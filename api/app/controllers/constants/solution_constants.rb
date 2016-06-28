@@ -20,8 +20,4 @@ module SolutionConstants
   LOAD_OBJECT_EXCEPT = [:category_folders, :folder_articles].freeze
 
   ADMIN_TASKS = :admin_tasks
-
-  # Validation Constants
-  FOLDER_CHECK_PARAMS_SET_FIELDS = %w(company_ids).freeze
-  ARTICLE_CHECK_PARAMS_SET_FIELDS = %w(type folder_name category_name).freeze
 end

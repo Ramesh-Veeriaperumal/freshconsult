@@ -71,8 +71,8 @@ module ApiSolutions
     def test_show_category_with_invalid_language_query_param
       sample_category = get_category
       get :show, controller_params(id: sample_category.parent_id, language: 'adadfs')
-      match_json([bad_request_error_pattern('language', :not_included, list: (@account.supported_languages + [@account.language]).sort.join(', '))])
-      assert_response 400
+      assert_response 404
+      match_json(request_error_pattern(:language_not_allowed, code: 'adadfs', list: (@account.supported_languages + [@account.language]).sort.join(', ')))
     end
 
     # Feature Check
@@ -183,8 +183,8 @@ module ApiSolutions
       language_code = @account.language
       params_hash  = { name: Faker::Name.name, description: Faker::Lorem.paragraph }
       post :create, construct_params({id: sample_category_meta.id, language: language_code}, params_hash)
-      assert_response 400
-      match_json([bad_request_error_pattern('language', :not_included, list: @account.supported_languages.sort.join(', '))])
+      assert_response 404
+      match_json(request_error_pattern(:language_not_allowed, code: language_code, list: (@account.supported_languages).sort.join(', ')))
     end
 
     def test_create_translation_with_invalid_languge
@@ -192,8 +192,8 @@ module ApiSolutions
       language_code = @account.supported_languages.first
       params_hash  = { name: Faker::Name.name, description: Faker::Lorem.paragraph }
       post :create, construct_params({id: sample_category_meta.id, language: 'aa'}, params_hash)
-      assert_response 400
-      match_json([bad_request_error_pattern('language', :not_included, list: @account.supported_languages.sort.join(', '))])
+      assert_response 404
+      match_json(request_error_pattern(:language_not_allowed, code: 'aa', list: (@account.supported_languages).sort.join(', ')))
     end
 
     # Update Category
@@ -313,8 +313,7 @@ module ApiSolutions
       sample_category = get_category
       language_code = Language.find(sample_category.language_id).code
       delete :destroy, construct_params({id: sample_category.id, language: language_code})
-      match_json([bad_request_error_pattern('language', :invalid_field)])
-      assert_response 400
+      assert_response 404
     end
 
     # Index
@@ -335,9 +334,9 @@ module ApiSolutions
     end
 
     def test_index_with_invalid_language_param
-      get :index, construct_params(language: 'aaa')      
-      match_json([bad_request_error_pattern('language', :not_included, list: (@account.supported_languages + [@account.language]).sort.join(', '))])
-      assert_response 400
+      get :index, construct_params(language: 'aaa')
+      assert_response 404
+      match_json(request_error_pattern(:language_not_allowed, code: 'aaa', list: (@account.supported_languages + [@account.language]).sort.join(', ')))
     end
 
     # Query Params test

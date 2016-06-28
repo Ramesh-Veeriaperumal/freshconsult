@@ -1,4 +1,5 @@
 class ApiSolutions::FolderValidation < ApiValidation
+  CHECK_PARAMS_SET_FIELDS = %w(company_ids).freeze
   attr_accessor :name, :description, :visibility, :company_ids
   validates :name, data_type: { rules: String, required: true }, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }
   validates :description, data_type: { rules: String, allow_nil: true  }
@@ -12,7 +13,6 @@ class ApiSolutions::FolderValidation < ApiValidation
   def initialize(request_params, item, lang_id)
     super(request_params, item)
     @lang_id = lang_id
-    check_params_set(request_params.slice(*SolutionConstants::FOLDER_CHECK_PARAMS_SET_FIELDS))
   end
 
   private

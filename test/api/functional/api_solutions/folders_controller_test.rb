@@ -91,8 +91,8 @@ module ApiSolutions
     def test_show_folder_with_invalid_language_query_param
       sample_folder = get_folder
       get :show, controller_params(id: sample_folder.parent_id, language: 'adadfs')
-      match_json([bad_request_error_pattern('language', :not_included, list: (@account.supported_languages + [@account.language]).sort.join(', '))])
-      assert_response 400
+      assert_response 404
+      match_json(request_error_pattern(:language_not_allowed, code: 'adadfs', list: (@account.supported_languages + [@account.language]).sort.join(', ')))
     end
 
     # Feature Check
@@ -295,8 +295,8 @@ module ApiSolutions
       params_hash = {name: Faker::Name.name, description: Faker::Lorem.paragraph}
       language_code = @account.language
       post :create, construct_params({id: folder.parent_id, language: language_code}, params_hash)
-      match_json([bad_request_error_pattern('language', :not_included, list: @account.supported_languages.sort.join(', '))])
-      assert_response 400
+      assert_response 404
+      match_json(request_error_pattern(:language_not_allowed, code: language_code, list: (@account.supported_languages).sort.join(', ')))
     end
 
     # Update Folder
@@ -392,8 +392,7 @@ module ApiSolutions
       sample_folder = get_folder
       language_code = Language.find(sample_folder.language_id).code
       delete :destroy, construct_params({id: sample_folder.parent_id, language: language_code})
-      match_json([bad_request_error_pattern('language', :invalid_field)])
-      assert_response 400
+      assert_response 404
     end
 
     def test_delete_unavailable_folder
@@ -432,8 +431,8 @@ module ApiSolutions
     def test_index_category_folders_with_invalid_language_param
       sample_category_meta = get_category_with_folders
       get :category_folders, controller_params(id: sample_category_meta.id, language: 'adadfa')
-      match_json([bad_request_error_pattern('language', :not_included, list: (@account.supported_languages + [@account.language]).sort.join(', '))])
-      assert_response 400
+      assert_response 404
+      match_json(request_error_pattern(:language_not_allowed, code: 'adadfa', list: (@account.supported_languages + [@account.language]).sort.join(', ')))
     end    
   end
 end

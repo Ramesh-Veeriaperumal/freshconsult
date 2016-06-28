@@ -10,13 +10,12 @@ module SolutionConcern
         render_request_error :require_feature_to_suppport_the_request, 404, feature: 'EnableMultilingualFeature'
         return false
       elsif destroy?
-        errors = [[:language, :invalid_field]]
-        render_errors errors
+        log_and_render_404
+        return false
       elsif permitted_languages.exclude?(params[:language])
-        errors = [[:language, :not_included]]
-        render_errors errors, list: permitted_languages.join(', ')
+        render_request_error :language_not_allowed, 404, code: params[:language], list: permitted_languages.join(', ')
+        return false
       end
-      return false if errors
     end
     @lang_id = current_request_language.id
   end

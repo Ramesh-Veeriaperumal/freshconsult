@@ -1,4 +1,5 @@
 class ApiSolutions::ArticleValidation < ApiValidation
+  CHECK_PARAMS_SET_FIELDS = %w(type folder_name category_name).freeze
   attr_accessor :title, :description, :user_id, :status, :type, :tags, :seo_data, :meta_title, :meta_keywords,
                 :meta_description, :folder_name, :category_name
   validates :title, data_type: { rules: String, required: true }, custom_length: { maximum: SolutionConstants::TITLE_MAX_LENGTH, minimum: SolutionConstants::TITLE_MIN_LENGTH, message: :too_long_too_short }
@@ -31,8 +32,6 @@ class ApiSolutions::ArticleValidation < ApiValidation
       @meta_description = seo_data['meta_description']
       @meta_keywords = seo_data['meta_keywords']
     end
-
-    check_params_set(request_params.slice(*SolutionConstants::ARTICLE_CHECK_PARAMS_SET_FIELDS))
   end
 
   private

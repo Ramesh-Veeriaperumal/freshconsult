@@ -88,3 +88,4 @@ api_error_messages:
   translation_available_already: "%{resource} translation is available already. %{attribute} attribute is not required"
   attribute_not_required: "It cannot be set, for articles belonging to primary language."
   translation_not_available: "%{resource} translation is not available. %{attribute} attribute is required."
+  language_not_allowed: "Language given in the request URL (%{code}) is not found. Allowed languages are %{list}"

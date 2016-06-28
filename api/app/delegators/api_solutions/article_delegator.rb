@@ -38,7 +38,6 @@ module ApiSolutions
       if secondary_language?
         if @article_meta.solution_folder_meta.solution_folders.where('language_id = ?', @language_id).first
           errors[:folder_name] << :translation_available_already
-          @error_options.merge!(folder_name: { resource: 'Folder', attribute: 'folder_name' })
         end
       else
         errors[:folder_name] << :attribute_not_required
@@ -49,7 +48,6 @@ module ApiSolutions
       if secondary_language?
         if @article_meta.solution_folder_meta.solution_category_meta.solution_categories.where('language_id = ?', @language_id).first
           errors[:category_name] << :translation_available_already
-          @error_options.merge!(category_name: { resource: 'Category', attribute: 'category_name' })
         end
       else
         errors[:category_name] << :attribute_not_required
@@ -60,14 +58,12 @@ module ApiSolutions
       unless @category_name
         unless @article_meta.solution_category_meta.solution_categories.where('language_id = ?', @language_id).first
           errors[:category_name] << :translation_not_available
-          @error_options.merge!(category_name: { resource: 'Category', attribute: 'category_name' })
         end
       end
 
       unless @folder_name
         unless @article_meta.solution_folder_meta.solution_folders.where('language_id = ?', @language_id).first
           errors[:folder_name] << :translation_not_available
-          @error_options.merge!(folder_name: { resource: 'Folder', attribute: 'folder_name' })
         end
       end
     end

@@ -117,8 +117,8 @@ module ApiSolutions
     def test_show_article_with_invalid_language_query_param
       sample_article = get_article
       get :show, controller_params(id: sample_article.parent_id, language: 'xaasd')
-      match_json([bad_request_error_pattern('language', :not_included, list: (@account.supported_languages + [@account.language]).sort.join(', '))])
-      assert_response 400
+      assert_response 404
+      match_json(request_error_pattern(:language_not_allowed, code: 'xaasd', list: (@account.supported_languages + [@account.language]).sort.join(', ')))
     end
 
     # Feature Check
@@ -403,8 +403,8 @@ module ApiSolutions
     def test_folder_index_with_invalid_language_param
       sample_folder = get_folder_meta
       get :folder_articles, controller_params(id: sample_folder.id, language: 'aaaa')
-      assert_response 400
-      match_json([bad_request_error_pattern('language', :not_included, list: (@account.supported_languages + [@account.language]).sort.join(', '))])
+      assert_response 404
+      match_json(request_error_pattern(:language_not_allowed, code: 'aaaa', list: (@account.supported_languages + [@account.language]).sort.join(', ')))
     end
 
     # Delete article
@@ -418,8 +418,7 @@ module ApiSolutions
       sample_article = get_article
       language_code = Language.find(sample_article.language_id).code
       delete :destroy, construct_params({id: sample_article.parent_id, language: language_code})
-      match_json([bad_request_error_pattern('language', :invalid_field)])
-      assert_response 400
+      assert_response 404
     end
 
     def test_delete_unavailable_article

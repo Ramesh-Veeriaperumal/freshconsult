@@ -19,7 +19,7 @@ module ApiSolutions
 
     def category_folders
       if validate_language
-        @item = current_account.solution_category_meta.where(is_default: false).find_by_id(params[:id])
+        @item = solution_category_meta(params[:id])
         if @item
           @items = paginate_items(@item.solution_folders.where(language_id: @lang_id))
           render '/api_solutions/folders/index'
@@ -58,7 +58,7 @@ module ApiSolutions
       end
 
       def category_exists?
-        @item = current_account.solution_category_meta.where(is_default: false).find_by_id(params[:id])
+        @item = solution_category_meta(params[:id])
         log_and_render_404 unless @item
       end
 
@@ -116,6 +116,10 @@ module ApiSolutions
         meta = meta_scoper.find_by_id(id)
         log_and_render_404 unless meta
         meta
+      end
+
+      def solution_category_meta(id)
+        current_account.solution_category_meta.where(is_default: false, id: id).first
       end
   end
 end
