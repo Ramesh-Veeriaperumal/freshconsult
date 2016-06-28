@@ -8,8 +8,8 @@ class ApiCompaniesQueriesTest < ActionDispatch::IntegrationTest
       v1 = {}
       v2_expected = {
         api_create: 9,
-        api_show: 1,
-        api_index: 2,
+        api_show: 2,
+        api_index: 3,
         api_update: 10,
         api_destroy: 10,
 

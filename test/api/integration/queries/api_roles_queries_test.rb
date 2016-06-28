@@ -6,8 +6,8 @@ class ApiRolesQueriesTest < ActionDispatch::IntegrationTest
     v1 = {}
     v2 = {}
     v2_expected = {
-      api_show: 0,
-      api_index: 0,
+      api_show: 1,
+      api_index: 1,
 
       show: 11,
       index: 11

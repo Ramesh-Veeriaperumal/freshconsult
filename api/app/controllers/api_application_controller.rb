@@ -404,7 +404,7 @@ class ApiApplicationController < MetalApiController
 
     def api_current_user
       return @current_user if defined?(@current_user)
-      if get_request?
+      if get_request? && !request.authorization
         if current_user_session # fall back to old session based auth
           @current_user = (session.key?(:assumed_user)) ? (current_account.users.find session[:assumed_user]) : current_user_session.record
           stale_record = current_user_session.stale_record

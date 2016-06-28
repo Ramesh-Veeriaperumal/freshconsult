@@ -11,8 +11,8 @@ class SurveysQueriesTest < ActionDispatch::IntegrationTest
       v1 = {}
       v2_expected = {
         api_create: 12,
-        api_index: 10,
-        api_ticket_surveys: 12,
+        api_index: 11,
+        api_ticket_surveys: 13,
 
         create: 72,
         index: 11,

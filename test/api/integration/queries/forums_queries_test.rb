@@ -8,13 +8,13 @@ class ForumsQueriesTest < ActionDispatch::IntegrationTest
     v1 = {}
     v2_expected = {
       api_create: 7,
-      api_show: 1,
+      api_show: 2,
       api_update: 7,
       api_destroy: 12,
       api_follow: 8,
       api_unfollow: 7,
-      api_is_following: 1,
-      api_topics: 2,
+      api_is_following: 2,
+      api_topics: 3,
 
       create: 17,
       show: 11,

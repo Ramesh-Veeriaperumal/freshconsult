@@ -31,7 +31,7 @@ class ApiAgentsFlowTest < ActionDispatch::IntegrationTest
       sample_agent.user.update_attributes(job_title: 'test update', language: 'en', mobile: '123123')
       get "/api/v2/agents/#{sample_user.user.id}", nil, @write_headers
       assert_response 200
-      match_json(agent_pattern({ job_title: 'test update', language: 'en', mobile: '123123' }, sample_agent.reload))
+      match_json(agent_pattern_with_additional_details({ job_title: 'test update', language: 'en', mobile: '123123' }, sample_agent.user.reload))
     end
   end
 

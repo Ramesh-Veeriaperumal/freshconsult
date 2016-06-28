@@ -9,10 +9,10 @@ class TimeEntriesQueriesTest < ActionDispatch::IntegrationTest
       v2_expected = {
         api_create: 7,
         api_update: 7,
-        api_index: 2,
+        api_index: 3,
         api_toggle_timer: 7,
         api_destroy: 7,
-        api_ticket_time_entries: 3,
+        api_ticket_time_entries: 4,
 
         create: 18,
         update: 16,
