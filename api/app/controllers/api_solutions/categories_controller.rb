@@ -66,8 +66,8 @@ module ApiSolutions
         prepare_array_fields [:visible_in]
         language_params = params[cname].slice(:name, :description)
         params[cname][language_scoper] = language_params unless language_params.empty?
-        params[cname][:id] = params[:id]
-        ParamsHelper.assign_and_clean_params({ :visible_in => :portal_ids }, params[cname])
+        params[cname][:id] = params[:id] if params.key?(:id)
+        ParamsHelper.assign_and_clean_params({ visible_in: :portal_ids }, params[cname])
         @category_params = params[cname].except!(:name, :description)
       end
 

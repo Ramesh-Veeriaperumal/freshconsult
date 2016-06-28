@@ -3,7 +3,6 @@ module ApiSolutions
     validate :company_ids_exist?, if: -> { @company_ids }
 
     def initialize(params)
-      # use self, ask Soorya
       @company_ids = params[:customer_folders_attributes]
       super(params)
     end

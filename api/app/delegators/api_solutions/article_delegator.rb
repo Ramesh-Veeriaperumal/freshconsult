@@ -30,7 +30,7 @@ module ApiSolutions
     def agent_exists?
       unless Account.current.agents_from_cache.detect { |x| x.user_id == @user_id }
         errors[:user_id] << :absent_in_db
-        @error_options.merge!({ user_id: { resource: 'Agent', attribute: 'user_id' }})
+        @error_options.merge!(user_id: { resource: 'Agent', attribute: 'user_id' })
       end
     end
 
@@ -38,10 +38,9 @@ module ApiSolutions
       if secondary_language?
         if @article_meta.solution_folder_meta.solution_folders.where('language_id = ?', @language_id).first
           errors[:folder_name] << :translation_available_already
-          @error_options.merge!({ folder_name: { resource: 'Folder', attribute: 'folder_name' }  })
+          @error_options.merge!(folder_name: { resource: 'Folder', attribute: 'folder_name' })
         end
       else
-        # refactor, should be handled in permit, ask Soorya
         errors[:folder_name] << :attribute_not_required
       end
     end
@@ -50,7 +49,7 @@ module ApiSolutions
       if secondary_language?
         if @article_meta.solution_folder_meta.solution_category_meta.solution_categories.where('language_id = ?', @language_id).first
           errors[:category_name] << :translation_available_already
-          @error_options.merge!({ category_name: { resource: 'Category', attribute: 'category_name' }  })
+          @error_options.merge!(category_name: { resource: 'Category', attribute: 'category_name' })
         end
       else
         errors[:category_name] << :attribute_not_required
@@ -61,14 +60,14 @@ module ApiSolutions
       unless @category_name
         unless @article_meta.solution_category_meta.solution_categories.where('language_id = ?', @language_id).first
           errors[:category_name] << :translation_not_available
-          @error_options.merge!({ category_name: { resource: 'Category', attribute: 'category_name' }  })
+          @error_options.merge!(category_name: { resource: 'Category', attribute: 'category_name' })
         end
       end
 
       unless @folder_name
         unless @article_meta.solution_folder_meta.solution_folders.where('language_id = ?', @language_id).first
           errors[:folder_name] << :translation_not_available
-          @error_options.merge!({ folder_name: { resource: 'Folder', attribute: 'folder_name' }  })
+          @error_options.merge!(folder_name: { resource: 'Folder', attribute: 'folder_name' })
         end
       end
     end

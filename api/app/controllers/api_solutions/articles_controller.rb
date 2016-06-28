@@ -5,9 +5,6 @@ module ApiSolutions
     include Helpdesk::TagMethods
     decorate_views(decorate_objects: [:folder_articles])
 
-    before_filter :validate_filter_params, only: [:folder_articles]
-    before_filter :folder_exists?, only: [:folder_articles]
-
     def show
       @meta = @item.solution_article_meta
     end
@@ -27,8 +24,17 @@ module ApiSolutions
     end
 
     def folder_articles
-      @items = paginate_items(@item.solution_articles.where(language_id: @lang_id))
-      render '/api_solutions/articles/index'
+      if validate_language
+        @item = current_account.solution_folder_meta.find_by_id(params[:id] || params[:folder_id])
+        if @item
+          @items = paginate_items(@item.solution_articles.where(language_id: @lang_id))
+          render '/api_solutions/articles/index'
+        else
+          log_and_render_404
+        end
+      else
+        return false
+      end
     end
 
     private
@@ -42,10 +48,8 @@ module ApiSolutions
       end
 
       def manage_article
-        delegator_params = { language_id: @lang_id, current_user_id: api_current_user.id }
+        delegator_params = { language_id: @lang_id, current_user_id: api_current_user.id, article_meta: @meta, category_name: @category_name, folder_name: @folder_name }
         delegator_params.merge!(user_id: @article_params[language_scoper][:user_id]) if  @article_params[language_scoper] && @article_params[language_scoper][:user_id]
-        delegator_params.merge!(article_meta: @meta)
-        delegator_params.merge!(category_name: @category_name, folder_name: @folder_name)
         article_delegator = ArticleDelegator.new(delegator_params)
         if article_delegator.valid?
           @meta = Solution::Builder.article(solution_article_meta: @article_params, language_id: @lang_id)
@@ -154,10 +158,6 @@ module ApiSolutions
         meta = meta_scoper.find_by_id(id)
         log_and_render_404 unless meta
         meta
-      end
-
-      def validate_filter_params
-        validate_language
       end
   end
 end

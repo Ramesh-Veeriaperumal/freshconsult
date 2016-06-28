@@ -59,6 +59,8 @@ class ApiSolutionFoldersQueriesTest < ActionDispatch::IntegrationTest
   	skip_bullet do
       post("/api/v2/solutions/folders/#{sample_folder.parent_id}/#{language_code}", payload, @write_headers)
       assert_response 201
+      result = parse_response(@response.body)
+      assert_equal "http://#{@request.host}/api/v2/solutions/folders/#{result['id']}", response.headers['Location']
     end
   end
 
@@ -68,6 +70,8 @@ class ApiSolutionFoldersQueriesTest < ActionDispatch::IntegrationTest
     skip_bullet do
       post("/api/v2/solutions/folders/#{sample_folder.parent_id}/articles", payload, @write_headers)
       assert_response 201
+      result = parse_response(@response.body)
+      assert_equal "http://#{@request.host}/api/v2/solutions/articles/#{result['id']}", response.headers['Location']
     end
   end
 

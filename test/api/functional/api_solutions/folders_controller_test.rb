@@ -112,6 +112,8 @@ module ApiSolutions
       category_meta = get_category
       post :create, construct_params({ id: category_meta.id }, {name: Faker::Name.name, description: Faker::Lorem.paragraph, visibility: 1})
       assert_response 201
+      result = parse_response(@response.body)
+      assert_equal "http://#{@request.host}/api/v2/solutions/folders/#{result['id']}", response.headers['Location']
       match_json(solution_folder_pattern(Solution::Folder.last))
     end
 
@@ -119,6 +121,8 @@ module ApiSolutions
       category_meta = get_category
       post :create, construct_params({ id: category_meta.id }, {name: Faker::Name.name, description: nil, visibility: 1})
       assert_response 201
+      result = parse_response(@response.body)
+      assert_equal "http://#{@request.host}/api/v2/solutions/folders/#{result['id']}", response.headers['Location']
       match_json(solution_folder_pattern(Solution::Folder.last))
     end
 
@@ -169,6 +173,8 @@ module ApiSolutions
       category_meta = get_category
       post :create, construct_params({ id: category_meta.id }, {name: Faker::Name.name, description: Faker::Lorem.paragraph, visibility: 4, company_ids:[get_company.id] })
       assert_response 201
+      result = parse_response(@response.body)
+      assert_equal "http://#{@request.host}/api/v2/solutions/folders/#{result['id']}", response.headers['Location']
       match_json(solution_folder_pattern(Solution::Folder.last))
     end
 
@@ -176,6 +182,8 @@ module ApiSolutions
       category_meta = get_category
       post :create, construct_params({ id: category_meta.id }, {name: Faker::Name.name, description: Faker::Lorem.paragraph, visibility: 4, company_ids:[] })
       assert_response 201
+      result = parse_response(@response.body)
+      assert_equal "http://#{@request.host}/api/v2/solutions/folders/#{result['id']}", response.headers['Location']
       match_json(solution_folder_pattern(Solution::Folder.last))
     end
 
@@ -205,6 +213,8 @@ module ApiSolutions
       company_id = get_company.id
       post :create, construct_params({ id: category_meta.id }, {name: Faker::Name.name, description: Faker::Lorem.paragraph, visibility: 4, company_ids:[company_id, company_id] })
       assert_response 201
+      result = parse_response(@response.body)
+      assert_equal "http://#{@request.host}/api/v2/solutions/folders/#{result['id']}", response.headers['Location']
       assert Solution::FolderMeta.last.customer_ids == [company_id]
     end
 
@@ -213,13 +223,15 @@ module ApiSolutions
       company_ids = Array.new(251) { rand(1...2) }
       post :create, construct_params({ id: category_meta.id }, {name: Faker::Name.name, description: Faker::Lorem.paragraph, visibility: 4, company_ids: company_ids })
       assert_response 400
-      match_json([bad_request_error_pattern('company_ids', :too_long, current_count: company_ids.size, element_type: :elements, max_count: SolutionConstants::MAX_COMPANY_ALLOWED)])
+      match_json([bad_request_error_pattern('company_ids', :too_long, current_count: company_ids.size, element_type: :elements, max_count: Solution::Constants::COMPANIES_LIMIT)])
     end
 
     def test_create_folder_with_visibility_selected_companies_without_company_ids
       category_meta = get_category
       post :create, construct_params({ id: category_meta.id }, {name: Faker::Name.name, description: Faker::Lorem.paragraph, visibility: 4})
       assert_response 201
+      result = parse_response(@response.body)
+      assert_equal "http://#{@request.host}/api/v2/solutions/folders/#{result['id']}", response.headers['Location']
       match_json(solution_folder_pattern(Solution::Folder.last))
     end
 
@@ -237,6 +249,8 @@ module ApiSolutions
       language_code = @account.supported_languages.first
       post :create, construct_params({id: folder.parent_id, language: language_code}, params_hash)
       assert_response 201
+      result = parse_response(@response.body)
+      assert_equal "http://#{@request.host}/api/v2/solutions/folders/#{result['id']}", response.headers['Location']
       match_json(solution_folder_pattern(Solution::Folder.last))
     end
 
@@ -246,6 +260,8 @@ module ApiSolutions
       language_code = @account.supported_languages.first
       post :create, construct_params({id: folder.parent_id, language: language_code}, params_hash)
       assert_response 201
+      result = parse_response(@response.body)
+      assert_equal "http://#{@request.host}/api/v2/solutions/folders/#{result['id']}", response.headers['Location']
       match_json(solution_folder_pattern(Solution::Folder.last))
     end
 

@@ -4,9 +4,6 @@ module ApiSolutions
     include Solution::LanguageControllerMethods
     decorate_views(decorate_objects: [:category_folders])
 
-    before_filter :validate_filter_params, only: [:category_folders]
-    before_filter :category_exists?, only: [:category_folders]
-
     def create
       render_201_with_location(item_id: @item.parent_id) if manage_folder
     end
@@ -21,8 +18,17 @@ module ApiSolutions
     end
 
     def category_folders
-      @items = paginate_items(@item.solution_folders.where(language_id: @lang_id))
-      render '/api_solutions/folders/index'
+      if validate_language
+        @item = current_account.solution_category_meta.where(is_default: false).find_by_id(params[:id])
+        if @item
+          @items = paginate_items(@item.solution_folders.where(language_id: @lang_id))
+          render '/api_solutions/folders/index'
+        else
+          log_and_render_404
+        end
+      else
+        return false
+      end
     end
 
     private
@@ -51,8 +57,6 @@ module ApiSolutions
         false
       end
 
-      # check and load the category before creating a folder in primary language
-      # the check is not necessary when a translated version is created, return true in that case
       def category_exists?
         @item = current_account.solution_category_meta.where(is_default: false).find_by_id(params[:id])
         log_and_render_404 unless @item
@@ -108,12 +112,8 @@ module ApiSolutions
         end
       end
 
-      def validate_filter_params
-        validate_language
-      end
-
       def load_meta(id)
-        meta = meta_scoper.where(is_default: false).find_by_id(id)
+        meta = meta_scoper.find_by_id(id)
         log_and_render_404 unless meta
         meta
       end

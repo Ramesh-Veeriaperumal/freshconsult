@@ -91,12 +91,16 @@ module ApiSolutions
     def test_create_category
       post :create, construct_params({},  name: Faker::Name.name, description: Faker::Lorem.paragraph)
       assert_response 201
+      result = parse_response(@response.body)
+      assert_equal "http://#{@request.host}/api/v2/solutions/categories/#{result['id']}", response.headers['Location']
       match_json(solution_category_pattern(Solution::Category.last))
     end
 
     def test_create_category_without_description
       post :create, construct_params({},  name: Faker::Name.name)
       assert_response 201
+      result = parse_response(@response.body)
+      assert_equal "http://#{@request.host}/api/v2/solutions/categories/#{result['id']}", response.headers['Location']
       match_json(solution_category_pattern(Solution::Category.last))
     end
 
@@ -129,6 +133,8 @@ module ApiSolutions
     def test_create_category_with_visible_in
       post :create, construct_params({}, {name: Faker::Name.name, description: Faker::Lorem.paragraph, visible_in: [@account.main_portal.id]})
       assert_response 201
+      result = parse_response(@response.body)
+      assert_equal "http://#{@request.host}/api/v2/solutions/categories/#{result['id']}", response.headers['Location']
       match_json(solution_category_pattern(Solution::Category.last))
     end
 
@@ -156,6 +162,8 @@ module ApiSolutions
       params_hash  = { name: Faker::Name.name, description: Faker::Lorem.paragraph }
       post :create, construct_params({id: sample_category_meta.id, language: language_code}, params_hash)
       assert_response 201
+      result = parse_response(@response.body)
+      assert_equal "http://#{@request.host}/api/v2/solutions/categories/#{result['id']}", response.headers['Location']
       match_json(solution_category_pattern(Solution::Category.last))
     end
 
@@ -165,6 +173,8 @@ module ApiSolutions
       params_hash  = { name: Faker::Name.name }
       post :create, construct_params({id: sample_category_meta.id, language: language_code}, params_hash)
       assert_response 201
+      result = parse_response(@response.body)
+      assert_equal "http://#{@request.host}/api/v2/solutions/categories/#{result['id']}", response.headers['Location']
       match_json(solution_category_pattern(Solution::Category.last))
     end
 

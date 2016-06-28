@@ -1,5 +1,4 @@
 class ApiSolutions::FolderValidation < ApiValidation
-  CHECK_PARAMS_SET_FIELDS = %w(company_ids).freeze
   attr_accessor :name, :description, :visibility, :company_ids
   validates :name, data_type: { rules: String, required: true }, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }
   validates :description, data_type: { rules: String, allow_nil: true  }
@@ -8,11 +7,12 @@ class ApiSolutions::FolderValidation < ApiValidation
   validates :visibility, custom_inclusion: { in: Solution::Constants::VISIBILITY_NAMES_BY_KEY.keys,  detect_type: true }, if: -> { visibility && visibility_can_be_altered? }
 
   validates :company_ids, custom_absence: { message: :cant_set_company_ids }, if: -> { errors[:visibility].blank? && company_ids_not_allowed? }
-  validates :company_ids, data_type: { rules: Array }, array: { custom_numericality: { only_integer: true, greater_than: 0, allow_nil: true } }, custom_length: { maximum: SolutionConstants::MAX_COMPANY_ALLOWED, message_options: { element_type: :elements } }, unless: -> { errors[:visibility].present? || company_ids_not_allowed? }
+  validates :company_ids, data_type: { rules: Array }, array: { custom_numericality: { only_integer: true, greater_than: 0, allow_nil: true } }, custom_length: { maximum: Solution::Constants::COMPANIES_LIMIT, message_options: { element_type: :elements } }, unless: -> { errors[:visibility].present? || company_ids_not_allowed? }
 
   def initialize(request_params, item, lang_id)
     super(request_params, item)
     @lang_id = lang_id
+    check_params_set(request_params.slice(*SolutionConstants::FOLDER_CHECK_PARAMS_SET_FIELDS))
   end
 
   private
