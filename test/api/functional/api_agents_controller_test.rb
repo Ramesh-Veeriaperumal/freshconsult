@@ -99,7 +99,7 @@ class ApiAgentsControllerTest < ActionController::TestCase
     sample_agent = @account.all_agents.first
     get :show, construct_params(id: sample_agent.user.id)
     assert_response 200
-    match_json(agent_pattern(sample_agent))
+    match_json(agent_pattern_with_additional_details(sample_agent.user))
   end
 
   def test_show_agent_with_view_contact_privilege_only
@@ -138,7 +138,7 @@ class ApiAgentsControllerTest < ActionController::TestCase
   def test_me
     get :me, controller_params
     assert_response 200
-    match_json(agent_pattern(@account.all_agents.find(@agent.agent.id)))
+    match_json(agent_pattern_with_additional_details(@agent))
   end
 
   # Agent email filter, passing an array to the email attribute
@@ -158,8 +158,8 @@ class ApiAgentsControllerTest < ActionController::TestCase
                role_ids: role_ids, group_ids: group_ids, job_title: Faker::Name.name }
     put :update, construct_params({ id: agent.id }, params)
     updated_agent = User.find(agent.id)
-    match_json(agent_update_pattern(params, updated_agent))
-    match_json(agent_update_pattern({}, updated_agent))
+    match_json(agent_pattern_with_additional_details(params, updated_agent))
+    match_json(agent_pattern_with_additional_details({}, updated_agent))
     assert_response 200
   end
 
@@ -284,8 +284,8 @@ class ApiAgentsControllerTest < ActionController::TestCase
     put :update, construct_params({ id: agent.id }, params)
     updated_agent = User.find(agent.id)
     refute previous_privelege == updated_agent.privileges
-    match_json(agent_update_pattern(params, updated_agent))
-    match_json(agent_update_pattern({}, updated_agent))
+    match_json(agent_pattern_with_additional_details(params, updated_agent))
+    match_json(agent_pattern_with_additional_details({}, updated_agent))
     assert_response 200
   end
 
@@ -308,8 +308,8 @@ class ApiAgentsControllerTest < ActionController::TestCase
                role_ids: role_ids, group_ids: group_ids, job_title: Faker::Name.name }
     put :update, construct_params({ id: agent.id }, params)
     updated_agent = User.find(agent.id)
-    match_json(agent_update_pattern(params, updated_agent))
-    match_json(agent_update_pattern({}, updated_agent))
+    match_json(agent_pattern_with_additional_details(params, updated_agent))
+    match_json(agent_pattern_with_additional_details({}, updated_agent))
     assert_response 200
   ensure
     Subscription.any_instance.unstub(:agent_limit)
@@ -353,8 +353,8 @@ class ApiAgentsControllerTest < ActionController::TestCase
     params = { signature: 'test' }
     put :update, construct_params({ id: agent.id }, params)
     updated_agent = User.find(agent.id)
-    match_json(agent_update_pattern(params, updated_agent))
-    match_json(agent_update_pattern({}, updated_agent))
+    match_json(agent_pattern_with_additional_details(params, updated_agent))
+    match_json(agent_pattern_with_additional_details({}, updated_agent))
     assert_response 200
   ensure
     User.unstub(:current)

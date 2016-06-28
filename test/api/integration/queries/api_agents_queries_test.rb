@@ -20,15 +20,15 @@ class ApiAgentsQueriesTest < ActionDispatch::IntegrationTest
     v1 = {}
     v2 = {}
     v2_expected = {
-      api_show: 3,
+      api_show: 5,
       api_index: 3,
-      api_me: 3,
+      api_me: 5,
       api_update: 15,
       api_destroy: 2,
 
-      show: 11,
+      show: 13,
       index: 11,
-      me: 11,
+      me: 13,
       update: 62,
       destroy: 58
     }

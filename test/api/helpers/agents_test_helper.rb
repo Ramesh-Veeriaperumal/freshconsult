@@ -8,7 +8,7 @@ module AgentsTestHelper
       email: agent.user.email,
       job_title: expected_output['job_title'] || agent.user.job_title,
       language: expected_output['language'] || agent.user.language,
-      last_login_at: agent.user.last_login_at,
+      last_login_at: agent.user.last_login_at.try(:utc).try(:iso8601),
       mobile: expected_output['mobile'] || agent.user.mobile,
       name: agent.user.name,
       phone: agent.user.phone,
@@ -29,14 +29,14 @@ module AgentsTestHelper
     }
   end
 
-  def agent_update_pattern(expected_output = {}, agent_user)
+  def agent_pattern_with_additional_details(expected_output = {}, agent_user)
     user = {
       active: agent_user.active,
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
       email: expected_output[:email] || agent_user.email,
       job_title: expected_output[:job_title] || agent_user.job_title,
       language: expected_output[:language] || agent_user.language,
-      last_login_at: agent_user.last_login_at,
+      last_login_at: agent_user.last_login_at.try(:utc).try(:iso8601),
       mobile: expected_output[:mobile] || agent_user.mobile,
       name: expected_output[:name] || agent_user.name,
       phone: expected_output[:phone] || agent_user.phone,
