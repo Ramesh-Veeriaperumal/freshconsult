@@ -157,13 +157,13 @@ window.App = window.App || {};
     },
 
     maximizeActivityContainer : function() {
-      $('body').on('click.archive_ticket_details', ' .conversation_thread .minimizable', function(ev){
-        if ($(ev.target).is('a')) return;
-        if(($(this).find(".edit_helpdesk_note").length == 0) || ($(this).find(".edit_helpdesk_note").is(":hidden"))){
-          $(this).toggleClass('minimized');
-        }
-      });
-    },
+      $('body').on('click.archive_ticket_details', ' .conversation_thread .minimizable .author-mail-detail, .conversation_thread .minimizable .subject', function(ev){
+    if ($(ev.target).is('a')) return;
+    var minimizable_wrap = $(this).closest('.minimizable');
+    if((minimizable_wrap.find(".edit_helpdesk_note").length == 0) || (minimizable_wrap.find(".edit_helpdesk_note").is(":hidden"))){
+      minimizable_wrap.toggleClass('minimized');
+    }
+  });
 
     getAdjacentTickets: function(){
       $.getScript("/helpdesk/archive_tickets/" + TICKET_DETAILS_DATA['display_id'] + "/prevnext");

@@ -1159,13 +1159,13 @@ ol, ul, li{
     	background: transparent;
     	@include border-radius(5px);
     }
-
-    .minimized .commentbox, .minimized.commentbox{
+     .minimizable  .author-mail-detail, .minimizable  .subject{
     	cursor: pointer;
+     }
+    .minimized .commentbox, .minimized.commentbox{
     	.details, .attachments-wrap, .attachment_list, .actions, .seperator, #ticket_original_request, .ticket-details-twitter{
     		display: none;
     	}
-
     	.smiley{
     		top: 3px;
     	}

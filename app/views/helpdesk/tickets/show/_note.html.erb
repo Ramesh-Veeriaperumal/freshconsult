@@ -104,7 +104,7 @@ end
 						:timestamp => note.created_at.to_i 
 					).html_safe %><br>
 				<%unless survey_name.blank? %>
-					<div class="author-mail-detail">
+					<div>
 						<%= t("helpdesk.tickets.note.survey_response",{:survey_name => survey_name})%>
 						<%unless agent_name.blank? %><%= t("helpdesk.tickets.note.survey_response_to",{:agent => agent_name})%><%end%>
 					</div>
