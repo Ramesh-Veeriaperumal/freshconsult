@@ -16,7 +16,6 @@ class Helpdesk::TicketsController < ApplicationController
   helper Helpdesk::NotesHelper
   helper Helpdesk::TicketsExportHelper
   helper Helpdesk::SelectAllHelper
-  helper Helpdesk::RequesterWidgetHelper 
   include Helpdesk::TagMethods
   include Helpdesk::Activities::ActivityMethods
 
@@ -419,27 +418,6 @@ class Helpdesk::TicketsController < ApplicationController
         format.mobile {
           render :json => { :failure => true, :errors => edit_error }.to_json
         }
-      end
-    end
-  end
-
-  def update_requester
-    @ticket = load_by_param(params[:id])
-    requester = current_account.users.find_by_id(params["requester_widget"]["contact_id"])
-    if requester.present? && requester.customer?
-      requester.validatable_custom_fields = { :fields => current_account.contact_form.custom_contact_fields, 
-                                          :error_label => :label }
-      if params["company"].present? && params["requester_widget"]["company_id"].present?
-        @company = current_account.companies.find(params["requester_widget"]["company_id"])
-        @company.validatable_custom_fields = { :fields => current_account.company_form.custom_company_fields, 
-                                               :error_label => :label }
-        @company.update_attributes(params["company"]) ? check_domain_exists : 
-          flash[:notice] = activerecord_error_list(@company.errors)
-      end
-      if (@company.blank? || @company.errors.blank?)
-        flash[:notice] = requester.update_attributes(params["contact"]) ? 
-          t(:'flash.general.update.success', :human_name => t('requester_widget_human_name')) :
-          activerecord_error_list(requester.errors)
       end
     end
   end
@@ -1560,16 +1538,6 @@ class Helpdesk::TicketsController < ApplicationController
     end
   end
 
-
-  def check_domain_exists
-      if @company.errors[:"company_domains.domain"].include?("has already been taken")
-        @company.company_domains.each do |cd|
-          @existing_company ||= current_account.company_domains.find_by_domain(cd.domain).try(:company) if cd.new_record?
-        end
-      end
-  end
-
-
   def load_tkt_and_templates
     build_item
     @item.build_flexifield
@@ -1598,5 +1566,4 @@ class Helpdesk::TicketsController < ApplicationController
       recent_ids
     end
   end
-
 end

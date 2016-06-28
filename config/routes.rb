@@ -971,13 +971,6 @@ Helpkit::Application.routes.draw do
       end
     end
 
-    resources :requester_widget, :only => [:get_widget, :update_widget] do
-      collection do
-        get :get_widget
-        put :update_widget
-      end
-    end
-
     resources :day_passes, :only => [:index, :update] do
       member do
         put :buy_now
@@ -1845,7 +1838,6 @@ Helpkit::Application.routes.draw do
         put :update_ticket_properties
         get :component
         get :prevnext
-        put :update_requester
         post :create # For Mobile apps backward compatibility.
       end
 

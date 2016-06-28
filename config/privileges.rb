@@ -335,7 +335,6 @@ Authority::Authorization::PrivilegeList.build do
     resource :"segment/group"
     # is this the correct place to put this ?
     resource :user, :only => [:new, :create, :edit, :update]
-    resource :"helpdesk/ticket", :only => [:update_requester]
 
     # Used by V2 API
     resource :"api_contact", :only => [:create, :update]
@@ -471,7 +470,6 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/custom_survey"
     resource :group
     resource :ticket_field
-    resource :"admin/requester_widget", :only => [:get_widget, :update_widget]
     resource :"admin/contact_field"
     resource :"admin/company_field"
     resource :"admin/role"
