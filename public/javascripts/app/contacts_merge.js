@@ -7,15 +7,18 @@ window.App.Contacts.Contacts_merge = window.App.Contacts.Contacts_merge || {};
   window.App.Contacts.Contacts_merge = {
     ErrorString: "",
     Twitter: 0,
+    Twitter_id: "",
     Email: 0,
     Facebook: 0,
     Phone: 0,
-    ContactNumber: 1,
-    Limits: {"twitter" : 2, "facebook" : 2, "emails" : 6, "contacts" : 6, "phone" : 2},
+    Phone_num: "",
+    Mobile: 0,
+    Mobile_num: "",
+    Limits: {"twitter" : 2, "facebook" : 2, "emails" : 6, "mobile phone" : 2, "work phone" : 2},
     
     contactsSearch: new Template(
         '<li class="#{d}"><div class="contactelement" data-id="#{id}" data-name="#{name}" data-email="#{email}" '+
-        'data-twitter="#{twitter}" data-facebook="#{facebook}" data-phone="#{phone}" data-avatar="#{avatar}" '+
+        'data-twitter="#{twitter}" data-twitter-id="#{twitter_id}" data-facebook="#{facebook}" data-mobile="#{mobile}" data-mobile-num="#{mobile_num}" data-phone="#{phone}" data-phone-num="#{phone_num}" data-avatar="#{avatar}" '+
         'data-emails="#{user_emails}">'+
         '<span class="round-icon ficon-plus fsize-15"></span>'+
         '<div data-uid="#{id}" class="user-contact contact_merge_element">'+
@@ -128,12 +131,19 @@ window.App.Contacts.Contacts_merge = window.App.Contacts.Contacts_merge || {};
         "id" : element.data("id"), 
         "avatar" : element.data("avatar"), 
         "emails" : element.data("emails"), 
-        "twitter" : element.data("twitter"), 
+        "twitter" : element.data("twitter"),
+        "twitter_id": element.data("twitter-id"), 
         "facebook" : element.data("facebook"), 
         "phone" : element.data("phone"),
+        "phone_num": element.data("phone-num"),
+        "mobile" : element.data("mobile"),
+        "mobile_num": element.data("mobile-num"),
         "primary" : this.markPrimary
       }
       var email = this.getEmails(userData["emails"]);
+      this.Twitter_id = userData["twitter_id"];
+      this.Mobile_num = userData["mobile_num"];
+      this.Phone_num = userData["phone_num"];
       var new_contact = $(JST["app/contacts/selected_contact"](userData));
       new_contact.find('.contact_data').append(jQuery(email));
       new_contact.appendTo('.merge_entity');
@@ -212,28 +222,40 @@ window.App.Contacts.Contacts_merge = window.App.Contacts.Contacts_merge || {};
         this.Facebook = 1;
       if(data["phone"])
         this.Phone = 1;
+      if(data["mobile"])
+        this.Mobile = 1;
     },
 
     setDefaults: function () {
       this.ErrorString="";this.Twitter=0;this.Email=0;this.Facebook=0;this.Phone=0;
-      this.ContactNumber=1;
+      this.Mobile=0;
     },
 
     modifyValidationValues: function (element, add) {
+      var old_element = jQuery('.contact-primary').clone();
+      var source_twitter = old_element.find('.contact_data').data('twitter-id');
+      var source_phone = old_element.find('.contact_data').data('phone-num');
+      var source_mobile = old_element.find('.contact_data').data('mobile-num');
       if(add){
-        this.ContactNumber += 1
         if(element.data("emails").length)
           this.Email += element.data("emails").split(",").length;
-        this.Twitter += element.data("twitter");
+        if(source_twitter != element.data("twitter-id"))
+          this.Twitter += element.data("twitter");
         this.Facebook += element.data("facebook");
-        this.Phone += element.data("phone");
+        if(source_phone != element.data("phone-num"))
+          this.Phone += element.data("phone");
+        if(source_mobile != element.data("mobile-num"))
+          this.Mobile += element.data("mobile");
       }else{
-        this.ContactNumber -= 1
         if(element.data("emails").length)
           this.Email -= element.data("emails").split(",").length;
-        this.Twitter -= element.data("twitter");
+        if(source_twitter != element.data("twitter-id"))
+          this.Twitter -= element.data("twitter");
         this.Facebook -= element.data("facebook");
-        this.Phone -= element.data("phone");
+        if(source_phone != element.data("phone-num"))
+          this.Phone -= element.data("phone");
+        if(source_mobile != element.data("mobile-num"))
+          this.Mobile -= element.data("mobile");
       }
     },
 
@@ -248,12 +270,12 @@ window.App.Contacts.Contacts_merge = window.App.Contacts.Contacts_merge || {};
         this.attributeError("twitter");
       if(this.Facebook >= this.Limits["facebook"])
         this.attributeError("facebook");
-      if(this.ContactNumber >= this.Limits["contacts"])
-        this.attributeError("contacts");
+      if(this.Mobile >= this.Limits["mobile phone"])
+        this.attributeError("mobile phone");
       if(this.Email >= this.Limits["emails"])
         this.attributeError("emails");
-      // if(this.Phone >= this.Limits["phone"])
-      //   this.attributeError("phone");
+      if(this.Phone >= this.Limits["work phone"])
+        this.attributeError("work phone");
       if(this.ErrorString == ""){
         jQuery("p.errors").html("");
         if(jQuery('input[name="target[]"]').length>0)
