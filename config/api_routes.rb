@@ -68,7 +68,9 @@ Helpkit::Application.routes.draw do
       end
     end
 
-    resources :helpdesk_settings, only: [:index]
+    namespace :settings do
+      resources :helpdesk, only: [:index]
+    end
 
     # Solution endpoints
     namespace :api_solutions, path: 'solutions' do

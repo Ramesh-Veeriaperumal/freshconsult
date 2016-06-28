@@ -146,7 +146,7 @@ module ApiSolutions
       name = Solution::Folder.last.name
       post :create, construct_params({ id: get_category.id }, { name: name, description: Faker::Lorem.paragraph, visibility: 1 })
       match_json([bad_request_error_pattern('name', :'already exists in the selected category.')])
-      assert_response 400
+      assert_response 409
     end
 
     def test_create_folder_with_invalid_name

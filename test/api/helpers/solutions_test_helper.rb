@@ -38,7 +38,7 @@ module SolutionsTestHelper
       title: expected_output[:title] || article.title,
       description: expected_output[:description] || article.description,
       description_text: expected_output[:description_text] || article.desc_un_html,
-      user_id: expected_output[:user_id] || article.user_id,
+      agent_id: expected_output[:agent_id] || article.user_id,
       type: expected_output[:type] || article.parent.reload.art_type,
       category_id: expected_output[:category_id] || article.parent.reload.solution_category_meta.id,
       folder_id: expected_output[:folder_id] || article.parent.reload.solution_folder_meta.id,

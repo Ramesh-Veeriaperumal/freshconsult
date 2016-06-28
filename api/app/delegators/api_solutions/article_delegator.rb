@@ -1,14 +1,14 @@
 module ApiSolutions
   class ArticleDelegator < BaseDelegator
-    validate :current_agent_has_admin_tasks_privilege?, if: -> { @user_id }
-    validate :agent_exists?, if: -> { @user_id && errors[:user_id].blank? }
+    validate :current_agent_has_admin_tasks_privilege?, if: -> { @agent_id }
+    validate :agent_exists?, if: -> { @agent_id && errors[:agent_id].blank? }
     validate :folder_exists?, if: -> { @folder_name }
     validate :category_exists?, if: -> { @category_name }
     validate :parent_exists?, if: -> { secondary_language? }
 
     def initialize(params)
       @current_user_id = params[:current_user_id]
-      @user_id = params[:user_id]
+      @agent_id = params[:user_id]
       @folder_name = params[:folder_name]
       @category_name = params[:category_name]
       @article_meta = params[:article_meta]
@@ -20,17 +20,17 @@ module ApiSolutions
     def current_agent_has_admin_tasks_privilege?
       agent = Account.current.agents_from_cache.detect { |x| x.user_id == @current_user_id }
       unless agent.user.privilege?(SolutionConstants::ADMIN_TASKS)
-        errors[:user_id] << :require_privilege_for_attribute
-        (self.error_options ||= {}).merge!(user_id: { privilege: SolutionConstants::ADMIN_TASKS, attribute: :user_id })
+        errors[:agent_id] << :require_privilege_for_attribute
+        (self.error_options ||= {}).merge!(agent_id: { privilege: SolutionConstants::ADMIN_TASKS, attribute: :agent_id })
         return false
       end
       true
     end
 
     def agent_exists?
-      unless Account.current.agents_from_cache.detect { |x| x.user_id == @user_id }
-        errors[:user_id] << :absent_in_db
-        @error_options.merge!(user_id: { resource: 'Agent', attribute: 'user_id' })
+      unless Account.current.agents_from_cache.detect { |x| x.user_id == @agent_id }
+        errors[:agent_id] << :absent_in_db
+        @error_options.merge!(agent_id: { resource: 'Agent', attribute: 'agent_id' })
       end
     end
 

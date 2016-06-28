@@ -1,12 +1,12 @@
 class ApiSolutions::ArticleValidation < ApiValidation
   CHECK_PARAMS_SET_FIELDS = %w(type folder_name category_name).freeze
-  attr_accessor :title, :description, :user_id, :status, :type, :tags, :seo_data, :meta_title, :meta_keywords,
+  attr_accessor :title, :description, :agent_id, :status, :type, :tags, :seo_data, :meta_title, :meta_keywords,
                 :meta_description, :folder_name, :category_name
   validates :title, data_type: { rules: String, required: true }, custom_length: { maximum: SolutionConstants::TITLE_MAX_LENGTH, minimum: SolutionConstants::TITLE_MIN_LENGTH, message: :too_long_too_short }
   validates :meta_title, data_type: { rules: String, allow_nil: true }, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }
   validates :description, data_type: { rules: String, required: true }
   validates :meta_description, data_type: { rules: String, allow_nil: true }
-  validates :user_id, custom_numericality: { only_integer: true, greater_than: 0, ignore_string: :allow_string_param }, on: :update
+  validates :agent_id, custom_numericality: { only_integer: true, greater_than: 0, ignore_string: :allow_string_param }, on: :update
   validates :status, custom_inclusion: { in: Solution::Article::STATUS_NAMES_BY_KEY.keys,  detect_type: true, required: true }
 
   # type is allowed only during creation/alteration of article in primary language

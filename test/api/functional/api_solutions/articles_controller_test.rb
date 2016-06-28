@@ -144,7 +144,6 @@ module ApiSolutions
       match_json(solution_article_pattern(Solution::Article.last))
       article = Solution::Article.last
       assert article.title == title
-      assert article.description == "<p>#{paragraph}</p>"
       assert article.desc_un_html.strip == paragraph
       assert article.user_id == @account.agents.first.id
       assert article.status == 1
@@ -172,9 +171,9 @@ module ApiSolutions
       folder_meta = get_folder_meta
       title = Faker::Name.name
       paragraph = Faker::Lorem.paragraph
-      post :create, construct_params({ id: folder_meta.id }, {title: title, description: paragraph, status: 1, type: 2, user_id: @agent.id})
+      post :create, construct_params({ id: folder_meta.id }, {title: title, description: paragraph, status: 1, type: 2, agent_id: @agent.id})
       assert_response 400
-      match_json([bad_request_error_pattern('user_id', :invalid_field)])
+      match_json([bad_request_error_pattern('agent_id', :invalid_field)])
     end
 
     def test_create_article_with_seo_data_and_tags
@@ -189,7 +188,6 @@ module ApiSolutions
       match_json(solution_article_pattern(Solution::Article.last))
       article = Solution::Article.last
       assert article.title == title
-      assert article.description == "<p>#{paragraph}</p>"
       assert article.desc_un_html.strip == paragraph
       assert article.user_id == @agent.id
       assert article.status == 1
@@ -264,7 +262,6 @@ module ApiSolutions
       match_json(solution_article_pattern(Solution::Article.last))
       article = Solution::Article.last
       assert article.title == title
-      assert article.description == "<p>#{description}</p>"
       assert article.desc_un_html.strip == description
       assert article.user_id == @agent.id
       assert article.status == 1
@@ -286,12 +283,11 @@ module ApiSolutions
     def test_update_article
       sample_article = get_article
       paragraph = Faker::Lorem.paragraph
-      params_hash  = { title: 'new title', description: paragraph, status: 2, type: 2, user_id: @agent.id }
+      params_hash  = { title: 'new title', description: paragraph, status: 2, type: 2, agent_id: @agent.id }
       put :update, construct_params({ id: sample_article.parent_id }, params_hash)
       assert_response 200
       match_json(solution_article_pattern(sample_article.reload))
       assert sample_article.reload.title == 'new title'
-      assert sample_article.reload.description == "<p>#{paragraph}</p>"
       assert sample_article.reload.status == 2
       assert sample_article.reload.parent.reload.art_type == 2
       assert sample_article.reload.parent.reload.user_id == @agent.id
@@ -300,10 +296,10 @@ module ApiSolutions
     def test_update_article_with_unavailable_user_id
       sample_article = get_article
       paragraph = Faker::Lorem.paragraph
-      params_hash  = { title: 'new title', description: paragraph, status: 2, type: 2, user_id: 9999 }
+      params_hash  = { title: 'new title', description: paragraph, status: 2, type: 2, agent_id: 9999 }
       put :update, construct_params({ id: sample_article.parent_id }, params_hash)
       assert_response 400
-      match_json([bad_request_error_pattern('user_id', :absent_in_db, resource: 'Agent', attribute: 'user_id')])
+      match_json([bad_request_error_pattern('agent_id', :absent_in_db, resource: 'Agent', attribute: 'agent_id')])
     end
 
 
@@ -365,10 +361,10 @@ module ApiSolutions
       User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(false)
       sample_article = get_article
       paragraph = Faker::Lorem.paragraph
-      params_hash  = { title: 'new title', description: paragraph, status: 2, type: 2, user_id: @agent.id }
+      params_hash  = { title: 'new title', description: paragraph, status: 2, type: 2, agent_id: @agent.id }
       put :update, construct_params({ id: sample_article.parent_id }, params_hash)
       assert_response 400
-      match_json([bad_request_error_pattern('user_id', :require_privilege_for_attribute, privilege: 'admin_tasks', attribute: 'user_id')])
+      match_json([bad_request_error_pattern('agent_id', :require_privilege_for_attribute, privilege: 'admin_tasks', attribute: 'agent_id')])
     ensure
       User.any_instance.unstub(:privilege?)
     end

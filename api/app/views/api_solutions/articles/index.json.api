@@ -5,7 +5,7 @@ JSON.generate(@items.map do |article|
     title: article.title,
     description: article.description,
     description_text: article.desc_un_html,
-    user_id: article.user_id,
+    agent_id: article.user_id,
     status: article.status,
     type: parent.art_type,
     thumbs_up: parent.thumbs_up,

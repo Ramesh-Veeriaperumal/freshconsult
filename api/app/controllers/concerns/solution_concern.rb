@@ -3,25 +3,21 @@ module SolutionConcern
 
   def validate_language
     if params.key?(:language)
-      permitted_languages = allowed_languages
-      permitted_languages -= [Account.current.language] if create?
-
+      permitted_languages = Account.current.supported_languages
+      permitted_languages += [Account.current.language] unless create?
+      invalid_language = true
       if !Account.current.multilingual?
-        render_request_error :require_feature_to_suppport_the_request, 404, feature: 'EnableMultilingualFeature'
-        return false
+        render_request_error(:require_feature_to_suppport_the_request, 404, feature: 'EnableMultilingualFeature')
       elsif destroy?
         log_and_render_404
-        return false
       elsif permitted_languages.exclude?(params[:language])
-        render_request_error :language_not_allowed, 404, code: params[:language], list: permitted_languages.join(', ')
-        return false
+        render_request_error(:language_not_allowed, 404, code: params[:language], list: permitted_languages.sort.join(', '))
+      else
+        invalid_language = false
       end
+      return false if invalid_language
     end
     @lang_id = current_request_language.id
-  end
-
-  def allowed_languages
-    @allowed_languages ||= [Account.current.language] + Account.current.supported_languages
   end
 
   def current_request_language

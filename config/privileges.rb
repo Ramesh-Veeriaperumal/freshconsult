@@ -520,7 +520,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"api_group", :only => [:create, :update, :destroy, :index, :show]
     resource :"api_sla_policy", :only => [:index, :update]
     resource :"api_product", :only => [:index, :show]
-    resource :"helpdesk_setting", :only => [:index]
+    resource :"settings/helpdesk", :only => [:index]
   end
 
   manage_account do

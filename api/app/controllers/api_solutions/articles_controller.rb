@@ -96,6 +96,7 @@ module ApiSolutions
         params[cname].permit(*(fields))
         article = ApiSolutions::ArticleValidation.new(params[cname], @item, @lang_id)
         render_errors article.errors, article.error_options unless article.valid?(action_name.to_sym)
+        ParamsHelper.assign_and_clean_params({ agent_id: :user_id }, params[cname])
       end
 
       def sanitize_params
