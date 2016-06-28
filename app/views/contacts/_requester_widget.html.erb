@@ -16,11 +16,6 @@
       </div>
     <% else %>
       <div class="user_design">
-        <% unless user.job_title.blank? %>
-            <div class="break-word user-job-title" title="<%= h user.job_title %>">
-                <%= h user.job_title %>
-              </div>
-        <% end %>
         <%= render :partial => "helpdesk/tickets/components/company_info", :locals => { :user => user } %>
         <% if feature?(:gamification) and feature?(:gamification_enable) and user.agent? %>
           <%= content_tag :div, h(user.agent.level.name) unless user.agent.level.blank? %>

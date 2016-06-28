@@ -44,6 +44,7 @@
         box-shadow:  0px 10px 40px -14px #666, inset 0 0 0px 1px #bbb  ;
         background-color:#fafafa;
         -webkit-transform: translate(-4px);
+        margin-top:-50px;
       }
 
       &.ui-sortable-placeholder{
@@ -242,11 +243,6 @@
 
 
 //styles for ticket page edit contact modal
-#requester-widget-user-edit-dialog .modal-body{
-    padding-bottom: 10px;
-    overflow-y: hidden;
-}
-
 .requester-widget-user-edit-dialog{
   .requester-widget-user-fields{   
     overflow-x: scroll;
@@ -254,6 +250,7 @@
     border-top: 1px solid #eee;
     padding: 20px;
     @include margin(0px -20px -10px);
+    border-bottom: 1px solid #eee;
   }
 
   .field-set{
@@ -357,6 +354,10 @@
   .ui-datepicker-trigger{
     position: relative;
     top: -33px;
+  }
+
+  .control-group .required_star {
+    //display: none;
   }
 }
 
