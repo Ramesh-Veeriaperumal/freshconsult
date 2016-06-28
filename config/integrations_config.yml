@@ -11,17 +11,17 @@ app:
     development:
       auth_header: "User y31G0E60L6Zs/nZx7x0MJtRKCyhsJACUaAaDYU67S78=,Organization 3abb0215cd97f5f346f29a860e1e5982"
       formula_template_id:
-        salesforce_crm_sync:  "2644"
+        salesforce_crm_sync:  "2786"
         dynamics_crm_sync: "2768"
     staging:
       auth_header: "User y31G0E60L6Zs/nZx7x0MJtRKCyhsJACUaAaDYU67S78=,Organization 3abb0215cd97f5f346f29a860e1e5982"
       formula_template_id:
-        salesforce_crm_sync:  "2644"
+        salesforce_crm_sync:  "2786"
         dynamics_crm_sync: "2768"
     production:
       auth_header: "User y31G0E60L6Zs/nZx7x0MJtRKCyhsJACUaAaDYU67S78=,Organization 3abb0215cd97f5f346f29a860e1e5982"
       formula_template_id:
-        salesforce_crm_sync:  "2644"
+        salesforce_crm_sync:  "2786"
         dynamics_crm_sync: "2768"
 marketplace_landing_paths:
   github: "/integrations/github/oauth_install"
