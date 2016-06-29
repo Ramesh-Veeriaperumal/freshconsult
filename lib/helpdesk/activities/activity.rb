@@ -32,23 +32,23 @@ module Helpdesk::Activities
     end
 
     def rule_type_name
-      rule? ? @rule[0] : nil
+      rule? ? @rule[:type_name] : nil
     end
 
     def rule_name
-      rule? ? @rule[1] : nil
+      rule? ? @rule[:name] : nil
     end
 
     def rule_id
-      rule? ? @rule[2] : nil
+      rule? ? @rule[:id] : nil
     end
 
     def rule_type
-      rule? ? @rule[3] : nil
+      rule? ? @rule[:type] : nil
     end
     
     def rule_exists?
-      rule? ? @rule[4] : nil
+      rule? ? @rule[:exists] : nil
     end
     
     def note_hash

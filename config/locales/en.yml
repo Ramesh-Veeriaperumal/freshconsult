@@ -2637,15 +2637,14 @@ en:
     tweet: "tweet"
     time_entry: "time entry"
     note: "note"
-    supervisor: "Supervisor rule"
-    observer: "Observer rule"
-    business: "Dispatch’r rule"
-    scenario: "Scenario automation"
+    supervisor: "supervisor rule"
+    observer: "observer rule"
+    business: "dispatch’r rule"
+    round_robin: "automatic ticket assignment"
     none: "None"
     subject: "subject"
     description: "description"
     set: "Set"
-    rule_executed: "System rule executed"
     tag:
       solutions: "New Solution"
       assigned_to_nobody: "Agent Unassigned"
@@ -2865,9 +2864,9 @@ en:
           long: "{{user_path}} stopped timer on {{timesheet_path}} to the ticket {{notable_path}}"
           new: "Stopped timer on timesheet entry"
       timesheet_without_time:
-        new: "%{billable} hours for <strong>%{user_path}</strong> on %{date}"
+        new: "%{billable} hours for %{user_path} on %{date}"
       timesheet_with_time:
-        new: "%{time_spent} %{billable} hours for <strong>%{user_path}</strong> on %{date}"
+        new: "%{time_spent} %{billable} hours for %{user_path} on %{date}"
       timesheet_timer_start:
         new: "Started timer on timesheet with %{timesheet}"
       timesheet_timer_stop:
@@ -2882,9 +2881,7 @@ en:
         short: Assigned to {{responder_path}} by {{user_path}}
         without_user: assigned to <strong>{{responder_path}}</strong>
         long: "{{user_path}} assigned the ticket {{notable_path}} to {{responder_path}}"
-        new: "Agent as <strong>%{responder_path}</strong>"
-      round_robin:
-        new: "Set Agent as <strong>%{responder_path}</strong> via round robin assignment"
+        new: "Agent as %{responder_path}"
       execute_scenario:
         short: "{{user_path}} executed the scenario '{{scenario_name | h}}"
         without_user: "executed the scenario <strong>{{scenario_name | h}}</strong>"
@@ -2963,13 +2960,13 @@ en:
       custom_text_field_change:
         new: "Modified %{text_fields}"
       added_watcher: 
-        new: "Added watcher(s) <strong>%{watcher_list}</strong>"
+        new: "Added watchers %{watcher_list}"
       removed_watcher:
-        new: "Removed watcher <strong>%{watcher_list}</strong>"
+        new: "Removed watcher %{watcher_list}"
       added_tag:
-        new: "Added tag(s) <strong>%{tag_name}</strong>"
+        new: "Added tags <strong>%{tag_name}</strong>"
       removed_tag:
-        new: "Removed tag(s) <strong>%{tag_name}</strong>"
+        new: "Removed tags <strong>%{tag_name}</strong>"
       add_cc:
         new: "Added CC %{cc_list}"
       add_note:
@@ -5249,8 +5246,10 @@ en:
     hide_activities_tooltip: Hide activities
     activity_timestamp: "%{user_name} updated <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
     user_activity_timestamp: "%{user_name} updated <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
-    deleted_rule: " (deleted rule - %{rule_name})"
-    system_activity_timestamp: "System rule executed <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date}) %{system_rule}"
+    deleted_rule: "deleted rule - %{rule_name}"
+    executed: " executed "
+    performed: " performed "
+    system_activity_timestamp: "<strong class='muted'>System</strong> %{system_rule} <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date}) "
     requestor_info: Requestor Info
     view_twitter: View on Twitter
     view_facebook: View on Facebook

@@ -36,7 +36,7 @@ end
         data-activity-id="<%= timestamp_id %>" 
       <% end %>
       data-timestamp="<%= note.created_at.to_i%>" 
-      class="conversation <%= 'minimized minimizable' if minimizable %> <%= 'source_email' if note.email? %>">
+      class="conversation <%= 'minimized' if minimizable %> <%= 'source_email' if note.email? %>">
   <% if note.user %>
   <div class="avatar-wrap" name="note<%= note.id %>" id="note<%= note.id %>"><%= user_avatar(note.user, :thumb, 'preview_pic circle') %></div>
   <% end %>

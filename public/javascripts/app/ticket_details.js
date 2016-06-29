@@ -305,14 +305,13 @@ var updateShowMore = function() {
 
 	//Checking if it is Notes (true) or Activities (false)
 	var showing_notes = $('#all_notes').length > 0;
-	var total_count, loaded_items;
+	var total_count, loaded_items, show_more;
 	if (showing_notes){
 		loaded_items = $('[rel=activity_container] .conversation').length;
 		total_count = TICKET_DETAILS_DATA['total_notes'];
 	} else {
 		total_count = TICKET_DETAILS_DATA['total_activities'];
 		loaded_items = TICKET_DETAILS_DATA['loaded_activities'];
-		paginationScroll()
 	}
 
 
@@ -321,11 +320,15 @@ var updateShowMore = function() {
 		$('#show_more [rel=count-total-remaining]').text(total_count - loaded_items);
 
 		$('#show_more').removeClass('hide');
-		return true;
+		show_more = true;
 	} else {
 		$('#show_more').addClass('hide');
-		return false;
+		show_more =  false;
 	}
+	if(!showing_notes){
+		paginationScroll();
+	}
+	return show_more;
 }
 
 var updatePagination = function() {
@@ -751,7 +754,6 @@ var scrollToError = function(){
 		}
 
 		$('#show_more').data('next-page',null);  //Resetting
-
 		$.ajax({
 			url: url,
 			success: function(response) {
@@ -762,7 +764,7 @@ var scrollToError = function(){
 					trigger_event("activities_toggle",{ current: showing_notes ? 'notes' : 'activities' });
 					var _shortcut = ' ( ' + _toggle.data('keybinding') + ' )';
 					if(showing_notes){
-						$("#original_request .commentbox").addClass('minimizable minimized');
+						$("#original_request .commentbox").addClass('minimized');
 						if(_toggle.data('hide-title'))
 						_toggle.attr('title',_toggle.data('hide-title')+_shortcut);
 					}
@@ -784,11 +786,16 @@ var scrollToError = function(){
 		})
 	});
 
+	$('body').on('click.ticket_details', '.conversation_thread .minimized ', function(ev){
+		if ($(ev.target).is('a')) return;
+		$(this).toggleClass('minimized minimizable');
+	});
+
 	$('body').on('click.ticket_details', '.conversation_thread .minimizable .author-mail-detail, .conversation_thread .minimizable .subject', function(ev){
 		if ($(ev.target).is('a')) return;
 		var minimizable_wrap = $(this).closest('.minimizable');
 		if((minimizable_wrap.find(".edit_helpdesk_note").length == 0) || (minimizable_wrap.find(".edit_helpdesk_note").is(":hidden"))){
-			minimizable_wrap.toggleClass('minimized');
+			minimizable_wrap.toggleClass('minimized minimizable');
 		}
 	});
 
