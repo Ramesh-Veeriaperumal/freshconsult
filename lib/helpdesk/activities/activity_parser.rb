@@ -28,7 +28,7 @@ module Helpdesk::Activities
       @summary        = ticketdata.summary.to_i
       @activity       = {
                         :new  => [], :set  => [], :edit => [], :custom => [], 
-                        :misc => [], :rule => [], :text => [], :note   => [],
+                        :misc => [], :rule => {}, :text => [], :note   => [],
                         :scenario => []}
       @content        = JSON.parse(ticketdata.content).deep_symbolize_keys
       @performed_time = ticketdata.published_time.to_i
@@ -89,7 +89,7 @@ module Helpdesk::Activities
       # for rule
       if @activity[:rule].present?
         rule = @activity[:rule]
-        rule_hash = {"rule_type" => rule[0], "rule_id" => rule[2], "rule_name" => rule[1]}
+        rule_hash = {"rule_type" => rule[:type_name], "rule_id" => rule[:id], "rule_name" => rule[:name]}
         activity_json.merge!({:rule => rule_hash})
       end
       # for note
@@ -448,8 +448,11 @@ module Helpdesk::Activities
       user = get_user(value[:responder_id][1].to_i)
       return if user.blank?
       params = {:responder_path => "#{build_url(user.name, user_path(user))}"}
-      str = get_string_name("round_robin")
-      @activity[:misc] << render_string(str, params)
+      str = get_string_name("assigned")
+      rule_type_name   = "#{render_string("activities.round_robin")}"
+      # marking rule type as -1 for round robin
+      @activity[:rule] = {:type_name => rule_type_name, :name => "", :id=> 0 , :type=> -1, :exists => false}
+      @activity[:set] << render_string(str, params)
     end
 
     # System rule
@@ -459,7 +462,7 @@ module Helpdesk::Activities
       rule_exists = rule_name.present? ? true : false
       rule_name   = value[1] if !rule_exists
       rule_type_name   = "#{render_string("activities.#{rule_type}")}"
-      @activity[:rule] = [rule_type_name, rule_name, @rule_id, value[0].to_i, rule_exists]
+      @activity[:rule] = {:type_name => rule_type_name, :name => rule_name, :id=> @rule_id, :type=> value[0].to_i, :exists => rule_exists}
     end
 
     # scenario automation

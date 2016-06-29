@@ -741,28 +741,33 @@ module ApplicationHelper
   end
 
   def link_to_system_rule(rule)
-    return if rule.blank?
-    case rule[3]
+    rule_verb = t("ticket.executed")
+    if rule.blank?
+      return rule_verb
+    end
+    case rule[:type]
+    when -1
+      rule_verb = t("ticket.performed")
+      rule_privilege = false
     when 1
-      system_rule_path = edit_admin_va_rule_path(rule[2])
+      system_rule_path = edit_admin_va_rule_path(rule[:id])
       rule_privilege = privilege?(:manage_dispatch_rules)
     when 4
-      system_rule_path = edit_admin_observer_rule_path(rule[2])
+      system_rule_path = edit_admin_observer_rule_path(rule[:id])
       rule_privilege = privilege?(:manage_dispatch_rules)
     when 3
-      system_rule_path = edit_admin_supervisor_rule_path(rule[2])
+      system_rule_path = edit_admin_supervisor_rule_path(rule[:id])
       rule_privilege = privilege?(:manage_supervisor_rules)
     else
-      system_rule_path = '#'
       rule_privilege = false
     end
 
-    if rule_privilege && rule[4]
-      content_tag(:div, link_to(rule[0],system_rule_path, :target => "_blank"))
+    if rule_privilege && rule[:exists]
+      rule_verb + link_to(rule[:type_name],system_rule_path, :class => "system-rule-link tooltip", :title => h(rule[:name]), :target => "_blank")
     elsif rule_privilege
-      content_tag(:div, h(rule[0])+ t("ticket.deleted_rule", :rule_name => h(rule[1])).html_safe, class:"strong")
+      rule_verb + content_tag(:span, h(rule[:type_name]), :title => t("ticket.deleted_rule", :rule_name => h(rule[:name])), :class => "tooltip")
     else
-      content_tag(:div, h(rule[0]), class:"strong")
+      rule_verb + content_tag(:span, h(rule[:type_name]))
     end
   end
 

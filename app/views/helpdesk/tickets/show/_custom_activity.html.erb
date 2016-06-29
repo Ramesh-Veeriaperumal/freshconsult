@@ -7,15 +7,13 @@
 		<%= render :partial => '/helpdesk/tickets/show/note', :object => note, locals: {minimizable: true, timestamp_id: custom_activity.performed_time} %>
 	<% else %>
 	<div class="conversation activity" data-activity-id="<%= custom_activity.performed_time %>" data-timestamp="<%= format_activity_date(custom_activity.performed_time, false) %>"> 
-		<% if custom_activity.performer? %>
-			<div class="avatar-wrap">
+		<div class="avatar-wrap">
+			<% if custom_activity.performer? %>
 				<%= user_avatar(custom_activity.performer, :thumb, 'preview_pic circle') %>
-			</div>
-		<% else %>
-			<div class="system-avatar-wrap">
-				<i class="system-avatar ficon-gear"></i>
-			</div>
-		<% end %>
+			<% else %>
+				<i class="system-avatar ficon-settings-outline"></i>
+			<% end %>
+		</div>
 		<div class="commentbox <%= (custom_activity.performer.blank? or custom_activity.performer.agent?) ? 'commentbox-gray' : 'commentbox-requester' %>">
 			<% if  custom_activity.summary.present? %>
 				<div class="tag">
@@ -30,9 +28,11 @@
 				<% end %>
 			</div>
 			<div class="details">
-				<% custom_activity.activity_arr.each do |detail| %>
-					<p><br/><%=detail.html_safe%></p>
-				<% end %>
+				<ul class="activity-details">
+					<% custom_activity.activity_arr.each do |detail| %>
+						<li><span><%=detail.html_safe%></span></li>
+					<% end %>
+				</ul>
 			</div>
 		</div>
 	</div>
