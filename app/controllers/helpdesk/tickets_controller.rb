@@ -17,6 +17,7 @@ class Helpdesk::TicketsController < ApplicationController
   helper Helpdesk::TicketsExportHelper
   helper Helpdesk::SelectAllHelper
   include Helpdesk::TagMethods
+  include Helpdesk::NotePropertiesMethods
   include Helpdesk::Activities::ActivityMethods
 
   before_filter :redirect_to_mobile_url
@@ -288,6 +289,7 @@ class Helpdesk::TicketsController < ApplicationController
 
     @page_title = "[##{@ticket.display_id}] #{@ticket.subject}"
 
+    build_notes_last_modified_user_hash(@ticket_notes)
     respond_to do |format|
       format.html  {
         @ticket_notes       = @ticket_notes.reverse

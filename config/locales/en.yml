@@ -6016,6 +6016,8 @@ en:
           forward: "%{user_name} forwarded <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
           survey: "%{user_name} rated this ticket <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
           reply_to_forward: "%{user_name} replied to forward <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
+        last_edited_info: "Last edited by: %{user_name} <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
+        last_deleted_info: "Deleted by: %{user_name} <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
         edit_note: Edit Note
         split_this_as_new_ticket: Split this as a new Ticket
         delete_note: "Remove this from the ticket conversation?"

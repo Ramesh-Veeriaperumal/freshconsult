@@ -5,6 +5,7 @@ class Helpdesk::ArchiveTicketsController < ApplicationController
   include Helpdesk::AdjacentArchiveTickets
   include Support::TicketsHelper
   include ExportCsvUtil
+  include Helpdesk::NotePropertiesMethods
   helper AutocompleteHelper
   helper Helpdesk::ArchiveNotesHelper
 
@@ -65,6 +66,7 @@ class Helpdesk::ArchiveTicketsController < ApplicationController
       format.html  {
         @ticket_notes = @ticket_notes.reverse
         @ticket_notes_total = @ticket.conversation_count
+        build_notes_last_modified_user_hash(@ticket_notes)
       }      
       format.json {
         render :json => @item.to_json

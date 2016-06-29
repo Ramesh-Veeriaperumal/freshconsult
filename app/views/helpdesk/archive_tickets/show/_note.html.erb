@@ -7,6 +7,9 @@ notable_object = @ticket || @parent
 minimizable ||= false
 timestamp_id ||=false
 kind = note.survey_remark.nil? ? note.kind : 'survey'
+if @note_last_modified_user_hash.present? && @note_last_modified_user_hash[note.id.to_s].present?
+  last_modified_user = @note_last_modified_user_hash[note.id.to_s]
+end
 
 if current_account.custom_survey_enabled?
   kind = note.custom_survey_remark.nil? ? note.kind : 'survey'
@@ -78,6 +81,16 @@ end
           </div>
         <%end%>
       </div>
+      <%  if last_modified_user %>
+        <div class="last-modified-detail">
+            <% last_modified_translation = note.deleted? ? 'last_deleted_info' : 'last_edited_info' %>
+              <%= t("helpdesk.tickets.note.#{last_modified_translation}", 
+                  :user_name => link_to_user(last_modified_user), 
+                  :note_date => formated_date(note.last_modified_timestamp), 
+                  :timestamp => note.last_modified_timestamp.to_i
+                ).html_safe %><br/>
+        </div>
+      <% end %>
       <% if current_account.new_survey_enabled? %>
         <%= render :partial => '/helpdesk/archive_tickets/show/custom_survey_note' , :locals => {:note => note , 
               :ticket_info => ticket_info, :notedetails => notedetails ,:question_values => question_values} %>
@@ -85,7 +98,6 @@ end
           <%= render :partial => '/helpdesk/archive_tickets/show/survey_note' , :locals => {:note => note , 
               :notedetails => notedetails} %>
       <% end %>
-
       <%= freshfone_audio_dom(note) if current_account.features?(:freshfone) %>
 
       <div id="note_attachments_container_<%= note.id%>">

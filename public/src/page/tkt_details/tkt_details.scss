@@ -1289,7 +1289,7 @@ ol, ul, li{
 		@include margin-left(10px);
 	}
 
-	.author-mail-detail{
+	.author-mail-detail {
 		margin: 0;
 		color: #a2a19f;
 		@include text-align(left);
@@ -1304,6 +1304,17 @@ ol, ul, li{
 			@include text-align(right);
 			a{ font-weight: normal; }
 		}
+	}
+
+	.last-modified-detail {
+		@extend .author-mail-detail;
+		a{ 
+			font-weight:normal;
+			color: #999;
+			&:hover{
+				color:#037;
+			}
+		};
 	}
 
 	.details, #ticket_original_request {

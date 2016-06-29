@@ -1,4 +1,5 @@
 module Helpdesk::Activities
+  include Helpdesk::NotePropertiesMethods
 
   def stacked_activities(ticket, activities, archived = false)
 		activity_stack = []
@@ -175,6 +176,7 @@ private
     options << :tweet if ticket.twitter?
 
     notes = Helpdesk::Note.includes(options).where(:id => note_ids)
+  	build_notes_last_modified_user_hash(notes) if notes.present?
     Hash[*notes.map { |note| [note.id, note] }.flatten]
   end
 
@@ -184,6 +186,7 @@ private
     options << :tweet if ticket.twitter?
 
     notes = Helpdesk::ArchiveNote.includes(options).where(:note_id => note_ids)
+    build_notes_last_modified_user_hash(notes)
     Hash[*notes.map { |note| [note.note_id, note] }.flatten]
   end
 

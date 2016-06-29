@@ -66,6 +66,9 @@ class Helpdesk::ArchiveNote < ActiveRecord::Base
     :third_party_response => 4,
     :meta_response => 5
   }
+  SCHEMA_LESS_FIELDS = {
+    :note_properties => "text_nc02"
+  }
   
   scope :newest_first, :order => "id DESC"
   scope :public, :conditions => { :private => false } 
@@ -245,5 +248,28 @@ class Helpdesk::ArchiveNote < ActiveRecord::Base
   def notable
     archive_ticket
   end
+
+  def parent
+    helpdesk_notes_association["schema_less_note"]
+  end
+
+  SCHEMA_LESS_FIELDS.each do |alias_attribute, field_name|
+    define_method "#{alias_attribute}" do
+      parent[field_name]
+    end
+  end
+
+  def last_modified_user_id
+    note_properties["last_modified_user_id"] unless note_properties.nil?
+  end
+
+  def last_modified_timestamp
+    note_properties["last_modified_timestamp"].to_s.to_datetime unless note_properties.nil?
+  end
+
+  def deleted?
+    archive_note_association.associations_data["helpdesk_tickets"]["deleted"]
+  end  
+
 
 end

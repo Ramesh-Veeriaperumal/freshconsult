@@ -6,6 +6,9 @@ reply_to_fwd_id = "cnt-reply-fwd-#{note.id.to_s()}"
 edit_id = "edit-#{note.id.to_s()}"
 notable_object = @ticket || @parent
 minimizable ||= false
+if @note_last_modified_user_hash.present? && @note_last_modified_user_hash[note.id.to_s].present?
+  last_modified_user = @note_last_modified_user_hash[note.id.to_s]
+end
 timestamp_id ||=false
 
 if current_account.new_survey_enabled?
@@ -24,7 +27,6 @@ else
   kind = note.survey_remark.nil? ? note.kind : 'survey'
 end
 %>
-
 <div id="<%= note_view_id %>" 
 			data-timestamp="<%= note.created_at.to_i%>" 
 			<% if timestamp_id %>
@@ -119,6 +121,16 @@ end
 						"data-content" => conversation_popover_details(note).to_str%>
 				</div>
 			<% end %>
+      <div class="last-modified-detail" id="note_last_modified_container_<%= note.id%>">
+      <%  if last_modified_user %>
+            <% last_modified_translation = note.deleted? ? 'last_deleted_info' : 'last_edited_info' %>
+              <%= t("helpdesk.tickets.note.#{last_modified_translation}", 
+                  :user_name => link_to_user(last_modified_user), 
+                  :note_date => formated_date(note.last_modified_timestamp), 
+                  :timestamp => note.last_modified_timestamp.to_i
+                ).html_safe %><br/>
+      <% end %>
+      </div>
 
 
 			<%= content_tag :div, "", :id => "#{edit_id}", :class => "request_panel email-edit-form hide", :rel => "remote", 
