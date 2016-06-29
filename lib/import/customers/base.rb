@@ -25,6 +25,7 @@ class Import::Customers::Base
   rescue => e
     NewRelic::Agent.notice_error(e, {:description => "Error in #{@params[:type]}_import :: account_id :: #{current_account.id}"})
     puts "Error in #{@params[:type]}_import ::#{e.message}\n#{e.backtrace.join("\n")}"
+    customer_import.failure!(e.message + "\n" + e.backtrace.join("\n"))
     notify_mailer(true)
   ensure
     enable_user_activation(current_account)
@@ -76,6 +77,10 @@ class Import::Customers::Base
     @account ||= (Account.current || Account.find_by_id(params[:account_id]))
   end
 
+  def customer_import
+    @import ||= current_account.send("#{@params[:type]}_import")
+  end
+
   def is_user?
     @type == "user"
   end
@@ -105,11 +110,13 @@ class Import::Customers::Base
   # Building csv file for failed items.
 
   def build_csv_file
+    customer_import.file_creation!
     csv_string = CSVBridge.generate do |csv|
       csv << @csv_headers.push("errors")
       @failed_items.map {|item| csv << item}
     end
     write_file(csv_string)
+    customer_import.completed!
   end
 
   def write_file file_string
@@ -136,7 +143,7 @@ class Import::Customers::Base
   end
 
   def notify_and_cleanup
-    (item_import = current_account.send("#{@params[:type]}_import")) && item_import.destroy
+    customer_import && customer_import.destroy
     notify_mailer
   end
 
