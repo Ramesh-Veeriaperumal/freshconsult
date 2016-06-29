@@ -1,11 +1,23 @@
-<div>
-	Hi <%= @admin.name %>,<div><br></div>
-	<div>Welcome to Freshdesk!</div>
-	<div><br></div>
-	<div>Click here to activate your Freshdesk account <%= link_to "#{@activation_url}", "#{@activation_url}" %></a></div>
-	<div><br></div>
-	<div>Regards</div>
-	<div><br></div>
-	<div>Freshdesk Support&nbsp;</div>
-	<div><br></div>
+<div style="text-align:center;background-color:#f4f7f6;font-family:sans-serif;max-width:800px;border-radius:3px;">
+  <!-- HEADER -->
+  <div style="background-color:#e5efec;padding:20px 0;">
+    <img src="#{asset_host_url}/assets/misc/freshdesklogo.png" style="height:35px;">
+  </div>
+
+  <!-- BODY -->
+  <div style="max-width:95%;margin: 0 auto;">
+    <h3>Activate your Freshdesk account</h3>
+    <div style="max-width: 600px;text-align: center;margin: 0 auto;margin-bottom: 20px;"> Thank you for signing up for Freshdesk. We look forward to seeing you support your customers. Click on the button below to activate your account and get started. </div>
+    <a href="#{@activation_url}" style="background-color:#208465;color:white;text-decoration: none;padding: 10px 30px;display: inline-block;border-radius: 5px;box-shadow: 0 4px 0px 0px #005539;">Activate Account</a>
+    <div style="margin-top: 30px;font-weight: bold;">Your Freshdesk URL:</div>
+    <a href="#{@account.full_domain}">#{@account.full_domain}</a>
+  </div>
+
+  <!-- FOOTER -->
+  <div style="font-size:13px;color:#aaa;margin-top:40px;padding-bottom:20px;">
+    <div>Got Questions? Get in touch with us</div>
+    <div>Email: support@freshdesk.com</div>
+    <div>Call: +1 (866) 832-3090</div>
+    <div>Freshdesk, Inc. 1250 Bayhill Drive, Suite 315, San Bruno, CA 94066</div>
+  </div>
 </div>
