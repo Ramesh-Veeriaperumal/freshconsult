@@ -1547,7 +1547,10 @@ var scrollToError = function(){
 	})()
 
 	trigger_event("ticket_view_loaded",{});
+	
+	App.TicketAttachmentPreview.init();
 };
+// TICKET DETAILS DOMREADY ENDS
 
 
 TICKET_DETAILS_CLEANUP = function() {
@@ -1597,7 +1600,7 @@ TICKET_DETAILS_CLEANUP = function() {
 		jQuery(document).off(custom_events[i]);
 	}
 
-
+	App.TicketAttachmentPreview.destroy();
 };
 
 jQuery('.freshdesk_quote .q-marker').live('click', function(){

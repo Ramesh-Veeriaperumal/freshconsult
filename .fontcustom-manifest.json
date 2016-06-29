@@ -1,13 +1,13 @@
 {
   "checksum": {
-    "previous": "0c25aa8a416ffed33b0ff858bc0ca56bdc2c7cdba208c4ce4c38805e8b2e1289",
-    "current": "0c25aa8a416ffed33b0ff858bc0ca56bdc2c7cdba208c4ce4c38805e8b2e1289"
+    "previous": "f64d18996ab6c76ea4adced96abf5cc4b851f753695328ad35a09d0c29885d02",
+    "current": "f64d18996ab6c76ea4adced96abf5cc4b851f753695328ad35a09d0c29885d02"
   },
   "fonts": [
-    "public/assets/glyphs_0c25aa8a416ffed33b0ff858bc0ca56b.ttf",
-    "public/assets/glyphs_0c25aa8a416ffed33b0ff858bc0ca56b.svg",
-    "public/assets/glyphs_0c25aa8a416ffed33b0ff858bc0ca56b.woff",
-    "public/assets/glyphs_0c25aa8a416ffed33b0ff858bc0ca56b.eot"
+    "public/assets/glyphs_f64d18996ab6c76ea4adced96abf5cc4.ttf",
+    "public/assets/glyphs_f64d18996ab6c76ea4adced96abf5cc4.svg",
+    "public/assets/glyphs_f64d18996ab6c76ea4adced96abf5cc4.woff",
+    "public/assets/glyphs_f64d18996ab6c76ea4adced96abf5cc4.eot"
   ],
   "glyphs": {
     "abandoned-call": {
@@ -109,6 +109,10 @@
     "article": {
       "codepoint": 61956,
       "source": "public/glyphs/vectors/article.svg"
+    },
+    "attachment-blank": {
+      "codepoint": 61993,
+      "source": "public/glyphs/vectors/attachment-blank.svg"
     },
     "available-on-mobile": {
       "codepoint": 61878,
@@ -243,7 +247,7 @@
       "source": "public/glyphs/vectors/chrome.svg"
     },
     "clone": {
-      "codepoint": 61993,
+      "codepoint": 61994,
       "source": "public/glyphs/vectors/clone.svg"
     },
     "comment-multi": {
@@ -1051,7 +1055,7 @@
       "source": "public/glyphs/vectors/ticket-thin.svg"
     },
     "ticket_template": {
-      "codepoint": 61994,
+      "codepoint": 61995,
       "source": "public/glyphs/vectors/ticket_template.svg"
     },
     "ticket_volume": {
@@ -1148,6 +1152,10 @@
     "config": "config/fontcustom.yml",
     "css_selector": ".ficon-{{glyph}}",
     "debug": false,
+    "font_ascent": 448,
+    "font_descent": 64,
+    "font_design_size": 16,
+    "font_em": 512,
     "font_name": "glyphs",
     "force": true,
     "input": {

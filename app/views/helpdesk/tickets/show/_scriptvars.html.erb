@@ -26,6 +26,9 @@ TICKET_DETAILS_DATA = {
 							hasChanged		: false,
 							saved 			: <%= @draft.present?.to_s %>,
 						},
+	attachment_missing_alert: '<%= t("ticket.reply_form.attachment_missing_alert") %>',
+	cannot_preview_attachment: '<%= t("ticket.cannot_preview_attachment") %>',
+	download: '<%= t("subscription.download") %>',
 	pagination_limit	: <%= ActivityConstants::QUERY_UI_LIMIT %>,
 	activity_event_type	: <%= ::HelpdeskActivities::EventType::ALL %>,
 	attachment_missing_alert: '<%= t("ticket.reply_form.attachment_missing_alert") %>'
