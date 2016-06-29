@@ -1,4 +1,4 @@
-class FacebookRealtime
+class Ryuken::FacebookRealtime
   
   include Shoryuken::Worker  
   include Facebook::RedisMethods
@@ -11,7 +11,7 @@ class FacebookRealtime
     begin
       #Check for app rate limit before processing feeds
       wait_on_poll if app_rate_limit_reached?
-      
+           
       sqs_msgs.each do |sqs_msg|
         puts "FEED ===> #{sqs_msg.body}"
         Sqs::Message.new(sqs_msg.body).process
