@@ -6,8 +6,10 @@ window.App = window.App || {};
 
   window.App.TicketAttachmentPreview = {
 
+    supportedFiles: ["png","gif","jpeg","jpg"]
+
     // This is a simple proxy method helper
-    p: function(fn){
+    ,p: function(fn){
       return $.proxy(fn,this);
     }
 
@@ -62,7 +64,11 @@ window.App = window.App || {};
 
     ,attachmentClicked: function(event){
       this.getAllAttachments(event);
-      this.showCurrentFile();
+
+      // Show the current file popup only for supported files.
+      if(this.supportedFiles.indexOf(this.attachments[this.currentPosition].filetype)>-1){
+        this.showCurrentFile();
+      }
     }
 
     ,showCurrentFile: function(){
