@@ -31,7 +31,7 @@ class Public::NotesController < ApplicationController
       user = current_user || @requester
       user.make_current
       if @note.save_note
-        update_cc_list if (current_user || @requester).privilege?(:client_manager)
+        update_cc_list if (current_user || @requester).company_client_manager?
         flash[:notice] = t(:'flash.tickets.notes.create.success')
       else
         flash[:error] = t(:'flash.tickets.notes.create.failure')

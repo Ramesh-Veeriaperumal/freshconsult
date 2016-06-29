@@ -125,18 +125,18 @@ class CompaniesController < ApplicationController
 
     def define_company_properties 
       @total_company_tickets = 
-        current_account.tickets.permissible(current_user).all_company_tickets(@company.id).visible.newest(11).find(:all, :include => [:ticket_states,:ticket_status,:responder,:requester])
+        current_account.tickets.permissible(current_user).all_company_tickets(@company.id).visible.newest(11).preload(:ticket_states,:ticket_status,:responder,:requester)
       @company_tickets = @total_company_tickets.sort_by {|item| -item.created_at.to_i}.take(10)
 
-      if current_account.features?(:archive_tickets)
+      if current_account.features_included?(:archive_tickets)
         @total_company_archive_tickets = 
-          current_account.archive_tickets.permissible(current_user).all_company_tickets(@company.id).newest(10).find(:all, 
-                                  :include => [:ticket_status, :responder, :requester])
+          current_account.archive_tickets.permissible(current_user).all_company_tickets(@company.id).newest(10).preload(:ticket_status, :responder, :requester)
         @company_archive_tickets = @total_company_archive_tickets.sort_by {|item| -item.created_at.to_i}.take(10)
       end
 
-      @company_users         = @company.users.contacts
-      @company_users_size    = @company_users.size
+      company_user_list      = current_account.users.company_users_via_customer_id(@company.id)
+      @company_users         = company_user_list.limit(6)
+      @company_users_size    = company_user_list.count("1")
     end
 
     def scoper

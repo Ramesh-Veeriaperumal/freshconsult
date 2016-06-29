@@ -39,6 +39,12 @@ function default_image_error(source){
   return true;
 }
 
+function escapeHtml(str) {
+        var div = document.createElement('div');
+        div.appendChild(document.createTextNode(str));
+        return div.innerHTML;
+}
+
 // Additional util methods for support helpdesk
 // Extending the string protoype to check if the entered string is a valid email or not
 String.prototype.isValidEmail = function(){

@@ -32,6 +32,12 @@
         }
     }
 
+  .company_field{
+    width: 19%;
+    @include padding(2px 0px 0px 9px);
+    border-left: 1px dotted #333;
+  }
+
   /*Compose new ticket!!*/
   .compose-new-ticket{
     margin-top: 20px;
@@ -86,7 +92,7 @@
             .input-date-field{
               @include float (left );
                width: 300px;
-                  input{
+                  input.date{
                     width: 100%;
                   }
                   label.error{

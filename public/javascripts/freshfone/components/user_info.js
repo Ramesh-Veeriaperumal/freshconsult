@@ -60,6 +60,7 @@ var FreshfoneUserInfo;
 						self.requestObject.callerCard  = data.caller_card;
 						if(data.call_meta){
 							self.requestObject.transferAgentName = data.call_meta.transfer_agent.user_name;
+							self.requestObject.transferAgentId = data.call_meta.transfer_agent.user_id;
 							self.requestObject.ffNumberName = (data.call_meta || {}).number || "";
 							self.requestObject.addAgentParams = data.call_meta.agent_conference; 
 						}	
@@ -124,6 +125,7 @@ var FreshfoneUserInfo;
 			freshfonewidget.callerUserId =  this.requestObject.callerId;
 			$('.caller-context-details').html(callerCard);
 			$('.caller-number').html(self.formattedNumber());
+			$('.minimised-ongoing-dialpad').html(this.requestObject.callerName)
 		},
 		formattedNumber: function () {
 			return formatInternational(this.callerLocation(), this.customerNumber)

@@ -1,10 +1,34 @@
-<% unless user.job_title.blank? %>
-	<div class="break-word user-job-title" title="<%= h user.job_title %>">
-   		<%= h user.job_title %>
-   	</div>
+<% if local_assigns[:companies].present? %>
+  <ul class="text-left user-company-name-wrap show-field">
+		<li class="field-label break-word">Company</li>
+    <% companies.each_with_index do |company, index| %>
+      <li class="break-word user-company-name <%= index < 3 ? '' : 'hide'%>" 
+           title="<%= h company.name %>">
+				<ul class="user-email-bullet">
+					<li>
+						<span class="email-tick <%= index ==0  ? 'primary' : ''%>"></span>
+						<p class= "<%= index == 0 ? 'primary_email_text' : ''%>"><%= link_to(h(company.name), company, :'data-pjax' => "#body-container")  %></p>
+					</li>
+				</ul>
+        
+      </li>
+    <% end %>
+    <% if companies.length > 3 %>
+      <li class="show_all" onclick="displayAll()">
+        <%= t("more_companies",
+            :count => companies.length-3).html_safe %>
+      </li>
+    <% end %>
+  </ul>
+<% elsif user.company.present? %>
+  <div class="break-word user-company-name" title="<%= h user.company.name %>">
+    <%= link_to(h(user.company.name), user.company, :'data-pjax' => "#body-container")  %>
+  </div>
 <% end %>
-<% unless user.company.blank? %>
-	<div class="break-word user-company-name" title="<%= h user.company.name %>">
-		<%= link_to(h(user.company.name), user.company, :'data-pjax' => "#body-container")  %>
-	</div>
-<% end %>
+
+<script type="text/javascript">
+  function displayAll(){
+    jQuery(".user-company-name").removeClass("hide");
+    jQuery(".show_all").hide();
+  }
+</script>

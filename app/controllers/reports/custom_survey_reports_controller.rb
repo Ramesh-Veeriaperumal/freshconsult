@@ -22,6 +22,7 @@ class Reports::CustomSurveyReportsController < ApplicationController
   RATING_ALL_URL_REF = 'r'
 
   def index
+    @hide_agent_reporting = Account.current.features_included?(:euc_hide_agent_metrics)
     @surveys = surveys_json
     @agents = agents
     @groups = groups

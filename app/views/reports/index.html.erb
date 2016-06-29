@@ -57,12 +57,14 @@
   <div class="report_category odd summary ">
        <h3 class="title"><span><%= t('helpdesk_reports.productivity') %></span></h3>
            <ul class="report_icon">
+            <%unless feature?(:euc_hide_agent_metrics) %>
               <li>
                <a href="/reports/v2/agent_summary" data-pjax="#body-container">
                   <div class="img-outer"><i class="fsize-36 ficon-agent_summary"></i></div>
                   <div class="report-icon-text"><%= t('helpdesk_reports.agent_summary.title')%></div>
                </a>
-            </li>
+              </li>
+            <% end %>
             <li>
                <a href="/reports/v2/group_summary" data-pjax="#body-container">
                   <div class="img-outer"><i class="fsize-36 ficon-group_summary"></i></div>

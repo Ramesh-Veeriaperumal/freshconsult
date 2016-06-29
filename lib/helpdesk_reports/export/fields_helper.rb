@@ -23,11 +23,11 @@ module HelpdeskReports
       end
       
       def ticket_associations_include
-        [ {:flexifield => [:flexifield_def]}, {:requester => [:company] }, :schema_less_ticket, :ticket_status, :group, :responder, :tags ]
+        [ {:flexifield => [:flexifield_def]}, :requester, :company, :schema_less_ticket, :ticket_status, :group, :responder, :tags ]
       end
       
       def archive_associations_include
-        [ {:flexifield => [:flexifield_def]}, {:requester => [:company] }, :archive_ticket_association, :ticket_status, :group, :responder, :tags]
+        [ {:flexifield => [:flexifield_def]}, :requester, :company, :archive_ticket_association, :ticket_status, :group, :responder, :tags]
       end
 
       def generate_ticket_data(tickets = [], headers, list_of_tickets, archive_status)
@@ -46,7 +46,7 @@ module HelpdeskReports
                 data = data.utc.strftime(date_format)
               end
             end
-            record << escape_html(data)
+            record << escape_html(strip_equal(data))
           end
           tickets << record
         end
@@ -74,6 +74,11 @@ module HelpdeskReports
 
       def escape_html(val)
         ((val.blank? || val.is_a?(Integer)) ? val : CGI::unescapeHTML(val.to_s).gsub(/\s+/, " "))
+      end
+
+      def strip_equal(data)
+        # To avoid formula execution in Excel - Removing any preceding =,+,- in any field
+        ((data.blank? || (data.is_a? Integer)) ? data : (data.to_s.gsub(/^[=+-]*/, "")))
       end
 
       def allowed_fields

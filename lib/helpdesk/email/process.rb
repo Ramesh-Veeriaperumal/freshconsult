@@ -27,11 +27,6 @@ class Helpdesk::Email::Process
     self.to_email = parse_to_email #In parse_email_data
   end
 
-  def determine_pod
-    shard = ShardMapping.fetch_by_domain(to_email[:domain])
-    shard.pod_info unless shard.blank?
-  end
-
   def perform
     self.start_time = Time.now.utc
     shardmapping = ShardMapping.fetch_by_domain(to_email[:domain])
@@ -127,7 +122,7 @@ class Helpdesk::Email::Process
 	end
 
   def create_archive_link(archive_ticket, email_handler, start_time)
-    if account.features?(:archive_tickets)
+    if account.features_included?(:archive_tickets)
       if archive_ticket && archive_ticket.is_a?(Helpdesk::ArchiveTicket)
         email_handler.archive_ticket = archive_ticket 
       elsif archive_ticket && archive_ticket.is_a?(Helpdesk::Ticket)

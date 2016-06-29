@@ -16,14 +16,15 @@
       <label class="control-label"><%=t('helpdesk.time_sheets.customer')%></label>  
 			
 			<%= render_autocomplete({ :selected_values => selected_companies(@customer_id), :type => :companies }) %>
-     
-      <label class="control-label"><%=t('helpdesk.time_sheets.agent')%></label>	
+		<%unless feature?(:euc_hide_agent_metrics) %>
+			<label class="control-label"><%=t('helpdesk.time_sheets.agent')%></label>
 			<%= select_tag :user_id, 
 							options_for_select(current_account.users.technicians.collect{ |c| [c.name, c.id] },
 												 @user_id.map(&:to_i)), 
 							{ :multiple => true,
 							  :class => "select2 filter_item", 
 										 "data-placeholder".to_sym() => t('reports.timesheet_reports.index.select_agent') } %>
+			<% end %>
 			<label class="control-label"><%=t('helpdesk.time_sheets.billing_type')%></label>
 			<%= select_tag :billable, options_for_select(Helpdesk::TimeSheet.billable_options,@billable), 
 			 				{ :multiple => true, 

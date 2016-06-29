@@ -81,6 +81,7 @@ class Account < ActiveRecord::Base
 
   # Features added temporarily to avoid release for all the customers at one shot
   # Default feature when creating account has been made true :surveys & ::survey_links $^&WE^%$E
+
   TEMPORARY_FEATURES = {
     :bi_reports => false, :contact_merge_ui => false, :social_revamp => false, :multiple_user_emails => false,  
     :round_robin_revamp => false, :solutions_meta_read => false, 
@@ -89,7 +90,9 @@ class Account < ActiveRecord::Base
     :report_field_regenerate => false, :reports_regenerate_data => false, 
     :chat_enable => false, :saml_old_issuer => false, :spam_dynamo => true,
     :redis_display_id => false, :es_multilang_solutions => false,
-    :sort_by_customer_response => false, :survey_links => true, :default_survey => false, :custom_survey => false, :saml_unspecified_nameid => false
+    :sort_by_customer_response => false, :survey_links => true, :default_survey => false, :custom_survey => false, 
+    :saml_unspecified_nameid => false, :multiple_user_companies => false,
+    :euc_hide_agent_metrics => false
   }
 
 
@@ -103,8 +106,9 @@ class Account < ActiveRecord::Base
     :marketplace => true, :fa_developer => false,:archive_tickets => false, :compose_email => false,
     :limit_mobihelp_results => false, :ecommerce => false, :es_v2_writes => false,  
     :salesforce_sync => false, :round_robin_on_update => false, :freshfone_call_metrics => false, :cobrowsing => false,
-    :threading_without_user_check => false, :freshfone_call_monitoring => false, :freshfone_caller_id_masking => false, :agent_conference => false,
-    :restricted_helpdesk => false, :enable_multilingual => false, :salesforce_crm_sync => false }
+    :threading_without_user_check => false, :freshfone_call_monitoring => false, :freshfone_caller_id_masking => false, 
+    :agent_conference => false, :restricted_helpdesk => false, :enable_multilingual => false, :count_es_writes => false, :count_es_reads => false,
+    :salesforce_crm_sync => false }
 
   # This list below is for customer portal features list only to prevent from adding addition features
   ADMIN_CUSTOMER_PORTAL_FEATURES =  {:anonymous_tickets => true, :open_solutions => true, :auto_suggest_solutions => true, 

@@ -24,8 +24,12 @@ module Reports::TimesheetReport
   end
   
   def list_view_items
-   [:workable , :customer_name , :priority_name, :status_name, :note , :group_by_day_criteria , :agent_name, :product_name ,
+    view_headers = [:workable , :customer_name , :priority_name, :status_name, :note , :group_by_day_criteria , :agent_name,
                                                                              :group_name , :hours]
+
+    view_headers -= [:agent_name] if Account.current.features_included?(:euc_hide_agent_metrics)
+    view_headers.push(:product_name) if Account.current.products.any? 
+    view_headers
   end
 
   def billable_vs_non_billable(time_sheets)
@@ -50,7 +54,7 @@ module Reports::TimesheetReport
 
   def filter(start_date,end_date)
        scoper(start_date,end_date).find(:all,:conditions => (select_conditions || {}), 
-         :include => [:user, :workable => [:schema_less_ticket, :group, :ticket_status, :requester => [:company]]]) # need to ensure - Hari
+         :include => [:user, :workable => [:schema_less_ticket, :group, :ticket_status, :requester, :company]]) # need to ensure - Hari
 
   end
 
@@ -58,7 +62,7 @@ module Reports::TimesheetReport
     @report_date = params[:date_range]
     current_range_time_sheet
     previous_range_time_sheet #Fetching the previous time range data.
-    if Account.current.features?(:archive_tickets)
+    if Account.current.features_included?(:archive_tickets)
       archive_current_range_time_sheet
       archive_previous_range_time_sheet
       sum_new_and_archived
@@ -76,7 +80,7 @@ module Reports::TimesheetReport
 
   def time_sheet_for_export
     @time_sheets = filter(@start_date,@end_date)
-    if Account.current.features?(:archive_tickets)
+    if Account.current.features_included?(:archive_tickets)
       @archive_time_sheets = archive_filter(@start_date,@end_date)
       @time_sheets = shift_merge_sorted_arrays(@time_sheets,@archive_time_sheets)
     end
@@ -93,7 +97,7 @@ module Reports::TimesheetReport
 
   def archive_filter(start_date,end_date)
        archive_scoper(start_date,end_date).find(:all,:conditions => (archive_select_conditions || {}), 
-         :include => [:user, :workable => [:product, :group, :ticket_status, :requester => [:company]]]) # need to ensure - Hari
+         :include => [:user, :workable => [:product, :group, :ticket_status, :requester, :company]]) # need to ensure - Hari
   end
 
   def archive_select_conditions
@@ -131,7 +135,7 @@ module Reports::TimesheetReport
     @start_date = start_date
     @end_date = end_date
     @customer_id = params[:customers] ? params[:customers].split(',') : []
-    @user_id = params[:user_id] || []
+    @user_id = (Account.current.features_included?(:euc_hide_agent_metrics) ? [] : (params[:user_id] || []))
     @headers = list_view_items.delete_if{|item| item == group_by_caluse }
     @billable = billable_and_non? ? [true, false] : [params[:billable].to_s.to_bool]
     @group_id = params[:group_id] || []

@@ -2,6 +2,7 @@ development:
   twitter_realtime_queue: social_gnip_tweet_dev
   facebook_realtime_queue: social_fb_feed_dev
   search_etl_queue: search_etl_queue_dev
+  count_etl_queue: count_etl_queue_dev
   auto_refresh_realtime_queue: auto_refresh_dev
   custom_mailbox_realtime_queue: custom_mailbox_dev
   forums_moderation_queue: forum_moderation_dev
@@ -9,10 +10,12 @@ development:
   reports_etl_msg_queue: reports_etl_msgs_dev
   reports_service_export_queue: reports_service_export_dev
   freshfone_call_tracker: freshfone_call_tracker_development
+  freshfone_call_notifier_queue: freshfone_call_notifier_development
 staging:
   twitter_realtime_queue: social_gnip_tweet_staging1
   facebook_realtime_queue: social_fb_feed_staging
   search_etl_queue: search_etl_queue_staging
+  count_etl_queue: count_etl_queue_staging
   auto_refresh_realtime_queue: auto_refresh_staging
   custom_mailbox_realtime_queue: custom_mailbox_staging
   forums_moderation_queue: forum_moderation_staging_rails3
@@ -20,10 +23,12 @@ staging:
   reports_etl_msg_queue: reports_etl_msgs_staging
   reports_service_export_queue: reports_service_export_staging
   freshfone_call_tracker: freshfone_call_tracker_staging
+  freshfone_call_notifier_queue: freshfone_call_notifier_staging
 production:
   twitter_realtime_queue: social_gnip_tweet_production
   facebook_realtime_queue: social_fb_feed_production
   search_etl_queue: search_etl_queue_production
+  count_etl_queue: count_etl_queue_procution
   auto_refresh_realtime_queue: auto_refresh_production
   custom_mailbox_realtime_queue: custom_mailbox_production
   forums_moderation_queue: forum_moderation_production
@@ -31,10 +36,12 @@ production:
   reports_etl_msg_queue: reports_etl_msgs_production
   reports_service_export_queue: reports_service_export_production
   freshfone_call_tracker: freshfone_call_tracker_production
+  freshfone_call_notifier_queue: freshfone_call_notifier_production
 test:
   twitter_realtime_queue: social_gnip_tweet_test
   facebook_realtime_queue: social_fb_feed_test
   search_etl_queue: search_etl_queue_test
+  count_etl_queue: count_etl_queue_test
   auto_refresh_realtime_queue: auto_refresh_test
   custom_mailbox_realtime_queue: custom_mailbox_test
   forums_moderation_queue: forum_moderation_test
@@ -42,3 +49,4 @@ test:
   reports_etl_msg_queue: reports_etl_msgs_test
   reports_service_export_queue: reports_service_export_test
   freshfone_call_tracker: freshfone_call_tracker_test
+  freshfone_call_notifier_queue: freshfone_call_notifier_test

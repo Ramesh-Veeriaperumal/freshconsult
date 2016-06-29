@@ -21,10 +21,13 @@
 
 .widget{ margin-bottom: 20px; }
 
-#ticket-sort{ @include margin-right(20px); }
-#user-list-dropdown .dropdown-menu{ 
-	max-height: 300px;
-	overflow: auto;
+#user-list-dropdown, #company-list-dropdown { 
+	@include margin-left(20px);
+	@include margin-right(20px);
+	.dropdown-menu {
+		max-height: 300px;
+		overflow: auto;
+	}
 }
 .name_label{ font-weight: bold; margin-top: 4px; }
 .value_label{ margin-bottom: 10px; }

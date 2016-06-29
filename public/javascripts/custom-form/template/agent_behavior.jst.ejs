@@ -6,9 +6,13 @@
 		</fieldset> 
 	<% } else { %>
 		<fieldset> 
-			<% isDisabled = ' ' %>
-			<% if (field_type == 'default_email' || field_type == 'default_twitter_id') { 
+			<% isDisabled = ' '
+				 closeTicketDisable = ' ' %>
+			<% if (field_type == 'default_email' || field_type == 'default_twitter_id' || field_type == 'default_company') { 
 							 isDisabled = ' disabled' 
+			 } %>
+			 <% if (field_type == 'default_email' || field_type == 'default_twitter_id') { 
+							 closeTicketDisable = ' disabled' 
 			 } %>
 			<label class="checkbox<%= isDisabled %>">
 				<input type="checkbox" 
@@ -20,11 +24,11 @@
 		</fieldset>
 		<% if(custom_form_type == 'ticket'){ %>
 			<fieldset>
-				<label class="checkbox<%= isDisabled %>">
+				<label class="checkbox<%= closeTicketDisable %>">
 					<input type="checkbox" 
 							name="agentclosure" 
 							<%= required_for_closure ? 'checked ' : ' ' %>
-							<%= isDisabled %> >
+							<%= closeTicketDisable %> >
 					<%= translate.get('agent_mandatory_closure') %>
 				</label>
 			</fieldset>

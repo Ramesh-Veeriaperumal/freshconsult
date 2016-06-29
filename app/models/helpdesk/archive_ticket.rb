@@ -91,11 +91,19 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
         :conditions => [" owner_id = ?",company_id]
     } 
   }
+  scope :contractor_tickets, lambda { |user_id, company_ids, operator|
+    if user_id.present?
+      self.where("archive_tickets.requester_id = ? #{operator} archive_tickets.owner_id in (?)", 
+                  user_id, company_ids)
+    else
+      self.where("archive_tickets.owner_id in (?)", company_ids)
+    end
+  }
   scope :created_at_inside, lambda { |start, stop| { :conditions =>
     [" archive_tickets.created_at >= ? and archive_tickets.created_at <= ?", start, stop] }
   }
   # do we need this
-  validates_uniqueness_of :display_id, :scope => :account_id
+  # validates_uniqueness_of :display_id, :scope => :account_id
   default_scope where(:progress => false)
 
   def self.agent_permission user

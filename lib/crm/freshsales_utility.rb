@@ -1,31 +1,34 @@
 class CRM::FreshsalesUtility
 
-  NEGATIVE_LEAD_STAGES  = ['Unqualified']
+  NEGATIVE_LEAD_STAGES    = ['Unqualified']
+  
+  PRODUCT_NAME            = AppConfig['app_name']
+  
+  WON_DEAL_STAGE          = 'Closed Won'
+  
+  LOST_DEAL_STAGE         = 'Closed Lost'
+  
+  PAYMENT_STATUS          = { online: "Online", offline: "Offline" }
+  
+  LOOKUP_URL              = "/lookup.json?f=%{field}&entities=%{entities}&q=%{query}&include=%{includes}&per_page=100"
+  
+  SELECTOR_URL            = "/selector/%{entity_type}"
+  
+  CUSTOMER_STATUS         = { trial: 'Trial', suspended: 'Trial Expired', free: 'Free', 
+                              paid: 'Customer', deleted: 'Deleted', active: 'Active', 
+                              no_payment_suspended: 'Suspended', trial_extended: 'Trial Extended',
+                              deleted: "Deleted" }
+  
+  DEAL_TYPES              = { new_business: 'New Business', upgrade: 'Existing Business-Upgrade', 
+                              downgrade: 'Existing Business-Downgrade', 
+                              renewal: 'Existing Business-Renewal' }
+  
+  OFFLINE                 = 'off'
+  
+  ZERO                    = 0
 
-  PRODUCT_NAME          = AppConfig['app_name']
-
-  WON_DEAL_STAGE        = 'Closed Won'
-
-  LOST_DEAL_STAGE       = 'Closed Lost'
-
-  PAYMENT_STATUS        = { online: "Online", offline: "Offline" }
-
-  LOOKUP_URL            = "/lookup.json?f=%{field}&entities=%{entities}&q=%{query}&include=%{includes}&per_page=100"
-
-  SELECTOR_URL          = "/selector/%{entity_type}"
-
-  CUSTOMER_STATUS       = { trial: 'Trial', suspended: 'Trial Expired', free: 'Free', 
-                            paid: 'Customer', deleted: 'Deleted', active: 'Active', 
-                            no_payment_suspended: 'Suspended', trial_extended: 'Trial Extended',
-                            deleted: "Deleted" }
-
-  DEAL_TYPES            = { new_business: 'New Business', upgrade: 'Existing Business-Upgrade', 
-                            downgrade: 'Existing Business-Downgrade', 
-                            renewal: 'Existing Business-Renewal' }
-
-  OFFLINE               = 'off'
-
-  ZERO                  = 0
+  DEFAULT_ACCOUNT_MANAGER = { display_name:   "Bobby",
+                              email:          "eval@freshdesk.com" }
 
   def initialize(data)
     @account = data[:account]
@@ -219,6 +222,15 @@ class CRM::FreshsalesUtility
     data = { custom_field: { cf_customer_status: CUSTOMER_STATUS[:trial_extended], 
                              cf_trial_expiry_date: @subscription[:next_renewal_at] } }
     update_deal_or_lead(data)
+  end
+
+  def account_manager
+    result = search_leads_by_account_id(@account.id, 'owner')
+    recent_lead = recent_lead_by_account_and_product(result[:leads], @account.id, @deal_product_id)
+    if recent_lead.present?
+      account_manger_info = recent_lead ? result[:users].find{ |user| user[:id] == recent_lead[:owner_id] } : nil
+    end
+    account_manger_info || DEFAULT_ACCOUNT_MANAGER
   end
 
   private
@@ -544,6 +556,10 @@ class CRM::FreshsalesUtility
       results
     end
 
+    def search_leads_by_account_id account_id = @account.id, includes = "owner"
+      search({ entities: 'lead', field: 'cf_account_id', query: account_id, includes: includes})
+    end
+
     def search(options)
       options[:query] = ERB::Util.url_encode(options[:query])
       config = { rest_url: LOOKUP_URL % options, method: 'get' }
@@ -614,4 +630,5 @@ class CRM::FreshsalesUtility
         obj
       end
     end
+
 end

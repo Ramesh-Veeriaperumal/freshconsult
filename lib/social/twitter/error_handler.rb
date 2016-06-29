@@ -52,6 +52,11 @@ module Social::Twitter::ErrorHandler
       rescue Twitter::Error::Forbidden => exception
         @social_error_msg =  exception.message.include?("not following") ? 
                               "#{I18n.t('social.streams.twitter.not_following')}" : "#{I18n.t('social.streams.twitter.client_error')}"
+        if exception.message.include?("temporarily locked")  
+          @sandbox_handle.state = Social::TwitterHandle::TWITTER_STATE_KEYS_BY_TOKEN[:reauth_required]
+          @sandbox_handle.last_error = exception.to_s
+          @sandbox_handle.save
+        end
         notify_error(exception)
 
       rescue Twitter::Error::GatewayTimeout => exception

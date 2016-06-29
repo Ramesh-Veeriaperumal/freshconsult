@@ -1,11 +1,17 @@
 <%= javascript_include_tag 'cdn/contact_templates' %>
 <script type="text/javascript">
 jQuery('body').on('assetLoaded.fjax', function() {
-	window.App.Contacts.Contact_form.confirm_text = "<%= t('merge_contacts.email_remove') %>";
-	window.App.Contacts.Contact_form.tags_options = "<%= escape_javascript(current_account.tags.most_used(25).collect{|tag| tag.name}.join(',').html_safe) %>";
-	window.App.Contacts.Contact_form.primary_text = "<%= t('merge_contacts.primary') %>";
-	window.App.Contacts.Contact_form.unverified_text = "<%= t('merge_contacts.not_verified') %>";
-	window.App.Contacts.Contact_form.mark_text = "<%= t('merge_contacts.make_primary') %>";
+  jQuery.extend(window.App.Contacts.Contact_form, {
+    confirm_text : "<%= t('merge_contacts.email_remove') %>",
+    tags_options : "<%= escape_javascript(current_account.tags.most_used(25).collect{|tag| tag.name}.join(',').html_safe) %>",
+    primary_text : "<%= t('merge_contacts.primary') %>",
+    unverified_text : "<%= t('merge_contacts.not_verified') %>",
+    mark_text : "<%= t('merge_contacts.make_primary') %>",
+    default_company : "<%= t('contacts.default_company') %>",
+    mark_default_company : "<%= t('contacts.mark_default_company') %>",
+    client_manager : "<%= t('contacts.client_manager') %>",
+    selected_companies : <%= @selected_companies.present? ? @selected_companies.map(&:name).to_json.html_safe : '[]'.html_safe %>
+  });
 });
 </script>
 
@@ -35,6 +41,37 @@ jQuery('body').on('assetLoaded.fjax', function() {
     <% contact_fields.each do |field| %>
     <%=  render_as_list f, field %>
     <% end %>
+    <input type="hidden" id="added_companies" name="user[added_companies]"/>
+    <input type="hidden" id="removed_companies" name="user[removed_companies]"/>
+    <input type="hidden" id="edited_companies" name="user[edited_companies]"/>
   	</ul>	 
   </div>
 </div>
+
+<div class="hide mb-10" id="company-delete-confirmation">
+  <b>
+    <%= t('contacts.removed_association') %>  
+  </b>
+  <div class="mt15">
+    <span class="bold">
+      <%= t('contacts.remove_company_text', :user_name => @user.name) %>
+    </span>
+    <label class="radio mt10">
+      <input type="radio" name="delete_company" class="rename_company" checked="checked"/>
+      <%= t('contacts.retain_company') %> <span id="target_company"> </span>
+    </label>
+    <label class="radio">
+      <input type="radio" name="delete_company" class="rename_company" id="rename_label"/>
+      <%= t('contacts.rename_company') %>
+    </label>
+    <div class="mt5 ml20">
+      <input type="text" id="rename_text" class="user_company" placeholder="<%= t('contacts.new_company') %>" >
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  jQuery('body').addClass('contacts');
+}());
+</script>

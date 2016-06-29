@@ -1797,6 +1797,9 @@ ol, ul, li{
 }
 
 .tkt-sidebar{
+	.input-date-field{
+         input.date{ padding: 6px 4px 6px 25px;}
+       } 
 	.requester-avatar-wrap{
 		@include float(left);
 		width: 50px;
@@ -3287,6 +3290,7 @@ $collision_delay: 1s;
 	padding: 2px 9px 8px 9px;
 	margin-top: 20px;
 	color: #333;
+	width: 18px;
 	&:before{
 		content: "...";
 		@include text-align(center);

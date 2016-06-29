@@ -907,7 +907,8 @@ module ApplicationHelper
     object_name     = "#{object_name.to_s}#{ ( !field.is_default_field? ) ? '[custom_field]' : '' }".html_safe
     label = label_tag (pl_value_id ? object_name+"_"+field.field_name+"_"+pl_value_id : 
                                      object_name+"_"+field.field_name), 
-                      field_label.html_safe
+                      field_label.html_safe,
+                      :class => ((field.field_type == "default_company"  && @ticket.new_record?) ? "company_field" : "")
     case dom_type
       when "requester" then
         element = label + content_tag(:div, render(:partial => "/shared/autocomplete_email", :formats => [:html], :locals => { :object_name => object_name, :field => field, :url => requesters_search_autocomplete_index_path }))
@@ -925,8 +926,8 @@ module ApplicationHelper
       when "paragraph" then
         element = label + text_area(object_name, field_name, :class => element_class, :value => field_value)
       when "dropdown" then
-        if (['default_priority','default_source','default_status'].include?(field.field_type) )
-          element = label + select(object_name, field_name, field.html_unescaped_choices, {:selected => field_value},{:class => element_class})
+        if (['default_priority','default_source','default_status', 'default_company'].include?(field.field_type) )
+          element = label + select(object_name, field_name, field.html_unescaped_choices(field.field_type == 'default_company' ? @ticket : nil), {:selected => field_value},{:class => element_class})
           #Just avoiding the include_blank here.
         else
           element = label + select(object_name, field_name, field.html_unescaped_choices, { :include_blank => "...", :selected => field_value},{:class => element_class})
@@ -970,7 +971,8 @@ module ApplicationHelper
                                             :class => "controls input-date-field")
     end
     element_class = (field.has_sections_feature? && (field.field_type == "default_ticket_type" || field.field_type == "default_source")) ? " dynamic_sections" : ""
-    content_tag :li, element.html_safe, :class => "#{ dom_type } #{ field.field_type } field" + element_class
+    company_class = " hide" if field.field_type == "default_company" && @ticket.new_record?
+    content_tag :li, element.html_safe, :class => "#{ dom_type } #{ field.field_type } field" + element_class + company_class.to_s
   end
 
   def construct_new_ticket_element(form_builder,object_name, field, field_label, dom_type, required, field_value = "", field_name = "", in_portal = false , is_edit = false, pl_value_id=nil)
@@ -984,7 +986,8 @@ module ApplicationHelper
     object_name     = "#{object_name.to_s}#{ ( !field.is_default_field? ) ? '[custom_field]' : '' }".html_safe
     label = label_tag (pl_value_id ? object_name+"_"+field.field_name+"_"+pl_value_id : 
                                      object_name+"_"+field.field_name), 
-                      field_label.html_safe
+                      field_label.html_safe,
+                      :class => ((field.field_type == "default_company" && @ticket.new_record?) ? "company_field" : "")
     choices = field.choices
     description = field.description
     case dom_type
@@ -1018,10 +1021,14 @@ module ApplicationHelper
           element = label + select(object_name, field_name, field.html_unescaped_choices, { :include_blank => "...", :selected => field_value},{:class => element_class + " select2", "data-domhelper-name" => "ticket-properties-" + field_name })
         end
       when "dropdown_blank" then
+        dropdown_choices = field.html_unescaped_choices(@ticket)
+        disabled = true if field.field_type == "default_company" && dropdown_choices.empty?
         element = label + select(object_name, field_name,
-                                              field.html_unescaped_choices(@ticket),
+                                              dropdown_choices,
                                               {:include_blank => "...", :selected => field_value},
-                                              {:class => element_class + " select2", "data-domhelper-name" => "ticket-properties-" + field_name })
+                                              {:class => element_class + " select2", 
+                                               :disabled => disabled,
+                                               "data-domhelper-name" => "ticket-properties-" + field_name })
       when "nested_field" then
         element =  new_nested_field_tag(label, object_name, 
                                             field_name, 
@@ -1061,7 +1068,8 @@ module ApplicationHelper
         
     end
     element_class = (field.has_sections_feature? && (field.field_type == "default_ticket_type" || field.field_type == "default_source")) ? " dynamic_sections" : ""
-    content_tag :li, element.html_safe, :class => "#{ dom_type } #{ field.field_type } field" + element_class
+    company_class = " hide" if field.field_type == "default_company" && (@ticket.new_record? || dropdown_choices.empty?)
+    content_tag :li, element.html_safe, :class => "#{ dom_type } #{ field.field_type } field" + element_class + company_class.to_s
   end
 
   def show_cc_field field
@@ -1300,6 +1308,10 @@ module ApplicationHelper
     AccountConstants::EMAIL_SCANNER.source
   end
 
+  def plain_email_regex
+    AccountConstants::EMAIL_REGEX.source
+  end
+
   def nodejs_url namespace
     nodejs_port = Rails.env.development? ? 5000 : (request.ssl? ? 2050 : 1050)
     "#{request.protocol}#{request.host}:#{nodejs_port}/#{namespace}"
@@ -1455,8 +1467,12 @@ module ApplicationHelper
 
 	end
 
+  def account_numbers
+    @account_numbers ||= current_account.freshfone_numbers
+  end
+
 	def current_account_freshfone_numbers
-		@current_account_freshfone_numbers ||= current_account.freshfone_numbers.accessible_freshfone_numbers(current_user)
+		@current_account_freshfone_numbers ||= account_numbers.accessible_freshfone_numbers(current_user)
 	end
 
   def current_account_freshfone_number_hash

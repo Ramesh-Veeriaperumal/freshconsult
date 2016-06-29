@@ -5,6 +5,8 @@ defaults: &defaults
     - localhost:9200
   :count_host:
     - localhost:9201
+  :count_v2_host:
+    - localhost:9201
 
 development:
   <<: *defaults

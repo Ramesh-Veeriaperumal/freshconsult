@@ -21,6 +21,10 @@ module Support::TicketsHelper
     session[:requested_by] = params[:requested_by].presence || session[:requested_by].presence || 0
   end
 
+  def current_requested_by_company
+    session[:requested_by_company] = params[:requested_by_company].presence || session[:requested_by_company].presence || 0
+  end
+
   # Will set a cookie until the browser cache is cleared
   def set_cookie type, default_value
     cookies[type] = (params[type] ? params[type] : ( (!cookies[type].blank?) ? cookies[type] : default_value )).to_sym
@@ -41,7 +45,7 @@ module Support::TicketsHelper
                 [ t("helpdesk.tickets.views.#{f}"), 
                   filter_support_tickets_path( :wf_filter => f, :requested_by => @requested_by),
                   (@current_filter == f)] }
-    if current_account.features?(:archive_tickets)
+    if current_account.features_included?(:archive_tickets)
       f_list << [:divider]                
       f_list << [t("helpdesk.tickets.views.archived"), 
                   filter_support_archive_tickets_path(:wf_filter => :archived, :requested_by => @requested_by),
@@ -66,9 +70,37 @@ module Support::TicketsHelper
                     }), TOOLBAR_LINK_OPTIONS
   end
 
+  def company_list
+    dropdown_menu [
+      [t("all_companies"), 
+                    filter_support_tickets_path(:requested_by_company => 0), 
+                    (@requested_by_company == 0 )],
+      [:divider]].concat(@companies.map{ 
+                    |x| [ x.name, 
+                          filter_support_tickets_path(:requested_by_company => x.id, :requested_by => 0), 
+                          (@requested_by_company.to_i == x.id) ] unless( current_user.id == x.id )
+                    }), TOOLBAR_LINK_OPTIONS
+  end
+
   def raised_by
     if @requested_by.to_i == 0
       t("tickets_filter.everyone_in_company", :company_name => @company.name)
+    else
+      @requested_item.name
+    end
+  end
+
+  def raised_by_company
+    if @requested_company.present?
+      { :name => @requested_company.name, :id => @requested_company.id }
+    else
+      { :name => t("tickets_filter.all_companies"), :id => 0 }
+    end
+  end
+
+  def raised_by_company_user
+    if @requested_by.to_i == 0
+      t("tickets_filter.everyone")
     else
       @requested_item.name
     end

@@ -6,10 +6,12 @@
 		</h3>
 	</div>
 
-	<div id="responder-box" class="filter-metric-widget">
-		<label><%=t('unresolved_tickets.agent_label') %></label>
-		<%= select_tag "unresolved_tickets[responder]", options_for_select(@agents), :multiple => true, :class => 'select2 reset-select2', "data-placeholder" => '', 'data-filterkey' => "responder_id"%>
-	</div>
+	<% unless feature?(:euc_hide_agent_metrics) %>
+		<div id="responder-box" class="filter-metric-widget">
+			<label><%=t('unresolved_tickets.agent_label') %></label>
+			<%= select_tag "unresolved_tickets[responder]", options_for_select(@agents), :multiple => true, :class => 'select2 reset-select2', "data-placeholder" => '', 'data-filterkey' => "responder_id"%>
+		</div>
+	<% end %>
 	<div id="group-box" class="filter-metric-widget">
 		<label><%=t('unresolved_tickets.group_label') %></label>
 		<%= select_tag "unresolved_tickets[group]", 

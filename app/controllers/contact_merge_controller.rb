@@ -15,8 +15,7 @@ class ContactMergeController < ApplicationController
     begin
       items = search_users.results.reject(&:parent_id?)
     rescue
-      items = scoper.matching_users_from(params[:v]).without(@source_user).all(:conditions => { :string_uc04 => nil }, 
-        :include => [:user_emails, :avatar, :company])
+      items = scoper.preload([:user_emails, :avatar, :companies, :default_user_company]).matching_users_from(params[:search_key]).without(@source_user).all(:conditions => { :string_uc04 => nil })
     end
     r = { :results => search_results(items) }
     render :json => r.to_json
@@ -28,9 +27,16 @@ class ContactMergeController < ApplicationController
   
   def merge
     if @error.blank?
+      company_ids = @source_user.user_companies.map(&:company_id)
+      target_company_ids = []
       @target_users.each do |target|
-        @source_user.company ||= target.company
-        @source_user.client_manager ||= target.client_manager #deleting target_user will reset privileges, hence capturing client_manager here
+        target.user_companies.each do |uc|
+          if !company_ids.include?(uc.company_id) && !target_company_ids.include?(uc.company_id)
+            @source_user.user_companies.build(:company_id => uc.company_id, :client_manager => uc.client_manager,
+              :default => company_ids.present? ? false : uc.default)
+            target_company_ids << uc.company_id
+          end
+        end
         target.deleted = true
         target.user_emails.update_all_with_publish({
                                                       :user_id => @source_user.id,

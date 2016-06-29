@@ -3,7 +3,9 @@
 	</div>
 
 	<div class="report-panel-content">
-		<%=  JST["survey/reports/template/stats_detail_layout"]() %>
+		<%=  JST["survey/reports/template/stats_detail_layout"]({
+			agentReporting: agentReporting
+		}) %>
 	</div>
 
 	<div class='empty-chart'></div>

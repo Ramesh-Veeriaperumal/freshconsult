@@ -115,7 +115,7 @@ module TicketsFilter
   DEFAULT_VISIBLE_FILTERS_WITH_ARCHIVE = %w( new_and_my_open unresolved all_tickets raised_by_me monitored_by archived spam deleted )
 
   def self.default_views
-    filters = if Account.current && Account.current.features?(:archive_tickets)
+    filters = if Account.current && Account.current.features_included?(:archive_tickets)
       DEFAULT_VISIBLE_FILTERS_WITH_ARCHIVE
     else
       DEFAULT_VISIBLE_FILTERS
