@@ -1,7 +1,7 @@
 <div style="text-align:center;background-color:#f4f7f6;font-family:sans-serif;max-width:800px;border-radius:3px;">
   <!-- HEADER -->
   <div style="background-color:#e5efec;padding:20px 0;">
-    <%= image_tag "#{asset_host_url}/assets/misc/freshdesklogo.png", {:style=>"height:35px;"}%>
+    <%= image_tag "#{Helpdesk::EMAIL_LOGO_URL[Rails.env.to_sym]}", {:style=>"height:35px;"}%>
   </div>
 
   <!-- BODY -->
