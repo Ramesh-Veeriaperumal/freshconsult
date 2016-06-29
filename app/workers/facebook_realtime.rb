@@ -12,7 +12,7 @@ class FacebookRealtime
       #Check for app rate limit before processing feeds
       wait_on_poll if app_rate_limit_reached?
       
-      sqs_msg.each do |sqs_msg|
+      sqs_msgs.each do |sqs_msg|
         puts "FEED ===> #{sqs_msg.body}"
         Sqs::Message.new(sqs_msg.body).process
       end
