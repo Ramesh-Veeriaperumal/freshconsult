@@ -120,12 +120,13 @@
 			  	
 			  		<%= select_tag :survey_report_group_list , options_for_select(@groups.collect{ |g| [g[:name], g[:id]]}.insert(0,["All","g"])) , :onchange => "SurveyGroup.change(this)", :class => 'select2 group-select' %>
 			  	</li>
-
+			  	<% if !@hide_agent_reporting %>
 			  	<li>
 			  		<span><%=t('reports.survey_reports.main.agent')%> : </span>
 			  	
 			  		<%= select_tag :survey_report_agent_list , options_for_select(@agents.collect{ |a| [a[:name],a[:id]]}.insert(0,["All","a"])) , :onchange => "SurveyAgent.change(this)", :class => 'select2' %>
 			  	</li>
+			  	<% end %>
 		  	</ul>
 		</div>
 		<div class="reports-menu hide" id="reports_type_menu">
@@ -145,9 +146,12 @@ current_user = {
 	time_zone : '<%= @user_time_zone_abbr %>',
 	name : '<%= current_user.name %>'
 };
+SurveyReport.agentReporting = <%= !@hide_agent_reporting %>;
 jQuery(document).ready(function(){
 	jQuery('.deleted_list').attr('disabled','disabled');
-	jQuery('#survey_main_layout').append(JST["survey/reports/template/main_content"]());
+	jQuery('#survey_main_layout').append(JST["survey/reports/template/main_content"]({
+		agentReporting: SurveyReport.agentReporting
+	}));
 	jQuery('#survey_main_layout').on('click.survey_reports', function(){
 		jQuery('#reports_type_menu').hide();
 	})

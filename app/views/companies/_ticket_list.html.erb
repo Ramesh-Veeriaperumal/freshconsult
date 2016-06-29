@@ -8,7 +8,7 @@
 <div id="tickets-expanded" class="contact_tickets row-fluid">
   <div class="detailed_view">
     
-    <% if current_account.features?(:archive_tickets)
+    <% if current_account.features_included?(:archive_tickets)
       list = [ [ t('contacts.conversations.recent_tickets'), '#conv_tickets', true, {:id => 'conv_tickets-tab', :'data-hash-url' => false }] ]
       list << [ :divider ]
       list << [ t('contacts.conversations.archive_tickets'), '#conv_archive_tickets', false, {:id => 'conv_archive_tickets-tab', :'data-hash-url' => false } ]
@@ -59,7 +59,7 @@
         <% end %>
       </div>
 
-      <% if current_account.features?(:archive_tickets) %>
+      <% if current_account.features_included?(:archive_tickets) %>
         <div class='tab-pane' id='conv_archive_tickets'> 
           <div class='timeline' id='timeline'>
             <ul class='timeline-list'>

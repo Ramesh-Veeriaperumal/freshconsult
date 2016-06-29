@@ -6,13 +6,13 @@ class Reports::TimesheetReportsController < ApplicationController
   helper AutocompleteHelper
   
   before_filter :check_permission, :set_selected_tab, :set_report_type
-  before_filter :report_filter_data_hash,    :only => [:index]
-  before_filter :build_item,                 :only => [:index,:export_csv,:report_filter,:time_sheet_list, 
-                                                       :generate_pdf]
-  before_filter :time_sheet_list,            :only => [:index,:report_filter, :generate_pdf]
-  before_filter :time_sheet_for_export,      :only => [:export_csv]
-  before_filter :save_report_max_limit?,     :only => [:save_reports_filter]
-  before_filter :construct_report_filters,   :only => [:save_reports_filter,:update_reports_filter]
+  before_filter :report_filter_data_hash,                       :only => [:index]
+  before_filter :build_item,                                    :only => [:index,:export_csv,:report_filter,:time_sheet_list, 
+                                                                          :generate_pdf]
+  before_filter :time_sheet_list,                               :only => [:index,:report_filter, :generate_pdf]
+  before_filter :time_sheet_for_export,                         :only => [:export_csv]
+  before_filter :save_report_max_limit?,                        :only => [:save_reports_filter]
+  before_filter :construct_report_filters, :schedule_allowed?,  :only => [:save_reports_filter,:update_reports_filter]
   
   around_filter :run_on_slave , :except => [:save_reports_filter,:update_reports_filter,:delete_reports_filter]
 
@@ -79,5 +79,11 @@ class Reports::TimesheetReportsController < ApplicationController
     Sharding.run_on_slave(&block)
   end 
 
+  def schedule_allowed?
+    if params['data_hash']['schedule_config']['enabled'] == true 
+      allow = enable_schedule_report? && current_user.privilege?(:export_reports)
+      render json: nil, status: :ok if allow != true
+    end
+  end
   
 end

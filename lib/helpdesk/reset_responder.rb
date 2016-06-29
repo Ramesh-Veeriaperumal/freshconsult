@@ -14,7 +14,7 @@ module Helpdesk
         
         account.tickets.where(responder_id: user.id).update_all_with_publish({ responder_id: nil }, {})
 
-        return unless account.features?(:archive_tickets)
+        return unless account.features_included?(:archive_tickets)
 
         account.archive_tickets.where(responder_id: user.id).update_all_with_publish({ responder_id: nil }, {})
 

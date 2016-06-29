@@ -26,7 +26,7 @@ class Helpdesk::Email::IdentifyTicket < Struct.new(:email, :user, :account)
     header_processor = Helpdesk::Email::ProcessByMessageId.new(email[:message_id][1..-2], 
                                                                email[:in_reply_to][1..-2], 
                                                                email[:references])
-    self.ticket = header_processor.ticket_from_headers(email[:from_email], account)
+    self.ticket = header_processor.ticket_from_headers(email[:from_email], account, email[:email_config])
   end
 
   def ticket_from_email_body
@@ -49,7 +49,7 @@ class Helpdesk::Email::IdentifyTicket < Struct.new(:email, :user, :account)
 
   def ticket_parent
     return @par if @set_parent
-    if account.features?(:archive_tickets) && self.ticket
+    if account.features_included?(:archive_tickets) && self.ticket
       parent_ticket_id = ticket.schema_less_ticket.parent_ticket
       if parent_ticket_id
         @par ||= ticket.parent 
@@ -149,7 +149,7 @@ class Helpdesk::Email::IdentifyTicket < Struct.new(:email, :user, :account)
     header_processor = Helpdesk::Email::ProcessByMessageId.new(email[:message_id][1..-2], 
                                                                email[:in_reply_to][1..-2], 
                                                                email[:references])
-    self.archived_ticket = header_processor.archive_ticket_from_headers(email[:from_email], account)
+    self.archived_ticket = header_processor.archive_ticket_from_headers(email[:from_email], account, email[:email_config])
   end
 
   def archive_ticket_from_email_body

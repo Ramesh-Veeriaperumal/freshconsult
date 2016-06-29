@@ -56,4 +56,11 @@ module Freshfone::CallerLookup
     number
   end
 
+  def users_scoper
+    current_account.all_users
+  end
+
+  def search_customer_with_id(customer_id)
+    users_scoper.find(customer_id)
+  end
 end

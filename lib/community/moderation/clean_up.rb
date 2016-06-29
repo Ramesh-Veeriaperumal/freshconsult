@@ -3,11 +3,7 @@ module Community::Moderation::CleanUp
 
 	def empty_folder
 		
-		Resque.enqueue(Workers::Community::EmptyModerationTrash, 
-						{
-							:account_id => current_account.id, 
-							:user_id => current_user.id
-						})
+		Community::EmptyModerationTrash.perform_async
 
 		flash[:notice] = t('discussions.unpublished.flash.empty_folder')
 		redirect_to discussions_path
@@ -15,13 +11,7 @@ module Community::Moderation::CleanUp
 
 	def empty_topic_spam
 
-		Resque.enqueue(Workers::Community::DeleteTopicSpam, 
-						{
-							:account_id => current_account.id, 
-							:user_id => current_user.id,
-							:klass => Post::SPAM_SCOPES_DYNAMO[:spam].to_s,
-							:topic_id => params[:id]
-						 })
+		Community::ClearModerationRecords.perform_async(params[:id], "Topic")
 
 		flash[:notice] = t('discussions.unpublished.flash.empty_topic_spam')
 		respond_back

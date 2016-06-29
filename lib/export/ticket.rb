@@ -4,6 +4,7 @@ class Export::Ticket < Struct.new(:export_params)
   include Rails.application.routes.url_helpers
   include Export::Util
   include Redis::RedisKeys
+  include Helpdesk::TicketModelExtension
   
   DATE_TIME_PARSE = [ :created_at, :due_by, :resolved_at, :updated_at, :first_response_time, :closed_at]
 
@@ -51,6 +52,7 @@ class Export::Ticket < Struct.new(:export_params)
   def initialize_params
     export_params.symbolize_keys!
     file_formats = ['csv', 'xls']
+    reorder_export_params
     export_params[:format] = file_formats[0] unless file_formats.include? export_params[:format]
     delete_invisible_fields
   end
@@ -257,6 +259,24 @@ class Export::Ticket < Struct.new(:export_params)
     %(archive_tickets.#{export_params[:ticket_state_filter]} 
        between '#{export_params[:start_date]}' and '#{export_params[:end_date]}'
       )
+  end
+
+  def reorder_export_params
+    export_fields = export_params[:export_fields]
+    return if export_fields.blank?
+    ticket_fields   = default_export_fields_order.merge(custom_export_fields_order)
+
+    param_position_hash = export_fields.keys.inject({}) do |hash, key|
+      hash[key] = ticket_fields[key]      
+      hash
+    end
+    sorted_param_list = param_position_hash.sort_by{|k,v| v}
+
+    sorted_export_fields = sorted_param_list.inject({}) do |hash, element|
+      hash[element[0]] = export_fields[element[0]]
+      hash
+    end 
+    export_params[:export_fields] = sorted_export_fields
   end
 
 end

@@ -198,19 +198,6 @@ var FreshfoneNotification;
 		getIncomingConnection: function (CallSid) {
 			return incomingConnections[CallSid];
 		},
-
-		setNotificationTimeout: function (CallSid, time){
-			var self = this,
-			conn = incomingConnections[CallSid];			
-			conn.callNotificationTimeout = setTimeout(function() {
-				conn.unanswered();
-        self.popOngoingNotification(conn.connection, conn);
-      }, parseInt(time,10)*1000);
-		},
-		alertCallWasPicked: function (callSid, agent) {
-			var conn = this.getIncomingConnection(callSid);
-			conn.freshfoneNotification.freshfoneUserInfo.setCallPickedAlert(agent);
-		},
 		setTransferMeta: function (type, agent){
 			this.freshfoneUserInfo.setTransferMeta(type, agent);
 		}

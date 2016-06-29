@@ -1,5 +1,5 @@
 JSON.generate(@items.map do |item|
-  {
+  response_hash = {
     active: item.active,
     address: item.address,
     company_id: item.company_id,
@@ -17,4 +17,6 @@ JSON.generate(@items.map do |item|
     created_at: item.created_at.try(:utc),
     updated_at: item.updated_at.try(:utc)
   }
+  response_hash.merge!(deleted: true) if item.deleted
+  response_hash
 end)

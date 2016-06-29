@@ -9,7 +9,7 @@ module HelpdeskReports::Helper::Ticket
   include HelpdeskReports::Helper::PlanConstraints
 
   VALIDATIONS = ["presence_of_params", "validate_inclusion", "validate_bucketing","validate_dates", "validate_time_trend",
-                  "validate_max_filters", "validate_max_multi_selects", "validate_group_by"]
+                  "validate_max_filters", "validate_max_multi_selects", "validate_group_by", "validate_agent_filter"]
 
   def filter_data
     show_options(DEFAULT_COLUMNS_ORDER, DEFAULT_COLUMNS_KEYS_BY_TOKEN, DEFAULT_COLUMNS_OPTIONS)
@@ -317,7 +317,11 @@ module HelpdeskReports::Helper::Ticket
   end
   
   def valid_group_by? column
-    column.starts_with?("ff") or TICKET_FIELD_NAMES.include?(column.to_sym)
+    if column.to_sym == :agent_id
+      !hide_agent_reporting?
+    else
+      column.starts_with?("ff") or TICKET_FIELD_NAMES.include?(column.to_sym)
+    end
   end
   
   def pdf_export_config
@@ -337,6 +341,11 @@ module HelpdeskReports::Helper::Ticket
   def set_last_dump_time time, export=false
     return (Time.now.in_time_zone(Account.current.time_zone) - 1.days).end_of_day if !disable_date_lag?
     export ? Time.at(time.to_i).in_time_zone(Account.current.time_zone) : time.to_i
+  end
+
+  def validate_agent_filter param
+    conditions = (params[:filter]||{}).collect{|filter| filter[:condition]}
+    return ["Invalid filter agent_id"] if (conditions.include?("agent_id") && hide_agent_reporting?)
   end
 
 end

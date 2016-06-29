@@ -43,10 +43,13 @@ var SurveyState = {
         var dateRange = SurveyDateRange.convertTimestampToDate(data.date_range);
         jQuery("#survey_report_survey_list").val(data.survey_id);
         jQuery("#survey_report_group_list").val(data.group_id);
-        jQuery("#survey_report_agent_list").val(data.agent_id);
+        if(SurveyReport.agentReporting){
+           jQuery("#survey_report_agent_list").val(data.agent_id);
+           this.setHeaderValues('select2-chosen-3','survey_report_agent_list');
+        }
         this.setHeaderValues('select2-chosen-1','survey_report_survey_list');
         this.setHeaderValues('select2-chosen-2','survey_report_group_list');
-        this.setHeaderValues('select2-chosen-3','survey_report_agent_list');
+       
         if(data.rating){
             SurveyState.setFilter('rating_list',data.rating);
             jQuery('#rating_list').find('i').removeClass().addClass('survey-indicator '+SurveyConstants.iconClass[data.rating.id]+'');

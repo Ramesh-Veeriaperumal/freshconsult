@@ -11,10 +11,10 @@ class Reports::Freshfone::SummaryReportsController < ApplicationController
 
   before_filter :access_denied, :unless => :freshfone_reports?
   before_filter :set_report_type, :set_selected_tab
-  before_filter :build_criteria,                   :except => [:export_pdf]
-  before_filter :set_filter,                       :only   => [:index, :generate]
-  before_filter :save_report_max_limit?,           :only   => [:save_reports_filter]
-  before_filter :construct_report_filters,         :only   => [:save_reports_filter,:update_reports_filter]
+  before_filter :build_criteria,                                :except => [:export_pdf]
+  before_filter :set_filter,                                    :only   => [:index, :generate]
+  before_filter :save_report_max_limit?,                        :only   => [:save_reports_filter]
+  before_filter :construct_report_filters, :schedule_allowed?,  :only   => [:save_reports_filter,:update_reports_filter]
 
   around_filter :run_on_slave , :except => [:save_reports_filter,:update_reports_filter,:delete_reports_filter]
 
@@ -63,6 +63,13 @@ class Reports::Freshfone::SummaryReportsController < ApplicationController
     def run_on_slave(&block)
       Sharding.run_on_slave(&block)
     end 
+
+    def schedule_allowed?
+      if params['data_hash']['schedule_config']['enabled'] == true 
+        allow = enable_schedule_report? && current_user.privilege?(:export_reports)
+        render json: nil, status: :ok if allow != true
+      end
+    end
 
     def csv_hash
       headers = { "Agent" => :agent_name,

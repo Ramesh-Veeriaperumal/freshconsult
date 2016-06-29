@@ -31,7 +31,7 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
   # Flexifield columns supported in V2
   #
   def esv2_ff_columns
-    @@es_flexi_txt_cols ||= Flexifield.column_names.select { |v| v =~ /^ff/ }.map(&:to_sym)
+    @@esv2_flexi_txt_cols ||= Flexifield.column_names.select { |v| v =~ /^ff/ }.map(&:to_sym)
   end
 
   # ES v2 specific methods
@@ -46,10 +46,6 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
 
   def es_fwd_emails
     cc_email_hash[:fwd_emails] if cc_email_hash
-  end
-  
-  def company_id
-    requester.company_id if requester
   end
 
   def tag_names

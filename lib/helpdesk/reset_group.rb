@@ -12,7 +12,7 @@ module Helpdesk
 
         account.tickets.where(group_id: group_id).update_all_with_publish({ group_id: nil }, {})
 
-        return unless account.features?(:archive_tickets)
+        return unless account.features_included?(:archive_tickets)
 
         account.archive_tickets.where(group_id: group_id).update_all_with_publish({ group_id: nil }, {})
 

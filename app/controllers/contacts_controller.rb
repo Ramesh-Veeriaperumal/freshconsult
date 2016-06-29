@@ -20,6 +20,7 @@ class ContactsController < ApplicationController
    skip_before_filter :build_item , :only => [:new, :create]
    before_filter :set_mobile , :only => :show
    before_filter :init_user_email, :only => :edit
+   before_filter :load_companies, :only => :edit
    before_filter :check_parent, :only => :restore
    before_filter :fetch_contacts, :only => [:index]
    before_filter :set_native_mobile, :only => [:show, :index, :create, :destroy, :restore,:update]
@@ -68,9 +69,9 @@ class ContactsController < ApplicationController
   
   def create   
     if initialize_and_signup!
-      flash[:notice] = render_to_string(:partial => '/contacts/contact_notice', :formats => [:html], :locals => { :message => t('flash.contacts.create.success') } ).html_safe
+      flash[:notice] = @flash_notice || render_to_string(:partial => '/contacts/contact_notice', :formats => [:html], :locals => { :message => t('flash.contacts.create.success') } ).html_safe
       respond_to do |format|
-        format.html { redirect_to contacts_url }
+        format.html { redirect_to redirection_url }
         format.xml  { render :xml => @user, :status => :created, :location => contacts_url(@user) }
         format.nmobile { 
             render :json => { :requester_id  => @user.id , :success => true , :success_message => t("flash.contacts.create.success") 
@@ -95,6 +96,7 @@ class ContactsController < ApplicationController
   end
 
   def create_contact # new method to implement dynamic validations, as many forms post to create action 
+    @flash_notice = t('flash.contacts.create.success')
     create
   end
   
@@ -182,6 +184,7 @@ class ContactsController < ApplicationController
     @user = nil # reset the user object.
     @user = current_account.user_emails.user_for_email(email) unless email.blank?
     @user = current_account.all_users.find(params[:id]) if @user.blank?
+    load_companies
     Rails.logger.info "$$$$$$$$ -> #{@user.inspect}"
 
     respond_to do |format|
@@ -195,9 +198,11 @@ class ContactsController < ApplicationController
   end
   
   def update
-    if @user.update_attributes(params[:user])
+    @user.update_companies(params)
+    filtered_params = params[:user].reject { |k| ["added_list", "removed_list"].include?(k) }
+    if @user.update_attributes(filtered_params)
       respond_to do |format|
-        flash[:notice] = render_to_string(:partial => '/contacts/contact_notice', :formats => [:html], :locals => { :message => t('merge_contacts.contact_updated') } ).html_safe
+        flash[:notice] = t('merge_contacts.contact_updated')
         format.html { redirect_to redirection_url }
         format.xml  { head 200 }
         format.json { head 200}
@@ -380,7 +385,7 @@ protected
   end
   
   def redirection_url # Moved out to overwrite in Freshservice
-    contacts_url
+    contact_url(@user)
   end
 
   private
@@ -401,7 +406,7 @@ protected
       @total_user_tickets_size = @total_user_tickets.length
       @user_tickets = @total_user_tickets.take(10)
 
-      if current_account.features?(:archive_tickets)
+      if current_account.features_included?(:archive_tickets)
         @total_archive_user_tickets = current_account.archive_tickets.permissible(current_user).
           requester_active(@user).newest(11).find(:all, :include => [:responder,:requester])
         @total_archive_user_tickets_size = @total_archive_user_tickets.length
@@ -421,7 +426,10 @@ protected
        order_by = "#{order_by} DESC" if(!params[:order_type].blank? && params[:order_type].casecmp("desc") == 0)
        @sort_state = params[:state] || cookies[:contacts_sort] || 'all'
        begin
-         @contacts = scoper.filter(params[:letter], params[:page],params.fetch(:state , @sort_state),per_page,order_by).preload(:avatar, :company)
+         @contacts = scoper.filter(params[:letter], 
+                                   params[:page],
+                                   params.fetch(:state , @sort_state),
+                                   per_page,order_by).preload(:avatar, :companies)
          cookies[:contacts_sort] = @sort_state
       rescue Exception => e
         @contacts = {:error => get_formatted_message(e)}
@@ -431,6 +439,15 @@ protected
     def init_user_email
       @item ||= @user
       @item.user_emails.build({:primary_role => true, :verified => @item.active? }) if @item.user_emails.empty?
+    end
+
+    def load_companies
+      if current_user.has_multiple_companies_feature?
+        @user_companies = @user.user_companies.preload(:company).to_a
+        default_index = @user_companies.find_index { |uc| uc.default }
+        @user_companies.insert(0, @user_companies.delete_at(default_index)) if default_index
+        @selected_companies = @user_companies.map(&:company)
+      end
     end
 
     def run_on_slave(&block) 

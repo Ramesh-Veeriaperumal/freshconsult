@@ -305,7 +305,7 @@ HelpdeskReports.ChartsInitializer.PerformanceDistribution = (function () {
             var date_range = HelpdeskReports.locals.date_range;
             var split = date_range.split("-");
             
-            if(split.length  == 1) {
+            if(split.length  == 1 || (split[0].trim() == split[1].trim())) {
                  _FD.showSimpleStats(hash);
                  jQuery(".trends").addClass('hide');
                  jQuery(".stat").removeClass('hide');

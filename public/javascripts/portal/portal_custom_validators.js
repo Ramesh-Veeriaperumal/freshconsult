@@ -51,7 +51,7 @@ $('body').on("change", "[data-select-one]", function(){
 
 $.validator.addMethod("two_decimal",function(value, element) {
 
-    return (value.trim() == '') ||  /^\d+(\.\d{0,2})?$/i.test(value);
+    return (value.trim() == '') ||  /^\d*(\.\d{0,2})?$/i.test(value);
 }, "Value cannot have more than 2 decimal digits");
 $.validator.addClassRules("decimal", { number: true , two_decimal: true});
 

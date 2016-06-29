@@ -5,3 +5,7 @@ ES_V2_BOOST_VALUES    = YAML::load_file(File.join(Rails.root, 'config/search/boo
 ES_V2_CONFIG          = YAML::load_file(File.join(Rails.root, 'config/search/esv2_config.yml'))[Rails.env].symbolize_keys
 ES_V2_DYNAMO_TABLES   = YAML::load_file(File.join(Rails.root, 'config/search/dynamo_tables.yml'))[Rails.env].symbolize_keys
 ES_V2_QUEUE_KEY       = ES_V2_CONFIG[:queue_key]
+
+ES_V2_POLLER_QUEUES   = YAML::load_file(File.join(Rails.root, 'config/search/etl_queue.yml')).collect {
+                          |queue_key| ES_V2_QUEUE_KEY % { cluster: queue_key }
+                        }

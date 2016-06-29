@@ -86,6 +86,7 @@ module Search::V2::AbstractController
       def construct_es_params
         { 
           search_term: @es_search_term,
+          account_id: current_account.id,
           request_id: request.try(:uuid)
         }
       end

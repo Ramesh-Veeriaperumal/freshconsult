@@ -30,7 +30,7 @@ div.medium{
 	font-size: 60px;
 	font-weight: 100;
 	text-align: right;
-	@include padding( 25px 15px 0 0 );
+	@include padding( 25px 20px 0 0 );
 	@include box-sizing(border-box);
 	color: rgba(255,255,255,0.6);
 	text-shadow: 0 0 8px #fff;

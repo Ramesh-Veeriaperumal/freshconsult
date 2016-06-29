@@ -27,7 +27,10 @@ begin
 
   # Reports helpkit Export
   $sqs_reports_helpkit_export = AWS::SQS.new.queues.named(SQS[:helpdesk_reports_export_queue])  
-
+  
+  # Freshfone Call Notifier
+  $freshfone_call_notifier = AWS::SQS.new.queues.named(SQS[:freshfone_call_notifier_queue])
+  
   $sqs_es_migration_queue = AWS::SQS.new.queues.named("es_etl_migration_queue_#{Rails.env}") 
   
   #Freshfone Call Tracker
@@ -37,6 +40,7 @@ begin
   #
   SQS_V2_QUEUE_URLS = {
     SQS[:search_etl_queue] => AwsWrapper::SqsV2.queue_url(SQS[:search_etl_queue]),
+    SQS[:count_etl_queue] => AwsWrapper::SqsV2.queue_url(SQS[:count_etl_queue]),
     SQS[:reports_etl_msg_queue] => AwsWrapper::SqsV2.queue_url(SQS[:reports_etl_msg_queue])
   }
 

@@ -86,10 +86,17 @@ namespace :scheduler do
     }
   }
 
+  PREMIUM_ACCOUNT_IDS_FB = {
+      "development" => [1],
+      "staging"     => [390], 
+      "production"  => [309357, 39190, 19063, 86336, 34388, 126077, 220561, 166928, 254067, 381984]
+  }
 
-  PREMIUM_ACCOUNT_IDS = {:staging => [390], :production => [39190,19063,86336,34388,126077,220561,166928,254067]}
-  
-
+  PREMIUM_ACCOUNT_IDS_TWT = {
+    "development" => [1],
+    "staging"     => [390], 
+    "production"  => [309357, 39190, 19063, 86336, 34388, 126077, 220561, 166928, 254067, 381984]
+  }
 
   def log_file
     @log_file_path = "#{Rails.root}/log/rake.log"      
@@ -173,7 +180,7 @@ namespace :scheduler do
           account = fb_page.account
           next unless account
           account.make_current
-          next if (check_if_premium?(account) or !fb_page.valid_page?)
+          next if (check_if_premium?(account, PREMIUM_ACCOUNT_IDS_FB) || !fb_page.valid_page?)
           class_constant.perform_async({:fb_page_id => fb_page.id}) 
         end
       end
@@ -194,7 +201,7 @@ namespace :scheduler do
           account = twitter_handle.account
           next unless account
           account.make_current
-          next unless twitter_handle.capture_dm_as_ticket
+          next if (check_if_premium?(account, PREMIUM_ACCOUNT_IDS_TWT) || !twitter_handle.capture_dm_as_ticket)
           class_constant.perform_async({:twt_handle_id => twitter_handle.id}) 
         end
       end
@@ -203,10 +210,28 @@ namespace :scheduler do
     end
   end
   
-
-  def check_if_premium?(account)
-    Rails.env.production? ? PREMIUM_ACCOUNT_IDS[:production].include?(account.id) :
-      PREMIUM_ACCOUNT_IDS[:staging].include?(account.id)
+  def enqueue_premium_twitter(delay = nil)
+    PREMIUM_ACCOUNT_IDS_TWT["#{Rails.env}"].each do |account_id|
+      if delay.nil?
+        Social::PremiumTwitterWorker.perform_async({:account_id => account_id})
+      else
+        Social::PremiumTwitterWorker.perform_in(delay, {:account_id => account_id})
+      end
+    end
+  end
+  
+  def enqueue_premium_facebook(delay = nil)
+    PREMIUM_ACCOUNT_IDS_FB["#{Rails.env}"].each do |account_id|
+      if delay.nil?
+        Social::PremiumFacebookWorker.perform_async({:account_id => account_id})
+      else
+        Social::PremiumFacebookWorker.perform_in(delay, {:account_id => account_id})
+      end
+    end
+  end
+  
+  def check_if_premium?(account, premium_accounts)
+    premium_accounts["#{Rails.env}"].include?(account.id)
   end
 
   task :supervisor, [:type] => :environment do |t,args|
@@ -235,6 +260,11 @@ namespace :scheduler do
   task :facebook, [:type] => :environment do |t,args|
     account_type = args.type || "paid"
     puts "Running #{account_type} facebook worker initiated at #{Time.zone.now}"
+    if account_type == "paid"
+      enqueue_premium_facebook
+      enqueue_premium_facebook(2.minutes)
+      enqueue_premium_facebook(4.minutes)
+    end
     enqueue_facebook(account_type)
     puts "Running #{account_type} facebook worker completed at #{Time.zone.now}"
   end
@@ -243,24 +273,13 @@ namespace :scheduler do
   task :twitter, [:type] => :environment do |t,args|
     account_type = args.type || "paid"
     puts "Running #{account_type} twitter worker initiated at #{Time.zone.now}"
+    if account_type == "paid"
+      enqueue_premium_twitter
+      enqueue_premium_twitter(2.minutes)
+      enqueue_premium_twitter(4.minutes)
+    end
     enqueue_twitter(account_type)
     puts "Running #{account_type} twitter worker completed at #{Time.zone.now}"
-  end
-  
-  desc 'Fetch facebook feeds and direct messages for premium accounts'
-  task :premium_facebook => :environment do
-    premium_acc_ids = Rails.env.production? ? PREMIUM_ACCOUNT_IDS[:production] : PREMIUM_ACCOUNT_IDS[:staging]
-    if empty_queue?(Social::PremiumFacebookWorker.get_sidekiq_options["queue"])
-      premium_acc_ids.each do |account_id|
-        Sharding.select_shard_of(account_id) do
-          Account.reset_current_account
-          Account.find(account_id).make_current
-          Social::PremiumFacebookWorker.perform_async
-        end
-      end
-    else
-      puts "Premium Facebook Worker is already running . skipping at #{Time.zone.now}" 
-    end
   end
   
   desc "Fetch custom twitter streams"

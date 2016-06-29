@@ -67,12 +67,18 @@ var SurveyUtil = {
             var urlData = {};
             var surveyObj = jQuery("#survey_report_survey_list");
             var groupObj = jQuery("#survey_report_group_list");
-            var agentObj = jQuery("#survey_report_agent_list");
+            if(SurveyReport.agentReporting){
+                var agentObj = jQuery("#survey_report_agent_list");
+                urlData['agent_id'] = agentObj.val();
+            }
+            else{
+                urlData['agent_id'] = SurveyReportData.defaultAllValues.agent;
+            }
             
 
             urlData['survey_id'] = surveyObj.val();
             urlData['group_id'] = groupObj.val();
-            urlData['agent_id'] = agentObj.val();
+            
             urlData['survey_question_id'] = SurveyUtil.findQuestionId();
             urlData['date'] = {};
             urlData['date']['presetRange'] = false;

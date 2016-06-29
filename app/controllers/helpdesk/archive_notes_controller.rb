@@ -49,7 +49,7 @@ class Helpdesk::ArchiveNotesController < ApplicationController
   private
 
   def check_feature
-    unless current_account.features?(:archive_tickets)
+    unless current_account.features_included?(:archive_tickets)
       redirect_to helpdesk_tickets_url
     end
   end
