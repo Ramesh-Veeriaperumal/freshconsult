@@ -6,3 +6,6 @@ page << "jQuery('#bulk_merge').button('reset')"
 page << "jQuery('#cancel').attr('disabled', false).removeClass('disabled')"
 page << "jQuery('.src').remove()"
 page << "jQuery('#redirect_back').val(jQuery('#redirect').val())"
+page << "jQuery('#merge_info').addClass('hide')"
+page << "jQuery('#merge_confirm_info').removeClass('hide')"
+page << %{jQuery('#merge_confirm_info').html('#{t('ticket.merge_confirm_info')}<br/><div class="pt10 #{"hide" unless @reply_cc_limit_exceeded}">#{t('ticket.reply_cc_limit_exceeded')}</div>')}

@@ -5,6 +5,7 @@ class Helpdesk::MergeTicketsController < ApplicationController
 	before_filter :load_source_tickets, :only => [ :bulk_merge, :merge, :complete_merge ]
 
 	before_filter :load_target_ticket, :only => [ :merge, :complete_merge ]
+  before_filter :reply_cc_limit, :only => [:merge]
 	before_filter :set_native_mobile, :only => [:complete_merge]
 
 	# MERGE_TICKET_STATES_PRIORITY = {
@@ -65,4 +66,9 @@ class Helpdesk::MergeTicketsController < ApplicationController
 													.where(:display_id => params[:source_tickets])
                           .order("status, created_at DESC")
 		end
+
+    def reply_cc_limit
+    	return unless params[:add_recipients]
+      @reply_cc_limit_exceeded = (get_emails_list.size + @target_reply_cc.size) > MAX_EMAIL_COUNT
+    end
 end
