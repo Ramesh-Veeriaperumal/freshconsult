@@ -2683,7 +2683,6 @@ en:
       tag_change: "Tag updated"
       add_watcher: "Watcher Added"
       remove_watcher: "Watcher Removed"
-      property_update: "Property Updated"
       spam: "Marked Spam"
     solutions:
       new_solution:
@@ -2952,7 +2951,7 @@ en:
         long: "{{user_path}} updated due date of {{notable_path}} to {{due_date_updated}}"
         new: "due by time as <strong>%{due_date_updated}</strong>"
       requester_change:
-        new: "Requester as <strong>%{requester_name}</strong>"
+        new: "Requester as %{requester_name}"
       ticket_edit:
         new: "Edited the <strong>%{fields}</strong>"
       custom_field_change:
@@ -2970,7 +2969,7 @@ en:
       add_cc:
         new: "Added CC %{cc_list}"
       add_note:
-        new: "Added note(s)"
+        new: "Added notes"
       ticket_merge_source:
         new: "Merged this ticket into %{target_ticket}"
       ticket_merge_target:
