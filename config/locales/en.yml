@@ -5100,6 +5100,10 @@ en:
     id : Id
     ticket_selected: " ticket selected (Conversations from the merged tickets will be added to the primary ticket)"
     tickets_selected: " tickets selected (Conversations from the merged tickets will be added to the primary ticket)"
+    add_recipients: "Add secondary ticket recipients to CC"
+    merge_warning: "We recommend that you retain the oldest ticket as the primary ticket to avoid mistakes in SLA calculation."
+    merge_confirm_info: "Review your merge and edit notes as necessary."
+    reply_cc_limit_exceeded: "You have reached the maximum threshold of 50 recipients per ticket. Recipients over and above this threshold value will be dropped."
     subject_placeholder: "Look up tickets by their subject"
     id_placeholder: "Type in an ID to find tickets"
     requester_placeholder: "Find tickets by requester"

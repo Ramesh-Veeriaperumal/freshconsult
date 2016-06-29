@@ -21,8 +21,7 @@ module Helpdesk::MergeTicketActions
 		end
     move_source_notes_to_target
 		add_header_to_target if !@header.blank?
-		# Moving requesters part removed from the feature for now!
-		# move_source_requesters_to_target 
+		move_source_requesters_to_target if params[:add_recipients]
 		add_note_to_target_ticket
 	end
 
@@ -57,18 +56,23 @@ module Helpdesk::MergeTicketActions
 		    <b>#{I18n.t('description')}:</b><br/>#{source_ticket.description_html}}
 		end
 
-		def move_source_requesters_to_target # Possible dead code
-			cc_email_array = @source_tickets.collect{ |source| [ get_cc_email_from_hash(source), 
-																	convert_to_cc_format(source) ] if check_source(source) }.flatten().compact
+		def move_source_requesters_to_target
+			reply_cc_email_array = get_emails_list
+			cc_email_array = get_email_array(reply_cc_email_array)
 			return unless cc_email_array.any?
 			if @target_ticket.cc_email.blank?
-				@target_ticket.cc_email = {:cc_emails => cc_email_array.uniq, :fwd_emails => []}
-			else	
-				cc_email_array += get_cc_email_from_hash(@target_ticket) 
-				@target_ticket.cc_email[:cc_emails] = validate_emails(cc_email_array , @target_ticket)
+				@target_ticket.cc_email = {
+					:cc_emails => cc_email_array,
+					:fwd_emails => [],
+					:reply_cc => reply_cc_email_array,
+					:tkt_cc => []
+				}
+			else
+				@target_ticket.cc_email[:cc_emails] = (get_cc_email_from_hash(@target_ticket) + cc_email_array).uniq
+				@target_ticket.cc_email[:reply_cc] =  (@target_reply_cc + reply_cc_email_array).first(50)
 			end
-			@target_ticket.save  
-		end  
+			@target_ticket.save
+		end
 
 		def move_source_time_sheets_to_target source_ticket
 		  source_ticket.time_sheets.each do |time_sheet|
@@ -116,17 +120,34 @@ module Helpdesk::MergeTicketActions
 			@target_note
 		end
 
-		# Moving requesters part removed from the feature for now!
-		# def convert_to_cc_format ticket
-		#   %{#{ticket.requester} <#{ticket.requester.email}>}
-		# end
+		def get_emails_list
+			@target_reply_cc = get_reply_cc_email_from_hash(@target_ticket)
+			emails_list = []
+			@source_tickets.each do |source|
+				emails_list += get_reply_cc_email_from_hash(source)
+				emails_list << add_source_requester(source) if check_source_requester(source)
+			end
+			emails_list.delete_if { |e| reject_email?(parse_email_text(e)[:email]) }
+		end
 
-  #   def get_cc_email_from_hash ticket
-  #     ticket.cc_email ? (ticket.cc_email[:cc_emails] ? ticket.cc_email[:cc_emails] : []) : []
-  #   end 
+		def reject_email? email
+			target_reply_cc_emails = get_email_array(@target_reply_cc)
+			email == @target_ticket.requester.email || target_reply_cc_emails.include?(email)
+		end
 
-		# def check_source source_ticket
-		#   source_ticket.requester_has_email? and ( !source_ticket.requester.eql?(@target_ticket.requester) or 
-		#   																									get_cc_email_from_hash(source_ticket).any?)
-		# end
+		def add_source_requester ticket
+			%{#{ticket.requester.name} <#{ticket.requester.email}>}
+		end
+
+    def get_cc_email_from_hash ticket
+      ticket.cc_email ? (ticket.cc_email[:cc_emails] ? get_email_array(ticket.cc_email[:cc_emails]) : []) : []
+    end
+
+    def get_reply_cc_email_from_hash ticket
+      ticket.cc_email ? (ticket.cc_email[:reply_cc] ? ticket.cc_email[:reply_cc] : []) : []
+    end
+
+		def check_source_requester source_ticket
+			source_ticket.requester_has_email? && !source_ticket.requester.eql?(@target_ticket.requester)
+		end
 end	
