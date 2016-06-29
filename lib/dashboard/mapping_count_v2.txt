@@ -2,12 +2,6 @@
 
 curl -XPUT "172.16.210.126:9101/es_filters_count" -d'
 {
- "settings" : {
-  "index" : {
-      "number_of_shards" : 10, 
-      "number_of_replicas" : 2 
-  }
-},
 "mappings": {
     "ticket": {
       "dynamic_templates": [
