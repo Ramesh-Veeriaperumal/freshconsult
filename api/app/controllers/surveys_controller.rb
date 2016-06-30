@@ -6,7 +6,7 @@ class SurveysController < ApiApplicationController
     if custom_survey?
       @survey_questions = @item.survey_questions.map do |q|
         survey = { id: "question_#{q.id}", label: q.label, accepted_ratings: q.face_values }
-        survey.merge!(default: true) if q.default
+        survey.merge!(default: true, id: 'default_question') if q.default
         survey
       end
     end
@@ -39,6 +39,7 @@ class SurveysController < ApiApplicationController
   end
 
   def survey_results
+    return if validate_filter_params
     load_objects
     render "#{controller_path}/index"
   end
@@ -63,9 +64,13 @@ class SurveysController < ApiApplicationController
   private
 
     def validate_filter_params
-      params.permit(*SurveyConstants::INDEX_FIELDS, *ApiConstants::DEFAULT_INDEX_FIELDS)
-      @survey_filter = SurveyFilterValidation.new(params, nil, string_request_params?)
-      render_errors(@survey_filter.errors, @survey_filter.error_options) unless @survey_filter.valid?
+      if index?
+        params.permit(*SurveyConstants::INDEX_FIELDS, *ApiConstants::DEFAULT_INDEX_FIELDS)
+        @survey_filter = SurveyFilterValidation.new(params, nil, string_request_params?)
+        render_errors(@survey_filter.errors, @survey_filter.error_options) unless @survey_filter.valid?
+      else
+        super
+      end
     end
 
     def surveys_filter(survey_results)
@@ -85,31 +90,34 @@ class SurveysController < ApiApplicationController
     end
 
     def validate_params
-      allowed_questions, allowed_default_choices, allowed_custom_choices = []
+      allowed_questions, allowed_custom_choices = []
+      allowed_default_choices = SurveyConstants::CLASSIC_RATINGS
       fields = SurveyConstants::FIELDS
       if custom_survey?
-        fields |= SurveyConstants::HASH_FIELDS
         construct_questions_hash
         allowed_questions = @question_id_name_mapping.empty? ? [nil] : @question_id_name_mapping.keys
         survey_questions = current_account.survey.survey_questions
         allowed_default_choices = survey_questions.first.face_values
         allowed_custom_choices = survey_questions.last.face_values if allowed_questions
-        fields |= ['custom_ratings' => allowed_questions]
+        fields |= ['ratings' => allowed_questions]
+      else
+        fields |= ['ratings' => ['default_question']]
       end
       params[cname].permit(*(fields))
-      survey = SurveyValidation.new(params[cname], @item, custom_survey?, allowed_custom_choices, allowed_default_choices)
+      survey = SurveyValidation.new(params[cname], @item, allowed_custom_choices, allowed_default_choices)
       render_custom_errors(survey, true) unless survey.valid?
     end
 
     def sanitize_params
+      ratings = params[cname].delete(:ratings)
+      params[cname][:rating] = ratings[:default_question]
       # ForBackward compatibility converting rating to old rating and saving in class survey result where as custom_survey_result has custom rating
       if custom_survey?
-        rating  = custom_rating(params[cname][:rating])
+        rating  = custom_rating(ratings[:default_question])
         params[cname][:rating] = CustomSurvey::Survey.old_rating rating.to_i
         params[cname]['custom_field'] = { "#{current_account.survey.default_question.name}" => rating }
         # converting Custom Rating hash keys from survey_question_id to survey_question_name
-        params[cname]['custom_ratings'].each_pair { |key, value| params[cname]['custom_field'][@question_id_name_mapping[key]] = value } if params[cname]['custom_ratings'].present?
-        params[cname].delete 'custom_ratings'
+        ratings.each_pair { |key, value| params[cname]['custom_field'][@question_id_name_mapping[key]] = value }
       end
       params[cname].merge!(survey_id: current_account.survey.id, customer_id: @ticket.requester_id, agent_id: @ticket.responder_id, group_id: @ticket.group_id)
       @feedback = params[cname].delete(:feedback)
@@ -124,8 +132,12 @@ class SurveysController < ApiApplicationController
 
     def construct_questions_hash
       @question_id_name_mapping = {}
-      current_account.survey.survey_questions.feedback.each do |sq|
-        @question_id_name_mapping["question_#{sq.id}"] = sq.name unless sq.default
+      current_account.survey.survey_questions.each do |sq|
+        if sq.default
+          @question_id_name_mapping["default_question"] = sq.name
+        else
+          @question_id_name_mapping["question_#{sq.id}"] = sq.name
+        end
       end
     end
 

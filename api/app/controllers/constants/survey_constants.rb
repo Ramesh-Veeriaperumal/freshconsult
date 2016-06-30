@@ -1,7 +1,6 @@
 module SurveyConstants
-  HASH_FIELDS = ['custom_ratings'].freeze
 
-  FIELDS = %w(rating feedback).freeze
+  FIELDS = %w(feedback ratings).freeze
 
   ATTRIBUTES_TO_BE_STRIPPED = %w(feedback).freeze
 

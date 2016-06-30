@@ -9,7 +9,7 @@ module SurveysTestHelper
       user_id: survey.customer_id,
       agent_id: survey.agent_id,
       group_id: survey.group_id,
-      rating: survey.rating,
+      ratings: { default_questions: survey.rating} ,
       feedback: feedback,
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
@@ -18,15 +18,19 @@ module SurveysTestHelper
 
   def survey_custom_rating_pattern(expected_output = {}, survey)
     survey_result = survey_pattern(expected_output, survey)
-    survey_result.merge!(custom_ratings: survey.custom_ratings)
+    survey_result[:ratings] = survey.custom_ratings
+    survey_result
   end
 
   def active_custom_survey_pattern(expected_output = {}, survey)
     active_survey = active_classic_survey_rating(expected_output, survey)
     if Account.current.new_survey_enabled?
       survey_questions = Account.current.survey.survey_questions.map do |q|
-        survey = { id: "question_#{q.id}", label: q.label, accepted_ratings: q.face_values }
-        survey.merge!(default: true) if q.default
+        if q.default
+          survey = { id: "default_question", label: q.label, accepted_ratings: q.face_values, default: true } 
+        else
+          survey = { id: "question_#{q.id}", label: q.label, accepted_ratings: q.face_values }
+        end
         survey
       end
       active_survey.merge!(questions: survey_questions)
@@ -51,11 +55,11 @@ module SurveysTestHelper
   end
 
   def v2_survey_params
-    { rating: 103,  feedback: Faker::Lorem.paragraph }
+    { ratings: {default_question: 103},  feedback: Faker::Lorem.paragraph }
   end
 
   def v2_classic_survey_params
-    { rating: 1,  feedback: Faker::Lorem.paragraph }
+    { ratings: {default_question: 1},  feedback: Faker::Lorem.paragraph }
   end
 
   def v2_classic_survey_payload

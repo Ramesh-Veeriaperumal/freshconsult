@@ -11,7 +11,8 @@ class ValidationHelper
         file_size: FileSizeValidator,
         required: RequiredValidator,
         string_rejection: StringRejectionValidator,
-        custom_length: CustomLengthValidator
+        custom_length: CustomLengthValidator,
+        hash: HashValidator
       }
     end
 

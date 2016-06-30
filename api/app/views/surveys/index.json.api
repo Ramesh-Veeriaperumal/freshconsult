@@ -7,10 +7,10 @@ JSON.generate(@items.map do |item|
     agent_id: item.agent_id,
     feedback: feedback,
     group_id: item.group_id,
-    rating: item.rating,
     created_at: item.created_at.try(:utc),
     updated_at: item.updated_at.try(:utc)
   }
-  response_hash.merge!(custom_ratings: item.custom_ratings) if item.respond_to?(:custom_ratings)
+  response_hash.merge!(ratings: item.custom_ratings) if item.respond_to?(:custom_ratings)
+  response_hash.merge!(ratings: { default_question: item.rating } ) unless item.respond_to?(:custom_ratings)
   response_hash
 end)
