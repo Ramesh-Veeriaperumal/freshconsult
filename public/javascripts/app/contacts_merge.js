@@ -238,23 +238,23 @@ window.App.Contacts.Contacts_merge = window.App.Contacts.Contacts_merge || {};
         this.ContactNumber += 1
         if(element.data("emails").length)
           this.Email += element.data("emails").split(",").length;
-        if(source_twitter != element.data("twitter-id"))
+        if(source_twitter != "" && element.data("twitter-id") != "" && source_twitter != element.data("twitter-id"))
           this.Twitter += element.data("twitter");
         this.Facebook += element.data("facebook");
-        if(source_phone != element.data("phone-num"))
+        if(source_phone != "" && element.data("phone-num") != "" && source_phone != element.data("phone-num"))
           this.Phone += element.data("phone");
-        if(source_mobile != element.data("mobile-num"))
+        if(source_mobile != "" && element.data("mobile-num") != "" && source_mobile != element.data("mobile-num"))
           this.Mobile += element.data("mobile");
       }else{
         this.ContactNumber -= 1
         if(element.data("emails").length)
           this.Email -= element.data("emails").split(",").length;
-        if(source_twitter != element.data("twitter-id"))
+        if(source_twitter != "" && element.data("twitter-id") != "" && source_twitter != element.data("twitter-id"))
           this.Twitter -= element.data("twitter");
         this.Facebook -= element.data("facebook");
-        if(source_phone != element.data("phone-num"))
+        if(source_phone != "" && element.data("phone-num") != "" && source_phone != element.data("phone-num"))
           this.Phone -= element.data("phone");
-        if(source_mobile != element.data("mobile-num"))
+        if(source_mobile != "" && element.data("mobile-num") != "" && source_mobile != element.data("mobile-num"))
           this.Mobile -= element.data("mobile");
       }
     },
