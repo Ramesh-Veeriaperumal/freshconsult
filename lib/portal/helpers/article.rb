@@ -97,7 +97,7 @@ HTML
 			output << %(</span>)
 			output << %(</p>)
 			output << article_feedback_link
-			output << article_feedback
+			output << article_feedback(article)
 		end
 
 		output.join('').html_safe
@@ -136,9 +136,14 @@ HTML
 		output.join('').html_safe
 	end
 
-	def article_feedback
+	def article_feedback(article)
 		output = []
-		output << %(<div class="hide" id="vote-feedback-container">)
+		output << %(<div id="vote-feedback-container")
+		if article.personalized_articles?
+			output << %(class="hide vote-feedback">)
+		else
+			output << %(class="hide">)
+		end				
 		output << %(	<div class="lead">#{t('feedback.downvote_feedback_messasge')}</div>)
 		output << %(	<div id="vote-feedback-form">)
 		output << %(		<div class="sloading loading-small loading-block"></div>)
