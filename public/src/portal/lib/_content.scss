@@ -371,6 +371,10 @@ li.article-item, li.topic-item, li.ticket-item, li.note-item {
 	@include margin-left(10px);
 }
 
+#vote-feedback-container{
+	@include margin-left(55px);
+}
+
 /* Print button in Solutions Page */
 .solution-print-icon {
 	@include float(right);

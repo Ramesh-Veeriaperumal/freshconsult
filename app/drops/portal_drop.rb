@@ -228,6 +228,10 @@ class PortalDrop < BaseDrop
     Language.current
   end
   
+  def personalized_articles?
+    source.preferences[:personalized_articles]
+  end
+
   private
     def load_tabs
       tabs = [  [ support_home_path,        :home,		    true ],
