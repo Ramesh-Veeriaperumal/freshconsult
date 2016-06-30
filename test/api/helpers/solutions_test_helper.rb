@@ -57,4 +57,37 @@ module SolutionsTestHelper
     solution_article_pattern(expected_output = {}, ignore_extra_keys = true, article).except(:tags)
   end
 
+  def v1_category_payload
+    { solution_category: { name: "API V1", description: "API V1 Description" } }.to_json
+  end
+
+  def v2_category_payload
+    { name: "API V2", description: "API V2 Description" }.to_json
+  end
+
+  def v1_folder_payload
+    { solution_folder: { name: "API V1", description: "API V1 Description", visibility: 1 } }.to_json
+  end
+
+  def v2_folder_payload
+    { name: "API V2", description: "API V2 Description", visibility: 1 }.to_json
+  end
+
+  def v1_article_payload(folder_id)
+    { solution_article: { title: "API V1", description: "API V1 Description", status: 1, art_type: 1, folder_id: folder_id } }.to_json
+  end
+
+  def v2_article_payload
+    { title: "API V1", description: "API V1 Description", status: 1, type: 1 }.to_json
+  end
+
+  def v1_article_update_payload
+    { solution_article: { description: "API V1 Description" } }.to_json
+  end
+
+  def v2_article_update_payload
+    { description: "API V1 Description" }.to_json
+  end
+
+
 end

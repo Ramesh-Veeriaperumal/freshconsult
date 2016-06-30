@@ -14,7 +14,7 @@ class ApiSolutions::FolderValidation < ApiValidation
   def initialize(request_params, item, lang_id)
     super(request_params, item)
     @lang_id = lang_id
-    @visibility = item.parent.visibility if item && secondary_language?
+    @visibility ||= item.parent.visibility if item.respond_to?(:visibility)
   end
 
   private

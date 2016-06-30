@@ -325,6 +325,22 @@ module ApiSolutions
       assert sample_folder.reload.solution_folder_meta.customer_ids == [@account.customer_ids.last]
     end
 
+    def test_update_folder_with_name_description
+      name = Faker::Name.name
+      description = Faker::Lorem.paragraph
+      sample_folder = get_folder
+
+      old_visibility = sample_folder.parent.visibility
+
+      params_hash  = { name: name, description: description }
+      put :update, construct_params({ id: sample_folder.parent_id }, params_hash)
+      assert_response 200
+      match_json(solution_folder_pattern(sample_folder.reload))
+      assert sample_folder.reload.name == name
+      assert sample_folder.reload.description == description
+      assert sample_folder.reload.solution_folder_meta.visibility == old_visibility
+    end
+
     def test_update_folder_with_primary_language_query_param_and_visibility
       name = Faker::Name.name
       description = Faker::Lorem.paragraph
