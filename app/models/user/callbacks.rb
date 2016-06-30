@@ -121,7 +121,7 @@ class User < ActiveRecord::Base
   end
 
   def set_company_name
-    if (self.company_id.nil? && self.email)      
+    if (!self.company_name.present? && self.email)      
       email_domain =  self.email.split("@")[1]
       comp_id = Account.current.company_domains.find_by_domain(email_domain).try(:company_id)
       self.company_id = comp_id unless comp_id.nil?
