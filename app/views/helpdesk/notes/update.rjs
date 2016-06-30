@@ -4,11 +4,11 @@ page << "jQuery('#note_details_#{@item.id}').removeClass('hide')"
 
 page << "trigger_event('note_updated', #{to_event_data(@item)});"
 
-page.replace_html "note_attachments_container_#{@item.id}".to_sym, :partial => '/helpdesk/tickets/show/note_attachments', :locals => { :note => @item}
+page.replace_html "note_attachments_container_#{@item.id}".to_sym, :partial => '/helpdesk/tickets/show/note_attachments', :locals => { :note => @item }
 
 page.replace_html "note_last_modified_container_#{@item.id}".to_sym, t("helpdesk.tickets.note.last_edited_info", 
                   :user_name => link_to_user(current_user), 
-                  :note_date => formated_date(Time.now), 
+                  :note_date => formated_date(Time.zone.now), 
                   :timestamp => Time.zone.now.to_i
                 ).html_safe
 show_ajax_flash(page)
