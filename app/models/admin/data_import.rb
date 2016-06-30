@@ -23,8 +23,6 @@ class Admin::DataImport < ActiveRecord::Base
                     :failure => 5
                   }
 
-  private
-
   def completed!
     self.update_attributes(:import_status => IMPORT_STATUS[:completed])
   end
@@ -40,6 +38,8 @@ class Admin::DataImport < ActiveRecord::Base
   def failure!(error)
     self.update_attributes({:import_status => IMPORT_STATUS[:failure], :last_error => error})
   end
+
+  private
 
   def clear_key
     clear_redis_key
