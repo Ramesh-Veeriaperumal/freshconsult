@@ -1718,6 +1718,7 @@ Helpkit::Application.routes.draw do
       post :calculate_amount
       put :convert_subscription_to_free
       post :calculate_plan_amount
+      post :request_trial_extension
     end
   end
 

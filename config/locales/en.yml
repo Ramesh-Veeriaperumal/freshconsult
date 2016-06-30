@@ -154,6 +154,8 @@ en:
   signup_title: "Sign up to %{current_portal}"
   signup_up_with_us: "Sign up with us"
   signup_help_information: "Once you sign up, you will have complete access to our self service portal and you can use your account to raise support tickets and track their status."
+  trial_extension_requested: "Your request has been received. We'll get back to you soon."
+  request_for_extension: "Request for extension."
   trial_expired_on: "Urgent! Your trial has expired!"
   trial_will_expire_in: "Your trial will expire in <b>%{no_of_days}</b>"
   trial_one_more_day: "You just have 1 more day in your trial"
