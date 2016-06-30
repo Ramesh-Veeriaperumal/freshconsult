@@ -1328,7 +1328,6 @@ ol, ul, li{
 	}
 
 	.last-modified-detail {
-		@extend .author-mail-detail;
 		a{ 
 			font-weight:normal;
 			color: #999;

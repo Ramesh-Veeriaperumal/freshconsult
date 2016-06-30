@@ -82,7 +82,7 @@ end
         <%end%>
       </div>
       <%  if last_modified_user %>
-        <div class="last-modified-detail">
+        <div class="author-mail-detail last-modified-detail">
             <% last_modified_translation = note.deleted? ? 'last_deleted_info' : 'last_edited_info' %>
               <%= t("helpdesk.tickets.note.#{last_modified_translation}", 
                   :user_name => link_to_user(last_modified_user), 
