@@ -104,7 +104,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"helpdesk/canned_responses/response"
 
     resource :"helpdesk/archive_ticket", :only => [:show, :index, :custom_search, :latest_note, 
-                                                    :full_paginate,  :activities, :component, :prevnext]                                                
+                                                    :full_paginate,  :activities, :component, :prevnext, :activitiesv2]                                                
     resource :"helpdesk/archive_note", :only => [:index, :full_text]
 
     resource :"wf/filter", :only => [:index, :update_filter, :save_filter, :delete_filter]
