@@ -11,7 +11,7 @@ class ApiSolutions::ArticleValidation < ApiValidation
 
   # type is allowed only during creation/alteration of article in primary language
   validates :type, required: true, if: -> { @lang_id == Account.current.language_object.id }, on: :create
-  validates :type, custom_absence: { message: :cant_set_art_type }, if: -> { @lang_id != Account.current.language_object.id }
+  validates :type, custom_absence: { message: :cant_set_for_secondary_language }, if: -> { @lang_id != Account.current.language_object.id }
   validates :type, custom_inclusion: { in: Solution::Article::TYPE_NAMES_BY_KEY.keys,  detect_type: true }
 
   validates :seo_data, data_type: { rules: Hash }

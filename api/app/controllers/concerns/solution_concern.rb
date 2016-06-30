@@ -7,7 +7,7 @@ module SolutionConcern
       permitted_languages += [Account.current.language] unless create?
       invalid_language = true
       if !Account.current.multilingual?
-        render_request_error(:require_feature_to_suppport_the_request, 404, feature: 'EnableMultilingualFeature')
+        render_request_error(:require_feature, 404, feature: 'EnableMultilingualFeature')
       elsif destroy?
         log_and_render_404
       elsif permitted_languages.exclude?(params[:language])

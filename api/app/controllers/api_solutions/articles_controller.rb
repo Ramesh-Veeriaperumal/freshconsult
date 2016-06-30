@@ -16,21 +16,19 @@ module ApiSolutions
 
     def create
       assign_protected
-      render_201_with_location(item_id: @item.parent_id) if manage_article
+      render_201_with_location(item_id: @item.parent_id) if create_or_update_article
     end
 
     def update
-      manage_article
+      create_or_update_article
     end
 
     def folder_articles
       if validate_language
-        @item = current_account.solution_folder_meta.find_by_id(params[:id] || params[:folder_id])
+        load_folder
         if @item
           @items = paginate_items(@item.solution_articles.where(language_id: @lang_id))
           render '/api_solutions/articles/index'
-        else
-          log_and_render_404
         end
       else
         return false
@@ -47,15 +45,10 @@ module ApiSolutions
         current_account.solution_article_meta
       end
 
-      def manage_article
-        delegator_params = { language_id: @lang_id, current_user_id: api_current_user.id, article_meta: @meta, category_name: @category_name, folder_name: @folder_name }
-        delegator_params.merge!(user_id: @article_params[language_scoper][:user_id]) if  @article_params[language_scoper] && @article_params[language_scoper][:user_id]
-        article_delegator = ArticleDelegator.new(delegator_params)
+      def create_or_update_article
+        article_delegator = build_article_delegator
         if article_delegator.valid?
-          @meta = Solution::Builder.article(solution_article_meta: @article_params, language_id: @lang_id)
-          @item = @meta.send(language_scoper)
-          @item.tags = construct_tags(@tags) if @tags
-          @item.create_draft_from_article if @status == Solution::Article::STATUS_KEYS_BY_TOKEN[:draft]
+          construct_article_object
           if @item.errors.any?
             render_custom_errors
           else
@@ -67,14 +60,19 @@ module ApiSolutions
         false
       end
 
-      def folder_exists?
-        @item = current_account.solution_folder_meta.find_by_id(params[:id] || params[:folder_id])
-        log_and_render_404 unless @item
+      def construct_article_object
+        @meta = Solution::Builder.article(solution_article_meta: @article_params, language_id: @lang_id)
+        @item = @meta.send(language_scoper)
+        @item.tags = construct_tags(@tags) if @tags
+        @item.create_draft_from_article if @status == Solution::Article::STATUS_KEYS_BY_TOKEN[:draft]
       end
 
-      # Load folder if create endpoint is triggered with primitive language
-      def load_folder
-        folder_exists? if @lang_id == current_account.language_object.id
+      def build_article_delegator
+        delegator_params = { language_id: @lang_id, current_user_id: api_current_user.id, article_meta: @meta }
+        delegator_params.merge!(folder_name: params[cname]['folder_name']) if params[cname].key?('folder_name')
+        delegator_params.merge!(category_name: params[cname]['category_name']) if params[cname].key?('category_name')
+        delegator_params.merge!(user_id: @article_params[language_scoper][:user_id]) if  @article_params[language_scoper] && @article_params[language_scoper][:user_id]
+        ArticleDelegator.new(delegator_params)
       end
 
       def before_load_object
@@ -90,21 +88,21 @@ module ApiSolutions
       def validate_params
         if create?
           return false unless validate_language
-          load_folder
+          # Load folder if create endpoint is triggered with primitive language
+          load_folder if @lang_id == current_account.language_object.id
         end
-        fields = "SolutionConstants::#{action_name.upcase}_ARTICLE_FIELDS".constantize
-        params[cname].permit(*(fields))
+        fields = "SolutionConstants::#{action_name.upcase}_ARTICLE_FIELDS"
+        params[cname].permit(*(get_fields(fields)))
         article = ApiSolutions::ArticleValidation.new(params[cname], @item, @lang_id)
         render_errors article.errors, article.error_options unless article.valid?(action_name.to_sym)
-        ParamsHelper.assign_and_clean_params({ agent_id: :user_id }, params[cname])
       end
 
       def sanitize_params
         prepare_array_fields [:tags]
+        ParamsHelper.assign_and_clean_params({ type: :art_type, agent_id: :user_id }, params[cname])
         sanitize_seo_params
         sanitize_language_params
         params[cname][folder] = params[:id]
-        ParamsHelper.assign_and_clean_params({ type: :art_type }, params[cname])
         @status = params[cname][:status]
         @tags = params[cname][:tags]
         @article_params = params[cname].except!(:title, :description, :status, :seo_data)
@@ -130,14 +128,17 @@ module ApiSolutions
         create? ? api_current_user.id : params[cname][:user_id]
       end
 
+      def load_folder
+        @item = current_account.solution_folder_meta.find_by_id(params[:id] || params[:folder_id])
+        log_and_render_404 unless @item
+      end
+
       def assign_protected
         params_hash = params[cname]
-        @folder_name = params_hash['folder_name']
-        @category_name = params_hash['category_name']
         if params_hash['folder_name']
-          @article_params['solution_folder_meta'] = { "#{language.to_key}_folder" => { 'name' => @folder_name }, 'id' => @meta.solution_folder_meta.id }
+          @article_params['solution_folder_meta'] = { "#{language.to_key}_folder" => { 'name' => params_hash['folder_name'] }, 'id' => @meta.solution_folder_meta.id }
           if params_hash['category_name']
-            @article_params['solution_folder_meta']['solution_category_meta'] = { "#{language.to_key}_category" => { 'name' => @category_name }, 'id' => @meta.solution_category_meta.id }
+            @article_params['solution_folder_meta']['solution_category_meta'] = { "#{language.to_key}_category" => { 'name' => params_hash['category_name'] }, 'id' => @meta.solution_category_meta.id }
           end
         end
       end
@@ -150,6 +151,7 @@ module ApiSolutions
             @item = Solution::Article.new
             params[cname][:user_id] ||= api_current_user.id
           else
+            # Not allowed if the request is fired with existing id language combination
             render_base_error(:method_not_allowed, 405, methods: 'GET, PUT', fired_method: 'POST')
           end
         end

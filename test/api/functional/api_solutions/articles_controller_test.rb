@@ -127,7 +127,7 @@ module ApiSolutions
       Account.any_instance.stubs(:features).returns(allowed_features)
       sample_article = get_article
       get :show, controller_params({id: sample_article.parent_id, language: @account.language })
-      match_json(request_error_pattern(:require_feature_to_suppport_the_request, feature: 'EnableMultilingualFeature'))
+      match_json(request_error_pattern(:require_feature, feature: 'EnableMultilingualFeature'))
       assert_response 404
     ensure
       Account.any_instance.unstub(:features)
@@ -277,7 +277,7 @@ module ApiSolutions
       type = 1
       post :create, construct_params({id: sample_article.parent_id, language: @account.supported_languages.first}, {title: title, description: description, status: status, category_name: category_name, folder_name: folder_name, type: type})
       assert_response 400
-      match_json([bad_request_error_pattern('type', :cant_set_art_type)])
+      match_json([bad_request_error_pattern('type', :cant_set_for_secondary_language, code: :incompatible_field)])
     end
 
     def test_update_article
@@ -299,7 +299,7 @@ module ApiSolutions
       params_hash  = { title: 'new title', description: paragraph, status: 2, type: 2, agent_id: 9999 }
       put :update, construct_params({ id: sample_article.parent_id }, params_hash)
       assert_response 400
-      match_json([bad_request_error_pattern('agent_id', :absent_in_db, resource: 'Agent', attribute: 'agent_id')])
+      match_json([bad_request_error_pattern('agent_id', :absent_in_db, resource: 'agent', attribute: 'agent_id')])
     end
 
 
@@ -338,8 +338,8 @@ module ApiSolutions
       language = @account.language
       put :update, construct_params({ id: sample_article.parent_id, language: language }, { title: title, description: description, status: status, category_name: category_name, folder_name: folder_name})
       assert_response 400
-      match_json([bad_request_error_pattern('folder_name', :attribute_not_required),
-                  bad_request_error_pattern('category_name', :attribute_not_required)])
+      match_json([bad_request_error_pattern('folder_name', :attribute_not_required, code: :incompatible_field),
+                  bad_request_error_pattern('category_name', :attribute_not_required, code: :incompatible_field)])
     end
 
     def test_update_article_with_primary_language_with_category_name_and_folder_name
@@ -350,8 +350,8 @@ module ApiSolutions
       language = @account.language
       put :update, construct_params({ id: sample_article.parent_id, language: language }, { title: title, description: description, status: status, category_name: 'category', folder_name: 'folder'})
       assert_response 400
-      match_json([bad_request_error_pattern('folder_name', :attribute_not_required),
-                  bad_request_error_pattern('category_name', :attribute_not_required)])
+      match_json([bad_request_error_pattern('folder_name', :attribute_not_required, code: :incompatible_field),
+                  bad_request_error_pattern('category_name', :attribute_not_required, code: :incompatible_field)])
     end
 
     def test_update_article_with_user_id_without_privilege
@@ -364,7 +364,7 @@ module ApiSolutions
       params_hash  = { title: 'new title', description: paragraph, status: 2, type: 2, agent_id: @agent.id }
       put :update, construct_params({ id: sample_article.parent_id }, params_hash)
       assert_response 400
-      match_json([bad_request_error_pattern('agent_id', :require_privilege_for_attribute, privilege: 'admin_tasks', attribute: 'agent_id')])
+      match_json([bad_request_error_pattern('agent_id', :inaccessible_field)])
     ensure
       User.any_instance.unstub(:privilege?)
     end

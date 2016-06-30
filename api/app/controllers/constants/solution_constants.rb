@@ -9,8 +9,9 @@ module SolutionConstants
 
   ARTICLE_SEO_DATA_FIELDS = %w(meta_title meta_description meta_keywords)
 
-  CREATE_ARTICLE_FIELDS = %w(category_name folder_name description title status seo_data type tags).freeze | ['seo_data' => ARTICLE_SEO_DATA_FIELDS]
-  UPDATE_ARTICLE_FIELDS = %w(agent_id) | CREATE_ARTICLE_FIELDS
+  ARTICLE_FIELDS = %w(category_name folder_name description title status seo_data type tags).freeze | ['seo_data' => ARTICLE_SEO_DATA_FIELDS]
+  CREATE_ARTICLE_FIELDS = { all: ARTICLE_FIELDS }.freeze
+  UPDATE_ARTICLE_FIELDS = { all: ARTICLE_FIELDS, admin_tasks: ['agent_id'] }.freeze
 
   ARTICLE_ATTRIBUTES_TO_BE_STRIPPED = %w(title category_name folder_name).freeze
 
@@ -18,6 +19,4 @@ module SolutionConstants
   TITLE_MIN_LENGTH = 3
 
   LOAD_OBJECT_EXCEPT = [:category_folders, :folder_articles].freeze
-
-  ADMIN_TASKS = :admin_tasks
 end

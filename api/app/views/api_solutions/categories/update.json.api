@@ -5,5 +5,5 @@ response_hash = {
 	created_at: @item.created_at,
 	updated_at: @item.updated_at
 }
-response_hash.merge!(visible_in: @meta.portal_ids) if @item.portal_ids_visible?
+response_hash.merge!(visible_in: @item.visible_in) if @item.portal_ids_visible?
 JSON.generate(response_hash)

@@ -1,11 +1,12 @@
 module ApiSolutions
   class ArticleDelegator < BaseDelegator
-    validate :current_agent_has_admin_tasks_privilege?, if: -> { @agent_id }
+    attr_accessor :folder_name, :category_name
     validate :agent_exists?, if: -> { @agent_id && errors[:agent_id].blank? }
-    validate :folder_exists?, if: -> { @folder_name }
-    validate :category_exists?, if: -> { @category_name }
-    validate :parent_exists?, if: -> { secondary_language? }
-
+    validates :folder_name, custom_absence: { message: :translation_available_already }, if: -> { secondary_language? && folder_exists? }
+    validates :category_name, custom_absence: { message: :translation_available_already }, if: -> { secondary_language? && category_exists? }
+    validates :folder_name, required: { message: :translation_not_available }, if: -> { secondary_language? && !folder_exists? }
+    validates :category_name, required: { message: :translation_not_available }, if: -> { secondary_language? && !category_exists? }
+    
     def initialize(params)
       @current_user_id = params[:current_user_id]
       @agent_id = params[:user_id]
@@ -14,58 +15,21 @@ module ApiSolutions
       @article_meta = params[:article_meta]
       @language_id = params[:language_id]
       super(params)
-    end
-
-    # user_id can be updated only if the current user has admin_tasks privilege
-    def current_agent_has_admin_tasks_privilege?
-      agent = Account.current.agents_from_cache.detect { |x| x.user_id == @current_user_id }
-      unless agent.user.privilege?(SolutionConstants::ADMIN_TASKS)
-        errors[:agent_id] << :require_privilege_for_attribute
-        (self.error_options ||= {}).merge!(agent_id: { privilege: SolutionConstants::ADMIN_TASKS, attribute: :agent_id })
-        return false
-      end
-      true
+      check_params_set(params.slice(:folder_name, :category_name))
     end
 
     def agent_exists?
-      unless Account.current.agents_from_cache.detect { |x| x.user_id == @agent_id }
-        errors[:agent_id] << :absent_in_db
-        @error_options.merge!(agent_id: { resource: 'Agent', attribute: 'agent_id' })
+      unless Account.current.agents_details_from_cache.detect { |x| x.id == @agent_id }
+        errors[:agent_id] << :"can't be blank"
       end
     end
 
     def folder_exists?
-      if secondary_language?
-        if @article_meta.solution_folder_meta.solution_folders.where('language_id = ?', @language_id).first
-          errors[:folder_name] << :translation_available_already
-        end
-      else
-        errors[:folder_name] << :attribute_not_required
-      end
+      @folder_exists ||= @article_meta.solution_folder_meta.solution_folders.where('language_id = ?', @language_id).first
     end
 
     def category_exists?
-      if secondary_language?
-        if @article_meta.solution_folder_meta.solution_category_meta.solution_categories.where('language_id = ?', @language_id).first
-          errors[:category_name] << :translation_available_already
-        end
-      else
-        errors[:category_name] << :attribute_not_required
-      end
-    end
-
-    def parent_exists?
-      unless @category_name
-        unless @article_meta.solution_category_meta.solution_categories.where('language_id = ?', @language_id).first
-          errors[:category_name] << :translation_not_available
-        end
-      end
-
-      unless @folder_name
-        unless @article_meta.solution_folder_meta.solution_folders.where('language_id = ?', @language_id).first
-          errors[:folder_name] << :translation_not_available
-        end
-      end
+      @category_exists ||= @article_meta.solution_category_meta.solution_categories.where('language_id = ?', @language_id).first
     end
 
     def secondary_language?

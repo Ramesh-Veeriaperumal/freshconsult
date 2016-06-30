@@ -5,11 +5,11 @@ module ApiSolutions
     decorate_views
 
     def create
-      render_201_with_location(item_id: @item.parent_id) if manage_category
+      render_201_with_location(item_id: @item.parent_id) if create_or_update_category
     end
 
     def update
-      manage_category
+      create_or_update_category
     end
 
     def destroy
@@ -27,20 +27,15 @@ module ApiSolutions
         current_account.solution_category_meta.where(is_default: false)
       end
 
-      def manage_category
-        category_delegator = CategoryDelegator.new(@category_params[:portal_ids])
-        if category_delegator.valid?
-          @meta = Solution::Builder.category(solution_category_meta: @category_params, language_id: @lang_id)
-          @item = @meta.send(language_scoper)
-          if @item.errors.any?
-            render_custom_errors
-          else
-            return true
-          end
+      def create_or_update_category
+        @meta = Solution::Builder.category(solution_category_meta: @category_params, language_id: @lang_id)
+        @item = @meta.send(language_scoper)
+        if @item.errors.any? || @item.parent.errors.any?
+          render_custom_errors
+          false
         else
-          render_custom_errors(category_delegator, true)
+          true
         end
-        false
       end
 
       def before_load_object
@@ -67,6 +62,7 @@ module ApiSolutions
         language_params = params[cname].slice(:name, :description)
         params[cname][language_scoper] = language_params unless language_params.empty?
         params[cname][:id] = params[:id] if params.key?(:id)
+        params[cname][:portal_solution_categories_attributes] = { portal_id:  params[cname].delete(:visible_in) } if params[cname].key?(:visible_in)
         ParamsHelper.assign_and_clean_params({ visible_in: :portal_ids }, params[cname])
         @category_params = params[cname].except!(:name, :description)
       end
@@ -95,6 +91,15 @@ module ApiSolutions
         meta = meta_scoper.find_by_id(id)
         log_and_render_404 unless meta
         meta
+      end
+
+      def set_custom_errors(item = @item)
+        if @item
+          bad_portal_ids = @item.parent.portal_solution_categories.select { |x| x.errors.present? }.map(&:portal_id)
+          @item.errors[:visible_in] << :invalid_list if bad_portal_ids.present?
+          @error_options = { remove: :"portal_solution_categories.portal", visible_in: { list: "#{bad_portal_ids.join(', ')}" } }
+        end
+        @error_options
       end
   end
 end

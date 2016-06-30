@@ -5,11 +5,11 @@ module ApiSolutions
     decorate_views(decorate_objects: [:category_folders])
 
     def create
-      render_201_with_location(item_id: @item.parent_id) if manage_folder
+      render_201_with_location(item_id: @item.parent_id) if create_or_update_folder
     end
 
     def update
-      manage_folder
+      create_or_update_folder
     end
 
     def destroy
@@ -41,20 +41,15 @@ module ApiSolutions
         current_account.solution_folder_meta.where(is_default: false)
       end
 
-      def manage_folder
-        folder_delegator = FolderDelegator.new(@folder_params)
-        if folder_delegator.valid?
-          @meta = Solution::Builder.folder(solution_folder_meta: @folder_params, language_id: @lang_id)
-          @item = @meta.send(language_scoper)
-          if @item.errors.any?
-            render_custom_errors
-          else
-            return true
-          end
+      def create_or_update_folder
+        @meta = Solution::Builder.folder(solution_folder_meta: @folder_params, language_id: @lang_id)
+        @item = @meta.send(language_scoper)
+        if @item.errors.any? || @item.parent.errors.any?
+          render_custom_errors
+          false
         else
-          render_custom_errors(folder_delegator, true)
+          true
         end
-        false
       end
 
       def category_exists?
@@ -120,6 +115,13 @@ module ApiSolutions
 
       def solution_category_meta(id)
         current_account.solution_category_meta.where(is_default: false, id: id).first
+      end
+
+      def set_custom_errors(_item = @item)
+        bad_customer_ids = @item.parent.customer_folders.select { |x| x.errors.present? }.map(&:customer_id)
+        @item.errors[:company_ids] << :invalid_list if bad_customer_ids.present?
+        @error_options = { remove: :customer_folders, company_ids: { list: "#{bad_customer_ids.join(', ')}" } }
+        @error_options
       end
   end
 end

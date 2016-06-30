@@ -101,7 +101,7 @@ module ApiSolutions
       Account.any_instance.stubs(:features).returns(allowed_features)
       sample_folder = get_folder
       get :show, controller_params({id: sample_folder.parent_id, language: @account.language })
-      match_json(request_error_pattern(:require_feature_to_suppport_the_request, feature: 'EnableMultilingualFeature'))
+      match_json(request_error_pattern(:require_feature, feature: 'EnableMultilingualFeature'))
       assert_response 404
     ensure
       Account.any_instance.unstub(:features)
@@ -131,7 +131,7 @@ module ApiSolutions
       post :create, construct_params({ id: category_meta.id }, description: Faker::Lorem.paragraph)
       assert_response 400
       match_json([bad_request_error_pattern('name', :datatype_mismatch, code: :missing_field, expected_data_type: String),
-        bad_request_error_pattern('visibility', :not_included, list: [1,2,3,4].join(','), code: :invalid_value)])
+        bad_request_error_pattern('visibility', :missing_field)])
     end
 
 
@@ -153,7 +153,7 @@ module ApiSolutions
       post :create, construct_params({ id: get_category.id },  { name: 1, description: ['1'] })
       match_json([bad_request_error_pattern('name', :datatype_mismatch, expected_data_type: 'String', prepend_msg: :input_received, given_data_type: Integer),
                   bad_request_error_pattern('description', :datatype_mismatch, expected_data_type: 'String', prepend_msg: :input_received, given_data_type: Array),
-                  bad_request_error_pattern('visibility', :not_included, list: [1,2,3,4].join(','), code: :invalid_value)])
+                  bad_request_error_pattern('visibility', :missing_field)])
       assert_response 400
     end
 
@@ -191,14 +191,14 @@ module ApiSolutions
       category_meta = get_category
       post :create, construct_params({ id: category_meta.id }, {name: Faker::Name.name, description: Faker::Lorem.paragraph, visibility: 3, company_ids:[get_company.id] })
       assert_response 400
-      match_json([bad_request_error_pattern('company_ids', :cant_set_company_ids)])
+      match_json([bad_request_error_pattern('company_ids', :cant_set_company_ids, code: :incompatible_field)])
     end
 
     def test_create_folder_with_invalid_company_ids_and_valid_visibility
       category_meta = get_category
       post :create, construct_params({ id: category_meta.id }, {name: Faker::Name.name, description: Faker::Lorem.paragraph, visibility: 3, company_ids:[99999] })
       assert_response 400
-      match_json([bad_request_error_pattern('company_ids', :cant_set_company_ids)])
+      match_json([bad_request_error_pattern('company_ids', :cant_set_company_ids, code: :incompatible_field)])
     end
 
     def test_create_folder_with_string_company_ids
@@ -238,8 +238,7 @@ module ApiSolutions
     def test_create_folder_without_visibility_and_with_company_ids
       category_meta = get_category
       post :create, construct_params({ id: category_meta.id }, {name: Faker::Name.name, description: Faker::Lorem.paragraph, company_ids: @account.customer_ids })
-      match_json([bad_request_error_pattern('visibility', :not_included, list: [1,2,3,4].join(','), code: :invalid_value)])
-      # match_json([bad_request_error_pattern('visibility', :not_included, list: [1,2,3,4].join(','), code: :missing_field)])
+      match_json([bad_request_error_pattern('visibility', :missing_field)])
       assert_response 400
     end
 
@@ -271,7 +270,7 @@ module ApiSolutions
       language_code = @account.supported_languages.last
       post :create, construct_params({id: folder.parent_id, language: language_code}, params_hash)
       assert_response 400
-      match_json([bad_request_error_pattern('visibility', :invalid_field)])
+      match_json([bad_request_error_pattern('visibility', :cant_set_for_secondary_language, code: :incompatible_field)])
     end
 
     def test_create_folder_with_supported_language_visibility_and_company_ids
@@ -280,7 +279,7 @@ module ApiSolutions
       language_code = @account.supported_languages.last
       post :create, construct_params({id: folder.parent_id, language: language_code}, params_hash)
       assert_response 400
-      match_json([bad_request_error_pattern('visibility', :invalid_field)])
+      match_json([bad_request_error_pattern('visibility', :cant_set_for_secondary_language, code: :incompatible_field)])
     end
 
     def test_create_folder_translation_for_unvailable_folder
@@ -341,7 +340,7 @@ module ApiSolutions
       params_hash  = { name: name, description: description, visibility: visibility, company_ids: company_ids }
       put :update, construct_params({ id: sample_folder.parent_id }, params_hash)
       assert_response 400
-      match_json([bad_request_error_pattern('company_ids', :cant_set_company_ids)])
+      match_json([bad_request_error_pattern('company_ids', :cant_set_company_ids, code: :incompatible_field)])
     end
 
     def test_update_unavailable_folder

@@ -412,6 +412,10 @@ class Account < ActiveRecord::Base
   def has_multiple_products?
     !products.empty?
   end
+
+  def has_multiple_portals?
+    portals.count > 1
+  end
   
   def kbase_email
     "kbase@#{full_domain}"
