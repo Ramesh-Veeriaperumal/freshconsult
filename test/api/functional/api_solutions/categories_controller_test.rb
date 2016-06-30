@@ -81,7 +81,7 @@ module ApiSolutions
       Account.any_instance.stubs(:features).returns(allowed_features)
       sample_category = get_category
       get :show, controller_params({id: sample_category.parent_id, language: @account.language })
-      match_json(request_error_pattern(:require_feature, feature: 'EnableMultilingualFeature'))
+      match_json(request_error_pattern(:require_feature, feature: 'MultilingualFeature'))
       assert_response 404
     ensure
       Account.any_instance.unstub(:features)
@@ -137,6 +137,17 @@ module ApiSolutions
       assert_equal "http://#{@request.host}/api/v2/solutions/categories/#{result['id']}", response.headers['Location']
       match_json(solution_category_pattern(Solution::Category.last))
     end
+
+    def test_create_category_with_visible_in_without_multiple_portals
+      portals = [@account.portals.first]
+      Account.any_instance.stubs(:portals).returns(portals)
+      post :create, construct_params({}, {name: Faker::Name.name, description: Faker::Lorem.paragraph, visible_in: [9999]})
+      match_json([bad_request_error_pattern('visible_in', :multiple_portals_required, code: :incompatible_field)])
+      assert_response 400
+    ensure
+      Account.any_instance.unstub(:portals)
+    end
+
 
     def test_create_category_with_invalid_visible_in
       post :create, construct_params({}, {name: Faker::Name.name, description: Faker::Lorem.paragraph, visible_in: [9999]})

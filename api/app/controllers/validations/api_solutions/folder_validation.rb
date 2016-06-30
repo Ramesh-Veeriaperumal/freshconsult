@@ -4,8 +4,8 @@ class ApiSolutions::FolderValidation < ApiValidation
   validates :name, data_type: { rules: String, required: true }, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }
   validates :description, data_type: { rules: String, allow_nil: true  }
 
-  validates :visibility, required: true, if: -> { @lang_id == Account.current.language_object.id }, on: :create
-  validates :visibility, custom_absence: { message: :cant_set_for_secondary_language }, if: -> { @lang_id != Account.current.language_object.id }
+  validates :visibility, required: true, unless: :secondary_language?, on: :create
+  validates :visibility, custom_absence: { message: :cant_set_for_secondary_language }, if: :secondary_language?
   validates :visibility, custom_inclusion: { in: Solution::Constants::VISIBILITY_NAMES_BY_KEY.keys, detect_type: true }
 
   validates :company_ids, custom_absence: { message: :cant_set_company_ids }, if: -> { (errors[:visibility].blank? && company_ids_not_allowed?) }
@@ -14,10 +14,14 @@ class ApiSolutions::FolderValidation < ApiValidation
   def initialize(request_params, item, lang_id)
     super(request_params, item)
     @lang_id = lang_id
-    @visibility = item.parent.visibility if item && @lang_id != Account.current.language_object.id
+    @visibility = item.parent.visibility if item && secondary_language?
   end
 
   private
+
+    def secondary_language?
+      @lang_id != Account.current.language_object.id
+    end
 
     def company_ids_not_allowed?
       @company_ids_not_allowed ||= visibility != Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:company_users]

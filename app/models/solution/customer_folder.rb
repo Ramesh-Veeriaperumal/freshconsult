@@ -23,7 +23,7 @@ class Solution::CustomerFolder < ActiveRecord::Base
 	after_commit :update_search_index, on: :create
 
 	def set_account_id
-		self.account_id = customer.account_id
+		self.account_id = customer.account_id if customer
 	end
 
 	 

@@ -127,7 +127,7 @@ module ApiSolutions
       Account.any_instance.stubs(:features).returns(allowed_features)
       sample_article = get_article
       get :show, controller_params({id: sample_article.parent_id, language: @account.language })
-      match_json(request_error_pattern(:require_feature, feature: 'EnableMultilingualFeature'))
+      match_json(request_error_pattern(:require_feature, feature: 'MultilingualFeature'))
       assert_response 404
     ensure
       Account.any_instance.unstub(:features)

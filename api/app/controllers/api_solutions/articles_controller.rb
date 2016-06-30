@@ -47,15 +47,12 @@ module ApiSolutions
 
       def create_or_update_article
         article_delegator = build_article_delegator
-        if article_delegator.valid?
-          construct_article_object
-          if @item.errors.any?
-            render_custom_errors
-          else
-            return true
-          end
+        if !article_delegator.valid?
+          render_custom_errors(article_delegator, true) 
+        elsif !construct_article_object
+          render_solution_item_errors
         else
-          render_custom_errors(article_delegator, true)
+          return true
         end
         false
       end
@@ -65,10 +62,11 @@ module ApiSolutions
         @item = @meta.send(language_scoper)
         @item.tags = construct_tags(@tags) if @tags
         @item.create_draft_from_article if @status == Solution::Article::STATUS_KEYS_BY_TOKEN[:draft]
+        !(@item.errors.any? || @item.parent.errors.any?)
       end
 
       def build_article_delegator
-        delegator_params = { language_id: @lang_id, current_user_id: api_current_user.id, article_meta: @meta }
+        delegator_params = { language_id: @lang_id, article_meta: @meta }
         delegator_params.merge!(folder_name: params[cname]['folder_name']) if params[cname].key?('folder_name')
         delegator_params.merge!(category_name: params[cname]['category_name']) if params[cname].key?('category_name')
         delegator_params.merge!(user_id: @article_params[language_scoper][:user_id]) if  @article_params[language_scoper] && @article_params[language_scoper][:user_id]

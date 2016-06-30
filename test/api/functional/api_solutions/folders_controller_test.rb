@@ -101,7 +101,7 @@ module ApiSolutions
       Account.any_instance.stubs(:features).returns(allowed_features)
       sample_folder = get_folder
       get :show, controller_params({id: sample_folder.parent_id, language: @account.language })
-      match_json(request_error_pattern(:require_feature, feature: 'EnableMultilingualFeature'))
+      match_json(request_error_pattern(:require_feature, feature: 'MultilingualFeature'))
       assert_response 404
     ensure
       Account.any_instance.unstub(:features)
@@ -194,12 +194,20 @@ module ApiSolutions
       match_json([bad_request_error_pattern('company_ids', :cant_set_company_ids, code: :incompatible_field)])
     end
 
-    def test_create_folder_with_invalid_company_ids_and_valid_visibility
+    def test_create_folder_with_invalid_company_ids_and_invalid_visibility
       category_meta = get_category
       post :create, construct_params({ id: category_meta.id }, {name: Faker::Name.name, description: Faker::Lorem.paragraph, visibility: 3, company_ids:[99999] })
       assert_response 400
       match_json([bad_request_error_pattern('company_ids', :cant_set_company_ids, code: :incompatible_field)])
     end
+
+    def test_create_folder_with_invalid_company_ids_and_valid_visibility
+      category_meta = get_category
+      post :create, construct_params({ id: category_meta.id }, {name: Faker::Name.name, description: Faker::Lorem.paragraph, visibility: 4, company_ids:[99999] })
+      assert_response 400
+      match_json([bad_request_error_pattern('company_ids', :invalid_list, list: '99999')])
+    end
+
 
     def test_create_folder_with_string_company_ids
       category_meta = get_category

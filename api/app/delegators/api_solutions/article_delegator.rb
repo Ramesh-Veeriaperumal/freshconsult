@@ -8,7 +8,6 @@ module ApiSolutions
     validates :category_name, required: { message: :translation_not_available }, if: -> { secondary_language? && !category_exists? }
     
     def initialize(params)
-      @current_user_id = params[:current_user_id]
       @agent_id = params[:user_id]
       @folder_name = params[:folder_name]
       @category_name = params[:category_name]
