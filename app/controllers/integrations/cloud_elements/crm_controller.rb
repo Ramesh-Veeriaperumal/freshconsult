@@ -101,13 +101,13 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
         end
       end
       portal = current_account.main_portal
-      hash[:callback_url] = (Rails.env.eql? "development") ? "https://freshdesk-ngrok.ngrok.io" : "#{portal.url_protocol}://#{portal.host}" # mention ngrok for development environment.
+      hash[:callback_url] = "#{portal.url_protocol}://#{portal.host}" # mention ngrok for development environment.
       hash[:element_name] = "#{element}_#{subdomain}_#{current_account.id}"
       hash
     end
 
     def subdomain
-      (Rails.env.eql? "development") ? "freshdesk-ngrok" : current_account.domain # mention ngrok for development environment.
+      current_account.domain # mention ngrok for development environment.
     end
 
     def fetch_metadata_fields(element_token)
@@ -404,7 +404,7 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
       kv_store = Redis::KeyValueStore.new(Redis::KeySpec.new(Redis::RedisKeys::APPS_AUTH_REDIRECT_OAUTH, key_options))
       kv_store.group = :integration
       app_config = JSON.parse(kv_store.get_key)
-      raise "OAuth Token is nil" if app_config["oauth_token"].nil?
+      raise OAUTH_ERROR if app_config["oauth_token"].nil?
       app_config
     end
 
