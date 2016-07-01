@@ -287,10 +287,10 @@ class Helpdesk::DashboardController < ApplicationController
   end
 
   def load_unresolved_filter
-    @group_by               = params[:group_by].presence || "group_id"
+    @group_by               = ["group_id","responder_id"].include?(params[:group_by]) ? params[:group_by] : "group_id"
     @filter_condition       = {}
 
-    [:group_id, :responder_id, :status].each do |filter|
+    [:group_id, :responder_id, :status].each do |filter|  
       next unless params[filter].present?
       filter_values = params[filter].split(",")
       if filter_values.include?("0")
