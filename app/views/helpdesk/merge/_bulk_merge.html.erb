@@ -6,6 +6,7 @@
       <%= pluralize(@source_tickets.length, t('ticket.ticket_selected'), t('ticket.tickets_selected')) %>
     </div>
     <div id="merge-warning" class="hide pt10">
+      <%= font_icon('unverified', :size => 15) %>
       <%= t('ticket.merge_warning') %>
     </div>
   </div>

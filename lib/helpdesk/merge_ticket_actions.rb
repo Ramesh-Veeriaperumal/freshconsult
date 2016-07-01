@@ -69,7 +69,7 @@ module Helpdesk::MergeTicketActions
 				}
 			else
 				@target_ticket.cc_email[:cc_emails] = (get_cc_email_from_hash(@target_ticket) + cc_email_array).uniq
-				@target_ticket.cc_email[:reply_cc] =  (@target_reply_cc + reply_cc_email_array).first(50)
+				@target_ticket.cc_email[:reply_cc] =  (@target_reply_cc + reply_cc_email_array).first(TicketConstants::MAX_EMAIL_COUNT - 1)
 			end
 			@target_ticket.save
 		end
