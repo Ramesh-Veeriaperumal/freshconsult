@@ -487,6 +487,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"integrations/infusionsoft", :only => [:install, :edit, :fields_update]
     resource :"integrations/sugarcrm", :only => [:settings, :edit, :settings_update, :fields_update]
     resource :"integrations/magento", :only => [:new, :edit, :update]
+    resource :"integrations/fullcontact", :only => [:new, :edit, :update]
     resource :"admin/freshfone"
     resource :"admin/freshfone/number"
     resource :"admin/gamification"

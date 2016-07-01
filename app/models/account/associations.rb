@@ -137,6 +137,9 @@ class Account < ActiveRecord::Base
 
   has_many :all_scn_automations, :class_name => 'VaRule',:conditions => {
   :rule_type => VAConfig::SCENARIO_AUTOMATION }, :order=> "position"
+
+  has_many :installed_app_business_rules, :class_name => 'VaRule', :conditions => {
+  :rule_type => VAConfig::INSTALLED_APP_BUSINESS_RULE, :active => true }, :order => "position"
    
   has_many :email_notifications
   has_many :groups

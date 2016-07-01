@@ -875,8 +875,15 @@ Helpkit::Application.routes.draw do
       post :check_session_id
     end
 
-    namespace :xero do
-      get :authorize
+    namespace :fullcontact do
+      get :new
+      post :callback
+      get :edit
+      post :update
+    end
+
+    namespace :xero do 
+      get :authorize 
       post :update_params
       get :edit
       get :fetch

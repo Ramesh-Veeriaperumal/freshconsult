@@ -445,3 +445,18 @@
   id: 26
   description: freshsales.widgets.freshsales_widget.description
   application_type: freshsales
+
+- options:
+    display_in_pages:
+    - contacts_show_page_side_bar
+  script: |-
+          <script type="text/javascript">
+            fullcontactBundle={contact_id: "{{requester.id}}", company_id: "{{company.id}}", company_domains: "{{company.domains}}"};
+            Fjax.Assets.integration('fullcontact', function () {
+              new FullcontactWidget(fullcontactBundle);
+            });
+          </script>
+  name: fullcontact_widget
+  id: 27
+  description: integrations.fullcontact.desc
+  application_type: fullcontact

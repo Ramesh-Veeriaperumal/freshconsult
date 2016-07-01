@@ -17,6 +17,7 @@ class User < ActiveRecord::Base
   include Redis::OthersRedis
   include Authority::FreshdeskRails::ModelHelpers
   include ApiWebhooks::Methods
+  include InstalledAppBusinessRules::Methods
   include Social::Ext::UserMethods
   include AccountConstants
   include PasswordPolicies::UserHelpers
