@@ -169,7 +169,7 @@ class User < ActiveRecord::Base
   end  
 
   def backup_customer_id
-    if has_multiple_companies_feature?
+    if self.user_companies.present?
       user_comp = self.user_companies.find{ |uc| uc.default }
       self.customer_id = user_comp.present? ? user_comp.company_id : nil
     elsif self.default_user_company.present?
