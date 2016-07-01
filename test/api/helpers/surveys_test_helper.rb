@@ -9,6 +9,7 @@ module SurveysTestHelper
       user_id: survey.customer_id,
       agent_id: survey.agent_id,
       group_id: survey.group_id,
+      ticket_id: survey.surveyable.display_id,
       ratings: { default_questions: survey.rating} ,
       feedback: feedback,
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},

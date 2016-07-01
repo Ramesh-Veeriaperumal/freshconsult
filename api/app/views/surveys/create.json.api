@@ -6,6 +6,7 @@ response_hash = {
   agent_id: @item.agent_id,
   group_id: @item.group_id,
   feedback: feedback,
+  ticket_id: @ticket.display_id,
   created_at: @item.created_at.try(:utc),
   updated_at: @item.updated_at.try(:utc)
 }

@@ -7,6 +7,7 @@ JSON.generate(@items.map do |item|
     agent_id: item.agent_id,
     feedback: feedback,
     group_id: item.group_id,
+    ticket_id: @ticket.try(:display_id) || item.surveyable.display_id,
     created_at: item.created_at.try(:utc),
     updated_at: item.updated_at.try(:utc)
   }
