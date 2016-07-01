@@ -9703,7 +9703,7 @@ en:
   doorkeeper:
     authorizations:
       new_form:
-        go_to_portal: "Authorize &amp; Goto %{portal_name} Portal"
+        go_to_portal: "Authorize &amp; Go to %{portal_name} Portal"
         later: Later
         authorize_text1: Authorize
         authorize_text2: to use your account?
