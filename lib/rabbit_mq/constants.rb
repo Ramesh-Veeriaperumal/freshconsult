@@ -26,7 +26,7 @@ module RabbitMq::Constants
     [  'ticket_state',        CRUD_KEYS_BY_TOKEN[:update],              'ticket'          ],
     [  'note',                CRUD_KEYS_BY_TOKEN[:all],                 'note'            ],
     [  'schema_less_note',    CRUD_KEYS_BY_TOKEN[:update],              'note'            ],
-    [  'archive_ticket',      CRUD_KEYS_BY_TOKEN[:create_and_update],   'archive_ticket'  ],
+    [  'archive_ticket',      CRUD_KEYS_BY_TOKEN[:update],              'archive_ticket'  ],
     [  'archive_note',        CRUD_KEYS_BY_TOKEN[:create],              'archive_note'    ],
     [  'company',             CRUD_KEYS_BY_TOKEN[:all],                 'company'         ],
     [  'company_domain',      CRUD_KEYS_BY_TOKEN[:create_and_destroy],  'company'         ],
@@ -72,6 +72,9 @@ module RabbitMq::Constants
   RMQ_SEARCH_TAG_USE_KEY        = "1"
   RMQ_SEARCH_COMPANY_KEY        = "1"
   RMQ_SEARCH_USER_KEY           = "1"
+
+  RMQ_COUNT_TICKET_KEY          = "*.*.*.1"
+  RMQ_COUNT_TAG_USE_KEY         = "*.1"
 
   AUTO_REFRESH_TICKET_KEYS = ["id", "display_id", "tag_names", "account_id", "user_id", "responder_id", "group_id", "status", 
     "priority", "ticket_type", "source", "requester_id", "due_by", "created_at"

@@ -334,6 +334,7 @@ class Helpdesk::TicketsController < ApplicationController
 
   def update
     #old_timer_count = @item.time_sheets.timer_active.size -  we will enable this later
+    params[nscname] ||= {} #params[nscname] might be uninitialised in some cases when update happens via API
     build_attachments @item, :helpdesk_ticket
     params[nscname][:tag_names] = params[:helpdesk][:tags] unless params[:helpdesk].blank? or params[:helpdesk][:tags].nil?
     if @item.update_ticket_attributes(params[nscname])
@@ -375,6 +376,7 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def update_ticket_properties
+    params[nscname] ||= {} #params[nscname] might be uninitialised in some cases when update happens via API
     params[nscname][:tag_names] = params[:helpdesk][:tags] unless params[:helpdesk].blank? or params[:helpdesk][:tags].nil?
     if @item.update_ticket_attributes(params[nscname])
       if(params[:redirect] && params[:redirect].to_bool)
@@ -1304,13 +1306,13 @@ class Helpdesk::TicketsController < ApplicationController
   def check_ticket_status
     respond_to do |format|
       format.html{
-        if params["helpdesk_ticket"]["status"].blank?
+        if !params["helpdesk_ticket"].nil? && params["helpdesk_ticket"]["status"].blank?
           flash[:error] = t("change_deleted_status_msg")
           redirect_to item_url
         end
       }
       format.any(:xml, :mobile, :json){
-        params["helpdesk_ticket"]["status"] ||= @item.status
+        params["helpdesk_ticket"]["status"] ||= @item.status unless params["helpdesk_ticket"].nil?
       }
     end
   end
@@ -1345,7 +1347,7 @@ class Helpdesk::TicketsController < ApplicationController
         end
       end
     else
-      params[nscname].except!(:due_by, :frDueBy)
+      params[nscname].except!(:due_by, :frDueBy) unless params[nscname].nil?
     end
   end
 
@@ -1390,7 +1392,7 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def load_archive_ticket(load_notes = false)
-    raise ActiveRecord::RecordNotFound unless current_account.features?(:archive_tickets)
+    raise ActiveRecord::RecordNotFound unless current_account.features_included?(:archive_tickets)
 
     options = load_notes ? archive_preload_options : {}
     archive_ticket = load_by_param(params[:id], options, true)
@@ -1430,7 +1432,7 @@ class Helpdesk::TicketsController < ApplicationController
     if es_tickets_enabled? and params[:html_format]
       tickets_from_es(params)
     else
-      current_account.tickets.preload(requester: [:avatar,:company]).permissible(current_user).filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
+      current_account.tickets.preload({requester: [:avatar]}, :company).permissible(current_user).filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
     end
   end
 

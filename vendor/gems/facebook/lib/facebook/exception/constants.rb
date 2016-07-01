@@ -11,7 +11,7 @@ module Facebook
       PERMISSION_ERROR         = [200, 299]
       IGNORED_ERRORS           = [230, 275]
       ERROR_MESSAGES           = {:permission_error => "manage_pages",  :auth_error => "impersonate",  :deleted_access_token => "access token" }
-      
+      PERMISSION_MSG           = "permission"
     end
   end
 end

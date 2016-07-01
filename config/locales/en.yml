@@ -314,6 +314,7 @@ en:
       ticket_type: Type
       created_at: Created
       tags: Tags
+      company: Company
     saving_ticket: "Saving ticket fields..."
     untitled: Untitled
     properties: Properties
@@ -998,7 +999,7 @@ en:
         list5: Campaign tools and rich messaging
       content3: 
         note_title: "Note:"
-        note_info:  "We will continue to support Mobihelp for existing customers, but are discontinuing active development for it. We encourage you to move to Hotline at the earliest."
+        note_info: "We will continue to support Mobihelp for existing customers, but are discontinuing active development for it. We encourage you to move to Hotline at the earliest. If you are an existing Mobihelp customer please reach out to support@hotline.io for special pricing."
       get_started: Get started with Hotline today 
       list_title: Mobihelp Apps
           
@@ -3429,6 +3430,7 @@ en:
         email_invalid: Email is invalid
         user_emails: Please enter at least one contact detail
         max_user_emails: A contact cannot have more than 5 emails
+        max_user_companies: A contact cannot have more than 20 companies
       full_messages:
         format: "%{attribute} %{message}"
       template:
@@ -3708,7 +3710,12 @@ en:
     helpdesk_software: Help Desk Software
     by_freshdesk: by Freshdesk
     submit_feedback: Submit Feedback
+    footer_feedback_subject_placeholder: Tell us how we can make Freshdesk better
+    footer_feedback_thanks: Thank you for your feedback!
+    errors:
+      feedback_subject_required: Cannot be blank.      
     browse_community: Browse Community
+    help_and_support: Help & Support
     privacy_policy: "Privacy Policy"
   tkt_unattended_in_grp: Ticket Unattended in Group
   agent_solves_tkt: Agent Solves the Ticket
@@ -3746,7 +3753,16 @@ en:
     confirm_delete: Are you sure you want to delete this user?
     deleted_user_info: "Note: All communication from the deleted users will be marked as SPAM."
     delete_confirmation: When you delete a contact, future communication from the contact will be marked as SPAM. Are you sure you want to proceed?
-    delete_contact: Delete Contact
+    delete_contact: Delete contact
+    default_company: Default Company
+    mark_default_company: Mark as Default
+    client_manager: Can view all tickets from this company
+    remove_company: Remove contact-company association
+    remove_company_text: "In the existing tickets created by %{user_name} for this company : "
+    removed_association: "You are about to remove a contact-company association."
+    retain_company: Company name can continue to be 
+    rename_company: Company name should be updated to 
+    new_company: Enter a company name
     convert_note: Converting to agent will delete all the secondary emails of this contact. Proceed to convert?
     add_new_user: Add a new user
     search_by: Search by Name or Email or Tags...
@@ -3795,6 +3811,7 @@ en:
     new_topic: New Topic
     reply: Reply
     info_example: example - LA Lakers fan etc.
+    helptext: <h4>Contacts and companies </h4><p><br/>Every customer contacting your helpdesk through any channel you have configured will be added as a contact in your helpdesk automatically. You can group contacts based on their domains into companies. This way you can have different SLA policies for different kinds of customers.</p><p><br/>Apart from automatic contact creation, you can also add contacts manually or import a list of contacts. <a href="https://support.freshdesk.com/solution/articles/37623" target="_blank">Read more.</a></p><p><br/>If you are in the Estate plan or above, you can associate one contact with multiple companies. <a href="https://support.freshdesk.com/solution/articles/219344" target="_blank">Read more.</a></p>
     form_placeholder:
       description: Add specific notes regarding this contact example - LA Lakers fan etc.
       tags: 'Tag Names'
@@ -3825,6 +3842,7 @@ en:
     info6: Add specific notes regarding this contact
     role:
       info: Can see all tickets from this company
+    multi_client_manager: Can see all tickets from these companies
     status:
       verified: Verified
       deleted: Deleted
@@ -5060,6 +5078,7 @@ en:
       send: Send
       send_satisfaction_survey: Include satisfaction survey
       dm_confirm_message: The user is not following your twitter account. Your response will be sent as a public tweet. Do you want to continue?
+      attachment_missing_alert: It looks like you missed an attachment. Are you sure you want to send this message?
     facebook_form:
       send_and_resolve: Send and Resolve
       send: Send
@@ -5949,9 +5968,15 @@ en:
     title: "Filter Tickets"
     unsaved_view: "Untitled View"
     requester_placeholder: "Name or Email"
+    user_placeholder: "Name or Email"
+    cc_emails_placeholder: "Name or email of user from selected company"
     customers_placeholder: ""
+    company_id_placeholder: ""
     raised_by: "Tickets created by"
     everyone_in_company: "Everyone in %{company_name}"
+    company: "Company"
+    all_companies: "All Companies"
+    everyone: "Everyone"
     copy_of: Copy of
     save_tooltip: Save
     saveas_tooltip: Save as
@@ -6024,6 +6049,9 @@ en:
     archived_at: "Archived"
     from: From
     to: To
+    show_additional_fields: Show Additional Fields
+    hide_additional_fields: Hide Additional Fields
+    additional_fields_help: Description fields are moved into additional fields
     view_all_tickets : Export as CSV
     check_uncheck_title: 'Check/Uncheck all'
     data_backup:
@@ -7128,7 +7156,7 @@ en:
         freshsales_settings: "Freshsales Settings"
         domain: "Account Domain"
         auth_token: "Authentication Token"
-        domain_info: "Enter your freshsales domain without https. Ex: example.freshsales.com"
+        domain_info: "Enter your freshsales domain without https. Ex: example.freshsales.io"
         auth_token_info: "Enter your authentication token"
         error: "Please verify your settings and try again"
         select: "Select an option"
@@ -8684,7 +8712,7 @@ en:
         queue_position_disable: "OFF"
       numbers:
         sidebar_title: "Phone channel"
-        sidebar_content: "Using the phone channel, you can make and receive calls through your browser, mobile phone or using the phone channel in Freshdesk’s mobile apps. It is tightly integrated with Freshdesk’s ticketing system. So you can keep track of phone calls by recording them and converting them into tickets whenever necessary. <br/><br/> <b>Setting up Phone</b></br>To start using phone, you will first need to enable it and purchase a support number. You can purchase local numbers from the <a href='https://support.freshdesk.com/support/solutions/articles/169322' target='_blank'>countries listed here</a> and make or take calls from anywhere in the world. If your customers will be calling you in the US, UK or Canada you can also purchase toll-free support numbers (or freephone in the UK). <br/><br/><b> Using Smart IVRs</b><br/> You can create smart Integrated Voice Response (IVR) systems to better categorize customers when they call your support number, and channelize them to the right department, team or agent. </b><br/><br/> <a href='http://freshdesk.com/multichannel-support/phone-support' target='_blank'>Read more about what you can do with phone</a>."
+        sidebar_content: "Using the phone channel, you can make and receive calls through your browser, mobile phone or using the phone channel in Freshdesk’s mobile apps. It is tightly integrated with Freshdesk’s ticketing system. So you can keep track of phone calls by recording them and converting them into tickets whenever necessary. <br/><br/> <b>Setting up Phone</b></br>To start using phone, you will first need to enable it and purchase a support number. You can purchase local numbers from the <a href='https://support.freshdesk.com/support/solutions/articles/169322' target='_blank'>countries listed here</a> and make or take calls from anywhere in the world. If your customers will be calling you in the US, UK or Canada you can also purchase toll-free support numbers (or freephone in the UK). <br/><br/><b>Provide Complete Phone Support</b><br/>With our phone channel, you can<br/><ul><li>Start making and taking calls using your web browser or mobile phones</li><li>Create voicemails, forward calls, or transfer calls to any agent, anywhere</li><li>Monitor calls, barge when needed, add other agents into on-going calls, and more*</li></ul><br/><p>*Please reach <a href='mailto:support@freshdesk.com'>support@freshdesk.com</a> to enable advanced features for your account. These include call monitoring, call barging, call conferencing, call masking, and call lifetime metrics.</p><br/><p><a href='http://freshdesk.com/multichannel-support/phone-support' target='_blank'>Learn more about phone’s powerful capabilities and features</a><p>"
         purchase_number: "Purchase Number"
         purchase_phone_number: "Buy Number (%{number})"
         buy: "Buy Number"
@@ -8779,9 +8807,9 @@ en:
         title_text: "Phone"
         heading_text: "Support your customers using the phone channel"
         trial_description: "Using the phone channel, you can make and receive calls through your browser, mobile phone or using the phone channel in Freshdesk’s mobile apps. It is tightly integrated with Freshdesk’s ticketing system. So you can keep track of phone calls by recording them and converting them into tickets whenever necessary."
-        number_info: "Purchase local and toll-free numbers from across the globe"
-        ivr_info: "Route calls to the right agent and group using IVR"
-        recording_info: "Record and convert calls to tickets, just like your emails"
+        number_info: "Purchase local and toll-free numbers for over 40 countries"
+        ivr_info: "Perform call monitoring, call conferencing, route calls using IVR, and many more"
+        recording_info: "Record and convert all your calls into tickets"
         learn_more: "Learn more"
         pricing: "See all call rates and supported countries"
         request_subject: "Phone Request - %{account_name}"
@@ -9547,3 +9575,9 @@ en:
     loading_label: "Loading"
   email_notification:
     spam_error: "An internal error occured.  Please contact support."
+  select_requester: "Please select requester"
+  associate_n_companies: "Associate a contact with multiple companies?"
+  enable_n_companies: "Enable"
+  add_new_company: "Add Company"
+  more_companies: "%{count} more"
+  n_companies: "%{count} companies"

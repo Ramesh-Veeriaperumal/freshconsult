@@ -101,7 +101,7 @@ class TopicObserver < ActiveRecord::Observer
 	def after_destroy(topic)
 		topic.account.clear_forum_categories_from_cache
 		update_forum_counter_cache(topic)
-		delete_spam_posts(topic)
+		Community::ClearModerationRecords.perform_async(topic.id, topic.class.to_s)
 	end
 
 private
@@ -161,18 +161,6 @@ private
                           :version      => 2
                         }
     )
-  end
-
-  def delete_spam_posts(topic)
-    Post::SPAM_SCOPES_DYNAMO.each do |k, klass|
-      next if SpamCounter.count(topic.id, k).zero?
-      Resque.enqueue(Workers::Community::DeleteTopicSpam, 
-                      {
-                        :account_id => topic.account.id,
-                        :topic_id => topic.id,
-                        :klass => klass.to_s  
-                      })
-    end
   end
 
 end

@@ -32,6 +32,10 @@ module Support::ArchiveTicketsHelper
     session[:requested_by] = params[:requested_by].presence || session[:requested_by].presence || 0
   end
 
+  def current_requested_by_company
+    session[:requested_by_company] = params[:requested_by_company].presence || session[:requested_by_company].presence || 0
+  end
+
   def filter_list    
     f_list = [:all, :open_or_pending, :resolved_or_closed].map{ |f| 
                 [ t("helpdesk.tickets.views.#{f}"), 
@@ -74,12 +78,29 @@ module Support::ArchiveTicketsHelper
 
   def can_access_support_ticket?
     @ticket && (privilege?(:manage_tickets)  ||  (current_user  &&  ((@ticket.requester_id == current_user.id) || 
-                          ( privilege?(:client_manager) && @ticket.company == current_user.company))))
+                ( current_user.company_client_manager? && current_user.company_ids.include?(@ticket.company_id)) ||
+                ( current_user.contractor_ticket? @ticket)))) 
   end
 
   def raised_by
     if @requested_by.to_i == 0
       t("tickets_filter.everyone_in_company", :company_name => @company.name)
+    else
+      @requested_item.name
+    end
+  end
+
+  def raised_by_company
+    if @requested_company.present?
+      { :name => @requested_company.name, :id => @requested_company.id }
+    else
+      { :name => t("tickets_filter.all_companies"), :id => 0 }
+    end
+  end
+
+  def raised_by_company_user
+    if @requested_by.to_i == 0
+      t("tickets_filter.everyone")
     else
       @requested_item.name
     end
@@ -96,6 +117,18 @@ module Support::ArchiveTicketsHelper
                     |x| [ x.name, 
                           filter_support_archive_tickets_path(:requested_by => x.id), 
                           (@requested_by.to_i == x.id) ] unless( current_user.id == x.id )
+                    }), TOOLBAR_LINK_OPTIONS
+  end
+
+  def company_list
+    dropdown_menu [
+      [t("all_companies"), 
+                    filter_support_archive_tickets_path(:requested_by_company => 0), 
+                    (@requested_by_company == 0 )],
+      [:divider]].concat(@companies.map{ 
+                    |x| [ x.name, 
+                          filter_support_archive_tickets_path(:requested_by_company => x.id, :requested_by => 0), 
+                          (@requested_by_company.to_i == x.id) ] unless( current_user.id == x.id )
                     }), TOOLBAR_LINK_OPTIONS
   end
 end

@@ -9,7 +9,8 @@ class Support::NotesController < ApplicationController
     @ticket = Helpdesk::Ticket.find_by_param(params[:ticket_id], current_account)
     raise ActiveRecord::RecordNotFound unless @ticket
     access = (current_user && @ticket.requester_id == current_user.id) ||
-     (privilege?(:client_manager)  && @ticket.company == current_user.company) ||
+     (current_user.company_client_manager?  && current_user.company_ids.include?(@ticket.company_id)) ||
+     (current_user.contractor_ticket? @ticket) ||
      (privilege?(:manage_tickets))
 
     return redirect_to(send(Helpdesk::ACCESS_DENIED_ROUTE)) unless access
@@ -24,7 +25,7 @@ class Support::NotesController < ApplicationController
     
     build_attachments
     if @note.save_note
-      update_cc_list if privilege?(:client_manager)
+      update_cc_list if current_user.company_client_manager?
       flash[:notice] = t(:'flash.tickets.notes.create.success')
     else
       flash[:error] = t(:'flash.tickets.notes.create.failure')

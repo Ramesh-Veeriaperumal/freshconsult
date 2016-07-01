@@ -49,7 +49,7 @@
   	<div class="<%= field_spacing %>">
 		<% @ticket_fields.each do |field| %>
 			<% next if field.section_field? %>
-			<div class="control-group <%= field.field_type %>">
+			<div class="control-group <%= field.field_type %> <%= " hide" if field.field_type == "default_company" %>">
     		<%= ticket_field_container f, :helpdesk_ticket, field, widget_prefilled_value(field) %>
     	</div>
     	<% if field.has_section?
@@ -363,6 +363,30 @@
       						.replace(new RegExp('&gt', 'g'), '>'))
       					.insertAfter(jQuery(".default_ticket_type"));
       	}
+    });
+
+    jQuery("#helpdesk_ticket_email").focusout(function(){
+      var ticket_email = jQuery("#helpdesk_ticket_email").val();
+      
+      jQuery.ajax({ url: "<%= helpdesk_commons_user_companies_path %>?email="+ticket_email,
+        success: function(data){
+        	if(data != false){
+	          jQuery('#helpdesk_ticket_company_id').empty();
+	          for(var i=0; i<data.length; i++){ 
+	            jQuery("<option/>").val(data[i][1]).html(data[i][0]).appendTo(jQuery("#helpdesk_ticket_company_id"));
+	          }
+	          jQuery('#helpdesk_ticket_company_id').val('').change();
+	          jQuery('.default_company .company_div').removeClass('company_div');
+	          jQuery('.default_company').children('label').removeClass('company_label');
+	          jQuery(".form-portal").prepend(jQuery('.default_company'));
+	          jQuery('#helpdesk_ticket_company_id').removeAttr("disabled");
+	          jQuery('.default_company').show();
+	        }else{
+						jQuery('#helpdesk_ticket_company_id').attr("disabled", true);
+            jQuery('.default_company').slideUp();
+          }
+        }
+      });
     });
 
 	});

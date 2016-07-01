@@ -11,6 +11,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   before_create :assign_display_id, :if => :set_display_id?
 
+  before_create :set_company_id
+
 	before_update :assign_email_config
 
   before_update :update_message_id, :if => :deleted_changed?
@@ -19,11 +21,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   before_save  :update_ticket_related_changes, :update_company_id, :set_sla_policy
 
+  before_save :check_company_id, :if => :company_id_changed?
+
   before_update :update_sender_email
 
   before_update :stop_recording_timestamps, :unless => :model_changes?
   
-  before_save :round_robin_on_ticket_update, :unless => :skip_rr_on_update?
+  before_update :round_robin_on_ticket_update, :unless => :skip_rr_on_update?
 
   after_update :start_recording_timestamps, :unless => :model_changes?
 
@@ -459,9 +463,21 @@ private
     self.ticket_status = !ticket_status || ticket_status.deleted? ? ticket_statuses.find { |x| x.status_id == OPEN } : ticket_status
   end
 
+  def set_company_id
+    if self.source == 1 && self.requester.contractor? && self.from_email != self.requester.email
+      domain = (/@(.+)/).match(self.from_email).to_a[1]
+      comp_domain = account.company_domains.where("domain = '#{domain}'").first
+      self.owner_id = comp_domain.company_id if comp_domain && requester.company_ids.include?(comp_domain.company_id)
+    end
+  end
+
   def update_company_id
     # owner_id will be used as an alias attribute to refer to a ticket's company_id
-    self.owner_id = self.requester.company_id if @model_changes.key?(:requester_id)
+    self.owner_id = self.requester.company_id if @model_changes.key?(:requester_id) && self.owner_id.nil?
+  end
+
+  def check_company_id
+    owner_id = owner_id_was if requester.contractor? && !requester.company_ids.include?(self.owner_id)
   end
 
   def populate_requester

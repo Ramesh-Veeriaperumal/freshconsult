@@ -112,7 +112,7 @@ end %>
     </div>
   <% else %>
     <% inst_plugs.try(:each) do |installed_plug| %>
-      <div id="ext_<%= installed_plug['extension_id'] %>" class="widget">
+      <div id="ext_<%= installed_plug['extension_id'] %>">
         <div class="content">
           <%= freshplug_script(installed_plug.symbolize_keys) %>
         </div>

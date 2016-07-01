@@ -64,15 +64,7 @@ class Fdadmin::BillingController < Fdadmin::DevopsMainController
     if LIVE_CHAT_EVENTS.include? params[:event_type]
       retrieve_account unless @account
       if @account && @account.chat_setting && @account.subscription && @account.chat_setting.site_id
-        Resque.enqueue(Workers::Livechat, 
-          {
-            :worker_method => "update_site", 
-            :siteId        => @account.chat_setting.site_id, 
-            :attributes    => { :expires_at => @account.subscription.next_renewal_at.utc,
-                                :suspended => !@account.active?
-                               }
-          }
-        )
+          Livechat::Sync.new.sync_account_state({ :expires_at => @account.subscription.next_renewal_at.utc, :suspended => !@account.active? })
       end
     end
 

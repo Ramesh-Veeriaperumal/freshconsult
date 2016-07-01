@@ -59,7 +59,7 @@ class MergeContacts < BaseWorker
     move_helpdesk_activities children_ids
     move_forum_activities children_ids
     move_polymorphic_objects children_ids
-    move_archived_tickets children_ids if @account.features?(:archive_tickets)
+    move_archived_tickets children_ids if @account.features_included?(:archive_tickets)
   end
 
   def move_accessory_attributes children_ids
@@ -71,10 +71,19 @@ class MergeContacts < BaseWorker
   end
 
   def move_helpdesk_activities children_ids
-    update_by_batches(@account.tickets, 
-                      { :requester_id => @parent_user.id,
-                        :owner_id     => @parent_user.company_id }, 
-                      ["requester_id in (?)", children_ids])
+    if @parent_user.contractor?
+      update_by_batches(@account.tickets, 
+                        { :owner_id => @parent_user.company_id }, 
+                        ["requester_id in (?) and owner_id is null", children_ids])
+      update_by_batches(@account.tickets, 
+                        { :requester_id => @parent_user.id }, 
+                        ["requester_id in (?)", children_ids])
+    else
+      update_by_batches(@account.tickets, 
+                        { :requester_id => @parent_user.id,
+                          :owner_id     => @parent_user.company_id }, 
+                        ["requester_id in (?)", children_ids])
+    end
     move_each_of(["notes"], children_ids)
   end
 
@@ -85,10 +94,19 @@ class MergeContacts < BaseWorker
   end
 
   def move_archived_tickets(children_ids)
-    update_by_batches(@account.archive_tickets, 
-                      { :requester_id => @parent_user.id,
-                        :owner_id     => @parent_user.company_id }, 
-                      ["requester_id in (?)", children_ids])
+    if @parent_user.contractor?
+      update_by_batches(@account.archive_tickets, 
+                        { :owner_id => @parent_user.company_id }, 
+                        ["requester_id in (?) and owner_id is null", children_ids])
+      update_by_batches(@account.archive_tickets, 
+                        { :requester_id => @parent_user.id }, 
+                        ["requester_id in (?)", children_ids])
+    else
+      update_by_batches(@account.archive_tickets, 
+                        { :requester_id => @parent_user.id,
+                          :owner_id     => @parent_user.company_id }, 
+                        ["requester_id in (?)", children_ids])
+    end
     move_each_of(["archive_notes"], children_ids)
   end
 

@@ -21,7 +21,12 @@ class Search::Filters::Docs
 
   # Doing this as there will be only one cluster
   def host
-    (::COUNT_HOST || 'localhost:9200')
+    if Account.current.features?(:count_es_reads)
+      (::COUNT_V2_HOST || 'localhost:9200')
+    else
+      (::COUNT_HOST || 'localhost:9200')
+    end
+    
   end
 
   ####################
@@ -110,7 +115,7 @@ class Search::Filters::Docs
 
     #_Note_: Include type if not doing only for ticket
     def alias_name
-      "es_filters_#{Account.current.id}"
+      Account.current.features?(:count_es_reads) ? "es_count_#{Account.current.id}" : "es_filters_#{Account.current.id}"
     end
 
     def document_path(model_class, id, query_params={})

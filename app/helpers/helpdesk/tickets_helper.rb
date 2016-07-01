@@ -14,6 +14,7 @@ module Helpdesk::TicketsHelper
   include Helpdesk::TicketFilterMethods
   include ParserUtil
   include Marketplace::ApiHelper
+  include AutocompleteHelper
   
   include HelpdeskAccessMethods
   
@@ -108,7 +109,13 @@ module Helpdesk::TicketsHelper
                                   :rel => "inputselectbox"}, 
                                  {}, 
                                  false)
-      else
+      elsif field.field_type == "default_company"
+        element = label + render_autocomplete({ :selected_values => [], 
+                                                :max_limit => 1, 
+                                                :type => :companies, 
+                                                :include_none => true,
+                                                :bulk_actions => true })
+      else        
         element = label + select(object_name,
                       field.field_name, 
                       field.html_unescaped_choices, 

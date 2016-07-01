@@ -21,6 +21,17 @@
   }
 }
 
+.phone_features_info{
+  ul {
+    list-style-type:disc
+  }
+  li{
+    line-height:1.4em;
+    @include margin(0 0 5px 25px);
+    color:#444;
+  }
+}
+
 .new_search{ @include text-align(center); }
 
 .buy-new{

@@ -35,13 +35,14 @@ module MailboxValidator
       begin
         imap = Net::IMAP.new(args[:server_name], args[:port], args[:use_ssl].to_bool)
 
-        raise IdleNotSupportedError, "Mailbox server does not support IDLE" unless imap.capability.include?("IDLE")
-
         if "PLAIN".casecmp(args[:authentication]) == 0
           imap.login(args[:user_name], args[:password])
         else
           imap.authenticate(args[:authentication], args[:user_name], args[:password]) 
         end
+
+        raise IdleNotSupportedError, "Mailbox server does not support IDLE" unless imap.capability.include?("IDLE")
+
         imap.logout()
         #msg = I18n.t('mailbox.authetication_success')
         verified = true
@@ -64,7 +65,13 @@ module MailboxValidator
       verified = false
       msg = ""
       begin
-        Net::SMTP.start(args[:server_name], args[:port],args[:server_name], args[:user_name], args[:password], args[:authentication]) do |smtp|
+        smtp = Net::SMTP.new(args[:server_name], args[:port])
+        if args[:port].to_i == 465
+          smtp.enable_ssl
+        elsif args[:port].to_i == 587
+          smtp.enable_starttls
+        end
+        smtp.start(args[:server_name], args[:user_name], args[:password], args[:authentication]) do |smtp|         
         end
         #flash[:notice] = I18n.t('mailbox.authetication_success')
         verified = true

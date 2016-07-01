@@ -414,6 +414,7 @@ Helpkit.commonSavedReportUtil = {
 	        } 
     	},
     	getDateRangeDefinition : function(dateFormat,date_lag){
+	        moment.lang('en');
 	        return {
 	            1:                    moment().subtract((1   + date_lag),"days").format(dateFormat), 
 	            7:                    moment().subtract((6   + date_lag),"days").format(dateFormat),

@@ -96,15 +96,17 @@ var SurveyTable = {
             ]
         });
         jQuery('#report_tabular_data').show();
+        if(SurveyReport.agentReporting){
+            jQuery('#report_tabular_data tbody tr:not(".exclude_none")').live('click',function () {
+                 var values =  jQuery('#report_tabular_data').dataTable().fnGetData(this);
+                 if(jQuery('#viewReportBy').attr('value') == SurveyReportData.defaultAllValues.group || !SurveyReport.agentReporting){
+                    SurveyTable.type.filter('survey_report_group_list',values[0],jQuery('#viewReportBy').attr('value'));
+                 }else{
+                    SurveyTable.type.filter('survey_report_agent_list',values[0],jQuery('#viewReportBy').attr('value'));
+                 }
+            });
+        }
 
-        jQuery('#report_tabular_data tbody tr:not(".exclude_none")').live('click',function () {
-            var values =  jQuery('#report_tabular_data').dataTable().fnGetData(this);
-            if(jQuery('#viewReportBy').attr('value') == SurveyReportData.defaultAllValues.group){
-                SurveyTable.type.filter('survey_report_group_list',values[0],jQuery('#viewReportBy').attr('value'));
-            }else{
-                SurveyTable.type.filter('survey_report_agent_list',values[0],jQuery('#viewReportBy').attr('value'));
-            }
-        });
     },
     renderTable:function(type){
         var tabRef = SurveyUtil.findQuestion(jQuery('.tabs-survey').find('li.active').data('id'));
@@ -112,7 +114,8 @@ var SurveyTable = {
             tabRef = SurveyUtil.whichSurvey().survey_questions[0];
         }
         jQuery("#survey_table").html(JST["survey/reports/template/stats_detail_table"]({
-            table:SurveyTable.format(type,tabRef.id,tabRef.name)
+            table:SurveyTable.format(type,tabRef.id,tabRef.name),
+            agentReporting: SurveyReport.agentReporting
         }));
     },
     fetch:function(){

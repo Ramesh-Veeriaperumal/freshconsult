@@ -29,7 +29,8 @@ module Admin::RolesHelper
                { :dom_type => "radio_button", :id => "edit_time_entries_false",
                  :privilege => "0", :class => "default" }]
            },
-           { :dom_type => "check_box", :id => "delete_ticket" }]
+           { :dom_type => "check_box", :id => "delete_ticket" },
+           { :dom_type => "check_box", :id => "export_tickets" }]
       },
 
       # *************************** Solutions **************************
@@ -75,15 +76,24 @@ module Admin::RolesHelper
               :children =>
 
                [{ :dom_type => "check_box", :id => "manage_contacts" },
-                { :dom_type => "check_box", :id => "delete_contact" }]
+                { :dom_type => "check_box", :id => "delete_contact" },
+                {:dom_type => "check_box", :id => "export_customers"}]
+              
            }]
+           
        },
 
        # *************************** Reports **************************
 
        { :dom_type => "label", :id => "reports", :children =>
 
-           [{ :dom_type => "check_box", :id => "view_reports" }]
+           [{ :dom_type => "check_box", :id => "view_reports", :class => "nested",
+              :children => 
+              
+              [{ :dom_type => "check_box", :id => "export_reports"}]
+              
+           }]
+           
        },
 
        # *************************** Admin **************************

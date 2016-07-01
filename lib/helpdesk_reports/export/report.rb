@@ -109,8 +109,10 @@ class HelpdeskReports::Export::Report < HelpdeskReports::Export::Base
       end
 
       pdf_html = av.render :layout => @layout,
-                           :template => 'sections/generate_report_pdf.pdf.erb',
-                           :locals => locals_option
+                           :template => 'sections/generate_report_pdf',
+                           :locals => locals_option,
+                           :handlers => [:erb],
+                           :formats => [:html]
 
       pdf = WickedPdf.new.pdf_from_string(pdf_html, :pdf => report_type, :page_size => "A3", :javascript_delay => 1000)
     end

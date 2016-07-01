@@ -119,13 +119,13 @@ class Support::SearchController < SupportController
                               { :term => { :notable_requester_id => current_user.id } }
                 if current_user.has_company?
                   f.filter :or, { :not => { :exists => { :field => 'forum.customer_forums.customer_id' } } },
-                                { :term => { 'forum.customer_forums.customer_id' => current_user.company_id } }
+                                { :terms => { 'forum.customer_forums.customer_id' => current_user.company_ids } }
                   f.filter :or, { :not => { :exists => { :field => 'folder.customer_folders.customer_id' } } },
-                                { :term => { 'folder.customer_folders.customer_id' => current_user.company_id } }
+                                { :terms => { 'folder.customer_folders.customer_id' => current_user.company_ids } }
                 end
-                if privilege?(:client_manager)
+                if current_user.client_manager_companies.present?
                   f.filter :or, { :not => { :exists => { :field => :company_id } } },
-                                { :term => { :company_id => current_user.company_id } }
+                                { :terms => { :company_id => current_user.client_manager_companies.map(&:id) } }
                 else
                   f.filter :or, { :not => { :exists => { :field => :requester_id } } },
                                 { :term => { :requester_id => current_user.id } }
@@ -219,7 +219,7 @@ class Support::SearchController < SupportController
                 :deleted => false }
       
       if @current_user 
-        if privilege?(:client_manager)
+        if current_user.company_client_manager?
           opts[:customer_id] = [@def_search_val, current_user.company_id]
         else
           # Buggy hack... The first users tickets in the first account will also be searched 

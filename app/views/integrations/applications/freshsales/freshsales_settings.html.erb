@@ -27,9 +27,7 @@
         </label>
 
         <div class="fields">
-          <%= construct_ui_element :configs, "domain", {:type => :text, :required => true, :label => "integrations.freshsales.form.domain", :rel => "ghostwriter", :autofill_text => ".freshmarketeer.com", :validator_type => "domain_validator"}, domain.to_s 
-            # autofill_text value has to be changed to ".freshsales.io" on prestaging 
-          %> 
+          <%= construct_ui_element :configs, "domain", {:type => :text, :required => true, :label => "integrations.freshsales.form.domain", :rel => "ghostwriter", :autofill_text => ".freshsales.io", :validator_type => "domain_validator"}, domain.to_s %> 
           <div class="info-data"> <%=t('integrations.freshsales.form.domain_info')%> </div>
             <span class="seperator"></span>
         </div>

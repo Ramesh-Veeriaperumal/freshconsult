@@ -1,34 +1,14 @@
 <div id="footer" class="wrapper">  
 	<div class="wrapper-shadow">
-		<div class="footer-content">
-		  <% unless(current_account.subscription.paid_account?) %>
-			  <%= link_to(t('footer.helpdesk_software'), AppConfig['app_website'], :target => "_blank") %>
-			  <%= t('footer.by_freshdesk') %>
-			  <span class="muted"> &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; </span>
-			<% end %>
-			<% if current_user %>
-				<%= link_to( t('footer.submit_feedback'), "#{AppConfig['support_url']}/support/tickets/new", :id => 'footer_feedback_widget' ) %>
-			<span class="muted"> &nbsp;&nbsp;&nbsp;| &nbsp;&nbsp;&nbsp;</span>
-			<% end %>
-			<%= link_to(t('footer.browse_community'), "#{AppConfig['support_url']}/support/discussions", :target => "_blank") %>
-			<% if @privacy_policy %>
-				<span class="muted"> &nbsp;&nbsp;&nbsp;| &nbsp;&nbsp;&nbsp;</span>
-				<%= link_to(t('footer.privacy_policy'), AppConfig['privacy_policy'], :target => "_blank") %>
-			<% end %>
-		</div> 
+			<% if current_account.launched?(:new_footer_feedback_box) %>
+				<%= render "layouts/shared/footer_feedback_box" %>
+			<% else %>
+				<%= render "layouts/shared/footer_no_feedback_box" %>
+			<% end %>		  			 
 	</div>
 </div>
 <%= render :partial => 'shared/shortcuts_help_chart' %>
 
-<% if current_account.features?(:client_debugging) %>
-    <script
-      src="//d2wy8f7a9ursnm.cloudfront.net/bugsnag-2.min.js"
-      data-apikey= <%=AppConfig["client_debugging"]["bugsnag"][Rails.env]["api_key"]%> 
-      data-autonotify="true"
-      >
-    </script>
-    <%= javascript_include_tag :'cdn/client_logger' %>
-<% end %>
 <% if current_user && current_user.agent? %>
 	<% cti_app = current_account.cti_installed_app_from_cache %>
 	<% if cti_app.present? %>
@@ -92,7 +72,18 @@
 			to_activate : <%= show_onboarding? %>,	
 			topic_id : <%= inlinemanual_topic_id %>
 		}
+		//TODO: Migrate to i18n Js
+		window.feedback_subject_required_error = "<%= t('footer.errors.feedback_subject_required') %>"
+		window.current_account_full_domain = "<%= current_account.full_domain %>"
+		window.is_current_user_admin = "<%= current_user.privilege?(:view_admin) %>"		
+
 </script>
 <%= javascript_include_tag :'cdn/inline_manual_trigger' %>
+<% if current_account.launched?(:new_footer_feedback_box) %>
+	<%= javascript_include_tag :'cdn/footer_feedback' %>
+<% end %>
 
 <% end %>
+<div class="hide" id="inline-manual-meta">
+	<span class="<%= inline_manual_classes_for_multilingual %>" id="multilingual-meta-info"></span>
+</div>

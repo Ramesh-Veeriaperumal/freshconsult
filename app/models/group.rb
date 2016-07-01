@@ -66,7 +66,7 @@ class Group < ActiveRecord::Base
     :except  => [:account_id,:email_on_assign,:import_id],
     :include => { 
       :agents => {
-        :only => [:id,:name,:email,:created_at,:updated_at,:active,:customer_id,:job_title,
+        :only => [:id,:name,:email,:created_at,:updated_at,:active,:job_title,
                   :phone,:mobile,:twitter_id, :description,:time_zone,:deleted,
                   :helpdesk_agent,:fb_profile_id,:external_id,:language,:address],
         :methods => [:company_id] 

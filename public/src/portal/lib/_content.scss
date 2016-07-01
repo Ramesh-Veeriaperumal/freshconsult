@@ -155,6 +155,9 @@ li.article-item, li.topic-item, li.ticket-item, li.note-item {
 }
 
 .help-text{	font-size: 12px;  }
+.company-users-filter{
+	display: inline-block;
+}
 .p-info strong{ color: $grayDark; }
 .list-noinfo{ @include text-align(center); }
 

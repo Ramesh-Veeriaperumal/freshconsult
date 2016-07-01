@@ -4,9 +4,9 @@ class Reports::Freshchat::SummaryReportsController < ApplicationController
   include HelpdeskReports::Helper::ScheduledReports
   
   before_filter :set_selected_tab, :set_report_type
-  before_filter :report_filter_data_hash,                  :only => [:index]
-  before_filter :save_report_max_limit?,                   :only => [:save_reports_filter]
-  before_filter :construct_report_filters,                 :only => [:save_reports_filter,:update_reports_filter]
+  before_filter :report_filter_data_hash,                         :only => [:index]
+  before_filter :save_report_max_limit?,                          :only => [:save_reports_filter]
+  before_filter :construct_report_filters, :schedule_allowed?,    :only => [:save_reports_filter,:update_reports_filter]
 
   helper_method :enable_schedule_report?
 
@@ -47,6 +47,13 @@ class Reports::Freshchat::SummaryReportsController < ApplicationController
   end
 
   private 
+
+    def schedule_allowed?
+      if params['data_hash']['schedule_config']['enabled'] == true 
+        allow = enable_schedule_report? && current_user.privilege?(:export_reports)
+        render json: nil, status: :ok if allow != true
+      end
+    end
 
     def set_selected_tab
       @selected_tab = :reports
