@@ -11,6 +11,8 @@ module MemcacheKeys
   ACCOUNT_AGENTS = "v4/ACCOUNT_AGENTS:%{account_id}"
 
   ACCOUNT_AGENTS_DETAILS = "v3/ACCOUNT_AGENTS_DETAILS:%{account_id}"
+  
+  ACCOUNT_ROLES = "v1/ACCOUNT_ROLES:%{account_id}"
 
   ACCOUNT_SUBSCRIPTION = "ACCOUNT_SUBSCRIPTION:%{account_id}"
 
