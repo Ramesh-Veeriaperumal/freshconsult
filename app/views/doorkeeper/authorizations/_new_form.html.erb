@@ -12,7 +12,7 @@
       <%= hidden_field_tag :response_type, @pre_auth.response_type %>
       <%= hidden_field_tag :scope, @pre_auth.scope %>
       <div class="agreement-title">
-        <h3 class="lead"><%= t('.authorize_text1').html_safe %> <%= link_to @pre_auth.client.name, current_account.full_domain %> <%= t('.authorize_text2').html_safe %></h3>
+        <h3 class="lead"><%= t('.authorize_text1').html_safe %> <%= link_to "#{portal_name} #{t('.portal')}", current_account.full_domain %> <%= t('.authorize_text2').html_safe %></h3>
       </div> 
       <div class="agreement-btns">
         <%= link_to t('.later'), MarketplaceConfig::DEV_URL, :class => "btn" %>

@@ -9712,6 +9712,7 @@ en:
         spinner_text: "Logging into %{portal_name} Portal"
         dev_portal: Developer
         admin_portal: Admin
+        portal: Portal
       error_form:
         authorize_failure: You are not allowed to access this page
   password_policy:
