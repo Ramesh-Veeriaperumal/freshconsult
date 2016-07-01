@@ -23,7 +23,7 @@
             <%= user_avatar(@source_user) %>
             <div class="user_info_item">
             <a class="contact_item_info"><b><%= h(@source_user.name) %></b></a>
-            <div class="contact_data" data-mobile-num="<%= h(@source_user.mobile) %>" data-phone-num="<%= h(@source_user.phone) %>" data-twitter-id="<%= h(@source_user.twitter_id) %>">
+            <div class="contact_data" data-mobile-num="<%= h(@source_user.mobile) %>" data-phone-num="<%= h(@source_user.phone) %>">
               <% @source_user.user_emails.each do |ue| %>
               <span><%= h(ue.email) %></span>
               <% end %>

@@ -39,7 +39,6 @@ class ContactMergeController < ApplicationController
         end
         target.mobile = "" if @source_user.mobile.eql? target.mobile
         target.phone = "" if @source_user.phone.eql? target.phone
-        target.twitter_id = "" if @source_user.twitter_id.eql? target.twitter_id
         target.deleted = true
         target.user_emails.update_all_with_publish({
                                                       :user_id => @source_user.id,
@@ -99,7 +98,6 @@ class ContactMergeController < ApplicationController
           :company => i.company_name,
           :user_emails => i.emails.join(","),
           :twitter => i.twitter_id.present?,
-          :twitter_id => i.twitter_id,
           :facebook => i.fb_profile_id.present?,
           :phone => i.phone.present?, 
           :phone_num => i.phone,
