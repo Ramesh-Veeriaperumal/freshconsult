@@ -15,7 +15,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def get_user_with_other_emails
-    @account.user_emails.group(:user_id).having("count(user_id) > 1").first.user
+    @account.user_emails.group(:user_id).having('count(user_id) > 1').first.user
   end
 
   def get_company
@@ -684,7 +684,7 @@ class ApiContactsControllerTest < ActionController::TestCase
     assert_response 200
     response = parse_response @response.body
     assert_equal count, response.size
-    users = @account.all_contacts.order('users.name').select { |x| ((x.deleted == true && x.deleted_at <= Time.zone.now + 5.days) or (x.blocked == true && x.blocked_at <= Time.zone.now + 5.days)) && x.whitelisted == false }
+    users = @account.all_contacts.order('users.name').select { |x| ((x.deleted == true && x.deleted_at <= Time.zone.now + 5.days) || (x.blocked == true && x.blocked_at <= Time.zone.now + 5.days)) && x.whitelisted == false }
     pattern = users.map { |user| index_contact_pattern(user) }
     match_json(pattern.ordered!)
   ensure
@@ -702,7 +702,7 @@ class ApiContactsControllerTest < ActionController::TestCase
     assert_response 200
     response = parse_response @response.body
     assert_equal count, response.size
-    users = @account.all_contacts.order('users.name').select { |x| ((x.deleted == true && x.deleted_at <= Time.zone.now + 5.days) or (x.blocked == true && x.blocked_at <= Time.zone.now + 5.days)) && x.whitelisted == false }
+    users = @account.all_contacts.order('users.name').select { |x| ((x.deleted == true && x.deleted_at <= Time.zone.now + 5.days) || (x.blocked == true && x.blocked_at <= Time.zone.now + 5.days)) && x.whitelisted == false }
     pattern = users.map { |user| index_contact_pattern(user) }
     match_json(pattern.ordered!)
   ensure
@@ -734,7 +734,6 @@ class ApiContactsControllerTest < ActionController::TestCase
     users = @account.all_contacts.order('users.name').select { |x|  x.phone == '1234567890' }
     pattern = users.map { |user| index_contact_pattern(user) }
     match_json(pattern.ordered!)
-
   end
 
   def test_contact_filter_mobile
@@ -987,7 +986,7 @@ class ApiContactsControllerTest < ActionController::TestCase
     sample_user = get_user
     email = sample_user.email
     sample_user.update_attribute(:email, nil)
-    params = { occasional: 'false', signature: Faker::Lorem.paragraph, ticket_scope: '2', role_ids: [1234], group_ids: [2344234] }
+    params = { occasional: 'false', signature: Faker::Lorem.paragraph, ticket_scope: '2', role_ids: [1234], group_ids: [2_344_234] }
     put :make_agent, construct_params({ id: sample_user.id }, params)
     assert_response 409
     sample_user.update_attribute(:email, email)
@@ -1488,7 +1487,7 @@ class ApiContactsControllerTest < ActionController::TestCase
                                         email: email,
                                         other_emails: email_array)
     match_json([bad_request_error_pattern('email', :'Email has already been taken'),
-      bad_request_error_pattern('other_emails', :email_already_taken, invalid_emails: email_array.sort.join(', '))])
+                bad_request_error_pattern('other_emails', :email_already_taken, invalid_emails: email_array.sort.join(', '))])
     assert_response 409
   end
 
@@ -1500,7 +1499,7 @@ class ApiContactsControllerTest < ActionController::TestCase
     sample_contact = get_user
     put :update, construct_params({ id: sample_contact.id }, email: email, other_emails: email_array)
     match_json([bad_request_error_pattern('email', :'Email has already been taken'),
-      bad_request_error_pattern('other_emails', :email_already_taken, invalid_emails: email_array.sort.join(', '))])
+                bad_request_error_pattern('other_emails', :email_already_taken, invalid_emails: email_array.sort.join(', '))])
     assert_response 409
   end
 
@@ -1552,9 +1551,9 @@ class ApiContactsControllerTest < ActionController::TestCase
     contact_a = add_new_user(@account, name: Faker::Lorem.characters(15), email: email)
     assert contact_a.reload.email == email
     contact_b = get_user
-    put :update, construct_params({id: contact_b.id}, email: email.downcase)
+    put :update, construct_params({ id: contact_b.id }, email: email.downcase)
     match_json([bad_request_error_pattern('email', :'Email has already been taken')])
-    assert_response 409    
+    assert_response 409
   end
 
   def test_update_contact_with_downcase_email_fires_a_query
@@ -1563,22 +1562,22 @@ class ApiContactsControllerTest < ActionController::TestCase
     pattern = /UPDATE `users` SET/
     from = 'SET'
     to = 'WHERE'
-    query = trace_query_condition(pattern, from, to) { put :update, construct_params({id: sample_user.id}, email: email.downcase) }
+    query = trace_query_condition(pattern, from, to) { put :update, construct_params({ id: sample_user.id }, email: email.downcase) }
     assert_match(/.* `email` = '#{email.downcase}', .*/, query)
   end
-  
+
   def test_update_email_and_pass_other_emails_without_change
     sample_user = get_user_with_email
     sample_user.user_emails.build(email: Faker::Internet.email, primary_role: false)
     sample_user.user_emails.build(email: Faker::Internet.email, primary_role: false)
     sample_user.save
     sample_user.reload
-    email_array = sample_user.user_emails.reject{|x| x.primary_role}.map(&:email)
+    email_array = sample_user.user_emails.reject(&:primary_role).map(&:email)
     email = Faker::Internet.email
     put :update, construct_params({ id: sample_user.id }, email: email, other_emails: email_array)
     assert_response 200
     response = parse_response @response.body
-    assert response["other_emails"].sort == email_array.sort
-    assert response["email"] == email
+    assert response['other_emails'].sort == email_array.sort
+    assert response['email'] == email
   end
 end

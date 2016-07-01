@@ -11,5 +11,5 @@ response_hash = {
   updated_at: @item.updated_at.try(:utc)
 }
 response_hash.merge!(ratings: @item.custom_ratings) if @custom_survey
-response_hash.merge!(ratings: { default_question: @item.rating } ) unless @custom_survey
+response_hash.merge!(ratings: { default_question: @item.rating }) unless @custom_survey
 JSON.generate(response_hash)

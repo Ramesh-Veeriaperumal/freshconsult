@@ -10,7 +10,7 @@ module SurveysTestHelper
       agent_id: survey.agent_id,
       group_id: survey.group_id,
       ticket_id: survey.surveyable.display_id,
-      ratings: { default_questions: survey.rating} ,
+      ratings: { default_questions: survey.rating },
       feedback: feedback,
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
@@ -28,7 +28,7 @@ module SurveysTestHelper
     if Account.current.new_survey_enabled?
       survey_questions = Account.current.survey.survey_questions.map do |q|
         if q.default
-          survey = { id: "default_question", label: q.label, accepted_ratings: q.face_values, default: true } 
+          survey = { id: 'default_question', label: q.label, accepted_ratings: q.face_values, default: true }
         else
           survey = { id: "question_#{q.id}", label: q.label, accepted_ratings: q.face_values }
         end
@@ -56,11 +56,11 @@ module SurveysTestHelper
   end
 
   def v2_survey_params
-    { ratings: {default_question: 103},  feedback: Faker::Lorem.paragraph }
+    { ratings: { default_question: 103 },  feedback: Faker::Lorem.paragraph }
   end
 
   def v2_classic_survey_params
-    { ratings: {default_question: 1},  feedback: Faker::Lorem.paragraph }
+    { ratings: { default_question: 1 },  feedback: Faker::Lorem.paragraph }
   end
 
   def v2_classic_survey_payload

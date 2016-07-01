@@ -12,6 +12,6 @@ JSON.generate(@items.map do |item|
     updated_at: item.updated_at.try(:utc)
   }
   response_hash.merge!(ratings: item.custom_ratings) if item.respond_to?(:custom_ratings)
-  response_hash.merge!(ratings: { default_question: item.rating } ) unless item.respond_to?(:custom_ratings)
+  response_hash.merge!(ratings: { default_question: item.rating }) unless item.respond_to?(:custom_ratings)
   response_hash
 end)

@@ -1,5 +1,4 @@
 module SurveyConstants
-
   FIELDS = %w(feedback ratings).freeze
 
   ATTRIBUTES_TO_BE_STRIPPED = %w(feedback).freeze

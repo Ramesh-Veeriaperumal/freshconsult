@@ -17,11 +17,11 @@ class SurveysController < ApiApplicationController
   end
 
   def custom_survey_results(item)
-    item.custom_survey_results.preload({:survey => {survey_questions: :custom_field_choices}, :survey_result_data => { :custom_form => {}}, :survey_remark => {:feedback => { :note_old_body=> {}}}, :flexifield => {}, :surveyable => {}}).order('created_at desc')
+    item.custom_survey_results.preload(survey: { survey_questions: :custom_field_choices }, survey_result_data: { custom_form: {} }, survey_remark: { feedback: { note_old_body: {} } }, flexifield: {}, surveyable: {}).order('created_at desc')
   end
 
   def classic_survey_results(item)
-    item.survey_results.preload( { survey_remark: { feedback: { note_old_body: {} } }, :surveyable => {} }).order('created_at desc')
+    item.survey_results.preload(survey_remark: { feedback: { note_old_body: {} } }, surveyable: {}).order('created_at desc')
   end
 
   def custom_survey?
@@ -134,7 +134,7 @@ class SurveysController < ApiApplicationController
       @question_id_name_mapping = {}
       current_account.survey.survey_questions.each do |sq|
         if sq.default
-          @question_id_name_mapping["default_question"] = sq.name
+          @question_id_name_mapping['default_question'] = sq.name
         else
           @question_id_name_mapping["question_#{sq.id}"] = sq.name
         end
