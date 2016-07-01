@@ -850,6 +850,11 @@ ul.user_list{
 		float: left;
 	}
 
+	.uc_actions.disabled{
+		cursor: default;
+		background-color: #c9c9c9;
+	}
+
 	.uc_text{
 		display: inline-block;
 		@include margin(0 0 0 5px);

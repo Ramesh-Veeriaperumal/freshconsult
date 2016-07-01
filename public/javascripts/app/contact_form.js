@@ -384,12 +384,21 @@ window.App.Contacts.Contact_form = window.App.Contacts.Contact_form || {};
           }
           $('#company-delete-confirmation').modal('hide');
         }
+        self.manageNewCompany();
       });
     },
 
     manageNewCompany: function () {
       var length = $("#user_companies li").not("[data-company-destroyed='true']").length;
       $('.uc_add_company').toggle(length < 20);
+      if($("#user_companies").parent().siblings().find(".required_star").length == 1){
+        var element = $("#user_companies li").not("[data-company-destroyed='true']").not("[data-new-company='true']");
+        if(element.length > 1){
+          element.first().find("a").removeClass("disabled");
+        }else if(element.length==1){
+          element.first().find(".remove_pad").addClass("disabled");
+        };
+      }
     }
   };
 }(window.jQuery));
