@@ -196,7 +196,7 @@ module Search::SearchResultJson
 	end
 
 	def suggest_json content, path, result
-		if Account.current.features?(:archive_tickets) && result.class.name == "Helpdesk::ArchiveTicket" 
+		if Account.current.features_included?(:archive_tickets) && result.class.name == "Helpdesk::ArchiveTicket" 
 		  class_name = "helpdesk_ticket"
 		else
           class_name = result.is_a?(Company) ? 'customer' : result.class.name.gsub('::', '_').downcase

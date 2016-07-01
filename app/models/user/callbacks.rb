@@ -25,6 +25,9 @@ class User < ActiveRecord::Base
   after_commit :subscribe_event_create, on: :create, :if => :allow_api_webhook?
 
   after_commit :subscribe_event_update, on: :update, :if => :allow_api_webhook?
+  
+  after_commit :inst_app_business_event_create, on: :create, :if => :allow_inst_app_business_rule?
+  
   #after_commit :discard_contact_field_data, on: :update, :if => [:helpdesk_agent_updated?, :agent?]
   after_commit :delete_forum_moderator, on: :update, :if => :helpdesk_agent_updated?
   after_commit :deactivate_monitorship, on: :update, :if => :blocked_deleted?
@@ -121,7 +124,7 @@ class User < ActiveRecord::Base
   end
 
   def set_company_name
-    if (self.company_id.nil? && self.email)      
+    if (!self.company_name.present? && self.email)      
       email_domain =  self.email.split("@")[1]
       comp_id = Account.current.company_domains.find_by_domain(email_domain).try(:company_id)
       self.company_id = comp_id unless comp_id.nil?
@@ -169,7 +172,7 @@ class User < ActiveRecord::Base
   end  
 
   def backup_customer_id
-    if self.user_companies.length > 1
+    if self.user_companies.present?
       user_comp = self.user_companies.find{ |uc| uc.default }
       self.customer_id = user_comp.present? ? user_comp.company_id : nil
     elsif self.default_user_company.present?

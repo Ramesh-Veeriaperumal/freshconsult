@@ -1,0 +1,236 @@
+#Mapping for Count cluster V2
+
+curl -XPUT "172.16.210.126:9101/es_filters_count" -d'
+{
+"mappings": {
+    "ticket": {
+      "dynamic_templates": [
+        {
+          "ffs": {
+            "match": "ffs_*",
+            "match_mapping_type": "string",
+            "mapping": {
+              "type": "string",
+              "index": "not_analyzed"
+            }
+          }
+        },
+        {
+          "ff_int": {
+            "match": "ff_int*",
+            "match_mapping_type": "long",
+            "mapping": {
+              "type": "long"
+            }
+          }
+        },
+        {
+          "ff_decimal": {
+            "match": "ff_decimal*",
+            "match_mapping_type": "float",
+            "mapping": {
+              "type": "float"
+            }
+          }
+        },
+        {
+          "ff_date": {
+            "match": "ff_date*",
+            "match_mapping_type": "date",
+            "mapping": {
+              "type": "date"
+            }
+          }
+        },
+        {
+          "ff_boolean": {
+            "match": "ff_boolean*",
+            "match_mapping_type": "boolean",
+            "mapping": {
+              "type": "boolean"
+            }
+          }
+        },
+        {
+          "schema_long": {
+            "match": "long_*",
+            "match_mapping_type": "integer",
+            "mapping": {
+              "type": "long"
+            }
+          }
+        },
+        {
+          "schema_integer": {
+            "match": "int_*",
+            "match_mapping_type": "integer",
+            "mapping": {
+              "type": "integer"
+            }
+          }
+        },
+        {
+          "schema_string": {
+            "match": "string_*",
+            "match_mapping_type": "string",
+            "mapping": {
+              "type": "string",
+              "index": "not_analyzed"
+            }
+          }
+        },
+        {
+          "schema_datetime": {
+            "match": "datetime_*",
+            "match_mapping_type": "date",
+            "mapping": {
+              "type": "date"
+            }
+          }
+        },
+        {
+          "schema_boolean": {
+            "match": "boolean_*",
+            "match_mapping_type": "boolean",
+            "mapping": {
+              "type": "boolean"
+            }
+          }
+        }
+      ],
+      "properties": {
+        "requester_id": {
+          "type": "long"
+        },
+        "responder_id": {
+          "type": "long"
+        },
+        "status": {
+          "type": "long"
+        },
+        "source": {
+          "type": "long"
+        },
+        "spam": {
+          "type": "boolean"
+        },
+        "deleted": {
+          "type": "boolean"
+        },
+        "created_at": {
+          "type": "date"
+        },
+        "resolved_at": {
+          "type": "date"
+        },
+        "closed_at": {
+          "type": "date"
+        },
+        "updated_at": {
+          "type": "date"
+        },
+        "account_id": {
+          "type": "long"
+        },
+        "display_id": {
+          "type": "long"
+        },
+        "group_id": {
+          "type": "long"
+        },
+        "due_by": {
+          "type": "date"
+        },
+        "frDueBy": {
+          "type": "date"
+        },
+        "priority": {
+          "type": "long"
+        },
+        "ticket_type": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "tag_names": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "tag_ids": {
+          "type": "long"
+        },
+        "watchers": {
+          "type": "long"
+        },
+        "product_id": {
+          "type": "long"
+        },
+        "trashed":{
+          "type": "boolean"
+        },
+        "company_id": {
+          "type": "long"
+        },
+        "status_stop_sla_timer":{
+          "type": "boolean"
+        },
+        "status_deleted":{
+          "type": "boolean"
+        },
+        "email_config_id": {
+          "type" : "long"
+        },
+        "opened_at": {
+          "type" : "date"
+        },
+        "first_assigned_at": {
+          "type" : "date"
+        },
+        "pending_since": {
+          "type" : "date"
+        },
+        "assigned_at": {
+          "type" : "date"
+        },
+        "first_response_time": {
+          "type" : "date"
+        },
+        "requester_responded_at": {
+          "type" : "date"
+        },
+        "agent_responded_at": {
+          "type" : "date"
+        },
+        "status_updated_at": {
+          "type" : "date"
+        },
+        "sla_timer_stopped_at": {
+          "type" : "date"
+        },
+        "isescalated": {
+          "type" : "boolean"
+        },
+        "fr_escalated": {
+          "type" : "boolean"
+        },
+        "group_escalated": {
+          "type" : "boolean"
+        },
+        "inbound_count": {
+          "type" : "long"
+        },
+        "outbound_count": {
+          "type" : "long"
+        },
+        "first_resp_time_by_bhrs": {
+          "type" : "long"
+        },
+        "avg_response_time_by_bhrs": {
+          "type" : "float"
+        },
+        "resolution_time_by_bhrs": {
+          "type" : "float"
+        }
+      }
+    }
+  }
+}'

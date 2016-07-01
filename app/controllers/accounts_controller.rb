@@ -224,7 +224,7 @@ class AccountsController < ApplicationController
     end
  
     def default_preferences
-      HashWithIndifferentAccess.new({:bg_color => "#efefef",:header_color => "#252525", :tab_color => "#006063"})
+      HashWithIndifferentAccess.new({:bg_color => "#efefef",:header_color => "#252525", :tab_color => "#006063", :personalized_articles => true})
     end
   
     def redirect_url
@@ -314,9 +314,13 @@ class AccountsController < ApplicationController
         end
       end
       
-      params[:signup][:locale] = http_accept_language.compatible_language_from(I18n.available_locales)
+      params[:signup][:locale] = assign_language || http_accept_language.compatible_language_from(I18n.available_locales)
       params[:signup][:time_zone] = params[:utc_offset]
       params[:signup][:metrics] = build_metrics
+    end
+
+    def assign_language
+      params[:account][:lang] if params[:account][:lang] and Language.find_by_code(params[:account][:lang]).present?
     end
 
     def build_signup_contact

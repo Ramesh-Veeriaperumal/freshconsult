@@ -30,6 +30,11 @@ window.App = window.App || {};
 			case 'helpdesk/tickets/compose_email':
 				this.current_module = 'Compose';
 				break;
+				
+			case 'helpdesk/tickets/new':
+			case 'helpdesk/tickets/edit':
+				this.current_module = 'Create';
+				break;
 			}
 		},
 

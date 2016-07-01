@@ -17,6 +17,7 @@ class User < ActiveRecord::Base
   include Redis::OthersRedis
   include Authority::FreshdeskRails::ModelHelpers
   include ApiWebhooks::Methods
+  include InstalledAppBusinessRules::Methods
   include Social::Ext::UserMethods
   include AccountConstants
   include PasswordPolicies::UserHelpers
@@ -704,7 +705,12 @@ class User < ActiveRecord::Base
   end
   
   def company_name
-    company.name if company
+    if has_multiple_companies_feature?
+      uc = user_companies.find { |uc| uc.default }
+      uc.company.name if uc.present? && uc.company.present?
+    else
+      default_user_company.company.name if default_user_company.present? && default_user_company.company.present?
+    end
   end
 
   def company_id= comp_id

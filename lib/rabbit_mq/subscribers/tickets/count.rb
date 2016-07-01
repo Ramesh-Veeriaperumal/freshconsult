@@ -1,7 +1,7 @@
 module RabbitMq::Subscribers::Tickets::Count
 
   def mq_count_valid(action, model)
-    Account.current.features?(:count_es_writes) && valid_count_model?(model) &&
+    Account.current.features?(:countv2_writes) && valid_count_model?(model) &&
    ((update_action?(action) && self.respond_to?(:count_fields_updated?)) ? self.count_fields_updated? : true)
   end
 

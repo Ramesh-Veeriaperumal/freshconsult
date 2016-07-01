@@ -26,43 +26,29 @@
             ]
           ]
       options = {'class' => 'item', 'ul_class' => 'tick menu-pjax'}
+      scenario_count = @all_items.count
     %>
-    <a class='dropdown-toggle' data-toggle="dropdown" href='#'><%= "#{t('showing')}: " %><b><%=t("automations.#{@current_tab}")%> (<%=@va_rules.count%>)</b>
+    <a class='dropdown-toggle' data-toggle="dropdown" href='#'><%= "#{t('showing')}: " %><b><%=t("automations.#{@current_tab}")%> (<%= scenario_count %>)</b>
     <span class='caret'></span></a>
       <%= dropdown_menu(list, options) %>
     </div>
   <%else%>
-    <%= "#{t('showing')}: " %><b><%=t("automations.personal")%> (<%=@va_rules.count%>)</b>
+    <%= "#{t('showing')}: " %><b><%=t("automations.personal")%> (<%= scenario_count %>)</b>
   <%end%>
 
   <div class="response-list list-page-body " id="va_rules_list">
-    <%if @va_rules.empty?%>
-    <div class="list-noinfo">
-    <%=t('automations.no_scenario',{:link => new_helpdesk_scenario_automation_path()}).html_safe%>
-    </div>
-    <%else%>
-    <table class="table table-striped">
-      <% @va_rules.each do |va_rule| %>
-        <tr id=<%= dom_id(va_rule) %>>
-          <td>
-            <strong>
-              <%= link_to(h(va_rule.name), edit_helpdesk_scenario_automation_path(va_rule), :class => "item_info") %>
-            </strong><br/>
-            <span class="muted"><%= h va_rule.description %></span>
-          </td>
-          <td>
-            <div class="item_actions" align="right">
-                <%= link_to(t('clone'),clone_rule_helpdesk_scenario_automation_path(va_rule), :class => "btn btn-mini")%>
-                <%= link_to(t('edit'), edit_helpdesk_scenario_automation_path(va_rule), :class => "btn btn-mini") %>
-                <%= link_to "<i class='icon-trash'></i>".html_safe, helpdesk_scenario_automation_path(va_rule), :confirm => t('confirm_delete_message', :human_name => t('admin.automations.index.human_name')), :method => :delete, :class => "btn btn-mini" %>
-            </div>
-          </td>
-        </tr>
-      <% end %>
-      <%end%>
-    </table>
+    <% if !((scenario_count/@per_page.to_f) > @page.to_i-1) %>
+      <div class="list-noinfo">
+        <%=t('automations.no_scenario',{:link => new_helpdesk_scenario_automation_path()}).html_safe%>
+      </div>
+    <% else %>
+      <table class="table table-striped">
+        <%= render :partial => "scenario", :collection => @all_items %>
+      </table>
+      <%= will_paginate @all_items, :renderer => BootstrapPaginationRenderer, 
+                              :previous_label => "<b class='arrow-left'></b>",
+                              :next_label => "<b class='arrow-right'></b>",
+                              :class => "pagination pagination-centered" %>
+    <% end %>
   </div>
-
 </div>
-
-

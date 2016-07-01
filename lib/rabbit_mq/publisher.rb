@@ -32,4 +32,22 @@ module RabbitMq::Publisher
     end
     
   end
+
+  #This method will be called from included model to return model specific keys     
+  #that are requied in model properties. Moving this method here so as to avoic   
+  #having it in all models.   
+  def return_specific_keys(hash, keys)    
+    new_hash = {}   
+      keys.each do |key|    
+        if key.class.name == "String"   
+          new_hash[key] = hash[key]   
+        elsif key.class.name == "Hash"    
+          current_key = key.keys.first    
+          if !hash[current_key].nil?    
+            new_hash[current_key] = return_specific_keys(hash[current_key], key[current_key])   
+          end   
+        end   
+      end   
+    new_hash    
+  end
 end

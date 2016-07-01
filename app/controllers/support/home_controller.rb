@@ -1,5 +1,7 @@
 class Support::HomeController < SupportController
 
+  before_filter :load_page_meta, :unless => :facebook?
+
   def index
     flash.keep(:notice)
   	redirect_to support_login_path and return unless (allowed_in_portal?(:open_solutions) || forums_enabled?)
@@ -12,5 +14,15 @@ class Support::HomeController < SupportController
 
     set_portal_page facebook? ? :facebook_home : :portal_home
   end
+
+  private
+
+    def load_page_meta
+      portal_drop = current_portal.to_liquid
+      return unless portal_drop.has_solutions ^ portal_drop.has_forums
+      @page_canonical = portal_drop.has_solutions ? 
+                          support_solutions_url(:host => current_portal.host, :protocol => current_account.url_protocol) : 
+                          support_discussions_url(:host => current_portal.host, :protocol => current_account.url_protocol)
+    end
 
 end

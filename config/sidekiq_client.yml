@@ -83,6 +83,7 @@ defaults: &defaults
     - [bulk_ticket_actions]
     - [bulk_ticket_reply]
     - [api_webhook_rule]
+    - [installed_app_business_rule]
     - [premium_dispatcher]
     - [dispatcher]
     - [trial_dispatcher]
@@ -115,6 +116,8 @@ defaults: &defaults
     - [account_info_to_dynamo]
     - [parallel_report_exports]
     - [count_es_queue]
+    - [clear_moderation_records]
+    - [empty_moderation_trash]
 
 development:
   <<: *defaults

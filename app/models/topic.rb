@@ -450,6 +450,21 @@ class Topic < ActiveRecord::Base
     @old_forum_cached ||= Forum.find(forum_id_was) if forum_id_was
   end
 
+  def to_rmq_json(keys,action)
+    topic_identifiers
+  end
+
+  def topic_identifiers
+    @rmq_topic_identifiers ||= {
+      "id"          =>  id,
+      "user_id"     =>  user_id,
+      "forum_id"    =>  forum_id,
+      "account_id"  =>  account_id,
+      "published"   =>  published,
+      "answer"      =>  answer,
+    }
+  end
+
   def ticket
     ticket_topic.ticketable if ticket_topic
   end

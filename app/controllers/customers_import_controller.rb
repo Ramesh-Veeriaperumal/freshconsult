@@ -22,7 +22,7 @@ class CustomersImportController < ApplicationController
   
   def create
     if fields_mapped?
-      current_account.send(:"create_#{params[:type]}_import",{:status => 1})
+      current_account.send(:"create_#{params[:type]}_import",{:import_status => Admin::DataImport::IMPORT_STATUS[:started]})
       import_worker = params[:type].eql?("company") ?
         "Import::CompanyWorker" :
         "Import::ContactWorker"

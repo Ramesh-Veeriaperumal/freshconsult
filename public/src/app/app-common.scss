@@ -2569,6 +2569,12 @@ a.mobile_switchBtn {
 	}
 }
 
+.personalized_articles {
+	.toggle-button {
+		@include margin-left(0px);
+	}
+}
+
 .manage-languages-body {
 	margin-top: 30px;
 

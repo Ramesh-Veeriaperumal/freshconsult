@@ -37,6 +37,8 @@ class ContactMergeController < ApplicationController
             target_company_ids << uc.company_id
           end
         end
+        target.mobile = "" if @source_user.mobile.eql? target.mobile
+        target.phone = "" if @source_user.phone.eql? target.phone
         target.deleted = true
         target.user_emails.update_all_with_publish({
                                                       :user_id => @source_user.id,
@@ -98,6 +100,9 @@ class ContactMergeController < ApplicationController
           :twitter => i.twitter_id.present?,
           :facebook => i.fb_profile_id.present?,
           :phone => i.phone.present?, 
+          :phone_num => i.phone,
+          :mobile => i.mobile.present?,
+          :mobile_num => i.mobile,
           :searchKey => i.emails.join(",")+i.name, 
           :avatar =>  i.avatar ? i.avatar.expiring_url("thumb",30.days.to_i) : is_user_social(i, "thumb")
         }
@@ -121,7 +126,7 @@ class ContactMergeController < ApplicationController
     end
 
     def exceded_user_attribute att, max
-      [@source_user.send(att), @target_users.map{|x| x.send(att)}].flatten.compact.reject(&:empty?).length > max
+      [@source_user.send(att), @target_users.map{|x| x.send(att)}].flatten.compact.reject(&:empty?).uniq.length > max
     end
 
     def set_error att, max

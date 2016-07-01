@@ -11,8 +11,8 @@ class UpdateAllPublisher
     exchange_name = RabbitMq::Constants::MODEL_TO_EXCHANGE_MAPPING[model_name]
     subscribers   = (RabbitMq::Keys.const_get("#{exchange_name.upcase}_SUBSCRIBERS") rescue [])
     
-    esv2_enabled = Account.current.features?(:es_v2_writes)
-    count_es_enabled = Account.current.features?(:count_es_writes)
+    esv2_enabled = Account.current.features_included?(:es_v2_writes)
+    count_es_enabled = Account.current.features?(:countv2_writes)
     # Move feature check inside if multiple subscribers added
     if esv2_enabled || count_es_enabled
       args[:klass_name].constantize.where(account_id: Account.current.id, id: args[:ids]).each do |record|

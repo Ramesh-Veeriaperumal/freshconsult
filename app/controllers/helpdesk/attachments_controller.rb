@@ -48,50 +48,33 @@ class Helpdesk::AttachmentsController < ApplicationController
 
   def unlink_shared
     if can_unlink?
-      @note = @item.shared_attachable
-      @note_attachment_count = @note.all_attachments.size + @note.cloud_files.size - 1
+      attachment_count
       @item.destroy
       flash[:notice] = t(:'flash.tickets.notes.remove_attachment.success')
     else
-      access_denied
+      flash[:notice] = t(:'flash.general.access_denied')
+      redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
     end
   end
 
   protected
 
-     def check_destroy_permission
-      can_destroy = false
-
-      @items.each do |attachment|
-        if ['Helpdesk::Ticket', 'Helpdesk::Note'].include? attachment.attachable_type
-          ticket = attachment.attachable.respond_to?(:notable) ? attachment.attachable.notable : attachment.attachable
-          can_destroy = true if privilege?(:manage_tickets) or (current_user && ticket.requester_id == current_user.id)
-        elsif ['Solution::Article', 'Solution::Draft'].include? attachment.attachable_type
-          can_destroy = true if privilege?(:publish_solution) or (current_user && attachment.attachable.user_id == current_user.id)
-        elsif ['Account'].include? attachment.attachable_type
-          can_destroy = true if privilege?(:manage_account)
-        elsif ['Post'].include? attachment.attachable_type
-          can_destroy = true if privilege?(:edit_topic) or (current_user && attachment.attachable.user_id == current_user.id)
-        elsif ['User'].include? attachment.attachable_type
-          can_destroy = true if privilege?(:manage_users) or (current_user && attachment.attachable.id == current_user.id)
-        end
-      end
-
-          unless  can_destroy
-            flash[:notice] = t(:'flash.general.access_denied')
-            redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
-          end
-
-
-
-   end
-
     def load_shared
-      @item = Helpdesk::SharedAttachment.find_by_shared_attachable_id(params[:note_id], :conditions=>["attachment_id=?", params[:id]])
+      @item = Helpdesk::SharedAttachment.find_by_shared_attachable_id(params[:item_id], :conditions=>["attachment_id=?", params[:id]])
     end
 
     def can_unlink?
-      privilege?(:manage_tickets) and ['Helpdesk::Note'].include? @item.shared_attachable_type
+      if ['Helpdesk::Ticket', 'Helpdesk::Note'].include? @item.shared_attachable_type
+        privilege?(:manage_tickets)
+      elsif ['Helpdesk::TicketTemplate'].include? @item.shared_attachable_type
+        template_priv? @item.shared_attachable
+      end
+    end
+
+    def attachment_count
+      @obj                  = @item.shared_attachable
+      @obj_name             = (@item.shared_attachable_type == "Helpdesk::Note") ? "note" : "ticket"
+      @obj_attachment_count = @obj.all_attachments.size + @obj.cloud_files.size - 1
     end
 
     def check_download_permission
@@ -99,7 +82,6 @@ class Helpdesk::AttachmentsController < ApplicationController
     end
 
     def can_download?
-
       # Is the attachment on a note?
       #if @attachment.attachable.respond_to?(:notable)
       if ['Helpdesk::Ticket', 'Helpdesk::Note', 'Mobihelp::TicketInfo', 'Helpdesk::ArchiveTicket','Helpdesk::ArchiveNote'].include? @attachment.attachable_type
@@ -124,6 +106,8 @@ class Helpdesk::AttachmentsController < ApplicationController
         return ticket_access? call_record_ticket
       elsif ['DataExport'].include? @attachment.attachable_type
         return privilege?(:manage_account) || @attachment.attachable.owner?(current_user)
+      elsif ['Helpdesk::TicketTemplate'].include? @attachment.attachable_type
+        return true if template_priv? @attachment.attachable
       end
 
     end

@@ -17,8 +17,9 @@ Authority::Authorization::PrivilegeList.build do
                                            :spam, :unspam, :execute_scenario, :pick_tickets,
                                            :get_ca_response_content, :merge_with_this_request, :print, :latest_note,
                                            :clear_draft, :save_draft, :prevnext, :component, :custom_search,
-                                           :quick_assign, :canned_reponse, :full_paginate, :custom_view_save,
-                                           :filter_options, :activities, :status, :get_top_view, :recent_tickets, :old_tickets, :summary, :bulk_scenario, :execute_bulk_scenario]
+                                           :quick_assign, :canned_reponse, :full_paginate, :custom_view_save, :apply_template, :accessible_templates, :search_templates,
+                                           :filter_options, :activities, :status, :get_top_view, :recent_tickets, :old_tickets, :summary, :bulk_scenario,
+                                           :execute_bulk_scenario, :activitiesv2, :activities_all]
     resource :"helpdesk/subscription"
     resource :"helpdesk/tag_use"
     resource :"helpdesk/tag"
@@ -95,12 +96,15 @@ Authority::Authorization::PrivilegeList.build do
     resource :"notification/product_notification", :only => [:index]
     # resource :"helpdesk/common", :only => [:group_agents]
 
+    # ticket_templates
+    resource :"helpdesk/ticket_template"
+
     #canned_response
     resource :"helpdesk/canned_responses/folder", :only => [:index, :show]
     resource :"helpdesk/canned_responses/response"
 
     resource :"helpdesk/archive_ticket", :only => [:show, :index, :custom_search, :latest_note, 
-                                                    :full_paginate,  :activities, :component, :prevnext]                                                
+                                                    :full_paginate,  :activities, :component, :prevnext, :activitiesv2]                                                
     resource :"helpdesk/archive_note", :only => [:index, :full_text]
 
     resource :"wf/filter", :only => [:index, :update_filter, :save_filter, :delete_filter]
@@ -485,6 +489,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"integrations/infusionsoft", :only => [:install, :edit, :fields_update]
     resource :"integrations/sugarcrm", :only => [:settings, :edit, :settings_update, :fields_update]
     resource :"integrations/magento", :only => [:new, :edit, :update]
+    resource :"integrations/fullcontact", :only => [:new, :edit, :update]
     resource :"admin/freshfone"
     resource :"admin/freshfone/number"
     resource :"admin/gamification"

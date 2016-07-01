@@ -59,7 +59,7 @@ class Import::Zen::Start < Struct.new(:params)
  end
  
 def read_data(obj_node)
-  set_redis_key(obj_node, Admin::DataImport::ZEN_IMPORT_STATUS[:started])
+  set_redis_key(obj_node, Admin::DataImport::IMPORT_STATUS[:started])
   set_queue_keys 'tickets' if obj_node.eql?("ticket")
   file_path = File.join(@base_dir , OBJECT_FILE_MAP[obj_node.to_sym])
   begin
@@ -78,7 +78,7 @@ def read_data(obj_node)
        end
     end
     set_redis_key('total_tickets',get_zen_import_hash_value(zi_key,'tickets_queued').to_i) if obj_node.eql?("ticket")
-    set_redis_key(obj_node, Admin::DataImport::ZEN_IMPORT_STATUS[:completed])
+    set_redis_key(obj_node, Admin::DataImport::IMPORT_STATUS[:completed])
   rescue Errno::ENOENT
     handle_format_error
     exit

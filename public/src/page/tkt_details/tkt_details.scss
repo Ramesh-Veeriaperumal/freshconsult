@@ -707,14 +707,17 @@ ol, ul, li{
     .freshdesk_quote {
     	// display: none;
     }
-
 	.conversation{
 		margin-bottom: 22px;
 		position: relative; 
 		&:hover {
-			.avatar-wrap, .commentbox {
+			.commentbox {
 				@include transition(border 200ms cubic-bezier(0.65, 0.05, 0.36, 1));
 				border-color: #bbb;
+			}
+			.avatar-wrap{
+				@include transition(border 200ms cubic-bezier(0.65, 0.05, 0.36, 1));
+				border-color: #999;
 			}
 			.commentbox:before {
 				@include border-right-color(#aaa);
@@ -726,7 +729,17 @@ ol, ul, li{
 			}
 		}
 	}
-
+	.activity:hover {
+		.commentbox {
+			border-color: #ddd;
+			&:before{
+				@include border-right-color(#bbb);
+			}
+		}
+		.avatar-wrap{
+			border-color: #999;
+		}
+	}
 	.alert-container{
 		@include margin-left(29px);
 		background: #900;
@@ -1159,13 +1172,14 @@ ol, ul, li{
     	background: transparent;
     	@include border-radius(5px);
     }
-
-    .minimized .commentbox {
+     .minimizable  .author-mail-detail, .minimizable  .subject{
     	cursor: pointer;
-    	.details, .attachments-wrap, .attachment_list, .actions, .seperator {
+     }
+    .minimized .commentbox, .minimized.commentbox{
+    	cursor: pointer;
+    	.details, .attachments-wrap, .attachment_list, .actions, .seperator, #ticket_original_request, .ticket-details-twitter{
     		display: none;
     	}
-
     	.smiley{
     		top: 3px;
     	}
@@ -1289,7 +1303,7 @@ ol, ul, li{
 		@include margin-left(10px);
 	}
 
-	.author-mail-detail{
+	.author-mail-detail {
 		margin: 0;
 		color: #a2a19f;
 		@include text-align(left);
@@ -1304,6 +1318,23 @@ ol, ul, li{
 			@include text-align(right);
 			a{ font-weight: normal; }
 		}
+		.system-rule-link{
+			color: #a2a19f;
+			font-weight: 400;
+			&:hover{
+				color: #06c;
+			}
+		}
+	}
+
+	.last-modified-detail {
+		a{ 
+			font-weight:normal;
+			color: #999;
+			&:hover{
+				color:#037;
+			}
+		};
 	}
 
 	.details, #ticket_original_request {
@@ -1322,14 +1353,14 @@ ol, ul, li{
 
 	.tag {
 		@include float(right);
-		background: #aaa;
+		background: #bbb;
 		color: #FFF;
 		border: solid 1px #FFF;
 		max-width: 150px;
 		display: block;
 		@include border-radius(5px);
-		font-size: 12px;
-		padding: 1px 15px 3px;
+		font-size: 11px;
+		padding: 0px 8px 2px;
 		font-weight: 500;
 		text-overflow: ellipsis;
 		height: 18px;
@@ -1458,7 +1489,17 @@ ol, ul, li{
 	min-height: 30px;
 
 	.details {
-		margin-top: 0;
+		margin-top: 5px;
+		.activity-details{
+    			@include padding-left(17px);
+    			li{
+    				padding-bottom: 2px;
+    				color: #bbb;
+    			}
+    			span{
+    				color:#333;
+    			}
+		}
 	}
 }
 
@@ -1739,19 +1780,20 @@ ol, ul, li{
 	}
 }
 .ticket_show .avatar-wrap {
-	width: 40px;
-	height: 40px;
 	z-index: 100;
-	@include border-radius(50%);
-	@include transition(border 200ms cubic-bezier(0.65, 0.05, 0.36, 1));
-	background: #fff;
 	position: absolute;
-	border: 1px solid #fff;
+	@include border-radius(50%);
 	@include margin(0 0 3px 0);
 	padding: 0;
 	@include text-align(center);
 	@include float(left);
+	width: 40px;
+	height: 40px;
  	@include left(-35px);
+ 	background-color: #E0E0E0;
+	@include transition(border 200ms cubic-bezier(0.65, 0.05, 0.36, 1));
+	border: 1px solid #fff;
+	@include text-align(center);
 	.preview_pic {
 		display: inline-block;
 		margin: 0;
@@ -1763,6 +1805,13 @@ ol, ul, li{
 			top: 0;
 		}
 	}
+	.system-avatar{
+    		font-size: 20px;
+    		top: 11px;
+    		@include right(10px);
+    		position: absolute;
+    		color:#555555;
+ 	}
 	.avatar {
 		@include border-radius(50%);
 		position: relative;
@@ -2630,8 +2679,20 @@ ol, ul, li{
 
 	.text {
 		@include float(left);
-		@include margin(3px 10px 0 3px);
+		@include margin(2px 10px 2px 3px);
 	}
+	.activities_tick{
+		@include border-radius(50%);
+	 	border: 1px solid #ccc;
+	 	padding: 1.5px 4.5px;
+	 	font-size: 10px;
+	 	@include text-shadow(none);
+	 }
+	 &.active .activities_tick{
+	 	color:#fff;
+	 	background-color:#424242;
+	 	border:none;
+	 }
 }
 
 .pagination-link{

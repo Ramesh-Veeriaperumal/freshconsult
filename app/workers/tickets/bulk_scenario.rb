@@ -14,7 +14,7 @@ module Tickets
         begin
           va_rule.trigger_actions(ticket, current_user)
           ticket.save
-          Va::ScenarioFlashMessage.clear_activities
+          Va::RuleActivityLogger.clear_activities
           ticket.create_scenario_activity(va_rule.name)
         rescue Exception => e
           logger.info "#{e}"

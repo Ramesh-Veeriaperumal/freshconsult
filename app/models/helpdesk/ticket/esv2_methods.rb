@@ -20,7 +20,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   # Flexifield columns supported in V2
   #
   def esv2_ff_columns
-    @@es_flexi_txt_cols ||= Flexifield.column_names.select { |v| v =~ /^ff/ }.map(&:to_sym)
+    @@esv2_flexi_txt_cols ||= Flexifield.column_names.select { |v| v =~ /^ff/ }.map(&:to_sym)
   end
 
   # Custom json used by ES v2
@@ -53,11 +53,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
   #
   def es_v2_attachments
     attachments.pluck(:content_file_name)
-  end
-  
-  # Tag use callbacks to ES
-  def update_ticket_tags(obj)
-    self.tags_updated = true
   end
 
   #############################

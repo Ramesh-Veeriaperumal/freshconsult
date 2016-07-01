@@ -62,7 +62,7 @@ module Reports::TimesheetReport
     @report_date = params[:date_range]
     current_range_time_sheet
     previous_range_time_sheet #Fetching the previous time range data.
-    if Account.current.features?(:archive_tickets)
+    if Account.current.features_included?(:archive_tickets)
       archive_current_range_time_sheet
       archive_previous_range_time_sheet
       sum_new_and_archived
@@ -80,7 +80,7 @@ module Reports::TimesheetReport
 
   def time_sheet_for_export
     @time_sheets = filter(@start_date,@end_date)
-    if Account.current.features?(:archive_tickets)
+    if Account.current.features_included?(:archive_tickets)
       @archive_time_sheets = archive_filter(@start_date,@end_date)
       @time_sheets = shift_merge_sorted_arrays(@time_sheets,@archive_time_sheets)
     end

@@ -30,7 +30,7 @@ class Widgets::FeedbackWidgetsController < SupportController
 
     if params[:meta].present?
       params[:meta][:user_agent] = RailsFullSanitizer.sanitize params[:meta][:user_agent] if params[:meta][:user_agent].present?
-      params[:meta][:referrer] = RailsFullSanitizer.sanitize params[:meta][:referrer] if params[:meta][:referrer].present?
+      params[:meta][:referrer] = sanitize_referrer params[:meta][:referrer] if params[:meta][:referrer].present?
     end
 
     if create_the_ticket(check_captcha)
@@ -101,4 +101,11 @@ class Widgets::FeedbackWidgetsController < SupportController
         end
       end
     end
+
+  def sanitize_referrer(url)
+    URI.parse(url.to_s).to_s
+  rescue
+    nil
+  end
+
 end

@@ -23,13 +23,6 @@
 		font-weight:bold;
 		line-height:1.4em;
 	}
-
-	li{
-		line-height:1.4em;
-		@include margin(0 0 5px 25px);
-		color:#444;
-	}
-
 	.element{
 		@include padding(4px 16px 16px 16px);
 		margin:0 -20px;
