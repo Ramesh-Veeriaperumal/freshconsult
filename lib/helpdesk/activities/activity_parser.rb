@@ -591,7 +591,9 @@ module Helpdesk::Activities
     end
 
     def get_formatted_time(seconds)
-      Time.at(seconds.to_i).utc.strftime("%H:%M")
+      hh = (seconds/3600).to_i
+      mm = ((seconds % 3600)/60.to_f).round
+      hh.to_s.rjust(2,'0') + ":" + mm.to_s.rjust(2,'0')
     end
 
     def get_user(user_id)
