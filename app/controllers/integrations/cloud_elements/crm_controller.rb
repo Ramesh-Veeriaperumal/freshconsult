@@ -15,7 +15,7 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
 
   def create
     el_response = create_element_instance( crm_payload, @metadata )
-    redirect_to "#{request.protocol+request.host_with_port}#{integrations_cloud_elements_crm_instances_path}?state=#{params[:state]}&method=post&id=#{el_response['id']}&token=#{el_response['token']}"
+    redirect_to "#{request.protocol+request.host_with_port}#{integrations_cloud_elements_crm_instances_path}?state=#{params[:state]}&method=post&id=#{el_response['id']}&token=#{CGI::escape(el_response['token'])}"
   rescue => e
     hash = build_setting_configs "create"
     flash[:error] = t(:'flash.application.install.cloud_element_settings_failure')
