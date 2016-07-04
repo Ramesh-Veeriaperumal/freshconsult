@@ -420,7 +420,7 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
       if method.eql? "create"
         hash = {}
         constant_file["keys"].each do |field|
-          hash[field] = params["#{field}_label"] unless field.eql? "password"
+          hash[field] = params["#{field}_label"]
         end
         hash
       end
