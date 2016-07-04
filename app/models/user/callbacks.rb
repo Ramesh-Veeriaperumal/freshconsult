@@ -106,6 +106,8 @@ class User < ActiveRecord::Base
       default_user_company = self.user_companies.find { |uc| uc.default }
       self.customer_id = default_user_company.company_id
       self.user_companies = [default_user_company] unless has_multiple_companies_feature?
+    else
+      self.customer_id = nil
     end
   end
   
