@@ -1094,7 +1094,7 @@ module ApplicationHelper
       when "html_paragraph" then
         element = label 
         redactor_wrapper = ""
-        element_class += " ta_insert_cr" if field.field_type == "default_description"
+        element_class += " ta_insert_cr required_redactor" if field.field_type == "default_description"
         editor_type = object_name.eql?("template_data") ? :template : :ticket
         id,name = "#{object_name}_ticket_body_attributes_description_html", "#{object_name}[ticket_body_attributes][description_html]"
         form_builder.fields_for(:ticket_body, @ticket.ticket_body ) do |builder|

@@ -535,8 +535,8 @@ module Helpdesk::TicketsHelper
                     else
                       desp.present? ? (sign.present? ? desp + sign : desp) : ("<p><br /></p>"*2)+sign.to_s
                     end
-      contents << content_tag(:div, (builder.text_area :description_html, :class => "required html_paragraph ta_insert_cr", :"data-wrap-font-family" => true, :value => field_value, :placeholder => "Enter Message...").html_safe)
-      contents << content_tag(:div, render(:partial => "helpdesk/tickets/show/editor_insert_buttons", 
+      contents << content_tag(:div, (builder.text_area :description_html, :class => "required html_paragraph required_redactor ta_insert_cr", :"data-wrap-font-family" => true, :value => field_value, :placeholder => "Enter Message...").html_safe)
+      contents << content_tag(:div, render(:partial => "helpdesk/tickets/show/editor_insert_buttons",
                   :locals => {:cntid => 'tkt-cr'}), :class => "request_panel")
     end
     contents << content_tag(:div, :class=> "attachment-wrapper") do 
