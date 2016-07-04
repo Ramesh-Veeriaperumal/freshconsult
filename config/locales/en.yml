@@ -9704,7 +9704,7 @@ en:
     authorizations:
       new_form:
         go_to_portal: "Authorize &amp; Go to %{portal_name} Portal"
-        later: Later
+        decline: Decline
         authorize_text1: Authorize
         authorize_text2: to use your account?
         authorize_success: You have allowed this request
