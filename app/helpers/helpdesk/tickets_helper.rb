@@ -528,6 +528,7 @@ module Helpdesk::TicketsHelper
 
   def ticket_body_form form_builder, to=false
     contents = []
+    email_content = []
     contents << content_tag(:div, (form_builder.text_field :subject, :class => "required text ticket-subject", :placeholder => t('ticket.compose.enter_subject')).html_safe)
     form_builder.fields_for(:ticket_body, @ticket.ticket_body ) do |builder|
       field_value = if (desp = @item.description_html).blank? & (sign = current_user.agent.signature_value).blank?
@@ -535,11 +536,12 @@ module Helpdesk::TicketsHelper
                     else
                       desp.present? ? (sign.present? ? desp + sign : desp) : ("<p><br /></p>"*2)+sign.to_s
                     end
-      contents << content_tag(:div, (builder.text_area :description_html, :class => "required html_paragraph ta_insert_cr", :"data-wrap-font-family" => true, :value => field_value, :placeholder => "Enter Message...").html_safe)
-      contents << content_tag(:div, render(:partial => "helpdesk/tickets/show/editor_insert_buttons", 
+      email_content << content_tag(:div, (builder.text_area :description_html, :class => "required html_paragraph required_redactor ta_insert_cr", :"data-wrap-font-family" => true, :value => field_value, :placeholder => "Enter Message...").html_safe)
+      email_content << content_tag(:div, render(:partial => "helpdesk/tickets/show/editor_insert_buttons",
                   :locals => {:cntid => 'tkt-cr'}), :class => "request_panel")
+      contents <<  content_tag(:div, email_content.join(" ").html_safe, :class => "email-wrapper" )
     end
-    contents << content_tag(:div, :class=> "attachment-wrapper") do 
+    contents << content_tag(:div, :class=> "attachment-wrapper") do
       render :partial => "/helpdesk/tickets/show/attachment_form", :locals => { :attach_id => "ticket" , :nsc_param => "helpdesk_ticket" }
     end
     contents.join(" ").html_safe

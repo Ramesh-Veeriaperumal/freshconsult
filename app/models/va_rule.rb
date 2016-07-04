@@ -19,6 +19,7 @@ class VaRule < ActiveRecord::Base
   before_save :set_encrypted_password
   after_commit :clear_observer_rules_cache, :if => :observer_rule?
   after_commit :clear_api_webhook_rules_from_cache, :if => :api_webhook_rule?
+  after_commit :clear_installed_app_business_rules_from_cache, :if => :installed_app_business_rule?
 
   attr_writer :conditions, :actions, :events, :performer
   attr_accessor :triggered_event
@@ -32,10 +33,6 @@ class VaRule < ActiveRecord::Base
   scope :active, :conditions => { :active => true }
   scope :inactive, :conditions => { :active => false }
   scope :slack_destroy,:conditions => ["name in (?)",['slack_create', 'slack_update','slack_note']]
-
-  scope :observer_biz_rules, :conditions => { 
-    "va_rules.rule_type" => [VAConfig::INSTALLED_APP_BUSINESS_RULE], 
-    "va_rules.active" => true }, :order => "va_rules.position"
 
   acts_as_list :scope => 'account_id = #{account_id} AND #{connection.quote_column_name("rule_type")} = #{rule_type}'
 
@@ -244,6 +241,10 @@ class VaRule < ActiveRecord::Base
 
   def api_webhook_rule?
     rule_type == VAConfig::API_WEBHOOK_RULE
+  end
+
+  def installed_app_business_rule?
+    rule_type == VAConfig::INSTALLED_APP_BUSINESS_RULE
   end
 
   def supervisor_rule?

@@ -204,7 +204,10 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       :to         =>  receips,
       :from       =>  from_email,
       :bcc        =>  bcc_email,
-      "Reply-To"  =>  "#{from_email}"
+      "Reply-To"  =>  "#{from_email}",
+      "Account-Id" =>  params[:ticket].account_id,
+      "Ticket-Id"  =>  params[:ticket].display_id,
+      "Type"  =>  params[:notification_type]
       })
     
     inline_attachments   = []
@@ -285,7 +288,10 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       :to         =>  to_emails,
       :bcc        =>  bcc_emails,
       :from       =>  from_email,
-      "Reply-To"  =>  "#{from_email}"
+      "Reply-To"  =>  "#{from_email}",
+      "Account-Id" =>  ticket.account_id,
+      "Ticket-Id"  =>  ticket.display_id,
+      "Type"  =>  "Reply"
     })
 
     headers[:cc] = validate_emails(note.cc_emails, note) unless options[:include_cc].blank?
@@ -343,7 +349,10 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       :cc         =>  cc_emails,
       :bcc        =>  bcc_emails,
       :from       =>  from_email,
-      "Reply-To"  =>  "#{from_email}"
+      "Reply-To"  =>  "#{from_email}",
+      "Account-Id" =>  ticket.account_id,
+      "Ticket-Id"  =>  ticket.display_id,
+      "Type"  =>  "Forward"
     })
     inline_attachments = []
     @ticket = ticket
@@ -387,7 +396,10 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       :cc         =>  cc_emails,
       :bcc        =>  bcc_emails,
       :from       =>  from_email,
-      "Reply-To"  =>  "#{from_email}"
+      "Reply-To"  =>  "#{from_email}",
+      "Account-Id" =>  ticket.account_id,
+      "Ticket-Id"  =>  ticket.display_id,
+      "Type"  =>  "Reply to Forward"
     })
 
     inline_attachments = []
@@ -422,7 +434,10 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       :to         =>  ticket.from_email,
       :from       =>  ticket.friendly_reply_email,
       :sent_on    =>  Time.now,
-      "Reply-To"  =>  "#{ticket.friendly_reply_email}"
+      "Reply-To"  =>  "#{ticket.friendly_reply_email}",
+      "Account-Id" =>  ticket.account_id,
+      "Ticket-Id"  =>  ticket.display_id,
+      "Type"  =>  "Email to requestor"
     })
 
     inline_attachments = []
@@ -450,7 +465,10 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       :to         =>  receips,
       :from       =>  ticket.friendly_reply_email,
       :sent_on    =>  Time.now,
-      "Reply-To"  =>  "#{ticket.friendly_reply_email}"
+      "Reply-To"  =>  "#{ticket.friendly_reply_email}",
+      "Account-Id" =>  ticket.account_id,
+      "Ticket-Id"  =>  ticket.display_id,
+      "Type"  =>  "Internal email"
     })
 
     inline_attachments = []
@@ -494,7 +512,10 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       :from       =>  from_email,
       :cc         =>  cc_emails,
       :bcc        =>  bcc_emails,
-      "Reply-To"  =>  from_email
+      "Reply-To"  =>  from_email,
+      "Account-Id" =>  ticket.account_id,
+      "Ticket-Id"  =>  ticket.display_id,
+      "Type"  =>  "Outbound email"
     })
 
     inline_attachments   = []

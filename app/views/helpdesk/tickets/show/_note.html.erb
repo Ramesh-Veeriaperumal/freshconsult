@@ -121,7 +121,7 @@ end
 						"data-content" => conversation_popover_details(note).to_str%>
 				</div>
 			<% end %>
-      <div class="last-modified-detail" id="note_last_modified_container_<%= note.id%>">
+      <div class="author-mail-detail last-modified-detail" id="note_last_modified_container_<%= note.id%>">
       <%  if last_modified_user %>
             <% last_modified_translation = note.deleted? ? 'last_deleted_info' : 'last_edited_info' %>
               <%= t("helpdesk.tickets.note.#{last_modified_translation}", 

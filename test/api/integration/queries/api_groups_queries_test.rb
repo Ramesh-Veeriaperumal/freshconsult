@@ -8,9 +8,9 @@ class ApiGroupsQueriesTest < ActionDispatch::IntegrationTest
       v1 = {}
       v2_expected = {
         api_create: 9,
-        api_show: 1,
+        api_show: 2,
         api_update: 7,
-        api_index: 0,
+        api_index: 1,
         api_destroy: 11,
 
         create: 22,

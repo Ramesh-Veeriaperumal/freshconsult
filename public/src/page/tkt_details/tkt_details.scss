@@ -1328,7 +1328,6 @@ ol, ul, li{
 	}
 
 	.last-modified-detail {
-		@extend .author-mail-detail;
 		a{ 
 			font-weight:normal;
 			color: #999;
@@ -1492,7 +1491,6 @@ ol, ul, li{
 	.details {
 		margin-top: 5px;
 		.activity-details{
-			list-style-type: circle;
     			@include padding-left(17px);
     			li{
     				padding-bottom: 2px;

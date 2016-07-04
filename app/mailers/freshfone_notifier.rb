@@ -143,10 +143,12 @@ class FreshfoneNotifier < ActionMailer::Base
     end.deliver
   end
 
-  def ops_alert(account, notification, message)
+  def ops_alert(account, notification, message, recipients = nil)
+    recipients ||= []
+    recipients << FreshfoneConfig['ops_alert']['mail']['to']
     headers = {
       :subject => "Alert #{notification} for account #{account.id}",
-      :to      => FreshfoneConfig['ops_alert']['mail']['to'],
+      :to      => recipients,
       :from    => FreshfoneConfig['ops_alert']['mail']['from'],
       :sent_on => Time.now,
       "Reply-to" => "",

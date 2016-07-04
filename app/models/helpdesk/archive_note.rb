@@ -264,7 +264,7 @@ class Helpdesk::ArchiveNote < ActiveRecord::Base
   end
 
   def last_modified_timestamp
-    note_properties["last_modified_timestamp"].to_s.to_datetime unless note_properties.nil?
+    Time.zone.parse(note_properties["last_modified_timestamp"].to_s).to_datetime unless note_properties.nil?
   end
 
   def deleted?

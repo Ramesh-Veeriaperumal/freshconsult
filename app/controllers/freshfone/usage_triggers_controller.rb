@@ -18,7 +18,7 @@ class Freshfone::UsageTriggersController < FreshfoneBaseController
       @ops_notifier = Freshfone::OpsNotifier.new(current_account, 
         trigger.trigger_type)
       send trigger.trigger_type if respond_to?(trigger.trigger_type, true)
-      @ops_notifier.alert_mail
+      deliver_alert_mail
     rescue Exception => e
       NewRelic::Agent.notice_error(e, params)
       #puts "Error - #{e} \n #{e.backtrace.join("\n\t")}"
@@ -123,4 +123,15 @@ class Freshfone::UsageTriggersController < FreshfoneBaseController
     		head :ok
     	end
     end
+
+    def deliver_alert_mail
+      return @ops_notifier.alert_mail_with_recepient if inbound_and_outbound_calls?
+      @ops_notifier.alert_mail
+    end
+
+    def inbound_and_outbound_calls?
+      [ :calls_inbound , :calls_outbound ].include?(trigger.trigger_type)
+    end
+
+
   end

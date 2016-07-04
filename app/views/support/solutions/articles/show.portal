@@ -11,8 +11,10 @@
 	<h2 class="heading">{{ article.title | h}}
 		<a href="javascript:print();" class="icon-print solution-print-icon" title="{% translate portal.print_title %}"></a>
 	</h2>
+	{% if article.personalized_articles? %}
+	<div> {% translate portal.article.created_by %} {{ article.author }} </div> 
+	{% endif %}
 	<p>{% translate portal.article.modified_on %} {{ article.modified_on | short_day_with_time }}</p>
-
 	<hr />
 	{% comment %}
 	<div>

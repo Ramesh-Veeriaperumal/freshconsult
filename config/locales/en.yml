@@ -108,7 +108,7 @@ en:
   sales: "Sales"
   preview: "Preview"
   no_agents_in_selected_group: "No agents in selected group"
-  send_feedback: "Send feedback"
+  send_feedback: "Send"
   sidebar_help: "Help"
   support_title: "Support"
   ticket_form:
@@ -1905,6 +1905,8 @@ en:
         categories_visible: Portal Categories
         product_label: "Product: %{product_name}"
         enable_multilingual: "Setup Multilingual Support"
+        show_author_name: "Show author names"
+        enable_personalized_articles: "When enabled, author names will show up in solution articles"
       edit:
         title: Edit Product
         updating: Updating...
@@ -3360,12 +3362,13 @@ en:
     skip_notification_no: "No"
   header_logo: Header Logo
   feedback:
-      title: "Was this answer helpful?"
+      title: "Did you find it helpful?"
       up_vote_thank_you_message: "Glad we could be helpful. Thanks for the feedback."
       upvote: "Yes"
       downvote: "No"
       link: "Send feedback"
       down_vote_form_title: "Can you please tell us how we can improve this article?"
+      solution_article_author: "is the author of this solution article."
       downvote_feedback_messasge: "Sorry we couldn't be helpful. Help us improve this article with your feedback."
   solutions:
     new_translation: "New %{language} translation"
@@ -4178,6 +4181,7 @@ en:
       more_articles: "More articles in <span class='folder-name'> %{article_name} </span>"
       modified_on: "Modified on:"
       related_articles: "Related Articles"
+      created_by: "Created by:"
     folder:
       filler_text: "Watch this space for articles regarding %{folder_name}"
     topic:
@@ -7025,6 +7029,26 @@ en:
         remove_shop: "Remove this shop"
         invalid_shop_url: "The Shop URL entered is invalid."
         invalid_admin_url: "The Admin URL entered is invalid."
+    fullcontact:
+      label: "FullContact"
+      desc: "Automate contact data enrichment for new contacts and update stale contact details on demand"
+      helptext: "<h4>Companies Settings</h4><br/>The Company data is fetched from FullContact and updated in your Freshdesk if a company is created or when a company domain is updated in your helpdesk. You can fetch upto 6 fields from FullContact to update in Freshdesk.<br/><br/><h4>Contacts Settings</h4><br/>Contact data is fetched from FullContact and updated in your Freshdesk when a contact is created in your helpdesk. Existing Freshdesk data will not be overwritten. You can select a maximum of five social profiles.<br/><br/>To save the FullContact data, a default mapping is created in Freshdesk. For location and social profiles you will need to create new custom columns. The admin, if required, can change or delete mappings of a FullContact data element at any time."
+      form:
+        api_key: "FullContact API key"
+      message:
+        queued: "Queued for search"
+        invalid_request: "Request malformed"
+        invalid_api: "API key invalid or Rate Limit Reached"
+        no_results: "No results found for this Id"
+        invalid_company_fields: "Domain Name is not valid"
+        invalid_contact_fields: "Invalid value in %{name} field"
+        temp_issue: "Temporary Issue. Try again later or contact support@freshdesk.com"
+        seek_field_empty: "Required fields are empty"
+        update_success: "Updated successfully"
+        update_failure: "Update failed. Try again later or Please contact support@freshdesk.com"
+        domain_absent: "No domains associated to this company"
+        backend_issue: "Unknown error. Please contact support@freshdesk.com"
+        company_exists: "Company with name \"%{name}\" already exists"
     slack:
       label: "Slack"
       desc: "Stay up to date about Freshdesk tickets in Slack"
@@ -9679,8 +9703,8 @@ en:
   doorkeeper:
     authorizations:
       new_form:
-        go_to_portal: "Authorize &amp; Goto %{portal_name} Portal"
-        later: Later
+        go_to_portal: "Authorize &amp; Go to %{portal_name} Portal"
+        decline: Decline
         authorize_text1: Authorize
         authorize_text2: to use your account?
         authorize_success: You have allowed this request
@@ -9688,6 +9712,7 @@ en:
         spinner_text: "Logging into %{portal_name} Portal"
         dev_portal: Developer
         admin_portal: Admin
+        portal: Portal
       error_form:
         authorize_failure: You are not allowed to access this page
   password_policy:

@@ -87,8 +87,8 @@ module Helpdesk::Activities
         when :rule_ids
           obj_hash[:rules]  = Account.current.account_va_rules.select("id, name").where(:id => query_hash[:rule_ids]).collect {|x| [x.id, x.name]}.to_h
         when :note_ids
-          obj_hash[:notes]  = archive ? prefetch_archive_notes(ticket, query_hash[:note_ids]) :
-                              prefetch_notes(ticket, query_hash[:note_ids])                      
+          obj_hash[:notes]  = archive ? prefetch_archive_notes_for_v2(ticket, query_hash[:note_ids]) :
+                              prefetch_notes_for_v2(ticket, query_hash[:note_ids])                      
         end
       end
       obj_hash
@@ -105,20 +105,24 @@ module Helpdesk::Activities
       users.collect{|user| [user.id, user]}.to_h
     end
 
-    def prefetch_notes(ticket, note_ids)
+    def prefetch_notes_for_v2(ticket, note_ids)
       options = [:notable, :schema_less_note, :note_old_body]
       options << (Account.current.new_survey_enabled? ? {:custom_survey_remark =>
                     {:survey_result => [:survey_result_data, :agent, {:survey => :survey_questions}]}} : :survey_remark)
       options << :fb_post if ticket.facebook?
       options << :tweet   if ticket.twitter?
-      ticket.notes.preload(options).where(:id => note_ids).collect{|note| [note.id, note]}.to_h
+      note_hash = ticket.notes.preload(options).where(:id => note_ids).collect{|note| [note.id, note]}.to_h
+      build_notes_last_modified_user_hash(note_hash.values)
+      note_hash
     end
 
-    def prefetch_archive_notes(ticket, note_ids)
+    def prefetch_archive_notes_for_v2(ticket, note_ids)
       options = [{:user => :avatar}]
       options << :fb_post if ticket.facebook?
       options << :tweet   if ticket.twitter?
-      ticket.archive_notes.preload(options).where(:note_id => note_ids).collect{|note| [note.note_id, note]}.to_h
+      note_hash = ticket.archive_notes.preload(options).where(:note_id => note_ids).collect{|note| [note.note_id, note]}.to_h
+      build_notes_last_modified_user_hash(note_hash.values)
+      note_hash
     end
 
     def dev_notification(subj, message, topic = nil)

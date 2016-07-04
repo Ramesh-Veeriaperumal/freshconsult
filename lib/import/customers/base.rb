@@ -14,6 +14,7 @@ class Import::Customers::Base
   end
 
   def import
+    Thread.current["customer_import_#{current_account.id}"] = true
     read_file @customer_params[:file_location]
     mapped_fields
     build_csv_file unless @failed_items.blank?
@@ -28,6 +29,7 @@ class Import::Customers::Base
     customer_import.failure!(e.message + "\n" + e.backtrace.join("\n"))
     notify_mailer(true)
   ensure
+    Thread.current["customer_import_#{current_account.id}"] = false
     enable_user_activation(current_account)
     cleanup_file
   end

@@ -1,0 +1,27 @@
+user = @item.user
+response_hash = {
+  available: @item.available,
+  occasional: @item.occasional,
+  id: @item.user_id,
+  ticket_scope: @item.ticket_permission,
+  signature: @item.signature_html,
+  group_ids: @item.group_ids,
+  role_ids:  user.role_ids,
+  created_at: @item.created_at.try(:utc),
+  updated_at: @item.updated_at.try(:utc),
+  available_since: @item.active_since.try(:utc),
+  contact: {
+    active: user.active,
+    email: user.email,
+    job_title: user.job_title,
+    language: user.language,
+    last_login_at: user.last_login_at.try(:utc),
+    mobile: user.mobile,
+    name: user.name,
+    phone: user.phone,
+    time_zone: user.time_zone,
+    created_at: user.created_at.try(:utc),
+    updated_at: user.updated_at.try(:utc)
+  }
+}
+JSON.generate(response_hash)

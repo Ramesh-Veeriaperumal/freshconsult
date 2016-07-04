@@ -12,7 +12,7 @@ var SurveyValidate = {
 					if(data.surveys){
 						survey_list = JSON.parse(data.surveys);
 						if(data.redirect_url){
-							pjaxify(data.redirect_url);
+							window.location.href = data.redirect_url;
 						}
 						else if(data.default_survey_enabled){
 							pjaxify(window.location.href);

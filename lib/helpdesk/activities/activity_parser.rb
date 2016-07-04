@@ -348,7 +348,7 @@ module Helpdesk::Activities
       params[:user_path]  = "#{build_url(user.name, user_path(user))}"
       params[:date]       = get_formatted_time_for_activity(value[:executed_at][index].to_i, TIME_FORMAT_FOR_TIMESHEET)
       time_spent          = value[:time_spent][index].to_i
-      params[:time_spent] = escapeHTML("#{get_formatted_time(Time.zone.at(time_spent))}")
+      params[:time_spent] = escapeHTML("#{get_formatted_time(time_spent)}")
       params
     end
 
@@ -591,7 +591,9 @@ module Helpdesk::Activities
     end
 
     def get_formatted_time(seconds)
-      Time.at(seconds.to_i).utc.strftime("%H:%M")
+      hh = (seconds/3600).to_i
+      mm = ((seconds % 3600)/60.to_f).round
+      hh.to_s.rjust(2,'0') + ":" + mm.to_s.rjust(2,'0')
     end
 
     def get_user(user_id)

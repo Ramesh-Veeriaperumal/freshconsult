@@ -68,6 +68,11 @@ window.App = window.App || {};
       // Show the current file popup only for supported files.
       if(this.supportedFiles.indexOf(this.attachments[this.currentPosition].filetype)>-1){
         this.showCurrentFile();
+
+        // Cancel event propogation
+        event.preventDefault();
+        if(event.stopPropogation) event.stopPropogation();
+        return false;
       }
     }
 
@@ -84,10 +89,6 @@ window.App = window.App || {};
         length: this.attachments.length,
         filetype: currentFile.filetype
       });
-
-      // Cancel event propogation
-      event.preventDefault();
-      return false;
     }
 
     ,nextFile: function(){

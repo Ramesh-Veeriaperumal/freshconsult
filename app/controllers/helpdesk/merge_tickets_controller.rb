@@ -69,6 +69,6 @@ class Helpdesk::MergeTicketsController < ApplicationController
 
     def reply_cc_limit
     	return unless params[:add_recipients]
-      @reply_cc_limit_exceeded = (get_emails_list.size + @target_reply_cc.size) > MAX_EMAIL_COUNT
+      @reply_cc_limit_exceeded = (get_emails_list.size + @target_reply_cc.size) >= MAX_EMAIL_COUNT
     end
 end

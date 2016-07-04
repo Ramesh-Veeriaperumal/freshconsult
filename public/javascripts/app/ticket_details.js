@@ -912,26 +912,32 @@ var scrollToError = function(){
 				return false;
 			}
 
-			// if(_form[0] && _form[0]['helpdesk_note[note_body_attributes][body_html]']){
-			// 	// Attachment Missing Check
-			// 	var replyHtml = _form[0]['helpdesk_note[note_body_attributes][body_html]'].value;
-			// 	var replyText = replyHtml.split('<div class="freshdesk_quote">')[0];
+			// Attachment Missing Check
+			if(_form[0] && _form[0]['helpdesk_note[note_body_attributes][body_html]']){
+				var replyHtml = _form[0]['helpdesk_note[note_body_attributes][body_html]'].value || "";
+				var replyText = replyHtml.split('<div class="freshdesk_quote">')[0];
 
-			// 	// Convert the HTML tag to a text string first
-			// 	var temp = document.createElement('DIV');
-			// 	temp.innerHTML = replyText;
-			// 	replyText = temp.innerText;
+				// Convert the HTML tag to a text string first
+				var temp = document.createElement('DIV');
+				temp.innerHTML = replyText;
+				replyText = temp.innerText;
 				
-			// 	if(replyText.toLowerCase().indexOf('attach')>-1){
-			// 	  var attachments = jQuery('input[name="helpdesk_note[attachments][][resource]"]:not([rel="original_attachment"]');
-			// 	  if(!(attachments[0] && attachments[0].files && attachments[0].files.length)){
-			// 	    var missed_attachment_text = TICKET_DETAILS_DATA.attachment_missing_alert;
-			// 	    if(!confirm(missed_attachment_text)){
-			// 	      return false;
-			// 	    }
-			// 	  }
-			// 	}
-			// }
+				if(replyText.toLowerCase().indexOf('attach')>-1){
+					var hasAttachments = false;
+
+					var note = _form.serializeObject().helpdesk_note || {};
+					var prevAttachments = (note.attachments && note.attachments.length) || 0;
+					attachments = jQuery('input[name="helpdesk_note[attachments][][resource]"]:not([rel="original_attachment"])');
+					currAttachments = (attachments && attachments[0] && attachments[0].files && attachments[0].files.length) || 0;
+
+				  if(!(currAttachments + prevAttachments)){
+				    var missed_attachment_text = TICKET_DETAILS_DATA.attachment_missing_alert;
+				    if(!confirm(missed_attachment_text)){
+				      return false;
+				    }
+				  }
+				}
+			}
       
 
 			_form.find('input[type=submit]').prop('disabled', true);

@@ -15,7 +15,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def get_user_with_other_emails
-    @account.user_emails.group(:user_id).having("count(user_id) > 1").first.user
+    @account.user_emails.group(:user_id).having('count(user_id) > 1').first.user
   end
 
   def get_company
@@ -479,7 +479,7 @@ class ApiContactsControllerTest < ActionController::TestCase
     match_json([bad_request_error_pattern('company_id', :absent_in_db, resource: :company, attribute: :company_id)])
   end
 
-   def test_update_client_manager_with_unavailable_company_id_with_existing_company_id
+  def test_update_client_manager_with_unavailable_company_id_with_existing_company_id
     sample_user = get_user
     sample_user.update_attribute(:client_manager, false)
     sample_user.update_attribute(:company_id, Company.first.id)
@@ -645,7 +645,7 @@ class ApiContactsControllerTest < ActionController::TestCase
     sample_user.update_attribute(:blocked, true)
     get :index, controller_params
     assert_response 200
-    users = @account.all_contacts.select { |x| x.deleted == false && x.blocked == false }
+    users = @account.all_contacts.order('users.name').select { |x| x.deleted == false && x.blocked == false }
     pattern = users.map { |user| index_contact_pattern(user) }
     match_json(pattern.ordered!)
   end
@@ -684,7 +684,7 @@ class ApiContactsControllerTest < ActionController::TestCase
     assert_response 200
     response = parse_response @response.body
     assert_equal count, response.size
-    users = @account.all_contacts.order('users.name').select { |x| ((x.deleted == true && x.deleted_at <= Time.zone.now + 5.days) or (x.blocked == true && x.blocked_at <= Time.zone.now + 5.days)) && x.whitelisted == false }
+    users = @account.all_contacts.order('users.name').select { |x| ((x.deleted == true && x.deleted_at <= Time.zone.now + 5.days) || (x.blocked == true && x.blocked_at <= Time.zone.now + 5.days)) && x.whitelisted == false }
     pattern = users.map { |user| index_contact_pattern(user) }
     match_json(pattern.ordered!)
   ensure
@@ -702,7 +702,7 @@ class ApiContactsControllerTest < ActionController::TestCase
     assert_response 200
     response = parse_response @response.body
     assert_equal count, response.size
-    users = @account.all_contacts.order('users.name').select { |x| ((x.deleted == true && x.deleted_at <= Time.zone.now + 5.days) or (x.blocked == true && x.blocked_at <= Time.zone.now + 5.days)) && x.whitelisted == false }
+    users = @account.all_contacts.order('users.name').select { |x| ((x.deleted == true && x.deleted_at <= Time.zone.now + 5.days) || (x.blocked == true && x.blocked_at <= Time.zone.now + 5.days)) && x.whitelisted == false }
     pattern = users.map { |user| index_contact_pattern(user) }
     match_json(pattern.ordered!)
   ensure
@@ -734,7 +734,6 @@ class ApiContactsControllerTest < ActionController::TestCase
     users = @account.all_contacts.order('users.name').select { |x|  x.phone == '1234567890' }
     pattern = users.map { |user| index_contact_pattern(user) }
     match_json(pattern.ordered!)
-
   end
 
   def test_contact_filter_mobile
@@ -858,15 +857,116 @@ class ApiContactsControllerTest < ActionController::TestCase
       put :make_agent, construct_params(id: sample_user.id)
       assert_response 200
       assert sample_user.reload.helpdesk_agent == true
-      assert Agent.last.user.id = sample_user.id
+      assert Agent.last.user.id == sample_user.id
+      assert Agent.last.occasional == false
     end
   end
 
   def test_make_agent_with_params
+    assert_difference 'Agent.count', 1 do
+      sample_user = get_user_with_email
+      role_ids = Role.limit(2).pluck(:id)
+      group_ids = [create_group(@account).id]
+      params = { occasional: false, signature: Faker::Lorem.paragraph, ticket_scope: 2, role_ids: role_ids, group_ids: group_ids }
+      put :make_agent, construct_params({ id: sample_user.id }, params)
+      assert_response 200
+      assert sample_user.reload.helpdesk_agent == true
+      match_json(make_agent_pattern({}, sample_user))
+      match_json(make_agent_pattern(params, sample_user))
+      assert Agent.last.user.id == sample_user.id
+      assert Agent.last.occasional == false
+    end
+  end
+
+  def test_make_agent_with_invalid_params
     sample_user = get_user_with_email
     put :make_agent, construct_params({ id: sample_user.id }, job_title: 'Employee')
     assert_response 400
-    match_json(request_error_pattern('no_content_required'))
+    match_json([bad_request_error_pattern(:job_title, :invalid_field)])
+  end
+
+  def test_make_agent_with_inaccessible_fields
+    role_ids = Role.limit(2).pluck(:id)
+    params = { ticket_scope: 2, role_ids: role_ids }
+    put :make_agent, construct_params({ id: @agent.id }, params)
+    assert_response 404
+  end
+
+  def test_make_agent_with_array_fields_invalid
+    sample_user = get_user_with_email
+    params = { role_ids: '1,2', group_ids: '34,4' }
+    put :make_agent, construct_params({ id: sample_user.id }, params)
+    match_json([bad_request_error_pattern(:role_ids, :datatype_mismatch, expected_data_type: Array, prepend_msg: :input_received, given_data_type: String),
+                bad_request_error_pattern(:group_ids, :datatype_mismatch, expected_data_type: Array, prepend_msg: :input_received, given_data_type: String)])
+    assert_response 400
+  end
+
+  def test_make_agent_with_array_fields_invalid_model
+    sample_user = get_user_with_email
+    params = { role_ids: [123, 567], group_ids: [466, 566] }
+    put :make_agent, construct_params({ id: sample_user.id }, params)
+    match_json([bad_request_error_pattern(:role_ids, :invalid_list, list: params[:role_ids].join(', ')),
+                bad_request_error_pattern(:group_ids, :invalid_list, list: params[:group_ids].join(', '))])
+    assert_response 400
+  end
+
+  def test_make_agent_without_any_groups
+    sample_user = get_user_with_email
+    params = { group_ids: [] }
+    put :make_agent, construct_params({ id: sample_user.id }, params)
+    assert_response 200
+    refute AgentGroup.exists?(user_id: sample_user.id)
+  end
+
+  def test_make_agent_with_only_role_ids
+    sample_user = get_user_with_email
+    roles = Role.limit(2)
+    params = { role_ids: roles.map(&:id) }
+    put :make_agent, construct_params({ id: sample_user.id }, params)
+    updated_agent = User.find(sample_user.id)
+    assert updated_agent.union_privileges(roles).to_s, updated_agent.privileges
+    assert_response 200
+  end
+
+  def test_make_agent_with_string_enumerators_for_level_and_scope
+    sample_user = get_user_with_email
+    params = { ticket_scope: '2' }
+    put :make_agent, construct_params({ id: sample_user.id }, params)
+    match_json([bad_request_error_pattern(:ticket_scope, :not_included, code: :datatype_mismatch, list: Agent::PERMISSION_TOKENS_BY_KEY.keys.join(','), prepend_msg: :input_received, given_data_type: String)])
+    assert_response 400
+  end
+
+  def test_make_agent_with_agent_limit_reached_invalid
+    sample_user = get_user_with_email
+    role_ids = Role.limit(2).pluck(:id)
+    group_ids = [create_group(@account).id]
+    Subscription.any_instance.stubs(:agent_limit).returns(@account.full_time_agents.count - 1)
+    DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
+    params = { occasional: false, signature: Faker::Lorem.paragraph, ticket_scope: 2, role_ids: role_ids, group_ids: group_ids }
+    put :make_agent, construct_params({ id: sample_user.id }, params)
+    match_json([bad_request_error_pattern(:occasional, :max_agents_reached, code: :incompatible_value, max_count: (@account.full_time_agents.count - 1))])
+    assert_response 400
+  ensure
+    Subscription.any_instance.unstub(:agent_limit)
+    DataTypeValidator.any_instance.unstub(:valid_type?)
+  end
+
+  def test_make_agent_with_occasional_valid
+    assert_difference 'Agent.count', 1 do
+      sample_user = get_user_with_email
+      put :make_agent, construct_params({ id: sample_user.id }, occasional: true)
+      assert_response 200
+      assert sample_user.reload.helpdesk_agent == true
+      assert Agent.last.user.id == sample_user.id
+      assert Agent.last.occasional == true
+    end
+  end
+
+  def test_make_agent_with_occasional_invalid
+    sample_user = get_user_with_email
+    put :make_agent, construct_params({ id: sample_user.id }, occasional: 'true')
+    assert_response 400
+    match_json([bad_request_error_pattern(:occasional, :datatype_mismatch, expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: String)])
   end
 
   def test_make_agent_out_of_a_user_without_email
@@ -881,12 +981,49 @@ class ApiContactsControllerTest < ActionController::TestCase
     sample_user.update_attribute(:email, email)
   end
 
+  def test_make_agent_with_invalid_params_out_of_a_user_without_email
+    @account.subscription.update_column(:agent_limit, nil)
+    sample_user = get_user
+    email = sample_user.email
+    sample_user.update_attribute(:email, nil)
+    params = { occasional: 'false', signature: Faker::Lorem.paragraph, ticket_scope: '2', role_ids: [1234], group_ids: [2_344_234] }
+    put :make_agent, construct_params({ id: sample_user.id }, params)
+    assert_response 409
+    sample_user.update_attribute(:email, email)
+    match_json(request_error_pattern(:inconsistent_state))
+    sample_user.update_attribute(:email, email)
+  end
+
   def test_make_agent_out_of_a_user_beyond_agent_limit
     @account.subscription.update_column(:agent_limit, 1)
     sample_user = get_user_with_email
     put :make_agent, construct_params(id: sample_user.id)
     assert_response 403
     match_json(request_error_pattern(:max_agents_reached, max_count: 1))
+  end
+
+  def test_make_agent_out_of_a_user_without_email_and_beyond_agent_limit
+    @account.subscription.update_column(:agent_limit, 1)
+    sample_user = get_user
+    email = sample_user.email
+    sample_user.update_attribute(:email, nil)
+    put :make_agent, construct_params(id: sample_user.id)
+    assert_response 409
+    sample_user.update_attribute(:email, email)
+    match_json(request_error_pattern(:inconsistent_state))
+    sample_user.update_attribute(:email, email)
+  end
+
+  def test_make_occasional_agent_out_of_a_user_beyond_agent_limit
+    assert_difference 'Agent.count', 1 do
+      @account.subscription.update_column(:agent_limit, 1)
+      sample_user = get_user_with_email
+      put :make_agent, construct_params({ id: sample_user.id }, occasional: true)
+      assert_response 200
+      assert sample_user.reload.helpdesk_agent == true
+      assert Agent.last.user.id == sample_user.id
+      assert Agent.last.occasional == true
+    end
   end
 
   def test_make_agent_fails_in_user_validation
@@ -936,7 +1073,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def test_update_array_field_with_empty_array
-    sample_user = get_user
+    sample_user = get_user_with_email
     put :update, construct_params({ id: sample_user.id }, tags: [])
     match_json(deleted_contact_pattern(sample_user.reload))
     assert_response 200
@@ -944,7 +1081,7 @@ class ApiContactsControllerTest < ActionController::TestCase
 
   def test_update_array_fields_with_compacting_array
     tag = Faker::Name.name
-    sample_user = get_user
+    sample_user = get_user_with_email
     put :update, construct_params({ id: sample_user.id }, tags: [tag, '', ''])
     match_json(deleted_contact_pattern({ tags: [tag] }, sample_user.reload))
     assert_response 200
@@ -1350,7 +1487,7 @@ class ApiContactsControllerTest < ActionController::TestCase
                                         email: email,
                                         other_emails: email_array)
     match_json([bad_request_error_pattern('email', :'Email has already been taken'),
-      bad_request_error_pattern('other_emails', :email_already_taken, invalid_emails: email_array.sort.join(', '))])
+                bad_request_error_pattern('other_emails', :email_already_taken, invalid_emails: email_array.sort.join(', '))])
     assert_response 409
   end
 
@@ -1362,7 +1499,7 @@ class ApiContactsControllerTest < ActionController::TestCase
     sample_contact = get_user
     put :update, construct_params({ id: sample_contact.id }, email: email, other_emails: email_array)
     match_json([bad_request_error_pattern('email', :'Email has already been taken'),
-      bad_request_error_pattern('other_emails', :email_already_taken, invalid_emails: email_array.sort.join(', '))])
+                bad_request_error_pattern('other_emails', :email_already_taken, invalid_emails: email_array.sort.join(', '))])
     assert_response 409
   end
 
@@ -1414,9 +1551,9 @@ class ApiContactsControllerTest < ActionController::TestCase
     contact_a = add_new_user(@account, name: Faker::Lorem.characters(15), email: email)
     assert contact_a.reload.email == email
     contact_b = get_user
-    put :update, construct_params({id: contact_b.id}, email: email.downcase)
+    put :update, construct_params({ id: contact_b.id }, email: email.downcase)
     match_json([bad_request_error_pattern('email', :'Email has already been taken')])
-    assert_response 409    
+    assert_response 409
   end
 
   def test_update_contact_with_downcase_email_fires_a_query
@@ -1425,22 +1562,22 @@ class ApiContactsControllerTest < ActionController::TestCase
     pattern = /UPDATE `users` SET/
     from = 'SET'
     to = 'WHERE'
-    query = trace_query_condition(pattern, from, to) { put :update, construct_params({id: sample_user.id}, email: email.downcase) }
+    query = trace_query_condition(pattern, from, to) { put :update, construct_params({ id: sample_user.id }, email: email.downcase) }
     assert_match(/.* `email` = '#{email.downcase}', .*/, query)
   end
-  
+
   def test_update_email_and_pass_other_emails_without_change
     sample_user = get_user_with_email
     sample_user.user_emails.build(email: Faker::Internet.email, primary_role: false)
     sample_user.user_emails.build(email: Faker::Internet.email, primary_role: false)
     sample_user.save
     sample_user.reload
-    email_array = sample_user.user_emails.reject{|x| x.primary_role}.map(&:email)
+    email_array = sample_user.user_emails.reject(&:primary_role).map(&:email)
     email = Faker::Internet.email
     put :update, construct_params({ id: sample_user.id }, email: email, other_emails: email_array)
     assert_response 200
     response = parse_response @response.body
-    assert response["other_emails"].sort == email_array.sort
-    assert response["email"] == email
+    assert response['other_emails'].sort == email_array.sort
+    assert response['email'] == email
   end
 end

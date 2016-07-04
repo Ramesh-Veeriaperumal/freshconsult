@@ -17,8 +17,7 @@ module AgentsHelper
   # 1. Agent should not be deleted
   # 2. To edit and agent with manage_account, the current_user must also have manage_account
   def can_edit?(agent)
-    !(agent.user.deleted? || 
-      (agent.user.privilege?(:manage_account) && !current_user.privilege?(:manage_account)))
+    current_user.can_edit_agent?(agent)
   end
   
   # Should be used only if NOT trial account

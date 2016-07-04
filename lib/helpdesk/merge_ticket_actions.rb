@@ -69,7 +69,7 @@ module Helpdesk::MergeTicketActions
 				}
 			else
 				@target_ticket.cc_email[:cc_emails] = (get_cc_email_from_hash(@target_ticket) + cc_email_array).uniq
-				@target_ticket.cc_email[:reply_cc] =  (@target_reply_cc + reply_cc_email_array).first(50)
+				@target_ticket.cc_email[:reply_cc] =  (@target_reply_cc + reply_cc_email_array).first(TicketConstants::MAX_EMAIL_COUNT - 1)
 			end
 			@target_ticket.save
 		end
@@ -127,7 +127,13 @@ module Helpdesk::MergeTicketActions
 				emails_list += get_reply_cc_email_from_hash(source)
 				emails_list << add_source_requester(source) if check_source_requester(source)
 			end
+			emails_list = remove_duplicates(emails_list)
 			emails_list.delete_if { |e| reject_email?(parse_email_text(e)[:email]) }
+		end
+
+		def remove_duplicates emails_list
+			emails_hash = Hash[ emails_list.map { |e| [parse_email_text(e)[:email], e] } ]
+			emails_hash.values
 		end
 
 		def reject_email? email

@@ -220,6 +220,7 @@ ActiveRecord::Schema.define(:version => 20160629121214) do
     t.text    "options"
     t.integer "account_id",       :limit => 8
     t.string  "application_type",              :default => "freshplug", :null => false
+    t.integer "dip"
   end
 
   add_index "applications", ["name"], :name => "index_applications_on_name"
