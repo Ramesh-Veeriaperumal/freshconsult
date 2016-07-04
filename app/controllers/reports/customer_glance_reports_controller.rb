@@ -37,8 +37,10 @@ class Reports::CustomerGlanceReportsController < ApplicationController
     render :pdf => "#{@report_title} - #{@agent_name}",
       :layout => 'report/glance_report_pdf.html', # uses views/layouts/pdf.haml
       :show_as_html => params[:debug].present?, # renders html version if you set debug=true in URL
-      :template => 'sections/generate_report_pdf.pdf.erb',
-      :page_size => "A3"
+      :template => 'sections/generate_report_pdf',
+      :page_size => "A3",
+      :handlers => [:erb],
+      :formats => [:html]
   end
 
   def fetch_metrics
