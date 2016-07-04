@@ -1026,6 +1026,32 @@ function nativePlaceholderSupport() {
   return i.placeholder !== undefined;
 }
 
+var GetCannedResponse = {
+  init: function(ticket_id, ca_resp_id, element){
+
+    var path = "/helpdesk/canned_responses/show";
+
+    var params = "?ca_resp_id="+ca_resp_id+"&tkt_cr=true"
+
+    var url = ticket_id ? (path+"/"+ticket_id+params ) : (path+params);
+    
+    jQuery(element).addClass("response-loading");
+    jQuery.ajax({   
+      type: 'POST',
+      url: url,
+      contentType: 'application/text',
+      dataType: "script",
+      async: true,
+      success: function(data){     
+        jQuery(element).removeClass("response-loading");
+        jQuery(element).qtip('hide');
+        jQuery('[data-dismiss="modal"]').trigger('click')
+      }
+    });
+    return true;
+  }
+}
+
 function uniqueCodeGenerator(name){
     var namearr = name.split('');
     var hash = 0;
@@ -1034,4 +1060,3 @@ function uniqueCodeGenerator(name){
     });
     return hash % 10;
 }
-

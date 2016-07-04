@@ -14,8 +14,8 @@ module RabbitMq::Constants
     [:all,                       CRUD,                     7]
   ]
     
-  CRUD_KEYS_BY_TOKEN = Hash[*CRUD_COMBINATIONS.map {|c| [c[0], c[2]] }.flatten ]
-  CRUD_NAMES_BY_KEY = Hash[*CRUD_COMBINATIONS.map {|c| [c[2], c[1]] }.flatten(1) ]
+  CRUD_KEYS_BY_TOKEN  = Hash[*CRUD_COMBINATIONS.map {|c| [c[0], c[2]] }.flatten ]
+  CRUD_NAMES_BY_KEY   = Hash[*CRUD_COMBINATIONS.map {|c| [c[2], c[1]] }.flatten(1) ]
   CRUD_TOKENS_BY_NAME = Hash[*CRUD_COMBINATIONS.map {|c| [c[0], c[1]] }.flatten(1) ]
   
   
@@ -32,9 +32,12 @@ module RabbitMq::Constants
     [  'company_domain',      CRUD_KEYS_BY_TOKEN[:create_and_destroy],  'company'         ],
     [  'user',                CRUD_KEYS_BY_TOKEN[:all],                 'user'            ],
     [  'user_email',          CRUD_KEYS_BY_TOKEN[:all],                 'user'            ],
+    [  'forum_category',      CRUD_KEYS_BY_TOKEN[:create_and_destroy],  'forum_category'  ],
+    [  'forum',               CRUD_KEYS_BY_TOKEN[:create_and_destroy],  'forum'           ],
     [  'topic',               CRUD_KEYS_BY_TOKEN[:all],                 'topic'           ],
     [  'post',                CRUD_KEYS_BY_TOKEN[:all],                 'post'            ],
     [  'article',             CRUD_KEYS_BY_TOKEN[:all],                 'article'         ],
+    [  'time_sheet',          CRUD_KEYS_BY_TOKEN[:all],                 'time_sheet'      ],
     [  'tag',                 CRUD_KEYS_BY_TOKEN[:all],                 'tag'             ],
     [  'tag_use',             CRUD_KEYS_BY_TOKEN[:create_and_destroy],  'tag_use'         ],
     [  'account',             CRUD_KEYS_BY_TOKEN[:destroy],             'account'         ]
@@ -56,6 +59,8 @@ module RabbitMq::Constants
     :customer_reply  =>  "customer_reply"
   }
   
+
+  # Manual publish keys - only for reports
   RMQ_REPORTS_TICKET_KEY         = "*.1.#"
   RMQ_REPORTS_NOTE_KEY           = "*.1.#"
   RMQ_REPORTS_ARCHIVE_TICKET_KEY = "1"
@@ -73,13 +78,36 @@ module RabbitMq::Constants
   RMQ_SEARCH_COMPANY_KEY        = "1"
   RMQ_SEARCH_USER_KEY           = "1"
 
-  RMQ_COUNT_TICKET_KEY          = "*.*.*.1"
-  RMQ_COUNT_TAG_USE_KEY         = "*.1"
+  # Manual publish keys - common for both activities and reports
+  RMQ_GENERIC_TICKET_KEY      = "*.1.*.*.1.#"  # Position 0 -> auto_refresh, 2 -> reports 4 -> search 6-> es count 8-> activities
+  RMQ_GENERIC_NOTE_KEY        = "*.1.*.1.#"  # Position 0 -> auto_refresh, 2 -> reports 4 -> activities
+  RMQ_GENERIC_ARCHIVE_TKT_KEY = "1.*.1.#"    # Position 0 -> reports 2 -> activities
 
-  AUTO_REFRESH_TICKET_KEYS = ["id", "display_id", "tag_names", "account_id", "user_id", "responder_id", "group_id", "status", 
+  # Manual publish keys - only for activities
+  RMQ_ACTIVITIES_TICKET_KEY = "*.*.*.*.1.#"
+  RMQ_ACTIVITIES_NOTE_KEY   = "*.*.*.1.#"
+
+  RMQ_COUNT_TICKET_KEY      = "*.*.*.1"
+  RMQ_COUNT_TAG_USE_KEY     = "*.1"
+
+
+  AUTO_REFRESH_TICKET_KEYS  = ["id", "display_id", "tag_names", "account_id", "user_id", "responder_id", "group_id", "status",
     "priority", "ticket_type", "source", "requester_id", "due_by", "created_at"
   ]
 
+  ACTIVITIES_TICKET_KEYS         = ["id", "account_id", "created_at", "display_id", "updated_at", "parent_id",
+                                      "requester_id", "responder_id", "group_id", "outbound_email", "archive"]
+  ACTIVITIES_NOTE_KEYS           = ["id", "source","notable_id", "user_id", "private", "incoming", "deleted", "account_id", "created_at"]
+  ACTIVITIES_TOPIC_KEYS          = ["id", "account_id", "user_id", "forum_id", "published"]
+  ACTIVITIES_POST_KEYS           = ["id", "account_id", "user_id", "topic_id", "forum_id", "published"]
+  ACTIVITIES_FORUM_KEYS          = ["id", "account_id", "name","forum_category_id"]
+  ACTIVITIES_FORUM_CATEGORY_KEYS = ["id", "account_id"]
+  ACTIVITIES_ARTICLE_KEYS        = ["id", "account_id", "user_id", "folder_id", "status", "modified_by", "modified_at", "language"]
+  ACTIVITIES_TIMESHEET_KEYS      = ["id", "account_id", "workable_id", "workable_type", "timer_running"]
+  ACTIVITIES_SUBSCRIPTION_KEYS   = ["id", "account_id", "user_id", "ticket_id"]
+  ACTIVITIES_ARCHIVE_TICKET_KEYS = ACTIVITIES_TICKET_KEYS
+
+  
   REPORTS_TICKET_KEYS = ["display_id", "id", "account_id", "agent_id", "group_id", 
     "product_id", "company_id", "status", "priority", "source", "requester_id", "ticket_type", 
     "visible", "sla_policy_id", "is_escalated", "fr_escalated", "resolved_at", 
@@ -92,9 +120,9 @@ module RabbitMq::Constants
   ]
   
   REPORTS_ARCHIVE_TICKET_KEYS = REPORTS_TICKET_KEYS
-
-  AUTO_REFRESH_NOTE_KEYS = ["kind", "private"]
-
-  REPORTS_NOTE_KEYS = ["id", "source", "user_id", "agent", "category", "private", "incoming", "deleted", "account_id", "created_at", "archive"]
+  AUTO_REFRESH_NOTE_KEYS      = ["kind", "private"]
+  REPORTS_NOTE_KEYS           = ["id", "source", "user_id", "agent", "category", "private", "incoming", "deleted", "account_id", "created_at", "archive"]
   
+  MANUAL_PUBLISH_SUBCRIBERS   = ["reports", "activities"]
+
 end

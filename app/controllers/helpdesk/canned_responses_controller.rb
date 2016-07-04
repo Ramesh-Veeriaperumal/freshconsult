@@ -7,7 +7,6 @@ class Helpdesk::CannedResponsesController < ApplicationController
   before_filter :load_ticket , :if => :ticket_present?
 
   def index
-    
     respond_to do |format|
       format.html { 
          ca_facets = ca_folders_from_es(Admin::CannedResponses::Response, {:size => 300}, default_visiblity)
@@ -26,12 +25,12 @@ class Helpdesk::CannedResponsesController < ApplicationController
   end
 
   def show
-    render_parsed_content if ticket_present?
-    @attachments = @ca_resp.attachments_sharable	
+    @template_content  = render_parsed_content
+    @attachments       = @ca_resp.attachments_sharable	
     @allow_attachments = (@ticket.blank? ? true : (@ticket.ecommerce? ? false : true))
     respond_to do |format|
-      format.html{ render :partial => '/helpdesk/tickets/components/insert_canned_response.rjs'}
-      format.nmobile{ render :json => @a_template }
+      format.html { render :partial => '/helpdesk/tickets/components/insert_canned_response.rjs'}
+      format.nmobile { render :json => @template_content }
     end
   end
 
@@ -70,8 +69,11 @@ class Helpdesk::CannedResponsesController < ApplicationController
 
   def render_parsed_content
     content = @ca_resp.content_html
-    @a_template = Liquid::Template.parse(content).render('ticket' => @ticket,
-                                                         'helpdesk_name' => @ticket.account.portal_name)
+    if ticket_present?
+      Liquid::Template.parse(content).render('ticket' => @ticket, 'helpdesk_name' => @ticket.account.portal_name)
+    else
+      params[:tkt_cr].present? ? Liquid::Template.parse(content).render('ticket' => nil) : content
+    end
   end
 
   def load_ticket

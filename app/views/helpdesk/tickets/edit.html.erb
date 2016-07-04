@@ -1,8 +1,11 @@
 <% content_for :sidebar do -%>&nbsp;<%- end %>
-
+<div id="ticket-fields-wrapper">
 <%= form_for @item, :html => {:multipart => true, :id => "NewTicket", :rel=>"validate" } do |f| %>
  <%= render :partial => "helpdesk/tickets/ticket_widget/edit_ticket_title",  :locals => {:f => f } %>
   <ul class="compose-new-ticket">  
     <%= render :partial => "ticket_form", :object => f, :locals => { :is_edit => true, :f => f } %>
   </ul>
-<% end %>  
+<% end %>
+
+<%= render :partial => "/helpdesk/tickets/show/multifile_template" %>
+<%= render :partial => "/helpdesk/tickets/canned_loading"  %>

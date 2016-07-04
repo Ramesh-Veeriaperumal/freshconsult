@@ -9,6 +9,7 @@ class Helpdesk::NotesController < ApplicationController
   include Conversations::Twitter
   include Facebook::TicketActions::Util
   include Helpdesk::Activities
+  include Helpdesk::NotePropertiesMethods
   
   skip_before_filter :build_item, :only => [:create]
   alias :build_note :build_item
@@ -18,6 +19,8 @@ class Helpdesk::NotesController < ApplicationController
   before_filter :fetch_item_attachments, :validate_fwd_to_email, :check_for_kbase_email, :set_default_source, :only =>[:create]
   before_filter :set_mobile, :prepare_mobile_note, :only => [:create]
   before_filter :set_native_mobile, :only=>[:index , :destroy , :restore]
+  before_filter :update_note_properties, :only=>[:update]
+  before_filter :set_note_properties, :only=>[:destroy]
   def index
 
     if params[:since_id].present?
@@ -27,7 +30,7 @@ class Helpdesk::NotesController < ApplicationController
     else
       @notes = @parent.conversation(params[:page])
     end
-    
+    build_notes_last_modified_user_hash(@notes)
     if request.xhr?
       unless params[:v].blank? or params[:v] != '2'
         @ticket_notes = @notes.reverse
@@ -240,4 +243,15 @@ class Helpdesk::NotesController < ApplicationController
     end
   end
 
+  def update_note_properties
+    params[nscname][:last_modified_user_id] = current_user.id.to_s
+    params[nscname][:last_modified_timestamp] = Time.now.utc
+  end
+
+  def set_note_properties
+    @notes.each do |note|
+      note.last_modified_user_id = current_user.id.to_s
+      note.last_modified_timestamp = Time.now.utc
+    end
+  end
 end

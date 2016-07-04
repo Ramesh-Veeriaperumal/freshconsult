@@ -28,11 +28,10 @@ class SurveyResult < ActiveRecord::Base
     
     note.account_id = account_id
     note.save_note
-    
-    create_survey_remark({
-      :account_id => account_id,
-      :note_id => note.id
-    })
+
+    remark = build_survey_remark
+    remark.feedback = note
+    remark.save
          
   end
   
@@ -142,6 +141,33 @@ class SurveyResult < ActiveRecord::Base
   def as_json(options={})
     options[:except] = [:account_id]
     super options
+  end
+
+  def self.survey_filter(survey_result_filter)
+      {
+        default: {
+          conditions: ['created_at > ?', created_in_last_month ]
+        },
+        created_since: {
+          conditions: ['created_at >= ?', survey_result_filter.created_since.try(:to_time).try(:utc) ]
+        },
+        user_id: {
+          conditions: { customer_id: survey_result_filter.user_id }
+        }
+      }
+  end
+
+  def self.created_in_last_month
+    # created in last month filter takes up user time zone info also into account.
+    in_user_time_zone { Time.zone.now.beginning_of_day.ago(1.month).utc }
+  end
+
+  def self.in_user_time_zone(&block)
+    old_zone = Time.zone
+    TimeZone.set_time_zone
+    yield
+  ensure
+    Time.zone = old_zone
   end
 
   private                                                   

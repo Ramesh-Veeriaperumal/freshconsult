@@ -42,7 +42,7 @@ Array.prototype.deleteElement = function (element) {
 
 	$ivrSubmit.click(function (ev) { preview = false; });
 	
-	$ivrPreview.click(function (ev) { preview = true; $ivrSubmit.addClass("disabled");});
+	$ivrPreview.click(function (ev) { preview = true; });
 	
 	$ivrForm.submit(function (ev) {
 		// 'Secure' IE forced hack

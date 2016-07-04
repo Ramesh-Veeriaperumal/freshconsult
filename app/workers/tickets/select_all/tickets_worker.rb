@@ -15,6 +15,7 @@ class Tickets::SelectAll::TicketsWorker
     user.make_current
     raise InvalidBatchError unless valid_within_batch?
     Thread.current[:skip_round_robin] = true
+    Thread.current[:skip_dashboard_activity] = true
     disable_notification(@account)
     perform_desired_action(ticket_ids, params)
   rescue InvalidBatchError => e
@@ -27,6 +28,7 @@ class Tickets::SelectAll::TicketsWorker
   ensure
     enable_notification(@account)
     Thread.current[:skip_round_robin] = nil
+    Thread.current[:skip_dashboard_activity] = nil
     User.reset_current_user
 
   end

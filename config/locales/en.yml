@@ -108,7 +108,7 @@ en:
   sales: "Sales"
   preview: "Preview"
   no_agents_in_selected_group: "No agents in selected group"
-  send_feedback: "Send feedback"
+  send_feedback: "Send"
   sidebar_help: "Help"
   support_title: "Support"
   ticket_form:
@@ -154,6 +154,8 @@ en:
   signup_title: "Sign up to %{current_portal}"
   signup_up_with_us: "Sign up with us"
   signup_help_information: "Once you sign up, you will have complete access to our self service portal and you can use your account to raise support tickets and track their status."
+  trial_extension_requested: "Your request has been received. We'll get back to you soon."
+  request_for_extension: "Request for extension."
   trial_expired_on: "Urgent! Your trial has expired!"
   trial_will_expire_in: "Your trial will expire in <b>%{no_of_days}</b>"
   trial_one_more_day: "You just have 1 more day in your trial"
@@ -1903,6 +1905,8 @@ en:
         categories_visible: Portal Categories
         product_label: "Product: %{product_name}"
         enable_multilingual: "Setup Multilingual Support"
+        show_author_name: "Show author names"
+        enable_personalized_articles: "When enabled, author names will show up in solution articles"
       edit:
         title: Edit Product
         updating: Updating...
@@ -2038,6 +2042,7 @@ en:
         manage_supervisor_rules: Manage Supervisor rules
         manage_scenario_automation_rules: Manage Scenario automation rules
         manage_email_settings: Manage Email Commands
+        manage_ticket_templates: Manage Ticket Templates
         admin_tasks: Play God with Super Admin controls
         manage_account: Include account management
     home:
@@ -2069,6 +2074,7 @@ en:
         customer-fields: Customer Fields
         remote-authentication: Remote Authentication
         scenario: Scenario Automations
+        ticket_template: "Ticket Templates"
         email: Email
         everything: Everything
         support-channels: Support Channels
@@ -2165,6 +2171,7 @@ en:
         event_based_rules: "Event based rules"
         scenario_automations: "Scenario Automations"
         macros: "Macros"
+        template: "Ticket Templates"
         email_notifications: "Email Notifications"
         auto_responses: "Auto responses"
         canned_responses: "Canned Responses"
@@ -2634,6 +2641,14 @@ en:
     tweet: "tweet"
     time_entry: "time entry"
     note: "note"
+    supervisor: "supervisor rule"
+    observer: "observer rule"
+    business: "dispatch’r rule"
+    round_robin: "automatic ticket assignment"
+    none: "None"
+    subject: "subject"
+    description: "description"
+    set: "Set"
     tag:
       solutions: "New Solution"
       assigned_to_nobody: "Agent Unassigned"
@@ -2652,6 +2667,10 @@ en:
         new: "Time logged"
         timer_started: "Timer Started"
         timer_stopped: "Timer Stopped"
+        edit: "Timesheet updated"
+        delete: "Timesheet deleted"
+        billable: "Billable"
+        non_billable: "Non-Billable"
       execute_scenario: "Scenario Executed"
       ticket_merge: "Ticket Merged"
       ticket_split: "Ticket Split"
@@ -2665,6 +2684,10 @@ en:
       group_change_none: "Agent Group Changed"
       source_change: "Ticket Source"
       due_date_updated: "Due Date Updated"
+      tag_change: "Tag updated"
+      add_watcher: "Watcher Added"
+      remove_watcher: "Watcher Removed"
+      spam: "Marked Spam"
     solutions:
       new_solution:
         short: "{{user_path}} created a new solution"
@@ -2799,12 +2822,15 @@ en:
         short: "{{user_path}} changed priority to {{priority_name}}"
         long: "{{user_path}} changed ticket priority of {{notable_path}} to {{priority_name}}"
         without_user: "updated ticket priority to <strong>{{priority_name}}</strong>"
+        new: "Priority as <strong>%{priority_name}</strong>"
       new_ticket:
         short: "{{user_path}} submitted the ticket"
         long: "{{user_path}} submitted a new ticket {{notable_path}}"
+        new: "Submitted a new ticket"
       new_outbound:
         short: "{{user_path}} created a ticket"
         long: "{{user_path}} created a ticket {{notable_path}}"
+        new: "Sent email and created a new ticket"
       conversation:
         out_email:
           short: "{{user_path}} has sent a {{reply_path}}"
@@ -2824,28 +2850,46 @@ en:
         ecommerce:
           short: "{{user_path}} has sent a {{ecommerce_path}}"
           long: "{{user_path}} has sent a {{ecommerce_path}} to the ticket {{notable_path}}"
-
       timesheet:
         new:
           short: "{{user_path}} added a {{timesheet_path}}"
           long: "{{user_path}} added a {{timesheet_path}} to the ticket {{notable_path}}"
           without_user: "added a {{timesheet_path}}"
+          new: "Added a time entry"
         timer_started:
           short: "{{user_path}} started timer on  {{timesheet_path}}"
           without_user: "started timer on  {{timesheet_path}}"
           long: "{{user_path}} started timer on {{timesheet_path}} to the ticket {{notable_path}}"
+          new: "Started timer on timesheet entry"
         timer_stopped:
           short: "{{user_path}} stopped timer on  {{timesheet_path}}"
           without_user: "stopped timer on  {{timesheet_path}}"
           long: "{{user_path}} stopped timer on {{timesheet_path}} to the ticket {{notable_path}}"
+          new: "Stopped timer on timesheet entry"
+      timesheet_without_time:
+        new: "%{billable} hours for %{user_path} on %{date}"
+      timesheet_with_time:
+        new: "%{time_spent} %{billable} hours for %{user_path} on %{date}"
+      timesheet_timer_start:
+        new: "Started timer on timesheet with %{timesheet}"
+      timesheet_timer_stop:
+        new: "Stopped timer on timesheet for %{timesheet}"
+      timesheet_create:
+        new: "Created a timesheet with %{timesheet}"
+      timesheet_edit:
+        new: "Edited a timesheet <br> Timesheet with %{old_timesheet} modified to timesheet with %{new_timesheet}"
+      timesheet_delete:
+        new: "Deleted the timesheet with %{timesheet}"
       assigned:
         short: Assigned to {{responder_path}} by {{user_path}}
         without_user: assigned to <strong>{{responder_path}}</strong>
         long: "{{user_path}} assigned the ticket {{notable_path}} to {{responder_path}}"
+        new: "Agent as %{responder_path}"
       execute_scenario:
         short: "{{user_path}} executed the scenario '{{scenario_name | h}}"
         without_user: "executed the scenario <strong>{{scenario_name | h}}</strong>"
         long: "{{user_path}} executed the scenario '{{scenario_name | h}}' on {{notable_path}}"
+        new: "Executed the scenario <strong>%{scenario_name}</strong>"
       ticket_merge:
         short: "{{user_path}} has merged the ticket {{notable_path}} to {{merge_ticket_path}} "
         long: "{{user_path}} has merged the ticket  {{notable_path}} to {{merge_ticket_path}}"
@@ -2862,18 +2906,26 @@ en:
         short: "{{user_path}} updated status to {{status_name}}"
         without_user: "updated status to <strong>{{status_name}}</strong>"
         long: "{{user_path}} updated ticket status of {{notable_path}} to {{status_name}}"
+        new: "Status as <strong>%{status_name}</strong>"
       deleted:
         short: "{{user_path}} has deleted this ticket"
         without_user: "has deleted the ticket"
         long: "{{user_path}} has deleted the ticket {{notable_path}}"
+        new: "Deleted this ticket"
       restored:
         short: "{{user_path}} has restored this ticket"
         without_user: "has restored the ticket"
         long: "{{user_path}} has restored the ticket {{notable_path}}"
+        new: "Restored this ticket from trash"
+      spam:
+        new: "Flagged this ticket as Spam"
+      unspam:
+        new: "Restored this ticket from Spam"
       product_change:
         short: "{{user_path}} updated product to {{product_name}}"
         without_user: "updated product to <strong>{{product_name}}</strong>"
         long: "{{user_path}} updated product of {{notable_path}} to {{product_name}}"
+        new:  "Product as <strong>%{product_name}</strong>"
       product_change_none:
         short: "{{user_path}} updated product to 'none'"
         without_user: "updated product to <strong>'none'"
@@ -2882,10 +2934,12 @@ en:
         short: "{{user_path}} updated ticket type to {{ticket_type}}"
         without_user: "updated ticket type to <strong>{{ticket_type}}</strong>"
         long: "{{user_path}} updated ticket type of {{notable_path}} to {{ticket_type}}"
+        new: "Type as <strong>%{ticket_type}</strong>"
       group_change:
         short: "{{user_path}} updated group to {{group_name}}"
         without_user: "updated group to <strong>{{group_name}}</strong>"
         long: "{{user_path}} updated group of {{notable_path}} to {{group_name}}"
+        new: "Group as <strong>%{group_name}</strong>"
       group_change_none:
         short: "{{user_path}} updated group to 'none'"
         without_user: "updated group to <strong>'none'</strong>"
@@ -2894,10 +2948,48 @@ en:
         short: "{{user_path}} updated source to {{source_name}}"
         without_user: "updated source to <strong>{{source_name}}</strong>"
         long: "{{user_path}} updated ticket source of {{notable_path}} to {{source_name}}"
+        new: "Source as <strong>%{source_name}</strong>"
       due_date_updated:
         short: "{{user_path}} updated due date to {{due_date_updated}}"
         without_user: "updated due date to <strong>{{due_date_updated}}</strong>"
         long: "{{user_path}} updated due date of {{notable_path}} to {{due_date_updated}}"
+        new: "due by time as <strong>%{due_date_updated}</strong>"
+      requester_change:
+        new: "Requester as %{requester_name}"
+      ticket_edit:
+        new: "Edited the <strong>%{fields}</strong>"
+      custom_field_change:
+        new: "%{field_name} as <strong>%{field_value}</strong>"
+      custom_text_field_change:
+        new: "Modified %{text_fields}"
+      added_watcher: 
+        new: "Added watchers %{watcher_list}"
+      removed_watcher:
+        new: "Removed watcher %{watcher_list}"
+      added_tag:
+        new: "Added tags <strong>%{tag_name}</strong>"
+      removed_tag:
+        new: "Removed tags <strong>%{tag_name}</strong>"
+      add_cc:
+        new: "Added CC %{cc_list}"
+      add_note:
+        new: "Added notes"
+      ticket_merge_source:
+        new: "Merged this ticket into %{target_ticket}"
+      ticket_merge_target:
+        new: "Merged %{source_ticket_list} with this ticket"
+      ticket_split_source:
+        new: "Split a response to create a new ticket %{target_ticket}"
+      ticket_split_target:
+        new: "Created this ticket by splitting a response from ticket %{source_ticket}"
+      ticket_import:
+        new: "Ticket imported on %{imported_time}"
+      checkbox_checked:
+        new: "Selected %{checkbox_list}"
+      checkbox_unchecked:
+        new: "Deselected %{checkbox_list}"
+      archive:
+        new: "Ticket archived"
   credit_card_info: Credit card information
   zendesk_backup_info: Select the Zendesk backup file downloaded from zendesk
   backup_error_msg: "The file exceeds the prescribed limit of 50MB, please <a href='#' id='import_request'>contact support</a> to proceed with the import."
@@ -3121,7 +3213,7 @@ en:
     edit: Edit Scenario
     shared: Shared
     personal: Personal
-    no_scenario: "No Personal Scenarios <a href=%{link}>Create New</a>"
+    no_scenario: "You don't have any scenarios <a href=%{link}>Create New</a>"
     no_scenario_to_execute: "No Scenarios"
     duplicate_title: Duplicate scenario. Name already exists
     visibility:
@@ -3154,6 +3246,42 @@ en:
   send_email_to_requester: Send Email to Requester
   feedbackwidget_btcustomize: Button customization
   chatwidget_agentsonline: When agents are online
+  ticket_templates:
+    title: "Ticket Templates"
+    select_template: "Select a template"
+    helptext:
+      info1: "Templates allow you to pre-fill new tickets and outgoing emails with a single click. You can save time spent on typing out the same content again and again, and quickly create tickets or send outbound emails."
+      info2: "For example, you can create a template called 'Initiate Refund' by filling the body of the ticket and setting the priority 'medium'. So the next time you receive a phone call about a refund, you can create a medium priority ticket for your customer and initiate the refund request with a single click."
+    new_template: "Add New"
+    create_template: "Create Template"
+    template_note: "Selecting a template will replace <br/>the form with new values."
+    template_info: "Ticket templates help to pre-fill this <br/>form in a single click and are helpful for <br/>recurring issues and communications."
+    new_title: "New Template"
+    edit_title: "Edit Template"
+    properties: "Properties"
+    description: "example: To initiate a refund for all cancellation requests"
+    name: "example: Initiate Refund"
+    apply_template: "Apply Template"
+    no_templates: "You don't have any templates "
+    create_new: "Create New"
+    shared: Shared
+    personal: Personal
+    delete_multiple: "The selected templates have been deleted."
+    partial_delete: "Could not delete the following templates due to an error. Please try again after sometime."
+    delete_templates: Are you sure you want to delete the selected templates?
+    not_available: "Looks like this template is not available anymore. Select another template to apply."
+    warning_message: "Selecting a template will reset the entire form - including the description and attachments."
+    copy_of: "Copy of"
+    apply_on_form: "Applying template..."
+    acc_templ_count: "%{templ_count} of %{total_templ} Templates"
+    total_templ_count: "Reached %{total_templ} Templates"
+    visibility:
+      groups: Agents in group
+      all_agents: All agents
+      me_only: Myself
+      available_for: Available for
+    errors:
+      duplicate_title: "Duplicate template. Title already exists"
   solution_category:
     all: All Categories
     name: Name
@@ -3234,12 +3362,13 @@ en:
     skip_notification_no: "No"
   header_logo: Header Logo
   feedback:
-      title: "Was this answer helpful?"
+      title: "Did you find it helpful?"
       up_vote_thank_you_message: "Glad we could be helpful. Thanks for the feedback."
       upvote: "Yes"
       downvote: "No"
       link: "Send feedback"
       down_vote_form_title: "Can you please tell us how we can improve this article?"
+      solution_article_author: "is the author of this solution article."
       downvote_feedback_messasge: "Sorry we couldn't be helpful. Help us improve this article with your feedback."
   solutions:
     new_translation: "New %{language} translation"
@@ -3571,6 +3700,7 @@ en:
     toggle_availability_disabled: If disabled, agents will always be set as “available”. Admins and supervisors can change the agent availability from the dashboard, if necessary.
     toggle_availability_note: "Note: Agents belonging to multiple groups will be able to change their availability only if they have permission to control their availability in all of the groups they belong to."
     round_robin_desc: "Once turned ON, tickets assigned to this group will be distributed among agents in round robin fashion. If you wish to manually assign tickets or dispatch them using the Dispatch'r or Supervisor automations, you can turn this OFF. "
+    page_not_found: "This group could not be found. It might have been deleted or the URL mistyped."
     assigntime:
       half: 30 Minutes
       one: 1 Hour
@@ -4051,6 +4181,7 @@ en:
       more_articles: "More articles in <span class='folder-name'> %{article_name} </span>"
       modified_on: "Modified on:"
       related_articles: "Related Articles"
+      created_by: "Created by:"
     folder:
       filler_text: "Watch this space for articles regarding %{folder_name}"
     topic:
@@ -4971,6 +5102,10 @@ en:
     id : Id
     ticket_selected: " ticket selected (Conversations from the merged tickets will be added to the primary ticket)"
     tickets_selected: " tickets selected (Conversations from the merged tickets will be added to the primary ticket)"
+    add_recipients: "Add secondary ticket recipients to CC"
+    merge_warning: "We recommend that you retain the oldest ticket as the primary ticket to avoid mistakes in SLA calculation."
+    merge_confirm_info: "Review your merge and edit notes as necessary."
+    reply_cc_limit_exceeded: "You have reached the maximum threshold of 50 recipients per ticket. Recipients over and above this threshold value will be dropped."
     subject_placeholder: "Look up tickets by their subject"
     id_placeholder: "Type in an ID to find tickets"
     requester_placeholder: "Find tickets by requester"
@@ -5110,7 +5245,16 @@ en:
       user_not_following: This user is not following your twitter account
     activities: Activities
     activity_toggle: Show Activities
+    activity_toggle_v2: Activities
+    activity_toggle_tooltip: Toggle activities
+    show_activities_tooltip: Show activities
+    hide_activities_tooltip: Hide activities
     activity_timestamp: "%{user_name} updated <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
+    user_activity_timestamp: "%{user_name} updated <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
+    deleted_rule: "deleted rule - %{rule_name}"
+    executed: " executed "
+    performed: " performed "
+    system_activity_timestamp: "<strong class='muted'>System</strong> %{system_rule} <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date}) "
     requestor_info: Requestor Info
     view_twitter: View on Twitter
     view_facebook: View on Facebook
@@ -5200,6 +5344,7 @@ en:
       in_progress_text: "A bulk update started by %{user_name} is in progress."
       in_progress_text_you: "A bulk update started by you is in progress."
       bulk_action_submit_label: "Confirm and update"
+    cannot_preview_attachment: No preview available.
   archive_ticket:
     title: Archived tickets
     no_reply_msg: This ticket has been archived.
@@ -5526,7 +5671,7 @@ en:
         tickets: Tickets
         recent_tickets: Recent tickets
         archive_tickets: Archived tickets
-        contacts: Contacts  
+        contacts: Contacts
         customer: Customer
         customers: Customers
         article: Article
@@ -5880,6 +6025,8 @@ en:
           forward: "%{user_name} forwarded <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
           survey: "%{user_name} rated this ticket <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
           reply_to_forward: "%{user_name} replied to forward <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
+        last_edited_info: "Last edited by: %{user_name} <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
+        last_deleted_info: "Deleted by: %{user_name} <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
         edit_note: Edit Note
         split_this_as_new_ticket: Split this as a new Ticket
         delete_note: "Remove this from the ticket conversation?"
@@ -6679,7 +6826,7 @@ en:
       send_reply_in_fd: "Notify customer via email"
       add_comment_in_jira: "Add a comment in JIRA"
       update_jira_status: "Update JIRA status"
-      add_attachments_in_jira: "While syncing exclude ticket attachments" 
+      add_attachments_in_jira: "While syncing exclude ticket attachments"
 
     infusionsoft:
       label: "Infusionsoft"
@@ -6882,6 +7029,26 @@ en:
         remove_shop: "Remove this shop"
         invalid_shop_url: "The Shop URL entered is invalid."
         invalid_admin_url: "The Admin URL entered is invalid."
+    fullcontact:
+      label: "FullContact"
+      desc: "Automate contact data enrichment for new contacts and update stale contact details on demand"
+      helptext: "<h4>Companies Settings</h4><br/>The Company data is fetched from FullContact and updated in your Freshdesk if a company is created or when a company domain is updated in your helpdesk. You can fetch upto 6 fields from FullContact to update in Freshdesk.<br/><br/><h4>Contacts Settings</h4><br/>Contact data is fetched from FullContact and updated in your Freshdesk when a contact is created in your helpdesk. Existing Freshdesk data will not be overwritten. You can select a maximum of five social profiles.<br/><br/>To save the FullContact data, a default mapping is created in Freshdesk. For location and social profiles you will need to create new custom columns. The admin, if required, can change or delete mappings of a FullContact data element at any time."
+      form:
+        api_key: "FullContact API key"
+      message:
+        queued: "Queued for search"
+        invalid_request: "Request malformed"
+        invalid_api: "API key invalid or Rate Limit Reached"
+        no_results: "No results found for this Id"
+        invalid_company_fields: "Domain Name is not valid"
+        invalid_contact_fields: "Invalid value in %{name} field"
+        temp_issue: "Temporary Issue. Try again later or contact support@freshdesk.com"
+        seek_field_empty: "Required fields are empty"
+        update_success: "Updated successfully"
+        update_failure: "Update failed. Try again later or Please contact support@freshdesk.com"
+        domain_absent: "No domains associated to this company"
+        backend_issue: "Unknown error. Please contact support@freshdesk.com"
+        company_exists: "Company with name \"%{name}\" already exists"
     slack:
       label: "Slack"
       desc: "Stay up to date about Freshdesk tickets in Slack"
@@ -8045,7 +8212,7 @@ en:
         resolution_violated: The percentage of tickets were not resolved within SLA in the selected time period
         customer_interactions: No. of customer responses made in the selected time period
         agent_interactions: No. of agent responses made in the selected time period
-    ticket_volume: 
+    ticket_volume:
       title: Ticket Volume Trends
       total_received_tickets : Total Received Tickets
       average_received_tickets : Average Received Tickets
@@ -8739,7 +8906,7 @@ en:
           title_text: "Setting up a call center"
           info_text: "In order to start using the phone channel, you will first need to purchase a call-in number to offer your customers. You can purchase a local number in any <a href='https://support.freshdesk.com/support/solutions/articles/169322' target='_blank'>countries listed here</a>. If your customers will be calling you from the US, UK or Canada, you can also offer them a Toll-free dial in number.<br/><br/>You can purchase multiple phone numbers from various countries and setup toll-free helplines inside Freshdesk without using any third party service. You will be charged standard rates for incoming, outgoing and forwarding calls from your helpdesk. Check out the <a href='http://freshdesk.com/multichannel-support/phone-support/call-rates' target='_blank'>call rates here</a>.<br/><br/> Once you have purchased a phone number for your support helpline, all incoming calls will be distributed to agents who are logged in to your helpdesk. In addition, your agents can choose to pick up phone calls from inside the browser or have them forwarded to their desk phone automatically."
         caller_id:
-          manage_caller_id : "Manage Caller ID "  
+          manage_caller_id : "Manage Caller ID "
           add_another : "/ Add another"
           enter_code : "Pick up your phone and enter the validation code"
           enter_number : "Enter the number you want to add as caller id"
@@ -8757,7 +8924,7 @@ en:
           invalid_number : "Invalid phone number!"
           calling : "Calling "
           call_id_mask : "Mask this number"
-          twilio_errors : 
+          twilio_errors :
             not_allowed : "Sorry there was an issue while adding this number as caller ID. Please try again. If the issue persists contact us at <a href='mailto:support@freshdesk.com'>support@freshdesk.com</a>"
             invalid_number : "Sorry it seems that the number is invalid. Please try again. If the issue persists contact us at <a href='mailto:support@freshdesk.com'>support@freshdesk.com</a>"
             already_verified : "Phone number already verified for your account!"
@@ -9536,8 +9703,8 @@ en:
   doorkeeper:
     authorizations:
       new_form:
-        go_to_portal: "Authorize &amp; Goto %{portal_name} Portal"
-        later: Later
+        go_to_portal: "Authorize &amp; Go to %{portal_name} Portal"
+        decline: Decline
         authorize_text1: Authorize
         authorize_text2: to use your account?
         authorize_success: You have allowed this request
@@ -9545,6 +9712,7 @@ en:
         spinner_text: "Logging into %{portal_name} Portal"
         dev_portal: Developer
         admin_portal: Admin
+        portal: Portal
       error_form:
         authorize_failure: You are not allowed to access this page
   password_policy:

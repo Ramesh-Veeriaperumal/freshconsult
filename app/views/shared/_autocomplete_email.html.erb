@@ -1,55 +1,12 @@
-<script type="text/javascript" charset="utf-8">
-  function lookup(searchString, callback) { 
-    new Ajax.Request('<%= url %>?q='+encodeURIComponent(searchString),
-                        {
-                          method:'GET',
-                          onSuccess:  function(response) {
-                                        var choices = $A();
-                                        response.responseJSON.results
-                                          .each(function(item){ 
-                                            choices.push(item.details);
-                                          });  
 
-                                        _partial_list = jQuery("#helpdesk_ticket_email").data("partialRequesterList") || []
-                                        
-                                        jQuery("#helpdesk_ticket_email")
-                                          .data("partialRequesterList", 
-                                              _partial_list.concat(response.responseJSON.results))
 
-                                        callback(choices);
-                                      }
-                               });
-
-  }
-  var cachedBackend = new Autocompleter.Cache(lookup, {choices: 20});
-  var cachedLookup = cachedBackend.lookup.bind(cachedBackend);    
-</script>
 <% if @item.not_editable? %>
   <%= text_field object_name, :twitter_id, :value => (@item.requester_info), :disabled => true %>
   <%= hidden_field object_name, :requester_id, :value => (@item.requester_id) %>
 <% else %>
-  <%= text_field object_name, :email, :value => (@item.requester_info), :class => "required requester", "data-requester-check" => false, "data-current-user" => "", "data-initial-requester" => @item.requester_info, "data-initial-requesterid" => @item.requester_id, :placeholder => defined?(placeholder) ? placeholder : t('ticket.compose.to_address_placeholder') %>
+  <% value = (params[:template_form] && params[:requester_email].present?) ? params[:requester_email] : @item.requester_info %>
+  <%= text_field object_name, :email, :value => value, :class => "required requester", "data-requester-check" => false, "data-current-user" => "", "data-initial-requester" => @item.requester_info, "data-initial-requesterid" => @item.requester_id, :placeholder => defined?(placeholder) ? placeholder : t('ticket.compose.to_address_placeholder') %>
 <% end %>
 <div id="<%=object_name%>_email_choices" class="autocomplete"></div>
-<script type="text/javascript" charset="utf-8">
-  new Autocompleter.Json("<%=object_name%>_email", "<%=object_name%>_email_choices", cachedLookup, {
-    afterUpdateElement: function(element, choice){      
-      _partial_list = jQuery("#helpdesk_ticket_email").data("partialRequesterList")
-      _partial_list.each(function(item){    
-        if(element.value == item.details){
-          jQuery('#helpdesk_ticket_requester_id').val(item.id);
-          jQuery('#helpdesk_ticket_email').blur().focus();
-        }
-      });
-    }
-  });
-  jQuery("#helpdesk_ticket_email").bind("keyup", function(){
-    jQuery(this).data("requesterCheck", false);
-  });
+<div id="meta-req" data-obj = "<%= object_name %>" data-url="<%= url %>"></div>
 
-  jQuery("#add_requester_btn_proxy").live("click",function(ev){
-    ev.preventDefault();
-    jQuery('#add_requester_btn').trigger("click");
-});
-  
-</script>

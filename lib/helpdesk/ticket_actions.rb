@@ -64,6 +64,12 @@ module Helpdesk::TicketActions
   def split_the_ticket        
     create_ticket_from_note or return
     update_split_activities
+    @source_ticket.activity_type = {:type => "ticket_split_source", 
+      :source_ticket_id => [@source_ticket.display_id], 
+      :target_ticket_id => [@item.display_id]}
+    if Account.current.features?(:activity_revamp)
+      @source_ticket.manual_publish_to_rmq("update", RabbitMq::Constants::RMQ_ACTIVITIES_TICKET_KEY)
+    end
     redirect_to @item
   end
   
@@ -183,6 +189,10 @@ module Helpdesk::TicketActions
     build_item 
     
     move_cloud_files
+    # for split ticket activity, 
+    # target ticket id will be added after ticket is created while publishing rmq msg
+    @item.activity_type = {:type => "ticket_split_target", 
+      :source_ticket_id => [@source_ticket.display_id]}
     if @item.save_ticket
       move_attachments
       @note.remove_activity

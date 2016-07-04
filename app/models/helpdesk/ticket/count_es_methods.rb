@@ -11,33 +11,38 @@ class Helpdesk::Ticket < ActiveRecord::Base
       :methods => [
                     :company_id, :tag_names, :tag_ids, :watchers, :status_stop_sla_timer, 
                     :status_deleted, :product_id, :trashed
-                  ],
+                  ].concat(ticket_states_columns),
       :only => ticket_indexed_fields
       },false).merge(count_es_ff_fields).merge(schema_less_fields).to_json
   end
 
   def count_es_columns
-    @@count_es_columns ||= ticket_indexed_fields.concat(count_es_ff_columns).concat(schema_less_columns)
+    @@count_es_columns ||= ticket_indexed_fields.concat(ticket_states_columns).concat(count_es_ff_columns).concat(schema_less_columns)
   end
 
   def count_es_ff_columns
     @@count_es_ff_columns ||= Flexifield.column_names.select {|v| v =~ /^ff(s|_date|_int|_decimal|_boolean)/}.map(&:to_sym)
   end
 
+  def ticket_states_columns
+    [
+      :resolved_at, :closed_at, :opened_at, :first_assigned_at, :pending_since, :assigned_at, :first_response_time,
+      :requester_responded_at, :agent_responded_at, :group_escalated, :inbound_count, :outbound_count,
+      :status_updated_at, :sla_timer_stopped_at, :outbound_count, :avg_response_time, :first_resp_time_by_bhrs,
+      :resolution_time_by_bhrs, :avg_response_time_by_bhrs, :to_emails, :cc_email, :status_stop_sla_timer, :status_deleted
+    ]
+  end
+
   def ticket_indexed_fields
     [
       :requester_id, :responder_id, :status, :source, :spam, :deleted, 
       :created_at, :updated_at, :account_id, :display_id, :group_id, :owner_id, :due_by, :isescalated,
-      :fr_escalated, :email_config_id, :frDueBy, :priority, :ticket_type, :resolved_at, :closed_at,
-      :opened_at, :first_assigned_at, :pending_since, :assigned_at, :first_response_time,
-      :requester_responded_at, :agent_responded_at, :group_escalated, :inbound_count, :outbound_count,
-      :status_updated_at, :sla_timer_stopped_at, :outbound_count, :avg_response_time, :first_resp_time_by_bhrs,
-      :resolution_time_by_bhrs, :avg_response_time_by_bhrs
+      :fr_escalated, :email_config_id, :frDueBy, :priority, :ticket_type, :product_id
     ]
   end
 
   def schema_less_columns
-    Helpdesk::SchemaLessTicket.column_names.select {|v| v =~ /^long|int|datetime|string|boolean_/}.map(&:to_sym)
+     @@schema_less_columns ||= Helpdesk::SchemaLessTicket.column_names.select {|v| v =~ /^long|int|datetime|string|boolean_/}.map(&:to_sym)
   end
 
   def schema_less_fields

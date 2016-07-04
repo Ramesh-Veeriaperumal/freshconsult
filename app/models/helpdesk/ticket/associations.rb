@@ -13,6 +13,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   has_many_cloud_files
 
+  has_many :shared_attachments,
+    :as => :shared_attachable,
+    :class_name => 'Helpdesk::SharedAttachment',
+    :dependent => :destroy
+
+  has_many :attachments_sharable, :through => :shared_attachments, :source => :attachment
+
   has_one :ticket_old_body, :class_name => 'Helpdesk::TicketOldBody', 
                             :dependent => :destroy, :autosave => false
                             
@@ -44,7 +51,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   has_many :tag_uses, :as => :taggable, :class_name => 'Helpdesk::TagUse', :dependent => :destroy
 
-  has_many :tags, :class_name => 'Helpdesk::Tag', :through => :tag_uses, :after_remove => :update_ticket_tags, :after_add => :update_ticket_tags
+  # Added after_add, after_remove for activities
+  # Issue reported for after_remove callback in rails 4
+  # Tested similar association in 4.2.6 and working fine
+  # https://github.com/rails/rails/issues/14365 
+  has_many :tags, :class_name => 'Helpdesk::Tag', :through => :tag_uses, 
+    :after_remove => :remove_tag_activity , :after_add => :add_tag_activity
 
   has_many :ticket_issues, :class_name => 'Helpdesk::TicketIssue', :dependent => :destroy
 

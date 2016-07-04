@@ -33,10 +33,10 @@ window.liveChat.preferenceSettings = function($){
 
 			// business calendar
 			if(business_calendar == null || business_calendar == "null" || business_calendar == 0){ // Set 24x7
-				if(offline_settings == "1"){
-					$("#chat_anytime").prop('checked', true);
-				}else{
+				if(offline_settings == "2"){
 					$("#chat_agents_online").prop('checked',true);
+				}else{
+					$("#chat_anytime").prop('checked', true);
 				}
 				$("#chat_business_options").hide();
 			}else{

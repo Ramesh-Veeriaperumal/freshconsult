@@ -42,7 +42,7 @@ class Helpdesk::ArchiveTicketDrop < BaseDrop
 	end
 
 	def attachments
-	  @source.attachments
+	  @source.all_attachments
 	end
 
 	def freshfone_call

@@ -1,0 +1,49 @@
+<% if !custom_activity.invalid %>
+	<%
+	note = custom_activity.note || nil
+	activity_date = format_activity_date(custom_activity.performed_time, true)
+	%>
+	<% if note.present? %>
+		<%= render :partial => '/helpdesk/tickets/show/note', :object => note, locals: {minimizable: true, timestamp_id: custom_activity.performed_time} %>
+	<% else %>
+	<div class="conversation activity" data-activity-id="<%= custom_activity.performed_time %>" data-timestamp="<%= format_activity_date(custom_activity.performed_time, false) %>"> 
+		<div class="avatar-wrap">
+			<% if custom_activity.performer? %>
+				<%= user_avatar(custom_activity.performer, :thumb, 'preview_pic circle') %>
+			<% else %>
+				<i class="system-avatar ficon-settings-outline"></i>
+			<% end %>
+		</div>
+		<div class="commentbox <%= (custom_activity.performer.blank? or custom_activity.performer.agent?) ? 'commentbox-gray' : 'commentbox-requester' %>">
+			<% if  custom_activity.summary.present? %>
+				<div class="tag">
+					<%= custom_activity.summary %>
+				</div>
+			<% end %>
+			<div class="author-mail-detail">
+				<% if custom_activity.performer? %>
+					<%= t("ticket.user_activity_timestamp", :user_name => link_to_user(custom_activity.performer, :class => "user_name" ),:timestamp => activity_date, :note_date => formated_date(activity_date)).html_safe %>
+				<% else %>
+					<%= t("ticket.system_activity_timestamp", :system_rule => link_to_system_rule(custom_activity.rule), :timestamp => activity_date, :note_date => formated_date(activity_date)).html_safe %>
+				<% end %>
+			</div>
+			<div class="details">
+				<ul class="activity-details">
+					<% custom_activity.activity_arr.each do |detail| %>
+						<li><span><%=detail.html_safe%></span></li>
+					<% end %>
+				</ul>
+			</div>
+		</div>
+	</div>
+	<% end %>
+<% end %>
+<script type="text/javascript">
+	if (typeof(TICKET_DETAILS_DATA['last_activity']) == 'undefined' || TICKET_DETAILS_DATA['last_activity'] == null || TICKET_DETAILS_DATA['last_activity'] < <%= custom_activity.performed_time %>)
+		TICKET_DETAILS_DATA['last_activity'] = <%= custom_activity.performed_time %>;
+	if (typeof(TICKET_DETAILS_DATA['last_activity_batch']) == 'undefined' || TICKET_DETAILS_DATA['last_activity_batch'] == null || TICKET_DETAILS_DATA['last_activity_batch'] < <%= custom_activity.performed_time %>)
+		TICKET_DETAILS_DATA['last_activity_batch'] = <%= custom_activity.performed_time %>;
+	if (typeof(TICKET_DETAILS_DATA['first_activity']) == 'undefined' || TICKET_DETAILS_DATA['first_activity'] == null || TICKET_DETAILS_DATA['first_activity'] > <%= custom_activity.performed_time %>)
+		TICKET_DETAILS_DATA['first_activity'] = <%= custom_activity.performed_time %>;
+	TICKET_DETAILS_DATA['loaded_activities'] += 1;
+</script>

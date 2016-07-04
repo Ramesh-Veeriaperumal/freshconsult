@@ -126,5 +126,10 @@ if Rails.env.test?
 
     factory :flexifield, :class => Flexifield do |d|
     end
+
+    factory :ticket_templates, :class => Helpdesk::TicketTemplate do |t|
+      sequence(:name) { |n| "Testing Ticket Template#{n}" }
+      description { Faker::Lorem.sentence(10) }
+    end
   end
 end

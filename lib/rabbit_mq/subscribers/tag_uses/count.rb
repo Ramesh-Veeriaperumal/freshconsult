@@ -1,7 +1,7 @@
 module RabbitMq::Subscribers::TagUses::Count
 
   def mq_count_valid(action, model)
-    Account.current.features?(:count_es_writes) && valid_count_model?(model)
+    Account.current.features?(:countv2_writes) && valid_count_model?(model)
   end
 
   def mq_count_tag_use_properties(action)

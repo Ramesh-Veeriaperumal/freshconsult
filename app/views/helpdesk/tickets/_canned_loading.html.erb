@@ -1,0 +1,21 @@
+ <!-- Loading template -->
+<div class="loading-template hide" id="loading-box">
+  <div class="sloading loading-left loading-small reports-loading">
+    <span class="loading-text"><%= t('ticket_templates.apply_on_form') %></span>
+  </div>
+</div>
+
+<!-- Canned response dialog -->
+<div class = "hide">
+  <%
+    path   = "/helpdesk/canned_responses/"
+    param  = "?tkt_cr=true"
+    param += "&id=#{@item.display_id}" if @item.display_id.present?
+    url    = "#{path}#{param}"
+  %>
+  <%= link_to( t(:'ticket.canned_responses.ca_response'),
+                "#{url}",
+                "data-width" => "700", "data-template-footer" => '', :rel => 'freshdialog',
+                :id => "canned_response_show", "data-target" => "#canned_responses",
+                :title => t(:'ticket.canned_responses.ca_responses')) %>
+</div>
