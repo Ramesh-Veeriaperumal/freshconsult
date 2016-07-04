@@ -1,4 +1,4 @@
-<% if current_user.privilege?(:view_admin) && !current_account.account_additional_settings.is_trial_extension_requested? %>
+<% if current_user.privilege?(:manage_account) && !current_account.account_additional_settings.is_trial_extension_requested? %>
 	<a id="request-trial-extension" href="#"> <%= t('request_for_extension' ).html_safe %></a>
 	<span id="trial-extension-load" class="hide">Loading..</span>
 	<span id="trial-extension-success" class="hide"><%= t('trial_extension_requested' ).html_safe %></span>
