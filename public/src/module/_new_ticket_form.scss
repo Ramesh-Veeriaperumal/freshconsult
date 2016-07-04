@@ -757,12 +757,14 @@
 /*Compose canned response */
 
 .ticket-details{
-  position: relative;
+  .email-wrapper{
+    position: relative;
+  }
   .request_panel{
     border: none;
   }
   .redactor_insert_btns{
-    top: 45px;
+    top: 0;
   }
   .redactor_toolbar{
     background: none;
