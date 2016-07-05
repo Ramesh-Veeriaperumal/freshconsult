@@ -6,7 +6,7 @@ class ApiContactFieldsQueriesTest < ActionDispatch::IntegrationTest
       v2 = {}
       v1 = {}
       v2_expected = {
-        api_contact_fields: 1,
+        api_contact_fields: 2,
 
         contact_fields: 13
       }

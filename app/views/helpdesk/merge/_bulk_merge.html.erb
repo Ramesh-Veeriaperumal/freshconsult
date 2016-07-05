@@ -1,9 +1,17 @@
 <div id="ticket-merge" class="ticket-merge">
-  <span class="merge-sub-title" 
-    data-default-text="<%= t('ticket.ticket_selected') %>"
-    data-pluralized-text="<%= t('ticket.tickets_selected') %>" >
-    <%= pluralize(@source_tickets.length, t('ticket.ticket_selected'), t('ticket.tickets_selected')) %>
-  </span>
+  <div id="merge_info" class="ml10">
+    <div class="merge-sub-title" 
+      data-default-text="<%= t('ticket.ticket_selected') %>"
+      data-pluralized-text="<%= t('ticket.tickets_selected') %>" >
+      <%= pluralize(@source_tickets.length, t('ticket.ticket_selected'), t('ticket.tickets_selected')) %>
+    </div>
+    <div id="merge-warning" class="hide pt10">
+      <%= font_icon('unverified', :size => 15) %>
+      <%= t('ticket.merge_warning') %>
+    </div>
+  </div>
+  <div id="merge_confirm_info" class="ml10 hide">
+  </div><br />
   <div id="mergeboxconfirm"></div>
   <div id="mergebox" class="row-fluid">
     <div id="merge-content" class="span6">
@@ -56,6 +64,12 @@
       <div class="divide"></div>
       <input type="hidden" name="target[ticket_id]" id="target_ticket" />
         <div class="button-container" id="bulk-merge-button-container">
+          <span class="add_recipients">
+            <%= check_box_tag 'add_recipients', 1, @source_tickets.pluck(:requester_id).uniq.length == 1 %>
+            <span class="m8">
+              <%= t('ticket.add_recipients') %>
+            </span>
+          </span>
           <a class="btn" id="cancel_new_merge"><%= t('cancel') %></a>
           <%= submit_tag t('.continue'),:class => "btn btn-primary",:id => "bulk_merge", :disabled => "disabled", "data-loading-text" => t('please_wait') %>
           <%- end %>

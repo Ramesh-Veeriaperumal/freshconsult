@@ -1,9 +1,10 @@
+require 'httparty'
 class SubscriptionsController < ApplicationController
   include RestrictControllerAction
   include Subscription::Currencies::Constants
 
   skip_before_filter :check_account_state
-  
+
   before_filter :admin_selected_tab
   before_filter :load_objects, :load_subscription_plan, :cache_objects
   before_filter :load_coupon, :only => [ :calculate_amount, :plan ]
@@ -36,17 +37,17 @@ class SubscriptionsController < ApplicationController
   def calculate_plan_amount
     # render plan pricing with selected currency
     scoper.set_billing_params(params[:currency])
-    render :partial => "select_plans", 
-      :locals => { :plans => @plans, :subscription => scoper, :show_all => true }    
+    render :partial => "select_plans",
+      :locals => { :plans => @plans, :subscription => scoper, :show_all => true }
   end
 
   def plan
-    if request.post? 
+    if request.post?
       switch_currency if switch_currency?
       if update_subscription
         update_features
         perform_next_billing_action
-      else    
+      else
         redirect_to subscription_url
       end
     end
@@ -82,10 +83,38 @@ class SubscriptionsController < ApplicationController
     end
   end
 
-  def show 
+  def show
     @offline_subscription = scoper.offline_subscription?
     @invoice = scoper.subscription_invoices.last unless @offline_subscription or scoper.affiliate.present?
   end
+
+  def request_trial_extension
+    if current_account.account_additional_settings.additional_settings[:trial_extension_requested] == true
+      # Trial Extension Already Requested
+      render :json => {:success => true }
+    else
+      ticket_html = "<div>#{current_user.name} has requested for a trial extension to their Freshdesk account. Please let them know it has been done or get in touch with them if you have any questions.</div><br/><br/><p>Account URL: #{current_account.full_domain}</p>"
+      ticket_html += "<p>Lead Owner: #{current_account.fresh_sales_manager_from_cache[:display_name]} (#{current_account.fresh_sales_manager_from_cache[:email]})</p>" unless current_account.fresh_sales_manager_from_cache.nil?
+      ticket_html += "<p>Timezone: #{current_account.time_zone}</p>"
+
+      ticket = {
+        :helpdesk_ticket => {
+          :subject => "Trial extension request from #{current_user.name} (#{current_user.email})",
+          :email => current_user.email,
+          :ticket_body_attributes =>{
+            :description_html => ticket_html
+          }
+        }
+      }
+      resp = HTTParty.post("#{AppConfig['feedback_account'][Rails.env]}/widgets/feedback_widget?widgetType=popup", :body => ticket.to_json, :headers => { 'Content-Type' => 'application/json' })
+
+      current_account.account_additional_settings.additional_settings[:trial_extension_requested] = true
+      current_account.account_additional_settings.save if resp.code == 200
+      render :json => {:success => true }
+    end
+  end
+
+
 
   private
     def admin_selected_tab
@@ -100,7 +129,7 @@ class SubscriptionsController < ApplicationController
       Billing::Subscription.new
     end
 
-    def load_objects      
+    def load_objects
       plans = SubscriptionPlan.current
       plans << scoper.subscription_plan if scoper.subscription_plan.classic?
 
@@ -143,12 +172,12 @@ class SubscriptionsController < ApplicationController
     end
 
     def build_free_subscription
-      scoper.subscription_plan = free_plan 
+      scoper.subscription_plan = free_plan
       scoper.convert_to_free
     end
 
     def free_plan
-      SubscriptionPlan.find(:first, 
+      SubscriptionPlan.find(:first,
         :conditions => {:name => SubscriptionPlan::SUBSCRIPTION_PLANS[:sprout]})
     end
 
@@ -161,7 +190,7 @@ class SubscriptionsController < ApplicationController
     def check_for_subscription_errors
       if scoper.chk_change_agents
         Rails.logger.debug "Subscription Error::::::: Agent Limit exceeded"
-        flash[:notice] = t("subscription.error.lesser_agents", 
+        flash[:notice] = t("subscription.error.lesser_agents",
               { :agent_count => current_account.full_time_agents.count} )
         redirect_to subscription_url
       end
@@ -178,7 +207,7 @@ class SubscriptionsController < ApplicationController
         scoper.set_next_renewal_at(result.subscription)
         scoper.addons = @addons
         scoper.save!
-      rescue Exception => e        
+      rescue Exception => e
         handle_error(e, t('error_in_update'))
         return false
       end
@@ -198,14 +227,14 @@ class SubscriptionsController < ApplicationController
 
     def billing_address(card_details)
       {
-        :billing_address => 
+        :billing_address =>
         {
           :first_name => card_details.first_name,
           :last_name => card_details.last_name,
-          :line1 => "#{card_details.billing_addr1} #{card_details.billing_addr2}", 
-          :city => card_details.billing_city, 
+          :line1 => "#{card_details.billing_addr1} #{card_details.billing_addr2}",
+          :city => card_details.billing_city,
           :state => card_details.billing_state,
-          :zip => card_details.billing_zip, 
+          :zip => card_details.billing_zip,
           :country => card_details.billing_country
         }
       }
@@ -229,24 +258,24 @@ class SubscriptionsController < ApplicationController
         flash[:notice] = t('plan_info_update')
         coupon = coupon_applicable? ? @coupon : nil
         if request.xhr?
-          render :partial => "calculate_amount", 
-                    :locals => { 
+          render :partial => "calculate_amount",
+                    :locals => {
                       :amount => scoper.total_amount(@addons, coupon),
-                      :discount => scoper.discount_amount(@addons, coupon) 
+                      :discount => scoper.discount_amount(@addons, coupon)
                     }
         else
           redirect_to :action => "show"
         end
       elsif card_needed_for_payment?
         redirect_to :action => "billing"
-      else 
+      else
         flash[:notice] = t('plan_info_update')
         redirect_to :action => "show"
       end
     end
 
     def handle_error(error, custom_error_msg)
-      Rails.logger.debug "Subscription Error::::: #{error}"      
+      Rails.logger.debug "Subscription Error::::: #{error}"
 
       if (error_msg = error.json_obj[:error_msg].split(/error_msg/).last.sub(/http.*/,""))
         flash[:notice] = error_msg #chargebee_error_message
@@ -267,7 +296,7 @@ class SubscriptionsController < ApplicationController
     #No proration(credit) in monthly downgrades
     def prorate?
       coupon = coupon_applicable? ? @coupon : nil
-      !(@cached_subscription.active? and (scoper.total_amount(scoper.addons, coupon) < @cached_subscription.amount) and 
+      !(@cached_subscription.active? and (scoper.total_amount(scoper.addons, coupon) < @cached_subscription.amount) and
         NO_PRORATION_PERIOD_CYCLES.include?(@cached_subscription.renewal_period))
     end
 
@@ -279,25 +308,25 @@ class SubscriptionsController < ApplicationController
 
     #Events
     def subscription_info(subscription)
-      subscription_attributes = 
+      subscription_attributes =
         Subscription::SUBSCRIPTION_ATTRIBUTES.inject({}) { |h, (k, v)| h[k] = subscription.send(v); h }
       subscription_attributes.merge!( :next_renewal_at => subscription.next_renewal_at.to_s(:db) )
-    end    
+    end
 
     def add_event
-      Resque.enqueue(Subscription::Events::AddEvent, 
-        { :account_id => @subscription.account_id, :subscription_id => @subscription.id, 
+      Resque.enqueue(Subscription::Events::AddEvent,
+        { :account_id => @subscription.account_id, :subscription_id => @subscription.id,
           :subscription_hash => subscription_info(@cached_subscription) } )
     end
 
     def key
       SUBSCRIPTIONS_BILLING % { :account_id => current_account.id }
     end
- 
+
     def perform_limit
       CARD_UPDATE_REQUEST_LIMIT
     end
- 
+
     def perform_limit_exceeded_message
       t("subscription.error.card_update_limit_exceeded")
     end
@@ -305,7 +334,7 @@ class SubscriptionsController < ApplicationController
     #switch_currency
     def switch_currency?
       # only trial & suspended(trial-expired) subscriptions can switch currency.
-      !current_account.has_credit_card? or scoper.trial? or scoper.suspended? or 
+      !current_account.has_credit_card? or scoper.trial? or scoper.suspended? or
       !(@currency == params[:currency])
     end
 
@@ -334,7 +363,7 @@ class SubscriptionsController < ApplicationController
       }
     end
 
-    def coupon_applicable?      
+    def coupon_applicable?
       @coupon.blank? ? false : billing_subscription.coupon_applicable?(@subscription, @coupon)
     end
 

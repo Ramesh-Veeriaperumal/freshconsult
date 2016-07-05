@@ -59,6 +59,7 @@
 //= require frameworks/plugins/dataTable.fixedColumns.js
 //= require marketplace/freshapp.js
 //= require frameworks/plugins/jquery.actual.min.js
+//= require app/populate_data.js
 //= require app/admin/roles/store_profile_img.js
 //= require app/admin/roles/templates/user_list.jst.ejs
 //= require app/admin/roles/templates/no_agent.jst.ejs

@@ -134,14 +134,14 @@
 							</a>
 							<ul class="dropdown-menu">
 								<% if !(privilege? (:manage_canned_responses))%>
-								<li>
-									<%= link_to t('canned_folders.responses'),folders_helpdesk_canned_responses_path %> 
-								</li>
+									<li>
+										<%= link_to t('canned_folders.responses'),folders_helpdesk_canned_responses_path %> 
+									</li>
 								<%end%>
 								<% if !(privilege?(:manage_scenario_automation_rules))%>
-								<li>
-									<%= link_to t('automations.title'),helpdesk_scenario_automations_path %>
-								</li>
+									<li>
+										<%= link_to t('automations.title'),helpdesk_scenario_automations_path %>
+									</li>
 								<%end%>
 							</ul>
 			            </div>
@@ -197,3 +197,11 @@
     Helpdesk.settings = <%= email_template_settings.html_safe %>;
   </script>
 <% end %> 
+
+<script>
+	var TICKET_STATUS = {
+		CLOSED: <%= Helpdesk::Ticketfields::TicketStatus::CLOSED %>
+	}
+</script>
+
+

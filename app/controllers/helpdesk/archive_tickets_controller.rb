@@ -1,9 +1,11 @@
 class Helpdesk::ArchiveTicketsController < ApplicationController
   include Search::TicketSearch
   include Helpdesk::Activities
+  include Helpdesk::Activities::ActivityMethods
   include Helpdesk::AdjacentArchiveTickets
   include Support::TicketsHelper
   include ExportCsvUtil
+  include Helpdesk::NotePropertiesMethods
   helper AutocompleteHelper
   helper Helpdesk::ArchiveNotesHelper
 
@@ -12,7 +14,7 @@ class Helpdesk::ArchiveTicketsController < ApplicationController
   
   before_filter :get_tag_name, :only => :index
   before_filter :set_filter_options, :set_data_hash, :load_sort_order, :only => [ :index, :custom_search ]
-  before_filter :load_ticket, :verify_permission, :load_reply_to_all_emails, :only => [:activities, :prevnext]
+  before_filter :load_ticket, :verify_permission, :load_reply_to_all_emails, :only => [:activities, :prevnext, :activitiesv2]
   before_filter :verify_format_and_tkt_id, :load_ticket_with_notes, :verify_permission, :load_reply_to_all_emails, :only => :show
   before_filter :set_date_filter, :only => [:export_csv]
   before_filter :csv_date_range_in_days , :only => [:export_csv]
@@ -64,6 +66,7 @@ class Helpdesk::ArchiveTicketsController < ApplicationController
       format.html  {
         @ticket_notes = @ticket_notes.reverse
         @ticket_notes_total = @ticket.conversation_count
+        build_notes_last_modified_user_hash(@ticket_notes)
       }      
       format.json {
         render :json => @item.to_json
@@ -119,6 +122,30 @@ class Helpdesk::ArchiveTicketsController < ApplicationController
       render :partial => "helpdesk/archive_tickets/show/activity.html.erb", :collection => @activities
     else
       render :layout => false
+    end
+  end
+
+  def activitiesv2
+    if Account.current.launched?(:activity_ui) and Account.current.features?(:activity_revamp) and request.format != "application/json" and ACTIVITIES_ENABLED
+      type = :tkt_activity
+      @activities_data = new_activities(params, @item, type, true)
+      @total_activities  ||=  @activities_data[:total_count] 
+      respond_to do |format|
+        format.html{
+           if  @activities_data.nil? || @activities_data[:error].present?
+            render nothing: true
+          else
+            @activities = @activities_data[:activity_list].reverse
+            if params[:since_id].present? or params[:before_id].present?
+               render :partial => "helpdesk/archive_tickets/show/custom_activity.html.erb", :collection => @activities
+            else
+              render :layout => false
+            end
+          end
+        }     
+      end
+    else
+      render :nothing => true
     end
   end
 

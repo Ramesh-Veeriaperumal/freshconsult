@@ -243,6 +243,10 @@ class Account < ActiveRecord::Base
     subscription.agent_limit.nil? or 
       (subscription.agent_limit >= (agent_count + full_time_agents.count))
   end
+
+  def agent_limit_reached?(agent_limit)
+    agent_limit && agents_from_cache.find_all { |a| a.occasional == false && a.user.deleted == false }.count >= agent_limit
+  end
   
   def get_max_display_id
     ticket_dis_id = self.ticket_display_id

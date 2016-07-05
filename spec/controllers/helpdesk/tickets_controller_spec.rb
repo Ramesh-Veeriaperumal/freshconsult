@@ -17,6 +17,7 @@ RSpec.describe Helpdesk::TicketsController do
     @email_config.reload
     @email_config.update_column(:active, true)
     sla_policy = create_sla_policy(user)
+    create_sample_tkt_templates # For ticket templates
     $redis_tickets.keys("HELPDESK_TICKET_FILTERS*").each {|key| $redis_tickets.del(key)}
     $redis_tickets.keys("HELPDESK_TICKET_ADJACENTS*").each {|key| $redis_tickets.del(key)}
   end
@@ -985,6 +986,31 @@ RSpec.describe Helpdesk::TicketsController do
     @account.tickets.find_by_id(tkt2.id).should be_nil
     Sidekiq::Testing.disable!
   end
+
+  # Ticket Template - starts here
+  it "should apply tkt template to new tkt form" do
+    get :apply_template, {:template_form=>"new_ticket", :template_id=> "#{@all_agents_template.id}", 
+                          :requester_email=>"dummyuser@freshdesk.com", 
+                          :cc_email=>"dummycc@gmail.com, dummycc1@fhdk.com"}
+    assigns(:template).should be_eql(@all_agents_template)
+    assigns[:ticket].subject.should be_eql @all_agents_template.template_data[:subject]
+  end
+
+  it "should apply tkt template to compose email form" do
+    get :apply_template, {:template_form=>"compose_email", :template_id=> "#{@user_template.id}", 
+                          :requester_email=>"dummyuser@freshdesk.com", :config_emails=>"#{@email_config.id}",
+                          :cc_email=>"dummycc@gmail.com, dummycc1@fhdk.com"}
+    assigns(:template).should be_eql(@user_template)
+    assigns[:ticket].ticket_type.should be_eql @all_agents_template.template_data[:ticket_type]
+  end
+
+  it "should not apply_template when the current user doesn't have access to the particular template" do
+    get :apply_template, {:template_form=>"new_ticket", :template_id=> "#{@grps_template.id}", 
+                          :requester_email=>"dummyuser@freshdesk.com", 
+                          :cc_email=>"dummycc@gmail.com, dummycc1@fhdk.com"}
+    flash[:notice].should be_eql(I18n.t('ticket_templates.not_available'))
+  end
+  # Ticket Template - ends here
 
   describe "Ticket creation from topic" do
 

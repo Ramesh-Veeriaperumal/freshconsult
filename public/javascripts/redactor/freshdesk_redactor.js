@@ -8,6 +8,11 @@
          		focus: false, convertDivs: false, observeImages:true, autoresize:false, imageUpload:"/tickets_uploaded_images", clipboardImageUpload:"/tickets_uploaded_images/create_file", setFontSettings:true, wrapFontSettings:Helpdesk.settings, allowTagsInCodeSnippet:true,
          		buttons:['bold','italic','underline','|','unorderedlist', 'orderedlist',  '|','fontcolor', 'backcolor', '|' ,'link', 'image', 'removeFormat']});
          	break;
+			case 'template':
+				jQuery(element_id).redactor({ 
+					focus: false, convertDivs: false, observeImages:true, autoresize:false, imageUpload:"/ticket_templates_uploaded_images", clipboardImageUpload:"/ticket_templates_uploaded_images/create_file", setFontSettings:true, wrapFontSettings:Helpdesk.settings, allowTagsInCodeSnippet:true,
+					buttons:['bold','italic','underline','|','unorderedlist', 'orderedlist',  '|','fontcolor', 'backcolor', '|' ,'link', 'image', 'removeFormat']});
+				break;
     		case 'forum':
     			jQuery(element_id).redactor({autoresize:false,convertDivs: false, allowTagsInCodeSnippet:true, buttons:['bold','italic','underline','|','unorderedlist', 'orderedlist',  '|','fontcolor', 'backcolor', '|' ,'link','image', 'video']});
     			break;

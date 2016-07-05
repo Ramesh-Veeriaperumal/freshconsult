@@ -118,11 +118,11 @@
 
       @font-face {
   font-family: "glyphs";
-  src: url("../../assets/glyphs_242a4edd73d45f72915a53113084b79a.eot");
-  src: url("../../assets/glyphs_242a4edd73d45f72915a53113084b79a.eot?#iefix") format("embedded-opentype"),
-       url("../../assets/glyphs_242a4edd73d45f72915a53113084b79a.woff") format("woff"),
-       url("../../assets/glyphs_242a4edd73d45f72915a53113084b79a.ttf") format("truetype"),
-       url("../../assets/glyphs_242a4edd73d45f72915a53113084b79a.svg#glyphs") format("svg");
+  src: url("../../assets/glyphs_30ab57e6f71e25bc4569c35a168c51e7.eot");
+  src: url("../../assets/glyphs_30ab57e6f71e25bc4569c35a168c51e7.eot?#iefix") format("embedded-opentype"),
+       url("../../assets/glyphs_30ab57e6f71e25bc4569c35a168c51e7.woff") format("woff"),
+       url("../../assets/glyphs_30ab57e6f71e25bc4569c35a168c51e7.ttf") format("truetype"),
+       url("../../assets/glyphs_30ab57e6f71e25bc4569c35a168c51e7.svg#glyphs") format("svg");
   font-weight: normal;
   font-style: normal;
 }
@@ -130,7 +130,7 @@
 @media screen and (-webkit-min-device-pixel-ratio:0) {
   @font-face {
     font-family: "glyphs";
-    src: url("../../assets/glyphs_242a4edd73d45f72915a53113084b79a.svg#glyphs") format("svg");
+    src: url("../../assets/glyphs_30ab57e6f71e25bc4569c35a168c51e7.svg#glyphs") format("svg");
   }
 }
 
@@ -162,6 +162,7 @@
 .ficon-arrow-up:before,
 .ficon-arrow-up-2:before,
 .ficon-article:before,
+.ficon-attachment-blank:before,
 .ficon-available-on-mobile:before,
 .ficon-bell:before,
 .ficon-billing:before,
@@ -195,6 +196,7 @@
 .ficon-checkmark-round-o:before,
 .ficon-checkmark-thick:before,
 .ficon-chrome:before,
+.ficon-clone:before,
 .ficon-comment-multi:before,
 .ficon-comments:before,
 .ficon-comments1:before,
@@ -375,6 +377,7 @@
 .ficon-scenario:before,
 .ficon-search:before,
 .ficon-security:before,
+.ficon-settings-outline:before,
 .ficon-settings1:before,
 .ficon-shared:before,
 .ficon-sidebar-list:before,
@@ -396,6 +399,7 @@
 .ficon-ticket:before,
 .ficon-ticket-fields:before,
 .ficon-ticket-thin:before,
+.ficon-ticket_template:before,
 .ficon-ticket_volume:before,
 .ficon-time_sheet:before,
 .ficon-timeline-forum:before,
@@ -457,6 +461,7 @@
 .ficon-arrow-up:before { content: "\f10d"; }
 .ficon-arrow-up-2:before { content: "\f10e"; }
 .ficon-article:before { content: "\f204"; }
+.ficon-attachment-blank:before { content: "\f229"; }
 .ficon-available-on-mobile:before { content: "\f1b6"; }
 .ficon-bell:before { content: "\f10f"; }
 .ficon-billing:before { content: "\f110"; }
@@ -490,6 +495,7 @@
 .ficon-checkmark-round-o:before { content: "\f122"; }
 .ficon-checkmark-thick:before { content: "\f123"; }
 .ficon-chrome:before { content: "\f124"; }
+.ficon-clone:before { content: "\f22a"; }
 .ficon-comment-multi:before { content: "\f125"; }
 .ficon-comments:before { content: "\f126"; }
 .ficon-comments1:before { content: "\f1d5"; }
@@ -670,6 +676,7 @@
 .ficon-scenario:before { content: "\f18c"; }
 .ficon-search:before { content: "\f18d"; }
 .ficon-security:before { content: "\f18e"; }
+.ficon-settings-outline:before { content: "\f22c"; }
 .ficon-settings1:before { content: "\f1d8"; }
 .ficon-shared:before { content: "\f18f"; }
 .ficon-sidebar-list:before { content: "\f190"; }
@@ -691,6 +698,7 @@
 .ficon-ticket:before { content: "\f199"; }
 .ficon-ticket-fields:before { content: "\f19a"; }
 .ficon-ticket-thin:before { content: "\f228"; }
+.ficon-ticket_template:before { content: "\f22b"; }
 .ficon-ticket_volume:before { content: "\f1f1"; }
 .ficon-time_sheet:before { content: "\f1f2"; }
 .ficon-timeline-forum:before { content: "\f19b"; }
@@ -727,7 +735,7 @@
 
   <body class="characters-off">
     <header>
-      <h1>Font Icons (281)</h1>
+      <h1>Font Icons (285)</h1>
       <p>We can use font icon classes or use helper method as follows <code>&lt;%= font_icon "icon-name", :size => 18 %&gt;</code>, which generates the Markup</p>
     </header>
     <div id="page" class="container">
@@ -955,6 +963,15 @@
         </div>
         <div class="usage">
           <span>article</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-attachment-blank" class="ficon-attachment-blank"></i></span>
+        </div>
+        <div class="usage">
+          <span>attachment-blank</span>
         </div>
       </div>
       
@@ -1252,6 +1269,15 @@
         </div>
         <div class="usage">
           <span>chrome</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-clone" class="ficon-clone"></i></span>
+        </div>
+        <div class="usage">
+          <span>clone</span>
         </div>
       </div>
       
@@ -2877,6 +2903,15 @@
       
       <div class="glyph">
         <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-settings-outline" class="ficon-settings-outline"></i></span>
+        </div>
+        <div class="usage">
+          <span>settings-outline</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
           <span class="step size-24"><span class="letters">Pp</span><i id="ficon-settings1" class="ficon-settings1"></i></span>
         </div>
         <div class="usage">
@@ -3061,6 +3096,15 @@
         </div>
         <div class="usage">
           <span>ticket-thin</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-ticket_template" class="ficon-ticket_template"></i></span>
+        </div>
+        <div class="usage">
+          <span>ticket_template</span>
         </div>
       </div>
       

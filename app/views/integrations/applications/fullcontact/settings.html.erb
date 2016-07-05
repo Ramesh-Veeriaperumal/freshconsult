@@ -1,0 +1,151 @@
+<% content_for :helpcard do %>
+  <div class="helpcard">
+      <%=t("integrations.fullcontact.helptext").html_safe%>
+  </div>
+<% end %>
+
+  <h3 class="lead"><%=t("integrations.fullcontact.form.settings")%></h3>
+  <%= form_tag("/integrations/fullcontact/update", :method => "post", :id => "fullcontact_form")  do %>
+    <div class="well">
+      <div class="tab-content row-fluid">
+        <label class="caption span3">
+          <div class="logo application-logo-fullcontact"></div>
+          <div class="logo info-data">
+            <%=t('integrations.fullcontact.desc')%>
+          </div>
+        </label>
+
+        <div class="tab-pane span9 active" id="field-mapping-tab">
+          <% existing_companies = @element_config['existing_companies']
+            existing_contacts = @element_config['existing_contacts'] %>
+            <div class="fields">
+              <label for="configs_api_key"> <%=t('integrations.fullcontact.form.api_key')%> <span class="required_star">*</span></label>
+              <input aria-required="true" class="text required" id="configs_api_key" name="configs[api_key]" size="30" value = "<%= @api_key %>" type="text">
+            </div>
+            <span class="seperator"></span>
+
+            <div class="row-fluid" id="rule-list">
+              <div class="field-mapping">
+                <ul class="nav nav-flat">
+                  <li class="active">
+                    <a href="#company-mapping-tab"  id="company-mapping-btn" data-toggle="tab">Company</a>
+                  </li>
+                  <li>
+                    <a href="#contact-mapping-tab" id="contact-mapping-btn" data-toggle="tab">Contact</a>
+                  </li>
+                </ul>
+
+                <div class="tab-content">
+                  <div class="tab-pane active" id="company-mapping-tab">
+                    <div class="contact-wrapper">
+                      <div class="contact-tabel-head">
+                        <div class="contact-tabel-data field-1"> <span class="field-1-text"> FullContact Fields </span> </div>
+                        <div class="contact-tabel-data field-3"> <span> Freshdesk Fields </span> </div>
+                      </div>
+                      <div rel="construct_company_rules" id="construct_company_rule" class="rules_wrapper" data-render-template = '.construct_company' ></div>
+                    </div>
+                  </div>
+
+                  <div class="tab-pane" id="contact-mapping-tab">
+                    <div class="contact-wrapper">
+                      <div class="contact-tabel-head">
+                        <div class="contact-tabel-data field-1"> <span class="field-1-text"> FullContact Fields </span> </div>
+                        <div class="contact-tabel-data field-3"> <span> Freshdesk Fields </span> </div>
+                      </div>
+                      <div rel="construct_contact_rules" id="construct_contact_rule" class="rules_wrapper" data-render-template = '.construct_contact' ></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+        </div>
+      </div>
+    </div>
+    <div class="button-container">
+      <%= link_to t('back'), {:controller => '/integrations/applications', :action => 'index'}, :class => "btn" %>
+      <%= submit_tag t('update'), :class => "btn btn-primary", :onclick => "return validateFields();"%>
+    </div>
+  <%end%>
+<script class="construct_company" type="text/html" data-default-value = '<%= @element_config["existing_companies"].to_json.html_safe %>'>
+    <% fc_company = @element_config["fc_company"] %>
+    <%= select_tag('configs[inputs][companies][][fc_field]', options_for_select(fc_company.collect{ |k,v| [v,k, {'data-field-type' => @element_config['fc_company_types'][v]}]}), 
+            { :class => "" , :rel => "dropdown", "data-refer-key" => 'fc_field', 'data-header-label' => ''}) %>
+    <% fd_company = @element_config["fd_company"] %>
+    <%= select_tag('configs[inputs][companies][][fd_field]', options_for_select(fd_company.collect{ |k,v| [v,k, {'data-field-type' => @element_config['fd_company_types'][v]}]}),  
+            { :class => "" , :rel => "dropdown", "data-refer-key" => 'fd_field', 'data-header-label' => ''}) %>
+</script>   
+
+<script class="construct_contact" type="text/html" data-default-value='<%= @element_config['existing_contacts'].to_json.html_safe %>'>
+  <% fc_contact = @element_config["fc_contact"] %>
+  <%= select_tag('configs[inputs][contacts][][fc_field]', options_for_select(fc_contact.collect{ |k,v| [v,k, {'data-field-type' => @element_config['fc_contact_types'][v], 'data-custom-size' => @element_config['fc_social_profile'][v]}]}), 
+          { :class => "" , :rel => "dropdown", "data-refer-key" => 'fc_field', 'data-header-label' => ''}) %>
+  <% fd_contact = @element_config["fd_contact"] %>
+  <%= select_tag('configs[inputs][contacts][][fd_field]', options_for_select(fd_contact.collect{ |k,v| [v,k, {'data-field-type' => @element_config['fd_contact_types'][v]}]}), 
+            { :class => "" , :rel => "dropdown", "data-refer-key" => 'fd_field', 'data-header-label' => ''}) %>
+</script> 
+
+<script>
+  var fdTypeValidator= <%= raw @element_config['fd_validator'].to_json%>;
+  var crmTypeValidator= <%= raw @element_config['fc_validator'].to_json%>;
+  var customMaxSize = 5;
+  var customModule = "sync"
+  jQuery(function(){
+    jQuery('[rel="construct_company_rules"]').constructRules({fdTypeValidator, crmTypeValidator, customModule});
+    jQuery('[rel="construct_contact_rules"]').constructRules({fdTypeValidator, crmTypeValidator, customModule, customMaxSize});
+    jQuery('#fullcontact_form').validate();
+  })
+
+
+  function validateFields(){
+    var valid = true;
+    //checking for error in contact mapping fields
+    jQuery('#construct_contact_rule .rules_list_wrapper .list').not('.overlay').find('.error').remove();
+    jQuery('#construct_contact_rule .rules_list_wrapper .list').not('.overlay').each(function(index, list){
+      var FDContactSelected = jQuery(this).find('.dropdown_2 .select2-chosen').text();
+      var FCContactSelected = jQuery(this).find('.dropdown_1 .select2-chosen').text();
+      if(FDContactSelected.toLowerCase() == "select" || FDContactSelected.toLowerCase() == "no matching data..."){
+
+        jQuery(this).find('[data-refer-key=fd_field]').after("<p class='error'>Field is required. </p>");
+        valid = false;
+        return false;
+      } 
+      if(FCContactSelected.toLowerCase() == "select" || FCContactSelected.toLowerCase() == "no matching data..."){
+        jQuery(this).find('[data-refer-key=fc_field]').after("<p class='error'>Field is required. </p>");
+        valid = false;
+        return false;
+      }
+    });
+    //checking for error in company mapping fields
+    jQuery('#construct_company_rule .rules_list_wrapper .list').not('.overlay').find('.error').remove();
+    if(valid){
+      jQuery('#construct_company_rule .rules_list_wrapper .list').not('.overlay').each(function(index, list){
+        var FDCompanySelected = jQuery(this).find('.dropdown_2 .select2-chosen').text();
+        var FCCompanySelected = jQuery(this).find('.dropdown_1 .select2-chosen').text();
+        if(FDCompanySelected.toLowerCase() == "select" || FDCompanySelected.toLowerCase() == "no matching data..."){
+
+          jQuery(this).find('[data-refer-key=fd_field]').after("<p class='error'>Field is required. </p>");
+          valid = false;
+          return false;
+        } 
+        if(FCCompanySelected.toLowerCase() == "select" || FCCompanySelected.toLowerCase() == "no matching data..."){
+          jQuery(this).find('[data-refer-key=fc_field]').after("<p class='error'>Field is required. </p>");
+          valid = false;
+          return false;
+        }
+      });
+    }
+
+    if(valid){
+      return true;
+    }else{
+      return false;
+    }
+  }
+  jQuery('#company-mapping-btn, #contact-mapping-btn').on('click', function(){
+    if(validateFields()){
+      return true;
+    }else{
+      return false;
+    }
+  });
+</script>

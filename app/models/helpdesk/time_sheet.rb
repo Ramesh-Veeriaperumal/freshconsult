@@ -103,6 +103,7 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
     } unless products.blank?
   } 
 
+  include RabbitMq::Publisher
   #************************** Archive scope ends here *****************************#
 
   FILTER_OPTIONS = { :group_id => [], :company_id => [], :user_id => [], :billable => true, :executed_after => 0 }
@@ -339,5 +340,24 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
   def workable_name
    workable_type.split("::").second.downcase.pluralize
   end
-  
+
+  def to_rmq_json(keys,action)
+    destroy_action?(action) ? timesheet_identifiers : return_specific_keys(timesheet_identifiers, keys)
+  end
+
+  def timesheet_identifiers
+    @rmq_timesheet_identifiers ||= {
+      "id"              =>  id,
+      "start_time"      =>  start_time,
+      "timer_running"   =>  timer_running,
+      "time_spent"      =>  time_spent,
+      "billable"        =>  billable,
+      "workable_id"     =>  workable_id,
+      "workable_type"   =>  workable_type,
+      "user_id"         =>  user_id,
+      "executed_at"     =>  executed_at,
+      "account_id"      =>  account_id
+    }
+  end
+
 end

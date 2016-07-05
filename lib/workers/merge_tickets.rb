@@ -32,7 +32,7 @@ class Workers::MergeTickets
     update_target_ticket_states(target_ticket)
     # notes are added to the target ticket via update_all. This wont trigger callback
     # So sending it manually
-    update_target_ticket_notes_to_reports(target_ticket, source_ticket_note_ids.flatten)
+    update_target_ticket_notes_to_subscribers(target_ticket, source_ticket_note_ids.flatten, args[:source_ticket_ids])
   end
 
   def self.add_note_to_source_ticket(source_ticket, source_note_private, source_info_note)
@@ -69,10 +69,10 @@ class Workers::MergeTickets
   end
 
   def self.update_merge_activity(source_ticket,target_ticket)
-    source_ticket.create_activity(User.current, 'activities.tickets.ticket_merge.long',
-          {'eval_args' => {'merge_ticket_path' => ['merge_ticket_path', 
-          {'ticket_id' => target_ticket.display_id, 'subject' => target_ticket.subject}]}}, 
-                                'activities.tickets.ticket_merge.short') 
+      source_ticket.create_activity(User.current, 'activities.tickets.ticket_merge.long',
+            {'eval_args' => {'merge_ticket_path' => ['merge_ticket_path', 
+            {'ticket_id' => target_ticket.display_id, 'subject' => target_ticket.subject}]}}, 
+                                  'activities.tickets.ticket_merge.short') 
   end
 
   def self.remove_ecommerce_mapping(source_ticket)
@@ -83,14 +83,13 @@ class Workers::MergeTickets
   end
     
   
-  ##  **  Methods related to reports starts here **  ##
-  # Here we are sending the target ticket notes to RMQ for reporting purpose
+  ##  **  Methods related to subscribers starts here **  ##
+  # REPORTS: Here we are sending the target ticket notes to RMQ for reporting purpose
   # We are not sending the source ticket updates to RMQ because source ticket(which is closed) should 
   # not be included in any of the reporting metrics. So not sending any updates for the source ticket.
-  def self.update_target_ticket_notes_to_reports(target_ticket, note_ids)
-    # TODO Must send only one push for all the subscribers(reports, search, activities)
-    # Currently only reports is handled.
-    # Need to handle it in a generic way for all the subscribers
+  def self.update_target_ticket_notes_to_subscribers(target_ticket, note_ids, source_ticket_ids)
+    # Currently reports and Activities are handled.
+    # Need to append RMQ_GENERIC_NOTE_KEY to enable for other subscribers
     target_ticket_notes = target_ticket.notes.where({:id => note_ids})
     target_ticket_notes.each do |note|
       next unless note.send(:human_note_for_ticket?)
@@ -100,9 +99,13 @@ class Workers::MergeTickets
       note.notable.schema_less_ticket.save
       note.manual_publish_to_rmq("create", RabbitMq::Constants::RMQ_REPORTS_NOTE_KEY)
     end
-    # while doing manual publish of note it will take note's created at and hence it will not be
+    # ACTIVTIIES: Adding ticket merge activity in target ticket
+    target_ticket.activity_type = {:type => "ticket_merge_target", 
+      :source_ticket_id => source_ticket_ids, 
+      :target_ticket_id => [target_ticket.display_id]} 
+    # REPORTS: while doing manual publish of note it will take note's created at and hence it will not be
     # reflected in latest row. Doing a manual push for target ticket here so that the latest row of the ticket will 
     # have all the customer reply and agent reply count updated.
-    target_ticket.manual_publish_to_rmq("update", RabbitMq::Constants::RMQ_REPORTS_TICKET_KEY, {:manual_publish => true})
+    target_ticket.manual_publish_to_rmq("update", RabbitMq::Constants::RMQ_GENERIC_TICKET_KEY, {:manual_publish => true})
   end
 end

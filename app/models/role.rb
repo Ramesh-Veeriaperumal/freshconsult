@@ -3,6 +3,7 @@ class Role < ActiveRecord::Base
   
   include Authority::FreshdeskRails::ModelHelpers
   include Chat::Constants
+  include MemcacheKeys
 
   before_destroy :destroy_user_privileges
   after_update :update_user_privileges
@@ -38,6 +39,8 @@ class Role < ActiveRecord::Base
   attr_protected :privileges 
 
   MA_ROLES_TO_BE_UPDATED = ["Supervisor", "Administrator", "Account Administrator"]
+
+  after_commit :clear_cache
 
   def privilege_list=(privilege_data)
     privilege_data = privilege_data.collect {|p| p.to_sym unless p.blank?}.compact
@@ -131,6 +134,11 @@ class Role < ActiveRecord::Base
   #       LivechatWorker.perform_async({:worker_method => "delete_role", :siteId => siteId, :name=> self.name})
   #     end
   #   end
+
+  def clear_cache
+    key = ACCOUNT_ROLES % { account_id: self.account_id }
+    MemcacheKeys.delete_from_cache key
+  end
 
   private
     def destroy_user_privileges

@@ -14,8 +14,8 @@
       </tr>
       <tr>
         <% JSON.parse(survey_handle.survey.choices).each do |option| %>
-            <td style="width: 14.28%;  border-right: 2px #fff solid; padding: 16px 0px; background-color:<%=CustomSurvey::Survey::CUSTOMER_RATINGS_TEXT_BGCOLOR[option['survey_question_choice']['face_value']]%>;">
-                <a href="<%=custom_survey_url(survey_handle, option["survey_question_choice"]['face_value'])%>" style="padding:5px;text-align:center; text-decoration:none;display:block;"><%= option["survey_question_choice"]["value"] %></a>
+            <td style="width: 14.28%;  border-right: 2px #fff solid; text-align:center; padding: 16px 0px; background-color:<%=CustomSurvey::Survey::CUSTOMER_RATINGS_TEXT_BGCOLOR[option['survey_question_choice']['face_value']]%>;">
+                <a href="<%=custom_survey_url(survey_handle, option["survey_question_choice"]['face_value'])%>" style="margin:0; padding:5px; text-decoration:none; display:block;"><%= option["survey_question_choice"]["value"] %></a>
             </td>
         <% end %>
       </tr>

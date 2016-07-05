@@ -6,12 +6,12 @@ module HelpdeskAccessMethods
 		end
 	end
 
-	def query_hash(model, table, conditions, includes = [])
+	def query_hash(model, table, conditions, includes = [], size = 300)
     {
     	:select => ["*"],
     	:joins 	=> "INNER JOIN (#{Account.current.accesses.all_user_accessible_sql(model, User.current )}) as visible_elements ON
     							visible_elements.accessible_id = #{table}.id AND visible_elements.account_id = #{table}.account_id",
-      :conditions => conditions, :include => includes
+      :conditions => conditions, :include => includes, :limit => size
     }
   end
 

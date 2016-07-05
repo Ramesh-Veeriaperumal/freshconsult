@@ -515,3 +515,36 @@ function closeableFlash(flash){
       delete flash.prevObject;
     }, 20700);
 }
+
+/*
+
+Generic Select all for checkbox;
+Usage - jQuery.selectall(all, child);
+
+all - Id of main check box
+child - class of child checkbox
+
+ */
+
+(function($){
+    $.extend({
+        selectall: function(all, child) {
+            $(all).on("change", function() {
+          if ($(all).prop('checked')) {
+             $(child).prop('checked', 'checked');
+            }
+           else {
+            $(child).removeAttr('checked');
+          }
+        });
+        $(child).on("change", function() {
+          if ($(child+':not(:checked)').length > 0) {
+           $(all).removeAttr('checked');
+          }
+          else {
+           $(all).prop('checked', 'checked');
+          }
+        });
+        }
+    });
+})(jQuery);

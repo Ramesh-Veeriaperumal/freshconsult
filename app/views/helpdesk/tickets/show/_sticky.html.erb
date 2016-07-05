@@ -14,13 +14,24 @@
 				</li>
 			</ul>
 		</div>
+		<% if Account.current.launched?(:activity_ui) %>
+			<div id="activity_toggle" title='<%= t('ticket.show_activities_tooltip') %>'  data-show-title = '<%= t('ticket.show_activities_tooltip') %>' data-hide-title= '<%= t('ticket.hide_activities_tooltip') %>' data-keybinding="<%= shortcut('ticket_detail.show_activities_toggle') %>"
+				class="activity_toggle btn clearfix tooltip" data-toggle="button" data-placement = "below"
+				 data-highlight="true">
+				<div class="text">
+					<i class="ficon-tick activities_tick"></i>
+					<%= t('ticket.activity_toggle_v2') %>
+				</div>
+			</div>
+		<% else %>
+			<div id="activity_toggle" title='<%= t('ticket.activity_toggle') %>' 
+				class="activity_toggle btn clearfix tooltip" data-toggle="button" data-placement = "below"
+				data-keybinding="<%= shortcut('ticket_detail.show_activities_toggle') %>" data-highlight="true">
+				<div class="text"><%= t('ticket.activity_toggle') %></div>
+				<span class="visible">Yes</span><span>No</span>
+			</div>
+		<% end %>
 
-		<div id="activity_toggle" title='<%= t('ticket.activity_toggle') %>' 
-			class="activity_toggle btn clearfix tooltip" data-toggle="button" data-placement = "below"
-			data-keybinding="<%= shortcut('ticket_detail.show_activities_toggle') %>" data-highlight="true">
-			<div class="text"><%= t('ticket.activity_toggle') %></div>
-			<span class="visible">Yes</span><span>No</span>
-		</div>
 		<div class="ticket-actions" data-domhelper-name="ticket-actions">
 			<ul class="collapse-content" data-domhelper-name="ticket-action-options">
 				<% unless @ticket.deleted or @ticket.spam %>

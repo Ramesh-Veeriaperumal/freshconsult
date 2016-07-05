@@ -25,10 +25,10 @@
           <span class="seperator"></span>
             <%= @ticket.description_html.html_safe %>
           </div>  
-        <% unless @ticket.attachments.empty? %>
+        <% unless @ticket.all_attachments.empty? %>
           <span class="seperator"></span>
-          <h4><%= @ticket.attachments.size %> <%= t('attachments')%></h4>
-          <%= attachment_container(@ticket.attachments, false, "ticket", nil) %>
+          <h4><%= @ticket.all_attachments.size %> <%= t('attachments')%></h4>
+          <%= attachment_container(@ticket.all_attachments, false, "ticket", @ticket.id) %>
         <% end %> 
         <% unless @ticket.cloud_files.empty? %>
             <%= attachment_container(@ticket.cloud_files, false, "cloud_file", nil) %>
