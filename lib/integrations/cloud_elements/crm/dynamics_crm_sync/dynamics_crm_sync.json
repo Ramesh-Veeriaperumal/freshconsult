@@ -9,8 +9,9 @@
 		"document.tagging": false,
 		"event.notification.enabled": "true",
 		"event.vendor.type": "polling",
-		"event.poller.urls": "account contact",
+		"event.poller.refresh_interval": "1",
 		"event.notification.callback.url": "%{callback_url}/integrations/cloud_elements/crm/event_notification"
 	},
-"name": "%{element_name}"
+	"name": "%{element_name}",
+    "externalAuthentication": "initial"
 }
