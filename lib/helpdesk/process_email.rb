@@ -15,6 +15,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
   include Helpdesk::Utils::ManageCcEmails
   include Helpdesk::Permission::Ticket
   include Helpdesk::ProcessAgentForwardedEmail
+  include Cache::Memcache::AccountWebhookKeyCache
 
   MESSAGE_LIMIT = 10.megabytes
 
@@ -37,6 +38,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     if !account.nil? and account.active?
       # clip_large_html
       account.make_current
+      verify unless params.key?(:mailbox_id)
       TimeZone.set_time_zone
       encode_stuffs
       from_email = parse_from_email(account)
@@ -881,7 +883,23 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
   def permissible_ccs(user, cc_emails, account)
     cc_emails, params[:dropped_cc_emails] = fetch_permissible_cc(user, cc_emails, account)
     cc_emails
-  end   
+  end 
+
+  def verify
+    Rails.logger.debug params[:verification_key]
+    if params[:verification_key].present?
+      stored_webhook_key = account_webhook_key_from_cache(Account::MAIL_PROVIDER[:sendgrid])
+      if stored_webhook_key.nil?
+        Rails.logger.debug "VERIFICATION RECORD IS NOT PRESENT. BUT VERIFICATION KEY IS THERE ===> #{verification_key}"
+        return false
+      else
+        verification = (stored_webhook_key == params[:verification_key] ? true : false)
+        return verification
+      end
+    end
+    # Returning true by default . If verification is needed , key will be present
+    return true
+  end  
 
   alias_method :parse_cc_email, :parse_cc_email_new
   alias_method :parse_to_emails, :parse_to_emails_new

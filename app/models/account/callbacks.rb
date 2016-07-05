@@ -122,6 +122,8 @@ class Account < ActiveRecord::Base
       if full_domain_changed?
         domain_mapping = DomainMapping.find_by_account_id_and_domain(id,@old_object.full_domain)
         domain_mapping.update_attribute(:domain,full_domain)
+        update_sendgrid(full_domain_was, 'delete')
+        update_sendgrid(full_domain, 'create')
       end
     end
 
@@ -156,11 +158,13 @@ class Account < ActiveRecord::Base
       shard_mapping = ShardMapping.find_by_account_id(id)
       shard_mapping.status = ShardMapping::STATUS_CODE[:ok]
       shard_mapping.save
+      update_sendgrid(full_domain, 'create')
     end
 
     def remove_shard_mapping
       shard_mapping = ShardMapping.find_by_account_id(id)
       shard_mapping.destroy
+      update_sendgrid(full_domain, 'delete')
     end
 
     def remove_global_shard_mapping
@@ -234,5 +238,44 @@ class Account < ActiveRecord::Base
     
     def disable_searchv2
       SearchV2::Manager::DisableSearch.perform_async(account_id: self.id)
+    end
+
+    def update_sendgrid(domain, action)
+      send_grid_credentials = Helpdesk::EMAIL[:outgoing][Rails.env.to_sym]
+
+      begin 
+        unless (send_grid_credentials.blank? && action.blank?)
+          post_args = Hash.new
+          post_args[:api_user] = send_grid_credentials[:user_name]
+          post_args[:api_key] = send_grid_credentials[:password]
+          post_args[:hostname] = domain
+    
+          if action == 'delete'
+            response = HTTParty.post(SendgridWebhookSetting::sendgrid_api[:delete_url], :body => post_args)
+            Rails.logger.debug "Deleting domain account from sendgrid"
+            verification = AccountWebhookKeys.destroy_all(account_id:self.id)
+          else
+            generated_key = generate_callback_key
+            post_args[:spam_check] = 1
+            post_args[:url] = SendgridWebhookSetting::post_url % { :full_domain => self.full_domain, :key => generated_key }
+            response = HTTParty.post(SendgridWebhookSetting::sendgrid_api[:set_url], :body => post_args)
+            
+            verification = AccountWebhookKey.new
+            verification.account_id  = self.id
+            verification.webhook_key = generated_key
+            verification.service_id  = Account::MAIL_PROVIDER[:sendgrid]
+            verification.status = 1
+            verification.save
+          end
+          Rails.logger.debug "Send grid update response for #{domain} : #{response}"
+        end
+      rescue => e
+        Rails.logger.error "Error in updating #{domain} in sendgrid."
+        Rails.logger.error e.backtrace.join("\n")
+      end
+    end
+
+    def generate_callback_key
+      SecureRandom.hex(13)
     end
 end

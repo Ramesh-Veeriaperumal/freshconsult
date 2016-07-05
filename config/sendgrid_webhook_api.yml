@@ -1,0 +1,8 @@
+sendgrid:
+  defaults: &defaults
+    set_url: https://api.sendgrid.com/api/parse.set.xml
+    delete_url: https://api.sendgrid.com/api/parse.delete.xml
+  development:
+    <<: *defaults
+  staging:
+    <<: *defaults
