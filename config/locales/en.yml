@@ -3275,6 +3275,7 @@ en:
     apply_on_form: "Applying template..."
     acc_templ_count: "%{templ_count} of %{total_templ} Templates"
     total_templ_count: "Reached %{total_templ} Templates"
+    ticket_email_form: "Ticket/Email Form"
     visibility:
       groups: Agents in group
       all_agents: All agents
