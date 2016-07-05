@@ -21,7 +21,7 @@ module SupportHelper
 					  "Droid Serif" => "Droid+Serif:regular,italic,700,700italic",
 					  "Oswald" => "Oswald:regular,700",
 					  "Open Sans Condensed" => "Open+Sans+Condensed:300,300italic,700",
-					  "Open Sans" => "Open+Sans:regular,italic,700,700italic&subset=latin,latin-ext",
+					  "Open Sans" => "Open+Sans:regular,italic,700,700italic",
 					  "Merriweather" => "Merriweather:regular,700",
 					  "Roboto Condensed" => "Roboto+Condensed:regular,italic,700,700italic",
 					  "Roboto" => "Roboto:regular,italic,700,700italic",
