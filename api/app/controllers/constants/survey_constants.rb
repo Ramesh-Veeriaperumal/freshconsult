@@ -9,5 +9,5 @@ module SurveyConstants
 
   CUSTOM_RATINGS = CustomSurvey::Survey::CUSTOMER_RATINGS.keys
 
-  INDEX_FIELDS = %w( created_since user_id).freeze
+  INDEX_FIELDS = %w( user_id created_since).freeze #dont change the order since indexing depends on the order
 end.freeze

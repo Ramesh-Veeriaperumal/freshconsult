@@ -53,7 +53,7 @@ class SurveysController < ApiApplicationController
   end
 
   def feature_name
-    FeatureConstants::SURVEYS
+    create? ? FeatureConstants::SURVEYS_WITH_LINK : FeatureConstants::SURVEYS
   end
 
   def load_objects
@@ -120,6 +120,11 @@ class SurveysController < ApiApplicationController
       # load ticket and return 404 if ticket doesn't exists in case of APIs which has ticket_id in url
       return false if (create? || ticket_survey_result?) && !load_ticket
       verify_ticket_permission(api_current_user, @ticket) if @ticket
+      render_request_error(:action_restricted, 403, action: action_name, reason: 'no survey is enabled') unless active_survey_present?
+    end
+
+    def active_survey_present?
+      custom_survey? ? current_account.survey.active? : current_account.features?(:survey_links)
     end
 
     def construct_questions_hash

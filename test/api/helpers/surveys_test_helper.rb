@@ -77,4 +77,32 @@ module SurveysTestHelper
   def unstub_custom_survey
     @account.class.any_instance.unstub(:new_survey_enabled?)
   end
+
+  def deactivate_survey
+    if @account.new_survey_enabled?
+      survey = @account.survey
+      survey.active = 0
+      survey.save
+    else
+      delete_survey_link_feature
+    end
+  end
+
+  def delete_survey_link_feature
+    @account.features.delete @account.features.survey_links
+  end
+
+  def create_survey_link_feature
+    @account.features.survey_links.create
+  end
+
+  def activate_survey
+    if @account.new_survey_enabled?
+      survey = @account.survey
+      survey.active = 1
+      survey.save
+    else
+      create_survey_link_feature
+    end
+  end
 end
