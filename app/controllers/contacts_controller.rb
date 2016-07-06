@@ -210,7 +210,6 @@ class ContactsController < ApplicationController
       end
     else
       check_email_exist
-      load_companies
       respond_to do |format|
         format.html { render :action => :edit }
         format.xml  { render :xml => @item.errors, :status => :unprocessable_entity} #Bad request
@@ -430,7 +429,7 @@ protected
          @contacts = scoper.filter(params[:letter], 
                                    params[:page],
                                    params.fetch(:state , @sort_state),
-                                   per_page,order_by).preload(:avatar, :companies, :default_user_company)
+                                   per_page,order_by).preload(:avatar, :companies)
          cookies[:contacts_sort] = @sort_state
       rescue Exception => e
         @contacts = {:error => get_formatted_message(e)}

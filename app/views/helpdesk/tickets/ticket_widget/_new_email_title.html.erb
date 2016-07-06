@@ -3,9 +3,11 @@
 	<div class="ticket-title-text pull-left">
 		<h3 class="lead"> <%= t('ticket.compose.send_email') %></h3>
 	</div>
-	<div id="template-wrapper" class="template-wrapper pull-left">
-		<%= render :partial => "ticket_template", :locals => {:form => "compose_email"} %>
-	</div>
+	<% if Account.current.launched?(:helpdesk_ticket_templates) %>
+		<div id="template-wrapper" class="template-wrapper pull-left">
+			<%= render :partial => "ticket_template", :locals => {:form => "compose_email"} %>
+		</div>
+	<% end %>
 	<div class="ticket-header-btn btn-toolbar pull-right">
 		<%= link_to t('cancel'), (@item.new_record? ? {:action => 'index'} : @item ), :class => "btn cancel-btn" %>
 		<span class="btn-group dropdown">

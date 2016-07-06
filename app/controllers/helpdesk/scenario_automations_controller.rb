@@ -43,7 +43,7 @@ class Helpdesk::ScenarioAutomationsController < ApplicationController
   def clone
     edit_info
     clone_attributes
-    @item.name = "%s #{@item.name}" % t('dispatch.copy_of')
+    @item.name = "#{I18n.t('dispatch.copy_of')} #{@item.name}"
   end
 
   protected

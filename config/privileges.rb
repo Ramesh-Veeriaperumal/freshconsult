@@ -58,7 +58,6 @@ Authority::Authorization::PrivilegeList.build do
 
     #Freshfone
     resource :"freshfone", :only => [:dashboard_stats, :dial_check, :create_ticket, :create_note]
-    resource :"freshfone/ivr"
     resource :"freshfone/user"
     resource :"freshfone/call", :only => [:caller_data, :inspect_call, :verify, :caller_recent_tickets, :trial_warnings, :agent_leg ]
     resource :"freshfone/conference", :only => [:initiate, :notify ]
@@ -492,6 +491,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"integrations/fullcontact", :only => [:new, :edit, :update]
     resource :"admin/freshfone"
     resource :"admin/freshfone/number"
+    resource :"freshfone/ivr"
     resource :"admin/gamification"
     resource :"admin/quest"
     resource :"helpdesk/sla_policy"

@@ -9,7 +9,14 @@ module RabbitMq::Subscribers::Accounts::Activities
   end
 
   def mq_activities_valid(action, model)
-    Account.current.features?(:activity_revamp) && destroy_action?(action)
+    # valid_model?(model) && destroy_action?(action)
+    # needs to be changed.
+    false
   end
+  private
   
+  def valid_model?(model)
+    ["account"].include?(model)
+  end
+
 end

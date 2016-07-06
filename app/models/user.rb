@@ -705,12 +705,7 @@ class User < ActiveRecord::Base
   end
   
   def company_name
-    if has_multiple_companies_feature?
-      uc = user_companies.find { |uc| uc.default }
-      uc.company.name if uc.present? && uc.company.present?
-    else
-      default_user_company.company.name if default_user_company.present? && default_user_company.company.present?
-    end
+    default_user_company.company.name if default_user_company.present? && default_user_company.company.present?
   end
 
   def company_id= comp_id

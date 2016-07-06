@@ -34,7 +34,7 @@
 		</li>
 	</ul>
 	<div class='ticket-form-title'>
-		<h3 class="lead">Ticket/Email Form</h3>
+		<h3 class="lead"><%= t('ticket_templates.ticket_email_form') %></h3>
 	</div>
 	<ul class="compose-new-ticket">
  		<%= render :partial => "ticket_form", :object => f, :locals => { :is_edit =>is_edit, :f => f } %>

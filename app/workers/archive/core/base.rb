@@ -199,7 +199,7 @@ module Archive
 
       def mysql_note_delete(ticket_id,account_id)
         # select helpdesk_notes
-        note_ids = ActiveRecord::Base.connection.select_values("select * from helpdesk_notes where notable_id=#{ticket_id} and notable_type='Helpdesk::Ticket' and account_id=#{account_id}")
+        note_ids = ActiveRecord::Base.connection.select_values("select id from helpdesk_notes where notable_id=#{ticket_id} and notable_type='Helpdesk::Ticket' and account_id=#{account_id}")
         # delete dependent notes
         unless note_ids.empty?
           delete_notes_association(note_ids,account_id)
@@ -248,9 +248,11 @@ module Archive
             if(key.to_sym == :inline_attachments)
               attach_from_polymorphic_type = (symbol == :helpdesk_tickets) ? "Ticket::Inline" : "Note::Inline"
               attach_to_polymorphic_type = modify_inline_attachments(symbol) 
-              ActiveRecord::Base.connection.execute("update helpdesk_attachments set #{value}_id=#{archive.id}, #{value}_type='#{attach_to_polymorphic_type}' where account_id=#{responder.account_id} and  #{value}_id=#{poly_id} and #{value}_type= '#{attach_from_polymorphic_type}'")
+              ids = ActiveRecord::Base.connection.select_values("select id from helpdesk_attachments where account_id=#{responder.account_id} and #{value}_id=#{poly_id} and #{value}_type= '#{attach_from_polymorphic_type}'")
+              ActiveRecord::Base.connection.execute("update helpdesk_attachments set #{value}_id=#{archive.id}, #{value}_type='#{attach_to_polymorphic_type}' where id in (#{ids.join(',')}) and account_id=#{responder.account_id}") unless ids.empty?
             else
-              ActiveRecord::Base.connection.execute("update #{key} set #{value}_id=#{archive.id}, #{value}_type='#{to_polymorphic_type}' where account_id=#{responder.account_id} and  #{value}_id=#{poly_id} and #{value}_type= '#{from_polymorphic_type}'")
+              ids = ActiveRecord::Base.connection.select_values("select id from #{key} where account_id=#{responder.account_id} and  #{value}_id=#{poly_id} and #{value}_type= '#{from_polymorphic_type}'")
+              ActiveRecord::Base.connection.execute("update #{key} set #{value}_id=#{archive.id}, #{value}_type='#{to_polymorphic_type}' where id in (#{ids.join(',')}) and account_id=#{responder.account_id}") unless ids.empty?
             end
           end
         end
