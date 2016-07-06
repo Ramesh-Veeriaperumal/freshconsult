@@ -1,4 +1,4 @@
-class SurveyValidation < ApiValidation
+class SatisfactionRatingValidation < ApiValidation
   attr_accessor :ratings, :feedback, :allowed_custom_choices, :allowed_default_choices
 
   validates :ratings, required: true, data_type: { rules: Hash }, hash: { validatable_fields_hash: proc { |x| x.construct_hash_field_validations } }

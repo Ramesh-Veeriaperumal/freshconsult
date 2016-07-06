@@ -1,17 +1,9 @@
 JSON.generate(@items.map do |item|
-  feedback = item.survey_remark.feedback.body if item.survey_remark
   response_hash = {
     id: item.id,
-    survey_id: item.survey_id,
-    user_id: item.customer_id,
-    agent_id: item.agent_id,
-    feedback: feedback,
-    group_id: item.group_id,
-    ticket_id: @ticket.try(:display_id) || item.surveyable.display_id,
-    created_at: item.created_at.try(:utc),
-    updated_at: item.updated_at.try(:utc)
+  	title: item.title_text
   }
-  response_hash.merge!(ratings: item.custom_ratings) if item.respond_to?(:custom_ratings)
-  response_hash.merge!(ratings: { default_question: item.rating }) unless item.respond_to?(:custom_ratings)
+  response_hash.merge!(questions: item.questions) if item.custom_survey?
   response_hash
 end)
+
