@@ -120,7 +120,7 @@ class SurveysController < ApiApplicationController
       # load ticket and return 404 if ticket doesn't exists in case of APIs which has ticket_id in url
       return false if (create? || ticket_survey_result?) && !load_ticket
       verify_ticket_permission(api_current_user, @ticket) if @ticket
-      render_request_error(:action_restricted, 403, action: action_name, reason: 'no survey is enabled') unless active_survey_present?
+      render_request_error(:action_restricted, 403, action: action_name, reason: 'no survey is enabled') if create? && !active_survey_present?
     end
 
     def active_survey_present?

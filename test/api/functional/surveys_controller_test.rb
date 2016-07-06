@@ -239,4 +239,26 @@ class SurveysControllerTest < ActionController::TestCase
     assert_response 403
     match_json(request_error_pattern(:action_restricted, action: 'create', reason: 'no survey is enabled'))
   end
+
+  def test_create_with_features_disabled
+    @account.class.any_instance.stubs(:features?).returns(false)
+    post :create, construct_params({ id: ticket.display_id }, rating: 103)
+    @account.class.any_instance.unstub(:features?)
+    assert_response 403
+    match_json(request_error_pattern(:require_feature, feature: 'surveys,survey_links'.titleize))
+  end
+
+  def test_view_with_survey_deactivated
+    deactivate_survey
+    get :index, controller_params
+    activate_survey
+    pattern = []
+    CustomSurvey::SurveyResult.all.each do |sr|
+      pattern << survey_custom_rating_pattern(sr)
+    end
+    assert_response 200
+    response_json = JSON.parse(response.body)
+    assert_equal response_json.size, CustomSurvey::SurveyResult.count
+    match_json(pattern)
+  end
 end
