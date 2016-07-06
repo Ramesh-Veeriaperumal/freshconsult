@@ -11,7 +11,9 @@ class Helpdesk::Note < ActiveRecord::Base
   include BusinessHoursCalculation
 
   SCHEMA_LESS_ATTRIBUTES = ['from_email', 'to_emails', 'cc_emails', 'bcc_emails', 'header_info', 'category', 
-                            'response_time_in_seconds', 'response_time_by_bhrs', 'email_config_id', 'subject']
+                            'response_time_in_seconds', 'response_time_by_bhrs', 'email_config_id', 'subject',
+                            'last_modified_user_id', 'last_modified_timestamp'
+                          ]
 
   self.table_name =  "helpdesk_notes"
 
@@ -95,6 +97,23 @@ class Helpdesk::Note < ActiveRecord::Base
   validates_numericality_of :source
   validates_inclusion_of :source, :in => 0..SOURCES.size-1
   validates :user, presence: true, if: -> {user_id.present?}
+
+  SCHEMA_LESS_ATTRIBUTES.each do |attribute|
+    define_method("#{attribute}") do
+      load_schema_less_note
+      schema_less_note.send(attribute)
+    end
+
+    define_method("#{attribute}?") do
+      load_schema_less_note
+      schema_less_note.send(attribute)
+    end
+
+    define_method("#{attribute}=") do |value|
+      load_schema_less_note
+      schema_less_note.send("#{attribute}=", value)
+    end
+  end
 
   def all_attachments
     shared_attachments=self.attachments_sharable

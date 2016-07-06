@@ -1,11 +1,21 @@
 <li class="close-dialog">
-	<% if @ticket
+	<% if params[:tkt_cr].present?
+			if @ticket
+				id = @ticket.display_id
+				tkt = @ticket
+				helpdesk = @ticket.account.portal_name
+			else
+				id,tkt,helpdesk=nil
+			end
+			title = truncate(Liquid::Template.parse(ca_response.content).render('ticket' => tkt, 'helpdesk_name' => helpdesk), :length => 200)
+			function = "GetCannedResponse.init('#{id}','#{ca_response.id}', this)"
+		elsif @ticket
 			title = truncate(Liquid::Template.parse(ca_response.content).render('ticket' => @ticket, 'helpdesk_name' => @ticket.account.portal_name), :length => 200)
 			function = "getCannedResponse('#{@ticket.display_id}','#{ca_response.id}', this)"
-	  else
-	  	title = truncate(ca_response.content, :length => 200)
-	  	function = "getCannedResponse('#{ca_response.id}', this)"
-	  end
+		else
+			title = truncate(ca_response.content, :length => 200)
+			function = "getCannedResponse('#{ca_response.id}', this)"
+		end
       title = title.gsub('&lt;', '&amp;lt;')
       #Double escaping tags that are part of the text
     %>

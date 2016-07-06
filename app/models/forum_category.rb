@@ -46,6 +46,8 @@ class ForumCategory < ActiveRecord::Base
 
   before_destroy :set_destroy_activity_and_clear_cache
 
+  include RabbitMq::Publisher 
+
   def set_activity_new_and_clear_cache
     create_activity('new_forum_category')
     account.clear_forum_categories_from_cache
@@ -132,6 +134,19 @@ class ForumCategory < ActiveRecord::Base
     self.portal_forum_categories.main_portal_category.first
   end
 
+  def to_rmq_json(keys,action)
+    forum_category_identifiers
+    #destroy_action?(action) ? forum_category_identifiers : return_specific_keys(forum_category_identifiers, keys)
+  end
+
+  def forum_category_identifiers
+    @rmq_forum_identifiers ||= {
+      "id"          =>  id,
+      "name"        =>  name,
+      "account_id"  =>  account_id
+    }
+  end
+  
   def set_default_portal
     self.portal_ids = [Account.current.main_portal.id] if self.portal_ids.blank?
   end

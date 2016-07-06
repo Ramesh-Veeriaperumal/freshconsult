@@ -423,6 +423,10 @@
 		padding-bottom: 8px;
 		border:none;
 	}
+	.add_recipients {
+		@include float(left);
+		@include padding(5px 0 0 10px);
+	}
 	#bulk_merge_tickets{
 		margin-bottom: 0;
 	}
@@ -470,9 +474,6 @@
 			border:none;
 			@include margin(3px 0 0 17px);
 		}
-	}
-	.merge-sub-title{
-		@include margin-left(9px);
 	}
 	.search-item{
 		@include float(left);

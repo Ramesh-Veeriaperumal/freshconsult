@@ -357,7 +357,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     account = Account.find(params[:account_id])
     begin
       account.make_current
-      result[:status] = account.contact_import ? account.contact_import.status : true
+      result[:status] = (import = account.contact_import) ? import.import_status : false
     rescue Exception => e
       result[:status] = "failure"
     ensure

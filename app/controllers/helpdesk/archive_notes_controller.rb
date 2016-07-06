@@ -1,5 +1,5 @@
 class Helpdesk::ArchiveNotesController < ApplicationController
-
+  include Helpdesk::NotePropertiesMethods
   before_filter :check_feature
   before_filter :load_parent_ticket
   before_filter :load_note, :only => :full_text
@@ -12,7 +12,7 @@ class Helpdesk::ArchiveNotesController < ApplicationController
     else
       @notes = @parent.conversation(params[:page])
     end
-    
+    build_notes_last_modified_user_hash(@notes)
     if request.xhr?
       unless params[:v].blank? or params[:v] != '2'
         @ticket_notes = @notes.reverse        
@@ -49,7 +49,7 @@ class Helpdesk::ArchiveNotesController < ApplicationController
   private
 
   def check_feature
-    unless current_account.features?(:archive_tickets)
+    unless current_account.features_included?(:archive_tickets)
       redirect_to helpdesk_tickets_url
     end
   end
@@ -61,4 +61,5 @@ class Helpdesk::ArchiveNotesController < ApplicationController
   def load_note
     @item = @parent.archive_notes.find_by_id(params[:id])
   end
+
 end

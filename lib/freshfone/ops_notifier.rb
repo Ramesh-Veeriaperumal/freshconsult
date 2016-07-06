@@ -21,6 +21,10 @@ class Freshfone::OpsNotifier
     FreshfoneNotifier.ops_alert(current_account, notification, message)
   end
 
+  def alert_mail_with_recepient
+    FreshfoneNotifier.ops_alert(current_account, notification, message, ["pulkit@freshdesk.com"])
+  end
+
   def alert_call
     url = "#{ops_call_notify_url}?message=#{CGI.escape(message)}"
     config_call = 

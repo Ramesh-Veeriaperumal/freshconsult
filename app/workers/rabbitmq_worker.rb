@@ -6,9 +6,12 @@ class RabbitmqWorker
   sidekiq_options :queue => 'rabbitmq_publish', :retry => 5, :dead => true, :failures => :exhausted
 
   def perform(exchange_key, message, rounting_key)
-    publish_message_to_xchg($rabbitmq_model_exchange[exchange_key], message, rounting_key)
-    Rails.logger.info("Published RMQ message via Sidekiq")
 
+
+    if autorefresh_routing_key?(exchange_key, rounting_key)
+        publish_message_to_xchg($rabbitmq_model_exchange[exchange_key], message, rounting_key)
+      Rails.logger.info("Published RMQ message via Sidekiq")
+    end
     # Publish to Search-v2
     #
     if search_routing_key?(exchange_key, rounting_key)
@@ -24,7 +27,14 @@ class RabbitmqWorker
       puts " SQS Message id - #{sqs_msg_obj.message_id} :: ROUTING KEY -- #{rounting_key} :: Exchange - #{exchange_key}"
     end
 
+    # Publish to Activities-v2
+    #
+    if activities_routing_key?(exchange_key, rounting_key)
+      sqs_msg_obj = sqs_v2_push(SQS[:activity_queue], message, nil)
+      puts " SQS Activities Message id - #{sqs_msg_obj.message_id} :: ROUTING KEY -- #{rounting_key} :: Exchange - #{exchange_key}"
+    end
 
+    # Publish to ES Count
     if count_routing_key?(exchange_key, rounting_key)
       sqs_msg_obj = (Ryuken::CountPerformer.perform_async(message) rescue nil)
       puts "CountES SQS Message id - #{sqs_msg_obj.try(:message_id)} :: ROUTING KEY -- #{rounting_key} :: Exchange - #{exchange_key}"
@@ -48,6 +58,11 @@ class RabbitmqWorker
   def sqs_v2_push(queue_name, message, delay, opts={})
     AwsWrapper::SqsV2.send_message(queue_name, message, delay, opts)
   rescue => e
+    if queue_name == SQS[:activity_queue]
+      description = "Activities SQS push error"
+      sns_topic = SNS["activities_notification_topic"]
+      sns_notification(description, message, sns_topic)
+    end
     NewRelic::Agent.notice_error(e, {
                                    :custom_params => {
                                      :description => "SQS push error in #{queue_name}",
@@ -56,6 +71,28 @@ class RabbitmqWorker
     raise e
   end
   
+  def autorefresh_routing_key?(exchange, key)
+    if (exchange.starts_with?("tickets") || exchange.starts_with?("notes")) && key[0] == "1"
+      return true
+    else
+      return false
+    end
+  end
+
+  def activities_routing_key?(exchange, key)
+    (
+      ((exchange.starts_with?("tickets") && key[8] == "1") || 
+          (exchange.starts_with?("notes") && key[6] == "1") ||
+          (exchange.starts_with?("archive_tickets") && key[4] == "1") ||
+          ((exchange.starts_with?("accounts") || exchange.starts_with?("article") || 
+            exchange.starts_with?("topic") || exchange.starts_with?("post")) && key[2] == "1") ||
+          ((exchange.starts_with?("forum_category") || exchange.starts_with?("forum") || 
+            exchange.starts_with?("time_sheet") || exchange.starts_with?("subscription") || 
+            exchange.starts_with?("ticket_old_body")) && key[0] == "1")
+      )
+    )
+  end
+
   def reports_routing_key?(exchange, key)
     ((exchange.starts_with?("tickets") || exchange.starts_with?("notes")) && key[2] == "1") || 
       ((exchange.starts_with?("archive_tickets") || exchange.starts_with?("accounts")) && key[0] == "1")

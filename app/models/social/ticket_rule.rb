@@ -63,12 +63,14 @@ class Social::TicketRule < ActiveRecord::Base
   end
 
   private
-    def check_includes(feed)
+    def check_includes(social_feed)
       includes = filter_data[:includes]
       includes.each do |keyword|
         to_match = tokenize(keyword)
-        match_found = to_match.each.map{|keyword| /\b#{keyword.downcase}\b/.match(feed.downcase)}
-        return true unless match_found.include?(nil)
+        #dot removed as it's the generic end of line character
+        feed     = "\s#{social_feed.gsub(".","")}\s"
+        match_found = to_match.all?{|match| feed.downcase.include?(match.downcase)}
+        return true if match_found
       end
       return false
     end
@@ -86,7 +88,7 @@ class Social::TicketRule < ActiveRecord::Base
         end
       end
       keywords << keys.join().split(" ")
-      keywords.flatten!
+      keywords.flatten!.map!{|word| "\s#{word}\s"}
       keywords
     end
 end

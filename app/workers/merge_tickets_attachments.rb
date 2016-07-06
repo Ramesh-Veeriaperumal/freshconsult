@@ -8,7 +8,7 @@ class MergeTicketsAttachments < BaseWorker
 		target_ticket = account.tickets.find_by_id(args[:target_ticket_id])
 		source_description_note = target_ticket.notes.find_by_id(args[:source_description_note_id])
 		return if (source_ticket.blank? || source_description_note.blank?) 
-		source_ticket.attachments.each do |attachment|      
+		source_ticket.all_attachments.each do |attachment|      
 			url = attachment.authenticated_s3_get_url
 			io = open(url)
 			if io 

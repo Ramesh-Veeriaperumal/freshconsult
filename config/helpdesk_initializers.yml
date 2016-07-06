@@ -82,4 +82,5 @@ helpdesk:
     - zero_downtime_migration
     - action_mailer_log_subscriber
     - email_controller_log_subscriber
+    - thrift
 

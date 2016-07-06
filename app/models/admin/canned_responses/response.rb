@@ -35,7 +35,7 @@ class Admin::CannedResponses::Response < ActiveRecord::Base
   delegate :groups, :users, :visible_to_me?, :to => :helpdesk_accessible
 
   attr_accessor :visibility
-  attr_protected :account_id
+  attr_accessible :title, :content_html, :folder_id, :helpdesk_accessible_attributes
 
   validates_length_of :title, :in => 3..240
   validates_presence_of :folder_id

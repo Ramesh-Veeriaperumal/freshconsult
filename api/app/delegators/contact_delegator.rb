@@ -1,5 +1,4 @@
 class ContactDelegator < BaseDelegator
-
   include ActiveRecord::Validations
 
   validates_associated :default_user_company, if: -> { company_id }
@@ -28,12 +27,12 @@ class ContactDelegator < BaseDelegator
     invalid_other_emails = unassociated_emails - [@primary_email]
     if invalid_other_emails.any?
       errors[:other_emails] << :email_already_taken
-      (self.error_options ||= {}).merge!(other_emails: { invalid_emails: "#{invalid_other_emails.join(', ')}" }  )
+      (self.error_options ||= {}).merge!(other_emails: { invalid_emails: "#{invalid_other_emails.join(', ')}" })
     end
     errors[:email] << :"Email has already been taken" if unassociated_emails.include?(@primary_email)
   end
 
   def unassociated_emails
-    @emails ||= @other_emails.select{ |x| id != x.user_id }.map(&:email)
+    @emails ||= @other_emails.select { |x| id != x.user_id }.map(&:email)
   end
 end

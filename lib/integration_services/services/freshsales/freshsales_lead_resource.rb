@@ -153,6 +153,7 @@ module IntegrationServices::Services
         lead_entity_selector_mapping = SELECTOR_MAPPING[lead_entity]
         result["leads"].each do |lead|
           lead_entity_record = lead[lead_entity]
+          next if lead_entity_record.blank?
           entity_lead_fields = lead_entity_fields_mapping.keys & fields
           if entity_lead_fields.present?
             entity_lead_fields.each do |entity_lead_field|

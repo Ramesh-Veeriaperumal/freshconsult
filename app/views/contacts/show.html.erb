@@ -140,7 +140,7 @@
 			</div>
 			<% end %>
 			<div class='contact-edit-padding'>
-			<% if current_account.features?(:forums) or current_account.features?(:archive_tickets) %>
+			<% if current_account.features?(:forums) or current_account.features_included?(:archive_tickets) %>
 					<% list = [
 						[
 							t('contacts.conversations.all'), '#conv_all', false, {:id => 'conv_all-tab', :'data-hash-url' => false}
@@ -153,7 +153,7 @@
 						],
 					]
 					
-					if current_account.features?(:archive_tickets) 
+					if current_account.features_included?(:archive_tickets) 
 						list << [ :divider ]
 						list << [ t('contacts.conversations.archive_tickets'), '#conv_archive_tickets', false, {:id => 'conv_archive_tickets-tab', :'data-hash-url' => false } ]
 					end
@@ -250,7 +250,7 @@
 						<% end %>
 					</div>
 
-					<% if current_account.features?(:archive_tickets) %>
+					<% if current_account.features_included?(:archive_tickets) %>
 						<div class='tab-pane' id='conv_archive_tickets'> 
 							
 							<div class='timeline' id='timeline'>

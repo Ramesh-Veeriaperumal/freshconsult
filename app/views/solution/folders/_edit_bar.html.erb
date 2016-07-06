@@ -7,7 +7,7 @@
 		<li class="lf-item lf-btns faded solution-bulk-actions" id="article-bulk-action">
 			<span>
 				<%= select_tag :id,
-	          option_groups_from_collection_for_select(current_account.solution_category_meta.includes(:primary_category, :solution_folder_meta => :primary_folder).reject(&:is_default?), :solution_folder_meta, :name, :id, :name), {
+	          grouped_options_for_select(grouped_options_for_folder_select), {
 	          		:class => "disabled bulk-action-btns input-small select2 m0",
 	              :id => "move_to",
 	              :'data-dropdown-css-class' => 'bulk-action-menu',

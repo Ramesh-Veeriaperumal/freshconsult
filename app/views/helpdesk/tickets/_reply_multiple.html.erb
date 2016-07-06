@@ -14,7 +14,7 @@
         <% end %>
         <li class="inline-field reply-content-container">
             <%= f.fields_for(:note_body_attributes, Helpdesk::NoteBody.new) do |ff| %>
-                <%= ff.text_area :body_html, :id => "#{id}-#{cntid}-body", :value => "", :"data-wrap-font-family" => true %>
+                <%= ff.text_area :body_html, :id => "#{id}-#{cntid}-body", :class => "ta_insert_cr", :value => "", :"data-wrap-font-family" => true %>
             <% end %>
             <%= f.hidden_field :private, :value=> 0 %>
             <%= f.hidden_field :user_id, :value=> current_user && current_user.id %>
@@ -28,6 +28,8 @@
     </ul>
 </div>
 
+<%= render :partial => "/helpdesk/tickets/show/multifile_template"  %>
+<%= render :partial => "/helpdesk/tickets/show/multifile_template_new"  %>
 
 <%= javascript_tag do %>
 

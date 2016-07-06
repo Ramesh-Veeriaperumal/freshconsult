@@ -123,7 +123,8 @@ module ForumSpamMethods
 		def next(timestamp)
 			query(
 				:account_id => Account.current.id, 
-				:timestamp => [:lt, timestamp],
+				:timestamp => [:ge, (Time.now - ForumSpam::UPTO).utc.to_f],
+				:last_record => timestamp,
 				:limit => 30
 				)
 		end

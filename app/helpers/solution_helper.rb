@@ -523,4 +523,10 @@ module SolutionHelper
 			t("solution.#{item_type}.enter_version_name", :language_name => @language.name) : ''
 	end
 
+	def grouped_options_for_folder_select
+		all_solution_categories.map { |category|
+			[category[:name], category[:folders].map { |folder| [folder[:name], folder[:id]] }]
+		}
+	end
+
 end

@@ -1,8 +1,8 @@
 class AccountAdditionalSettings < ActiveRecord::Base
 
-  self.table_name =  "account_additional_settings" 
+  self.table_name =  "account_additional_settings"
   self.primary_key = :id
-  
+
   include AccountAdditionalSettings::AdditionalSettings
 
   belongs_to :account
@@ -18,23 +18,23 @@ class AccountAdditionalSettings < ActiveRecord::Base
   validate :validate_portal_languages, :if => :multilingual?
 
   def handle_email_notification_outdate
-    if supported_languages_changed? 
+    if supported_languages_changed?
     	removed = supported_languages_was - supported_languages
     	added = supported_languages - supported_languages_was
 
     	removed.each do |l|
-    		DynamicNotificationTemplate.deactivate!(l) 
-    	end	
+    		DynamicNotificationTemplate.deactivate!(l)
+    	end
 
     	added.each do |l|
     		DynamicNotificationTemplate.activate!(l)
-    	end	
-    end	
-  end 
+    	end
+    end
+  end
 
   def had_supported_languages?
     !supported_languages_was.nil?
-  end 
+  end
 
   def validate_bcc_emails
     (bcc_email || "").split(",").each do |email|
@@ -48,6 +48,10 @@ class AccountAdditionalSettings < ActiveRecord::Base
 
   def delete_spam_tickets_days
     additional_settings[:delete_spam_days] unless additional_settings.blank?
+  end
+
+  def is_trial_extension_requested?
+    additional_settings.blank? ? false : additional_settings[:trial_extension_requested] == true
   end
 
   private
@@ -79,5 +83,7 @@ class AccountAdditionalSettings < ActiveRecord::Base
     end
     return true
   end
+
+
 
 end

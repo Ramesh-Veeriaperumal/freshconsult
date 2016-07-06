@@ -9,7 +9,7 @@ class Helpdesk::TagsController < ApplicationController
 
     tag_id = params[:tag_id].present? ? [params[:tag_id]] : :all
     sort_order = params[:sort] || cookies[:tag_sort_key] || :activity_desc 
-    @archive_feature = current_account.features?(:archive_tickets)
+    @archive_feature = current_account.features_included?(:archive_tickets)
     @tags = Helpdesk::Tag.sort_tags(sort_order).tag_search(params["name"]).find(tag_id).paginate(
         :page => params[:page],
         :include => [:tag_uses],

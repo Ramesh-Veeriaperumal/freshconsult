@@ -21,7 +21,8 @@ QUEUE_WATCHER_RULE = {
               "gamification_ticket_quests",
               "gamification_ticket_score",
               "helpdesk_note_body_queue",
-              "gamification_user_score"
+              "gamification_user_score",
+              "livechat_queue"  
             ]
 }
 

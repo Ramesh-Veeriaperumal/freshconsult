@@ -6,6 +6,18 @@
 	font-weight: 600;
 	width:150px;
 }
+
+.phone_features_info{
+  ul {
+    list-style-type:disc
+  }
+  li{
+    line-height:1.4em;
+    @include margin(0 0 5px 25px);
+    color:#444;
+  }
+}
+
 .general-settings .row-fluid{
 	margin-bottom: 12px;
 }

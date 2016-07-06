@@ -57,6 +57,13 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
   has_many_attachments
   has_many_cloud_files
 
+  has_many :shared_attachments,
+    :as => :shared_attachable,
+    :class_name => 'Helpdesk::SharedAttachment',
+    :dependent => :destroy
+
+  has_many :attachments_sharable, :through => :shared_attachments, :source => :attachment
+
   delegate :active?, :open?, :is_closed, :closed?, :resolved?, :pending?, :onhold?,
     :onhold_and_closed?, :to => :ticket_status, :allow_nil => true
 
@@ -103,8 +110,16 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
     [" archive_tickets.created_at >= ? and archive_tickets.created_at <= ?", start, stop] }
   }
   # do we need this
-  validates_uniqueness_of :display_id, :scope => :account_id
+  # validates_uniqueness_of :display_id, :scope => :account_id
   default_scope where(:progress => false)
+
+  def all_attachments
+    @all_attachments ||= begin
+      shared_attachments = self.attachments_sharable
+      individual_attachments = self.attachments
+      individual_attachments + shared_attachments
+    end
+  end
 
   def self.agent_permission user
     case Agent::PERMISSION_TOKENS_BY_KEY[user.agent.ticket_permission]
@@ -342,12 +357,12 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
   end
 
   def description_with_attachments
-    attachments.empty? ? description_html :
-        "#{description_html}\n\nTicket attachments :\n#{liquidize_attachments(attachments)}\n"
+    all_attachments.empty? ? description_html :
+        "#{description_html}\n\nTicket attachments :\n#{liquidize_attachments(all_attachments)}\n"
   end
 
-  def liquidize_attachments(attachments)
-    attachments.each_with_index.map { |a, i|
+  def liquidize_attachments(all_attachments)
+    all_attachments.each_with_index.map { |a, i|
       "#{i+1}. <a href='#{Rails.application.routes.url_helpers.helpdesk_attachment_url(a, :host => portal_host)}'>#{a.content_file_name}</a>"
       }.join("<br />")
   end 

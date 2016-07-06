@@ -89,16 +89,14 @@ class ApiContactsController < ApiApplicationController
     def invalid_params_or_state?
       return true if blank_email? # invalid state because agent can't be created without email.
       if params[cname].present?
-        invalid_params? 
+        invalid_params?
       else
         agent_limit_reached?
       end
     end
 
     def blank_email?
-      if @item.email.blank?
-        render_request_error :inconsistent_state, 409
-      end
+      render_request_error :inconsistent_state, 409 if @item.email.blank?
     end
 
     # returns true if it fails params validation either in data type validation or in delegator validation.
@@ -119,7 +117,7 @@ class ApiContactsController < ApiApplicationController
     def agent_limit_reached?
       agent_limit_reached, agent_limit = ApiUserHelper.agent_limit_reached?
       if agent_limit_reached
-        render_request_error :max_agents_reached, 403, max_count: agent_limit 
+        render_request_error :max_agents_reached, 403, max_count: agent_limit
       end
     end
 

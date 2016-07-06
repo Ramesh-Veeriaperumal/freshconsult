@@ -20,6 +20,7 @@ class Tickets::UpdateCompanyId < BaseWorker
       condition = company_id ? "(owner_id != ? OR owner_id IS NULL)" : "owner_id is not ?"
       condition = "owner_id = ?" if old_company_id
 
+      count_es_enabled = Account.current.features?(:countv2_writes)
       Account.current.send(tkts).where(["requester_id in (?) AND #{condition}", 
                                           user_ids, company_id_in_query]).find_in_batches(:batch_size => TICKET_LIMIT) do |tickets|
         Account.current.send(tkts).where("id in (?)", tickets.map(&:id)).update_all(:owner_id => company_id)
@@ -27,6 +28,7 @@ class Tickets::UpdateCompanyId < BaseWorker
 
         #=> Needing this to publish to search until another way found.
         execute_on_db { tickets.map(&:sqs_manual_publish) }
+        execute_on_db { tickets.map(&:count_es_manual_publish) } if count_es_enabled
       end
     end
   end

@@ -52,7 +52,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
   attr_accessor :email, :name, :custom_field ,:customizer, :nscname, :twitter_id, :external_id, 
     :requester_name, :meta_data, :disable_observer, :highlight_subject, :highlight_description, 
     :phone , :facebook_id, :send_and_set, :archive, :required_fields, :disable_observer_rule, 
-    :disable_activities, :tags_updated
+    :disable_activities, :tags_updated, :system_changes, :activity_type, :misc_changes
+  # Added :system_changes, :activity_type, :misc_changes for activity_revamp -
+  # - will be clearing these after activity publish.
 
 #  attr_protected :attachments #by Shan - need to check..
 
@@ -633,12 +635,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
   def description_with_attachments
-    attachments.empty? ? description_html : 
-        "#{description_html}\n\nTicket attachments :\n#{liquidize_attachments(attachments)}\n"
+    all_attachments.empty? ? description_html : 
+        "#{description_html}\n\nTicket attachments :\n#{liquidize_attachments(all_attachments)}\n"
   end
   
-  def liquidize_attachments(attachments)
-    attachments.each_with_index.map { |a, i| 
+  def liquidize_attachments(all_attachments)
+    all_attachments.each_with_index.map { |a, i| 
       "#{i+1}. <a href='#{Rails.application.routes.url_helpers.helpdesk_attachment_url(a, :host => portal_host)}'>#{a.content_file_name}</a>"
       }.join("<br />") #Not a smart way for sure, but donno how to do this in RedCloth?
   end
@@ -1053,6 +1055,33 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
     return if next_agent.nil? #There is no agent available to assign ticket.
     self.responder_id = next_agent.user_id
+    self.activity_type = {:type => "round_robin", :responder_id => [nil, self.responder_id]}
+  end
+
+  def add_tag_activity(tag)
+    self.tags_updated = true    # for ES search
+    if self.misc_changes.present?
+      self.misc_changes[:add_tag].present? ? self.misc_changes[:add_tag] << tag.name : self.misc_changes[:add_tag] = [tag.name]
+    else
+      self.misc_changes = {:add_tag => [tag.name]} 
+    end
+  end
+
+  def remove_tag_activity(tag)
+    self.tags_updated = true    # for ES search
+    if self.misc_changes.present?
+      self.misc_changes[:remove_tag].present? ? self.misc_changes[:remove_tag] << tag.name : self.misc_changes[:remove_tag] = [tag.name]
+    else
+      self.misc_changes = {:remove_tag => [tag.name]} 
+    end
+  end
+
+  def all_attachments
+    @all_attachments ||= begin
+      resp_shared_attachments = self.attachments_sharable
+      individual_attachments = self.attachments
+      individual_attachments + resp_shared_attachments
+    end
   end
 
   # Moved here from note.rb

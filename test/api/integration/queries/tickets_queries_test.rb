@@ -15,8 +15,8 @@ class TicketsQueriesTest < ActionDispatch::IntegrationTest
         api_restore: 7,
         api_compose_email: 3,
 
-        create: 83,
-        compose_email: 75,
+        create: 84,
+        compose_email: 76,
         show: 18,
         update: 31,
         index: 16,

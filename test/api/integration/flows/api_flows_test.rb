@@ -1076,7 +1076,7 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
     sample_user.save
     record = sample_user.reload
     UserSession.any_instance.stubs(:cookie_credentials).returns([record.persistence_token, record.id])
-    headers = @headers.except("HTTP_AUTHORIZATION")
+    headers = @headers.except('HTTP_AUTHORIZATION')
     get 'api/agents/me', nil, headers
     assert_response 200
     response.body.must_match_json_expression(agent_pattern_with_additional_details(sample_user))

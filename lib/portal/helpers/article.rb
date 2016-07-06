@@ -81,6 +81,11 @@ HTML
 	def article_voting article
 		output = []
 		unless article.voted_by_user?
+			if article.personalized_articles?
+				output << %(<div id="article-author">#{profile_image(article.user)})
+				output << %(<span class="muted">#{article.user.first_name} #{t('feedback.solution_article_author')}</span>)
+				output << %(</div>)
+			end
 			output << %(<p class="article-vote" id="voting-container" 
 											data-user-id="#{User.current.id if User.current}" 
 											data-article-id="#{article.id}"
@@ -92,7 +97,7 @@ HTML
 			output << %(</span>)
 			output << %(</p>)
 			output << article_feedback_link
-			output << article_feedback
+			output << article_feedback(article)
 		end
 
 		output.join('').html_safe
@@ -131,9 +136,14 @@ HTML
 		output.join('').html_safe
 	end
 
-	def article_feedback
+	def article_feedback(article)
 		output = []
-		output << %(<div class="hide" id="vote-feedback-container">)
+		output << %(<div id="vote-feedback-container")
+		if article.personalized_articles?
+			output << %(class="hide vote-feedback">)
+		else
+			output << %(class="hide">)
+		end				
 		output << %(	<div class="lead">#{t('feedback.downvote_feedback_messasge')}</div>)
 		output << %(	<div id="vote-feedback-form">)
 		output << %(		<div class="sloading loading-small loading-block"></div>)

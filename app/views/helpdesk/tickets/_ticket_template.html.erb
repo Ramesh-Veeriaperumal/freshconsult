@@ -1,0 +1,25 @@
+<%= form_for "", :url => {:controller => 'helpdesk/tickets', :action=> :apply_template} , :html => { :method => "post", :id => "apply_template_form", :remote => true, :class => "pull-left" } do |f| %>
+    <%= f.hidden_field :template_form, :value => form %>
+    <%= f.hidden_field :template_id, :value => '' %>
+    <div class="template-pick-list template-label" data-action="select-template"><%=t("ticket_templates.select_template")%></div>
+    <div id="template-list-wrapper">
+      <div class="template-options">
+        <span class="arrow-top"></span>
+        <div class="filter-wrapper hide">
+          <input type="text" placeholder="Search templates" data-picklist-filter id="filter-template" autocomplete="off" />
+        </div>
+        <div id="wrapper-template-list">
+          <ul id="template-items" data-picklist>
+            <li></li>
+          </ul>
+          <div id="template-loading" class="sloading"></div>
+        </div>
+      </div>
+    </div>
+    <div id="dynamic_values"></div>
+<% end %>
+<div class="filter-info pull-left tooltip" data-html="true" data-placement="below" data-original-title="<%=t("ticket_templates.template_note")%>">
+	<i class="ficon-help fsize-20"></i>
+</div>
+<input type="hidden" id="template_previlage" value="<%= privilege?(:manage_ticket_templates) %>" />
+<input type="hidden" id="template_count" value="<%= templates_count_from_cache < Helpdesk::TicketTemplate::TOTAL_SHARED_TEMPLATES %>" />

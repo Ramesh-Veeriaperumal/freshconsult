@@ -211,6 +211,13 @@ module Cache::Memcache::Account
     end
   end
 
+  def installed_app_business_rules_from_cache
+    key = ACCOUNT_INSTALLED_APP_BUSINESS_RULES % { :account_id => self.id }
+    MemcacheKeys.fetch(key) do
+      installed_app_business_rules.all
+    end
+  end
+
   def forum_categories_from_cache
     key = FORUM_CATEGORIES % { :account_id => self.id }
     MemcacheKeys.fetch(key) { self.forum_categories.find(:all, :include => [ :forums ]) }
@@ -326,6 +333,19 @@ module Cache::Memcache::Account
   def clear_agent_password_policy_from_cache
     key = password_policy_memcache_key(PasswordPolicy::USER_TYPE[:agent])
     MemcacheKeys.delete_from_cache(key)
+  end
+
+  def installed_apps_in_company_page_from_cache
+    key = ACCOUNT_INSTALLED_APPS_IN_COMPANY_PAGE % { :account_id => self.id }
+    MemcacheKeys.fetch(key) do
+      condition = "applications.dip & #{2**Integrations::Constants::DISPLAY_IN_PAGES['company_show']} > 0"
+      self.installed_applications.includes(:application).where(condition)
+    end
+  end
+
+  def clear_application_on_dip_from_cache
+    key = ACCOUNT_INSTALLED_APPS_IN_COMPANY_PAGE % { :account_id => self.id }
+    MemcacheKeys.delete_from_cache key
   end
 
   private

@@ -6,7 +6,7 @@ module Integrations
 
       if act_on.is_a?(Helpdesk::Ticket)
         return unless act_on.linked_to_integration?(rule.installed_application)
-      elsif act_on.notable.is_a?(Helpdesk::Ticket)
+      elsif act_on.is_a?(Helpdesk::Note) && act_on.notable.is_a?(Helpdesk::Ticket)
         return unless act_on.notable.linked_to_integration?(rule.installed_application)
       end
 
