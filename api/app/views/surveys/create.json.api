@@ -5,10 +5,11 @@ response_hash = {
   user_id: @item.customer_id,
   agent_id: @item.agent_id,
   group_id: @item.group_id,
-  rating: @item.rating,
   feedback: feedback,
+  ticket_id: @ticket.display_id,
   created_at: @item.created_at.try(:utc),
   updated_at: @item.updated_at.try(:utc)
 }
-response_hash.merge!(custom_ratings: @item.custom_ratings) if @custom_survey
+response_hash.merge!(ratings: @item.custom_ratings) if @custom_survey
+response_hash.merge!(ratings: { default_question: @item.rating }) unless @custom_survey
 JSON.generate(response_hash)

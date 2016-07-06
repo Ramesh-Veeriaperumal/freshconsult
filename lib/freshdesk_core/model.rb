@@ -195,7 +195,8 @@ module FreshdeskCore::Model
                         "ticket_form_fields",
                         "user_companies",
                         "helpdesk_permissible_domains",
-                        "outgoing_email_domain_categories"
+                        "outgoing_email_domain_categories",
+                        "ticket_templates"
                     ]
 
   STATUS = {

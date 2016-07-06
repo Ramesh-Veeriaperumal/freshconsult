@@ -122,7 +122,7 @@ class Helpdesk::Email::Process
 	end
 
   def create_archive_link(archive_ticket, email_handler, start_time)
-    if account.features?(:archive_tickets)
+    if account.features_included?(:archive_tickets)
       if archive_ticket && archive_ticket.is_a?(Helpdesk::ArchiveTicket)
         email_handler.archive_ticket = archive_ticket 
       elsif archive_ticket && archive_ticket.is_a?(Helpdesk::Ticket)

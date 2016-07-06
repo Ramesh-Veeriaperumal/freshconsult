@@ -122,7 +122,7 @@ class Solution::FolderMeta < ActiveRecord::Base
 	def update_search_index
 	  SearchSidekiq::IndexUpdate::FolderArticles.perform_async({ :folder_id => id }) if ES_ENABLED
 
-	  SearchV2::IndexOperations::UpdateArticleFolder.perform_async({ :folder_id => id }) if Account.current.features?(:es_v2_writes)
+	  SearchV2::IndexOperations::UpdateArticleFolder.perform_async({ :folder_id => id }) if Account.current.features_included?(:es_v2_writes)
 	end
 
 	def clear_customer_folders
@@ -132,10 +132,11 @@ class Solution::FolderMeta < ActiveRecord::Base
 	def visible?(user)
 	  return true if (user and user.privilege?(:view_solutions))
 	  return true if self.visibility == VISIBILITY_KEYS_BY_TOKEN[:anyone]
-	  return true if (user and (self.visibility == VISIBILITY_KEYS_BY_TOKEN[:logged_users]))
+	  return false unless user
+	  return true if self.visibility == VISIBILITY_KEYS_BY_TOKEN[:logged_users]
       company_cdn = user.contractor? ? (user.company_ids & customer_folders.map(&:customer_id)).any? : 
                      (user.company  && customer_folders.map(&:customer_id).include?(user.company.id))
-      return true if (user && (self.visibility == VISIBILITY_KEYS_BY_TOKEN[:company_users]) && company_cdn)
+      return true if ((self.visibility == VISIBILITY_KEYS_BY_TOKEN[:company_users]) && company_cdn)
 	end
 
 	private

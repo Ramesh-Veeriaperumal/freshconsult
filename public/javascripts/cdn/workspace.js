@@ -34,3 +34,5 @@
 //= require plugins/jquery.placeholder.js
 //= require i18n
 //= require i18n/translations
+//= require tickets/templates/attachment-viewer.jst.ejs
+//= require app/ticket_attachment_viewer.js

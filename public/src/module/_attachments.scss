@@ -1,3 +1,5 @@
+$attachment-viewer-toolbar-height: 50px;
+
 .attachment_list, .ui-form .attachment_list{
 	@include no-bullets;
 	color:#888987;
@@ -189,4 +191,161 @@
 		@include left(3px);
 		top: 4px;
 	}
+}
+
+// ------------------------------------------------------------------ //
+// -------------------- Attachment Viewer  -------------------------- //
+// ------------------------------------------------------------------ //
+.attachments-viewer {
+	background-color: rgba(200, 200, 200, 0.8);
+	position: fixed;
+	height: 100%;
+	width: 100%;
+	top: 0;
+	left: 0;
+	z-index: 100;
+}
+
+.av-close {
+	background-color: #fdfdfd;
+	border-radius: 100px;
+	box-shadow: 0 4px 5px 0 rgba(0, 0, 0, 0.05);
+	color: black;
+	
+	padding: 5px 12px;
+	position: absolute;
+	@include right(10px);
+	top: 10px;
+	
+	cursor: pointer;
+	z-index: 1;
+}
+
+.av-close:before {
+	content: "\00d7";
+	white-space: nowrap;
+	overflow: hidden;
+	display: inline-block;
+	font-size: 15px;
+	color: #000;
+	margin-bottom: -2px;
+}
+
+.av-close:hover {
+	color: black;
+	background-color: #eee;
+}
+
+.av-media {
+	position: absolute;
+	top: 0;
+	bottom: $attachment-viewer-toolbar-height;
+	width: 100%;
+	text-align: center;
+}
+
+.av-media:before, .av-cannot-preview:before {
+	height: 100%;
+	content: '';
+	display: inline-block;
+	margin-right: -0.25%;
+	vertical-align: middle;
+}
+
+.av-media img {
+	max-height: 80%;
+	max-width: 80%;
+	vertical-align: middle;
+	transition: all 0.3s;
+	box-shadow: 0 13px 42px 0px rgba(0,0,0,.3);
+}
+
+.av-toolbar {
+	background-color: white;
+	box-shadow: 0 -4px 5px 0 rgba(0, 0, 0, 0.05);
+	opacity: 0.9;
+	position: absolute;
+	width: 100%;
+	bottom: 0;
+	left: 0;
+	height: $attachment-viewer-toolbar-height;
+}
+
+.av-toolbar a {
+	color: black;
+	padding: 17px 10px 18px 10px;
+}
+
+.av-toolbar a:hover {
+	background-color: rgba(0,0,0,0.1);
+}
+
+.av-toolbar-col {
+	text-align: center;
+	padding: 17px 0;
+}
+
+.av-toolbar-col .disabled{
+	opacity: 0.5;
+	pointer-events: none;
+}
+
+.av-tool-download i{
+	font-size: 11px;
+}
+
+.av-prev, .av-next {
+	cursor: pointer;
+	font-size: 20px;
+	margin-top: -17px;
+	display: inline-block;
+}
+
+.av-cannot-preview {
+	position: absolute;
+	top: 0;
+	bottom: $attachment-viewer-toolbar-height;
+	left: 0;
+	width: 100%;
+	text-align: center;
+}
+
+.av-message {
+	display: inline-block;
+	padding: 55px;
+	text-align: center;
+	vertical-align: middle;
+	width: 420px;
+	height: 240px;
+	border-radius: 4px;
+	background-color: #ffffff;
+	box-shadow: 0 13px 42px 0px rgba(0,0,0,.3);
+	box-sizing: border-box;
+}
+
+.av-message-icon {
+	position: relative;
+	display: inline-block;
+}
+
+.av-message-icon i {
+	font-size: 86px;
+	color: #eaeaea;
+}
+
+.av-message-icon span {
+	background-color: #9b9b9b;
+	color: white;
+  padding: 5px 9px;
+  text-transform: uppercase;
+  border-radius: 4px;
+  position: absolute;
+  bottom: 14px;
+  left: -16px;
+  border: 5px solid white;
+  font-size: 14px;
+}
+
+.av-message-text {
+	margin: 20px 0;
 }

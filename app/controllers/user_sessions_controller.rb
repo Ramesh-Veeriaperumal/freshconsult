@@ -71,10 +71,7 @@ include Mobile::Actions::Push_Notifier
       else
         @current_user.name =  params[:name]
         @current_user.phone = params[:phone] unless params[:phone].blank?
-        if params[:company].present?
-          company_id = current_account.companies.find_or_create_by_name(params[:company]).id
-          @current_user.user_companies.build(:company_id => company_id)
-        end
+        @current_user.company_name = params[:company] if params[:company].present?
         @current_user.active = true
         saved = @current_user.save
       end
@@ -293,10 +290,7 @@ include Mobile::Actions::Push_Notifier
       @contact = account.users.new
       @contact.name = options[:name] unless options[:name].blank?
       @contact.phone = options[:phone] unless options[:phone].blank?
-      if options[:company].present?
-        company_id = current_account.companies.find_or_create_by_name(options[:company]).id
-        @contact.user_companies.build(:company_id => company_id)
-      end
+      @contact.company_name = options[:company] if options[:company].present?
       @contact.email = email
       @contact.helpdesk_agent = false
       @contact.language = current_portal.language

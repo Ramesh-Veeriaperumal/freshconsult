@@ -11,7 +11,7 @@ class User < ActiveRecord::Base
     ]
 
   COMMON_API_OPTIONS = { 
-    :only     => [:id,:name,:email,:created_at,:updated_at,:active,:job_title,
+    :only     => [:id,:name,:email,:created_at,:updated_at,:active,:customer_id,:job_title,
                   :phone,:mobile,:twitter_id,:description,:time_zone,:deleted,:helpdesk_agent,
                   :fb_profile_id,:external_id,:language,:address]
   }
@@ -36,7 +36,7 @@ class User < ActiveRecord::Base
 
   MERGE_VALIDATIONS = [["emails", 5, "emails"], ["twitter_id", 1, "Twitter User"], 
     ["fb_profile_id", 1, "Facebook User"], ["external_id", 1, "Ecommerce User or Mobihelp User"], 
-    ["company_names", 20, "companies"]] #[Attribute, limit, message] ["phone", 1, "Phone User"]
+    ["company_names", 20, "companies"], ["mobile", 1, "mobile phone"], ["phone", 1, "work phone"]] #[Attribute, limit, message] ["phone", 1, "Phone User"]
 
   USER_FILTER_TYPES = ["verified","unverified","all","deleted","blocked"]
 

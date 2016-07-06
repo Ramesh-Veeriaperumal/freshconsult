@@ -8,8 +8,12 @@ module Va::Util
 		Thread.current[:http_user_agent] == 'Freshdesk'
 	end
 
+  def customer_import?
+    Thread.current["customer_import_#{account_id}"]
+  end
+
   def map_class class_name
-    attr_map = {"Helpdesk::Ticket" => "ticket", "User" => "user", "Helpdesk::Note" => "note"}
+    attr_map = {"Helpdesk::Ticket" => "ticket", "User" => "user", "Helpdesk::Note" => "note", "Company" => "company"}
     attr_map[class_name]
   end
 	

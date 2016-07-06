@@ -87,10 +87,7 @@ module SsoUtil
     elsif current_account.sso_enabled?
       @current_user.name =  user_name
       @current_user.phone = phone unless phone.blank?
-      if company.present?
-        company_id = current_account.companies.find_or_create_by_name(company).id
-        @current_user.user_companies.build(:company_id => company_id)
-      end
+      @current_user.company_name = company if company.present?
       @current_user.active = true
       saved = @current_user.save
     end

@@ -8,7 +8,7 @@ class SurveyFilterValidation < FilterValidation
   validate :verify_user, if: -> { user_id && errors[:user_id].blank? }
 
   def initialize(request_params, item = nil, allow_string_param = true)
-    @conditions = (SurveyConstants::INDEX_FIELDS & request_params.keys )
+    @conditions = (SurveyConstants::INDEX_FIELDS & request_params.keys)
     @conditions = ['default'] if @conditions.empty?
     super(request_params, item, allow_string_param)
   end

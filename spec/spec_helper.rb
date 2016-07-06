@@ -148,6 +148,7 @@ Spork.prefork do
     config.include ActionDispatch::TestProcess# to use fixture_file_upload
     config.include ForumDynamoHelper
     config.include ContactFieldsHelper
+    config.include TicketTemplateHelper
     config.include Portal::Helpers::SolutionsHelper
     config.include Portal::Multilingual
     config.infer_spec_type_from_file_location!

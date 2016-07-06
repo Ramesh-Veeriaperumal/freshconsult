@@ -1,0 +1,80 @@
+<% content_for :helpcard do %>
+  <%= render :partial => "helpnote_without_tour" %>
+<% end %>
+
+<div class='page-header-sticky' rel='sticky'>
+  <div class='sticky-header-wrapper'>
+    <h3 class='lead pull-left'>
+      <%= t('ticket_templates.title') %>
+    </h3>
+    <div class="pull-right">
+      <% templ_count     = templates_count_from_cache
+         total_templ     = Helpdesk::TicketTemplate::TOTAL_SHARED_TEMPLATES
+         # templates_count = @all_items.count
+         %>
+      <% if templ_count < total_templ %>
+        <%= t('ticket_templates.acc_templ_count', :templ_count => templ_count, :total_templ => total_templ).html_safe if templ_count >= 280 %>
+        <%= (link_to t('ticket_templates.new_template'), new_helpdesk_ticket_template_path(), :class => "btn btn-primary") %>
+      <% else %>
+        <%= t('ticket_templates.total_templ_count', :total_templ => total_templ).html_safe %>
+      <% end %>
+    </div>
+  </div>
+</div>
+</br>
+
+  <div class="list-page ticket-template-list">
+    <div class="response-list list-page-body">
+      <% if !@all_items.present? %> 
+        <div class="list-noinfo">
+          <%=t('ticket_templates.no_templates')%>
+          <% if templ_count < total_templ %>
+            <a href="<%=new_helpdesk_ticket_template_path()%>"><%=t('ticket_templates.create_new')%></a>
+          <% end %>
+        </div>
+      <%else%>
+        <%= remote_form_for :ticket_templates, :url => delete_multiple_helpdesk_ticket_templates_path,
+            :html => {:method => :delete} do |f|%>
+          <table class="table table-striped tkt-template-table">
+            <thead>
+              <tr>
+                <td>
+                  <input type="checkbox" id="select-all-template">
+                </td>
+                <td colspan="2">
+                  <%= f.submit t('delete') , :class => "btn", :id => "templates_delete", :disabled => "disabled",
+                    :confirm => t('ticket_templates.delete_templates') %>
+                </td>
+              </tr>
+            </thead>
+            <tbody>
+              <%= render :partial => "template", :collection => @all_items, :locals => {:show_clone => (templ_count < total_templ)} %>
+            </tbody>
+          </table>
+          <%= will_paginate @all_items, :renderer => BootstrapPaginationRenderer,
+                              :previous_label => "<b class='arrow-left'></b>",
+                              :next_label => "<b class='arrow-right'></b>",
+                              :class => "pagination pagination-centered" %>
+        <% end %>
+      <%end%>
+    </div>
+  </div>
+
+<%= javascript_tag do %>
+
+  (function () {
+
+      jQuery.selectall('#select-all-template', '.select-template');
+      jQuery(".select-template, #select-all-template").on('change', checkSelectStatus);
+      jQuery(document).on('ready', checkSelectStatus);
+      function checkSelectStatus(){
+        var length  = jQuery(".select-template:checked").length;
+        if(length){
+            jQuery("#templates_delete").attr("disabled", false);
+        }else{
+            jQuery("#templates_delete").attr("disabled", true);
+        }
+      }
+
+  })();
+<% end %>

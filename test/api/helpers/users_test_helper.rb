@@ -45,6 +45,7 @@ module UsersTestHelper
     }
 
     result.merge!(other_emails: expected_output[:other_emails] || contact.user_emails.where(primary_role: false).map(&:email))
+    result.merge!(deleted: true) if contact.deleted
     result
   end
 
@@ -83,11 +84,9 @@ module UsersTestHelper
   end
 
   def index_contact_pattern(contact)
-    contact_pattern(contact).except(:avatar, :tags, :deleted, :other_emails)
-  end
-
-  def index_deleted_contact_pattern(contact)
-    index_contact_pattern(contact).merge(deleted: contact.deleted.to_s.to_bool)
+    keys = [:avatar, :tags, :other_emails, :deleted]
+    keys -= [:deleted] if contact.deleted
+    contact_pattern(contact).except(*keys)
   end
 
   def v1_contact_payload

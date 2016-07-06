@@ -1,0 +1,15 @@
+defaults: &defaults
+  host: 127.0.0.1
+  port: 9090
+
+development:
+  <<: *defaults
+
+slave:
+  <<: *defaults
+
+test:
+  <<: *defaults
+
+staging:
+  <<: *defaults

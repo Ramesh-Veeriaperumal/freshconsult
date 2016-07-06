@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20160512085738) do
+ActiveRecord::Schema.define(:version => 20160629121214) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -121,10 +121,12 @@ ActiveRecord::Schema.define(:version => 20160512085738) do
   create_table "admin_data_imports", :force => true do |t|
     t.string   "import_type"
     t.boolean  "status"
-    t.integer  "account_id",  :limit => 8
+    t.integer  "account_id",    :limit => 8
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "source"
+    t.integer  "import_status", :default => 1
+    t.text     "last_error"
   end
 
   add_index "admin_data_imports", ["account_id", "created_at"], :name => "index_data_imports_on_account_id_and_created_at"
@@ -218,6 +220,7 @@ ActiveRecord::Schema.define(:version => 20160512085738) do
     t.text    "options"
     t.integer "account_id",       :limit => 8
     t.string  "application_type",              :default => "freshplug", :null => false
+    t.integer "dip"
   end
 
   add_index "applications", ["name"], :name => "index_applications_on_name"
@@ -2581,6 +2584,7 @@ ActiveRecord::Schema.define(:version => 20160512085738) do
   end
 
   add_index "portal_solution_categories", ["account_id", "portal_id"], :name => "index_portal_solution_categories_on_account_id_and_portal_id"
+  add_index "portal_solution_categories", ["account_id", "solution_category_meta_id"], :name => "portal_solution_categories_on_account_id_category_meta_id"
   add_index "portal_solution_categories", ["portal_id", "solution_category_id"], :name => "index_on_portal_and_soln_categ_id"
   add_index "portal_solution_categories", ["portal_id", "solution_category_meta_id"], :name => "index_portal_solution_categories_on_portal_id_category_meta_id"
 
@@ -3062,6 +3066,7 @@ ActiveRecord::Schema.define(:version => 20160512085738) do
     t.string   "available"
   end
 
+  add_index "solution_category_meta", ["account_id", "position"], :name => "index_category_meta_on_account_id_position"
   add_index "solution_category_meta", ["account_id"], :name => "index_solution_category_meta_on_account_id"
 
   create_table "solution_customer_folders", :force => true do |t|
@@ -3761,6 +3766,21 @@ ActiveRecord::Schema.define(:version => 20160512085738) do
 
   add_index "ticket_stats_2013_9", ["account_id", "created_at"], :name => "index_ticket_stats_on_account_id_created_at"
   add_index "ticket_stats_2013_9", ["ticket_id", "account_id", "created_at"], :name => "index_ticket_stats_on_ticket_id_created_at_account_id", :unique => true
+
+  create_table "ticket_templates", :force => true do |t|
+    t.integer  "account_id",            :limit => 8
+    t.string   "name"
+    t.text     "description"
+    t.text     "template_data",         :limit => 16777215
+    t.text     "data_description_html", :limit => 16777215
+    t.integer  "association_type"
+    t.integer  "folder_id",             :limit => 8
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "ticket_templates", ["account_id", "name"], :name => "index_ticket_templates_on_account_id_and_name", :length => {"account_id"=>nil, "name"=>20}
+  add_index "ticket_templates", ["account_id", "association_type"], :name => "index_ticket_templates_on_account_id_and_association_type"
 
   create_table "ticket_topics", :force => true do |t|
     t.integer  "ticket_id",       :limit => 8

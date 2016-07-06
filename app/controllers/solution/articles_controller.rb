@@ -20,7 +20,7 @@ class Solution::ArticlesController < ApplicationController
   before_filter :old_folder, :only => [:move_to]
   before_filter :check_new_folder, :bulk_update_folder, :only => [:move_to, :move_back]
   # before_filter :check_new_author, :only => [:change_author]
-  before_filter :validate_author, :language, :only => [:update]
+  before_filter :validate_author, :language, :only => [:create, :update]
   before_filter :cleanup_params_for_title, :only => [:show]
   before_filter :language_scoper, :only => [:new]
   before_filter :check_parent_params, :only => [:translate_parents]
@@ -365,7 +365,6 @@ class Solution::ArticlesController < ApplicationController
     end
 
     def validate_author
-      return unless update_properties?
       new_params = params[:solution_article] || article_params
       new_author_id = new_params[:user_id]
       if new_author_id.present? && @article.user_id != new_author_id
@@ -456,9 +455,9 @@ class Solution::ArticlesController < ApplicationController
     def set_user_and_status
       if params[:solution_article].present?
         params[:solution_article][:status] ||= get_status if get_status
-        params[:solution_article][:user_id] = current_user.id
+        params[:solution_article][:user_id] = current_user.id if @article_meta.nil? #API Cases
       else
-        params[:solution_article_meta][language_scoper.to_sym][:user_id] ||= current_user.id
+        params[:solution_article_meta][language_scoper.to_sym][:user_id] = current_user.id if @article_meta.nil?
         set_status
       end
     end

@@ -97,11 +97,16 @@
   </div>
   <div class="divide"></div>
   <div class="button-container">
-    <%= button_to_function(t("back"), "jQuery('#mergeboxconfirm').hide(); jQuery('#mergebox').show();", :class => "btn", :id  => "back-user-merge") %> 
+    <%= button_to_function(t("back"), 
+        "jQuery('#mergeboxconfirm').hide(); jQuery('#mergebox').show(); jQuery('#merge_info').removeClass('hide'); jQuery('#merge_confirm_info').addClass('hide');", 
+        :class => "btn", 
+        :id  => "back-user-merge")
+    %> 
     <a class="btn" id="cancel-user-merge"><%= t('cancel') %></a>
   	<%= submit_tag t("helpdesk.merge.confirm_merge.confirm_and_merge"), :class => "btn btn-primary", :id => "merge_completion", 
     "data-loading-text" => t('please_wait')  %>
   </div>
+  <%= hidden_field_tag('add_recipients', params[:add_recipients]) if params[:add_recipients] %>
 <% end %>
 <%= javascript_tag do %>
   var value="";

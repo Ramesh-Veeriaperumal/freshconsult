@@ -170,10 +170,15 @@ HelpdeskReports.ChartsInitializer.CustomerReport = (function () {
             if(!jQuery.isEmptyObject(hash)){
                 var current_hash = hash['company_id'][sort_order];
                 var current_value_array = [];
-                
+                var id_value_hash = {};
+
                 _.each(_.values(current_hash), function(i) {
                     current_value_array.push(i.value);
                 });
+
+                _.each(current_hash, function( values, key ) {
+                    id_value_hash[key] = values.id
+                }); 
                 
                 var values = current_value_array;
 
@@ -188,6 +193,18 @@ HelpdeskReports.ChartsInitializer.CustomerReport = (function () {
                 chart.series[0].update({
                     data: values
                 }, false);
+
+                chart.series[0].update({
+                    point: {
+                        events: {
+                            click: function () {
+                                var ev = this;
+                                _FD.clickEventForTicketList(ev,id_value_hash);
+                            }
+                        }
+                    }
+                },false);
+
 
                 chart.redraw(true);
             }    

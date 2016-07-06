@@ -27,7 +27,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   before_update :stop_recording_timestamps, :unless => :model_changes?
   
-  before_save :round_robin_on_ticket_update, :unless => :skip_rr_on_update?
+  before_update :round_robin_on_ticket_update, :unless => :skip_rr_on_update?
 
   after_update :start_recording_timestamps, :unless => :model_changes?
 

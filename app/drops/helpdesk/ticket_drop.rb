@@ -47,7 +47,7 @@ class Helpdesk::TicketDrop < BaseDrop
   end
 
   def attachments
-      @source.attachments
+      @source.all_attachments
   end
 
   def freshfone_call
@@ -78,6 +78,10 @@ class Helpdesk::TicketDrop < BaseDrop
     @source.status_name
   end
 
+  def status_id
+    @source.status
+  end
+
   def requester_status_name
     @source.requester_status_name
   end
@@ -86,8 +90,16 @@ class Helpdesk::TicketDrop < BaseDrop
     TicketConstants.priority_list[@source.priority]
   end
 
+  def priority_id
+    @source.priority
+  end
+
   def source
     TicketConstants.source_list[@source.source]
+  end
+
+  def source_id
+    @source.source
   end
 
   def source_name
