@@ -63,10 +63,10 @@ module IntegrationServices::Services
       metadata = {:user_agent => user_agent}
       formula_obj = self.class.new(installed_app, {}, metadata.merge({:formula_id => formula_id, :formula_instance_id => formula_instance_id}))
       formula_obj.receive(:delete_formula_instance)
-      [element_instance_id, fd_instance_id].each do |id|
-        element_obj = self.class.new(installed_app, {}, metadata.merge({ :element_instance_id => id }))
-        element_obj.receive(:delete_element_instance)
-      end
+      [element_instance_id, fd_instance_id].each do |element_id|
+        options = {:element_id => element_id, :app_id => installed_app.application_id}
+        Integrations::CloudElementsDeleteWorker.perform_async(options)     
+      end 
     end
 
     private

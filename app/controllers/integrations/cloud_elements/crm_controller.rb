@@ -35,22 +35,20 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
     app_configs = get_app_configs(el_response_token, el_response_id, fd_response['id'], formula_resp['id'])
     @installed_app.configs[:inputs].merge!(app_configs)
     @installed_app.save!
-    @action = 'update'
     flash[:notice] = t(:'flash.application.install.cloud_element_success')
     render_settings
   rescue => e
     delete_formula_instance_error request.user_agent, formula_resp['id'] if formula_resp.present? and formula_resp['id'].present?
-    delete_element_instance_error request.user_agent, el_response_id if el_response.present? and el_response_id.present?
-    delete_element_instance_error request.user_agent, fd_response['id'] if fd_response.present? and fd_response['id'].present?
+    Integrations::CloudElementsDeleteWorker.perform_async({:element_id => el_response_id, :app_id => @installed_app.application_id}) if el_response.present? and el_response_id.present?
+    Integrations::CloudElementsDeleteWorker.perform_async({:element_id => fd_response['id'], :app_id => @installed_app.application_id}) if fd_response.present? and fd_response['id'].present?
     NewRelic::Agent.notice_error(e,{:custom_params => {:description => "Problem in installing the application: #{e.message}", :account_id => current_account.id}})
     flash[:error] = t(:'flash.application.install.error')
     redirect_to integrations_applications_path 
   end
 
   def edit
-    @action = 'update'
-    fetch_metadata_fields(@app_config['element_token'])
-    @element_config['enble_sync'] = @app_config['enble_sync']
+    fetch_metadata_fields(@installed_app.configs_element_token)
+    @element_config['enble_sync'] = @installed_app.configs_enble_sync
     default_mapped_fields
     construct_synced_contacts
     render_settings
@@ -78,12 +76,12 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
   private
   
     def crm_payload
-      json_payload = File.read("lib/integrations/cloud_elements/crm/#{element}/#{element}.json")
+      json_payload = "Integrations::CloudElements::Crm::Constant::#{element.upcase}_JSON".constantize
       json_payload % instance_hash
     end
 
     def fd_payload
-      json_payload = JSON.parse(File.read("lib/integrations/cloud_elements/freshdesk.json"))
+      json_payload = FRESHDESK_JSON
       api_key = current_user.single_access_token
       JSON.generate(json_payload) % {:api_key => api_key, :subdomain => subdomain, :fd_instance_name => "freshdesk_#{element}_#{subdomain}_#{current_account.id}" }
     end
@@ -100,8 +98,7 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
           hash[field.to_sym] = params["#{field}_label"]
         end
       end
-      portal = current_account.main_portal
-      hash[:callback_url] = "#{portal.url_protocol}://#{portal.host}" # mention ngrok for development environment.
+      hash[:callback_url] = "#{https}://#{current_account.full_domain}" # mention ngrok for development environment.
       hash[:element_name] = "#{element}_#{subdomain}_#{current_account.id}"
       hash
     end
@@ -163,7 +160,7 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
       fields_hash = {}
       data_type_hash = {}
       #To remove those custom fields that we will be syncing from the customers view
-      custom_fields = ["cf_crmcontactid", "cf_crmaccountid"]
+      custom_fields = read_constant_file['fd_delete_fields']
       object.each do |field|
         unless custom_fields.include? field[:name]
           fields_hash[field[:name]] = field[:label]
@@ -193,44 +190,42 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
     end
 
     def get_synced_objects
-      @contact_synced = params[:inputs][:contacts]
-      @contact_fields, @account_fields = Hash.new, Hash.new
-      @contact_fields['fields_hash'] = current_account.contact_form.fields.map{|field| [field[:name], field.dom_type]}.to_h
-      @contact_fields['seek_fields'] = ["name", "email", "mobile", "phone"]
-      @account_synced = params[:inputs][:companies]
-      @account_fields['fields_hash'] = current_account.company_form.fields.map{|field| [field[:name], field.dom_type]}.to_h
-      @account_fields['seek_fields'] = ["name"]
+      contact_synced = params[:inputs][:contacts]
+      contact_fields, account_fields = Hash.new, Hash.new
+      contact_fields['fields_hash'] = current_account.contact_form.fields.map{|field| [field[:name], field.dom_type]}.to_h
+      contact_fields['seek_fields'] = ["name", "email", "mobile", "phone"]
+      account_synced = params[:inputs][:companies]
+      account_fields['fields_hash'] = current_account.company_form.fields.map{|field| [field[:name], field.dom_type]}.to_h
+      account_fields['seek_fields'] = ["name"]
+      {"contact_synced" => contact_synced, "account_synced" => account_synced, "contact_fields" => contact_fields, "account_fields" => account_fields}
     end
 
     def update_obj_transformation
-      get_synced_objects
+      sync_hash = get_synced_objects
       @contact_metadata = @metadata.merge({:object => 'fdContact', :method => params[:method]})
       @account_metadata = @metadata.merge({:object => 'fdCompany', :method => params[:method]})
-      crm_element_object_transformation
-      freshdesk_object_transformation
+      element_object_transformation sync_hash, @installed_app.configs_element_instance_id, "crm"
+      element_object_transformation sync_hash, @installed_app.configs_fd_instance_id, "fd"
     rescue => e
       NewRelic::Agent.notice_error(e,{:custom_params => {:description => "Problem in updating the application: #{e.message}", :account_id => current_account.id}})
       flash[:error] = t(:'flash.application.update.error')
       redirect_to integrations_applications_path
     end
 
-    def crm_element_object_transformation
-      contact_metadata = @contact_metadata.merge({:instance_id => @app_config['element_instance_id'], :update_action => @app_config['update_action']}) 
-      account_metadata = @account_metadata.merge({:instance_id => @app_config['element_instance_id'], :update_action => @app_config['update_action']})
+    def element_object_transformation sync_hash, instance_id , type
       constant_file = read_constant_file 
-      instance_object_definition( obj_def_payload(@contact_synced, @contact_fields), contact_metadata )
-      instance_object_definition( obj_def_payload(@account_synced, @account_fields), account_metadata )
-      instance_transformation( crm_element_trans_payload(@contact_synced, constant_file['objects']['contact'], @contact_fields), contact_metadata )
-      instance_transformation( crm_element_trans_payload(@account_synced, constant_file['objects']['account'], @account_fields), account_metadata )
-    end
+      contact_metadata = @contact_metadata.merge({:instance_id => instance_id, :update_action => @installed_app.configs_update_action}) 
+      account_metadata = @account_metadata.merge({:instance_id => instance_id, :update_action => @installed_app.configs_update_action})
+      instance_object_definition( obj_def_payload(sync_hash["contact_synced"], sync_hash["contact_fields"]), contact_metadata )
+      instance_object_definition( obj_def_payload(sync_hash["account_synced"], sync_hash["account_fields"]), account_metadata )
+      if type.eql? "crm"
+        instance_transformation( crm_element_trans_payload(sync_hash["contact_synced"], constant_file['objects']['contact'], sync_hash["contact_fields"]), contact_metadata )
+        instance_transformation( crm_element_trans_payload(sync_hash["account_synced"], constant_file['objects']['account'], sync_hash["account_fields"]), account_metadata )
+      else
+        instance_transformation( fd_trans_payload(sync_hash["contact_synced"],'','contacts', sync_hash["contact_fields"] ), contact_metadata )
+        instance_transformation( fd_trans_payload(sync_hash["account_synced"],'customer','accounts', sync_hash["account_fields"]), account_metadata )
+      end
 
-    def freshdesk_object_transformation
-      contact_metadata = @contact_metadata.merge({:instance_id => @app_config['fd_instance_id'], :update_action => @app_config['update_action']}) 
-      account_metadata = @account_metadata.merge({:instance_id => @app_config['fd_instance_id'], :update_action => @app_config['update_action']})
-      instance_object_definition( obj_def_payload(@contact_synced, @contact_fields), contact_metadata )
-      instance_object_definition( obj_def_payload(@account_synced, @account_fields), account_metadata )
-      instance_transformation( fd_trans_payload(@contact_synced,'','contacts', @contact_fields ), contact_metadata )
-      instance_transformation( fd_trans_payload(@account_synced,'customer','accounts', @account_fields), account_metadata )
     end
 
     def obj_def_payload obj_synced, obj_fields
@@ -304,7 +299,7 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
     end
 
     def parse_trans_payload arr, obj_name
-      json_payload = JSON.parse(File.read("lib/integrations/cloud_elements/instance_transformation.json"))
+      json_payload = INSTANCE_TRANSFORMATION_JSON
       json_payload['fields'] = arr
       JSON.generate(json_payload) % {:object_name => obj_name}
     end
@@ -318,8 +313,8 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
 
     def update_formula_inst
       formula_id = Integrations::CRM_TO_HELPDESK_FORMULA_ID[element]
-      metadata = @metadata.merge({:formula_id => formula_id, :formula_instance_id => @app_config['crm_to_helpdesk_formula_instance']})
-      payload = formula_instance_payload( "#{element}_#{subdomain}_#{current_account.id}", @app_config['element_instance_id'], @app_config['fd_instance_id'])
+      metadata = @metadata.merge({:formula_id => formula_id, :formula_instance_id => @installed_app.configs_crm_to_helpdesk_formula_instance})
+      payload = formula_instance_payload( "#{element}_#{subdomain}_#{current_account.id}", @installed_app.configs_element_instance_id, @installed_app.configs_fd_instance_id)
       update_formula_instance(payload, metadata)
     rescue => e
       NewRelic::Agent.notice_error(e,{:custom_params => {:description => "Problem in installing the application: #{e.message}", :account_id => current_account.id}})
@@ -328,7 +323,7 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
     end
 
     def formula_instance_payload instance_name, source, target
-      json_payload = File.read("lib/integrations/cloud_elements/formula_instance.json")
+      json_payload = FORMULA_INSTANCE_JSON
       active = params[:enble_sync] == "on"
       json_payload % {:formula_instance => instance_name, :source => source ,:target => target, :active => active}
     end
@@ -354,7 +349,6 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
 
     def load_installed_app
       @installed_app = current_account.installed_applications.find_by_application_id(app.id)
-      @app_config = @installed_app.configs[:inputs]
       @metadata = {:user_agent => request.user_agent}
       unless @installed_app
         flash[:error] = t(:'flash.application.not_installed')
@@ -409,7 +403,7 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
     end
 
     def read_constant_file
-      JSON.parse(File.read("lib/integrations/cloud_elements/crm/#{element}/constant.json"))
+      "Integrations::CloudElements::Crm::Constant::#{element.upcase}".constantize
     end
 
     def build_setting_configs method

@@ -6,7 +6,7 @@
 <%- end %>
 	<h3 class="lead"><%=t("integrations.#{@element_config["element"]}.form.#{@element_config["element"]}_settings")%></h3>
   <%method_type = "post" %>
-  <%= form_tag("/integrations/sync/crm/#{@action}", :method => method_type )  do %>
+  <%= form_tag("/integrations/sync/crm/update", :method => method_type )  do %>
   <%= hidden_field_tag 'state', params[:state] %>
   <%= hidden_field_tag 'method', params[:method] %>
   <div class="well">
