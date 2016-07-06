@@ -17,8 +17,7 @@ module RabbitMq::Subscribers::Tickets::Count
     {}
   end
 
-  def count_es_manual_publish
-    action          = 'update' #=> Always keeping manual publish as update
+  def count_es_manual_publish(action = "update")
     model_name      = self.class.name.demodulize.tableize.downcase.singularize
     model_uuid      = RabbitMq::Utils.generate_uuid
     model_exchange  = RabbitMq::Constants::MODEL_TO_EXCHANGE_MAPPING[model_name]
