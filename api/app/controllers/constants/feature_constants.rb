@@ -5,5 +5,6 @@ module FeatureConstants
   PRODUCTS = :multi_product
   TICKETS = :compose_email
   SURVEYS = [:surveys]
-  SURVEYS_WITH_LINK =  SURVEYS | [:survey_links]
+  SATISFACTION_RATINGS = [:surveys]
+  SATISFACTION_RATINGS_WITH_LINK =  SATISFACTION_RATINGS | [:survey_links]
 end
