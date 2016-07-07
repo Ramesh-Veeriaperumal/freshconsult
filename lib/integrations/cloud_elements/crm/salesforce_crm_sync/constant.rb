@@ -3,7 +3,7 @@ module Integrations::CloudElements::Crm
 
 		SALESFORCE_CRM_SYNC = {
 			"objects"=>{"contact"=>"Contact", "account"=>"Account"}, 
-			"fd_delete_fields"=>["cf_sfcontactid", "cf_sfaccountid"],
+			"fd_hide_fields"=>["cf_sfcontactid", "cf_sfaccountid"],
 			"delete_fields"=>{"contact_fields"=>"FDCONTACTID__c", "contact_fields_types"=>"FDCONTACTID", "account_fields"=>"FDACCOUNTID__c", "account_fields_types"=>"FDACCOUNTID"},
 			"existing_companies"=>[{"fd_field"=>"name", "sf_field"=>"Name"}], 
 			"existing_contacts"=>[{"fd_field"=>"name", "sf_field"=>"Name"}, {"fd_field"=>"email", "sf_field"=>"Email"}, {"fd_field"=>"mobile", "sf_field"=>"MobilePhone"}, {"fd_field"=>"phone", "sf_field"=>"Phone"}], 
