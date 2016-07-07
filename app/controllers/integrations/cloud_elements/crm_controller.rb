@@ -15,7 +15,7 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
 
   def create
     el_response = create_element_instance( crm_payload, @metadata )
-    redirect_to "#{request.protocol}#{request.host_with_port}#{integrations_cloud_elements_crm_instances_path}?state=#{params[:state]}&method=post&id=#{el_response['id']}&token=#{CGI::escape(el_response['token'])}"
+    redirect_to "#{request.protocol}#{request.host}#{integrations_cloud_elements_crm_instances_path}?state=#{params[:state]}&method=post&id=#{el_response['id']}&token=#{CGI::escape(el_response['token'])}"
   rescue => e
     hash = build_setting_configs "create"
     flash[:error] = t(:'flash.application.install.cloud_element_settings_failure')
@@ -93,7 +93,7 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
         hash[:api_key] = Integrations::OAUTH_CONFIG_HASH[element]["consumer_token"]
         hash[:api_secret] = Integrations::OAUTH_CONFIG_HASH[element]["consumer_secret"]
       else
-        constant_file = read_constant_file
+        constant_file = get_crm_constants
         constant_file["keys"].each do |field|
           hash[field.to_sym] = params["#{field}_label"]
         end
@@ -115,7 +115,7 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
     def crm_element_metadata_fields(element_token)
       @element_config = Hash.new
       metadata = @metadata.merge({ :element_token => element_token })
-      constant_file = read_constant_file
+      constant_file = get_crm_constants
       constant_file['objects'].each do |key, obj|
         metadata[:object] = obj
         element_metadata = service_obj({},metadata).receive("#{key}_metadata".to_sym)
@@ -127,7 +127,7 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
     end
 
     def delete_crm_custom_fields
-      file = read_constant_file
+      file = get_crm_constants
       file['delete_fields'].each do |k,v|
         @element_config[k].delete(v)
       end
@@ -160,7 +160,7 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
       fields_hash = {}
       data_type_hash = {}
       #To remove those custom fields that we will be syncing from the customers view
-      custom_fields = read_constant_file['fd_delete_fields']
+      custom_fields = get_crm_constants['fd_hide_fields']
       object.each do |field|
         unless custom_fields.include? field[:name]
           fields_hash[field[:name]] = field[:label]
@@ -213,7 +213,7 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
     end
 
     def element_object_transformation sync_hash, instance_id , type
-      constant_file = read_constant_file 
+      constant_file = get_crm_constants 
       contact_metadata = @contact_metadata.merge({:instance_id => instance_id, :update_action => @installed_app.configs_update_action}) 
       account_metadata = @account_metadata.merge({:instance_id => instance_id, :update_action => @installed_app.configs_update_action})
       instance_object_definition( obj_def_payload(sync_hash["contact_synced"], sync_hash["contact_fields"]), contact_metadata )
@@ -371,7 +371,7 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
     end
 
     def default_mapped_fields
-      file = read_constant_file
+      file = get_crm_constants
       @element_config['existing_companies'] = file['existing_companies']
       @element_config['existing_contacts'] = file['existing_contacts']
       @element_config['element_validator'] = file['validator']
@@ -402,12 +402,12 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
       app_config
     end
 
-    def read_constant_file
+    def get_crm_constants
       "Integrations::CloudElements::Crm::Constant::#{element.upcase}".constantize
     end
 
     def build_setting_configs method
-      constant_file = read_constant_file
+      constant_file = get_crm_constants
       @settings = Hash.new
       @settings["keys"] = constant_file["keys"]
       @settings["app_name"] = element
