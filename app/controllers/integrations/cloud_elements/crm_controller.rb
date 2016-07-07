@@ -15,7 +15,7 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
 
   def create
     el_response = create_element_instance( crm_payload, @metadata )
-    redirect_to "#{request.protocol+request.host_with_port}#{integrations_cloud_elements_crm_instances_path}?state=#{params[:state]}&method=post&id=#{el_response['id']}&token=#{CGI::escape(el_response['token'])}"
+    redirect_to "#{request.protocol}#{request.host_with_port}#{integrations_cloud_elements_crm_instances_path}?state=#{params[:state]}&method=post&id=#{el_response['id']}&token=#{CGI::escape(el_response['token'])}"
   rescue => e
     hash = build_setting_configs "create"
     flash[:error] = t(:'flash.application.install.cloud_element_settings_failure')
@@ -98,7 +98,7 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
           hash[field.to_sym] = params["#{field}_label"]
         end
       end
-      hash[:callback_url] = "#{https}://#{current_account.full_domain}" # mention ngrok for development environment.
+      hash[:callback_url] = "https://#{current_account.full_domain}" # mention ngrok for development environment.
       hash[:element_name] = "#{element}_#{subdomain}_#{current_account.id}"
       hash
     end
@@ -408,9 +408,9 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
 
     def build_setting_configs method
       constant_file = read_constant_file
-      @keys = constant_file["keys"]
-      @app_name = element
-      @action ="create"
+      @settings = Hash.new
+      @settings["keys"] = constant_file["keys"]
+      @settings["app_name"] = element
       if method.eql? "create"
         hash = {}
         constant_file["keys"].each do |field|
