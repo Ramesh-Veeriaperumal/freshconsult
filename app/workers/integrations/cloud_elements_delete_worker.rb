@@ -2,7 +2,7 @@ module Integrations
   class CloudElementsDeleteWorker < ::BaseWorker
     include Sidekiq::Worker
 
-    sidekiq_options :queue => :cloud_elements_delete, :retry => 2, :backtrace => true, :failures => :exhausted
+    sidekiq_options :queue => :cloud_elements_delete, :retry => 0, :backtrace => true, :failures => :exhausted
     def perform options
       begin
         current_account = Account.current
