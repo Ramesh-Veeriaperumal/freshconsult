@@ -54,16 +54,13 @@ module IntegrationServices::Services
     end
 
     def receive_uninstall
-      installed_app_configs = installed_app.configs[:inputs]
-      element_instance_id = installed_app_configs['element_instance_id']
-      fd_instance_id = installed_app_configs['fd_instance_id']
-      formula_instance_id = installed_app_configs['crm_to_helpdesk_formula_instance']
+      formula_instance_id = installed_app.configs_crm_to_helpdesk_formula_instance
       app_name = installed_app.application.name
       formula_id = Integrations::CRM_TO_HELPDESK_FORMULA_ID[app_name]
       metadata = {:user_agent => user_agent}
       formula_obj = self.class.new(installed_app, {}, metadata.merge({:formula_id => formula_id, :formula_instance_id => formula_instance_id}))
       formula_obj.receive(:delete_formula_instance)
-      [element_instance_id, fd_instance_id].each do |element_id|
+      [installed_app.configs_element_instance_id, installed_app.configs_fd_instance_id].each do |element_id|
         options = {:element_id => element_id, :app_id => installed_app.application_id}
         Integrations::CloudElementsDeleteWorker.perform_async(options)     
       end 
