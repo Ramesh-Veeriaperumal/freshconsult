@@ -18,7 +18,7 @@
 		<% if(visitorData.ip_address){ %>
 			<li class="lc-info-ip"><%= visitorData.ip_address %></li>
 		<% } %>
-		<li><i class="ficon-web-page"></i><a href="<%=visitorData.visited_page%>" alt="<%=visitorData.visited_page%>" title="<%=visitorData.visited_page%>" target="_blank"><% if(visitorData.title){%><%=visitorData.title%><%}else{%><%=visitorData.visited_page%><%}%></a></li>
+		<li><i class="ficon-web-page"></i><a href="<%=visitorData.visited_page%>" alt="<%=visitorData.visited_page%>" title="<%=visitorData.visited_page%>" target="_blank"><%=visitorData.title%></a></li>
 	<%}%>
 	<% if(visitorData.browser_family){
 	    print('<li><i class="ficon-'+visitorData.browser_family.toLowerCase()+'"></i>');

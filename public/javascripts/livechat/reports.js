@@ -266,8 +266,7 @@ var chatReport = function(){
 			cur_queueTime += chat.queue_time;
 
 			if(chat.last_msg_at && !chat.missed){
-				//added chat.ended_at time instead of last_msg_at time
-				var endTime = new Date(chat.ended_at || chat.last_msg_at).getTime();
+				var endTime = new Date(chat.last_msg_at).getTime();
 				var startTime = new Date(chat.created_at).getTime();
 				cur_avg += endTime - startTime;
 				avg_count++;
@@ -289,7 +288,7 @@ var chatReport = function(){
 			prev_queueTime += pchat.queue_time;
 
 			if(pchat.last_msg_at && !pchat.missed){
-				var pendTime = new Date(pchat.ended_at || pchat.last_msg_at).getTime();
+				var pendTime = new Date(pchat.last_msg_at).getTime();
 				var pstartTime = new Date(pchat.created_at).getTime();
 				prev_avg += pendTime - pstartTime;
 				pavg_count++;
@@ -362,7 +361,7 @@ var chatReport = function(){
 			$.map(agent, function(chat) {
 				if(chat.last_msg_at){
 					count++;
-					time += (new Date(chat.ended_at || chat.last_msg_at).getTime() - new Date(chat.created_at).getTime());
+					time += (new Date(chat.last_msg_at).getTime() - new Date(chat.created_at).getTime());
 				}
 			});
 			return {'count': count, 'time': time};

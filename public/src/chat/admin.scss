@@ -151,19 +151,7 @@ $font-class: "ficon-"; // Change this when font class changed in glyphs comman
     }
     .info{
     	margin-top: 20px;
-    	li,
-    	a {
-    		display: inline-block;
-    		overflow: hidden;
-    		text-overflow: ellipsis;
-    		white-space: nowrap;
-    	}
-    	a {
-    		max-width: 90%;
-    		vertical-align: bottom;
-    	}
     	li{
-    		width: 100%;
     		padding-top: 6px;
     		i {
     			display: inline-block;
