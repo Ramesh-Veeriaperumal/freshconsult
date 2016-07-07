@@ -54,16 +54,19 @@ class SatisfactionRatingsControllerTest < ActionController::TestCase
   end
 
   def test_view_list_of_surveys
-    3.times do
-      post :create, construct_params({ id: ticket.display_id }, ratings: { 'default_question' => 103 }, feedback: 'Feedback given Surveys')
-      assert_response 201
+    ticket_obj = create_ticket
+    result = []
+    1.times do
+      result << create_survey_result(ticket_obj, 3)
     end
-    get :survey_results, controller_params(id: ticket.display_id)
+    get :survey_results, controller_params(id: ticket_obj.display_id)
+    assert_response 200
+    response_json = JSON.parse(response.body)
+    assert_equal 1, response_json.size
     pattern = []
-    CustomSurvey::SurveyResult.all.each do |sr|
+    result.each do |sr|
       pattern << survey_custom_rating_pattern(sr)
     end
-    assert_response 200
     match_json(pattern)
   end
 

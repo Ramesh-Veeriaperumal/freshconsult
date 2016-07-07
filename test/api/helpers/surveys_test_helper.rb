@@ -84,6 +84,26 @@ module SurveysTestHelper
     end
   end
 
+  def create_survey_result(ticket, rating, response_note=nil)
+    old_rating = CustomSurvey::Survey::old_rating rating.to_i
+    result = @account.custom_survey_results.build({
+      :account_id => @account,
+      :survey_id => @account.survey.id,
+      :surveyable_id => ticket.id,
+      :surveyable_type => 'Helpdesk::Ticket',
+      :customer_id => ticket.requester_id,
+      :agent_id => response_note ? response_note.user_id : ticket.responder_id,
+      :group_id => ticket.group_id,
+      :response_note_id => ticket,
+      :custom_field     => {
+          "#{@account.survey.default_question.name}" => rating
+        },
+      :rating           => old_rating
+    })
+    result.save
+    result
+  end
+
   def ticket
     ticket = Helpdesk::Ticket.last || create_ticket(ticket_params_hash)
     ticket
