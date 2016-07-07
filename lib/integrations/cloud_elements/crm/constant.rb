@@ -5,6 +5,8 @@ module Integrations::CloudElements
     OAUTH_ERROR = "OAuth Token is nil"
     SALESFORCE_CRM_SYNC = Integrations::CloudElements::Crm::SalesforceCrmSync::Constant::SALESFORCE_CRM_SYNC
     SALESFORCE_CRM_SYNC_JSON = Integrations::CloudElements::Crm::SalesforceCrmSync::Constant::SALESFORCE_CRM_SYNC_JSON
+    DYNAMICS_CRM_SYNC = Integrations::CloudElements::Crm::DynamicsCrmSync::Constant::DYNAMICS_CRM_SYNC
+    DYNAMICS_CRM_SYNC_JSON = Integrations::CloudElements::Crm::DynamicsCrmSync::Constant::DYNAMICS_CRM_SYNC_JSON
 
     FRESHDESK_JSON = {
 			"element" => { "key" => "freshdeskv2" },

@@ -10,26 +10,27 @@ module Integrations::CloudElements::Crm
 			"validator"=>{"string"=>["text"], "textarea"=>["paragraph"], "boolean"=>["checkbox"], "reference"=>[],
 						  "phone"=>["phone_number"], "picklist"=>["dropdown", "dropdown_blank"], "multipicklist"=>["dropdown", "dropdown_blank"], 
 						  "email"=>["email"], "date"=>["date"], "double"=>["number"], "currency"=>["number"], "encryptedstring"=>["text"], "percent"=>["number"], 
-						  "url"=>["url"], "id"=>[]}, "fd_validator"=>{"text"=>["string", "encryptedstring"], "email"=>["email"], "phone_number"=>["phone"], 
+						  "url"=>["url"], "id"=>[]}, 
+			"fd_validator"=>{"text"=>["string", "encryptedstring"], "email"=>["email"], "phone_number"=>["phone"], 
 						  "checkbox"=>["boolean"], "paragraph"=>["textarea"], "dropdown"=>["picklist", "multipicklist"], "dropdown_blank"=>["picklist", "multipicklist"], 
 						  "number"=>["number", "currency", "percent"], "survey_radio"=>[], "date"=>["date"], "url"=>["url"]}
 		}
 
 		SALESFORCE_CRM_SYNC_JSON = {
-	  	"element" => {"key" => "sfdc"}, 
-			"configuration" => { 
-		    "oauth.user.refresh_token" => "%{refresh_token}", 
-		    "oauth.api.key" => "%{api_key}", 
-		    "oauth.api.secret" => "%{api_secret}", 
-		    "event.vendor.type" => "polling", 
-		    "event.notification.enabled" => "true", 
-		    "event.objects" => "Contact,Account",
-		    "event.poller.refresh_interval"=> "1",
-		    "event.notification.callback.url"=> "%{callback_url}/integrations/sync/crm/event_notification"
-	    },
-	    "tags" => [], 
-	    "name" => "%{element_name}",
-	    "externalAuthentication"=> "initial"
+		  	"element" => {"key" => "sfdc"}, 
+				"configuration" => { 
+			    "oauth.user.refresh_token" => "%{refresh_token}", 
+			    "oauth.api.key" => "%{api_key}", 
+			    "oauth.api.secret" => "%{api_secret}", 
+			    "event.vendor.type" => "polling", 
+			    "event.notification.enabled" => "true", 
+			    "event.objects" => "Contact,Account",
+			    "event.poller.refresh_interval"=> "1",
+			    "event.notification.callback.url"=> "%{callback_url}/integrations/sync/crm/event_notification"
+		    },
+		    "tags" => [], 
+		    "name" => "%{element_name}",
+		    "externalAuthentication"=> "initial"
 	  	}.to_json
   
 	end
