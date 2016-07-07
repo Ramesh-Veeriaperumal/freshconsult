@@ -122,6 +122,8 @@
       });
     }); 
 
+    jQuery('#helpdesk_ticket_ticket_type').trigger('change');
+    
     jQuery("#helpdesk_ticket_email").focusout(function(){
       var ticket_email = jQuery("#helpdesk_ticket_email").val();
       if(<%= current_user.present? && current_user.contractor? %>){

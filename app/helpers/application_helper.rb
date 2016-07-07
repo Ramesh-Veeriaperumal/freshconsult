@@ -1017,7 +1017,8 @@ module ApplicationHelper
 
   def construct_new_ticket_element(form_builder,object_name, field, field_label, dom_type, required, field_value = "", field_name = "", in_portal = false , is_edit = false, pl_value_id=nil)
     dom_type = (field.field_type == "nested_field") ? "nested_field" : dom_type
-    element_class   = " #{ (required && !object_name.eql?(:template_data)) ? 'required' : '' } #{ dom_type }" 
+    element_class   = " #{ (required && !object_name.eql?(:template_data)) ? 
+                      (field.field_type == "default_description" ? 'required_redactor' : 'required') : '' } #{ dom_type }" 
     element_class  += " required_closure" if (field.required_for_closure && !field.required)
     element_class  += " section_field" if field.section_field?
     field_label    += '<span class="required_star">*</span>'.html_safe if required
@@ -1095,7 +1096,6 @@ module ApplicationHelper
         element = label 
         redactor_wrapper = ""
         element_class += " ta_insert_cr" if field.field_type == "default_description"
-        element_class += " required_redactor" unless object_name.eql?("template_data")
         editor_type = object_name.eql?("template_data") ? :template : :ticket
         id,name = "#{object_name}_ticket_body_attributes_description_html", "#{object_name}[ticket_body_attributes][description_html]"
         form_builder.fields_for(:ticket_body, @ticket.ticket_body ) do |builder|

@@ -31,7 +31,7 @@ module AccountCleanup
             end
           end
           AWS::S3::Bucket.new(bucket).objects.delete(objects) # Batch deletion 
-          delete_query = "delete from helpdesk_attachments where id in (#{attachment_ids.join(",")}) "
+          delete_query = "delete from helpdesk_attachments where id in (#{attachment_ids.join(",")}) and account_id = #{account.id}"
           puts delete_query
           ActiveRecord::Base.connection.execute(delete_query)
         end
