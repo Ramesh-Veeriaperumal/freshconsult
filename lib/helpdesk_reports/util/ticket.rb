@@ -12,7 +12,7 @@ module HelpdeskReports::Util::Ticket
 
   def field_id_to_name_mapping(field_type)
     case field_type.to_sym
-    when :status
+    when :status, :historic_status
       Helpdesk::TicketStatus.status_names_from_cache(Account.current).to_h
     when :ticket_type
       Account.current.ticket_types_from_cache.collect {|item| [item.id, item.value]}.to_h

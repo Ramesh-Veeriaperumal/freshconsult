@@ -4,7 +4,33 @@
 	var title_name = HelpdeskReports.Constants.Glance.metrics[metric].title;
 	var constants = HelpdeskReports.Constants.Glance;
 %>
-<% if (custom_fields.indexOf(data) < 0) { %>
+
+<% if (metric == "UNRESOLVED_TICKETS" && data == "status" && historic_status) { %>
+	<div class="chart-container">
+			<div class="title">
+				<%= I18n.t(title_name,{group_by: ''}) %>
+			</div>
+			<div class="view-all-status">
+				<span id="current_status" class="toggle active">
+					<%= I18n.t('helpdesk_reports.chart_title.current_status') %>
+				</span>
+				<div class="reports-help-icon tooltip" data-placement="right" data-original-title="Present status of the tickets" twipsy-content-set="true">
+					<i class="ficon-help-icon fsize-14" size="14"></i>
+				</div>
+				<span class="sep">|</span> 
+				<span id="historic_status" class="toggle">
+					<%= I18n.t('helpdesk_reports.chart_title.historic_status') %>
+				</span>
+				<div class="reports-help-icon tooltip historic_tooltip">
+					<i class="ficon-help-icon fsize-14" size="14"></i>
+				</div>
+			</div>
+		<div id="status_container" class="half-container" data-group="status" data-report="glance-container"></div>
+		<span id="status_view_more_container" class="view-more" data-container="view-more" data-group-container="status"><%= I18n.t('helpdesk_reports.view_more') %></span>
+		<div id="historic_status_container"class="half-container" data-group="status" data-report="glance-container"></div>
+		<span id="historic_status_view_more_container" class="view-more" data-container="view-more" data-group-container="historic_status"><%= I18n.t('helpdesk_reports.view_more') %></span>
+	</div>	
+<% } else if (custom_fields.indexOf(data) < 0) { %>
 	<div class="chart-container">
 			<% group_type = I18n.t(fields_hash[data].toLowerCase(),{scope: "helpdesk_reports.chart_title",defaultValue: fields_hash[data].toLowerCase()}) %>
 			<div class="title">

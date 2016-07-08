@@ -36,12 +36,28 @@ HelpdeskReports.ChartsInitializer.TicketVolume = (function () {
             'qtr': I18n.t('helpdesk_reports.ticket_volume.time_trends_title.qtr'),
             'y'  : I18n.t('helpdesk_reports.ticket_volume.time_trends_title.y')
         },
+        TIME_TRENDS : {
+            'doy' : 'day',
+            'w'   : 'week',
+            'mon' : 'month',
+            'qtr' : 'quarter',
+            'y'   : 'year'
+        },
         week_trend: "week_trend",
-        series: ["RECEIVED_TICKETS", "RESOLVED_TICKETS"],
+        series: ["RECEIVED_TICKETS", "RESOLVED_TICKETS", "ALL_UNRESOLVED_TICKETS"],
+        load_analysis_series: ['received', 'resolved', 'unresolved'],
         received_name: I18n.t('helpdesk_reports.chart_title.received'),
         resolved_name: I18n.t('helpdesk_reports.chart_title.resolved'),
+        unresolved_name: I18n.t('helpdesk_reports.chart_title.unresolved'),
+        total_load: I18n.t('helpdesk_reports.chart_title.total_load'),
+        new_received_name: I18n.t('helpdesk_reports.chart_title.new_received'),
+        all_resolved_name: I18n.t('helpdesk_reports.chart_title.all_resolved'),
+        new_resolved_name: I18n.t('helpdesk_reports.chart_title.new_resolved'),
+        all_unresolved_name: I18n.t('helpdesk_reports.chart_title.all_unresolved'),
+        new_unresolved_name: I18n.t('helpdesk_reports.chart_title.new_unresolved'),
         time_trend_chart: "time_trend",
         day_trend_chart: "day_trend",
+        load_analysis_chart: "load_analysis",
 
         /* Deciding default_trend & trends to be disabled based on selected date range.
            Max data points that will be shown in each trend is 31, i.e 31 days, 31 weeks, 31 months etc.
@@ -96,6 +112,9 @@ HelpdeskReports.ChartsInitializer.TicketVolume = (function () {
             }, {
                 name: this.resolved_name,
                 data: _.values(this.hash_resolved[current_trend])
+            }, {
+                name: this.unresolved_name,
+                data: _.values(this.hash_unresolved[current_trend])
             });
 
             var labels = _.keys(this.hash_received[current_trend]);
@@ -109,7 +128,247 @@ HelpdeskReports.ChartsInitializer.TicketVolume = (function () {
             timeBased.columnGraph();
             jQuery('span[data-format="' + current_trend + '"]').addClass('active');
             jQuery("[data-title='trend']").text(this.trend_title[current_trend]);
-            // _FD.populateAvgAndTotalTicketsLabel();
+            _FD.populateAvgAndTotalTicketsLabel();
+        },
+        loadAnalysisTrend: function(labels, data, div, type, trend, is_pdf){
+            //'No data found' needs to be displayed if Data is all zeroes
+            if(_.max(data[0].data) == 0 && _.max(data[1].data) == 0){
+                var div = [div];
+                var msg = I18n.t('helpdesk_reports.no_data_to_display_msg');
+                HelpdeskReports.CoreUtil.populateEmptyChart(div, msg);
+                return;
+            }
+            var disabled_date = I18n.t('helpdesk_reports.disabled_date_range');
+            var dateRange = this.dateRangeLimit();
+
+            if (dateRange.deactive.length) {
+                jQuery.each(dateRange.deactive, function (i) {
+                    jQuery('[data-format="' + dateRange.deactive[i] + '"]').addClass('deactive').attr('title', disabled_date);
+                });
+            }
+
+            var settings = {
+                renderTo: div,
+                xAxisLabel: labels,
+                chartData: data
+            }
+            var loadAnalysis = new stackedColumnChart(settings, type, trend);
+            loadAnalysis.stackedGraph();
+            if(!is_pdf){
+                this.setTooltipForLegends();    
+            }
+            
+        },
+        setTooltipForLegends : function(){
+
+            jQuery(jQuery(".info.received")[0]).twipsy({
+                html : true,
+                placement : "above",
+                title : function() { 
+                    return I18n.t('helpdesk_reports.chart_title.legend_tooltip.total_load');
+            }});
+
+            jQuery(jQuery(".info.received")[1]).twipsy({
+                html : true,
+                placement : "above",
+                title : function() { 
+                    return I18n.t('helpdesk_reports.chart_title.legend_tooltip.received');
+            }});
+
+            jQuery(jQuery(".info.resolved")[0]).twipsy({
+                html : true,
+                placement : "above",
+                title : function() { 
+                    return I18n.t('helpdesk_reports.chart_title.legend_tooltip.total_load');
+              }});
+            
+            jQuery(jQuery(".info.resolved")[1]).twipsy({
+                html : true,
+                placement : "above",
+                title : function() { 
+                    return I18n.t('helpdesk_reports.chart_title.legend_tooltip.all_resolved');
+              }});
+            
+            jQuery(jQuery(".info.resolved")[2]).twipsy({
+                html : true,
+                placement : "above",
+                title : function() { 
+                    return I18n.t('helpdesk_reports.chart_title.legend_tooltip.new_resolved');
+              }});
+            
+            jQuery(jQuery(".info.unresolved")[0]).twipsy({
+                html : true,
+                placement : "above",
+                title : function() { 
+                    return I18n.t('helpdesk_reports.chart_title.legend_tooltip.total_load');
+              }});
+
+
+            jQuery(jQuery(".info.unresolved")[1]).twipsy({
+                html : true,
+                placement : "above",
+                title : function() { 
+                    return I18n.t('helpdesk_reports.chart_title.legend_tooltip.all_unresolved');
+              }});
+
+            jQuery(jQuery(".info.unresolved")[2]).twipsy({
+                html : true,
+                placement : "above",
+                title : function() { 
+                    return I18n.t('helpdesk_reports.chart_title.legend_tooltip.new_unresolved');
+              }});
+
+        },  
+        getLoadAnalysisData: function(hash, type, trend){
+            var data = []
+            if(type == _FD.load_analysis_series[0]){
+                data = [
+                    {
+                        name: this.total_load,
+                        data: _.values(hash['TOTAL_LOAD'][trend]),
+                        pointPadding : 0.2,
+                        borderColor: '#F5F5F5',
+                        borderWidth: 1
+                    },
+                    {
+                        name: this.new_received_name,
+                        data: _.values(hash['RECEIVED_TICKETS'][trend]),
+                        pointPadding : 0.2
+                    }
+                ];
+            }
+            else if(type == _FD.load_analysis_series[1]){
+                data = [
+                    {
+                        name: this.total_load,
+                        data: _.values(hash['TOTAL_LOAD'][trend]),
+                        borderColor: '#F5F5F5',
+                        borderWidth: 2,
+                    },
+                    {
+                        name: this.all_resolved_name,
+                        data: _.values(hash['RESOLVED_TICKETS'][trend]),
+                        borderColor : '#7CAF46',
+                        borderWidth : 2,
+                    },
+                    {
+                        name: this.new_resolved_name,
+                        data: _.values(hash['NEW_RESOLVED_TICKETS'][trend]),
+                        borderWidth: 2,
+                        borderColor : '#7CAF46'
+                    }
+                ];
+            }
+            else{
+                data = [
+                    {
+                        name: this.total_load,
+                        data: _.values(hash['TOTAL_LOAD'][trend]),
+                        borderColor: '#F5F5F5',
+                        borderWidth: 2
+                    },
+                    {
+                        name: this.all_unresolved_name,
+                        data: _.values(hash['ALL_UNRESOLVED_TICKETS'][trend]),
+                        borderWidth: 2,
+                        borderColor : 'rgba(245,166,35,1)'
+                    },
+                    {
+                        name: this.new_unresolved_name,
+                        data: _.values(hash['NEW_UNRESOLVED_TICKETS'][trend]),
+                        borderColor: 'rgba(245,166,35,1)',
+                        borderWidth: 2
+                    } 
+                ];
+            }
+            return data;
+        },
+        getLoadAnalysisLabels: function(hash, type, trend){
+            var labels = [];
+            if(type == _FD.load_analysis_series[0])
+                labels = _.keys(hash['TOTAL_LOAD'][trend]);
+            else if(type == _FD.load_analysis_series[1])
+                labels = _.keys(hash['RESOLVED_TICKETS'][trend])
+            else
+                labels = _.keys(hash['ALL_UNRESOLVED_TICKETS'][trend])
+            return labels;
+        },
+        displayLoadAnalysisAvg: function(type, trend){
+            var trend_size = _.size(HelpdeskReports.locals.chart_hash['TOTAL_LOAD'][trend]);
+            var msg = [];
+            msg.push("<span style='color:#666'>Average per " + this.TIME_TRENDS[trend] + " : </span>")
+            var total_load = eval(_.values(HelpdeskReports.locals.chart_hash['TOTAL_LOAD'][trend]).join('+'))/trend_size;
+            total_load = total_load.round();
+            msg.push("<p class='analysis_tooltip'>" + I18n.t('helpdesk_reports.chart_title.tooltip.total_load') + " : " + '<span class="bold">' + total_load + ' ' + (total_load == 0 ? 'ticket' : I18n.t('helpdesk_reports.chart_title.tickets')) + "</span>");
+            var preposition = (trend == 'doy' ? 'on' : 'in');
+            if(type == 'received'){
+                var newly_received = eval(_.values(HelpdeskReports.locals.chart_hash['RECEIVED_TICKETS'][trend]).join('+'))/trend_size;
+                newly_received = (total_load == 0 ? 0 : ((newly_received/total_load) * 100 || 0).round());
+                var carried_over = 100 - newly_received;
+                
+                msg.push(I18n.t('helpdesk_reports.chart_title.tooltip.carried_over', {count: carried_over}));
+                msg.push(I18n.t('helpdesk_reports.chart_title.tooltip.newly_received', {count: newly_received}) + "</p>");
+            }
+            else if(type == 'resolved'){
+                var total_load_resolved = eval(_.values(HelpdeskReports.locals.chart_hash['RESOLVED_TICKETS'][trend]).join('+'))/trend_size;
+                total_load_resolved = (total_load == 0 ? 0 : ((total_load_resolved/total_load) * 100 || 0).round());
+                var new_received = eval(_.values(HelpdeskReports.locals.chart_hash['RECEIVED_TICKETS'][trend]).join('+'))/trend_size;
+                var new_resolved = eval(_.values(HelpdeskReports.locals.chart_hash['NEW_RESOLVED_TICKETS'][trend]).join('+'))/trend_size;
+                var newly_received_resolved = ((new_resolved/new_received) * 100 || 0).round();
+
+                msg.push(I18n.t('helpdesk_reports.chart_title.tooltip.total_load_resolved', {count: total_load_resolved}));
+                msg.push(I18n.t('helpdesk_reports.chart_title.tooltip.newly_received_resolved', {count: newly_received_resolved}) + "</p>");
+            }
+            else{
+                var total_load_unresolved = eval(_.values(HelpdeskReports.locals.chart_hash['ALL_UNRESOLVED_TICKETS'][trend]).join('+'))/trend_size;
+                total_load_unresolved = (total_load == 0 ? 0 : ((total_load_unresolved/total_load) * 100 || 0).round());
+                var new_received = eval(_.values(HelpdeskReports.locals.chart_hash['RECEIVED_TICKETS'][trend]).join('+'))/trend_size;
+                var new_unresolved = eval(_.values(HelpdeskReports.locals.chart_hash['NEW_UNRESOLVED_TICKETS'][trend]).join('+'))/trend_size;
+                var newly_received_unresolved = ((new_unresolved/new_received) * 100 || 0).round();
+
+                msg.push(I18n.t('helpdesk_reports.chart_title.tooltip.total_load_unresolved', {count: total_load_unresolved}));
+                msg.push(I18n.t('helpdesk_reports.chart_title.tooltip.newly_received_unresolved', {count: newly_received_unresolved}) + "</p>");
+            }
+            jQuery('#load_analysis_' + type +'_avg').html(msg.join('<br/>'));
+        },
+        constructLoadAnalysisTrend: function(hash, type, trend){
+            var dateRange = this.dateRangeLimit();
+            var current_trend = trend || dateRange.default_trend;
+            HelpdeskReports.locals.trend = current_trend;
+            var data = _FD.getLoadAnalysisData(hash, type, current_trend);
+            var labels = _FD.getLoadAnalysisLabels(hash, type, current_trend);
+            _FD.loadAnalysisTrend(labels, data, this.load_analysis_chart + '_' +  type + '_chart', type, current_trend, false);
+            _FD.displayLoadAnalysisAvg(type, trend);
+        },
+        constructPdfLoadAnalysisTrend: function(hash, trend){
+            var dateRange = this.dateRangeLimit();
+            var current_trend = trend || dateRange.default_trend;
+            HelpdeskReports.locals.trend = current_trend;
+            for (var i = 0; i < _FD.load_analysis_series.length; i++) {
+                var type = _FD.load_analysis_series[i];
+                var data = _FD.getLoadAnalysisData(hash, type, current_trend);
+                var labels = _FD.getLoadAnalysisLabels(hash, type, current_trend);
+                _FD.loadAnalysisTrend(labels, data, this.load_analysis_chart + '_' +  type + '_chart', type, current_trend, true);
+            }
+        },
+
+        constructDayTrend: function(hash, pdf){
+            if(this.hash_received[this.week_trend] == undefined){
+                var div = ['day_trend_chart'];
+                var msg = I18n.t('helpdesk_reports.no_data_to_display_msg');
+                HelpdeskReports.CoreUtil.populateEmptyChart(div, msg);
+                jQuery('#mini_chart_wrapper,.busy_period').hide();
+                return;
+            }
+            if(pdf){
+                _FD.populateBusiestDayAndHours(pdf);
+                _FD.pdfDayTrend(hash);
+            }
+            else{
+                _FD.populateBusiestDayAndHours(pdf);
+                _FD.dayTrend(hash);
+                _FD.miniDayTrends(hash);
+            }
         },
         dayTrend: function (hash) {
             var defaults = this.findDefaultDay();
@@ -342,13 +601,33 @@ HelpdeskReports.ChartsInitializer.TicketVolume = (function () {
                 //Populate the Total & Average Labels
                 _FD.populateAvgAndTotalTicketsLabel();
             });
+            jQuery('#reports_wrapper').on('click.helpdesk_reports.vol', "[data-trend='an-trend-type']:not('.deactive')", function () {
+                jQuery("[data-trend='an-trend-type']").removeClass('active');
+                jQuery(this).addClass('active');
+                jQuery("[data-title='an-trend']").text(_FD.trend_title[HelpdeskReports.locals.trend]);
+                //_FD.redrawLoadAnalysis(HelpdeskReports.locals.trend);
+                _FD.constructLoadAnalysisTrend(HelpdeskReports.locals.chart_hash, jQuery('.load_analysis_nav').find('.active').data('type'), jQuery(this).data('format'));
+            });
+            //Capturing Tab change in All & New Charts
+            jQuery('a[data-toggle="tab"]').on('show.bs.tab', function(e){
+                setTimeout(function(){
+                    _FD.constructLoadAnalysisTrend(HelpdeskReports.locals.chart_hash, jQuery(e.target).parent().data('type'), HelpdeskReports.locals.trend);
+                },0);
+            });
+            jQuery('#load_analysis_charts').on('mouseover', function(e){
+                jQuery('.load_analysis_avg').hide();
+            });
+            jQuery('#load_analysis_charts').on('mouseout', function(e){
+                jQuery('.load_analysis_avg').show();
+            });
         },
         redrawDayTrend: function (dow, prev_active, present) {
             HelpdeskReports.locals.active_day = this.DAY_MAPPING_LABEL[this.WEEKDAY_MAPPING[dow]];
             var chart = jQuery('#day_trend_chart').highcharts();
-            for (i = 0; i < this.series.length; i++) {
+            //Hack to manage different series length for DayChart & TimeChart (this.series.length - 1)
+            for (i = 0; i < this.series.length-1; i++) {
                 chart.series[i].update({
-                    data: _.values(HelpdeskReports.locals.chart_hash[HelpdeskReports.locals.metric][this.series[i]][this.week_trend][this.WEEKDAY_MAPPING[dow]])
+                    data: _.values(HelpdeskReports.locals.chart_hash[this.series[i]][this.week_trend][this.WEEKDAY_MAPPING[dow]])
                 }, false);
             }
             chart.redraw(true);
@@ -369,16 +648,35 @@ HelpdeskReports.ChartsInitializer.TicketVolume = (function () {
                 color: REPORT_COLORS['miniActive']
             });
         },
+        redrawLoadAnalysis: function(trend){
+            var charts = ['load_analysis_received_chart', 'load_analysis_resolved_chart', 'load_analysis_unresolved_chart'];
+            var labels = [
+                _.keys(HelpdeskReports.locals.chart_hash['TOTAL_LOAD'][trend]),
+                _.keys(HelpdeskReports.locals.chart_hash['RESOLVED_TICKETS'][trend]),
+                _.keys(HelpdeskReports.locals.chart_hash['ALL_UNRESOLVED_TICKETS'][trend]),
+            ];
+            
+            for(i = 0; i< charts.length; i++){
+                var chart = jQuery('#'+charts[i]).highcharts();
+                chart.xAxis[0].update({
+                    categories: labels[i]
+                }, false);
+                var data = _FD.getLoadAnalysisData(HelpdeskReports.locals.chart_hash, trend);
+                chart.series[0].update({data: data.shift()}, false);
+                chart.series[1].update({data: data.shift()}, false);
+                chart.redraw(true);
+            }
+        },
         redrawTimeBased: function (trend) {
             var chart = jQuery('#time_trend_chart').highcharts();
-            var labels = _.keys(HelpdeskReports.locals.chart_hash[HelpdeskReports.locals.metric][this.series[0]][trend]);
+            var labels = _.keys(HelpdeskReports.locals.chart_hash[this.series[0]][trend]);
             
             chart.xAxis[0].update({
                 categories: labels
             }, false);
             for (i = 0; i < this.series.length; i++) {
                 chart.series[i].update({
-                    data: _.values(HelpdeskReports.locals.chart_hash[HelpdeskReports.locals.metric][this.series[i]][trend])
+                    data: _.values(HelpdeskReports.locals.chart_hash[this.series[i]][trend])
                 }, false);
             }
             chart.redraw(true);
@@ -402,56 +700,100 @@ HelpdeskReports.ChartsInitializer.TicketVolume = (function () {
             };
 
         },
+        generateStatusArrowHtml : function(val, type){
+            if(val == "None" || val == 0)
+                return '';
+            else{
+                if(type == 'received' || type == 'unresolved'){
+                    if(val < 0)
+                        return '<span class="status-percent"><span class="status-symbol report-arrow down positive"></span> ' + Math.abs(val) +'%</span>';
+                    else
+                        return '<span class="status-percent"><span class="status-symbol report-arrow up negative"></span> ' + val +'%</span>';
+                }
+                else{
+                    if(val < 0)
+                        return '<span class="status-percent"><span class="status-symbol report-arrow down negative"></span> ' + Math.abs(val) +'%</span>';
+                    else
+                        return '<span class="status-percent"><span class="status-symbol report-arrow up positive"></span> ' + val +'%</span>';
+                }
+            }
+        },
         populateAvgAndTotalTicketsLabel : function(){
             
             var trend = HelpdeskReports.locals.trend;
-            var avg_received = jQuery(".stats .value_average");
-            var tot_received = jQuery(".stats .value_total");
-            var avg_resolved = jQuery(".stats .value_average");
-            var tot_resolved = jQuery(".stats .value_total");
+            var avg_received = jQuery(".stats .avg_received");
+            var tot_received = jQuery(".stats .total_received");
+            var avg_resolved = jQuery(".stats .avg_resolved");
+            var tot_resolved = jQuery(".stats .total_resolved");
+            var tot_unresolved = jQuery(".stats .total_unresolved");
+            var avg_unresolved = jQuery(".stats .avg_unresolved");
+
+            var core = HelpdeskReports.CoreUtil;
+            var limit = core.SHORTEN_LIMIT;
+            var shorten_func = core.shortenLargeNumber;
+            var tooltip_tmpl = _.template('<span class="tooltip" data-placement="right" data-original-title="<%= value %>" twipsy-content-set="true"><%= truncated_value %></span>');
             
-            if( trend == 'doy'){
-                avg_received.html(_FD.hash_received.doy_avg);
-                tot_received.html(_FD.hash_received.doy_total);
-                avg_resolved.html(_FD.hash_resolved.doy_avg);
-                tot_resolved.html(_FD.hash_resolved.doy_total);
-            } else if( trend == 'w') {
-                avg_received.html(_FD.hash_received.w_avg);
-                tot_received.html(_FD.hash_received.w_total);
-                avg_resolved.html(_FD.hash_resolved.w_avg);
-                tot_resolved.html(_FD.hash_resolved.w_total);
-            } else if( trend == 'mon') {
-                avg_received.html(_FD.hash_received.mon_avg);
-                tot_received.html(_FD.hash_received.mon_total);
-                avg_resolved.html(_FD.hash_resolved.mon_avg);
-                tot_resolved.html(_FD.hash_resolved.mon_total);
-            } else if( trend == 'qtr') {
-                avg_received.html(_FD.hash_received.qtr_avg);
-                tot_received.html(_FD.hash_received.qtr_total);
-                avg_resolved.html(_FD.hash_resolved.qtr_avg);
-                tot_resolved.html(_FD.hash_resolved.qtr_total);
-            } else if( trend == 'y') {
-                avg_received.html(_FD.hash_received.y_avg);
-                tot_received.html(_FD.hash_received.y_total);
-                avg_resolved.html(_FD.hash_resolved.y_avg);
-                tot_resolved.html(_FD.hash_resolved.y_total);
-            }
+            avg_received.html(_FD.hash_received.extra_details[trend+'_avg'] <= limit ? _FD.hash_received.extra_details[trend+'_avg'] : tooltip_tmpl({ 
+                    value : _FD.hash_received.extra_details[trend+'_avg'], 
+                    truncated_value : shorten_func(_FD.hash_received.extra_details[trend+'_avg'],1)
+            }));
+            tot_received.html(_FD.hash_received.extra_details.total <= limit ? _FD.hash_received.extra_details.total : tooltip_tmpl({
+                    value : _FD.hash_received.extra_details.total,
+                    truncated_value : shorten_func(_FD.hash_received.extra_details.total)
+            }));
+            avg_resolved.html(_FD.hash_resolved.extra_details[trend+'_avg'] <= limit ? _FD.hash_resolved.extra_details[trend+'_avg'] : tooltip_tmpl({
+                    value : _FD.hash_resolved.extra_details[trend+'_avg'],
+                    truncated_value : shorten_func(_FD.hash_resolved.extra_details[trend+'_avg'])
+            }));
+            tot_resolved.html(_FD.hash_resolved.extra_details.total <= limit ? _FD.hash_resolved.extra_details.total : tooltip_tmpl({
+                    value : _FD.hash_resolved.extra_details.total,
+                    truncated_value : shorten_func(_FD.hash_resolved.extra_details.total)
+            }));
+            avg_unresolved.html(_FD.hash_unresolved.extra_details[trend+'_avg'] <= limit ? _FD.hash_unresolved.extra_details[trend+'_avg'] : tooltip_tmpl({
+                    value : _FD.hash_unresolved.extra_details[trend+'_avg'],
+                    truncated_value : shorten_func(_FD.hash_unresolved.extra_details[trend+'_avg'])
+            }));
+            tot_unresolved.html(_FD.hash_unresolved.extra_details.total <= limit ? _FD.hash_unresolved.extra_details.total : tooltip_tmpl({
+                    value : _FD.hash_unresolved.extra_details.total,
+                    truncated_value : shorten_func(_FD.hash_unresolved.extra_details.total)
+            }));
+
+            avg_received.append(_FD.generateStatusArrowHtml(_FD.hash_received.extra_details.diff_perc, 'received'));
+            tot_received.append(_FD.generateStatusArrowHtml(_FD.hash_received.extra_details.diff_perc, 'received'));
+            avg_resolved.append(_FD.generateStatusArrowHtml(_FD.hash_resolved.extra_details.diff_perc, 'resolved'));
+            tot_resolved.append(_FD.generateStatusArrowHtml(_FD.hash_resolved.extra_details.diff_perc, 'resolved'));
+            avg_unresolved.append(_FD.generateStatusArrowHtml(_FD.hash_unresolved.extra_details.diff_perc, 'unresolved'));
+            tot_unresolved.append(_FD.generateStatusArrowHtml(_FD.hash_unresolved.extra_details.diff_perc, 'unresolved'));
+        },
+        populateBusiestDayAndHours : function(pdf){
+            var class_name = pdf ? ".busy_period_pdf " : ".busy_period "
+            jQuery(class_name + ".busy_hour_received .value").html(_FD.hash_received.busiest_day_and_hours[1]);
+            jQuery(class_name + ".busy_hour_resolved .value").html(_FD.hash_resolved.busiest_day_and_hours[1]);
+            jQuery(class_name + ".busy_day_received .value").html(_FD.hash_received.busiest_day_and_hours[0]);
+            jQuery(class_name + ".busy_day_resolved .value").html(_FD.hash_resolved.busiest_day_and_hours[0]);
         }
     };
     return {
-        init: function (hash) {
-            _FD.hash_received = hash[HelpdeskReports.locals.metric][_FD.series[0]];
-            _FD.hash_resolved = hash[HelpdeskReports.locals.metric][_FD.series[1]];
+        init: function (hash, display_day_trend) {
+            _FD.hash_received = hash[_FD.series[0]];
+            _FD.hash_resolved = hash[_FD.series[1]];
+            _FD.hash_unresolved = hash[_FD.series[2]];
             _FD.timeTrend(hash);
-            _FD.dayTrend(hash);
-            _FD.miniDayTrends(hash);
+            var dateRange = _FD.dateRangeLimit();
+            var current_trend = dateRange.default_trend
+            current_trend = (current_trend == "doy" && HelpdeskReports.CoreUtil.dateRangeDiff() >= 6) ? 'w' : current_trend;
+            _FD.constructLoadAnalysisTrend(hash, _FD.load_analysis_series[0], current_trend);
+            _FD.constructDayTrend(hash, false);
             _FD.bindChartEvents();
         },
-        pdf: function (hash) {
-            _FD.hash_received = hash[HelpdeskReports.locals.metric][_FD.series[0]];
-            _FD.hash_resolved = hash[HelpdeskReports.locals.metric][_FD.series[1]];
+        pdf: function (hash, print_day_trend) {
+            _FD.hash_received = hash[_FD.series[0]];
+            _FD.hash_resolved = hash[_FD.series[1]];
+            _FD.hash_unresolved = hash[_FD.series[2]];
             _FD.timeTrend(hash);
-            _FD.pdfDayTrend(hash);
+            var current_trend = HelpdeskReports.locals.trend;
+            _FD.constructPdfLoadAnalysisTrend(hash, current_trend);
+            _FD.constructDayTrend(hash, true);
         }
     };
 })();

@@ -81,8 +81,9 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
   end
   
   def email_reports
-    email_report_params
-    Reports::Export.perform_async(params)
+    param_constructor = "HelpdeskReports::ParamConstructor::#{report_type.to_s.camelcase}".constantize.new(params.symbolize_keys) 
+    req_params = param_constructor.build_pdf_params
+    Reports::Export.perform_async(req_params)
     render json: nil, status: :ok
   end
 

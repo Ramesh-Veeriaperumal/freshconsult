@@ -49,19 +49,35 @@ HelpdeskReports.ChartsInitializer.Glance = (function () {
             var active_metric = HelpdeskReports.locals.active_metric;
             var hash_active = hash[active_metric];
             var group_by = HelpdeskReports.locals.current_group_by;
+            var is_historic_present = false;
             HelpdeskReports.CoreUtil.flushCharts();
             jQuery('#glance_main').html('');            
 
             if (jQuery.isEmptyObject(hash_active['error'])) {
                 for (i = 0; i < group_by.length; i++) {
+                    if(group_by[i] == "historic_status" && active_metric == "UNRESOLVED_TICKETS"){
+                        break;
+                    }
+                    if(group_by[i] == "status" && active_metric == "UNRESOLVED_TICKETS"){
+                       is_historic_present = (typeof hash_active["historic_status"] !== 'undefined');
+                    }
                     var group_tmpl = JST["helpdesk_reports/templates/glance_group_by"]({
                         data: group_by[i],
-                        metric: active_metric
+                        metric: active_metric,
+                        historic_status: is_historic_present
                     });
                     jQuery('#glance_main').append(group_tmpl);
 
                     if (!jQuery.isEmptyObject(hash_active[group_by[i]])) {
                         _FD.constructChartSettings(hash_active, group_by[i], false, false, false);
+                        if(group_by[i] == "status" && active_metric == "UNRESOLVED_TICKETS"){
+                            if(is_historic_present){
+                                _FD.constructChartSettings(hash_active, "historic_status", false, false, false);
+                                jQuery("#historic_status_container").hide();    
+                            }
+                            
+                        }
+
                     } else {
                         var msg = I18n.t('helpdesk_reports.no_data_to_display_msg');
                         var div = [group_by[i] + '_container'];
@@ -81,6 +97,23 @@ HelpdeskReports.ChartsInitializer.Glance = (function () {
                 var div = ["glance_main"];
                 HelpdeskReports.CoreUtil.populateEmptyChart(div, msg);
             }
+
+            //Tooltip for historic status
+            var date_range = HelpdeskReports.locals.date_range.split('-');
+            var end_date;
+            if (date_range.length == 2){
+                end_date = date_range[1];
+            }else{
+                end_date = date_range[0];
+            }
+            var text = 'Status of the tickets at end of ' + end_date;
+            jQuery(".historic_tooltip").twipsy({
+                html : true,
+                placement : "right",
+                title : function() { 
+                    return text;
+              }});
+
 
         },
         contructPdfCharts: function (hash) {
@@ -584,7 +617,11 @@ HelpdeskReports.ChartsInitializer.Glance = (function () {
         mergeDataHash: function (hash) {
             var active_metric = HelpdeskReports.locals.active_metric;
             var group_by = HelpdeskReports.locals.current_group_by;
-
+            //if the metric is unresolved, extra historic status is added in group by
+            if(active_metric == "UNRESOLVED_TICKETS"){
+                group_by.push("historic_status")
+            }
+                
             if (HelpdeskReports && HelpdeskReports.locals && HelpdeskReports.locals.chart_hash) {
                 for (var key in hash) {
                     if (HelpdeskReports.locals.chart_hash.hasOwnProperty(key) && key === active_metric) {

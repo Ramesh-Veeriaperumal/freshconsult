@@ -86,6 +86,10 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
 			self.save
 		end
 	end
+
+	def set_last_resolved_at(time)
+		self.reports_hash['last_resolved_at'] = time
+	end
 	
 	["agent", "group"].each do |type|
 		define_method("set_#{type}_assigned_flag") do
@@ -105,7 +109,7 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
 			previous_count = self.reports_hash["#{count_type}_count"]
 			case action
 			when "create"
-				current_count = previous_count.to_i + 1
+				current_count  = previous_count.to_i + 1
 			when "destroy"
 				current_count = (previous_count.to_i == 0 ? nil : previous_count.to_i -  1)
 			else

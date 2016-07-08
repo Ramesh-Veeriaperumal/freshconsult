@@ -1,5 +1,7 @@
 class HelpdeskReports::ParamConstructor::CustomerReport < HelpdeskReports::ParamConstructor::Base
 
+  METRICS = ["CUSTOMER_CURRENT_HISTORIC","UNRESOLVED_TICKETS"]
+
   def initialize options
     @report_type = :customer_report
     super options
@@ -10,12 +12,14 @@ class HelpdeskReports::ParamConstructor::CustomerReport < HelpdeskReports::Param
   end
 
   def query_params
-    cr_params = {
-        metric: "CUSTOMER_CURRENT_HISTORIC",
-        group_by: ["company_id"],
-    }
-    cr_params = basic_param_structure.merge(cr_params)
-    [cr_params]
+    cr_params = { group_by: ["company_id"], sorting: true }
+
+    METRICS.inject([]) do |params, metric|
+      query = basic_param_structure.merge(cr_params)
+      query[:metric] = metric
+      params << query
+    end
+
   end
 
 end

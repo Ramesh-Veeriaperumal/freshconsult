@@ -79,7 +79,10 @@ module HelpdeskReports
           avg_first_response_time: :response_trend
         },
         ticket_volume: {
-          received_resolved_tickets: :trend
+          received_resolved_tickets: :trend,
+          unresolved_previous_benchmark: :trend,
+          received_resolved_benchmark: :trend,
+          unresolved_current_benchmark: :trend
         }
       }
     end
