@@ -124,7 +124,7 @@ BoxChooser.prototype = {
     var list_markup = '';
     res.item_collection.entries.each(function(entry, index){
       arrow_span_html = (entry.type=='folder'?'<span class="arrow-right"></span>':'');
-      list_markup += this.list_item.evaluate({name: clip_filename(entry.name, 35), item_id: entry.id, type: entry.type, arrow_span: arrow_span_html});
+      list_markup += this.list_item.evaluate({name: clip_filename(htmlEntities(entry.name), 35), item_id: entry.id, type: entry.type, arrow_span: arrow_span_html});
       entry.parent_id = folder_id;
       this.item_id_to_entry[entry.id] = entry;
     }.bind(this));
