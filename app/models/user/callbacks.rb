@@ -104,7 +104,10 @@ class User < ActiveRecord::Base
         self.user_companies.first.default = true
       end
       default_user_company = self.user_companies.find { |uc| uc.default }
+      self.customer_id = default_user_company.company_id
       self.user_companies = [default_user_company] unless has_multiple_companies_feature?
+    else
+      self.customer_id = nil
     end
   end
   
@@ -124,10 +127,13 @@ class User < ActiveRecord::Base
   end
 
   def set_company_name
-    if (self.company_id.nil? && self.email)      
+    if (!self.company_name.present? && self.email)      
       email_domain =  self.email.split("@")[1]
       comp_id = Account.current.company_domains.find_by_domain(email_domain).try(:company_id)
-      self.company_id = comp_id unless comp_id.nil?
+      unless comp_id.nil?
+        self.company_id = comp_id 
+        self.customer_id = comp_id
+      end
     end
   end
 
@@ -172,7 +178,7 @@ class User < ActiveRecord::Base
   end  
 
   def backup_customer_id
-    if self.user_companies.length > 1
+    if self.user_companies.length > 1 || has_multiple_companies_feature?
       user_comp = self.user_companies.find{ |uc| uc.default }
       self.customer_id = user_comp.present? ? user_comp.company_id : nil
     elsif self.default_user_company.present?
