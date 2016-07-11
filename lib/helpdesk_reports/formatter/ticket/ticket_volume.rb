@@ -55,14 +55,16 @@ class HelpdeskReports::Formatter::Ticket::TicketVolume
       if(overall['ALL_UNRESOLVED_TICKETS'][trend])
         unresolved = current_unresolved_benchmark[0]["unresolved_count"].to_i
         overall['ALL_UNRESOLVED_TICKETS'][trend].keys.reverse.each do |key|
-          overall['TOTAL_LOAD'][trend][key] += unresolved
+          overall['TOTAL_LOAD'][trend][key] += unresolved + overall['RESOLVED_TICKETS'][trend][key]
           overall['ALL_UNRESOLVED_TICKETS'][trend][key] += unresolved
-          unresolved = (overall['TOTAL_LOAD'][trend][key] + overall['RESOLVED_TICKETS'][trend][key] - overall['RECEIVED_TICKETS'][trend][key] )
+          unresolved = overall['TOTAL_LOAD'][trend][key] - overall['RECEIVED_TICKETS'][trend][key]
         end
       end
       if(overall['NEW_RESOLVED_TICKETS'][trend])
         overall['NEW_RESOLVED_TICKETS'][trend].keys.each do |key|
-          overall['NEW_UNRESOLVED_TICKETS'][trend][key] += (overall['RECEIVED_TICKETS'][trend][key] - overall['NEW_RESOLVED_TICKETS'][trend][key])
+          if overall['NEW_UNRESOLVED_TICKETS'][trend][key]
+            overall['NEW_UNRESOLVED_TICKETS'][trend][key] += (overall['RECEIVED_TICKETS'][trend][key] - overall['NEW_RESOLVED_TICKETS'][trend][key])
+          end
         end
       end
     end

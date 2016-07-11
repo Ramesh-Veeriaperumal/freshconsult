@@ -6,7 +6,19 @@
 
 <% if (custom_fields.indexOf(data) < 0) { %>
   <div class="chart-container">
-  <% var group_type =  (metric == "UNRESOLVED_TICKETS" && data == "status") ? I18n.t("helpdesk_reports.chart_title.current_status_lower") : I18n.t(fields_hash[data].toLowerCase(),{scope: "helpdesk_reports.chart_title",defaultValue: fields_hash[data].toLowerCase()}) %>
+  <% if (metric == "UNRESOLVED_TICKETS"){
+      switch (data){ 
+        case 'status':
+          group_type = I18n.t("helpdesk_reports.chart_title.current_status_lower");
+          break;
+        case 'historic_status':
+          group_type = I18n.t("helpdesk_reports.chart_title.historic_status_lower");
+          break;
+        default:
+          group_type = I18n.t(fields_hash[data].toLowerCase(),{scope: "helpdesk_reports.chart_title",defaultValue: fields_hash[data].toLowerCase()});
+      } 
+    }%>
+
     <div class="title">
       <%= I18n.t(title_name,{group_by: group_type}) %>
     </div>

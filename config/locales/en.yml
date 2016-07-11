@@ -8189,6 +8189,7 @@ en:
       historic_status: Historic Status
       current_status: Current Status
       current_status_lower: current status
+      historic_status_lower: historic status
       agent_responses: agent responses
       customer_responses: customer responses
       received: Received

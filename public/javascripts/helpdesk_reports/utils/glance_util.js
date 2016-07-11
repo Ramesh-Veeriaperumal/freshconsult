@@ -394,12 +394,15 @@ HelpdeskReports.ReportUtil.Glance = (function () {
             },  
             constructMainListCondition: function (group_by, label, id) {
                 var list_hash = {};
+                var tmp_group='';
                 //Hack for historic status
                 if (group_by == "historic_status"){
-                    group_by = "status";
+                    tmp_group = "status";
+                }else{
+                    tmp_group = group_by;
                 }
 
-                var hash_group_by = HelpdeskReports.locals.report_options_hash[group_by];
+                var hash_group_by = HelpdeskReports.locals.report_options_hash[tmp_group];
 
                 if (hash_group_by.hasOwnProperty(id)) {
                     list_hash = {

@@ -303,6 +303,7 @@ HelpdeskReports.ChartsInitializer.TicketVolume = (function () {
             var preposition = (trend == 'doy' ? 'on' : 'in');
             if(type == 'received'){
                 var newly_received = eval(_.values(HelpdeskReports.locals.chart_hash['RECEIVED_TICKETS'][trend]).join('+'))/trend_size;
+                newly_received = newly_received.round();
                 newly_received = (total_load == 0 ? 0 : ((newly_received/total_load) * 100 || 0).round());
                 var carried_over = 100 - newly_received;
                 
