@@ -141,7 +141,7 @@ BoxChooser.prototype = {
       navbar_html += this.navbar_item.evaluate({item_id: entry.id, name: htmlEntities(entry.name) }); 
     }
     if(Number(res.id))
-      navbar_html += this.navbar_item.evaluate({item_id: res.id, name: htmlEntities('<b>'+res.name+'</b>')});
+      navbar_html += this.navbar_item.evaluate({item_id: res.id, name:'<b>'+htmlEntities(res.name) +'</b>'});
     jQuery('#box-navbar').html(navbar_html);
     jQuery(".box-loading-big").hide();
   },
