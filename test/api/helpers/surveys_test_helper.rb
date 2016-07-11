@@ -50,56 +50,52 @@ module SurveysTestHelper
     }
   end
 
-  def create_survey(number, custom_survey=true)
-    survey = @account.surveys.build({
-    :title_text => I18n.t('admin.surveys.new_layout.default_survey'),
-    :thanks_text => I18n.t('admin.surveys.new_thanks.thanks_feedback'),
-    :feedback_response_text => I18n.t('admin.surveys.new_thanks.feedback_response_text'),
-    :comments_text => I18n.t('admin.surveys.new_thanks.comments_feedback'),
-    :active => (@account.features?(:survey_links) ? true : false),
-    :can_comment => true,
-    :default => false
-    })
+  def create_survey(number, custom_survey = true)
+    survey = @account.surveys.build(title_text: I18n.t('admin.surveys.new_layout.default_survey'),
+                                    thanks_text: I18n.t('admin.surveys.new_thanks.thanks_feedback'),
+                                    feedback_response_text: I18n.t('admin.surveys.new_thanks.feedback_response_text'),
+                                    comments_text: I18n.t('admin.surveys.new_thanks.comments_feedback'),
+                                    active: (@account.features?(:survey_links) ? true : false),
+                                    can_comment: true,
+                                    default: false)
     survey.save
     if custom_survey
-      unhappy_text = survey.unhappy_text.blank? ? I18n.t('helpdesk.ticket_notifier.reply.unhappy') :  survey.unhappy_text
-      neutral_text = survey.neutral_text.blank? ? I18n.t('helpdesk.ticket_notifier.reply.neutral') :  survey.neutral_text
+      unhappy_text = survey.unhappy_text.blank? ? I18n.t('helpdesk.ticket_notifier.reply.unhappy') : survey.unhappy_text
+      neutral_text = survey.neutral_text.blank? ? I18n.t('helpdesk.ticket_notifier.reply.neutral') : survey.neutral_text
       happy_text = survey.happy_text.blank? ? I18n.t('helpdesk.ticket_notifier.reply.happy') : survey.happy_text
       survey_question = CustomSurvey::SurveyQuestion.new(
-      :account_id => @account.id,
-      :name => 'default_survey_question',
-      :label => survey.link_text,
-      :position => 1,
-      :survey_id => survey.id,
-      :field_type => :custom_survey_radio,
-      :default => true,
-      :custom_field_choices_attributes => [
-      { :position => 1, :_destroy => 0, :value => unhappy_text, :face_value => CustomSurvey::Survey::EXTREMELY_UNHAPPY },
-      { :position => 2, :_destroy => 0, :value => neutral_text, :face_value => CustomSurvey::Survey::NEUTRAL },
-      { :position => 3, :_destroy => 0, :value => happy_text, :face_value => CustomSurvey::Survey::EXTREMELY_HAPPY }
-      ]
+        account_id: @account.id,
+        name: 'default_survey_question',
+        label: survey.link_text,
+        position: 1,
+        survey_id: survey.id,
+        field_type: :custom_survey_radio,
+        default: true,
+        custom_field_choices_attributes: [
+          { position: 1, _destroy: 0, value: unhappy_text, face_value: CustomSurvey::Survey::EXTREMELY_UNHAPPY },
+          { position: 2, _destroy: 0, value: neutral_text, face_value: CustomSurvey::Survey::NEUTRAL },
+          { position: 3, _destroy: 0, value: happy_text, face_value: CustomSurvey::Survey::EXTREMELY_HAPPY }
+        ]
       )
       survey_question.column_name = "cf_int0#{number}"
       survey_question.save
     end
   end
 
-  def create_survey_result(ticket, rating, response_note=nil)
-    old_rating = CustomSurvey::Survey::old_rating rating.to_i
-    result = @account.custom_survey_results.build({
-      :account_id => @account,
-      :survey_id => @account.survey.id,
-      :surveyable_id => ticket.id,
-      :surveyable_type => 'Helpdesk::Ticket',
-      :customer_id => ticket.requester_id,
-      :agent_id => response_note ? response_note.user_id : ticket.responder_id,
-      :group_id => ticket.group_id,
-      :response_note_id => ticket,
-      :custom_field     => {
-          "#{@account.survey.default_question.name}" => rating
-        },
-      :rating           => old_rating
-    })
+  def create_survey_result(ticket, rating, response_note = nil)
+    old_rating = CustomSurvey::Survey.old_rating rating.to_i
+    result = @account.custom_survey_results.build(account_id: @account,
+                                                  survey_id: @account.survey.id,
+                                                  surveyable_id: ticket.id,
+                                                  surveyable_type: 'Helpdesk::Ticket',
+                                                  customer_id: ticket.requester_id,
+                                                  agent_id: response_note ? response_note.user_id : ticket.responder_id,
+                                                  group_id: ticket.group_id,
+                                                  response_note_id: ticket,
+                                                  custom_field: {
+                                                    "#{@account.survey.default_question.name}" => rating
+                                                  },
+                                                  rating: old_rating)
     result.save
     result
   end

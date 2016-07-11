@@ -47,7 +47,7 @@ class SatisfactionRatingsController < ApiApplicationController
     index? ? super(surveys_filter(scoper(current_account))) : super
   end
 
-   private
+  private
 
     def validate_filter_params
       if index?

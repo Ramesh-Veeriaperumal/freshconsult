@@ -1,9 +1,8 @@
 JSON.generate(@items.map do |item|
   response_hash = {
     id: item.id,
-  	title: item.title_text
+    title: item.title_text
   }
   response_hash.merge!(questions: item.questions) if item.custom_survey?
   response_hash
 end)
-

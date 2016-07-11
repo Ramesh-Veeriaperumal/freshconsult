@@ -65,7 +65,7 @@ class SurveysControllerTest < ActionController::TestCase
     stub_custom_survey false
     Account.any_instance.stubs(:features?).with(:surveys).returns(true).once
     Account.any_instance.stubs(:features?).with(:survey_links).returns(false).once
-    get :index, controller_params({state: 'active'}, {})
+    get :index, controller_params({ state: 'active' }, {})
     assert_response 200
     assert JSON.parse(response.body).count == 0
   ensure
@@ -91,7 +91,7 @@ class SurveysControllerTest < ActionController::TestCase
     Account.any_instance.unstub(:features?)
   end
 
-   def test_index_with_invalid_filter
+  def test_index_with_invalid_filter
     get :index, controller_params({ test: 'junk' }, {})
     assert_response 400
     match_json([bad_request_error_pattern('test', :invalid_field)])
@@ -142,6 +142,4 @@ class SurveysControllerTest < ActionController::TestCase
     assert JSON.parse(response.body).count == 1
     assert_nil response.headers['Link']
   end
-
-
 end

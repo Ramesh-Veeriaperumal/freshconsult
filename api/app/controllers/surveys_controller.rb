@@ -1,5 +1,4 @@
 class SurveysController < ApiApplicationController
-
   decorate_views
 
   def scoper
@@ -11,12 +10,12 @@ class SurveysController < ApiApplicationController
   end
 
   def validate_filter_params
-    params.permit(:state, *ApiConstants::DEFAULT_INDEX_FIELDS) 
+    params.permit(:state, *ApiConstants::DEFAULT_INDEX_FIELDS)
     survey_filter = SurveyFilterValidation.new(params, nil, true)
     render_errors(survey_filter.errors, survey_filter.error_options) unless survey_filter.valid?
   end
 
-  def load_objects(items = scoper)
+  def load_objects(_items = scoper)
     super survey_filter
   end
 
