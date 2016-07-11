@@ -16,9 +16,11 @@ module Middleware
             Sharding.select_shard_of(account_id) do
               account = ::Account.find(account_id)
               account.make_current
+              time_spent = Benchmark.realtime { yield }
             end
+          else
+            yield
           end
-          time_spent = Benchmark.realtime { yield }
         rescue DomainNotReady => e
           puts "Just ignoring the DomainNotReady , #{e.inspect}"
         rescue Exception => e

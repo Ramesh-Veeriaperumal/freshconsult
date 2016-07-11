@@ -84,7 +84,7 @@ class HelpdeskReports::Export::Report < HelpdeskReports::Export::Base
     end
 
     def format_result
-      if FORMATTING_REQUIRED.include?(report_type.to_sym)
+      if FORMATTING_REQUIRED.include?(report_type)
         @data = HelpdeskReports::Formatter::Ticket.new(@processed_result, report_specific_constraints(true)).format
       else
         @data = @processed_result

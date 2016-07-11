@@ -1,8 +1,17 @@
 <script type='text/javascript'>
   var page_type = 'contact',
-  dom_helper_data = <%= raw @user.to_json({:only=>api_permitted_data}) %>;
-  current_user = <%= raw current_user.to_json %>;
-  requester = <%= raw @user.to_json %>;
+  dom_helper_data = <%= escape_html_entity(true) {
+                         raw @user.as_json(api_permitted_data).to_json
+                        }
+                    %>;
+  current_user = <%= escape_html_entity(true) {
+                         raw current_user.as_json(api_permitted_data).to_json
+                     }
+                    %>;
+  requester = <%= escape_html_entity(true) {
+                         raw @user.as_json(api_permitted_data).to_json
+                         }
+              %>;
 </script>
 
 <% # Do not remove this div - fa-dev-pholder, It is used by Freshapps SDK for local testing of plugs %>

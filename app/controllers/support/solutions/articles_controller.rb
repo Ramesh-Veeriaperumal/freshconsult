@@ -9,8 +9,8 @@ class Support::Solutions::ArticlesController < SupportController
   
   before_filter :check_version_availability, :only => [:show]
 
-  before_filter :article_visible?, :only => [:show]
-
+  before_filter :article_visible?, :only => [:show, :hit]
+ 
   before_filter :load_agent_actions, :only => :show
 
   before_filter { |c| c.check_portal_scope :open_solutions }

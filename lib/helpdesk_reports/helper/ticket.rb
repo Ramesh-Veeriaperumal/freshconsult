@@ -66,6 +66,8 @@ module HelpdeskReports::Helper::Ticket
         res.merge!(agent_ids: agent_ids.map{|agt_id| agt_id.to_i }) if !agent_ids.nil?
     elsif report_type == :glance
       res.merge!(pdf_export: pdf_export)
+    elsif report_type == :ticket_volume
+      res.merge!(date_range: @query_params[0][:date_range])
     end
     
     res   

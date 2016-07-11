@@ -166,6 +166,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end 
     
     if reopened_now?
+      schema_less_ticket.set_last_resolved_at(ticket_states.resolved_at)
       ticket_states.opened_at=time_zone_now
       ticket_states.reset_tkt_states
       schema_less_ticket.update_reopened_count("create")

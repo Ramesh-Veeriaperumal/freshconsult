@@ -68,8 +68,8 @@
 	freshfone.account_url = '<%= current_account.url_protocol + "://" + current_account.full_domain %>';
 	freshfone.numbersHash = <%= Hash[*current_account_freshfone_number_hash.collect(&:reverse).flatten].to_json.html_safe %>;
 	freshfone.namesHash = <%= Hash[*current_account_freshfone_names.flatten].to_json.html_safe %>;
-	freshfone.ringingTimeOutHash = <%= Hash[*freshfone_numbers.map { |n| [n.id, n.ringing_time] }.flatten].to_json.html_safe %>;
-	freshfone.rrTimeOutHash = <%= Hash[*freshfone_numbers.map { |n| [n.id, n.rr_timeout] }.flatten].to_json.html_safe%>;
+	freshfone.ringingTimeOutHash = <%= Hash[*account_numbers.map { |n| [n.id, n.ringing_time] }.flatten].to_json.html_safe %>;
+	freshfone.rrTimeOutHash = <%= Hash[*account_numbers.map { |n| [n.id, n.rr_timeout] }.flatten].to_json.html_safe%>;
 	freshfone.requester_autocomplete_path = '<%= requester_search_freshfone_autocomplete_index_path %>';
 	freshfone.isDebuggingMode = <%= current_account.features?(:client_debugging)%>;
 	freshfone.isConferenceMode = <%= current_account.features?(:freshfone_conference)%>;

@@ -41,8 +41,8 @@ class Helpdesk::CommonsController < ApplicationController
           user_email = current_account.user_emails.find_by_email(email)
           user = user_email.user if user_email
         when (params[:email] =~ PHONE_REGEX).present?
-          phone = $1
-          user = current_account.users.where(["phone = ? or mobile = ?", phone, phone]).first
+          phone = $1.strip
+          user = current_account.users.where(["phone like ? or mobile like ?", "%#{phone}%", "%#{phone}%"]).first
         when (params[:email] =~ TWITTER_REGEX).present?
           twitter_id = $1
           user = current_account.users.find_by_twitter_id(twitter_id)

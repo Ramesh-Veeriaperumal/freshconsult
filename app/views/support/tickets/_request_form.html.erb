@@ -51,7 +51,7 @@
 
 <%= javascript_tag do %>
   (function($){
-    jQuery(document).ready(function(){      
+    jQuery(document).ready(function(){
       jQuery('#meta_referrer').val(document.referrer.escapeHTML());
       <% if feature?(:auto_suggest_solutions) && allowed_in_portal?(:open_solutions) %>
         callbackToSolutionSearch = function(string){
@@ -120,8 +120,11 @@
                 .insertAfter(jQuery("#helpdesk_ticket_ticket_type").parents('.control-group'));
           }
       });
+      jQuery('#helpdesk_ticket_ticket_type').trigger('change');
     }); 
 
+    
+    
     jQuery("#helpdesk_ticket_email").focusout(function(){
       var ticket_email = jQuery("#helpdesk_ticket_email").val();
       if(<%= current_user.present? && current_user.contractor? %>){
