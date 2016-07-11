@@ -82,5 +82,4 @@ helpdesk:
     - zero_downtime_migration
     - action_mailer_log_subscriber
     - email_controller_log_subscriber
-    - sendgrid_webhook_setting
-
+    - sendgrid_webhook_config

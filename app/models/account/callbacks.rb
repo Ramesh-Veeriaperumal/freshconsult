@@ -101,6 +101,7 @@ class Account < ActiveRecord::Base
     end
 
     def set_shard_mapping
+      return false unless update_sendgrid(full_domain, 'create')
       begin
         create_shard_mapping
        rescue => e
@@ -242,7 +243,8 @@ class Account < ActiveRecord::Base
 
     def update_sendgrid(domain, action)
       send_grid_credentials = Helpdesk::EMAIL[:outgoing][Rails.env.to_sym]
-
+      domain_in_sendgrid = sendgrid_domain_exists?(full_domain)
+      byebug
       begin 
         unless (send_grid_credentials.blank? && action.blank?)
           post_args = Hash.new
@@ -250,32 +252,54 @@ class Account < ActiveRecord::Base
           post_args[:api_key] = send_grid_credentials[:password]
           post_args[:hostname] = domain
     
-          if action == 'delete'
-            response = HTTParty.post(SendgridWebhookSetting::sendgrid_api[:delete_url], :body => post_args)
+          if (action == 'delete' and domain_in_sendgrid)
+            response = HTTParty.post(SendgridWebhookConfig::SENDGRID_API[:delete_url], :body => post_args)
             Rails.logger.debug "Deleting domain account from sendgrid"
             verification = AccountWebhookKeys.destroy_all(account_id:self.id)
           else
+            if domain_in_sendgrid
+              errors[:base] << "Domain is not available!" 
+              Rails.logger.info "Domain exists in sendgrid already"
+              return false
+            end
             generated_key = generate_callback_key
             post_args[:spam_check] = 1
-            post_args[:url] = SendgridWebhookSetting::post_url % { :full_domain => self.full_domain, :key => generated_key }
-            response = HTTParty.post(SendgridWebhookSetting::sendgrid_api[:set_url], :body => post_args)
+            post_args[:url] = SendgridWebhookConfig::POST_URL % { :full_domain => self.full_domain, :key => generated_key }
+            response = HTTParty.post(SendgridWebhookConfig::SENDGRID_API[:set_url], :body => post_args)
             
-            verification = AccountWebhookKey.new
-            verification.account_id  = self.id
-            verification.webhook_key = generated_key
-            verification.service_id  = Account::MAIL_PROVIDER[:sendgrid]
-            verification.status = 1
-            verification.save
+            verification = AccountWebhookKey.new(:account_id => self.id, 
+              :webhook_key => generated_key, :service_id => Account::MAIL_PROVIDER[:sendgrid], :status => 1)
+            verification.save!
           end
-          Rails.logger.debug "Send grid update response for #{domain} : #{response}"
+          Rails.logger.debug "Sendgrid update response for #{domain} : #{response}"
         end
       rescue => e
-        Rails.logger.error "Error in updating #{domain} in sendgrid."
-        Rails.logger.error e.backtrace.join("\n")
+        Rails.logger.error "Error while updating domain in sendgrid."
+        FreshdeskErrorsMailer.error_email(nil, {:domain_name => domain}, e, {
+          :subject => "Error in updating domain in sendgrid", 
+          :recipients => "email-team@freshdesk.com" 
+          })
       end
     end
 
     def generate_callback_key
       SecureRandom.hex(13)
+    end
+
+    def sendgrid_domain_exists?(domain)
+      config = SendgridWebhookConfig::CONFIG
+      begin
+        Timeout::timeout(config[:timeout]) do
+          get_url = SendgridWebhookConfig::SENDGRID_API[:get_specific_domain_url] + "/#{domain}"
+          response = HTTParty.get(get_url, :headers => { "Authorization" => "Bearer #{config[:api_key]}"})
+          return false unless response.code == 200
+        end
+      rescue => e
+        FreshdeskErrorsMailer.error_email(nil, {:domain_name => domain}, e, {
+          :subject => "Error during sendgrid domain verification", 
+          :recipients => "email-team@freshdesk.com"
+          })
+      end
+      return true
     end
 end
