@@ -138,10 +138,10 @@ BoxChooser.prototype = {
     if(min_depth){ navbar_html += this.navbar_item.evaluate({item_id: 'na', name: '...'}); }
     for(i=min_depth+1; i<max_depth; i++){
       entry = this.path_collection.entries[i];
-      navbar_html += this.navbar_item.evaluate({item_id: entry.id, name: entry.name}); 
+      navbar_html += this.navbar_item.evaluate({item_id: entry.id, name: htmlEntities(entry.name) }); 
     }
     if(Number(res.id))
-      navbar_html += this.navbar_item.evaluate({item_id: res.id, name: '<b>'+res.name+'</b>'});
+      navbar_html += this.navbar_item.evaluate({item_id: res.id, name: htmlEntities('<b>'+res.name+'</b>')});
     jQuery('#box-navbar').html(navbar_html);
     jQuery(".box-loading-big").hide();
   },
