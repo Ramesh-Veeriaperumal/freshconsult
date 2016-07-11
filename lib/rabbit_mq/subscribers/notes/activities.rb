@@ -16,12 +16,12 @@ module RabbitMq::Subscribers::Notes::Activities
   end
 
   def mq_activities_valid(action, model)
-    Account.current.features?(:activity_revamp) and valid_model?(model) and act_note_valid?(action)
+    Account.current.features?(:activity_revamp) and act_note_valid_model?(model) and act_note_valid?(action)
   end
   
   private
 
-  def valid_model?(model)
+  def act_note_valid_model?(model)
     model == "note"
   end
 

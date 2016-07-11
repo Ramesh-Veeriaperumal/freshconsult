@@ -65,7 +65,7 @@
       <input type="hidden" name="target[ticket_id]" id="target_ticket" />
         <div class="button-container" id="bulk-merge-button-container">
           <span class="add_recipients">
-            <%= check_box_tag 'add_recipients', 1, @source_tickets.pluck(:requester_id).uniq.length == 1 %>
+            <%= check_box_tag 'add_recipients', 1, false %>
             <span class="m8">
               <%= t('ticket.add_recipients') %>
             </span>

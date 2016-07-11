@@ -6,7 +6,7 @@ namespace :account_cleanup do
         Account.find_in_batches do |accounts|
           accounts.each do |account|
             s_m = ShardMapping.find_by_account_id(account.id)
-            if s_m
+            if s_m.shard_name == ActiveRecord::Base.current_shard_selection.shard
               shard_name = s_m.shard_name
               if (account.subscription &&  account.subscription.suspended? && account.subscription.updated_at < 3.months.ago )
                 puts "Enqueuing #{account.id} to SuspendedAccountsWorker"

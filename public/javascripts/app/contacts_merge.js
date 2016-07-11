@@ -219,13 +219,11 @@ window.App.Contacts.Contacts_merge = window.App.Contacts.Contacts_merge || {};
         this.Facebook = 1;
       if(data["phone"])
         this.Phone = 1;
-      if(data["mobile"])
-        this.Mobile = 1;
     },
 
     setDefaults: function () {
       this.ErrorString="";this.Twitter=0;this.Email=0;this.Facebook=0;this.Phone=0;
-      this.Mobile=0;
+      this.ContactNumber=1;
     },
 
     modifyValidationValues: function (element, add) {
@@ -233,6 +231,7 @@ window.App.Contacts.Contacts_merge = window.App.Contacts.Contacts_merge || {};
       var source_phone = old_element.find('.contact_data').data('phone-num');
       var source_mobile = old_element.find('.contact_data').data('mobile-num');
       if(add){
+        this.ContactNumber += 1
         if(element.data("emails").length)
           this.Email += element.data("emails").split(",").length;
         this.Twitter += element.data("twitter");
@@ -242,6 +241,7 @@ window.App.Contacts.Contacts_merge = window.App.Contacts.Contacts_merge || {};
         if(source_mobile != "" && element.data("mobile-num") != "" && source_mobile != element.data("mobile-num").toString())
           this.Mobile += element.data("mobile");
       }else{
+        this.ContactNumber -= 1
         if(element.data("emails").length)
           this.Email -= element.data("emails").split(",").length;
         this.Twitter -= element.data("twitter");
@@ -264,12 +264,12 @@ window.App.Contacts.Contacts_merge = window.App.Contacts.Contacts_merge || {};
         this.attributeError("twitter");
       if(this.Facebook >= this.Limits["facebook"])
         this.attributeError("facebook");
-      if(this.Mobile >= this.Limits["mobile phone"])
-        this.attributeError("mobile phone");
+      if(this.ContactNumber >= this.Limits["contacts"])
+        this.attributeError("contacts");
       if(this.Email >= this.Limits["emails"])
         this.attributeError("emails");
-      if(this.Phone >= this.Limits["work phone"])
-        this.attributeError("work phone");
+      // if(this.Phone >= this.Limits["phone"])
+      //   this.attributeError("phone");
       if(this.ErrorString == ""){
         jQuery("p.errors").html("");
         if(jQuery('input[name="target[]"]').length>0)

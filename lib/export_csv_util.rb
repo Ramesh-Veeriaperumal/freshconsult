@@ -117,8 +117,8 @@ DATE_TIME_PARSE = [ :created_at, :due_by, :resolved_at, :updated_at, :first_resp
   end
 
   def strip_equal(data)
-    # To avoid formula execution in Excel - Removing any preceding =,+,-,@ in any field
-    ((data.blank? || (data.is_a? Integer)) ? data : (data.to_s.gsub(/^[=+-@]*/, "")))
+    # To avoid formula execution in Excel - Removing any preceding =,+,- in any field
+    ((data.blank? || (data.is_a? Integer)) ? data : (data.to_s.gsub(/^[=+-]*/, "")))
   end
 
   def unescape_html(data)

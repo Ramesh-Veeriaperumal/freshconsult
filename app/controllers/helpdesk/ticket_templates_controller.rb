@@ -36,7 +36,7 @@ class Helpdesk::TicketTemplatesController < ApplicationController
 
   def clone
     clone_attributes
-    @item.name = "%s #{@item.name}" % t('ticket_templates.copy_of')
+    @item.name = "#{I18n.t('ticket_templates.copy_of')} #{@item.name}"
   end
 
   def delete_multiple
