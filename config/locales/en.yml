@@ -3889,7 +3889,7 @@ en:
     mark_default_company: Mark as Default
     client_manager: Can view all tickets from this company
     remove_company: Remove contact-company association
-    remove_company_text: "In the existing tickets created by %{user_name} for this company : "
+    remove_company_text: "In the existing tickets created by %{user_name} for this company:"
     removed_association: "You are about to remove a contact-company association."
     retain_company: Company name can continue to be 
     rename_company: Company name should be updated to 

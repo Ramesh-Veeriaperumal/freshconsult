@@ -989,7 +989,8 @@ class User < ActiveRecord::Base
     def build_or_update_company comp_id
       default_user_company.present? ? (self.default_user_company.company_id = comp_id) :
         self.build_default_user_company(:company_id => comp_id) 
-      self.user_companies = [default_user_company]
+      user_comp = self.user_companies.find { |uc| uc.default }
+      user_comp.company_id = default_user_company.company_id if user_comp.present?
     end
 
     def mark_user_company_destroy
