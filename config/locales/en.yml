@@ -8177,10 +8177,10 @@ en:
       legend_tooltip: 
         total_load: Total load = Old unresolved tickets + New received tickets 
         all_resolved: Total number of resolved tickets
-        new_resolved: Number of tickets received and resolved on the same day
+        new_resolved: 'Number of tickets received and resolved on the same %{trend}'
         all_unresolved: Total number of unresolved tickets
-        new_unresolved:  Number of tickets received and not resolved on the same day
-        received: Number of new tickets received on a given day
+        new_unresolved:  'Number of tickets received and not resolved on the same %{trend}'
+        received: 'Number of new tickets received on a given %{trend}'
       tickets: tickets
       source: source
       priority: priority

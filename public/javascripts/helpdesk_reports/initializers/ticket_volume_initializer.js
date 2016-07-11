@@ -155,12 +155,11 @@ HelpdeskReports.ChartsInitializer.TicketVolume = (function () {
             var loadAnalysis = new stackedColumnChart(settings, type, trend);
             loadAnalysis.stackedGraph();
             if(!is_pdf){
-                this.setTooltipForLegends();    
+                this.setTooltipForLegends(this.TIME_TRENDS[trend]);
             }
             
         },
-        setTooltipForLegends : function(){
-
+        setTooltipForLegends : function(trend){
             jQuery(jQuery(".info.received")[0]).twipsy({
                 html : true,
                 placement : "above",
@@ -172,7 +171,7 @@ HelpdeskReports.ChartsInitializer.TicketVolume = (function () {
                 html : true,
                 placement : "above",
                 title : function() { 
-                    return I18n.t('helpdesk_reports.chart_title.legend_tooltip.received');
+                    return I18n.t('helpdesk_reports.chart_title.legend_tooltip.received', {trend: trend});
             }});
 
             jQuery(jQuery(".info.resolved")[0]).twipsy({
@@ -193,7 +192,7 @@ HelpdeskReports.ChartsInitializer.TicketVolume = (function () {
                 html : true,
                 placement : "above",
                 title : function() { 
-                    return I18n.t('helpdesk_reports.chart_title.legend_tooltip.new_resolved');
+                    return I18n.t('helpdesk_reports.chart_title.legend_tooltip.new_resolved', {trend: trend});
               }});
             
             jQuery(jQuery(".info.unresolved")[0]).twipsy({
@@ -215,7 +214,7 @@ HelpdeskReports.ChartsInitializer.TicketVolume = (function () {
                 html : true,
                 placement : "above",
                 title : function() { 
-                    return I18n.t('helpdesk_reports.chart_title.legend_tooltip.new_unresolved');
+                    return I18n.t('helpdesk_reports.chart_title.legend_tooltip.new_unresolved', {trend: trend});
               }});
 
         },  
