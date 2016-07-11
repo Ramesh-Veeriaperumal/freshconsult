@@ -24,6 +24,18 @@ class CustomNumericalityValidator < ApiValidator
     end
   end
 
+  def validate_each_value
+    if allow_string?
+      @default_validator_instance.validate_each(record, attribute, value)
+      if record.errors[attribute].present?
+        default_datatype_mismatch?
+        record_array_field_error
+      end
+    else
+      super
+    end
+  end
+
   private
 
     def skip_input_info?

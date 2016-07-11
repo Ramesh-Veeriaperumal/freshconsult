@@ -1,0 +1,15 @@
+feedback = @item.survey_remark.feedback.body if @item.survey_remark
+response_hash = {
+  id: @item.id,
+  survey_id: @item.survey_id,
+  user_id: @item.customer_id,
+  agent_id: @item.agent_id,
+  group_id: @item.group_id,
+  feedback: feedback,
+  ticket_id: @ticket.display_id,
+  created_at: @item.created_at.try(:utc),
+  updated_at: @item.updated_at.try(:utc)
+}
+response_hash.merge!(ratings: @item.custom_ratings) if @custom_survey
+response_hash.merge!(ratings: { default_question: @item.rating }) unless @custom_survey
+JSON.generate(response_hash)

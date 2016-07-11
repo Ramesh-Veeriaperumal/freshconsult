@@ -22,7 +22,7 @@ class Import::Zen::ZenStatusWorker < Struct.new(:params)
 		def completed?
 			nodes = JSON.parse(status['nodes'])
 			nodes.each do |node|
-				if status[node].present? && status[node].to_i != Admin::DataImport::ZEN_IMPORT_STATUS[:completed]
+				if status[node].present? && status[node].to_i != Admin::DataImport::IMPORT_STATUS[:completed]
 					return false
 				elsif status[node].present? && node.eql?('ticket')
 					return false unless (ticket_completed?) && (attachment_completed?)

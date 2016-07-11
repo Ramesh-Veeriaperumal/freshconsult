@@ -38,7 +38,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
              :email_body_html => html_version,
              :subject => r_s_template.render('ticket' => ticket, 'helpdesk_name' => ticket.account.portal_name).html_safe}
       if(notification_type == EmailNotification::NEW_TICKET and ticket.source == TicketConstants::SOURCE_KEYS_BY_TOKEN[:phone])
-        params[:attachments] = ticket.attachments
+        params[:attachments] = ticket.all_attachments
         params[:cloud_files] = ticket.cloud_files
       end
       deliver_email_notification(params) if ticket.requester_has_email?
@@ -204,7 +204,10 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       :to         =>  receips,
       :from       =>  from_email,
       :bcc        =>  bcc_email,
-      "Reply-To"  =>  "#{from_email}"
+      "Reply-To"  =>  "#{from_email}",
+      "Account-Id" =>  params[:ticket].account_id,
+      "Ticket-Id"  =>  params[:ticket].display_id,
+      "Type"  =>  params[:notification_type]
       })
     
     inline_attachments   = []
@@ -285,7 +288,10 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       :to         =>  to_emails,
       :bcc        =>  bcc_emails,
       :from       =>  from_email,
-      "Reply-To"  =>  "#{from_email}"
+      "Reply-To"  =>  "#{from_email}",
+      "Account-Id" =>  ticket.account_id,
+      "Ticket-Id"  =>  ticket.display_id,
+      "Type"  =>  "Reply"
     })
 
     headers[:cc] = validate_emails(note.cc_emails, note) unless options[:include_cc].blank?
@@ -343,7 +349,10 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       :cc         =>  cc_emails,
       :bcc        =>  bcc_emails,
       :from       =>  from_email,
-      "Reply-To"  =>  "#{from_email}"
+      "Reply-To"  =>  "#{from_email}",
+      "Account-Id" =>  ticket.account_id,
+      "Ticket-Id"  =>  ticket.display_id,
+      "Type"  =>  "Forward"
     })
     inline_attachments = []
     @ticket = ticket
@@ -387,7 +396,10 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       :cc         =>  cc_emails,
       :bcc        =>  bcc_emails,
       :from       =>  from_email,
-      "Reply-To"  =>  "#{from_email}"
+      "Reply-To"  =>  "#{from_email}",
+      "Account-Id" =>  ticket.account_id,
+      "Ticket-Id"  =>  ticket.display_id,
+      "Type"  =>  "Reply to Forward"
     })
 
     inline_attachments = []
@@ -422,7 +434,10 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       :to         =>  ticket.from_email,
       :from       =>  ticket.friendly_reply_email,
       :sent_on    =>  Time.now,
-      "Reply-To"  =>  "#{ticket.friendly_reply_email}"
+      "Reply-To"  =>  "#{ticket.friendly_reply_email}",
+      "Account-Id" =>  ticket.account_id,
+      "Ticket-Id"  =>  ticket.display_id,
+      "Type"  =>  "Email to requestor"
     })
 
     inline_attachments = []
@@ -450,7 +465,10 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       :to         =>  receips,
       :from       =>  ticket.friendly_reply_email,
       :sent_on    =>  Time.now,
-      "Reply-To"  =>  "#{ticket.friendly_reply_email}"
+      "Reply-To"  =>  "#{ticket.friendly_reply_email}",
+      "Account-Id" =>  ticket.account_id,
+      "Ticket-Id"  =>  ticket.display_id,
+      "Type"  =>  "Internal email"
     })
 
     inline_attachments = []
@@ -494,7 +512,10 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       :from       =>  from_email,
       :cc         =>  cc_emails,
       :bcc        =>  bcc_emails,
-      "Reply-To"  =>  from_email
+      "Reply-To"  =>  from_email,
+      "Account-Id" =>  ticket.account_id,
+      "Ticket-Id"  =>  ticket.display_id,
+      "Type"  =>  "Outbound email"
     })
 
     inline_attachments   = []
@@ -507,7 +528,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     end
 
     self.class.trace_execution_scoped(['Custom/Helpdesk::TicketNotifier/read_binary_attachment']) do
-      ticket.attachments.each do |a|
+      ticket.all_attachments.each do |a|
         attachments[ a.content_file_name] = { 
           :mime_type => a.content_content_type, 
           :content => File.read(a.content.to_file.path, :mode => "rb")

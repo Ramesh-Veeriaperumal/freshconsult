@@ -40,7 +40,7 @@ class Va::Action
       return send(action_key, act_on) if respond_to?(action_key)
       if act_on.respond_to?("#{action_key}=")
         act_on.send("#{action_key}=", value)
-        record_action
+        record_action(act_on)
         return
       else
         clazz = @action_key.constantize
@@ -59,16 +59,20 @@ class Va::Action
     end
   end
   
-  def record_action(params = nil)
-    return if !is_automation_rule?
+  def record_action(ticket, params = nil)
     performer = @doer
-    Va::ScenarioFlashMessage.new(act_hash, performer, false).record_activity(params)
+    activity_params = {:ticket => ticket}
+    activity_params.merge!({
+                        :rule_id => @va_rule.id,
+                        :is_automation_rule => is_automation_rule?
+                        }) if @va_rule.present?
+    Va::RuleActivityLogger.new(act_hash, performer, false, activity_params).record_activity(params)
   end
 
   def record_action_for_bulk(user)
     return if !is_automation_rule?
     performer = user
-    Va::ScenarioFlashMessage.new(act_hash, performer, true).record_activity
+    Va::RuleActivityLogger.new(act_hash, performer, true).record_activity
   end
 
   def group_id(act_on)
@@ -78,7 +82,7 @@ class Va::Action
     rescue ActiveRecord::RecordNotFound
     end
     act_on.group = group if group || value.empty?
-    record_action(group)
+    record_action(act_on, group)
   end
 
   def responder_id(act_on)
@@ -88,7 +92,7 @@ class Va::Action
     rescue ActiveRecord::RecordNotFound
     end
     act_on.responder = responder if responder || value.empty?
-    record_action(responder)
+    record_action(act_on, responder)
   end
 
   def add_comment(act_on)
@@ -100,12 +104,12 @@ class Va::Action
     note.source = Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"]
     note.incoming = false
     note.private = "true".eql?(act_hash[:private])
-    note.save_note!
-    record_action
+    note.build_note_and_sanitize
+    record_action(act_on)
   end
   
   def add_watcher(act_on)
-    watchers = Array.new
+    watchers = Hash.new
     watcher_value = value.kind_of?(Array) ? value : value.to_a
     watcher_value.each do |watcher_id|
       watcher = act_on.subscriptions.find_by_user_id(watcher_id)
@@ -113,7 +117,7 @@ class Va::Action
         user = Account.current.users.find_by_id(watcher_id)
         subscription = act_on.subscriptions.build(:user_id => watcher_id)
         if user && act_on.agent_performed?(user) && subscription.save
-          watchers.push subscription.user.name
+          watchers.merge!({subscription.user.id => subscription.user.name})
           Helpdesk::WatcherNotifier.send_later(:deliver_notify_new_watcher, 
                                                 act_on, 
                                                 subscription, 
@@ -121,17 +125,21 @@ class Va::Action
         end
       end
     end
-    record_action(watchers) if watchers.present?
+    record_action(act_on, watchers) if watchers.present?
   end
 
   def add_tag(act_on)
+    tag_arr = []
     value.split(',').each do |tag_name|
       tag_name.strip!
       tag = Helpdesk::Tag.find_by_name_and_account_id(tag_name, act_on.account_id) || Helpdesk::Tag.new(
           :name => tag_name, :account_id => act_on.account_id)
-      act_on.tags << tag unless act_on.tags.include?(tag)
+      if !act_on.tags.include?(tag)
+        act_on.tags << tag
+        tag_arr << tag.name
+      end
     end
-    record_action
+    record_action(act_on, tag_arr)
   rescue ActiveRecord::RecordInvalid
     Rails.logger.debug "For Va::Action #{self} RecordInvalid Exception rescued"
     last_tag_uses = act_on.tag_uses.last
@@ -155,6 +163,7 @@ class Va::Action
       unless ticket_cc_emails.include?(cc_email_value)
         act_on.cc_email[:tkt_cc] << cc_email_value 
       end
+      record_action(act_on)
     end
   end
 
@@ -164,7 +173,7 @@ class Va::Action
       Helpdesk::TicketNotifier.email_to_requester(act_on, 
         substitute_placeholders_for_requester(act_on, :email_body),
                       substitute_placeholders_for_requester(act_on, :email_subject)) 
-      record_action
+      record_action(act_on)
     end
   end
   
@@ -172,7 +181,7 @@ class Va::Action
     group = get_group(act_on)
     if group && !group.agent_emails.empty?
       send_internal_email(act_on, group.agent_emails)
-      record_action(group)
+      record_action(act_on, group)
     end
   end
 
@@ -180,18 +189,18 @@ class Va::Action
     agent = get_agent(act_on)
     if agent
       send_internal_email(act_on, agent.email)
-      record_action(agent)
+      record_action(act_on, agent)
     end
   end
   
   def delete_ticket(act_on)
     act_on.deleted = true
-    record_action(act_on)
+    record_action(act_on, act_on)
   end
   
   def mark_as_spam(act_on)
     act_on.spam = true 
-    record_action(act_on)
+    record_action(act_on, act_on)
   end
 
   def skip_notification(act_on)
@@ -203,7 +212,7 @@ class Va::Action
     @act_hash[:nested_rules].each do |field|
       assign_custom_field act_on, field[:name], field[:value]
     end
-    record_action
+    record_action(act_on)
   end
 
   private

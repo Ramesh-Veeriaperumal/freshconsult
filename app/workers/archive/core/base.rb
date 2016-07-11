@@ -172,8 +172,14 @@ module Archive
 
       def delete_ticket(ticket,archive_ticket)
         ticket.archive = true
-        ticket.manual_publish_to_rmq("update", RabbitMq::Constants::RMQ_REPORTS_TICKET_KEY,
-                                       {:manual_publish => true})
+        if Account.current.features?(:activity_revamp)  # for both reports and activities
+          ticket.misc_changes = {:archive => [false, true]}
+          key = RabbitMq::Constants::RMQ_GENERIC_TICKET_KEY 
+        else
+          key = RabbitMq::Constants::RMQ_REPORTS_TICKET_KEY
+        end
+        ticket.manual_publish_to_rmq("update", key, {:manual_publish => true})
+        ticket.count_es_manual_publish("destroy") if Account.current.features?(:countv2_writes)#for count es, its a delete action and we ll remove document from count cluster.
         if archive_ticket_destroy(ticket)
           Helpdesk::ArchiveTicket.where(:id => archive_ticket.id, :account_id => archive_ticket.account_id, :progress => true).update_all(:progress => false)
           archive_ticket.sqs_manual_publish
@@ -194,7 +200,7 @@ module Archive
 
       def mysql_note_delete(ticket_id,account_id)
         # select helpdesk_notes
-        note_ids = ActiveRecord::Base.connection.select_values("select * from helpdesk_notes where notable_id=#{ticket_id} and notable_type='Helpdesk::Ticket' and account_id=#{account_id}")
+        note_ids = ActiveRecord::Base.connection.select_values("select id from helpdesk_notes where notable_id=#{ticket_id} and notable_type='Helpdesk::Ticket' and account_id=#{account_id}")
         # delete dependent notes
         unless note_ids.empty?
           delete_notes_association(note_ids,account_id)
@@ -243,9 +249,11 @@ module Archive
             if(key.to_sym == :inline_attachments)
               attach_from_polymorphic_type = (symbol == :helpdesk_tickets) ? "Ticket::Inline" : "Note::Inline"
               attach_to_polymorphic_type = modify_inline_attachments(symbol) 
-              ActiveRecord::Base.connection.execute("update helpdesk_attachments set #{value}_id=#{archive.id}, #{value}_type='#{attach_to_polymorphic_type}' where account_id=#{responder.account_id} and  #{value}_id=#{poly_id} and #{value}_type= '#{attach_from_polymorphic_type}'")
+              ids = ActiveRecord::Base.connection.select_values("select id from helpdesk_attachments where account_id=#{responder.account_id} and #{value}_id=#{poly_id} and #{value}_type= '#{attach_from_polymorphic_type}'")
+              ActiveRecord::Base.connection.execute("update helpdesk_attachments set #{value}_id=#{archive.id}, #{value}_type='#{attach_to_polymorphic_type}' where id in (#{ids.join(',')}) and account_id=#{responder.account_id}") unless ids.empty?
             else
-              ActiveRecord::Base.connection.execute("update #{key} set #{value}_id=#{archive.id}, #{value}_type='#{to_polymorphic_type}' where account_id=#{responder.account_id} and  #{value}_id=#{poly_id} and #{value}_type= '#{from_polymorphic_type}'")
+              ids = ActiveRecord::Base.connection.select_values("select id from #{key} where account_id=#{responder.account_id} and  #{value}_id=#{poly_id} and #{value}_type= '#{from_polymorphic_type}'")
+              ActiveRecord::Base.connection.execute("update #{key} set #{value}_id=#{archive.id}, #{value}_type='#{to_polymorphic_type}' where id in (#{ids.join(',')}) and account_id=#{responder.account_id}") unless ids.empty?
             end
           end
         end

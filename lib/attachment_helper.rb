@@ -1,14 +1,14 @@
  module AttachmentHelper
 
 
-  def attachment_container(attachment, show_delete, page, note_id=nil)
+  def attachment_container(attachment, show_delete, page, item_id=nil)
     unless attachment.empty?
       output = ""
       output << %(<div class="attachment_wrapper mb20">)
       output << %(<ul class="attachment_list">)
 
       attachment.each do |attached|
-        output << attachment_list(attached, show_delete, page, note_id)
+        output << attachment_list(attached, show_delete, page, item_id)
       end
 
       output << %(</ul>)
@@ -17,7 +17,7 @@
     end
   end
 
-  def attachment_list(attached, show_delete, page, note_id, custom_delete_link = nil)
+  def attachment_list(attached, show_delete, page, item_id, custom_delete_link = nil)
     unless attached.new_record?
       output = ""
       output << %(<li class="attachment list_element" id="#{ dom_id(attached) }" rel="original_attachment">)
@@ -28,8 +28,8 @@
           output << attachment_delete_link(custom_delete_link || helpdesk_attachment_path(attached))
         elsif (page == "cloud_file")
           output << attachment_delete_link(custom_delete_link || helpdesk_cloud_file_path(attached))
-        elsif (page == "ticket")
-          output << attachment_delete_link(attachment_unlink_path(attached, note_id))
+        elsif (["ticket", "ticket_template"].include? page)
+          output << attachment_delete_link(attachment_unlink_path(attached, item_id))
         else
           output << %(<span>)
           output << link_to("",'javascript:void(0)',:class => "delete mr10 #{ page }", :id =>"#{attached.id.to_s}")
@@ -96,10 +96,10 @@
             :remote => true
   end
 
-  def attachment_unlink_path(attachment, note_id = nil)
-    (attachment.attachable_type != "Account" or note_id.blank?) ?
-            helpdesk_attachment_path(attachment) :
-            unlink_shared_helpdesk_attachment_path(attachment, {:note_id => note_id})
+  def attachment_unlink_path(attachment, item_id = nil)
+    (attachment.attachable_type != "Account" or item_id.blank?) ?
+      helpdesk_attachment_path(attachment) :
+      unlink_shared_helpdesk_attachment_path(attachment, {:item_id => item_id})
   end
 
   def ticket_page_attachment(attachment)
@@ -108,20 +108,12 @@
         ["Helpdesk::Note", "Helpdesk::Ticket"].include?(attachment.send("#{name}_type")) 
   
         id = attachment.send("#{name}_id")
-        if attachment.send("#{name}_type") == "Helpdesk::Note"
-          attachments_count = attachment.send(name).all_attachments.size + 
-                           attachment.send(name).cloud_files.size
-          type = 'note'
-        else
-          attachments_count = attachment.send(name).attachments.size + 
-                           attachment.send(name).cloud_files.size
-          type = 'ticket'
-        end
+        attachments_count = attachment.send(name).all_attachments.size + 
+                         attachment.send(name).cloud_files.size
+        type = attachment.send("#{name}_type") == "Helpdesk::Note" ? 'note' : 'ticket'
         return {id: id , attachments_count: attachments_count , type: type}
       end
     end
     false
   end
-
-
 end

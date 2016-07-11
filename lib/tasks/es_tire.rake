@@ -203,7 +203,7 @@ def init_partial_reindex(es_account_ids)
 end
 
 def import_classes(id, klasses)
-  import_classes = klasses.blank? ? ['User', 'Helpdesk::Ticket', 'Solution::Article', 'Topic', 'Customer', 'Helpdesk::Note', 'Helpdesk::Tag', 'Freshfone::Caller','Admin::CannedResponses::Response','ScenarioAutomation'] : klasses.split(',')
+  import_classes = klasses.blank? ? ['User', 'Helpdesk::Ticket', 'Solution::Article', 'Topic', 'Customer', 'Helpdesk::Note', 'Helpdesk::Tag', 'Freshfone::Caller','Admin::CannedResponses::Response','ScenarioAutomation', 'Helpdesk::TicketTemplate'] : klasses.split(',')
   import_classes.collect!{ |item| "#{item}#{import_condition(id, item)}" }.join(';')
 end
 
@@ -226,6 +226,8 @@ def import_condition(id, item)
       condition = ".where(['account_id=?', #{id}])"
     when "Solution::Article" then
       condition = ".where(['`solution_articles`.account_id=? and `solution_articles`.updated_at<?', #{id}, Time.now.utc])"
+    when "Helpdesk::TicketTemplate" then
+      condition = ".where(['account_id=?', #{id}])"
   end
   condition
 end

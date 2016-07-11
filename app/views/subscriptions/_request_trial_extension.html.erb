@@ -1,0 +1,26 @@
+<% if current_user.privilege?(:manage_account) && !current_account.account_additional_settings.is_trial_extension_requested? %>
+	<a id="request-trial-extension" href="#"> <%= t('request_for_extension' ).html_safe %></a>
+	<span id="trial-extension-load" class="hide">Loading..</span>
+	<span id="trial-extension-success" class="hide"><%= t('trial_extension_requested' ).html_safe %></span>
+
+	<script type="text/javascript">
+		jQuery('body').on('click.request_trial_extension', '#request-trial-extension', function(e){
+			e.preventDefault();
+			e.stopPropagation();
+			jQuery('#request-trial-extension').fadeOut(500, function(){
+				jQuery('#trial-extension-load').fadeIn(500);
+			});
+
+			jQuery.post('/subscription/request_trial_extension', function(data){
+				jQuery('#trial-extension-load').fadeOut(500, function(){
+					jQuery('#trial-extension-success').fadeIn(1000);
+				});
+			});
+		})
+		
+
+	</script>		
+<% end %>
+
+
+

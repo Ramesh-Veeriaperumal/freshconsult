@@ -1,7 +1,7 @@
 <div class="redactor_insert_btns">
 <ul class="redactor_toolbar">
 	<% defined?(id) ? editorId = id+'-'+cntid+'-body' : editorId = cntid+'-body' %>
-	<% if privilege?(:view_solutions) %>
+	<% if privilege?(:view_solutions) && cntid != 'tkt-cr'%>
 	<li>
 		<%= link_to( t('solution.title_singular'), "#", 
 						:rel => "ticket_solutions", 'data-editor-id' => "#{editorId}", 

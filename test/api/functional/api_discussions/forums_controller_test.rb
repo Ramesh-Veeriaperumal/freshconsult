@@ -452,8 +452,8 @@ module ApiDiscussions
     end
 
     def test_permit_toggle_params_valid
-      Monitorship.where(monitorable_type: 'Forum', user_id: @agent.id,
-                        monitorable_id: f_obj.id).first || monitor_forum(f_obj, @agent, 1)
+      Monitorship.where(monitorable_type: 'Forum', user_id: other_user.id,
+                        monitorable_id: f_obj.id).first || monitor_forum(f_obj, other_user, 1)
       delete :unfollow, controller_params(id: f_obj.id, user_id: other_user.id)
       assert_response 204
       monitorship = Monitorship.where(monitorable_type: 'Forum', user_id: other_user.id, monitorable_id: f_obj.id).first

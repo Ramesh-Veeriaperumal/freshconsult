@@ -1,7 +1,8 @@
-if @note_attachment_count > 0
-  page << "jQuery('#note_attachments_container_#{@note.id} ##{dom_id(@item.attachment)}').fadeOut(500, function(){ jQuery(this).remove() });"
-  page.replace_html "note_attachments_title_#{@note.id}", pluralize(@note_attachment_count, "Attachment")
+if @obj_attachment_count > 0
+  page << "jQuery('##{@obj_name}_attachments_container_#{@obj.id} ##{dom_id(@item.attachment)}').fadeOut(500, function(){ jQuery(this).remove() });"
+  page << "jQuery('#prev-attachments ##{dom_id(@item.attachment)}').fadeOut(500, function(){ jQuery(this).remove() });"
+  page.replace_html "#{@obj_name}_attachments_title_#{@obj.id}", pluralize(@obj_attachment_count, "Attachment")
 else
-  page.replace_html "note_attachments_container_#{@note.id}", ""
+  page.replace_html "#{@obj_name}_attachments_container_#{@obj.id}", ""
 end
 show_ajax_flash(page)

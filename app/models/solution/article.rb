@@ -274,6 +274,28 @@ class Solution::Article < ActiveRecord::Base
       SOLUTION_HIT_TRACKER % {:account_id => account_id, :article_id => id }
     end
 
+    def to_rmq_json(keys,action)
+      article_identifiers
+      #destroy_action?(action) ? article_identifiers : return_specific_keys(article_identifiers, keys)
+    end
+
+    def article_identifiers
+      @rmq_article_identifiers ||= {
+        "id"            =>  id,
+        "user_id"       =>  user_id,
+        "folder_id"     =>  folder_id,
+        "status"        =>  status,
+        "art_type"      =>  art_type,
+        "thumbs_down"   =>  thumbs_down,
+        "thumbs_up"     =>  thumbs_up,
+        "parent_id"     =>  parent_id,
+        "modified_by"   =>  modified_by,
+        "modified_at"   =>  modified_at,
+        "language"      =>  language,
+        "hits"          =>  hits
+      }
+    end
+
     def rl_exceeded_operation
       key = "RL_%{table_name}:%{account_id}:%{user_id}" % {:table_name => self.class.table_name, :account_id => self.account_id,
             :user_id => self.user_id }

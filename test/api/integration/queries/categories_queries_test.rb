@@ -8,11 +8,11 @@ class CategoriesQueriesTest < ActionDispatch::IntegrationTest
     v1 = {}
     v2_expected = {
       api_create: 8,
-      api_show: 1,
+      api_show: 2,
       api_update: 6,
-      api_index: 1,
+      api_index: 2,
       api_destroy: 8,
-      api_forums: 2,
+      api_forums: 3,
 
       create: 19,
       show: 11,

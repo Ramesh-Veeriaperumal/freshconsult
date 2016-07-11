@@ -90,4 +90,49 @@ describe Support::HomeController do
     get 'index'
     response.should redirect_to support_login_url
   end
+
+  describe 'Canonical url' do
+    before(:each) do
+      @account.reload
+      @account.features.forums.create
+      @account.features.open_forums.create
+      @category = create_test_category
+      @forum = create_test_forum(@category)
+      @url_options = { :host => @account.portals.first.host, :protocol => @account.url_protocol }
+      create_test_topic(@forum)
+      log_in(@user)
+    end
+
+    it "should be support home url when solutions and forums are available" do
+      get 'index'
+      expect(controller.instance_variable_get("@page_meta")[:canonical]).to eq(support_home_url(@url_options))
+    end
+
+    it "should be discussions home url when forums are available but solutions are not available" do
+      portal = @account.portals.first
+      solution_category_ids = portal.solution_category_metum_ids
+      portal.portal_solution_category_ids = []
+      log_in(@user)
+      get 'index'
+      expect(controller.instance_variable_get("@page_meta")[:canonical]).to eq(support_discussions_url(@url_options))
+      portal.solution_category_metum_ids = solution_category_ids
+    end
+
+    it "should be solutions home url when solutions are available but forums are not available" do
+      @account.features.forums.destroy
+      log_in(@user)
+      get 'index'
+      expect(controller.instance_variable_get("@page_meta")[:canonical]).to eq(support_solutions_url(@url_options))
+    end
+
+    it "should be support home url when solutions and forums are not available" do
+      portal = @account.portals.first
+      solution_category_ids = portal.solution_category_metum_ids
+      portal.portal_solution_category_ids = []
+      @account.features.forums.destroy
+      get 'index'
+      expect(controller.instance_variable_get("@page_meta")[:canonical]).to eq(support_home_url(@url_options))
+      portal.solution_category_metum_ids = solution_category_ids
+    end
+  end
 end

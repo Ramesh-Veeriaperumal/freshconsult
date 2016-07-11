@@ -5,16 +5,16 @@ class Helpdesk::TicketOldBody < ActiveRecord::Base
   self.table_name =  'helpdesk_ticket_bodies'
   self.primary_key =  :id
   
-  # Callbacks will be executed in the order in which they have been included. 
-  # Included rabbitmq callbacks at the last
-  include RabbitMq::Publisher
-
   belongs_to_account
   belongs_to :ticket, :class_name => "Helpdesk::Ticket", :foreign_key => "ticket_id"
 
   after_update ->(obj) { obj.ticket.update_timestamp }, :if => :changed?
 
   attr_protected :account_id
+
+  # Callbacks will be executed in the order in which they have been included. 
+  # Included rabbitmq callbacks at the last
+  include RabbitMq::Publisher
 
   #  returns false by default 
   #  preventing update a ticket_body in case of ticket update gets called in cases

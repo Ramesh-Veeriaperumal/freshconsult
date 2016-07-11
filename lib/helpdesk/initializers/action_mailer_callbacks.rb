@@ -20,6 +20,17 @@ module ActionMailerCallbacks
     end
     
     def set_smtp_settings(mail)
+      account_id_field = mail.header["Account-Id"]
+      ticket_id_field = mail.header["Ticket-Id"]
+      mail_type_field = mail.header["Type"]
+      account_id = account_id_field.value if account_id_field.present?
+      ticket_id = ticket_id_field.value if ticket_id_field.present?
+      mail_type = (mail_type_field.present? && mail_type_field.value.present?) ? mail_type_field.value : "empty"
+      account_id = account_id.present? ? account_id : -1
+      ticket_id = ticket_id.present? ? ticket_id : -1
+      mail.header["Account-Id"] = nil
+      mail.header["Ticket-Id"] = nil
+      mail.header["Type"] = nil
       if (email_config && email_config.smtp_mailbox)
         smtp_mailbox = email_config.smtp_mailbox
         smtp_settings = {
@@ -36,11 +47,13 @@ module ActionMailerCallbacks
         self.smtp_settings = smtp_settings
         mail.delivery_method(:smtp, smtp_settings)
       elsif (email_config && email_config.category)
+        mail.header['X-SMTPAPI'] = "{\"unique_args\":{\"account_id\": #{account_id},\"ticket_id\":#{ticket_id},\"type\":\"#{mail_type}\"}}"
         Rails.logger.debug "Used EXISTING category : #{email_config.category} in email config : #{email_config.id} while email delivery"
         category_id = email_config.category
         self.smtp_settings = read_smtp_settings(category_id)
         mail.delivery_method(:smtp, read_smtp_settings(category_id))
       else
+        mail.header['X-SMTPAPI'] = "{\"unique_args\":{\"account_id\": #{account_id},\"ticket_id\":#{ticket_id},\"type\":\"#{mail_type}\"}}"
         reset_smtp_settings(mail)
       end
       @email_confg = nil

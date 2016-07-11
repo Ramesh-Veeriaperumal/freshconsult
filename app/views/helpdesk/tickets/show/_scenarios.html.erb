@@ -6,7 +6,7 @@
 	</div>
 	<div data-menu-hover-in='tr' data-menu-trigger=".scenario-btn" class="dialog-well links menuselector">
 		<table class="table table-striped selected_to_yellow scenarios_table">
-		<% elements = scn_accessible_elements %>
+		<% elements = accessible_scenrios %>
 			<%if elements.empty? %>
 			    <div class="list-noinfo">
 			    	<%=t('automations.no_scenario_to_execute').html_safe%>
@@ -33,10 +33,10 @@
 						</div>
 						<div class='info-wrapper'>
 							<div>
-								<% font_class = (Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:users] == scenario.accessible.access_type) ? 
+								<% font_class = (Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:users] == @access_types[scenario.id]) ? 
 										font_class('user', nil, 'visibility-icon tooltip') : 
 										font_class('shared', nil, 'visibility-icon tooltip') %>
-								<% tooltip_text = (Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:users] == scenario.accessible.access_type) ? 'Personal' : 'Shared' %>
+								<% tooltip_text = (Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:users] == @access_types[scenario.id]) ? 'Personal' : 'Shared' %>
 								<span class='<%= font_class %>' title='<%= tooltip_text %>'></span>
 								<strong> <%= h scenario.name %> </strong> 
 							</div>

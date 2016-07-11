@@ -17,8 +17,9 @@ Authority::Authorization::PrivilegeList.build do
                                            :spam, :unspam, :execute_scenario, :pick_tickets,
                                            :get_ca_response_content, :merge_with_this_request, :print, :latest_note,
                                            :clear_draft, :save_draft, :prevnext, :component, :custom_search,
-                                           :quick_assign, :canned_reponse, :full_paginate, :custom_view_save,
-                                           :filter_options, :activities, :status, :get_top_view, :recent_tickets, :old_tickets, :summary, :bulk_scenario, :execute_bulk_scenario]
+                                           :quick_assign, :canned_reponse, :full_paginate, :custom_view_save, :apply_template, :accessible_templates, :search_templates,
+                                           :filter_options, :activities, :status, :get_top_view, :recent_tickets, :old_tickets, :summary, :bulk_scenario,
+                                           :execute_bulk_scenario, :activitiesv2, :activities_all]
     resource :"helpdesk/subscription"
     resource :"helpdesk/tag_use"
     resource :"helpdesk/tag"
@@ -57,7 +58,6 @@ Authority::Authorization::PrivilegeList.build do
 
     #Freshfone
     resource :"freshfone", :only => [:dashboard_stats, :dial_check, :create_ticket, :create_note]
-    resource :"freshfone/ivr"
     resource :"freshfone/user"
     resource :"freshfone/call", :only => [:caller_data, :inspect_call, :verify, :caller_recent_tickets, :trial_warnings, :agent_leg ]
     resource :"freshfone/conference", :only => [:initiate, :notify ]
@@ -95,12 +95,15 @@ Authority::Authorization::PrivilegeList.build do
     resource :"notification/product_notification", :only => [:index]
     # resource :"helpdesk/common", :only => [:group_agents]
 
+    # ticket_templates
+    resource :"helpdesk/ticket_template"
+
     #canned_response
     resource :"helpdesk/canned_responses/folder", :only => [:index, :show]
     resource :"helpdesk/canned_responses/response"
 
     resource :"helpdesk/archive_ticket", :only => [:show, :index, :custom_search, :latest_note, 
-                                                    :full_paginate,  :activities, :component, :prevnext]                                                
+                                                    :full_paginate,  :activities, :component, :prevnext, :activitiesv2]                                                
     resource :"helpdesk/archive_note", :only => [:index, :full_text]
 
     resource :"wf/filter", :only => [:index, :update_filter, :save_filter, :delete_filter]
@@ -109,6 +112,8 @@ Authority::Authorization::PrivilegeList.build do
     # Used for API V2
     resource :"conversation", only: [:create, :ticket_conversations]
     resource :"ticket", :only => [:show, :create, :index, :search]
+
+    resource :"survey", :only => [:create, :survey_results]
 
     # This privilege should only be used for API. This should have only read permission. 
     # Agent who has access to ticket create will obviously know the custom field names.
@@ -420,7 +425,7 @@ Authority::Authorization::PrivilegeList.build do
 
     # Used by V2 API
     resource :"api_contact", :only => [:make_agent]
-    resource :"api_agent", :only => [:show, :index]
+    resource :"api_agent", :only => [:show, :index, :update, :destroy]
   end
 
   manage_availability do
@@ -483,8 +488,10 @@ Authority::Authorization::PrivilegeList.build do
     resource :"integrations/infusionsoft", :only => [:install, :edit, :fields_update]
     resource :"integrations/sugarcrm", :only => [:settings, :edit, :settings_update, :fields_update]
     resource :"integrations/magento", :only => [:new, :edit, :update]
+    resource :"integrations/fullcontact", :only => [:new, :edit, :update]
     resource :"admin/freshfone"
     resource :"admin/freshfone/number"
+    resource :"freshfone/ivr"
     resource :"admin/gamification"
     resource :"admin/quest"
     resource :"helpdesk/sla_policy"
@@ -527,6 +534,8 @@ Authority::Authorization::PrivilegeList.build do
     resource :"api_group", :only => [:create, :update, :destroy, :index, :show]
     resource :"api_sla_policy", :only => [:index, :update]
     resource :"api_product", :only => [:index, :show]
+    resource :survey, :only => [:active_survey, :index]
+    resource :"api_role", :only => [:index, :show]
   end
 
   manage_account do

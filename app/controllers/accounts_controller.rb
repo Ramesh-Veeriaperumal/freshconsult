@@ -224,7 +224,7 @@ class AccountsController < ApplicationController
     end
  
     def default_preferences
-      HashWithIndifferentAccess.new({:bg_color => "#efefef",:header_color => "#252525", :tab_color => "#006063"})
+      HashWithIndifferentAccess.new({:bg_color => "#efefef",:header_color => "#252525", :tab_color => "#006063", :personalized_articles => true})
     end
   
     def redirect_url

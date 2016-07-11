@@ -122,13 +122,13 @@
 	<% end %>
 
     <div id="ticket_attachments_container_<%= @ticket.id%>">
-	<% unless @ticket.attachments.empty? and @ticket.cloud_files.empty? %>
+	<% unless @ticket.all_attachments.empty? and @ticket.cloud_files.empty? %>
 		<span class="seperator"></span>
 		<div class="attachments-wrap clearfix" data-domhelper-name="attachments-wrap">
-			<h5 id="ticket_attachments_title_<%= @ticket.id %>"><strong><%= pluralize(@ticket.attachments.size + @ticket.cloud_files.size, t('attachment'), t('attachments'))%></strong></h5>
+			<h5 id="ticket_attachments_title_<%= @ticket.id %>"><strong><%= pluralize(@ticket.all_attachments.size + @ticket.cloud_files.size, t('attachment'), t('attachments'))%></strong></h5>
 			<ul class="attachment_list">
-			    <% @ticket.attachments.each do |attached| %> 
-			    	<%= attachment_list(attached, privilege?(:edit_ticket_properties), "ticket",nil) %>
+			    <% @ticket.all_attachments.each do |attached| %> 
+			    	<%= attachment_list(attached, privilege?(:edit_ticket_properties), "ticket", @ticket.id) %>
 			    <% end %>
 
 			    <% @ticket.cloud_files.each do |cloud_file| %> 

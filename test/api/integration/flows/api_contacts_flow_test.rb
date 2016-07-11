@@ -20,7 +20,7 @@ class ApiContactsFlowTest < ActionDispatch::IntegrationTest
     old_value.make_current unless old_value.nil?
   end
 
-  JSON_ROUTES = { '/api/contacts/1/restore' => 'put' }
+  JSON_ROUTES = { '/api/contacts/1/make_agent' => 'put' }
 
   JSON_ROUTES.each do |path, verb|
     define_method("test_#{path}_#{verb}_with_multipart") do
@@ -102,6 +102,7 @@ class ApiContactsFlowTest < ActionDispatch::IntegrationTest
 
   def test_create_contact_without_email_and_convert_to_agent
     skip_bullet do
+      Subscription.any_instance.stubs(:agent_limit).returns(100)
       params = {  name: Faker::Lorem.characters(15),
                   twitter_id: Faker::Internet.email }
 
@@ -110,7 +111,7 @@ class ApiContactsFlowTest < ActionDispatch::IntegrationTest
         assert_response 201
       end
 
-      sample_user = User.last
+      sample_user = User.order(:id).last
       put "/api/v2/contacts/#{sample_user.id}/make_agent", nil, @write_headers
       match_json(request_error_pattern('inconsistent_state'))
 
@@ -121,6 +122,8 @@ class ApiContactsFlowTest < ActionDispatch::IntegrationTest
       put "/api/v2/contacts/#{sample_user.id}/make_agent", nil, @write_headers
       assert_response 200
     end
+  ensure
+    Subscription.any_instance.unstub(:agent_limit)
   end
 
   def test_multipart_create_with_all_params

@@ -15,15 +15,9 @@ module Helpdesk::TicketsHelper
   include ParserUtil
   include Marketplace::ApiHelper
   include AutocompleteHelper
-  
-  include HelpdeskAccessMethods
-  
-  def scn_accessible_elements
-    visible_scn = accessible_from_es(ScenarioAutomation,{:load => true, :size => 200},Helpdesk::Accessible::ElasticSearchMethods::GLOBAL_VISIBILITY, "raw_name")
-    visible_scn = accessible_elements(current_account.scn_automations, query_hash('VARule', 'va_rules', '')) if visible_scn.nil?
-    visible_scn.compact! unless visible_scn.blank?
-    visible_scn
-  end
+  include Helpdesk::AccessibleElements
+  include Cache::Memcache::Helpdesk::Ticket #Methods for fragment caching in new ticket and compose email forms
+  include Cache::Memcache::Helpdesk::TicketTemplate #Methods for tkt templates count
   
   def ticket_sidebar
     tabs = [["TicketProperties", t('ticket.properties').html_safe,         "ticket"],
@@ -534,12 +528,20 @@ module Helpdesk::TicketsHelper
 
   def ticket_body_form form_builder, to=false
     contents = []
+    email_content = []
     contents << content_tag(:div, (form_builder.text_field :subject, :class => "required text ticket-subject", :placeholder => t('ticket.compose.enter_subject')).html_safe)
     form_builder.fields_for(:ticket_body, @ticket.ticket_body ) do |builder|
-      signature_value = current_user.agent.signature_value ? ("<p><br /></p>"*2)+current_user.agent.signature_value.to_s : ""
-      contents << content_tag(:div, (builder.text_area :description_html, :class => "required html_paragraph", :"data-wrap-font-family" => true, :value => (signature_value), :placeholder => "Enter Message...").html_safe)
+      field_value = if (desp = @item.description_html).blank? & (sign = current_user.agent.signature_value).blank?
+                      desp.to_s
+                    else
+                      desp.present? ? (sign.present? ? desp + sign : desp) : ("<p><br /></p>"*2)+sign.to_s
+                    end
+      email_content << content_tag(:div, (builder.text_area :description_html, :class => "required html_paragraph ta_insert_cr", :"data-wrap-font-family" => true, :value => field_value, :placeholder => "Enter Message...").html_safe)
+      email_content << content_tag(:div, render(:partial => "helpdesk/tickets/show/editor_insert_buttons",
+                  :locals => {:cntid => 'tkt-cr'}), :class => "request_panel")
+      contents <<  content_tag(:div, email_content.join(" ").html_safe, :class => "email-wrapper" )
     end
-    contents << content_tag(:div, :class=> "attachment-wrapper") do 
+    contents << content_tag(:div, :class=> "attachment-wrapper") do
       render :partial => "/helpdesk/tickets/show/attachment_form", :locals => { :attach_id => "ticket" , :nsc_param => "helpdesk_ticket" }
     end
     contents.join(" ").html_safe
@@ -565,9 +567,10 @@ module Helpdesk::TicketsHelper
     else
       compose_options(current_account.email_configs.order(:name))
     end
-    
     all_options.unshift(default_option) if all_options.count > 1
-    options_for_select(all_options)
+    default_select = params[:template_form] && params[:config_emails].present? ? params[:config_emails] : ""
+
+    options_for_select(all_options,default_select)
   end
     
   def restricted_options_for_compose
@@ -633,6 +636,6 @@ def to_event_data_scenario(va_rule)
     name: va_rule.name,
     description: va_rule.description,
     id: va_rule.id,
-    activities: Va::ScenarioFlashMessage.activities
+    activities: Va::RuleActivityLogger.activities
   }.to_json
 end

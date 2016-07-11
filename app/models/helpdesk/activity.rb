@@ -16,8 +16,10 @@ class Helpdesk::Activity < ActiveRecord::Base
   validates_presence_of :description, :notable_id, :user_id
   
   before_create :set_short_descr
+  before_create :set_migration_key, :if => :feature_present?
   
   OLD_MIGRATION_KEYS = ["bi_reports", "bi_reports_1", "bi_reports_2"]
+  MIGRATION_KEYS     = ["activities"]
   
   scope :freshest, lambda { |account|
     { :conditions => ["helpdesk_activities.account_id = ? and notable_type != ?", account, "Helpdesk::ArchiveTicket"], 
@@ -107,9 +109,25 @@ class Helpdesk::Activity < ActiveRecord::Base
     activity_data.reject {|k,v| OLD_MIGRATION_KEYS.include?(k) }.blank?
   end
 
+  def migrate_activity?
+    activity_data["activities"].nil? and !description.include?("new_ticket") and !description.include?("new_outbound")
+  end
+
   private
     def set_short_descr
       self.short_descr ||= description
     end
-
+    
+    def feature_present?
+      # Added feature check as a separate method so that activities can reuse 
+      # this by adding their feature
+      Account.current.features_included?(:activity_revamp)
+    end
+    
+    def set_migration_key
+      MIGRATION_KEYS.each do |key|
+        self.activity_data.merge!(key => true)
+      end
+    end
+    
 end

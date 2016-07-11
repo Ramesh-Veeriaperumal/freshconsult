@@ -1,5 +1,5 @@
-if !params[:ticket_id].blank? 
-    @ticket = current_account.tickets.find_by_display_id(params[:ticket_id]) unless params[:ticket_id] == 'bulk' 
+if !params[:ticket_id].blank? || params[:tkt_cr].present?
+    @ticket = current_account.tickets.find_by_display_id(params[:ticket_id]) unless ['bulk',nil].include? params[:ticket_id]
     page.replace_html 'responses', :partial => 'helpdesk/tickets/components/ca_responses'
 end 
 page << "jQuery('#responses').removeClass('sloading loading-small');"

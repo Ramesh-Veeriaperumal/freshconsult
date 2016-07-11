@@ -5,8 +5,8 @@ class ApiEmailConfigsQueriesTest < ActionDispatch::IntegrationTest
   def test_query_count
     v2 = {}
     v2_expected = {
-      api_show: 1,
-      api_index: 1,
+      api_show: 2,
+      api_index: 2,
 
       show: 11,
       index: 11

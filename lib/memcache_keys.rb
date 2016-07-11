@@ -11,6 +11,8 @@ module MemcacheKeys
   ACCOUNT_AGENTS = "v4/ACCOUNT_AGENTS:%{account_id}"
 
   ACCOUNT_AGENTS_DETAILS = "v3/ACCOUNT_AGENTS_DETAILS:%{account_id}"
+  
+  ACCOUNT_ROLES = "v1/ACCOUNT_ROLES:%{account_id}"
 
   ACCOUNT_SUBSCRIPTION = "ACCOUNT_SUBSCRIPTION:%{account_id}"
 
@@ -94,6 +96,8 @@ module MemcacheKeys
 
   ACCOUNT_API_WEBHOOKS_RULES = "v1/ACCOUNT_API_WEBHOOKS_RULES:%{account_id}"
 
+  ACCOUNT_INSTALLED_APP_BUSINESS_RULES = "v1/ACCOUNT_INSTALLED_APP_BUSINESS_RULES:%{account_id}"
+
   SALES_MANAGER_3_DAYS = "v1/SALES_MANAGER_3_DAYS:%{account_id}"
 
   FRESH_SALES_MANAGER_3_DAYS = "v1/FRESH_SALES_MANAGER_3_DAYS:%{account_id}"
@@ -138,6 +142,12 @@ module MemcacheKeys
 
   LEADERBOARD_MINILIST_REALTIME = "v2/LEADERBOARD_MINILIST_REALTIME:%{account_id}:%{agent_type}"
 
+  AGENT_NEW_TICKET_FORM = "v1/AGENT_NEW_TICKET_FORM:%{account_id}"
+  ACCOUNT_INSTALLED_APPS_IN_COMPANY_PAGE = "V1/ACCOUNT_INSTALLED_APPS_IN_COMPANY_PAGE:%{account_id}"
+
+  COMPOSE_EMAIL_FORM = "v1/COMPOSE_EMAIL_FORM:%{account_id}"
+
+  TKT_TEMPLATES_COUNT = "v1/TKT_TEMPLATES_COUNT:%{account_id}"
 
   class << self
 
@@ -197,4 +207,12 @@ module MemcacheKeys
     end
   end
   
+  # Fragment caching based on launch key...
+  def cache_based_on_launch launch_key, memcache_key, &block
+    if Account.current.launched?(launch_key)
+      cache(memcache_key, &block)
+    else
+      block.call
+    end
+  end
 end
