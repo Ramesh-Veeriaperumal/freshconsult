@@ -969,6 +969,7 @@ GEM
       ref
     thor (0.19.1)
     thread_safe (0.3.4)
+    thrift (0.9.2.0)
     tilt (1.4.1)
     timecop (0.7.3)
     timers (4.0.4)
@@ -1195,6 +1196,7 @@ DEPENDENCIES
   syck
   text_data_store!
   therubyracer
+  thrift (~> 0.9.2.0)
   timecop
   tire!
   turbo-sprockets-rails3 (= 0.3.14)
