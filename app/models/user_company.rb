@@ -41,6 +41,7 @@ class UserCompany < ActiveRecord::Base
   end
 
   def update_es_index
+    return if Account.current.features_included?(:es_v2_writes) || $redis_others.sismember("DISABLE_ES_WRITES", Account.current.id)
     SearchSidekiq::IndexUpdate::UserTickets.perform_async({ :user_id => user_id }) \
       if ES_ENABLED && !contractor?
   end
