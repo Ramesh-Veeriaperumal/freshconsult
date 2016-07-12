@@ -803,6 +803,7 @@ class User < ActiveRecord::Base
       self.role_ids = args[:role_ids].present? ? args[:role_ids] : [account.roles.find_by_name("Agent").id]
       self.tags.clear
       self.user_companies.delete_all
+      self.user_companies.reload
       agent = build_agent()
       agent.occasional = !!args[:occasional]
       agent.group_ids = args[:group_ids] if args.key?(:group_ids) 
