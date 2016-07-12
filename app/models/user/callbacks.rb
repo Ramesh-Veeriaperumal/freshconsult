@@ -179,6 +179,7 @@ class User < ActiveRecord::Base
       if self.user_companies.length > 1 || has_multiple_companies_feature?
         user_comp = self.user_companies.find{ |uc| uc.default }
         self.customer_id = user_comp.present? ? user_comp.company_id : nil
+        self.customer_id = nil if self.default_user_company.present? && self.default_user_company.marked_for_destruction?
       elsif self.default_user_company.present?
         self.customer_id = !self.default_user_company.marked_for_destruction? ? self.default_user_company.company_id : nil
       end

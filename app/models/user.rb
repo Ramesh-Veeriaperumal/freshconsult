@@ -990,7 +990,11 @@ class User < ActiveRecord::Base
       default_user_company.present? ? (self.default_user_company.company_id = comp_id) :
         self.build_default_user_company(:company_id => comp_id) 
       user_comp = self.user_companies.find { |uc| uc.default }
-      user_comp.company_id = default_user_company.company_id if user_comp.present?
+      if user_comp.present?
+        user_comp.company_id = default_user_company.company_id
+      else
+        self.user_companies = [default_user_company]
+      end
     end
 
     def mark_user_company_destroy
@@ -1000,6 +1004,7 @@ class User < ActiveRecord::Base
                                             :company_id => uc.company_id, 
                                             :user_id => uc.user_id,
                                             :_destroy => true }
+        self.customer_id = nil
       end
     end
 end
