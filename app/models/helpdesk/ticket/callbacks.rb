@@ -478,7 +478,7 @@ private
   end
 
   def check_company_id
-    owner_id = owner_id_was if requester.contractor? && !requester.company_ids.include?(self.owner_id)
+    self.owner_id = owner_id_was unless requester.company_ids.include?(self.owner_id)
   end
 
   def populate_requester
