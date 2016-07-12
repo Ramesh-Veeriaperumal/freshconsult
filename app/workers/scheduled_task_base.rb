@@ -47,7 +47,7 @@ class ScheduledTaskBase < BaseWorker
 
   def execute_on_common_scope
     return if params[:task_id].blank?
-    self.task = Helpdesk::ScheduledTask.find_by_id(params[:task_id]) if params[:task_id].is_a Fixnum
+    self.task = Helpdesk::ScheduledTask.find_by_id(params[:task_id]) if params[:task_id].is_a? Fixnum
     yield if Helpdesk::ScheduledTask::ACCOUNT_INDEPENDENT_TASKS.include?(self.task.schedulable_name)
   end
 
