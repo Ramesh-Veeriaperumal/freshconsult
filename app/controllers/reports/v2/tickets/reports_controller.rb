@@ -11,7 +11,7 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
   before_filter :pdf_export_config, :report_filter_data_hash,           :only   => [:index, :fetch_metrics]
   before_filter :filter_data, :set_selected_tab,                        :only   => [:index, :export_report, :email_reports]
   before_filter :normalize_params, :validate_params, :validate_scope, 
-                :only_ajax_request,                                     :except => [:index, :configure_export, :export_report, :download_file,
+                :only_ajax_request, :redirect_if_invalid_request,          :except => [:index, :configure_export, :export_report, :download_file,
                                                                                     :save_reports_filter, :delete_reports_filter]
   before_filter :pdf_params,                                            :only   => [:export_report]
   before_filter :save_report_max_limit?,                                :only   => [:save_reports_filter]
@@ -136,7 +136,7 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
       request_object.build_request
       requests << request_object
     end
-        
+
     response = bulk_request requests
 
     @results = []

@@ -703,6 +703,8 @@ HelpdeskReports.ChartsInitializer.TicketVolume = (function () {
         generateStatusArrowHtml : function(val, type){
             if(val == "None" || val == 0)
                 return '';
+            else if(val == 0)
+                return '<span class="status-percent"><span class="status-symbol report-arrow no-change left-arrow"></span> <span class="report-arrow no-change right-arrow"></span> 0%</span>'; 
             else{
                 if(type == 'received' || type == 'unresolved'){
                     if(val < 0)
