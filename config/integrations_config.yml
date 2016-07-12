@@ -14,15 +14,15 @@ app:
         salesforce_crm_sync:  "2786"
         dynamics_crm_sync: "2800"
     staging:
-      auth_header: "User y31G0E60L6Zs/nZx7x0MJtRKCyhsJACUaAaDYU67S78=,Organization 3abb0215cd97f5f346f29a860e1e5982"
+      auth_header: "User HEr6MX+mVz+zMwfSRIydYpKVqSbI4F+LWhodHhj0IQk=,Organization e18df23b39be015812b0ae60911dccbd"
       formula_template_id:
-        salesforce_crm_sync:  "2786"
-        dynamics_crm_sync: "2800"
+        salesforce_crm_sync:  "3007"
+        dynamics_crm_sync: "3010"
     production:
-      auth_header: "User y31G0E60L6Zs/nZx7x0MJtRKCyhsJACUaAaDYU67S78=,Organization 3abb0215cd97f5f346f29a860e1e5982"
+      auth_header: "User 7ehqmCMXILFwqZN5z0PD0oZBFzK1paw3CMnfXF3Dtmc=,Organization 508a53340eac87879ff8e65ddfd39da0"
       formula_template_id:
-        salesforce_crm_sync:  "2786"
-        dynamics_crm_sync: "2800"
+        salesforce_crm_sync:  "453"
+        dynamics_crm_sync: "459"
 marketplace_landing_paths:
   github: "/integrations/github/oauth_install"
   quickbooks: "/integrations/marketplace/quickbooks_sso/landing"
