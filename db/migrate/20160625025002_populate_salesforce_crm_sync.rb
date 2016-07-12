@@ -6,7 +6,7 @@ class PopulateSalesforceCrmSync < ActiveRecord::Migration
     	:display_name => "integrations.salesforce_crm_sync.label"
     	:description => "integrations.salesforce_crm_sync.desc" 
     	:account_id => Integrations::Constants::SYSTEM_ACCOUNT_ID
-    	:listing_order => 42
+    	:listing_order => 43
     	:options => {
     		:direct_install => true, 
         :oauth_url => "/auth/salesforce_crm_sync?origin=id%3D{{account_id}}", 

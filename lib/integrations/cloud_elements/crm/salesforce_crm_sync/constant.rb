@@ -9,10 +9,11 @@ module Integrations::CloudElements::Crm
 			"existing_contacts"=>[{"fd_field"=>"name", "sf_field"=>"Name"}, {"fd_field"=>"email", "sf_field"=>"Email"}, {"fd_field"=>"mobile", "sf_field"=>"MobilePhone"}, {"fd_field"=>"phone", "sf_field"=>"Phone"}], 
 			"validator"=>{"string"=>["text"], "textarea"=>["paragraph"], "boolean"=>["checkbox"], "reference"=>[],
 						  "phone"=>["phone_number"], "picklist"=>["dropdown", "dropdown_blank"], "multipicklist"=>["dropdown", "dropdown_blank"], 
-						  "email"=>["email"], "date"=>["date"], "double"=>["number"], "currency"=>["number"], "encryptedstring"=>["text"], "percent"=>["number"], 
-						  "url"=>["url"], "id"=>[]}, "fd_validator"=>{"text"=>["string", "encryptedstring"], "email"=>["email"], "phone_number"=>["phone"], 
+						  "email"=>["email"], "date"=>["date"], "double"=>["number"], "number"=>["number"], "currency"=>["number"], 
+						  "encryptedstring"=>["text"], "percent"=>["number"], "url"=>["url"], "id"=>[]}, 
+		  	"fd_validator"=>{"text"=>["string", "encryptedstring"], "email"=>["email"], "phone_number"=>["phone"], 
 						  "checkbox"=>["boolean"], "paragraph"=>["textarea"], "dropdown"=>["picklist", "multipicklist"], "dropdown_blank"=>["picklist", "multipicklist"], 
-						  "number"=>["number", "currency", "percent"], "survey_radio"=>[], "date"=>["date"], "url"=>["url"]}
+						  "number"=>["number", "currency", "percent", "double"], "survey_radio"=>[], "date"=>["date"], "url"=>["url"]}
 		}
 
 		SALESFORCE_CRM_SYNC_JSON = {
