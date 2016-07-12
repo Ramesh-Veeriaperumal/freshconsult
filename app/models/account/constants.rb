@@ -103,11 +103,12 @@ class Account < ActiveRecord::Base
     :no_list_view_count_query => false, :client_debugging => false, :collision_socket => false,
     :resource_rate_limit => false, :disable_agent_forward => false, :call_quality_metrics => false,
     :disable_rr_toggle => false, :domain_restricted_access => false, :freshfone_conference => false, 
-    :marketplace => true, :fa_developer => false,:archive_tickets => false, :compose_email => false,
+    :marketplace => true, :fa_developer => true,:archive_tickets => false, :compose_email => false,
     :limit_mobihelp_results => false, :ecommerce => false, :es_v2_writes => false,  
     :salesforce_sync => false, :round_robin_on_update => false, :freshfone_call_metrics => false, :cobrowsing => false,
     :threading_without_user_check => false, :freshfone_call_monitoring => false, :freshfone_caller_id_masking => false, 
-    :agent_conference => false, :restricted_helpdesk => false, :enable_multilingual => false, :count_es_writes => false, :count_es_reads => false,
+    :agent_conference => false, :restricted_helpdesk => false, :enable_multilingual => false,
+    :count_es_writes => false, :count_es_reads => false, :activity_revamp => false, :countv2_writes => false, :countv2_reads => false,
     :salesforce_crm_sync => false }
 
   # This list below is for customer portal features list only to prevent from adding addition features

@@ -14,6 +14,11 @@
   <span class="label label-<%= trial_days > 10 ? 'success' : 'important' %> label-lead">
     <%= trial_expiry_title(trial_days) %>
   </span>
+  <% if trial_days < 4 %>
+    <div>
+      <%= render :partial => "/subscriptions/request_trial_extension" %>
+    </div>
+  <% end %>
   <p>
     <%= t('choose_plan_trial').html_safe %>
   </p>

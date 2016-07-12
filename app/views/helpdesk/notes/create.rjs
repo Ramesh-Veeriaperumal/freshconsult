@@ -3,8 +3,11 @@ show_ajax_flash(page)
 
 if params[:showing] == 'activities'
     @total_activities =  @parent.activities_count
-
-    page.insert_html :bottom, 'all_activities', render(:partial => "helpdesk/tickets/show/activity", :collection => @activities)
+    if Account.current.launched?(:activity_ui)
+    	page.insert_html :bottom, 'all_activities', render(:partial => "helpdesk/tickets/show/custom_activity", :collection => @activities)
+    else
+    	page.insert_html :bottom, 'all_activities', render(:partial => "helpdesk/tickets/show/activity", :collection => @activities)
+    end
 else
 	@notes = @parent.conversation_since(params[:since_id]).reverse
 	public_notes = @notes.select{ |note| note.private == false || note.incoming == true }

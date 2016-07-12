@@ -1,7 +1,7 @@
 module RabbitMq::Subscribers::Tickets::Count
 
   def mq_count_valid(action, model)
-    Account.current.features?(:count_es_writes) && valid_count_model?(model) &&
+    Account.current.features?(:countv2_writes) && valid_count_model?(model) &&
    ((update_action?(action) && self.respond_to?(:count_fields_updated?)) ? self.count_fields_updated? : true)
   end
 
@@ -17,8 +17,7 @@ module RabbitMq::Subscribers::Tickets::Count
     {}
   end
 
-  def count_es_manual_publish
-    action          = 'update' #=> Always keeping manual publish as update
+  def count_es_manual_publish(action = "update")
     model_name      = self.class.name.demodulize.tableize.downcase.singularize
     model_uuid      = RabbitMq::Utils.generate_uuid
     model_exchange  = RabbitMq::Constants::MODEL_TO_EXCHANGE_MAPPING[model_name]

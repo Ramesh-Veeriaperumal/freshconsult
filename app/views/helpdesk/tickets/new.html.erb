@@ -1,40 +1,31 @@
-<% content_for :sidebar do %><%= render :partial => "helpdesk/tickets/ticket_widget/sidebar", :locals => {:from_page => 'new_ticket_page_side_bar'}%> <% end %>
-
-<%= form_for @item, :html => {:multipart => true, :id => "NewTicket", :ignore => "" , :rel=>"validate"} do |f| %>
-    <%= render :partial => "helpdesk/tickets/ticket_widget/new_ticket_title" %>
-    <div class="muted"><%= t("ticket.submit_a_ticket_info") %></div>
-  <ul class="compose-new-ticket">  
-    <%= render :partial => "ticket_form", :object => f, :locals => { :is_edit => (@item.errors.any? ? true : false), :f => f } %>
-  </ul>
+<% content_for :sidebar do %>
+  <%= render :partial => "helpdesk/tickets/ticket_widget/sidebar", :locals => {:from_page => 'new_ticket_page_side_bar'}%> 
 <% end %>
-<%= javascript_tag do %>
-  jQuery('a[name="action_save"]').bind('click', function(ev){
-    preventDefault(ev);
-    var _form = jQuery(this).parents("form");
-    if(jQuery(this).prop('id') == 'save_and_close') {
-      jQuery('#helpdesk_ticket_status').val('<%= Helpdesk::Ticketfields::TicketStatus::CLOSED %>')
-      jQuery('#helpdesk_ticket_status').trigger('change')
-    }
-    else {
-      _form.append(new Element('input', {
-                     type: 'hidden',
-                     name: 'save_and_create',
-                     value: true
-                   }));
-    }
+<div class="templates-header-wrapper">
+  <%= render :partial => "helpdesk/tickets/ticket_widget/new_ticket_title" %>
+  <div class="muted"><%= t("ticket.submit_a_ticket_info") %></div>
+<div id="ticket-fields-wrapper">
+  <%= form_for @item, :html => {:multipart => true, :id => "NewTicket", :ignore => "" , :rel=>"validate"} do |f| %>
+    <!-- Note: when any changes made to the block below or TICKET_FORM PARTIAL in the future,
+         please update the memcache key version. key_name :: AGENT_NEW_TICKET_FORM  -->
+    <% cache_based_on_launch(:cache_new_tkt_comps_forms, agent_new_tkt_form_memcache_key) do %>
+      <ul class="compose-new-ticket">
+        <%= render :partial => "ticket_form", :object => f, :locals => { :is_edit => (@item.errors.any? ? true : false), :f => f } %>
+      </ul>
+    <% end %>
+    <!-- block ends here -->
+  <% end %>
+</div>
+</div>
+<%= render :partial => "/helpdesk/tickets/show/multifile_template" %>
+<%= render :partial => "/helpdesk/tickets/show/multifile_template_new" %>
+<%= render :partial => "/helpdesk/tickets/canned_loading"  %>
 
-    _form.submit();
+<script>
+// To load data from store to populate group/agent/product for the first time.
+  jQuery(document).ready(function(){
+    PopulateData.fromStore("#helpdesk_ticket_group_id", 'group');
+    PopulateData.fromStore("#helpdesk_ticket_responder_id", 'agent');
+    PopulateData.fromStore("#helpdesk_ticket_product_id", 'product');
   });
-
-  jQuery('#NewTicket').bind("submit", function(){
-    var _form = jQuery(this);
-    if(_form.valid())
-    {
-      if (_form.find('input[name="cc_emails[]"]').length >= 50) {
-        alert('You can add upto 50 CC emails');
-        return false;
-      }
-      _form.find("button, a.btn").attr('disabled',true);
-    }
-  });
-<% end %>
+</script>

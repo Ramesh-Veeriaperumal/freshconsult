@@ -23,6 +23,7 @@ class Integrations::InstalledApplication < ActiveRecord::Base
   after_commit :after_commit_on_update_customize, :on => :update
   after_commit :after_commit_on_destroy_customize, :on => :destroy
   after_commit :after_commit_customize
+  after_commit :clear_application_on_dip_from_cache
 
   include ::Integrations::AppMarketPlaceExtension
 
@@ -185,5 +186,9 @@ class Integrations::InstalledApplication < ActiveRecord::Base
       if ext_app
         self.errors[:base] << t(:'flash.application.already') and return false
       end
+    end
+
+    def clear_application_on_dip_from_cache
+      Account.current.clear_application_on_dip_from_cache
     end
 end

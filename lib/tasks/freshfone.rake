@@ -213,7 +213,7 @@ namespace :freshfone do
           FreshfoneNotifier.deliver_freshfone_ops_notifier(
             account,
             message: "Phone Trial has been expired for Account :: #{ff_account.account_id}",
-            recipients: ["freshfone@freshdesk.com","pulkit@freshdesk.com"])
+            recipients: ["freshfone-ops@freshdesk.com","pulkit@freshdesk.com"])
         rescue Exception => e
           FreshfoneNotifier.deliver_freshfone_ops_notifier(
             account,
@@ -285,7 +285,7 @@ namespace :freshfone do
           account.make_current
           ff_account.expire
           FreshfoneNotifier.deliver_freshfone_ops_notifier(
-            account, message: "Freshfone Account Trial Expired For Account :: #{ff_account.account_id}", recipients: ["freshfone@freshdesk.com","pulkit@freshdesk.com"])
+            account, message: "Freshfone Account Trial Expired For Account :: #{ff_account.account_id}", recipients: ["freshfone-ops@freshdesk.com","pulkit@freshdesk.com"])
         rescue Exception => e
           FreshfoneNotifier.deliver_freshfone_ops_notifier(
             account,

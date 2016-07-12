@@ -740,6 +740,46 @@ module ApplicationHelper
     end
   end
 
+  def link_to_system_rule(rule)
+    rule_verb = t("ticket.executed")
+    if rule.blank?
+      return rule_verb
+    end
+    case rule[:type]
+    when -1
+      rule_verb = t("ticket.performed")
+      rule_privilege = false
+    when 1
+      system_rule_path = edit_admin_va_rule_path(rule[:id])
+      rule_privilege = privilege?(:manage_dispatch_rules)
+    when 4
+      system_rule_path = edit_admin_observer_rule_path(rule[:id])
+      rule_privilege = privilege?(:manage_dispatch_rules)
+    when 3
+      system_rule_path = edit_admin_supervisor_rule_path(rule[:id])
+      rule_privilege = privilege?(:manage_supervisor_rules)
+    else
+      rule_privilege = false
+    end
+
+    if rule_privilege && rule[:exists]
+      rule_verb + link_to(rule[:type_name],system_rule_path, :class => "system-rule-link tooltip", :title => h(rule[:name]), :target => "_blank")
+    elsif rule_privilege
+      rule_verb + content_tag(:span, h(rule[:type_name]), :title => t("ticket.deleted_rule", :rule_name => h(rule[:name])), :class => "tooltip")
+    else
+      rule_verb + content_tag(:span, h(rule[:type_name]))
+    end
+  end
+
+  def format_activity_date(timestamp, format)
+    activity_timestamp  = timestamp / ActivityConstants::TIME_MULTIPLIER
+    if format
+      Time.zone.at(activity_timestamp)
+    else
+      activity_timestamp
+    end
+  end
+
   def formated_date(date_time, options={})
     default_options = {
       :format => :short_day_with_time,
@@ -977,7 +1017,8 @@ module ApplicationHelper
 
   def construct_new_ticket_element(form_builder,object_name, field, field_label, dom_type, required, field_value = "", field_name = "", in_portal = false , is_edit = false, pl_value_id=nil)
     dom_type = (field.field_type == "nested_field") ? "nested_field" : dom_type
-    element_class   = " #{ (required) ? 'required' : '' } #{ dom_type }"
+    element_class   = " #{ (required && !object_name.eql?(:template_data)) ? 
+                      (field.field_type == "default_description" ? 'required_redactor' : 'required') : '' } #{ dom_type }" 
     element_class  += " required_closure" if (field.required_for_closure && !field.required)
     element_class  += " section_field" if field.section_field?
     field_label    += '<span class="required_star">*</span>'.html_safe if required
@@ -1010,7 +1051,7 @@ module ApplicationHelper
         element = add_cc_field_tag element ,field if (field.portal_cc_field? && !is_edit && controller_name.singularize != "feedback_widget") #dirty fix
         element += add_name_field if !is_edit and !current_user
       when "text", "number", "decimal" then
-        element = label + text_field(object_name, field_name, :class => element_class, :value => field_value)
+        element = label + text_field(object_name, field_name, :class => element_class, :value => "#{field_value}")
       when "paragraph" then
         element = label + text_area(object_name, field_name, :class => element_class, :value => field_value)
       when "dropdown" then
@@ -1052,13 +1093,18 @@ module ApplicationHelper
                                           ( check_box(object_name, field_name, check_box_html.merge!({:checked => field_value}) ) ) )
         element = content_tag(:div, (checkbox_element + label).html_safe, :class => "checkbox-wrapper")
       when "html_paragraph" then
-         element = label 
-         redactor_wrapper = ""
+        element = label 
+        redactor_wrapper = ""
+        element_class += " ta_insert_cr" if field.field_type == "default_description"
+        editor_type = object_name.eql?("template_data") ? :template : :ticket
+        id,name = "#{object_name}_ticket_body_attributes_description_html", "#{object_name}[ticket_body_attributes][description_html]"
         form_builder.fields_for(:ticket_body, @ticket.ticket_body ) do |builder|
-            redactor_wrapper = builder.text_area(field_name, :class => element_class, :value => field_value, :"data-wrap-font-family" => true )
+          redactor_wrapper = builder.text_area(field_name, :class => element_class, :value => field_value, :"data-wrap-font-family" => true, :"editor-type" => editor_type, :id => id, :name => name)
         end
-            redactor_wrapper += render(:partial => "/helpdesk/tickets/ticket_widget/new_ticket_attachment", :formats => [:html])
-            element += content_tag(:div, redactor_wrapper, :class => "redactor_wrapper")
+        redactor_wrapper += render(:partial => "/helpdesk/tickets/ticket_widget/new_ticket_attachment", :formats => [:html], :locals => {:object_name => object_name})
+        redactor_wrapper += content_tag(:div, render(:partial => "helpdesk/tickets/show/editor_insert_buttons", 
+                  :locals => {:cntid => 'tkt-cr'}), :class => "request_panel") if field.field_type == "default_description"
+        element += content_tag(:div, redactor_wrapper, :class => "redactor_wrapper")
       when "date" then
         element = label + content_tag(:div, construct_date_field(field_value, 
                                                                  object_name, 
@@ -1067,9 +1113,11 @@ module ApplicationHelper
                                             :class => "controls input-date-field")
         
     end
-    element_class = (field.has_sections_feature? && (field.field_type == "default_ticket_type" || field.field_type == "default_source")) ? " dynamic_sections" : ""
-    company_class = " hide" if field.field_type == "default_company" && (@ticket.new_record? || dropdown_choices.empty?)
-    content_tag :li, element.html_safe, :class => "#{ dom_type } #{ field.field_type } field" + element_class + company_class.to_s
+    fd_class = "#{ dom_type } #{ field.field_type } field"
+    fd_class += " dynamic_sections" if (field.has_sections_feature? && (field.field_type == "default_ticket_type" || field.field_type == "default_source"))
+    fd_class += " hide" if field.field_type == "default_company" && (@ticket.new_record? || dropdown_choices.empty?)
+    fd_class += " tkt_cr_wrap" if field.field_type == "default_description"
+    content_tag :li, element.html_safe, :class => fd_class
   end
 
   def show_cc_field field
@@ -1085,7 +1133,7 @@ module ApplicationHelper
 
   def construct_date_field(field_value, object_name, field_name, element_class)
     date_format = AccountConstants::DATEFORMATS[Account.current.account_additional_settings.date_format]
-    field_value = formatted_date(field_value) if field_value.present?
+    field_value = formatted_date(field_value) if !object_name.include?("template_data") and field_value.present?
     text_field_tag("#{object_name}[#{field_name}]", field_value, 
               {:class => "#{element_class} datepicker_popover", 
                 :readonly => true,
@@ -1128,22 +1176,27 @@ module ApplicationHelper
     section_container
   end
 
-  def construct_new_section_fields(f, field, is_edit, item, required)
+  def construct_new_section_fields(f, object_name, field, is_edit, item, required)
     section_container = ""
     field.picklist_values.includes(:section).each do |picklist|
       next if picklist.section.blank?
       section_elements = ""
       picklist.section_ticket_fields.each do |section_tkt_field|
-        if is_edit || required
-          section_field_value = item.is_a?(Helpdesk::Ticket) ? item.send(section_tkt_field.field_name) :
+        if is_edit || params[:template_form] || required
+          section_field_value = if item.is_a?(Helpdesk::TicketTemplate)
+            item.template_data[section_tkt_field.field_name]
+          elsif item.is_a?(Helpdesk::Ticket) 
+            item.send(section_tkt_field.field_name)
+          else
             item.custom_field_value(section_tkt_field.field_name)
+          end
           section_field_value = nested_ticket_field_value(item, 
                                   section_tkt_field) if section_tkt_field.field_type == "nested_field"
         elsif !params[:topic_id].blank?
           section_field_value = item[section_tkt_field.field_name]
         end
         field_label = (section_tkt_field.label).html_safe
-        section_elements += construct_new_ticket_element(f, :helpdesk_ticket, 
+        section_elements += construct_new_ticket_element(f, object_name, 
                                                         section_tkt_field, 
                                                         field_label,
                                                         section_tkt_field.dom_type, 
@@ -1654,6 +1707,10 @@ module ApplicationHelper
       :updated  => current_user.last_login_at.to_i,
       :roles    => (current_user.privilege?(:admin_tasks)) ? 'admin' : 'agent'
     }
+  end
+
+  def description_attachment params = {}
+    render :partial => "helpdesk/tickets/description_attachment", :locals => {:filename => params[:filename], :value => params[:value], :name => params[:name]}
   end
 
 end

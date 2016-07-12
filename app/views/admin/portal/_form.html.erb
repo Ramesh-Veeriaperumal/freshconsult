@@ -81,6 +81,18 @@
         </div>
       </div>
     </div>
+
+    <div class="fields">
+    <div class="control-group pt10">
+      <label class="control-label"> <%= t("admin.products.portal.show_author_name") %></label>
+      <div class="controls personalized_articles">
+        <input rel="toggle" type="checkbox" name="portal[preferences][personalized_articles]" data-checked-label="<%= t('plain_yes') %>" data-unchecked-label="<%= t('plain_no') %>" <%if portal.preferences[:personalized_articles] %>checked="true"<%end%> value=true />
+          <span class="muted">
+            <%= content_tag(:div, t("admin.products.portal.enable_personalized_articles"), :class => "info-data") %>
+          </span>
+      </div>
+    </div>
+
     <div class="fields">
       <span class="seperator"></span>
       <h4 class="heading caption lead rebranding-header"><%= t('admin.products.portal.portal_rebranding') %></h4>

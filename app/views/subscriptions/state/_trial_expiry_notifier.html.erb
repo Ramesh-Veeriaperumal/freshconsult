@@ -24,6 +24,11 @@
       <div class="trial-background" >
         <%= link_to("#{t('choose_a_plan')} <b class='arrow-right'></b>".html_safe, subscription_url) %>
       </div>
+      <% if trial_days < 4 %>
+          <div>
+            <%= render :partial => "/subscriptions/request_trial_extension" %>
+          </div>
+      <% end %>
     <% end %>
   </div>
   <%= javascript_tag do %>

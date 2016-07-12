@@ -58,12 +58,12 @@ class Freshfone::Option
 		unless has_valid_performer_type?
 			ivr.errors.add(:base, t('freshfone.admin.ivr.invalid_performer_type'))
 		end
-		ivr.errors.add(:base, t('freshfone.admin.trial.numbers.ivr.direct_dial')) if call_number? && in_trial_states?
-		ivr.errors.add(:base, t('freshfone.admin.ivr.invalid_number',
+		ivr.errors.add(:base, I18n.t('freshfone.admin.trial.numbers.ivr.direct_dial')) if call_number? && in_trial_states?
+		ivr.errors.add(:base, I18n.t('freshfone.admin.ivr.invalid_number',
 																				{ :menu => menu.menu_name })) if invalid_performer_number?
-		ivr.errors.add(:base, t('freshfone.admin.ivr.restricted_country',
+		ivr.errors.add(:base, I18n.t('freshfone.admin.ivr.restricted_country',
 																				{ :menu => menu.menu_name })) if restricted_performer_number?
-		ivr.errors.add(:base, t('freshfone.admin.ivr.invalid_jump_to',
+		ivr.errors.add(:base, I18n.t('freshfone.admin.ivr.invalid_jump_to',
 															{ :menu => menu.menu_name })) if has_invalid_jump_to?
 	end
 	
@@ -97,7 +97,8 @@ class Freshfone::Option
 		end
 
 		def restricted_performer_number?
-			call_number? && !authorized_country?(performer_number,account)
+			call_number? && !invalid_performer_number? &&
+				!authorized_country?(CGI.escapeHTML(performer_number),account)
 		end
 		
 		def active_performer

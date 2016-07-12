@@ -38,8 +38,11 @@ module Integrations::Constants
     :twitter => "twitter",
     :facebook => "facebook",
     :freshsales => "freshsales",
+    :fullcontact => "fullcontact",
     :salesforce_crm_sync => "salesforce_crm_sync"
   }
+
+  DISPLAY_IN_PAGES = { "ticket_show" => 2, "contact_show" => 1, "company_show" => 0 }
 
   CRM_APPS= [:sugarcrm, :salesforce, :batchbook, :highrise, :nimble, :zohocrm, :capsule_crm, :dynamicscrm, :quickbooks, :freshbooks, :infusionsoft, :freshsales]
 

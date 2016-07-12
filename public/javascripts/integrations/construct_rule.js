@@ -14,6 +14,9 @@
         this.dropdown2_validator = options.crmTypeValidator;
         this.maximumSize = options.maximumSelectionSizeContact;
         this.customModule = options.customModule;
+        this.customMaxSize = options.customMaxSize;
+        this.customSize = 0;
+        this.selectedCustomSize = [];
         this.data_type = [];
         this.init();
     }
@@ -30,7 +33,6 @@
             $currentChilds.each(function(){
 
                 var options = $(this).children('option');
-                var options_data = [];
                 var type = $(this).attr('rel');
 
                 self.data_type.push(type);
@@ -41,14 +43,24 @@
                 var element_count = arr.size();
 
                 self.inputArea[$(this).attr('rel')] ? "" : self.inputArea[$(this).attr('rel')] = {};
-                
-                for (var i = options.length - 1; i >= 0; i--) {
-                    if(self.customModule == "sync"){
-                        options_data.push({ 'text' : options[i].innerHTML , 'id' : options[i].value, 'type' : $(options[i]).data('fieldType'), disabled: false });
-                    }else{
-                        options_data.push({ 'text' : options[i].innerHTML , 'id' : options[i].value, disabled: false });
-                    }
-                };
+
+                var options_data = options.map(function(index, item){
+                    if(self.customModule === "sync"){
+                        return {
+                            text: item.innerHTML,
+                            id: item.value,
+                            type: $(item).data('fieldType'),
+                            disabled: false,
+                            customSize: $(item).data('customSize')
+                        };
+                    } else {
+                        return {
+                            text: item.innerHTML,
+                            id: item.value,
+                            disabled: false
+                        };
+                    } 
+                });
                 
                 self.inputArea[$(this).attr('rel')][$(this).attr('rel') + "_" + element_count] = options_data;
                 self.inputAttrName[$(this).attr('rel') + "_" + element_count] = $(this).attr('name');
@@ -71,7 +83,7 @@
             var $wrapper = $("<div>", { class: 'rules_list_wrapper' });
             var $addElement = $('<div>', { class:"add_menu_wrapper" })
                 $addElement.append('<div class="add_new_list list" class="active"><div class="list-data"><a class="add_img list-icon"></a></div> <div class="list-data pt14 pb14"><span class="add_list"> Add New </span></div></div>'); 
-                $addElement.append('<div class="empty_list_alert list"> <div class="list-data"></div> <div class="list-data"> <p class="m10 muted"> Cannot to add any more fields </p></div></div>') 
+                $addElement.append('<div class="empty_list_alert list"> <div class="list-data"></div> <div class="list-data"> <p class="m10 muted"> Cannot add any more fields </p></div></div>') 
                 $temp_div.append('<div class="tabel-thead"></div>')
                         .append($wrapper).append($addElement);          
             this.$currentElement.html($temp_div.html());
@@ -158,8 +170,16 @@
 
             if(this.inputArea['dropdown'] != undefined && this.inputArea['dropdown'] != "") {
                 $.each(this.inputArea['dropdown'], function(key, object){
-                    var size = self.$currentElement.children('.rules_list_wrapper').children().size();
-                    if(object.size() == size|| (self.customModule == "sync" && size == self.maximumSize)){
+                    var select2_count = self.$currentElement.children('.rules_list_wrapper').children().size();
+                    var size = 0;
+                    if(self.customModule === "sync"){
+                        $.each(object,function(index, item){
+                            if(item["disabled"] == true){
+                                size = size + 1;
+                            }
+                        });
+                    }
+                    if(object.size() == select2_count || (self.customModule === "sync" && (size == self.maximumSize || object.size() == size))){
                         self.$currentElement.children('.add_menu_wrapper').find('.add_new_list').hide();
                         self.$currentElement.children('.add_menu_wrapper').find('.empty_list_alert').css('display','table-row');
                         return false;
@@ -230,18 +250,46 @@
             var old_value = $(element).data('oldValue');
             var object = this.inputArea[$(element).attr('rel')][$(element).data('current-type')];
 
+            if(select2_data.customSize) {
+                this.customSize = this.customSize + 1;
+                this.selectedCustomSize.push(select2_data['id']);
+            }
+
+            if(old_value !== undefined){
+                if(old_value['id'] != select2_data['id'] && old_value.customSize) {
+                    this.includeCustomFields(object, old_value["id"]);
+                }
+            }
+
             for(var i = 0; i < object.length; i++) {
-                if(object[i]['id'] == select2_data['id']){ 
+                if(object[i]['id'] == select2_data['id']){
                     object[i].disabled = true;
                     $(element).data('oldValue', object);
                 }
-
-                if(object[i]['id'] == old_value['id'] && select2_data['id'] != old_value['id']){
+                if(this.customMaxSize == this.customSize && object[i].customSize) {
+                    object[i].disabled = true;
+                }
+                if(old_value !== undefined && object[i]['id'] == old_value['id'] && select2_data['id'] != old_value['id']){
                     object[i]['disabled'] = false;
                 }
             }
 
             this.changePreviouesData(element);
+            if(this.customModule === "sync" && this.customMaxSize == this.customSize ){
+                this.checkAddButtonForDropdown();
+            }
+        },
+        includeCustomFields: function(object, id){
+            this.customSize = this.customSize - 1;
+            var index = this.selectedCustomSize.indexOf(id)
+            this.selectedCustomSize.splice(index,1);
+            if(this.customSize == this.customMaxSize-1) {
+                for(var i = 0; i < object.length; i++) {
+                    if(this.selectedCustomSize.indexOf(object[i]['id']) == -1 && object[i].customSize){
+                        object[i]['disabled'] = false;
+                    }
+                }
+            }
         },
         constructSelect2: function($list){
             var self = this;
@@ -259,7 +307,7 @@
                     }).off().on('change', function(ev){
                         self.onChangeSelect2(this);
 
-                    }).data('oldValue', select2_data[0]);
+                    })
 
                 } else if($(value).attr('rel') == 'multi_select'){
                     // Initilize select2 for multi select
@@ -376,6 +424,10 @@
                 list_element.each(function(index, element){
                     var select2_data = $(element).select2('data');
                     if(select2_data != null){
+                        if(select2_data.customSize){
+                            var object = self.inputArea[$(element).attr('rel')][$(element).data('current-type')];
+                            self.includeCustomFields(object, select2_data['id']);
+                        }
                         self.setDisable(element,select2_data);
                     }
                 })
@@ -481,12 +533,10 @@
             }
 
             var val_keys = Object.keys(validator);
-            var validDataTypes = [];
-            for(var i=0; i<val_keys.length; i++){
-                if(validator[val_keys[i]].indexOf(type) != -1){
-                    validDataTypes.push(val_keys[i]);
-                }
-            }
+            var validDataTypes = val_keys.filter(function(valkey){
+                return validator[valkey].indexOf(type) !== -1;
+                
+            })
 
             $.each(this.inputArea[$(element).attr('rel')][$(element).data('currentType')], function(key, object){
                 if(object['disabled'] == false && validDataTypes.indexOf(object['type']) != -1){ 
@@ -512,6 +562,7 @@
         createRuleData : [],
         rule_value : [],
         disableField : '',
-        renderTemplate : '' // ----- variable only for template rendering. Have to give template class
+        renderTemplate : '', // ----- variable only for template rendering. Have to give template class
+        customMaxSize : 0
     }
 }(jQuery));

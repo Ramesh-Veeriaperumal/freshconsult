@@ -1,9 +1,9 @@
-if @a_template
-	page << "insertIntoConversation(\"#{escape_javascript(@a_template)}\")"
+if params[:id].present? and !params[:tkt_cr]
+	page << "insertIntoConversation(\"#{escape_javascript(@template_content)}\")"
 else
-  page << 'var $msg_body_element = jQuery("#reply-multiple-cnt-reply-multiple-body");'
+  page << 'var $msg_body_element = jQuery(".ta_insert_cr");'
   page << '$msg_body_element.data("redactor").focusOnCursor();'
-  page << "$msg_body_element.insertHtml(\"#{escape_javascript(@ca_resp.content_html)}\");"
+  page << "$msg_body_element.insertHtml(\"#{escape_javascript(@template_content)}\");"
   page << 'jQuery.event.trigger({ type:"textInserted", message:"success", time:new Date() });'
   page << '$msg_body_element.getEditor().focus();'
 end
@@ -13,10 +13,14 @@ if !@attachments.empty? && @allow_attachments
   @attachments.each do |att|
     attachment_dom << %(  <div class="item">
                             <a href="#" class="removefile attachment-close" onclick="jQuery(this).parent().remove(); return false;" ></a>
-                            <a href="#"> #{escape_javascript(att.content_file_name)} </a>
+                            <a class="attachment-title" href="#"> #{escape_javascript(att.content_file_name)} </a>
                             <input type="hidden" value="#{att.id}" name="shared_attachments[]" class="ca" />
                           </div>)
   end
-  page << "jQuery('.request_panel:visible .shared_attachment_list').append('#{escape_javascript(attachment_dom)}')"
-  page << 'jQuery(".request_panel:visible .a-count").html(jQuery(".shared_attachment_list").children(":visible").size());'
+  if !params[:tkt_cr].present?
+    page << "jQuery('.request_panel:visible .shared_attachment_list').append('#{escape_javascript(attachment_dom)}')"
+    page << 'jQuery(".request_panel:visible .a-count").html(jQuery(".shared_attachment_list").children(":visible").size());'
+  else
+    page << "jQuery('#ticket-attachments').append('#{escape_javascript(attachment_dom)}')"
+  end
 end

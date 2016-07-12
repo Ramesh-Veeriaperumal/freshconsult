@@ -7,7 +7,7 @@ class UserCompany < ActiveRecord::Base
   belongs_to :company
 
   validates_presence_of :company
-  validates_uniqueness_of :company_id, :scope => :user_id
+  validates_uniqueness_of :company_id, :scope => [:user_id, :account_id]
 
   after_commit :associate_tickets, on: :create
   after_commit :update_tickets_company_id, on: :update

@@ -206,6 +206,12 @@ Helpkit::Application.routes.draw do
     end
   end
 
+  resources :ticket_templates_uploaded_images, :only => :create do
+    collection do
+      post :create_file
+    end
+  end
+
   resources :email_notification_uploaded_images, :only => :create do
     collection do
       post :create_file
@@ -881,8 +887,15 @@ Helpkit::Application.routes.draw do
       post :check_session_id
     end
 
-    namespace :xero do
-      get :authorize
+    namespace :fullcontact do
+      get :new
+      post :callback
+      get :edit
+      post :update
+    end
+
+    namespace :xero do 
+      get :authorize 
       post :update_params
       get :edit
       get :fetch
@@ -1724,6 +1737,7 @@ Helpkit::Application.routes.draw do
       post :calculate_amount
       put :convert_subscription_to_free
       post :calculate_plan_amount
+      post :request_trial_extension
     end
   end
 
@@ -1758,6 +1772,7 @@ Helpkit::Application.routes.draw do
       member do
         get :latest_note
         get :activities
+        get :activitiesv2
         get :prevnext
         get :component
       end
@@ -1811,6 +1826,9 @@ Helpkit::Application.routes.draw do
         put :quick_assign #TODO-RAILS3 new route
         get :bulk_scenario
         put :execute_bulk_scenario
+        get :search_templates
+        get :accessible_templates
+        post :apply_template
       end
 
       member do
@@ -1833,6 +1851,8 @@ Helpkit::Application.routes.draw do
         get :print
         get :latest_note
         get :activities
+        get :activitiesv2
+        get :activities_all
         delete :clear_draft
         post :save_draft
         put :update_ticket_properties
@@ -2066,12 +2086,21 @@ Helpkit::Application.routes.draw do
     match 'commons/group_agents/(:id)' => "commons#group_agents"
     match 'commons/user_companies' => "commons#user_companies"
 
-
-    resources :scenario_automations do
-      member do
-        get :clone_rule
-      end
+    resources :ticket_templates do
+      member do 
+        get :clone
+      end 
       collection do
+        delete :delete_multiple
+      end
+    end
+    match '/ticket_templates/tab/:current_tab' => 'ticket_templates#index'
+    
+    resources :scenario_automations do
+      member do 
+        get :clone
+      end 
+      collection do 
         get :search
         get :recent
       end

@@ -1,0 +1,6 @@
+JSON.generate(id: @item.id,
+              name: @item.name,
+              description: @item.description,
+              default: @item.default_role,
+              created_at: @item.created_at.try(:utc),
+              updated_at: @item.updated_at.try(:utc))

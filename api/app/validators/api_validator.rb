@@ -98,7 +98,13 @@ class ApiValidator < ActiveModel::EachValidator
       error_options = (options[:message_options] ? options[:message_options].dup : {})
       code = options[:code] || error_code
       error_options.merge!(code: code) if code
+      nested_field = nested_field_name
+      error_options.merge!(nested_field: nested_field) if nested_field
       error_options
+    end
+
+    def nested_field_name
+      options[:nested_field]
     end
 
     def custom_error_options

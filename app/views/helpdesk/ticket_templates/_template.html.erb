@@ -1,0 +1,30 @@
+<tr id=<%= dom_id(template) %>>
+  <td class="template-checkbox">
+    <input type="checkbox" name="ids[]" class="select-template" value= "<%=template.id%>">
+  </td>
+  <td class="template-desc ticket-details">
+    <strong>
+      <%= link_to(h(template.name), edit_helpdesk_ticket_template_path(template), :class => "item_info") %>
+    </strong><br/>
+    <span class="muted">
+      <%= template.description.length > 75 ? h(template.description).slice(0,75)+"..." : h(template.description) %>
+    </span>
+  </td>
+  <td class="action-btn">
+    <div class="item_actions hide" align="right">
+        <% if show_clone %>
+          <a class="tooltip" data-original-title="<%= t('clone') %>" href="<%= clone_helpdesk_ticket_template_path(template) %>">
+           <%= font_icon "clone", { :size => 20 } %>
+          </a>
+        <% end %>
+        <a class="tooltip" data-original-title="<%= t('edit') %>" href="<%= edit_helpdesk_ticket_template_path(template) %>">
+         <%= font_icon "edit", { :size => 20 } %>
+        </a>
+
+    </div>
+     <div class="item_actions" align="right">
+        <%= link_to(t('clone'),clone_helpdesk_ticket_template_path(template), :class => "btn btn-mini") if show_clone%>
+        <%= link_to(t('edit'), edit_helpdesk_ticket_template_path(template), :class => "btn btn-mini") %>
+    </div>
+  </td>
+</tr>

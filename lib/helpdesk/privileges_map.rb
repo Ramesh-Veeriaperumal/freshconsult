@@ -47,9 +47,7 @@ module Helpdesk
 							hash.merge!(pr_map) {|key,oldval,newval| oldval | newval}
 	   						hash
 						end
-
 	end
-
 end
 
 

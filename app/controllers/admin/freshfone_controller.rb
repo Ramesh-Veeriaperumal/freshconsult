@@ -28,7 +28,7 @@ class Admin::FreshfoneController < Admin::AdminController
 				:deliver_freshfone_ops_notifier,
 				current_account,
 				message: "Phone Activation Requested From Trial For Account ::#{current_account.id}",
-				recipients: ["freshfone@freshdesk.com","pulkit@freshdesk.com"]) if in_trial_states?
+				recipients: ["freshfone-ops@freshdesk.com","pulkit@freshdesk.com"]) if in_trial_states?
 		render :json => { :status => :success }
 	end
 

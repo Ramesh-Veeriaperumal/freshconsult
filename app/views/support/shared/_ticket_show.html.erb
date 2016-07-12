@@ -35,18 +35,17 @@
 			    	<%= @ticket.description_html.html_safe %>
 			    </div>  
 		 		
-		 		<% unless @ticket.attachments.empty? %>
+		 		<% unless @ticket.all_attachments.empty? %>
 					<span class="seperator"></span>
-					<h4><%= @ticket.attachments.size %><%= t('number_of_attachments') %></h4>
+					<h4><%= @ticket.all_attachments.size %><%= t('number_of_attachments') %></h4>
 
-					<%= attachment_container(@ticket.attachments,true,"ticket") %>
+					<%= attachment_container(@ticket.all_attachments,true,"ticket",@ticket.id) %>
 				<% end %>
 				<% unless @ticket.cloud_files.empty? %>
 					<%= attachment_container(@ticket.cloud_files,true,"cloud_file") %>
-      	<% end %>
-
+				<% end %>
 			</div> 
-	    </div>               
+		</div>               
 	</div>  
 
 	<% unless @ticket.deleted %>

@@ -37,6 +37,18 @@ module FormBuilders::Redactor
                       '|','fontcolor', 'backcolor', '|' ,'link', 'image']
       }
 
+      REDACTOR_TICKET_TEMPLATE_EDITOR = {
+        :focus => true,
+        :autoresize => false,
+        :tabindex => 2,
+        :convertDivs => false,
+        :allowTagsInCodeSnippet => true,
+        :imageUpload => "/ticket_templates_uploaded_images",
+        :clipboardImageUpload => "/ticket_templates_uploaded_images/create_file",
+        :buttons => ['bold','italic','underline','|','unorderedlist', 'orderedlist',  
+                      '|','fontcolor', 'backcolor', '|' ,'link', 'image']
+      }
+
       REDACTOR_EMAIL_NOTIFICATION_EDITOR = {
         :focus => false,
         :autoresize => false,
@@ -102,6 +114,8 @@ module FormBuilders::Redactor
             REDACTOR_FORUM_EDITOR
           when :ticket then
             REDACTOR_TICKET_EDITOR
+          when :template then
+            REDACTOR_TICKET_TEMPLATE_EDITOR
           when :email_notification then
             REDACTOR_EMAIL_NOTIFICATION_EDITOR
           else

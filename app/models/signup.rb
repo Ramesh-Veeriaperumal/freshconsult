@@ -102,7 +102,8 @@ class Signup < ActivePresenter::Base
         {
           :bg_color => "#efefef",
           :header_color => "#252525",
-          :tab_color => "#006063"
+          :tab_color => "#006063",
+          :personalized_articles => true
         }
       )
     end
