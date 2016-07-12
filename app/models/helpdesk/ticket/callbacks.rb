@@ -309,7 +309,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def changed_condition?
-    group_id_changed? || source_changed? || has_product_changed? || ticket_type_changed?
+    group_id_changed? || source_changed? || has_product_changed? || ticket_type_changed? || company_id_changed?
   end
 
   def has_product_changed?
