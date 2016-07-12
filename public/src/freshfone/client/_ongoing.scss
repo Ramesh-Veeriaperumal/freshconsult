@@ -29,6 +29,14 @@
 	    border-right: 1px solid #ccc;
 	  }
 	}
+	.ivr_preview_mode {
+	  .hold,.mute,.transfer_call{
+	    visibility: hidden;
+	  }
+	  .ongoingDialpad {
+	    border-left: 1px solid #ccc;
+	  }
+	}
 }
 
 .ongoing {

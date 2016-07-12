@@ -116,7 +116,8 @@ module RabbitMq::Constants
     # columns stored in reports_hash in schema_less_ticket
     "first_response_id", "agent_reassigned_count", "group_reassigned_count", "reopened_count", 
     "private_note_count", "public_note_count", "agent_reply_count", "customer_reply_count",
-    "agent_assigned_flag", "agent_reassigned_flag", "group_assigned_flag", "group_reassigned_flag"
+    "agent_assigned_flag", "agent_reassigned_flag", "group_assigned_flag", "group_reassigned_flag",
+    "last_resolved_at"
   ]
   
   REPORTS_ARCHIVE_TICKET_KEYS = REPORTS_TICKET_KEYS

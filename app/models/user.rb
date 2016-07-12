@@ -705,7 +705,12 @@ class User < ActiveRecord::Base
   end
   
   def company_name
-    default_user_company.company.name if default_user_company.present? && default_user_company.company.present?
+    if has_multiple_companies_feature?
+      uc = user_companies.find { |uc| uc.default }
+      uc.company.name if uc.present? && uc.company.present?
+    else
+      default_user_company.company.name if default_user_company.present? && default_user_company.company.present?
+    end
   end
 
   def company_id= comp_id
@@ -982,8 +987,14 @@ class User < ActiveRecord::Base
     end
 
     def build_or_update_company comp_id
-      default_user_company.present? ? (default_user_company.company_id = comp_id) :
-        build_default_user_company(:company_id => comp_id) 
+      default_user_company.present? ? (self.default_user_company.company_id = comp_id) :
+        self.build_default_user_company(:company_id => comp_id) 
+      user_comp = self.user_companies.find { |uc| uc.default }
+      if user_comp.present?
+        user_comp.company_id = default_user_company.company_id
+      else
+        self.user_companies = [default_user_company]
+      end
     end
 
     def mark_user_company_destroy
@@ -993,6 +1004,7 @@ class User < ActiveRecord::Base
                                             :company_id => uc.company_id, 
                                             :user_id => uc.user_id,
                                             :_destroy => true }
+        self.customer_id = nil
       end
     end
 end

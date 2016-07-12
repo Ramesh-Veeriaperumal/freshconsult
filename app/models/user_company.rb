@@ -7,7 +7,7 @@ class UserCompany < ActiveRecord::Base
   belongs_to :company
 
   validates_presence_of :company
-  validates_uniqueness_of :company_id, :scope => :user_id
+  validates_uniqueness_of :company_id, :scope => [:user_id, :account_id]
 
   after_commit :associate_tickets, on: :create
   after_commit :update_tickets_company_id, on: :update
@@ -41,6 +41,7 @@ class UserCompany < ActiveRecord::Base
   end
 
   def update_es_index
+    return if Account.current.features_included?(:es_v2_writes) || $redis_others.sismember("DISABLE_ES_WRITES", Account.current.id)
     SearchSidekiq::IndexUpdate::UserTickets.perform_async({ :user_id => user_id }) \
       if ES_ENABLED && !contractor?
   end

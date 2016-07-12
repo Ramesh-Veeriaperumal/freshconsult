@@ -3889,7 +3889,7 @@ en:
     mark_default_company: Mark as Default
     client_manager: Can view all tickets from this company
     remove_company: Remove contact-company association
-    remove_company_text: "In the existing tickets created by %{user_name} for this company : "
+    remove_company_text: "In the existing tickets created by %{user_name} for this company:"
     removed_association: "You are about to remove a contact-company association."
     retain_company: Company name can continue to be 
     rename_company: Company name should be updated to 
@@ -8121,6 +8121,7 @@ en:
       created_tickets: CREATED TICKETS
       resolved_tickets: RESOLVED TICKETS
       reopened_tickets: REOPENED TICKETS
+      unresolved_tickets: UNRESOLVED TICKETS
       avg_first_response_time: AVERAGE 1ST RESPONSE TIME
       avg_response_time: AVERAGE RESPONSE TIME
       avg_resolution_time: AVERAGE RESOLUTION TIME
@@ -8131,6 +8132,7 @@ en:
     chart_title:
       created_tickets_group_by_chart: 'Created tickets split by %{group_by}'
       resolved_tickets_group_by_chart: 'Resolved tickets split by %{group_by}'
+      unresolved_tickets_group_by_chart:  'Unresolved tickets split by %{group_by}'
       reopened_tickets: Reopened tickets
       reopened_tickets_group_by_chart: 'Reopened tickets split by %{group_by}'
       avg_first_response_time_group_by_chart: 'Avg 1st response time split by %{group_by}'
@@ -8164,23 +8166,50 @@ en:
         reopened_tickets:
           one: "%{ticket_count} tickets with %{reopen_count} reopen"
           other: "%{ticket_count} tickets with %{reopen_count} reopens"
+        total_tickets_unresolved: 'Total tickets unresolved : %{count}'
+        total_load: 'Total load'
+        carried_over: '<span class="bold" >%{count}%</span> of total load is old carried over tickets'
+        newly_received: '<span class="bold" >%{count}%</span> of total load is newly received tickets'
+        total_load_resolved: '<span class="bold" > %{count}%</span> of total load is resolved'
+        newly_received_resolved: '<span class="bold" > %{count}%</span> of newly received tickets are resolved'
+        total_load_unresolved: '<span class="bold" >%{count}% </span>of total load remains unresolved'
+        newly_received_unresolved: '<span class="bold">%{count}% </span>of newly received tickets remain unresolved'
+      legend_tooltip: 
+        total_load: Total load = Old unresolved tickets + New received tickets 
+        all_resolved: Total number of resolved tickets
+        new_resolved: 'Number of tickets received and resolved on the same %{trend}'
+        all_unresolved: Total number of unresolved tickets
+        new_unresolved:  'Number of tickets received and not resolved on the same %{trend}'
+        received: 'Number of new tickets received on a given %{trend}'
       tickets: tickets
       source: source
       priority: priority
       status: status
       type: type
+      historic_status: Historic Status
+      current_status: Current Status
+      current_status_lower: current status
+      historic_status_lower: historic status
       agent_responses: agent responses
       customer_responses: customer responses
       received: Received
       resolved: Resolved
+      unresolved: Unresolved
       violated: 'Violated'
       compliant: 'Compliant'
       performance_distribution:
         avg_first_response_time: Avg first response time
+      total_load: 'Total Load'
+      new_received: 'Received Tickets'
+      all_resolved: 'All Resolved Tickets'
+      new_resolved: 'New Resolved Tickets'
+      all_unresolved: 'All Unresolved Tickets'
+      new_unresolved: 'New Unresolved Tickets'
     ticket_list_title:
       created_tickets: All created tickets
       resolved_tickets: All resolved tickets
       reopened_tickets: All reopened tickets
+      unresolved_tickets: All unresolved tickets
       avg_first_response_time: All tickets with 1st response
       avg_response_time: All tickets with reponse
       avg_resolution_time: All resolved tickets
@@ -8199,6 +8228,7 @@ en:
         created_tickets: The tickets that were created in the helpdesk in the selected time period
         resolved_tickets: The tickets resolved in the selected time period (that were created any time)
         reopened_tickets: The tickets reopened in the selected time period (that were created any time)
+        unresolved_tickets: The unresolved tickets
         avg_first_response_time: Average first response time of all the first responses made in the selected time period
         avg_response_time: Average response time of all the responses made in the selected time period
         avg_resolution_time: Average resolution time of tickets resolved in the selected time period
@@ -8209,6 +8239,8 @@ en:
       customer_report:
         received_tickets: The tickets that were submitted in the helpdesk in the selected time period
         resolved_tickets: The tickets resolved in the selected time period (that were created any time)
+        unresolved_tickets: The tickets unresolved till now
+        reopened_tickets: The tickets reopened in the selected time period (that were created any time)
         response_violated: The percentage of tickets were not responded within SLA in the selected time period
         resolution_violated: The percentage of tickets were not resolved within SLA in the selected time period
         customer_interactions: No. of customer responses made in the selected time period
@@ -8218,9 +8250,18 @@ en:
       total_received_tickets : Total Received Tickets
       average_received_tickets : Average Received Tickets
       total_resolved_tickets : Total Resolved Tickets
+      total_unresolved_tickets : Total Unresolved Tickets
       average_resolved_tickets : Average Resolved Tickets
-      busiest_hour_received_tickets : Busiest hours for Received Tickets
-      busiest_hour_resolved_tickets : Busiest hours for Resolved Tickets
+      average_unresolved_tickets : Average Unresolved Tickets
+      busiest_hour_received_tickets : Most tickets were received around
+      busiest_hour_resolved_tickets : Most tickets were resolved around
+      busiest_day_received_tickets : Most tickets were received on
+      busiest_day_resolved_tickets : Most tickets were resolved on
+      received_tickets: Received Tickets
+      resolved_tickets: Resolved Tickets
+      unresolved_tickets: Unresolved Tickets
+      load_analysis:
+        title: Load Analysis
       labels:
         day_month: '%{day} %{month}'
         day_month_year: '%{day} %{month}, %{year}'
@@ -8290,6 +8331,8 @@ en:
       title:  Top Customer Analysis
       received_tickets: Tickets submitted
       resolved_tickets: Tickets resolved
+      unresolved_tickets: Tickets unresolved
+      reopened_tickets: Tickets reopened
       response_violated: Response SLA violations %
       resolution_violated: Resolution SLA violations %
       customer_interactions: Customer responses
@@ -8342,6 +8385,7 @@ en:
     time_period: "Time Period"
     tickets_received: "Tickets Received"
     tickets_resolved: "Tickets Resolved"
+    tickets_unresolved: "Tickets Unresolved"
     tickets_backlog: "Tickets Backlog"
     deleted_agent: "Deleted Agent"
     deleted_group: "Deleted Group"

@@ -48,12 +48,12 @@ module Freshfone::Conference::EndCallActions
     end
 
     def cancel_ringing_agents
-      return if current_call.blank?
+      return if current_call.blank? || current_call.meta.blank?
       #To cancel both browser and mobile agents in case of new notifications
       jid = Freshfone::RealtimeNotifier.perform_async({ call_id: current_call.id }, current_call.id, nil, 'cancel_other_agents') if new_notifications?
       Rails.logger.info "Account ID : #{current_account.id} - cancel_ringing_agents : Sidekiq Job ID #{jid} - TID #{Thread.current.object_id.to_s(36)}"
       Freshfone::NotificationWorker.perform_async({ call_id: current_call.id }, nil, 'cancel_other_agents')
-      current_call.meta.cancel_browser_agents if current_call.meta.present? && new_notifications? 
+      current_call.meta.cancel_browser_agents if new_notifications? 
     end
 
     def active_agent_conference_call

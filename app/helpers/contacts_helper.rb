@@ -87,9 +87,12 @@ HTML
   end
 
   def api_permitted_data
-    [:id,:name,:email,:created_at,:updated_at,:active,:job_title,
-    :phone,:mobile,:twitter_id, :description,:time_zone,:deleted, :helpdesk_agent,
-    :fb_profile_id,:external_id,:language,:address,:customer_id]
+    {
+      :only    => [:id,:name,:email,:created_at,:updated_at,:active,:job_title,
+                 :phone,:mobile,:twitter_id, :description,:time_zone,:deleted, :helpdesk_agent,
+                 :fb_profile_id,:external_id,:language,:address,:customer_id],
+      :methods => [:custom_field]
+    }
   end
   
   def is_campaign_app?(app_name)

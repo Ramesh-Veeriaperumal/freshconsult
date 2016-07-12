@@ -8,8 +8,8 @@ Helpkit::Application.routes.draw do
         put :restore
         get :time_entries, to: 'time_entries#ticket_time_entries'
         get :conversations, to: 'conversations#ticket_conversations'
-        get :satisfaction_ratings, to: 'surveys#survey_results'
-        post :satisfaction_ratings, to: 'surveys#create'
+        get :satisfaction_ratings, to: 'satisfaction_ratings#survey_results'
+        post :satisfaction_ratings, to: 'satisfaction_ratings#create'
         post :reply, to: 'conversations#reply'
         post :notes, to: 'conversations#create'
         post :time_entries, to: 'time_entries#create'
@@ -71,10 +71,9 @@ Helpkit::Application.routes.draw do
     end
     
 
-    resources :surveys, only: [] do
+    resources :surveys, only: [:index] do
       collection do
-        get :active_survey
-        get :satisfaction_ratings, to: 'surveys#index'
+        get :satisfaction_ratings, to: 'satisfaction_ratings#index'
       end
     end
 
