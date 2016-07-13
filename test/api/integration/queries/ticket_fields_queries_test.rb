@@ -6,7 +6,7 @@ class TicketFieldsQueriesTest < ActionDispatch::IntegrationTest
       v2 = {}
       v1 = {}
       v2_expected = {
-        api_index: 4,
+        api_index: 5,
 
         index: 21
       }

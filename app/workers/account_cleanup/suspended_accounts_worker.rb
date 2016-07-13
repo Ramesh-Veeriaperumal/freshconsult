@@ -45,6 +45,7 @@ module AccountCleanup
         Sharding.run_on_shard(shard_name) do
           account = Account.find account_id
           account.make_current
+          return unless account.subscription.suspended?
           perform_delete(account)
           clean_attachments(account_id: account_id)
           TABLES.each do |table|

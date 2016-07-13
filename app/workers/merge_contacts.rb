@@ -137,11 +137,19 @@ class MergeContacts < BaseWorker
   def move_if_exists(user_att)
     user_att.each do |att|
       if @parent_user.send(att).blank?
-        related = @children.detect{|i| i.send(att).present?}
-        unless related.nil?
-          @parent_user.send("#{att}=", related.send(att))
-          related.send("#{att}=", nil) unless att == "avatar" 
-          #avatar is a has_one relation and hence will error out without the check
+        if(att == "mobile" || att == "phone")
+          related_children = @children.select{|i| i.send(att).present?}
+          @parent_user.send("#{att}=", related_children.first.send(att)) unless related_children.empty?
+          related_children.each do |child|
+            child.send("#{att}=", nil)
+          end
+        else
+          related = @children.detect{|i| i.send(att).present?}
+          unless related.nil?
+            @parent_user.send("#{att}=", related.send(att))
+            related.send("#{att}=", nil) unless att == "avatar" 
+            #avatar is a has_one relation and hence will error out without the check
+          end
         end
       end
     end

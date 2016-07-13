@@ -2,11 +2,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   
   def manual_publish_to_rmq(action, key, options = {})
-    # TODO currently the manual publish is specific to reports
-    # But need to reorg this method such that it pushes only msg to rmq
-    # for all the subscribers(reports, activities, search etc)
+    # Manual publish for ticket model
+    # Currently handled for reports and activities subscribers
+    # Need to Append RMQ_GENERIC_TICKET_KEY to enable for new subscribers
     uuid = generate_uuid
-    manual_publish_to_xchg(uuid, "ticket", (reports_rmq_msg(action, uuid, options)).to_json, key)
+    manual_publish_to_xchg(uuid, "ticket", subscriber_manual_publish("ticket", action, options, uuid), key)
   end
 
   def to_rmq_json(keys, action)
@@ -22,7 +22,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
     @rmq_ticket_identifiers ||= {
       "id"          =>  id,
       "display_id"  =>  display_id,      
-      "account_id"  =>  account_id
+      "account_id"  =>  account_id,
+      "archive"     =>  archive || false
      }
   end  
   
@@ -45,6 +46,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
       "is_escalated"     =>   isescalated,
       "fr_escalated"     =>   fr_escalated,      
       "created_at"       =>   created_at.to_i,
+      "outbound_email"   =>   outbound_email?,
       "archive"          =>   archive || false
     }
   end
@@ -70,17 +72,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
       "time_to_resolution_in_chrs"  =>  (resolved_at ? (resolved_at - created_at) : nil ),
       "first_response_by_bhrs"      =>  ticket_states.first_resp_time_by_bhrs,
       "inbound_count"               =>  ticket_states.inbound_count
-    }
-  end
-
-  def reports_rmq_msg(action, uuid, options)
-    { 
-        "object"                =>  "ticket",
-        "action"                =>  action,
-        "uuid"                  =>  uuid,
-        "action_epoch"          =>  Time.zone.now.to_f,
-        "ticket_properties"     =>  mq_reports_ticket_properties(action),
-        "subscriber_properties" =>  { "reports" => mq_reports_subscriber_properties(action).merge(options)  }     
     }
   end
 

@@ -1,13 +1,13 @@
 {
   "checksum": {
-    "previous": "242a4edd73d45f72915a53113084b79a1dbc6f40a3ca6297e18de7e20470b1e1",
-    "current": "242a4edd73d45f72915a53113084b79a1dbc6f40a3ca6297e18de7e20470b1e1"
+    "previous": "30ab57e6f71e25bc4569c35a168c51e78c6ec522ae7766ce29021e5a2a9ec1c7",
+    "current": "30ab57e6f71e25bc4569c35a168c51e78c6ec522ae7766ce29021e5a2a9ec1c7"
   },
   "fonts": [
-    "public/assets/glyphs_242a4edd73d45f72915a53113084b79a.ttf",
-    "public/assets/glyphs_242a4edd73d45f72915a53113084b79a.svg",
-    "public/assets/glyphs_242a4edd73d45f72915a53113084b79a.woff",
-    "public/assets/glyphs_242a4edd73d45f72915a53113084b79a.eot"
+    "public/assets/glyphs_30ab57e6f71e25bc4569c35a168c51e7.ttf",
+    "public/assets/glyphs_30ab57e6f71e25bc4569c35a168c51e7.svg",
+    "public/assets/glyphs_30ab57e6f71e25bc4569c35a168c51e7.woff",
+    "public/assets/glyphs_30ab57e6f71e25bc4569c35a168c51e7.eot"
   ],
   "glyphs": {
     "abandoned-call": {
@@ -109,6 +109,10 @@
     "article": {
       "codepoint": 61956,
       "source": "public/glyphs/vectors/article.svg"
+    },
+    "attachment-blank": {
+      "codepoint": 61993,
+      "source": "public/glyphs/vectors/attachment-blank.svg"
     },
     "available-on-mobile": {
       "codepoint": 61878,
@@ -241,6 +245,10 @@
     "chrome": {
       "codepoint": 61732,
       "source": "public/glyphs/vectors/chrome.svg"
+    },
+    "clone": {
+      "codepoint": 61994,
+      "source": "public/glyphs/vectors/clone.svg"
     },
     "comment-multi": {
       "codepoint": 61733,
@@ -962,6 +970,10 @@
       "codepoint": 61838,
       "source": "public/glyphs/vectors/security.svg"
     },
+    "settings-outline": {
+      "codepoint": 61996,
+      "source": "public/glyphs/vectors/settings-outline.svg"
+    },
     "settings1": {
       "codepoint": 61912,
       "source": "public/glyphs/vectors/settings1.svg"
@@ -1045,6 +1057,10 @@
     "ticket-thin": {
       "codepoint": 61992,
       "source": "public/glyphs/vectors/ticket-thin.svg"
+    },
+    "ticket_template": {
+      "codepoint": 61995,
+      "source": "public/glyphs/vectors/ticket_template.svg"
     },
     "ticket_volume": {
       "codepoint": 61937,

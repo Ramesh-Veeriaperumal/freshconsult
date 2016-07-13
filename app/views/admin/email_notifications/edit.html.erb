@@ -195,7 +195,7 @@
 				<%if (@type == 'requester_template') and notification_type != EmailNotification::PASSWORD_RESET and notification_type != EmailNotification::DEFAULT_REPLY_TEMPLATE %>
 					<%=t('email_notifications.singular_title')%>
 					<input rel="toggle" type="checkbox" id="email" name="timer" data-checked-label="ON" data-unchecked-label="OFF" <%= (@email_notification.requester_notification) ? "checked" : "" %> data-type="email_notification[requester_notification]" data-url=<%= admin_email_notification_path(@email_notification.id) %>  >
-				<%elsif (@type == 'agent_template') and notification_type != EmailNotification::PASSWORD_RESET and notification_type != EmailNotification::USER_ACTIVATION %>
+				<%elsif (@type == 'agent_template') and notification_type != EmailNotification::PASSWORD_RESET and notification_type != EmailNotification::USER_ACTIVATION  and notification_type != EmailNotification::NOTIFY_COMMENT%>
 					<%=t('email_notifications.singular_title')%>
 					<input rel="toggle" type="checkbox" id="em" name="timer" data-checked-label="ON" data-unchecked-label="OFF" <%= (@email_notification.agent_notification) ? "checked" : "" %> data-type="email_notification[agent_notification]" data-url=<%=admin_email_notification_path(@email_notification.id) %> >
 				<%end%>	

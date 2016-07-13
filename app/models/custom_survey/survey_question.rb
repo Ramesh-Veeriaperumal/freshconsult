@@ -30,4 +30,8 @@ class CustomSurvey::SurveyQuestion < ActiveRecord::Base
   def survey_method(param_survey_id)
     (Account.current || account).custom_surveys.find_by_id(param_survey_id)
   end
+
+  def face_values
+    choices.map { |c| c[:face_value] }
+  end
 end

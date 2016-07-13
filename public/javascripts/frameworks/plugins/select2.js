@@ -1244,7 +1244,7 @@ the specific language governing permissions and limitations under the Apache Lic
                 enoughRoomAbove = (offset.top - dropHeight) >= $window.scrollTop(),
                 dropWidth = $dropdown.outerWidth(false),
                 enoughRoomOnRight = dropLeft + dropWidth <= viewPortRight,
-                aboveNow = $dropdown.hasClass("select2-drop-above"),
+                aboveNow = this.opts.forceAbove ||  $dropdown.hasClass("select2-drop-above"),
                 bodyOffset,
                 above,
                 changeDirection,

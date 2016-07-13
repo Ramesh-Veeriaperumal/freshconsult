@@ -1,0 +1,32 @@
+<% current_account.installed_apps_in_company_page_from_cache.each{ |installed_app|
+  app = installed_app.application
+  unless app.blank?
+    widget  = app.widget
+    unless widget.blank?
+      liquid_objects = {"company" => company, "widget_type" => "_company"}
+      widget_code = widget_script(installed_app, widget, liquid_objects) %>
+      <div id="<%=app.name%>" class="widget inactive load_on_click <%=widget.clazz_option%>">
+        <h3 class="title"><%= h(installed_app.configs_title || t(app.display_name).html_safe )%></h3>
+        <div class="content">
+        <textarea class="hide" rel="lazyload">
+          <div id="<%=app.name%>_company_widget" class="integration_widget"><div class="content"></div><div class="error hide "></div></div>
+          <%=widget_code%>
+        </textarea>
+        </div>
+      </div>
+    <% end
+  end
+} %>
+
+<script type="text/javascript">
+  jQuery("body").on('click.contact-sidebar', '.widget.load_on_click.inactive', function(ev){
+    var widget_code = jQuery(this).find('textarea');
+    jQuery(this).find('.content').append(widget_code.val());
+    widget_code.remove();
+    jQuery(this).removeClass('inactive load_on_click');
+  });
+
+  jQuery("body").on('click.contact-sidebar', '.widget:not(.load_remote, .load_on_click, .dialog-widget) > h3', function(ev){
+    jQuery(this).parent().toggleClass('inactive');
+  });
+</script>

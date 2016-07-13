@@ -53,7 +53,7 @@ class SearchV2::IndexOperations::PostArchiveProcess < SearchV2::IndexOperations
           properties['parent_id']         = parent_id
         end
       end
-
+      
       model_message.to_json
     end
 end

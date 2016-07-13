@@ -10,7 +10,7 @@ class CountES::IndexOperations
       tag = Account.current.tags.find(args[:tag_id])
       tag.tag_uses.preload(:taggable).find_in_batches do |taguses|
         taguses.map(&:taggable).map(&:count_es_manual_publish)
-      end if tag and Account.current.try(:features?, :count_es_writes)
+      end if tag and Account.current.try(:features?, :countv2_writes)
     end
   end
 

@@ -17,13 +17,7 @@ class ApiValidation
     end
 
     # Set instance variables of validation class from the request params.
-    request_params.each_pair do |key, value|
-      if respond_to?("#{key}=")
-        send("#{key}=", value)
-      else
-        instance_variable_set("@#{key}", value)
-      end
-    end
+    set_instance_variables(request_params)
 
     # Allow string param based on action & content_type
     @allow_string_param = allow_string_param
@@ -72,5 +66,16 @@ class ApiValidation
 
   def attributes_to_be_stripped
     []
+  end
+
+  def set_instance_variables(request_params)
+    request_params.each_pair do |key, value|
+      if respond_to?("#{key}=")
+        send("#{key}=", value)
+      else
+        instance_variable_set("@#{key}", value)
+      end
+      set_instance_variables(value) if value.is_a?(Hash)
+    end
   end
 end

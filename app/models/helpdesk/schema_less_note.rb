@@ -13,11 +13,13 @@ class Helpdesk::SchemaLessNote < ActiveRecord::Base
 	alias_attribute :response_time_by_bhrs, :int_nc03
 	alias_attribute :email_config_id, :long_nc01
 	alias_attribute :subject, :string_nc01
+	alias_attribute :note_properties, :text_nc02
 	
 	serialize :to_emails
 	serialize :cc_emails
 	serialize :bcc_emails
 	serialize :header_info
+	serialize :text_nc02, Hash
 
 	belongs_to_account	
 	belongs_to :note, :class_name =>'Helpdesk::Note'
@@ -32,6 +34,22 @@ class Helpdesk::SchemaLessNote < ActiveRecord::Base
 
 	def self.resp_time_by_bhrs_column
 		:int_nc03
+	end
+
+	def last_modified_user_id
+		note_properties[:last_modified_user_id] if note_properties.is_a?(Hash)
+	end
+
+	def last_modified_user_id=(user_id)
+		note_properties[:last_modified_user_id] = user_id.to_s
+	end
+
+	def last_modified_timestamp
+		note_properties[:last_modified_timestamp].to_datetime.in_time_zone(Time.zone) if note_properties.is_a?(Hash) && note_properties[:last_modified_timestamp].present?
+	end
+
+	def last_modified_timestamp=(curr_time)
+		note_properties[:last_modified_timestamp] = curr_time.to_s
 	end
 
 	def cc_emails

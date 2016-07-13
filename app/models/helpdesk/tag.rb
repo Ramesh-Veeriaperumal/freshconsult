@@ -154,7 +154,7 @@ class Helpdesk::Tag < ActiveRecord::Base
     
     def update_taggables
       SearchV2::IndexOperations::UpdateTaggables.perform_async({ :tag_id => self.id }) if Account.current.features_included?(:es_v2_writes)
-      CountES::IndexOperations::UpdateTaggables.perform_async({ :tag_id => self.id }) if Account.current.features?(:count_es_writes)
+      CountES::IndexOperations::UpdateTaggables.perform_async({ :tag_id => self.id }) if Account.current.features?(:countv2_writes)
     end
     
     def remove_taguses

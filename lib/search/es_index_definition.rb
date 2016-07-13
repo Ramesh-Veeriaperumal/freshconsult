@@ -11,12 +11,12 @@ class Search::EsIndexDefinition
   # These are table names of the searchable models.
   # Incase we want to add any new model the table name should be added here
   def models
-    [:customers, :users, :helpdesk_tickets, :solution_articles, :topics, :helpdesk_notes, :helpdesk_tags, :freshfone_callers, :admin_canned_responses, :scenario_automations]
+    [:customers, :users, :helpdesk_tickets, :solution_articles, :topics, :helpdesk_notes, :helpdesk_tags, :freshfone_callers, :admin_canned_responses, :scenario_automations, :ticket_templates]
   end
 
   # Used for new model migrations
   def additional_models
-    [:admin_canned_responses, :scenario_automations]
+    [:ticket_templates]
   end
 
   def index_hash(pre_fix = DEFAULT_CLUSTER, is_additional_model=false)
@@ -279,6 +279,27 @@ class Search::EsIndexDefinition
               :raw_title => {:type => :string, :analyzer => :case_insensitive}
             }
           },
+        }
+      }
+    }
+  end
+
+  def ticket_templates
+    {
+      :"helpdesk/ticket_template" => {
+        :properties => {
+          :account_id => { :type => :long },
+          :association_type => { :type => :long },
+          :name => {
+            :type => :multi_field,
+            :fields => {
+              :name => {:type => :string},
+              :raw_name => {:type => :string, :analyzer => :case_insensitive}
+            }
+          },
+          :es_group_accesses => { :type => :long },
+          :es_user_accesses => { :type => :long },
+          :es_access_type => { :type => :long }
         }
       }
     }

@@ -15,16 +15,25 @@
 			</ul>
 		</div>
 
-		
+		<% if Account.current.launched?(:activity_ui) %>
+			<div id="activity_toggle" title='<%= t('ticket.show_activities_tooltip') %>' 
+				class="activity_toggle btn clearfix tooltip" data-show-title = '<%= t('ticket.show_activities_tooltip') %>' data-hide-title= '<%= t('ticket.hide_activities_tooltip') %>' data-keybinding="<%= shortcut('ticket_detail.show_activities_toggle') %>" data-toggle="button" data-placement = "below"
+				 data-highlight="true">
+				<div class="text">
+					<i class="ficon-tick activities_tick"></i>
+					<%= t('ticket.activity_toggle_v2') %>
+				</div>
+			</div>
+		<% else %>		
 
-		<div id="activity_toggle" title='<%= t('ticket.activity_toggle') %>' 
-			class="activity_toggle btn clearfix tooltip" data-toggle="button" data-placement = "below"
-			data-keybinding="<%= shortcut('ticket_detail.show_activities_toggle') %>" data-highlight="true">
-			<div class="text"><%= t('ticket.activity_toggle') %></div>
-			<span class="visible">Yes</span><span>No</span>
-		</div>
+			<div id="activity_toggle" title='<%= t('ticket.activity_toggle') %>' 
+				class="activity_toggle btn clearfix tooltip" data-toggle="button" data-placement = "below"
+				data-keybinding="<%= shortcut('ticket_detail.show_activities_toggle') %>" data-highlight="true">
+				<div class="text"><%= t('ticket.activity_toggle') %></div>
+				<span class="visible">Yes</span><span>No</span>
+			</div>
 
-
+		<%end%>
 
 	<div class="sticky_left">
 		<div>

@@ -112,6 +112,8 @@ class Forum < ActiveRecord::Base
   before_destroy :add_activity
   after_destroy :clear_cat_cache, :clear_moderation_records
 
+  include RabbitMq::Publisher
+
   def add_activity_new_and_clear_cache
     create_activity('new_forum')
     account.clear_forum_categories_from_cache
@@ -301,6 +303,23 @@ class Forum < ActiveRecord::Base
 
     def forum_visibility_updated?
       @all_changes.has_key?(:forum_visibility)
+    end
+
+    def to_rmq_json(keys,action)
+      forum_identifiers
+      #destroy_action?(action) ? forum_identifiers : return_specific_keys(forum_identifiers, keys)
+    end
+
+    def forum_identifiers
+      @rmq_forum_identifiers ||= {
+      "id"          =>  id,
+      "name"        =>  name, 
+      "post_count"  => posts_count,
+      "forum_category_id" => forum_category_id,
+      "forum_type"  => forum_type,
+      "forum_visibility" => forum_visibility,     
+      "account_id"  =>  account_id
+     }
     end
 
 end

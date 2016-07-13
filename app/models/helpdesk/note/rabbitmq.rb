@@ -2,11 +2,11 @@ class Helpdesk::Note < ActiveRecord::Base
   
   
   def manual_publish_to_rmq(action, key, options = {})
-    # TODO currently the manual publish is specific to reports
-    # But need to reorg this method such that it pushes only msg to rmq
-    # for all the subscribers(reports, activities, search etc)
+    # Manual publish for note model
+    # Currently handled for reports and activities subscribers
+    # Need to Append RMQ_GENERIC_NOTE_KEY to enable for new subscribers
     uuid = generate_uuid
-    manual_publish_to_xchg(uuid, "note", (reports_rmq_msg(action, uuid, options)).to_json, key)
+    manual_publish_to_xchg(uuid, "note", subscriber_manual_publish("note", action, options, uuid), key)
   end
 
   def to_rmq_json(keys, action)
@@ -20,7 +20,8 @@ class Helpdesk::Note < ActiveRecord::Base
   def note_identifiers
     @rmq_note_identifiers ||= {
       "id"          =>  id,
-      "account_id"  =>  account_id
+      "account_id"  =>  account_id,
+      "created_at"  =>  created_at.to_i
      }
   end  
 
@@ -39,18 +40,6 @@ class Helpdesk::Note < ActiveRecord::Base
       # @ARCHIVE TODO Currently setting archive as false. 
       # Will change it once "archiving tickets" feature is rolled out.
       "archive"     =>   notable.archive || false
-    }
-  end
-  
-  # Used for publishing the message manually to rabbitmq
-  def reports_rmq_msg(action, uuid, options)
-    { 
-      "object"                =>  "note",
-      "action"                =>  action,
-      "uuid"                  =>  uuid,
-      "action_epoch"          =>  Time.zone.now.to_f,
-      "note_properties"       =>  mq_reports_note_properties(action),
-      "subscriber_properties" =>  {"reports" => mq_reports_subscriber_properties(action).merge(options) }    
     }
   end
   

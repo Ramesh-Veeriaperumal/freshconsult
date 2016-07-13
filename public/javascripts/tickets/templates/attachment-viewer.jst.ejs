@@ -1,0 +1,46 @@
+<div class="attachments-viewer">
+  <!-- CLOSE BUTTON -->
+  <a class="av-close"> Close </a>
+  
+  <% if(["png","gif","jpeg","jpg"].indexOf(filetype)>-1){ %>
+    <!-- IMAGE FILE -->
+    <div class="av-media">
+      <img src="<%= filelink %>"/>
+    </div>
+
+  <% } else { %>
+    <!-- CANNOT PREVIEW MESSAGE -->
+    <div class="av-cannot-preview">
+      <div class="av-message">
+        <div class="av-message-icon">
+          <i class="ficon-attachment-blank"></i>
+          <% if(filetype) { %>
+            <span> <%= filetype %> </span>
+          <% } %>
+        </div>
+        <div class="av-message-text"><%= TICKET_DETAILS_DATA.cannot_preview_attachment %></div>
+      </div>
+    </div>
+  <% } %>
+
+  <!-- TOOLBAR -->
+  <div class="av-toolbar">
+    <div class="span4 av-toolbar-col ellipsis"><%= filename %></div>
+    <ul class="span8 av-toolbar-col inline">
+      <li class="av-tool-download">
+        <a href="<%= filelink %>" download="<%= filename %>">
+          <i class="ficon-download"></i>
+          <%= TICKET_DETAILS_DATA.download %>
+        </a>
+      </li>
+      <!-- TODO Later - RA -->
+      <!-- <li class="av-tool-print">Print</li> -->
+      <!-- <li class="av-tool-zoomin">Zoom In</li> -->
+    </ul>
+
+    <div class="span4 av-toolbar-col">
+      <a class="av-prev <%= currentPos==0?'disabled':'' %>"><i class="ficon-arrow-left"></i></a>
+      <a class="av-next <%= currentPos==length-1?'disabled':'' %>"><i class="ficon-arrow-right"></i></a>
+    </div>
+  </div>
+</div>

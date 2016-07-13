@@ -259,11 +259,11 @@ protected
         item.shared_attachments.build(:account_id => item.account_id,:attachment=>a )
       end
 
-      if !params[:admin_canned_responses_response].nil?
-      (params[:admin_canned_responses_response][:attachments]).each do |a|
-        attachment_created=item.account.attachments.create(:content => a[:resource], :description => a[:description],:attachable_type=>"Account", :attachable_id=>current_account.id)
-        item.shared_attachments.build(:attachment=>attachment_created )
-      end
+      unless params[:admin_canned_responses_response].nil?
+        (params[:admin_canned_responses_response][:attachments]).each do |a|
+          attachment_created=item.account.attachments.create(:content => a[:resource], :description => a[:description],:attachable_type=> "Account", :attachable_id=>current_account.id)
+          item.shared_attachments.build(:attachment=>attachment_created )
+        end
       end
  end
 
@@ -334,7 +334,8 @@ protected
   end
 
   def fetch_item_attachments
-    return unless @item.is_a? Helpdesk::Note and @item.fwd_email?
+    return unless (@item.is_a? Helpdesk::Note and @item.fwd_email?) or @item.is_a? Helpdesk::Ticket or
+      @item.is_a? Helpdesk::TicketTemplate
     (params[nscname][:attachments] || []).each do |a|
       begin
         if a[:resource].is_a?(String) and Integer(a[:resource]) # In case of forward, we are passing existing Attachment ID's to upload the file via URL's
@@ -346,9 +347,9 @@ protected
           end
           a[:resource] = io
         end
-        rescue Exception => e
-          NewRelic::Agent.notice_error(e)
-          Rails.logger.error("Error while fetching item attachments using ID")
+      rescue Exception => e
+        NewRelic::Agent.notice_error(e)
+        Rails.logger.error("Error while fetching item attachments using ID")
       end
     end
   end

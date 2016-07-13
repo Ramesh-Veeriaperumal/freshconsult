@@ -1004,13 +1004,27 @@ if Integrations::Application.count == 0
     s.application_type = "freshsales"
   end
 
+  fullcontact = Integrations::Application.seed(:name) do |s|
+    s.name = "fullcontact"
+    s.display_name = "integrations.fullcontact.label"
+    s.description = "integrations.fullcontact.desc"
+    s.account_id = Integrations::Constants::SYSTEM_ACCOUNT_ID
+    s.listing_order = 42
+    s.options = {:direct_install => true, 
+                 :auth_url => "/integrations/fullcontact/new",
+                 :edit_url => "/integrations/fullcontact/edit"
+                 }
+    s.application_type = "fullcontact"
+    s.dip = 3
+  end
+
   #Populate Salesforce CRM Sync app
   salesforce_crm_sync_app = Integrations::Application.seed(:name) do |s|
     s.name = "salesforce_crm_sync"
     s.display_name = "integrations.salesforce_crm_sync.label"
     s.description = "integrations.salesforce_crm_sync.desc" 
     s.account_id = Integrations::Constants::SYSTEM_ACCOUNT_ID
-    s.listing_order = 42
+    s.listing_order = 43
     s.options = {:direct_install => true, 
                  :oauth_url => "/auth/salesforce_crm_sync?origin=id%3D{{account_id}}", 
                  :edit_url => "/integrations/sync/crm/edit?state=salesforce_crm_sync&method=put",
