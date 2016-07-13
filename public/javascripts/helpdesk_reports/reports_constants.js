@@ -23,6 +23,16 @@ HelpdeskReports.Constants = {
                 ticket_list_title : I18n.t('helpdesk_reports.ticket_list_title.resolved_tickets'),
                 solution_url : "https://support.freshdesk.com/support/solutions/articles/212989"
             },
+            "UNRESOLVED_TICKETS" : { 
+                name : I18n.t('helpdesk_reports.metric_name.unresolved_tickets'),
+                title: 'helpdesk_reports.chart_title.unresolved_tickets_group_by_chart',
+                description: I18n.t('helpdesk_reports.v2_helptext.glance.unresolved_tickets'),
+                css  : ["report-arrow up negative", "report-arrow down positive"],
+                bucket: ["customer_interactions", "agent_interactions"],
+                bucket_graph_map: ['interactions'],
+                ticket_list_title : I18n.t('helpdesk_reports.ticket_list_title.unresolved_tickets'),
+                solution_url : "https://support.freshdesk.com/support/solutions/articles/212989"
+            },
             "REOPENED_TICKETS" : { 
                 name : I18n.t('helpdesk_reports.metric_name.reopened_tickets'),
                 title: 'helpdesk_reports.chart_title.reopened_tickets_group_by_chart',
@@ -96,7 +106,7 @@ HelpdeskReports.Constants = {
                 solution_url : "https://support.freshdesk.com/support/solutions/articles/213168"
             }
         },
-        template_metrics: ["GLANCE_CURRENT", "GLANCE_HISTORIC"],
+        template_metrics: ["GLANCE_CURRENT", "GLANCE_HISTORIC","UNRESOLVED_PREVIOUS_BENCHMARK","UNRESOLVED_CURRENT_BENCHMARK"],
         default_metric: "RECEIVED_TICKETS",
         group_by_with_status: ["source", "priority", "status", "ticket_type"],
         group_by_without_status: ["source", "priority", "ticket_type"],
@@ -104,7 +114,7 @@ HelpdeskReports.Constants = {
         reopen_bucket_condition_metrics: ["REOPENED_TICKETS"],
         interaction_bucket_condition_metrics: ["RECEIVED_TICKETS", "RESOLVED_TICKETS", "REOPENED_TICKETS"],
         bucket_condition_metrics: ["RECEIVED_TICKETS", "RESOLVED_TICKETS", "REOPENED_TICKETS"],
-        status_metrics: ["RECEIVED_TICKETS", "REOPENED_TICKETS"],
+        status_metrics: ["RECEIVED_TICKETS", "REOPENED_TICKETS","UNRESOLVED_TICKETS"],
         time_metrics: ["AVG_FIRST_RESPONSE_TIME", "AVG_RESPONSE_TIME", "AVG_RESOLUTION_TIME", "AVG_FIRST_ASSIGN_TIME"],
         percentage_metrics: ["FCR_TICKETS", "RESPONSE_SLA", "RESOLUTION_SLA"],
         bucket_data : {
@@ -150,8 +160,7 @@ HelpdeskReports.Constants = {
         }
     },
     TicketVolume: {
-        metrics: ["RECEIVED_RESOLVED_TICKETS"],
-        metric: "RECEIVED_RESOLVED_TICKETS",
+        metrics: ["RECEIVED_RESOLVED_TICKETS","UNRESOLVED_PREVIOUS_BENCHMARK","RECEIVED_RESOLVED_BENCHMARK","UNRESOLVED_CURRENT_BENCHMARK"],
         params: {
             bucket                : false, 
             bucket_conditions     : [],
@@ -234,6 +243,14 @@ HelpdeskReports.Constants = {
                 title: I18n.t('helpdesk_reports.customer_report.resolved_tickets'),
                 description: I18n.t('helpdesk_reports.v2_helptext.customer_report.resolved_tickets'),
             },
+            "UNRESOLVED_TICKETS" : { 
+                title: I18n.t('helpdesk_reports.customer_report.unresolved_tickets'),
+                description: I18n.t('helpdesk_reports.v2_helptext.customer_report.unresolved_tickets'),
+            },
+            "REOPENED_TICKETS" : { 
+                title: I18n.t('helpdesk_reports.customer_report.reopened_tickets'),
+                description: I18n.t('helpdesk_reports.v2_helptext.customer_report.reopened_tickets'),
+            },
             "RESPONSE_VIOLATED" : { 
                 title: I18n.t('helpdesk_reports.customer_report.response_violated'),
                 description: I18n.t('helpdesk_reports.v2_helptext.customer_report.response_violated'),
@@ -255,7 +272,7 @@ HelpdeskReports.Constants = {
         },
         report_type: "customer_report",
         percentage_metrics: ["RESPONSE_VIOLATED", "RESOLUTION_VIOLATED"],
-        template_metrics: ["CUSTOMER_CURRENT_HISTORIC"],
+        template_metrics: ["CUSTOMER_CURRENT_HISTORIC","UNRESOLVED_TICKETS"],
         params: {
             bucket                : false, 
             bucket_conditions     : [],

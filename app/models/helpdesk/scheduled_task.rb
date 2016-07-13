@@ -142,7 +142,8 @@ class Helpdesk::ScheduledTask < ActiveRecord::Base
 
     from_now = (schedule_time - Time.now.utc).to_i
     from_now = 15 unless from_now > 15
-    options = { account_id: account_id, task_id: id, next_run_at: next_run_at.to_i }
+    options = {task_id: id, next_run_at: next_run_at.to_i}
+    options[:account_id] = account_id unless ACCOUNT_INDEPENDENT_TASKS.include?(schedulable_name)
     mark_enqueued.save!
     worker.perform_in(from_now, options)
   end

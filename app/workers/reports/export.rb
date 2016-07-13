@@ -7,7 +7,9 @@ class Reports::Export < BaseWorker
     begin
       old_report = [:timesheet_reports, :chat_summary, :phone_summary]
       class_name = old_report.include?(params['report_type'].to_sym) ? params['report_type'].camelcase : 'Report'
-      "HelpdeskReports::Export::#{class_name}".constantize.new(params).perform
+      Sharding.run_on_slave do
+        "HelpdeskReports::Export::#{class_name}".constantize.new(params).perform
+      end
     rescue Exception => e
       NewRelic::Agent.notice_error(e)
       subj_txt = "Reports Export exception for #{Account.current.id}"

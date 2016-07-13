@@ -80,3 +80,4 @@ api_error_messages:
   inaccessible_value: "The %{resource} matching the given %{attribute} is inaccessible to you"
   section_field_absence_check_error: "It cannot be set, when the %{field} is of value '%{value}'"
   agent_roles_and_scope_error: 'You cannot edit your own roles & ticket scopes'
+  action_restricted: "Cannot perform '%{action}' when %{reason}"

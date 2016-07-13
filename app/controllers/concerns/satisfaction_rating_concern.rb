@@ -1,4 +1,4 @@
-module Concerns::SurveyConcern
+module Concerns::SatisfactionRatingConcern
   extend ActiveSupport::Concern
 
   def custom_rating(rating)
