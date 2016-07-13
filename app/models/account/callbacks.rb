@@ -243,7 +243,7 @@ class Account < ActiveRecord::Base
       elsif transaction_include_action?(:update) && full_domain_changed?
         SendgridDomainUpdates.perform_async({:action => 'delete', :domain => full_domain_was })
         SendgridDomainUpdates.perform_at(5.minutes.from_now, {:action => 'create', :domain => full_domain })
-      else 
+      elsif transaction_include_action?(:destroy)
         SendgridDomainUpdates.perform_async({:action => 'delete', :domain => full_domain })
       end
     end
