@@ -3,6 +3,7 @@ development:
   facebook_realtime_queue: social_fb_feed_dev
   search_etl_queue: search_etl_queue_dev
   count_etl_queue: count_etl_queue_dev
+  sqs_es_index_queue: sqs_es_index_queue_dev
   auto_refresh_realtime_queue: auto_refresh_dev
   custom_mailbox_realtime_queue: custom_mailbox_dev
   forums_moderation_queue: forum_moderation_dev
