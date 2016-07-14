@@ -1,7 +1,8 @@
-['note_helper.rb', 'ticket_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
+['note_helper.rb', 'ticket_helper.rb', 'email_configs_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
 module ConversationsTestHelper
   include NoteHelper
   include TicketHelper
+  include EmailConfigsHelper
 
   def note_pattern(expected_output = {}, note)
     body_html = format_ticket_html(note, expected_output[:body]) if expected_output[:body]
