@@ -11,7 +11,7 @@ JSON.generate(@items.map do |article|
     thumbs_up: parent.thumbs_up,
     thumbs_down: parent.thumbs_down,
     hits: parent.hits,
-    category_id: parent.solution_category_meta.id,
+    category_id: parent.solution_folder_meta.solution_category_meta_id,
     folder_id: parent.solution_folder_meta.id,
     seo_data: article.seo_data,
     created_at: article.created_at,

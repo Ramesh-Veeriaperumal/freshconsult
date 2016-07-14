@@ -6,6 +6,6 @@ class Solutions::CategoryDecorator < ApiDecorator
   end
 
   def visible_in
-  	record.parent.portal_solution_categories.pluck(:portal_id)
+  	record.parent.portal_solution_categories.map(&:portal_id)
   end
 end

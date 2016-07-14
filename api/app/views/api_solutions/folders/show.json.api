@@ -7,5 +7,5 @@ response_hash = {
 	created_at: @item.created_at,
 	updated_at: @item.updated_at
 }
-response_hash.merge!(company_ids: @meta.customer_ids) if @item.company_ids_visible?
+response_hash.merge!(company_ids: @item.company_ids) if @item.company_ids_visible?
 JSON.generate(response_hash)

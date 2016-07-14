@@ -414,7 +414,8 @@ class Account < ActiveRecord::Base
   end
 
   def has_multiple_portals?
-    portals.count > 1
+    @multiple_portals = portals.count > 1 if @multiple_portals.nil?
+    @multiple_portals
   end
   
   def kbase_email

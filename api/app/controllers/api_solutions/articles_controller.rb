@@ -27,7 +27,7 @@ module ApiSolutions
       if validate_language
         load_folder
         if @item
-          @items = paginate_items(@item.solution_articles.where(language_id: @lang_id))
+          @items = paginate_items(@item.solution_articles.where(language_id: @lang_id).preload(:solution_folder_meta, :solution_article_meta, :article_body))
           render '/api_solutions/articles/index'
         end
       else

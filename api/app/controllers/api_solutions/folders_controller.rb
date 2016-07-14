@@ -25,7 +25,7 @@ module ApiSolutions
       if validate_language
         @item = solution_category_meta(params[:id])
         if @item
-          @items = paginate_items(@item.solution_folders.where(language_id: @lang_id))
+          @items = paginate_items(@item.solution_folders.where(language_id: @lang_id).preload(:solution_folder_meta, { solution_folder_meta: :customer_folders }))
           render '/api_solutions/folders/index'
         else
           log_and_render_404

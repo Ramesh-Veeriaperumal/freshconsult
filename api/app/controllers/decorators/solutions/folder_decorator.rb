@@ -8,4 +8,8 @@ class Solutions::FolderDecorator < ApiDecorator
   def parent
     @parent ||= record.parent
   end
+
+  def company_ids
+  	parent.customer_folders.map(&:customer_id)
+  end
 end

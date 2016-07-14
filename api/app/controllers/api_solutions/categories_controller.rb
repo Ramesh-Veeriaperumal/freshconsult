@@ -82,7 +82,7 @@ module ApiSolutions
       end
 
       def load_objects(items = scoper)
-        super(items.where(language_id: @lang_id).preload(:solution_category_meta))
+        super(items.where(language_id: @lang_id).preload(:solution_category_meta, { solution_category_meta: :portal_solution_categories }))
       end
 
       def load_meta(id)
