@@ -32,9 +32,9 @@ class Users::UpdateCompanyId < BaseWorker
                      destroy_user_companies(account, user_ids, current_company_id) if user_ids.any?
         destroy_contractor_companies(account, contractor_ids, current_company_id) if (!company_id && 
           contractor_ids.present? && account.companies.find_by_id(current_company_id).nil?)
-        user_ids.each_slice(TICKET_UPDATE_LIMIT) do |ids|
-          Tickets::UpdateCompanyId.perform_async({ :user_ids => ids, :company_id => company_id })
-        end
+        # user_ids.each_slice(TICKET_UPDATE_LIMIT) do |ids|
+        #   Tickets::UpdateCompanyId.perform_async({ :user_ids => ids, :company_id => company_id })
+        # end
       end
     end
   end
