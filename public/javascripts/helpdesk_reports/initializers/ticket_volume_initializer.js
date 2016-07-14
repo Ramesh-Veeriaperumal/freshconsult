@@ -155,12 +155,11 @@ HelpdeskReports.ChartsInitializer.TicketVolume = (function () {
             var loadAnalysis = new stackedColumnChart(settings, type, trend);
             loadAnalysis.stackedGraph();
             if(!is_pdf){
-                this.setTooltipForLegends();    
+                this.setTooltipForLegends(this.TIME_TRENDS[trend]);
             }
             
         },
-        setTooltipForLegends : function(){
-
+        setTooltipForLegends : function(trend){
             jQuery(jQuery(".info.received")[0]).twipsy({
                 html : true,
                 placement : "above",
@@ -172,7 +171,7 @@ HelpdeskReports.ChartsInitializer.TicketVolume = (function () {
                 html : true,
                 placement : "above",
                 title : function() { 
-                    return I18n.t('helpdesk_reports.chart_title.legend_tooltip.received');
+                    return I18n.t('helpdesk_reports.chart_title.legend_tooltip.received', {trend: trend});
             }});
 
             jQuery(jQuery(".info.resolved")[0]).twipsy({
@@ -193,7 +192,7 @@ HelpdeskReports.ChartsInitializer.TicketVolume = (function () {
                 html : true,
                 placement : "above",
                 title : function() { 
-                    return I18n.t('helpdesk_reports.chart_title.legend_tooltip.new_resolved');
+                    return I18n.t('helpdesk_reports.chart_title.legend_tooltip.new_resolved', {trend: trend});
               }});
             
             jQuery(jQuery(".info.unresolved")[0]).twipsy({
@@ -215,7 +214,7 @@ HelpdeskReports.ChartsInitializer.TicketVolume = (function () {
                 html : true,
                 placement : "above",
                 title : function() { 
-                    return I18n.t('helpdesk_reports.chart_title.legend_tooltip.new_unresolved');
+                    return I18n.t('helpdesk_reports.chart_title.legend_tooltip.new_unresolved', {trend: trend});
               }});
 
         },  
@@ -303,6 +302,7 @@ HelpdeskReports.ChartsInitializer.TicketVolume = (function () {
             var preposition = (trend == 'doy' ? 'on' : 'in');
             if(type == 'received'){
                 var newly_received = eval(_.values(HelpdeskReports.locals.chart_hash['RECEIVED_TICKETS'][trend]).join('+'))/trend_size;
+                newly_received = newly_received.round();
                 newly_received = (total_load == 0 ? 0 : ((newly_received/total_load) * 100 || 0).round());
                 var carried_over = 100 - newly_received;
                 
@@ -701,8 +701,10 @@ HelpdeskReports.ChartsInitializer.TicketVolume = (function () {
 
         },
         generateStatusArrowHtml : function(val, type){
-            if(val == "None" || val == 0)
+            if(val == "None")
                 return '';
+            else if(val == 0)
+                return '<span class="status-percent"><span class="status-symbol report-arrow no-change left-arrow"></span> <span class="report-arrow no-change right-arrow"></span> 0%</span>'; 
             else{
                 if(type == 'received' || type == 'unresolved'){
                     if(val < 0)

@@ -104,10 +104,7 @@ class User < ActiveRecord::Base
         self.user_companies.first.default = true
       end
       default_user_company = self.user_companies.find { |uc| uc.default }
-      self.customer_id = default_user_company.company_id
       self.user_companies = [default_user_company] unless has_multiple_companies_feature?
-    else
-      self.customer_id = nil
     end
   end
   
@@ -178,11 +175,14 @@ class User < ActiveRecord::Base
   end  
 
   def backup_customer_id
-    if self.user_companies.length > 1 || has_multiple_companies_feature?
-      user_comp = self.user_companies.find{ |uc| uc.default }
-      self.customer_id = user_comp.present? ? user_comp.company_id : nil
-    elsif self.default_user_company.present?
-      self.customer_id = !self.default_user_company.marked_for_destruction? ? self.default_user_company.company_id : nil
+    unless self.changes.has_key?("perishable_token")
+      if self.user_companies.length > 1 || has_multiple_companies_feature?
+        user_comp = self.user_companies.find{ |uc| uc.default }
+        self.customer_id = user_comp.present? ? user_comp.company_id : nil
+        self.customer_id = nil if self.default_user_company.present? && self.default_user_company.marked_for_destruction?
+      elsif self.default_user_company.present?
+        self.customer_id = !self.default_user_company.marked_for_destruction? ? self.default_user_company.company_id : nil
+      end
     end
   end
 end

@@ -260,6 +260,7 @@ module HelpdeskReports::Helper::Ticket
   # DO NOT ALLOW filters without group if current_user scope is group_ticket
   # DO NOT ALLOW filters without agent = current_user if scope is restricted
   def validate_scope
+    return if @filter_err.present?
     scope = Agent::PERMISSION_TOKENS_BY_KEY[User.current.agent.ticket_permission]
     case scope
     when :group_tickets
@@ -297,6 +298,7 @@ module HelpdeskReports::Helper::Ticket
         passed_ids  = f["value"].split(",").map!{|id| id.to_i}
         allowed_ids = scoped_values & passed_ids
         f["value"]  = allowed_ids.join(",")
+        @filter_err = t('helpdesk_reports.no_data_to_display_msg') unless f["value"].present?
       end
     end
   end
@@ -350,4 +352,7 @@ module HelpdeskReports::Helper::Ticket
     return ["Invalid filter agent_id"] if (conditions.include?("agent_id") && hide_agent_reporting?)
   end
 
+  def redirect_if_invalid_request
+    render_charts if @filter_err.present?
+  end
 end

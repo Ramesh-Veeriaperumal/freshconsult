@@ -803,6 +803,8 @@ class User < ActiveRecord::Base
       self.role_ids = args[:role_ids].present? ? args[:role_ids] : [account.roles.find_by_name("Agent").id]
       self.tags.clear
       self.user_companies.delete_all
+      self.user_companies.reload
+      self.customer_id = nil
       agent = build_agent()
       agent.occasional = !!args[:occasional]
       agent.group_ids = args[:group_ids] if args.key?(:group_ids) 
@@ -989,7 +991,12 @@ class User < ActiveRecord::Base
     def build_or_update_company comp_id
       default_user_company.present? ? (self.default_user_company.company_id = comp_id) :
         self.build_default_user_company(:company_id => comp_id) 
-      self.user_companies = [default_user_company]
+      user_comp = self.user_companies.find { |uc| uc.default }
+      if user_comp.present?
+        user_comp.company_id = default_user_company.company_id
+      else
+        self.user_companies = [default_user_company] if default_user_company.valid?
+      end
     end
 
     def mark_user_company_destroy
@@ -999,6 +1006,7 @@ class User < ActiveRecord::Base
                                             :company_id => uc.company_id, 
                                             :user_id => uc.user_id,
                                             :_destroy => true }
+        self.customer_id = nil
       end
     end
 end

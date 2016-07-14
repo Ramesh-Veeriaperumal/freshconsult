@@ -3889,7 +3889,7 @@ en:
     mark_default_company: Mark as Default
     client_manager: Can view all tickets from this company
     remove_company: Remove contact-company association
-    remove_company_text: "In the existing tickets created by %{user_name} for this company : "
+    remove_company_text: "In the existing tickets created by %{user_name} for this company:"
     removed_association: "You are about to remove a contact-company association."
     retain_company: Company name can continue to be 
     rename_company: Company name should be updated to 
@@ -8177,10 +8177,10 @@ en:
       legend_tooltip: 
         total_load: Total load = Old unresolved tickets + New received tickets 
         all_resolved: Total number of resolved tickets
-        new_resolved: Number of tickets received and resolved on the same day
+        new_resolved: 'Number of tickets received and resolved on the same %{trend}'
         all_unresolved: Total number of unresolved tickets
-        new_unresolved:  Number of tickets received and not resolved on the same day
-        received: Number of new tickets received on a given day
+        new_unresolved:  'Number of tickets received and not resolved on the same %{trend}'
+        received: 'Number of new tickets received on a given %{trend}'
       tickets: tickets
       source: source
       priority: priority
@@ -8189,6 +8189,7 @@ en:
       historic_status: Historic Status
       current_status: Current Status
       current_status_lower: current status
+      historic_status_lower: historic status
       agent_responses: agent responses
       customer_responses: customer responses
       received: Received
