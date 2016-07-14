@@ -202,16 +202,16 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     end
 
     def parse_email(email_text)
-      
       parsed_email = parse_email_text(email_text)
       
       name = parsed_email[:name]
       email = parsed_email[:email]
 
-      if((email && !(email =~ EMAIL_REGEX) && (email_text =~ EMAIL_REGEX)) || (email_text =~ EMAIL_REGEX))
-        email = $1 
+      if(email && (email =~ EMAIL_REGEX))
+        email = $1
+      elsif(email_text =~ EMAIL_REGEX) 
+        email = $1  
       end
-
 
       name ||= ""
       domain = (/@(.+)/).match(email).to_a[1]
