@@ -1,6 +1,6 @@
 class Helpdesk::SurveysController < ApplicationController
 
-	include Concerns::SurveyConcern
+	include Concerns::SatisfactionRatingConcern
 
 	before_filter :check_feature?, :load_ticket
 	before_filter :check_rating?, only: [:rate]

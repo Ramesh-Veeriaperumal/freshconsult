@@ -97,6 +97,8 @@ class Helpdesk::AttachmentsController < ApplicationController
 
       elsif ['Solution::Article'].include? @attachment.attachable_type
         return @attachment.attachable.solution_folder_meta.visible?(current_user)
+      elsif ['Solution::Draft'].include? @attachment.attachable_type
+        return current_user && current_user.privilege?(:view_solutions)
       elsif ['Post'].include? @attachment.attachable_type
         return @attachment.attachable && @attachment.attachable.forum.visible?(current_user)
       elsif ['Account', 'Portal'].include? @attachment.attachable_type

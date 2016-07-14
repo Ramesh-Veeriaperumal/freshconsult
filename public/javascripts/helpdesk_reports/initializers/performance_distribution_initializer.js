@@ -320,10 +320,10 @@ HelpdeskReports.ChartsInitializer.PerformanceDistribution = (function () {
         showSimpleStats : function(hash) {
                  var metrics = _FD.constants.metrics;
                  jQuery.each(metrics, function (index, value) {
-                     var current_data = hash[value];
+                     var current_data = hash[value+'_BUCKET'];
                      var time = "";
-                     if(current_data != undefined && current_data.general != undefined){
-                        time = HelpdeskReports.CoreUtil.timeMetricConversion(current_data.general.metric_result);
+                     if(current_data != undefined){
+                        time = HelpdeskReports.CoreUtil.timeMetricConversion(current_data['avg_value']);
                      } else{
                         time = HelpdeskReports.CoreUtil.timeMetricConversion(0);
                      } 

@@ -83,6 +83,9 @@ module RabbitMq::Constants
   RMQ_GENERIC_NOTE_KEY        = "*.1.*.1.#"  # Position 0 -> auto_refresh, 2 -> reports 4 -> activities
   RMQ_GENERIC_ARCHIVE_TKT_KEY = "1.*.1.#"    # Position 0 -> reports 2 -> activities
 
+  #when a spam or trash ticket is deleted after 30 days, we are firing a raw query. So deleting from all subscribers by manual publish
+  RMQ_CLEANUP_TICKET_KEY      = "*.1.*.1.1.#"
+
   # Manual publish keys - only for activities
   RMQ_ACTIVITIES_TICKET_KEY = "*.*.*.*.1.#"
   RMQ_ACTIVITIES_NOTE_KEY   = "*.*.*.1.#"
@@ -116,13 +119,14 @@ module RabbitMq::Constants
     # columns stored in reports_hash in schema_less_ticket
     "first_response_id", "agent_reassigned_count", "group_reassigned_count", "reopened_count", 
     "private_note_count", "public_note_count", "agent_reply_count", "customer_reply_count",
-    "agent_assigned_flag", "agent_reassigned_flag", "group_assigned_flag", "group_reassigned_flag"
+    "agent_assigned_flag", "agent_reassigned_flag", "group_assigned_flag", "group_reassigned_flag",
+    "last_resolved_at"
   ]
   
   REPORTS_ARCHIVE_TICKET_KEYS = REPORTS_TICKET_KEYS
   AUTO_REFRESH_NOTE_KEYS      = ["kind", "private"]
   REPORTS_NOTE_KEYS           = ["id", "source", "user_id", "agent", "category", "private", "incoming", "deleted", "account_id", "created_at", "archive"]
   
-  MANUAL_PUBLISH_SUBCRIBERS   = ["reports", "activities"]
+  MANUAL_PUBLISH_SUBCRIBERS   = ["reports", "activities", "count"]
 
 end

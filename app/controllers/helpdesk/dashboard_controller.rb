@@ -305,7 +305,7 @@ class Helpdesk::DashboardController < ApplicationController
   end
 
   def fetch_unresolved_tickets
-    if current_account.launched?(:es_count_reads)
+    if current_account.launched?(:es_count_reads) || current_account.features?(:countv2_reads)
       begin
         fetch_unresolved_tickets_from_es(true)
       rescue Exception => e

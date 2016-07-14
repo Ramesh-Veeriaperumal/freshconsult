@@ -5,11 +5,11 @@ namespace :scheduled_task do
   # Do not add if no such distribution is required.
   TASK_DISTRIBUTION = {
 
-    :scheduled_report => { :min_delay        => 15.seconds,
-                           :max_delay        => 15.minute,
-                           :offset           => 15.seconds,
-                           :task_per_offset  => 5
-                         }
+    # :scheduled_report => { :min_delay        => 15.seconds,
+    #                        :max_delay        => 15.minute,
+    #                        :offset           => 15.seconds,
+    #                        :task_per_offset  => 5
+    #                      }
   }
 
   #######################################################

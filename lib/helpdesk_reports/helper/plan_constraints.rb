@@ -27,7 +27,7 @@ module HelpdeskReports::Helper::PlanConstraints
   end
 
   def enterprise_reporting?
-    return @ent_reports_addon if defined?(@ent_reports_addon)
+    # return @ent_reports_addon if defined?(@ent_reports_addon)
     @ent_reports_addon ||= Account.current.features_included?(:enterprise_reporting)
   end
 

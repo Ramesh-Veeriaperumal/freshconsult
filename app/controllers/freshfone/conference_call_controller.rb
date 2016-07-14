@@ -8,10 +8,10 @@ class Freshfone::ConferenceCallController < FreshfoneBaseController
   include Freshfone::CallsRedisMethods
   include Freshfone::SupervisorActions
   
+  before_filter :select_current_call, :only => [:status]
   before_filter :complete_browser_leg, only: [:status], if: :agent_leg?
   before_filter :complete_supervisor_leg, :only => [:status], :if => :supervisor_leg?
   before_filter :check_conference_feature, :only => [:status]
-  before_filter :select_current_call, :only => [:status]
   before_filter :handle_blocked_numbers, :only => [:status]
   before_filter :terminate_ivr_preview, :only => [:status]
   before_filter :validate_dial_call_status, :only => [ :status ]

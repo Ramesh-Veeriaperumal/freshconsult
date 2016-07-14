@@ -97,7 +97,7 @@
       },
       :ticket_template                 =>   {
         :url                           =>   "/helpdesk/ticket_templates",
-        :privilege                     =>   privilege?(:manage_ticket_templates) && current_account.launched?(:helpdesk_ticket_templates)
+        :privilege                     =>   (feature?(:ticket_templates) || current_account.launched?(:helpdesk_ticket_templates)) && privilege?(:manage_ticket_templates)
       },
       :"email-notifications"           =>   {
         :url                           =>   "/admin/email_notifications",

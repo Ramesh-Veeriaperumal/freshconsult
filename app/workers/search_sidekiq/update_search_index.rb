@@ -2,6 +2,7 @@ class SearchSidekiq::UpdateSearchIndex < SearchSidekiq::BaseWorker
 
   def perform(args)
     args.symbolize_keys!
+    return if Account.current && $redis_others.sismember("DISABLE_ES_WRITES", Account.current.id)
     @update_item = args[:klass_name].constantize.find_by_id(args[:id])
     unless @update_item.blank?
       send_to_es(@update_item)

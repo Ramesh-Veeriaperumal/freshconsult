@@ -4,23 +4,7 @@ namespace :reports do
 
   desc "Build a no activity entry in reports ETL for handling backlog tickets"
   task :build_no_activity => :environment do
-    Sharding.run_on_all_slaves do
-      Account.reset_current_account
-      Account.find_in_batches do |accounts|
-        accounts.each do |account|
-          begin
-            account.make_current
-            Reports::BuildNoActivity.perform_async({:date => Time.now.utc})
-          rescue Exception => e
-            puts e.inspect
-            puts e.backtrace.join("\n")
-            NewRelic::Agent.notice_error(e,{:custom_params => {:description => "Exception in build_no_activity rake task"}})
-          ensure
-            Account.reset_current_account
-          end
-        end
-      end
-    end
+    Reports::BuildNoActivity.execute_task
   end
 
   ###### REPORT EXPORT SQS POLLER ######

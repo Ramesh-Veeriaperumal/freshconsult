@@ -30,7 +30,7 @@ class ApiAgentsQueriesTest < ActionDispatch::IntegrationTest
       index: 11,
       me: 13,
       update: 62,
-      destroy: 58
+      destroy: 56
     }
 
     id1 = Agent.where('user_id != ?', @agent.id).last.try(:user_id) || add_test_agent(@account, role: Role.find_by_name('Agent').id).id

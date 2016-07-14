@@ -5,6 +5,7 @@ module Search::ElasticSearchIndex
       include Tire::Model::Search if ES_ENABLED
 
       def update_es_index
+        return if self.account_id.to_s == "273518"
         SearchSidekiq::UpdateSearchIndex.perform_async({ :klass_name => self.class.name, 
                                                           :id => self.id }) if ES_ENABLED #and !queued?
 

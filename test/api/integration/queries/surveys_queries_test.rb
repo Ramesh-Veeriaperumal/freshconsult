@@ -4,7 +4,7 @@ class SurveysQueriesTest < ActionDispatch::IntegrationTest
   include SurveysTestHelper
 
   def test_query_count
-    v2_keys = %w(create index ticket_surveys)
+    v2_keys = %w(create index ticket_surveys survey_index)
 
     skip_bullet do
       v2 = {}
@@ -13,10 +13,12 @@ class SurveysQueriesTest < ActionDispatch::IntegrationTest
         api_create: 11,
         api_index: 12,
         api_ticket_surveys: 14,
+        api_survey_index: 4,
 
         create: 72,
         index: 11,
-        ticket_surveys: 10
+        ticket_surveys: 10,
+        survey_index: 12
       }
 
       stub_custom_survey true
@@ -32,6 +34,11 @@ class SurveysQueriesTest < ActionDispatch::IntegrationTest
 
       v2[:index], v2[:api_index], v2[:index_queries] = count_api_queries do
         get('/api/v2/surveys/satisfaction_ratings', nil, @write_headers)
+        assert_response 200
+      end
+
+      v2[:survey_index], v2[:api_survey_index], v2[:survey_index_queries] = count_api_queries do
+        get('/api/v2/surveys', nil, @headers)
         assert_response 200
       end
       unstub_custom_survey

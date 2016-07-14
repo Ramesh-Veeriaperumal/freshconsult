@@ -1,9 +1,10 @@
 class HelpdeskReports::ParamConstructor::Glance < HelpdeskReports::ParamConstructor::Base
   include HelpdeskReports::Field::Ticket
 
-  METRICS = [ "RECEIVED_TICKETS", "RESOLVED_TICKETS", "REOPENED_TICKETS", "AVG_FIRST_RESPONSE_TIME", 
-            "AVG_RESPONSE_TIME","AVG_RESOLUTION_TIME", "AVG_FIRST_ASSIGN_TIME", "FCR_TICKETS",
-            "RESPONSE_SLA", "RESOLUTION_SLA"]
+  METRICS = [ "RECEIVED_TICKETS", "RESOLVED_TICKETS","UNRESOLVED_TICKETS", 
+              "REOPENED_TICKETS", "AVG_FIRST_RESPONSE_TIME", "AVG_RESPONSE_TIME",
+              "AVG_RESOLUTION_TIME", "AVG_FIRST_ASSIGN_TIME", "FCR_TICKETS",
+              "RESPONSE_SLA", "RESOLUTION_SLA","UNRESOLVED_PREVIOUS_BENCHMARK"]
 
   BUCKET_METRICS_AND_CONDS = {
     "RECEIVED_TICKETS" => ["customer_interactions", "agent_interactions"],
@@ -45,11 +46,12 @@ class HelpdeskReports::ParamConstructor::Glance < HelpdeskReports::ParamConstruc
   end
 
   def glance_group_by metric
-    status_metrics = ["RECEIVED_TICKETS", "REOPENED_TICKETS"]
+    status_metrics = ["RECEIVED_TICKETS", "REOPENED_TICKETS","UNRESOLVED_TICKETS"]
     gp_by = ["source", "priority", "ticket_type"]
 
     gp_by |= ["product_id"] if Account.current.products.any?   
     gp_by |= ["status"] if status_metrics.include?(metric)
+    gp_by |= ["historic_status"] if metric == "UNRESOLVED_TICKETS"
     gp_by |= check_and_add_custom_field_in_group_by
   end
 
