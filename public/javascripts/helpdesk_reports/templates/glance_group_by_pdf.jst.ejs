@@ -16,8 +16,10 @@
           break;
         default:
           group_type = I18n.t(fields_hash[data].toLowerCase(),{scope: "helpdesk_reports.chart_title",defaultValue: fields_hash[data].toLowerCase()});
-      } 
-    }%>
+      }
+    }else{
+        group_type = I18n.t(fields_hash[data].toLowerCase(),{scope: "helpdesk_reports.chart_title",defaultValue: fields_hash[data].toLowerCase()}); 
+  }%>
 
     <div class="title">
       <%= I18n.t(title_name,{group_by: group_type}) %>

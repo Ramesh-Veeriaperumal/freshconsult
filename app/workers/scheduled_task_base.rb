@@ -18,6 +18,7 @@ class ScheduledTaskBase < BaseWorker
   #Never override, instead use execute_task!
   def perform(options)
     begin
+      logger.info "Received ScheduledTask with #{options.inspect} for execution."
       initialize_task(options)
       #Account dependent tasks, Account independent tasks & rake invocations respectively
       if params[:account_id].present?
@@ -47,11 +48,12 @@ class ScheduledTaskBase < BaseWorker
 
   def execute_on_common_scope
     return if params[:task_id].blank?
-    self.task = Helpdesk::ScheduledTask.find_by_id(params[:task_id]) if params[:task_id].is_a Fixnum
+    self.task = Helpdesk::ScheduledTask.find_by_id(params[:task_id]) if params[:task_id].is_a? Fixnum
     yield if Helpdesk::ScheduledTask::ACCOUNT_INDEPENDENT_TASKS.include?(self.task.schedulable_name)
   end
 
   def trigger_task_execution
+    logger.info "Triggering scheduled task execution : #{params.inspect}"
     status = false
     begin
       task.user.make_current if task.user
@@ -60,6 +62,7 @@ class ScheduledTaskBase < BaseWorker
     rescue Exception => e
       raise
     ensure
+      logger.info "Scheduled task execution complete : #{params.inspect}. Status : #{status}"
       after_execute(status)
     end
   end

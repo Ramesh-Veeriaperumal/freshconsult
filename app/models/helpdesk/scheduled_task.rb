@@ -26,7 +26,7 @@ class Helpdesk::ScheduledTask < ActiveRecord::Base
       status: STATUS_NAME_TO_TOKEN[:available]) }
 
   scope :dangling_tasks, lambda{ |from = Time.now.utc| 
-    tasks_between(from-2*CRON_FREQUENCY_IN_HOURS, from-30.minutes).where(
+    tasks_between(from-2*CRON_FREQUENCY_IN_HOURS, from-5.minutes).where(
       "status NOT IN (?)", INACTIVE_STATUS) }
 
   scope :tasks_between, lambda{ |from, till| {
@@ -139,13 +139,12 @@ class Helpdesk::ScheduledTask < ActiveRecord::Base
   def trigger(schedule_time = next_run_at)
     return unless (active? && worker.present?)
     return if schedule_time > (Time.now.utc.end_of_hour + CRON_FREQUENCY_IN_HOURS)
+    options = {task_id: id, next_run_at: next_run_at.to_i}
+    options[:account_id] = account_id unless ACCOUNT_INDEPENDENT_TASKS.include?(schedulable_name)
+    mark_enqueued.save!
 
     from_now = (schedule_time - Time.now.utc).to_i
-    from_now = 15 unless from_now > 15
-    options = {task_id: id, next_run_at: next_run_at.to_i}
-    options[:account_id] = account_id if ACCOUNT_INDEPENDENT_TASKS.include?(schedulable_name)
-    mark_enqueued.save!
-    worker.perform_in(from_now, options)
+    (from_now > 0) ? worker.perform_in(from_now, options) : worker.perform_async(options.merge({dangling: true}))
   end
 
   def as_json(options = {}, config = true)

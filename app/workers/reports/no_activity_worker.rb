@@ -1,15 +1,17 @@
 class Reports::NoActivityWorker < BaseWorker
   
-  sidekiq_options :queue => :no_activity_queue, :retry => 0, :backtrace => true, :failures => :exhausted
+  sidekiq_options :queue => :reports_no_activity, :retry => 0, :backtrace => true, :failures => :exhausted
   
 
   def perform params
+    HelpdeskReports::Logger.log("No-Activity batch #{params[:batch]} started")
     Sharding.run_on_shard(params[:shard_name]) do
       Sharding.run_on_slave do
         params[:account_ids].each do |account_id|
           begin
             Account.find_by_id(account_id).make_current
             run(params[:date])
+            HelpdeskReports::Logger.log("No-Activity batch #{params[:batch]} ended")
           rescue Exception => e
             options = {:account_id => account_id}
             HelpdeskReports::Logger.log("Exception in build_no_activity",e,options)
@@ -52,10 +54,10 @@ class Reports::NoActivityWorker < BaseWorker
   
   def conditions(date)
     dates = []
-    (84..90).each{ |d| dates << [(date - d.days), d] }
+    (84..90).each{ |d| dates << (date - d.days) }
 
-    conditions        = ["created_at < ? AND (" + (["ABS(DATEDIFF(?, created_at)) % ? = 0"] * 7).join(' OR ') + ")",
-                            (date - 83.days), dates.flatten
+    conditions        = ["created_at < ? AND (" + (["ABS(DATEDIFF(?, created_at)) % 90 = 0"] * 7).join(' OR ') + ")",
+                            (date - 83.days), dates
                         ].flatten
   end
   

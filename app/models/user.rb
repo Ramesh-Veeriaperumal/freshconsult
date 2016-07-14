@@ -804,6 +804,7 @@ class User < ActiveRecord::Base
       self.tags.clear
       self.user_companies.delete_all
       self.user_companies.reload
+      self.customer_id = nil
       agent = build_agent()
       agent.occasional = !!args[:occasional]
       agent.group_ids = args[:group_ids] if args.key?(:group_ids) 
@@ -994,7 +995,7 @@ class User < ActiveRecord::Base
       if user_comp.present?
         user_comp.company_id = default_user_company.company_id
       else
-        self.user_companies = [default_user_company]
+        self.user_companies = [default_user_company] if default_user_company.valid?
       end
     end
 
