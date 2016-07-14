@@ -219,6 +219,12 @@
 	.volume-header{
 		padding-top: 35px;
 	}
+
+	.no-data-border {
+		border: 1px solid #ebebeb;
+	    margin: 16px 0;
+	    border-radius: 5px;
+	}
 	.performance-at-glance{
 		margin-right: -20px;
 		margin-top: 30px;
@@ -244,7 +250,7 @@
 	.no-data{
 		padding-top: 7%;
 	}
-	.days-name-pdf{
+	.days-name-pdf,.load-analysis-pdf-title{
 		font-weight: bold;
 	}
 }
@@ -482,10 +488,13 @@
 #selected_day_chart{
 	 margin: -8px 0 40px;
 }
+
 /*Chart styles*/
 .charts_container{
 	margin: 25px 0 40px;
 	min-height: 300px;
+	border: 1px solid #ebebeb;
+	border-radius: 5px;
 	.mini-chart{
 		@include float(left);
 		width: 14.2%;
@@ -511,26 +520,111 @@
   		width: 100%;
 	}
 }
+#load_analysis_head{
+	padding-top: 1%;
+	padding-bottom: 2%;
+}
+
+.time_trend_margin{
+	margin: 45px 0 40px !important;
+}
+.day_trend_margin {
+	margin: 0;
+}
 .charts-container-pdf{
 	margin: 10px 0;
 }
 
 /* Statistics Section */
+	.busy_period{
+		padding-left: 7%;
+		.received_tickets .value{
+			color: #1387C2;
+		}
+		.resolved_tickets .value{
+			color: #80B447;
+		}
+	}
+	.busy_period_pdf{
+		padding-left: 7%;
+		@include float(left);
+		margin: 24px 0 16px 0;
+		width : 100%;
+		display : block;
+		.received_tickets .value{
+			color: #1387C2;
+		}
+		.resolved_tickets .value{
+			color: #80B447;
+		}
+		.stat{
+			display : inline-block;
+			@include border-left-width(1px);
+			border-left: 1px solid #EBEBEB;
+		    width: 22%;
+		    padding-left: 8px;
+		    .received{
+		        color: #1387C2;
+		    }
+		    .resolved{
+		        color: #80B447;
+		    }
+		    .unresolved{
+		        color: #F4AA2E;
+		    }
+		}
+
+		.value_average, .value_total, .value{
+			margin: 8px 0;
+			color: #333;
+			font-size : 16px;
+			font-weight :bold;
+			.status-symbol{
+				margin-left: 10%;
+			}
+			.right-arrow{
+				margin-left: 0px !important;
+			}
+			.status-percent{
+				font-size : 12px;
+				color : #999;
+			}
+		}
+
+		.stat_title{
+			margin : 8px 0;
+			font-size : 12px;
+			color : #999;
+		}
+
+		&::after{
+			display : block;
+			content : '';
+			clear : both;
+		}
+	}
+	.stats{
+		padding-left: 3%;
+	}
 	.busy_period , .stats{
 			@include float(left);
 			margin: 24px 0 16px 0;
 			width : 100%;
-			display : none;
+			display : block;
 			.stat{
 				display : inline-block;
 				@include border-left-width(1px);
-				border-color: #EBEBEB;
+				border-left: 1px solid #EBEBEB;
 			    width: 22%;
-			    border-style: solid;
 			    padding-left: 8px;
-
-			    &.received_tickets,&.resolved_tickets{
-			    	width : 32%;
+			    .received{
+			        color: #1387C2;
+			    }
+			    .resolved{
+			        color: #80B447;
+			    }
+			    .unresolved{
+			        color: #F4AA2E;
 			    }
 			}
 
@@ -539,6 +633,16 @@
     			color: #333;
     			font-size : 16px;
     			font-weight :bold;
+    			.status-symbol{
+					margin-left: 10%;
+				}
+				.right-arrow{
+					margin-left: 0px !important;
+				}
+				.status-percent{
+					font-size : 12px;
+					color : #999;
+				}
 			}
 
 			.stat_title{
@@ -552,6 +656,12 @@
 				content : '';
 				clear : both;
 			}
+	}
+
+	.stats{
+		.stat{
+			width: 15% !important;
+		}
 	}
 
 .trend-type{
@@ -775,6 +885,24 @@
 					padding:0 10px;
 					height: 25px;
 					font-weight: 500;
+				}
+				.view-all-status {
+					font-size: 15px;
+					padding: 0px 10px;
+				}
+				.current_status{
+			    	color: #0066CC;
+			    }	
+			    .historic_status{
+			    	color: #999999;
+			    }
+			    span.toggle{
+					color: #0066CC;
+				   	cursor: pointer;
+				   	&.active{
+				   		color: #999999;
+				   		cursor: default;
+				   	}
 				}
 				.select2-container{
 					width: 150px;
@@ -1309,16 +1437,77 @@
 }
 .highcharts-tooltip {
 	span {
-	    background-color: rgba(0,0,0, 0.6);
 	    z-index:9999 !important;
 	    .tooltip{
+	    	background-color: rgba(0,0,0, 0.6);
 	    	padding: 13px;
 	    	font-size:13px;
 	    	font-weight:500;
 	    	color: #aeaeae;
 	    	cursor: default;
 	    }
+	    .stacked_chart_tooltip{
+	    	background-color: transparent;
+	    	font-size:13px;
+	    	font-weight:500;
+	    	color: #aeaeae;
+	    	cursor: default;
+	    }
 	}
+}
+
+
+/* Nav Tabs in ticket volume */
+.load_analysis_nav{
+	border: none;
+
+	> li > a{
+		text-decoration: none;
+		color: #3385D6 !important;
+		background-color: transparent !important;
+		border: 0;
+		padding: 10px 0 10px 0;
+		margin: 0px 15px;
+		font-size: 15px;
+	}
+
+	> li > a:hover{
+		border-bottom-width: 2px;
+		border-bottom-style: solid;
+		border-bottom-color: #3385D6;
+	}
+
+	> .active > a,
+	> .active > a:hover {
+		text-decoration: none;
+		border: none;
+		border-bottom-width: 2px;
+		border-bottom-style: solid;
+		border-bottom-color: #999999;
+		color: #555555 !important;
+		background-color: transparent !important;
+	}
+}
+
+.load_analysis_avg{
+	display: block;
+    background-color: rgba(255,255,255,1);
+    z-index: 1;
+    position: absolute;
+    margin-left: 10px;
+    margin-top: 1%;
+    box-shadow: 1px 1px 2px 2px lightgrey;
+    padding: 14px;
+    border-radius : 3px;
+}
+
+.analysis_tooltip{
+	font-size: 13px !important;
+	color: #636363;
+    max-width: 300px;
+    .bold{
+    	font-weight: 500;
+    }
 }
 
 /*View more metrics styles*/

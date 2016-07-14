@@ -18,6 +18,12 @@ HelpdeskReports.ReportUtil.Glance = (function () {
                     _FD.actions.submitActiveMetric(this);
                 }
             });
+            
+            jQuery('#reports_wrapper').on('click.helpdesk_reports', '#current_status:not(".active"), #historic_status:not(".active")', function (event) {
+                jQuery('#current_status, #historic_status').toggleClass('active');
+                jQuery('#status_container, #historic_status_container').toggle();
+                jQuery('#status_view_more_container.active, #historic_status_view_more_container.active').toggle();
+            });
 
             jQuery('#reports_wrapper').on('click.helpdesk_reports', '[data-ticket="view_all"]', function() {
                 _FD.actions.viewAllTickets(this);
@@ -388,7 +394,15 @@ HelpdeskReports.ReportUtil.Glance = (function () {
             },  
             constructMainListCondition: function (group_by, label, id) {
                 var list_hash = {};
-                var hash_group_by = HelpdeskReports.locals.report_options_hash[group_by];
+                var tmp_group='';
+                //Hack for historic status
+                if (group_by == "historic_status"){
+                    tmp_group = "status";
+                }else{
+                    tmp_group = group_by;
+                }
+
+                var hash_group_by = HelpdeskReports.locals.report_options_hash[tmp_group];
 
                 if (hash_group_by.hasOwnProperty(id)) {
                     list_hash = {

@@ -331,7 +331,7 @@ var FreshfoneWidget;
 			this.previewMode(false);
 		},
 		previewMode: function (show) {
-			this.ongoingCallWidget.find('.transfer_call').parent().toggle(show);
+			this.ongoingCallWidget.toggleClass('ivr_preview_mode', !show);
 			this.ongoingCallWidget.find('.add_notes').parent().toggle(show);
 		},
 		showDialPad: function () {

@@ -68,6 +68,11 @@ module RabbitMq::Utils
     message = subscriber_basic_message(model, action, uuid)
     MANUAL_PUBLISH_SUBCRIBERS.each { |f|
       next if f == "activities" && !Account.current.features?(:activity_revamp)
+      if Account.current.features?(:countv2_writes)
+        next if f == "count" && model != "ticket"
+      else
+        next if f == "count"
+      end
       message["#{model}_properties"].deep_merge!(send("mq_#{f}_#{model}_properties", action))
       message["subscriber_properties"].merge!({ f => send("mq_#{f}_subscriber_properties", action)})
     }

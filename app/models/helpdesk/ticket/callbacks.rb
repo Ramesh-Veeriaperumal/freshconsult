@@ -166,6 +166,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end 
     
     if reopened_now?
+      schema_less_ticket.set_last_resolved_at(ticket_states.resolved_at)
       ticket_states.opened_at=time_zone_now
       ticket_states.reset_tkt_states
       schema_less_ticket.update_reopened_count("create")
@@ -308,7 +309,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def changed_condition?
-    group_id_changed? || source_changed? || has_product_changed? || ticket_type_changed?
+    group_id_changed? || source_changed? || has_product_changed? || ticket_type_changed? || company_id_changed?
   end
 
   def has_product_changed?
@@ -477,7 +478,7 @@ private
   end
 
   def check_company_id
-    owner_id = owner_id_was if requester.contractor? && !requester.company_ids.include?(self.owner_id)
+    self.owner_id = owner_id_was unless requester.company_ids.include?(self.owner_id)
   end
 
   def populate_requester

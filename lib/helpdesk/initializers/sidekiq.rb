@@ -30,8 +30,10 @@ Sidekiq.configure_client do |config|
       "Social::Gnip::ReplayWorker",
       "Social::Gnip::RuleWorker",
       "Reports::ScheduledReports",
+      "Reports::BuildNoActivity",
       "Social::PremiumFacebookWorker",
-      "Social::PremiumTwitterWorker"
+      "Social::PremiumTwitterWorker",
+      "Reports::NoActivityWorker"
     ]
     chain.add Middleware::Sidekiq::Client::SetCurrentUser, :required_classes => [
       "Tickets::BulkScenario",
@@ -80,8 +82,10 @@ Sidekiq.configure_server do |config|
       "Social::Gnip::ReplayWorker",
       "Social::Gnip::RuleWorker",
       "Reports::ScheduledReports",
+      "Reports::BuildNoActivity",
       "Social::PremiumFacebookWorker",
-      "Social::PremiumTwitterWorker"
+      "Social::PremiumTwitterWorker",
+      "Reports::NoActivityWorker"
     ]
     chain.add Middleware::Sidekiq::Server::SetCurrentUser, :required_classes => [
       "Tickets::BulkScenario",
@@ -120,8 +124,10 @@ Sidekiq.configure_server do |config|
       "Social::Gnip::ReplayWorker",
       "Social::Gnip::RuleWorker",
       "Reports::ScheduledReports",
+      "Reports::BuildNoActivity",
       "Social::PremiumFacebookWorker",
-      "Social::PremiumTwitterWorker"
+      "Social::PremiumTwitterWorker",
+      "Reports::NoActivityWorker"
     ]
     chain.add Middleware::Sidekiq::Client::SetCurrentUser, :required_classes => [
       "Tickets::BulkScenario",

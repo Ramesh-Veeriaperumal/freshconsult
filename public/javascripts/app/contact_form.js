@@ -353,7 +353,20 @@ window.App.Contacts.Contact_form = window.App.Contacts.Contact_form || {};
     bindRemoveCompanyClick: function () {
       var self = this;
       $('body').on('shown.contact_form', '#company-delete-confirmation', function(e){
-        $("#rename_text").addClass("disabled rename_fade");
+        if($("#user_companies").parent().siblings().find(".required_star").length == 1){
+          var element = $("#user_companies li").not("[data-company-destroyed='true']").not("[data-new-company='true']");
+          if(element.length > 1){
+            $(".rename_company").first().attr("disabled", false);
+            $("#rename_text").addClass("disabled rename_fade");
+          }else if(element.length==1){
+            $(".rename_company").first().attr("disabled", "disabled");
+            $("#rename_text").removeClass("disabled rename_fade");
+            $("#rename_label").attr('checked', true);
+            $("#rename_text").focus();
+          };
+        } else {
+          $("#rename_text").addClass("disabled rename_fade");
+        }
         var modal = $(this).data('modal');
         self.triggerElement = $(modal.options.source.siblings('p'));
         $("#target_company").text(self.triggerElement.text());

@@ -16,10 +16,15 @@ class ScheduledTaskBase < BaseWorker
   end
 
   #Never override, instead use execute_task!
-  def perform(params)
+  def perform(options)
     begin
-      initialize_task(params)
-      execute_on_account_scope { trigger_task_execution if valid_task? }
+      initialize_task(options)
+      #Account dependent tasks, Account independent tasks & rake invocations respectively
+      if params[:account_id].present?
+        execute_on_account_scope { trigger_task_execution if valid_task? }
+      else
+        execute_on_common_scope { trigger_task_execution if valid_task? }
+      end
     rescue Exception => e
       NewRelic::Agent.notice_error(e, {:description => "Error on executing scheduled task #{params}"})
       message = "Error on executing scheduled task: #{task_printable}. Options :#{params.inspect}.\n#{e.message}\n#{e.backtrace.join("\n\t")}"
@@ -38,6 +43,12 @@ class ScheduledTaskBase < BaseWorker
       self.task = Helpdesk::ScheduledTask.find_by_id(params[:task_id]) if params[:task_id].is_a? Fixnum
       yield
     end
+  end
+
+  def execute_on_common_scope
+    return if params[:task_id].blank?
+    self.task = Helpdesk::ScheduledTask.find_by_id(params[:task_id]) if params[:task_id].is_a? Fixnum
+    yield if Helpdesk::ScheduledTask::ACCOUNT_INDEPENDENT_TASKS.include?(self.task.schedulable_name)
   end
 
   def trigger_task_execution

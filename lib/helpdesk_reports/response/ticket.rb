@@ -13,7 +13,13 @@ class HelpdeskReports::Response::Ticket
   end
   
   def parse_result
-    result["errors"].present? ? error_result : query_result
+    if result["errors"].present?  
+      error_result 
+    elsif TEMPLATE_METRICS_AND_QUERY.include?(metric.to_sym)
+      result["result"]  
+    else
+      query_result
+    end
   end
     
   private
