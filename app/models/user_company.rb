@@ -18,19 +18,16 @@ class UserCompany < ActiveRecord::Base
   
   # This will also update the tickets' company in reports
   def associate_tickets
-    return if $redis_others.sismember("DISABLE_ES_WRITES", Account.current.id) || Account.current.features_included?(:es_v2_writes)
     Tickets::UpdateCompanyId.perform_async({ :user_ids => user_id,
                                              :company_id => company_id }) unless contractor?
   end
 
   def update_tickets_company_id
-    return if $redis_others.sismember("DISABLE_ES_WRITES", Account.current.id) || Account.current.features_included?(:es_v2_writes)
     Tickets::UpdateCompanyId.perform_async({ :user_ids => user_id, :company_id => company_id, :old_company_id =>  
       previous_changes["company_id"][0] }) if previous_changes["company_id"].present?
   end
 
   def remove_tickets_company_id
-    return if $redis_others.sismember("DISABLE_ES_WRITES", Account.current.id) || Account.current.features_included?(:es_v2_writes)
     Tickets::UpdateCompanyId.perform_async({ :user_ids => user_id,
       :company_id => nil }) unless account.features?(:multiple_user_companies)
   end
