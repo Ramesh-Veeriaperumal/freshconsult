@@ -24,7 +24,7 @@ class UserCompany < ActiveRecord::Base
   end
 
   def update_tickets_company_id
-    return if $redis_others.sismember("DISABLE_ES_WRITES", Account.current.id) || Account.current.features_included?(:es_v2_writes)
+    # return if $redis_others.sismember("DISABLE_ES_WRITES", Account.current.id) || Account.current.features_included?(:es_v2_writes)
     Tickets::UpdateCompanyId.perform_async({ :user_ids => user_id, :company_id => company_id, :old_company_id =>  
       previous_changes["company_id"][0] }) if previous_changes["company_id"].present?
   end
