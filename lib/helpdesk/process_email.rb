@@ -220,7 +220,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     end
 
     def parse_reply_to_email
-      if(!params[:headers].nil? && params[:headers] =~ /^Reply-[tT]o: (.+)$/)
+      if(!params[:headers].nil? && params[:headers] =~ /^reply-to:(.+)$/i)
         self.additional_emails = get_email_array($1.strip)[1..-1]
         parsed_reply_to = parse_email($1.strip)
         self.reply_to_email = parsed_reply_to if parsed_reply_to[:email] =~ EMAIL_REGEX
