@@ -8,8 +8,9 @@
           <%= t('helpdesk_reports.reports_in_action')%>
         </a>
         <% if current_account.old_reports_enabled? %>
-          <span class="seperator_reports"> | </span>
-          <a class="report-link" href="<%=old_reports_url%>"><%= t('helpdesk_reports.view_old_reports')%></a>
+          <div class="remove-message">
+             The <a class="report-link" href="<%=old_reports_url%>"><%= t('helpdesk_reports.old_reports')%></a> will no longer be available after 3rd Aug, 2016
+          </div>
         <% end %>
       </div>
       <div class="clear"></div>
