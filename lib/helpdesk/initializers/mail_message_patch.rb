@@ -4,7 +4,7 @@ Mail::Message.class_eval do
       
       HEADER_SEPARATOR_WITH_MATCH_PATTERN = /(#{Mail::Patterns::CRLF}#{Mail::Patterns::CRLF}|#{Mail::Patterns::CRLF}#{Mail::Patterns::WSP}*#{Mail::Patterns::CRLF}(?!#{Mail::Patterns::WSP}))/m
       HEADER_SEPARATOR_WITH_NO_WHITESPACE = /#{Mail::Patterns::CRLF}#{Mail::Patterns::CRLF}(?!#{Mail::Patterns::WSP})/m
-      HEADER_FIELD_PATTERN = /^\w(.*):(.*)$/m
+      HEADER_FIELD_PATTERN = /^\w(.*):(.*)$/
       
     def parse_message
       header_part, match_pattern, body_part = raw_source.lstrip.split(HEADER_SEPARATOR_WITH_MATCH_PATTERN, 2)
