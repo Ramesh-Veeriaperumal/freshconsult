@@ -11,9 +11,9 @@ class SendgridDomainUpdates < BaseWorker
         if (!domain_in_sendgrid && args['action'] == 'delete')
           Rails.logger.info "Domain #{args['domain']} does not exist in sendgrid to delete"
         elsif (domain_in_sendgrid && args['action'] == 'create')
-          notify_and_update(args['domain'])
+          notify_and_update(args['domain'], args['vendor_id'])
         elsif (args['action'] == 'create' or args['action'] == 'delete')
-          self.send("#{args['action']}_record", args['domain'])
+          self.send("#{args['action']}_record", args['domain'], args['vendor_id'])
         end
       end
     rescue => e
@@ -29,25 +29,25 @@ class SendgridDomainUpdates < BaseWorker
     return true if response.code == 200
   end
 
-  def delete_record(domain)
+  def delete_record(domain, vendor_id)
     response = send_request('delete', SendgridWebhookConfig::SENDGRID_API["delete_url"] + domain)
     return false unless response.code == 204
     Rails.logger.info "Deleting domain #{domain} from sendgrid"
-    AccountWebhookKeys.destroy_all(account_id: Account.current.id)
+    AccountWebhookKeys.destroy_all(account_id: Account.current.id, vendor_id: vendor_id)
   end
 
-  def create_record(domain)
+  def create_record(domain, vendor_id)
     generated_key = generate_callback_key
     post_url = SendgridWebhookConfig::POST_URL % { :full_domain => domain, :key => generated_key }
     post_args = {:hostname => domain, :url => post_url, :spam_check => true, :send_raw => false }
     response = send_request('post', SendgridWebhookConfig::SENDGRID_API["set_url"] + , post_args)
     return false unless response.code == 200
     verification = AccountWebhookKey.new(:account_id => Account.current.id, 
-      :webhook_key => generated_key, :service_id => Account::MAIL_PROVIDER[:sendgrid], :status => 1)
+      :webhook_key => generated_key, :vendor_id => vendor_id, :status => 1)
     verification.save!
   end
 
-  def notify_and_update(domain)
+  def notify_and_update(domain, vendor_id)
     FreshdeskErrorsMailer.error_email(nil, {:domain_name => domain}, nil, {
       :subject => "Error in creating mapping for a domain in sendgrid", 
       :recipients => "email-team@freshdesk.com",
@@ -58,7 +58,7 @@ class SendgridDomainUpdates < BaseWorker
     post_url = SendgridWebhookConfig::POST_URL % { :full_domain => domain, :key => generated_key }
     post_args = { :url => post_url, :spam_check => true, :send_raw => false }
     response = send_request('patch', SendgridWebhookConfig::SENDGRID_API['update_url'] + domain, post_args)
-    AccountWebhookKey.find_by_account_id(Account.current.id).update_attributes(:webhook_key => generated_key)
+    AccountWebhookKey.find_by_account_id_and_vendor_id(Account.current.id, vendor_id).update_attributes(:webhook_key => generated_key)
   end
 
   def send_request(action, url, post_args={})

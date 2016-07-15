@@ -38,7 +38,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     if !account.nil? and account.active?
       # clip_large_html
       account.make_current
-      verify unless params.key?(:mailbox_id)
+      verify
       TimeZone.set_time_zone
       encode_stuffs
       from_email = parse_from_email(account)
@@ -890,14 +890,15 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     if params[:verification_key].present?
       stored_webhook_key = account_webhook_key_from_cache(Account::MAIL_PROVIDER[:sendgrid])
       if stored_webhook_key.nil?
-        Rails.logger.debug "VERIFICATION RECORD IS NOT PRESENT. BUT VERIFICATION KEY IS THERE ===> #{verification_key}"
-        return false
+        Rails.logger.info "VERIFICATION KEY is there. But AccountWebhookKey Record is not present for the key #{verification_key}"
       else
         verification = (stored_webhook_key == params[:verification_key] ? true : false)
         return verification
       end
+    else
+      Rails.logger.info "VERIFICATION KEY is not present for the account #{Account.current.id} with the envelope address #{params[:envelope]}"
     end
-    # Returning true by default . If verification is needed , key will be present
+    # Returning true by default.
     return true
   end  
 
