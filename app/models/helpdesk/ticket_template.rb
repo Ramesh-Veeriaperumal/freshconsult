@@ -12,6 +12,15 @@ class Helpdesk::TicketTemplate < ActiveRecord::Base
 
   TOTAL_SHARED_TEMPLATES = 300
 
+  ASSOCIATION_TYPES = [
+    [ :general, "General Template", 1 ],
+    [ :parent, "Parent Template", 2 ],
+    [ :child , "Child Template",  3 ]
+  ]
+
+  ASSOCIATION_TYPES_KEYS_BY_TOKEN = Hash[*ASSOCIATION_TYPES.map { |i| [i[0], i[2]] }.flatten]
+  ASSOCIATION_TYPES_KEYS_BY_TYPE = Hash[*ASSOCIATION_TYPES.map { |i| [i[2], i[0]] }.flatten]
+
   serialize :template_data, Hash
 
   has_many_attachments 
@@ -39,7 +48,7 @@ class Helpdesk::TicketTemplate < ActiveRecord::Base
   attr_accessible :name, :description, :template_data, :accessible_attributes
   xss_sanitize :only => [:name, :description], :html_sanitize => [:name, :description], :decode_calm_sanitizer => [:data_description_html]
 
-  before_validation :validate_name
+  before_validation :set_default_type, :validate_name
   accepts_nested_attributes_for :accessible
   alias_attribute :helpdesk_accessible, :accessible
   delegate :groups, :users, :visible_to_me?,:visible_to_only_me?, :to => :accessible
@@ -78,6 +87,10 @@ class Helpdesk::TicketTemplate < ActiveRecord::Base
   INCLUDE_ASSOCIATIONS_BY_CLASS = {
     Helpdesk::TicketTemplate => {:include => [{:accessible => [:group_accesses, :user_accesses]}]}
   }
+
+  def set_default_type
+    self.association_type ||= ASSOCIATION_TYPES_KEYS_BY_TOKEN[:general]
+  end
 
   def to_indexed_json
    as_json({
