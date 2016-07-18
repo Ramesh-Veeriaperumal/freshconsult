@@ -10,11 +10,11 @@ class CreateAccountWebhookKeys < ActiveRecord::Migration
       t.integer :status, :limit => 1
     end 
 
-    add_index :account_webhook_keys, [:account_id, :vendor_id], :name => 'index_account_webhook_keys_on_account_id_and_webhook_key'
+    add_index :account_webhook_keys, [:account_id, :vendor_id], :name => 'index_account_webhook_keys_on_account_id_and_vendor_id'
+    add_index :account_webhook_keys, :webhook_key, :unique => true
   end
 
   def self.down
   	drop_table :account_webhook_keys
   end
 end
-

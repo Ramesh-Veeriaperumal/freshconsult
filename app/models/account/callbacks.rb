@@ -104,7 +104,7 @@ class Account < ActiveRecord::Base
     def set_shard_mapping
       begin
         create_shard_mapping
-       rescue => e
+      rescue => e
         Rails.logger.error e.message
         Rails.logger.error e.backtrace.join("\n\t")
         Rails.logger.info "Shard mapping exception caught"
@@ -238,10 +238,10 @@ class Account < ActiveRecord::Base
     end
 
     def update_sendgrid
-      vendor_id = Account::MAIL_PROVIDER[:sendgrid])
+      vendor_id = Account::MAIL_PROVIDER[:sendgrid]
       if transaction_include_action?(:create)
         SendgridDomainUpdates.perform_async({:action => 'create', :domain => full_domain, :vendor_id => vendor_id})
-      elsif transaction_include_action?(:update) && full_domain_changed?
+      elsif (transaction_include_action?(:update) && full_domain_changed?)
         SendgridDomainUpdates.perform_async({:action => 'delete', :domain => full_domain_was, :vendor_id => vendor_id})
         SendgridDomainUpdates.perform_at(5.minutes.from_now, {:action => 'create', :domain => full_domain, :vendor_id => vendor_id})
       elsif transaction_include_action?(:destroy)

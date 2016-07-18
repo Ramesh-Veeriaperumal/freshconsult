@@ -40,7 +40,7 @@ class SendgridDomainUpdates < BaseWorker
     generated_key = generate_callback_key
     post_url = SendgridWebhookConfig::POST_URL % { :full_domain => domain, :key => generated_key }
     post_args = {:hostname => domain, :url => post_url, :spam_check => true, :send_raw => false }
-    response = send_request('post', SendgridWebhookConfig::SENDGRID_API["set_url"] + , post_args)
+    response = send_request('post', SendgridWebhookConfig::SENDGRID_API["set_url"] , post_args)
     return false unless response.code == 200
     verification = AccountWebhookKey.new(:account_id => Account.current.id, 
       :webhook_key => generated_key, :vendor_id => vendor_id, :status => 1)
