@@ -102,7 +102,7 @@ module AccountCleanup
     end
 
     def perform_delete(account)
-      SearchSidekiq::RemoveFromIndex::AllDocuments.perform_async if ES_ENABLED
+      # SearchSidekiq::RemoveFromIndex::AllDocuments.perform_async if ES_ENABLED
       delete_gnip_twitter_rules(account)
       delete_social_redis_keys(account)
       delete_facebook_subscription(account)

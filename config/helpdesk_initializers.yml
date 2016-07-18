@@ -2,6 +2,7 @@ helpdesk:
   initializers:
     - mri2.1_patches
     - rails3_patches
+    - mail_message_patch
     - authlogic_patch
     - helpdesk
     - api_initializer

@@ -741,23 +741,23 @@ HelpdeskReports.ChartsInitializer.TicketVolume = (function () {
             }));
             tot_received.html(_FD.hash_received.extra_details.total <= limit ? _FD.hash_received.extra_details.total : tooltip_tmpl({
                     value : _FD.hash_received.extra_details.total,
-                    truncated_value : shorten_func(_FD.hash_received.extra_details.total)
+                    truncated_value : shorten_func(_FD.hash_received.extra_details.total,1)
             }));
             avg_resolved.html(_FD.hash_resolved.extra_details[trend+'_avg'] <= limit ? _FD.hash_resolved.extra_details[trend+'_avg'] : tooltip_tmpl({
                     value : _FD.hash_resolved.extra_details[trend+'_avg'],
-                    truncated_value : shorten_func(_FD.hash_resolved.extra_details[trend+'_avg'])
+                    truncated_value : shorten_func(_FD.hash_resolved.extra_details[trend+'_avg'],1)
             }));
             tot_resolved.html(_FD.hash_resolved.extra_details.total <= limit ? _FD.hash_resolved.extra_details.total : tooltip_tmpl({
                     value : _FD.hash_resolved.extra_details.total,
-                    truncated_value : shorten_func(_FD.hash_resolved.extra_details.total)
+                    truncated_value : shorten_func(_FD.hash_resolved.extra_details.total,1)
             }));
             avg_unresolved.html(_FD.hash_unresolved.extra_details[trend+'_avg'] <= limit ? _FD.hash_unresolved.extra_details[trend+'_avg'] : tooltip_tmpl({
                     value : _FD.hash_unresolved.extra_details[trend+'_avg'],
-                    truncated_value : shorten_func(_FD.hash_unresolved.extra_details[trend+'_avg'])
+                    truncated_value : shorten_func(_FD.hash_unresolved.extra_details[trend+'_avg'],1)
             }));
             tot_unresolved.html(_FD.hash_unresolved.extra_details.total <= limit ? _FD.hash_unresolved.extra_details.total : tooltip_tmpl({
                     value : _FD.hash_unresolved.extra_details.total,
-                    truncated_value : shorten_func(_FD.hash_unresolved.extra_details.total)
+                    truncated_value : shorten_func(_FD.hash_unresolved.extra_details.total,1)
             }));
 
             avg_received.append(_FD.generateStatusArrowHtml(_FD.hash_received.extra_details.diff_perc, 'received'));

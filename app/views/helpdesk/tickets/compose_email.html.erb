@@ -7,6 +7,18 @@
         <%= t("ticket.compose.compose_email_info") %>
         <a href="https://support.freshdesk.com/support/solutions/articles/211974" target="_blank"><%= t("ticket.compose.learn_more") %></a>
  </div>
+
+<% 
+  sign_value = if (desp = @item.description_html).blank? & (sign = 
+                  current_user.agent.signature_value).blank?
+                desp.to_s
+              else
+                desp.present? ? (sign.present? ? desp + sign : desp) : ("<p><br /></p>"*2)+sign.to_s
+              end
+%>
+
+<input type="hidden" value="<%= sign_value %>" id="signature" />
+
 <div id="compose-new-email" class="compose-new-email">
   <%= form_for @item, :html => {:multipart => true, :id => "ComposeTicket", :ignore => "", :rel => "validate" } do |f| %>
   <div class="address-details">

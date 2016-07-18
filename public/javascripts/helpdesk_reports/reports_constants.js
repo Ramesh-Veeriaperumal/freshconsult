@@ -31,7 +31,7 @@ HelpdeskReports.Constants = {
                 bucket: ["customer_interactions", "agent_interactions"],
                 bucket_graph_map: ['interactions'],
                 ticket_list_title : I18n.t('helpdesk_reports.ticket_list_title.unresolved_tickets'),
-                solution_url : "https://support.freshdesk.com/support/solutions/articles/212989"
+                solution_url : "https://support.freshdesk.com/solution/articles/220369"
             },
             "REOPENED_TICKETS" : { 
                 name : I18n.t('helpdesk_reports.metric_name.reopened_tickets'),

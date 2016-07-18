@@ -20,7 +20,8 @@ class BadRequestError < BaseError
     user_id: :contact,
     forum_id: :forum,
     forum_category_id: :category,
-    email_config_id: :email_config
+    email_config_id: :email_config,
+    from_email: :"active email_config"
   }
 
   def initialize(attribute, value, params_hash = {})

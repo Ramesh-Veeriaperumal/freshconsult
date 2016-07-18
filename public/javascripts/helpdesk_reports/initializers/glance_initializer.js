@@ -56,7 +56,7 @@ HelpdeskReports.ChartsInitializer.Glance = (function () {
             if (jQuery.isEmptyObject(hash_active['error'])) {
                 for (i = 0; i < group_by.length; i++) {
                     if(group_by[i] == "historic_status" && active_metric == "UNRESOLVED_TICKETS"){
-                        break;
+                        continue;
                     }
                     if(group_by[i] == "status" && active_metric == "UNRESOLVED_TICKETS"){
                        is_historic_present = (typeof hash_active["historic_status"] !== 'undefined');
@@ -73,7 +73,8 @@ HelpdeskReports.ChartsInitializer.Glance = (function () {
                         if(group_by[i] == "status" && active_metric == "UNRESOLVED_TICKETS"){
                             if(is_historic_present){
                                 _FD.constructChartSettings(hash_active, "historic_status", false, false, false);
-                                jQuery("#historic_status_container").hide();    
+                                jQuery("#historic_status_container").hide();
+                                jQuery("#historic_status_view_more_container").hide();    
                             }
                             
                         }
@@ -600,7 +601,10 @@ HelpdeskReports.ChartsInitializer.Glance = (function () {
                 var title = title_el.find('.rep-title-sub').text().trim();
                 title = title + ' ' + title_el.children('select').find('option:selected').text().trim();
             }
-
+            //Check historic & current status view more
+            if(jQuery(el).siblings('[data-group]').length > 0) {
+                title += " " + jQuery(el).siblings('.view-all-status').find('.toggle.active').text();
+            }
             jQuery('#view_title').text(title);
         },
         fillArray: function(value, length) {

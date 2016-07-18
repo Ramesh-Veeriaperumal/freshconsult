@@ -41,9 +41,8 @@ class UserCompany < ActiveRecord::Base
   end
 
   def update_es_index
-    return if Account.current.features_included?(:es_v2_writes) || $redis_others.sismember("DISABLE_ES_WRITES", Account.current.id)
-    SearchSidekiq::IndexUpdate::UserTickets.perform_async({ :user_id => user_id }) \
-      if ES_ENABLED && !contractor?
+    return if $redis_others.sismember("DISABLE_ES_WRITES", Account.current.id) || Account.current.features_included?(:es_v2_writes)
+    AwsWrapper::SqsV2.send_message(SQS[:sqs_es_index_queue], {:op_type => "user_tickets",:user_id =>user_id, :account_id => Account.current.id}.to_json) if ES_ENABLED && !contractor?
   end
 
   def contractor?
