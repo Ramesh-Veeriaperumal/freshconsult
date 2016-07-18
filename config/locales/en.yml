@@ -5868,6 +5868,11 @@ en:
       overlay_reply_time: " replied, %{time_in_words} ago"
       overlay_fwd_time: " forwarded, %{time_in_words} ago"
       overlay_note_time: " added a note, %{time_in_words} ago"
+      overlay_submitted_ticket: " submitted a new ticket"
+      overlay_forward: " forwarded"
+      overlay_reply: " replied"
+      overlay_note: " added a note"
+      overlay_time: "%{time_in_words} ago, "
       friendly_status:
         customer_responded: "Customer Responded"
         overdue: "Overdue"
