@@ -45,7 +45,7 @@ module Facebook
               if permission_error?
                 update_error_and_notify(error_params)
               else
-                Sqs::Message.new("{}").requeue(JSON.parse(@raw_obj)) if @raw_obj
+                Sqs::Message.new("{}").requeue(JSON.parse(@raw_obj)) if (@raw_obj && @exception.response_body.downcase.include?(SERVICE_UNAVAILABLE))
                 raise_sns_notification("Server Error", {:error => "Server Error", :exception => @exception})
               end
             else

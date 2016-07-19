@@ -13,7 +13,7 @@ module Cache::Memcache::Helpdesk::Ticket
   def clear_tkt_form_cache
     [AGENT_NEW_TICKET_FORM, COMPOSE_EMAIL_FORM].each do |k|
       key = memcache_key(k)
-      expire_fragment(key)
+      ActionController::Base.new.expire_fragment(key)
     end
   end
 

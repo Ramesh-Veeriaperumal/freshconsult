@@ -15,6 +15,7 @@ module Search
           model_class = payload[:klass_name]
           document_id = payload[:document_id]
           model_object  = model_class.constantize.find_by_id(document_id)
+          return if model_object.nil?
           version       = {
             :version_type => 'external',
             :version      => payload[:version].to_i

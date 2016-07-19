@@ -24,7 +24,8 @@ class ConversationsControllerTest < ActionController::TestCase
     body = Faker::Lorem.paragraph
     email = [Faker::Internet.email, Faker::Internet.email]
     bcc_emails = [Faker::Internet.email, Faker::Internet.email]
-    params_hash = { body: body, cc_emails: email, bcc_emails: bcc_emails }
+    email_config = @account.email_configs.where(active: true).first || create_email_config
+    params_hash = { body: body, cc_emails: email, bcc_emails: bcc_emails, from_email: email_config.reply_email }
     params_hash
   end
 
@@ -369,11 +370,12 @@ class ConversationsControllerTest < ActionController::TestCase
   end
 
   def test_reply_email_format_invalid
-    params_hash = { cc_emails: ['tyt@'], bcc_emails: ['hj#'], body: Faker::Lorem.paragraph }
+    params_hash = { cc_emails: ['tyt@'], bcc_emails: ['hj#'], from_email: 'df@', body: Faker::Lorem.paragraph }
     post :reply, construct_params({ id: ticket.display_id }, params_hash)
     assert_response 400
     match_json([bad_request_error_pattern('cc_emails', :array_invalid_format, accepted: 'valid email address'),
-                bad_request_error_pattern('bcc_emails', :array_invalid_format, accepted: 'valid email address')])
+                bad_request_error_pattern('bcc_emails', :array_invalid_format, accepted: 'valid email address'),
+                bad_request_error_pattern('from_email', :invalid_format, accepted: 'valid email address')])
   end
 
   def test_reply_invalid_id
@@ -387,6 +389,43 @@ class ConversationsControllerTest < ActionController::TestCase
     post :reply, construct_params({ id: ticket.display_id }, params_hash)
     assert_response 400
     match_json([bad_request_error_pattern('user_id', :absent_in_db, resource: :contact, attribute: :user_id)])
+  end
+
+  def test_reply_invalid_from_email
+    params_hash = { body: 'test', from_email: Faker::Internet.email }
+    post :reply, construct_params({ id: ticket.display_id }, params_hash)
+    assert_response 400
+    match_json([bad_request_error_pattern('from_email', :absent_in_db, resource: :"active email_config", attribute: :from_email)])
+  end
+
+  def test_reply_new_email_config
+    email_config = create_email_config
+    params_hash = reply_note_params_hash.merge(from_email: email_config.reply_email)
+    post :reply, construct_params({ id: ticket.display_id }, params_hash)
+    assert_response 201
+    note = Helpdesk::Note.last
+    assert_equal email_config.id, note.email_config_id 
+    match_json(reply_note_pattern(params_hash, note))
+    match_json(reply_note_pattern({}, note))
+  end
+
+  def test_reply_with_only_body
+    params_hash = {body: Faker::Lorem.paragraph}
+    post :reply, construct_params({ id: ticket.display_id }, params_hash)
+    assert_response 201
+    note = Helpdesk::Note.last
+    match_json(reply_note_pattern(params_hash, note))
+    match_json(reply_note_pattern({}, note))
+  end
+
+  def test_reply_inactive_email_config
+    email_config = create_email_config
+    email_config.active = false
+    email_config.save
+    params_hash = reply_note_params_hash.merge(from_email: email_config.reply_email)
+    post :reply, construct_params({ id: ticket.display_id }, params_hash)
+    assert_response 400
+    match_json([bad_request_error_pattern('from_email', :absent_in_db, resource: :"active email_config", attribute: :from_email)])
   end
 
   def test_reply_extra_params

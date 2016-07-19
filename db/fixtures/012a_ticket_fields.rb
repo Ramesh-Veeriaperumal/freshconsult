@@ -23,8 +23,7 @@ def self.ticket_fields_data
       :picklist_values => [{ :value => "Question"},
                            { :value => "Incident"},
                            { :value => "Problem"},
-                           { :value => "Feature Request"},
-                           { :value => "Lead"}]
+                           { :value => "Feature Request"}]
     },
       
     { :name => "source", :label => "Source", :description => "Ticket source" },

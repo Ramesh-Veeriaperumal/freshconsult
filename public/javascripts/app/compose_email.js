@@ -6,6 +6,7 @@ var ComposeEmail = {
       this.domCache();
       this.bindEvents();
       this.defaultSettings();
+      this.appendSignature();
       invokeRedactor('helpdesk_ticket_ticket_body_attributes_description_html', 'ticket');
       ComposeAutoSuggest.cc();
       AutoSuggest.requester();
@@ -50,6 +51,12 @@ var ComposeEmail = {
     });
 
     },
+
+    appendSignature: function(){
+		signature = jQuery("#signature").val();
+    	jQuery(".redactor_editor").html(signature);
+    },
+    
     bindEvents: function(){
 		// Functions for Select2
 		var formatPriority = function(item) {

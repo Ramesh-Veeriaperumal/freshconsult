@@ -7964,6 +7964,7 @@ en:
     customer_happiness : Customer Happiness
     reports_in_action: Watch reports in action
     view_old_reports: View old reports
+    old_reports: old reports
     view_new_reports: View new reports
     solution_article_text: How to read this report ?
     loading_text: Generating Report...
@@ -8228,7 +8229,7 @@ en:
         created_tickets: The tickets that were created in the helpdesk in the selected time period
         resolved_tickets: The tickets resolved in the selected time period (that were created any time)
         reopened_tickets: The tickets reopened in the selected time period (that were created any time)
-        unresolved_tickets: The unresolved tickets
+        unresolved_tickets: The tickets not resolved at the end of the selected time period (that were created any time)
         avg_first_response_time: Average first response time of all the first responses made in the selected time period
         avg_response_time: Average response time of all the responses made in the selected time period
         avg_resolution_time: Average resolution time of tickets resolved in the selected time period
@@ -8239,7 +8240,7 @@ en:
       customer_report:
         received_tickets: The tickets that were submitted in the helpdesk in the selected time period
         resolved_tickets: The tickets resolved in the selected time period (that were created any time)
-        unresolved_tickets: The tickets unresolved till now
+        unresolved_tickets: The tickets not resolved at the end of the selected time period (that were created any time)
         reopened_tickets: The tickets reopened in the selected time period (that were created any time)
         response_violated: The percentage of tickets were not responded within SLA in the selected time period
         resolution_violated: The percentage of tickets were not resolved within SLA in the selected time period
@@ -8277,7 +8278,7 @@ en:
         month: Month
         qtr: Quarter
         year: Year
-        title: trend of tickets received and resolved
+        title: trend of tickets received and resolved and unresolved
       time_trends_part_title:
         doy: Daily
         w: Weekly
@@ -8285,11 +8286,11 @@ en:
         qtr: Quarterly
         y: Yearly
       time_trends_title:
-        doy: Daily trend of tickets received and resolved
-        w: Weekly trend of tickets received and resolved
-        mon: Monthly trend of tickets received and resolved
-        qtr: Quarterly trend of tickets received and resolved
-        y: Yearly trend of tickets received and resolved
+        doy: Daily trend of tickets received and resolved and unresolved
+        w: Weekly trend of tickets received and resolved and unresolved
+        mon: Monthly trend of tickets received and resolved and unresolved
+        qtr: Quarterly trend of tickets received and resolved and unresolved
+        y: Yearly trend of tickets received and resolved and unresolved
       day_trend:
         title: Day of the week and Hour of the day trend
         subtitle: See which hour of which day receives the most number of tickets and allocate your staff accordingly
