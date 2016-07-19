@@ -52,7 +52,6 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         if (from_email[:email] =~ EMAIL_VALIDATOR).nil?
           error_msg = "Invalid email address found in requester details - #{from_email[:email]} for account - #{account.id}"
           Rails.logger.debug error_msg
-          NewRelic::Agent.notice_error(Exception.new(error_msg))
           return
         end
         user = existing_user(account, from_email)

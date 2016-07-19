@@ -54,7 +54,6 @@ class Helpdesk::Email::Process
     if (common_email_data[:from][:email] =~ EMAIL_VALIDATOR).nil?
       error_msg = "Invalid email address found in requester details - #{common_email_data[:from][:email]} for account : #{account.id}"
       Rails.logger.debug error_msg
-      NewRelic::Agent.notice_error(Exception.new(error_msg))
       return
     end
     check_tnef_message_id
