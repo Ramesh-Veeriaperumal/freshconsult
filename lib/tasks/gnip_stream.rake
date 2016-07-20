@@ -64,6 +64,7 @@ namespace :gnip_stream do
   
   desc "Poll the sqs for pushing feeds to the respective stream"
   task :global_poll => :environment do
+    include Social::Util
     queue = $sqs_twitter_global
     attributes = Rails.env.production? ? [] : [:sent_at]
 
@@ -76,11 +77,19 @@ namespace :gnip_stream do
           gnip_msg = Social::Gnip::TwitterFeed.new(tweet, queue)
           next if gnip_msg.blank?
           gnip_msg.tag_objs.each do |tag_obj|
-            pod = determine_pod(tag_obj, gnip_msg.tweet_obj)
-
+            tweet = gnip_msg.tweet_obj
+            pod   = determine_pod(tag_obj, tweet)
+            
             # send message to the specific queue
             Rails.logger.info "Tweet received for POD: #{pod}."
-            AwsWrapper::SqsQueue.instance.send_message(pod + '_' + SQS[:twitter_realtime_queue], gnip_msg.tweet_obj.to_json) if pod
+           
+            if pod
+              $sqs_twitter.send_message(tweet.to_json) 
+            elsif !$sqs_twitter_euc.nil?
+              $sqs_twitter_euc.send_message(tweet.to_json) 
+            else
+              notify_social_dev("Message not sent to both pods", {:tweet => tweet})
+           end
           end
         end
       end
