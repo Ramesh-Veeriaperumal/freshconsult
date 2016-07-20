@@ -677,6 +677,29 @@ class TicketsControllerTest < ActionController::TestCase
     assert User.count == count
   end
 
+  def test_create_without_value_for_boolean_custom_field
+    post :create, construct_params({}, ticket_params_hash)
+    assert_equal Helpdesk::Ticket.last.test_custom_checkbox_1, false
+  end
+
+  def test_create_with_value_for_boolean_custom_field_as_true
+    params = ticket_params_hash.merge(custom_fields: {})
+    CUSTOM_FIELDS.each do |custom_field|
+      params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES[custom_field]
+    end
+    post :create, construct_params({}, params)
+    assert_equal Helpdesk::Ticket.last.test_custom_checkbox_1, true
+  end
+
+  def test_create_with_value_for_boolean_custom_field_as_false
+    params = ticket_params_hash.merge(custom_fields: {})
+    CUSTOM_FIELDS.each do |custom_field|
+      params[:custom_fields]["test_custom_#{custom_field}"] = UPDATE_CUSTOM_FIELDS_VALUES[custom_field]
+    end
+    post :create, construct_params({}, params)
+    assert_equal Helpdesk::Ticket.last.test_custom_checkbox_1, false
+  end
+
   def test_create_with_invalid_custom_fields
     params = ticket_params_hash.merge('custom_fields' => { 'dsfsdf' => 'dsfsdf' })
     post :create, construct_params({}, params)
@@ -985,7 +1008,7 @@ class TicketsControllerTest < ActionController::TestCase
     put :update, construct_params({ id: t.display_id }, params_hash)
     Helpdesk::TicketField.where(name: [@@custom_field_names]).update_all(required_for_closure: false)
     pattern = []
-    (VALIDATABLE_CUSTOM_FIELDS).each do |custom_field|
+    (VALIDATABLE_CUSTOM_FIELDS - ['checkbox']).each do |custom_field|
       pattern << bad_request_error_pattern("test_custom_#{custom_field}", *(ERROR_REQUIRED_PARAMS[custom_field]))
     end
     match_json(pattern)
@@ -999,7 +1022,7 @@ class TicketsControllerTest < ActionController::TestCase
     put :update, construct_params({ id: t.display_id }, params_hash)
     Helpdesk::TicketField.where(name: [@@custom_field_names]).update_all(required_for_closure: false)
     pattern = []
-    (VALIDATABLE_CUSTOM_FIELDS).each do |custom_field|
+    (VALIDATABLE_CUSTOM_FIELDS - ['checkbox']).each do |custom_field|
       pattern << bad_request_error_pattern("test_custom_#{custom_field}", *(ERROR_REQUIRED_PARAMS[custom_field]))
     end
     match_json(pattern)
@@ -1009,6 +1032,22 @@ class TicketsControllerTest < ActionController::TestCase
   def test_update_with_custom_fields_required
     params_hash = update_ticket_params_hash
     t = create_ticket
+    Helpdesk::TicketField.where(name: [@@custom_field_names]).update_all(required: true)
+    put :update, construct_params({ id: t.display_id }, params_hash)
+    Helpdesk::TicketField.where(name: [@@custom_field_names]).update_all(required: false)
+    assert_response 400
+    pattern = []
+    (VALIDATABLE_CUSTOM_FIELDS - ['checkbox']).each do |custom_field|
+      pattern << bad_request_error_pattern("test_custom_#{custom_field}", *(ERROR_REQUIRED_PARAMS[custom_field]))
+    end
+    match_json(pattern)
+  end
+
+  def test_update_with_custom_fields_required_with_checkbox_as_nil
+    params_hash = update_ticket_params_hash
+    t = create_ticket
+    t.test_custom_checkbox_1 = nil
+    t.save
     Helpdesk::TicketField.where(name: [@@custom_field_names]).update_all(required: true)
     put :update, construct_params({ id: t.display_id }, params_hash)
     Helpdesk::TicketField.where(name: [@@custom_field_names]).update_all(required: false)
