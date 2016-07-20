@@ -3677,7 +3677,7 @@ en:
     info5: Are you sure you want to delete this group?      Deleting a group will not delete the Agents in it.
     info6: "Email Agent when a new ticket is assigned to this group "
     info7: "if a ticket remains un-assigned for more than "
-    info8: "New: Allow your supervisors the ability to manage automatic ticket assignment and agent availability for the groups they belongs to -"
+    info8: "New: Allow your supervisors the ability to manage automatic ticket assignment and agent availability for the groups they belong to -"
     info8_readmore: Read More
     enable: Enable
     enable_success_message: The ability to manage ticket assignment has been enabled for your supervisors successfully.
