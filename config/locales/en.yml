@@ -678,7 +678,7 @@ en:
         stream_info2: "The tweets coming in through these social streams can be filtered further using certain keywords and converted to tickets automatically. They can even be assigned to groups and products. You can set up more than one rule and the first rule that the tweet satisfies will get executed. For example, you can convert tweets mentioning “switching to” with your competitors names into tickets and escalate them to your support team head."
         fb_page_title1: "Adding Facebook pages"
         fb_page_title2: "Converting Facebook posts to tickets automatically"
-        fb_page_info1: "Associate your Facebook company pages with your helpdesk to manage all queries coming in from there along with your support tickets. You can automatically convert visitor posts and private messages as tickets as well as use keyword rules to pull in specific comments as individual tickets." 
+        fb_page_info1: "Associate your Facebook company pages with your helpdesk to manage all queries coming in from there along with your support tickets. You can automatically convert visitor posts and private messages as tickets as well as use keyword rules to pull in specific comments as individual tickets."
         fb_page_info2:  "Most Facebook users either post on your wall or comment under one of your company posts, when they have support queries. You can import all your visitor posts directly as tickets. To pull in relevant queries among the noise in visitor comments, filter them based on keywords. For example, an e-commerce company could use keywords like delayed, return or refund to filter out the most relevant questions."
         fb_stream_title1: "Streamlining Facebook support"
         fb_stream_title2: "Ticketing Facebook Messenger chats"
@@ -740,7 +740,7 @@ en:
         include_helptext: "example: support, \"System down\", @insideapple"
         brief_desc: "Tweets will get converted to tickets automatically based on first matching rule"
       facebook_streams:
-        index: 
+        index:
           new_account: "New Account"
           new_page: "New Page"
           pages: "Facebook Pages"
@@ -987,7 +987,7 @@ en:
         info2: "You can also choose specific solution and forum categories to be listed in the main portal and other portals​.​"
         info3: "Additionally, you can rebrand the look and feel of your helpdesk by uploading your logo and favicon, giv​e​ your helpdesk a name, and customiz​e​ your portal colors."
         info4: "If you would like to set up user permissions and tweak forum moderation settings, click on the 'Settings' tab. Settings cannot be configured for each portal and will be common for all portals that have been created."
-        
+
     hotline:
       heading1: Mobihelp users meet hotline
       content1:
@@ -999,12 +999,12 @@ en:
         list3: High speed engagement interface for agents
         list4: Native integration into Freshdesk
         list5: Campaign tools and rich messaging
-      content3: 
+      content3:
         note_title: "Note:"
         note_info: "We will continue to support Mobihelp for existing customers, but are discontinuing active development for it. We encourage you to move to Hotline at the earliest. If you are an existing Mobihelp customer please reach out to support@hotline.io for special pricing."
-      get_started: Get started with Hotline today 
+      get_started: Get started with Hotline today
       list_title: Mobihelp Apps
-          
+
     mobihelp:
       app_review:
         request_sent: "App Review Request Sent"
@@ -1048,7 +1048,7 @@ en:
           no_app:
             title: Welcome to Mobihelp
             sdk_and_guide: Mobihelp SDK and Integration guide
-            
+
         new:
           title: New Mobihelp App
         edit:
@@ -1567,7 +1567,7 @@ en:
         recharge_quantity: "Recharge quantity:"
         day_passes: "Day Passes"
         helptext: "Your day passes will Auto-recharge once the number of available day passes comes down to 2."
-    widget_config:    
+    widget_config:
       errors:
         invalid_requester: Invalid Requester
       index:
@@ -2534,7 +2534,7 @@ en:
         success: Instructions to reset your password have been emailed to you. Please check your email.
     login:
       verify_credentials: Couldn't log you in. Please verify your credentials
-      login_permission_denied: Sorry! You do not have enough permission to access this page. 
+      login_permission_denied: Sorry! You do not have enough permission to access this page.
       signup_permission_denied: Sorry! You do not have enough permission to access this page.
       contact_administrator: Please contact your Account Administrator.
       sso:
@@ -2740,7 +2740,7 @@ en:
       published_draft:
         short: "{{user_path}} published the draft of an article"
         long: "{{user_path}} published the draft of an article '{{notable_path}}'"
-      published_draft_translation:  
+      published_draft_translation:
         short: "{{user_path}} published the draft of an article translation in {{language_name}}"
         long: "{{user_path}} published the draft of an article translation in {{language_name}} '{{notable_path}}'"
       delete_draft:
@@ -2962,7 +2962,7 @@ en:
         new: "%{field_name} as <strong>%{field_value}</strong>"
       custom_text_field_change:
         new: "Modified %{text_fields}"
-      added_watcher: 
+      added_watcher:
         new: "Added watchers %{watcher_list}"
       removed_watcher:
         new: "Removed watcher %{watcher_list}"
@@ -3094,7 +3094,7 @@ en:
       helpcard:
         title: "Speak in Your Customer's Language"
         info1: "Provide a seamless support experience to your global customers from different parts of the world."
-        supported_languages: 
+        supported_languages:
           title: "<b>Supported Languages</b><br/>"
           info1: "Adding languages to this list will enable you to translate knowledge base articles and email notifications in the respective languages to support your customers.<br /><br />"
           info2: "<i>Once you add supported languages, you will not be able to change your primary language.</i>"
@@ -3844,7 +3844,7 @@ en:
     footer_feedback_subject_placeholder: Tell us how we can make Freshdesk better
     footer_feedback_thanks: Thank you for your feedback!
     errors:
-      feedback_subject_required: Cannot be blank.      
+      feedback_subject_required: Cannot be blank.
     browse_community: Browse Community
     help_and_support: Help & Support
     privacy_policy: "Privacy Policy"
@@ -3891,8 +3891,8 @@ en:
     remove_company: Remove contact-company association
     remove_company_text: "In the existing tickets created by %{user_name} for this company:"
     removed_association: "You are about to remove a contact-company association."
-    retain_company: Company name can continue to be 
-    rename_company: Company name should be updated to 
+    retain_company: Company name can continue to be
+    rename_company: Company name should be updated to
     new_company: Enter a company name
     convert_note: Converting to agent will delete all the secondary emails of this contact. Proceed to convert?
     add_new_user: Add a new user
@@ -3999,6 +3999,10 @@ en:
     segment_api:
       invalid_type: Invalid operation. Check your type.
       email_blank: Email can't be blank
+    email: Email
+    phone: Phone
+    facebook: Facebook
+    twitter: Twitter
   between: Between
   profile_settings: Profile settings
   portal_key: Portal
@@ -5493,14 +5497,14 @@ en:
     visible_in_portal: Visible on Portal
     hidden_on_portal: Hidden on Portal
     anyone: "Anyone"
-    users_from_domains: "Users from selected domains"    
+    users_from_domains: "Users from selected domains"
     search_domain: Search Domain
     company_domain: Company Domains
     domains_allowed: Only customers from these domains will be allowed to sign up and log in.
     twitter_disabled: Twitter login will be disabled for customers and agents for security purposes.
     important: Important
     includes_contacts_company_domain: (includes existing contacts and company domains)
-    permission: 
+    permission:
       helpdesk_restrictions: Helpdesk restrictions
       who_can_create: Who can log in (or) sign up (or) create tickets?
       users_from_selected_domains: Users from whitelisted domains
@@ -6505,7 +6509,7 @@ en:
     installing_text: "Please wait..."
     in_development: In Development
     no_mktp_apps: "No Apps installed"
-    no_mktp_apps_note: "We've integrated with some of your favorite applications." 
+    no_mktp_apps_note: "We've integrated with some of your favorite applications."
     no_mktp_apps_note_2: "Click 'Get more Apps' to browse the selection."
     go_to_dev_portal: Go to Developer Portal
     developer_shortcuts: Developer Shortcuts
@@ -7710,7 +7714,7 @@ en:
   error_in_plan: "Error changing the plan"
   change_free_plan: "Change your Free plan"
   billing_info: "Subscription information"
-  forwarded_email: "Forwarded email" 
+  forwarded_email: "Forwarded email"
   forwarded_to: "Forwarded to"
   replied_to: "Replied to"
   notified_to: "Notified to"
@@ -8004,7 +8008,7 @@ en:
     average_interactions: "(Average %{count})"
     last_updated: "Last updated <span class='instance'><abbr data-livestamp=%{last_dump_time}> ago </abbr></span>"
     last_updated_at: "Last updated at <span class='instance'>%{time_in_words}</span>"
-    saved_report: 
+    saved_report:
       title: Report title
       dialog_header: "Save & Schedule Report"
       copy_of: "Copy of "
@@ -8036,7 +8040,7 @@ en:
         week_tmpl: "%{name} for <strong>last %{day}</strong> to <strong>%{previous_day}</strong> will be sent along with below email <strong>every %{day}</strong> at <strong>%{time}</strong> time"
         week_friday_tmpl: "%{name} for <strong>last %{day}</strong> to <strong> this %{previous_day}</strong> will be sent along with below email <strong>every %{day}</strong> at <strong>%{time}</strong> time"
         daily_tmpl: "%{name} for <strong>yesterday</strong> will be sent along with below email <strong>everyday</strong> at <strong>%{time}</strong> time"
-        monthly_tmpl: "%{name} for <strong>last month</strong> will be sent along with below email <strong>first of every month</strong> at <strong>%{time}</strong> time"        
+        monthly_tmpl: "%{name} for <strong>last month</strong> will be sent along with below email <strong>first of every month</strong> at <strong>%{time}</strong> time"
     scheduled_reports:
       dialog:
         email: Email
@@ -8175,8 +8179,8 @@ en:
         newly_received_resolved: '<span class="bold" > %{count}%</span> of newly received tickets are resolved'
         total_load_unresolved: '<span class="bold" >%{count}% </span>of total load remains unresolved'
         newly_received_unresolved: '<span class="bold">%{count}% </span>of newly received tickets remain unresolved'
-      legend_tooltip: 
-        total_load: Total load = Old unresolved tickets + New received tickets 
+      legend_tooltip:
+        total_load: Total load = Old unresolved tickets + New received tickets
         all_resolved: Total number of resolved tickets
         new_resolved: 'Number of tickets received and resolved on the same %{trend}'
         all_unresolved: Total number of unresolved tickets
@@ -8643,7 +8647,7 @@ en:
       agents_count_in_group: "%{count} Agents"
       agents_count:
         other: "Agents"
-        one: "Agent"  
+        one: "Agent"
       ticket_info: "Create new ticket or add note to existing ticket with the notes and recording. "
       add_note: "Add Notes"
       note_placeholder: "Add call notes..."
@@ -9240,18 +9244,18 @@ en:
     end_chat_end_title: "End"
     end_chat_cancel_title: "Cancel"
     cobrowse_request : "Waiting for visitor to accept your request"
-    visitor_cobrowse_request : "Can agent control your current screen? "    
-    cobrowsing_start_msg : "Your screenshare session has started"   
-    cobrowsing_stop_msg : "Your screensharing session has ended"    
-    cobrowsing_deny_msg : "Your request was declined"   
-    cobrowsing_viewing_screen : "You are viewing the visitor’s screen"    
-    cobrowsing_controlling_screen : "You are controlling the visitor’s screen"    
-    cobrowsing_request_control : "Request visitor for control"    
-    cobrowsing_stop_request : "End your screensharing session"    
-    cobrowsing_request_control_rejected : "Your request was declined"   
-    cobrowsing_cancel_visitor_msg : "Screensharing is currently unavailable"    
-    cb_viewing_screen_vi : "Agent can view your screen "    
-    cb_controlling_screen_vi : "Agent can control your screen"    
+    visitor_cobrowse_request : "Can agent control your current screen? "
+    cobrowsing_start_msg : "Your screenshare session has started"
+    cobrowsing_stop_msg : "Your screensharing session has ended"
+    cobrowsing_deny_msg : "Your request was declined"
+    cobrowsing_viewing_screen : "You are viewing the visitor’s screen"
+    cobrowsing_controlling_screen : "You are controlling the visitor’s screen"
+    cobrowsing_request_control : "Request visitor for control"
+    cobrowsing_stop_request : "End your screensharing session"
+    cobrowsing_request_control_rejected : "Your request was declined"
+    cobrowsing_cancel_visitor_msg : "Screensharing is currently unavailable"
+    cb_viewing_screen_vi : "Agent can view your screen "
+    cb_controlling_screen_vi : "Agent can control your screen"
     cb_give_control_vi :  "Allow agent to control your screen"
     help_text_agent_msg: "Use {{agent_name}} and {{helpdesk_name}} to display Agent Name and Helpdesk Name in your messages"
     date_invalid: Invalid date
@@ -9789,9 +9793,26 @@ en:
     loading_label: "Loading"
   email_notification:
     spam_error: "An internal error occured.  Please contact support."
+  requester_widget_more: More
+  requester_widget_less: Less
+  requester_widget_limit: You have selected 10 fields
+  requester_widget_notice: You can select upto 10 fields to show on the ticket details page
+  customize_requester_widget: Customize Requester widget
+  requester_widget_edit: Edit
+  requester_widget_edit_req: Edit Requester
+  requester_widget_human_name: requester
+  requester_widget:
+    search_company: Search a Company
+    company_required: Please enter the company name
+    company_association_exists: Company has already been taken
+    helpcard:
+      title: Customizing requester widget
+      info: Choose the fields that you want displayed under the requester info section on the ticket page with the requester widget. This way your team can update requester details directly from the ticket page and keep track of the customer details while solving their ticket.
+  requester_fields_updated: The requester widget has been updated.
   select_requester: "Please select requester"
   associate_n_companies: "Associate a contact with multiple companies?"
   enable_n_companies: "Enable"
   add_new_company: "Add Company"
   more_companies: "%{count} more"
   n_companies: "%{count} companies"
+

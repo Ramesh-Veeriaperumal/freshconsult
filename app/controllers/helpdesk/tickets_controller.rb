@@ -16,6 +16,7 @@ class Helpdesk::TicketsController < ApplicationController
   helper Helpdesk::NotesHelper
   helper Helpdesk::TicketsExportHelper
   helper Helpdesk::SelectAllHelper
+  helper Helpdesk::RequesterWidgetHelper
   include Helpdesk::TagMethods
   include Helpdesk::NotePropertiesMethods
   include Helpdesk::Activities::ActivityMethods
@@ -56,11 +57,11 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :set_native_mobile, :only => [:show, :load_reply_to_all_emails, :index,:recent_tickets,:old_tickets , :delete_forever,:change_due_by,:reply_to_forward]
   before_filter :verify_ticket_permission_by_id, :only => [:component]
 
-  before_filter :load_ticket, 
-    :only => [:edit, :update, :execute_scenario, :close, :change_due_by, :print, :clear_draft, :save_draft, 
+  before_filter :load_ticket,
+    :only => [:edit, :update, :execute_scenario, :close, :change_due_by, :print, :clear_draft, :save_draft,
               :draft_key, :get_ticket_agents, :quick_assign, :prevnext, :status, :update_ticket_properties,
               :activities, :activitiesv2, :activities_all]
-  
+
   before_filter :load_ticket_with_notes, :only => [:show]
 
   before_filter :check_outbound_permission, :only => [:edit, :update]
@@ -78,7 +79,7 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :validate_manual_dueby, :only => :update
   before_filter :set_default_filter , :only => [:custom_search, :export_csv]
 
-  before_filter :verify_permission, :only => [:show, :edit, :update, :execute_scenario, :close, :change_due_by, :print, :clear_draft, :save_draft, 
+  before_filter :verify_permission, :only => [:show, :edit, :update, :execute_scenario, :close, :change_due_by, :print, :clear_draft, :save_draft,
               :draft_key, :get_ticket_agents, :quick_assign, :prevnext, :status, :update_ticket_properties, :activities, :unspam, :restore, :activitiesv2, :activities_all]
 
   before_filter :load_email_params, :only => [:show, :reply_to_conv, :forward_conv, :reply_to_forward]
@@ -420,6 +421,47 @@ class Helpdesk::TicketsController < ApplicationController
         format.mobile {
           render :json => { :failure => true, :errors => edit_error }.to_json
         }
+      end
+    end
+  end
+
+  def update_requester
+    @ticket = load_by_param(params[:id])
+    @requester_errors = false
+    @company_name_required_error = false
+
+    requester = current_account.users.find_by_id(params["requester_widget"]["contact_id"])
+    if requester.present? && requester.customer?
+      requester.validatable_custom_fields = { :fields => current_account.contact_form.custom_contact_fields,
+                                          :error_label => :label }
+      params[:contact][:customer_id] = ""
+
+      if company_details_present?
+        if params["company"]["name"].present?
+          @company = current_account.companies.find_by_name(params["company"]["name"])
+          if @company
+            @company.assign_attributes(params["company"])
+          else
+            @company = current_account.companies.new(params["company"])
+          end
+          @company.validatable_custom_fields = { :fields => current_account.company_form.custom_company_fields,
+                                                 :error_label => :label }
+          check_domain_exists unless @company.save
+          flash[:notice] = activerecord_error_list(@company.errors) unless @existing_company.present?
+          params[:contact][:customer_id] = @company.id
+        else
+          @company_name_required_error = true
+        end
+      end
+      if (@company.blank? || @company.errors.blank?) && !@company_name_required_error
+        if requester.update_attributes(params["contact"])
+          flash[:notice] = t(:'flash.general.update.success', :human_name => t('requester_widget_human_name'))
+        else
+          check_company_association_exists(requester.errors)
+          flash[:notice] = activerecord_error_list(requester.errors) unless @company_association_exists
+        end
+      else
+        @requester_errors = true
       end
     end
   end
@@ -858,7 +900,7 @@ class Helpdesk::TicketsController < ApplicationController
     if Account.current.launched?(:activity_ui) and Account.current.features?(:activity_revamp) and request.format != "application/json" and ACTIVITIES_ENABLED
       type = :tkt_activity
       @activities_data = new_activities(params, @item, type)
-      @total_activities  ||=  @activities_data[:total_count] 
+      @total_activities  ||=  @activities_data[:total_count]
        respond_to do |format|
         format.html{
           if @activities_data.nil? || @activities_data[:error].present?
@@ -871,7 +913,7 @@ class Helpdesk::TicketsController < ApplicationController
               render :layout => false
             end
           end
-        }     
+        }
       end
     else
       render :nothing => true
@@ -1540,6 +1582,35 @@ class Helpdesk::TicketsController < ApplicationController
     end
   end
 
+
+  def check_domain_exists
+      if @company.errors[:"company_domains.domain"].include?("has already been taken")
+        @company.company_domains.each do |cd|
+          @existing_company ||= current_account.company_domains.find_by_domain(cd.domain).try(:company) if cd.new_record?
+        end
+      end
+  end
+
+  def check_company_association_exists errors
+    if errors[:"default_user_company.company_id"].include?("has already been taken")
+      @company_association_exists = true
+      @requester_errors = true
+    end
+  end
+
+  def flat_hash(hash_to_convert,tmp=[],new_hash={})
+    return new_hash.update({ tmp=>hash_to_convert }) unless hash_to_convert.is_a? Hash
+    hash_to_convert.each { |k,v| flat_hash(v,tmp+[k],new_hash) }
+    new_hash
+  end
+
+
+  def company_details_present?
+    company_hash = flat_hash(params["company"])
+    company_hash.values.any?{|v| !v.nil? && v.length > 0 && v != "false"}
+  end
+
+
   def load_tkt_and_templates
     build_item
     @item.build_flexifield
@@ -1568,4 +1639,5 @@ class Helpdesk::TicketsController < ApplicationController
       recent_ids
     end
   end
+
 end
