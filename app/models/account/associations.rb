@@ -305,4 +305,7 @@ class Account < ActiveRecord::Base
   has_many :authorizations, :class_name => '::Authorization'
 
   has_many :ticket_templates, :class_name => "Helpdesk::TicketTemplate"
+
+  has_many :account_webhook_key, dependent: :destroy
+  
 end

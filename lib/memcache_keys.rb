@@ -149,6 +149,8 @@ module MemcacheKeys
 
   TKT_TEMPLATES_COUNT = "v1/TKT_TEMPLATES_COUNT:%{account_id}"
 
+  ACCOUNT_WEBHOOK_KEY = "ACCOUNT_WEBHOOK_KEY:%{account_id}:%{vendor_id}"
+
   class << self
 
     def newrelic_begin_rescue(&block)

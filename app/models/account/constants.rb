@@ -117,4 +117,6 @@ class Account < ActiveRecord::Base
                             :moderate_all_posts => false, :moderate_posts_with_links => true, :hide_portal_forums => false,
                             :forum_captcha_disable => false, :public_ticket_url => false } 
 
-end
+  MAIL_PROVIDER = { :sendgrid => 1, :mailgun => 2 }
+
+end  

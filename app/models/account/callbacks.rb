@@ -22,6 +22,7 @@ class Account < ActiveRecord::Base
   
   after_commit :enable_searchv2, :enable_count_es, on: :create
   after_commit :disable_searchv2, on: :destroy
+  after_commit :update_sendgrid
 
 
   # Callbacks will be executed in the order in which they have been included. 
@@ -103,7 +104,7 @@ class Account < ActiveRecord::Base
     def set_shard_mapping
       begin
         create_shard_mapping
-       rescue => e
+      rescue => e
         Rails.logger.error e.message
         Rails.logger.error e.backtrace.join("\n\t")
         Rails.logger.info "Shard mapping exception caught"
@@ -242,5 +243,16 @@ class Account < ActiveRecord::Base
 
     def disable_count_es
       CountES::IndexOperations::DisableCountES.perform_async({ :account_id => self.id })
+
+    def update_sendgrid
+      vendor_id = Account::MAIL_PROVIDER[:sendgrid]
+      if transaction_include_action?(:create)
+        SendgridDomainUpdates.perform_async({:action => 'create', :domain => full_domain, :vendor_id => vendor_id})
+      elsif (transaction_include_action?(:update) && full_domain_changed?)
+        SendgridDomainUpdates.perform_async({:action => 'delete', :domain => full_domain_was, :vendor_id => vendor_id})
+        SendgridDomainUpdates.perform_at(5.minutes.from_now, {:action => 'create', :domain => full_domain, :vendor_id => vendor_id})
+      elsif transaction_include_action?(:destroy)
+        SendgridDomainUpdates.perform_async({:action => 'delete', :domain => full_domain, :vendor_id => vendor_id})
+      end
     end
 end
