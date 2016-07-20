@@ -31,6 +31,7 @@ class Account < ActiveRecord::Base
   has_many :dynamic_notification_templates
   has_many :google_accounts, :class_name => 'Integrations::GoogleAccount'
 
+
   accepts_nested_attributes_for :primary_email_config
   accepts_nested_attributes_for :main_portal
   accepts_nested_attributes_for :account_additional_settings

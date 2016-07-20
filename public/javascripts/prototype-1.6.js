@@ -651,7 +651,7 @@ var Enumerable = {
   findAll: function(iterator, context) {
     iterator = iterator.bind(context);
     var results = [];
-    this.each(function(value, index) {
+    this.each( function(value, index) {
       if (iterator(value, index))
         results.push(value);
     });
@@ -797,7 +797,7 @@ Object.extend(Enumerable, {
   map:     Enumerable.collect,
   find:    Enumerable.detect,
   select:  Enumerable.findAll,
-  filter:  Enumerable.findAll,
+  // filter:  Enumerable.findAll,
   member:  Enumerable.include,
   entries: Enumerable.toArray,
   every:   Enumerable.all,

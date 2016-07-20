@@ -1,5 +1,7 @@
 module MemcacheKeys
 
+  include Cache::Memcache::Dashboard::MemcacheKeys
+
   AVAILABLE_QUEST_LIST = "AVAILABLE_QUEST_LIST:%{user_id}:%{account_id}"
 
   USER_TICKET_FILTERS = "v1/TICKET_VIEWS:%{user_id}:%{account_id}"

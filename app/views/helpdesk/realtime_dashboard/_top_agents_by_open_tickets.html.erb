@@ -1,0 +1,22 @@
+<div data-gs-x="<%= x %>" data-gs-y="<%= y %>" data-gs-width="<%= width %>" data-gs-height="<%= height %>" class="grid-stack-item widget">
+	<div class="grid-stack-item-content widget-inner open_tickets_by_agent_widget">
+  	   <h3 class="widget-title"> <%=t('helpdesk.realtime_dashboard.top_agents_by_open_tickets') %></h3>
+  	   <div class="widget-title-muted muted" rel="timestamp"></div>
+  	   <div id="open_tickets_by_agent" class="open_tickets_by_agent  list_widgets">
+          <div class="sloading loading-small loading-block"></div>
+      </div>
+      <a href="javascript:void(0)" rel="view_all_open_tickets_by_customer"
+          class="widget-more-link text-center hide"
+          > <%=t('helpdesk.realtime_dashboard.view_all') %> </a>
+	</div>
+</div>
+<script>
+  
+  jQuery('body').one('assetLoaded.fjax', function() {
+   	 new RealtimeDashboard.Widgets.OpenTickets.Agent(
+   	 	'open_tickets_by_agent',
+   	 	'open_tickets_by_agent',
+        4 //Limit
+   	 	).init();
+  });
+</script>

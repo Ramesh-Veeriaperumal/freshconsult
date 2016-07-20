@@ -175,7 +175,12 @@ module ApplicationHelper
       options.merge!({:"data-parallel-url" => "/helpdesk/tickets/filter_options", :"data-parallel-placeholder" => "#ticket-leftFilter"})
     end
     if tab_name.eql?(:reports)
-      options.delete(:"data-pjax");
+      options.delete(:"data-pjax")
+    end
+    #Remove this patch after knocking off old reports
+    #When referrer is reports page, all tab navigations will be non pjax.
+    if request.fullpath.include? "reports"
+      options.delete(:"data-pjax")
     end
     content_tag('li', link_to(strip_tags(title), url, options), :class => ( cls ? "active": "" ), :"data-tab-name" => tab_name )
   end

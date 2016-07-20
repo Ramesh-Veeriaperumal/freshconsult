@@ -1318,7 +1318,7 @@ class Helpdesk::TicketsController < ApplicationController
 
     def dashboard_filter?
       #(params[:filter_type] == "status") and params[:filter_key].present?
-      [:agent,:status,:group,:priority,:type,:source].any? {|type| params[type].present?}
+      TicketConstants::DASHBOARD_FILTER_MAPPING.keys.any? {|type| params[type].present?}
     end
 
     def is_custom_filter_ticket?
@@ -1565,7 +1565,7 @@ class Helpdesk::TicketsController < ApplicationController
       :order_entity => params[:wf_order],
       :order_sort   => params[:wf_order_type]
     }
-    Search::Filters::Docs.new(@ticket_filter.query_hash.dclone).records('Helpdesk::Ticket', es_options)
+    Search::Tickets::Docs.new(@ticket_filter.query_hash.dclone).records('Helpdesk::Ticket', es_options)
   end
 
   def scenario_failure_notification

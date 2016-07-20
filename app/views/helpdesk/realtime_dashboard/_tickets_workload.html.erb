@@ -1,0 +1,21 @@
+<div data-gs-x="<%= x %>" data-gs-y="<%= y %>" data-gs-width="<%= width %>" data-gs-height="<%= height %>" class="grid-stack-item widget workload_trend_widget">
+	<div class="grid-stack-item-content widget-inner">
+		<h3 class="widget-title"><%=t('helpdesk.realtime_dashboard.ticket_workload') %></h3>
+		<div class="widget-title-muted muted" rel="timestamp"></div>
+		<div class="widget-content">
+			<div id="incoming_trend">
+				<div class="sloading loading-small loading-block"></div>
+			</div>
+			<div class="stats"></div>
+			<div class="clear"></div>	
+		</div>
+		
+	</div>
+</div>
+<script type="text/javascript">
+		jQuery('body').one('assetLoaded.fjax', function() {
+			setTimeout(function(){
+				new RealtimeDashboard.Widgets.TicketIncomingTrend('workload_trend','incoming_trend').init();
+			},1000);
+		});
+</script>

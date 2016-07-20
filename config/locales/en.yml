@@ -5746,34 +5746,61 @@ en:
         recent_item: Recent Items
     realtime_dashboard:
       view_all: View all
-      ticket: Ticket
+      view_more: View more
+      ticket: Ticket Assignment
       ticket_summary: Ticket Summary
       filter_by: Filter by
-      all_groups: All Groups
+      all_groups: All
       unresolved: Unresolved
       open: Open
       on_hold: On Hold
       due_today: Due Today
       new: Unassigned
       overdue: Overdue
+      across_helpdesk: across helpdesk
       unresolve_tickets: Unresolved Tickets
+      recent_activities: Recent Helpdesk Activity
       unresolved_tickets_by_status: Unresolved Tickets by Status
-      unresolved_tickets_by_type: Unresolved Tickets by Type
+      unresolved_tickets_by_ticket_type: Unresolved Tickets by Type
       unresolved_tickets_by_group: Unresolved Tickets by Group
       unresolved_tickets_by_priority: Unresolved Tickets by Priority
       unresolved_tickets_by_agent: Unresolved Tickets by Agent
+      unresolved_tickets_by_age: Top 10 Unresolved Tickets by age (Days)
+      agent_received_resolved: My Performance
+      top_customers_by_open_tickets: Top 10 Customers by Open Tickets ( >2 Tickets )
+      top_agents_by_open_tickets: Top 10 Agents by Old Tickets ( >7 Days )
+      csat: Customer Satisfaction
+      group_performance: Group Performance Today
+      agent_performance: Agent Performance Today
+      ticket_workload_channels: Today's tickets workload by channels
+      ticket_workload: Today's tickets workload
+      time_stamp: as of %{time}
+      detailed_summary: Detailed Summary
       leader_Board: Leaderboard
       achievements: Achievements
       forum_moderation: Forum Moderation
       phone: Phone
       global_view: Global View
       my_view: My View
+      total_value: Total value
       live_chat: Live Chat
       in_conversation: In-conversation
       returning_visitors: Returning Visitors
       visitors: Visitors
       chat_history: Chat History
       view_group_vs_status_summary: View Group vs Status summary
+      something_went_wrong: We are Sorry. Something went Wrong.
+      stats:
+        received_tickets: Total Receieved Tickets
+        resolved_tickets: Total Resolved Tickets
+        avg_resolution_time: Avg Resolution Time(days)
+        resolution_within_sla: Resolution within SLA%
+        first_contact_resolution: First Contact Resolution %
+        total_agent_performance: Total Agent Performance
+        total_group_performance: Total Group Performance
+        total_workoad: Total Tickets Workload
+        performance_title: "%{subject}'s performance"
+      this_month: This Month
     dashboard:
       agent_availability: Agent Availability
       round_robin:
