@@ -7,7 +7,8 @@ module Facebook
         "email",
         "publish_actions",
         "publish_pages",
-        "read_page_mailboxes"
+        "read_page_mailboxes",
+        "pages_messaging"
       ]
 
       PAGE_TAB_PERMISSIONS = [
