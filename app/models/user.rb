@@ -141,7 +141,7 @@ class User < ActiveRecord::Base
   end
 
   def avatar_url(profile_size = :thumb)
-    (avatar ? avatar.expiring_url(profile_size, 30.days.to_i) : is_user_social(profile_size)) if present?
+    (avatar ? avatar.expiring_url(profile_size, 7.days.to_i) : is_user_social(profile_size)) if present?
   end
 
   def allow_password_update?
