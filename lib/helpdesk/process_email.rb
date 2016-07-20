@@ -17,6 +17,9 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
   include Helpdesk::ProcessAgentForwardedEmail
   include Cache::Memcache::AccountWebhookKeyCache
 
+  class UserCreationError < StandardError
+  end
+
   MESSAGE_LIMIT = 10.megabytes
   MAXIMUM_CONTENT_LIMIT = 300.kilobytes
 
@@ -640,8 +643,15 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         user = account.contacts.new
         language = (account.features?(:dynamic_content)) ? nil : account.language
         portal = (email_config && email_config.product) ? email_config.product.portal : account.main_portal
-        signup_status = user.signup!({:user => {:email => from_email[:email], :name => from_email[:name], 
-          :helpdesk_agent => false, :language => language, :created_from_email => true }, :email_config => email_config},portal)        
+        begin
+          signup_status = user.signup!({:user => {:email => from_email[:email], :name => from_email[:name],
+            :helpdesk_agent => false, :language => language, :created_from_email => true }, :email_config => email_config},portal)
+          raise UserCreationError, "Failed to create new Account!" unless signup_status
+        rescue UserCreationError => e
+          NewRelic::Agent.notice_error(e)
+          Account.reset_current_account
+          raise e
+        end
         if params[:text]
           text = text_for_detection
           args = [user, text]  #user_email changed
