@@ -1038,9 +1038,9 @@ if Integrations::Application.count == 0
     s.display_name = "integrations.dynamics_crm_sync.label"
     s.description = "integrations.dynamics_crm_sync.desc" 
     s.account_id = Integrations::Constants::SYSTEM_ACCOUNT_ID
-    s.listing_order = 42
+    s.listing_order = 44
     s.options = {:direct_install => true, 
-                 :oauth_url => "/integrations/sync/crm/settings?state=dynamics_crm_sync", 
+                 :auth_url => "/integrations/sync/crm/settings?state=dynamics_crm_sync", 
                  :edit_url => "/integrations/sync/crm/edit?state=dynamics_crm_sync&method=put",
                  :after_commit_on_destroy => { :clazz => "IntegrationServices::Services::CloudElementsService", :method => "uninstall" }}
     s.application_type = "dynamics_crm_sync"

@@ -199,12 +199,14 @@ function fillLabels(){
       jQuery(this).find('.list-icon').remove();
       jQuery(this).find('.select2-choice').addClass('disabled');
       jQuery(this).addClass('overlay');
+      jQuery(this).find(".select2-arrow").remove();
     });
     //setting the first field of account as compulsary and  disabled
     jQuery('#construct_company_rule .rules_list_wrapper .list').slice(0,1).each(function(){
       jQuery(this).find('.list-icon').remove();
       jQuery(this).find('.select2-choice').addClass('disabled');
       jQuery(this).addClass('overlay');
+      jQuery(this).find(".select2-arrow").remove();
     });
   });
 </script>

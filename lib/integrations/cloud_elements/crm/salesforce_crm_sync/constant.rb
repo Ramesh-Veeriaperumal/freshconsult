@@ -25,7 +25,7 @@ module Integrations::CloudElements::Crm
 		    "event.vendor.type" => "polling", 
 		    "event.notification.enabled" => "true", 
 		    "event.objects" => "Contact,Account",
-		    "event.poller.refresh_interval"=> "1",
+		    "event.poller.refresh_interval"=> "60",
 		    "event.notification.callback.url"=> "%{callback_url}/integrations/sync/crm/event_notification"
 	    },
 	    "tags" => [], 

@@ -12,6 +12,14 @@ module IntegrationServices::Services
         "#{@service.server_url}/elements/api-v2"
       end
 
+      def self.default_http_options
+        @@default_http_options ||= {
+          :request => {:timeout => 20, :open_timeout => 15},
+          :ssl => {:verify => false, :verify_depth => 5},
+          :headers => {}
+        }
+      end
+
       def process_response(response, *success_codes, &block)
         if success_codes.include?(response.status)
           yield parse(response.body)

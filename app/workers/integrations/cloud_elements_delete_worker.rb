@@ -9,21 +9,22 @@ module Integrations
         app = Integrations::Application.where(:id => options[:app_id]).first
         installed_app = current_account.installed_applications.build(:application => app )
         obj = IntegrationServices::Services::CloudElementsService.new(installed_app, {}, {:element_instance_id => options[:element_id]})
+        Rails.logger.debug "#{app.name}: Receiving Element Instance Id #{options[:element_id]} For delete...."
         obj.receive(:delete_element_instance)
       rescue IntegrationServices::Errors::TimeoutError => timeouterr
-        timeout_error = "Timeout error on CE elements delete, delete element id #{options[:element_id]} manually - error: #{timeouterr}"
-        Rails.logger.debug timeout_error
+        timeout_error = "Timeout error on #{app.name} Uninstall, Element Instance Id: #{options[:element_id]}. Delete Manually in CE - error: #{timeouterr}"
+        Rails.logger.error timeout_error
         NewRelic::Agent.notice_error(timeout_error)
         FreshdeskErrorsMailer.error_email(nil, nil, timeouterr, {
-          :subject => timeout_error, :recipients => "integrations@freshesk.com"
+          :subject => timeout_error, :recipients => "integration@freshdesk.com"
         })
         raise timeouterr
       rescue Exception => error
-        error_log = "error on CE elements delete, delete element id #{options[:element_id]} manually - error: #{error}"
-        Rails.logger.debug error_log
+        error_log = "Error on #{app.name} Uninstall, Element Instance Id: #{options[:element_id]}. Delete Manually in CE - error: #{error}"
+        Rails.logger.error error_log
         NewRelic::Agent.notice_error(error_log)
         FreshdeskErrorsMailer.error_email(nil, nil, error, {
-          :subject => error_log, :recipients => "integrations@freshesk.com"
+          :subject => error_log, :recipients => "integration@freshdesk.com"
         })
         raise error
       end

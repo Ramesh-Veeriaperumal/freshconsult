@@ -57,13 +57,23 @@ module IntegrationServices::Services
       formula_instance_id = installed_app.configs_crm_to_helpdesk_formula_instance
       app_name = installed_app.application.name
       formula_id = Integrations::CRM_TO_HELPDESK_FORMULA_ID[app_name]
+      Rails.logger.debug "Queing Instance Ids on uninstalling. Formula Template ID: #{formula_id}, Formula Instance Id: #{formula_instance_id}, 
+        #{app_name} Instance Id: #{installed_app.configs_element_instance_id}, Freshdesk Instance Id: #{installed_app.configs_fd_instance_id}"
       metadata = {:user_agent => user_agent}
       formula_obj = self.class.new(installed_app, {}, metadata.merge({:formula_id => formula_id, :formula_instance_id => formula_instance_id}))
       formula_obj.receive(:delete_formula_instance)
+      Rails.logger.debug "Deleting Formula Instance is Successfull."
       [installed_app.configs_element_instance_id, installed_app.configs_fd_instance_id].each do |element_id|
         options = {:element_id => element_id, :app_id => installed_app.application_id}
         Integrations::CloudElementsDeleteWorker.perform_async(options)     
       end 
+      Rails.logger.debug "Queing Done Successfully."
+      rescue Exception => e
+        error_log = "#{app_name}: Error on Formula Instance delete. Formula Template ID: #{formula_id}, Formula Instance Id: #{formula_instance_id}, 
+          #{app_name} Instance Id: #{installed_app.configs_element_instance_id}, Freshdesk Instance Id: #{installed_app.configs_fd_instance_id}. Delete them Manually."
+        FreshdeskErrorsMailer.error_email(nil, nil, e, {
+          :subject => error_log, :recipients => "integration@freshdesk.com"
+        })
     end
 
     private

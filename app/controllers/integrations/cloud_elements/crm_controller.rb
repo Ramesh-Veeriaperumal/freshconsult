@@ -17,6 +17,7 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
     el_response = create_element_instance( crm_payload, @metadata )
     redirect_to "#{request.protocol}#{request.host}#{integrations_cloud_elements_crm_instances_path}?state=#{params[:state]}&method=post&id=#{el_response['id']}&token=#{CGI::escape(el_response['token'])}"
   rescue => e
+    Rails.logger.error "Error inside crm_controller::create Message: #{e}"
     hash = build_setting_configs "create"
     flash[:error] = t(:'flash.application.install.cloud_element_settings_failure')
     render :template => "integrations/applications/crm_settings", :locals => {:configs => hash}
@@ -29,19 +30,25 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
       el_response = create_element_instance( crm_payload, @metadata )
       el_response_id, el_response_token = el_response['id'], el_response['token']
     end
+    Rails.logger.debug "#{element} Instance Created successfully, Id: #{el_response_id}"
     fd_response = create_element_instance( fd_payload, @metadata )
+    Rails.logger.debug "Freshdesk Instance Created successfully, Id: #{fd_response['id']}"
     fetch_metadata_fields(el_response_token)
     formula_resp = create_formula_inst(el_response_id, fd_response['id'])
+    Rails.logger.debug "Formula Instance Created successfully, Id: #{formula_resp['id']}"
     app_configs = get_app_configs(el_response_token, el_response_id, fd_response['id'], formula_resp['id'])
     @installed_app.configs[:inputs].merge!(app_configs)
     @installed_app.save!
     flash[:notice] = t(:'flash.application.install.cloud_element_success')
     render_settings
   rescue => e
+    Rails.logger.error "Error inside crm_controller::instances Message: #{e}"
+    NewRelic::Agent.notice_error(e,{:custom_params => {:description => "Problem in installing the application: #{e.message}", :account_id => current_account.id}})
     delete_formula_instance_error request.user_agent, formula_resp['id'] if formula_resp.present? and formula_resp['id'].present?
     Integrations::CloudElementsDeleteWorker.perform_async({:element_id => el_response_id, :app_id => @installed_app.application_id}) if el_response.present? and el_response_id.present?
     Integrations::CloudElementsDeleteWorker.perform_async({:element_id => fd_response['id'], :app_id => @installed_app.application_id}) if fd_response.present? and fd_response['id'].present?
     NewRelic::Agent.notice_error(e,{:custom_params => {:description => "Problem in installing the application: #{e.message}", :account_id => current_account.id}})
+    NewRelic::Agent.notice_error(e,{:custom_params => {:description => "Queueing done successfully: #{e.message}", :account_id => current_account.id}})
     flash[:error] = t(:'flash.application.install.error')
     redirect_to integrations_applications_path 
   end
