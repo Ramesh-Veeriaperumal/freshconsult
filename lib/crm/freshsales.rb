@@ -53,44 +53,50 @@ class CRM::Freshsales
     end
   end
 
-  class AccountActivation < FdAccount
-    @queue = QUEUE
-
-    def self.handle_data_sync(freshsales, args)
-      begin
-        freshsales.account_activation(args)
-      rescue => e
-        NewRelic::Agent.notice_error(e, { description: "Error occured while pushing AccountActivation Info to Freshsales 
-          AccountID::#{Account.current.id}" })
-      end
-    end
-  end
-
   class TrackSubscription < FdAccount
     @queue = QUEUE
 
     ACTIVE    = 'active'
     TRIAL     = 'trial'
     SUSPENDED = 'suspended'
+    FREE      = 'free'
+
+    ZERO      = 0
 
     def self.handle_data_sync(freshsales, args)
       begin
         old_subscription = prepare_subscription(args[:old_subscription])
+        subscription = prepare_subscription(args[:subscription])       
         old_cmrr = args[:old_cmrr].to_f
+        cmrr = args[:cmrr].to_f
         payments_count = args[:payments_count].to_i
-        subscription = prepare_subscription(args[:subscription])
 
         case
+        when opted_for_free_plan?(subscription, old_subscription, cmrr, payments_count)
+          amount = ZERO
+          freshsales.push_subscription_changes(:new_business, amount, payments_count)
+
+        when paid_activation?(subscription, old_subscription)
+          amount = cmrr.round(2)
+          freshsales.push_subscription_changes(:new_business, amount, payments_count)
+
         when upgrade?(subscription, old_subscription)
-          freshsales.account_upgrade(old_cmrr)
+          amount = calculate_deal_amount(cmrr, old_cmrr)
+          freshsales.push_subscription_changes(:upgrade, amount, payments_count)
+
         when downgrade?(subscription, old_subscription)
-          freshsales.account_downgrade(old_cmrr)
+          amount = calculate_deal_amount(cmrr, old_cmrr)
+          freshsales.push_subscription_changes(:downgrade, amount, payments_count)
+
         when trial_expired?(subscription, old_subscription)
           freshsales.account_trial_expiry
+
         when trial_extended?(subscription, old_subscription)
           freshsales.account_trial_extension
+
         when state_changed?(subscription, old_subscription)
-          freshsales.subscription_state_change(old_cmrr, old_subscription[:state].to_sym, payments_count)
+          (deal_type, amount) = get_deal_type_and_amount(subscription, old_subscription, cmrr, old_cmrr, payments_count)
+          freshsales.push_subscription_changes(deal_type, amount, payments_count) if(deal_type.present? && amount.present?)
         end
       rescue => e
         NewRelic::Agent.notice_error(e, { description: "Error occured while pushing SubscriptionTracking to Freshsales 
@@ -100,6 +106,16 @@ class CRM::Freshsales
 
     def self.previously_active?(old_subscription)
       old_subscription[:state].eql?(ACTIVE)
+    end
+
+    def self.amount_increased_from_zero?(subscription, old_subscription)
+      (old_subscription[:amount] == ZERO) && (subscription[:amount] > ZERO)
+    end
+
+    # Will pass when, Account moves from "Trial->Active", "Free->Active" 
+    #   for both Existing and Newly Paying Accounts
+    def self.paid_activation?(subscription, old_subscription)
+      ((!previously_active?(old_subscription) && subscription[:amount] > ZERO) || (amount_increased_from_zero?(subscription, old_subscription))) && subscription[:state].eql?(ACTIVE)
     end
 
     def self.upgrade?(subscription, old_subscription)
@@ -127,6 +143,45 @@ class CRM::Freshsales
 
     def self.state_changed?(subscription, old_subscription)
       !old_subscription[:state].eql?(subscription[:state])
+    end
+
+    def self.get_deal_type_and_amount(subscription, old_subscription, cmrr, old_cmrr, payments_count)
+      old_state = old_subscription[:state]
+      current_state = subscription[:state]
+
+      (deal_type, amount) = case
+                            when reactivation?(old_state, current_state, payments_count)
+                              [:upgrade, cmrr.round(2)]
+                            when (old_state == ACTIVE && current_state == SUSPENDED)
+                              amount = (subscription[:amount] == ZERO) ? calculate_deal_amount(cmrr, old_cmrr) : 
+                                                                          -cmrr.round(2)
+                              [:downgrade, amount]
+                            else
+                              [nil, nil]
+                            end
+    end
+
+    def self.calculate_deal_amount(cmrr, old_cmrr)
+      (cmrr - old_cmrr).round(2)
+    end
+
+    def self.opted_for_free_plan?(subscription, old_subscription, cmrr, payments_count)
+      old_state = old_subscription[:state]
+      current_state = subscription[:state]
+
+      !old_state.eql?(FREE ) && free_plan_selected?(current_state, cmrr) && !paid_customer?(payments_count)
+    end
+
+    def self.free_plan_selected?(current_state, cmrr)
+      current_state == FREE || (current_state == ACTIVE && cmrr == ZERO)
+    end
+
+    def self.paid_customer?(payments_count)
+      payments_count > ZERO
+    end
+    
+    def self.reactivation?(old_state, current_state, payments_count)
+      paid_customer?(payments_count) && [TRIAL, SUSPENDED].include?(old_state) && (current_state == ACTIVE)
     end
   end
 
