@@ -5,6 +5,7 @@ class Export::DataExport
                   :failures => :exhausted
 
   def perform(params)
+  	TimeZone.set_time_zone
     params.symbolize_keys!
     Helpdesk::ExportDataWorker.new(params).perform
   end
