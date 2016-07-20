@@ -960,6 +960,10 @@ function storeInLocalStorage(key, value) {
   localStorage.setItem(key, JSON.stringify(value));
 }
 
+function storeBrowserLocalStorage(key, value){
+  localStorage.setItem(key, Browser.stringify(value));  
+}
+
 function getFromLocalStorage(key_name) {
   return JSON.parse(localStorage.getItem(key_name))
 }

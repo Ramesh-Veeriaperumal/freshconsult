@@ -7651,6 +7651,8 @@ en:
   latest_ticket: "new update"
   latest_tickets: "new updates"
   search:
+    recent_searches: "Recent Searches"
+    recently_viewed: "Recently Viewed"
     no_results_msg: "No results found"
     showing: "Showing:"
     all_results: "All Results"
