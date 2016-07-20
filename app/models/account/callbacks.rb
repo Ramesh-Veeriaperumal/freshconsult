@@ -242,7 +242,8 @@ class Account < ActiveRecord::Base
     end
 
     def disable_count_es
-      CountES::IndexOperations::DisableCountES.perform_async({ :account_id => self.id })
+      CountES::IndexOperations::DisableCountES.perform_async({ :account_id => self.id })   
+    end
 
     def update_sendgrid
       vendor_id = Account::MAIL_PROVIDER[:sendgrid]
