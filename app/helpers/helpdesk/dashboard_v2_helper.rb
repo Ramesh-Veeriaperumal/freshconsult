@@ -40,7 +40,7 @@ module Helpdesk::DashboardV2Helper
     dashboardv2_plans = [ SubscriptionPlan::SUBSCRIPTION_PLANS[:garden], SubscriptionPlan::SUBSCRIPTION_PLANS[:estate],
                         SubscriptionPlan::SUBSCRIPTION_PLANS[:forest], SubscriptionPlan::SUBSCRIPTION_PLANS[:garden_classic],
                         SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_classic]]
-    dashboardv2_plans.include?(current_account.subscription_plan.name)
+    dashboardv2_plans.include?(current_account.subscription.subscription_plan.name) rescue false
   end
 
 end
