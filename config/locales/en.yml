@@ -5139,6 +5139,7 @@ en:
     private_note: Private
     public_note: Public
     none: None
+    me: Me
     myself: Myself
     spam_btn_title: Mark as spam
     assigned_to: Assigned To

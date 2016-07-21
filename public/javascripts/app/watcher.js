@@ -26,6 +26,7 @@ window.App.Tickets = window.App.Tickets || {};
     toggleWatcher: function (ev) {
       this.removeHighlightClass();
       jQuery("#new_watcher_page").toggle();
+      jQuery("#addwatcher .select2-search-field input").focus()
     },
     closeWatcher: function () {
       jQuery(".watchers_tooltip").hide();
