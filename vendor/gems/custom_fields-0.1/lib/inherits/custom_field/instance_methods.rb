@@ -75,7 +75,7 @@ module Inherits
 
       def regex # only for regex field
         @regex ||= begin
-          if field_type.to_sym == :custom_text && field_options.is_a?(Hash)
+          if field_type.to_sym == :custom_text && field_options.is_a?(Hash) && field_options.has_key?('regex')
             # Need to receive regex as two parts like rubular instead of splitting everytime while using
 
             flags = field_options['regex']['modifier']

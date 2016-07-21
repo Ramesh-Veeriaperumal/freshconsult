@@ -47,6 +47,7 @@ window.App.Freshfonecallhistory = window.App.Freshfonecallhistory || {};
       this.filteredAgents = [];
       this.filteredAgents_Name = [];
       this.data_hash = [];
+      this.date_range_values = ["Today", "Yesterday", "Last7Days", "Last30Days"];
       this.isShowingAllNumbers=false;
     },
     bindAllSelect2: function () {
@@ -428,7 +429,7 @@ window.App.Freshfonecallhistory = window.App.Freshfonecallhistory || {};
       this.filterString = filterString;
     },
     dateRangeState: function(){
-      return $(".ui-widget-content li.ui-state-active").text().replace(/\s/g, "");
+      return this.date_range_values[$(".ui-widget-content li.ui-state-active").index()];
     },
     bindAutoCompleteSetet2: function ($element, path, placeholder, customeFormatSelection) {
       var self = this;

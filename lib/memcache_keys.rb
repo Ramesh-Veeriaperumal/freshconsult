@@ -1,5 +1,7 @@
 module MemcacheKeys
 
+  include Cache::Memcache::Dashboard::MemcacheKeys
+
   AVAILABLE_QUEST_LIST = "AVAILABLE_QUEST_LIST:%{user_id}:%{account_id}"
 
   USER_TICKET_FILTERS = "v1/TICKET_VIEWS:%{user_id}:%{account_id}"
@@ -141,6 +143,8 @@ module MemcacheKeys
   HELPDESK_PERMISSIBLE_DOMAINS = "v1/HELPDESK_PERMISSIBLE_DOMAINS:%{account_id}"
 
   LEADERBOARD_MINILIST_REALTIME = "v2/LEADERBOARD_MINILIST_REALTIME:%{account_id}:%{agent_type}"
+
+  REQUESTER_WIDGET_FIELDS = "v1/REQUESTER_WIDGET_FIELDS:%{account_id}"
 
   AGENT_NEW_TICKET_FORM = "v1/AGENT_NEW_TICKET_FORM:%{account_id}"
   ACCOUNT_INSTALLED_APPS_IN_COMPANY_PAGE = "V1/ACCOUNT_INSTALLED_APPS_IN_COMPANY_PAGE:%{account_id}"

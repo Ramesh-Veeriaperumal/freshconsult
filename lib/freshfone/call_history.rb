@@ -40,7 +40,7 @@ module Freshfone::CallHistory
 
 	def get_date_range(type, custom_value)
 		TimeZone.set_time_zone
-		options = {:format => :short_day_separated, :include_year => true}
+		options = {:format => :short_day_separated, :include_year => true, :translate => false}
 		case type
 			when "Today"
 				view_context.formated_date(Time.zone.now.to_date, options)

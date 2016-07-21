@@ -21,7 +21,7 @@ class Account < ActiveRecord::Base
   after_commit ->(obj) { obj.clear_cache }, on: :destroy
   
   after_commit :enable_searchv2, :enable_count_es, on: :create
-  after_commit :disable_searchv2, on: :destroy
+  after_commit :disable_searchv2, :disable_count_es, on: :destroy
   after_commit :update_sendgrid
 
 
@@ -242,7 +242,7 @@ class Account < ActiveRecord::Base
     end
 
     def disable_count_es
-      CountES::IndexOperations::DisableCountES.perform_async({ :account_id => self.id })   
+      CountES::IndexOperations::DisableCountES.perform_async({ :account_id => self.id, :shard_name => ActiveRecord::Base.current_shard_selection.shard })
     end
 
     def update_sendgrid

@@ -85,10 +85,10 @@ module ApplicationHelper
   
 
   def logo_url(portal = current_portal)
-    MemcacheKeys.fetch(["v7","portal","logo",portal],30.days.to_i) do
+    MemcacheKeys.fetch(["v7","portal","logo",portal],7.days.to_i) do
         portal.logo.nil? ? "/assets/misc/logo.png?721014" :
         AwsWrapper::S3Object.url_for(portal.logo.content.path(:logo),portal.logo.content.bucket_name,
-                                          :expires => 30.days, :secure => true)
+                                          :expires => 7.days, :secure => true)
     end
   end
 
@@ -96,7 +96,7 @@ module ApplicationHelper
     MemcacheKeys.fetch(["v7","portal","fav_ico",portal]) do
       portal.fav_icon.nil? ? '/assets/misc/favicon.ico?123457' :
             AwsWrapper::S3Object.url_for(portal.fav_icon.content.path(:fav_icon),portal.fav_icon.content.bucket_name,
-                                          :expires => 30.days, :secure => true)
+                                          :expires => 7.days, :secure => true)
     end
   end
 
@@ -175,7 +175,12 @@ module ApplicationHelper
       options.merge!({:"data-parallel-url" => "/helpdesk/tickets/filter_options", :"data-parallel-placeholder" => "#ticket-leftFilter"})
     end
     if tab_name.eql?(:reports)
-      options.delete(:"data-pjax");
+      options.delete(:"data-pjax")
+    end
+    #Remove this patch after knocking off old reports
+    #When referrer is reports page, all tab navigations will be non pjax.
+    if request.fullpath.include? "reports"
+      options.delete(:"data-pjax")
     end
     content_tag('li', link_to(strip_tags(title), url, options), :class => ( cls ? "active": "" ), :"data-tab-name" => tab_name )
   end
@@ -657,8 +662,8 @@ module ApplicationHelper
   end
 
   def avatar_cached_url(user, profile_size)
-    MemcacheKeys.fetch(["v16","avatar",profile_size ,user],30.days.to_i) do
-      user.avatar ? user.avatar.expiring_url(profile_size,30.days.to_i) : is_user_social(user, profile_size)
+    MemcacheKeys.fetch(["v16","avatar",profile_size ,user],7.days.to_i) do
+      user.avatar ? user.avatar.expiring_url(profile_size,7.days.to_i) : is_user_social(user, profile_size)
     end
   end
   
@@ -672,7 +677,7 @@ module ApplicationHelper
   end
 
   def user_avatar_url(user, profile_size = :thumb)
-    (user.avatar ? user.avatar.expiring_url(profile_size, 30.days.to_i) : is_user_social(user, profile_size)) if user.present?
+    (user.avatar ? user.avatar.expiring_url(profile_size, 7.days.to_i) : is_user_social(user, profile_size)) if user.present?
   end
 
   def user_avatar_with_expiry( user, expiry = 300)
@@ -713,8 +718,8 @@ module ApplicationHelper
   end
 
   def s3_twitter_avatar(handle, profile_size = "thumb")
-    handle_avatar = MemcacheKeys.fetch(["v2","twt_avatar", profile_size, handle], 30.days.to_i) do
-      handle.avatar ? handle.avatar.expiring_url(profile_size.to_sym, 30.days.to_i) : "/assets/misc/profile_blank_#{profile_size}.jpg"
+    handle_avatar = MemcacheKeys.fetch(["v2","twt_avatar", profile_size, handle], 7.days.to_i) do
+      handle.avatar ? handle.avatar.expiring_url(profile_size.to_sym, 7.days.to_i) : "/assets/misc/profile_blank_#{profile_size}.jpg"
     end
     handle_avatar
   end

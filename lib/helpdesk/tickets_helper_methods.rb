@@ -1,7 +1,8 @@
 module Helpdesk::TicketsHelperMethods
 
   include Helpdesk::Ticketfields::TicketStatus  
-  
+  include Helpdesk::TicketsDynamoHelper
+
   def subject_style(ticket,onhold_and_closed_statuses)
     if ticket.outbound_email?
       cust_responded = customer_responded_for_outbound?(ticket) 

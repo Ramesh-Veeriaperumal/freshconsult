@@ -506,6 +506,9 @@ javascripts:
     - public/javascripts/custom-form/company_fields.js
     - public/javascripts/custom-form/template/*.jst
 
+  requester_widget:
+    - public/javascripts/admin/requester_widget_config.js
+
   survey:
     - public/javascripts/frameworks/jquery.js
     - public/javascripts/frameworks/plugins/jquery.blockUI.js

@@ -1562,6 +1562,11 @@ var scrollToError = function(){
 	trigger_event("ticket_view_loaded",{});
 	
 	App.TicketAttachmentPreview.init();
+
+	//RECENT TICKETS SETUP
+	//check if already part of recent tickets
+	NavSearchUtils.saveToLocalRecentTickets(TICKET_DETAILS_DATA);	
+
 };
 // TICKET DETAILS DOMREADY ENDS
 

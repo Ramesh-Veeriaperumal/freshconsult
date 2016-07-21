@@ -1,7 +1,9 @@
 class Helpdesk::Ticket < ActiveRecord::Base
 
   def count_fields_updated?
-    (@model_changes.keys & count_es_columns).any?
+    fields_updated = (@model_changes.keys & count_es_columns).any?
+    Rails.logger.info "COUNT ES:: account id:#{self.account_id}, display id: #{self.display_id}, fields updated: #{fields_updated}"
+    fields_updated
   end
 
   def to_count_es_json

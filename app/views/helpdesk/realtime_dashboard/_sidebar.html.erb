@@ -1,0 +1,35 @@
+<div class="dashboard-details-wrapper hide" id="dashboard_details_wrapper">
+	<div class="list-title">
+		<div class="title_wrapper">	
+			<div class="level1"></div>
+			<div class="level2"></div>
+		</div>
+		<div class="cross" data-action="hide-dashboard-details"><%= font_icon "cross", :size => 20 %>
+		</div>
+		<div class="clear"></div>
+	</div> 
+	<div class="trend-toggle-tab hide">
+		<div class="link1">
+			<span class="toggle active" data-trend="week"data-action="toggle-trend" >
+				This Week
+			</span>
+		</div>
+		<div class="link2">
+			<span class="toggle" data-trend="month" data-action="toggle-trend" >
+				This Month
+			</span>
+		</div>
+	</div>
+	<div class="report-pager">
+		<div class="next-page ctrl" data-action="next-page">
+			<i class="ficon-arrow-right fsize-14"></i>
+		</div>
+		<div class="previous-page ctrl" data-action="prev-page">
+			<i class="ficon-arrow-left fsize-14"></i>
+		</div>
+		<div class="clear"></div>
+	</div>
+	<div id="graph_space" rel="view_more_space"></div>
+	<div class="graph_details"></div>
+	<div class="list_items"></div>
+</div>	

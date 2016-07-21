@@ -978,6 +978,13 @@ Helpkit::Application.routes.draw do
       end
     end
 
+    resources :requester_widget, :only => [:get_widget, :update_widget] do
+      collection do
+        get :get_widget
+        put :update_widget
+      end
+    end
+
     resources :day_passes, :only => [:index, :update] do
       member do
         put :buy_now
@@ -1846,6 +1853,7 @@ Helpkit::Application.routes.draw do
         put :update_ticket_properties
         get :component
         get :prevnext
+        put :update_requester
         post :create # For Mobile apps backward compatibility.
       end
 
@@ -2026,11 +2034,28 @@ Helpkit::Application.routes.draw do
     match '/dashboard/latest_summary' => 'dashboard#latest_summary'
     match '' => 'dashboard#index', :as => :dashboard
     match '/sales_manager' => 'dashboard#sales_manager'
-    match '/unresolved_tickets' => 'dashboard#unresolved_tickets'
-    match '/unresolved_tickets_data' => 'dashboard#unresolved_tickets_data'
+    match '/dashboard/unresolved_tickets' => 'dashboard#unresolved_tickets'
+    match '/dashboard/unresolved_tickets_data' => 'dashboard#unresolved_tickets_data'
     match '/tickets_summary' => 'dashboard#tickets_summary'
-    match '/achievements' => 'dashboard#achievements'
-    match '/agent_status' => 'dashboard#agent_status'
+    match '/dashboard/due_today' => 'dashboard#due_today'
+    match '/dashboard/overdue' => 'dashboard#overdue'
+    match '/dashboard/trend_count' => 'dashboard#trend_count'
+    match '/dashboard/unresolved_tickets_dashboard' => 'dashboard#unresolved_tickets_dashboard'
+    match '/dashboard/unresolved_tickets_workload' => 'dashboard#unresolved_tickets_workload'
+    match '/dashboard/my_performance'   => 'dashboard#my_performance'
+    match '/dashboard/my_performance_summary'   => 'dashboard#my_performance_summary'
+    match '/dashboard/agent_performance'  => 'dashboard#agent_performance'
+    match '/dashboard/agent_performance_summary'  => 'dashboard#agent_performance_summary'
+    match '/dashboard/group_performance'  => 'dashboard#group_performance'
+    match '/dashboard/group_performance_summary'  => 'dashboard#group_performance_summary'
+    match '/dashboard/channels_workload'  => 'dashboard#channels_workload'
+    match '/dashboard/admin_glance'  => 'dashboard#admin_glance'
+    match '/dashboard/top_customers_open_tickets'  => 'dashboard#top_customers_open_tickets'
+    match '/dashboard/top_agents_old_tickets'  => 'dashboard#top_agents_old_tickets'
+    match '/dashboard/available_agents' => 'dashboard#available_agents'
+    match '/dashboard/survey_info' => 'dashboard#survey_info'
+    match '/dashboard/achievements' => 'dashboard#achievements'
+    match '/dashboard/agent_status' => 'dashboard#agent_status'
 
     # For mobile apps backward compatibility.
     match '/subscriptions' => 'subscriptions#index'
@@ -2073,6 +2098,7 @@ Helpkit::Application.routes.draw do
 
     match 'commons/group_agents/(:id)' => "commons#group_agents"
     match 'commons/user_companies' => "commons#user_companies"
+    match "commons/fetch_company_by_name" => "commons#fetch_company_by_name"
 
     resources :ticket_templates do
       member do 

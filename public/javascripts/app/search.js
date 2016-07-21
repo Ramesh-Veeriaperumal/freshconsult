@@ -37,6 +37,7 @@
 		},
 		pjaxifyUrl: function(ev){
 			ev.preventDefault();
+    		NavSearchUtils.saveToLocalRecentSearches(jQuery('.search-input').val());			
 			var searchKey = encodeURIComponent(jQuery('.search-input').val());
 			var url = jQuery('.search-form').attr('action')+'?term='+searchKey;
 			pjaxify(url);

@@ -17,7 +17,11 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
   include Helpdesk::ProcessAgentForwardedEmail
   include Cache::Memcache::AccountWebhookKeyCache
 
+  class UserCreationError < StandardError
+  end
+
   MESSAGE_LIMIT = 10.megabytes
+  MAXIMUM_CONTENT_LIMIT = 300.kilobytes
 
   attr_accessor :reply_to_email, :additional_emails,:archived_ticket, :start_time, :actual_archive_ticket
 
@@ -583,13 +587,13 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         # ticket.save
         note.notable = ticket
         return if large_email && duplicate_email?(from_email[:email], 
-                                                  parse_to_emails.first, 
+                                                  to_email[:email],
                                                   params[:subject], 
                                                   message_id)
         note.save_note
         cleanup_attachments note
         mark_email(process_email_key, from_email[:email], 
-                                      parse_to_emails.first, 
+                                      to_email[:email], 
                                       params[:subject], 
                                       message_id) if large_email
       end
@@ -639,8 +643,15 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         user = account.contacts.new
         language = (account.features?(:dynamic_content)) ? nil : account.language
         portal = (email_config && email_config.product) ? email_config.product.portal : account.main_portal
-        signup_status = user.signup!({:user => {:email => from_email[:email], :name => from_email[:name], 
-          :helpdesk_agent => false, :language => language, :created_from_email => true }, :email_config => email_config},portal)        
+        begin
+          signup_status = user.signup!({:user => {:email => from_email[:email], :name => from_email[:name],
+            :helpdesk_agent => false, :language => language, :created_from_email => true }, :email_config => email_config},portal)
+          raise UserCreationError, "Failed to create new Account!" unless signup_status
+        rescue UserCreationError => e
+          NewRelic::Agent.notice_error(e)
+          Account.reset_current_account
+          raise e
+        end
         if params[:text]
           text = text_for_detection
           args = [user, text]  #user_email changed
@@ -853,7 +864,14 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     def body_html_with_formatting(body,email_cmds_regex)
       body = body.gsub(email_cmds_regex,'<notextile>\0</notextile>')
       to_html = text_to_html(body)
-      body_html = auto_link(to_html) { |text| truncate(text, :length => 100) }
+
+      # Process auto_link if the content is less than 300 KB, otherwise leave as text.
+      if body.size < MAXIMUM_CONTENT_LIMIT
+        body_html = auto_link(to_html) { |text| truncate(text, :length => 100) }
+      else
+        body_html = sanitize(to_html)
+      end
+
       html = white_list(body_html)
       html.gsub!("&amp;amp;", "&amp;")
       html

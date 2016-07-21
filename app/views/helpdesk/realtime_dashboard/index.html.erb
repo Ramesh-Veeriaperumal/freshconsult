@@ -4,14 +4,14 @@
     <%= check_twitter_reauth_required %>
 <% end %>
 
-<div class="index-page-content" data-widget-type="<%= @manage_dashboard and @global_dashboard %>" id="realtime-dashboard-content">
+<div class="index-page-content" id="realtime-dashboard-content">
     <%= render :partial => "/helpdesk/realtime_dashboard/summary" %>
     <%= render :partial => "/helpdesk/realtime_dashboard/trial_account" %>
 
     <div class="widget-wrapper-bg clearfix">
         <div class="row-fluid widget-wrapper">
-            <div class="grid-stack grid-stack-3" id="grid-stack">
-                <% widget_list.each do |widget| %>
+            <div class="grid-stack" id="grid-stack">
+                <% widget_list(@type).each do |widget| %>
                   <%= render_dashboard_widget widget %>
                 <% end %>
             </div>
@@ -20,7 +20,34 @@
 
     <div class="unresolved_tickets hide" id="unresolved_tickets"></div>
 </div>
-
+<% content_for :dialogs do %>
+    <%= render :partial => "/helpdesk/realtime_dashboard/sidebar" %>
+<% end %>
+<!-- Anchor tag for agents unresolved chart clicks -->
+<a href="#" rel="tickets-anchor" data-parallel-url="/helpdesk/tickets/filter_options" data-parallel-placeholder="#ticket-leftFilter" data-pjax="#body-container" style="display:none;"></a>
+<!-- End -->
 <% if chat_activated? %>
     <%= javascript_include_tag :'cdn/livechat_mini_dashboard' %>
 <% end %>
+<% unless AppMetrics::FRESHFONE_METRICS.blank? %>
+    <%= javascript_tag do %>
+    jQuery(document).ready(function(){
+        if(App.Kissmetrics != undefined){   
+            App.Kissmetrics.kissMetricTrackingCode("<%= AppMetrics::FRESHFONE_METRICS %>");
+        }
+     });
+    <% end %>
+<% end %>
+<script type="text/javascript">
+    jQuery(document).ready(function() {
+        window.RealtimeDashboard = window.RealtimeDashboard || {};
+        RealtimeDashboard.auto_refresh_widgets = ['available_agents','unresoved'];
+        RealtimeDashboard.group_role_dependent_widgets = [];
+        RealtimeDashboard.type = '<%= @type %>';
+        RealtimeDashboard.snapshot_label = '<%= snapshot_label @type %>';
+        RealtimeDashboard.locals = {};
+        RealtimeDashboard.month_name = <%=t('date.abbr_month_names').to_json.html_safe%>;
+        RealtimeDashboard.full_domain = '<%= current_account.full_domain %>';
+        RealtimeDashboard.helpdesk_name = '<%= current_account.helpdesk_name %>';
+    });
+</script>

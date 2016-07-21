@@ -25,7 +25,7 @@ module Dashboard::UtilMethods
       sum_value   = result_hash.last.sum
       result_arr << ((sum_value.zero? and !valid_row?(group_value.first)) ? [] : [result_hash, sum_value].flatten)
     end
-    return result_array.reject(&:empty?) if !@filter_condition.blank? || current_user.assigned_ticket_permission
+    return result_array.reject(&:empty?) if !@filter_condition.blank? || User.current.assigned_ticket_permission
 
     #Handle unassign case - special case to put it as a separate row in response array to UI.
     mapped_status_arr = statuses_list.inject(["unassigned"]) do |status_arr,status_list|
@@ -68,13 +68,13 @@ module Dashboard::UtilMethods
   end
 
   def ticket_types_list
-    current_account.ticket_types_from_cache.collect { |g| [g.value, g.value]}.to_h
+    Account.current.ticket_types_from_cache.collect { |g| [g.value, g.value]}.to_h
   end
 
   def agents_list(from_dashboard = false)
     agents = agent_list_from_cache
     if from_dashboard and @group_id.present?
-      groups = current_account.groups.where(:id => @group_id)
+      groups = Account.current.groups.where(:id => @group_id)
       filtered_agent_list ={}
       groups.each do |group|
         filtered_agent_list.merge!(group.agents.collect {|u| [u.id, u.name] }.to_h)
@@ -83,10 +83,10 @@ module Dashboard::UtilMethods
     end
 
     if @responder_id.blank?
-      if current_user.assigned_ticket_permission
-        {current_user.id => current_user.name}
-      elsif current_user.group_ticket_permission
-        agent_ids = current_account.agent_groups.where(:group_id => user_agent_groups).pluck(:user_id).uniq
+      if User.current.assigned_ticket_permission
+        {User.current.id => User.current.name}
+      elsif User.current.group_ticket_permission
+        agent_ids = Account.current.agent_groups.where(:group_id => user_agent_groups).pluck(:user_id).uniq
         agent_ids.inject({}) do |agent_hash, agent_id|
           agent_hash.merge!({agent_id => agents[agent_id]})
         end
@@ -100,8 +100,8 @@ module Dashboard::UtilMethods
 
   def groups_list
     if @group_id.blank?
-      if current_user.restricted?
-        group_ids = current_account.groups.select("id,name").where(id: user_agent_groups)
+      if User.current.restricted?
+        group_ids = Account.current.groups.select("id,name").where(id: user_agent_groups)
         group_ids.inject({}) do |group_hash, group|
           group_hash.merge!(group.id => group.name)
         end
@@ -151,11 +151,15 @@ module Dashboard::UtilMethods
 
   def build_group_by_list
     @group_by_list = if @group_by == "group_id" and @responder_id.present?
-       current_account.agent_groups.where("user_id in (?)", @responder_id).pluck(:group_id).uniq
+       Account.current.agent_groups.where("user_id in (?)", @responder_id).pluck(:group_id).uniq
     elsif @group_by == "responder_id" and @group_id.present?
-      current_account.agent_groups.where("group_id in (?)", @group_id).pluck(:user_id).uniq
+      Account.current.agent_groups.where("group_id in (?)", @group_id).pluck(:user_id).uniq
     else
       []
     end
+  end
+
+  def ticket_source_ids
+    TicketConstants::SOURCE_NAMES_BY_KEY.keys
   end
 end
