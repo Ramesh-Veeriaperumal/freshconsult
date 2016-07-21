@@ -4,6 +4,7 @@ class Freshfone::UsersController < ApplicationController
 	include Freshfone::NodeEvents
 	include Freshfone::CallsRedisMethods
 	include Freshfone::SubscriptionsUtil
+	include Freshfone::AcwUtil
 
 	EXPIRES = 3600
 	before_filter { |c| c.requires_feature :freshfone }
@@ -36,14 +37,16 @@ class Freshfone::UsersController < ApplicationController
 	end
 
 	def reset_presence_on_reconnect
-		render :json => {
-			:status => @freshfone_user.busy? ? false : reset_presence
+		render json: {
+			status: @freshfone_user.busy_or_acw? ? false : reset_presence
 		}
 	end
 
 	def availability_on_phone
 		return render(json: { error: "In Trial" }, status: 403) if in_trial_states?
 		@freshfone_user.available_on_phone = params[:available_on_phone]
+		@freshfone_user.change_presence_and_preference(
+			Freshfone::User::PRESENCE[:online]) if agent_acw?
 		if @freshfone_user.save
 			publish_agent_device(@freshfone_user,current_user)
 			render :json => { :update_status =>  true } 
@@ -158,7 +161,8 @@ class Freshfone::UsersController < ApplicationController
 
 		def resolve_busy
 			@freshfone_user.busy? ? publish_freshfone_presence(current_user) : @freshfone_user.busy!
-			Resque::enqueue(Freshfone::Jobs::BusyResolve, { :agent_id => @freshfone_user.user_id })
+			Resque::enqueue(Freshfone::Jobs::BusyResolve, { :agent_id =>
+				@freshfone_user.user_id }) if busy_resolve?
 		end
 
 		def is_agent_busy?
@@ -185,7 +189,11 @@ class Freshfone::UsersController < ApplicationController
 		end
 
 		def validate_presence
-			return render json: { update_status: false } if agent_in_call?
+			return render json: { update_status: false } if agent_in_call? || agent_acw?
+		end
+
+		def busy_resolve?
+			params[:status].to_i != Freshfone::User::PRESENCE[:busy]
 		end
 
 end

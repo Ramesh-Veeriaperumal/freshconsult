@@ -8567,6 +8567,8 @@ en:
     not_enough_credit: "Not Enough Credit!"
     recharge: "Recharge"
     ff_number: "Phone Number"
+    online_availability_text: "Available:"
+    acw_availability_text: 'Move to Available:'
     via_browser: "via Browser / App"
     via_phone: "via Phone"
     subscription:
@@ -8587,6 +8589,7 @@ en:
       not_enough_credit: "Not Enough Credit"
       restricted_country: "Restricted country"
       already_in_call: "Simultaneous outgoing call restricted"
+      in_acw_state: 'Move out of "After Call Work State" to start making calls'
       strange_number: "Cannot call a Restricted number"
       move_to_dialer: "Back to dialer"
       connect_call: "Call"
@@ -8668,6 +8671,7 @@ en:
       available: "Accepting calls"
       unavailable: "Not accepting calls"
       busy: "Ongoing Call"
+      acw: "Wrapping Up"
       recent_calls: "Recent Calls"
       transferring: "<span>Transferring Call</span><br />Please wait..."
       transfer_agents: "Type an agent or group name..."

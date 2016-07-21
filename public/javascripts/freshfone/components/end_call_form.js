@@ -81,7 +81,6 @@ var FreshfoneEndCall;
 			self.$endCallNewTicketDetailsForm.show();
 			self.$ticketSubject.focus();
 			self.$requesterName.val(self.number);
-			self.initRequesterValue();
 
 		});
 
@@ -224,8 +223,10 @@ var FreshfoneEndCall;
 		},
 		resetDefaults: function () {
 			if (this.inCall) {
-				this.freshfoneuser.resetStatusAfterCall();
-				if (!this.convertedToTicket) { this.freshfoneuser.updatePresence(); }
+				if(!freshfone.isAcwEnabled){
+					this.freshfoneuser.resetStatusAfterCall();
+					if (!this.convertedToTicket) { this.freshfoneuser.updatePresence(); }
+				}
 
 				this.freshfonewidget.resetToDefaultState();
 				this.freshfonecalls.init();
@@ -326,6 +327,7 @@ var FreshfoneEndCall;
 			this.number = this.number || this.freshfonecalls.number;
 			this.callerName = this.callerName || this.freshfonecalls.callerName;
 			this.prefillForm();
+			this.initRequesterValue();
 		},
 		prefillForm: function () {
 			this.$requesterName.val(this.number);

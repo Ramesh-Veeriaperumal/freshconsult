@@ -1387,6 +1387,7 @@ ActiveRecord::Schema.define(:version => 20160629121214) do
     t.boolean  "security_whitelist",                         :default => false
     t.text     "triggers"
     t.boolean  "caller_id_enabled",                     :default => false
+    t.integer  "acw_timeout",                           :default => 1
   end
 
   add_index "freshfone_accounts", ["account_id", "state", "expires_on"], :name => "index_freshfone_accounts_on_account_id_and_state_and_expires_on"

@@ -189,6 +189,9 @@ label.overlabel{
 	#freshfone-presence-toggle {
 		border-right: 1px solid rgba(255,255,255,0.2);
 	}
+	.freshfone-preference-tooltip{
+		display: inline-block;
+	}
 	i.header-icon-freshfone,i.header-icon-chat {
 		display: block;
 		height: 35px;
@@ -206,6 +209,9 @@ label.overlabel{
 		}
 		&.ff-busy {
 			background-color: #FFAB39;
+		}
+		&.ff-acw {
+			background-color:  #CC4352;
 		}
 	}
 	i.header-icon-chat {
@@ -390,6 +396,7 @@ label.overlabel{
 }
 .ff_hover_card{
 	min-width: 140px !important;
+	padding: 0 !important;
 }
 .ff_alert_card{
 	min-width: 250px !important;
@@ -405,6 +412,12 @@ label.overlabel{
 }
 .ff_presence_options {
 	padding: 0 !important;
+	.ff_available{
+		color: #fff;
+		background-color: #666;
+		font-weight: 500;
+		padding: 10px;
+	}
 	.availabilityOnPhone {
 		color: #000;
 		font-weight: 500; 	
@@ -420,11 +433,7 @@ label.overlabel{
 		}
 
 		&:hover {
-			color: #fff;
-			background-color: #999;
-			.ff-dropdown-text {
-				color: #fff;
-			}
+			background-color: #ddd;
 		}
 	}
 	.ficon-ff-on-call {

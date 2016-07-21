@@ -41,7 +41,7 @@ window.App.Freshfonedashboard = window.App.Freshfonedashboard || {};
 			}
 		},
 		canSupervisorConnect: function(){
-			return (Twilio.Device.status() !== 'busy' && !freshfoneuser.isBusy());
+			return (Twilio.Device.status() !== 'busy' && freshfoneuser.isOnlineOrOffline());
 		}, 
 		rejectActiveConnections: function(){
 			if(Twilio.Device.activeConnection() && 

@@ -36,13 +36,14 @@ module Freshfone::Conference::TransferMethods
       rescue Exception => e
         Rails.logger.error "Error in conference transfer success for #{current_account.id} \n#{e.message}\n#{e.backtrace.join("\n\t")}"
         current_call.cleanup_and_disconnect_call
-        telephony.no_action
+        no_action
       end
     end
 
     def cancel_child_call
       current_call.children.last.canceled!
-      return telephony.no_action
+      return no_action if new_notifications?
+      empty_twiml
     end
 
     def transfer_answered
@@ -70,6 +71,10 @@ module Freshfone::Conference::TransferMethods
 
     def call_actions
       @call_actions ||= Freshfone::CallActions.new(params, current_account)
+    end
+
+    def no_action
+      telephony.no_action
     end
 
 end
