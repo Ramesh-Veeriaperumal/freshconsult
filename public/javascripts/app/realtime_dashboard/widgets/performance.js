@@ -33,15 +33,19 @@ RealtimeDashboard.Widgets.Performance = function(widget_name,container,preview_l
 				self.parseResponse();
 			} 
 		},
-		fetchStats : function() {
+		fetchStats : function(container) {
 			var self = this;
 			
 			if(true || self.core.refresh.did_time_expire() || !self.core.readFromLocalStorage(_fd.widget_name)) {
+
+				jQuery( '#' + container).html('<div class="sloading loading-small loading-block"></div>');
 				var opts = {
 		            url: _fd.widget_name == "agent_performance" ? self.constants.stats_endPoint_agent : self.constants.stats_endPoint_group ,
 		            success: function (response) {
 		                _fd.stats = response.result;
 		            	self.core.addToLocalStorage(_fd.widget_name + '_stats',_fd.stats);
+						self.constructChart(container,false);
+						self.showTotalStats();
 		            }
 		        };
 		        self.core.makeAjaxRequest(opts);
@@ -240,10 +244,7 @@ RealtimeDashboard.Widgets.Performance = function(widget_name,container,preview_l
 		sidebarModalChart: function (container) {
 			var self = this;
 			self.core.controls.showDashboardDetails(_fd.widget_name,I18n.t(self.locale_key),false,_fd.formated_time);
-			setTimeout(function(){
-				self.constructChart(container,false);
-				self.showTotalStats();
-			},10)
+			self.fetchStats(container);
 		},
 		bindEvents : function() {
 			var self = this;
@@ -268,7 +269,6 @@ RealtimeDashboard.Widgets.Performance = function(widget_name,container,preview_l
 			self.core = RealtimeDashboard.CoreUtil;
 			self.locale_key = self.core.locale_prefix + _fd.widget_name;
 			self.fetchData(false,'-');
-			self.fetchStats();
 			self.bindEvents();
 		}	
 	}

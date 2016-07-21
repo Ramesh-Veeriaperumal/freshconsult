@@ -97,7 +97,7 @@ function lineChart(opts){
                     color : REPORT_COLORS['label']
                 }
             },
-            tickInterval : 2
+            tickInterval : 4
         },
         yAxis: {
             min: 0,

@@ -27,16 +27,20 @@ RealtimeDashboard.Widgets.AgentReceivedResolved = function(widget_name,container
 				self.parseResponse();
 			} 
 		},
-		fetchStats : function() {
+		fetchStats : function(values,container) {
 			var self = this;
 			
 			if(true || self.core.refresh.did_time_expire() || !self.core.readFromLocalStorage(_fd.widget_name)) {
+				jQuery( '#' + container).html('<div class="sloading loading-small loading-block"></div>');
 				var opts = {
 		            url: self.constants.stats_endPoint,
 		            success: function (response) {
 		                _fd.stats = response.result;
 		            	self.core.addToLocalStorage(_fd.widget_name + '_stats',_fd.stats);
 		                //self.parseResponse();
+						self.constructChart(values,container,false,true);
+						self.showTotalStats(true);
+						jQuery(".trend-toggle-tab").removeClass('hide');
 		            },
 		            error : function(){
 		            	self.core.appendNoData(_fd.container + '_widget');
@@ -224,11 +228,7 @@ RealtimeDashboard.Widgets.AgentReceivedResolved = function(widget_name,container
 		sidebarModalChart: function (values,container) {
 			var self = this;
 			self.core.controls.showDashboardDetails(_fd.widget_name,I18n.t(self.locale_key),false,_fd.formated_time);
-			jQuery(".trend-toggle-tab").removeClass('hide');
-			setTimeout(function(){
-				self.constructChart(values,container,false,true);
-				self.showTotalStats(true);
-			},10)
+			self.fetchStats(values,container);
 		},
 		bindEvents : function() {
 			var self = this;
@@ -259,7 +259,6 @@ RealtimeDashboard.Widgets.AgentReceivedResolved = function(widget_name,container
 			self.core = RealtimeDashboard.CoreUtil;
 			self.locale_key = self.core.locale_prefix + _fd.widget_name;
 			self.fetchData();
-			self.fetchStats();
 			self.bindEvents();
 		}	
 	}

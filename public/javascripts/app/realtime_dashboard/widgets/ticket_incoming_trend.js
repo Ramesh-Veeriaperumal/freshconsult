@@ -23,20 +23,25 @@ RealtimeDashboard.Widgets.TicketIncomingTrend = function(widget_name,container){
 	        };
 	        self.core.makeAjaxRequest(opts);
 		},
-		fetchStats : function() {
+		fetchStats : function(container) {
 			var self = this;
 			
 			if(true || self.core.refresh.did_time_expire() || !self.core.readFromLocalStorage(_fd.widget_name)) {
+				jQuery("#" + container).html('<div class="sloading loading-small loading-block"></div>');
 				var opts = {
 		            url: self.constants.channel_workload,
 		            success: function (response) {
 		                _fd.stats = response.result;
 		            	self.core.addToLocalStorage(_fd.widget_name + '_stats',_fd.stats);
+						self.constructChannelChart(container);
+						self.showTotalStats();
 		            }
 		        };
 		        self.core.makeAjaxRequest(opts);
 			} else{
 				_fd.stats = JSON.parse(self.core.readFromLocalStorage(_fd.widget_name + '_stats'));
+				self.constructChannelChart('graph_space');
+				self.showTotalStats();
 			}
 		},
 		parseResponse : function() {
@@ -195,10 +200,7 @@ RealtimeDashboard.Widgets.TicketIncomingTrend = function(widget_name,container){
 		sidebarModalChart: function (values,container) {
 			var self = this;
 			self.core.controls.showDashboardDetails(_fd.widget_name,I18n.t('helpdesk.realtime_dashboard.ticket_workload_channels'),false,_fd.formated_time);
-			setTimeout(function(){
-				self.constructChannelChart('graph_space');
-				self.showTotalStats();
-			},10)
+			self.fetchStats(container);
 		},
 		showTotalStats : function() {
 			var str = [];
@@ -245,7 +247,6 @@ RealtimeDashboard.Widgets.TicketIncomingTrend = function(widget_name,container){
 			self.core = RealtimeDashboard.CoreUtil;
 			self.locale_key = self.core.locale_prefix ;//+ _fd.widget_name;
 			self.fetchData();
-			self.fetchStats();
 			self.bindEvents();
 		}
 	}
