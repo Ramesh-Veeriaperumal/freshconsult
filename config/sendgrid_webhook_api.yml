@@ -12,5 +12,9 @@ development:
   <<: *defaults
 staging:
   <<: *defaults
+test:
+  <<: *defaults
+production:
+  <<: *defaults
 
   
