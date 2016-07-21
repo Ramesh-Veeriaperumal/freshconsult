@@ -86,7 +86,7 @@ class TicketsControllerTest < ActionController::TestCase
     subject = Faker::Lorem.words(10).join(' ')
     description = Faker::Lorem.paragraph
     @update_group ||= create_group_with_agents(@account, agent_list: [agent.id])
-    params_hash = { description: description, subject: subject, priority: 4, status: 7, type: 'Lead',
+    params_hash = { description: description, subject: subject, priority: 4, status: 7, type: 'Incident',
                     responder_id: agent.id, source: 3, tags: ['update_tag1', 'update_tag2'],
                     due_by: 12.days.since.iso8601, fr_due_by: 4.days.since.iso8601, group_id: @update_group.id }
     params_hash
@@ -308,7 +308,7 @@ class TicketsControllerTest < ActionController::TestCase
     post :create, construct_params({}, params)
     match_json([bad_request_error_pattern('priority', :not_included, list: '1,2,3,4'),
                 bad_request_error_pattern('status', :not_included, list: '2,3,4,5,6,7'),
-                bad_request_error_pattern('type', :not_included, list: 'Question,Incident,Problem,Feature Request,Lead'),
+                bad_request_error_pattern('type', :not_included, list: 'Question,Incident,Problem,Feature Request'),
                 bad_request_error_pattern('source', :not_included, list: '1,2,3,7,8,9')])
     assert_response 400
   end
@@ -1717,7 +1717,7 @@ class TicketsControllerTest < ActionController::TestCase
     assert_response 400
     match_json([bad_request_error_pattern('priority', :not_included, list: '1,2,3,4'),
                 bad_request_error_pattern('status', :not_included, list: '2,3,4,5,6,7'),
-                bad_request_error_pattern('type', :not_included, list: 'Question,Incident,Problem,Feature Request,Lead'),
+                bad_request_error_pattern('type', :not_included, list: 'Question,Incident,Problem,Feature Request'),
                 bad_request_error_pattern('source', :not_included, list: '1,2,3,7,8,9,10')])
   end
 
@@ -2785,7 +2785,7 @@ class TicketsControllerTest < ActionController::TestCase
                 bad_request_error_pattern('product_id', :datatype_mismatch, code: :missing_field, expected_data_type: 'Positive Integer'),
                 bad_request_error_pattern('priority', :not_included, code: :missing_field, list: '1,2,3,4'),
                 bad_request_error_pattern('status', :not_included, code: :missing_field, list: '2,3,4,5,6,7'),
-                bad_request_error_pattern('type', :not_included, code: :missing_field, list: 'Question,Incident,Problem,Feature Request,Lead')])
+                bad_request_error_pattern('type', :not_included, code: :missing_field, list: 'Question,Incident,Problem,Feature Request')])
     assert_response 400
   ensure
     default_non_required_fiels.map { |x| x.toggle!(:required) }
@@ -2798,7 +2798,7 @@ class TicketsControllerTest < ActionController::TestCase
     post :create, construct_params({},  requester_id: @agent.id,
                                         status: 2,
                                         priority: 2,
-                                        type: 'Lead',
+                                        type: 'Feature Request',
                                         source: 1,
                                         description: Faker::Lorem.characters(15),
                                         group_id: ticket_params_hash[:group_id],
@@ -2832,7 +2832,7 @@ class TicketsControllerTest < ActionController::TestCase
                 bad_request_error_pattern('product_id', :datatype_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: 'Null'),
                 bad_request_error_pattern('priority', :not_included, list: '1,2,3,4'),
                 bad_request_error_pattern('status', :not_included, list: '2,3,4,5,6,7'),
-                bad_request_error_pattern('type', :not_included, list: 'Question,Incident,Problem,Feature Request,Lead'),
+                bad_request_error_pattern('type', :not_included, list: 'Question,Incident,Problem,Feature Request'),
                 bad_request_error_pattern('source', :not_included, list: '1,2,3,7,8,9,10')])
     assert_response 400
   ensure
@@ -2915,7 +2915,7 @@ class TicketsControllerTest < ActionController::TestCase
     default_non_required_fiels.map { |x| x.toggle!(:required) }
     default_non_required_fiels.select { |x| x.name == 'product' }.map { |x| x.toggle!(:required) }
     email_config = fetch_email_config
-    params = { email: Faker::Internet.email, email_config_id: email_config.id, priority: 2, type: 'Lead', description: Faker::Lorem.characters(15), group_id: ticket_params_hash[:group_id], subject: Faker::Lorem.characters(15) }
+    params = { email: Faker::Internet.email, email_config_id: email_config.id, priority: 2, type: 'Feature Request', description: Faker::Lorem.characters(15), group_id: ticket_params_hash[:group_id], subject: Faker::Lorem.characters(15) }
     post :create, construct_params({ _action: 'compose_email' }, params)
     match_json(ticket_pattern({}, Helpdesk::Ticket.last))
     match_json(ticket_pattern(params.merge(responder_id: @agent.id, source: 10, status: 5), Helpdesk::Ticket.last))
@@ -3212,12 +3212,12 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_create_with_section_fields_absence_check_error_with_format_validatable_fields
     create_section_fields
-    params = ticket_params_hash.merge(custom_fields: {}, type: 'Lead', description: '<b>test</b>')
+    params = ticket_params_hash.merge(custom_fields: {}, type: 'Feature Request', description: '<b>test</b>')
     ['number', 'date'].each do |custom_field|
       params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES[custom_field]
     end
     post :create, construct_params({}, params)
-    match_json([bad_request_error_pattern('test_custom_date', :section_field_absence_check_error, code: :incompatible_field, field: 'type', value: 'Lead'), bad_request_error_pattern('test_custom_number', :section_field_absence_check_error, code: :incompatible_field, field: 'type', value: 'Lead')])
+    match_json([bad_request_error_pattern('test_custom_date', :section_field_absence_check_error, code: :incompatible_field, field: 'type', value: 'Feature Request'), bad_request_error_pattern('test_custom_number', :section_field_absence_check_error, code: :incompatible_field, field: 'type', value: 'Feature Request')])
   ensure
     @account.ticket_fields.custom_fields.each do |x|
       x.update_attributes(field_options: nil) if %w(number date dropdown paragraph).any? { |b| x.name.include?(b) }
@@ -3226,12 +3226,12 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_create_with_section_fields_absence_check_error_with_choices_fields
     create_section_fields
-    params = ticket_params_hash.merge(custom_fields: {}, type: 'Lead', description: '<b>test</b>')
+    params = ticket_params_hash.merge(custom_fields: {}, type: 'Feature Request', description: '<b>test</b>')
     ['dropdown'].each do |custom_field|
       params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES[custom_field]
     end
     post :create, construct_params({}, params)
-    match_json([bad_request_error_pattern('test_custom_dropdown', :section_field_absence_check_error, code: :incompatible_field, field: 'type', value: 'Lead')])
+    match_json([bad_request_error_pattern('test_custom_dropdown', :section_field_absence_check_error, code: :incompatible_field, field: 'type', value: 'Feature Request')])
   ensure
     @account.ticket_fields.custom_fields.each do |x|
       x.update_attributes(field_options: nil) if %w(number date dropdown paragraph).any? { |b| x.name.include?(b) }
@@ -3255,13 +3255,13 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_update_with_section_fields_absence_check_error_with_format_validatable_fields
     create_section_fields
-    params = update_ticket_params_hash.merge(custom_fields: {}, type: 'Lead', description: '<b>test</b>')
+    params = update_ticket_params_hash.merge(custom_fields: {}, type: 'Feature Request', description: '<b>test</b>')
     ['number', 'date'].each do |custom_field|
       params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES[custom_field]
     end
     t = ticket
     put :update, construct_params({ id: t.display_id }, params)
-    match_json([bad_request_error_pattern('test_custom_date', :section_field_absence_check_error, code: :incompatible_field, field: 'type', value: 'Lead'), bad_request_error_pattern('test_custom_number', :section_field_absence_check_error, code: :incompatible_field, field: 'type', value: 'Lead')])
+    match_json([bad_request_error_pattern('test_custom_date', :section_field_absence_check_error, code: :incompatible_field, field: 'type', value: 'Feature Request'), bad_request_error_pattern('test_custom_number', :section_field_absence_check_error, code: :incompatible_field, field: 'type', value: 'Feature Request')])
   ensure
     @account.ticket_fields.custom_fields.each do |x|
       x.update_attributes(field_options: nil) if %w(number date dropdown paragraph).any? { |b| x.name.include?(b) }
@@ -3270,13 +3270,13 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_update_with_section_fields_absence_check_error_with_choices_fields
     create_section_fields
-    params = update_ticket_params_hash.merge(custom_fields: {}, type: 'Lead', description: '<b>test</b>')
+    params = update_ticket_params_hash.merge(custom_fields: {}, type: 'Feature Request', description: '<b>test</b>')
     ['dropdown'].each do |custom_field|
       params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES[custom_field]
     end
     t = ticket
     put :update, construct_params({ id: t.display_id }, params)
-    match_json([bad_request_error_pattern('test_custom_dropdown', :section_field_absence_check_error, code: :incompatible_field, field: 'type', value: 'Lead')])
+    match_json([bad_request_error_pattern('test_custom_dropdown', :section_field_absence_check_error, code: :incompatible_field, field: 'type', value: 'Feature Request')])
   ensure
     @account.ticket_fields.custom_fields.each do |x|
       x.update_attributes(field_options: nil) if %w(number date dropdown paragraph).any? { |b| x.name.include?(b) }
