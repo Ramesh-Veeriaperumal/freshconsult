@@ -39,7 +39,7 @@ class Freshfone::Call < ActiveRecord::Base
   delegate :update_acw_duration, :to => :call_metrics
 
   attr_protected :account_id
-  attr_accessor :params, :queue_duration
+  attr_accessor :params, :queue_duration, :voicemail_initiated
   
   VOICEMAIL_MAX_LENGTH = 180 #seconds
   RECORDING_MAX_LENGTH = 300
@@ -278,6 +278,11 @@ class Freshfone::Call < ActiveRecord::Base
   def queue_duration=(duration)
     attribute_will_change!("queue_duration") if @queue_duration != duration
     @queue_duration = duration
+  end
+
+  def voicemail_initiated!
+    self.voicemail_initiated = true
+    save!
   end
 
   def update_status(params)
