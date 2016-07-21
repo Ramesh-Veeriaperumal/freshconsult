@@ -4,10 +4,8 @@ jQuery(document).ready(function(){
 	insideSearch 	= false,
 	focusedOnSearch = true,
 	currentString = "",
-	fullSearchString = "";
-	NavSearchUtils.localRecentSearchKey = 'local_recent_searches_' + window.current_account_id + '_' + window.current_user_id;	
+	fullSearchString = "";	
 	NavSearchUtils.localRecentSearches = NavSearchUtils.getLocalRecentSearches(NavSearchUtils.localRecentSearchKey);
-	NavSearchUtils.localRecentTicketKey = 'local_recent_tickets_' + window.current_account_id + '_' + window.current_user_id;
 	NavSearchUtils.localRecentTickets = NavSearchUtils.getLocalRecentTickets(NavSearchUtils.localRecentTicketKey);
 
 	callbackToSearch = function(string, search_url){
@@ -193,9 +191,6 @@ jQuery(document).ready(function(){
 				break;
 			case 13:
 				focusedOnSearch = true
-
-				NavSearchUtils.saveToLocalRecentSearches(fullSearchString);
-
 				$J(currentactive).trigger("click");
 				break; 
 		}

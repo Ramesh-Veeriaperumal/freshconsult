@@ -21,6 +21,8 @@
 			this.searchedTicketIds = []
 			this.container = jQuery('#search-page-results')
 			this.bindEvents()
+			NavSearchUtils.saveToLocalRecentSearches(jQuery('.search-input').val().trim());
+
 		},
 		namespace: function(){
 			return '.search_results';

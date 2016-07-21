@@ -1,5 +1,7 @@
 var NavSearchUtils = NavSearchUtils || (function(){
 	var navSearchUtils = {};
+	navSearchUtils.localRecentSearchKey = getLocalRecentSearchKey();
+	navSearchUtils.localRecentTicketKey = getLocalRecentTicketsKey();
 
 	navSearchUtils.saveToLocalRecentSearches= function (fullSearchString){
 		navSearchUtils.localRecentSearches = navSearchUtils.getLocalRecentSearches(navSearchUtils.localRecentSearchKey);
@@ -85,6 +87,14 @@ var NavSearchUtils = NavSearchUtils || (function(){
 	    };
 
 	    return ret;
+	}
+
+	function getLocalRecentSearchKey(){
+		return 'local_recent_searches_' + window.current_account_id + '_' + window.current_user_id;
+	}
+
+	function getLocalRecentTicketsKey(){
+		return 'local_recent_tickets_' + window.current_account_id + '_' + window.current_user_id;
 	}
 
 	return navSearchUtils;
