@@ -117,8 +117,8 @@ window.App = window.App || {};
          }
          widgetConfig.push(field);
       });
-      $('input#requester_widget_config').val(JSON.stringify(widgetConfig));
-      $('input#deleted_widget_config').val(JSON.stringify($this.deleted_list));
+      $('input#requester_widget_config').val(Browser.stringify(widgetConfig));
+      $('input#deleted_widget_config').val(Browser.stringify($this.deleted_list));
 
       var url = $($this.configForm).attr("action");
     },

@@ -11,6 +11,7 @@ module Integrations::OauthHelper
 
     def get_oauth1_response(params)
       oauth_options = Integrations::OauthHelper.get_oauth_options(params[:app_name])
+      oauth_options[:proxy] = "#{Integrations::PROXY_SERVER["protocol"]}://#{Integrations::PROXY_SERVER["host"]}:#{Integrations::PROXY_SERVER["port"]}" if !Rails.env.development? && Integrations::PROXY_SERVER["host"].present? #host will not be present for layers other than integration layer.
       oauth_keys = Integrations::OauthHelper.get_oauth_keys(params[:app_name])
       consumer = OAuth::Consumer.new(oauth_keys['consumer_token'], oauth_keys['consumer_secret'], oauth_options)
       installed_app = params[:installed_app] || Account.current.installed_applications.with_name(params[:app_name]).first

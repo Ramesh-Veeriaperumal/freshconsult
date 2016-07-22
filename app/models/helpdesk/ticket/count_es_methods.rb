@@ -14,7 +14,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
                     :company_id, :tag_names, :tag_ids, :watchers, :status_stop_sla_timer, 
                     :status_deleted, :product_id, :trashed
                   ].concat(ticket_states_columns),
-      :only => ticket_indexed_fields
+      :only => ticket_indexed_fields.concat(:updated_at)
       },false).merge(count_es_ff_fields).merge(schema_less_fields).to_json
   end
 
@@ -31,15 +31,14 @@ class Helpdesk::Ticket < ActiveRecord::Base
       :resolved_at, :closed_at, :opened_at, :first_assigned_at, :pending_since, :assigned_at, :first_response_time,
       :requester_responded_at, :agent_responded_at, :group_escalated, :inbound_count, :outbound_count,
       :status_updated_at, :sla_timer_stopped_at, :outbound_count, :avg_response_time, :first_resp_time_by_bhrs,
-      :resolution_time_by_bhrs, :avg_response_time_by_bhrs, :status_stop_sla_timer, :status_deleted,
-      :tags
+      :resolution_time_by_bhrs, :avg_response_time_by_bhrs, :status_stop_sla_timer, :status_deleted
     ]
   end
 
   def ticket_indexed_fields
     [
       :requester_id, :responder_id, :status, :source, :spam, :deleted, 
-      :created_at, :updated_at, :account_id, :display_id, :group_id, :owner_id, :due_by, :isescalated,
+      :created_at, :account_id, :display_id, :group_id, :owner_id, :due_by, :isescalated,
       :fr_escalated, :email_config_id, :frDueBy, :priority, :ticket_type, :product_id
     ]
   end

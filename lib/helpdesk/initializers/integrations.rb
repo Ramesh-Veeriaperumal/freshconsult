@@ -23,4 +23,5 @@ module Integrations
 	icontact_key_hash = hash["app"]["icontact"]
 	ICONTACT_APP_ID = icontact_key_hash["app_id"]
 	#========================================================
+  PROXY_SERVER = hash["proxy_server"] || {}
 end

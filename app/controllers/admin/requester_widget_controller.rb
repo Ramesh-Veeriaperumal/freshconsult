@@ -11,8 +11,8 @@ class Admin::RequesterWidgetController < ApplicationController
   end
 
   def update_widget
-    widget_fields = JSON.parse(ActiveSupport::JSON.decode(params["requester_widget_config"]))
-    deleted_fields = JSON.parse(ActiveSupport::JSON.decode(params["deleted_widget_config"]))
+    widget_fields = JSON.parse(params["requester_widget_config"])
+    deleted_fields = JSON.parse(params["deleted_widget_config"])
 
     customer_fields = { "contact" => current_account.contact_form.contact_fields,
                         "company" => current_account.company_form.company_fields }
