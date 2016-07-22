@@ -33,9 +33,7 @@ class Freshfone::UserObserver < ActiveRecord::Observer
 
     def check_for_queued_calls(freshfone_user)
       return unless freshfone_user.online?
-      was_busy = [Freshfone::User::PRESENCE[:busy],
-        Freshfone::User::PRESENCE[:acw]].include?(
-        freshfone_user.previous_changes[:presence].first)
+      was_busy = (freshfone_user.previous_changes[:presence].first == Freshfone::User::PRESENCE[:busy])
       Rails.logger.info "Call Queue Worker Initiated :: Account :: #{freshfone_user.account_id} :: User :: #{freshfone_user.user_id} :: User Was Busy :: #{was_busy}"
       add_to_call_queue_worker(was_busy, freshfone_user.user_id, {})
     end
