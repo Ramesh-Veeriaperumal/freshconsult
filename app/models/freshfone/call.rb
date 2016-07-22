@@ -642,7 +642,7 @@ class Freshfone::Call < ActiveRecord::Base
     def description_html(is_ticket)
 
       i18n_params = {
-        :customer_name=> customer_name,
+        :customer_name=> params[:caller_name] || customer_name,
         :customer_number=> caller_number,
         :location => location,
         :freshfone_number => freshfone_number.number

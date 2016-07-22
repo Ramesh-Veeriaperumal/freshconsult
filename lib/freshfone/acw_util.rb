@@ -4,7 +4,7 @@ module Freshfone::AcwUtil
     account = call.account
     worker_params = { call_id: call.id, account_id:
       account.id }
-    timeout = account.freshfone_account.acw_timeout.minutes
+    timeout = account.freshfone_account.acw_timeout.minutes - 10.seconds
     job_id = Freshfone::AcwWorker.perform_in(timeout, worker_params,
                                              call.user_id)
     Rails.logger.info "Freshfone acw worker: Job-id: #{job_id}, Account ID: #{account.id}, User ID: #{call.user_id}, Worker Params: #{worker_params.inspect}"

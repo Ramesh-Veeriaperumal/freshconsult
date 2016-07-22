@@ -282,7 +282,8 @@ var FreshfoneEndCall;
 					'ticket': this.ticketId,
 					'call_log': this.ticket_notes,
 					'CallSid': this.callSid,
-					'call_history': !this.inCall
+					'call_history': !this.inCall,
+					'caller_name': this.callerName,
 				}
 			});
 		},	
