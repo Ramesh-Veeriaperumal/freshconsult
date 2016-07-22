@@ -5,7 +5,7 @@
   <% if(["png","gif","jpeg","jpg"].indexOf(filetype)>-1){ %>
     <!-- IMAGE FILE -->
     <div class="av-media">
-      <img src="<%= filelink %>"/>
+      <img src="<%= filelink %>" onload="App.TicketAttachmentPreview.imageLoaded()"/>
     </div>
 
   <% } else { %>
