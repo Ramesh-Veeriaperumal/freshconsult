@@ -80,7 +80,7 @@ class Mobile::SettingsController < ApplicationController
   end	
 
   def mobile_configurations
-    render :json => {userdetail: current_user.as_config_json.merge(current_account.as_config_json),ff_nodeurl: FreshfoneConfig['node_url'], agent_collision_url: agent_collision_url, freshfone_new_notifications: Account.current.launched?(:freshfone_new_notifications)}
+    render :json => {userdetail: current_user.as_config_json.merge(current_account.as_config_json),ff_nodeurl: FreshfoneConfig['node_url'], agent_collision_url: agent_collision_url, freshfone_new_notifications: current_account.launched?(:freshfone_new_notifications)}
   end
 
   private
