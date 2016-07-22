@@ -14,7 +14,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
                     :company_id, :tag_names, :tag_ids, :watchers, :status_stop_sla_timer, 
                     :status_deleted, :product_id, :trashed
                   ].concat(ticket_states_columns),
-      :only => ticket_indexed_fields
+      :only => ticket_indexed_fields.concat(:updated_at)
       },false).merge(count_es_ff_fields).merge(schema_less_fields).to_json
   end
 
@@ -38,7 +38,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def ticket_indexed_fields
     [
       :requester_id, :responder_id, :status, :source, :spam, :deleted, 
-      :created_at, :updated_at, :account_id, :display_id, :group_id, :owner_id, :due_by, :isescalated,
+      :created_at, :account_id, :display_id, :group_id, :owner_id, :due_by, :isescalated,
       :fr_escalated, :email_config_id, :frDueBy, :priority, :ticket_type, :product_id
     ]
   end
