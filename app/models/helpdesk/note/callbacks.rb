@@ -135,7 +135,7 @@ class Helpdesk::Note < ActiveRecord::Base
         end
         handle_notification_for_agent_as_req if ( !incoming && notable.agent_as_requester?(user.id))
 
-        if notable.cc_email.present?
+        if notable.cc_email.present? && !self.private?
           if user.id == notable.requester_id
             Helpdesk::TicketNotifier.send_later(:send_cc_email, notable , self, {})
           end
