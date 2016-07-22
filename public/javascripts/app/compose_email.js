@@ -23,7 +23,7 @@ var ComposeEmail = {
     	this.$body = jQuery('body');
 		this.$el = this.$body.find("#compose-new-email");
 		this.$tag = this.$el.find("#helpdesk_tags");
-		this.$fromaddress = this.$el.find(".from_address_wrapper");
+		this.$fromaddress = this.$el.find("select.from_address_wrapper");
     },
     unbindEvents: function(){
     	this.$el.off('.compose');

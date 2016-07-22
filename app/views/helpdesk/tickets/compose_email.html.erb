@@ -1,6 +1,12 @@
 <% content_for :sidebar do -%>
   <%= render :partial => "helpdesk/tickets/ticket_widget/sidebar",:locals =>{:from_page =>'new_outbound_email_page_side_bar'}%>
 <%- end %>
+
+<%# multifile attachments templates %>
+<% if  current_account.launched?(:multifile_attachments)  %>
+<%= render "helpdesk/tickets/ticket_widget/multifile_template_generator" %>
+<% end %>
+
 <div class="templates-header-wrapper">
   <%= render :partial => "helpdesk/tickets/ticket_widget/new_email_title" %>
   <div class="muted">
@@ -46,24 +52,67 @@
       please update the memcache key version. key_name :: COMPOSE_EMAIL_FORM  -->
   <% cache_based_on_launch(:cache_new_tkt_comps_forms, agent_compose_email_memcache_key) do %>
     <div class="ticket-details">
-      <%= ticket_body_form f %>
+
+      <%# sending widget as true%>
+      <% widget = true %>
+      <%= ticket_body_form f,widget %>
     </div>
+
     <div class="compose-new-ticket">
       <h3 class="lead"><%= t('ticket.compose.properties') %></h3>
       <%= render :partial => '/helpdesk/tickets/show/ticket_field_elements',  :locals => {:form_builder => f, :ticket =>  @item} %>
     </div>
-  <% end%>
-  <!-- block ends here -->
-
   <% end %>
+  </div>
+
+<% content_for :onload_script do -%> 
+
+<!--  -->
+     jQuery(".from_address_wrapper").select2({minimumResultsForSearch: 10});
+
+      jQuery(".from_address_wrapper").on("select2-open", function() { 
+           jQuery('body').addClass('compose-from-select2');
+      });
+      jQuery(".from_address_wrapper").on("select2-close", function() { 
+           jQuery('body').removeClass('compose-from-select2');
+      });
+
+
+
+
+   jQuery("#helpdesk_tags").select2({  
+    tags: "<%= escape_javascript(current_account.tags.most_used(25).collect{|tag| tag.name}.join(',').html_safe) %>".split(","),
+    tokenSeparators: [',']
+  });
+
+ jQuery('body').on('assetLoaded.fjax', function(){
+  window.App.Tickets.Compose.original_requester_error_message = jQuery.validator.messages.requester;
+ })
+      jQuery("[data-action='show-cc']").on('click', function(){
+          jQuery('.show-cc').addClass('muted');
+          jQuery('.cc-address ').removeClass('hide');
+           jQuery('.to-address').addClass('light-border');
+      });
+
+      jQuery("[data-action='hide-cc']").on('click', function(){
+           jQuery('.show-cc').removeClass('muted');
+          jQuery('.cc-address ').addClass('hide');
+           jQuery('.to-address').removeClass('light-border');
+      });
+      var close_flash = jQuery("#compose-notice")
+      closeableFlash(close_flash);
+    //TODO - Change to a generic truncate function.
+  jQuery('.invalid_attachment a').livequery(function(ev){
+      jQuery(this).text(jQuery(this).text().substring(0,19)+"...");
+    });
+<% end %>
+  <!-- block ends here -->
+<% end %>
   </div>
   </div>
   <input type="hidden" id="tags-value" value="<%= escape_javascript(current_account.tags.most_used(25).collect{|tag| tag.name}.join(',').html_safe) %>" />
 
 <%= render :partial => "/helpdesk/tickets/canned_loading"  %>
-<%= render :partial => "/helpdesk/tickets/show/multifile_template_new" %>
-<%= render :partial => "/helpdesk/tickets/show/multifile_template"  %>
-
 <script>
   // To load data from store to populate group for the first time.
   jQuery(document).ready(function(){

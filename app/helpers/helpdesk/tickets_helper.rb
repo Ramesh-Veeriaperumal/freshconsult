@@ -526,7 +526,7 @@ module Helpdesk::TicketsHelper
       return raw(dom)
   end
 
-  def ticket_body_form form_builder, to=false
+  def ticket_body_form form_builder, widget=false, to=false
     contents = []
     email_content = []
     contents << content_tag(:div, (form_builder.text_field :subject, :class => "required text ticket-subject", :placeholder => t('ticket.compose.enter_subject')).html_safe)
@@ -541,9 +541,15 @@ module Helpdesk::TicketsHelper
                   :locals => {:cntid => 'tkt-cr'}), :class => "request_panel")
       contents <<  content_tag(:div, email_content.join(" ").html_safe, :class => "email-wrapper" )
     end
-    contents << content_tag(:div, :class=> "attachment-wrapper") do
-      render :partial => "/helpdesk/tickets/show/attachment_form", :locals => { :attach_id => "ticket" , :nsc_param => "helpdesk_ticket" }
+    if  current_account.launched?(:multifile_attachments)
+    contents << content_tag(:div) do 
+        render :partial => "helpdesk/tickets/ticket_widget/widget_attachment_form", :locals => { :attach_id => "ticket" , :nsc_param => "helpdesk_ticket" , :template => true}
     end
+  else
+    contents << content_tag(:div) do 
+      render :partial => "/helpdesk/tickets/show/single_attachment_form", :locals => { :attach_id => "ticket" , :nsc_param => "helpdesk_ticket" , :template => true}
+    end
+  end
     contents.join(" ").html_safe
   end
 

@@ -208,6 +208,17 @@ class Helpdesk::Attachment < ActiveRecord::Base
     end
   end
 
+  def to_jq_upload
+    {
+      "id"          => self.id,
+      "name"        => content_file_name,
+      "size"        => content_file_size,
+      "url"         => Rails.application.routes.url_helpers.helpdesk_attachment_path(self),
+      "delete_url"  => Rails.application.routes.url_helpers.delete_attachment_helpdesk_attachment_path(self),
+      "delete_type" => "DELETE" 
+    }
+  end
+
   private
 
   def set_random_secret

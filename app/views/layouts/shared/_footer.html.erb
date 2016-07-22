@@ -39,7 +39,7 @@
 
 <% elsif Rails.env.production? %>
 <% @LoadAsset="https://s3.amazonaws.com/assets.freshdesk.com" %>
-<% @LoadAsset1="https://s3.amazonaws.com/assets.freshpo.com/widget" %>
+<% @LoadAsset1="https://s3.amazonaws.com/assets.freshdesk.com/widget" %>
 <% end %>
 	 <script type="text/javascript" src="<%= @LoadAsset %>/widget/freshwidget.js"></script>
 <style type="text/css" media="screen, projection">

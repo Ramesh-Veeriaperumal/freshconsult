@@ -1,0 +1,145 @@
+<% 
+  attach_id ||= "ticket" 
+  nsc_param = nsc_param || "helpdesk_ticket"
+  original_attachments ||= {:regular => [], :cloud_files => []}
+  max_attachment ||= nil
+  max_size ||= 15
+  forward ||= false
+  session[:multiple_list] ||= session[:multiple_list]=0
+%>
+<% # Below block is an hack for cloud files when ticket gets converted to topic %> 
+<% if(@topic.new_record?) %>
+ <% attachments[:cloud_files].each do |attachment| %>
+  <input type="hidden" name="post[cloud_file_attachments][][resource]" value="<%= attachment.id %>" rel="original_attachment">
+ <% end %>
+<% end %>
+<div class="discussionPanel">
+<div class="attach-wrapper" id="attachment-type">
+ <div class="file_dropzone" id="file_dropzone_<%=session[:multiple_list]%>" style="display: none">
+    <h3 class="dropzone-text lead text-center pt20 mt10">Drop files here</h3>
+  </div>
+  <div class="m0"> 
+        <% if cloud_files_installed? and (@ticket.present? ? !@ticket.ecommerce? : true)  %>
+        <div class="add_attachment" id="trigger_attachment">
+            <div class="dropdown dropup">        
+              <a class="dropdown-toggle attach-link" data-toggle="dropdown"  href="#">
+               <div class="attachment-icon pull-left text-center tooltip" data-icon-count=<%=session[:multiple_list] %> data-integration=true title="<%= I18n.t('multifile_attachments.label')%>"> <i class="ficon-attachment"></i></div>
+              </a>
+              <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                <li class="portal-attach">
+
+                  <a data-file-id="<%=attach_id%>" href="javascript:void(0)" class="attach-link-wrap"><%=t('attach_files')%>
+                 <div class="cloud_hidden_upload">
+                  <input id="fileupload-form-<%=session[:multiple_list]%>" class="fileupload-form" type="file" name="file"  data-url="/helpdesk/attachments/1/create_attachment" data-multifile-enabled=false data-multifile-count=<%=session[:multiple_list]%> multiple />
+                </div>
+                  </a>
+                </li>
+                <% get_enabled_cloud_files_app.each do |c_f| %>
+                  <%= render :partial => "integrations/applications/#{c_f}", :formats => [:html], :locals => {:attach_id => attach_id} %>
+                <% end %>
+              </ul> 
+            </div>
+
+             <!-- Attachement Names -->
+          <div class="attachment-names pull-left pl20">
+           <div class="attachment-limit"  id="attach-limt-<%=session[:multiple_list]%>"> < 15 MB </div> 
+            <input type="hidden" name="attachments_list" data-forward=<%=forward%> data-total-size=0 value="" data-input-id="<%=session[:multiple_list]%>">
+                  <div class="existing-file-list" data-count=<%=session[:multiple_list]%>></div>
+                <div class="multiple-filelist multiple-filelist-<%= session[:multiple_list] %>" data-filelist-count=<%=session[:multiple_list] %>>
+                </div>
+          </div>
+             
+      </div>
+    <% else %>      
+      <div class="add_attachment" id="trigger_attachment">
+         <div class="hidden_upload tooltip" title="<%= I18n.t('multifile_attachments.label')%>">
+            <input id="fileupload-form-<%=session[:multiple_list]%>" class="fileupload-form" type="file" name="file"  data-url="/helpdesk/attachments/1/create_attachment" data-multifile-enabled=false data-multifile-count=<%=session[:multiple_list]%> multiple />
+            </div>
+          <div class="attachment-icon pull-left text-center" data-icon-count=<%=session[:multiple_list] %>> <i class="ficon-attachment"></i></div>
+
+          <div class="attachment-names pull-left pl20">
+         <div class="attachment-limit" id="attach-limt-<%=session[:multiple_list]%>" > < 15 MB </div> 
+            <input type="hidden" name="attachments_list" data-forward=<%=forward%> data-total-size=0 value="" data-input-id="<%=session[:multiple_list]%>">
+                  <div class="existing-file-list" data-count=<%=session[:multiple_list]%>></div>
+                <div class="multiple-filelist multiple-filelist-<%= session[:multiple_list] %>" data-filelist-count=<%=session[:multiple_list] %>>
+                </div>
+          </div>
+        </div>
+    <% end %>    
+  </div>
+</div>
+<%= render "multi_attachment_template" %>
+
+  <script type="text/javascript">
+            <% attachments[:cloud_files].each do |cloud| 
+               cloud[:provider] = cloud.provider
+           end %>
+            Helpdesk.MultipleFileUpload.renderExistingFiles(<%= attachments[:regular].to_json.html_safe %>,<%= attachments[:cloud_files].to_json.html_safe %>,<%=session[:multiple_list]%>);
+</script>
+
+      
+        <!-- upload template -->
+
+<script id="upload-template-<%=session[:multiple_list]%>" type="text/x-tmpl">
+{% for (var i=0, file; file=o.files[i]; i++) { %}
+   <div class="file-upload pull-left mr10 mb10 tooltip" id="file_{%=file.attach_id%}">
+   <div class="progress-bar progress-bar-striped active" id="progressBar" style="width:0%">
+</div>
+   <i class="ficon-cross file-close file-abort"></i> <span class="file-name"><span class="fname ellipsis">{%=Helpdesk.MultipleFileUpload.FilenameSplitter(file.name).fname%}</span><span class="ftype">.{%=Helpdesk.MultipleFileUpload.FilenameSplitter(file.name).type%}</span></span>
+   <span class="file-size">({%=Helpdesk.MultipleFileUpload.formatFileSize(file.size)%})</span>
+   </div>
+{% } %}
+</script>
+
+<!-- download template  -->
+
+<script id="download-template-<%=session[:multiple_list]%>" type="text/x-tmpl">
+  {% for (var i=0, files=o.files, length=files.length, file=files[0]; i<length; file=files[++i]) { %}
+  <div class="file pull-left mr10 mb10 tooltip" title="{%= file.name %}" id="file_{%=file.attach_id%}">
+   <i class="ficon-cross file-close file-remove" data-delete-url="{%=file.delete_url%}" data-file-id="{%=file.id%}" data-file-size="{%=file.size%}"></i> <span class="file-name"><span class="fname ellipsis">{%=Helpdesk.MultipleFileUpload.FilenameSplitter(file.name).fname%}</span><span class="ftype">.{%=Helpdesk.MultipleFileUpload.FilenameSplitter(file.name).type%}</span></span>
+   <span class="file-size">({%=Helpdesk.MultipleFileUpload.formatFileSize(file.size)%})</span>
+   </div>
+  {% } %}
+</script>
+        <!-- end -->
+<script type="text/javascript">
+  // Fix for Firefox/IE - To override :hover style persistance after click on input[type=file] element
+  // global mutifile key
+  
+  // jQuery('div.attach-wrapper a[data-toggle="dropdown"]').bind('click', function(){
+  //   jQuery(this).parents('div.attach-wrapper').find('a.attach-link-wrap').first().css({
+  //         'background-color': 'inherit',
+  //         'background-image': 'inherit',
+  //         'color': 'inherit',
+  //         'box-shadow': 'inherit'
+  //     });
+  // });
+  // jQuery('li.portal-attach a.attach-link-wrap')
+  //   .bind('mouseover', function(){
+  //     jQuery(this).removeAttr('style');
+  //   })
+  //   .bind('mousemove', function(event){
+  //     // Fix to move "Browse" button along with mouse pointer - fix for IE.
+  //     p=jQuery(this).find('div').first();
+  //     newLeft = Math.min(175, Math.max(event.clientX - p.offset().left + p.position().left - 5, 0));
+  //     window.title = newLeft;
+  //     p.css({left: newLeft, top: 0});
+  //   })
+</script>
+<!-- init multi file -->
+<script type="text/javascript">
+  Helpdesk.MultipleFileUpload.init(<%=session[:multiple_list]%>);
+  Helpdesk.MultipleFileUpload.message = <%= I18n.t('multifile_attachments').to_json.html_safe %>;
+  jQuery("#fileupload-form"+<%=session[:multiple_list]%>).data("multifile-enabled",true);
+  jQuery("body").on("click.initial","#fileupload-form-<%=session[:multiple_list]%>",function(e){
+     e.preventDefault();
+  });
+  jQuery("#fileupload-form-<%=session[:multiple_list]%>").trigger("click");
+     jQuery("body").off(".initial");
+</script>
+<%
+session[:multiple_list]=session[:multiple_list]+1;
+%>
+
+</div>
+<!-- old -->

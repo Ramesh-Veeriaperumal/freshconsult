@@ -1,547 +1,1124 @@
 {
   "checksum": {
-    "previous": "",
-    "current": "3ecf73a4768b93a0bab52b64be885161f6e0238256554877d4d7567db63addd1"
+    "previous": "6aeacef87280f46d155d3c202d24668449adcac9f1fe575354fec6f74869c5f9",
+    "current": "6aeacef87280f46d155d3c202d24668449adcac9f1fe575354fec6f74869c5f9"
   },
   "fonts": [
-
+    "public/assets/glyphs_6aeacef87280f46d155d3c202d246684.ttf",
+    "public/assets/glyphs_6aeacef87280f46d155d3c202d246684.svg",
+    "public/assets/glyphs_6aeacef87280f46d155d3c202d246684.woff",
+    "public/assets/glyphs_6aeacef87280f46d155d3c202d246684.eot"
   ],
   "glyphs": {
+    "abandoned-call": {
+      "codepoint": 61925,
+      "source": "public/glyphs/vectors/abandoned-call.svg"
+    },
     "account": {
-      "source": "./account.svg",
-      "codepoint": 61696
+      "codepoint": 61696,
+      "source": "public/glyphs/vectors/account.svg"
     },
     "agent": {
-      "source": "./agent.svg",
-      "codepoint": 61697
+      "codepoint": 61697,
+      "source": "public/glyphs/vectors/agent.svg"
+    },
+    "agent-fchat-off": {
+      "codepoint": 61872,
+      "source": "public/glyphs/vectors/agent-fchat-off.svg"
+    },
+    "agent-fchat-on": {
+      "codepoint": 61873,
+      "source": "public/glyphs/vectors/agent-fchat-on.svg"
+    },
+    "agent-summary": {
+      "codepoint": 61883,
+      "source": "public/glyphs/vectors/agent-summary.svg"
+    },
+    "alert": {
+      "codepoint": 61953,
+      "source": "public/glyphs/vectors/alert.svg"
     },
     "all-streams": {
-      "source": "./all-streams.svg",
-      "codepoint": 61698
+      "codepoint": 61698,
+      "source": "public/glyphs/vectors/all-streams.svg"
+    },
+    "android": {
+      "codepoint": 61699,
+      "source": "public/glyphs/vectors/android.svg"
     },
     "answer-checked": {
-      "source": "./answer-checked.svg",
-      "codepoint": 61699
+      "codepoint": 61700,
+      "source": "public/glyphs/vectors/answer-checked.svg"
     },
     "answer-unchecked": {
-      "source": "./answer-unchecked.svg",
-      "codepoint": 61700
+      "codepoint": 61701,
+      "source": "public/glyphs/vectors/answer-unchecked.svg"
+    },
+    "apple": {
+      "codepoint": 61702,
+      "source": "public/glyphs/vectors/apple.svg"
+    },
+    "archived-ticket": {
+      "codepoint": 61955,
+      "source": "public/glyphs/vectors/archived-ticket.svg"
+    },
+    "arrow-click": {
+      "codepoint": 61879,
+      "source": "public/glyphs/vectors/arrow-click.svg"
     },
     "arrow-down": {
-      "source": "./arrow-down.svg",
-      "codepoint": 61701
+      "codepoint": 61703,
+      "source": "public/glyphs/vectors/arrow-down.svg"
     },
     "arrow-down-2": {
-      "source": "./arrow-down-2.svg",
-      "codepoint": 61702
+      "codepoint": 61704,
+      "source": "public/glyphs/vectors/arrow-down-2.svg"
     },
     "arrow-left": {
-      "source": "./arrow-left.svg",
-      "codepoint": 61703
+      "codepoint": 61705,
+      "source": "public/glyphs/vectors/arrow-left.svg"
     },
     "arrow-left-2": {
-      "source": "./arrow-left-2.svg",
-      "codepoint": 61704
+      "codepoint": 61706,
+      "source": "public/glyphs/vectors/arrow-left-2.svg"
     },
     "arrow-right": {
-      "source": "./arrow-right.svg",
-      "codepoint": 61705
+      "codepoint": 61707,
+      "source": "public/glyphs/vectors/arrow-right.svg"
     },
     "arrow-right-2": {
-      "source": "./arrow-right-2.svg",
-      "codepoint": 61706
+      "codepoint": 61708,
+      "source": "public/glyphs/vectors/arrow-right-2.svg"
     },
     "arrow-up": {
-      "source": "./arrow-up.svg",
-      "codepoint": 61707
+      "codepoint": 61709,
+      "source": "public/glyphs/vectors/arrow-up.svg"
     },
     "arrow-up-2": {
-      "source": "./arrow-up-2.svg",
-      "codepoint": 61708
+      "codepoint": 61710,
+      "source": "public/glyphs/vectors/arrow-up-2.svg"
+    },
+    "article": {
+      "codepoint": 61956,
+      "source": "public/glyphs/vectors/article.svg"
+    },
+    "attachment": {
+      "codepoint": 61970,
+      "source": "public/glyphs/vectors/attachment.svg"
+    },
+    "available-on-mobile": {
+      "codepoint": 61878,
+      "source": "public/glyphs/vectors/available-on-mobile.svg"
     },
     "bell": {
-      "source": "./bell.svg",
-      "codepoint": 61709
+      "codepoint": 61711,
+      "source": "public/glyphs/vectors/bell.svg"
     },
     "billing": {
-      "source": "./billing.svg",
-      "codepoint": 61710
+      "codepoint": 61712,
+      "source": "public/glyphs/vectors/billing.svg"
     },
     "blank-file": {
-      "source": "./blank-file.svg",
-      "codepoint": 61711
+      "codepoint": 61713,
+      "source": "public/glyphs/vectors/blank-file.svg"
+    },
+    "block": {
+      "codepoint": 61964,
+      "source": "public/glyphs/vectors/block.svg"
+    },
+    "blocked-call": {
+      "codepoint": 61965,
+      "source": "public/glyphs/vectors/blocked-call.svg"
     },
     "book": {
-      "source": "./book.svg",
-      "codepoint": 61712
+      "codepoint": 61714,
+      "source": "public/glyphs/vectors/book.svg"
+    },
+    "book-hollow": {
+      "codepoint": 61914,
+      "source": "public/glyphs/vectors/book-hollow.svg"
     },
     "bulb": {
-      "source": "./bulb.svg",
-      "codepoint": 61713
+      "codepoint": 61715,
+      "source": "public/glyphs/vectors/bulb.svg"
     },
     "bullhorn": {
-      "source": "./bullhorn.svg",
-      "codepoint": 61714
+      "codepoint": 61716,
+      "source": "public/glyphs/vectors/bullhorn.svg"
     },
     "business-hours": {
-      "source": "./business-hours.svg",
-      "codepoint": 61715
+      "codepoint": 61717,
+      "source": "public/glyphs/vectors/business-hours.svg"
+    },
+    "calendar": {
+      "codepoint": 61884,
+      "source": "public/glyphs/vectors/calendar.svg"
+    },
+    "calling": {
+      "codepoint": 61718,
+      "source": "public/glyphs/vectors/calling.svg"
     },
     "canned-response": {
-      "source": "./canned-response.svg",
-      "codepoint": 61716
+      "codepoint": 61719,
+      "source": "public/glyphs/vectors/canned-response.svg"
     },
     "caret-down": {
-      "source": "./caret-down.svg",
-      "codepoint": 61717
+      "codepoint": 61720,
+      "source": "public/glyphs/vectors/caret-down.svg"
     },
     "caret-left": {
-      "source": "./caret-left.svg",
-      "codepoint": 61718
+      "codepoint": 61721,
+      "source": "public/glyphs/vectors/caret-left.svg"
     },
     "caret-right": {
-      "source": "./caret-right.svg",
-      "codepoint": 61719
+      "codepoint": 61722,
+      "source": "public/glyphs/vectors/caret-right.svg"
     },
     "caret-up": {
-      "source": "./caret-up.svg",
-      "codepoint": 61720
+      "codepoint": 61723,
+      "source": "public/glyphs/vectors/caret-up.svg"
+    },
+    "categories": {
+      "codepoint": 61915,
+      "source": "public/glyphs/vectors/categories.svg"
+    },
+    "categories-orphan": {
+      "codepoint": 61916,
+      "source": "public/glyphs/vectors/categories-orphan.svg"
+    },
+    "chat": {
+      "codepoint": 61885,
+      "source": "public/glyphs/vectors/chat.svg"
+    },
+    "chat-bubble": {
+      "codepoint": 61724,
+      "source": "public/glyphs/vectors/chat-bubble.svg"
     },
     "chat-disable": {
-      "source": "./chat-disable.svg",
-      "codepoint": 61721
+      "codepoint": 61725,
+      "source": "public/glyphs/vectors/chat-disable.svg"
     },
     "chat-enable": {
-      "source": "./chat-enable.svg",
-      "codepoint": 61722
+      "codepoint": 61726,
+      "source": "public/glyphs/vectors/chat-enable.svg"
+    },
+    "chat-source": {
+      "codepoint": 61939,
+      "source": "public/glyphs/vectors/chat-source.svg"
+    },
+    "checkbox": {
+      "codepoint": 61727,
+      "source": "public/glyphs/vectors/checkbox.svg"
     },
     "checkmark": {
-      "source": "./checkmark.svg",
-      "codepoint": 61723
+      "codepoint": 61728,
+      "source": "public/glyphs/vectors/checkmark.svg"
     },
     "checkmark-round": {
-      "source": "./checkmark-round.svg",
-      "codepoint": 61724
+      "codepoint": 61729,
+      "source": "public/glyphs/vectors/checkmark-round.svg"
     },
     "checkmark-round-o": {
-      "source": "./checkmark-round-o.svg",
-      "codepoint": 61725
+      "codepoint": 61730,
+      "source": "public/glyphs/vectors/checkmark-round-o.svg"
+    },
+    "checkmark-thick": {
+      "codepoint": 61731,
+      "source": "public/glyphs/vectors/checkmark-thick.svg"
+    },
+    "chrome": {
+      "codepoint": 61732,
+      "source": "public/glyphs/vectors/chrome.svg"
     },
     "comment-multi": {
-      "source": "./comment-multi.svg",
-      "codepoint": 61726
+      "codepoint": 61733,
+      "source": "public/glyphs/vectors/comment-multi.svg"
     },
     "comments": {
-      "source": "./comments.svg",
-      "codepoint": 61727
+      "codepoint": 61734,
+      "source": "public/glyphs/vectors/comments.svg"
+    },
+    "comments1": {
+      "codepoint": 61909,
+      "source": "public/glyphs/vectors/comments1.svg"
+    },
+    "company": {
+      "codepoint": 61735,
+      "source": "public/glyphs/vectors/company.svg"
+    },
+    "compose-email": {
+      "codepoint": 61896,
+      "source": "public/glyphs/vectors/compose-email.svg"
     },
     "conversation": {
-      "source": "./conversation.svg",
-      "codepoint": 61728
+      "codepoint": 61736,
+      "source": "public/glyphs/vectors/conversation.svg"
     },
     "cross": {
-      "source": "./cross.svg",
-      "codepoint": 61729
+      "codepoint": 61737,
+      "source": "public/glyphs/vectors/cross.svg"
     },
     "crown": {
-      "source": "./crown.svg",
-      "codepoint": 61730
+      "codepoint": 61738,
+      "source": "public/glyphs/vectors/crown.svg"
+    },
+    "cube": {
+      "codepoint": 61917,
+      "source": "public/glyphs/vectors/cube.svg"
+    },
+    "customer-fields": {
+      "codepoint": 61739,
+      "source": "public/glyphs/vectors/customer-fields.svg"
     },
     "customer-portal": {
-      "source": "./customer-portal.svg",
-      "codepoint": 61731
+      "codepoint": 61740,
+      "source": "public/glyphs/vectors/customer-portal.svg"
+    },
+    "customer-report": {
+      "codepoint": 61886,
+      "source": "public/glyphs/vectors/customer-report.svg"
+    },
+    "customer-satisfaction": {
+      "codepoint": 61887,
+      "source": "public/glyphs/vectors/customer-satisfaction.svg"
+    },
+    "customer_reports": {
+      "codepoint": 61929,
+      "source": "public/glyphs/vectors/customer_reports.svg"
+    },
+    "customer_satisfaction": {
+      "codepoint": 61930,
+      "source": "public/glyphs/vectors/customer_satisfaction.svg"
+    },
+    "date": {
+      "codepoint": 61741,
+      "source": "public/glyphs/vectors/date.svg"
     },
     "day_pass": {
-      "source": "./day_pass.svg",
-      "codepoint": 61732
+      "codepoint": 61742,
+      "source": "public/glyphs/vectors/day_pass.svg"
+    },
+    "db-calendar": {
+      "codepoint": 61958,
+      "source": "public/glyphs/vectors/db-calendar.svg"
+    },
+    "db-feedback": {
+      "codepoint": 61959,
+      "source": "public/glyphs/vectors/db-feedback.svg"
+    },
+    "db-interactions": {
+      "codepoint": 61960,
+      "source": "public/glyphs/vectors/db-interactions.svg"
+    },
+    "db-message": {
+      "codepoint": 61961,
+      "source": "public/glyphs/vectors/db-message.svg"
+    },
+    "db-sand-clock": {
+      "codepoint": 61962,
+      "source": "public/glyphs/vectors/db-sand-clock.svg"
+    },
+    "db-unassigned": {
+      "codepoint": 61963,
+      "source": "public/glyphs/vectors/db-unassigned.svg"
+    },
+    "decimal": {
+      "codepoint": 61897,
+      "source": "public/glyphs/vectors/decimal.svg"
+    },
+    "deleted": {
+      "codepoint": 61875,
+      "source": "public/glyphs/vectors/deleted.svg"
+    },
+    "disconnected": {
+      "codepoint": 61743,
+      "source": "public/glyphs/vectors/disconnected.svg"
+    },
+    "dislike": {
+      "codepoint": 61744,
+      "source": "public/glyphs/vectors/dislike.svg"
     },
     "dispatcher": {
-      "source": "./dispatcher.svg",
-      "codepoint": 61733
+      "codepoint": 61745,
+      "source": "public/glyphs/vectors/dispatcher.svg"
     },
     "dots": {
-      "source": "./dots.svg",
-      "codepoint": 61734
+      "codepoint": 61746,
+      "source": "public/glyphs/vectors/dots.svg"
+    },
+    "download": {
+      "codepoint": 61954,
+      "source": "public/glyphs/vectors/download.svg"
     },
     "dropbox": {
-      "source": "./dropbox.svg",
-      "codepoint": 61735
+      "codepoint": 61747,
+      "source": "public/glyphs/vectors/dropbox.svg"
+    },
+    "dropdown_blank": {
+      "codepoint": 61748,
+      "source": "public/glyphs/vectors/dropdown_blank.svg"
     },
     "earth": {
-      "source": "./earth.svg",
-      "codepoint": 61736
+      "codepoint": 61749,
+      "source": "public/glyphs/vectors/earth.svg"
+    },
+    "ecommerce": {
+      "codepoint": 61922,
+      "source": "public/glyphs/vectors/ecommerce.svg"
     },
     "edit": {
-      "source": "./edit.svg",
-      "codepoint": 61737
+      "codepoint": 61750,
+      "source": "public/glyphs/vectors/edit.svg"
+    },
+    "edit-strike-thru": {
+      "codepoint": 61751,
+      "source": "public/glyphs/vectors/edit-strike-thru.svg"
     },
     "ellipsis": {
-      "source": "./ellipsis.svg",
-      "codepoint": 61738
+      "codepoint": 61752,
+      "source": "public/glyphs/vectors/ellipsis.svg"
     },
     "email": {
-      "source": "./email.svg",
-      "codepoint": 61739
+      "codepoint": 61753,
+      "source": "public/glyphs/vectors/email.svg"
     },
     "email-notifications": {
-      "source": "./email-notifications.svg",
-      "codepoint": 61740
+      "codepoint": 61754,
+      "source": "public/glyphs/vectors/email-notifications.svg"
     },
     "email_commands_setting": {
-      "source": "./email_commands_setting.svg",
-      "codepoint": 61741
+      "codepoint": 61755,
+      "source": "public/glyphs/vectors/email_commands_setting.svg"
     },
     "eye": {
-      "source": "./eye.svg",
-      "codepoint": 61742
+      "codepoint": 61756,
+      "source": "public/glyphs/vectors/eye.svg"
     },
     "facebook": {
-      "source": "./facebook.svg",
-      "codepoint": 61743
+      "codepoint": 61757,
+      "source": "public/glyphs/vectors/facebook.svg"
     },
     "facebook-lock": {
-      "source": "./facebook-lock.svg",
-      "codepoint": 61744
+      "codepoint": 61758,
+      "source": "public/glyphs/vectors/facebook-lock.svg"
     },
     "facebook-setting": {
-      "source": "./facebook-setting.svg",
-      "codepoint": 61745
+      "codepoint": 61759,
+      "source": "public/glyphs/vectors/facebook-setting.svg"
+    },
+    "facebook-source": {
+      "codepoint": 61940,
+      "source": "public/glyphs/vectors/facebook-source.svg"
     },
     "feedback": {
-      "source": "./feedback.svg",
-      "codepoint": 61746
+      "codepoint": 61760,
+      "source": "public/glyphs/vectors/feedback.svg"
+    },
+    "feedback-new": {
+      "codepoint": 61918,
+      "source": "public/glyphs/vectors/feedback-new.svg"
     },
     "ff-add-note": {
-      "source": "./ff-add-note.svg",
-      "codepoint": 61747
+      "codepoint": 61761,
+      "source": "public/glyphs/vectors/ff-add-note.svg"
     },
     "ff-clock": {
-      "source": "./ff-clock.svg",
-      "codepoint": 61748
+      "codepoint": 61762,
+      "source": "public/glyphs/vectors/ff-clock.svg"
     },
     "ff-dialpad": {
-      "source": "./ff-dialpad.svg",
-      "codepoint": 61749
+      "codepoint": 61763,
+      "source": "public/glyphs/vectors/ff-dialpad.svg"
+    },
+    "ff-group": {
+      "codepoint": 61874,
+      "source": "public/glyphs/vectors/ff-group.svg"
+    },
+    "ff-group-thin": {
+      "codepoint": 61904,
+      "source": "public/glyphs/vectors/ff-group-thin.svg"
+    },
+    "ff-hold": {
+      "codepoint": 61905,
+      "source": "public/glyphs/vectors/ff-hold.svg"
+    },
+    "ff-line-phone": {
+      "codepoint": 61906,
+      "source": "public/glyphs/vectors/ff-line-phone.svg"
     },
     "ff-mic": {
-      "source": "./ff-mic.svg",
-      "codepoint": 61750
+      "codepoint": 61764,
+      "source": "public/glyphs/vectors/ff-mic.svg"
     },
     "ff-mute": {
-      "source": "./ff-mute.svg",
-      "codepoint": 61751
+      "codepoint": 61765,
+      "source": "public/glyphs/vectors/ff-mute.svg"
     },
     "ff-on-browser": {
-      "source": "./ff-on-browser.svg",
-      "codepoint": 61752
+      "codepoint": 61766,
+      "source": "public/glyphs/vectors/ff-on-browser.svg"
     },
     "ff-on-call": {
-      "source": "./ff-on-call.svg",
-      "codepoint": 61753
+      "codepoint": 61767,
+      "source": "public/glyphs/vectors/ff-on-call.svg"
+    },
+    "ff-on-mobile": {
+      "codepoint": 61871,
+      "source": "public/glyphs/vectors/ff-on-mobile.svg"
     },
     "ff-phone": {
-      "source": "./ff-phone.svg",
-      "codepoint": 61754
+      "codepoint": 61768,
+      "source": "public/glyphs/vectors/ff-phone.svg"
+    },
+    "ff-phone-accept": {
+      "codepoint": 61907,
+      "source": "public/glyphs/vectors/ff-phone-accept.svg"
+    },
+    "ff-phone-reject": {
+      "codepoint": 61908,
+      "source": "public/glyphs/vectors/ff-phone-reject.svg"
+    },
+    "ff-via-browser": {
+      "codepoint": 61869,
+      "source": "public/glyphs/vectors/ff-via-browser.svg"
+    },
+    "ff-via-phone": {
+      "codepoint": 61870,
+      "source": "public/glyphs/vectors/ff-via-phone.svg"
     },
     "file": {
-      "source": "./file.svg",
-      "codepoint": 61755
+      "codepoint": 61769,
+      "source": "public/glyphs/vectors/file.svg"
     },
     "file-edit": {
-      "source": "./file-edit.svg",
-      "codepoint": 61756
+      "codepoint": 61770,
+      "source": "public/glyphs/vectors/file-edit.svg"
     },
     "file-visible": {
-      "source": "./file-visible.svg",
-      "codepoint": 61757
+      "codepoint": 61771,
+      "source": "public/glyphs/vectors/file-visible.svg"
+    },
+    "firefox": {
+      "codepoint": 61772,
+      "source": "public/glyphs/vectors/firefox.svg"
+    },
+    "folder": {
+      "codepoint": 61919,
+      "source": "public/glyphs/vectors/folder.svg"
     },
     "folder-o": {
-      "source": "./folder-o.svg",
-      "codepoint": 61758
+      "codepoint": 61773,
+      "source": "public/glyphs/vectors/folder-o.svg"
     },
     "folder-open-o": {
-      "source": "./folder-open-o.svg",
-      "codepoint": 61759
+      "codepoint": 61774,
+      "source": "public/glyphs/vectors/folder-open-o.svg"
+    },
+    "forum-source": {
+      "codepoint": 61941,
+      "source": "public/glyphs/vectors/forum-source.svg"
+    },
+    "forward": {
+      "codepoint": 61775,
+      "source": "public/glyphs/vectors/forward.svg"
+    },
+    "forward-tkt": {
+      "codepoint": 61868,
+      "source": "public/glyphs/vectors/forward-tkt.svg"
     },
     "freshchat": {
-      "source": "./freshchat.svg",
-      "codepoint": 61760
+      "codepoint": 61776,
+      "source": "public/glyphs/vectors/freshchat.svg"
     },
     "freshdesk": {
-      "source": "./freshdesk.svg",
-      "codepoint": 61761
+      "codepoint": 61777,
+      "source": "public/glyphs/vectors/freshdesk.svg"
     },
     "freshfone": {
-      "source": "./freshfone.svg",
-      "codepoint": 61762
+      "codepoint": 61888,
+      "source": "public/glyphs/vectors/freshfone.svg"
     },
     "gamification-settings": {
-      "source": "./gamification-settings.svg",
-      "codepoint": 61763
+      "codepoint": 61778,
+      "source": "public/glyphs/vectors/gamification-settings.svg"
     },
     "gear": {
-      "source": "./gear.svg",
-      "codepoint": 61764
+      "codepoint": 61779,
+      "source": "public/glyphs/vectors/gear.svg"
     },
     "googleplus": {
-      "source": "./googleplus.svg",
-      "codepoint": 61765
+      "codepoint": 61780,
+      "source": "public/glyphs/vectors/googleplus.svg"
     },
     "group": {
-      "source": "./group.svg",
-      "codepoint": 61766
+      "codepoint": 61781,
+      "source": "public/glyphs/vectors/group.svg"
+    },
+    "group-summary": {
+      "codepoint": 61889,
+      "source": "public/glyphs/vectors/group-summary.svg"
     },
     "grouping-disable": {
-      "source": "./grouping-disable.svg",
-      "codepoint": 61767
+      "codepoint": 61782,
+      "source": "public/glyphs/vectors/grouping-disable.svg"
     },
     "grouping-enable": {
-      "source": "./grouping-enable.svg",
-      "codepoint": 61768
+      "codepoint": 61783,
+      "source": "public/glyphs/vectors/grouping-enable.svg"
+    },
+    "hangup": {
+      "codepoint": 61966,
+      "source": "public/glyphs/vectors/hangup.svg"
     },
     "help": {
-      "source": "./help.svg",
-      "codepoint": 61769
+      "codepoint": 61784,
+      "source": "public/glyphs/vectors/help.svg"
+    },
+    "help-icon": {
+      "codepoint": 61913,
+      "source": "public/glyphs/vectors/help-icon.svg"
+    },
+    "helpdesk": {
+      "codepoint": 61898,
+      "source": "public/glyphs/vectors/helpdesk.svg"
+    },
+    "helpdesk-settings": {
+      "codepoint": 61899,
+      "source": "public/glyphs/vectors/helpdesk-settings.svg"
+    },
+    "helpdesk_at_glance": {
+      "codepoint": 61931,
+      "source": "public/glyphs/vectors/helpdesk_at_glance.svg"
+    },
+    "ie": {
+      "codepoint": 61785,
+      "source": "public/glyphs/vectors/ie.svg"
+    },
+    "ilos-icon": {
+      "codepoint": 61952,
+      "source": "public/glyphs/vectors/ilos-icon.svg"
     },
     "import": {
-      "source": "./import.svg",
-      "codepoint": 61770
+      "codepoint": 61786,
+      "source": "public/glyphs/vectors/import.svg"
+    },
+    "incoming-call": {
+      "codepoint": 61967,
+      "source": "public/glyphs/vectors/incoming-call.svg"
     },
     "infinity-5": {
-      "source": "./infinity-5.svg",
-      "codepoint": 61771
+      "codepoint": 61787,
+      "source": "public/glyphs/vectors/infinity-5.svg"
     },
     "integrations": {
-      "source": "./integrations.svg",
-      "codepoint": 61772
+      "codepoint": 61788,
+      "source": "public/glyphs/vectors/integrations.svg"
+    },
+    "ios": {
+      "codepoint": 61789,
+      "source": "public/glyphs/vectors/ios.svg"
+    },
+    "left-arrow-thick": {
+      "codepoint": 61910,
+      "source": "public/glyphs/vectors/left-arrow-thick.svg"
     },
     "like": {
-      "source": "./like.svg",
-      "codepoint": 61773
+      "codepoint": 61790,
+      "source": "public/glyphs/vectors/like.svg"
     },
     "link": {
-      "source": "./link.svg",
-      "codepoint": 61774
+      "codepoint": 61791,
+      "source": "public/glyphs/vectors/link.svg"
     },
     "linkedin": {
-      "source": "./linkedin.svg",
-      "codepoint": 61775
+      "codepoint": 61792,
+      "source": "public/glyphs/vectors/linkedin.svg"
+    },
+    "linux": {
+      "codepoint": 61793,
+      "source": "public/glyphs/vectors/linux.svg"
+    },
+    "live_chat": {
+      "codepoint": 61932,
+      "source": "public/glyphs/vectors/live_chat.svg"
     },
     "lock": {
-      "source": "./lock.svg",
-      "codepoint": 61776
+      "codepoint": 61794,
+      "source": "public/glyphs/vectors/lock.svg"
+    },
+    "lock-2": {
+      "codepoint": 61795,
+      "source": "public/glyphs/vectors/lock-2.svg"
     },
     "lock-open": {
-      "source": "./lock-open.svg",
-      "codepoint": 61777
+      "codepoint": 61796,
+      "source": "public/glyphs/vectors/lock-open.svg"
+    },
+    "mac": {
+      "codepoint": 61797,
+      "source": "public/glyphs/vectors/mac.svg"
     },
     "mail": {
-      "source": "./mail.svg",
-      "codepoint": 61778
+      "codepoint": 61798,
+      "source": "public/glyphs/vectors/mail.svg"
+    },
+    "mail-filled": {
+      "codepoint": 61866,
+      "source": "public/glyphs/vectors/mail-filled.svg"
+    },
+    "mail-source": {
+      "codepoint": 61942,
+      "source": "public/glyphs/vectors/mail-source.svg"
+    },
+    "mail-thin": {
+      "codepoint": 61800,
+      "source": "public/glyphs/vectors/mail-thin.svg"
     },
     "map-marker": {
-      "source": "./map-marker.svg",
-      "codepoint": 61779
+      "codepoint": 61801,
+      "source": "public/glyphs/vectors/map-marker.svg"
+    },
+    "merge": {
+      "codepoint": 61802,
+      "source": "public/glyphs/vectors/merge.svg"
     },
     "message": {
-      "source": "./message.svg",
-      "codepoint": 61780
+      "codepoint": 61803,
+      "source": "public/glyphs/vectors/message.svg"
     },
     "minus": {
-      "source": "./minus.svg",
-      "codepoint": 61781
+      "codepoint": 61804,
+      "source": "public/glyphs/vectors/minus.svg"
     },
     "mobihelp": {
-      "source": "./mobihelp.svg",
-      "codepoint": 61782
+      "codepoint": 61805,
+      "source": "public/glyphs/vectors/mobihelp.svg"
+    },
+    "mobile": {
+      "codepoint": 61806,
+      "source": "public/glyphs/vectors/mobile.svg"
+    },
+    "mobile-active-source": {
+      "codepoint": 61943,
+      "source": "public/glyphs/vectors/mobile-active-source.svg"
+    },
+    "mobile-source": {
+      "codepoint": 61944,
+      "source": "public/glyphs/vectors/mobile-source.svg"
     },
     "multi-product": {
-      "source": "./multi-product.svg",
-      "codepoint": 61783
+      "codepoint": 61807,
+      "source": "public/glyphs/vectors/multi-product.svg"
+    },
+    "nested_field": {
+      "codepoint": 61900,
+      "source": "public/glyphs/vectors/nested_field.svg"
+    },
+    "new-phone-ticket": {
+      "codepoint": 61901,
+      "source": "public/glyphs/vectors/new-phone-ticket.svg"
+    },
+    "new-ticket": {
+      "codepoint": 61902,
+      "source": "public/glyphs/vectors/new-ticket.svg"
+    },
+    "no-arrow-left": {
+      "codepoint": 61808,
+      "source": "public/glyphs/vectors/no-arrow-left.svg"
+    },
+    "no-arrow-right": {
+      "codepoint": 61809,
+      "source": "public/glyphs/vectors/no-arrow-right.svg"
+    },
+    "no-data": {
+      "codepoint": 61950,
+      "source": "public/glyphs/vectors/no-data.svg"
+    },
+    "no-data-graph": {
+      "codepoint": 61894,
+      "source": "public/glyphs/vectors/no-data-graph.svg"
+    },
+    "no-network": {
+      "codepoint": 61876,
+      "source": "public/glyphs/vectors/no-network.svg"
     },
     "notice": {
-      "source": "./notice.svg",
-      "codepoint": 61784
+      "codepoint": 61810,
+      "source": "public/glyphs/vectors/notice.svg"
     },
     "notice-o": {
-      "source": "./notice-o.svg",
-      "codepoint": 61785
+      "codepoint": 61811,
+      "source": "public/glyphs/vectors/notice-o.svg"
+    },
+    "number": {
+      "codepoint": 61812,
+      "source": "public/glyphs/vectors/number.svg"
     },
     "observer": {
-      "source": "./observer.svg",
-      "codepoint": 61786
+      "codepoint": 61813,
+      "source": "public/glyphs/vectors/observer.svg"
+    },
+    "onhold": {
+      "codepoint": 61969,
+      "source": "public/glyphs/vectors/onhold.svg"
     },
     "open-in-new-window": {
-      "source": "./open-in-new-window.svg",
-      "codepoint": 61787
+      "codepoint": 61814,
+      "source": "public/glyphs/vectors/open-in-new-window.svg"
+    },
+    "open-in-portal": {
+      "codepoint": 61920,
+      "source": "public/glyphs/vectors/open-in-portal.svg"
+    },
+    "opera": {
+      "codepoint": 61815,
+      "source": "public/glyphs/vectors/opera.svg"
+    },
+    "outgoing-call": {
+      "codepoint": 61968,
+      "source": "public/glyphs/vectors/outgoing-call.svg"
     },
     "paperplane": {
-      "source": "./paperplane.svg",
-      "codepoint": 61788
+      "codepoint": 61816,
+      "source": "public/glyphs/vectors/paperplane.svg"
+    },
+    "paragraph": {
+      "codepoint": 61817,
+      "source": "public/glyphs/vectors/paragraph.svg"
+    },
+    "pencil": {
+      "codepoint": 61818,
+      "source": "public/glyphs/vectors/pencil.svg"
+    },
+    "performance-distribution": {
+      "codepoint": 61891,
+      "source": "public/glyphs/vectors/performance-distribution.svg"
+    },
+    "performance_distributions": {
+      "codepoint": 61933,
+      "source": "public/glyphs/vectors/performance_distributions.svg"
     },
     "phone": {
-      "source": "./phone.svg",
-      "codepoint": 61789
+      "codepoint": 61819,
+      "source": "public/glyphs/vectors/phone.svg"
+    },
+    "phone-block": {
+      "codepoint": 61820,
+      "source": "public/glyphs/vectors/phone-block.svg"
     },
     "phone-disable": {
-      "source": "./phone-disable.svg",
-      "codepoint": 61790
+      "codepoint": 61821,
+      "source": "public/glyphs/vectors/phone-disable.svg"
     },
-    "phone-enable": {
-      "source": "./phone-enable.svg",
-      "codepoint": 61791
+    "phone-disable-thin": {
+      "codepoint": 61877,
+      "source": "public/glyphs/vectors/phone-disable-thin.svg"
+    },
+    "phone_summary": {
+      "codepoint": 61934,
+      "source": "public/glyphs/vectors/phone_summary.svg"
     },
     "plus": {
-      "source": "./plus.svg",
-      "codepoint": 61792
+      "codepoint": 61822,
+      "source": "public/glyphs/vectors/plus.svg"
+    },
+    "plus-circle": {
+      "codepoint": 61893,
+      "source": "public/glyphs/vectors/plus-circle.svg"
+    },
+    "portal-source": {
+      "codepoint": 61945,
+      "source": "public/glyphs/vectors/portal-source.svg"
+    },
+    "portals": {
+      "codepoint": 61903,
+      "source": "public/glyphs/vectors/portals.svg"
     },
     "post-edit": {
-      "source": "./post-edit.svg",
-      "codepoint": 61793
+      "codepoint": 61823,
+      "source": "public/glyphs/vectors/post-edit.svg"
+    },
+    "pushpin": {
+      "codepoint": 61824,
+      "source": "public/glyphs/vectors/pushpin.svg"
+    },
+    "puzzle": {
+      "codepoint": 61911,
+      "source": "public/glyphs/vectors/puzzle.svg"
     },
     "rearrange": {
-      "source": "./rearrange.svg",
-      "codepoint": 61794
+      "codepoint": 61825,
+      "source": "public/glyphs/vectors/rearrange.svg"
     },
     "rebranding": {
-      "source": "./rebranding.svg",
-      "codepoint": 61795
+      "codepoint": 61826,
+      "source": "public/glyphs/vectors/rebranding.svg"
     },
     "refresh": {
-      "source": "./refresh.svg",
-      "codepoint": 61796
+      "codepoint": 61827,
+      "source": "public/glyphs/vectors/refresh.svg"
+    },
+    "refresh-source": {
+      "codepoint": 61946,
+      "source": "public/glyphs/vectors/refresh-source.svg"
     },
     "reorder": {
-      "source": "./reorder.svg",
-      "codepoint": 61797
+      "codepoint": 61828,
+      "source": "public/glyphs/vectors/reorder.svg"
     },
     "reorder-2": {
-      "source": "./reorder-2.svg",
-      "codepoint": 61798
+      "codepoint": 61829,
+      "source": "public/glyphs/vectors/reorder-2.svg"
     },
     "reply": {
-      "source": "./reply.svg",
-      "codepoint": 61799
+      "codepoint": 61830,
+      "source": "public/glyphs/vectors/reply.svg"
+    },
+    "reports-sorting": {
+      "codepoint": 61921,
+      "source": "public/glyphs/vectors/reports-sorting.svg"
+    },
+    "reports-sorting-asc": {
+      "codepoint": 61923,
+      "source": "public/glyphs/vectors/reports-sorting-asc.svg"
+    },
+    "reports-sorting-desc": {
+      "codepoint": 61924,
+      "source": "public/glyphs/vectors/reports-sorting-desc.svg"
     },
     "retweet": {
-      "source": "./retweet.svg",
-      "codepoint": 61800
+      "codepoint": 61831,
+      "source": "public/glyphs/vectors/retweet.svg"
     },
     "role": {
-      "source": "./role.svg",
-      "codepoint": 61801
+      "codepoint": 61832,
+      "source": "public/glyphs/vectors/role.svg"
+    },
+    "safari": {
+      "codepoint": 61833,
+      "source": "public/glyphs/vectors/safari.svg"
+    },
+    "save": {
+      "codepoint": 61834,
+      "source": "public/glyphs/vectors/save.svg"
+    },
+    "save-as": {
+      "codepoint": 61835,
+      "source": "public/glyphs/vectors/save-as.svg"
     },
     "scenario": {
-      "source": "./scenario.svg",
-      "codepoint": 61802
+      "codepoint": 61836,
+      "source": "public/glyphs/vectors/scenario.svg"
     },
     "search": {
-      "source": "./search.svg",
-      "codepoint": 61803
+      "codepoint": 61837,
+      "source": "public/glyphs/vectors/search.svg"
     },
     "security": {
-      "source": "./security.svg",
-      "codepoint": 61804
+      "codepoint": 61838,
+      "source": "public/glyphs/vectors/security.svg"
+    },
+    "settings1": {
+      "codepoint": 61912,
+      "source": "public/glyphs/vectors/settings1.svg"
+    },
+    "shared": {
+      "codepoint": 61839,
+      "source": "public/glyphs/vectors/shared.svg"
     },
     "sidebar-list": {
-      "source": "./sidebar-list.svg",
-      "codepoint": 61805
+      "codepoint": 61840,
+      "source": "public/glyphs/vectors/sidebar-list.svg"
     },
     "sla": {
-      "source": "./sla.svg",
-      "codepoint": 61806
+      "codepoint": 61841,
+      "source": "public/glyphs/vectors/sla.svg"
+    },
+    "sorting-asc": {
+      "codepoint": 61926,
+      "source": "public/glyphs/vectors/sorting-asc.svg"
+    },
+    "sorting-default": {
+      "codepoint": 61927,
+      "source": "public/glyphs/vectors/sorting-default.svg"
+    },
+    "sorting-dsc": {
+      "codepoint": 61928,
+      "source": "public/glyphs/vectors/sorting-dsc.svg"
+    },
+    "split": {
+      "codepoint": 61842,
+      "source": "public/glyphs/vectors/split.svg"
     },
     "star": {
-      "source": "./star.svg",
-      "codepoint": 61807
+      "codepoint": 61843,
+      "source": "public/glyphs/vectors/star.svg"
     },
     "star-o": {
-      "source": "./star-o.svg",
-      "codepoint": 61808
+      "codepoint": 61844,
+      "source": "public/glyphs/vectors/star-o.svg"
+    },
+    "summary-1": {
+      "codepoint": 61935,
+      "source": "public/glyphs/vectors/summary-1.svg"
+    },
+    "summary-2": {
+      "codepoint": 61936,
+      "source": "public/glyphs/vectors/summary-2.svg"
     },
     "supervisor": {
-      "source": "./supervisor.svg",
-      "codepoint": 61809
+      "codepoint": 61845,
+      "source": "public/glyphs/vectors/supervisor.svg"
+    },
+    "survey-happy": {
+      "codepoint": 61880,
+      "source": "public/glyphs/vectors/survey-happy.svg"
+    },
+    "survey-neutral": {
+      "codepoint": 61881,
+      "source": "public/glyphs/vectors/survey-neutral.svg"
+    },
+    "survey-sad": {
+      "codepoint": 61882,
+      "source": "public/glyphs/vectors/survey-sad.svg"
     },
     "survey-settings": {
-      "source": "./survey-settings.svg",
-      "codepoint": 61810
+      "codepoint": 61846,
+      "source": "public/glyphs/vectors/survey-settings.svg"
     },
     "tags": {
-      "source": "./tags.svg",
-      "codepoint": 61811
+      "codepoint": 61957,
+      "source": "public/glyphs/vectors/tags.svg"
+    },
+    "text": {
+      "codepoint": 61848,
+      "source": "public/glyphs/vectors/text.svg"
     },
     "ticket": {
-      "source": "./ticket.svg",
-      "codepoint": 61812
+      "codepoint": 61849,
+      "source": "public/glyphs/vectors/ticket.svg"
     },
     "ticket-fields": {
-      "source": "./ticket-fields.svg",
-      "codepoint": 61813
+      "codepoint": 61850,
+      "source": "public/glyphs/vectors/ticket-fields.svg"
     },
-    "ticket2": {
-      "source": "./ticket2.svg",
-      "codepoint": 61814
+    "ticket-volume": {
+      "codepoint": 61892,
+      "source": "public/glyphs/vectors/ticket-volume.svg"
+    },
+    "ticket_volume": {
+      "codepoint": 61937,
+      "source": "public/glyphs/vectors/ticket_volume.svg"
+    },
+    "time_sheet": {
+      "codepoint": 61938,
+      "source": "public/glyphs/vectors/time_sheet.svg"
+    },
+    "timeline-forum": {
+      "codepoint": 61851,
+      "source": "public/glyphs/vectors/timeline-forum.svg"
+    },
+    "timeline-ticket": {
+      "codepoint": 61852,
+      "source": "public/glyphs/vectors/timeline-ticket.svg"
     },
     "trash": {
-      "source": "./trash.svg",
-      "codepoint": 61815
+      "codepoint": 61853,
+      "source": "public/glyphs/vectors/trash.svg"
     },
     "trash-o": {
-      "source": "./trash-o.svg",
-      "codepoint": 61816
+      "codepoint": 61854,
+      "source": "public/glyphs/vectors/trash-o.svg"
+    },
+    "trash-strike-thru": {
+      "codepoint": 61855,
+      "source": "public/glyphs/vectors/trash-strike-thru.svg"
     },
     "twitter": {
-      "source": "./twitter.svg",
-      "codepoint": 61817
+      "codepoint": 61856,
+      "source": "public/glyphs/vectors/twitter.svg"
+    },
+    "twitter-like": {
+      "codepoint": 61949,
+      "source": "public/glyphs/vectors/twitter-like.svg"
     },
     "twitter-lock": {
-      "source": "./twitter-lock.svg",
-      "codepoint": 61818
+      "codepoint": 61857,
+      "source": "public/glyphs/vectors/twitter-lock.svg"
+    },
+    "twitter-o": {
+      "codepoint": 61858,
+      "source": "public/glyphs/vectors/twitter-o.svg"
+    },
+    "twitter-source": {
+      "codepoint": 61947,
+      "source": "public/glyphs/vectors/twitter-source.svg"
     },
     "unlock": {
-      "source": "./unlock.svg",
-      "codepoint": 61819
+      "codepoint": 61859,
+      "source": "public/glyphs/vectors/unlock.svg"
+    },
+    "unverified": {
+      "codepoint": 61860,
+      "source": "public/glyphs/vectors/unverified.svg"
     },
     "user": {
-      "source": "./user.svg",
-      "codepoint": 61820
+      "codepoint": 61861,
+      "source": "public/glyphs/vectors/user.svg"
     },
     "view-retweets": {
-      "source": "./view-retweets.svg",
-      "codepoint": 61821
+      "codepoint": 61862,
+      "source": "public/glyphs/vectors/view-retweets.svg"
     },
     "warning": {
-      "source": "./warning.svg",
-      "codepoint": 61822
+      "codepoint": 61863,
+      "source": "public/glyphs/vectors/warning.svg"
+    },
+    "web-page": {
+      "codepoint": 61864,
+      "source": "public/glyphs/vectors/web-page.svg"
+    },
+    "web-source": {
+      "codepoint": 61948,
+      "source": "public/glyphs/vectors/web-source.svg"
+    },
+    "went-wrong": {
+      "codepoint": 61951,
+      "source": "public/glyphs/vectors/went-wrong.svg"
+    },
+    "windows": {
+      "codepoint": 61865,
+      "source": "public/glyphs/vectors/windows.svg"
     }
   },
   "options": {
-    "input": {
-      "vectors": ".",
-      "templates": "."
-    },
-    "output": {
-      "fonts": "fontcustom",
-      "css": "fontcustom",
-      "preview": "fontcustom"
-    },
-    "config": false,
-    "templates": [
-      "css",
-      "preview"
-    ],
-    "font_name": "fontcustom",
-    "css_selector": ".icon-{{glyph}}",
-    "preprocessor_path": null,
-    "autowidth": false,
-    "no_hash": false,
+    "autowidth": true,
+    "config": "config/fontcustom.yml",
+    "css_selector": ".ficon-{{glyph}}",
     "debug": false,
-    "force": false,
+    "font_name": "glyphs",
+    "force": true,
+    "input": {
+      "templates": "public/glyphs/templates",
+      "vectors": "public/glyphs/vectors"
+    },
+    "no_hash": false,
+    "output": {
+      "css": "public/src/fonts",
+      "fonts": "public/assets",
+      "preview": "public/assets"
+    },
+    "preprocessor_path": "",
     "quiet": false,
-    "skip_first": false
+    "templates": [
+      "scss",
+      "_glyphs-variables.scss",
+      "index.html"
+    ]
   },
   "templates": [
-
+    "public/src/fonts/_glyphs.scss",
+    "public/src/fonts/_glyphs-variables.scss",
+    "public/assets/index.html"
   ]
 }

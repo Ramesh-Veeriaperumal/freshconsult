@@ -224,7 +224,7 @@ class Discussions::TopicsController < ApplicationController
 
 		def build_attachments
 			post_attachments = params[:post].nil? ? [] : params[:post][:attachments]
-			attachment_builder(@post, post_attachments, params[:cloud_file_attachments])
+			attachment_builder(@post, post_attachments, params[:cloud_file_attachments], params[:attachments_list])
 		end
 
 		def after_destroy_path

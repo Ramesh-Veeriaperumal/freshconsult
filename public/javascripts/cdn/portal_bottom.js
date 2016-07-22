@@ -4,7 +4,6 @@
 //= require frameworks/plugins/jquery.tmpl.js
 //= require hackz.js
 //= require portal/multifile.js
-//= require portal/multifile_upload.js
 //= require portal/jquery-ui.js
 //= require portal/bootstrap.js
 //= require portal/bootstrap.dialog.js
