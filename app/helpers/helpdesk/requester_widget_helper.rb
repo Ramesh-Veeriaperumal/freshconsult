@@ -40,7 +40,9 @@ module Helpdesk::RequesterWidgetHelper
   end
 
   def company_field_of_contact_form
-    ContactField.where(:account_id => current_account.id, :contact_form_id => current_account.contact_form.id, :name => "company_name")[0];
+    current_account.contact_form.contact_fields.select { |field|
+      field["name"] == "company_name"
+    }
   end
 
   def default_company_fields
@@ -128,7 +130,7 @@ module Helpdesk::RequesterWidgetHelper
       field_value = (field_value = requester.company.send(field.name)).blank? ?
         field.default_value : field_value if requester.company.present?
       obj = :company
-      required = field.name == "name" ? company_field_of_contact_form.required_for_agent : field.required_for_agent
+      required = field.name == "name" ? company_field_of_contact_form[0].required_for_agent : field.required_for_agent
       class_name = "company_form"
       disabled = true
       if field.name == "name"
