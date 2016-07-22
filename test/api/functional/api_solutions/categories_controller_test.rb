@@ -131,7 +131,7 @@ module ApiSolutions
     end
 
     def test_create_category_with_visible_in
-      post :create, construct_params({}, {name: Faker::Name.name, description: Faker::Lorem.paragraph, visible_in: [@account.main_portal.id]})
+      post :create, construct_params({}, {name: Faker::Name.name, description: Faker::Lorem.paragraph, visible_in_portals: [@account.main_portal.id]})
       assert_response 201
       result = parse_response(@response.body)
       assert_equal "http://#{@request.host}/api/v2/solutions/categories/#{result['id']}", response.headers['Location']
@@ -141,8 +141,8 @@ module ApiSolutions
     def test_create_category_with_visible_in_without_multiple_portals
       portals = [@account.portals.first]
       Account.any_instance.stubs(:portals).returns(portals)
-      post :create, construct_params({}, {name: Faker::Name.name, description: Faker::Lorem.paragraph, visible_in: [9999]})
-      match_json([bad_request_error_pattern('visible_in', :multiple_portals_required, code: :incompatible_field)])
+      post :create, construct_params({}, {name: Faker::Name.name, description: Faker::Lorem.paragraph, visible_in_portals: [9999]})
+      match_json([bad_request_error_pattern('visible_in_portals', :multiple_portals_required, code: :incompatible_field)])
       assert_response 400
     ensure
       Account.any_instance.unstub(:portals)
@@ -150,14 +150,14 @@ module ApiSolutions
 
 
     def test_create_category_with_invalid_visible_in
-      post :create, construct_params({}, {name: Faker::Name.name, description: Faker::Lorem.paragraph, visible_in: [9999]})
-      match_json([bad_request_error_pattern('visible_in', :invalid_list, list: '9999')])
+      post :create, construct_params({}, {name: Faker::Name.name, description: Faker::Lorem.paragraph, visible_in_portals: [9999]})
+      match_json([bad_request_error_pattern('visible_in_portals', :invalid_list, list: '9999')])
       assert_response 400
     end
 
     def test_create_category_with_invalid_datatype_in_visible_in
-      post :create, construct_params({}, {name: Faker::Name.name, description: Faker::Lorem.paragraph, visible_in: ['9999']})
-      match_json([bad_request_error_pattern('visible_in', :array_datatype_mismatch, expected_data_type: 'Positive Integer')])
+      post :create, construct_params({}, {name: Faker::Name.name, description: Faker::Lorem.paragraph, visible_in_portals: ['9999']})
+      match_json([bad_request_error_pattern('visible_in_portals', :array_datatype_mismatch, expected_data_type: 'Positive Integer')])
       assert_response 400
     end
 
@@ -212,7 +212,7 @@ module ApiSolutions
       name = Faker::Name.name
       description = Faker::Lorem.paragraph
       sample_category = get_category
-      params_hash  = { name: name, description: description, visible_in: [@account.portal_ids.last] }
+      params_hash  = { name: name, description: description, visible_in_portals: [@account.portal_ids.last] }
       put :update, construct_params({ id: sample_category.id }, params_hash)
       assert_response 200
       match_json(solution_category_pattern(sample_category.reload))
@@ -233,7 +233,7 @@ module ApiSolutions
     def test_update_unavailable_category
       name = Faker::Name.name
       description = Faker::Lorem.paragraph
-      params_hash  = { name: name, description: description, visible_in: [@account.portal_ids.last] }
+      params_hash  = { name: name, description: description, visible_in_portals: [@account.portal_ids.last] }
       put :update, construct_params({ id: 9999 }, params_hash)
       assert_response :missing
     end
@@ -242,7 +242,7 @@ module ApiSolutions
       sample_category = get_category
       old_name = sample_category.name
       old_description = sample_category.description
-      params_hash  = { visible_in: [@account.portal_ids.last] }
+      params_hash  = { visible_in_portals: [@account.portal_ids.last] }
       put :update, construct_params({ id: sample_category.id }, params_hash)
       assert_response 200
       match_json(solution_category_pattern(sample_category.reload))

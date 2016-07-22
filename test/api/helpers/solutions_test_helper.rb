@@ -7,7 +7,7 @@ module SolutionsTestHelper
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
     }
-    result.merge!(visible_in: category.parent.portal_solution_categories.pluck(:portal_id)) if Account.current.has_multiple_portals?
+    result.merge!(visible_in_portals: category.parent.portal_solution_categories.pluck(:portal_id)) if Account.current.has_multiple_portals?
     result
   end
 

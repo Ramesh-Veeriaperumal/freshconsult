@@ -57,11 +57,11 @@ module ApiSolutions
       end
 
       def sanitize_params
-        prepare_array_fields [:visible_in]
+        prepare_array_fields [:visible_in_portals]
         language_params = params[cname].slice(:name, :description)
         params[cname][language_scoper] = language_params unless language_params.empty?
         params[cname][:id] = params[:id] if params.key?(:id)
-        params[cname][:portal_solution_categories_attributes] = { portal_id:  params[cname].delete(:visible_in) } if params[cname].key?(:visible_in)
+        params[cname][:portal_solution_categories_attributes] = { portal_id:  params[cname].delete(:visible_in_portals) } if params[cname].key?(:visible_in_portals)
         @category_params = params[cname].except!(:name, :description)
       end
 
@@ -94,8 +94,8 @@ module ApiSolutions
       def set_custom_errors(item = @item)
         unless item.respond_to?(:parent)
           bad_portal_ids = item.portal_solution_categories.select { |x| x.errors.present? }.map(&:portal_id)
-          item.errors[:visible_in] << :invalid_list if bad_portal_ids.present?
-          @error_options = { remove: :"category.portal_solution_categories", visible_in: { list: "#{bad_portal_ids.join(', ')}" } }
+          item.errors[:visible_in_portals] << :invalid_list if bad_portal_ids.present?
+          @error_options = { remove: :"category.portal_solution_categories", visible_in_portals: { list: "#{bad_portal_ids.join(', ')}" } }
         end
         @error_options
       end

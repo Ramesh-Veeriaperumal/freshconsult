@@ -5,7 +5,7 @@ class Solutions::CategoryDecorator < ApiDecorator
     @portal_ids_visible ||= Account.current.has_multiple_portals?
   end
 
-  def visible_in
+  def visible_in_portals
   	record.parent.portal_solution_categories.map(&:portal_id)
   end
 end

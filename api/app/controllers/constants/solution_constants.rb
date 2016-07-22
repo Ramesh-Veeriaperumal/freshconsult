@@ -1,5 +1,5 @@
 module SolutionConstants
-  CATEGORY_FIELDS = %w(description name visible_in).freeze
+  CATEGORY_FIELDS = %w(description name visible_in_portals).freeze
 
   CATEGORY_ATTRIBUTES_TO_BE_STRIPPED = %w(name).freeze
 

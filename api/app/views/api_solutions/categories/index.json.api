@@ -7,7 +7,7 @@ JSON.generate(@items.map do |category|
 		created_at: category.created_at,
 		updated_at: category.updated_at
 	}
- 	response_hash.merge!(visible_in: category.visible_in) if category.portal_ids_visible?
+ 	response_hash.merge!(visible_in_portals: category.visible_in_portals) if category.portal_ids_visible?
   response_hash
 end
 )
