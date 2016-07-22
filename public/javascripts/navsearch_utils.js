@@ -16,10 +16,10 @@ var NavSearchUtils = NavSearchUtils || (function(){
 			var reducedLocalSearchString = navSearchUtils.localRecentSearches[i].replace(/^\s+|\s+$/g, "").toLowerCase();
 			isLocalRecentSearch = reducedLocalSearchString == reducedString;
 			if(isLocalRecentSearch){
-				//replace positions of the search strings
-				var last = navSearchUtils.localRecentSearches[navSearchUtils.localRecentSearches.length - 1];
-				navSearchUtils.localRecentSearches[navSearchUtils.localRecentSearches.length - 1] = fullSearchString;
-				navSearchUtils.localRecentSearches[i] = last;
+				// remove the item from its place
+				navSearchUtils.localRecentSearches.splice(i, 1);
+				//insert it at the top
+				navSearchUtils.localRecentSearches.splice(4, 0, fullSearchString);
 				break;
 			}			
 		}
@@ -50,11 +50,13 @@ var NavSearchUtils = NavSearchUtils || (function(){
 		for(var i = 0; i < navSearchUtils.localRecentTickets.length; i++){
 			isLocalRecentTicket = navSearchUtils.localRecentTickets[i].displayId == TICKET_DETAILS_DATA['displayId'];
 			if(isLocalRecentTicket){
-				//replace positions of the tickets
-				var last = navSearchUtils.localRecentTickets[navSearchUtils.localRecentTickets.length - 1];
-				navSearchUtils.localRecentTickets[navSearchUtils.localRecentTickets.length - 1] = {displayId: TICKET_DETAILS_DATA['displayId'], subject: TICKET_DETAILS_DATA['ticket_subject'], path: TICKET_DETAILS_DATA['ticket_path']};
-				navSearchUtils.localRecentTickets[i] = last;
+				// remove the item from its place
+				navSearchUtils.localRecentTickets.splice(i, 1);
+				//insert it at the top
+				navSearchUtils.localRecentTickets.splice(4, 0, {displayId: TICKET_DETAILS_DATA['displayId'], subject: TICKET_DETAILS_DATA['ticket_subject'], path: TICKET_DETAILS_DATA['ticket_path']});
 				break;
+
+
 			}			
 		}
 		if(!isLocalRecentTicket){

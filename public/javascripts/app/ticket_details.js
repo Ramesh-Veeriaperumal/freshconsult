@@ -1565,7 +1565,6 @@ var scrollToError = function(){
 	App.TicketAttachmentPreview.init();
 
 	//RECENT TICKETS SETUP
-	//check if already part of recent tickets
 	NavSearchUtils.saveToLocalRecentTickets(TICKET_DETAILS_DATA);	
 
 };
