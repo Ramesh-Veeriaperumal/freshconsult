@@ -43,7 +43,7 @@ module Freshfone
         set_sid
         enqueue_notification_recovery
         logger.info "Socket Notification pushed to SQS for account :: #{current_account.id} , call_id :: #{current_call.id} at #{Time.now}"
-        freshfone_call_notifier.send_message notification_message.to_json
+        $freshfone_call_notifier.send_message notification_message.to_json
         freshfone_notify_incoming_call(notification_message)
         
       rescue Exception => e
