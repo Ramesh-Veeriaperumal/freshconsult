@@ -1020,6 +1020,92 @@ module ApplicationHelper
     content_tag :li, element.html_safe, :class => "#{ dom_type } #{ field.field_type } field" + element_class + company_class.to_s
   end
 
+
+def construct_new_ticket_element_for_google_gadget(form_builder,object_name, field, field_label, dom_type, required, field_value = "", field_name = "", in_portal = false , is_edit = false, pl_value_id=nil)
+    dom_type = (field.field_type == "nested_field") ? "nested_field" : dom_type
+    element_class   = " #{ (required) ? 'required' : '' } #{ dom_type }"
+    element_class  += " required_closure" if (field.required_for_closure && !field.required)
+    element_class  += " section_field" if field.section_field?
+    field_label    += '<span class="required_star">*</span>'.html_safe if required
+    field_label    += "#{add_requester_field}".html_safe if (dom_type == "requester" && !is_edit) #add_requester_field has been type converted to string to handle false conditions
+    field_name      = (field_name.blank?) ? field.field_name.html_safe : field_name.html_safe
+    object_name     = "#{object_name.to_s}#{ ( !field.is_default_field? ) ? '[custom_field]' : '' }".html_safe
+    label = label_tag (pl_value_id ? object_name+"_"+field.field_name+"_"+pl_value_id : 
+                                     object_name+"_"+field.field_name), 
+                      field_label.html_safe,
+                      :class => ((field.field_type == "default_company" && @ticket.new_record?) ? "company_field" : "")
+    choices = field.choices
+    description = field.description
+    case dom_type
+      when "old_requester" then
+        element = label + content_tag(:div, render(:partial => "/shared/autocomplete_email", :formats => [:html], :locals => { :object_name => object_name, :field => field, :url => requesters_search_autocomplete_index_path }))
+        element+= hidden_field(object_name, :requester_id, :value => @item.requester_id)
+        element+= label_tag("", "#{add_requester_field}".html_safe,:class => 'hidden') if is_edit
+        unless is_edit or params[:format] == 'widget'
+          element = add_cc_field_tag element, field
+        end
+      when "requester" then
+         search_req =   "#{add_requester_field}".html_safe #if (!is_edit)
+        unless is_edit or params[:format] == 'widget'
+          show_cc = show_cc_field  field
+        end
+            element = render(:partial => "/helpdesk/tickets/ticket_widget/requester", :formats => [:html], :locals => {:search_req => search_req , :placeholder => description, :show_cc => show_cc, :is_edit => is_edit})
+            element+= hidden_field(object_name, :requester_id, :value => @item.requester_id)
+      when "email" then
+        element = label + text_field(object_name, field_name, :class => element_class, :value => field_value)
+        element = add_cc_field_tag element ,field if (field.portal_cc_field? && !is_edit && controller_name.singularize != "feedback_widget") #dirty fix
+        element += add_name_field if !is_edit and !current_user
+      when "text", "number", "decimal" then
+        element = label + text_field(object_name, field_name, :class => element_class, :value => field_value)
+      when "paragraph" then
+        element = label + text_area(object_name, field_name, :class => element_class, :value => field_value)
+      when "dropdown" then
+        if (['default_priority','default_source','default_status'].include?(field.field_type) )
+          element = label + select(object_name, field_name, field.html_unescaped_choices, {:selected => field_value},{:class => element_class + " select2", "data-domhelper-name" => "ticket-properties-" + field_name })
+          #Just avoiding the include_blank here.
+        else
+          element = label + select(object_name, field_name, field.html_unescaped_choices, { :include_blank => "...", :selected => field_value},{:class => element_class + " select2", "data-domhelper-name" => "ticket-properties-" + field_name })
+        end
+      when "dropdown_blank" then
+        dropdown_choices = field.html_unescaped_choices(@ticket)
+        disabled = true if field.field_type == "default_company" && dropdown_choices.empty?
+        element = label + select(object_name, field_name,
+                                              dropdown_choices,
+                                              {:include_blank => "...", :selected => field_value},
+                                              {:class => element_class + " select2", 
+                                               :disabled => disabled,
+                                               "data-domhelper-name" => "ticket-properties-" + field_name })
+      when "hidden" then
+        element = hidden_field(object_name , field_name , :value => field_value)
+      when "checkbox" then
+        check_box_html = { :class => element_class }
+        if pl_value_id
+          id = gsub_id object_name+"_"+field_name+"_"+pl_value_id
+          check_box_html.merge!({:id => id})
+        end
+        checkbox_element = ( required ? ( check_box_tag(%{#{object_name}[#{field_name}]}, 1, !field_value.blank?,  check_box_html)) :
+                                          ( check_box(object_name, field_name, check_box_html.merge!({:checked => field_value}) ) ) )
+        element = content_tag(:div, (checkbox_element + label).html_safe, :class => "checkbox-wrapper")
+      when "html_paragraph" then
+         element = label 
+         redactor_wrapper = ""
+        form_builder.fields_for(:ticket_body, @ticket.ticket_body ) do |builder|
+            redactor_wrapper = builder.text_area(field_name, :class => element_class, :value => field_value, :"data-wrap-font-family" => true )
+        end
+            element += content_tag(:div, redactor_wrapper, :class => "redactor_wrapper")
+      when "date" then
+        element = label + content_tag(:div, construct_date_field(field_value, 
+                                                                 object_name, 
+                                                                 field_name, 
+                                                                 element_class).html_safe,
+                                            :class => "controls input-date-field")
+        
+    end
+    element_class = (field.has_sections_feature? && (field.field_type == "default_ticket_type" || field.field_type == "default_source")) ? " dynamic_sections" : ""
+    company_class = " hide" if field.field_type == "default_company" && (@ticket.new_record? || dropdown_choices.empty?)
+    content_tag :li, element.html_safe, :class => "#{ dom_type } #{ field.field_type } field" + element_class + company_class.to_s
+  end
+
   def construct_new_ticket_element(form_builder,object_name, field, field_label, dom_type, required, field_value = "", field_name = "", in_portal = false , is_edit = false, pl_value_id=nil)
     dom_type = (field.field_type == "nested_field") ? "nested_field" : dom_type
     element_class   = " #{ (required && !object_name.eql?(:template_data)) ? 

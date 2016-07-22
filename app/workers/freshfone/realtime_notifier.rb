@@ -4,6 +4,7 @@ module Freshfone
     include Freshfone::CallerLookup
     include Freshfone::Endpoints
     include Freshfone::CallsRedisMethods
+    include Mobile::Actions::Push_Notifier
 
     sidekiq_options :queue => :freshfone_notifications, :retry => 0, :backtrace => true, :failures => :exhausted
 
@@ -43,7 +44,8 @@ module Freshfone
         enqueue_notification_recovery
         logger.info "Socket Notification pushed to SQS for account :: #{current_account.id} , call_id :: #{current_call.id} at #{Time.now}"
         $freshfone_call_notifier.send_message notification_message.to_json
-
+        freshfone_notify_incoming_call(notification_message)
+        
       rescue Exception => e
         logger.error "[#{jid}] - [#{tid}] Error notifying for account #{current_account.id} for type #{type}"
         logger.error "[#{jid}] - [#{tid}] Message:: #{e.message}"
