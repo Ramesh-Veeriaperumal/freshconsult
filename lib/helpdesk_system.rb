@@ -75,6 +75,8 @@ module HelpdeskSystem
         can_destroy = true if privilege?(:manage_users) or (current_user && file_attachable.id == current_user.id)
       elsif ['Helpdesk::TicketTemplate'].include? file_type
         can_destroy = true if template_priv? file_attachable
+      elsif ['UserDraft'].include? attachment.attachable_type
+        can_destroy = true if (current_user && file_attachable.id == current_user.id)
       end
       process_denied unless can_destroy
     end

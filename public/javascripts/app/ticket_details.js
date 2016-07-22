@@ -6,7 +6,7 @@ var MAX_EMAILS = 50;
 save_draft = function(content, cc_email_list, bcc_email_list) {
 	if ($.trim(content) != '') {
 		$(".ticket_show #reply-draft").show().addClass('saving');
-		$(".ticket_show #reply-draft").parent().addClass('draft_saved');
+		// $(".ticket_show #reply-draft").parent().addClass('draft_saved');
 
 		$(".ticket_show #draft-save").text(TICKET_DETAILS_DATA['draft']['saving_text']);
 		savingDraft = true;
@@ -180,7 +180,7 @@ swapEmailNote = function(formid, link){
 			if (!draftClearedFlag) {
 				$("#draft-save").text(TICKET_DETAILS_DATA['draft']['saved_text']);
 				$("#reply-draft").show();
-				$(".ticket_show #reply-draft").parent().addClass('draft_saved');
+				// $(".ticket_show #reply-draft").parent().addClass('draft_saved');
 			}else{
 				$("#reply-draft").hide();
 				$(".ticket_show #reply-draft").parent().removeClass('draft_saved');
@@ -1064,8 +1064,8 @@ var scrollToError = function(){
 		}
 	}
 
-	var submitNewConversation = function(_form, ev, callback) {
-
+	window.submitNewConversation = function(_form, ev, callback) {
+		
 		callback = callback || function(){};
 
 		_form.ajaxSubmit({
@@ -1176,6 +1176,8 @@ var scrollToError = function(){
 				if(_form.attr('rel') == 'tweet_form'){
 					getTweetTypeAndBind();
 				}
+
+				Helpdesk.TicketStickyBar.check();
 
 			},
 			error: function(response) {

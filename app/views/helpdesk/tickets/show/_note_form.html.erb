@@ -11,7 +11,8 @@
                       "data-cnt-id" => cntid,
                       "data-submitting" => 'false'
                     } do |f| %>
-    <%= content_tag( :div, t("ticket.note_form.form_title"), :class => "form_title" ) %>
+    <%= content_tag( :div, "" , :class => "form_title" ) %>
+     <b class="note_title"><%= t("ticket.note_form.form_title") %></b>
     <div class="list_agents_replying" class="hide"></div>
     <%= f.error_messages %>
     <ul class="ui-form dont-validate botm-space">
@@ -49,9 +50,14 @@
         <span class="alert-text"><%= t('helpdesk.tickets.note.not_added') %></span>
         <%= t('helpdesk.tickets.note.attachment_size.exceed') %>
       </li>
-      <li class="inline-field field attachment-options continous" id="attachment-options-note">
+
+      <li class="attachment-options-reply" id="attachment-options-note">
           <% unless local_assigns[:no_attachments] %>
-          <%= render :partial => "/helpdesk/tickets/show/attachment_form", :locals => { :attach_id => id , :nsc_param => "helpdesk_note" } %>
+         <% if current_account.launched?(:multifile_attachments) %>
+            <%= render :partial => "/helpdesk/tickets/show/multi_attachment_form", :locals => { :attach_id => id , :nsc_param => "helpdesk_note" } %>
+          <% else %>
+            <%= render :partial => "/helpdesk/tickets/show/single_attachment_form", :locals => { :attach_id => id , :nsc_param => "helpdesk_note" } %>
+          <% end %>
           <% end %>
       </li>
     </ul> 
@@ -65,7 +71,7 @@
     </div>
 
 
-    <div class="btn-toolbar">
+    <div class="btn-toolbar no-width">
       
       <span class="btn-group">
         <button class="btn cancel_btn reply_agent_collision" data-show-pseudo-reply='true' data-cnt-id='<%= cntid %>'>

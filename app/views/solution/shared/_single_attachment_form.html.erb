@@ -1,8 +1,9 @@
-<%
+<hr><%
   attach_id ||= "article"
   original_attachments ||= {:regular => [], :cloud_files => []}
   nsc_param = nsc_param || "solution_article"
 %>
+<div class="single_file">
 <div class="attachments-wrap" id="attachment-type" data-multifile-enable="<%= current_account.launched?(:multifile_attachments) %>">
   <div id="<%=attach_id%>-container" class="attachments-container" >
 
@@ -29,10 +30,10 @@
             </a>
           </li>
           <% get_enabled_cloud_files_app.each do |c_f| %>
-			       <%= render :partial => "integrations/applications/#{c_f}", :formats => [:html], :locals => {:attach_id => attach_id} %>
+             <%= render :partial => "integrations/applications/#{c_f}", :formats => [:html], :locals => {:attach_id => attach_id} %>
           <% end %>
         </ul>
-        <span class="info-data info-cloud-data"> ( <%= t('total') %> <%=t('attachment_help_info')%> ) </span>      
+         
       </div>
     <% else %>
       <div class="hidden_upload">
@@ -88,9 +89,6 @@
     </div>
   </li>
 </script>
-<!-- for multifile -->
-<%= render :partial => "/helpdesk/tickets/show/multifile_template_new" %>
-<div class="clearfix"></div>
 
 <script type="text/javascript">
   // Fix for Firefox/IE - To override :hover style persistance after click on input[type=file] element
@@ -114,5 +112,7 @@
       p.css({left: newLeft, top: 0});
     })
 </script>
+</div>
+<hr>
 
 

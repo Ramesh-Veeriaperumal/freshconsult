@@ -16,7 +16,11 @@
 					</li>
 					<li class="control-group">
 						<div class="controls">
-							<%= render :partial=> "discussions/shared/attachment_form" %>
+				          <% if current_account.launched?(:multifile_attachments) %>
+							<%= render :partial=> "discussions/shared/multi_attachment_form" %>
+						 <% else %>
+							<%= render :partial=> "discussions/shared/single_attachment_form" %>
+						 <% end %>
 						</div>
 					</li>
 

@@ -2633,3 +2633,16 @@ label.label-choice{ cursor: pointer; }
 	box-shadow: none;
 	height: 100px;
 }
+/*canned response icon*/
+a.ficon-canned-response.redactor_separator_ficon,a.ficon-book-dark.redactor_separator_ficon {
+	background-image: none;
+	text-indent: 0px;
+	content: "";
+	font-size:20px;
+	color: #848484;
+	margin-bottom: 5px;
+}
+a.ficon-canned-response.redactor_separator_ficon:before,a.ficon-book-dark.redactor_separator_ficon:before{
+	margin-top: 5px;
+    margin-left: 3px;
+}

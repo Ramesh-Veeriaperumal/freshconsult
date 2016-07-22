@@ -2069,6 +2069,9 @@ Helpkit::Application.routes.draw do
       member do
         delete :unlink_shared
         get :text_content
+        get :download_all
+        post :create_attachment
+        delete :delete_attachment
       end
     end
 

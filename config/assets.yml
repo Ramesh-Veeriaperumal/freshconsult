@@ -24,6 +24,7 @@ stylesheets:
   :tour_my_app  => [ "plugins/tourmyapp_initial","plugins/tourmyapp"],
   :codemirror  => [ "plugins/codemirror"],
   :player360  => [ "freshfone/360player"],
+  :fileupload => ["plugins,fileupload"],
   :freshwidget  => [ "freshwidget"],
   :tkt_details  => [ "page/tkt_details/tkt_details","page/tkt_details/tkt_details_sprites"],
   :tkt_details_print  => [ "page/tkt_details/tkt_details_print"],
@@ -153,6 +154,12 @@ javascripts:
     - public/javascripts/codemirror/util-search.js
     - public/javascripts/codemirror/util-searchcursor.js
 
+    #file upload
+  fileupload:
+    - public/javascripts/fileupload/jquery.ui.widget.js
+    - public/javascripts/fileupload/jquery.iframe-transport.js
+    - public/javascripts/fileupload/jquery.fileupload.js
+    - public/javascripts/fileupload/jquery.fileupload-ui.js
   colorpicker:
     - public/javascripts/mColorPicker.js
 

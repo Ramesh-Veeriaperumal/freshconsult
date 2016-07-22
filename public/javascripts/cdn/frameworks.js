@@ -31,7 +31,6 @@
 //= require hackz.js
 //= require lib/nestedtree.js
 //= require helpdesk/multifile.js
-//= require helpdesk/multifile_upload.js
 //= require frameworks/plugins/jquery.nested_select_tag.js
 //= require frameworks/socket.io-1.2.1.js
 //= require frameworks/faye.js

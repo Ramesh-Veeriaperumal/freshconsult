@@ -249,7 +249,7 @@ protected
   end
 
   def build_attachments item, model_name
-    attachment_builder(item, params[model_name][:attachments], params[:cloud_file_attachments] )
+    attachment_builder(item, params[model_name][:attachments], params[:cloud_file_attachments], params[:attachments_list])
     build_shared_attachments item
   end
 
@@ -297,6 +297,12 @@ protected
         end
 
         if @items.present?
+          # for edit note
+          @drop_id = 0;
+          if @cname == "cloud_file"
+            @drop_id = @items[0].droppable_id;
+          end
+          page << "Helpdesk.MultipleFileUpload.manageNoteData('#{@cname}',#{@items[0].id},#{@drop_id})";
           page << "trigger_event('attachment_deleted', {attachment_id: #{@items[0].id}, attachment_type: '#{@items[0].class.name.split('::')[1].underscore}'});"
         end
       end

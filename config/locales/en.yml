@@ -5245,7 +5245,7 @@ en:
       add_and_set_as: "Add and set as <strong>%{status}</strong>"
       add_public_note: Add Public Note
       add_private_note: Add Private Note
-      notify_agents: Notify Agents
+      notify_agents: "Notify "
     tweet_form:
       tweet_and_resolve: Tweet and Resolve
       user_not_following: This user is not following your twitter account
@@ -5938,7 +5938,8 @@ en:
         conversation: Conversation
         timesheet: Time Sheet
         reply_form:
-          title: Reply to
+          title: "From"
+          to: "To:"
           cc: Cc
           addcc: Add Cc
           removecc: Remove Cc
@@ -5947,6 +5948,7 @@ en:
           removebcc: Remove Bcc
           not_sent: Reply was not sent!
         forward_form:
+          title: "From:"
           cc: Cc
           addcc: Add Cc
           removecc: Remove Cc
@@ -7710,6 +7712,7 @@ en:
   ticket_cc_email_more: "more"
   dropped_due_to_moderation: Dropped due to moderation
   fwd_to: "Forward"
+  fwd_as: " <b>Forward as</b> "
   add_cc: Add Cc
   add_a_cc: Add a CC
   reply_to_fwd: Reply
@@ -9849,4 +9852,13 @@ en:
   add_new_company: "Add Company"
   more_companies: "%{count} more"
   n_companies: "%{count} companies"
+  multifile_attachments:
+    label: "Attach files"
+    sending: "Sending..."
+    in_progress: "File attachment in progress. Do you want to leave this page?"
+    permanent_delete: "You're about to permanently delete this attachment. Continue?"
+    sending_failed: "Unable to send your last response."
+    try_again: "Go to Ticket and try again"
+    actions_alert: "File attachment in progress. Do you want to leave this page?"
+    reminder: "You have unsaved content in this page. Do you want to leave this page?"
 
