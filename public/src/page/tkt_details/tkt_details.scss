@@ -3685,6 +3685,7 @@ li {
         padding: 2px 9px 8px 9px;
         margin-top: 20px;
         color: #333;
+        width:20px;
         &:before {
             content: "...";
             @include text-align(center);

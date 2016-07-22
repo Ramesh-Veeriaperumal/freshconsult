@@ -254,7 +254,7 @@ Helpdesk = Helpdesk || {};
                     }
                     var data = {
                         targetId: "#attachment-modal",
-                        title: _this.message.in_progress,
+                        title: _this.message.progress_modal_header,
                         width: "400",
                         submitLabel: "Ok",
                         showClose: "true",

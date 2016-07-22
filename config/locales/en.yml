@@ -9855,6 +9855,7 @@ en:
   multifile_attachments:
     label: "Attach files"
     sending: "Sending..."
+    progress_modal_header: "Files attachment in progress..."
     in_progress: "File attachment in progress. Do you want to leave this page?"
     permanent_delete: "You're about to permanently delete this attachment. Continue?"
     sending_failed: "Unable to send your last response."
