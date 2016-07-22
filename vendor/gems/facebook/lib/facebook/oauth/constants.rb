@@ -17,7 +17,9 @@ module Facebook
         "email"
       ]
 
-      FB_AUTH_DIALOG_URL   = "https://www.facebook.com/dialog/oauth"
+      FB_API_VERSION       = "v2.6"      
+      
+      FB_AUTH_DIALOG_URL   = "https://www.facebook.com/#{FB_API_VERSION}/dialog/oauth"
       
       PAGE_TAB_URL         = "https://www.facebook.com/dialog/pagetab"
 
