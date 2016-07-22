@@ -4,7 +4,6 @@ class Sanitize
       :elements => HTML_RELAXED[:elements] + ['iframe', 'object', 'param', 'embed', 'canvas', 'video', 'track'],
       :attributes => {
         :all => HTML_RELAXED[:attributes][:all] + ['name'],
-        'a' => HTML_RELAXED[:attributes]['a'] + ['download'],
         'iframe' => ['src', 'width', 'height', 'frameborder', 'allowfullscreen', 'align'],
         'audio' => HTML_RELAXED[:attributes]['audio'] + ['src', 'crossorigin', 'preload', 'autoplay', 'mediagroup', 'loop', 'muted'],
         'source' => HTML_RELAXED[:attributes]['source'] + ['media'],
@@ -25,7 +24,7 @@ class Sanitize
         'th' => HTML_RELAXED[:attributes]['th'] + ['bgcolor'],
         'tr' => ['bgcolor'],
         'tbody' => ['bgcolor']
-      }.merge(HTML_RELAXED[:attributes].except('object','param','embed','video','audio','source','track','font', 'td', 'a', :all)),
+      }.merge(HTML_RELAXED[:attributes].except('object','param','embed','video','audio','source','track','font', 'td', :all)),
 
       :protocols => {
         'img' => { 'src' => HTML_RELAXED[:protocols]['img']['src'] + ['data', 'cid'] },
