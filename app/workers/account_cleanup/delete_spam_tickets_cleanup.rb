@@ -142,9 +142,10 @@ module AccountCleanup
     end
 
     def manual_publish_subscribers(account_id, klass, object_ids)
+      key = Account.current.features?(:countv2_writes) ? "RMQ_CLEANUP_TICKET_KEY" : "RMQ_GENERIC_TICKET_KEY"
       Account.current.tickets.where(id:object_ids).find_in_batches(:batch_size => 300) do |tickets|
         tickets.each do |t|
-          t.manual_publish_to_rmq("destroy", RabbitMq::Constants.const_get("RMQ_CLEANUP_TICKET_KEY"), {:manual_publish => true})
+          t.manual_publish_to_rmq("destroy", RabbitMq::Constants.const_get(key), {:manual_publish => true})
         end
       end
     end
