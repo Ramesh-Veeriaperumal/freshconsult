@@ -303,7 +303,7 @@
 				}
 
 				.ticket_overlay_group {
-					float: right;
+					@include float(right)
 					color: #cec295;
 					font-size: 10px;
 				}
