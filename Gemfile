@@ -6,9 +6,9 @@ gem "rake", "~> 10.4.0"
 gem "rails","3.2.22.2"
 
 gem 'rack-cors', '~> 0.3.1'
-gem "syck", :platform => [:mri_20, :mri_21]
+gem "syck",'1.0.5'
 
-gem "json", "~> 1.8"
+gem "json", "1.8.3"
 gem 'jbuilder', "2.2.13"
 gem 'strong_parameters', "0.2.3" # Used for API params validation
 
@@ -17,7 +17,7 @@ gem "mysql2", "~> 0.3.0"
 gem "rate-limiting", :git =>"git://github.com/freshdesk/rate-limiting.git"
 gem 'fd_rate_limiter', :git => 'git@github.com:freshdesk/fd_rate_limiter.git', :branch => 'dynamic_rules'
 gem "white_list", :git =>"git://github.com/neubloc/white_list.git"
-gem "will_paginate", "~> 3.0"
+gem "will_paginate", "3.0.6"
 gem "country_select", :git => "git://github.com/stefanpenner/country_select", :tag => 'v1.1.2'
 gem "activemerchant", :git => "git://github.com/Shopify/active_merchant", :tag => 'v1.43.1'
 # Please do not update acts_as_list unless this issue is resolved https://github.com/swanandp/acts_as_list/issues/137
@@ -26,13 +26,14 @@ gem "prototype-rails", '~> 3.2.0'
 gem "dynamic_form"
 gem "prototype_legacy_helper", '0.0.0', :git => "git://github.com/rails/prototype_legacy_helper.git"
 gem 'rack-ssl', :require => 'rack/ssl', :git => 'git://github.com/freshdesk/rack-ssl',:branch => 'ssl'
+gem "rack-cache", "~> 1.2"
 gem "statsd-ruby", :git => 'git://github.com/sumakumardey/statsd-ruby', :branch =>'custom_stats', :require => 'statsd'
 
 gem 'sneaky-save', :git => 'git://github.com/partyearth/sneaky-save.git'
 gem 'fresh_request', :git => 'git@github.com:freshdesk/fresh_request.git', :branch => 'v10'
 
 #for ruby ~> 2.1.0 upgrade
-gem 'iconv', '~> 1.0.2', :platform => [:mri_20, :mri_21]
+gem 'iconv', '~> 1.0.4'
 gem 'thrift', '~> 0.9.2.0'
 
 group :development, :test do
@@ -66,21 +67,25 @@ gem 'rails_autolink', '1.1.6'
 
 gem "omniauth-oauth2", "1.0"
 gem "omniauth-openid"
+# TODO-RAILS3 need check are we still using this
+gem "omniauth-google", "1.0.2"
+gem "omniauth-google-oauth2", "0.1.13"
+gem "omniauth-facebook", "1.2.0"
+gem "omniauth-quickbooks", "0.0.2"
+gem "omniauth-salesforce", :git => "git://github.com/sathishfreshdesk/omniauth-salesforce.git", :branch => "master"
+gem "omniauth-mailchimp", "1.0.3"
+gem "omniauth-constantcontact2", "1.0.4"
 
-gem "omniauth-facebook"
-gem "omniauth-quickbooks"
-gem "omniauth-mailchimp", "~> 1.0.3"
-gem "omniauth-constantcontact2", "~> 1.0.4"
 gem "dynamics_crm", :git => 'git@github.com:TinderBox/dynamics_crm.git', :branch => "master"
-gem "nori", "1.1.4"
 gem "google-api-client", "~> 0.7.0"
 gem "ipaddress", "0.8.0"
 
+gem 'sidekiq', "3.4.1"
 # This needs bundler 1.7.2 or 1.10.6 as other version has problem in resolving.
 source "https://a55d1643:d20410bb@gems.contribsys.com/" do 
   gem 'sidekiq-pro' 
 end 
-gem 'shoryuken', '~> 2.0'
+gem 'shoryuken', '2.0.4'
 
 gem "soap4r-ruby1.9", "~> 2.0.5"
 gem "jira4r", "0.3.0"
@@ -121,7 +126,7 @@ gem "insensitive_hash", "0.2.3"
 gem "redis","3.0.7"
 gem "resque","~> 1.24.0"
 gem "resque-status", "0.4.1"
-gem 'resque-scheduler', :require => 'resque_scheduler'
+gem 'resque-scheduler', "2.2.0", :require => 'resque_scheduler'
 
 gem 'marketo', :git => "git://github.com/freshdesk/Marketo.git"
 gem 'rforce'
@@ -180,7 +185,7 @@ gem "bunny", "1.7.0"
 gem "add_pod_support", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/add_pod_support-0.0.1"
 gem "custom_fields", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/custom_fields-0.1"
 
-gem "jwt", "1.0.0" #could not use latest gem version(1.2.0) since twilio-ruby gem is using 1.0.0
+gem "jwt", "1.5.4"
 
 group :production, :test, :staging do
   gem "tire", :git => "git@github.com:freshdesk/retire.git"
@@ -247,11 +252,17 @@ group :test do
   gem "rspec_junit_formatter" # Used by API
   gem "simplecov-rcov" 
   gem "rubocop-checkstyle_formatter" # Used by API
-  gem "minitest-rails", "~> 1.0" # Used by API
-  gem "minitest-reporters" # Used by API
+  gem "minitest-rails", "1.0.1" # Used by API
+  gem "minitest-reporters", "0.14.24" # Used by API
+  gem "minitest", "4.7.5"
   gem 'json_expressions' # Used by API
   gem "timecop" # Used by API
 end
+
+#ruby 2.2.3 expects tesst-unit to be available by default.
+#http://stackoverflow.com/questions/28252036/how-to-run-existing-test-code-on-ruby-2-2
+  gem 'test-unit', '3.1.7'
+  gem 'test-unit-minitest'
 
 # group :development, :assets do
 
