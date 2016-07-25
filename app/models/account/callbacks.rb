@@ -226,6 +226,7 @@ class Account < ActiveRecord::Base
       if full_domain_changed?
         Redis::RoutesRedis.delete_route_info(full_domain_was)
         Redis::RoutesRedis.set_route_info(full_domain, id, full_domain)
+        Subscription::UpdatePartnersSubscription.perform_async({:event_type => :domain_updated })
       end
     end
     
