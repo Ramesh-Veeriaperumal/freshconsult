@@ -82,29 +82,13 @@ HTML
     def construct_company_field
       output = []
       count = @user_companies.length
-      @user_companies.each_with_index do |user_company, index|
-        company = user_company.company
-        output << %(<li class="uc_list uc_list_edit row-fluid" data-client-manager="#{user_company.client_manager}" data-default-company="#{user_company.default}">)
-        output << "<div class='span10'>"
-        class_name = "remove_pad company_delete uc_actions ficon-minus fsize-12 #{"disabled" if @company_field_req && user_company.default }"
-        output << content_tag(:a, "", :class => class_name)
-        output << "<p class='uc_text' data-id='#{company.id}'>#{html_escape company.name}</p>"
-        output << "</div>"
-        if user_company.default == true
-          title = t('contacts.default_company')
-          class_name = "ficon-checkmark-round primary"
-        else
-          title = t('contacts.mark_default_company')
-          class_name = "make_company_default"
+      if @user_companies.present?
+        @user_companies.each_with_index do |user_company, index|
+          output << construct_user_company(user_company.default, user_company.client_manager, user_company.company)
         end
-        output << "<div class='span2 text-left'><i class='fsize-18 tooltip client_manager 
-                        #{user_company.client_manager == true ? "unmanage ficon-ticket" : "manage ficon-ticket-thin"}' 
-                      title='#{t('contacts.client_manager')}'></i>"
-        output << content_tag(:span, "", 
-                      :class => "default_company tooltip fsize-20 ml9 #{class_name}",
-                      :title => title)
-        output << "</div></li>"
-      end if @user_companies.present?
+      else
+        output << construct_user_company(true, false)
+      end
       check_box_html = @form_builder.check_box(:contractor, 
                                               { :class => "activate", 
                                                 :checked => @contractor}, true, false).html_safe
@@ -124,6 +108,35 @@ HTML
         </div>
 HTML
       ret.html_safe
+    end
+
+    def construct_user_company(uc_default, uc_client_manager, company=nil)
+      output = []
+      output << %(<li class="uc_list uc_list_edit row-fluid" data-client-manager="#{uc_client_manager}" data-default-company="#{uc_default}" data-new-company='true'>)
+      output << "<div class='span10'>"
+      class_name = "remove_pad company_delete uc_actions ficon-minus fsize-12 #{"disabled" if @company_field_req && uc_default }"
+      output << content_tag(:a, "", :class => class_name)
+      if company.present?
+        output << "<p class='uc_text' data-id='#{company.id}'>#{html_escape company.name}</p>"
+      else
+        output << "<input type='text' name='company_name' class='#{"required" if @company_field_req && uc_default } text contact_text new_company user_company ui-autocomplete-input' id='user_company_name_1'>"
+      end
+      output << "</div>"
+      if uc_default == true
+        title = t('contacts.default_company')
+        class_name = "ficon-checkmark-round primary"
+      else
+        title = t('contacts.mark_default_company')
+        class_name = "make_company_default"
+      end
+      output << "<div class='span2 text-left'><i class='fsize-18 tooltip client_manager 
+                      #{uc_client_manager == true ? "unmanage ficon-ticket" : "manage ficon-ticket-thin"}' 
+                    title='#{t('contacts.client_manager')}'></i>"
+      output << content_tag(:span, "", 
+                    :class => "default_company tooltip fsize-20 ml9 #{class_name}",
+                    :title => title)
+      output << "</div></li>"
+      output
     end
   end
 end
