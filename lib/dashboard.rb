@@ -37,6 +37,7 @@ class Dashboard
     [:gamification, "gamification",                         2,1],
     [:csat,         "csat",                                 2,1],
     [:moderation,   "forum_moderation",                     2,1],
+    [:freshfone,    "phone",                                2,1],
     [:chat,         "chat",                                 2,1]
   ]
 
