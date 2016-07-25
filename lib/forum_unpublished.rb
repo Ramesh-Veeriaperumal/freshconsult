@@ -34,7 +34,7 @@ class ForumUnpublished < Dynamo
 	end
 
 	def self.next_user_timestamp(user)
-		(user + 1) * 10.power!(17) + Time.now.utc.to_f * 10.power!(7)
+		(user + 1) * (10 ** 17) + Time.now.utc.to_f * (10 ** 7)
 	end
 
 
