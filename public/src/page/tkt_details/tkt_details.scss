@@ -706,16 +706,15 @@ li {
        @extend .ficon-cross;
        color: red !important;
     }
-    .file-upload .ficon-cross  {
-       left: -8px;
-    }
     .progress-bar.active,
     .progress.active .progress-bar {
-        animation: 1s linear 0s normal none infinite running progress-bar-stripes;
+        animation: progress-bar-stripes 1s linear infinite;
+         -webkit-animation: progress-bar-stripes 1s linear infinite
     }
     .progress-bar-striped,
     .progress-striped .progress-bar {
         background-image: linear-gradient(45deg, rgba(153, 153, 153, 0.15) 25%, transparent 25%, transparent 50%, rgba(153, 153, 153, 0.15) 50%, rgba(153, 153, 153, 0.15) 75%, transparent 75%, transparent);
+        background-image: -webkit-linear-gradient(45deg, rgba(153, 153, 153, 0.15) 25%, transparent 25%, transparent 50%, rgba(153, 153, 153, 0.15) 50%, rgba(153, 153, 153, 0.15) 75%, transparent 75%, transparent);
         background-size: 30px 30px;
     }
     .progress-bar {
@@ -732,6 +731,14 @@ li {
         border-radius: 3px;
     }
     @keyframes progress-bar-stripes {
+        0% {
+            background-position: 30px 0;
+        }
+        100% {
+            background-position: 0 0;
+        }
+    }
+     @-webkit-keyframes progress-bar-stripes {
         0% {
             background-position: 30px 0;
         }
@@ -999,6 +1006,9 @@ li {
     border-radius: 0 0px 5px 5px;
     background-color: #fdfdfd;
     border-bottom: none;
+    .add_attachment {
+        top: 8px;
+    }
 }
 
 .compose-new-ticket .single_file .attach-wrapper {
@@ -1008,6 +1018,10 @@ li {
     border-radius: 0px 0px 5px 5px;
     padding: 10px 0;
     width: 99.7%;
+    border-top:1px solid #F3F3F3;
+    .add_attachment {
+        top: 8px;
+    }
 }
 
 
@@ -3853,7 +3867,6 @@ li {
             display: inline-block;
             width: 100%;
         }
-
     }
     .publicAttachmentPanel {
         @extend .attachmentPanel;
