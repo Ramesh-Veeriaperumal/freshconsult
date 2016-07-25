@@ -17,6 +17,7 @@ window.App.Contacts.Contact_form = window.App.Contacts.Contact_form || {};
       this.onVisit(data);
     },
     onVisit: function (data) {
+      this.appendemptycompanyField();
       this.bindGroupValidation();
       this.bindAutocomplete();
       this.bindCompanySelect2();
@@ -101,8 +102,6 @@ window.App.Contacts.Contact_form = window.App.Contacts.Contact_form || {};
       this.bindDefaultCompanyClick();
       this.bindDeleteCompanyClick();
       this.bindRenameCompanyClick();
-      this.bindRemoveCompanyClick();
-      this.bindCompanySubmitClick();
     },
 
     bindContactSubmitClick: function () {
@@ -276,25 +275,7 @@ window.App.Contacts.Contact_form = window.App.Contacts.Contact_form || {};
     addNewCompany: function () {
       var self = this;
       $('body').on('click.contact_form', '#add_new_company', function(ev){
-        if(!$(this).hasClass('disabled')) {
-          var count = $("#user_companies li").not("[data-company-destroyed='true']").length+1;
-          if(count==1) {
-            var className = "ficon-checkmark-round primary";
-            var company_title = self.default_company;
-            var default_comp = true;
-          } else {
-            var className = "make_company_default";
-            var company_title = self.mark_default_company;
-            var default_comp = false;
-          }
-          var client_manager = self.client_manager;
-          $(JST["app/contacts/add_company"]({"count" : count, 
-                                             "class_name" : className,
-                                             "client_manager" : client_manager, 
-                                             "company_title" : company_title,
-                                             "default_comp" : default_comp})).appendTo('ul.companies');
-          $('#user_companies').find('input[type="text"]').last().focus();
-        }
+        self.addCompanyTemplate();
         self.manageNewCompany();
       });
     },
@@ -303,7 +284,7 @@ window.App.Contacts.Contact_form = window.App.Contacts.Contact_form || {};
       var self = this;
       $('body').on('click.contact_form', ".client_manager", function(){
         $(this).toggleClass("manage unmanage ficon-ticket-thin ficon-ticket");
-        var parent = $(this).parent();
+        var parent = $(this).parents('.uc_list');
         self.toggleEditAttr(parent, "data-cmanager-edited");
         parent.attr("data-client-manager", !eval(parent.attr("data-client-manager")));
       });
@@ -322,8 +303,16 @@ window.App.Contacts.Contact_form = window.App.Contacts.Contact_form || {};
                .removeClass("make_company_default")
                .twipsy('hide')
                .attr("title", self.default_company);
-        self.toggleEditAttr($(this).parent(), "data-company-edited");
-        $(this).parent().attr("data-default-company", true);
+        self.toggleEditAttr($(this).parents('.uc_list'), "data-company-edited");
+        $(this).parents('.uc_list').attr("data-default-company", true);
+
+        if (self.is_company_required) {
+          $('.uc_list').find('.user_company').removeClass('required');
+          $('.uc_list').find('.remove_pad').removeClass('disabled');
+          var parent = $(this).parents('.uc_list');
+          parent.find('.user_company').addClass('required');
+          parent.find('.remove_pad').addClass('disabled');
+        }
       });
     },
 
@@ -336,9 +325,23 @@ window.App.Contacts.Contact_form = window.App.Contacts.Contact_form || {};
     bindDeleteCompanyClick: function () {
       var self = this;
       $('body').on('click.contact_form', '.company_remove', function(){
-        $(this).parent().remove();
+        $(this).parents('.uc_list').remove();
         self.manageNewCompany();
       });
+
+      $('body').on('click.contact_form', '.company_delete', function() {
+        $(this).parents('.uc_list').attr('data-company-destroyed', true)
+                                      .addClass('hide');
+        if(eval($(this).parents('.uc_list').attr("data-default-company")) || false){
+          var obj = $("#user_companies li").not("[data-company-destroyed='true']").first();
+          obj.attr("data-default-company", true)
+             .attr("data-company-edited", true);
+          obj.find(".default_company")
+             .addClass("ficon-checkmark-round primary")
+             .removeClass("make_company_default")
+             .attr("title", self.default_company);
+        }
+      })
     },
 
     bindRenameCompanyClick: function () {
@@ -350,59 +353,42 @@ window.App.Contacts.Contact_form = window.App.Contacts.Contact_form || {};
       });
     },
 
-    bindRemoveCompanyClick: function () {
-      var self = this;
-      $('body').on('shown.contact_form', '#company-delete-confirmation', function(e){
-        if($("#user_companies").parent().siblings().find(".required_star").length == 1){
-          var element = $("#user_companies li").not("[data-company-destroyed='true']").not("[data-new-company='true']");
-          if(element.length > 1){
-            $(".rename_company").first().attr("disabled", false);
-            $("#rename_text").addClass("disabled rename_fade");
-          }else if(element.length==1){
-            $(".rename_company").first().attr("disabled", "disabled");
-            $("#rename_text").removeClass("disabled rename_fade");
-            $("#rename_label").attr('checked', true);
-            $("#rename_text").focus();
-          };
-        } else {
-          $("#rename_text").addClass("disabled rename_fade");
-        }
-        var modal = $(this).data('modal');
-        self.triggerElement = $(modal.options.source.siblings('p'));
-        $("#target_company").text(self.triggerElement.text());
-      });
-    },
-
-    bindCompanySubmitClick: function () {
-      var self = this;
-      $('body').on('click.contact_form', "#company-delete-confirmation-submit", function() {
-        if ($("#rename_label").attr('checked') == "checked"){
-          var new_company_name = $("#rename_text").val().trim();
-          if(new_company_name !== ""){
-            self.triggerElement.text(new_company_name);
-            self.triggerElement.parent().attr("data-company-name-edited", true);
-            $('#company-delete-confirmation').modal('hide');
-          }
-        } else {
-          self.triggerElement.parent().attr('data-company-destroyed', true)
-                                      .addClass('hide');
-          if(eval(self.triggerElement.parent().attr("data-default-company")) || false){
-            var obj = $("#user_companies li").not("[data-company-destroyed='true']").first();
-            obj.attr("data-default-company", true)
-               .attr("data-company-edited", true);
-            obj.find(".default_company")
-               .addClass("ficon-checkmark-round primary")
-               .removeClass("make_company_default")
-               .attr("title", self.default_company);
-          }
-          $('#company-delete-confirmation').modal('hide');
-        }
-      });
-    },
-
     manageNewCompany: function () {
       var length = $("#user_companies li").not("[data-company-destroyed='true']").length;
       $('.uc_add_company').toggle(length < 20);
+    },
+
+    appendemptycompanyField: function () {
+      if (!$(".uc_list_edit").get(0)) {
+        this.addCompanyTemplate();
+      }
+    },
+
+    addCompanyTemplate: function () {
+      if(!$(this).hasClass('disabled')) {
+          var count = $("#user_companies li").not("[data-company-destroyed='true']").length+1;
+          if(count==1) {
+            var className = "ficon-checkmark-round primary";
+            var company_title = this.default_company;
+            var default_comp = true;
+          } else {
+            var className = "make_company_default";
+            var company_title = this.mark_default_company;
+            var default_comp = false;
+          }
+          var client_manager = this.client_manager;
+
+          var required = (this.is_company_required && ($('.companies').children().length < 1))
+          $(JST["app/contacts/add_company"]({"count" : count, 
+                                             "class_name" : className,
+                                             "required" : (required) ? 'required' : '',
+                                             "disabled" : (required) ? 'disabled' : '',
+                                             "client_manager" : client_manager, 
+                                             "company_title" : company_title,
+                                             "default_comp" : default_comp})).appendTo('ul.companies');
+          $('#user_companies').find('input[type="text"]').last().focus();
+        }
     }
+
   };
 }(window.jQuery));
