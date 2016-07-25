@@ -1,11 +1,11 @@
 <script id="file-list-template" type="text/x-jquery-tmpl">	
   <div class="item">
   	<span class="{{if (!file_valid) }} alert-invalid{ {{/if}}">
-  		${name} {{if (size != '0' && size != '0.00 KB ') }} (${size}) {{/if}} - 
+  		${name} {{if (size != '0' && size != '0.00 KB ') }} (${size}) {{/if}}
   	</span>
   	<span> 
   		{{if (file_valid) }}
-  			<a href="javascript:void(0)" onclick="Helpdesk.Multifile.remove(this); return false;" inputId="${inputId}" class="attachment-close"></a>
+  			<sup><b>--</b></sup> <a href="javascript:void(0)" onclick="Helpdesk.Multifile.remove(this); return false;" inputId="${inputId}" class="attachment-close"></a>
   		{{else}}
       <div>
   			<span class="alert-invalid-attach-text">

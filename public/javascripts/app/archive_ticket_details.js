@@ -28,6 +28,7 @@ window.App = window.App || {};
       this.getAdjacentTickets();
       this.quoteText();
       this.toggleQuotedText();
+      this.updateLocalRecentTickets();
     },
     paginationScroll : function(){
       var element = $("[data-activity-id ='"+TICKET_DETAILS_DATA['last_activity_batch']+"']")[0];
@@ -228,7 +229,13 @@ window.App = window.App || {};
         $(item).removeClass("request_archive_mail");
         $(item).attr("data-quoted", true);
       }
+    },
+
+    updateLocalRecentTickets: function(){
+      //RECENT TICKETS SETUP
+      NavSearchUtils.saveToLocalRecentTickets(TICKET_DETAILS_DATA);
     }
+
 
   }
 }(window.jQuery));

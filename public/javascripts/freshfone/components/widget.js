@@ -212,7 +212,9 @@ var FreshfoneWidget;
 		},
 		showOutgoing: function () {
 			this.hideAllWidgets();
-			this.outgoingCallWidget.show();
+			if(!$.isEmptyObject(freshfone.numbersHash)){
+				this.outgoingCallWidget.show();				
+			}
 		},
 		disableFreshfoneWidget: function () {
 			if (freshfonewidget.ongoingCallWidget.is(':visible')){

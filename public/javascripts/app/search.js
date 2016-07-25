@@ -21,6 +21,8 @@
 			this.searchedTicketIds = []
 			this.container = jQuery('#search-page-results')
 			this.bindEvents()
+			NavSearchUtils.saveToLocalRecentSearches(jQuery('.search-input').val().trim());
+
 		},
 		namespace: function(){
 			return '.search_results';
@@ -37,6 +39,7 @@
 		},
 		pjaxifyUrl: function(ev){
 			ev.preventDefault();
+    		NavSearchUtils.saveToLocalRecentSearches(jQuery('.search-input').val());			
 			var searchKey = encodeURIComponent(jQuery('.search-input').val());
 			var url = jQuery('.search-form').attr('action')+'?term='+searchKey;
 			pjaxify(url);

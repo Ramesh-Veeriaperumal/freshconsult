@@ -27,6 +27,12 @@ class RabbitmqWorker
       puts " SQS Message id - #{sqs_msg_obj.message_id} :: ROUTING KEY -- #{rounting_key} :: Exchange - #{exchange_key}"
     end
 
+    # Publish to ES Count
+    if count_routing_key?(exchange_key, rounting_key)
+      sqs_msg_obj = (Ryuken::CountPerformer.perform_async(message) rescue nil)
+      puts "CountES SQS Message id - #{sqs_msg_obj.try(:message_id)} :: ROUTING KEY -- #{rounting_key} :: Exchange - #{exchange_key}"
+    end
+
     # Publish to Activities-v2
     #
     if activities_routing_key?(exchange_key, rounting_key)
@@ -34,11 +40,6 @@ class RabbitmqWorker
       puts " SQS Activities Message id - #{sqs_msg_obj.message_id} :: ROUTING KEY -- #{rounting_key} :: Exchange - #{exchange_key}"
     end
 
-    # Publish to ES Count
-    if count_routing_key?(exchange_key, rounting_key)
-      sqs_msg_obj = (Ryuken::CountPerformer.perform_async(message) rescue nil)
-      puts "CountES SQS Message id - #{sqs_msg_obj.try(:message_id)} :: ROUTING KEY -- #{rounting_key} :: Exchange - #{exchange_key}"
-    end
     # Handling only the network related failures
   rescue Bunny::ConnectionClosedError, Bunny::NetworkErrorWrapper, NoMethodError => e
     NewRelic::Agent.notice_error(e, {
@@ -115,7 +116,7 @@ class RabbitmqWorker
   end
 
   def count_routing_key?(exchange, key)
-    (exchange.starts_with?("tickets") && key[6] == "1") || (exchange.starts_with?("tag_uses") && key[2] == "1" )
+    (exchange.starts_with?("tickets") && key[6] == "1")
   end
 
 end

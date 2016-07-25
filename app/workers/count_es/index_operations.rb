@@ -27,7 +27,7 @@ class CountES::IndexOperations
   class DisableCountES < CountES::IndexOperations
     def perform(args)
       args.symbolize_keys!
-      Search::Dashboard::Count.new({},args[:account_id]).remove_alias
+      Search::Dashboard::Count.new({},args[:account_id], {:shard_name => args[:shard_name]}).remove_alias
     end
   end
 

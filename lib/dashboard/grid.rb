@@ -5,12 +5,11 @@ class Dashboard::Grid
     @widgets = []
   end
 
-  def process_widgets(dashboard_widget, privilege, dashboard_type)    
+  def process_widgets(dashboard_widget,column_count)    
+    @max_columns = column_count
     dashboard_widget.each_with_index.map do |widget, i|
-      if (privilege[widget[0]])
-        _widget = Dashboard::Widget.new(widget[0], widget[1], widget[2])
-        @widgets.push calculate_position(_widget)
-      end 
+      _widget = Dashboard::Widget.new(widget[1], widget[2], widget[3])
+      @widgets.push calculate_position(_widget)
     end
     @widgets
   end

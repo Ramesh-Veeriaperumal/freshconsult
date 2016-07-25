@@ -16,8 +16,12 @@
 				<%= ff.text_area :body_html, :class => "required", :value => @item.body_html, :id =>"#{@item.id}-body" %>
 			<% end %>
 		</li>
-		<li class="inline-field field attachment-options continous" id="attachment-options-note">
-			<%= render :partial => "/helpdesk/tickets/show/attachment_form", :locals => { :attach_id => "edit-note-#{@item.id}" , :nsc_param => "helpdesk_note" } %>
+		<li class="attachment-options-reply" id="attachment-options-note" data-note-id="<%=@item.id%>" >
+          <% if current_account.launched?(:multifile_attachments) %>
+			<%= render :partial => "/helpdesk/tickets/show/multi_attachment_form", :locals => { :attach_id => "edit-note-#{@item.id}" ,:note=>true, :nsc_param => "helpdesk_note" } %>
+		<% else %>
+		<%= render :partial => "/helpdesk/tickets/show/single_attachment_form", :locals => { :attach_id => "edit-note-#{@item.id}" ,:note=>true, :nsc_param => "helpdesk_note" } %>
+		<% end %>
 		</li>
 		<li class="button-container hide">
 			<%= submit_tag(t("update"), :class => "uiButton special") %>
@@ -25,8 +29,8 @@
 		</li>
 	</ul>
 	<div class="btn-toolbar">
-		<%= button_to_function(t('cancel'), "jQuery('#edit-#{@item.id}').slideUp();jQuery('#note_details_#{@item.id}').show()", :class => "btn" ) %>
-    	<%= submit_tag(t("update"), :class => "btn btn-primary") %>
+		<%= button_to_function(t('cancel'), "jQuery('#edit-#{@item.id}').slideUp();jQuery('#note_details_#{@item.id}').show();", :class => "btn editNoteCancelButton" , :noteId => @item.id)  %>
+    	<%= submit_tag(t("update"), :class => "btn btn-primary editNoteUpdateButton",:noteId => @item.id) %>
     </div>
     <div class="clearfix"></div>
 <% end %>

@@ -81,7 +81,6 @@ var FreshfoneEndCall;
 			self.$endCallNewTicketDetailsForm.show();
 			self.$ticketSubject.focus();
 			self.$requesterName.val(self.number);
-			self.initRequesterValue();
 
 		});
 
@@ -224,8 +223,10 @@ var FreshfoneEndCall;
 		},
 		resetDefaults: function () {
 			if (this.inCall) {
-				this.freshfoneuser.resetStatusAfterCall();
-				if (!this.convertedToTicket) { this.freshfoneuser.updatePresence(); }
+				if(!freshfone.isAcwEnabled){
+					this.freshfoneuser.resetStatusAfterCall();
+					if (!this.convertedToTicket) { this.freshfoneuser.updatePresence(); }
+				}
 
 				this.freshfonewidget.resetToDefaultState();
 				this.freshfonecalls.init();
@@ -281,7 +282,8 @@ var FreshfoneEndCall;
 					'ticket': this.ticketId,
 					'call_log': this.ticket_notes,
 					'CallSid': this.callSid,
-					'call_history': !this.inCall
+					'call_history': !this.inCall,
+					'caller_name': this.callerName,
 				}
 			});
 		},	
@@ -326,6 +328,7 @@ var FreshfoneEndCall;
 			this.number = this.number || this.freshfonecalls.number;
 			this.callerName = this.callerName || this.freshfonecalls.callerName;
 			this.prefillForm();
+			this.initRequesterValue();
 		},
 		prefillForm: function () {
 			this.$requesterName.val(this.number);
@@ -362,9 +365,13 @@ var FreshfoneEndCall;
 				$.ajax({
 					url: freshfone.requester_autocomplete_path,
 					quietMillis: 1000,
-					data: {customer_id: this.callerId},
+					data: {customer_id: this.callerId,
+								 q: this.number},
 				}).done(function(data) {
 					self.$requesterName.select2("data",data.results[0]);
+					self.callerName = data.results[0].value;
+					self.prefillForm(); //calling again so that proper requester is loaded while saving ticket from call
+					                    //history for merged contacts.
 				});
 			}
 		},

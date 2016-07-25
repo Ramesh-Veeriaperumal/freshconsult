@@ -106,7 +106,7 @@ class Discussions::PostsController < ApplicationController
 	end
 
 	def build_attachments
-		attachment_builder(@post, params[:post][:attachments], params[:cloud_file_attachments] )
+		attachment_builder(@post, params[:post][:attachments], params[:cloud_file_attachments], params[:attachments_list] )
 	end
 
 	def invalid_message

@@ -10,6 +10,7 @@ jQuery('body').on('assetLoaded.fjax', function() {
     default_company : "<%= t('contacts.default_company') %>",
     mark_default_company : "<%= t('contacts.mark_default_company') %>",
     client_manager : "<%= t('contacts.client_manager') %>",
+    is_company_required: <%= company_field_required %>,
     selected_companies : <%= @selected_companies.present? ? @selected_companies.map(&:name).to_json.html_safe : '[]'.html_safe %>
   });
 });
@@ -45,28 +46,6 @@ jQuery('body').on('assetLoaded.fjax', function() {
     <input type="hidden" id="removed_companies" name="user[removed_companies]"/>
     <input type="hidden" id="edited_companies" name="user[edited_companies]"/>
   	</ul>	 
-  </div>
-</div>
-
-<div class="hide mb-10" id="company-delete-confirmation">
-  <b>
-    <%= t('contacts.removed_association') %>  
-  </b>
-  <div class="mt15">
-    <span class="bold">
-      <%= t('contacts.remove_company_text', :user_name => @user.name) %>
-    </span>
-    <label class="radio mt10">
-      <input type="radio" name="delete_company" class="rename_company" checked="checked"/>
-      <%= t('contacts.retain_company') %> <span id="target_company"> </span>
-    </label>
-    <label class="radio">
-      <input type="radio" name="delete_company" class="rename_company" id="rename_label"/>
-      <%= t('contacts.rename_company') %>
-    </label>
-    <div class="mt5 ml20">
-      <input type="text" id="rename_text" class="user_company" placeholder="<%= t('contacts.new_company') %>" >
-    </div>
   </div>
 </div>
 

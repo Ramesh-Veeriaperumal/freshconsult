@@ -21,7 +21,7 @@
 <div id="ticket_agents" class="hide">
 	<a class="action_assign"  href=""
 	   data-assign-action="agent"
-	   data-value="<%= current_user.id %>" data-text="<%= current_user.name %>"  tabindex = '99'><%= t('ticket.myself') %></a>
+	   data-value="<%= current_user.id %>" data-text="<%= current_user.name %>"  tabindex = '99'><%= t('ticket.me') %> (<%= current_user.name %>)</a>
 
 	<a class="action_assign"  href="" tabindex = '99'
 	   data-assign-action="agent"

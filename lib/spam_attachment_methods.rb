@@ -2,7 +2,7 @@ module SpamAttachmentMethods
 
 	def backup_attachments post
 		post.attachments.each_with_index.map do |att, i|
-			resource = open(att.attachment_url_for_api(false))
+			resource = open(att.attachment_url_for_api)
 			original_filename = resource.base_uri.path.split('/').last.gsub("%20"," ")
 			filename = "#{i}_#{original_filename}"
 			AwsWrapper::S3Object.store("#{cdn_folder_name}/#{filename}", resource, S3_CONFIG[:bucket], :content_type => Helpdesk::Attachment::BINARY_TYPE)
@@ -30,7 +30,7 @@ module SpamAttachmentMethods
 		folder = attachments['folder']
 		(attachments['file_names'] || []).map do |file_name|
 			s3_object = AwsWrapper::S3Object.find("#{folder}/#{file_name}", S3_CONFIG[:bucket])
-			attachment = open(s3_object.url_for(:read, { :secure => false, :expires => 1.hour }))
+			attachment = open(s3_object.url_for(:read, { :secure => true, :expires => 1.hour }))
 			if attachment
 				def attachment.original_filename; base_uri.path.split('/').last.split('?').first.split('_')[1..-1].join.gsub("%20"," "); end
 			end

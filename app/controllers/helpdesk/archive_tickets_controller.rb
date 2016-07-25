@@ -8,6 +8,7 @@ class Helpdesk::ArchiveTicketsController < ApplicationController
   include Helpdesk::NotePropertiesMethods
   helper AutocompleteHelper
   helper Helpdesk::ArchiveNotesHelper
+  helper Helpdesk::RequesterWidgetHelper
 
   around_filter :run_on_slave
   before_filter :check_feature

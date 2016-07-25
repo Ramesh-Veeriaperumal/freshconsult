@@ -84,4 +84,5 @@ helpdesk:
     - action_mailer_log_subscriber
     - email_controller_log_subscriber
     - thrift
+    - sendgrid_webhook_config
 

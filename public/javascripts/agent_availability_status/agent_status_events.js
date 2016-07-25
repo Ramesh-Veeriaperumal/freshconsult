@@ -105,7 +105,10 @@ window.App = window.App || {};
             App.Freshfoneagents.Node.changeToUnavailableAgent(data.user);
             break;
           case "agent_busy":
-            App.Freshfoneagents.Node.changeToBusyAgent(data.user);
+            App.Freshfoneagents.Node.changeToBusyAgent(data.user,freshfone.call_in_progress);
+            break;
+          case "agent_in_acw_state":
+            App.Freshfoneagents.Node.changeToBusyAgent(data.user,freshfone.call_in_acw);
             break;
           case "toggle_device":
             App.Freshfoneagents.Node.changeAgentDevice(data.user);

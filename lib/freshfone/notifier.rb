@@ -144,6 +144,7 @@ class Freshfone::Notifier
     Rails.logger.info "cancel_other_agents => #{current_call.meta.pinged_agents.to_json}" if current_call.meta.present?
     params.merge!({ :call_id => current_call.id })
     Freshfone::NotificationWorker.perform_async(params, nil, "cancel_other_agents")
+    return unless new_notifications?
     jid = Freshfone::RealtimeNotifier.perform_async(params.merge(enqueued_at: Time.now), current_call.id, nil, "cancel_other_agents") 
     Rails.logger.info "Account ID : #{current_account.id} - Call ID : #{current_call.id} - cancel_other_agents : Sidekiq Job ID #{jid}"
   end

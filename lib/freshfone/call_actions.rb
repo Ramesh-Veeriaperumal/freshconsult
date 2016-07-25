@@ -296,7 +296,8 @@ class Freshfone::CallActions
     end
 
     def search_customer
-      return search_customer_with_id(params[:customer_id]) if params[:customer_id].present?
+      customer = search_customer_with_id(params[:customer_id]) if params[:customer_id].present?
+      return customer if customer.present?
       search_customer_with_number(called_number)
     end
 end

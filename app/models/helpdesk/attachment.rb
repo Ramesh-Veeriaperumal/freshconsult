@@ -40,6 +40,7 @@ class Helpdesk::Attachment < ActiveRecord::Base
     :url => "/:s3_alias_url",
     :s3_host_alias => S3_CONFIG[:bucket_name],
     :s3_host_name => S3_CONFIG[:s3_host_name],
+    :s3_server_side_encryption => 'AES256',
     :whiny => false,
     :restricted_characters => /[&$+,\/:;=?@<>\[\]\{\}\|\\\^~%#]/,
     :styles => Proc.new  { |attachment| attachment.instance.attachment_sizes }
@@ -160,7 +161,7 @@ class Helpdesk::Attachment < ActiveRecord::Base
   end
 
   def attachment_url_for_api(secure=true)
-    AwsWrapper::S3Object.url_for(content.path, content.bucket_name, { :expires => 1.days, :secure => secure })
+    AwsWrapper::S3Object.url_for(content.path, content.bucket_name, { :expires => 1.days, :secure => true })
   end
 
   def as_json(options = {})
@@ -205,6 +206,17 @@ class Helpdesk::Attachment < ActiveRecord::Base
       NewRelic::Agent.notice_error(e,{:description => "Error occoured in Validating Images."})
       false
     end
+  end
+
+  def to_jq_upload
+    {
+      "id"          => self.id,
+      "name"        => content_file_name,
+      "size"        => content_file_size,
+      "url"         => Rails.application.routes.url_helpers.helpdesk_attachment_path(self),
+      "delete_url"  => Rails.application.routes.url_helpers.delete_attachment_helpdesk_attachment_path(self),
+      "delete_type" => "DELETE" 
+    }
   end
 
   private

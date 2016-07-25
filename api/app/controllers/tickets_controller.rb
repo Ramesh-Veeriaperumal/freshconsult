@@ -367,7 +367,7 @@ class TicketsController < ApiApplicationController
       }
       neg_conditions = [Helpdesk::Filters::CustomTicketFilter.deleted_condition(true), Helpdesk::Filters::CustomTicketFilter.spam_condition(true)]
       conditions = params[:search_conditions].collect { |s_c| { 'condition' => s_c.first, 'operator' => 'is_in', 'value' => s_c.last.join(',') } }
-      Search::Filters::Docs.new(conditions, neg_conditions).records('Helpdesk::Ticket', es_options)
+      Search::Tickets::Docs.new(conditions, neg_conditions).records('Helpdesk::Ticket', es_options)
     end
 
     # Since wrap params arguments are dynamic & needed for checking if the resource allows multipart, placing this at last.
