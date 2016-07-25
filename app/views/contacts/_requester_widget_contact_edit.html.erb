@@ -16,20 +16,23 @@
           </ul>
         <%end%>
       </div>
-      <div id="company_section">
-        <ul class="field-set group">
-          <li class="icon-wrapper"><span class="ficon-company"></span></li>
-          <li class="section-title">
-            <div class="title-text"><%= t('user.company') %></div>
-            <div class="separator"></div>
-          </li>
-        </ul>
-        <% requester_widget_company_fields.each do |field| %>
-          <ul class="field-set">
-            <%= construct_requester_widget_field f, user, field %>
+      <% unless user.company.blank? %>
+        <div id="company_section">
+          <ul class="field-set group">
+            <li class="icon-wrapper"><span class="ficon-company"></span></li>
+            <li class="section-title">
+              <div class="title-text"><%= t('user.company') %></div>
+              <div class="separator"></div>
+            </li>
           </ul>
-        <%end%>
-      </div>
+          
+          <% requester_widget_company_fields.each do |field| %>
+            <ul class="field-set">
+              <%= construct_requester_widget_field f, user, field %>
+            </ul>
+          <% end %>
+        </div>
+      <% end %>
     </div>
     <%end%>
 </div>

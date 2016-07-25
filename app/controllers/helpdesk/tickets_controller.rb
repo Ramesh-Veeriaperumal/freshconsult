@@ -431,39 +431,63 @@ class Helpdesk::TicketsController < ApplicationController
     @company_name_required_error = false
 
     requester = current_account.users.find_by_id(params["requester_widget"]["contact_id"])
+
     if requester.present? && requester.customer?
       requester.validatable_custom_fields = { :fields => current_account.contact_form.custom_contact_fields,
                                           :error_label => :label }
-      params[:contact][:customer_id] = ""
-
-      if company_details_present?
-        if params["company"]["name"].present?
-          @company = current_account.companies.find_by_name(params["company"]["name"])
-          if @company
-            @company.assign_attributes(params["company"])
-          else
-            @company = current_account.companies.new(params["company"])
-          end
-          @company.validatable_custom_fields = { :fields => current_account.company_form.custom_company_fields,
-                                                 :error_label => :label }
-          check_domain_exists unless @company.save
-          flash[:notice] = activerecord_error_list(@company.errors) unless @existing_company.present?
-          params[:contact][:customer_id] = @company.id
-        else
-          @company_name_required_error = true
-        end
+      if params["company"].present? && requester.company.present?
+        @company = current_account.companies.find(requester.company_id)
+        @company.validatable_custom_fields = { :fields => current_account.company_form.custom_company_fields, 
+                                               :error_label => :label }
+        check_domain_exists unless @company.update_attributes(params["company"])
+        flash[:notice] = activerecord_error_list(@company.errors) unless @existing_company.present?
       end
-      if (@company.blank? || @company.errors.blank?) && !@company_name_required_error
-        if requester.update_attributes(params["contact"])
-          flash[:notice] = t(:'flash.general.update.success', :human_name => t('requester_widget_human_name'))
-        else
-          check_company_association_exists(requester.errors)
-          flash[:notice] = activerecord_error_list(requester.errors) unless @company_association_exists
-        end
+
+      if (@company.blank? || @company.errors.blank?)
+        flash[:notice] = requester.update_attributes(params["contact"]) ? 
+          t(:'flash.general.update.success', :human_name => t('requester_widget_human_name')) :
+          activerecord_error_list(requester.errors)
       else
         @requester_errors = true
       end
+
     end
+
+    # if company name editing is allowed, enable the following block and remove the block above
+
+    # if requester.present? && requester.customer?
+    #   requester.validatable_custom_fields = { :fields => current_account.contact_form.custom_contact_fields,
+    #                                       :error_label => :label }
+    #   params[:contact][:customer_id] = ""
+
+    #   if company_details_present?
+    #     if params["company"]["name"].present?
+    #       @company = current_account.companies.find_by_name(params["company"]["name"])
+    #       if @company
+    #         @company.assign_attributes(params["company"])
+    #       else
+    #         @company = current_account.companies.new(params["company"])
+    #       end
+    #       @company.validatable_custom_fields = { :fields => current_account.company_form.custom_company_fields,
+    #                                              :error_label => :label }
+    #       check_domain_exists unless @company.save
+    #       flash[:notice] = activerecord_error_list(@company.errors) unless @existing_company.present?
+    #       params[:contact][:customer_id] = @company.id
+    #     else
+    #       @company_name_required_error = true
+    #     end
+    #   end
+    #   if (@company.blank? || @company.errors.blank?) && !@company_name_required_error
+    #     if requester.update_attributes(params["contact"])
+    #       flash[:notice] = t(:'flash.general.update.success', :human_name => t('requester_widget_human_name'))
+    #     else
+    #       check_company_association_exists(requester.errors)
+    #       flash[:notice] = activerecord_error_list(requester.errors) unless @company_association_exists
+    #     end
+    #   else
+    #     @requester_errors = true
+    #   end
+    # end
   end
 
   def assign
