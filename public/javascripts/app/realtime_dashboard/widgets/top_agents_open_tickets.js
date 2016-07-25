@@ -49,7 +49,7 @@ RealtimeDashboard.Widgets.OpenTickets.Agent = function(container,widget_name,lis
 				var self = this;
 				jQuery(document).on('click.realtimeDashboard', '[rel=view_all_open_tickets_by_customer]', function (e) {
 					self.constructList('.list_items',false);
-					self.core.controls.showDashboardDetails(_fd.widget_name,I18n.t('helpdesk.realtime_dashboard.top_customers_by_open_tickets'),false,'> 7 days');
+					self.core.controls.showDashboardDetails(_fd.widget_name,I18n.t('helpdesk.realtime_dashboard.top_agents_by_open_tickets'),false,_fd.formated_time);
 					jQuery("#graph_space").hide();
 					jQuery(".list_items").show();
 				});
