@@ -29,7 +29,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
       :resolved_at, :closed_at, :opened_at, :first_assigned_at, :pending_since, :assigned_at, :first_response_time,
       :requester_responded_at, :agent_responded_at, :group_escalated, :inbound_count, :outbound_count,
       :status_updated_at, :sla_timer_stopped_at, :outbound_count, :avg_response_time, :first_resp_time_by_bhrs,
-      :resolution_time_by_bhrs, :avg_response_time_by_bhrs, :to_emails, :cc_email, :status_stop_sla_timer, :status_deleted
+      :resolution_time_by_bhrs, :avg_response_time_by_bhrs, :status_stop_sla_timer, :status_deleted,
+      :tags
     ]
   end
 

@@ -8,9 +8,11 @@ class HelpdeskReports::ParamConstructor::Base
   def initialize options
     @options = options
     @date_range = options[:date_range]
+    @direct_export = options[:direct_export] || false
   end
 
   def build_pdf_params
+    options.merge!(options[:trend].symbolize_keys) if @direct_export
     if date_range.nil?
       return {
         date_range: date_range,
@@ -50,7 +52,7 @@ class HelpdeskReports::ParamConstructor::Base
       time_trend_conditions: [],
       date_range: date_range,
       metric: nil,
-      scheduled_report: true,
+      scheduled_report: @direct_export ? false : true,
       filter: options[:report_filters].present? ? options[:report_filters] : []
     }
   end

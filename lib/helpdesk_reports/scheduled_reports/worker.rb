@@ -62,7 +62,7 @@ private
     start_day, end_day = nil, lagged_time
     case report_filter.data_hash[:date]["period"]
       when "today"
-        start_day = current_time if date_lag.zero?
+        start_day = lagged_time
       when "yesterday"
         start_day, end_day = (current_time - 1.day), (current_time - 1.day)
       when "this_week"

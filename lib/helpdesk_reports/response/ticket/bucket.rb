@@ -13,6 +13,9 @@ class HelpdeskReports::Response::Ticket::Bucket < HelpdeskReports::Response::Tic
         if bucket == "total_count"
           total_interaction_count[bucket_type] = result.to_i
           next
+        elsif bucket == "avg_value"
+          processed_result["avg_value"] = result.to_i
+          next
         end
         buckets << bucket_type
         

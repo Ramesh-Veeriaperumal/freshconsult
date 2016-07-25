@@ -5,8 +5,14 @@
                         }
                     %>;
   dom_helper_data.helpdesk_ticket.tag_list = tag_list;
-  current_user = <%= raw current_user.to_json %>;
-  requester = <%= raw @ticket.requester.to_json %>;
+  current_user = <%= escape_html_entity(true) {
+                      raw current_user.to_json
+                     }
+                 %>;
+  requester = <%= escape_html_entity(true) {
+                    raw @ticket.requester.to_json
+                  }
+              %>;
 </script>
 
 <%= javascript_include_tag :'cdn/marketplace/freshapps_ticket_dom_helper' %>

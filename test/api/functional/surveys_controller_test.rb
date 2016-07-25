@@ -2,6 +2,8 @@ require_relative '../test_helper'
 class SurveysControllerTest < ActionController::TestCase
   include SurveysTestHelper
 
+  attr_accessor :number
+
   def create_survey_questions
     survey = Account.current.custom_surveys.first # Needs to be changed to Account.current.survey once surveys are enabled for singups
     3.times do |x|
@@ -25,186 +27,119 @@ class SurveysControllerTest < ActionController::TestCase
     { survey: params }
   end
 
-  def test_create_custom_survey
-    post :create, construct_params({ id: ticket.display_id }, ratings: { 'default_question' => 103 })
-    assert_response 201
-    match_json(survey_custom_rating_pattern(CustomSurvey::SurveyResult.last))
-  end
-
-  def test_create_survey_with_feedback
-    post :create, construct_params({ id: ticket.display_id }, ratings: { 'default_question' => 103 }, feedback: 'Feedback given Surveys')
-    assert_response 201
-    match_json(survey_custom_rating_pattern(CustomSurvey::SurveyResult.last))
-    res = JSON.parse(response.body)
-    feedback = res['feedback']
-    assert 'Feedback given Surveys', feedback
-  end
-
-  def test_create_survey_without_rating
-    post :create, construct_params({ id: ticket.display_id },  feedback: 'Feedback given Surveys')
-    assert_response 400
-    match_json([bad_request_error_pattern('ratings', :missing_field)])
-  end
-
-  def test_create_with_invalid_data_type
-    post :create, construct_params({ id: ticket.display_id }, ratings: { 'default_question' => 'test' }, feedback: [])
-    assert_response 400
-    match_json([bad_request_error_pattern_with_nested_field('ratings', 'default_question', :not_included, list: '-103,100,103'),
-                bad_request_error_pattern('feedback', :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: Array)])
-  end
-
-  def test_view_list_of_surveys
-    3.times do
-      post :create, construct_params({ id: ticket.display_id }, ratings: { 'default_question' => 103 }, feedback: 'Feedback given Surveys')
-      assert_response 201
-    end
-    get :survey_results, controller_params(id: ticket.display_id)
-    pattern = []
-    CustomSurvey::SurveyResult.all.each do |sr|
-      pattern << survey_custom_rating_pattern(sr)
-    end
+  def test_index
+    get :index, controller_params
     assert_response 200
-    match_json(pattern)
+    assert JSON.parse(response.body).count > 0
+    match_json(index_survey_pattern(@account.custom_surveys.undeleted))
   end
 
-  def test_create_with_custom_ratings
-    post :create, construct_params({ id: ticket.display_id }, ratings: { 'default_question' => 103, 'question_2' => -103, 'question_3' => 100 }, feedback: 'Feedback given Surveys')
-    assert_response 201
-    match_json(survey_custom_rating_pattern(CustomSurvey::SurveyResult.last))
-  end
-
-  def test_create_without_default_question
-    post :create, construct_params({ id: ticket.display_id }, ratings: { 'question_2' => -103, 'question_3' => 100 }, feedback: 'Feedback given Surveys')
-    assert_response 400
-    match_json([bad_request_error_pattern_with_nested_field('ratings', 'default_question', :not_included, code: :missing_field, list: '-103,100,103')])
-  end
-
-  def test_create_with_invalid_custom_ratings
-    post :create, construct_params({ id: ticket.display_id }, ratings: { 'default_question' => 103, 'question_10' => -103 }, feedback: 'Feedback given Surveys')
-    assert_response 400
-    match_json([bad_request_error_pattern('question_10',  :invalid_field)])
-  end
-
-  def test_create_with_invalid_custom_ratings_type
-    post :create, construct_params({ id: ticket.display_id }, ratings: { 'default_question' => 103, 'question_3' => 'Test' }, feedback: 'Feedback given Surveys')
-    assert_response 400
-    match_json([bad_request_error_pattern_with_nested_field('ratings', 'question_3', :not_included, list: '-103,100,103')])
-  end
-
-  def test_create_with_invalid_custom_ratings_value
-    post :create, construct_params({ id: ticket.display_id }, ratings: { 'default_question' => 103, 'question_3' => -102, 'question_2' => 110 }, feedback: 'Feedback given Surveys')
-    assert_response 400
-    match_json([bad_request_error_pattern_with_nested_field('ratings', 'question_3', :not_included, list: '-103,100,103'),
-                bad_request_error_pattern_with_nested_field('ratings', 'question_2', :not_included, list: '-103,100,103')])
-  end
-
-  def test_create_with_invalid_custom_ratings_data_type
-    post :create, construct_params({ id: ticket.display_id }, ratings: [-102, 110], feedback: 'Feedback given Surveys')
-    assert_response 400
-    match_json([bad_request_error_pattern('ratings', :datatype_mismatch, expected_data_type: 'key/value pair', prepend_msg: :input_received, given_data_type: Array)])
-  end
-
-  def test_show_activated_survey
-    get :active_survey, controller_params
+  def test_index_with_active_filter
+    get :index, controller_params({ state: 'active' }, {})
     assert_response 200
-    match_json(active_custom_survey_pattern(Account.current.survey))
+    assert JSON.parse(response.body).count > 0
+    match_json(index_survey_pattern(Array.wrap(@account.custom_surveys.active.with_questions_and_choices.first)))
   end
 
-  def test_show_classic_activated_survey
+  def test_index_with_active_filter_for_default_survey
     stub_custom_survey false
-    get :active_survey, controller_params
+    get :index, controller_params({ state: 'active' }, {})
+    assert_response 200
+    assert JSON.parse(response.body).count == 1
+    match_json([active_classic_survey_rating(@account.survey)])
+  ensure
     unstub_custom_survey
-    assert_response 200
-    match_json(active_classic_survey_rating(Account.current.survey))
   end
 
-  def test_view_all_survey_results_with_user_filter
-    user_id = User.last.id
-    CustomSurvey::SurveyResult.update_all(customer_id: user_id)
-    get :index, controller_params(user_id: user_id)
-    pattern = []
-    CustomSurvey::SurveyResult.all.each do |sr|
-      pattern << survey_custom_rating_pattern(sr)
-    end
-    assert_response 200
-    match_json(pattern)
-  end
-
-  def test_view_all_survey_with_invalid_filter_values
-    get :index, controller_params(user_id: 'test', created_since: 1000)
-    assert_response 400
-    match_json([bad_request_error_pattern('user_id', :datatype_mismatch, expected_data_type:  'Positive Integer'),
-                bad_request_error_pattern('created_since', :invalid_date, accepted: :'combined date and time ISO8601')])
-  end
-
-  def test_view_all_survey_with_invalid_field
-    get :index, controller_params(customer_id: 'test')
-    assert_response 400
-    match_json([bad_request_error_pattern('customer_id',  :invalid_field)])
-  end
-
-  def test_view_all_without_filters
+  def test_index_for_default_survey
+    stub_custom_survey false
     get :index, controller_params
-    pattern = []
-    CustomSurvey::SurveyResult.all.each do |sr|
-      pattern << survey_custom_rating_pattern(sr)
-    end
     assert_response 200
-    response_json = JSON.parse(response.body)
-    assert_equal response_json.size, CustomSurvey::SurveyResult.count
-    match_json(pattern)
+    assert JSON.parse(response.body).count == 1
+    match_json([active_classic_survey_rating(@account.survey)])
+  ensure
+    unstub_custom_survey
   end
 
-  def test_view_with_features_disabled
-    @account.class.any_instance.stubs(:features?).returns(false)
-    get :index, controller_params
-    @account.class.any_instance.unstub(:features?)
-    assert_response 403
-    match_json(request_error_pattern(:require_feature, feature: 'surveys,survey_links'.titleize))
+  def test_index_with_active_filter_for_default_survey_without_survey_link_feature
+    stub_custom_survey false
+    Account.any_instance.stubs(:features?).with(:surveys).returns(true).once
+    Account.any_instance.stubs(:features?).with(:survey_links).returns(false).once
+    get :index, controller_params({ state: 'active' }, {})
+    assert_response 200
+    assert JSON.parse(response.body).count == 0
+  ensure
+    Account.any_instance.unstub(:features?)
+    unstub_custom_survey
   end
 
-  def test_create_without_manage_tickets_privilege
-    User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(false).at_most_once
-    post :create, construct_params({ id: ticket.display_id }, rating: 103)
-    User.any_instance.unstub(:privilege?)
-    assert_response 403
-    match_json(request_error_pattern(:access_denied))
-    ensure
-      User.any_instance.unstub(:privilege?)
-  end
-
-  def test_create_without_ticket_privilege
-    User.any_instance.stubs(:has_ticket_permission?).returns(false)
-    post :create, construct_params({ id: ticket.display_id }, rating: 103)
-    User.any_instance.unstub(:has_ticket_permission?)
-    assert_response 403
-    match_json(request_error_pattern(:access_denied))
-  end
-
-  def test_index_without_admin_privilege
+  def test_index_without_privilege
     User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(false).at_most_once
     get :index, controller_params
     assert_response 403
     match_json(request_error_pattern(:access_denied))
-    ensure
-      User.any_instance.unstub(:privilege?)
+  ensure
+    User.any_instance.unstub(:privilege?)
   end
 
-  def test_index_with_created_at_filter
-    CustomSurvey::SurveyResult.update_all(created_at: 2.days.ago)
-    present_date_time = DateTime.now
-    survey_result = CustomSurvey::SurveyResult.first
-    survey_result.created_at = present_date_time
-    survey_result.save
-    get :index, controller_params(created_since: present_date_time.iso8601)
-    assert_response 200
-    response = parse_response @response.body
-    assert_equal 1, response.size
+  def test_index_without_feature
+    Account.any_instance.stubs(:features?).returns(false).once
+    get :index, controller_params
+    assert_response 403
+    match_json(request_error_pattern(:require_feature, feature: 'Surveys'))
+  ensure
+    Account.any_instance.unstub(:features?)
   end
 
-  def test_view_all_survey_with_invalid_user_ids
-    get :index, controller_params(user_id: 1000)
+  def test_index_with_invalid_filter
+    get :index, controller_params({ test: 'junk' }, {})
     assert_response 400
-    match_json([bad_request_error_pattern('user_id', :absent_in_db, resource: 'contact', attribute: 'user_id')])
+    match_json([bad_request_error_pattern('test', :invalid_field)])
+  end
+
+  def test_index_with_invalid_filter_value
+    get :index, controller_params({ state: 'junk' }, {})
+    assert_response 400
+    match_json([bad_request_error_pattern('state', :not_included, list: 'active')])
+  end
+
+  def test_index_with_pagination
+    3.times do
+      @number ||= 1
+      @number += @number
+      create_survey(@number)
+    end
+    get :index, controller_params(per_page: 1)
+    assert_response 200
+    assert JSON.parse(response.body).count == 1
+    get :index, controller_params(per_page: 1)
+    assert_response 200
+    assert JSON.parse(response.body).count == 1
+  end
+
+  def test_index_with_pagination_exceeds_limit
+    get :index, controller_params(per_page: 101)
+    assert_response 400
+    match_json([bad_request_error_pattern('per_page', :per_page_invalid, max_value: 100)])
+  end
+
+  def test_index_with_link_header
+    3.times do
+      @number ||= 1
+      @number += @number
+      create_survey(@number)
+    end
+    surveys = @account.custom_surveys.undeleted
+    per_page = surveys.count - 1
+    get :index, controller_params(per_page: per_page)
+    assert_response 200
+    assert JSON.parse(response.body).count == per_page
+    match_json(index_survey_pattern(surveys.take(per_page)))
+    assert_equal "<http://#{@request.host}/api/v2/surveys?per_page=#{per_page}&page=2>; rel=\"next\"", response.headers['Link']
+
+    get :index, controller_params(per_page: per_page, page: 2)
+    assert_response 200
+    assert JSON.parse(response.body).count == 1
+    assert_nil response.headers['Link']
   end
 end

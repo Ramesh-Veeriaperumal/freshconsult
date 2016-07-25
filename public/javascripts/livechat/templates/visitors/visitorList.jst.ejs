@@ -27,7 +27,7 @@
   </td>
   <td class="lookpage <%=(visitor.title && visitor.title.length > 	45) ? 'tooltip': ''%>"><i class="ficon-eye"></i>
     <a href="<%=visitor.visited_page%>" alt="<%=visitor.visited_page%>" target="_blank">
-      <%=visitor.title%>
+      <% if(visitor.title) {%><%=visitor.title%><%}else{%><%=visitor.visited_page%><%}%>
     </a>
   </td>
 </tr>
