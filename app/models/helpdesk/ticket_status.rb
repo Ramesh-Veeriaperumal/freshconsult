@@ -130,19 +130,23 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
   end
 
   def update_tickets_sla
-    tickets.visible.find_in_batches(:batch_size => 300) do |tkts|
-      tkts.each do |ticket|
-        begin
-          if (stop_sla_timer? or deleted?)
-            ticket.ticket_states.sla_timer_stopped_at ||= Time.zone.now
-          else
-            ticket.ticket_states.sla_timer_stopped_at = nil
+    Sharding.run_on_slave do
+      tickets.visible.includes(:ticket_states).find_in_batches(:batch_size => 300) do |tkts|
+        tkts.each do |ticket|
+          begin
+            Sharding.run_on_master do
+              if (stop_sla_timer? or deleted?)
+                ticket.ticket_states.sla_timer_stopped_at ||= Time.zone.now
+              else
+                ticket.ticket_states.sla_timer_stopped_at = nil
+              end
+              ticket.ticket_states.save
+            end
+          rescue Exception => e
+              NewRelic::Agent.notice_error(e)
+              Rails.logger.debug "SLA timer stopped at time update failed for Ticket ID : #{ticket.id} on status update"
+              Rails.logger.debug "Error message ::: #{e.message}"
           end
-          ticket.ticket_states.save
-        rescue Exception => e
-            NewRelic::Agent.notice_error(e)
-            Rails.logger.debug "SLA timer stopped at time update failed for Ticket ID : #{ticket.id} on status update"
-            Rails.logger.debug "Error message ::: #{e.message}"
         end
       end
     end
@@ -152,20 +156,26 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
     if stop_sla_timer?
       update_tickets_sla
     else
-      tickets.visible.joins(:ticket_states).where("helpdesk_ticket_states.sla_timer_stopped_at IS NOT NULL").find_in_batches(:batch_size => 300) do |tkts|
-        tkts.each do |ticket|
-          begin
-            sla_timer_stopped_at_time = ticket.ticket_states.sla_timer_stopped_at
-            if(!sla_timer_stopped_at_time.nil? and ticket.due_by > sla_timer_stopped_at_time)
-              ticket.update_dueby(true)
-              ticket.sneaky_save
+      Sharding.run_on_slave do
+        tickets.visible.includes(:ticket_states).where("helpdesk_ticket_states.sla_timer_stopped_at IS NOT NULL").find_in_batches(:batch_size => 300) do |tkts|
+          tkts.each do |ticket|
+            begin
+              sla_timer_stopped_at_time = ticket.ticket_states.sla_timer_stopped_at
+              if(!sla_timer_stopped_at_time.nil? and ticket.due_by > sla_timer_stopped_at_time)
+                Sharding.run_on_master do
+                  ticket.update_dueby(true)
+                  ticket.sneaky_save
+                end
+              end
+              Sharding.run_on_master do
+                ticket.ticket_states.sla_timer_stopped_at = nil
+                ticket.ticket_states.save
+              end
+            rescue Exception => e
+              NewRelic::Agent.notice_error(e)
+              Rails.logger.debug "Due by time update failed for Ticket ID : #{ticket.id} on status update"
+              Rails.logger.debug "Error message ::: #{e.message}"
             end
-            ticket.ticket_states.sla_timer_stopped_at = nil
-            ticket.ticket_states.save
-          rescue Exception => e
-            NewRelic::Agent.notice_error(e)
-            Rails.logger.debug "Due by time update failed for Ticket ID : #{ticket.id} on status update"
-            Rails.logger.debug "Error message ::: #{e.message}"
           end
         end
       end
