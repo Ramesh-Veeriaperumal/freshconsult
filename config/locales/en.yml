@@ -9849,7 +9849,7 @@ en:
     company_association_exists: Company has already been taken
     helpcard:
       title: Customizing requester widget
-      info: Choose the fields that you want displayed under the requester info section on the ticket page with the requester widget. This way your team can update requester details directly from the ticket page and keep track of the customer details while solving their ticket.
+      info: Choose the fields that you want displayed under the requester info section on the ticket page with the requester widget. This way your team can update requester details directly from the ticket page and keep track of the customer details while solving their ticket. <a href="https://support.freshdesk.com/support/solutions/articles/219948-customizing-requester-info-fields" target="_blank">Learn more</a>
   requester_fields_updated: The requester widget has been updated.
   select_requester: "Please select requester"
   associate_n_companies: "Associate a contact with multiple companies?"
