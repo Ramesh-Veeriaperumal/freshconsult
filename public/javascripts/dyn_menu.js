@@ -161,7 +161,7 @@
 		}
 
 		var initElementHover = function(menuid) {
-			$('#menu_' + menuid + ' .contents a').live('mouseover',function(ev) {
+			$('body').on('mouseover', '#menu_' + menuid + ' .contents a', function(ev) {
 				deselectActiveElement(menuid);
 				var searchlist 	= $('#menu_' + menuid + ' .contents a').not('.hide');
 
@@ -221,7 +221,7 @@
 			position = typeof(position) == 'undefined' ? -1 : position;
 
 			$(currentactive).removeClass("selected");
-			position = Math.min((searchlist.size()-1), Math.max(0, position + offset)); 
+			position = Math.min((searchlist.length-1), Math.max(0, position + offset)); 
 			currentactive = $(searchlist.get(position)).addClass("selected"); 
 
 			if (offset > 0 && position > 15 ) {

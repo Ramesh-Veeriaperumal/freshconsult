@@ -241,7 +241,7 @@
   	})
 
   	//Upon change of conditions select dropdown
-		$('.condition_list').live('click', function(ev) {
+		$('.condition_list').on('click', function(ev) {
 			ev.preventDefault();
   		var target = $('#' + $(this).data('cond')); //Gives target div
   		

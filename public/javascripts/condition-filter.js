@@ -376,7 +376,7 @@ rules_filter = function(_name, filter_data, parentDom, options){
                   postProcessCondition(hg_data.get(rule.name), data_id);
              }catch(e){}
             });
-			this.dom_size = dataFeed.size()+1;
+			this.dom_size = dataFeed.length+1;
     },
 
     	refresh_item: 
@@ -507,7 +507,7 @@ rules_filter = function(_name, filter_data, parentDom, options){
 
 				domUtil.add_to_hash(filter_data);
 
-				if(setting.init_feed.size())
+				if(setting.init_feed.length)
 					domUtil.feed_data(setting.init_feed);
 				else
 					domUtil.add_dom();	
@@ -555,7 +555,7 @@ rules_filter = function(_name, filter_data, parentDom, options){
 				// return false;
 			});
 
-			jQuery('.l_placeholder').die('click').live("click", function(ev){
+			jQuery(document).off('click.placedialog').on("click.placedialog", '.l_placeholder', function(ev){
 				ev.preventDefault();
 				// active_email_body = jQuery(this).prev();
 
@@ -567,8 +567,8 @@ rules_filter = function(_name, filter_data, parentDom, options){
 			// Binding Events to Containers
 			// Filter on change action 
 			
-			jQuery(parentDom+' .'+"ruCls_"+name)
-				.live("change", 
+			jQuery(parentDom)
+				.on("change", ".ruCls_"+name,
 						function(){ 
 							var rule_drop = jQuery(this).next().empty().addClass('dependent'),
 									$this = jQuery(this);
@@ -596,7 +596,6 @@ rules_filter = function(_name, filter_data, parentDom, options){
                   	rule_drop.append(conditional_dom(hg_item, data_id, name, {value:'--'}, "value", 'select2 test_value_field ', {'minimumResultsForSearch':'10'}));
                   	break;
                   case 2:
-                  	// console.log(hg_item)
                   	from_select = conditional_dom(hg_item, data_id, name, {from:'--'}, "from", 'select2 test_from_field', {'minimumResultsForSearch':'10', 'formatResult':disableOtherSelectValue});
                   	to_select = conditional_dom(hg_item, data_id, name, {to:'--'}, "to", 'select2 test_to_field', {'minimumResultsForSearch':'10', 'formatResult':disableOtherSelectValue});
 
@@ -618,7 +617,7 @@ rules_filter = function(_name, filter_data, parentDom, options){
 						});
 
 			jQuery(parentDom).find('.webhook select[name=request_type]')
-				.live("change", function(){
+				.on("change", function(){
 					var request_content = jQuery(this).parent().parent().find('.request_content');
 					if(jQuery(this).val()==1 || jQuery(this).val()==5)
 						request_content.slideUp('slow');
@@ -627,34 +626,34 @@ rules_filter = function(_name, filter_data, parentDom, options){
 				});
 
 			jQuery(parentDom).find('.webhook input[name=need_authentication]')
-				.live("change", function(){	jQuery(this).parent().parent().parent().parent().find('.credentials').slideToggle();	});
+				.on("change", function(){	jQuery(this).parent().parent().parent().find('.credentials').slideToggle();	});
 
 			jQuery(parentDom).find('.webhook .headers_toggle')
-				.live("click", function(){	
+				.on("click", function(){	
                     jQuery(parentDom).find('.webhook .headers_toggle').toggle();
                     jQuery(this).parent().parent().find('.custom_headers_wrapper').slideToggle();
 				});
 
 			jQuery(parentDom).find('.webhook .headers_toggle.headers_toggle_remove')
-				.live("click", function(){	
+				.on("click", function(){	
                     jQuery(this).parent().parent().find('.custom_headers_wrapper textarea').val('');	
 				});
 
 			jQuery(parentDom).find('.webhook .credentials_toggle')
-				.live("click", function(){
+				.on("click", function(){
 					current_credential = jQuery(this).parent();
 					current_credential.hide();
 					current_credential.siblings().show();
 				});
 
 			jQuery(parentDom).find('.webhook input[name=content_layout]')
-				.live("change", function(){
+				.on("change", function(){
 					divs = jQuery(this).parent().parent().find('.edit1,.edit2')
 					divs[1].toggle();
 					divs[0].toggle();
 				});
 
-			jQuery(parentDom).find('.webhook .params_div .checkbox').live("change", function() {
+			jQuery(parentDom).find('.webhook .params_div .checkbox').on("change", function() {
 				if(this.checked) {
 			  	jQuery(this).parent().addClass('highlighted');
 				}else{
@@ -662,7 +661,7 @@ rules_filter = function(_name, filter_data, parentDom, options){
 				}
 			});
 
-			jQuery(parentDom).find('.webhook input[name=content_type]').live("change", function(){
+			jQuery(parentDom).find('.webhook input[name=content_type]').on("change", function(){
 				advanced_rb = jQuery(this).parent().parent().parent().find('input[name=content_layout][value=2]').first();
 				if(jQuery(this).val()==3){
 					advanced_rb.attr("disabled", true);
@@ -674,31 +673,31 @@ rules_filter = function(_name, filter_data, parentDom, options){
 				}
 			});
 
-			jQuery(parentDom).find('.webhook a[href=#change_password]').live("click", function(){
+			jQuery(parentDom).find('.webhook a[href="#change_password"]').on("click", function(){
 				jQuery(this).hide();
 				jQuery(this).parent().find('.password').show();
 			});
 			
 			jQuery(parentDom).find('select, :text')
-				.live("change",function(){
+				.on("change",function(){
 					var formObj = jQuery(parentDom).parents('form:first');
 					setting.onRuleSelect.apply(this,[this,domUtil.get_filter_list('json', formObj),formObj])
 				});
 
-			jQuery(ADD_DOM)
-				.bind("click",
+			jQuery(document)
+				.on("click", ADD_DOM,
 						function(){
 							domUtil.add_dom();							
 						});
 
 			// Delete button action
-			jQuery(parentDom+' .delete')
-				.live("click", 
+			jQuery(parentDom)
+				.on("click", ' .delete',
 						function(){
 							filter = jQuery(this).parent();
 
 							selectedOptionList.set(filter.find("select.ruCls_filter, select.ruCls_action, select.ruCls_event").val(), false)
-							if(setting.delete_last || (filter.parent().children().size() != 1)){
+							if(setting.delete_last || (filter.parent().children().length != 1)){
 								filter.remove();
 								domUtil.dom_size--;
 							}
@@ -706,8 +705,8 @@ rules_filter = function(_name, filter_data, parentDom, options){
 							var formObj = jQuery(parentDom).parents('form:first');
 							setting.onRuleSelect.apply(this,[this,domUtil.get_filter_list('json', formObj),formObj]);
 						});
-			jQuery(parentDom+' .condn-group-selection .btn')
-				.live('click',
+			jQuery(parentDom)
+				.on('click', '.condn-group-selection .btn',
 						function(e) {
 							e.preventDefault();
 							var $this = jQuery(this);

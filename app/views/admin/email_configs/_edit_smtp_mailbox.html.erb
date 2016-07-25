@@ -58,7 +58,7 @@
               jQuery(_id + '_server_name').val(null).attr('placeholder', ((name == "imap") ? 'IMAP Server Name' : 'SMTP Server Name'));
             
             jQuery(_id + '_port').val( (name == "imap") ? _data.imapPort : _data.smtpPort );
-            jQuery(_id + '_use_ssl').val( true ).attr('checked', true);
+            jQuery(_id + '_use_ssl').val( true ).prop('checked', true);
           });
           jQuery(".smtp_limit_alert").html(_data.smtpAlert);
           disable_ssl_checkbox();

@@ -84,7 +84,7 @@ window.App.Tickets = window.App.Tickets || {};
           if(jQuery.inArray(self.currentUserID, jQuery("select.watcher_input").val()) == -1) {
             jQuery("select.watcher_input")
               .prepend(jQuery("<option></option>")
-              .attr("value", self.currentUserID )
+              .val(self.currentUserID )
               .text("Me"));
           } else {
             selected_ids.splice(selected_ids.indexOf(self.currentUserID), 1);

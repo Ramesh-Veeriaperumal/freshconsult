@@ -118,17 +118,17 @@ JiraWidget.prototype = {
 			});
 		}
 
-		jQuery('.show_linkform, .show_createform').live('click', function(e) {
+		jQuery('.show_linkform, .show_createform').on('click', function(e) {
 			e.preventDefault();
 			jQuery('#jira_issue_create, #jira_issue_link').toggleClass('hide');
 		});
 
-		jQuery('#jira-unlink').live('click', function(ev) {
+		jQuery('#jira-unlink').on('click', function(ev) {
 			ev.preventDefault();
 			jiraWidget.unlinkJiraIssue();
 		});
 
-		jQuery('#jira-delete').live('click', function(ev) {
+		jQuery('#jira-delete').on('click', function(ev) {
 			ev.preventDefault();
 			jiraWidget.deleteJiraIssue();
 		});
@@ -402,7 +402,7 @@ JiraWidget.prototype = {
 	jiraCreateSummaryAndDescription: function(){
 		var jira_initialtext = jQuery("#jira-note").text();
 		jQuery("#jira-note").html(jira_initialtext);
-		if(jQuery('input[name="fields[description]"]').size() == 0)
+		if(jQuery('input[name="fields[description]"]').length == 0)
 		{
 			jQuery('<input>').attr({
 			type:'hidden',
@@ -410,7 +410,7 @@ JiraWidget.prototype = {
 			name: 'fields[description]',
 			value: jQuery("#jira-note").text()}).appendTo('#jira-add-form');
 		}
-		if(jQuery('input[name="fields[summary]"]').size() == 0)
+		if(jQuery('input[name="fields[summary]"]').length == 0)
 		{
 			jQuery('<input>').attr({
 			type:'hidden',

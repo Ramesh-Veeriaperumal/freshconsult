@@ -262,7 +262,7 @@ jQuery(document).on('click', '#box-confirm-cancel', function(){
   jQuery('.modal').modal('hide');
 })
 
-jQuery('div#box-content-pane li.box-item').live('click', function(e){
+jQuery('.box-chooser-body').on('click', 'div#box-content-pane li.box-item', function(e){
   e.preventDefault();
   element = jQuery(this)
   element.find('span.arrow-right').removeClass('arrow-right').addClass('sloading loading-circle loading-left');

@@ -97,16 +97,15 @@ var SurveyTable = {
         });
         jQuery('#report_tabular_data').show();
         if(SurveyReport.agentReporting){
-            jQuery('#report_tabular_data tbody tr:not(".exclude_none")').live('click',function () {
-                 var values =  jQuery('#report_tabular_data').dataTable().fnGetData(this);
-                 if(jQuery('#viewReportBy').attr('value') == SurveyReportData.defaultAllValues.group || !SurveyReport.agentReporting){
-                    SurveyTable.type.filter('survey_report_group_list',values[0],jQuery('#viewReportBy').attr('value'));
-                 }else{
-                    SurveyTable.type.filter('survey_report_agent_list',values[0],jQuery('#viewReportBy').attr('value'));
-                 }
+            jQuery('#report_tabular_data tbody tr:not(".exclude_none")').on('click',function () {
+                var values =  jQuery('#report_tabular_data').dataTable().fnGetData(this);
+                if(jQuery('#viewReportBy').data('report-type') == SurveyReportData.defaultAllValues.group){
+                    SurveyTable.type.filter('survey_report_group_list',values[0],jQuery('#viewReportBy').data('report-type'));
+                }else{
+                    SurveyTable.type.filter('survey_report_agent_list',values[0],jQuery('#viewReportBy').data('report-type'));
+                }
             });
         }
-
     },
     renderTable:function(type){
         var tabRef = SurveyUtil.findQuestion(jQuery('.tabs-survey').find('li.active').data('id'));
@@ -125,7 +124,7 @@ var SurveyTable = {
             url_type = 'group_wise_report';
             report_type = SurveyReportData.defaultAllValues.group;   
             if(urlData.agent_id == SurveyReportData.defaultAllValues.agent){
-                report_type = jQuery('#viewReportBy').attr('value');
+                report_type = jQuery('#viewReportBy').data('report-type');
                 url_type = (report_type == SurveyReportData.defaultAllValues.group)? 'group_wise_report' : 'agent_wise_report';
             }             
         }
@@ -174,16 +173,16 @@ var SurveyTable = {
             return type;
         },
         change: function(obj){
-            var type = jQuery(obj).attr('value');
+            var type = jQuery(obj).data('report-type');
             jQuery('#viewReportBy').find('li').removeClass('active');
-            jQuery('#viewReportBy').attr('value',type);
+            jQuery('#viewReportBy').data('report-type', type);
             jQuery(obj).parent().addClass('active');
             SurveyTable.fetch();
 
         },
         hide: function(type){
             setTimeout(function(){
-                type ? jQuery('#viewReportBy').attr('value',type) : '';
+                type ? jQuery('#viewReportBy').data('report-type', type) : '';
                 jQuery('#reportView').hide();
             }, 0);
         },

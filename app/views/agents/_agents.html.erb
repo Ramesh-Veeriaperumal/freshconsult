@@ -93,7 +93,7 @@
 		jQuery("#agent-filters").data('agent', jQuery(this).data('agent'));
 	});
 
-	jQuery('#agent-deletion-confirmation-submit').live("click", function(){
+	jQuery(document).on("click", '#agent-deletion-confirmation-submit', function(){
 		var agent_id = jQuery("#agent-filters").data('agent');
 		jQuery('#agent_convert_id_'+agent_id).trigger('click');
 		jQuery("#agent-filters").data('agent', null);

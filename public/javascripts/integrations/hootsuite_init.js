@@ -37,7 +37,7 @@
       });
     };
 
-    $('div.popover').live('mouseleave',hidePopover).live('mouseenter',function (ev) {
+    $('div.popover').on('mouseleave',hidePopover).on('mouseenter',function (ev) {
       clearTimeout(hidePopoverTimer);
     });
 
@@ -58,7 +58,7 @@
 
 
 
-    $("[rel=hover-popover]").live('mouseenter',function(ev) {
+    $("[rel=hover-popover]").on('mouseenter',function(ev) {
         ev.preventDefault();
         var element = $(this);
         // Introducing a slight delay so that the popover does not show up
@@ -71,7 +71,7 @@
         }, 500);
         element.data('timeoutDelayShow', timeoutDelayShow);
 
-      }).live('mouseleave',function(ev) {
+      }).on('mouseleave',function(ev) {
           clearTimeout($(this).data('timeoutDelayShow'));
           hidePopoverTimer = setTimeout(function() {
             if(widgetPopup) widgetPopup.popover('hide');

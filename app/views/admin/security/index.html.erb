@@ -329,9 +329,9 @@
         var is_default = $(this).find(".password-policy-toggle[value='default']").is(":checked");
         if(is_default){
           $(this).find(".advanced-policies").removeAttr('checked');
-          $(this).find("#minimum-characters").attr('value', '');
-          $(this).find("#password-expiry").attr('value', '');
-          $(this).find("#password-history").attr('value', '');
+          $(this).find("#minimum-characters").val('');
+          $(this).find("#password-expiry").val('');
+          $(this).find("#password-history").val('');
         }
       });
     }
@@ -366,9 +366,9 @@
         $.tmpl( _ip_template, { start_ip : "", end_ip : "" } ).appendTo( "#security-ip-range-container" );
       })
 
-      $(".delete-row").live("click", function(ev){
+      $(document).on("click",".delete-row", function(ev){
         ev.preventDefault();
-        if($(this).parent().parent().children().size() > 1)
+        if($(this).parent().parent().children().length > 1)
           $(this).parent().remove()
       })
 
@@ -382,7 +382,7 @@
           $.tmpl( _ip_template, item ).appendTo( "#security-ip-range-container" );
         });
 
-        <%= @whitelisted_ips.applies_only_to_agents %> ? $("#agents").attr("checked","checked") : $("#both").attr("checked","checked")
+        <%= @whitelisted_ips.applies_only_to_agents %> ? $("#agents").prop("checked",true) : $("#both").prop("checked",prop)
         <%= @whitelisted_ips.enabled %> ? $("#ip-form").show() : $("#ip-form").hide()
       <% else %>
         $.tmpl( _ip_template, { start_ip : "<%= request.env['CLIENT_IP'] %>", end_ip : "<%= request.env['CLIENT_IP'] %>" } )

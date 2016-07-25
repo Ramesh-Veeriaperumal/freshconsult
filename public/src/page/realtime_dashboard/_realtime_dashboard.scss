@@ -1,5 +1,3 @@
-@import "../../settings/settings";
-
 $survey-types: happy #82af56, neutral #f3ca6e, sad #ee715e;
 
 @each $survey-type in $survey-types {
@@ -7,6 +5,7 @@ $survey-types: happy #82af56, neutral #f3ca6e, sad #ee715e;
     color: #{nth($survey-type, 2)};
   }
 }
+
 // ---------- NEW DASHBOARD ---------- //
 .index-page-content{ min-height: 900px;}
 

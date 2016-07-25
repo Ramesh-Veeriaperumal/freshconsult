@@ -67,7 +67,7 @@
             }
 
             jQuery(_id + '_port').val( (name == "imap") ? _data.imapPort : _data.smtpPort );
-            jQuery(_id + '_use_ssl').val( true ).attr('checked', true);
+            jQuery(_id + '_use_ssl').val( true ).prop('checked', true);
           });
         })
         .trigger("change");

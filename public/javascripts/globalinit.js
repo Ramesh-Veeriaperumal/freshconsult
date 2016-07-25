@@ -10,23 +10,18 @@ window.Helpdesk = window.Helpdesk || {};
   }
 }(window.jQuery));
 
+
 var $J = jQuery.noConflict();
 is_touch_device = function() {
   return !!('ontouchstart' in window) // works on most browsers
       || !!('onmsgesturechange' in window); // works on ie10
 };
 window.xhrPool = [];
+
 (function($){
-    // IE 11
-    if (!!navigator.userAgent.match(/^(?=.*\bTrident\b)(?=.*\brv\b).*$/)){
-      $.browser = { msie: true, version: "11" };
-      $('html').addClass('ie ie11');
-    }
-// Note - Browser detection code for edge.
- $.browser.edge = ( window.navigator.userAgent.indexOf("Edge") > 0 ) ? true : false;
- 
-   // Global Jquery Plugin initialisation
-   // $.fn.qtip.baseIndex = 10000;
+
+  // Global Jquery Plugin initialisation
+  // $.fn.qtip.baseIndex = 10000;
 
   // App initialisation
   $.oldajax = $.ajax;
@@ -99,7 +94,7 @@ window.xhrPool = [];
     hidePopover = function (ev) {
       if(!$.contains(this, ev.relatedTarget) ) {
         if(hoverPopup && !$(ev.relatedTarget).is('[rel=contact-hover]')) {
-          hidePopoverTimer = setTimeout(function() {widgetPopup.popover('hide'); hoverPopup = false;},1000);
+          hidePopoverTimer = setTimeout(function() {if(widgetPopup){ widgetPopup.popover('hide'); hoverPopup = false;}},1000);
         }
         if(!$(ev.relatedTarget).is('[rel=more-agents-hover]')) {
           hidePopoverTimer = setTimeout(function() {$('.hover-card-agent').parent().remove(); },500);
@@ -117,7 +112,7 @@ window.xhrPool = [];
       });
     };
 
-    $('div.popover').live('mouseleave',hidePopover).live('mouseenter',function (ev) {
+    $('body').on('mouseleave', 'div.popover', hidePopover).on('mouseenter', 'div.popover', function (ev) {
       clearTimeout(hidePopoverTimer);
     });
 
@@ -134,7 +129,7 @@ window.xhrPool = [];
         }
       });
       
-   $("a[rel=more-agents-hover]").live('mouseenter',function(ev) {
+   $('body').on('mouseenter', "a[rel=more-agents-hover]", function(ev) {
           ev.preventDefault();
           var element = $(this);
           // Introducing a slight delay so that the popover does not show up
@@ -148,14 +143,14 @@ window.xhrPool = [];
           }, 300);
           element.data('timeoutDelayShow', timeoutDelayShow);
 
-        }).live('mouseleave',function(ev) {
+        }).on('mouseleave',function(ev) {
             clearTimeout($(this).data('timeoutDelayShow'));
             hidePopoverTimer = setTimeout(function() {
               $('.hover-card-agent').parent().remove();
             },1000);
       });
 
-    $("a[rel=contact-hover],[rel=hover-popover]").live('mouseenter',function(ev) {
+    $('body').on('mouseenter', "a[rel=contact-hover],[rel=hover-popover]", function(ev) {
         ev.preventDefault();
         var element = $(this);
         // Introducing a slight delay so that the popover does not show up
@@ -168,14 +163,15 @@ window.xhrPool = [];
         }, 500);
         element.data('timeoutDelayShow', timeoutDelayShow);
 
-      }).live('mouseleave',function(ev) {
+      }).on('mouseleave', "a[rel=contact-hover],[rel=hover-popover]", function(ev) {
           clearTimeout($(this).data('timeoutDelayShow'));
           hidePopoverTimer = setTimeout(function() {
             if(widgetPopup) widgetPopup.popover('hide');
             hoverPopup = false;
           },1000);
       });
-    $("[rel=ff-alert-popover]").live('mouseenter',function(ev) {
+
+    $('body').on('mouseenter', "[rel=ff-alert-popover]", function(ev) {
         ev.preventDefault();
         var element = $(this);
         // Introducing a slight delay so that the popover does not show up
@@ -188,13 +184,14 @@ window.xhrPool = [];
         }, 500);
         element.data('timeoutDelayShow', timeoutDelayShow);
 
-      }).live('mouseleave',function(ev) {
+      }).on('mouseleave', "[rel=ff-alert-popover]", function(ev) {
             clearTimeout($(this).data('timeoutDelayShow'));
             hidePopoverTimer = setTimeout(function() {
               $('.hover-card-agent').parent().remove();
             },300);
-      });  
-    $("a[rel=ff-hover-popover]").live('mouseenter',function(ev) {
+      });
+
+    $('body').on('mouseenter', "a[rel=ff-hover-popover]", function(ev) {
           ev.preventDefault();
           if(freshfoneuser.isOffline()){ return;}
           var element = $(this);
@@ -208,14 +205,14 @@ window.xhrPool = [];
           }, 300);
           element.data('timeoutDelayShow', timeoutDelayShow);
 
-        }).live('mouseleave',function(ev) {
+        }).on('mouseleave', "a[rel=ff-hover-popover]", function(ev) {
             clearTimeout($(this).data('timeoutDelayShow'));
             hidePopoverTimer = setTimeout(function() {
               $('.hover-card-agent').parent().remove();
             },1000);
       });
 
-    $("a[rel=widget-popover], a[rel=click-popover-below-left]").live("click", function(e){
+    $('body').on("click", "a[rel=widget-popover], a[rel=click-popover-below-left]", function(e){
         e.preventDefault();
         e.stopPropagation();
         clearTimeout(hidePopoverTimer);
@@ -236,10 +233,18 @@ window.xhrPool = [];
           var _self = $(this);
           if(!_self.data('loaded')) {      
             _self.append("<div class='sloading loading-small loading-block'></div>");
-            _self.load(_self.data('remoteUrl'), function(){
+            $.ajax({
+              type: 'GET',
+              url: _self.data('remoteUrl'), 
+              dataType: 'html',
+              error: function(data){
+                console.log("failed",data);
+              },
+              success: function(data){
+                _self.html(data);
                 _self.data('loaded', true);
                 _self.trigger('remoteLoaded');
-            });
+            }});
           }
       });
 
@@ -283,7 +288,7 @@ window.xhrPool = [];
           if ($(this).hasClass('inactive')) {
             $(this).children('input[type=checkbox]').removeAttr('checked');
           } else {
-            $(this).children('input[type=checkbox]').attr('checked','checked');
+            $(this).children('input[type=checkbox]').prop('checked',true);
           }
 
         });
@@ -303,16 +308,8 @@ window.xhrPool = [];
         ignore:"select.nested_field:empty, .portal_url:not(:visible), .ignore_on_hidden:not(:visible)"
       });
 
-      
-      
 
-    $('.single_click_link').live('click',function(ev) {
-      if (! $(ev.srcElement).is('a')) {
-        window.location = $(this).find('a').first().attr('href');
-      }
-    });
-
-    $('#helpdesk_ticket_status').live('change', function(){
+    $('body').on('change', '#helpdesk_ticket_status', function(){
       var required_closure_elements = $(".required_closure");
       if(required_closure_elements.length == 0)
         return
@@ -341,17 +338,14 @@ window.xhrPool = [];
       }
     });
 
-    $("input[rel=companion]")
-      .live({
-        "keyup": function(ev){
-          selector = $(this).data("companion");
-          if($(this).data("companionEmpty")) $(selector).val(this.value);
-        },
-        "focus": function(ev){
-          selector = $(this).data("companion");
-          $(this).data("companionEmpty", ($(selector) && $(selector).val().strip() === ""));
-        }
-      });
+      $(document).on('keyup.companion', "input[rel=companion]", function(ev){
+        selector = $(this).data("companion");
+        if($(this).data("companionEmpty")) $(selector).val(this.value);
+
+      }).on('focus.companion', "input[rel=companion]", function(ev) {
+        selector = $(this).data("companion");
+        $(this).data("companionEmpty", ($(selector) && $(selector).val().strip() === ""));
+      })
 
       sidebarHeight = $('#Sidebar').height();
       if(sidebarHeight !== null && sidebarHeight > $('#Pagearea').height())
@@ -381,7 +375,7 @@ window.xhrPool = [];
           }
         };
 
-        $('.custom-tip, .custom-tip-top, .custom-tip-left, .custom-tip-bottom').live('mouseenter', function(ev) {
+        $('.custom-tip, .custom-tip-top, .custom-tip-left, .custom-tip-bottom').on('mouseenter', function(ev) {
           config_position = qtipPositions['normal'];
 
           var classes = jQuery(this).data('tip-classes') || '';
@@ -428,7 +422,7 @@ window.xhrPool = [];
         }
 
         $(".nav-drop .menu-trigger")
-            .live('click', function(ev){
+            .on('click', function(ev){
                 ev.preventDefault();
 
                 $(this).toggleClass("selected").next().toggle();
@@ -472,7 +466,6 @@ window.xhrPool = [];
       $('body').on('click.freshdesk', '#scroll-to-top', function(ev) {
         $.scrollTo('body');
       })
-
 
 			
 			$(window).on("scroll.select2", function(ev) {

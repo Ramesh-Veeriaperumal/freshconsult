@@ -172,7 +172,7 @@ window.App.Discussions = window.App.Discussions || {};
 				if (confirm($(this).data('confirm'))) {
 					var $this = $(this),
 						form = $("#topic-bulk-form");
-					form.find('input[name=_method]').attr('value', $this.data('method'));
+					form.find('input[name=_method]').val($this.data('method'));
 					form.attr('action', $this.data('actionUrl'));
 					form.submit();
 				}

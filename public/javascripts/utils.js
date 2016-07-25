@@ -674,6 +674,7 @@ supports_html5_storage = function() {
   }
 }
 
+// TODO - Have to de move in to [ca_ticket_view.js] page
 var keyed_up = 0;
 function simpleTimedSearch(element, url, time){
   jQuery(element).keyup(function(ev){

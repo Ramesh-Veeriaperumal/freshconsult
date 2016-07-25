@@ -70,8 +70,8 @@ jQuery(document).ready(function(){
 		jQuery("ul.results").filter(function(){return jQuery(this).find('li.spotlight_result').length == 0; }).hide();
 	}
 
-	$J("#SearchResultsBar a").die('hover');
-	$J("#SearchResultsBar a").live({
+	$J("#SearchResultsBar a").off('hover');
+	$J("#SearchResultsBar a").on({
 		hover: function(){
 			$J(currentactive).removeClass("active");
 			currentactive = $J(this).addClass("active");
@@ -80,19 +80,15 @@ jQuery(document).ready(function(){
 			hideSearchBar();
 		}
 	});
-			
-	$J("#SearchResultsBar").live({
-		mouseenter:
-		   function()
-		   {
-		   	focusedOnSearch = false
-		   	insideSearch = true;
-		   },
-		mouseleave:
-		   function()
-		   {
-		   	insideSearch = false;
-		   }
+		
+	$J("#SearchResultsBar").on({
+		mouseenter: function() {
+			focusedOnSearch = false
+			insideSearch = true;
+		},
+		mouseleave: function() {
+			insideSearch = false;
+		}
 	});
 			
 	$J("#header_search").bind("focusout", function(ev){ 
@@ -176,7 +172,7 @@ jQuery(document).ready(function(){
 			}
 		}
 		$J(currentactive).removeClass("active");
-		position = Math.min((searchlist.size()-1), Math.max(0, position + diff)); 
+		position = Math.min((searchlist.length - 1), Math.max(0, position + diff)); 
 		currentactive = $J(searchlist.get(position)).addClass("active"); 
 	};
 			

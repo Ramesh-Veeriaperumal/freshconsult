@@ -86,7 +86,7 @@ var TemplateDockManager   = Class.create({
                     .on("click.tmpl_events", ".carousel", this.carouselScroll.bindAsEventListener(this));
   },
   resetQuery: function (e) {
-    jQuery(".appsearch-box #query").attr("value", "");
+    jQuery(".appsearch-box #query").val("");
   },
   setupCarousel: function(){
     jQuery("#screenshotsCarousel").livequery(function(){
@@ -212,7 +212,7 @@ var TemplateDockManager   = Class.create({
         jQuery(that.extensionsWrapper).empty()
                                     .append(JST["marketplace/marketplace_show"](extensions));
 
-        jQuery.event.trigger({
+        jQuery(document).trigger({
           type: "viewed_app_description_page",
           app_name: extensions.display_name,
           developed_by: extensions.account,
@@ -303,7 +303,7 @@ var TemplateDockManager   = Class.create({
         },
         success: function(resp_body, statustext, resp){
           if(resp.status == 200){
-            jQuery.event.trigger({
+            jQuery(document).trigger({
                 type: "successful_installation",
                 message: "Success",
                 app_name: that.appName,
@@ -359,7 +359,7 @@ var TemplateDockManager   = Class.create({
           that.developedBy = jQuery(el).attr("data-developedby");
         }
 
-        jQuery.event.trigger({
+        jQuery(document).trigger({
             type: "km_install_config_page_loaded",
             app_name: that.appName,
             developed_by: that.developedBy,

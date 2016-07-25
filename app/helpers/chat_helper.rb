@@ -360,4 +360,11 @@ module ChatHelper
     return { :text=> response_body, :content_type => response_type, :status => response_code }
   end
   
+  def chat_widget_list(widgets)
+    widgetList = []
+    widgets.each do |widget|
+      widgetList << livechat_setting(widget)
+    end
+    return widgetList
+  end
 end

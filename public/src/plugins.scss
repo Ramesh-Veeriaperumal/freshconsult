@@ -17,3 +17,8 @@
 
 //SyntaxHighlighter styles
 @import "plugins/shcore_default";
+
+//Dashboard page plugins
+@import "page/realtime_dashboard/gridstack";
+@import "page/realtime_dashboard/jquery.mCustomScrollbar";
+@import "page/realtime_dashboard/gridstack-extra";

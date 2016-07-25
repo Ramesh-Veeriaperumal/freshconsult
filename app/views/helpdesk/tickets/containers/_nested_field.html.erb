@@ -66,10 +66,10 @@ options = options.unshift([any,""], [none, "-1"]) %>
           item_id: '<%= sub_category_item_id %>',
           change_callback: toggle_save_and_refresh
         });
-        jQuery('#s2id_<%= category_id %>').live('click', function(){
+        jQuery('#s2id_<%= category_id %>').on('click', function(){
           jQuery('#s2id_<%= sub_category_id %>').select2("enable");
         });
-        jQuery('#s2id_<%= sub_category_id %>').live('click', function(){
+        jQuery('#s2id_<%= sub_category_id %>').on('click', function(){
           jQuery('#s2id_<%= sub_category_item_id %>').select2("enable");
         });
     <% end %>

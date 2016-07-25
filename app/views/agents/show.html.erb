@@ -144,11 +144,11 @@ jQuery(document).ready(function(){
   }
 });
 
-jQuery('#agent-deletion-confirmation-submit').live("click", function(){
+jQuery(document).on("click", '#agent-deletion-confirmation-submit', function(){
 	jQuery('#agent_contact_convert').trigger('click');
 });
 
-jQuery('#agent-gamification-reset-submit').live('click', function(){ 
+jQuery(document).on('click', '#agent-gamification-reset-submit', function(){ 
 	jQuery('#agent_score_reset').trigger('click');
 });
 <%end%>

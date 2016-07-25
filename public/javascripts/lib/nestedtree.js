@@ -198,9 +198,9 @@ var NestedField = Class.create({
                 _subcategory.value.children.each(function(_item){
                    _item_array.push([escapeHtml(_item.key), escapeHtml(_item.value.id)]);  
                });                                              
-               _subcategory_array.push((_item_array.size()) ? [escapeHtml(_subcategory.key), escapeHtml(_subcategory.value.id), _item_array] : [escapeHtml(_subcategory.key), (_subcategory.value.id)]);               
+               _subcategory_array.push((_item_array.length) ? [escapeHtml(_subcategory.key), escapeHtml(_subcategory.value.id), _item_array] : [escapeHtml(_subcategory.key), (_subcategory.value.id)]);               
             });               
-           _category_array.push((_subcategory_array.size()) ? [escapeHtml(_category.key), escapeHtml(_category.value.id), _subcategory_array] : [escapeHtml(_category.key), escapeHtml(_category.value.id)]);
+           _category_array.push((_subcategory_array.length) ? [escapeHtml(_category.key), escapeHtml(_category.value.id), _subcategory_array] : [escapeHtml(_category.key), escapeHtml(_category.value.id)]);
         });          
         return _category_array;      
   }

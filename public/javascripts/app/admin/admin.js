@@ -21,7 +21,6 @@ window.App = window.App || {};
 
 		setSubModule: function () {
 			switch (App.namespace) {
-
 			case 'admin/portal/index':
 			case 'admin/portal/edit':
 			case 'admin/portal/enable':
@@ -33,10 +32,15 @@ window.App = window.App || {};
 			case 'admin/portal/settings':
 				this.current_module = 'PortalSettings';
 				break;
-				
+
 			case 'accounts/manage_languages':
 			case "accounts/update_languages":
 				this.current_module = 'LanguageSettings';
+				break
+
+			case 'admin/chat_widgets/index':
+			case 'admin/chat_widgets/edit':
+				this.current_module = 'LiveChatAdminSettings';
 				break;
 			}
 		},

@@ -246,12 +246,12 @@ HarvestWidget.prototype= {
 		this.freshdeskWidget.remote_integratable_id = remote_integratable_id;
 		if (!is_delete_request){
 			if (harvestBundle.remote_integratable_id){
-				  jQuery('.harvest_timetracking_widget .app-logo input:checkbox').attr('checked',true);
+				  jQuery('.harvest_timetracking_widget .app-logo input:checkbox').prop('checked',true);
                   jQuery('.harvest_timetracking_widget .integration_container').toggle(jQuery('.harvest_timetracking_widget .app-logo input:checkbox').prop('checked'));	 
 				  this.retrieveTimeEntry();
 				}
 			else{
-				 jQuery('.harvest_timetracking_widget .app-logo input:checkbox').attr('checked',false);
+				 jQuery('.harvest_timetracking_widget .app-logo input:checkbox').prop('checked',false);
                  jQuery('.harvest_timetracking_widget .integration_container').toggle(jQuery('.harvest_timetracking_widget .app-logo input:checkbox').prop('checked'));
 				 this.resetTimeEntryForm();
 				}

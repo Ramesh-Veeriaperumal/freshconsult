@@ -143,15 +143,21 @@ $("[rel=remote-load]").livequery(
 
 		var $this = jQuery(this)
 
-		$(this).load($(this).data("url"), function(){
-			$(this).attr("rel", "");
-			$(this).removeClass("sloading loading-small loading-block");
+		$.ajax({
+			type: 'GET',
+			url: $(this).data("url"), 
+			dataType: 'html',
+			success: function(html){
+				$this.html(html);
+				$this.attr("rel", "");
+				$this.removeClass("sloading loading-small loading-block");
 
-			if(!$this.data("loadUnique"))
-			$(this).clone().prependTo('#remote_loaded_dom_elements');
+				if(!$this.data("loadUnique"))
+				$this.clone().prependTo('#remote_loaded_dom_elements');
 
-			if($this.data("extraLoadingClasses"))
-			$(this).removeClass($this.data("extraLoadingClasses"));
+				if($this.data("extraLoadingClasses"))
+				$this.removeClass($this.data("extraLoadingClasses"));
+			}
 		});
 	}
 );
@@ -416,7 +422,7 @@ $('.btn-collapse').livequery(
     var img = $(this);
   	$("<img/>")
     .attr("src", img.attr("src"))
-    .load(function() {
+    .on('load', function() {
 
       var originalWidth = this.width,
         originalHeight = this.height,
