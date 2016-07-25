@@ -5766,15 +5766,15 @@ en:
       unresolved_tickets_by_group: Unresolved Tickets by Group
       unresolved_tickets_by_priority: Unresolved Tickets by Priority
       unresolved_tickets_by_agent: Unresolved Tickets by Agent
-      unresolved_tickets_by_age: Top 10 Unresolved Tickets by age (Days)
+      unresolved_tickets_by_age: Top 10 Unresolved Tickets by Age (Days)
       agent_received_resolved: My Performance
       top_customers_by_open_tickets: Top 10 Customers by Open Tickets ( >2 Tickets )
       top_agents_by_open_tickets: Top 10 Agents by Old Tickets ( >7 Days )
       csat: Customer Satisfaction
       group_performance: Group Performance Today
       agent_performance: Agent Performance Today
-      ticket_workload_channels: Today's tickets workload by channels
-      ticket_workload: Today's tickets workload
+      ticket_workload_channels: Today's Tickets Workload by Channels
+      ticket_workload: Today's Tickets Workload
       time_stamp: as of %{time}
       detailed_summary: Detailed Summary
       leader_Board: Leaderboard
@@ -5792,7 +5792,7 @@ en:
       view_group_vs_status_summary: View Group vs Status summary
       something_went_wrong: We are Sorry. Something went Wrong.
       stats:
-        received_tickets: Total Receieved Tickets
+        received_tickets: Total Received Tickets
         resolved_tickets: Total Resolved Tickets
         avg_resolution_time: Avg Resolution Time(days)
         resolution_within_sla: Resolution within SLA%
