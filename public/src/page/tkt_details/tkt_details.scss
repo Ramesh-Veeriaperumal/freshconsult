@@ -3867,6 +3867,10 @@ li {
             display: inline-block;
             width: 100%;
         }
+        /*error close icon fix for new ticket*/
+        .file-upload.error-file {
+            padding-left: 4px !important;
+        }
     }
     .publicAttachmentPanel {
         @extend .attachmentPanel;
