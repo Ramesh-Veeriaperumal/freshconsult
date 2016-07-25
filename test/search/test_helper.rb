@@ -14,7 +14,7 @@ include ForumHelper
 include SolutionsHelper
 include TicketHelper
 include NoteHelper
-include Helpers::TicketFieldsTestHelper
+include TicketFieldsTestHelper
 include ContactFieldsHelper
 include Searchv2::SearchHelper
 
