@@ -504,6 +504,12 @@ li {
 
 
 /*// Multiple File Upload*/
+.attach-wrapper {
+    /*integration dropdowns*/
+    .dropdown-menu {
+        max-width: 230px;
+    }
+}
 .no-width {
     width: auto !important;
 }
@@ -700,6 +706,9 @@ li {
        @extend .ficon-cross;
        color: red !important;
     }
+    .file-upload .ficon-cross  {
+       left: -8px;
+    }
     .progress-bar.active,
     .progress.active .progress-bar {
         animation: 1s linear 0s normal none infinite running progress-bar-stripes;
@@ -827,20 +836,9 @@ li {
      box-shadow: none !important;
      -webkit-box-shadow:none !important;
 }
-
-    .select2-choice,
-    .select2-choice:active,
-    .select2-choice:hover {
-        border: none;
-    }
-
-    .select2-drop-active {
-        border: none;
-    }
-    .select2-container-active {
-        background: #E9E9E9 !important;
-        border: none;
-    }
+/*.select2-container-active {
+    background: #E9E9E9 !important;
+}*/
 
 .ticketSelect2Container {
     b[role="presentation"] {
@@ -881,6 +879,7 @@ li {
 /*// Single file upload */
 
 .single_file {
+        border-radius:5px;
     // !Pattern?
     .hidden_upload {
         display: block;
@@ -931,7 +930,12 @@ li {
     }
     .attach-wrapper {
         color: #333333;
-        background: none;
+        background: #FDFDFD;
+        padding: 0px;
+        border-top:1px solid #F3F3F3;
+        border-bottom: 1px solid #ccc;
+        display: block;
+
     }
     .attachments-wrap div.item {
         border: none;
@@ -940,6 +944,12 @@ li {
         white-space: nowrap;
         text-overflow: ellipsis;
         display: block;
+        a {
+          color: #000000 !important;
+        }
+    }
+    .attachments-wrap div.item:last-child {
+        margin-bottom: 10px;
     }
     .attachments-wrap div.item:hover {
         color: #000000 !important;
@@ -961,10 +971,6 @@ li {
     .attachmentTrigger {
         margin-left: 10px !important;
     }
-}
-
-.attach-wrapper .attachment_contents {
-    padding-bottom: 10px;
 }
 
 
@@ -992,7 +998,7 @@ li {
     padding: 7px 0;
     border-radius: 0 0px 5px 5px;
     background-color: #fdfdfd;
-    top: -12px;
+    border-bottom: none;
 }
 
 .compose-new-ticket .single_file .attach-wrapper {
@@ -1357,7 +1363,6 @@ li {
             }
         }
         .select2-container {
-            /*width: 350px;*/
             width:500px;
             position: relative;
             top: 5px;
@@ -3914,11 +3919,13 @@ li {
         border-radius: 15px;
         .progress-bar.active,
         .progress.active .progress-bar {
-            animation: 1s linear 0s normal none infinite running progress-bar-stripes;
+            animation: progress-bar-stripes 1s linear infinite;
+            -webkit-animation: progress-bar-stripes 1s linear infinite
         }
         .progress-bar-striped,
         .progress-striped .progress-bar {
             background-image: linear-gradient(45deg, rgba(153, 153, 153, 0.15) 25%, transparent 25%, transparent 50%, rgba(153, 153, 153, 0.15) 50%, rgba(153, 153, 153, 0.15) 75%, transparent 75%, transparent);
+            background-image: -webkit-linear-gradient(45deg, rgba(153, 153, 153, 0.15) 25%, transparent 25%, transparent 50%, rgba(153, 153, 153, 0.15) 50%, rgba(153, 153, 153, 0.15) 75%, transparent 75%, transparent);
             background-size: 30px 30px;
         }
         .progress-bar {
@@ -3936,6 +3943,14 @@ li {
             border-radius: 3px;
         }
         @keyframes progress-bar-stripes {
+            0% {
+                background-position: 30px 0;
+            }
+            100% {
+                background-position: 0 0;
+            }
+        }
+        @-webkit-keyframes progress-bar-stripes {
             0% {
                 background-position: 30px 0;
             }
