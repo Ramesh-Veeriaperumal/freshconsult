@@ -211,15 +211,15 @@ RealtimeDashboard.Widgets.Performance = function(widget_name,container,preview_l
 							color : '#99CD60',
 						},
 						{
-							value : cdata['fcr_tickets'],
+							value : cdata['fcr_tickets'] == null ? 0 : cdata['fcr_tickets'],
 							name : I18n.t('helpdesk.realtime_dashboard.stats.first_contact_resolution')
 						},
 						{
-							value : cdata['resolution_sla'],
+							value : cdata['resolution_sla'] == null ? 0 : cdata['resolution_sla'],
 							name : I18n.t('helpdesk.realtime_dashboard.stats.resolution_within_sla')
 						},
 						{
-							value : cdata['avg_resolution_time'],
+							value : cdata['avg_resolution_time'] == null ? 0 : cdata['avg_resolution_time'],
 							name : I18n.t('helpdesk.realtime_dashboard.stats.avg_resolution_time')
 						}
 					];
