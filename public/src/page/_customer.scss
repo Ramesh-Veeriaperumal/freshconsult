@@ -816,6 +816,7 @@ ul.user_list{
 		li{
 			@include padding(10px 0 10px 5px);
 			border-bottom: 1px solid #dadada;
+			@include box-sizing(border-box);
 			&[data-default-company="true"]{
 				background-color: #fffaee;
 			}
