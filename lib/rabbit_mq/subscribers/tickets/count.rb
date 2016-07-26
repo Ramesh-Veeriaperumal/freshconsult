@@ -39,7 +39,7 @@ module RabbitMq::Subscribers::Tickets::Count
   end
 
   def mq_count_valid(action, model)
-    if VALID_MODELS.include?(model) || count_misc_changes?
+    if VALID_MODELS.include?(model) || (model == "ticket" and count_misc_changes?)
       send("mq_count_#{model}_valid", action, model)
     else
       false
