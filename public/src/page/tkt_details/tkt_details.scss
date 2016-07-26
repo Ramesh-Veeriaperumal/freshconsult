@@ -1011,14 +1011,26 @@ li {
         margin-left: 10px !important;
     }
 }
-
+/*reply 2 forward*/
 .single_file.color {
     .attach-wrapper {
+        width: 100%;
         background: #fdfdfd !important;
         border-bottom: none;
     }
     .add_attachment {
         top: 14px;
+    }
+}
+.single_file.bulk {
+   .attach-wrapper {
+        width: 100%;
+        background: #fdfdfd !important;
+        border-bottom: none;
+        border-top: none;
+    }
+    .add_attachment {
+        top: 8px;
     }
 }
 .commentbox.commentbox-gray  {
@@ -1031,7 +1043,13 @@ li {
         }
     }
 }
-      
+/*multifile attachments*/
+.reply2forward_attachments {
+    padding: 0px !important;
+    width: 100% !important;
+    position: relative;
+    top: 23px;
+}
 /*attachment view*/
 
 .compose-new-ticket .attachments-wrap div.item,
