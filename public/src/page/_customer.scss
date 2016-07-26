@@ -794,23 +794,15 @@ ul.user_list{
 		border-radius: 50%;
 		display: inline-block;
 		@include size(12px, 12px);
-		@include float(right);
-		@include margin(2px 10px);
 		color: #ccc;
 	}
 
 	.default_company.primary{
 		color: #7ba70f;
-		@include float(right);
 		@include margin-right(10px);
-		cursor: default;
 	}
 
 	.client_manager{
-		@include float(right);
-		cursor: pointer;
-		right: 55px;
-		position: absolute;
 		&.unmanage{ color: #7ba70f;}
 		&.manage{ color: #ccc;}
 	}
@@ -824,6 +816,7 @@ ul.user_list{
 		li{
 			@include padding(10px 0 10px 5px);
 			border-bottom: 1px solid #dadada;
+			@include box-sizing(border-box);
 			&[data-default-company="true"]{
 				background-color: #fffaee;
 			}
@@ -831,14 +824,24 @@ ul.user_list{
 		li:has(ficon-checkmark-round){
 			background-color: #fffaee;
 		}
+		.uc_list_edit [class*="span"] {
+			min-height: auto;
+		}
 	}
 
 	input.user_company{
-		width: 74%;
+		width: 90%;
+	}
+
+	label.error {
+		margin-left: 25px;
 	}
 
 	.add_pad{ background-color: #98bf47; }
-	.remove_pad{ background-color: #ff9291;}
+	.remove_pad{ 
+		&.disabled {background-color: #c9c9c9;}
+		background-color: #ff9291;
+	}
 
 	.uc_actions{
 		@include border-radius(100%);
@@ -847,13 +850,12 @@ ul.user_list{
 		cursor: pointer;
 		font-weight: bold;
 		color: #ffffff;
-		float: left;
 	}
 
 	.uc_text{
 		display: inline-block;
 		@include margin(0 0 0 5px);
-		width: 75%;
+		width: 80%;
 		word-break: break-word;
 	}
 }

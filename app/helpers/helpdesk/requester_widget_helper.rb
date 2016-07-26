@@ -130,10 +130,14 @@ module Helpdesk::RequesterWidgetHelper
       field_value = (field_value = requester.company.send(field.name)).blank? ?
         field.default_value : field_value if requester.company.present?
       obj = :company
-      required = field.name == "name" ? company_field_of_contact_form[0].required_for_agent : field.required_for_agent
+      # to be enabled if company name edit is enabled
+      #required = field.name == "name" ? company_field_of_contact_form[0].required_for_agent : field.required_for_agent
+      required = field.required_for_agent # to be removed if company name edit is enabled
       class_name = "company_form"
       disabled = true
       if field.name == "name"
+        disabled = false # to be removed if company name edit is enabled
+        required = false # to be removed if company name edit is enabled
         args[:autocomplete] = true
         placeholder = I18n.t('requester_widget.search_company')
       end

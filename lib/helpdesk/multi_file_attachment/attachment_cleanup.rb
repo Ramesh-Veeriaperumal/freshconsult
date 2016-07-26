@@ -18,7 +18,7 @@ class Helpdesk::MultiFileAttachment::AttachmentCleanup
     else
       puts "** Not all stale attachments got cleaned up. Remaining attachments : #{stale_attachments.inspect} **"
       Rails.logger.debug "** Not all stale attachments got cleaned up. Remaining attachments : #{stale_attachments.inspect} **"
-      notification_topic = SNS["freshdesk_team_notification"]
+      notification_topic = SNS["freshdesk_team_notification_topic"]
       options = { :environment => Rails.env, :key => @key }
       DevNotification.publish(notification_topic, "Issue with attachment cleanup - Not all stale attachments got cleaned up", options.to_json)
     end

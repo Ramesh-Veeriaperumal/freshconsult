@@ -100,11 +100,11 @@ class CRM::FreshsalesUtility
     customer_status = get_customer_status(@subscription[:state].to_sym, payments_count)
 
     if result[:deals].any?
+      deal_type = ((deal_type == :new_business) && get_new_business_deal(result[:deals]).present?) ? :upgrade : deal_type
       open_deal = (deal_type == :downgrade) ? nil : recent_open_deal(result[:deals], result[:deal_stages])
       if open_deal
         mark_deal_as_closed_won(open_deal, { deal_type: deal_type, amount: amount })
       else
-        deal_type = ((deal_type == :new_business) && get_new_business_deal(result[:deals]).present?) ? :upgrade : deal_type
         deal_account_id = result[:sales_accounts].find{ |acc| acc[:id] == result[:deals].first[:sales_account_id] }[:id]
         deal_params = { deal_type: deal_type, amount: amount, customer_status: customer_status, 
                         sales_account_id: deal_account_id }.merge(contact_and_owner(deal_account_id))

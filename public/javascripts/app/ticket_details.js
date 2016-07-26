@@ -215,8 +215,7 @@ insertIntoConversation = function(value,element_id){
 	if($element){
 		if(element_id == "send-tweet-cnt-reply-body" || element_id == "send-fb-post-cnt-reply-body" || element_id == "send-mobihelp-chat-cnt-reply-body" ||
 				element_id == "send-ecommerce-post-cnt-reply-body" ){
-			var textValue = jQuery("<div />").html(value).text();
-			textValue = textValue.replace(/^\n?/, '');
+			var textValue = jQuery("<div />").html(value).text().trim();
 			$element.focus();
 			insertTextAtCursor($element.get(0), textValue);
 			$element.keyup(); // to update the SendTweetCounter value

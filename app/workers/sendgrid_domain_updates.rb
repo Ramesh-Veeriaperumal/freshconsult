@@ -19,7 +19,7 @@ class SendgridDomainUpdates < BaseWorker
     rescue => e
       FreshdeskErrorsMailer.error_email(nil, {:domain_name => args['domain']}, e, {
         :subject => "Error in updating domain in sendgrid", 
-        :recipients => "email-team@freshdesk.com" 
+        :recipients => "mail-alerts@freshdesk.com" 
         })
     end
   end
@@ -50,7 +50,7 @@ class SendgridDomainUpdates < BaseWorker
   def notify_and_update(domain, vendor_id)
     FreshdeskErrorsMailer.error_email(nil, {:domain_name => domain}, nil, {
       :subject => "Error in creating mapping for a domain in sendgrid", 
-      :recipients => "email-team@freshdesk.com",
+      :recipients => "mail-alerts@freshdesk.com",
       :additional_info => "Domain already exists in sendgrid"
       })
 
@@ -69,7 +69,7 @@ class SendgridDomainUpdates < BaseWorker
   end
 
   def generate_callback_key
-    SecureRandom.hex(13)
+    SecureRandom.hex(15)
   end
 
 end

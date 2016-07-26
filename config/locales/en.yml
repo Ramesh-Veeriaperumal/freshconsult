@@ -5766,15 +5766,15 @@ en:
       unresolved_tickets_by_group: Unresolved Tickets by Group
       unresolved_tickets_by_priority: Unresolved Tickets by Priority
       unresolved_tickets_by_agent: Unresolved Tickets by Agent
-      unresolved_tickets_by_age: Top 10 Unresolved Tickets by age (Days)
+      unresolved_tickets_by_age: Top 10 Unresolved Tickets by Age (Days)
       agent_received_resolved: My Performance
       top_customers_by_open_tickets: Top 10 Customers by Open Tickets ( >2 Tickets )
       top_agents_by_open_tickets: Top 10 Agents by Old Tickets ( >7 Days )
       csat: Customer Satisfaction
       group_performance: Group Performance Today
       agent_performance: Agent Performance Today
-      ticket_workload_channels: Today's tickets workload by channels
-      ticket_workload: Today's tickets workload
+      ticket_workload_channels: Today's Tickets Workload by Channels
+      ticket_workload: Today's Tickets Workload
       time_stamp: as of %{time}
       detailed_summary: Detailed Summary
       leader_Board: Leaderboard
@@ -5792,7 +5792,7 @@ en:
       view_group_vs_status_summary: View Group vs Status summary
       something_went_wrong: We are Sorry. Something went Wrong.
       stats:
-        received_tickets: Total Receieved Tickets
+        received_tickets: Total Received Tickets
         resolved_tickets: Total Resolved Tickets
         avg_resolution_time: Avg Resolution Time(days)
         resolution_within_sla: Resolution within SLA%
@@ -5868,6 +5868,11 @@ en:
       overlay_reply_time: " replied, %{time_in_words} ago"
       overlay_fwd_time: " forwarded, %{time_in_words} ago"
       overlay_note_time: " added a note, %{time_in_words} ago"
+      overlay_submitted_ticket: " submitted a new ticket"
+      overlay_forward: " forwarded"
+      overlay_reply: " replied"
+      overlay_note: " added a note"
+      overlay_time: "%{time_in_words} ago, "
       friendly_status:
         customer_responded: "Customer Responded"
         overdue: "Overdue"
@@ -9844,7 +9849,7 @@ en:
     company_association_exists: Company has already been taken
     helpcard:
       title: Customizing requester widget
-      info: Choose the fields that you want displayed under the requester info section on the ticket page with the requester widget. This way your team can update requester details directly from the ticket page and keep track of the customer details while solving their ticket.
+      info: Choose the fields that you want displayed under the requester info section on the ticket page with the requester widget. This way your team can update requester details directly from the ticket page and keep track of the customer details while solving their ticket. <a href="https://support.freshdesk.com/support/solutions/articles/219948-customizing-requester-info-fields" target="_blank">Learn more</a>
   requester_fields_updated: The requester widget has been updated.
   select_requester: "Please select requester"
   associate_n_companies: "Associate a contact with multiple companies?"

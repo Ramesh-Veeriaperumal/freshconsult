@@ -182,6 +182,11 @@ Helpdesk = Helpdesk || {};
                     if (_this.upload_status.length == 0) {
                         if ($("#attachment-modal-cancel:visible").length == 1) {
                             $("#attachment-modal-cancel:visible").trigger('click');
+                            // if edit ticket
+                            if(App.namespace == "helpdesk/tickets/edit") {
+                                form.find("input[name='helpdesk_note[attachments][][resource]']").remove();
+                                form.find("input[name='[cloud_file_attachments][]']").remove();
+                            }
                             form.submit();
                             $("#attachment-modal").remove();
                         }
@@ -309,6 +314,11 @@ Helpdesk = Helpdesk || {};
                 if (elist == 0 && nlist == 0) {
                     $(form).find('.attachment-limit').show();
                 }
+                // if edit ticket
+                if(App.namespace == "helpdesk/tickets/edit") {
+                      form.find("input[name='helpdesk_note[attachments][][resource]']").remove();
+                      form.find("input[name='[cloud_file_attachments][]']").remove();
+                }
             });
             // calling onload functions
             if (_this.onload_status == false) {
@@ -385,6 +395,7 @@ Helpdesk = Helpdesk || {};
                     // normal submit if in same tkt page
                     if (window.location.href == origin) {
                         var SubmitCallback = function() {
+
                             var form = _this.lastform;
                             var submitBtn = form.find('.submit_btn');
                             submitBtn.text(submitBtn.data('prevText'));

@@ -78,7 +78,8 @@ class CRM::Freshsales
 
         when paid_activation?(subscription, old_subscription)
           amount = cmrr.round(2)
-          freshsales.push_subscription_changes(:new_business, amount, payments_count)
+          deal_type = paid_customer?(payments_count) ? :upgrade : :new_business
+          freshsales.push_subscription_changes(deal_type, amount, payments_count)
 
         when upgrade?(subscription, old_subscription)
           amount = calculate_deal_amount(cmrr, old_cmrr)
@@ -169,7 +170,7 @@ class CRM::Freshsales
       old_state = old_subscription[:state]
       current_state = subscription[:state]
 
-      !old_state.eql?(FREE ) && free_plan_selected?(current_state, cmrr) && !paid_customer?(payments_count)
+      !old_state.eql?(FREE) && free_plan_selected?(current_state, cmrr) && !paid_customer?(payments_count)
     end
 
     def self.free_plan_selected?(current_state, cmrr)

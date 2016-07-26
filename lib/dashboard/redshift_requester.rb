@@ -42,7 +42,8 @@ class Dashboard::RedshiftRequester
       date_range:             "",
       filter:                 [],
       time_trend:             false,
-      time_trend_conditions:  []
+      time_trend_conditions:  [],
+      dashboard:              true
     }
   end
 

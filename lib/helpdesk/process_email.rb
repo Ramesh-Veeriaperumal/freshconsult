@@ -912,11 +912,12 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     Rails.logger.debug params[:verification_key]
     if params[:verification_key].present?
       stored_webhook_key = account_webhook_key_from_cache(Account::MAIL_PROVIDER[:sendgrid])
-      if stored_webhook_key.nil?
+      if stored_webhook_key.nil? or stored_webhook_key.webhook_key.nil?
         Rails.logger.info "VERIFICATION KEY is there. But AccountWebhookKey Record is not present for the key #{verification_key}"
       else
-        verification = (stored_webhook_key == params[:verification_key] ? true : false)
-        return verification
+        verification = (stored_webhook_key.webhook_key == params[:verification_key] ? true : false)
+        Rails.logger.info "VERIFICATION KEY match for account #{Account.current.id} : #{verification}"
+        # return verification
       end
     else
       Rails.logger.info "VERIFICATION KEY is not present for the account #{Account.current.id} with the envelope address #{params[:envelope]}"
