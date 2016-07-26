@@ -118,6 +118,7 @@ defaults: &defaults
     - [count_es_queue]
     - [clear_moderation_records]
     - [empty_moderation_trash]
+    - [sendgrid_domain_updates]
 
 development:
   <<: *defaults
