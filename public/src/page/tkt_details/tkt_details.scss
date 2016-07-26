@@ -883,7 +883,36 @@ li {
     }
   }
 }
+/*reply from forward*/
+.ticketSelect2Reply {
+    border:none !important;
+    @extends ticketSelect2;
+        .select2-results .select2-result-label {
+            margin:0px;
+      }
+    .select2-result-label {
+        background: #fff;
+        border: none;
+        color: black;
+    }
+  .select2-highlighted {
+    .select2-result-label {
+        background-color: #6F6F6F !important;
+        color: #fff !important;
+        cursor: pointer !important;
+    }
+  }
+}
+.ticketSelect2ReplyContainer {
+    @extends ticketSelect2Container;
+    a.select2-choice {
+        background: #f5f5f5 !important;
+    }
+    b[role="presentation"] {
+        background: #f5f5f5 !important;
+    }
 
+}
 /*// Multiple File Upload ends*/
 
 /*// Single file upload */
@@ -983,7 +1012,26 @@ li {
     }
 }
 
-
+.single_file.color {
+    .attach-wrapper {
+        background: #fdfdfd !important;
+        border-bottom: none;
+    }
+    .add_attachment {
+        top: 14px;
+    }
+}
+.commentbox.commentbox-gray  {
+    .ticketSelect2Container {
+        a.select2-choice {
+            background: #f5f5f5 !important;
+        }
+        b[role="presentation"] {
+            background: #f5f5f5 !important;
+        }
+    }
+}
+      
 /*attachment view*/
 
 .compose-new-ticket .attachments-wrap div.item,

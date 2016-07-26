@@ -190,7 +190,7 @@ class Helpdesk::DashboardController < ApplicationController
   end
 
   def load_items
-    @items = recent_activities(params[:activity_id]).paginate(:page => params[:page], :per_page => 20, :total_entries => 1000)
+    @items = recent_activities(params[:activity_id]).paginate(:page => params[:page], :per_page => 30, :total_entries => 1000)
   end
 
   def recent_activity_id
