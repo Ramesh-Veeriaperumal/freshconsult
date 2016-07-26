@@ -4,9 +4,10 @@
 
 <%# multifile attachments templates %>
 <% if  current_account.launched?(:multifile_attachments)  %>
-<%= render "helpdesk/tickets/ticket_widget/multifile_template_generator" %>
+  <%= render "helpdesk/tickets/ticket_widget/multifile_template_generator" %>
+<% else %>
+  <%= render "helpdesk/shared/single_attachment_template" %>
 <% end %>
-
 <div class="templates-header-wrapper">
   <%= render :partial => "helpdesk/tickets/ticket_widget/new_email_title" %>
   <div class="muted">
