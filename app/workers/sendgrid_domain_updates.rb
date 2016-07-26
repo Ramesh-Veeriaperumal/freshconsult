@@ -33,7 +33,7 @@ class SendgridDomainUpdates < BaseWorker
     response = send_request('delete', SendgridWebhookConfig::SENDGRID_API["delete_url"] + domain)
     return false unless response.code == 204
     Rails.logger.info "Deleting domain #{domain} from sendgrid"
-    AccountWebhookKeys.destroy_all(account_id: Account.current.id, vendor_id: vendor_id)
+    AccountWebhookKey.destroy_all(account_id: Account.current.id, vendor_id: vendor_id)
   end
 
   def create_record(domain, vendor_id)
