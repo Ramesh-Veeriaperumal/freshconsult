@@ -230,7 +230,7 @@ class Account < ActiveRecord::Base
         Redis::RoutesRedis.set_route_info(full_domain, id, full_domain)
         Subscription::UpdatePartnersSubscription.perform_async({:event_type => :domain_updated })
         SendgridDomainUpdates.perform_async({:action => 'delete', :domain => full_domain_was, :vendor_id => vendor_id})
-        SendgridDomainUpdates.perform_at(5.minutes.from_now, {:action => 'create', :domain => full_domain, :vendor_id => vendor_id})
+        SendgridDomainUpdates.perform_async({:action => 'create', :domain => full_domain, :vendor_id => vendor_id})
       end
     end
     
