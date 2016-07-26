@@ -1,7 +1,7 @@
 class TicketFieldDecorator < ApiDecorator
   delegate :id, :default, :description, :label, :position, :required_for_closure,
            :field_type, :required, :required_in_portal, :label_in_portal, :editable_in_portal, :visible_in_portal,
-           :level, :ticket_field_id, to: :record
+           :level, :ticket_field_id, :picklist_values, to: :record
 
   def portal_cc
     record.field_options.try(:[], 'portalcc')
@@ -10,7 +10,11 @@ class TicketFieldDecorator < ApiDecorator
   def portalcc_to
     record.field_options.try(:[], 'portalcc_to')
   end
-
+  
+  def has_section?
+    record.has_section?
+  end
+  
   def default_requester?
     @field_type ||= field_type == 'default_requester'
   end

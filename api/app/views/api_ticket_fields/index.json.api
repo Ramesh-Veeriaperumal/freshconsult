@@ -35,5 +35,26 @@ JSON.generate(@items.map do |ticket_field|
     end
     response_hash.merge!(nested_ticket_fields: nested_ticket_fields)
   end
+  if ticket_field.has_section?
+    sections =  ticket_field.picklist_values.includes(:section).map(&:section).compact.map do |section|
+      {
+        id: section.id,
+        label: section.label,
+        section_fields: section.section_fields.map do |sf|
+          {
+            id: sf.id,
+            position: sf.position,
+            ticket_field_id: sf.ticket_field_id
+          }
+        end,
+        picklist_mapping: section.section_picklist_mappings.includes(:picklist_value).map(&:picklist_value).map do |pv|
+          { 
+            "#{pv.id}" => pv.value 
+          }
+        end
+      }
+    end
+    response_hash.merge!(sections: sections)
+  end
   response_hash
 end)
