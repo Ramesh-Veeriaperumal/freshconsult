@@ -2,8 +2,11 @@
   <%= render :partial => "helpdesk/tickets/ticket_widget/sidebar", :locals => {:from_page => 'new_ticket_page_side_bar'}%> 
 <% end %>
 <%# multifile attachments templates %>
-<%= render "helpdesk/tickets/ticket_widget/multifile_template_generator" %>
-
+<% if  current_account.launched?(:multifile_attachments)  %>
+  <%= render "helpdesk/tickets/ticket_widget/multifile_template_generator" %>
+<% else %>
+  <%= render "helpdesk/shared/single_attachment_template" %>
+<% end %>
 <div class="templates-header-wrapper">
   <%= render :partial => "helpdesk/tickets/ticket_widget/new_ticket_title" %>
   <div class="muted"><%= t("ticket.submit_a_ticket_info") %></div>

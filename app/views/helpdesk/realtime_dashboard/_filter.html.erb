@@ -40,3 +40,18 @@
 	    </li>
 <% end %>
 	</ul>
+<% if @type == 'agent' %>
+	<div class="pull-right solution-link">
+		<a target="_blank" href="https://support.freshdesk.com/solution/articles/220744"><%=t('helpdesk.realtime_dashboard.solution_link') %></a>
+	</div>
+<% end %>
+<% if @type == 'supervisor' %>
+	<div class="pull-right mt5">	
+		<a target="_blank" href="https://support.freshdesk.com/solution/articles/220743"><%=t('helpdesk.realtime_dashboard.solution_link') %></a>
+	</div>
+<% end %>
+<% if @type == 'admin' %>
+	<div class="pull-right solution-link">
+		<a target="_blank" href="https://support.freshdesk.com/solution/articles/220738"><%=t('helpdesk.realtime_dashboard.solution_link') %></a>
+	</div>
+<% end %>
