@@ -5,9 +5,10 @@
   max_attachment ||= nil
   max_size ||= 15
   template ||= false
+  color ||= false
 %>
-<div class="single_file">
-<div class="attach-wrapper row-fluid new-attach" id="attachment-type" data-single-file=true>
+<div class="single_file <%= (color == true) ? "color":""%> ">
+<div class="attach-wrapper <%= (color == true)? "" : "row-fluid" %> new-attach" id="attachment-type" data-single-file=true>
   <div class="attachmentTrigger">   
     <div class="attachments-list-form" id="<%= attach_id %>-container">
       <% total_attachments = original_attachments[:regular].size + original_attachments[:cloud_files].size if original_attachments.present? %>
