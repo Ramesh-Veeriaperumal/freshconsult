@@ -865,8 +865,11 @@ li {
     background: #fff;
     border: none;
     color: black;
+    /*min-width: 300px;*/
     with:500px !important;
-  
+      .select2-results .select2-result-label {
+            margin:0px;
+      }
     .select2-result-label {
         background: #fff;
         border: none;
