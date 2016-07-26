@@ -1193,19 +1193,33 @@ li {
         margin-bottom: 22px;
         position: relative;
         &:hover {
-            .avatar-wrap,
             .commentbox {
                 @include transition(border 200ms cubic-bezier(0.65, 0.05, 0.36, 1));
                 border-color: #bbb;
+            }
+            .avatar-wrap{
+                @include transition(border 200ms cubic-bezier(0.65, 0.05, 0.36, 1));
+                border-color: #999;
             }
             .commentbox:before {
                 @include border-right-color(#aaa);
             }
         }
-        a.avatar-wrap {
-            .avatar-text {
+        a.avatar-wrap{
+            .avatar-text{
                 cursor: pointer;
             }
+        }
+    }
+    .activity:hover {
+        .commentbox {
+            border-color: #ddd;
+            &:before{
+                @include border-right-color(#bbb);
+            }
+        }
+        .avatar-wrap{
+            border-color: #999;
         }
     }
     .alert-container {
@@ -1685,13 +1699,12 @@ li {
         background: transparent;
         @include border-radius(5px);
     }
-    .minimized .commentbox {
+    .minimizable  .author-mail-detail, .minimizable  .subject{
         cursor: pointer;
-        .details,
-        .attachments-wrap,
-        .attachment_list,
-        .actions,
-        .seperator {
+     }
+    .minimized .commentbox, .minimized.commentbox{
+        cursor: pointer;
+        .details, .attachments-wrap, .attachment_list, .actions, .seperator, #ticket_original_request, .ticket-details-twitter{
             display: none;
         }
         .smiley {
@@ -1815,6 +1828,13 @@ li {
         a {
             font-weight: bold;
         }
+        .system-rule-link{
+            color: #a2a19f;
+            font-weight: 400;
+            &:hover{
+                color: #06c;
+            }
+        }
         .ticket-details-twitter {
             width: 200px;
             @include float(right);
@@ -1825,6 +1845,16 @@ li {
             }
         }
     }
+    .last-modified-detail {
+        a{ 
+            font-weight:normal;
+            color: #999;
+            &:hover{
+                color:#037;
+            }
+        };
+    }
+
     .details,
     #ticket_original_request {
         margin-top: 30px;
@@ -2240,19 +2270,20 @@ li {
 }
 
 .ticket_show .avatar-wrap {
-    width: 40px;
-    height: 40px;
     z-index: 100;
-    @include border-radius(50%);
-    @include transition(border 200ms cubic-bezier(0.65, 0.05, 0.36, 1));
-    background: #fff;
     position: absolute;
-    border: 1px solid #fff;
+    @include border-radius(50%);
     @include margin(0 0 3px 0);
     padding: 0;
     @include text-align(center);
     @include float(left);
+    width: 40px;
+    height: 40px;
     @include left(-35px);
+    background-color: #E0E0E0;
+    @include transition(border 200ms cubic-bezier(0.65, 0.05, 0.36, 1));
+    border: 1px solid #fff;
+    @include text-align(center);
     .preview_pic {
         display: inline-block;
         margin: 0;
@@ -2264,12 +2295,19 @@ li {
             top: 0;
         }
     }
+    .system-avatar{
+            font-size: 20px;
+            top: 11px;
+            @include right(10px);
+            position: absolute;
+            color:#555555;
+    }
     .avatar {
         @include border-radius(50%);
         position: relative;
         top: 2px;
     }
-    &:hover {
+    &:hover{
         @include transition(border 200ms cubic-bezier(0.65, 0.05, 0.36, 1));
         text-decoration: none;
         border: 1px solid #000;
@@ -3046,6 +3084,18 @@ li {
         &.active .visible {
             display: block;
         }
+        .activities_tick{
+            @include border-radius(50%);
+            border: 1px solid #ccc;
+            padding: 1.5px 4.5px;
+            font-size: 10px;
+            @include text-shadow(none);
+        }
+         &.active .activities_tick{
+            color:#fff;
+            background-color:#424242;
+            border:none;
+         }
         .text {
             @include float(left);
             @include margin(3px 10px 0 3px);
@@ -3986,3 +4036,19 @@ li {
     }
     /*// multifile attachments panels end*/
     /*//--------------------------------------*/
+
+
+    /* System Activity Styles */
+    .details {
+            margin-top: 5px;
+            .activity-details{
+                    @include padding-left(17px);
+                    li{
+                        padding-bottom: 2px;
+                        color: #bbb;
+                    }
+                    span{
+                        color:#333;
+                    }
+            }
+    }
