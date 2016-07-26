@@ -2017,7 +2017,17 @@ li {
 .activity .commentbox {
     min-height: 30px;
     .details {
-        margin-top: 0;
+        margin-top: 5px;
+            .activity-details{
+                    @include padding-left(17px);
+                    li{
+                        padding-bottom: 2px;
+                        color: #bbb;
+                    }
+                    span{
+                        color:#333;
+                    }
+            }
     }
 }
 
@@ -4036,19 +4046,3 @@ li {
     }
     /*// multifile attachments panels end*/
     /*//--------------------------------------*/
-
-
-    /* System Activity Styles */
-    .details {
-            margin-top: 5px;
-            .activity-details{
-                    @include padding-left(17px);
-                    li{
-                        padding-bottom: 2px;
-                        color: #bbb;
-                    }
-                    span{
-                        color:#333;
-                    }
-            }
-    }
