@@ -695,7 +695,7 @@ Helpdesk = Helpdesk || {};
                 }
             }
             return {
-                fname: m[1],
+                fname: escapeHtml(m[1]),
                 type: m[2].replace('.', '')
             };
         },
@@ -716,7 +716,7 @@ Helpdesk = Helpdesk || {};
         fileObjectConvertor: function(obj) {
             var attachments = JSON.stringify({
                 link: obj.url,
-                name: obj.filename,
+                name: escapeHtml(obj.filename),
                 original_attachment: true,
                 provider: obj.provider,
             });

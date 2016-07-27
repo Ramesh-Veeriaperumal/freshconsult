@@ -30,11 +30,12 @@
                         singleFile();
                     }
                     // for app
-                    else {
-                      
+                    else { 
+                            var tempName = files[0].name;
+                            files[0].name = escapeHtml(files[0].name);
                             var attachments = JSON.stringify(files[0]);
                             var cloud_file_object = [{
-                                fileName: files[0].name,
+                                fileName: tempName,
                                 provider: 'Box',
                                 attachments: attachments
                             }];

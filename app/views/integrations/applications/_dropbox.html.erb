@@ -33,7 +33,7 @@
                  else {
                           var attachments = JSON.stringify({
                              link: files[0].link,
-                             name: files[0].name,
+                             name: escapeHtml(files[0].name),
                              provider: 'dropbox'
                          });
                          var cloud_file_object = [{
