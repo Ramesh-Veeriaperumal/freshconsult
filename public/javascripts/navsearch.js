@@ -225,6 +225,8 @@ jQuery(document).ready(function(){
 			break;
 		}
 	});
+
+
 	jQuery('body').on('submit', '.nav_search', function(ev){ 
 		if(!focusedOnSearch){
 			return false;
@@ -233,6 +235,12 @@ jQuery(document).ready(function(){
 			handleFullSearch();
 		}
 
+	});
+
+	jQuery("[data-domhelper-name='ticket-delete-btn']").bind('click.remove_recent_ticket', function(ev){		
+		if(TICKET_DETAILS_DATA){
+			NavSearchUtils.deleteRecentTicketById(TICKET_DETAILS_DATA['displayId']);
+		}
 	});
 });
 
