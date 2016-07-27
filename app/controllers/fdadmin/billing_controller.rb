@@ -234,13 +234,6 @@ class Fdadmin::BillingController < Fdadmin::DevopsMainController
         Subscription::UpdatePartnersSubscription.perform_async({ :account_id => @account.id, 
           :event_type => :payment_added, :invoice_id => content[:invoice][:id] })
       store_invoice(content) if @account.subscription.affiliate.nil?
-      
-      Resque.enqueue_at(15.minute.from_now, CRM::Freshsales::AccountActivation,
-                             {  account_id: @account.id,
-                                subscription: @account.subscription.attributes, 
-                                cmrr:  @account.subscription.cmrr,
-                                collection_date: content[:invoice][:paid_on],
-                                auto_collection: content[:customer][:auto_collection] }) if content[:invoice][:first_invoice].to_s == TRUE
     end
 
     def payment_refunded(content)

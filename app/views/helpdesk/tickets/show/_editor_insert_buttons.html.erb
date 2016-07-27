@@ -3,16 +3,16 @@
 	<% defined?(id) ? editorId = id+'-'+cntid+'-body' : editorId = cntid+'-body' %>
 	<% if privilege?(:view_solutions) && cntid != 'tkt-cr'%>
 	<li>
-		<%= link_to( t('solution.title_singular'), "#", 
+		<%= link_to( "", "#", 
 						:rel => "ticket_solutions", 'data-editor-id' => "#{editorId}", 
-						:class => 'insert_solution tooltip', :title => "#{t('ticket.insert')} #{t('solution.title_singular')}") %>
+						:class => 'ficon-book-dark tooltip redactor_separator_ficon', :title => "#{t('ticket.insert')} #{t('solution.title_singular')}") %>
 	</li>
 	<li class="redactor_separator"></li>
 	<% end %>
 	<li>
-		<%= link_to( t('ticket.canned_responses.insert_ca_response'), "#", 
+		<%= link_to( "", "#", 
 						:rel => "ticket_canned_response", 'data-editor-id' => "#{editorId}", 
-						:class => 'insert_ca_response tooltip', :title => "#{t('ticket.insert')} #{t('ticket.canned_responses.insert_ca_response')}") %>
+						:class => 'ficon-canned-response tooltip redactor_separator_ficon', :title => "#{t('ticket.insert')} #{t('ticket.canned_responses.insert_ca_response')}") %>
 		<a href="javascript:void(null);" title="Bold (⌘B)" class="redactor_btn_bold" tabindex="-1"></a>
 	</li>
 </ul>

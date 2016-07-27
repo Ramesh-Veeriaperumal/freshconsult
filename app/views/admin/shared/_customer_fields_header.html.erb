@@ -1,0 +1,37 @@
+<div class='page-header-sticky custom-field-header' rel='sticky'>
+  <div class='sticky-header-wrapper'>
+    <div class="nav-tabs-underlined pull-left">
+      <%= link_to t('contacts.title'), admin_contact_fields_path, {
+            :class => "tooltip tab #{'active' if params[:controller] == 'admin/contact_fields'}"
+          } %>
+      <%= link_to t('company.title'), admin_company_fields_path, {
+          :class => "tooltip tab #{'active' if params[:controller] == 'admin/company_fields'}",
+          } %>
+    </div>
+    <div class="pull-right">
+      <span>
+        <%= link_to t('customize_requester_widget'), 
+                      "/admin/requester_widget/get_widget",
+                      :class => 'mr10 requester-widget-link',
+                      :rel => 'freshdialog',
+                      "data-target" => "#requester-widget-config-modal",  
+                      "data-width" => '500',
+                      "data-submit-label" => t('save'),
+                      "data-submit-loading" => t('saving'),
+                      "data-close-label" => t('cancel'),
+                      :title => t('customize_requester_widget') %>
+      </span>
+      <%= link_to "#{ t('cancel') }".html_safe, "/admin/home", :class => "btn" %>
+      <%= submit_tag t("save"), :class => "btn btn-primary save-custom-form", "data-commit" => t('saving') %>
+    </div>
+  </div>
+  <%= render :partial => "/shared/custom_field_buttons", :locals => { :field_class => field_class } %>
+</div>
+
+<%= javascript_tag do %>
+jQuery(document).ready(function(){ 
+  jQuery(document).bind("hidden", "#requester-widget-config-modal", function(e){ 
+    jQuery("#requester-widget-config-modal").removeData();
+  }) ;
+});
+<% end %>

@@ -1,6 +1,6 @@
 <% unless note.all_attachments.empty? and note.cloud_files.empty? %>
 <span class="seperator"></span>
-<div class="attachments-wrap clearfix" data-domhelper-name="attachments-wrap">
+<div class="attachments-wrap clearfix" data-domhelper-name="attachments-wrap" data-attachment-noteId=<%= note.id %> data-attachments='<%= note.all_attachments.to_json %>' data-cloudFile='<%= note.cloud_files.to_json.html_safe %>' >
 	<h5 id="note_attachments_title_<%= note.id %>"><strong><%= pluralize(note.all_attachments.size + note.cloud_files.size, t('attachment'), t('attachments'))%></strong></h5>
 	<ul class="attachment_list">
 	    <% note.all_attachments.each do |attached| %> 
@@ -13,3 +13,4 @@
 	</ul>
 </div>
 <% end %>
+

@@ -2,11 +2,12 @@ module Search
   module Dashboard
 
     class Count
-      attr_accessor :account_id, :payload
+      attr_accessor :account_id, :payload, :options
 
-      def initialize(payload = nil, account_id = Account.current.id)
+      def initialize(payload = nil, account_id = Account.current.id, options = {})
         @account_id= account_id
         @payload = payload
+        @options = options
       end
 
       def index_es_count_document
@@ -20,7 +21,7 @@ module Search
             :version_type => 'external',
             :version      => payload[:version].to_i
           }
-          Search::V2::Utils::EsClient.new("put",document_path(model_class, document_id, version), model_object.to_count_es_json)
+          Search::Dashboard::CountClient.new("put",document_path(model_class, document_id, version), model_object.to_count_es_json)
         end
       end
 
@@ -28,11 +29,11 @@ module Search
         payload.symbolize_keys!
         model_class = payload[:klass_name]
         document_id = payload[:document_id]
-        Search::V2::Utils::EsClient.new(:delete, document_path(model_class, document_id), nil, Search::Utils::SEARCH_LOGGING[:response]).response
+        Search::Dashboard::CountClient.new(:delete, document_path(model_class, document_id), nil, Search::Utils::SEARCH_LOGGING[:response]).response
       end
 
       def create_alias
-        Search::V2::Utils::EsClient.new(:post, 
+        Search::Dashboard::CountClient.new(:post, 
                             [host, '_aliases'].join('/'), 
                             ({ actions: aliases }.to_json),
                             Search::Utils::SEARCH_LOGGING[:all]
@@ -40,7 +41,7 @@ module Search
       end
 
       def remove_alias
-        Search::V2::Utils::EsClient.new(:post, 
+        Search::Dashboard::CountClient.new(:post, 
                             [host, '_aliases'].join('/'), 
                             ({ actions: aliases("remove") }.to_json),
                             Search::Utils::SEARCH_LOGGING[:all]
@@ -66,7 +67,12 @@ module Search
       end
 
       def index_name
-        "es_filters_count"
+        if Rails.env.production?
+          es_shard_name = options[:shard_name].to_s.gsub("_","")
+          "es_filters_count_#{es_shard_name}"
+        else
+          "es_filters_count"
+        end
       end
 
     end

@@ -1,6 +1,13 @@
  
 <%= stylesheet_link_tag_with_rtl :'cdn/tkt_details_print', :media => "print"  %>
 <%= render :partial => "helpdesk/tickets/show/scriptvars" %>
+<!-- if multi file enabled -->
+<% if current_account.launched?(:multifile_attachments) %>
+ <%= render :partial => "helpdesk/shared/multi_attachment_template" %>
+<% else %>
+<!-- else  -->
+ <%= render :partial => "helpdesk/shared/single_attachment_template" %>
+<% end %>
 <%= load_sticky %>
 <div class="tkt-wrapper ticket_show" data-showing='notes'>
 	<div class="tkt-wrapper-inner clearfix">
@@ -47,8 +54,6 @@
 	<%= render :partial => "helpdesk/tickets/freshdesk_socket", :locals => {:ticket => @ticket } if current_account.agents_details_from_cache.count > 1%>
 <% end %>
 
-<%= render :partial => "/helpdesk/tickets/show/multifile_template"  %>
-<%= render :partial => "/helpdesk/tickets/show/multifile_template_new"  %>
 <script type="text/javascript">
 	Fjax.Assets.plugin('360player');
 jQuery(document).ready(function(){

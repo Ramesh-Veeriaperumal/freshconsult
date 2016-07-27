@@ -8,9 +8,11 @@ module AwsWrapper
   class S3Object
     
     def self.url_for(content_path,bucket_name,options={})
-      bucket = AWS::S3::Bucket.new(bucket_name)
-      s3object = AWS::S3::S3Object.new(bucket,content_path)
-      s3object.url_for(:read,options).to_s
+      unless content_path.blank?
+        bucket = AWS::S3::Bucket.new(bucket_name)
+        s3object = AWS::S3::S3Object.new(bucket,content_path)
+        s3object.url_for(:read,options).to_s
+      end
     end
 
     def self.read(content_path,bucket_name,options={})
@@ -20,7 +22,7 @@ module AwsWrapper
     end
 
     def self.store(file_path,file,bucket_name,options={})
-      AWS::S3::Bucket.new(bucket_name).objects[file_path].write(file,options)
+      AWS::S3::Bucket.new(bucket_name).objects[file_path].write(file,options.merge(:server_side_encryption => :aes256))
     end
 
     def self.find(file,bucket)

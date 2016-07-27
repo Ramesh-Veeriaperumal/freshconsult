@@ -1,0 +1,139 @@
+<% user ||= @user %>
+<% show_recent_tickets ||= :filter %>
+<% link_target = local_assigns.has_key?(:new_tab) ? "_blank" : "_self"  %>
+<% strange_number = strange_number?(user.available_number) if user.available_number.present? %>
+<div class="contact_hover requester_widget">
+  <%= user_avatar(user, :thumb, 'preview_pic small') %>
+  <div class="infoblock muted">
+    <%= content_tag :div, link_to(h(user.display_name), user, :target => link_target,
+                                  :'data-pjax' => '#body-container'),
+                                  :class => "user_name"%>
+    <% if user.parent.present? %>
+      <div class="contact-append">
+        <p class="merged_user"><%= t('contacts.merged_info') %></p>
+        <%= link_to h(user.parent.name), contact_path(user.parent_id),
+            :class => "hover-contact-box merged_user" %>
+      </div>
+    <% else %>
+      <div class="user_design">
+        <% unless user.job_title.blank? %>
+            <div class="break-word user-job-title" title="<%= h user.job_title %>">
+                <%= h user.job_title %>
+              </div>
+        <% end %>
+        <%= render :partial => "helpdesk/tickets/components/company_info", :locals => { :user => user } %>
+        <% if feature?(:gamification) and feature?(:gamification_enable) and user.agent? %>
+          <%= content_tag :div, h(user.agent.level.name) unless user.agent.level.blank? %>
+        <% end %>
+      </div>
+
+      <%= construct_widget_fields(user).html_safe if privilege?(:manage_contacts) %>
+
+      <div class="pull-right">
+        <span class="recent-tickets">
+          <% case show_recent_tickets %>
+            <% when :dialog then %>
+              <% if ticket.is_a?(Helpdesk::ArchiveTicket) %>
+                <%= link_to t('ticket.recent_tickets'),
+                      "/helpdesk/archive_tickets/#{ticket.id}/component?component=requester_tickets",
+                      :rel => 'freshdialog',
+                      "data-target" => "#requester_tickets",
+                      "data-template-footer" => "",
+                      :title => t('contacts.info4', :nick_name => h(user.display_name)) if ticket.present? %>
+              <% else %>
+                <%= link_to t('ticket.recent_tickets'),
+                      "/helpdesk/tickets/#{ticket.id}/component?component=requester_tickets",
+                      :rel => 'freshdialog',
+                      "data-target" => "#requester_tickets",
+                      "data-template-footer" => "",
+                      :title => t('contacts.info4', :nick_name => h(user.display_name)) if ticket.present? %>
+              <% end %>
+            <% when :filter then %>
+              <% if local_assigns.has_key? :new_tab %>
+                <%= link_to t('ticket.recent_tickets'),
+                    helpdesk_requester_filter_path(:requester_id => user.id),
+                    :title => t('contacts.info4', :nick_name => h(user.display_name)), :target => "_blank" %>
+              <% else %>
+                <%= link_to t('ticket.recent_tickets'),
+                    helpdesk_requester_filter_path(:requester_id => user.id),
+                    :title => t('contacts.info4', :nick_name => h(user.display_name)) %>
+              <% end %>
+          <% end %>
+        </span>
+        <% unless user.agent? || !privilege?(:manage_contacts) || user.deleted || user.blocked %>
+          <span class="dash-seperator"> - </span>
+          <%= link_to t('requester_widget_edit'),
+                        "#requester-widget-user-edit-dialog",
+                        :rel => 'freshdialog',
+                        "class" => 'edit-requester-link',
+                        "data-width" => '500',
+                        "data-submit-label" => t('save'),
+                        "data-submit-loading" => t('saving'),
+                        "data-close-label" => t('cancel'),
+                        :title => t('requester_widget_edit_req') %>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<%= javascript_tag do %>
+jQuery(document).ready(function()
+{
+  var tags_options = "<%= escape_javascript(current_account.tags.most_used(25).collect{|tag| tag.name}.join(',').html_safe) %>";
+  jQuery('.requester_widget span.widget-more-toggle').click(function(){
+    if(jQuery(this).hasClass('condensed')){
+      jQuery(this).parents('.requester_widget').find('div.widget-more-content').slideDown('fast','easeInQuad');
+      jQuery(this).removeClass('condensed');
+      jQuery(this).text('<%= t("requester_widget_less")%>');
+    } else {
+      jQuery(this).addClass('condensed');
+      jQuery(this).parents('.requester_widget').find('div.widget-more-content').slideUp('fast','easeOutQuad');
+      jQuery(this).text('<%= t("requester_widget_more")%>')
+    }
+  });
+
+  jQuery("input[name='contact[tag_names]']").select2({
+    tags: tags_options.split(","),
+    tokenSeparators: [',']
+  });
+
+  jQuery('.requester_widget span.more-toggle').click(function(){
+    var toggle = this;
+    if(jQuery(toggle).parent().hasClass('expanded')){
+      jQuery(toggle).parent().find('.hidden-text').hide();
+      jQuery(toggle).parent().removeClass('expanded');
+    }else{
+      jQuery(toggle).parent().addClass('expanded');
+      jQuery(toggle).parent().find('.hidden-text').slideDown('fast','linear');
+    }
+  });
+
+  jQuery(document).bind("show", "#requester-widget-user-edit-dialog", function(e){
+    jQuery(".requester-widget-user-fields .field-set label").each(function(){
+      if(jQuery(this).text().length > 11){
+        jQuery(this).attr('title',jQuery(this).text());
+        jQuery(this).addClass('tooltip');
+      }
+    });
+    jQuery("#company_domains").select2({
+      multiple: true,
+      tags:[],
+      tokenSeparators: [","," "],
+      minimumResultsForSearch: -1,
+      selectOnBlur: true,
+      dropdownCssClass: "requester-widget-domain-names"
+    });
+
+    jQuery(document).bind('select2-removed',"#company_domains", function(e){
+      jQuery('#domain_name-error').remove();
+    });
+
+
+  });
+
+
+
+});
+<% end %>
+

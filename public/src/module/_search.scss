@@ -217,20 +217,17 @@
 .search_results_bar{
 	border-bottom-radius:6px;
 	@include box-shadow(#aaa 0px 10px 40px -10px);
-	border:1px solid #afafaf;
+	// border:1px solid #afafaf;
 	display:none;
 	position:absolute;
 	background:#ffffff;
  @include right(0px);
 	top:-1px;
 	border-top:1px solid #dddede;
-	@include padding-left(100px);
 	z-index:9999999;
 	ul.results{
 		width:298px;
-		background:#f6f6f6;
-		@include border-left(1px solid #dedede);
-		@include padding(6px 0px 0px 0px);			
+		@include border-left(1px solid #dedede);			
 		border-bottom:1px solid #efefef;
 		li{
 			a:hover, a.active{
@@ -255,11 +252,12 @@
 	li{
 		list-style:none;
 		position:relative;
-		.helpdesk_ticket_icon, .customer_icon, .topic_icon, .solution_article_icon, .user_icon{
+		.helpdesk_ticket_icon, .customer_icon, .topic_icon, .solution_article_icon, .user_icon, .recent_search_icon{
 			@include margin-right(10px);
 			font-size:15px;
 			position: absolute;
 			@include left(7px);
+			opacity: 0.6
 		}
 		a{
 			display:block;
@@ -290,14 +288,12 @@
 		}
 		
 		h4{
-			position:absolute;
-		 	@include left(0px);
-			top:5px;
-			@include margin-left(-100px);
-			width:90px;
-			color:#888888;
+			background-color: #f7f7f7;			
+			color:#666666;
 			font-size:12px;
-			@include text-align(right);
+			padding-top: 8px;
+			padding-bottom: 8px;
+			@include padding-left(8px);
 		}
 		div, a{
 			@include padding(4px 8px 4px 30px);

@@ -13,6 +13,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   before_create :set_company_id
 
+  before_create :set_boolean_custom_fields
+
 	before_update :assign_email_config
 
   before_update :update_message_id, :if => :deleted_changed?
@@ -469,6 +471,12 @@ private
       domain = (/@(.+)/).match(self.from_email).to_a[1]
       comp_domain = account.company_domains.where("domain = '#{domain}'").first
       self.owner_id = comp_domain.company_id if comp_domain && requester.company_ids.include?(comp_domain.company_id)
+    end
+  end
+
+  def set_boolean_custom_fields
+    Account.current.ticket_field_def.boolean_ff_aliases.each do |f|
+      set_ff_value(f, 0) unless self.send(f)
     end
   end
 

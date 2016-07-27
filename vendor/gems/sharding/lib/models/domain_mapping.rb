@@ -38,7 +38,7 @@ class DomainMapping < ActiveRecord::Base
   end
 
   def update_route_53(options)
-    domain_config = {:domain_name => domain, :region => "podeuwest1" }.merge(options)
+    domain_config = {:domain_name => domain, :region => PodConfig['CURRENT_POD'] }.merge(options)
     PodDnsUpdate.perform_async(domain_config)
   end
 

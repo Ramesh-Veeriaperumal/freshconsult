@@ -4,6 +4,7 @@ class Freshfone::CallObserver < ActiveRecord::Observer
   include Freshfone::NodeEvents
   include Freshfone::CallsRedisMethods
   include Freshfone::SubscriptionsUtil
+  include Freshfone::AcwUtil
   
 	def before_create(freshfone_call)
 		initialize_data_from_params(freshfone_call)
@@ -28,6 +29,7 @@ class Freshfone::CallObserver < ActiveRecord::Observer
         account.launched?(:freshfone_call_tracker) && !trial?
       update_pinged_agent_status(call) if ongoing_child_call? call 
       if call.call_ended?
+        resolve_acw(call) if call.agent.present? && account.features?(:freshfone_acw)
         trigger_cost_job(call)
         remove_value_from_set(pinged_agents_key(call.id, account), call.call_sid)
       end
@@ -188,5 +190,30 @@ class Freshfone::CallObserver < ActiveRecord::Observer
     def ongoing_child_call?(call)
       call.inprogress? && call.user_id.present? && (
         call.incoming? || !call.is_root?) # checking not root for outgoing child
+    end
+
+    def resolve_acw(call)
+      move_to_acw_state(call) if  outgoing_or_completed?(call) &&
+        !transferred?(call) && !on_app_or_mobile?(call)
+    end
+
+    def outgoing_or_completed?(call)
+      call.outgoing? || (call.incoming? && call.completed?)
+    end
+
+    def on_app_or_mobile?(call)
+      call.meta.android_or_ios? || (call.incoming? &&
+        call.meta.available_on_phone?)
+    end
+
+    def move_to_acw_state(call)
+      freshfone_user = call.agent.freshfone_user
+      freshfone_user.acw!
+      trigger_acw_timer(call)
+    end
+
+    def transferred?(call)
+      call.children.present? && call.children.last.call_status.in?(
+        Freshfone::Call::INTERMEDIATE_CALL_STATUS)
     end
 end

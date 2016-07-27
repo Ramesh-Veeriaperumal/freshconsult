@@ -1,0 +1,31 @@
+<% if (renderData && renderData.length) { %>
+	<ul>
+		<% for (i = 0; i < renderData.length; i++) { %>
+	        <% if ( i %2 == 0) { %>
+	        	<li class='odd'> 
+	        		<a 
+	        		data-parallel-url="/helpdesk/tickets/filter_options" data-parallel-placeholder="#ticket-leftFilter" data-pjax="#body-container"
+	        		href='/helpdesk/tickets?requester=<%= renderData[i].requester_id %>' ><%= renderData[i].name %>
+	        		<% if(renderData[i].company_name != undefined){ %>
+	        			( <%= renderData[i].company_name %> )
+	        		<% } %>
+	        		
+	        	    </a>
+	        		<span class='pull-right'><%= RealtimeDashboard.CoreUtil.shortenLargeNumber(renderData[i].count,1) %></span>
+	        			<div class="clear"></div>
+	        	</li>
+	        <% } else { %>
+	        	<li class='even'> <a 
+	        	data-parallel-url="/helpdesk/tickets/filter_options" data-parallel-placeholder="#ticket-leftFilter" data-pjax="#body-container"
+	        	href='/helpdesk/tickets?requester=<%= renderData[i].requester_id %>'><%= renderData[i].name %>
+	        	<% if(renderData[i].company_name != undefined){ %>
+	        			( <%= renderData[i].company_name %> )
+	        		<% } %>
+	        	 </a>
+				<span class='pull-right'><%= RealtimeDashboard.CoreUtil.shortenLargeNumber(renderData[i].count,1) %></span>
+	        		<div class="clear"></div>
+	        	 </li>
+	        <% } %>
+	    <% } %>
+    </ul>
+<%  } %>

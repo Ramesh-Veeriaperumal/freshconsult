@@ -156,6 +156,17 @@ module Redis::RedisKeys
   GAMIFICATION_GROUPS_LEADERBOARD = "GAMIFICATION_GROUPS_LEADERBOARD:%{account_id}:%{category}:%{month}"
   GAMIFICATION_GROUP_AGENTS_LEADERBOARD = "GAMIFICATION_GROUP_AGENTS_LEADERBOARD:%{account_id}:%{category}:%{month}:%{group_id}"
 
+  MULTI_FILE_ATTACHMENT = "MULTI_FILE_ATTACHMENT:%{date}"
+  #Dashboard v2 caching keys starts
+  ADMIN_WIDGET_CACHE_SET =  "ADMIN_WIDGET_CACHE_SET:%{account_id}"
+  GROUP_WIDGET_CACHE_SET =  "GROUP_WIDGET_CACHE_SET:%{account_id}"
+  ADMIN_WIDGET_CACHE_GET =  "ADMIN_WIDGET_CACHE_GET:%{account_id}"
+  GROUP_WIDGET_CACHE_GET =  "GROUP_WIDGET_CACHE_GET:%{account_id}"
+  #Dashboard v2 caching keys ends
+
+	# List of languages used by agents in an account
+  AGENT_LANGUAGE_LIST = "AGENT_LANGUAGE_LIST:%{account_id}"
+
 	def newrelic_begin_rescue
 	    begin
 	      yield

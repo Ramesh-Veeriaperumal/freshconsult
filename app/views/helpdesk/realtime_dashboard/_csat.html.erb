@@ -1,0 +1,50 @@
+<div data-gs-x="<%= x %>" data-gs-y="<%= y %>" data-gs-width="<%= width %>" data-gs-height="<%= height %>" class="grid-stack-item widget csat_widget">
+	<div class="grid-stack-item-content widget-inner">
+		  <h3 class="widget-title multi">
+          <%= t('helpdesk.realtime_dashboard.csat') %>
+      </h3>
+      <div class="widget-title-muted muted" rel="timestamp"></div>
+      <div id="widget_content">
+          <div class="row-fluid survey-summary">
+               <div class="span2 survey-info">
+                  <div class="pull-left">
+                     <i class="ficon-survey-happy survey-icon"></i>
+                  </div>
+                  <div class="overview-percentage" rel="positive">0%</div>
+                  <div class="muted">Positive</div>
+               </div>
+               <div class="span2 survey-info">
+                  <div class="pull-left">
+                     <i class="ficon-survey-neutral survey-icon"></i>
+                  </div>
+                  <div class="overview-percentage" rel="nuetral">0%</div>
+                  <div class="muted">Neutral</div>
+               </div>
+               <div class="span2 survey-info">
+                  <div class="pull-left">
+                     <i class="ficon-survey-sad survey-icon"></i>
+                  </div>
+                  <div class="overview-percentage" rel="negative">0%</div>
+                  <div class="muted">Negative</div>
+               </div>
+               <div class="clear"></div>
+          </div>
+          <div class="survey-count">
+              <div class="section first hide">
+                  <div class="count" rel="sent">0</div>
+                  <div class="text">Surveys Sent</div>
+              </div>
+              <div class="section" style="margin:0 auto;border:0;float:none;">
+                  <div class="count" rel="responded">0</div>
+                  <div class="text">Surveys Received</div>
+              </div>
+              <div class="clear"></div>
+          </div>
+      </div>
+  </div>
+</div>
+<script>
+  jQuery('body').one('assetLoaded.fjax', function() {
+   	  RealtimeDashboard.Widgets.Csat.init();
+  });
+</script>

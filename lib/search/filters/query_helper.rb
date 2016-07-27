@@ -23,7 +23,7 @@ module Search::Filters::QueryHelper
     # rest          : terms            #
     ####################################
 
-    def es_query(conditions, neg_conditions, with_permissible = true)
+    def es_query(conditions, neg_conditions, with_permissible = true, list_page = false)
 
       condition_block = {
         :should   => [],
@@ -34,20 +34,18 @@ module Search::Filters::QueryHelper
       # Hack for handling permissible as used in tickets
       #with_permissible will be false when queried from admin->tag as we dont need permisible there. 
       condition_block[:must].push(permissible_filter) if with_permissible and User.current.agent? and User.current.restricted?
-
       construct_conditions(condition_block[:must], conditions)
       construct_conditions(condition_block[:must_not], neg_conditions)
-
-      filtered_query(nil, bool_filter(condition_block))
+      filtered_query(nil, bool_filter(condition_block),list_page)
     end
 
     def permissible_filter
       ({
         :group_tickets      =>  bool_filter(:should => [
                                                         group_id_es_filter('group_id', ['0']), 
-                                                        term_filter('responder_id', [User.current.id.to_s])
+                                                        term_filter('responder_id', User.current.id.to_s)
                                                         ]),
-        :assigned_tickets   =>  term_filter('responder_id', [User.current.id.to_s])
+        :assigned_tickets   =>  term_filter('responder_id', User.current.id.to_s)
       })[Agent::PERMISSION_TOKENS_BY_KEY[User.current.agent.ticket_permission]]
     end
 
@@ -219,8 +217,12 @@ module Search::Filters::QueryHelper
       { :term => { field_name.to_s => value, :_cache => false }}
     end
 
-    def filtered_query(query_part={}, filter_part={})
-      query_base = Account.current.features?(:countv2_reads) ? :bool : :filtered
+    def filtered_query(query_part={}, filter_part={}, list_page=false)
+      query_base =  if list_page
+                      :filtered
+                    else
+                      Account.current.features?(:countv2_reads) ? :bool : :filtered
+                    end
       base = ({:query => { query_base => {}}})
       
       base[:query][query_base].update(:query => query_part) if query_part.present?

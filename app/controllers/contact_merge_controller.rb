@@ -104,7 +104,7 @@ class ContactMergeController < ApplicationController
           :mobile => i.mobile.present?,
           :mobile_num => i.mobile,
           :searchKey => i.emails.join(",")+i.name, 
-          :avatar =>  i.avatar ? i.avatar.expiring_url("thumb",30.days.to_i) : is_user_social(i, "thumb")
+          :avatar =>  i.avatar ? i.avatar.expiring_url("thumb",7.days.to_i) : is_user_social(i, "thumb")
         }
       end
     end

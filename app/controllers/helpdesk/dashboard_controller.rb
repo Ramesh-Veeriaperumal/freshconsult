@@ -11,22 +11,16 @@ class Helpdesk::DashboardController < ApplicationController
   include Dashboard::UtilMethods
   include Helpdesk::TicketFilterMethods
   include Gamification::GamificationUtil
-
-  ACTIVITY_LIMIT = {
-    "type1" => 20,
-    "type2" => 40,
-    "type3" => 10
-  }
+  include DashboardControllerMethods
 
   skip_before_filter :check_account_state
-  before_filter :check_dashboard_privilege, :only => [:show]
   before_filter :check_account_state, :redirect_to_mobile_url, :set_mobile, :show_password_expiry_warning, :only => [:index]  
+  before_filter :check_dashboard_privilege, :only => [:index]
   before_filter :load_items, :only => [:activity_list]
   before_filter :set_selected_tab
   before_filter :round_robin_filter, :load_ffone_agents_by_group, :only => [:agent_status]
-  around_filter :run_on_slave,            :only => [:unresolved_tickets_data, :tickets_summary]
+  around_filter :run_on_slave,            :only => [:unresolved_tickets_data, :tickets_summary, :trend_count, :overdue, :due_today, :unresolved_tickets_dashboard, :unresolved_tickets_workload, :survey_info, :available_agents]
   before_filter :load_unresolved_filter,  :only => [:unresolved_tickets_data]
-  before_filter :load_widget_filter,      :only => [:tickets_summary]
   skip_after_filter :set_last_active_time, :only => [:latest_activities]
 
   def index
@@ -34,9 +28,6 @@ class Helpdesk::DashboardController < ApplicationController
       load_items
       render(:partial => "ticket_note", :collection => @items)
     else
-      #defaulting global to be privilege based. It ll be false in show action which is 'myview'
-      @manage_dashboard = current_user.privilege?(:manage_dashboard)
-      @global_dashboard = true
       render "helpdesk/realtime_dashboard/index"
     end
     #for leaderboard widget
@@ -44,7 +35,6 @@ class Helpdesk::DashboardController < ApplicationController
   end
 
   def show
-    @manage_dashboard = current_user.privilege?(:manage_dashboard)
     render "helpdesk/realtime_dashboard/index"
   end
 
@@ -81,35 +71,8 @@ class Helpdesk::DashboardController < ApplicationController
   def tickets_summary
     unresolved_hash = {}
     begin
-      trends_count_hash = {}
-      response_hash = plan_based_widgets.inject({}) do |hash, group_by|
-        tickets_count = fetch_widget_count(group_by)
-        hash.merge!({"unresolved_tickets_by_#{group_by}" => id_name_mapping(tickets_count, group_by)})
-      end
-
-      unless current_account.dashboard_disabled?
-        onhold_statuses  = Helpdesk::TicketStatus::onhold_statuses(current_account)
-        # if response_hash["unresolved_tickets_by_status"]
-        #   tickets_count    = response_hash["unresolved_tickets_by_status"]
-        #   unresolved_count = tickets_count.collect {|tc| tc[:value].to_i}.sum
-        #   open_count       = tickets_count.collect {|tc| tc[:value].to_i if tc[:id] == Helpdesk::Ticketfields::TicketStatus::OPEN }.compact.sum
-        #   on_hold_count    = tickets_count.collect {|tc| tc[:value].to_i if onhold_statuses.include?(tc[:id])}.compact.sum
-        # else
-        #   tickets_count    = fetch_widget_count(:status)
-        #   unresolved_count = tickets_count.values.sum
-        #   open_count       = tickets_count[Helpdesk::Ticketfields::TicketStatus::OPEN].to_i
-        #   on_hold_count    = onhold_statuses.collect {|st| tickets_count[st]}.compact.sum
-        # end
-
-        trends_count_hash = ticket_trends_count(["overdue", "due_today", "on_hold", "open", "unresolved", "new"])
-        #trends_count_hash = ticket_trends_count(["overdue", "due_today"])
-        #trends_count_hash.merge!({ :unresolved   => { :value => unresolved_count,  :label => t("helpdesk.realtime_dashboard.unresolved")} })
-        #trends_count_hash.merge!({ :open         => { :value => open_count,        :label => t("helpdesk.realtime_dashboard.open") }})
-        #trends_count_hash.merge!({ :on_hold      => { :value => on_hold_count,     :label => t("helpdesk.realtime_dashboard.on_hold") }})
-
-        #trends_count_hash.merge!(ticket_trends_count(["new"])) unless current_user.assigned_ticket_permission
-      end
-      unresolved_hash = {:ticket_trend => trends_count_hash, :widgets => response_hash}
+      trends_count_hash = ticket_trends_count(["overdue", "due_today", "on_hold", "open", "unresolved", "new"]) unless current_account.dashboard_disabled?
+      unresolved_hash = {:ticket_trend => trends_count_hash}
     rescue Exception => ex
       NewRelic::Agent.notice_error(ex)
       Rails.logger.info "Exception in Fetching tickets from DB for Dashboard, #{ex.message}, #{ex.backtrace}"
@@ -227,7 +190,7 @@ class Helpdesk::DashboardController < ApplicationController
   end
 
   def load_items
-    @items = recent_activities(params[:activity_id]).paginate(:page => params[:page], :per_page => plan_based_count, :total_entries => 1000)
+    @items = recent_activities(params[:activity_id]).paginate(:page => params[:page], :per_page => 30, :total_entries => 1000)
   end
 
   def recent_activity_id
@@ -276,16 +239,6 @@ class Helpdesk::DashboardController < ApplicationController
 
   #### Functions for new dashboard start here
 
-  def load_widget_filter
-    if global_dashboard? 
-      if params[:group_id].present?
-        @group_id         = params[:group_id].split(",")
-        @filter_condition = {:group_id => @group_id} if @group_id
-      end
-      @group_by = params[:group_by].presence || "group_id"
-    end
-  end
-
   def load_unresolved_filter
     @group_by               = ["group_id","responder_id"].include?(params[:group_by]) ? params[:group_by] : "group_id"
     @filter_condition       = {}
@@ -305,57 +258,10 @@ class Helpdesk::DashboardController < ApplicationController
   end
 
   def fetch_unresolved_tickets
-    if current_account.launched?(:es_count_reads) || current_account.features?(:countv2_reads)
-      begin
-        fetch_unresolved_tickets_from_es(true)
-      rescue Exception => e
-        Rails.logger.info "Exception in Fetching unresolved tickets from ES for Dashboard --, #{e.message}, #{e.backtrace}"
-        NewRelic::Agent.notice_error(e)
-        #Fallback to DB if ES fails
-        fetch_unresolved_tickets_from_db
-      end
-    else
-      fetch_unresolved_tickets_from_db
-    end
-  end
-
-  def fetch_unresolved_tickets_from_db
-    begin
-      ticket_counts = current_account.tickets.permissible(current_user).unresolved.visible.where(@filter_condition).group(@group_by).group(:status).count
-      map_id_to_names(ticket_counts)
-    rescue Exception => ex
-      NewRelic::Agent.notice_error(ex)
-      Rails.logger.info "Exception in Fetching tickets from DB for Dashboard, #{ex.message}, #{ex.backtrace}"
-      {}
-    end
-  end
-
-  def fetch_widget_count(group_by)
-    tickets_count = if current_account.launched?(:es_count_reads)
-      begin
-        widget_count_from_es(group_by, true, !global_dashboard?)
-      rescue Exception => e
-        Rails.logger.info "Exception in Fetching widget count from ES for Dashboard --, #{e.message}, #{e.backtrace}"
-        NewRelic::Agent.notice_error(e)
-        #Fallback to DB if ES fails
-        widget_count_from_db(group_by)
-      end
-    else
-      widget_count_from_db(group_by)
-    end
-  end
-
-  def widget_count_from_db(group_by)
-    default_scoper.where(@filter_condition).group(group_by).count
-  end
-
-  def default_scoper
-    current_account.tickets.visible.permissible(current_user).unresolved
-    # if global_dashboard?
-    #   current_account.tickets.visible.permissible(current_user).unresolved
-    # else
-    #   current_account.tickets.visible.permissible(current_user).unresolved.where(responder_id: current_user.id)
-    # end
+    es_enabled = current_account.launched?(:es_count_reads)
+    options = {:group_by => [@group_by, "status"], :filter_condition => @filter_condition, :cache_data => false, :include_missing => true}
+    ticket_counts = Dashboard::DataLayer.new(es_enabled,options).aggregated_data
+    map_id_to_names(ticket_counts)
   end
 
   def ticket_trends_count(trends)
@@ -365,52 +271,33 @@ class Helpdesk::DashboardController < ApplicationController
     end
   end
 
-  def filtered_trend_count(filter_type)
-    action_hash = Helpdesk::Filters::CustomTicketFilter.new.default_filter(filter_type) || []
-    action_hash.push({"condition" => "group_id", "operator" => "is_in", "value" => @group_id }) if @group_id
-    # unless global_dashboard?
-    #   action_hash.push({"condition" => "group_id", "operator" => "is_in", "value" => user_agent_groups.join(",")}) if unassigned_filter_type?(filter_type)
-    # end
-
-    if current_account.launched?(:es_count_reads)
-      #action_hash.push({"condition" => "responder_id", "operator" => "is_in", "value" => current_user.id}) if !unassigned_filter_type?(filter_type) and !global_dashboard?
-      negative_conditions = [{ "condition" => "status", "operator" => "is_not", "value" => "#{RESOLVED},#{CLOSED}" }]
-      Search::Filters::Docs.new(action_hash, negative_conditions).count(Helpdesk::Ticket)
-    else
-      filter_params = {:data_hash => action_hash.to_json}
-      default_scoper.filter(:params => filter_params, :filter => 'Helpdesk::Filters::CustomTicketFilter').count
-      # if unassigned_filter_type?(filter_type)
-      #   current_account.tickets.visible.permissible(current_user).unresolved.filter(:params => filter_params, :filter => 'Helpdesk::Filters::CustomTicketFilter').count
-      # else
-      #   default_scoper.filter(:params => filter_params, :filter => 'Helpdesk::Filters::CustomTicketFilter').count
-      # end
-    end
-  end
-
-  def global_dashboard?
-    current_user.privilege?(:manage_dashboard) && params[:global].present? 
-  end
-
-  def plan_based_widgets
-    return []
-    #When group id filter is present, then we group by agent for the unresolved tickets by group widget.
-    widgets = current_account.features?(:custom_dashboard) ? [:status, :priority, :ticket_type] : []
-    global_dashboard? ? @group_id.present? ? widgets.push(:responder_id) : widgets.push(:group_id) : widgets
-  end
-
-  def unassigned_filter_type?(filter_type)
-    filter_type == "new"
-  end
-
-  def plan_based_count
-    plan_name = current_account.plan_name
-    plan_type = Helpdesk::DashboardHelper::PLAN_TYPE_MAPPING[plan_name]
-    #plan_type = Helpdesk::DashboardHelper::ALL_WIDGET_TYPE if current_account.features?(:custom_dashboard)
-    ACTIVITY_LIMIT[plan_type] || 10
-  end
-
   def check_dashboard_privilege
-    redirect_to helpdesk_formatted_dashboard_path unless current_user.privilege?(:manage_dashboard)
+    @type = if dashboardv2_launched?
+              params[:view].presence || 'standard'
+            else
+              'standard'
+            end
+    access_denied if @type == "admin" and admin_dashboard_not_available?
+    access_denied if @type == "supervisor" and supervisor_dashboard_not_available?
+    access_denied if @type == "agent" and agent_dashboard_not_available?
+    return true
+  end
+
+  def admin_dashboard_not_available?
+    !(current_user.privilege?(:admin_tasks) and current_account.launched?(:admin_dashboard))
+  end
+
+  def supervisor_dashboard_not_available?
+    !(current_user.privilege?(:view_reports) and !current_user.privilege?(:admin_tasks) and current_account.launched?(:supervisor_dashboard))
+  end
+
+  def agent_dashboard_not_available?
+    !(!current_user.privilege?(:view_reports) and current_account.launched?(:agent_dashboard))
+  end
+
+
+  def dashboardv2_launched?
+    current_account.launched?(:admin_dashboard) || current_account.launched?(:supervisor_dashboard) || current_account.launched?(:agent_dashboard)
   end
 
   #### Functions for new dashboard end here

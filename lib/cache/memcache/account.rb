@@ -335,6 +335,12 @@ module Cache::Memcache::Account
     MemcacheKeys.delete_from_cache(key)
   end
 
+
+  def clear_requester_widget_fields_from_cache
+    key = REQUESTER_WIDGET_FIELDS % { :account_id => current_account.id }
+    MemcacheKeys.delete_from_cache key
+  end
+
   def installed_apps_in_company_page_from_cache
     key = ACCOUNT_INSTALLED_APPS_IN_COMPANY_PAGE % { :account_id => self.id }
     MemcacheKeys.fetch(key) do
@@ -345,7 +351,7 @@ module Cache::Memcache::Account
 
   def clear_application_on_dip_from_cache
     key = ACCOUNT_INSTALLED_APPS_IN_COMPANY_PAGE % { :account_id => self.id }
-    MemcacheKeys.delete_from_cache key
+    MemcacheKeys.delete_from_cache(key)
   end
 
   private

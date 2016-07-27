@@ -11,11 +11,13 @@ if !@attachments.empty? && @allow_attachments
   page << "jQuery('.request_panel:visible .attachments').show()"
   attachment_dom = ""
   @attachments.each do |att|
+
     attachment_dom << %(  <div class="item">
                             <a href="#" class="removefile attachment-close" onclick="jQuery(this).parent().remove(); return false;" ></a>
                             <a class="attachment-title" href="#"> #{escape_javascript(att.content_file_name)} </a>
                             <input type="hidden" value="#{att.id}" name="shared_attachments[]" class="ca" />
                           </div>)
+
   end
   if !params[:tkt_cr].present?
     page << "jQuery('.request_panel:visible .shared_attachment_list').append('#{escape_javascript(attachment_dom)}')"
@@ -23,4 +25,9 @@ if !@attachments.empty? && @allow_attachments
   else
     page << "jQuery('#ticket-attachments').append('#{escape_javascript(attachment_dom)}')"
   end
+  if  current_account.launched?(:multifile_attachments)
+    page << "Helpdesk.MultipleFileUpload.canned_response(#{@attachments.to_json.html_safe},jQuery('.attachment-icon:visible').data('iconCount'))"
+  end
+  page << "jQuery('.modal#canned_responses').find('.close').trigger('click')"
+  page << "jQuery('.response-loading').removeClass('response-loading')"
 end

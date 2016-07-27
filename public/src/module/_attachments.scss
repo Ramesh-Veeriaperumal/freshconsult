@@ -256,8 +256,9 @@ $attachment-viewer-toolbar-height: 50px;
 	max-height: 80%;
 	max-width: 80%;
 	vertical-align: middle;
-	transition: all 0.3s;
+	// transition: all 0.3s;
 	box-shadow: 0 13px 42px 0px rgba(0,0,0,.3);
+	display: none;
 }
 
 .av-toolbar {
@@ -281,8 +282,26 @@ $attachment-viewer-toolbar-height: 50px;
 }
 
 .av-toolbar-col {
+	padding: 17px;
+	box-sizing: border-box;
+}
+
+.av-toolbar-col:nth-child(2) {
 	text-align: center;
-	padding: 17px 0;
+}
+
+.av-toolbar-col:last-child {
+	text-align: right;
+}
+
+.av-toolbar-col.span4 {
+	width: 25%;
+	margin: 0;
+}
+
+.av-toolbar-col.span8 {
+	width: 50%;
+	margin: 0;
 }
 
 .av-toolbar-col .disabled{

@@ -31,7 +31,10 @@ TICKET_DETAILS_DATA = {
 	download: '<%= t("subscription.download") %>',
 	pagination_limit	: <%= ActivityConstants::QUERY_UI_LIMIT %>,
 	activity_event_type	: <%= ::HelpdeskActivities::EventType::ALL %>,
-	attachment_missing_alert: '<%= t("ticket.reply_form.attachment_missing_alert") %>'
+	attachment_missing_alert: '<%= t("ticket.reply_form.attachment_missing_alert") %>',
+	ticket_subject: "<%= @ticket.subject %>",
+	ticket_deleted: <%= @ticket.deleted %>,
+	ticket_spam: <%= @ticket.spam %>
 };
 </script>
 <textarea id="ticket_draft_default_reply" class="hide"><%= bind_last_conv(@ticket, @signature, false, false) %></textarea>

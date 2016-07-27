@@ -8,29 +8,47 @@
 <% unless installed_apps[:box].blank? %>
   <script type="text/javascript" src="/javascripts/integrations/box.js"></script>
   <script type="text/javascript">
-    function initBox(inp){
-      Box.choose({success: function(files, doc, file1_json){
-
-          var inputElement = jQuery(inp, doc).data('holder');
-
-          var $inputElement = jQuery('#'+inputElement, doc)
-                                .val(file1_json || JSON.stringify(files[0]))
-                                .data('filename', files[0].name)
-                                .data('provider', 'Box');
-          if(jQuery("#attachment-type").data('multifile-enable')==true)
-          {
-              Helpdesk.MultifileUpload.addFileToList($inputElement);
-          newInput = Helpdesk.MultifileUpload.duplicateInput(jQuery('#'+inputElement, doc));
-          jQuery(inp, doc).data('holder',newInput.attr('id'));
-          }
-          else
-          {
-             Helpdesk.Multifile.addFileToList($inputElement);
-          newInput = Helpdesk.Multifile.duplicateInput(jQuery('#'+inputElement, doc));
-          jQuery(inp, doc).data('holder',newInput.attr('id')); 
-          }
-        
-      }})
-    }
+    function initBox(inp) {
+    Box.choose({
+                success: function(files, doc, file1_json) {
+                    function singleFile() {
+                        var inputElement = jQuery(inp).data('holder');
+                        jQuery('#' + inputElement)
+                            .val(JSON.stringify({
+                                link: files[0].link,
+                                name: files[0].name,
+                                provider: 'box'
+                            }))
+                            .data('filename', files[0].name)
+                            .data('provider', 'Box');
+                        Helpdesk.Multifile.addFileToList(jQuery('#' + inputElement));
+                        newInput = Helpdesk.Multifile.duplicateInput(jQuery('#' + inputElement));
+                        jQuery(inp).data('holder', newInput.attr('id'));
+                    }
+                    // for portal 
+                    if (jQuery('.single_file').length !== 0) {
+                        singleFile();
+                    }
+                    // for app
+                    else { 
+                            var tempName = files[0].name;
+                            files[0].name = escapeHtml(files[0].name);
+                            var attachments = JSON.stringify(files[0]);
+                            var cloud_file_object = [{
+                                fileName: tempName,
+                                provider: 'Box',
+                                attachments: attachments
+                            }];
+                            var file_list = window.localStorage.getItem('current-file-list');
+                            jQuery("#attach-limt-" + file_list).hide();
+                            jQuery("#attachment-template").tmpl({
+                                render_type: "new",
+                                type: "cloud",
+                                files: cloud_file_object
+                            }).appendTo(".multiple-filelist-" + file_list);
+                        }
+                }
+            });
+  }
   </script>
 <% end %>

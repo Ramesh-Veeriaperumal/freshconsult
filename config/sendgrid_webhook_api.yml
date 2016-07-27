@@ -1,0 +1,20 @@
+defaults: &defaults
+  sendgrid:
+    api:
+      set_url: https://api.sendgrid.com/v3/user/webhooks/parse/settings
+      get_specific_domain_url: https://api.sendgrid.com/v3/user/webhooks/parse/settings/
+      delete_url: https://api.sendgrid.com/v3/user/webhooks/parse/settings/
+      update_url: https://api.sendgrid.com/v3/user/webhooks/parse/settings/
+    api_key: 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
+    global_verification_key: 4a1beaedf946d6c4ea1b88567a
+    timeout: 30
+development:
+  <<: *defaults
+staging:
+  <<: *defaults
+test:
+  <<: *defaults
+production:
+  <<: *defaults
+
+  

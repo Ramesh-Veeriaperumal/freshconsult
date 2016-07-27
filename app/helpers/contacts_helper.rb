@@ -5,7 +5,13 @@ module ContactsHelper
   include Marketplace::ApiHelper
 
   def contact_fields
-    @user.helpdesk_agent? ? current_account.contact_form.default_contact_fields : current_account.contact_form.contact_fields
+    @contact_fields ||= @user.helpdesk_agent? ? 
+      current_account.contact_form.default_contact_fields : 
+      current_account.contact_form.contact_fields
+  end
+
+  def company_field_required
+    contact_fields.find { |f| f.name == "company_name" }.required_for_agent
   end
 
   def render_as_list form_builder, field
@@ -21,7 +27,8 @@ module ContactsHelper
               field.required_for_agent, true, field_value, field.dom_placeholder, field.bottom_note, 
               { :account => current_account, 
                 :user_companies => @user_companies, 
-                :contractor => @user.privilege?(:contractor)}).construct
+                :contractor => @user.privilege?(:contractor),
+                :company_field_req => company_field_required}).construct
     end
   end
 

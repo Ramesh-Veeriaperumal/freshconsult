@@ -15,8 +15,13 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
   include Helpdesk::Utils::ManageCcEmails
   include Helpdesk::Permission::Ticket
   include Helpdesk::ProcessAgentForwardedEmail
+  include Cache::Memcache::AccountWebhookKeyCache
+
+  class UserCreationError < StandardError
+  end
 
   MESSAGE_LIMIT = 10.megabytes
+  MAXIMUM_CONTENT_LIMIT = 300.kilobytes
 
   attr_accessor :reply_to_email, :additional_emails,:archived_ticket, :start_time, :actual_archive_ticket
 
@@ -31,6 +36,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     if !account.nil? and account.active?
       # clip_large_html
       account.make_current
+      verify
       TimeZone.set_time_zone
       encode_stuffs unless skip_encoding
       from_email = parse_from_email(account)
@@ -52,7 +58,6 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         if (from_email[:email] =~ EMAIL_VALIDATOR).nil?
           error_msg = "Invalid email address found in requester details - #{from_email[:email]} for account - #{account.id}"
           Rails.logger.debug error_msg
-          NewRelic::Agent.notice_error(Exception.new(error_msg))
           return
         end
         user = existing_user(account, from_email)
@@ -582,13 +587,13 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         # ticket.save
         note.notable = ticket
         return if large_email && duplicate_email?(from_email[:email], 
-                                                  parse_to_emails.first, 
+                                                  to_email[:email],
                                                   params[:subject], 
                                                   message_id)
         note.save_note
         cleanup_attachments note
         mark_email(process_email_key, from_email[:email], 
-                                      parse_to_emails.first, 
+                                      to_email[:email], 
                                       params[:subject], 
                                       message_id) if large_email
       end
@@ -638,8 +643,15 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         user = account.contacts.new
         language = (account.features?(:dynamic_content)) ? nil : account.language
         portal = (email_config && email_config.product) ? email_config.product.portal : account.main_portal
-        signup_status = user.signup!({:user => {:email => from_email[:email], :name => from_email[:name], 
-          :helpdesk_agent => false, :language => language, :created_from_email => true }, :email_config => email_config},portal)        
+        begin
+          signup_status = user.signup!({:user => {:email => from_email[:email], :name => from_email[:name],
+            :helpdesk_agent => false, :language => language, :created_from_email => true }, :email_config => email_config},portal)
+          raise UserCreationError, "Failed to create new Account!" unless signup_status
+        rescue UserCreationError => e
+          NewRelic::Agent.notice_error(e)
+          Account.reset_current_account
+          raise e
+        end
         if params[:text]
           text = text_for_detection
           args = [user, text]  #user_email changed
@@ -852,7 +864,14 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     def body_html_with_formatting(body,email_cmds_regex)
       body = body.gsub(email_cmds_regex,'<notextile>\0</notextile>')
       to_html = text_to_html(body)
-      body_html = auto_link(to_html) { |text| truncate(text, :length => 100) }
+
+      # Process auto_link if the content is less than 300 KB, otherwise leave as text.
+      if body.size < MAXIMUM_CONTENT_LIMIT
+        body_html = auto_link(to_html) { |text| truncate(text, :length => 100) }
+      else
+        body_html = sanitize(to_html)
+      end
+
       html = white_list(body_html)
       html.gsub!("&amp;amp;", "&amp;")
       html
@@ -888,6 +907,24 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     cc_emails, params[:dropped_cc_emails] = fetch_permissible_cc(user, cc_emails, account)
     cc_emails
   end   
+
+  def verify
+    Rails.logger.debug params[:verification_key]
+    if params[:verification_key].present?
+      stored_webhook_key = account_webhook_key_from_cache(Account::MAIL_PROVIDER[:sendgrid])
+      if stored_webhook_key.nil? or stored_webhook_key.webhook_key.nil?
+        Rails.logger.info "VERIFICATION KEY is there. But AccountWebhookKey Record is not present for the key #{params[:verification_key]}"
+      else
+        verification = (stored_webhook_key.webhook_key == params[:verification_key] ? true : false)
+        Rails.logger.info "VERIFICATION KEY match for account #{Account.current.id} : #{verification}"
+        # return verification
+      end
+    else
+      Rails.logger.info "VERIFICATION KEY is not present for the account #{Account.current.id} with the envelope address #{params[:envelope]}"
+    end
+    # Returning true by default.
+    return true
+  end  
 
   alias_method :parse_cc_email, :parse_cc_email_new
   alias_method :parse_to_emails, :parse_to_emails_new

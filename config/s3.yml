@@ -3,6 +3,9 @@ common: &common
   secret_access_key: T8LomtbPUYQpVzcyDmcqkuHuScadfmeHh5t1Jv9Y
   AWS_CALLING_FORMAT: SUBDOMAIN
   region: 'us-east-1'
+  access_key_id_euc: access_key_id_euc
+  secret_access_key_euc: secret_access_key_euc
+  region_euc: 'eu-central-1'
 
 development:
   <<: *common

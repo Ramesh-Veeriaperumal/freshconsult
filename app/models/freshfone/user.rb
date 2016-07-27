@@ -16,7 +16,8 @@ class Freshfone::User < ActiveRecord::Base
 	PRESENCE = {
 		:offline => 0,
 		:online => 1,
-		:busy => 2
+		:busy => 2,
+		:acw => 3
 	}
 
 	INCOMING = {
@@ -40,7 +41,9 @@ class Freshfone::User < ActiveRecord::Base
 	scope :online_agents_with_avatar, lambda { {
 							:conditions => [ "freshfone_users.presence = ? or (freshfone_users.presence = ? and freshfone_users.mobile_token_refreshed_at > ?)", PRESENCE[:online], PRESENCE[:offline], 1.hour.ago],
 							:include => [:user => [:avatar]] }}
-	scope :busy_agents, :conditions => { :presence => PRESENCE[:busy] }
+	scope :busy_agents, lambda {
+		where(presence: [PRESENCE[:busy], PRESENCE[:acw]])
+	}
 	scope :agents_in_group, lambda { |group_id|
 		{:joins => "INNER JOIN agent_groups ON agent_groups.user_id = #{table_name}.user_id AND
 								agent_groups.account_id = #{table_name}.account_id",
@@ -51,7 +54,7 @@ class Freshfone::User < ActiveRecord::Base
 	scope :agents_by_last_call_at, lambda { |order_type|
 		order_type = "ASC" if order_type.blank?
 		{:conditions => [ "freshfone_users.presence = ? or (freshfone_users.presence = ? and freshfone_users.mobile_token_refreshed_at > ?)
-			#{' AND `freshfone_users`.`available_on_phone` = 0' if trial?}",
+			#{' AND `freshfone_users`.`available_on_phone` = false' if trial?}",
 		PRESENCE[:online], PRESENCE[:offline], 1.hour.ago], :include => :user, :order => "freshfone_users.last_call_at #{order_type}" } }
 
 	def set_presence(status)
@@ -73,7 +76,7 @@ class Freshfone::User < ActiveRecord::Base
 		if nmobile
 			self.mobile_token_refreshed_at = Time.now if self.incoming_preference == INCOMING[:allowed]
 		else
-			self.incoming_preference = status unless status == PRESENCE[:busy].to_s
+			self.incoming_preference = status unless (status == PRESENCE[:busy].to_s) || (status == PRESENCE[:acw].to_s)
 			self.presence = status unless busy?
 			self.mobile_token_refreshed_at = 2.hours.ago if self.incoming_preference == INCOMING[:not_allowed] && self.mobile_token_refreshed_at.present?
 		end
@@ -179,6 +182,10 @@ class Freshfone::User < ActiveRecord::Base
 		self.mobile_token_refreshed_at.present? && self.mobile_token_refreshed_at > 1.hour.ago
 	end
 
+	def busy_or_acw?
+		busy? || acw?
+	end
+
 	private
 
 		def call_agent_on_phone(xml_builder, forward_call_url)
@@ -202,5 +209,9 @@ class Freshfone::User < ActiveRecord::Base
 
 		def self.trial?
 			::Account.current.freshfone_account.trial?
+		end
+
+		def self.phone_acw_enabled?
+			::Account.current.features?(:freshfone_acw)
 		end
 end
