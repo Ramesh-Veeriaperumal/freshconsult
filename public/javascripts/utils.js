@@ -244,14 +244,14 @@ function helpdesk_submit(url, method, params){
           form.appendChild(field);
    });
 
-   if(method == 'delete'){
+   if(method == 'delete' || (url.includes("spam") && method == 'put')){
     jQuery('input.selector').each(function(index, element){
       if(jQuery(this).prop('checked')){
         NavSearchUtils.deleteRecentTicketById(jQuery(this).val());
       }
     });
-   }
-
+   } 
+   
    form.action = url;      
    form.submit();
 }

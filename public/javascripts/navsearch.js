@@ -237,7 +237,7 @@ jQuery(document).ready(function(){
 
 	});
 
-	jQuery("[data-domhelper-name='ticket-delete-btn']").bind('click.remove_recent_ticket', function(ev){		
+	jQuery("[data-domhelper-name='ticket-delete-btn'], li a.spam").bind('click.remove_recent_ticket', function(ev){				
 		if(TICKET_DETAILS_DATA){
 			NavSearchUtils.deleteRecentTicketById(TICKET_DETAILS_DATA['displayId']);
 		}
