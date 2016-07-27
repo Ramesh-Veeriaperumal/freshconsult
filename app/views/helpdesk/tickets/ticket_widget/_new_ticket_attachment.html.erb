@@ -13,7 +13,7 @@
 <% end %>
 
 
-<div class="attachments-wrap clearfix  <%= current_account.launched?(:multifile_attachments) ? "hide" : "" %> id="prev-attachments">
+<div class="attachments-wrap clearfix  <%= current_account.launched?(:multifile_attachments) ? "hide" : "" %> " id="prev-attachments">
 	<ul class="attachment_list">
 
 		<% if object_name == "template_data" 
@@ -54,5 +54,10 @@
 	     nsc_param = "helpdesk_ticket";
 	      Helpdesk.MultipleFileUpload.renderExistingFiles(<%= item.all_attachments.to_json.html_safe%>,<%=item.cloud_files.to_json.html_safe %>,jQuery('.attachment-icon:visible').data('iconCount'),template,nsc_param);
 	   }
+	     if(App.namespace == "helpdesk/tickets/edit") {
+	     	 // template = true;
+		     // nsc_param = "helpdesk_ticket";
+		      Helpdesk.MultipleFileUpload.renderExistingFiles(<%= item.all_attachments.to_json.html_safe%>,<%=item.cloud_files.to_json.html_safe %>,jQuery('.attachment-icon:visible').data('iconCount'));
+	     }
 	</script>
 <% end %>

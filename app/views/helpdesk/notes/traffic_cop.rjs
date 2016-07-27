@@ -12,3 +12,10 @@ end
 
 # Assigning the last public note id when added
 page << "jQuery('.last_note_id').val(#{@public_notes.last.id})" unless @public_notes.empty?
+
+# remove block ui if multifile attachments in background
+if current_account.launched?(:multifile_attachments) 
+ 	page <<"jQuery('.attach-block-ui').remove()"
+ 	page << 'var form_btn = jQuery("form[data-cnt-id]:visible").find(".submit_btn")'
+ 	page << "form_btn.text(form_btn.data('prevText'))"
+end

@@ -243,7 +243,16 @@ function helpdesk_submit(url, method, params){
           field.value = source.value;
           form.appendChild(field);
    });
-   form.action = url;
+
+   if(method == 'delete' || (url.includes("spam") && method == 'put')){
+    jQuery('input.selector').each(function(index, element){
+      if(jQuery(this).prop('checked')){
+        NavSearchUtils.deleteRecentTicketById(jQuery(this).val());
+      }
+    });
+   } 
+   
+   form.action = url;      
    form.submit();
 }
 

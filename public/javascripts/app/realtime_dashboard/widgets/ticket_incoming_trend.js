@@ -199,7 +199,7 @@ RealtimeDashboard.Widgets.TicketIncomingTrend = function(widget_name,container){
 		},
 		sidebarModalChart: function (values,container) {
 			var self = this;
-			self.core.controls.showDashboardDetails(_fd.widget_name,I18n.t('helpdesk.realtime_dashboard.ticket_workload'),false,_fd.formated_time);
+			self.core.controls.showDashboardDetails(_fd.widget_name,I18n.t('helpdesk.realtime_dashboard.ticket_workload_channels'),false,_fd.formated_time);
 			self.fetchStats(container);
 		},
 		showTotalStats : function() {

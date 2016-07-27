@@ -22,7 +22,7 @@ class Account < ActiveRecord::Base
   
   after_commit :enable_searchv2, :enable_count_es, on: :create
   after_commit :disable_searchv2, :disable_count_es, on: :destroy
-  after_commit :update_sendgrid
+  after_commit :update_sendgrid, on: :create
 
 
   # Callbacks will be executed in the order in which they have been included. 
@@ -172,6 +172,7 @@ class Account < ActiveRecord::Base
     end
 
     def make_shard_mapping_inactive
+      SendgridDomainUpdates.perform_async({:action => 'delete', :domain => full_domain, :vendor_id => Account::MAIL_PROVIDER[:sendgrid]})
       shard_mapping = ShardMapping.find_by_account_id(id)
       shard_mapping.status = ShardMapping::STATUS_CODE[:not_found]
       shard_mapping.save
@@ -224,9 +225,12 @@ class Account < ActiveRecord::Base
 
     def update_route_info
       if full_domain_changed?
+        vendor_id = Account::MAIL_PROVIDER[:sendgrid]
         Redis::RoutesRedis.delete_route_info(full_domain_was)
         Redis::RoutesRedis.set_route_info(full_domain, id, full_domain)
         Subscription::UpdatePartnersSubscription.perform_async({:event_type => :domain_updated })
+        SendgridDomainUpdates.perform_async({:action => 'delete', :domain => full_domain_was, :vendor_id => vendor_id})
+        SendgridDomainUpdates.perform_async({:action => 'create', :domain => full_domain, :vendor_id => vendor_id})
       end
     end
     
@@ -247,14 +251,6 @@ class Account < ActiveRecord::Base
     end
 
     def update_sendgrid
-      vendor_id = Account::MAIL_PROVIDER[:sendgrid]
-      if transaction_include_action?(:create)
-        SendgridDomainUpdates.perform_async({:action => 'create', :domain => full_domain, :vendor_id => vendor_id})
-      elsif (transaction_include_action?(:update) && full_domain_changed?)
-        SendgridDomainUpdates.perform_async({:action => 'delete', :domain => full_domain_was, :vendor_id => vendor_id})
-        SendgridDomainUpdates.perform_at(5.minutes.from_now, {:action => 'create', :domain => full_domain, :vendor_id => vendor_id})
-      elsif transaction_include_action?(:destroy)
-        SendgridDomainUpdates.perform_async({:action => 'delete', :domain => full_domain, :vendor_id => vendor_id})
-      end
+      SendgridDomainUpdates.perform_async({:action => 'create', :domain => full_domain, :vendor_id => Account::MAIL_PROVIDER[:sendgrid]})
     end
 end

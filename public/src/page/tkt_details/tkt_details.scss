@@ -504,6 +504,12 @@ li {
 
 
 /*// Multiple File Upload*/
+.attach-wrapper {
+    /*integration dropdowns*/
+    .dropdown-menu {
+        max-width: 230px;
+    }
+}
 .no-width {
     width: auto !important;
 }
@@ -517,7 +523,7 @@ li {
     @include clear(both);
     overflow: hidden;
     position: absolute;
-    left: 0;
+    @include left(0);
     span {
         color: #1272de;
         font-size: 22px;
@@ -569,14 +575,14 @@ li {
         @include size(40px, 40px);
         font-size: 1.4em;
         position: absolute;
-        left: 0;
+        @include left(0);
         top: 2px;
         .ficon-attachment {
             @include micro-position(5px);
         }
     }
     .attachment-names {
-        border-left: 1px solid #dfdfdf;
+        @include border-left(1px solid #dfdfdf);
         @include margin-left(44px);
         min-height: 30px;
         width: 91%;
@@ -610,7 +616,7 @@ li {
 .multiple-filelist{
     @include micro-position(4px);
     z-index: 7;
-    float: left;
+    @include float(left);
     .file-upload {
         background-color: #F8F8F8;
         border: 1px solid #d5d5d5;
@@ -678,23 +684,23 @@ li {
     .ficon-cross {
         font-size: 1.2em;
         @include float(left);
-        padding: 0px 4px 2px 4px;
+        @include padding(0px 4px 2px 4px);
         border: 1px solid transparent;
         border-radius: 21px;
         height: 15px;
         cursor: pointer;
         width: 6px;
         position: relative;
-        left: -4px;
+        @include left(-4px);
         
     }
     .ficon-cross:hover {
         background-color: #999;
-        border-radius: 3px 0px 0px 3px;
+        @include border-radius(3px 0px 0px 3px);
         color: #fff;
         cursor: pointer;
-        border-bottom-left-radius: 2px;
-        border-top-left-radius: 3px;
+        @include border-bottom-left-radius(2px);
+        @include border-top-left-radius(3px);
     }
     .ficon-notice {
        @extend .ficon-cross;
@@ -702,11 +708,13 @@ li {
     }
     .progress-bar.active,
     .progress.active .progress-bar {
-        animation: 1s linear 0s normal none infinite running progress-bar-stripes;
+        animation: progress-bar-stripes 1s linear infinite;
+         -webkit-animation: progress-bar-stripes 1s linear infinite
     }
     .progress-bar-striped,
     .progress-striped .progress-bar {
         background-image: linear-gradient(45deg, rgba(153, 153, 153, 0.15) 25%, transparent 25%, transparent 50%, rgba(153, 153, 153, 0.15) 50%, rgba(153, 153, 153, 0.15) 75%, transparent 75%, transparent);
+        background-image: -webkit-linear-gradient(45deg, rgba(153, 153, 153, 0.15) 25%, transparent 25%, transparent 50%, rgba(153, 153, 153, 0.15) 50%, rgba(153, 153, 153, 0.15) 75%, transparent 75%, transparent);
         background-size: 30px 30px;
     }
     .progress-bar {
@@ -730,6 +738,14 @@ li {
             background-position: 0 0;
         }
     }
+     @-webkit-keyframes progress-bar-stripes {
+        0% {
+            background-position: 30px 0;
+        }
+        100% {
+            background-position: 0 0;
+        }
+    }
 }
 /*reply failed*/
 .sending-failed-template {
@@ -737,17 +753,17 @@ li {
     top: 0px;
     background: #fefef0;
     color: #a00;
-    left: 33%;
-    padding: 5px 10px;
+    @include left(33%);
+    @include padding(5px 10px);
     min-width: 200px;
     text-align: left;
-    border-radius: 0px 0px 5px 5px;
+    @include border-radius(0px 0px 5px 5px);
     font-weight: 500;
     z-index: 99999;
     i {
         color: #999;
-        float: right;
-        padding: 0px 5px 0px 6px;
+        @include float(right);
+        @include padding(0px 5px 0px 6px);
         line-height: 1.5;
         margin-left: 10px;
         cursor: pointer;
@@ -774,16 +790,16 @@ li {
         font-size: 12px !important;
         position: relative;
         div {
-            padding-left:15px;
+            @include padding-left(15px);
         }
 }
         a.select2-search-choice-close {
                 color: #333;
                 font-size: 1.1em;
-                float: left;
-                padding: 0px 4px 0px 4px;
+                @include float(left);
+                @include padding(0px 4px 0px 4px);
                 border: 1px solid transparent;
-                border-radius: 3px 0px 0px 3px;
+                @include border-radius(3px 0px 0px 3px);
                 cursor: pointer;
                 width: 6px;
                 line-height: 1.2;
@@ -827,20 +843,9 @@ li {
      box-shadow: none !important;
      -webkit-box-shadow:none !important;
 }
-
-    .select2-choice,
-    .select2-choice:active,
-    .select2-choice:hover {
-        border: none;
-    }
-
-    .select2-drop-active {
-        border: none;
-    }
-    .select2-container-active {
-        background: #E9E9E9 !important;
-        border: none;
-    }
+/*.select2-container-active {
+    background: #E9E9E9 !important;
+}*/
 
 .ticketSelect2Container {
     b[role="presentation"] {
@@ -860,8 +865,11 @@ li {
     background: #fff;
     border: none;
     color: black;
+    /*min-width: 300px;*/
     with:500px !important;
-  
+      .select2-results .select2-result-label {
+            margin:0px;
+      }
     .select2-result-label {
         background: #fff;
         border: none;
@@ -875,12 +883,42 @@ li {
     }
   }
 }
+/*reply from forward*/
+.ticketSelect2Reply {
+    border:none !important;
+    @extends ticketSelect2;
+        .select2-results .select2-result-label {
+            margin:0px;
+      }
+    .select2-result-label {
+        background: #fff;
+        border: none;
+        color: black;
+    }
+  .select2-highlighted {
+    .select2-result-label {
+        background-color: #6F6F6F !important;
+        color: #fff !important;
+        cursor: pointer !important;
+    }
+  }
+}
+.ticketSelect2ReplyContainer {
+    @extends ticketSelect2Container;
+    a.select2-choice {
+        background: #f5f5f5 !important;
+    }
+    b[role="presentation"] {
+        background: #f5f5f5 !important;
+    }
 
+}
 /*// Multiple File Upload ends*/
 
 /*// Single file upload */
 
 .single_file {
+        border-radius:5px;
     // !Pattern?
     .hidden_upload {
         display: block;
@@ -922,7 +960,7 @@ li {
         white-space: nowrap;
         top: 0px;
         span {
-            padding: 0 5px 5px 5px;
+            @include padding(0px 5px 5px 5px);
             color: #1272de;
             font-size: 22px;
             font-weight: bold;
@@ -931,15 +969,26 @@ li {
     }
     .attach-wrapper {
         color: #333333;
-        background: none;
+        background: #FDFDFD;
+        padding: 0px;
+        border-top:1px solid #F3F3F3;
+        border-bottom: 1px solid #ccc;
+        display: block;
+
     }
     .attachments-wrap div.item {
         border: none;
         color: #000000 !important;
-        padding-left: 5px;
+        @include padding-left(5px);
         white-space: nowrap;
         text-overflow: ellipsis;
         display: block;
+        a {
+          color: #000000 !important;
+        }
+    }
+    .attachments-wrap div.item:last-child {
+        margin-bottom: 10px;
     }
     .attachments-wrap div.item:hover {
         color: #000000 !important;
@@ -948,8 +997,9 @@ li {
         }
     }
     .attachments-wrap .attachment-type {
-        padding: 3px 0 3px 5px;
+        @include padding(3px 0 3px 5px);
     }
+  
     .attachment-type span a,
     .attachment-type a {
         color: #000;
@@ -959,15 +1009,48 @@ li {
         color: #000 !important;
     }
     .attachmentTrigger {
-        margin-left: 10px !important;
+        @include margin-left(10px !important);
     }
 }
-
-.attach-wrapper .attachment_contents {
-    padding-bottom: 10px;
+/*reply 2 forward*/
+.single_file.color {
+    .attach-wrapper {
+        width: 100%;
+        background: #fdfdfd !important;
+        border-bottom: none;
+    }
+    .add_attachment {
+        top: 14px;
+    }
 }
-
-
+.single_file.bulk {
+   .attach-wrapper {
+        width: 100%;
+        background: #fdfdfd !important;
+        border-bottom: none;
+        border-top: none;
+    }
+    .add_attachment {
+        top: 6px;
+    }
+}
+.commentbox.commentbox-gray  {
+    .ticketSelect2Container {
+        a.select2-choice {
+            background: #f5f5f5 !important;
+        }
+        b[role="presentation"] {
+            background: #f5f5f5 !important;
+        }
+    }
+}
+/*multifile attachments*/
+.reply2forward_attachments {
+    padding: 0px !important;
+    width: 100% !important;
+    position: relative;
+    top: 23px;
+}
 /*attachment view*/
 
 .compose-new-ticket .attachments-wrap div.item,
@@ -975,7 +1058,7 @@ li {
     background: rgba(255, 255, 255, 0.4);
     border: 1px #e8e8e8 solid;
     border-radius: 4px;
-    padding: 10px;
+    padding: 8px;
     font-size: 12px;
     margin: 5px;
     display: inline-block;
@@ -984,15 +1067,29 @@ li {
     height: auto !important;
     width: auto;
     min-width: 100px;
-    margin-left: 0;
+    @include margin-left(0px);
     margin-bottom: 0;
 }
 
 .compose-new-email .single_file .attach-wrapper {
     padding: 7px 0;
-    border-radius: 0 0px 5px 5px;
+    @include border-radius(0 0px 5px 5px);
     background-color: #fdfdfd;
-    top: -12px;
+    border-bottom: none;
+    .add_attachment {
+        top: 8px;
+    }
+     .attachments-wrap .attachment-title {
+        display: inline-block;
+        position: relative;
+        top: 4px;
+    }
+      .attachments-wrap .attachment-type,.attachment-title {
+        width: 250px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
 }
 
 .compose-new-ticket .single_file .attach-wrapper {
@@ -1002,8 +1099,27 @@ li {
     border-radius: 0px 0px 5px 5px;
     padding: 10px 0;
     width: 99.7%;
+    border-top:1px solid #F3F3F3;
+    .add_attachment {
+        top: 8px;
+    }
+    .attachments-wrap .attachment-title {
+        display: inline-block;
+        position: relative;
+        top: 4px;
+    }
+      .attachments-wrap .attachment-type,.attachment-title {
+        width: 250px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
 }
-
+.article-container {
+ .attachments-wrap .attachment-type {
+    width: none !important;
+ }
+}
 
 /*for canned response */
 
@@ -1170,19 +1286,33 @@ li {
         margin-bottom: 22px;
         position: relative;
         &:hover {
-            .avatar-wrap,
             .commentbox {
                 @include transition(border 200ms cubic-bezier(0.65, 0.05, 0.36, 1));
                 border-color: #bbb;
+            }
+            .avatar-wrap{
+                @include transition(border 200ms cubic-bezier(0.65, 0.05, 0.36, 1));
+                border-color: #999;
             }
             .commentbox:before {
                 @include border-right-color(#aaa);
             }
         }
-        a.avatar-wrap {
-            .avatar-text {
+        a.avatar-wrap{
+            .avatar-text{
                 cursor: pointer;
             }
+        }
+    }
+    .activity:hover {
+        .commentbox {
+            border-color: #ddd;
+            &:before{
+                @include border-right-color(#bbb);
+            }
+        }
+        .avatar-wrap{
+            border-color: #999;
         }
     }
     .alert-container {
@@ -1357,7 +1487,6 @@ li {
             }
         }
         .select2-container {
-            /*width: 350px;*/
             width:500px;
             position: relative;
             top: 5px;
@@ -1663,13 +1792,12 @@ li {
         background: transparent;
         @include border-radius(5px);
     }
-    .minimized .commentbox {
+    .minimizable  .author-mail-detail, .minimizable  .subject{
         cursor: pointer;
-        .details,
-        .attachments-wrap,
-        .attachment_list,
-        .actions,
-        .seperator {
+     }
+    .minimized .commentbox, .minimized.commentbox{
+        cursor: pointer;
+        .details, .attachments-wrap, .attachment_list, .actions, .seperator, #ticket_original_request, .ticket-details-twitter{
             display: none;
         }
         .smiley {
@@ -1793,6 +1921,13 @@ li {
         a {
             font-weight: bold;
         }
+        .system-rule-link{
+            color: #a2a19f;
+            font-weight: 400;
+            &:hover{
+                color: #06c;
+            }
+        }
         .ticket-details-twitter {
             width: 200px;
             @include float(right);
@@ -1803,6 +1938,16 @@ li {
             }
         }
     }
+    .last-modified-detail {
+        a{ 
+            font-weight:normal;
+            color: #999;
+            &:hover{
+                color:#037;
+            }
+        };
+    }
+
     .details,
     #ticket_original_request {
         margin-top: 30px;
@@ -1965,7 +2110,17 @@ li {
 .activity .commentbox {
     min-height: 30px;
     .details {
-        margin-top: 0;
+        margin-top: 5px;
+            .activity-details{
+                    @include padding-left(17px);
+                    li{
+                        padding-bottom: 2px;
+                        color: #bbb;
+                    }
+                    span{
+                        color:#333;
+                    }
+            }
     }
 }
 
@@ -2218,19 +2373,20 @@ li {
 }
 
 .ticket_show .avatar-wrap {
-    width: 40px;
-    height: 40px;
     z-index: 100;
-    @include border-radius(50%);
-    @include transition(border 200ms cubic-bezier(0.65, 0.05, 0.36, 1));
-    background: #fff;
     position: absolute;
-    border: 1px solid #fff;
+    @include border-radius(50%);
     @include margin(0 0 3px 0);
     padding: 0;
     @include text-align(center);
     @include float(left);
+    width: 40px;
+    height: 40px;
     @include left(-35px);
+    background-color: #E0E0E0;
+    @include transition(border 200ms cubic-bezier(0.65, 0.05, 0.36, 1));
+    border: 1px solid #fff;
+    @include text-align(center);
     .preview_pic {
         display: inline-block;
         margin: 0;
@@ -2242,12 +2398,19 @@ li {
             top: 0;
         }
     }
+    .system-avatar{
+            font-size: 20px;
+            top: 11px;
+            @include right(10px);
+            position: absolute;
+            color:#555555;
+    }
     .avatar {
         @include border-radius(50%);
         position: relative;
         top: 2px;
     }
-    &:hover {
+    &:hover{
         @include transition(border 200ms cubic-bezier(0.65, 0.05, 0.36, 1));
         text-decoration: none;
         border: 1px solid #000;
@@ -3024,6 +3187,18 @@ li {
         &.active .visible {
             display: block;
         }
+        .activities_tick{
+            @include border-radius(50%);
+            border: 1px solid #ccc;
+            padding: 1.5px 4.5px;
+            font-size: 10px;
+            @include text-shadow(none);
+        }
+         &.active .activities_tick{
+            color:#fff;
+            background-color:#424242;
+            border:none;
+         }
         .text {
             @include float(left);
             @include margin(3px 10px 0 3px);
@@ -3842,13 +4017,16 @@ li {
             bottom: 7px;
             background: #f1f1f1 none repeat scroll 0 0;
             border-color: #c6c6c6;
-            border-radius: 0 0 6px 6px;
+            @include border-radius(0 0 6px 6px);
             box-sizing: border-box;
             color: #333333;
             display: inline-block;
             width: 100%;
         }
-
+        /*error close icon fix for new ticket*/
+        .file-upload.error-file {
+            @include padding-left(4px !important);
+        }
     }
     .publicAttachmentPanel {
         @extend .attachmentPanel;
@@ -3882,8 +4060,8 @@ li {
         border-color: #c6c6c6;
         border-radius: 2px;
         border-style: solid;
-        border-top-left-radius: 0px;
-        border-top-right-radius: 0px;
+        @include border-top-left-radius(0px);
+        @include border-top-right-radius(0px);
         margin-top: -2px;
         .attach-wrapper {
             -moz-border-bottom-colors: none;
@@ -3914,11 +4092,13 @@ li {
         border-radius: 15px;
         .progress-bar.active,
         .progress.active .progress-bar {
-            animation: 1s linear 0s normal none infinite running progress-bar-stripes;
+            animation: progress-bar-stripes 1s linear infinite;
+            -webkit-animation: progress-bar-stripes 1s linear infinite
         }
         .progress-bar-striped,
         .progress-striped .progress-bar {
             background-image: linear-gradient(45deg, rgba(153, 153, 153, 0.15) 25%, transparent 25%, transparent 50%, rgba(153, 153, 153, 0.15) 50%, rgba(153, 153, 153, 0.15) 75%, transparent 75%, transparent);
+            background-image: -webkit-linear-gradient(45deg, rgba(153, 153, 153, 0.15) 25%, transparent 25%, transparent 50%, rgba(153, 153, 153, 0.15) 50%, rgba(153, 153, 153, 0.15) 75%, transparent 75%, transparent);
             background-size: 30px 30px;
         }
         .progress-bar {
@@ -3936,6 +4116,14 @@ li {
             border-radius: 3px;
         }
         @keyframes progress-bar-stripes {
+            0% {
+                background-position: 30px 0;
+            }
+            100% {
+                background-position: 0 0;
+            }
+        }
+        @-webkit-keyframes progress-bar-stripes {
             0% {
                 background-position: 30px 0;
             }

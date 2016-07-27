@@ -5768,13 +5768,13 @@ en:
       unresolved_tickets_by_agent: Unresolved Tickets by Agent
       unresolved_tickets_by_age: Top 10 Unresolved Tickets by Age (Days)
       agent_received_resolved: My Performance
-      top_customers_by_open_tickets: Top 10 Customers by Open Tickets ( >2 Tickets )
+      top_customers_by_open_tickets: Top 10 Customers by Unresolved Tickets ( >2 )
       top_agents_by_open_tickets: Top 10 Agents by Old Tickets ( >7 Days )
       csat: Customer Satisfaction
       group_performance: Group Performance Today
       agent_performance: Agent Performance Today
-      ticket_workload_channels: Today's Tickets Workload by Channels
-      ticket_workload: Today's Tickets Workload
+      ticket_workload_channels: Today's Ticket Trend by Channels
+      ticket_workload: Today's Ticket Trend
       time_stamp: as of %{time}
       detailed_summary: Detailed Summary
       leader_Board: Leaderboard
@@ -5791,6 +5791,7 @@ en:
       chat_history: Chat History
       view_group_vs_status_summary: View Group vs Status summary
       something_went_wrong: We are Sorry. Something went Wrong.
+      solution_link: How to read this dashboard?
       stats:
         received_tickets: Total Received Tickets
         resolved_tickets: Total Resolved Tickets

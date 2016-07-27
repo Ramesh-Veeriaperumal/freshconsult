@@ -40,13 +40,6 @@ function lineChart(opts){
             plotBackgroundColor: REPORT_COLORS['plotBG'],
             backgroundColor: REPORT_COLORS['plotBG'],
             height : opts.height,
-            events : {
-                click : function(e) {
-                    if(opts['chartClick'] != undefined) {
-                        opts['chartClick'].call(this,e);
-                    }
-                }
-            },
             style: {
                 fontFamily: '"Helvetica Neue", Helvetica, Arial'
             }
@@ -80,8 +73,8 @@ function lineChart(opts){
             },
             line: {
                 allowPointSelect : false,
+                cursor : 'pointer',
                 events: {
-                    click : opts['chartClick'] != undefined ? opts['chartClick'] : function(){},
                     mouseOut: opts['total_action'] != undefined ? opts['total_action'] : function(){},
                     mouseOver : opts['hover_callback']
                 }
@@ -94,7 +87,8 @@ function lineChart(opts){
                 step : 1,
                 style : {
                     fontSize : '11px',
-                    color : REPORT_COLORS['label']
+                    color : REPORT_COLORS['label'],
+                    fontFamily: "Helvetica Neue"
                 }
             },
             tickInterval : 4
@@ -116,7 +110,8 @@ function lineChart(opts){
                 overflow: 'justify',
                 style: {
                     fontSize: '12px',
-                    color: REPORT_COLORS['label']
+                    color: REPORT_COLORS['label'],
+                    fontFamily: "Helvetica Neue",
                 },
                 formatter: this.lineLabelFormatter
             },
@@ -155,8 +150,26 @@ function lineChart(opts){
             borderRadius : 6
         }
     }
-
+    if(opts['chartClick'] != undefined && opts['chartClick']) {
+        config.xAxis.labels.style.cursor = 'pointer';
+        config.yAxis.labels.style.cursor = 'pointer';
+        config.chart.style.cursor = 'pointer';
+    }
     new Highcharts.Chart(config);
+    if(opts['chartClick'] != undefined && opts['chartClick']) {
+        var legend_container = jQuery('#' + opts['container'] + ' .highcharts-legend'); 
+        jQuery('#' + opts['container'] + ' .highcharts-container')
+        .bind({
+            mouseover : function() {
+                jQuery(this).css('cursor','hover');
+            },
+            mousedown : function(e) {
+                if(legend_container.length == 0 || !jQuery.contains(legend_container[0],e.target)) {
+                    opts['chartClick'].call(this,e);
+                }
+            }
+        });
+    }
 }
 
 function stackedColumnGraph(opts) {
@@ -167,13 +180,6 @@ function stackedColumnGraph(opts) {
             type: 'column',
             height: opts.height,
             plotBackgroundColor : REPORT_COLORS['REPORT_COLORS'],
-            events : {
-                click : function(e) {
-                    if(opts['chartClick'] != undefined) {
-                        opts['chartClick'].call(this,e);
-                    }
-                }
-            },
             style: {
                 fontFamily: '"Helvetica Neue", Helvetica, Arial'
             }
@@ -234,7 +240,6 @@ function stackedColumnGraph(opts) {
                 shadow : false,
                 borderWidth: 0,
                 events: {
-                    click : opts['chartClick'] != undefined ? opts['chartClick'] : function(){},
                     mouseOut: opts['total_action'] != undefined ? opts['total_action'] : function(){},
                     mouseOver : opts['hover_callback'] != undefined ? opts['hover_callback'] : function(){}
                 },
@@ -329,7 +334,26 @@ function stackedColumnGraph(opts) {
         config.xAxis.crosshair = {};
         config.xAxis.crosshair.color = '#eeeeee';
     }
+    if(opts['chartClick'] != undefined && opts['chartClick']) {
+        config.xAxis.labels.style.cursor = 'pointer';
+        config.yAxis.labels.style.cursor = 'pointer';
+    }
     new Highcharts.Chart(config);
+    if(opts['chartClick'] != undefined && opts['chartClick']) {
+        var legend_container = jQuery('#' + opts['container'] + ' .highcharts-legend'); 
+        jQuery('#' + opts['container'] + ' .highcharts-container')
+        .bind({
+            mouseover : function() {
+                jQuery(this).css('cursor','hover');
+            },
+            mousedown : function(e) {
+                //dont invoke if click was on legend items
+                if(legend_container.length == 0 || !jQuery.contains(legend_container[0],e.target)) {
+                    opts['chartClick'].call(this,e);
+                }
+            }
+        });
+    }
 }
 
 /*
@@ -342,13 +366,6 @@ function multiSeriesColumn(opts) {
             type: 'column',
             borderRadius: 0,
             height: opts['height'],
-            events : {
-                click : function(e) {
-                    if(opts['chartClick'] != undefined) {
-                        opts['chartClick'].call(this,e);
-                    }
-                }
-            },
             style: {
                 fontFamily: '"Helvetica Neue", Helvetica, Arial'
             }
@@ -415,7 +432,6 @@ function multiSeriesColumn(opts) {
                 events: {
                     mouseOut: opts['total_action'] != undefined ? opts['total_action'] : function(){},
                     mouseOver : opts['hover_callback'] != undefined ? opts['hover_callback'] : function(){},
-                    click : opts['chartClick'] != undefined ? opts['chartClick'] : function(){}
                 }
             },
             series: {
@@ -508,7 +524,25 @@ function multiSeriesColumn(opts) {
         config.xAxis.crosshair = {};
         config.xAxis.crosshair.color = '#eeeeee';
     }
+    if(opts['chartClick'] != undefined && opts['chartClick']) {
+        config.xAxis.labels.style.cursor = 'pointer';
+        config.yAxis.labels.style.cursor = 'pointer';
+    }
     new Highcharts.Chart(config);
+    if(opts['chartClick'] != undefined && opts['chartClick']) {
+        var legend_container = jQuery('#' + opts['container'] + ' .highcharts-legend'); 
+        jQuery('#' + opts['container'] + ' .highcharts-container')
+        .bind({
+            mouseover : function() {
+                jQuery(this).css('cursor','hover');
+            },
+            mousedown : function(e) {
+                if(legend_container.length == 0 || !jQuery.contains(legend_container[0],e.target)) {
+                    opts['chartClick'].call(this,e);
+                }
+            }
+        });
+    }
 }
 
 function barChart(opts) {

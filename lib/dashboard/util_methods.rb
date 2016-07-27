@@ -55,7 +55,7 @@ module Dashboard::UtilMethods
     end
     #a way to check for unassigned group by value
     if response_hash.has_key?(nil)
-      result_arr << {:name => "Unassigned", :value => response_hash[nil], :id => "-1"}
+      result_arr << {:name => "None", :value => response_hash[nil], :id => "-1"}
     end
 
     result_arr.sort_by {|x| x[:value]}.reverse

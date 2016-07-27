@@ -3,6 +3,7 @@ var NavSearchUtils = NavSearchUtils || (function(){
 	navSearchUtils.localRecentSearchKey = getLocalRecentSearchKey();
 	navSearchUtils.localRecentTicketKey = getLocalRecentTicketsKey();
 
+
 	navSearchUtils.saveToLocalRecentSearches= function (fullSearchString){
 		navSearchUtils.localRecentSearches = navSearchUtils.getLocalRecentSearches(navSearchUtils.localRecentSearchKey);
 		//check if search stirng is already part of local recent searches
@@ -43,6 +44,20 @@ var NavSearchUtils = NavSearchUtils || (function(){
 	navSearchUtils.setLocalRecentSearches = function (key){
 		storeBrowserLocalStorage(key, navSearchUtils.localRecentSearches);		
 	};
+
+	navSearchUtils.deleteRecentTicketById = function(displayId){
+		if(!displayId) return;
+		navSearchUtils.localRecentTickets = navSearchUtils.getLocalRecentTickets(navSearchUtils.localRecentTicketKey);
+		for(var i = 0; i < navSearchUtils.localRecentTickets.length; i++){
+			if(navSearchUtils.localRecentTickets[i].displayId == displayId){
+				// remove the item from its place
+				navSearchUtils.localRecentTickets.splice(i, 1);
+				navSearchUtils.setLocalRecentTickets(navSearchUtils.localRecentTicketKey);				
+				break;
+			}			
+		}
+	}
+
 
 	navSearchUtils.saveToLocalRecentTickets = function(TICKET_DETAILS_DATA){
 		var isLocalRecentTicket = false;

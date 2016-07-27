@@ -383,6 +383,7 @@ ActiveRecord::Schema.define(:version => 20160629121214) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.boolean  "active",                  :default => false
+    t.boolean  "enabled",                 :default => false
   end
 
   add_index "chat_settings", ["account_id"], :name => "index_chat_settings_on_account_id"
@@ -3504,6 +3505,7 @@ ActiveRecord::Schema.define(:version => 20160629121214) do
 
   add_index "survey_results", ["account_id", "survey_id"], :name => "nameindex_on_account_id_and_survey_id"
   add_index "survey_results", ["surveyable_id", "surveyable_type"], :name => "index_survey_results_on_surveyable_id_and_surveyable_type"
+  add_index "survey_results", ["account_id", "created_at"], :name => "index_survey_results_on_account_id_and_created_at"
   execute "ALTER TABLE survey_results ADD PRIMARY KEY (id,account_id)"
 
   create_table "surveys", :force => true do |t|

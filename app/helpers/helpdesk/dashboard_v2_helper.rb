@@ -1,7 +1,6 @@
 module Helpdesk::DashboardV2Helper
 
   def dashboard_widget_list snapshot
-    widget_type =  Dashboard::STANDARD_DASHBOARD
     widgets = []
     widget_type = if dashboardv2_available?
       if current_user.privilege?(:admin_tasks)
@@ -11,6 +10,8 @@ module Helpdesk::DashboardV2Helper
       else
         (snapshot == 'agent') ? Dashboard::AGENT_DASHBOARD : Dashboard::STANDARD_DASHBOARD
       end
+    else
+      Dashboard::STANDARD_DASHBOARD
     end
 
     widget_type.each do |widget|

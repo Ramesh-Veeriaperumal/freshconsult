@@ -17,7 +17,6 @@ window.App.Contacts.Contact_form = window.App.Contacts.Contact_form || {};
       this.onVisit(data);
     },
     onVisit: function (data) {
-      this.appendemptycompanyField();
       this.bindGroupValidation();
       this.bindAutocomplete();
       this.bindCompanySelect2();
@@ -356,12 +355,6 @@ window.App.Contacts.Contact_form = window.App.Contacts.Contact_form || {};
     manageNewCompany: function () {
       var length = $("#user_companies li").not("[data-company-destroyed='true']").length;
       $('.uc_add_company').toggle(length < 20);
-    },
-
-    appendemptycompanyField: function () {
-      if (!$(".uc_list_edit").get(0)) {
-        this.addCompanyTemplate();
-      }
     },
 
     addCompanyTemplate: function () {
