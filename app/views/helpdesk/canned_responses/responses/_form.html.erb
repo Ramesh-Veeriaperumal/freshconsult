@@ -80,7 +80,7 @@ function toggleGroup(access_id)
 			 <%= attachment_container(@item.attachments_sharable, true, "remove_shared_attachment", nil) %>
         </div>
 	</li>
-	<li class="inline-field  form-horizontal pull-left">
+	<li class="inline-field  form-horizontal">
 		<div class="control-group">
 		<%= f.fields_for :visibility do |access| %>	
 			<label class="control-label"><%=t('.available_for').html_safe%> :</label>

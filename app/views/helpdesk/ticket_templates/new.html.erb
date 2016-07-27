@@ -3,7 +3,9 @@
 <% end %>
 <%# multifile attachments templates %>
 <% if  current_account.launched?(:multifile_attachments)  %>
-<%= render "helpdesk/tickets/ticket_widget/multifile_template_generator" %>
+	<%= render "helpdesk/tickets/ticket_widget/multifile_template_generator" %>
+ <% else %>
+     <%= render "helpdesk/shared/single_attachment_template" %>
 <% end %>
 <%= form_for @tkt_template, :url => { :controller => "ticket_templates", :action => "create" }, :html => { :multipart => true, :rel => "validate", :class => 'form-unsaved-changes-trigger', :id => "ticket_template"}  do |f| %>
 	<div class='page-header-sticky' rel='sticky'>

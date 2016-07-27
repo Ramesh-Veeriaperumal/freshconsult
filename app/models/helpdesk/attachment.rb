@@ -10,16 +10,6 @@ class Helpdesk::Attachment < ActiveRecord::Base
 
   BINARY_TYPE = "application/octet-stream"
 
-  MIME_TYPE_MAPPING = {"ppt" => "application/vnd.ms-powerpoint",
-                       "doc" => "application/msword",
-                       "xls" => "application/vnd.ms-excel",
-                       "pdf" => "application/pdf",
-                       "docx" => "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-                       "xlsx" => "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                       "pptx" => "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-                       "mp3" => "audio/mpeg"
-                      }
-
   MAX_DIMENSIONS = 16000000
 
   NON_THUMBNAIL_RESOURCES = ["Helpdesk::Ticket", "Helpdesk::Note", "Account", 
@@ -106,10 +96,8 @@ class Helpdesk::Attachment < ActiveRecord::Base
   end
 
   def set_content_type
-    file_ext = File.extname(self.content_file_name).gsub('.','')
-    mime_content_type = ATTACHMENT_WHITELIST.include?(file_ext.downcase) ? lookup_by_extension(file_ext.downcase) : BINARY_TYPE
-    mime_content_type = BINARY_TYPE if ['text/html', 'image/svg+xml'].include?(self.content_content_type)
-    self.content_content_type = mime_content_type unless mime_content_type.blank?
+    file_ext = File.extname(self.content_file_name).gsub('.','').downcase
+    self.content_content_type = BINARY_TYPE if !ATTACHMENT_WHITELIST.keys.include?(file_ext) || ATTACHMENT_WHITELIST[file_ext] != self.content_content_type.downcase
   end
 
   def set_content_dispositon
@@ -223,10 +211,6 @@ class Helpdesk::Attachment < ActiveRecord::Base
 
   def set_random_secret
     self.random_secret = SecureRandom.hex(8)
-  end
-
-  def lookup_by_extension(extension)
-    MIME_TYPE_MAPPING[extension]
   end
 
   def set_account_id

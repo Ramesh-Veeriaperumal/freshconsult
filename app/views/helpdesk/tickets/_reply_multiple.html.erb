@@ -22,7 +22,7 @@
         </li>
         <li>
           <% unless local_assigns[:no_attachments] %>
-              <%= render :partial => "/helpdesk/tickets/show/single_attachment_form", :locals => { :attach_id => id , :nsc_param => "helpdesk_note" } %>
+              <%= render :partial => "/helpdesk/tickets/show/single_attachment_form", :locals => { :attach_id => id , :nsc_param => "helpdesk_note",:bulk => true } %>
                   <%= render "helpdesk/shared/single_attachment_template" %>
           <% end %>
         </li>
