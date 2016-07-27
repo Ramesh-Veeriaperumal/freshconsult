@@ -119,6 +119,7 @@ Authority::Authorization::PrivilegeList.build do
     # Agent who has access to ticket create will obviously know the custom field names.
     # So access to read the list of custom fields for an account through API should also be given at the same level of privilege as ticket create.
     resource :api_ticket_field, :only => [:index] 
+    resource :"bootstrap", :only => [:meta_info]
 	end
 
   export_tickets do

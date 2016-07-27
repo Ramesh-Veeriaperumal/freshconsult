@@ -97,6 +97,7 @@ Helpkit::Application.routes.draw do
   end
 
   match '/api/v2/_search/tickets' => 'tickets#search', :defaults => { :format => 'json' }, :as => :tickets_search, via: :get
+  match '/api/v2/bootstrap' => 'bootstrap#meta_info', :as => :bootstrap, via: :get
   
   scope '/api', defaults: { version: 'v2', format: 'json' }, constraints: { format: /(json|$^)/ } do
     scope '/v2', &api_routes # "/api/v2/.."
