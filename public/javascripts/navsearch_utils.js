@@ -60,6 +60,7 @@ var NavSearchUtils = NavSearchUtils || (function(){
 
 
 	navSearchUtils.saveToLocalRecentTickets = function(TICKET_DETAILS_DATA){
+		if (TICKET_DETAILS_DATA['ticket_deleted'] == true || TICKET_DETAILS_DATA['ticket_spam'] == true) return;
 		var isLocalRecentTicket = false;
 		navSearchUtils.localRecentTickets = navSearchUtils.getLocalRecentTickets(navSearchUtils.localRecentTicketKey);
 		for(var i = 0; i < navSearchUtils.localRecentTickets.length; i++){
