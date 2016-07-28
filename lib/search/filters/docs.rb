@@ -126,7 +126,7 @@ class Search::Filters::Docs
 
     def document_path(model_class, id, query_params={})
       path    = [host, alias_name, model_class.demodulize.downcase, id].join('/')
-      query_params.blank? ? path : "#{path}?#{query_params.to_params}"
+      query_params.blank? ? path : "#{path}?#{query_params.to_query}"
     end
 
     def error_handle(&block)
