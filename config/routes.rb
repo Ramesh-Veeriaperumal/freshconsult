@@ -1599,6 +1599,7 @@ Helpkit::Application.routes.draw do
       post :save_reports_filter
       post :update_reports_filter
       post :delete_reports_filter
+      post :time_entries_list
     end
   end
 

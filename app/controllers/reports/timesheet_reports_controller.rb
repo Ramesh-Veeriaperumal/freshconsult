@@ -9,7 +9,7 @@ class Reports::TimesheetReportsController < ApplicationController
   before_filter :report_filter_data_hash,                       :only => [:index]
   before_filter :build_item,                                    :only => [:index,:export_csv,:report_filter,:time_sheet_list, 
                                                                           :generate_pdf]
-  before_filter :time_sheet_list,                               :only => [:index,:report_filter, :generate_pdf]
+  before_filter :time_sheet_list,                               :only => [:index,:report_filter, :generate_pdf, :time_entries_list]
   before_filter :time_sheet_for_export,                         :only => [:export_csv]
   before_filter :save_report_max_limit?,                        :only => [:save_reports_filter]
   before_filter :construct_report_filters, :schedule_allowed?,  :only => [:save_reports_filter,:update_reports_filter]
@@ -22,6 +22,10 @@ class Reports::TimesheetReportsController < ApplicationController
 
   def report_filter
     render :partial => "time_sheet_list"
+  end
+
+  def time_entries_list
+    render :partial => "time_entries_list"
   end
   
   def export_csv
