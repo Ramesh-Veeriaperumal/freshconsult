@@ -33,7 +33,7 @@ function openFromSkyDrive(inp) {
                             if (jQuery('.single_file').length !== 0 ) {
                                 singleFile();
                             } else {
-                                var attachments = JSON.stringify({ link: response.url, name: file.name, provider: 'onedrive' });
+                                var attachments = JSON.stringify({ link: response.url, name: escapeHtml(file.name), provider: 'onedrive' });
                                 jQuery("#attach-limt-" + file_list).hide();
                                 var cloud_file_object = [{ fileName: file.name, provider: 'One drive', attachments: attachments }];
                                 jQuery("#attachment-template").tmpl({
