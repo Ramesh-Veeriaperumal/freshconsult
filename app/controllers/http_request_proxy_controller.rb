@@ -58,6 +58,10 @@ class HttpRequestProxyController < ApplicationController
         elsif params[:app_name] == "czentrix" #adding this as a hack in here. ideally it should not be here.
           params[:domain] = "#{request.protocol}#{installed_app.configs[:inputs][:host_ip]}"
           @domain_verified = true
+        elsif params[:app_name] == "jira"
+          params[:domain] = installed_app.configs_domain
+          params[:password] = installed_app.configsdecrypt_password
+          @domain_verified = true
         else
           params[:password] = installed_app.configsdecrypt_password
         end
