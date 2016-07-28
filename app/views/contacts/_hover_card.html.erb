@@ -51,6 +51,7 @@
         <% end %>
       <% end %>
 
+    <% unless user.agent? %>
       <div class="recent-tickets">
         <% case show_recent_tickets %>
           <% when :dialog then %>
