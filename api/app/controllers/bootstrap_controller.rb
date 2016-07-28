@@ -1,6 +1,9 @@
 class BootstrapController < ApiApplicationController
 
   def meta_info
+    date_format = Account::DATEFORMATS[current_account.account_additional_settings.date_format]
+    @data_date_format = Account::DATA_DATEFORMATS[date_format]
+    @current_timezone = ActiveSupport::TimeZone.new(current_user.time_zone || current_account.time_zone).tzinfo.identifier
   end
 
   private

@@ -11,7 +11,8 @@ json.cache! CacheLib.key(@agent.user, params) do
   end
   json.account do
     json.extract! current_account, "full_domain", "helpdesk_name", "name", "time_zone"
-    json.date_format current_account.account_additional_settings.date_format
+    json.date_format @data_date_format
+    json.time_zone @current_timezone
     json.subscription do 
       json.extract! current_account.subscription, :agent_limit, :state, :addons
       json.subscription_plan current_account.subscription.subscription_plan.name
