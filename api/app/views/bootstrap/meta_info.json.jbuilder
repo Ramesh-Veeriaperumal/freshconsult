@@ -8,11 +8,11 @@ json.cache! CacheLib.key(@agent.user, params) do
     json.preferences @agent.preferences
     json.partial! 'shared/utc_date_format', item: @agent
     json.locale current_user.language
+    json.time_zone @current_timezone
   end
   json.account do
     json.extract! current_account, "full_domain", "helpdesk_name", "name", "time_zone"
     json.date_format @data_date_format
-    json.time_zone @current_timezone
     json.subscription do 
       json.extract! current_account.subscription, :agent_limit, :state, :addons
       json.subscription_plan current_account.subscription.subscription_plan.name
