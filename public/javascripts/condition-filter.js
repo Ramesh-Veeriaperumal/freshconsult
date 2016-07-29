@@ -678,8 +678,8 @@ rules_filter = function(_name, filter_data, parentDom, options){
 				jQuery(this).parent().find('.password').show();
 			});
 			
-			jQuery(parentDom).find('select, :text')
-				.on("change",function(){
+			jQuery(parentDom)
+				.on("change", 'select, :text', function(){
 					var formObj = jQuery(parentDom).parents('form:first');
 					setting.onRuleSelect.apply(this,[this,domUtil.get_filter_list('json', formObj),formObj])
 				});
