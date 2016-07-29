@@ -180,7 +180,7 @@ Helpkit::Application.routes.draw do
   match '/packages/:package.:extension' => 'jammit#package', :as => :jammit, :constraints => { :extension => /.+/ }
   resources :authorizations
 
-  ["github","salesforce", "magento", "shopify", "slack", "infusionsoft", "google_calendar", "google_login", "google_marketplace_sso", "google_contacts", "google_gadget"].each do |provider|
+  ["github","salesforce", "magento", "shopify", "slack", "infusionsoft", "google_calendar", "google_login", "google_marketplace_sso", "google_contacts", "google_gadget", "salesforce_crm_sync"].each do |provider|
     match "/auth/#{provider}/callback" => 'omniauth_callbacks#complete', :provider => provider
   end
 
@@ -685,6 +685,18 @@ Helpkit::Application.routes.draw do
         get :edit
         get :new
         post :install
+    end
+
+    namespace :cloud_elements, :path => "sync" do
+      get :oauth_url
+      namespace :crm do
+        get :settings
+        post :create
+        get :instances
+        get :edit
+        post :update
+        post :event_notification
+      end
     end
 
     resources :remote_configurations

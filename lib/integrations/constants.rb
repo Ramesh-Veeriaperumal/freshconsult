@@ -38,7 +38,8 @@ module Integrations::Constants
     :twitter => "twitter",
     :facebook => "facebook",
     :freshsales => "freshsales",
-	:fullcontact => "fullcontact"
+    :fullcontact => "fullcontact",
+    :salesforce_crm_sync => "salesforce_crm_sync"
   }
 
   DISPLAY_IN_PAGES = { "ticket_show" => 2, "contact_show" => 1, "company_show" => 0 }
@@ -94,7 +95,8 @@ module Integrations::Constants
     "box" => "box",
     "mailchimp" => "mailchimp",
     "constantcontact" => "constantcontact",
-    "surveymonkey" => "surveymonkey"
+    "surveymonkey" => "surveymonkey",
+    "salesforce_crm_sync" => "salesforce_crm_sync"
   }
 
 end

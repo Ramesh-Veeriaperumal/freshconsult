@@ -2287,6 +2287,9 @@ en:
         error: "Error while installing the app."
         cti_error: "Multiple CTI apps can not be enabled."
         freshfone_alert: "CTI app cannot be enabled when your phone channel is enabled."
+        cloud_element_success: "Integration has been enabled with default configuration."
+        cloud_element_settings_failure: "check your configuration and enable again."
+        no_feature_error: "Please contact support and enable the crm sync feature first"
       update:
         success: "App updated successfully."
         error: "Error while updating the app."
@@ -6897,6 +6900,18 @@ en:
         account: "Account Fields"
         opportunity: "Opportunity Fields"
         opportunity_settings: "Agents can create/link or unlink opportunities from the ticket"
+    salesforce_crm_sync:
+      label: "Salesforce Contact Account Sync"
+      desc: "You can sync Contact and Account information between Salesforce crm and Freshdesk."
+      helptext: "<h4>Salesforce Contact Account Sync</h4><p><br/>You can enable one way sync between your Salesforce CRM and freshdesk. From your helpdesk dashboard, you will be able to create, delete or update CRM contact/account fields. A maximum of 10 account fields can be synced, amongst which, 4 contact fields will be selected by default (Name, Email, Mobile and Phone). On the other hand, for account fields, only the name will be selected by default.</p><p>Hence, the customer can additionally select 6 contact fields and 9 account fields in their CRM-Helpdesk integration.</p><p>To enable this integration, drop a mail request to us and we’ll do it for you.</p><p>You need to create the following custom fields in your Freshdesk account to enable this integration.<br/>a.SFCONTACTID in admin/contact_fields.<br/>b.SFACCOUNTID in admin/company_fields.</p><p>In addition to the above fields, you will also have to create these custom fields in your Salesforce CRM.<br/>a.FDCONTACTID in contact custom fields.<br/>b.FDACCOUNTID in account custom fields.</p>"
+      add_fields:
+        remove: "Remove"
+      form:
+        salesforce_crm_sync_settings_info: ""
+        salesforce_crm_sync_settings: "Salesforce Settings"
+        select: "Select an option"
+        contact: "Contact Fields"
+        account: "Account Fields"
     nimble:
       label: "Nimble"
       desc: "You can view contact information from Nimble crm in Freshdesk."
