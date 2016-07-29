@@ -69,7 +69,7 @@ module IntegrationServices::Services
       end 
       Rails.logger.debug "Queing Done Successfully."
       rescue Exception => e
-        error_log = "#{app_name}: Error on Formula Instance delete. Formula Template ID: #{formula_id}, Formula Instance Id: #{formula_instance_id}, 
+        error_log = "Account: #{Account.current.full_domain}, Id: #{Account.current.id}, #{app_name}: Error on Formula Instance delete. Formula Template ID: #{formula_id}, Formula Instance Id: #{formula_instance_id}, 
           #{app_name} Instance Id: #{installed_app.configs_element_instance_id}, Freshdesk Instance Id: #{installed_app.configs_fd_instance_id}. Delete them Manually."
         FreshdeskErrorsMailer.error_email(nil, nil, e, {
           :subject => error_log, :recipients => "integration@freshdesk.com"

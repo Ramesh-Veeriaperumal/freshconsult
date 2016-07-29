@@ -12,7 +12,7 @@ module Integrations
         Rails.logger.debug "#{app.name}: Receiving Element Instance Id #{options[:element_id]} For delete...."
         obj.receive(:delete_element_instance)
       rescue IntegrationServices::Errors::TimeoutError => timeouterr
-        timeout_error = "Timeout error on #{app.name} Uninstall, Element Instance Id: #{options[:element_id]}. Delete Manually in CE - error: #{timeouterr}"
+        timeout_error = "Account: #{current_account.full_domain}, Id: #{current_account.id}, Timeout error on #{app.name} Uninstall, Element Instance Id: #{options[:element_id]}. Delete Manually in CE - error: #{timeouterr}"
         Rails.logger.error timeout_error
         NewRelic::Agent.notice_error(timeout_error)
         FreshdeskErrorsMailer.error_email(nil, nil, timeouterr, {
@@ -20,7 +20,7 @@ module Integrations
         })
         raise timeouterr
       rescue Exception => error
-        error_log = "Error on #{app.name} Uninstall, Element Instance Id: #{options[:element_id]}. Delete Manually in CE - error: #{error}"
+        error_log = "Account: #{current_account.full_domain}, Id: #{current_account.id}, Error on #{app.name} Uninstall, Element Instance Id: #{options[:element_id]}. Delete Manually in CE - error: #{error}"
         Rails.logger.error error_log
         NewRelic::Agent.notice_error(error_log)
         FreshdeskErrorsMailer.error_email(nil, nil, error, {

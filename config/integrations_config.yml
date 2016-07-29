@@ -9,10 +9,10 @@ app:
     client_secret: "0aJhfYIgkDDPb-cE57TehreBwVlRKQd4"
   cloud_elements:
     development:
-      auth_header: "User y31G0E60L6Zs/nZx7x0MJtRKCyhsJACUaAaDYU67S78=,Organization 3abb0215cd97f5f346f29a860e1e5982"
+      auth_header: "User zOJM1qpY3NGz9kNmTY6T0/JqOBwnqPlMUQby23qIf3E=,Organization b27f961e00da8d2ba042707e0938bd15"
       formula_template_id:
-        salesforce_crm_sync:  "2786"
-        dynamics_crm_sync: "2800"
+        salesforce_crm_sync:  "3113"
+        dynamics_crm_sync: "3114"
     staging:
       auth_header: "User HEr6MX+mVz+zMwfSRIydYpKVqSbI4F+LWhodHhj0IQk=,Organization e18df23b39be015812b0ae60911dccbd"
       formula_template_id:
