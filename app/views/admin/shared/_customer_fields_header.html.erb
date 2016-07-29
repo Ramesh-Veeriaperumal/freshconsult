@@ -9,6 +9,9 @@
           } %>
     </div>
     <div class="pull-right">
+
+      <!-- disabling the requester widget temporarily -->
+      <% if false %>
       <span>
         <%= link_to t('customize_requester_widget'), 
                       "/admin/requester_widget/get_widget",
@@ -21,6 +24,9 @@
                       "data-close-label" => t('cancel'),
                       :title => t('customize_requester_widget') %>
       </span>
+      <% end %>
+
+
       <%= link_to "#{ t('cancel') }".html_safe, "/admin/home", :class => "btn" %>
       <%= submit_tag t("save"), :class => "btn btn-primary save-custom-form", "data-commit" => t('saving') %>
     </div>

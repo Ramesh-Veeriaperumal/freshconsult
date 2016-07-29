@@ -47,9 +47,6 @@ RealtimeDashboard.Widgets.TrendCounter = {
 		},
 		bindEvents : function() {
 			var self = this;
-			jQuery(document).on('group_change',function(event) {
-				self.fetchData(event.group_id);
-			});
 		},
 		init : function() {
 			var self = this;
