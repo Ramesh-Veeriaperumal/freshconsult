@@ -516,6 +516,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"helpdesk/select_all_ticket_action"
     resource :"helpdesk/dashboard",:only => [:agent_status,:load_ffone_agents_by_group ]
     resource :"integrations/xero", :only => [:authorize, :authdone, :update_params]
+    resource :"integrations/cloud_elements/crm", :only => [:instances, :edit, :update, :settings, :create]
     resource :"integrations/github", :only => [:new, :install, :edit, :update, :oauth_install]
     resource :"integrations/marketplace/quickbooks_sso", :only => [:landing]
     resource :"integrations/marketplace/shopify", :only => [:landing]

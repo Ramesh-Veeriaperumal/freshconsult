@@ -1,0 +1,71 @@
+<ul class="ui-form">
+  <li class="inline-field">
+    <% divider_class = "hidden" %>
+    <div class="salesforce-wrapper salesforce-new-block cloud-elements">
+      <span class="seperator <%= divider_class %>"></span>
+      <div class="row-fluid">
+        <div class="sf-contact-fields sf-settings-widget"> 
+          <h3 class="leftselect2"><%=t("integrations.#{@element_config["element"]}.form.contact")%></h3>
+          <div id='sfcontacts'>
+            <span>
+              <div id="contactslist">
+                <ul>
+                  <%selected_fields = default_fields['contact'].collect{|x| x} %>
+                  <%unless @installed_app.blank? %>
+                    <%selected_fields.push(@installed_app.configs_contact_fields.split(",").collect!{ |x| next if  default_fields['contact'].include?(x);
+                       x
+                      })%>
+                  <%end%>
+                </ul>
+              </div>
+              <!--select_tag input for selected fields is considering it as string if we directly pass the array object. Hence this workaround to convert it at runtime -->
+              <%data =selected_fields.join(",").html_safe%>
+              <% contact_fields = @element_config['contact_fields'] %>
+              <% # order the fields in such a way so that default fields come at the top
+                contact_fields_list = []
+                default_fields['contact'].each { |field| contact_fields_list.push([contact_fields[field],field]) } 
+                @element_config['contact_fields'].keys.collect{|field|
+                  contact_fields_list.push([contact_fields[field],field]) if not default_fields['contact'].include?(field); 
+                }
+              %>
+              <%=hidden_field_tag :contact_labels %>
+              <%= select_tag :contacts, 
+                      options_for_select(contact_fields_list,data.split(",")), { :multiple => true, :class => "select2-fields salesforce-int-select","data-placeholder" => " "} %> <!-- space in placeholder to add an empty option -->
+            </span>
+          </div>
+        </div>
+        <div class="sf-account-fields sf-settings-widget"> 
+          <h3 class="leftselect2"><%=t("integrations.#{@element_config["element"]}.form.account")%></h3>
+          <div id='sfaccounts'>
+            <span>
+              <div id="accountslist">
+                <ul>
+                  <%selected_fields = default_fields['account'].collect{|x| x} %>
+                  <%unless @installed_app.blank? %> 
+                    <%config_account_fields = @installed_app.configs[:inputs]['account_fields'] ? @installed_app.configs[:inputs]['account_fields'] : ""%>
+                    <%selected_fields.push(config_account_fields.split(",").collect!{ |x| next if  default_fields['account'].include?(x);
+                       x
+                      })%>
+                  <%end%>
+                </ul>
+              </div>
+              <!--select_tag input for selected fields is considering it as string if we directly pass the array object. Hence this workaround to convert it at runtime -->
+              <%data =selected_fields.join(",").html_safe%>
+              <% account_fields = @element_config['account_fields'] %>
+              <% # order the fields in such a way so that default fields come at the top
+                account_fields_list = []
+                default_fields['account'].each { |field| account_fields_list.push([account_fields[field],field]) } 
+                @element_config['account_fields'].keys.collect{|field|
+                  account_fields_list.push([account_fields[field],field]) if not default_fields['account'].include?(field); 
+                }
+              %>
+              <%=hidden_field_tag :account_labels %>
+              <%= select_tag :accounts, 
+                      options_for_select(account_fields_list,data.split(",")), { :multiple => true, :class => "select2-fields salesforce-int-select","data-placeholder" => " "} %> <!-- space in placeholder to add an empty option -->
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </li>
+</ul>

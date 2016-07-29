@@ -1,0 +1,212 @@
+<!-- This file used only for the sync apps that are using cloud elements, If we need both sync and view flow using cloud elements use crm_fields.html.erb in cloud_elements branch. -->
+<% content_for :helpcard do -%>
+  <div class="helpcard">
+      <%=t("integrations.#{@element_config["element"]}.helptext").html_safe%>
+  </div>
+<%- end %>
+	<h3 class="lead"><%=t("integrations.#{@element_config["element"]}.form.#{@element_config["element"]}_settings")%></h3>
+  <%method_type = "post" %>
+  <%= form_tag("/integrations/sync/crm/update", :method => method_type )  do %>
+  <%= hidden_field_tag 'state', params[:state] %>
+  <%= hidden_field_tag 'method', params[:method] %>
+  <div class="well">
+    <div class="tab-content row-fluid">
+      <label class="caption span3">
+        <div class="logo application-logo-<%=@element_config["element"]%>"></div>
+        <div class="logo info-data">
+          <%=t("integrations.#{@element_config["element"]}.desc")%>
+        </div>
+      </label>
+      <div class="tab-pane span9 active" id="field-mapping-tab">
+        <div class="sf-title-wrapper">
+          <label for="enble_sync"> <%= @element_config["element"].camelize%></label> 
+          <input type="checkbox" rel="toggle" name="enble_sync" id="enble_sync" data-checked-label="ON" data-unchecked-label="OFF" <% if @element_config['enble_sync'] == "on" %> checked=checked <% end %> onchange="change(this)">
+        </div>
+        <div class="field-mapping">
+          <div id="field-wrap"></div>
+          <div class="row-fluid" id="rule-list">
+            <ul class="nav nav-flat">
+              <li class="active">
+                <a href="#contact-mapping-tab" id="contact-mapping-btn"data-toggle="tab">Contact</a>
+              </li>
+              <li>
+                <a href="#company-mapping-tab" id="company-mapping-btn" data-toggle="tab">Company</a>
+              </li>        
+            </ul>
+            <div class="tab-content">
+              <div class="tab-pane active" id="contact-mapping-tab">
+                <div class="contact-wrapper">
+                  <div class="contact-tabel-head">
+                    <div class="contact-tabel-data field-1"> <span class="field-1-text"> Freshdesk Fields </span> </div>
+                    <div class="contact-tabel-data field-2"> 
+                      <a class="center-icon"><%= font_icon "left-direction", { :size => 20 } %></a>
+                    </div>
+                    <div class="contact-tabel-data field-3"> <span> <%= @element_config["element"].camelize%> Contact Fields </span> </div>
+                  </div>
+                  <div rel="construct_contact_rules" id="construct_contact_rule" class="rules_wrapper" data-render-template = '.construct_contact' ></div>
+                </div>
+              </div>
+              <div class="tab-pane" id="company-mapping-tab">
+                <div class="contact-wrapper">
+                  <div class="contact-tabel-head">
+                    <div class="contact-tabel-data field-1"> <span class="field-1-text"> Freshdesk Fields </span> </div>
+                    <div class="contact-tabel-data field-2">
+                      <a class="center-icon"><%= font_icon "left-direction", { :size => 20 } %></a>
+                    </div>
+                    <div class="contact-tabel-data field-3"> <span> <%= @element_config["element"].camelize%> Account Fields </span> </div>
+                  </div>
+                  <div rel="construct_company_rules" id="construct_company_rule" class="rules_wrapper" data-render-template = '.construct_company' ></div>
+                </div>
+              </div>    
+            </div>
+          </div>
+        </div>  
+      </div>
+    </div>
+  </div>
+  <div id="no-display" class="alert notice error">Resolve the errors in the form before proceeding!!</div>
+
+<div class="button-container">
+  <%= link_to t('back'), {:controller => '/integrations/applications', :action => 'index'}, :class => "btn" %>
+  <%= submit_tag t('update'), :class => "btn btn-primary",:onclick => "return fillLabels();" %>
+</div>
+
+<%end%>
+
+<script class="construct_company" type="text/html" data-default-value = '<%= @element_config['existing_companies'].to_json.html_safe %>'>
+    <% fd_company = @element_config["fd_company"] %>
+    <%= select_tag('inputs[companies][][fd_field]', options_for_select(fd_company.collect{ |k,v| [v,k,{'data-field-type' => @element_config['fd_company_types'][v]} ]}), 
+            { :class => "" , :rel => "dropdown", "data-refer-key" => 'fd_field', 'data-header-label' => ''}) %>
+    <% sf_company = @element_config["account_fields"] %>
+    <%= select_tag('inputs[companies][][sf_field]', options_for_select(sf_company.collect{ |k,v| [v,k,{'data-field-type' => @element_config["account_fields_types"][v]} ]}),  
+            { :class => "" , :rel => "dropdown", "data-refer-key" => 'sf_field', 'data-header-label' => ''}) %>
+</script>
+<script class="construct_contact" type="text/html" data-default-value='<%= @element_config['existing_contacts'].to_json.html_safe %>'>
+  <% fd_contact = @element_config["fd_contact"] %>
+  <%= select_tag('inputs[contacts][][fd_field]', options_for_select(fd_contact.collect{ |k,v| [v,k,{'data-field-type' => @element_config['fd_contact_types'][v]} ]}), 
+          { :class => "" , :rel => "dropdown", "data-refer-key" => 'fd_field', 'data-header-label' => ''}) %>
+  <% sf_contact = @element_config["contact_fields"] %>
+  <%= select_tag('inputs[contacts][][sf_field]', options_for_select(sf_contact.collect{ |k,v| [v,k,{'data-field-type' => @element_config['contact_fields_types'][v]} ]}), 
+            { :class => "" , :rel => "dropdown", "data-refer-key" => 'sf_field', 'data-header-label' => ''}) %>
+</script> 
+
+<script type="text/javascript">
+
+function fillLabels(){
+  if(validateFields()){
+    return true; 
+  }else{
+    jQuery("#no-display").slideDown(function() {
+      setTimeout(function() {
+        jQuery("#no-display").slideUp();
+      }, 3000);
+    });
+    return false;
+  }
+}
+
+  jQuery(document).ready(function(){
+    if(!jQuery('#enble_sync').is(':checked')){
+      change();
+    }
+    jQuery('#enble_sync').prop('checked', "<%= @element_config['enble_sync'] %>");
+  });
+
+  function change(){ 
+    jQuery('#field-wrap').toggleClass('field-disable');
+  }
+
+  jQuery(document).on('click','.sync-radio-btn', function(){
+    var clone_element = jQuery(this).siblings('.sync-icon').children().clone();
+    jQuery('.center-icon').html('').html(clone_element);
+  });
+  /*
+      content for field mapping starts here.
+  */
+  var fdTypeValidator= <%= raw @element_config['fd_validator'].to_json%>;
+  var crmTypeValidator= <%= raw @element_config['element_validator'].to_json%>;
+  var maximumSelectionSizeContact = 10;
+  var customModule = "sync";
+
+  jQuery(function(){
+   jQuery('[rel="construct_contact_rules"]').constructRules({fdTypeValidator, crmTypeValidator, maximumSelectionSizeContact, customModule});
+   jQuery('[rel="construct_company_rules"]').constructRules({fdTypeValidator, crmTypeValidator, maximumSelectionSizeContact, customModule});
+  });
+
+  jQuery('#company-mapping-btn, #contact-mapping-btn').on('click', function(){
+    if(validateFields()){
+      return true;
+    }else{
+      return false;
+    }
+  });
+  jQuery('#field-visibility-btn').on("click", function(e){
+    if(!validateFields()){
+      jQuery("#no-display").slideDown(function() {
+        setTimeout(function() {
+          jQuery("#no-display").slideUp();
+        }, 3000);
+      });
+      return false;
+    }
+  });
+
+  function validateFields(){
+    var valid = true;
+    //checking for error in contact mapping fields
+    jQuery('#construct_contact_rule .rules_list_wrapper .list').not('.overlay').find('.error').remove();
+    jQuery('#construct_contact_rule .rules_list_wrapper .list').not('.overlay').each(function(index, list){
+      var FDContactSelected = jQuery(this).find('.dropdown_1 .select2-chosen').text();
+      var SFContactSelected = jQuery(this).find('.dropdown_2 .select2-chosen').text();
+      if(FDContactSelected.toLowerCase() == "select" || FDContactSelected.toLowerCase() == "no matching data..."){
+        jQuery(this).find('[data-refer-key=fd_field]').after("<p class='error'>Field is required. </p>");
+        valid = false;
+        return false;
+      } 
+      if(SFContactSelected.toLowerCase() == "select" || SFContactSelected.toLowerCase() == "no matching data..." ){
+        jQuery(this).find('[data-refer-key=sf_field]').after("<p class='error'>Field is required. </p>");
+        valid = false;
+        return false;
+      }
+    });
+    //checking for error in company mapping fields
+    jQuery('#construct_company_rule .rules_list_wrapper .list').not('.overlay').find('.error').remove();
+    if(valid){
+      jQuery('#construct_company_rule .rules_list_wrapper .list').not('.overlay').each(function(index, list){
+        var FDCompanySelected = jQuery(this).find('.dropdown_1 .select2-chosen').text();
+        var SFCompanySelected = jQuery(this).find('.dropdown_2 .select2-chosen').text();
+        if(FDCompanySelected.toLowerCase() == "select" || FDCompanySelected.toLowerCase() == "no matching data..." ){
+          jQuery(this).find('[data-refer-key=fd_field]').after("<p class='error'>Field is required. </p>");
+          valid = false;
+          return false;
+        } 
+        if(SFCompanySelected.toLowerCase() == "select" || SFCompanySelected.toLowerCase() == "no matching data..." ){
+          jQuery(this).find('[data-refer-key=sf_field]').after("<p class='error'>Field is required. </p>");
+          valid = false;
+          return false;
+        }
+      });
+    }
+    if(valid){
+      return true;
+    }else{
+      return false;
+    }
+  }
+  jQuery(document).ready(function(){
+    //setting first 3 contact fields as compulsary and  disabled
+    jQuery('#construct_contact_rule .rules_list_wrapper .list').slice(0,4).each(function(){
+      jQuery(this).find('.list-icon').remove();
+      jQuery(this).find('.select2-choice').addClass('disabled');
+      jQuery(this).addClass('overlay');
+      jQuery(this).find(".select2-arrow").remove();
+    });
+    //setting the first field of account as compulsary and  disabled
+    jQuery('#construct_company_rule .rules_list_wrapper .list').slice(0,1).each(function(){
+      jQuery(this).find('.list-icon').remove();
+      jQuery(this).find('.select2-choice').addClass('disabled');
+      jQuery(this).addClass('overlay');
+      jQuery(this).find(".select2-arrow").remove();
+    });
+  });
+</script>
