@@ -126,7 +126,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         return create_ticket(account, from_email, to_email, user, email_config) if primary_ticket.is_a?(Helpdesk::ArchiveTicket)
         ticket = primary_ticket
       end
-      add_email_to_ticket(ticket, from_email, user)
+      add_email_to_ticket(ticket, from_email, to_email, user)
     else
       if archive_ticket
         self.archived_ticket = archive_ticket
@@ -134,11 +134,11 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         if parent_ticket && parent_ticket.is_a?(Helpdesk::ArchiveTicket)
           self.archived_ticket = parent_ticket
         elsif valid_parent_ticket
-          return add_email_to_ticket(parent_ticket, from_email, user)
+          return add_email_to_ticket(parent_ticket, from_email, to_email, user)
         end
         # If not merge check if archive child present
         if valid_linked_ticket
-          return add_email_to_ticket(linked_ticket, from_email, user)
+          return add_email_to_ticket(linked_ticket, from_email, to_email, user)
         end
       end
       create_ticket(account, from_email, to_email, user, email_config)
@@ -515,7 +515,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     end
 
 
-    def add_email_to_ticket(ticket, from_email, user)
+    def add_email_to_ticket(ticket, from_email, to_email, user)
       msg_hash = {}
       # for plain text
       msg_hash = show_quoted_text(params[:text],ticket.reply_email)
