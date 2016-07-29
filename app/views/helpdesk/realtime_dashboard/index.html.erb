@@ -29,15 +29,6 @@
 <% if chat_activated? %>
     <%= javascript_include_tag :'cdn/livechat_mini_dashboard' %>
 <% end %>
-<% unless AppMetrics::FRESHFONE_METRICS.blank? %>
-    <%= javascript_tag do %>
-    jQuery(document).ready(function(){
-        if(App.Kissmetrics != undefined){   
-            App.Kissmetrics.kissMetricTrackingCode("<%= AppMetrics::FRESHFONE_METRICS %>");
-        }
-     });
-    <% end %>
-<% end %>
 <script type="text/javascript">
     jQuery(document).ready(function() {
         window.RealtimeDashboard = window.RealtimeDashboard || {};

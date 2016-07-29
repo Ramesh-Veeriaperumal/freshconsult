@@ -32,7 +32,7 @@ TICKET_DETAILS_DATA = {
 	pagination_limit	: <%= ActivityConstants::QUERY_UI_LIMIT %>,
 	activity_event_type	: <%= ::HelpdeskActivities::EventType::ALL %>,
 	attachment_missing_alert: '<%= t("ticket.reply_form.attachment_missing_alert") %>',
-	ticket_subject: "<%= @ticket.subject %>",
+	ticket_subject: "<%= escape_javascript(@ticket.subject.squish.html_safe) %>",
 	ticket_deleted: <%= @ticket.deleted %>,
 	ticket_spam: <%= @ticket.spam %>
 };

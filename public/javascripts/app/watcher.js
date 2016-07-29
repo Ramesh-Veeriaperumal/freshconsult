@@ -9,6 +9,7 @@ window.App.Tickets = window.App.Tickets || {};
   
   App.Tickets.Watcher = {
     currentUserID: (DataStore.get('current_user').currentData.user.id).toString(),
+    currentUserName: (DataStore.get('current_user').currentData.user.name).toString(),
     init: function () {
       this.offEventBinding();
       this.addListeners();
@@ -74,7 +75,6 @@ window.App.Tickets = window.App.Tickets || {};
       var self = this,
           requestURL = $("#monitor").data('remote-url') + "/unwatch",
           selected_ids = jQuery("select.watcher_input").val();
-
       this.watcherRequest(requestURL ,'DELETE', function(data){
           jQuery("#watcherlist").removeClass("sloading");
           jQuery(".construct").append(jQuery("#watcherlist .unwatch"));
@@ -84,8 +84,8 @@ window.App.Tickets = window.App.Tickets || {};
           if(jQuery.inArray(self.currentUserID, jQuery("select.watcher_input").val()) == -1) {
             jQuery("select.watcher_input")
               .prepend(jQuery("<option></option>")
-              .val(self.currentUserID )
-              .text("Me"));
+              .attr("value", self.currentUserID )
+              .text("Me ("+self.currentUserName+")"));
           } else {
             selected_ids.splice(selected_ids.indexOf(self.currentUserID), 1);
           }

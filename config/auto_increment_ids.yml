@@ -15,6 +15,7 @@ defaults: &defaults
     shard_13: 14000000000
     shard_14: 16000000000
     shard_15: 17000000000
+    shard_16: 18000000000
   podeuwest1:
     eu_shard_1: 7000000000
     eu_shard_2: 10000000000
