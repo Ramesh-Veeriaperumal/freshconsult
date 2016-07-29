@@ -40,6 +40,7 @@ class Reports::TimesheetReportsController < ApplicationController
       headers = csv_hash.keys.sort
       csv << headers
       @time_sheets.each do |record|
+        record[:time_spent] += record[:timer_running]==true ? (@load_time - record[:start_time]).to_i : 0
         csv_data = []
         headers.each do |val|
           if date_fields.include?(val)

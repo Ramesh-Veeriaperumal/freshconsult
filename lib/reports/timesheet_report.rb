@@ -189,6 +189,7 @@ module Reports::TimesheetReport
   end
 
   def time_sheet_for_export
+    @load_time = Time.now.utc
     @time_sheets = csv_filter(@start_date,@end_date)
     if Account.current.features_included?(:archive_tickets)
       @archive_time_sheets = csv_archive_filter(@start_date,@end_date)
