@@ -984,7 +984,7 @@ if Integrations::Application.count == 0
     s.account_id = Integrations::Constants::SYSTEM_ACCOUNT_ID
     s.listing_order = 40
     s.options = {:direct_install => true, 
-                 :edit_url => "/integrations/infusionsoft/edit",
+                 :edit_url => "infusionsoft/edit",
                  :oauth_url => "/auth/infusionsoft?origin=id%3D{{account_id}}", 
                  :default_fields => {:contact => ["First Name"], :account => ["Company"]}
                  }

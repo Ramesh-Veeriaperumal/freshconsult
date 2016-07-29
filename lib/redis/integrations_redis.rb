@@ -63,8 +63,6 @@ module Redis::IntegrationsRedis
 		end
 	end
 
-	alias value_in_set? is_value_in_set?
-
 	def remove_value_from_set(key, value)
 		$redis_integrations.perform_redis_op("srem", key, value)
 	end
