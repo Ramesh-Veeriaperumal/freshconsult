@@ -33,8 +33,9 @@ class Tickets::UpdateCompanyId < BaseWorker
   end
 
   def subscribers_manual_publish(items)
+    key = Account.current.features?(:countv2_writes) ? "RMQ_REPORTS_COUNT_TICKET_KEY" : "RMQ_REPORTS_TICKET_KEY"
     items.each do |item|
-      item.manual_publish_to_rmq("update", RabbitMq::Constants.const_get("RMQ_REPORTS_COUNT_TICKET_KEY"), {:manual_publish => true})
+      item.manual_publish_to_rmq("update", RabbitMq::Constants.const_get(key), {:manual_publish => true})
     end
   end
 end
