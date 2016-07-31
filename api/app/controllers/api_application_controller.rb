@@ -416,7 +416,7 @@ class ApiApplicationController < MetalApiController
             @current_user = stale_record # stale_record would be set in case of password expiry. record would be nil.
           end
         end
-      else
+      elsif !$infra['PRIVATE_API']
         # authenticate using auth headers
         authenticate_with_http_basic do |username, password| # authenticate_with_http_basic - AuthLogic method
           # string check for @ is used to avoid a query.

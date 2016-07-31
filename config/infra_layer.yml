@@ -1,2 +1,3 @@
 API_LAYER: true
 SUPPORT_LAYER: false
+PRIVATE_API: true #Has to be false in layers except the one handling /api/_ namespace for the New UI

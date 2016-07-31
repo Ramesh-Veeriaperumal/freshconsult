@@ -1,12 +1,12 @@
-Infra = YAML.load_file(File.join(Rails.root, 'config', 'infra_layer.yml'))
+$infra = YAML.load_file(File.join(Rails.root, 'config', 'infra_layer.yml'))
 
-if Infra['API_LAYER']
+if $infra['API_LAYER']
   Helpkit::Application.configure do
     config.middleware.delete 'Middleware::ApiThrottler'
     config.middleware.insert_before ActionDispatch::ParamsParser, "Middleware::ApiRequestInterceptor"
 
     # API layer uses new verison API throttler. Hence deleted the above middleware and inserted new.
-    config.middleware.insert_before 'Middleware::ApiRequestInterceptor', 'Middleware::FdApiThrottler', max: 1000
+    config.middleware.insert_before 'Middleware::ApiRequestInterceptor', 'Middleware::FdApiThrottler', max: 1000 unless $infra['PRIVATE_API']
 
     # This middleware will attempt to return the contents of a file's body from disk in the response.
     # If a file is not found on disk, the request will be delegated to the application stack.
@@ -45,6 +45,7 @@ if Infra['API_LAYER']
     # A gem which helps you detect the users preferred language,
     # as sent by the "Accept-Language" HTTP header. Used only in account create.
     config.middleware.delete HttpAcceptLanguage::Middleware
+    config.middleware.use Middleware::ApiResponseWrapper if $infra['PRIVATE_API']
 
     # Deep_munge has to be patched as it converts empty array to nil
     # https://github.com/rails/rails/issues/13420
@@ -103,6 +104,14 @@ if Infra['API_LAYER']
     ActionController::Metal.send(:include, Authlogic::ControllerAdapters::RailsAdapter::RailsImplementation)
   end
 
+end
+
+if $infra['PRIVATE_API']
+  module ActionDispatch
+    Response.class_eval do      
+      attr_accessor :api_meta
+    end
+  end
 end
 
 # Fallback to dalli.yml if dalli_api.yml doesn't exist.
