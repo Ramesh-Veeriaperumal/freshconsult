@@ -92,7 +92,7 @@ class Account < ActiveRecord::Base
     :redis_display_id => false, :es_multilang_solutions => false,
     :sort_by_customer_response => false, :survey_links => true, :default_survey => false, :custom_survey => false, 
     :saml_unspecified_nameid => false, :multiple_user_companies => false,
-    :euc_hide_agent_metrics => false, :ticket_templates => false
+    :euc_hide_agent_metrics => false, :ticket_templates => false, :single_session_per_user => true
   }
 
 

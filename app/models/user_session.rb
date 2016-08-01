@@ -12,6 +12,10 @@ class UserSession < Authlogic::Session::Base
   before_destroy :delete_node_session
   after_validation :set_missing_node_session
   validate :account_lockdown_warning, :unless => :api_request?
+
+  before_create  :reset_persistence_token
+  before_destroy :reset_persistence_token
+
   generalize_credentials_error_messages true
   consecutive_failed_logins_limit 10
 
@@ -75,8 +79,12 @@ class UserSession < Authlogic::Session::Base
     self.record.agent.update_last_active(:force) if self.record.agent? and !self.record.agent.nil?   
   end
 
-  attr_accessor :email, :password
+  attr_accessor :email, :password, :web_session
   password_field(:password)
+
+  def reset_persistence_token
+    self.record.reset_persistence_token! if self.web_session and Account.current and Account.current.features(:single_session_per_user)
+  end
 
   private
     def exceeded_failed_logins_warning_limit?
