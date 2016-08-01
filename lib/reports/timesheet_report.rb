@@ -123,10 +123,10 @@ module Reports::TimesheetReport
 
   def fetch_timesheet_entries(offset=0, row_limit=nil)
     row_limit ||= @pdf_export ? BATCH_LIMIT_FOR_EXPORT : TIMESHEET_ROWS_LIMIT
-    entries = scoper(@start_date, @end_date).where("helpdesk_time_sheets.id < #{@latest_timesheet_id}").select("helpdesk_time_sheets.*, #{group_to_column_map(group_by_caluse, false)}").reorder("#{GROUP_TO_FIELD_MAP[group_by_caluse]}, id asc").find(:all, :limit => row_limit, :offset => offset,:conditions => (select_conditions || {}),
+    entries = scoper(@start_date, @end_date).where("helpdesk_time_sheets.id <= #{@latest_timesheet_id}").select("helpdesk_time_sheets.*, #{group_to_column_map(group_by_caluse, false)}").reorder("#{GROUP_TO_FIELD_MAP[group_by_caluse]}, id asc").find(:all, :limit => row_limit, :offset => offset,:conditions => (select_conditions || {}),
       :include => [:user, :workable => [:schema_less_ticket, :group, :ticket_status, :requester, :company]])
     if (archive_enabled? && entries.size < row_limit)
-      entries << archive_scoper(@start_date, @end_date).where("helpdesk_time_sheets.id < #{@latest_timesheet_id}").select("helpdesk_time_sheets.*, #{group_to_column_map(group_by_caluse, true)}").reorder("#{GROUP_TO_FIELD_MAP[group_by_caluse]}, id asc").find(:all, :limit => row_limit, :offset => offset,:conditions => (archive_select_conditions || {}),
+      entries << archive_scoper(@start_date, @end_date).where("helpdesk_time_sheets.id <= #{@latest_timesheet_id}").select("helpdesk_time_sheets.*, #{group_to_column_map(group_by_caluse, true)}").reorder("#{GROUP_TO_FIELD_MAP[group_by_caluse]}, id asc").find(:all, :limit => row_limit, :offset => offset,:conditions => (archive_select_conditions || {}),
           :include => [:user, :workable => [:schema_less_ticket, :group, :ticket_status, :requester, :company]])
     end
     entries
