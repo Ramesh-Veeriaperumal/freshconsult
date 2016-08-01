@@ -1617,9 +1617,9 @@ Redactor.prototype = {
 			if ($.browser.msie){
 				fontstyle = fontstyle.replace('px','').split(".")[0] + 'px';
 			}
-			element = $('[rel="' + this.opts.fontsize_levels_reverse[fontstyle] + '"].redactor_font_link');
+			element = $('[rel=' + this.opts.fontsize_levels_reverse[fontstyle] + '].redactor_font_link');
 		}else{
-			element = $('[rel="' + fontstyle + '"].redactor_font_link');
+			element = $('[rel=' + fontstyle + '].redactor_font_link');
 		}
 		if(element.length) {
 			element.html("<span class='icon ticksymbol'></span>" + element.html());
