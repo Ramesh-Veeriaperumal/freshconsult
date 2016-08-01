@@ -86,8 +86,12 @@ class PasswordPolicy < ActiveRecord::Base
 		("1".."5").to_a
 	end
 
-	def password_session_expiry_days_values
+	def password_expiry_days_values
 		((1..6).to_a.collect{ |x| (x*30).to_s }) << NEVER
+	end
+
+	def session_expiry_days_values
+		([7, 15, 30, 60, 90].collect{ |x| x.to_s }) << NEVER
 	end
 
 	def update_password_expiry
@@ -125,8 +129,10 @@ class PasswordPolicy < ActiveRecord::Base
 						errors.add(:base, I18n.t("password_policy.wrong_password_length")) unless value.in? minimum_character_values
 					when "cannot_be_same_as_past_passwords"
 						errors.add(:base, I18n.t("password_policy.wrong_no_of_past_password")) unless value.in? password_history_match_values
-					when "session_expiry", "password_expiry"
-						errors.add(:base, I18n.t("password_policy.wrong_expiry_days")) unless value.in? password_session_expiry_days_values
+					when "password_expiry"
+						errors.add(:base, I18n.t("password_policy.wrong_expiry_days")) unless value.in? password_expiry_days_values
+					when "session_expiry"
+						errors.add(:base, I18n.t("password_policy.wrong_expiry_days")) unless value.in? session_expiry_days_values
 					end
 				end
 
