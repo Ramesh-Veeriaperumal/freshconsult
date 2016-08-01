@@ -142,7 +142,7 @@ module Reports::TimesheetReport
       @summary << fetch_summary(true) if archive_enabled?
       construct_timesheet_metric_data
       stacked_chart_data
-      @time_sheets = timesheet_entries(0, 2000)
+      @time_sheets = @latest_timesheet_id ? timesheet_entries(0, 2000) : {}
       @ajax_params = {scroll_position: 20, row_count: 2000, group_by: group_by_caluse.to_s}
     end
   end
@@ -154,7 +154,8 @@ module Reports::TimesheetReport
     @summary << fetch_summary(true) if archive_enabled?
     construct_timesheet_metric_data
     stacked_chart_data
-    @time_sheets = timesheet_entries
+    @time_sheets = @latest_timesheet_id ? timesheet_entries : {}
+    return if @time_sheets.empty?
     offset = BATCH_LIMIT_FOR_EXPORT
     while(offset < @row_count)
       result = timesheet_entries(offset)
@@ -366,7 +367,7 @@ def set_time_range(prev_time = false)
       @metric_data[:previous][type] /= 3600.0
       @metric_data[:current][type] /= 3600.0
     end
-    @latest_timesheet_id = @summary.collect(&:max_timesheet_id).max
+    @latest_timesheet_id = @summary.collect{ |entry| entry.max_timesheet_id if entry.current == 1}.max
     @group_count = Hash[ @group_count.collect {|k,v| [k, v/3600.0] } ]
   end
 
