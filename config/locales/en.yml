@@ -586,7 +586,7 @@ en:
     fcr: Is first call resolution
     customer_votes: Number of votes
     solution_likes: Number of likes
-    true : True
+    "true" : "True"
     ticket_mand: Please populate number of resolved tickets.
     solution_mand: Please populate number of Solutions.
     forum_mand: Please populate number of Forums.
@@ -1399,8 +1399,8 @@ en:
         survey_help_msg: Selecting a rating above will link off to the page below
         survey_help_msg_v2: When a satisfaction rating is selected, a thank you page is shown.
         survey_help_msg_v3: When a satisfaction rating is selected, a thank you page is shown to collect more feedback
-        on: ON
-        off: OFF
+        "on": "ON"
+        "off": "OFF"
         confirm_text: Please confirm...
         delete: Delete
         activate_survey: Activate
@@ -1969,7 +1969,7 @@ en:
       no_agent_label: No Agent
       add_agent_label: Add Agent
       add_label: Add
-      no_label: No
+      no_label: "No"
       done_label: Done
       manage_label: Manage
       save_label: Save
@@ -4299,7 +4299,7 @@ en:
   urgent: Urgent
   import_groups: Groups
   solution:
-    on: 'on'
+    "on": 'on'
     plain_new: New
     plain_edit: Edit
     show_languages: Show languages
@@ -5643,7 +5643,7 @@ en:
         hours: Hours
         billing_hours: Billable
         note: Note
-        on: on
+        "on": "on"
         hours_format_tip: "Enter time in HH:MM or decimals (like 1:30 or 1.5 for an hour and 30 minutes). Leave this blank to start the auto-timer."
       note: Notes
 
@@ -8091,7 +8091,7 @@ en:
       dialog:
         email: Email
         generate_report: Generate report
-        on: On
+        "on": "On"
         subject: Subject
         desc: Description
       errors:

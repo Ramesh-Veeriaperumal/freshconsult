@@ -2,6 +2,19 @@ require File.expand_path('../boot', __FILE__)
 
 require 'rails/all'
 
+# Disable i18nema usage during asset compilation.
+#
+# During asset compilation, we use i18n-js to generate translation strings
+# for js. i18n-js gem is using non-public member ('translations') of
+# i18n.backend object which is not implemented in i18nema.
+#
+# Note that in development environment, asset compilation may happen on the
+# fly, so we will disable i18nema for development as well.
+if !Rails.env.development? && ENV['I18NEMA_ENABLE'] == 'true'
+  require 'i18nema'
+  I18n.backend = I18nema::Backend.new
+end
+
 require 'rack/throttle'
 require 'gapps_openid'
 require File.expand_path('../../lib/facebook_routing', __FILE__)

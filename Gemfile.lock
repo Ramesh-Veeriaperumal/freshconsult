@@ -238,6 +238,14 @@ GIT
       oauth (>= 0.4.5)
       tzinfo
 
+GIT
+  remote: https://github.com/freshdesk/i18nema
+  revision: 544682bac9976794950ebc5dd15ad21810950a81
+  specs:
+    i18nema (0.0.8)
+      i18n (>= 0.5)
+      syck (~> 1.0.0)
+
 PATH
   remote: vendor/gems/acts_as_voteable
   specs:
@@ -1231,6 +1239,7 @@ DEPENDENCIES
   httparty (= 0.10.0)
   i18n (~> 0.6.0)
   i18n-js (= 3.0.0.rc11)
+  i18nema!
   iconv (~> 1.0.4)
   insensitive_hash (= 0.2.3)
   ipaddress (= 0.8.0)

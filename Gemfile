@@ -301,3 +301,5 @@ gem 'doorkeeper', '2.2.1'
 
 # Search v2
 gem 'typhoeus'
+
+gem 'i18nema', :git => 'https://github.com/freshdesk/i18nema', :require => false

@@ -51,7 +51,7 @@ else
       end
       Chef::Log.info "condition for compilation"
       run "cd #{release_path} && RAILS_ENV=#{node[:opsworks][:environment]} bundle exec rake assets:clean_expired"
-      run "cd #{release_path} && RAILS_ENV=#{node[:opsworks][:environment]} bundle exec rake assets:precompile:primary"
+      run "cd #{release_path} && I18NEMA_ENABLE=false RAILS_ENV=#{node[:opsworks][:environment]} bundle exec rake assets:precompile:primary"
       run "cd #{release_path} && RAILS_ENV=#{node[:opsworks][:environment]} bundle exec rake assets:sync"
       Chef::Log.info "path is #{node[:path]}"
      
