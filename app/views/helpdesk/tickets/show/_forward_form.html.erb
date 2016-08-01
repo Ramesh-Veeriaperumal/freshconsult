@@ -24,6 +24,7 @@
               :multipart => true, 
               :id => "HelpdeskFwd_#{cntid}", 
               :rel => 'forward_form', 
+              :class => "form-unsaved-changes-trigger",
               "data-panel" => conv_id.nil? ? "cnt-fwd" : "cnt-fwd-#{@note.id}",
               "data-form" => conv_id.nil? ? "" : "inline_form",
               "data-show-pseudo-reply" => conv_id.nil?.to_s,
