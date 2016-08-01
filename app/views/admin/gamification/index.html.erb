@@ -77,7 +77,7 @@
 	jQuery('#enable-gamification-button').bind("click", function(){
 		jQuery('#gamification_enable').trigger('click');
 	});
-	jQuery('#all-agents-gamification-reset-submit').on('click', function(){ 
+	jQuery(document).on('click', '#all-agents-gamification-reset-submit', function(){ 
       jQuery('#all_agents_score_reset').trigger('click');
     });
 <% end %>
