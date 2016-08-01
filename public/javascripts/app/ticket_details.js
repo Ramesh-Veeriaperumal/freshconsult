@@ -1391,8 +1391,7 @@ var scrollToError = function(){
 
 
 	//For showing canned response and solutions
-
-	$('body').on('click.ticket_details', 'a[rel="ticket_canned_response"]', function(ev){
+	$('body').on('click.ticket_details', 'a[rel="ticket_canned_response"]', function(ev){	
 		ev.preventDefault();
 		$('#canned_response_show').data('editorId', $(this).data('editorId'));
 		var editorId = $('#canned_response_show').data('editorId');
@@ -1596,15 +1595,12 @@ var scrollToError = function(){
 	})()
 
 	trigger_event("ticket_view_loaded",{});
-	
-	App.TicketAttachmentPreview.init();
 
 	//RECENT TICKETS SETUP
 	NavSearchUtils.saveToLocalRecentTickets(TICKET_DETAILS_DATA);	
 
 };
 // TICKET DETAILS DOMREADY ENDS
-
 
 TICKET_DETAILS_CLEANUP = function() {
 	// if($('body').hasClass('ticket_details')) return;
@@ -1652,22 +1648,30 @@ TICKET_DETAILS_CLEANUP = function() {
 	for(var i=0; i<custom_events.length ; i++){
 		jQuery(document).off(custom_events[i]);
 	}
-
-	App.TicketAttachmentPreview.destroy();
 };
 
 	
 App.Tickets.TicketDetail = {
 	onVisit: function (data) {
+		if($("#HelpdeskReply").data('containDraft')) {
+			swapEmailNote('cnt-reply', null);
+			TICKET_DETAILS_DATA['draft']['hasChanged'] = false;
+			jQuery(window).trigger('scroll');
+		}
+
 		TICKET_DETAILS_DOMREADY();
 		App.Tickets.Watcher.init();
 		App.Tickets.Merge_tickets.initialize();
+		App.TicketAttachmentPreview.init();
+
+		// Have tried in onLeave to off all the event binding. 
+		// But it cause errors in whole app, like modal, dropdown and some issues has occered.
+		Fjax.afterNextPage = TICKET_DETAILS_CLEANUP;
 	},
 	onLeave: function() {
-		$("body").off('.ticket_details');
 		App.Tickets.Merge_tickets.unBindEvent();
 		App.Tickets.Watcher.offEventBinding();
-		TICKET_DETAILS_CLEANUP();
+		App.TicketAttachmentPreview.destroy();
 	}
 };
 

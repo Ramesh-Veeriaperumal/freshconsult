@@ -74,9 +74,7 @@ try {
 	});
 	<% end %>
 	<% unless @draft.nil? %>
-		swapEmailNote('cnt-reply', null);
-		TICKET_DETAILS_DATA['draft']['hasChanged'] = false;
-		jQuery(window).trigger('scroll');
+		jQuery('#HelpdeskReply').data('containDraft', true)
 	<% end %>
 
 		jQuery('#revert_details_view #switch').on('click.ticket_details',function(ev) {
