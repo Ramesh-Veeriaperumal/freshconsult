@@ -148,6 +148,7 @@ var IvrOption;
 		choosePerformerType: function (menu) {
 			if (this.jsonOption === undefined) { return false; }
 			this.$dom.find('select').each(function () {
+				if ($(this).data('selected') == '') { return false; }
 				$(this).find('option[value=' + $(this).data('selected') + ']').attr('selected', true);
 			});
 		},
