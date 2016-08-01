@@ -56,7 +56,10 @@ Helpkit::Application.routes.draw do
   # Note: This route will make all actions in every controller accessible via GET requests.
   # match ':controller(/:action(/:id))(.:format)'
 
-
+  #Route to handle new ember UI
+    get '/new' => 'newui#index'
+    match '/new/*path' => 'newui#index'
+  #End of Route to handle new ember UI
 
   constraints(lambda {|req| req.subdomain == AppConfig['admin_subdomain'] }) do
 
@@ -882,8 +885,8 @@ Helpkit::Application.routes.draw do
       post :update
     end
 
-    namespace :xero do 
-      get :authorize 
+    namespace :xero do
+      get :authorize
       post :update_params
       get :edit
       get :fetch
@@ -2075,20 +2078,20 @@ Helpkit::Application.routes.draw do
     match 'commons/user_companies' => "commons#user_companies"
 
     resources :ticket_templates do
-      member do 
+      member do
         get :clone
-      end 
+      end
       collection do
         delete :delete_multiple
       end
     end
     match '/ticket_templates/tab/:current_tab' => 'ticket_templates#index'
-    
+
     resources :scenario_automations do
-      member do 
+      member do
         get :clone
-      end 
-      collection do 
+      end
+      collection do
         get :search
         get :recent
       end

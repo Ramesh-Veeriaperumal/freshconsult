@@ -11,7 +11,7 @@ if $infra['API_LAYER']
     # This middleware will attempt to return the contents of a file's body from disk in the response.
     # If a file is not found on disk, the request will be delegated to the application stack.
     # This middleware is commonly initialized to serve assets from a server's `public/` directory.
-    config.middleware.delete ActionDispatch::Static
+    config.middleware.delete ActionDispatch::Static unless ($infra['PRIVATE_API'] && Rails.env == "development")
 
     # Adds response time header to response.
     config.middleware.delete Rack::Runtime
@@ -108,7 +108,7 @@ end
 
 if $infra['PRIVATE_API']
   module ActionDispatch
-    Response.class_eval do      
+    Response.class_eval do
       attr_accessor :api_meta
     end
   end

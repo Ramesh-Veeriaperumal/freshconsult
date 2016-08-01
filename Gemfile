@@ -49,7 +49,7 @@ group :development, :test do
   gem 'fake_dynamo'
 end
 
-gem "rack-mini-profiler", :group => [:development]
+#gem "rack-mini-profiler", :group => [:development]
 gem "brakeman", :require => false, :group => [:development]
 gem "bullet", :group => [:development, :test, :staging]
 gem "mail"
@@ -77,9 +77,9 @@ gem "google-api-client", "~> 0.7.0"
 gem "ipaddress", "0.8.0"
 
 # This needs bundler 1.7.2 or 1.10.6 as other version has problem in resolving.
-source "https://a55d1643:d20410bb@gems.contribsys.com/" do 
-  gem 'sidekiq-pro' 
-end 
+source "https://a55d1643:d20410bb@gems.contribsys.com/" do
+  gem 'sidekiq-pro'
+end
 gem 'shoryuken', '~> 2.0'
 
 gem "soap4r-ruby1.9", "~> 2.0.5"
@@ -159,7 +159,7 @@ gem "gemoji-parser", "~> 1.3.1"
 # gem "cloudfront_asset_host", github: "freshdesk/cloudfront_asset_host", branch: :rails3upgrade
 
 # Please do not update Paperclip unless you can get it Monkey Patched for Imagemagick DoS Bug.
-# Please see https://hackerone.com/reports/390 
+# Please see https://hackerone.com/reports/390
 gem "paperclip", "~> 2.8.0"
 
 gem "aws-sdk", "~> 1.11.3"
@@ -245,7 +245,7 @@ group :test do
   gem "fuubar"
   gem "json-compare", "0.1.8"
   gem "rspec_junit_formatter" # Used by API
-  gem "simplecov-rcov" 
+  gem "simplecov-rcov"
   gem "rubocop-checkstyle_formatter" # Used by API
   gem "minitest-rails", "~> 1.0" # Used by API
   gem "minitest-reporters" # Used by API
@@ -262,7 +262,7 @@ end
 
   gem "sprockets",              "2.2.2"
   gem "asset_sync",             "1.1.0"
-  gem "turbo-sprockets-rails3", "0.3.14"  
+  gem "turbo-sprockets-rails3", "0.3.14"
   gem "ejs",                    "1.1.1"
 
   # SASS and Compass gems
@@ -275,9 +275,9 @@ end
 
   # To optimize sprite generation
   gem "oily_png",               "1.1.1"
-  
+
   # Building custom font icons inside the application
-  gem "fontcustom",             "1.3.3"  
+  gem "fontcustom",             "1.3.3"
 
 # end
 

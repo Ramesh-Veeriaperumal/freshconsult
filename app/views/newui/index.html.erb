@@ -1,0 +1,15 @@
+<%
+  if Rails.env == "development"
+  begin
+    content = File.open(Rails.root.join('public','new','ember.html'), "rb").read
+  rescue
+    content="Ember build files missing <br> From ember repo run <b>'npm run railsbuild' </b>
+    <br> Note : Before build helpkit and helpkit-ember repo should be in the same directory (Until add a map in git repo)."
+  end
+  else
+    #content = $redis_client_asset.get('ember.html')
+    #Need to get from redis
+  end
+  content=content.sub("<!--$DYNAMICSCRIPTS$-->",@langscript).sub("//$DYNAMICSCRIPTLETS$",@scriptlet)
+%>
+<%=content.html_safe%>
