@@ -198,6 +198,9 @@
 				border-right:0;
 				@include border-radius(5px 0 0 5px);
 			}
+			&:hover{
+				display:block !important;
+			}
 		}
 		.private-symbol {
 			font-size: 13px;
