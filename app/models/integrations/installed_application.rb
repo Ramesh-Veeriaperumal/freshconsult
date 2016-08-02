@@ -158,7 +158,7 @@ class Integrations::InstalledApplication < ActiveRecord::Base
       return if self.application.blank?
       as = self.application.options[action]
       unless as.blank?
-        if ["github", "salesforce_crm_sync"].include? self.application.name
+        if ["github"].include? self.application.name
           execute_service(as.delete(:clazz), as.delete(:method), self, as)
         else
           execute(as[:clazz], as[:method], self)

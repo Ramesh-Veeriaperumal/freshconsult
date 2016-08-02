@@ -16,7 +16,6 @@ module OmniAuth
         :redirect_uri,
         :login_hint
       ]
-      option :name, 'salesforce'
 
       def auth_hash
         signed_value = access_token.params['id'] + access_token.params['issued_at']

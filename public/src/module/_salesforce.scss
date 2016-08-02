@@ -16,12 +16,9 @@
   font-weight: bold;
 }
 
-
 .salesforce-wrapper{
-  &:not(.cloud-elements){
-    @include float(right);
-    width: 75%;
-  }
+  @include float(right);
+  width: 75%;
   .select2-choices{
     background:none;
     @include border-radius(5px);

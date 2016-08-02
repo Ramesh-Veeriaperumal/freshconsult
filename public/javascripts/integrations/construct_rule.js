@@ -76,7 +76,7 @@
                 this.constructSelect2($row);
             }
 
-            this.checkAddButtonForDropdown("Init");
+            this.checkAddButtonForDropdown();
         },
         constructWrapper: function(){
             var $temp_div = $('<div />');
@@ -128,7 +128,7 @@
             if(add_new_list) {
                 var $list = this.appendNewRule();
                 this.constructSelect2($list);
-                this.checkAddButtonForDropdown("Insert");
+                this.checkAddButtonForDropdown();
             } 
         },
         setGenerateDataWithPrev: function($list)
@@ -165,7 +165,7 @@
             this.bindRemove();
             return $list;
         },
-        checkAddButtonForDropdown: function(action){
+        checkAddButtonForDropdown: function(){
             var self = this;
 
             if(this.inputArea['dropdown'] != undefined && this.inputArea['dropdown'] != "") {
@@ -179,8 +179,6 @@
                             }
                         });
                     }
-                    if(action === "Insert")
-                        size++;
                     if(object.size() == select2_count || (self.customModule === "sync" && (size == self.maximumSize || object.size() == size))){
                         self.$currentElement.children('.add_menu_wrapper').find('.add_new_list').hide();
                         self.$currentElement.children('.add_menu_wrapper').find('.empty_list_alert').css('display','table-row');
@@ -278,7 +276,7 @@
 
             this.changePreviouesData(element);
             if(this.customModule === "sync" && this.customMaxSize == this.customSize ){
-                this.checkAddButtonForDropdown("Insert");
+                this.checkAddButtonForDropdown();
             }
         },
         includeCustomFields: function(object, id){
@@ -443,7 +441,7 @@
             }
             $(ev.target).parent().parent().remove();
             self.$currentElement.children('.add_menu_wrapper').find('.prev_empty_notify').removeClass('inline');
-            this.checkAddButtonForDropdown("Delete");
+            this.checkAddButtonForDropdown();
         },
         updateSelect2: function(){
             var self = this;

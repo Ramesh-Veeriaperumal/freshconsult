@@ -109,7 +109,7 @@ class Account < ActiveRecord::Base
     :threading_without_user_check => false, :freshfone_call_monitoring => false, :freshfone_caller_id_masking => false, 
     :agent_conference => false, :restricted_helpdesk => false, :enable_multilingual => false,
     :count_es_writes => false, :count_es_reads => false, :activity_revamp => false, :countv2_writes => false, :countv2_reads => false,
-    :freshfone_acw => false, :salesforce_crm_sync => false  }
+    :freshfone_acw => false  }
 
   # This list below is for customer portal features list only to prevent from adding addition features
   ADMIN_CUSTOMER_PORTAL_FEATURES =  {:anonymous_tickets => true, :open_solutions => true, :auto_suggest_solutions => true, 

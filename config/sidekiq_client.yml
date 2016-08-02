@@ -119,7 +119,6 @@ defaults: &defaults
     - [clear_moderation_records]
     - [empty_moderation_trash]
     - [sendgrid_domain_updates]
-    - [cloud_elements_delete]
 
 development:
   <<: *defaults

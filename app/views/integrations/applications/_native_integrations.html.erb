@@ -8,8 +8,6 @@
         <% next if exists_in_installed_apps?(application, @installed_applications).blank? %>
       <% end %>
       <%next if (!feature?(:timesheets) && (application.name == 'harvest' or application.name == 'workflow_max'))%>
-      <%cloudelement_feature = Integrations::CloudElements::Constant::FEATURE[application.name]
-        next if ( cloudelement_feature.present? && !feature?(cloudelement_feature))%>
         <% if application.system_app? %>
           <li class="app-native">
             <div class="application">

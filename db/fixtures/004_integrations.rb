@@ -1018,18 +1018,4 @@ if Integrations::Application.count == 0
     s.dip = 3
   end
 
-  #Populate Salesforce CRM Sync app
-  salesforce_crm_sync_app = Integrations::Application.seed(:name) do |s|
-    s.name = "salesforce_crm_sync"
-    s.display_name = "integrations.salesforce_crm_sync.label"
-    s.description = "integrations.salesforce_crm_sync.desc" 
-    s.account_id = Integrations::Constants::SYSTEM_ACCOUNT_ID
-    s.listing_order = 43
-    s.options = {:direct_install => true, 
-                 :oauth_url => "/auth/salesforce_crm_sync?origin=id%3D{{account_id}}", 
-                 :edit_url => "/integrations/sync/crm/edit?state=salesforce_crm_sync&method=put",
-                 :after_commit_on_destroy => { :clazz => "IntegrationServices::Services::CloudElementsService", :method => "uninstall" }}
-    s.application_type = "salesforce_crm_sync"
-  end
-
 end

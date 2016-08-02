@@ -79,9 +79,6 @@ development:
  infusionsoft:
    consumer_token:  pymmum7erkmq5vm4vsbqamut
    consumer_secret: DzWRNku2hu
- salesforce_crm_sync:
-   consumer_token:  3MVG9Y6d_Btp4xp58zBbA.yojzSKxh4AAfjz9vC7Y0hCJcPK.jEhSAtHw_wUvMmIYOx0ST_d6h9hmShXfqp0h
-   consumer_secret: 7001719970668762733
 
 defaults: &defaults
  salesforce:
@@ -172,9 +169,6 @@ staging:
  infusionsoft:
    consumer_token:  pymmum7erkmq5vm4vsbqamut
    consumer_secret: DzWRNku2hu
- salesforce_crm_sync:
-   consumer_token:  3MVG9Y6d_Btp4xp58zBbA.yojzcUrTptpFBqv2TysFLiR4xW0iYNRXEc_XcQm8ppyv4ChaaOcp0qgxJzDa66j
-   consumer_secret: 1837903769423338582
 
 production:
  salesforce:
@@ -225,6 +219,3 @@ production:
  infusionsoft:
    consumer_token:  pymmum7erkmq5vm4vsbqamut
    consumer_secret: DzWRNku2hu
- salesforce_crm_sync:
-   consumer_token:  3MVG9Y6d_Btp4xp58zBbA.yojzTtKWMbF3uOnlZfP.N6g8euTZBPxc3XwlbzAxfP_OLyicc5xNp6P1BQdgQ03
-   consumer_secret: 3781595496104962886
