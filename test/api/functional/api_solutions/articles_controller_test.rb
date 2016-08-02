@@ -145,7 +145,22 @@ module ApiSolutions
       article = Solution::Article.last
       assert article.title == title
       assert article.desc_un_html.strip == paragraph
-      assert article.user_id == @account.agents.first.id
+      assert article.user_id == @agent.id
+      assert article.status == 1
+      assert article.parent.art_type == 2
+    end
+
+    def test_create_article_in_primary_language
+      folder_meta = get_folder_meta
+      title = Faker::Name.name
+      paragraph = Faker::Lorem.paragraph
+      post :create, construct_params({ id: folder_meta.id }, {title: title, description: paragraph, status: 1, type: 2})
+      assert_response 201
+      match_json(solution_article_pattern(Solution::Article.last))
+      article = Solution::Article.last
+      assert article.title == title
+      assert article.desc_un_html.strip == paragraph
+      assert article.user_id == @agent.id
       assert article.status == 1
       assert article.parent.art_type == 2
     end
@@ -162,7 +177,7 @@ module ApiSolutions
       article = Solution::Article.last
       assert article.title == title
       assert article.description == paragraph
-      assert article.user_id == @account.agents.first.id
+      assert article.user_id == @agent.id
       assert article.status == 1
       assert article.parent.art_type == 2
     end
@@ -255,7 +270,7 @@ module ApiSolutions
       status = 1
       category_name = 'translated category_name'
       folder_name = 'translated folder_name'
-      post :create, construct_params({id: sample_article.parent_id, language: @account.supported_languages.first}, {title: title, description: description, status: status, category_name: category_name, folder_name: folder_name})
+      post :create, construct_params({id: sample_article.parent_id, language: @account.supported_languages.last}, {title: title, description: description, status: status, category_name: category_name, folder_name: folder_name})
       assert_response 201
       result = parse_response(@response.body)
       assert_equal "http://#{@request.host}/api/v2/solutions/articles/#{result['id']}", response.headers['Location']

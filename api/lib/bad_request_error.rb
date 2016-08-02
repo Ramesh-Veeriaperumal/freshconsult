@@ -24,7 +24,7 @@ class BadRequestError < BaseError
     forum_category_id: :category,
     email_config_id: :email_config,
     category_name: :category,
-    folder_name: :folder
+    folder_name: :folder,
     from_email: :"active email_config"
   }
 
