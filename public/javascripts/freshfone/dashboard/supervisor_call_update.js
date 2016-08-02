@@ -35,12 +35,13 @@ window.App.Freshfonedashboard = window.App.Freshfonedashboard || {};
 				this.rejectActiveConnections();
 				$("#freshfone_active_calls").find('.call_to_join').addClass("disabled");
 				freshfoneSupervisorCall.connectSupervisor(callId);
+				freshfonewidget.minimiseChatWidget();
 			} else {
 				this.resetJoinCallButton(callId);
 			}
 		},
 		canSupervisorConnect: function(){
-			return (Twilio.Device.status() !== 'busy' && !freshfoneuser.isBusy());
+			return (Twilio.Device.status() !== 'busy' && freshfoneuser.isOnlineOrOffline());
 		}, 
 		rejectActiveConnections: function(){
 			if(Twilio.Device.activeConnection() && 

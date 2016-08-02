@@ -1,0 +1,10 @@
+<li class="uc_list row-fluid" data-default-company="<%= default_comp %>" data-client-manager="false" data-new-company="true">
+<div class="span10">
+  <span class="remove_pad company_remove uc_actions ficon-minus fsize-12 <%= disabled %>"></span>
+  <input type="text" name="company_name" class="<%= required %> text contact_text new_company user_company ui-autocomplete-input" id="user_company_name_<%= count %>" >
+</div>
+<div class="span2 text-left">
+	<i class="ficon-ticket-thin fsize-18 tooltip client_manager manage" data-original-title="<%= client_manager %>" twipsy-content-set="true"></i>
+  <span class="default_company tooltip fsize-20 ml9 <%= class_name %>" title="<%= company_title %>"></span>
+</div>
+</li>

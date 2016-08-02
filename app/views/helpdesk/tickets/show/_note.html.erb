@@ -6,6 +6,10 @@ reply_to_fwd_id = "cnt-reply-fwd-#{note.id.to_s()}"
 edit_id = "edit-#{note.id.to_s()}"
 notable_object = @ticket || @parent
 minimizable ||= false
+if @note_last_modified_user_hash.present? && @note_last_modified_user_hash[note.id.to_s].present?
+  last_modified_user = @note_last_modified_user_hash[note.id.to_s]
+end
+timestamp_id ||=false
 
 if current_account.new_survey_enabled?
   kind = note.custom_survey_remark.nil? ? note.kind : 'survey'
@@ -23,10 +27,12 @@ else
   kind = note.survey_remark.nil? ? note.kind : 'survey'
 end
 %>
-
 <div id="<%= note_view_id %>" 
 			data-timestamp="<%= note.created_at.to_i%>" 
-			class="conversation <%= 'minimized minimizable' if minimizable %> <%= 'source_email' if note.email? %>">
+			<% if timestamp_id %>
+			data-activity-id="<%= timestamp_id %>" 
+			<% end %>
+			class="conversation <%= 'minimized' if minimizable %> <%= 'source_email' if note.email? %>">
 	<% if note.user %>
 	<div class="avatar-wrap" name="note<%= note.id %>" id="note<%= note.id %>"><%= user_avatar(note.user, :thumb, 'preview_pic circle') %></div>
 	<% end %>
@@ -88,7 +94,7 @@ end
         <% if privilege?(:edit_note, note) %>
 					<%= link_to_function('', 
 								"jQuery('##{notedetails}').addClass('hide'); jQuery('##{edit_id}').show().trigger('afterShow')",
-								:class => "conv-action-icon conv-actions-edit tooltip", :title => t('edit')) if(note.note? && note.user && note.user.agent? && !note.reply_to_forward?) %>
+								:class => "conv-action-icon conv-actions-edit tooltip", :noteId => note.id , :title => t('edit')) if(note.note? && note.user && note.user.agent? && !note.reply_to_forward?) %>
         <% end %>
 		    </div>
 		    <% end %>
@@ -100,7 +106,7 @@ end
 						:timestamp => note.created_at.to_i 
 					).html_safe %><br>
 				<%unless survey_name.blank? %>
-					<div class="author-mail-detail">
+					<div>
 						<%= t("helpdesk.tickets.note.survey_response",{:survey_name => survey_name})%>
 						<%unless agent_name.blank? %><%= t("helpdesk.tickets.note.survey_response_to",{:agent => agent_name})%><%end%>
 					</div>
@@ -115,6 +121,16 @@ end
 						"data-content" => conversation_popover_details(note).to_str%>
 				</div>
 			<% end %>
+      <div class="author-mail-detail last-modified-detail" id="note_last_modified_container_<%= note.id%>">
+      <%  if last_modified_user %>
+            <% last_modified_translation = note.deleted? ? 'last_deleted_info' : 'last_edited_info' %>
+              <%= t("helpdesk.tickets.note.#{last_modified_translation}", 
+                  :user_name => link_to_user(last_modified_user), 
+                  :note_date => formated_date(note.last_modified_timestamp), 
+                  :timestamp => note.last_modified_timestamp.to_i
+                ).html_safe %><br/>
+      <% end %>
+      </div>
 
 
 			<%= content_tag :div, "", :id => "#{edit_id}", :class => "request_panel email-edit-form hide", :rel => "remote", 

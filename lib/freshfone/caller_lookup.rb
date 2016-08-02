@@ -56,4 +56,13 @@ module Freshfone::CallerLookup
     number
   end
 
+  def users_scoper
+    current_account.all_users
+  end
+
+  #return contact only if it has phone or mobile number present.
+  # <> operator will check for both null and empty fields.
+  def search_customer_with_id(customer_id)
+    users_scoper.where(id: customer_id).where("(phone <> '') OR (mobile <> '')").first
+  end
 end

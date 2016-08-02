@@ -75,6 +75,10 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 			return this.cached.$alreadyInCallText = this.cached.$alreadyInCallText ||
 																							this.$container.find('.already_in_call_text');
 		},
+		$inAcwText: function () {
+			return this.cached.$inAcwText = this.cached.$inAcwText ||
+																							this.$container.find('.in_acw_state');
+		},
 		$infoText: function () {
 			return this.cached.$infoText = this.cached.$infoText ||
 																			this.$container.find('.info_message');
@@ -261,10 +265,17 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 		},
 		makeOutgoing: function (item) {
 			this.number = formatE164(this.callerLocation(), this.number);
-			this.customerId = item.data('contactId');
+			if(item){
+				this.customerId = item.data('contactId');
+			}
 			this.prefillDialerTemplate(item);
 			this.clearMessage();
-			if (this.freshfoneuser.isBusy()) { return this.toggleAlreadyInCallText(true); }
+			if (this.freshfoneuser.isBusy()){
+				return this.toggleAlreadyInCallText(true);
+			}
+			else if(this.freshfoneuser.isAcw()){
+				return this.toggleInAcwText(true);
+			}
 			if (!this.canDialNumber()) { return this.toggleInvalidNumberText(true); }
 
 			var params = { PhoneNumber : this.number, phone_country: this.callerLocation(),
@@ -299,10 +310,12 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 			this.$invalidNumberText().toggle(false);
 			this.$invalidPhoneNumber().toggle(false);
 			this.toggleAlreadyInCallText(false);
+			this.toggleInAcwText(false);
 			$('.call_loader').hide();
 		},
 		toggleInvalidNumberText: function (show) {
 			if (this.$alreadyInCallText().is(":visible")) { this.toggleAlreadyInCallText(false);}
+			if (this.$inAcwText().is(":visible")) { this.toggleInAcwText(false);}
 			if(show && !(this.exceptionalNumberValidation(phoneNumber)) && !(freshfonewidget.checkForStrangeNumbers(phoneNumber)) ) {
 			 this.$invalidNumberText().toggle(show || false);
 			 this.$invalidPhoneNumber().toggle(!show || false);
@@ -317,6 +330,9 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 		},
 		toggleAlreadyInCallText: function(show) {
 			this.$alreadyInCallText().toggle(show || false);
+		},
+		toggleInAcwText: function(show) {
+			this.$inAcwText().toggle(show || false);
 		},
 		toggleBackToDialer: function(show){
 			this.$backToDialer().toggle(show || false);
@@ -554,6 +570,9 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 					"call_id" : this.callId
 				}
 			});
+		},
+		canTrackQuality: function(){
+			return !this.isAgentConference && freshfone.isCallQualityMetricsEnabled && this.freshfone_monitor; 
 		}
 
 	};

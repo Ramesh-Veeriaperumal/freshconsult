@@ -15,7 +15,22 @@
 	<% if current_account.subscription.non_sprout_plan? || feature?(:advanced_reporting)%>
 		<%= render :partial => "reports/shared/save_report_controls"%>
 	<% end %>
-	<%= render :partial => "reports/v2/tickets/reports/shared/generate_pdf" %>
+	<% if current_user.privilege?(:export_reports) %>
+		<%= render :partial => "reports/v2/tickets/reports/shared/generate_pdf" %>
+	<% end %>
+	<% if current_account.old_reports_enabled? %>
+		<% if @report_type == :agent_summary %>
+		    <% if current_user.privilege?(:export_reports) %>
+				<span class="pull-right dividr"> | </span>
+			<% end %>
+		    <a class="pull-right old_report_link" href="/reports/1" >View old report</a>
+		 <% elsif @report_type == :group_summary %>
+		    <% if current_user.privilege?(:export_reports) %>
+				<span class="pull-right dividr"> | </span>
+			<% end %> 
+		    <a class="pull-right old_report_link" href="/reports/2" >View old report</a>
+		 <% end %>
+	<% end %>
 </div>
 <div class="reports-filter span12">
 		<% if current_account.subscription.non_sprout_plan? || feature?(:advanced_reporting) %>

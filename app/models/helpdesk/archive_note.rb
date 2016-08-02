@@ -33,6 +33,7 @@ class Helpdesk::ArchiveNote < ActiveRecord::Base
   concerned_with :attributes, :s3, :esv2_methods
   
   scope :exclude_source, lambda { |s| { :conditions => ['source <> ?', SOURCE_KEYS_BY_TOKEN[s]] } }
+  scope :visible, :conditions => { :deleted => false }
   
   # Callbacks will be executed in the order in which they have been included. 
   # Included rabbitmq callbacks at the last
@@ -64,6 +65,9 @@ class Helpdesk::ArchiveNote < ActiveRecord::Base
     :agent_public_response => 3,
     :third_party_response => 4,
     :meta_response => 5
+  }
+  SCHEMA_LESS_FIELDS = {
+    :note_properties => "text_nc02"
   }
   
   scope :newest_first, :order => "id DESC"
@@ -244,5 +248,28 @@ class Helpdesk::ArchiveNote < ActiveRecord::Base
   def notable
     archive_ticket
   end
+
+  def parent
+    helpdesk_notes_association["schema_less_note"]
+  end
+
+  SCHEMA_LESS_FIELDS.each do |alias_attribute, field_name|
+    define_method "#{alias_attribute}" do
+      parent[field_name]
+    end
+  end
+
+  def last_modified_user_id
+    note_properties["last_modified_user_id"] unless note_properties.nil?
+  end
+
+  def last_modified_timestamp
+    Time.zone.parse(note_properties["last_modified_timestamp"].to_s).to_datetime unless note_properties.nil?
+  end
+
+  def deleted?
+    archive_note_association.associations_data["helpdesk_tickets"]["deleted"]
+  end  
+
 
 end

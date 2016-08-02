@@ -11,12 +11,12 @@ class Search::EsIndexDefinition
   # These are table names of the searchable models.
   # Incase we want to add any new model the table name should be added here
   def models
-    [:customers, :users, :helpdesk_tickets, :solution_articles, :topics, :helpdesk_notes, :helpdesk_tags, :freshfone_callers, :admin_canned_responses, :scenario_automations]
+    [:customers, :users, :helpdesk_tickets, :solution_articles, :topics, :helpdesk_notes, :helpdesk_tags, :freshfone_callers, :admin_canned_responses, :scenario_automations, :ticket_templates]
   end
 
   # Used for new model migrations
   def additional_models
-    [:admin_canned_responses, :scenario_automations]
+    [:ticket_templates]
   end
 
   def index_hash(pre_fix = DEFAULT_CLUSTER, is_additional_model=false)
@@ -284,6 +284,27 @@ class Search::EsIndexDefinition
     }
   end
 
+  def ticket_templates
+    {
+      :"helpdesk/ticket_template" => {
+        :properties => {
+          :account_id => { :type => :long },
+          :association_type => { :type => :long },
+          :name => {
+            :type => :multi_field,
+            :fields => {
+              :name => {:type => :string},
+              :raw_name => {:type => :string, :analyzer => :case_insensitive}
+            }
+          },
+          :es_group_accesses => { :type => :long },
+          :es_user_accesses => { :type => :long },
+          :es_access_type => { :type => :long }
+        }
+      }
+    }
+  end
+
   def create_model_index(index_name, model_mapping)
   	sandbox(0) {
       Search::EsIndexDefinition.es_cluster_by_prefix(index_name)
@@ -407,7 +428,8 @@ class Search::EsIndexDefinition
 
   def es_cluster_pos(account_id)
     # temperory commit until elasticsearch cluster determination is moved to table
-    return 0 if PodConfig['CURRENT_POD'] == "podeuwest1"
+    other_pods = ["podeuwest1","podeucentral1"]
+    return 0 if other_pods.include?(PodConfig['CURRENT_POD'])
     case account_id.to_i
     when 110962           then 3 #Pinnacle sports is in Cluster-4
     when 1..55000         then 0

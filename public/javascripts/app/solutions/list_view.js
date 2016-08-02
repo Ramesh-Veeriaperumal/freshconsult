@@ -87,12 +87,6 @@ window.App = window.App || {};
         }
       });
 
-      $('body').on('reorder.folders_articles', function () {
-        if (App.namespace !== "solution/folders/show") {
-          App.Solutions.NavMenu.reload();
-        }
-      });
-
       $('body').on('change.folders_articles', '#move_to, #change_author', function () {
         var el = $(this);
         if ($this.selectedElementsCount() > 0) {
@@ -316,6 +310,21 @@ window.App = window.App || {};
         customers_input.trigger("liszt:updated");
         form.find('.company_folders').hide();
       }
-    }
+    },
+
+    bindCreateNew: function () {
+      $('body').on('click.solutions', '#create-new-category, #cancel-create-new', function (ev) {
+        ev.preventDefault();
+        var flag = $(this).attr('id') === "create-new-category",
+          form = $(this).closest('form');
+        form.find('#solution_folder_meta_solution_category_meta_id').toggleClass('hide', flag).select2("enable", !flag);
+        form.find('#create-category-text').toggleClass('hide', !flag).attr('disabled', !flag);
+        form.find('#create-category-text-error, #cancel-create-new').toggleClass('hide', !flag);
+        form.find('#create-new-category, .solution_folder_meta_solution_category_meta').toggleClass('hide', flag);
+        if (flag) {
+          form.find('#create-category-text').focus();
+        }
+      });
+    },
   };
 }(window.jQuery));

@@ -1,7 +1,15 @@
 <% content_for :sidebar do -%>&nbsp;<%- end %>
 
-
-<%= form_for @user, :url => { :controller => "contacts", :action => "update_contact" },:html => { :multipart => true, :rel => "validate", :class => 'form-unsaved-changes-trigger form_for_contact'}  do |f| %>
+<% content_for :helpcard do %>
+  <p>
+  	<%= t('contacts.helptext').html_safe %>
+  </p>
+<% end %>
+<%= form_for @user, :url => { :controller => "contacts", :action => "update_contact" },
+                              :html => { :multipart => true, 
+                                         :rel => "validate", 
+                                         :id => "user_form",
+                                         :class => 'form-unsaved-changes-trigger form_for_contact'}  do |f| %>
 	  
 	<div class='page-header-sticky' rel='sticky'>
 		<div class='sticky-header-wrapper'>

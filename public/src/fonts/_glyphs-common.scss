@@ -77,6 +77,12 @@ a [class*="#{$font-class}"], a[class*="#{$font-class}"]{
 .topic_icon{			@extend .#{$font-class}conversation }
 .solution_article_icon{	@extend .#{$font-class}book }
 .user_icon{				@extend .#{$font-class}user }
+.recent_search_icon{ 	@extend .#{$font-class}search }
+.recent_search_cross_icon{	
+	@extend .#{$font-class}cross;
+	color: #fff;
+	font-size: 18px;		
+}
 	
 	
 // -----------------------------------------------------------------------------------------------
@@ -639,5 +645,11 @@ span.fb_add
 		color: #333;
 		font-size: 20px;
 	    content: $font-glyphs-sorting-dsc;
+	}
+}
+
+.user_actions {
+	.contact-action {
+		color: #999;
 	}
 }

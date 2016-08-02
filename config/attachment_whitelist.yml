@@ -1,18 +1,18 @@
----
-- doc
-- docx
-- pdf
-- txt
-- pps
-- ppsx
-- ppt
-- pptx
-- jpeg
-- jpg
-- png
-- tif
-- tiff
-- xls
-- xlsx
-- mp3
-- mp4
+doc : application/msword
+docx: application/vnd.openxmlformats-officedocument.wordprocessingml.document
+pdf : application/pdf
+txt : text/plain
+pps : application/vnd.ms-powerpoint
+ppsx: application/vnd.openxmlformats-officedocument.presentationml.slideshow
+ppt : application/vnd.ms-powerpoint
+pptx: application/vnd.openxmlformats-officedocument.presentationml.presentation
+jpeg: image/jpeg
+jpg : image/jpeg
+png : image/png
+tif : image/tiff
+tiff: image/tiff
+xls : application/vnd.ms-excel
+xlsx: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+mp3 : audio/mpeg
+mp4 : video/mp4
+wav : audio/wav

@@ -58,8 +58,8 @@ class Solution::Object
 	end
 
 	def create_parent_translation
-		return if @params["#{PARENT_OF[obj]}_meta"].blank?
-    @params["#{PARENT_OF[obj]}_meta"]['id'] = @meta_obj.parent_id if @meta_obj.parent_id
+		return if PARENT_OF[obj].blank? || @params["#{PARENT_OF[obj]}_meta"].blank?
+    @params["#{PARENT_OF[obj]}_meta"]['id'] = @meta_obj.send("#{PARENT_OF[obj]}_meta_id") if @meta_obj.send("#{PARENT_OF[obj]}_meta_id")
 		@meta_obj.send("#{PARENT_OF[obj]}_meta=", Solution::Object.new(@params, PARENT_OF[obj], @meta_obj).object)
 	end
   
@@ -127,7 +127,7 @@ class Solution::Object
 	def build_associations object, lang
 		attachment_builder(object, 
 			(@params["#{lang}_#{short_name}"] || {})[:attachments], 
-			(@params["#{lang}_#{short_name}"] || {})[:cloud_file_attachments] )
+			(@params["#{lang}_#{short_name}"] || {})[:cloud_file_attachments], @args["attachments_list"])
 	end
 
 	def primary_version_check?

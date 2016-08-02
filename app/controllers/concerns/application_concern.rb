@@ -14,7 +14,10 @@ module Concerns::ApplicationConcern
   end
 
   def set_shard_for_payload  # For log
-    Thread.current[:shard_name_payload] = Thread.current[:shard_selection].shard if Thread.current[:shard_selection]
+    if Thread.current[:shard_selection]
+      Thread.current[:shard_name_payload] = Thread.current[:shard_selection].shard
+      cookies[HashedData["shard_name"]] = HashedData[Thread.current[:shard_selection].shard]
+    end
   end
 
   def unset_shard_for_payload
@@ -32,6 +35,10 @@ module Concerns::ApplicationConcern
 
   def unset_current_portal
     Thread.current[:portal] = nil
+  end
+
+  def set_msg_id
+    Thread.current[:message_uuid] = request.try(:uuid).to_a
   end
 
   # See http://stackoverflow.com/questions/8268778/rails-2-3-9-encoding-of-query-parameters

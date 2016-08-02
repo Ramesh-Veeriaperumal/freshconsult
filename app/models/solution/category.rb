@@ -60,12 +60,6 @@ class Solution::Category < ActiveRecord::Base
     super options
   end
 
-  def self.folder_names(account)
-    account.solution_categories.map { |category|
-      [ category.name, category.folders.map {|folder| [folder.id, folder.name] } ]
-    }
-  end
-
   def self.get_default_categories_visibility(user)
     user.customer? ? {:is_default=>false} : {}
   end

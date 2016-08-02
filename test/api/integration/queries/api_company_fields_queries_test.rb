@@ -5,7 +5,7 @@ class ApiCompanyFieldsQueriesTest < ActionDispatch::IntegrationTest
     skip_bullet do
       v2 = {}
       v1 = {}
-      v2_api_index_query_count = 1
+      v2_api_index_query_count = 2
       v2_index_query_count = 13
       # index
       v2[:index], v2[:api_index], v2[:index_queries] = count_api_queries do

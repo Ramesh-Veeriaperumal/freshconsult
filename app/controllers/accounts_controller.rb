@@ -11,15 +11,19 @@ class AccountsController < ApplicationController
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:check_domain, :new_signup_free,
                      :create, :rebrand, :dashboard, :rabbitmq_exchange_info]
 
-  skip_before_filter :set_locale, :except => [:cancel, :show, :edit]
+  skip_before_filter :set_locale, :except => [:cancel, :show, :edit, :manage_languages]
   skip_before_filter :set_time_zone, :set_current_account,
     :except => [:cancel, :edit, :update, :delete_logo, :delete_favicon, :show, :manage_languages, :update_languages]
   skip_before_filter :check_account_state
   skip_before_filter :redirect_to_mobile_url
-  skip_before_filter :check_day_pass_usage, :except => [:cancel, :edit, :update, :delete_logo, :delete_favicon, :show]
-  skip_filter :select_shard, :except => [:update,:cancel,:edit,:show,:delete_favicon,:delete_logo]
-  skip_before_filter :ensure_proper_protocol, :except => [:update,:cancel,:edit,:show,:delete_favicon,:delete_logo]
-  skip_before_filter :determine_pod, :except => [:update,:cancel,:edit,:show,:delete_favicon,:delete_logo]
+  skip_before_filter :check_day_pass_usage, 
+    :except => [:cancel, :edit, :update, :delete_logo, :delete_favicon, :show, :manage_languages, :update_languages]
+  skip_filter :select_shard, 
+    :except => [:update,:cancel,:edit,:show,:delete_favicon,:delete_logo, :manage_languages, :update_languages]
+  skip_before_filter :ensure_proper_protocol, 
+    :except => [:update,:cancel,:edit,:show,:delete_favicon,:delete_logo, :manage_languages, :update_languages]
+  skip_before_filter :determine_pod, 
+    :except => [:update,:cancel,:edit,:show,:delete_favicon,:delete_logo, :manage_languages, :update_languages]
 
   around_filter :select_latest_shard, :except => [:update,:cancel,:edit,:show,:delete_favicon,:delete_logo,:manage_languages,:update_languages]
 
@@ -27,7 +31,7 @@ class AccountsController < ApplicationController
   before_filter :build_metrics, :only => [ :create ]
   before_filter :load_billing, :only => [ :show, :new, :create, :payment_info ]
   before_filter :build_plan, :only => [:new, :create]
-  before_filter :admin_selected_tab, :only => [:show, :edit, :cancel ]
+  before_filter :admin_selected_tab, :only => [:show, :edit, :cancel, :manage_languages  ]
   before_filter :validate_custom_domain_feature, :only => [:update]
   before_filter :build_signup_param, :only => [:new_signup_free]
   before_filter :build_signup_contact, :only => [:new_signup_free]
@@ -35,6 +39,8 @@ class AccountsController < ApplicationController
   before_filter :set_native_mobile, :only => [:new_signup_free]
   before_filter :update_language_attributes, :only => [:update_languages]
   before_filter :validate_portal_language_inclusion, :only => [:update_languages]
+  before_filter(:only => [:manage_languages]) { |c| c.requires_feature :multi_language }
+  before_filter :multilingual_available?, :only => [:manage_languages]
   
   def show
   end   
@@ -218,7 +224,7 @@ class AccountsController < ApplicationController
     end
  
     def default_preferences
-      HashWithIndifferentAccess.new({:bg_color => "#efefef",:header_color => "#252525", :tab_color => "#006063"})
+      HashWithIndifferentAccess.new({:bg_color => "#efefef",:header_color => "#252525", :tab_color => "#006063", :personalized_articles => true})
     end
   
     def redirect_url
@@ -308,9 +314,13 @@ class AccountsController < ApplicationController
         end
       end
       
-      params[:signup][:locale] = http_accept_language.compatible_language_from(I18n.available_locales)
+      params[:signup][:locale] = assign_language || http_accept_language.compatible_language_from(I18n.available_locales)
       params[:signup][:time_zone] = params[:utc_offset]
       params[:signup][:metrics] = build_metrics
+    end
+
+    def assign_language
+      params[:account][:lang] if params[:account][:lang] and Language.find_by_code(params[:account][:lang]).present?
     end
 
     def build_signup_contact
@@ -328,7 +338,7 @@ class AccountsController < ApplicationController
     def add_to_crm
       if (Rails.env.production? or Rails.env.staging?)
         Resque.enqueue_at(3.minute.from_now, Marketo::AddLead, { :account_id => @signup.account.id, 
-          :signup_id => params[:signup_id] })
+          :signup_id => params[:signup_id], :fs_cookie => params[:fs_cookie] })
       end
       
     end  
@@ -435,5 +445,9 @@ class AccountsController < ApplicationController
       @account.main_portal_attributes = params[:account][:main_portal_attributes] unless @account.features?(:enable_multilingual)
       @account.account_additional_settings[:supported_languages] = params[:account][:account_additional_settings_attributes][:supported_languages]
       @account.account_additional_settings.additional_settings[:portal_languages] = portal_languages
+    end
+
+    def multilingual_available?
+      render :template => "/errors/non_covered_feature.html", :locals => {:feature => :multi_language} unless @account.launched?(:translate_solutions)
     end
 end

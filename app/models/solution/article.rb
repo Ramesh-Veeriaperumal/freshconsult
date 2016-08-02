@@ -137,7 +137,7 @@ class Solution::Article < ActiveRecord::Base
   def as_json(options={})
     return super(options) if (options[:tailored_json].present?)
     old_options = options.dup
-    options.merge!(Solution::Constants::API_OPTIONS)
+    options.merge!(Solution::Constants::API_OPTIONS.deep_dup)
     options[:except] += (old_options[:except] || [])
     options[:except].each {|ex| options[:include].delete(ex)}
     super options
@@ -172,6 +172,7 @@ class Solution::Article < ActiveRecord::Base
     define_method "toggle_#{method}!" do
       self.class.update_counters(self.id, method => 1, (VOTE_TYPES - [method]).first => -1 )
       meta_class.update_counters(self.parent_id, method => 1, (VOTE_TYPES - [method]).first => -1 )
+      self.sqs_manual_publish #=> Publish to ES
       queue_quest_job if self.published?
       return true
     end
@@ -179,6 +180,7 @@ class Solution::Article < ActiveRecord::Base
     define_method "#{method}!" do
       self.class.increment_counter(method, self.id)
       meta_class.increment_counter(method, self.parent_id)
+      self.sqs_manual_publish #=> Publish to ES
       queue_quest_job if (method == :thumbs_up && self.published?)
       return true
     end
@@ -192,7 +194,7 @@ class Solution::Article < ActiveRecord::Base
   end
 
   def reset_ratings
-    self.class.update_all({:thumbs_up => 0, :thumbs_down => 0} ,{ :id => self.id})
+    self.class.update_all_with_publish({:thumbs_up => 0, :thumbs_down => 0}, { :id => self.id})
     meta_class.update_counters(self.parent_id, :thumbs_up => -self.thumbs_up, :thumbs_down => -self.thumbs_down)
     self.votes.destroy_all
   end
@@ -248,6 +250,11 @@ class Solution::Article < ActiveRecord::Base
   def to_liquid
     @solution_article_drop ||= Solution::ArticleVersionDrop.new self
   end
+  
+  def folder_id
+    # To make Gamification work
+    @folder_id ||= solution_article_meta.solution_folder_meta_id
+  end
 
   private
 
@@ -265,6 +272,28 @@ class Solution::Article < ActiveRecord::Base
     
     def hit_key
       SOLUTION_HIT_TRACKER % {:account_id => account_id, :article_id => id }
+    end
+
+    def to_rmq_json(keys,action)
+      article_identifiers
+      #destroy_action?(action) ? article_identifiers : return_specific_keys(article_identifiers, keys)
+    end
+
+    def article_identifiers
+      @rmq_article_identifiers ||= {
+        "id"            =>  id,
+        "user_id"       =>  user_id,
+        "folder_id"     =>  folder_id,
+        "status"        =>  status,
+        "art_type"      =>  art_type,
+        "thumbs_down"   =>  thumbs_down,
+        "thumbs_up"     =>  thumbs_up,
+        "parent_id"     =>  parent_id,
+        "modified_by"   =>  modified_by,
+        "modified_at"   =>  modified_at,
+        "language"      =>  language,
+        "hits"          =>  hits
+      }
     end
 
     def rl_exceeded_operation

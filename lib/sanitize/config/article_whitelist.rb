@@ -36,6 +36,14 @@ class Sanitize
         
         return if env[:is_whitelisted] || !node.element? || ARTICLE_WHITELIST[:elements].exclude?(node.name)
 
+        if node.name == 'iframe'
+          uri = URI.parse(node['src'])
+          if uri.host.blank? || uri.host == Account.current.full_domain || Account.current.portals.map(&:portal_url).compact.include?(uri.host)
+            node.unlink
+            return
+          end
+        end
+
         data_attrs = node.attribute_nodes.select{|a_n| a_n.name =~ /^data-/ }
         
         return if data_attrs.empty?

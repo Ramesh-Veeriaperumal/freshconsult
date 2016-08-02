@@ -197,7 +197,7 @@ class Admin::VaRulesController < Admin::AdminController
           :operatortype => "object_id", :choices => @agents },
         { :name => "group_id", :value => I18n.t('ticket.group'), :domtype => dropdown_domtype,
           :operatortype => "object_id", :choices => @groups },
-        { :name => "tag_ids", :value => t('ticket.tags'), :domtype => "autocomplete_multiple_with_id", 
+        { :name => "tag_ids", :value => t('ticket.tag_condition'), :domtype => "autocomplete_multiple_with_id", 
           :data_url => tags_search_autocomplete_index_path, :operatortype => "object_id_array",
           :condition => !supervisor_rules_controller?, :autocomplete_choices => @tag_hash }
       ]

@@ -17,6 +17,7 @@ RSpec.describe Helpdesk::TicketsController do
     @email_config.reload
     @email_config.update_column(:active, true)
     sla_policy = create_sla_policy(user)
+    create_sample_tkt_templates # For ticket templates
     $redis_tickets.keys("HELPDESK_TICKET_FILTERS*").each {|key| $redis_tickets.del(key)}
     $redis_tickets.keys("HELPDESK_TICKET_ADJACENTS*").each {|key| $redis_tickets.del(key)}
   end
@@ -171,8 +172,8 @@ RSpec.describe Helpdesk::TicketsController do
   end
 
   it "should create a new outbound email ticket" do
-    now = (Time.now.to_f*1000).to_i
-    @account.features.compose_email.create
+    now = (Time.now.to_f*1000).to_i    
+    @account.features.compose_email.destroy
     post :create, :helpdesk_ticket => {:email => Faker::Internet.email,
                                        :requester_id => "",
                                        :subject => "New Oubound Ticket #{now}",
@@ -189,13 +190,14 @@ RSpec.describe Helpdesk::TicketsController do
     Delayed::Job.last.handler.should_not include("biz_rules_check")                                  
     t = @account.tickets.find_by_subject("New Oubound Ticket #{now}")
     t.cc_email[:cc_email].include?("someone@cc.com")
+    t.outbound_email?.should be true
     t.source.should be_eql(Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:outbound_email])
     @account.tickets.find_by_subject("New Oubound Ticket #{now}").should be_an_instance_of(Helpdesk::Ticket)
-    @account.features.compose_email.destroy
   end
 
   it "should create a new outbound email ticket for non feature account but outbound email check should return false" do
     now = (Time.now.to_f*1000).to_i
+    @account.features.compose_email.create
     post :create, :helpdesk_ticket => {:email => Faker::Internet.email,
                                        :requester_id => "",
                                        :subject => "New Oubound Ticket #{now}",
@@ -211,6 +213,7 @@ RSpec.describe Helpdesk::TicketsController do
     Delayed::Job.last.handler.should_not include("biz_rules_check")
     t = @account.tickets.find_by_subject("New Oubound Ticket #{now}")
     t.source.should be_eql(Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:outbound_email])
+
     t.outbound_email?.should be false
     @account.tickets.find_by_subject("New Oubound Ticket #{now}").should be_an_instance_of(Helpdesk::Ticket)
 
@@ -982,5 +985,143 @@ RSpec.describe Helpdesk::TicketsController do
     @account.tickets.find_by_id(tkt1.id).should be_nil
     @account.tickets.find_by_id(tkt2.id).should be_nil
     Sidekiq::Testing.disable!
+  end
+
+  # Ticket Template - starts here
+  it "should apply tkt template to new tkt form" do
+    get :apply_template, {:template_form=>"new_ticket", :template_id=> "#{@all_agents_template.id}", 
+                          :requester_email=>"dummyuser@freshdesk.com", 
+                          :cc_email=>"dummycc@gmail.com, dummycc1@fhdk.com"}
+    assigns(:template).should be_eql(@all_agents_template)
+    assigns[:ticket].subject.should be_eql @all_agents_template.template_data[:subject]
+  end
+
+  it "should apply tkt template to compose email form" do
+    get :apply_template, {:template_form=>"compose_email", :template_id=> "#{@user_template.id}", 
+                          :requester_email=>"dummyuser@freshdesk.com", :config_emails=>"#{@email_config.id}",
+                          :cc_email=>"dummycc@gmail.com, dummycc1@fhdk.com"}
+    assigns(:template).should be_eql(@user_template)
+    assigns[:ticket].ticket_type.should be_eql @all_agents_template.template_data[:ticket_type]
+  end
+
+  it "should not apply_template when the current user doesn't have access to the particular template" do
+    get :apply_template, {:template_form=>"new_ticket", :template_id=> "#{@grps_template.id}", 
+                          :requester_email=>"dummyuser@freshdesk.com", 
+                          :cc_email=>"dummycc@gmail.com, dummycc1@fhdk.com"}
+    flash[:notice].should be_eql(I18n.t('ticket_templates.not_available'))
+  end
+  # Ticket Template - ends here
+
+  describe "Ticket creation from topic" do
+
+    it "should have topic association when created from topic" do
+      @category = create_test_category
+      @forum = create_test_forum(@category)
+      @topic = create_test_topic(@forum)
+
+      post :create, 
+        :helpdesk_ticket => 
+        {
+          :email => @topic.user.email,
+          :requester_id => @topic.user,
+          :subject => @topic.title,
+          :source => "3",
+          :status => "2",
+          :priority => "1",
+          :group_id => "",
+          :responder_id => "",
+          :ticket_body_attributes => {"description_html"=>@topic.posts.first.body_html}
+        },
+        :topic_id => @topic.id
+      ticket = @account.tickets.where(:subject => @topic.title).last
+      ticket.topic.should_not be_nil
+      ticket.topic.id.should be_eql(@topic.id)
+      ticket.requester_id.should be_eql(@topic.user_id)
+    end
+
+    it "should create a new association and remove existing association if an association already exists but the associated ticket is in a deleted state" do
+      @category = create_test_category
+      @forum = create_test_forum(@category)
+      @topic = create_test_topic(@forum)
+
+      post :create, 
+        :helpdesk_ticket => 
+        {
+          :email => @topic.user.email,
+          :requester_id => @topic.user,
+          :subject => @topic.title,
+          :source => "3",
+          :status => "2",
+          :priority => "1",
+          :group_id => "",
+          :responder_id => "",
+          :ticket_body_attributes => {"description_html"=>@topic.posts.first.body_html}
+        },
+        :topic_id => @topic.id
+      ticket1 = @account.tickets.where(:subject => @topic.title).last
+      delete :destroy, :id => ticket1.display_id
+
+      post :create, 
+        :helpdesk_ticket => 
+        {
+          :email => @topic.user.email,
+          :requester_id => @topic.user,
+          :subject => @topic.title,
+          :source => "3",
+          :status => "2",
+          :priority => "1",
+          :group_id => "",
+          :responder_id => "",
+          :ticket_body_attributes => {"description_html"=>@topic.posts.first.body_html}
+        },
+        :topic_id => @topic.id
+      ticket2 = @account.tickets.where(:subject => @topic.title).last
+
+      ticket1.reload
+      ticket1.deleted.should be_truthy
+      ticket1.topic.should be_nil
+      ticket2.topic.should_not be_nil
+      ticket2.topic.id.should be_eql(@topic.id)
+      ticket2.requester_id.should be_eql(@topic.user_id)
+    end
+
+    it "should create a ticket without any association to the topic if an association already exists but the associated ticket is not in a deleted state" do
+      @category = create_test_category
+      @forum = create_test_forum(@category)
+      @topic = create_test_topic(@forum)
+
+      post :create, 
+        :helpdesk_ticket => 
+        {
+          :email => @topic.user.email,
+          :requester_id => @topic.user,
+          :subject => @topic.title,
+          :source => "3",
+          :status => "2",
+          :priority => "1",
+          :group_id => "",
+          :responder_id => "",
+          :ticket_body_attributes => {"description_html"=>@topic.posts.first.body_html}
+        },
+        :topic_id => @topic.id
+
+      post :create, 
+        :helpdesk_ticket => 
+        {
+          :email => @topic.user.email,
+          :requester_id => @topic.user,
+          :subject => @topic.title,
+          :source => "3",
+          :status => "2",
+          :priority => "1",
+          :group_id => "",
+          :responder_id => "",
+          :ticket_body_attributes => {"description_html"=>@topic.posts.first.body_html}
+        },
+        :topic_id => @topic.id
+
+      ticket = @account.tickets.where(:subject => @topic.title).last
+      ticket.topic.should be_nil
+    end
   end
 end

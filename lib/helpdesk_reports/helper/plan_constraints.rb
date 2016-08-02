@@ -27,8 +27,13 @@ module HelpdeskReports::Helper::PlanConstraints
   end
 
   def enterprise_reporting?
-    return @ent_reports_addon if defined?(@ent_reports_addon)
+    # return @ent_reports_addon if defined?(@ent_reports_addon)
     @ent_reports_addon ||= Account.current.features_included?(:enterprise_reporting)
+  end
+
+  def hide_agent_reporting?
+    return @hide_agent_metrics if defined?(@hide_agent_metrics)
+    @hide_agent_metrics ||= Account.current.features_included?(:euc_hide_agent_metrics)
   end
 
   def exclude_filters(report_type)  
@@ -37,6 +42,8 @@ module HelpdeskReports::Helper::PlanConstraints
     plan_excludes     = ReportsAppConfig::REPORT_CONSTRAINTS[:plan_exclude_filters][report_type]
     plan_filters      = plan_excludes[plan_group] if plan_excludes
     excluded_filters |= plan_filters || [] 
+    excluded_filters += [:agent_id] if hide_agent_reporting?
+    excluded_filters
   end
 
   def max_limits_by_user?(feature, current_count = nil)
@@ -73,11 +80,11 @@ module HelpdeskReports::Helper::PlanConstraints
   end
 
   def scheduled_report_user_count
-    @schedule_report_user_count ||= User.current.scheduled_tasks.count
+    @schedule_report_user_count ||= User.current.scheduled_tasks.active_tasks.count
   end
 
   def scheduled_report_account_count
-    @schedule_report_account_count ||= Account.current.scheduled_tasks.count
+    @schedule_report_account_count ||= Account.current.scheduled_tasks.active_tasks.count
   end
 
 end

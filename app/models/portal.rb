@@ -206,7 +206,7 @@ class Portal < ActiveRecord::Base
     end
 
     def main_portal_language_changes?
-      main_portal and @portal_changes.has_key?(:language)
+      main_portal && @portal_changes && @portal_changes.has_key?(:language)
     end
 
     def backup_portal_changes
@@ -239,7 +239,9 @@ class Portal < ActiveRecord::Base
     end
 
     def ticket_field_conditions
-      { 'product' => (main_portal && !account.products.empty?) }
+      { 'product' => (main_portal && !account.products.empty?), 
+        'company' => account.features?(:multiple_user_companies) && User.current.present? && 
+                      (User.current.agent? || User.current.contractor?) }
     end
 
     def filter_fields(f_list, conditions)

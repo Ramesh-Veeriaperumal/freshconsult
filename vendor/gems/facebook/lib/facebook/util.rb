@@ -18,6 +18,10 @@ module Facebook
       koala_comment
     end
     
+    def user_blocked?(user_id)
+      Account.current.users.find_by_fb_profile_id(user_id).try(:blocked?)
+    end
+    
     #Parse the feed content from facebook post
     def html_content_from_feed(feed)
       html_content =  CGI.escapeHTML(feed[:message]) if feed[:message]

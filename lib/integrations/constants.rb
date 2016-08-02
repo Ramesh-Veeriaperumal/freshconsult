@@ -36,10 +36,14 @@ module Integrations::Constants
     :infusionsoft => "infusionsoft",
     :pivotal_tracker => "pivotal_tracker",
     :twitter => "twitter",
-    :facebook => "facebook"
+    :facebook => "facebook",
+    :freshsales => "freshsales",
+	:fullcontact => "fullcontact"
   }
 
-  CRM_APPS= [:sugarcrm, :salesforce, :batchbook, :highrise, :nimble, :zohocrm, :capsule_crm, :dynamicscrm, :quickbooks, :freshbooks, :infusionsoft]
+  DISPLAY_IN_PAGES = { "ticket_show" => 2, "contact_show" => 1, "company_show" => 0 }
+
+  CRM_APPS= [:sugarcrm, :salesforce, :batchbook, :highrise, :nimble, :zohocrm, :capsule_crm, :dynamicscrm, :quickbooks, :freshbooks, :infusionsoft, :freshsales]
 
   APP_CATEGORY_ID_TO_NAME = {
     10 => :custom,

@@ -14,7 +14,8 @@ class Agent < ActiveRecord::Base
   accepts_nested_attributes_for :user
   before_update :create_model_changes
   after_commit :enqueue_round_robin_process, on: :update
-  after_commit :nullify_tickets, :destroy_agent_canned_responses, :destroy_agent_scenarios, :agent_destroy_cleanup, on: :destroy
+
+  after_commit :nullify_tickets, :agent_destroy_cleanup, on: :destroy
   
   after_commit  ->(obj) { obj.update_agent_to_livechat } , on: :create
   after_commit  ->(obj) { obj.update_agent_to_livechat } , on: :update
@@ -149,14 +150,6 @@ class Agent < ActiveRecord::Base
                      :user_id => self.user_id })
   end
 
-  def destroy_agent_canned_responses
-    account.canned_responses.only_me(user).destroy_all
-  end
-
-  def destroy_agent_scenarios
-    account.scn_automations.only_me(user).destroy_all
-  end
-
   def nullify_tickets
     Helpdesk::ResetResponder.perform_async({:user_id => self.user_id })
   end
@@ -178,7 +171,7 @@ class Agent < ActiveRecord::Base
     site_id = account.chat_setting.site_id
     # role_ids = self.agent_role_ids.null? self.user.roles.collect{ |role| role.id} : self.agent_role_ids
     # :roles => role_ids, need to add in phase 2 for chat privilages
-    if account.features?(:chat) && site_id
+    if account.features?(:chat) && site_id && !(::User.current.blank?)
       c = {:name=>self.user.name, :agent_id=>self.user.id, :site_id => site_id,
            :scope => SCOPE_TOKENS_BY_KEY[self.ticket_permission]}
       LivechatWorker.perform_async({:worker_method =>"create_agent",

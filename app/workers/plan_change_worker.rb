@@ -41,7 +41,10 @@ class PlanChangeWorker
 
   def drop_multiple_business_hours_data(account)
     update_all_in_batches({ :time_zone => account.time_zone }){ |cond| 
-      account.all_users.where(@conditions).limit(@batch_size).update_all(cond)
+      records = account.all_users.where(@conditions).limit(@batch_size)
+      count   = records.update_all(cond)
+      records.map(&:sqs_manual_publish)
+      count
     }
   end
 

@@ -243,7 +243,16 @@ function helpdesk_submit(url, method, params){
           field.value = source.value;
           form.appendChild(field);
    });
-   form.action = url;
+
+   if(method == 'delete' || (url.includes("spam") && method == 'put')){
+    jQuery('input.selector').each(function(index, element){
+      if(jQuery(this).prop('checked')){
+        NavSearchUtils.deleteRecentTicketById(jQuery(this).val());
+      }
+    });
+   } 
+   
+   form.action = url;      
    form.submit();
 }
 
@@ -960,6 +969,10 @@ function storeInLocalStorage(key, value) {
   localStorage.setItem(key, JSON.stringify(value));
 }
 
+function storeBrowserLocalStorage(key, value){
+  localStorage.setItem(key, Browser.stringify(value));  
+}
+
 function getFromLocalStorage(key_name) {
   return JSON.parse(localStorage.getItem(key_name))
 }
@@ -1026,3 +1039,37 @@ function nativePlaceholderSupport() {
   return i.placeholder !== undefined;
 }
 
+var GetCannedResponse = {
+  init: function(ticket_id, ca_resp_id, element){
+
+    var path = "/helpdesk/canned_responses/show";
+
+    var params = "?ca_resp_id="+ca_resp_id+"&tkt_cr=true"
+
+    var url = ticket_id ? (path+"/"+ticket_id+params ) : (path+params);
+    
+    jQuery(element).addClass("response-loading");
+    jQuery.ajax({   
+      type: 'POST',
+      url: url,
+      contentType: 'application/text',
+      dataType: "script",
+      async: true,
+      success: function(data){     
+        jQuery(element).removeClass("response-loading");
+        jQuery(element).qtip('hide');
+        jQuery('[data-dismiss="modal"]').trigger('click')
+      }
+    });
+    return true;
+  }
+}
+
+function uniqueCodeGenerator(name){
+    var namearr = name.split('');
+    var hash = 0;
+    namearr.each(function (char) {
+      hash = char.charCodeAt(0) + ((hash << 5) - hash)
+    });
+    return hash % 10;
+}

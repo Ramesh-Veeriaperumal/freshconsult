@@ -1,8 +1,8 @@
-<div class="widget clearfix" id="requester_info">
+<div class="widget clearfix" id="requester_info" data-domhelper-name="requester_info">
 	<h3><%=t('ticket.requestor_info')%></h3>
 	<div class="content">
-	<div class="tkt-tabs-wrap">
-		<ul class="tkt-tabs">
+	<div class="tkt-tabs-wrap" data-domhelper-name="tkt-tabs-wrap">
+		<ul class="tkt-tabs" data-domhelper-name="tkt-tabs">
 			<li><a href="#contact_info_default" class="requester-info-sprite requester-info-default"></a></li>
 			<%
 			unless @ticket.ecommerce?
@@ -22,7 +22,7 @@
 	contact = (privilege?(:view_contacts) && current_user.can_view_all_tickets?) ? user : "javascript:void(0)"
 	%>
 	<div id="contact_info_default" class='requester_tab'>
-		<div class="requester-details">
+		<div class="requester-details" id="requester-details-info">
 			<%= render :partial => "contacts/hover_card", :locals => { 
 					:user => user, 
 					:show_recent_tickets => :dialog,
@@ -51,4 +51,10 @@
 	end
 	%>
 	</div>
+</div>
+
+<div id="requester-widget-edit-modal-container">
+<% unless user.agent? || !privilege?(:manage_contacts) %>
+  <%= render :partial => "/contacts/requester_widget_contact_edit" , :locals => { :user => user, :ticket => @ticket }  %>
+<% end %>
 </div>

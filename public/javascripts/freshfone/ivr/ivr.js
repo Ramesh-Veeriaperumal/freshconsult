@@ -91,6 +91,7 @@ var Ivr;
 		},
 		submitIvr: function (submitButton, $form, preview) {
 			if (this.anyErrorInIvrForm()) {return;}
+			if(preview){ $('#ivr_submit').addClass("disabled"); }
 			var $submitButton = $(submitButton),
 				self = this;
 			$submitButton.button('loading');

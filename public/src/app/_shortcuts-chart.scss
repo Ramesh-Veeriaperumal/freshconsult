@@ -103,8 +103,8 @@
 //					Ticket list item selector animation
 // =============================================================================
 .sc-item-selected .sc-item-cursor{
+	width:4px;
 	@include animation(fadeIn 100ms);
-	width:$TKT_LIST_VIEW_PRIORITY_BORDER_SIZE * 2;
 }
 .fade-out .sc-item-cursor{
 	@include animation(fadeOut 100ms);
@@ -112,9 +112,9 @@
 }
 @include keyframes(fadeIn){
 	0%{width:0;}
-	100%{width:10px;}
+	100%{width:5px;}
 }
 @include keyframes(fadeOut){
-	0%{width:10px;}
+	0%{width:5px;}
 	100%{width:0;}
 }

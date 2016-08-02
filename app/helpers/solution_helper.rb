@@ -89,7 +89,11 @@ module SolutionHelper
 					if privilege?(:publish_solution)
 						btn_dropdown_menu(article, [category, folder], opts)
 					else
-						btn_dropdown_menu(folder, [category], opts)
+						opts = { 
+							"data-modal-title" => "#{t("solution.add_folder")}#{language_label}", 
+							"data-target" => "#new-fold"
+						}
+						btn_dropdown_menu(folder, [category], opts.merge(default_new_btn_opts))
 					end
 			end
 		elsif privilege?(:publish_solution)
@@ -293,9 +297,10 @@ module SolutionHelper
 		category = solution_meta.class.short_name
 		return version_view_icon(solution_meta, language) unless edit_privilege?(category)
 		options = { 
-			:class => "language_icon #{language_style(solution_meta, language)} tooltip",
+			:class => "language_icon #{language_style(solution_meta, language)} custom-tip-top",
 			:title => language_label_title(language, solution_meta.send("#{language.to_key}_available?")),
 			:id => "version-#{solution_meta.id}-#{language.id}",
+			:"data-tip-classes" => 'ui-tooltip-dark',
 		}
 		options.merge!({:rel => "freshdialog",
 			:data => {
@@ -516,6 +521,12 @@ module SolutionHelper
 	def title_placeholder(item_type)
 		Account.current.multilingual? ?
 			t("solution.#{item_type}.enter_version_name", :language_name => @language.name) : ''
+	end
+
+	def grouped_options_for_folder_select
+		all_solution_categories.map { |category|
+			[category[:name], category[:folders].map { |folder| [folder[:name], folder[:id]] }]
+		}
 	end
 
 end

@@ -3,7 +3,7 @@ class ScenarioAutomation < VaRule
   include Search::ElasticSearchIndex
   include Helpdesk::Accessible::ElasticSearchMethods
   
-  attr_protected :account_id
+  attr_accessible :name, :description, :action_data, :accessible_attributes
   belongs_to_account
   
   default_scope { where(:rule_type => VAConfig::SCENARIO_AUTOMATION) }
@@ -22,16 +22,17 @@ class ScenarioAutomation < VaRule
   before_validation :validate_name
   before_save :set_active
 
-  scope :all_managed_scenarios, lambda { |user|
+  scope :shared_scenarios, lambda { |user|
     {
       :joins => %(JOIN helpdesk_accesses acc ON
                   acc.accessible_id = va_rules.id AND
                   acc.accessible_type = 'VARule' AND
                   va_rules.account_id=%<account_id>i AND
                   acc.account_id = va_rules.account_id) % { :account_id => user.account_id },
-      :conditions => %(acc.access_type!=%<users>s) % {
+      :conditions => %(acc.access_type != %<users>s) % {
         :users => Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:users],
-      }
+      }, 
+      :order => "name"
     }
   }
 
@@ -47,8 +48,13 @@ class ScenarioAutomation < VaRule
       :conditions => %(acc.access_type=%<only_me>s and user_accesses.user_id=%<user_id>i ) % {
         :only_me => Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:users],
         :user_id => user.id
-      }
+      }, 
+      :order => "name"
     }
+  }
+
+  INCLUDE_ASSOCIATIONS_BY_CLASS = {
+    ScenarioAutomation => {:include => [{:accessible => [:group_accesses, :user_accesses]}]}
   }
 
   def to_indexed_json
@@ -63,20 +69,15 @@ class ScenarioAutomation < VaRule
   private
 
   def validate_name
-   if (visibility_not_myself? && (self.name_changed? || access_type_changed?))
-    scenario = Account.current.scn_automations.all_managed_scenarios(User.current).where("va_rules.name = ?", self.name)
-    scenario= scenario.select{|scn| scn.id!=self.id} if !self.new_record?
-    unless scenario.empty?
-      self.errors.add(:base,I18n.t('automations.duplicate_title'))
-      return false
+    if !self.accessible.user_access_type? && (self.name_changed? || access_type_changed?)
+      scen_ids = Account.current.scn_automations.shared_scenarios(User.current).where("va_rules.name = ?", self.name).pluck(:id)
+      scen_ids = scen_ids.select{|id| id != self.id} if !self.new_record?
+      unless scen_ids.empty?
+        self.errors.add(:base,I18n.t('automations.duplicate_title'))
+        return false
+      end
     end
     true
-   end
-   true
-  end
-
-  def visibility_not_myself?
-    (self.accessible.access_type != Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:users])
   end
 
   def access_type_changed?

@@ -4,6 +4,7 @@ class Freshfone::UsersController < ApplicationController
 	include Freshfone::NodeEvents
 	include Freshfone::CallsRedisMethods
 	include Freshfone::SubscriptionsUtil
+	include Freshfone::AcwUtil
 
 	EXPIRES = 3600
 	before_filter { |c| c.requires_feature :freshfone }
@@ -36,14 +37,16 @@ class Freshfone::UsersController < ApplicationController
 	end
 
 	def reset_presence_on_reconnect
-		render :json => {
-			:status => @freshfone_user.busy? ? false : reset_presence
+		render json: {
+			status: @freshfone_user.busy_or_acw? ? false : reset_presence
 		}
 	end
 
 	def availability_on_phone
 		return render(json: { error: "In Trial" }, status: 403) if in_trial_states?
 		@freshfone_user.available_on_phone = params[:available_on_phone]
+		@freshfone_user.change_presence_and_preference(
+			Freshfone::User::PRESENCE[:online]) if agent_acw?
 		if @freshfone_user.save
 			publish_agent_device(@freshfone_user,current_user)
 			render :json => { :update_status =>  true } 
@@ -74,8 +77,8 @@ class Freshfone::UsersController < ApplicationController
 		respond_to do |format|
 			format.any(:json, :nmobile) { render :json => {
 				:update_status => update_presence_and_publish_call(params),
-				:call_sid => current_call_sid, 
-				:call_id => current_call_id } }
+				:call_sid => current_call[:call_sid], 
+				:call_id => current_call[:id] } }
 		end
 	end
 
@@ -111,21 +114,18 @@ class Freshfone::UsersController < ApplicationController
 			@freshfone_user.reset_presence.save
 		end
 		
-		def current_call_sid
-			outgoing? ? (current_outgoing_call || {})[:call_sid] : incoming_sid
-		end
-
-		def current_call_id
-			outgoing? ? (current_outgoing_call || {})[:id] :
-			(current_account.freshfone_calls.filter_by_call_sid(incoming_sid).first || {})[:id]
+		def current_call
+			outgoing? ? current_outgoing_call : current_incoming_call
 		end
 
 		def current_outgoing_call
-			@outgoing_call ||= current_user.freshfone_calls.call_in_progress
+			@outgoing_call ||= (current_user.freshfone_calls.outgoing_in_progress_calls || {})
 		end
-
-		def incoming_sid
-			@browser_sid ||= get_browser_sid
+	
+		def current_incoming_call
+			return (current_user.freshfone_calls.recent_in_progress_call || 
+				current_user.freshfone_calls.call_in_progress || {}) if new_notifications?
+			(current_account.freshfone_calls.filter_by_call_sid(get_browser_sid).first || {})
 		end
 		
 		def outgoing?
@@ -161,7 +161,8 @@ class Freshfone::UsersController < ApplicationController
 
 		def resolve_busy
 			@freshfone_user.busy? ? publish_freshfone_presence(current_user) : @freshfone_user.busy!
-			Resque::enqueue(Freshfone::Jobs::BusyResolve, { :agent_id => @freshfone_user.user_id })
+			Resque::enqueue(Freshfone::Jobs::BusyResolve, { :agent_id =>
+				@freshfone_user.user_id }) if busy_resolve?
 		end
 
 		def is_agent_busy?
@@ -188,7 +189,11 @@ class Freshfone::UsersController < ApplicationController
 		end
 
 		def validate_presence
-			return render json: { update_status: false } if agent_in_call?
+			return render json: { update_status: false } if agent_in_call? || agent_acw?
+		end
+
+		def busy_resolve?
+			params[:status].to_i != Freshfone::User::PRESENCE[:busy]
 		end
 
 end

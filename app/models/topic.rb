@@ -161,8 +161,8 @@ class Topic < ActiveRecord::Base
           {}
        else
           { :include => [:forum =>:customer_forums],
-            :conditions =>["forums.forum_visibility in(?) OR (forums.forum_visibility = ? and customer_forums.customer_id =?)" ,
-                           Forum.visibility_array(user) , Forum::VISIBILITY_KEYS_BY_TOKEN[:company_users] ,user.company_id]
+            :conditions =>["forums.forum_visibility in(?) OR (forums.forum_visibility = ? and customer_forums.customer_id in (?))" ,
+                           Forum.visibility_array(user) , Forum::VISIBILITY_KEYS_BY_TOKEN[:company_users], user.company_ids_str]
           }
        end
     else
@@ -448,6 +448,21 @@ class Topic < ActiveRecord::Base
 
   def forum_was
     @old_forum_cached ||= Forum.find(forum_id_was) if forum_id_was
+  end
+
+  def to_rmq_json(keys,action)
+    topic_identifiers
+  end
+
+  def topic_identifiers
+    @rmq_topic_identifiers ||= {
+      "id"          =>  id,
+      "user_id"     =>  user_id,
+      "forum_id"    =>  forum_id,
+      "account_id"  =>  account_id,
+      "published"   =>  published,
+      "answer"      =>  answer,
+    }
   end
 
   def ticket

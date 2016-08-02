@@ -4,7 +4,10 @@ module ContactConstants
   COMPLEX_FIELDS = ARRAY_FIELDS | HASH_FIELDS
   CONTACT_FIELDS = %w(address avatar view_all_tickets company_id description email job_title language mobile name other_emails phone time_zone twitter_id).freeze | ARRAY_FIELDS | HASH_FIELDS
 
+  MAKE_AGENT_FIELDS = %w(occasional group_ids role_ids ticket_scope signature).freeze
   STATES = %w( verified unverified deleted blocked ).freeze
+
+  VALIDATABLE_DELEGATOR_ATTRIBUTES = %w( company_id custom_field ).freeze
 
   INDEX_FIELDS = %w( state email phone mobile company_id ).freeze
 
@@ -37,8 +40,9 @@ module ContactConstants
 
   ALLOWED_CONTENT_TYPE_FOR_ACTION = {
     create: [:json, :multipart_form],
-    update: [:json, :multipart_form]
+    update: [:json, :multipart_form],
+    make_agent: [:json]
   }.freeze
 
-  FIELD_MAPPINGS = { company_name: :company_id, tag_names: :tags, company: :company_id, 'primary_email.email'.to_sym => :email, base: :email }.freeze
+  FIELD_MAPPINGS = { company_name: :company_id, default_user_company: :company_id, company: :company_id, :"primary_email.email" => :email, base: :email }.freeze
 end.freeze

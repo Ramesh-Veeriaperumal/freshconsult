@@ -1,6 +1,7 @@
 class Integrations::InstalledApplication < ActiveRecord::Base
   include Integrations::AppsUtil
   include Integrations::Jira::WebhookInstaller
+  include Cache::Memcache::Helpdesk::Ticket
   
   serialize :configs, Hash
   belongs_to :application, :class_name => 'Integrations::Application'
@@ -23,6 +24,8 @@ class Integrations::InstalledApplication < ActiveRecord::Base
   after_commit :after_commit_on_update_customize, :on => :update
   after_commit :after_commit_on_destroy_customize, :on => :destroy
   after_commit :after_commit_customize
+  after_commit :clear_application_on_dip_from_cache
+  after_commit :clear_tkt_form_cache, :if => :attachment_applications?
 
   include ::Integrations::AppMarketPlaceExtension
 
@@ -185,5 +188,13 @@ class Integrations::InstalledApplication < ActiveRecord::Base
       if ext_app
         self.errors[:base] << t(:'flash.application.already') and return false
       end
+    end
+
+    def clear_application_on_dip_from_cache
+      Account.current.clear_application_on_dip_from_cache
+    end
+
+    def attachment_applications?
+      self.application and ["dropbox","box","onedrive"].include?(self.application.name)
     end
 end

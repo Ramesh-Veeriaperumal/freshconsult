@@ -67,15 +67,7 @@ class Billing::BillingController < ApplicationController
     if LIVE_CHAT_EVENTS.include? params[:event_type]
       retrieve_account unless @account
       if @account && @account.chat_setting && @account.subscription && @account.chat_setting.site_id
-        LivechatWorker.perform_async(
-          {
-            :worker_method => "update_site", 
-            :siteId        => @account.chat_setting.site_id, 
-            :attributes    => { :expires_at => @account.subscription.next_renewal_at.utc,
-                                :suspended => !@account.active?
-                               }
-          }
-        )
+          Livechat::Sync.new.sync_account_state({ :expires_at => @account.subscription.next_renewal_at.utc, :suspended => !@account.active? })
       end
     end
 
@@ -245,13 +237,6 @@ class Billing::BillingController < ApplicationController
       Subscription::UpdatePartnersSubscription.perform_async({ :account_id => @account.id, 
           :event_type => :payment_added, :invoice_id => content[:invoice][:id] })
       store_invoice(content) if @account.subscription.affiliate.nil?
-
-      Resque.enqueue_at(15.minute.from_now, CRM::Freshsales::AccountActivation,
-                               {  account_id: @account.id,
-                                  subscription: @account.subscription.attributes, 
-                                  cmrr:  @account.subscription.cmrr,
-                                  collection_date: content[:invoice][:paid_on],
-                                  auto_collection: content[:customer][:auto_collection] }) if content[:invoice][:first_invoice].to_s == TRUE
     end
 
     def payment_refunded(content)

@@ -189,6 +189,9 @@ label.overlabel{
 	#freshfone-presence-toggle {
 		border-right: 1px solid rgba(255,255,255,0.2);
 	}
+	.freshfone-preference-tooltip{
+		display: inline-block;
+	}
 	i.header-icon-freshfone,i.header-icon-chat {
 		display: block;
 		height: 35px;
@@ -206,6 +209,9 @@ label.overlabel{
 		}
 		&.ff-busy {
 			background-color: #FFAB39;
+		}
+		&.ff-acw {
+			background-color:  #CC4352;
 		}
 	}
 	i.header-icon-chat {
@@ -390,11 +396,12 @@ label.overlabel{
 }
 .ff_hover_card{
 	min-width: 140px !important;
+	padding: 0 !important;
 }
 .ff_alert_card{
 	min-width: 250px !important;
 	position: relative;
-	right:10px;
+	left:260px;
 	top: -20px;
 }
 .adjust_arrow{
@@ -405,6 +412,12 @@ label.overlabel{
 }
 .ff_presence_options {
 	padding: 0 !important;
+	.ff_available{
+		color: #fff;
+		background-color: #666;
+		font-weight: 500;
+		padding: 10px;
+	}
 	.availabilityOnPhone {
 		color: #000;
 		font-weight: 500; 	
@@ -420,11 +433,7 @@ label.overlabel{
 		}
 
 		&:hover {
-			color: #fff;
-			background-color: #999;
-			.ff-dropdown-text {
-				color: #fff;
-			}
+			background-color: #ddd;
 		}
 	}
 	.ficon-ff-on-call {
@@ -678,13 +687,36 @@ a.new_ticket_button, .nav_search, .nav_settings{
 	@include box-shadow(0px -5px 5px 0px rgba(0, 0, 0, 0.5), 0px 70px+$footer-padding 5px 0px rgba(0, 0, 0, 0.5));
 }*/
 .footer-content{
-	padding:20px 0; 
-	@include text-align(center);
-	padding-bottom: 80px;
+	padding:20px 0 100px; 
+	/*@include text-align(center);*/
 	background-color:$footer-bg;
 	border-top: 1px solid $footer-border;
 	border-bottom: 1px solid rgba(0, 0, 0, 0.2);
 	@include box-shadow(inset 0px 1px 0px #FFF, 0 4px 10px -4px rgba(0,0,0,0.2));
+}
+
+.footer-content-centre{
+	padding:20px 0 100px; 
+	@include text-align(center);
+	background-color:$footer-bg;
+	border-top: 1px solid $footer-border;
+	border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+	@include box-shadow(inset 0px 1px 0px #FFF, 0 4px 10px -4px rgba(0,0,0,0.2));
+}
+
+.footer-feedback-subject {
+	-webkit-transition: all 500ms ease;
+    -moz-transition: all 500ms ease;
+    -o-transition: all 500ms ease;
+    transition: all 500ms ease;
+    @include margin-right(5px);
+}
+.footer-feedback-thanks {
+	min-height: 35px;
+}
+.footer-help-links {
+	@include text-align(right);
+	@include padding-right(20px);
 }
 
 // --------------------------------------------------------------------------------------------

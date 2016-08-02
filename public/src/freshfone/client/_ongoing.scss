@@ -29,6 +29,14 @@
 	    border-right: 1px solid #ccc;
 	  }
 	}
+	.ivr_preview_mode {
+	  .hold,.mute,.transfer_call{
+	    visibility: hidden;
+	  }
+	  .ongoingDialpad {
+	    border-left: 1px solid #ccc;
+	  }
+	}
 }
 
 .ongoing {
@@ -147,6 +155,33 @@
 		height: auto;
 		padding: 0;
 	}
+	.minimised-ongoing-dialpad {
+		position: absolute;
+		top: 0;
+		@include right(0);
+		@include left(108px);
+		height: 26px;
+		display: none;
+		line-height: 26px;
+		font-size: 14px;
+		background-color: #aaa;
+		@include border-top-right-radius(4px);
+		@include border-bottom-right-radius(4px);
+	}
+	.minimised-ongoing-dialpad:hover {
+		background-color: #888;
+	}
+	.minimised {
+		display: block;
+	}
+}
+.freshfone_widget .ongoing .minimised-ongoing-dialpad {
+	text-align: left;
+	padding: 0 10px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	cursor: pointer;
 }
 
 
@@ -174,7 +209,7 @@
 		max-height: 380px;
 		min-height: 75px;
 		width: $ongoing-popup-width;
-		right: $ongoing-popup-right;
+		left: $ongoing-popup-left;
 		position: fixed;
 		bottom: 38px;
 		@include border-radius(4px 4px 0px 0px);

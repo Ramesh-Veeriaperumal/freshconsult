@@ -124,7 +124,7 @@ BoxChooser.prototype = {
     var list_markup = '';
     res.item_collection.entries.each(function(entry, index){
       arrow_span_html = (entry.type=='folder'?'<span class="arrow-right"></span>':'');
-      list_markup += this.list_item.evaluate({name: clip_filename(entry.name, 35), item_id: entry.id, type: entry.type, arrow_span: arrow_span_html});
+      list_markup += this.list_item.evaluate({name: clip_filename(htmlEntities(entry.name), 35), item_id: entry.id, type: entry.type, arrow_span: arrow_span_html});
       entry.parent_id = folder_id;
       this.item_id_to_entry[entry.id] = entry;
     }.bind(this));
@@ -138,10 +138,10 @@ BoxChooser.prototype = {
     if(min_depth){ navbar_html += this.navbar_item.evaluate({item_id: 'na', name: '...'}); }
     for(i=min_depth+1; i<max_depth; i++){
       entry = this.path_collection.entries[i];
-      navbar_html += this.navbar_item.evaluate({item_id: entry.id, name: entry.name}); 
+      navbar_html += this.navbar_item.evaluate({item_id: entry.id, name: htmlEntities(entry.name) }); 
     }
     if(Number(res.id))
-      navbar_html += this.navbar_item.evaluate({item_id: res.id, name: '<b>'+res.name+'</b>'});
+      navbar_html += this.navbar_item.evaluate({item_id: res.id, name:'<b>'+htmlEntities(res.name) +'</b>'});
     jQuery('#box-navbar').html(navbar_html);
     jQuery(".box-loading-big").hide();
   },

@@ -9,8 +9,8 @@ class Support::Solutions::ArticlesController < SupportController
   
   before_filter :check_version_availability, :only => [:show]
 
-  before_filter :render_404, :unless => :article_visible?, :only => [:show]
-
+  before_filter :article_visible?, :only => [:show, :hit]
+ 
   before_filter :load_agent_actions, :only => :show
 
   before_filter { |c| c.check_portal_scope :open_solutions }
@@ -19,13 +19,13 @@ class Support::Solutions::ArticlesController < SupportController
 
   newrelic_ignore :only => [:thumbs_up,:thumbs_down]
   before_filter :load_vote, :only => [:thumbs_up,:thumbs_down]
-
   skip_before_filter :verify_authenticity_token, :only => [:thumbs_up,:thumbs_down]
+
+  before_filter :verify_authenticity_token, :only => [:thumbs_up, :thumbs_down], :unless => :public_request?
   
   before_filter :generate_ticket_params, :only => :create_ticket
   after_filter :add_watcher, :add_to_article_ticket, :only => :create_ticket, :if => :no_error
 
-  before_filter :adapt_attachments, :only => [:show]
   before_filter :cleanup_params_for_title, :only => [:show]
 
 
@@ -84,9 +84,37 @@ class Support::Solutions::ArticlesController < SupportController
     end
 
     def article_visible?
-      return false unless @article && (((current_user && current_user.agent? && privilege?(:view_solutions)) || 
-                    @article.current_article.published?) and @article.visible_in?(current_portal))
-      draft_preview_agent_filter?
+      unless @article && @article.visible_in?(@portal)
+        render_404
+        return
+      end
+
+      if (!solution_agent? && draft_preview?)
+        render_404
+        return
+      end
+
+      return if @article.status == Solution::Article::STATUS_KEYS_BY_TOKEN[:published]
+
+      unless solution_agent?
+        render_404 && return if draft_preview?
+        current_account.multilingual? ? version_unavailable : render_404
+        return
+      end
+
+      render_404 unless draft_preview_agent_filter?
+    end
+
+    def solution_agent?
+      current_user && current_user.agent? && privilege?(:view_solutions)
+    end
+
+    def version_unavailable
+      unless @article.current_is_primary?
+        flash[:warning] = version_not_available_msg(controller_name.singularize)
+        redirect_to(support_home_path) and return
+      end
+      render_404 #For unpublished primary articles
     end
     
     def load_agent_actions      
@@ -129,14 +157,15 @@ class Support::Solutions::ArticlesController < SupportController
         @article.attributes.each do |key, value|
           @article.send("#{key}=", draft.send(key)) if draft.respond_to?(key) and key != 'id'
         end
+        adapt_attachments
         @article.freeze
+
+        flash[:notice] = t('solution.articles.draft.portal_preview_msg_v2')
       end
       @page_meta = { :title => @article.title }
     end
 
     def adapt_attachments
-      return true unless draft_preview?
-      flash[:notice] = t('solution.articles.draft.portal_preview_msg_v2')
       @article[:current_attachments] = active_attachments(:attachments)
       @article[:current_cloud_files] = active_attachments(:cloud_files)
     end

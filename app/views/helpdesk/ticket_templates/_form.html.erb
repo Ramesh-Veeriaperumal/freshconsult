@@ -1,0 +1,87 @@
+<%= f.error_messages %>
+<div class="ticket-template-form">
+ 	<ul class="template-details">
+ 		<li>
+ 			<%= f.label :name, t('title') , :class => "required" %>
+			<%= f.text_field :name , :class => "text required", :placeholder => t('ticket_templates.name') %>
+ 		</li>
+ 		<li>
+ 			 <%= f.label :description, t('description'), :class => "" %>
+			 <%= f.text_area :description , :class => "text smallpara", :placeholder => t('ticket_templates.description').html_safe  %>
+ 		</li>
+
+ 		<li class="availabilty-check">
+				<%= f.fields_for :accessible do |access| %>
+					<label class="availability-label"><%=t('ticket_templates.visibility.available_for').html_safe%> :</label>
+					<div class="availability-controls">
+					<div class="inline">
+						<label class="radio" id="group_agents">
+							<%= access.radio_button  :access_type, Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:groups],{:onclick =>"toggleGroup(this.value)" , :class => "radio" , :checked => Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:groups]== @tkt_template.accessible.access_type} %>
+							<%= t('ticket_templates.visibility.groups') %>
+						</label>
+					</div>
+					<div class="inline">
+						<label class="radio" id="all_agents">
+							<%= access.radio_button  :access_type, Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:all], {:onclick =>"toggleGroup(this.value)",:class => "radio" ,:checked => Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:all]== @tkt_template.accessible.access_type } %>
+							<%= t('ticket_templates.visibility.all_agents') %>
+						</label>
+					</div>
+					<div class="mt5" id="accessible_group">
+						<%= access.select_tag("helpdesk_ticket_template[accessible_attributes][group_ids]", options_from_collection_for_select(current_account.groups_from_cache,"id", "name",{:selected=>@tkt_template.accessible.groups.collect{|group| group.id} ,:include_blank => true}), {:multiple => true, :class => "select2 span5", :size => 4, :placeholder => "Select groups"}) %>
+					</div>
+					</div>
+				<%end%>
+		</li>
+	</ul>
+	<div class='ticket-form-title'>
+		<h3 class="lead"><%= t('ticket_templates.ticket_email_form') %></h3>
+	</div>
+	<ul class="compose-new-ticket">
+ 		<%= render :partial => "ticket_form", :object => f, :locals => { :is_edit =>is_edit, :f => f } %>
+	</ul>
+</div>
+
+<%= javascript_tag do %>
+
+jQuery(document).ready(function(){
+	toggleGroup(<%=@tkt_template.accessible.access_type%>);
+
+	if (!<%=privilege?(:manage_ticket_templates)%>)
+	{
+		jQuery('#all_agents,#group_agents,#only_me').children().attr('disabled','disabled');
+		jQuery('#all_agents,#group_agents').addClass("muted");
+	}
+	jQuery(".remove_shared_attachment").on("click", function(){
+		id=jQuery(this).attr("id");
+		jQuery(this).parent().append('<input type="hidden" value="'+id+'" name="remove_attachments[]">');
+		jQuery("#helpdesk_attachment_"+id).addClass("hide");
+	});
+
+	//Autofocus on first field
+	jQuery('#helpdesk_ticket_template_name').focus();
+});
+
+function toggleGroup(access_id)
+{
+	if (access_id == '<%=Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:groups]%>')
+	{
+		jQuery('#accessible_group').show();
+		jQuery('#accessible_group select').select2();
+	}
+	else
+	{
+		jQuery('#accessible_group').hide();
+		jQuery('#accessible_group select').select2('val', '')
+	}
+}
+
+jQuery('body').on('click', 'a[rel="ticket_canned_response"]', function(ev){
+	ev.preventDefault();
+	jQuery("#canned_response_show").attr('data-tiny-mce-id', "#helpdesk_ticket_ticket_body_attributes_description_html");
+	jQuery('#canned_response_show').trigger('click');
+});
+// Sync data of agent select box with group
+jQuery(window).on('load', function(){
+  jQuery("#template_data_group_id").trigger('change');
+});
+<% end %>

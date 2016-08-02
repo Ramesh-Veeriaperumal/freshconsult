@@ -11,7 +11,7 @@ class Helpdesk::TicketsExport
   	elsif $redis_others.perform_redis_op("sismember", long_running_key, Account.current.id)
   		Resque.enqueue(Helpdesk::LongRunningTicketsExport, export_params)
   	else
-  		Helpdesk::TicketsExportWorker.new(export_params).perform
+  		Export::Ticket.new(export_params).perform
   	end
   end
 end

@@ -569,13 +569,10 @@ ul.ui-form .ui-form-inline{
 				.select2-container{@include left(1px);}
 				label{margin-top: 7px;}
 				label.error{ width:100%; }
-				.subject_div{
 				.sub_placeholder{
-					width: 78%; padding: 0px;
-					input[type='text']{width: 73%; height: 18px;}
-					.l_placeholder{position:relative; top:3px; @include right(3px);}
-					}
+					width: 73%;
 				}
+				.l_placeholder{@include float(right); @include margin-right(12%);}
 			}
 
 			span{
@@ -2635,4 +2632,17 @@ label.label-choice{ cursor: pointer; }
 	border: none;
 	box-shadow: none;
 	height: 100px;
+}
+/*canned response icon*/
+a.ficon-canned-response.redactor_separator_ficon,a.ficon-book-dark.redactor_separator_ficon {
+	background-image: none;
+	text-indent: 0px;
+	content: "";
+	font-size:20px;
+	color: #848484;
+	margin-bottom: 5px;
+}
+a.ficon-canned-response.redactor_separator_ficon:before,a.ficon-book-dark.redactor_separator_ficon:before{
+	margin-top: 5px;
+    margin-left: 3px;
 }

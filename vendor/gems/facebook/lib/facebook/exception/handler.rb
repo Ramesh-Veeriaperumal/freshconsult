@@ -38,18 +38,18 @@ module Facebook
                     raise_sns_notification(error_params[:error_msg][0..50], error_params) : 
                     update_error_and_notify(error_params)
               else
-                raise_sns_notification(error_params[:error_msg][0..50], error_params)
+                raise_newrelic_error(error_params)
               end
             
             elsif server_error?
               if permission_error?
                 update_error_and_notify(error_params)
               else
-                Sqs::Message.new("{}").requeue(JSON.parse(@raw_obj)) if @raw_obj
+                Sqs::Message.new("{}").requeue(JSON.parse(@raw_obj)) if (@raw_obj && @exception.response_body.downcase.include?(SERVICE_UNAVAILABLE))
                 raise_sns_notification("Server Error", {:error => "Server Error", :exception => @exception})
               end
             else
-              raise_sns_notification(error_params[:error_msg][0..50], error_params)
+              raise_newrelic_error(error_params)
             end
             
           rescue => @exception
@@ -88,7 +88,7 @@ module Facebook
         end
         
         def permission_error?
-          !@exception.fb_error_code.blank? and @exception.fb_error_code.between?(PERMISSION_ERROR.first,  PERMISSION_ERROR.last)
+          !@exception.fb_error_code.blank? && @exception.fb_error_code.between?(PERMISSION_ERROR.first,  PERMISSION_ERROR.last) && @exception.fb_error_message.include?(PERMISSION_MSG)
         end
         
       end

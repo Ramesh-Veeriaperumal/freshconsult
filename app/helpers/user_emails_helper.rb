@@ -4,6 +4,9 @@ module UserEmailsHelper
     def initialize(form_builder, object_name, class_name, field, field_label, dom_type, required, enabled,
                       field_value = '', dom_placeholder = '', bottom_note = '', args = {})
     @account = args[:account]
+    @user_companies = args[:user_companies]
+    @contractor = args[:contractor]
+    @company_field_req = args[:company_field_req]
     super
     end
 
@@ -15,6 +18,12 @@ module UserEmailsHelper
       if @field_name == "email"
         @field_value = @form_builder.object.user_emails.map(&:email).join(", ")
       end
+      super
+    end
+
+    def construct_text
+      return construct_company_field if @account.features_included?(:multiple_user_companies) && 
+                                        @field_name == "company_name"
       super
     end
 
@@ -70,5 +79,64 @@ HTML
       output.join("").html_safe
     end
 
+    def construct_company_field
+      output = []
+      count = @user_companies.length
+      if @user_companies.present?
+        @user_companies.each_with_index do |user_company, index|
+          output << construct_user_company(user_company.default, user_company.client_manager, user_company.company)
+        end
+      else
+        output << construct_user_company(true, false)
+      end
+      check_box_html = @form_builder.check_box(:contractor, 
+                                              { :class => "activate", 
+                                                :checked => @contractor}, true, false).html_safe
+      output = output.join("").html_safe
+      ret = <<HTML
+        <div id="user_companies" class="user_comp">
+          <ul class="companies">
+            #{output}
+          </ul>
+          <div class="uc_add_company">
+            <a id="add_new_company" href="javascript:void(null);">
+              <span class="add_pad uc_actions ficon-plus fsize-12"></span>
+              <span id="add_company"></span>
+              #{t('add_new_company')}
+            </a>
+          </div>
+        </div>
+HTML
+      ret.html_safe
+    end
+
+    def construct_user_company(uc_default, uc_client_manager, company=nil)
+      output = []
+      output << %(<li class="uc_list uc_list_edit row-fluid" data-client-manager="#{uc_client_manager}" data-default-company="#{uc_default}" data-new-company='true'>)
+      output << "<div class='span10'>"
+      class_name = "remove_pad company_delete uc_actions ficon-minus fsize-12 #{"disabled" if @company_field_req && uc_default }"
+      output << content_tag(:a, "", :class => class_name)
+      if company.present?
+        output << "<p class='uc_text' data-id='#{company.id}'>#{html_escape company.name}</p>"
+      else
+        output << "<input type='text' name='company_name' class='#{"required" if @company_field_req && uc_default } text contact_text new_company user_company ui-autocomplete-input' id='user_company_name_1'>"
+      end
+      output << "</div>"
+      if uc_default == true
+        title = t('contacts.default_company')
+        class_name = "ficon-checkmark-round primary"
+      else
+        title = t('contacts.mark_default_company')
+        class_name = "make_company_default"
+      end
+      output << "<div class='span2 text-left'><i class='fsize-18 tooltip client_manager 
+                      #{uc_client_manager == true ? "unmanage ficon-ticket" : "manage ficon-ticket-thin"}' 
+                    title='#{t('contacts.client_manager')}'></i>"
+      output << content_tag(:span, "", 
+                    :class => "default_company tooltip fsize-20 ml9 #{class_name}",
+                    :title => title)
+      output << "</div></li>"
+      output
+    end
   end
 end

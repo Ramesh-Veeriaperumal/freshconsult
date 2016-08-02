@@ -2,6 +2,7 @@ class ConversationsController < ApiApplicationController
   include TicketConcern
   include CloudFilesHelper
   include Conversations::Email
+  decorate_views(decorate_objects: [:ticket_conversations], decorate_object: [:create, :update, :reply])
 
   before_filter :can_send_user?, only: [:create, :reply]
 
@@ -20,10 +21,16 @@ class ConversationsController < ApiApplicationController
     sanitize_params
     build_object
     kbase_email_included? params[cname] # kbase_email_included? present in Email module
-    is_success = create_note
-    render_response(is_success)
-    # publish solution is being set in kbase_email_included based on privilege and email params
-    create_solution_article if is_success && @publish_solution
+    conversation_delegator = ConversationDelegator.new(@item)
+    if conversation_delegator.valid?
+      @item.email_config_id = conversation_delegator.email_config_id
+      is_success = create_note
+      # publish solution is being set in kbase_email_included based on privilege and email params
+      create_solution_article if is_success && @publish_solution
+      render_response(is_success)
+    else
+      render_custom_errors(conversation_delegator, true)
+    end
   end
 
   def update
@@ -43,7 +50,7 @@ class ConversationsController < ApiApplicationController
   def ticket_conversations
     return if validate_filter_params
     ticket_conversations = @ticket.notes.visible.exclude_source('meta').preload(:schema_less_note, :note_old_body, :attachments).order(:created_at)
-    @ticket_conversations = paginate_items(ticket_conversations)
+    @items = paginate_items(ticket_conversations)
   end
 
   def self.wrap_params
@@ -51,6 +58,10 @@ class ConversationsController < ApiApplicationController
   end
 
   private
+
+    def decorator_options
+      super({ ticket: @ticket })
+    end
 
     def after_load_object
       load_notable_from_item # find ticket in case of APIs which has @item.id in url

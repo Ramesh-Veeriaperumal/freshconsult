@@ -24,7 +24,7 @@ class Search::V2::SuggestController < Search::V2::SpotlightController
       super
       @suggest        = true
       @klasses        = esv2_klasses
-      @search_context = :agent_spotlight_global
+      @search_context = :agent_spotlight_suggest
     end
 
     # ESType - [model, associations] mapping

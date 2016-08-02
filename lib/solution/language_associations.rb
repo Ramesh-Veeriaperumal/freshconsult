@@ -109,6 +109,11 @@ module Solution::LanguageAssociations
       end
     end
 
+    def current_is_primary?
+      return unless Language.current.present?
+      self[:language_id] == Account.current.language_object.id
+    end
+
     def portal_available_versions
       language_keys = in_available & Account.current.all_portal_language_objects.map(&:to_key)
       language_keys.map{ |l| Language.find_by_key(l) }

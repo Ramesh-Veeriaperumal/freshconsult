@@ -39,7 +39,7 @@ class Support::Solutions::FoldersController < SupportController
 	  end
 
     def folder_visible?
-      @folder.visible_in?(current_portal)
+      @folder && @folder.visible_in?(current_portal)
     end
 
 		def unscoped_fetch

@@ -6,7 +6,7 @@ class ApiContactsController < ApiApplicationController
 
   def create
     assign_protected
-    contact_delegator = ContactDelegator.new(@item, other_emails: @email_objects[:old_email_objects], custom_fields: params[cname][:custom_field])
+    contact_delegator = ContactDelegator.new(@item, email_objects: @email_objects, custom_fields: params[cname][:custom_field])
     if !contact_delegator.valid?
       render_custom_errors(contact_delegator, true)
     else
@@ -21,8 +21,10 @@ class ApiContactsController < ApiApplicationController
 
   def update
     assign_protected
-    @item.assign_attributes(params[cname].except('tag_names'))
-    contact_delegator = ContactDelegator.new(@item, other_emails: @email_objects[:old_email_objects], custom_fields: params[cname][:custom_field])
+    custom_fields = params[cname][:custom_field] # Assigning it here as it would be deleted in the next statement while assigning.
+    # Assign attributes required as the contact delegator needs it.
+    @item.assign_attributes(validatable_delegator_attributes)
+    contact_delegator = ContactDelegator.new(@item, email_objects: @email_objects, custom_fields: custom_fields)
     unless contact_delegator.valid?
       render_custom_errors(contact_delegator, true)
       return
@@ -37,16 +39,11 @@ class ApiContactsController < ApiApplicationController
   end
 
   def make_agent
-    if @item.email.blank?
-      render_request_error :inconsistent_state, 409
-    elsif (@agent_limit = current_account.subscription.agent_limit) && agent_limit_reached?
-      render_request_error :max_agents_reached, 403, max_count: @agent_limit
+    return if invalid_params_or_state?
+    if @item.make_agent(params[cname])
+      @agent = Agent.find_by_user_id(@item.id)
     else
-      if @item.make_agent
-        @agent = Agent.find_by_user_id(@item.id)
-      else
-        render_errors(@item.errors)
-      end
+      render_errors(@item.errors)
     end
   end
 
@@ -55,6 +52,12 @@ class ApiContactsController < ApiApplicationController
   end
 
   private
+
+    # Same as http://apidock.com/rails/Hash/extract! without the shortcomings in http://apidock.com/rails/Hash/extract%21#1530-Non-existent-key-semantics-changed-
+    # extract the keys from the hash & delete the same in the original hash to avoid repeat assignments
+    def validatable_delegator_attributes
+      params[cname].select { |key, value| (params[cname].delete(key); true) if ContactConstants::VALIDATABLE_DELEGATOR_ATTRIBUTES.include?(key) }
+    end
 
     def decorator_options
       super({ name_mapping: (@name_mapping || get_name_mapping) })
@@ -81,10 +84,40 @@ class ApiContactsController < ApiApplicationController
           return false
         end
       end
+    end
 
-      # make_agent route doesn't accept any parameters
-      if action_name == 'make_agent' && params[cname].present?
-        render_request_error :no_content_required, 400
+    def invalid_params_or_state?
+      return true if blank_email? # invalid state because agent can't be created without email.
+      if params[cname].present?
+        invalid_params?
+      else
+        agent_limit_reached?
+      end
+    end
+
+    def blank_email?
+      render_request_error :inconsistent_state, 409 if @item.email.blank?
+    end
+
+    # returns true if it fails params validation either in data type validation or in delegator validation.
+    def invalid_params?
+      params[cname].permit(*(ContactConstants::MAKE_AGENT_FIELDS))
+      make_agent = MakeAgentValidation.new(params[cname], @item)
+      if make_agent.valid?
+        ParamsHelper.assign_and_clean_params({ ticket_scope: :ticket_permission, signature: :signature_html }, params[cname])
+        agent_delegator = AgentDelegator.new(params[cname].slice(:role_ids, :group_ids))
+        render_errors(agent_delegator.errors, agent_delegator.error_options) if agent_delegator.invalid?
+      else
+        render_errors(make_agent.errors, make_agent.error_options)
+      end
+    end
+
+    # returns true if agent limit is reached for the account. No more full time agents can't be created.
+    # Will return 403 as make_agent action considers full time agent creation if no params in request.
+    def agent_limit_reached?
+      agent_limit_reached, agent_limit = ApiUserHelper.agent_limit_reached?
+      if agent_limit_reached
+        render_request_error :max_agents_reached, 403, max_count: agent_limit
       end
     end
 
@@ -114,6 +147,9 @@ class ApiContactsController < ApiApplicationController
         params_hash[:avatar_attributes] = { content: params_hash.delete(:avatar) }
       end
 
+      # email has to be saved in downcase to maintain consistency between user_emails table and users table
+      params_hash[:email].downcase! if params_hash[:email]
+
       @email_objects = {}
       construct_all_emails(params_hash) if params_hash.key?(:other_emails)
 
@@ -124,14 +160,16 @@ class ApiContactsController < ApiApplicationController
 
     def construct_all_emails(params_hash)
       all_emails = params_hash.delete(:other_emails)
-      primary_email = params_hash.key?(:email) ? params_hash.delete(:email) : @item.email
 
-      all_emails.uniq!
+      # If an existing user has an uppercase email, save it in downcase to maintain constistency with user_emails table
+      primary_email = params_hash.key?(:email) ? params_hash.delete(:email) : @item.email.downcase
 
       if primary_email
         @email_objects[:primary_email] = primary_email
         all_emails << primary_email
       end
+
+      all_emails.map!(&:downcase).uniq!
 
       @email_objects[:old_email_objects]  = current_account.user_emails.where(email: all_emails)
       @email_objects[:new_emails]  = all_emails - @email_objects[:old_email_objects].collect(&:email)
@@ -145,7 +183,7 @@ class ApiContactsController < ApiApplicationController
 
     def load_objects
       # preload(:flexifield) will avoid n + 1 query to contact field data.
-      super contacts_filter(scoper).preload(:flexifield).order('users.name')
+      super contacts_filter(scoper).preload(:flexifield, :default_user_company).order('users.name')
     end
 
     def contacts_filter(contacts)
@@ -170,10 +208,6 @@ class ApiContactsController < ApiApplicationController
 
     def assign_protected
       @item.deleted = true if @item.email.present? && @item.email =~ ContactConstants::MAILER_DAEMON_REGEX
-    end
-
-    def agent_limit_reached?
-      current_account.agents_from_cache.find_all { |a| a.occasional == false && a.user.deleted == false }.count >= @agent_limit
     end
 
     def valid_content_type?

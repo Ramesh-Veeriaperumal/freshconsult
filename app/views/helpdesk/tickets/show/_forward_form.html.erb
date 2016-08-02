@@ -34,29 +34,31 @@
               "data-fulltext" => true,
               "data-submitting" => 'false'
             } do |f| %>
+ <div class="form_title custom-selectdrop" id="fwd_title" >
+ <b><%= t('.title').html_safe %></b>
 
-<%= content_tag( :div, t("fwd_to"), :class => "form_title", :id => "fwd_title" ) %>
+<select id="reply_email_id" name="reply_email[id]" class="select2  responder_field " data-container-css-class="ticketSelect2Container" data-dropdown-css-class="ticketSelect2">
+        <% @reply_emails.each do |re| %>
+          <% if re[1].downcase == @selected_reply_email.downcase %>
+            <% @selected_email_config_id = re[0]%>
+            <option value="<%=re[1]%>" data-email-config-id="<%=re[0]%>" selected="selected"><%= h re[1].gsub(/"/,'') { |match|  }%></option>
+          <% else %>
+            <option value="<%=re[1]%>" data-email-config-id="<%=re[0]%>"><%= h re[1].gsub(/"/,'') { |match|  }%></option>
+          <% end %>  
+        <%end%>
+      </select>
+ </div>
+
 <% if conv_id.nil? %>
 <div class="list_agents_replying" class="hide"></div>
 <% end %>
 <%= f.error_messages %>       
 <ul class="ui-form dont-validate botm-space">
-  <li class="inline-field field" >
-      <%= f.label(:reply_email, t('ticket.from'), :class => "mailaddr-label from" ) %>
+<!-- <li class="inline-field field" >
+      # <%= f.label(:reply_email, t('ticket.from'), :class => "mailaddr-label from" ) %>
       <%#= select :reply_email, :id, options_for_select(@reply_emails, @selected_reply_email), {}, {:class => 'select2 responder_field'} %>
-      <select id="reply_email_id" name="reply_email[id]" class="select2 responder_field">
-        <% @reply_emails.each do |re| %>
-          <% if re[1].downcase == @selected_reply_email.downcase %>
-            <% @selected_email_config_id = re[0]%>
-            <option value="<%=re[1]%>" data-email-config-id="<%=re[0]%>" selected="selected"><%= h re[1]%></option>
-          <% else %>
-            <option value="<%=re[1]%>" data-email-config-id="<%=re[0]%>"><%= h re[1]%></option>
-          <% end %>  
-        <%end%>
-      </select>
-  </li>
-
-  <li class="inline-field field cc_fields">
+  </li> -->
+  <li class="inline-field field cc_fields forward">
      <%= f.label(:forward_email, t('helpdesk.tickets.to'), :class => "caption mailaddr-label" ) %>
       
       <div class="request_form_options">
@@ -116,20 +118,30 @@
     <%= render :partial => 'helpdesk/tickets/show/editor_insert_buttons', :locals => { :cntid => cntid } %>
     <% conv_item = conv_id.nil? ? @ticket : @note %>
     <%= f.fields_for(:note_body, Helpdesk::NoteBody.new) do |ff| %>
-            <%= ff.text_area :body_html, :class => "body_html required", :id => "#{cntid}-body", :value => bind_last_conv(conv_item, @signature, true), :"data-wrap-font-family" => true %>
+            <%= ff.text_area :body_html, :class => "body_html", :id => "#{cntid}-body",  :"data-wrap-font-family" => true, :"data-quoted-textarea" => "##{cntid}-quoted" %>
             <%= ff.text_area :full_text_html, :id => "#{cntid}-body-fulltext", :value => "", 
                                   :style => "display:none;"%>
+            <%if  current_browser == "Internet Explorer" %>
+                <%= text_area_tag "quoted_text_html", h(bind_last_conv(conv_item, @signature, true)), { :id => "#{cntid}-quoted", :class => "hide" } %>
+            <% else %>
+              <template name = "quoted_text_html" id = "<%= cntid %>-quoted" class="hide">
+                <%= h(bind_last_conv(conv_item, @signature, true)) %>
+              </template>
+            <% end %>
     <% end %>
   </li>
   <li class="inline-field field continous file_size_alert hide" id="file_size_alert_<%= cntid %>">
     <span class="alert-text"><%= t('helpdesk.tickets.show.forward_form.not_sent') %></span>
     <%= t('helpdesk.tickets.note.attachment_size.exceed') %>
   </li>
-  <li class="inline-field field attachment-options continous" id="attachment-options-reply">
+  <li class="attachment-options-reply" id="attachment-options-reply">
       <% unless local_assigns[:no_attachments] %>
-      <% attached= conv_item.class.name=="Helpdesk::Note" ? conv_item.all_attachments : conv_item.attachments %>
-      <% attachments = {:regular => attached, :cloud_files => conv_item.cloud_files } %>
-      <%= render :partial => "/helpdesk/tickets/show/attachment_form", :locals => { :attach_id => id , :nsc_param => "helpdesk_note", :original_attachments => attachments} %>
+      <% attachments = {:regular => conv_item.all_attachments, :cloud_files => conv_item.cloud_files } %>
+          <% if current_account.launched?(:multifile_attachments) %>
+               <%= render :partial => "/helpdesk/tickets/show/multi_attachment_form", :locals => { :attach_id => id , :nsc_param => "helpdesk_note", :forward=>true,:original_attachments => attachments} %>
+            <% else %>
+              <%= render :partial => "/helpdesk/tickets/show/single_attachment_form", :locals => { :attach_id => id , :nsc_param => "helpdesk_note", :forward => true,:original_attachments => attachments } %>
+            <% end %> 
       <% end %>    
   </li>
 
@@ -144,7 +156,7 @@
 
 </ul>
 
-<div class="btn-toolbar">
+<div class="btn-toolbar no-width">
 
   <span>
     <a class="btn cancel_btn" data-show-pseudo-reply="<%=conv_id.nil?.to_s %>" data-cnt-id="<%=cntid%>">
@@ -171,10 +183,15 @@
     }, 100);
 </script>
 
+
 <% end %>
+
+
+
+
 <% content_for :pagefixed do %>
   <script type="text/javascript">
-    jQuery('#HelpdeskFwd_<%=cntid%> select#reply_email_id').live('change',function(e){
+  jQuery('#HelpdeskFwd_<%=cntid%> select#reply_email_id').live('change',function(e){
     var selectObj = jQuery(e.target),
         form = e.target.form,
         fromEmail = selectObj.val();
@@ -183,4 +200,7 @@
         form['helpdesk_note[email_config_id]'].value = email_config_id;
   })
   </script>
+
+
+
 <% end %>

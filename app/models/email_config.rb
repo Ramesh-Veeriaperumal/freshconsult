@@ -71,7 +71,7 @@ class EmailConfig < ActiveRecord::Base
 
   protected
     def blacklisted_domain?
-      domain = self.reply_email.split("@").last.strip
+      domain = self.reply_email.split("@").last.strip if self.reply_email.present?
       self.errors.add(:base, I18n.t('email_configs.blacklisted_domain_message')) \
         if ismember?(EMAIL_CONFIG_BLACKLISTED_DOMAINS, domain)
     end

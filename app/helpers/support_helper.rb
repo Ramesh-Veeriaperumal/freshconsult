@@ -21,7 +21,7 @@ module SupportHelper
 					  "Droid Serif" => "Droid+Serif:regular,italic,700,700italic",
 					  "Oswald" => "Oswald:regular,700",
 					  "Open Sans Condensed" => "Open+Sans+Condensed:300,300italic,700",
-					  "Open Sans" => "Open+Sans:regular,italic,700,700italic&subset=latin,latin-ext",
+					  "Open Sans" => "Open+Sans:regular,italic,700,700italic",
 					  "Merriweather" => "Merriweather:regular,700",
 					  "Roboto Condensed" => "Roboto+Condensed:regular,italic,700,700italic",
 					  "Roboto" => "Roboto:regular,italic,700,700italic",
@@ -267,11 +267,11 @@ module SupportHelper
 	end
 
 	def portal_fav_ico
-		fav_icon = MemcacheKeys.fetch(["v7","portal","fav_ico",current_portal],30.days.to_i) do
+		fav_icon = MemcacheKeys.fetch(["v7","portal","fav_ico",current_portal],7.days.to_i) do
      			current_portal.fav_icon.nil? ? '/assets/misc/favicon.ico?123458' :
             		AwsWrapper::S3Object.url_for(current_portal.fav_icon.content.path,
             			current_portal.fav_icon.content.bucket_name,
-                        :expires => 30.days.to_i,
+                        :expires => 7.days.to_i,
                         :secure => true)
             end
 		"<link rel='shortcut icon' href='#{fav_icon}' />".html_safe
@@ -361,7 +361,7 @@ module SupportHelper
 					</div> ).html_safe
 			else
 				%( #{ ticket_label object_name, field }
-		   			<div class="controls #{"nested_field" if field.dom_type=="nested_field"} #{"support-date-field" if field.dom_type=="date"}">
+		   			<div class="controls #{"nested_field" if field.dom_type=="nested_field"} #{"support-date-field" if field.dom_type=="date"} #{"company_div" if field.field_type == "default_company" && @ticket.new_record?}">
 		   				#{ ticket_form_element form_builder, :helpdesk_ticket, field, field_value,
 		   																						 { :pl_value_id => pl_value_id } }
 		   			</div> ).html_safe
@@ -370,7 +370,7 @@ module SupportHelper
 
 	def ticket_label object_name, field
 		required = (field[:required_in_portal] && field[:editable_in_portal])
-		element_class = " #{required ? 'required' : '' } control-label #{field[:name]}-label"
+		element_class = " #{required ? 'required' : '' } control-label #{field[:name]}-label #{"company_label" if field.field_type == "default_company" && @ticket.new_record?}"
 		label_tag "#{object_name}_#{field[:name]}", field[:label_in_portal].html_safe, :class => element_class
 	end
 
@@ -385,6 +385,7 @@ module SupportHelper
 
 	    case dom_type
 	      when "requester" then
+	      	@company_cc_in_portal = field.company_cc_in_portal?
 	      	render(:partial => "/support/shared/requester", :locals => { :object_name => object_name, :field => field, :html_opts => html_opts, :value => field_value })
 	      when "widget_requester" then
 	      	render(:partial => "/support/shared/widget_requester", :locals => { :object_name => object_name, :field => field, :html_opts => html_opts, :value => field_value })
@@ -397,8 +398,11 @@ module SupportHelper
           			field.field_type == "default_status" ? field.visible_status_choices : field.html_unescaped_choices,
           			{ :selected => (field.is_default_field? and is_num?(field_value)) ? field_value.to_i : field_value }, {:class => element_class})
 	      when "dropdown_blank" then
-	        select(object_name, field_name, field.html_unescaped_choices,
-	        		{ :include_blank => "...", :selected => (field.is_default_field? and is_num?(field_value)) ? field_value.to_i : field_value }, {:class => element_class})
+	      	tkt = @ticket if field.field_type == "default_company"
+	      	choices = field.html_unescaped_choices(tkt)
+	      	disabled = true if field.field_type == "default_company" && choices.empty?
+	        select(object_name, field_name, choices,
+	        		{ :include_blank => "...", :selected => (field.is_default_field? and is_num?(field_value)) ? field_value.to_i : field_value }, {:class => element_class, :disabled => disabled})
 	      when "nested_field" then
 			nested_field_tag(object_name, field_name, field,
 	        	{:include_blank => "...", :selected => field_value, :pl_value_id => pl_value_id},
@@ -773,7 +777,7 @@ module SupportHelper
 		output = []
 
 		output << %(<div class="attachment">)
-		tooltip = "data-toggle='tooltip' title='#{cloud_file.filename}'" if cloud_file.filename.size > 15
+		tooltip = "data-toggle='tooltip' title='#{h(cloud_file.filename)}'" if cloud_file.filename.size > 15
 		output << %(<a href="#{cloud_file.delete_url}" data-method="delete" data-confirm="#{I18n.t('attachment_delete')}" class="delete mr5"></a>) if can_delete
 
 		output << %(<img src="/assets/#{cloud_file.provider}_big.png"></span>)
@@ -781,7 +785,7 @@ module SupportHelper
 		output << %(<div class="attach_content">)
 		output << %(<div class="ellipsis">)
 		output << %(<a href="#{cloud_file.url}" class="filename" target="_blank"
-			        #{tooltip}>#{ cloud_file.filename.truncate(15) } </a>)
+			        #{tooltip}>#{h(cloud_file.filename.truncate(15))} </a>)
 		output << %(<span class="file-size cloud-file"></span>)
 		output << %(</div>)
 		output << %(</div>)

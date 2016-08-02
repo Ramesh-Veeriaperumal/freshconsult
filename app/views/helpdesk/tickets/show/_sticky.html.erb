@@ -14,13 +14,24 @@
 				</li>
 			</ul>
 		</div>
+		<% if Account.current.launched?(:activity_ui) %>
+			<div id="activity_toggle" title='<%= t('ticket.show_activities_tooltip') %>'  data-show-title = '<%= t('ticket.show_activities_tooltip') %>' data-hide-title= '<%= t('ticket.hide_activities_tooltip') %>' data-keybinding="<%= shortcut('ticket_detail.show_activities_toggle') %>"
+				class="activity_toggle btn clearfix tooltip" data-toggle="button" data-placement = "below"
+				 data-highlight="true">
+				<div class="text">
+					<i class="ficon-tick activities_tick"></i>
+					<%= t('ticket.activity_toggle_v2') %>
+				</div>
+			</div>
+		<% else %>
+			<div id="activity_toggle" title='<%= t('ticket.activity_toggle') %>' 
+				class="activity_toggle btn clearfix tooltip" data-toggle="button" data-placement = "below"
+				data-keybinding="<%= shortcut('ticket_detail.show_activities_toggle') %>" data-highlight="true">
+				<div class="text"><%= t('ticket.activity_toggle') %></div>
+				<span class="visible">Yes</span><span>No</span>
+			</div>
+		<% end %>
 
-		<div id="activity_toggle" title='<%= t('ticket.activity_toggle') %>' 
-			class="activity_toggle btn clearfix tooltip" data-toggle="button" data-placement = "below"
-			data-keybinding="<%= shortcut('ticket_detail.show_activities_toggle') %>" data-highlight="true">
-			<div class="text"><%= t('ticket.activity_toggle') %></div>
-			<span class="visible">Yes</span><span>No</span>
-		</div>
 		<div class="ticket-actions" data-domhelper-name="ticket-actions">
 			<ul class="collapse-content" data-domhelper-name="ticket-action-options">
 				<% unless @ticket.deleted or @ticket.spam %>
@@ -86,7 +97,7 @@
 				<% end %>
 				<% if privilege?(:merge_or_split_ticket) %>
 				<li class="ticket-btns hide_on_collapse">
-					<a href="#merge_freshdialog" class="btn btn-collapse" 
+					<a href="#merge_freshdialog" class="btn btn-collapse reload-action" 
 						data-width="800" 
 						data-ticket-display-id = "<%= @ticket.display_id %>"
 						rel="freshdialog"
@@ -104,7 +115,7 @@
 		            </span>
 				</div>
 				<% end %>
-				<li class="ticket-btns hide_on_collapse">
+				<li class="ticket-btns hide_on_collapse scenario reload-action">
 					<div class="tooltip keytitle" title='<%="#{t('ticket.execute_scenario')}"%>' data-placement = "below" data-hotkey='<%="#{shortcut('ticket_detail.scenario')}"%>'>
 					<%= link_to( t('ticket.scenarios'), "/helpdesk/tickets/#{@ticket.id}/component?component=scenarios", 
 					  				:rel => 'freshdialog', "data-target" => "#execute_scenario", :class => 'btn btn-collapse', "data-keybinding" => shortcut('ticket_detail.scenario'), "data-highlight" => true, "data-template-footer" => "",
@@ -119,13 +130,13 @@
 			  	<% end %>
 
 			  	<% if (feature?(:forums) && privilege?(:create_topic) && @ticket.ticket_topic.nil? && @ticket.requester.active?) %>		
-			  	<li class = "collapse_on_default">		
+			  	<li class = "collapse_on_default reload-action">		
 			  		<%= link_to t('ticket.convert_to_topic'),new_discussions_topic_path(:ticket_id => @ticket.display_id) %>		
 			  	</li>		
 			  	<% end%>
 
 			  	<% if privilege?(:edit_ticket_properties) and !@ticket.outbound_email?%>
-			  	<li class = "collapse_on_default">
+			  	<li class = "collapse_on_default edit reload-action">
 			  		<%= link_to(t('ticket.edit_btn'), edit_helpdesk_ticket_path(@ticket)  ) %>
 			  	</li>
 			  	<% end %>
@@ -133,12 +144,12 @@
 			  	<li class = "collapse_on_default">
 			  		<%= link_to( "Print", print_helpdesk_ticket_path(@ticket), :target => "_blank") %>
 			  	</li>
-			  	<li class = "collapse_on_default">
+			  	<li class = "collapse_on_default spam reload-action">
 			  		<%= render :partial => "spam", :locals => { :ticket => @ticket, :page => params[:page] } %>
 			  	</li>
 			  	
 			  	<% if privilege?(:delete_ticket) %>
-			  	<li class = "collapse_on_default">
+			  	<li class = "collapse_on_default delete reload-action">
 			  		<%= link_to(t('ticket.delete_btn'),
 			  					helpdesk_ticket_path({:id => @ticket.display_id, :page => params[:page]}),
 			  					:method => :delete, "data-domhelper-name" => "ticket-delete-btn", "data-keybinding" => shortcut('ticket_detail.delete')) %>

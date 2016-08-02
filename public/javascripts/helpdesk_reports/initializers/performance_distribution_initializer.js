@@ -45,7 +45,16 @@ HelpdeskReports.ChartsInitializer.PerformanceDistribution = (function () {
                     data: this.fillArray(this.arrayElementsSum(current_data),current_data.length),
                     color:  REPORT_COLORS["barChartDummy"],
                     states: { hover: { brightness: 0 } },
-                    borderRadius: 5
+                    borderRadius: 5,
+                    cursor: 'pointer',
+                    point: {
+                        events: {
+                            click: function () {
+                                var ev = this; 
+                                _FD.ticketListEvent(ev,label_key);
+                            }
+                        }
+                    }
                 },{
                     data: current_data,
                     color: this.COLORS[chart_name],
@@ -296,7 +305,7 @@ HelpdeskReports.ChartsInitializer.PerformanceDistribution = (function () {
             var date_range = HelpdeskReports.locals.date_range;
             var split = date_range.split("-");
             
-            if(split.length  == 1) {
+            if(split.length  == 1 || (split[0].trim() == split[1].trim())) {
                  _FD.showSimpleStats(hash);
                  jQuery(".trends").addClass('hide');
                  jQuery(".stat").removeClass('hide');
@@ -311,10 +320,10 @@ HelpdeskReports.ChartsInitializer.PerformanceDistribution = (function () {
         showSimpleStats : function(hash) {
                  var metrics = _FD.constants.metrics;
                  jQuery.each(metrics, function (index, value) {
-                     var current_data = hash[value];
+                     var current_data = hash[value+'_BUCKET'];
                      var time = "";
-                     if(current_data != undefined && current_data.general != undefined){
-                        time = HelpdeskReports.CoreUtil.timeMetricConversion(current_data.general.metric_result);
+                     if(current_data != undefined){
+                        time = HelpdeskReports.CoreUtil.timeMetricConversion(current_data['avg_value']);
                      } else{
                         time = HelpdeskReports.CoreUtil.timeMetricConversion(0);
                      } 

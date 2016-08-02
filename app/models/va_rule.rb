@@ -19,6 +19,7 @@ class VaRule < ActiveRecord::Base
   before_save :set_encrypted_password
   after_commit :clear_observer_rules_cache, :if => :observer_rule?
   after_commit :clear_api_webhook_rules_from_cache, :if => :api_webhook_rule?
+  after_commit :clear_installed_app_business_rules_from_cache, :if => :installed_app_business_rule?
 
   attr_writer :conditions, :actions, :events, :performer
   attr_accessor :triggered_event
@@ -32,10 +33,6 @@ class VaRule < ActiveRecord::Base
   scope :active, :conditions => { :active => true }
   scope :inactive, :conditions => { :active => false }
   scope :slack_destroy,:conditions => ["name in (?)",['slack_create', 'slack_update','slack_note']]
-
-  scope :observer_biz_rules, :conditions => { 
-    "va_rules.rule_type" => [VAConfig::INSTALLED_APP_BUSINESS_RULE], 
-    "va_rules.active" => true }, :order => "va_rules.position"
 
   acts_as_list :scope => 'account_id = #{account_id} AND #{connection.quote_column_name("rule_type")} = #{rule_type}'
 
@@ -139,14 +136,24 @@ class VaRule < ActiveRecord::Base
   end
   
   def trigger_actions(evaluate_on, doer=nil)
-    Va::ScenarioFlashMessage.initialize_activities if automation_rule?
+    Va::RuleActivityLogger.initialize_activities if automation_rule?
     return false unless check_user_privilege
     @triggered_event ||= TICKET_CREATED_EVENT
+    add_rule_to_system_changes(evaluate_on, doer) if activities_enabled?(evaluate_on)
     actions.each { |a| a.trigger(evaluate_on, doer, triggered_event) }
   end
 
+  def add_rule_to_system_changes(evaluate_on, doer)
+    base_hash = {"#{self.id}" => {:rule => [self.rule_type, self.name.truncate(33)]}}
+    if evaluate_on.system_changes.present?
+      evaluate_on.system_changes.merge!(base_hash)
+    else
+      evaluate_on.system_changes = base_hash
+    end
+  end
+
   def fetch_actions_for_flash_notice(doer)
-    Va::ScenarioFlashMessage.initialize_activities
+    Va::RuleActivityLogger.initialize_activities
     actions.each { |a| a.record_action_for_bulk(doer) }
   end
   
@@ -234,6 +241,10 @@ class VaRule < ActiveRecord::Base
 
   def api_webhook_rule?
     rule_type == VAConfig::API_WEBHOOK_RULE
+  end
+
+  def installed_app_business_rule?
+    rule_type == VAConfig::INSTALLED_APP_BUSINESS_RULE
   end
 
   def supervisor_rule?
@@ -341,4 +352,7 @@ class VaRule < ActiveRecord::Base
       conditions
     end
 
+    def activities_enabled?(ticket)
+      Account.current.features_included?(:activity_revamp) and ticket.respond_to?(:system_changes)
+    end
 end

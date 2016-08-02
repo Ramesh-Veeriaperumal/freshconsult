@@ -41,16 +41,6 @@ class User < ActiveRecord::Base
     flexifield.as_json(root: false, only: esv2_contact_field_data_columns)
   end
 
-  # Note: [*] for handling one-contact multiple-companies later.
-  def company_ids
-    [*company_id]
-  end
-
-  # Note: [*] for handling one-contact multiple-companies later.
-  def company_names
-    [*company_name]
-  end
-
   def emails
     user_emails.pluck(:email)
   end

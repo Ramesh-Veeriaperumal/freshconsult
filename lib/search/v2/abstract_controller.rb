@@ -44,7 +44,7 @@ module Search::V2::AbstractController
               from: @offset
             }
           )
-        rescue => e
+        rescue Exception => e
           Rails.logger.error "Searchv2 exception - #{e.message} - #{e.backtrace.first}"
           NewRelic::Agent.notice_error(e)
           @es_results = []
@@ -86,6 +86,7 @@ module Search::V2::AbstractController
       def construct_es_params
         { 
           search_term: @es_search_term,
+          account_id: current_account.id,
           request_id: request.try(:uuid)
         }
       end

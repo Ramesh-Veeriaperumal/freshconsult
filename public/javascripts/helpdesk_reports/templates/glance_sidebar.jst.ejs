@@ -20,7 +20,16 @@
 							<% } else if (constants.percentage_metrics.indexOf(metrics[i]) > -1) { %>
 									<span class="ticket-count"> <%= HelpdeskReports.CoreUtil.addsuffix(data[metrics[i]].general.metric_result) %>  </span>
 							<%	} else { %>
-									<span class="ticket-count">  <%= HelpdeskReports.CoreUtil.shortenLargeNumber(data[metrics[i]].general.metric_result, 1) %> </span>
+									<%
+									var num = data[metrics[i]].general.metric_result;
+									var tooltip_tmpl = "";
+									var classes = "ticket-count ";
+									if(num > 9999) {
+										tooltip_tmpl = 'data-placement="right" twipsy-content-set="true"';
+										classes += " tooltip";
+									}  
+									%>
+									<span class="<%= classes %>" <%= tooltip_tmpl %> data-original-title="<%= data[metrics[i]].general.metric_result %>" >  <%= HelpdeskReports.CoreUtil.shortenLargeNumber(data[metrics[i]].general.metric_result, 1) %> </span>
 							<%	} %>
 
 							<% 

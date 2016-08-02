@@ -68,7 +68,7 @@ class Solution::FolderMeta < ActiveRecord::Base
 	CACHEABLE_ATTRIBUTES  = ["is_default","name","id","article_count"]
 
 	before_update :clear_customer_folders, :backup_folder_changes
-	after_commit :update_search_index, on: :update, :if => :visibility_updated?
+	after_commit :update_search_index, on: :update, :if => :update_es?
 	after_commit :set_mobihelp_solution_updated_time, :if => :valid_change?
   
   after_commit ->(obj) { obj.send(:clear_cache) }, on: :create
@@ -121,6 +121,8 @@ class Solution::FolderMeta < ActiveRecord::Base
 
 	def update_search_index
 	  SearchSidekiq::IndexUpdate::FolderArticles.perform_async({ :folder_id => id }) if ES_ENABLED
+
+	  SearchV2::IndexOperations::UpdateArticleFolder.perform_async({ :folder_id => id }) if Account.current.features_included?(:es_v2_writes)
 	end
 
 	def clear_customer_folders
@@ -130,8 +132,11 @@ class Solution::FolderMeta < ActiveRecord::Base
 	def visible?(user)
 	  return true if (user and user.privilege?(:view_solutions))
 	  return true if self.visibility == VISIBILITY_KEYS_BY_TOKEN[:anyone]
-	  return true if (user and (self.visibility == VISIBILITY_KEYS_BY_TOKEN[:logged_users]))
-	  return true if (user && (self.visibility == VISIBILITY_KEYS_BY_TOKEN[:company_users]) && user.company  && customer_folders.map(&:customer_id).include?(user.company.id))
+	  return false unless user
+	  return true if self.visibility == VISIBILITY_KEYS_BY_TOKEN[:logged_users]
+      company_cdn = user.contractor? ? (user.company_ids & customer_folders.map(&:customer_id)).any? : 
+                     (user.company  && customer_folders.map(&:customer_id).include?(user.company.id))
+      return true if ((self.visibility == VISIBILITY_KEYS_BY_TOKEN[:company_users]) && company_cdn)
 	end
 
 	private
@@ -179,11 +184,13 @@ class Solution::FolderMeta < ActiveRecord::Base
 
 	def self.visibility_condition(user)
 		condition = "`solution_folder_meta`.visibility IN (#{ self.get_visibility_array(user).join(',') })"
-		condition +=  "OR (`solution_folder_meta`.visibility=#{VISIBILITY_KEYS_BY_TOKEN[:company_users]} " <<
-				"AND `solution_folder_meta`.id in (SELECT solution_customer_folders.folder_meta_id " <<
-				"FROM solution_customer_folders " <<
-				"WHERE solution_customer_folders.customer_id = #{user.company_id} " <<
-				"AND solution_customer_folders.account_id = #{user.account_id}))" if (user && user.has_company?)
+		if (user && user.has_company?)
+			condition +=  "OR (`solution_folder_meta`.visibility=#{VISIBILITY_KEYS_BY_TOKEN[:company_users]} " <<
+					"AND `solution_folder_meta`.id in (SELECT solution_customer_folders.folder_meta_id " <<
+					"FROM solution_customer_folders " <<
+					"WHERE solution_customer_folders.customer_id in (#{user.company_ids_str}) " <<
+					"AND solution_customer_folders.account_id = #{user.account_id}))"
+		end
 					# solution_customer_folders.customer_id = #{ user.company_id})" if (user && user.has_company?)
 		return condition
 	end
@@ -206,8 +213,8 @@ class Solution::FolderMeta < ActiveRecord::Base
 	  @all_changes = self.changes.clone
 	end
 
-	def visibility_updated?
-	  @all_changes.has_key?(:visibility)
+	def update_es?
+	  (@all_changes.keys & ["visibility", "solution_category_meta_id"]).present?
 	end
 	
 	def backup_category

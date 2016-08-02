@@ -5,7 +5,11 @@ forward_note_id = "cnt-fwd-#{note.id.to_s()}"
 edit_id = "edit-#{note.id.to_s()}"
 notable_object = @ticket || @parent
 minimizable ||= false
+timestamp_id ||=false
 kind = note.survey_remark.nil? ? note.kind : 'survey'
+if @note_last_modified_user_hash.present? && @note_last_modified_user_hash[note.id.to_s].present?
+  last_modified_user = @note_last_modified_user_hash[note.id.to_s]
+end
 
 if current_account.custom_survey_enabled?
   kind = note.custom_survey_remark.nil? ? note.kind : 'survey'
@@ -28,8 +32,11 @@ end
 %>
 
 <div id="<%= note_view_id %>" 
+      <% if timestamp_id %>
+        data-activity-id="<%= timestamp_id %>" 
+      <% end %>
       data-timestamp="<%= note.created_at.to_i%>" 
-      class="conversation <%= 'minimized minimizable' if minimizable %> <%= 'source_email' if note.email? %>">
+      class="conversation <%= 'minimized' if minimizable %> <%= 'source_email' if note.email? %>">
   <% if note.user %>
   <div class="avatar-wrap" name="note<%= note.id %>" id="note<%= note.id %>"><%= user_avatar(note.user, :thumb, 'preview_pic circle') %></div>
   <% end %>
@@ -55,6 +62,11 @@ end
     <% end %>
 
     <div class="<%= clazz %>">
+      <% if note.deleted? %>
+      <div class="tag">
+        <%= t("helpdesk.tickets.note.deleted_note").html_safe %>
+      </div>
+      <% end %>
       <div class="author-mail-detail cc_bcc_info">
         <% kind %>
         <%= t("helpdesk.tickets.note.created_on_live.#{kind}", 
@@ -63,12 +75,22 @@ end
             :timestamp => note.created_at.to_i 
           ).html_safe %><br>
         <%unless survey_name.blank? %>
-          <div class="author-mail-detail">
+          <div>
             <%= t("helpdesk.tickets.note.survey_response",{:survey_name => survey_name})%>
             <%unless agent_name.blank? %><%= t("helpdesk.tickets.note.survey_response_to",{:agent => agent_name})%><%end%>
           </div>
         <%end%>
       </div>
+      <%  if last_modified_user %>
+        <div class="author-mail-detail last-modified-detail">
+            <% last_modified_translation = note.deleted? ? 'last_deleted_info' : 'last_edited_info' %>
+              <%= t("helpdesk.tickets.note.#{last_modified_translation}", 
+                  :user_name => link_to_user(last_modified_user), 
+                  :note_date => formated_date(note.last_modified_timestamp), 
+                  :timestamp => note.last_modified_timestamp.to_i
+                ).html_safe %><br/>
+        </div>
+      <% end %>
       <% if current_account.new_survey_enabled? %>
         <%= render :partial => '/helpdesk/archive_tickets/show/custom_survey_note' , :locals => {:note => note , 
               :ticket_info => ticket_info, :notedetails => notedetails ,:question_values => question_values} %>
@@ -76,7 +98,6 @@ end
           <%= render :partial => '/helpdesk/archive_tickets/show/survey_note' , :locals => {:note => note , 
               :notedetails => notedetails} %>
       <% end %>
-
       <%= freshfone_audio_dom(note) if current_account.features?(:freshfone) %>
 
       <div id="note_attachments_container_<%= note.id%>">

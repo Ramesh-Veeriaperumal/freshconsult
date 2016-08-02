@@ -12,8 +12,8 @@ class MergeTickets < BaseWorker
     source_ticket_note_ids = []
     source_tickets.each do |source_ticket|
       source_ticket_note_ids << source_ticket.notes.pluck(:id)
-      source_ticket.notes.update_all( "notable_id = #{args[:target_ticket_id]}", [ "account_id = ?", 
-                                                                                account.id ] )
+      source_ticket.notes.update_all_with_publish({ notable_id: args[:target_ticket_id] },
+                                    [ "account_id = ? and notable_id != ?", account.id, args[:target_ticket_id] ])
       source_ticket.activities.update_all("notable_id = #{args[:target_ticket_id]}", [ "account_id = ? and description NOT IN (?)", 
                                                                                 account.id, ACTIVITIES_TO_BE_DISCARDED ] )
       source_ticket.time_sheets.update_all("workable_id = #{args[:target_ticket_id]}", [ "account_id = ?", 
@@ -28,7 +28,7 @@ class MergeTickets < BaseWorker
     update_target_ticket_states(target_ticket, tkt_states_hash)
     # notes are added to the target ticket via update_all. This wont trigger callback
     # So sending it manually
-    update_target_ticket_notes_to_reports(target_ticket, source_ticket_note_ids.flatten)
+    update_target_ticket_notes_to_subscribers(target_ticket, source_ticket_note_ids.flatten, args[:source_ticket_ids])
   end
 
   def add_note_to_source_ticket(source_ticket, source_note_private, source_info_note)
@@ -78,14 +78,13 @@ class MergeTickets < BaseWorker
      end
   end
   
-  ##  **  Methods related to reports starts here **  ##
-  # Here we are sending the target ticket notes to RMQ for reporting purpose
+  ##  **  Methods related to subscribers starts here **  ##
+  # REPORTS: Here we are sending the target ticket notes to RMQ for reporting purpose
   # We are not sending the source ticket updates to RMQ because source ticket(which is closed) should 
   # not be included in any of the reporting metrics. So not sending any updates for the source ticket.
-  def update_target_ticket_notes_to_reports(target_ticket, note_ids)
-    # TODO Must send only one push for all the subscribers(reports, search, activities)
-    # Currently only reports is handled.
-    # Need to handle it in a generic way for all the subscribers
+  def update_target_ticket_notes_to_subscribers(target_ticket, note_ids, source_ticket_ids)
+    # Currently reports and Activities are handled.
+    # Need to append RMQ_GENERIC_NOTE_KEY to enable for other subscribers
     target_ticket_notes = target_ticket.notes.where({:id => note_ids})
     target_ticket_notes.each do |note|
       next unless note.send(:human_note_for_ticket?)
@@ -95,9 +94,14 @@ class MergeTickets < BaseWorker
       note.notable.schema_less_ticket.save
       note.manual_publish_to_rmq("create", RabbitMq::Constants::RMQ_REPORTS_NOTE_KEY)
     end
-    # while doing manual publish of note it will take note's created at and hence it will not be
+    # ACTIVTIIES: Adding ticket merge activity in target ticket
+    target_ticket.activity_type = {:type => "ticket_merge_target", 
+      :source_ticket_id => source_ticket_ids, 
+      :target_ticket_id => [target_ticket.display_id]}
+    # REPORTS: while doing manual publish of note it will take note's created at and hence it will not be
     # reflected in latest row. Doing a manual push for target ticket here so that the latest row of the ticket will 
     # have all the customer reply and agent reply count updated.
-    target_ticket.manual_publish_to_rmq("update", RabbitMq::Constants::RMQ_REPORTS_TICKET_KEY, {:manual_publish => true})
+    key  = Account.current.features?(:activity_revamp) ? RabbitMq::Constants::RMQ_GENERIC_TICKET_KEY : RabbitMq::Constants::RMQ_REPORTS_TICKET_KEY
+    target_ticket.manual_publish_to_rmq("update", key, {:manual_publish => true})
   end
 end

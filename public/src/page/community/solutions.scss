@@ -224,7 +224,7 @@
   padding-top: 5px;
   border: 1px solid #ccc;
   border-radius: 3px;
-  margin: 5px 0px 0px -32px;
+  @include margin(5px 0px 0px -32px);
 }
 
 body.community #sticky_header.category-sticky.is_stuck {
@@ -275,7 +275,7 @@ body.community #sticky_header.category-sticky.is_stuck {
 
 #master_article_inner{
   #master-article-tab {
-    padding: 5px 10px 0 20px;
+    @include padding(5px 10px 0 20px);
   }
   .status-label{
     padding: 15px 0 0 15px;

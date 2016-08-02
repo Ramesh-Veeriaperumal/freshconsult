@@ -1,0 +1,22 @@
+<% if (renderData && renderData.items.length) { %>
+	<div class="title"><%= renderData.title %></div>
+		<div class="wrape">
+			<% for (i = 0; i < renderData.items.length; i++) { %>
+		        <% if ( i < 2) { %>
+		        	<div class='detail_row dot-divider'>
+		        		<div class="pull-left symbol" style="background:<%= renderData.items[i].color%>"></div>
+		        		<div class="pull-left" style="font-weight:500"><%= renderData.items[i].name %></div>
+		        		<div class="pull-right" style="font-weight:500"><%= renderData.items[i].value %></div>
+		        		<div class="clear"></div>
+		        	</div>
+		        <% } else { %>
+		        	<div class='detail_row dot-divider'>
+		        		<div class="pull-left symbol" style="background:<%= renderData.items[i].color%>"></div>
+		        		<div class="pull-left"><%= renderData.items[i].name %></div>
+		        		<div class="pull-right"><%= renderData.items[i].value %></div>
+		        		<div class="clear"></div>
+		        	</div>
+		        <% } %>
+		    <% } %>
+	    </div>
+<%  } %>

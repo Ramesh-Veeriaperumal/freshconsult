@@ -74,6 +74,7 @@ fields:
         reply_sent: change
         ticket_action: value
         user_action: value
+        company_action: value
         note_action: value
         time_sheet_action: value
         customer_feedback: value

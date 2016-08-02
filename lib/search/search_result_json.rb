@@ -183,7 +183,7 @@ module Search::SearchResultJson
 			:result_type => 'solution_article',
 			:title => article.es_highlight('title').html_safe,
 			:path => multilingual_article_path(article),
-			:folder_name => h(article.solution_folder_meta.send("#{article.language.to_key}_folder").name),
+			:folder_name => h((article.solution_folder_meta.send("#{article.language.to_key}_folder") || article.solution_folder_meta.primary_folder).name),
 			:folder_path => solution_folder_path(article.solution_folder_meta),
 			:description => article.es_highlight('desc_un_html'),
 			:user_name => h(author.name),
@@ -196,7 +196,7 @@ module Search::SearchResultJson
 	end
 
 	def suggest_json content, path, result
-		if Account.current.features?(:archive_tickets) && result.class.name == "Helpdesk::ArchiveTicket" 
+		if Account.current.features_included?(:archive_tickets) && result.class.name == "Helpdesk::ArchiveTicket" 
 		  class_name = "helpdesk_ticket"
 		else
           class_name = result.is_a?(Company) ? 'customer' : result.class.name.gsub('::', '_').downcase

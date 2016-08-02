@@ -202,6 +202,9 @@
                     color: #000;
                     cursor: default;
                 }
+                a.attachment-close {
+                        cursor: pointer;
+                    }
             }
             span{
                 @include float(left);
@@ -231,6 +234,12 @@
             .email-config a{
                 border: 0;
             }
+        }
+    }
+
+    .select2-container-multi {
+        .select2-choices {
+            overflow: initial;
         }
     }
 }

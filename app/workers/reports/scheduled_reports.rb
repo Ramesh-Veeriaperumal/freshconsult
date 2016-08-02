@@ -10,11 +10,12 @@ class Reports::ScheduledReports < ScheduledTaskBase
     @task = task
     if task_permitted?
       Sharding.run_on_slave do
+        logger.info "Calling Export on Scheduled Report #{task.id} : #{task.inspect}"
         HelpdeskReports::ScheduledReports::Worker.new(task).perform
       end
       return true
     else
-      return "not_permitted"
+      return :not_permitted
     end
   end
 
@@ -25,14 +26,12 @@ class Reports::ScheduledReports < ScheduledTaskBase
   private
     def task_permitted?
       result = false
-      Sharding.select_shard_of(task.account_id) do
-        if !enable_schedule_report?
-          task.mark_disabled.save!
-        elsif (task.user.blocked? || !task.user.privilege?(:view_reports))
-          AgentDestroyCleanup.perform_async({:user_id => task.user.id})
-        else
-          result = true
-        end
+      if !enable_schedule_report?
+        task.mark_disabled.save!
+      elsif (task.user.blocked? || !task.user.privilege?(:view_reports))
+        AgentDestroyCleanup.perform_async({:user_id => task.user.id})
+      else
+        result = true
       end
       result
     end

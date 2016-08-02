@@ -77,9 +77,13 @@ module ParserUtil
     parsed_email = parse_email_text(email_text)   
     name = parsed_email[:name] || ""
     email = parsed_email[:email]
-    if((email && !(email =~ EMAIL_REGEX) && (email_text =~ EMAIL_REGEX)) || (email_text =~ EMAIL_REGEX))
-      email = $1 
+
+    if(email && (email =~ EMAIL_REGEX))
+        email = $1
+    elsif(email_text =~ EMAIL_REGEX) 
+        email = $1  
     end
+    
     domain = (/@(.+)/).match(email).to_a[1]
     {:name => name, :email => email, :domain => domain}
   end
@@ -103,6 +107,7 @@ module ParserUtil
     return [] if addresses.blank?
 
     ignore_emails = options[:ignore_emails].to_a
+    ignore_emails = ignore_emails.map(&:downcase) if ignore_emails.present?
 
     addresses = addresses.collect do |address|
       next if address.blank?

@@ -62,8 +62,14 @@ module Helpdesk::TicketActions
   end
   
   def split_the_ticket        
-    create_ticket_from_note
+    create_ticket_from_note or return
     update_split_activities
+    @source_ticket.activity_type = {:type => "ticket_split_source", 
+      :source_ticket_id => [@source_ticket.display_id], 
+      :target_ticket_id => [@item.display_id]}
+    if Account.current.features?(:activity_revamp)
+      @source_ticket.manual_publish_to_rmq("update", RabbitMq::Constants::RMQ_ACTIVITIES_TICKET_KEY)
+    end
     redirect_to @item
   end
   
@@ -84,7 +90,7 @@ module Helpdesk::TicketActions
   end
 
   def configure_export
-    @csv_headers = export_fields 
+    @default_csv_headers, @additional_csv_headers = ticket_export_fields
     render :partial => "configure_export"
   end
   
@@ -97,7 +103,7 @@ module Helpdesk::TicketActions
       remove_tickets_redis_key(export_redis_key)
       create_ticket_export_fields_list(params[:export_fields].keys)
       params[:portal_url] = main_portal? ? current_account.host : current_portal.portal_url
-      Helpdesk::TicketsExportWorker.enqueue(params)
+      Export::Ticket.enqueue(params)
       flash[:notice] = t("export_data.ticket_export.info")
       redirect_to helpdesk_tickets_path
     # else
@@ -125,14 +131,21 @@ module Helpdesk::TicketActions
   end
   
   def create_ticket_from_note    
-    @source_ticket = current_account.tickets.find_by_display_id(params[:id])
+    @source_ticket = current_account.tickets.permissible(current_user).find_by_display_id(params[:id])
+    if @source_ticket.blank?
+      flash[:warning] = t('flash.general.access_denied')
+      redirect_to helpdesk_tickets_path and return false
+    end
     @note = @source_ticket.notes.find(params[:note_id])   
+    company_id = @note.user.companies.map(&:id).include?(@source_ticket.company_id) ? 
+                  @source_ticket.company_id : @note.user.company_id
     params[:helpdesk_ticket] = {:subject =>@source_ticket.subject ,
                                 :email => @note.user.email,
                                 :priority =>@source_ticket.priority,
                                 :group_id =>@source_ticket.group_id,
                                 :email_config_id => @source_ticket.email_config_id,
                                 :product_id => @source_ticket.product_id,
+                                :company_id => company_id,
                                 :status =>@source_ticket.status,
                                 :source =>@source_ticket.source,
                                 :ticket_type =>@source_ticket.ticket_type,                             
@@ -176,6 +189,10 @@ module Helpdesk::TicketActions
     build_item 
     
     move_cloud_files
+    # for split ticket activity, 
+    # target ticket id will be added after ticket is created while publishing rmq msg
+    @item.activity_type = {:type => "ticket_split_target", 
+      :source_ticket_id => [@source_ticket.display_id]}
     if @item.save_ticket
       move_attachments
       @note.remove_activity
@@ -188,7 +205,7 @@ module Helpdesk::TicketActions
     else
       puts @item.errors.to_json
     end
-    
+    return true
   end
 
   
@@ -196,6 +213,7 @@ module Helpdesk::TicketActions
   def move_attachments   
     @note.attachments.update_all({:attachable_type =>"Helpdesk::Ticket" , :attachable_id => @item.id})
     @note.inline_attachments.update_all({:attachable_type =>"Inline" , :attachable_id => @item.id})
+    @item.sqs_manual_publish
   end
 
   def move_cloud_files #added to support cloud_file while spliting tickets
@@ -267,7 +285,7 @@ module Helpdesk::TicketActions
         Sharding.send(db_type) do
           @ticket_filter.deserialize_from_params(params)
           if Account.current.launched?(:es_count_reads)
-            total_entries = Search::Filters::Docs.new(@ticket_filter.query_hash).count(Helpdesk::Ticket)
+            total_entries = Search::Tickets::Docs.new(@ticket_filter.query_hash).count(Helpdesk::Ticket)
           else
             joins = @ticket_filter.get_joins(@ticket_filter.sql_conditions)
             joins[0].concat(@ticket_filter.states_join) if @ticket_filter.sql_conditions[0].include?("helpdesk_ticket_states")

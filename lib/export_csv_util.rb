@@ -22,6 +22,7 @@ DATE_TIME_PARSE = [ :created_at, :due_by, :resolved_at, :updated_at, :first_resp
     csv_headers = Helpdesk::TicketModelExtension.csv_headers 
     #Product entry
     csv_headers = csv_headers + [ {:label => I18n.t("export_data.fields.product"), :value => "product_name", :selected => false, :type => :field_type} ] if Account.current.has_multiple_products?
+    csv_headers = csv_headers + [{:label => I18n.t("export_data.fields.description"), :value => "description", :selected => false}]
     csv_headers = csv_headers + flexi_fields.collect { |ff| { :label => ff.label, :label_in_portal => ff.label_in_portal, :value => ff.name, :type => ff.field_type, :selected => false, :levels => (ff.nested_levels || []) } }
 
     if is_portal
@@ -32,6 +33,28 @@ DATE_TIME_PARSE = [ :created_at, :due_by, :resolved_at, :updated_at, :first_resp
       }
     end
     csv_headers
+  end
+
+  def ticket_export_fields(is_portal = false)
+    flexi_fields = Account.current.ticket_fields.custom_fields(:include => :flexifield_def_entry)
+    default_csv_headers = Helpdesk::TicketModelExtension.csv_headers
+
+    flexi_fields , additional_flexi_fields = split_flexifields(flexi_fields)
+
+    default_csv_headers = default_csv_headers + [ {:label => I18n.t("export_data.fields.product"), :value => "product_name", :selected => false, :type => :field_type} ] if Account.current.has_multiple_products?
+    default_csv_headers = default_csv_headers + generate_headers(flexi_fields)
+
+    additional_csv_headers = [{:label => I18n.t("export_data.fields.description"), :value => "description", :selected => false}]
+    additional_csv_headers = additional_csv_headers + generate_headers(additional_flexi_fields)
+
+    if is_portal
+      vfs = visible_fields
+      default_csv_headers.delete_if{|default_csv_header|
+        field_name = Helpdesk::TicketModelExtension.field_name default_csv_header[:value]
+        true unless vfs.include?(field_name)
+      }
+    end
+    [default_csv_headers, additional_csv_headers]
   end
 
   def export_customer_fields type
@@ -95,7 +118,7 @@ DATE_TIME_PARSE = [ :created_at, :due_by, :resolved_at, :updated_at, :first_resp
 
   def strip_equal(data)
     # To avoid formula execution in Excel - Removing any preceding =,+,- in any field
-    ((data.blank? || (data.is_a? Integer)) ? data : (data.to_s.gsub(/^[=+-]*/, "")))
+    ((data.blank? || (data.is_a? Integer)) ? data : (data.to_s.gsub(/^[@=+-]*/, "")))
   end
 
   def unescape_html(data)
@@ -117,4 +140,24 @@ DATE_TIME_PARSE = [ :created_at, :due_by, :resolved_at, :updated_at, :first_resp
   def fetch_archive_ticket_value(item, val)
     item.respond_to?(val) ? item.send(val) : item.custom_field_value(val)
   end
+
+  private
+
+  def split_flexifields fields
+    default_fields = []
+    additional_fields = []
+    fields.each do |field|
+      if field.field_type != "custom_paragraph"
+        default_fields << field
+      else
+        additional_fields << field
+      end
+    end
+    [default_fields, additional_fields]
+  end
+
+  def generate_headers flexi_fields
+    flexi_fields.collect { |ff| { :label => ff.label, :label_in_portal => ff.label_in_portal, :value => ff.name, :type => ff.field_type, :selected => false, :levels => (ff.nested_levels || []) } }
+  end
+
 end

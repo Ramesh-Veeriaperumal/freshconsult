@@ -382,7 +382,13 @@ $.validator.addClassRules("ca_same_folder_validity", { ca_same_folder_validity: 
 
 $.validator.addMethod("field_maxlength", $.validator.methods.maxlength, "Please enter less than 255 characters" );   
 $.validator.addClassRules("field_maxlength", { field_maxlength: 255 });
-$.validator.addClassRules("decimal", { number: true });
+// For validation to the decimal fields so that only two decimal are accepted
+
+$.validator.addMethod("two_decimal",function(value, element) {
+
+    return /^\d*(\.\d{0,2})?$/i.test(value);
+},"Value cannot have more than 2 decimal digits");
+$.validator.addClassRules("decimal", { number: true , two_decimal: true});
 
 $.validator.addMethod("require_from_group", function(value, element, options) {
   var $fields = $(options[1], element.form),

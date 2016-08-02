@@ -31,6 +31,9 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
 
   scope :timer_active , :conditions =>["timer_running=?" , true]
 
+  ## ** Methods used by API V1 filters starts here.****
+  ## If there are any conditions changed here in any one of scopes, relevant conditions should be changed in self.filter_conditions(filter_options=FILTER_OPTIONS) also.
+
   scope :created_at_inside, lambda { |start, stop|
     { :conditions => 
       [" helpdesk_time_sheets.executed_at >= ? and helpdesk_time_sheets.executed_at <= ?", 
@@ -74,6 +77,8 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
      } unless products.blank?
   }
 
+  ## ** Methods used by API V1 filters ends here.****
+
   #************************** Archive scope start here *****************************#
   scope :archive_by_group , lambda  { |group|
       { :conditions => { :archive_tickets => { :group_id => group } } } unless group.blank?
@@ -98,6 +103,7 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
     } unless products.blank?
   } 
 
+  include RabbitMq::Publisher
   #************************** Archive scope ends here *****************************#
 
   FILTER_OPTIONS = { :group_id => [], :company_id => [], :user_id => [], :billable => true, :executed_after => 0 }
@@ -109,11 +115,11 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
 
   def self.group_by_options
     [ [I18n.t('helpdesk.time_sheets.customer') , :customer_name], 
-      [I18n.t('helpdesk.time_sheets.agent') , :agent_name], 
+      ([I18n.t('helpdesk.time_sheets.agent') , :agent_name] unless Account.current.features_included?(:euc_hide_agent_metrics)),
       [I18n.t('helpdesk.time_sheets.group') , :group_name],
-      [I18n.t('helpdesk.time_sheets.product') , :product_name], 
+      ([I18n.t('helpdesk.time_sheets.product') , :product_name] if Account.current.products.any?), 
       [I18n.t('helpdesk.time_sheets.ticket') , :workable], 
-      [I18n.t('helpdesk.time_sheets.executed_at') , :group_by_day_criteria] ]
+      [I18n.t('helpdesk.time_sheets.executed_at') , :group_by_day_criteria] ].compact
   end                                                                                                                                               
 
   def self.report_list
@@ -159,8 +165,7 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
       },
       
       company_id: {
-        joins: ["INNER JOIN `users` ON `helpdesk_tickets`.requester_id = `users`.id AND `helpdesk_tickets`.account_id = `users`.account_id"],
-        conditions: {:users => {:customer_id => filter_options[:company_id]}}
+        conditions: { helpdesk_tickets:  { owner_id: filter_options[:company_id] } }
       }
     }
   end
@@ -335,5 +340,24 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
   def workable_name
    workable_type.split("::").second.downcase.pluralize
   end
-  
+
+  def to_rmq_json(keys,action)
+    destroy_action?(action) ? timesheet_identifiers : return_specific_keys(timesheet_identifiers, keys)
+  end
+
+  def timesheet_identifiers
+    @rmq_timesheet_identifiers ||= {
+      "id"              =>  id,
+      "start_time"      =>  start_time,
+      "timer_running"   =>  timer_running,
+      "time_spent"      =>  time_spent,
+      "billable"        =>  billable,
+      "workable_id"     =>  workable_id,
+      "workable_type"   =>  workable_type,
+      "user_id"         =>  user_id,
+      "executed_at"     =>  executed_at,
+      "account_id"      =>  account_id
+    }
+  end
+
 end

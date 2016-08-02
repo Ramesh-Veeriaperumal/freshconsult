@@ -68,12 +68,15 @@ var FreshfoneSocket;
       // this.freshfone_socket_channel = false;
       this.connectionClosedAt = new Date();
     },
-    notify_ignore: function (CallSid) {
+    notify_ignore: function (callId) {
       this.freshfone_socket_channel.emit('ignore', { 
-        call_sid: CallSid,
+        call_id: callId,
         agent: freshfone.current_user,
         account: freshfone.current_account
       });
+    },
+    notify_transfer_success: function(params){
+      this.freshfone_socket_channel.emit('transfer_success',params);
     },
     connect: function () {
       this.freshfone_socket_channel = freshfone_io.connect(this.freshfone_nodejs_url(), 
@@ -161,6 +164,19 @@ var FreshfoneSocket;
           trigger_event('ffone_socket', result);
 				}); 
 
+				this.freshfone_socket_channel.on('agent_in_acw_state', function (data){
+					data = JSON.parse(data) || {};
+					if(data.user.id == freshfone.current_user){
+						self.toggleUserStatus(userStatus.ACW);
+					}
+					self.updateAgentListView();
+					var result = {
+						user: data.user,
+						event: "agent_in_acw_state"
+					}
+					trigger_event('ffone_socket', result);
+				}); 
+
 			this.freshfone_socket_channel.on('credit_change', function (data) {
 				(data === 'enable') ? freshfonewidget.enableFreshfoneWidget() : 
 															freshfonewidget.disableFreshfoneWidget();
@@ -174,8 +190,10 @@ var FreshfoneSocket;
             event: "toggle_device"
           }
           trigger_event('ffone_socket', result);
+          if(data.user.id == freshfone.current_user){
+            self.togglePhone(data.user.on_phone);
+          }
       });
-
 
 			this.freshfone_socket_channel.on('token', function (data) {
 				data = JSON.parse(data) || {};
@@ -243,7 +261,7 @@ var FreshfoneSocket;
         $(window).trigger('ffone.networkUp'); // for non-chromium based browsers
       });
 			
-			this.freshfone_socket_channel.on('CallTreansferSuccess', function (data) {
+			this.freshfone_socket_channel.on('CallTransferSuccess', function (data) {
 				data = JSON.parse(data);
 				self.successTransferCall(data.result);
 			});
@@ -254,6 +272,7 @@ var FreshfoneSocket;
       this.freshfone_socket_channel.on('transfer_success', function (data) {
         if(data.agent == freshfone.current_user){
           self.successTransferConferenceCall(data.call_sid);
+          //Twilio.Device.disconnect(data);
         }
       });
       this.freshfone_socket_channel.on('transfer_reconnected', function(data){        
@@ -261,7 +280,8 @@ var FreshfoneSocket;
       });
 
       this.freshfone_socket_channel.on('transfer_unanswered', function(data){        
-        if(data.agent == freshfone.current_user){ freshfonecalls.freshfoneCallTransfer.enableTransferResume(); }
+        if(data.agent == freshfone.current_user){ 
+          freshfonecalls.freshfoneCallTransfer.enableTransferResume(); }
       });
       
       this.freshfone_socket_channel.on('call_holded', function (data) {
@@ -299,6 +319,53 @@ var FreshfoneSocket;
 
       //Conference events end here
 
+      //Call Notifier events
+      this.freshfone_socket_channel.on('incoming', function (data) {
+        if(self.deviceWithActiveConnection()){
+          var incomingConnection = new IncomingConnection(data, incomingNotification);
+          incomingConnection.reject();
+        }
+        else{
+          if(freshfoneuser.isOnline()){
+            incomingNotification.notify(data);
+          }
+          self.freshfone_socket_channel.emit('incoming_ack', data); 
+        }   
+      });
+      this.freshfone_socket_channel.on('transfer', function(data){
+        incomingNotification.notify(data);
+        self.freshfone_socket_channel.emit('transfer_ack',data);
+      });
+      this.freshfone_socket_channel.on('ignore', function (data) {
+        incomingNotification.removeNotification(data.call_id);
+      });
+
+      this.freshfone_socket_channel.on("round_robin", function(data){
+        if(freshfoneuser.isOnline()){
+          incomingNotification.notify(data);
+        }
+        self.freshfone_socket_channel.emit('round_robin_ack', data);
+      });
+      this.freshfone_socket_channel.on('accepted', function (data) {
+        var currentConnection = incomingNotification.currentConnection();
+        if(currentConnection == undefined) {
+          incomingNotification.popOngoingNotification(data.call_id);
+        }else{
+          incomingNotification.popAllNotification();
+        }
+      });
+      this.freshfone_socket_channel.on('cancelled', function (data) {
+        incomingNotification.popOngoingNotification(data.call_id);
+        self.freshfone_socket_channel.emit('cancelled_ack', data);
+      });
+
+      this.freshfone_socket_channel.on('completed', function (data) {
+        incomingNotification.popOngoingNotification(data.call_id);
+        self.freshfone_socket_channel.emit('completed_ack', data);
+      });
+
+      //Call Notifier events end
+
 
 			$('body').on('pjaxDone', function() {
 				self.$dashboard = $('.freshfone_dashboard');
@@ -309,9 +376,15 @@ var FreshfoneSocket;
         self.getAgents();
 				self.tryUpdateDashboard();
 			});
+
 		},
-		tryUpdateDashboard: function () {
-			if ((this.$availableAgents || this.$liveCalls || this.$queuedCalls) === undefined) { return false; }
+    notifyAccept: function(data){
+      this.freshfone_socket_channel.emit('accepted',data); //send accepted to cancel notification in  other tabs
+    },
+    tryUpdateDashboard: function () {
+			if ((this.$availableAgents || 
+            this.$liveCalls || 
+            this.$queuedCalls) === undefined) { return false; }
 
 			this.$availableAgents.text(this.totalAgents);
 			this.$liveCalls.text(this.activeCalls);
@@ -321,7 +394,8 @@ var FreshfoneSocket;
 		},
 		onlineUserCount: function () {
 			var offset = freshfoneuser.isOnline() ? -1 : 0;
-			return (this.totalAgents + offset < 0) ? 0 : (this.totalAgents + offset) || 0 ;
+			return (this.totalAgents + offset < 0) ? 0 : 
+                (this.totalAgents + offset) || 0 ;
 		},
 		getAvailableAgents: function () {
       var self = this;
@@ -468,11 +542,15 @@ var FreshfoneSocket;
 		},
 		
 		toggleUserStatus: function  (status) {
-			if (status !== userStatus.BUSY) {
+			freshfoneuser.manageAvailabilityToggle(status);
+			freshfoneuser.setStatus(status);
+			if (freshfoneuser.isOnlineOrOffline()) {
 				freshfoneuser.online = freshfoneuser.isOnline();
 			}
-			freshfoneuser.setStatus(status);
 			freshfoneuser.userPresenceDomChanges();
+		},
+		togglePhone: function(availability){
+			freshfoneuser.userPresenceDomChanges(availability, true);
 		},
 		updataTwilioDevice: function (token) {
 			if (freshfoneuser.newTokenGenerated) {
@@ -790,7 +868,12 @@ var FreshfoneSocket;
       if(this.$dashboard.length){
           this.getAvailableAgents();
       }
+    },
+    deviceWithActiveConnection: function(){
+      var activeConnection = Twilio.Device.activeConnection();
+      return (activeConnection && activeConnection.status()=="open");
     }
+
 
 	};
 }(jQuery));

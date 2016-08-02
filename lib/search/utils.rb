@@ -29,8 +29,12 @@ class Search::Utils
     company_autocomplete:             'companyAutocomplete',
     company_autocomplete_exact:       'companyAutocompleteExact',
     tag_autocomplete:                 'tagAutocomplete',
+    agent_insert_solution:            'agentInsertSolution',
+    agent_insert_solution_exact:      'agentInsertSolutionExact',
     agent_spotlight_global:           'agentSpotlightGlobal',
     agent_spotlight_global_exact:     'agentSpotlightGlobalExact',
+    agent_spotlight_suggest:          'agentSpotlightSuggest',
+    agent_spotlight_suggest_exact:    'agentSpotlightSuggestExact',
     agent_spotlight_ticket:           'agentSpotlightTicket',
     agent_spotlight_ticket_exact:     'agentSpotlightTicketExact',
     agent_spotlight_solution:         'agentSpotlightSolution',
@@ -51,7 +55,7 @@ class Search::Utils
   #
   PARENT_BASED_ROUTING  = {
     'Helpdesk::Note'        => :notable_id,
-    'Helpdesk::ArchiveNote' => :notable_id,
+    'Helpdesk::ArchiveNote' => :archive_ticket_id,
     'Post'                  => :topic_id
   }
   SEARCH_LOGGING        = {

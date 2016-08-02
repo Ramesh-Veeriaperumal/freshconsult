@@ -24,6 +24,7 @@ stylesheets:
   :tour_my_app  => [ "plugins/tourmyapp_initial","plugins/tourmyapp"],
   :codemirror  => [ "plugins/codemirror"],
   :player360  => [ "freshfone/360player"],
+  :fileupload => ["plugins,fileupload"],
   :freshwidget  => [ "freshwidget"],
   :tkt_details  => [ "page/tkt_details/tkt_details","page/tkt_details/tkt_details_sprites"],
   :tkt_details_print  => [ "page/tkt_details/tkt_details_print"],
@@ -53,7 +54,8 @@ stylesheets:
   :livechat_mini_dashboard  => [ "chat/mini-dashboard"],
   :ui_daterangepicker => ["ui.daterangepicker"],
   :remote_configurations  => [ "page/remote-configurations"],
-  :cti => ["cti/cti"]
+  :cti => ["cti/cti"],
+  :freshfone_livechat => ["freshfone_livechat"]
 } %>
 
 <%  @stylesheets_list = []
@@ -152,6 +154,12 @@ javascripts:
     - public/javascripts/codemirror/util-search.js
     - public/javascripts/codemirror/util-searchcursor.js
 
+    #file upload
+  fileupload:
+    - public/javascripts/fileupload/jquery.ui.widget.js
+    - public/javascripts/fileupload/jquery.iframe-transport.js
+    - public/javascripts/fileupload/jquery.fileupload.js
+    - public/javascripts/fileupload/jquery.fileupload-ui.js
   colorpicker:
     - public/javascripts/mColorPicker.js
 
@@ -504,6 +512,9 @@ javascripts:
     - public/javascripts/custom-form/sortable.js
     - public/javascripts/custom-form/company_fields.js
     - public/javascripts/custom-form/template/*.jst
+
+  requester_widget:
+    - public/javascripts/admin/requester_widget_config.js
 
   survey:
     - public/javascripts/frameworks/jquery.js

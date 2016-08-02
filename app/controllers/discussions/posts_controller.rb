@@ -1,6 +1,7 @@
 class Discussions::PostsController < ApplicationController
 
 	helper DiscussionsHelper
+	include Community::AssignUser
 	include CloudFilesHelper
 	before_filter :find_post, :except =>  [:monitored, :create]
 
@@ -95,13 +96,9 @@ class Discussions::PostsController < ApplicationController
 	end
 
 	def build_post
-
 		@post  = @topic.posts.build(params[:post])
-		if privilege?(:admin_tasks)
-			@post.user = (params[:post][:import_id].blank? || params[:email].blank?) ? current_user : current_account.all_users.find_by_email(params[:email])
-		end
+		@post.user = assign_user
 
-		@post.user ||= current_user
 		@post.account_id = current_account.id
 		@post.portal = current_portal.id
 		build_attachments
@@ -109,7 +106,7 @@ class Discussions::PostsController < ApplicationController
 	end
 
 	def build_attachments
-		attachment_builder(@post, params[:post][:attachments], params[:cloud_file_attachments] )
+		attachment_builder(@post, params[:post][:attachments], params[:cloud_file_attachments], params[:attachments_list] )
 	end
 
 	def invalid_message

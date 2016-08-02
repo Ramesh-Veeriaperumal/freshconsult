@@ -30,7 +30,7 @@ class ApplicationController < ActionController::Base
   rescue_from ActionController::RoutingError, :with => :render_404
   rescue_from ActiveRecord::RecordNotFound, :with => :record_not_found
   rescue_from ShardNotFound, :with => :record_not_found
-  rescue_from DomainNotReady, :with => :render_404
+  rescue_from DomainNotReady, :with => :render_domain_not_ready
 
   
   include AuthenticationSystem
@@ -55,10 +55,6 @@ class ApplicationController < ActionController::Base
   def set_locale
     I18n.locale =  (current_user && current_user.language) ? current_user.language : (current_portal ? current_portal.language : I18n.default_locale) 
   end
-
-  def set_msg_id
-     Thread.current[:message_uuid] = request.try(:uuid).to_a
-  end
  
   def check_account_state
     unless current_account.active? 
@@ -81,6 +77,7 @@ class ApplicationController < ActionController::Base
         }
       end
     end
+    cookies[HashedData["state"]] = HashedData[current_account.subscription.state] if current_account.subscription
   end
   
   def set_time_zone
@@ -132,6 +129,10 @@ class ApplicationController < ActionController::Base
   
   def run_on_slave(&block)
     Sharding.run_on_slave(&block)
+  end
+
+  def render_domain_not_ready
+    render :file => "#{Rails.root}/public/DomainNotReady.html", :status => 403, :layout => false
   end
 
   def render_404

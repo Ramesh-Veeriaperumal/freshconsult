@@ -25,7 +25,7 @@ api_error_messages:
   conditional_not_blank: "It should not be blank if '%{child}' is set"
   per_page_invalid: "It should be a Positive Integer less than or equal to %{max_value}"
   method_not_allowed: "%{fired_method} method is not allowed. It should be one of these method(s): %{methods}"
-  require_feature: "The %{feature} feature is not supported in your plan. Please upgrade your account to use it."
+  require_feature: "The %{feature} feature(s) is/are not supported in your plan. Please upgrade your account to use it."
   invalid_credentials: "You have to be logged in to perform this action."
   credentials_required: "Authentication header is needed to log in."
   domain_not_ready: Your data is getting moved to a new datacenter.
@@ -87,3 +87,5 @@ api_error_messages:
   attribute_not_required: "It cannot be set, for articles belonging to primary language."
   translation_not_available: "%{resource} translation is not available. %{attribute} attribute is required."
   language_not_allowed: "Language given in the request URL (%{code}) is not found. Allowed languages are %{list}"
+  agent_roles_and_scope_error: 'You cannot edit your own roles & ticket scopes'
+  action_restricted: "Cannot perform '%{action}' when %{reason}"

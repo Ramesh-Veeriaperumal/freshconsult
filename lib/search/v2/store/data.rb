@@ -123,18 +123,29 @@ module Search
             end
           end
           
-          # Usage: Search::V2::Store::Data.instance.store_cluster_info('cluster3')
           # Bootstraps default values like split:1, version:v1
+          # Usage:
+          # ------
+          # Search::V2::Store::Data.instance.store_cluster_info('cluster3')
+          # Search::V2::Store::Data.instance.store_cluster_info('cluster1',{
+          #   'user' => { 'suffix_params' => { 'current_partition' => 'partition2' }}
+          # })
           def cluster_config(cluster_id, opts)
             Hash.new.tap do |cluster_params|
               cluster_params[:cluster_id] = cluster_id
               cluster_params[:current]    = 'true'
               cluster_params[:timestamp]  = (Time.now.to_f * 1000).ceil
               ES_V2_SUPPORTED_TYPES.keys.each do |type|
-                cluster_params["#{type}_split".to_sym]    = opts["#{type}_split".to_sym] || '1'
-                cluster_params["#{type}_version".to_sym]  = opts["#{type}_version".to_sym] || 'v1'
+                cluster_params[type] = Hash.new.tap do |type_params|
+                  type_params['suffix_pattern'] = "%{current_partition}_%{current_split}_%{current_version}"
+                  type_params['suffix_params']  = Hash.new.tap do |suffix_params|
+                    suffix_params['current_partition']  = 'partition1'
+                    suffix_params['current_split']      = 'split1'
+                    suffix_params['current_version']    = 'v1'
+                  end
+                end
               end
-            end
+            end.deep_merge(opts)
           end
           
           def clear_cluster_cache(cluster_id)
@@ -142,8 +153,7 @@ module Search
             Store::Cache.instance.remove(Store::Cache::CLUSTER_INFO % { cluster_id: cluster_id })
             Store::Cache.instance.remove(Store::Cache::LASTEST_CLUSTER)
             ES_V2_SUPPORTED_TYPES.keys.each do |type|
-              Store::Cache.instance.remove(Store::Cache::CLUSTER_INDEX_SPLIT % { cluster_id: cluster_id, type: type })
-              Store::Cache.instance.remove(Store::Cache::CLUSTER_INDEX_VERSION % { cluster_id: cluster_id, type: type })
+              Store::Cache.instance.remove(Store::Cache::CLUSTER_INDEX_SUFFIX % { cluster_id: cluster_id, type: type })
             end
           end
       end

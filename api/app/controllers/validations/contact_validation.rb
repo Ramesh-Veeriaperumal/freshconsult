@@ -2,7 +2,6 @@ class ContactValidation < ApiValidation
   DEFAULT_FIELD_VALIDATIONS = {
     job_title:  { data_type: { rules: String }, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING } },
     language: { custom_inclusion: { in: ContactConstants::LANGUAGES } },
-    tag_names:  { data_type: { rules: Array, allow_nil: false }, array: { data_type: { rules: String }, custom_length: { maximum: ApiConstants::TAG_MAX_LENGTH_STRING } }, string_rejection: { excluded_chars: [','], allow_nil: true } },
     time_zone: { custom_inclusion: { in: ContactConstants::TIMEZONES } },
     phone: { data_type: { rules: String },  custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING } },
     mobile: { data_type: { rules: String },  custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING } },
@@ -13,18 +12,19 @@ class ContactValidation < ApiValidation
   }.freeze
 
   MANDATORY_FIELD_ARRAY = [:email, :mobile, :phone, :twitter_id].freeze
-  CHECK_PARAMS_SET_FIELDS = MANDATORY_FIELD_ARRAY.map(&:to_s).freeze
+  CHECK_PARAMS_SET_FIELDS = (MANDATORY_FIELD_ARRAY.map(&:to_s) + %w(time_zone language custom_fields)).freeze
   MANDATORY_FIELD_STRING = MANDATORY_FIELD_ARRAY.join(', ').freeze
 
   attr_accessor :avatar, :view_all_tickets, :custom_fields, :company_name, :email, :fb_profile_id, :job_title,
-                :language, :mobile, :name, :other_emails, :phone, :tag_names, :time_zone, :twitter_id, :address, :description
+                :language, :mobile, :name, :other_emails, :phone, :tags, :time_zone, :twitter_id, :address, :description
 
   alias_attribute :company_id, :company_name
   alias_attribute :customer_id, :company_name
-  alias_attribute :tags, :tag_names
 
   # Default fields validation
-  validates :email, :phone, :mobile, :company_name, :tag_names, :address, :job_title, :twitter_id, :language, :time_zone, :description, :other_emails, default_field:
+  validates :language, custom_absence: { message: :require_feature_for_attribute, code: :inaccessible_field,  message_options: { attribute: 'language', feature: :multi_language } }, unless: :multi_language_enabled?
+  validates :time_zone, custom_absence: { message: :require_feature_for_attribute, code: :inaccessible_field, message_options: { attribute: 'time_zone', feature: :multi_timezone } }, unless: :multi_timezone_enabled?
+  validates :email, :phone, :mobile, :company_name, :address, :job_title, :twitter_id, :language, :time_zone, :description, :other_emails, default_field:
                               {
                                 required_fields: proc { |x| x.required_default_fields },
                                 field_validations: DEFAULT_FIELD_VALIDATIONS
@@ -33,6 +33,7 @@ class ContactValidation < ApiValidation
   validates :name, data_type: { rules: String, required: true }
   validates :name, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }
   validates :view_all_tickets, data_type: { rules: 'Boolean',  ignore_string: :allow_string_param }
+  validates :tags, data_type: { rules: Array, allow_nil: false }, array: { data_type: { rules: String }, custom_length: { maximum: ApiConstants::TAG_MAX_LENGTH_STRING } }, string_rejection: { excluded_chars: [','], allow_nil: true }
 
   validate :contact_detail_missing, if: :email_mandatory?, on: :create
 
@@ -61,9 +62,7 @@ class ContactValidation < ApiValidation
 
   def initialize(request_params, item, allow_string_param = false)
     super(request_params, item, allow_string_param)
-    @tag_names = item.tag_names.split(',') if item && !request_params.key?(:tags)
     @current_email = item.email if item
-    check_params_set(request_params[:custom_fields]) if request_params[:custom_fields].is_a?(Hash)
     fill_custom_fields(request_params, item.custom_field) if item && item.custom_field.present?
   end
 
@@ -87,10 +86,10 @@ class ContactValidation < ApiValidation
     alias_method :contact_detail_missing_update, :contact_detail_missing
 
     def validate_avatar
-      ext = File.extname(avatar.original_filename).downcase
-      if ContactConstants::AVATAR_EXT.exclude?(ext)
+      valid_extension, extension = ApiUserHelper.avatar_extension_valid?(avatar)
+      unless valid_extension
         errors[:avatar] << :upload_jpg_or_png_file
-        error_options[:avatar] = { current_extension: ext }
+        error_options[:avatar] = { current_extension: extension }
       end
     end
 
@@ -110,6 +109,14 @@ class ContactValidation < ApiValidation
         errors[:other_emails] << :cant_add_primary_email
         (self.error_options ||= {}).merge!(other_emails: { email: "#{email}" })
       end
+    end
+
+    def multi_language_enabled?
+      Account.current.features?(:multi_language)
+    end
+
+    def multi_timezone_enabled?
+      Account.current.features?(:multi_timezone)
     end
 
     def attributes_to_be_stripped

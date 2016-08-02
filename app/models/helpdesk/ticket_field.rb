@@ -114,31 +114,37 @@ class Helpdesk::TicketField < ActiveRecord::Base
   scope :nested_and_dropdown_fields, :conditions=>["flexifield_def_entry_id is not null and (field_type = 'nested_field' or field_type='custom_dropdown')"]
   scope :event_fields, :conditions=>["flexifield_def_entry_id is not null and (field_type = 'nested_field' or field_type='custom_dropdown' or field_type='custom_checkbox')"]
   scope :default_fields, -> { where(:default => true ) }
+  scope :custom_checkbox_fields, :conditions => ["flexifield_def_entry_id is not null and field_type = 'custom_checkbox'"]
 
 
   # Enumerator constant for mapping the CSS class name to the field type
-  FIELD_CLASS = { :default_subject              => { :type => :default, :dom_type => "text",
-                                              :form_field => "subject", :visible_in_view_form => false },
-                  :default_requester            => { :type => :default, :dom_type => "requester",
-                                              :form_field => "email"  , :visible_in_view_form => false },
-                  :default_ticket_type          => { :type => :default, :dom_type => "dropdown_blank"},
-                  :default_status               => { :type => :default, :dom_type => "dropdown"}, 
-                  :default_priority             => { :type => :default, :dom_type => "dropdown"},
-                  :default_group                => { :type => :default, :dom_type => "dropdown_blank", :form_field => "group_id"},
-                  :default_agent                => { :type => :default, :dom_type => "dropdown_blank", :form_field => "responder_id"},
-                  :default_source               => { :type => :default, :dom_type => "hidden"},
-                  :default_description          => { :type => :default, :dom_type => "html_paragraph", 
-                                              :form_field => "description_html", :visible_in_view_form => false },
-                  :default_product              => { :type => :default, :dom_type => "dropdown_blank",
-                                             :form_field => "product_id" },
-                  :custom_text                  => { :type => :custom, :dom_type => "text"},
-                  :custom_paragraph             => { :type => :custom, :dom_type => "paragraph"},
-                  :custom_checkbox              => { :type => :custom, :dom_type => "checkbox"},
-                  :custom_number                => { :type => :custom, :dom_type => "number"},
-                  :custom_date                  => { :type => :custom, :dom_type => "date"},
-                  :custom_decimal               => { :type => :custom, :dom_type => "decimal"},
-                  :custom_dropdown              => { :type => :custom, :dom_type => "dropdown_blank"},
-                  :nested_field                 => { :type => :custom, :dom_type => "nested_field"}
+  FIELD_CLASS = { :default_subject        => { :type => :default, :dom_type => "text",
+                                               :form_field => "subject", :visible_in_view_form => false },
+                  :default_requester      => { :type => :default, :dom_type => "requester",
+                                               :form_field => "email"  , :visible_in_view_form => false },
+                  :default_ticket_type    => { :type => :default, :dom_type => "dropdown_blank"},
+                  :default_status         => { :type => :default, :dom_type => "dropdown"}, 
+                  :default_priority       => { :type => :default, :dom_type => "dropdown"},
+                  :default_group          => { :type => :default, :dom_type => "dropdown_blank", 
+                                               :form_field => "group_id"},
+                  :default_agent          => { :type => :default, :dom_type => "dropdown_blank", 
+                                               :form_field => "responder_id"},
+                  :default_source         => { :type => :default, :dom_type => "hidden"},
+                  :default_description    => { :type => :default, :dom_type => "html_paragraph", 
+                                               :form_field => "description_html", 
+                                               :visible_in_view_form => false },
+                  :default_product        => { :type => :default, :dom_type => "dropdown_blank",
+                                               :form_field => "product_id" },
+                  :default_company        => { :type => :default, :dom_type => "dropdown_blank", 
+                                               :form_field => "company_id" },
+                  :custom_text            => { :type => :custom, :dom_type => "text"},
+                  :custom_paragraph       => { :type => :custom, :dom_type => "paragraph"},
+                  :custom_checkbox        => { :type => :custom, :dom_type => "checkbox"},
+                  :custom_number          => { :type => :custom, :dom_type => "number"},
+                  :custom_date            => { :type => :custom, :dom_type => "date"},
+                  :custom_decimal         => { :type => :custom, :dom_type => "decimal"},
+                  :custom_dropdown        => { :type => :custom, :dom_type => "dropdown_blank"},
+                  :nested_field           => { :type => :custom, :dom_type => "nested_field"}
                 }
 
   def dom_type
@@ -277,11 +283,24 @@ class Helpdesk::TicketField < ActiveRecord::Base
          Account.current.groups_from_cache.collect { |c| [c.name, c.id] }
        when "default_product" then
          Account.current.products.collect { |e| [e.name, e.id] }
+       when "default_company" then
+         requester_companies(ticket)
        when "nested_field" then
          picklist_values.collect { |c| [CGI.unescapeHTML(c.value), c.value] }
        else
          []
      end
+  end
+
+  def requester_companies ticket
+    if ticket && !ticket.new_record?
+      companies = ticket.requester.companies.sorted.collect { |c| [c.name, c.id] }
+      if ticket.company_id && !ticket.requester.company_ids.include?(ticket.company_id)
+        old_company = account.companies.find_by_id(ticket.company_id)
+        companies.push([old_company.name, old_company.id]) if old_company.present?
+      end
+    end
+    companies.present? ? companies : []
   end
 
   def all_status_choices(disp_col_name=nil)

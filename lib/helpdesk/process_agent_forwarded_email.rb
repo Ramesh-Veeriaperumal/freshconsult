@@ -7,10 +7,13 @@ module Helpdesk
       from_name = from_email = from_index = nil
       if content
         t_content = decode_brackets_in_text(content.gsub("\r\n", "\n"))
-        from_index = (t_content =~ /^>*\s*\*?From:\*?\s*(.*)\s+<(.*)>$/ or 
-                      t_content =~ /^\s*\*?From:\*?\s(.*)\s+\[mailto:(.*)\]/ or
-                      t_content =~ /^\s*\*?From:\*?\s(.*)\s+\[mailto:(.*)\]/ or  
-                      t_content =~ /^>>>+\s(.*)\s+<(.*)>$/)      
+        from_index = (t_content =~ /^>*\s*\*?(?:From:|De:|Desde:|Von:|Van:)\*?\s*(.*)\s+<(.*)>$/ or 
+                      t_content =~ /^\s*\*?(?:From:|De:|Desde:|Von:|Van:)\*?\s(.*)\s+\[mailto:(.*)\]/ or
+                      t_content =~ /^\s*\*?(?:From:|De:|Desde:|Von:|Van:)\*?\s(.*)\s+\[mailto:(.*)\]/ or  
+                      t_content =~ /^>>>+\s(.*)\s+<(.*)>$/) 
+                      
+       
+                      
         if from_index
           from_name, from_email = $1, $2
           begin
@@ -36,7 +39,7 @@ module Helpdesk
         cc_text = "" 
         to_text = ""
         parsed_header_content.sub!(/^(\*?Cc:\*?)/, "Cc:")
-        parsed_header_content.sub!(/^(\*?To:\*?)/, "To:")
+        parsed_header_content.sub!(/^(\*?(?:To:|Pour:|Para:|Zu:|Aan:)\*?)/, "To:")
 
         parsed_header_content.split("\n").each do |line| 
           if (!cc_text.empty? or line.start_with?("Cc")) 

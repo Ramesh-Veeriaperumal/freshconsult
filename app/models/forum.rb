@@ -61,10 +61,10 @@ class Forum < ActiveRecord::Base
   def self.visiblity_condition(user)
     condition = "forums.forum_visibility IN (#{self.visibility_array(user).join(",")})"
     condition +=  " OR ( forum_visibility = #{Forum::VISIBILITY_KEYS_BY_TOKEN[:company_users]}
-                    AND forums.id IN (SELECT customer_forums.forum_id from customer_forums
-                                      where customer_forums.customer_id = #{user.customer_id} and
-                                      customer_forums.account_id = #{user.account_id}))"  if (user && user.has_company?)
-                # customer_forums.customer_id = #{user.customer_id} )"  if (user && user.has_company?)
+                      AND forums.id IN (SELECT customer_forums.forum_id from customer_forums
+                                        where customer_forums.customer_id in (#{user.company_ids_str}) and
+                                        customer_forums.account_id = #{user.account_id}))" if (user && user.has_company?)
+                  # customer_forums.customer_id = #{user.customer_id} )"  if (user && user.has_company?)
     condition
   end
 
@@ -110,7 +110,9 @@ class Forum < ActiveRecord::Base
   after_create :add_activity_new_and_clear_cache
   after_update :clear_cache_with_condition
   before_destroy :add_activity
-  after_destroy :clear_cat_cache
+  after_destroy :clear_cat_cache, :clear_moderation_records
+
+  include RabbitMq::Publisher
 
   def add_activity_new_and_clear_cache
     create_activity('new_forum')
@@ -206,9 +208,12 @@ class Forum < ActiveRecord::Base
   def visible?(user)
     return true if (user and user.agent?)
     return true if self.forum_visibility == VISIBILITY_KEYS_BY_TOKEN[:anyone]
-    return true if (user and (self.forum_visibility == VISIBILITY_KEYS_BY_TOKEN[:logged_users]))
-    return true if (user && (self.forum_visibility == VISIBILITY_KEYS_BY_TOKEN[:company_users]) && 
-      user.company  && customer_forums.map(&:customer_id).include?(user.company.id))
+    return false unless user
+    return true if self.forum_visibility == VISIBILITY_KEYS_BY_TOKEN[:logged_users]
+    company_cdn = user.contractor? ? (user.company_ids & customer_forums.map(&:customer_id)).any? : 
+                    (user.company  && customer_forums.map(&:customer_id).include?(user.company.id))
+    return true if ((self.forum_visibility == VISIBILITY_KEYS_BY_TOKEN[:company_users]) && 
+      company_cdn)
   end
 
   # def set_topic_delta_flag
@@ -268,22 +273,26 @@ class Forum < ActiveRecord::Base
   def update_search_index
     SearchSidekiq::IndexUpdate::ForumTopics.perform_async({ :forum_id => id }) if ES_ENABLED
     
-    SearchV2::IndexOperations::UpdateTopicForum.perform_async({ :forum_id => id }) if Account.current.features?(:es_v2_writes)
+    SearchV2::IndexOperations::UpdateTopicForum.perform_async({ :forum_id => id }) if Account.current.features_included?(:es_v2_writes)
   end
 
   def remove_topics_from_es
     SearchSidekiq::RemoveFromIndex::ForumTopics.perform_async({ :deleted_topics => @deleted_topic_ids }) if ES_ENABLED
     
-    SearchV2::IndexOperations::RemoveForumTopics.perform_async({ :forum_id => id }) if Account.current.features?(:es_v2_writes)
+    SearchV2::IndexOperations::RemoveForumTopics.perform_async({ :forum_id => id }) if Account.current.features_included?(:es_v2_writes)
   end
 
   def backup_forum_topic_ids
-    @deleted_topic_ids = self.topics.map(&:id)
+    @deleted_topic_ids = self.topics.pluck(:id)
   end
 
   def unsubscribed_agents
     user_ids = monitors.map(&:id)
     account.agents_from_cache.reject{ |a| user_ids.include? a.user_id }
+  end
+
+  def clear_moderation_records
+    Community::ClearModerationRecords.perform_async(self.id, self.class.to_s, @deleted_topic_ids)
   end
 
   private
@@ -294,6 +303,23 @@ class Forum < ActiveRecord::Base
 
     def forum_visibility_updated?
       @all_changes.has_key?(:forum_visibility)
+    end
+
+    def to_rmq_json(keys,action)
+      forum_identifiers
+      #destroy_action?(action) ? forum_identifiers : return_specific_keys(forum_identifiers, keys)
+    end
+
+    def forum_identifiers
+      @rmq_forum_identifiers ||= {
+      "id"          =>  id,
+      "name"        =>  name, 
+      "post_count"  => posts_count,
+      "forum_category_id" => forum_category_id,
+      "forum_type"  => forum_type,
+      "forum_visibility" => forum_visibility,     
+      "account_id"  =>  account_id
+     }
     end
 
 end

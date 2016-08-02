@@ -7,12 +7,17 @@
     notes_per_page    : 50,
     notes_pagination_url: "/helpdesk/archive_tickets/<%= @ticket.display_id %>/archive_notes?v=2&", 
     last_note_id    : <%= @ticket_notes.present? ? @ticket_notes.last.id : -1 %>,
-    activities_pagination_url: "/helpdesk/archive_tickets/<%= @ticket.display_id %>/activities/?",
+    activities_pagination_url: "/helpdesk/archive_tickets/<%= @ticket.display_id %>/<%= Account.current.launched?(:activity_ui) ?  'activitiesv2/?' : 'activities/?'%>",
     last_activity   : -1,
+    last_activity_batch : -1,
     loaded_activities : 0,
     scroll_to_last    : <%= (@ticket.responder_id == current_user.id).to_s %>,
     fetch_notes_url   : "/helpdesk/archive_tickets/<%= escape_javascript(h(@ticket.display_id)) %>/archive_notes", 
     created_on      : new Date("<%= @ticket.created_at.strftime("%B %e, %Y %H:%M") %>"),
+    pagination_limit: <%= ActivityConstants::QUERY_UI_LIMIT %>,
+    activity_event_type: <%= ::HelpdeskActivities::EventType::ALL %>,
+    ticket_subject: "<%= escape_javascript(@ticket.subject.squish.html_safe) %>",
+    ticket_deleted: <%= @ticket.deleted %>
   };
 </script>
 

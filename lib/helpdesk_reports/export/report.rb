@@ -84,7 +84,7 @@ class HelpdeskReports::Export::Report < HelpdeskReports::Export::Base
     end
 
     def format_result
-      if FORMATTING_REQUIRED.include?(report_type.to_sym)
+      if FORMATTING_REQUIRED.include?(report_type)
         @data = HelpdeskReports::Formatter::Ticket.new(@processed_result, report_specific_constraints(true)).format
       else
         @data = @processed_result
@@ -94,7 +94,7 @@ class HelpdeskReports::Export::Report < HelpdeskReports::Export::Base
     def generate_file
       @layout = "layouts/report/v2/#{report_type}_pdf.html"
       file = file_format == TYPES[:csv] ? export_summary_report : build_pdf
-      build_file(file, file_format, PDF_EXPORT_TYPE)
+      build_file(file, file_format, report_type, PDF_EXPORT_TYPE)
     end
 
     def build_pdf
@@ -109,8 +109,10 @@ class HelpdeskReports::Export::Report < HelpdeskReports::Export::Base
       end
 
       pdf_html = av.render :layout => @layout,
-                           :template => 'sections/generate_report_pdf.pdf.erb',
-                           :locals => locals_option
+                           :template => 'sections/generate_report_pdf',
+                           :locals => locals_option,
+                           :handlers => [:erb],
+                           :formats => [:html]
 
       pdf = WickedPdf.new.pdf_from_string(pdf_html, :pdf => report_type, :page_size => "A3", :javascript_delay => 1000)
     end

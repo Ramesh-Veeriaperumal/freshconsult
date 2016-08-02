@@ -54,7 +54,7 @@ class Forum::TopicDrop < BaseDrop
   end
 
   def posts
-    ordered_posts.filter(@per_page, page_number)
+    ordered_posts.filter(@per_page, @page)
   end
 
   def ordered_posts
@@ -205,13 +205,8 @@ class Forum::TopicDrop < BaseDrop
       end
     end
 
-    def page_number
-      return nil unless @page
-      max_page = [(source.posts_count.to_f / @per_page).ceil.to_i, 1].max 
-      return max_page if @page == "last" or @page.to_i > max_page
-      return 1 if @page.to_i.to_s != @page #Other invalid strings
-      return 1 if @page.to_i <= 0 #Other invalid numbers
-      @page
+    def max_page
+      [(source.posts_count.to_f / @per_page).ceil.to_i, 1].max
     end
 
 end

@@ -1,4 +1,3 @@
-
 class Helpdesk::TicketsController < ApplicationController
 
   include ActionView::Helpers::TextHelper
@@ -17,7 +16,10 @@ class Helpdesk::TicketsController < ApplicationController
   helper Helpdesk::NotesHelper
   helper Helpdesk::TicketsExportHelper
   helper Helpdesk::SelectAllHelper
+  helper Helpdesk::RequesterWidgetHelper
   include Helpdesk::TagMethods
+  include Helpdesk::NotePropertiesMethods
+  include Helpdesk::Activities::ActivityMethods
 
   before_filter :redirect_to_mobile_url
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => :show
@@ -55,10 +57,11 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :set_native_mobile, :only => [:show, :load_reply_to_all_emails, :index,:recent_tickets,:old_tickets , :delete_forever,:change_due_by,:reply_to_forward]
   before_filter :verify_ticket_permission_by_id, :only => [:component]
 
-  before_filter :load_ticket, 
-    :only => [:edit, :update, :execute_scenario, :close, :change_due_by, :print, :clear_draft, :save_draft, 
-              :draft_key, :get_ticket_agents, :quick_assign, :prevnext, :status, :update_ticket_properties, :activities]
-  
+  before_filter :load_ticket,
+    :only => [:edit, :update, :execute_scenario, :close, :change_due_by, :print, :clear_draft, :save_draft,
+              :draft_key, :get_ticket_agents, :quick_assign, :prevnext, :status, :update_ticket_properties,
+              :activities, :activitiesv2, :activities_all]
+
   before_filter :load_ticket_with_notes, :only => [:show]
 
   before_filter :check_outbound_permission, :only => [:edit, :update]
@@ -76,8 +79,8 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :validate_manual_dueby, :only => :update
   before_filter :set_default_filter , :only => [:custom_search, :export_csv]
 
-  before_filter :verify_permission, :only => [:show, :edit, :update, :execute_scenario, :close, :change_due_by, :print, :clear_draft, :save_draft, 
-              :draft_key, :get_ticket_agents, :quick_assign, :prevnext, :status, :update_ticket_properties, :activities, :unspam, :restore]
+  before_filter :verify_permission, :only => [:show, :edit, :update, :execute_scenario, :close, :change_due_by, :print, :clear_draft, :save_draft,
+              :draft_key, :get_ticket_agents, :quick_assign, :prevnext, :status, :update_ticket_properties, :activities, :unspam, :restore, :activitiesv2, :activities_all]
 
   before_filter :load_email_params, :only => [:show, :reply_to_conv, :forward_conv, :reply_to_forward]
   before_filter :load_conversation_params, :only => [:reply_to_conv, :forward_conv, :reply_to_forward]
@@ -89,6 +92,8 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :show_password_expiry_warning, :only => [:index, :show]
 
   after_filter  :set_adjacent_list, :only => [:index, :custom_search]
+  before_filter :fetch_item_attachments, :only => [:create, :update]
+  before_filter :load_tkt_and_templates, :only => :apply_template
 
   def user_ticket
     if params[:email].present?
@@ -285,7 +290,7 @@ class Helpdesk::TicketsController < ApplicationController
 
     @page_title = "[##{@ticket.display_id}] #{@ticket.subject}"
 
-
+    build_notes_last_modified_user_hash(@ticket_notes)
     respond_to do |format|
       format.html  {
         @ticket_notes       = @ticket_notes.reverse
@@ -309,6 +314,7 @@ class Helpdesk::TicketsController < ApplicationController
         hash.merge!(current_account.as_json(:only=> [:id], :methods=>[:timesheets_feature]))
         hash.merge!({:subscription => !@subscription.nil?})
         hash.merge!({:reply_emails => @reply_emails})
+        hash.merge!({:selected_email => @selected_reply_email})
         hash.merge!({:to_cc_emails => @to_cc_emails})
         hash.merge!({:bcc_drop_box_email => bcc_drop_box_email.map{|item|[item, item]}})
         hash.merge!({:last_reply => bind_last_reply(@ticket, @signature, false, true, true)})
@@ -333,6 +339,7 @@ class Helpdesk::TicketsController < ApplicationController
 
   def update
     #old_timer_count = @item.time_sheets.timer_active.size -  we will enable this later
+    params[nscname] ||= {} #params[nscname] might be uninitialised in some cases when update happens via API
     build_attachments @item, :helpdesk_ticket
     params[nscname][:tag_names] = params[:helpdesk][:tags] unless params[:helpdesk].blank? or params[:helpdesk][:tags].nil?
     if @item.update_ticket_attributes(params[nscname])
@@ -369,11 +376,11 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def compose_email
-    @item.build_ticket_body
-    @item.source = Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:outbound_email]
+    build_tkt_body
   end
 
   def update_ticket_properties
+    params[nscname] ||= {} #params[nscname] might be uninitialised in some cases when update happens via API
     params[nscname][:tag_names] = params[:helpdesk][:tags] unless params[:helpdesk].blank? or params[:helpdesk][:tags].nil?
     if @item.update_ticket_attributes(params[nscname])
       if(params[:redirect] && params[:redirect].to_bool)
@@ -416,6 +423,71 @@ class Helpdesk::TicketsController < ApplicationController
         }
       end
     end
+  end
+
+  def update_requester
+    @ticket = load_by_param(params[:id])
+    @requester_errors = false
+    @company_name_required_error = false
+
+    requester = current_account.users.find_by_id(params["requester_widget"]["contact_id"])
+
+    if requester.present? && requester.customer?
+      requester.validatable_custom_fields = { :fields => current_account.contact_form.custom_contact_fields,
+                                          :error_label => :label }
+      if params["company"].present? && requester.company.present?
+        @company = current_account.companies.find(requester.company_id)
+        @company.validatable_custom_fields = { :fields => current_account.company_form.custom_company_fields, 
+                                               :error_label => :label }
+        check_domain_exists unless @company.update_attributes(params["company"])
+        flash[:notice] = activerecord_error_list(@company.errors) unless @existing_company.present?
+      end
+
+      if (@company.blank? || @company.errors.blank?)
+        flash[:notice] = requester.update_attributes(params["contact"]) ? 
+          t(:'flash.general.update.success', :human_name => t('requester_widget_human_name')) :
+          activerecord_error_list(requester.errors)
+      else
+        @requester_errors = true
+      end
+
+    end
+
+    # if company name editing is allowed, enable the following block and remove the block above
+
+    # if requester.present? && requester.customer?
+    #   requester.validatable_custom_fields = { :fields => current_account.contact_form.custom_contact_fields,
+    #                                       :error_label => :label }
+    #   params[:contact][:customer_id] = ""
+
+    #   if company_details_present?
+    #     if params["company"]["name"].present?
+    #       @company = current_account.companies.find_by_name(params["company"]["name"])
+    #       if @company
+    #         @company.assign_attributes(params["company"])
+    #       else
+    #         @company = current_account.companies.new(params["company"])
+    #       end
+    #       @company.validatable_custom_fields = { :fields => current_account.company_form.custom_company_fields,
+    #                                              :error_label => :label }
+    #       check_domain_exists unless @company.save
+    #       flash[:notice] = activerecord_error_list(@company.errors) unless @existing_company.present?
+    #       params[:contact][:customer_id] = @company.id
+    #     else
+    #       @company_name_required_error = true
+    #     end
+    #   end
+    #   if (@company.blank? || @company.errors.blank?) && !@company_name_required_error
+    #     if requester.update_attributes(params["contact"])
+    #       flash[:notice] = t(:'flash.general.update.success', :human_name => t('requester_widget_human_name'))
+    #     else
+    #       check_company_association_exists(requester.errors)
+    #       flash[:notice] = activerecord_error_list(requester.errors) unless @company_association_exists
+    #     end
+    #   else
+    #     @requester_errors = true
+    #   end
+    # end
   end
 
   def assign
@@ -479,8 +551,8 @@ class Helpdesk::TicketsController < ApplicationController
     if va_rule.present? and va_rule.visible_to_me? and va_rule.check_user_privilege
       Tickets::BulkScenario.perform_async({:ticket_ids => params[:ids], :scenario_id => params[:scenario_id]})
       va_rule.fetch_actions_for_flash_notice(current_user)
-      actions_executed = Va::ScenarioFlashMessage.activities
-      Va::ScenarioFlashMessage.clear_activities
+      actions_executed = Va::RuleActivityLogger.activities
+      Va::RuleActivityLogger.clear_activities
       respond_to do |format|
         format.html {
           flash[:notice] = render_to_string(:partial => '/helpdesk/tickets/execute_scenario_notice',
@@ -499,7 +571,8 @@ class Helpdesk::TicketsController < ApplicationController
       @item.save
       @item.create_scenario_activity(va_rule.name)
       @va_rule_executed = va_rule
-      actions_executed = Va::ScenarioFlashMessage.activities
+      actions_executed = Va::RuleActivityLogger.activities
+      Va::RuleActivityLogger.clear_activities
       respond_to do |format|
         format.html {
           flash[:notice] = render_to_string(:partial => '/helpdesk/tickets/execute_scenario_notice',
@@ -561,7 +634,7 @@ class Helpdesk::TicketsController < ApplicationController
 
   def unspam
     @items.each do |item|
-      item.spam = false 
+      item.spam = false
       restore_dirty_tags(item)
       item.save
       #mark_requester_deleted(item,false)
@@ -679,21 +752,20 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def new
-    @item.build_ticket_body
-
+    build_tkt_body
     unless @topic.nil?
       @item.subject     = @topic.title
       @item.description_html = @topic.posts.first.body_html
       @item.requester   = @topic.user
     end
-    @item.source = Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:phone] #setting for agent new ticket- as phone
+
     if params['format'] == 'widget'
       render :layout => 'widgets/contacts'
     end
   end
 
   def create
-    if !params[:topic_id].blank?
+    if (!params[:topic_id].blank? && find_topic) && (@topic.ticket.nil? || (@topic.ticket.present? && @topic.ticket.deleted))
       @item.source = Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:forum]
       @item.build_ticket_topic(:topic_id => params[:topic_id])
     end
@@ -785,7 +857,7 @@ class Helpdesk::TicketsController < ApplicationController
   def get_solution_detail
     language = Language.find_by_code(params[:language]) || Language.for_current_account
     sol_desc = current_account.solution_article_meta.find(params[:id]).send("#{language.to_key}_article")
-    render :text => sol_desc.description || ""
+    render :text => Helpdesk::HTMLSanitizer.sanitize_for_insert_solution(sol_desc.description) || ""
   end
 
   def latest_note
@@ -848,6 +920,47 @@ class Helpdesk::TicketsController < ApplicationController
     end
   end
 
+  def activitiesv2
+    if Account.current.launched?(:activity_ui) and Account.current.features?(:activity_revamp) and request.format != "application/json" and ACTIVITIES_ENABLED
+      type = :tkt_activity
+      @activities_data = new_activities(params, @item, type)
+      @total_activities  ||=  @activities_data[:total_count]
+       respond_to do |format|
+        format.html{
+          if @activities_data.nil? || @activities_data[:error].present?
+            render nothing: true
+          else
+            @activities = @activities_data[:activity_list].reverse
+            if params[:since_id].present? or params[:before_id].present?
+              render :partial => "helpdesk/tickets/show/custom_activity.html.erb", :collection => @activities
+            else
+              render :layout => false
+            end
+          end
+        }
+      end
+    else
+      render :nothing => true
+    end
+  end
+
+  def activities_all
+    if request.format != "application/json"
+      activities = {:activity => "Incorrect request format"}
+    else
+      if Account.current.features?(:activity_revamp)
+        params[:event_type] = ::HelpdeskActivities::EventType::ALL
+        params[:limit]      = 200
+        activities = new_activities(params, @item, :test_json)
+      end
+    end
+    respond_to do |format|
+      format.json do
+        render :json => activities
+      end
+    end
+  end
+
   def status
     render :partial => 'helpdesk/tickets/show/status.html.erb', :locals => {:ticket => @ticket}
   end
@@ -868,6 +981,43 @@ class Helpdesk::TicketsController < ApplicationController
       format.any {
        render_404
       }
+    end
+  end
+
+  def accessible_templates
+    recent_ids = recent_templ_ids
+    if recent_ids.present?
+      recent_templ = fetch_templates(["`ticket_templates`.id IN (?)",recent_ids], recent_ids, RECENT_TEMPLATES)
+    else
+      recent_ids   = ""
+      recent_templ = []
+    end
+    size = ITEMS_TO_DISPLAY - recent_templ.count
+    acc_templ = fetch_templates(["`ticket_templates`.id NOT IN (?)",recent_ids],nil, size, recent_ids)
+    render :json => { :all_acc_templates => acc_templ, :recent_templates => recent_templ }
+  end
+
+  def search_templates
+    search_acc_templ = fetch_templates(["`ticket_templates`.name like ?","%#{params[:search_string]}%"])
+    render :json => { :all_acc_templates => search_acc_templ }
+  end
+
+  def apply_template
+    @template  = current_account.ticket_templates.find_by_id(params[:template_id])
+    @template  = nil unless @template and @template.visible_to_me?
+
+    if @template.present?
+      @all_attachments = @template.all_attachments
+      @cloud_files = @template.cloud_files
+      @template.template_data.each do |key,value|
+        next if compose_email? && invisible_fields?(key)
+        key == "tags" ? (@item[key] = value) : (@item.send("#{key}=",value))
+      end
+    else
+      flash[:notice] = t('ticket_templates.not_available')
+    end
+    respond_to do |format|
+      format.js { render :partial => "/helpdesk/tickets/apply_template" }
     end
   end
 
@@ -952,7 +1102,7 @@ class Helpdesk::TicketsController < ApplicationController
   def load_note_reply_from_email
     from_emails = @note.load_note_reply_from_email
     @selected_from_email_addr = nil
-    from_emails.each do|from_email| 
+    from_emails.each do|from_email|
       @selected_from_email_addr = @reply_emails.find { |email_config| from_email == parse_email_text(email_config[1])[:email].downcase }
         break if @selected_from_email_addr
     end
@@ -964,13 +1114,13 @@ class Helpdesk::TicketsController < ApplicationController
     def set_trashed_column
       sql_array = ["update helpdesk_schema_less_tickets st inner join helpdesk_tickets t on
                     st.ticket_id= t.id and st.account_id=%s and t.account_id=%s
-                    set st.%s = 1 where t.id in (%s)", 
+                    set st.%s = 1 where t.id in (%s)",
                     current_account.id, current_account.id, Helpdesk::SchemaLessTicket.trashed_column, @items.map(&:id).join(',')]
       sql = ActiveRecord::Base.send(:sanitize_sql_array, sql_array)
 
       ActiveRecord::Base.connection.execute(sql)
     end
-    
+
     def render_delete_forever
       flash[:notice] = render_to_string(
           :inline => t("flash.tickets.delete_forever.success", :tickets => get_updated_ticket_count ))
@@ -978,7 +1128,7 @@ class Helpdesk::TicketsController < ApplicationController
         format.html { redirect_to :back }
         format.nmobile { render :json => {:success => true , :success_message => render_to_string(
           :inline => t("flash.tickets.delete_forever.success", :tickets => get_updated_ticket_count ))}}
-      end 
+      end
     end
 
     def scoper_ticket_actions
@@ -1192,7 +1342,7 @@ class Helpdesk::TicketsController < ApplicationController
 
     def dashboard_filter?
       #(params[:filter_type] == "status") and params[:filter_key].present?
-      [:agent,:status,:group,:priority,:type,:source].any? {|type| params[type].present?}
+      TicketConstants::DASHBOARD_FILTER_MAPPING.keys.any? {|type| params[type].present?}
     end
 
     def is_custom_filter_ticket?
@@ -1303,13 +1453,13 @@ class Helpdesk::TicketsController < ApplicationController
   def check_ticket_status
     respond_to do |format|
       format.html{
-        if params["helpdesk_ticket"]["status"].blank?
+        if !params["helpdesk_ticket"].nil? && params["helpdesk_ticket"]["status"].blank?
           flash[:error] = t("change_deleted_status_msg")
           redirect_to item_url
         end
       }
       format.any(:xml, :mobile, :json){
-        params["helpdesk_ticket"]["status"] ||= @item.status
+        params["helpdesk_ticket"]["status"] ||= @item.status unless params["helpdesk_ticket"].nil?
       }
     end
   end
@@ -1344,7 +1494,7 @@ class Helpdesk::TicketsController < ApplicationController
         end
       end
     else
-      params[nscname].except!(:due_by, :frDueBy)
+      params[nscname].except!(:due_by, :frDueBy) unless params[nscname].nil?
     end
   end
 
@@ -1377,7 +1527,7 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def load_ticket_with_notes
-    return load_ticket if request.format.html? or request.format.nmobile? or request.format.js? 
+    return load_ticket if request.format.html? or request.format.nmobile? or request.format.js?
     @ticket = @item = load_by_param(params[:id], preload_options)
     load_or_show_error(true)
   end
@@ -1389,7 +1539,7 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def load_archive_ticket(load_notes = false)
-    raise ActiveRecord::RecordNotFound unless current_account.features?(:archive_tickets)
+    raise ActiveRecord::RecordNotFound unless current_account.features_included?(:archive_tickets)
 
     options = load_notes ? archive_preload_options : {}
     archive_ticket = load_by_param(params[:id], options, true)
@@ -1429,7 +1579,7 @@ class Helpdesk::TicketsController < ApplicationController
     if es_tickets_enabled? and params[:html_format]
       tickets_from_es(params)
     else
-      current_account.tickets.preload(requester: [:avatar,:company]).permissible(current_user).filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
+      current_account.tickets.preload({requester: [:avatar]}, :company).permissible(current_user).filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
     end
   end
 
@@ -1439,7 +1589,7 @@ class Helpdesk::TicketsController < ApplicationController
       :order_entity => params[:wf_order],
       :order_sort   => params[:wf_order_type]
     }
-    Search::Filters::Docs.new(@ticket_filter.query_hash.dclone).records('Helpdesk::Ticket', es_options)
+    Search::Tickets::Docs.new(@ticket_filter.query_hash.dclone).records('Helpdesk::Ticket', es_options)
   end
 
   def scenario_failure_notification
@@ -1453,6 +1603,64 @@ class Helpdesk::TicketsController < ApplicationController
         render :json => { :failure => true,
            :rule_name => I18n.t("admin.automations.failure") }.to_json
       }
+    end
+  end
+
+
+  def check_domain_exists
+      if @company.errors[:"company_domains.domain"].include?("has already been taken")
+        @company.company_domains.each do |cd|
+          @existing_company ||= current_account.company_domains.find_by_domain(cd.domain).try(:company) if cd.new_record?
+        end
+      end
+  end
+
+  def check_company_association_exists errors
+    if errors[:"default_user_company.company_id"].include?("has already been taken")
+      @company_association_exists = true
+      @requester_errors = true
+    end
+  end
+
+  def flat_hash(hash_to_convert,tmp=[],new_hash={})
+    return new_hash.update({ tmp=>hash_to_convert }) unless hash_to_convert.is_a? Hash
+    hash_to_convert.each { |k,v| flat_hash(v,tmp+[k],new_hash) }
+    new_hash
+  end
+
+
+  def company_details_present?
+    company_hash = flat_hash(params["company"])
+    company_hash.values.any?{|v| !v.nil? && v.length > 0 && v != "false"}
+  end
+
+
+  def load_tkt_and_templates
+    build_item
+    @item.build_flexifield
+    @item.ff_def = Account.current.flexi_field_defs.first.id
+    build_tkt_body
+  end
+
+  def build_tkt_body
+    @item.build_ticket_body
+    source = compose_email? ? :outbound_email : :phone
+    @item.source = Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[source]
+  end
+
+  def compose_email?
+    params[:action].eql?("compose_email") or params[:template_form].eql?("compose_email")
+  end
+
+  def invisible_fields? key
+    ["product_id", "responder_id", "source"].include?(key.to_s)
+  end
+
+  def recent_templ_ids
+    if params[:recent_ids]
+      recent_ids = ActiveSupport::JSON.decode(params[:recent_ids])
+      recent_ids.compact!
+      recent_ids
     end
   end
 

@@ -1,4 +1,7 @@
 <div class="ff-context-container">
+	<div class="desktop-notifier-context">
+		<%= render :partial => 'layouts/shared/freshfone/freshfone_desktop_notifier'%>
+	</div>
 	<% if freshfone_trial_states? %>
 		<div class="trial_warnings hide">
 			<div class="trial_incoming_warning trial_warning center error hide">

@@ -42,7 +42,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   serialize :cc_email
 
-  concerned_with :associations, :validations, :callbacks, :riak, :s3, :mysql, :attributes, :rabbitmq, :permissions, :esv2_methods
+  concerned_with :associations, :validations, :callbacks, :riak, :s3, :mysql, :attributes, :rabbitmq, :permissions, :esv2_methods, :count_es_methods
   
   text_datastore_callbacks :class => "ticket"
   spam_watcher_callbacks :user_column => "requester_id"
@@ -52,7 +52,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
   attr_accessor :email, :name, :custom_field ,:customizer, :nscname, :twitter_id, :external_id, 
     :requester_name, :meta_data, :disable_observer, :highlight_subject, :highlight_description, 
     :phone , :facebook_id, :send_and_set, :archive, :required_fields, :disable_observer_rule, 
-    :disable_activities, :tags_updated
+    :disable_activities, :tags_updated, :system_changes, :activity_type, :misc_changes
+  # Added :system_changes, :activity_type, :misc_changes for activity_revamp -
+  # - will be clearing these after activity publish.
 
 #  attr_protected :attachments #by Shan - need to check..
 
@@ -79,7 +81,16 @@ class Helpdesk::Ticket < ActiveRecord::Base
         :conditions => ["owner_id = ?",company_id]
   } 
   }
-  
+
+  scope :contractor_tickets, lambda { |user_id, company_ids, operator|
+    if user_id.present?
+      self.where("helpdesk_tickets.requester_id = ? #{operator} helpdesk_tickets.owner_id in (?)", 
+                  user_id, company_ids)
+    else
+      self.where("helpdesk_tickets.owner_id in (?)", company_ids)
+    end
+  }
+
   scope :company_tickets_resolved_on_time,lambda { |company_id| { 
         :joins => %(INNER JOIN helpdesk_ticket_states on 
           helpdesk_tickets.id = helpdesk_ticket_states.ticket_id and 
@@ -459,7 +470,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def time_tracked
-    time_sheets.sum(&:running_time)
+    time_sheets.map(&:running_time).sum
   end
 
   def billable_hours
@@ -572,8 +583,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def ticket_survey_results
-     recent_survey = survey_results.last(:order => "id")
-     recent_survey.text if recent_survey
+     survey_results.sort_by(&:id).last.try(:text)
   end
   
   def subject_or_description
@@ -625,12 +635,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
   def description_with_attachments
-    attachments.empty? ? description_html : 
-        "#{description_html}\n\nTicket attachments :\n#{liquidize_attachments(attachments)}\n"
+    all_attachments.empty? ? description_html : 
+        "#{description_html}\n\nTicket attachments :\n#{liquidize_attachments(all_attachments)}\n"
   end
   
-  def liquidize_attachments(attachments)
-    attachments.each_with_index.map { |a, i| 
+  def liquidize_attachments(all_attachments)
+    all_attachments.each_with_index.map { |a, i| 
       "#{i+1}. <a href='#{Rails.application.routes.url_helpers.helpdesk_attachment_url(a, :host => portal_host)}'>#{a.content_file_name}</a>"
       }.join("<br />") #Not a smart way for sure, but donno how to do this in RedCloth?
   end
@@ -990,7 +1000,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def self.filter_conditions(ticket_filter = nil, current_user = nil)
     {
       default: {
-        conditions: ['helpdesk_tickets.created_at > ? AND helpdesk_tickets.spam = ?', created_in_last_month , false ]
+        conditions: ['helpdesk_tickets.created_at > ?', created_in_last_month ]
       },
       spam: {
         conditions: { spam: true }
@@ -1000,21 +1010,20 @@ class Helpdesk::Ticket < ActiveRecord::Base
         joins: :schema_less_ticket
       },
       new_and_my_open: {
-        conditions: { status: OPEN,  responder_id: [nil, current_user.try(:id)], spam: false }
+        conditions: { status: OPEN,  responder_id: [nil, current_user.try(:id)] }
       },
       watching: {
-          :conditions => {helpdesk_subscriptions: {user_id: current_user.id}, spam: false},
+          :conditions => {helpdesk_subscriptions: {user_id: current_user.id}},
           :joins => :subscriptions
       },
       requester_id: {
-        conditions: { requester_id: ticket_filter.try(:requester_id), spam: false }
+        conditions: { requester_id: ticket_filter.try(:requester_id) }
       },
       company_id: { 
-        conditions: { users: { customer_id: ticket_filter.try(:company_id) }, spam: false },
-        joins: :requester
+        conditions: { owner_id: ticket_filter.try(:company_id) }
       },
       updated_since: {
-        conditions: ['helpdesk_tickets.updated_at >= ? AND helpdesk_tickets.spam = ?', ticket_filter.try(:updated_since).try(:to_time).try(:utc), false]
+        conditions: ['helpdesk_tickets.updated_at >= ?', ticket_filter.try(:updated_since).try(:to_time).try(:utc)]
       }
     }
   end
@@ -1034,7 +1043,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   # Used update_column instead of touch because touch fires after commit callbacks from RAILS 4 onwards.
   def update_timestamp
-    self.update_column(:updated_at, Time.zone.now) unless @touched || new_record? # update_column can't be invoked in new record.
+    unless @touched || new_record?
+      self.update_column(:updated_at, Time.zone.now) # update_column can't be invoked in new record.
+      self.sqs_manual_publish
+    end
     @touched ||= true
   end
 
@@ -1043,6 +1055,33 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
     return if next_agent.nil? #There is no agent available to assign ticket.
     self.responder_id = next_agent.user_id
+    self.activity_type = {:type => "round_robin", :responder_id => [nil, self.responder_id]}
+  end
+
+  def add_tag_activity(tag)
+    self.tags_updated = true    # for ES search
+    if self.misc_changes.present?
+      self.misc_changes[:add_tag].present? ? self.misc_changes[:add_tag] << tag.name : self.misc_changes[:add_tag] = [tag.name]
+    else
+      self.misc_changes = {:add_tag => [tag.name]} 
+    end
+  end
+
+  def remove_tag_activity(tag)
+    self.tags_updated = true    # for ES search
+    if self.misc_changes.present?
+      self.misc_changes[:remove_tag].present? ? self.misc_changes[:remove_tag] << tag.name : self.misc_changes[:remove_tag] = [tag.name]
+    else
+      self.misc_changes = {:remove_tag => [tag.name]} 
+    end
+  end
+
+  def all_attachments
+    @all_attachments ||= begin
+      resp_shared_attachments = self.attachments_sharable
+      individual_attachments = self.attachments
+      individual_attachments + resp_shared_attachments
+    end
   end
 
   # Moved here from note.rb
@@ -1055,6 +1094,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
 
     self.cc_email_will_change! if cc_changed
+  end
+
+  def va_rules_after_save_actions
+    @va_rules_after_save_actions ||= []
   end
 
   private

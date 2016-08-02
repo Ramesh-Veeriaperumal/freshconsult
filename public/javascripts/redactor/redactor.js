@@ -169,12 +169,15 @@ var Redactor = function(element, options)
 	}		
 
 	RLANG = $.extend(DEFAULT_LANG, RLANG ); //Defaulting to english for a few strings
+	var fc_lang = document.getElementsByTagName('html')[0].getAttribute('lang'); 
+	var fc_rtlLanguages = ['ar','he']; 
+	var fc_rtlSuffix = (fc_rtlLanguages.indexOf(fc_lang) >= 0) ? 'rtl' : 'ltr';
 	
 	// Options
 	this.opts = $.extend({
 
 		lang: 'en',
-		direction: 'ltr', // ltr or rtl
+		direction: fc_rtlSuffix, // ltr or rtl
 		mixedDirectionSupport: true,
 
 		callback: false, // function
@@ -1018,16 +1021,19 @@ Redactor.prototype = {
 		var	div = $("<div />")
 			div.css(this.opts.wrapFontSettings)
 			div.html(content)
+		if(this.opts.mixedDirectionSupport){
+			div.attr('dir',this.opts.direction);
+		}
 		temp_div.append(div)
 
 		return temp_div.html();
 	},
-	removeWeakAttr: function(content){
+	wrapElementWithDirection: function(content){
 		var temp_div = $("<div />");
-		var	div = $("<div />")
+		var	div = $("<div dir='"+this.opts.direction+"'/>")
 			div.html(content)
 		temp_div.append(div)
-		temp_div.find('[weak]').removeAttr('weak');
+
 		return temp_div.html();
 	},
 	changesInTextarea: function(){
@@ -1040,10 +1046,10 @@ Redactor.prototype = {
 		if(this.$el.data('wrapFontFamily') != undefined && this.$el.data('wrapFontFamily')){
 			content = this.wrapElementWithFont(content);
 		}
-
-		if(this.opts.mixedDirectionSupport){
-			content = this.removeWeakAttr(content);
+		else if(this.opts.mixedDirectionSupport){
+			content = this.wrapElementWithDirection(content);
 		}
+
 		this.$el.val(content);
 	},
 	removeCursorImage: function() {
@@ -1181,11 +1187,13 @@ Redactor.prototype = {
 				var text_node =  $(this.getCurrentNode());
 				var parent = text_node.closest("p,div,blockquote");
 				var blockText =  parent.text();
-	    			if(!parent.is('.redactor_editor') && (!parent.attr('dir') || parent.attr('weak'))&& blockText!='' ){
+	    			if(!parent.is('.redactor_editor') && blockText!='' ){
 		    			var dir=this.findDirection(blockText);
-					if(dir){
+					if(dir == this.opts.direction){
+						parent.removeAttr('dir');
+					}
+					else if(dir){
 						parent.attr('dir',dir);
-						parent.removeAttr('weak');
 					}
 				}
 			}
@@ -2052,7 +2060,7 @@ Redactor.prototype = {
 			html = html.replace(/p(.*?)class=MsoListParagraphCxSpMiddle ([\w\W]*?)\/p|p(.*?)class="MsoListParagraphCxSpMiddle" ([\w\W]*?)\/p/gi, this.removeIndentForList);
 			html = html.replace(/p(.*?)class=MsoListParagraphCxSpLast ([\w\W]*?)\/p|p(.*?)class="MsoListParagraphCxSpLast" ([\w\W]*?)\/p/gi, this.removeIndentForList);
 			// one line
-			html = html.replace(/p(.*?)class="MsoListParagraph" ([\w\W]*?)\/p/gi, this.removeIndentForList);
+			html = html.replace(/p(.*?)class=MsoListParagraph ([\w\W]*?)\/p|p(.*?)class="MsoListParagraph" ([\w\W]*?)\/p/gi, this.removeIndentForList);
 
 			// remove ms word tags
 			html = html.replace(/<o:p(.*?)>([\w\W]*?)<\/o:p>/gi, '$2');
@@ -2202,7 +2210,11 @@ Redactor.prototype = {
 			container.css('background-color', value);
 		},
 		'font-family': function (container, value, options) {
-			container.css('font-family', value + "," + options.wrapFontSettings["font-family"]);
+			if(options.setFontSettings){
+				container.css('font-family', value + "," + options.wrapFontSettings["font-family"]);
+			} else {
+				container.css('font-family', value);
+			}
 		},
 		'background': function (container, value) {
 			var _testCondition = ($.browser.msie || $.browser.mozilla);
@@ -3121,11 +3133,11 @@ Redactor.prototype = {
 		  		var blockText =  textNode.text();
 		  		if(textNode.is("p,div:not(.redactor_editor),blockquote")){
 					var dir=this.findDirection(blockText);
-					if(dir){
-						textNode.attr('dir',dir); 
+					if(dir == this.opts.direction){
+						textNode.removeAttr('dir'); 
 					}
-					else{
-						textNode.attr('weak',true);
+					else if(dir){
+						textNode.attr('dir',dir); 
 					}
 				}
 			}
@@ -4713,7 +4725,14 @@ $.fn.insertExternal = function(html)
 			jQuery(this.$redactor.$box).delegate("."+this.opts.class_name, "click.quotedtext", $.proxy(this.insertQuotedText, this));
 		},
 		insertQuotedText: function(){
-			this.$redactor.insertHtmlAtLast(this.getQuotedText());
+			if("content" in document.createElement("template")){
+				var quoted_clone = document.importNode(this.$quoted_area[0].content, true);
+				quoted_clone = $('<div></div>').append(quoted_clone).append("<p><br /></p>");
+				this.$redactor.$editor.append(quoted_clone.text());
+			}
+			else{
+				this.$redactor.insertHtmlAtLast(this.$quoted_area.val() + "<p><br /></p>");
+			}
 			this.$redactor.syncCode();
 			this.checkQuotedText();
 		},
@@ -4723,12 +4742,17 @@ $.fn.insertExternal = function(html)
 		},
 		syncQuotedText: function(){
 			if(!this.$draft_added){
-				var full_text = this.$redactor.$el.val() + this.$quoted_area.val();
+				var quoted_clone;
+				if("content" in document.createElement("template")){
+					var quoted_clone = document.importNode(this.$quoted_area[0].content, true);
+					quoted_clone = $(quoted_clone).text();
+				}
+				else{
+					quoted_clone = this.$quoted_area.val();
+				}
+				var full_text = this.$redactor.$el.val() + quoted_clone;
 				this.$redactor.$el.val(full_text);
 			}
-		},
-		getQuotedText: function(){
-			return this.$quoted_area.val() + "<p><br /></p>";
 		},
 		reset: function(){
 			this.$draft_added = false;
@@ -5056,7 +5080,7 @@ $.fn.insertExternal = function(html)
 		},
 		bindCustomEvent: function() {
 			var self = this;
-			this.$editor.$el.off();
+			this.$editor.$el.off('pasteImage');
 			this.$editor.$el.on('pasteImage', function(ev, data){
 				self.saveImage(data);
 				ev.preventDefault();

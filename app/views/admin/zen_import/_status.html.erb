@@ -26,7 +26,7 @@ if @import_status['organization'].blank? %>
             ticket_queue = 'ratio_tickets_completed'
           end
         else
-          status = "completed" if @import_status[node].to_i == Admin::DataImport::ZEN_IMPORT_STATUS[:completed]
+          status = "completed" if @import_status[node].to_i == Admin::DataImport::IMPORT_STATUS[:completed]
         end
         %>
         <tr>

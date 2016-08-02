@@ -16,6 +16,7 @@ Sidekiq.configure_client do |config|
       "Tickets::SelectAll::BatcherWorker",
       "Sidekiq::Batch::Callback",
       "Freshfone::CallQueueWorker",
+      "Freshfone::AcwWorker",
       "Ecommerce::EbayWorker",
       "Ecommerce::EbayUserWorker",
       "PasswordExpiryWorker",
@@ -23,12 +24,17 @@ Sidekiq.configure_client do |config|
       "DevNotificationWorker",
       "PodDnsUpdate",
       "SearchV2::Manager::DisableSearch",
+      "CountES::IndexOperations::DisableCountES",
       "Gamification::ProcessTicketQuests",
       "AccountCleanup::DeleteSpamTicketsCleanup",
       "AccountCleanup::SuspendedAccountsWorker",
       "Social::Gnip::ReplayWorker",
       "Social::Gnip::RuleWorker",
-      "Reports::ScheduledReports"
+      "Reports::ScheduledReports",
+      "Reports::BuildNoActivity",
+      "Social::PremiumFacebookWorker",
+      "Social::PremiumTwitterWorker",
+      "Reports::NoActivityWorker"
     ]
     chain.add Middleware::Sidekiq::Client::SetCurrentUser, :required_classes => [
       "Tickets::BulkScenario",
@@ -64,6 +70,7 @@ Sidekiq.configure_server do |config|
       "Tickets::SelectAll::BatcherWorker",
       "Sidekiq::Batch::Callback",
       "Freshfone::CallQueueWorker",
+      "Freshfone::AcwWorker",
       "Ecommerce::EbayWorker",
       "Ecommerce::EbayUserWorker",
       "PasswordExpiryWorker",
@@ -71,12 +78,17 @@ Sidekiq.configure_server do |config|
       "DevNotificationWorker",
       "PodDnsUpdate",
       "SearchV2::Manager::DisableSearch",
+      "CountES::IndexOperations::DisableCountES",
       "Gamification::ProcessTicketQuests",
       "AccountCleanup::DeleteSpamTicketsCleanup",
       "AccountCleanup::SuspendedAccountsWorker",
       "Social::Gnip::ReplayWorker",
       "Social::Gnip::RuleWorker",
-      "Reports::ScheduledReports"
+      "Reports::ScheduledReports",
+      "Reports::BuildNoActivity",
+      "Social::PremiumFacebookWorker",
+      "Social::PremiumTwitterWorker",
+      "Reports::NoActivityWorker"
     ]
     chain.add Middleware::Sidekiq::Server::SetCurrentUser, :required_classes => [
       "Tickets::BulkScenario",
@@ -103,18 +115,24 @@ Sidekiq.configure_server do |config|
       "Tickets::SelectAll::BatcherWorker",
       "Sidekiq::Batch::Callback",
       "Freshfone::CallQueueWorker",
+      "Freshfone::AcwWorker",
       "Ecommerce::EbayWorker",
       "Ecommerce::EbayUserWorker",
       "PasswordExpiryWorker",
       "WebhookV1Worker",
       "DevNotificationWorker",
       "SearchV2::Manager::DisableSearch",
+      "CountES::IndexOperations::DisableCountES",
       "Gamification::ProcessTicketQuests",
       "AccountCleanup::DeleteSpamTicketsCleanup",
       "AccountCleanup::SuspendedAccountsWorker",
       "Social::Gnip::ReplayWorker",
       "Social::Gnip::RuleWorker",
-      "Reports::ScheduledReports"
+      "Reports::ScheduledReports",
+      "Reports::BuildNoActivity",
+      "Social::PremiumFacebookWorker",
+      "Social::PremiumTwitterWorker",
+      "Reports::NoActivityWorker"
     ]
     chain.add Middleware::Sidekiq::Client::SetCurrentUser, :required_classes => [
       "Tickets::BulkScenario",

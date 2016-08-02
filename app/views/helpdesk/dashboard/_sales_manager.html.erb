@@ -8,7 +8,7 @@
 
 			<div class="sp-title span3">
 				<h3 class="title">
-					<%= @details[:Name].html_safe %><br>
+					<%= @details[:display_name].html_safe %><br>
 				</h3>
 				<div>Account Manager</div>
 				<div>Freshdesk</div>
@@ -42,7 +42,7 @@
 				<ul class="unstyled sp-details-list">
 					<li class="inline-field pull-left">
 						<span class="ficon-mail fsize-14 vertical-alignment pr5"></span>
-						<span class="vertical-alignment"> <%= @details[:Email].html_safe %> </span>
+						<span class="vertical-alignment"> <%= @details[:email].html_safe %> </span>
 					</li>
 		  		<li class="inline-field pull-left ml20 pl20">
 		  			<span class="ficon-phone fsize-14 vertical-alignment pr5"></span>
@@ -65,12 +65,15 @@
 				<% end %>
 
 				<div class="plan_and_expiry <%= trial_days > 10 ? 'trial-alert-color' : 'trial-end-alert-color' %>">
-					<span class="expiry-details pt10">
+					<span class="expiry-details">
 						<% if trial_days > 0 %>
-	      				Your trial will expire in <%= trial_days %> days.
-	    			<% else %>
-	      				Your trial expired.
-	    			<% end %>
+	      					Your trial will expire in <%= trial_days %> days.
+		    			<% else %>
+		      				Your trial expired.
+		    			<% end %>
+		    			<% if trial_days < 4 %>
+		    				<%= render :partial => "/subscriptions/request_trial_extension" %>
+		    			<% end %>
 	    		</span>
 				</div>
 

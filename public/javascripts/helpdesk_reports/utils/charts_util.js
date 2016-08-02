@@ -9,26 +9,34 @@ REPORT_COLORS = {
     miniActive       : "#333333",
     miniAlt          : "#555555",
     miniDisableTitle : "#D6D6D6",
-    series_colors    : ['#1387C2', '#80B447'],
+    series_colors    : ['#1387C2', '#80B447', '#F4AA2E'],
     borderColor      : 'rgba(0,0,0,0)',
     tooltip_bg       : "rgba(0,0,0,0.6)",
     barChartDummy    : "#F8F8F8",
     barChartReal     : "#5194CC",
     barChartPercent  : "#CFA495",
     gridLineColor    : "#f0f0f0",
-    bucket_series    : ['#6FB5EC', '#FFCA7E']
+    bucket_series    : ['#6FB5EC', '#FFCA7E'],
+    stack_color      : {
+                        'received': ["#F5F5F5", "#0587C0"],
+                        'resolved': ["#F5F5F5", "#7CAF46", "#C1D8A8"],
+                        'unresolved': ["#F5F5F5", "rgba(245,166,35,1)", "rgba(247,208,144,1)"]
+                       },
+    stack_data       : "white"
 }
 
 COLUMN_SERIES = {
     'Received': "RECEIVED_TICKETS",
-    'Resolved': "RESOLVED_TICKETS"
+    'Resolved': "RESOLVED_TICKETS",
+    'Unresolved': "UNRESOLVED_TICKETS"
 }
-
 
 MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 
 I18N_QTR_NAMES = I18n.t('helpdesk_reports.abbr_qtr') 
 I18N_MONTHS = I18n.t('helpdesk_reports.abbr_month_names')
+
+CURRENT_STACKED_CHART_TYPE = 'received'
 
 
 // TODO: Namespace it to helpdesk reports
@@ -82,9 +90,29 @@ helpdeskReports.prototype = {
         var y = (this.point.y).toFixed(0);
         if (this.point.series.index == 0) {
             return '<div class="tooltip"> <p style="margin:0;color:#63b3f5;font-size: 13px;font-weight: 500">' + I18n.t('helpdesk_reports.chart_title.tooltip.total_tickets_received',{count: y}) + '</p></div>';
-        } else {
+        } else if (this.point.series.index == 1){
             return '<div class="tooltip"> <p style="margin:0;color:#64b740;font-size: 13px;font-weight: 500">' + I18n.t('helpdesk_reports.chart_title.tooltip.total_tickets_resolved',{count: y}) + '</p></div>';
+        } else {
+            return '<div class="tooltip"> <p style="margin:0;color:#f4aa2e;font-size: 13px;font-weight: 500">' + I18n.t('helpdesk_reports.chart_title.tooltip.total_tickets_unresolved',{count: y}) + '</p></div>';
         }
+    },
+    stackedColumnChartTooltip: function(){
+        var cnt = this.points[0].y;
+        msg = '<div class="stacked_chart_tooltip"><p style="margin:0;color:#F5F5F5;font-size: 13px;font-weight: 500">' + I18n.t('helpdesk_reports.chart_title.total_load') + ' : ' + cnt + (cnt == 0 ? ' ticket' : ' tickets')+'</p></div>';
+        if(CURRENT_STACKED_CHART_TYPE == 'received'){
+             if(this.points[1] != undefined) {
+                 msg += '<p style="margin:0;color:#0587C0;font-size: 13px;font-weight: 500">' + I18n.t('helpdesk_reports.chart_title.new_received') + ' : ' + this.points[1].y + ' <span style="color:#0587C0;font-size: 13px;font-weight: 500"> (' + (Math.round((this.points[1].y/this.points[0].y)*100) || 0) + '%)</span></p><div/>';
+             }
+        }
+        else if(CURRENT_STACKED_CHART_TYPE == 'resolved'){
+            msg += '<p style="margin:0;color:#7CAF46;font-size: 13px;font-weight: 500">' + I18n.t('helpdesk_reports.chart_title.all_resolved') + ' : ' + this.points[1].y + ' <span style="color:#7CAF46;font-size: 13px;font-weight: 500"> (' + (Math.round((this.points[1].y/this.points[0].y)*100) || 0) + '%)</span></p>';
+            msg += '<p style="margin:0;color:#C1D8A8;font-size: 13px;font-weight: 500">' + I18n.t('helpdesk_reports.chart_title.new_resolved') + ' : ' + this.points[2].y + ' <span style="color:#C1D8A8;font-size: 13px;font-weight: 500"> (' + (Math.round((this.points[2].y/this.points[1].y)*100) || 0) + '%)</span></p><div/>';
+        }
+        else{
+            msg += '<p style="margin:0;color:#F5A623;font-size: 13px;font-weight: 500">' + I18n.t('helpdesk_reports.chart_title.all_unresolved') + ' : ' + this.points[1].y + ' <span style="color:#F5A623;font-size: 13px;font-weight: 500"> (' + (Math.round((this.points[1].y/this.points[0].y)*100) || 0) + '%)</span></p>';
+            msg += '<p style="margin:0;color:#F7D090;font-size: 13px;font-weight: 500">' + I18n.t('helpdesk_reports.chart_title.new_unresolved') + ' : ' + this.points[2].y + ' <span style="color:#F7D090;font-size: 13px;font-weight: 500"> (' + (Math.round((this.points[2].y/this.points[1].y)*100) || 0) + '%)</span></p><div/>';
+        }
+        return msg;
     },
     perfXAxisTrendLabel: function(timestamp){
         var trend = HelpdeskReports.locals.trend;
@@ -105,7 +133,6 @@ helpdeskReports.prototype = {
         return helpdeskReports.prototype.xAxisTrendLabel(true,category);
     },
     xAxisTrendLabel: function(is_column_chart_clicked,clicked_category) {  
-       
         var trend = HelpdeskReports.locals.trend;
         var value = clicked_category || this.value;
 
@@ -241,7 +268,15 @@ helpdeskReports.prototype = {
         var pcnt = (value / dataSum) * 100;
         var color = this.points[1].series.color;
         var tooltip_name = this.points[1].series.options.tooltip_name;
-        return '<div class="tooltip"><p style="margin:0;color:'+color+';"> ' + this.points[1].x + ' : '+ Highcharts.numberFormat(pcnt) + '% '+ I18n.t('helpdesk_reports.chart_title.tickets')+'</p></div>';
+        if(value > 9999) {
+            return '<div class="tooltip"><p style="margin:0;color:'+color+';"> ' + this.points[1].x + ' : '+ Highcharts.numberFormat(pcnt) + '%<span style="color:#efefef;opacity:0.5"> ('+ value + ') </span>' +I18n.t('helpdesk_reports.chart_title.tickets')+'</p></div>';
+        }
+        return '<div class="tooltip"><p style="margin:0;color:'+color+';"> ' + this.points[1].x + ' : '+ Highcharts.numberFormat(pcnt) + '%' +I18n.t('helpdesk_reports.chart_title.tickets')+'</p></div>';
+    },
+    countTooltip : function(){
+        if(this.y && this.y > 9999) {
+           return '<div class="tooltip"><p style="margin:0;color:#63b3f5;">'+ this.y + ' tickets </p></div>';
+        }
     },
     barChartTooltip: function(){
         var value = this.points[1].y;
@@ -249,7 +284,10 @@ helpdeskReports.prototype = {
         var dataSum = this.points[1].series.options.total;
         var pcnt = (value / dataSum) * 100;
         var color = this.points[1].series.color;
-        return '<div class="tooltip"><p style="margin:0;color:'+color+';"> ' + this.points[1].x + ' : '+ Highcharts.numberFormat(pcnt) + '%</p></div>'
+        if(value > 9999){
+            return '<div class="tooltip"><p style="margin:0;color:'+color+';"> ' + this.points[1].x + ' : '+ Highcharts.numberFormat(pcnt) + '%<span style="color:#efefef;opacity:0.5"> ('+ value +')</span></p></div>'
+        }
+        return '<div class="tooltip"><p style="margin:0;color:'+color+';"> ' + this.points[1].x + ' : '+ Highcharts.numberFormat(pcnt) + '%'+ '</p></div>'
     },
     barChartSeriesTooltip: function () {
         switch(this.series.options.id){
@@ -405,7 +443,8 @@ function columnChart(opts) {
                 fontWeight: 'normal'
             },
             verticalAlign: 'bottom',
-            itemDistance: 50
+            itemDistance: 50,
+            symbolRadius : 3
         }
     });
 }
@@ -415,6 +454,120 @@ columnChart.prototype.updateDefaultCharts();
 columnChart.constructor = columnChart;
 
 columnChart.prototype.columnGraph = function () {
+    var chart = new Highcharts.Chart(this.options);
+}
+
+function stackedColumnChart(opts, type, trend){
+    CURRENT_STACKED_CHART_TYPE = type;
+    helpdeskReports.call(this, {
+        chart: {
+            renderTo: opts['renderTo'],
+            type: 'column',
+            plotBackgroundColor: REPORT_COLORS['plotBG'],
+            backgroundColor: REPORT_COLORS['plotBG'],
+            height: 375,
+        },
+        title: {
+            text: (typeof opts['title'] === 'undefined') ? '' : opts['title'],
+            style: {
+                fontSize: '13px'
+            }
+        },
+        xAxis: {
+            categories: opts['xAxisLabel'],
+            labels: {
+                style: {
+                    fontSize: '12px',
+                    color: REPORT_COLORS['label']
+                },
+                formatter: this.xAxisTrendLabel
+            },
+            tickLength: 0,
+            minorTickLength: 0,
+            lineColor: REPORT_COLORS['lineColor'],
+        },
+        yAxis: {
+            min: 0,
+            allowDecimals: false,
+            title: {
+                text: (typeof opts['yAxis_label'] === 'undefined') ? I18n.t('helpdesk_reports.chart_title.no_of_tickets') : opts['yAxis_label'],
+                align: 'middle',
+                style: {
+                    fontSize: '12px',
+                    color: REPORT_COLORS['title']
+                },
+                margin: 25
+            },
+            labels: {
+                overflow: 'justify',
+                style: {
+                    fontSize: '12px',
+                    color: REPORT_COLORS['label']
+                }
+            },
+            alternateGridColor: REPORT_COLORS['alternateBG'],
+            gridLineWidth: 0,
+            minorGridLineWidth: 0,
+            lineColor: REPORT_COLORS['lineColor'],
+            lineWidth: 1,
+            startOnTick: true
+        },
+        colors: REPORT_COLORS["stack_color"][type],
+        plotOptions: {
+            column: {
+                grouping : false,
+                shadow : false,
+                borderWidth: 0
+            },
+            series: {
+                animation: {
+                    duration: 1000,
+                    easing: 'easeInOutQuart'
+                }
+            }
+        },
+        tooltip: {
+            shared: true,
+            backgroundColor: '#000000',
+            borderColor: 'none',
+            formatter: this.stackedColumnChartTooltip,
+            useHTML: true,
+            padding: 0,
+            hideDelay: 50,
+            shape: 'callout'
+        },
+        series: opts['chartData'],
+        legend: {
+            itemStyle: {
+                fontWeight: 'normal'
+            },
+            itemDistance: 50,
+            symbolRadius : 3,
+            labelFormatter : function () {
+                    if(this.name == 'Total Load' || 
+                        this.name == 'All Resolved Tickets' ||
+                        this.name == 'New Resolved Tickets' ||
+                        this.name == 'All Unresolved Tickets' ||
+                        this.name == 'New Unresolved Tickets' ||
+                        this.name == 'Received Tickets'
+                        ) {
+                        var tooltip =  this.name + ' <i class="info ' + type + ' reports-help-icon ficon-help-icon fsize-14" size="14"></i></div>';
+                        return tooltip;    
+                    } else {
+                        return this.name;
+                    }
+                    
+            },
+            useHTML : true
+        }
+    });
+}
+
+stackedColumnChart.prototype = new helpdeskReports;
+stackedColumnChart.prototype.updateDefaultCharts();
+stackedColumnChart.constructor = stackedColumnChart;
+
+stackedColumnChart.prototype.stackedGraph = function () {
     var chart = new Highcharts.Chart(this.options);
 }
 
@@ -506,7 +659,7 @@ function lineChart(opts) {
             lineWidth: 1,
             opposite: true
         }],
-        colors: REPORT_COLORS["series_colors"],
+        colors: REPORT_COLORS["series_colors"].slice(0,2),
         plotOptions: {
             series: {
                 shadow: false,
@@ -613,7 +766,7 @@ function miniLineChart(opts) {
             minPadding: 0,
             maxPadding: 0
         },
-        colors: REPORT_COLORS["series_colors"],
+        colors: REPORT_COLORS["series_colors"].slice(0,2),
         plotOptions: {
             series: {
                 shadow: false,
@@ -647,7 +800,22 @@ miniLineChart.prototype.miniLineChartGraph = function () {
 }
 
 
-function barChart(opts) {
+function barChart(opts) { 
+
+    if(opts['enableTooltip'] == true && opts['countTooltip']) {
+        formatter = this.countTooltip;
+    } else {
+        if(opts['sharedTooltip'] == true) {
+            if(opts['performanceDistTooltip']) {
+                formatter = this.performanceDistributionBarChartTooltip
+            } else {
+                formatter = this.barChartTooltip;
+            }
+        } else {
+            formatter = this.barChartSLATooltip;
+        }
+    }
+
     helpdeskReports.call(this, {
         chart: {
             renderTo: opts['renderTo'],
@@ -729,7 +897,8 @@ function barChart(opts) {
         tooltip: {
             useHTML: true,
             shared: opts['sharedTooltip'],
-            formatter: opts['sharedTooltip'] == true ? ( opts['performanceDistTooltip'] ? this.performanceDistributionBarChartTooltip : this.barChartTooltip) : this.barChartSLATooltip,
+            formatter: formatter,
+            //opts['sharedTooltip'] == true ? ( opts['performanceDistTooltip'] ? this.performanceDistributionBarChartTooltip : this.barChartTooltip) : this.barChartSLATooltip,
             followPointer: true,
             enabled: opts['enableTooltip'] == true ? true : false,
             backgroundColor: REPORT_COLORS['tooltip_bg'],

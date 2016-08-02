@@ -5,7 +5,13 @@ module ContactsHelper
   include Marketplace::ApiHelper
 
   def contact_fields
-    @user.helpdesk_agent? ? current_account.contact_form.default_contact_fields : current_account.contact_form.contact_fields
+    @contact_fields ||= @user.helpdesk_agent? ? 
+      current_account.contact_form.default_contact_fields : 
+      current_account.contact_form.contact_fields
+  end
+
+  def company_field_required
+    contact_fields.find { |f| f.name == "company_name" }.required_for_agent
   end
 
   def render_as_list form_builder, field
@@ -18,7 +24,11 @@ module ContactsHelper
       end
     else
       UserEmailsHelper::FreshdeskDomElement.new(form_builder, :user, :contact, field, field.label, field.dom_type, 
-              field.required_for_agent, true, field_value, field.dom_placeholder, field.bottom_note, {:account => current_account}).construct
+              field.required_for_agent, true, field_value, field.dom_placeholder, field.bottom_note, 
+              { :account => current_account, 
+                :user_companies => @user_companies, 
+                :contractor => @user.privilege?(:contractor),
+                :company_field_req => company_field_required}).construct
     end
   end
 
@@ -84,9 +94,12 @@ HTML
   end
 
   def api_permitted_data
-    [:id,:name,:email,:created_at,:updated_at,:active,:job_title,
-    :phone,:mobile,:twitter_id, :description,:time_zone,:deleted, :helpdesk_agent,
-    :fb_profile_id,:external_id,:language,:address,:customer_id]
+    {
+      :only    => [:id,:name,:email,:created_at,:updated_at,:active,:job_title,
+                 :phone,:mobile,:twitter_id, :description,:time_zone,:deleted, :helpdesk_agent,
+                 :fb_profile_id,:external_id,:language,:address,:customer_id],
+      :methods => [:custom_field]
+    }
   end
   
   def is_campaign_app?(app_name)

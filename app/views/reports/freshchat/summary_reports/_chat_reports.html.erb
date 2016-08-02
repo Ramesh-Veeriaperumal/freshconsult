@@ -18,9 +18,11 @@
         <% if current_account.subscription.non_sprout_plan? %>
           <%= render :partial => "reports/shared/save_report_controls"%>
         <% end %>
-        <button class="generate-pdf-button" id="email_pdf" name="button" onclick="this.blur();">
-          <%= t('helpdesk_reports.export.email_report_pdf')%>
-        </button>
+        <% if current_user.privilege?(:export_reports) %>
+          <button class="generate-pdf-button" id="email_pdf" name="button" onclick="this.blur();">
+            <%= t('helpdesk_reports.export.email_report_pdf')%>
+          </button>
+        <% end %>
       </div>
       <div class="reports-filter span12" id="report-filter-details">
           <div class="span1 edit-filter report-filter-slide-btn">
@@ -54,12 +56,14 @@
       <div class="vertical-alignment time-sheet-top-margin">
         <strong><%=t('reports.livechat.agent_chat_summary')%></strong>
       </div>
+      <%if current_user.privilege?(:export_reports) %>
         <span class="pull-right time-sheet-top-margin">
             <a href="javascript:void(0);" id='export_as_csv'><%=t('export_to_CSV')%></a>
             <form id="pdf_form" method="post" action="<%= export_pdf_reports_freshchat_summary_reports_url %>" target="_blank">
         <input type="hidden" name="pdf_args" class="serialize" id="pdf_args" value="" />
       </form>
         </span>
+      <% end %>
       </div>
       <div class="grid report row-fluid"> 
           <table width="100%" id="agent_summary">
@@ -95,6 +99,13 @@
                   menu.addClass('hide');
               }
         });
+
+    jQuery('#report-page').on('click.helpdesk_reports', function () {
+          var menu = jQuery('#reports_type_menu');
+          if (menu.is(':visible')) {
+              menu.addClass('hide');
+          }
+    });
   });
 
    jQuery("#email_pdf").on('click.helpdesk_reports',function(){

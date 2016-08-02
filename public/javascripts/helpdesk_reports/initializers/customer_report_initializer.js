@@ -77,10 +77,13 @@ HelpdeskReports.ChartsInitializer.CustomerReport = (function () {
                     enableTooltip: false,
                     cursor: 'default',
                     minPoint: true,
-                    suffix: (constants.percentage_metrics.indexOf(metric) > -1) ? '{value}%' : null,
+                    suffix: (constants.percentage_metrics.indexOf(metric) > -1) ? '{value}%' : undefined,
                     order: 'desc',
                     type: type == 'pdf' ? 'pdf' : 'page'
                 }
+             if(!(constants.percentage_metrics.indexOf(metric) > -1)) {
+                options.enableTooltip = true;
+             }
             _FD.renderCommonChart(current_hash, options, metric);
 
             if(type == 'pdf'){
@@ -143,6 +146,7 @@ HelpdeskReports.ChartsInitializer.CustomerReport = (function () {
                 dataLabels: values,
                 sharedTooltip: options.sharedTooltip,
                 enableTooltip: options.enableTooltip,
+                countTooltip : true,
                 minPoint: options.minPoint,
                 suffix: options.suffix,
                 yAxisMaxValue: options.maxValue
@@ -166,10 +170,15 @@ HelpdeskReports.ChartsInitializer.CustomerReport = (function () {
             if(!jQuery.isEmptyObject(hash)){
                 var current_hash = hash['company_id'][sort_order];
                 var current_value_array = [];
-                
+                var id_value_hash = {};
+
                 _.each(_.values(current_hash), function(i) {
                     current_value_array.push(i.value);
                 });
+
+                _.each(current_hash, function( values, key ) {
+                    id_value_hash[key] = values.id
+                }); 
                 
                 var values = current_value_array;
 
@@ -184,6 +193,18 @@ HelpdeskReports.ChartsInitializer.CustomerReport = (function () {
                 chart.series[0].update({
                     data: values
                 }, false);
+
+                chart.series[0].update({
+                    point: {
+                        events: {
+                            click: function () {
+                                var ev = this;
+                                _FD.clickEventForTicketList(ev,id_value_hash);
+                            }
+                        }
+                    }
+                },false);
+
 
                 chart.redraw(true);
             }    

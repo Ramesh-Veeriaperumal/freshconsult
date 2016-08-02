@@ -7,10 +7,12 @@ class HelpdeskReports::ParamConstructor::Base
 
   def initialize options
     @options = options
-    @date_range = options[:date_range] || default_date_range # have to compelete
+    @date_range = options[:date_range]
+    @direct_export = options[:direct_export] || false
   end
 
   def build_pdf_params
+    options.merge!(options[:trend].symbolize_keys) if @direct_export
     if date_range.nil?
       return {
         date_range: date_range,
@@ -37,14 +39,6 @@ class HelpdeskReports::ParamConstructor::Base
     params
   end
 
-  def default_date_range
-    date_lag = disable_date_lag? ? 0 : 1
-    current_time = Time.zone.now
-    end_day = current_time - date_lag.days
-    start_day = end_day - 30.days
-    "#{start_day.strftime("%d %b, %Y")}-#{end_day.strftime("%d %b, %Y")}"
-  end
-
   def basic_param_structure
     {
       bucket: false,
@@ -58,7 +52,7 @@ class HelpdeskReports::ParamConstructor::Base
       time_trend_conditions: [],
       date_range: date_range,
       metric: nil,
-      scheduled_report: true,
+      scheduled_report: @direct_export ? false : true,
       filter: options[:report_filters].present? ? options[:report_filters] : []
     }
   end

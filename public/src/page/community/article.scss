@@ -85,7 +85,7 @@
       .drop-right {
         border: 1px solid #ccc;
         padding: 5px;
-        padding-right: 20px;
+        @include padding-right(20px);
         cursor: pointer;
         &.selected {
           cursor: default;
@@ -103,8 +103,8 @@
         width: 150px;
         a {
           display: inline;
-          padding: 5px 0px 5px 15px;
-          float: left;
+          @include padding(5px 0px 5px 15px);
+          @include float(left);
           width: 100%;
         }
         li {
@@ -432,13 +432,12 @@
   }
   #solution-properties {
     .control-label {
-      float: left;
       width: 130px;
       padding-top: 5px;
       font-weight: 500;
     }
     .controls{
-      margin-left: 150px;
+      @include margin-left(150px);
       input, textarea {
         margin-bottom: 0px;
       }
@@ -451,11 +450,11 @@
       overflow: hidden;
     }
     .unpublish-article {
-      margin-left: 20px;
+      @include margin-left(20px);
       margin-top: 5px;
       span {
         font-weight: bold;
-        margin-left: 5px;
+        @include margin-left(5px);
       }
       .row {
         input {
@@ -553,7 +552,7 @@
           padding: 4px;
 
           .ficon-checkmark-round-o{
-            margin-right: 5px;
+            @include margin-right(5px);
             top: 2px;
             position: relative;
           }
@@ -566,7 +565,7 @@
 
         .spinner {
           top: -7px;
-          left: 14px;
+          @include left(14px);
         }
       }
     }

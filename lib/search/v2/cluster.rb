@@ -21,17 +21,21 @@ module Search
         end
       end
       
-      def current_split(type)
-        Store::Cache.instance.fetch(Store::Cache::CLUSTER_INDEX_SPLIT % { cluster_id: cluster_id, type: type }) do
-          Store::Data.instance.cluster_info(cluster_id)["#{type}_split"]
+      def index_suffix(type)
+        Store::Cache.instance.fetch(Store::Cache::CLUSTER_INDEX_SUFFIX % { cluster_id: cluster_id, type: type }) do
+          suffix_pattern(type) % suffix_params(type)
         end
       end
       
-      def current_version(type)
-        Store::Cache.instance.fetch(Store::Cache::CLUSTER_INDEX_VERSION % { cluster_id: cluster_id, type: type }) do
-          Store::Data.instance.cluster_info(cluster_id)["#{type}_version"]
+      private
+
+        def suffix_pattern(type)
+          Store::Data.instance.cluster_info(cluster_id)[type]['suffix_pattern']
         end
-      end
+        
+        def suffix_params(type)
+          Store::Data.instance.cluster_info(cluster_id)[type]['suffix_params'].symbolize_keys
+        end
     end
 
   end

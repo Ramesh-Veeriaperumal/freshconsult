@@ -37,7 +37,7 @@ jQuery('body').append('<div id="agent_collision_container" class="hide"></div>')
 				}
 			},             
 			content: {
-				text: TICKET_STRINGS['tooltip_loading'],
+				text: "<div class='ui-tooltip-ticket-loading'>"+TICKET_STRINGS['tooltip_loading']+"</div>",
 				ajax: {
 					url: tipUrl,
 					once: true
@@ -183,6 +183,26 @@ jQuery('body').append('<div id="agent_collision_container" class="hide"></div>')
 	// 		checkbox.trigger('change');
 	// 	}
 	// });
+
+		var checkboxStore = null;
+		jQuery('body').off('click.shiftMultiselect');
+		jQuery('body').on('click.shiftMultiselect', '.tickets tbody tr .check :checkbox',function(e){
+			var $checkboxes = jQuery('.tickets tbody tr .check :checkbox');
+			// Add selection border on click
+      var index = jQuery(e.target).parent().parent().index();
+      jQuery('#ticket-list').data('menuSelector').setCurrentElement(index);
+
+			if(!checkboxStore) {
+				checkboxStore = e.target;
+				return;
+			}
+			if(e.shiftKey) {
+				var start = $checkboxes.index(e.target);
+				var end = $checkboxes.index(checkboxStore);
+				$checkboxes.slice(Math.min(start,end), Math.max(start,end)+ 1).prop('checked', e.target.checked).change();
+			}
+			checkboxStore = e.target;
+		});
 
     jQuery('.tickets tbody tr .check :checkbox').die();
     jQuery('.tickets tbody tr .check :checkbox').live('change', function() {

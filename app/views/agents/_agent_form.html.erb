@@ -88,9 +88,9 @@
   					<%= label(:user, :phone, "#{t('user.phone_no')}.", :class => "control-label" ) %>
   				  <div class="controls">
   					  <%= text_field(:user, :phone, :class => "text input-medium margin-bottom", 
-                 :value => @agent.user.phone, :placeholder => t('user.work') ) %> 
+                 :value => "#{@agent.user.phone}", :placeholder => t('user.work') ) %> 
               <%= text_field(:user, :mobile, :class => "text input-medium ", 
-                    :value => @agent.user.mobile, :placeholder => t('user.mobile')) %>
+                    :value => "#{@agent.user.mobile}", :placeholder => t('user.mobile')) %>
             </div>
   				</li>
     			<% if gamification_feature?(current_account) %>
@@ -257,8 +257,15 @@
 
     $(document).ready(function() {
       <% @roles.each do |role| %>
-          roles[<%= role.id %>] = <%= @agent.user.roles.include?(role) %>;
+        <% if role.name == "Account Administrator" %>
+          <% if current_user.privilege?(:manage_account) %>
+            roles[<%= role.id %>] = <%= @agent.user.roles.include?(role) %>; 
+            role_details[<%= role.id %>] = ["<%= role.name %>", "<%= escape_javascript(role.description)%>"];
+          <% end %>
+        <% else %>
+          roles[<%= role.id %>] = <%= @agent.user.roles.include?(role) %>; 
           role_details[<%= role.id %>] = ["<%= role.name %>", "<%= escape_javascript(role.description)%>"];
+        <%end%>
       <% end %>
 
       <% @groups.each do |group| %>

@@ -108,7 +108,7 @@ en:
   sales: "Sales"
   preview: "Preview"
   no_agents_in_selected_group: "No agents in selected group"
-  send_feedback: "Send feedback"
+  send_feedback: "Send"
   sidebar_help: "Help"
   support_title: "Support"
   ticket_form:
@@ -154,6 +154,8 @@ en:
   signup_title: "Sign up to %{current_portal}"
   signup_up_with_us: "Sign up with us"
   signup_help_information: "Once you sign up, you will have complete access to our self service portal and you can use your account to raise support tickets and track their status."
+  trial_extension_requested: "Your request has been received. We'll get back to you soon."
+  request_for_extension: "Request for extension."
   trial_expired_on: "Urgent! Your trial has expired!"
   trial_will_expire_in: "Your trial will expire in <b>%{no_of_days}</b>"
   trial_one_more_day: "You just have 1 more day in your trial"
@@ -240,8 +242,8 @@ en:
   before_two: Before 2 Hours
   before_one: Before 1 Hour
   before_half: Before 30 Minutes
-  add_more_lang: Add supported languages to your helpdesk.
-  support_multi_languge: Supporting customers across more than one language?
+  add_more_lang: Add 'supported languages' to your helpdesk.
+  support_multi_languge: "Supporting customers in multiple languages?"
   many: many
   user:
     company: Company
@@ -314,6 +316,7 @@ en:
       ticket_type: Type
       created_at: Created
       tags: Tags
+      company: Company
     saving_ticket: "Saving ticket fields..."
     untitled: Untitled
     properties: Properties
@@ -675,7 +678,7 @@ en:
         stream_info2: "The tweets coming in through these social streams can be filtered further using certain keywords and converted to tickets automatically. They can even be assigned to groups and products. You can set up more than one rule and the first rule that the tweet satisfies will get executed. For example, you can convert tweets mentioning “switching to” with your competitors names into tickets and escalate them to your support team head."
         fb_page_title1: "Adding Facebook pages"
         fb_page_title2: "Converting Facebook posts to tickets automatically"
-        fb_page_info1: "Associate your Facebook company pages with your helpdesk to manage all queries coming in from there along with your support tickets. You can automatically convert visitor posts and private messages as tickets as well as use keyword rules to pull in specific comments as individual tickets." 
+        fb_page_info1: "Associate your Facebook company pages with your helpdesk to manage all queries coming in from there along with your support tickets. You can automatically convert visitor posts and private messages as tickets as well as use keyword rules to pull in specific comments as individual tickets."
         fb_page_info2:  "Most Facebook users either post on your wall or comment under one of your company posts, when they have support queries. You can import all your visitor posts directly as tickets. To pull in relevant queries among the noise in visitor comments, filter them based on keywords. For example, an e-commerce company could use keywords like delayed, return or refund to filter out the most relevant questions."
         fb_stream_title1: "Streamlining Facebook support"
         fb_stream_title2: "Ticketing Facebook Messenger chats"
@@ -737,7 +740,7 @@ en:
         include_helptext: "example: support, \"System down\", @insideapple"
         brief_desc: "Tweets will get converted to tickets automatically based on first matching rule"
       facebook_streams:
-        index: 
+        index:
           new_account: "New Account"
           new_page: "New Page"
           pages: "Facebook Pages"
@@ -984,6 +987,24 @@ en:
         info2: "You can also choose specific solution and forum categories to be listed in the main portal and other portals​.​"
         info3: "Additionally, you can rebrand the look and feel of your helpdesk by uploading your logo and favicon, giv​e​ your helpdesk a name, and customiz​e​ your portal colors."
         info4: "If you would like to set up user permissions and tweak forum moderation settings, click on the 'Settings' tab. Settings cannot be configured for each portal and will be common for all portals that have been created."
+
+    hotline:
+      heading1: Mobihelp users meet hotline
+      content1:
+        info1:  Hotline is the new mobile support and engagement platform from Freshdesk. It gives you all that Mobihelp had to offer and more in a slick new product.
+      content2:
+        list_title: "With Hotline you get:"
+        list1: In-app chat with push notifications
+        list2: FAQs for mobile apps
+        list3: High speed engagement interface for agents
+        list4: Native integration into Freshdesk
+        list5: Campaign tools and rich messaging
+      content3:
+        note_title: "Note:"
+        note_info: "We will continue to support Mobihelp for existing customers, but are discontinuing active development for it. We encourage you to move to Hotline at the earliest. If you are an existing Mobihelp customer please reach out to support@hotline.io for special pricing."
+      get_started: Get started with Hotline today
+      list_title: Mobihelp Apps
+
     mobihelp:
       app_review:
         request_sent: "App Review Request Sent"
@@ -1027,6 +1048,7 @@ en:
           no_app:
             title: Welcome to Mobihelp
             sdk_and_guide: Mobihelp SDK and Integration guide
+
         new:
           title: New Mobihelp App
         edit:
@@ -1545,7 +1567,7 @@ en:
         recharge_quantity: "Recharge quantity:"
         day_passes: "Day Passes"
         helptext: "Your day passes will Auto-recharge once the number of available day passes comes down to 2."
-    widget_config:    
+    widget_config:
       errors:
         invalid_requester: Invalid Requester
       index:
@@ -1883,6 +1905,8 @@ en:
         categories_visible: Portal Categories
         product_label: "Product: %{product_name}"
         enable_multilingual: "Setup Multilingual Support"
+        show_author_name: "Show author names"
+        enable_personalized_articles: "When enabled, author names will show up in solution articles"
       edit:
         title: Edit Product
         updating: Updating...
@@ -1940,6 +1964,18 @@ en:
         default_group : Default Group
     roles:
       title: Agent Roles
+      agent_label: Agent
+      agents_label: Agents
+      no_agent_label: No Agent
+      add_agent_label: Add Agent
+      add_label: Add
+      no_label: No
+      done_label: Done
+      manage_label: Manage
+      save_label: Save
+      saving_label: Saving...
+      no_agent_added: No Agent added
+      cancel_label: Cancel
       new: New Role
       edit: Edit Role
       default_role: Default Role
@@ -2006,6 +2042,7 @@ en:
         manage_supervisor_rules: Manage Supervisor rules
         manage_scenario_automation_rules: Manage Scenario automation rules
         manage_email_settings: Manage Email Commands
+        manage_ticket_templates: Manage Ticket Templates
         admin_tasks: Play God with Super Admin controls
         manage_account: Include account management
     home:
@@ -2037,6 +2074,7 @@ en:
         customer-fields: Customer Fields
         remote-authentication: Remote Authentication
         scenario: Scenario Automations
+        ticket_template: "Ticket Templates"
         email: Email
         everything: Everything
         support-channels: Support Channels
@@ -2133,6 +2171,7 @@ en:
         event_based_rules: "Event based rules"
         scenario_automations: "Scenario Automations"
         macros: "Macros"
+        template: "Ticket Templates"
         email_notifications: "Email Notifications"
         auto_responses: "Auto responses"
         canned_responses: "Canned Responses"
@@ -2495,7 +2534,7 @@ en:
         success: Instructions to reset your password have been emailed to you. Please check your email.
     login:
       verify_credentials: Couldn't log you in. Please verify your credentials
-      login_permission_denied: Sorry! You do not have enough permission to access this page. 
+      login_permission_denied: Sorry! You do not have enough permission to access this page.
       signup_permission_denied: Sorry! You do not have enough permission to access this page.
       contact_administrator: Please contact your Account Administrator.
       sso:
@@ -2602,6 +2641,14 @@ en:
     tweet: "tweet"
     time_entry: "time entry"
     note: "note"
+    supervisor: "supervisor rule"
+    observer: "observer rule"
+    business: "dispatch’r rule"
+    round_robin: "automatic ticket assignment"
+    none: "None"
+    subject: "subject"
+    description: "description"
+    set: "Set"
     tag:
       solutions: "New Solution"
       assigned_to_nobody: "Agent Unassigned"
@@ -2620,6 +2667,10 @@ en:
         new: "Time logged"
         timer_started: "Timer Started"
         timer_stopped: "Timer Stopped"
+        edit: "Timesheet updated"
+        delete: "Timesheet deleted"
+        billable: "Billable"
+        non_billable: "Non-Billable"
       execute_scenario: "Scenario Executed"
       ticket_merge: "Ticket Merged"
       ticket_split: "Ticket Split"
@@ -2633,6 +2684,10 @@ en:
       group_change_none: "Agent Group Changed"
       source_change: "Ticket Source"
       due_date_updated: "Due Date Updated"
+      tag_change: "Tag updated"
+      add_watcher: "Watcher Added"
+      remove_watcher: "Watcher Removed"
+      spam: "Marked Spam"
     solutions:
       new_solution:
         short: "{{user_path}} created a new solution"
@@ -2685,7 +2740,7 @@ en:
       published_draft:
         short: "{{user_path}} published the draft of an article"
         long: "{{user_path}} published the draft of an article '{{notable_path}}'"
-      published_draft_translation:  
+      published_draft_translation:
         short: "{{user_path}} published the draft of an article translation in {{language_name}}"
         long: "{{user_path}} published the draft of an article translation in {{language_name}} '{{notable_path}}'"
       delete_draft:
@@ -2767,12 +2822,15 @@ en:
         short: "{{user_path}} changed priority to {{priority_name}}"
         long: "{{user_path}} changed ticket priority of {{notable_path}} to {{priority_name}}"
         without_user: "updated ticket priority to <strong>{{priority_name}}</strong>"
+        new: "Priority as <strong>%{priority_name}</strong>"
       new_ticket:
         short: "{{user_path}} submitted the ticket"
         long: "{{user_path}} submitted a new ticket {{notable_path}}"
+        new: "Submitted a new ticket"
       new_outbound:
         short: "{{user_path}} created a ticket"
         long: "{{user_path}} created a ticket {{notable_path}}"
+        new: "Sent email and created a new ticket"
       conversation:
         out_email:
           short: "{{user_path}} has sent a {{reply_path}}"
@@ -2792,28 +2850,46 @@ en:
         ecommerce:
           short: "{{user_path}} has sent a {{ecommerce_path}}"
           long: "{{user_path}} has sent a {{ecommerce_path}} to the ticket {{notable_path}}"
-
       timesheet:
         new:
           short: "{{user_path}} added a {{timesheet_path}}"
           long: "{{user_path}} added a {{timesheet_path}} to the ticket {{notable_path}}"
           without_user: "added a {{timesheet_path}}"
+          new: "Added a time entry"
         timer_started:
           short: "{{user_path}} started timer on  {{timesheet_path}}"
           without_user: "started timer on  {{timesheet_path}}"
           long: "{{user_path}} started timer on {{timesheet_path}} to the ticket {{notable_path}}"
+          new: "Started timer on timesheet entry"
         timer_stopped:
           short: "{{user_path}} stopped timer on  {{timesheet_path}}"
           without_user: "stopped timer on  {{timesheet_path}}"
           long: "{{user_path}} stopped timer on {{timesheet_path}} to the ticket {{notable_path}}"
+          new: "Stopped timer on timesheet entry"
+      timesheet_without_time:
+        new: "%{billable} hours for %{user_path} on %{date}"
+      timesheet_with_time:
+        new: "%{time_spent} %{billable} hours for %{user_path} on %{date}"
+      timesheet_timer_start:
+        new: "Started timer on timesheet with %{timesheet}"
+      timesheet_timer_stop:
+        new: "Stopped timer on timesheet for %{timesheet}"
+      timesheet_create:
+        new: "Created a timesheet with %{timesheet}"
+      timesheet_edit:
+        new: "Edited a timesheet <br> Timesheet with %{old_timesheet} modified to timesheet with %{new_timesheet}"
+      timesheet_delete:
+        new: "Deleted the timesheet with %{timesheet}"
       assigned:
         short: Assigned to {{responder_path}} by {{user_path}}
         without_user: assigned to <strong>{{responder_path}}</strong>
         long: "{{user_path}} assigned the ticket {{notable_path}} to {{responder_path}}"
+        new: "Agent as %{responder_path}"
       execute_scenario:
         short: "{{user_path}} executed the scenario '{{scenario_name | h}}"
         without_user: "executed the scenario <strong>{{scenario_name | h}}</strong>"
         long: "{{user_path}} executed the scenario '{{scenario_name | h}}' on {{notable_path}}"
+        new: "Executed the scenario <strong>%{scenario_name}</strong>"
       ticket_merge:
         short: "{{user_path}} has merged the ticket {{notable_path}} to {{merge_ticket_path}} "
         long: "{{user_path}} has merged the ticket  {{notable_path}} to {{merge_ticket_path}}"
@@ -2830,18 +2906,26 @@ en:
         short: "{{user_path}} updated status to {{status_name}}"
         without_user: "updated status to <strong>{{status_name}}</strong>"
         long: "{{user_path}} updated ticket status of {{notable_path}} to {{status_name}}"
+        new: "Status as <strong>%{status_name}</strong>"
       deleted:
         short: "{{user_path}} has deleted this ticket"
         without_user: "has deleted the ticket"
         long: "{{user_path}} has deleted the ticket {{notable_path}}"
+        new: "Deleted this ticket"
       restored:
         short: "{{user_path}} has restored this ticket"
         without_user: "has restored the ticket"
         long: "{{user_path}} has restored the ticket {{notable_path}}"
+        new: "Restored this ticket from trash"
+      spam:
+        new: "Flagged this ticket as Spam"
+      unspam:
+        new: "Restored this ticket from Spam"
       product_change:
         short: "{{user_path}} updated product to {{product_name}}"
         without_user: "updated product to <strong>{{product_name}}</strong>"
         long: "{{user_path}} updated product of {{notable_path}} to {{product_name}}"
+        new:  "Product as <strong>%{product_name}</strong>"
       product_change_none:
         short: "{{user_path}} updated product to 'none'"
         without_user: "updated product to <strong>'none'"
@@ -2850,10 +2934,12 @@ en:
         short: "{{user_path}} updated ticket type to {{ticket_type}}"
         without_user: "updated ticket type to <strong>{{ticket_type}}</strong>"
         long: "{{user_path}} updated ticket type of {{notable_path}} to {{ticket_type}}"
+        new: "Type as <strong>%{ticket_type}</strong>"
       group_change:
         short: "{{user_path}} updated group to {{group_name}}"
         without_user: "updated group to <strong>{{group_name}}</strong>"
         long: "{{user_path}} updated group of {{notable_path}} to {{group_name}}"
+        new: "Group as <strong>%{group_name}</strong>"
       group_change_none:
         short: "{{user_path}} updated group to 'none'"
         without_user: "updated group to <strong>'none'</strong>"
@@ -2862,10 +2948,48 @@ en:
         short: "{{user_path}} updated source to {{source_name}}"
         without_user: "updated source to <strong>{{source_name}}</strong>"
         long: "{{user_path}} updated ticket source of {{notable_path}} to {{source_name}}"
+        new: "Source as <strong>%{source_name}</strong>"
       due_date_updated:
         short: "{{user_path}} updated due date to {{due_date_updated}}"
         without_user: "updated due date to <strong>{{due_date_updated}}</strong>"
         long: "{{user_path}} updated due date of {{notable_path}} to {{due_date_updated}}"
+        new: "due by time as <strong>%{due_date_updated}</strong>"
+      requester_change:
+        new: "Requester as %{requester_name}"
+      ticket_edit:
+        new: "Edited the <strong>%{fields}</strong>"
+      custom_field_change:
+        new: "%{field_name} as <strong>%{field_value}</strong>"
+      custom_text_field_change:
+        new: "Modified %{text_fields}"
+      added_watcher:
+        new: "Added watchers %{watcher_list}"
+      removed_watcher:
+        new: "Removed watcher %{watcher_list}"
+      added_tag:
+        new: "Added tags <strong>%{tag_name}</strong>"
+      removed_tag:
+        new: "Removed tags <strong>%{tag_name}</strong>"
+      add_cc:
+        new: "Added CC %{cc_list}"
+      add_note:
+        new: "Added notes"
+      ticket_merge_source:
+        new: "Merged this ticket into %{target_ticket}"
+      ticket_merge_target:
+        new: "Merged %{source_ticket_list} with this ticket"
+      ticket_split_source:
+        new: "Split a response to create a new ticket %{target_ticket}"
+      ticket_split_target:
+        new: "Created this ticket by splitting a response from ticket %{source_ticket}"
+      ticket_import:
+        new: "Ticket imported on %{imported_time}"
+      checkbox_checked:
+        new: "Selected %{checkbox_list}"
+      checkbox_unchecked:
+        new: "Deselected %{checkbox_list}"
+      archive:
+        new: "Ticket archived"
   credit_card_info: Credit card information
   zendesk_backup_info: Select the Zendesk backup file downloaded from zendesk
   backup_error_msg: "The file exceeds the prescribed limit of 50MB, please <a href='#' id='import_request'>contact support</a> to proceed with the import."
@@ -2970,7 +3094,7 @@ en:
       helpcard:
         title: "Speak in Your Customer's Language"
         info1: "Provide a seamless support experience to your global customers from different parts of the world."
-        supported_languages: 
+        supported_languages:
           title: "<b>Supported Languages</b><br/>"
           info1: "Adding languages to this list will enable you to translate knowledge base articles and email notifications in the respective languages to support your customers.<br /><br />"
           info2: "<i>Once you add supported languages, you will not be able to change your primary language.</i>"
@@ -3089,7 +3213,7 @@ en:
     edit: Edit Scenario
     shared: Shared
     personal: Personal
-    no_scenario: "No Personal Scenarios <a href=%{link}>Create New</a>"
+    no_scenario: "You don't have any scenarios <a href=%{link}>Create New</a>"
     no_scenario_to_execute: "No Scenarios"
     duplicate_title: Duplicate scenario. Name already exists
     visibility:
@@ -3122,6 +3246,43 @@ en:
   send_email_to_requester: Send Email to Requester
   feedbackwidget_btcustomize: Button customization
   chatwidget_agentsonline: When agents are online
+  ticket_templates:
+    title: "Ticket Templates"
+    select_template: "Select a template"
+    helptext:
+      info1: "Templates allow you to pre-fill new tickets and outgoing emails with a single click. You can save time spent on typing out the same content again and again, and quickly create tickets or send outbound emails."
+      info2: "For example, you can create a template called 'Initiate Refund' by filling the body of the ticket and setting the priority 'medium'. So the next time you receive a phone call about a refund, you can create a medium priority ticket for your customer and initiate the refund request with a single click."
+    new_template: "Add New"
+    create_template: "Create Template"
+    template_note: "Selecting a template will replace <br/>the form with new values."
+    template_info: "Ticket templates help to pre-fill this <br/>form in a single click and are helpful for <br/>recurring issues and communications."
+    new_title: "New Template"
+    edit_title: "Edit Template"
+    properties: "Properties"
+    description: "example: To initiate a refund for all cancellation requests"
+    name: "example: Initiate Refund"
+    apply_template: "Apply Template"
+    no_templates: "You don't have any templates "
+    create_new: "Create New"
+    shared: Shared
+    personal: Personal
+    delete_multiple: "The selected templates have been deleted."
+    partial_delete: "Could not delete the following templates due to an error. Please try again after sometime."
+    delete_templates: Are you sure you want to delete the selected templates?
+    not_available: "Looks like this template is not available anymore. Select another template to apply."
+    warning_message: "Selecting a template will reset the entire form - including the description and attachments."
+    copy_of: "Copy of"
+    apply_on_form: "Applying template..."
+    acc_templ_count: "%{templ_count} of %{total_templ} Templates"
+    total_templ_count: "Reached %{total_templ} Templates"
+    ticket_email_form: "Ticket/Email Form"
+    visibility:
+      groups: Agents in group
+      all_agents: All agents
+      me_only: Myself
+      available_for: Available for
+    errors:
+      duplicate_title: "Duplicate template. Title already exists"
   solution_category:
     all: All Categories
     name: Name
@@ -3202,12 +3363,13 @@ en:
     skip_notification_no: "No"
   header_logo: Header Logo
   feedback:
-      title: "Was this answer helpful?"
+      title: "Did you find it helpful?"
       up_vote_thank_you_message: "Glad we could be helpful. Thanks for the feedback."
       upvote: "Yes"
       downvote: "No"
       link: "Send feedback"
       down_vote_form_title: "Can you please tell us how we can improve this article?"
+      solution_article_author: "is the author of this solution article."
       downvote_feedback_messasge: "Sorry we couldn't be helpful. Help us improve this article with your feedback."
   solutions:
     new_translation: "New %{language} translation"
@@ -3398,6 +3560,7 @@ en:
         email_invalid: Email is invalid
         user_emails: Please enter at least one contact detail
         max_user_emails: A contact cannot have more than 5 emails
+        max_user_companies: A contact cannot have more than 20 companies
       full_messages:
         format: "%{attribute} %{message}"
       template:
@@ -3514,7 +3677,7 @@ en:
     info5: Are you sure you want to delete this group?      Deleting a group will not delete the Agents in it.
     info6: "Email Agent when a new ticket is assigned to this group "
     info7: "if a ticket remains un-assigned for more than "
-    info8: "New: Allow your supervisors the ability to manage automatic ticket assignment and agent availability for the groups they belongs to -"
+    info8: "New: Allow your supervisors the ability to manage automatic ticket assignment and agent availability for the groups they belong to -"
     info8_readmore: Read More
     enable: Enable
     enable_success_message: The ability to manage ticket assignment has been enabled for your supervisors successfully.
@@ -3538,6 +3701,7 @@ en:
     toggle_availability_disabled: If disabled, agents will always be set as “available”. Admins and supervisors can change the agent availability from the dashboard, if necessary.
     toggle_availability_note: "Note: Agents belonging to multiple groups will be able to change their availability only if they have permission to control their availability in all of the groups they belong to."
     round_robin_desc: "Once turned ON, tickets assigned to this group will be distributed among agents in round robin fashion. If you wish to manually assign tickets or dispatch them using the Dispatch'r or Supervisor automations, you can turn this OFF. "
+    page_not_found: "This group could not be found. It might have been deleted or the URL mistyped."
     assigntime:
       half: 30 Minutes
       one: 1 Hour
@@ -3677,7 +3841,12 @@ en:
     helpdesk_software: Help Desk Software
     by_freshdesk: by Freshdesk
     submit_feedback: Submit Feedback
+    footer_feedback_subject_placeholder: Tell us how we can make Freshdesk better
+    footer_feedback_thanks: Thank you for your feedback!
+    errors:
+      feedback_subject_required: Cannot be blank.
     browse_community: Browse Community
+    help_and_support: Help & Support
     privacy_policy: "Privacy Policy"
   tkt_unattended_in_grp: Ticket Unattended in Group
   agent_solves_tkt: Agent Solves the Ticket
@@ -3715,7 +3884,16 @@ en:
     confirm_delete: Are you sure you want to delete this user?
     deleted_user_info: "Note: All communication from the deleted users will be marked as SPAM."
     delete_confirmation: When you delete a contact, future communication from the contact will be marked as SPAM. Are you sure you want to proceed?
-    delete_contact: Delete Contact
+    delete_contact: Delete contact
+    default_company: Default Company
+    mark_default_company: Mark as Default
+    client_manager: Can view all tickets from this company
+    remove_company: Remove contact-company association
+    remove_company_text: "In the existing tickets created by %{user_name} for this company:"
+    removed_association: "You are about to remove a contact-company association."
+    retain_company: Company name can continue to be
+    rename_company: Company name should be updated to
+    new_company: Enter a company name
     convert_note: Converting to agent will delete all the secondary emails of this contact. Proceed to convert?
     add_new_user: Add a new user
     search_by: Search by Name or Email or Tags...
@@ -3764,6 +3942,7 @@ en:
     new_topic: New Topic
     reply: Reply
     info_example: example - LA Lakers fan etc.
+    helptext: <h4>Contacts and companies </h4><p><br/>Every customer contacting your helpdesk through any channel you have configured will be added as a contact in your helpdesk automatically. You can group contacts based on their domains into companies. This way you can have different SLA policies for different kinds of customers.</p><p><br/>Apart from automatic contact creation, you can also add contacts manually or import a list of contacts. <a href="https://support.freshdesk.com/solution/articles/37623" target="_blank">Read more.</a></p><p><br/>If you are in the Estate plan or above, you can associate one contact with multiple companies. <a href="https://support.freshdesk.com/solution/articles/219344" target="_blank">Read more.</a></p>
     form_placeholder:
       description: Add specific notes regarding this contact example - LA Lakers fan etc.
       tags: 'Tag Names'
@@ -3794,6 +3973,7 @@ en:
     info6: Add specific notes regarding this contact
     role:
       info: Can see all tickets from this company
+    multi_client_manager: Can see all tickets from these companies
     status:
       verified: Verified
       deleted: Deleted
@@ -3819,6 +3999,10 @@ en:
     segment_api:
       invalid_type: Invalid operation. Check your type.
       email_blank: Email can't be blank
+    email: Email
+    phone: Phone
+    facebook: Facebook
+    twitter: Twitter
   between: Between
   profile_settings: Profile settings
   portal_key: Portal
@@ -4002,6 +4186,7 @@ en:
       more_articles: "More articles in <span class='folder-name'> %{article_name} </span>"
       modified_on: "Modified on:"
       related_articles: "Related Articles"
+      created_by: "Created by:"
     folder:
       filler_text: "Watch this space for articles regarding %{folder_name}"
     topic:
@@ -4385,6 +4570,12 @@ en:
     info25: "Draft articles will be visible only to agents."
     info26: "<b>My Drafts</b> lists all articles which you last edited and saved as a draft."
     info27: "<b>All Drafts</b> lists all the articles in draft status. If you have multiple portals set up, you can filter draft articles from any specific portal by selecting the option in the dropdown list."
+    info28: "A knowledge base portal serves as a one stop shop for your customers to find answers to their questions instantly. It can help you deflect common questions by providing a way for customers to help themselves."
+    info29: "The Freshdesk Knowledge Base has a 3 level hierarchy: <b>Category --> Folder --> Article </b>"
+    info30: "If you use multiple products, the categories you create can be made visible in their respective product portals."
+    info31: "You can chose to make your folders visible to different groups of people (<b>All, Logged in users, Agents & Selected companies</b>)."
+    kb: "Knowledge Base"
+    tour_v2: "Help me set up my knowledge base"
     kbase_email_msg: "All emails sent by agents to <b>%{email}</b> will be stored as a draft here."
     folder: Folder
     solution_meta: Meta tags for search engines
@@ -4916,6 +5107,10 @@ en:
     id : Id
     ticket_selected: " ticket selected (Conversations from the merged tickets will be added to the primary ticket)"
     tickets_selected: " tickets selected (Conversations from the merged tickets will be added to the primary ticket)"
+    add_recipients: "Add secondary ticket recipients to CC"
+    merge_warning: "We recommend that you retain the oldest ticket as the primary ticket to avoid mistakes in SLA calculation."
+    merge_confirm_info: "Review your merge and edit notes as necessary."
+    reply_cc_limit_exceeded: "You have reached the maximum threshold of 50 recipients per ticket. Recipients over and above this threshold value will be dropped."
     subject_placeholder: "Look up tickets by their subject"
     id_placeholder: "Type in an ID to find tickets"
     requester_placeholder: "Find tickets by requester"
@@ -4944,6 +5139,7 @@ en:
     private_note: Private
     public_note: Public
     none: None
+    me: Me
     myself: Myself
     spam_btn_title: Mark as spam
     assigned_to: Assigned To
@@ -5023,6 +5219,7 @@ en:
       send: Send
       send_satisfaction_survey: Include satisfaction survey
       dm_confirm_message: The user is not following your twitter account. Your response will be sent as a public tweet. Do you want to continue?
+      attachment_missing_alert: It looks like you missed an attachment. Are you sure you want to send this message?
     facebook_form:
       send_and_resolve: Send and Resolve
       send: Send
@@ -5048,13 +5245,22 @@ en:
       add_and_set_as: "Add and set as <strong>%{status}</strong>"
       add_public_note: Add Public Note
       add_private_note: Add Private Note
-      notify_agents: Notify Agents
+      notify_agents: "Notify "
     tweet_form:
       tweet_and_resolve: Tweet and Resolve
       user_not_following: This user is not following your twitter account
     activities: Activities
     activity_toggle: Show Activities
+    activity_toggle_v2: Activities
+    activity_toggle_tooltip: Toggle activities
+    show_activities_tooltip: Show activities
+    hide_activities_tooltip: Hide activities
     activity_timestamp: "%{user_name} updated <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
+    user_activity_timestamp: "%{user_name} updated <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
+    deleted_rule: "deleted rule - %{rule_name}"
+    executed: " executed "
+    performed: " performed "
+    system_activity_timestamp: "<strong class='muted'>System</strong> %{system_rule} <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date}) "
     requestor_info: Requestor Info
     view_twitter: View on Twitter
     view_facebook: View on Facebook
@@ -5083,7 +5289,7 @@ en:
     delete_btn: Delete
     status: Status
     source: Source
-    tags: Tag
+    tag_condition: Tag
     verify_human: To verify you are human, please type the given scrambled letters
     edit_btn: Edit
     requester: Requester
@@ -5144,6 +5350,7 @@ en:
       in_progress_text: "A bulk update started by %{user_name} is in progress."
       in_progress_text_you: "A bulk update started by you is in progress."
       bulk_action_submit_label: "Confirm and update"
+    cannot_preview_attachment: No preview available.
   archive_ticket:
     title: Archived tickets
     no_reply_msg: This ticket has been archived.
@@ -5291,14 +5498,14 @@ en:
     visible_in_portal: Visible on Portal
     hidden_on_portal: Hidden on Portal
     anyone: "Anyone"
-    users_from_domains: "Users from selected domains"    
+    users_from_domains: "Users from selected domains"
     search_domain: Search Domain
     company_domain: Company Domains
     domains_allowed: Only customers from these domains will be allowed to sign up and log in.
     twitter_disabled: Twitter login will be disabled for customers and agents for security purposes.
     important: Important
     includes_contacts_company_domain: (includes existing contacts and company domains)
-    permission: 
+    permission:
       helpdesk_restrictions: Helpdesk restrictions
       who_can_create: Who can log in (or) sign up (or) create tickets?
       users_from_selected_domains: Users from whitelisted domains
@@ -5470,7 +5677,7 @@ en:
         tickets: Tickets
         recent_tickets: Recent tickets
         archive_tickets: Archived tickets
-        contacts: Contacts  
+        contacts: Contacts
         customer: Customer
         customers: Customers
         article: Article
@@ -5540,34 +5747,62 @@ en:
         recent_item: Recent Items
     realtime_dashboard:
       view_all: View all
-      ticket: Ticket
+      view_more: View more
+      ticket: Ticket Assignment
       ticket_summary: Ticket Summary
       filter_by: Filter by
-      all_groups: All Groups
+      all_groups: All
       unresolved: Unresolved
       open: Open
       on_hold: On Hold
       due_today: Due Today
       new: Unassigned
       overdue: Overdue
+      across_helpdesk: across helpdesk
       unresolve_tickets: Unresolved Tickets
+      recent_activities: Recent Helpdesk Activity
       unresolved_tickets_by_status: Unresolved Tickets by Status
-      unresolved_tickets_by_type: Unresolved Tickets by Type
+      unresolved_tickets_by_ticket_type: Unresolved Tickets by Type
       unresolved_tickets_by_group: Unresolved Tickets by Group
       unresolved_tickets_by_priority: Unresolved Tickets by Priority
       unresolved_tickets_by_agent: Unresolved Tickets by Agent
+      unresolved_tickets_by_age: Top 10 Unresolved Tickets by Age (Days)
+      agent_received_resolved: My Performance
+      top_customers_by_open_tickets: Top 10 Customers by Unresolved Tickets ( >2 )
+      top_agents_by_open_tickets: Top 10 Agents by Old Tickets ( >7 Days )
+      csat: Customer Satisfaction
+      group_performance: Group Performance Today
+      agent_performance: Agent Performance Today
+      ticket_workload_channels: Today's Ticket Trend by Channels
+      ticket_workload: Today's Ticket Trend
+      time_stamp: as of %{time}
+      detailed_summary: Detailed Summary
       leader_Board: Leaderboard
       achievements: Achievements
       forum_moderation: Forum Moderation
       phone: Phone
       global_view: Global View
       my_view: My View
+      total_value: Total value
       live_chat: Live Chat
       in_conversation: In-conversation
       returning_visitors: Returning Visitors
       visitors: Visitors
       chat_history: Chat History
       view_group_vs_status_summary: View Group vs Status summary
+      something_went_wrong: We are Sorry. Something went Wrong.
+      solution_link: How to read this dashboard?
+      stats:
+        received_tickets: Total Received Tickets
+        resolved_tickets: Total Resolved Tickets
+        avg_resolution_time: Avg Resolution Time(days)
+        resolution_within_sla: Resolution within SLA%
+        first_contact_resolution: First Contact Resolution %
+        total_agent_performance: Total Agent Performance
+        total_group_performance: Total Group Performance
+        total_workoad: Total Tickets Workload
+        performance_title: "%{subject}'s performance"
+      this_month: This Month
     dashboard:
       agent_availability: Agent Availability
       round_robin:
@@ -5634,6 +5869,11 @@ en:
       overlay_reply_time: " replied, %{time_in_words} ago"
       overlay_fwd_time: " forwarded, %{time_in_words} ago"
       overlay_note_time: " added a note, %{time_in_words} ago"
+      overlay_submitted_ticket: " submitted a new ticket"
+      overlay_forward: " forwarded"
+      overlay_reply: " replied"
+      overlay_note: " added a note"
+      overlay_time: "%{time_in_words} ago, "
       friendly_status:
         customer_responded: "Customer Responded"
         overdue: "Overdue"
@@ -5704,7 +5944,8 @@ en:
         conversation: Conversation
         timesheet: Time Sheet
         reply_form:
-          title: Reply to
+          title: "From"
+          to: "To:"
           cc: Cc
           addcc: Add Cc
           removecc: Remove Cc
@@ -5713,6 +5954,7 @@ en:
           removebcc: Remove Bcc
           not_sent: Reply was not sent!
         forward_form:
+          title: "From:"
           cc: Cc
           addcc: Add Cc
           removecc: Remove Cc
@@ -5824,6 +6066,8 @@ en:
           forward: "%{user_name} forwarded <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
           survey: "%{user_name} rated this ticket <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
           reply_to_forward: "%{user_name} replied to forward <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
+        last_edited_info: "Last edited by: %{user_name} <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
+        last_deleted_info: "Deleted by: %{user_name} <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
         edit_note: Edit Note
         split_this_as_new_ticket: Split this as a new Ticket
         delete_note: "Remove this from the ticket conversation?"
@@ -5912,9 +6156,15 @@ en:
     title: "Filter Tickets"
     unsaved_view: "Untitled View"
     requester_placeholder: "Name or Email"
+    user_placeholder: "Name or Email"
+    cc_emails_placeholder: "Name or email of user from selected company"
     customers_placeholder: ""
+    company_id_placeholder: ""
     raised_by: "Tickets created by"
     everyone_in_company: "Everyone in %{company_name}"
+    company: "Company"
+    all_companies: "All Companies"
+    everyone: "Everyone"
     copy_of: Copy of
     save_tooltip: Save
     saveas_tooltip: Save as
@@ -5987,6 +6237,9 @@ en:
     archived_at: "Archived"
     from: From
     to: To
+    show_additional_fields: Show Additional Fields
+    hide_additional_fields: Hide Additional Fields
+    additional_fields_help: Description fields are moved into additional fields
     view_all_tickets : Export as CSV
     check_uncheck_title: 'Check/Uncheck all'
     data_backup:
@@ -6292,7 +6545,7 @@ en:
     installing_text: "Please wait..."
     in_development: In Development
     no_mktp_apps: "No Apps installed"
-    no_mktp_apps_note: "We've integrated with some of your favorite applications." 
+    no_mktp_apps_note: "We've integrated with some of your favorite applications."
     no_mktp_apps_note_2: "Click 'Get more Apps' to browse the selection."
     go_to_dev_portal: Go to Developer Portal
     developer_shortcuts: Developer Shortcuts
@@ -6614,7 +6867,7 @@ en:
       send_reply_in_fd: "Notify customer via email"
       add_comment_in_jira: "Add a comment in JIRA"
       update_jira_status: "Update JIRA status"
-      add_attachments_in_jira: "While syncing exclude ticket attachments" 
+      add_attachments_in_jira: "While syncing exclude ticket attachments"
 
     infusionsoft:
       label: "Infusionsoft"
@@ -6817,6 +7070,26 @@ en:
         remove_shop: "Remove this shop"
         invalid_shop_url: "The Shop URL entered is invalid."
         invalid_admin_url: "The Admin URL entered is invalid."
+    fullcontact:
+      label: "FullContact"
+      desc: "Automate contact data enrichment for new contacts and update stale contact details on demand"
+      helptext: "<h4>Companies Settings</h4><br/>The Company data is fetched from FullContact and updated in your Freshdesk if a company is created or when a company domain is updated in your helpdesk. You can fetch upto 6 fields from FullContact to update in Freshdesk.<br/><br/><h4>Contacts Settings</h4><br/>Contact data is fetched from FullContact and updated in your Freshdesk when a contact is created in your helpdesk. Existing Freshdesk data will not be overwritten. You can select a maximum of five social profiles.<br/><br/>To save the FullContact data, a default mapping is created in Freshdesk. For location and social profiles you will need to create new custom columns. The admin, if required, can change or delete mappings of a FullContact data element at any time."
+      form:
+        api_key: "FullContact API key"
+      message:
+        queued: "Queued for search"
+        invalid_request: "Request malformed"
+        invalid_api: "API key invalid or Rate Limit Reached"
+        no_results: "No results found for this Id"
+        invalid_company_fields: "Domain Name is not valid"
+        invalid_contact_fields: "Invalid value in %{name} field"
+        temp_issue: "Temporary Issue. Try again later or contact support@freshdesk.com"
+        seek_field_empty: "Required fields are empty"
+        update_success: "Updated successfully"
+        update_failure: "Update failed. Try again later or Please contact support@freshdesk.com"
+        domain_absent: "No domains associated to this company"
+        backend_issue: "Unknown error. Please contact support@freshdesk.com"
+        company_exists: "Company with name \"%{name}\" already exists"
     slack:
       label: "Slack"
       desc: "Stay up to date about Freshdesk tickets in Slack"
@@ -7083,6 +7356,23 @@ en:
         login: "Login"
         email: "Email"
         password: "Password"
+    freshsales:
+      label: "Freshsales"
+      helptext: "<h4>Freshsales Integration Help</h4><p><br/> Once you enable this integration, your agents can access Freshsales contact information right inside the Freshdesk ticket & contact pages. <br /><br /> Please note that your agents can only view those fields that are configured by you in the settings page and the search function is based on the email address mapping."
+      desc: "You can view contact information from Freshsales in Freshdesk."
+      form:
+        freshsales_settings: "Freshsales Settings"
+        domain: "Account Domain"
+        auth_token: "Authentication Token"
+        domain_info: "Enter your freshsales domain without https. Ex: example.freshsales.io"
+        auth_token_info: "Enter your authentication token"
+        error: "Please verify your settings and try again"
+        select: "Select an option"
+        contact: "Contact Fields"
+        lead: "Lead Fields"
+        account: "Account Fields"
+        deal: "Deal Fields"
+        deal_settings: "Agents can create/link or unlink deals from the ticket"
   widgets:
     contact_widget:
       description: "Display a contact or option to add the contact into capsule."
@@ -7370,6 +7660,8 @@ en:
   latest_ticket: "new update"
   latest_tickets: "new updates"
   search:
+    recent_searches: "Recent Searches"
+    recently_viewed: "Recently Viewed"
     no_results_msg: "No results found"
     showing: "Showing:"
     all_results: "All Results"
@@ -7426,6 +7718,7 @@ en:
   ticket_cc_email_more: "more"
   dropped_due_to_moderation: Dropped due to moderation
   fwd_to: "Forward"
+  fwd_as: " <b>Forward as</b> "
   add_cc: Add Cc
   add_a_cc: Add a CC
   reply_to_fwd: Reply
@@ -7460,7 +7753,7 @@ en:
   error_in_plan: "Error changing the plan"
   change_free_plan: "Change your Free plan"
   billing_info: "Subscription information"
-  forwarded_email: "Forwarded email" 
+  forwarded_email: "Forwarded email"
   forwarded_to: "Forwarded to"
   replied_to: "Replied to"
   notified_to: "Notified to"
@@ -7714,6 +8007,7 @@ en:
     customer_happiness : Customer Happiness
     reports_in_action: Watch reports in action
     view_old_reports: View old reports
+    old_reports: old reports
     view_new_reports: View new reports
     solution_article_text: How to read this report ?
     loading_text: Generating Report...
@@ -7753,7 +8047,7 @@ en:
     average_interactions: "(Average %{count})"
     last_updated: "Last updated <span class='instance'><abbr data-livestamp=%{last_dump_time}> ago </abbr></span>"
     last_updated_at: "Last updated at <span class='instance'>%{time_in_words}</span>"
-    saved_report: 
+    saved_report:
       title: Report title
       dialog_header: "Save & Schedule Report"
       copy_of: "Copy of "
@@ -7776,28 +8070,28 @@ en:
       schedule_header: Schedule Report
       read_more: How to schedule report?
       schedule_success: Report has been scheduled successfully.
-      limit_exceeded_message: You have exceeded the maximum limit. You are allowed to create %{count} saved filters per report
+      limit_exceeded_message: You can only save %{count} filters per report. Please delete a saved report and try again.
       tooltip: Scheduled every %{period}
       save: Save
       cancel: Cancel
-      desc: "Hello, \n\nPlease find a copy of %{report_name} - %{schedule} report with this email.\n\n\n Thanks"
+      desc: "Hi, \n\nHere is your %{schedule} %{report_name} report.\n\nHappy number crunching!"
       message:
         week_tmpl: "%{name} for <strong>last %{day}</strong> to <strong>%{previous_day}</strong> will be sent along with below email <strong>every %{day}</strong> at <strong>%{time}</strong> time"
         week_friday_tmpl: "%{name} for <strong>last %{day}</strong> to <strong> this %{previous_day}</strong> will be sent along with below email <strong>every %{day}</strong> at <strong>%{time}</strong> time"
         daily_tmpl: "%{name} for <strong>yesterday</strong> will be sent along with below email <strong>everyday</strong> at <strong>%{time}</strong> time"
-        monthly_tmpl: "%{name} for <strong>last month</strong> will be sent along with below email <strong>first of every month</strong> at <strong>%{time}</strong> time"        
+        monthly_tmpl: "%{name} for <strong>last month</strong> will be sent along with below email <strong>first of every month</strong> at <strong>%{time}</strong> time"
     scheduled_reports:
       dialog:
-        email : Email
-        generate_report : Generate report
-        on : On
-        subject : Subject
-        desc : Description
+        email: Email
+        generate_report: Generate report
+        on: On
+        subject: Subject
+        desc: Description
       errors:
         emails_limit: You can add maximum %{num} emails
         invalid_email: Invalid emails
-        acc_max_limit: An account can have maximum of %{count} scheduled tasks
-        user_max_limit: A user can create maximum of %{count} scheduled tasks
+        acc_max_limit: You can only schedule %{count} reports per account. Please delete a schedule and try again.
+        user_max_limit: You can only create %{count} schedules. Please delete a schedule and try again.
         general: Some of the fields in form are invalid
         disabled : Reports with custom date ranges cannot be scheduled
         invalid_frequency: Invalid frequency
@@ -7871,6 +8165,7 @@ en:
       created_tickets: CREATED TICKETS
       resolved_tickets: RESOLVED TICKETS
       reopened_tickets: REOPENED TICKETS
+      unresolved_tickets: UNRESOLVED TICKETS
       avg_first_response_time: AVERAGE 1ST RESPONSE TIME
       avg_response_time: AVERAGE RESPONSE TIME
       avg_resolution_time: AVERAGE RESOLUTION TIME
@@ -7881,6 +8176,7 @@ en:
     chart_title:
       created_tickets_group_by_chart: 'Created tickets split by %{group_by}'
       resolved_tickets_group_by_chart: 'Resolved tickets split by %{group_by}'
+      unresolved_tickets_group_by_chart:  'Unresolved tickets split by %{group_by}'
       reopened_tickets: Reopened tickets
       reopened_tickets_group_by_chart: 'Reopened tickets split by %{group_by}'
       avg_first_response_time_group_by_chart: 'Avg 1st response time split by %{group_by}'
@@ -7914,23 +8210,50 @@ en:
         reopened_tickets:
           one: "%{ticket_count} tickets with %{reopen_count} reopen"
           other: "%{ticket_count} tickets with %{reopen_count} reopens"
+        total_tickets_unresolved: 'Total tickets unresolved : %{count}'
+        total_load: 'Total load'
+        carried_over: '<span class="bold" >%{count}%</span> of total load is old carried over tickets'
+        newly_received: '<span class="bold" >%{count}%</span> of total load is newly received tickets'
+        total_load_resolved: '<span class="bold" > %{count}%</span> of total load is resolved'
+        newly_received_resolved: '<span class="bold" > %{count}%</span> of newly received tickets are resolved'
+        total_load_unresolved: '<span class="bold" >%{count}% </span>of total load remains unresolved'
+        newly_received_unresolved: '<span class="bold">%{count}% </span>of newly received tickets remain unresolved'
+      legend_tooltip:
+        total_load: Total load = Old unresolved tickets + New received tickets
+        all_resolved: Total number of resolved tickets
+        new_resolved: 'Number of tickets received and resolved on the same %{trend}'
+        all_unresolved: Total number of unresolved tickets
+        new_unresolved:  'Number of tickets received and not resolved on the same %{trend}'
+        received: 'Number of new tickets received on a given %{trend}'
       tickets: tickets
       source: source
       priority: priority
       status: status
       type: type
+      historic_status: Historic Status
+      current_status: Current Status
+      current_status_lower: current status
+      historic_status_lower: historic status
       agent_responses: agent responses
       customer_responses: customer responses
       received: Received
       resolved: Resolved
+      unresolved: Unresolved
       violated: 'Violated'
       compliant: 'Compliant'
       performance_distribution:
         avg_first_response_time: Avg first response time
+      total_load: 'Total Load'
+      new_received: 'Received Tickets'
+      all_resolved: 'All Resolved Tickets'
+      new_resolved: 'New Resolved Tickets'
+      all_unresolved: 'All Unresolved Tickets'
+      new_unresolved: 'New Unresolved Tickets'
     ticket_list_title:
       created_tickets: All created tickets
       resolved_tickets: All resolved tickets
       reopened_tickets: All reopened tickets
+      unresolved_tickets: All unresolved tickets
       avg_first_response_time: All tickets with 1st response
       avg_response_time: All tickets with reponse
       avg_resolution_time: All resolved tickets
@@ -7941,7 +8264,7 @@ en:
       first_response_sla_violated: All first response SLA violated tickets
       resolution_sla_compliant: All resolution SLA compliant tickets
       resolution_sla_violated: All resolution SLA violated tickets
-      no_tickets: No Tickets to display
+      no_tickets: No tickets to display
       compliant: Compliant
       violated: Violated
     v2_helptext:
@@ -7949,6 +8272,7 @@ en:
         created_tickets: The tickets that were created in the helpdesk in the selected time period
         resolved_tickets: The tickets resolved in the selected time period (that were created any time)
         reopened_tickets: The tickets reopened in the selected time period (that were created any time)
+        unresolved_tickets: The tickets not resolved at the end of the selected time period (that were created any time)
         avg_first_response_time: Average first response time of all the first responses made in the selected time period
         avg_response_time: Average response time of all the responses made in the selected time period
         avg_resolution_time: Average resolution time of tickets resolved in the selected time period
@@ -7959,18 +8283,29 @@ en:
       customer_report:
         received_tickets: The tickets that were submitted in the helpdesk in the selected time period
         resolved_tickets: The tickets resolved in the selected time period (that were created any time)
+        unresolved_tickets: The tickets not resolved at the end of the selected time period (that were created any time)
+        reopened_tickets: The tickets reopened in the selected time period (that were created any time)
         response_violated: The percentage of tickets were not responded within SLA in the selected time period
         resolution_violated: The percentage of tickets were not resolved within SLA in the selected time period
         customer_interactions: No. of customer responses made in the selected time period
         agent_interactions: No. of agent responses made in the selected time period
-    ticket_volume: 
+    ticket_volume:
       title: Ticket Volume Trends
       total_received_tickets : Total Received Tickets
       average_received_tickets : Average Received Tickets
       total_resolved_tickets : Total Resolved Tickets
+      total_unresolved_tickets : Total Unresolved Tickets
       average_resolved_tickets : Average Resolved Tickets
-      busiest_hour_received_tickets : Busiest hours for Received Tickets
-      busiest_hour_resolved_tickets : Busiest hours for Resolved Tickets
+      average_unresolved_tickets : Average Unresolved Tickets
+      busiest_hour_received_tickets : Most tickets were received around
+      busiest_hour_resolved_tickets : Most tickets were resolved around
+      busiest_day_received_tickets : Most tickets were received on
+      busiest_day_resolved_tickets : Most tickets were resolved on
+      received_tickets: Received Tickets
+      resolved_tickets: Resolved Tickets
+      unresolved_tickets: Unresolved Tickets
+      load_analysis:
+        title: Load Analysis
       labels:
         day_month: '%{day} %{month}'
         day_month_year: '%{day} %{month}, %{year}'
@@ -7986,7 +8321,7 @@ en:
         month: Month
         qtr: Quarter
         year: Year
-        title: trend of tickets received and resolved
+        title: trend of tickets received and resolved and unresolved
       time_trends_part_title:
         doy: Daily
         w: Weekly
@@ -7994,11 +8329,11 @@ en:
         qtr: Quarterly
         y: Yearly
       time_trends_title:
-        doy: Daily trend of tickets received and resolved
-        w: Weekly trend of tickets received and resolved
-        mon: Monthly trend of tickets received and resolved
-        qtr: Quarterly trend of tickets received and resolved
-        y: Yearly trend of tickets received and resolved
+        doy: Daily trend of tickets received and resolved and unresolved
+        w: Weekly trend of tickets received and resolved and unresolved
+        mon: Monthly trend of tickets received and resolved and unresolved
+        qtr: Quarterly trend of tickets received and resolved and unresolved
+        y: Yearly trend of tickets received and resolved and unresolved
       day_trend:
         title: Day of the week and Hour of the day trend
         subtitle: See which hour of which day receives the most number of tickets and allocate your staff accordingly
@@ -8040,6 +8375,8 @@ en:
       title:  Top Customer Analysis
       received_tickets: Tickets submitted
       resolved_tickets: Tickets resolved
+      unresolved_tickets: Tickets unresolved
+      reopened_tickets: Tickets reopened
       response_violated: Response SLA violations %
       resolution_violated: Resolution SLA violations %
       customer_interactions: Customer responses
@@ -8092,6 +8429,7 @@ en:
     time_period: "Time Period"
     tickets_received: "Tickets Received"
     tickets_resolved: "Tickets Resolved"
+    tickets_unresolved: "Tickets Unresolved"
     tickets_backlog: "Tickets Backlog"
     deleted_agent: "Deleted Agent"
     deleted_group: "Deleted Group"
@@ -8238,6 +8576,8 @@ en:
     not_enough_credit: "Not Enough Credit!"
     recharge: "Recharge"
     ff_number: "Phone Number"
+    online_availability_text: "Available:"
+    acw_availability_text: 'Move to Available:'
     via_browser: "via Browser / App"
     via_phone: "via Phone"
     subscription:
@@ -8258,6 +8598,7 @@ en:
       not_enough_credit: "Not Enough Credit"
       restricted_country: "Restricted country"
       already_in_call: "Simultaneous outgoing call restricted"
+      in_acw_state: 'Move out of "After Call Work State" to start making calls'
       strange_number: "Cannot call a Restricted number"
       move_to_dialer: "Back to dialer"
       connect_call: "Call"
@@ -8339,6 +8680,7 @@ en:
       available: "Accepting calls"
       unavailable: "Not accepting calls"
       busy: "Ongoing Call"
+      acw: "Wrapping Up"
       recent_calls: "Recent Calls"
       transferring: "<span>Transferring Call</span><br />Please wait..."
       transfer_agents: "Type an agent or group name..."
@@ -8348,7 +8690,7 @@ en:
       agents_count_in_group: "%{count} Agents"
       agents_count:
         other: "Agents"
-        one: "Agent"  
+        one: "Agent"
       ticket_info: "Create new ticket or add note to existing ticket with the notes and recording. "
       add_note: "Add Notes"
       note_placeholder: "Add call notes..."
@@ -8630,7 +8972,7 @@ en:
         queue_position_disable: "OFF"
       numbers:
         sidebar_title: "Phone channel"
-        sidebar_content: "Using the phone channel, you can make and receive calls through your browser, mobile phone or using the phone channel in Freshdesk’s mobile apps. It is tightly integrated with Freshdesk’s ticketing system. So you can keep track of phone calls by recording them and converting them into tickets whenever necessary. <br/><br/> <b>Setting up Phone</b></br>To start using phone, you will first need to enable it and purchase a support number. You can purchase local numbers from the <a href='https://support.freshdesk.com/support/solutions/articles/169322' target='_blank'>countries listed here</a> and make or take calls from anywhere in the world. If your customers will be calling you in the US, UK or Canada you can also purchase toll-free support numbers (or freephone in the UK). <br/><br/><b> Using Smart IVRs</b><br/> You can create smart Integrated Voice Response (IVR) systems to better categorize customers when they call your support number, and channelize them to the right department, team or agent. </b><br/><br/> <a href='http://freshdesk.com/multichannel-support/phone-support' target='_blank'>Read more about what you can do with phone</a>."
+        sidebar_content: "Using the phone channel, you can make and receive calls through your browser, mobile phone or using the phone channel in Freshdesk’s mobile apps. It is tightly integrated with Freshdesk’s ticketing system. So you can keep track of phone calls by recording them and converting them into tickets whenever necessary. <br/><br/> <b>Setting up Phone</b></br>To start using phone, you will first need to enable it and purchase a support number. You can purchase local numbers from the <a href='https://support.freshdesk.com/support/solutions/articles/169322' target='_blank'>countries listed here</a> and make or take calls from anywhere in the world. If your customers will be calling you in the US, UK or Canada you can also purchase toll-free support numbers (or freephone in the UK). <br/><br/><b>Provide Complete Phone Support</b><br/>With our phone channel, you can<br/><ul><li>Start making and taking calls using your web browser or mobile phones</li><li>Create voicemails, forward calls, or transfer calls to any agent, anywhere</li><li>Monitor calls, barge when needed, add other agents into on-going calls, and more*</li></ul><br/><p>*Please reach <a href='mailto:support@freshdesk.com'>support@freshdesk.com</a> to enable advanced features for your account. These include call monitoring, call barging, call conferencing, call masking, and call lifetime metrics.</p><br/><p><a href='http://freshdesk.com/multichannel-support/phone-support' target='_blank'>Learn more about phone’s powerful capabilities and features</a><p>"
         purchase_number: "Purchase Number"
         purchase_phone_number: "Buy Number (%{number})"
         buy: "Buy Number"
@@ -8657,7 +8999,7 @@ en:
           title_text: "Setting up a call center"
           info_text: "In order to start using the phone channel, you will first need to purchase a call-in number to offer your customers. You can purchase a local number in any <a href='https://support.freshdesk.com/support/solutions/articles/169322' target='_blank'>countries listed here</a>. If your customers will be calling you from the US, UK or Canada, you can also offer them a Toll-free dial in number.<br/><br/>You can purchase multiple phone numbers from various countries and setup toll-free helplines inside Freshdesk without using any third party service. You will be charged standard rates for incoming, outgoing and forwarding calls from your helpdesk. Check out the <a href='http://freshdesk.com/multichannel-support/phone-support/call-rates' target='_blank'>call rates here</a>.<br/><br/> Once you have purchased a phone number for your support helpline, all incoming calls will be distributed to agents who are logged in to your helpdesk. In addition, your agents can choose to pick up phone calls from inside the browser or have them forwarded to their desk phone automatically."
         caller_id:
-          manage_caller_id : "Manage Caller ID "  
+          manage_caller_id : "Manage Caller ID "
           add_another : "/ Add another"
           enter_code : "Pick up your phone and enter the validation code"
           enter_number : "Enter the number you want to add as caller id"
@@ -8675,7 +9017,7 @@ en:
           invalid_number : "Invalid phone number!"
           calling : "Calling "
           call_id_mask : "Mask this number"
-          twilio_errors : 
+          twilio_errors :
             not_allowed : "Sorry there was an issue while adding this number as caller ID. Please try again. If the issue persists contact us at <a href='mailto:support@freshdesk.com'>support@freshdesk.com</a>"
             invalid_number : "Sorry it seems that the number is invalid. Please try again. If the issue persists contact us at <a href='mailto:support@freshdesk.com'>support@freshdesk.com</a>"
             already_verified : "Phone number already verified for your account!"
@@ -8725,9 +9067,9 @@ en:
         title_text: "Phone"
         heading_text: "Support your customers using the phone channel"
         trial_description: "Using the phone channel, you can make and receive calls through your browser, mobile phone or using the phone channel in Freshdesk’s mobile apps. It is tightly integrated with Freshdesk’s ticketing system. So you can keep track of phone calls by recording them and converting them into tickets whenever necessary."
-        number_info: "Purchase local and toll-free numbers from across the globe"
-        ivr_info: "Route calls to the right agent and group using IVR"
-        recording_info: "Record and convert calls to tickets, just like your emails"
+        number_info: "Purchase local and toll-free numbers for over 40 countries"
+        ivr_info: "Perform call monitoring, call conferencing, route calls using IVR, and many more"
+        recording_info: "Record and convert all your calls into tickets"
         learn_more: "Learn more"
         pricing: "See all call rates and supported countries"
         request_subject: "Phone Request - %{account_name}"
@@ -8793,6 +9135,7 @@ en:
     business_hours: "During business hours"
     anytime: "Always (24/7)"
     business_calendar: "Select business hour"
+    show_widget: "When agents are online and accepting chats"
     texton: "On"
     textoff: "Off"
     form_details: "Form details"
@@ -8944,18 +9287,18 @@ en:
     end_chat_end_title: "End"
     end_chat_cancel_title: "Cancel"
     cobrowse_request : "Waiting for visitor to accept your request"
-    visitor_cobrowse_request : "Can agent control your current screen? "    
-    cobrowsing_start_msg : "Your screenshare session has started"   
-    cobrowsing_stop_msg : "Your screensharing session has ended"    
-    cobrowsing_deny_msg : "Your request was declined"   
-    cobrowsing_viewing_screen : "You are viewing the visitor’s screen"    
-    cobrowsing_controlling_screen : "You are controlling the visitor’s screen"    
-    cobrowsing_request_control : "Request visitor for control"    
-    cobrowsing_stop_request : "End your screensharing session"    
-    cobrowsing_request_control_rejected : "Your request was declined"   
-    cobrowsing_cancel_visitor_msg : "Screensharing is currently unavailable"    
-    cb_viewing_screen_vi : "Agent can view your screen "    
-    cb_controlling_screen_vi : "Agent can control your screen"    
+    visitor_cobrowse_request : "Can agent control your current screen? "
+    cobrowsing_start_msg : "Your screenshare session has started"
+    cobrowsing_stop_msg : "Your screensharing session has ended"
+    cobrowsing_deny_msg : "Your request was declined"
+    cobrowsing_viewing_screen : "You are viewing the visitor’s screen"
+    cobrowsing_controlling_screen : "You are controlling the visitor’s screen"
+    cobrowsing_request_control : "Request visitor for control"
+    cobrowsing_stop_request : "End your screensharing session"
+    cobrowsing_request_control_rejected : "Your request was declined"
+    cobrowsing_cancel_visitor_msg : "Screensharing is currently unavailable"
+    cb_viewing_screen_vi : "Agent can view your screen "
+    cb_controlling_screen_vi : "Agent can control your screen"
     cb_give_control_vi :  "Allow agent to control your screen"
     help_text_agent_msg: "Use {{agent_name}} and {{helpdesk_name}} to display Agent Name and Helpdesk Name in your messages"
     date_invalid: Invalid date
@@ -9453,8 +9796,8 @@ en:
   doorkeeper:
     authorizations:
       new_form:
-        go_to_portal: "Authorize &amp; Goto %{portal_name} Portal"
-        later: Later
+        go_to_portal: "Authorize &amp; Go to %{portal_name} Portal"
+        decline: Decline
         authorize_text1: Authorize
         authorize_text2: to use your account?
         authorize_success: You have allowed this request
@@ -9462,6 +9805,7 @@ en:
         spinner_text: "Logging into %{portal_name} Portal"
         dev_portal: Developer
         admin_portal: Admin
+        portal: Portal
       error_form:
         authorize_failure: You are not allowed to access this page
   password_policy:
@@ -9492,3 +9836,36 @@ en:
     loading_label: "Loading"
   email_notification:
     spam_error: "An internal error occured.  Please contact support."
+  requester_widget_more: More
+  requester_widget_less: Less
+  requester_widget_limit: You have selected 10 fields
+  requester_widget_notice: You can select upto 10 fields to show on the ticket details page
+  customize_requester_widget: Customize Requester widget
+  requester_widget_edit: Edit
+  requester_widget_edit_req: Edit Requester
+  requester_widget_human_name: requester
+  requester_widget:
+    search_company: Search a Company
+    company_required: Please enter the company name
+    company_association_exists: Company has already been taken
+    helpcard:
+      title: Customizing requester widget
+      info: Choose the fields that you want displayed under the requester info section on the ticket page with the requester widget. This way your team can update requester details directly from the ticket page and keep track of the customer details while solving their ticket. <a href="https://support.freshdesk.com/support/solutions/articles/219948-customizing-requester-info-fields" target="_blank">Learn more</a>
+  requester_fields_updated: The requester widget has been updated.
+  select_requester: "Please select requester"
+  associate_n_companies: "Associate a contact with multiple companies?"
+  enable_n_companies: "Enable"
+  add_new_company: "Add Company"
+  more_companies: "%{count} more"
+  n_companies: "%{count} companies"
+  multifile_attachments:
+    label: "Attach files"
+    sending: "Sending..."
+    progress_modal_header: "Files attachment in progress..."
+    in_progress: "File attachment in progress. Do you want to leave this page?"
+    permanent_delete: "You're about to permanently delete this attachment. Continue?"
+    sending_failed: "Unable to send your last response."
+    try_again: "Go to Ticket and try again"
+    actions_alert: "File attachment in progress. Do you want to leave this page?"
+    reminder: "You have unsaved content in this page. Do you want to leave this page?"
+

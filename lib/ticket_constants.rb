@@ -61,7 +61,7 @@ module TicketConstants
   TYPE_NAMES_BY_SYMBOL = Hash[*TYPE.map { |i| [i[0], i[1]] }.flatten]
   
   DEFAULT_COLUMNS_ORDER = [ :responder_id, :group_id, :created_at, :due_by, :status, :priority,
-    :ticket_type, :source, "helpdesk_tags.name", "users.customer_id", :owner_id,
+    :ticket_type, :source, "helpdesk_tags.name", :owner_id,
     :requester_id, "helpdesk_schema_less_tickets.product_id" ]
   
   ARCHIVE_DEFAULT_COLUMNS_ORDER = [ :responder_id, :group_id, :created_at, :due_by, :status, :priority,
@@ -77,7 +77,6 @@ module TicketConstants
     [ :priority,            'priority',         :dropdown],
     [ :due_by,              'due_by',           :due_by],
     [ "helpdesk_tags.name", "tags",             :dropdown],
-    [ "users.customer_id",  "customers",        :customer],
     [ :owner_id,            "customers",        :customer],
     [ :created_at,          "created_at",       :created_at],
     [ :requester_id,        'requester',        :requester],
@@ -204,7 +203,9 @@ module TicketConstants
     :priority => "priority",
     :type => "ticket_type",
     :source => "source",
-    :status => "status"
+    :status => "status",
+    :requester => "requester_id",
+    :company => "owner_id"
   }
   # CC emails count
   MAX_EMAIL_COUNT = 50

@@ -62,8 +62,8 @@ module AutomationControllerMethods
     @obj = @va_rule #Destroy of model-controller-methods needs @obj
   end
 
-  def edit_data
-    @action_input = ActiveSupport::JSON.encode @va_rule.action_data
+  def edit_data(obj = @va_rule)
+    @action_input = ActiveSupport::JSON.encode obj.action_data
   end
 
   def set_nested_fields_data(data)

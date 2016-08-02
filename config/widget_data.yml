@@ -430,3 +430,33 @@
   id: 23
   description: infusionsoft.widgets.infusionsoft_widget.description
   application_type: infusionsoft
+
+- options: 
+    display_in_pages: 
+    - contacts_show_page_side_bar
+  script: |-
+          <script type="text/javascript">
+            var freshsalesBundle={domain:"{{freshsales.domain}}", ticket_id:"{{ticket.raw_id}}", ticket_company:"{{ticket.company.name | make_vaild_javascript}}", reqEmail:"{{requester.email}}", contactFields:"{{freshsales.contact_fields}}", dealFields:"{{freshsales.deal_fields}}", dealLabels:"{{freshsales.deal_labels}}", leadFields:"{{freshsales.lead_fields}}", contactLabels:"{{freshsales.contact_labels}}", leadLabels:"{{freshsales.lead_labels}}", reqName:"{{requester.name | make_vaild_javascript}}" , accountLabels:"{{freshsales.account_labels}}", accountFields:"{{freshsales.account_fields}}" , reqCompany : "{{requester.company_name | make_vaild_javascript}}", reqEmails: "{{requester.all_emails}}", dealView: "{{freshsales.deal_view}}", agentSettings: "{{freshsales.agent_settings}}", deal_stage: {{installed_app.configs_deal_stage_choices}} } ;
+            Fjax.Assets.integration('freshsales', function () {
+              new FreshsalesWidget(freshsalesBundle);
+            });
+          </script>
+  name: freshsales_widget
+  id: 26
+  description: freshsales.widgets.freshsales_widget.description
+  application_type: freshsales
+
+- options:
+    display_in_pages:
+    - contacts_show_page_side_bar
+  script: |-
+          <script type="text/javascript">
+            fullcontactBundle={contact_id: "{{requester.id}}", company_id: "{{company.id}}", company_domains: "{{company.domains}}"};
+            Fjax.Assets.integration('fullcontact', function () {
+              new FullcontactWidget(fullcontactBundle);
+            });
+          </script>
+  name: fullcontact_widget
+  id: 27
+  description: integrations.fullcontact.desc
+  application_type: fullcontact

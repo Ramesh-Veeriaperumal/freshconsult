@@ -1,38 +1,28 @@
-class Reports::BuildNoActivity < BaseWorker
-  
-  sidekiq_options :queue => :reports_no_activity, :retry => 0, :backtrace => true, :failures => :exhausted
+class Reports::BuildNoActivity < ScheduledTaskBase
   
   include Helpdesk::Ticketfields::TicketStatus
+
+  def execute_task(task = nil)
+    run_for_all_accounts(task.nil? ? nil : task.next_run_at)
+    return true
+  end
   
-  def perform(args)
-    args.symbolize_keys!
-    account = Account.current
-    return unless account
-    current_date = Time.zone.parse(args[:date].to_s).utc
-    Sharding.run_on_slave do
-      account.tickets.use_index("index_helpdesk_tickets_status_and_account_id").unresolved.where(conditions(current_date)).
-                        includes(associations_include).
-                        find_in_batches(:batch_size => 300) do |tickets|
-        tickets.each do |ticket|
-          ticket.manual_publish_to_rmq("update", RabbitMq::Constants::RMQ_REPORTS_TICKET_KEY, {:model_changes => {:no_activity => []}})
+  def run_for_all_accounts(date = nil)
+    date = date || Time.now.utc
+    threshold_date = Time.now.utc.to_date - 83.days
+    params = {:date => date, :batch => 1}
+    Sharding.all_shards.each do |shard_name|
+      params[:shard_name] = shard_name
+      Sharding.run_on_shard(shard_name) do
+        Sharding.run_on_slave do
+          Account.active_accounts.where("accounts.created_at < ?", threshold_date).select('accounts.id').find_in_batches(:batch_size => 300) do |accounts|
+            params[:account_ids] = accounts.collect(&:id)
+            Reports::NoActivityWorker.perform_async(params)
+            params[:batch] += 1
+          end
         end
       end
     end
-    # account.account_additional_settings.additional_settings[:last_no_activity_date] = current_date.strftime("%Y-%m-%d")
-    # account.account_additional_settings.save
-  end
-  
-  def conditions(date)
-    dates = []
-    (84..90).each{ |d| dates << [(Time.now - d.days), d] }
-
-    conditions        = ["spam = false AND deleted = false AND DATEDIFF(?, created_at) > 83 AND (" + (["DATEDIFF(?, created_at) % ? = 0"] * 7).join(' OR ') + ")",
-                            Time.now, dates.flatten
-                        ].flatten
-  end
-  
-  def associations_include
-    [ {:flexifield => [:flexifield_def]}, :ticket_states, :schema_less_ticket, :requester, :group, :responder]
   end
   
 end

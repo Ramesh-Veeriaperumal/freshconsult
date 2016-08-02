@@ -11,11 +11,11 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
   before_filter :pdf_export_config, :report_filter_data_hash,           :only   => [:index, :fetch_metrics]
   before_filter :filter_data, :set_selected_tab,                        :only   => [:index, :export_report, :email_reports]
   before_filter :normalize_params, :validate_params, :validate_scope, 
-                :only_ajax_request,                                     :except => [:index, :configure_export, :export_report, :download_file,
+                :only_ajax_request, :redirect_if_invalid_request,          :except => [:index, :configure_export, :export_report, :download_file,
                                                                                     :save_reports_filter, :delete_reports_filter]
   before_filter :pdf_params,                                            :only   => [:export_report]
   before_filter :save_report_max_limit?,                                :only   => [:save_reports_filter]
-  before_filter :construct_report_filters,                              :only   => [:save_reports_filter,:update_reports_filter]
+  before_filter :construct_report_filters, :schedule_allowed?,          :only   => [:save_reports_filter,:update_reports_filter]
   
   helper_method :enable_schedule_report?
 
@@ -81,8 +81,9 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
   end
   
   def email_reports
-    email_report_params
-    Reports::Export.perform_async(params)
+    param_constructor = "HelpdeskReports::ParamConstructor::#{report_type.to_s.camelcase}".constantize.new(params.symbolize_keys) 
+    req_params = param_constructor.build_pdf_params
+    Reports::Export.perform_async(req_params)
     render json: nil, status: :ok
   end
 
@@ -121,6 +122,13 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
     redirect_to reports_path unless LIST_REPORT_TYPES.include?(report_type) && has_scope?(report_type)
   end
 
+  def schedule_allowed?
+    if params['data_hash']['schedule_config']['enabled'] == true 
+      allow = enable_schedule_report? && current_user.privilege?(:export_reports)
+      render json: nil, status: :ok if allow != true
+    end
+  end
+
   def build_and_execute
     requests = []
     @query_params.each_with_index do |param, i|
@@ -128,7 +136,7 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
       request_object.build_request
       requests << request_object
     end
-        
+
     response = bulk_request requests
 
     @results = []
@@ -277,13 +285,15 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
   end
 
   def has_scope?(report_type)
-    if current_account.features_included?(:enterprise_reporting)
+    if (report_type == :agent_summary && hide_agent_reporting?)
+      return false
+    elsif enterprise_reporting?
       ENTERPRISE_REPORTS.include?(report_type)
     elsif current_account.features_included?(:advanced_reporting)
       ADVANCED_REPORTS.include?(report_type)
     else
       DEFAULT_REPORTS.include?(report_type)
-    end 
+    end
   end
 
 end

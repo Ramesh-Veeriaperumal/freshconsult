@@ -1,12 +1,13 @@
 class GamificationQuestsObserver < ActiveRecord::Observer
 
-	observe Helpdesk::Ticket, Solution::Article, Topic, Post, SurveyResult, CustomSurvey::SurveyResult
+	observe Helpdesk::Ticket, Solution::Article, Solution::ArticleMeta, Topic, Post, SurveyResult, CustomSurvey::SurveyResult
 
   include Redis::RedisKeys
   include Redis::OthersRedis
 	include Gamification::GamificationUtil
 
-	SOLUTION_UPDATE_ATTRIBUTES = ["folder_id", "status"]
+	SOLUTION_UPDATE_ATTRIBUTES = ["status"]
+	SOLUTION_META_UPDATE_ATTRIBUTES = ["solution_folder_meta_id"]
 	TOPIC_UPDATE_ATTRIBUTES = ["forum_id", "user_votes"]
   
   def after_commit(model)
@@ -21,7 +22,7 @@ class GamificationQuestsObserver < ActiveRecord::Observer
   private
   
 	def commit_on_create(model)
-		return unless gamification_feature?(model.account)
+		return unless gamification_feature?(model.account) && (model.class.name.to_sym != :"Solution::ArticleMeta")
 		process_quests(model)
 	end
 
@@ -64,6 +65,15 @@ class GamificationQuestsObserver < ActiveRecord::Observer
   	if changed_article_attributes.any? and article.published?
   		Resque.enqueue(Gamification::Quests::ProcessSolutionQuests, { :id => article.id, 
 				:account_id => article.account_id })
+  	end
+  end
+	
+  def process_article_meta_quests(article_meta)
+  	if article_meta.previous_changes.keys & SOLUTION_META_UPDATE_ATTRIBUTES
+			article_meta.solution_articles.visible.each do |article|
+	  		Resque.enqueue(Gamification::Quests::ProcessSolutionQuests, { :id => article.id, 
+					:account_id => article.account_id })
+			end
   	end
   end
 
@@ -112,6 +122,8 @@ class GamificationQuestsObserver < ActiveRecord::Observer
           return "surveyresult"
       when :"Solution::Article"
           return "article"
+      when :"Solution::ArticleMeta"
+          return "article_meta"
       else
           return name.class.name.downcase
       end

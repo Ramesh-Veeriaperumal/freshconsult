@@ -196,7 +196,7 @@ window.xhrPool = [];
       });  
     $("a[rel=ff-hover-popover]").live('mouseenter',function(ev) {
           ev.preventDefault();
-          if(!freshfoneuser.online){ return;}
+          if(freshfoneuser.isOffline()){ return;}
           var element = $(this);
           // Introducing a slight delay so that the popover does not show up
           // when just passing thru this element.
@@ -491,7 +491,10 @@ window.xhrPool = [];
       $('.form-unsaved-changes-trigger').on('change', function() {
         $(this).data('formChanged', true);
       });
-      
+
+      $('body').on('focus', 'select.select2', function (ev) {
+        $(ev.target).select2('focus');
+      });      
       
    });
 })(jQuery);
@@ -512,3 +515,36 @@ function closeableFlash(flash){
       delete flash.prevObject;
     }, 20700);
 }
+
+/*
+
+Generic Select all for checkbox;
+Usage - jQuery.selectall(all, child);
+
+all - Id of main check box
+child - class of child checkbox
+
+ */
+
+(function($){
+    $.extend({
+        selectall: function(all, child) {
+            $(all).on("change", function() {
+          if ($(all).prop('checked')) {
+             $(child).prop('checked', 'checked');
+            }
+           else {
+            $(child).removeAttr('checked');
+          }
+        });
+        $(child).on("change", function() {
+          if ($(child+':not(:checked)').length > 0) {
+           $(all).removeAttr('checked');
+          }
+          else {
+           $(all).prop('checked', 'checked');
+          }
+        });
+        }
+    });
+})(jQuery);

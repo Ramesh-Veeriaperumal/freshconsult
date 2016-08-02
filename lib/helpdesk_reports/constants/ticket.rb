@@ -1,11 +1,12 @@
 module HelpdeskReports::Constants::Ticket
   
-  TICKET_FIELD_NAMES       = [:source, :priority, :status, :ticket_type, :group_id, :agent_id, :product_id, :company_id]
+  TICKET_FIELD_NAMES       = [:source, :priority, :status, :historic_status, :ticket_type, :group_id, :agent_id, :product_id, :company_id]
   
   METRIC_AND_QUERY = [
     [:RECEIVED_TICKETS,            "Count",       "Created Tickets"],
     [:RESOLVED_TICKETS,            "Count",       "Tickets Resolved"],
     [:REOPENED_TICKETS,            "Count",       "Tickets Reopened"],
+    [:UNRESOLVED_TICKETS,          "Count",       "Unresolved Tickets"],
     [:AGENT_ASSIGNED_TICKETS,      "Count",       "Tickets Assigned"],
     [:GROUP_ASSIGNED_TICKETS,      "Count",       "Tickets Assigned"],
     [:AGENT_REASSIGNED_TICKETS,    "Count",       "Tickets Reassigned"],
@@ -25,52 +26,52 @@ module HelpdeskReports::Constants::Ticket
     [:AVG_FIRST_ASSIGN_TIME,       "Avg",         "Avg 1st Assign Time"],
   ]
   
-  TEMPLATE_METRICS_AND_QUERY = [
-    [:RECEIVED_RESOLVED_TICKETS,   "TicketVolume"],
-    [:AGENT_SUMMARY_HISTORIC,      "Base"], #Already preprocessed in reports service
-    [:AGENT_SUMMARY_CURRENT,       "Base"],
-    [:GROUP_SUMMARY_HISTORIC,      "Base"],
-    [:GROUP_SUMMARY_CURRENT,       "Base"],
-    [:CUSTOMER_CURRENT_HISTORIC,   "Base"],
-    [:GLANCE_CURRENT,              "Base"],
-    [:GLANCE_HISTORIC,             "Base"]
-  ]
+  TEMPLATE_METRICS_AND_QUERY = [ :RECEIVED_RESOLVED_TICKETS, :UNRESOLVED_PREVIOUS_BENCHMARK, :UNRESOLVED_CURRENT_BENCHMARK,
+                                 :RECEIVED_RESOLVED_BENCHMARK, :AGENT_SUMMARY_HISTORIC, 
+                                 :AGENT_SUMMARY_CURRENT, :GROUP_SUMMARY_HISTORIC, 
+                                 :GROUP_SUMMARY_CURRENT, :CUSTOMER_CURRENT_HISTORIC, 
+                                 :GLANCE_CURRENT, :GLANCE_HISTORIC ]
 
-  METRICS               = METRIC_AND_QUERY.map { |i| i[0].to_s } + TEMPLATE_METRICS_AND_QUERY.map { |i| i[0].to_s }
-  METRIC_TO_QUERY_TYPE  = Hash[*METRIC_AND_QUERY.map { |i| [i[0], i[1]] }.flatten].merge!(Hash[*TEMPLATE_METRICS_AND_QUERY.map { |i| [i[0], i[1]] }.flatten])
+
+  METRICS               = METRIC_AND_QUERY.map { |i| i[0].to_s } + TEMPLATE_METRICS_AND_QUERY.map(&:to_s)
+  METRIC_TO_QUERY_TYPE  = Hash[*METRIC_AND_QUERY.map { |i| [i[0], i[1]] }.flatten]
   METRIC_TO_QUERY_TYPE.merge!({:list => "TicketList", :bucket => "Bucket" })
   
   METRIC_DISPLAY_NAME   = METRIC_AND_QUERY.map{|i| [i[0].to_s, i[2]]}.to_h
 
   #Mappings between redshift columns and what we use in parsing
   COLUMN_MAP = {
-    :result           =>  "result",
-    :benchmark        =>  "range_benchmark",
-    :ticket_id        =>  "ticket_id",
-    :count            =>  "count",
-    :avg              =>  "avg",
-    :fr_escalated     =>  "fr_escalated",
-    :is_escalated     =>  "is_escalated",
-    :fcr_violation    =>  "fcr_violation",
-    :received_count   =>  "received_count",
-    :resolved_count   =>  "resolved_count",
-    :received_avg     =>  "received_avg",
-    :resolved_avg     =>  "resolved_avg"
+    :result             =>  "result",
+    :benchmark          =>  "range_benchmark",
+    :ticket_id          =>  "ticket_id",
+    :count              =>  "count",
+    :avg                =>  "avg",
+    :fr_escalated       =>  "fr_escalated",
+    :is_escalated       =>  "is_escalated",
+    :fcr_violation      =>  "fcr_violation",
+    :received_count     =>  "received_count",
+    :resolved_count     =>  "resolved_count",
+    :reopened_count     =>  "reopened_count",
+    :received_avg       =>  "received_avg",
+    :resolved_avg       =>  "resolved_avg"
   }
   
   AVOIDABLE_COLUMNS = ["h", "dow", "avg", "count", "range_benchmark", "fr_escalated",
                        "is_escalated", "fcr_violation", "resolved", "received", 
-                       "received_count", "resolved_count", "received_avg", "resolved_avg","tickets_count"]
+                       "received_count", "resolved_count", "received_avg", "resolved_avg","tickets_count",
+                       "reopened_count", "doy_new_resolved_count", "w_new_resolved_count",
+                       "mon_new_resolved_count", "qtr_new_resolved_count", "y_new_resolved_count"]
   
   DEFAULT_COLUMNS = [
-    [ :agent_id,       "Agent",      :dropdown],
-    [ :group_id,       "Group",      :dropdown],
-    [ :ticket_type,    "Type",       :dropdown],
-    [ :source,         "Source",     :dropdown],
-    [ :priority,       "Priority",   :dropdown],
-    [ :status,         "Status",     :dropdown],
-    [ :product_id,     "Product",    :dropdown],
-    [ :company_id,     "Customer",   :dropdown]
+    [ :agent_id,         "Agent",               :dropdown],
+    [ :group_id,         "Group",               :dropdown],
+    [ :ticket_type,      "Type",                :dropdown],
+    [ :source,           "Source",              :dropdown],
+    [ :priority,         "Priority",            :dropdown],
+    [ :status,           "Status",              :dropdown],
+    [ :historic_status,  "Historic Status",     :dropdown],
+    [ :product_id,       "Product",             :dropdown],
+    [ :company_id,       "Customer",            :dropdown]
   ]
 
   DEFAULT_COLUMNS_ORDER         = DEFAULT_COLUMNS.map { |i| i[0] }    
@@ -79,7 +80,7 @@ module HelpdeskReports::Constants::Ticket
 
   REQUIRED_PARAMS = [:model, :metric, :date_range, :reference, :bucket, :time_trend, :list]
   
-  FORMATTING_REQUIRED = [:glance, :agent_summary, :group_summary, :customer_report]
+  FORMATTING_REQUIRED = [:glance, :agent_summary, :group_summary, :customer_report, :ticket_volume]
   
   PARAM_INCLUSION_VALUES = {
     :model       =>  ["TICKET"],

@@ -3,6 +3,7 @@ module SsoUtil
 
   SAML="saml"
   SAML_NAME_ID_FORMAT="urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress"
+  SAML_NAME_ID_UNSPECIFIED = "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified"
   SSO_ALLOWED_IN_SECS = 1800
   SSO_CLOCK_DRIFT = 60 # No of secs the response time can be before the server time .. Keep this very low for security
   FIRST_NAME_STRS = ["givenname" , "FirstName", "User.FirstName", "username" ,
@@ -58,6 +59,7 @@ module SsoUtil
     settings.idp_sso_target_url = acc.sso_login_url
     settings.idp_slo_target_url = acc.sso_logout_url unless acc.sso_logout_url.blank?
     settings.name_identifier_format = SAML_NAME_ID_FORMAT
+    settings.name_identifier_format = SAML_NAME_ID_UNSPECIFIED if current_account.features?(:saml_unspecified_nameid)
     settings
   end
 
@@ -85,7 +87,7 @@ module SsoUtil
     elsif current_account.sso_enabled?
       @current_user.name =  user_name
       @current_user.phone = phone unless phone.blank?
-      @current_user.customer_id = current_account.companies.find_or_create_by_name(company).id unless company.blank?
+      @current_user.company_name = company if company.present?
       @current_user.active = true
       saved = @current_user.save
     end

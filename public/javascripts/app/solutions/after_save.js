@@ -76,21 +76,6 @@ window.App.Solutions = window.App.Solutions || {};
 			$('#create-new').remove();
 		},
 
-		bindCreateNew: function () {
-			$('#create-new-category, #cancel-create-new').on('click', function (ev) {
-				ev.preventDefault();
-				var flag = $(this).attr('id') === "create-new-category",
-					form = $(this).closest('form');
-				form.find('#solution_folder_meta_solution_category_meta_id').toggleClass('hide', flag).select2("enable", !flag);
-				form.find('#create-category-text').toggleClass('hide', !flag).attr('disabled', !flag);
-				form.find('#create-category-text-error, #cancel-create-new').toggleClass('hide', !flag);
-				form.find('#create-new-category, .solution_folder_meta_solution_category_meta').toggleClass('hide', flag);
-				if (flag) {
-					form.find('#create-category-text').focus();
-				}
-			});
-		},
-
 		onLeave: function () {
 			$('body').off('.after-save');
 		}

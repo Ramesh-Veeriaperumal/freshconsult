@@ -8,20 +8,20 @@ class TicketsQueriesTest < ActionDispatch::IntegrationTest
       v1 = {}
       v2_expected = {
         api_create: 1,
-        api_show: 4,
+        api_show: 5,
         api_update: 4,
-        api_index: 5,
+        api_index: 6,
         api_destroy: 6,
         api_restore: 7,
         api_compose_email: 3,
 
-        create: 83,
-        compose_email: 75,
+        create: 84,
+        compose_email: 76,
         show: 18,
-        update: 30,
-        index: 18,
-        destroy: 36, # Shoule be fixed once an alternate approach is figured out for https://github.com/freshdesk/helpkit/commit/4ce3521ff79c9864c1277013053df7dcf3af0f62
-        restore: 42 # Shoule be fixed once an alternate approach is figured out for https://github.com/freshdesk/helpkit/commit/4ce3521ff79c9864c1277013053df7dcf3af0f62
+        update: 31,
+        index: 16,
+        destroy: 37, # Shoule be fixed once an alternate approach is figured out for https://github.com/freshdesk/helpkit/commit/4ce3521ff79c9864c1277013053df7dcf3af0f62
+        restore: 46 # Shoule be fixed once an alternate approach is figured out for https://github.com/freshdesk/helpkit/commit/4ce3521ff79c9864c1277013053df7dcf3af0f62
       }
 
       # Assigning in prior so that query invoked as part of contruction of this payload will not be counted.

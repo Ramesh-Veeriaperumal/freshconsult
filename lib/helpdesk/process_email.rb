@@ -15,21 +15,20 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
   include Helpdesk::Utils::ManageCcEmails
   include Helpdesk::Permission::Ticket
   include Helpdesk::ProcessAgentForwardedEmail
+  include Cache::Memcache::AccountWebhookKeyCache
+
+  class UserCreationError < StandardError
+  end
 
   MESSAGE_LIMIT = 10.megabytes
+  MAXIMUM_CONTENT_LIMIT = 300.kilobytes
 
   attr_accessor :reply_to_email, :additional_emails,:archived_ticket, :start_time, :actual_archive_ticket
 
-  def determine_pod
-    to_email = parse_to_email
-    shard = ShardMapping.fetch_by_domain(to_email[:domain])
-    shard.pod_info unless shard.blank?
-  end
-
-  def perform
+  def perform(parsed_to_email = Hash.new, skip_encoding = false)
     # from_email = parse_from_email
     self.start_time = Time.now.utc
-    to_email = parse_to_email
+    to_email = parsed_to_email.present? ? parsed_to_email : parse_to_email
     shardmapping = ShardMapping.fetch_by_domain(to_email[:domain])
     return unless shardmapping.present?
     Sharding.select_shard_of(to_email[:domain]) do
@@ -37,8 +36,9 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     if !account.nil? and account.active?
       # clip_large_html
       account.make_current
+      verify
       TimeZone.set_time_zone
-      encode_stuffs
+      encode_stuffs unless skip_encoding
       from_email = parse_from_email(account)
       return if from_email.nil?
       if account.features?(:domain_restricted_access)
@@ -58,7 +58,6 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         if (from_email[:email] =~ EMAIL_VALIDATOR).nil?
           error_msg = "Invalid email address found in requester details - #{from_email[:email]} for account - #{account.id}"
           Rails.logger.debug error_msg
-          NewRelic::Agent.notice_error(Exception.new(error_msg))
           return
         end
         user = existing_user(account, from_email)
@@ -100,7 +99,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
   # ITIL Related Methods starts here
 
   def add_to_or_create_ticket(account, from_email, to_email, user, email_config)
-    ticket, archive_ticket = process_email_ticket_info(account, from_email, user)
+    ticket, archive_ticket = process_email_ticket_info(account, from_email, user, email_config)
     if (ticket.present? || archive_ticket.present?) && user.blank?
       if archive_ticket
         parent_ticket = archive_ticket.parent_ticket
@@ -127,7 +126,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         return create_ticket(account, from_email, to_email, user, email_config) if primary_ticket.is_a?(Helpdesk::ArchiveTicket)
         ticket = primary_ticket
       end
-      add_email_to_ticket(ticket, from_email, user)
+      add_email_to_ticket(ticket, from_email, to_email, user)
     else
       if archive_ticket
         self.archived_ticket = archive_ticket
@@ -135,11 +134,11 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         if parent_ticket && parent_ticket.is_a?(Helpdesk::ArchiveTicket)
           self.archived_ticket = parent_ticket
         elsif valid_parent_ticket
-          return add_email_to_ticket(parent_ticket, from_email, user)
+          return add_email_to_ticket(parent_ticket, from_email, to_email, user)
         end
         # If not merge check if archive child present
         if valid_linked_ticket
-          return add_email_to_ticket(linked_ticket, from_email, user)
+          return add_email_to_ticket(linked_ticket, from_email, to_email, user)
         end
       end
       create_ticket(account, from_email, to_email, user, email_config)
@@ -208,16 +207,16 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     end
 
     def parse_email(email_text)
-      
       parsed_email = parse_email_text(email_text)
       
       name = parsed_email[:name]
       email = parsed_email[:email]
 
-      if((email && !(email =~ EMAIL_REGEX) && (email_text =~ EMAIL_REGEX)) || (email_text =~ EMAIL_REGEX))
-        email = $1 
+      if(email && (email =~ EMAIL_REGEX))
+        email = $1
+      elsif(email_text =~ EMAIL_REGEX) 
+        email = $1  
       end
-
 
       name ||= ""
       domain = (/@(.+)/).match(email).to_a[1]
@@ -226,7 +225,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     end
 
     def parse_reply_to_email
-      if(!params[:headers].nil? && params[:headers] =~ /^Reply-[tT]o: (.+)$/)
+      if(!params[:headers].nil? && params[:headers] =~ /^reply-to:(.+)$/i)
         self.additional_emails = get_email_array($1.strip)[1..-1]
         parsed_reply_to = parse_email($1.strip)
         self.reply_to_email = parsed_reply_to if parsed_reply_to[:email] =~ EMAIL_REGEX
@@ -306,11 +305,11 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       fetch_valid_emails params[:to]
     end
 
-    def fetch_ticket(account, from_email, user)
+    def fetch_ticket(account, from_email, user, email_config)
       display_id = Helpdesk::Ticket.extract_id_token(params[:subject], account.ticket_id_delimiter)
       ticket = account.tickets.find_by_display_id(display_id) if display_id
       return ticket if can_be_added_to_ticket?(ticket, user, from_email)
-      ticket = ticket_from_headers(from_email, account)
+      ticket = ticket_from_headers(from_email, account, email_config)
       return ticket if can_be_added_to_ticket?(ticket, user, from_email)
       ticket = ticket_from_email_body(account)
       return ticket if can_be_added_to_ticket?(ticket, user, from_email)
@@ -318,11 +317,11 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       return ticket if can_be_added_to_ticket?(ticket, user, from_email)
     end
 
-    def fetch_archived_ticket(account, from_email, user)
+    def fetch_archived_ticket(account, from_email, user, email_config)
       display_id = Helpdesk::Ticket.extract_id_token(params[:subject], account.ticket_id_delimiter)
       archive_ticket = account.archive_tickets.find_by_display_id(display_id) if display_id
       return archive_ticket if can_be_added_to_ticket?(archive_ticket, user, from_email)
-      archive_ticket = archive_ticket_from_headers(from_email, account)
+      archive_ticket = archive_ticket_from_headers(from_email, account, email_config)
       return archive_ticket if can_be_added_to_ticket?(archive_ticket, user, from_email)
       return self.actual_archive_ticket if can_be_added_to_ticket?(self.actual_archive_ticket, user, from_email)
     end
@@ -388,7 +387,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
                                                     to_email[:email], 
                                                     params[:subject], 
                                                     message_id)
-          if account.features?(:archive_tickets) && archived_ticket
+          if account.features_included?(:archive_tickets) && archived_ticket
             ticket.build_archive_child(:archive_ticket_id => archived_ticket.id) 
             # tags = archived_ticket.tags
             # add_ticket_tags(tags,ticket) unless tags.blank?
@@ -421,7 +420,17 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         # FreshdeskErrorsMailer.deliver_error_email(ticket,params,e)
         NewRelic::Agent.notice_error(e)
       end
-      set_ticket_id_with_message_id account, message_key, ticket
+      store_ticket_threading_info(account, message_key, ticket)
+    end
+
+    def store_ticket_threading_info(account, message_id, ticket)
+      related_ticket_info = get_ticket_info_from_redis(account, message_id)
+      if related_ticket_info
+        ticket_id_list = $1 if related_ticket_info =~ /(.+?):/
+      end
+      related_tickets_display_info = ticket_id_list.present? ? ((ticket_id_list.to_s) +","+ (ticket.display_id.to_s)) : ticket.display_id.to_s
+
+      set_ticket_id_with_message_id account, message_id, related_tickets_display_info
     end
     
     def check_for_spam(ticket)
@@ -455,6 +464,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       model.skip_notification = true if user && account.support_emails.any? {|email| email.casecmp(from_email[:email]) == 0}
     end
 
+    #Todo: Check code duplicate available in mailgun controller side - try to merge both & reuse it
     def ticket_from_email_body(account)
       display_span = run_with_timeout(NokogiriTimeoutError) { 
                         Nokogiri::HTML(params[:html]).css("span[title='fd_tkt_identifier']") 
@@ -463,12 +473,13 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         display_id = display_span.last.inner_html
         unless display_id.blank?
           ticket = account.tickets.find_by_display_id(display_id.to_i)
-          self.actual_archive_ticket = account.archive_tickets.find_by_display_id(display_id.to_i) if account.features?(:archive_tickets) && !ticket
+          self.actual_archive_ticket = account.archive_tickets.find_by_display_id(display_id.to_i) if account.features_included?(:archive_tickets) && !ticket
           return ticket 
         end 
       end
     end
 
+    #Todo: Check code duplicate available in mailgun controller side - try to merge both & reuse it
     def ticket_from_id_span(account)
       parsed_html = run_with_timeout(NokogiriTimeoutError) { Nokogiri::HTML(params[:html]) }
       display_span = parsed_html.css("span[style]").select{|x| x.to_s.include?('fdtktid')}
@@ -478,7 +489,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         params[:html] = parsed_html.inner_html
         unless display_id.blank?
           ticket = account.tickets.find_by_display_id(display_id.to_i)
-          self.actual_archive_ticket = account.archive_tickets.find_by_display_id(display_id.to_i) if account.features?(:archive_tickets) && !ticket
+          self.actual_archive_ticket = account.archive_tickets.find_by_display_id(display_id.to_i) if account.features_included?(:archive_tickets) && !ticket
           return ticket 
         end 
       end
@@ -504,7 +515,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     end
 
 
-    def add_email_to_ticket(ticket, from_email, user)
+    def add_email_to_ticket(ticket, from_email, to_email, user)
       msg_hash = {}
       # for plain text
       msg_hash = show_quoted_text(params[:text],ticket.reply_email)
@@ -576,13 +587,13 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         # ticket.save
         note.notable = ticket
         return if large_email && duplicate_email?(from_email[:email], 
-                                                  parse_to_emails.first, 
+                                                  to_email[:email],
                                                   params[:subject], 
                                                   message_id)
         note.save_note
         cleanup_attachments note
         mark_email(process_email_key, from_email[:email], 
-                                      parse_to_emails.first, 
+                                      to_email[:email], 
                                       params[:subject], 
                                       message_id) if large_email
       end
@@ -632,8 +643,15 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         user = account.contacts.new
         language = (account.features?(:dynamic_content)) ? nil : account.language
         portal = (email_config && email_config.product) ? email_config.product.portal : account.main_portal
-        signup_status = user.signup!({:user => {:email => from_email[:email], :name => from_email[:name], 
-          :helpdesk_agent => false, :language => language, :created_from_email => true }, :email_config => email_config},portal)        
+        begin
+          signup_status = user.signup!({:user => {:email => from_email[:email], :name => from_email[:name],
+            :helpdesk_agent => false, :language => language, :created_from_email => true }, :email_config => email_config},portal)
+          raise UserCreationError, "Failed to create new Account!" unless signup_status
+        rescue UserCreationError => e
+          NewRelic::Agent.notice_error(e)
+          Account.reset_current_account
+          raise e
+        end
         if params[:text]
           text = text_for_detection
           args = [user, text]  #user_email changed
@@ -846,7 +864,14 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     def body_html_with_formatting(body,email_cmds_regex)
       body = body.gsub(email_cmds_regex,'<notextile>\0</notextile>')
       to_html = text_to_html(body)
-      body_html = auto_link(to_html) { |text| truncate(text, :length => 100) }
+
+      # Process auto_link if the content is less than 300 KB, otherwise leave as text.
+      if body.size < MAXIMUM_CONTENT_LIMIT
+        body_html = auto_link(to_html) { |text| truncate(text, :length => 100) }
+      else
+        body_html = sanitize(to_html)
+      end
+
       html = white_list(body_html)
       html.gsub!("&amp;amp;", "&amp;")
       html
@@ -864,7 +889,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     parent_ticket_id = ticket.schema_less_ticket.parent_ticket
     if !parent_ticket_id
       return nil
-    elsif account.features?(:archive_tickets) && parent_ticket_id
+    elsif account.features_included?(:archive_tickets) && parent_ticket_id
       parent_ticket = ticket.parent
       unless parent_ticket
         archive_ticket = Helpdesk::ArchiveTicket.find_by_ticket_id(parent_ticket_id)
@@ -882,6 +907,24 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     cc_emails, params[:dropped_cc_emails] = fetch_permissible_cc(user, cc_emails, account)
     cc_emails
   end   
+
+  def verify
+    Rails.logger.debug params[:verification_key]
+    if params[:verification_key].present?
+      stored_webhook_key = account_webhook_key_from_cache(Account::MAIL_PROVIDER[:sendgrid])
+      if stored_webhook_key.nil? or stored_webhook_key.webhook_key.nil?
+        Rails.logger.info "VERIFICATION KEY is there. But AccountWebhookKey Record is not present for the key #{params[:verification_key]}"
+      else
+        verification = (stored_webhook_key.webhook_key == params[:verification_key] ? true : false)
+        Rails.logger.info "VERIFICATION KEY match for account #{Account.current.id} : #{verification}"
+        # return verification
+      end
+    else
+      Rails.logger.info "VERIFICATION KEY is not present for the account #{Account.current.id} with the envelope address #{params[:envelope]}"
+    end
+    # Returning true by default.
+    return true
+  end  
 
   alias_method :parse_cc_email, :parse_cc_email_new
   alias_method :parse_to_emails, :parse_to_emails_new

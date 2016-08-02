@@ -3,7 +3,7 @@ class HelpdeskReports::Request::Ticket
   include HelpdeskReports::Constants
   include HelpdeskReports::Util::Ticket
 
-  attr_accessor :req_params, :metric, :query_type
+  attr_accessor :req_params, :metric, :query_type, :end_date
 
   def initialize params, report_type
     @req_params = params
@@ -15,13 +15,18 @@ class HelpdeskReports::Request::Ticket
   def build_request
     req_params.merge!(account_id: Account.current.id)
     req_params.merge!(report_type: @report_type)
-    req_params.merge!(account_plan: Account.current.plan_name)
+    req_params.merge!(account_plan: current_account_plan)
     req_params.merge!(account_domain: Account.current.full_domain)
     add_bucketing_condition unless req_params[:bucket_conditions].blank?
     add_time_zone_condition
     
     # building list_conditions on trend_graph at helpkit side
     build_list_condition if time_trend_query? and list_query? 
+  end
+
+  #For trial account, sending trial as plan.
+  def current_account_plan
+    Account.current.subscription.state == "trial" ? :trial : Account.current.plan_name
   end
 
   def fetch_req_params
@@ -70,21 +75,48 @@ class HelpdeskReports::Request::Ticket
   
   def build_list_condition
     trend = req_params[:list_conditions].first["condition"]
-    unless trend == "y"
-      selected_date = trend == "w" ? req_params[:list_conditions].first["value"].split("-").first : req_params[:list_conditions].first["value"] 
-      date  = Date.parse(selected_date)
-      year_condition = {
-        condition:  "y",
-        operator:   "eql",
-        value:      date.year.to_s
-      }
-      trend_condition = {
-        condition: trend,
-        operator: "eql",
-        value:   date_part(date, trend).to_s
-      }
-      req_params[:list_conditions] = ["doy","w"].include?(trend) ? [trend_condition] : [year_condition, trend_condition]
-    end
+    if req_params[:metric] == "UNRESOLVED_TICKETS"
+      dates      = req_params[:date_range].split("-")
+      start_date = DateTime.parse(dates[0])
+      @end_date  = dates.length > 1 ? DateTime.parse(dates[1]) : start_date
+      value      = req_params[:list_conditions].first["value"]
+      req_params[:date_range] = generating_end_value(trend,value)
+      req_params[:time_trend] = false
+      req_params[:time_trend_conditions] = []
+    else
+      unless trend == "y"
+        selected_date = trend == "w" ? req_params[:list_conditions].first["value"].split("-").first : req_params[:list_conditions].first["value"] 
+        date  = Date.parse(selected_date)
+        year_condition = {
+          condition:  "y",
+          operator:   "eql",
+          value:      date.year.to_s
+        }
+        trend_condition = {
+          condition: trend,
+          operator: "eql",
+          value:   date_part(date, trend).to_s
+        }
+        req_params[:list_conditions] = ["doy","w"].include?(trend) ? [trend_condition] : [year_condition, trend_condition]
+      end
+    end 
+  end
+
+    def generating_end_value trend, label
+    case trend
+      when "doy"
+        return label
+      when "w"
+        return label.split(" - ").second
+      when "mon"
+        date = Date.parse(label).end_of_month
+      when "qtr"
+        date = Date.parse(label).end_of_month
+      when "y"
+        date = Date.ordinal(label.to_i).end_of_year
+      end
+      date = date < end_date ? date : end_date
+      date.strftime('%d %b, %Y')
   end
 
 end

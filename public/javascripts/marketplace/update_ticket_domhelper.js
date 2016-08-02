@@ -4,7 +4,7 @@ $(function(){
   function updateCustomFields(data, key){
     var customField = JSON.stringify(key),
         mainKey = customField.slice(31, customField.length-2),
-        ticketObj = domHelper.getTicketInfo();
+        ticketObj = domHelper.ticket.getTicketInfo();
 
     if(ticketObj.helpdesk_ticket.custom_field.hasOwnProperty(mainKey)){
       ticketObj.helpdesk_ticket.custom_field[mainKey] = data[key].value;
@@ -12,7 +12,7 @@ $(function(){
   }
 
   jQuery(document).on('ticket_fields_updated', function(ev, data) {
-    var ticketObj = domHelper.getTicketInfo();
+    var ticketObj = domHelper.ticket.getTicketInfo();
     for(var key in data) {
       switch(key){
         case "helpdesk_ticket[priority]":

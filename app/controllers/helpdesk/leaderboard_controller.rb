@@ -4,93 +4,106 @@ class Helpdesk::LeaderboardController < ApplicationController
   around_filter :run_on_slave
 
   helper Helpdesk::LeaderboardHelper
+  include Redis::RedisKeys
+  include Redis::SortedSetRedis
 
-  def mini_list    
-      generate_score_card
-      render :layout => false
+  def mini_list
+    @mini_list_leaderboard = {}
+    support_score = SupportScore.new
+    current_time = Time.now.in_time_zone current_account.time_zone
+
+    category_list.each do |category|
+      response = support_score.get_leader_ids current_account, "agents", category, current_time, 1
+      @mini_list_leaderboard[category] = current_account.technicians.includes(:avatar).find(response.first.first) if response
+    end
+
+    render :layout => false
   end
 
   def agents
-    generate_score_card 50
+    generate_leaderboard
   end
 
   def groups
-    generate_score_card 50, :group
+    generate_leaderboard
   end
 
   def group_agents
-    generate_score_card 50, :group_agents
+    @group = current_account.groups.find(params[:id])
+    generate_leaderboard
   end
 
   private
-    def generate_score_card( _limit = 1, type = :user )
-        case type
-          when :group_agents
-            c_card = group_agent_scoper
-          when :group
-            c_card = group_scoper
-          else
-            c_card = user_scoper
-        end
 
-      [:mvp, :first_call, :customer_champion, :fast].each do |item|
-        instance_variable_set "@#{item}_scorecard", ((item == :mvp) ? c_card : c_card.send(item)).limit(_limit).all
-      end
-    end
+    def generate_leaderboard
+      @leaderboard = {}
+      support_score = SupportScore.new(:group_id => params[:id])
+      group_action = params[:action] == "groups"
 
-    def user_scoper
-      current_account.support_scores.by_performance.user_score(user_scope_params).created_at_inside(*get_date_range)
-    end
+      if params[:date_range] == "select_range" && params[:date_range_selected].present?
+        @date_range_val = "select_range"
+        @date_range_selected = params[:date_range_selected]
+        start_time = get_time(@date_range_selected.split(" - ")[0])
+        end_time = get_time(@date_range_selected.split(" - ")[1]).end_of_day
+        leader_module = group_action ? "group" : "user"
 
-    def group_scoper
-      current_account.support_scores.by_performance.group_score.created_at_inside(*get_date_range)
-    end
+        category_list.each do |category|
+          scoper = support_score.send("#{params[:action]}_scoper", current_account, start_time, end_time)
+          scoper = scoper.includes(:group) if group_action
+          result = category == :mvp ? scoper.limit(50).all : scoper.send(category).limit(50).all
+          @leaderboard[category] = []
 
-    def group_agent_scoper
-      @group = current_account.groups.find(params[:id])
-      current_account.support_scores.by_performance.user_score(group_agent_scope_params).created_at_inside(*get_date_range)
-    end
-
-    def this_month
-      @this_month ||= [Time.zone.now.beginning_of_month, Time.zone.now]
-    end
-
-    def set_selected_tab
-      @selected_tab = :dashboard
-    end
-
-    def get_date_range
-      @date_range_val = params[:date_range] ? params[:date_range] : "current_month"
-      case @date_range_val
-        when "3_months_ago"
-          @this_month = [get_time(3.month.ago.beginning_of_month), get_time(3.month.ago.end_of_month)]
-        when "2_months_ago"
-          @this_month = [get_time(2.month.ago.beginning_of_month), get_time(2.month.ago.end_of_month)]
-        when "last_month"
-          @this_month = [get_time(1.month.ago.beginning_of_month), get_time(1.month.ago.end_of_month)]
-        when "select_range"
-          if(params[:date_range_selected])
-            @date_range_selected = params[:date_range_selected]
-            @this_month = [get_time(@date_range_selected.split(" - ")[0]),get_time(@date_range_selected.split(" - ")[1]).end_of_day]
-          else
-            @date_range_val = "current_month"
-            @this_month = [Time.zone.now.beginning_of_month, Time.zone.now]
+          result.each do |score|
+            @leaderboard[category] << [score.send(leader_module), score.tot_score]
           end
-        else
-          @this_month = [Time.zone.now.beginning_of_month, Time.zone.now]
-      end
+        end
+      else
+        current_time = Time.now.in_time_zone current_account.time_zone
+        module_association = group_action ? "groups" : "all_users"
+
+        category_list.each do |category|
+          leader_module_ids = support_score.get_leader_ids current_account, params[:action], category, get_months_ago_value.month.ago(current_time.end_of_month), 50
+          @leaderboard[category] = []
+
+          if leader_module_ids
+            id_list = leader_module_ids.map(&:first).join(',')
+            result = current_account.send(module_association).where("id in (#{id_list}) #{group_action ? "" : "and helpdesk_agent = 1 and deleted = 0"}").order("FIELD(id, #{id_list})")
+            result = result.includes(:avatar) unless group_action
+
+            result.each_with_index do |leader_module, counter|
+              @leaderboard[category] << [leader_module, leader_module_ids[counter][1]]
+            end
+          end
+        end      
+      end      
+    end
+
+    def get_months_ago_value
+      @date_range_val = params[:date_range] && params[:date_range] != "select_range" ? params[:date_range] : "current_month"
+
+      range_vs_months = {
+        "3_months_ago" => 3,
+        "2_months_ago" => 2,
+        "last_month" => 1,
+        "current_month" => 0
+      }
+
+      range_vs_months[@date_range_val]
+    end
+
+    def category_list
+      categories = [:mvp, :sharpshooter, :speed]
+      categories.insert(1, :love) if current_account.any_survey_feature_enabled_and_active?
+
+      categories
     end
 
     def get_time(time)
       Time.zone.parse(time.to_s)
     end
 
-    def user_scope_params
-      { :conditions => ["user_id is not null"] }
-    end
-
-    def group_agent_scope_params
-      { :conditions => ["support_scores.group_id = ?", @group.id] }
+    def set_selected_tab
+      @selected_tab = :dashboard
     end
 
     def run_on_slave(&block)

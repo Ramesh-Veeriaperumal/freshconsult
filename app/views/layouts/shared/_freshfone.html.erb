@@ -6,13 +6,6 @@
 	<%= render 'layouts/shared/freshfone/freshfone_notification' %>
 </div>
 <div class="freshfone_widget">
-  <div class="browser_alert hide">
-   <a class="alert_popup" href="#" title="phoneicon" data-placement="above" rel="ff-alert-popover"><i class="ficon-alert active fsize-20"></i></a> 
-  </div>
-	<div class="ff_desktop_notification hide tooltip" 
-		data-placement="left" title="<%= t('freshfone.widget.desktop_notification') %>">
-		<div class="desktopNotifier"><%= font_icon "bell", :size => 22 %></div>
-	</div>
 	<div id="failed_hold" class='hide failed_hold'>
   	<div class='ffone_hold_message popupbox-content'>
     	<span class='message'> <%= t('freshfone.widget.holding') %></span>
@@ -42,10 +35,12 @@
 	freshfone.current_user = <%= current_user.id %>;
 	freshfone.current_account = <%= current_account.id%>;
 	freshfone.user_phone = "<%= current_user.available_number %>";
-	freshfone.current_status = "<%= current_user.freshfone_user_incoming_preference ||
-												Freshfone::User::PRESENCE[:offline] %>";
+	freshfone.current_status = "<%= current_user.freshfone_user.presence %>";
+	freshfone.current_preference = "<%= current_user.freshfone_user_incoming_preference ||
+	  Freshfone::User::PRESENCE[:offline]%>";
   <% freshfone_account = current_account.freshfone_account %>
 	freshfone.isAgentConferenceEnabled = <%= current_account.features?(:agent_conference)%>;
+  <% freshfone_numbers = current_account_freshfone_numbers %>
 	freshfone.below_threshold = <%= !freshfone_trial_states? && freshfone_below_threshold? %>;
 	freshfone.available_on_phone = <%= current_user.available_on_phone? || false %>;
 	freshfone.recent_calls_path = "<%= recent_calls_freshfone_call_history_index_path %>";
@@ -55,6 +50,11 @@
 	freshfone.freshfone_user_online_text = "<%= t('freshfone.widget.available') %>";
 	freshfone.freshfone_user_offline_text = "<%= t('freshfone.widget.unavailable') %>";
 	freshfone.freshfone_user_busy_text = "<%= t('freshfone.widget.busy') %>";
+	<% if current_account.features?(:freshfone_acw) %>
+		freshfone.freshfone_user_in_acw_text = "<%= t('freshfone.widget.acw') %>";
+		freshfone.acw_timeout = <%= current_account.freshfone_account.acw_timeout.minutes %>;
+		freshfone.isAcwEnabled = true;
+	<% end %>
 	freshfone.forward_number_alert = "<%= t('freshfone.widget.forward_number_alert') %>";
 	freshfone.invalid_user_number_text = "<%= t('freshfone.widget.invalid_phone_number').html_safe%>";
 	freshfone.widget_inactive = "<%= t('freshfone.widget.low_credit') %>";
@@ -74,6 +74,8 @@
 	freshfone.account_url = '<%= current_account.url_protocol + "://" + current_account.full_domain %>';
 	freshfone.numbersHash = <%= Hash[*current_account_freshfone_number_hash.collect(&:reverse).flatten].to_json.html_safe %>;
 	freshfone.namesHash = <%= Hash[*current_account_freshfone_names.flatten].to_json.html_safe %>;
+	freshfone.ringingTimeOutHash = <%= Hash[*account_numbers.map { |n| [n.id, n.ringing_time] }.flatten].to_json.html_safe %>;
+	freshfone.rrTimeOutHash = <%= Hash[*account_numbers.map { |n| [n.id, n.rr_timeout] }.flatten].to_json.html_safe%>;
 	freshfone.requester_autocomplete_path = '<%= requester_search_freshfone_autocomplete_index_path %>';
 	freshfone.isDebuggingMode = <%= current_account.features?(:client_debugging)%>;
 	freshfone.isConferenceMode = <%= current_account.features?(:freshfone_conference)%>;
@@ -81,8 +83,9 @@
 	freshfone.isCallQualityMetricsEnabled = <%= current_account.features?(:call_quality_metrics)%>;
 	freshfone.agent_count = "<%= t('freshfone.widget.agents_count.one') %>";
 	freshfone.agents_count = "<%= t('freshfone.widget.agents_count.other') %>";
+	freshfone.newNotifications = <%=current_account.launched?(:freshfone_new_notifications) %>;
 	
-  freshfone.ringingTime = <%= current_account_freshfone_numbers.present? ?  current_account_freshfone_numbers.first.ringing_time : 30 %>;
+  freshfone.ringingTime = <%= freshfone_numbers.present? ?  freshfone_numbers.first.ringing_time : 30 %>;
   freshfone.isAdmin = <%= current_user.privilege?(:admin_tasks) %>
   freshfone.current_user_details = {
           'id'        : '<%=current_user.id%>',
@@ -97,6 +100,11 @@
 	  	url: '<%= audio_path("/assets/call_disconnected_due_to_network.mp3") %>'
 	  });
 	  freshfone.networkErrorSound.load();
+    freshfone.callRingingSound = soundManager.createSound({
+      id: "freshfoneCallRingingSound",
+      url: '<%= audio_path("/assets/incoming.mp3") %>'
+    });
+    freshfone.callRingingSound.load();
   });
   freshfone.isActiveOrTrial = <%= freshfone_active_or_trial? %>;
   freshfone.strangeNumbers = <%= Freshfone::CallerLookup::STRANGE_NUMBERS.to_json.html_safe %>;

@@ -30,23 +30,28 @@ class Subscription::UpdatePartnersSubscription
     def trigger_subscription_updated_event(account, args)
       data = { :account_id => account.id, :state => account.subscription.state, 
                 :cmrr => (account.subscription.amount/account.subscription.renewal_period), 
-                :currency => account.currency_name, :next_renewal_at => account.subscription.next_renewal_at }        
+                :currency => account.currency_name, :next_renewal_at => account.subscription.next_renewal_at, :product_name => USER_AGENT}        
       http_connect(:subscription_updated, data, "post")
     end
 
     def trigger_contact_updated_event(account, args)
-      data = { :account_id => account.id, :email => account.admin_email, :phone => account.admin_phone }
+      data = { :account_id => account.id, :email => account.admin_email, :phone => account.admin_phone, :product_name => USER_AGENT}
       http_connect(:contact_updated, data, "post")
     end 
 
     def trigger_payment_added_event(account, args)
-      data = { :account_id => account.id, :invoice_id => args["invoice_id"] }
+      data = { :account_id => account.id, :invoice_id => args["invoice_id"], :product_name => USER_AGENT}
       http_connect(:payment_added, data, "post")
     end
 
     def trigger_auto_collection_off_event(account, args = {})
-      data = {:account_id => account.id}
+      data = {:account_id => account.id, :product_name => USER_AGENT}
       http_connect(:auto_collection_turned_off, data, "post")
+    end
+
+    def trigger_domain_updated_event(account, args = {})
+      data = {:domain => account.full_domain, :product_name => USER_AGENT, :account_id => account.id}
+      http_connect(:domain_updated, data, "post")
     end
 
     def http_connect(event_type, data, req_type)        

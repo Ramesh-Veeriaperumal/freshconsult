@@ -1,6 +1,6 @@
 # source :gemcutter
 Encoding.default_external = Encoding::UTF_8
-source 'http://rubygems.org'
+source 'https://rubygems.org'
 
 gem "rake", "~> 10.4.0"
 gem "rails","3.2.22.2"
@@ -33,6 +33,7 @@ gem 'fresh_request', :git => 'git@github.com:freshdesk/fresh_request.git', :bran
 
 #for ruby ~> 2.1.0 upgrade
 gem 'iconv', '~> 1.0.2', :platform => [:mri_20, :mri_21]
+gem 'thrift', '~> 0.9.2.0'
 
 group :development, :test do
   gem 'rails-dev-boost', :git => 'git://github.com/thedarkone/rails-dev-boost.git'
@@ -129,7 +130,7 @@ gem 'rforce'
 gem 'chargebee', "~> 1.5.1"
 
 gem 'encryptor', '1.1.3'
-gem "dalli"
+gem "dalli", :git => "git://github.com/freshdesk/dalli.git", :branch => "fd_master"
 #gem 'memcache-client', '1.8.5', :git => "git://github.com/mperham/memcache-client.git"
 gem "deadlock_retry", :git => "git://github.com/freshdesk/deadlock_retry.git"
 gem "lhm", :git => "git://github.com/freshdesk/large-hadron-migrator.git"
@@ -161,7 +162,7 @@ gem "gemoji-parser", "~> 1.3.1"
 # Please see https://hackerone.com/reports/390 
 gem "paperclip", "~> 2.8.0"
 
-gem "aws-sdk", "~> 1.11.3"
+gem "aws-sdk", "~> 1.31.3"
 gem "aws-sdk-resources", '~> 2'
 gem "xml-simple", "1.1.4", :require => 'xmlsimple'
 
@@ -181,7 +182,7 @@ gem "custom_fields", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/cust
 
 gem "jwt", "1.0.0" #could not use latest gem version(1.2.0) since twilio-ruby gem is using 1.0.0
 
-group :production, :staging do
+group :production, :test, :staging do
   gem "tire", :git => "git@github.com:freshdesk/retire.git"
 end
 
@@ -255,28 +256,28 @@ end
 # group :development, :assets do
 
   # TODO_RAILS3 Remove the default asset pipeline
-  gem "jammit", 				"0.6.5"
-  gem "uglifier", 				"~> 2.1.2"
-  gem "yui-compressor", 		:git => "git://github.com/freshdesk/ruby-yui-compressor.git"
+  gem "jammit",         "0.6.5"
+  gem "uglifier",         "~> 2.1.2"
+  gem "yui-compressor",     :git => "git://github.com/freshdesk/ruby-yui-compressor.git"
 
-  gem "sprockets",            	"2.2.2"
-  gem "asset_sync",           	"1.1.0"
-  gem "turbo-sprockets-rails3", "0.3.14"	
-  gem "ejs",                  	"1.1.1"
+  gem "sprockets",              "2.2.2"
+  gem "asset_sync",             "1.1.0"
+  gem "turbo-sprockets-rails3", "0.3.14"  
+  gem "ejs",                    "1.1.1"
 
   # SASS and Compass gems
-  gem "sass-rails",           	"3.2.6"
-  gem "compass-rails",        	"2.0.0"
-  gem "compass-blueprint",    	"1.0.0"
+  gem "sass-rails",             "3.2.6"
+  gem "compass-rails",          "2.0.0"
+  gem "compass-blueprint",      "1.0.0"
 
   # Portal grid system is done using susy grids
-  gem "susy",                 	"2.1.3"
+  gem "susy",                   "2.1.3"
 
   # To optimize sprite generation
-  gem "oily_png",             	"1.1.1"
+  gem "oily_png",               "1.1.1"
   
   # Building custom font icons inside the application
-  gem "fontcustom",           	"1.3.3"  
+  gem "fontcustom",             "1.3.3"  
 
 # end
 

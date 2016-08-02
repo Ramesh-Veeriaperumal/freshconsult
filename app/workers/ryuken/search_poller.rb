@@ -3,7 +3,7 @@
 class Ryuken::SearchPoller
   include Shoryuken::Worker
 
-  shoryuken_options queue: (ES_V2_QUEUE_KEY % { cluster: 'cluster1' }),
+  shoryuken_options queue: ::ES_V2_POLLER_QUEUES,
                     body_parser: :json
                     # retry_intervals: [360, 1200, 3600] #=> Depends on visibility timeout
                     # batch: true, #=> Batch processing. Max 10 messages. sqs_msg, args = ARRAY
@@ -22,7 +22,7 @@ class Ryuken::SearchPoller
         Search::V2::Operations::DocumentAdd.new(search_payload).perform
       end
       sqs_msg.delete
-    rescue => e
+    rescue Exception => e
       Rails.logger.error "Searchv2 exception - #{e.message} - #{e.backtrace.first}"
       NewRelic::Agent.notice_error(e, { arguments: args })
       raise e

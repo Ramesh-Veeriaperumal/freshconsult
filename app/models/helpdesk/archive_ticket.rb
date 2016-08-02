@@ -51,11 +51,18 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
   
   has_many :public_notes,
     :class_name => 'Helpdesk::ArchiveNote',
-    :conditions => { :private =>  false }
+    :conditions => { :private =>  false, :deleted => false  }
   
   has_flexiblefields :class_name => 'Flexifield', :as => :flexifield_set
   has_many_attachments
   has_many_cloud_files
+
+  has_many :shared_attachments,
+    :as => :shared_attachable,
+    :class_name => 'Helpdesk::SharedAttachment',
+    :dependent => :destroy
+
+  has_many :attachments_sharable, :through => :shared_attachments, :source => :attachment
 
   delegate :active?, :open?, :is_closed, :closed?, :resolved?, :pending?, :onhold?,
     :onhold_and_closed?, :to => :ticket_status, :allow_nil => true
@@ -91,12 +98,28 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
         :conditions => [" owner_id = ?",company_id]
     } 
   }
+  scope :contractor_tickets, lambda { |user_id, company_ids, operator|
+    if user_id.present?
+      self.where("archive_tickets.requester_id = ? #{operator} archive_tickets.owner_id in (?)", 
+                  user_id, company_ids)
+    else
+      self.where("archive_tickets.owner_id in (?)", company_ids)
+    end
+  }
   scope :created_at_inside, lambda { |start, stop| { :conditions =>
     [" archive_tickets.created_at >= ? and archive_tickets.created_at <= ?", start, stop] }
   }
   # do we need this
-  validates_uniqueness_of :display_id, :scope => :account_id
+  # validates_uniqueness_of :display_id, :scope => :account_id
   default_scope where(:progress => false)
+
+  def all_attachments
+    @all_attachments ||= begin
+      shared_attachments = self.attachments_sharable
+      individual_attachments = self.attachments
+      individual_attachments + shared_attachments
+    end
+  end
 
   def self.agent_permission user
     case Agent::PERMISSION_TOKENS_BY_KEY[user.agent.ticket_permission]
@@ -182,19 +205,19 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
 
   def conversation(page = nil, no_of_records = 5, includes=[])
     includes = note_preload_options if includes.blank?
-    archive_notes.exclude_source('meta').newest_first.paginate(:page => page, :per_page => no_of_records, :include => includes)
+    archive_notes.visible.exclude_source('meta').newest_first.paginate(:page => page, :per_page => no_of_records, :include => includes)
   end
 
   def conversation_since(since_id)
-    archive_notes.exclude_source('meta').newest_first.since(since_id).includes(note_preload_options)
+    archive_notes.visible.exclude_source('meta').visible.newest_first.since(since_id).includes(note_preload_options)
   end
 
   def conversation_before(before_id)
-    archive_notes.exclude_source('meta').newest_first.before(before_id).includes(note_preload_options)
+    archive_notes.visible.exclude_source('meta').newest_first.before(before_id).includes(note_preload_options)
   end
 
   def conversation_count(page = nil, no_of_records = 5)
-    archive_notes.exclude_source('meta').size
+    archive_notes.visible.exclude_source('meta').size
   end
 
   def to_emails
@@ -334,12 +357,12 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
   end
 
   def description_with_attachments
-    attachments.empty? ? description_html :
-        "#{description_html}\n\nTicket attachments :\n#{liquidize_attachments(attachments)}\n"
+    all_attachments.empty? ? description_html :
+        "#{description_html}\n\nTicket attachments :\n#{liquidize_attachments(all_attachments)}\n"
   end
 
-  def liquidize_attachments(attachments)
-    attachments.each_with_index.map { |a, i|
+  def liquidize_attachments(all_attachments)
+    all_attachments.each_with_index.map { |a, i|
       "#{i+1}. <a href='#{Rails.application.routes.url_helpers.helpdesk_attachment_url(a, :host => portal_host)}'>#{a.content_file_name}</a>"
       }.join("<br />")
   end 

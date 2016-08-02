@@ -2,6 +2,8 @@ inherit_from: .rubocop_todo.yml
 
 AllCops:
   RunRailsCops: true
+  Include:
+    - '**/*.api'
   Exclude:
     - 'test/api/query_reports/*'
 

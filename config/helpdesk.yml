@@ -23,6 +23,12 @@ ASSET_URL:
       http:      "http://assets.freshpo.com/widget"
       https:      "https://s3.amazonaws.com/assets.freshpo.com/widget"
 
+EMAIL_LOGO_URL:
+    development:  "https://localhost:3000/email/logo.png"
+    test:         "https://localhost:3000/email/logo.png"
+    production:   "https://s3.amazonaws.com/assets.freshdesk.com/email/logo.png"
+    staging:      "https://s3.amazonaws.com/assets.freshpo.com/email/logo.png"
+
 # This is the title staff members will see when they are using the helpdesk application
 STAFF_FACING_TITLE: FreshDesk
 

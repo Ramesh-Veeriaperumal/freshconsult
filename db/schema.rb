@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20160512085738) do
+ActiveRecord::Schema.define(:version => 20160629121214) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -121,10 +121,12 @@ ActiveRecord::Schema.define(:version => 20160512085738) do
   create_table "admin_data_imports", :force => true do |t|
     t.string   "import_type"
     t.boolean  "status"
-    t.integer  "account_id",  :limit => 8
+    t.integer  "account_id",    :limit => 8
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "source"
+    t.integer  "import_status", :default => 1
+    t.text     "last_error"
   end
 
   add_index "admin_data_imports", ["account_id", "created_at"], :name => "index_data_imports_on_account_id_and_created_at"
@@ -218,6 +220,7 @@ ActiveRecord::Schema.define(:version => 20160512085738) do
     t.text    "options"
     t.integer "account_id",       :limit => 8
     t.string  "application_type",              :default => "freshplug", :null => false
+    t.integer "dip"
   end
 
   add_index "applications", ["name"], :name => "index_applications_on_name"
@@ -272,13 +275,13 @@ ActiveRecord::Schema.define(:version => 20160512085738) do
     t.boolean  "private",                        :default => true
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "deleted",                        :default => false
   end
 
   add_index "archive_notes", ["account_id", "archive_ticket_id"], :name => "index_archive_notes_on_account_id_and_archive_ticket_id"
   add_index "archive_notes", ["account_id", "user_id"], :name => "index_archive_notes_on_account_id_and_user_id"
   add_index "archive_notes", ["account_id", "note_id"], :name => "index_archive_notes_on_account_id_and_note_id"
-  add_index "archive_notes", ["id"], :name => "index_on_id"
-  execute "ALTER TABLE archive_notes ADD PRIMARY KEY (account_id,id)"
+  execute "ALTER TABLE archive_notes ADD PRIMARY KEY (id,account_id)"
 
   create_table "archive_ticket_associations", :id => false, :force => true do |t|
     t.integer "id",                :limit => 8,                         :null => false
@@ -331,9 +334,8 @@ ActiveRecord::Schema.define(:version => 20160512085738) do
   add_index "archive_tickets", ["account_id", "ticket_id", "progress"], :name => "index_on_account_id_and_ticket_id_and_progress"
   add_index "archive_tickets", ["account_id", "ticket_type"], :name => "index_archive_tickets_on_account_id_and_ticket_type", :length => {"account_id"=>nil, "ticket_type"=>10}
   add_index "archive_tickets", ["account_id", "updated_at"], :name => "index_archive_tickets_on_account_id_and_updated_at"
-  add_index "archive_tickets", ["id"], :name => "index_on_id"
   add_index "archive_tickets", ["account_id", "display_id"], :name => "index_archive_tickets_on_account_id_and_display_id", :unique => true
-  execute "ALTER TABLE archive_tickets ADD PRIMARY KEY (account_id,id)"
+  execute "ALTER TABLE archive_tickets ADD PRIMARY KEY (id,account_id)"
 
   create_table "authorizations", :force => true do |t|
     t.string   "provider"
@@ -381,6 +383,7 @@ ActiveRecord::Schema.define(:version => 20160512085738) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.boolean  "active",                  :default => false
+    t.boolean  "enabled",                 :default => false
   end
 
   add_index "chat_settings", ["account_id"], :name => "index_chat_settings_on_account_id"
@@ -1385,6 +1388,7 @@ ActiveRecord::Schema.define(:version => 20160512085738) do
     t.boolean  "security_whitelist",                         :default => false
     t.text     "triggers"
     t.boolean  "caller_id_enabled",                     :default => false
+    t.integer  "acw_timeout",                           :default => 1
   end
 
   add_index "freshfone_accounts", ["account_id", "state", "expires_on"], :name => "index_freshfone_accounts_on_account_id_and_state_and_expires_on"
@@ -2582,6 +2586,7 @@ ActiveRecord::Schema.define(:version => 20160512085738) do
   end
 
   add_index "portal_solution_categories", ["account_id", "portal_id"], :name => "index_portal_solution_categories_on_account_id_and_portal_id"
+  add_index "portal_solution_categories", ["account_id", "solution_category_meta_id"], :name => "portal_solution_categories_on_account_id_category_meta_id"
   add_index "portal_solution_categories", ["portal_id", "solution_category_id"], :name => "index_on_portal_and_soln_categ_id"
   add_index "portal_solution_categories", ["portal_id", "solution_category_meta_id"], :name => "index_portal_solution_categories_on_portal_id_category_meta_id"
 
@@ -2710,6 +2715,7 @@ ActiveRecord::Schema.define(:version => 20160512085738) do
   end
 
   add_index "report_filters", ["account_id", "report_type"], :name => "index_report_filters_account_id_and_report_type"
+  add_index "report_filters", ["account_id", "user_id", "report_type"], :name => "index_report_filters_on_account_user_and_report_type"
 
   create_table "roles", :force => true do |t|
     t.string   "name"
@@ -3062,6 +3068,7 @@ ActiveRecord::Schema.define(:version => 20160512085738) do
     t.string   "available"
   end
 
+  add_index "solution_category_meta", ["account_id", "position"], :name => "index_category_meta_on_account_id_position"
   add_index "solution_category_meta", ["account_id"], :name => "index_solution_category_meta_on_account_id"
 
   create_table "solution_customer_folders", :force => true do |t|
@@ -3498,6 +3505,7 @@ ActiveRecord::Schema.define(:version => 20160512085738) do
 
   add_index "survey_results", ["account_id", "survey_id"], :name => "nameindex_on_account_id_and_survey_id"
   add_index "survey_results", ["surveyable_id", "surveyable_type"], :name => "index_survey_results_on_surveyable_id_and_surveyable_type"
+  add_index "survey_results", ["account_id", "created_at"], :name => "index_survey_results_on_account_id_and_created_at"
   execute "ALTER TABLE survey_results ADD PRIMARY KEY (id,account_id)"
 
   create_table "surveys", :force => true do |t|
@@ -3762,6 +3770,21 @@ ActiveRecord::Schema.define(:version => 20160512085738) do
   add_index "ticket_stats_2013_9", ["account_id", "created_at"], :name => "index_ticket_stats_on_account_id_created_at"
   add_index "ticket_stats_2013_9", ["ticket_id", "account_id", "created_at"], :name => "index_ticket_stats_on_ticket_id_created_at_account_id", :unique => true
 
+  create_table "ticket_templates", :force => true do |t|
+    t.integer  "account_id",            :limit => 8
+    t.string   "name"
+    t.text     "description"
+    t.text     "template_data",         :limit => 16777215
+    t.text     "data_description_html", :limit => 16777215
+    t.integer  "association_type"
+    t.integer  "folder_id",             :limit => 8
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "ticket_templates", ["account_id", "name"], :name => "index_ticket_templates_on_account_id_and_name", :length => {"account_id"=>nil, "name"=>20}
+  add_index "ticket_templates", ["account_id", "association_type"], :name => "index_ticket_templates_on_account_id_and_association_type"
+
   create_table "ticket_topics", :force => true do |t|
     t.integer  "ticket_id",       :limit => 8
     t.integer  "topic_id",        :limit => 8
@@ -3858,10 +3881,9 @@ ActiveRecord::Schema.define(:version => 20160512085738) do
     t.datetime "updated_at", :null => false
   end
   
-  add_index "user_companies", ["account_id", "user_id", "company_id"], 
-            :name => "index_user_companies_on_account_id_user_id_company_id"
-  add_index "user_companies", ["account_id", "user_id"], 
-            :name => "index_user_companies_on_account_id_user_id"
+  add_index "user_companies", ["account_id", "user_id", "company_id"],
+            :name => "index_user_companies_on_acc_id_user_id_company_id", 
+            :unique => true
   add_index "user_companies", ["account_id", "company_id"], 
             :name => "index_user_companies_on_account_id_company_id"
 

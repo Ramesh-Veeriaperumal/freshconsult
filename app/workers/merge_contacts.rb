@@ -59,7 +59,7 @@ class MergeContacts < BaseWorker
     move_helpdesk_activities children_ids
     move_forum_activities children_ids
     move_polymorphic_objects children_ids
-    move_archived_tickets children_ids if @account.features?(:archive_tickets)
+    move_archived_tickets children_ids if @account.features_included?(:archive_tickets)
   end
 
   def move_accessory_attributes children_ids
@@ -71,10 +71,19 @@ class MergeContacts < BaseWorker
   end
 
   def move_helpdesk_activities children_ids
-    update_by_batches(@account.tickets, 
-                      { :requester_id => @parent_user.id,
-                        :owner_id     => @parent_user.company_id }, 
-                      ["requester_id in (?)", children_ids])
+    if @parent_user.contractor?
+      update_by_batches(@account.tickets, 
+                        { :owner_id => @parent_user.company_id }, 
+                        ["requester_id in (?) and owner_id is null", children_ids])
+      update_by_batches(@account.tickets, 
+                        { :requester_id => @parent_user.id }, 
+                        ["requester_id in (?)", children_ids])
+    else
+      update_by_batches(@account.tickets, 
+                        { :requester_id => @parent_user.id,
+                          :owner_id     => @parent_user.company_id }, 
+                        ["requester_id in (?)", children_ids])
+    end
     move_each_of(["notes"], children_ids)
   end
 
@@ -85,10 +94,19 @@ class MergeContacts < BaseWorker
   end
 
   def move_archived_tickets(children_ids)
-    update_by_batches(@account.archive_tickets, 
-                      { :requester_id => @parent_user.id,
-                        :owner_id     => @parent_user.company_id }, 
-                      ["requester_id in (?)", children_ids])
+    if @parent_user.contractor?
+      update_by_batches(@account.archive_tickets, 
+                        { :owner_id => @parent_user.company_id }, 
+                        ["requester_id in (?) and owner_id is null", children_ids])
+      update_by_batches(@account.archive_tickets, 
+                        { :requester_id => @parent_user.id }, 
+                        ["requester_id in (?)", children_ids])
+    else
+      update_by_batches(@account.archive_tickets, 
+                        { :requester_id => @parent_user.id,
+                          :owner_id     => @parent_user.company_id }, 
+                        ["requester_id in (?)", children_ids])
+    end
     move_each_of(["archive_notes"], children_ids)
   end
 
@@ -101,7 +119,7 @@ class MergeContacts < BaseWorker
       # but just returns the count. We need to manually push the changes to RMQ as it does not trigger callbacks too.
       # Here adding .all to trigger the query(delayed query) and storing the active record objects for which updates need to be sent to RMQ 
       items_to_update_arr = items_to_update.all if REPORTS_TRACKING_CLASS.include?(klass_name)
-      records_updated     = items_to_update.update_all(values)
+      records_updated     = items_to_update.update_all_with_publish(values, {}, { batch_size: BATCH_LIMIT })
       send_updates_to_rmq(items_to_update_arr, klass_name) if REPORTS_TRACKING_CLASS.include?(klass_name)
     end while records_updated == BATCH_LIMIT
   end
@@ -119,11 +137,19 @@ class MergeContacts < BaseWorker
   def move_if_exists(user_att)
     user_att.each do |att|
       if @parent_user.send(att).blank?
-        related = @children.detect{|i| i.send(att).present?}
-        unless related.nil?
-          @parent_user.send("#{att}=", related.send(att))
-          related.send("#{att}=", nil) unless att == "avatar" 
-          #avatar is a has_one relation and hence will error out without the check
+        if(att == "mobile" || att == "phone")
+          related_children = @children.select{|i| i.send(att).present?}
+          @parent_user.send("#{att}=", related_children.first.send(att)) unless related_children.empty?
+          related_children.each do |child|
+            child.send("#{att}=", nil)
+          end
+        else
+          related = @children.detect{|i| i.send(att).present?}
+          unless related.nil?
+            @parent_user.send("#{att}=", related.send(att))
+            related.send("#{att}=", nil) unless att == "avatar" 
+            #avatar is a has_one relation and hence will error out without the check
+          end
         end
       end
     end
@@ -155,7 +181,7 @@ class MergeContacts < BaseWorker
         end
       end
     end
-    @account.send(options[:object]).where({:id => update_ids}).update_all({options[:user] => @parent_user.id}) if update_ids.present?
+    @account.send(options[:object]).where({:id => update_ids}).update_all_with_publish({ options[:user] => @parent_user.id }, ["#{options[:user]} != ?", @parent_user.id]) if update_ids.present?
     @account.send(options[:object]).where({:id => delete_ids}).destroy_all if delete_ids.present?
   end
 end

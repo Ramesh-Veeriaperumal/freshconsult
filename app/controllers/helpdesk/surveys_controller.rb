@@ -1,5 +1,7 @@
 class Helpdesk::SurveysController < ApplicationController
 
+	include Concerns::SatisfactionRatingConcern
+
 	before_filter :check_feature?, :load_ticket
 	before_filter :check_rating?, only: [:rate]
 
@@ -30,21 +32,6 @@ class Helpdesk::SurveysController < ApplicationController
 
 	private 
 	
-		# For backward compatibility purpose, old rating has been mapped with custom equivalent
-		def custom_rating rating			
-			classic_vs_custom = {
-				"#{Survey::HAPPY}" => CustomSurvey::Survey::EXTREMELY_HAPPY,
-				"#{Survey::NEUTRAL}" => CustomSurvey::Survey::NEUTRAL,
-				"#{Survey::UNHAPPY}" => CustomSurvey::Survey::EXTREMELY_UNHAPPY
-			}
-			if (rating.to_i<100 && rating.to_i>0)
-				rating = classic_vs_custom[rating]
-			end
-
-			rating
-			
-		end
-		
 		def create_classic_survey_result
 			survey_result = @ticket.survey_results.create({        
 				:survey_id => current_account.survey.id,                
@@ -58,7 +45,7 @@ class Helpdesk::SurveysController < ApplicationController
 		end
 		
 		def create_custom_survey_result
-			rating = custom_rating(params[:rating])
+			rating = custom_rating(params[:rating].to_i)
 			old_rating = CustomSurvey::Survey::old_rating rating.to_i
 			survey = current_account.survey # Need to check the use case
 			survey_result = @ticket.custom_survey_results.create({
@@ -70,7 +57,7 @@ class Helpdesk::SurveysController < ApplicationController
 						      :custom_field => {"#{survey.default_question.name}" => rating},
 						      :rating => old_rating
 						    })
-			survey_result.add_feedback(params) unless params[:feedback].blank?
+			survey_result.update_result_and_feedback(params) unless params[:feedback].blank?
 			survey_result
 		end
 

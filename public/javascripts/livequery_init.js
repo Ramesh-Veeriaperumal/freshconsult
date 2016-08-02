@@ -178,7 +178,31 @@ $("input.datepicker_popover").livequery(
 		if($(this).data('showImage')) {
 			$(this).datepicker('option', 'showOn', "both" );
 			$(this).datepicker('option', 'buttonText', "<i class='ficon-date'></i>" );
+
 		}
+		// custom clear button
+		var clearButton =  jQuery(this).siblings('.dateClear');
+		if(clearButton.length === 0) {
+			 clearButton = jQuery('<span class="dateClear"><i class="ficon-cross" ></i></div>');
+			jQuery(this).after(clearButton);
+		}
+		if(jQuery(this).val().length === 0) {
+			clearButton.hide();
+		}
+		jQuery(this).on("change",function(){
+			if(jQuery(this).val().length === 0) {
+				clearButton.hide();
+			}
+			else {
+				clearButton.show();
+			}
+
+		});
+		clearButton.on('click', function(e) {
+			 jQuery(this).siblings('input.date').val("");
+			 jQuery(this).hide(); 
+		 });
+		// clear button ends
 	}
 );
 
@@ -413,6 +437,48 @@ $('.btn-collapse').livequery(
 
     });
 	});
+
+	// Remote tags
+	// default value should be given in VALUE attribute
+	// 
+	$('[rel=remote-tag]').livequery(function() {
+		var hash_val = []
+		var _this = $(this);
+		_this.val().split(",").each(function(item, i){ hash_val.push({ id: item, text: item }); });
+		_this.select2({
+			multiple: true,
+			maximumInputLength: 32,
+			data: hash_val,
+			quietMillis: 500,
+			ajax: { 
+        url: '/search/autocomplete/tags',
+        dataType: 'json',
+        data: function (term) {
+            return { q: term };
+        },
+        results: function (data) {
+          var results = [];
+          jQuery.each(data.results, function(i, item){
+          	var result = escapeHtml(item.value);
+            results.push({ id: result, text: result });
+          });
+          return { results: results }
+        }
+			},
+			initSelection : function (element, callback) {
+			  callback(hash_val);
+			},
+		    formatInputTooLong: function () { 
+      	return MAX_TAG_LENGTH_MSG; },
+		  createSearchChoice:function(term, data) { 
+		  	//Check if not already existing & then return
+        if ($(data).filter(function() { return this.text.localeCompare(term)===0; }).length===0)
+	        return { id: term, text: term };
+		    }
+				});
+		}, function(){
+			$(this).select2('destroy');
+		});
 
 });
 

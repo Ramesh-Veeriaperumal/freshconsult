@@ -2,10 +2,11 @@
 class Helpdesk::AttachmentsController < ApplicationController
 
   include HelpdeskControllerMethods
+  include Helpdesk::MultiFileAttachment::Util
   skip_before_filter :check_privilege
-  before_filter :load_item, :only => [:text_content, :show]
+  before_filter :load_item, :only => [:text_content, :show, :delete_attachment]
   before_filter :check_download_permission, :only => [:show, :text_content]
-  before_filter :check_destroy_permission, :only => [:destroy]
+  before_filter :check_destroy_permission, :only => [:destroy, :delete_attachment]
   before_filter :set_native_mobile, :only => [:show]
   before_filter :load_shared, :only => [:unlink_shared]
   def show
@@ -48,50 +49,61 @@ class Helpdesk::AttachmentsController < ApplicationController
 
   def unlink_shared
     if can_unlink?
-      @note = @item.shared_attachable
-      @note_attachment_count = @note.all_attachments.size + @note.cloud_files.size - 1
+      attachment_count
       @item.destroy
       flash[:notice] = t(:'flash.tickets.notes.remove_attachment.success')
     else
-      access_denied
+      flash[:notice] = t(:'flash.general.access_denied')
+      redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
+    end
+  end
+
+  def create_attachment    
+    attachable_id = current_user.id
+    @attachment = Helpdesk::Attachment.new(content: params[:file], account_id: Account.current.id, attachable_type: "UserDraft", attachable_id: attachable_id)
+    if @attachment.save
+      mark_for_cleanup(@attachment.id)
+      respond_to do |format|
+        format.json do
+          render :json => {"files" => [@attachment.to_jq_upload]}.to_json
+        end
+      end
+    else
+      render :json => [{:error => "custom_failure"}], :status => 304
+    end
+  end
+
+  def delete_attachment
+    if @item.destroy
+      unmark_for_cleanup(@item.id)
+      respond_to do |format|
+        format.json do
+          render :json => @item.to_json    
+        end
+      end
+    else
+      render :json => [{:error => "custom_failure"}], :status => 304
     end
   end
 
   protected
 
-     def check_destroy_permission
-      can_destroy = false
-
-      @items.each do |attachment|
-        if ['Helpdesk::Ticket', 'Helpdesk::Note'].include? attachment.attachable_type
-          ticket = attachment.attachable.respond_to?(:notable) ? attachment.attachable.notable : attachment.attachable
-          can_destroy = true if privilege?(:manage_tickets) or (current_user && ticket.requester_id == current_user.id)
-        elsif ['Solution::Article', 'Solution::Draft'].include? attachment.attachable_type
-          can_destroy = true if privilege?(:publish_solution) or (current_user && attachment.attachable.user_id == current_user.id)
-        elsif ['Account'].include? attachment.attachable_type
-          can_destroy = true if privilege?(:manage_account)
-        elsif ['Post'].include? attachment.attachable_type
-          can_destroy = true if privilege?(:edit_topic) or (current_user && attachment.attachable.user_id == current_user.id)
-        elsif ['User'].include? attachment.attachable_type
-          can_destroy = true if privilege?(:manage_users) or (current_user && attachment.attachable.id == current_user.id)
-        end
-      end
-
-          unless  can_destroy
-            flash[:notice] = t(:'flash.general.access_denied')
-            redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
-          end
-
-
-
-   end
-
     def load_shared
-      @item = Helpdesk::SharedAttachment.find_by_shared_attachable_id(params[:note_id], :conditions=>["attachment_id=?", params[:id]])
+      @item = Helpdesk::SharedAttachment.find_by_shared_attachable_id(params[:item_id], :conditions=>["attachment_id=?", params[:id]])
     end
 
     def can_unlink?
-      privilege?(:manage_tickets) and ['Helpdesk::Note'].include? @item.shared_attachable_type
+      if ['Helpdesk::Ticket', 'Helpdesk::Note'].include? @item.shared_attachable_type
+        privilege?(:manage_tickets)
+      elsif ['Helpdesk::TicketTemplate'].include? @item.shared_attachable_type
+        template_priv? @item.shared_attachable
+      end
+    end
+
+    def attachment_count
+      @obj                  = @item.shared_attachable
+      @obj_name             = (@item.shared_attachable_type == "Helpdesk::Note") ? "note" : "ticket"
+      @obj_attachment_count = @obj.all_attachments.size + @obj.cloud_files.size - 1
     end
 
     def check_download_permission
@@ -99,7 +111,6 @@ class Helpdesk::AttachmentsController < ApplicationController
     end
 
     def can_download?
-
       # Is the attachment on a note?
       #if @attachment.attachable.respond_to?(:notable)
       if ['Helpdesk::Ticket', 'Helpdesk::Note', 'Mobihelp::TicketInfo', 'Helpdesk::ArchiveTicket','Helpdesk::ArchiveNote'].include? @attachment.attachable_type
@@ -115,6 +126,8 @@ class Helpdesk::AttachmentsController < ApplicationController
 
       elsif ['Solution::Article'].include? @attachment.attachable_type
         return @attachment.attachable.solution_folder_meta.visible?(current_user)
+      elsif ['Solution::Draft'].include? @attachment.attachable_type
+        return current_user && current_user.privilege?(:view_solutions)
       elsif ['Post'].include? @attachment.attachable_type
         return @attachment.attachable && @attachment.attachable.forum.visible?(current_user)
       elsif ['Account', 'Portal'].include? @attachment.attachable_type
@@ -124,6 +137,10 @@ class Helpdesk::AttachmentsController < ApplicationController
         return ticket_access? call_record_ticket
       elsif ['DataExport'].include? @attachment.attachable_type
         return privilege?(:manage_account) || @attachment.attachable.owner?(current_user)
+      elsif ['UserDraft'].include? @attachment.attachable_type
+        return true if(current_user)
+      elsif ['Helpdesk::TicketTemplate'].include? @attachment.attachable_type
+        return true if template_priv? @attachment.attachable
       end
 
     end
@@ -131,7 +148,8 @@ class Helpdesk::AttachmentsController < ApplicationController
     def ticket_access?(ticket)
       return false if ticket.nil?
       (current_user && (ticket.requester_id == current_user.id || ticket.included_in_cc?(current_user.email) || 
-        (privilege?(:client_manager)  && ticket.company == current_user.company))) || 
+        (current_user.company_client_manager? && current_user.company_ids.include?(ticket.company_id)) ||
+        (current_user.contractor_ticket? ticket))) || 
         (params[:access_token] && ticket.access_token == params[:access_token])
     end
 

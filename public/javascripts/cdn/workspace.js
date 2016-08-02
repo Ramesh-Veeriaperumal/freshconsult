@@ -21,8 +21,11 @@
 //= require fjax/assets.js
 //= require fjax/manager.js
 //= require application.js
+//= require navsearch_utils.js
 //= require navsearch.js
 //= require app/search/templates/spotlight_result
+//= require app/search/templates/spotlight_result_recent_search
+//= require app/search/templates/spotlight_result_recent_ticket
 //= require report/date.js
 //= require freshfone/global.js
 //= require app/metrics.js
@@ -34,3 +37,5 @@
 //= require plugins/jquery.placeholder.js
 //= require i18n
 //= require i18n/translations
+//= require tickets/templates/attachment-viewer.jst.ejs
+//= require app/ticket_attachment_viewer.js

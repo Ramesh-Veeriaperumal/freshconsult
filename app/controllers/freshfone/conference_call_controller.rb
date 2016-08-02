@@ -7,10 +7,12 @@ class Freshfone::ConferenceCallController < FreshfoneBaseController
   include Freshfone::Endpoints
   include Freshfone::CallsRedisMethods
   include Freshfone::SupervisorActions
+  include Freshfone::AcwUtil
   
+  before_filter :select_current_call, :only => [:status]
+  before_filter :complete_browser_leg, only: [:status], if: :agent_leg?
   before_filter :complete_supervisor_leg, :only => [:status], :if => :supervisor_leg?
   before_filter :check_conference_feature, :only => [:status]
-  before_filter :select_current_call, :only => [:status]
   before_filter :handle_blocked_numbers, :only => [:status]
   before_filter :terminate_ivr_preview, :only => [:status]
   before_filter :validate_dial_call_status, :only => [ :status ]
@@ -22,6 +24,7 @@ class Freshfone::ConferenceCallController < FreshfoneBaseController
   before_filter :reset_outgoing_count, :only => [:status]
   before_filter :set_abandon_state, :only => [:status]
   before_filter :call_quality_monitoring_enabled?, :only => [:save_call_quality_metrics]
+  before_filter :handle_simultaneous_answer, only: :wrap_call, if: :acw_without_new_notifications?
 
   def status
     begin
@@ -85,12 +88,13 @@ class Freshfone::ConferenceCallController < FreshfoneBaseController
 
   def wrap_call
     return render :json => { :result => :failure } if current_call.blank?
-    acw if call_metrics_enabled?
+    acw
     current_call.meta.update_feedback(params) if current_call.meta.present?
     render :json => { :result => true }
   end
 
   def acw
+    return if !call_metrics_enabled? || phone_acw_enabled?
     current_call_leg = current_call.missed_child? ? current_call.parent : current_call
     current_call_leg.update_acw_duration
   end
@@ -262,5 +266,48 @@ class Freshfone::ConferenceCallController < FreshfoneBaseController
    
     def call_quality_monitoring_enabled?
       render :json => {} unless current_account.features?(:call_quality_metrics)
+    end
+
+    def agent_leg?
+      new_notifications? &&
+        params[:From].present? && split_client_id(params[:From]).present? &&
+        current_call.present? && outgoing_child_leg?
+    end
+
+    def outgoing_child_leg?
+      current_call.incoming? || (current_call.outgoing? && current_call.transferred_leg?)
+    end
+
+    def complete_browser_leg
+      return if current_call.blank?
+      set_agent
+      render xml: agent_call_leg.initiate_disconnect
+    end
+
+    def acw_without_new_notifications?
+      phone_acw_enabled? && !new_notifications?
+    end
+
+    def handle_simultaneous_answer
+      return if current_call.blank?
+      freshfone_user = current_user.freshfone_user
+      render json: { result: freshfone_user.reset_presence.save } if reset_preconditions?
+    end
+
+    def reset_preconditions?
+      current_call.incoming? && (simultaneous_accept? ||
+        simultaneous_canceled_transfer?)
+    end
+
+    #if two agents simultaneously accepted an incoming call, reset presence of
+    #disconnected agent on closing end-call form
+    def simultaneous_accept?
+      current_call.user_id != current_user.id
+    end
+
+    #if agent transferring the call cancels the transfer at same moment when the other agent accepted the transferred
+    #call, that agent will be stuck in busy state. reset presence on closing end-call form
+    def simultaneous_canceled_transfer?
+      current_call.ancestry.present? && current_call.canceled?
     end
 end

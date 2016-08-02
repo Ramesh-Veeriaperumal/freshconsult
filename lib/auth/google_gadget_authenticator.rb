@@ -28,7 +28,6 @@ class Auth::GoogleGadgetAuthenticator < Auth::Authenticator
         construct_setup_key(env)
       },
       :scope        => "https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email",
-      :prompt       => "select_account consent",
       :access_type  => "online",
       :redirect_uri => "#{AppConfig['integrations_url'][Rails.env]}/auth/google_gadget/callback",
       :name         => "google_gadget")

@@ -10,17 +10,11 @@ module Helpdesk
         account = Account.current
         group_id = args[:group_id]
 
-        account.tickets.where(group_id: group_id).select(:id).find_in_batches(batch_size: BATCH_LIMIT) do |tickets|
-          ticket_ids = tickets.map(&:id)
-          account.tickets.where(id: ticket_ids).update_all(group_id: nil)
-        end
+        account.tickets.where(group_id: group_id).update_all_with_publish({ group_id: nil }, {})
 
-        return unless account.features?(:archive_tickets)
+        return unless account.features_included?(:archive_tickets)
 
-        account.archive_tickets.where(group_id: group_id).select(:id).find_in_batches(batch_size: BATCH_LIMIT) do |tickets|
-          ticket_ids = tickets.map(&:id)
-          account.archive_tickets.where(id: ticket_ids).update_all(group_id: nil)          
-        end
+        account.archive_tickets.where(group_id: group_id).update_all_with_publish({ group_id: nil }, {})
 
       rescue Exception => e
         puts e.inspect, args.inspect

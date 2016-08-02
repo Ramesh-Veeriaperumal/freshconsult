@@ -9,6 +9,11 @@ class Livechat::Sync
     send(data_methods.shift, data_methods, siteId)
   end
 
+  def sync_account_state args
+    options = { :worker_method => 'update_site', :attributes => args }
+    set_current_account_user_and_process_next options
+  end
+  
   #This method is called from frontend
   def roles next_methods, siteId
     sidekiq_batch(siteId, next_methods).jobs do
@@ -61,17 +66,48 @@ class Livechat::Sync
 
   #This method is called from sidekiq backend callbacks
   def on_success(status, options)
-    next_methods = options["next_methods"]
-    Livechat::Sync.new.send(next_methods.shift, next_methods, options['siteId']) unless next_methods.blank?
+    set_current_account_user_and_process_next options
   end
 
   def sidekiq_batch(siteId, next_methods)
     batch = Sidekiq::Batch.new
-    batch.on(:success, Livechat::Sync, 'bid' => batch.bid, 'siteId' => siteId, :next_methods => next_methods)
+    batch.on(:success, Livechat::Sync, 'bid' => batch.bid, 
+              'siteId' => siteId, :next_methods => next_methods, 
+              :account_id => ::Account.current.id, :current_user_id => ::User.current.id)
     batch
   end
 
   def current_account
-    Account.current
+    ::Account.current
   end
+
+  def current_user
+    ::User.current
+  end
+
+  def set_current_account_user_and_process_next options={}
+    next_methods = options["next_methods"]
+    worker_method = options[:worker_method]
+    account_id = current_account.present? ? current_account.id : options['account_id']
+    if account_id && (next_methods.present? || worker_method.present?) 
+      user_id = current_user.present? ? current_user.id : options['current_user_id'].present? ? options['current_user_id'] : nil;
+      Sharding.select_shard_of(account_id) do
+        account = ::Account.find(account_id)
+        account.make_current
+        user = account.users.find_by_id(user_id) if user_id.present?
+        user = account.users.find_by_email(account.admin_email) if !user.present?
+        if user.present?
+          user.make_current
+          unless next_methods.blank?
+            send(next_methods.shift, next_methods, options['siteId'])
+          else
+            LivechatWorker.perform_async({ :worker_method => worker_method, :attributes => options[:attributes]})
+          end
+        end
+        Account.reset_current_account
+        User.reset_current_user
+      end
+    end
+  end
+
 end

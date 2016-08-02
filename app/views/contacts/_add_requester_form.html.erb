@@ -21,8 +21,8 @@
     </li>
     <li>
       <%= add_requester.label t('user.company') %>
-      <%= add_requester.text_field :customer %>
-      <div id="user_customer_choices" class="autocomplete"></div>
+      <%= add_requester.text_field :company_name %>
+      <div id="user_company_choices" class="autocomplete select2ui"></div>
     </li>
   </ul>
   <div class="button-container">
@@ -48,7 +48,7 @@
   var cachedBackend = new Autocompleter.Cache(lookup, {choices: 20});
   var cachedLookup = cachedBackend.lookup.bind(cachedBackend);
   
-  new Autocompleter.Json("user_customer", "user_customer_choices", cachedLookup, {});
+  new Autocompleter.Json("user_company_name", "user_company_choices", cachedLookup, {});
 
   jQuery('#cancel_button').live('click', function(){
     jQuery('#add_requester_form').modal('hide');

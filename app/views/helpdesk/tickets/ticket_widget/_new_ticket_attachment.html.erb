@@ -1,19 +1,63 @@
-<div class="attachment-wrapper">
-	<%= render(:partial => "/helpdesk/tickets/show/attachment_form", :formats => [:html], :locals => { 
+<% if current_account.launched?(:multifile_attachments) %>
+<%= render(:partial => "/helpdesk/tickets/ticket_widget/widget_attachment_form", :formats => [:html], :locals => { 
 		:attach_id => "ticket" , 
-		:nsc_param => "helpdesk_ticket"
+		:nsc_param => object_name,
+		:template => true
 		}) %>
+<% else %>
+<%= render(:partial => "/helpdesk/tickets/show/single_attachment_form", :formats => [:html], :locals => { 
+		:attach_id => "ticket" , 
+		:nsc_param => object_name,
+		:template => true,
+		}) %>
+<% end %>
 
-</div>
 
-<div class="attachments-wrap clearfix">
+<div class="attachments-wrap clearfix  <%= current_account.launched?(:multifile_attachments) ? "hide" : "" %> " id="prev-attachments">
 	<ul class="attachment_list">
-	    <% @ticket.attachments.each do |attached| %> 
-	    	<%= attachment_list(attached, privilege?(:edit_ticket_properties), "ticket",nil) %>
-	    <% end %>
 
-	    <% @ticket.cloud_files.each do |cloud_file| %> 
-			<%= attachment_list(cloud_file, privilege?(:edit_ticket_properties), "cloud_file",nil) %>
+		<% if object_name == "template_data" 
+			item = @tkt_template
+			priv = true
+			obj = "ticket_template"		
+	    else 
+			item = @ticket
+			priv = privilege?(:edit_ticket_properties)
+			obj = "ticket"
+		end %>
+
+		<% item.all_attachments.each do |attached| %> 
+			<%= attachment_list(attached, priv, obj, item.id) %>
+		<% end %>
+
+		<% item.cloud_files.each do |cloud_file| %> 
+			<%= attachment_list(cloud_file, priv, "cloud_file",nil) %>
 		<% end %>
 	</ul>
 </div>
+<% if current_account.launched?(:multifile_attachments) %>
+       <% 
+	    item.cloud_files.each do |cloud| 
+          cloud[:provider] = cloud.provider
+        end
+	   %>
+	<script>
+	   var template = false;
+	   var nsc_param = "";
+	   if (App.namespace == "helpdesk/ticket_templates/clone")  {
+	     template = true;
+	     nsc_param = "template_data";
+	      Helpdesk.MultipleFileUpload.renderExistingFiles(<%= item.all_attachments.to_json.html_safe%>,<%=item.cloud_files.to_json.html_safe %>,jQuery('.attachment-icon:visible').data('iconCount'),template,nsc_param,true);
+	   }
+	   if(App.namespace == "helpdesk/ticket_templates/edit") {
+	     template = true;
+	     nsc_param = "helpdesk_ticket";
+	      Helpdesk.MultipleFileUpload.renderExistingFiles(<%= item.all_attachments.to_json.html_safe%>,<%=item.cloud_files.to_json.html_safe %>,jQuery('.attachment-icon:visible').data('iconCount'),template,nsc_param);
+	   }
+	     if(App.namespace == "helpdesk/tickets/edit") {
+	     	 // template = true;
+		     // nsc_param = "helpdesk_ticket";
+		      Helpdesk.MultipleFileUpload.renderExistingFiles(<%= item.all_attachments.to_json.html_safe%>,<%=item.cloud_files.to_json.html_safe %>,jQuery('.attachment-icon:visible').data('iconCount'));
+	     }
+	</script>
+<% end %>

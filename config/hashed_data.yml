@@ -1,0 +1,40 @@
+defaults: &defaults
+  shard_name: _x_w
+  state: _x_m
+  trial: x_c
+  free: x_b
+  paid: x_j
+  suspended: x_a
+  shard_1: 1
+  shard_2: 2
+  shard_3: 3
+  shard_4: 4
+  shard_5: 5
+  shard_6: 6
+  shard_7: 7
+  shard_8: 8
+  shard_9: 9
+  shard_10: 10
+  shard_11: 11
+  shard_12: 12
+  shard_13: 13
+  shard_14: 14
+  shard_15: 15
+  eu_shard_1: 1
+  eu_shard_2: 2
+  euc_shard_1: 1
+
+development:
+  <<: *defaults
+
+slave:
+  <<: *defaults
+
+test:
+  <<: *defaults
+
+staging:
+  <<: *defaults
+
+production:
+  <<: *defaults

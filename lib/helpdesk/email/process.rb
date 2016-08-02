@@ -27,11 +27,6 @@ class Helpdesk::Email::Process
     self.to_email = parse_to_email #In parse_email_data
   end
 
-  def determine_pod
-    shard = ShardMapping.fetch_by_domain(to_email[:domain])
-    shard.pod_info unless shard.blank?
-  end
-
   def perform
     self.start_time = Time.now.utc
     shardmapping = ShardMapping.fetch_by_domain(to_email[:domain])
@@ -59,7 +54,6 @@ class Helpdesk::Email::Process
     if (common_email_data[:from][:email] =~ EMAIL_VALIDATOR).nil?
       error_msg = "Invalid email address found in requester details - #{common_email_data[:from][:email]} for account : #{account.id}"
       Rails.logger.debug error_msg
-      NewRelic::Agent.notice_error(Exception.new(error_msg))
       return
     end
     check_tnef_message_id
@@ -127,7 +121,7 @@ class Helpdesk::Email::Process
 	end
 
   def create_archive_link(archive_ticket, email_handler, start_time)
-    if account.features?(:archive_tickets)
+    if account.features_included?(:archive_tickets)
       if archive_ticket && archive_ticket.is_a?(Helpdesk::ArchiveTicket)
         email_handler.archive_ticket = archive_ticket 
       elsif archive_ticket && archive_ticket.is_a?(Helpdesk::Ticket)

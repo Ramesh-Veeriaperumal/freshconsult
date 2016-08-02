@@ -7,9 +7,9 @@ class Helpdesk::ArchiveNote < ActiveRecord::Base
       as_json({
                 :root => false,
                 :tailored_json => true,
-                :only => [ :notable_id, :private, :account_id, :created_at, :updated_at ],
+                :only => [ :deleted, :private, :account_id, :created_at, :updated_at ],
                 :methods => [ :body ]
-              }).merge(attachments: es_v2_attachments).to_json
+              }).merge(notable_id: archive_ticket_id).merge(attachments: es_v2_attachments).to_json
     end
 
     # ES v2 specific methods

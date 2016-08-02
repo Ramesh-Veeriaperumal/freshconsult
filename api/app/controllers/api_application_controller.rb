@@ -27,7 +27,7 @@ class ApiApplicationController < MetalApiController
   before_filter :ensure_proper_fd_domain, :ensure_proper_protocol
   include Authority::FreshdeskRails::ControllerHelpers
   before_filter :check_account_state
-  before_filter :set_time_zone, :check_day_pass_usage_with_user_time_zone
+  before_filter :set_time_zone, :check_day_pass_usage_with_user_time_zone, :set_msg_id
   before_filter :force_utf8_params
   before_filter :set_cache_buster
   include AuthenticationSystem
@@ -37,7 +37,7 @@ class ApiApplicationController < MetalApiController
 
   include DecoratorConcern
 
-  before_filter { |c| c.requires_feature feature_name if feature_name }
+  before_filter { |c| c.requires_feature *feature_name if feature_name }
   skip_before_filter :check_privilege, only: [:route_not_found]
 
   # before_load_object and after_load_object are used to stop the execution exactly before and after the load_object call.
@@ -104,9 +104,9 @@ class ApiApplicationController < MetalApiController
 
   protected
 
-    def requires_feature(f) # Should be from cache. Need to revisit.
-      return if Account.current.features?(f)
-      render_request_error(:require_feature, 403, feature: f.to_s.titleize)
+    def requires_feature(*f) # Should be from cache. Need to revisit.
+      return if Account.current.features?(*f)
+      render_request_error(:require_feature, 403, feature: f.join(',').titleize)
     end
 
   private
@@ -404,7 +404,7 @@ class ApiApplicationController < MetalApiController
 
     def api_current_user
       return @current_user if defined?(@current_user)
-      if get_request?
+      if get_request? && !request.authorization
         if current_user_session # fall back to old session based auth
           @current_user = (session.key?(:assumed_user)) ? (current_account.users.find session[:assumed_user]) : current_user_session.record
           stale_record = current_user_session.stale_record

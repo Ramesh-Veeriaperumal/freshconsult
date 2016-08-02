@@ -70,7 +70,12 @@ window.App.Solutions = window.App.Solutions || {};
 						$('.comm-items ul').data('list_item', $('.comm-items ul').html());
 						$this.showSearch();
 						$this.enableBulkAction();
-						// App.Discussions.Sidebar.reload();
+						if (App.namespace != "solution/folders/show") {
+						  // Not needed for Folder show page, as article reordering is not going to affect
+						  // the NavMenu order (we only show article counts)
+						  App.Solutions.NavMenu.reload();
+						}
+
 						$('body').trigger('reorder');
 					}
 				});

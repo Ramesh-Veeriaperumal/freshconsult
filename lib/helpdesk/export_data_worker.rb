@@ -80,15 +80,21 @@ class Helpdesk::ExportDataWorker < Struct.new(:params)
   end
   
   def export_users_data
-     users = @current_account.users.all  
-     xml_output = users.to_xml(:except => [:crypted_password,:password_salt,:persistence_token,:single_access_token,:perishable_token]) 
-     write_to_file("Users.xml",xml_output)
+     i = 0 
+     @current_account.users.preload(:flexifield).find_in_batches(:batch_size => 300) do |users|
+        xml_output = users.to_xml(:except => [:crypted_password,:password_salt,:persistence_token,:single_access_token,:perishable_token]) 
+        write_to_file("Users#{i}.xml",xml_output)
+        i+=1
+     end
   end
   
   def export_companies_data
-     companies = @current_account.companies.all  
-     xml_output = companies.to_xml
-     write_to_file("Companies.xml",xml_output)
+     i = 0 
+     @current_account.companies.preload(:flexifield, :company_domains).find_in_batches(:batch_size => 300) do |companies|
+        xml_output = companies.to_xml
+        write_to_file("Companies#{i}.xml",xml_output)
+        i+=1
+     end
   end
   
   def export_tickets_data

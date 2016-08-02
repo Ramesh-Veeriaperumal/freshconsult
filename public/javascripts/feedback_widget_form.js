@@ -3,6 +3,12 @@
 	$(function () {
 
 		$("select").select2();
+
+		// selectOption;
+		$("select").on('change', function() {
+			$(this).trigger('blur');
+		});
+
 		var $ticket_desc = $("#helpdesk_ticket_ticket_body_attributes_description_html"),
 			proxy_placeholders = jQuery(".form-placeholder").find("input[type=text], textarea");
 
@@ -22,14 +28,26 @@
 			})
 		})
 
+		jQuery(document).on('focus', '.redactor_editor', function() {
+        jQuery('#helpdesk_ticket_ticket_body_attributes_description_html-error').css({'display':'none'})
+    });
+    jQuery(document).on('blur', '.redactor_editor', function() {
+        if(!$ticket_desc.data('redactor').isNotEmpty()){
+            jQuery('#helpdesk_ticket_ticket_body_attributes_description_html-error').css({'display':'block'})
+        }
+    });
+
 
 		$ticket_desc.redactor({
 			convertDivs: false,
 			autoresize: false,
 			mobile: false,
 			buttons:['bold','italic','underline','|','unorderedlist', 'orderedlist',  '|','fontcolor', 'backcolor', '|' ,'link'],
-			keyupCallback: function(e){
+			keyupCallback: function(ele,event){
 				var $item = $ticket_desc;
+        if(event.which===9){
+          ele.$editor.blur();
+        }
 				setTimeout(function() {
 			        $item.data("placeholder-proxy").toggle(!jQuery(".redactor_editor").text());
 			    }, 0);
@@ -48,7 +66,11 @@
 
 		$.urlParam = function(name){
 			var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
-			return results[1] || 0;
+			if(results != null && results.length == 2){
+				return results[1];	
+			} else{
+				return 0;
+			}
 		};
 
  		jQuery("#fd_feedback_widget").validate({
@@ -142,7 +164,6 @@
 						_name_div.slideUp()
 					}
 				}
-
 			if(email_path == "") return
 
 			if(ticket_email.isValidEmail()){
@@ -190,10 +211,36 @@
         changeMonth:true,
         changeYear:true,
       });
+      jQuery(this).on('change', function() {
+          $(this).trigger('blur');
+      });
       if(jQuery(this).data('showImage')) {
         jQuery(this).datepicker('option', 'showOn', "both" );
         jQuery(this).datepicker('option', 'buttonText', "<i class='ficon-date'></i>" );
       }
+      	// custom clear button
+		var clearButton =  jQuery(this).siblings('.dateClear');
+		if(clearButton.length === 0) {
+			 clearButton = jQuery('<span class="dateClear"><i class="ficon-cross" ></i></div>');
+			jQuery(this).after(clearButton);
+		}
+		if(jQuery(this).val().length === 0) {
+			clearButton.hide();
+		}
+		jQuery(this).on("change",function(){
+			if(jQuery(this).val().length === 0) {
+				clearButton.hide();
+			}
+			else {
+				clearButton.show();
+			}
+
+		});
+		clearButton.on('click', function(e) {
+			 jQuery(this).siblings('input.date').val("");
+			 jQuery(this).hide(); 
+		 });
+		// clear button ends
     });
 
 	});

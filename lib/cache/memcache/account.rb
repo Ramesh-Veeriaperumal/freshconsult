@@ -70,9 +70,16 @@ module Cache::Memcache::Account
     end
   end
 
+  def roles_from_cache
+    @roles_from_cache ||= begin
+      key = roles_cache_key
+      MemcacheKeys.fetch(key) { self.roles.find(:all) }
+    end
+  end
+
   def agents_details_from_cache
     key = agents_details_memcache_key
-    MemcacheKeys.fetch(key) { self.users.where(:helpdesk_agent => true).select("id,name").all }
+    MemcacheKeys.fetch(key) { self.users.where(:helpdesk_agent => true).select("id,name,email").all }
   end  
 
   def groups_from_cache
@@ -204,6 +211,13 @@ module Cache::Memcache::Account
     end
   end
 
+  def installed_app_business_rules_from_cache
+    key = ACCOUNT_INSTALLED_APP_BUSINESS_RULES % { :account_id => self.id }
+    MemcacheKeys.fetch(key) do
+      installed_app_business_rules.all
+    end
+  end
+
   def forum_categories_from_cache
     key = FORUM_CATEGORIES % { :account_id => self.id }
     MemcacheKeys.fetch(key) { self.forum_categories.find(:all, :include => [ :forums ]) }
@@ -242,6 +256,23 @@ module Cache::Memcache::Account
     end
     MemcacheKeys.fetch(key,expiry) do
       CRM::Salesforce.new.account_owner(self.id)
+    end
+  end
+
+  def fresh_sales_manager_from_cache
+    if self.created_at > Time.now.utc - 3.days # Logic to handle sales manager change
+      key = FRESH_SALES_MANAGER_3_DAYS % { :account_id => self.id }
+      expiry = 1.day.to_i
+    else
+      key = FRESH_SALES_MANAGER_1_MONTH % { :account_id => self.id }
+      expiry = 30.days.to_i
+    end
+    MemcacheKeys.fetch(key,expiry) do
+      begin
+        CRM::FreshsalesUtility.new({ account: self }).account_manager  
+      rescue  => e
+        CRM::FreshsalesUtility::DEFAULT_ACCOUNT_MANAGER
+      end      
     end
   end
 
@@ -304,6 +335,25 @@ module Cache::Memcache::Account
     MemcacheKeys.delete_from_cache(key)
   end
 
+
+  def clear_requester_widget_fields_from_cache
+    key = REQUESTER_WIDGET_FIELDS % { :account_id => current_account.id }
+    MemcacheKeys.delete_from_cache key
+  end
+
+  def installed_apps_in_company_page_from_cache
+    key = ACCOUNT_INSTALLED_APPS_IN_COMPANY_PAGE % { :account_id => self.id }
+    MemcacheKeys.fetch(key) do
+      condition = "applications.dip & #{2**Integrations::Constants::DISPLAY_IN_PAGES['company_show']} > 0"
+      self.installed_applications.includes(:application).where(condition)
+    end
+  end
+
+  def clear_application_on_dip_from_cache
+    key = ACCOUNT_INSTALLED_APPS_IN_COMPANY_PAGE % { :account_id => self.id }
+    MemcacheKeys.delete_from_cache(key)
+  end
+
   private
     def permissible_domains_memcache_key id = self.id
       HELPDESK_PERMISSIBLE_DOMAINS % { :account_id => id }
@@ -315,6 +365,10 @@ module Cache::Memcache::Account
 
     def agents_memcache_key
       ACCOUNT_AGENTS % { :account_id => self.id }
+    end
+
+    def roles_cache_key
+      ACCOUNT_ROLES % { :account_id => self.id }
     end
 
     def agents_details_memcache_key

@@ -57,10 +57,12 @@ window.App = window.App || {};
     bindHandlers: function () {
       $('body').on('change.solutionHome', '#solution_folder_meta_visibility', App.Solutions.Folder.setCompanyVisibility);
       $('body').on('click.solutionHome', '.modal-footer [data-dismiss="modal"]', this.resetFormOnCancel);
+      this.Folder.bindCreateNew();
     },
 
     unBindHandlers: function () {
       $('body').off('.solutionHome');
+      $('body').off('.solutions');
     },
 
     configurePlaceholder: function () {

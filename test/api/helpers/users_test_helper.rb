@@ -1,6 +1,7 @@
-['company_helper.rb', 'contact_fields_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
+['company_helper.rb', 'contact_fields_helper.rb', 'group_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
 module UsersTestHelper
   include CompanyHelper
+  include GroupHelper
   include ContactFieldsHelper
   # Patterns
   def contact_pattern(expected_output = {}, ignore_extra_keys = true, contact)
@@ -44,6 +45,7 @@ module UsersTestHelper
     }
 
     result.merge!(other_emails: expected_output[:other_emails] || contact.user_emails.where(primary_role: false).map(&:email))
+    result.merge!(deleted: true) if contact.deleted
     result
   end
 
@@ -51,12 +53,40 @@ module UsersTestHelper
     contact_pattern(expected_output, contact).merge(deleted: (expected_output[:deleted] || contact.deleted).to_s.to_bool)
   end
 
-  def index_contact_pattern(contact)
-    contact_pattern(contact).except(:avatar, :tags, :deleted, :other_emails)
+  def make_agent_pattern(expected_output = {}, agent_user)
+    agent = agent_user.agent
+    agent_pattern = {
+      available_since: agent.active_since,
+      available: agent.available,
+      created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
+      id: Fixnum,
+      occasional: expected_output[:occasional] || agent.occasional,
+      signature: expected_output[:signature] || agent.signature_html,
+      ticket_scope: expected_output[:ticket_scope] || agent.ticket_permission,
+      updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
+      role_ids: expected_output[:role_ids] || agent_user.role_ids,
+      group_ids: expected_output[:group_ids] || agent.group_ids
+    }
+    {
+      active: agent_user.active,
+      created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
+      email: agent_user.email,
+      job_title: agent_user.job_title,
+      language: agent_user.language,
+      last_login_at: agent_user.last_login_at,
+      mobile: agent_user.mobile,
+      name: agent_user.name,
+      phone: agent_user.phone,
+      time_zone: agent_user.time_zone,
+      updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
+      agent: agent_pattern
+    }
   end
 
-  def index_deleted_contact_pattern(contact)
-    index_contact_pattern(contact).merge(deleted: contact.deleted.to_s.to_bool)
+  def index_contact_pattern(contact)
+    keys = [:avatar, :tags, :other_emails, :deleted]
+    keys -= [:deleted] if contact.deleted
+    contact_pattern(contact).except(*keys)
   end
 
   def v1_contact_payload
@@ -103,7 +133,7 @@ module UsersTestHelper
   end
 
   def other_emails_for_test(contact)
-    contact.reload.emails - [contact.reload.email]
+    contact.user_emails.reject(&:primary_role).map(&:email)
   end
 
   def add_user_email(contact, email, options = {})

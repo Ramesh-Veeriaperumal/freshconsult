@@ -24,7 +24,7 @@ class Support::SearchV2::SolutionsController < SupportController
         es_params[:article_id]          = @article.id
         es_params[:article_status]      = Solution::Constants::STATUS_KEYS_BY_TOKEN[:draft]
         es_params[:article_visibility]  = @article.user_visibility
-        es_params[:article_company_id]  = User.current.try(:company_id)
+        es_params[:article_company_id]  = User.current.try(:company_ids)
         es_params[:article_category_id] = current_portal.portal_solution_categories.map(&:solution_category_meta_id)
 
         es_params[:size]                = @size
@@ -35,7 +35,7 @@ class Support::SearchV2::SolutionsController < SupportController
     def initialize_search_parameters
       super
       @klasses        = ['Solution::Article']
-      @article        = current_account.solution_articles.find(params[:article_id])
+      @article        = current_account.solution_articles.where(:parent_id => params[:article_id], :language_id => Language.current.id).first
       @no_render      = true
       @container      = params[:container]
       @search_context = :portal_related_articles

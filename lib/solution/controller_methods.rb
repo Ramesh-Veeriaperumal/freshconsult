@@ -13,7 +13,7 @@ module Solution::ControllerMethods
 	end
 
 	def sanitize_item_id
-    params[item][:id] = params[:id] if params[nscname].present?
+    params[nscname][:id] = params[:id] if params[nscname].present?
     params["#{nscname}_meta"][:id] = params[:id] if params["#{nscname}_meta"].present?
   end
 
@@ -47,7 +47,7 @@ module Solution::ControllerMethods
 	end
 
 	def set_modal
-		@modal = true if request.xhr?
+		@modal = true if request.xhr? && request.headers['X-PJAX'].nil?
 	end
 
 	def post_response(meta, object)
@@ -128,4 +128,23 @@ module Solution::ControllerMethods
 		end
 	end
 
+	def set_parent_for_old_params
+		return unless params[nscname].present?
+		api_parent_key = "#{parent_model}_id".to_sym
+		params[nscname][api_parent_key] ||= params[api_parent_key]
+		parent = current_account.send("solution_#{parent_model}_meta").find_by_id(params[nscname][api_parent_key])
+		params[nscname].delete(api_parent_key) if parent.blank?
+		return if (parent.present? || (action == :update))
+		meta_class = "Solution::#{controller_name.classify}Meta".constantize
+		parent_error_response(meta_class.new, "#{controller_name.singularize}.#{api_parent_key}")
+  end
+
+	def parent_error_response(new_obj, error_key)
+		errors_hash = ActiveModel::Errors.new(new_obj)
+		errors_hash[error_key] = t("activerecord.errors.messages.invalid")
+		respond_to do |format|
+			format.xml  { render :xml => errors_hash, :status => :unprocessable_entity }
+			format.json  { render :json => errors_hash, :status => :unprocessable_entity }
+		end
+	end
 end

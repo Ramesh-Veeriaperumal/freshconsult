@@ -33,7 +33,7 @@
           <%=render :partial =>"reports/timesheet_reports/time_sheets_metric.html.erb", :locals => {:timesheet_data => time_sheet_data, :old_timesheet_data => old_time_sheet_data, :activity_data_hash_var => activity_data_hash } %>
         </div>
       </div>
-      <% grp_data = Helpdesk::TimeSheet.group_by_options.collect {|grp| grp[1] if !(headers.include?(grp[1])) } %>
+      <% grp_data = [params[:group_by] ? params[:group_by].to_sym : Helpdesk::TimeSheet.group_by_options.first[1]]%>
       <div class="row-fluid control-group">
         <div class="vertical-alignment">
           <strong><%=t('helpdesk.time_sheets.group_by')%>: </strong>
@@ -46,7 +46,7 @@
         <table class = "table-print-pdf" width="100%">
           <thead>
             <tr style="text-align:left">
-              <%colspan = 8%>
+              <%colspan = headers.length-1%>
               <% headers.each do |header| %>
                 <% concat content_tag :th, h(Helpdesk::TimeSheet.report_list[header]), :class => header %>
               <% end %>

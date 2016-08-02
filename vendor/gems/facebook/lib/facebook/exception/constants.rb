@@ -10,8 +10,9 @@ module Facebook
       USER_RATE_LIMIT          = 17
       PERMISSION_ERROR         = [200, 299]
       IGNORED_ERRORS           = [230, 275]
-      ERROR_MESSAGES           = {:permission_error => "manage_pages",  :auth_error => "impersonate" }
-      
+      ERROR_MESSAGES           = {:permission_error => "manage_pages",  :auth_error => "impersonate",  :deleted_access_token => "access token" }
+      PERMISSION_MSG           = "permission"
+      SERVICE_UNAVAILABLE      = "service unavailable"
     end
   end
 end

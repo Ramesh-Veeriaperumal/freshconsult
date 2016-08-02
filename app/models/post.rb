@@ -80,7 +80,6 @@ class Post < ActiveRecord::Base
   }
 
   attr_accessor :request_params, :portal
-
   
   def to_xml(options = {})
     options[:except] ||= []
@@ -171,6 +170,23 @@ class Post < ActiveRecord::Base
 
   def topic_url
     Rails.application.routes.url_helpers.support_discussions_topic_url(topic, :host => account.host)
+  end
+
+  def to_rmq_json(keys,action)
+    post_identifiers
+    #destroy_action?(action) ? post_identifiers : return_specific_keys(post_identifiers, keys)
+  end
+
+  def post_identifiers
+    @rmq_post_identifiers ||= {
+      "id"          =>  id,
+      "user_id"     =>  user_id,
+      "topic_id"    =>  topic_id,
+      "forum_id"    =>  forum_id,
+      "account_id"  =>  account_id,
+      "published"   =>  published,
+      "answer"      =>  answer,
+    }
   end
 
 end

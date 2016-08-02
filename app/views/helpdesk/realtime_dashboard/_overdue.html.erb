@@ -1,0 +1,61 @@
+<div data-gs-x="<%= x %>" data-gs-y="<%= y %>" data-gs-width="<%= width %>" data-gs-height="<%= height %>" class="grid-stack-item widget overdue_widget">
+	<div class="grid-stack-item-content widget-inner">
+			<div class="metric-head">
+					<div class="widget-title pull-left">Overdue</div>
+					<!--
+					<div class="controls pull-right">
+						<i class="ficon-pencil icons tooltip fsize-16" data-placement="above" data-original-title="Edit" twipsy-content-set="true"
+						href="#widget-overdue-edit" 
+						rel="freshdialog" 
+						data-backdrop="static"
+						data-show-close="false"
+						data-submit-label="Update" 
+						data-width="400"
+						></i>
+						<i class="ficon-refresh icons tooltip fsize-16" data-placement="above" data-original-title="Refresh" twipsy-content-set="true"></i>
+					</div> -->
+					<div class="clear"></div>
+			</div>
+			<div class="widget-content">
+				<!--<div class="indicator">
+					<i class="ficon-db-calendar"></i>
+				</div> -->
+				<h2 class="value">
+				</h2>
+			</div>		
+	</div>
+</div>
+<!--
+<div id="widget-overdue-edit" class="hide row-fluid">
+	<div class="dialog_container">
+			<div class="widget-edit">
+			      <div class="form">
+			      	 <div class="form-row">
+			            <label>Title</label>
+			            <div class="field">
+			               <input class="title" type="text" />
+			            </div>
+			         </div>
+			         <div class="form-row">
+				         <div class="message">Critical Limits</div>
+				     </div>
+			         <div class="form-row inline">
+			         		<label class="text-right">Agents</label>
+            				<div class="field">
+            					<input type="text">
+            				</div>
+            				<label class="text-right">Supervisors</label>
+            				<div class="field">
+            					<input type="text">
+            				</div>
+			         </div>
+			      </div>
+			</div>
+	</div>
+</div>
+-->
+<script type="text/javascript">
+	jQuery('body').one('assetLoaded.fjax', function() {
+		RealtimeDashboard.Widgets.OverDue.init();
+	});
+</script>

@@ -33,8 +33,8 @@
           <% } %>
         </li>
         <li class="help dot ttl"><%= translate.get('help_and_support') %></li>
-        <li class="help dot"><a href="mailto:support@freshdesk.com">support@freshdesk.com</a></li>
-        <li class="help"><a href="https://support.freshdesk.com" target="_blank">support.freshdesk.com</a></li>
+        <li class="help dot"><a href="mailto:<%= contact_details["support_email"] %>"> <%= contact_details["support_email"] %> </a></li>
+        <li class="help"><a href="<%= contact_details["support_url"] %>" target="_blank"> <%= contact_details["support_url"] %> </a></li>
       </ul>
     </div>
 

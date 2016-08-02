@@ -136,6 +136,11 @@ class Freshfone::CallActions
     call.meta.update_external_transfer_call_response(number, response) if external_transfer?
   end
 
+  def cancel_browser_agents(call)
+    call_meta = call.meta
+    call_meta.cancel_browser_agents if call_meta.present?
+  end
+
   def handle_failed_incoming_call(call, agent_id)
     call_meta = call.meta
     return if call_meta.blank?
@@ -263,10 +268,6 @@ class Freshfone::CallActions
 			users_scoper.find(:first, :conditions => ['phone = ? or mobile = ?',phone_number, phone_number], :order => "deleted ASC, name ASC")
 		end
 
-		def users_scoper
-			current_account.all_users
-		end
-
     def telephony
       @telephony ||= Freshfone::Telephony.new params, current_account, current_number
     end
@@ -294,12 +295,9 @@ class Freshfone::CallActions
       meta.save!
     end
 
-  def search_customer
-    return search_customer_with_id(params[:customer_id]) if params[:customer_id].present?
-    search_customer_with_number(called_number)
-  end
-
-  def search_customer_with_id(customer_id)
-    users_scoper.find(customer_id)
-  end
+    def search_customer
+      customer = search_customer_with_id(params[:customer_id]) if params[:customer_id].present?
+      return customer if customer.present?
+      search_customer_with_number(called_number)
+    end
 end

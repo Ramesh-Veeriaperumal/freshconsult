@@ -1,10 +1,13 @@
+<!-- Note: when any changes made to TICKET_FIELD_ELEMENTS PARTIAL in the future, 
+      please update the memcache key version. key_name :: COMPOSE_EMAIL_FORM  -->
 <% 
   default_field_order = [
       "default_priority", "default_status", 
       "default_source", "default_ticket_type", 
       "default_group", 
       "default_agent", 
-      "default_product"
+      "default_product",
+      "default_company"
   ]
 
   default_fields = []
@@ -20,11 +23,11 @@
       field_value = @ticket.send(field.field_name)
       field_label = t("ticket_fields.fields.#{field.name}")
     else
-      field_value = @ticket.send(field.name) unless @ticket.new_record?
+      field_value = @ticket.send(field.name) unless @ticket.new_record? and !params[:template_form]
       field_label = (field.label).html_safe
     end
     dom_type    = (field.field_type == "default_source") ? "dropdown" : field.dom_type
-    field_value = nested_ticket_field_value(@ticket, field) if(field.field_type == "nested_field") and !@ticket.new_record?
+    field_value = nested_ticket_field_value(@ticket, field) if (field.field_type == "nested_field") and (!@ticket.new_record? or params[:template_form])
     field_html = construct_new_ticket_element(form_builder, :helpdesk_ticket, 
                                           field, field_label, dom_type, 
                                           field.required, field_value, '', false, false)
@@ -37,7 +40,7 @@
     else
       custom_fields << field_html
     end
-    section_container += construct_new_section_fields(form_builder, field, false, @ticket, !@ticket.new_record?) if field.has_section?
+    section_container += construct_new_section_fields(form_builder, :helpdesk_ticket, field, false, @ticket, !@ticket.new_record?) if field.has_section?
   end
 end
 default_fields.sort! {|x,y| default_field_order.index(x.first) <=> default_field_order.index(y.first) }
@@ -52,11 +55,34 @@ default_fields.sort! {|x,y| default_field_order.index(x.first) <=> default_field
 <% end %>
 
 <%= javascript_tag do %>  
-  <% if !@ticket.new_record? and @ticket.ticket_status.deleted? %>
+  <% if (!@ticket.new_record? or params[:template_form]) and @ticket.ticket_status.deleted? %>
     jQuery("#helpdesk_ticket_status")
     .append('<option disabled="disabled" value = "<%= @ticket.status %>"> <%= @ticket.status_name %> </option>')
     .val("<%=@ticket.status%>")
   <% end %>
+
+  jQuery("#helpdesk_ticket_email").blur(function(){
+    var ticket_email = jQuery("#helpdesk_ticket_email").val();
+
+    jQuery.ajax({ url: "<%= helpdesk_commons_user_companies_path %>?email="+ticket_email,
+      success: function(data){
+        if(data != false){
+          jQuery('#helpdesk_ticket_company_id').empty();
+          for(var i=0; i<data.length; i++){ 
+            jQuery("<option/>").val(data[i][1]).html(data[i][0]).appendTo("#helpdesk_ticket_company_id");
+          }
+          jQuery('#helpdesk_ticket_company_id').val('').change();
+          jQuery('.default_company label').removeClass("company_field");
+          jQuery('.default_company').insertBefore(jQuery(".default_priority")).show();
+          jQuery('#helpdesk_ticket_company_id').removeAttr("disabled");
+        }else{
+          jQuery('.default_company').slideUp();
+          jQuery('#helpdesk_ticket_company_id').attr("disabled", true);
+        }
+      }
+    });
+  });
+
   // Need to make the code generic to handle the custom dropdown fields sections.
   jQuery("#helpdesk_ticket_ticket_type")
     .on("change", function(e){
@@ -70,7 +96,10 @@ default_fields.sort! {|x,y| default_field_order.index(x.first) <=> default_field
       }
   }).trigger('change');
 <% end %>
-  <%= render :partial => '/helpdesk/tickets/show/tags' %>
+
+<% values = params[:template_form] ? @template.template_data[:tags] : @ticket.tags.collect{|tag| tag.name}.join(',')
+%>
+<%= render :partial => "/helpdesk/tickets/remote_tags" , :locals => {:values => values }%>
 
 <% unless privilege?(:edit_ticket_properties) %>
   <%= javascript_tag do %> 

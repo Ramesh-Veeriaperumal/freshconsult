@@ -9,8 +9,8 @@ class ForumCategory < ActiveRecord::Base
   end
 
   def self.user_forums_condition
-    condition = "forum_categories.forum_visibility not in (#{Forum::VISIBILITY_KEYS_BY_TOKEN[:agents]},#{Forum::VISIBILITY_KEYS_BY_TOKEN[:company_users]})"
-    condition += " OR ( forum_visibility =#{Forum::VISIBILITY_KEYS_BY_TOKEN[:company_users]} AND customer_forums.customer_id = #{User.current.company.id})" if company_specific?(User.current)
+    condition = "forum_categories.forum_visibility not in (#{Forum::VISIBILITY_KEYS_BY_TOKEN[:agents]},#{Forum::VISIBILITY_KEYS_BY_TOKEN[:company_users]})"    
+    condition += " OR ( forum_visibility =#{Forum::VISIBILITY_KEYS_BY_TOKEN[:company_users]} AND customer_forums.customer_id in (#{User.current.company_ids_str}))" if company_specific?(User.current)
     condition
   end
 
@@ -45,6 +45,8 @@ class ForumCategory < ActiveRecord::Base
   before_create :set_default_portal
 
   before_destroy :set_destroy_activity_and_clear_cache
+
+  include RabbitMq::Publisher 
 
   def set_activity_new_and_clear_cache
     create_activity('new_forum_category')
@@ -132,6 +134,19 @@ class ForumCategory < ActiveRecord::Base
     self.portal_forum_categories.main_portal_category.first
   end
 
+  def to_rmq_json(keys,action)
+    forum_category_identifiers
+    #destroy_action?(action) ? forum_category_identifiers : return_specific_keys(forum_category_identifiers, keys)
+  end
+
+  def forum_category_identifiers
+    @rmq_forum_identifiers ||= {
+      "id"          =>  id,
+      "name"        =>  name,
+      "account_id"  =>  account_id
+    }
+  end
+  
   def set_default_portal
     self.portal_ids = [Account.current.main_portal.id] if self.portal_ids.blank?
   end

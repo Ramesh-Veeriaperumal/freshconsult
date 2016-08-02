@@ -60,6 +60,7 @@ class Solution::ArticleMeta < ActiveRecord::Base
 	after_commit ->(obj) { obj.send(:clear_cache) }, on: :destroy
 	after_commit ->(obj) { obj.send(:clear_cache) }, on: :create
 	after_commit ->(obj) { obj.send(:clear_cache_after_update) }, on: :update
+	after_commit :update_search_index, on: :update
 	after_find :deserialize_attr
 
 	after_save :set_mobihelp_solution_updated_time, :if => :valid_change?
@@ -174,5 +175,9 @@ class Solution::ArticleMeta < ActiveRecord::Base
 
 	def clear_cache_after_update
 		clear_cache if previous_changes['solution_folder_meta_id'].present?
+	end
+
+	def update_search_index
+		solution_articles.map(&:update_es_index) if previous_changes.keys.include?("solution_folder_meta_id")
 	end
 end

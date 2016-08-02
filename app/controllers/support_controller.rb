@@ -262,8 +262,19 @@ class SupportController < ApplicationController
     override_default_locale
   end
 
+  def agent?
+    current_user && current_user.agent?
+  end
+
+  def public_request?
+    current_user.nil?
+  end
+
   def redirect_to_locale
-    redirect_to request.fullpath.prepend("/#{Language.current.code}") if current_account.multilingual? && !facebook? && (params[:url_locale] != Language.current.code)
+    if current_account.multilingual? && !facebook? && (params[:url_locale] != Language.current.code)
+      flash.keep 
+      redirect_to request.fullpath.prepend("/#{Language.current.code}") 
+    end
   end
 
   def override_default_locale
@@ -286,9 +297,5 @@ class SupportController < ApplicationController
     render_404 and return if unscoped_fetch.blank?
     flash[:warning] = version_not_available_msg(controller_name.singularize)
     redirect_to support_home_path
-  end
-  
-  def agent?
-    current_user && current_user.agent?
   end
 end

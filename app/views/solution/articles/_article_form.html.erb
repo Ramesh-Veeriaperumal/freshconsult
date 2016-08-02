@@ -22,7 +22,8 @@
                   :maxlength => 240,
                   :id => :solution_article_title,
                   :value => (@article.new_record? ? @article.title : ''),
-                  :placeholder => title_placeholder('articles') %>
+
+                  :placeholder => (Account.current.multilingual? ? t("solution.articles.enter_version_name", :language_name => @language.name) : t('solution.solution_title')) %>
       
         </div>
       </div>
@@ -51,25 +52,37 @@
     <% end %>
     <input type="hidden" name="cancel_draft_changes" 
           value="1" id="cancel_draft_changes_input" disabled="disabled">
-    <hr />
-    <%= render	:partial => "/solution/shared/attachment_form",
-        :locals => { :attach_id => 'article', :nsc_param => "solution_article_meta[#{@language_scoper}]",
-          :original_attachments => { 
-            :cloud_files => active_attachments(:cloud_files, @article), 
-            :regular => active_attachments(:attachments, @article) }
-        } %>
+          <% if current_account.launched?(:multifile_attachments) %>
+            <%= render	:partial => "/solution/shared/multi_attachment_form",
+            :locals => { :attach_id => 'article', :nsc_param => 'solution_article',
+              :original_attachments => { 
+                :cloud_files => active_attachments(:cloud_files, @article), 
+                :regular => active_attachments(:attachments, @article) }
+            } %>
+            <% else %>
+              <%= render  :partial => "/solution/shared/single_attachment_form",
+              :locals => { :attach_id => 'article', :nsc_param => "solution_article_meta[#{@language_scoper}]",
+                :original_attachments => { 
+                  :cloud_files => active_attachments(:cloud_files, @article), 
+                  :regular => active_attachments(:attachments, @article) }
+              } %>
+            <% end %>
+    <% if is_application_installed?("screenr") %>
+      <div class="control-group">
+        <div class="controls">
+            <%= render :partial => "shared/screenr_recorder", :locals => { :location => "solution" } %>
+        </div>
+  
+      </div>
+    <% end %>
 
     <% if !@article.new_record? && @article_meta.solution_folder_meta.is_default? %>
       <div class="row-fluid select-folder">
         <div class="control-group">
           <%= f.label :solution_folder_meta_id, t('solution.folder'), :class => "control-label" %>
           <div class="controls">
-            <%= f.select :solution_folder_meta_id , 
-                  option_groups_from_collection_for_select( 
-                      current_account.solution_category_meta.includes(:primary_category, :solution_folder_meta => :primary_folder).reject(&:is_default), 
-                      :solution_folder_meta, :name, :id, :name, 
-                      @article_meta.solution_folder_meta_id
-                  ), 
+            <%= f.select :solution_folder_meta_id,
+                  grouped_options_for_select(grouped_options_for_folder_select, @article_meta.solution_folder_meta_id),
                   { :include_blank => true },
                   :class => "select2 span4 required",
                   :placeholder => t('solution.folders.choose_folder')

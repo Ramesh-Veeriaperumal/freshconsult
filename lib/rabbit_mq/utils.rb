@@ -23,19 +23,24 @@ module RabbitMq::Utils
 
   private
 
-  # Note: If message structure is changing here, make sure to check PostArchiveProcess file.
+  def subscriber_basic_message(model, action, uuid)
+    { 
+      "object"                =>  model,
+      "action"                =>  action,
+      "action_epoch"          =>  Time.zone.now.to_f,
+      "uuid"                  =>  uuid,
+      "actor"                 =>  User.current.try(:id).to_i,
+      "account_id"            =>  Account.current.id,
+      "shard"                 =>  shard_info,
+      "#{model}_properties"   =>  {}, 
+      "subscriber_properties" =>  {}        
+    }
+  end
+
   def publish_to_rabbitmq(exchange, model, action)
     if RABBIT_MQ_ENABLED
       uuid    =  generate_uuid
-      message = { 
-        "object"                    =>  model,
-        "action"                    =>  action,
-        "action_epoch"              =>  Time.zone.now.to_f,
-        "uuid"                      =>  uuid,
-        "account_id"                =>  (model.eql?('account') ? self.id : self.account_id),
-        "#{model}_properties"       =>  {}, 
-        "subscriber_properties"     =>  {}
-      }
+      message = subscriber_basic_message(model, action, uuid)
       key = ""
       RabbitMq::Keys.const_get("#{exchange.upcase}_SUBSCRIBERS").each { |f|
         valid = construct_message_for_subscriber(f, message, model, action)
@@ -57,6 +62,24 @@ module RabbitMq::Utils
       message["subscriber_properties"].merge!({ s => send("mq_#{s}_subscriber_properties", action) })
     end
     valid
+  end
+
+  def subscriber_manual_publish(model, action, options, uuid)
+    message = subscriber_basic_message(model, action, uuid)
+    MANUAL_PUBLISH_SUBCRIBERS.each { |f|
+      next if f == "activities" && !Account.current.features?(:activity_revamp)
+      if Account.current.features?(:countv2_writes)
+        next if f == "count" && model != "ticket"
+      else
+        next if f == "count"
+      end
+      message["#{model}_properties"].deep_merge!(send("mq_#{f}_#{model}_properties", action))
+      message["subscriber_properties"].merge!({ f => send("mq_#{f}_subscriber_properties", action)})
+    }
+    # Currently need options only for reports, so adding all options directly to reports
+    # TODO Need to change options as hash with subscriber name as key and modify the code as generic
+    message["subscriber_properties"]["reports"].merge!(options) if message["subscriber_properties"]["reports"].present?
+    message.to_json
   end
 
   #made this as a function, incase later we want to compress the data before sending
@@ -92,6 +115,10 @@ module RabbitMq::Utils
     DevNotification.publish(notification_topic, subj, message.to_json)
   end
 
+  def shard_info
+    ActiveRecord::Base.current_shard_selection.shard
+  end
+
   def handle_sidekiq_fail(uuid, exchange, message, key, exception)
     FailedHelpkitFeed.create(
       account_id: Account.current.id,
@@ -108,5 +135,5 @@ module RabbitMq::Utils
   end
 
   # Need this to invoke without AR objects
-  module_function :generate_uuid, :manual_publish_to_xchg
+  module_function :generate_uuid, :manual_publish_to_xchg, :handle_sidekiq_fail, :subscriber_basic_message
 end

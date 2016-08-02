@@ -32,15 +32,17 @@ module IntegrationServices
     def prepare_request
     end
 
-    def encode_path_with_params(path, params={})
-      [URI.escape(path),encode_params(params)].reject { |url_element| url_element.empty? }.join("?")
+    def encode_path_with_params(path, params={}, encode_path = true, encode_parameters = true)
+      url_path = encode_path ? URI.escape(path) : path
+      [url_path,encode_params(params, encode_parameters)].reject { |url_element| url_element.empty? }.join("?")
     end
 
-    def encode_params params = {}
-      (params || {}).collect { |k,v| "#{uri_escape(k)}=#{uri_escape(v)}"}.join("&")
+    def encode_params params = {}, encode_parameters
+      (params || {}).collect { |k,v| "#{uri_escape(k,encode_parameters)}=#{uri_escape(v,encode_parameters)}" }.join("&")
     end
 
-    def uri_escape element
+    def uri_escape element, escape = true
+      return element unless escape
       URI.escape(element.to_s,Regexp.new("[^#{URI::PATTERN::UNRESERVED}]"))
     end
 

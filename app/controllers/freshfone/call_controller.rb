@@ -83,27 +83,28 @@ class Freshfone::CallController < FreshfoneBaseController
 
   private
     def load_customer
-      if params[:customerId].present?
-        @user = current_account.all_users.find_by_id(params[:customerId])
-      else
-        @user = search_user_with_number(params[:PhoneNumber].gsub(/^\+/, ''))
+      @user ||= begin
+        if ongoing_call.present?
+          ongoing_call.customer
+        else
+          search_customer
+        end
       end
     end
 
-		def call_meta	
+		def call_meta
 	    #Yet to handle the scenario where multiple calls at the same time 
 	    #from the same number targeting different groups.
 			return if caller.blank?
-			call = current_account.freshfone_calls.ongoing_by_caller(caller.id).first
 			
-			if call.present?
-				call_data = { :number => call.freshfone_number.number_name,
-											:ringing_time => call.freshfone_number.ringing_time,
-											:transfer_agent => get_transfer_agent(call),
-											:group 	=> (call.group.present?) ? call.group.name : "",
+			if ongoing_call.present?
+				call_data = { :number => ongoing_call.freshfone_number.number_name,
+											:ringing_time => ongoing_call.freshfone_number.ringing_time,
+											:transfer_agent => get_transfer_agent(ongoing_call),
+											:group 	=> (ongoing_call.group.present?) ? ongoing_call.group.name : "",
 											:company_name => (@user.present? && @user.company_name.present?) ? @user.company_name : "",
 										}
-        call_data[:agent_conference] = agent_conference_meta(call) if agent_conference_launched?
+        call_data[:agent_conference] = agent_conference_meta(ongoing_call) if agent_conference_launched?
 			end
 			call_data
 		end
@@ -241,5 +242,15 @@ class Freshfone::CallController < FreshfoneBaseController
 			return {} if current_call.blank?
 			return freshfone_subscription.incoming_trial_warnings if current_call.incoming?
 			freshfone_subscription.outgoing_trial_warnings
+		end
+
+		def ongoing_call
+			@ongoing_call ||= current_account.freshfone_calls.ongoing_by_caller(caller.id).first if caller.present?
+		end
+
+		def search_customer
+			customer = search_customer_with_id(params[:customerId]) if params[:customerId].present?
+			return customer if customer.present?
+			search_user_with_number(params[:PhoneNumber].gsub(/^\+/, ''))
 		end
 end

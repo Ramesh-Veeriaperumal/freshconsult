@@ -991,4 +991,31 @@ if Integrations::Application.count == 0
     s.application_type = "infusionsoft"
   end
 
+  freshsales = Integrations::Application.seed(:name) do |s|
+    s.name = "freshsales"
+    s.display_name = "integrations.freshsales.label"
+    s.description = "integrations.freshsales.desc"
+    s.account_id = Integrations::Constants::SYSTEM_ACCOUNT_ID
+    s.listing_order = 41
+    s.options = { :direct_install => true,
+                  :auth_url => "/integrations/freshsales/new",
+                  :edit_url => "/integrations/freshsales/edit"
+                }
+    s.application_type = "freshsales"
+  end
+
+  fullcontact = Integrations::Application.seed(:name) do |s|
+    s.name = "fullcontact"
+    s.display_name = "integrations.fullcontact.label"
+    s.description = "integrations.fullcontact.desc"
+    s.account_id = Integrations::Constants::SYSTEM_ACCOUNT_ID
+    s.listing_order = 42
+    s.options = {:direct_install => true, 
+                 :auth_url => "/integrations/fullcontact/new",
+                 :edit_url => "/integrations/fullcontact/edit"
+                 }
+    s.application_type = "fullcontact"
+    s.dip = 3
+  end
+
 end

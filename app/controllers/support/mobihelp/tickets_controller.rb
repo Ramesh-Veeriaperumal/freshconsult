@@ -11,6 +11,7 @@ class Support::Mobihelp::TicketsController < SupportController
   before_filter :check_ticket_permissions, :only => [:show,:notes,:close]
   before_filter :pre_process_mobihelp_params, :only => [:create]
   skip_before_filter :check_day_pass_usage
+  skip_before_filter :redirect_to_locale
 
   def create
     status = false

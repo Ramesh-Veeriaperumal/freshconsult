@@ -46,6 +46,11 @@ class FlexifieldDef < ActiveRecord::Base
   def ff_alias_column_mapping
     @mapping ||= flexifield_def_entries.each_with_object({}) { |ff_def_entry, hash| hash[ff_def_entry.flexifield_alias] = ff_def_entry.flexifield_name }
   end
+
+  def boolean_ff_aliases
+    flexifield_column_hash =  self.account.flexifields.columns_hash
+    ff_alias_column_mapping.map { |key, value| key if flexifield_column_hash[value].type == :boolean }.compact
+  end
   
   def non_text_ff_aliases
     flexifield_def_entries.nil? ? [] : non_text_fields.map(&:flexifield_alias)                                                   
@@ -57,6 +62,10 @@ class FlexifieldDef < ActiveRecord::Base
   
   def non_text_ff_fields
     flexifield_def_entries.nil? ? [] : non_text_fields.map(&:flexifield_name)
+  end
+
+  def text_ff_fields
+    flexifield_def_entries.nil? ? [] : text_fields.map(&:flexifield_name)
   end
   
   def text_and_number_ff_fields
@@ -77,6 +86,10 @@ class FlexifieldDef < ActiveRecord::Base
   
   def non_text_fields
     flexifield_def_entries.select {|field| !TEXT_COL_TYPES.include?(field.flexifield_coltype)}
+  end
+
+  def text_fields
+    flexifield_def_entries.select {|field| TEXT_COL_TYPES.include?(field.flexifield_coltype)}
   end
 
   def text_and_number_fields

@@ -1,0 +1,24 @@
+<div data-gs-x="<%= x %>" data-gs-y="<%= y %>" data-gs-width="<%= width %>" data-gs-height="<%= height %>" class="grid-stack-item widget agent_received_resolved_widget">
+	<div class="grid-stack-item-content widget-inner">
+		<h3 class="widget-title multi">
+	        <%=t('helpdesk.realtime_dashboard.agent_received_resolved') %>
+	    </h3>
+	    <div class="widget-title-muted muted" rel="timestamp"></div>
+	    <div class="widget-content">
+  			<div id="agent_received_resolved">
+  				<div class="sloading loading-small loading-block"></div>
+  			</div>
+		 </div>
+	</div>
+</div>
+<script>
+  jQuery('body').one('assetLoaded.fjax', function() {
+   	 setTimeout(function(){
+   	 	new RealtimeDashboard.Widgets.AgentReceivedResolved(
+	   	 	'agent_received_resolved',
+	   	 	'agent_received_resolved',
+	   	 	 5
+   	 	).init();
+   	 },100);
+  });
+</script>

@@ -37,7 +37,7 @@
 			<% else %>
 				<div class="span6 solution_folder_meta_solution_category_meta">
 				<% selected_value = (@folder_meta && @folder_meta.solution_category_meta_id) || params[:category_id] %>
-				<%= f.select :solution_category_meta_id, current_account.solution_category_meta.includes(:primary_category).reject(&:is_default?).collect{|c|[c.name, c.id]}, 
+				<%= f.select :solution_category_meta_id, all_solution_categories.collect{|c|[c[:name], c[:id]]}, 
 						{ :selected => selected_value }, 
 						{ 
 							:class => "select2 required input-large", 
@@ -88,7 +88,3 @@
   </li>
   <%= dynamic_hidden_fields(:folder) %>
 </ul>
-<%= javascript_tag do %>
-	App.Solutions.AfterSave.bindCreateNew();
-<% end %>
-

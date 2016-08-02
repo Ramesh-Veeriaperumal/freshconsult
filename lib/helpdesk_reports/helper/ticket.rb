@@ -9,7 +9,7 @@ module HelpdeskReports::Helper::Ticket
   include HelpdeskReports::Helper::PlanConstraints
 
   VALIDATIONS = ["presence_of_params", "validate_inclusion", "validate_bucketing","validate_dates", "validate_time_trend",
-                  "validate_max_filters", "validate_max_multi_selects", "validate_group_by"]
+                  "validate_max_filters", "validate_max_multi_selects", "validate_group_by", "validate_agent_filter"]
 
   def filter_data
     show_options(DEFAULT_COLUMNS_ORDER, DEFAULT_COLUMNS_KEYS_BY_TOKEN, DEFAULT_COLUMNS_OPTIONS)
@@ -50,6 +50,7 @@ module HelpdeskReports::Helper::Ticket
     res = {report_type: report_type}
 
     if [:agent_summary, :group_summary].include?(report_type)
+        res.merge!(csv_export: pdf_export)
         group_ids, agent_ids = []
         param = @query_params[0]
         param[:filter].each do |f|
@@ -65,6 +66,8 @@ module HelpdeskReports::Helper::Ticket
         res.merge!(agent_ids: agent_ids.map{|agt_id| agt_id.to_i }) if !agent_ids.nil?
     elsif report_type == :glance
       res.merge!(pdf_export: pdf_export)
+    elsif report_type == :ticket_volume
+      res.merge!(date_range: @query_params[0][:date_range])
     end
     
     res   
@@ -257,14 +260,15 @@ module HelpdeskReports::Helper::Ticket
   # DO NOT ALLOW filters without group if current_user scope is group_ticket
   # DO NOT ALLOW filters without agent = current_user if scope is restricted
   def validate_scope
+    return if @filter_err.present?
     scope = Agent::PERMISSION_TOKENS_BY_KEY[User.current.agent.ticket_permission]
     case scope
     when :group_tickets
-      scoped_group_ids = current_user.agent.agent_groups.collect(&:group_id)
+      scoped_group_ids = User.current.agent.agent_groups.collect(&:group_id)
       scoped_group_ids.present? ? validate_filter("group_id", scoped_group_ids)
-                                : validate_filter("agent_id", [current_user.id])
+                                : validate_filter("agent_id", [User.current.id])
     when :assigned_tickets
-      validate_filter "agent_id", [current_user.id]
+      validate_filter "agent_id", [User.current.id]
     end
   end
 
@@ -294,6 +298,7 @@ module HelpdeskReports::Helper::Ticket
         passed_ids  = f["value"].split(",").map!{|id| id.to_i}
         allowed_ids = scoped_values & passed_ids
         f["value"]  = allowed_ids.join(",")
+        @filter_err = t('helpdesk_reports.no_data_to_display_msg') unless f["value"].present?
       end
     end
   end
@@ -316,7 +321,11 @@ module HelpdeskReports::Helper::Ticket
   end
   
   def valid_group_by? column
-    column.starts_with?("ff") or TICKET_FIELD_NAMES.include?(column.to_sym)
+    if column.to_sym == :agent_id
+      !hide_agent_reporting?
+    else
+      column.starts_with?("ff") or TICKET_FIELD_NAMES.include?(column.to_sym)
+    end
   end
   
   def pdf_export_config
@@ -338,4 +347,12 @@ module HelpdeskReports::Helper::Ticket
     export ? Time.at(time.to_i).in_time_zone(Account.current.time_zone) : time.to_i
   end
 
+  def validate_agent_filter param
+    conditions = (params[:filter]||{}).collect{|filter| filter[:condition]}
+    return ["Invalid filter agent_id"] if (conditions.include?("agent_id") && hide_agent_reporting?)
+  end
+
+  def redirect_if_invalid_request
+    render_charts if @filter_err.present?
+  end
 end

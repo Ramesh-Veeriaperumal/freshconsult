@@ -2,6 +2,7 @@ helpdesk:
   initializers:
     - mri2.1_patches
     - rails3_patches
+    - mail_message_patch
     - authlogic_patch
     - helpdesk
     - api_initializer
@@ -50,6 +51,7 @@ helpdesk:
     - resque
     - riak
     - ruby193_monkey_patches
+    - core_ext/active_record/relation
     - secret_token
     - session_store
     - sidekiq
@@ -81,4 +83,6 @@ helpdesk:
     - zero_downtime_migration
     - action_mailer_log_subscriber
     - email_controller_log_subscriber
+    - thrift
+    - sendgrid_webhook_config
 

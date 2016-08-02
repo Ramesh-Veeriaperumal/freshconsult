@@ -6,9 +6,9 @@ module UploadedImagesControllerMethods
 
   def create
     @image = current_account.attachments.build({
-      :description => "public",
-      :content => params[:image][:uploaded_data],
-      :attachable_type => "#{cname} Upload"
+      :description      => "public",
+      :content          => params[:image][:uploaded_data],
+      :attachable_type  => "#{cname} Upload"
     })
 
     respond_to do |format|
@@ -26,12 +26,12 @@ module UploadedImagesControllerMethods
        attr_accessor :content_type, :original_filename
     end
     data_f.content_type = splited_dataURI[:type]
-    data_f.original_filename = "blob" + params["_uniquekey"] + "." + splited_dataURI[:extension]
+    data_f.original_filename = "blob" + CGI.escapeHTML(params["_uniquekey"]) + "." + splited_dataURI[:extension]
    
     @image = current_account.attachments.build({
-      :description => "public",
-      :content => data_f,
-      :attachable_type => "#{cname} Upload"
+      :description      => "public",
+      :content          => data_f,
+      :attachable_type  => "#{cname} Upload"
     })
 
     respond_to do |format|
@@ -58,20 +58,20 @@ module UploadedImagesControllerMethods
     end
 
     def success_response
-      { :filelink => @image.content.url, :fileid => @image.id, :uniquekey => params["_uniquekey"] }
+      { :filelink => @image.content.url, :fileid => @image.id, :uniquekey => CGI.escapeHTML(params["_uniquekey"]) }
     end
 
     def error_response
-      { :error => @image.errors.blank? ? [] : @image.errors.full_messages.to_sentence, :uniquekey => params["_uniquekey"] }
+      { :error => @image.errors.blank? ? [] : @image.errors.full_messages.to_sentence, :uniquekey => CGI.escapeHTML(params["_uniquekey"]) }
     end
 
     def check_image?
       unless @image.image? && @image.valid_image?
         @image.errors.clear
         @image.errors.add('ERROR :', 'Image Dimensions are larger than Expected, Please send them as attachments instead')
-        return false
+        false
       else
-        return true
+        true
       end
     end
 

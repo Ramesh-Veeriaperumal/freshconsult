@@ -102,7 +102,7 @@ module Helpkit
       r.define_rule( :match => "^/(support\/mobihelp)/.*", :type => :fixed, :metric => :rph, :limit => 300,:per_ip => true ,:per_url => true )
       r.define_rule( :match => "^/(support(?!\/(theme)))/.*", :type => :fixed, :metric => :rph, :limit => 1800,:per_ip => true ,:per_url => true )
       r.define_rule( :match => "^/(accounts\/new_signup_free).*", :type => :fixed, :metric => :rpd, :limit => 5,:per_ip => true)
-      r.define_rule( :match => "^/(public\/tickets)/.*", :type => :fixed, :metric => :rph, :limit => 30,:per_ip => true)
+      r.define_rule( :match => "^/(public\/tickets)/.*", :type => :fixed, :metric => :rpm, :limit => 10,:per_ip => true)
       store = Redis.new(:host => RateLimitConfig["host"], :port => RateLimitConfig["port"],:timeout => 0.5)
       r.set_cache(store) if store.present?
     end
@@ -131,7 +131,8 @@ module Helpkit
     # TODO-RAILS3 need to rewritten all lib files and adding requires if need to make it thread safe
     # http://hakunin.com/rails3-load-paths
     config.autoload_paths += Dir["#{config.root}/lib/"]
-    config.autoload_paths += Dir["#{config.root}/api/**/*"]
+    # http://blog.arkency.com/2014/11/dont-forget-about-eager-load-when-extending-autoload/
+    config.eager_load_paths += Dir["#{config.root}/api/**/*"]
     # config.autoload_paths += %W(#{config.root}/api/app/validators/)
     # make sure to uncomment this for sidekiq workers
     config.eager_load_paths += Dir["#{config.root}/lib/"] unless Rails.env.development?

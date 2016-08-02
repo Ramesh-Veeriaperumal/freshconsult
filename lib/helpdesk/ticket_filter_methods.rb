@@ -199,7 +199,7 @@ module Helpdesk::TicketFilterMethods
     if Account.current.launched?(:es_count_reads)
       TicketsFilter.es_filter_count(selector, unresolved)
     else
-      filter = TicketsFilter.filter(filter(selector), current_user, current_account.tickets.permissible(current_user))
+      filter = TicketsFilter.filter(filter(selector), User.current, Account.current.tickets.permissible(User.current))
       Sharding.run_on_slave do
         if unresolved
           if Account.current.launched?(:force_index_tickets)

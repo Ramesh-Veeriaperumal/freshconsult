@@ -10,7 +10,7 @@ defaults: &defaults
     - [select_all_batcher]
     - [freshfone_notifications]
     - [freshfone_node]
-    - [livechat_queue]
+    - [livechat_worker]
     - [freshfone_trial_worker]
     - [natero_worker]
     - [merge_contacts]
@@ -39,6 +39,7 @@ defaults: &defaults
     - [rabbitmq_publish]
     - [plan_change]
     - [update_tickets_company]
+    - [update_all_callbacks]
     - [reports_no_activity]
     - [es_alias_queue]
     - [es_index_queue]
@@ -82,6 +83,7 @@ defaults: &defaults
     - [bulk_ticket_actions]
     - [bulk_ticket_reply]
     - [api_webhook_rule]
+    - [installed_app_business_rule]
     - [premium_dispatcher]
     - [dispatcher]
     - [trial_dispatcher]
@@ -112,6 +114,11 @@ defaults: &defaults
     - [scheduled_reports]
     - [scheduled_reports_cleanup]
     - [account_info_to_dynamo]
+    - [parallel_report_exports]
+    - [count_es_queue]
+    - [clear_moderation_records]
+    - [empty_moderation_trash]
+    - [sendgrid_domain_updates]
 
 development:
   <<: *defaults

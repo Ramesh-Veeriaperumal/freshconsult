@@ -125,6 +125,7 @@ module AccountCleanup
     def perform_es_deletion(account_id)
       es_delete(account_id, Helpdesk::Ticket, @ticket_ids)
       es_delete(account_id, Helpdesk::Note, @note_ids)
+      manual_publish_subscribers(account_id, Helpdesk::Ticket, @ticket_ids)
     end
 
     def es_delete(account_id, klass, object_ids)
@@ -137,6 +138,15 @@ module AccountCleanup
       query_params  = { :source => query.to_hash[:query].to_json }
       request_url   = [Search::EsIndexDefinition.index_url(index_alias, account_id)].join('/')    
       response = Tire::Configuration.client.delete "#{request_url}/_query?source=#{Tire::Utils.escape(query.to_hash[:query].to_json)}"
+      end
+    end
+
+    def manual_publish_subscribers(account_id, klass, object_ids)
+      key = Account.current.features?(:countv2_writes) ? "RMQ_CLEANUP_TICKET_KEY" : "RMQ_GENERIC_TICKET_KEY"
+      Account.current.tickets.where(id:object_ids).find_in_batches(:batch_size => 300) do |tickets|
+        tickets.each do |t|
+          t.manual_publish_to_rmq("destroy", RabbitMq::Constants.const_get(key), {:manual_publish => true})
+        end
       end
     end
     
