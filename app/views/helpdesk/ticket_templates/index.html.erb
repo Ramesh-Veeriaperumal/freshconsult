@@ -66,7 +66,7 @@
 
       jQuery.selectall('#select-all-template', '.select-template');
       jQuery(".select-template, #select-all-template").on('change', checkSelectStatus);
-      jQuery(document).on('ready', checkSelectStatus);
+      jQuery(document).ready(checkSelectStatus);
       function checkSelectStatus(){
         var length  = jQuery(".select-template:checked").length;
         if(length){
