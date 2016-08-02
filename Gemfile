@@ -61,12 +61,13 @@ gem "authlogic", "~> 3.4.2"
 gem "request_store", "~> 1.0"
 gem "httparty", "0.10.0"
 gem "omniauth", "1.2.2"
-gem "omniauth-oauth"
+gem "omniauth-oauth", "1.1.0"
+gem "oauth", "0.4.5"
 gem "tzinfo", "~> 0.3.29"
 gem 'rails_autolink', '1.1.6'
 
 gem "omniauth-oauth2", "1.0"
-gem "omniauth-openid"
+gem "omniauth-openid", "1.0.1"
 # TODO-RAILS3 need check are we still using this
 gem "omniauth-google", "1.0.2"
 gem "omniauth-google-oauth2", "0.1.13"

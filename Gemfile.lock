@@ -830,7 +830,7 @@ GEM
     newrelic_rpm (3.9.9.275)
     nokogiri (1.5.11)
     nori (2.6.0)
-    oauth (0.5.1)
+    oauth (0.4.5)
     oauth2 (0.5.2)
       faraday (~> 0.7)
       multi_json (~> 1.0)
@@ -1258,6 +1258,7 @@ DEPENDENCIES
   mysql2 (~> 0.3.0)
   namae (= 0.8.4)
   newrelic_rpm (= 3.9.9.275)
+  oauth (= 0.4.5)
   oily_png (= 1.1.1)
   omniauth (= 1.2.2)
   omniauth-box2 (~> 0.0.1)
@@ -1266,9 +1267,9 @@ DEPENDENCIES
   omniauth-google (= 1.0.2)
   omniauth-google-oauth2 (= 0.1.13)
   omniauth-mailchimp (= 1.0.3)
-  omniauth-oauth
+  omniauth-oauth (= 1.1.0)
   omniauth-oauth2 (= 1.0)
-  omniauth-openid
+  omniauth-openid (= 1.0.1)
   omniauth-quickbooks (= 0.0.2)
   omniauth-salesforce!
   open_id_authentication!
