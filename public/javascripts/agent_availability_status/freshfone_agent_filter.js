@@ -210,8 +210,8 @@ window.App.Freshfoneagents = window.App.Freshfoneagents || {};
     },
     
     updateNoOfAgents: function(){      
-          $("#accepting_count").html(this.AvailableAgentList.length);
-          $("#not_accepting_count").html(this.UnavailableAgentList.length);
+          $("#accepting_count").html(this.AvailableAgentList.size());
+          $("#not_accepting_count").html(this.UnavailableAgentList.size());
     },
     checkList: function(list_size,title_class,tab_id){
         if(list_size==0){ 
