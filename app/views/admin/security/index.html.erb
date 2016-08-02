@@ -331,6 +331,8 @@
           $(this).find(".advanced-policies").removeAttr('checked');
           $(this).find("#minimum-characters").val('');
           $(this).find("#password-expiry").val('');
+          if($(this).find("#session-expiry"))
+            $(this).find("#session-expiry").val('');
           $(this).find("#password-history").val('');
         }
       });

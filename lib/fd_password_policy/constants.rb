@@ -3,7 +3,7 @@ module FDPasswordPolicy::Constants
   PASSWORD_POLICIES = YAML.load_file(File.join(Rails.root, 'config', 'password_policies.yml'))[:policies]
   POLICIES_BY_NAME = PASSWORD_POLICIES.keys
 
-  DEFAULT_PASSWORD_POLICIES = [:minimum_characters, :cannot_contain_user_name, :password_expiry]
+  DEFAULT_PASSWORD_POLICIES = [:minimum_characters, :cannot_contain_user_name, :password_expiry, :session_expiry]
 
   CONFIG_REQUIRED_POLICIES = [:minimum_characters, :cannot_be_same_as_past_passwords, :password_expiry, :session_expiry]
 
@@ -11,7 +11,7 @@ module FDPasswordPolicy::Constants
 
   DEFAULT_CONFIGS = {
     "minimum_characters" => "8",
-    "session_expiry" => "90",
+    "session_expiry" => NEVER,
     "password_expiry" => NEVER,
     "cannot_be_same_as_past_passwords" => "3"
   }
