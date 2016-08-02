@@ -16,7 +16,7 @@ JSON.generate(@items.map do |ticket_field|
     created_at: ticket_field.created_at.try(:utc),
     updated_at: ticket_field.updated_at.try(:utc)
   }
-  response_hash.merge!(choices: ticket_field.ticket_field_choices) if ticket_field.ticket_field_choices.present?
+  response_hash.merge!(choices: ticket_field.ticket_field_choices_by_id) if ticket_field.ticket_field_choices_by_id.present?
   response_hash.merge!(portal_cc: ticket_field.portal_cc) if ticket_field.default_requester?
   response_hash.merge!(portal_cc_to: ticket_field.portalcc_to) if ticket_field.default_requester?
   if ticket_field.field_type == 'nested_field'
@@ -36,7 +36,7 @@ JSON.generate(@items.map do |ticket_field|
     response_hash.merge!(nested_ticket_fields: nested_ticket_fields)
   end
   if ticket_field.has_section?
-    sections =  ticket_field.picklist_values.includes(:section).map(&:section).compact.uniq.map do |section|
+    sections =  ticket_field.picklist_values.map(&:section).compact.uniq.map do |section|
       {
         id: section.id,
         label: section.label,
@@ -47,11 +47,7 @@ JSON.generate(@items.map do |ticket_field|
             ticket_field_id: sf.ticket_field_id
           }
         end,
-        picklist_mapping: section.section_picklist_mappings.includes(:picklist_value).map(&:picklist_value).map do |pv|
-          { 
-            "#{pv.id}" => pv.value 
-          }
-        end
+        picklist_mapping_ids: section.section_picklist_mappings.map(&:picklist_value).map(&:id)
       }
     end
     response_hash.merge!(sections: sections)

@@ -61,4 +61,57 @@ class TicketFieldDecorator < ApiDecorator
                    []
                  end
   end
+
+  def ticket_field_choices_by_id
+    @choices_by_id ||= case record.field_type
+      when 'custom_dropdown'
+        choices_by_id(Hash[record.picklist_values.map { |pv| [pv.id, pv.value] }])
+      when 'default_priority'
+        choices_by_id(TicketConstants.priority_list)
+      when 'default_source'
+        choices_by_id(TicketConstants.source_list)
+      when 'nested_field'
+        nested_field_choices_by_id(record.picklist_values)
+      when 'default_status'
+        Helpdesk::TicketStatus.status_objects_from_cache(Account.current).map do|status|
+          {
+            :id => status.status_id,
+            :value => Helpdesk::TicketStatus.translate_status_name(status, 'name'),
+            :customer_display_value => Helpdesk::TicketStatus.translate_status_name(status, 'customer_display_name')
+          }
+        end
+      when 'default_ticket_type'
+        choices_by_id(Hash[Account.current.ticket_types_from_cache.map { |tt| [tt.id, tt.value] }])
+      when 'default_agent'
+        choices_by_id(Hash[Account.current.agents_details_from_cache.map { |a| [a.id, a.name] }])
+      when 'default_group'
+        choices_by_id(Hash[Account.current.groups_from_cache.map { |g| [g.id, CGI.escapeHTML(g.name)] }])
+      when 'default_product'
+        choices_by_id(Hash[Account.current.products_from_cache.map { |p| [p.id, CGI.escapeHTML(p.name)] }])
+      else
+        []
+    end
+  end
+
+  private
+
+    def nested_field_choices_by_id(pvs)
+      pvs.collect { |c| 
+        {
+          :id => c.id,
+          :value => c.value,
+          :choices => nested_field_choices_by_id(c.sub_picklist_values)
+        }
+      }
+    end
+
+    def choices_by_id(list)
+      list.map { |k, v|
+        {
+          :id => k,
+          :value => v
+        }
+      }
+    end
+
 end
