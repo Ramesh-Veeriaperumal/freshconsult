@@ -163,7 +163,18 @@
 					$(current_ele).append($(this).clone());
 			});
 
-			initialize ? $(current_ele).val(time[ref]) : $(current_ele).val(current_val);
+            // removed on jquery migration
+			// initialize ? $(current_ele).val(time[ref]) : $(current_ele).val(current_val);
+			
+			var val;
+			if(initialize) {
+				val = (time[ref]) ? time[ref] : current_val;
+			} else {
+				val = current_val;
+			}
+			
+            $(current_ele).val(val);
+
 			generate_select($('#select_' + type + '_time_' + next_ele), 
 											initialize);
 		}
