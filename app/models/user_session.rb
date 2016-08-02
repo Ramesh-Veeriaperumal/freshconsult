@@ -83,6 +83,7 @@ class UserSession < Authlogic::Session::Base
   password_field(:password)
 
   def reset_persistence_token
+    return if self.record.nil?
     self.record.reset_persistence_token! if self.web_session and Account.current and Account.current.features_included?(:single_session_per_user)
   end
 
