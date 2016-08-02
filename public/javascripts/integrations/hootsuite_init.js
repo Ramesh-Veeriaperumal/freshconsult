@@ -79,7 +79,7 @@
           },1000);
       });
 
-      $('.freshdesk_quote').live('click', function(){
+      $(document).on('click', '.freshdesk_quote',  function(){
         var _container = jQuery(this).parents('.details');
         var _fd_quote = jQuery(this);
         if (_fd_quote.data('remoteQuote')){

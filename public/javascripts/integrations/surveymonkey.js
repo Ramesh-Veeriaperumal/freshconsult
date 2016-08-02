@@ -76,7 +76,7 @@ SurveyMonkey.prototype = {
 			jQuery(this).find("option[selected=selected]").removeAttr("selected");
 
 			if(selected_survey_id !=null || selected_survey_id !="") {
-				jQuery(this).find("option[value='"+selected_survey_id+"']").attr("selected","selected");
+				jQuery(this).find("option[value='"+selected_survey_id+"']").prop("selected",true);
 			}
 
 			jQuery(this).parents(".m-survey-row").find(".survey_id").val(selected_survey_id);
@@ -332,7 +332,7 @@ SurveyMonkey.prototype = {
 	validate_group: function() {
 		jQuery("select.group_list").map( function() {
 			if (jQuery(this).val() != "") {
-				jQuery("select.group_list").not(this).find("option[value='" + jQuery(this).val() + "']").attr('disabled', 'disabled').addClass("disabled");
+				jQuery("select.group_list").not(this).find("option[value='" + jQuery(this).val() + "']").prop('disabled', true).addClass("disabled");
 			} else {
 				jQuery(this).val(null);
 			}

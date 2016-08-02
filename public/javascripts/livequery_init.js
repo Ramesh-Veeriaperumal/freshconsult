@@ -14,6 +14,26 @@ $('.menuselector').livequery(
 		$(this).menuSelector('destroy')
 	}
 );
+$('.tooltip').livequery(
+	function(){
+		$(this).twipsy();
+	}
+);
+$(".full-width-tooltip").livequery(
+	function(){
+		$(this).twipsy({
+			template: '<div class="twipsy-arrow"></div><div class="twipsy-inner big"></div>'
+		});
+	}
+);
+$(".form-tooltip").livequery(
+	function(){
+		$(this).twipsy({
+		     	trigger: 'focus',
+        			template: '<div class="twipsy-arrow"></div><div class="twipsy-inner big"></div>'
+		    });
+	}
+);
 
 $("a[rel=click-popover-below-left]").livequery(
 	function(){
