@@ -1,0 +1,79 @@
+<!-- multifile -->
+<% 
+   attach_id ||= "ticket" 
+   nsc_param = nsc_param || "helpdesk_ticket"
+   original_attachments ||= {:regular => [], :cloud_files => []}
+   max_attachment ||= nil
+   max_size ||= 15
+   forward ||= false
+   note ||= false;
+   template ||= false;
+   %>
+<div class="attachmentPanel">
+<div class="attach-wrapper" id="attachment-type">
+   <div class="file_dropzone" id="file_dropzone_<%=session[:multiple_list]%>" style="display: none">
+      <h3 class="dropzone-text lead text-center pt20 mt10">Drop files here</h3>
+   </div>
+   <div class="m0">
+      <% if cloud_files_installed? and (@ticket.present? ? !@ticket.ecommerce? : true)  %>
+      <div class="add_attachment" id="trigger_attachment">
+         <div class="dropdown dropup"
+            >
+            <a class="dropdown-toggle attach-link" data-toggle="dropdown"  href="#">
+               <div class="attachment-icon pull-left text-center tooltip" data-icon-count=<%=session[:multiple_list] %> data-integration=true title="<%= I18n.t('multifile_attachments.label')%>"> <i class="ficon-attachment"></i></div>
+            </a>
+            <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+               <li class="portal-attach">
+                  <a data-file-id="<%=attach_id%>" href="javascript:void(0)" class="attach-link-wrap">
+                     <%=t('attach_files')%>
+                     <div class="cloud_hidden_upload">
+                        <input id="fileupload-form-<%=session[:multiple_list]%>" class="fileupload-form" type="file" name="file"  data-url="/helpdesk/attachments/1/create_attachment" data-multifile-enabled=false data-multifile-count=<%=session[:multiple_list]%> multiple />
+                     </div>
+                  </a>
+               </li>
+               <% get_enabled_cloud_files_app.each do |c_f| %>
+               <%= render :partial => "integrations/applications/#{c_f}", :formats => [:html], :locals => {:attach_id => attach_id} %>
+               <% end %>
+            </ul>
+         </div>
+         <!-- Attachement Names -->
+         <div class="attachment-names pull-left pl20" data-note=<%=note%>>
+            <div class="attachment-limit"  id="attach-limt-<%=session[:multiple_list]%>"> < 15 MB </div>
+            <input type="hidden" name="attachments_list" data-forward=<%=forward%> data-total-size=0 value="" data-input-id="<%=session[:multiple_list]%>">
+            <div class="existing-file-list" data-count=<%=session[:multiple_list]%>></div>
+            <div class="multiple-filelist multiple-filelist-<%= session[:multiple_list] %>" data-filelist-count=<%=session[:multiple_list] %>>
+            </div>
+         </div>
+      </div>
+      <% else %>      
+      <div class="add_attachment" id="trigger_attachment">
+         <div class="hidden_upload tooltip" title="<%= I18n.t('multifile_attachments.label')%>">
+            <input id="fileupload-form-<%=session[:multiple_list]%>" class="fileupload-form" type="file" name="file"  data-url="/helpdesk/attachments/1/create_attachment" data-multifile-enabled=false data-multifile-count=<%=session[:multiple_list]%> multiple />
+         </div>
+         <div class="attachment-icon pull-left text-center" data-icon-count=<%=session[:multiple_list] %>> <i class="ficon-attachment"></i></div>
+         <div class="attachment-names pull-left pl20" data-note=<%=note%>>
+            <div class="attachment-limit"  id="attach-limt-<%=session[:multiple_list]%>"> < 15 MB </div>
+            <input type="hidden" name="attachments_list" data-forward=<%=forward%> data-total-size=0 value="" data-input-id="<%=session[:multiple_list]%>">
+            <div class="existing-file-list" data-count=<%=session[:multiple_list]%>></div>
+            <div class="multiple-filelist multiple-filelist-<%= session[:multiple_list] %>" data-filelist-count=<%=session[:multiple_list] %>>
+            </div>
+         </div>
+      </div>
+      <% end %>    
+   </div>
+</div>
+<script type="text/javascript">
+   Helpdesk.MultipleFileUpload.init(<%=session[:multiple_list]%>);
+   Helpdesk.MultipleFileUpload.message = <%= I18n.t('multifile_attachments').to_json.html_safe %>;
+   jQuery("#fileupload-form"+<%=session[:multiple_list]%>).data("multifile-enabled",true);
+   // triggering event for first time
+   jQuery("body").on("click.initial","#fileupload-form-<%=session[:multiple_list]%>",function(e){
+      e.preventDefault();
+   });
+   jQuery("#fileupload-form-<%=session[:multiple_list]%>").trigger("click");
+   jQuery("body").off(".initial");
+   if(App.namespace == "helpdesk/tickets/compose_email") {
+    jQuery(".attach-wrapper").parent('div').removeClass('attachmentPanel').addClass('emailAttachmentPanel');
+   }
+</script>
+</div>

@@ -164,7 +164,6 @@
 						_name_div.slideUp()
 					}
 				}
-
 			if(email_path == "") return
 
 			if(ticket_email.isValidEmail()){

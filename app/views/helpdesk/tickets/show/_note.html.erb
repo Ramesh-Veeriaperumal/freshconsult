@@ -94,7 +94,7 @@ end
         <% if privilege?(:edit_note, note) %>
 					<%= link_to_function('', 
 								"jQuery('##{notedetails}').addClass('hide'); jQuery('##{edit_id}').show().trigger('afterShow')",
-								:class => "conv-action-icon conv-actions-edit tooltip", :title => t('edit')) if(note.note? && note.user && note.user.agent? && !note.reply_to_forward?) %>
+								:class => "conv-action-icon conv-actions-edit tooltip", :noteId => note.id , :title => t('edit')) if(note.note? && note.user && note.user.agent? && !note.reply_to_forward?) %>
         <% end %>
 		    </div>
 		    <% end %>

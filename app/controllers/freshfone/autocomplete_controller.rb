@@ -30,7 +30,9 @@ class Freshfone::AutocompleteController < ApplicationController
 	end
 
 	def load_requester_with_id
-		customer = current_account.all_users.find(params[:customer_id])
+		customer = current_account.all_users.where(id: params[
+			:customer_id]).where("(phone <> '') OR (mobile <> '')").first
+		return if customer.blank?
 		result = format_customer_result(customer)
 		respond_to do |format|
 			format.json { render json: result }

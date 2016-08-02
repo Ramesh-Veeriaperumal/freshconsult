@@ -1,27 +1,30 @@
-<div class="ticket-summary row-fluid pb5">
+<div class="ticket-summary row-fluid">
   <div class="sidebar-dropdown db-filter clear">
-    <% if current_account.features?(:custom_dashboard) %>
-      <div data-tabs="tabs">
-        <% if @manage_dashboard %>
-          <%= render :partial => "/helpdesk/realtime_dashboard/filter" %>
-        <% else %>
-          <h3 class="pull-left span3 lead"> <%= t("helpdesk.realtime_dashboard.ticket_summary")%> </h3>
-        <% end %>
-      </div>
-    <% else %>
-      <% unless current_account.dashboard_disabled? %>
-        <h3 class="pull-left span3 lead"> <%= t("helpdesk.realtime_dashboard.ticket_summary")%> </h3>
-      <% end %>
+    <div data-tabs="tabs">
+        <%= render :partial => "/helpdesk/realtime_dashboard/filter" %>
+        
+    </div>
+    <% if @type == 'standard' and current_user.privilege?(:view_reports) %>
+    <% unless current_account.dashboard_disabled? %>
+      <h3 class="pull-left lead ticket_summary_title"> <%= t("helpdesk.realtime_dashboard.ticket_summary")%> </h3>
     <% end %>
-    <% if current_user.privilege?(:view_reports) %>
       <div class="pull-right">
-        <a href="/helpdesk/unresolved_tickets" data-pjax="#body-container" class="unresolved-ticket-link pull-right"> <%= t('helpdesk.realtime_dashboard.unresolve_tickets')%> </a>
+        <a href="/helpdesk/dashboard/unresolved_tickets" data-pjax="#body-container" class="unresolved-ticket-link pull-right"> <%= t('helpdesk.realtime_dashboard.unresolve_tickets')%> </a>
       </div>
     <% end %>
   </div>
+  <% if @type == 'standard' %>
     <% unless current_account.dashboard_disabled? %>
         <ul class="db-summary clearfix pb20 pt20 clear" id="ticket-summary">
             <li class="sloading loading-small loading-block"></li>
         </ul>
     <% end %>
+  <% end %>
 </div>
+<% if @type == 'standard' %>
+  <script>
+    jQuery('body').one('assetLoaded.fjax', function() {
+      RealtimeDashboard.Widgets.TrendCounter.init();
+    });
+  </script>
+<% end %>

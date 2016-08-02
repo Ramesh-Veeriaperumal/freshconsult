@@ -37,7 +37,7 @@ jQuery('body').append('<div id="agent_collision_container" class="hide"></div>')
 				}
 			},             
 			content: {
-				text: TICKET_STRINGS['tooltip_loading'],
+				text: "<div class='ui-tooltip-ticket-loading'>"+TICKET_STRINGS['tooltip_loading']+"</div>",
 				ajax: {
 					url: tipUrl,
 					once: true

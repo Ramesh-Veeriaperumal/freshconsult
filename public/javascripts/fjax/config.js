@@ -50,9 +50,9 @@ window.Fjax = window.Fjax || {};
 
 			"/helpdesk/tickets/archived/": "archiveticketdetails",			
 			"/helpdesk/tickets": 'tickets',
-			"/helpdesk/agent_status": 'freshfoneagents',
+			"/helpdesk/dashboard/agent_status": 'freshfoneagents',
 			"/helpdesk/tickets/compose_email": 'tickets',
-			"/helpdesk/unresolved_tickets": 'unresolvedtickets',
+			"/helpdesk/dashboard/unresolved_tickets": 'unresolvedtickets',
 
 			"/helpdesk" : 'realtime_dashboard' 
 		},

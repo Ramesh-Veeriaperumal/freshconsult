@@ -127,7 +127,7 @@ class Solution::Object
 	def build_associations object, lang
 		attachment_builder(object, 
 			(@params["#{lang}_#{short_name}"] || {})[:attachments], 
-			(@params["#{lang}_#{short_name}"] || {})[:cloud_file_attachments] )
+			(@params["#{lang}_#{short_name}"] || {})[:cloud_file_attachments], @args["attachments_list"])
 	end
 
 	def primary_version_check?

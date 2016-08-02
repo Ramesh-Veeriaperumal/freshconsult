@@ -1,5 +1,5 @@
 # encoding: utf-8
-class User < ActiveRecord::Base  
+class User < ActiveRecord::Base
   self.primary_key= :id
 
   belongs_to_account
@@ -21,7 +21,7 @@ class User < ActiveRecord::Base
   include Social::Ext::UserMethods
   include AccountConstants
   include PasswordPolicies::UserHelpers
-  
+
   concerned_with :constants, :associations, :callbacks, :user_email_callbacks, :rabbitmq, :esv2_methods
   include CustomerDeprecationMethods, CustomerDeprecationMethods::NormalizeParams
 
@@ -37,7 +37,7 @@ class User < ActiveRecord::Base
   scope :company_users_via_customer_id, lambda { |cust_id| { :conditions => ["customer_id = ?", cust_id]} }
   # Using text_uc01 column as the preferences hash for storing user based settings
   serialize :text_uc01, Hash
-  alias_attribute :preferences, :text_uc01  
+  alias_attribute :preferences, :text_uc01
   alias_method_chain :preferences, :defaults
 
   # Attributes used in Freshservice
@@ -46,47 +46,47 @@ class User < ActiveRecord::Base
   alias_attribute :extn, :string_uc03 # Active Directory User - Phone Extension
 
   delegate :history_column=, :history_column, :to => :flexifield
-    
-  acts_as_authentic do |c|    
+
+  acts_as_authentic do |c|
     c.login_field(:email)
     c.validate_login_field(false)
     c.validate_email_field(false)
     c.validations_scope = :account_id
     c.validates_length_of_password_field_options = {:on => :update, :minimum => PASSWORD_LENGTH, :if => :has_no_credentials? }
-    c.validates_length_of_password_confirmation_field_options = {:on => :update, :minimum => PASSWORD_LENGTH, :if => :has_no_credentials?}    
+    c.validates_length_of_password_confirmation_field_options = {:on => :update, :minimum => PASSWORD_LENGTH, :if => :has_no_credentials?}
     #The following is a part to validate email only if its not deleted
     c.merge_validates_format_of_email_field_options  :if =>:chk_email_validation?, :with => EMAIL_VALIDATOR
-    c.merge_validates_length_of_email_field_options :if =>:chk_email_validation? 
+    c.merge_validates_length_of_email_field_options :if =>:chk_email_validation?
     c.merge_validates_uniqueness_of_email_field_options :if =>:chk_email_validation?, :case_sensitive => true
     c.crypto_provider = Authlogic::CryptoProviders::Sha512
 
-    c.validate_password_length = {:if => :password_length_enabled?, 
+    c.validate_password_length = {:if => :password_length_enabled?,
                                   :min_length => :minimum_password_length}
 
     c.password_history_field(:history_column)
 
-    c.validate_password_history = {:if => :password_history_enabled?, 
+    c.validate_password_history = {:if => :password_history_enabled?,
                                    :depth => :password_history_depth}
-  
-    c.password_format_options([{:if => :password_alphanumeric_enabled?, :regex => FDPasswordPolicy::Regex.alphanumeric, :error => I18n.t('password_policy.alphanumeric')}, 
-                               {:if => :password_special_character_enabled?, :regex => FDPasswordPolicy::Regex.special_characters, :error => I18n.t('password_policy.special_characters')}, 
+
+    c.password_format_options([{:if => :password_alphanumeric_enabled?, :regex => FDPasswordPolicy::Regex.alphanumeric, :error => I18n.t('password_policy.alphanumeric')},
+                               {:if => :password_special_character_enabled?, :regex => FDPasswordPolicy::Regex.special_characters, :error => I18n.t('password_policy.special_characters')},
                                {:if => :password_mixed_case_enabled?, :regex => FDPasswordPolicy::Regex.mixed_case, :error => I18n.t('password_policy.mixed_case')}])
 
     c.validate_password_contains_login(:if => :password_contains_login_enabled?)
 
     c.password_expiry_field(:text_uc01)
-    c.password_expiry_timeout = { :if => :password_expiry_enabled?, 
+    c.password_expiry_timeout = { :if => :password_expiry_enabled?,
                                   :duration => :password_expiry_duration}
 
     c.disable_perishable_token_maintenance(true)
 
     # enable for Phase 2
-    # c.periodic_logged_in_timeout = { :if => :periodic_login_enabled?, 
+    # c.periodic_logged_in_timeout = { :if => :periodic_login_enabled?,
     #                                  :duration => :periodic_login_duration}
   end
 
   validate :has_role?, :unless => :customer?
-  validate :email_validity, :if => :chk_email_validation?
+  validate :email_validity, :if => :chk_email_presence?
   validate :user_email_presence, :if => :email_required?
   validate :only_primary_email, on: :update, :if => [:agent?]
   validate :max_user_emails
@@ -122,15 +122,15 @@ class User < ActiveRecord::Base
     account.features_included?(:multiple_user_companies)
   end
 
-  attr_accessor :import, :highlight_name, :highlight_job_title, :created_from_email, 
-                :primary_email_attributes, :tags_updated, :role_ids_changed # (This role_ids_changed used to forcefully call user callbacks only when role_ids are there. 
+  attr_accessor :import, :highlight_name, :highlight_job_title, :created_from_email,
+                :primary_email_attributes, :tags_updated, :role_ids_changed # (This role_ids_changed used to forcefully call user callbacks only when role_ids are there.
   # As role_ids are not part of user_model(it is an association_reader), agent.update_attributes won't trigger user callbacks since user doesn't have any change.
   # Hence user.send(:attribute_will_change!, :role_ids_changed) is being called in api_agents_controller.)
 
-  attr_accessible :name, :email, :password, :password_confirmation, :primary_email_attributes, 
-                  :user_emails_attributes, :second_email, :job_title, :phone, :mobile, :twitter_id, 
-                  :description, :time_zone, :customer_id, :avatar_attributes, :company_id, 
-                  :company_name, :tag_names, :import_id, :deleted, :fb_profile_id, :language, 
+  attr_accessible :name, :email, :password, :password_confirmation, :primary_email_attributes,
+                  :user_emails_attributes, :second_email, :job_title, :phone, :mobile, :twitter_id,
+                  :description, :time_zone, :customer_id, :avatar_attributes, :company_id,
+                  :company_name, :tag_names, :import_id, :deleted, :fb_profile_id, :language,
                   :address, :client_manager, :helpdesk_agent, :role_ids, :parent_id, :string_uc04,
                   :contractor
 
@@ -141,9 +141,9 @@ class User < ActiveRecord::Base
   end
 
   def avatar_url(profile_size = :thumb)
-    (avatar ? avatar.expiring_url(profile_size, 30.days.to_i) : is_user_social(profile_size)) if present?
+    (avatar ? avatar.expiring_url(profile_size, 7.days.to_i) : is_user_social(profile_size)) if present?
   end
-  
+
   def allow_password_update?
     !deleted? and !spam? and !blocked? and !email.blank? and !agent?
   end
@@ -168,7 +168,7 @@ class User < ActiveRecord::Base
   def ebay_user?
     (self.external_id && self.external_id =~ /\Afbay-/) ? true : false
   end
-  
+
   class << self # Class Methods
     #Search display
     def search_display(user)
@@ -179,7 +179,7 @@ class User < ActiveRecord::Base
     def filter(letter, page, state = "verified", per_page = 50,order_by = 'name')
       begin
         paginate(
-                :per_page => per_page, 
+                :per_page => per_page,
                 :page => page,
                 :conditions => filter_condition(state, letter),
                 :order => order_by
@@ -192,16 +192,16 @@ class User < ActiveRecord::Base
     def filter_condition(state, letter)
       conditions = case state
         when "verified", "unverified"
-           [ ' deleted = ? and active = ? and deleted_at IS NULL and blocked = false ', 
+           [ ' deleted = ? and active = ? and deleted_at IS NULL and blocked = false ',
             false , state.eql?("verified") ]
         when "deleted", "all"
-          [ ' deleted = ? and deleted_at IS NULL and blocked = false', 
+          [ ' deleted = ? and deleted_at IS NULL and blocked = false',
             state.eql?("deleted")]
         when "blocked"
-          [ ' ((blocked = ? and blocked_at <= ?) or (deleted = ? and  deleted_at <= ?)) and whitelisted = false ', 
+          [ ' ((blocked = ? and blocked_at <= ?) or (deleted = ? and  deleted_at <= ?)) and whitelisted = false ',
             true, (Time.zone.now+5.days).to_s(:db), true, (Time.zone.now+5.days).to_s(:db) ]
       end
-      
+
       unless letter.blank?
         conditions[0] = "#{conditions[0]} and name like ? "
         conditions.push("#{letter}%")
@@ -222,19 +222,19 @@ class User < ActiveRecord::Base
 
     def find_by_an_unique_id(options = {})
       options.delete_if { |key, value| value.blank? }
-      
+
       #return self.find(options[:id]) if options.key?(:id)
       return UserEmail.user_for_email(options[:email]) if options.key?(:email)
       return self.where(twitter_id: options[:twitter_id]).first if options.key?(:twitter_id)
       return self.where(fb_profile_id: options[:fb_profile_id]).first if options.key?(:fb_profile_id)
       return self.where(external_id: options[:external_id]).first if options.key?(:external_id)
       return self.where(phone: options[:phone]).first if options.key?(:phone)
-    end 
+    end
 
     def update_posts_count
       self.class.update_posts_count id
     end
-    
+
     def update_posts_count(id)
       User.update_all ['posts_count = ?', Post.count(:id, :conditions => {:user_id => id, :published => true})],   ['id = ?', id]
     end
@@ -265,8 +265,8 @@ class User < ActiveRecord::Base
           conditions: { customer_id: contact_filter.company_id }
         },
         email: {
-          joins: :user_emails, 
-          # It is guranteed that all contacts in FD have atleast one entry in user_emails table. 
+          joins: :user_emails,
+          # It is guranteed that all contacts in FD have atleast one entry in user_emails table.
           conditions: { user_emails: { email: contact_filter.email }}
         },
         phone: {
@@ -296,8 +296,12 @@ class User < ActiveRecord::Base
   end
 
   def contractor_ticket? ticket
-    privilege?(:contractor) && company_ids.include?(ticket.company_id) && 
+    privilege?(:contractor) && company_ids.include?(ticket.company_id) &&
       user_companies.where(:company_id => ticket.company_id).first.client_manager
+  end
+
+  def chk_email_presence?
+    (is_not_deleted?) and !email.blank?
   end
 
   def chk_email_validation?
@@ -351,14 +355,14 @@ class User < ActiveRecord::Base
     end
     return false
   end
-	
+
 	def available_number
 		phone.blank? ? mobile : phone
 	end
 
   def update_attributes(params) # Overriding to normalize params at one place
     normalize_params(params) # hack to facilitate contact_fields & deprecate customer
-    if [:tag_names, :tags].any?{|attr| # checking old key for API & prevents resetting tags if its not intended 
+    if [:tag_names, :tags].any?{|attr| # checking old key for API & prevents resetting tags if its not intended
      params.include?(attr)} && params[:tags].is_a?(String)
       tags = params.delete(:tags)
       params[:tag_names]||= tags
@@ -371,8 +375,8 @@ class User < ActiveRecord::Base
       if params[:user][:removed_companies].present?
         to_be_removed = params[:user][:removed_companies].split(",").uniq
         remove_ids = to_be_removed.map{ |company_name| companies.find { |c| c.name == company_name}.id }
-        UserCompany.destroy_all(:account_id => account_id, 
-                                :user_id => id, 
+        UserCompany.destroy_all(:account_id => account_id,
+                                :user_id => id,
                                 :company_id => remove_ids) if remove_ids.any?
         self.user_companies.reload
       end
@@ -429,14 +433,14 @@ class User < ActiveRecord::Base
     self.avatar_attributes=params[:user][:avatar_attributes] unless params[:user][:avatar_attributes].nil?
     self.user_emails_attributes = params[:user][:user_emails_attributes] if params[:user][:user_emails_attributes].present?
     self.deleted = true if (email.present? && email =~ /MAILER-DAEMON@(.+)/i)
-    self.created_from_email = params[:user][:created_from_email] 
+    self.created_from_email = params[:user][:created_from_email]
     return false unless save_without_session_maintenance
     portal.make_current if portal
     if (!deleted and !email.blank? and send_activation)
       if self.language.nil?
         args = [ portal,false, params[:email_config]]
-        Delayed::Job.enqueue(Delayed::PerformableMethod.new(self, :deliver_activation_instructions!, args), 
-          nil, 5.minutes.from_now) 
+        Delayed::Job.enqueue(Delayed::PerformableMethod.new(self, :deliver_activation_instructions!, args),
+          nil, 5.minutes.from_now)
       else
         deliver_activation_instructions!(portal,false, params[:email_config])
       end
@@ -461,15 +465,15 @@ class User < ActiveRecord::Base
 
   scope :matching_users_from, lambda { |search|
     {
-      :select => %(users.id, name, users.account_id, users.string_uc04, users.email, GROUP_CONCAT(user_emails.email) as `additional_email`, 
+      :select => %(users.id, name, users.account_id, users.string_uc04, users.email, GROUP_CONCAT(user_emails.email) as `additional_email`,
         twitter_id, fb_profile_id, phone, mobile, job_title),
-      :joins => %(left join user_emails on user_emails.user_id=users.id and 
+      :joins => %(left join user_emails on user_emails.user_id=users.id and
         user_emails.account_id = users.account_id) % { :str => "%#{search}%" },
-      :conditions => %((name like '%<str>s' or user_emails.email 
+      :conditions => %((name like '%<str>s' or user_emails.email
         like '%<str>s' and deleted = 0)) % {
-        :str => "%#{search}%"      
+        :str => "%#{search}%"
       },
-      
+
       :group => "users.id",
     }
   }
@@ -487,16 +491,16 @@ class User < ActiveRecord::Base
     deliver_activation_instructions!(portal,false) if (!deleted and self.email.present?)
     true
   end
- 
+
   def active?
     active
   end
-  
+
   def has_email?
     !self.email.blank?
   end
 
-  
+
   def activate!(params)
     self.active = true
     self.name = params[:user][:name]
@@ -524,12 +528,12 @@ class User < ActiveRecord::Base
   end
 
   #Savage_beast changes start here
-  #implement in your user model 
+  #implement in your user model
   def display_name
     to_s
   end
 
-  #implement in your user model 
+  #implement in your user model
 
   def agent?
     helpdesk_agent
@@ -540,7 +544,7 @@ class User < ActiveRecord::Base
     !agent?
   end
   alias :is_customer :customer?
-  
+
   # Used in mobile
   def is_client_manager?
     company_client_manager?
@@ -567,11 +571,11 @@ class User < ActiveRecord::Base
   def api_assumable?
     !deleted? && privilege?(:manage_tickets)
   end
-  
+
   def first_login?
     login_count <= 2
   end
-  
+
   #Savage_beast changes end here
 
   ##Authorization copy starts here
@@ -592,11 +596,11 @@ class User < ActiveRecord::Base
   end
 
   ##Authorization copy ends here
-  
+
   def url_protocol
-    if account.main_portal_from_cache.portal_url.blank? 
+    if account.main_portal_from_cache.portal_url.blank?
       return account.ssl_enabled? ? 'https' : 'http'
-    else 
+    else
       return account.main_portal_from_cache.ssl_enabled? ? 'https' : 'http'
     end
   end
@@ -604,12 +608,12 @@ class User < ActiveRecord::Base
   def can_edit_agent?(agent)
     !(agent.user.deleted? || (agent.user.privilege?(:manage_account) && !self.privilege?(:manage_account)))
   end
-  
+
   def to_s
     user_display_text = name.blank? ? (email.blank? ? (phone.blank? ? mobile : phone) : email) : name
     user_display_text.to_s
   end
-  
+
   def to_liquid
     @user_drop ||= UserDrop.new self
   end
@@ -622,7 +626,7 @@ class User < ActiveRecord::Base
     Rails.logger.debug "not ::deleted ?:: #{!self.deleted}"
     !self.deleted
   end
-  
+
   def occasional_agent?
     agent && agent.occasional
   end
@@ -630,7 +634,7 @@ class User < ActiveRecord::Base
   def day_pass_granted_on(start_time = DayPassUsage.start_time) #Revisit..
     day_pass_usages.on_the_day(start_time).first
   end
-  
+
   def spam?
     deleted && !deleted_at.nil?
   end
@@ -638,15 +642,15 @@ class User < ActiveRecord::Base
   def get_info
     (email) || (twitter_id) || (external_id) || (name)
   end
-  
+
   def twitter_style_id
     "@#{twitter_id}"
   end
-  
+
   def can_view_all_tickets?
     self.privilege?(:manage_tickets) && agent.all_ticket_permission
   end
-  
+
   def group_ticket_permission
     self.privilege?(:manage_tickets) && agent.group_ticket_permission
   end
@@ -654,19 +658,19 @@ class User < ActiveRecord::Base
   def assigned_ticket_permission
     self.privilege?(:manage_tickets) && agent.assigned_ticket_permission
   end
-  
+
   def has_ticket_permission? ticket
-    (can_view_all_tickets?) or (ticket.responder_id == self.id ) or (group_ticket_permission && (ticket.group_id && (agent_groups.pluck(:group_id).insert(0,0)).include?( ticket.group_id))) 
+    (can_view_all_tickets?) or (ticket.responder_id == self.id ) or (group_ticket_permission && (ticket.group_id && (agent_groups.pluck(:group_id).insert(0,0)).include?( ticket.group_id)))
   end
 
   # For a customer we need to check if he is the requester of the ticket
   # Or if he is allowed to view tickets from his company
   def has_customer_ticket_permission?(ticket)
-    (self.id == ticket.requester_id) or 
+    (self.id == ticket.requester_id) or
     (is_client_manager? && self.company_id && ticket.company_id && (self.company_ids.include?(ticket.company_id)) ) or
     (self.contractor_ticket? ticket)
   end
-  
+
   def restricted?
     !can_view_all_tickets?
   end
@@ -703,7 +707,7 @@ class User < ActiveRecord::Base
       mark_user_company_destroy
     end
   end
-  
+
   def company_name
     if has_multiple_companies_feature?
       uc = user_companies.find { |uc| uc.default }
@@ -768,7 +772,7 @@ class User < ActiveRecord::Base
   def reset_primary_email primary
     # Web does not allow a new email to be the primary_email for a contact, but it should be allowed via API
     return true if primary.nil?
-    
+
     new_primary = self.user_emails.find(primary.to_i)
     if new_primary
       self.user_emails.update_all(:primary_role => false)
@@ -776,7 +780,7 @@ class User < ActiveRecord::Base
     end
     return true
   end
-  
+
   def make_customer
     return true if customer?
     set_company_name
@@ -787,13 +791,13 @@ class User < ActiveRecord::Base
       email_notification_agents.destroy_all
 
       expiry_period = self.user_policy ? FDPasswordPolicy::Constants::GRACE_PERIOD : FDPasswordPolicy::Constants::NEVER.to_i.days
-      self.set_password_expiry({:password_expiry_date => 
+      self.set_password_expiry({:password_expiry_date =>
               (Time.now.utc + expiry_period).to_s})
       return true
-    end 
+    end
     return false
   end
-  
+
   def make_agent(args = {})
     ActiveRecord::Base.transaction do
       self.user_emails = [self.primary_email]
@@ -807,12 +811,12 @@ class User < ActiveRecord::Base
       self.customer_id = nil
       agent = build_agent()
       agent.occasional = !!args[:occasional]
-      agent.group_ids = args[:group_ids] if args.key?(:group_ids) 
+      agent.group_ids = args[:group_ids] if args.key?(:group_ids)
       agent.ticket_permission = args[:ticket_permission] if args.key?(:ticket_permission)
       agent.signature_html = args[:signature_html] if args.key?(:signature_html)
 
       expiry_period = self.user_policy ? FDPasswordPolicy::Constants::GRACE_PERIOD : FDPasswordPolicy::Constants::NEVER.to_i.days
-      self.set_password_expiry({:password_expiry_date => 
+      self.set_password_expiry({:password_expiry_date =>
           (Time.now.utc + expiry_period).to_s}, false)
       save ? true : (raise ActiveRecord::Rollback)
     end
@@ -833,11 +837,11 @@ class User < ActiveRecord::Base
   def self.reset_current_user
     User.current = nil
   end
-  
+
   def user_time_zone
     self.time_zone
   end
-  
+
   def user_tag
     self.tags
   end
@@ -851,7 +855,7 @@ class User < ActiveRecord::Base
   end
 
   def custom_form
-    helpdesk_agent? ? nil : (Account.current || account).contact_form # memcache this 
+    helpdesk_agent? ? nil : (Account.current || account).contact_form # memcache this
   end
 
   def custom_field_aliases
@@ -870,7 +874,7 @@ class User < ActiveRecord::Base
         search.query do |query|
           query.filtered do |f|
             if SearchUtil.es_exact_match?(search_by)
-              f.query { |q| q.match ["name", "email", "user_emails.email"], SearchUtil.es_filter_exact(search_by), :type => :phrase } 
+              f.query { |q| q.match ["name", "email", "user_emails.email"], SearchUtil.es_filter_exact(search_by), :type => :phrase }
             else
               f.query { |q| q.string SearchUtil.es_filter_key(search_by), :fields => ['name', 'email', 'user_emails.email'], :analyzer => "include_stop" }
             end
@@ -885,7 +889,7 @@ class User < ActiveRecord::Base
     rescue Exception => e
       NewRelic::Agent.notice_error(e)
       []
-    end 
+    end
   end
 
 
@@ -896,7 +900,7 @@ class User < ActiveRecord::Base
   end
 
   def mobile=(value)
-    value = value.nil? ? value : value.to_s 
+    value = value.nil? ? value : value.to_s
     write_attribute(:mobile, RailsFullSanitizer.sanitize(value))
   end
   # Hack ends here
@@ -979,7 +983,7 @@ class User < ActiveRecord::Base
     end
 
     def process_api_options default_options, current_options
-      default_options.each do |key, value| 
+      default_options.each do |key, value|
         current_options[key] = current_options.key?(key) ? current_options[key] & default_options[key] : default_options[key]
       end
     end
@@ -990,7 +994,7 @@ class User < ActiveRecord::Base
 
     def build_or_update_company comp_id
       default_user_company.present? ? (self.default_user_company.company_id = comp_id) :
-        self.build_default_user_company(:company_id => comp_id) 
+        self.build_default_user_company(:company_id => comp_id)
       user_comp = self.user_companies.find { |uc| uc.default }
       if user_comp.present?
         user_comp.company_id = default_user_company.company_id
@@ -1003,7 +1007,7 @@ class User < ActiveRecord::Base
       uc = default_user_company
       if uc
         self.default_user_company_attributes = { :id => uc.id,
-                                            :company_id => uc.company_id, 
+                                            :company_id => uc.company_id,
                                             :user_id => uc.user_id,
                                             :_destroy => true }
         self.customer_id = nil

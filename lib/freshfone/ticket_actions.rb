@@ -88,7 +88,8 @@ module Freshfone::TicketActions
 			Rails.logger.debug "Update user presence from Ticket Actions  :: account => #{current_account.id}
 						 agent_with_active_call => #{agent_with_active_call?} :: agent => #{agent}"
 			return if (agent.blank? || agent_with_active_call?)
-			agent.freshfone_user.reset_presence.save 
+			ff_user = agent.freshfone_user
+			ff_user.reset_presence.save unless ff_user.acw?
 		end
 		
 		def call_history?

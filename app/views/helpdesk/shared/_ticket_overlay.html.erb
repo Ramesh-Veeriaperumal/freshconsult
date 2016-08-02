@@ -1,25 +1,35 @@
 <div class="ticket_overlay_tip">
 	<div class="ticket_overlay_content">
 		<%
-		latest_note = ticket.notes.visible.exclude_source('meta').newest_first.first
-		unless latest_note.nil?
-			action_msg = latest_note.fwd_email? ? 'helpdesk.tickets.overlay_fwd_time' : (latest_note.note? ? 'helpdesk.tickets.overlay_note_time' : 'helpdesk.tickets.overlay_reply_time')
+			latest_note = ticket.notes.visible.exclude_source('meta').newest_first.first
+			unless latest_note.nil?
+				action_msg = latest_note.fwd_email? ? 'helpdesk.tickets.overlay_forward' : (latest_note.note? ? 'helpdesk.tickets.overlay_note' : 'helpdesk.tickets.overlay_reply')
+				overlay_user = latest_note.user
+				overlay_time = latest_note.created_at
+				overlay_content = latest_note.body
+			else
+				overlay_user = ticket.requester
+				overlay_time = ticket.created_at
+				overlay_content = ticket.description
+				action_msg = 'helpdesk.tickets.overlay_submitted_ticket'
+			end
 		%>
-		<%= user_avatar(latest_note.user, :thumb, 'preview_pic small') %>
-		<div class="text">
-			<div class="user_and_time">
-				<span class="user"><%= h(latest_note.user.name) %></span><%= t( "#{action_msg}", :time_in_words => time_ago_in_words(latest_note.created_at)) %> (<%= formated_date(latest_note.created_at) %>)
-			</div>
-			<div class="note">
-				<%= h(truncate(latest_note.body, { :length => 150, :omission => "..." })) %>
+
+		<div class="user_and_time">
+			<%= user_avatar(overlay_user, :thumb, 'preview_pic small') %>
+			<div class="ticket_list_user_hover">
+				<span class="ticket_overlay_user_name"> 
+					<%= h(overlay_user.name) %> 
+					<% unless ticket.group.nil? %> <span class="ticket_overlay_group"><%= h(ticket.group.name) %></span> <% end %>
+				</span>
+				<span class="ticket_overlay_action"> <%= t("#{action_msg}") %> </span>
+				<div class="ticket_overlay_time">
+					<%= t("helpdesk.tickets.overlay_time", :time_in_words => time_ago_in_words(overlay_time)) %>
+					<%= formated_date(overlay_time) %>
+				</div>
 			</div>
 		</div>
-		<%
-		else
-		%>
-		<%= h(truncate(ticket.description, { :length => 350, :omission => "..." })) %>
-		<%
-		end
-		%>
+		<div class="ticket_overlay_content_text"><%= h(truncate(overlay_content, { :length => 350, :omission => "..." })) %></div>
+
 	</div>
 </div>

@@ -196,7 +196,7 @@ window.xhrPool = [];
       });  
     $("a[rel=ff-hover-popover]").live('mouseenter',function(ev) {
           ev.preventDefault();
-          if(!freshfoneuser.online){ return;}
+          if(freshfoneuser.isOffline()){ return;}
           var element = $(this);
           // Introducing a slight delay so that the popover does not show up
           // when just passing thru this element.

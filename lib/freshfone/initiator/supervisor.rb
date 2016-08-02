@@ -36,6 +36,6 @@ class Freshfone::Initiator::Supervisor
     current_user = current_account.users.find_by_id(client_id)
     current_call.inprogress? && 
     current_call.supervisor_controls.active.blank? && 
-    !current_user.freshfone_user.busy?
+    !current_user.freshfone_user.busy_or_acw?
   end 
 end

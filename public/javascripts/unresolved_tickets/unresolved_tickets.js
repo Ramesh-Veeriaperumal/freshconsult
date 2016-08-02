@@ -1,6 +1,6 @@
 var UnresolvedTickets = (function () {
 	var CONST = {
-		unresolved_url    : "/helpdesk/unresolved_tickets_data",
+		unresolved_url    : "/helpdesk/dashboard/unresolved_tickets_data",
 		ticketlist_url	  : "/helpdesk/tickets?",
 		dynamicWidth 	  :( jQuery('body')[0].clientWidth * 0.9 - 40 - 60 - 150 ),
 		visibleColumn	  : 5,

@@ -29,7 +29,7 @@ module Freshfone::AgentsLoader
   def load_agent_hunt(agent_id, freshfone_user=nil)
     freshfone_user = freshfone_users.find_by_user_id(agent_id) if freshfone_user.blank?
     initialize_agents({ :available_agents => freshfone_user && freshfone_user.online? ? [freshfone_user] : [],
-                        :busy_agents      => freshfone_user && freshfone_user.busy? ? [freshfone_user] : [] })
+                        :busy_agents      => freshfone_user && freshfone_user.busy_or_acw? ? [freshfone_user] : [] })
   end
 
 end

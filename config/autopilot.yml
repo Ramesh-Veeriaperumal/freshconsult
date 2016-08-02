@@ -8,15 +8,19 @@ autopilot:
     <<: *common
     access_key: "68eee57364d64f5a8cad615fcd20d78a"
     trigger_code: "0008"
+    ui_token: "2c290bf83da74f158a97e0b64e65df3e234444a92a18430c982f592f1bd7ce80"
   staging: 
     <<: *common
     access_key: "9a0e8aa4369f4103b0bbe9ce8ef19ee5"
     trigger_code: "0002"
+    ui_token: "f099ccdcadd749e5abe6202d19d1ddb0656f3506ce2e4c4b8ae063a0ee7f8a10"
   development: 
     <<: *common
     access_key: "9a0e8aa4369f4103b0bbe9ce8ef19ee5"
     trigger_code: "0002"
+    ui_token: "f099ccdcadd749e5abe6202d19d1ddb0656f3506ce2e4c4b8ae063a0ee7f8a10"
   test: 
     <<: *common
     access_key: "9a0e8aa4369f4103b0bbe9ce8ef19ee5"
     trigger_code: "0002"
+    ui_token: "f099ccdcadd749e5abe6202d19d1ddb0656f3506ce2e4c4b8ae063a0ee7f8a10"

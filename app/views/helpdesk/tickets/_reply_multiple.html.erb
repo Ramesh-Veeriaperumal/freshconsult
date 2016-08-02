@@ -22,14 +22,13 @@
         </li>
         <li>
           <% unless local_assigns[:no_attachments] %>
-            <%= render :partial => "/helpdesk/tickets/show/attachment_form", :locals => { :attach_id => id , :nsc_param => "helpdesk_note" } %>
+              <%= render :partial => "/helpdesk/tickets/show/single_attachment_form", :locals => { :attach_id => id , :nsc_param => "helpdesk_note",:bulk => true } %>
+                  <%= render "helpdesk/shared/single_attachment_template" %>
           <% end %>
         </li>
     </ul>
 </div>
 
-<%= render :partial => "/helpdesk/tickets/show/multifile_template"  %>
-<%= render :partial => "/helpdesk/tickets/show/multifile_template_new"  %>
 
 <%= javascript_tag do %>
 
@@ -69,6 +68,13 @@
                                     }
                     });
         return true;
+        var input = jQuery("input[fileList]");
+                Helpdesk.Multifile.load()
+                Helpdesk.Multifile.addEventHandler(input)
+                jQuery(input.form).off("reset.Multifile")
+                jQuery(input.form).on("reset.Multifile", function(){
+                    Helpdesk.Multifile.resetAll(this)
+                });
     } 
-
 <% end %>
+

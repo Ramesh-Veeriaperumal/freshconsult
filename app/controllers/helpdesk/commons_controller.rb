@@ -30,6 +30,17 @@ class Helpdesk::CommonsController < ApplicationController
       }
     end
   end
+  
+  def fetch_company_by_name
+    company = current_account.companies.find_by_name(params["name"])
+    respond_to do |format|
+      if company
+        format.json { render :json => company.to_json }
+      else
+        format.json { render :json => {:error => "Record not found" }}
+      end
+    end
+  end
 
   def user_companies
     to_ret = false

@@ -848,6 +848,14 @@ $animation_timing: .1s;
 		display:table;
 		width:100%;
 	}
+	.remove-message{
+		color : #80161D;
+		font-weight : 400;
+		margin-top : 10px;
+		a.report-link{
+			color : #80161D;
+		}
+	}
 	.report-home-header{
 		background-color: #f1f1f1;
 		width:20%;

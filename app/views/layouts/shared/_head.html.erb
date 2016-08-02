@@ -32,6 +32,7 @@
 	<%= stylesheet_link_tag_with_rtl :'cdn/non_pattern' %>
 	<%= stylesheet_link_tag_with_rtl :'cdn/tour_my_app' %>
 	<%= stylesheet_link_tag_with_rtl :'cdn/ie_hacks' %>
+
 	<%= stylesheet_link_tag_with_rtl :'cdn/tkt_details', :media => "screen, print, projection"  %>
 
 	<%= stylesheet_link_tag_with_rtl :'cdn/community' %>
@@ -49,6 +50,13 @@
 		cloudfront_version = "<%= CLOUDFRONT_VERSION %>";
 		cloudfront_host_url = "<%= asset_host_url %>";
 	</script>
+
+	<% if logged_in? %>
+	<script type="text/javascript">
+		window.current_account_id = "<%=current_account.id%>";
+		window.current_user_id = "<%= current_user.id %>";
+	</script>
+	<% end %>
 		
 	<%= javascript_include_tag :'cdn/defaults'  %>
 	<%= javascript_include_tag :'cdn/frameworks' %>
@@ -58,8 +66,8 @@
 	<%= javascript_include_tag :'cdn/pattern'  %>
 	<%= javascript_include_tag :'cdn/merge'  %>
 	<%= javascript_include_tag :'cdn/custom_widget' %>
-  	<%= javascript_include_tag :'cdn/livechat_helper' %>
-
+	<%= javascript_include_tag :'cdn/plugins/fileupload' %>
+	<%= javascript_include_tag :'cdn/livechat_helper' %>
 
 	<% if current_account.features?(:freshfone) ||
 	  (current_account.features?(:chat) && current_account.chat_setting && !(is_assumed_user?)) %>

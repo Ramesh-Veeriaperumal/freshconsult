@@ -8,27 +8,49 @@
 <% unless dropbox_app_key.blank? %>
   <script type="text/javascript" src="https://www.dropbox.com/static/api/1/dropbox.js"></script>
   <script type="text/javascript">
-    function initDropbox(inp){
-      Dropbox.choose({success:function(files){
-          var inputElement = jQuery(inp).data('holder');
+    function initDropbox(inp) {
+     Dropbox.choose({
+             success: function(files) {
+                 function singleFile() {
+                     var inputElement = jQuery(inp).data('holder');
+                     jQuery('#' + inputElement)
+                         .val(JSON.stringify({
+                             link: files[0].link,
+                             name: files[0].name,
+                             provider: 'dropbox'
+                         }))
+                         .data('filename', files[0].name)
+                         .data('provider', 'Dropbox');
+                     Helpdesk.Multifile.addFileToList(jQuery('#' + inputElement));
+                     newInput = Helpdesk.Multifile.duplicateInput(jQuery('#' + inputElement));
+                     jQuery(inp).data('holder', newInput.attr('id'));
+                 }
+                 // for portal 
+                if (jQuery('.single_file').length !== 0 ) {
+                     singleFile();
+                 }
+                 // for app
+                 else {
+                          var attachments = JSON.stringify({
+                             link: files[0].link,
+                             name: escapeHtml(files[0].name),
+                             provider: 'dropbox'
+                         });
+                         var cloud_file_object = [{
+                             fileName: files[0].name,
+                             provider: 'Dropbox',
+                             attachments: attachments
+                         }];
+                         var file_list = window.localStorage.getItem('current-file-list');
+                         jQuery("#attach-limt-" + file_list).hide();
+                         jQuery("#attachment-template").tmpl({
+                             render_type: "new",
+                             type: "cloud",
+                             files: cloud_file_object
+                         }).appendTo(".multiple-filelist-" + file_list);
+                     }
 
-          jQuery('#'+inputElement)
-            .val(JSON.stringify({link: files[0].link,name: files[0].name, provider: 'dropbox'}))
-            .data('filename', files[0].name)
-            .data('provider', 'Dropbox');
-          if(jQuery("#attachment-type").data('multifile-enable')==true)
-          {
-            Helpdesk.MultifileUpload.addFileToList(jQuery('#'+inputElement));
-            newInput = Helpdesk.MultifileUpload.duplicateInput(jQuery('#'+inputElement));
-            jQuery(inp).data('holder',newInput.attr('id'));
-          }
-          else
-          {
-            Helpdesk.Multifile.addFileToList(jQuery('#'+inputElement));
-            newInput = Helpdesk.Multifile.duplicateInput(jQuery('#'+inputElement));
-            jQuery(inp).data('holder',newInput.attr('id'));
-          }
-      }, extensions:""})
-    }
+                 }, extensions: ""})
+     }
   </script>
 <% end %>

@@ -15,7 +15,7 @@ window.App.Freshfoneagents = window.App.Freshfoneagents || {};
       this.presence_in_words = "";
       this.last_call_in_words = "";
       this.list_length = freshfone.agents.length;
-      this.Status = {ONLINE:1, OFFLINE:0, BUSY:2};
+      this.Status = {ONLINE:1, OFFLINE:0, BUSY:2, ACW:3};
       this.Preference = {TRUE:1, FALSE:0};
       this.AvailableAgentListValuesName = ["id", "data_id", "name", "available_avatar_image", "presence_time",
                                             "presence_time_in_s", "on_device_img","busy_agent","toggle_button"];
@@ -56,6 +56,9 @@ window.App.Freshfoneagents = window.App.Freshfoneagents || {};
       if(this.agent.presence==this.Status.BUSY){
         this.presence_in_words = freshfone.call_in_progress;
       }
+      else if(this.agent.presence==this.Status.ACW){
+        this.presence_in_words = freshfone.call_in_acw;
+      }
       return { id : this.agent.id, 
                data_id : "<span class='id' data-id='"+this.agent.id+"'></span>",
                name : this.agent.name, 
@@ -72,7 +75,10 @@ window.App.Freshfoneagents = window.App.Freshfoneagents || {};
        this.timeInWords(this.agent);
        if(this.agent.presence==this.Status.BUSY){
         this.presence_in_words = freshfone.call_in_progress;
-      }
+       }
+       else if(this.agent.presence==this.Status.ACW){
+        this.presence_in_words = freshfone.call_in_acw;
+       }
       return { id : this.agent.id, 
                data_id : "<span class='id' data-id='"+this.agent.id+"'></span>",
                name : this.agent.name,
@@ -148,7 +154,7 @@ window.App.Freshfoneagents = window.App.Freshfoneagents || {};
                 this.addAgentByDevice(id);
               }
         }  
-        if (this.agent.presence==this.Status.BUSY){
+        if ((this.agent.presence==this.Status.BUSY) || (this.agent.presence==this.Status.ACW)){
            if(this.agent.preference==this.Preference.TRUE){
               if(!this.AvailableAgentList.get("id",id)){
                 this.addAgentByDevice(id);

@@ -1,12 +1,12 @@
 require 'aws-sdk'
 require 'logger'
-AWS.config(:logger => Logger.new($stdout),:log_level => :debug)
+AWS.config(:logger => Logger.new($stdout),:log_level => :debug, :s3_signature_version => :v4)
 
 # establishing connection with aws to run custom restart of nginx
 awscreds = {
      :access_key_id    => node[:opsworks_access_keys][:access_key_id],
      :secret_access_key => node[:opsworks_access_keys][:secret_access_key],
-     :region           => node[:opsworks_access_keys][:opsworks_region]
+     :region           => node[:opsworks_access_keys][:region]
 }
 #TODO-RAILS3 once migrations is done we can remove setting from stack and bellow code.
 # awscreds.merge!({:access_key_id    => node[:opsworks_access_keys][:access_key_id],

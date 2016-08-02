@@ -285,7 +285,7 @@ class Account < ActiveRecord::Base
   end
   
   def active?
-    !self.subscription.suspended?
+    self.subscription && !self.subscription.suspended?
   end
 
   def spam_email?

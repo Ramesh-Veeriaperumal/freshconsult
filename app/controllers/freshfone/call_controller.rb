@@ -249,7 +249,8 @@ class Freshfone::CallController < FreshfoneBaseController
 		end
 
 		def search_customer
-			return search_customer_with_id(params[:customerId]) if params[:customerId].present?
+			customer = search_customer_with_id(params[:customerId]) if params[:customerId].present?
+			return customer if customer.present?
 			search_user_with_number(params[:PhoneNumber].gsub(/^\+/, ''))
 		end
 end

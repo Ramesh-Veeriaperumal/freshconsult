@@ -31,7 +31,7 @@ class Search::V2::MergeContactsController < ApplicationController
           :facebook => i.fb_profile_id.present?,
           :phone => i.phone.present?, 
           :searchKey => i.emails.join(",")+i.name, 
-          :avatar =>  i.avatar ? i.avatar.expiring_url("thumb",30.days.to_i) : is_user_social(i, "thumb")
+          :avatar =>  i.avatar ? i.avatar.expiring_url("thumb",7.days.to_i) : is_user_social(i, "thumb")
         }
       end
     end

@@ -46,7 +46,6 @@ class Community::Moderation::QueuedPost
 
     def initialize_post
       @post = topic.posts.build(post_params)
-      post.body = Helpdesk::HTMLSanitizer.plain(post_params[:body_html])
       post.published = true
     end
 
@@ -114,7 +113,7 @@ class Community::Moderation::QueuedPost
         'account_id' => Account.current.id,
         'user_timestamp' => timestamp('user'),
         'timestamp' => params['timestamp'],
-        'body_html' => Helpdesk::HTMLSanitizer.clean(params['body_html']),
+        'body_html' => Helpdesk::HTMLSanitizer.sanitize_post(params['body_html']),
         'attachments' => params['attachments'].to_json,
         'cloud_file_attachments' => params['cloud_file_attachments'].to_json,
         'portal' => params['portal']

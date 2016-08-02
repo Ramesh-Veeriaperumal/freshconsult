@@ -2,4 +2,4 @@
                           options_for_select(current_account.agents.includes(:user).map { |agent| "#{agent.user.name} <#{agent.user.email}>" }, 
                               [( (@ticket.responder_id and @ticket.responder_id != current_user.id and @ticket.responder.present?) ? 
                                       "#{@ticket.responder.name} <#{@ticket.responder.email}>" : nil ) ]), 
-                          :multiple => true, :class => 'select2', "data-placeholder" => 'Select agents to notify' %>
+                          :multiple => true, :class => 'select2', "data-placeholder" => 'Select agents to notify', "data-container-css-class" => "ticketSelect2ContainerNote", "data-dropdown-css-class" =>"ticketSelect2" ,:multiple => true, :class => 'select2', "data-placeholder" => 'Select agents to notify'%>

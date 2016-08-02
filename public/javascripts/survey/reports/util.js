@@ -22,7 +22,7 @@ var SurveyUtil = {
                 }
             }
             return selectedSurvey;
-        },	   
+        },
         reverseChoices:function(){
            for(var i=0;i<SurveyReportData.surveysList.length;i++){
                 var survey = SurveyReportData.surveysList[i];
@@ -129,7 +129,6 @@ var SurveyUtil = {
                 }
         },
         findQuestionId:function(){
-            
             return (SurveyTab.activeTab["id"] || SurveyUtil.whichSurvey().survey_questions[0].id);
         },
         ratingFormat:function(obj){
@@ -260,16 +259,25 @@ var SurveyUtil = {
                 });
             },
             arrayToHash:function(choices){
-                var choices = choices || SurveyUtil.whichSurvey().choices;
+                var survey = SurveyUtil.whichSurvey();
+                var choices = choices || (SurveyUtil.findQuestionId() == survey.survey_questions[0].id) ? survey.choices : survey.survey_questions[1].choices;
                 var choiceMap = {};
                 for(var i=0;i<choices.length;i++){
-                        choiceMap[choices[i].survey_question_choice.face_value] = choices[i].survey_question_choice.value;                }
+                        var choiceitem = choices[i].survey_question_choice || choices[i];
+                        choiceMap[choiceitem.face_value] = choiceitem.value;
+                    }
                 return choiceMap;
             },
             text:function(rating){
               var survey = SurveyUtil.whichSurvey();
-              if(!survey.choiceMap){ survey.choiceMap = this.arrayToHash(); }
-              return survey.choiceMap[rating];
+              if(SurveyUtil.findQuestionId() == survey.survey_questions[0].id){
+                if(!survey.choiceMap){ survey.choiceMap = this.arrayToHash(); }
+                return survey.choiceMap[rating];
+             }
+             else{
+                if(!survey.questionChoiceMap){ survey.questionChoiceMap = this.arrayToHash(); }
+                return survey.questionChoiceMap[rating];
+             }
             },
             style:function(rating){
                 return SurveyReportData.customerRatingsStyle[rating];

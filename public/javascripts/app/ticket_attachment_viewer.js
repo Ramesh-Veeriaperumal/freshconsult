@@ -28,7 +28,7 @@ window.App = window.App || {};
     
       // When the user clicks the attachment link, catch it
       // and invoke the popup for the attachment viewer
-      $(document).on('click.ticket_attachment_preview',".attach_content a",this.p(this.attachmentClicked));
+      $(document).on('click.ticket_attachment_preview',".attach_content,.attachment-type",this.p(this.attachmentClicked));
 
       // Close the popup when user clicks the close button
       $(document).on('click.ticket_attachment_preview','.av-close',this.p(this.removePopup));
@@ -91,6 +91,11 @@ window.App = window.App || {};
       });
     }
 
+    ,imageLoaded: function(){
+      $('.av-media').spin(false);
+      $('.av-media img').fadeIn('fast');
+    }
+
     ,nextFile: function(){
       if(this.currentPosition==this.attachments.length-1) return;
       this.currentPosition++;
@@ -116,7 +121,7 @@ window.App = window.App || {};
         self.attachments.push({
           filename: $el.find(".attach_content a").data("original-title") || $el.find(".attach_content a").attr('title')
           ,filelink: $el.find(".attach_content a").attr("href")
-          ,filetype: $el.find(".attachment-type .file-type").text()
+          ,filetype: $el.find(".attachment-type .file-type").text().toLowerCase()
         })
       })
     }
@@ -128,6 +133,9 @@ window.App = window.App || {};
       $('body').append(popup);
 
       this.attachKeys();
+
+      $('.av-media').spin('false');
+      $('.av-media').spin();
     }
 
     ,removePopupCheck: function(e){

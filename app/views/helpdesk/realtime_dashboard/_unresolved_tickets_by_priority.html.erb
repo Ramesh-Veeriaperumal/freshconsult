@@ -1,8 +1,9 @@
-<div data-gs-x="<%= x %>" data-gs-y="<%= y %>" data-gs-width="<%= width %>" data-gs-height="<%= height %>" class="grid-stack-item widget">
+<div data-gs-x="<%= x %>" data-gs-y="<%= y %>" data-gs-width="<%= width %>" data-gs-height="<%= height %>" class="grid-stack-item widget unresolved_tickets_by_priority_widget">
 	<div class="grid-stack-item-content widget-inner">
  		<h3 class="widget-title">
 			<%=t('helpdesk.realtime_dashboard.unresolved_tickets_by_priority') %>
 		</h3>
+		<div class="widget-title-muted muted" rel="timestamp"></div>
 		<div class="widget-content">
 			<div id="unresolved_tickets_by_priority">
 				<div class="sloading loading-small loading-block"></div>
@@ -10,3 +11,44 @@
 		</div>
 	</div>
 </div>
+
+<% if current_user.privilege?(:admin_tasks) %>
+	<script>
+	  jQuery('body').one('assetLoaded.fjax', function() {
+	   	 new RealtimeDashboard.Widgets.UnresolvedTickets.OtherRoles(
+	   	 	'unresolved_tickets_by_priority',
+	   	 	'unresolved_tickets_by_priority',
+	   	 	'group_id,priority',
+	   	 	'group_id',
+	   	 	 5
+	   	 	).init();
+	  });
+	</script>
+<% elsif current_user.privilege?(:view_reports) %>
+	<script>
+	  jQuery('body').one('assetLoaded.fjax', function() {
+	   	 new RealtimeDashboard.Widgets.UnresolvedTickets.OtherRoles(
+	   	 	'unresolved_tickets_by_priority',
+	   	 	'unresolved_tickets_by_priority',
+	   	 	'responder_id,priority',
+	   	 	'responder_id',
+	   	 	 5
+	   	 	).init();
+	  });
+	</script>
+
+<% else %>
+	<script>
+	  jQuery('body').one('assetLoaded.fjax', function() {
+	   	 new RealtimeDashboard.Widgets.UnresolvedTickets.Agent(
+	   	 	'unresolved_tickets_by_priority',
+	   	 	'unresolved_tickets_by_priority',
+	   	 	'priority',
+	   	 	 1,
+	   	 	 4
+	   	 	).init();
+	  });
+	</script>
+
+
+<% end %>

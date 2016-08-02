@@ -24,6 +24,12 @@
   </div>
 </div> 
 
+<div id="requester-widget-edit-modal-container">
+<% unless user.agent? || !privilege?(:manage_contacts) %>
+  <%= render :partial => "/contacts/requester_widget_contact_edit" , :locals => { :user => user, :ticket => @ticket }  %>
+<% end %>
+</div>
+
 <script>
   jQuery(document).ready(function(){
     if (jQuery('.requester-info-sprite').length < 2) {
