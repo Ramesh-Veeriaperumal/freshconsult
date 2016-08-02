@@ -616,44 +616,40 @@ rules_filter = function(_name, filter_data, parentDom, options){
 							}
 						});
 
-			jQuery(parentDom).find('.webhook select[name=request_type]')
-				.on("change", function(){
-					var request_content = jQuery(this).parent().parent().find('.request_content');
-					if(jQuery(this).val()==1 || jQuery(this).val()==5)
-						request_content.slideUp('slow');
-					else
-						request_content.slideDown('slow');
-				});
+			jQuery(parentDom).on("change", '.webhook select[name=request_type]', function(){
+				var request_content = jQuery(this).parent().parent().find('.request_content');
+				if(jQuery(this).val()==1 || jQuery(this).val()==5)
+					request_content.slideUp('slow');
+				else
+					request_content.slideDown('slow');
+			});
 
-			jQuery(parentDom).find('.webhook input[name=need_authentication]')
-				.on("change", function(){	jQuery(this).parent().parent().parent().find('.credentials').slideToggle();	});
+			jQuery(parentDom).on("change", '.webhook input[name=need_authentication]', function(){	jQuery(this).parent().parent().parent().find('.credentials').slideToggle();	});
 
-			jQuery(parentDom).find('.webhook .headers_toggle')
-				.on("click", function(){	
-                    jQuery(parentDom).find('.webhook .headers_toggle').toggle();
-                    jQuery(this).parent().parent().find('.custom_headers_wrapper').slideToggle();
-				});
+			jQuery(parentDom).on("click", '.webhook .headers_toggle', function(){	
+		        		jQuery(parentDom).find('.webhook .headers_toggle').toggle();
+                 			jQuery(this).parent().parent().find('.custom_headers_wrapper').slideToggle();
+			});
 
-			jQuery(parentDom).find('.webhook .headers_toggle.headers_toggle_remove')
-				.on("click", function(){	
-                    jQuery(this).parent().parent().find('.custom_headers_wrapper textarea').val('');	
-				});
+			jQuery(parentDom).on("click", '.webhook .headers_toggle.headers_toggle_remove', function(){	
+                    		jQuery(this).parent().parent().find('.custom_headers_wrapper textarea').val('');	
+			});
 
-			jQuery(parentDom).find('.webhook .credentials_toggle')
-				.on("click", function(){
+			jQuery(parentDom)
+				.on("click", '.webhook .credentials_toggle', function(){
 					current_credential = jQuery(this).parent();
 					current_credential.hide();
 					current_credential.siblings().show();
 				});
 
-			jQuery(parentDom).find('.webhook input[name=content_layout]')
-				.on("change", function(){
+			jQuery(parentDom)
+				.on("change", '.webhook input[name=content_layout]', function(){
 					divs = jQuery(this).parent().parent().find('.edit1,.edit2')
 					divs[1].toggle();
 					divs[0].toggle();
 				});
 
-			jQuery(parentDom).find('.webhook .params_div .checkbox').on("change", function() {
+			jQuery(parentDom).on("change", '.webhook .params_div .checkbox', function() {
 				if(this.checked) {
 			  	jQuery(this).parent().addClass('highlighted');
 				}else{
@@ -661,7 +657,7 @@ rules_filter = function(_name, filter_data, parentDom, options){
 				}
 			});
 
-			jQuery(parentDom).find('.webhook input[name=content_type]').on("change", function(){
+			jQuery(parentDom).on("change", '.webhook input[name=content_type]', function(){
 				advanced_rb = jQuery(this).parent().parent().parent().find('input[name=content_layout][value=2]').first();
 				if(jQuery(this).val()==3){
 					advanced_rb.attr("disabled", true);
@@ -673,7 +669,7 @@ rules_filter = function(_name, filter_data, parentDom, options){
 				}
 			});
 
-			jQuery(parentDom).find('.webhook a[href="#change_password"]').on("click", function(){
+			jQuery(parentDom).on("click", '.webhook a[href="#change_password"]', function(){
 				jQuery(this).hide();
 				jQuery(this).parent().find('.password').show();
 			});
