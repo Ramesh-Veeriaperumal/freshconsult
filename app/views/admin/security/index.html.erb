@@ -382,7 +382,7 @@
           $.tmpl( _ip_template, item ).appendTo( "#security-ip-range-container" );
         });
 
-        <%= @whitelisted_ips.applies_only_to_agents %> ? $("#agents").prop("checked",true) : $("#both").prop("checked",prop)
+        <%= @whitelisted_ips.applies_only_to_agents %> ? $("#agents").prop("checked",true) : $("#both").prop("checked",true)
         <%= @whitelisted_ips.enabled %> ? $("#ip-form").show() : $("#ip-form").hide()
       <% else %>
         $.tmpl( _ip_template, { start_ip : "<%= request.env['CLIENT_IP'] %>", end_ip : "<%= request.env['CLIENT_IP'] %>" } )
