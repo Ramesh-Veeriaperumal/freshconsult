@@ -13,8 +13,8 @@ class UserSession < Authlogic::Session::Base
   after_validation :set_missing_node_session
   validate :account_lockdown_warning, :unless => :api_request?
 
-  before_create  :reset_persistence_token
-  before_destroy :reset_persistence_token
+  before_create  :reset_persistence_token, :delete_assume_user_keys, :if => :web_session?
+  before_destroy :reset_persistence_token, :if => :web_session?
 
   generalize_credentials_error_messages true
   consecutive_failed_logins_limit 10
@@ -83,8 +83,16 @@ class UserSession < Authlogic::Session::Base
   password_field(:password)
 
   def reset_persistence_token
-    return if self.record.nil?
-    self.record.reset_persistence_token! if self.web_session and Account.current and Account.current.features_included?(:single_session_per_user)
+    self.record.reset_persistence_token! if self.record.present?
+  end
+
+  def delete_assume_user_keys
+    controller.session.delete :assumed_user if controller.session.has_key?(:assumed_user)
+    controller.session.delete :original_user if controller.session.has_key?(:original_user)
+  end
+
+  def web_session?
+    self.web_session and Account.current and Account.current.features_included?(:single_session_per_user)
   end
 
   private
