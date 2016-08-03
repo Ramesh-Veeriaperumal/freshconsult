@@ -1,10 +1,11 @@
 
 window.App = window.App || {};
+window.App.Admin = window.App.Admin || {};
 
 (function ($) {
     "use strict";
 
-    App.AdminFontSettings = {
+    App.Admin.AdminFontSettings = {
 		fontname_pairs : {	
 			'Helvetica'		: 'Helvetica Neue, Helvetica, Arial, sans-serif',
 			'Sans Serif'	: 'arial, helvetica, sans-serif',
@@ -28,6 +29,9 @@ window.App = window.App || {};
 			this.bindDOM();
 			this.changeFontName();
     	},
+    	onVisit: function () {
+	      this.initialize();
+	    },
     	bindFontChange: function(){
 			$(document).on("click.fontsetting","#font-change", function(){
 				$("#font-show").addClass('hide');
@@ -40,7 +44,7 @@ window.App = window.App || {};
 				$("#font-btn").empty().addClass('sloading');
 				$.ajax({
 					type: "POST",
-          dataType: "script",
+          			dataType: "script",
 				    data: { "_method" : "put",  
 				    		"font-family" : $("#family-text").attr('rel')
 				    	},
@@ -49,7 +53,7 @@ window.App = window.App || {};
 
 					}
 				});
-			}); 
+			});
     	},
     	bindFontCancel: function(){
 			$(document).on("click.fontsetting","#font-cancel", function(){
@@ -94,9 +98,9 @@ window.App = window.App || {};
 			$("#font-name").text(name);
 			$("#family-text").text(name);
    		},
-    	destroy: function(){
-			$(document).off("click.fontsetting");
-    	}
+    	onLeave: function () {
+	      $(document).off("click.fontsetting");
+	    }
     };
 
 }(window.jQuery));

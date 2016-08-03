@@ -42,6 +42,9 @@ window.App = window.App || {};
 			case 'admin/chat_widgets/edit':
 				this.current_module = 'LiveChatAdminSettings';
 				break;
+			case 'admin/email_notifications/index':
+				this.current_module = 'AdminFontSettings'
+				break
 			}
 		},
 
