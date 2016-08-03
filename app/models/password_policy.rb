@@ -91,7 +91,7 @@ class PasswordPolicy < ActiveRecord::Base
 	end
 
 	def session_expiry_days_values
-		([7, 15, 30, 60, 90].collect{ |x| x.to_s }) << NEVER
+		([7, 15, 30, 60, 90].collect{ |x| x.to_s })
 	end
 
 	def update_password_expiry
