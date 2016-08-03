@@ -9,6 +9,10 @@ class ApiApplicationController < MetalApiController
   rescue_from ActiveRecord::StatementInvalid, with: :db_query_error
   rescue_from RangeError, with: :range_error
 
+  protect_from_forgery
+  skip_before_filter :verify_authenticity_token
+  before_filter :verify_authenticity_token, :if => :csrf_check_reqd?
+  
   # Do not change the order as record_not_unique is inheriting from statement invalid error
   rescue_from ActiveRecord::RecordNotUnique, with: :duplicate_value_error
   rescue_from ConsecutiveFailedLoginError, with: :login_error_handler
@@ -404,28 +408,37 @@ class ApiApplicationController < MetalApiController
 
     def api_current_user
       return @current_user if defined?(@current_user)
-      if get_request? && !request.authorization
-        if current_user_session # fall back to old session based auth
-          @current_user = (session.key?(:assumed_user)) ? (current_account.users.find session[:assumed_user]) : current_user_session.record
-          stale_record = current_user_session.stale_record
-          if @current_user
-            @current_user.update_failed_login_count(true) if @current_user.failed_login_count != 0 && login_via_email?
-            # to avoid query to check for password expiry. We know for sure that passowrd won't be expired if record is not nil
-            @current_user.password_expired = false
-          elsif stale_record && stale_record.password_expired
-            @current_user = stale_record # stale_record would be set in case of password expiry. record would be nil.
-          end
-        end
-      elsif !$infra['PRIVATE_API']
-        # authenticate using auth headers
-        authenticate_with_http_basic do |username, password| # authenticate_with_http_basic - AuthLogic method
-          # string check for @ is used to avoid a query.
-          @current_user = email_given?(username) ? AuthHelper.get_email_user(username, password, request.ip) : AuthHelper.get_token_user(username)
-        end
+      # Private API is supposed to work only with session based authentication
+      if $infra['PRIVATE_API'] || (get_request? && !request.authorization)
+        session_auth
+      else
+        basic_auth
       end
 
       # should be defined in case of invalid credentials as api_current_user gets called repeatedly.
       @current_user ||= nil
+    end
+    
+    def session_auth
+      if current_user_session # fall back to old session based auth
+        @current_user = (session.key?(:assumed_user)) ? (current_account.users.find session[:assumed_user]) : current_user_session.record
+        stale_record = current_user_session.stale_record
+        if @current_user
+          @current_user.update_failed_login_count(true) if @current_user.failed_login_count != 0 && login_via_email?
+          # to avoid query to check for password expiry. We know for sure that passowrd won't be expired if record is not nil
+          @current_user.password_expired = false
+        elsif stale_record && stale_record.password_expired
+          @current_user = stale_record # stale_record would be set in case of password expiry. record would be nil.
+        end
+      end
+    end
+    
+    def basic_auth
+      # authenticate using auth headers
+      authenticate_with_http_basic do |username, password| # authenticate_with_http_basic - AuthLogic method
+        # string check for @ is used to avoid a query.
+        @current_user = email_given?(username) ? AuthHelper.get_email_user(username, password, request.ip) : AuthHelper.get_token_user(username)
+      end
     end
 
     def email_given?(username)
@@ -641,5 +654,15 @@ class ApiApplicationController < MetalApiController
       Sharding.run_on_slave do
         yield
       end
+    end
+    
+    def csrf_check_reqd?
+      return false unless $infra['PRIVATE_API']
+      request.cookies["_helpkit_session"] && !get_request?
+    end
+    
+    def handle_unverified_request
+      render_request_error :invalid_credentials, 401
+      #TODO-EMBERAPI Need to decide what exactly to send back
     end
 end
