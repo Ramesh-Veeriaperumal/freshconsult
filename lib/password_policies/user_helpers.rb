@@ -46,7 +46,7 @@ module PasswordPolicies
     end 
 
     def periodic_login_duration
-      user_policy && user_policy.periodic_login_duration && user_policy.periodic_login_duration.to_i.seconds
+      user_policy && user_policy.periodic_login_duration && user_policy.periodic_login_duration.to_i.days
     end
 
     def password_expiry_duration
