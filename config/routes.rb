@@ -1445,115 +1445,16 @@ Helpkit::Application.routes.draw do
   match "/reports/:report_type",           :controller => 'reports/v2/tickets/reports', :action => 'index', :method => :get  
 
   namespace :reports do
-    # resources :helpdesk_glance_reports, :controller => 'helpdesk_glance_reports' do
-    #   collection do
-    #     post :generate
-    #     post :generate_pdf
-    #     post :send_report_email
-    #     post :fetch_activity_ajax
-    #     post :fetch_metrics
-    #   end
-    # end
 
-
-
-    # resources :analysis_reports, :controller => 'helpdesk_load_analysis' do
-    #   collection do
-    #     post :generate
-    #     post :generate_pdf
-    #     post :send_report_email
-    #   end
-    # end
-
-    # resources :performance_analysis_reports, :controller => 'helpdesk_performance_analysis' do
-    #   collection do
-    #     post :generate
-    #     post :generate_pdf
-    #     post :send_report_email
-    #   end
-    # end
-
-    # resources :agent_glance_reports, :controller => 'agent_glance_reports' do
-    #   collection do
-    #     post :generate
-    #     post :generate_pdf
-    #     post :send_report_email
-    #     post :fetch_activity_ajax
-    #     post :fetch_metrics
-    #   end
-    # end
-
-    # resources :group_glance_reports, :controller => 'group_glance_reports' do
-    #   collection do
-    #     post :generate
-    #     post :generate_pdf
-    #     post :send_report_email
-    #     post :fetch_activity_ajax
-    #     post :fetch_metrics
-    #   end
-    # end
-
-    # resources :authorizations, :collection => { :autocomplete => :get, :agent_autocomplete => :get,
-    #                                             :company_autocomplete => :get }
-
-    # resources :agent_analysis_reports, :controller => 'agents_analysis' do
-    #   collection do
-    #     post :generate
-    #     post :generate_pdf
-    #     post :send_report_email
-    #     post :fetch_chart_data
-    #   end
-    # end
-
-    # resources :group_analysis_reports, :controller => 'groups_analysis' do
-    #   collection do
-    #     post :generate
-    #     post :generate_pdf
-    #     post :send_report_email
-    #     post :fetch_chart_data
-    #   end
-    # end
-
-    # resources :agents_comparison_reports, :controller => 'agents_comparison' do
-    #   collection do
-    #     post :generate
-    #     post :generate_pdf
-    #     post :send_report_email
-    #   end
-    # end
-
-    # resources :groups_comparison_reports, :controller => 'groups_comparison' do
-    #   collection do
-    #     post :generate
-    #     post :generate_pdf
-    #     post :send_report_email
-    #   end
-    # end
-
-    # resources :customer_glance_reports, :controller => 'customer_glance_reports' do
-    #   collection do
-    #     post :generate
-    #     post :generate_pdf
-    #     post :send_report_email
-    #     post :fetch_activity_ajax
-    #     post :fetch_metrics
-    #   end
-    # end
-
-    # resources :customers_analysis_reports, :controller => 'customers_analysis' do
-    #   collection do
-    #     post :generate
-    #     post :generate_pdf
-    #     post :send_report_email
-    #     post :fetch_chart_data
-    #   end
-    # end
+    resources :authorizations, :collection => { :autocomplete => :get, :agent_autocomplete => :get,
+                                                :company_autocomplete => :get }
 
     resources :report_filters do
       member do
         post :create
       end
     end
+
     namespace :freshfone, :path => "phone" do
       resources :summary_reports, :controller => 'summary_reports' do
         collection do
