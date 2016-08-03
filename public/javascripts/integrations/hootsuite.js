@@ -180,7 +180,7 @@ jQuery.noConflict();
 				var form = $('#custom_ticket_form');
 				var formData = $(form).serialize();
 				var btn = $("#helpdesk_ticket_submit");
-				btn.attr("value",btn.attr("data-loading-text"));
+				btn.val(btn.attr("data-loading-text"));
 				btn.addClass('disabled');
 				$.ajax({
 				    type: 'POST',
@@ -191,10 +191,10 @@ jQuery.noConflict();
 							$('#alert').html(data.msg);
 							$('#alert').show();
 					  }
-						btn.attr("value",btn.attr("data-saved-text"));
+						btn.val(btn.attr("data-saved-text"));
 						btn.removeClass('disabled');
 						setTimeout(function(){
-						  btn.attr("value",btn.attr("data-default-text"));
+						  btn.val(btn.attr("data-default-text"));
 						}, 2000);
 					}).fail(function(data) {
 					});

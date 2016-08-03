@@ -36,7 +36,9 @@ class Search::Filters::Docs
   # Fetch count from Elasticsearch based on filters
   def count(model_class)
     response = es_request(model_class, '_search?search_type=count')
-    JSON.parse(response)['hits']['total']
+    parsed_response = JSON.parse(response)
+    Rails.logger.info "ES count response:: Account -> #{Account.current.id}, Took:: #{parsed_response['took']}"
+    parsed_response['hits']['total']
   end
 
   # Fetch docs from Elasticsearch based on filters and load from ActiveRecord
@@ -126,7 +128,7 @@ class Search::Filters::Docs
 
     def document_path(model_class, id, query_params={})
       path    = [host, alias_name, model_class.demodulize.downcase, id].join('/')
-      query_params.blank? ? path : "#{path}?#{query_params.to_params}"
+      query_params.blank? ? path : "#{path}?#{query_params.to_query}"
     end
 
     def error_handle(&block)

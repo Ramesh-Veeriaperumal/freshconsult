@@ -179,13 +179,13 @@
 <% end %>
 <% content_for :pagefixed do %>
   <%= javascript_tag do %>
-    jQuery('#HelpdeskFwd_<%=cntid%> select#reply_email_id').live('change',function(e){
+    jQuery(document).on('change','#HelpdeskFwd_<%=cntid%> select#reply_email_id', function(e){
     var selectObj = jQuery(e.target),
         form = e.target.form,
         fromEmail = selectObj.val();
         form['helpdesk_note[from_email]'].value = fromEmail;
   });
-  jQuery(".forward-resp").live('click', function(ev){
+  jQuery(".forward-resp").on('click', function(ev){
     ev.preventDefault();
     jQuery("#canned_response_show").attr('data-editor-id', jQuery(this).data('current-forward'));
     jQuery("#canned_response_show").trigger('click');

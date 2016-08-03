@@ -1,6 +1,6 @@
 <% content_for :onload_script do %>
 	
-	jQuery("#customers-select-all").live("change", function(ev){
+	jQuery("#customers-select-all").on("change", function(ev){
 		jQuery("#contacts-table .customers_selector, #companies .customers_selector")
 			.not('[disabled]')
 			.prop("checked", this.checked)
@@ -11,7 +11,7 @@
 	});
 
 
-	jQuery('.customers_selector').live("change", function(ev){
+	jQuery('.customers_selector').on("change", function(ev){
 		jQuery(this).parents("tr").toggleClass("diffColor", this.checked);
 
 		if(jQuery('.customers_selector:checked').length == 0 )

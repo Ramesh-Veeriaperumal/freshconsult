@@ -1,0 +1,1 @@
+//= require app/ca_ticket_view.js

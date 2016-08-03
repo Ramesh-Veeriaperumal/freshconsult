@@ -43,7 +43,7 @@ var DataModel = {
 		return this.currentData[0];
 	},
 	last: function(){
-		var length = this.size();
+		var length = this.length;
 		return this.currentData[length-1];
 	},
 	find: function(id, key){

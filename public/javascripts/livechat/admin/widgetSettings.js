@@ -6,7 +6,7 @@ window.liveChat.widgetSettings = function($){
 
 		render: function(){
 			var self = this;
-			var _widget = liveChat.adminSettings.currentWidget;
+			var _widget = App.Admin.LiveChatAdminSettings.currentWidget;
 			var _widgetPreferences = _widget.widget_preferences;
 			var _defaultMessages = _widget.defaultMessages;
 			var default_widget_preferences = _defaultMessages.widget_preferences;
@@ -185,7 +185,7 @@ window.liveChat.widgetSettings = function($){
 				_nonavailabilityPreferences['customLink'] = _useCustomLink ? 1 : 0;
 				_nonavailabilityPreferences['customLinkUrl'] = _useCustomLink ? $("#custom_link_url").val() : "";
 
-				_data.offline_chat = liveChat.adminSettings.currentWidget['offline_chat'];
+				_data.offline_chat = App.Admin.LiveChatAdminSettings.currentWidget['offline_chat'];
 
 				_offlineMessages['title'] = $("#offline_title").val() || "";
 				_offlineMessages['thank'] = $("#offline_thank_msg").val() || "";
@@ -249,7 +249,7 @@ window.liveChat.widgetSettings = function($){
 
 		updateLiveChatWidgetSettings: function(params, widget_id){
 			var self 					= this;
-			var _widget 		 	= liveChat.adminSettings.currentWidget;
+			var _widget 		 	= App.Admin.LiveChatAdminSettings.currentWidget;
 			var _visitorForm 	= window.liveChat.visitorFormSettings;
 			var _routing 		 	= window.liveChat.routingSettings;
 			$.ajax({
@@ -259,7 +259,7 @@ window.liveChat.widgetSettings = function($){
 				dataType: "json",
 				success: function(resp){
 					if(resp.status == "success"){
-						window.liveChat.adminSettings.currentWidget = $.extend({}, _widget, params);
+						App.Admin.LiveChatAdminSettings.currentWidget = $.extend({}, _widget, params);
 						window.liveChat.mainSettings.parseStringJsonFields();
 						self.showMsg(resp);
 					}
@@ -298,7 +298,7 @@ window.liveChat.widgetSettings = function($){
 
 		bindEvents: function(){
 			var self = this;
-			var _widget = window.liveChat.adminSettings.currentWidget;
+			var _widget = App.Admin.LiveChatAdminSettings.currentWidget;
 
 			window.liveChat.widgetCode.bindClipBoardEvents();
 			window.liveChat.preferenceSettings.bindEvents();

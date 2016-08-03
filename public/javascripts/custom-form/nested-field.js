@@ -66,7 +66,7 @@
 			this.settings.currentData    = $H(this.settings.currentData);
 			levels = this.settings.currentData.get("levels");
 			action = (this.settings.currentData.get("level_three_present")) ? ((this.nestedTree.third_level) ? "edit" : "delete") : "create";
-			if (levels.size() < 2) levels.push({level: 3});
+			if (levels.length < 2) levels.push({level: 3});
 			if (!this.settings.currentData.get("level_three_present") && !this.nestedTree.third_level){
                 levels.pop();
 			}

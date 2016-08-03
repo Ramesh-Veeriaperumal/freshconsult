@@ -58,7 +58,7 @@
 		})(jQuery);
 
 		<% unless default_currency? %>
-	    jQuery("#freshfone_credits_recharge_quantity").live("change", function(ev){
+	    jQuery("#freshfone_credits_recharge_quantity").on("change", function(ev){
 	    	jQuery("#fone-recharge-followup").html("$" + jQuery(this).val() + " <%= t('freshfone.subscription.followup_text') %>")
 	    });
 	  <% end %>

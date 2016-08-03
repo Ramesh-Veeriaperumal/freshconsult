@@ -1276,7 +1276,7 @@ and dependencies (minified).
 			});
 			if(iframe.length){
 				iframe.each(function(){
-					$(this).load(function(){
+					$(this).on('load',function(){
 						/* bind events on accessible iframes */
 						if(_canAccessIFrame(this)){
 							$(this.contentDocument || this.contentWindow.document).bind(events[0],function(e){
@@ -1459,7 +1459,7 @@ and dependencies (minified).
 				iframe=$("#mCSB_"+d.idx+"_container").find("iframe");
 			if(iframe.length){
 				iframe.each(function(){
-					$(this).load(function(){
+					$(this).on('load', function(){
 						/* bind events on accessible iframes */
 						if(_canAccessIFrame(this)){
 							$(this.contentDocument || this.contentWindow.document).bind("mousewheel."+namespace,function(e,delta){
@@ -1690,7 +1690,7 @@ and dependencies (minified).
 				events=["blur."+namespace+" keydown."+namespace+" keyup."+namespace];
 			if(iframe.length){
 				iframe.each(function(){
-					$(this).load(function(){
+					$(this).on('load', function(){
 						/* bind events on accessible iframes */
 						if(_canAccessIFrame(this)){
 							$(this.contentDocument || this.contentWindow.document).bind(events[0],function(e){
@@ -2397,7 +2397,7 @@ and dependencies (minified).
 	*/
 	window[pluginNS]=true;
 
-	$(window).load(function(){
+	$(window).on('load', function(){
 
 		$(defaultSelector)[pluginNS](); /* add scrollbars automatically on default selector */
 

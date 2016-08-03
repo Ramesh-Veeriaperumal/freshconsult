@@ -231,7 +231,7 @@
 	        });
 		}
 
-	  	jQuery("#helpdesk_ticket_subject").live("blur paste", function(ev){
+	  	jQuery("#helpdesk_ticket_subject").on("blur paste", function(ev){
 	  		jQuery("#searchInputFrom").val("Subject");
 	  		if(!suggestForSubject) return
 
@@ -244,7 +244,7 @@
 	  		}
 	  	});
 
-	  	jQuery("#fs-input").live("keydown change paste", function(ev){
+	  	jQuery("#fs-input").on("keydown change paste", function(ev){
 	  		jQuery("#searchInputFrom").val("Search");
 
 			var $this = jQuery(this);

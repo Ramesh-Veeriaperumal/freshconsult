@@ -27,7 +27,7 @@ jQuery(document).ready(function() {
 		jQuery('#account_domain').val(jQuery('#account_domain').val().toLowerCase().replace(/\W/g, ''));
 		if (isFormValid()) {
 			jQuery(".btn-primary").addClass("disabled");
-			jQuery(".btn-primary").attr("value","Loading...");
+			jQuery(".btn-primary").val("Loading...");
 			jQuery(".btn-primary").attr("disabled", "disabled");
 		}
 	})

@@ -73,9 +73,9 @@ window.liveChat.mainSettings = function($){
       self.getLiveChatWidgetSettings(function(err, response){
         $('#chat_loading').hide();
         $('#chat_setting').show();
-        var _widget = window.liveChat.adminSettings.currentWidget;
+        var _widget = App.Admin.LiveChatAdminSettings.currentWidget;
         delete response.id;
-        window.liveChat.adminSettings.currentWidget = $.extend({}, _widget, response);
+        App.Admin.LiveChatAdminSettings.currentWidget = $.extend({}, _widget, response);
         self.parseStringJsonFields();
         window.liveChat.offlineSettings.setOfflineChatSetting();
         self._renderWidget();
@@ -83,25 +83,25 @@ window.liveChat.mainSettings = function($){
     },
 
     getLiveChatWidgetSettings: function(callback){
-      var _widget = window.liveChat.adminSettings.currentWidget;
+      var _widget = App.Admin.LiveChatAdminSettings.currentWidget;
       window.liveChat.request('widgets/' + _widget.widget_id, 'GET', {}, callback);
     },
 
     parseStringJsonFields: function(){
-      var _widget = window.liveChat.adminSettings.currentWidget;
+      var _widget = App.Admin.LiveChatAdminSettings.currentWidget;
       var serializedFields = ['widget_preferences','non_availability_message',
                               'prechat_fields','business_calendar','routing','offline_chat'];
       $.each(serializedFields, function(index, field){
         if(typeof _widget[field] == 'string'){
-          window.liveChat.adminSettings.currentWidget[field] = JSON.parse(_widget[field]);
+          App.Admin.LiveChatAdminSettings.currentWidget[field] = JSON.parse(_widget[field]);
         }
       });
     },
 
     toggleWidget: function(toggledState, widget_id){
-      var self = this;
-      var _widgetList = window.liveChat.adminSettings.widgetList;
-      var _widget = window.liveChat.adminSettings.currentWidget;
+      var self = this;  
+      var _widgetList = App.Admin.LiveChatAdminSettings.widgetList;
+      var _widget = App.Admin.LiveChatAdminSettings.currentWidget
       var widget_id = (widget_id || _widget.widget_id)
       $.ajax({
         type: "POST",
@@ -114,8 +114,8 @@ window.liveChat.mainSettings = function($){
 
     createWidget: function(triggeredFrom){
       var self = this;
-      var _widget = window.liveChat.adminSettings.currentWidget;
-      var _widgetList = window.liveChat.adminSettings.widgetList;
+      var _widget = App.Admin.LiveChatAdminSettings.currentWidget
+      var _widgetList = App.Admin.LiveChatAdminSettings.widgetList;
       $.ajax({
         type: "POST",
         url: "/admin/chat_widgets/enable",
@@ -126,7 +126,7 @@ window.liveChat.mainSettings = function($){
             if(triggeredFrom == "edit"){
               $('#chat_loading').hide();
               $('#chat_setting').show();
-              window.liveChat.adminSettings.currentWidget = $.extend({}, _widget, response.result);
+              App.Admin.LiveChatAdminSettings.currentWidget = $.extend({}, _widget, response.result);
               self.parseStringJsonFields();
               self._renderWidget();
             }else if(triggeredFrom == "index"){

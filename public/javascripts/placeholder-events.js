@@ -53,12 +53,12 @@ jQuery(document).ready(function(){
 		jQuery('#place-dialog').groupPlaceholders();
 	});
 
-	jQuery('.redactor_editor').live('click', function(){
+	jQuery(document).on('click', ".redactor_editor, .CodeMirror", function(){
 		active_email_body = jQuery(this).siblings('textarea');	
 		jQuery('#place-dialog').groupPlaceholders();
     });
 	
-	jQuery(".placeholder-list button, .placeholder-list a.ph-btn").click(function(ev){  
+	jQuery(".placeholder-list button, .placeholder-list a.ph-btn").click(function(ev){
 		preventDefault(ev);
 		if(jQuery(this).parent().hasClass('ph-more-less')) {
 			return false;

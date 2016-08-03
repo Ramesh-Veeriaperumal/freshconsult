@@ -75,7 +75,7 @@
 	// private function for debugging
 	function debug($obj) {
 		if (window.console && window.console.log)
-		window.console.log('textarea count: ' + $obj.size());
+		window.console.log('textarea count: ' + $obj.length);
 	};
 
 	function process_keypress (o,shft,options) {

@@ -116,6 +116,10 @@
 					display: inline-block;
 					@include margin-right(8px);
 				}
+				li {
+				   max-width : 100%;
+				   word-wrap: break-word;
+				}
 			}
 			.edit-filter{
 				text-align: center;

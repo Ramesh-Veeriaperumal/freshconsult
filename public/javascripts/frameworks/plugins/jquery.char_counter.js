@@ -14,7 +14,7 @@
 					checkLength($(this).data('counter'), this, $(this).data('limit'))
 				}, 10);
 			});
-			$(node).live("keyup", function() {
+			$(node).on("keyup", function() {
 				checkLength($(this).data('counter'), this, $(this).data('limit'))
 			});
 			checkLength($(node).data('counter'), node, $(node).data('limit'))

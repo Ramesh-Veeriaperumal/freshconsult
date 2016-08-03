@@ -42,7 +42,7 @@
 <script  type="text/javascript">
   jQuery(".twt-stream-name").trigger('click');
   jQuery(function() {
-    if(jQuery("#social_twitter_handle_capture_mention_as_ticket").attr('checked')){
+    if(jQuery("#social_twitter_handle_capture_mention_as_ticket").prop('checked')){
       jQuery('.mention_rule').show()
     }else{
       jQuery('.mention_rule').hide()

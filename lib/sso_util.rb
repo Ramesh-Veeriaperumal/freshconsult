@@ -93,6 +93,7 @@ module SsoUtil
     end
 
     @user_session = @current_user.account.user_sessions.new(@current_user)
+    @user_session.web_session = true unless is_native_mobile?
     if (!@current_user.new_record? && @user_session.save)
       if is_native_mobile?
         cookies["mobile_access_token"] = { :value => @current_user.helpdesk_agent ? @current_user.single_access_token : 'customer', :http_only => true } 

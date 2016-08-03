@@ -25,7 +25,7 @@ window.Fjax = window.Fjax || {};
 		start: function () {
 			this.bindPjaxListeners();
 			this.loadReqdAssets();
-			$(document).one('ready', function () {
+			$(function(){
 				Fjax.Manager.loadedPage();
 			});
 		},

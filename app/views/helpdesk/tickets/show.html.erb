@@ -67,17 +67,14 @@ try {
 	"use strict";
 	Fjax.bodyClass = 'ticket_details';
 	Fjax.current_page = 'ticket_detail';
-	TICKET_DETAILS_DOMREADY();
-	Fjax.afterNextPage = TICKET_DETAILS_CLEANUP;
+
 	<% if @ticket.twitter? %>
 	jQuery(document).ready(function(){
 		jQuery('#twitter_handle').change();
 	});
 	<% end %>
 	<% unless @draft.nil? %>
-		swapEmailNote('cnt-reply', null);
-		TICKET_DETAILS_DATA['draft']['hasChanged'] = false;
-		jQuery(window).trigger('scroll');
+		jQuery('#HelpdeskReply').data('containDraft', true)
 	<% end %>
 
 		jQuery('#revert_details_view #switch').on('click.ticket_details',function(ev) {

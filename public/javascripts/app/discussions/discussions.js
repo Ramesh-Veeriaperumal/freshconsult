@@ -56,7 +56,7 @@ window.App = window.App || {};
 		bindDeleteConfirm: function () {
 			if($('#del') !== undefined){
 				var submit_btn_id = $('#del').data('target') + '-submit';
-				$(submit_btn_id).live('click', function () {
+				$(submit_btn_id).on('click', function () {				
 					$('#delete_object').trigger('click');
 				})
 			}

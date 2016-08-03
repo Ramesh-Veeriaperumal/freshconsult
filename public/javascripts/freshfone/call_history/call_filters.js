@@ -112,7 +112,7 @@ window.App.Freshfonecallhistory = window.App.Freshfonecallhistory || {};
         },
         formatSelection: function (result) {
           self.handleGroupView(result);
-          self.$fCallStatusSelect2.attr('value',result.call_type)
+          self.$fCallStatusSelect2.val(result.call_type)
                              .data('value',result.value);
           return result.value;
         }
@@ -123,7 +123,7 @@ window.App.Freshfonecallhistory = window.App.Freshfonecallhistory || {};
       this.$responder.on("change", function (data) {
         var responderNames = ($("#responder option:selected").map( function () {return $(this).text()}));
         responderNames = responderNames.toArray().join(', ');
-        self.$requesterId_ffitem.attr('value',self.$responder.val());
+        self.$requesterId_ffitem.val(self.$responder.val());
         self.$requesterId_ffitem.data('value',responderNames);
       });
     },
@@ -134,7 +134,7 @@ window.App.Freshfonecallhistory = window.App.Freshfonecallhistory || {};
           self.$callerName.val(result.value);
           var condition = (result.user_result == undefined) ? 'caller_number_id' : 'customer_id' 
           self.$callerId_ffitem.attr('condition', condition);
-          self.$callerId_ffitem.attr('value',result.id);
+          self.$callerId_ffitem.val(result.id);
           self.$callerId_ffitem.data('value', escapeHtml(result.value));
           return escapeHtml(result.value);
       });
@@ -151,7 +151,7 @@ window.App.Freshfonecallhistory = window.App.Freshfonecallhistory || {};
           return result.value;
         },
         formatSelection: function (result) {
-          self.$groupName.attr('value',result.id);
+          self.$groupName.val(result.id);
           self.$groupName.data('value', result.value);
           return result.value;
 
@@ -171,7 +171,7 @@ window.App.Freshfonecallhistory = window.App.Freshfonecallhistory || {};
         },
         formatSelection: function (result) {
           self.$fBusinessHoursSelect2
-                .attr('value', result.business_hour_call)
+                .val(result.business_hour_call)
                 .data('value', result.value);
           return result.value;
         }
@@ -194,7 +194,7 @@ window.App.Freshfonecallhistory = window.App.Freshfonecallhistory || {};
     },
     resetElementvalues: function (element) {
       element.data('value','');
-      element.attr('value','');
+      element.val('');
     },
     bindSortingMenu: function () {
       var self = this;
@@ -360,7 +360,7 @@ window.App.Freshfonecallhistory = window.App.Freshfonecallhistory || {};
         if(filter['customer_name'] || filter['caller_number']){
           this.$callerName.select2('data',{'value' : filter['customer_name'] || filter['caller_number'] });
           this.$callerId_ffitem.attr('condition', filter['customer_id'] ? "customer_id" : "caller_number_id" );
-          this.$callerId_ffitem.attr('value',filter['customer_id'] || filter['caller_number_id']);
+          this.$callerId_ffitem.val(filter['customer_id'] || filter['caller_number_id']);
           this.$callerId_ffitem.data('value', filter['customer_name'] || filter['caller_number']);
         }
     },
@@ -388,7 +388,7 @@ window.App.Freshfonecallhistory = window.App.Freshfonecallhistory || {};
         dateFormat: 'dd MM yy',
         closeOnSelect: true,
         onChange: function() {
-          $("#date_range").attr("value",$("#date_range").val());
+          $("#date_range").val($("#date_range").val());
           $("#date_range").data("value",$("#date_range").val());
         }
       });

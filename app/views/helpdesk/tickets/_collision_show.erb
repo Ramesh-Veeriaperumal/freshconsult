@@ -41,7 +41,7 @@
       //console.log("Agents Viewing The Ticket : " + _agents);
       console.log(_agents)
       agents.viewing = _agents.without(current_user);
-      if(agents.viewing.size()) update_notification_ui();
+      if(agents.viewing.length) update_notification_ui();
     }
 
     function update_replying(_agents) {   
@@ -50,7 +50,7 @@
       agents.replying.each(function(item){
         agents.viewing = agents.viewing.without(item);             
       });
-      if(agents.replying.size()) update_notification_ui();
+      if(agents.replying.length) update_notification_ui();
     }            
     
     function update_reload(){
@@ -60,10 +60,10 @@
     function update_notification_ui(){   
       agents.viewing = agents.viewing.uniq();
       agents.replying = agents.replying.uniq();
-      jQuery("#agents_viewing").toggleClass("active", (agents.viewing.size() != 0)).effect("highlight", { color: "#fffff3" }, 400);
-      jQuery("#agents_viewing .pill").html(agents.viewing.size());
-      jQuery("#agents_replying").toggleClass("active", (agents.replying.size() != 0)).effect("highlight", { color: "#fffff3"  }, 400);      
-      jQuery("#agents_replying .pill").html(agents.replying.size());
+      jQuery("#agents_viewing").toggleClass("active", (agents.viewing.length != 0)).effect("highlight", { color: "#fffff3" }, 400);
+      jQuery("#agents_viewing .pill").html(agents.viewing.length);
+      jQuery("#agents_replying").toggleClass("active", (agents.replying.length != 0)).effect("highlight", { color: "#fffff3"  }, 400);      
+      jQuery("#agents_replying .pill").html(agents.replying.length);
     }
     
     jQuery(document).ready(function() {   

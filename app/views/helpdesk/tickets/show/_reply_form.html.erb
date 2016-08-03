@@ -197,7 +197,7 @@
           <input type="hidden" id="include_surveymonkey_link" name="include_surveymonkey_link" value="false"> 
           <script type="text/javascript">
             jQuery(document).ready(function(){
-              jQuery("body div.popover input[survey-checkbox=true]").live('click', function(){
+              jQuery("body div.popover input[survey-checkbox=true]").on('click', function(){
                 jQuery('#' + jQuery(this).attr('name')).val(jQuery(this)[0].checked?1:0);
               });
             });
@@ -256,7 +256,7 @@
       })
       .validate();  
 
-    jQuery('#HelpdeskReply select#reply_email_id').live('change',function(e){
+    jQuery('#HelpdeskReply select#reply_email_id').on('change',function(e){
       var selectObj = jQuery(e.target),
           form = e.target.form,
           fromEmail = selectObj.val();

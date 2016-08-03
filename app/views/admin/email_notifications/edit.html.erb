@@ -137,13 +137,13 @@
  			jQuery('#'+ current_tab ).data("redactor").focusOnCursor();
  		}, 500)
 
-		jQuery('.link_placeholder').live("click", function(ev){
+		jQuery('.link_placeholder').on("click", function(ev){
 		    ev.preventDefault();
 				jQuery('#place-dialog').slideDown('fast', function(){
         			jQuery(this).groupPlaceholders();
 				});
 		});
-		jQuery('.redactor_editor').live('click', function(){
+		jQuery('.redactor_editor').on('click', function(){
             active_email_body = jQuery("#"+ current_tab);        
         }); 
 
@@ -321,7 +321,7 @@
 				<%= javascript_tag do %>
 						jQuery("#reset_template_default").data('html', jQuery('#description_default').val());
 						jQuery("#reset_template_default").data('subject', jQuery('#subject_default').val());
-						jQuery('#reset_template_default').live("click", function(ev){
+						jQuery('#reset_template_default').on("click", function(ev){
 							ev.preventDefault();
 							if(confirm("<%=t('email_notifications.reset_confirm')%>")){
 								jQuery('#description_default').setCode(jQuery('#reset_template_default').data("html"));
@@ -426,7 +426,7 @@
 					<%= javascript_tag do %>
 							jQuery("#reset_template_<%=lang%>").data('html', jQuery('#description_<%=lang%>').val());
 							jQuery("#reset_template_<%=lang%>").data('subject', jQuery('#subject_<%=lang%>').val());
-							jQuery('#reset_template_<%=lang%>').live("click", function(ev){
+							jQuery('#reset_template_<%=lang%>').on("click", function(ev){
 								ev.preventDefault();
 								if(confirm("<%=t('email_notifications.reset_confirm')%>")){
 									jQuery('#description_<%=lang%>').setCode(jQuery('#reset_template_<%=lang%>').data("html"));

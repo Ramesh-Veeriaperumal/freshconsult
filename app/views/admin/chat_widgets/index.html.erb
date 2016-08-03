@@ -13,7 +13,7 @@
       </h3>
       <p class="small"><%=t('livechat.widgets_list_info')%></p>
     </div>
-    <div id="chat_widgets_list" <% unless @chat_enabled %>class="disable-widgets"<%end%>>
+    <div id="chat_widgets_list" data-widget-list="<%= chat_widget_list @widgets %>" <% unless @chat_enabled %>class="disable-widgets"<%end%>>
       <div class="list-page">
   	   <div class="list-page-body chat-widget-index" >
         <table class="table table-striped" >
@@ -78,18 +78,6 @@
 
     </div>
   </div>
-  <%= javascript_tag do %>
-      (function($){
-          $(document).one('ready pjax:success' ,function(){
-            var widgetList = [];
-            <% @widgets.each do |widget| %>
-              widgetList.push(<%= livechat_setting widget%>);
-            <% end%>
-            window.liveChat.adminSettings.initializeWidgetList(widgetList);
-           
-          });
-      })(jQuery);
-    <%end%>
   <%else%>
     <%= render :partial => "intro" if current_account.features?(:chat)%>
   <%end%>

@@ -87,15 +87,17 @@
 	jQuery(".delete_user_btn").on('click',function(){
 		jQuery("#contacts-expanded").data('user',jQuery(this).data('user'));
 	});
-	jQuery(document).on('pjax:beforeSend.tempFreshDialogFix', function () {
-		jQuery("#company-delete-confirmation").remove();
-		jQuery("#user-deletion-confirmation").remove();
-		jQuery(document).off('.tempFreshDialogFix');
-	});
-	jQuery('#user-deletion-confirmation-submit').live("click", function(){
+
+	jQuery(document).on("click.userDeletionEvent", '#user-deletion-confirmation-submit', function(){
 		var user_id = jQuery("#contacts-expanded").data('user');
 		jQuery('#user_id_'+user_id).trigger('click');
 		jQuery("#contacts-expanded").data('agent', null);
+	});
+
+	jQuery(document).on('pjax:beforeSend.userDeletionEvent', function () {
+		jQuery("#company-delete-confirmation").remove();
+		jQuery("#user-deletion-confirmation").remove();
+		jQuery(document).off('.userDeletionEvent');
 	});
 <% end %>
 

@@ -144,7 +144,7 @@
       <%= javascript_include_tag :'cdn/subscription' %>
       
       <%= javascript_tag do %>
-        jQuery("#slide-down").live('click', function(ev){
+        jQuery("#slide-down").on('click', function(ev){
           ev.preventDefault();
           jQuery(this).parent().find('.event-details').slideToggle();
         });

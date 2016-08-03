@@ -92,7 +92,7 @@
                 color: "#fffff3"
             }, 400);
             jQuery("#agents_replying .flip-back").html(agents.replying.length);
-            jQuery(".list_agents_replying").toggleClass("hide", (agents.replying.size() == 0)).html(humanize_name_list(agents.replying, 'replying'));
+            jQuery(".list_agents_replying").toggleClass("hide", (agents.replying.length == 0)).html(humanize_name_list(agents.replying, 'replying'));
         };
 
         var update_viewing_notification_ui = function (key, viewing) {
@@ -469,7 +469,8 @@
 
         var setEvents = function () {
             if($.browser.mozilla){
-                $(window).unload(function(event){
+                $(window).on('unload',function(event){
+                    console.log("unload change test"); //need to be removed after testing
                      $.ajax({
                       url: window.FreshdeskNode.getValue('faye_server'),
                       timeout: 300,
@@ -718,7 +719,7 @@
                     return container;
                 },
                 template: '<div class="arrow notice-arrow"></div><div class="ticket-notice-popover"><div class="title"></div><div class="content"><p></p></div></div>'
-            }).live({
+            }).on({
                 mouseenter: function () {
                     if ($(this).hasClass("active"))
                         $(this).popover('show');
@@ -811,7 +812,7 @@
             });
 
 
-            $("#SortMenu, .prev_page, .next_page, .toolbar_pagination_full").live("click", function () {
+            $("#SortMenu, .prev_page, .next_page, .toolbar_pagination_full").on("click", function () {
                 $("#index_refresh_alert").slideUp(100);
             });
         };
