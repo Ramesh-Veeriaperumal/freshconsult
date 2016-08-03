@@ -131,8 +131,16 @@ var TicketForm = {
 			$requester_val = jQuery("input.requester").val();
 		});	
 		jQuery("#helpdesk_ticket_email").on("focusout.ticketForms", function(){
-			var ticket_email = jQuery("#helpdesk_ticket_email").val();
-			var validajax =  jQuery("input.requester").valid();
+			var re = /\<(.*)\>/i, 
+				validajax = false,
+				ticket_email = jQuery("#helpdesk_ticket_email").val();
+				ticket_email_match = ticket_email.match(re) ;
+
+  			if (ticket_email_match != null) {
+  				var rec = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  				validajax = rec.test(ticket_email_match[1]);	
+  			}
+
 			if(($requester_val != ticket_email) && validajax){
 				jQuery.ajax({
 					url: $companyurl+"?email="+ticket_email,
@@ -153,7 +161,7 @@ var TicketForm = {
 					}
 				});
 			}
-			else if(!validajax){
+			else if($requester_val != ticket_email){
 			jQuery('.default_company').slideUp();
 			jQuery('#helpdesk_ticket_company_id').attr("disabled", true);
 			}
