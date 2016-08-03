@@ -118,17 +118,17 @@ JiraWidget.prototype = {
 			});
 		}
 
-		jQuery('.show_linkform, .show_createform').on('click', function(e) {
+		jQuery('#jira_widget_dialog').on('click.ticket_details', '.show_linkform, .show_createform', function(e) {
 			e.preventDefault();
 			jQuery('#jira_issue_create, #jira_issue_link').toggleClass('hide');
 		});
 
-		jQuery('#jira-unlink').on('click', function(ev) {
+		jQuery('#jira_widget_dialog').on('click.ticket_details', '#jira-unlink',  function(ev) {
 			ev.preventDefault();
 			jiraWidget.unlinkJiraIssue();
 		});
 
-		jQuery('#jira-delete').on('click', function(ev) {
+		jQuery('#jira_widget_dialog').on('click.ticket_details', '#jira-delete', function(ev) {
 			ev.preventDefault();
 			jiraWidget.deleteJiraIssue();
 		});
