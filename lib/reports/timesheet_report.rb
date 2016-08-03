@@ -127,9 +127,9 @@ module Reports::TimesheetReport
       :include => [:user, :workable => [:schema_less_ticket, :group, :ticket_status, :requester, :company]])
     if (archive_enabled? && entries.size < row_limit)
       entries << archive_scoper(@start_date, @end_date).where("helpdesk_time_sheets.id <= #{@latest_timesheet_id}").select("helpdesk_time_sheets.*, #{group_to_column_map(group_by_caluse, true)}").reorder("#{GROUP_TO_FIELD_MAP[group_by_caluse]}, id asc").find(:all, :limit => row_limit, :offset => offset,:conditions => (archive_select_conditions || {}),
-          :include => [:user, :workable => [:schema_less_ticket, :group, :ticket_status, :requester, :company]])
+          :include => [:user, :workable => [:product, :group, :ticket_status, :requester, :company]])
     end
-    entries
+    entries.flatten
   end
 
   def time_sheet_list

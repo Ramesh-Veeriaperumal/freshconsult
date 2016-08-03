@@ -139,9 +139,6 @@
         jQuery('#timesheet_total').removeClass('hide');
       }
     jQuery(document).ready(function(){
-       setTimeout(function(){
-          jQuery('#report-page').css('min-height', 'initial');
-       },100);
 
        jQuery('[rel=load-more]').on('click',function(){
               jQuery(this).html('Loading...');
@@ -169,7 +166,6 @@
                   jQuery('#timesheet_total').removeClass('hide');
                 }
                 triggered = false;
-                jQuery('#report-page').css('min-height', 'initial');
               }
           });
         }
