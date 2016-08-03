@@ -53,7 +53,7 @@ jQuery(document).ready(function(){
 		jQuery('#place-dialog').groupPlaceholders();
 	});
 
-	jQuery(".redactor_editor, .CodeMirror").on('click', function(){
+	jQuery(document).on('click', ".redactor_editor, .CodeMirror", function(){
 		active_email_body = jQuery(this).siblings('textarea');	
 		jQuery('#place-dialog').groupPlaceholders();
     });
