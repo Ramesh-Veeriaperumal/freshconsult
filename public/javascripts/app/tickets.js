@@ -44,6 +44,7 @@ window.App = window.App || {};
 				this[this.current_module].onLeave();
 				this.current_module = '';
 			}
+			$(document).off('.nested_field');
 		}
 	};
 }(window.jQuery));
