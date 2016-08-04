@@ -209,11 +209,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def pass_thro_biz_rules
     #Remove redis check if no issues after deployment
-    if Account.current.launched?(:sidekiq_dispatchr_feature)
+    if Account.current.launched?(:delayed_dispatchr_feature)
+      send_later(:delayed_rule_check, User.current, freshdesk_webhook?) unless (import_id or outbound_email?)
+    else
       # This queue includes dispatcher_rules, auto_reply, round_robin.
       Helpdesk::Dispatcher.enqueue(self.id, (User.current.blank? ? nil : User.current.id), freshdesk_webhook?) unless (import_id or outbound_email?)
-    else
-      send_later(:delayed_rule_check, User.current, freshdesk_webhook?) unless (import_id or outbound_email?)
     end
   end
 
