@@ -4,7 +4,7 @@ json.search_placeholder search_placeholder
 
 json.extensions @extensions do |extension|
   json.merge! extension
-  json.url show_admin_marketplace_extensions_path(extension['version_id']) + '?' + index_url_params
+  json.url show_admin_marketplace_extensions_path(extension['id']) + '?' + index_url_params
 end
 
 json.categories do

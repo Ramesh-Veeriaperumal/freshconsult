@@ -7,15 +7,16 @@ module Marketplace::Constants
   DEVELOPED_BY_FRESHDESK = 'freshdesk'
 
   EXTENSION_TYPES = [ 
-    [:plug,  1],    
-    [:theme,  2],
-    [:app,  3],
-    [:ni, 4]
+    [:plug,               1],    
+    [:theme,              2],
+    [:app,                3],
+    [:ni,                 4],
+    [:external_app,       5]
   ]
 
   EXTENSION_TYPE = Hash[*EXTENSION_TYPES.map { |i| [i[0], i[1]] }.flatten]
 
-  DEFAULT_EXTENSION_TYPES = "#{EXTENSION_TYPE[:plug]},#{EXTENSION_TYPE[:ni]}"
+  DEFAULT_EXTENSION_TYPES = "#{EXTENSION_TYPE[:plug]},#{EXTENSION_TYPE[:ni]},#{EXTENSION_TYPE[:external_app]}"
 
   FORM_FIELD_TYPES = [
     [:text, 1],

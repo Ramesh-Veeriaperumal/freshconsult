@@ -6542,6 +6542,7 @@ en:
     coming_soon: Coming Soon
     install: Install
     update: Update
+    visit_site_to_install: Visit site to install
     installing_text: "Please wait..."
     in_development: In Development
     no_mktp_apps: "No Apps installed"
