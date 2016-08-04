@@ -143,6 +143,10 @@ class Account < ActiveRecord::Base
     !features?(:compose_email) || ismember?(COMPOSE_EMAIL_ENABLED, self.id)
   end
 
+  def helpdesk_restriction_enabled?
+     features?(:helpdesk_restriction_toggle) || launched?(:restricted_helpdesk)
+  end
+
   def dashboard_disabled?
     ismember?(DASHBOARD_DISABLED, self.id)
   end
@@ -205,7 +209,7 @@ class Account < ActiveRecord::Base
   end
 
   def restricted_helpdesk?
-    features?(:restricted_helpdesk) && launched?(:restricted_helpdesk)
+    features?(:restricted_helpdesk) && helpdesk_restriction_enabled?
   end
 
   class << self # class methods
