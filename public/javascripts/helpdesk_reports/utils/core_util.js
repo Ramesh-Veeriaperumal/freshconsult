@@ -2,8 +2,8 @@ HelpdeskReports.CoreUtil = HelpdeskReports.CoreUtil || {};
 HelpdeskReports.locals = HelpdeskReports.locals || {};
 
 HelpdeskReports.CoreUtil = {
-    MULTI_SELECT_SELECTION_LIMIT: 10,
-    FILTER_LIMIT: 5,
+    MULTI_SELECT_SELECTION_LIMIT: 50,
+    FILTER_LIMIT: 10,
     FILTER_LIMIT_MSG: I18n.t('helpdesk_reports.filter_error_msg'),
     CONST: {
         base_url    : "/reports/v2/",
