@@ -28,9 +28,13 @@ class Helpdesk::Email::Process
   end
 
   def perform
+    Rails.logger.info "Email received: Message-Id #{params["Message-Id"]}"
     self.start_time = Time.now.utc
     shardmapping = ShardMapping.fetch_by_domain(to_email[:domain])
-    return unless shardmapping.present?
+    unless shardmapping.present?
+      Rails.logger.info "Email Processing Failed: No Shard Mapping found!"
+      return
+    end
     Sharding.select_shard_of(to_email[:domain]) do 
       accept_email if get_active_account
     end
@@ -45,11 +49,17 @@ class Helpdesk::Email::Process
     account.make_current
     TimeZone.set_time_zone
     self.common_email_data = email_metadata #In parse_email_data
-    return if mail_from_email_config?
-    # encode_stuffs
+    if mail_from_email_config?
+      Rails.logger.info "Email Processing Failed: From-email and Reply-email are same!"
+      return
+    end
+      # encode_stuffs
     if account.features?(:domain_restricted_access)
       wl_domain  = account.account_additional_settings_from_cache.additional_settings[:whitelisted_domain]
-      return unless Array.wrap(wl_domain).include?(common_email_data[:from][:domain])
+      unless Array.wrap(wl_domain).include?(common_email_data[:from][:domain])
+        Rails.logger.info "Email Processing Failed: Not a White listed Domain!"
+        return
+      end
     end    
     if (common_email_data[:from][:email] =~ EMAIL_VALIDATOR).nil?
       error_msg = "Invalid email address found in requester details - #{common_email_data[:from][:email]} for account : #{account.id}"
@@ -60,7 +70,14 @@ class Helpdesk::Email::Process
     construct_html_param
     self.user = get_user(common_email_data[:from], common_email_data[:email_config], params["body-plain"]) #In parse_email_data
 
-    return if ((user.nil? && !account.restricted_helpdesk?) or (user && user.blocked?))
+    if ((user.nil? && !account.restricted_helpdesk?) or (user && user.blocked?))
+      if (user.nil? && !account.restricted_helpdesk?)
+        Rails.logger.info "Email Processing Failed: Blank User!"
+      else
+        Rails.logger.info "Email Processing Failed: Blocked User!"
+      end
+      return
+    end
     self.common_email_data[:cc] = permissible_ccs(user, self.common_email_data[:cc], account)
 
     get_necessary_details
@@ -116,7 +133,10 @@ class Helpdesk::Email::Process
     if ticket.present? || (archive_ticket.present? && archive_ticket.is_a?(Helpdesk::Ticket))
       self.user ||= get_user(common_email_data[:from], common_email_data[:email_config], params["body-plain"], true)
     end
-    return if user.blank?    
+    if user.blank?
+      Rails.logger.info "Email Processing Failed: Blank User!"
+      return
+    end
     ticket ? email_handler.create_note(start_time) : create_archive_link(archive_ticket, email_handler, start_time)
 	end
 
