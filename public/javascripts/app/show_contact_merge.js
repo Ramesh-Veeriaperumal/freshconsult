@@ -3,21 +3,21 @@ jQuery('#select-user').bind('keyup', function(){
   jQuery('.searchicon').toggleClass('typed', jQuery(this).val()!="");
 });
 
-jQuery('.typed').live('click', function(){
+jQuery('.typed').on('click', function(){
   clearSearchField(jQuery(this));
   jQuery('#match_results').hide();
 });
 
-jQuery('#new_merge_confirm').live('click', function(){
+jQuery('#new_merge_confirm').on('click', function(){
   jQuery(this).button("loading");
 });
 
-jQuery('#back-user-merge').live('click', function(){
+jQuery('#back-user-merge').on('click', function(){
   jQuery('#new_merge_confirm').button('loaded');
   jQuery('#new_merge_confirm').val('Continue');
 });
 
-jQuery('.contactdiv').live('click', function(){
+jQuery('.contactdiv').on('click', function(){
   var in_element = "<input type='hidden' name='ids[]' id='ids[]' value="+jQuery(this).data('id')+" />";
   if(!jQuery(this).children('#resp-icon').hasClass('clicked'))
   {
@@ -31,7 +31,7 @@ jQuery('.contactdiv').live('click', function(){
   }
 });
 
-jQuery('.primary-marker').live('click', function(){
+jQuery('.primary-marker').on('click', function(){
   jQuery('#parent_user_id').attr('name', 'ids[]');
   jQuery('#parent_user_id').attr('id', 'ids[]');
   jQuery('input[value='+jQuery(this).siblings('#contact-area').children('#user-contact').data('uid')+']').attr('id', 'parent_user_id');
@@ -39,7 +39,7 @@ jQuery('.primary-marker').live('click', function(){
   mark_primary(jQuery(this))
 });
 
-jQuery('#resp-icon').live('click', function(){
+jQuery('#resp-icon').on('click', function(){
   if(!jQuery(this).parent().parent().hasClass('present-contact') && !jQuery(this).parent().hasClass('contactdiv'))
   {
     var chose = jQuery(this).parent();

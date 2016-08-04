@@ -29,7 +29,7 @@ module ForumDynamoHelper
 
 	def post_params(topic)
 		common_params.merge({
-				:topic_timestamp => topic.id * 10.power!(17) + timestamp * 10.power!(7)
+				:topic_timestamp => topic.id * (10 ** 17) + timestamp * (10 ** 7)
 			})
 	end
 
@@ -39,7 +39,7 @@ module ForumDynamoHelper
 			:account_id => @account.id,
 			:marked_by_filter => false,
 			:portal_id => @account.main_portal.id,
-			:user_timestamp => @customer.id * 10.power!(17) + timestamp * 10.power!(7),
+			:user_timestamp => @customer.id * (10 ** 17) + timestamp * (10 ** 7),
 			:body_html => "<p>#{Faker::Lorem.paragraph}</p>",
 			:cloud_file_attachments => [{:link => "https://www.dropbox.com/s/7d3z51nidxe358m/Getting Started.pdf?dl=0",
 																		:name => "Getting Started.pdf",:provider => "dropbox"}.to_json].to_json
@@ -78,13 +78,13 @@ module ForumDynamoHelper
 	end
 
 	def next_user_timestamp(user)
-		user.id * 10.power!(17) + (Time.now - ForumSpam::UPTO).utc.to_f * 10.power!(7)
+		user.id * (10 ** 17) + (Time.now - ForumSpam::UPTO).utc.to_f * (10 ** 17)
 	end
 
 	def user_timestamp_params(user)
 		time_stamp = Time.now.utc.to_f
 		op = { :timestamp => time_stamp }
-		op.merge!({ :user_timestamp =>user.id * 10.power!(17) + time_stamp * 10.power!(7) })
+		op.merge!({ :user_timestamp =>user.id * (10 ** 17) + time_stamp * (10 ** 7) })
 		op
 	end
 

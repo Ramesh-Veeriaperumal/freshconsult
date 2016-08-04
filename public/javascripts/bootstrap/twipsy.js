@@ -297,7 +297,7 @@
     }
 
     if (options.trigger != 'manual') {
-      binder   = options.live ? 'live' : 'bind'
+      binder   = options.live ? 'on' : 'bind'
       eventIn  = options.trigger == 'hover' ? 'mouseenter' : 'focus'
       eventOut = options.trigger == 'hover' ? 'mouseleave' : 'blur'
       this[binder](eventIn, enter)[binder](eventOut, leave)

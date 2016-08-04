@@ -125,6 +125,7 @@ class Admin::FreshfoneController < Admin::AdminController
 		def load_search_options
 			if params[:search_options].present? &&
 				params[:search_options].values.any?(&:present?)
+				params[:search_options][:contains] << "*" if params[:search_options][:contains].length == 1
 				return params[:search_options]
 			end
 			{}

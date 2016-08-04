@@ -9,22 +9,14 @@
 
 <%= javascript_tag  do %>
 
-  jQuery('#create_rule').live('click', function (event) {
-    console.log("Create rule clikced");
-    event.preventDefault();
-    jQuery('#ticket_rules').empty();
-    jQuery("#ticket_rules").html("<%= escape_javascript(render :partial => 'ticket_rule_form', :locals => { :ticket_rule => @twitter_stream.new_ticket_rule})%>");
-    jQuery("#ticket_rules").append('<a href="" id="add_new_rule" class="add-another"><%= font_icon "plus", :size=>"14" %> <%= t('admin.social.ticket_rules.add') %></a>');
-  });
-
-  jQuery('#add_new_rule').live('click', function (event) {
+  jQuery(document).on('click', '#add_new_rule', function (event) {
     event.preventDefault();
     jQuery('#add_new_rule').remove();
     jQuery("#ticket_rules").append("<%= escape_javascript(render :partial => 'ticket_rule_form', :locals =>{:ticket_rule => @twitter_stream.new_ticket_rule})%>");
     jQuery("#ticket_rules").append('<a href="" id="add_new_rule" class="add-another"><%= font_icon "plus", :size=>"14" %> <%= t('admin.social.ticket_rules.add') %></a>');
   });
 
-  jQuery(".ce-btn" ).live('click', function() {
+  jQuery(document).on('click', ".ce-btn", function() {
     if (jQuery(this).closest('.tkt-rule').find('.form_data').is(':visible')){
       jQuery(this).find('i').removeClass('icon-minus');
       jQuery(this).find('i').addClass('icon-plus');
@@ -36,7 +28,7 @@
     jQuery(this).closest('.tkt-rule').find('.form_data').slideToggle();
   });
 
-  jQuery(".delete_ticket,.ce-btn").live('click', function(){
+  jQuery(document).on('click', ".delete_ticket,.ce-btn", function(){
    jQuery(this).parents(".form-horizontal").find(".ticket_deleted").val("true");
    jQuery(this).parents(".form-horizontal").hide();
   });

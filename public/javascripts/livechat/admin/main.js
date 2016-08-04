@@ -1,30 +1,53 @@
-window.liveChat = window.liveChat || {};
+/*jslint browser: true */
+/*global  App */
 
-window.liveChat.adminSettings= function($){
-	return {
+window.App = window.App || {};
+window.App.Admin = window.App.Admin || {};
+
+// window.liveChat = window.liveChat || {};
+(function ($) {
+	// "use strict";
+
+App.Admin.LiveChatAdminSettings = {
+	// return {
+
+
 		widgetList: [],
-		currentWidget : null,
+		currentWidget: null,
 		eventsRegistered: false,
 
-		initializeWidgetList: function(_widgetList){
-			this.widgetList = _widgetList;
-			this.bindEvents();
-			window.liveChat.mainSettings.getSiteSettings();
-
-			$('#chat_enable').itoggle();
-			$('.toggle_widget').itoggle();
-			if(window.fc_cobrowsing == true){
-				$("#chat_cobrowsing").prop('checked', true);
-				$(".chat_cobrowsing").show(); 
-			}else{
-				$("#chat_cobrowsing").prop('checked', false);
-				$(".chat_cobrowsing").hide();
+		onVisit: function () {
+			if ('admin/chat_widgets/index' == App.namespace) {
+				// have to do if check for index page 
+				this.initializeWidgetList();
+			} else {
+				this.initializeWidget();
 			}
-			$('#chat_cobrowsing').itoggle();	
+		},
+
+		initializeWidgetList: function(_widgetList){
+			if($('#chat_widgets_list').get(0)) {
+				this.widgetList = _widgetList || jQuery('#chat_widgets_list').data('widgetList');
+				this.bindEvents();
+				window.liveChat.mainSettings.getSiteSettings();
+
+				$('#chat_enable').itoggle();
+				$('.toggle_widget').itoggle();
+				if(window.fc_cobrowsing == true){
+					$("#chat_cobrowsing").prop('checked', true);
+					$(".chat_cobrowsing").show(); 
+				}else{
+					$("#chat_cobrowsing").prop('checked', false);
+					$(".chat_cobrowsing").hide();
+				}
+				$('#chat_cobrowsing').itoggle();
+			}
 		},
 
 		initializeWidget: function(widget){
-			this.currentWidget = widget;
+			this.currentWidget = widget || $('#chat_header').data('widget');
+
+			var widget = this.currentWidget;
 
 			if(widget.widget_id){
 				window.liveChat.mainSettings.renderWidget();
@@ -38,7 +61,7 @@ window.liveChat.adminSettings= function($){
 			$('#chat_enable').on('change', function (){
 				CURRENT_ACCOUNT.chat_enabled = $(this).is(":checked");
 				window.liveChat.mainSettings.toggleSite(CURRENT_ACCOUNT.chat_enabled);
-	    });
+	    	});
 
 			$('.toggle_widget').on('change', function (){
 	    	if($("#chat_enable").is(":checked")){
@@ -51,6 +74,7 @@ window.liveChat.adminSettings= function($){
 				  		self.currentWidget = self.widgetList[i];
 				  	}
 					}
+
 				  if(self.currentWidget.widget_id){
 				  	window.liveChat.mainSettings.toggleWidget(status);
 				  }else if(status){
@@ -59,8 +83,14 @@ window.liveChat.adminSettings= function($){
 				  }
 				}
 	    });
+
 			window.liveChat.mainSettings.bindCobrowsingSetting();	    
 			window.liveChat.mainSettings.bindMaxChatEvents();
+		},
+
+		onLeave: function () {
+
 		}
+
 	}
-}(jQuery);
+}(window.jQuery));

@@ -31,11 +31,8 @@
 //= require app/metrics.js
 //= require app/header.js
 //= require app/product_notifications.js
-//= require app/admin_font_settings.js
 //= require app/merge.js
 //= require app/autosave.js
 //= require plugins/jquery.placeholder.js
 //= require i18n
 //= require i18n/translations
-//= require tickets/templates/attachment-viewer.jst.ejs
-//= require app/ticket_attachment_viewer.js

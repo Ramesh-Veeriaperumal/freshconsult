@@ -14,7 +14,7 @@ jQuery.noConflict()
     // Attaching dom ready events
 
     // Remote ajax for links
-    // $("a[data-remote]").live("click", function(ev){
+    // $("a[data-remote]").on("click", function(ev){
     //   ev.preventDefault()
 
     //   var _o_data = $(this).data(),
@@ -57,7 +57,7 @@ jQuery.noConflict()
     //   }
     // })
     // Data api for onclick showing dom elements
-    $("a[data-show-dom], button[data-show-dom]").live("click", function(ev){
+    $(document).on("click", "a[data-show-dom], button[data-show-dom]", function(ev){
       ev.preventDefault()
       if($(this).data("remote")) return
 
@@ -65,7 +65,7 @@ jQuery.noConflict()
     })
 
     // Data api for onclick hiding dom elements
-    $("a[data-hide-dom], button[data-hide-dom]").live("click", function(ev){
+    $(document).on("click", "a[data-hide-dom], button[data-hide-dom]", function(ev){
       ev.preventDefault()
       if($(this).data("remote")) return
 
@@ -73,7 +73,7 @@ jQuery.noConflict()
     })
 
     // Data api for onclick toggle of dom elements
-    $("a[data-toggle-dom], button[data-toggle-dom]").live("click", function(ev){
+    $(document).on("click", "a[data-toggle-dom], button[data-toggle-dom]", function(ev){
       ev.preventDefault()
       if($(this).data("remote")) return
 
@@ -84,7 +84,7 @@ jQuery.noConflict()
     })
 
     // Data api for onclick change of html text inside the dom element
-    $("[data-toggle-text]").live("click", function(ev){
+    $(document).on("click", "[data-toggle-text]", function(ev){
       ev.preventDefault()
       if($(this).data("remote")) return
 
@@ -97,7 +97,7 @@ jQuery.noConflict()
     })
 
     // Data api for onclick for show hiding a proxy input box to show inplace of a redactor or textarea
-    $("input[data-proxy-for], a[data-proxy-for]").live("click", function(ev){
+    $(document).on("click", "input[data-proxy-for], a[data-proxy-for]", function(ev){
       var proxyDom = $(this).data("proxyFor")
 
       // Checking if the clicked element is a link so that the 

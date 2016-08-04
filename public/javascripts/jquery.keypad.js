@@ -538,9 +538,9 @@ $.extend(Keypad.prototype, {
 			return;
 		}
 		var target = $(event.target);
-		if (!target.parents().andSelf().hasClass(plugin._mainDivClass) &&
+		if (!target.parents().addBack().hasClass(plugin._mainDivClass) &&
 				!target.hasClass(plugin.markerClassName) &&
-				!target.parents().andSelf().hasClass(plugin._triggerClass) &&
+				!target.parents().addBack().hasClass(plugin._triggerClass) &&
 				plugin._keypadShowing) {
 			plugin._hidePlugin();
 		}

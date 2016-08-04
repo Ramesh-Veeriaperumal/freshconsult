@@ -174,7 +174,7 @@
 	  });
 			
 	jQuery("#twitter_results a.reply_button")
-	  .live("click", function(e){
+	  .on("click", function(e){
 	    e.preventDefault();   
 	     
 	    var user = jQuery(this).data("user");
@@ -189,7 +189,7 @@
 	 
 			
 	jQuery("#twitter_results a.convert_as_ticket")
-	  .live("click", function(e){
+	  .on("click", function(e){
 	    e.preventDefault(); 
 	    var screen_name = this.getAttribute("data-user"),
 	        tweet_text  = this.getAttribute("data-text"), 

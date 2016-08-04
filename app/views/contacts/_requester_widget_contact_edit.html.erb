@@ -103,7 +103,7 @@
     }
   });
 
-  function toggle_loading_symbol(show, for_elt = "") {
+  function toggle_loading_symbol(show, for_elt) {
     elements = (for_elt == "") ? jQuery(".requester-widget-user-edit-dialog [id$='_loading']").not("#company_name_loading") : jQuery(".requester-widget-user-edit-dialog [id='" + for_elt + "_loading']");
     if(show) {
       elements.each(function(){
@@ -162,7 +162,7 @@
   }
 
   function fetch_company_details(company_name) {
-    toggle_loading_symbol(true);
+    toggle_loading_symbol(true, "");
     new Ajax.Request('/helpdesk/commons/fetch_company_by_name?name=' + encodeURIComponent(company_name),
       {
           method: 'GET',
@@ -198,7 +198,7 @@
                 clear_company_field_values();
               }
               toggle_requester_edit(true);
-              toggle_loading_symbol(false);
+              toggle_loading_symbol(false, "");
             }
           }
       });

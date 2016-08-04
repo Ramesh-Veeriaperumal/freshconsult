@@ -92,7 +92,7 @@
       $.each(countries, function (index,country_name) {  
          $('#country_list')
          .append($("<option></option>")
-         .attr("value",country_name)
+         .val(country_name)
          .attr("data-status",status)
          .text(country_name)); 
       });

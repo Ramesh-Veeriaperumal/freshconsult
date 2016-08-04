@@ -4,7 +4,7 @@ window.liveChat.preferenceSettings = function($){
 	return {
 		render: function(){
 			var self = this;
-			var _widget = window.liveChat.adminSettings.currentWidget;
+			var _widget = App.Admin.LiveChatAdminSettings.currentWidget;
 			var business_calendar = _widget.business_calendar;
 
 			//offline chat
@@ -25,7 +25,7 @@ window.liveChat.preferenceSettings = function($){
 				$(".proactive_chat").toggle();
 			});
 
-			$('#proactive_time').attr('value', _widget.proactive_time).on('change', function(){
+			$('#proactive_time').val(_widget.proactive_time).on('change', function(){
 				$('.proactive_time_display').html(self.timeConversion()); 
 			});
 			
@@ -87,7 +87,7 @@ window.liveChat.preferenceSettings = function($){
 
 		preferencesSave: function (){
 			var self = this;
-			var _widget = window.liveChat.adminSettings.currentWidget;
+			var _widget = App.Admin.LiveChatAdminSettings.currentWidget;
 			var business_calendar_id = "";
 			_widget.offline_chat.show  = $("#chat_agents_online").is(":checked") ? 2 : $("#chat_anytime").is(":checked") ? 1 : 0;
 
@@ -121,7 +121,7 @@ window.liveChat.preferenceSettings = function($){
 				data: { attributes : data },
 				dataType: "json",
 				success: function(resp){
-					window.liveChat.adminSettings.currentWidget = $.extend({}, _widget, data);
+					App.Admin.LiveChatAdminSettings.currentWidget = $.extend({}, _widget, data);
 					window.liveChat.mainSettings.parseStringJsonFields();
 					self.showMsg(resp);
 				},
@@ -145,7 +145,7 @@ window.liveChat.preferenceSettings = function($){
 		renderRoutingSettings: function(routing, type){			
 			var self = this;
 			var choices = routing.choices;
-			var _widget = window.liveChat.adminSettings.currentWidget;
+			var _widget = App.Admin.LiveChatAdminSettings.currentWidget;
 
 			if (!_.isEmpty(choices)) {
 				$.ajax({
@@ -245,7 +245,7 @@ window.liveChat.preferenceSettings = function($){
 		},
 
 	  bindEvents: function(){
-	  	var _widget = window.liveChat.adminSettings.currentWidget;
+	  	var _widget = App.Admin.LiveChatAdminSettings.currentWidget;
 	  	var self = this;
 
 			$("#preferences_save").on('click', function(){

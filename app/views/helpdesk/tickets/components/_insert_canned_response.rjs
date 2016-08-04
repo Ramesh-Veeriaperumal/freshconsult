@@ -3,8 +3,8 @@ if params[:id].present? and !params[:tkt_cr]
 else
   page << 'var $msg_body_element = jQuery(".ta_insert_cr");'
   page << '$msg_body_element.data("redactor").focusOnCursor();'
-  page << "$msg_body_element.insertHtml(\"#{escape_javascript(@template_content)}\");"
-  page << 'jQuery.event.trigger({ type:"textInserted", message:"success", time:new Date() });'
+  page << "$msg_body_element.insertHtml(\"#{escape_javascript(@ca_resp.content_html)}\");"
+  page << 'jQuery(document).trigger({ type:"textInserted", message:"success", time:new Date() });'
   page << '$msg_body_element.getEditor().focus();'
 end
 if !@attachments.empty? && @allow_attachments
@@ -21,7 +21,7 @@ if !@attachments.empty? && @allow_attachments
   end
   if !params[:tkt_cr].present?
     page << "jQuery('.request_panel:visible .shared_attachment_list').append('#{escape_javascript(attachment_dom)}')"
-    page << 'jQuery(".request_panel:visible .a-count").html(jQuery(".shared_attachment_list").children(":visible").size());'
+    page << 'jQuery(".request_panel:visible .a-count").html(jQuery(".shared_attachment_list").children(":visible").length);'
   else
     page << "jQuery('#ticket-attachments').append('#{escape_javascript(attachment_dom)}')"
   end

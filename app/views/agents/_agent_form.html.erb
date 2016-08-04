@@ -275,14 +275,14 @@
 
     });
     
-    $('div.icon_remove').live("click", function(){
+    $(document).on("click", 'div.icon_remove', function(){
       $('#role_'+jQuery(this).attr('rel')).remove();
       $('.twipsy').remove();
       jQuery("#agent_form").valid();
       roles[jQuery(this).attr('rel')] = false;
     });
     
-    $('#agent_role ul li input').live("click", function(){
+    $(document).on("click", '#agent_role ul li input', function(){
       jQuery(this).parents("li").toggleClass("selected_to_yellow", this.checked);
     });
     
@@ -295,7 +295,7 @@
       }
     });
         
-    $('#agent-role-container-submit').live("click", function(){
+    $(document).on("click.agent-roles", '#agent-role-container-submit', function() {
       $('#agent_role input:checked').each(function(){
         var role_id = jQuery(this).attr('rel');
         roles[role_id] = true;
@@ -309,14 +309,14 @@
       jQuery("#agent_form").valid();
     });
 
-    $('div.group_icon_remove').live("click", function(){
+    $(document).on("click.agent-roles", 'div.group_icon_remove', function(){
       $('#group_'+jQuery(this).attr('rel')).remove();
       $('.twipsy').remove();
       jQuery("#agent_form").valid();
       groups[jQuery(this).attr('rel')] = false;
     });
 
-    $('#agent_group ul li input').live("click", function(){
+    $(document).on("click.agent-roles", '#agent_group ul li input', function(){
       jQuery(this).parents("li").toggleClass("selected_to_yellow", this.checked);
     });
 
@@ -329,7 +329,7 @@
       }
     });
 
-    $('#agent-group-container-submit').live("click", function(){
+    $(document).on("click.agent-roles", "#agent-group-container-submit", function(){
       $('#agent_group input:checked').each(function(){
         var group_id = jQuery(this).attr('rel');
         groups[group_id] = true;

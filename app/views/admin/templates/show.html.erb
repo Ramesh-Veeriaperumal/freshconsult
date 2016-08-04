@@ -104,7 +104,7 @@
 <% end %>
 
 <% content_for :onload_script do %>
-  jQuery("[rel=portal_form]").live("change", function(ev){
+  jQuery("[rel=portal_form]").on("change", function(ev){
     jQuery(this).data('formChanged', true)
   })
 
@@ -161,12 +161,12 @@
       })
     })
 
-    jQuery("#portal-tabs a").live("click", function(ev){
+    jQuery("#portal-tabs a").on("click", function(ev){
       jQuery("[rel=helpcard]").hide()
       jQuery("#" + this.id + "-helpcard").show()
     })
 
-    jQuery("[rel=reset-btn]").live("click", function(ev){
+    jQuery("[rel=reset-btn]").on("click", function(ev){
       var btn_disabled = (jQuery(this).data("resetDisabled") == 'true')
       jQuery("#soft-reset-proxy")
         .attr({ "href": jQuery(this).data("resetUrl"), 
@@ -176,13 +176,13 @@
       jQuery("#reset-tab-type").html(jQuery(this).data("resetTab"))
     })
 
-  jQuery("#pages-tab").live("click", function(ev){
+  jQuery("#pages-tab").on("click", function(ev){
     if(jQuery("#Customizepage").html() == "")
       jQuery("#PortalPages a").first().trigger("click");
   });
 
   
-  jQuery("#PortalPages a.page-btn").live("click", function(ev){
+  jQuery("#PortalPages a.page-btn").on("click", function(ev){
     jQuery("#PortalPages").find(".active").removeClass("active")
     jQuery(this).parent().addClass("active")
   })

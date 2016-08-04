@@ -35,8 +35,8 @@
     invokeRedactor('reply-multiple-cnt-reply-multiple-body','bulk-reply');
     
    
-    jQuery('#canned_show').die('click');
-    jQuery('#canned_show').live('click', function(ev){
+    jQuery('#canned_show').off('click');
+    jQuery('#canned_show').on('click', function(ev){
         ev.preventDefault();
         jQuery('#bulk-response-group').removeClass('hide');
         jQuery('#bulktickets').addClass('bulk-tickets-animation');
@@ -48,7 +48,7 @@
       var user_id=jQuery('#helpdesk_note_user_id').val();
       jQuery("#bulk_canned_response_holder").append("<div class='sloading'></div>");
       jQuery("#bulk_canned_response_holder")
-        .load("/helpdesk/canned_responses")
+        .ajaxLoad({url: "/helpdesk/canned_responses"})
         .show();
     }
 

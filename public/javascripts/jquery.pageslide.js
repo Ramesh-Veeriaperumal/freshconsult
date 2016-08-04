@@ -28,7 +28,7 @@
 			'height':'auto !important'
 		});
 
-		$this.live("click", function(ev){
+		$this.on("click", function(ev){
 			ev.preventDefault()
 			toggle_slide()
 		});

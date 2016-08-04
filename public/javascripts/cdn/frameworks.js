@@ -1,7 +1,10 @@
-//= require jquery-1.8.3.min.js
+//= require jquery-1.12.4.js
+//= require jquery-migrate-1.4.1.js
+//= require frameworks/plugins/jquery.browser.js
 //= require jquery_ujs.js
 //= require jquery.pjax.js
 //= require js-data-model.js
+//= require frameworks/plugins/ajaxload.js
 //= require utils.js
 //= require frameworks/sprintf.js
 //= require frameworks/plugins/jquery.cookie.js
@@ -38,10 +41,7 @@
 //= require helpdesk/socket_agent.js
 //= require helpdesk/socket_agent_autorefresh.js
 //= require helpdesk/freshdesk_node.js
-//= require ticket_list.js
-//= require lib/detectmobilebrowsers.js
 //= require frameworks/plugins/jquery.ui.timepicker.addon.js
-//= require app/ticket_details.js
 //= require frameworks/plugins/jquery.tabby.js
 //= require base64.js
 //= require frameworks/plugins/nprogress.js
@@ -59,9 +59,6 @@
 //= require marketplace/freshapp.js
 //= require frameworks/plugins/jquery.actual.min.js
 //= require app/populate_data.js
-//= require app/admin/roles/store_profile_img.js
-//= require app/admin/roles/templates/user_list.jst.ejs
-//= require app/admin/roles/templates/no_agent.jst.ejs
-//= require app/admin/roles/templates/user.jst.ejs
-//= require app/admin/roles/manage_agents.js
-//= require app/admin/roles/admin_roles.js
+//= require redactor/redactor.js
+//= require redactor/freshdesk_redactor.js
+//= require custom_widget.js

@@ -25,6 +25,8 @@
 	</div>
 </div>
 <%= javascript_tag do %>
-	App.AdminFontSettings.destroy();
-	App.AdminFontSettings.initialize();
+if(App.Admin && App.Admin.AdminFontSettings) {
+	App.Admin.AdminFontSettings.onLeave();
+	App.Admin.AdminFontSettings.initialize();		
+}
 <% end %>

@@ -124,7 +124,7 @@
     }
   });
 
-  jQuery("#preview").live("click", function(e){
+  jQuery(".adm-social #preview").on("click", function(e){
       e.preventDefault();
       jQuery('#previewFeeds .modal-body').empty();
       jQuery('#previewFeeds .modal-body').addClass('sloading loading-block');

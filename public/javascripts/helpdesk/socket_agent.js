@@ -200,7 +200,7 @@ var setEvents = function (hashed_params,current_username,current_userid) {
           return customer_reply_div+agent_reply_div+private_note_div+properties_updated_div;
         },
         template: '<div class="dbl_up arrow"></div><div class="hover_card ar-hover inner"><div class="content"><div></div></div></div>',
-      }).live({
+      }).on({
           mouseenter: function () {
               if(jQuery(".source-badge-wrap .source").hasClass("collision_refresh")){
                   jQuery(this).popover('show');
@@ -252,7 +252,7 @@ var setEvents = function (hashed_params,current_username,current_userid) {
               return container;
           },
           template: '<div class="arrow notice-arrow"></div><div class="ticket-notice-popover"><div class="title"></div><div class="content"><p></p></div></div>'
-      }).live({
+      }).on({
           mouseenter: function () {
               if (jQuery(this).hasClass("active")){
                   jQuery(this).popover('show');

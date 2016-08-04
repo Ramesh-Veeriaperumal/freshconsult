@@ -176,7 +176,7 @@ jQuery(document).ready(function(){
 		}
 	});
 
-	jQuery('input#reply_to_id').live("keyup",function(){
+	jQuery('input#reply_to_id').on("keyup",function(){
 		submit = jQuery('#email_config_submit')
 		jQuery(this).val() == "" ? submit.fadeOut() : submit.fadeIn();
 	});
@@ -273,7 +273,7 @@ jQuery(document).ready(function(){
 		jQuery("#slide1-"+activeSlide).trigger("click");
 	});
 
-	jQuery('.mColorPicker').live('change', function(ev) {
+	jQuery('document').on('change.colorpickerEvents', '.mColorPicker', function(ev) {
 		jQuery("#"+jQuery(this).attr("id")+"View")
 			.css("background-color", jQuery(this).val());
 	});
