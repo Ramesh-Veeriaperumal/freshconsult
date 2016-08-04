@@ -83,7 +83,11 @@ var TemplateDockManager   = Class.create({
                     .on("click.tmpl_events", ".fa-tabd a", this.reinstateURL.bindAsEventListener(this))
                     .on("click.tmpl_events", ".remove-query", this.resetQuery.bindAsEventListener(this))
                     .on("click.tmpl_events", ".carousel-dot", this.carouselDotNav.bindAsEventListener(this))
-                    .on("click.tmpl_events", ".carousel", this.carouselScroll.bindAsEventListener(this));
+                    .on("click.tmpl_events", ".carousel", this.carouselScroll.bindAsEventListener(this))
+                    .on("click.tmpl_events", ".toggle_policy" , this.togglePolicyInfo.bindAsEventListener(this));
+  },
+  togglePolicyInfo: function() {
+    jQuery('.display_policy').toggle();
   },
   resetQuery: function (e) {
     jQuery(".appsearch-box #query").val("");

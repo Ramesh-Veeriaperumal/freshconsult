@@ -4,6 +4,7 @@ module Marketplace::Constants
   DEV_PORTAL_NAME = 'Freshdesk Marketplace'
   ADMIN_PORTAL_NAME = 'Marketplace Admin Portal'
   PLG_FILENAME = 'build/index.html'
+  DEVELOPED_BY_FRESHDESK = 'freshdesk'
 
   EXTENSION_TYPES = [ 
     [:plug,  1],    

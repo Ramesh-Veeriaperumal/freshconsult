@@ -106,4 +106,8 @@ module Admin::Marketplace::ExtensionsHelper
     (User.current && User.current.language != I18n.default_locale.to_s) ? 
       t('marketplace.search_language_warning') : t('marketplace.search')
   end
+
+  def third_party_developer?
+    @extension['account'].downcase != Marketplace::Constants::DEVELOPED_BY_FRESHDESK ? true : false
+  end
 end

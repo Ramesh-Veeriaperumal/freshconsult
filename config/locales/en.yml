@@ -6585,6 +6585,8 @@ en:
     help_and_support: "Help and Support"
     developed_by: "By "
     time_ago: "ago"
+    policy_on_tp_apps: "Policy on third party apps"
+    third_party_app_policy: "You are downloading an App that has not been developed by Freshdesk. By downloading this App you understand that you are bound by the terms and privacy policies provided by its developer. For more details about such terms and privacy policies, please contact the developer or visit the developer's page."
   integrations:
     native_integrations: Native Integrations
     cti_app_title: CTI Integrations
