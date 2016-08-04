@@ -187,7 +187,7 @@
       })
       .validate();  
 
-      jQuery('#HelpdeskReplyFwd_<%= @note.id%> select#reply_to_fwd_email_id').live('change',function(e){
+      jQuery('#HelpdeskReplyFwd_<%= @note.id%> select#reply_to_fwd_email_id').on('change',function(e){
       var selectObj = jQuery(e.target),
           form = e.target.form,
           fromEmail = selectObj.val();

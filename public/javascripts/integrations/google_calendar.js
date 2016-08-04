@@ -783,7 +783,7 @@ GoogleCalendar.prototype = {
 		jQuery('#gcal-event-summary').val(ev.summary);
 		jQuery('#google_calendar_event_description').val(ev.description);
 		jQuery('#gcal-event-location-field').val(ev.location);
-		jQuery('#gcal-calendar-list option[value=\''+gcal.getCalId(eventId)+'\']').attr("selected", "selected");
+		jQuery('#gcal-calendar-list option[value=\''+gcal.getCalId(eventId)+'\']').prop("selected", "selected");
 		jQuery('#gcal-submit-event-button').val('Update');
 	},
 

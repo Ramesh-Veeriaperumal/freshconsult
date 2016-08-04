@@ -4,7 +4,7 @@ window.App.Tickets.Merge_tickets = window.App.Tickets.Merge_tickets || {};
 (function ($) {
   "use strict";
 
-  window.App.Tickets.Merge_tickets = {
+  App.Tickets.Merge_tickets = {
 
     global: {},
 
@@ -22,14 +22,16 @@ window.App.Tickets.Merge_tickets = window.App.Tickets.Merge_tickets || {};
       this.onVisit(data);
     },
     onVisit: function (data) {
-      App.Merge.initialize();
-      this.bindHandlers();
+      this.initialize();
     },
     onLeave: function () {
       jQuery('body').off('.merge_tickets');
       jQuery('#ticket-merge').parent().remove();
     },
-
+    initialize: function(){
+      App.Merge.initialize();
+      this.bindHandlers();
+    },
     bindHandlers: function () {
       this.typedClick();
       this.searchKeyup();
@@ -236,7 +238,10 @@ window.App.Tickets.Merge_tickets = window.App.Tickets.Merge_tickets || {};
         }
       });
       return oldestTicket;
+    },
+    unBindEvent: function () {
+      jQuery('body').off('.merge_tickets');
+      jQuery('#ticket-merge').parent().remove();
     }
-
   };
 }(window.jQuery));

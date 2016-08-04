@@ -51,7 +51,7 @@
     function update_viewing(_agents) {
       _agents = filter_agents(_agents);
       agents.viewing = _agents.without(current_user);
-      if(agents.viewing.size()) update_notification_ui();
+      if(agents.viewing.length) update_notification_ui();
     }
 
     function update_replying(_agents) {  
@@ -60,7 +60,7 @@
       agents.replying.each(function(item){
         agents.viewing = agents.viewing.without(item);             
       });
-      if(agents.replying.size()) update_notification_ui();
+      if(agents.replying.length) update_notification_ui();
     }            
     
     function update_reload(){
@@ -83,11 +83,11 @@
     function update_notification_ui(){   
       agents.viewing = agents.viewing.uniq();
       agents.replying = agents.replying.uniq();
-      jQuery("#agents_viewing").toggleClass("active", (agents.viewing.size() != 0) ).effect("highlight", { color: "#fffff3" }, 400);
-      jQuery("#agents_viewing .flip-back").html(agents.viewing.size());
-      jQuery("#agents_replying").toggleClass("active", (agents.replying.size() != 0) ).effect("highlight", { color: "#fffff3"  }, 400);      
-      jQuery("#agents_replying .flip-back").html(agents.replying.size());
-      jQuery(".list_agents_replying").toggleClass("hide", (agents.replying.size() == 0) ).html(humanize_name_list(agents.replying, 'replying'));
+      jQuery("#agents_viewing").toggleClass("active", (agents.viewing.length != 0) ).effect("highlight", { color: "#fffff3" }, 400);
+      jQuery("#agents_viewing .flip-back").html(agents.viewing.length);
+      jQuery("#agents_replying").toggleClass("active", (agents.replying.length != 0) ).effect("highlight", { color: "#fffff3"  }, 400);      
+      jQuery("#agents_replying .flip-back").html(agents.replying.length);
+      jQuery(".list_agents_replying").toggleClass("hide", (agents.replying.length == 0) ).html(humanize_name_list(agents.replying, 'replying'));
     }
 
     jQuery(document).ready(function() {   
@@ -169,7 +169,7 @@
               return container;
             },
             template: '<div class="arrow notice-arrow"></div><div class="ticket-notice-popover"><div class="title"></div><div class="content"><p></p></div></div>'
-          }).live({ 
+          }).on({ 
             mouseenter: function(){  
               if(jQuery(this).hasClass("active"))
                 jQuery(this).popover('show');

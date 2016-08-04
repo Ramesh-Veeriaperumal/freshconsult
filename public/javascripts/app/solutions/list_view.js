@@ -57,7 +57,7 @@ window.App = window.App || {};
     },
 
     toggleSelectAll: function (checked) {
-      $("#fa_item-select-all").attr('checked', checked);
+      $("#fa_item-select-all").prop('checked', checked);
     },
 
     bindHandlers: function () {
@@ -181,7 +181,7 @@ window.App = window.App || {};
     },
 
     allSelectAction: function (checked) {
-      $(".item_ids_checkbox").attr('checked', checked);
+      $(".item_ids_checkbox").prop('checked', checked);
       $(".comm-item").toggleClass('active', checked);
       this.selectedElementsCount();
     },
@@ -288,13 +288,13 @@ window.App = window.App || {};
       for (i = 0; i < ids.length; i += 1) {
         $('.solution-list li[item_id="' + ids[i] + '"]').remove();
       }
-      $(".item_ids_checkbox:checked").attr('checked', false);
+      $(".item_ids_checkbox:checked").prop('checked', false);
       $('.comm-item').removeClass('active');
     },
     
     hideSelectAll: function () {
-      if ($('#fa_item-select-all:checked').size() > 0) {
-        $("#fa_item-select-all").attr('checked', false);
+      if ($('#fa_item-select-all:checked').length > 0) {
+        $("#fa_item-select-all").prop('checked', false);
       }
     },
 

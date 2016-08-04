@@ -621,7 +621,7 @@ var FreshfoneSocket;
       $(document).off('.freshfonetransfer');
     },
     bindUnload: function(){
-      $(window).unload(function() {
+      $(window).on('unload', function() {
         $('#transfer-list').off('mousewheel.transfer');
       });
     },
@@ -689,7 +689,7 @@ var FreshfoneSocket;
     bindMouseEvents: function(){
       var self = this;
 
-      $('#freshfone_available_agents').on('hover',' #online-agents-list ul >li', function(event) {
+      $('#freshfone_available_agents').on('mouseenter mouseleave',' #online-agents-list ul >li', function(event) {
         self.selectedElement == null;
         self.$freshfoneAvailableAgentsList.find('#online-agents-list li.transfer-active')
                                           .removeClass('transfer-active group-transfer');
@@ -703,7 +703,7 @@ var FreshfoneSocket;
         }
       });
 
-      $('#freshfone_available_agents').on('hover','.available_numbers_list li',function(event) {
+      $('#freshfone_available_agents').on('mouseenter mouseleave','.available_numbers_list li',function(event) {
         self.selectedElement == null;
         $('#freshfone_available_agents .available_numbers_list li.transfer-external-selected').removeClass('transfer-external-selected');
         $('#freshfone_available_agents .available_numbers_list li.transfer-active').removeClass('transfer-active');

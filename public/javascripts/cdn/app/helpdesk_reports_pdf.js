@@ -1,4 +1,5 @@
-//= require frameworks/jquery
+//= require jquery-1.12.4.js
+//= require jquery-migrate-1.4.1.js
 //= require report/date
 //= require frameworks/underscore-min
 //= require utils.js

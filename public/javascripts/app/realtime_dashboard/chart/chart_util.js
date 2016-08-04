@@ -29,7 +29,7 @@ REPORT_COLORS = {
         track_border : '#e9e9e9',
     }
 }
-
+var FONT_FAMILY = '"Helvetica Neue", Helvetica, Arial';
 
 function lineChart(opts){
     var config = {
@@ -88,7 +88,7 @@ function lineChart(opts){
                 style : {
                     fontSize : '11px',
                     color : REPORT_COLORS['label'],
-                    fontFamily: "Helvetica Neue"
+                    fontFamily: FONT_FAMILY
                 }
             },
             tickInterval : 4
@@ -111,7 +111,7 @@ function lineChart(opts){
                 style: {
                     fontSize: '12px',
                     color: REPORT_COLORS['label'],
-                    fontFamily: "Helvetica Neue",
+                    fontFamily: FONT_FAMILY
                 },
                 formatter: this.lineLabelFormatter
             },
@@ -199,7 +199,7 @@ function stackedColumnGraph(opts) {
                 style: {
                     fontSize: '11px',
                     color: REPORT_COLORS['label'],
-                    fontFamily: "Helvetica Neue"
+                    fontFamily: FONT_FAMILY
                 },
                 formatter: opts['formatter'],
                 autoRotation : false
@@ -216,7 +216,7 @@ function stackedColumnGraph(opts) {
                 style: {
                     fontSize: '12px',
                     color: REPORT_COLORS['title'],
-                    fontFamily: "Helvetica Neue"
+                    fontFamily: FONT_FAMILY
                 }
             },
             labels: {
@@ -224,7 +224,7 @@ function stackedColumnGraph(opts) {
                 style: {
                     fontSize: '12px',
                     color: REPORT_COLORS['label'],
-                    fontFamily: "Helvetica Neue"
+                    fontFamily: FONT_FAMILY
                 }
             },
             gridLineWidth: opts['gridLineWidth'] != 'undefined' ? opts['gridLineWidth'] : 0,
@@ -283,7 +283,7 @@ function stackedColumnGraph(opts) {
                 fontSize : '11px',
                 color : '#888',
                 cursor : 'pointer',
-                fontFamily: "Helvetica Neue"
+                fontFamily: FONT_FAMILY
             },
             verticalAlign: 'bottom',
             floating: false,
@@ -385,7 +385,7 @@ function multiSeriesColumn(opts) {
                 style : {
                     fontSize : '11px',
                     color : REPORT_COLORS['label'],
-                    fontFamily: "Helvetica Neue"
+                    fontFamily: FONT_FAMILY
                 },
                 autoRotation : false
             },
@@ -422,7 +422,7 @@ function multiSeriesColumn(opts) {
             labels : {
                 enabled : opts['label_enabled'] != 'undefined' && !opts['label_enabled'] ? false : true,
                 style : {
-                    fontFamily: "Helvetica Neue"
+                    fontFamily: FONT_FAMILY
                 }
             }
         },
@@ -474,7 +474,7 @@ function multiSeriesColumn(opts) {
                 fontSize : '11px',
                 color : '#888',
                 cursor : 'pointer',
-                fontFamily : "Helvetica Neue"
+                fontFamily : FONT_FAMILY
             },
             verticalAlign: 'bottom',
             itemDistance: 10,

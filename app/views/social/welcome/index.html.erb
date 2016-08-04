@@ -50,7 +50,7 @@
     }
   });
 
-  jQuery("#getStats").live("click", function(e){
+  jQuery("#getStats").on("click", function(e){
     e.preventDefault();
     if(jQuery("#twitter_handle").val() == ""){
       return;

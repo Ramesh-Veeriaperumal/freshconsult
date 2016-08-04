@@ -19,7 +19,7 @@ RealtimeDashboard.Widgets.Performance = function(widget_name,container,preview_l
 			if(true || self.core.refresh.did_time_expire() || !self.core.readFromLocalStorage(_fd.widget_name)) {
 				var opts = {
 		            url: _fd.widget_name == "agent_performance" ? self.constants.endPoint_agent : self.constants.endPoint_group,
-		            params : data,
+		            data : data,
 		            success: function (response) {
 		                _fd.resp = response.result;
 		            	self.core.addToLocalStorage(_fd.widget_name,_fd.resp);

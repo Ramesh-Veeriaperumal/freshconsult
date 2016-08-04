@@ -153,7 +153,7 @@
 
 			
 			val = (previous_ele) ? $('#select_' + type + '_time_' + previous_ele).val() : -1;
-	
+			
 			var current_val = $(current_ele).val();
 
 			$(current_ele).html("");
@@ -163,7 +163,23 @@
 					$(current_ele).append($(this).clone());
 			});
 
-			initialize ? $(current_ele).val(time[ref]) : $(current_ele).val(current_val);
+
+			if(parseInt(current_val) < parseInt($(current_ele).children().first().val()) && ref > 1) {
+				current_val = $(current_ele).children().first().val()
+			}				
+
+            // removed on jquery migration
+			// initialize ? $(current_ele).val(time[ref]) : $(current_ele).val(current_val);
+			
+			var value;
+			if(initialize) {
+				value = (time[ref]) ? time[ref] : current_val;
+			} else {
+				value = current_val;
+			}
+			
+            $(current_ele).val(value);
+
 			generate_select($('#select_' + type + '_time_' + next_ele), 
 											initialize);
 		}
@@ -200,7 +216,7 @@
 			if(next_level.length) {	
 				var element = next_level.first();
 				//Add validation class and set next availabe time
-				element.find('select').val("");
+				element.find('select').val(element.find('option').first().val());
 				//Append add_next_level button to last
 				parent.append($(this).parents('tr').first());
 
@@ -241,7 +257,7 @@
   	})
 
   	//Upon change of conditions select dropdown
-		$('.condition_list').live('click', function(ev) {
+		$('.condition_list').on('click', function(ev) {
 			ev.preventDefault();
   		var target = $('#' + $(this).data('cond')); //Gives target div
   		

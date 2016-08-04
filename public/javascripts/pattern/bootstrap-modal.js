@@ -37,7 +37,7 @@
       this.$source = this.$element.data("source");
     }
 
-    this.options.remote && this.$element.find('.modal-body').load(this.options.remote)
+    this.options.remote && this.$element.find('.modal-body').ajaxLoad({url: this.options.remote})
   }
 
   Modal.prototype = {

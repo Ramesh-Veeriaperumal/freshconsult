@@ -48,18 +48,28 @@ if node[:opsworks]
       # trigger deployment incase of masternode else don't do anything
       if node[:opsworks][:instance][:hostname] == master_node
         # custom_json = "{\"custom_deployment_id\":\"#{node[:opsworks][:deployment].first}\",\"custom_stack_id\":\"#{stack_id}\"}"
+        
+        if node[:new_asset_compilation]
+          target_instance_ids = [node[:opsworks][:instance][:id]]
+          recipe_list = ["asset_compilation::setup", "deploy::rolling_restart"]
+        else
+          target_instance_ids = instance_ids
+          recipe_list = ["deploy::helpkit_restart_services"]
+        end
+
         opsworks.create_deployment({
                                      :stack_id =>  stack_id,
-                                     :instance_ids => instance_ids,
+                                     :instance_ids => target_instance_ids,
                                      :command => {
                                        :name =>  "execute_recipes",
                                        :args => {
-                                         "recipes" => ["deploy::helpkit_restart_services"]
+                                         "recipes" => recipe_list
                                        }
                                      },
-                                     :comment => "service restart from master"
-
+                                     :comment => "service restart from master",
+                                     :custom_json => { :deployed_instance_ids => instance_ids }.to_json
         })
+
         newrelic_key = (node["opsworks"]["environment"] == "production") ? "53e0eade912ffb2c559d6f3c045fe363609df3ee" : "7a4f2f3abfd0f8044580034278816352324a9fb7"
         long_user_string = node["deploy"][node["opsworks"]["applications"][0]["slug_name"]]["deploying_user"]
         #something like: "arn:aws:iam::(long-number):user/username"
@@ -75,13 +85,23 @@ if node[:opsworks]
       # restart nginx for custom deployment without master only for old instances
       if stack_id
         instance_ids = [node[:opsworks][:instance][:id]]
+
+        recipe_list = ["deploy::helpkit_restart_services"]
+
+        if node[:new_asset_compilation] && (node[:opsworks][:instance][:hostname].include?("-app-"))
+          Chef::Log.info "Adding asset flag file on deployment without master"
+          ::File.open("#{release_path}/#{node[:rails_assets][:flag_file]}", "w") {}
+
+          recipe_list = ["asset_compilation::generate"]
+        end
+
         opsworks.create_deployment({
                                      :stack_id =>  stack_id,
                                      :instance_ids => instance_ids,
                                      :command => {
                                        :name =>  "execute_recipes",
                                        :args => {
-                                         "recipes" => ["deploy::helpkit_restart_services"]
+                                         "recipes" => recipe_list
                                        }
                                      },
                                      :comment => "service restart by node"

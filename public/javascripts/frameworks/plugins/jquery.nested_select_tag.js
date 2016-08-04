@@ -13,11 +13,16 @@
             _vals = (opts.initValues || {}),
             _disable_children = opts.disable_children;
 
+        var cat_id = $(this).attr('id'),
+            sub_cat_id = opts.subcategory_id,
+            item_id = opts.item_id
+
          opts["default_option"] = "<option value=''>"+opts["include_blank"]+"</option>";
          if(opts["include_none"]) {
           opts["none_option"] = "<option value='-1'>"+opts["include_none"]+"</option>";
          }
-         _category.bind("change", function(ev){
+
+          $(document).on('change.nested_field', "#"+cat_id, function(ev) {
             var _items_present = false;
 
             _subcategory.html("");
@@ -53,7 +58,7 @@
             _subcategory.prop("disabled", _disable_children && _condition).parent().toggle(!_condition);
          });
 
-         _subcategory.bind("change", function(ev){
+           $(document).on('change.nested_field', "#"+sub_cat_id, function(ev) {         
             if(!_subcategory.data("initialLoad")){              
               _subcategory.val(_vals["subcategory_val"]);
               _subcategory.data("initialLoad", true);
@@ -96,7 +101,7 @@
             }
          });
 
-         _item.bind("change", function(ev){
+          $(document).on('change.nested_field', "#"+item_id, function(ev) {
             if(_item.data("initialLoad")){
                opts.change_callback();             
             }else{              
@@ -108,7 +113,6 @@
          _category
           .val(_vals["category_val"])
           .trigger("change");
-          
 
        });
      }

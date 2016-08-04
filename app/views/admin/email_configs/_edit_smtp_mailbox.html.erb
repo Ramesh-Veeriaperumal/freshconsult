@@ -41,13 +41,22 @@
 
 <% content_for :pagefixed do -%>
   <%= javascript_tag do %>
-
+     // jQuery migration fix
+      function optionElement() {
+         var $selected = jQuery("#email_system").find(":selected");
+         if($selected.length == 0) {
+           $selected = jQuery("#email_system").find("option[selected]");
+         }
+         return $selected;
+       }
     jQuery(document).ready(function(){
-      jQuery(".smtp_limit_alert").html(jQuery("#email_system").find(":selected").data('smtpAlert'));
+      var OptionElement = optionElement();
+      jQuery(".smtp_limit_alert").html(OptionElement.data('smtpAlert'));
       disable_ssl_checkbox();
       jQuery("#email_system")
         .bind("change", function(ev){ 
-          _data = jQuery(this).find(":selected").data();
+           var OptionElement = optionElement();
+          _data = OptionElement.data();
           ['imap', 'smtp'].each(function(name){
 
             _id = "#email_config_" + name + "_mailbox_attributes";
@@ -58,7 +67,7 @@
               jQuery(_id + '_server_name').val(null).attr('placeholder', ((name == "imap") ? 'IMAP Server Name' : 'SMTP Server Name'));
             
             jQuery(_id + '_port').val( (name == "imap") ? _data.imapPort : _data.smtpPort );
-            jQuery(_id + '_use_ssl').val( true ).attr('checked', true);
+            jQuery(_id + '_use_ssl').val( true ).prop('checked', true);
           });
           jQuery(".smtp_limit_alert").html(_data.smtpAlert);
           disable_ssl_checkbox();
@@ -73,7 +82,8 @@
     }
 
     function disable_ssl_checkbox(){
-      if (jQuery("#email_system").find(":selected").data().server == "gmail.com"){
+      var OptionElement = optionElement();
+      if (OptionElement.data().server == "gmail.com"){
         jQuery("#email_config_imap_mailbox_attributes_use_ssl").attr("disabled", "disabled").val(true);
         jQuery('input[name="email_config[imap_mailbox_attributes][use_ssl]"][type="hidden"]').val(true);
       } else {

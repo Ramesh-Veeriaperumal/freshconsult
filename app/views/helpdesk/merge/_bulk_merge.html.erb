@@ -78,11 +78,12 @@
   </div>   
 </div>
 <script type="text/javascript">
-  var primary_ticket = window.App.Tickets.Merge_tickets.findOldestTicket();
+  var primary_ticket = App.Tickets.Merge_tickets.findOldestTicket();
   primary_ticket.parent().prepend(primary_ticket);
   primary_ticket.addClass('cont-primary');
   primary_ticket.find('.primary-marker').attr('title','Primary ticket');
-  window.App.Tickets.Merge_tickets.enableContinue();
-  window.App.Tickets.Merge_tickets.bindAutocompleter();
-  window.App.Tickets.Merge_tickets.checkRequester();
+  
+  App.Tickets.Merge_tickets.enableContinue();
+  App.Tickets.Merge_tickets.bindAutocompleter();
+  App.Tickets.Merge_tickets.checkRequester();
 </script>

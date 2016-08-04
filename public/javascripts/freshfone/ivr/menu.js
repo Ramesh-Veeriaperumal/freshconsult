@@ -66,7 +66,7 @@ var globalmenus = {},
 			$(this.options).each(function (i, option) { option.hideAddMenuLink(); });
 		},
 		nextMenuIdAvailable: function () {
-			if (!this.menusList.size()) { return 0; }
+			if (!this.menusList.length) { return 0; }
 			return ($.map(this.menusList, function (menu, index) { 
 				if(menu != undefined){
 						return menu.menuId;
@@ -129,7 +129,7 @@ var globalmenus = {},
 			this.$addOptionElement.click(function () {
 				var opt = new IvrOption(self.ivr, self).build();
 
-				if (self.options.length === Ivr.globalkeyslist.size()) {
+				if (self.options.length === Ivr.globalkeyslist.length) {
 					self.$addOptionElement.hide();
 				}
 			});

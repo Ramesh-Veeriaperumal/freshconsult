@@ -141,7 +141,7 @@ var FreshfoneAgentConference;
       });
     },
     bindUnload: function() {
-      $(window).unload(function(){
+      $(window).on('unload', function(){
         $("#freshfone_add_agent").off('.add_agent');
         $(document).off('agent_conference');
       });      
