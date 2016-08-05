@@ -40,7 +40,7 @@ class Account < ActiveRecord::Base
     
     :garden => {
       :features => [ :multi_product, :customer_slas, :multi_timezone , :multi_language, 
-        :css_customization, :advanced_reporting, :multiple_business_hours, :dynamic_content, :chat ],
+        :css_customization, :advanced_reporting, :multiple_business_hours, :dynamic_content, :chat, :ticket_templates ],
       :inherits => [ :blossom ]
     },
 
@@ -67,7 +67,7 @@ class Account < ActiveRecord::Base
     
     :garden_classic => {
       :features => [ :multi_product, :customer_slas, :multi_timezone , :multi_language, 
-        :css_customization, :advanced_reporting, :dynamic_content ],
+        :css_customization, :advanced_reporting, :dynamic_content, :ticket_templates ],
       :inherits => [ :blossom_classic ]
     },
 
@@ -92,7 +92,7 @@ class Account < ActiveRecord::Base
     :redis_display_id => false, :es_multilang_solutions => false,
     :sort_by_customer_response => false, :survey_links => true, :default_survey => false, :custom_survey => false, 
     :saml_unspecified_nameid => false, :multiple_user_companies => false,
-    :euc_hide_agent_metrics => false, :ticket_templates => false, :single_session_per_user => false
+    :euc_hide_agent_metrics => false, :single_session_per_user => false
   }
 
 
@@ -109,7 +109,7 @@ class Account < ActiveRecord::Base
     :threading_without_user_check => false, :freshfone_call_monitoring => false, :freshfone_caller_id_masking => false, 
     :agent_conference => false, :restricted_helpdesk => false, :enable_multilingual => false,
     :count_es_writes => false, :count_es_reads => false, :activity_revamp => false, :countv2_writes => false, :countv2_reads => false,
-    :helpdesk_restriction_toggle => false, :freshfone_acw => false  }
+    :helpdesk_restriction_toggle => false, :freshfone_acw => false, :ticket_templates => false  }
 
   # This list below is for customer portal features list only to prevent from adding addition features
   ADMIN_CUSTOMER_PORTAL_FEATURES =  {:anonymous_tickets => true, :open_solutions => true, :auto_suggest_solutions => true, 

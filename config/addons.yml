@@ -50,3 +50,5 @@ Call Center Advanced:
   - :agent_conference
 Helpdesk Restriction:
   - :helpdesk_restriction_toggle
+Ticket Templates:
+  - :ticket_templates
