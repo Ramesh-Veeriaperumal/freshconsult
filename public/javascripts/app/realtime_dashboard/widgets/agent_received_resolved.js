@@ -108,6 +108,7 @@ RealtimeDashboard.Widgets.AgentReceivedResolved = function(widget_name,container
 				opts.scrollbar = false;
 				opts.label_enabled = true;
 				opts.gridLineWidth = 1;
+				opts.chartCursor = true;
 				opts.showYAxisLabels = true;
 			} else {
 				opts.height = 250;

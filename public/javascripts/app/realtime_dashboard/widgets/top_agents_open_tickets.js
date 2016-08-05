@@ -6,11 +6,15 @@ RealtimeDashboard.Widgets.OpenTickets.Agent = function(container,widget_name,lis
 			constants : {
 				endPoint : '/helpdesk/dashboard/top_agents_old_tickets '
 			},
-			fetchData : function() {
+			fetchData : function(group_id) {
 				var self = this;
-
+				var data = {};
+				if(!self.core.isAllSelected(group_id)) {
+					data['group_id'] = group_id;
+				}
 				var opts = {
 		            url: self.constants.endPoint,
+		            data : data,
 		            success: function (response) {
 						_fd.resp = response.result;
 		                self.parseResponse();
@@ -53,6 +57,10 @@ RealtimeDashboard.Widgets.OpenTickets.Agent = function(container,widget_name,lis
 					jQuery("#graph_space").hide();
 					jQuery(".list_items").show();
 				});
+
+				jQuery(document).on('group_change',function(ev,data){
+					self.fetchData(data.group_id);
+				});
 			},
 			showTimeStamp : function() {
 				var self = this;
@@ -64,7 +72,7 @@ RealtimeDashboard.Widgets.OpenTickets.Agent = function(container,widget_name,lis
 			init : function() {
 				var self = this;
 				self.core = RealtimeDashboard.CoreUtil;
-				self.fetchData();
+				self.fetchData('-');
 				self.bindEvents();
 			}
 	};
