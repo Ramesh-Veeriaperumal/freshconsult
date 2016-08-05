@@ -23,6 +23,13 @@
   <% end %>
 </div>
 </div>
+<!-- Populate value if, ticket created form forum -->
+<input type="hidden" id="topic_id" value="<%= params[:topic_id] %>" />
+<% if params[:topic_id] %>
+  <input type="hidden" id="topic_desc" value="<%= @topic.posts.first.body_html %>" />
+  <input type="hidden" id="topic_title" value="<%= @topic.title %>" />
+  <input type="hidden" id="topic_req" value="<%= @topic.user.email %>" />
+<% end %>
 <%= render :partial => "/helpdesk/tickets/canned_loading"  %>
 
 <script>

@@ -26,6 +26,7 @@ var CreateTicket = {
 		this.cacheDOM();
 		this.bindEvents();
 		invokeRedactor('helpdesk_ticket_ticket_body_attributes_description_html', 'ticket');
+		this.ticketFromForum();
 		TicketTemplate.init();
 		TicketForm.init();
 		AutoSuggest.requester();
@@ -91,6 +92,19 @@ var CreateTicket = {
 	              ev.preventDefault();
 	              jQuery('#add_requester_btn').trigger("click");
         	  });
+	},
+	ticketFromForum: function(){
+		var topic_id = jQuery("#topic_id").val();
+
+		if(topic_id){
+			jQuery(".redactor_editor").html(jQuery("#topic_desc").val());
+			jQuery("#helpdesk_ticket_subject").val(jQuery("#topic_title").val());
+			jQuery("#helpdesk_ticket_email").val(jQuery("#topic_req").val());
+		}else{
+			jQuery(".redactor_editor").html("");
+			jQuery("#helpdesk_ticket_subject").val("");
+			jQuery("#helpdesk_ticket_email").val("");
+		}
 	}
 }
 
