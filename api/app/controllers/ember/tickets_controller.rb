@@ -1,5 +1,4 @@
-class Ember::TicketsController < ApiApplicationController
-  include Common::TicketsControllerConcern
+class Ember::TicketsController < TicketsController
   
   def index
     super

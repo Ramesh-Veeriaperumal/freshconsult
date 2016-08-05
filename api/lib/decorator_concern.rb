@@ -23,7 +23,9 @@ module DecoratorConcern
   end
 
   def decorator_method
-    @decorator_method ||= self.class.decorator_method_mapping[action_name.to_sym]
+    @decorator_method ||= 
+      (self.class.decorator_method_mapping || 
+        self.class.superclass.decorator_method_mapping)[action_name.to_sym]
   end
 
   def render_with_before_render_action(*options, &block)
