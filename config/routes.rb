@@ -2527,6 +2527,7 @@ Helpkit::Application.routes.draw do
       collection do
         get :numbers
         get :can_accept_incoming_calls
+        get :is_ringing
       end
     end
   end
