@@ -19,9 +19,12 @@ RealtimeDashboard.Widgets.Csat = {
 		//jQuery(' [rel=sent]').html(response['survey_sent']);
 		jQuery(' [rel=responded]').html(response['survey_responded']);
 		if(!jQuery.isEmptyObject(response['results'])){
-			jQuery(' [rel=positive]').html(response['results']['Positive'] + '%');
-			jQuery(' [rel=negative]').html(response['results']['Negative'] + '%');
-			jQuery(' [rel=nuetral]').html(response['results']['Neutral'] + '%');
+			var positive = response['results']['Positive'] == undefined ? 0 : response['results']['Positive'];
+			var negative = response['results']['Negative'] == undefined ? 0 : response['results']['Negative'];
+			var nuetral = response['results']['Neutral'] == undefined ? 0 : response['results']['Neutral'];
+			jQuery(' [rel=positive]').html(positive + '%');
+			jQuery(' [rel=negative]').html( negative + '%');
+			jQuery(' [rel=nuetral]').html(nuetral + '%');
 		}
 	},
 	bindEvents : function() {
