@@ -77,7 +77,7 @@ describe Admin::Marketplace::InstalledExtensionsController do
   describe "DELETE uninstall" do
     it "deletes the extension" do
       controller.stubs(:uninstall_extension).returns(success_response)
-      delete :uninstall, { extension_id: 1, version_id: 1 }
+      delete :uninstall, { extension_id: 1 }
       expect(response.body).to eq(success_response.body)
       expect(response.status).to eq(200)
     end
