@@ -17,6 +17,8 @@ class HttpRequestProxy
     "fe80::/10",
     "::1"].map {|a| IPAddr.new(a) }.freeze
 
+  ACCEPT_TYPES = ['application/json', 'application/xml', 'text/plain']
+
   TIMEOUT = 4
 
   def fetch(params, request)
@@ -118,11 +120,14 @@ class HttpRequestProxy
           Rails.logger.debug "Response Code: #{proxy_response.code}"
           Rails.logger.debug "Response Headers: #{proxy_response.headers.inspect}"
         end
-
         # TODO Need to audit all the request and response calls to 3rd party api.
-        response_body = proxy_response.body
-        response_code = proxy_response.code
-        response_type = proxy_response.headers['content-type'] unless (params[:auth_type] == 'OAuth1')
+        if ACCEPT_TYPES.include? proxy_response.content_type
+          response_body = proxy_response.body
+          response_code = proxy_response.code
+          response_type = proxy_response.headers['content-type'] unless (params[:auth_type] == 'OAuth1')
+        else
+          return {:text=>"error", :status => 500}
+        end
 
       rescue Timeout::Error
         Rails.logger.error("Timeout trying to complete the request. \n#{params.inspect}")
