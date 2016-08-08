@@ -460,7 +460,7 @@ HelpdeskReports.SavedReportUtil = (function() {
                  
 	              });
 	            }
-	           
+	            is_scheduled_op = false;
 	        } else{
 	        	var default_date_range = _FD.core.convertDateDiffToDate(29);
 	        	jQuery('#date_range').val(default_date_range);
