@@ -23,7 +23,7 @@ module Search::Filters::QueryHelper
     # rest          : terms            #
     ####################################
 
-    def es_query(conditions, neg_conditions, with_permissible = true, list_page = false)
+    def es_query(conditions, neg_conditions, with_permissible = true)
 
       condition_block = {
         :should   => [],
@@ -36,7 +36,7 @@ module Search::Filters::QueryHelper
       condition_block[:must].push(permissible_filter) if with_permissible and User.current.agent? and User.current.restricted?
       construct_conditions(condition_block[:must], conditions)
       construct_conditions(condition_block[:must_not], neg_conditions)
-      filtered_query(nil, bool_filter(condition_block),list_page)
+      filtered_query(nil, bool_filter(condition_block))
     end
 
     def permissible_filter
@@ -217,12 +217,8 @@ module Search::Filters::QueryHelper
       { :term => { field_name.to_s => value, :_cache => false }}
     end
 
-    def filtered_query(query_part={}, filter_part={}, list_page=false)
-      query_base =  if list_page
-                      :filtered
-                    else
-                      Account.current.features?(:countv2_reads) ? :bool : :filtered
-                    end
+    def filtered_query(query_part={}, filter_part={})
+      query_base = Account.current.features?(:countv2_reads) ? :bool : :filtered
       base = ({:query => { query_base => {}}})
       
       base[:query][query_base].update(:query => query_part) if query_part.present?

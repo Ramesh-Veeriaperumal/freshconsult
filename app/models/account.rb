@@ -111,6 +111,10 @@ class Account < ActiveRecord::Base
     features?(:default_survey) && !custom_survey_enabled?
   end
 
+  def count_es_enabled?
+    (launched?(:es_count_reads) || launched?(:list_page_new_cluster)) && features?(:countv2_reads)
+  end
+
   def permissible_domains
     helpdesk_permissible_domains.pluck(:domain).join(",")
   end
