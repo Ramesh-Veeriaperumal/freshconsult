@@ -99,7 +99,7 @@ RealtimeDashboard.Widgets.AgentReceivedResolved = function(widget_name,container
 			}
 
 			if(isMainView) {
-				opts.height = 180;
+				opts.height = 220;
 				opts.chartClick = function(e) {
 					self.sidebarModalChart(data,'graph_space');
 				}

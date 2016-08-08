@@ -43,6 +43,8 @@ RealtimeDashboard.Widgets.OpenTickets.Agent = function(container,widget_name,lis
 
 				if (data.length < 4) {
 					jQuery('[rel=view_all_open_tickets_by_customer]').hide(); // hide the View All panel
+				} else {
+					jQuery('[rel=view_all_open_tickets_by_customer]').show();
 				}
 
 				self.core.Utils.renderTemplate(targetContainer,
