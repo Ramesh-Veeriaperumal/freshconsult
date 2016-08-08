@@ -8037,7 +8037,7 @@ en:
     summary: Summary
     chats: Chats
     edit: Edit
-    filter_error_msg: '* You can select a maximum of 5 filters. (Each selected level of nested field counts as one filter)'
+    filter_error_msg: '* You can select a maximum of 10 filters. (Each selected level of nested field counts as one filter)'
     no_data_to_display_msg: No data to display
     something_went_wrong_msg: 'Something went wrong, please try again'
     disabled_date_range: Disabled for this date range
