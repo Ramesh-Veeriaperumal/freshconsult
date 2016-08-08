@@ -62,7 +62,7 @@ window.App.Discussions = window.App.Discussions || {};
 
 		openReplyForm: function () {
 			$('#new-reply').addClass('replying');
-			$('#post_body_html').setFocus();
+			setTimeout(function() { $('#post_body_html').setFocus(); }, 500)
 			$('.topic-reply').bringToView();
 		},
 
