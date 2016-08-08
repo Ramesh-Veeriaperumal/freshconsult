@@ -11,7 +11,7 @@
 module Facebook
   module PageTab
     class Configure
-
+      
       #By default this call is set for realtime
       #Pass app id as "page_tab" for page_tab app
       def self.new(page=nil,app_id=nil)
@@ -20,6 +20,8 @@ module Facebook
     end
 
     class KoalaConnector
+      
+      include Facebook::Constants
 
       attr_accessor :page_token, :app_id, :graph
 
@@ -66,7 +68,8 @@ module Facebook
       
       #Subscribe for realtime updates from the app
       def subscribe_realtime
-        @graph.put_connections("me", "subscribed_apps")
+        data = {"access_token" => @page_token}
+        RestClient.post "#{FACEBOOK_GRAPH_URL}/#{GRAPH_API_VERSION}/me/subscribed_apps", data.to_json, :content_type => :json, :accept => :json
       end
 
       #Remove realtime subscribe for realtime updates from the app

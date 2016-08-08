@@ -76,7 +76,7 @@
 
 	<script type="text/javascript">
 			jQuery('div.send_while_container input[value="<%=installed_app.configs[:inputs]['send_while'] ||
-				Survey::RESOLVED_NOTIFICATION %>"]').attr("checked", true);
+				Survey::RESOLVED_NOTIFICATION %>"]').prop("checked", true);
 	</script>
 
 </div>

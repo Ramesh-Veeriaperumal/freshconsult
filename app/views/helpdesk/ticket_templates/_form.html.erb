@@ -1,3 +1,4 @@
+<%= javascript_include_tag :'cdn/app/canned_response'  %>
 <%= f.error_messages %>
 <div class="ticket-template-form">
  	<ul class="template-details">
@@ -39,7 +40,6 @@
 	<ul class="compose-new-ticket">
  		<%= render :partial => "ticket_form", :object => f, :locals => { :is_edit =>is_edit, :f => f } %>
 	</ul>
-		<%= render :partial => "/helpdesk/tickets/show/multifile_template"  %>
 </div>
 
 <%= javascript_tag do %>
@@ -60,6 +60,11 @@ jQuery(document).ready(function(){
 
 	//Autofocus on first field
 	jQuery('#helpdesk_ticket_template_name').focus();
+
+	jQuery(document).on('pjax:beforeSend.ticket_template', function () {
+		App.Tickets.CannedResponse.unBindEvents();
+      	jQuery(document).off('.ticket_template');
+    });
 });
 
 function toggleGroup(access_id)

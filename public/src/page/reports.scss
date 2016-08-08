@@ -216,6 +216,28 @@ $Customer_hover_color:#866aa0;
 }
 
 /* New TimeSheet Report */
+#timesheet_table_loading {
+	text-align : center;
+}
+
+.widget-more-link{
+  color: #0066cc;
+  font-weight: 500;
+  display: block;
+  border-top: 1px #f7f7f7 solid;
+  padding: 8px 0px;
+  width: 100%;
+  text-align: center;
+  background-color: #fdfdfd;
+}
+
+#load-more{
+  border: none;
+  background: none;
+  background-color: #fff;
+  @extend .widget-more-link;
+  border-top: 1px #f7f7f7 solid;
+}
 .metrics{
 	width: 100%;
 	margin: 10px 0 0 0;
@@ -847,6 +869,14 @@ $animation_timing: .1s;
 		margin-bottom: 15px;
 		display:table;
 		width:100%;
+	}
+	.remove-message{
+		color : #80161D;
+		font-weight : 400;
+		margin-top : 10px;
+		a.report-link{
+			color : #80161D;
+		}
 	}
 	.report-home-header{
 		background-color: #f1f1f1;

@@ -1,0 +1,118 @@
+<% 
+  attach_id ||= "ticket" 
+  nsc_param = nsc_param || "helpdesk_ticket"
+  original_attachments ||= {:regular => [], :cloud_files => []}
+  max_attachment ||= nil
+  max_size ||= 15
+  template ||= false
+  color ||= false
+  bulk ||= false
+%>
+
+<div class="single_file <%= (color == true) ? "color":""%> <%= (bulk == true) ? "bulk":""%> ">
+<div class="attach-wrapper <%= (color == true)? "" : "row-fluid" %> new-attach" id="attachment-type" data-single-file=true>
+  <div class="attachmentTrigger">   
+    <div class="attachments-list-form" id="<%= attach_id %>-container">
+      <% total_attachments = original_attachments[:regular].size + original_attachments[:cloud_files].size if original_attachments.present? %>
+      <% if total_attachments.to_i > 0 %><div><b><span class="a-count"><%= total_attachments || 0 %></span> <%= t('attachments')%>: </b></div><% end %>
+      <div class="attachment_contents">
+        <div id="<%= attach_id %>-attachments" class="attachments-wrap shared_attachment_list">
+
+        <% #original_attachments is to be used only for Forward forms %>
+        <% if original_attachments.present? %>
+          <% original_attachments[:regular].each do |attachment| %>
+            <div class="item" rel="original_attachment" id="<%= dom_id(attachment) %>">
+                <a class="attachment-close"  href="javascript:void(0)" fileContainer="<%=attach_id%>-container" fileList="<%=attach_id%>-attachments" 
+                  onclick="jQuery(this).parent().hide(); jQuery(this).next().prop('disabled', true);Helpdesk.Multifile.updateCount(this); return false;"></a>
+              <input type="hidden" name="helpdesk_note[attachments][][resource]" value="<%=attachment.id%>" rel="original_attachment"/>
+              <div class="attachment-type file-types-def">
+                <a href="javascript:void(0)"><%= attachment.content_file_name %></a>
+              </div>
+            </div>
+          <% end %>
+
+          <% original_attachments[:cloud_files].each do |cloud_file| %>
+            <div class="item" rel="original_attachment">
+              <a class="attachment-close"  href="javascript:void(0)"
+                fileContainer="<%=attach_id%>-container" fileList="<%=attach_id%>-attachments" 
+                onclick="jQuery(this).parent().hide(); jQuery(this).next().prop('disabled', true); Helpdesk.Multifile.updateCount(this); return false;"></a>
+              <input type="hidden" name="[cloud_file_attachments][]" value="<%={:link=>cloud_file.url,:name=>cloud_file.filename, :provider => cloud_file.provider, :original_attachment => true}.to_json %>" rel="original_attachment" />
+              <div class="attachment-type file-types-def">
+                <a href="javascript:void(0)"><%= cloud_file.filename %> </a>
+              </div>
+            </div>
+          <% end %>
+        <% end %>
+
+        </div>
+      </div>
+    </div>  
+    <% if cloud_files_installed? and (@ticket.present? ? !@ticket.ecommerce? : true)  %>
+      <div class="dropdown dropup">        
+        <a class="dropdown-toggle attach-link" data-toggle="dropdown" href="#">
+          <i class="wicon-paper-clip"></i><%=I18n.t('attach')%><b class="caret"></b>
+        </a>
+        <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+          <li class="portal-attach">
+            <a data-file-id="<%=attach_id%>" href="javascript:void(0)" class="attach-link-wrap">
+               <%= t('attach_file') %>
+                <div class="attach-file attach-link-file" id="<%= attach_id %>-attach-container">  
+                  <input type="file" name="emptyfile" 
+                    id="<%=attach_id%>_file"
+                    data-attach-id="<%=attach_id%>"
+                    nameWhenFilled="<%=nsc_param%>[attachments][][resource]" 
+                    fileContainer="<%=attach_id%>-container" 
+                    fileList="<%=attach_id%>-attachments"
+                    sendFocusTo="<%=attach_id%>-body" 
+                    %>
+                    />
+                </div>
+            </a>
+          </li>
+          <% get_enabled_cloud_files_app.each do |c_f| %>
+            <%= render :partial => "integrations/applications/#{c_f}", :formats => [:html], :locals => {:attach_id => attach_id} %>
+          <% end %>
+        </ul>      
+      </div>
+    <% else %>      
+      <div class="hidden_upload">
+        <div class="add_attachment"><span>+</span> <%= t('attach_file') %></div>
+        <input type="file" name="emptyfile" 
+                    id="<%=attach_id%>_file"
+                    data-attach-id="<%=attach_id%>"
+                    nameWhenFilled="<%=nsc_param%>[attachments][][resource]" 
+                    fileContainer="<%=attach_id%>-container" 
+                    fileList="<%=attach_id%>-attachments"
+                    sendFocusTo="<%=attach_id%>-body" 
+                    max_size="<%=max_size%>"
+                    max_attachment= "<%=max_attachment%>" 
+                    >
+      </div>
+    <% end %>    
+  </div>
+</div>
+<script type="text/javascript">
+  // Fix for Firefox/IE - To override :hover style persistance after click on input[type=file] element
+  // global mutifile key
+  
+  jQuery('div.attach-wrapper a[data-toggle="dropdown"]').bind('click', function(){
+    jQuery(this).parents('div.attach-wrapper').find('a.attach-link-wrap').first().css({
+          'background-color': 'inherit',
+          'background-image': 'inherit',
+          'color': 'inherit',
+          'box-shadow': 'inherit'
+      });
+  });
+  jQuery('li.portal-attach a.attach-link-wrap')
+    .bind('mouseover', function(){
+      jQuery(this).removeAttr('style');
+    })
+    .bind('mousemove', function(event){
+      // Fix to move "Browse" button along with mouse pointer - fix for IE.
+      p=jQuery(this).find('div').first();
+      newLeft = Math.min(175, Math.max(event.clientX - p.offset().left + p.position().left - 5, 0));
+      window.title = newLeft;
+      p.css({left: newLeft, top: 0});
+    })
+</script>
+</div>

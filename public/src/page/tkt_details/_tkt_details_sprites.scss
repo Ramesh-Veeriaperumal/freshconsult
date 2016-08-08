@@ -1,0 +1,12 @@
+// Icon sprite creation
+// --------------------------------------------------
+@import "cdn-ignored/sprites/requester-info/*.png";
+@import "cdn-ignored/sprites/collision/*.png";
+
+/* %% more styles set for this class in some other file */
+.tkt-tabs-wrap{ @include all-requester-info-sprites; }
+
+.reply-flip .flip-front { 			@include collision-sprite(show-reply-inactive); }
+.view-flip .flip-front { 			@include collision-sprite(show-viewing-inactive); }
+.reply-flip.active .flip-front { 	@include collision-sprite(show-reply-active); }
+.view-flip.active .flip-front { 	@include collision-sprite(show-viewing-active); }

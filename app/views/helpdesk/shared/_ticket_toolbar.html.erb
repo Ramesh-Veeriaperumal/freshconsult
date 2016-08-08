@@ -186,44 +186,10 @@
       jQuery('.check input').hide();
     }
   });
-  jQuery('#ticket-close-all-confirmation-submit').live("click", function(){
-    jQuery('#close_all_ticket_btn').trigger('click');
-  });
-
-  jQuery('#ticket-spam-all-confirmation-submit').live("click", function(){
-    jQuery('#spam_all_ticket_btn').trigger('click');
-  });
-
-  jQuery('#ticket-delete-all-confirmation-submit').live("click", function(){
-    jQuery('#delete_all_ticket_btn').trigger('click');
-  });
-
-  jQuery('#empty-spam-confirmation-submit').live("click", function(){
-    jQuery('#empty_spam').trigger('click');
-  });
-
-  jQuery('#empty-trash-confirmation-submit').live("click", function(){
-    jQuery('#empty_trash').trigger('click');
-  });
 
   </script>
 
 <%= javascript_tag do -%>
-  jQuery(document).on("click", '[data-action="merge"]', function(ev){
-      var selected_tickets=[];
-      var parameters=[];
-      jQuery("#tickets-expanded .selector:checked").each(function(){
-        selected_tickets.push(jQuery(this).val());
-      });
-      jQuery.ajax({
-        type:              'POST',
-        url:               '/helpdesk/merge_tickets/bulk_merge',
-        data:              { source_tickets : selected_tickets, redirect_back : true },
-        success:           function(data){
-                            jQuery('#merge_freshdialog-content').html(data);
-                           }
-     });
-  });
 
   setExportCreatedRange = function(){
   var startDate, endDate;
@@ -249,11 +215,4 @@
     }
   });
 
-  jQuery(document).on('click','.tooltip', function(){
-    jQuery(this).twipsy('hide');
-  });
-
-  jQuery(document).ready(function(){
-    jQuery('#ticket-toolbar .bulk_action_buttons .btn').addClass('disabled').prop('disabled', true).attr("disabled","disabled");
-  });
 <%- end %>

@@ -191,6 +191,10 @@ class Freshfone::CallMeta < ActiveRecord::Base
     simple_routing_hunt? || group_hunt?
   end
 
+  def android_or_ios?
+    android? || ios?
+  end
+
   private
 
     def browser_agent?(agent)

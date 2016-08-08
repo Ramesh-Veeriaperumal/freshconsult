@@ -107,7 +107,7 @@
 
 		// Page search autocompelete
 		window['portal-search-boxes'] = $( "input[rel=page-search]" )
-		if(window['portal-search-boxes'].get().size() > 0){
+		if(window['portal-search-boxes'].get().length > 0){
 			window['portal-search-cache'] = {}
 			window['portal-search-boxes'].autocomplete({
 	        	minLength: 2,
@@ -167,7 +167,7 @@
 		// Fix for reCapcha !!! should be removed if it is removed
 		window['portal-recaptcha'] = $('.recaptcha-control')
 
-		if(window['portal-recaptcha'].size() > 1){			
+		if(window['portal-recaptcha'].length > 1){			
 	    	$.each(window['portal-recaptcha'], function(i, item){
 	    		if(i > 0){
 		    		$(item).find("#recaptcha_widget_div")
@@ -221,7 +221,7 @@
 			break;
 	    }
 
-	    $("div.agent_view, div.agent_actions").on('hover',function(ev){
+	    $("div.agent_view, div.agent_actions").on('mouseenter mouseleave',function(ev){
 	    	ev.preventDefault();
 	    	$(".agent_actions").toggle();
 	    })

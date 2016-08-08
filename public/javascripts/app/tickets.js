@@ -21,10 +21,11 @@ window.App = window.App || {};
 
 		setSubModule: function() {
 			switch (App.namespace) {
-
 			case 'helpdesk/tickets/index':
+				this.current_module = "TicketList"
+				break
 			case 'helpdesk/tickets/show':
-				this.current_module = 'Merge_tickets';
+				this.current_module = 'TicketDetail';
 				break;
 				
 			case 'helpdesk/tickets/compose_email':
@@ -43,6 +44,7 @@ window.App = window.App || {};
 				this[this.current_module].onLeave();
 				this.current_module = '';
 			}
+			$(document).off('.nested_field');
 		}
 	};
 }(window.jQuery));

@@ -16,7 +16,7 @@
                              },
               _mand_check_fails = false;
           
-          $(".quest_types").live('change', function(ev) {
+          $(document).on('change', ".quest_types", function(ev) {
               base.onQuestChange(selectListArr[$(this).val()]);
               $("#quest_description").val("");
           });
@@ -33,7 +33,7 @@
               base.processInputFeeds();
           }
          
-          $("#select-badge .badge-set").live('click', function(ev) {
+          $(document).on('click', "#select-badge .badge-set",function(ev) {
             $("#selected-badge").parent().show();
             var badge_class = "gamesettings-badges " + $(this).data('class');
             $("#selected-badge").html("<div class='"+badge_class+"' />");
@@ -41,6 +41,7 @@
             $("#selected-badge-name").html($(this).data('name'));
             $("#quest_badge_id").val($(this).data('badgeId'));
             $("#showbadges").html("Change");
+            $("#quest_points").trigger('change');
           });    
 
           $('#formQuestNew').submit(function(e) {
@@ -318,7 +319,7 @@ var getFilterDef = function(name,quest_type){
         game_types = ['','ticket','solution','forum'],_is_Desc_edited = false,  
         filter_rule = new rules_filter("filter", $A([<%=json_escape @filter_defs.html_safe if @filter_defs %>]), "#filterDOM", {"operators": op_hash, "init_feed":$A(<%=json_escape @filter_input.html_safe if @filter_input %>), selectListArr: game_types, delete_last: true,
         change_filter_data : manipulateFilterData,onRuleSelect : populateQuestDes});
-        jQuery("#quest_data_mode").live('change',function(){
+        jQuery(document).on('change',"#quest_data_mode",function(){
            filter_rule.refresh_list();
          });
     var fnPopulateQuestDes = function(){
@@ -326,8 +327,8 @@ var getFilterDef = function(name,quest_type){
           data = jQuery('#RuleList').children().length ? filter_rule.get_filter_list('json',formObj) : [];
       populateQuestDes(this,data,formObj);
     }
-    jQuery('#quest_data_value').live('keyup',fnPopulateQuestDes);
-    jQuery('#quest_data_date,#quest_data_mode').live('change',fnPopulateQuestDes);
-    jQuery('#quest_description').live('keyup',function(){_is_Desc_edited = true;})
+    jQuery(document).on('keyup','#quest_data_value', fnPopulateQuestDes);
+    jQuery(document).on('change','#quest_data_date,#quest_data_mode,#quest_points', fnPopulateQuestDes);
+    jQuery(document).on('keyup','#quest_description', function(){_is_Desc_edited = true;})
   <% end %>
 <% end %>

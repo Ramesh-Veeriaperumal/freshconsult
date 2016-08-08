@@ -164,7 +164,7 @@ jQuery("#agent_list").select2("val",[]);
 jQuery("#agent_list").on("change", function() {
 	var agent_count = 0;
 	agent_list = jQuery("#agent_list").val();
-	if (agent_list != '')  agent_count = agent_list.split(",").size();
+	if (agent_list != '')  agent_count = agent_list.split(",").length;
 	jQuery("#agents_count").text(agent_count);
 });
 

@@ -25,7 +25,7 @@ TicketTimesheet.prototype = {
          jQuery("#timesheetlist div.timeentry")
               .livequery( this.timeCount, this.timeCount );
 
-         jQuery('a.submit').live("click", function(ev){
+         jQuery('a.submit').on("click", function(ev){
            ev.preventDefault();
 
            if (jQuery("#timeentry_apps_add .app-logo input[type=checkbox]").filter(':checked').parentsUntil('#time_integration').filter(".still_loading").length) {
@@ -47,7 +47,7 @@ TicketTimesheet.prototype = {
               }
            }); 
         
-        if(jQuery("#timesheetlist .timeentry").size() == 0 || jQuery("#TimeSheetButton").hasClass('active')){ 
+        if(jQuery("#timesheetlist .timeentry").length == 0 || jQuery("#TimeSheetButton").hasClass('active')){ 
            jQuery('#timeentry_add').addClass("active_edit");
          }
          
@@ -89,7 +89,7 @@ TicketTimesheet.prototype = {
   },
   
   timeCount: function(){
-      count = jQuery("#timesheetlist div.timeentry").size();  
+      count = jQuery("#timesheetlist div.timeentry").length;  
       jQuery("#TimesheetCount").html(count);
       jQuery("#TimesheetCount, #timesheettotal").toggle(count != 0)
       jQuery("#timesheetlist div.list-noinfo").hide();
@@ -98,7 +98,7 @@ TicketTimesheet.prototype = {
 };
 var timesheet = new TicketTimesheet();	
 
-jQuery("#time_integration .app-logo").live('click', function(ev) {
+jQuery("#time_integration .app-logo").on('click', function(ev) {
   if (!jQuery(ev.target).is('input[type=checkbox]')) {
       var checkbox = jQuery(this).children("input[type=checkbox]");
       checkbox.prop('checked', !checkbox.prop('checked'));

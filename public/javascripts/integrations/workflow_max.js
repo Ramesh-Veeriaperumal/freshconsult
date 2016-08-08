@@ -325,7 +325,7 @@ WorkflowMaxWidget.prototype = {
 		this.freshdeskWidget.remote_integratable_id = remote_integratable_id
 		if (!is_delete_request)
 	   		if (workflowMaxBundle.remote_integratable_id){
-	   			jQuery('.workflow_max_timetracking_widget .app-logo input:checkbox').attr('checked',true);	
+	   			jQuery('.workflow_max_timetracking_widget .app-logo input:checkbox').prop('checked',true);	
                 jQuery('.workflow_max_timetracking_widget .integration_container').toggle(jQuery('.workflow_max_timetracking_widget .app-logo input:checkbox').prop('checked'));
 	   			this.retrieveTimeEntry();
 	   		}
@@ -333,7 +333,7 @@ WorkflowMaxWidget.prototype = {
 	   			// Do nothing
 	   		}
 	   		else{
-	   			jQuery('.workflow_max_timetracking_widget .app-logo input:checkbox').attr('checked',false);	
+	   			jQuery('.workflow_max_timetracking_widget .app-logo input:checkbox').prop('checked',false);	
                 jQuery('.workflow_max_timetracking_widget .integration_container').toggle(jQuery('.workflow_max_timetracking_widget .app-logo input:checkbox').prop('checked'));
 	   			this.resetTimeEntryForm();
 	   		}

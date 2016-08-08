@@ -30,7 +30,7 @@ var SurveySummary = {
                 if(data.rating){
                     rating = data.rating[protocol.rating];
                 }
-                protocol.ratingText = jQuery('#rating_list').find('span.reports').attr('value');
+                protocol.ratingText = jQuery('#rating_list').find('span.reports').val();
                 protocol.ratingPercentage = Math.round((parseInt(rating)/totalRating)*100) || 0;
                 protocol.ratingSmiley = SurveyUtil.findSmiley(protocol.rating);
                 protocol.ratingCount = rating ? rating : 0 ;

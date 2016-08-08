@@ -89,6 +89,10 @@
 					color : #004080;
 				}
 			}
+			.old_report_link,.dividr {
+				@include margin-right(8px);
+				margin-top: 9px;
+			}
 			.pdf-export-info{
 				@include padding-right(10px);
 				font-size: 14px;
@@ -111,6 +115,10 @@
 				ul li{
 					display: inline-block;
 					@include margin-right(8px);
+				}
+				li {
+				   max-width : 100%;
+				   word-wrap: break-word;
 				}
 			}
 			.edit-filter{

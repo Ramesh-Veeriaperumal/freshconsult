@@ -24,8 +24,11 @@
 								<%= phone_disabled? %>"
 								data-placement="below"  
 								rel = "ff-hover-popover"
-							 	title="<%= current_user.freshfone_user_online? ? "Accepting calls" : "Not accepting calls" %>" data-html="true">
-							 	<i class='header-icon-freshfone <%= freshfone_presence_status_class %>'></i>
+								data-html="true">
+							 	<span class='freshfone-preference-tooltip tooltip' title="<%= t('freshfone.widget.unavailable') %>"
+							 	 data-placement='left'>
+							 		<i class='header-icon-freshfone <%= freshfone_presence_status_class %>'></i>
+							 	</span>
 			  			</a>
 			  		<% end %>
 			  		<% if current_user.toggle_availability? %>
@@ -106,6 +109,10 @@
 			    </div>
 			    <% unless freshfone_trial? || freshfone_trial_expired? %>
 				    <div class="ff_presence_options hide" id="FreshfonePresenceOptions">
+				    	<div class="ff_available"> 
+				    		<div class="online_availability_text hide"><%=t('freshfone.online_availability_text')%> </div>
+				    		<div class="acw_availability_text hide"><%=t('freshfone.acw_availability_text')%> </div> 
+				    	</div>
 	  					<div class="availabilityOnPhone" data-to_phone='false' id="availableOnBrowser">
 	  						<i class="ficon-ff-on-browser fsize-20 <%= 'active' unless current_user.available_on_phone? %>"></i>
 	  					 <span class="ff-dropdown-text ellipsis"><%=t('freshfone.via_browser')%></span>
@@ -187,11 +194,11 @@
 </div>
 
 <%  if logged_in? and current_user.agent?  %>
-  <script type="text/javascript">
+  <script type="text/javascript">   	
     jQuery(document).ready(function() {
-      App.Header.init(<%= is_assumed_user? %>);
+      App.Header.init(<%= is_assumed_user? || !current_user.privilege?(:manage_users) %>);
     })
-    var current_account_id = "<%=current_account.id%>";
+   
 		var raw_store_data = <%= get_store_data.html_safe %>
 		createDataStore(raw_store_data);
     Helpdesk.settings = <%= email_template_settings.html_safe %>;

@@ -20,9 +20,7 @@
   note_details_id = conv_id.nil? ? "" : "note_details_#{@note.id}"
   %>
 <div class="request_panel <%=hide_class%>" id="<%=cntid%>" rel="emitter" data-node-name="agent_replying">
-  
-  <div class="form_title"><%= t('.title') %></div>
-  <%= form_for note, :url => reply_to_forward_helpdesk_ticket_conversations_path(@ticket), :html => { 
+    <%= form_for note, :url => reply_to_forward_helpdesk_ticket_conversations_path(@ticket), :html => { 
                         :multipart => true, 
                         :id => "HelpdeskReplyFwd_#{@note.id}",
                         "rel"  => "reply_to_forward_form",
@@ -35,29 +33,32 @@
                         "data-fulltext" => true,
                         "data-submitting" => 'false'
                       } do |f| %>
-    <%= f.error_messages %>
-
-    
-    <ul class="ui-form dont-validate botm-space">
-      <li class="inline-field field" >
-        <%= f.label(:reply_email, t("ticket.from"), :class => "mailaddr-label from" ) %>
-        <input type="checkbox" class="hide" id="include_cc" name="include_cc"  <%=@note.cc_emails.blank? ? "" : "checked" %>  />
-        <input type="checkbox" class="hide" id="include_bcc" name="include_bcc" <%=bcc_drop_box_email.blank? ? "" : "checked" %> />
-        <select id="reply_to_fwd_email_id" name="reply_to_fwd_email[id]" class="select2 responder_field">
+  <div class="form_title"><b><%= t('.from')%> : </b> 
+  <select id="reply_to_fwd_email_id" name="reply_to_fwd_email[id]" class="select2 responder_field" data-container-css-class="ticketSelect2Container ticketSelect2ReplyContainer" data-dropdown-css-class="ticketSelect2Reply">
           <% @from_emails.each_with_index do |from,index| %>
             <% if ( @selected_from_email_addr.present? ) && (from[1] == @selected_from_email_addr[1]) %>
               <% @selected_email_config_id = from[0]%>
               <% @selected_from_email = from[1]%>
-              <option value="<%=from[1]%>" data-email-config-id="<%=from[0]%>" selected="selected"><%= h from[1]%></option>
+              <option value="<%=from[1]%>" data-email-config-id="<%=from[0]%>" selected="selected"><%= h from[1].gsub(/"/,'')%></option>
             <% else %>
               <% if index == 0 %>
                 <% @selected_email_config_id = from[0]%>
                 <% @selected_from_email = from[1]%>
               <%end%>
-              <option value="<%=from[1]%>" data-email-config-id="<%=from[0]%>"><%= h from[1]%></option>
+              <option value="<%=from[1]%>" data-email-config-id="<%=from[0]%>"><%= h from[1].gsub(/"/,'')%></option>
             <% end %>  
           <%end%>
         </select>
+        </div>
+
+    <%= f.error_messages %>
+
+    
+    <ul class="ui-form dont-validate botm-space">
+      <li class="inline-field field" >
+        <input type="checkbox" class="hide" id="include_cc" name="include_cc"  <%=@note.cc_emails.blank? ? "" : "checked" %>  />
+        <input type="checkbox" class="hide" id="include_bcc" name="include_bcc" <%=bcc_drop_box_email.blank? ? "" : "checked" %> />
+        
       </li>
 
 
@@ -135,9 +136,13 @@
         <span class="alert-text"><%= t('helpdesk.tickets.show.reply_form.not_sent') %></span>
         <%= t('helpdesk.tickets.note.attachment_size.exceed') %>
       </li>
-      <li class="inline-field field attachment-options continous" id="attachment-options-reply">
+      <li class="attachment-options continous   <%= current_account.launched?(:multifile_attachments) ? "reply2forward_attachments" : "" %> id="attachment-options-reply">
           <% unless local_assigns[:no_attachments] %>
-          <%= render :partial => "/helpdesk/tickets/show/attachment_form", :locals => { :attach_id => "reply-to-forward-#{@note.id}" , :nsc_param => "helpdesk_note" } %>
+           <% if current_account.launched?(:multifile_attachments)  %>
+              <%= render :partial => "/helpdesk/tickets/show/multi_attachment_form", :locals => { :attach_id => "reply-to-forward-#{@note.id}" , :nsc_param => "helpdesk_note" } %>
+            <% else %>
+              <%= render :partial => "/helpdesk/tickets/show/single_attachment_form", :locals => { :attach_id => "reply-to-forward-#{@note.id}" , :nsc_param => "helpdesk_note", :color => true } %>
+            <% end %>
           <% end %>    
       </li>
     </ul>
@@ -182,7 +187,7 @@
       })
       .validate();  
 
-      jQuery('#HelpdeskReplyFwd_<%= @note.id%> select#reply_to_fwd_email_id').live('change',function(e){
+      jQuery('#HelpdeskReplyFwd_<%= @note.id%> select#reply_to_fwd_email_id').on('change',function(e){
       var selectObj = jQuery(e.target),
           form = e.target.form,
           fromEmail = selectObj.val();

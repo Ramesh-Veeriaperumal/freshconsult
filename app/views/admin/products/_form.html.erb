@@ -149,14 +149,14 @@
       jQuery(this).button("loading");
     });
 
-    jQuery("input[rel=reply_to_id]").live("focus",function(){
+    jQuery(document).on("focus","input[rel=reply_to_id]", function(){
       jQuery(this).removeClass('error');
       if(jQuery(this).next().hasClass('error'))
         jQuery(this).next().remove();
     });
 
     jQuery(document).ready(function(){
-      jQuery("input[rel=reply_to_id]").live("change keyup", 
+      jQuery(document).on("change keyup",  "input[rel=reply_to_id]",
           function(ev){
             var reply_email = this.value;
             if(this.value != ''){
@@ -213,7 +213,7 @@
         }
       );
 
-      jQuery(".deleteChoiceProduct").live('click',
+      jQuery(document).on('click', ".deleteChoiceProduct", 
         function(ev){
           var r;
           if(!jQuery(this).hasClass('disabled')){
@@ -234,14 +234,14 @@
         }
       );
 
-        jQuery("input[rel=email_config_checkbox]").live('change',function(ev){
+        jQuery(document).on('change',"input[rel=email_config_checkbox]", function(ev){
         jQuery("input[rel=email_config_checkbox]").each(function(){
           var spanElement = jQuery(this).parent().parent().parent().parent().find("div.deleteChoiceProduct");
           spanElement.removeClass('disabled');
           jQuery(this).removeAttr("checked");
           jQuery(this).val('false');  
         });
-        jQuery(this).attr('checked','checked');
+        jQuery(this).prop('checked',true);
         jQuery(this).val('true');
         jQuery(this).parent().parent().parent().parent().find("div.deleteChoiceProduct").addClass('disabled');
       });

@@ -8,7 +8,7 @@ CZentrixWidget.prototype = {
     app_name: "czentrix",
     integratable_type:"issue-tracking",
     application_id: 29,
-    use_server_password: false,
+    use_server_password: true,
     auth_type: 'NoAuth',
     domain : location.protocol + "//" +cti_user.host_ip+'/' ,
     ssl_enabled: "false",

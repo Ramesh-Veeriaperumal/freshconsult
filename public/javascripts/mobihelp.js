@@ -1,5 +1,5 @@
 jQuery(function($){
-  $("[rel=ordered_dropdown] select").live("change", function(event){
+  $("[rel=ordered_dropdown] select").on("change", function(event){
     if(event.added) {
       var $element = $(event.added.element);
       $element.appendTo($element.parent());

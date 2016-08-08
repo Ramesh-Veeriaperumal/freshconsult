@@ -3,7 +3,10 @@ Authority::Authorization::PrivilegeList.build do
   # *************** TICKETS **********************
 
   manage_tickets do
-    resource :"helpdesk/dashboard", :only => [:index, :show, :activity_list,:latest_activities,:latest_summary,:sales_manager, :tickets_summary, :achievements]
+    resource :"helpdesk/dashboard", :only => [:index, :show, :activity_list,:latest_activities,:latest_summary,:sales_manager, :tickets_summary, :achievements,
+                                              :trend_count, :due_today, :overdue, :unresolved_tickets_dashboard, :unresolved_tickets_workload, :available_agents, :survey_info,
+                                              :my_performance, :agent_performance, :group_performance, :channels_workload, :admin_glance, :agent_performance_summary,
+                                              :group_performance_summary, :my_performance_summary, :top_agents_old_tickets, :top_customers_open_tickets]
     resource :"helpdesk/quest"
     resource :"helpdesk/leaderboard"
     resource :"helpdesk/note", :only => [:index, :agents_autocomplete,:public_conversation]
@@ -337,6 +340,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"segment/group"
     # is this the correct place to put this ?
     resource :user, :only => [:new, :create, :edit, :update]
+    resource :"helpdesk/ticket", :only => [:update_requester]
 
     # Used by V2 API
     resource :"api_contact", :only => [:create, :update]
@@ -389,7 +393,7 @@ Authority::Authorization::PrivilegeList.build do
       resource :"reports/custom_survey_report"
       resource :"reports/freshfone/summary_report"
       resource :"reports/freshchat/summary_report"
-   	  resource :"reports/timesheet_report", :only => [:index, :report_filter, :save_reports_filter, :update_reports_filter, :delete_reports_filter]
+      resource :"reports/timesheet_report", :only => [:index, :report_filter, :save_reports_filter, :update_reports_filter, :delete_reports_filter, :time_entries_list]
       resource :"reports/report_filter"
       resource :"reports/v2/tickets/report", :only =>[ :index, :fetch_metrics, :fetch_ticket_list, :fetch_active_metric,
                                                         :save_reports_filter, :update_reports_filter, :delete_reports_filter]
@@ -472,6 +476,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/custom_survey"
     resource :group
     resource :ticket_field
+    resource :"admin/requester_widget", :only => [:get_widget, :update_widget]
     resource :"admin/contact_field"
     resource :"admin/company_field"
     resource :"admin/role"

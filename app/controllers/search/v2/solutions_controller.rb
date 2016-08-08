@@ -47,7 +47,7 @@ class Search::V2::SolutionsController < ApplicationController
     def initialize_search_parameters
       super
       @klasses            = ['Solution::Article']
-      @search_context     = :agent_spotlight_solution
+      @search_context     = :agent_insert_solution
       @suggest            = true
       @no_render          = true
     end

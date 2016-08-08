@@ -35,8 +35,9 @@
 	freshfone.current_user = <%= current_user.id %>;
 	freshfone.current_account = <%= current_account.id%>;
 	freshfone.user_phone = "<%= current_user.available_number %>";
-	freshfone.current_status = "<%= current_user.freshfone_user_incoming_preference ||
-												Freshfone::User::PRESENCE[:offline] %>";
+	freshfone.current_status = "<%= current_user.freshfone_user.presence %>";
+	freshfone.current_preference = "<%= current_user.freshfone_user_incoming_preference ||
+	  Freshfone::User::PRESENCE[:offline]%>";
   <% freshfone_account = current_account.freshfone_account %>
 	freshfone.isAgentConferenceEnabled = <%= current_account.features?(:agent_conference)%>;
   <% freshfone_numbers = current_account_freshfone_numbers %>
@@ -49,6 +50,11 @@
 	freshfone.freshfone_user_online_text = "<%= t('freshfone.widget.available') %>";
 	freshfone.freshfone_user_offline_text = "<%= t('freshfone.widget.unavailable') %>";
 	freshfone.freshfone_user_busy_text = "<%= t('freshfone.widget.busy') %>";
+	<% if current_account.features?(:freshfone_acw) %>
+		freshfone.freshfone_user_in_acw_text = "<%= t('freshfone.widget.acw') %>";
+		freshfone.acw_timeout = <%= current_account.freshfone_account.acw_timeout.minutes %>;
+		freshfone.isAcwEnabled = true;
+	<% end %>
 	freshfone.forward_number_alert = "<%= t('freshfone.widget.forward_number_alert') %>";
 	freshfone.invalid_user_number_text = "<%= t('freshfone.widget.invalid_phone_number').html_safe%>";
 	freshfone.widget_inactive = "<%= t('freshfone.widget.low_credit') %>";

@@ -34,7 +34,7 @@ module PasswordPolicies
     end
 
     def periodic_login_enabled?
-      user_policy && policy_account.launched?(:periodic_login_feature) ? (user_policy.periodic_login_enabled?) : false
+      user_policy && policy_account.launched?(:periodic_login_feature) && (user_policy.periodic_login_enabled?)
     end    
 
     def password_expiry_enabled?

@@ -8,7 +8,7 @@ jQuery("#new_resp").bind('click', function(ev){
 	window.location = '/helpdesk/canned_responses/folders/'+folder_id+'/responses/new';
 })
 
-jQuery("#responses-select-all").live("change", function(ev){
+jQuery("#responses-select-all").on("change", function(ev){
 	jQuery("#responses").find("input[type=checkbox]")
 						.prop("checked", jQuery(this).prop("checked"))
 						.trigger('change');
@@ -16,7 +16,7 @@ jQuery("#responses-select-all").live("change", function(ev){
 });
 
 jQuery("#responses").click(function() {
-			var checkStatus = jQuery('#resp-boxes :checked').size();
+			var checkStatus = jQuery('#resp-boxes :checked').length;
             if (checkStatus > 0) 
             {
                 jQuery('#move, #admin_canned_response_submit').removeAttr('disabled');
@@ -36,7 +36,7 @@ jQuery("#responses").click(function() {
             }
 });
 
-jQuery('#resp-boxes input[type=checkbox]').live('change', function(){
+jQuery('#resp-boxes input[type=checkbox]').on('change', function(){
 	if (jQuery(this).prop('checked'))
 		jQuery(this).parent().parent().addClass('selected_resp');
 	else
@@ -44,7 +44,7 @@ jQuery('#resp-boxes input[type=checkbox]').live('change', function(){
 	jQuery('#responses-select-all').prop('checked', jQuery('#responses :checkbox:checked').length == jQuery('#responses :checkbox').length);
 });
 
-jQuery("[data-folder]").live('click', function(){
+jQuery("[data-folder]").on('click', function(){
 	folder_id=jQuery(this).data('folder');
 	jQuery('#responses-select-all').removeAttr('disabled');
 	makeFolderActive(folder_id);
@@ -68,7 +68,7 @@ var makeFolderActive = function(folder_id) {
 		jQuery('#responses-select-all').click();
 }
 
-jQuery(".default-folder").live('click', function(){
+jQuery(".default-folder").on('click', function(){
 	jQuery('#folder-controls').css('visibility', 'hidden');
 });
 

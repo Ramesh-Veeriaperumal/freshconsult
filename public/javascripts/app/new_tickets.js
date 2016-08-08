@@ -125,36 +125,50 @@ var TicketForm = {
 	},
 
 	requesterToCompany: function(){
-		var $requester_val, $companyurl = jQuery("#companyurl").val();
-	  jQuery("input.requester").on("focusout.ticketForms", function(){
-	    $requester_val = jQuery("input.requester").val();
-	  });
-	  jQuery("#helpdesk_ticket_email").on("blur.ticketForms", function(){
-	    var ticket_email = jQuery("#helpdesk_ticket_email").val();
+		var $requester_val= jQuery("#helpdesk_ticket_email").val(), 
+			$companyurl = jQuery("#companyurl").val();
+		jQuery("#helpdesk_ticket_email").on("blur.ticketForms", function(){
+			$requester_val = jQuery("input.requester").val();
+		});	
+		jQuery("#helpdesk_ticket_email").on("focusout.ticketForms", function(){
+			var re = /\<(.*)\>/i, 
+				validajax = false,
+				ticket_email = jQuery("#helpdesk_ticket_email").val();
+				ticket_email_match = ticket_email.match(re) ;
 
-	    if($requester_val != jQuery("input.requester").val()){
-	      jQuery.ajax({
+  			if (ticket_email_match != null) {
+  				var rec = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  				validajax = rec.test(ticket_email_match[1]);	
+  			}
+
+			if(($requester_val != ticket_email) && validajax){
+				jQuery.ajax({
 					url: $companyurl+"?email="+ticket_email,
-	        success: function(data){
-	          if(data != false){
-	            jQuery('#helpdesk_ticket_company_id').empty();
-	            for(var i=0; i<data.length; i++){
-	              jQuery("<option/>").val(data[i][1]).html(data[i][0]).appendTo("#helpdesk_ticket_company_id");
-	            }
-	            jQuery('#helpdesk_ticket_company_id').val('').change();
-	            jQuery('.default_company').insertAfter(jQuery(".default_requester")).show();
-	            jQuery('#helpdesk_ticket_company_id').removeAttr("disabled");
-	          }else{
-	            jQuery('.default_company').slideUp();
-	            jQuery('#helpdesk_ticket_company_id').attr("disabled", true);
-	          }
-	        }
-	      });
-	    }
-	  });
+					success: function(data){
+						if(data != false){
+							jQuery('#helpdesk_ticket_company_id').empty();
+							for(var i=0; i<data.length; i++){
+								jQuery("<option/>").val(data[i][1]).html(data[i][0]).appendTo("#helpdesk_ticket_company_id");
+							}
+							jQuery('#helpdesk_ticket_company_id').trigger('change');
+							jQuery('.default_company').insertAfter(jQuery(".default_requester")).show();
+							jQuery('#helpdesk_ticket_company_id').removeAttr("disabled");
+						}
+						else{
+							jQuery('.default_company').slideUp();
+							jQuery('#helpdesk_ticket_company_id').attr("disabled", true);
+						}
+					}
+				});
+			}
+			else if($requester_val != ticket_email){
+			jQuery('.default_company').slideUp();
+			jQuery('#helpdesk_ticket_company_id').attr("disabled", true);
+			}
+		});
 
-	  if(App.namespace === "helpdesk/tickets/edit" && (jQuery("#helpdesk_ticket_company_id").attr("disabled") != "disabled")){
-	    jQuery('.default_company').insertAfter(jQuery(".default_requester")).show();
+		if(App.namespace === "helpdesk/tickets/edit" && (jQuery("#helpdesk_ticket_company_id").attr("disabled") != "disabled")){
+			jQuery('.default_company').insertAfter(jQuery(".default_requester")).show();
 		}
 	},
 

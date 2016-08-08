@@ -33,6 +33,15 @@ module Mobile::Actions::Push_Notifier
     publish_to_channel MOBILE_NOTIFICATION_REGISTRATION_CHANNEL, message.to_json
   end
 	
+  def freshfone_notify_incoming_call(message)
+    user_ids = message[:agents]
+    message[:freshfone_notification_type] = message[:notification_type]
+    message.merge!(:notification_types => { NOTIFCATION_TYPES[:FRESHFONE_INCOMING_CALL] => user_ids })
+    channel_id = message[:account_id]%MOBILE_NOTIFICATION_CHANNEL_COUNT
+    Rails.logger.debug "DEBUG :: freshfone_notify_incoming_call hash : #{message}"
+    publish_to_mobile_channel message.to_json, channel_id
+  end
+  
   def send_mobile_notification(action=:new, message)
     notification_types = Hash.new()
 

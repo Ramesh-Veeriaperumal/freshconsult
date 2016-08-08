@@ -165,7 +165,7 @@
             }
         }
     }
-	.invalid_phone_text, .info_message, .already_in_call_text, .restricted_country, .strange_number {
+	.invalid_phone_text, .info_message, .already_in_call_text, .in_acw_state, .restricted_country, .strange_number {
 		position: absolute;
 		top: 45px;
 		font-weight: 500;

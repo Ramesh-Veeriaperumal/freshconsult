@@ -20,10 +20,7 @@
   note_details_id = conv_id.nil? ? "" : "note_details_#{@note.id}"
   %>
 <div class="request_panel <%=hide_class%>" id="<%=cntid%>" rel="emitter" data-node-name="agent_replying">
-  
-  <div class="form_title"><%= t('.title') %>: <span><%= @ticket.from_email %></span> </div>
-  <div class="list_agents_replying" class="hide"></div>
-  <%= form_for note, :url => reply_helpdesk_ticket_conversations_path(@ticket), :html => { 
+    <%= form_for note, :url => reply_helpdesk_ticket_conversations_path(@ticket), :html => { 
                         :multipart => true, 
                         :id => "HelpdeskReply",
                         "data-panel" => cntid,
@@ -35,6 +32,20 @@
                         "data-fulltext" => true,
                         "data-submitting" => 'false'
                       } do |f| %>
+  <div class="form_title custom-selectdrop"><b><%= t('.title') %>: </b> 
+    <select id="reply_email_id" name="reply_email[id]" class="select2  responder_field" data-container-css-class="ticketSelect2Container" data-dropdown-css-class="ticketSelect2">
+      <% @reply_emails.each do |re| %>
+        <% if re[1].downcase == @selected_reply_email.downcase %>
+          <% @selected_email_config_id = re[0]%>
+          <b><option value="<%=re[1]%>" data-email-config-id="<%=re[0]%>" selected="selected"><%= h re[1].gsub(/"/,'') { |match|  }%></option></b>
+        <% else %>
+          <b><option value="<%=re[1]%>" data-email-config-id="<%=re[0]%>"><%= h re[1].gsub(/"/,'') { |match|  }%></option></b>
+        <% end %>  
+      <%end%>
+    </select> 
+  </div>
+  <div class="list_agents_replying" class="hide"></div>
+
     <%= f.error_messages %>
 
     <% conv_item = conv_id.nil? ? @ticket : @note %>
@@ -42,7 +53,7 @@
 
     <ul class="ui-form dont-validate botm-space">
       <li class="inline-field field" >
-          <%= f.label(:reply_email, t("ticket.from"), :class => "mailaddr-label from" ) %>
+          <%= f.label(:reply_email, t(".to"), :class => "mailaddr-label from" ) %>
           <div class="request_form_options">
             <a  href="#" rel="toggle_email_container" id="add_cc_btn_<%=cntid%>"
                 class="<%=saved_draft["draft_cc"].blank? ? '' : 'hide' %>"
@@ -63,16 +74,8 @@
           <input type="checkbox" class="hide" id="include_bcc" name="include_bcc" <%=saved_draft["draft_bcc"].blank? ? "" : "checked" %> />
           
           <%#= select :reply_email, :id, options_for_select(@reply_emails, @selected_reply_email),{}, {:class => 'select2 responder_field'} %>
-          <select id="reply_email_id" name="reply_email[id]" class="select2 responder_field">
-            <% @reply_emails.each do |re| %>
-              <% if re[1].downcase == @selected_reply_email.downcase %>
-                <% @selected_email_config_id = re[0]%>
-                <option value="<%=re[1]%>" data-email-config-id="<%=re[0]%>" selected="selected"><%= h re[1]%></option>
-              <% else %>
-                <option value="<%=re[1]%>" data-email-config-id="<%=re[0]%>"><%= h re[1]%></option>
-              <% end %>  
-            <%end%>
-          </select>
+          <span class="default-value"><%= @ticket.from_email %></span>
+         
       </li>
       <li class="inline-field field <%=saved_draft["draft_cc"].blank? ? "hide" : "" %> cc_fields" id="cc-form-container-<%=cntid%>">
         <label class = "mailaddr-label" for="cc_emails_<%=cntid%>"><%= t(".cc") %>:</label>
@@ -83,6 +86,9 @@
             <div class="email_container">
               <input type="text" id="cc_emails_<%=cntid%>" name="helpdesk_note[cc_emails]" />
               <%= javascript_tag do %>
+              function alertx() {
+                alert("done");
+              }
                 new Autocompleter.MultiValue("cc_emails_<%=cntid%>", cachedLookup, $A(<%= saved_draft["draft_cc"].map{|item|[item, item]}.to_json.html_safe %>), {frequency: 0.1, acceptNewValues: true, allowSpaces: true, ignoreQuotedComma: true, separatorRegEx:/(?:"[^"]*"|[^,])+/g});
               <% end %>
             </div>
@@ -122,9 +128,13 @@
         <span class="alert-text"><%= t('helpdesk.tickets.show.reply_form.not_sent') %></span>
         <%= t('helpdesk.tickets.note.attachment_size.exceed') %>
       </li>
-      <li class="inline-field field attachment-options continous" id="attachment-options-reply">
+  <li class="attachment-options-reply" id="attachment-options-reply">
           <% unless local_assigns[:no_attachments] %>
-          <%= render :partial => "/helpdesk/tickets/show/attachment_form", :locals => { :attach_id => id , :nsc_param => "helpdesk_note" } %>
+          <% if current_account.launched?(:multifile_attachments) %>
+            <%= render :partial => "/helpdesk/tickets/show/multi_attachment_form", :locals => { :attach_id => id , :nsc_param => "helpdesk_note" } %>
+            <% else %>
+              <%= render :partial => "/helpdesk/tickets/show/single_attachment_form", :locals => { :attach_id => id , :nsc_param => "helpdesk_note" } %>
+            <% end %> 
           <% end %>    
       </li>
     </ul>
@@ -142,9 +152,9 @@
       <div class="clearfix zeroh" ></div>
       <div class="post_in_forum">
 
-        <span class="reply-draft" id="reply-draft">
+      <!--   <span class="reply-draft" id="reply-draft">
           <%= content_tag :div, "#{t("draft")} #{t("saved_draft")}", :class => "sav tooltip", "data-placement" => "below", :id => "draft-save", "title" => t("last_draft") %>
-        </span>
+        </span> -->
 
         <% if privilege?(:view_forums) && !@ticket.ticket_topic.nil? && !(@ticket.ticket_topic.topic.locked) %>    
           <label>
@@ -187,7 +197,7 @@
           <input type="hidden" id="include_surveymonkey_link" name="include_surveymonkey_link" value="false"> 
           <script type="text/javascript">
             jQuery(document).ready(function(){
-              jQuery("body div.popover input[survey-checkbox=true]").live('click', function(){
+              jQuery("body div.popover input[survey-checkbox=true]").on('click', function(){
                 jQuery('#' + jQuery(this).attr('name')).val(jQuery(this)[0].checked?1:0);
               });
             });
@@ -195,7 +205,10 @@
         <% end %>
       </div>      
 
-      <div class="btn-toolbar">
+      <div class="btn-toolbar no-width">
+      <span class="" id="reply-draft">
+          <%= content_tag :div, "#{t("draft")} #{t("saved_draft")}", :class => "tooltip", "data-placement" => "below", :id => "draft-save", "title" => t("last_draft") %>
+        </span>
         <span>
           <%= link_to(t('cancel'), '#', :class => "btn cancel_btn reply_agent_collision", "data-show-pseudo-reply" => 'true',"data-cnt-id" => cntid , "data-clear-draft" => 'true', "data-editor-id" => 'cnt-reply-body') %>
         </span>
@@ -227,6 +240,7 @@
           <% end %>
         </span>
         
+        
       </div>
 
     <% end %>
@@ -242,7 +256,7 @@
       })
       .validate();  
 
-    jQuery('#HelpdeskReply select#reply_email_id').live('change',function(e){
+    jQuery('#HelpdeskReply select#reply_email_id').on('change',function(e){
       var selectObj = jQuery(e.target),
           form = e.target.form,
           fromEmail = selectObj.val();

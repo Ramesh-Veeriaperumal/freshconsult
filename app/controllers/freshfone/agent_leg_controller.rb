@@ -29,7 +29,7 @@ module Freshfone
 	        next if params[:call_ids].present? && call.meta.present? && !call.meta.agent_pinged_and_no_response?(params[:agent].to_i) 
           self.current_call = call
           self.current_number = call.freshfone_number
-          if simultaneous_call?
+          if params[:agent_disconnected].blank? && simultaneous_call?
             move_call_to_queue
             next
           end

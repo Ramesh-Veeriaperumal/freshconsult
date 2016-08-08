@@ -7,7 +7,7 @@ module FDPasswordPolicy
         klass.class_eval do
           extend Config
           include InstanceMethods
-          #after_persisting :enforce_periodic_login #TBD enable after Phase 1
+          after_persisting :enforce_periodic_login
         end
       end
 

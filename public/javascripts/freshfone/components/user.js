@@ -1,20 +1,22 @@
 var FreshfoneUser,
-	userStatus = { OFFLINE : 0, ONLINE : 1, BUSY : 2};
-	userStatusReverse = { 0 : 'OFFLINE', 1: 'ONLINE', 2: 'BUSY'};
+	userStatus = { OFFLINE : 0, ONLINE : 1, BUSY : 2, ACW : 3};
+	userStatusReverse = { 0 : 'OFFLINE', 1: 'ONLINE', 2: 'BUSY', 3: 'ACW'};
 
 (function ($) {
     "use strict";
 		var socket_init_params;
 	FreshfoneUser = function () {
-		this.setStatus(freshfone.current_status);
+		this.setStatus(this.getInitialState());
 		this.online = (this.status === userStatus.ONLINE);
 		this.availableOnPhone = freshfone.available_on_phone;
 		this.cached = {};
 		this.newTokenGenerated = false;
 		this.tokenRegenerationOn = null;
-		if (freshfone.isActiveOrTrial && this.online) { this.updateUserPresence(); }
-		if (!freshfone.user_phone && !freshfone.isTrial && freshfone.isActiveOrTrial) 
-			{ this.toggleAvailabilityOnPhone(true); }
+		if (freshfone.isActiveOrTrial && !this.isOffline()) { this.updateUserPresence(); }
+		if (this.canResetPhoneAvailabilityOnReload()){ 
+			//reset availability back to browser/app if agent is available on phone and deletes number from profile settings.
+			this.toggleAvailabilityOnPhone(true);
+		}
 		this.bindUserPresenceHover();
 		if(this.chromeSSLRestriction()){
 			//From "47.0.2526.80" Chrome version, SSL is mandated. So, giving alerts temporarily
@@ -29,8 +31,11 @@ var FreshfoneUser,
 			// this.status = null;
 		},
 		$userPresence: $("#freshfone-presence-toggle"),
+		$preferenceMessage: $('.freshfone-preference-tooltip'),
 		$availableOnPhone: $('.ff_presence_options #availableOnPhone'),
 		$availableOnBrowser: $('.ff_presence_options #availableOnBrowser'),
+		$onlineAvailabilityText: $('.ff_presence_options .ff_available .online_availability_text'),
+		$acwAvailabilityText: $('.ff_presence_options .ff_available .acw_availability_text'),
 		$availabilityOptions: $("#FreshfonePresenceOptions"),
 		$userPresenceImage: function () {
 			return this.cached.$userPresenceImage = this.cached.$userPresenceImage ||
@@ -45,8 +50,14 @@ var FreshfoneUser,
 		isOnline : function () {
 			return this.status === userStatus.ONLINE;
 		},
+		isOffline : function(){
+			return this.status === userStatus.OFFLINE;
+		},
 		isBusy : function(){
 			return this.status === userStatus.BUSY;
+		},
+		isAcw : function(){
+			return this.status === userStatus.ACW;
 		},
 		toggleUserPresence: function () {
 			if(!freshfone.isActiveOrTrial)
@@ -55,11 +66,18 @@ var FreshfoneUser,
 			if(this.online  && this.freshfoneNotification.canAllowUserPresenceChange()) {
 				return;
 			}
+			if(this.isBusy()){
+				this.setPresence(freshfone.current_preference, this.$userPresenceImage());
+				return;
+			}
 			this.online = !this.online;
-			if (!this.updateUserPresence()) { this.online = !this.online; }
+			var status = (this.isOffline() ? userStatus.ONLINE : userStatus.OFFLINE);
+			this.setPresence(status, this.$userPresenceImage());
 		},
 		updateUserPresence: function () {
-			if (this.status === userStatus.BUSY) { this.setPresence(this.status, this.$userPresenceImage()); return false; }
+			if (this.isBusyOrAcw()){
+				this.setPresence(this.status, this.$userPresenceImage()); return false;
+			}
 			
 			var status = (this.online ? userStatus.ONLINE : userStatus.OFFLINE);
 			
@@ -67,8 +85,12 @@ var FreshfoneUser,
 
 			return true;
 		},
-		userPresenceDomChanges: function (available_on_phone) {
-			var availableOnPhone = available_on_phone || this.availableOnPhone;
+		userPresenceDomChanges: function (isOnPhone, fromSocket) {
+			if(fromSocket){
+				isOnPhone = (isOnPhone == 'true');
+				this.availableOnPhone = isOnPhone;
+			}
+			var availableOnPhone = isOnPhone ||  this.availableOnPhone;
 			switch (this.status) {
 				case 0 :
 					this.offlineUserPresenceDomChanges(); break;
@@ -76,6 +98,8 @@ var FreshfoneUser,
 					this.onlineUserPresenceDomChanges(availableOnPhone); break;
 				case 2 :
 					this.busyUserPresenceDomChanges(availableOnPhone); break;
+				case 3 :
+					this.acwUserPresenceDomChanges(availableOnPhone); break;
 				default :
 					ffLogger.logIssue("Unexpected error in setting user presence");
 			}
@@ -102,26 +126,35 @@ var FreshfoneUser,
 		onlineUserPresenceDomChanges: function (available_on_phone) {
 			var presenceClass = available_on_phone ? "ficon-ff-via-phone" : "ficon-ff-via-browser";
 			this.cleanUpUserPresenceDomClass();
+			this.toggleAvailabilityText(true);
 			this.$userPresenceImage().addClass(presenceClass);
-			this.$userPresence.attr('title', freshfone.freshfone_user_online_text);
+			this.$preferenceMessage.attr('title', freshfone.freshfone_user_online_text);
 			this.updateAvailabilityOptionTemplate(available_on_phone);
 		},
 
 		offlineUserPresenceDomChanges: function () {
 			this.cleanUpUserPresenceDomClass();
 			this.$userPresenceImage().addClass('ficon-phone-disable');
-			this.$userPresence.attr('title', freshfone.freshfone_user_offline_text);
+			this.$preferenceMessage.attr('title', freshfone.freshfone_user_offline_text);
 		},
 
 		busyUserPresenceDomChanges: function (available_on_phone) {
-			var presenceClass = available_on_phone ? "ficon-ff-via-phone" : "ficon-ff-via-browser";
-			this.$userPresenceImage().addClass(presenceClass);
+			this.userPresenceImageChanges(available_on_phone);
 			this.$userPresenceImage().addClass('ff-busy');
-			this.$userPresence.attr('title', freshfone.freshfone_user_busy_text);
+			this.$preferenceMessage.attr('title', freshfone.freshfone_user_busy_text);
+		},
+		acwUserPresenceDomChanges: function (available_on_phone) {
+			this.userPresenceImageChanges(available_on_phone);
+			this.$userPresenceImage().addClass('ff-acw');
+			this.$preferenceMessage.attr('title', freshfone.freshfone_user_in_acw_text);
+			this.$availabilityOptions.find(".ticksymbol").remove();
+			this.toggleAvailabilityText(false);
+			this.$availableOnPhone.removeClass('active');
+			this.$availableOnBrowser.removeClass('active');
 		},
 		cleanUpUserPresenceDomClass: function () {
 			this.$userPresenceImage()
-			.removeClass('ficon-phone-disable ficon-ff-via-phone ficon-ff-via-browser ff-busy header-spinner');
+			.removeClass('ficon-phone-disable ficon-ff-via-phone ficon-ff-via-browser ff-busy ff-acw header-spinner');
 		 },
 		setPresence: function (status, $loading_element) {
 			this.setStatus(status);
@@ -142,19 +175,23 @@ var FreshfoneUser,
 			}
 		},
 		
-		toggleAvailabilityOnPhone: function (skip_alert) {
+		toggleAvailabilityOnPhone: function (skipAlert) {
 			if (freshfone.user_phone) {
 				if (this.availableOnPhone || isValidNumber(freshfone.user_phone)) {
 					this.availableOnPhone = !this.availableOnPhone;
 					this.publishAvailabilityOnPhone();	
 				} else {
-					if(!skip_alert) { alert(freshfone.invalid_user_number_text); }
+					if(!skipAlert) { alert(freshfone.invalid_user_number_text); }
 					this.toggleAvailabilityOnPhoneClass();
 				}
 			} else {
+				//added availableOnPhone check to handle click in acw-state as both the options will be clickable
+				//but alert-message should be displayed only when "via Phone" option is clicked.
+				if (!skipAlert && !this.availableOnPhone){
+					alert(freshfone.forward_number_alert);
+				}
 				this.availableOnPhone = false;
 				this.publishAvailabilityOnPhone();
-				if (!skip_alert) { alert(freshfone.forward_number_alert); }
 			}
 		},
 		
@@ -170,6 +207,7 @@ var FreshfoneUser,
 			this.cleanUpUserPresenceDomClass()
 			this.$userPresenceImage().addClass('header-spinner'); 
 			var self = this;
+			if(self.isAcw()){ self.setStatus(userStatus.ONLINE) };
 			$.ajax({
 				type: 'POST',
 				dataType: "json",
@@ -276,6 +314,23 @@ var FreshfoneUser,
 			this.previous_status = init_value || this.status;
 			this.status = parseInt(status, 10);
 		},
+
+		manageAvailabilityToggle: function(status){
+			var flag = this.isBusyOrOffline(status) ? 'disable' : 'enable';
+			$("a[rel=ff-hover-popover]").popover(flag);
+		},
+
+		isBusyOrOffline: function(status){
+			return ((status == userStatus.BUSY) || (status == userStatus.OFFLINE));
+		},
+
+		isOnlineOrOffline: function(){
+			return [userStatus.ONLINE, userStatus.OFFLINE].includes(this.status);
+		},
+
+		isBusyOrAcw: function(){
+			return [userStatus.BUSY, userStatus.ACW].includes(this.status);
+		},
 		
 		resetStatusAfterCall: function () {
 			var status = (this.online ? userStatus.ONLINE : userStatus.OFFLINE);
@@ -322,7 +377,7 @@ var FreshfoneUser,
 		},
 		bindUserPresenceHover: function () {
 			var self = this;
-			$('.ff_presence_options .availabilityOnPhone').live('click', function(){
+			$(document).on('click', '.ff_presence_options .availabilityOnPhone', function(){
 				var	to_phone = $(this).data('to_phone');
 				self.updateAvailability(to_phone, this);
 			});
@@ -348,8 +403,9 @@ var FreshfoneUser,
 			this.$availabilityOptions.find(".ticksymbol").remove();
 			$(this.$availabilityOptions.find("#"+elementId)).prepend($('<span class="icon ticksymbol"></span>'));
 		},
-		updateAvailability: function(to_phone, element){
-			if(this.availableOnPhone == to_phone) {return;}
+		updateAvailability: function(toPhone, element){
+			this.handleAcwAvailabilityToggle(toPhone);
+			if(this.availableOnPhone == toPhone) {return;}
 			if(!freshfone.isTrial)
 				this.toggleAvailabilityOnPhone(false);
 			this.updateAvailabilityDomChange(element);
@@ -385,6 +441,32 @@ var FreshfoneUser,
 		},
 		validateEnvironment: function(){
 			return freshfone.env != "development"
+		},
+		handleAcwAvailabilityToggle: function(isOnPhone){
+			if(this.isAcw() && (this.availableOnPhone == isOnPhone)){
+				this.availableOnPhone = !this.availableOnPhone;
+			}
+		},
+		userPresenceImageChanges: function(available_on_phone){
+			var presenceClass = available_on_phone ? "ficon-ff-via-phone" : "ficon-ff-via-browser";
+			this.$userPresenceImage().addClass(presenceClass);
+		},
+		//To handle the case where agent is logging in from offline state. Then return
+		//current incoming-preference instead of returning offline.
+		getInitialState: function(){
+			if(freshfone.current_status == userStatus.OFFLINE){
+				return freshfone.current_preference;
+			}
+			else{
+				return freshfone.current_status;
+			}
+		},
+		toggleAvailabilityText: function(show){
+			this.$onlineAvailabilityText.toggle(show);
+			this.$acwAvailabilityText.toggle(!show);
+		},
+		canResetPhoneAvailabilityOnReload: function(){
+			return (!freshfone.user_phone && !freshfone.isTrial && freshfone.isActiveOrTrial && this.availableOnPhone && !this.isAcw());
 		}
 	};
 }(jQuery));

@@ -19,7 +19,7 @@ var bindEvent = function(){
         }
     });
 
-    jQuery('body').on('hover','.list_agents_replying .agent_detail',function (){
+    jQuery('body').on('mouseenter mouseleave','.list_agents_replying .agent_detail',function (){
         jQuery('.agent_detail').css({'cursor':'pointer'});
         jQuery('.more_agents').css({'cursor':'pointer'});
     });
@@ -28,7 +28,7 @@ var bindEvent = function(){
         jQuery('.twipsy.in').hide();
     })
 
-    jQuery('body').on('hover','.hover_card .agent_name',function(e){
+    jQuery('body').on('mouseenter mouseleave','.hover_card .agent_name',function(e){
         jQuery('.agent_name').css({'cursor':'pointer'});
     });
 

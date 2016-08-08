@@ -1,25 +1,24 @@
-<% @old_time_sheet_data ||= old_timesheet_data %>
-<% @time_sheet_data ||= timesheet_data %>
 <% @activity_data_hash ||= activity_data_hash_var %>
-    
+<% @metric_data ||= metric_data_var %>
+
 <%label = "time_sheet"%>
 <div class="metrics">
   <div class="metric">
     <label><%=t('reports.time_sheets.total_time')%></label>
-    <h1><%=sprintf("%0.02f",(@time_sheet_data[:total_time])/3600) %></h1>
-    <% metric_obj = percentage_change((@old_time_sheet_data[:total_time])/3600,(@time_sheet_data[:total_time])/3600,:hours_tracked)%>
+    <h1><%=sprintf("%0.02f", @metric_data[:current][:total_time]) %></h1>
+    <% metric_obj = percentage_change(@metric_data[:previous][:total_time], @metric_data[:current][:total_time], :hours_tracked)%>
       <span class="<%=metric_obj[:class]%>"></span><%=metric_obj[:val]%>
   </div>
   <div class="metric">
     <label><%=t('reports.time_sheets.billable')%></label> 
-    <h1><%=sprintf("%0.02f",@time_sheet_data[:billable]/3600) %></h1>
-    <% metric_obj = percentage_change(@old_time_sheet_data[:billable]/3600,@time_sheet_data[:billable]/3600,:billable_hours)%>
+    <h1><%=sprintf("%0.02f", @metric_data[:current][:billable]) %></h1>
+    <% metric_obj = percentage_change(@metric_data[:previous][:billable], @metric_data[:current][:billable], :billable_hours)%>
       <span class="<%=metric_obj[:class]%>"></span><%=metric_obj[:val]%>
   </div>
   <div class="metric">
     <label><%=t('reports.time_sheets.non_billable')%></label> 
-    <h1><%=sprintf("%0.02f",@time_sheet_data[:non_billable]/3600)%></h1>
-    <% metric_obj = percentage_change(@old_time_sheet_data[:non_billable]/3600,@time_sheet_data[:non_billable]/3600,:non_billable_hours)%>
+    <h1><%=sprintf("%0.02f",@metric_data[:current][:non_billable])%></h1>
+    <% metric_obj = percentage_change(@metric_data[:previous][:non_billable], @metric_data[:current][:non_billable], :non_billable_hours) %>
     <span class="<%=metric_obj[:class]%>"></span><%=metric_obj[:val]%>
   </div>
   <div class="metric no-border">
@@ -35,7 +34,7 @@
 </div>
 <script type="text/javascript">
   jQuery(document).ready(function() {
-    <%unless @time_sheet_data[:total_time] == 0%>
+    <%unless @metric_data[:current][:total_time] == 0%>
       jQuery('#bar_chart_noinfo').hide();
       if(<%=@activity_data_hash['barchart_data'].to_json.html_safe%>.length > 0) {
           var billabale = <%= @activity_data_hash['barchart_data'][1][:data] %>;

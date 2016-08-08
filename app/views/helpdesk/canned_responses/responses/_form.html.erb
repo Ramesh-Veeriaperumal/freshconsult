@@ -72,15 +72,14 @@ function toggleGroup(access_id)
    		<%= f.text_area :content_html, :class => "ca_content_body required_redactor", :id => 'ca-content' %>		
 	</li>
 	<li>
-      <div class="control-group"><%= render "attachment_form" %></div>
+	    <%= render :partial=>"attachment_form" , :locals=>{:attachments => @item.attachments_sharable} %>
     </li>
-	<li>
+	
+    <li>
         <div class="control-group">
-
 			 <%= attachment_container(@item.attachments_sharable, true, "remove_shared_attachment", nil) %>
         </div>
 	</li>
-
 	<li class="inline-field  form-horizontal">
 		<div class="control-group">
 		<%= f.fields_for :visibility do |access| %>	

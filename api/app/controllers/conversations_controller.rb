@@ -21,10 +21,16 @@ class ConversationsController < ApiApplicationController
     sanitize_params
     build_object
     kbase_email_included? params[cname] # kbase_email_included? present in Email module
-    is_success = create_note
-    # publish solution is being set in kbase_email_included based on privilege and email params
-    create_solution_article if is_success && @publish_solution
-    render_response(is_success)
+    conversation_delegator = ConversationDelegator.new(@item)
+    if conversation_delegator.valid?
+      @item.email_config_id = conversation_delegator.email_config_id
+      is_success = create_note
+      # publish solution is being set in kbase_email_included based on privilege and email params
+      create_solution_article if is_success && @publish_solution
+      render_response(is_success)
+    else
+      render_custom_errors(conversation_delegator, true)
+    end
   end
 
   def update

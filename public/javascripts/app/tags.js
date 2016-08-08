@@ -51,7 +51,7 @@ $(document).ready(function(){
         if($(this).hasClass("clear-search-results"))
         {
             e.preventDefault();
-            $tag_search.attr("value","");
+            $tag_search.val("");
             $clear_text.addClass('hide');
         }
 
@@ -67,7 +67,7 @@ $(document).ready(function(){
     $("#current_order").prepend('<span class="icon ticksymbol ordertype"></span>');
 
 
-    if($tag_search.attr("value").length==0){
+    if($tag_search.val().length==0){
         $(".clear-text").addClass("hide");
     }
 
@@ -103,13 +103,13 @@ $(document).ready(function(){
         }
     );
 
-    $('.tag-list tbody tr :checkbox').live('change', function() {
+    $('.tag-list tbody tr :checkbox').on('change', function() {
         $("#tag-select-all").prop('checked', $('.table tbody tr :checkbox:checked').length == $('.table tbody tr :checkbox').length);
         $('#tag-delete').prop('disabled', $('.table tbody tr :checkbox:checked').length == 0);
     });
 
 
-    $( "#tag-delete-confirm-submit" ).live('click', function(e) {
+    $( 'body' ).on('click', "#tag-delete-confirm-submit", function(e) {
         $( "#tag-delete-confirm" ).modal('hide');
         $("#tags-expanded").submit();
     });
@@ -174,9 +174,9 @@ $(document).ready(function(){
         var this_tag_text = $(this)
 
         tag_id = this_tag_text.parents("tr").data("tagId");
-        tag_name = this_tag_text.attr("value");
+        tag_name = this_tag_text.val();
         var tag_name_id = $("#tag_name_"+tag_id)
-        if(!(this_tag_text.attr("value") == tag_name_id.data("tagName") || this_tag_text.attr("value") == "" || this_tag_text.attr("value") == null))
+        if(!(this_tag_text.val() == tag_name_id.data("tagName") || this_tag_text.val() == "" || this_tag_text.val() == null))
         {
             change_tag_name(tag_id, tag_name);
         }
@@ -285,7 +285,7 @@ $(document).ready(function(){
 
     $(document).on('click.tag_index', "#tag-dialog-confirm-cancel", function(){
         $("#tag_text_container_" + tag_id).addClass("hide")
-                .children(".textbox").attr("value",$("#tag_name_" + tag_id).data("tagName"));
+                .children(".textbox").val($("#tag_name_" + tag_id).data("tagName"));
         $("#tag_name_" + tag_id).removeClass("hide");
 
     })
@@ -297,3 +297,4 @@ $(document).ready(function(){
 
 });
 })(jQuery)
+

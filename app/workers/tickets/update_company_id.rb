@@ -20,16 +20,22 @@ class Tickets::UpdateCompanyId < BaseWorker
       condition = company_id ? "(owner_id != ? OR owner_id IS NULL)" : "owner_id is not ?"
       condition = "owner_id = ?" if old_company_id
 
-      count_es_enabled = Account.current.features?(:countv2_writes)
       Account.current.send(tkts).where(["requester_id in (?) AND #{condition}", 
                                           user_ids, company_id_in_query]).find_in_batches(:batch_size => TICKET_LIMIT) do |tickets|
         Account.current.send(tkts).where("id in (?)", tickets.map(&:id)).update_all(:owner_id => company_id)
-        execute_on_db { send_updates_to_rmq(tickets, tickets[0].class.name) }
+        execute_on_db { send_updates_to_rmq(tickets, tickets[0].class.name) } if tkts == "archive_tickets"
+        execute_on_db { subscribers_manual_publish(tickets) } if tkts == "tickets"
 
         #=> Needing this to publish to search until another way found.
         execute_on_db { tickets.map(&:sqs_manual_publish) }
-        execute_on_db { tickets.map(&:count_es_manual_publish) } if count_es_enabled
       end
+    end
+  end
+
+  def subscribers_manual_publish(items)
+    key = Account.current.features?(:countv2_writes) ? "RMQ_REPORTS_COUNT_TICKET_KEY" : "RMQ_REPORTS_TICKET_KEY"
+    items.each do |item|
+      item.manual_publish_to_rmq("update", RabbitMq::Constants.const_get(key), {:manual_publish => true})
     end
   end
 end

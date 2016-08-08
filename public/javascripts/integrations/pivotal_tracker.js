@@ -308,7 +308,7 @@ populate_loaded_project: function(){
 
 pivotalTrackerWidget = new PivotalTrackerWidget(pivotal_bundle);
 
-jQuery("#pivotal_dialog-submit").die("click");
-jQuery("#pivotal_dialog-submit").live("click" , function(eventObj) { 
+jQuery(".ticket_details #pivotal_dialog-submit").off("click");
+jQuery(".ticket_details").on("click" , "#pivotal_dialog-submit", function(eventObj) { 
 	pivotalTrackerWidget.createstory();
 });

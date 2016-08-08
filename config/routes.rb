@@ -981,6 +981,13 @@ Helpkit::Application.routes.draw do
       end
     end
 
+    resources :requester_widget, :only => [:get_widget, :update_widget] do
+      collection do
+        get :get_widget
+        put :update_widget
+      end
+    end
+
     resources :day_passes, :only => [:index, :update] do
       member do
         put :buy_now
@@ -1437,119 +1444,19 @@ Helpkit::Application.routes.draw do
       post :merge
     end
   end
-
+  get   'reports/:id'   => 'reports#show', constraints: { id: /[1-2]+/ }
+  match "/reports/:report_type",           :controller => 'reports/v2/tickets/reports', :action => 'index', :method => :get  
 
   namespace :reports do
-    resources :helpdesk_glance_reports, :controller => 'helpdesk_glance_reports' do
-      collection do
-        post :generate
-        post :generate_pdf
-        post :send_report_email
-        post :fetch_activity_ajax
-        post :fetch_metrics
-      end
-    end
-
-
-
-    resources :analysis_reports, :controller => 'helpdesk_load_analysis' do
-      collection do
-        post :generate
-        post :generate_pdf
-        post :send_report_email
-      end
-    end
-
-    resources :performance_analysis_reports, :controller => 'helpdesk_performance_analysis' do
-      collection do
-        post :generate
-        post :generate_pdf
-        post :send_report_email
-      end
-    end
-
-    resources :agent_glance_reports, :controller => 'agent_glance_reports' do
-      collection do
-        post :generate
-        post :generate_pdf
-        post :send_report_email
-        post :fetch_activity_ajax
-        post :fetch_metrics
-      end
-    end
-
-    resources :group_glance_reports, :controller => 'group_glance_reports' do
-      collection do
-        post :generate
-        post :generate_pdf
-        post :send_report_email
-        post :fetch_activity_ajax
-        post :fetch_metrics
-      end
-    end
 
     resources :authorizations, :collection => { :autocomplete => :get, :agent_autocomplete => :get,
                                                 :company_autocomplete => :get }
-
-    resources :agent_analysis_reports, :controller => 'agents_analysis' do
-      collection do
-        post :generate
-        post :generate_pdf
-        post :send_report_email
-        post :fetch_chart_data
-      end
-    end
-
-    resources :group_analysis_reports, :controller => 'groups_analysis' do
-      collection do
-        post :generate
-        post :generate_pdf
-        post :send_report_email
-        post :fetch_chart_data
-      end
-    end
-
-    resources :agents_comparison_reports, :controller => 'agents_comparison' do
-      collection do
-        post :generate
-        post :generate_pdf
-        post :send_report_email
-      end
-    end
-
-    resources :groups_comparison_reports, :controller => 'groups_comparison' do
-      collection do
-        post :generate
-        post :generate_pdf
-        post :send_report_email
-      end
-    end
-
-    resources :customer_glance_reports, :controller => 'customer_glance_reports' do
-      collection do
-        post :generate
-        post :generate_pdf
-        post :send_report_email
-        post :fetch_activity_ajax
-        post :fetch_metrics
-      end
-    end
-
-    resources :customers_analysis_reports, :controller => 'customers_analysis' do
-      collection do
-        post :generate
-        post :generate_pdf
-        post :send_report_email
-        post :fetch_chart_data
-      end
-    end
 
     resources :report_filters do
       member do
         post :create
       end
     end
-
 
     namespace :freshfone, :path => "phone" do
       resources :summary_reports, :controller => 'summary_reports' do
@@ -1577,11 +1484,11 @@ Helpkit::Application.routes.draw do
     end
   end
 
-  resources :reports do
-    collection do
-      get :old
-    end
-  end
+  resources :reports #do
+  #   collection do
+  #     get :old
+  #   end
+  # end
 
   match 'reports/report_filters/destroy/:id(.:format)' => "reports/report_filters#destroy", :method => :post
 
@@ -1595,6 +1502,7 @@ Helpkit::Application.routes.draw do
       post :save_reports_filter
       post :update_reports_filter
       post :delete_reports_filter
+      post :time_entries_list
     end
   end
 
@@ -1849,6 +1757,7 @@ Helpkit::Application.routes.draw do
         put :update_ticket_properties
         get :component
         get :prevnext
+        put :update_requester
         post :create # For Mobile apps backward compatibility.
       end
 
@@ -2029,11 +1938,28 @@ Helpkit::Application.routes.draw do
     match '/dashboard/latest_summary' => 'dashboard#latest_summary'
     match '' => 'dashboard#index', :as => :dashboard
     match '/sales_manager' => 'dashboard#sales_manager'
-    match '/unresolved_tickets' => 'dashboard#unresolved_tickets'
-    match '/unresolved_tickets_data' => 'dashboard#unresolved_tickets_data'
+    match '/dashboard/unresolved_tickets' => 'dashboard#unresolved_tickets'
+    match '/dashboard/unresolved_tickets_data' => 'dashboard#unresolved_tickets_data'
     match '/tickets_summary' => 'dashboard#tickets_summary'
-    match '/achievements' => 'dashboard#achievements'
-    match '/agent_status' => 'dashboard#agent_status'
+    match '/dashboard/due_today' => 'dashboard#due_today'
+    match '/dashboard/overdue' => 'dashboard#overdue'
+    match '/dashboard/trend_count' => 'dashboard#trend_count'
+    match '/dashboard/unresolved_tickets_dashboard' => 'dashboard#unresolved_tickets_dashboard'
+    match '/dashboard/unresolved_tickets_workload' => 'dashboard#unresolved_tickets_workload'
+    match '/dashboard/my_performance'   => 'dashboard#my_performance'
+    match '/dashboard/my_performance_summary'   => 'dashboard#my_performance_summary'
+    match '/dashboard/agent_performance'  => 'dashboard#agent_performance'
+    match '/dashboard/agent_performance_summary'  => 'dashboard#agent_performance_summary'
+    match '/dashboard/group_performance'  => 'dashboard#group_performance'
+    match '/dashboard/group_performance_summary'  => 'dashboard#group_performance_summary'
+    match '/dashboard/channels_workload'  => 'dashboard#channels_workload'
+    match '/dashboard/admin_glance'  => 'dashboard#admin_glance'
+    match '/dashboard/top_customers_open_tickets'  => 'dashboard#top_customers_open_tickets'
+    match '/dashboard/top_agents_old_tickets'  => 'dashboard#top_agents_old_tickets'
+    match '/dashboard/available_agents' => 'dashboard#available_agents'
+    match '/dashboard/survey_info' => 'dashboard#survey_info'
+    match '/dashboard/achievements' => 'dashboard#achievements'
+    match '/dashboard/agent_status' => 'dashboard#agent_status'
 
     # For mobile apps backward compatibility.
     match '/subscriptions' => 'subscriptions#index'
@@ -2047,6 +1973,9 @@ Helpkit::Application.routes.draw do
       member do
         delete :unlink_shared
         get :text_content
+        get :download_all
+        post :create_attachment
+        delete :delete_attachment
       end
     end
 
@@ -2076,6 +2005,7 @@ Helpkit::Application.routes.draw do
 
     match 'commons/group_agents/(:id)' => "commons#group_agents"
     match 'commons/user_companies' => "commons#user_companies"
+    match "commons/fetch_company_by_name" => "commons#fetch_company_by_name"
 
     resources :ticket_templates do
       member do

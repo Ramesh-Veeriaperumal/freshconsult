@@ -4,7 +4,7 @@ module ConversationConstants
   REPLY_ARRAY_FIELDS = %w(cc_emails bcc_emails attachments).freeze
   UPDATE_ARRAY_FIELDS = ['attachments'].freeze
 
-  REPLY_FIELDS = %w(body user_id).freeze | REPLY_ARRAY_FIELDS
+  REPLY_FIELDS = %w(body user_id from_email).freeze | REPLY_ARRAY_FIELDS
   CREATE_FIELDS = %w(body private incoming user_id).freeze | CREATE_ARRAY_FIELDS
   UPDATE_FIELDS = %w(body).freeze | UPDATE_ARRAY_FIELDS
   MAX_INCLUDE = 10

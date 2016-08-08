@@ -99,7 +99,8 @@ module RabbitMq::Subscribers::Tickets::Activities
   end
 
   def add_dont_care(value)
-    value[0] = DONT_CARE_VALUE if value[0].present?
+    value[0] = DONT_CARE_VALUE if !value[0].nil?
+    value[1] = nil if value[1].blank? and !value[1].nil?
     value
   end
 

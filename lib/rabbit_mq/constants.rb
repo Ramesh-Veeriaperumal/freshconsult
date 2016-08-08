@@ -85,6 +85,9 @@ module RabbitMq::Constants
 
   #when a spam or trash ticket is deleted after 30 days, we are firing a raw query. So deleting from all subscribers by manual publish
   RMQ_CLEANUP_TICKET_KEY      = "*.1.*.1.1.#"
+  
+  #used for reports and count cluster tickets alone. 
+  RMQ_REPORTS_COUNT_TICKET_KEY = "*.1.*.1.*.#"
 
   # Manual publish keys - only for activities
   RMQ_ACTIVITIES_TICKET_KEY = "*.*.*.*.1.#"

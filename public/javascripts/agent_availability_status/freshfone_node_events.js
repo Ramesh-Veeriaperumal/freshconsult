@@ -24,13 +24,13 @@ window.App.Freshfoneagents = window.App.Freshfoneagents || {};
        this.filter.sortLists();
      },
     
-    changeToBusyAgent: function (agent) {
+    changeToBusyAgent: function (agent, agentAvailabilityText) {
       var agent=this.filter.getAgent(agent.id);
           this.userListUpdate(agent,this.filter.Status.BUSY,agent.preference);
           if(agent.preference==this.filter.Preference.TRUE){
             if(this.filter.AvailableAgentList.get("id", agent.id)){
                       var item=this.filter.AvailableAgentList.get("id",agent.id);
-                      item.values({ presence_time_in_s: freshfone.call_in_progress, 
+                      item.values({ presence_time_in_s: agentAvailabilityText, 
                                     busy_agent : this.filter.busyState.BUSY,
                                     toggle_button : this.filter.toggleButton(agent.id,agent.presence,true) });
             }
@@ -38,7 +38,7 @@ window.App.Freshfoneagents = window.App.Freshfoneagents || {};
            if(agent.preference==this.filter.Preference.FALSE){
             if(this.filter.UnavailableAgentList.get("id",agent.id)){
                       var item=this.filter.UnavailableAgentList.get("id",agent.id);
-                      item.values({ presence_time_in_s: freshfone.call_in_progress, 
+                      item.values({ presence_time_in_s: agentAvailabilityText, 
                                     busy_agent : this.filter.busyState.BUSY,
                                     toggle_button : this.filter.toggleButton(agent.id,agent.presence,false) });
             }
@@ -88,8 +88,7 @@ window.App.Freshfoneagents = window.App.Freshfoneagents || {};
     
    userListUpdate: function(agent,presence,preference){
     var last_call=agent.presence_time==""? null:agent.presence_time;
-    var on_phone_val = typeof agent.on_phone == "boolean" ? true : false;
-    var on_phone = this.getOnPhone(on_phone_val,agent.on_phone);
+    var on_phone = JSON.parse(agent.on_phone);
         $.each(freshfone.agents,jQuery.proxy(function(index,value)  {
             if(value["id"]==agent.id){
                value["presence"]=presence;
@@ -99,14 +98,6 @@ window.App.Freshfoneagents = window.App.Freshfoneagents || {};
                this.filter.timeInWords(this.filter.getAgent(agent.id));
             }  
         },this)); 
-    },
-    getOnPhone: function(phone_flag,on_phone){
-      if(phone_flag){
-        return on_phone ? true : false ;
-      }
-      else{
-        return on_phone=="true" ? true : false ;
-      }
     },
     removeAgent:function(agent,list){
           list.remove("id",agent.id);

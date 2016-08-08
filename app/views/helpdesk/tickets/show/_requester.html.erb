@@ -22,7 +22,7 @@
 	contact = (privilege?(:view_contacts) && current_user.can_view_all_tickets?) ? user : "javascript:void(0)"
 	%>
 	<div id="contact_info_default" class='requester_tab'>
-		<div class="requester-details">
+		<div class="requester-details" id="requester-details-info">
 			<%= render :partial => "contacts/hover_card", :locals => { 
 					:user => user, 
 					:show_recent_tickets => :dialog,
@@ -52,3 +52,12 @@
 	%>
 	</div>
 </div>
+
+<!-- disabling the requester widget temporarily -->
+<% if false %>
+<div id="requester-widget-edit-modal-container">
+<% unless user.agent? || !privilege?(:manage_contacts) %>
+  <%= render :partial => "/contacts/requester_widget_contact_edit" , :locals => { :user => user, :ticket => @ticket }  %>
+<% end %>
+</div>
+<% end %>

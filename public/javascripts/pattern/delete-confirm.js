@@ -43,7 +43,7 @@
 
 		appendInputs: function() {
 			// To ensure this seen as DELETE method by RAILS
-			this.form.append($('<input />').attr('type', 'hidden').attr('name', '_method').attr('value', 'delete'));
+			this.form.append($('<input />').attr('type', 'hidden').attr('name', '_method').val('delete'));
 
 			this.text_input = $('<input />').attr('name', 'verify_title').attr('placeholder', this.data.itemTitle).
 										attr('type', 'text').attr('autocomplete', 'off').attr('id', 'check-title_'+this.data.dialogId);

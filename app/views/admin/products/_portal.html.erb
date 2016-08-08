@@ -137,11 +137,11 @@
 
 
 <% content_for :onload_script do %>
-  jQuery("[data-rebrand-form]").live("change", function(ev){
+  jQuery(document).on("change", "[data-rebrand-form]", function(ev){
     jQuery(this).data('formChanged', true)
   })
 
-  jQuery("[rel=customize-portal]").live("click", function(ev){
+  jQuery(document).on("click","[rel=customize-portal]", function(ev){
     var form = jQuery(this).parents('form:first')
     if(form.data('formChanged') && form.valid()){
       <% if @product.portal.template.present? %>
