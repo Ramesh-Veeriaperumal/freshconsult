@@ -649,7 +649,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     end
 
     def text_part
-      params[:text] = params[:text].present? ? params[:text] : HTMLSanitizer.html_to_plain_text(params[:html])
+      params[:text] = params[:text].empty? ? Helpdesk::HTMLSanitizer.html_to_plain_text(params[:html]) : params[:text]
     end
     
     def get_user(account, from_email, email_config, force_create = false)
