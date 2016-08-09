@@ -71,7 +71,13 @@ module EmailHelper
   end
 
   def tokenize_emojis(msg_text)
-    (msg_text.present? and Account.current.features?(:tokenize_emoji)) ? msg_text.tokenize_emoji : msg_text
+    begin
+      (msg_text.present? and Account.current.features?(:tokenize_emoji)) ? msg_text.tokenize_emoji : msg_text
+    rescue => e
+      Rails.logger.debug "Error while tokenizing emoji for message text: #{e.backtrace}"
+      NewRelic::Agent.notice_error(e)
+      msg_text
+    end
   end
 
   def reply_to_private_note?(all_keys)
