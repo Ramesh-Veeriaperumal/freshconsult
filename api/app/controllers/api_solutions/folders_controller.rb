@@ -51,14 +51,16 @@ module ApiSolutions
         !(@item.errors.any? || @item.parent.errors.any?)
       end
 
-      def category_exists?
-        @item = solution_category_meta(params[:id])
-        log_and_render_404 unless @item
-      end
-
       # Load category if create endpoint is triggered with primitive language
       def load_category
-        category_exists? if @lang_id == current_account.language_object.id
+        if @lang_id == current_account.language_object.id
+          @item = solution_category_meta(params[:id])
+          if @item.nil?
+            log_and_render_404
+            return false
+          end
+        end
+        true
       end
 
       def before_load_object
@@ -72,10 +74,7 @@ module ApiSolutions
       end
 
       def validate_params
-        if create?
-          return false unless validate_language
-          load_category
-        end
+        return false unless validate_language && load_category if create?
         params[cname].permit(*(SolutionConstants::FOLDER_FIELDS))
         folder = ApiSolutions::FolderValidation.new(params[cname], @item, @lang_id)
         render_errors folder.errors, folder.error_options unless folder.valid?(action_name.to_sym)

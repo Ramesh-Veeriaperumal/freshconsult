@@ -254,6 +254,11 @@ module ApiSolutions
       assert_response :missing
     end
 
+    def test_create_article_in_unavailable_folder_without_mandatory_fields
+      post :create, construct_params({ id: 9999 }, { description: '<b>aaaa</b>', title: 'aaaa' })
+      assert_response :missing
+    end
+
     def test_create_article_with_invalid_seo_data
       folder_meta = get_folder_meta
       post :create, construct_params({ id: folder_meta.id }, { description: '<b>aaaa</b>', title: 'aaaa', status: 1, type: 1, seo_data: { meta_title: 1, meta_description: 1, meta_keywords: 1 } })

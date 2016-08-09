@@ -168,6 +168,11 @@ module ApiSolutions
       assert_response :missing
     end
 
+    def test_create_folder_in_unavailable_category_id_without_mandatory_fields
+      post :create, construct_params({ id: 99999 }, {name: Faker::Name.name, description: Faker::Lorem.paragraph})
+      assert_response :missing
+    end
+
     # Visibility & Company ids validation
     def test_create_folder_with_valid_visibility_and_company_ids
       category_meta = get_category

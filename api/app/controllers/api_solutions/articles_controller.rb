@@ -25,8 +25,7 @@ module ApiSolutions
 
     def folder_articles
       if validate_language
-        load_folder
-        if @item
+        if load_folder
           @items = paginate_items(@item.solution_articles.where(language_id: @lang_id).preload(:solution_folder_meta, :solution_article_meta, :article_body))
           render '/api_solutions/articles/index'
         end
@@ -87,7 +86,7 @@ module ApiSolutions
         if create?
           return false unless validate_language
           # Load folder if create endpoint is triggered with primitive language
-          load_folder if @lang_id == current_account.language_object.id
+          return false if @lang_id == current_account.language_object.id && !load_folder
         end
         fields = "SolutionConstants::#{action_name.upcase}_ARTICLE_FIELDS"
         params[cname].permit(*(get_fields(fields)))
@@ -128,7 +127,11 @@ module ApiSolutions
 
       def load_folder
         @item = current_account.solution_folder_meta.find_by_id(params[:id] || params[:folder_id])
-        log_and_render_404 unless @item
+        unless @item
+          log_and_render_404
+          return false
+        end
+        true
       end
 
       def assign_protected
