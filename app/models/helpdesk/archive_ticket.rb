@@ -15,9 +15,12 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
 
   belongs_to :company, :foreign_key => :owner_id
 
-  has_many :archive_notes,
+  has_many :archive_notes_old,
            :class_name => "Helpdesk::ArchiveNote",
            :dependent => :destroy
+
+  has_many :notes, :inverse_of => :notable, :class_name => 'Helpdesk::Note', :as => 'notable', :dependent => :destroy # TODO-RAILS3 Need to cross check, :foreign_key => :id
+
 
   has_many :inline_attachments, :class_name => "Helpdesk::Attachment",
                                 :conditions => { :attachable_type => "ArchiveTicket::Inline" },
@@ -510,6 +513,16 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
         end
       end
      end
+  end
+
+
+  def archive_notes
+    current_shard = ActiveRecord::Base.current_shard_selection.shard.to_s
+    if(ArchiveNoteConfig[current_shard] && (self.id <= ArchiveNoteConfig[current_shard].to_i))
+      archive_notes_old
+    else
+      notes
+    end
   end
 
   private

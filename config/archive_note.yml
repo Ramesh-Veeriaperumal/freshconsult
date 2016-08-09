@@ -1,0 +1,18 @@
+defaults: &defaults
+  shard_1: 17
+
+development:
+  <<: *defaults
+
+slave:
+  <<: *defaults
+
+test:
+  <<: *defaults
+
+staging:
+  <<: *defaults
+
+production:
+  <<: *defaults
+  

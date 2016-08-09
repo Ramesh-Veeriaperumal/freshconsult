@@ -51,6 +51,7 @@ run "ln -nfs #{shared_path}/config/pod_dns_config.yml #{node[:rel_path]}/config/
 run "ln -nfs #{shared_path}/config/helpdesk.yml #{node[:rel_path]}/config/helpdesk.yml"
 run "ln -nfs #{shared_path}/config/thrift.yml #{node[:rel_path]}/config/thrift.yml"
 run "ln -nfs #{shared_path}/config/delayed_job_watcher.yml #{node[:rel_path]}/config/delayed_job_watcher.yml"
+run "ln -nfs #{shared_path}/config/archive_note.yml #{node[:rel_path]}/config/archive_note.yml"
 
 
 #search V2
