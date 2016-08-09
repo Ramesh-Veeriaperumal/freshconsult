@@ -106,15 +106,16 @@ var CreateTicket = {
 	},
 	ticketFromForum: function(){
 		var topic_id = jQuery("#topic_id_stub").val();
-
-		if(topic_id){
-			jQuery(".redactor_editor").html(jQuery("#topic_desc").val());
-			jQuery("#helpdesk_ticket_subject").val(jQuery("#topic_title").val());
-			jQuery("#helpdesk_ticket_email").val(jQuery("#topic_req").val());
-		}else{
-			jQuery(".redactor_editor").html("");
-			jQuery("#helpdesk_ticket_subject").val("");
-			jQuery("#helpdesk_ticket_email").val("");
+		if(App.namespace === 'helpdesk/tickets/new'){
+			if(topic_id){
+				jQuery(".redactor_editor").html(jQuery("#topic_desc").val());
+				jQuery("#helpdesk_ticket_subject").val(jQuery("#topic_title").val());
+				jQuery("#helpdesk_ticket_email").val(jQuery("#topic_req").val());
+			}else{
+				jQuery(".redactor_editor").html("");
+				jQuery("#helpdesk_ticket_subject").val("");
+				jQuery("#helpdesk_ticket_email").val("");
+			}
 		}
 	}
 }
