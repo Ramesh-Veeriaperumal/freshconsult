@@ -12,6 +12,7 @@ window.App.Tickets = window.App.Tickets || {};
 		},
 		onVisit: function (data) {
 			CreateTicket.init();
+			CreateTicket.ticketFromForum();
 		},
 		onLeave: function (data) {
 			CreateTicket.unBindEvents();
