@@ -192,12 +192,16 @@
 <% content_for :pagefixed do %>
   <script type="text/javascript">
     jQuery('#HelpdeskFwd_<%=cntid%> select#reply_email_id').on('change',function(e){
-    var selectObj = jQuery(e.target),
+      try {
+        var selectObj = jQuery(e.target),
         form = e.target.form,
         fromEmail = selectObj.val();
         form['helpdesk_note[from_email]'].value = fromEmail;
         email_config_id = jQuery(selectObj).find(":selected").data().emailConfigId;
         form['helpdesk_note[email_config_id]'].value = email_config_id;
+      } catch(e) {
+
+      }
   })
   </script>
 
