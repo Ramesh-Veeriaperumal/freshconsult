@@ -170,16 +170,18 @@
 				width: 75%;
 			}
 		}
+		/* TO-DO width and height same for circle */
 		.transferNotifier {
 			.ff-arrow-direction{
 				float: left;
 				color: #888;
 				border: 1px solid #888;
 				@include border-radius(50%);
-				@include padding(2px 2px 2px 2px);
-				@include margin(5px 7px 0px 0px);
+				@include padding(2px 1px 1px 2px);
+				@include margin(4px 7px 0px 0px);
 				font-size: 10px;
-				width: 15px;
+				width: 18px;
+				height: 17px;
 				text-align: center;
 			}
 			.transfer-agent-name {
@@ -193,8 +195,9 @@
 		    color: #888;
 		    @include margin-right(7px);
 		  }
+		  /* TO-DO width and height same for circle */
 		  .warm-transfer-label{
-		  	@include padding(1px 1px 1px 1px);
+		  	@include padding(2px 1px 2px 1px);
 		    font-size: 10px;
 		    color: #888;
 		    @include margin-right(7px);
@@ -202,7 +205,7 @@
 		    border-radius: 50%;
 		    border: 1px solid;
 		    text-align: center;
-		    width: 15px;
+		    width: 18px;
 		  }
 		  .add-agent-name,.warm-transfer-agent-name {
 				margin-top: 5px;
