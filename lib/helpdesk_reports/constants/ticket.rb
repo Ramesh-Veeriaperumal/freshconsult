@@ -130,9 +130,9 @@ module HelpdeskReports::Constants::Ticket
   
   NA_PLACEHOLDER_GLANCE = 0
   
-  TICKET_FILTER_LIMIT = 13
+  TICKET_FILTER_LIMIT = 8
   
-  MULTI_SELECT_LIMIT = 50
+  MULTI_SELECT_LIMIT = 10
   
   TICKET_LIST_LIMIT = 25
   

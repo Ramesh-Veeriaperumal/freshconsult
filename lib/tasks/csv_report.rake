@@ -43,12 +43,12 @@ namespace :csv_report do
     include Redis::RedisKeys
 
     @task_start_time = Time.now.utc
-    @task_id = "csv_export_#{@task_start_time.to_s.gsub(/\s+/,'_')}"
+    @task_id = "#{@task_start_time.to_s.gsub(/\s+/,'_')}"
     Rails.logger.info "CSV EXPORT task id : #{@task_id}  ; BEGINS AT : #{@task_start_time}"
 
     MANDATORY_PARAMETERS.each { |param| display_param_structure unless ENV[param].present? }
     
-    puts "\nTASK ID : csv_export_#{@task_id}\n"
+    puts "\nTASK ID : #{@task_id}\n"
     
     date_range      = ENV["DATE_RANGE"]
     account_ids_str = ENV["ACCOUNT_IDS"]
@@ -194,7 +194,7 @@ namespace :csv_report do
       csv << csv_headers
       result.each do |record_hash|
         row = []
-        csv_keys.each { |key| row << record_hash[key] }
+        csv_keys.each { |key| row << presentable_format(record_hash[key],key)  }
         csv << row
       end
       csv << ["Invalid Accounts"] if @invalid_accounts.present?
@@ -243,6 +243,18 @@ namespace :csv_report do
     puts "****Provide all mandatory parameters****\n\nMANDATORY_PARAMETERS : \n DATE_RANGE='1 Jan, 2016 - 1 Feb, 2016' or last n days(Ex.: 30, 60 or any number)\n ACCOUNT_IDS='1,2,3,4' (comma separated values)\n EMAIL_IDS='a@gmail.com,b@gmail.com' \n\nOPTIONAL PARAMETERS :\n WEEKDAY='true' (To generate report in weekdays)\n DESCRIPTION = Short description of report requested.\n\n\t *******\n"
     puts "\n #{'*' * 100}\n"
     exit
+  end
+
+  def presentable_format value, metric
+    metric.starts_with?("avg") ? hhmm(value) : value
+  end
+  
+  def hhmm(seconds)
+    seconds = seconds.to_i
+    hh = (seconds/3600).to_i
+    mm = ((seconds % 3600) / 60).to_i
+    ss = (seconds % 60).to_i
+    "#{hh.to_s.rjust(2,'0')}:#{mm.to_s.rjust(2,'0')}:#{ss.to_s.rjust(2,'0')}"
   end
 
 end
