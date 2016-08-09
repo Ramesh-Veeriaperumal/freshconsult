@@ -15,6 +15,7 @@ module MarketplaceConfig
   CACHE_INVALIDATION_TIME = config[:cache_invalidation_time]
   ACC_API_TIMEOUT = { :read => config[:acc_api_read_timeout], :conn => config[:acc_api_conn_timeout] }
   GLOBAL_API_TIMEOUT = { :read => config[:global_api_read_timeout], :conn => config[:global_api_conn_timeout] }
+  FRESHAPPS_JS_URL = config[:freshapps_js_url]
   MKP_CB = FreshRequest::RedisUrlCb.new(
                 max_failures: 5,
                 trip_off_interval: 20,

@@ -176,6 +176,10 @@ gem "xml-simple", "1.1.4", :require => 'xmlsimple'
 gem "therubyracer"
 gem "premailer", "~> 1.8.0"
 
+# Email Related Gems
+gem 'html_to_plain_text', '1.0.5'
+
+
 gem "akismetor", :git => "git://github.com/freshdesk/akismetor.git"
 gem 'launchparty', "0.1.1", :git => 'git@github.com:freshdesk/launch-party.git', :branch => 'master'
 gem 'binarize', "0.1.1", :git => 'git@github.com:freshdesk/binarize.git', :branch => 'master'

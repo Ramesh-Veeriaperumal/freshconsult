@@ -58,6 +58,7 @@ class AccountAdditionalSettings < ActiveRecord::Base
 
   def clear_cache
     self.account.clear_account_additional_settings_from_cache
+    self.account.clear_api_limit_cache
   end
 
   def set_default_rlimit

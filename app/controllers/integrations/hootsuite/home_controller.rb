@@ -42,7 +42,7 @@ class Integrations::Hootsuite::HomeController < Integrations::Hootsuite::Hootsui
           user_id = Sharding.select_shard_of(domain_mapping.account_id) do
               UserEmail.where(:email => params[:user_session][:username], :account_id => domain_mapping.account_id).first.user_id 
           end
-          Integrations::HootsuiteRemoteUser.create(
+          Integrations::HootsuiteRemoteUser.create!(
           :configs => {:pid => params[:pid],:freshdesk_user_id => user_id},
           :account_id => domain_mapping.account_id,
           :remote_id => params[:uid])
@@ -59,7 +59,7 @@ class Integrations::Hootsuite::HomeController < Integrations::Hootsuite::Hootsui
 
   def destroy
     integrations_url = AppConfig['integrations_url'][Rails.env]
-    Integrations::HootsuiteRemoteUser.delete_all(["remote_id=?", params[:uid]])
+    Integrations::HootsuiteRemoteUser.where(:remote_id=> params[:uid]).destroy_all
     redirect_to request.GET.merge(:action => "domain_page")
   end
 

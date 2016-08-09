@@ -49,7 +49,7 @@ class AccountsController < ApplicationController
     @supported_languages_list = current_account.account_additional_settings.supported_languages
     @ticket_display_id = current_account.get_max_display_id
     @restricted_helpdesk = current_account.restricted_helpdesk?
-    @restricted_helpdesk_launched = current_account.launched?(:restricted_helpdesk)
+    @restricted_helpdesk_launched = current_account.helpdesk_restriction_enabled?
     if current_account.features?(:redis_display_id)
       key = TICKET_DISPLAY_ID % { :account_id => current_account.id }
       redis_display_id = get_display_id_redis_key(key).to_i

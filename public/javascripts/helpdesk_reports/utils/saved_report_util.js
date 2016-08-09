@@ -460,7 +460,7 @@ HelpdeskReports.SavedReportUtil = (function() {
                  
 	              });
 	            }
-	           
+	            is_scheduled_op = false;
 	        } else{
 	        	var default_date_range = _FD.core.convertDateDiffToDate(29);
 	        	jQuery('#date_range').val(default_date_range);
@@ -600,7 +600,7 @@ HelpdeskReports.SavedReportUtil = (function() {
 		    params.data_hash.select_hash = locals.select_hash;
 	        _FD.attachExtraParamsPerReport(params.data_hash);
 
-	        params.data_hash.report_filters = jQuery.extend([],locals.local_hash);
+	        params.data_hash.report_filters = locals.local_hash;
 	        
 	        if(is_scheduled_op){
 	        	params.filter_name = locals.report_filter_data[current_selected_index].report_filter.filter_name;

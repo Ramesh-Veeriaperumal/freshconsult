@@ -60,6 +60,9 @@
 	<%= javascript_include_tag :'cdn/plugins/fileupload' %>
 	<%= javascript_include_tag :'cdn/livechat_helper' %>
 
+	<!-- The following is the remote CDN file managed by Freshapps Team. It is to exec freshapps one by one -->
+  <%= javascript_include_tag :"#{MarketplaceConfig::FRESHAPPS_JS_URL}/js/common-0.2.0.min.js" %>
+
 	<% if current_account.features?(:freshfone) ||
 	  (current_account.features?(:chat) && current_account.chat_setting && !(is_assumed_user?)) %>
 		<%= javascript_include_tag :'cdn/soundmanager' %>
@@ -73,8 +76,8 @@
 	<% end %> 
 
 
-	
 	<%= javascript_include_tag :"cdn/lang/#{I18n.locale.to_s.downcase}" %>
+	
 
 	<!-- for i18n-js translations -->
   <%= javascript_include_tag :"cdn/i18n/#{I18n.locale.to_s}" %>

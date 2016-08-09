@@ -17,11 +17,11 @@ class Tickets::UpdateCompanyId < BaseWorker
     old_company_id = args[:old_company_id]
     TICKET_TYPES.each do |tkts|
       company_id_in_query = old_company_id || company_id
-      condition = company_id ? "(owner_id != ? OR owner_id IS NULL)" : "owner_id is not ?"
+      condition = company_id ? "owner_id is null" : "owner_id is not null"
       condition = "owner_id = ?" if old_company_id
 
       Account.current.send(tkts).where(["requester_id in (?) AND #{condition}", 
-                                          user_ids, company_id_in_query]).find_in_batches(:batch_size => TICKET_LIMIT) do |tickets|
+                                          user_ids]).find_in_batches(:batch_size => TICKET_LIMIT) do |tickets|
         Account.current.send(tkts).where("id in (?)", tickets.map(&:id)).update_all(:owner_id => company_id)
         execute_on_db { send_updates_to_rmq(tickets, tickets[0].class.name) } if tkts == "archive_tickets"
         execute_on_db { subscribers_manual_publish(tickets) } if tkts == "tickets"

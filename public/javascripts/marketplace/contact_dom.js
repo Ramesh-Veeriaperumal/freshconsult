@@ -52,6 +52,7 @@ var ContactDom = Class.create({
 
   destroy: function(){
     dom_helper_data = {};
+    jQuery(document).off(".contact_app_evt");
     //need to clear all sorts of data manipulations when navigating away.
   }
 });
