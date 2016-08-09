@@ -47,9 +47,11 @@ RealtimeDashboard.Widgets.OpenTickets.Agent = function(container,widget_name,lis
 					jQuery('[rel=view_all_open_tickets_by_customer]').show();
 				}
 
-				self.core.Utils.renderTemplate(targetContainer,
-					'app/realtime_dashboard/template/top_agents_by_open_tickets', spliced);
-				
+				var template_data = { renderData : spliced };
+				template_data['group_id'] = self.group_id;
+
+				jQuery(targetContainer).empty()
+								.append( JST[ 'app/realtime_dashboard/template/top_agents_by_open_tickets' ](template_data) );
 			},
 			bindEvents : function() {	
 				var self = this;
@@ -61,6 +63,7 @@ RealtimeDashboard.Widgets.OpenTickets.Agent = function(container,widget_name,lis
 				});
 
 				jQuery(document).on('group_change',function(ev,data){
+					self.group_id = data.group_id;
 					self.fetchData(data.group_id);
 				});
 			},
@@ -74,6 +77,7 @@ RealtimeDashboard.Widgets.OpenTickets.Agent = function(container,widget_name,lis
 			init : function() {
 				var self = this;
 				self.core = RealtimeDashboard.CoreUtil;
+				self.group_id = '-';
 				self.fetchData('-');
 				self.bindEvents();
 			}
