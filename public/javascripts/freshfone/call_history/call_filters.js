@@ -388,7 +388,7 @@ window.App.Freshfonecallhistory = window.App.Freshfonecallhistory || {};
         dateFormat: 'dd MM yy',
         closeOnSelect: true,
         onChange: function() {
-          $("#date_range").val($("#date_range").val());
+          $("#date_range").attr('value', $("#date_range").val());
           $("#date_range").data("value",$("#date_range").val());
         }
       });
