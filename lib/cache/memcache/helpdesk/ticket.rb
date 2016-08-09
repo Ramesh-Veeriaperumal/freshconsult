@@ -1,19 +1,21 @@
 module Cache::Memcache::Helpdesk::Ticket
 
   include MemcacheKeys
+  include Redis::RedisKeys
+  include Redis::OthersRedis
 
   def agent_new_tkt_form_memcache_key
-    set_redis_lang_list(fragment_cache_redis_key(Redis::RedisKeys::AGENT_LANGUAGE_LIST), "#{I18n.locale}")
+    set_redis_lang_list(fragment_cache_redis_key(AGENT_LANGUAGE_LIST), "#{I18n.locale}")
     memcache_key(AGENT_NEW_TICKET_FORM)
   end
 
   def agent_compose_email_memcache_key
-    set_redis_lang_list(fragment_cache_redis_key(Redis::RedisKeys::AGENT_LANGUAGE_LIST), "#{I18n.locale}")
+    set_redis_lang_list(fragment_cache_redis_key(AGENT_LANGUAGE_LIST), "#{I18n.locale}")
     memcache_key(COMPOSE_EMAIL_FORM)
   end
 
   def clear_tkt_form_cache
-    redis_key = fragment_cache_redis_key(Redis::RedisKeys::AGENT_LANGUAGE_LIST)
+    redis_key = fragment_cache_redis_key(AGENT_LANGUAGE_LIST)
     lang      = get_redis_lang_list(redis_key)
     [AGENT_NEW_TICKET_FORM, COMPOSE_EMAIL_FORM].each do |k|
       lang.each do |l|
