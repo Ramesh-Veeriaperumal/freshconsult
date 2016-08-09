@@ -1,7 +1,6 @@
-
 @include keyframes(blinker) {  
-  30% { opacity: 0.3; }
-  80% { opacity: 0.8; }
+  70% { opacity: 0.3; }
+  20% { opacity: 0.8; }
   100% { opacity: 1; }
 }
 .grey_widget_background {

@@ -428,6 +428,23 @@ Helpkit::Application.routes.draw do
       end
     end
 
+    resources :warm_transfer do
+      collection do
+        post :initiate
+        post :success
+        post :status
+        post :redirect_source_agent
+        post :redirect_customer
+        post :join_agent
+        post :transfer_agent_wait
+        post :unhold
+        post :wait
+        post :quit
+        post :cancel
+        post :resume
+      end
+    end
+
     resources :agent_conference do
       collection do
         post :add_agent

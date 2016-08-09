@@ -41,6 +41,7 @@
   <% freshfone_account = current_account.freshfone_account %>
 	freshfone.isAgentConferenceEnabled = <%= current_account.features?(:agent_conference)%>;
   <% freshfone_numbers = current_account_freshfone_numbers %>
+  freshfone.isWarmTransferEnabled = <%= warm_transfer_enabled? %>;
 	freshfone.below_threshold = <%= !freshfone_trial_states? && freshfone_below_threshold? %>;
 	freshfone.available_on_phone = <%= current_user.available_on_phone? || false %>;
 	freshfone.recent_calls_path = "<%= recent_calls_freshfone_call_history_index_path %>";
@@ -121,6 +122,7 @@
 <%= javascript_include_tag :'cdn/freshfone_client' %>
 <%= javascript_include_tag :'cdn/freshfone_subscription' if freshfone_trial_states? %>
 <%= javascript_include_tag :'cdn/freshfone_agent_conference' if current_account.features?(:agent_conference) %>
+<%= javascript_include_tag :'cdn/freshfone_warm_transfer' if current_account.features?(:freshfone_warm_transfer) %>
 <% unless AppMetrics::FRESHFONE_METRICS.blank? %>
   <%= javascript_tag do %>	
   App.Kissmetrics.kissMetricTrackingCode("<%= AppMetrics::FRESHFONE_METRICS %>");

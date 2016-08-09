@@ -16,6 +16,10 @@ module Freshfone::CallHistory
   def update_conference_sid
     current_call.update_attributes(:conference_sid => params[:ConferenceSid])
   end
+
+  def child_call
+  	@child_call ||= current_call.children.last
+  end
 	
 	def current_call
 		@current_call ||= ( current_call_by_call_param || current_call_by_id || current_call_by_filter || current_call_by_parent_call_sid )

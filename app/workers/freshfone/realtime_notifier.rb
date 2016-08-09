@@ -26,7 +26,7 @@ module Freshfone
           logger.info "[#{jid}] - [#{tid}] RealtimeNotifier Job Latency is more than #{incoming_timeout} seconds for JID #{jid} TID #{tid}" if job_latency > job_latency_treshold
           return if job_latency > job_latency_treshold
         end
-        
+
         case type
           when "browser"
             @type ||= "incoming"
@@ -38,13 +38,15 @@ module Freshfone
             return cancel_other_agents
           when "complete_other_agents"
             return complete_other_agents
+          when "browser_warm_transfer"
+            @type ||= "warm_transfer"
         end
 
         set_sid
         enqueue_notification_recovery
         logger.info "Socket Notification pushed to SQS for account :: #{current_account.id} , call_id :: #{current_call.id} at #{Time.now}"
-        $freshfone_call_notifier.send_message notification_message.to_json
-        freshfone_notify_incoming_call(notification_message)
+        $freshfone_call_notifier.send_message notification_params.to_json
+        freshfone_notify_incoming_call(notification_params)
         
       rescue Exception => e
         logger.error "[#{jid}] - [#{tid}] Error notifying for account #{current_account.id} for type #{type}"
@@ -67,6 +69,12 @@ module Freshfone
 
       def set_sid
         set_browser_sid(params["ConferenceSid"], current_call.call_sid)
+      end
+
+      def notification_params
+        return notification_message.merge!(
+            warm_transfer_call_id: params['warm_transfer_call_id']) if params['warm_transfer_call_id'].present?
+        notification_message
       end
 
       def notification_message

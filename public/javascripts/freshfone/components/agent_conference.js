@@ -6,6 +6,7 @@ var FreshfoneAgentConference;
     this.$freshfoneAvailableAgents = $('#freshfone_available_agents');
     this.$freshfoneAddAgentContainer = $('#freshfone_add_agent');
     this.$ongoingTransfer = $(".ongoing .transfer_call");
+    this.$freshfoneTransferContainer = $('#freshfone_transfer');
     this.$addAgentInfo = this.$freshfoneAddAgentContainer.find('.add-agent-info');
     this.$freshfoneAvailableAgentsList = this.$freshfoneAvailableAgents.find('.available_agents_list');
     this.$freshfoneContextContainer = $('.freshfone-context-container');
@@ -50,6 +51,7 @@ var FreshfoneAgentConference;
       this.$freshfoneAvailableAgents.hide();
       this.$freshfoneContextContainer.show();
       this.$freshfoneAddAgentContainer.show();
+      this.$freshfoneTransferContainer.hide();
     },
     errorAddAgent: function() {
       this.removeAddingAgentState();

@@ -4,7 +4,7 @@ class Freshfone::CallMeta < ActiveRecord::Base
 
   belongs_to_account
   serialize :meta_info, Hash
-  belongs_to :freshfone_call, :class_name => "Freshfone::Call"
+  belongs_to :freshfone_call, :class_name => "Freshfone::Call", :foreign_key => 'call_id'
   belongs_to :group
   
   serialize :pinged_agents
@@ -193,6 +193,20 @@ class Freshfone::CallMeta < ActiveRecord::Base
 
   def android_or_ios?
     android? || ios?
+  end
+  
+  def warm_transfer_meta?
+    meta_info[:type] == 'warm_transfer'
+  end
+
+  def warm_transfer_revert?
+    meta_info[:type] == 'warm_transfer' &&
+                      freshfone_call.user_id == freshfone_call.parent.user_id
+  end
+
+  def warm_transfer_success?
+    meta_info[:type] == 'warm_transfer' && 
+                      freshfone_call.user_id != freshfone_call.parent.user_id
   end
 
   private

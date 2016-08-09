@@ -21,7 +21,7 @@
 }
 
 .freshfone_widget {
-	.add_agent_call {
+	.add_agent_call,.warm_transfer_call {
 	  .hold,.transfer_call,.ongoingDialpad{
 	    visibility: hidden;
 	  }
@@ -61,6 +61,41 @@
 		}
 		&:hover{
 			background-color: $ongoing-hover-tabs-background;
+		}
+	}
+
+	&.tools-disabled {
+		li{
+		  a{
+				pointer-events: none;
+				opacity: 0.2;
+				background-color: #BBB;
+			}
+		}
+		.mute,.hold,.transfer_call {
+			border-right: 1px solid white;
+		}
+		.call_details {
+			border-right: 1px solid #ccc;
+		}
+		li {
+			.ongoingDialpad {
+					a{	width: 56px; }
+			}
+		}
+		pointer-events: none;
+		.call_details {
+      height: 27px;
+      .end_call {
+        background-color: #BBB;
+       		a {
+       			background-color: #BBB;
+       			color: #fff;
+       			i{
+       				color: #fff;
+       			}
+       		}
+       }
 		}
 	}
 	.end_call {
@@ -224,6 +259,9 @@
 				  .add_agent {
 				    display: none;
 				  }
+				  .add-agent-border{
+				  	display: none;
+				  }
 				}
 			}
 		}
@@ -292,7 +330,7 @@
 
 	.available_numbers_list, .search-number-label,.available_agents_list{
 		li.transfer-external-selected, li.transfer-active{
-			.transfer,.add_agent{
+			.transfer,.add_agent,.warm_transfer{
 				@include border-radius(50%);
 				border: 1px solid #ddd;
 				text-align: center;
@@ -301,16 +339,33 @@
 				width: 16px;
 				height: 15px;
 				margin-top: -2px;
-				&:hover {
+			}
+			.add-agent-border {
+				height: 27px;
+				margin-top: -2px;
+				@include border-right(1px solid #ddd);
+				width: 242px;
+			}
+			.transfer,.add_agent{
+				&:hover{
 				 background: #046c11;
 				 color: #fff;
 				 border: 1px solid #046c11;
 				}
 			}
+			.warm_transfer{
+				@include margin-left(4px);
+				font-size: 11px;
+			 &:hover{
+			 	 background: #FFA500;
+				 color: #fff;
+				 border: 1px solid #FFA500;
+			 }
+			}
 		}
 		.call-actions{
 			display: none;
-			@include margin-right(11px);
+			@include margin-right(2px);
 		}
 	}
 	.available_agents_list{
@@ -319,8 +374,9 @@
 				display: block;
 			}
 			.transfer{
-			 	font-size: 12px;
+			 	font-size: 11px;
 			 	@include margin-left(1px);
+			 	@include padding(4px 4px 5px 5px);
 			 }
 			.add_agent{
 				font-size: 17px;
@@ -328,7 +384,13 @@
 			}
 		}
 		li.group-transfer, li.adding_agent_state{
-			.add_agent{
+			.add_agent, .warm_transfer{
+				display: none;
+			}
+			.available_agents_name {
+				width: 130px;
+			}
+			.add-agent-border{
 				display: none;
 			}
 		}
@@ -347,6 +409,9 @@
 	.available_agents_name {
 		width: 160px;
 		height: 20px;
+		overflow: hidden;
+		white-space: nowrap;
+		text-overflow: ellipsis;
 	}
 	.available_agents_name, .agent-group-name {
 		@include margin(3px 0 0 -5px);
@@ -931,10 +996,181 @@
 				@include margin-right(11px);
 			}
 			.transfer{
-				@include padding(6px 5px 5px 5px);
+				font-size: 11px;
+				@include padding(6px 5px 6px 6px);
 			}
 		}
 	}
+}
+
+.freshfone-context-container {
+	.transfer-context{
+    height: 30px;
+    border-bottom: 1px solid #aaa;
+    @include padding(7px 2px 5px 0px);
+    @include border-radius(5px 5px 0px 0px);
+    background-color: #f8f8f8;
+    .transfer-progress-bar {
+      position: absolute;
+      border: 2px solid #D5C28C;
+      width: 0px;
+      @include border-radius(2px 2px 0px 0px);
+      top: 45px;
+      @include left(-1px);  
+    }
+    .progress-bar-placer {
+      position: relative;
+      top: -14px;
+    }
+    .progress-bar-active{
+      width: 300px;
+      transition-duration: 60000ms;
+    }
+    .progress-bar-busy {
+      width: 323px;
+      border: 2px solid #Ab301e;
+    }
+    .transfer-info { 
+      text-overflow: ellipsis;
+      .agent_name {
+        font-weight: 700;
+      }
+      .transfer-label{
+        @include padding(0px 0px 1px 0px);
+        width: 15px;
+        height: 15px;
+        text-align: center;
+        font-size: 16px;
+        color: #888;
+        @include margin(5px 7px 0px 0px);
+        border-radius: 50%;
+        border: 1px solid;
+        font-size: 10px;
+      }
+      .transfer-placer{
+        @include padding-left(10px);
+      }
+      .transfer_img{
+        .preview_pic,img{
+          @include right(-10px);
+          top:3px;
+          width: 26px;
+          height: 26px;
+          line-height: 25px;
+          font-size: 14px;
+          font-weight: 400;
+          margin-top: -3px;
+          @include left(55px);
+          @include border-radius(50%);
+        }
+        img {
+          margin-top: 0px;
+        }
+        .external_number_pic{
+          background-color: #ccc;
+          text-align: center;
+          color: white;
+        }
+      }
+      .transfer-status{
+        @include margin-left(1px);
+        margin-top: 6px;
+        .busy,.no-answer {
+          color: #Ab301e;
+        }
+        .connected {
+          color: #046c11;
+        }
+        .in_progress {
+          @include animation(blinker 0.8s infinite);
+        }
+      }
+      .transfer-status > div {
+      	white-space: nowrap;
+      	text-overflow: ellipsis;
+      	overflow: hidden
+      }
+      .cancel_transfer{
+          text-align: center;
+          background-color: #fff;
+          font-size: 34px;
+          margin-top: -4px;
+          height: 26px;
+          width: 24px;
+          background-color: #f8f8f8;
+          i {
+           color: #555;
+          }
+        &:hover {
+          .#{$font-class}cross-filled {
+            display: block;
+          }
+          .#{$font-class}cross-round {
+           display: none;
+          }
+        }
+        .#{$font-class}cross-filled {
+          display: none;
+        }
+        .#{$font-class}cross-round {
+          display: block;
+        }
+      }
+      .resume_call {
+        border: 1px solid green;
+        border-radius: 100px;
+        padding-top: 4px;
+        padding-bottom: 4px;
+        @include padding-left(6px);
+        float: left;
+        width: 84px;
+        color: white;
+        background-color: green;
+        display: none;
+        @include margin-left(44px);
+        cursor: pointer;
+        text-align: center;
+      }
+      .cancel_transfer, .transfer-label{
+        display: none;
+      }
+    }
+    .resume_state {
+      .#{$font-class}freshfone {
+        @include margin(0px 4px 0px -7px);
+      }
+      .resume_call {
+        display: block;
+      }
+      .transfer-status {
+        width: 140px;
+        margin-top: 4px;
+      }
+      .transfer_img{
+        .preview_pic{
+          left: 5px;
+          margin-top: -4px;
+        }
+      }
+    }
+    .transferring_state{
+      .cancel_transfer, .transfer-label{
+        display: block;
+      }
+      .transfer-status {
+        margin-top: 4px;
+      }
+      .resume_call{
+        display: none;
+      }
+      .transfer_img{
+        .preview_pic {
+          @include margin(-4px 18px 0px 0px);
+          left: 10px;
+        }
+      }
+    }
+  }
 }
 
 
@@ -952,7 +1188,7 @@
 		}
 		.ff-loader {
 			display: inline;
-			top: 16px;
+			top: 13px;
 	  		position: relative;
 	  		left: 30px;
 		}
