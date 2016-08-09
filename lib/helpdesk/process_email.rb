@@ -27,10 +27,14 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
 
   def perform(parsed_to_email = Hash.new, skip_encoding = false)
     # from_email = parse_from_email
+    Rails.logger.info "Email received: Message-Id #{message_id}"
     self.start_time = Time.now.utc
     to_email = parsed_to_email.present? ? parsed_to_email : parse_to_email
     shardmapping = ShardMapping.fetch_by_domain(to_email[:domain])
-    return unless shardmapping.present?
+    unless shardmapping.present?
+      Rails.logger.info "Email Processing Failed: No Shard Mapping found!"
+      return
+    end
     Sharding.select_shard_of(to_email[:domain]) do
     account = Account.find_by_full_domain(to_email[:domain])
     if !account.nil? and account.active?
@@ -40,17 +44,26 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       TimeZone.set_time_zone
       encode_stuffs unless skip_encoding
       from_email = parse_from_email(account)
-      return if from_email.nil?
+      if from_email.nil?
+        Rails.logger.info "Email Processing Failed: No From Email found!"
+        return
+      end
       if account.features?(:domain_restricted_access)
         domain = (/@(.+)/).match(from_email[:email]).to_a[1]
         wl_domain  = account.account_additional_settings_from_cache.additional_settings[:whitelisted_domain]
-        return unless Array.wrap(wl_domain).include?(domain)
+        unless Array.wrap(wl_domain).include?(domain)
+          Rails.logger.info "Email Processing Failed: Not a White listed Domain!"
+          return
+        end
       end
       kbase_email = account.kbase_email
       
       if (to_email[:email] != kbase_email) || (get_envelope_to.size > 1)
         email_config = account.email_configs.find_by_to_email(to_email[:email])
-        return if email_config && (from_email[:email] == email_config.reply_email)
+        if email_config && (from_email[:email] == email_config.reply_email)
+          Rails.logger.info "Email Processing Failed: From-email and reply-email are same!"
+          return
+        end
         return if duplicate_email?(from_email[:email], 
                                    to_email[:email], 
                                    params[:subject], 
@@ -66,10 +79,16 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
           text_part
           user = create_new_user(account, from_email, email_config)
         else
-          return if user.blocked?
+          if user.blocked?
+            Rails.logger.info "Email Processing Failed: User is blocked!"
+            return
+          end
           text_part
         end
-        return if (user.blank? && !account.restricted_helpdesk?)
+        if (user.blank? && !account.restricted_helpdesk?)
+          Rails.logger.info "Email Processing Failed: Blank User!"
+          return
+        end
         set_current_user(user)        
 
         self.class.trace_execution_scoped(['Custom/Helpdesk::ProcessEmail/sanitize']) do
@@ -92,6 +111,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         NewRelic::Agent.notice_error(e)
       end
       Account.reset_current_account
+    else
+      Rails.logger.info "Email Processing Failed: No active Account found!"  
     end
     end
   end
@@ -117,10 +138,16 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         set_current_user(user)
       end
     end
-    return if user.blank?
+    if user.blank?
+      Rails.logger.info "Email Processing Failed: Blank User!"
+      return
+    end
     params[:cc] = permissible_ccs(user, params[:cc], account)
     if ticket
-      return if(from_email[:email] == ticket.reply_email) #Premature handling for email looping..
+      if(from_email[:email] == ticket.reply_email) #Premature handling for email looping..
+        Rails.logger.info "Email Processing Failed: From-email and reply-email email are same!"
+        return
+      end
       primary_ticket = check_primary(ticket,account)
       if primary_ticket 
         return create_ticket(account, from_email, to_email, user, email_config) if primary_ticket.is_a?(Helpdesk::ArchiveTicket)
@@ -235,7 +262,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
 
     def orig_email_from_text #To process mails fwd'ed from agents
       @orig_email_user ||= begin
-        content = params[:text] || cleansed_html
+        content = text_part
         identify_original_requestor(content)
       end
     end
@@ -393,6 +420,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
             # add_ticket_tags(tags,ticket) unless tags.blank?
           end
           ticket.save_ticket!
+          Rails.logger.info "Email Processing Successful: Email Successfully created as Ticket!!"
           cleanup_attachments ticket
           mark_email(process_email_key, from_email[:email], 
                                         to_email[:email], 
@@ -415,6 +443,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
 
       rescue AWS::S3::Errors::InvalidURI => e
         # FreshdeskErrorsMailer.deliver_error_email(ticket,params,e)
+        Rails.logger.info "Email Processing Failed: Couldn't store attachment in S3!"
         raise e
       rescue ActiveRecord::RecordInvalid => e
         # FreshdeskErrorsMailer.deliver_error_email(ticket,params,e)
@@ -591,6 +620,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
                                                   params[:subject], 
                                                   message_id)
         note.save_note
+        Rails.logger.info "Email Processing Successful: Email Successfully created as Note!!"
         cleanup_attachments note
         mark_email(process_email_key, from_email[:email], 
                                       to_email[:email], 
@@ -619,9 +649,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     end
 
     def text_part
-      params[:text] = params[:text] || run_with_timeout(HtmlSanitizerTimeoutError) {
-                                             Helpdesk::HTMLSanitizer.plain(params[:html])
-                                            }
+      params[:text] = params[:text].empty? ? Helpdesk::HTMLSanitizer.html_to_plain_text(params[:html]) : params[:text]
     end
     
     def get_user(account, from_email, email_config, force_create = false)
@@ -650,6 +678,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         rescue UserCreationError => e
           NewRelic::Agent.notice_error(e)
           Account.reset_current_account
+          Rails.logger.info "Email Processing Failed: Couldn't create new user!"
           raise e
         end
         if params[:text]
