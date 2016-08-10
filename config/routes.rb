@@ -1295,7 +1295,7 @@ Helpkit::Application.routes.draw do
         collection do
           get :search
           get :auto_suggest
-          get '/:version_id', :action => :show, :as => 'show'
+          get '/:extension_id', :action => :show, :as => 'show'
         end
       end
 
@@ -1303,6 +1303,8 @@ Helpkit::Application.routes.draw do
         scope ':extension_id/:version_id' do
           get :new_configs
           get :edit_configs
+        end
+        scope ':extension_id' do
           post :install
           put :reinstall
           delete :uninstall
@@ -2542,6 +2544,7 @@ Helpkit::Application.routes.draw do
       collection do
         get :numbers
         get :can_accept_incoming_calls
+        get :is_ringing
       end
     end
   end

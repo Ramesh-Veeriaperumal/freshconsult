@@ -87,6 +87,7 @@ module Freshfone
           number_id: current_call.freshfone_number_id,
           call_sid: current_call.call_sid,
           number: current_call.caller_number,
+          ringing_duration: current_call.freshfone_number.ringing_duration,
           enqueued_time: epoch_time,
           domain: current_account.freshfone_account.host
         }

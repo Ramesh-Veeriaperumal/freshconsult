@@ -5,23 +5,18 @@ class PodDnsUpdate
 
   sidekiq_options :queue => :pod_route_update, :retry => 0, :backtrace => true, :failures => :exhausted
 
-  def perform(domain_config)
-    if domain_config["target_method"]
-      send(domain_config["target_method"],domain_config) 
+  def perform(request_parameters)
+    if request_parameters["target_method"]
+      remove_from_global_pod(request_parameters)
     else
-      map_cname_to_domain(domain_config)
+      map_cname_to_domain(request_parameters)
     end
   end
 
   private
 
-  def remove_shard_mapping_for_pod(request_parameters)
-    puts "Req Params: #{request_parameters}"
-    global_pod_response = Fdadmin::APICalls.connect_main_pod(request_parameters)
-  end
-
-  def remove_domain_mapping_for_pod(request_parameters)
-    puts "Req Params: #{request_parameters}"
+  def remove_from_global_pod(request_parameters)
+    Rails.logger.debug("Received Params: : #{request_parameters.inspect}")
     global_pod_response = Fdadmin::APICalls.connect_main_pod(request_parameters)
   end
 

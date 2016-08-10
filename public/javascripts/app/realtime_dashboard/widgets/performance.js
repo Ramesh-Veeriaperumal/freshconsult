@@ -35,12 +35,18 @@ RealtimeDashboard.Widgets.Performance = function(widget_name,container,preview_l
 		},
 		fetchStats : function(container) {
 			var self = this;
-			
+			var data = {};
+			var group_id = self.current_group_id;
+			if(group_id !=undefined && !self.core.isAllSelected(group_id)) {
+				data['group_id'] = group_id;
+			}
+
 			if(true || self.core.refresh.did_time_expire() || !self.core.readFromLocalStorage(_fd.widget_name)) {
 
 				jQuery( '#' + container).html('<div class="sloading loading-small loading-block"></div>');
 				var opts = {
 		            url: _fd.widget_name == "agent_performance" ? self.constants.stats_endPoint_agent : self.constants.stats_endPoint_group ,
+		            data : data,
 		            success: function (response) {
 		                _fd.stats = response.result;
 		            	self.core.addToLocalStorage(_fd.widget_name + '_stats',_fd.stats);
@@ -254,6 +260,7 @@ RealtimeDashboard.Widgets.Performance = function(widget_name,container,preview_l
 			});
 
 			jQuery(document).on('group_change',function(ev,data){
+				self.current_group_id = data.group_id;
 				self.fetchData(true,data.group_id);
 			});
 		},

@@ -122,6 +122,15 @@ class PlanChangeWorker
     account.sections.destroy_all
   end
 
+  def drop_helpdesk_restriction_toggle_data(account)
+    account.helpdesk_permissible_domains.destroy_all
+    account.features.restricted_helpdesk.destroy
+  end
+
+  def drop_ticket_templates_data(account)
+    account.ticket_templates.destroy_all
+  end
+
   def drop_custom_survey_data(account)
     if account.default_survey_enabled?
       account.custom_surveys.default.first.activate if account.active_custom_survey_from_cache.present?

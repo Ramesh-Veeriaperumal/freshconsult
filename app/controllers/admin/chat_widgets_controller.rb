@@ -52,14 +52,16 @@ class Admin::ChatWidgetsController < Admin::AdminController
     update_attribs = {}
     site_id = current_account.chat_setting.site_id
     attributes = params[:attributes]
-    business_cal_id = attributes[:business_calendar_id]
-    update_attribs[:business_calendar_id] = business_cal_id if business_cal_id
+    if attributes.key?("business_calendar_id")
+      business_cal_id = attributes[:business_calendar_id]
+      update_attribs[:business_calendar_id] = business_cal_id if business_cal_id
+      calendar_data  = business_cal_id.blank? ? nil : JSON.parse(BusinessCalendar.find(business_cal_id).to_json({:only => [:time_zone, :business_time_data, :holiday_data]}))['business_calendar']
+      attributes[:business_calendar] = calendar_data
+    end
     update_attribs[:show_on_portal] = attributes[:show_on_portal] if attributes[:show_on_portal]
     update_attribs[:portal_login_required] = attributes[:portal_login_required] if attributes[:portal_login_required]
     widget = current_account.chat_widgets.find_by_id(params[:id])
 
-    calendar_data  = business_cal_id.blank? ? nil : JSON.parse(BusinessCalendar.find(business_cal_id).to_json({:only => [:time_zone, :business_time_data, :holiday_data]}))['business_calendar']
-    attributes[:business_calendar] = calendar_data
     attributes.except!(:business_calendar_id, :show_on_portal, :portal_login_required)
     request_params = { :attributes => attributes}
     response = livechat_request("update_widget", request_params, 'widgets/'+widget.widget_id, 'PUT')

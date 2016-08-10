@@ -753,12 +753,6 @@ class Helpdesk::TicketsController < ApplicationController
 
   def new
     build_tkt_body
-    unless @topic.nil?
-      @item.subject     = @topic.title
-      @item.description_html = @topic.posts.first.body_html
-      @item.requester   = @topic.user
-    end
-
     if params['format'] == 'widget'
       render :layout => 'widgets/contacts'
     end

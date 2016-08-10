@@ -235,7 +235,10 @@ class Account < ActiveRecord::Base
     end
     
     def enable_searchv2
-      SearchV2::Manager::EnableSearch.perform_async if self.features_included?(:es_v2_writes)
+      if self.features?(:es_v2_writes)
+        SearchV2::Manager::EnableSearch.perform_async
+        self.launch(:es_v2_reads)
+      end
     end
 
     def enable_count_es

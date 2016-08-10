@@ -114,7 +114,7 @@ class Dashboard::RedshiftResponseParser
 
   def process_agent_unresolved
     user_ids = @raw_data.map{|x| x["agent_id"]}
-    users_hash = user_id_name_mapping(user_ids, true)
+    users_hash = user_id_name_mapping(user_ids)
     @raw_data.each do |row|
       if users_hash[row["agent_id"]].present?
         user_name = users_hash[row["agent_id"]]
@@ -168,7 +168,7 @@ class Dashboard::RedshiftResponseParser
   def process_supervisor_agents_summary
     padded_agents_list = padding_for_agents(false)
     @raw_data.each do |row|
-      if row["agent_id"].blank?
+      if row["agent_id"].blank? && padded_agents_list[0].present?
         padded_agents_list[0].merge!(row) if row.key?("agent_id")
       elsif padded_agents_list[row["agent_id"].to_i].present?
         padded_agents_list[row["agent_id"].to_i].merge!(row)
@@ -181,7 +181,7 @@ class Dashboard::RedshiftResponseParser
   def process_admin_groups_summary
     padded_groups_list = padding_for_groups(false)
     @raw_data.each do |row|
-      if row["group_id"].blank?
+      if row["group_id"].blank? && padded_groups_list[0].present?
         padded_groups_list[0].merge!(row) if row.key?("group_id")
       elsif padded_groups_list[row["group_id"].to_i].present?
         padded_groups_list[row["group_id"].to_i].merge!(row)
@@ -194,7 +194,7 @@ class Dashboard::RedshiftResponseParser
   def process_admin_group_received_resolved
     padded_groups_list = padding_for_groups
     @raw_data.each do |row|
-      if row["group_id"].blank?
+      if row["group_id"].blank? && padded_groups_list[0].present?
         padded_groups_list[0].merge!(row) if row.key?("group_id")
       elsif padded_groups_list[row["group_id"].to_i].present?
         padded_groups_list[row["group_id"].to_i].merge!(row)
@@ -206,7 +206,7 @@ class Dashboard::RedshiftResponseParser
   def process_supervisor_agent_received_resolved
     padded_agents_list = padding_for_agents
     @raw_data.each do |row|
-      if row["agent_id"].blank?
+      if row["agent_id"].blank? && padded_agents_list[0].present?
         padded_agents_list[0].merge!(row) if row.key?("agent_id")
       elsif padded_agents_list[row["agent_id"].to_i].present?
         padded_agents_list[row["agent_id"].to_i].merge!(row)
@@ -306,8 +306,12 @@ class Dashboard::RedshiftResponseParser
   end
 
   def padding_for_agents for_received_resolved = true
-    agents = agents_list(true)
-    agents[0] = "Unassigned"
+    if User.current.assigned_ticket_permission
+      agents = {User.current.id => User.current.name}
+    else
+      agents = agents_list(true)
+      agents[0] = "Unassigned"
+    end
     padding_hash = {}
     agents.each do |agentid, agent_name|
       padding_hash[agentid] = {
@@ -325,7 +329,7 @@ class Dashboard::RedshiftResponseParser
   def padding_for_groups for_received_resolved = true
     padding_hash = {}
     groups = groups_list
-    groups[0] = "Unassigned"
+    groups[0] = "Unassigned" if User.current.can_view_all_tickets?
     groups.each do |group_id, group_name|
       padding_hash[group_id] = {
         "name"                => group_name,
@@ -419,8 +423,8 @@ class Dashboard::RedshiftResponseParser
     names_by_keys
   end
 
-  def user_id_name_mapping ids, agent = false
-    users = Account.current.all_users.where(id: ids, helpdesk_agent: agent).select("id, name")
+  def user_id_name_mapping ids
+    users = Account.current.all_users.where(id: ids).select("id, name")
     users_hash = users.inject({}) do |hash, user|
       hash[user.id] = user.name
       hash

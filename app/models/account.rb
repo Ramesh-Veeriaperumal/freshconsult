@@ -111,6 +111,10 @@ class Account < ActiveRecord::Base
     features?(:default_survey) && !custom_survey_enabled?
   end
 
+  def count_es_enabled?
+    (launched?(:es_count_reads) || launched?(:list_page_new_cluster)) && features?(:countv2_reads)
+  end
+
   def permissible_domains
     helpdesk_permissible_domains.pluck(:domain).join(",")
   end
@@ -141,6 +145,10 @@ class Account < ActiveRecord::Base
   #Temporary feature check methods - using redis keys - starts here
   def compose_email_enabled?
     !features?(:compose_email) || ismember?(COMPOSE_EMAIL_ENABLED, self.id)
+  end
+
+  def helpdesk_restriction_enabled?
+     features?(:helpdesk_restriction_toggle) || launched?(:restricted_helpdesk)
   end
 
   def dashboard_disabled?
@@ -205,7 +213,7 @@ class Account < ActiveRecord::Base
   end
 
   def restricted_helpdesk?
-    features?(:restricted_helpdesk) && launched?(:restricted_helpdesk)
+    features?(:restricted_helpdesk) && helpdesk_restriction_enabled?
   end
 
   class << self # class methods

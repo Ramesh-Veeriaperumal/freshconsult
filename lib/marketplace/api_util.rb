@@ -46,7 +46,7 @@ module Marketplace::ApiUtil
                                 circuit_breaker: MarketplaceConfig::MKP_CB,
                                 headers: {
                                             'Content-Type' => 'application/json',
-                                            'Accept' => 'application/json',
+                                            'Accept' => 'application/json; 1.0.0',
                                             'Accept-Language' => curr_user_language,
                                             'Authorization' => generate_md5_digest(url)
                                          },

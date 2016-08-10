@@ -37,7 +37,7 @@ module Reports::ConstructReport
       group_by:   [@val == "group" ? "group_id" : "agent_id"],
       date_range: "#{s_date} - #{e_date}",
       filter:     [],
-      account_id: 1010003081,#Account.current.id,
+      account_id: Account.current.id,
       account_domain: Account.current.full_domain,
       time_zone: (Account.current.time_zone || "Pacific Time (US & Canada)")
     }

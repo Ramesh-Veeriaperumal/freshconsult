@@ -31,6 +31,7 @@ run "ln -nfs #{shared_path}/config/aws_v2.yml #{node[:rel_path]}/config/aws_v2.y
 run "ln -nfs #{shared_path}/config/s3_static_files.yml #{node[:rel_path]}/config/s3_static_files.yml"
 run "ln -nfs #{shared_path}/config/dalli.yml #{node[:rel_path]}/config/dalli.yml"
 run "ln -nfs #{shared_path}/config/dalli_api.yml #{node[:rel_path]}/config/dalli_api.yml"
+run "ln -nfs #{shared_path}/config/custom_dalli.yml #{node[:rel_path]}/config/custom_dalli.yml"
 run "ln -nfs #{shared_path}/config/statsd.yml #{node[:rel_path]}/config/statsd.yml"
 run "ln -nfs #{shared_path}/config/redis_display_id.yml #{node[:rel_path]}/config/redis_display_id.yml"
 run "ln -nfs #{shared_path}/config/chat.yml #{node[:rel_path]}/config/chat.yml"
