@@ -443,7 +443,7 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 			}
 		},
 		selectFreshfoneNumber: function (freshfone_number_id) {
-			if (this.$outgoingNumberSelector().is('select') && freshfone_number_id !== undefined) {
+			if (this.$outgoingNumberSelector().is('select') && freshfone_number_id && freshfone_number_id !== 'null'){
 				this.$outgoingNumberSelector().val(freshfone_number_id).trigger('change');
 			}
 		},
