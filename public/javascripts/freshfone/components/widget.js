@@ -87,6 +87,7 @@ var FreshfoneWidget;
 		showOngoing: function () {
 			var self = this;
 			this.hideAllWidgets();
+			this.resetForm();
 			this.setupConferenceAndWarmTransferSetup();
 			if (!freshfonecalls.isOutgoing()){
 				this.minimiseChatWidget();
@@ -417,7 +418,6 @@ var FreshfoneWidget;
 		},
 		resetWidget: function(){
 			this.resetNotesAgentHeader();
-			this.resetForm();
 			this.widgetLoaded = false;
 		},
 		minimiseOngoingDialpad: function(){
