@@ -3,10 +3,11 @@ namespace :seed_tickets do
   require 'faker'
 
   desc "Generate twitter tickets"
-  task :twitter => :environment do |args|
-    puts "Populating ticket conversations for Account ID : #{ENV["ACCOUNT_ID"]}, USER_ID : #{ENV["USER_ID"]}"
-    account_id = ENV["ACCOUNT_ID"]
-    user_id = ENV["USER_ID"]
+  #usage rake seed_tickets:twitter[1,1]  first arg is account_id, second is user_id
+  task :twitter, [:account_id, :user_id] => :environment do |t, args|
+    puts "Populating ticket conversations for Account ID : #{args[:account_id] || ENV["ACCOUNT_ID"]}, USER_ID : #{args[:user_id] || ENV["USER_ID"]}"
+    account_id = args[:account_id] || ENV["ACCOUNT_ID"] || Account.first.id
+    user_id = args[:user_id] || ENV["USER_ID"] || Account.first.agents.first.user_id
     Sharding.select_shard_of(account_id) do 
       account = Account.find(account_id).make_current
       user = account.agents.find_by_user_id(user_id).user.make_current
@@ -21,7 +22,7 @@ namespace :seed_tickets do
 
   def define_factories
     FactoryGirl.define do
-      factory :twitter_handle, :class => Social::TwitterHandle do
+      factory :seed_twitter_handle, :class => Social::TwitterHandle do
         screen_name "TestingGnip"
         capture_dm_as_ticket true
         capture_mention_as_ticket false
@@ -29,13 +30,30 @@ namespace :seed_tickets do
         twitter_user_id { (Time.now.utc.to_f*1000000).to_i }
       end
       
-      factory :twitter_stream, :class => Social::TwitterStream do
+      factory :seed_twitter_stream, :class => Social::TwitterStream do
         name "Custom Social Stream"
         type "Social::TwitterStream"
         includes ["Freshdesk"]
         excludes []
         data HashWithIndifferentAccess.new({:kind => "Custom" })
         filter HashWithIndifferentAccess.new({:exclude_twitter_handles => []})
+      end
+
+      factory :seed_facebook_pages, :class => Social::FacebookPage do
+        sequence(:page_id) { |n| n }
+        profile_id rand(193887364..32876438764)
+        page_token Digest::SHA256.new.update(Time.now.to_s).hexdigest
+        page_name Faker::Lorem.sentence 
+        access_token Digest::SHA256.new.update(Time.now.to_s).hexdigest
+        enable_page true
+        fetch_since 0
+        import_visitor_posts false
+        import_company_posts false
+        realtime_subscription true
+      end
+
+      factory :seed_facebook_mapping, :class => Social::FacebookPageMapping do
+        facebook_page_id rand(1938873647623..3287643876476253)
       end
     end
   end
@@ -57,66 +75,52 @@ namespace :seed_tickets do
 
       notes_count = rand(2..7)
       notes_count.times do
-        if ['agent', 'customer'].sample == 'agent'
-          twitter_agent_reply_to_ticket(ticket, {
-            :tweet => new_tweet({ :twitter_user => tweet[:user] })
-              .merge({ :body => "@#{requester.twitter_id} #{Faker::Lorem.sentence}" }),
-            :twitter_handle => twitter_handle,
-            :stream_id => stream_id
-          })
-        else
-          twitter_customer_reply_to_ticket(ticket, {
-          :tweet => new_tweet({
-            :twitter_user => tweet[:user]
+        note_options = {
+          :tweet => new_tweet({ 
+            :twitter_user => tweet[:user] 
           }),
           :twitter_handle => twitter_handle,
           :stream_id => stream_id
-        })
+        }
+        is_agent_reply = ['agent', 'customer'].sample == 'agent'
+        if is_agent_reply
+          note_options[:tweet].merge!({ :body => "@#{requester.twitter_id} #{Faker::Lorem.sentence}" })
         end
+        twitter_reply_to_ticket(ticket, note_options, is_agent_reply)
       end
     end
   end
 
   def get_twitter_stream_id(options = {})
-    options[:stream_id] || Account.current.twitter_streams.sample.id && return
-    stream  = FactoryGirl.build(:twitter_stream)
+    stream_id = options[:stream_id] || Account.current.twitter_streams.sample.id
+    return stream_id if stream_id.present?
+    stream  = FactoryGirl.build(:seed_twitter_stream)
     stream.account_id = Account.current.id
     stream.save
     stream.id
   end
 
   def get_twitter_handle(options = {})
-    (options[:twitter_handle] || Account.current.twitter_handles.sample) && return
-    handle = FactoryGirl.build(:twitter_handle)
+    handle = (options[:twitter_handle] || Account.current.twitter_handles.sample)
+    return handle if handle.present?
+    handle = FactoryGirl.build(:seed_twitter_handle)
     handle.account_id = Account.current.id
     handle.save
     handle
   end
 
   def create_twitter_ticket(options = {})
-    twitter_handle = options[:twitter_handle] || FactoryGirl.build(:twitter_handle)
-    
-    if twitter_handle.new_record?
-      twitter_handle.account_id = Account.current.id
-      twitter_handle.save
-    end
-
     tweet = options[:tweet] || new_tweet(options[:stream_id])
     requester = options[:requester] || create_tweet_user(tweet[:user])
 
     twitter_ticket = Account.current.tickets.build(
       :subject    => Helpdesk::HTMLSanitizer.plain(tweet[:body]),
       :twitter_id => requester.twitter_id,
-      :product_id => twitter_handle.product_id,
-      :group_id   => options[:group_id] || ( twitter_handle.product ? twitter_handle.product.primary_email_config.group_id : nil),
+      :product_id => options[:twitter_handle].product_id,
+      :group_id   => options[:group_id] || ( options[:twitter_handle].product ? options[:twitter_handle].product.primary_email_config.group_id : nil),
       :source     => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:twitter],
-      :created_at =>  Time.at(Time.parse(tweet[:posted_time]).to_i),
-      :tweet_attributes => {
-        :tweet_id           => tweet[:id],
-        :tweet_type         => tweet[:type],
-        :twitter_handle_id  => twitter_handle.id,
-        :stream_id          => tweet[:stream_id]
-      },
+      :created_at => Time.now, #Time.at(Time.parse(tweet[:posted_time]).to_i),
+      :tweet_attributes => tweet_attributes_params(options),
       :ticket_body_attributes => {
         :description_html => tweet[:body]
       }
@@ -126,29 +130,21 @@ namespace :seed_tickets do
     twitter_ticket
   end
 
-  def twitter_customer_reply_to_ticket(ticket, options = {})
+  def twitter_reply_to_ticket(ticket, options = {}, agent = false)
     options[:twitter_handle] ||= Account.current.twitter_handles.find_by_id(ticket.fetch_twitter_handle)
     options[:stream_id] ||= options[:twitter_handle].default_stream_id
-
-    note_params = {
-      :incoming   => true,
-      :user_id    => ticket.requester.id 
-    }.merge(note_common_params(options))
-    note = ticket.notes.build(note_params)
-    note.account_id = Account.current.id
-    note.save
-    note
-  end
-
-  def twitter_agent_reply_to_ticket(ticket, options = {})
-    options[:twitter_handle] ||= Account.current.twitter_handles.find_by_id(ticket.fetch_twitter_handle)
-    options[:stream_id] ||= options[:twitter_handle].default_stream_id
-
-    note_params = {
-      :private => false,
-      :user_id => User.current.id
-    }.merge(note_common_params(options))
-    note = ticket.notes.build(note_params)
+    if agent
+      note_params = {
+        :private => false,
+        :user_id => User.current.id
+      }
+    else
+      note_params = {
+        :incoming   => true,
+        :user_id    => ticket.requester.id 
+      }
+    end
+    note = ticket.notes.build( note_params.merge( note_common_params(options) ) )
     note.account_id = Account.current.id
     note.save
     note
@@ -160,13 +156,17 @@ namespace :seed_tickets do
         :body_html => options[:tweet][:body]
       },
       :source => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:twitter],
-      :created_at => Time.at(Time.parse(options[:tweet][:posted_time]).to_i),
-      :tweet_attributes => {
-        :tweet_id => options[:tweet][:id],
-        :tweet_type => options[:tweet][:type],
-        :twitter_handle_id => options[:twitter_handle].id,
-        :stream_id => options[:stream_id]
-       }
+      :created_at => Time.now, # Time.at(Time.parse(options[:tweet][:posted_time]).to_i),
+      :tweet_attributes => tweet_attributes_params(options)
+    }
+  end
+
+  def tweet_attributes_params(options = {})
+    {
+      :tweet_id => options[:tweet][:id],
+      :tweet_type => options[:tweet][:type],
+      :twitter_handle_id => options[:twitter_handle].id,
+      :stream_id => options[:stream_id]
     }
   end
 
