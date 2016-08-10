@@ -140,7 +140,9 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
   end
 
   def self.find_by_param(token, account, options = {})
-    where(display_id: token, account_id: account.id).includes(options).first
+    # hack for maintaingin tickets which are alreadu archived
+    # removing includes options as we have to determine
+    where(display_id: token, account_id: account.id).first
   end
 
   def self.sort_fields_options_array 
