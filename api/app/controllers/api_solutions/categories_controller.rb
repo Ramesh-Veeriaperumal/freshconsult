@@ -61,7 +61,7 @@ module ApiSolutions
         language_params = params[cname].slice(:name, :description)
         params[cname][language_scoper] = language_params unless language_params.empty?
         params[cname][:id] = params[:id] if params.key?(:id)
-        params[cname][:portal_solution_categories_attributes] = { portal_id:  params[cname].delete(:visible_in_portals) } if params[cname].key?(:visible_in_portals)
+        params[cname][:portal_solution_categories_attributes] = { portal_id:  params[cname].delete(:visible_in_portals) } if params[cname].key?(:visible_in_portals) && params[cname][:visible_in_portals].any?
         @category_params = params[cname].except!(:name, :description)
       end
 

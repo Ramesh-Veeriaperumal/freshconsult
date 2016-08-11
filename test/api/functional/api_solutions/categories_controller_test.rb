@@ -94,6 +94,7 @@ module ApiSolutions
       result = parse_response(@response.body)
       assert_equal "http://#{@request.host}/api/v2/solutions/categories/#{result['id']}", response.headers['Location']
       match_json(solution_category_pattern(Solution::Category.last))
+      assert_equal Solution::Category.last.parent.portal_ids, [@account.main_portal.id]
     end
 
     def test_create_category_without_description
@@ -102,6 +103,7 @@ module ApiSolutions
       result = parse_response(@response.body)
       assert_equal "http://#{@request.host}/api/v2/solutions/categories/#{result['id']}", response.headers['Location']
       match_json(solution_category_pattern(Solution::Category.last))
+      assert_equal Solution::Category.last.parent.portal_ids, [@account.main_portal.id]
     end
 
     def test_create_category_without_name
@@ -136,6 +138,7 @@ module ApiSolutions
       result = parse_response(@response.body)
       assert_equal "http://#{@request.host}/api/v2/solutions/categories/#{result['id']}", response.headers['Location']
       match_json(solution_category_pattern(Solution::Category.last))
+      assert_equal Solution::Category.last.parent.portal_ids, [@account.main_portal.id]
     end
 
     def test_create_category_with_visible_in_without_multiple_portals
@@ -169,6 +172,7 @@ module ApiSolutions
 
     def test_create_translation
       sample_category_meta = get_meta_without_translation
+      old_portal_ids = sample_category_meta.portal_ids
       language_code = @account.supported_languages.first
       params_hash  = { name: Faker::Name.name, description: Faker::Lorem.paragraph }
       post :create, construct_params({id: sample_category_meta.id, language: language_code}, params_hash)
@@ -176,10 +180,12 @@ module ApiSolutions
       result = parse_response(@response.body)
       assert_equal "http://#{@request.host}/api/v2/solutions/categories/#{result['id']}", response.headers['Location']
       match_json(solution_category_pattern(Solution::Category.last))
+      assert_equal sample_category_meta.portal_ids, old_portal_ids
     end
 
     def test_create_translation_without_description
       sample_category_meta = get_meta_without_translation
+      old_portal_ids = sample_category_meta.portal_ids
       language_code = @account.supported_languages.last
       params_hash  = { name: Faker::Name.name }
       post :create, construct_params({id: sample_category_meta.id, language: language_code}, params_hash)
@@ -187,6 +193,7 @@ module ApiSolutions
       result = parse_response(@response.body)
       assert_equal "http://#{@request.host}/api/v2/solutions/categories/#{result['id']}", response.headers['Location']
       match_json(solution_category_pattern(Solution::Category.last))
+      assert_equal sample_category_meta.portal_ids, old_portal_ids
     end
 
     def test_create_translation_with_primary_language_param
@@ -224,10 +231,12 @@ module ApiSolutions
     def test_update_category_with_empty_description
       sample_category = get_category
       params_hash  = { description: nil }
+      old_portal_ids = sample_category.parent.portal_ids
       put :update, construct_params({ id: sample_category.id }, params_hash)
       assert_response 200
       match_json(solution_category_pattern(sample_category.reload))
       assert sample_category.reload.description == nil
+      assert_equal sample_category.parent.portal_ids, old_portal_ids
     end
 
     def test_update_unavailable_category
@@ -242,13 +251,14 @@ module ApiSolutions
       sample_category = get_category
       old_name = sample_category.name
       old_description = sample_category.description
+      old_portal_ids = sample_category.parent.portal_ids
       params_hash  = { visible_in_portals: [@account.portal_ids.last] }
       put :update, construct_params({ id: sample_category.id }, params_hash)
       assert_response 200
       match_json(solution_category_pattern(sample_category.reload))
       assert sample_category.reload.name == old_name
       assert sample_category.reload.description == old_description
-      assert sample_category.reload.solution_category_meta.portal_ids == [@account.portal_ids.last]
+      assert sample_category.reload.solution_category_meta.portal_ids == old_portal_ids
     end
 
     def test_update_category_description
@@ -280,6 +290,7 @@ module ApiSolutions
       name = Faker::Name.name
       description = Faker::Lorem.paragraph
       sample_category_meta = get_meta_with_translation
+      old_portal_ids = sample_category_meta.portal_ids
 
       solution_category = sample_category_meta.children.last
       language_code = Language.find(solution_category.language_id).code
@@ -291,6 +302,7 @@ module ApiSolutions
       match_json(solution_category_pattern(solution_category.reload))
       assert solution_category.reload.name == name
       assert solution_category.reload.description == description
+      assert sample_category_meta.reload.portal_ids == old_portal_ids
     end
 
     def test_update_category_description
