@@ -29,6 +29,9 @@ class MergeTickets < BaseWorker
     # notes are added to the target ticket via update_all. This wont trigger callback
     # So sending it manually
     update_target_ticket_notes_to_subscribers(target_ticket, source_ticket_note_ids.flatten, args[:source_ticket_ids])
+    #race condition when es version conflict happens and a recent update on source ticket is missed. sqs was processing it faster. hack to solve it
+    #need to revisit
+    source_tickets.map(&:count_es_manual_publish)
   end
 
   def add_note_to_source_ticket(source_ticket, source_note_private, source_info_note)
