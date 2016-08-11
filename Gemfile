@@ -15,7 +15,7 @@ gem 'strong_parameters', "0.2.3" # Used for API params validation
 gem "mysql2", "~> 0.3.0"
 
 gem "rate-limiting", :git =>"git://github.com/freshdesk/rate-limiting.git"
-gem 'fd_rate_limiter', :git => 'git@github.com:freshdesk/fd_rate_limiter.git', :branch => 'dynamic_rules'
+gem 'fd_rate_limiter', :git => 'git@github.com:freshdesk/fd_rate_limiter.git', :branch => 'controller_action_rl'
 gem "white_list", :git =>"git://github.com/neubloc/white_list.git"
 gem "will_paginate", "3.0.6"
 gem "country_select", :git => "git://github.com/stefanpenner/country_select", :tag => 'v1.1.2'
