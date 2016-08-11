@@ -6,15 +6,13 @@ class Helpdesk::TicketField < ActiveRecord::Base
 
   include Helpdesk::Ticketfields::TicketStatus
   include Cache::Memcache::Helpdesk::TicketField
-  # add for multiform phase 1 migration
-  include Helpdesk::Ticketfields::TicketFormFields
   
   self.table_name =  "helpdesk_ticket_fields"
   attr_accessible :name, :label, :label_in_portal, :description, :active, 
     :field_type, :position, :required, :visible_in_portal, :editable_in_portal, :required_in_portal, 
     :required_for_closure, :flexifield_def_entry_id, :field_options, :default, 
     :level, :parent_id, :prefered_ff_col, :import_id, :choices, :picklist_values_attributes, 
-    :ticket_statuses_attributes
+    :ticket_statuses_attributes, :ticket_form_id, :column_name, :flexifield_coltype
 
   CUSTOM_FIELD_PROPS = {  
     :custom_text            => { :type => :custom, :dom_type => :text},
@@ -29,6 +27,13 @@ class Helpdesk::TicketField < ActiveRecord::Base
   
   belongs_to_account
   belongs_to :flexifield_def_entry, :dependent => :destroy
+  belongs_to :parent, :class_name => 'Helpdesk::TicketField'
+  has_many :child_levels, :class_name => 'Helpdesk::TicketField', 
+                          :foreign_key => "parent_id", 
+                          :conditions => {:field_type => 'nested_field'},
+                          :dependent => :destroy,
+                          :order => "level"
+
   has_many :picklist_values, :as => :pickable, 
                              :class_name => 'Helpdesk::PicklistValue',
                              :include => {:sub_picklist_values => :sub_picklist_values},
@@ -66,13 +71,6 @@ class Helpdesk::TicketField < ActiveRecord::Base
   # before_update :delete_from_ticket_filter
   before_save :set_portal_edit
 
-  #https://github.com/rails/rails/issues/988#issuecomment-31621550
-  # Phase1:- multiform , will be removed once migration is done.
-  after_commit ->(obj) { obj.save_form_field_mapping }, on: :create
-  after_commit ->(obj) { obj.save_form_field_mapping }, on: :update
-  after_commit :remove_form_field_mapping, on: :destroy
-  #Phase1:- end
-
   # xss_terminate
   acts_as_list :scope => 'account_id = #{account_id}'
 
@@ -99,8 +97,8 @@ class Helpdesk::TicketField < ActiveRecord::Base
    
   validates_presence_of :name
   validates_uniqueness_of :name, :scope => :account_id
-  
   before_create :populate_label
+  validates_uniqueness_of :column_name, :scope => [:account_id, :ticket_form_id], :unless => :default
   
   
   scope :custom_fields, :conditions => ["flexifield_def_entry_id is not null"]
@@ -514,14 +512,6 @@ class Helpdesk::TicketField < ActiveRecord::Base
     def set_portal_edit
       self.editable_in_portal = false unless visible_in_portal
       self
-    end
-
-    def save_form_field_mapping
-      save_form_field(self)
-    end
-
-    def remove_form_field_mapping
-      remove_form_field(self)
     end
 
   private

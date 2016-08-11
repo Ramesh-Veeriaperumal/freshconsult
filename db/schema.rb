@@ -11,8 +11,9 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20160802094502) do
 
+ActiveRecord::Schema.define(:version => 20160802094502) do
+  
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
     t.integer  "account_id",           :limit => 8
@@ -2188,10 +2189,14 @@ ActiveRecord::Schema.define(:version => 20160802094502) do
     t.integer  "parent_id",               :limit => 8
     t.string   "prefered_ff_col"
     t.integer  "import_id",               :limit => 8
+    t.integer  "ticket_form_id",       :limit => 8                   
+    t.string   "column_name"                                        
+    t.string   "flexifield_coltype"
   end
 
   add_index "helpdesk_ticket_fields", ["account_id", "field_type", "position"], :name => "index_tkt_flds_on_account_id_and_field_type_and_position"
   add_index "helpdesk_ticket_fields", ["account_id", "name"], :name => "index_helpdesk_ticket_fields_on_account_id_and_name", :unique => true
+  add_index "helpdesk_ticket_fields", ["account_id", "ticket_form_id", "column_name"], :name => "index_tkt_flds_on_account_id_ticket_form_id_column_name"
 
   create_table "helpdesk_ticket_issues", :force => true do |t|
     t.integer "ticket_id"
