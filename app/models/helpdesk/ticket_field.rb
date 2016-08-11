@@ -98,7 +98,6 @@ class Helpdesk::TicketField < ActiveRecord::Base
   validates_presence_of :name
   validates_uniqueness_of :name, :scope => :account_id
   before_create :populate_label
-  validates_uniqueness_of :column_name, :scope => [:account_id, :ticket_form_id], :unless => :default
   
   
   scope :custom_fields, :conditions => ["flexifield_def_entry_id is not null"]
