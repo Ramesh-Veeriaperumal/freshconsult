@@ -142,6 +142,9 @@ HelpdeskReports.ChartsInitializer.Glance = (function () {
                                 metric: active_metric
                             });
                             var div_id = '#'+active_metric.toLowerCase();
+                            if (active_metric == "UNRESOLVED_TICKETS" && group_by[i] == "historic_status" && jQuery.isEmptyObject(hash_active[group_by[i]]))
+                                continue;
+                            
                             jQuery(div_id).append(group_tmpl);
 
                             if (!jQuery.isEmptyObject(hash_active[group_by[i]])) {

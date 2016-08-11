@@ -1,5 +1,6 @@
 class HelpdeskReports::ParamConstructor::Glance < HelpdeskReports::ParamConstructor::Base
   include HelpdeskReports::Field::Ticket
+  include HelpdeskReports::Helper::PlanConstraints
 
   OVERALL_METRICS = ["GLANCE_CURRENT","GLANCE_HISTORIC"]
 
@@ -52,11 +53,14 @@ class HelpdeskReports::ParamConstructor::Glance < HelpdeskReports::ParamConstruc
   def glance_group_by metric
     status_metrics = ["RECEIVED_TICKETS", "REOPENED_TICKETS","UNRESOLVED_TICKETS"]
     
-    account_end_date = Time.now.in_time_zone(Account.current.time_zone).to_date      
-    dr               = @date_range.split("-")
-    end_date         = ( dr.size == 1 ) ? dr[0].strip : dr[1].strip
-    diff_end_date    = !(account_end_date == Date.parse(end_date).to_date)
-    
+    if(metric == "UNRESOLVED_TICKETS")
+      date_lag         = disable_date_lag? ? 0 : 1
+      account_end_date = (Time.now.in_time_zone(Account.current.time_zone) - date_lag.days).to_date      
+      dr               = @date_range.split("-")
+      end_date         = ( dr.size == 1 ) ? dr[0].strip : dr[1].strip
+      diff_end_date    = !(account_end_date == Date.parse(end_date).to_date)
+    end
+
     gp_by = ["source", "priority", "ticket_type"]
     gp_by |= ["product_id"] if Account.current.products.any?   
     gp_by |= ["status"] if status_metrics.include?(metric)
