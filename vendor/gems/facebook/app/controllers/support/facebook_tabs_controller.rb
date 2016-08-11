@@ -1,6 +1,6 @@
 class Support::FacebookTabsController < SupportController
 
-  skip_before_filter :portal_context, :page_message, :ensure_proper_protocol, :set_language
+  skip_before_filter :portal_context, :page_message, :ensure_proper_protocol, :set_language, :redirect_to_locale
   skip_filter :select_shard
   skip_before_filter :determine_pod
   skip_before_filter :verify_authenticity_token, :check_account_state
