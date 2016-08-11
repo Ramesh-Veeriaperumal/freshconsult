@@ -6297,6 +6297,9 @@ en:
       survey_result: "Survey Result"
       product: "Product"
       requester_phone: "Requester Phone"
+      survey_received: "Survey Received Time"
+      comment: "Comment"
+      rating: "Rating"
     call_history:
       info:
         success: We have started exporting your call records. It will be mailed to you once completed.

@@ -70,7 +70,7 @@ module HelpdeskReports
         end
 
         def default_file_format
-          [:agent_summary, :group_summary].include?(report_type) ? 'csv' : 'pdf'
+          [:agent_summary, :group_summary, :satisfaction_survey].include?(report_type) ? 'csv' : 'pdf'
         end
         
     end
