@@ -1,7 +1,6 @@
 #By shan .. Need to introduce delayed jobs here.
 #Right now commented out delayed_job, with regards to the size of attachments and other things.
 #In future, we can just try using delayed_jobs for non-attachment mails or something like that..
-require 'charlock_holmes'
 class EmailController < ApplicationController
 
   include EnvelopeParser
