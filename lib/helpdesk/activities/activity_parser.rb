@@ -118,7 +118,7 @@ module Helpdesk::Activities
     def get_summary
       if SUMMARY_FOR_TOKEN.has_key?(@summary)
         str = "activities.tag.#{SUMMARY_FOR_TOKEN[@summary]}"
-        params =  @summary_text.present? ? {:value => escapeHTML("#{@summary_text}")} : {}
+        params =  @summary_text.present? ? {:value => escapeHTML(CGI::unescapeHTML("#{@summary_text}"))} : {}
         render_string(str, params)
       else
         nil
