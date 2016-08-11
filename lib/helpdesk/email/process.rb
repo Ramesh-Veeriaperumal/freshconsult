@@ -35,6 +35,7 @@ class Helpdesk::Email::Process
       Rails.logger.info "Email Processing Failed: No Shard Mapping found!"
       return
     end
+    return shardmapping.status  unless shardmapping.ok?
     Sharding.select_shard_of(to_email[:domain]) do 
       accept_email if get_active_account
     end

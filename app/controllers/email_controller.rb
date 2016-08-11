@@ -24,12 +24,13 @@ class EmailController < ApplicationController
   def create
     envelope = params[:envelope]
     if envelope.present? && multiple_envelope_to_address?( envelope_to = get_to_address_from_envelope(envelope))
-      process_email_for_each_to_email_address(envelope_to)
+     status = process_email_for_each_to_email_address(envelope_to)
     else
       @process_email = Helpdesk::ProcessEmail.new(params)
-      @process_email.perform
+      status =  @process_email.perform 
     end
-    render :layout => 'email'
+    status = (status == MAINTENANCE_STATUS ? :service_unavailable : :ok )
+    render :layout => 'email', :status => status
   end
 
   private
@@ -62,14 +63,16 @@ class EmailController < ApplicationController
 
   def process_email_for_each_to_email_address(envelope_to)
     encode_param_fields 
+    status = MAINTENANCE_STATUS
     envelope_to.each_with_index do |to_address, i|
       envelope_params = ActiveSupport::JSON.decode(params[:envelope]).with_indifferent_access
       envelope_params[:to] = Array.new.push(to_address)
       params[:envelope] = envelope_params.to_json
       Rails.logger.info "Multiple Recipient case - starting Process email for :#{to_address} "
       process_email = Helpdesk::ProcessEmail.new(params)
-      process_email.perform(@to_emails[i], true)
+       status = nil if process_email.perform(@to_emails[i], true) != MAINTENANCE_STATUS
     end
+    status
   end
   
   def redirect_email(pod_info)

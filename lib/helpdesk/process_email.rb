@@ -35,6 +35,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       Rails.logger.info "Email Processing Failed: No Shard Mapping found!"
       return
     end
+    return shardmapping.status unless shardmapping.ok?
     Sharding.select_shard_of(to_email[:domain]) do
     account = Account.find_by_full_domain(to_email[:domain])
     if !account.nil? and account.active?
