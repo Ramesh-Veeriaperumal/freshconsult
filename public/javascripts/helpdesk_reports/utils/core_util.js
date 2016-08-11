@@ -260,7 +260,19 @@ HelpdeskReports.CoreUtil = {
         var current_group = this.setDefaultGroupByOptions(HelpdeskReports.locals.active_metric);
         
         if (locals.custom_fields_group_by.length) {
-            current_group.push(locals.custom_fields_group_by[0]);
+            if(HelpdeskReports.locals.report_type == 'glance' && localStorage.getItem('glance') != '-1'){
+                var rf = _.find(HelpdeskReports.locals.report_filter_data, function(rfd){ return rfd.report_filter.id == parseInt(localStorage.getItem('glance'))})
+                var active_cf;
+                if(rf != null && (active_cf = rf.report_filter.data_hash.active_custom_field)){
+                    current_group.push(active_cf);
+                    HelpdeskReports.locals.active_custom_field = active_cf;
+                }
+                else
+                    current_group.push(locals.custom_fields_group_by[0]);
+            }
+            else{
+                current_group.push(locals.custom_fields_group_by[0]);
+            }
         }
         locals.current_group_by = current_group;
     },
@@ -276,8 +288,13 @@ HelpdeskReports.CoreUtil = {
         if (constants.status_metrics.indexOf(active_metric) > -1) {
             groupby = constants.group_by_with_status.slice();
             if(active_metric == "UNRESOLVED_TICKETS")
-            {
-                groupby.push("historic_status")
+            {   
+                var account_end_date = HelpdeskReports.locals.endDate;
+                var date_range       = HelpdeskReports.locals.date_range.split(' - ')
+                var end_date         = date_range.length == 1 ? date_range[0] : date_range[1]
+                if((Date.parse(account_end_date) - Date.parse(end_date)) != 0){
+                    groupby.push("historic_status")
+                }
             }
         } else {
             groupby = constants.group_by_without_status.slice();
@@ -1352,6 +1369,8 @@ HelpdeskReports.CoreUtil = {
     generatePdfAsync: function (){
         var _this = this;
         var params = _this.pdfParams();
+        if(HelpdeskReports.locals.report_type == 'glance')
+            params['active_custom_field'] = HelpdeskReports.locals.active_custom_field;
         var opts = {
             url: _this.CONST.base_url + HelpdeskReports.locals.report_type + _this.CONST.email_reports,
             type: 'POST',

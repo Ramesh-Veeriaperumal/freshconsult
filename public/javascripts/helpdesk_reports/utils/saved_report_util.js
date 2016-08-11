@@ -99,6 +99,13 @@ HelpdeskReports.SavedReportUtil = (function() {
 	    			);
 	    	});
 
+			jQuery(document.body).on("change","#custom_field_group_by select",function(){
+				_this.filterChanged = true;
+				_FD.controls.hideDeleteAndEditOptions();
+				_FD.controls.hideScheduleOptions();
+				_FD.controls.showSaveOptions(_FD.last_applied_saved_report_index);
+			});
+
 	    	//Saved Reports
 	        jQuery(document).on('click.save_reports',"#report-dialog-save-submit",function() {  
 
@@ -245,7 +252,9 @@ HelpdeskReports.SavedReportUtil = (function() {
 	        if(_FD.last_applied_saved_report_index == -1 && !_FD.filterChanged) {
 	        	params.data_hash.default_report_is_scheduled = true;
 	        } 
-
+	        if(locals.report_type == "glance" && locals.active_custom_field){
+	            params["active_custom_field"] = locals.active_custom_field;
+	        }
 	        var opts = {
 	            url: _FD.core.CONST.base_url + HelpdeskReports.locals.report_type + _FD.CONST.save_report,
 	            type: 'POST',
@@ -297,6 +306,7 @@ HelpdeskReports.SavedReportUtil = (function() {
 		                     //Show successfully saved message
 		                    HelpdeskReports.CoreUtil.showResponseMessage(I18n.t('helpdesk_reports.saved_report.saved_message'));
 		                    _this.cacheLastAppliedReport(resp.id);
+		                    _this.showReportDropdown();
 		                    
 	                     }
 	                     if(resp.data.schedule_config.enabled){
@@ -359,6 +369,19 @@ HelpdeskReports.SavedReportUtil = (function() {
 	            	report_name = report_name.toLowerCase();
 	            }
 	            _FD.saved_report_names.push(report_name);
+	            _FD.showReportDropdown();
+	    },
+	    showReportDropdown : function() {
+	    	 //Show dropdown icon only when saved reports are available
+	    	var _this = this;
+            var hash = HelpdeskReports.locals.report_filter_data;;
+            if(hash.length == 0 || ( hash.length == 1 && _this.default_report_is_scheduled)){
+            	jQuery('.report-title-block #report-title').css('cursor','auto');
+            	jQuery('.title-dropdown').hide();
+            } else {
+            	jQuery('.report-title-block #report-title').css('cursor','pointer'); 
+            	jQuery('.title-dropdown').show();
+            }
 	    },
 	    setActiveSavedReport : function(el){
 	           jQuery("#report-title").html(escapeHtml(jQuery(el).attr('data-title')));
@@ -628,7 +651,9 @@ HelpdeskReports.SavedReportUtil = (function() {
 	        }
 	        
 	        params.id = locals.report_filter_data[current_selected_index].report_filter.id;
-
+	        if(locals.report_type == "glance" && locals.active_custom_field){
+	            params["active_custom_field"] = locals.active_custom_field;
+	        }
 	        var opts = {
 	            url: _FD.core.CONST.base_url + locals.report_type + _FD.CONST.update_report,
 	            type: 'POST',
