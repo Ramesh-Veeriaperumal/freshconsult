@@ -112,7 +112,7 @@ class Account < ActiveRecord::Base
   end
 
   def count_es_enabled?
-    (launched?(:es_count_reads) || launched?(:list_page_new_cluster)) && features?(:countv2_reads)
+    launched?(:es_count_reads) || features?(:countv2_reads)
   end
 
   def permissible_domains

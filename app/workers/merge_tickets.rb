@@ -101,7 +101,7 @@ class MergeTickets < BaseWorker
     # REPORTS: while doing manual publish of note it will take note's created at and hence it will not be
     # reflected in latest row. Doing a manual push for target ticket here so that the latest row of the ticket will 
     # have all the customer reply and agent reply count updated.
-    key  = Account.current.features?(:activity_revamp) ? RabbitMq::Constants::RMQ_GENERIC_TICKET_KEY : RabbitMq::Constants::RMQ_REPORTS_TICKET_KEY
+    key  = Account.current.features?(:activity_revamp) ? RabbitMq::Constants::RMQ_CLEANUP_TICKET_KEY : RabbitMq::Constants::RMQ_REPORTS_COUNT_TICKET_KEY
     target_ticket.manual_publish_to_rmq("update", key, {:manual_publish => true})
   end
 end
