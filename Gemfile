@@ -35,6 +35,7 @@ gem 'fresh_request', :git => 'git@github.com:freshdesk/fresh_request.git', :bran
 #for ruby ~> 2.1.0 upgrade
 gem 'iconv', '~> 1.0.4'
 gem 'thrift', '~> 0.9.2.0'
+gem 'charlock_holmes', "0.7.3"
 
 group :development, :test do
   gem 'rails-dev-boost', :git => 'git://github.com/thedarkone/rails-dev-boost.git'

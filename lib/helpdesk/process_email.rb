@@ -1,4 +1,5 @@
 # encoding: utf-8
+require 'charlock_holmes'
 class Helpdesk::ProcessEmail < Struct.new(:params)
  
   include EmailCommands
@@ -211,6 +212,10 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         unless params[t_format].nil?
           charset_encoding = (charsets[t_format.to_s] || "UTF-8").strip()
           # if !charset_encoding.nil? and !(["utf-8","utf8"].include?(charset_encoding.downcase))
+          replacement_char = "\uFFFD"
+          if t_format.to_s == "subject" and (params[t_format] =~ /^=\?(.+)\?[BQ]?(.+)\?=/ or params[t_format].include? replacement_char)
+            params[t_format] = decode_subject
+          else
             begin
               params[t_format] = Iconv.new('utf-8//IGNORE', charset_encoding).iconv(params[t_format])
             rescue Exception => e
@@ -229,9 +234,42 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
                 NewRelic::Agent.notice_error(e,{:description => "Charset Encoding issue with ===============> #{charset_encoding}"})
               end
             end
-          # end
+          end
         end
       end
+    end
+
+    def decode_subject
+      subject = params[:subject]
+      replacement_char = "\uFFFD"
+      if subject.include? replacement_char
+        params[:headers] =~ /^subject\s*:(.+)$/i
+        subject = $1.strip
+        unless subject =~ /=\?(.+)\?[BQ]?(.+)\?=/
+          detected_encoding = CharlockHolmes::EncodingDetector.detect(subject)
+          detected_encoding = "UTF-8" if detected_encoding.nil?
+          begin
+            decoded_subject = subject.force_encoding(detected_encoding).encode(Encoding::UTF_8, :undef => :replace, 
+                                                                              :invalid => :replace, 
+                                                                              :replace => '')
+          rescue Exception => e
+            decoded_subject = subject.force_encoding("UTF-8").encode(Encoding::UTF_8, :undef => :replace, 
+                                                                      :invalid => :replace, 
+                                                                      :replace => '')
+          end
+          subject = decoded_subject if decoded_subject
+        end
+      end
+      if subject =~ /=\?(.+)\?[BQ]?(.+)\?=/
+        decoded_subject = ""
+        subject_arr = subject.split("?=")
+        subject_arr.each do |sub|
+          decoded_string = Mail::Encodings.unquote_and_convert_to("#{sub}?=", 'UTF-8')
+          decoded_subject << decoded_string
+        end
+        subject = decoded_subject.strip
+      end
+      subject
     end
 
     def parse_email(email_text)
