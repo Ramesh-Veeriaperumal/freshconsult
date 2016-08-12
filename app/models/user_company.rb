@@ -10,26 +10,19 @@ class UserCompany < ActiveRecord::Base
   validates_uniqueness_of :company_id, :scope => [:user_id, :account_id]
 
   after_commit :associate_tickets, on: :create
-  after_commit :update_tickets_company_id, on: :update
   after_commit :remove_tickets_company_id, :set_default_company, on: :destroy
   after_commit :update_es_index
 
   private
-  
-  # This will also update the tickets' company in reports
+
   def associate_tickets
     Tickets::UpdateCompanyId.perform_async({ :user_ids => user_id,
                                              :company_id => company_id }) unless contractor?
   end
 
-  def update_tickets_company_id
-    Tickets::UpdateCompanyId.perform_async({ :user_ids => user_id, :company_id => company_id, :old_company_id =>  
-      previous_changes["company_id"][0] }) if previous_changes["company_id"].present?
-  end
-
   def remove_tickets_company_id
-    Tickets::UpdateCompanyId.perform_async({ :user_ids => user_id,
-      :company_id => nil }) unless account.features?(:multiple_user_companies)
+    # Tickets::UpdateCompanyId.perform_async({ :user_ids => user_id,
+    #   :company_id => nil }) unless account.features?(:multiple_user_companies)
   end
 
   def set_default_company

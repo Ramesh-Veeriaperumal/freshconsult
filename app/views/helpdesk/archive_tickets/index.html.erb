@@ -5,11 +5,11 @@
     $J("#tickets-expanded input[type=checkbox]").trigger('change');
   }); 
 
-  $J("#select_view_id").live("change", function(ev){
+  $J("#select_view_id").on("change", function(ev){
     window.location = this.value;
   });
   
-  $J("#assign-options-link").live("click", function(ev){
+  $J("#assign-options-link").on("click", function(ev){
     jQuery("#assign-options").show();
     jQuery(this).hide();
   });

@@ -5,13 +5,13 @@
 	<%=  JST["survey/reports/template/content_stats_chart"]() %>
 	<% if(agentReporting){ %>
 		<div id="reportView">
-			<ul class="nav nav-tabs sleek-tab" id="viewReportBy" value=<%= SurveyReportData.defaultAllValues.group %>>
-		  		<li class="active"><a onclick="SurveyTable.type.change(this)" value=<%=  SurveyReportData.defaultAllValues.group %> ><%= SurveyI18N.group %></a></li>
-		  		<li><a onclick="SurveyTable.type.change(this)" value= <%= SurveyReportData.defaultAllValues.agent %> ><%= SurveyI18N.agent %></a></li>
+			<ul class="nav nav-tabs sleek-tab" id="viewReportBy" data-report-type=<%= SurveyReportData.defaultAllValues.group %>>
+		  		<li class="active"><a onclick="SurveyTable.type.change(this)" data-report-type=<%=  SurveyReportData.defaultAllValues.group %> ><%= SurveyI18N.group %></a></li>
+		  		<li><a onclick="SurveyTable.type.change(this)" data-report-type= <%= SurveyReportData.defaultAllValues.agent %> ><%= SurveyI18N.agent %></a></li>
 			</ul>
 		</div>
 	<% }  %>
-
+	
 	<div id="survey_table">
 		<%=  JST["survey/reports/template/stats_detail_table"]({
 			table:SurveyTable.format(),

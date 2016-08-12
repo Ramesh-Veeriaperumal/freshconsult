@@ -5,7 +5,7 @@ window.liveChat.visitorFormSettings = function($){
 		dropdownIsChanged: false,
 		
 		render: function(){
-			var _widget = window.liveChat.adminSettings.currentWidget;
+			var _widget = App.Admin.LiveChatAdminSettings.currentWidget;
 			var form_details = _widget.prechat_fields;
 			var prechat_form = _widget.prechat_form;
 			var prechat_msg = _widget.prechat_message;
@@ -15,7 +15,7 @@ window.liveChat.visitorFormSettings = function($){
 			var form_details_list = [];
 			var show = _widget.show, required = _widget.required;
 			var labels = {'name': prechat_fields['name']['title'], 'phone': prechat_fields['phone']['title'], 'email': prechat_fields['email']['title'], 'textfield': prechat_fields['textfield']['title'], 'dropdown': prechat_fields['dropdown']['title']};
-			var offline_chat_form = liveChat.adminSettings.currentWidget.offline_chat.form;
+			var offline_chat_form = App.Admin.LiveChatAdminSettings.currentWidget.offline_chat.form;
 			var default_offline_chat_form = _defaultMessages.offline_chat.form;
 			var old_dropdown_choices ;
 
@@ -110,7 +110,7 @@ window.liveChat.visitorFormSettings = function($){
 			var valid = true;
 			var preForm = CHAT_CONSTANTS.HIDE;
 			var prechat_form_details = {};
-			var _widget = liveChat.adminSettings.currentWidget;
+			var _widget = App.Admin.LiveChatAdminSettings.currentWidget;
 
 			if($("#prechat_form").is(":checked")){
 				preForm = 1;
@@ -159,7 +159,7 @@ window.liveChat.visitorFormSettings = function($){
 
 		updateLiveChatWidgetSettings: function(params){
 			var self 					= this;
-			var _widget 		 	= liveChat.adminSettings.currentWidget;
+			var _widget 		 	= App.Admin.LiveChatAdminSettings.currentWidget;
 			var _routing 		 	= window.liveChat.routingSettings;
 			if(CURRENT_ACCOUNT.chat_routing && params.prechat_fields && self.dropdownIsChanged){
 				var newRouting = {};
@@ -195,7 +195,7 @@ window.liveChat.visitorFormSettings = function($){
 				dataType: "json",
 				success: function(resp){
 					if(resp.status == "success"){
-						window.liveChat.adminSettings.currentWidget = $.extend({}, _widget, params);
+						App.Admin.LiveChatAdminSettings.currentWidget = $.extend({}, _widget, params);
 						window.liveChat.mainSettings.parseStringJsonFields();
 						self.showMsg(resp);
 						if(CURRENT_ACCOUNT.chat_routing){

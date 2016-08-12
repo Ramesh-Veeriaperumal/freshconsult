@@ -54,13 +54,13 @@ module CustomerDeprecationMethods
     }
 
     # hack to facilitate contact_fields & deprecate customer
-    def normalize_params params=params  # params in default value refers to controller params
+    def normalize_params parameters=params  # params in default value refers to controller params
       attribute = ATTRIBUTE_MAP.keys.find do |attr|
-        params.include?(attr)
+        parameters.include?(attr)
       end
       unless attribute.nil?
         attribute_to_store = ATTRIBUTE_MAP[attribute]
-        params[attribute_to_store] =  params[attribute]
+        parameters[attribute_to_store] =  parameters[attribute]
       end
     end
   end

@@ -115,7 +115,7 @@
   invokeRedactor('target-note-body');
   invokeRedactor('source-note-body');
 
-  jQuery("#merge_completion").live('click', function(){
+  jQuery("#merge_completion").on('click', function(){
     jQuery(this).button('loading');
     jQuery("#cancel-user-merge, #back-user-merge").attr("disabled", true).addClass("disabled");
   })

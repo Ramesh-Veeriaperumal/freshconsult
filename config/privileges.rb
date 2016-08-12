@@ -407,7 +407,7 @@ Authority::Authorization::PrivilegeList.build do
       resource :"reports/custom_survey_report"
       resource :"reports/freshfone/summary_report"
       resource :"reports/freshchat/summary_report"
-   	  resource :"reports/timesheet_report", :only => [:index, :report_filter, :save_reports_filter, :update_reports_filter, :delete_reports_filter]
+      resource :"reports/timesheet_report", :only => [:index, :report_filter, :save_reports_filter, :update_reports_filter, :delete_reports_filter, :time_entries_list]
       resource :"reports/report_filter"
       resource :"reports/v2/tickets/report", :only =>[ :index, :fetch_metrics, :fetch_ticket_list, :fetch_active_metric,
                                                         :save_reports_filter, :update_reports_filter, :delete_reports_filter]

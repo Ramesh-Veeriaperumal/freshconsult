@@ -92,7 +92,7 @@ jQuery(document).ready(function() {
 });
 
 jQuery('#cascade_dispatchr').change(function() {
-    var cascade_value = jQuery('#cascade_dispatchr').attr('value');
+    var cascade_value = jQuery('#cascade_dispatchr').val();
 
     new Ajax.Request('/admin/va_rules/toggle_cascade', 
                      { parameters: {cascade_dispatcher: cascade_value},

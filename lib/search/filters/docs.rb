@@ -9,7 +9,7 @@
 class Search::Filters::Docs
   include Search::Filters::QueryHelper
 
-  attr_accessor :params, :negative_params, :with_permissible, :list_page
+  attr_accessor :params, :negative_params, :with_permissible
 
   ES_PAGINATION_SIZE = 30
 
@@ -17,7 +17,6 @@ class Search::Filters::Docs
     @params           = (values.presence || [])
     @negative_params  = (negative_values.presence || [])
     @with_permissible = with_permissible
-    @list_page        = false
   end
 
   # Doing this as there will be only one cluster
@@ -36,7 +35,9 @@ class Search::Filters::Docs
   # Fetch count from Elasticsearch based on filters
   def count(model_class)
     response = es_request(model_class, '_search?search_type=count')
-    JSON.parse(response)['hits']['total']
+    parsed_response = JSON.parse(response)
+    Rails.logger.info "ES count response:: Account -> #{Account.current.id}, Took:: #{parsed_response['took']}"
+    parsed_response['hits']['total']
   end
 
   # Fetch docs from Elasticsearch based on filters and load from ActiveRecord
@@ -102,8 +103,7 @@ class Search::Filters::Docs
     # Make request to ES to get the DOCS
     def es_request(model_class, end_point, options={})
       permissible_value = with_permissible.nil? ? true : with_permissible
-      from_list_page = list_page.nil? ? true : list_page #this will be true for list page and unresolved dashboard page, false for dashboard.
-      deserialized_params = es_query(params, negative_params, permissible_value, from_list_page).merge(options)
+      deserialized_params = es_query(params, negative_params, permissible_value).merge(options)
       error_handle do
         request = RestClient::Request.new(method: :get,
                                            url: [host("get"), alias_name("get"), end_point].join('/'),
@@ -126,7 +126,7 @@ class Search::Filters::Docs
 
     def document_path(model_class, id, query_params={})
       path    = [host, alias_name, model_class.demodulize.downcase, id].join('/')
-      query_params.blank? ? path : "#{path}?#{query_params.to_params}"
+      query_params.blank? ? path : "#{path}?#{query_params.to_query}"
     end
 
     def error_handle(&block)

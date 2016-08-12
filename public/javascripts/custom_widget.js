@@ -584,7 +584,7 @@ Freshdesk.EmailMarketingWidget = Class.create(Freshdesk.Widget, {
 			lists = this.options.integratable_impl.handleSubscribedLists(response);
 		}
 		for(var i=0; i<lists.length; i++){
-			jQuery('#'+lists[i]).attr('checked', true);
+			jQuery('#'+lists[i]).prop('checked', true);
 			this.mc_subscribe_lists.push(lists[i]);
 		}
 		jQuery('#' + this.options.widget_name + ' .lists input:unchecked').each(function() {
@@ -618,8 +618,8 @@ Freshdesk.EmailMarketingWidget = Class.create(Freshdesk.Widget, {
 
 	bindShowActivity: function(activities){
 		var email_marketing = this;
-		jQuery('#show-activity-'+this.app).die();
-		jQuery('#show-activity-'+this.app).live('click', function(ev){
+		jQuery(document).off('.show-activity');
+		jQuery(document).on('click.show-activity', '#show-activity-'+this.app ,function(ev){
 			ev.preventDefault();
 			cid = jQuery(this).attr("class").split(" ")[1];
 			if(jQuery('#user-campaign-' + cid).is(":visible") == false){
@@ -1194,7 +1194,7 @@ var UIUtil = {
 		jQuery("#" + integrationName + context + '-' + fieldName).removeClass('hide');
 		jQuery("#" + integrationName + "-" + fieldName + "-spinner").addClass('hide');
 
-		var parent_form = jQuery("#" + integrationName + context + '-' + fieldName).parentsUntil('form').siblings().andSelf();
+		var parent_form = jQuery("#" + integrationName + context + '-' + fieldName).parentsUntil('form').siblings().addBack();
 		
 		if ( parent_form.find('.loading-fb.hide').length == parent_form.find('.loading-fb').length) {
 			//All the loading are hidden

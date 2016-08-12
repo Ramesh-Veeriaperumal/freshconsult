@@ -91,7 +91,8 @@ var IvrOption;
 			var select2 = this.$menuList.removeClass('hide').data('select2');
 			if (select2) {
 				select2.container.show();
-				this.$menuList.val(0).change(); // Set default
+				var defaultMenuList = this.$menuList.find('option:first').val();
+				this.$menuList.val(defaultMenuList).change(); // Set default
 			}
 		},
 		onLoadActions: function () {
@@ -148,6 +149,7 @@ var IvrOption;
 		choosePerformerType: function (menu) {
 			if (this.jsonOption === undefined) { return false; }
 			this.$dom.find('select').each(function () {
+				if ($(this).data('selected') == '') { return false; }
 				$(this).find('option[value=' + $(this).data('selected') + ']').attr('selected', true);
 			});
 		},

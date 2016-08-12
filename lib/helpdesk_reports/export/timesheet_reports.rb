@@ -6,6 +6,7 @@ class HelpdeskReports::Export::TimesheetReports < HelpdeskReports::Export::Repor
   def initialize(args, scheduled_report = false)
     args.symbolize_keys!
     args = old_report_params(args)
+    @pdf_export = true
     super
   end
 
@@ -16,10 +17,10 @@ class HelpdeskReports::Export::TimesheetReports < HelpdeskReports::Export::Repor
     params.delete(:customers_filter)
     params.each { |key,value| params[key] = value.to_s.split(",") if ARRAY_METRICS.include?(key.to_sym) && value }
     build_item
-    time_sheet_list
+    time_sheet_list_pdf
 
     #skip other process when there is no data. Return filepath as nil.
-    return nil if (no_data?(@time_sheet_data) && no_data?(@old_time_sheet_data))
+    return nil if no_data?(@metric_data)
 
     @layout = "layouts/report/timesheet_reports_pdf.html.erb"
     file = build_pdf
@@ -31,15 +32,19 @@ class HelpdeskReports::Export::TimesheetReports < HelpdeskReports::Export::Repor
       :params => params,
       :time_sheets => @time_sheets,
       :report_date => params[:date_range],
-      :time_sheet_data => @time_sheet_data,
-      :old_time_sheet_data => @old_time_sheet_data,
+      :metric_data => @metric_data,
       :activity_data_hash => @activity_data_hash,
-      :headers => @headers
+      :headers => @headers,
+      :group_count => @group_count,
+      :group_names => @group_names,
+      :load_time => @load_time
     }
   end
   
   def no_data? data_hash
-    data_hash.values.uniq == [0.0]
+    has_data = false
+    data_hash.values.each { |hash| has_data ||= (hash.values.uniq != [0.0]) }
+    !has_data
   end
 
 end

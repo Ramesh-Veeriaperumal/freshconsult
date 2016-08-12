@@ -50,7 +50,7 @@
   
   new Autocompleter.Json("user_company_name", "user_company_choices", cachedLookup, {});
 
-  jQuery('#cancel_button').live('click', function(){
+  jQuery('#cancel_button').on('click', function(){
     jQuery('#add_requester_form').modal('hide');
   });
 

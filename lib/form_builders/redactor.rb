@@ -93,7 +93,7 @@ module FormBuilders::Redactor
         output << text_area_tag(name, content, options)
 
         output << %(<script type="text/javascript">
-                      if( !isMobile.any() ){
+                      if( jQuery.browser.desktop ){
                         if (window['redactors'] === undefined) window.redactors = {}
                         !function( $ ) {
                           $(function() {

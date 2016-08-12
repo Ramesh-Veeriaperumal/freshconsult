@@ -38,14 +38,14 @@
 				}
 			}, this) );
 
-			$(this.options.customPropertiesDiv).live('submit',function(){ return false; });
+			$(this.options.customPropertiesDiv).on('submit',function(){ return false; });
 
 			this.options.validateOptions = {
 				submitHandler: $.proxy(function(form){
 					// console.log(form);
 					this.options.currentData = this.setCurrentData();
 					$(this.element).removeClass('active');
-					$.event.trigger('customDataChange', this.options.currentData);
+					$(document).trigger('customDataChange', this.options.currentData);
 					this.hideDialog();
 				}, this),
 				rules: {},

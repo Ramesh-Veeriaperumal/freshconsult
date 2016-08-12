@@ -81,7 +81,6 @@
 	<% end %>
 <% end %>
 <script type="text/javascript">
-jQuery(document).ready(function(){
 	window.HelpdeskReports = window.HelpdeskReports || {};
 	HelpdeskReports.locals = HelpdeskReports.locals || {};
 	HelpdeskReports.locals.report_type = '<%= @report_type %>';
@@ -103,5 +102,4 @@ jQuery(document).ready(function(){
 		name : '<%= current_user.name %>'
 	};
 	day_names = <%=t('date.day_names').to_json.html_safe%>;
-});
 </script>

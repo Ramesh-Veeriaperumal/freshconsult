@@ -53,8 +53,11 @@
 	</div>
 </div>
 
+<!-- disabling the requester widget temporarily -->
+<% if false %>
 <div id="requester-widget-edit-modal-container">
 <% unless user.agent? || !privilege?(:manage_contacts) %>
   <%= render :partial => "/contacts/requester_widget_contact_edit" , :locals => { :user => user, :ticket => @ticket }  %>
 <% end %>
 </div>
+<% end %>

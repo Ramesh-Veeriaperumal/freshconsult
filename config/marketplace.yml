@@ -14,6 +14,7 @@ defaults: &defaults
   acc_api_conn_timeout: 2 ### In Seconds
   global_api_read_timeout: 5 ### In Seconds
   global_api_conn_timeout: 5 ### In Seconds
+  freshapps_js_url: "https://s3.amazonaws.com/static.freshcloud.io"
 
 development:
   <<: *defaults
@@ -28,6 +29,7 @@ staging:
   api_url: "http://freshapps-global-api-2-661604820.us-east-1.elb.amazonaws.com"
   acc_api_url: "http://freshapps-account-api-2-1479636878.us-east-1.elb.amazonaws.com"
   cdn_static_assets: "d2p7lkcc8qpotz.cloudfront.net/app-assets"
+  freshapps_js_url: "https://s3.amazonaws.com/static.freshcloud.io"
 
 production:
   <<: *defaults
@@ -36,3 +38,4 @@ production:
   api_url: "https://api.freshdev.io"
   acc_api_url: "" #POD specific account api url
   cdn_static_assets: ""
+  freshapps_js_url: "https://static.freshdev.io"

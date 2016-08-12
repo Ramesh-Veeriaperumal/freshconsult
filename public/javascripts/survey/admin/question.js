@@ -98,8 +98,8 @@ var SurveyQuestion = {
       var defaultScale = jQuery("input[name=question-choice]:checked").val();
       var choices = SurveyProtocol.content.choice.values(defaultScale,"questions");
       jQuery("div#question_rating_options").find('li input').each(function(index,value){
-        if(jQuery(this).attr('value').length > 0 && jQuery(this).attr('value')!= ""){
-          choices[index]["value"] = escapeHtml(jQuery(this).attr('value'));
+        if(jQuery(this).val().length > 0 && jQuery(this).val()!= ""){
+          choices[index]["value"] = escapeHtml(jQuery(this).val());
         }else{
           choices[index]["value"] = jQuery(this).attr('placeholder');           
         }

@@ -81,7 +81,7 @@
 				return false;
 			}
 
-			if($element.parent().siblings(':visible').size() !== 0) {
+			if($element.parent().siblings(':visible').length !== 0) {
 				var choice_id 	= $element.parent().find('input').attr('data_id');
 
 				if(choice_id != 0 && choice_id != "undefined") {
@@ -205,7 +205,7 @@
 							 .find("fieldset:visible")
 							 .find('input[name=customer_display_name]')
 							 ,function(){
-								if($.trim($('input[data-companion=#'+$(this).attr('id')+']').attr('value'))!="" && $.trim($(this).val())==""){
+								if($.trim($('input[data-companion="#'+$(this).attr('id')+'"]').val())!="" && $.trim($(this).val())==""){
 									_condition = false;
 								}
 							 }

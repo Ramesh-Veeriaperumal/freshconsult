@@ -29,7 +29,7 @@ window.App.Header  = window.App.Header || {};
 	        url: "/users/assumable_agents",
 	        type: "GET",
 	        success: function(agent_list){
-	          if(agent_list.size() == 0){
+	          if(agent_list.length == 0){
 	            jQuery("#switch_agent_container").remove();
 	          } else{
 							$.each(agent_list, function(index, agent){

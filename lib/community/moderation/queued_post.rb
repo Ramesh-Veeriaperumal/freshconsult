@@ -126,7 +126,7 @@ class Community::Moderation::QueuedPost
     end
 
     def timestamp(attr)
-      params[attr]['id'] * 10.power!(17) + params['timestamp'] * 10.power!(7)
+      params[attr]['id'] * (10 ** 17) + params['timestamp'] * (10 ** 7)
     end
 
     def notify_error

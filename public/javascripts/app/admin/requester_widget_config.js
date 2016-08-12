@@ -34,7 +34,7 @@ window.App = window.App || {};
 
     attachDeleteFieldTrigger: function(){
       var $this = this;
-      $($this.sortableFieldsContainer).find('.rounded-minus-icon').live("click", function(){
+      $(document).on("click", $this.sortableFieldsContainer+' .rounded-minus-icon', function(){
         // Need a global variable here to store id and type of deleted elements;
         $this.deleted_list.push({"id" : $(this).parent('li').data('id'),
                                   "type" : $(this).parent('li').data('type'), });

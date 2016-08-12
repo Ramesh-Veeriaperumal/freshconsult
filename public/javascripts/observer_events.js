@@ -19,14 +19,14 @@ var ObserverDom = {}
 			element.select2("val", e.val[1]);
 	};
 
-	ObserverDom['performed_by_change'] = function(){ 
+	ObserverDom['performed_by_change'] = function(){ 		
 		if($(this).val() == 1)
 			$(".performer_data_members_container").slideDown();
 	 	else
 	  	$(".performer_data_members_container").slideUp(); 
 	};
 
-	ObserverDom['resizeSelect2'] = function(ev){	
+	ObserverDom['resizeSelect2'] = function(ev){
 		switch(true){
 			case $(this).val()=='ticket_update':
 			case $(this).val()=='time_sheet_action':
@@ -40,7 +40,7 @@ var ObserverDom = {}
 
 	ObserverDom['init'] = function(){
 		if( $( 'input[name="performer_data[type]"]:checked' ).val() == null )
-			$( 'input[name="performer_data[type]"][value = 1]' ).attr("checked","checked");
+			$( 'input[name="performer_data[type]"][value = 1]' ).prop("checked",true);
 		
 		setTimeout(function(ev){
 			$.each($('#EventList .controls > select'), function(i, item){
@@ -53,9 +53,9 @@ var ObserverDom = {}
 	};
 	
 
-	$('input[name = "performer_data[type]"]').live( "change", ObserverDom['performed_by_change']	);
-	$('.doer select').live( "change", ObserverDom['ensure_performed_by'] );
-	$('#EventList .controls > select').live("change", ObserverDom['resizeSelect2']);
+	$(document).on( "change", 'input[name = "performer_data[type]"]', ObserverDom['performed_by_change']	);
+	$(document).on( "change", '.doer select', ObserverDom['ensure_performed_by'] );
+	$(document).on( "change", '#EventList .controls > select', ObserverDom['resizeSelect2']);
 
 	$("#ObserverForm").submit(function(e){
 		var performed_by = $('input[name="performer_data[type]"]:checked').val();

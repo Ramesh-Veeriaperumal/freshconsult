@@ -243,7 +243,7 @@
 		},
 
 		deleteDropDownChoice: function($this){
-			if($this.parent().siblings(':visible').size() !== 0) {
+			if($this.parent().siblings(':visible').length !== 0) {
 				var no_choices = (this.dialogDOMMap.admin_choices).find('fieldset:visible').length,
 						choice_id = $this.parent().find('input').attr('data_id');
 				if(no_choices < this.settings.maxNoOfChoices) {
@@ -659,7 +659,7 @@
 				}
 			});
 
-			$(this.settings.formContainer).on('hover', 'li', function() {
+			$(this.settings.formContainer).on('mouseenter mouseleave', 'li', function() {
 				self.hideDeleteIconForDefaultFields($(this));
 				self.hideEditIconForFields($(this));
 			});
@@ -676,7 +676,7 @@
 				self.hideDialog();
 			});
 
-			$(document).live("change.custom-fields", this.settings.nestedConfig + " input:checkbox", function(e){
+			$(document).on("change.custom-fields", this.settings.nestedConfig + " input:checkbox", function(e){
 				self.innerLevelExpand(e.target);
 			});
 
@@ -726,7 +726,7 @@
 			});
 
 			$(this.settings.customPropertiesDiv)
-					.live('submit',function(){ return false; });
+					.on('submit',function(){ return false; });
 
 			this.settings.validateOptions = {
 							submitHandler: function(){

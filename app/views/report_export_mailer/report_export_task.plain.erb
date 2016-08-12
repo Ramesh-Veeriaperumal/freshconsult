@@ -1,0 +1,9 @@
+CSV report requested at : <%= @task_start_time %>
+
+Date range : <%= @date_range%>
+
+<%= "Description : #{@description}" if @description %>
+<%= "No. of invalid accounts : #{@invalid_count}" if @invalid_count>0 %>
+
+Regards,
+Reports Team, Freshdesk

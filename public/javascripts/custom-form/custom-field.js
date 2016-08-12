@@ -210,7 +210,7 @@
 				return false;
 			}, this) );
 
-			$(document).live("change.dialog-events", this.settings.nestedConfig + " input:checkbox", $.proxy(function(e){
+			$(document).on("change.dialog-events", this.settings.nestedConfig + " input:checkbox", $.proxy(function(e){
 				this.toggleCustomerBehaviorOptions(e.target);
 				return false;
 			}, this) );

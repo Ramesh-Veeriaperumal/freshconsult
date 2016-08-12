@@ -196,7 +196,7 @@ module Helpdesk::TicketFilterMethods
   end
 
   def filter_count(selector=nil, unresolved=false)
-    if Account.current.launched?(:es_count_reads)
+    if Account.current.count_es_enabled?
       TicketsFilter.es_filter_count(selector, unresolved)
     else
       filter = TicketsFilter.filter(filter(selector), User.current, Account.current.tickets.permissible(User.current))

@@ -82,7 +82,7 @@
             });
           }
         
-          jQuery("#helpdesk_ticket_subject").live("blur", function(ev){
+          jQuery("#helpdesk_ticket_subject").on("blur", function(ev){
               var searchString = this.value.replace(/^\s+|\s+$/g, "");
               if(searchString != '' && searchString.length > 1){
                 jQuery(this).addClass("sloading loading-small loading-right");
@@ -92,8 +92,7 @@
               }
           });
       <% end %>
-
-      if( !isMobile.any() ){
+      if( jQuery.browser.desktop ){
         <% if logged_in? %>
           invokeRedactor('helpdesk_ticket_ticket_body_attributes_description_html', 'ticket');
         <% else %>

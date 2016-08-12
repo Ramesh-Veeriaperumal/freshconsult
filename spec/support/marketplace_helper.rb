@@ -1,12 +1,14 @@
 module MarketplaceHelper
 
   def extensions
-    body =  [{ "name" => "google_plug",
+    body =  [{   
+                 "id" => 1,
+                 "name" => "google_plug",
                  "display_name" => "Google Plug",
                  "description" => "desc",
-                 "version_id" => 3,
+                 "cover_art" => "//s3.amazonaws.com/freshapps-images.freshpo.com/3/cover_art/thumb/Screen1.png",
                  "categories" => ["Agent Productivity"],
-                 "cover_art" => "//s3.amazonaws.com/freshapps-images.freshpo.com/3/cover_art/thumb/Screen1.png"
+                 "type" => 1
               }]
     FreshRequest::Response.new(Response.new(body))
 
@@ -35,26 +37,34 @@ module MarketplaceHelper
   def extension_details
     body = { 
               "extension_id" => 1,
-              "type" => "1",
-              "version_id" => 3,
-              "latest_version" => 2,
+              "type" => "1",  
+              "account" => "Freshdesk",            
               "name" => "Plug 1",
               "display_name" => "Google Plug",
               "description" => "desc",
-              "install_count" => 2,
-              "app_version" => "2.0",
-              "account" => "",
-              "options" => [1],
-              "published_date" => "13 days",
               "instructions" => "",
-              "whats_new" => "",
-              "cover_art" => "//s3.amazonaws.com/freshapps-images.freshpo.com/3/cover_art/thumb/Screen1.png",
-              "categories" => [],
+              "cover_art" => 
+                { "thumb" => "//s3.amazonaws.com/freshapps-images.freshpo.com/3/cover_art/thumb/Screen1.png",
+                  "thumb2x" => "//s3.amazonaws.com/freshapps-images.freshpo.com/3/cover_art/thumb2x/Screen1.png"
+                },
               "screenshots" =>
                 [{ 
+                  "thumb" => "//s3.amazonaws.com/freshapps-images.freshpo.com/3/screenshot/thumb/Screen2.png",
+                  "thumb2x" => "//s3.amazonaws.com/freshapps-images.freshpo.com/3/screenshot/thumb2x/Screen2.png",
                   "large"=> "//s3.amazonaws.com/freshapps-images.freshpo.com/3/screenshot/large/Screen2.png",
-                  "thumb" => "//s3.amazonaws.com/freshapps-images.freshpo.com/3/screenshot/thumb/Screen2.png"
-                }]
+                  "large2x"=> "//s3.amazonaws.com/freshapps-images.freshpo.com/3/screenshot/large2x/Screen2.png"
+                }],
+              "categories" => [],
+              "contact_details" => {
+                  "support_email" => "support@freshdesk.com",
+                  "support_url" => "https://support.freshdesk.com"
+                },
+              "options" => [1],
+              "published_date" => "13 days",              
+              "version_id" => 3,
+              "app_version" => "2.0",
+              "whats_new" => "",
+              "page_options" => [1]
             }
     FreshRequest::Response.new(Response.new(body))
   end
@@ -102,7 +112,7 @@ module MarketplaceHelper
   end
 
   def auto_suggestion
-    body = [{ suggest_term: "Google Plug", version_id: 1 }]
+    body = [{ suggest_term: "Google Plug", extension_id: 1 }]
     FreshRequest::Response.new(Response.new(body))
   end
 

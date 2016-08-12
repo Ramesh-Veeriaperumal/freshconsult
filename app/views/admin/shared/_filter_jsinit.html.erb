@@ -65,7 +65,8 @@
             jQuery(c_dom).val("--");
           }
           else{
-            jQuery(c_dom).val(initFeed[value]);
+            var default_cdom_val = jQuery(c_dom).children().first().val();
+            jQuery(c_dom).val(initFeed[value] || default_cdom_val);
           }
 
           //Monkey patch
@@ -102,7 +103,8 @@
             break;
         case 'optgroup':
           c_dom = FactoryUI.optgroup(filter.choices, "value", _class_name, _data_attr);
-          jQuery(c_dom).val(initFeed["value"]);
+          var default_opt_val = jQuery(c_dom).children().first().val();
+          jQuery(c_dom).val(initFeed["value"]||default_opt_val);
         break;
         case 'paragraph':
           c_dom = FactoryUI.paragraph("", value, initFeed[value]);
@@ -134,7 +136,8 @@
           }     
         
           if (type != 'email') {
-            jQuery(control).val(initFeed["email_to"]);
+            var default_email_to = jQuery(control).children().first().val();
+            jQuery(control).val(initFeed["email_to"] || default_email_to);
             var to = jQuery('<div class="row-fluid" />')
                       .append("<label class='span2'><%= t(".to") %> </label>")
                       .append(control);
@@ -171,7 +174,8 @@
               value: compName == 'action' ? "<%= t(".not_selected") %>" : "<%= t(".unchecked") %>"
             }];
             c_dom = FactoryUI.dropdown(choices, value, _class_name, _data_attr);
-            jQuery(c_dom).val(initFeed[value]);
+            var default_check_val = jQuery(c_dom).children().first().val();
+            jQuery(c_dom).val(initFeed[value]||default_check_val);
           } 
         break;
         case 'nested_field':
@@ -215,7 +219,8 @@
                                           { name: '2', value: "<%= t('.advanced_layout') %>" } ]
 
           var method_dropdown = FactoryUI.dropdown(method_choices, "request_type", _class_name, _data_attr);
-          jQuery(method_dropdown).val(initFeed['request_type']);
+          var default_method = jQuery(method_dropdown).children().first().val();
+          jQuery(method_dropdown).val(initFeed['request_type']||default_method);
           var method = jQuery('<div class="row-fluid"/>')
                         .append('<label class="span2"><%= t(".request_type") %></label>')
                         .append(method_dropdown)

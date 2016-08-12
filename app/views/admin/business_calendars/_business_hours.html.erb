@@ -159,11 +159,11 @@
 	jQuery(document).ready(function(){
 		
 		
-		jQuery("#HolidayList a.close").live("click", function(){
+		jQuery(document).on("click", "#HolidayList a.close", function(){
 			holiday = jQuery(this).parent();
 			HolidayList.unset(holiday.attr("month_date"));
 			holiday.remove(); 
-			if(HolidayList.size() == 0)
+			if(HolidayList.length == 0)
 				jQuery("#HolidayList").hide();
 		});
 
