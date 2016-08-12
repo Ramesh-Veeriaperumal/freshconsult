@@ -100,6 +100,7 @@ Helpkit::Application.routes.draw do
     resources :ticket_fields, controller: 'ember/ticket_fields', only: [:index, :update]
     resources :bootstrap, controller: 'ember/bootstrap', only: :index
     resources :tickets, controller: 'ember/tickets', only: :index
+    resources :ticket_filters, controller: 'ember/ticket_filters', only: :index
   end
 
   match '/api/v2/_search/tickets' => 'tickets#search', :defaults => { :format => 'json' }, :as => :tickets_search, via: :get
