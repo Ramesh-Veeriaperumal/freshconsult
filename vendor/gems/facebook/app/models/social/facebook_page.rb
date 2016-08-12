@@ -82,4 +82,8 @@ class Social::FacebookPage < ActiveRecord::Base
   def log_api_hits
     increment_api_hit_count_to_redis(self.page_id)
   end
+  
+  def default_ticket_rule
+    self.default_stream.ticket_rules.first
+  end
 end

@@ -26,6 +26,8 @@ module Sqs
     def process
       entry_changes.each do |entry_change|
         fb_feed = Facebook::Core::Feed.new(page_id, entry_change)
+        next if fb_feed.realtime_feed["value"].blank?
+        
         valid_account, valid_page = fb_feed.account_and_page_validity
 
         next unless valid_account
