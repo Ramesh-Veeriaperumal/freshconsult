@@ -101,7 +101,7 @@ module ChatHelper
       :end_chat_end_title => t('livechat.end_chat_end_title'),
       :end_chat_cancel_title => t('livechat.end_chat_cancel_title')
     }
-    setting = convertToJson ? livechat_setting.to_json.html_safe : livechat_setting
+    setting = convertToJson ? livechat_setting.to_json : livechat_setting
     return setting
   end
 
