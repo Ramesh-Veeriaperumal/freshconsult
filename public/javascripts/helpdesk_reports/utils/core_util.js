@@ -552,10 +552,15 @@ HelpdeskReports.CoreUtil = {
         },
         toggleReportTypeMenu: function () {
             var menu = jQuery('#reports_type_menu');
-            if (!menu.is(':visible')) {
-                menu.removeClass('hide');
+            var hash = HelpdeskReports.locals.report_filter_data;;
+            if(hash.length == 0 || ( hash.length == 1 && HelpdeskReports.SavedReportUtil.default_report_is_scheduled)) {
+                //No saved report or only one saved report entry[ Default saved report]
             } else {
-                menu.addClass('hide');
+                if (!menu.is(':visible')) {
+                    menu.removeClass('hide');
+                } else {
+                    menu.addClass('hide');
+                } 
             }
         },
         hideReportTypeMenu: function () {
