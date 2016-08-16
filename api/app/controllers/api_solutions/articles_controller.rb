@@ -20,13 +20,15 @@ module ApiSolutions
     end
 
     def update
+      # Before applying the new changes to the article publish it
+      publish_article if @status == Solution::Article::STATUS_KEYS_BY_TOKEN[:published]
       create_or_update_article
     end
 
     def folder_articles
       if validate_language
         if load_folder
-          @items = paginate_items(@item.solution_articles.where(language_id: @lang_id).preload(:solution_folder_meta, :solution_article_meta, :article_body))
+          @items = paginate_items(@item.solution_articles.where(language_id: @lang_id).preload(:solution_folder_meta, :solution_article_meta, { solution_article_meta: :solution_category_meta}, :article_body, :draft, { draft: :draft_body }))
           render '/api_solutions/articles/index'
         end
       else
@@ -162,6 +164,10 @@ module ApiSolutions
         meta = meta_scoper.find_by_id(id)
         log_and_render_404 unless meta
         meta
+      end
+
+      def publish_article
+        @item.draft.publish! if @item && @item.draft.present?
       end
   end
 end

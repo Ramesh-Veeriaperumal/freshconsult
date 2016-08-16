@@ -60,6 +60,10 @@ module ApiSolutions
       @account.solution_category_meta.where(is_default: false).collect{ |x| x.solution_folder_meta }.flatten.map{ |x| x unless x.is_default}.collect{ |x| x.solution_article_meta }.flatten.collect{ |x| x.children }.flatten.first
     end
 
+    def get_article_with_draft
+      @account.solution_category_meta.where(is_default: false).collect{ |x| x.solution_folder_meta }.flatten.map{ |x| x unless x.is_default}.collect{ |x| x.solution_article_meta }.flatten.collect{ |x| x.children }.flatten.select{ |x| x.draft.present? }.first
+    end
+
     def get_folder_meta
       @account.solution_category_meta.where(is_default: false).collect{ |x| x.solution_folder_meta }.flatten.map{ |x| x unless x.is_default}.first
     end
@@ -302,6 +306,19 @@ module ApiSolutions
 
     def test_update_article
       sample_article = get_article
+      paragraph = Faker::Lorem.paragraph
+      params_hash  = { title: 'new title', description: paragraph, status: 2, type: 2, agent_id: @agent.id }
+      put :update, construct_params({ id: sample_article.parent_id }, params_hash)
+      assert_response 200
+      match_json(solution_article_pattern(sample_article.reload))
+      assert sample_article.reload.title == 'new title'
+      assert sample_article.reload.status == 2
+      assert sample_article.reload.parent.reload.art_type == 2
+      assert sample_article.reload.parent.reload.user_id == @agent.id
+    end
+
+    def test_update_and_publish_a_draft
+      sample_article = get_article_with_draft
       paragraph = Faker::Lorem.paragraph
       params_hash  = { title: 'new title', description: paragraph, status: 2, type: 2, agent_id: @agent.id }
       put :update, construct_params({ id: sample_article.parent_id }, params_hash)

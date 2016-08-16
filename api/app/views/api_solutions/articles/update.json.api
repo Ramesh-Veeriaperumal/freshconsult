@@ -1,11 +1,6 @@
 parent = @meta
-JSON.generate({
+response_hash = {
   id: parent.id,
-  title: @item.title,
-  description: @item.description,
-  description_text: @item.desc_un_html,
-  status: @item.status,
-  agent_id: @item.user_id,
   type: parent.art_type,
   category_id: parent.solution_category_meta.id,
   folder_id: parent.solution_folder_meta.id,
@@ -13,7 +8,30 @@ JSON.generate({
   thumbs_down: parent.thumbs_down,
   hits: parent.hits,
   tags: @item.tags,
-  seo_data: @item.seo_data,
-  created_at: @item.created_at,
-  updated_at: @item.updated_at
-})
+  seo_data: @item.seo_data
+}
+
+draft = @item.draft
+if draft
+  response_hash.merge!({
+    title: draft.title,
+    description: draft.description,
+    description_text: @item.un_html(draft.description),
+    status: draft.status,
+    agent_id: draft.user_id,
+    created_at: draft.created_at,
+    updated_at: draft.updated_at
+  })
+else
+  response_hash.merge!({
+    title: @item.title,
+    description: @item.description,
+    description_text: @item.desc_un_html,
+    status: @item.status,
+    agent_id: @item.user_id,
+    created_at: @item.created_at,
+    updated_at: @item.updated_at
+  })
+end
+
+JSON.generate(response_hash)
