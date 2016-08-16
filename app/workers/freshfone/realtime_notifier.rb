@@ -98,7 +98,7 @@ module Freshfone
           notification_type: "cancelled",
           call_sid: current_call.call_sid,
           call_id: current_call.id,
-          agents: warm_transfer_agent || pinged_agents,
+          agents: pinged_agents,
           account_id: current_account.id,
           enqueued_time: epoch_time
           }
@@ -120,11 +120,6 @@ module Freshfone
 
       def pinged_agents
         current_call.meta.pinged_agents.map {|agent| agent[:id]}.compact
-      end
-
-      def warm_transfer_agent
-        return if self.params['warm_transfer_user_id'].blank?
-        [self.params['warm_transfer_user_id']]
       end
 
       def epoch_time

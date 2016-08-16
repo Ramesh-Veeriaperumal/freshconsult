@@ -67,8 +67,8 @@ module Freshfone
     def cancel
       active_warm_transfer_call = current_call.supervisor_controls
                                               .warm_transfer_initiated_calls.last
-      update_canceled_warm_transfer(active_warm_transfer_call)
       notifier.cancel_warm_transfer(active_warm_transfer_call, current_call)
+      update_canceled_warm_transfer(active_warm_transfer_call)
       telephony(current_call).initiate_transfer_fall_back
       notifier.notify_warm_transfer_status(current_call, :warm_transfer_cancel, params[:CallStatus])
       render json: { status: :unhold_initiated }

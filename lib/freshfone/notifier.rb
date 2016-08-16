@@ -184,19 +184,12 @@ class Freshfone::Notifier
 
   def cancel_warm_transfer(warm_transfer_call, call)
     Rails.logger.info "cancel_warm_transfer => #{warm_transfer_call.id}"
-    return new_notifications_cancel_warm_transfer(warm_transfer_call, call) if new_notifications?
+    return jid = Freshfone::RealtimeNotifier.perform_async(params.merge(enqueued_at: Time.now), call.id, nil, "cancel_other_agents") if new_notifications?
     params.merge!({ warm_transfer_call_sid: warm_transfer_call.sid,
                     call_id: call.id})
     Freshfone::NotificationWorker.perform_async(params, nil, 'cancel_warm_transfer')
   end
 
-  def new_notifications_cancel_warm_transfer(warm_transfer_call, call)
-    jid = Freshfone::RealtimeNotifier.perform_async(
-      params.merge(enqueued_at: Time.now, warm_transfer_user_id: warm_transfer_call.supervisor_id),
-                   call.id, nil, "cancel_other_agents")
-     Rails.logger.info "Account ID: #{current_account.id}, Call ID: #{call.id}, warm transfer ID : #{warm_transfer_call.id}, 
-                        cancel agent: #{warm_transfer_call.supervisor_id}, Sidekiq Job ID: #{jid}"
-  end
 
   def complete_other_agents(current_call)
     Rails.logger.info "complete_other_agents => #{current_call.meta.pinged_agents.to_json}"

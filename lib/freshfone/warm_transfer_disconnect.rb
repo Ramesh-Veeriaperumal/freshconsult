@@ -60,14 +60,9 @@ module Freshfone
 
     def disconnect_warm_transfer(call)
       return unless split_client_id(params[:From]).blank? && call.present?
-      disconnect_call(call)
+      current_account.freshfone_subaccount.calls.get(call.sid).update(status: :completed)
       call.update_details(
         status: Freshfone::SupervisorControl::CALL_STATUS_HASH[:completed])
-    end
-
-    def disconnect_call(warm_transfer_call)
-      return notifier.cancel_warm_transfer(warm_transfer_call, current_call) if new_notifications? && warm_transfer_call.default?
-      current_account.freshfone_subaccount.calls.get(warm_transfer_call.sid).update(status: :completed)
     end
 
     def update_participant_cost

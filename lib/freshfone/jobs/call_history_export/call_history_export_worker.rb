@@ -97,9 +97,10 @@ module Freshfone::Jobs
         def with_warm_transfer_hash activerecord_relation
           count = 0
           activerecord_relation.map { |phone_call|
-            next if phone_call.meta.present? && phone_call.meta.warm_transfer_revert?
-            count += 1
-            field_hash.call(phone_call, count)
+              unless phone_call.meta.warm_transfer_revert?
+                count += 1
+                field_hash.call(phone_call, count) 
+              end
           }
         end
 
