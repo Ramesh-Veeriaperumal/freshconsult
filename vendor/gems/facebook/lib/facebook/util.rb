@@ -93,7 +93,6 @@ module Facebook
     def html_content_from_message(message)
       message = HashWithIndifferentAccess.new(message)
       html_content =  CGI.escapeHTML(message[:message]) if message[:message]
-
       if message[:attachments]
         if message[:attachments][:data]
           html_content =  "<div class=\"facebook_post\"><p> #{html_content}</p><p>"
@@ -101,6 +100,18 @@ module Facebook
             if attachment[:image_data] && attachment[:image_data][:preview_url] && attachment[:image_data][:url]
               html_content = "#{html_content} <a href=\"#{attachment[:image_data][:url]}\" target=\"_blank\">
                                   <img src=\"#{attachment[:image_data][:preview_url]}\"></a>"
+            elsif attachment[:file_url] && attachment[:name] ### for file attachments
+              html_content = "#{html_content} <a href=\"#{attachment[:file_url]}\" target=\"_blank\"> #{attachment[:name]}</a>"
+            end
+          end
+          html_content = "#{html_content} </p></div>"
+        end
+      elsif message[:shares] #### for stickers 
+        if message[:shares][:data]
+          html_content =  "<div class=\"facebook_post\"><p> #{html_content}</p><p>"
+          message[:shares][:data].each do |share|
+            if share[:link]
+              html_content = "#{html_content} <a href=\"#{share[:link]}\" target=\"_blank\"> #{share[:link]} </a>"
             end
           end
           html_content = "#{html_content} </p></div>"

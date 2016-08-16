@@ -2885,6 +2885,7 @@ ActiveRecord::Schema.define(:version => 20160802094502) do
     t.text     "last_error"
     t.boolean  "realtime_subscription",              :default => false,             :null => false
     t.string   "page_token_tab"
+    t.boolean  "realtime_messaging",                 :default => false,             :null => false
   end
 
   add_index "social_facebook_pages", ["account_id", "page_id"], :name => "index_pages_on_account_id"

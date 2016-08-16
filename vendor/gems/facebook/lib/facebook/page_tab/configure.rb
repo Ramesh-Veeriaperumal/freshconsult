@@ -23,6 +23,8 @@ module Facebook
       
       include Facebook::Constants
 
+      include Facebook::Constants
+
       attr_accessor :page_token, :app_id, :graph
 
       def initialize(page,app_id)
@@ -67,6 +69,7 @@ module Facebook
       end
       
       #Subscribe for realtime updates from the app
+
       def subscribe_realtime
         data = {"access_token" => @page_token}
         RestClient.post "#{FACEBOOK_GRAPH_URL}/#{GRAPH_API_VERSION}/me/subscribed_apps", data.to_json, :content_type => :json, :accept => :json

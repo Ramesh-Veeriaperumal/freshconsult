@@ -27,11 +27,9 @@ module Sqs
       entry_changes.each do |entry_change|
         fb_feed = Facebook::Core::Feed.new(page_id, entry_change)
         next if fb_feed.realtime_feed["value"].blank?
-        
-        valid_account, valid_page = fb_feed.account_and_page_validity
 
+        valid_account, valid_page = fb_feed.account_and_page_validity
         next unless valid_account
-          
         if valid_page 
           fb_feed.process_feed(raw_obj)
         else
@@ -45,7 +43,13 @@ module Sqs
     #Push Realtime Facebook Feed back to SQS from Dynamo on re-authorization
     def push(feeds, discard_feed)
       feeds.each do |data|
-        $sqs_facebook.send_message(data["feed"][:s]) unless discard_feed
+        unless discard_feed
+          if data["feed"] && data["feed"][:s]
+            $sqs_facebook.send_message(data["feed"][:s])
+          elsif data["message"] && data["message"][:s]
+            $sqs_facebook_messages.send_message(data["message"][:s])
+          end
+        end
         delete_facebook_feed(data)
       end
     end
@@ -56,7 +60,11 @@ module Sqs
       return false if msg["counter"] > FB_REQUEUE_COUNTER  #removing from the queue after 15 mins
       
       options[:delay_seconds] = msg["counter"] * FB_DELAY_SECONDS
-      $sqs_facebook.send_message(msg.to_json, options)
+      if msg["entry"] && msg["entry"]["changes"].kind_of?(Array)
+        $sqs_facebook.send_message(msg.to_json, options)
+      elsif msg["entry"] && msg["entry"]["messaging"].kind_of?(Array)
+        $sqs_facebook_messages.send_message(msg.to_json, options)
+      end
     end
     
   end

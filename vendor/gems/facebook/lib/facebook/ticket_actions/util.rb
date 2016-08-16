@@ -64,7 +64,7 @@ module Facebook
         sandbox {
           @fan_page  = fan_page
           rest       = Koala::Facebook::API.new(fan_page.page_token)
-          msg_type == POST_TYPE[:message] ? send_dm(rest, parent, note) : send_comment(rest, parent, note)
+          msg_type == POST_TYPE[:message] ? send_dm(rest, parent, note, fan_page) : send_comment(rest, parent, note)
         }
       end
 
@@ -90,10 +90,35 @@ module Facebook
       end
       
       #reply to a message in fb
-      def send_dm(rest, ticket, note)
+      def send_dm(rest, ticket, note, fan_page)
         thread_id  = ticket.fb_post.thread_id
-        message    = rest.put_object(thread_id, 'messages', :message => note.body)
-        message.symbolize_keys!
+        if thread_id.include? MESSAGE_THREAD_ID_DELIMITER
+          page_scoped_user_id = thread_id.split(MESSAGE_THREAD_ID_DELIMITER)[1]
+          page_token = fan_page.page_token
+          message = nil
+          begin
+            data = {:message => {:text => note.body}, :recipient => {:id => page_scoped_user_id}}
+            message = RestClient.post "#{FACEBOOK_GRAPH_URL}/#{GRAPH_API_VERSION}/me/messages?access_token=#{page_token}", data.to_json, :content_type => :json, :accept => :json
+            message = JSON.parse(message)
+            message["id"] = "#{FB_MESSAGE_PREFIX}#{message["message_id"]}"
+            message.symbolize_keys!
+          rescue StandardError => ex
+            message = nil
+            http_status = ex.try(:http_code)
+            ex_response = ex.try(:response)
+            if http_status && ex_response
+              if valid_json?(ex_response)
+                ex_response = JSON.parse(ex_response)
+                raise Koala::Facebook::APIError.new(http_status, ex.response) if ex_response['error'] && ex_response['error']['code']
+              end
+            end
+            Rails.logger.error ex.message
+            return false
+          end
+        else
+          message    = rest.put_object(thread_id, 'messages', :message => note.body)
+          message.symbolize_keys!
+        end
 
         #Create fb_post for this note
         unless message.blank?
@@ -104,6 +129,17 @@ module Facebook
             :thread_id          => ticket.fb_post.thread_id,
             :msg_type           => 'dm'
           })
+        end
+      end
+
+      private
+
+      def valid_json?(json)
+        begin
+          JSON.parse(json)
+          return true
+        rescue JSON::ParserError => e
+          return false
         end
       end
     
