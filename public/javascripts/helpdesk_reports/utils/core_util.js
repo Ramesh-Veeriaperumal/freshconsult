@@ -384,7 +384,15 @@ HelpdeskReports.CoreUtil = {
         });
         jQuery('#reports_wrapper').on('click.helpdesk_reports', '[data-action="pop-report-type-menu"]', function (event) {
             event.stopImmediatePropagation();
-            _this.actions.toggleReportTypeMenu();
+            var target_id = event.target.id;
+            var show_menu = true;
+            
+            if(target_id == 'last-updated' || jQuery(event.target).parents('#last-updated').length == 1 ) {
+                show_menu = false;
+            } 
+            if(show_menu) {
+                _this.actions.toggleReportTypeMenu();    
+            }
         });
         jQuery('#reports_wrapper').on('click.helpdesk_reports', function () {
             _this.actions.hideReportTypeMenu();

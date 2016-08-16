@@ -377,10 +377,10 @@ HelpdeskReports.SavedReportUtil = (function() {
             var hash = HelpdeskReports.locals.report_filter_data;;
             if(hash.length == 0 || ( hash.length == 1 && _this.default_report_is_scheduled)){
             	jQuery('.report-title-block #report-title').css('cursor','auto');
-            	jQuery('.title-dropdown').hide();
+            	jQuery('.title-dropdown').css('display', 'none');
             } else {
             	jQuery('.report-title-block #report-title').css('cursor','pointer'); 
-            	jQuery('.title-dropdown').show();
+            	jQuery('.title-dropdown').css('display', 'inline-block');
             }
 	    },
 	    setActiveSavedReport : function(el){
