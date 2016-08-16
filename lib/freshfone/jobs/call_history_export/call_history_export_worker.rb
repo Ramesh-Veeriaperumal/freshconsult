@@ -97,10 +97,9 @@ module Freshfone::Jobs
         def with_warm_transfer_hash activerecord_relation
           count = 0
           activerecord_relation.map { |phone_call|
-              unless phone_call.meta.warm_transfer_revert?
-                count += 1
-                field_hash.call(phone_call, count) 
-              end
+            next if phone_call.meta.present? && phone_call.meta.warm_transfer_revert?
+            count += 1
+            field_hash.call(phone_call, count)
           }
         end
 
@@ -141,7 +140,7 @@ module Freshfone::Jobs
           @records ||= []
           @calls_hash.each do |phone_call|
             values = phone_call.values
-            @records << values.map { |record| escape_html(record) } if phone_call.values?
+            @records << values.map { |record| escape_html(record) } if values.present?
           end
           path =  "#{Rails.root}/app/views/support/tickets/export_csv.xls.erb"
           ERB.new(File.read(path)).result(binding)
