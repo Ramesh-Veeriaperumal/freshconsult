@@ -3,6 +3,7 @@
 	var custom_fields = HelpdeskReports.locals.custom_fields_group_by;
 	var title_name = HelpdeskReports.Constants.Glance.metrics[metric].title;
 	var constants = HelpdeskReports.Constants.Glance;
+
 %>
 
 <% if (metric == "UNRESOLVED_TICKETS" && data == "status" && historic_status) { %>
@@ -45,13 +46,11 @@
 			<span class="rep-title-sub">
 				<%= I18n.t(title_name,{group_by: ''}) %>
 			</span>
-			<select class="select2 dropdown" >
+			<select class="select2 dropdown custom_field_select" >
 				<% for (j=0; j<	custom_fields.length; j++) { %>
-			    	<option value="<%=custom_fields[j]%>"> <%= fields_hash[custom_fields[j]] %> </option>
+			    	<option value="<%=custom_fields[j]%>" <%=(data == custom_fields[j]) ? 'selected' : ''%>> <%= fields_hash[custom_fields[j]] %> </option>
 			 	<% } %>
 			</select>
-
-			<% jQuery('#custom_field_group_by select').select2('val', fields_hash[data]) %>
 
 		</div>
 		<div id="<%= data %>_container" class="half-container" data-group="<%= data %>" data-report="glance-container"></div>

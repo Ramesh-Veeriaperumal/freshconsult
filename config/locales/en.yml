@@ -6297,6 +6297,9 @@ en:
       survey_result: "Survey Result"
       product: "Product"
       requester_phone: "Requester Phone"
+      survey_received: "Survey Received Time"
+      comment: "Comment"
+      rating: "Rating"
     call_history:
       info:
         success: We have started exporting your call records. It will be mailed to you once completed.
@@ -8628,6 +8631,9 @@ en:
       ringing_abandon: "Abandon Call (Ringing)"
       ivr_abandon: "Abandon Call (IVR)"
       queue_abandon: "Abandon Call(Queue)"
+    transfer_type:
+      blind: "Blind Transfer"
+      warm: "Warm Transfer"
     general:
       suspended_account_msg: "Your phone channel is currently suspended. Please enable phone to make and receive calls."
       suspended_on_low_balance_msg: "Your phone channel has been suspended due to low balance. Please recharge to activate."
@@ -8671,6 +8677,8 @@ en:
       hold_success: "Now call on hold"
       add_or_transfer_call: "Add or Transfer Call"
       add_agent_to_call: "Add to Call"
+      warm_transfer: 'Warm Transfer'
+      blind_transfer: 'Blind Transfer'
       transfer_call: "Transfer Call"
       dialpad: "Dialpad"
       cancel: "Cancel"
@@ -8746,11 +8754,12 @@ en:
         connected: "Connected"
         no_answer: "Not available"
         busy: "Ignored"
-        end_call: "Call ended"
+        end_call: "disconnected"
         cancel_add_agent: "Cancel"
         in_call: "on call"
+        transfer_via: "via "
       transfer:
-        tranfer_via: "via "
+        transfer_via: "via "
         to: "To: "
         transferring: "Transferring..."
         transfer_canceled: "Ignored"
@@ -8760,9 +8769,17 @@ en:
         group_tranfer_connected: "Connected with customer"
         close: "Close"
         resume: "Resume"
+        resumed: "Resumed"
+        resuming: "Resuming"
         cancel: "Cancel"
         cancelling: "Cancelling..."
         resuming: "Resuming..."
+        transferring_to: "Transferring to"
+        on_call: "on call"
+        connected: "Connected"
+        canceled: "Canceled"
+        add_customer: "Add Customer to Call"
+        end_call: "disconnected"
     call_history:
       title: "Call History"
       sort_by: "Sorted by:"

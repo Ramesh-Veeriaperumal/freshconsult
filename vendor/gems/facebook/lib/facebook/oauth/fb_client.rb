@@ -86,7 +86,8 @@ module Facebook
             :source          => source_string,
             :last_error      => nil,
             :message_since   => (Time.now - 1.week).utc.to_i,
-            :enable_page     => true
+            :enable_page     => true,
+            :realtime_messaging => Account.current.launched?(:fb_msg_realtime) ? 1 : 0
           } unless page[:access_token].blank?
         end
         fb_pages

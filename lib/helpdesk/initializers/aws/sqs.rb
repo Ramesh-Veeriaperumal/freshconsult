@@ -7,7 +7,9 @@ begin
   $sqs_client = AWS::SQS.new.client
   
   $sqs_facebook =  AWS::SQS.new.queues.named(SQS[:facebook_realtime_queue])
-  
+
+  $sqs_facebook_messages = AWS::SQS.new.queues.named(SQS[:fb_message_realtime_queue])
+
   ##################### SQS RELATED TO TWITTER STARTS #########################
   
   #US Polls dircetly from the global queue - No region specific queues

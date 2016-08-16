@@ -15,7 +15,8 @@ class Freshfone::SupervisorControl < ActiveRecord::Base
     [ :monitoring,  'monitoring', 1 ],
     [ :barging,  'barging', 2 ],
     [ :whispering,  'whispering', 3 ],
-    [ :agent_conference, 'agent_conference', 4 ]
+    [ :agent_conference, 'agent_conference', 4 ],
+    [ :warm_transfer, 'warm_transfer', 5]
   ]
   CALL_TYPE_HASH = Hash[*CALL_TYPE.map { |i| [i[0], i[2]] }.flatten]
 
@@ -52,14 +53,32 @@ class Freshfone::SupervisorControl < ActiveRecord::Base
       supervisor_id: user_id)
   }
 
+  scope :warm_transfer_calls, where(supervisor_control_type: CALL_TYPE_HASH[:warm_transfer])
+
+  scope :completed_calls, where(supervisor_control_status: CALL_STATUS_HASH[:completed])
+
+  scope :initiated_or_inprogress_calls, where(
+    supervisor_control_status: [CALL_STATUS_HASH[:default],
+                                CALL_STATUS_HASH[:'in-progress']])
+
   CALL_TYPE_HASH.each_pair do |k, v|
     define_method("#{k}?") do
       supervisor_control_type == v
     end
   end
 
-  def completed?
-    supervisor_control_status == CALL_STATUS_HASH[:success]
+  CALL_STATUS_HASH.each_pair do |k, v|
+    define_method("#{k.to_s.gsub(/\W/, '')}?") do
+      supervisor_control_status == v
+    end
+  end
+
+  def self.warm_transfer_initiated_calls
+    self.warm_transfer_calls.where(supervisor_control_status: CALL_STATUS_HASH[:default])
+  end
+
+  def self.inprogress_warm_transfer_calls
+    self.warm_transfer_calls.where(supervisor_control_status: CALL_STATUS_HASH[:'in-progress'])
   end
 
   def update_details(params)
@@ -74,12 +93,24 @@ class Freshfone::SupervisorControl < ActiveRecord::Base
     save
   end
 
+  def update_duration_and_status(status)
+    self.supervisor_control_status = CALL_STATUS_HASH[status.to_sym]
+    self.duration = (Time.now.utc - updated_at).to_i
+    save
+  end
+
   def register_supervisor_in_redis
     register_supervisor_leg account_id, supervisor_id, sid, call_id
   end
 
   def remove_supervisor_in_redis
     remove_supervisor_leg account_id, supervisor_id, sid
+  end
+
+  def update_inprogress_status(sid)
+    self.sid = sid
+    self.supervisor_control_status = CALL_STATUS_HASH[:'in-progress']
+    save
   end
 
 end

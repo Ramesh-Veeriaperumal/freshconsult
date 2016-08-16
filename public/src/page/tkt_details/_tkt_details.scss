@@ -1964,14 +1964,13 @@ li {
     }
     .tag {
         @include float(right);
-        background: #aaa;
-        color: #FFF;
-        border: solid 1px #FFF;
+        color: #888888;
+        border: solid 1px #888888;
         max-width: 150px;
         display: block;
-        @include border-radius(5px);
+        @include border-radius(6px);
         font-size: 12px;
-        padding: 1px 15px 3px;
+        padding: 0 15px 2px;
         font-weight: 500;
         text-overflow: ellipsis;
         height: 18px;
@@ -3164,6 +3163,11 @@ li {
             }
         }
     }
+    .system_activity_toggle.active{
+        color:#fff;
+        background-color: #666666;
+        @include text-shadow(none);
+    }
     .activity_toggle {
         @include float(right);
         padding: 2px 2px 2px 4px;
@@ -3207,7 +3211,7 @@ li {
          }
         .text {
             @include float(left);
-            @include margin(3px 10px 0 3px);
+            @include margin(2px 10px 3px 3px);
         }
     }
     .pagination-link {

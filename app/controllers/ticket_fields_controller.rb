@@ -3,7 +3,7 @@ class TicketFieldsController < CustomFieldsController
   include TicketFieldsHelper
 
   def index
-    @ticket_fields = current_portal.ticket_fields
+    @ticket_fields = current_portal.ticket_fields_including_nested_fields
     @section_data = current_account.sections
 
     respond_to do |format|
@@ -21,11 +21,21 @@ class TicketFieldsController < CustomFieldsController
       nested_field.delete(:type)
       nested_field.delete(:position)
       nested_ticket_field = ticket_field.nested_ticket_fields.find(nested_field.delete(:id))
-      @invalid_fields.push(ticket_field) and return unless nested_ticket_field.update_attributes(nested_field)
+      return @invalid_fields.push(ticket_field) unless nested_ticket_field.update_attributes(nested_field)
+      # Currently updating by comparing the name of the nested_ticket_field
+      # This should be changed once 'id' is populated for the child_levels in the UI
+      child_level = ticket_field.child_levels.find_by_name(nested_ticket_field.name)
+      child_level.update_attributes(nested_field) if child_level
     end
 
     def delete_nested_field(ticket_field,nested_field)
       nested_ticket_field = ticket_field.nested_ticket_fields.find(nested_field[:id])
-      nested_ticket_field.destroy if nested_ticket_field
+      if nested_ticket_field
+        nested_ticket_field.destroy
+        # Currently destorying by comparing the name of the nested_ticket_field
+        # This should be changed once 'id' is populated for the child_levels in the UI
+        child_level = ticket_field.child_levels.find_by_name(nested_ticket_field.name)
+        child_level.try(:destroy)
+      end
     end
 end

@@ -26,6 +26,10 @@ class Freshfone::Telephony #Wrapper for all telephony provider related actions
     telephony(conf_params).initiate_conference
   end
 
+  def initiate_conference(options)
+    telephony(conference_params(options)).initiate_conference
+  end
+
   def join_conference(conf_params={})
     conf_params[:room] = room_name(conf_params[:sid], conf_params[:incoming_wait])
     telephony(conf_params).initiate_conference
@@ -73,6 +77,8 @@ class Freshfone::Telephony #Wrapper for all telephony provider related actions
   end
 
   def hold_enqueue
+    return telephony.add_to_hold_queue(params[:hold_queue], warm_transfer_wait_url,
+                  warm_transfer_quit_url) if params[:transfer_type] == 'warm_transfer'
     telephony.add_to_hold_queue(params[:hold_queue], hold_wait_url, hold_quit_url)
   end
 
@@ -154,21 +160,20 @@ class Freshfone::Telephony #Wrapper for all telephony provider related actions
     telephony.redirect_call(customer_sid, initiate_hold_url(customer_sid, transfer_options), current_account)
   end
 
-  def initiate_unhold
-    hold_queue = current_call.hold_queue    
-    customer_leg = outgoing_transfer?(current_call) ? current_call.root.customer_sid : current_call.customer_sid
-    telephony.dequeue(hold_queue, customer_leg, unhold_url(current_call.id), current_account)
+  def initiate_unhold 
+    customer_leg = outgoing_or_warm_transfer?(current_call) ? current_call.root.customer_sid : current_call.customer_sid
+    telephony.dequeue(current_call.hold_queue, customer_leg,  unhold_url(current_call.id), current_account)
   end
 
   def initiate_transfer_on_unhold #Can be merged with intiate_unhold action
     params[:child_sid] = params[:CallSid] || current_call.children.last.dial_call_sid
-    hold_queue = current_call.hold_queue
-    customer_leg = outgoing_transfer?(current_call) ? current_call.root.customer_sid : current_call.customer_sid
+    hold_queue = current_call.hold_queue || current_call.parent.hold_queue
+    customer_leg = outgoing_or_warm_transfer?(current_call) ? current_call.root.customer_sid : current_call.customer_sid
     telephony.dequeue(hold_queue, customer_leg, transfer_on_unhold_url(current_call.id), current_account) 
   end
 
   def initiate_transfer_fall_back
-    hold_queue = current_call.hold_queue
+    hold_queue = current_call.hold_queue || current_call.parent.hold_queue
     customer_leg = current_call.hold_leg_sid
     telephony.dequeue(hold_queue, customer_leg, transfer_fall_back_url(current_call.id), current_account)
   end
@@ -205,12 +210,12 @@ class Freshfone::Telephony #Wrapper for all telephony provider related actions
   end
 
   private
-    def conference_params(options, actor)
-      options.merge!(default_moderation_params(actor)).merge!(options[:moderation_params] || {})
+    def conference_params(options, actor = nil)
+      options.merge!(default_moderation_params(actor)).merge!(options[:moderation_params] || {}) if actor.present?
       options[:room] = room_name(options[:sid], options[:incoming_wait])
       options[:timeLimit] ||= time_limit
       options[:recording_callback_url] = recording_call_back_url
-      options[:record] = current_number.record? ? "record-from-start" : "do-not-record"
+      options[:record] ||= current_number.record? ? 'record-from-start' : 'do-not-record'
       options
     end
 
@@ -240,13 +245,17 @@ class Freshfone::Telephony #Wrapper for all telephony provider related actions
 
     def prepare_transfer_options(transfer_options) #For hold
       params = "&call=#{transfer_options[:call]}"
-      params << "&transfer=true&source=#{transfer_options[:source]}&target=#{transfer_options[:target]}&transfer_type=#{transfer_options[:transfer_type]}&group_transfer=#{transfer_options[:group_transfer]}#{external_transfer_params(transfer_options)}" if  transfer_options[:source].present?
+      params << "&transfer=true&source=#{transfer_options[:source]}&target=#{transfer_options[:target]}&transfer_type=#{transfer_options[:transfer_type]}&group_transfer=#{transfer_options[:group_transfer]}#{external_transfer_params(transfer_options)}#{warm_transfer_params(transfer_options)}" if  transfer_options[:source].present?
       params
     end
 
     def external_transfer_params(transfer_options)
       return if transfer_options[:external_number].blank?
       "&external_transfer=true"
+    end
+
+    def warm_transfer_params(transfer_options)
+      "&warm_transfer_call_id=#{transfer_options[:warm_transfer_call_id]}" if transfer_options[:transfer_type] == 'warm_transfer'
     end
 
     def telephony(params={})

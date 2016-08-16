@@ -1,9 +1,6 @@
 class Helpdesk::NestedTicketField < ActiveRecord::Base
   self.primary_key = :id
 
-  # add for multiform phase 1 migration
-  include Helpdesk::Ticketfields::TicketFormFields
-
   self.table_name =  "helpdesk_nested_ticket_fields"
   attr_protected  :account_id
 
@@ -16,13 +13,6 @@ class Helpdesk::NestedTicketField < ActiveRecord::Base
   validates_uniqueness_of :name, :scope => :account_id
     
   before_create :populate_label
-
-  #https://github.com/rails/rails/issues/988#issuecomment-31621550
-  # Phase1:- multiform , will be removed once migration is done.
-  after_commit ->(obj) { obj.save_form_field_mapping }, on: :create
-  after_commit ->(obj) { obj.save_form_field_mapping }, on: :update
-  after_commit :remove_form_field_mapping, on: :destroy
-  #Phase1:- end
 
   def dom_type
   	"dropdown_blank"
@@ -49,14 +39,4 @@ class Helpdesk::NestedTicketField < ActiveRecord::Base
   	self.label = name.titleize if label.blank?
   	self.label_in_portal = label if label_in_portal.blank?
   end
-
-  protected
-
-    def save_form_field_mapping
-      save_form_nested_field(self)
-    end
-
-    def remove_form_field_mapping
-      remove_form_nested_field(self)
-    end
 end

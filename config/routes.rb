@@ -428,6 +428,23 @@ Helpkit::Application.routes.draw do
       end
     end
 
+    resources :warm_transfer do
+      collection do
+        post :initiate
+        post :success
+        post :status
+        post :redirect_source_agent
+        post :redirect_customer
+        post :join_agent
+        post :transfer_agent_wait
+        post :unhold
+        post :wait
+        post :quit
+        post :cancel
+        post :resume
+      end
+    end
+
     resources :agent_conference do
       collection do
         post :add_agent
@@ -1416,6 +1433,7 @@ Helpkit::Application.routes.draw do
   match '/reports/custom_survey/save_reports_filter' =>  'reports/custom_survey_reports#save_reports_filter', :as => :custom_survey_save_reports_filter
   match '/reports/custom_survey/update_reports_filter' =>  'reports/custom_survey_reports#update_reports_filter', :as => :custom_survey_update_reports_filter
   match '/reports/custom_survey/delete_reports_filter' =>  'reports/custom_survey_reports#delete_reports_filter', :as => :custom_survey_delete_reports_filter
+  match '/reports/custom_survey/export_csv' => 'reports/custom_survey_reports#export_csv'
 
   # BEGIN Routes for new reports **/report/v2**
   match "/reports/v2/:report_type/fetch_metrics",      :controller => 'reports/v2/tickets/reports', :action => 'fetch_metrics', :method => :post

@@ -80,6 +80,8 @@ var FreshfoneUserInfo;
 								self.fillTransferAgent(data.call_meta.transfer_agent);
 							}else if (data.call_meta.agent_conference) {
 								self.fillAddAgent(data.call_meta.agent_conference);
+							}else if (data.call_meta.warm_transfer) {
+								self.fillWarmTransfer(data.call_meta.warm_transfer);
 							}else{
 								freshfonecalls.setIsIncomingTransfer(false);
 							}
@@ -178,6 +180,10 @@ var FreshfoneUserInfo;
 			var template = $("#freshfone-add-agent-notifier").clone();
 			this.requestObject.$userInfoContainer.find('.call-meta-notifier').html(template.tmpl(params));
 		},
+		fillWarmTransfer: function(params) {
+			var template = $("#freshfone-warm-transfer-notifier").clone();
+			this.requestObject.$userInfoContainer.find('.call-meta-notifier').html(template.tmpl(params));
+		},
 		userContactHover: function () {
 			var template = "<span><div class='infoblock'><div class='preview_pic' size_type='thumb'></div><div class='user_name ${strangeNumber}'>${number}</div></div></span>",
 				$div = $("<div />")
@@ -202,6 +208,10 @@ var FreshfoneUserInfo;
 		agentConferenceInfo: function() {
 			var temp = $("#add-agent-info-template").clone();
 			$('.add-agent-info').html(temp.tmpl(freshfonecalls.agentConferenceParams));
+		},
+		warmTransferInfo: function() {
+			var template = $("#transfer-context-template").clone();
+			$('.transfer-info').html(template.tmpl(freshfonecalls.warmTransfer.params));
 		}
 	};
 }(jQuery));

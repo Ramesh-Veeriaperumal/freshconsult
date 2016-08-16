@@ -66,6 +66,7 @@ module HelpdeskReports::Helper::ControllerMethods
   end
 
   def save_report(report_filter)
+    report_filter.data_hash['active_custom_field'] = params[:active_custom_field] if params[:active_custom_field]
     if(report_filter.save)
       @data_map[:schedule_config] = {enabled: false}
       status = 200

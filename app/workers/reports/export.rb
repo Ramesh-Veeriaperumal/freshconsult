@@ -5,7 +5,7 @@ class Reports::Export < BaseWorker
 
   def perform params
     begin
-      old_report = [:timesheet_reports, :chat_summary, :phone_summary]
+      old_report = [:timesheet_reports, :chat_summary, :phone_summary, :satisfaction_survey]
       class_name = old_report.include?(params['report_type'].to_sym) ? params['report_type'].camelcase : 'Report'
       Sharding.run_on_slave do
         "HelpdeskReports::Export::#{class_name}".constantize.new(params).perform
