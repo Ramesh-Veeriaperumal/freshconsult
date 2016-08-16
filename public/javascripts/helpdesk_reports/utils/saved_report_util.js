@@ -401,6 +401,8 @@ HelpdeskReports.SavedReportUtil = (function() {
 
 	        if(index != -1) {
 	            var filter_hash = hash[index].report_filter;
+	            HelpdeskReports.locals.active_custom_field = filter_hash.data_hash.active_custom_field;
+	            HelpdeskReports.locals.default_custom_field = filter_hash.data_hash.active_custom_field;
 	            id = filter_hash.id;
 	            var date_hash = filter_hash.data_hash.date;
 	            var daterange;
@@ -761,6 +763,7 @@ HelpdeskReports.SavedReportUtil = (function() {
 	     * This function will clear the all the filters and re apply the filters of selected saved report
 	     */
 	    discardChangesMadeToFilter : function() { 
+	    	HelpdeskReports.locals.active_custom_field = HelpdeskReports.locals.default_custom_field;
 	        this.applySavedReport(this.last_applied_saved_report_index,true);
 	        this.controls.hideSaveOptions(); 
 	    },

@@ -260,19 +260,7 @@ HelpdeskReports.CoreUtil = {
         var current_group = this.setDefaultGroupByOptions(HelpdeskReports.locals.active_metric);
         
         if (locals.custom_fields_group_by.length) {
-            if(HelpdeskReports.locals.report_type == 'glance' && localStorage.getItem('glance') != '-1'){
-                var rf = _.find(HelpdeskReports.locals.report_filter_data, function(rfd){ return rfd.report_filter.id == parseInt(localStorage.getItem('glance'))})
-                var active_cf;
-                if(rf != null && (active_cf = rf.report_filter.data_hash.active_custom_field)){
-                    current_group.push(active_cf);
-                    HelpdeskReports.locals.active_custom_field = active_cf;
-                }
-                else
-                    current_group.push(locals.custom_fields_group_by[0]);
-            }
-            else{
-                current_group.push(locals.custom_fields_group_by[0]);
-            }
+            current_group.push(HelpdeskReports.locals.active_custom_field);
         }
         locals.current_group_by = current_group;
     },
