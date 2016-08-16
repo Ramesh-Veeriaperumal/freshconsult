@@ -43,7 +43,8 @@ module Reports::CustomSurveyReport
     csv_string = CSVBridge.generate do |csv|
       csv << csv_headers
       @survey_results.each do |survey_result|
-        csv << csv_row(survey_result)
+        csv_row_arr = csv_row(survey_result).compact
+        csv << csv_row_arr
       end
       csv << t('helpdesk_reports.export_exceeds_row_limit_msg', :row_max_limit => csv_row_limit) if exceeds_limit
     end
@@ -78,20 +79,32 @@ module Reports::CustomSurveyReport
 
     def csv_cell survey_result, method_chain
       if method_chain.first == :rating_text_for_custom_questions
-        rating_text_for_custom_questions survey_result, method_chain.second, method_chain.last
+
+        index = method_chain.second
+        question = survey_result.survey.survey_questions[index]
+        return nil if question.nil?
+
+        rating_text_for_custom_questions survey_result, question, method_chain.last
       else
-        method_chain.inject(survey_result) do |evaluate_on, method_name|
+        result = method_chain.inject(survey_result) do |evaluate_on, method_name|
           evaluate_on.try(method_name)
         end
+        result = result.strftime("%F %T") if result.is_a?(Time)
+        return '' if result.nil?
+        result
       end
     end
 
-    def rating_text_for_custom_questions survey_result, index, question_column
+    def rating_text_for_custom_questions survey_result, question, question_column
       return '' if survey_result.survey_result_data.nil?
       survey_answer = survey_result.survey_result_data.send(question_column)
-      (survey_result.survey.survey_questions[index].try(:custom_field_choices) || []).find do |choice|
+
+      face_value = (question.custom_field_choices || []).find do |choice|
         choice.face_value == survey_answer
       end.value
+
+      return '' if face_value.nil?
+      face_value
     end
 
     def survey_id
