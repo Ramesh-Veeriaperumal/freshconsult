@@ -490,7 +490,9 @@ HelpdeskReports.SavedReportUtil = (function() {
 	        	var default_date_range = _FD.core.convertDateDiffToDate(29);
 	        	jQuery('#date_range').val(default_date_range);
 	        	HelpdeskReports.locals.presetRangesSelected = true;
-              	HelpdeskReports.locals.presetRangesPeriod = 'last_30';
+                HelpdeskReports.locals.presetRangesPeriod = 'last_30';
+                HelpdeskReports.locals.active_custom_field = _.keys(HelpdeskReports.locals.custom_field_hash).first();
+                HelpdeskReports.locals.default_custom_field = HelpdeskReports.locals.active_custom_field;
 	        }
 
 	        _FD.setActiveSavedReport(jQuery(".reports-menu li a[data-index=" + index +"]"));
