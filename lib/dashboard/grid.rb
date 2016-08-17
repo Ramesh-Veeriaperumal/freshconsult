@@ -11,6 +11,7 @@ class Dashboard::Grid
       _widget = Dashboard::Widget.new(widget[1], widget[2], widget[3])
       @widgets.push calculate_position(_widget)
     end
+    calculateActivityHeight
     @widgets
   end
 
@@ -40,6 +41,13 @@ class Dashboard::Grid
       widget.increment_y_by(1)
     end
     widget
+  end
+
+  def calculateActivityHeight
+    # This sets the height of "recent helpdesk activities"
+    # according to the widgets available
+    activityHeight = @widgets.length > 4 ? @widgets.length - 1 : 3    
+    @widgets[0].height = activityHeight
   end
 
 end
