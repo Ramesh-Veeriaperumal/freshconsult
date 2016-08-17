@@ -1674,7 +1674,7 @@ en:
         help_title_2a: Events
         help_info_2a: An event may refer to any user-driven change that will trigger a specific Observer rule.
         help_title_2b: Event Performers
-        help_info_2b: Specifies which user's changes should trigger the rule. You can choose between the agent, the requestor (or someone outside your support team in the ticket loop), or both.
+        help_info_2b: Specifies which user's changes should trigger the rule. You can choose between the agent, the requester (or someone outside your support team in the ticket loop), or both.
         help_title_2c: Ticket conditions
         help_info_2c: You can optionally filter the rule to apply to only certain tickets.
         help_title_2d: Actions
@@ -4801,7 +4801,7 @@ en:
     page_not_found: "This template could not be found."
     helpcard:
       info2: "<a target=\"_blank\" href=\"https://support.freshdesk.com/solution/categories/45922/folders/74513/articles/170407-configuring-dynamic-email-notifications\"> Click here </a>to learn more"
-      info3: "You can configure Freshdesk to send out automatic email notifications to agents and the requestor when specific events occur. These notifications can be customized and dynamic content can be added using placeholders. For example, you can notify customers when agents add comments or public notes to their tickets with a customized email with a link to the ticket.<br/><br/>If your plan supports multi-language, you will be able to add notification languages and customize the templates for each language. The <i class=\"common-icon-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
+      info3: "You can configure Freshdesk to send out automatic email notifications to agents and the requester when specific events occur. These notifications can be customized and dynamic content can be added using placeholders. For example, you can notify customers when agents add comments or public notes to their tickets with a customized email with a link to the ticket.<br/><br/>If your plan supports multi-language, you will be able to add notification languages and customize the templates for each language. The <i class=\"common-icon-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
       agent_template_10:
         topic: "User Activation Email"
         info1: "The User Activation Email is sent when a new agent is added in your helpdesk. The activation email must necessarily contain the “Agent Activation URL” {{activation_url}} for agents to create their password and complete the signup process.<br /><br />If you’ve setup multiple supported languages in your helpdesk, you can create an activation email specific to each language. The <i class=\"common-icon-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
@@ -4821,7 +4821,7 @@ en:
         topic: Ticket Unattended in a Group
         info1: "This notification is sent out when a ticket assigned to a group has not been attended within the time specified in the Group settings. This email notification can contain the time lapsed since the ticket got assigned to the group.<br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icon-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
       agent_template_6:
-        topic: Requestor Replies to the Ticket
+        topic: Requester Replies to the Ticket
         info1: "When a customer replies to the ticket he raised previously, the agent handling the ticket will receive this email notification. This email could contain the ticket URL making it easier for the agent to check the ticket.<br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icon-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
       agent_template_12:
         topic: First Response SLA Violation
@@ -4849,25 +4849,25 @@ en:
         info1: "When a new user creates a ticket you can create a customer account in your helpdesk for them and send out an activation email. This notification should contain the activation URL for your customers.<br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icon-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
       requester_template_14:
         topic: Password Reset Email
-        info1: "Password Reset Email will be sent out to your requestors when they request a new password at your helpdesk. The {{password_reset_url}} placeholder is required to provide the dynamically generated password reset link in the email.<br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icon-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
+        info1: "Password Reset Email will be sent out to your requesters when they request a new password at your helpdesk. The {{password_reset_url}} placeholder is required to provide the dynamically generated password reset link in the email.<br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icon-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
       requester_template_1:
         topic: New Ticket Created
-        info1: "A New Ticket Created email is sent to the requestor after they create a ticket in your helpdesk. This email should ideally contain the ticket id and a public URL link to the ticket.<br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icon-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
+        info1: "A New Ticket Created email is sent to the requester after they create a ticket in your helpdesk. This email should ideally contain the ticket id and a public URL link to the ticket.<br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icon-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
       requester_template_4:
         topic: Agent Adds Comment to the Ticket
-        info1: "This email is sent to a requestor whenever an agent adds a comment to the ticket he raised. This email should ideally contain the ticket id and a public URL link to the ticket. The agent comment could also be added in the mail using these placeholders:<br/> {{comment.commenter.name}} - name of the agent who commented<br/>{{comment.body}} - the new comment added to the ticket.<br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icon-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
+        info1: "This email is sent to a requester whenever an agent adds a comment to the ticket he raised. This email should ideally contain the ticket id and a public URL link to the ticket. The agent comment could also be added in the mail using these placeholders:<br/> {{comment.commenter.name}} - name of the agent who commented<br/>{{comment.body}} - the new comment added to the ticket.<br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icon-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
       requester_template_7:
         topic: Agent Solves the Ticket
-        info1: "This email is sent to the requestors to notify them that their ticket has been resolved. This email should ideally contain the ticket id and a public URL link to the ticket. You could also inform the requester that replying to this mail will reopen the ticket.<br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icon-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
+        info1: "This email is sent to the requesters to notify them that their ticket has been resolved. This email should ideally contain the ticket id and a public URL link to the ticket. You could also inform the requester that replying to this mail will reopen the ticket.<br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icon-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
       requester_template_8:
         topic: Agent Closes the Ticket
-        info1: "This email is sent to the requestors to notify them that their ticket has been resolved and closed. This email should ideally contain the ticket id and a public URL link to the ticket. You could also inform the requester that replying to this mail will reopen the ticket.<br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icon-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
+        info1: "This email is sent to the requesters to notify them that their ticket has been resolved and closed. This email should ideally contain the ticket id and a public URL link to the ticket. You could also inform the requester that replying to this mail will reopen the ticket.<br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icon-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
       requester_template_17:
         topic: A new Email id has been added
-        info1: "This email is sent to the requestors asking them to verify a newly added email id to their contact."
+        info1: "This email is sent to the requesters asking them to verify a newly added email id to their contact."
       reply_template_15:
         topic: Agent Reply Template
-        info1: "You can customize and prefill default information you want added in agent ticket replies using the Reply Template. Agent Reply Templates let you add dynamic content like the requestor name, ticket URLs and agent signatures automatically.. <br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icon-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
+        info1: "You can customize and prefill default information you want added in agent ticket replies using the Reply Template. Agent Reply Templates let you add dynamic content like the requester name, ticket URLs and agent signatures automatically.. <br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icon-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
     insert_placeholder: Insert Placeholders
     modify_agent_template: Modify Agent Email Template
     event: Event
@@ -4971,8 +4971,8 @@ en:
     personalized_email_replies_info: If yes, then agents will be allowed to choose their own name as the sender name in ticket replies and outbound emails. Sender email will still remain the support email address (like '%{current_user_name} &lt;%{current_account_domain}&gt;').
     config_saved_message: Your setting is succesfully saved.
     blacklisted_domain_message: The domain you have entered is blocked. Please enter another domain.
-    reply_to_tickets: Use "Reply-to" email address to create requestor contacts
-    reply_to_tickets_info: "Note: If disabled, requestor will be created using 'From' address in email."
+    reply_to_tickets: Use "Reply-to" email address to create requester contacts
+    reply_to_tickets_info: "Note: If disabled, requester will be created using 'From' address in email."
     disable_agent_forward: "For forwarded emails, use original sender as requester"
     disable_agent_forward_info: "When an agent forwards an email from his mailbox to the helpdesk, create the ticket under the original sender. If disabled, the requester is the agent."
     primary_email_delete_alert: "Can't delete primary email"
@@ -5261,7 +5261,7 @@ en:
     executed: " executed "
     performed: " performed "
     system_activity_timestamp: "<strong class='muted'>System</strong> %{system_rule} <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date}) "
-    requestor_info: Requestor Info
+    requestor_info: Requester Info
     view_twitter: View on Twitter
     view_facebook: View on Facebook
     via: via
@@ -6127,13 +6127,13 @@ en:
           title: Canned responses
           tour: Help me use canned responses
           info1: Canned Responses are predefined reply templates which can be used to quickly send out replies to tickets.
-          info2: You can use placeholders in your canned responses to fill in dynamic content like the requestor’s name, ticket ID and URL inside the response.
+          info2: You can use placeholders in your canned responses to fill in dynamic content like the requester’s name, ticket ID and URL inside the response.
       folders:
         helpnote:
           title: Canned responses
           tour: Help me use canned responses
           info1: Canned Responses are predefined reply templates which can be used to quickly send out replies to tickets.
-          info2: You can use placeholders in your canned responses to fill in dynamic content like the requestor’s name, ticket ID and URL inside the response.
+          info2: You can use placeholders in your canned responses to fill in dynamic content like the requester’s name, ticket ID and URL inside the response.
       responses:
         edit:
           title: Edit Canned response
@@ -7184,7 +7184,7 @@ en:
       new_custom_app: "New Custom app"
       edit_custom_app: "Edit Custom app"
       desc: "You can add a custom widget to display any detail using your own custom script."
-      helpnote: "<h4>Custom Apps</h4><p><br/> You can develop your own custom app using HTML, CSS and JavaScript, and bring data from any 3rd party app or database right into your tickets and contacts. <br/><br/> To create a custom app, first give it a name and description. Then enter your code in the ‘Script’ area. You can pass any ticket or requestor field, including the custom fields you have created, as JSONP objects.<br/><br/>You can click <b>‘Show Preview’</b> to view how your widget will look like both in the ticket and contact pages.<br/><br/>Refer to our <a href='http://support.freshdesk.com/solution/categories/4/folders/15/articles/32031-using-freshplugs-to-integrate-third-party-apps'> solutions page </a> to learn more about custom apps."
+      helpnote: "<h4>Custom Apps</h4><p><br/> You can develop your own custom app using HTML, CSS and JavaScript, and bring data from any 3rd party app or database right into your tickets and contacts. <br/><br/> To create a custom app, first give it a name and description. Then enter your code in the ‘Script’ area. You can pass any ticket or requester field, including the custom fields you have created, as JSONP objects.<br/><br/>You can click <b>‘Show Preview’</b> to view how your widget will look like both in the ticket and contact pages.<br/><br/>Refer to our <a href='http://support.freshdesk.com/solution/categories/4/folders/15/articles/32031-using-freshplugs-to-integrate-third-party-apps'> solutions page </a> to learn more about custom apps."
       form:
         widget_title: "Widget Name"
         widget_script: "Widget code snippet"
@@ -7618,9 +7618,9 @@ en:
     helpcard:
       heading: " Email Command Settings"
       tour: Help me understand email commands
-      info1: "When replying to notification emails from your mailbox, you can include \"Email Commands\" to instruct Freshdesk to perform certain actions on a ticket. The Email Command text will be stripped by Freshdesk and will not be seen by the requestor, while the rest of the text will become a part of the conversation."
+      info1: "When replying to notification emails from your mailbox, you can include \"Email Commands\" to instruct Freshdesk to perform certain actions on a ticket. The Email Command text will be stripped by Freshdesk and will not be seen by the requester, while the rest of the text will become a part of the conversation."
       info2: "Email commands must follow the correct syntax and must be placed within the pre-configured delimiter text. For example the command - \"@simonsays agent : John Roberts Status:Resolved @simonsays\" will assign the ticket to the agent John Roberts and mark the Ticket as Resolved."
-      info3: "The rest of your email content will be added as a conversation to Freshdesk and also sent to the Requestor via email."
+      info3: "The rest of your email content will be added as a conversation to Freshdesk and also sent to the Requester via email."
       ticket_type_example: "Question"
       note: "Note"
   email_command_delimeter_label: "Email Commands Delimeter"
@@ -7839,13 +7839,13 @@ en:
       title: Canned responses
       tour: Help me use canned responses
       info1: Canned Responses are predefined reply templates which can be used to quickly send out replies to tickets.
-      info2: You can use placeholders in your canned responses to fill in dynamic content like the requestor’s name, ticket ID and URL inside the response.
+      info2: You can use placeholders in your canned responses to fill in dynamic content like the requester’s name, ticket ID and URL inside the response.
     folders:
       helpnote:
         title: Canned responses
         tour: Help me use canned responses
         info1: Canned Responses are predefined reply templates which can be used to quickly send out replies to tickets.
-        info2: You can use placeholders in your canned responses to fill in dynamic content like the requestor’s name, ticket ID and URL inside the response.
+        info2: You can use placeholders in your canned responses to fill in dynamic content like the requester’s name, ticket ID and URL inside the response.
     responses:
       edit:
         title: Edit Canned response
