@@ -9,6 +9,7 @@ JSON.generate(@items.map do |article|
     thumbs_down: parent.thumbs_down,
     hits: parent.hits,
     seo_data: article.seo_data,
+    agent_id: article.user_id
   }
 
   draft = article.draft
@@ -18,7 +19,6 @@ JSON.generate(@items.map do |article|
       description: draft.description,
       description_text: article.un_html(draft.description),
       status: draft.status,
-      agent_id: draft.user_id,
       created_at: draft.created_at,
       updated_at: draft.updated_at
     })
@@ -28,7 +28,6 @@ JSON.generate(@items.map do |article|
       description: article.description,
       description_text: article.desc_un_html,
       status: article.status,
-      agent_id: article.user_id,
       created_at: article.created_at,
       updated_at: article.updated_at
     })

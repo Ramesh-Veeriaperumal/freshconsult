@@ -8,7 +8,8 @@ response_hash = {
   thumbs_down: parent.thumbs_down,
   hits: parent.hits,
   tags: @item.tags,
-  seo_data: @item.seo_data
+  seo_data: @item.seo_data,
+  agent_id: @item.user_id
 }
 
 draft = @item.draft
@@ -18,7 +19,6 @@ if draft
     description: draft.description,
     description_text: @item.un_html(draft.description),
     status: draft.status,
-    agent_id: draft.user_id,
     created_at: draft.created_at,
     updated_at: draft.updated_at
   })
@@ -28,7 +28,6 @@ else
     description: @item.description,
     description_text: @item.desc_un_html,
     status: @item.status,
-    agent_id: @item.user_id,
     created_at: @item.created_at,
     updated_at: @item.updated_at
   })

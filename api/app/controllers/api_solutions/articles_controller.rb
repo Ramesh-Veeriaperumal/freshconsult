@@ -20,8 +20,17 @@ module ApiSolutions
     end
 
     def update
-      # Before applying the new changes to the article publish it
-      publish_article if @status == Solution::Article::STATUS_KEYS_BY_TOKEN[:published]
+      if @item.draft.present?
+        # Before applying the new changes to the article publish it
+        if @status == Solution::Article::STATUS_KEYS_BY_TOKEN[:published]
+          @item.draft.publish!
+        else
+          @draft = @item.draft
+          @draft.unlock
+          language_params = @article_params.delete(language_scoper)
+          @draft.update_attributes(language_params)
+        end
+      end
       create_or_update_article
     end
 
@@ -62,7 +71,7 @@ module ApiSolutions
         @meta = Solution::Builder.article(solution_article_meta: @article_params, language_id: @lang_id)
         @item = @meta.send(language_scoper)
         @item.tags = construct_tags(@tags) if @tags
-        @item.create_draft_from_article if @status == Solution::Article::STATUS_KEYS_BY_TOKEN[:draft]
+        @item.create_draft_from_article if @status == Solution::Article::STATUS_KEYS_BY_TOKEN[:draft] && create?
         !(@item.errors.any? || @item.parent.errors.any?)
       end
 
@@ -164,10 +173,6 @@ module ApiSolutions
         meta = meta_scoper.find_by_id(id)
         log_and_render_404 unless meta
         meta
-      end
-
-      def publish_article
-        @item.draft.publish! if @item && @item.draft.present?
       end
   end
 end
