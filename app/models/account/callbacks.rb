@@ -74,9 +74,6 @@ class Account < ActiveRecord::Base
       self.shared_secret = generate_secret_token
       self.sso_options = set_sso_options_hash
       self.ssl_enabled = true
-      self.secret_keys = {
-        public_ticket_token: SecureRandom.hex
-      }
     end
 
     def backup_changes
