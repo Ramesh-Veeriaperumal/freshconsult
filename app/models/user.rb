@@ -785,6 +785,7 @@ class User < ActiveRecord::Base
     set_company_name
     if update_attributes({:helpdesk_agent => false, :deleted => false})
       subscriptions.destroy_all
+      self.cti_phone = nil
       agent.destroy
       freshfone_user.destroy if freshfone_user
       email_notification_agents.destroy_all

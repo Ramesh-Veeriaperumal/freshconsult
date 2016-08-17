@@ -6,7 +6,12 @@ class RabbitmqWorker
   sidekiq_options :queue => 'rabbitmq_publish', :retry => 5, :dead => true, :failures => :exhausted
 
   def perform(exchange_key, message, rounting_key)
+    if cti_routing_key?(exchange_key)
+      sqs_msg_obj = sqs_v2_push(SQS[:cti_screen_pop], message, 0)
+      puts " SQS Message id - #{sqs_msg_obj.message_id} :: ROUTING KEY -- #{rounting_key} :: Exchange - #{exchange_key}"
+      return
 
+    end
     # Publish to ES Count
     if count_routing_key?(exchange_key, rounting_key)
       sqs_msg_obj = (Ryuken::CountPerformer.perform_async(message) rescue nil)
@@ -97,6 +102,10 @@ class RabbitmqWorker
   def reports_routing_key?(exchange, key)
     ((exchange.starts_with?("tickets") || exchange.starts_with?("notes")) && key[2] == "1") || 
       ((exchange.starts_with?("archive_tickets") || exchange.starts_with?("accounts")) && key[0] == "1")
+  end
+
+  def cti_routing_key?(exchange)
+    exchange.include?("cti_calls")
   end
 
   # Key will be like 1.1.1 (Possibility of additional 1s appended in future)

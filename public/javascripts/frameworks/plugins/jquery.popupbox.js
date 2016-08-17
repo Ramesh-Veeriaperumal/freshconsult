@@ -105,7 +105,7 @@
 		},
 
 		isClickInsidePlugin: function ($element) {
-			return (!$element.parents('.popupbox-content, .popupbox-tabs').length);
+			return (!$element.parents('.popupbox-content, .popupbox-tabs').length) && !this.settings.disableCloseOnClick;
 		},
 
 		bindEscapeKey: function () {

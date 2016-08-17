@@ -9,9 +9,11 @@ development:
   forums_moderation_queue: forum_moderation_dev
   helpdesk_reports_export_queue: helpdesk_reports_export_dev
   reports_etl_msg_queue: reports_etl_msgs_dev
+  cti_call_queue: cti_call_dev
   activity_queue: fd_activities_dev
   reports_service_export_queue: reports_service_export_dev
   freshfone_call_tracker: freshfone_call_tracker_development
+  cti_screen_pop: cti_screen_pop_dev
   fb_message_realtime_queue: social_fb_messenger_dev
   freshfone_call_notifier_queue: freshfone_call_notifier_development
 staging:
@@ -27,6 +29,8 @@ staging:
   activity_queue: fd_activities_staging
   reports_service_export_queue: reports_service_export_staging
   freshfone_call_tracker: freshfone_call_tracker_staging
+  cti_screen_pop: cti_screen_pop_staging
+  cti_call_queue: cti_call_staging
   fb_message_realtime_queue: social_fb_messenger_staging
   freshfone_call_notifier_queue: freshfone_call_notifier_staging
 production:
@@ -42,6 +46,8 @@ production:
   activity_queue: fd_activities_production
   reports_service_export_queue: reports_service_export_production
   freshfone_call_tracker: freshfone_call_tracker_production
+  cti_screen_pop: cti_screen_pop_production
+  cti_call_queue: cti_call_production
   fb_message_realtime_queue: social_fb_messenger_prod
   freshfone_call_notifier_queue: freshfone_call_notifier_production
 test:
@@ -57,5 +63,7 @@ test:
   activity_queue: fd_activities_test
   reports_service_export_queue: reports_service_export_test
   freshfone_call_tracker: freshfone_call_tracker_test
+  cti_screen_pop: cti_screen_pop_test
+  cti_call_queue: cti_call_test
   fb_message_realtime_queue: social_fb_messenger_dev
   freshfone_call_notifier_queue: freshfone_call_notifier_test

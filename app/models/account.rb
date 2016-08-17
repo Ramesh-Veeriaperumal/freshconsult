@@ -75,6 +75,16 @@ class Account < ActiveRecord::Base
     end
   end
 
+  def node_feature_list
+    @node_feature_list ||= begin
+      feature_list = []
+      FD_NODE_FEATURES.each do |ns|
+        feature_list << ns if features?(ns)
+      end
+      feature_list
+    end
+  end
+
   def time_zone
     tz = self.read_attribute(:time_zone)
     tz = "Kyiv" if tz.eql?("Kyev")

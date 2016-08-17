@@ -803,6 +803,13 @@ Helpkit::Application.routes.draw do
       end
     end
 
+    namespace :cti_admin do
+      get :edit
+      put :update
+      post :add_phone_numbers
+      get :unused_numbers
+      delete :delete_number
+    end
     namespace :cti do
       resources :customer_details do
         collection do
@@ -812,6 +819,19 @@ Helpkit::Application.routes.draw do
           post :verify_session
           get :ameyo_session
         end
+      end
+      namespace :screen_pop do
+        get :contact_details
+        get :recent_tickets
+        post :link_to_existing
+        post :link_to_new
+        post :add_note_to_new
+        post :ignore_call
+        post :set_pop_open
+        get :phone_numbers
+        post :set_phone_number
+        post :click_to_dial
+        get :ongoing_call
       end
     end
 

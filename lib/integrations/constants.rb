@@ -38,7 +38,8 @@ module Integrations::Constants
     :twitter => "twitter",
     :facebook => "facebook",
     :freshsales => "freshsales",
-	:fullcontact => "fullcontact"
+	:fullcontact => "fullcontact",
+    :cti => "cti"
   }
 
   DISPLAY_IN_PAGES = { "ticket_show" => 2, "contact_show" => 1, "company_show" => 0 }
