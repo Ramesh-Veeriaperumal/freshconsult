@@ -1,0 +1,8 @@
+JSON.generate(@scenarios.map do |scenario|
+  response_hash = {
+    id: scenario.id,
+    name: scenario.name,
+    description: scenario.description
+  }
+  response_hash
+end)

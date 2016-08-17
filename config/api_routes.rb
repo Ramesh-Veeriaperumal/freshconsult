@@ -106,6 +106,7 @@ Helpkit::Application.routes.draw do
       end
     end
     resources :ticket_filters, controller: 'ember/ticket_filters', only: :index
+    resources :scenario_automations, controller: 'ember/scenario_automations', only: :index
   end
 
   match '/api/v2/_search/tickets' => 'tickets#search', :defaults => { :format => 'json' }, :as => :tickets_search, via: :get
