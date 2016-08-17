@@ -107,7 +107,7 @@ class Account < ActiveRecord::Base
     :limit_mobihelp_results => false, :ecommerce => false, :es_v2_writes => false,  
     :salesforce_sync => false, :round_robin_on_update => false, :freshfone_call_metrics => false, :cobrowsing => false,
     :threading_without_user_check => false, :freshfone_call_monitoring => false, :freshfone_caller_id_masking => false, 
-    :agent_conference => false, :restricted_helpdesk => false, :enable_multilingual => false,
+    :agent_conference => false, :freshfone_warm_transfer => false, :restricted_helpdesk => false, :enable_multilingual => false,
     :count_es_writes => false, :count_es_reads => false, :activity_revamp => false, :countv2_writes => false, :countv2_reads => false,
     :helpdesk_restriction_toggle => false, :freshfone_acw => false, :ticket_templates => false  }
 

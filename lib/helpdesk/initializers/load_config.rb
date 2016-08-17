@@ -31,3 +31,5 @@ AutoIncrementId = YAML.load_file(File.join(Rails.root,'config','auto_increment_i
 HashedData = YAML.load_file(File.join(Rails.root,'config','hashed_data.yml'))[Rails.env]
 
 ThirdPartyAppConfig = YAML::load_file File.join(Rails.root, 'config', 'third_party_app_config.yml')
+
+ArchiveNoteConfig = YAML::load_file(File.join(Rails.root, 'config', 'archive_note.yml'))[Rails.env]

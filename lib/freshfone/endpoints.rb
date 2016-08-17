@@ -195,6 +195,42 @@ module Freshfone::Endpoints
     "#{host}/phone/caller_id/add"
   end
 
+  def warm_transfer_accept_url(warm_transfer_call_id, call_id)
+    "#{host}/freshfone/warm_transfer/success?warm_transfer_call_id=#{warm_transfer_call_id}&call=#{call_id}"
+  end
+
+  def warm_transfer_unhold_url(call)
+    "#{host}/freshfone/warm_transfer/unhold?call=#{call}"
+  end
+
+  def warm_transfer_wait_url
+    "#{host}/freshfone/warm_transfer/wait?call=#{params[:call]}#{transfer_params}#{warm_transfer_wait_params}"
+  end
+
+  def warm_transfer_quit_url
+    "#{host}/freshfone/warm_transfer/quit?call=#{params[:call]}"
+  end
+
+  def warm_transfer_wait_params
+    "&warm_transfer_call_id=#{params[:warm_transfer_call_id]}" if params[:transfer_type] == 'warm_transfer'
+  end
+
+  def join_agent_url(call)
+    "#{host}/freshfone/warm_transfer/join_agent?call=#{call}"
+  end
+
+  def redirect_customer_url(call)
+    "#{host}/freshfone/warm_transfer/redirect_customer?call=#{call}"
+  end
+
+  def warm_transfer_agent_wait_url
+    "#{host}/freshfone/warm_transfer/transfer_agent_wait"
+  end
+
+  def redirect_source_url(call_id)
+    "#{host}/freshfone/warm_transfer/redirect_source_agent?warm_transfer_call_id=#{call_id}"
+  end
+
   private 
     def call_params
       "caller_id=#{CGI.escape(params[:From])}&timeout=#{incoming_timeout}"

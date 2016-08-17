@@ -254,7 +254,11 @@ HelpdeskReports.ReportUtil.Glance = (function () {
 
                 var group_by = _FD.core.setDefaultGroupByOptions(active_metric);
                 if (HelpdeskReports.locals.custom_fields_group_by.length) {
-                    group_by.push(HelpdeskReports.locals.custom_fields_group_by[0]);
+                    if(HelpdeskReports.locals.active_custom_field)
+                        group_by.push(HelpdeskReports.locals.active_custom_field);
+                    else{
+                        group_by.push(HelpdeskReports.locals.custom_fields_group_by[0]);
+                    }
                 }
                 HelpdeskReports.locals.current_group_by = group_by;
 
@@ -265,6 +269,10 @@ HelpdeskReports.ReportUtil.Glance = (function () {
                 jQuery('#glance_chart_wrapper .loading-bar').removeClass('hide');
 
                 if(HelpdeskReports.locals.visited_metrics.indexOf(HelpdeskReports.locals.active_metric) > -1) {
+                    if(!HelpdeskReports.locals.chart_hash[active_metric].hasOwnProperty(HelpdeskReports.locals.active_custom_field)){
+                        if(HelpdeskReports.locals.active_custom_field)
+                            _FD.constructCustomFieldParams(HelpdeskReports.locals.active_custom_field,false);
+                    }
                     HelpdeskReports.ChartsInitializer.Glance.init(HelpdeskReports.locals.chart_hash);
                     jQuery('#glance_chart_wrapper .loading-bar').addClass('hide');
                     jQuery('#view_all_tickets').show();

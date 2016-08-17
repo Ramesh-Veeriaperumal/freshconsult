@@ -28,7 +28,11 @@ class Middleware::ApiThrottler < Rack::Throttle::Hourly
           current_account = Account.find(@account_id)
           current_account.api_limit.to_i
         end
-        return true if by_pass_throttle?
+        if by_pass_throttle?
+          req = Rack::Request.new(env)
+          req.session_options[:non_api_call] = true
+          return true
+        end
         remove_others_redis_key(key) if get_others_redis_key(key+"_expiry").nil?
         @count = get_others_redis_key(key).to_i
         return api_limit > @count

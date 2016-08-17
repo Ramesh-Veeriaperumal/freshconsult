@@ -9,6 +9,7 @@ module RoutingFilter
       @support_portal_filter_type = source
       yield.tap do |params|
         if source
+          params = ActionController::Parameters.new if params.nil?
           params[:portal_type] = source
         end
       end

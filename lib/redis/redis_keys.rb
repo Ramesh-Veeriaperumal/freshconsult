@@ -165,6 +165,10 @@ module Redis::RedisKeys
   GROUP_WIDGET_CACHE_GET =  "GROUP_WIDGET_CACHE_GET:%{account_id}"
   #Dashboard v2 caching keys ends
 
+  #update tickets sla - move from delayed job to sidekiq starts
+  SLA_ON_STATUS_CHANGE = "SLA_ON_STATUS_CHANGE"
+  #update tickets sla - move from delayed job to sidekiq ends
+
 	# List of languages used by agents in an account
   AGENT_LANGUAGE_LIST = "AGENT_LANGUAGE_LIST:%{account_id}"
 

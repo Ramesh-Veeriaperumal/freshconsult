@@ -85,4 +85,15 @@ class CustomSurvey::SurveyResult < ActiveRecord::Base
                         condition[:survey_id], condition[:start_date], condition[:end_date]]
 
   }}
+
+  scope :export_data, lambda {|condition| 
+    query_condition = "`survey_results`.`survey_id` = #{condition[:survey_id]} and 
+                        `survey_results`.`created_at` between '#{condition[:start_date]}' and '#{condition[:end_date]}'"
+    query_condition += " and `survey_results`.`agent_id` = #{condition[:agent_id]}" if condition[:agent_id].present?
+    query_condition += " and `survey_results`.`group_id` = #{condition[:group_id]}" if condition[:group_id].present?  
+    {
+      :conditions => Array(query_condition)
+  
+    }
+  }
 end

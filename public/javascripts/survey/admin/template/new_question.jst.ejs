@@ -5,7 +5,7 @@
 			</li>
 			<li><i class="rearrange-icon ficon-rearrange"></i></li>
 			<li>
-				<input type="text" onblur="javascript:SurveyValidate.removeError(this);" maxlength="<%=SurveyConstants.limit.thanks_text%>" class="input-survy-ques" data-name="<%=question.name%>" name="survey_question[<%=question.name%>]" value='<%=question.label%>' id="<%=question.id%>" data-choicemap='<%if(question.choiceMap){%><%=SurveyJSON.stringify(question.choiceMap)%><%}%>'/>
+				<input type="text" onblur="javascript:SurveyValidate.removeError(this);" maxlength="<%=SurveyConstants.limit.thanks_text%>" class="input-survy-ques" data-name="<%=question.name%>" name="survey_question[<%=question.name%>]" value="<%-question.label%>" id="<%=question.id%>" data-choicemap='<%if(question.choiceMap){%><%=SurveyJSON.stringify(question.choiceMap)%><%}%>'/>
 			</li>
 			<li class="question-rating-option" id="question-rating-option-<%=count%>" data-question-id="<%=count%>">
 					<label id="rating-label-<%=count%>" data-selected-value="&nbsp;" data-selected-id="none" class="muted pb0 rating-label">&nbsp;</label>

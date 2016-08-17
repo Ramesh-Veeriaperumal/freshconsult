@@ -15,7 +15,7 @@ gem 'strong_parameters', "0.2.3" # Used for API params validation
 gem "mysql2", "~> 0.3.0"
 
 gem "rate-limiting", :git =>"git://github.com/freshdesk/rate-limiting.git"
-gem 'fd_rate_limiter', :git => 'git@github.com:freshdesk/fd_rate_limiter.git', :branch => 'dynamic_rules'
+gem 'fd_rate_limiter', :git => 'git@github.com:freshdesk/fd_rate_limiter.git', :branch => 'controller_action_rl'
 gem "white_list", :git =>"git://github.com/neubloc/white_list.git"
 gem "will_paginate", "3.0.6"
 gem "country_select", :git => "git://github.com/stefanpenner/country_select", :tag => 'v1.1.2'
@@ -35,6 +35,7 @@ gem 'fresh_request', :git => 'git@github.com:freshdesk/fresh_request.git', :bran
 #for ruby ~> 2.1.0 upgrade
 gem 'iconv', '~> 1.0.4'
 gem 'thrift', '~> 0.9.2.0'
+gem 'charlock_holmes', "0.7.3"
 
 group :development, :test do
   gem 'rails-dev-boost', :git => 'git://github.com/thedarkone/rails-dev-boost.git'
@@ -178,8 +179,6 @@ gem "premailer", "~> 1.8.0"
 
 # Email Related Gems
 gem 'html_to_plain_text', '1.0.5'
-
-
 gem "akismetor", :git => "git://github.com/freshdesk/akismetor.git"
 gem 'launchparty', "0.1.1", :git => 'git@github.com:freshdesk/launch-party.git', :branch => 'master'
 gem 'binarize', "0.1.1", :git => 'git@github.com:freshdesk/binarize.git', :branch => 'master'

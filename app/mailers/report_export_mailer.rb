@@ -109,7 +109,7 @@ class ReportExportMailer < ActionMailer::Base
   end
 
   def filter_to_display? report_type, ticket_export
-    ticket_export || [:agent_summary, :group_summary].include?(report_type)
+    ticket_export || [:agent_summary, :group_summary, :satisfaction_survey].include?(report_type)
   end
 
   def get_attachment_file_name file_path

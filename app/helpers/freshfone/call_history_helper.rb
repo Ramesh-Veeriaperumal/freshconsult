@@ -114,6 +114,25 @@ module Freshfone::CallHistoryHelper
 		end
 	end
 
+  def transfer_type_tooltip(call)
+    type = call.meta.present? && call.meta.warm_transfer_meta? ? 'warm' : 'blind'
+    t("freshfone.transfer_type.#{type}")
+  end
+
+  def count_of_children(call)
+    count = 0
+    call.descendants.each do |call|
+      call_meta = call.meta
+      count += 1 if call_meta.present? && !call_meta.warm_transfer_revert?
+    end
+    count
+  end
+
+  def can_show_call?(call)
+    call_meta = call.meta
+    call_meta.present? && (!call_meta.warm_transfer_meta? || call_meta.warm_transfer_success?)
+  end
+
 	def abandon_status_or_missed(call)
 		if call.abandoned_call?
 			status = Freshfone::Call::CALL_ABANDON_TYPE_REVERSE_HASH[call.abandon_state]

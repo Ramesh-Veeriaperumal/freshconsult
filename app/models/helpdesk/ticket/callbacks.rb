@@ -43,7 +43,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   after_commit :filter_observer_events, on: :update, :if => :execute_observer?
   after_commit :update_ticket_states, :notify_on_update, :update_activity, 
   :stop_timesheet_timers, :fire_update_event, :push_update_notification, on: :update 
-  after_commit :regenerate_reports_data, on: :update, :if => :regenerate_data? 
+  #after_commit :regenerate_reports_data, on: :update, :if => :regenerate_data? 
   after_commit :push_create_notification, on: :create
   after_commit :update_group_escalation, on: :create, :if => :model_changes?
   after_commit :publish_to_update_channel, on: :update, :if => :model_changes?

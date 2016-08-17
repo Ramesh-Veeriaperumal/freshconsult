@@ -22,9 +22,9 @@
 			<% end %>
 			<div class="author-mail-detail">
 				<% if custom_activity.performer? %>
-					<%= t("ticket.user_activity_timestamp", :user_name => link_to_user(custom_activity.performer, :class => "user_name" ),:timestamp => activity_date, :note_date => formated_date(activity_date)).html_safe %>
+					<%= t("ticket.user_activity_timestamp", :user_name => link_to_user(custom_activity.performer, :class => "user_name" ),:timestamp => activity_date.to_i, :note_date => formated_date(activity_date)).html_safe %>
 				<% else %>
-					<%= t("ticket.system_activity_timestamp", :system_rule => link_to_system_rule(custom_activity.rule), :timestamp => activity_date, :note_date => formated_date(activity_date)).html_safe %>
+					<%= t("ticket.system_activity_timestamp", :system_rule => link_to_system_rule(custom_activity.rule), :timestamp => activity_date.to_i, :note_date => formated_date(activity_date)).html_safe %>
 				<% end %>
 			</div>
 			<div class="details">

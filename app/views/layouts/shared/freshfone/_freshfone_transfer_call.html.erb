@@ -53,12 +53,19 @@
              <label class="available_agents_name name span2"></label> 
               <span class="call-actions">
 
-                <a href="#" class="pull-right tooltip transfer ficon-arrow-right-2 offset1"
-                        title="<%= t('freshfone.widget.transfer_call') %>"></a>
+                <% if warm_transfer_enabled? %>
+                  <a href="#" class="pull-right tooltip warm_transfer ficon-warm-transfer"
+                          title="<%= t('freshfone.widget.warm_transfer') %>">
+                  </a>
+                <% end %>
+                <a href="#" class="pull-right tooltip transfer ficon-blind-transfer offset1"
+                        title="<%= transfer_tooltip %>"></a>
                 <% if current_account.features?(:agent_conference) %>
+                <div class="<%= 'add-agent-border' if warm_transfer_enabled? %>">
                 <a href="#" class="pull-right tooltip add_agent ficon-plus"
                         title="<%= t('freshfone.widget.add_agent_to_call') %>">
                 </a>
+                </div>
                 <% end %>   
               </span>
              <span class="hide sortname"></span>
@@ -100,7 +107,7 @@
                </span>
                <span class="available_agents_name name span2 external_number"></span>
                <span class="call-actions">
-                <a href="#" class="pull-right tooltip transfer ficon-arrow-right-2"
+                <a href="#" class="pull-right tooltip transfer ficon-blind-transfer"
                         title="<%= t('freshfone.widget.transfer_call') %>"></a>   
               </span>
               <span class="hide id"></span>

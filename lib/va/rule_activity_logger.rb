@@ -164,7 +164,8 @@ class Va::RuleActivityLogger
     end
 
     def add_a_cc
-      add_system_changes({:add_a_cc => [value.downcase.strip]})
+      cc_email = value.downcase.strip
+      add_system_changes({:add_a_cc => [cc_email]}) if cc_email.present?
     end
 
     def send_email_to_requester

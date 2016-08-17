@@ -14,7 +14,7 @@ class Freshfone::HoldController < FreshfoneBaseController
     begin
       if valid_call?
         current_call.onhold!
-        customer_sid = outgoing_transfer?(current_call) ? current_call.root.customer_sid : current_call.customer_sid
+        customer_sid = outgoing_or_warm_transfer?(current_call) ? current_call.root.customer_sid : current_call.customer_sid
         
         telephony.initiate_hold(customer_sid, {call: current_call.id})
         render :json => {:status => :hold_initiated}
@@ -132,12 +132,13 @@ class Freshfone::HoldController < FreshfoneBaseController
     end
 
     def validate_twilio_request
-      @callback_params = params.except(*[:hold_queue, :call, :transfer, :source, :target, :child_sid, :transfer_type, :group_transfer, :external_transfer])
+      @callback_params = params.except(*[:hold_queue, :call, :transfer, :source, :target, :child_sid, :transfer_type, :group_transfer, :external_transfer, :warm_transfer_call_id])
       super
     end
 
     def cancel_browser_agents
-      call_actions.cancel_browser_agents(current_call.children.last)
+      return if child_call.blank?
+      call_actions.cancel_browser_agents(child_call)
     end
 
   def error_handler(format=nil, message="")
@@ -154,6 +155,7 @@ class Freshfone::HoldController < FreshfoneBaseController
   end
 
   def conference_room_name_sid
+    return current_call.agent_sid if current_call.meta.warm_transfer_meta?
     current_call.is_root? ? current_call.call_sid : current_call.dial_call_sid
   end
 

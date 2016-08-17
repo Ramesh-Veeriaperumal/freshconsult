@@ -92,7 +92,7 @@ var SurveyState = {
       jQuery('#'+id+' ul li a').each(function(){
         if(jQuery(this).attr('id') == value){
             data.id = value;
-            data.value = (type == 'responses') ? jQuery(this).val() : jQuery(this).text().trim();
+            data.value = (type == 'responses') ? jQuery(this).data('rating') : jQuery(this).text().trim();
         }   
       });
       return data;
@@ -138,7 +138,7 @@ var SurveyState = {
         var value = jQuery(obj).text().trim();
         if(jQuery(obj).hasClass('rating_list')){
             SurveyState.isRating = true;
-            value = jQuery(obj).val();
+            value = jQuery(obj).data('rating');
             jQuery('#'+divId).find('i').removeClass().addClass('survey-indicator '+SurveyConstants.iconClass[id]+'');            
         }
         SurveyState.setFilter(divId,{'id':id ,'value':value});

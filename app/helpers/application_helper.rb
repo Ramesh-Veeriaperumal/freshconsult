@@ -1631,6 +1631,15 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
     @current_account_freshfone_details ||= current_account_freshfone_numbers.map{|n| [n.name.blank? ? "#{n.number}" : "#{CGI.escapeHTML(n.name)} #{n.number}", n.id] }
  end
 
+ def warm_transfer_enabled?
+  current_account.features?(:freshfone_warm_transfer)
+ end
+
+ def transfer_tooltip
+   return t('freshfone.widget.blind_transfer') if warm_transfer_enabled?
+   t('freshfone.widget.transfer_call')
+ end
+
  def freshfone_presence_status_class
   return "ficon-phone-disable" if current_user.freshfone_user_offline? ||
     !freshfone_active_or_trial?

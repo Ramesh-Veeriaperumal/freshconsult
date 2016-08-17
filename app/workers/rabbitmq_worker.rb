@@ -7,11 +7,12 @@ class RabbitmqWorker
 
   def perform(exchange_key, message, rounting_key)
 
-
-    if autorefresh_routing_key?(exchange_key, rounting_key)
-        publish_message_to_xchg($rabbitmq_model_exchange[exchange_key], message, rounting_key)
-      Rails.logger.info("Published RMQ message via Sidekiq")
+    # Publish to ES Count
+    if count_routing_key?(exchange_key, rounting_key)
+      sqs_msg_obj = (Ryuken::CountPerformer.perform_async(message) rescue nil)
+      puts "CountES SQS Message id - #{sqs_msg_obj.try(:message_id)} :: ROUTING KEY -- #{rounting_key} :: Exchange - #{exchange_key}"
     end
+    
     # Publish to Search-v2
     #
     if search_routing_key?(exchange_key, rounting_key)
@@ -27,17 +28,16 @@ class RabbitmqWorker
       puts " SQS Message id - #{sqs_msg_obj.message_id} :: ROUTING KEY -- #{rounting_key} :: Exchange - #{exchange_key}"
     end
 
-    # Publish to ES Count
-    if count_routing_key?(exchange_key, rounting_key)
-      sqs_msg_obj = (Ryuken::CountPerformer.perform_async(message) rescue nil)
-      puts "CountES SQS Message id - #{sqs_msg_obj.try(:message_id)} :: ROUTING KEY -- #{rounting_key} :: Exchange - #{exchange_key}"
-    end
-
     # Publish to Activities-v2
     #
     if activities_routing_key?(exchange_key, rounting_key)
       sqs_msg_obj = sqs_v2_push(SQS[:activity_queue], message, nil)
       puts " SQS Activities Message id - #{sqs_msg_obj.message_id} :: ROUTING KEY -- #{rounting_key} :: Exchange - #{exchange_key}"
+    end
+
+    if autorefresh_routing_key?(exchange_key, rounting_key)
+        publish_message_to_xchg($rabbitmq_model_exchange[exchange_key], message, rounting_key)
+      Rails.logger.info("Published RMQ message via Sidekiq")
     end
 
     # Handling only the network related failures

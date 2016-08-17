@@ -20,6 +20,11 @@ defaults: &defaults
   shard_13: 13
   shard_14: 14
   shard_15: 15
+  shard_16: 16
+  shard_17: 17
+  shard_18: 18
+  shard_19: 19
+  shard_20: 20
   eu_shard_1: 1
   eu_shard_2: 2
   euc_shard_1: 1
