@@ -5,6 +5,8 @@ source 'https://rubygems.org'
 gem "rake", "~> 10.4.0"
 gem "rails","3.2.22.2"
 
+gem "freemail", "0.2.0", require: false 
+
 gem 'rack-cors', '~> 0.3.1'
 gem "syck",'1.0.5'
 
