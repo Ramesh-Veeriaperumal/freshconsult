@@ -19,7 +19,7 @@ class Middleware::ApiResponseWrapper
   def to_be_wrapped?
     defined?($infra) && 
       $infra['PRIVATE_API'] && 
-      @response.request.env["REQUEST_PATH"].starts_with?('/api/_/') &&
+      @response.respond_to?(:request) && @response.request.env["REQUEST_PATH"].starts_with?('/api/_/') &&
       @headers["Content-Type"].present? &&
       @headers["Content-Type"].starts_with?(Mime::JSON)
   end
