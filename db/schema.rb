@@ -27,7 +27,8 @@ ActiveRecord::Schema.define(:version => 20160802094502) do
     t.integer  "date_format",                       :default => 1
     t.text     "additional_settings"
     t.text     "resource_rlimit_conf"
-    t.integer  "webhook_limit",                      :default => 1000
+    t.integer  "webhook_limit",                     :default => 1000
+    t.text     "secret_keys"
   end
 
   add_index "account_additional_settings", ["account_id"], :name => "index_account_id_on_account_additional_settings"

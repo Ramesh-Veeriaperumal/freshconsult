@@ -7,6 +7,7 @@ class AccountAdditionalSettings < ActiveRecord::Base
 
   belongs_to :account
   serialize :supported_languages, Array
+  serialize :secret_keys, Hash
   validates_length_of :email_cmds_delimeter, :minimum => 3, :message => I18n.t('email_command_delimeter_length_error_msg')
   after_update :handle_email_notification_outdate, :if => :had_supported_languages?
   after_initialize :set_default_rlimit

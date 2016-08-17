@@ -581,10 +581,16 @@ private
     self.access_token ||= generate_token
   end
 
-  def generate_token
-    # using Digest::SHA2.hexdigest for a 64 char hash
-    # using ticket id, current account id along with Time.now
-    Digest::SHA2.hexdigest("#{Account.current.id}:#{self.id}:#{Time.now.to_f}")
+  def generate_token    
+    public_ticket_token = Account.current.public_ticket_token
+    if public_ticket_token.present?
+      # using OpenSSL::HMAC.hexdigest for a 64 char hash
+      OpenSSL::HMAC.hexdigest(OpenSSL::Digest.new('sha256'), public_ticket_token, '%s/%s' % [Account.current.id, self.id])
+    else
+      # using Digest::SHA2.hexdigest for a 64 char hash
+      # using ticket id, current account id along with Time.now
+      Digest::SHA2.hexdigest("#{Account.current.id}:#{self.id}:#{Time.now.to_f}")
+    end
   end
 
   def fire_update_event
