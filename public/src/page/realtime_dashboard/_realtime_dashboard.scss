@@ -446,12 +446,16 @@ $survey-types: happy #82af56, neutral #f3ca6e, sad #ee715e;
 
 }
 
-[data-gs-height="4"] .activityfeed-wrap{
-  height: 978px;
-}
-
 [data-gs-height="2"] .activityfeed-wrap{
   height: 560px;
+}
+
+[data-gs-height="3"] .activityfeed-wrap{
+  height: 740px;
+}
+
+[data-gs-height="4"] .activityfeed-wrap{
+  height: 978px;
 }
 
 [data-gs-height="6"] .activityfeed-wrap {

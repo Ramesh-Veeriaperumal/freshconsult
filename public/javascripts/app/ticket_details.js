@@ -1548,6 +1548,7 @@ var scrollToError = function(){
 	      data: { id: _note_id },
 	      success: function(response){
 	        if(response!=""){
+	        	 _messageDiv.find('.tooltip').twipsy('hide');
 	          _messageDiv.html(response);
 
 	          quote_text(_messageDiv, options);
