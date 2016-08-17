@@ -85,7 +85,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"helpdesk/ca_folder"
     resource :"helpdesk/scenario_automation"
     resource :agent, :only => [:toggle_availability, :list]
-    resource :"search/home", :only => [:index, :suggest]
+    resource :"search/home", :only => [:index, :suggest, :recent_searches_tickets, :remove_recent_search]
     resource :"search/v2/suggest", :only => [:index]
     resource :"search/solution", :only => [:related_solutions, :search_solutions]
     resource :"search/v2/solution", :only => [:related_solutions, :search_solutions]
