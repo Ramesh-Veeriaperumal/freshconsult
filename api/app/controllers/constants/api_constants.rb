@@ -27,7 +27,8 @@ module ApiConstants
                        TimeEntryConstants::LOAD_OBJECT_EXCEPT +
                        ConversationConstants::LOAD_OBJECT_EXCEPT +
                        DiscussionConstants::LOAD_OBJECT_EXCEPT +
-                       SurveyConstants::LOAD_OBJECT_EXCEPT
+                       SurveyConstants::LOAD_OBJECT_EXCEPT +
+                       ContactConstants::LOAD_OBJECT_EXCEPT
 
   ALLOWED_DOMAIN = AppConfig['base_domain'][Rails.env]
   MAX_LENGTH_STRING = 255

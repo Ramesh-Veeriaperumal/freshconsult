@@ -393,6 +393,13 @@ class ApiApplicationController < MetalApiController
       end
     end
 
+    def render_partial_success(succeeded, errors, meta = {})
+      @succeeded = succeeded
+      @errors = ErrorHelper.format_error(errors, meta)
+      log_error_response @errors
+      render '/partial_success', status: 202
+    end
+
     def cname
       controller_name.singularize
     end

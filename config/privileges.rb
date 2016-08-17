@@ -1,3 +1,5 @@
+require_relative 'api_privileges'
+
 Authority::Authorization::PrivilegeList.build do
 
   # *************** TICKETS **********************
@@ -122,7 +124,6 @@ Authority::Authorization::PrivilegeList.build do
     # Agent who has access to ticket create will obviously know the custom field names.
     # So access to read the list of custom fields for an account through API should also be given at the same level of privilege as ticket create.
     resource :api_ticket_field, :only => [:index] 
-    resource :"ember/bootstrap"
 	end
 
   export_tickets do

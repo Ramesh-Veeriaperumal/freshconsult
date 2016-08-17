@@ -100,6 +100,11 @@ Helpkit::Application.routes.draw do
     resources :ticket_fields, controller: 'ember/ticket_fields', only: [:index, :update]
     resources :bootstrap, controller: 'ember/bootstrap', only: :index
     resources :tickets, controller: 'ember/tickets', only: :index
+    resources :contacts, controller: 'ember/contacts', except: [:new, :edit] do
+      collection do
+        put :bulk_delete
+      end
+    end
     resources :ticket_filters, controller: 'ember/ticket_filters', only: :index
   end
 

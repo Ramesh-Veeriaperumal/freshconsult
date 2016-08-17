@@ -12,6 +12,20 @@ module JsonPattern
     bad_request_error_pattern(nested_field, value, params_hash).merge(nested_field: "#{field}.#{nested_field}")
   end
 
+  def partial_success_response_pattern(succeeded_ids, errors = [], params_hash={})
+    {
+      succeeded: succeeded_ids,
+      errors: errors.map do |err_id, value|
+        message = retrieve_message(params_hash[:prepend_msg]) + retrieve_message(value) + retrieve_message(params_hash[:append_msg])
+        {
+          id: err_id,
+          message: message,
+          code: ErrorConstants::API_ERROR_CODES_BY_VALUE[value] || ErrorConstants::DEFAULT_CUSTOM_CODE
+        }
+      end
+    }
+  end
+
   def retrieve_message(value)
     !value.nil? && ErrorConstants::ERROR_MESSAGES.key?(value.to_sym) ? ErrorConstants::ERROR_MESSAGES[value.to_sym].to_s : value.to_s
   end

@@ -14,7 +14,11 @@ module DecoratorConcern
       custom_options = ACTION_MAPPING.merge(options)
       custom_method_mapping = custom_options.each_with_object({}) { |(k, v), inverse| v.each { |e| inverse[e] = k } }
       @decorator_method_mapping = DECORATOR_METHOD_MAPPING.merge(custom_method_mapping)
-      alias_method_chain :render, :before_render_action
+      alias_method_chain :render, :before_render_action unless self.method_defined? :render_without_before_render_action
+    end
+
+    def inherited(subclass)
+      subclass.instance_variable_set("@decorator_method_mapping", @decorator_method_mapping)
     end
 
     def decorator_name
@@ -24,8 +28,7 @@ module DecoratorConcern
 
   def decorator_method
     @decorator_method ||= 
-      (self.class.decorator_method_mapping || 
-        self.class.superclass.decorator_method_mapping)[action_name.to_sym]
+      self.class.decorator_method_mapping[action_name.to_sym]
   end
 
   def render_with_before_render_action(*options, &block)

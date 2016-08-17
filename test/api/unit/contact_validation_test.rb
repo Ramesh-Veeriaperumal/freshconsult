@@ -99,4 +99,38 @@ class ContactValidationTest < ActionView::TestCase
     assert_equal({ name: {}, email: { field_names: 'email, mobile, phone, twitter_id' } }, contact.error_options)
     Account.unstub(:current)
   end
+
+  def test_bulk_delete_with_different_params
+    Account.stubs(:current).returns(Account.new)
+    Account.any_instance.stubs(:contact_form).returns(ContactForm.new)
+    ContactForm.any_instance.stubs(:default_contact_fields).returns([])
+
+    controller_params = { version: 'private' }
+    contact_validation = ContactValidation.new(controller_params, nil)
+    refute contact_validation.valid?(:bulk_delete)
+    assert contact_validation.errors.full_messages.include?('Ids missing_field')
+
+    controller_params = { version: 'private', ids: [] }
+    contact_validation = ContactValidation.new(controller_params, nil)
+    refute contact_validation.valid?(:bulk_delete)
+    assert contact_validation.errors.full_messages.include?('Ids blank')
+
+    controller_params = { version: 'private', ids: "Text" }
+    contact_validation = ContactValidation.new(controller_params, nil)
+    refute contact_validation.valid?(:bulk_delete)
+    assert contact_validation.errors.full_messages.include?('Ids datatype_mismatch')
+    assert_equal({ ids: { expected_data_type: Array, prepend_msg: :input_received, given_data_type: String } }, contact_validation.error_options)
+
+    controller_params = { version: 'private', ids: ["Text"] }
+    contact_validation = ContactValidation.new(controller_params, nil)
+    refute contact_validation.valid?(:bulk_delete)
+    assert contact_validation.errors.full_messages.include?('Ids array_datatype_mismatch')
+    assert_equal({ ids: { expected_data_type: :'Positive Integer' } }, contact_validation.error_options)
+
+    controller_params = { version: 'private', ids: [1, 2, 3] }
+    contact_validation = ContactValidation.new(controller_params, nil)
+    assert contact_validation.valid?(:bulk_delete)
+
+    Account.unstub(:current)
+  end
 end
