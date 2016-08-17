@@ -81,41 +81,35 @@ jQuery(document).ready(function(){
 		$J('#header_search').val('');
 		$J('ul.results li.spotlight_result').remove();
 		jQuery("ul.results").filter(function(){return jQuery(this).find('li.spotlight_result').length == 0; }).hide();
-	}
+	}	
 
-	$J("#SearchResultsBar a").die('hover');
-	$J("#SearchResultsBar a").live({
-		hover: function(){
-			$J(currentactive).removeClass("active");
-			currentactive = $J(this).addClass("active");
-		},
-		click: function(){
-			hideSearchBar();
-		}
+	$J(document).on('mouseenter mouseleave', "#SearchResultsBar a", function(){
+		$J(currentactive).removeClass("active");
+		currentactive = $J(this).addClass("active");
 	});
-			
-	$J("#SearchResultsBar").live({
-		mouseenter:
-		   function()
-		   {
-		   	focusedOnSearch = false
-		   	insideSearch = true;
-		   },
-		mouseleave:
-		   function()
-		   {
-		   	insideSearch = false;
-		   }
+
+	$J(document).on('click', "#SearchResultsBar a", function(){
+		hideSearchBar();
+		insideSearch = false;
 	});
+
+	$J(document).on('mouseenter', "#SearchResultsBar", function(){
+		focusedOnSearch = false;
+		insideSearch = true;
+	});
+
+	$J(document).on('mouseleave',"#SearchResultsBar", function(){
+		insideSearch = false;
+	});	
 			
-	$J("#header_search").bind("focusout", function(ev){ 
+	$J(document).on("focusout", "#header_search", function(ev){ 
 		focusedOnSearch = false;
 		if(!insideSearch){
 			hideSearchBar();					
 		}
 	});
 			
-	$J("#header_search").bind("focusin", function(ev){
+	$J(document).on("focusin", "#header_search", function(ev){
 		focusedOnSearch = true;
 		searchString = this.value.replace(/^\s+|\s+$/g, "");
 		$J("#SearchBar").addClass("active");
@@ -176,7 +170,7 @@ jQuery(document).ready(function(){
 		jQuery("ul.results").filter(function(){return jQuery(this).find('li.spotlight_result').length == 0; }).hide();
 		jQuery("ul.results").filter(function(){return jQuery(this).find('li.spotlight_result').length > 0; }).show();
 
-		jQuery('ul.recent_searches_results').on('click.remove_recent_search', '.recent_search_cross_icon', function(ev){
+		jQuery(document).on('click.remove_recent_search', '.recent_search_cross_icon', function(ev){
 			ev.stopPropagation();
 			ev.preventDefault();
 			var recentSearchId = jQuery(ev.currentTarget).parents('li.spotlight_result').attr('id');
