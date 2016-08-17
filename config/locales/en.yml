@@ -5944,7 +5944,8 @@ en:
         conversation: Conversation
         timesheet: Time Sheet
         reply_form:
-          title: "From"
+          title: Reply to
+          from: "From"
           to: "To:"
           cc: Cc
           addcc: Add Cc
@@ -9888,4 +9889,5 @@ en:
     try_again: "Go to Ticket and try again"
     actions_alert: "File attachment in progress. Do you want to leave this page?"
     reminder: "You have unsaved content in this page. Do you want to leave this page?"
+    traffic_cop: Unable to send your last response. Ticket was updated with new replies by another agent.<a href="%{ticket_url}" data-pjax="body-container"> Please review their reply before sending your reply </a>.
 

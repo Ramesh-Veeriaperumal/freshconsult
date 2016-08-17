@@ -7,10 +7,10 @@
   template ||= false
   color ||= false
   bulk ||= false
+  rowfluid ||= false
 %>
-
-<div class="single_file <%= (color == true) ? "color":""%> <%= (bulk == true) ? "bulk":""%> ">
-<div class="attach-wrapper <%= (color == true)? "" : "row-fluid" %> new-attach" id="attachment-type" data-single-file=true>
+<div class="single_file<%= (color == true) ? " color":""%><%= (bulk == true) ? " bulk":""%><% if cloud_files_installed? and (@ticket.present? ? !@ticket.ecommerce? : true)  %> cloud<% end %>">
+<div class="attach-wrapper<%= (rowfluid == true)? " row-fluid":""%> new-attach" id="attachment-type" data-single-file=true>
   <div class="attachmentTrigger">   
     <div class="attachments-list-form" id="<%= attach_id %>-container">
       <% total_attachments = original_attachments[:regular].size + original_attachments[:cloud_files].size if original_attachments.present? %>
@@ -55,7 +55,8 @@
         <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
           <li class="portal-attach">
             <a data-file-id="<%=attach_id%>" href="javascript:void(0)" class="attach-link-wrap">
-               <%= t('attach_file') %>
+               <%= t('attach_file') %> <span class="attachment-help-info">( <%= t('attachment_help_info') %> )</span>
+
                 <div class="attach-file attach-link-file" id="<%= attach_id %>-attach-container">  
                   <input type="file" name="emptyfile" 
                     id="<%=attach_id%>_file"
@@ -76,7 +77,8 @@
       </div>
     <% else %>      
       <div class="hidden_upload">
-        <div class="add_attachment"><span>+</span> <%= t('attach_file') %></div>
+        <div class="add_attachment"><span>+</span> <%= t('attach_file') %> <span class="attachment-help-info">( <%= t('attachment_help_info') %> )</span>
+</div>
         <input type="file" name="emptyfile" 
                     id="<%=attach_id%>_file"
                     data-attach-id="<%=attach_id%>"

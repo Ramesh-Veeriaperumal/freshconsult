@@ -547,7 +547,7 @@ module Helpdesk::TicketsHelper
     end
   else
     contents << content_tag(:div) do 
-      render :partial => "/helpdesk/tickets/show/single_attachment_form", :locals => { :attach_id => "ticket" , :nsc_param => "helpdesk_ticket" , :template => true}
+      render :partial => "/helpdesk/tickets/show/single_attachment_form", :locals => { :attach_id => "ticket" , :nsc_param => "helpdesk_ticket" , :template => true,:rowfluid => true}
     end
   end
     contents.join(" ").html_safe
