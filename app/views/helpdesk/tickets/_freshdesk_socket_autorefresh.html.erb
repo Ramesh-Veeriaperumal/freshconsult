@@ -29,8 +29,9 @@
       'week' : Date.parse("<%= Time.now.monday %>"),
       'month' : Date.parse("<%= Time.now.beginning_of_month %>"),
       'two_months' : Date.parse("<%= Time.now.beginning_of_month - 2.months %>"),
-      'six_months' : Date.parse("<%= Time.now.beginning_of_month - 6.months %>") 
-  }
+      'six_months' : Date.parse("<%= Time.now.beginning_of_month - 6.months %>"),
+      'last_month' : Date.parse("<%= Time.now.midnight - 1.month %>")
+ }
 
   function slide_up(){
     jQuery("#index_refresh_alert").slideUp(100);
