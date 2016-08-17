@@ -1,0 +1,71 @@
+{
+  "custom_data":{
+    "Level":"20",
+    "SpecialSkill":"Axe",
+    "CustomerType":"Paid",
+    "Class":"Barbarian"
+  },
+  "debug_logs":"--------- beginning of \/dev\/log\/main\n05-15 23:57:53.564 W\/EGL_emulation( 2293): eglSurfaceAttrib not implemented\n05-16 00:31:18.675 D\/dalvikvm( 2509): Not late-enabling CheckJNI (already on)\n05-16 00:31:18.795 D\/dalvikvm( 2509): GC_CONCURRENT freed 345K, 16% free 2500K\/2976K, paused 14ms+1ms, total 16ms\n05-16 00:31:18.855 D\/dalvikvm( 2509): GC_CONCURRENT freed 307K, 15% free 2578K\/3016K, paused 15ms+0ms, total 17ms\n05-16 00:31:18.895 D\/dalvikvm( 2509): GC_CONCURRENT freed 202K, 11% free 2766K\/3100K, paused 11ms+0ms, total 14ms\n05-16 00:31:18.905 D\/dalvikvm( 2509): GC_FOR_ALLOC freed 19K, 9% free 2882K\/3156K, paused 2ms, total 3ms\n05-16 00:31:18.905 I\/dalvikvm-heap( 2509): Grow heap (frag case) to 3.543MB for 635808-byte allocation\n05-16 00:31:18.925 D\/dalvikvm( 2509): GC_FOR_ALLOC freed <1K, 8% free 3503K\/3780K, paused 16ms, total 16ms\n05-16 00:31:18.925 D\/dalvikvm( 2509): GC_CONCURRENT freed 2K, 8% free 3501K\/3780K, paused 1ms+0ms, total 3ms\n",
+  "app_info":{
+    "device_sw_build":"GENERIC_X86",
+    "os":"Android",
+    "mobile_network_type":"UMTS",
+    "app_locale":"en_US",
+    "battery_level":"50",
+    "app_version":"1.0 (2)",
+    "mobihelp_sdk_version":"1.0.0",
+    "device_make":"UNKNOWN",
+    "app_name":"FreshApp",
+    "mobile_network_operator_name":"Android",
+    "os_version":"4.3 (API Level 18)",
+    "app_identifier":"com.example.freshapp",
+    "active_network_type":"Mobile Network",
+    "device_model":"Android SDK built for x86",
+    "storage_space_internal":"376 MB \/ 392 MB",
+    "screen_orientation":"PORTRAIT (0 DEG ROTATION)",
+    "mobile_network_country_code":"US",
+    "battery_status":"CHARGING (AC PLUGGED)",
+    "os_locale":"en_US",
+    "storage_space_sd":"0 MB \/ 0 MB"
+  },
+  "breadcrumbs":[{
+    "time":"2014-05-15T23:44:11.000-04:00",
+    "crumbText":"InboxView"
+  },
+  {
+    "time":"2014-05-15T23:45:16.000-04:00",
+    "crumbText":"InboxView"
+  },
+  {
+    "time":"2014-05-15T23:47:25.000-04:00",
+    "crumbText":"SupportView"
+  },
+  {
+    "time":"2014-05-15T23:47:28.000-04:00",
+    "crumbText":"SolutionView"
+  },
+  {
+    "time":"2014-05-15T23:52:44.000-04:00",
+    "crumbText":"InboxView"
+  },
+  {
+    "time":"2014-05-15T23:53:40.000-04:00",
+    "crumbText":"InboxView"
+  },
+  {
+    "time":"2014-05-15T23:57:36.000-04:00",
+    "crumbText":"InboxView"
+  },
+  {
+    "time":"2014-05-16T00:31:18.000-04:00",
+    "crumbText":"FeedbackView"
+  },
+  {
+    "time":"2014-05-16T00:31:19.000-04:00",
+    "crumbText":"InboxView"
+  },
+  {
+    "time":"2014-05-16T00:47:33.000-04:00",
+    "crumbText":"InboxView"
+  }]
+}
