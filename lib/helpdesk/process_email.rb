@@ -62,7 +62,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       
       if (to_email[:email] != kbase_email) || (get_envelope_to.size > 1)
         email_config = account.email_configs.find_by_to_email(to_email[:email])
-        if email_config && (from_email[:email] == email_config.reply_email)
+        if email_config && (from_email[:email].to_s.downcase == email_config.reply_email.to_s.downcase)
           Rails.logger.info "Email Processing Failed: From-email and reply-email are same!"
           return
         end
@@ -146,7 +146,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     end
     params[:cc] = permissible_ccs(user, params[:cc], account)
     if ticket
-      if(from_email[:email] == ticket.reply_email) #Premature handling for email looping..
+      if(from_email[:email].to_s.downcase == ticket.reply_email.to_s.downcase) #Premature handling for email looping..
         Rails.logger.info "Email Processing Failed: From-email and reply-email email are same!"
         return
       end

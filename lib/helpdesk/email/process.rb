@@ -111,7 +111,7 @@ class Helpdesk::Email::Process
   end
 
   def mail_from_email_config?
-    common_email_data[:email_config] && (common_email_data[:from][:email] == common_email_data[:email_config].reply_email)
+    common_email_data[:email_config] && (common_email_data[:from][:email].to_s.downcase == common_email_data[:email_config].reply_email.to_s.downcase)
   end
 
   def assign_to_ticket_or_kbase
