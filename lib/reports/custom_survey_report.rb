@@ -55,17 +55,17 @@ module Reports::CustomSurveyReport
 
     conditions = {:start_date => start_date, :end_date => end_date, :survey_id => survey_id}
 
-    conditions[:agent_id] =  agent_id if agent?
-    conditions[:group_id] =  group_id if group?
-
     @survey_results = []
 
     include_array = [{:survey_remark => { :feedback => :note_old_body }}, 
                       :survey_result_data, :survey => [:survey_questions], 
                       :surveyable => [:requester, :company, :responder, :group ]]
 
-    Account.current.custom_survey_results.export_data(conditions).find_in_batches(:include => include_array) do |sr_results|
-      @survey_results += sr_results
+    Account.current.custom_survey_results.
+            export_data(conditions).agent_filter(agent_id).
+            group_filter(group_id).
+            find_in_batches(:include => include_array) do |sr_results|
+             @survey_results += sr_results
     end
   end
 
@@ -112,19 +112,11 @@ module Reports::CustomSurveyReport
     end
 
     def agent_id
-      params[:agent_id]
+      params[:agent_id] if params[:agent_id] != AGENT_ALL_URL_REF
     end
 
     def group_id
-      params[:group_id]
-    end
-
-    def agent?
-      agent_id && agent_id != AGENT_ALL_URL_REF
-    end
-
-    def group?
-      group_id && group_id != GROUP_ALL_URL_REF
+      params[:group_id] if params[:group_id] != GROUP_ALL_URL_REF
     end
 
     def survey_question_labels
