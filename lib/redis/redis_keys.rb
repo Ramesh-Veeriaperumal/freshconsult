@@ -175,12 +175,6 @@ module Redis::RedisKeys
 	# List of languages used by agents in an account
   AGENT_LANGUAGE_LIST = "AGENT_LANGUAGE_LIST:%{account_id}"
 
-  BLACKLISTED_SPAM_ACCOUNTS = "BLACKLISTED_SPAM_ACCOUNTS"
-  BLACKLISTED_SPAM_DOMAINS = "BLACKLISTED_SPAM_DOMAINS"
-
-  SPAM_EMAIL_EXACT_REGEX_KEY = "SPAM_EMAIL_EXACT_REGEX"
-  SPAM_EMAIL_APPRX_REGEX_KEY = "SPAM_EMAIL_APPRX_REGEX"
-
 	def newrelic_begin_rescue
 	    begin
 	      yield
