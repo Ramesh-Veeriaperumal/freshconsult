@@ -2,10 +2,16 @@ module Ember
   class ContactsController < ApiContactsController
     decorate_views
 
+    def index
+      super
+      response.api_meta = { :count => @items.count }
+      render 'api_contacts/index'
+    end
+
     def bulk_delete
       return unless validate_deletion_params
       sanitize_deletion_params
-      load_objects
+      fetch_contacts
       delete_contacts
     end
 
@@ -51,7 +57,7 @@ module Ember
         end
       end
 
-      def load_objects(items = scoper)
+      def fetch_contacts(items = scoper)
         @items = items.find_all_by_id(params[cname][:ids])
       end
 
@@ -66,6 +72,10 @@ module Ember
 
       def sanitize_deletion_params
         prepare_array_fields ContactConstants::BULK_DELETE_ARRAY_FIELDS.map(&:to_sym)
+      end
+
+      def render_201_with_location(template_name: "api_contacts/#{action_name}", location_url: "api_contact_url", item_id: @item.id)
+        render template_name, location: send(location_url, item_id), status: 201
       end
 
       wrap_parameters(*wrap_params)

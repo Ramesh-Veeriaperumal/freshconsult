@@ -6,7 +6,19 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   delete_contact do
-    resource :"ember/contact", only: [:bulk_delete]
+    resource :"ember/contact", only: [:bulk_delete, :destroy]
+  end
+
+  view_contacts do
+    resource :"ember/contact", only: [:index, :show]
+  end
+
+  manage_contacts do
+    resource :"ember/contact", only: [:create, :update]
+  end
+
+  manage_users do
+    resource :"ember/contact", only: [:make_agent]
   end
 
 	delete_ticket do
