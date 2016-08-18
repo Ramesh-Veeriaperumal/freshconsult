@@ -111,6 +111,7 @@ Helpkit::Application.routes.draw do
         put :bulk_delete
       end
     end
+    resources :scenario_automations, controller: 'ember/scenario_automations', only: :index
   end
 
   match '/api/v2/_search/tickets' => 'tickets#search', :defaults => { :format => 'json' }, :as => :tickets_search, via: :get
