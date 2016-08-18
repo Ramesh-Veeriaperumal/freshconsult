@@ -181,6 +181,10 @@ Helpdesk.Multifile = {
             inputs.not(".original_input").remove();
         }
 
+    },
+    remove_file_size_alert: function(element){
+        var _form = jQuery(element).parents('form');
+        jQuery('#file_size_alert_' + _form.data('cntId')).hide();
     }
 };
 

@@ -401,7 +401,12 @@ HelpdeskReports.SavedReportUtil = (function() {
 
 	        if(index != -1) {
 	            var filter_hash = hash[index].report_filter;
-	            HelpdeskReports.locals.active_custom_field = filter_hash.data_hash.active_custom_field;
+	            if(filter_hash.data_hash.active_custom_field != undefined){
+	                HelpdeskReports.locals.active_custom_field = filter_hash.data_hash.active_custom_field;
+	            }
+	            else{
+	                HelpdeskReports.locals.active_custom_field = _.keys(HelpdeskReports.locals.custom_field_hash).first();
+	            }
 	            HelpdeskReports.locals.default_custom_field = filter_hash.data_hash.active_custom_field;
 	            id = filter_hash.id;
 	            var date_hash = filter_hash.data_hash.date;

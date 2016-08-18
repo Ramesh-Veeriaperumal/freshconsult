@@ -2,7 +2,7 @@
 <div class="item" id="${attachmentId}">
   {{if (file_valid)}}
   <a class="attachment-close"  href="javascript:void(0)" 
-            onclick="remove_file_size_alert(this); Helpdesk.Multifile.remove(this); return false;" 
+            onclick="Helpdesk.Multifile.remove_file_size_alert(this); Helpdesk.Multifile.remove(this); return false;" 
             inputId="${inputId}" data-size="${size_in_bytes}" data-attachment="${attachmentId}"></a>
   {{/if}}
   <div class="attachment-type file-types-def">
