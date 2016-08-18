@@ -942,7 +942,7 @@ li {
     // !Pattern?
     .hidden_upload {
         display: block;
-        min-width: 220px;
+        min-width: 100px;
         @include margin-left(3px);
         @include float(left);
         @include clear(both);
@@ -1032,6 +1032,8 @@ li {
         color: #999 !important;
         font-size: 0.9em !important;
         font-weight: normal !important;
+        position: relative;
+        top:16px;
     }
     #article-container {
         .hidden_upload {
@@ -1040,6 +1042,20 @@ li {
         .info-data {
             top:15px;
         }
+    }
+
+}
+.attachment-options.reply2forward {
+    width:100%;
+    padding: 0px;
+    margin-bottom: -15px;
+    .hidden_upload {
+        top:0px;
+    }
+   .cloud .attachmentTrigger {
+         .attachments-list-form {
+        padding-bottom:10px;
+      }
     }
 
 }
@@ -1055,6 +1071,9 @@ li {
     .attach-wrapper {
         padding-top: 10px;
         padding-bottom: 10px;
+    }
+    .attachment-help-info {
+        top:0px;
     }
 }
 /*reply 2 forward*/
@@ -1078,6 +1097,10 @@ li {
     .add_attachment {
         top: 6px;
     }
+    .attachment-help-info {
+        top: 12px;
+    }
+
 }
 .commentbox.commentbox-gray  {
     .ticketSelect2Container {
@@ -1094,7 +1117,8 @@ li {
     padding: 0px !important;
     width: 100% !important;
     position: relative;
-    top: 23px;
+    top: 15px;
+    margin-bottom: 0px !important;
 }
 /*attachment view*/
 

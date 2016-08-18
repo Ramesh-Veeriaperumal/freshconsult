@@ -55,7 +55,7 @@
         <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
           <li class="portal-attach">
             <a data-file-id="<%=attach_id%>" href="javascript:void(0)" class="attach-link-wrap">
-               <%= t('attach_file') %> <span class="attachment-help-info">( <%= t('attachment_help_info') %> )</span>
+               <%= t('attach_file') %> <span class="attachment-help-info">( <%= t('total') %> <%= t('attachment_help_info') %> )</span>
 
                 <div class="attach-file attach-link-file" id="<%= attach_id %>-attach-container">  
                   <input type="file" name="emptyfile" 
@@ -77,7 +77,7 @@
       </div>
     <% else %>      
       <div class="hidden_upload">
-        <div class="add_attachment"><span>+</span> <%= t('attach_file') %> <span class="attachment-help-info">( <%= t('attachment_help_info') %> )</span>
+        <div class="add_attachment"><span>+</span> <%= t('attach_file') %> 
 </div>
         <input type="file" name="emptyfile" 
                     id="<%=attach_id%>_file"
@@ -89,7 +89,7 @@
                     max_size="<%=max_size%>"
                     max_attachment= "<%=max_attachment%>" 
                     >
-      </div>
+      </div> <span class="attachment-help-info">( <%= t('total') %> <%= t('attachment_help_info') %> )</span>
     <% end %>    
   </div>
 </div>
