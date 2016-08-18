@@ -106,6 +106,11 @@ Helpkit::Application.routes.draw do
       end
     end
     resources :ticket_filters, controller: 'ember/ticket_filters', only: :index
+    resources :tickets, controller: 'ember/tickets' do
+      collection do
+        put :bulk_delete
+      end
+    end
   end
 
   match '/api/v2/_search/tickets' => 'tickets#search', :defaults => { :format => 'json' }, :as => :tickets_search, via: :get

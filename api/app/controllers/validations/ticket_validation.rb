@@ -5,7 +5,8 @@ class TicketValidation < ApiValidation
 
   attr_accessor :id, :cc_emails, :description, :due_by, :email_config_id, :fr_due_by, :group, :priority, :email,
                 :phone, :twitter_id, :facebook_id, :requester_id, :name, :agent, :source, :status, :subject, :ticket_type,
-                :product, :tags, :custom_fields, :attachments, :request_params, :item, :statuses, :status_ids, :ticket_fields
+                :product, :tags, :custom_fields, :attachments, :request_params, :item, :statuses, :status_ids, :ticket_fields,
+                :ids
 
   alias_attribute :type, :ticket_type
   alias_attribute :product_id, :product
@@ -81,14 +82,16 @@ class TicketValidation < ApiValidation
                                 ignore_string: :allow_string_param,
                                 section_field_mapping: proc { |x| TicketsValidationHelper.section_field_parent_field_mapping }
                               }
-                           }
+                           }, if: -> {!is_bulk_delete?}
   validates :twitter_id, :phone, :name, data_type: { rules: String, allow_nil: true }
   validates :twitter_id, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }
   validates :phone, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }
 
+  validates :ids, required: true, data_type: { rules: Array, allow_nil: false }, array: { custom_numericality: { only_integer: true, greater_than: 0, allow_nil: true, ignore_string: :allow_string_param, greater_than: 0 } }, on: :bulk_delete
+
   def initialize(request_params, item, allow_string_param = false)
     @request_params = request_params
-    @status_ids = request_params[:statuses].map(&:status_id)
+    @status_ids = request_params[:statuses].map(&:status_id) if request_params.key?(:statuses)
     super(request_params, item, allow_string_param)
     @description = item.description_html if !request_params.key?(:description) && item
     @fr_due_by ||= item.try(:frDueBy).try(:iso8601) if item
@@ -165,6 +168,10 @@ class TicketValidation < ApiValidation
 
   def create_or_update?
     [:create, :update].include?(validation_context)
+  end
+
+  def is_bulk_delete?
+    [:bulk_delete].include?(validation_context)
   end
 
   def source_as_outbound_email?

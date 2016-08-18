@@ -41,7 +41,6 @@ module ContactConstants
 
   # Wrap parameters args
   WRAP_PARAMS = [:api_contact, exclude: [], format: [:json, :multipart_form]].freeze
-  # Wrap parameters args
   EMBER_WRAP_PARAMS = [:contact, exclude: [], format: [:json]].freeze
 
   ALLOWED_CONTENT_TYPE_FOR_ACTION = {

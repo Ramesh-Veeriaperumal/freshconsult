@@ -1,6 +1,7 @@
 module ApiTicketConstants
   # ControllerConstants
   ARRAY_FIELDS = %w(tags cc_emails attachments).freeze
+  BULK_DELETE_ARRAY_FIELDS = ['ids'].freeze
   HASH_FIELDS = ['custom_fields'].freeze
   COMPLEX_FIELDS = ARRAY_FIELDS | HASH_FIELDS
   CREATE_FIELDS = %w(description due_by email_config_id fr_due_by group_id priority
@@ -14,6 +15,7 @@ module ApiTicketConstants
   ALLOWED_INCLUDE_PARAMS = %w(conversations requester company stats)
   SIDE_LOADING = ['requester', 'stats']
   INCLUDE_PRELOAD_MAPPING = { 'stats' => :ticket_states }
+  BULK_DELETE_PRELOAD_OPTIONS = [:tags, :schema_less_ticket].freeze
   ORDER_TYPE = TicketsFilter::SORT_ORDER_FIELDS.map(&:first).map(&:to_s).freeze
   ORDER_BY = TicketsFilter::SORT_FIELDS.map(&:first).map(&:to_s) - ['priority']
   DEFAULT_ORDER_BY = TicketsFilter::DEFAULT_SORT
@@ -35,6 +37,7 @@ module ApiTicketConstants
   FIELD_TYPES = Helpdesk::TicketField::FIELD_CLASS.keys.map(&:to_s).freeze
   INDEX_FIELDS = %w(filter company_id requester_id email order_by order_type updated_since include).freeze
   INDEX_FILTER_FIELDS = %w(filter company_id requester_id email updated_since).freeze
+  BULK_DELETE_FIELDS = BULK_DELETE_ARRAY_FIELDS.freeze
 
   ATTRIBUTES_TO_BE_STRIPPED = %w(email phone name subject type tags cc_emails twitter_id custom_fields).freeze
 
@@ -49,7 +52,8 @@ module ApiTicketConstants
 
   ALLOWED_CONTENT_TYPE_FOR_ACTION = {
     create: [:json, :multipart_form],
-    update: [:json, :multipart_form]
+    update: [:json, :multipart_form],
+    bulk_delete: [:json]
   }.freeze
 
   MAX_EMAIL_COUNT = TicketConstants::MAX_EMAIL_COUNT - 1

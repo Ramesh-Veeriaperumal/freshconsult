@@ -58,7 +58,7 @@ module Ember
       def validate_deletion_params
         params[cname].permit(*ContactConstants::BULK_DELETE_FIELDS)
         contact_validation = ContactValidation.new(params[cname], nil)
-        return true if contact_validation.valid?(action_name.to_sym)
+        return true if contact_validation.valid?(:bulk_delete)
 
         render_errors contact_validation.errors, contact_validation.error_options
         false
