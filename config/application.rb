@@ -236,13 +236,5 @@ ENV['RECAPTCHA_PRIVATE_KEY'] = '6LfNCb8SAAAAANC5TxzpWerRTLrxP3Hsfxw0hTNk'
 
 
 
-if defined?(PhusionPassenger)
-  PhusionPassenger.on_event(:starting_worker_process) do |forked|
-    if forked
-       RABBIT_MQ_ENABLED = !Rails.env.development?
-       RabbitMq::Init.start if RABBIT_MQ_ENABLED
-    end
-  end
-end
 
 GC::Profiler.enable if defined?(GC) && defined?(GC::Profiler) && GC::Profiler.respond_to?(:enable)

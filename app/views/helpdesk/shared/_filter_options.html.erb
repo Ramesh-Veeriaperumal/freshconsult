@@ -47,8 +47,6 @@
         value       : value.toString()
       }
     }
-    window.FreshdeskNode.getValue('faye_realtime').new_ticket_ids = [];
-    window.FreshdeskNode.getValue('faye_realtime').updated_ticket_ids = [];
   }
 
   function refresh_tickets() {
@@ -245,10 +243,6 @@
     });
 
   jQuery("#FilterOptions").change(function(){
-    for(var i=0;i<window.FreshdeskNode.getValue('faye_realtime').faye_subscriptions.length;i++)
-    {
-      window.FreshdeskNode.getValue('faye_realtime').faye_subscriptions[i].cancel();
-    }
     <%
     # Select all should be persisted on pagination
     # but not when filter get changed, which is handled in change event of
@@ -296,7 +290,6 @@
           updated_ticket_ids = [];
           jQuery("#update_message, #new_ticket_message").hide();
         }
-        window.FreshdeskNode.addSubscriptions();
       }
     });
   });

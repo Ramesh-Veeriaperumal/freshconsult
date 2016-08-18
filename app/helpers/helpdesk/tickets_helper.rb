@@ -481,23 +481,6 @@ module Helpdesk::TicketsHelper
     AgentCollision.ticket_channel(current_account,ticket_id)
   end
 
-
-  def agentcollision_host
-    "#{request.protocol}#{NodeConfig["agentcollision_host"]}"
-  end
-
-  def agentcollision_server
-    "#{request.protocol}#{NodeConfig["agentcollision_server"]}"
-  end
-
-  def autorefresh_host
-    "#{request.protocol}#{NodeConfig["autorefresh_host"]}"
-  end
-
-  def autorefresh_server
-    "#{request.protocol}#{NodeConfig["autorefresh_server"]}"
-  end
-
   def facebook_link
     ids = @ticket.fb_post.original_post_id.split('_')
     page_id = @ticket.fb_post.facebook_page.page_id

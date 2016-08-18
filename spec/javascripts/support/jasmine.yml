@@ -42,8 +42,8 @@ src_files:
     - public/javascripts/helpdesk/multifile.js
     - public/javascripts/frameworks/plugins/jquery.nested_select_tag.js
     - public/javascripts/frameworks/socket.io.js
-    - public/javascripts/frameworks/faye.js
-    - public/javascripts/helpdesk/freshdesk_node.js
+    # - public/javascripts/frameworks/faye.js
+    # - public/javascripts/helpdesk/freshdesk_node.js
     - public/javascripts/ticket_list.js
     - public/javascripts/AsyncJSLoader.js
     - public/javascripts/lib/detectmobilebrowsers.js

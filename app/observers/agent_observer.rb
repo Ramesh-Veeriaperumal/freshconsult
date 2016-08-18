@@ -45,9 +45,6 @@ class AgentObserver < ActiveRecord::Observer
       end 
     end
 
-    def auto_refresh_key(agent)
-      AUTO_REFRESH_AGENT_DETAILS % { :account_id => agent.account_id, :user_id => agent.user_id }
-    end
       
     def update_crm(agent)
       if agent.account.full_time_agents.count > 1

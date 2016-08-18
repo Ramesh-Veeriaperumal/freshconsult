@@ -24,7 +24,6 @@ window.Fjax = {
         }
       }
       this._SocketCleanUp();
-      this._FayeCleanUp();
       this._deleteDetachedDOM();
       
       $.xhrPool_Abort();
@@ -187,39 +186,6 @@ window.Fjax = {
         $('.reply_agent_collision').off("click.agent_collsion");
       }
     },
-
-    _FayeCleanUp: function()
-    {
-      $('[data-note-type]').off("click.agent_collsion");
-      $('.reply_agent_collision').off("click.agent_collsion");
-
-      if(window.FreshdeskNode.getValue('faye_realtime').fayeClient)
-      {
-        for(var i=0;i < window.FreshdeskNode.getValue('faye_realtime').faye_subscriptions.length;i++)
-        {
-          window.FreshdeskNode.getValue('faye_realtime').faye_subscriptions[i].cancel();
-        }
-        window.FreshdeskNode.clearClients();
-        window.FreshdeskNode.clearReplyOnLoad();
-        window.FreshdeskNode.clearPolling();
-        window.FreshdeskNode.getValue('faye_realtime').faye_subscriptions = [];
-        window.FreshdeskNode.getValue('faye_realtime').fayeClient.disconnect();
-        window.FreshdeskNode.getValue('faye_realtime').faye_channels = [];
-        window.FreshdeskNode.getValue('faye_realtime').fayeClient = null;
-      }
-    },
-
-    _deleteDetachedDOM: function() {
-
-      delete $("#TicketProperties select.dropdown, #TicketProperties select.dropdown_blank, #TicketProperties select.nested_field").prevObject;
-      delete $('body.ticket_details [rel=tagger]').prevObject;
-      delete $('[data-hotkey]').prevObject;
-      delete $("a.page-btn.next_page.btn.tooltip").prevObject;
-      delete $("#body-container").prevObject;
-
-    },
-
-
     _disconnectNode: function() {
       try {
         jQuery(document).trigger('disconnectNode');
