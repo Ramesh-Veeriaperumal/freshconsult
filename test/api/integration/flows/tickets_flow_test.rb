@@ -402,4 +402,18 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
     10.times { Delayed::Job.reserve_and_run_one_job }
     assert_equal 0, Delayed::Job.count
   end
+
+  def test_bulk_deletion
+    skip_bullet do
+      ticket_id = ticket.display_id
+      put "api/_/tickets/bulk_delete", {ids: [ticket_id]}.to_json, @write_headers
+      assert_response 205
+
+      put "api/_/tickets/bulk_delete", {ids: [ticket_id, ticket_id + 20]}.to_json, @write_headers
+      assert_response 202
+
+      put "api/_/tickets/bulk_delete", nil, @write_headers
+      assert_response 400
+    end
+  end
 end
