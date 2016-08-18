@@ -277,10 +277,8 @@ module Cache::Memcache::Account
   end
 
   def account_additional_settings_from_cache
-    @account_additional_settings_from_cache ||= begin
-      key = ACCOUNT_ADDITIONAL_SETTINGS % { :account_id => self.id }
-      MemcacheKeys.fetch(key) { self.account_additional_settings }
-    end
+    key = ACCOUNT_ADDITIONAL_SETTINGS % { :account_id => self.id }
+    MemcacheKeys.fetch(key) { self.account_additional_settings }
   end
 
   def clear_account_additional_settings_from_cache

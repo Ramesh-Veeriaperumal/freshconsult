@@ -185,8 +185,8 @@ GIT
 
 GIT
   remote: git@github.com:freshdesk/fd_rate_limiter.git
-  revision: 4db93ed9cb13a51c173b8f2a910afe808e86e968
-  branch: controller_action_rl
+  revision: 94ebd47857e65ed3de0c4e1fd8b81d5666aabde1
+  branch: dynamic_rules
   specs:
     fd_rate_limiter (0.0.1)
 

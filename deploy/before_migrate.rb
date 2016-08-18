@@ -20,7 +20,6 @@ run "ln -nfs #{shared_path}/config/mailgun.yml #{node[:rel_path]}/config/mailgun
 run "ln -nfs #{shared_path}/config/mailbox.yml #{node[:rel_path]}/config/mailbox.yml"
 run "ln -nfs #{shared_path}/config/freshfone.yml #{node[:rel_path]}/config/freshfone.yml"
 run "ln -nfs #{shared_path}/config/rate_limit.yml #{node[:rel_path]}/config/rate_limit.yml"
-run "ln -nfs #{shared_path}/config/rate_limit_threshold.yml #{node[:rel_path]}/config/rate_limit_threshold.yml"
 run "ln -nfs #{shared_path}/config/akismet.yml #{node[:rel_path]}/config/akismet.yml"
 run "ln -nfs #{shared_path}/config/braintree.yml #{node[:rel_path]}/config/braintree.yml"
 run "ln -nfs #{shared_path}/config/rabbitmq.yml #{node[:rel_path]}/config/rabbitmq.yml"
