@@ -67,7 +67,7 @@
     <div>
       {{if (file_valid)}}
       <a  class="delete mr10" href="#" 
-        onclick="remove_file_size_alert(this); Helpdesk.Multifile.remove(this); return false;"
+        onclick="Helpdesk.Multifile.remove_file_size_alert(this); Helpdesk.Multifile.remove(this); return false;"
         inputId="${inputId}" >
       </a>
       {{/if}}
