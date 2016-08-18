@@ -1,0 +1,57 @@
+<div class="context-container-wrap">
+  <i class="cti-minimize ficon-minus"></i>
+  <%= render :partial => 'shared/integrations/cti/cti_caller_context' %>
+
+  <ul class="nav nav-tabs sleek-tab">
+    <li class="active"><a href="#cti_call_action" data-toggle="tab"><%= t("integrations.screen_pop.widget.call_actions") %></a></li>
+    <li><a id="cti_recent_tickets_link" href="#cti_recent_tickets" data-toggle="tab"><%= t("integrations.screen_pop.widget.recent_tickets") %></a></li>
+  </ul>
+
+  <div class = "tab-content">
+    <div class="tab-pane active" id="cti_call_action">
+      <div class="link-call-index">
+        <div class="cti-call-reference pt5 hide">
+          <%= t("integrations.screen_pop.widget.ticket_reference_id") %>
+          <a class="call-reference-ticket-id" data-pjax="#body-container"></a>
+        </div>
+        <div id="cti_action_existing" class="mt10 hide">
+          <div class="cti-link-ticket-info p10 clearfix">
+            <div class="link-ticket-subject ellipsis pull-left"></div>
+            <span class="cti-existing-id pull-left"></span>
+          </div>
+          <a id="cti_action_existing" class="cti-action-existing text-center"><%= t("integrations.screen_pop.widget.link_to_ticket") %></a>
+        </div>
+        <a id="cti_action_new" class="cti-action-new mt10 text-center"> <%= t("integrations.screen_pop.widget.link_to_new_ticket") %></a>
+        <div class="text-center mt10"><a id="cti_action_ignore" class="cti-action-new flat"> <%= t("integrations.screen_pop.widget.do_not_link") %></a></div>
+      </div>
+
+      <div class="link-call-ticket hide">
+        <label> <%= t("integrations.screen_pop.widget.requester") %> </label>
+        <textarea id="ticket_requester" class="cti-requester p5"></textarea>
+        <label> <%= t("integrations.screen_pop.widget.subject") %></label>
+        <textarea id="ticket_subject" class="cti-subject p5"></textarea>
+        <div class="link-call-ticket-options mt10">
+          <button id="cti_link_new" class="btn btn-primary pull-right ml10"> <%= t("integrations.screen_pop.widget.create") %></button>
+          <button id="cti_cancel" class="btn btn-default pull-right"> <%= t("integrations.screen_pop.widget.cancel") %> </button>
+        </div>  
+      </div>
+
+      <div class="link-new-call-note hide">
+        <div id="cti_new_call_text" class="text-center pt10">
+          <%= t("integrations.screen_pop.widget.new_ticket_with_id") %> <a id="cti_new_call_id" data-pjax="#body-container"></a>
+        </div>
+        <a id="cti_new_call_link" class="cti-action-new mt10 text-center"> <%= t("integrations.screen_pop.widget.add_note_to_ticket") %> </a>
+        <div class="text-center mt10"><a id="cti_new_call_ignore" class="cti-action-new flat"> Do not link </a></div>
+      </div>
+      <div class="cti-action-loading loading-block loading-small loading-align"> </div>
+    </div>
+
+    <div class="tab-pane" id="cti_recent_tickets" >
+      <div class="recent-tickets-content"></div>
+      <div class="loading-block loading-small loading-align"> </div>
+    </div>
+  </div>
+  <div id="cti_add_notes" class="cti-add-notes">
+    <%= render :partial => 'shared/integrations/cti/cti_add_notes' %>
+  </div>
+</div>

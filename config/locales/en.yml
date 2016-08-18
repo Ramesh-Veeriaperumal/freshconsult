@@ -586,7 +586,7 @@ en:
     fcr: Is first call resolution
     customer_votes: Number of votes
     solution_likes: Number of likes
-    true : True
+    "true" : "True"
     ticket_mand: Please populate number of resolved tickets.
     solution_mand: Please populate number of Solutions.
     forum_mand: Please populate number of Forums.
@@ -1399,8 +1399,8 @@ en:
         survey_help_msg: Selecting a rating above will link off to the page below
         survey_help_msg_v2: When a satisfaction rating is selected, a thank you page is shown.
         survey_help_msg_v3: When a satisfaction rating is selected, a thank you page is shown to collect more feedback
-        on: ON
-        off: OFF
+        "on": "ON"
+        "off": "OFF"
         confirm_text: Please confirm...
         delete: Delete
         activate_survey: Activate
@@ -1969,7 +1969,7 @@ en:
       no_agent_label: No Agent
       add_agent_label: Add Agent
       add_label: Add
-      no_label: No
+      no_label: "No"
       done_label: Done
       manage_label: Manage
       save_label: Save
@@ -4299,7 +4299,7 @@ en:
   urgent: Urgent
   import_groups: Groups
   solution:
-    on: 'on'
+    "on": 'on'
     plain_new: New
     plain_edit: Edit
     show_languages: Show languages
@@ -5643,7 +5643,7 @@ en:
         hours: Hours
         billing_hours: Billable
         note: Note
-        on: on
+        "on": "on"
         hours_format_tip: "Enter time in HH:MM or decimals (like 1:30 or 1.5 for an hour and 30 minutes). Leave this blank to start the auto-timer."
       note: Notes
 
@@ -6622,6 +6622,73 @@ en:
       convert_to_ticket: "Convert all call recordings into a ticket at the end of the call"
       add_note_as_private: "Mark in call notes as a private"
       cti_error: "No app of type cti enabled for this account"
+    screen_pop:
+      title: "cti_phone"
+      call_info: "Call Info"
+      header_msg: "Support Call between %{responder} and %{requester}"
+      widget:
+        call_actions: "Call Actions"
+        recent_tickets: "Recent Tickets"
+        add_note_text: "Call Notes"
+        edit_note_text: "Edit Note"
+        agent_phone_updated: "Agent phone details Updated"
+        agent_phone_details: "Agent phone details"
+        ticket_reference_id: "Call reference id"
+        link_to_ticket: "Link to this ticket"
+        link_to_new_ticket: "Link to new ticket"
+        do_not_link: "Do not link"
+        requester: "Requester Name"
+        subject: "Subject"
+        create: "Create"
+        cancel: "Cancel"
+        new_ticket_with_id: "New ticket created with id"
+        add_note_to_ticket: "Add note to ticket"
+        view_all: View all
+    cti_admin:
+      helptext: "<p>Integrate your telephone system with your online helpdesk using the Freshdesk CTI framework. With our simple documentation and straightforward APIs, hooking up your online helpdesk with a telephone system becomes a walk in the park.</p><p>Once you’re done setting up your adaptor with our helpdesk, your support agents will be able to make/receive calls, access customer details, take notes during calls, and maintain context to provide that jaw-drop awesome customer support.</p><p><a href='
+https://support.freshdesk.com/solution/articles/221418-computer-telephony-integration-framework'> Learn more </a>"
+      no_feature: "This app can only be installed for accounts with CTI enabled."
+      label: "CTI Framework"
+      desc: "Unify your telephony experience within Freshdesk"
+      title: "CTI Settings"
+      iframe_toggle: "Enable Softphone Iframe"
+      softfone:
+        url: "URL for Iframe"
+        width: "Width"
+        height: "Height"
+        max_dimension: "Max 550px &times; 250px"
+      save_agent_private_note: "Save Call Notes as private"
+      ctd_toggle: "Configure Click to Dial"
+      ctd:
+        request_type: "Request Type"
+        callback_url: "Callback URL"
+        req_authentication: "Require authentication"
+        username: "Username"
+        password: "Password"
+        have_user_pass: "I have Username & Password?"
+        api_key: "API Key"
+        have_api_key: "I have API key?"
+        encoding: "Encoding"
+        content: "Content"
+      phone:
+        title: "Helpdesk Numbers"
+        add_number: "Add Number"
+        add_number_tooltip: "Each row should contain only one number"
+        cancel: "Cancel"
+        save: "Save"
+        number_in_use: "Numbers in use"
+        number_not_in_use: "Not in use"
+        add_number_success: "All Numbers were added successfully"
+        add_number_failure: "Error in adding number. Please check the format"
+        add_number_warning: "<strong>%{added_length} of %{original_length} were added successfully<br/>These numbers could not be added because they already exist in the system </strong> (%{numbers})"
+        delete_number: "Please confirm"
+        delete_msg: "Are you sure you want to delete this number?"
+    cti_call:
+      invalid_ticket_id: "Invalid ticket id"
+      invalid_requester_id: "Invalid requester id"
+      invalid_responder_id: "Invalid responder id"
+      contact_creation_failed: "Unable to create contact"
+      no_agent_with_phone: "No agent found with the given number"
     czentrix:
       label: "C-Zentrix"
       desc: "Answer calls or trigger an outgoing call with this powerful C-zentrix's telephony capabilities embedded inside Freshdesk"
@@ -8091,7 +8158,7 @@ en:
       dialog:
         email: Email
         generate_report: Generate report
-        on: On
+        "on": "On"
         subject: Subject
         desc: Description
       errors:

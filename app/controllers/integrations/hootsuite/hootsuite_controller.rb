@@ -8,7 +8,7 @@ class Integrations::Hootsuite::HootsuiteController < ApplicationController
 
   def authenticate_hootsuite_user
     if (params[:uid].nil? || params[:ts].nil? || params[:token].nil? || (Digest::SHA512.hexdigest(params[:uid] + params[:ts] + ThirdPartyAppConfig["hootsuite"]["shared_secret"]) != params[:token]))
-         render :text =>  t("integrations.hootsuite.auth_error") and return
+      render :text =>  t("integrations.hootsuite.auth_error") and return
     end
   end
 

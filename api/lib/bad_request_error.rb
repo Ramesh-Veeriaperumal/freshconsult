@@ -21,6 +21,8 @@ class BadRequestError < BaseError
     forum_id: :forum,
     forum_category_id: :category,
     email_config_id: :email_config,
+    ticket_id: :ticket,
+    responder_phone: :agent,
     from_email: :"active email_config"
   }
 

@@ -196,7 +196,9 @@ module FreshdeskCore::Model
                         "user_companies",
                         "helpdesk_permissible_domains",
                         "outgoing_email_domain_categories",
-                        "ticket_templates"
+                        "ticket_templates",
+                        "cti_calls",
+                        "cti_phones"
                     ]
 
   STATUS = {

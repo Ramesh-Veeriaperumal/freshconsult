@@ -22,19 +22,21 @@
 
 <%= javascript_tag do %>
  	(function($){
+ 		var $placement = ($("html").attr("dir") == "rtl") ? 'left' :'right';
 		$("input.popover-enabled").focus(function(){
 		  var popover_message= $(this).attr("data-content");
       	  if(popover_message){
 		    $(this).popover({
   	   		  html: true,
   	   		  trigger: 'manual',
+  	   		   placement: $placement,
   	   		  template: '<div class="popover"><div class="arrow"></div><div class="popover-inner"><div class="popover-content"><p></p></div></div></div>',
   	   		  content:function(){
                   return "<div class='password-wrapper'><h5 class='policy-title'><%= t("admin.security.password_policy_popover.password_must") %></h5>" 
                   	+popover_message + "</div>"
                 }
   	   	    }).popover("show");
-      	  }
+  	   	    }
 		});
 	
 		$(".popover-enabled").blur(function(){

@@ -40,7 +40,12 @@
               }
               _subcategory.prepend(opts.default_option);
               _subcategory.val("")
-            }
+            } else {
+                $("<option />")
+                  .html("")
+                  .val("")
+                  .appendTo(_subcategory);
+              }
             
             _subcategory.trigger("change");
             _condition = (!_items_present || (!_category.val() || _category.val() == -1));
@@ -84,6 +89,11 @@
                 }
                 _item.prepend(opts.default_option);
                 _item.val("")
+              } else {
+                $("<option />")
+                  .html("")
+                  .val("")
+                  .appendTo(_item);
               }
 
               _item.trigger("change");
