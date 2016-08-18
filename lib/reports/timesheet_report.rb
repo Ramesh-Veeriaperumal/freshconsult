@@ -40,7 +40,7 @@ module Reports::TimesheetReport
     view_headers = [:workable , :customer_name , :priority_name, :status_name, :note , :group_by_day_criteria , :agent_name,
                                                                              :group_name ]
 
-    view_headers -= [:agent_name] if Account.current.features_included?(:euc_hide_agent_metrics)
+    view_headers -= [:agent_name] if Account.current.hide_agent_metrics_feature?
     view_headers.push(:product_name) if Account.current.products.any?
     view_headers.push(:hours)
     view_headers
@@ -253,7 +253,7 @@ module Reports::TimesheetReport
       :start_date  => start_date,
       :end_date    => end_date,
       :customer_id => params[:customers] ? params[:customers].split(',') : [],
-      :user_id     => (Account.current.features_included?(:euc_hide_agent_metrics) ? [] : (params[:user_id] || [])),
+      :user_id     => (Account.current.hide_agent_metrics_feature? ? [] : (params[:user_id] || [])),
       :headers     => list_view_items.delete_if{|item| item == group_by_caluse },
       :billable    => billable_and_non? ? [true, false] : [params[:billable].to_s.to_bool],
       :group_id    => params[:group_id] || [],

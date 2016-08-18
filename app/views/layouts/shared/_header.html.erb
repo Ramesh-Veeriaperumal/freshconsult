@@ -1,4 +1,6 @@
+<% unless current_account.hide_agent_metrics_feature? %>
 <%= assumed_identity_message %>
+<% end %>
 <% if logged_in? %>
 <script type="text/javascript">
 	window.current_account_id = "<%=current_account.id%>";
@@ -87,12 +89,14 @@
 						<span class="seperator"></span>
 						<%= link_to t('revert_identity_link_msg').html_safe, revert_identity_users_path, :class => "link" %>			
 					<% elsif privilege?(:manage_users) %>  			
+					<% unless current_account.hide_agent_metrics_feature? %>		
 						<div class="info switch_agent" id="switch_agent_container">
               <div id="agt_loading" class="link load_agent"><span><%= t("agent_loading_msg") %></span></div>
               <select id="assumed_select_id" data-placeholder="<%= t("swith_agent_msg") %>" class="header-agent-select hide">
                 <option></option>
               </select>
             </div>
+            <% end %>     
 					<% end %>     
 					<div class="tone-customize hide" >
 						<span class="seperator"></span>
@@ -202,7 +206,7 @@
 <%  if logged_in? and current_user.agent?  %>
   <script type="text/javascript">   	
     jQuery(document).ready(function() {
-      App.Header.init(<%= is_assumed_user? || !current_user.privilege?(:manage_users) %>);
+      App.Header.init(<%= is_assumed_user? || !current_user.privilege?(:manage_users) || current_account.hide_agent_metrics_feature? %>);
     })
    
 		var raw_store_data = <%= get_store_data.html_safe %>
