@@ -186,6 +186,13 @@ window.Fjax = {
         $('.reply_agent_collision').off("click.agent_collsion");
       }
     },
+    _deleteDetachedDOM: function() {       
+       delete $("#TicketProperties select.dropdown, #TicketProperties select.dropdown_blank, #TicketProperties select.nested_field").prevObject;   
+       delete $('body.ticket_details [rel=tagger]').prevObject;    
+       delete $('[data-hotkey]').prevObject;   
+       delete $("a.page-btn.next_page.btn.tooltip").prevObject;    
+       delete $("#body-container").prevObject;   
+     },
     _disconnectNode: function() {
       try {
         jQuery(document).trigger('disconnectNode');
