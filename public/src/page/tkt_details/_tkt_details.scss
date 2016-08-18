@@ -886,7 +886,7 @@ li {
 /*traffic cop for multifile*/
 #traffic-cop-attachment-error {
     position: fixed;
-    border-left: 0px;
+    @include border-left(0px);
     top: 0px;
     z-index: 999;
     @include left(100px);
@@ -1073,7 +1073,7 @@ li {
         padding-bottom: 10px;
     }
     .attachment-help-info {
-        top:0px;
+        top:0px !important;
     }
 }
 /*reply 2 forward*/
@@ -1088,6 +1088,7 @@ li {
     }
 }
 .single_file.bulk {
+    margin-bottom: 15px;
    .attach-wrapper {
         width: 100%;
         background: #fdfdfd !important;
@@ -1100,7 +1101,6 @@ li {
     .attachment-help-info {
         top: 12px;
     }
-
 }
 .commentbox.commentbox-gray  {
     .ticketSelect2Container {
