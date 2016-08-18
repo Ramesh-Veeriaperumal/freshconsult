@@ -23,7 +23,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   before_save  :update_ticket_related_changes, :update_company_id, :set_sla_policy
 
-  before_save :check_company_id, :if => :company_id_changed?
+  before_save :check_and_reset_company_id, :if => :company_id_changed?
 
   before_update :update_sender_email
 
@@ -480,13 +480,15 @@ private
     end
   end
 
-  def update_company_id
+  def update_company_id 
     # owner_id will be used as an alias attribute to refer to a ticket's company_id
-    self.owner_id = self.requester.company_id if @model_changes.key?(:requester_id) && self.owner_id.nil?
+    self.owner_id = self.requester.company_id if @model_changes.key?(:requester_id) &&
+                                                 self.requester.company_ids.length < 2
   end
 
-  def check_company_id
-    self.owner_id = owner_id_was unless requester.company_ids.include?(self.owner_id)
+  def check_and_reset_company_id
+    self.owner_id = owner_id_was if self.owner_id.present? &&
+                                    !requester.company_ids.include?(self.owner_id)
   end
 
   def populate_requester
