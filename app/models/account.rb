@@ -90,6 +90,10 @@ class Account < ActiveRecord::Base
     tz = "Kyiv" if tz.eql?("Kyev")
     tz
   end
+
+  def hide_agent_metrics_feature?
+    features?(:euc_hide_agent_metrics)
+  end
   
   def survey
     @survey ||= begin
