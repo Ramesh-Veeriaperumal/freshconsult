@@ -23,9 +23,13 @@ module ApiSolutions
     end
 
     def setup_articles
+      @category_meta = Solution::CategoryMeta.last
+      @folder_meta = @category_meta.solution_folder_meta.last
+
       @articlemeta = Solution::ArticleMeta.new
       @articlemeta.art_type = 1
-      @articlemeta.solution_folder_meta_id = Solution::FolderMeta.first.id
+      @articlemeta.solution_folder_meta_id = @folder_meta.id
+      @articlemeta.solution_category_meta = @folder_meta.solution_category_meta
       @articlemeta.account_id = @account.id
       @articlemeta.published = false
       @articlemeta.save
@@ -39,6 +43,20 @@ module ApiSolutions
       @article.account_id = @account.id
       @article.user_id = @account.agents.first.id
       @article.save
+
+      @draft = Solution::Draft.new
+      @draft.account = @account
+      @draft.article = @article
+      @draft.title = "Sample"
+      @draft.category_meta = Solution::FolderMeta.first.solution_category_meta
+      @draft.status = 1
+      @draft.save
+
+      @draft_body = Solution::DraftBody.new
+      @draft_body.draft = @draft
+      @draft_body.description = "<b>aaa</b>"
+      @draft_body.account = @account
+      @draft_body.save
     end
 
 
@@ -329,6 +347,16 @@ module ApiSolutions
       assert sample_article.reload.parent.reload.art_type == 2
       assert sample_article.reload.parent.reload.user_id == @agent.id
     end
+
+    def test_update_draft_with_unavailable_agent_id
+      sample_article = get_article_with_draft
+      paragraph = Faker::Lorem.paragraph
+      params_hash  = { agent_id: 9999 }
+      put :update, construct_params({ id: sample_article.parent_id }, params_hash)
+      assert_response 400
+      match_json([bad_request_error_pattern('agent_id', :absent_in_db, resource: 'agent', attribute: 'agent_id')])
+    end
+
 
     def test_update_article_with_unavailable_user_id
       sample_article = get_article

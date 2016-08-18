@@ -27,7 +27,7 @@ module ApiSolutions
         else
           @draft = @item.draft
           @draft.unlock
-          language_params = @article_params.delete(language_scoper)
+          language_params = @article_params[language_scoper].extract!(:title, :description)
           @draft.update_attributes(language_params)
         end
       end
