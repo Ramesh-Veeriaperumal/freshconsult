@@ -10,9 +10,14 @@ module Social
       
       def insert_facebook_feed(hash_key, range_key, feed)
         times = [Time.now.utc, Time.now.utc + 7.days]
+        feed_hash = JSON.parse(feed)
+        if feed_hash["entry"] && feed_hash["entry"]["changes"].kind_of?(Array)
+          item_hash  = facebook_feed_hash(hash_key, range_key, feed)
+        elsif feed_hash["entry"] && feed_hash["entry"]["messaging"].kind_of?(Array)
+          item_hash  = facebook_message_hash(hash_key, range_key, feed)
+        end
         times.each do |time|
           table_name = Social::DynamoHelper.select_table(TABLE, time)
-          item_hash  = facebook_feed_hash(hash_key, range_key, feed)
           Social::DynamoHelper.insert(table_name, item_hash, SCHEMA, false)
         end
       end
@@ -52,6 +57,20 @@ module Social
           },
           "feed" => {
             :s => "#{feed}"
+          }
+        }
+      end
+
+      def facebook_message_hash(hash_key, range_key, message)
+        query_options = {
+          "page_id" => {
+            :n => "#{hash_key}"
+          },
+          "timestamp" => {
+            :n => "#{range_key}"
+          },
+          "message" => {
+            :s => "#{message}"
           }
         }
       end

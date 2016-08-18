@@ -50,6 +50,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"integrations/user_credential"
     resource :"integrations/pivotal_tracker"
     resource :"integrations/cti/customer_detail"
+    resource :"integrations/cti/screen_pop"
     resource :"integrations/quickbook"
     resource :"integrations/dynamicscrm", :only => [:widget_data]
     resource :"integrations/infusionsoft", :only => [:fetch_user]
@@ -67,6 +68,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"freshfone/agent_leg", :only => [:agent_response, :disconnect_browser_agent, :remove_notification_recovery]
     resource :"freshfone/conference_transfer", :only => [:initiate_transfer, :complete_transfer, :transfer_success, :cancel_transfer, :resume_transfer, :disconnect_agent]
     resource :"freshfone/agent_conference", :only => [:add_agent, :success, :cancel]
+    resource :"freshfone/warm_transfer", :only => [:initiate, :unhold, :cancel, :resume]
     resource :"freshfone/conference_call", :only => [:call_notes, :save_call_notes, :save_call_quality_metrics, :wrap_call]
     resource :"freshfone/hold", :only => [ :add, :remove ]
     resource :"freshfone/call_history"
@@ -84,7 +86,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"helpdesk/ca_folder"
     resource :"helpdesk/scenario_automation"
     resource :agent, :only => [:toggle_availability, :list]
-    resource :"search/home", :only => [:index, :suggest]
+    resource :"search/home", :only => [:index, :suggest, :recent_searches_tickets, :remove_recent_search]
     resource :"search/v2/suggest", :only => [:index]
     resource :"search/solution", :only => [:related_solutions, :search_solutions]
     resource :"search/v2/solution", :only => [:related_solutions, :search_solutions]
@@ -537,6 +539,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"integrations/salesforce"
     resource :"integrations/freshsale"
     resource :"integrations/slack_v2", :only => [:oauth, :new, :install, :edit, :update]
+    resource :"integrations/cti_admin"
     resource :"admin/integrations/freshplug"
     resource :"admin/marketplace/extension"
     resource :"admin/marketplace/installed_extension"
@@ -558,6 +561,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :survey, :only => [:index]
     resource :"satisfaction_rating", :only => [:index]
     resource :"api_role", :only => [:index, :show]
+    resource :"api_integrations/cti", :only => [:create, :index]
   end
 
   manage_account do

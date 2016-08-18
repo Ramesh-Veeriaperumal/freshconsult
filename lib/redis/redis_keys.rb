@@ -8,6 +8,8 @@ module Redis::RedisKeys
 	HELPDESK_TICKET_ADJACENTS_META	 	= "HELPDESK_TICKET_ADJACENTS_META:%{account_id}:%{user_id}:%{session_id}"
 	INTEGRATIONS_JIRA_NOTIFICATION = "INTEGRATIONS_JIRA_NOTIFY:%{account_id}:%{local_integratable_id}:%{remote_integratable_id}:%{comment_id}"
 	INTEGRATIONS_LOGMEIN = "INTEGRATIONS_LOGMEIN:%{account_id}:%{ticket_id}"
+	INTEGRATIONS_CTI = "INTEGRATIONS_CTI:%{account_id}:%{user_id}"
+	INTEGRATIONS_CTI_OLD_PHONE = "INTEGRATIONS_CTI_OLD_PHONE:%{account_id}:%{user_id}"
 	HELPDESK_TICKET_UPDATED_NODE_MSG    = "{\"account_id\":%{account_id},\"ticket_id\":%{ticket_id},\"agent\":\"%{agent_name}\",\"type\":\"%{type}\"}"
 	EMPTY_TRASH_TICKETS = "EMPTY_TRASH_TICKETS:%{account_id}"
 	EMPTY_SPAM_TICKETS = "EMPTY_SPAM_TICKETS:%{account_id}"
@@ -37,7 +39,7 @@ module Redis::RedisKeys
 	WEBHOOK_ERROR_NOTIFICATION = "WEBHOOK_ERROR_NOTIFICATION:%{account_id}:%{rule_id}"
 	
 	PREMIUM_GAMIFICATION_ACCOUNT = "PREMIUM_GAMIFICATION_ACCOUNT"
-    WEBHOOK_DROP_NOTIFY = "WEBHOOK_DROP_NOTIFY:%{account_id}"
+	WEBHOOK_DROP_NOTIFY = "WEBHOOK_DROP_NOTIFY:%{account_id}"
 	#AUTH_REDIRECT_CONFIG = "AUTH_REDIRECT:%{account_id}:%{user_id}:%{provider}:%{auth}"
 	SSO_AUTH_REDIRECT_OAUTH = "AUTH_REDIRECT:%{account_id}:%{user_id}:%{provider}:oauth"
 	APPS_AUTH_REDIRECT_OAUTH = "AUTH_REDIRECT:%{account_id}:%{provider}:oauth"
@@ -165,17 +167,30 @@ module Redis::RedisKeys
   GROUP_WIDGET_CACHE_GET =  "GROUP_WIDGET_CACHE_GET:%{account_id}"
   #Dashboard v2 caching keys ends
 
+  PERSISTENT_RECENT_SEARCHES = "PERSISTENT_RECENT_SEARCHES:%{account_id}:%{user_id}"
+  PERSISTENT_RECENT_TICKETS = "PERSISTENT_RECENT_TICKETS:%{account_id}:%{user_id}"
+
+  #update tickets sla - move from delayed job to sidekiq starts
+  SLA_ON_STATUS_CHANGE = "SLA_ON_STATUS_CHANGE"
+  #update tickets sla - move from delayed job to sidekiq ends
+
 	# List of languages used by agents in an account
   AGENT_LANGUAGE_LIST = "AGENT_LANGUAGE_LIST:%{account_id}"
 
+  BLACKLISTED_SPAM_ACCOUNTS = "BLACKLISTED_SPAM_ACCOUNTS"
+  BLACKLISTED_SPAM_DOMAINS = "BLACKLISTED_SPAM_DOMAINS"
+
+  SPAM_EMAIL_EXACT_REGEX_KEY = "SPAM_EMAIL_EXACT_REGEX"
+  SPAM_EMAIL_APPRX_REGEX_KEY = "SPAM_EMAIL_APPRX_REGEX"
+
 	def newrelic_begin_rescue
-	    begin
-	      yield
-	    rescue Exception => e
-	      NewRelic::Agent.notice_error(e)
-	      return
-	    end
-  	end
+		begin
+		  yield
+		rescue Exception => e
+		  NewRelic::Agent.notice_error(e)
+		  return
+		end
+	end
 
 	# def increment(key)
 	# 	newrelic_begin_rescue { $redis.INCR(key) }

@@ -25,6 +25,8 @@ class BadRequestError < BaseError
     email_config_id: :email_config,
     category_name: :category,
     folder_name: :folder,
+    ticket_id: :ticket,
+    responder_phone: :agent,
     from_email: :"active email_config"
   }
 

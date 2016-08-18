@@ -428,6 +428,23 @@ Helpkit::Application.routes.draw do
       end
     end
 
+    resources :warm_transfer do
+      collection do
+        post :initiate
+        post :success
+        post :status
+        post :redirect_source_agent
+        post :redirect_customer
+        post :join_agent
+        post :transfer_agent_wait
+        post :unhold
+        post :wait
+        post :quit
+        post :cancel
+        post :resume
+      end
+    end
+
     resources :agent_conference do
       collection do
         post :add_agent
@@ -786,6 +803,13 @@ Helpkit::Application.routes.draw do
       end
     end
 
+    namespace :cti_admin do
+      get :edit
+      put :update
+      post :add_phone_numbers
+      get :unused_numbers
+      delete :delete_number
+    end
     namespace :cti do
       resources :customer_details do
         collection do
@@ -795,6 +819,19 @@ Helpkit::Application.routes.draw do
           post :verify_session
           get :ameyo_session
         end
+      end
+      namespace :screen_pop do
+        get :contact_details
+        get :recent_tickets
+        post :link_to_existing
+        post :link_to_new
+        post :add_note_to_new
+        post :ignore_call
+        post :set_pop_open
+        get :phone_numbers
+        post :set_phone_number
+        post :click_to_dial
+        get :ongoing_call
       end
     end
 
@@ -1406,7 +1443,8 @@ Helpkit::Application.routes.draw do
   match '/search/topics.:format' => 'search/forums#index'
   match '/mobile/tickets/get_suggested_solutions/:ticket.:format' => 'search/solutions#related_solutions'
   match '/search/merge_topic', :controller => 'search/merge_topic', :action => 'index'
-
+  match '/search/recent_searches_tickets' => 'search/home#recent_searches_tickets', :method => :get
+  match '/search/remove_recent_search' => 'search/home#remove_recent_search', :method => :post
   # routes for custom survey reports
   match '/reports/custom_survey' => 'reports/custom_survey_reports#index', :as => :custom_survey_activity
   match '/reports/custom_survey/aggregate_report/:survey_id/:group_id/:agent_id/:date_range' => 'reports/custom_survey_reports#aggregate_report', :as => :custom_survey_aggregate_report
@@ -1416,6 +1454,7 @@ Helpkit::Application.routes.draw do
   match '/reports/custom_survey/save_reports_filter' =>  'reports/custom_survey_reports#save_reports_filter', :as => :custom_survey_save_reports_filter
   match '/reports/custom_survey/update_reports_filter' =>  'reports/custom_survey_reports#update_reports_filter', :as => :custom_survey_update_reports_filter
   match '/reports/custom_survey/delete_reports_filter' =>  'reports/custom_survey_reports#delete_reports_filter', :as => :custom_survey_delete_reports_filter
+  match '/reports/custom_survey/export_csv' => 'reports/custom_survey_reports#export_csv'
 
   # BEGIN Routes for new reports **/report/v2**
   match "/reports/v2/:report_type/fetch_metrics",      :controller => 'reports/v2/tickets/reports', :action => 'fetch_metrics', :method => :post

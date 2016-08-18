@@ -22,7 +22,7 @@ class Freshfone::Initiator::Supervisor
   def process
     return reject_outgoing_call unless supervisable? && register_outgoing_device
     create_supervisor_leg
-    telephony.join_conference({ :sid => current_call.ancestry.present? ? current_call.dial_call_sid : current_call.call_sid,
+    telephony.join_conference({ :sid => select_conference_room,
       :beep => false,
       :startConferenceOnEnter => false,
       :endConferenceOnExit => false,
@@ -38,4 +38,9 @@ class Freshfone::Initiator::Supervisor
     current_call.supervisor_controls.active.blank? && 
     !current_user.freshfone_user.busy_or_acw?
   end 
+
+  def select_conference_room
+    return current_call.agent_sid if warm_transfer_enabled? && current_call.meta.warm_transfer_meta?
+    current_call.ancestry.present? ? current_call.dial_call_sid : current_call.call_sid
+  end
 end

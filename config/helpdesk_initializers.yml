@@ -18,6 +18,7 @@ helpdesk:
     - aws/dynamo_sdk2
     - aws/sqs_sdk2
     - aws/dynamo
+    - aws/lambda
     - aws/sns
     - aws/sqs
     - aws/swf

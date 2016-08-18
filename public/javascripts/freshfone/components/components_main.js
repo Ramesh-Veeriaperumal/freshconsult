@@ -30,7 +30,7 @@ var freshfonetimer,
 
 		freshfonesocket.loadDependencies(freshfonecalls,freshfoneNetworkError);
 		freshfoneuser.loadDependencies(freshfonecalls,freshfonesocket,freshfoneNotification, incomingNotification);
-		freshfonecalls.loadDependencies(freshfoneuser, freshfonetimer, freshfoneUserInfo);
+		freshfonecalls.loadDependencies(freshfoneuser, freshfonetimer, freshfoneUserInfo, freshfonesocket);
 		freshfonewidget.loadDependencies(freshfonecalls, freshfoneuser, freshfoneSupervisorCall);
 		freshfoneendcall.loadDependencies(freshfonecalls, freshfoneuser, freshfonewidget);
 		freshfoneNotification.loadDependencies(freshfonecalls, freshfoneUserInfo);
@@ -42,11 +42,11 @@ var freshfonetimer,
 	// End ongoing call
 	$(document).on('click', '.end_call', function (e) {
 		e.preventDefault();
-		var addAgentCall = freshfonecalls.isAgentConference;
+		var dontShowForm = freshfonecalls.endCallFormForConference();
 		freshfonecalls.hangup();
 		freshfoneDialpadEvents.hideContactDetails();
-		//Checking isAgentConference when freshfonecalls init() is called in hangup()
-		if (freshfonecalls.dontShowEndCallForm() || addAgentCall) {
+		//Checking isAgentConference and isWarmTransfer when freshfonecalls init() is called in hangup()
+		if (freshfonecalls.dontShowEndCallForm() || dontShowForm) {
 			freshfoneuser.resetStatusAfterCall();
 			freshfoneuser.updatePresence();
 			return freshfonewidget.handleWidgets();

@@ -162,8 +162,12 @@ class Freshfone::CallActions
     child_call_meta.update_pinged_agents_with_response(agent_id, :failed)
     if child_call_meta.all_agents_missed?
       child_call.failed!
-      notify_transfer_unanswered call
+      notify_transfer_unanswered(call)
     end
+  end
+
+  def handle_failed_warm_transfer(call)
+    notify_warm_transfer_status(call,'warm_transfer_status', 'no-answer')
   end
 
   def handle_failed_agent_conference(call, add_agent_call_id)
@@ -176,12 +180,16 @@ class Freshfone::CallActions
     notify_agent_conference_status call, 'agent_conference_connecting'
   end
 
+  def handle_failed_warm_transfer_cancel(call)
+    notify_warm_transfer_status call, 'warm_transferring'
+  end
+
   def handle_failed_external_transfer_call(call)
     child_call = call.children.last
     child_call_meta = child_call.meta
     child_call_meta.update_external_transfer_call_response(params[:external_number], :failed) if child_call_meta.present?
     child_call.update_call({:direct_dial_number => "+#{params[:external_number]}", :DialCallStatus => 'failed'})
-    notify_transfer_unanswered call
+    notify_transfer_unanswered(call)
   end
 
   def handle_failed_round_robin_call(call, agent_id)
@@ -229,7 +237,7 @@ class Freshfone::CallActions
 		end
 		
 		def build_child
-			call = current_call.has_children? ? get_child_call : current_call
+			call = current_call.has_children? ? current_call.get_child_call : current_call
 			direction = call.direction_in_words
 			if call.customer_id.blank?
 				params[:customer] = search_customer_with_number(params["#{direction}"])
@@ -237,12 +245,6 @@ class Freshfone::CallActions
 			Rails.logger.debug "Child Call Id:: #{current_call.id} :: Group_id::  #{current_call.group_id} :: params :: #{params[:group_id]}"
 			params[:group_id] ||= call.group_id if call.group_id.present? && params[:group_transfer] == 'true'
 			call.build_child_call(params)
-		end
-
-		def get_child_call
-			call = current_call.children.last
-			return call unless current_account.features?(:freshfone_conference)
-			(call.busy? || call.noanswer? ||  call.canceled?|| call.ringing?) ? call.parent : call
 		end
 		
 		def current_call # Internal parameters have been changed to plain `call` because of potential conflict with this method

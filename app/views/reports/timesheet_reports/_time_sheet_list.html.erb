@@ -125,7 +125,7 @@
       var previous_group_id = "<%= @time_sheets.keys.last %>";
       var previous_entry_id = <%= @time_sheets.values.flatten.last ? @time_sheets.values.flatten.last.id : 0 %>;
       var group_count = JSON.parse('<%= @group_count.to_json.html_safe %>');
-      var group_names = JSON.parse('<%= @group_names.to_json.html_safe %>');
+      var group_names = '<%= @group_names.to_json.html_safe %>';
       var total_row_count = <%= @row_count %>;
       var row_count = 2000;
       var totaltime = <%= @group_count.values.sum %>;
@@ -252,11 +252,16 @@
     jQuery('#report-page').on('click.helpdesk_reports', '[data-action="pop-report-type-menu"]', function (event) {
               event.stopImmediatePropagation();
              var menu = jQuery('#reports_type_menu');
-              if (!menu.is(':visible')) {
-                  menu.removeClass('hide');
-              } else {
-                  menu.addClass('hide');
-              }
+             var hash = Helpkit.report_filter_data;
+            if(hash.length == 0 || ( hash.length == 1 && Helpkit.commonSavedReportUtil.default_report_is_scheduled)){
+
+            }else{
+                if (!menu.is(':visible')) {
+                    menu.removeClass('hide');
+                } else {
+                    menu.addClass('hide');
+                }
+            }
         });
     jQuery('#report-page').on('click.helpdesk_reports', function () {
         var menu = jQuery('#reports_type_menu');

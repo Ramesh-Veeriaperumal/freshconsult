@@ -70,24 +70,25 @@ class CRM::Freshsales
         old_cmrr = args[:old_cmrr].to_f
         cmrr = args[:cmrr].to_f
         payments_count = args[:payments_count].to_i
+        is_state_changed = state_changed?(subscription, old_subscription)
 
         case
         when opted_for_free_plan?(subscription, old_subscription, cmrr, payments_count)
           amount = ZERO
-          freshsales.push_subscription_changes(:new_business, amount, payments_count)
+          freshsales.push_subscription_changes(:new_business, amount, payments_count, is_state_changed)
 
         when paid_activation?(subscription, old_subscription)
           amount = cmrr.round(2)
           deal_type = paid_customer?(payments_count) ? :upgrade : :new_business
-          freshsales.push_subscription_changes(deal_type, amount, payments_count)
+          freshsales.push_subscription_changes(deal_type, amount, payments_count, is_state_changed)
 
         when upgrade?(subscription, old_subscription)
           amount = calculate_deal_amount(cmrr, old_cmrr)
-          freshsales.push_subscription_changes(:upgrade, amount, payments_count)
+          freshsales.push_subscription_changes(:upgrade, amount, payments_count, is_state_changed)
 
         when downgrade?(subscription, old_subscription)
           amount = calculate_deal_amount(cmrr, old_cmrr)
-          freshsales.push_subscription_changes(:downgrade, amount, payments_count)
+          freshsales.push_subscription_changes(:downgrade, amount, payments_count, is_state_changed)
 
         when trial_expired?(subscription, old_subscription)
           freshsales.account_trial_expiry
@@ -95,9 +96,9 @@ class CRM::Freshsales
         when trial_extended?(subscription, old_subscription)
           freshsales.account_trial_extension
 
-        when state_changed?(subscription, old_subscription)
+        when is_state_changed
           (deal_type, amount) = get_deal_type_and_amount(subscription, old_subscription, cmrr, old_cmrr, payments_count)
-          freshsales.push_subscription_changes(deal_type, amount, payments_count) if(deal_type.present? && amount.present?)
+          freshsales.push_subscription_changes(deal_type, amount, payments_count, is_state_changed) if(deal_type.present? && amount.present?)
         end
       rescue => e
         NewRelic::Agent.notice_error(e, { description: "Error occured while pushing SubscriptionTracking to Freshsales 

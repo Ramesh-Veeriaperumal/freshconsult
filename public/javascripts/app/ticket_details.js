@@ -174,7 +174,6 @@ swapEmailNote = function(formid, link){
 			} catch (e) {}
 		});
 	}
-	window.AgentCollisionShow.reply_event();
 	activeForm.trigger("visibility")
 
 	//Draft Saving for Reply form
@@ -300,9 +299,9 @@ var formatTag = function(item) {
 
 // ----- CODE FOR REVERSE PAGINATION ------ //
 var paginationScroll = function(){
-	var element = $("[data-activity-id ='"+TICKET_DETAILS_DATA['last_activity_batch']+"']")[0];
+	var element = $("[data-activity-id ='"+TICKET_DETAILS_DATA['last_activity_batch']+"']");
 	if(element){
-		$(element)[0].scrollIntoView(false);
+		$.scrollTo(element,{offset: $(window).height()-jQuery('#sticky_header').outerHeight(true)});
 	}
 }
 
@@ -349,7 +348,7 @@ var updatePagination = function() {
 		if (showing_notes)
 			href = TICKET_DETAILS_DATA['notes_pagination_url'] + 'before_id=' + TICKET_DETAILS_DATA['first_note_id'];
 		else
-			href = TICKET_DETAILS_DATA['activities_pagination_url'] + 'before_id=' + TICKET_DETAILS_DATA['first_activity'] + '&limit=' +  TICKET_DETAILS_DATA['pagination_limit'] +'&event_type='+TICKET_DETAILS_DATA['activity_event_type'];
+			href = TICKET_DETAILS_DATA['activities_pagination_url'] + 'before_id=' + TICKET_DETAILS_DATA['first_activity'] + '&limit=' +  TICKET_DETAILS_DATA['pagination_limit'];
 
 		$.get(href, function(response) {
 			if(response.trim()!=''){
@@ -749,7 +748,7 @@ var scrollToError = function(){
 		}
 		_toggle.addClass('disabled')
 		var showing_notes = $('#all_notes').length > 0;
-		var url = showing_notes ? TICKET_DETAILS_DATA['activities_pagination_url']  + 'limit=' + TICKET_DETAILS_DATA['pagination_limit'] + '&event_type='+TICKET_DETAILS_DATA['activity_event_type']  : TICKET_DETAILS_DATA['notes_pagination_url'];
+		var url = showing_notes ? TICKET_DETAILS_DATA['activities_pagination_url']  + 'limit=' + TICKET_DETAILS_DATA['pagination_limit'] : TICKET_DETAILS_DATA['notes_pagination_url'];
 		if (showing_notes) {
 			TICKET_DETAILS_DATA['first_activity'] = null;
 			TICKET_DETAILS_DATA['loaded_activities'] = 0;
@@ -774,6 +773,12 @@ var scrollToError = function(){
 						_toggle.attr('title',_toggle.data('hide-title')+_shortcut);
 					}
 					else{
+						if(TICKET_DETAILS_DATA['scroll_to_last']) {
+							$.scrollTo('[rel=activity_container] .conversation:last');
+						}
+						else{
+							$.scrollTo($('body'));
+						}
 						$("#original_request .commentbox").removeClass('minimizable minimized');
 						if(_toggle.data('show-title'))
 						_toggle.attr('title',_toggle.data('show-title')+_shortcut);
@@ -814,7 +819,6 @@ var scrollToError = function(){
         {
           window.replySubscription.cancel();
         }
-        window.FreshdeskNode.getValue('faye_realtime').faye_subscriptions.splice(window.FreshdeskNode.getValue('faye_realtime').faye_subscriptions.indexOf(window.relySubscription), 1);
 		$(this).parents('form').trigger('submit');
 	});
 
@@ -823,9 +827,8 @@ var scrollToError = function(){
 		var btn = $(this);
 		if(TICKET_DETAILS_DATA['draft']['saved'] && btn.data('cntId') && btn.data('cntId') == "cnt-reply"){
 			if(!confirm(TICKET_DETAILS_DATA['draft']['clear_text'])){
-				window.AgentCollisionShow.reply_event();
-				return false;
-			}
+				return false; 
+			} 
         }
 		remove_file_size_alert(btn)
 		$('#' + btn.data('cntId')).hide().trigger('visibility');
@@ -1542,6 +1545,7 @@ var scrollToError = function(){
 	      data: { id: _note_id },
 	      success: function(response){
 	        if(response!=""){
+	        	 _messageDiv.find('.tooltip').twipsy('hide');
 	          _messageDiv.html(response);
 
 	          quote_text(_messageDiv, options);

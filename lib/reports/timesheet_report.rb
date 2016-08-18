@@ -40,7 +40,7 @@ module Reports::TimesheetReport
     view_headers = [:workable , :customer_name , :priority_name, :status_name, :note , :group_by_day_criteria , :agent_name,
                                                                              :group_name ]
 
-    view_headers -= [:agent_name] if Account.current.features_included?(:euc_hide_agent_metrics)
+    view_headers -= [:agent_name] if Account.current.hide_agent_metrics_feature?
     view_headers.push(:product_name) if Account.current.products.any?
     view_headers.push(:hours)
     view_headers
@@ -253,7 +253,7 @@ module Reports::TimesheetReport
       :start_date  => start_date,
       :end_date    => end_date,
       :customer_id => params[:customers] ? params[:customers].split(',') : [],
-      :user_id     => (Account.current.features_included?(:euc_hide_agent_metrics) ? [] : (params[:user_id] || [])),
+      :user_id     => (Account.current.hide_agent_metrics_feature? ? [] : (params[:user_id] || [])),
       :headers     => list_view_items.delete_if{|item| item == group_by_caluse },
       :billable    => billable_and_non? ? [true, false] : [params[:billable].to_s.to_bool],
       :group_id    => params[:group_id] || [],
@@ -354,11 +354,11 @@ def set_time_range(prev_time = false)
         @group_count[entry.send(GROUP_TO_FIELD_MAP[group_by_caluse]) || 0] += (entry.time_spent || 0)
         if @group_names[entry.send(GROUP_TO_FIELD_MAP[group_by_caluse])].blank?
           if group_by_caluse == :workable
-            @group_names[entry.send(GROUP_TO_FIELD_MAP[group_by_caluse])] = "#{entry.send(group_by_caluse).subject.gsub("'",'').gsub(/\\/,"/")} (##{entry.send(group_by_caluse).display_id})"
+            @group_names[entry.send(GROUP_TO_FIELD_MAP[group_by_caluse])] = "#{entry.send(group_by_caluse).subject.gsub("'",'')} (##{entry.send(group_by_caluse).display_id})"
           elsif group_by_caluse == :group_by_day_criteria
             @group_names[entry.send(GROUP_TO_FIELD_MAP[group_by_caluse])] = entry.send('executed_at_date')
           else
-            @group_names[entry.send(GROUP_TO_FIELD_MAP[group_by_caluse]) || 0] = entry.send(group_by_caluse).gsub("'",'').gsub(/\\/,"/")
+            @group_names[entry.send(GROUP_TO_FIELD_MAP[group_by_caluse]) || 0] = entry.send(group_by_caluse).gsub("'",'')
           end
         end
       end

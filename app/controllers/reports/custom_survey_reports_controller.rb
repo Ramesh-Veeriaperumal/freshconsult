@@ -17,12 +17,8 @@ class Reports::CustomSurveyReportsController < ApplicationController
 
   attr_accessor :report_type
   
-  AGENT_ALL_URL_REF = 'a'
-  GROUP_ALL_URL_REF = 'g'
-  RATING_ALL_URL_REF = 'r'
-
   def index
-    @hide_agent_reporting = Account.current.features_included?(:euc_hide_agent_metrics)
+    @hide_agent_reporting = Account.current.hide_agent_metrics_feature?
     @surveys = surveys_json
     @agents = agents
     @groups = groups
@@ -86,6 +82,12 @@ class Reports::CustomSurveyReportsController < ApplicationController
 
   def delete_reports_filter
     common_delete_reports_filter
+  end
+
+  def export_csv
+    params.merge!(:report_type => report_type)
+    Reports::Export.perform_async(params)
+    render json: nil, status: :ok
   end
 
   private

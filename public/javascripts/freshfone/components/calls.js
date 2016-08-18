@@ -15,6 +15,7 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 		this.cached = {};
 		this.freshfoneCallTransfer = {};
 		this.freshfoneAgentConference = {};
+		this.freshfoneWarmTransfer = {};
 		this.exceptionalNumber=false;
 		this.recentCaller = 0;
 		this.callInitiationTime = null;
@@ -47,6 +48,11 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 			this.isAgentConference = false;
 			this.isAgentConferenceActive = false;
 			this.agentConferenceParams = null;
+			this.warmTransfer = {
+				type: null,
+				unholdType: null,
+				params: null
+			}
 		},
 		resetFlags: function() {
 			this.errorcode = null;
@@ -58,10 +64,11 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 			this.group_id = group_id
 		},
 		$container: $('.freshfone_content_container'),
-		loadDependencies: function (freshfoneuser, timer, freshfoneUserInfo) {
+		loadDependencies: function (freshfoneuser, timer, freshfoneUserInfo, freshfoneSocket) {
 			this.freshfoneuser = freshfoneuser;
 			this.freshfoneUserInfo = freshfoneUserInfo;
 			this.timer = timer;
+			this.freshfoneSocket = freshfoneSocket;
 		},
 		$invalidNumberText: function () {
 			return this.cached.$invalidNumberText = this.cached.$invalidNumberText ||
@@ -158,6 +165,10 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 			this.isAgentConference = true;
 			this.agentConferenceParams = params;
 		},
+		setWarmTransfer: function(params){
+			this.warmTransfer.type = 'receiver';
+			this.warmTransfer.params = params;
+		},
 		saveCallNotes: function(){
 			var self = this;
 			if(freshfonewidget.callNote.val()!="" && (freshfone.isConferenceMode)){
@@ -172,7 +183,7 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 		},
 		getSavedCallNotes: function(phoneNumber){
 			var self = this;
-			if(freshfone.isConferenceMode && freshfonecalls.isIncomingTransfer){
+			if(freshfone.isConferenceMode && (freshfonecalls.isIncomingTransfer || freshfonecalls.isWarmTransferReceiver)){
 				$.ajax({
 					type: 'GET',
 					dataTyp: "json",
@@ -262,6 +273,9 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 				this.number = this.addDialCode();
 				this.makeOutgoing(item);
 			}
+		},
+		publishWarmTransferedCall: function() {
+			this.freshfoneuser.publishLiveCall((this.tConn.message || {}).preview);
 		},
 		makeOutgoing: function (item) {
 			this.number = formatE164(this.callerLocation(), this.number);
@@ -407,6 +421,21 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 		addAgent: function (id) {
 			this.freshfoneAgentConference = new FreshfoneAgentConference(this, id);
 		},
+		warmTransferCall: function (id) {
+			this.freshfoneWarmTransfer = new FreshfoneWarmTransfer(this, id);
+			this.freshfoneWarmTransfer.init();
+			this.freshfoneWarmTransfer.loadDependencies(this.freshfoneSocket);
+			this.saveCallNotes();
+		},
+		handleWarmTransferReceiverCall: function() {
+			this.setIsWarmTransfer('receiver');
+			this.freshfoneWarmTransfer = new FreshfoneWarmTransfer(this, '');
+			this.freshfoneWarmTransfer.receiverInit();
+			this.freshfoneWarmTransfer.loadReceiverDependencies(this.freshfoneSocket);
+		},
+		setIsWarmTransfer: function(status) {
+			this.warmTransfer.type = status;
+		},
 		isTransfering: function(){
 			var status = $(".transfer-status").children(":visible").data("status");
 			return ($.inArray(status, TRANSFERING_STATUS) > -1 ) ? true : false ;
@@ -414,11 +443,13 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 
 		dontShowEndCallForm: function () {
 			if(freshfone.isConferenceMode){
-				return (this.tConn.message || {}).preview || this.callError()  || this.isTransfering() || this.isAgentConference;
+				return (this.tConn.message || {}).preview || this.callError()  || this.isTransfering() || this.endCallFormForConference();
 			}
 			return (this.tConn.message || {}).preview || this.callError() || this.transfered;
 		},
-
+		endCallFormForConference: function() {
+		  return this.isAgentConference || this.isWarmTransferReceiver();
+	  },	
 		callError: function () {
 			return $.inArray(this.errorcode, [31000, 31001, 31002, 31003]) > -1;
 		},
@@ -519,6 +550,12 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
     },
 		unhold: function () {
 			var self = this;
+			if(this.warmTransfer.unholdType == 'resume') {
+				return this.freshfoneWarmTransfer.resumeCall();
+			}
+			if(this.warmTransfer.unholdType == 'unhold') {
+				return this.freshfoneWarmTransfer.unhold();
+			}
       $.ajax({
         dataType: "json",
         data: { "CallSid": self.call },
@@ -529,6 +566,18 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
         	self.resetHold();
         }
       });
+		},
+		setIsHold: function(flag) {
+			this.isHold = flag;
+		},
+		setIsWarmTransferUnhold: function(flag) {
+			this.warmTransfer.unholdType = flag;
+		},
+		isWarmTransferReceiver: function() {
+			return this.warmTransfer.type == 'receiver';
+		},
+		isWarmTransfer: function() {
+			return this.warmTransfer.type == 'initiator';
 		},
 		toggleWidgetOnHold: function(holded) {
 			var self = this;

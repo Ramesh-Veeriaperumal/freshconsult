@@ -93,11 +93,16 @@
     jQuery('#report-page').on('click.helpdesk_reports', '[data-action="pop-report-type-menu"]',  function (event) {
                 event.stopImmediatePropagation();
                var menu = jQuery('#reports_type_menu');
-                if (!menu.is(':visible')) {
-                    menu.removeClass('hide');
-                } else {
-                    menu.addClass('hide');
-                }
+               var hash = Helpkit.report_filter_data;
+             if(hash.length == 0 || ( hash.length == 1 && Helpkit.commonSavedReportUtil.default_report_is_scheduled)) {
+
+             } else {
+                  if (!menu.is(':visible')) {
+                      menu.removeClass('hide');
+                  } else {
+                      menu.addClass('hide');
+                  }
+            }
           });
 
     jQuery('#report-page').on('click.helpdesk_reports', function () {

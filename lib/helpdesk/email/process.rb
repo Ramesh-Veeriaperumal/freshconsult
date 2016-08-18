@@ -35,6 +35,7 @@ class Helpdesk::Email::Process
       Rails.logger.info "Email Processing Failed: No Shard Mapping found!"
       return
     end
+    return shardmapping.status  unless shardmapping.ok?
     Sharding.select_shard_of(to_email[:domain]) do 
       accept_email if get_active_account
     end
@@ -53,7 +54,7 @@ class Helpdesk::Email::Process
       Rails.logger.info "Email Processing Failed: From-email and Reply-email are same!"
       return
     end
-    # encode_stuffs
+      # encode_stuffs
     if account.features?(:domain_restricted_access)
       wl_domain  = account.account_additional_settings_from_cache.additional_settings[:whitelisted_domain]
       unless Array.wrap(wl_domain).include?(common_email_data[:from][:domain])
@@ -110,7 +111,7 @@ class Helpdesk::Email::Process
   end
 
   def mail_from_email_config?
-    common_email_data[:email_config] && (common_email_data[:from][:email] == common_email_data[:email_config].reply_email)
+    common_email_data[:email_config] && (common_email_data[:from][:email].to_s.downcase == common_email_data[:email_config].reply_email.to_s.downcase)
   end
 
   def assign_to_ticket_or_kbase

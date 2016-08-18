@@ -20,8 +20,8 @@ class Helpdesk::TicketState <  ActiveRecord::Base
 
   before_update :update_ticket_state_changes
   #https://github.com/rails/rails/issues/988#issuecomment-31621550
-  after_commit :update_ticket_stats, on: :update, :if => :ent_reports_enabled?
-  after_commit :create_ticket_stats, on: :create, :if => :ent_reports_enabled?
+  # after_commit :update_ticket_stats, on: :update, :if => :ent_reports_enabled?
+  # after_commit :create_ticket_stats, on: :create, :if => :ent_reports_enabled?
   after_commit :update_search_index,  on: :update
   
   # Callbacks will be executed in the order in which they have been included. 

@@ -1,0 +1,17 @@
+
+<% if tickets.present? %>
+	<% tickets.each do |ticket| %>
+		<div class="ticket-content">
+			<div class="ticket-subject">
+				<%= link_to( h(ticket.subject).html_safe, ticket, :'data-pjax' => "#body-container", :class =>'ellipsis') %>
+				<span class="muted">#<%= h(ticket.display_id).html_safe %></span>
+			</div>
+			<div class ="ticket-state muted" ><abbr data-livestamp= <%= ticket.created_at.to_i %> > <%= h(ticket.created_at).html_safe%></abbr>, Status: <%= h(ticket.status_name).html_safe %>
+			</div>
+		</div>
+		<div class="seperator"></div>
+	<% end %>
+  <% if tickets_count > 3 %>
+    <%= link_to( t('integrations.screen_pop.widget.view_all'), helpdesk_tickets_path(:requester => requester), :class => 'view-all-ticket mt20',:'data-parallel-placeholder' => "#ticket-leftFilter", :'data-pjax' => "#body-container", :'data-parallel-url' => "/helpdesk/tickets/filter_options") %>
+  <% end %>
+<% end %>

@@ -127,7 +127,7 @@
 			background: #fff;
 			min-height: 16px;	
 		}
-		.add_agent_notifier,.transferNotifier {
+		.add_agent_notifier,.transferNotifier,.warm_transfer_notifier {
 		  display: inline-block;
 		  clear: both;
 		  color: #000;
@@ -139,7 +139,7 @@
 		  .agent_name {
 				font-weight: 700;
 			}
-			.transfer_agent, .add_agent {
+			.transfer_agent, .add_agent, .warm_transfer_agent {
 			  @include border-radius(20px);
 			  opacity: 1;
 			  width: 25px;
@@ -163,33 +163,51 @@
 					margin:0;
 				}
 			}
-			.transfer-agent-name,.add-agent-name {
+			.transfer-agent-name,.add-agent-name, .warm-transfer-agent-name {
 				font-size: 13px;
 				display: inline-block;
 				float: left;
 				width: 75%;
 			}
 		}
+		/* TO-DO width and height same for circle */
 		.transferNotifier {
 			.ff-arrow-direction{
 				float: left;
 				color: #888;
-				@include padding(0px 1px 2px 1px);
-				@include margin(5px 7px 0px 0px);
-				font-size: 23px;
+				border: 1px solid #888;
+				@include border-radius(50%);
+				@include padding(2px 1px 1px 2px);
+				@include margin(4px 7px 0px 0px);
+				font-size: 10px;
+				width: 18px;
+				height: 17px;
+				text-align: center;
 			}
 			.transfer-agent-name {
 				margin-top: 7px;
 			}
 		}
-		.add_agent_notifier {
+		.add_agent_notifier,.warm_transfer_notifier {
 		  .add-agent-label{
 		    @include padding(7px 0px 2px 1px);
 		    font-size: 16px;
 		    color: #888;
 		    @include margin-right(7px);
 		  }
-		  .add-agent-name {
+		  /* TO-DO width and height same for circle */
+		  .warm-transfer-label{
+		  	@include padding(2px 1px 2px 1px);
+		    font-size: 10px;
+		    color: #888;
+		    @include margin-right(7px);
+		    margin-top: 4px;
+		    border-radius: 50%;
+		    border: 1px solid;
+		    text-align: center;
+		    width: 18px;
+		  }
+		  .add-agent-name,.warm-transfer-agent-name {
 				margin-top: 5px;
 			}
 		}

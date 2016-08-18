@@ -31,8 +31,8 @@ module Social
 
     private
       def fetch_from_fb fan_page
-        fetch_fb_posts(fan_page) unless fan_page.realtime_subscription #This will get removed
-        fetch_fb_messages(fan_page) if fan_page.import_dms
+        fetch_fb_posts(fan_page) if fan_page.message_since.nil?
+        fetch_fb_messages(fan_page) if (fan_page.import_dms && !fan_page.realtime_messaging)
       end
 
       def fetch_fb_messages fan_page
@@ -46,8 +46,6 @@ module Social
       def fetch_fb_posts fan_page
         sandbox do      
           @fan_page = fan_page
-          @fan_page.update_attributes(:realtime_subscription => "true")
-                
           if @fan_page.company_or_visitor?
             fb_posts = Facebook::Graph::Posts.new(@fan_page)
             fb_posts.fetch_latest_posts

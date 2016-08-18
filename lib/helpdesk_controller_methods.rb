@@ -91,6 +91,7 @@ module HelpdeskControllerMethods
       else
         item.destroy
       end
+      Search::RecentTickets.new(item.display_id).delete if item.is_a?(Helpdesk::Ticket)
     end
 
     options = params[:basic].blank? ? {:basic=>true} : params[:basic].to_s.eql?("true") ? {:basic => true} : {}

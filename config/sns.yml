@@ -3,6 +3,7 @@ development:
   reports_notification_topic: reports_notification_dev
   dev_ops_notification_topic: dev_ops_notification_dev
   mailbox_notification_topic: mailbox_notification_dev
+  autorefresh_sqs_topic: helpkit_autorefresh_dev
   activities_notification_topic: activities_notification_dev
   freshdesk_team_notification_topic: freshdesk_team_notification_dev
 staging:
@@ -10,6 +11,7 @@ staging:
   reports_notification_topic: reports_notification_staging
   dev_ops_notification_topic: dev_ops_notification_staging
   mailbox_notification_topic: mailbox_notification_staging
+  autorefresh_sqs_topic: helpkit_autorefresh_staging
   activities_notification_topic: activities_notification_staging
   freshdesk_team_notification_topic: freshdesk_team_notification_staging
 production:
@@ -17,6 +19,7 @@ production:
   reports_notification_topic: reports_notification_production
   dev_ops_notification_topic: dev_ops_notification_production
   mailbox_notification_topic: mailbox_notification_production
+  autorefresh_sqs_topic: helpkit_autorefresh_production
   activities_notification_topic: activities_notification_production
   freshdesk_team_notification_topic: freshdesk_team_notification_production
 test:
@@ -24,5 +27,6 @@ test:
   reports_notification_topic: reports_notification_test
   dev_ops_notification_topic: dev_ops_notification_test
   mailbox_notification_topic: mailbox_notification_test
+  autorefresh_sqs_topic: helpkit_autorefresh_test
   activities_notification_topic: activities_notification_test
   freshdesk_team_notification_topic: freshdesk_team_notification_test

@@ -67,7 +67,10 @@ HelpdeskReports.ChartsInitializer.Glance = (function () {
                         historic_status: is_historic_present
                     });
                     jQuery('#glance_main').append(group_tmpl);
-
+                    if(active_metric == "UNRESOLVED_TICKETS" && _.contains(group_by, 'historic_status'))
+                        jQuery('.custom_field_select').select2('val', group_by[group_by.length - 2]);
+                    else
+                        jQuery('.custom_field_select').select2('val', group_by.last());
                     if (!jQuery.isEmptyObject(hash_active[group_by[i]])) {
                         _FD.constructChartSettings(hash_active, group_by[i], false, false, false);
                         if(group_by[i] == "status" && active_metric == "UNRESOLVED_TICKETS"){
@@ -114,8 +117,6 @@ HelpdeskReports.ChartsInitializer.Glance = (function () {
                 title : function() { 
                     return text;
               }});
-
-
         },
         contructPdfCharts: function (hash) {
             HelpdeskReports.CoreUtil.flushCharts();
@@ -141,6 +142,9 @@ HelpdeskReports.ChartsInitializer.Glance = (function () {
                                 metric: active_metric
                             });
                             var div_id = '#'+active_metric.toLowerCase();
+                            if (active_metric == "UNRESOLVED_TICKETS" && group_by[i] == "historic_status" && jQuery.isEmptyObject(hash_active[group_by[i]]))
+                                continue;
+                            
                             jQuery(div_id).append(group_tmpl);
 
                             if (!jQuery.isEmptyObject(hash_active[group_by[i]])) {
