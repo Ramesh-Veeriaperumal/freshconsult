@@ -37,18 +37,20 @@ module Ember
         @permissible_ids ||= begin
           if api_current_user.can_view_all_tickets?
             params[cname][:ids]
+          elsif api_current_user.group_ticket_permission?
+            tickets_with_group_permission(params[cname][:ids])
           else
-            tickets_with_group_permission(params[cname][:ids]) | tickets_assigned(params[cname][:ids])
+            tickets_with_assigned_permission(params[cname][:ids])
           end
         end
       end
 
       def tickets_with_group_permission(ids)
-        api_current_user.group_ticket_permission ? scoper.group_tickets_permission(api_current_user, ids).map(&:display_id) : []
+        scoper.group_tickets_permission(api_current_user, ids).map(&:display_id)
       end
 
-      def tickets_assigned(ids)
-        api_current_user.assigned_ticket_permission ? scoper.assigned_tickets_permission(api_current_user, ids).map(&:display_id) : []
+      def tickets_with_assigned_permission(ids)
+        scoper.assigned_tickets_permission(api_current_user, ids).map(&:display_id)
       end
 
       def delete_tickets
