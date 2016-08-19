@@ -50,8 +50,8 @@
   </div>
 
   <!-- Note: when any changes made to the block below or TICKET_FIELD_ELEMENTS PARTIAL in the future,
-      please update the memcache key version. key_name :: COMPOSE_EMAIL_FORM  -->
-  <% cache_based_on_launch(:cache_new_tkt_comps_forms, agent_compose_email_memcache_key) do %>
+    please update the memcache key version. key_name :: COMPOSE_EMAIL_FORM in cache/fragment_cache/keys.rb -->
+  <% enable_fragment_cache(:compose_email_form) do %>
     <div class="ticket-details">
 
       <%# sending widget as true%>
@@ -64,6 +64,7 @@
       <%= render :partial => '/helpdesk/tickets/show/ticket_field_elements',  :locals => {:form_builder => f, :ticket =>  @item} %>
     </div>
   <% end %>
+  <!-- block ends here for fragment cache -->
   </div>
 
 <% content_for :onload_script do -%> 
@@ -114,10 +115,12 @@
   <input type="hidden" id="tags-value" value="<%= escape_javascript(current_account.tags.most_used(25).collect{|tag| tag.name}.join(',').html_safe) %>" />
 
 <%= render :partial => "/helpdesk/tickets/canned_loading"  %>
-<script>
-  // To load data from store to populate group for the first time.
-  jQuery(document).ready(function(){
-    // Load data into group, agent and product from data store if the page is cached
-    PopulateData.fromStore("#helpdesk_ticket_group_id", 'group');
-  })
-</script>
+<% if Account.current.launched?(:agent_new_ticket_cache) %>
+  <script>
+    // To load data from store to populate group for the first time.
+    jQuery(document).ready(function(){
+      // Load data into group, agent and product from data store if the page is cached
+      PopulateData.fromStore("#helpdesk_ticket_group_id", 'group');
+    })
+  </script>
+<% end %>

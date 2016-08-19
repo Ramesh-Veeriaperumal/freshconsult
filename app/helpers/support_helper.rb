@@ -7,7 +7,7 @@ module SupportHelper
   include Portal::Helpers::DiscussionsVotingHelper
   include Portal::Helpers::Article
   include Portal::Helpers::SolutionsHelper
-
+	include Cache::FragmentCache::Base
 
   # TODO-RAILS3 the below helpers are added to use liquids truncate
   # HACK Need to scope down liquid helpers and include only the required ones

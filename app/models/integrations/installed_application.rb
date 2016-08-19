@@ -1,7 +1,7 @@
 class Integrations::InstalledApplication < ActiveRecord::Base
   include Integrations::AppsUtil
   include Integrations::Jira::WebhookInstaller
-  include Cache::Memcache::Helpdesk::Ticket
+  include Cache::FragmentCache::Base
   
   serialize :configs, Hash
   belongs_to :application, :class_name => 'Integrations::Application'
@@ -27,7 +27,7 @@ class Integrations::InstalledApplication < ActiveRecord::Base
   after_commit :after_commit_on_destroy_customize, :on => :destroy
   after_commit :after_commit_customize
   after_commit :clear_application_on_dip_from_cache
-  after_commit :clear_tkt_form_cache, :if => :attachment_applications?
+  after_commit :clear_fragment_caches, :if => :attachment_applications?
 
   include ::Integrations::AppMarketPlaceExtension
 

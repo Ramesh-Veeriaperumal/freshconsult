@@ -9,12 +9,13 @@ class RabbitmqWorker
   end
 
   def perform(exchange_key, message, rounting_key, lambda_feature=false)
+    
+    # Publish to cti
     if cti_routing_key?(exchange_key)
       sqs_msg_obj = sqs_v2_push(SQS[:cti_screen_pop], message, 0)
       puts " SQS Message id - #{sqs_msg_obj.message_id} :: ROUTING KEY -- #{rounting_key} :: Exchange - #{exchange_key}"
-      return
-
     end
+
     # Publish to ES Count
     if count_routing_key?(exchange_key, rounting_key)
       sqs_msg_obj = (Ryuken::CountPerformer.perform_async(message) rescue nil)
