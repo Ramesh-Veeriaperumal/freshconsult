@@ -125,7 +125,7 @@ class Freshfone::Notifier
     #pass additional params if transfer is warm
     agents_list = [agent_id]
     agents_list = mobile_agents if agent_id.blank?
-    params.merge!({:call_id => current_call.id, :source_agent_id => source_agent_id, transfer_type: type, warm_transfer_call_id: warm_transfer_call})
+    params.merge!({call_id: current_call.id, source_agent_id: source_agent_id})
     agents_list.each do |agent|
       Freshfone::NotificationWorker.perform_async(params, agent, "mobile_transfer")
     end
