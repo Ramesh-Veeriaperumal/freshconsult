@@ -2,6 +2,7 @@ class Product < ActiveRecord::Base
   
   self.primary_key = :id
   include Cache::Memcache::Product
+  include Cache::FragmentCache::Base
 
   before_destroy :remove_primary_email_config_role
   validates_uniqueness_of :name , :case_sensitive => false, :scope => :account_id
@@ -11,6 +12,9 @@ class Product < ActiveRecord::Base
 
   after_commit :clear_cache
   after_update :widget_update
+  after_commit ->(obj) { obj.clear_fragment_caches } , on: :create
+  after_commit ->(obj) { obj.clear_fragment_caches } , on: :destroy
+  after_commit :clear_fragment_caches, on: :update, :if => :pdt_name_changed?
 
   belongs_to_account
   has_one    :portal               , :dependent => :destroy
@@ -96,5 +100,9 @@ class Product < ActiveRecord::Base
         chat_widget.name = name
         chat_widget.save
       end
+    end
+
+    def pdt_name_changed?
+      self.previous_changes.keys.include?('name')
     end
 end
