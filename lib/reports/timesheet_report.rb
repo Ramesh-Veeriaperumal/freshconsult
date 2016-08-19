@@ -103,7 +103,7 @@ module Reports::TimesheetReport
         max(helpdesk_time_sheets.id) as max_timesheet_id,
         helpdesk_time_sheets.workable_id,
         #{GROUP_TO_FIELD_MAP[group_by_caluse] == 'executed_at_date' ? 'executed_at as executed_at_date' : GROUP_TO_FIELD_MAP[group_by_caluse]}
-        ").group("#{group_by_day_criteria == 'executed_at_date' ? (GROUP_TO_FIELD_MAP[group_by_caluse]) : GROUP_TO_FIELD_MAP[group_by_caluse]}, current, billable").find(:all, :conditions => (archive_select_conditions || {}),
+        ").group("#{GROUP_TO_FIELD_MAP[group_by_caluse]}, current, billable").find(:all, :conditions => (archive_select_conditions || {}),
         :include => [:user, :workable => [:product, :group, :ticket_status, :requester, :company]])
     else
       scoper(previous_start, @end_date).select("
@@ -116,7 +116,7 @@ module Reports::TimesheetReport
         max(helpdesk_time_sheets.id) as max_timesheet_id,
         helpdesk_time_sheets.workable_id,
         #{GROUP_TO_FIELD_MAP[group_by_caluse] == 'executed_at_date' ? 'executed_at as executed_at_date' : GROUP_TO_FIELD_MAP[group_by_caluse]}
-        ").group("#{group_by_day_criteria == 'executed_at_date' ? (GROUP_TO_FIELD_MAP[group_by_caluse]) : GROUP_TO_FIELD_MAP[group_by_caluse]}, current, billable").find(:all, :conditions => (select_conditions || {}),
+        ").group("#{GROUP_TO_FIELD_MAP[group_by_caluse]}, current, billable").find(:all, :conditions => (select_conditions || {}),
         :include => [:user, :workable => [:schema_less_ticket, :group, :ticket_status, :requester, :company]])
     end
   end
