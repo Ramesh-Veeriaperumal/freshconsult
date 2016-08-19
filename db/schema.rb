@@ -238,6 +238,7 @@ ActiveRecord::Schema.define(:version => 20160802094502) do
   add_index "archive_childs", ["account_id", "archive_ticket_id"], :name => "index_on_account_id_and_archive_ticket_id"
   add_index "archive_childs", ["account_id", "ticket_id"], :name => "index_on_account_id_and_ticket_id"
   add_index "archive_childs", ["id"], :name => "index_on_id"
+  execute "ALTER TABLE archive_childs ADD PRIMARY KEY (account_id,id)"
 
   create_table "archive_note_associations", :id => false, :force => true do |t|
     t.integer "id",                :limit => 8,          :null => false
@@ -250,6 +251,7 @@ ActiveRecord::Schema.define(:version => 20160802094502) do
 
   add_index "archive_note_associations", ["account_id", "archive_note_id"], :name => "index_on_account_id_and_archive_note_id"
   add_index "archive_note_associations", ["id"], :name => "index_on_id"
+  execute "ALTER TABLE archive_note_associations ADD PRIMARY KEY (account_id,id)"
 
   create_table "archive_notes", :id => false, :force => true do |t|
     t.integer  "id",                :limit => 8,                    :null => false
@@ -269,6 +271,7 @@ ActiveRecord::Schema.define(:version => 20160802094502) do
   add_index "archive_notes", ["account_id", "archive_ticket_id"], :name => "index_archive_notes_on_account_id_and_archive_ticket_id"
   add_index "archive_notes", ["account_id", "note_id"], :name => "index_archive_notes_on_account_id_and_note_id"
   add_index "archive_notes", ["account_id", "user_id"], :name => "index_archive_notes_on_account_id_and_user_id"
+  execute "ALTER TABLE archive_notes ADD PRIMARY KEY (id,account_id)"
 
   create_table "archive_ticket_associations", :id => false, :force => true do |t|
     t.integer "id",                :limit => 8,          :null => false
@@ -281,6 +284,7 @@ ActiveRecord::Schema.define(:version => 20160802094502) do
 
   add_index "archive_ticket_associations", ["account_id", "archive_ticket_id"], :name => "index_on_account_id_and_archive_ticket_id"
   add_index "archive_ticket_associations", ["id"], :name => "index_on_id"
+  execute "ALTER TABLE archive_ticket_associations ADD PRIMARY KEY (account_id,id)"
 
   create_table "archive_tickets", :id => false, :force => true do |t|
     t.integer  "id",                 :limit => 8,                    :null => false
@@ -333,6 +337,7 @@ ActiveRecord::Schema.define(:version => 20160802094502) do
   add_index "article_tickets", ["account_id", "ticketable_id", "ticketable_type"], :name => "index_article_tickets_on_account_id_and_ticketetable"
   add_index "article_tickets", ["account_id"], :name => "index_article_tickets_on_account_id"
   add_index "article_tickets", ["article_id"], :name => "index_article_tickets_on_article_id"
+  execute "ALTER TABLE archive_tickets ADD PRIMARY KEY (id,account_id)"
 
   create_table "authorizations", :force => true do |t|
     t.string   "provider"
@@ -1342,6 +1347,7 @@ ActiveRecord::Schema.define(:version => 20160802094502) do
 
   add_index "flexifields", ["account_id", "flexifield_set_id"], :name => "index_flexifields_on_flexifield_def_id_and_flexifield_set_id"
   add_index "flexifields", ["flexifield_def_id"], :name => "index_flexifields_on_flexifield_def_id"
+  execute "ALTER TABLE flexifields ADD PRIMARY KEY (id,account_id)"
 
   create_table "form_ticket_field_values", :force => true do |t|
     t.integer  "account_id",      :limit => 8
@@ -1831,6 +1837,7 @@ ActiveRecord::Schema.define(:version => 20160802094502) do
   end
 
   add_index "helpdesk_activities", ["account_id", "notable_type", "notable_id"], :name => "index_helpdesk_activities_on_notables"
+  execute "ALTER TABLE helpdesk_activities ADD PRIMARY KEY (id,account_id)"
 
   create_table "helpdesk_attachments", :id => false, :force => true do |t|
     t.integer  "id",                   :limit => 8,                :null => false
@@ -1847,6 +1854,7 @@ ActiveRecord::Schema.define(:version => 20160802094502) do
   end
 
   add_index "helpdesk_attachments", ["account_id", "attachable_id", "attachable_type"], :name => "index_helpdesk_attachments_on_attachable_id", :length => {"account_id"=>nil, "attachable_id"=>nil, "attachable_type"=>14}
+  execute "ALTER TABLE helpdesk_attachments ADD PRIMARY KEY (id,account_id)"
 
   create_table "helpdesk_authorizations", :force => true do |t|
     t.string   "role_token"
@@ -1871,6 +1879,7 @@ ActiveRecord::Schema.define(:version => 20160802094502) do
   end
 
   add_index "helpdesk_dropboxes", ["account_id", "droppable_id", "droppable_type"], :name => "index_helpdesk_dropboxes_on_droppable_id"
+  execute "ALTER TABLE helpdesk_dropboxes ADD PRIMARY KEY (id,account_id)"
 
   create_table "helpdesk_external_notes", :id => false, :force => true do |t|
     t.integer "id",                       :limit => 8,                :null => false
@@ -1881,6 +1890,7 @@ ActiveRecord::Schema.define(:version => 20160802094502) do
   end
 
   add_index "helpdesk_external_notes", ["account_id", "installed_application_id", "external_id"], :name => "index_helpdesk_external_id", :length => {"account_id"=>nil, "installed_application_id"=>nil, "external_id"=>20}
+  execute "ALTER TABLE helpdesk_external_notes ADD PRIMARY KEY (id,account_id)"
 
   create_table "helpdesk_issues", :force => true do |t|
     t.string   "title"
@@ -1926,6 +1936,7 @@ ActiveRecord::Schema.define(:version => 20160802094502) do
   end
 
   add_index "helpdesk_note_bodies", ["account_id", "note_id"], :name => "index_note_bodies_on_account_id_and_note_id", :unique => true
+  execute "ALTER TABLE helpdesk_note_bodies ADD PRIMARY KEY (id,account_id)"
 
   create_table "helpdesk_notes", :id => false, :force => true do |t|
     t.integer  "id",           :limit => 8,                             :null => false
@@ -1944,6 +1955,7 @@ ActiveRecord::Schema.define(:version => 20160802094502) do
   end
 
   add_index "helpdesk_notes", ["account_id", "notable_type", "notable_id"], :name => "index_helpdesk_notes_on_notables"
+  execute "ALTER TABLE helpdesk_notes ADD PRIMARY KEY (id,account_id)"
 
   create_table "helpdesk_permissible_domains", :force => true do |t|
     t.string   "domain"
@@ -2043,6 +2055,7 @@ ActiveRecord::Schema.define(:version => 20160802094502) do
   add_index "helpdesk_schema_less_notes", ["int_nc02", "account_id"], :name => "index_helpdesk_schema_less_notes_on_int_nc02_account_id"
   add_index "helpdesk_schema_less_notes", ["long_nc01", "account_id"], :name => "index_helpdesk_schema_less_notes_on_long_nc01_account_id"
   add_index "helpdesk_schema_less_notes", ["long_nc02", "account_id"], :name => "index_helpdesk_schema_less_notes_on_long_nc02_account_id"
+  execute "ALTER TABLE helpdesk_schema_less_notes ADD PRIMARY KEY (id,account_id)"
 
   create_table "helpdesk_schema_less_tickets", :id => false, :force => true do |t|
     t.integer  "id",            :limit => 8,                    :null => false
@@ -2107,6 +2120,7 @@ ActiveRecord::Schema.define(:version => 20160802094502) do
   add_index "helpdesk_schema_less_tickets", ["string_tc01", "account_id"], :name => "index_helpdesk_schema_less_tickets_on_ticket_id_and_string_01", :length => {"string_tc01"=>10, "account_id"=>nil}
   add_index "helpdesk_schema_less_tickets", ["string_tc02", "account_id"], :name => "index_helpdesk_schema_less_tickets_on_ticket_id_and_string_02", :length => {"string_tc02"=>10, "account_id"=>nil}
   add_index "helpdesk_schema_less_tickets", ["ticket_id", "account_id"], :name => "index_helpdesk_schema_less_tickets_on_account_id_ticket_id", :unique => true
+  execute "ALTER TABLE helpdesk_schema_less_tickets ADD PRIMARY KEY (id,account_id)"
 
   create_table "helpdesk_section_fields", :force => true do |t|
     t.integer  "account_id",             :limit => 8
@@ -2188,6 +2202,7 @@ ActiveRecord::Schema.define(:version => 20160802094502) do
   end
 
   add_index "helpdesk_ticket_bodies", ["account_id", "ticket_id"], :name => "index_ticket_bodies_on_account_id_and_ticket_id", :unique => true
+  execute "ALTER TABLE helpdesk_ticket_bodies ADD PRIMARY KEY (id,account_id)"
 
   create_table "helpdesk_ticket_fields", :force => true do |t|
     t.integer  "account_id",              :limit => 8
@@ -2256,6 +2271,7 @@ ActiveRecord::Schema.define(:version => 20160802094502) do
   end
 
   add_index "helpdesk_ticket_states", ["account_id", "ticket_id"], :name => "index_helpdesk_ticket_states_on_account_and_ticket", :unique => true
+  execute "ALTER TABLE helpdesk_ticket_states ADD PRIMARY KEY (id,account_id)"
 
   create_table "helpdesk_ticket_statuses", :force => true do |t|
     t.integer  "status_id",             :limit => 8
@@ -2314,6 +2330,7 @@ ActiveRecord::Schema.define(:version => 20160802094502) do
   add_index "helpdesk_tickets", ["account_id", "updated_at", "id"], :name => "index_helpdesk_tickets_on_account_id_and_updated_at_and_id"
   add_index "helpdesk_tickets", ["requester_id", "account_id"], :name => "index_helpdesk_tickets_on_requester_id_and_account_id"
   add_index "helpdesk_tickets", ["responder_id", "account_id"], :name => "index_helpdesk_tickets_on_responder_id_and_account_id"
+  execute "ALTER TABLE helpdesk_tickets ADD PRIMARY KEY (id,account_id)"
 
   create_table "helpdesk_time_sheets", :force => true do |t|
     t.datetime "start_time"
@@ -3352,6 +3369,7 @@ ActiveRecord::Schema.define(:version => 20160802094502) do
   add_index "support_scores", ["account_id", "group_id", "created_at"], :name => "index_support_scores_on_accid_and_gid_and_created_at"
   add_index "support_scores", ["account_id", "scorable_id", "scorable_type"], :name => "index_support_scores_on_accid_scorable_id_scorable_type"
   add_index "support_scores", ["account_id", "user_id", "created_at"], :name => "index_support_scores_on_accid_and_uid_and_created_at"
+  execute "ALTER TABLE support_scores ADD PRIMARY KEY (id,account_id)"
 
   create_table "survey_handles", :id => false, :force => true do |t|
     t.integer  "id",               :limit => 8,                    :null => false
@@ -3373,6 +3391,7 @@ ActiveRecord::Schema.define(:version => 20160802094502) do
 
   add_index "survey_handles", ["account_id", "id_token"], :name => "index_survey_handles_on_account_id_and_id_token", :length => {"account_id"=>nil, "id_token"=>20}
   add_index "survey_handles", ["account_id", "surveyable_id", "surveyable_type"], :name => "index_on_account_id_and_surveyable_id_and_surveyable_type"
+  execute "ALTER TABLE survey_handles ADD PRIMARY KEY (id,account_id)"
 
   create_table "survey_question_choices", :force => true do |t|
     t.integer  "account_id",         :limit => 8
@@ -3413,6 +3432,7 @@ ActiveRecord::Schema.define(:version => 20160802094502) do
 
   add_index "survey_remarks", ["account_id", "note_id"], :name => "index_survey_remarks_on_account_id_and_note_id"
   add_index "survey_remarks", ["account_id", "survey_result_id"], :name => "index_survey_remarks_on_account_id_and_survey_result_id"
+  execute "ALTER TABLE survey_remarks ADD PRIMARY KEY (id,account_id)"
 
   create_table "survey_result_data", :id => false, :force => true do |t|
     t.integer  "id",               :limit => 8,                :null => false
@@ -3506,6 +3526,7 @@ ActiveRecord::Schema.define(:version => 20160802094502) do
 
   add_index "survey_result_data", ["account_id", "survey_id"], :name => "index_survey_result_data_on_account_id_and_survey_id"
   add_index "survey_result_data", ["account_id", "survey_result_id"], :name => "index_survey_result_data_on_account_id_and_survey_result_id"
+  execute "ALTER TABLE survey_result_data ADD PRIMARY KEY (id, account_id)"
 
   create_table "survey_results", :id => false, :force => true do |t|
     t.integer  "id",               :limit => 8,                :null => false
@@ -3525,6 +3546,7 @@ ActiveRecord::Schema.define(:version => 20160802094502) do
   add_index "survey_results", ["account_id", "created_at"], :name => "index_survey_results_on_account_id_and_created_at"
   add_index "survey_results", ["account_id", "survey_id"], :name => "nameindex_on_account_id_and_survey_id"
   add_index "survey_results", ["surveyable_id", "surveyable_type"], :name => "index_survey_results_on_surveyable_id_and_surveyable_type"
+  execute "ALTER TABLE survey_results ADD PRIMARY KEY (id,account_id)"
 
   create_table "surveys", :force => true do |t|
     t.integer  "account_id",             :limit => 8
@@ -4200,6 +4222,7 @@ ActiveRecord::Schema.define(:version => 20160802094502) do
   add_index "users", ["perishable_token", "account_id"], :name => "index_users_on_perishable_token_and_account_id"
   add_index "users", ["persistence_token", "account_id"], :name => "index_users_on_persistence_token_and_account_id"
   add_index "users", ["single_access_token", "account_id"], :name => "index_users_on_account_id_and_single_access_token", :unique => true
+  execute "ALTER TABLE users ADD PRIMARY KEY (id,account_id)"
 
   create_table "va_rules", :force => true do |t|
     t.string   "name"
