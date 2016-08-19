@@ -504,12 +504,6 @@ li {
 
 
 /*// Multiple File Upload*/
-.attach-wrapper {
-    /*integration dropdowns*/
-    .dropdown-menu {
-        max-width: 230px;
-    }
-}
 .no-width {
     width: auto !important;
 }
@@ -1074,6 +1068,9 @@ li {
     }
     .attachment-help-info {
         top:0px !important;
+    }
+    .dropdown {
+        padding-bottom: 10px;
     }
 }
 /*reply 2 forward*/

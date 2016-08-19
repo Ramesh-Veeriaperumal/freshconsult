@@ -9,12 +9,19 @@ module ApiIntegrations
 
     def setup
       super
-      @account.add_features(:cti)
+      Integrations::InstalledApplication.any_instance.stubs(:marketplace_enabled?).returns(false)
+      @account.add_features([:cti])
+      application = Integrations::Application.find_by_name("cti")
+      @installed_app = @account.installed_applications.build(:application => application)
+      @installed_app.set_configs("softfone_enabled" => "0", "call_note_private" => "1", "click_to_dial" => "0")
+      @installed_app.save!
     end
 
     def teardown
       super
+      @account.installed_applications.destroy_all
       @account.remove_feature(:cti)
+      Integrations::InstalledApplication.unstub(:marketplace_enabled?)
     end
 
     def test_create_with_feature_disabled
@@ -436,12 +443,13 @@ module ApiIntegrations
       assert_response 403
       expected = {
         code: "require_feature",
-        message: "The Cti feature is not supported in your plan. Please upgrade your account to use it."
+        message: "The Cti feature(s) is/are not supported in your plan. Please upgrade your account to use it."
       }
       match_json(expected)
       cti_call.destroy
       responder.destroy
       requester.destroy
+      @account.class.any_instance.unstub(:features?)
     end
 
     def test_without_call_reference_id_index
