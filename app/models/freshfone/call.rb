@@ -602,6 +602,10 @@ class Freshfone::Call < ActiveRecord::Base
     incoming? && is_root?
   end
 
+  def outgoing_root_call?
+    outgoing? && is_root?
+  end
+
   def missed_or_busy?
     busy? || noanswer? || canceled?
   end

@@ -16,8 +16,8 @@ module Helpdesk::TicketsHelper
   include Marketplace::ApiHelper
   include AutocompleteHelper
   include Helpdesk::AccessibleElements
-  include Cache::Memcache::Helpdesk::Ticket #Methods for fragment caching in new ticket and compose email forms
   include Cache::Memcache::Helpdesk::TicketTemplate #Methods for tkt templates count
+  include Cache::FragmentCache::Base # Methods for fragment caching
   
   def ticket_sidebar
     tabs = [["TicketProperties", t('ticket.properties').html_safe,         "ticket"],

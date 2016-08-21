@@ -93,7 +93,7 @@ class SupportController < ApplicationController
       process_template_liquid
 
       # TODO-RAILS3 need to check this
-      @skip_liquid_compile = false # if active_layout.present?      
+      @skip_liquid_compile = true # if active_layout.present?      
     end
 
     def preview?

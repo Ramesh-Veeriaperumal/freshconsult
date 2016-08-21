@@ -175,7 +175,9 @@ module Redis::RedisKeys
   #update tickets sla - move from delayed job to sidekiq ends
 
 	# List of languages used by agents in an account
-  AGENT_LANGUAGE_LIST = "AGENT_LANGUAGE_LIST:%{account_id}"
+  AGENT_LANGUAGE_LIST 	 = "AGENT_LANGUAGE_LIST:%{account_id}"
+  # List of languges used by customers in an account
+  CUSTOMER_LANGUAGE_LIST = "CUSTOMER_LANGUAGE_LIST:%{account_id}"
 
   BLACKLISTED_SPAM_ACCOUNTS = "BLACKLISTED_SPAM_ACCOUNTS"
   BLACKLISTED_SPAM_DOMAINS = "BLACKLISTED_SPAM_DOMAINS"

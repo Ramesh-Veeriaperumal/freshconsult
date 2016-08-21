@@ -159,6 +159,14 @@ class Helpdesk::ScheduledTask < ActiveRecord::Base
     super(options).merge!(:enabled => active?)
   end
 
+  #For tasks picked by 'calculate_next_run_at' job
+  # and
+  #For last try of dangling tasks, 'next_run_at' will be updated only once when task is enqueued.
+  #Subsequent status changes will not update 'next_run_at' based on condition in upcoming_schedule
+  def dead_task?
+    active? && (next_run_at + MAX_DANGLE_TIME_IN_HOURS <= Time.now.utc)
+  end
+
   private
 
   def set_user_id
@@ -168,14 +176,6 @@ class Helpdesk::ScheduledTask < ActiveRecord::Base
   def schedule_changed?
     new_record? || minute_of_day_changed? || day_of_frequency_changed? || 
       frequency_changed? || repeat_frequency_changed? || end_date_changed? 
-  end
-
-  #For tasks picked by 'calculate_next_run_at' job
-  # and
-  #For last try of dangling tasks, 'next_run_at' will be updated only once when task is enqueued.
-  #Subsequent status changes will not update 'next_run_at' based on condition in upcoming_schedule
-  def dead_task?
-    active? && (next_run_at + MAX_DANGLE_TIME_IN_HOURS <= Time.now.utc)
   end
 
   def calculate_next_run_at

@@ -260,13 +260,13 @@ jQuery(document).ready(function(){
 	});
 
 	// Ticket Details Page Links
-	jQuery(".ticket-actions").on('click.remove_recent_ticket', "[data-domhelper-name='ticket-delete-btn'], li a.spam", function(ev){		
+	jQuery(document).on('click.remove_recent_ticket', "[data-domhelper-name='ticket-delete-btn'], li a.spam", function(ev){		
 		if(TICKET_DETAILS_DATA){
 			NavSearchUtils.deleteRecentTicketById(TICKET_DETAILS_DATA['displayId']);
 		}
 	});
 
-	jQuery('.profile_info').on('click.clear_local_recents', '.signout_link' ,function(ev){	
+	jQuery(document).on('click.clear_local_recents', '.signout_link' ,function(ev){	
 		NavSearchUtils.clearLocalRecentTimestamp();	
 		NavSearchUtils.clearLocalRecents();	
 	})
