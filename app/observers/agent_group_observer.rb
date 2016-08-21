@@ -23,7 +23,6 @@ class AgentGroupObserver < ActiveRecord::Observer
   end
 
   def after_destroy(agent_group)
-    clear_cache(agent_group)
     group = agent_group.group
 
     group.remove_agent_from_round_robin(agent_group.user_id) if group.round_robin_enabled?

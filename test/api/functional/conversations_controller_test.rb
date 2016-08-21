@@ -797,7 +797,7 @@ class ConversationsControllerTest < ActionController::TestCase
   def test_ticket_conversations_with_link_header
     parent_ticket = ticket
     3.times do
-      create_note(user_id: @agent.id, ticket_id: parent_ticket.display_id, source: 2)
+      create_note(user_id: @agent.id, ticket_id: parent_ticket.id, source: 2)
     end
     per_page = parent_ticket.notes.visible.exclude_source('meta').count - 1
     get :ticket_conversations, controller_params(id: parent_ticket.display_id, per_page: per_page)

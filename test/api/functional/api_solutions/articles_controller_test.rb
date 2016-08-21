@@ -24,7 +24,20 @@ module ApiSolutions
 
     def setup_articles
       @category_meta = Solution::CategoryMeta.last
-      @folder_meta = @category_meta.solution_folder_meta.last
+
+      @folder_meta = Solution::FolderMeta.new
+      @folder_meta.visibility = 1
+      @folder_meta.solution_category_meta = @category_meta
+      @folder_meta.account = @account
+      @folder_meta.save
+
+      @folder = Solution::Folder.new
+      @folder.name = 'test folder'
+      @folder.description = 'test description'
+      @folder.account = @account
+      @folder.parent_id = @folder_meta.id
+      @folder.language_id = Language.find_by_code('en').id
+      @folder.save
 
       @articlemeta = Solution::ArticleMeta.new
       @articlemeta.art_type = 1
