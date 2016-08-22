@@ -5118,7 +5118,7 @@ en:
     default_note_text : Default Note will be added
     note_saved : Note saved
     edit_note: "<b>Edit Note</b>"
-    thanks: Thank you for submitting your feedback
+    thanks: Thank you for your feedback
     portal_created_on: "Created by <span class='emphasize'>%{username}</span> on <span class='emphasize'>%{date}</span>"
     portal_created_on_same_user: "Created on <span class='emphasize'>%{date}</span>"
     fb_portal_created_on: "Created by <span class='emphasize'>%{username}</span> <span class='emphasize'>%{date}</span>"
@@ -5314,6 +5314,9 @@ en:
     note_content: Note content
     private_note_alert: "To send a private reply, please use the below email command in your message body."
     ticket_url: Ticket URL
+    submit_feedback: Send Feedback
+    search_text: Search Articles
+    search_close_text: Close search
     integrations:
       jira:
         tooltip: "View the associated JIRA Issue"
@@ -7457,7 +7460,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
         feedback_widgets_search_results: "Search results"
         feedback_widgets_search_our: "Search our "
         feedback_widgets_knowledge_base: "Knowledge base "
-        feedback_widgets_help_articles: "or Browse help articles"
+        feedback_widgets_help_articles: "or Browse articles"
         show_all_results: "Show all results"
         no_results: "No results for "
   reorder: "Reorder"

@@ -426,7 +426,11 @@ module SupportHelper
 	      		_output << %( #{ ff.text_area(field_name,
 	      			{ :class => element_class + " span12", :value => field_value, :rows => 6 }.merge(html_opts)) } )
 	      	end
-	      	_output << %( #{ render(:partial=>"/support/shared/attachment_form") } )
+	      	if(@widget_form)
+	      		_output << %( #{ render(:partial=>"/support/shared/widget_attachment_form") } )
+	      	else
+	      		_output << %( #{ render(:partial=>"/support/shared/attachment_form") } )
+	      	end
 	        # element = content_tag(:div, _output.join(" "), :class => "controls")
 	      	# %( #{ text_area(object_name, field_name, { :class => element_class + " span12", :value => field_value, :rows => 6 }.merge(html_opts)) }
 	      	   #{ render(:partial=>"/support/shared/attachment_form") } )

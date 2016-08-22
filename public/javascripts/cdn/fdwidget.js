@@ -1,5 +1,6 @@
 //= require prototype-1.6.js
 //= require jquery-1.7.1.min.js
+//= require bootstrap/twipsy.js
 //= require frameworks/plugins/jquery.ui.js
 //= require widgetinit.js
 //= require utils.js
@@ -7,7 +8,7 @@
 //= require frameworks/plugins/jquery.validate.js
 //= require lib/nestedtree.js
 //= require frameworks/plugins/jquery.livequery.js
-//= require portal/multifile.js
+//= require portal/widget_multifile.js
 //= require portal/portal_custom_validators.js
 //= require frameworks/plugins/jquery.nested_select_tag.js
 //= require frameworks/plugins/select2.js
