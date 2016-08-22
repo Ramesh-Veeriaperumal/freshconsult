@@ -46,6 +46,7 @@ module RabbitMq::Utils
         valid = construct_message_for_subscriber(f, message, model, action)
         key = generate_routing_key(key, valid)
       }
+      message["routing_key"] = key
       send_message(uuid, exchange, message.to_json, key)
     end
   end
@@ -87,7 +88,10 @@ module RabbitMq::Utils
     Rails.logger.debug "ROUTING KEY - #{key}"
     return unless key.include?("1")
     HelpkitFeedsLogger.log(Account.current.id, uuid, exchange, message, key)
-    job_id = RabbitmqWorker.perform_async(Account.current.rabbit_mq_exchange_key(exchange), message, key)
+    job_id = RabbitmqWorker.perform_async( exchange.pluralize, #remove pluralize after taking all to lambda
+                                           message, 
+                                           key, 
+                                           Account.current.launched?(:lambda_exchange))
     Rails.logger.debug "Sidekiq Job Id #{job_id} " 
   rescue => e
     NewRelic::Agent.notice_error(e,{:custom_params => {:description => "RabbitMq Publish Error",

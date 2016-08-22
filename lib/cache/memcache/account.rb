@@ -277,10 +277,8 @@ module Cache::Memcache::Account
   end
 
   def account_additional_settings_from_cache
-    @account_additional_settings_from_cache ||= begin
-      key = ACCOUNT_ADDITIONAL_SETTINGS % { :account_id => self.id }
-      MemcacheKeys.fetch(key) { self.account_additional_settings }
-    end
+    key = ACCOUNT_ADDITIONAL_SETTINGS % { :account_id => self.id }
+    MemcacheKeys.fetch(key) { self.account_additional_settings }
   end
 
   def clear_account_additional_settings_from_cache
@@ -289,9 +287,11 @@ module Cache::Memcache::Account
   end
 
   def cti_installed_app_from_cache
-    key = INSTALLED_CTI_APP % { :account_id => self.id }
-    MemcacheKeys.fetch(key) do
-      self.installed_applications.with_type_cti.first ? self.installed_applications.with_type_cti.first : false
+    @cti_installed_app_from_cache ||= begin
+      key = INSTALLED_CTI_APP % { :account_id => self.id }
+      MemcacheKeys.fetch(key) do
+        self.installed_applications.with_type_cti.first ? self.installed_applications.with_type_cti.first : false
+      end
     end
   end
 
@@ -354,6 +354,11 @@ module Cache::Memcache::Account
   def clear_application_on_dip_from_cache
     key = ACCOUNT_INSTALLED_APPS_IN_COMPANY_PAGE % { :account_id => self.id }
     MemcacheKeys.delete_from_cache(key)
+  end
+
+  def clear_requester_widget_fields_from_cache
+    key = REQUESTER_WIDGET_FIELDS % { :account_id => current_account.id }
+    MemcacheKeys.delete_from_cache key
   end
 
   private

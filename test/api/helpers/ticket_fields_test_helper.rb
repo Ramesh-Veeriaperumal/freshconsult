@@ -1,4 +1,6 @@
 module TicketFieldsTestHelper
+  include Helpdesk::Ticketfields::ControllerMethods
+
   FIELD_MAPPING = { 'number' => 'int', 'checkbox' => 'boolean', 'paragraph' => 'text', 'decimal' => 'decimal', 'date' => 'date' }
 
   def create_custom_field(name, type)
@@ -113,16 +115,16 @@ module TicketFieldsTestHelper
     # ffs_07, ffs_08 and ffs_09 are created here
     ticket_field_exists = @account.ticket_fields.find_by_name("#{labels[0].downcase}_#{@account.id}")
     return ticket_field_exists if ticket_field_exists
-    (0..2).each do |nested_field_id|
-      flexifield_def_entry[nested_field_id] = FactoryGirl.build(:flexifield_def_entry,
-                                                                flexifield_def_id: @account.flexi_field_defs.find_by_name("Ticket_#{@account.id}").id,
-                                                                flexifield_alias: "#{labels[nested_field_id].downcase}_#{@account.id}",
-                                                                flexifield_name: "ffs_0#{nested_field_id + 7}",
-                                                                flexifield_order: 6,
-                                                                flexifield_coltype: 'dropdown',
-                                                                account_id: @account.id)
-      flexifield_def_entry[nested_field_id].save
-    end
+
+    flexifield_def_entry[0] = FactoryGirl.build(:flexifield_def_entry,
+                                                              flexifield_def_id: @account.flexi_field_defs.find_by_name("Ticket_#{@account.id}").id,
+                                                              flexifield_alias: "#{labels[0].downcase}_#{@account.id}",
+                                                              flexifield_name: "ffs_0#{0 + 7}",
+                                                              flexifield_order: 6,
+                                                              flexifield_coltype: 'dropdown',
+                                                              account_id: @account.id)
+    flexifield_def_entry[0].save
+
 
     parent_custom_field = FactoryGirl.build(:ticket_field, account_id: @account.id,
                                                            name: "#{labels[0].downcase}_#{@account.id}",
@@ -132,6 +134,23 @@ module TicketFieldsTestHelper
                                                            description: '',
                                                            flexifield_def_entry_id: flexifield_def_entry[0].id)
     parent_custom_field.save
+
+    (1..2).each do |nested_field_id|
+      flexifield_def_entry[nested_field_id] = FactoryGirl.build(:flexifield_def_entry,
+                                                                flexifield_def_id: @account.flexi_field_defs.find_by_name("Ticket_#{@account.id}").id,
+                                                                flexifield_alias: "#{labels[nested_field_id].downcase}_#{@account.id}",
+                                                                flexifield_name: "ffs_0#{nested_field_id + 7}",
+                                                                flexifield_order: 6,
+                                                                flexifield_coltype: 'dropdown',
+                                                                account_id: @account.id)
+
+      nested_field_params = {name: "#{labels[nested_field_id].downcase}_#{@account.id}", label_in_portal: labels[nested_field_id], label: labels[nested_field_id], level: nested_field_id+1 }
+      is_saved = create_nested_field(flexifield_def_entry[nested_field_id], parent_custom_field, nested_field_params.merge(type: 'nested_field'), @account)
+      construct_child_levels(flexifield_def_entry[nested_field_id], parent_custom_field, nested_field_params) if is_saved
+
+      flexifield_def_entry[nested_field_id].save
+    end
+
 
     nested_field_vals = []
     (1..2).each do |nf|

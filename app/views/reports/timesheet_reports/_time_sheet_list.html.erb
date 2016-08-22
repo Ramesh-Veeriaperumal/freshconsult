@@ -125,7 +125,7 @@
       var previous_group_id = "<%= @time_sheets.keys.last %>";
       var previous_entry_id = <%= @time_sheets.values.flatten.last ? @time_sheets.values.flatten.last.id : 0 %>;
       var group_count = JSON.parse('<%= @group_count.to_json.html_safe %>');
-      var group_names = JSON.parse('<%= @group_names.to_json.html_safe %>');
+      var group_names = '<%= @group_names.to_json.html_safe %>';\*\/\}$/)[1];
       var total_row_count = <%= @row_count %>;
       var row_count = 2000;
       var totaltime = <%= @group_count.values.sum %>;

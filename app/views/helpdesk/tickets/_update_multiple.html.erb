@@ -217,7 +217,7 @@ function groupchange(value){
 	 blank_value = "No Change";
      jQuery.ajax({
        type:        'GET',
-       url: 		'/helpdesk/commons/group_agents/'+this.value+'?blank_value=<%=t('select')%>',
+       url: 		'/helpdesk/commons/group_agents/'+this.value+'?blank_value=<%=t('select')%>&allow_none=true',
        contentType: 'application/text',
        success:     function(data){
 
@@ -254,4 +254,7 @@ jQuery('.ui-icon-closethick').on('click', function(){
               .insertAfter(jQuery("#helpdesk_ticket_ticket_type").parent());
       }
   });
+
+  jQuery('#helpdesk_ticket_responder_id').append("<option value='-1'><%= t("unassign") %></option>");
+  jQuery('#helpdesk_ticket_group_id').append("<option value='-1'><%= t("unassign") %></option>");
 <% end %>

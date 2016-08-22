@@ -1,7 +1,7 @@
 class Integrations::InstalledApplication < ActiveRecord::Base
   include Integrations::AppsUtil
   include Integrations::Jira::WebhookInstaller
-  include Cache::Memcache::Helpdesk::Ticket
+  include Cache::FragmentCache::Base
   
   serialize :configs, Hash
   belongs_to :application, :class_name => 'Integrations::Application'
@@ -10,6 +10,8 @@ class Integrations::InstalledApplication < ActiveRecord::Base
   has_many :user_credentials, :class_name => 'Integrations::UserCredential', :dependent => :destroy
   has_many :external_notes,:class_name => 'Helpdesk::ExternalNote',:foreign_key => 'installed_application_id',:dependent => :delete_all
   has_many :app_business_rules, :class_name =>'Integrations::AppBusinessRule', :dependent => :destroy
+  has_many :cti_calls, :class_name =>'Integrations::CtiCall', :dependent => :nullify
+  has_many :cti_phones, :class_name =>'Integrations::CtiPhone', :dependent => :destroy
   has_many :va_rules, through: :app_business_rules
   attr_protected :application_id
   
@@ -25,7 +27,7 @@ class Integrations::InstalledApplication < ActiveRecord::Base
   after_commit :after_commit_on_destroy_customize, :on => :destroy
   after_commit :after_commit_customize
   after_commit :clear_application_on_dip_from_cache
-  after_commit :clear_tkt_form_cache, :if => :attachment_applications?
+  after_commit :clear_fragment_caches, :if => :attachment_applications?
 
   include ::Integrations::AppMarketPlaceExtension
 

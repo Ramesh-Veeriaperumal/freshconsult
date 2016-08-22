@@ -106,6 +106,10 @@ HelpdeskReports.SavedReportUtil = (function() {
 				_FD.controls.showSaveOptions(_FD.last_applied_saved_report_index);
 			});
 
+			jQuery('#reports_wrapper').on('click.helpdesk_reports', '[data-action="remove-field"]', function () {
+				_FD.filterChanged = true;
+	            HelpdeskReports.locals.saved_report_used = false;
+        	});
 	    	//Saved Reports
 	        jQuery(document).on('click.save_reports',"#report-dialog-save-submit",function() {  
 
@@ -401,7 +405,12 @@ HelpdeskReports.SavedReportUtil = (function() {
 
 	        if(index != -1) {
 	            var filter_hash = hash[index].report_filter;
-	            HelpdeskReports.locals.active_custom_field = filter_hash.data_hash.active_custom_field;
+	            if(filter_hash.data_hash.active_custom_field != undefined){
+	                HelpdeskReports.locals.active_custom_field = filter_hash.data_hash.active_custom_field;
+	            }
+	            else{
+	                HelpdeskReports.locals.active_custom_field = _.keys(HelpdeskReports.locals.custom_field_hash).first();
+	            }
 	            HelpdeskReports.locals.default_custom_field = filter_hash.data_hash.active_custom_field;
 	            id = filter_hash.id;
 	            var date_hash = filter_hash.data_hash.date;
@@ -433,7 +442,7 @@ HelpdeskReports.SavedReportUtil = (function() {
 
 							var values = filter_row.value.split(','); // val1,val2,val3 -> [val1,val2,val3]
 							jQuery.each(values,function(idx,val) {
-								var is_saved_param_valid = _FD.checkValidityOfSavedParams(condition,val,saved_source);
+								var is_saved_param_valid = true;//_FD.checkValidityOfSavedParams(condition,val,saved_source);
 								if(!is_saved_param_valid) {
 									//source object was spliced in reponse of elastic search itself
 									values.splice(idx,1);
@@ -459,7 +468,7 @@ HelpdeskReports.SavedReportUtil = (function() {
 	                   			 //Identifying invalid params for neseted fields is not working,because all values are
 	                   			 //grouped under same condition, when fixed move the below logic out of the if else.
 	                   			 jQuery.each(values,function(idx,val) {
-									var is_saved_param_valid = _FD.checkValidityOfSavedParams(condition,val);
+									var is_saved_param_valid = true;//_FD.checkValidityOfSavedParams(condition,val);
 									if(!is_saved_param_valid) {
 										//source object was spliced in reponse of elastic search itself
 										values.splice(idx,1);

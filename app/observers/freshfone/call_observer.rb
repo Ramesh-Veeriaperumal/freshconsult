@@ -200,12 +200,16 @@ class Freshfone::CallObserver < ActiveRecord::Observer
     end
 
     def resolve_acw(call)
-      move_to_acw_state(call) if  outgoing_or_completed?(call) &&
-        !transferred?(call) && !on_app_or_mobile?(call) && !warm_transferred?(call)
+      move_to_acw_state(call) if acw_preconditions?(call)
     end
 
-    def outgoing_or_completed?(call)
-      call.outgoing? || (call.incoming? && call.completed?)
+    def acw_preconditions?(call)
+      single_leg_outgoing_or_completed?(call) && !transferred?(call) &&
+        !on_app_or_mobile?(call) && !warm_transferred?(call)
+    end
+
+    def single_leg_outgoing_or_completed?(call)
+      call.outgoing_root_call? || call.completed?
     end
 
     def on_app_or_mobile?(call)

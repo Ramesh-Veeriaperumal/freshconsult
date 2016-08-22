@@ -202,6 +202,7 @@ window.App = window.App || {};
             data: { id: _note_id },
             success: function(response){
               if(response!=""){
+                _messageDiv.find('.tooltip').twipsy('hide');
                 _messageDiv.html(response);
                 self.quote_text_from_archive(_messageDiv, options);
               }

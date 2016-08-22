@@ -16,12 +16,13 @@ class Account < ActiveRecord::Base
   has_many_attachments
   
   serialize :sso_options, Hash
+  delegate :secret_keys, to: :account_additional_settings
 
   pod_filter "id"
   
   is_a_launch_target
   
-  concerned_with :associations, :constants, :validations, :callbacks, :rabbitmq, :solution_associations, :multilingual
+  concerned_with :associations, :constants, :validations, :callbacks, :solution_associations, :multilingual
 
   include CustomerDeprecationMethods
   
@@ -74,10 +75,24 @@ class Account < ActiveRecord::Base
     end
   end
 
+  def node_feature_list
+    @node_feature_list ||= begin
+      feature_list = []
+      FD_NODE_FEATURES.each do |ns|
+        feature_list << ns if features?(ns)
+      end
+      feature_list
+    end
+  end
+
   def time_zone
     tz = self.read_attribute(:time_zone)
     tz = "Kyiv" if tz.eql?("Kyev")
     tz
+  end
+
+  def hide_agent_metrics_feature?
+    features?(:euc_hide_agent_metrics)
   end
   
   def survey
@@ -177,6 +192,10 @@ class Account < ActiveRecord::Base
 
   def plugs_enabled_in_new_ticket?
     ismember?(PLUGS_IN_NEW_TICKET,self.id)
+  end
+
+  def public_ticket_token
+    self.secret_keys[:public_ticket_token]
   end
 
   #Temporary feature check methods - using redis keys - ends here
@@ -376,7 +395,7 @@ class Account < ActiveRecord::Base
   end
   
    def language
-    main_portal_from_cache.language
+    main_portal.language
    end
   
   #Sentient things start here, can move to lib some time later - Shan
@@ -423,6 +442,11 @@ class Account < ActiveRecord::Base
 
   def has_multiple_products?
     !products.empty?
+  end
+
+  def has_multiple_portals?
+    @multiple_portals = portals.count > 1 if @multiple_portals.nil?
+    @multiple_portals
   end
   
   def kbase_email

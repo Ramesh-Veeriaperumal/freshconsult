@@ -87,11 +87,12 @@ class ConversationsControllerTest < ActionController::TestCase
   end
 
   def test_create_with_user_id_invalid_privilege
-    params_hash = create_note_params_hash.merge(user_id: other_user.id)
+    sample_user = other_user
+    params_hash = create_note_params_hash.merge(user_id: sample_user.id)
     controller.class.any_instance.stubs(:is_allowed_to_assume?).returns(false)
     post :create, construct_params({ id: ticket.display_id }, params_hash)
     assert_response 403
-    match_json(request_error_pattern('invalid_user', id: other_user.id, name: other_user.name))
+    match_json(request_error_pattern('invalid_user', id: sample_user.id, name: sample_user.name))
     controller.class.any_instance.unstub(:is_allowed_to_assume?)
   end
 
@@ -796,7 +797,7 @@ class ConversationsControllerTest < ActionController::TestCase
   def test_ticket_conversations_with_link_header
     parent_ticket = ticket
     3.times do
-      create_note(user_id: @agent.id, ticket_id: parent_ticket.display_id, source: 2)
+      create_note(user_id: @agent.id, ticket_id: parent_ticket.id, source: 2)
     end
     per_page = parent_ticket.notes.visible.exclude_source('meta').count - 1
     get :ticket_conversations, controller_params(id: parent_ticket.display_id, per_page: per_page)

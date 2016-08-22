@@ -2,6 +2,7 @@
 
 $wicon-layout:horizontal;
 @import "cdn-ignored/sprites/portal/wicon/*.png";
+@import "../../fonts/glyphs-variables";
 $wicon-sprite-dimensions:true;
 @include all-wicon-sprites;
 
@@ -14,25 +15,47 @@ $wicon-sprite-dimensions:true;
 }
 
 .form-placeholder{
-  .default_requester .controls:before{ @extend .wicon-email; }
-  .default_subject .controls:before{ @extend .wicon-question-sign; }
-  .default_name_field:before{ @extend .wicon-user; }
+  .default_requester .controls:before{ content: $font-glyphs-mail;}
+  .default_subject .controls:before{ content: $font-glyphs-help; }
+  .default_name_field:before{ content: $font-glyphs-user; }
 }
 
 #feedback-suggest .hc-search-input:before{ @extend .wicon-search; }
 .default_requester .controls, .default_subject .controls, .default_name_field, .hc-search-input{
   &:before{
-    content: " ";
     position: absolute;
-    margin-top: 6px;
-    @include margin-left(7px);
-    color: #aaa;
+    margin-top: 5px;
+    @include margin-left(13px);
     @include text-align(center);
+    background-image: none;
+    font-size: 20px;
+    display: inline-block;
+    font-family: "glyphs";
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-font-smoothing: antialiased;
+    font-smoothing: antialiased;
+    color: #b2b2b2;
     @if $rtl {
       right:0;
     }
   }
 }
+.select2-search{
+  &:after{
+        font-size: 20px;
+        display: inline-block;
+        font-family: "glyphs";
+        -moz-osx-font-smoothing: grayscale;
+        -webkit-font-smoothing: antialiased;
+        font-smoothing: antialiased;
+        color: #b2b2b2;
+        position: absolute;
+        margin-top: 8px;
+        @include margin-left(-23px);
+        content: $font-glyphs-search;
+  }
+}
+
 
 .hc-search-input:before{
   margin-top: 11px;
@@ -44,4 +67,7 @@ $wicon-sprite-dimensions:true;
   top: 1px;
   @include left(-2px);
   font-size: 1em;
+}
+html[dir="rtl"] .select2-search input{
+  background: none;
 }

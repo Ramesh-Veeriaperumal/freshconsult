@@ -2,8 +2,59 @@ var NavSearchUtils = NavSearchUtils || (function(){
 	var navSearchUtils = {};
 	navSearchUtils.localRecentSearchKey = getLocalRecentSearchKey();
 	navSearchUtils.localRecentTicketKey = getLocalRecentTicketsKey();
+	navSearchUtils.localRecentTimestampKey = getLocalRecentTimestampKey();
+
+	navSearchUtils.tryClearLocalRecents = function(){
+		var storedTimestamp = getFromLocalStorage(navSearchUtils.localRecentTimestampKey);
+		var currentTimestamp = new Date().getTime();
+		var eightHoursSeconds = 8 * 60 * 60;
+		if(storedTimestamp){
+			var timeElapsed = currentTimestamp - storedTimestamp;
+			timeElapsed = Math.round(timeElapsed / 1000);
+			if (timeElapsed > eightHoursSeconds){
+				navSearchUtils.clearLocalRecents();
+				storeBrowserLocalStorage(navSearchUtils.localRecentTimestampKey, currentTimestamp);
+			}
+		}else{
+			navSearchUtils.clearLocalRecents();
+			storeBrowserLocalStorage(navSearchUtils.localRecentTimestampKey, currentTimestamp);
+		}
+
+	}
+
+	navSearchUtils.clearLocalRecents = function(){
+		removeFromLocalStorage(navSearchUtils.localRecentSearchKey);
+		removeFromLocalStorage(navSearchUtils.localRecentTicketKey);
+	}
+
+	navSearchUtils.clearLocalRecentTimestamp = function(){
+		removeFromLocalStorage(navSearchUtils.localRecentTimestampKey);
+	}
 
 
+	navSearchUtils.saveServerRecents = function(recents, isRecentSearches){
+		var lrs = queue(5);
+		if (recents){
+			for(var i = 0; i < recents.length; i++){
+				var recentItem = recents[i];
+				if(isRecentSearches){
+					recentItem = recentItem.length > 100 ? recentItem.substring(0, 100) + '...' : recentItem;
+				}else{
+					recentItem['subject'] = recentItem['subject'].length > 100 ? recentItem['subject'].substring(0, 100) + '...' : recentItem['subject'];			
+				}
+				lrs.push(recentItem);
+			}			
+		}
+		if (isRecentSearches){
+			navSearchUtils.localRecentSearches = lrs;
+			navSearchUtils.setLocalRecentSearches(navSearchUtils.localRecentSearchKey);
+		}else{
+			navSearchUtils.localRecentTickets = lrs;
+			navSearchUtils.setLocalRecentTickets(navSearchUtils.localRecentTicketKey);
+		}
+		
+	}
+	
 	navSearchUtils.saveToLocalRecentSearches= function (fullSearchString){
 		navSearchUtils.localRecentSearches = navSearchUtils.getLocalRecentSearches(navSearchUtils.localRecentSearchKey);
 		//check if search stirng is already part of local recent searches
@@ -71,8 +122,6 @@ var NavSearchUtils = NavSearchUtils || (function(){
 				//insert it at the top
 				navSearchUtils.localRecentTickets.splice(4, 0, {displayId: TICKET_DETAILS_DATA['displayId'], subject: TICKET_DETAILS_DATA['ticket_subject'], path: TICKET_DETAILS_DATA['ticket_path']});
 				break;
-
-
 			}			
 		}
 		if(!isLocalRecentTicket){
@@ -113,6 +162,10 @@ var NavSearchUtils = NavSearchUtils || (function(){
 
 	function getLocalRecentTicketsKey(){
 		return 'local_recent_tickets_' + window.current_account_id + '_' + window.current_user_id;
+	}
+
+	function getLocalRecentTimestampKey(){
+		return 'local_recent_searches_tickets_timestamp_' + window.current_account_id + '_' + window.current_user_id;
 	}
 
 	return navSearchUtils;

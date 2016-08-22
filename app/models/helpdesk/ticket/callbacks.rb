@@ -23,7 +23,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   before_save  :update_ticket_related_changes, :update_company_id, :set_sla_policy
 
-  before_save :check_company_id, :if => :company_id_changed?
+  before_save :check_and_reset_company_id, :if => :company_id_changed?
 
   before_update :update_sender_email
 
@@ -480,13 +480,16 @@ private
     end
   end
 
-  def update_company_id
+  def update_company_id 
     # owner_id will be used as an alias attribute to refer to a ticket's company_id
-    self.owner_id = self.requester.company_id if @model_changes.key?(:requester_id) && self.owner_id.nil?
+    self.owner_id = self.requester.company_id if @model_changes.key?(:requester_id) &&
+                                                 (self.owner_id.nil? ||
+                                                  self.requester.company_ids.length < 2)
   end
 
-  def check_company_id
-    self.owner_id = owner_id_was unless requester.company_ids.include?(self.owner_id)
+  def check_and_reset_company_id
+    self.owner_id = owner_id_was if self.owner_id.present? &&
+                                    !requester.company_ids.include?(self.owner_id)
   end
 
   def populate_requester
@@ -581,10 +584,16 @@ private
     self.access_token ||= generate_token
   end
 
-  def generate_token
-    # using Digest::SHA2.hexdigest for a 64 char hash
-    # using ticket id, current account id along with Time.now
-    Digest::SHA2.hexdigest("#{Account.current.id}:#{self.id}:#{Time.now.to_f}")
+  def generate_token    
+    public_ticket_token = Account.current.public_ticket_token
+    if public_ticket_token.present?
+      # using OpenSSL::HMAC.hexdigest for a 64 char hash
+      OpenSSL::HMAC.hexdigest(OpenSSL::Digest.new('sha256'), public_ticket_token, '%s/%s' % [Account.current.id, self.id])
+    else
+      # using Digest::SHA2.hexdigest for a 64 char hash
+      # using ticket id, current account id along with Time.now
+      Digest::SHA2.hexdigest("#{Account.current.id}:#{self.id}:#{Time.now.to_f}")
+    end
   end
 
   def fire_update_event

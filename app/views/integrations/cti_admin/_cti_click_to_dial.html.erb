@@ -1,0 +1,119 @@
+<%
+inputs = @installed_app.configs[:inputs]
+placeholders = []
+request_method = [
+  ['GET', 'get'],
+  ['POST', 'post']
+]
+content_type_choices = [
+  ['JSON', 'application/json'],
+  ['XML', 'application/xml']
+]
+
+%>
+<div class="form-horizontal">
+  <div class="form-group clearfix">
+    <label class="span2"><%= t("integrations.cti_admin.ctd.request_type") %></label>
+    <div class="span10">
+      <%= select(:configs, 'cti_ctd_method', request_method, {:selected => inputs['cti_ctd_method'] }, { :class => "select2" }) %>
+    </div>
+  </div>
+  <div class="form-group clearfix">
+    <label class="required_label span2">
+      <%= t("integrations.cti_admin.ctd.callback_url") %><b class="required_star">*</b>
+    </label>
+    <div class="span10">
+      <%= text_area(:configs, "cti_ctd_url", :class => "url required", :rows => "2", :value => inputs["cti_ctd_url"])%>
+      <div class="clearfix">
+        <div class="clearfix pt5">
+          <span class="pull-left">
+            <%= check_box(:configs, 'cti_ctd_req_auth', :checked => (inputs["cti_ctd_req_auth"] || '').to_bool) %>
+          </span>
+          <label class="check-box-label pull-left pl5" for="configs_cti_ctd_req_auth"><%= t("integrations.cti_admin.ctd.req_authentication") %></label>
+        </div>
+
+        <div class="credentials mt10">
+          <div class="row-fluid" id="user_pass">
+            <div class="credentials_toggle text-right cti-link pb5"><%= t("integrations.cti_admin.ctd.have_api_key") %></div>
+            <div class="row-fluid">
+              <div class="span6">
+                <%= text_field(:configs, "cti_ctd_user_name", size: 20, :value => inputs["cti_ctd_user_name"], :placeholder => t("integrations.cti_admin.ctd.username"), :class => "required") %>
+              </div>
+              <div class="span6">
+                 <%= text_field(:configs, "password", :type => "password", size: 20, :placeholder => t("integrations.cti_admin.ctd.password"), :class => "required") %>
+              </div>
+            </div>
+          </div>
+          <div class="row-fluid" id="api">
+            <div class="credentials_toggle text-right cti-link pb5"><%= t("integrations.cti_admin.ctd.have_user_pass") %></div>
+
+            <%= text_field(:configs, "cti_ctd_api", size: 50, :value => inputs["cti_ctd_api"], :placeholder => t("integrations.cti_admin.ctd.api_key"), :class => "required") %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="cti_ctd_post_params">
+    <div class="form-group clearfix">
+      <label class="span2"><%= t("integrations.cti_admin.ctd.encoding") %></label>
+      <div class="span10">
+        <%= select(:configs, 'cti_ctd_encoding', content_type_choices, {:selected => inputs['cti_ctd_encoding'] }, { :class => "select2" }) %>
+      </div>
+    </div>
+    <div class="form-group clearfix">
+      <label class="span2"><%= t("integrations.cti_admin.ctd.content") %></label>
+      <div class="span10">
+        <%= text_area(:configs, "cti_ctd_content", :class => "text required", :rows => "10", :value => inputs["cti_ctd_content"])%>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+<%= javascript_tag do %>
+ jQuery(document).ready( function () {
+   if ( jQuery('#configs_cti_ctd_req_auth')[0].checked ) {
+     jQuery('.credentials').show();
+   } else {
+     jQuery('.credentials').hide();
+   }
+
+   if ( jQuery('#configs_cti_ctd_method').val() != "post" ) {
+     jQuery('#cti_ctd_post_params').hide();
+   }
+
+   if ( !!jQuery('#configs_cti_ctd_api').val() ) {
+     show_api()
+   } else {
+     show_user_pass();
+   }
+
+   jQuery('#configs_cti_ctd_req_auth').on('change', function () {
+     jQuery('.credentials').toggle();
+   });
+
+   jQuery('.credentials_toggle').on('click', function() {
+     current_credential=jQuery(this).parent();
+     current_credential.hide();
+     current_credential.find(':input').val("");
+     current_credential.siblings().show();
+   });
+
+   jQuery('#configs_cti_ctd_method').on('change', function () {
+     jQuery('#cti_ctd_post_params').toggle();
+   });
+
+ });
+
+ function show_user_pass(){
+   jQuery('#api').hide();
+   jQuery('#user_pass').show();
+ }
+
+ function show_api(){
+   jQuery('#api').show();
+   jQuery('#user_pass').hide();
+
+ }
+<% end %>

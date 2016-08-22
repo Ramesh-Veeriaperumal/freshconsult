@@ -23,7 +23,6 @@ class AgentGroupObserver < ActiveRecord::Observer
   end
 
   def after_destroy(agent_group)
-    clear_cache(agent_group)
     group = agent_group.group
 
     group.remove_agent_from_round_robin(agent_group.user_id) if group.round_robin_enabled?
@@ -34,14 +33,4 @@ class AgentGroupObserver < ActiveRecord::Observer
     def set_account_id(agent_group)
       agent_group.account_id = agent_group.user.account_id unless agent_group.user.blank?
     end
-
-    def auto_refresh_key(agent_group)
-      AUTO_REFRESH_AGENT_DETAILS % { :account_id => agent_group.account_id, :user_id => agent_group.user_id }
-    end
-
-    def clear_cache(agent_group)
-      key = auto_refresh_key(agent_group)
-      MemcacheKeys.delete_from_cache key
-    end
-
 end

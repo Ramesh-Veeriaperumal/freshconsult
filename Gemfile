@@ -5,6 +5,8 @@ source 'https://rubygems.org'
 gem "rake", "~> 10.4.0"
 gem "rails","3.2.22.2"
 
+gem "freemail", "0.2.0", :require => false 
+
 gem 'rack-cors', '~> 0.3.1'
 gem "syck",'1.0.5'
 
@@ -15,7 +17,7 @@ gem 'strong_parameters', "0.2.3" # Used for API params validation
 gem "mysql2", "~> 0.3.0"
 
 gem "rate-limiting", :git =>"git://github.com/freshdesk/rate-limiting.git"
-gem 'fd_rate_limiter', :git => 'git@github.com:freshdesk/fd_rate_limiter.git', :branch => 'controller_action_rl'
+gem 'fd_rate_limiter', :git => 'git@github.com:freshdesk/fd_rate_limiter.git', :branch => 'dynamic_rules'
 gem "white_list", :git =>"git://github.com/neubloc/white_list.git"
 gem "will_paginate", "3.0.6"
 gem "country_select", :git => "git://github.com/stefanpenner/country_select", :tag => 'v1.1.2'
@@ -301,3 +303,5 @@ gem 'doorkeeper', '2.2.1'
 
 # Search v2
 gem 'typhoeus'
+
+gem 'i18nema', :git => 'https://github.com/freshdesk/i18nema', :require => false

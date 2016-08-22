@@ -174,7 +174,6 @@ swapEmailNote = function(formid, link){
 			} catch (e) {}
 		});
 	}
-	window.AgentCollisionShow.reply_event();
 	activeForm.trigger("visibility")
 
 	//Draft Saving for Reply form
@@ -820,7 +819,6 @@ var scrollToError = function(){
         {
           window.replySubscription.cancel();
         }
-        window.FreshdeskNode.getValue('faye_realtime').faye_subscriptions.splice(window.FreshdeskNode.getValue('faye_realtime').faye_subscriptions.indexOf(window.relySubscription), 1);
 		$(this).parents('form').trigger('submit');
 	});
 
@@ -829,9 +827,8 @@ var scrollToError = function(){
 		var btn = $(this);
 		if(TICKET_DETAILS_DATA['draft']['saved'] && btn.data('cntId') && btn.data('cntId') == "cnt-reply"){
 			if(!confirm(TICKET_DETAILS_DATA['draft']['clear_text'])){
-				window.AgentCollisionShow.reply_event();
-				return false;
-			}
+				return false; 
+			} 
         }
 		remove_file_size_alert(btn)
 		$('#' + btn.data('cntId')).hide().trigger('visibility');
@@ -1548,6 +1545,7 @@ var scrollToError = function(){
 	      data: { id: _note_id },
 	      success: function(response){
 	        if(response!=""){
+	        	 _messageDiv.find('.tooltip').twipsy('hide');
 	          _messageDiv.html(response);
 
 	          quote_text(_messageDiv, options);

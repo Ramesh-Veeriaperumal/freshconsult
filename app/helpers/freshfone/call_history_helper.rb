@@ -119,9 +119,9 @@ module Freshfone::CallHistoryHelper
     t("freshfone.transfer_type.#{type}")
   end
 
-  def count_of_children(call)
+  def count_of_children(calls)
     count = 0
-    call.descendants.each do |call|
+    calls.descendants.each do |call|
       call_meta = call.meta
       count += 1 if call_meta.present? && !call_meta.warm_transfer_revert?
     end
@@ -129,6 +129,7 @@ module Freshfone::CallHistoryHelper
   end
 
   def can_show_call?(call)
+    return true if call.is_root?
     call_meta = call.meta
     call_meta.present? && (!call_meta.warm_transfer_meta? || call_meta.warm_transfer_success?)
   end

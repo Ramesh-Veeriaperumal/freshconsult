@@ -108,6 +108,7 @@ en:
   sales: "Sales"
   preview: "Preview"
   no_agents_in_selected_group: "No agents in selected group"
+  unassign: "Unassign"
   send_feedback: "Send"
   sidebar_help: "Help"
   support_title: "Support"
@@ -586,7 +587,7 @@ en:
     fcr: Is first call resolution
     customer_votes: Number of votes
     solution_likes: Number of likes
-    true : True
+    "true" : "True"
     ticket_mand: Please populate number of resolved tickets.
     solution_mand: Please populate number of Solutions.
     forum_mand: Please populate number of Forums.
@@ -1399,8 +1400,8 @@ en:
         survey_help_msg: Selecting a rating above will link off to the page below
         survey_help_msg_v2: When a satisfaction rating is selected, a thank you page is shown.
         survey_help_msg_v3: When a satisfaction rating is selected, a thank you page is shown to collect more feedback
-        on: ON
-        off: OFF
+        "on": "ON"
+        "off": "OFF"
         confirm_text: Please confirm...
         delete: Delete
         activate_survey: Activate
@@ -1674,7 +1675,7 @@ en:
         help_title_2a: Events
         help_info_2a: An event may refer to any user-driven change that will trigger a specific Observer rule.
         help_title_2b: Event Performers
-        help_info_2b: Specifies which user's changes should trigger the rule. You can choose between the agent, the requestor (or someone outside your support team in the ticket loop), or both.
+        help_info_2b: Specifies which user's changes should trigger the rule. You can choose between the agent, the requester (or someone outside your support team in the ticket loop), or both.
         help_title_2c: Ticket conditions
         help_info_2c: You can optionally filter the rule to apply to only certain tickets.
         help_title_2d: Actions
@@ -1969,7 +1970,7 @@ en:
       no_agent_label: No Agent
       add_agent_label: Add Agent
       add_label: Add
-      no_label: No
+      no_label: "No"
       done_label: Done
       manage_label: Manage
       save_label: Save
@@ -4299,7 +4300,7 @@ en:
   urgent: Urgent
   import_groups: Groups
   solution:
-    on: 'on'
+    "on": 'on'
     plain_new: New
     plain_edit: Edit
     show_languages: Show languages
@@ -4801,7 +4802,7 @@ en:
     page_not_found: "This template could not be found."
     helpcard:
       info2: "<a target=\"_blank\" href=\"https://support.freshdesk.com/solution/categories/45922/folders/74513/articles/170407-configuring-dynamic-email-notifications\"> Click here </a>to learn more"
-      info3: "You can configure Freshdesk to send out automatic email notifications to agents and the requestor when specific events occur. These notifications can be customized and dynamic content can be added using placeholders. For example, you can notify customers when agents add comments or public notes to their tickets with a customized email with a link to the ticket.<br/><br/>If your plan supports multi-language, you will be able to add notification languages and customize the templates for each language. The <i class=\"common-icon-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
+      info3: "You can configure Freshdesk to send out automatic email notifications to agents and the requester when specific events occur. These notifications can be customized and dynamic content can be added using placeholders. For example, you can notify customers when agents add comments or public notes to their tickets with a customized email with a link to the ticket.<br/><br/>If your plan supports multi-language, you will be able to add notification languages and customize the templates for each language. The <i class=\"common-icon-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
       agent_template_10:
         topic: "User Activation Email"
         info1: "The User Activation Email is sent when a new agent is added in your helpdesk. The activation email must necessarily contain the “Agent Activation URL” {{activation_url}} for agents to create their password and complete the signup process.<br /><br />If you’ve setup multiple supported languages in your helpdesk, you can create an activation email specific to each language. The <i class=\"common-icon-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
@@ -4821,7 +4822,7 @@ en:
         topic: Ticket Unattended in a Group
         info1: "This notification is sent out when a ticket assigned to a group has not been attended within the time specified in the Group settings. This email notification can contain the time lapsed since the ticket got assigned to the group.<br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icon-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
       agent_template_6:
-        topic: Requestor Replies to the Ticket
+        topic: Requester Replies to the Ticket
         info1: "When a customer replies to the ticket he raised previously, the agent handling the ticket will receive this email notification. This email could contain the ticket URL making it easier for the agent to check the ticket.<br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icon-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
       agent_template_12:
         topic: First Response SLA Violation
@@ -4849,25 +4850,25 @@ en:
         info1: "When a new user creates a ticket you can create a customer account in your helpdesk for them and send out an activation email. This notification should contain the activation URL for your customers.<br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icon-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
       requester_template_14:
         topic: Password Reset Email
-        info1: "Password Reset Email will be sent out to your requestors when they request a new password at your helpdesk. The {{password_reset_url}} placeholder is required to provide the dynamically generated password reset link in the email.<br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icon-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
+        info1: "Password Reset Email will be sent out to your requesters when they request a new password at your helpdesk. The {{password_reset_url}} placeholder is required to provide the dynamically generated password reset link in the email.<br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icon-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
       requester_template_1:
         topic: New Ticket Created
-        info1: "A New Ticket Created email is sent to the requestor after they create a ticket in your helpdesk. This email should ideally contain the ticket id and a public URL link to the ticket.<br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icon-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
+        info1: "A New Ticket Created email is sent to the requester after they create a ticket in your helpdesk. This email should ideally contain the ticket id and a public URL link to the ticket.<br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icon-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
       requester_template_4:
         topic: Agent Adds Comment to the Ticket
-        info1: "This email is sent to a requestor whenever an agent adds a comment to the ticket he raised. This email should ideally contain the ticket id and a public URL link to the ticket. The agent comment could also be added in the mail using these placeholders:<br/> {{comment.commenter.name}} - name of the agent who commented<br/>{{comment.body}} - the new comment added to the ticket.<br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icon-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
+        info1: "This email is sent to a requester whenever an agent adds a comment to the ticket he raised. This email should ideally contain the ticket id and a public URL link to the ticket. The agent comment could also be added in the mail using these placeholders:<br/> {{comment.commenter.name}} - name of the agent who commented<br/>{{comment.body}} - the new comment added to the ticket.<br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icon-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
       requester_template_7:
         topic: Agent Solves the Ticket
-        info1: "This email is sent to the requestors to notify them that their ticket has been resolved. This email should ideally contain the ticket id and a public URL link to the ticket. You could also inform the requester that replying to this mail will reopen the ticket.<br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icon-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
+        info1: "This email is sent to the requesters to notify them that their ticket has been resolved. This email should ideally contain the ticket id and a public URL link to the ticket. You could also inform the requester that replying to this mail will reopen the ticket.<br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icon-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
       requester_template_8:
         topic: Agent Closes the Ticket
-        info1: "This email is sent to the requestors to notify them that their ticket has been resolved and closed. This email should ideally contain the ticket id and a public URL link to the ticket. You could also inform the requester that replying to this mail will reopen the ticket.<br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icon-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
+        info1: "This email is sent to the requesters to notify them that their ticket has been resolved and closed. This email should ideally contain the ticket id and a public URL link to the ticket. You could also inform the requester that replying to this mail will reopen the ticket.<br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icon-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
       requester_template_17:
         topic: A new Email id has been added
-        info1: "This email is sent to the requestors asking them to verify a newly added email id to their contact."
+        info1: "This email is sent to the requesters asking them to verify a newly added email id to their contact."
       reply_template_15:
         topic: Agent Reply Template
-        info1: "You can customize and prefill default information you want added in agent ticket replies using the Reply Template. Agent Reply Templates let you add dynamic content like the requestor name, ticket URLs and agent signatures automatically.. <br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icon-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
+        info1: "You can customize and prefill default information you want added in agent ticket replies using the Reply Template. Agent Reply Templates let you add dynamic content like the requester name, ticket URLs and agent signatures automatically.. <br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icon-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
     insert_placeholder: Insert Placeholders
     modify_agent_template: Modify Agent Email Template
     event: Event
@@ -4971,8 +4972,8 @@ en:
     personalized_email_replies_info: If yes, then agents will be allowed to choose their own name as the sender name in ticket replies and outbound emails. Sender email will still remain the support email address (like '%{current_user_name} &lt;%{current_account_domain}&gt;').
     config_saved_message: Your setting is succesfully saved.
     blacklisted_domain_message: The domain you have entered is blocked. Please enter another domain.
-    reply_to_tickets: Use "Reply-to" email address to create requestor contacts
-    reply_to_tickets_info: "Note: If disabled, requestor will be created using 'From' address in email."
+    reply_to_tickets: Use "Reply-to" email address to create requester contacts
+    reply_to_tickets_info: "Note: If disabled, requester will be created using 'From' address in email."
     disable_agent_forward: "For forwarded emails, use original sender as requester"
     disable_agent_forward_info: "When an agent forwards an email from his mailbox to the helpdesk, create the ticket under the original sender. If disabled, the requester is the agent."
     primary_email_delete_alert: "Can't delete primary email"
@@ -5117,7 +5118,7 @@ en:
     default_note_text : Default Note will be added
     note_saved : Note saved
     edit_note: "<b>Edit Note</b>"
-    thanks: Thank you for submitting your feedback
+    thanks: Thank you for your feedback
     portal_created_on: "Created by <span class='emphasize'>%{username}</span> on <span class='emphasize'>%{date}</span>"
     portal_created_on_same_user: "Created on <span class='emphasize'>%{date}</span>"
     fb_portal_created_on: "Created by <span class='emphasize'>%{username}</span> <span class='emphasize'>%{date}</span>"
@@ -5261,7 +5262,7 @@ en:
     executed: " executed "
     performed: " performed "
     system_activity_timestamp: "<strong class='muted'>System</strong> %{system_rule} <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date}) "
-    requestor_info: Requestor Info
+    requestor_info: Requester Info
     view_twitter: View on Twitter
     view_facebook: View on Facebook
     via: via
@@ -5313,6 +5314,9 @@ en:
     note_content: Note content
     private_note_alert: "To send a private reply, please use the below email command in your message body."
     ticket_url: Ticket URL
+    submit_feedback: Send Feedback
+    search_text: Search Articles
+    search_close_text: Close search
     integrations:
       jira:
         tooltip: "View the associated JIRA Issue"
@@ -5643,7 +5647,7 @@ en:
         hours: Hours
         billing_hours: Billable
         note: Note
-        on: on
+        "on": "on"
         hours_format_tip: "Enter time in HH:MM or decimals (like 1:30 or 1.5 for an hour and 30 minutes). Leave this blank to start the auto-timer."
       note: Notes
 
@@ -5944,7 +5948,8 @@ en:
         conversation: Conversation
         timesheet: Time Sheet
         reply_form:
-          title: "From"
+          title: Reply to
+          from: "From"
           to: "To:"
           cc: Cc
           addcc: Add Cc
@@ -6126,13 +6131,13 @@ en:
           title: Canned responses
           tour: Help me use canned responses
           info1: Canned Responses are predefined reply templates which can be used to quickly send out replies to tickets.
-          info2: You can use placeholders in your canned responses to fill in dynamic content like the requestor’s name, ticket ID and URL inside the response.
+          info2: You can use placeholders in your canned responses to fill in dynamic content like the requester’s name, ticket ID and URL inside the response.
       folders:
         helpnote:
           title: Canned responses
           tour: Help me use canned responses
           info1: Canned Responses are predefined reply templates which can be used to quickly send out replies to tickets.
-          info2: You can use placeholders in your canned responses to fill in dynamic content like the requestor’s name, ticket ID and URL inside the response.
+          info2: You can use placeholders in your canned responses to fill in dynamic content like the requester’s name, ticket ID and URL inside the response.
       responses:
         edit:
           title: Edit Canned response
@@ -6621,6 +6626,73 @@ en:
       convert_to_ticket: "Convert all call recordings into a ticket at the end of the call"
       add_note_as_private: "Mark in call notes as a private"
       cti_error: "No app of type cti enabled for this account"
+    screen_pop:
+      title: "cti_phone"
+      call_info: "Call Info"
+      header_msg: "Support Call between %{responder} and %{requester}"
+      widget:
+        call_actions: "Call Actions"
+        recent_tickets: "Recent Tickets"
+        add_note_text: "Call Notes"
+        edit_note_text: "Edit Note"
+        agent_phone_updated: "Agent phone details Updated"
+        agent_phone_details: "Agent phone details"
+        ticket_reference_id: "Call reference id"
+        link_to_ticket: "Link to this ticket"
+        link_to_new_ticket: "Link to new ticket"
+        do_not_link: "Do not link"
+        requester: "Requester Name"
+        subject: "Subject"
+        create: "Create"
+        cancel: "Cancel"
+        new_ticket_with_id: "New ticket created with id"
+        add_note_to_ticket: "Add note to ticket"
+        view_all: View all
+    cti_admin:
+      helptext: "<p>Integrate your telephone system with your online helpdesk using the Freshdesk CTI framework. With our simple documentation and straightforward APIs, hooking up your online helpdesk with a telephone system becomes a walk in the park.</p><p>Once you’re done setting up your adaptor with our helpdesk, your support agents will be able to make/receive calls, access customer details, take notes during calls, and maintain context to provide that jaw-drop awesome customer support.</p><p><a href='
+https://support.freshdesk.com/solution/articles/221418-computer-telephony-integration-framework'> Learn more </a>"
+      no_feature: "This app can only be installed for accounts with CTI enabled."
+      label: "CTI Framework"
+      desc: "Unify your telephony experience within Freshdesk"
+      title: "CTI Settings"
+      iframe_toggle: "Enable Softphone Iframe"
+      softfone:
+        url: "URL for Iframe"
+        width: "Width"
+        height: "Height"
+        max_dimension: "Max 550px &times; 250px"
+      save_agent_private_note: "Save Call Notes as private"
+      ctd_toggle: "Configure Click to Dial"
+      ctd:
+        request_type: "Request Type"
+        callback_url: "Callback URL"
+        req_authentication: "Require authentication"
+        username: "Username"
+        password: "Password"
+        have_user_pass: "I have Username & Password?"
+        api_key: "API Key"
+        have_api_key: "I have API key?"
+        encoding: "Encoding"
+        content: "Content"
+      phone:
+        title: "Helpdesk Numbers"
+        add_number: "Add Number"
+        add_number_tooltip: "Each row should contain only one number"
+        cancel: "Cancel"
+        save: "Save"
+        number_in_use: "Numbers in use"
+        number_not_in_use: "Not in use"
+        add_number_success: "All Numbers were added successfully"
+        add_number_failure: "Error in adding number. Please check the format"
+        add_number_warning: "<strong>%{added_length} of %{original_length} were added successfully<br/>These numbers could not be added because they already exist in the system </strong> (%{numbers})"
+        delete_number: "Please confirm"
+        delete_msg: "Are you sure you want to delete this number?"
+    cti_call:
+      invalid_ticket_id: "Invalid ticket id"
+      invalid_requester_id: "Invalid requester id"
+      invalid_responder_id: "Invalid responder id"
+      contact_creation_failed: "Unable to create contact"
+      no_agent_with_phone: "No agent found with the given number"
     czentrix:
       label: "C-Zentrix"
       desc: "Answer calls or trigger an outgoing call with this powerful C-zentrix's telephony capabilities embedded inside Freshdesk"
@@ -7183,7 +7255,7 @@ en:
       new_custom_app: "New Custom app"
       edit_custom_app: "Edit Custom app"
       desc: "You can add a custom widget to display any detail using your own custom script."
-      helpnote: "<h4>Custom Apps</h4><p><br/> You can develop your own custom app using HTML, CSS and JavaScript, and bring data from any 3rd party app or database right into your tickets and contacts. <br/><br/> To create a custom app, first give it a name and description. Then enter your code in the ‘Script’ area. You can pass any ticket or requestor field, including the custom fields you have created, as JSONP objects.<br/><br/>You can click <b>‘Show Preview’</b> to view how your widget will look like both in the ticket and contact pages.<br/><br/>Refer to our <a href='http://support.freshdesk.com/solution/categories/4/folders/15/articles/32031-using-freshplugs-to-integrate-third-party-apps'> solutions page </a> to learn more about custom apps."
+      helpnote: "<h4>Custom Apps</h4><p><br/> You can develop your own custom app using HTML, CSS and JavaScript, and bring data from any 3rd party app or database right into your tickets and contacts. <br/><br/> To create a custom app, first give it a name and description. Then enter your code in the ‘Script’ area. You can pass any ticket or requester field, including the custom fields you have created, as JSONP objects.<br/><br/>You can click <b>‘Show Preview’</b> to view how your widget will look like both in the ticket and contact pages.<br/><br/>Refer to our <a href='http://support.freshdesk.com/solution/categories/4/folders/15/articles/32031-using-freshplugs-to-integrate-third-party-apps'> solutions page </a> to learn more about custom apps."
       form:
         widget_title: "Widget Name"
         widget_script: "Widget code snippet"
@@ -7388,7 +7460,7 @@ en:
         feedback_widgets_search_results: "Search results"
         feedback_widgets_search_our: "Search our "
         feedback_widgets_knowledge_base: "Knowledge base "
-        feedback_widgets_help_articles: "or Browse help articles"
+        feedback_widgets_help_articles: "or Browse articles"
         show_all_results: "Show all results"
         no_results: "No results for "
   reorder: "Reorder"
@@ -7617,9 +7689,9 @@ en:
     helpcard:
       heading: " Email Command Settings"
       tour: Help me understand email commands
-      info1: "When replying to notification emails from your mailbox, you can include \"Email Commands\" to instruct Freshdesk to perform certain actions on a ticket. The Email Command text will be stripped by Freshdesk and will not be seen by the requestor, while the rest of the text will become a part of the conversation."
+      info1: "When replying to notification emails from your mailbox, you can include \"Email Commands\" to instruct Freshdesk to perform certain actions on a ticket. The Email Command text will be stripped by Freshdesk and will not be seen by the requester, while the rest of the text will become a part of the conversation."
       info2: "Email commands must follow the correct syntax and must be placed within the pre-configured delimiter text. For example the command - \"@simonsays agent : John Roberts Status:Resolved @simonsays\" will assign the ticket to the agent John Roberts and mark the Ticket as Resolved."
-      info3: "The rest of your email content will be added as a conversation to Freshdesk and also sent to the Requestor via email."
+      info3: "The rest of your email content will be added as a conversation to Freshdesk and also sent to the Requester via email."
       ticket_type_example: "Question"
       note: "Note"
   email_command_delimeter_label: "Email Commands Delimeter"
@@ -7838,13 +7910,13 @@ en:
       title: Canned responses
       tour: Help me use canned responses
       info1: Canned Responses are predefined reply templates which can be used to quickly send out replies to tickets.
-      info2: You can use placeholders in your canned responses to fill in dynamic content like the requestor’s name, ticket ID and URL inside the response.
+      info2: You can use placeholders in your canned responses to fill in dynamic content like the requester’s name, ticket ID and URL inside the response.
     folders:
       helpnote:
         title: Canned responses
         tour: Help me use canned responses
         info1: Canned Responses are predefined reply templates which can be used to quickly send out replies to tickets.
-        info2: You can use placeholders in your canned responses to fill in dynamic content like the requestor’s name, ticket ID and URL inside the response.
+        info2: You can use placeholders in your canned responses to fill in dynamic content like the requester’s name, ticket ID and URL inside the response.
     responses:
       edit:
         title: Edit Canned response
@@ -8040,7 +8112,7 @@ en:
     summary: Summary
     chats: Chats
     edit: Edit
-    filter_error_msg: '* You can select a maximum of 5 filters. (Each selected level of nested field counts as one filter)'
+    filter_error_msg: '* You can select a maximum of 10 filters. (Each selected level of nested field counts as one filter)'
     no_data_to_display_msg: No data to display
     something_went_wrong_msg: 'Something went wrong, please try again'
     disabled_date_range: Disabled for this date range
@@ -8090,7 +8162,7 @@ en:
       dialog:
         email: Email
         generate_report: Generate report
-        on: On
+        "on": "On"
         subject: Subject
         desc: Description
       errors:
@@ -8832,6 +8904,7 @@ en:
       filter_option_blocked_calls: "Blocked"
       filter_option_within_business_hours: "Within Business hours"
       filter_option_outside_business_hours: "Outside Business hours"
+      requester_not_found: "No matching requesters found"
       recording_delete:
         done_by: "Deleted By"
         tooltip: "Delete Recording"
@@ -9888,4 +9961,5 @@ en:
     try_again: "Go to Ticket and try again"
     actions_alert: "File attachment in progress. Do you want to leave this page?"
     reminder: "You have unsaved content in this page. Do you want to leave this page?"
+    traffic_cop: Unable to send your last response. Ticket was updated with new replies by another agent.<a href="%{ticket_url}" data-pjax="body-container"> Please review their reply before sending your reply </a>.
 

@@ -93,7 +93,7 @@ class SupportController < ApplicationController
       process_template_liquid
 
       # TODO-RAILS3 need to check this
-      @skip_liquid_compile = false # if active_layout.present?      
+      @skip_liquid_compile = true # if active_layout.present?      
     end
 
     def preview?
@@ -262,13 +262,13 @@ class SupportController < ApplicationController
     override_default_locale
   end
 
-    def agent?
-      current_user && current_user.agent?
-    end
+  def agent?
+    current_user && current_user.agent?
+  end
 
-    def public_request?
-      current_user.nil?
-    end
+  def public_request?
+    current_user.nil?
+  end
 
   def redirect_to_locale
     if current_portal.multilingual? && !facebook? && (params[:url_locale] != Language.current.code)
@@ -298,5 +298,4 @@ class SupportController < ApplicationController
     flash[:warning] = version_not_available_msg(controller_name.singularize)
     redirect_to support_home_path
   end
-
 end

@@ -32,7 +32,7 @@
                         "data-fulltext" => true,
                         "data-submitting" => 'false'
                       } do |f| %>
-  <div class="form_title custom-selectdrop"><b><%= t('.title') %>: </b> 
+  <div class="form_title custom-selectdrop"><b><%= t('.from') %>: </b> 
     <select id="reply_email_id" name="reply_email[id]" class="select2  responder_field" data-container-css-class="ticketSelect2Container" data-dropdown-css-class="ticketSelect2">
       <% @reply_emails.each do |re| %>
         <% if re[1].downcase == @selected_reply_email.downcase %>
@@ -126,7 +126,6 @@
       </li>
       <li class="inline-field field continous file_size_alert hide" id="file_size_alert_<%= cntid %>">
         <span class="alert-text"><%= t('helpdesk.tickets.show.reply_form.not_sent') %></span>
-        <%= t('helpdesk.tickets.note.attachment_size.exceed') %>
       </li>
   <li class="attachment-options-reply" id="attachment-options-reply">
           <% unless local_assigns[:no_attachments] %>

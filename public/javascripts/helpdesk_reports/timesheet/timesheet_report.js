@@ -480,7 +480,7 @@ var savedReportUtil = (function() {
                 }
                 
                 if(i != selected_options.length -1){
-                  txt += ",";
+                  txt += " , ";
                 }
             });
             var data = {
@@ -549,7 +549,7 @@ function getFilterTextPDF(){
             txt += option.value;
           }  
           if(i != selected_options.length -1){
-            txt += ",";
+            txt += " , ";
           }
       });
       var data = {

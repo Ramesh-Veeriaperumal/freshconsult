@@ -27,7 +27,8 @@ ActiveRecord::Schema.define(:version => 20160802094502) do
     t.integer  "date_format",                       :default => 1
     t.text     "additional_settings"
     t.text     "resource_rlimit_conf"
-    t.integer  "webhook_limit",                      :default => 1000
+    t.integer  "webhook_limit",                     :default => 1000
+    t.text     "secret_keys"
   end
 
   add_index "account_additional_settings", ["account_id"], :name => "index_account_id_on_account_additional_settings"
@@ -886,6 +887,37 @@ ActiveRecord::Schema.define(:version => 20160802094502) do
   end
 
   add_index "conversion_metrics", ["account_id"], :name => "index_conversion_metrics_on_account_id"
+
+  create_table "cti_calls", :force => true do |t|
+    t.string   "call_sid"
+    t.string   "recordable_type"
+    t.integer  "recordable_id",            :limit => 8
+    t.integer  "account_id",               :limit => 8
+    t.integer  "responder_id",             :limit => 8
+    t.integer  "requester_id",             :limit => 8
+    t.integer  "installed_application_id", :limit => 8
+    t.text     "options"
+    t.integer  "status",                   :limit => 8
+    t.datetime "created_at",                            :null => false
+    t.datetime "updated_at",                            :null => false
+  end
+
+  add_index "cti_calls", ["account_id", "call_sid"], :name => "index_cti_calls_on_account_id_and_call_sid"
+  add_index "cti_calls", ["account_id", "created_at"], :name => "index_cti_calls_on_account_id_and_created_at"
+  add_index "cti_calls", ["account_id", "recordable_type", "recordable_id"], :name => "index_cti_call_on_account_id_and_recordable"
+  add_index "cti_calls", ["account_id", "responder_id", "status"], :name => "index_cti_calls_on_account_id_and_responder_id_and_status"
+
+  create_table "cti_phones", :force => true do |t|
+    t.integer  "account_id",               :limit => 8
+    t.integer  "agent_id",                 :limit => 8
+    t.string   "phone"
+    t.integer  "installed_application_id", :limit => 8
+    t.datetime "created_at",                            :null => false
+    t.datetime "updated_at",                            :null => false
+  end
+
+  add_index "cti_phones", ["account_id", "agent_id"], :name => "index_cti_phones_on_account_id_and_agent_id", :unique => true
+  add_index "cti_phones", ["account_id", "phone"], :name => "index_cti_phones_on_account_id_and_phone", :unique => true
 
   create_table "customer_forums", :force => true do |t|
     t.integer  "customer_id", :limit => 8
