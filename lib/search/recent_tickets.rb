@@ -1,6 +1,7 @@
 class Search::RecentTickets < Search::RecentStore
 
   HELPDESK_TICKET_PATH = "/helpdesk/tickets/%{display_id}"
+  HELPDESK_ARCHIVED_TICKET_PATH = "/helpdesk/tickets/archived/%{display_id}"
   
   def initialize(recent_item=nil)
     @key = redis_persistent_recent_tickets_key
@@ -19,6 +20,17 @@ class Search::RecentTickets < Search::RecentStore
           :subject => ticket.subject,
           :path => HELPDESK_TICKET_PATH % { :display_id => ticket.display_id}
         }
+      end
+      unless recent_tickets.length == recent_ticket_ids.length
+        # There are some archive tickets
+        archive_tickets = Account.current.archive_tickets.where(:display_id => recent_ticket_ids).select('archive_tickets.display_id, archive_tickets.subject').order("field(display_id, #{recent_ticket_ids.join(',')})")
+        recent_tickets = archive_tickets.inject(recent_tickets) do |result, ticket|
+          result << {
+            :displayId => ticket.display_id,
+            :subject => ticket.subject,
+            :path => HELPDESK_ARCHIVED_TICKET_PATH % { :display_id => ticket.display_id}
+          }
+        end
       end            
     end    
     recent_tickets
