@@ -354,11 +354,11 @@ def set_time_range(prev_time = false)
         @group_count[entry.send(GROUP_TO_FIELD_MAP[group_by_caluse]) || 0] += (entry.time_spent || 0)
         if @group_names[entry.send(GROUP_TO_FIELD_MAP[group_by_caluse])].blank?
           if group_by_caluse == :workable
-            @group_names[entry.send(GROUP_TO_FIELD_MAP[group_by_caluse])] = "#{entry.send(group_by_caluse).subject} (##{entry.send(group_by_caluse).display_id})"
+            @group_names[entry.send(GROUP_TO_FIELD_MAP[group_by_caluse])] = "#{entry.send(group_by_caluse).subject.gsub("'",'')} (##{entry.send(group_by_caluse).display_id})"
           elsif group_by_caluse == :group_by_day_criteria
             @group_names[entry.send(GROUP_TO_FIELD_MAP[group_by_caluse])] = entry.send('executed_at_date')
           else
-            @group_names[entry.send(GROUP_TO_FIELD_MAP[group_by_caluse]) || 0] = entry.send(group_by_caluse)
+            @group_names[entry.send(GROUP_TO_FIELD_MAP[group_by_caluse]) || 0] = entry.send(group_by_caluse).gsub("'",'')
           end
         end
       end
