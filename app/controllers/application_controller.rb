@@ -6,17 +6,10 @@ class ApplicationController < ActionController::Base
   layout Proc.new { |controller| controller.request.headers['X-PJAX'] ? 'maincontent' : 'application' }
 
   include Concerns::ApplicationConcern
-
-  rate_limit :rl_enabled => true, :if => lambda{|obj| obj.rl_enabled? }, 
-        :rl_rules => lambda{|obj| Account.current.account_additional_settings_from_cache.resource_rlimit_conf["controllers"] if Account.current.present? }, 
-        :rl_suffix => lambda{|obj| obj.rl_key_suffix }
-  rescue_from FdRateLimiter::RateLimitReached, :with => :render_rate_limit_reached
-
   around_filter :select_shard
   
   prepend_before_filter :determine_pod
   before_filter :unset_current_account, :unset_current_portal, :unset_shard_for_payload, :set_current_account, :reset_language
-  before_filter :unset_current_account, :unset_current_portal, :unset_shard_for_payload, :set_current_account, :check_rate_limit, :reset_language
   before_filter :set_shard_for_payload
   before_filter :set_default_locale, :set_locale, :set_msg_id
   include SslRequirement
@@ -192,39 +185,7 @@ class ApplicationController < ActionController::Base
       end
     end
   end
-
-  def rl_enabled?
-    current_account.present? ? current_account.features_included?(:resource_rate_limit) : false
-  end
-
-  def rl_key_suffix
-    "#{request_category}:#{Account.current.try(:id)}"
-  end
-
-  def rl_exceeded_operation
-    raise FdRateLimiter::RateLimitReached
-  end
-
-  def render_rate_limit_reached
-    respond_to do |format|
-      format.html do
-        render(:file => "#{Rails.root}/public/RateLimitReached.html", :layout => false)
-      end
-      format.xml do 
-        result = { :error => "You have exceeded the limit of requests." }
-        render :xml => result.to_xml(:indent =>2,:root=> :errors), :status => 429
-      end
-      format.json do 
-        render :json => {:errors =>{:error =>"You have exceeded the limit of requests."}}.to_json, :status => 429
-      end
-      format.nmobile do 
-        render :json => {:errors =>{:error =>"You have exceeded the limit of requests."}}.to_json, :status => 429
-      end
-      format.widget do 
-        render :json => {:errors =>{:error =>"You have exceeded the limit of requests."}}.to_json, :status => 429
-      end
-    end
-  end
+ 
  
   def handle_error (error)
     Rails.logger.debug "API::Error  =>" + error.message
@@ -312,10 +273,6 @@ class ApplicationController < ActionController::Base
 
     def web_request?
       request.cookies["_helpkit_session"]
-    end
-
-    def request_category
-      request.session_options[:non_api_call] ? "non_api" : "api"
     end
 
     def set_last_active_time

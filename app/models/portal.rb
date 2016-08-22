@@ -69,7 +69,7 @@ class Portal < ActiveRecord::Base
 
   concerned_with :solution_associations
 
-  APP_CACHE_VERSION = "FD73"
+  APP_CACHE_VERSION = "FD74"
 
   def logo_attributes=(icon_attr)
     handle_icon 'logo', icon_attr
