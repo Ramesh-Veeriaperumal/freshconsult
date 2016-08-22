@@ -15,6 +15,8 @@ development:
   cti_screen_pop: cti_screen_pop_dev
   fb_message_realtime_queue: social_fb_messenger_dev
   freshfone_call_notifier_queue: freshfone_call_notifier_development
+  auto_refresh_queue: auto_refresh_dev
+  agent_collision_queue: agent_collision_dev
 staging:
   twitter_realtime_queue: social_gnip_tweet_staging1
   facebook_realtime_queue: social_fb_feed_staging
@@ -30,6 +32,8 @@ staging:
   cti_call_queue: cti_call_staging
   fb_message_realtime_queue: social_fb_messenger_staging
   freshfone_call_notifier_queue: freshfone_call_notifier_staging
+  auto_refresh_queue: auto_refresh_staging
+  agent_collision_queue: agent_collision_staging
 production:
   twitter_realtime_queue: social_gnip_tweet_production
   facebook_realtime_queue: social_fb_feed_production
@@ -46,6 +50,8 @@ production:
   cti_call_queue: cti_call_production
   fb_message_realtime_queue: social_fb_messenger_prod
   freshfone_call_notifier_queue: freshfone_call_notifier_production
+  auto_refresh_queue: auto_refresh_production
+  agent_collision_queue: agent_collision_production
 test:
   twitter_realtime_queue: social_gnip_tweet_test
   facebook_realtime_queue: social_fb_feed_test
@@ -62,3 +68,5 @@ test:
   cti_call_queue: cti_call_test
   fb_message_realtime_queue: social_fb_messenger_dev
   freshfone_call_notifier_queue: freshfone_call_notifier_test
+  auto_refresh_queue: auto_refresh_test
+  agent_collision_queue: agent_collision_test

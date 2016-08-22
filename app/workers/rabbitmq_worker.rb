@@ -48,10 +48,13 @@ class RabbitmqWorker
     #
     if LAMBDA_ENABLED and lambda_feature
       invoke_lambda(exchange_key, message)
-    elsif autorefresh_routing_key?(exchange_key, rounting_key)
-      # publish to sns which in turn will send to AR and AC sqs queues
-      sns_resp = sns_publish($sns_autorefresh_topic[:topic_arn], message)
-      puts " Autorefresh SNS Message id - #{sns_resp.data[:message_id]}"        
+    elsif agent_collision_routing_key?(exchange_key, rounting_key)
+      sqs_msg_obj = sqs_v2_push(SQS[:agent_collision_queue], message, nil)
+      puts " AgentCollision SQS Message id - #{sqs_msg_obj.message_id} :: ROUTING KEY -- #{rounting_key} :: Exchange - #{exchange_key}"                      
+      if autorefresh_routing_key?(exchange_key, rounting_key)
+        sqs_msg_obj = sqs_v2_push(SQS[:auto_refresh_queue], message, nil)
+        puts " Autorefresh SQS Message id - #{sqs_msg_obj.message_id} :: ROUTING KEY -- #{rounting_key} :: Exchange - #{exchange_key}"
+      end
     end
     
     Rails.logger.info("Published RMQ message via Sidekiq")
@@ -110,6 +113,10 @@ class RabbitmqWorker
     end
     
     def autorefresh_routing_key?(exchange, key)
+      (exchange.starts_with?("tickets") && key[0] == "1") 
+    end
+
+    def agent_collision_routing_key?(exchange, key)
       ((exchange.starts_with?("tickets") || exchange.starts_with?("notes")) && key[0] == "1") 
     end
 
