@@ -65,8 +65,7 @@
             jQuery(c_dom).val("--");
           }
           else{
-            var default_cdom_val = (initFeed[value] == '') ? '' : jQuery(c_dom).children().first().val();
-            console.log(default_cdom_val);
+            var default_cdom_val = (initFeed[value] == '' && jQuery(c_dom).children("[value='']").length!=0) ? '' : jQuery(c_dom).children().first().val();
             jQuery(c_dom).val(initFeed[value] || default_cdom_val);
           }
 

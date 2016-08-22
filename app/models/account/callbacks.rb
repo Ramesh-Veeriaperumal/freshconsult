@@ -16,7 +16,6 @@ class Account < ActiveRecord::Base
 
   after_commit :add_to_billing, :enable_elastic_search, on: :create
   after_commit :clear_api_limit_cache, :update_redis_display_id, on: :update
-  after_commit :delete_reports_archived_data, on: :destroy
   after_commit ->(obj) { obj.clear_cache }, on: :update
   after_commit ->(obj) { obj.clear_cache }, on: :destroy
   
@@ -180,10 +179,6 @@ class Account < ActiveRecord::Base
 
     def remove_from_slave_queries
       remove_member_from_redis_set(SLAVE_QUERIES,self.id)
-    end
-
-    def delete_reports_archived_data
-      Resque.enqueue(Workers::DeleteArchivedData, {:account_id => id})
     end
 
     def update_freshfone_voice_url

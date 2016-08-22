@@ -9,7 +9,7 @@
   bulk ||= false
   rowfluid ||= false
 %>
-<div class="single_file<%= (color == true) ? " color":""%><%= (bulk == true) ? " bulk":""%><% if cloud_files_installed? and (@ticket.present? ? !@ticket.ecommerce? : true)  %> cloud<% end %>">
+<div class="single_file show<%= (color == true) ? " color":""%><%= (bulk == true) ? " bulk":""%><% if cloud_files_installed? and (@ticket.present? ? !@ticket.ecommerce? : true)  %> cloud<% end %>">
 <div class="attach-wrapper<%= (rowfluid == true)? " row-fluid":""%> new-attach" id="attachment-type" data-single-file=true>
   <div class="attachmentTrigger">   
     <div class="attachments-list-form" id="<%= attach_id %>-container">

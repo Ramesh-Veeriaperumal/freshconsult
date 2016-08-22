@@ -106,6 +106,10 @@ HelpdeskReports.SavedReportUtil = (function() {
 				_FD.controls.showSaveOptions(_FD.last_applied_saved_report_index);
 			});
 
+			jQuery('#reports_wrapper').on('click.helpdesk_reports', '[data-action="remove-field"]', function () {
+				_FD.filterChanged = true;
+	            HelpdeskReports.locals.saved_report_used = false;
+        	});
 	    	//Saved Reports
 	        jQuery(document).on('click.save_reports',"#report-dialog-save-submit",function() {  
 
