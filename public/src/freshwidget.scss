@@ -1,194 +1,350 @@
 @import "settings/settings";
 $button-radius: 6px;
 @if $rtl {
-	html,body,.redactor_editor{
-		text-align: right;
-		direction:rtl !important;
-	}
-}
-.widget-ovelay{
-	@include opacity(0.5);
-	background-color:white;
+    html,
+    body,
+    .redactor_editor {
+        text-align: right;
+        direction: rtl !important;
+    }
 }
 
-.freshwidget-container, .widget-ovelay {
-	position:fixed;
-	_position:absolute;
-	@include left(0px); 
-	top:0px;
-	width:100%;
-	height:100%;
-	z-index:90002;
-}
-.freshwidget-container{
-	z-index:999999; //need to override chat button
+.widget-ovelay {
+    @include opacity(0.5);
+    background-color: white;
 }
 
-.freshwidget-container{
-	z-index:999999; //need to override chat button
+.freshwidget-container,
+.widget-ovelay {
+    position: fixed;
+    _position: absolute;
+    @include left(0px);
+    top: 0px;
+    width: 100%;
+    height: 100%;
+    z-index: 90002;
 }
 
-.fd-btn-left a{ @include left(-2px); }
-.fd-btn-left a:hover{ @include left(0px); }
-
-.fd-btn-right{ 
-	@include right(-2px);
-	*right: 35px; /* IE 7 specific style */
-}
-.fd-btn-right:hover{ 
-	@include right(0px);
-	*right:33px; /* IE 7 specific style */
-}
-.ie8.fd-btn-right, .ie9.fd-btn-right{ 
-	@include right(35px); /* IE 8 & 9 specific style */
-}
-.ie8.fd-btn-right:hover, .ie9.fd-btn-right:hover{ 
-	@include right(33px); /* IE 8 & 9 specific style */
+.freshwidget-container {
+    z-index: 999999; //need to override chat button
 }
 
-.fd-btn-top{ top:-2px; }
-.fd-btn-top:hover{ top:0px; }
-
-.fd-btn-bottom{
-	bottom:0px;
-	a{ bottom:-2px; }
-	a:hover{ bottom:0px; }
+.freshwidget-container {
+    z-index: 999999; //need to override chat button
 }
 
-.freshwidget-theme{
-	@include text-shadow(rgba(0, 0, 0, 0.2), -1px, -1px, 1px);
-	padding:8px 16px;
-	background-color:rgb(1, 84, 83);
-	color: rgb(255, 255, 255);
-	/*border:0 solid rgba(255, 255, 255, 0.8);*/
-	color:#ffffff;
-	font-size:14px; 
-	text-decoration:none;
-	font-weight:bold;
-	outline:0;	
+.fd-btn-left a {
+    @include left(-2px);
 }
 
-.freshwidget-theme:hover{
-	color:#f3f3f3;
+.fd-btn-left a:hover {
+    @include left(0px);
 }
 
-.freshwidget-customimage{ overflow:visible; }
-
-.fd-btn-right .freshwidget-customimage{ @include right(0px); }
-
-.freshwidget-button{
-	position:fixed;
-	display:block !important;
-	width:0px;
-	height:0px;
-	z-index:90000;
-	margin:0px;
-	outline:0;	
+.fd-btn-right {
+    @include right(-2px);
+    *right: 35px;
+    /* IE 7 specific style */
 }
 
-.freshwidget-button a{
-	position:fixed;
-	white-space: nowrap;
-	_position:absolute;
-	_right:0px;
-	outline:0;
-	&:hover{ text-decoration:none; }
+.fd-btn-right:hover {
+    @include right(0px);
+    *right: 33px;
+    /* IE 7 specific style */
 }
 
-.proxy-link{
-	position: absolute;
-	z-index: 10;
-	outline:0;
+.ie8.fd-btn-right,
+.ie9.fd-btn-right {
+    @include right(35px);
+    /* IE 8 & 9 specific style */
 }
 
-.fd-btn-left a.freshwidget-theme, .fd-btn-top a.freshwidget-theme{  
-	/*border-top-width:0; */
-	@include border-bottom-radius($button-radius); 
-	@include box-shadow( 0 0 10px rgba(0, 0, 0, 0.1), inset 0 -1px 0 rgba(0, 0, 0, 0.08), inset 0 -2px 0 rgba(255, 255, 255, 0.7), inset 0 9px 29px rgba(0, 0, 0, 0.1) );
-}
-.fd-btn-left a.freshwidget-theme{
-	@include widget-rotate(-90deg, top left);
-	filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);	
+.ie8.fd-btn-right:hover,
+.ie9.fd-btn-right:hover {
+    @include right(33px);
+    /* IE 8 & 9 specific style */
 }
 
-.fd-btn-bottom a.freshwidget-theme, .fd-btn-right a.freshwidget-theme{  
-	/*border-bottom-width:0; */
-	@include border-top-radius($button-radius); 
-	@include box-shadow( 0 0 10px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(0, 0, 0, 0.08), inset 0 2px 0 rgba(255, 255, 255, 0.7), inset 0 -9px 29px rgba(0, 0, 0, 0.1) );
-}
-.fd-btn-right a.freshwidget-theme{
-	@include widget-rotate;
-	filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+.fd-btn-top {
+    top: -2px;
 }
 
-.fd-btn-left a.ie10{
-	-ms-transform: widget-rotate(-90deg);
-	-ms-transform-origin: top left;
+.fd-btn-top:hover {
+    top: 0px;
 }
 
-.fd-btn-right a.ie10{
-	-ms-transform: widget-rotate(-90deg);
-	-ms-transform-origin: bottom left;
+.fd-btn-bottom {
+    bottom: 0px;
+    a {
+        bottom: -2px;
+    }
+    a:hover {
+        bottom: 0px;
+    }
 }
 
-/* Widget Form Style */ 
-.freshwidget-dialog{
-	position:absolute;
-	padding:8px 0; 
-	@include left(50%);
-	@include margin-left(-420px);
-	top:20px;
-	z-index:900010;
-	iframe{ width: 850px; height: 600px; }
-	.widget-close{
-		display: block;
-		position:absolute;
-		@include left(-8px);
-		top:30px;
-		width: 28px;
-		height: 28px; 
-		cursor:pointer;
-	}
+.freshwidget-theme {
+    @include text-shadow(rgba(0, 0, 0, 0.2), -1px, -1px, 1px);
+    padding: 8px 16px;
+    background-color: rgb(1, 84, 83);
+    color: rgb(255, 255, 255);
+    /*border:0 solid rgba(255, 255, 255, 0.8);*/
+    color: #ffffff;
+    font-size: 14px;
+    text-decoration: none;
+    font-weight: bold;
+    outline: 0;
 }
-.mobile-widget-close{
-	display: none;
-}
-/* Mobile Widget Style */ 
 
-@media (max-width: 768px){
-	.responsive{
-		.freshwidget-container, .widget-ovelay {
-			background: #FFF;
-		}
-		.mobile-widget-close{
-			display: block;
-			position:fixed;
-			top:12px;
-			font-size: 32px;
-			color: #000;
-			font-weight: bold;
-			margin:0;
-			padding:0;
-			@include left(15px);
-			z-index:10;
-			cursor:pointer;
-			&:before{
-				content: "\00d7";
-			}
-		}
-		.freshwidget-dialog{
-			@include left(0);
-			@include margin-left(0);
-			top: 0;
-			iframe{
-				position:fixed;
-				top:0;
-				height:100% !important;
-				width:100%;
-			}
-			.widget-close{
-				display: none;
-			}
-		}
-	}
+.freshwidget-theme:hover {
+    color: #f3f3f3;
+}
+
+.freshwidget-customimage {
+    overflow: visible;
+}
+
+.fd-btn-right .freshwidget-customimage {
+    @include right(0px);
+}
+
+.freshwidget-button {
+    position: fixed;
+    display: block !important;
+    width: 0px;
+    height: 0px;
+    z-index: 90000;
+    margin: 0px;
+    outline: 0;
+}
+
+.freshwidget-button a {
+    position: fixed;
+    white-space: nowrap;
+    _position: absolute;
+    _right: 0px;
+    outline: 0;
+    &:hover {
+        text-decoration: none;
+    }
+}
+
+.proxy-link {
+    position: absolute;
+    z-index: 10;
+    outline: 0;
+}
+
+.fd-btn-left a.freshwidget-theme,
+.fd-btn-top a.freshwidget-theme {
+    /*border-top-width:0; */
+    @include border-bottom-radius($button-radius);
+    @include box-shadow( 0 0 10px rgba(0, 0, 0, 0.1), inset 0 -1px 0 rgba(0, 0, 0, 0.08), inset 0 -2px 0 rgba(255, 255, 255, 0.7), inset 0 9px 29px rgba(0, 0, 0, 0.1));
+}
+
+.fd-btn-left a.freshwidget-theme {
+    @include widget-rotate(-90deg, top left);
+    filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+}
+
+.fd-btn-bottom a.freshwidget-theme,
+.fd-btn-right a.freshwidget-theme {
+    /*border-bottom-width:0; */
+    @include border-top-radius($button-radius);
+    @include box-shadow( 0 0 10px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(0, 0, 0, 0.08), inset 0 2px 0 rgba(255, 255, 255, 0.7), inset 0 -9px 29px rgba(0, 0, 0, 0.1));
+}
+
+.fd-btn-right a.freshwidget-theme {
+    @include widget-rotate;
+    filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+}
+
+.fd-btn-left a.ie10 {
+    -ms-transform: widget-rotate(-90deg);
+    -ms-transform-origin: top left;
+}
+
+.fd-btn-right a.ie10 {
+    -ms-transform: widget-rotate(-90deg);
+    -ms-transform-origin: bottom left;
+}
+
+@mixin keyframes($animation-name) {
+    @-webkit-keyframes #{$animation-name} {
+        @content;
+    }
+    @-moz-keyframes #{$animation-name} {
+        @content;
+    }
+    @-ms-keyframes #{$animation-name} {
+        @content;
+    }
+    @-o-keyframes #{$animation-name} {
+        @content;
+    }
+    @keyframes #{$animation-name} {
+        @content;
+    }
+}
+
+@mixin animation($str) {
+    -webkit-animation: #{$str};
+    -moz-animation: #{$str};
+    -ms-animation: #{$str};
+    -o-animation: #{$str};
+    animation: #{$str};
+}
+
+@include keyframes(freshwidget-dialog-box-animation) {
+    from {
+        margin-left: -260px;
+    }
+    to {
+        margin-left: -420px;
+    }
+}
+
+@include keyframes(iframeResize-animation) {
+    from {
+        width: 500px;
+    }
+    to {
+        width: 850px;
+    }
+}
+
+@include keyframes(freshwidget-dialog-box-animation-close) {
+    from {
+        margin-left: -420px;
+    }
+    to {
+        margin-left: -260px;
+    }
+}
+
+@include keyframes(iframe-animation-close) {
+    from {
+        width: 850px;
+    }
+    to {
+        width: 526px;
+    }
+}
+
+.freshwidget-dialog-box-close {
+    @include animation('freshwidget-dialog-box-animation-close .3s forwards');
+}
+
+.freshwidget-dialog-box {
+    @include animation('freshwidget-dialog-box-animation .3s forwards');
+}
+
+
+/* Widget Form Style */
+
+.freshwidget-dialog {
+    position: absolute;
+    padding: 8px 0;
+    @include left(50%);
+    @include margin-left(-420px);
+    top: 20px;
+    z-index: 900010;
+    iframe {
+        width: 526px;
+        height: 600px;
+        &.iframeClose {
+            @include animation('iframe-animation-close .3s forwards');
+        }
+        &.iframeResize {
+            @include animation('iframeResize-animation .3s forwards');
+        }
+    }
+    .widget-close {
+        display: block;
+        position: absolute;
+        @include left(-13px);
+        top: 16px;
+        width: 32px;
+        height: 32px;
+        background: #6D7574;
+        cursor: pointer;
+        color: #fff;
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        border-radius: 3px 0 0 3px;
+        border-right-color: #6D7574;
+        font-size: 24px;
+        font-style: normal;
+        font-weight: 600;
+        &:before {
+            content: "\00d7";
+            position: absolute;
+            left: 10px;
+            top: 4px;
+        }
+    }
+}
+
+.mobile-widget-close,
+.mobile-widget-arrow {
+    display: none;
+}
+
+
+/* Mobile Widget Style */
+
+@media (max-width: 768px) {
+    .responsive {
+        .freshwidget-container,
+        .widget-ovelay {
+            background: #FFF;
+        }
+        .mobile-widget-close,
+        .mobile-widget-arrow {
+            position: fixed;
+            top: 2%;
+            font-size: 32px;
+            color: #000;
+            font-weight: bold;
+            margin: 0;
+            padding: 0;
+            left: 15px;
+            z-index: 10;
+            cursor: pointer
+        }
+        .mobile-widget-close {
+            display: block;
+            &:before {
+                content: "\00d7";
+            }
+        }
+        .mobile-widget-arrow {
+            &:before {
+                content: "\003C";
+            }
+        }
+        .mobile-widget-arrow-block {
+            display: block;
+        }
+        .mobile-widget-close-none {
+            display: none;
+        }
+        .freshwidget-dialog {
+            @include left(0);
+            @include margin-left(0);
+            top: 0;
+            iframe {
+                position: fixed;
+                top: 0;
+                height: 100% !important;
+                width: 100%;
+            }
+            .widget-close {
+                display: none;
+            }
+        }
+    }
+}
+
+.suggest-panel {
+    display: none;
 }

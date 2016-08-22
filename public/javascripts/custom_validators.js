@@ -315,7 +315,7 @@ $.validator.addClassRules("trim_spaces", { trim_spaces: true });
 // Redactor validator
 $.validator.addMethod("required_redactor", function(value, element, param) {
   return $(element).data('redactor').isNotEmpty();
-}, "This field is required.")
+}, $.validator.messages.required)
 $.validator.addClassRules("required_redactor", { required_redactor : true });
 
   // Color hex validation rules
