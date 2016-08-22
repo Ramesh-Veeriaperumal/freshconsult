@@ -111,7 +111,7 @@ var NavSearchUtils = NavSearchUtils || (function(){
 
 
 	navSearchUtils.saveToLocalRecentTickets = function(TICKET_DETAILS_DATA){
-		if (TICKET_DETAILS_DATA['ticket_deleted'] == true || TICKET_DETAILS_DATA['ticket_spam'] == true) return;
+		if (TICKET_DETAILS_DATA['ticket_deleted'] == true || TICKET_DETAILS_DATA['ticket_spam'] == true || TICKET_DETAILS_DATA['ticket_archived'] == true) return;
 		var isLocalRecentTicket = false;
 		navSearchUtils.localRecentTickets = navSearchUtils.getLocalRecentTickets(navSearchUtils.localRecentTicketKey);
 		for(var i = 0; i < navSearchUtils.localRecentTickets.length; i++){
@@ -122,8 +122,6 @@ var NavSearchUtils = NavSearchUtils || (function(){
 				//insert it at the top
 				navSearchUtils.localRecentTickets.splice(4, 0, {displayId: TICKET_DETAILS_DATA['displayId'], subject: TICKET_DETAILS_DATA['ticket_subject'], path: TICKET_DETAILS_DATA['ticket_path']});
 				break;
-
-
 			}			
 		}
 		if(!isLocalRecentTicket){

@@ -17,7 +17,8 @@
     pagination_limit: <%= ActivityConstants::QUERY_UI_LIMIT %>,
     activity_event_type: <%= ::HelpdeskActivities::EventType::ALL %>,
     ticket_subject: "<%= escape_javascript(@ticket.subject.squish.html_safe) %>",
-    ticket_deleted: <%= @ticket.deleted %>
+    ticket_deleted: <%= @ticket.deleted %>,
+    ticket_archived: true
   };
 </script>
 
