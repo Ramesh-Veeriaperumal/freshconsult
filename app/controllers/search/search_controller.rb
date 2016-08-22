@@ -22,7 +22,7 @@ class Search::SearchController < ApplicationController
 
 	def index
 		(@search_key.blank? and params[:search_conditions].blank?) ? set_result_json : search(search_classes)
-		Search::RecentSearches.new(@search_key).store
+		Search::RecentSearches.new(@search_key).store unless @search_key.blank?
 		post_process
 	end
 
