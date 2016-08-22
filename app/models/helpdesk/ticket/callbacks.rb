@@ -483,7 +483,8 @@ private
   def update_company_id 
     # owner_id will be used as an alias attribute to refer to a ticket's company_id
     self.owner_id = self.requester.company_id if @model_changes.key?(:requester_id) &&
-                                                 self.requester.company_ids.length < 2
+                                                 (self.owner_id.nil? ||
+                                                  self.requester.company_ids.length < 2)
   end
 
   def check_and_reset_company_id
