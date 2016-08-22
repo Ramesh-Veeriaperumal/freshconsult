@@ -8901,6 +8901,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       filter_option_blocked_calls: "Blocked"
       filter_option_within_business_hours: "Within Business hours"
       filter_option_outside_business_hours: "Outside Business hours"
+      requester_not_found: "No matching requesters found"
       recording_delete:
         done_by: "Deleted By"
         tooltip: "Delete Recording"
