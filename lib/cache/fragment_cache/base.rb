@@ -59,17 +59,17 @@ module Cache
         def language_specific_fragment_process(lang_key, cache_key)
           lang = "#{I18n.locale}"
           add_language_list(lang_key, lang)
-          fragment_cache_key(cache_key, lang)
+          fragment_cache_key_with_language(cache_key, lang)
         end
 
         def clear_language_cache(cache_key, lang_list)
           lang_list.each do |lang|
-            frag_key = fragment_cache_key(cache_key, lang)
+            frag_key = fragment_cache_key_with_language(cache_key, lang)
             ActionController::Base.cache_store.delete("#{frag_key}")
           end
         end
         
-        def fragment_cache_key(key, language = I18n.locale)
+        def fragment_cache_key_with_language(key, language = I18n.locale)
           key % {:account_id => Account.current.id, :language => "#{language}"}
         end
 
