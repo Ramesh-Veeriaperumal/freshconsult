@@ -57,7 +57,7 @@ class Ember::TicketsControllerTest < ActionController::TestCase
     Helpdesk::Ticket.any_instance.stubs(:save).returns(false)
     put :bulk_delete, construct_params({ version: 'private' }, {ids: ids_to_delete})
     errors = {}
-    ids_to_delete.each { |id| errors[id] = :unable_to_delete }
+    ids_to_delete.each { |id| errors[id] = :unable_to_perform }
     match_json(partial_success_response_pattern([], errors))
     assert_response 202
   end
@@ -96,6 +96,86 @@ class Ember::TicketsControllerTest < ActionController::TestCase
       ticket_ids << create_ticket(ticket_params_hash).display_id
     end
     put :bulk_delete, construct_params({ version: 'private' }, {ids: ticket_ids})
+    assert_response 205
+  end
+
+  def test_bulk_spam_with_no_params
+    put :bulk_spam, construct_params({ version: 'private' }, {})
+    assert_response 400
+    match_json([bad_request_error_pattern('ids', :missing_field)])
+  end
+
+  def test_bulk_spam_with_invalid_ids
+    ticket_ids = []
+    rand(2..10).times do
+      ticket_ids << create_ticket(ticket_params_hash).display_id
+    end
+    invalid_ids = [ticket_ids[0] + 20, ticket_ids[0] + 30]
+    ids_list = [*ticket_ids, *invalid_ids]
+    put :bulk_spam, construct_params({ version: 'private' }, {ids: ids_list})
+    errors = {}
+    invalid_ids.each { |id| errors[id] = :"is invalid" }
+    match_json(partial_success_response_pattern(ticket_ids, errors))
+    assert_response 202
+  end
+
+  def test_bulk_spam_with_valid_ids
+    ticket_ids = []
+    rand(2..10).times do
+      ticket_ids << create_ticket(ticket_params_hash).display_id
+    end
+    put :bulk_spam, construct_params({ version: 'private' }, {ids: ticket_ids})
+    assert_response 205
+  end
+
+  def test_bulk_spam_with_errors
+    tickets = []
+    rand(2..10).times do
+      tickets << create_ticket(ticket_params_hash)
+    end
+    ids_list = tickets.map(&:display_id)
+    Helpdesk::Ticket.any_instance.stubs(:save).returns(false)
+    put :bulk_spam, construct_params({ version: 'private' }, {ids: ids_list})
+    errors = {}
+    ids_list.each { |id| errors[id] = :unable_to_perform }
+    match_json(partial_success_response_pattern([], errors))
+    assert_response 202
+  end
+
+  def test_bulk_spam_tickets_without_access
+    ticket_ids = []
+    rand(2..10).times do
+      ticket_ids << create_ticket(ticket_params_hash).display_id
+    end
+    User.any_instance.stubs(:can_view_all_tickets?).returns(false)
+    put :bulk_spam, construct_params({ version: 'private' }, {ids: ticket_ids})
+    errors = {}
+    ticket_ids.each { |id| errors[id] = :"is invalid" }
+    match_json(partial_success_response_pattern([], errors))
+    assert_response 202
+  end
+
+  def test_bulk_spam_tickets_with_group_access
+    params = ticket_params_hash
+    @agent.agent.ticket_permission = Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets]
+    @agent.group_ids << @create_group.id
+    @agent.save
+    ticket_ids = []
+    rand(2..10).times do
+      ticket_ids << create_ticket(params).display_id
+    end
+    put :bulk_spam, construct_params({ version: 'private' }, {ids: ticket_ids})
+    assert_response 205
+  end
+
+  def test_bulk_spam_tickets_with_assigned_access
+    @agent.agent.ticket_permission = Agent::PERMISSION_KEYS_BY_TOKEN[:assigned_tickets]
+    @agent.save
+    ticket_ids = []
+    rand(2..10).times do
+      ticket_ids << create_ticket(ticket_params_hash).display_id
+    end
+    put :bulk_spam, construct_params({ version: 'private' }, {ids: ticket_ids})
     assert_response 205
   end
 

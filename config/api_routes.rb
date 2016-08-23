@@ -109,6 +109,7 @@ Helpkit::Application.routes.draw do
     resources :tickets, controller: 'ember/tickets' do
       collection do
         put :bulk_delete
+        put :bulk_spam
       end
     end
     resources :scenario_automations, controller: 'ember/scenario_automations', only: :index

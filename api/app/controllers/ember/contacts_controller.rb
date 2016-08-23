@@ -1,5 +1,6 @@
 module Ember
   class ContactsController < ApiContactsController
+    include ControllerMethods::CommonHelper
     decorate_views
 
     def index
@@ -9,10 +10,11 @@ module Ember
     end
 
     def bulk_delete
-      return unless validate_deletion_params
-      sanitize_deletion_params
-      fetch_contacts
-      delete_contacts
+      return unless validate_bulk_action_params
+      sanitize_bulk_action_params
+      fetch_objects
+      destroy
+      render_bulk_action_response(bulk_action_succeeded_items, bulk_action_errors)
     end
 
     def self.wrap_params
@@ -21,48 +23,8 @@ module Ember
 
     private
 
-      def delete_contacts
-        @contacts_not_deleted = []
-        @items.each do |item|
-          @contacts_not_deleted << item.id unless item.update_attribute(:deleted, 'true')
-        end
-
-        if bulk_delete_errors.any?
-          render_partial_success(deleted_contact_ids, bulk_delete_errors)
-        else
-          head 205
-        end
-      end
-
-      def bulk_delete_errors
-        @bulk_delete_errors ||=
-          params[cname][:ids].inject({}) { |a, e| a.merge deletion_error(e) }
-      end
-
-      def invalid_contact_ids
-        @invalid_ids ||= params[cname][:ids] - @items.map(&:id)
-      end
-
-      def deleted_contact_ids
-        @deleted_ids ||= @items.map(&:id) - @contacts_not_deleted
-      end
-
-      def deletion_error(id)
-        if invalid_contact_ids.include?(id)
-          { id => :"is invalid" }
-        elsif @contacts_not_deleted.include?(id)
-          { id => :unable_to_delete }
-        else
-          {}
-        end
-      end
-
-      def fetch_contacts(items = scoper)
-        @items = items.find_all_by_id(params[cname][:ids])
-      end
-
-      def validate_deletion_params
-        params[cname].permit(*ContactConstants::BULK_DELETE_FIELDS)
+      def validate_bulk_action_params
+        params[cname].permit(*ContactConstants::BULK_ACTION_FIELDS)
         contact_validation = ContactValidation.new(params[cname], nil)
         return true if contact_validation.valid?(:bulk_delete)
 
@@ -70,8 +32,37 @@ module Ember
         false
       end
 
-      def sanitize_deletion_params
-        prepare_array_fields ContactConstants::BULK_DELETE_ARRAY_FIELDS.map(&:to_sym)
+      def sanitize_bulk_action_params
+        prepare_array_fields ContactConstants::BULK_ACTION_ARRAY_FIELDS.map(&:to_sym)
+      end
+
+      def fetch_objects(items = scoper)
+        id_list = params[cname][:ids] || Array.wrap(params[cname][:id])
+        @items = items.find_all_by_id(id_list)
+      end
+
+
+      def bulk_action_errors
+        @bulk_action_errors ||=
+          params[cname][:ids].inject({}) { |a, e| a.merge retrieve_error_code(e) }
+      end
+
+      def retrieve_error_code(id)
+        if bulk_action_failed_items.include?(id)
+          { id => :unable_to_perform }
+        elsif !bulk_action_succeeded_items.include?(id)
+          { id => :"is invalid" }
+        else
+          {}
+        end
+      end
+
+      def bulk_action_succeeded_items
+        @succeeded_ids ||= @items.map(&:id) - bulk_action_failed_items
+      end
+
+      def bulk_action_failed_items
+        @failed_ids ||= @items_failed.map(&:id)
       end
 
       def render_201_with_location(template_name: "api_contacts/#{action_name}", location_url: "api_contact_url", item_id: @item.id)

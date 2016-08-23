@@ -22,6 +22,6 @@ Authority::Authorization::PrivilegeList.build do
   end
 
 	delete_ticket do
-		resource :"ember/ticket", only: [:bulk_delete]
+		resource :"ember/ticket", only: [:bulk_delete, :bulk_spam]
 	end
 end

@@ -229,7 +229,7 @@ class TicketValidationTest < ActionView::TestCase
     Account.unstub(:current)
   end
 
-  def test_bulk_delete_validations
+  def test_bulk_action_validations
     Account.stubs(:current).returns(Account.first)
 
     controller_params = { version: 'private' }
@@ -244,19 +244,19 @@ class TicketValidationTest < ActionView::TestCase
 
     controller_params = { version: 'private', ids: "Text" }
     ticket_validation = TicketValidation.new(controller_params, nil)
-    refute ticket_validation.valid?(:bulk_delete)
+    refute ticket_validation.valid?(:bulk_spam)
     assert ticket_validation.errors.full_messages.include?('Ids datatype_mismatch')
     assert_equal({ ids: { expected_data_type: Array, prepend_msg: :input_received, given_data_type: String } }, ticket_validation.error_options)
 
     controller_params = { version: 'private', ids: ["Text"] }
     ticket_validation = TicketValidation.new(controller_params, nil)
-    refute ticket_validation.valid?(:bulk_delete)
+    refute ticket_validation.valid?(:bulk_spam)
     assert ticket_validation.errors.full_messages.include?('Ids array_datatype_mismatch')
     assert_equal({ ids: { expected_data_type: :'Positive Integer' } }, ticket_validation.error_options)
 
     controller_params = { version: 'private', ids: [1, 2, 3] }
     ticket_validation = TicketValidation.new(controller_params, nil)
-    assert ticket_validation.valid?(:bulk_delete)
+    assert ticket_validation.valid?(:bulk_spam)
 
     Account.unstub(:current)
   end
