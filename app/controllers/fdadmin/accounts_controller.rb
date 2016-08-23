@@ -408,9 +408,14 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     end
 
     def get_freshfone_details(account)
-      return get_account_details(account) if account.freshfone_account.
-        present? || freshfone_activation_requested?(account)
+      return get_account_details(account
+        ) if freshfone_details_preconditions?(account)
       { disabled: true }
+    end
+
+    def freshfone_details_preconditions?(account)
+      account.freshfone_account.present? || account.features?(:freshfone) ||
+        freshfone_activation_requested?(account)
     end
 
 end

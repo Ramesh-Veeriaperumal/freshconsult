@@ -177,7 +177,8 @@ module Fdadmin
         end
 
         def ff_active
-          { active: freshfone_account.present? && freshfone_account.active? }
+          { active: (freshfone_account.present? && freshfone_account.active?) ||
+             (@account.features?(:freshfone) && freshfone_account.blank?) }
         end
 
         def subscription_present?
