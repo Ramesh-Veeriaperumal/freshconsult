@@ -420,7 +420,7 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
     skip_bullet do
       ticket_id = create_ticket(ticket_params_hash).display_id
       put "api/_/tickets/bulk_delete", {ids: [ticket_id]}.to_json, @write_headers
-      assert_response 205
+      assert_response 204
 
       put "api/_/tickets/bulk_delete", {ids: [ticket_id, ticket_id + 20]}.to_json, @write_headers
       assert_response 202
@@ -434,7 +434,7 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
     skip_bullet do
       ticket_id = create_ticket(ticket_params_hash).display_id
       put "api/_/tickets/bulk_spam", {ids: [ticket_id]}.to_json, @write_headers
-      assert_response 205
+      assert_response 204
 
       put "api/_/tickets/bulk_spam", {ids: [ticket_id, ticket_id + 20]}.to_json, @write_headers
       assert_response 202

@@ -1,6 +1,6 @@
 module Ember
   class ContactsController < ApiContactsController
-    include ControllerMethods::CommonHelper
+    include ControllerMethods::BulkActionMethods
     decorate_views
 
     def index

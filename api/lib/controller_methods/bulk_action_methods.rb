@@ -1,4 +1,4 @@
-module ControllerMethods::CommonHelper
+module ControllerMethods::BulkActionMethods
 
   private
 
@@ -40,7 +40,7 @@ module ControllerMethods::CommonHelper
       if errors.any?
         render_partial_success(succeeded, errors)
       else
-        head 205
+        head 204
       end
     end
 end

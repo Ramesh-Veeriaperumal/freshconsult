@@ -45,7 +45,7 @@ class Ember::TicketsControllerTest < ActionController::TestCase
       ticket_ids << create_ticket(ticket_params_hash).display_id
     end
     put :bulk_delete, construct_params({ version: 'private' }, {ids: ticket_ids})
-    assert_response 205
+    assert_response 204
   end
 
   def test_bulk_delete_with_errors_in_deletion
@@ -85,7 +85,7 @@ class Ember::TicketsControllerTest < ActionController::TestCase
       ticket_ids << create_ticket(params).display_id
     end
     put :bulk_delete, construct_params({ version: 'private' }, {ids: ticket_ids})
-    assert_response 205
+    assert_response 204
   end
 
   def test_bulk_delete_tickets_with_assigned_access
@@ -96,7 +96,7 @@ class Ember::TicketsControllerTest < ActionController::TestCase
       ticket_ids << create_ticket(ticket_params_hash).display_id
     end
     put :bulk_delete, construct_params({ version: 'private' }, {ids: ticket_ids})
-    assert_response 205
+    assert_response 204
   end
 
   def test_bulk_spam_with_no_params
@@ -125,7 +125,7 @@ class Ember::TicketsControllerTest < ActionController::TestCase
       ticket_ids << create_ticket(ticket_params_hash).display_id
     end
     put :bulk_spam, construct_params({ version: 'private' }, {ids: ticket_ids})
-    assert_response 205
+    assert_response 204
   end
 
   def test_bulk_spam_with_errors
@@ -165,7 +165,7 @@ class Ember::TicketsControllerTest < ActionController::TestCase
       ticket_ids << create_ticket(params).display_id
     end
     put :bulk_spam, construct_params({ version: 'private' }, {ids: ticket_ids})
-    assert_response 205
+    assert_response 204
   end
 
   def test_bulk_spam_tickets_with_assigned_access
@@ -176,7 +176,7 @@ class Ember::TicketsControllerTest < ActionController::TestCase
       ticket_ids << create_ticket(ticket_params_hash).display_id
     end
     put :bulk_spam, construct_params({ version: 'private' }, {ids: ticket_ids})
-    assert_response 205
+    assert_response 204
   end
 
 end

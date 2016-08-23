@@ -1,6 +1,6 @@
 module Ember
   class TicketsController < TicketsController
-    include ControllerMethods::CommonHelper
+    include ControllerMethods::BulkActionMethods
 
     def index
       super

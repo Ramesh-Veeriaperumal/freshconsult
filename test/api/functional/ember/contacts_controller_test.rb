@@ -46,7 +46,7 @@ class Ember::ContactsControllerTest < ActionController::TestCase
       contact_ids << add_new_user(@account).id
     end
     put :bulk_delete, construct_params({ version: 'private' }, {ids: contact_ids})
-    assert_response 205
+    assert_response 204
   end
 
 end
