@@ -97,12 +97,12 @@ module Helpdesk::RequesterWidgetHelper
         count=count+1
         value = obj.send(field.name)
         value = format_field_value(field, value) || value
-        html << "<div class='contact-append #{"can-make-calls" if PHONE_NUMBER_FIELDS.include?(field["field_type"]) && field.is_a?(ContactField)}' #{phone_field_data_attributes(user, value) if PHONE_NUMBER_FIELDS.include?(field["field_type"]) && field.is_a?(ContactField)}>
+        html << "<div class='contact-append'>
           <span class='add-on field-label'>
           <span class='label-name  #{ "tooltip" if (field.label.length > MAX_LABEL_LENGTH) }'
             title='#{ field.label if (field.label.length > MAX_LABEL_LENGTH) }'>
           #{field.label}</span>:</span>
-          <span class='field-value'>#{value}</span>
+          <span class='field-value #{"can-make-calls" if PHONE_NUMBER_FIELDS.include?(field["field_type"]) && field.is_a?(ContactField)}' #{phone_field_data_attributes(user, value) if PHONE_NUMBER_FIELDS.include?(field["field_type"]) && field.is_a?(ContactField)}>#{value}</span>
         </div>"
       end
     end

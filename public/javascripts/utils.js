@@ -249,8 +249,8 @@ function helpdesk_submit(url, method, params){
         NavSearchUtils.deleteRecentTicketById(jQuery(this).val());
       }
     });
-   } 
-   
+   }
+
    form.action = url;      
    form.submit();
 }

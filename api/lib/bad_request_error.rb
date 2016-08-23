@@ -5,6 +5,8 @@ class BadRequestError < BaseError
     :"can't be blank" => :absent_in_db,
     :'should be a valid email address' => :absent_in_db,
     :inaccessible_value => :inaccessible_value,
+    :translation_available_already => :translation_available_already,
+    :translation_not_available => :translation_not_available,
     :"is invalid" => :absent_in_db
   }
 
@@ -21,6 +23,10 @@ class BadRequestError < BaseError
     forum_id: :forum,
     forum_category_id: :category,
     email_config_id: :email_config,
+    category_name: :category,
+    folder_name: :folder,
+    ticket_id: :ticket,
+    responder_phone: :agent,
     from_email: :"active email_config"
   }
 

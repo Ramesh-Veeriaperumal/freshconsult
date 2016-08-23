@@ -624,7 +624,9 @@ rules_filter = function(_name, filter_data, parentDom, options){
 					request_content.slideDown('slow');
 			});
 
-			jQuery(parentDom).on("change", '.webhook input[name=need_authentication]', function(){	jQuery(this).parent().parent().parent().find('.credentials').slideToggle();	});
+			jQuery(parentDom).on("change", '.webhook input[name=need_authentication]', function(){	
+				jQuery(this).closest('.webhook').find('.credentials').slideToggle();	
+			});
 
 			jQuery(parentDom).on("click", '.webhook .headers_toggle', function(){	
 		        		jQuery(parentDom).find('.webhook .headers_toggle').toggle();

@@ -1,3 +1,5 @@
+
+
 // Base settings for portal styles
 @import "lib/settings";
 @import "lib/mixins";
@@ -39,6 +41,8 @@
 
 @import "lib/misc";
 
+@import "../app/app-bootstrap";
+
 @import "lib/widget";
 @import "lib/widget-icons";
 
@@ -46,5 +50,8 @@
 
 @import "../plugins/_jquery-ui";
 
-@import "lib/multifile-attachments";
+@import "lib/widget-multifile-attachments";
+
+
+
 

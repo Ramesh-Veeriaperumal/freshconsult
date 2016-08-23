@@ -28,13 +28,13 @@ class CustomLengthValidatorTest < ActionView::TestCase
     test.attribute2 = [1] * 11
     refute test.valid?
     assert_equal(['Attribute2 test'], test.errors.full_messages)
-    assert_equal({ attribute2: { max_count: 10, current_count: 11, element_type: :characters } }, test.error_options)
+    assert_equal({ attribute2: { min_count: 2, max_count: 10, current_count: 11, element_type: :characters } }, test.error_options)
 
     test = TestValidation.new
     test.attribute2 = [1]
     refute test.valid?
     assert_equal(['Attribute2 test'], test.errors.full_messages)
-    assert_equal({ attribute2: { max_count: 10, current_count: 1, element_type: :characters } }, test.error_options)
+    assert_equal({ attribute2: { min_count: 2, max_count: 10, current_count: 1, element_type: :characters } }, test.error_options)
   end
 
   def test_custom_error_message
@@ -42,7 +42,7 @@ class CustomLengthValidatorTest < ActionView::TestCase
     test.attribute1 = [1] * 11
     refute test.valid?
     assert_equal(['Attribute1 too_long'], test.errors.full_messages)
-    assert_equal({ attribute1: { max_count: 10, current_count: 11, element_type: :characters } }, test.error_options)
+    assert_equal({ attribute1: { min_count: 0, max_count: 10, current_count: 11, element_type: :characters } }, test.error_options)
   end
 
   def test_valid

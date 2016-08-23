@@ -40,6 +40,7 @@ run "ln -nfs #{shared_path}/config/pod_info.yml #{node[:rel_path]}/config/pod_in
 run "ln -nfs #{shared_path}/config/infra_layer.yml #{node[:rel_path]}/config/infra_layer.yml"
 run "ln -nfs #{shared_path}/config/redis_routes.yml #{node[:rel_path]}/config/redis_routes.yml"
 run "ln -nfs #{shared_path}/config/integrations_config.yml #{node[:rel_path]}/config/integrations_config.yml"
+run "ln -nfs #{shared_path}/config/fd_node_config.yml #{node[:rel_path]}/config/fd_node_config.yml"
 run "ln -nfs #{shared_path}/config/mobile_config.yml #{node[:rel_path]}/config/mobile_config.yml"
 run "ln -nfs #{shared_path}/config/asset_sync.yml #{node[:rel_path]}/config/asset_sync.yml"
 run "ln -nfs #{shared_path}/config/config.yml #{node[:rel_path]}/config/config.yml"

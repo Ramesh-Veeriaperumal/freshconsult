@@ -8,6 +8,8 @@ class PortalSolutionCategory < ActiveRecord::Base
   attr_accessible :portal_id, :solution_category_id, :position
 	acts_as_list :scope => :portal
 
+  validates :portal, :presence => true
+
 	delegate :name, :to => :solution_category
 
   after_commit ->(obj) { obj.send(:clear_cache_with_condition) }, on: :update

@@ -14,12 +14,12 @@
   <%= form_for @item, :html => {:multipart => true, :id => "NewTicket", :ignore => "" , :rel=>"validate"} do |f| %>
     <!-- Note: when any changes made to the block below or TICKET_FORM PARTIAL in the future,
          please update the memcache key version. key_name :: AGENT_NEW_TICKET_FORM  -->
-    <% cache_based_on_launch(:cache_new_tkt_comps_forms, agent_new_tkt_form_memcache_key) do %>
+    <% enable_fragment_cache(:agent_new_ticket) do %>
       <ul class="compose-new-ticket">
         <%= render :partial => "ticket_form", :object => f, :locals => { :is_edit => (@item.errors.any? ? true : false), :f => f } %>
       </ul>
     <% end %>
-    <!-- block ends here -->
+    <!-- block ends here for fragment cache -->
   <% end %>
 </div>
 </div>
@@ -31,12 +31,13 @@
   <input type="hidden" id="topic_req" value="<%= @topic.user.email %>" />
 <% end %>
 <%= render :partial => "/helpdesk/tickets/canned_loading"  %>
-
-<script>
-// To load data from store to populate group/agent/product for the first time.
-  jQuery(document).ready(function(){
-    PopulateData.fromStore("#helpdesk_ticket_group_id", 'group');
-    PopulateData.fromStore("#helpdesk_ticket_responder_id", 'agent');
-    PopulateData.fromStore("#helpdesk_ticket_product_id", 'product');
-  });
-</script>
+<% if Account.current.launched?(:agent_new_ticket_cache) %>
+  <script>
+  // To load data from store to populate group/agent/product for the first time.
+    jQuery(document).ready(function(){
+      PopulateData.fromStore("#helpdesk_ticket_group_id", 'group');
+      PopulateData.fromStore("#helpdesk_ticket_responder_id", 'agent');
+      //PopulateData.fromStore("#helpdesk_ticket_product_id", 'product');
+    });
+  </script>
+<% end %>

@@ -86,6 +86,7 @@ class HelpdeskReports::Formatter::Ticket::TicketVolume
         "diff_perc" => calculate_difference_percentage(previous_values[metric].to_f,current_values[metric].to_f),
       }
       trends_to_show.each do |trend|
+        total = overall[metric.upcase][trend].values.sum if(metric == "all_unresolved_tickets")
         avg = (total/overall[metric.upcase][trend].size).to_i
         extra_details[trend+'_avg'] = avg if overall[metric.upcase][trend]
       end

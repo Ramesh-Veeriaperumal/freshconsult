@@ -10,7 +10,8 @@ module Fdadmin
                                                         :refund_credits,
                                                         :new_freshfone_account,
                                                         :fetch_numbers,
-                                                        :launch_feature]
+                                                        :launch_feature,
+                                                        :activate_trial]
     before_filter :validate_triggers, only: [:update_usage_triggers]
     before_filter :validate_timeout_and_queue,
                   :construct_timeout_and_queue_hash,
@@ -20,6 +21,7 @@ module Fdadmin
                                                   :fetch_usage_triggers,
                                                   :fetch_conference_state,
                                                   :fetch_numbers]
+    before_filter :add_freshfone_feature, only: :activate_trial, unless: :freshfone_feature?
 
     TRIGGER_TYPE = { credit_overdraft: 1, daily_credit_threshold: 2 }
     PROMOTIONAL_CREDITS = 3
@@ -552,6 +554,17 @@ module Fdadmin
       if @account.freshfone_account.blank?
         return render json: { status: 'error' }
       end
+    end
+
+    def freshfone_feature?
+      @account.features? :freshfone
+    end
+
+    def add_freshfone_feature
+      @account.features.freshfone.create
+      result = { account_id: @account.id, account_name: @account.name,
+        status: 'feature_added' }
+      return render json: result
     end
   end
 end

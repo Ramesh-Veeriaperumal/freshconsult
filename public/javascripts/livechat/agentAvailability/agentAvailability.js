@@ -22,7 +22,7 @@
           this.autoRefreshAgentList.stop();
         }
         this.autoRefreshAgentList = new PeriodicalExecuter(function(pe) {
-          if(window.location.pathname !== "/helpdesk/agent_status"){
+          if(window.location.pathname !== "/helpdesk/dashboard/agent_status"){
             this.autoRefreshAgentList.stop();
           }else{
             window.userCollection.syncAvailabilityStatus();

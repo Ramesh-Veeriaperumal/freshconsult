@@ -10,6 +10,7 @@ class UsersController < ApplicationController
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:revert_identity, :profile_image]
   before_filter :set_selected_tab
   skip_before_filter :load_object , :only => [ :show, :edit ]
+  before_filter :assume_allowed?, :only => [:assume_identity]
   before_filter :load_items, :only => :block
 
   ##redirect to contacts
@@ -139,6 +140,10 @@ class UsersController < ApplicationController
 
     def set_selected_tab
       @selected_tab = :customers
+    end
+
+    def assume_allowed?
+      redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) if current_account.hide_agent_metrics_feature?
     end
   
 end

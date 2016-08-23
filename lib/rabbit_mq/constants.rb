@@ -40,7 +40,8 @@ module RabbitMq::Constants
     [  'time_sheet',          CRUD_KEYS_BY_TOKEN[:all],                 'time_sheet'      ],
     [  'tag',                 CRUD_KEYS_BY_TOKEN[:all],                 'tag'             ],
     [  'tag_use',             CRUD_KEYS_BY_TOKEN[:create_and_destroy],  'tag_use'         ],
-    [  'account',             CRUD_KEYS_BY_TOKEN[:destroy],             'account'         ]
+    [  'account',             CRUD_KEYS_BY_TOKEN[:destroy],             'account'         ],
+    [  "cti_call",            CRUD_KEYS_BY_TOKEN[:create],                  "cti_call"   ]
   ]
   
   # If the exchange mapping values ("ticket", "customer") is changed, please make sure that the changes
@@ -131,5 +132,6 @@ module RabbitMq::Constants
   REPORTS_NOTE_KEYS           = ["id", "source", "user_id", "agent", "category", "private", "incoming", "deleted", "account_id", "created_at", "archive", "actor_type"]
   
   MANUAL_PUBLISH_SUBCRIBERS   = ["reports", "activities", "count"]
+  CTI_CALL_KEYS = ["id", "call_sid", "options", "account_id", "responder_id", "requester_id"]
 
 end

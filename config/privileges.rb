@@ -50,6 +50,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"integrations/user_credential"
     resource :"integrations/pivotal_tracker"
     resource :"integrations/cti/customer_detail"
+    resource :"integrations/cti/screen_pop"
     resource :"integrations/quickbook"
     resource :"integrations/dynamicscrm", :only => [:widget_data]
     resource :"integrations/infusionsoft", :only => [:fetch_user]
@@ -85,7 +86,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"helpdesk/ca_folder"
     resource :"helpdesk/scenario_automation"
     resource :agent, :only => [:toggle_availability, :list]
-    resource :"search/home", :only => [:index, :suggest]
+    resource :"search/home", :only => [:index, :suggest, :recent_searches_tickets, :remove_recent_search]
     resource :"search/v2/suggest", :only => [:index]
     resource :"search/solution", :only => [:related_solutions, :search_solutions]
     resource :"search/v2/solution", :only => [:related_solutions, :search_solutions]
@@ -213,6 +214,11 @@ Authority::Authorization::PrivilegeList.build do
     resource :"search/v2/spotlight", :only => [:solutions]
     resource :"helpdesk/ticket", :only => [:get_solution_detail]
     resource :"solution/draft", :only => [:index]
+
+    # Used by V2 API
+    resource :"api_solutions/category", :only => [:index, :show]
+    resource :"api_solutions/folder", :only => [:category_folders, :show]
+    resource :"api_solutions/article", :only => [:folder_articles, :show]
   end
 
   publish_solution do
@@ -220,18 +226,28 @@ Authority::Authorization::PrivilegeList.build do
     resource :"solution/tag_use"
     resource :solutions_uploaded_image, :only => [:create, :create_file]
     resource :"solution/draft", :only => [:autosave, :publish, :attachments_delete, :destroy]
+
+    # Used by V2 API
+    resource :"api_solutions/article", :only => [:create, :update]
   end
 
   delete_solution do
     resource :"solution/article", :only => [:destroy, :reset_ratings], :owned_by =>
                                   { :scoper => :solution_articles }
     resource :"solution/draft", :only => [:destroy]
+
+    # Used by V2 API
+    resource :"api_solutions/article", :only => [:destroy], :owned_by => { :scoper => :solution_articles }
   end
 
   manage_solutions do
     resource :"solution/category", :only => [:new, :create, :edit, :update, :destroy, :reorder]
     resource :"solution/folder", :only => [:new, :create, :edit, :update, :destroy, :reorder, :move_to, :move_back, :visible_to]
     resource :"solution/article", :only => [:translate_parents]
+
+    # Used by V2 API
+    resource :"api_solutions/category", :only => [:create, :update, :destroy]
+    resource :"api_solutions/folder", :only => [:create, :update, :destroy]
   end
 
   # ************** FORUMS **************************
@@ -523,6 +539,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"integrations/salesforce"
     resource :"integrations/freshsale"
     resource :"integrations/slack_v2", :only => [:oauth, :new, :install, :edit, :update]
+    resource :"integrations/cti_admin"
     resource :"admin/integrations/freshplug"
     resource :"admin/marketplace/extension"
     resource :"admin/marketplace/installed_extension"
@@ -540,9 +557,11 @@ Authority::Authorization::PrivilegeList.build do
     resource :"api_group", :only => [:create, :update, :destroy, :index, :show]
     resource :"api_sla_policy", :only => [:index, :update]
     resource :"api_product", :only => [:index, :show]
+    resource :"settings/helpdesk", :only => [:index]
     resource :survey, :only => [:index]
     resource :"satisfaction_rating", :only => [:index]
     resource :"api_role", :only => [:index, :show]
+    resource :"api_integrations/cti", :only => [:create, :index]
   end
 
   manage_account do

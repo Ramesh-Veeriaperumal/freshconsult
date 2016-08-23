@@ -36,11 +36,9 @@
 //= require helpdesk/multifile.js
 //= require frameworks/plugins/jquery.nested_select_tag.js
 //= require frameworks/socket.io-1.2.1.js
-//= require frameworks/faye.js
 //= require frameworks/socket.io-agent.js
 //= require helpdesk/socket_agent.js
 //= require helpdesk/socket_agent_autorefresh.js
-//= require helpdesk/freshdesk_node.js
 //= require frameworks/plugins/jquery.ui.timepicker.addon.js
 //= require frameworks/plugins/jquery.tabby.js
 //= require base64.js

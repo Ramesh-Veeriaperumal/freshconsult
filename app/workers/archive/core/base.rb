@@ -16,8 +16,8 @@ module Archive
         :helpdesk_tickets => ["helpdesk_attachments" => "attachable", "helpdesk_dropboxes" => "droppable", "helpdesk_activities" => "notable", "survey_results" => "surveyable",
                               "support_scores" => "scorable", "helpdesk_time_sheets" => "workable", "social_tweets" => "tweetable",
                               "ticket_topics" => "ticketable","social_fb_posts" => "postable", "freshfone_calls" => "notable", "helpdesk_tag_uses" => "taggable", "article_tickets" => "ticketable","integrated_resources" => "local_integratable",
-                              "inline_attachments" => "attachable", "helpdesk_notes" => "notable"]
-        # :helpdesk_notes => ["social_tweets" => "tweetable", "social_fb_posts" => "postable", "freshfone_calls" => "notable", "helpdesk_attachments" => "attachable", "helpdesk_dropboxes" => "droppable", "helpdesk_shared_attachments" => "shared_attachable" ,"inline_attachments" => "attachable"]
+                              "inline_attachments" => "attachable", "helpdesk_notes" => "notable", :cti_calls => "recordable"]
+        # :helpdesk_notes => ["social_tweets" => "tweetable", "social_fb_posts" => "postable", "freshfone_calls" => "notable", "helpdesk_attachments" => "attachable", "helpdesk_dropboxes" => "droppable", "helpdesk_shared_attachments" => "shared_attachable" ,"inline_attachments" => "attachable", :cti_calls => "recordable"]
       }
 
       RAW_MYSQL_TICKET_ASSOCIATION = ["helpdesk_ticket_bodies","helpdesk_schema_less_tickets","helpdesk_ticket_states","mobihelp_ticket_infos","helpdesk_reminders","helpdesk_subscriptions"]  #helpdesk_subscriptions

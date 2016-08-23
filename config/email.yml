@@ -109,3 +109,18 @@ category-5:
       <<: *defaults
     staging:
       <<: *defaults
+
+category-9:
+    defaults: &defaults
+      address: smtp.sendgrid.net
+      port: 587
+      domain: freshpo.com
+      authentication: :plain
+      user_name: fdstage
+      password: 45533keFi3c924T
+    development:
+      <<: *defaults
+    test:
+      <<: *defaults
+    staging:
+      <<: *defaults      

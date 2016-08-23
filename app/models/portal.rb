@@ -130,7 +130,7 @@ class Portal < ActiveRecord::Base
   end
 
   def customer_editable_ticket_fields
-    filter_fields account.ticket_fields.customer_editable, ticket_field_conditions
+    filter_fields account.ticket_fields_including_nested_fields.customer_editable, ticket_field_conditions
   end
 
   def layout

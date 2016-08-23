@@ -1270,7 +1270,7 @@ class TicketsControllerTest < ActionController::TestCase
     due_by = 30.days.since.utc.iso8601
     fr_due_by = 31.days.since.utc.iso8601
     params = update_ticket_params_hash.merge(due_by: due_by, fr_due_by: fr_due_by)
-    put :update, construct_params({ id: t.id }, params)
+    put :update, construct_params({ id: t.display_id }, params)
     match_json([bad_request_error_pattern('fr_due_by', 'lt_due_by')])
     assert_response 400
 
@@ -1280,7 +1280,7 @@ class TicketsControllerTest < ActionController::TestCase
     t.update_column(:due_by, due_by)
     fr_due_by = 31.days.since.utc.iso8601
     params = update_ticket_params_hash.except(:due_by).merge(fr_due_by: fr_due_by)
-    put :update, construct_params({ id: t.id }, params)
+    put :update, construct_params({ id: t.display_id }, params)
     match_json([bad_request_error_pattern('fr_due_by', 'lt_due_by')])
     assert_response 400
 
@@ -1290,7 +1290,7 @@ class TicketsControllerTest < ActionController::TestCase
     fr_due_by = 31.days.since.utc.iso8601
     t.update_column(:frDueBy, fr_due_by)
     params = update_ticket_params_hash.except(:fr_due_by).merge(due_by: due_by)
-    put :update, construct_params({ id: t.id }, params)
+    put :update, construct_params({ id: t.display_id }, params)
     match_json([bad_request_error_pattern('due_by', 'lt_due_by')])
     assert_response 400
   end
@@ -2639,16 +2639,6 @@ class TicketsControllerTest < ActionController::TestCase
     tkts =  Helpdesk::Ticket.where(deleted: 0, spam: 0).created_in(Helpdesk::Ticket.created_in_last_month)
     assert_equal tkts.count, response.size
     pattern = tkts.map { |tkt| index_ticket_pattern_with_associations(tkt, false, true) }
-    match_json(pattern)
-  end
-
-  def test_index_with_all_associations
-    get :index, controller_params(include: 'requester,stats', per_page: 70)
-    assert_response 200
-    response = parse_response @response.body
-    tkts =  Helpdesk::Ticket.where(deleted: 0, spam: 0).created_in(Helpdesk::Ticket.created_in_last_month)
-    assert_equal tkts.count, response.size
-    pattern = tkts.map { |tkt| index_ticket_pattern_with_associations(tkt) }
     match_json(pattern)
   end
 

@@ -35,7 +35,7 @@ class Helpdesk::Note < ActiveRecord::Base
 
   delegate :to_emails, :cc_emails, :bcc_emails, :subject, :cc_emails_hash, :to => :schema_less_note
 
-  scope :newest_first, :order => "created_at DESC"
+  scope :newest_first, :order => "created_at DESC,id DESC"
   scope :visible, :conditions => { :deleted => false } 
   scope :public, :conditions => { :private => false } 
   scope :private, :conditions => { :private => true } 

@@ -1,4 +1,4 @@
-ES_ENABLED = !Rails.env.development?  
+ES_ENABLED = !Rails.env.development?
 puts "elasticsearch is #{ES_ENABLED ? 'enabled' : 'not enabled'}" 
 if ES_ENABLED
 	tire_config = YAML::load_file(File.join(Rails.root, 'config', 'elasticsearch.yml'))[Rails.env]

@@ -95,4 +95,23 @@ module Redis::OthersRedis
   def get_all_members_in_a_redis_set(key)
     newrelic_begin_rescue { $redis_others.perform_redis_op("smembers", key) }
   end
+
+  def add_member_to_others_sorted_set(key, score, member, expires = 86400)
+    newrelic_begin_rescue do 
+    	$redis_others.perform_redis_op("zadd", key, score, member) 
+    	$redis_others.perform_redis_op("expire", key,expires) if expires
+    end
+  end
+
+  def get_members_others_sorted_set_range(key, start, stop)
+    newrelic_begin_rescue { $redis_others.perform_redis_op("zrange", key, start, stop) }  	
+  end
+
+  def remove_member_others_sorted_set(key, member)
+    newrelic_begin_rescue { $redis_others.perform_redis_op("zrem", key, member) }
+  end
+
+  def remove_members_others_sorted_set_rank(key, start, stop)
+    newrelic_begin_rescue { $redis_others.perform_redis_op("zremrangebyrank", key, start, stop) }  	
+  end
 end

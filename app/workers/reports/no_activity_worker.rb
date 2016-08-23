@@ -7,6 +7,7 @@ class Reports::NoActivityWorker < BaseWorker
     HelpdeskReports::Logger.log("No-Activity batch #{params[:batch]} started")
     Sharding.run_on_shard(params[:shard_name]) do
       Sharding.run_on_slave do
+        start_time = Time.now.utc
         params[:account_ids].each do |account_id|
           begin
             Account.find_by_id(account_id).make_current
@@ -19,6 +20,10 @@ class Reports::NoActivityWorker < BaseWorker
             Account.reset_current_account
           end
         end
+        totaltime = ((Time.now.utc - start_time) / 1.hour).round
+        subj = "Helpkit | unresolved No-Activity batch #{params[:batch]} completed"
+        message = "Total Time = #{totaltime}"
+        DevNotification.publish(SNS["reports_notification_topic"], subj, message.to_json)
       end
     end   
   end
@@ -33,7 +38,7 @@ class Reports::NoActivityWorker < BaseWorker
         begin
           #skipping merged tickets
           next if ticket.parent_ticket?
-          timestamp = (current_date.to_time - ((ticket.created_at.to_date - current_date.to_date).to_i.abs % 7).days).to_f
+          timestamp = (current_date.to_time - ((ticket.created_at.to_date - current_date.to_date).to_i.abs % 90).days).to_f
           ticket.manual_publish_to_rmq("update", RabbitMq::Constants::RMQ_REPORTS_TICKET_KEY, {:model_changes => { :no_activity => []}, :ingest_timestamp => timestamp})        
         rescue Exception => e
           options = {:account_id => account.id, :ticket_id => ticket.id }
@@ -54,7 +59,7 @@ class Reports::NoActivityWorker < BaseWorker
   
   def conditions(date)
     dates = []
-    (84..90).each{ |d| dates << (date - d.days) }
+    (0..6).each{ |d| dates << (date - d.days) }
 
     conditions        = ["created_at < ? AND (" + (["ABS(DATEDIFF(?, created_at)) % 90 = 0"] * 7).join(' OR ') + ")",
                             (date - 83.days), dates

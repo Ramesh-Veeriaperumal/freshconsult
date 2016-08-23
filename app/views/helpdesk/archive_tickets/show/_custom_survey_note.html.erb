@@ -42,8 +42,8 @@
         <%= note.body_html.html_safe %>
       </div>
     <%end%>
-  </div>
-  <% if note.fwd_email? %>
+    <% if note.fwd_email? %>
       <div class="freshdesk_quote" data-remote-quote=true></div>
-  <% end %>
+    <% end %>
+  </div>
 </div>

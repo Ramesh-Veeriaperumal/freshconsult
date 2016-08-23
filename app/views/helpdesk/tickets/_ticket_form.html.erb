@@ -2,7 +2,7 @@
       please update the memcache key version. key_name :: AGENT_NEW_TICKET_FORM  -->
 
 <%= ticket_form.error_messages %>
-<% current_portal.ticket_fields.each do |field|
+<% current_portal.ticket_fields_including_nested_fields.each do |field|
     next if field.section_field?
     if is_edit or params[:template_form]
       field_value = @item.send(field.field_name)

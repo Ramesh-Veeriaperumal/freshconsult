@@ -112,7 +112,7 @@
 				@include padding(15px 0 15px 25px);
 				@include margin-left(10px);
 				ul li{
-					display: inline-block;
+					display: inline;
 					@include margin-right(8px);
 				}
 				li {

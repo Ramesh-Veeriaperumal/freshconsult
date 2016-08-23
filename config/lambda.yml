@@ -1,0 +1,24 @@
+common: &common
+  access_key_id: AKIAI33WZQ6WRNZQLEWQ
+  secret_access_key: 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
+  region: 'us-east-1'
+  resources: ['tickets', 'notes', 'accounts', 'archive_tickets']
+
+development:
+  <<: *common
+  tickets_interchange: arn:aws:lambda:us-east-1:213293927234:function:ticketInterchange-development
+  accounts_interchange: arn:aws:lambda:us-east-1:213293927234:function:accountInterchange-development
+  notes_interchange: arn:aws:lambda:us-east-1:213293927234:function:noteInterchange-development
+  archive_tickets_interchange: arn:aws:lambda:us-east-1:213293927234:function:archieveTicketInterchange-development
+staging:
+  <<: *common
+  tickets_interchange: arn:aws:lambda:us-east-1:213293927234:function:ticketInterchange-staging
+  accounts_interchange: arn:aws:lambda:us-east-1:213293927234:function:accountInterchange-staging
+  notes_interchange: arn:aws:lambda:us-east-1:213293927234:function:noteInterchange-staging
+  archive_tickets_interchange: arn:aws:lambda:us-east-1:213293927234:function:archieveTicketInterchange-staging
+production:
+  <<: *common
+  tickets_interchange: arn:aws:lambda:us-east-1:213293927234:function:ticketInterchange-production
+  accounts_interchange: arn:aws:lambda:us-east-1:213293927234:function:accountInterchange-production
+  notes_interchange: arn:aws:lambda:us-east-1:213293927234:function:noteInterchange-production
+  archive_tickets_interchange: arn:aws:lambda:us-east-1:213293927234:function:archieveTicketInterchange-production
