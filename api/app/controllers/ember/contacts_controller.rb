@@ -5,7 +5,7 @@ module Ember
 
     def index
       super
-      response.api_meta = { :count => @items.count }
+      response.api_meta = { :count => contacts_filter(scoper).count }
       render 'api_contacts/index'
     end
 
