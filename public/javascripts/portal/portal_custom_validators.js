@@ -4,6 +4,7 @@
 (function($){
 
 // Redactor validators
+var validation_messages = validation_messages || '';
 var requiredMessage=validation_messages ? validation_messages.required : "This field is required."; 
 $.validator.addMethod("required_redactor", function(value, element, param) {
   if ($(element).data('redactor')){
