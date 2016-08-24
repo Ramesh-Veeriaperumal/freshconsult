@@ -26,6 +26,7 @@ module Helpdesk::TicketActions
     build_ticket_attachments
     @ticket.skip_notification = skip_notifications
     @ticket.meta_data = params[:meta] if params[:meta]
+    @ticket.tag_names = params[:helpdesk][:tags] unless params[:helpdesk].blank? or params[:helpdesk][:tags].nil? 
     
     return false unless @ticket.save_ticket
 

@@ -23,7 +23,7 @@
       feedback_submit_btn.button("loading");
       // Referrer needs to be filled
       $('#meta_referrer').val(window.location.href);
-      var appended_val = '<div>' + feedback_subject.val() + '</div>' + '<br/><br/><p>' + 'Account URL: ' + window.current_account_full_domain + '</p><p>' +  'Admin: ' +  window.is_current_user_admin + '</p>';
+      var appended_val = '<div>' + feedback_subject.val() + '</div>' + '<br/><br/><p> Account Id: ' + window.current_account_id + '</p><p>' + 'Account URL: ' + window.current_account_full_domain + '</p><p>' +  'Admin: ' +  window.is_current_user_admin + '</p>';
       //feedback_subject.val(appended_val);
       feedback_body.val(appended_val); 
       $(form).ajaxSubmit({
