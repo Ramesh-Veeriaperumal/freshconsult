@@ -152,7 +152,7 @@
 
   jQuery("[rel=inputselectbox],[rel=inputtextbox]").off('change');
  jQuery("[rel=inputselectbox],[rel=inputtextbox]").on('change',  function(ev){
-    if(jQuery(this).attr('id')=="helpdesk_ticket_group_id")
+    if(jQuery(this).attr('id')=="helpdesk_ticket_group_id" && jQuery("#helpdesk_ticket_group_id").val() != "-1")
     {
       if(jQuery('#helpdesk_ticket_responder_id_label').is(':checked'))
       {
