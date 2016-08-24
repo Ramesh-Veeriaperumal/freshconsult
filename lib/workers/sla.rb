@@ -140,7 +140,7 @@ end
                                 'ticket' => ticket, 'helpdesk_name' => account.portal_name)
     email_body = Liquid::Template.parse(agent_template.last).render(
                                 'agent' => agent, 'ticket' => ticket, 'helpdesk_name' => account.portal_name)
-    SlaNotifier.escalation(ticket, agent, :email_body => email_body, :subject => email_subject)
+    SlaNotifier.escalation(ticket, agent, n_type, :email_body => email_body, :subject => email_subject)
     User.reset_current
   end
 end
