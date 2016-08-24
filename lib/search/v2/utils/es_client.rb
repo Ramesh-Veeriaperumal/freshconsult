@@ -10,9 +10,9 @@ module Search
 
         attr_accessor :method, :path, :payload, :logger, :response, :log_data
 
-        def initialize(method, path, payload=nil, log_data=nil, request_uuid=nil)
+        def initialize(method, path, query_params={}, payload=nil, log_data=nil, request_uuid=nil)
           @method     = method.to_sym
-          @path       = path
+          @path       = query_params.present? ? "#{path}?#{query_params.to_query}" : path
           @payload    = payload
           @uuid       = request_uuid
           @logger     = EsLogger.new(@uuid)
