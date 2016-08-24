@@ -9034,7 +9034,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
         stop_recording: "<span></span>Stop Recording"
         preparing_recording: "Preparing your message..."
         recorded_voice: "Recorded Voice"
-        audio_upload: "Select file to upload"
+        audio_upload: "Upload"
         greeting_message: "Enter your message here"
         attachment_help_info: "Accepts audio file (mp3) < 5mb"
         attachment_help_text: "Accepts audio file (mp3) < 5mb"
