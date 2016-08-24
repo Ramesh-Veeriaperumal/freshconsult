@@ -8,7 +8,7 @@ module ErrorConstants
     incompatible_field: ['incompatible_field'],
     inaccessible_field: ['inaccessible_field'],
     inaccessible_value: ['inaccessible_value'],
-    unable_to_delete: [:unable_to_delete]
+    unable_to_perform: [:unable_to_perform]
   }.freeze
 
   API_HTTP_ERROR_STATUS_BY_CODE = {

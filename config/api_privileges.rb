@@ -1,6 +1,7 @@
 Authority::Authorization::PrivilegeList.build do
   manage_tickets do
     resource :"ember/bootstrap"
+    resource :"ember/ticket", only: [:index]
     resource :"ember/scenario_automation", only: [:index]
   end
 
@@ -19,4 +20,8 @@ Authority::Authorization::PrivilegeList.build do
   manage_users do
     resource :"ember/contact", only: [:make_agent]
   end
+
+	delete_ticket do
+		resource :"ember/ticket", only: [:bulk_delete, :bulk_spam]
+	end
 end

@@ -30,7 +30,7 @@ class ContactValidation < ApiValidation
                                 field_validations: DEFAULT_FIELD_VALIDATIONS
                               }
 
-  validates :name, data_type: { rules: String, required: true }, if: -> { !is_bulk_delete? }
+  validates :name, data_type: { rules: String, required: true }, if: -> { !is_bulk_action? }
   validates :name, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }
   validates :view_all_tickets, data_type: { rules: 'Boolean',  ignore_string: :allow_string_param }
   validates :tags, data_type: { rules: Array, allow_nil: false }, array: { data_type: { rules: String }, custom_length: { maximum: ApiConstants::TAG_MAX_LENGTH_STRING } }, string_rejection: { excluded_chars: [','], allow_nil: true }
@@ -125,7 +125,7 @@ class ContactValidation < ApiValidation
       ContactConstants::ATTRIBUTES_TO_BE_STRIPPED
     end
 
-    def is_bulk_delete?
+    def is_bulk_action?
       [:bulk_delete].include?(validation_context)
     end
 end
