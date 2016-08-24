@@ -181,7 +181,9 @@ div.custom-file-upload {
 	}
 	.file-upload{
 		position: absolute;
-	 @include left(15%);
+		@include left(0%);
+		width: 100%;
+		text-align: center;
 		top: 1px;
 		.file-upload-text{
 			position: static;
