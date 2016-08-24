@@ -92,6 +92,16 @@ class EmailController < ApplicationController
         unless params[t_format].nil?
           charset_encoding = (charsets[t_format.to_s] || "UTF-8").strip()
           # if !charset_encoding.nil? and !(["utf-8","utf8"].include?(charset_encoding.downcase))
+          if ((t_format == :subject || t_format == :headers) && (charsets[t_format.to_s].blank? || charsets[t_format.to_s].upcase == "UTF-8") && (!params[t_format].valid_encoding?))
+            begin
+              params[t_format] = params[t_format].encode(Encoding::UTF_8, :undef => :replace, 
+                                                                      :invalid => :replace, 
+                                                                      :replace => '')
+              next
+            rescue Exception => e
+              Rails.logger.error "Error While encoding in process email  \n#{e.message}\n#{e.backtrace.join("\n\t")} #{params}"
+            end
+          end
           replacement_char = "\uFFFD"
           if t_format.to_s == "subject" and (params[t_format] =~ /^=\?(.+)\?[BQ]?(.+)\?=/ or params[t_format].include? replacement_char)
             params[t_format] = decode_subject

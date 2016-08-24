@@ -463,7 +463,11 @@ window.xhrPool = [];
       // If there are some form changes that is unsaved, it prompts the user to save before leaving the page.
       $(window).on('beforeunload', function(ev){
         var form = $('.form-unsaved-changes-trigger');
-        if(form.data('formChanged')) {
+        var formChanged = false;
+        form.each(function(){ 
+          formChanged = $(this).data('formChanged') ? true : formChanged;
+        })
+        if(formChanged) {
           ev.preventDefault();
           return customMessages.confirmNavigate;
         }
