@@ -1,5 +1,11 @@
 <div id="ticket-merge" class="ticket-merge">
-  <div id="merge_info" class="ml10">
+  <div id="merge_info">
+    <div class="merge-notice">
+      <span class="merge-notice-important">
+        <%= t('.important') %>
+      </span>
+      <%= t('ticket.merge_notice') %>
+    </div>
     <div class="merge-sub-title" 
       data-default-text="<%= t('ticket.ticket_selected') %>"
       data-pluralized-text="<%= t('ticket.tickets_selected') %>" >
@@ -10,7 +16,7 @@
       <%= t('ticket.merge_warning') %>
     </div>
   </div>
-  <div id="merge_confirm_info" class="ml10 hide">
+  <div id="merge_confirm_info" class="hide">
   </div><br />
   <div id="mergeboxconfirm"></div>
   <div id="mergebox" class="row-fluid">
