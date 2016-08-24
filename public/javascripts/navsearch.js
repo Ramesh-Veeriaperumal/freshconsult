@@ -100,6 +100,8 @@ jQuery(document).ready(function(){
 
 	$J(document).on('mouseleave',"#SearchResultsBar", function(){
 		insideSearch = false;
+		$J('#SearchResultsBar a').removeClass('active');
+		currentactive = null;
 	});	
 			
 	$J(document).on("focusout", "#header_search", function(ev){ 
