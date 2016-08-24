@@ -1856,7 +1856,7 @@ en:
         have_special_character: Have a special character
       password_policy_popover:
         password_must: Password must
-        minimum_characters: Contain atleast %{count} characters
+        minimum_characters: Contain at least %{count} characters
         cannot_contain_user_name: Not contain the username
         cannot_be_same_as_past_passwords: Be different from your past passwords
         atleast_an_alphabet_and_number: Contain atleast 1 alphabet and 1 number
