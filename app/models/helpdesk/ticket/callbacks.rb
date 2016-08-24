@@ -19,7 +19,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   before_update :update_message_id, :if => :deleted_changed?
 
-  before_save :assign_outbound_agent, :if => :outbound_email?
+  before_create :assign_outbound_agent, :if => :outbound_email?
 
   before_save  :update_ticket_related_changes, :update_company_id, :set_sla_policy
 
