@@ -1190,6 +1190,8 @@ var scrollToError = function(){
 					getTweetTypeAndBind();
 				}
 
+				_form.data("formChanged",false)
+
 				Helpdesk.TicketStickyBar.check();
 
 			},
