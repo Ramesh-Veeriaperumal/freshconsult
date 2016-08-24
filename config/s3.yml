@@ -1,6 +1,6 @@
 common: &common
-  access_key_id: AKIAILZZJD6Q3WAFMCHA
-  secret_access_key: T8LomtbPUYQpVzcyDmcqkuHuScadfmeHh5t1Jv9Y
+  access_key_id: dummy
+  secret_access_key: dummy
   AWS_CALLING_FORMAT: SUBDOMAIN
   region: 'us-east-1'
   access_key_id_euc: access_key_id_euc
@@ -40,8 +40,8 @@ test:
 
 
 production:
-  access_key_id: AKIAISZIJ5WPZKABHKSA
-  secret_access_key: oxTly6FrGIbyphIy0L0vKkSEvet3vehkTuYaKB8q
+  access_key_id: dummy
+  secret_access_key: dummy
   region: 'us-east-1'
   AWS_CALLING_FORMAT: SUBDOMAIN
   bucket: cdn.freshdesk.com
