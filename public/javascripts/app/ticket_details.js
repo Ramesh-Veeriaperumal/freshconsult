@@ -4,7 +4,18 @@
 window.App = window.App || {};
 window.App.Tickets = window.App.Tickets || {};
 
-(function ($) {
+ (function ($) {	
+
+
+$(document).on("click.conversation_action", '.conv-action-icon', function(ev){
+// var note_id_number = ev.target.getAttribute("noteId");
+		jQuery('.request_panel').hide();
+		var fetchedId = ev.target.id;
+	    //slicing 'conv-action-' prefix from conv-action-icon's id value
+	    var selectedId = fetchedId.slice(12);
+	    jQuery('#'+selectedId).show().trigger('afterShow');
+	});
+
 
 var activeForm, savingDraft, draftClearedFlag, draftSavedTime,dontSaveDraft, replyEditor, draftInterval, currentStatus;
 var MAX_EMAILS = 50;
@@ -1674,6 +1685,7 @@ TICKET_DETAILS_CLEANUP = function() {
 	for(var i=0; i<custom_events.length ; i++){
 		jQuery(document).off(custom_events[i]);
 	}
+	$(document).off('.conversation_action');
 };
 
 	
