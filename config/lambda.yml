@@ -1,6 +1,6 @@
 common: &common
-  access_key_id: AKIAI33WZQ6WRNZQLEWQ
-  secret_access_key: oYOFKVn5hVWuA3BxEQHlUYCL2RJu0xKglA70v3eJ
+  access_key_id: dummy
+  secret_access_key: dummy
   region: 'us-east-1'
   resources: ['tickets', 'notes', 'accounts', 'archive_tickets']
 

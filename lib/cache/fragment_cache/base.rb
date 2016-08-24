@@ -65,7 +65,7 @@ module Cache
         def clear_language_cache(cache_key, lang_list)
           lang_list.each do |lang|
             frag_key = fragment_cache_key_with_language(cache_key, lang)
-            ActionController::Base.cache_store.delete("#{frag_key}")
+            ActionController::Base.cache_store.delete("views/#{frag_key}")
           end
         end
         
