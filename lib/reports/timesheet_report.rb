@@ -13,7 +13,16 @@ module Reports::TimesheetReport
     :group_name => "group_id",
     :product_name => "product_id",
     :workable => "display_id",
-    :group_by_day_criteria => 'executed_at_date'
+    :group_by_day_criteria => 'executed_at'
+  }
+
+  ALIAS_GROUP_NAME = {
+    :customer_name => "customer_id",
+    :agent_name => "user_id",
+    :group_name => "group_id",
+    :product_id => "product_id",
+    :workable => "display_id",
+    :group_by_day_criteria => "executed_at"
   }
 
   def valid_month?(time)
@@ -81,12 +90,12 @@ module Reports::TimesheetReport
   def group_to_column_map(group,archive=false)
     # ticket_table_name = archive ? Helpdesk::ArchiveTicket.table_name : Helpdesk::Ticket.table_name
     time_sheet_group_to_column_map = {
-      :customer_name => "#{archive ? Helpdesk::ArchiveTicket.table_name : Helpdesk::Ticket.table_name}.owner_id",
+      :customer_name => "IFNULL(#{archive ? Helpdesk::ArchiveTicket.table_name : Helpdesk::Ticket.table_name}.owner_id, #{archive ? Helpdesk::ArchiveTicket.table_name : Helpdesk::Ticket.table_name}.requester_id) as #{ALIAS_GROUP_NAME[group]}",
       :agent_name    => "#{Helpdesk::TimeSheet.table_name}.user_id",
       :group_name    => "#{archive ? Helpdesk::ArchiveTicket.table_name : Helpdesk::Ticket.table_name}.group_id",
       :product_name  => "#{archive ? Helpdesk::ArchiveTicket.table_name : Helpdesk::SchemaLessTicket.table_name}.product_id",
       :workable      => "#{archive ? Helpdesk::ArchiveTicket.table_name : Helpdesk::Ticket.table_name}.display_id",
-      :group_by_day_criteria => "#{Helpdesk::TimeSheet.table_name}.executed_at as executed_at_date"
+      :group_by_day_criteria => "#{Helpdesk::TimeSheet.table_name}.executed_at as executed_at"
     }
     time_sheet_group_to_column_map[group]
   end
@@ -102,8 +111,9 @@ module Reports::TimesheetReport
         archive_tickets.id,
         max(helpdesk_time_sheets.id) as max_timesheet_id,
         helpdesk_time_sheets.workable_id,
-        #{GROUP_TO_FIELD_MAP[group_by_caluse] == 'executed_at_date' ? 'executed_at as executed_at_date' : GROUP_TO_FIELD_MAP[group_by_caluse]}
-        ").group("#{GROUP_TO_FIELD_MAP[group_by_caluse]}, current, billable").find(:all, :conditions => (archive_select_conditions || {}),
+        (CASE WHEN #{group_by_caluse==:customer_name} THEN IFNULL(archive_tickets.owner_id,archive_tickets.requester_id)
+             ELSE #{GROUP_TO_FIELD_MAP[group_by_caluse]} END) AS #{ALIAS_GROUP_NAME[group_by_caluse]}"
+        ).group("#{ALIAS_GROUP_NAME[group_by_caluse]}, current, billable").find(:all, :conditions => (archive_select_conditions || {}),
         :include => [:user, :workable => [:product, :group, :ticket_status, :requester, :company]])
     else
       scoper(previous_start, @end_date).select("
@@ -115,18 +125,18 @@ module Reports::TimesheetReport
         helpdesk_tickets.id,
         max(helpdesk_time_sheets.id) as max_timesheet_id,
         helpdesk_time_sheets.workable_id,
-        #{GROUP_TO_FIELD_MAP[group_by_caluse] == 'executed_at_date' ? 'executed_at as executed_at_date' : GROUP_TO_FIELD_MAP[group_by_caluse]}
-        ").group("#{GROUP_TO_FIELD_MAP[group_by_caluse]}, current, billable").find(:all, :conditions => (select_conditions || {}),
+         (CASE WHEN #{group_by_caluse==:customer_name} THEN IFNULL(helpdesk_tickets.owner_id,helpdesk_tickets.requester_id)
+             ELSE #{GROUP_TO_FIELD_MAP[group_by_caluse]} END) AS #{ALIAS_GROUP_NAME[group_by_caluse]}").group("#{ALIAS_GROUP_NAME[group_by_caluse]}, current, billable").find(:all, :conditions => (select_conditions || {}),
         :include => [:user, :workable => [:schema_less_ticket, :group, :ticket_status, :requester, :company]])
     end
   end
 
   def fetch_timesheet_entries(offset=0, row_limit=nil)
     row_limit ||= @pdf_export ? BATCH_LIMIT_FOR_EXPORT : TIMESHEET_ROWS_LIMIT
-    entries = scoper(@start_date, @end_date).where("helpdesk_time_sheets.id <= #{@latest_timesheet_id}").select("helpdesk_time_sheets.*, #{group_to_column_map(group_by_caluse, false)}").reorder("#{GROUP_TO_FIELD_MAP[group_by_caluse]}, id asc").find(:all, :limit => row_limit, :offset => offset,:conditions => (select_conditions || {}),
+    entries = scoper(@start_date, @end_date).where("helpdesk_time_sheets.id <= #{@latest_timesheet_id}").select("helpdesk_time_sheets.*, #{group_to_column_map(group_by_caluse, false)}").reorder("#{ALIAS_GROUP_NAME[group_by_caluse]}, id asc").find(:all, :limit => row_limit, :offset => offset,:conditions => (select_conditions || {}),
       :include => [:user, :workable => [:schema_less_ticket, :group, :ticket_status, :requester, :company]])
     if (archive_enabled? && entries.size < row_limit)
-      entries << archive_scoper(@start_date, @end_date).where("helpdesk_time_sheets.id <= #{@latest_timesheet_id}").select("helpdesk_time_sheets.*, #{group_to_column_map(group_by_caluse, true)}").reorder("#{GROUP_TO_FIELD_MAP[group_by_caluse]}, id asc").find(:all, :limit => row_limit, :offset => offset,:conditions => (archive_select_conditions || {}),
+      entries << archive_scoper(@start_date, @end_date).where("helpdesk_time_sheets.id <= #{@latest_timesheet_id}").select("helpdesk_time_sheets.*, #{group_to_column_map(group_by_caluse, true)}").reorder("#{ALIAS_GROUP_NAME[group_by_caluse]}, id asc").find(:all, :limit => row_limit, :offset => offset,:conditions => (archive_select_conditions || {}),
           :include => [:user, :workable => [:product, :group, :ticket_status, :requester, :company]])
     end
     entries.flatten
@@ -351,14 +361,16 @@ def set_time_range(prev_time = false)
       @metric_data[entry.current == 0 ? :previous : :current][:total_time] += (entry.time_spent || 0)
       if entry.current == 1
         @row_count += (entry.count || 0)
-        @group_count[entry.send(GROUP_TO_FIELD_MAP[group_by_caluse]) || 0] += (entry.time_spent || 0)
-        if @group_names[entry.send(GROUP_TO_FIELD_MAP[group_by_caluse])].blank?
+        hash_key = entry.send(ALIAS_GROUP_NAME[group_by_caluse]) || 0
+        hash_key = hash_key.to_s unless group_by_caluse == :group_by_day_criteria
+        @group_count[hash_key] += (entry.time_spent || 0)
+        if @group_names[hash_key].blank?
           if group_by_caluse == :workable
-            @group_names[entry.send(GROUP_TO_FIELD_MAP[group_by_caluse])] = "#{entry.send(group_by_caluse).subject.gsub("`",'')} (##{entry.send(group_by_caluse).display_id})"
+            @group_names[hash_key] = "#{entry.send(group_by_caluse).subject} (##{entry.send(group_by_caluse).display_id})"
           elsif group_by_caluse == :group_by_day_criteria
-            @group_names[entry.send(GROUP_TO_FIELD_MAP[group_by_caluse])] = entry.send('executed_at_date')
+            @group_names[hash_key] = entry.send('executed_at')
           else
-            @group_names[entry.send(GROUP_TO_FIELD_MAP[group_by_caluse]) || 0] = entry.send(group_by_caluse).gsub("`",'')
+            @group_names[hash_key] = entry.send(group_by_caluse)
           end
         end
       end
@@ -376,10 +388,12 @@ def set_time_range(prev_time = false)
     entries = fetch_timesheet_entries(offset, row_limit)
     result = {}
     entries.each do |entry|
-      result[entry.send(GROUP_TO_FIELD_MAP[group_by_caluse])] ||= []  
-      result[entry.send(GROUP_TO_FIELD_MAP[group_by_caluse])] << entry
+      hash_key = entry.send(ALIAS_GROUP_NAME[group_by_caluse]) || 0
+      hash_key = hash_key.to_s unless group_by_caluse == :group_by_day_criteria
+      result[hash_key] ||= []  
+      result[hash_key] << entry
     end
-    result.map{|k,v| [(k.nil? ? 0 : k), v]}.to_h
+    result
   end
 
   def construct_timesheet_entries
@@ -393,7 +407,7 @@ def set_time_range(prev_time = false)
       if group_by_caluse == :group_by_day_criteria
         entries.select!{|entry| ((key == Date.strptime(params[:previous_group_id], "%Y-%m-%d") && entry.id >= params[:previous_entry_id].to_i) || (key > Date.strptime(params[:previous_group_id], "%Y-%m-%d")))}
       else
-        entries.select!{|entry| ((key == params[:previous_group_id].to_i && entry.id >= params[:previous_entry_id].to_i) || (key > params[:previous_group_id].to_i))}
+        entries.select!{|entry| ((key.to_s == params[:previous_group_id] && entry.id.to_s >= params[:previous_entry_id]) || (key.to_s > params[:previous_group_id]))}
       end
     end
     @time_sheets.stringify_keys!

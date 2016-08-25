@@ -8418,6 +8418,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       day_trend:
         title: Day of the week and Hour of the day trend
         subtitle: See which hour of which day receives the most number of tickets and allocate your staff accordingly
+      avg_tickets: 'Average tickets %{metric} : <span style="color:%{color}">%{value}</span>'
     glance:
       index_title: Helpdesk<br/>In-depth
       title: Helpdesk In-depth
