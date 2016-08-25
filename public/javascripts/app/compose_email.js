@@ -34,6 +34,9 @@ var ComposeEmail = {
     defaultSettings: function(){
       // Snippets moved from compose js
     jQuery('.default_agent, .default_source, .default_product').hide();
+    //removing internal fileds in compose email for negating form validation
+    //when these fields are set required in admin ticket fields
+    jQuery('.default_internal_agent, .default_internal_group').remove();
     jQuery('#helpdesk_ticket_source').val(10);
     jQuery('#helpdesk_ticket_status').val(5);
     jQuery("#helpdesk_ticket_product_id").removeClass("required");

@@ -206,7 +206,7 @@ class Helpdesk::TicketsController < ApplicationController
     @show_options = show_options
     @is_default_filter = (!is_num?(view_context.current_filter))
     @current_view = @ticket_filter.id || @ticket_filter.name if is_custom_filter_ticket?
-    render :partial => "helpdesk/shared/filter_options", :locals => { :current_filter => @ticket_filter }
+    render :partial => "helpdesk/shared/filter_options", :locals => { :current_filter => @ticket_filter , :shared_ownership_enabled => current_account.features?(:shared_ownership)}
   end
 
   def latest_ticket_count # Possible dead code
@@ -1278,6 +1278,7 @@ class Helpdesk::TicketsController < ApplicationController
         @cached_filter_data = get_cached_filters
         @cached_filter_data.symbolize_keys!
         handle_unsaved_view
+        set_modes(action_hash)
         initialize_ticket_filter
         params.merge!(@cached_filter_data)
       elsif custom_filter?
@@ -1358,6 +1359,7 @@ class Helpdesk::TicketsController < ApplicationController
         @ticket_filter = current_account.ticket_filters.find_by_id(filter_name)
         return load_default_filter(TicketsFilter::DEFAULT_FILTER) if @ticket_filter.nil? or !@ticket_filter.has_permission?(current_user)
         @ticket_filter.query_hash = @ticket_filter.data[:data_hash]
+        set_modes(@ticket_filter.query_hash)
         params.merge!(@ticket_filter.attributes["data"])
       end
     end
@@ -1368,6 +1370,20 @@ class Helpdesk::TicketsController < ApplicationController
       @ticket_filter.query_hash = @ticket_filter.default_filter(filter_name)
       @ticket_filter.accessible = current_account.user_accesses.new
       @ticket_filter.accessible.visibility = Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me]
+      set_modes(@ticket_filter.query_hash)
+    end
+
+    def set_modes(conditions)
+      return unless current_account.features?(:shared_ownership)
+      @agent_mode = TicketConstants::FILTER_MODES[:primary]
+      @group_mode = TicketConstants::FILTER_MODES[:primary]
+      conditions.each do |condition|
+        if TicketConstants::SHARED_AGENT_COLUMNS_ORDER.include?(condition["condition"])
+          @agent_mode = TicketConstants::SHARED_AGENT_COLUMNS_MODE_BY_NAME[condition["condition"]]
+        elsif TicketConstants::SHARED_GROUP_COLUMNS_ORDER.include?(condition["condition"])
+          @group_mode = TicketConstants::SHARED_GROUP_COLUMNS_MODE_BY_NAME[condition["condition"]]
+        end
+      end
     end
 
     def portal_check

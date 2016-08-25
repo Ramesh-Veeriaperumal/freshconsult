@@ -2041,9 +2041,10 @@ Helpkit::Application.routes.draw do
       end
     end
 
-    match 'commons/group_agents/(:id)' => "commons#group_agents"
-    match 'commons/user_companies' => "commons#user_companies"
+    match 'commons/group_agents/(:id)'    => "commons#group_agents"
+    match 'commons/user_companies'        => "commons#user_companies"
     match "commons/fetch_company_by_name" => "commons#fetch_company_by_name"
+    match 'commons/status_groups'         => "commons#status_groups"
 
     resources :ticket_templates do
       member do 

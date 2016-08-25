@@ -25,6 +25,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   before_save :check_and_reset_company_id, :if => :company_id_changed?
 
+  before_update :reset_internal_group_agent
+  before_save   :allow_valid_internal_group_agent
+
   before_update :update_sender_email
 
   before_update :stop_recording_timestamps, :unless => :model_changes?
@@ -130,7 +133,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
   def process_agent_and_group_changes 
-    
     if (@model_changes.key?(:responder_id) && responder)
       if @model_changes[:responder_id][0].nil?
         unless ticket_states.first_assigned_at 
@@ -148,15 +150,20 @@ class Helpdesk::Ticket < ActiveRecord::Base
       schema_less_ticket.update_group_reassigned_count("create") if @model_changes[:group_id][0]
       schema_less_ticket.set_group_assigned_flag
     end
-    
+    #for internal_agent_id
+    if @model_changes.key?(:long_tc04)
+      schema_less_ticket.set_internal_agent_assigned_flag
+      schema_less_ticket.set_internal_agent_first_assign_bhrs(self.created_at, time_zone_now, self.group) if (self.reports_hash["internal_agent_assigned_flag"]==true )
+    end
+    schema_less_ticket.set_internal_group_assigned_flag if @model_changes.key?(:long_tc03)
   end
-  
+
   def process_status_changes
     return unless @model_changes.key?(:status)
-    
+
     ticket_states.status_updated_at = time_zone_now
-    
-    ticket_states.pending_since = nil if @model_changes[:status][0] == PENDING  
+
+    ticket_states.pending_since = nil if @model_changes[:status][0] == PENDING
     ticket_states.pending_since=time_zone_now if (status == PENDING)
     ticket_states.set_resolved_at_state if (status == RESOLVED)
     ticket_states.set_closed_at_state if closed?
@@ -165,8 +172,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
       ticket_states.sla_timer_stopped_at ||= time_zone_now 
     else
       ticket_states.sla_timer_stopped_at = nil
-    end 
-    
+    end
+
     if reopened_now?
       schema_less_ticket.set_last_resolved_at(ticket_states.resolved_at)
       ticket_states.opened_at=time_zone_now
@@ -174,6 +181,43 @@ class Helpdesk::Ticket < ActiveRecord::Base
       schema_less_ticket.update_reopened_count("create")
     end
   end
+
+  #Shared onwership Validations
+  def reset_internal_group_agent
+    return unless @model_changes.key?(:status) and Account.current.features?(:shared_ownership)
+
+    #Reset internal group and internal agent when the status(without the particular group mapped) is changed
+    internal_group_column = Helpdesk::SchemaLessTicket.internal_group_column
+    internal_agent_column = Helpdesk::SchemaLessTicket.internal_agent_column
+    if internal_group_id.present? and !@model_changes.include?(internal_group_column) and ticket_status.group_ids.exclude?(schema_less_ticket.internal_group_id)
+      schema_less_ticket.internal_group_id = nil
+      @model_changes.merge!(schema_less_ticket.changes.slice(internal_group_column.to_s))
+    end
+
+    if internal_agent_id.present? and !@model_changes.include?(internal_agent_column) and ticket_status.group_ids.exclude?(schema_less_ticket.internal_group_id)
+      schema_less_ticket.internal_agent_id = nil
+      @model_changes.merge!(schema_less_ticket.changes.slice(internal_agent_column.to_s))
+    end
+    @model_changes.symbolize_keys!
+  end
+
+  def allow_valid_internal_group_agent
+    return unless shared_ownership_fields_changed? and Account.current.features?(:shared_ownership)
+
+    internal_group_column = Helpdesk::SchemaLessTicket.internal_group_column
+    internal_agent_column = Helpdesk::SchemaLessTicket.internal_agent_column
+
+    #Reset internal group and internal agent to old value if the mapping is incorrect
+    if internal_group_id.present? and ticket_status.group_ids.exclude?(internal_group_id)
+      schema_less_ticket.internal_group_id = @model_changes.key?(internal_group_column) ? @model_changes[internal_group_column][0] : nil
+      @model_changes.delete(internal_group_column)
+    end
+    if internal_agent_id.present? and (internal_group.blank? or internal_group.agents.pluck(:user_id).exclude?(internal_agent_id))
+      schema_less_ticket.internal_agent_id = @model_changes.key?(internal_agent_column) ? @model_changes[internal_agent_column][0] : nil
+      @model_changes.delete(internal_agent_column)
+    end
+  end
+  #Shared onwership Validations ends here
 
   def refresh_display_id #by Shan temp
       self.display_id = Helpdesk::Ticket.select(:display_id).where(id: id).first.display_id  if display_id.nil? #by Shan hack need to revisit about self as well.
@@ -455,7 +499,7 @@ private
     @model_changes = self.changes.to_hash
     @model_changes.merge!(schema_less_ticket.changes) unless schema_less_ticket.nil?
     @model_changes.merge!(flexifield.changes) unless flexifield.nil?
-		@model_changes.merge!({ tags: [] }) if self.tags_updated #=> Hack for when only tags are updated to trigger ES publish
+    @model_changes.merge!({ tags: [] }) if self.tags_updated #=> Hack for when only tags are updated to trigger ES publish
     @model_changes.symbolize_keys!
   end
 

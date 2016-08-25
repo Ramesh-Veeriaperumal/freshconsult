@@ -567,7 +567,49 @@ var scrollToError = function(){
 			  }
 		});
 	});
+	//code added for shared-ownership changes
+	$('body').on('change.ticket_details' ,'#helpdesk_ticket_status', function(event){ 
 
+		var _this = $(this);
+		var previous =  _this.data("previous");
+		_this.data("previous", _this.val());
+		var select_group = jQuery('#TicketProperties .default_internal_group select')[0];
+		if(select_group){
+      		var prev_val = select_group.options[select_group.selectedIndex].value;
+		}
+
+		if(previous && select_group){
+			$('#TicketProperties .default_internal_group').addClass('sloading loading-small loading-right');
+
+		    $.ajax({type: "GET",
+		      	url: prev_val == "" ? "/helpdesk/commons/status_groups?status_id="+$("#helpdesk_ticket_status").val() : "/helpdesk/commons/status_groups?status_id="+$("#helpdesk_ticket_status").val()+"&group_id="+prev_val,
+		      	contentType: "application/text",
+		      	success: function(data){
+		    		$('#helpdesk_ticket_internal_group_id').html(data).trigger('change');
+		        	$('#TicketProperties .default_internal_group').removeClass('sloading loading-small loading-right');
+		      	}
+		    });
+		}
+	});
+	$('body').on("change.ticket_details", '#helpdesk_ticket_internal_group_id', function(e){
+	    $('#TicketProperties .default_internal_agent').addClass('sloading loading-small loading-right');
+	    var select_group = jQuery('#TicketProperties .default_internal_agent select')[0];
+      	var prev_val = select_group.options[select_group.selectedIndex].value;
+		if(this.value){
+			$.ajax({
+		       	type: 'GET',
+		      	url:  prev_val == "" ? '/helpdesk/commons/group_agents/'+this.value : '/helpdesk/commons/group_agents/'+this.value+"?agent="+prev_val,
+		      	contentType: 'application/text',
+		      	success: function(data){
+		        	$('#helpdesk_ticket_internal_agent_id').html(data).trigger('change');
+		        	$('#TicketProperties .default_internal_agent').removeClass('sloading loading-small loading-right');
+		      	}
+		    });
+		}else{
+      		$('#helpdesk_ticket_internal_agent_id').html("<option value=''>...</option>").trigger('change');
+			$('#TicketProperties .default_internal_agent').removeClass('sloading loading-small loading-right');
+		}  
+	});
 
 	$("body").on('click.ticket_details', '.widget.load_on_click.inactive', function(ev){
 		var widget_code = $(this).find('textarea');

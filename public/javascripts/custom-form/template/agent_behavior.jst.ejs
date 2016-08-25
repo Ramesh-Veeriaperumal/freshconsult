@@ -22,7 +22,7 @@
 				<%= translate.get('agentMandatory') %> 
 			</label>
 		</fieldset>
-		<% if(custom_form_type == 'ticket'){ %>
+		<% if(custom_form_type == 'ticket' && obj.field_type != 'default_internal_agent' && obj.field_type != 'default_internal_group'){ %>
 			<fieldset>
 				<label class="checkbox<%= closeTicketDisable %>">
 					<input type="checkbox" 

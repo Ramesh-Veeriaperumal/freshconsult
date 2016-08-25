@@ -13,6 +13,18 @@ class Helpdesk::DashboardController < ApplicationController
   include Gamification::GamificationUtil
   include DashboardControllerMethods
 
+
+  UNRESOLVED_COLUMN_KEY_MAPPING = {:group_id => "group_id", :responder_id => "responder_id", :status => "status", 
+      :internal_agent_id => "helpdesk_schema_less_tickets.long_tc04", :internal_group_id => "helpdesk_schema_less_tickets.long_tc03"}
+
+  UNRESOLVED_FILTER_HEADERS = {
+    UNRESOLVED_COLUMN_KEY_MAPPING[:responder_id]      => "Agent", 
+    UNRESOLVED_COLUMN_KEY_MAPPING[:group_id]          => "Group",
+    UNRESOLVED_COLUMN_KEY_MAPPING[:internal_agent_id] => "Internal Agent",
+    UNRESOLVED_COLUMN_KEY_MAPPING[:internal_group_id] => "Internal Group"
+  }
+
+
   skip_before_filter :check_account_state
   before_filter :check_account_state, :redirect_to_mobile_url, :set_mobile, :show_password_expiry_warning, :only => [:index]  
   before_filter :check_dashboard_privilege, :only => [:index]
@@ -53,7 +65,7 @@ class Helpdesk::DashboardController < ApplicationController
   end
 
   def unresolved_tickets_data
-    header_array = (@group_by == "responder_id") ? ["Agent"] : ["Group"]
+    header_array = [UNRESOLVED_FILTER_HEADERS[@group_by]]
     header_array << [status_list_from_cache.values, "Total"]
     header_array.flatten!
     unresolved_hash = {:data => header_array, :content => fetch_unresolved_tickets }
@@ -243,7 +255,7 @@ class Helpdesk::DashboardController < ApplicationController
     @group_by               = ["group_id","responder_id"].include?(params[:group_by]) ? params[:group_by] : "group_id"
     @filter_condition       = {}
 
-    [:group_id, :responder_id, :status].each do |filter|  
+    UNRESOLVED_COLUMN_KEY_MAPPING.keys.each do |filter|
       next unless params[filter].present?
       filter_values = params[filter].split(",")
       if filter_values.include?("0")
@@ -251,10 +263,18 @@ class Helpdesk::DashboardController < ApplicationController
         filter_values.concat(user_agent_groups.map(&:to_s))
         filter_values.uniq!
       end
-      self.instance_variable_set("@#{filter}", filter_values)
-      @filter_condition.merge!({filter => filter_values}) if filter_values.present?
+      instance_var = case filter
+          when :internal_agent_id
+            :responder_id
+          when :internal_group_id
+            :group_id
+          else
+            filter
+          end
+
+      self.instance_variable_set("@#{instance_var}", filter_values)
+      @filter_condition.merge!({UNRESOLVED_COLUMN_KEY_MAPPING[filter] => filter_values}) if filter_values.present?
     end
-    
   end
 
   def fetch_unresolved_tickets

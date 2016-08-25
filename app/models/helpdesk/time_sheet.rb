@@ -7,13 +7,13 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
   self.table_name =  "helpdesk_time_sheets"
 
   default_scope :order => "executed_at DESC"
-  
+
   belongs_to :workable, :polymorphic => true
   delegate :product_name, :group_name, :to => :workable
 
   belongs_to :user
   belongs_to_account
-  
+
   # if any validation is introduced, update_running_timer in api/time_entries_controller should also be changed accordingly.
   before_validation :set_default_values 
 
@@ -101,7 +101,7 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
     { 
       :conditions => { :archive_tickets => { :product_id => products } }
     } unless products.blank?
-  } 
+  }
 
   include RabbitMq::Publisher
   #************************** Archive scope ends here *****************************#
@@ -134,10 +134,11 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
       :product_name => I18n.t('helpdesk.time_sheets.product'), 
       :group_name => I18n.t('helpdesk.time_sheets.group') }    
   end                    
-  
+
   # Used by API v2
   def self.filter(filter_options=FILTER_OPTIONS, user=User.current)
-    relation = scoped.where(permissible_ticket_conditions(user))
+    query_hash = permissible_query_hash(user)
+    relation = scoped.where(query_hash[:conditions]).joins(query_hash[:joins])
     filter_options.each_pair do |key, value|
       clause = filter_conditions(filter_options)[key.to_sym] || {}
       relation = relation.where(clause[:conditions]).joins(clause[:joins]) # where & join chaining
@@ -171,16 +172,27 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
   end
 
   # Used by API v2
-  def self.permissible_ticket_conditions(user)
-    # Not spammed tickets only
-    ticket_conditions = "`helpdesk_tickets`.spam =0"
+  def self.permissible_query_hash user
+    schema_less_ticket_table, ticket_table, timesheet_table = Helpdesk::SchemaLessTicket.table_name, Helpdesk::Ticket.table_name, Helpdesk::TimeSheet.table_name
+    ticket_model = Helpdesk::Ticket.model_name
 
-    # get permissible tickets for the user.
-    conditions =  user.agent? ? Helpdesk::Ticket.agent_permission(user) : [ "`helpdesk_tickets`.requester_id=?", user.id ]
+    query_hash = {}
+    conditions = []
+    spam_condition = "#{ticket_table}.spam = 0"
 
-    # Merge above two conditions.
-    conditions[0] = conditions.present? ? "#{ticket_conditions} AND #{conditions[0]}"  : ticket_conditions 
-    conditions
+    if user.agent? 
+      if !user.agent.all_ticket_permission
+        conditions = Helpdesk::Ticket.permissible_condition(user)
+        ticket_join_table = "INNER JOIN #{schema_less_ticket_table} ON #{ticket_table}.id = #{schema_less_ticket_table}.ticket_id AND #{ticket_table}.account_id = #{schema_less_ticket_table}.account_id" if Account.current.features?(:shared_ownership)
+      end
+    else
+      conditions = ["#{ticket_table}.requester_id = ?", user.id ]
+    end
+
+    conditions[0] = (conditions.blank? ? spam_condition : "#{conditions[0]} AND #{spam_condition}")
+    query_hash[:conditions] = conditions
+    query_hash[:joins] = ticket_join_table
+    query_hash
   end
 
   def hours 
@@ -231,7 +243,7 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
   def status_name
     workable.status_name
   end
-  
+
   def group_by_day_criteria
     executed_at.to_date.to_s(:db)
   end
@@ -280,7 +292,7 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
     time += (Time.zone.now.to_time - start_time.to_time).abs.round if start_time
     time
   end
-  
+
   private
 
   def update_timer_activity

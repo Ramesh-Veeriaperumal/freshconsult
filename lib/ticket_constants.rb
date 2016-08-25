@@ -59,7 +59,7 @@ module TicketConstants
   TYPE_NAMES_BY_KEY = Hash[*TYPE.map { |i| [i[2], i[1]] }.flatten]
   TYPE_KEYS_BY_TOKEN = Hash[*TYPE.map { |i| [i[0], i[2]] }.flatten]
   TYPE_NAMES_BY_SYMBOL = Hash[*TYPE.map { |i| [i[0], i[1]] }.flatten]
-  
+
   DEFAULT_COLUMNS_ORDER = [ :responder_id, :group_id, :created_at, :due_by, :status, :priority,
     :ticket_type, :source, "helpdesk_tags.name", :owner_id,
     :requester_id, "helpdesk_schema_less_tickets.product_id" ]
@@ -67,6 +67,9 @@ module TicketConstants
   ARCHIVE_DEFAULT_COLUMNS_ORDER = [ :responder_id, :group_id, :created_at, :due_by, :status, :priority,
     :ticket_type, :source, "helpdesk_tags.name", "users.customer_id", :owner_id,
     :requester_id, :product_id ]
+
+  SHARED_AGENT_COLUMNS_ORDER = ["helpdesk_schema_less_tickets.long_tc04", "any_agent_id"]
+  SHARED_GROUP_COLUMNS_ORDER = ["helpdesk_schema_less_tickets.long_tc03", "any_group_id"]
   
   DEFAULT_COLUMNS =  [
     [ :status,              'status',           :dropdown],
@@ -95,7 +98,7 @@ module TicketConstants
     [ :owner_id,            "customers",        :customer],
     [ :created_at,          "created_at",       :created_at],
     [ :requester_id,        'requester',        :requester],
-    [ :product_id,          'products',       :dropdown]
+    [ :product_id,          'products',         :dropdown]
   ]
   
   
@@ -106,7 +109,27 @@ module TicketConstants
   ARCHIVE_DEFAULT_COLUMNS_OPTIONS = Hash[*ARCHIVE_DEFAULT_COLUMNS.map { |i| [i[0], i[1]] }.flatten]
   ARCHIVE_DEFAULT_COLUMNS_BY_KEY = Hash[*ARCHIVE_DEFAULT_COLUMNS.map { |i| [i[2], i[1]] }.flatten]
   ARCHIVE_DEFAULT_COLUMNS_KEYS_BY_TOKEN = Hash[*ARCHIVE_DEFAULT_COLUMNS.map { |i| [i[0], i[2]] }.flatten]
-  
+
+  FILTER_MODES = {:primary => 0, :internal => 1, :any => 2}
+
+  SHARED_AGENT_COLUMNS = [
+    ["helpdesk_schema_less_tickets.long_tc04",  :dropdown,          FILTER_MODES[:internal] ],
+    ["any_agent_id",                            :special_responder, FILTER_MODES[:any] ]
+  ]
+
+  SHARED_GROUP_COLUMNS = [
+    ["helpdesk_schema_less_tickets.long_tc03",  :dropdown,          FILTER_MODES[:internal] ],
+    ["any_group_id",                            :special_responder, FILTER_MODES[:any] ]
+  ]
+
+  SHARED_AGENT_COLUMNS_KEYS_BY_TOKEN       = Hash[*SHARED_AGENT_COLUMNS.map { |i| [i[0], i[1]] }.flatten]
+  SHARED_AGENT_COLUMNS_CONDITIONS_BY_MODE  = Hash[*SHARED_AGENT_COLUMNS.map { |i| [i[2], i[0]] }.flatten]
+  SHARED_AGENT_COLUMNS_MODE_BY_NAME        = Hash[*SHARED_AGENT_COLUMNS.map { |i| [i[0], i[2]] }.flatten]
+
+  SHARED_GROUP_COLUMNS_KEYS_BY_TOKEN       = Hash[*SHARED_GROUP_COLUMNS.map { |i| [i[0], i[1]] }.flatten]
+  SHARED_GROUP_COLUMNS_CONDITIONS_BY_MODE  = Hash[*SHARED_GROUP_COLUMNS.map { |i| [i[2], i[0]] }.flatten]
+  SHARED_GROUP_COLUMNS_MODE_BY_NAME        = Hash[*SHARED_GROUP_COLUMNS.map { |i| [i[0], i[2]] }.flatten]
+
   DUE_BY_TYPES = [
     [ :all_due,         'all_due',               1 ], # If modified, _auto_refresh.html.erb has to be modified.
     [ :due_today,       'due_today',             2 ], # By Shridar.
@@ -205,7 +228,9 @@ module TicketConstants
     :source => "source",
     :status => "status",
     :requester => "requester_id",
-    :company => "owner_id"
+    :company => "owner_id",
+    :internal_agent => SHARED_AGENT_COLUMNS_ORDER[0],
+    :internal_group => SHARED_GROUP_COLUMNS_ORDER[0]
   }
   # CC emails count
   MAX_EMAIL_COUNT = 50

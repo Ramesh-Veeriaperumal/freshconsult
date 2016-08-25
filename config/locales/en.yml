@@ -110,6 +110,7 @@ en:
   no_agents_in_selected_group: "No agents in selected group"
   unassign: "Unassign"
   send_feedback: "Send"
+  no_groups_mapped_for_status: "No groups mapped for the status"
   sidebar_help: "Help"
   support_title: "Support"
   ticket_form:
@@ -125,8 +126,12 @@ en:
   filter_options:
     status: "Status"
     responder_id: "Agents"
+    internal_agent: "Internal Agents"
+    any_agent: "Agents or Internal Agents"
     ticket_type: "Type"
     group_id: "Groups"
+    internal_group: "Internal Groups"
+    any_group: "Groups or Internal Groups"
     source: "Source"
     priority: "Priority"
     due_by: "Due By"
@@ -311,6 +316,8 @@ en:
       status: Status
       group: Group
       agent: Agent
+      internal_group: Internal Group
+      internal_agent: Internal Agent
       priority: Priority
       description: Description
       product: Product
@@ -937,6 +944,7 @@ en:
         validate_regexp: Validate using Regular Expression
         regexp_example_html: "For example, To match a string that contains only alphabets & numbers: <b> /^[a-zA-Z0-9]*$/ </b>. To match a string that starts with word \"fresh\" <b> %{regex} </b>."
         max_choices: "Maximum items reached"
+        mapped_internal_groups: "Mapped Internal Groups"
     portal:
       delete_confirm:
         title: "Deleting this portal will remove"
@@ -6043,6 +6051,8 @@ en:
         spam: Spam
         monitored_by: Tickets I'm Watching
         raised_by_me: Tickets I Requested
+        shared_by_me: Tickets I've shared
+        shared_with_me: Tickets shared with me
         my_closed: My Closed Tickets
         my_open: My Open Tickets
         tickets_by: Tickets by

@@ -62,21 +62,24 @@ class Helpdesk::Activity < ActiveRecord::Base
   }
 
   scope :newest_first, :order => "helpdesk_activities.id DESC"
-  
- scope :permissible , lambda {|user| { 
- :joins => "LEFT JOIN `helpdesk_tickets` ON helpdesk_activities.notable_id = helpdesk_tickets.id AND helpdesk_activities.account_id = helpdesk_tickets.account_id AND notable_type = 'Helpdesk::Ticket'"  ,
- :conditions => send(:agent_permission ,user) } if user.agent? && !user.agent.all_ticket_permission  }
-  
-  def self.agent_permission user
-    case Agent::PERMISSION_TOKENS_BY_KEY[user.agent.ticket_permission]
-    when :all_tickets
-      []
-    when :group_tickets
-      ["(helpdesk_activities.notable_type !=?)   OR (helpdesk_tickets.group_id in (?) OR helpdesk_tickets.responder_id=?)",
-          'Helpdesk::Ticket' , user.agent_groups.pluck(:group_id).insert(0,0), user.id]
-    when :assigned_tickets
-      ["(helpdesk_activities.notable_type !=?)   OR (helpdesk_tickets.responder_id=?)" ,'Helpdesk::Ticket', user.id]  
+
+  scope :permissible , lambda {|user| permissible_query_hash(user)}
+
+  def self.permissible_query_hash user
+    query_hash = {}
+    schema_less_ticket_table, ticket_table, activity_table = Helpdesk::SchemaLessTicket.table_name, Helpdesk::Ticket.table_name, Helpdesk::Activity.table_name 
+    ticket_model = Helpdesk::Ticket.model_name
+    ticket_join_table = ticket_table
+
+    if user.agent? and !user.agent.all_ticket_permission
+      query_hash[:conditions] = Helpdesk::Ticket.permissible_condition(user)
+      query_hash[:conditions][0] += " OR (#{activity_table}.notable_type != ?)"
+      query_hash[:conditions] << ticket_model
+      ticket_join_table = "(#{ticket_table} INNER JOIN #{schema_less_ticket_table} ON #{ticket_table}.id = #{schema_less_ticket_table}.ticket_id AND #{ticket_table}.account_id = #{schema_less_ticket_table}.account_id)" if Account.current.features?(:shared_ownership)
     end
+
+    query_hash[:joins] = "LEFT JOIN #{ticket_join_table} ON #{activity_table}.notable_id = #{ticket_table}.id AND #{activity_table}.account_id = #{ticket_table}.account_id AND notable_type = '#{ticket_model}'"
+    query_hash
   end
 
   def ticket_activity_type

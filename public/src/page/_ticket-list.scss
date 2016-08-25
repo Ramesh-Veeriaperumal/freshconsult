@@ -852,6 +852,34 @@
 		}
 	}
 
+	#ticket-leftFilter{
+		.shared_sort_menu{
+			min-width: 185px;
+		}
+		.shared_filter_text{
+			color: #333;
+			font-weight: 500;
+		  margin-bottom: 3px;
+		  display: block;
+		  width: 175px;
+		  overflow: hidden;
+		  text-overflow: ellipsis;
+		  white-space: nowrap;
+
+		  &:after {
+		    border-left: 4px solid transparent;
+		    border-right: 4px solid transparent;
+		    border-top: 4px solid #888;
+		  }
+
+		  &.lengthier_text {
+		  	&:after {
+		  		left: 170px;
+		  	}
+		  }
+		}
+	}
+
 }
 
 #ticket-toolbar [disabled] {

@@ -2126,12 +2126,38 @@ class TicketsControllerTest < ActionController::TestCase
     assert_response 204
   end
 
+  def test_delete_group_ticket_permission_internal_agent_valid
+    User.any_instance.stubs(:can_view_all_tickets?).returns(false).at_most_once
+    User.any_instance.stubs(:group_ticket_permission).returns(true).at_most_once
+    User.any_instance.stubs(:assigned_ticket_permission).returns(false).at_most_once
+    group = create_group_with_agents(@account, agent_list: [@agent.id])
+    t = create_ticket(ticket_params_hash.merge(internal_group_id: group.id))
+    Account.any_instance.stubs(:features?).with(:shared_ownership).returns(true)
+    delete :destroy, construct_params(id: t.display_id)
+    User.any_instance.unstub(:can_view_all_tickets?, :group_ticket_permission, :assigned_ticket_permission)
+    Account.any_instance.unstub(:features?)
+    assert_response 204
+  end
+
   def test_delete_assigned_ticket_permission_valid
     User.any_instance.stubs(:can_view_all_tickets?).returns(false).at_most_once
     User.any_instance.stubs(:group_ticket_permission).returns(false).at_most_once
     User.any_instance.stubs(:assigned_ticket_permission).returns(true).at_most_once
     t = create_ticket(ticket_params_hash)
     Helpdesk::Ticket.any_instance.stubs(:responder_id).returns(@agent.id)
+    delete :destroy, construct_params(id: t.display_id)
+    User.any_instance.unstub(:can_view_all_tickets?, :group_ticket_permission, :assigned_ticket_permission)
+    assert_response 204
+    Helpdesk::Ticket.any_instance.unstub(:responder_id)
+  end
+
+  def test_delete_assigned_ticket_permission_internal_agent_valid
+    User.any_instance.stubs(:can_view_all_tickets?).returns(false).at_most_once
+    User.any_instance.stubs(:group_ticket_permission).returns(false).at_most_once
+    User.any_instance.stubs(:assigned_ticket_permission).returns(true).at_most_once
+    t = create_ticket(ticket_params_hash)
+    Helpdesk::Ticket.any_instance.stubs(:internal_agent_id).returns(@agent.id)
+    Account.any_instance.stubs(:features?).with(:shared_ownership).returns(true)
     delete :destroy, construct_params(id: t.display_id)
     User.any_instance.unstub(:can_view_all_tickets?, :group_ticket_permission, :assigned_ticket_permission)
     assert_response 204

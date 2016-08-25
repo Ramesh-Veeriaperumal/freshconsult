@@ -233,6 +233,20 @@ module Helpdesk::TicketFilterMethods
     cookies[:wf_order_type] = (params[:wf_order_type] ? params[:wf_order_type] : ( (!cookies[:wf_order_type].blank?) ? cookies[:wf_order_type] : DEFAULT_SORT_ORDER )).to_sym
   end
 
+  def current_agent_mode
+    return @agent_mode if @agent_mode.present?
+    return @cached_filter_data[:agent_mode].to_i if @cached_filter_data && !@cached_filter_data[:agent_mode].blank?
+    cookies[:agent_mode] = (params[:agent_mode] ? params[:agent_mode] : ( (!cookies[:agent_mode].blank?) ? cookies[:agent_mode] : DEFAULT_AGENT_MODE))
+    cookies[:agent_mode].to_i
+  end
+
+  def current_group_mode
+    return @group_mode if @group_mode.present?
+    return @cached_filter_data[:group_mode].to_i if @cached_filter_data && !@cached_filter_data[:group_mode].blank?
+    cookies[:group_mode] = (params[:group_mode] ? params[:group_mode] : ( (!cookies[:group_mode].blank?) ? cookies[:group_mode] : DEFAULT_GROUP_MODE))
+    cookies[:group_mode].to_i
+  end
+
   def current_selector
     current_filter#.reject { |f| CONTEXTS.include? f }
   end
