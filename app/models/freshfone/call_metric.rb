@@ -135,7 +135,7 @@ class Freshfone::CallMetric < ActiveRecord::Base
     end
 
     def round_robin_routing?
-      self.freshfone_call.round_robin_call? && self.queue_wait_time.blank?
+      self.freshfone_call.incoming? && self.freshfone_call.round_robin_call? && self.queue_wait_time.blank?
     end
 
     def calculate_ring_time(queued_at = nil)
