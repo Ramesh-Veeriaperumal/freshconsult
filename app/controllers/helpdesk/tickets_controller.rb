@@ -862,10 +862,30 @@ class Helpdesk::TicketsController < ApplicationController
 
   def latest_note
     ticket = current_account.tickets.permissible(current_user).find_by_display_id(params[:id])
-    if ticket.nil?
-      render :text => t("flash.general.access_denied")
-    else
-      render :partial => "/helpdesk/shared/ticket_overlay", :locals => {:ticket => ticket}
+    respond_to do |format|
+
+      format.html {
+        if ticket.nil?
+          render :text => t("flash.general.access_denied")
+        else
+          render :partial => "/helpdesk/shared/ticket_overlay", :locals => {:ticket => ticket}
+        end
+      }
+      format.nmobile {
+        if ticket.nil?  
+            access_denied
+        else   
+          latest_note_hash = latest_note_helper(ticket)
+          overlay_user = latest_note_hash[:user]
+          user_hash = {
+            :user => { :name => overlay_user.name, :avatar_url => overlay_user.medium_avatar}            
+          }           
+          user_hash[:group] =  {:name => latest_note_hash[:ticket_group].name, :id => latest_note_hash[:ticket_group].id} if latest_note_hash[:ticket_group]
+          latest_note_hash.except!(:user, :ticket_group)
+          latest_note_hash.merge!(user_hash)
+          render :json => latest_note_hash.to_json()
+        end 
+      }    
     end
   end
 

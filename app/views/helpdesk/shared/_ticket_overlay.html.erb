@@ -1,18 +1,12 @@
 <div class="ticket_overlay_tip">
 	<div class="ticket_overlay_content">
-		<%
-			latest_note = ticket.notes.visible.exclude_source('meta').newest_first.first
-			unless latest_note.nil?
-				action_msg = latest_note.fwd_email? ? 'helpdesk.tickets.overlay_forward' : (latest_note.note? ? 'helpdesk.tickets.overlay_note' : 'helpdesk.tickets.overlay_reply')
-				overlay_user = latest_note.user
-				overlay_time = latest_note.created_at
-				overlay_content = latest_note.body
-			else
-				overlay_user = ticket.requester
-				overlay_time = ticket.created_at
-				overlay_content = ticket.description
-				action_msg = 'helpdesk.tickets.overlay_submitted_ticket'
-			end
+		<%			
+			latest_note_hash = latest_note_helper(ticket)
+
+			action_msg = latest_note_hash[:action_msg]
+			overlay_user = latest_note_hash[:user]
+			overlay_time = latest_note_hash[:created_at]
+			overlay_content = latest_note_hash[:body]
 		%>
 
 		<div class="user_and_time">
@@ -22,7 +16,7 @@
 					<%= h(overlay_user.name) %> 
 					<% unless ticket.group.nil? %> <span class="ticket_overlay_group"><%= h(ticket.group.name) %></span> <% end %>
 				</span>
-				<span class="ticket_overlay_action"> <%= t("#{action_msg}") %> </span>
+				<span class="ticket_overlay_action"> <%= action_msg %> </span>
 				<div class="ticket_overlay_time">
 					<%= t("helpdesk.tickets.overlay_time", :time_in_words => time_ago_in_words(overlay_time)) %>
 					<%= formated_date(overlay_time) %>
