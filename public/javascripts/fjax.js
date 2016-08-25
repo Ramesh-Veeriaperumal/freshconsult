@@ -22,7 +22,7 @@ window.Fjax = {
       })
       if(formChanged) {
         var conf = confirm(customMessages.confirmNavigate);
-        if(conf) {
+        if(!conf) {
           xhr.abort();  
           return false;
         }

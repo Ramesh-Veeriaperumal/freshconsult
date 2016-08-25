@@ -1903,7 +1903,7 @@ en:
         edit_portal: Edit Portal
         customize_portal: "Customize portal"
         save_and_customize: "Save & Customize portal"
-        save_and_continue: You have unsaved changes in your form. Do you want to save and continue?
+        save_and_continue: You have unsaved changes. Are you sure you want to continue?
         helpdesk_phone: Helpdesk Phone
         ago: ago
         last_published: Your portal was last published
