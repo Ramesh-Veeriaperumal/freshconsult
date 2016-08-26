@@ -58,10 +58,6 @@ module Facebook
 
     FB_MESSAGE_PREFIX           = "m_"
     
-    FACEBOOK_GRAPH_URL          = "https://graph.facebook.com"
-
-    GRAPH_API_VERSION           = "v2.6"
-    
   end
 end
   
