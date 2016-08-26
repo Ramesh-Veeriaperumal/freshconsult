@@ -918,9 +918,6 @@ var scrollToError = function(){
 			_form.find('.forward_email li.choice').remove();
 		}
 		$('#response_added_alert').remove();
-
-		// Remove formChanged field in the form
-		_form.data("formChanged",false);
 	});
 
 	// More Event bindings for Draft Saving
@@ -1060,9 +1057,6 @@ var scrollToError = function(){
 		} else {
 			_form.find('input[type=submit]').prop('disabled', false);
 		}
-
-		// Remove formChanged field in the form
-		_form.data("formChanged",false);
 	});
 
 
@@ -1242,8 +1236,6 @@ var scrollToError = function(){
 				if(_form.attr('rel') == 'tweet_form'){
 					getTweetTypeAndBind();
 				}
-
-				_form.data("formChanged",false)
 
 				Helpdesk.TicketStickyBar.check();
 
@@ -1663,22 +1655,6 @@ var scrollToError = function(){
 
 	//RECENT TICKETS SETUP
 	NavSearchUtils.saveToLocalRecentTickets(TICKET_DETAILS_DATA);	
-
-	// Check for when form changes occur
-	var selectors = [
-		".form-unsaved-changes-trigger input",
-		".form-unsaved-changes-trigger textarea",
-		".form-unsaved-changes-trigger .redactor_editor",
-		".form-unsaved-changes-trigger select"
-	];
-	$('body').on('change.ticket_details input.ticket_details', selectors.join(","), function(event){
-		var form = $(event.target).parents('.form-unsaved-changes-trigger');
-		form.data("formChanged","true");
-	})
-
-	// Need to set this on global for Fjax.js
-	if(typeof customMessages=='undefined') customMessages = {};
-	customMessages.confirmNavigate = TICKET_DETAILS_DATA.confirm_navigation;
 
 };
 // TICKET DETAILS DOMREADY ENDS

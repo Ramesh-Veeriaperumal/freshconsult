@@ -5365,7 +5365,6 @@ en:
       in_progress_text_you: "A bulk update started by you is in progress."
       bulk_action_submit_label: "Confirm and update"
     cannot_preview_attachment: No preview available.
-    confirm_navigation: You have unsaved changes. Are you sure you want to continue?
   archive_ticket:
     title: Archived tickets
     no_reply_msg: This ticket has been archived.

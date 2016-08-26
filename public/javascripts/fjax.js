@@ -16,13 +16,9 @@ window.Fjax = {
 
     callBeforeSend: function(evnt,xhr,settings,options) {
       var form = $('.form-unsaved-changes-trigger');
-      var formChanged = false;
-      form.each(function(){ 
-        formChanged = $(this).data('formChanged') ? true : formChanged;
-      })
-      if(formChanged) {
+      if(form.data('formChanged')) {
         var conf = confirm(customMessages.confirmNavigate);
-        if(!conf) {
+        if(conf) {
           xhr.abort();  
           return false;
         }

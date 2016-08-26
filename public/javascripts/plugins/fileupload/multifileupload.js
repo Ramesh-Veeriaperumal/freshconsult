@@ -252,7 +252,6 @@ Helpdesk = Helpdesk || {};
             form.on("submit", function(event) {
                 // turning of reminder
                 _this.reminder = false;
-                form.data("formChanged",false);
                 // preventing from edit note
                 function normal_attachments() {
                     if ($('#attachment-modal').length == 0) {
