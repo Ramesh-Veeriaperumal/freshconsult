@@ -1,7 +1,7 @@
 Authority::Authorization::PrivilegeList.build do
   manage_tickets do
     resource :"ember/bootstrap"
-    resource :"ember/ticket", only: [:index]
+    resource :"ember/ticket", only: [:index, :execute_scenario, :bulk_execute_scenario]
     resource :"ember/scenario_automation", only: [:index]
   end
 

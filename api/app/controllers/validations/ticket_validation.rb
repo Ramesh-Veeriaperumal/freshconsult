@@ -86,8 +86,7 @@ class TicketValidation < ApiValidation
   validates :twitter_id, :phone, :name, data_type: { rules: String, allow_nil: true }
   validates :twitter_id, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }
   validates :phone, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }
-
-  validates :ids, required: true, data_type: { rules: Array, allow_nil: false }, array: { custom_numericality: { only_integer: true, greater_than: 0, allow_nil: true, ignore_string: :allow_string_param, greater_than: 0 } }, if: :is_bulk_action?
+  validates :ids, required: true, data_type: { rules: Array, allow_nil: false }, array: { custom_numericality: { only_integer: true, greater_than: 0, allow_nil: false, ignore_string: :allow_string_param, greater_than: 0 } }, if: :is_bulk_action?
 
   def initialize(request_params, item, allow_string_param = false)
     @request_params = request_params
@@ -171,7 +170,7 @@ class TicketValidation < ApiValidation
   end
 
   def is_bulk_action?
-    [:bulk_delete, :bulk_spam].include?(validation_context)
+    [:bulk_delete, :bulk_spam, :bulk_execute_scenario].include?(validation_context)
   end
 
   def source_as_outbound_email?

@@ -106,6 +106,10 @@ Helpkit::Application.routes.draw do
       end
     end
     resources :ticket_filters, controller: 'ember/ticket_filters', only: :index
+
+    match '/tickets/bulk_execute_scenario/:scenario_id' => 'ember/tickets#bulk_execute_scenario', via: :put
+    match '/tickets/:id/execute_scenario/:scenario_id' => 'ember/tickets#execute_scenario', via: :put
+    
     resources :tickets, controller: 'ember/tickets' do
       collection do
         put :bulk_delete

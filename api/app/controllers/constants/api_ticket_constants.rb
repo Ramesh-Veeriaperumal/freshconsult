@@ -57,7 +57,7 @@ module ApiTicketConstants
     bulk_spam: [:json]
   }.freeze
 
-  LOAD_OBJECT_EXCEPT = [:bulk_delete, :bulk_spam].freeze
+  LOAD_OBJECT_EXCEPT = [:bulk_delete, :bulk_spam, :execute_scenario, :bulk_execute_scenario].freeze
 
   MAX_EMAIL_COUNT = TicketConstants::MAX_EMAIL_COUNT - 1
 

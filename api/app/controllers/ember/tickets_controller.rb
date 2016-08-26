@@ -10,28 +10,46 @@ module Ember
     end
 
     def bulk_delete
-      return unless validate_bulk_action_params
+      return unless validate_body_params(*ApiTicketConstants::BULK_ACTION_FIELDS)
       sanitize_bulk_action_params
-      fetch_objects
+      fetch_objects(ApiTicketConstants::BULK_DELETE_PRELOAD_OPTIONS)
       destroy
       render_bulk_action_response(bulk_action_succeeded_items, bulk_action_errors)
     end
 
     def bulk_spam
-      return unless validate_bulk_action_params
+      return unless validate_body_params(*ApiTicketConstants::BULK_ACTION_FIELDS)
       sanitize_bulk_action_params
-      fetch_objects
+      fetch_objects(ApiTicketConstants::BULK_DELETE_PRELOAD_OPTIONS)
       spam
       render_bulk_action_response(bulk_action_succeeded_items, bulk_action_errors)
     end
 
+    def bulk_execute_scenario
+      return unless validate_body_params(*ApiTicketConstants::BULK_ACTION_FIELDS)
+      sanitize_bulk_action_params
+      return unless load_scenario
+      fetch_objects
+      Tickets::BulkScenario.perform_async(ticket_ids: @items.map(&:display_id), scenario_id: params[:scenario_id])
+      render_bulk_action_response(bulk_action_succeeded_items, bulk_action_errors)
+    end
+
+    def execute_scenario
+      return unless load_scenario
+      fetch_objects
+      return head 404 unless @item
+      @va_rule.trigger_actions(@item, api_current_user)
+      @item.save # TODO: verify if it should be save_ticket or save
+      @item.create_scenario_activity(@va_rule.name)
+      head 204
+    end
+
     private
 
-      def validate_bulk_action_params
-        params[cname].permit(*ApiTicketConstants::BULK_ACTION_FIELDS)
-        ticket_validation = TicketValidation.new(params[cname], nil)
+      def validate_body_params(*args)
+        params[cname].permit(*args)
+        ticket_validation = TicketValidation.new(params, nil)
         return true if ticket_validation.valid?(action_name.to_sym)
-
         render_errors ticket_validation.errors, ticket_validation.error_options
         false
       end
@@ -40,9 +58,17 @@ module Ember
         prepare_array_fields ApiTicketConstants::BULK_ACTION_ARRAY_FIELDS.map(&:to_sym)
       end
 
-      def fetch_objects(items = scoper)
-        id_list = params[cname][:ids] || Array.wrap(params[cname][:id])
-        @items = items.preload(ApiTicketConstants::BULK_DELETE_PRELOAD_OPTIONS).find_all_by_param(permissible_ticket_ids(id_list))
+      def load_scenario
+        @va_rule ||= current_account.scn_automations.find_by_id(params[:scenario_id])
+        return true if @va_rule.present? && @va_rule.visible_to_me? && @va_rule.check_user_privilege
+        render_errors(scenario_id: :"is invalid")
+        false
+      end
+
+      def fetch_objects(preload_options = [], items = scoper)
+        id_list = params[cname][:ids] || Array.wrap(params[:id])
+        @items = items.preload(preload_options).find_all_by_param(permissible_ticket_ids(id_list))
+        @item = @items.first
       end
 
       def permissible_ticket_ids(id_list)
@@ -65,7 +91,7 @@ module Ember
 
       def tickets_with_assigned_permission(ids)
         scoper.assigned_tickets_permission(api_current_user, ids).map(&:display_id)
-      end  
+      end
 
       def bulk_action_errors
         @bulk_action_errors ||=
@@ -87,7 +113,7 @@ module Ember
       end
 
       def bulk_action_failed_items
-        @failed_ids ||= @items_failed.map(&:display_id)
+        @failed_ids ||= @items_failed ? @items_failed.map(&:display_id) : []
       end
 
       wrap_parameters(*wrap_params)
