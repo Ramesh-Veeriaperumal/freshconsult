@@ -111,7 +111,8 @@ module Fdadmin::AccountsControllerMethods
 	end
 
 	def active_account_details(account)
-		{ available_credit: account.freshfone_credit.available_credit }
+		ff_credit = account.freshfone_credit
+		{ available_credit: ff_credit.present? ? ff_credit.available_credit : 0.00 }
 	end
 
 	def freshfone_activation_requested?(account)
