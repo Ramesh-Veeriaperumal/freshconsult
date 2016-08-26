@@ -71,6 +71,8 @@ try {
 	<% if @ticket.twitter? %>
 	jQuery(document).ready(function(){
 		jQuery('#twitter_handle').change();
+		// The above change should not trigger the formChanged flag
+		jQuery('#twitter_handle').parents('form').data('formChanged',false);
 	});
 	<% end %>
 	<% unless @draft.nil? %>

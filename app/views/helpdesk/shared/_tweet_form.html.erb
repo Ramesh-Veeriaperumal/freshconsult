@@ -59,5 +59,7 @@ if (!istwitter || req_twt_id == "" || twitter_handle == "")
 return ;
 } 
 jQuery('#twitter_handle').change(); 
+// The above change should not trigger the formChanged flag
+jQuery('#twitter_handle').parents('form').data('formChanged',false);
 });
 <% end %>
