@@ -20,7 +20,7 @@ module Reports::TimesheetReport
     :customer_name => "customer_id",
     :agent_name => "user_id",
     :group_name => "group_id",
-    :product_id => "product_id",
+    :product_name => "product_id",
     :workable => "display_id",
     :group_by_day_criteria => "executed_at"
   }

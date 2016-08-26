@@ -56,7 +56,24 @@ jQuery(document).ready(function() {
 });
 
 //Analytics
+
+function adjustFontSize(content, el) {
+    var len = 0;
+    if(content.indexOf('.') == -1) {
+      len = content.length;
+    } else {
+      len = content.indexOf('.')+3  
+    }
     
+    if(len <= 12){
+        jQuery(el).css('font-size','36px');
+    } else if( len <= 24){
+        jQuery(el).css('font-size','26px');
+    } else {
+        jQuery(el).css('font-size','16px');
+    }
+}
+
 function recordAnalytics(){
 
     jQuery(document).on("script_loaded", function (ev, data) {
@@ -106,7 +123,7 @@ var savedReportUtil = (function() {
         },
         save_util : Helpkit.commonSavedReportUtil,
         remote_filters : ["customers_filter"],
-        filters : [ "customers_filter","user_id" ,"billable","products_id","group_id","ticket_type","priority","group_by_field"],
+        filters : [ "customers_filter","user_id" ,"billable","group_id","products_id","ticket_type","priority","group_by_field"],
         filterChanged : false,
         bindSavedReportEvents : function() {
             var _this = this;
@@ -454,7 +471,7 @@ var savedReportUtil = (function() {
 
  function setFilterText() {
 
-      var filters_name = [ "customers_filter","user_id" ,"billable","products_id","group_id","ticket_type","priority"];
+      var filters_name = [ "customers_filter","user_id" ,"billable","group_id","products_id","ticket_type","priority"];
 
       var labels = [
         I18n.t('helpdesk.time_sheets.customer'),
@@ -503,7 +520,7 @@ function getPdfParams() {
   var remove = [];
   var params = {};
   var form_data = [];//jQuery('#report_filters').serializeArray(); 
-  var filters_name = [ "customers_filter","user_id" ,"billable","products_id","group_id","ticket_type","priority","group_by_field"];
+  var filters_name = [ "customers_filter","user_id" ,"billable","group_id","products_id","ticket_type","priority","group_by_field"];
   params.data_hash = {};
   jQuery.each(filters_name,function(idx,condition) {
     var val = jQuery('#' + condition).select2('val');
@@ -527,7 +544,7 @@ function getPdfParams() {
 }
 
 function getFilterTextPDF(){
-  var filters_name = [ "customers_filter","user_id" ,"billable","products_id","group_id","ticket_type","priority"];
+  var filters_name = [ "customers_filter","user_id" ,"billable","group_id","products_id","ticket_type","priority"];
   var labels = [
     I18n.t('helpdesk.time_sheets.customer'),
     I18n.t('helpdesk.time_sheets.agent'),
