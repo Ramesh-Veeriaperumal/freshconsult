@@ -57,6 +57,7 @@ class Search::Filters::Docs
     
     # Get document IDs from ES response
     parsed_response = JSON.parse(response)
+    Rails.logger.info "ES records response:: Account -> #{Account.current.id}, Took:: #{parsed_response['took']}"
     record_ids      = parsed_response['hits']['hits'].collect { |record| record['_id'] }
     total_entries   = parsed_response['hits']['total']
     
