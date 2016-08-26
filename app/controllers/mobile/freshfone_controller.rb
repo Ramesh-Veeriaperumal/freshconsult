@@ -25,7 +25,7 @@ class Mobile::FreshfoneController < ApplicationController
 			format.nmobile {
 				freshfone_user = current_user.freshfone_user
 				unless freshfone_user.nil?
-					accept_incoming = current_user.freshfone_user_online? && !freshfone_user.available_on_phone
+					accept_incoming = !current_user.freshfone_user_offline?
 				end
 				render :json => {:accept_incoming => accept_incoming}
 			}
