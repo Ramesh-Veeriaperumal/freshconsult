@@ -362,7 +362,6 @@ def set_time_range(prev_time = false)
       if entry.current == 1
         @row_count += (entry.count || 0)
         hash_key = entry.send(ALIAS_GROUP_NAME[group_by_caluse]) || 0
-        hash_key = hash_key.to_s unless group_by_caluse == :group_by_day_criteria
         @group_count[hash_key] += (entry.time_spent || 0)
         if @group_names[hash_key].blank?
           if group_by_caluse == :workable
@@ -389,7 +388,6 @@ def set_time_range(prev_time = false)
     result = {}
     entries.each do |entry|
       hash_key = entry.send(ALIAS_GROUP_NAME[group_by_caluse]) || 0
-      hash_key = hash_key.to_s unless group_by_caluse == :group_by_day_criteria
       result[hash_key] ||= []  
       result[hash_key] << entry
     end
@@ -405,9 +403,9 @@ def set_time_range(prev_time = false)
     @time_sheets = timesheet_entries(offset)
     @time_sheets.each do |key, entries|
       if group_by_caluse == :group_by_day_criteria
-        entries.select!{|entry| ((key == Date.strptime(params[:previous_group_id], "%Y-%m-%d") && entry.id >= params[:previous_entry_id].to_i) || (key > Date.strptime(params[:previous_group_id], "%Y-%m-%d")))}
+        entries.select!{|entry| ((key == Time.zone.parse(params[:previous_group_id]) && entry.id >= params[:previous_entry_id].to_i) || (key > Time.zone.parse(params[:previous_group_id])))}
       else
-        entries.select!{|entry| ((key.to_s == params[:previous_group_id] && entry.id.to_s >= params[:previous_entry_id]) || (key.to_s > params[:previous_group_id]))}
+        entries.select!{|entry| ((key == params[:previous_group_id].to_i && entry.id >= params[:previous_entry_id].to_i) || (key > params[:previous_group_id].to_i))}
       end
     end
     @time_sheets.stringify_keys!
