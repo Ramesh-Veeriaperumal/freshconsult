@@ -62,6 +62,9 @@ class Helpdesk::ArchiveTicketsController < ApplicationController
   def show
     @to_emails = @ticket.to_emails
     @page_title = %([##{@ticket.display_id}] #{@ticket.subject})
+    
+    # Only store recent tickets in redis which are not spam or not deleted
+    Search::RecentTickets.new(@ticket.display_id).store unless @ticket.spam || @ticket.deleted
 
     respond_to do |format|
       format.html  {

@@ -21,6 +21,7 @@ module ApplicationHelper
   include Freshfone::SubscriptionsHelper
   include DateHelper
   include StoreHelper
+  include Redis::IntegrationsRedis
   include JsonEscape
   
   require "twitter"
@@ -1631,6 +1632,15 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
     @current_account_freshfone_details ||= current_account_freshfone_numbers.map{|n| [n.name.blank? ? "#{n.number}" : "#{CGI.escapeHTML(n.name)} #{n.number}", n.id] }
  end
 
+ def warm_transfer_enabled?
+  current_account.features?(:freshfone_warm_transfer)
+ end
+
+ def transfer_tooltip
+   return t('freshfone.widget.blind_transfer') if warm_transfer_enabled?
+   t('freshfone.widget.transfer_call')
+ end
+
  def freshfone_presence_status_class
   return "ficon-phone-disable" if current_user.freshfone_user_offline? ||
     !freshfone_active_or_trial?
@@ -1757,6 +1767,21 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
     raw TabHelper::TabsRenderer.new( *options, &block ).render
   end
 
+  def fd_node_auth_params
+    aes = OpenSSL::Cipher::Cipher.new('aes-256-cbc')
+    aes.encrypt
+    aes.key = Digest::SHA256.digest(FdNodeConfig["key"]) 
+    aes.iv  = FdNodeConfig["iv"]
+
+    account_data = {
+      :account_id => current_user.account_id, 
+      :user_id    => current_user.id,
+      :features => current_account.node_feature_list
+    }.to_json
+    encoded_data = Base64.encode64(aes.update(account_data) + aes.final)
+    return encoded_data.to_json.html_safe
+  end
+
   def password_policies_for_popover
     return "" if (@password_policy.nil? or @password_policy.new_record?)
     list = Proc.new do
@@ -1772,6 +1797,32 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
     end
     
     content_tag :ul, &list
+  end
+  
+  def fd_socket_host
+    "#{request.protocol}#{FdNodeConfig["socket_host"]}"
+  end
+
+  def cti_app
+    @cti_app ||= current_account.cti_installed_app_from_cache if current_account.features?(:cti)
+    @cti_app
+  end
+
+  def cti_configs
+    if cti_app.present?
+      cti_app.configs
+    end
+  end
+
+  def cti_phone_old_number
+    cti_phone_redis_key = Redis::RedisKeys::INTEGRATIONS_CTI_OLD_PHONE % { :account_id => current_account.id, :user_id => current_user.id }
+    get_integ_redis_key(cti_phone_redis_key)
+  end
+
+  def softfone_enabled?
+    if cti_app.present?
+      cti_configs[:inputs]["softfone_enabled"].to_bool
+    end
   end
 
   def show_onboarding?

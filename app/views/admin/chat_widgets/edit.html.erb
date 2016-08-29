@@ -1,6 +1,6 @@
 <%= render :partial => "helpnote" %>
 <div class="chat-settings">
-  <div id="chat_header" class="chat-header">
+  <div id="chat_header" class="chat-header" data-widget='<%= livechat_setting @widget %>'>
     <h3 class = "lead"> 
       <%= pjax_link_to(h(t('chatwidget_title')), admin_chat_widgets_path, :class =>"") %>
       /&nbsp;<%= (@widget.product ? @widget.product.name : @widget.account.name) %>
@@ -11,10 +11,4 @@
 
 <%= javascript_tag do %>
   var zeroClipBoardSWFPath = "<%= asset_path('/swf/ZeroClipBoard.swf')%>";
-
-  (function($){
-    $(document).one('ready pjax:success' ,function(){
-      window.liveChat.adminSettings.initializeWidget(<%= livechat_setting @widget%>);
-    });
-  })(jQuery);
 <%end%>

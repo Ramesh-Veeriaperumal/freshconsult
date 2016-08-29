@@ -44,7 +44,7 @@
 <script type="text/javascript">
 	(function($){
 
-    $(".recharge-funds").live("click", function(ev){
+    $(".recharge-funds").on("click", function(ev){
       ev.preventDefault();
       $('.show-freshfone-credits').animate({
         height: ['toggle', 'linear']
@@ -52,7 +52,7 @@
       //$(".recharge-funds").toggleClass("plan-expand-click");
     });
 
-    $(".auto-recharge").live("click", function(ev){
+    $(".auto-recharge").on("click", function(ev){
       ev.preventDefault();
       $('.show-freshfone-auto-recharge').animate({
         height: ['toggle', 'linear']

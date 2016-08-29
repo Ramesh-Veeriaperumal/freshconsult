@@ -346,6 +346,7 @@ var TktDetailDom = Class.create({
     dom_helper_data = {};
     jQuery(document, 'body').off("click submit");
     jQuery(document, 'body').off(".ticket_details");
+    jQuery(document).off(".ticket_app_evt");
     //need to clear all sorts of data manipulations when navigating away.
   }
 });

@@ -27,7 +27,7 @@
 																																	this.content_container;
 			this.tab_elements = this.container.find('.popupbox-tabs > li');
 			this.all_tab_links = this.container.find('.popupbox-tabs > li a:not(.persist)');
-			this.tab_links = this.container.find('.popupbox-tabs > li a:not([href=#no_popup])');
+			this.tab_links = this.container.find('.popupbox-tabs > li a:not([href="#no_popup"])');
 		},
 
 		toggleTarget : function (element, toggle) {
@@ -105,7 +105,7 @@
 		},
 
 		isClickInsidePlugin: function ($element) {
-			return (!$element.parents('.popupbox-content, .popupbox-tabs').length);
+			return (!$element.parents('.popupbox-content, .popupbox-tabs').length) && !this.settings.disableCloseOnClick;
 		},
 
 		bindEscapeKey: function () {

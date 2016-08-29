@@ -1,0 +1,13 @@
+<div class="add-call-note p10">
+  <div class= "add-notes-header">
+    <div class="header-text-closed">
+      <%= font_icon "caret-right", :size => 6, :class => "ff-icon caret-right" %>
+      <span class="add_note_text"><%= t('integrations.screen_pop.widget.add_note_text') %></span>
+    </div>
+    <div class="header-text-opened hide">
+      <%= font_icon "caret-down", :size => 6, :class => "ff-icon caret-down muted" %>
+      <span class="edit_note_text muted"><%= t('integrations.screen_pop.widget.edit_note') %></span>
+    </div>
+  </div>
+  <textarea id="call_notes" class="call_notes hide" rows="4" placeholder=""></textarea>
+</div>

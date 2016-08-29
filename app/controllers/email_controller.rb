@@ -1,7 +1,7 @@
 #By shan .. Need to introduce delayed jobs here.
 #Right now commented out delayed_job, with regards to the size of attachments and other things.
 #In future, we can just try using delayed_jobs for non-attachment mails or something like that..
-
+require 'charlock_holmes'
 class EmailController < ApplicationController
 
   include EnvelopeParser
@@ -24,12 +24,13 @@ class EmailController < ApplicationController
   def create
     envelope = params[:envelope]
     if envelope.present? && multiple_envelope_to_address?( envelope_to = get_to_address_from_envelope(envelope))
-      process_email_for_each_to_email_address(envelope_to)
+     status = process_email_for_each_to_email_address(envelope_to)
     else
       @process_email = Helpdesk::ProcessEmail.new(params)
-      @process_email.perform
+      status =  @process_email.perform 
     end
-    render :layout => 'email'
+    status = (status == MAINTENANCE_STATUS ? :service_unavailable : :ok )
+    render :layout => 'email', :status => status
   end
 
   private
@@ -62,14 +63,16 @@ class EmailController < ApplicationController
 
   def process_email_for_each_to_email_address(envelope_to)
     encode_param_fields 
+    status = MAINTENANCE_STATUS
     envelope_to.each_with_index do |to_address, i|
       envelope_params = ActiveSupport::JSON.decode(params[:envelope]).with_indifferent_access
       envelope_params[:to] = Array.new.push(to_address)
       params[:envelope] = envelope_params.to_json
       Rails.logger.info "Multiple Recipient case - starting Process email for :#{to_address} "
       process_email = Helpdesk::ProcessEmail.new(params)
-      process_email.perform(@to_emails[i], true)
+       status = nil if process_email.perform(@to_emails[i], true) != MAINTENANCE_STATUS
     end
+    status
   end
   
   def redirect_email(pod_info)
@@ -89,6 +92,20 @@ class EmailController < ApplicationController
         unless params[t_format].nil?
           charset_encoding = (charsets[t_format.to_s] || "UTF-8").strip()
           # if !charset_encoding.nil? and !(["utf-8","utf8"].include?(charset_encoding.downcase))
+          if ((t_format == :subject || t_format == :headers) && (charsets[t_format.to_s].blank? || charsets[t_format.to_s].upcase == "UTF-8") && (!params[t_format].valid_encoding?))
+            begin
+              params[t_format] = params[t_format].encode(Encoding::UTF_8, :undef => :replace, 
+                                                                      :invalid => :replace, 
+                                                                      :replace => '')
+              next
+            rescue Exception => e
+              Rails.logger.error "Error While encoding in process email  \n#{e.message}\n#{e.backtrace.join("\n\t")} #{params}"
+            end
+          end
+          replacement_char = "\uFFFD"
+          if t_format.to_s == "subject" and (params[t_format] =~ /^=\?(.+)\?[BQ]?(.+)\?=/ or params[t_format].include? replacement_char)
+            params[t_format] = decode_subject
+          else
             begin
               params[t_format] = Iconv.new('utf-8//IGNORE', charset_encoding).iconv(params[t_format])
             rescue Exception => e
@@ -107,8 +124,41 @@ class EmailController < ApplicationController
                 NewRelic::Agent.notice_error(e,{:description => "Charset Encoding issue with ===============> #{charset_encoding}"})
               end
             end
-          # end
+          end
         end
       end
+  end
+
+  def decode_subject
+    subject = params[:subject]
+    replacement_char = "\uFFFD"
+    if subject.include? replacement_char
+      params[:headers] =~ /^subject\s*:(.+)$/i
+      subject = $1.strip
+      unless subject =~ /=\?(.+)\?[BQ]?(.+)\?=/
+        detected_encoding = CharlockHolmes::EncodingDetector.detect(subject)
+        detected_encoding = "UTF-8" if detected_encoding.nil?
+        begin
+          decoded_subject = subject.force_encoding(detected_encoding).encode(Encoding::UTF_8, :undef => :replace, 
+                                                                            :invalid => :replace, 
+                                                                            :replace => '')
+        rescue Exception => e
+          decoded_subject = subject.force_encoding("UTF-8").encode(Encoding::UTF_8, :undef => :replace, 
+                                                                    :invalid => :replace, 
+                                                                    :replace => '')
+        end
+        subject = decoded_subject if decoded_subject
+      end
     end
+    if subject =~ /=\?(.+)\?[BQ]?(.+)\?=/
+      decoded_subject = ""
+      subject_arr = subject.split("?=")
+      subject_arr.each do |sub|
+        decoded_string = Mail::Encodings.unquote_and_convert_to("#{sub}?=", 'UTF-8')
+        decoded_subject << decoded_string
+      end
+      subject = decoded_subject.strip
+    end
+    subject
+  end
 end

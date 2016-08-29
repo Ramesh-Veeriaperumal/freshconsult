@@ -12,6 +12,7 @@ window.App.Tickets = window.App.Tickets || {};
 		},
 		onVisit: function (data) {
 			CreateTicket.init();
+			CreateTicket.ticketFromForum();
 		},
 		onLeave: function (data) {
 			CreateTicket.unBindEvents();
@@ -53,16 +54,20 @@ var CreateTicket = {
 
 		this.$createForm.on('submit.newTicket', function(){
 			var _form = jQuery("#NewTicket");
+			var topic_id = jQuery("#topic_id_stub").val();
 			if(_form.valid()){
 				if (_form.find('input[name="cc_emails[]"]').length >= 50) {
 					alert('You can add upto 50 CC emails');
 					return false;
 				}
+				if(topic_id){
+						this.createHiddenElement('topic_id', topic_id, _form);
+				}
 				jQuery("#newticket-submit").text(jQuery("#newticket-submit").data('loading-text')).attr('disabled', true);
 				jQuery("#newticket-submit").next().attr('disabled', true);
 				jQuery(".cancel-btn").attr('disabled', true);
 			}
-		});
+		}.bind(this));
 
 		this.$body.on('click.newTicket', 'a[name="action_save"]', function(ev){
 				preventDefault(ev);
@@ -91,6 +96,27 @@ var CreateTicket = {
 	              ev.preventDefault();
 	              jQuery('#add_requester_btn').trigger("click");
         	  });
+	},
+	createHiddenElement: function(fieldName, val, appendForm){
+		jQuery('<input>').attr({
+			type: 'hidden',
+			value: val,
+			name: fieldName
+		}).appendTo(appendForm);
+	},
+	ticketFromForum: function(){
+		var topic_id = jQuery("#topic_id_stub").val();
+		if(App.namespace === 'helpdesk/tickets/new'){
+			if(topic_id){
+				jQuery(".redactor_editor").html(jQuery("#topic_desc").val());
+				jQuery("#helpdesk_ticket_subject").val(jQuery("#topic_title").val());
+				jQuery("#helpdesk_ticket_email").val(jQuery("#topic_req").val());
+			}else{
+				jQuery(".redactor_editor").html("");
+				jQuery("#helpdesk_ticket_subject").val("");
+				jQuery("#helpdesk_ticket_email").val("");
+			}
+		}
 	}
 }
 
@@ -125,36 +151,50 @@ var TicketForm = {
 	},
 
 	requesterToCompany: function(){
-		var $requester_val, $companyurl = jQuery("#companyurl").val();
-	  jQuery("input.requester").on("focusout.ticketForms", function(){
-	    $requester_val = jQuery("input.requester").val();
-	  });
-	  jQuery("#helpdesk_ticket_email").on("blur.ticketForms", function(){
-	    var ticket_email = jQuery("#helpdesk_ticket_email").val();
+		var $requester_val= jQuery("#helpdesk_ticket_email").val(),
+			$companyurl = jQuery("#companyurl").val();
+		jQuery("#helpdesk_ticket_email").on("blur.ticketForms", function(){
+			$requester_val = jQuery("input.requester").val();
+		});
+		jQuery("#helpdesk_ticket_email").on("focusout.ticketForms", function(){
+			var re = /\<(.*)\>/i,
+				validajax = false,
+				ticket_email = jQuery("#helpdesk_ticket_email").val();
+				ticket_email_match = ticket_email.match(re) ;
 
-	    if($requester_val != jQuery("input.requester").val()){
-	      jQuery.ajax({
+  			if (ticket_email_match != null) {
+  				var rec = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  				validajax = rec.test(ticket_email_match[1]);
+  			}
+
+			if(($requester_val != ticket_email) && validajax){
+				jQuery.ajax({
 					url: $companyurl+"?email="+ticket_email,
-	        success: function(data){
-	          if(data != false){
-	            jQuery('#helpdesk_ticket_company_id').empty();
-	            for(var i=0; i<data.length; i++){
-	              jQuery("<option/>").val(data[i][1]).html(data[i][0]).appendTo("#helpdesk_ticket_company_id");
-	            }
-	            jQuery('#helpdesk_ticket_company_id').val('').change();
-	            jQuery('.default_company').insertAfter(jQuery(".default_requester")).show();
-	            jQuery('#helpdesk_ticket_company_id').removeAttr("disabled");
-	          }else{
-	            jQuery('.default_company').slideUp();
-	            jQuery('#helpdesk_ticket_company_id').attr("disabled", true);
-	          }
-	        }
-	      });
-	    }
-	  });
+					success: function(data){
+						if(data != false){
+							jQuery('#helpdesk_ticket_company_id').empty();
+							for(var i=0; i<data.length; i++){
+								jQuery("<option/>").val(data[i][1]).html(data[i][0]).appendTo("#helpdesk_ticket_company_id");
+							}
+							jQuery('#helpdesk_ticket_company_id').trigger('change');
+							jQuery('.default_company').insertAfter(jQuery(".default_requester")).show();
+							jQuery('#helpdesk_ticket_company_id').removeAttr("disabled");
+						}
+						else{
+							jQuery('.default_company').slideUp();
+							jQuery('#helpdesk_ticket_company_id').attr("disabled", true);
+						}
+					}
+				});
+			}
+			else if($requester_val != ticket_email){
+			jQuery('.default_company').slideUp();
+			jQuery('#helpdesk_ticket_company_id').attr("disabled", true);
+			}
+		});
 
-	  if(App.namespace === "helpdesk/tickets/edit" && (jQuery("#helpdesk_ticket_company_id").attr("disabled") != "disabled")){
-	    jQuery('.default_company').insertAfter(jQuery(".default_requester")).show();
+		if(App.namespace === "helpdesk/tickets/edit" && (jQuery("#helpdesk_ticket_company_id").attr("disabled") != "disabled")){
+			jQuery('.default_company').insertAfter(jQuery(".default_requester")).show();
 		}
 	},
 

@@ -103,7 +103,7 @@ window.App.Freshfone = window.App.Freshfone || {};
             return result.value;
           },
           formatSelection: function (result) {
-            jQuery('#group_id').attr('value',result.id);
+            jQuery('#group_id').val(result.id);
             jQuery('#group_id').data('value', result.value);
             return result.value;
           }
@@ -157,7 +157,7 @@ window.App.Freshfone = window.App.Freshfone || {};
             return result.value;
           },
           formatSelection: function (result) {
-            $('#ff_business_hours').attr('value',result.business_hour_call);
+            $('#ff_business_hours').val(result.business_hour_call);
             $('#ff_business_hours').data('value', result.value);
             return result.value;
           }

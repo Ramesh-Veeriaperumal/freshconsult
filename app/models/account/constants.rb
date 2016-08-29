@@ -40,13 +40,13 @@ class Account < ActiveRecord::Base
     
     :garden => {
       :features => [ :multi_product, :customer_slas, :multi_timezone , :multi_language, 
-        :css_customization, :advanced_reporting, :multiple_business_hours, :dynamic_content, :chat ],
+        :css_customization, :advanced_reporting, :multiple_business_hours, :dynamic_content, :chat, :ticket_templates ],
       :inherits => [ :blossom ]
     },
 
     :estate => {
       :features => [ :collision, :layout_customization, :round_robin, :enterprise_reporting,
-        :custom_ssl, :custom_roles, :multiple_business_hours, :facebook_page_tab, :chat_routing, :dynamic_sections],
+        :custom_ssl, :custom_roles, :multiple_business_hours, :facebook_page_tab, :chat_routing, :dynamic_sections, :helpdesk_restriction_toggle],
       :inherits => [ :garden ]
     },
 
@@ -67,13 +67,13 @@ class Account < ActiveRecord::Base
     
     :garden_classic => {
       :features => [ :multi_product, :customer_slas, :multi_timezone , :multi_language, 
-        :css_customization, :advanced_reporting, :dynamic_content ],
+        :css_customization, :advanced_reporting, :dynamic_content, :ticket_templates ],
       :inherits => [ :blossom_classic ]
     },
 
     :estate_classic => {
       :features => [ :collision, :layout_customization, :round_robin, :enterprise_reporting,
-        :custom_ssl, :custom_roles, :multiple_business_hours, :facebook_page_tab, :chat_routing ],
+        :custom_ssl, :custom_roles, :multiple_business_hours, :facebook_page_tab, :chat_routing, :helpdesk_restriction_toggle ],
       :inherits => [ :garden_classic ]
     }
 
@@ -92,7 +92,7 @@ class Account < ActiveRecord::Base
     :redis_display_id => false, :es_multilang_solutions => false,
     :sort_by_customer_response => false, :survey_links => true, :default_survey => false, :custom_survey => false, 
     :saml_unspecified_nameid => false, :multiple_user_companies => false,
-    :euc_hide_agent_metrics => false, :ticket_templates => false
+    :euc_hide_agent_metrics => false, :single_session_per_user => false
   }
 
 
@@ -107,9 +107,9 @@ class Account < ActiveRecord::Base
     :limit_mobihelp_results => false, :ecommerce => false, :es_v2_writes => false,  
     :salesforce_sync => false, :round_robin_on_update => false, :freshfone_call_metrics => false, :cobrowsing => false,
     :threading_without_user_check => false, :freshfone_call_monitoring => false, :freshfone_caller_id_masking => false, 
-    :agent_conference => false, :restricted_helpdesk => false, :enable_multilingual => false,
+    :agent_conference => false, :freshfone_warm_transfer => false, :restricted_helpdesk => false, :enable_multilingual => false,
     :count_es_writes => false, :count_es_reads => false, :activity_revamp => false, :countv2_writes => false, :countv2_reads => false,
-    :freshfone_acw => false  }
+    :helpdesk_restriction_toggle => false, :freshfone_acw => false, :ticket_templates => false, :cti => false  }
 
   # This list below is for customer portal features list only to prevent from adding addition features
   ADMIN_CUSTOMER_PORTAL_FEATURES =  {:anonymous_tickets => true, :open_solutions => true, :auto_suggest_solutions => true, 
@@ -120,4 +120,7 @@ class Account < ActiveRecord::Base
 
   MAIL_PROVIDER = { :sendgrid => 1, :mailgun => 2 }
 
-end  
+  #Features that need to connect to the FDnode server
+  FD_NODE_FEATURES = ['cti']
+
+end

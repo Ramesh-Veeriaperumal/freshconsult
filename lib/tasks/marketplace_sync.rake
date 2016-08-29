@@ -30,8 +30,7 @@ namespace :marketplace_sync do
 
         # Delete all installed native integrations in marketplace
         installed_ni_response.body.each do |installed_ni|
-          delete_params = { :extension_id => installed_ni['extension_id'], 
-                            :version_id => installed_ni['version_id']
+          delete_params = { :extension_id => installed_ni['extension_id']
                           }
           delete_response = uninstall_extension(delete_params)
           if error_status?(delete_response)
@@ -58,7 +57,6 @@ namespace :marketplace_sync do
             # Install ni in marketplace
             extension_details = latest_details_response.body
             install_params = { :extension_id => extension_details['extension_id'],
-                               :version_id => extension_details['version_id'],
                                :configs => installed_app.configs, 
                                :type => Marketplace::Constants::EXTENSION_TYPE[:ni],
                                :enabled => Marketplace::Constants::EXTENSION_STATUS[:enabled],

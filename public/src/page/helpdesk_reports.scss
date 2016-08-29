@@ -37,7 +37,6 @@
 			.report-title-block{
 				margin-top: 7px;
 				display: inline-block;
-				cursor: pointer;
 				vertical-align: top;
 				#report-title{
 					font-size: 20px;
@@ -113,8 +112,12 @@
 				@include padding(15px 0 15px 25px);
 				@include margin-left(10px);
 				ul li{
-					display: inline-block;
+					display: inline;
 					@include margin-right(8px);
+				}
+				li {
+				   max-width : 100%;
+				   word-wrap: break-word;
 				}
 			}
 			.edit-filter{

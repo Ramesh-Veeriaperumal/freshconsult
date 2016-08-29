@@ -94,8 +94,8 @@
 </div>
 <% end %>
 <%= javascript_tag do %> 
-  jQuery('#ticket_cancel_multiple_button').die('click')
-  jQuery('#ticket_cancel_multiple_button').live('click',
+  jQuery('#ticket_cancel_multiple_button').off('click')
+  jQuery('#ticket_cancel_multiple_button').on('click',
    	function(){
   		active_dialog.dialog('close');
    	});
@@ -140,8 +140,8 @@
       jQuery('#loader').addClass("sloading loading-small loading-align");      
     }
   }
-  jQuery('#no-response').die('click');
-  jQuery('#no-response').live('click', function(){
+  jQuery('#no-response').off('click');
+  jQuery('#no-response').on('click', function(){
     jQuery('#bulkcontent').css('height','auto');
     jQuery('#bulktickets').removeClass('bulk-tickets-animation', function() {
       jQuery('#bulk-response-group').addClass('hide');
@@ -150,8 +150,8 @@
     jQuery('#clear-search').trigger('click');
 });
 
-  jQuery("[rel=inputselectbox],[rel=inputtextbox]").die('change');
- jQuery("[rel=inputselectbox],[rel=inputtextbox], #bulk_customers_filter").live('change',  function(ev){
+  jQuery("[rel=inputselectbox],[rel=inputtextbox]").off('change');
+ jQuery("[rel=inputselectbox],[rel=inputtextbox]").on('change',  function(ev){
     if(jQuery(this).attr('id')=="helpdesk_ticket_group_id")
     {
       if(jQuery('#helpdesk_ticket_responder_id_label').is(':checked'))
@@ -159,7 +159,7 @@
         jQuery('#helpdesk_ticket_responder_id_label').prop('checked', false); 
         jQuery('#helpdesk_ticket_responder_id_label').parent().removeClass('active');
       }
-      value=jQuery(this).find(':selected').attr('value');
+      value=jQuery(this).find(':selected').val();
       groupchange(value);
     }
     if(jQuery(this).attr('id')=="bulk_customers_filter"){
@@ -181,8 +181,8 @@
   }
   }); 
   
-  jQuery("[rel=inputcheckbox]").die('click');
-  jQuery("[rel=inputcheckbox]").live('click',  function(ev){
+  jQuery("[rel=inputcheckbox]").off('click');
+  jQuery("[rel=inputcheckbox]").on('click',  function(ev){
     if(jQuery(this).parent().find("input").is(':checked'))
     {
       jQuery(this).addClass("active");
@@ -217,7 +217,7 @@ function groupchange(value){
 	 blank_value = "No Change";
      jQuery.ajax({
        type:        'GET',
-       url: 		'/helpdesk/commons/group_agents/'+this.value+'?blank_value=<%=t('select')%>',
+       url: 		'/helpdesk/commons/group_agents/'+this.value+'?blank_value=<%=t('select')%>&allow_none=true',
        contentType: 'application/text',
        success:     function(data){
 
@@ -226,8 +226,8 @@ function groupchange(value){
                     }
      });
    }
-jQuery('.ui-icon-closethick').die('click');
-jQuery('.ui-icon-closethick').live('click', function(){
+jQuery('.ui-icon-closethick').off('click');
+jQuery('.ui-icon-closethick').on('click', function(){
   if(!jQuery('#no-response').is(':hidden'))
     jQuery('#no-response').click();
 });
@@ -254,4 +254,7 @@ jQuery('.ui-icon-closethick').live('click', function(){
               .insertAfter(jQuery("#helpdesk_ticket_ticket_type").parent());
       }
   });
+
+  jQuery('#helpdesk_ticket_responder_id').append("<option value='-1'><%= t("unassign") %></option>");
+  jQuery('#helpdesk_ticket_group_id').append("<option value='-1'><%= t("unassign") %></option>");
 <% end %>

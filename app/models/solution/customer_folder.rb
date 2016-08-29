@@ -15,13 +15,15 @@ class Solution::CustomerFolder < ActiveRecord::Base
   attr_accessible :customer_id
 
 	validates_presence_of :customer_id
+	
+	validates :customer, :presence => true
 
 	delegate :update_search_index, :to => :folder, :allow_nil => true
 	
 	after_commit :update_search_index, on: :create
 
 	def set_account_id
-		self.account_id = customer.account_id
+		self.account_id = customer.account_id if customer
 	end
 
 	 

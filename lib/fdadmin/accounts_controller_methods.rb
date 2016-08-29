@@ -1,4 +1,6 @@
 module Fdadmin::AccountsControllerMethods
+	include Redis::RedisKeys
+	include Redis::IntegrationsRedis
 
 	def fetch_account_info(account)
 		account_info = {}
@@ -99,4 +101,28 @@ module Fdadmin::AccountsControllerMethods
 							}
 	end
 
+	def get_account_details(account)
+	  ff_account = account.freshfone_account
+	  return { available_credit: 0.00 } if only_freshfone_feature?(account)
+	  return active_account_details(account) if freshfone_active?(ff_account)
+
+	  { trial_started:  ff_account.present? && ff_account.trial_or_exhausted?,
+	   activation_requested: freshfone_activation_requested?(account) }
+	end
+
+	def active_account_details(account)
+		{ available_credit: account.freshfone_credit.available_credit }
+	end
+
+	def freshfone_activation_requested?(account)
+	  get_key(FRESHFONE_ACTIVATION_REQUEST % { account_id: account.id }).present?
+	end
+
+	def only_freshfone_feature?(account)
+	  account.freshfone_account.blank? && account.features?(:freshfone)
+	end
+
+	def freshfone_active?(ff_account)
+	  ff_account.present? && ff_account.active?
+	end
 end

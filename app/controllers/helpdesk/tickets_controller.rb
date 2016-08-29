@@ -291,6 +291,10 @@ class Helpdesk::TicketsController < ApplicationController
     @page_title = "[##{@ticket.display_id}] #{@ticket.subject}"
 
     build_notes_last_modified_user_hash(@ticket_notes)
+
+    # Only store recent tickets in redis which are not spam or not deleted
+    Search::RecentTickets.new(@ticket.display_id).store unless @ticket.spam || @ticket.deleted
+
     respond_to do |format|
       format.html  {
         @ticket_notes       = @ticket_notes.reverse
@@ -608,6 +612,8 @@ class Helpdesk::TicketsController < ApplicationController
       req_list << req.id if req.customer?
       store_dirty_tags(item)
       item.save
+
+      Search::RecentTickets.new(item.display_id).delete if item.is_a?(Helpdesk::Ticket)      
     end
 
     msg1 = render_to_string(
@@ -753,12 +759,6 @@ class Helpdesk::TicketsController < ApplicationController
 
   def new
     build_tkt_body
-    unless @topic.nil?
-      @item.subject     = @topic.title
-      @item.description_html = @topic.posts.first.body_html
-      @item.requester   = @topic.user
-    end
-
     if params['format'] == 'widget'
       render :layout => 'widgets/contacts'
     end

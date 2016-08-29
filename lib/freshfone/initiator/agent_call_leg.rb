@@ -77,8 +77,15 @@ class Freshfone::Initiator::AgentCallLeg
     end		
   
     def select_current_call
+      call = select_call
+      child_call = call.children.ongoing_calls.last
+      return call if child_call.blank?
+      child_call.meta.warm_transfer_meta? ? child_call : call
+    end
+
+    def select_call
       return current_account.freshfone_calls.find(call_id) if call_id.present?
-      current_account.freshfone_calls.find_by_dial_call_sid(params[:CallSid]) if params[:CallSid].present? 
+      current_account.freshfone_calls.find_by_dial_call_sid(params[:CallSid]) if params[:CallSid].present?
     end
 
     def call_id
@@ -90,8 +97,6 @@ class Freshfone::Initiator::AgentCallLeg
       return incoming_answered unless intended_agent?
       current_call.noanswer? ? telephony.incoming_missed : incoming_answered
     end
-
-    
 
     def process_call_accept_callbacks
       @call_actions.update_agent_leg(current_call)

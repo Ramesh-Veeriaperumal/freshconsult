@@ -136,11 +136,11 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
       assert ticket.cc_email[:cc_emails].count == 1
       assert ticket.cc_email[:tkt_cc].count == 1
 
-      put "/api/tickets/#{ticket.id}", { tags: nil }.to_json, @write_headers
+      put "/api/tickets/#{ticket.display_id}", { tags: nil }.to_json, @write_headers
       match_json([bad_request_error_pattern('tags', :datatype_mismatch, prepend_msg: :input_received, given_data_type: 'Null', expected_data_type: Array)])
       assert_response 400
 
-      put "/api/tickets/#{ticket.id}", { tags: [] }.to_json, @write_headers
+      put "/api/tickets/#{ticket.display_id}", { tags: [] }.to_json, @write_headers
       assert_response 200
       assert ticket.reload.tags.count == 0
     end
@@ -189,7 +189,7 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
     ticket = Helpdesk::Ticket.where(spam: false, deleted: false, source: 1).first
     previous_updated_at = ticket.updated_at
     skip_bullet do
-      put "/api/tickets/#{ticket.id}", { description: Faker::Lorem.paragraph }.to_json, @write_headers
+      put "/api/tickets/#{ticket.display_id}", { description: Faker::Lorem.paragraph }.to_json, @write_headers
     end
     assert_response 200
     assert Helpdesk::Ticket.find(ticket.id).updated_at > previous_updated_at
@@ -205,7 +205,7 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
     # IN API V1
     previous_updated_at_for_api_v1 = ticket.updated_at
     skip_bullet do
-      put "helpdesk/tickets/#{ticket.id}.json", { helpdesk_ticket: { ticket_body_attributes: { description_html: Faker::Lorem.paragraph } } }.to_json, @write_headers
+      put "helpdesk/tickets/#{ticket.display_id}.json", { helpdesk_ticket: { ticket_body_attributes: { description_html: Faker::Lorem.paragraph } } }.to_json, @write_headers
     end
     assert_response 200
     assert Helpdesk::Ticket.find(ticket.id).updated_at > previous_updated_at_for_api_v1
@@ -216,7 +216,7 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
     ticket = create_ticket(requested_id: @agent.id)
     previous_updated_at = ticket.updated_at
     skip_bullet do
-      put "/api/tickets/#{ticket.id}", { description: ticket.description_html }.to_json, @write_headers
+      put "/api/tickets/#{ticket.display_id}", { description: ticket.description_html }.to_json, @write_headers
     end
     assert_response 200
     assert Helpdesk::Ticket.find(ticket.id).updated_at.to_i == previous_updated_at.to_i
@@ -230,7 +230,7 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
 
     # IN API V1
     skip_bullet do
-      put "helpdesk/tickets/#{ticket.id}.json", { helpdesk_ticket: { ticket_body_attributes: { description_html: ticket.description_html } } }.to_json, @write_headers
+      put "helpdesk/tickets/#{ticket.display_id}.json", { helpdesk_ticket: { ticket_body_attributes: { description_html: ticket.description_html } } }.to_json, @write_headers
     end
     assert_response 200
     assert Helpdesk::Ticket.find(ticket.id).updated_at.to_i == previous_updated_at.to_i
@@ -296,7 +296,7 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
     previous_updated_at = ticket.updated_at
     tags = existing_tags | [Faker::Name.name]
     skip_bullet do
-      put "/api/tickets/#{ticket.id}", { tags: tags }.to_json, @write_headers
+      put "/api/tickets/#{ticket.display_id}", { tags: tags }.to_json, @write_headers
     end
     assert_response 200
     assert Helpdesk::Ticket.find(ticket.id).updated_at > previous_updated_at
@@ -316,7 +316,7 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
     tags = existing_tags.present? ? "#{existing_tags},#{Faker::Name.name}" : "#{Faker::Name.name}"
     sleep 1
     skip_bullet do
-      put "helpdesk/tickets/#{ticket.id}.json", { helpdesk_ticket: {}, helpdesk: { tags: tags  } }.to_json, @write_headers
+      put "helpdesk/tickets/#{ticket.display_id}.json", { helpdesk_ticket: {}, helpdesk: { tags: tags  } }.to_json, @write_headers
     end
     assert_response 200
     assert Helpdesk::Ticket.find(ticket.id).updated_at > previous_updated_at_for_api_v1
@@ -329,7 +329,7 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
     previous_updated_at = ticket.updated_at
     sleep 1
     skip_bullet do
-      put "/api/tickets/#{ticket.id}", { tags: [] }.to_json, @write_headers
+      put "/api/tickets/#{ticket.display_id}", { tags: [] }.to_json, @write_headers
     end
     assert_response 200
     assert Helpdesk::Ticket.find(ticket.id).updated_at > previous_updated_at
@@ -350,7 +350,7 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
     previous_updated_at_for_api_v1 = ticket.updated_at
     sleep 1
     skip_bullet do
-      put "helpdesk/tickets/#{ticket.id}.json", { helpdesk_ticket: {}, helpdesk: { tags: '' }  }.to_json, @write_headers
+      put "helpdesk/tickets/#{ticket.display_id}.json", { helpdesk_ticket: {}, helpdesk: { tags: '' }  }.to_json, @write_headers
     end
     assert_response 200
     assert Helpdesk::Ticket.find(ticket.id).updated_at > previous_updated_at_for_api_v1
@@ -363,7 +363,7 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
     ticket.tags = [tag]
     previous_updated_at = ticket.updated_at
     skip_bullet do
-      put "/api/tickets/#{ticket.id}", { tags: [tag.name] }.to_json, @write_headers
+      put "/api/tickets/#{ticket.display_id}", { tags: [tag.name] }.to_json, @write_headers
     end
     assert_response 200
     assert Helpdesk::Ticket.find(ticket.id).updated_at.to_i == previous_updated_at.to_i
@@ -377,7 +377,7 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
 
     # IN API V1
     skip_bullet do
-      put "helpdesk/tickets/#{ticket.id}.json", { helpdesk_ticket: {}, helpdesk: { tags: "#{tag.name}" } }.to_json, @write_headers
+      put "helpdesk/tickets/#{ticket.display_id}.json", { helpdesk_ticket: {}, helpdesk: { tags: "#{tag.name}" } }.to_json, @write_headers
     end
     assert_response 200
     assert Helpdesk::Ticket.find(ticket.id).updated_at.to_i == previous_updated_at.to_i

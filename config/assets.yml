@@ -115,11 +115,10 @@ javascripts:
     - public/javascripts/helpdesk/multifile_upload.js
     - public/javascripts/frameworks/plugins/jquery.nested_select_tag.js
     - public/javascripts/frameworks/socket.io-1.2.1.js
-    - public/javascripts/frameworks/faye.js
+    # - public/javascripts/frameworks/faye.js
     - public/javascripts/frameworks/socket.io-agent.js
     - public/javascripts/helpdesk/socket_agent.js
     - public/javascripts/helpdesk/socket_agent_autorefresh.js
-    - public/javascripts/helpdesk/freshdesk_node.js
     - app/views/helpdesk/tickets/show/agent_collision.jst
     # - public/javascripts/sisyphus.js
     - public/javascripts/ticket_list.js
@@ -137,7 +136,6 @@ javascripts:
     - public/javascripts/frameworks/plugins/menuselector.js
     - public/javascripts/frameworks/plugins/jquery.autosuggester.js
     - public/javascripts/integrations/construct_rule.js
-    - public/javascripts/marketplace/freshapp.js
 
   # Code editor for portal cms
   codemirror:
@@ -373,6 +371,7 @@ javascripts:
     - public/javascripts/freshfone/freshfone_monitor.js
     - public/javascripts/freshfone/components/freshfone_conference_connection.js
     - public/javascripts/freshfone/components/agent_conference.js
+    - public/javascripts/freshfone/components/warm_transfer.js
 
   freshfone_call_history:
     - public/javascripts/report/daterangepicker.jQuery.js

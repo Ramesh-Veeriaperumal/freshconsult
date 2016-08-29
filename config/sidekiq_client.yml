@@ -119,6 +119,8 @@ defaults: &defaults
     - [clear_moderation_records]
     - [empty_moderation_trash]
     - [sendgrid_domain_updates]
+    - [cti]
+    - [sla_on_status_change]
 
 development:
   <<: *defaults

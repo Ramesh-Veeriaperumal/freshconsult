@@ -1,9 +1,15 @@
-(function($) {
-$("body").off('.ticket_details');
+/*jslint browser: true, devel: true */
+/*global  App */
+
+window.App = window.App || {};
+window.App.Tickets = window.App.Tickets || {};
+
+(function ($) {
+
 var activeForm, savingDraft, draftClearedFlag, draftSavedTime,dontSaveDraft, replyEditor, draftInterval, currentStatus;
 var MAX_EMAILS = 50;
 // ----- SAVING REPLIES AS DRAFTS -------- //
-save_draft = function(content, cc_email_list, bcc_email_list) {
+var save_draft = function(content, cc_email_list, bcc_email_list) {
 	if ($.trim(content) != '') {
 		$(".ticket_show #reply-draft").show().addClass('saving');
 		// $(".ticket_show #reply-draft").parent().addClass('draft_saved');
@@ -28,7 +34,7 @@ save_draft = function(content, cc_email_list, bcc_email_list) {
 	}
 }
 
-autosaveDraft = function() {
+var autosaveDraft = function() {
 	if(dontSaveDraft == 0 && TICKET_DETAILS_DATA['draft']['hasChanged']) {
 		var content = $('#cnt-reply-body').getCode();
 
@@ -52,12 +58,12 @@ autosaveDraft = function() {
 	TICKET_DETAILS_DATA['draft']['hasChanged'] = false;
 }
 
-triggerDraftSaving = function() {
+var triggerDraftSaving = function() {
 	dontSaveDraft = 0;
 	draftInterval = setInterval(autosaveDraft, 30000);
 }
 
-stopDraftSaving = function() {
+var stopDraftSaving = function() {
 	dontSaveDraft = 1;
 	clearInterval(draftInterval);
 }
@@ -67,7 +73,7 @@ var _clearDraftDom = function() {
 	$(".ticket_show #reply-draft").parent().removeClass('draft_saved');
 	draftClearedFlag = true;
 }
-clearSavedDraft = function(editorId){
+var clearSavedDraft = function(editorId){
 	$.ajax({
 		url: TICKET_DETAILS_DATA['draft']['clear_path'],
 		type: 'delete'
@@ -168,7 +174,6 @@ swapEmailNote = function(formid, link){
 			} catch (e) {}
 		});
 	}
-	window.AgentCollisionShow.reply_event();
 	activeForm.trigger("visibility")
 
 	//Draft Saving for Reply form
@@ -249,9 +254,8 @@ showHideToEmailContainer = function(){
 }
 
 TICKET_DETAILS_DOMREADY = function() {
-
 activeForm = null, savingDraft = false, draftClearedFlag = TICKET_DETAILS_DATA['draft']['cleared_flag'];
-$('#ticket_original_request *').css({position: ''}); //Resetting the Position
+// $('#ticket_original_request *').css({position: ''}); //Resetting the Position
 
 $('body').on('mouseover.ticket_details', ".ticket_show #draft-save", function() {
 	var hasMoment = $(this).attr('data-moment');
@@ -295,9 +299,9 @@ var formatTag = function(item) {
 
 // ----- CODE FOR REVERSE PAGINATION ------ //
 var paginationScroll = function(){
-	var element = $("[data-activity-id ='"+TICKET_DETAILS_DATA['last_activity_batch']+"']")[0];
+	var element = $("[data-activity-id ='"+TICKET_DETAILS_DATA['last_activity_batch']+"']");
 	if(element){
-		$(element)[0].scrollIntoView(false);
+		$.scrollTo(element,{offset: $(window).height()-jQuery('#sticky_header').outerHeight(true)});
 	}
 }
 
@@ -344,7 +348,7 @@ var updatePagination = function() {
 		if (showing_notes)
 			href = TICKET_DETAILS_DATA['notes_pagination_url'] + 'before_id=' + TICKET_DETAILS_DATA['first_note_id'];
 		else
-			href = TICKET_DETAILS_DATA['activities_pagination_url'] + 'before_id=' + TICKET_DETAILS_DATA['first_activity'] + '&limit=' +  TICKET_DETAILS_DATA['pagination_limit'] +'&event_type='+TICKET_DETAILS_DATA['activity_event_type'];
+			href = TICKET_DETAILS_DATA['activities_pagination_url'] + 'before_id=' + TICKET_DETAILS_DATA['first_activity'] + '&limit=' +  TICKET_DETAILS_DATA['pagination_limit'];
 
 		$.get(href, function(response) {
 			if(response.trim()!=''){
@@ -744,7 +748,7 @@ var scrollToError = function(){
 		}
 		_toggle.addClass('disabled')
 		var showing_notes = $('#all_notes').length > 0;
-		var url = showing_notes ? TICKET_DETAILS_DATA['activities_pagination_url']  + 'limit=' + TICKET_DETAILS_DATA['pagination_limit'] + '&event_type='+TICKET_DETAILS_DATA['activity_event_type']  : TICKET_DETAILS_DATA['notes_pagination_url'];
+		var url = showing_notes ? TICKET_DETAILS_DATA['activities_pagination_url']  + 'limit=' + TICKET_DETAILS_DATA['pagination_limit'] : TICKET_DETAILS_DATA['notes_pagination_url'];
 		if (showing_notes) {
 			TICKET_DETAILS_DATA['first_activity'] = null;
 			TICKET_DETAILS_DATA['loaded_activities'] = 0;
@@ -769,6 +773,12 @@ var scrollToError = function(){
 						_toggle.attr('title',_toggle.data('hide-title')+_shortcut);
 					}
 					else{
+						if(TICKET_DETAILS_DATA['scroll_to_last']) {
+							$.scrollTo('[rel=activity_container] .conversation:last');
+						}
+						else{
+							$.scrollTo($('body'));
+						}
 						$("#original_request .commentbox").removeClass('minimizable minimized');
 						if(_toggle.data('show-title'))
 						_toggle.attr('title',_toggle.data('show-title')+_shortcut);
@@ -809,7 +819,6 @@ var scrollToError = function(){
         {
           window.replySubscription.cancel();
         }
-        window.FreshdeskNode.getValue('faye_realtime').faye_subscriptions.splice(window.FreshdeskNode.getValue('faye_realtime').faye_subscriptions.indexOf(window.relySubscription), 1);
 		$(this).parents('form').trigger('submit');
 	});
 
@@ -818,9 +827,8 @@ var scrollToError = function(){
 		var btn = $(this);
 		if(TICKET_DETAILS_DATA['draft']['saved'] && btn.data('cntId') && btn.data('cntId') == "cnt-reply"){
 			if(!confirm(TICKET_DETAILS_DATA['draft']['clear_text'])){
-				window.AgentCollisionShow.reply_event();
-				return false;
-			}
+				return false; 
+			} 
         }
 		remove_file_size_alert(btn)
 		$('#' + btn.data('cntId')).hide().trigger('visibility');
@@ -948,7 +956,7 @@ var scrollToError = function(){
 				var propertiesForm = $("#custom_ticket_form");
 				if(propertiesForm.valid()) {
 
-					if($.browser.msie || $.browser.edge) {
+					if($.browser.msie || $.browser.msedge) {
 						if(eligibleForReply(_form)){
 							handleIEReply(_form);
 							submitTicketProperties();
@@ -973,7 +981,7 @@ var scrollToError = function(){
 					scrollToError();
 				}
 			} else {
-				if($.browser.msie || $.browser.edge) {
+				if($.browser.msie || $.browser.msedge) {
 					if(eligibleForReply(_form)){
 						handleIEReply(_form);
 						return true;
@@ -1386,8 +1394,7 @@ var scrollToError = function(){
 
 
 	//For showing canned response and solutions
-
-	$('body').on('click.ticket_details', 'a[rel="ticket_canned_response"]', function(ev){
+	$('body').on('click.ticket_details', 'a[rel="ticket_canned_response"]', function(ev){	
 		ev.preventDefault();
 		$('#canned_response_show').data('editorId', $(this).data('editorId'));
 		var editorId = $('#canned_response_show').data('editorId');
@@ -1525,6 +1532,33 @@ var scrollToError = function(){
 			return msg;
 		}
 	});
+
+	jQuery('body').on('click.ticket_details', '.freshdesk_quote .q-marker', function(){
+	  var _container = jQuery(this).parents('.details');
+	  var _fd_quote = jQuery(this).parents('.freshdesk_quote')
+	  if (_fd_quote.data('remoteQuote')){
+	    var _note_id = _container.data('note-id');
+	    var _messageDiv = _container.find('div:first');
+	    var options = {"force_quote": true};
+	    jQuery.ajax({
+	      url: '/helpdesk/tickets/'+TICKET_DETAILS_DATA["displayId"]+'/conversations/full_text',
+	      data: { id: _note_id },
+	      success: function(response){
+	        if(response!=""){
+	        	 _messageDiv.find('.tooltip').twipsy('hide');
+	          _messageDiv.html(response);
+
+	          quote_text(_messageDiv, options);
+	        }
+	        else {
+	          _container.find('div.freshdesk_quote').remove();
+	        }
+	      }
+	    });
+	  }
+	});
+
+
 	var findWhereToScroll = function() {
 		var element = $(window.location.hash);
 		if (element.length) {
@@ -1544,33 +1578,33 @@ var scrollToError = function(){
 	(function(){
 		var tkt_prop = $('#TicketProperties .content');
 		tkt_prop.append("<div class='sloading loading-small loading-block'></div>");
-        tkt_prop.load(tkt_prop.data('remoteUrl'), function(){
-            tkt_prop.data('remoteUrl', false);
-
-			$('body').on('change.ticket_details', '#custom_ticket_form', function(ev) {
-
-				if (!dontAjaxUpdate)
-				{
-					TICKET_DETAILS_DATA['updating_properties'] = true;
-					$(ev.target).data('updated', true);
-					$('#custom_ticket_form').data('updated', true);
-				}
-				dontAjaxUpdate = false;
-			} );
+		$.ajax({
+			type: 'GET',
+			url: tkt_prop.data('remoteUrl'), 
+			success: function(data){
+				tkt_prop.html(data);
+       	 		tkt_prop.data('remoteUrl', false);
+				$('body').on('change.ticket_details', '#custom_ticket_form', function(ev) {
+			
+					if (!dontAjaxUpdate) 
+					{
+						TICKET_DETAILS_DATA['updating_properties'] = true;
+						$(ev.target).data('updated', true);
+						$('#custom_ticket_form').data('updated', true);
+					}
+					dontAjaxUpdate = false;
+				});
 			trigger_event("sidebar_loaded",{name: "ticket_properties", dom_id: "#TicketProperties"});
-        });
+		}});	
 	})()
 
 	trigger_event("ticket_view_loaded",{});
-	
-	App.TicketAttachmentPreview.init();
 
 	//RECENT TICKETS SETUP
 	NavSearchUtils.saveToLocalRecentTickets(TICKET_DETAILS_DATA);	
 
 };
 // TICKET DETAILS DOMREADY ENDS
-
 
 TICKET_DETAILS_CLEANUP = function() {
 	// if($('body').hasClass('ticket_details')) return;
@@ -1618,32 +1652,32 @@ TICKET_DETAILS_CLEANUP = function() {
 	for(var i=0; i<custom_events.length ; i++){
 		jQuery(document).off(custom_events[i]);
 	}
-
-	App.TicketAttachmentPreview.destroy();
 };
 
-jQuery('.freshdesk_quote .q-marker').live('click', function(){
-  var _container = jQuery(this).parents('.details');
-  var _fd_quote = jQuery(this).parents('.freshdesk_quote')
-  if (_fd_quote.data('remoteQuote')){
-    var _note_id = _container.data('note-id');
-    var _messageDiv = _container.find('div:first');
-    var options = {"force_quote": true};
-    jQuery.ajax({
-      url: '/helpdesk/tickets/'+TICKET_DETAILS_DATA["displayId"]+'/conversations/full_text',
-      data: { id: _note_id },
-      success: function(response){
-        if(response!=""){
-          _messageDiv.html(response);
+	
+App.Tickets.TicketDetail = {
+	onVisit: function (data) {
+		if($("#HelpdeskReply").data('containDraft')) {
+			swapEmailNote('cnt-reply', null);
+			TICKET_DETAILS_DATA['draft']['hasChanged'] = false;
+			jQuery(window).trigger('scroll');
+		}
 
-          quote_text(_messageDiv, options);
-        }
-        else {
-          _container.find('div.freshdesk_quote').remove();
-        }
-      }
-    });
-  }
-});
+		TICKET_DETAILS_DOMREADY();
+		App.Tickets.Watcher.init();
+		App.Tickets.Merge_tickets.initialize();
+		App.TicketAttachmentPreview.init();
 
-})(jQuery);
+		// Have tried in onLeave to off all the event binding. 
+		// But it cause errors in whole app, like modal, dropdown and some issues has occered.
+		Fjax.afterNextPage = TICKET_DETAILS_CLEANUP;
+	},
+	onLeave: function() {
+		App.Tickets.Merge_tickets.unBindEvent();
+		App.Tickets.Watcher.offEventBinding();
+		App.TicketAttachmentPreview.destroy();
+	}
+};
+
+}(window.jQuery));
+

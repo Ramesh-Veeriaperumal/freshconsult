@@ -1004,7 +1004,7 @@ Redactor.prototype = {
 			this.focusOnCursor();
 		}
 		this.execCommand(cmd, value);
-	    $.event.trigger({ type:"textInserted", message:"success", time:new Date() });
+	    this.$editor.trigger({ type:"textInserted", message:"success", time:new Date() });
 	},
 	findDirection: function(block){
 	        var weakChars       = '\u0000-\u0040\u005B-\u0060\u007B-\u00BF\u00D7\u00F7\u02B9-\u02FF\u2000-\u2BFF\u2010-\u2029\u202C\u202F-\u2BFF',
@@ -1576,7 +1576,7 @@ Redactor.prototype = {
 
 		var tag = $(parent).closest(['p', 'div', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'blockquote', 'td']);
 
-		if (typeof tag[0] !== 'undefined' && typeof tag[0].elem !== 'undefined' && $(tag[0].elem).size() != 0)
+		if (typeof tag[0] !== 'undefined' && typeof tag[0].elem !== 'undefined' && $(tag[0].elem).length != 0)
 		{
 			var align = $(tag[0].elem).css('text-align');
 
@@ -1617,9 +1617,9 @@ Redactor.prototype = {
 			if ($.browser.msie){
 				fontstyle = fontstyle.replace('px','').split(".")[0] + 'px';
 			}
-			element = $('[rel="' + this.opts.fontsize_levels_reverse[fontstyle] + '"].redactor_font_link');
+			element = $('[rel=' + this.opts.fontsize_levels_reverse[fontstyle] + '].redactor_font_link');
 		}else{
-			element = $('[rel="' + fontstyle + '"].redactor_font_link');
+			element = $('[rel=' + fontstyle + '].redactor_font_link');
 		}
 		if(element.length) {
 			element.html("<span class='icon ticksymbol'></span>" + element.html());
@@ -3372,7 +3372,7 @@ Redactor.prototype = {
 	},
 	addHead: function()
 	{
-		if ($(this.$table).find('thead').size() !== 0)
+		if ($(this.$table).find('thead').length !== 0)
 		{
 			this.deleteHead();
 		}
@@ -3797,7 +3797,7 @@ Redactor.prototype = {
 				if (this.opts.uploadCrossDomain === false && this.isMobile() === false)
 				{
 					
-					if ($('#redactor_file').size() !== 0)
+					if ($('#redactor_file').length !== 0)
 					{
 						$('#redactor_file').dragupload(
 						{
@@ -4006,7 +4006,7 @@ Redactor.prototype = {
 			
 			if (target === '_blank')
 			{
-				$('#redactor_link_blank').attr('checked', true);
+				$('#redactor_link_blank').prop('checked', true);
 			}
 			
 			$('#redactor_insert_link_btn').click($.proxy(this.insertLink, this));
@@ -4032,7 +4032,7 @@ Redactor.prototype = {
 		{
 			link = $('#redactor_link_url').val();
 			text = escapeHtml($('#redactor_link_url_text').val());
-			if ($('#redactor_link_blank').attr('checked'))
+			if ($('#redactor_link_blank').prop('checked'))
 			{
 				target = '_blank';
 			}
@@ -4163,13 +4163,13 @@ Redactor.prototype = {
 	modalInit: function(title, url, width, handler, endCallback)
 	{
 		// modal overlay
-		if ($('#redactor_modal_overlay').size() === 0)
+		if ($('#redactor_modal_overlay').length === 0)
 		{
 			this.overlay = $('<div id="redactor_modal_overlay" style="display: none;"></div>');
 			$('body').prepend(this.overlay);
 		}
 
-		if ($('#redactor_modal').size() === 0)
+		if ($('#redactor_modal').length === 0)
 		{
 			this.modal = $('<div id="redactor_modal" style="display: none;"><div id="redactor_modal_close">&times;</div><div id="redactor_modal_header"></div><div id="redactor_modal_inner"></div></div>');
 			$('body').append(this.modal);
@@ -4194,7 +4194,7 @@ Redactor.prototype = {
 		}
 		
 		// tabs
-		if ($('#redactor_tabs').size() !== 0)
+		if ($('#redactor_tabs').length !== 0)
 		{
 			var that = this;
 			$('#redactor_tabs a').each(function(i,s)
@@ -4294,7 +4294,7 @@ Redactor.prototype = {
 		$.extend(this.uploadOptions, options);
 
 		// Test input or form
-		if ($('#' + element).size() !== 0 && $('#' + element).get(0).tagName === 'INPUT')
+		if ($('#' + element).length !== 0 && $('#' + element).get(0).tagName === 'INPUT')
 		{
 			this.uploadOptions.input = $('#' + element);
 			this.element = $($('#' + element).get(0).form);

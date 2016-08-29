@@ -147,6 +147,7 @@ var savedReportUtil = (function() {
                      _this.save_util.controls.showSaveOptions(_this.last_applied_saved_report_index); 
                 } else{
                   var index = parseInt(jQuery('.active [data-action="select-saved-report"]').attr('data-index'));
+                  _this.save_util.showReportDropdown();
                   if(index != -1) {
                       _this.save_util.controls.showDeleteAndEditOptions();
                       if(is_preset_selected){
@@ -479,7 +480,7 @@ var savedReportUtil = (function() {
                 }
                 
                 if(i != selected_options.length -1){
-                  txt += ",";
+                  txt += " , ";
                 }
             });
             var data = {
@@ -548,7 +549,7 @@ function getFilterTextPDF(){
             txt += option.value;
           }  
           if(i != selected_options.length -1){
-            txt += ",";
+            txt += " , ";
           }
       });
       var data = {

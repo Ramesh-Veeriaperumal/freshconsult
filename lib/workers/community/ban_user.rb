@@ -48,7 +48,7 @@ class Workers::Community::BanUser
 		end
 
 		def next_user_timestamp(spam_user)
-			spam_user.id * 10.power!(17) + (Time.now - ForumSpam::UPTO).utc.to_f * 10.power!(7)
+			spam_user.id * (10 ** 17) + (Time.now - ForumSpam::UPTO).utc.to_f * (10 ** 7)
 		end
 
 		def ban_post(post)

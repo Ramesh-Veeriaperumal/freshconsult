@@ -24,7 +24,7 @@ class HelpdeskReports::ParamConstructor::Base
     validate_scope
     @query_params.each do|param|
      validate_time_trend(param)
-     optimize_time_trend_for_pdf param if param[:time_trend]
+     optimize_time_trend_for_pdf param if (param[:time_trend] && @direct_export)
     end
     
     get_pdf_params.merge(query_hash: @query_params)

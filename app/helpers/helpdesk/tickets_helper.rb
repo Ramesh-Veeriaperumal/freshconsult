@@ -16,8 +16,8 @@ module Helpdesk::TicketsHelper
   include Marketplace::ApiHelper
   include AutocompleteHelper
   include Helpdesk::AccessibleElements
-  include Cache::Memcache::Helpdesk::Ticket #Methods for fragment caching in new ticket and compose email forms
   include Cache::Memcache::Helpdesk::TicketTemplate #Methods for tkt templates count
+  include Cache::FragmentCache::Base # Methods for fragment caching
   
   def ticket_sidebar
     tabs = [["TicketProperties", t('ticket.properties').html_safe,         "ticket"],
@@ -481,23 +481,6 @@ module Helpdesk::TicketsHelper
     AgentCollision.ticket_channel(current_account,ticket_id)
   end
 
-
-  def agentcollision_host
-    "#{request.protocol}#{NodeConfig["agentcollision_host"]}"
-  end
-
-  def agentcollision_server
-    "#{request.protocol}#{NodeConfig["agentcollision_server"]}"
-  end
-
-  def autorefresh_host
-    "#{request.protocol}#{NodeConfig["autorefresh_host"]}"
-  end
-
-  def autorefresh_server
-    "#{request.protocol}#{NodeConfig["autorefresh_server"]}"
-  end
-
   def facebook_link
     ids = @ticket.fb_post.original_post_id.split('_')
     page_id = @ticket.fb_post.facebook_page.page_id
@@ -547,7 +530,7 @@ module Helpdesk::TicketsHelper
     end
   else
     contents << content_tag(:div) do 
-      render :partial => "/helpdesk/tickets/show/single_attachment_form", :locals => { :attach_id => "ticket" , :nsc_param => "helpdesk_ticket" , :template => true}
+      render :partial => "/helpdesk/tickets/show/single_attachment_form", :locals => { :attach_id => "ticket" , :nsc_param => "helpdesk_ticket" , :template => true,:rowfluid => true}
     end
   end
     contents.join(" ").html_safe

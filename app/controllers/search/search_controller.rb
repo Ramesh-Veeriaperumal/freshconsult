@@ -2,7 +2,7 @@ require 'json'
 
 class Search::SearchController < ApplicationController
 
-	include Search::SearchResultJson
+	include Search::SearchResultJson	
 	
 	before_filter :privilege_check, :only => :index , :if => :is_native_mobile?
 
@@ -22,6 +22,7 @@ class Search::SearchController < ApplicationController
 
 	def index
 		(@search_key.blank? and params[:search_conditions].blank?) ? set_result_json : search(search_classes)
+		Search::RecentSearches.new(@search_key).store unless @search_key.blank?
 		post_process
 	end
 
@@ -56,6 +57,24 @@ class Search::SearchController < ApplicationController
 			Rails.logger.debug e.inspect
 			NewRelic::Agent.notice_error(e)
 		end
+	end
+
+	def recent_searches_tickets		
+		
+		recent_data = {
+			:recent_tickets => Search::RecentTickets.new().recent,
+			:recent_searches => Search::RecentSearches.new().recent
+		}
+		respond_to do |format|
+			format.json do
+				render :json => recent_data.to_json
+			end
+		end
+	end
+
+	def remove_recent_search
+		Search::RecentSearches.new(params[:search_key]).delete
+		render :status => 200, :nothing => true
 	end
 
 	protected
@@ -249,5 +268,7 @@ class Search::SearchController < ApplicationController
 		def privilege_check 
 			access_denied if params[:search_class].to_s.eql?("customer") && !privilege?(:view_contacts)
 			access_denied if params[:search_class].to_s.eql?("solutions") && !privilege?(:view_solutions)
-		end	
+		end
+
+			
 end

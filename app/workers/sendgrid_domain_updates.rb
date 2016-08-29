@@ -1,4 +1,12 @@
+require 'resolv'
+
 class SendgridDomainUpdates < BaseWorker
+
+  include ParserUtil
+  include Redis::RedisKeys
+  include Redis::OthersRedis
+
+  require 'freemail'
 
   TIMEOUT = SendgridWebhookConfig::CONFIG[:timeout]
 
@@ -38,8 +46,9 @@ class SendgridDomainUpdates < BaseWorker
 
   def create_record(domain, vendor_id)
     generated_key = generate_callback_key
+    check_spam_account
     post_url = SendgridWebhookConfig::POST_URL % { :full_domain => domain, :key => generated_key }
-    post_args = {:hostname => domain, :url => post_url, :spam_check => true, :send_raw => false }
+    post_args = {:hostname => domain, :url => post_url, :spam_check => false, :send_raw => false }
     response = send_request('post', SendgridWebhookConfig::SENDGRID_API["set_url"] , post_args)
     return false unless response.code == 200
     verification = AccountWebhookKey.new(:account_id => Account.current.id, 
@@ -47,16 +56,48 @@ class SendgridDomainUpdates < BaseWorker
     verification.save!
   end
 
+  def check_spam_account
+    account = Account.find_by_id(Account.current.id)
+    if account.present?
+      admin_email_domain = parse_email_with_domain(account.admin_email)[:domain]
+      resolver = Resolv::DNS.new
+      mxrecord = resolver.getresources(admin_email_domain,Resolv::DNS::Resource::IN::MX) if admin_email_domain.present?
+      
+      spam_email_exact_regex_value = get_others_redis_key(SPAM_EMAIL_EXACT_REGEX_KEY)
+      spam_email_apprx_regex_value = get_others_redis_key(SPAM_EMAIL_APPRX_REGEX_KEY)
+      spam_email_exact_match_regex = spam_email_exact_regex_value.present? ? Regexp.compile(spam_email_exact_regex_value, true) : SPAM_EMAIL_EXACT_REGEX
+      spam_email_apprx_match_regex = spam_email_apprx_regex_value.present? ? Regexp.compile(spam_email_apprx_regex_value, true) : SPAM_EMAIL_APPRX_REGEX
+
+      if( mxrecord.blank? || (ismember?(BLACKLISTED_SPAM_DOMAINS,admin_email_domain)) || 
+          ((account.helpdesk_name =~ spam_email_exact_match_regex || account.full_domain =~ spam_email_exact_match_regex) && Freemail.free_or_disposable?(account.admin_email)))
+        add_member_to_redis_set(SPAM_EMAIL_ACCOUNTS, Account.current.id)
+        add_member_to_redis_set(BLACKLISTED_SPAM_ACCOUNTS, Account.current.id)
+        FreshdeskErrorsMailer.error_email(nil, {:domain_name => account.full_domain}, nil, {
+          :subject => "Detected suspicious spam account :#{Account.current.id} ", 
+          :recipients => ["mail-alerts@freshdesk.com", "noc@freshdesk.com"],
+          :additional_info => {:info => "Outgoing may be blocked for Account ID: #{Account.current.id} , Reason: Account's contact address is invalid or its domain is blacklisted or Account name is suspicious "}
+        })
+      elsif((account.helpdesk_name =~ spam_email_apprx_match_regex || account.full_domain =~ spam_email_apprx_match_regex) && Freemail.free_or_disposable?(account.admin_email)) 
+        add_member_to_redis_set(BLACKLISTED_SPAM_ACCOUNTS, Account.current.id)
+        FreshdeskErrorsMailer.error_email(nil, {:domain_name => account.full_domain}, nil, {
+          :subject => "Detected suspicious spam account :#{Account.current.id} ", 
+          :recipients => ["mail-alerts@freshdesk.com", "noc@freshdesk.com"],
+          :additional_info => {:info => "Account ID: #{Account.current.id} , Reason: Account name looks suspicious"}
+        })
+      end
+    end
+  end
+
   def notify_and_update(domain, vendor_id)
     FreshdeskErrorsMailer.error_email(nil, {:domain_name => domain}, nil, {
       :subject => "Error in creating mapping for a domain in sendgrid", 
       :recipients => "mail-alerts@freshdesk.com",
-      :additional_info => "Domain already exists in sendgrid"
+      :additional_info => {:info => "Domain already exists in sendgrid"}
       })
 
     generated_key = generate_callback_key
     post_url = SendgridWebhookConfig::POST_URL % { :full_domain => domain, :key => generated_key }
-    post_args = { :url => post_url, :spam_check => true, :send_raw => false }
+    post_args = { :url => post_url, :spam_check => false, :send_raw => false }
     response = send_request('patch', SendgridWebhookConfig::SENDGRID_API['update_url'] + domain, post_args)
     AccountWebhookKey.find_by_account_id_and_vendor_id(Account.current.id, vendor_id).update_attributes(:webhook_key => generated_key)
   end

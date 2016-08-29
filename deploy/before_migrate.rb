@@ -31,6 +31,7 @@ run "ln -nfs #{shared_path}/config/aws_v2.yml #{node[:rel_path]}/config/aws_v2.y
 run "ln -nfs #{shared_path}/config/s3_static_files.yml #{node[:rel_path]}/config/s3_static_files.yml"
 run "ln -nfs #{shared_path}/config/dalli.yml #{node[:rel_path]}/config/dalli.yml"
 run "ln -nfs #{shared_path}/config/dalli_api.yml #{node[:rel_path]}/config/dalli_api.yml"
+run "ln -nfs #{shared_path}/config/custom_dalli.yml #{node[:rel_path]}/config/custom_dalli.yml"
 run "ln -nfs #{shared_path}/config/statsd.yml #{node[:rel_path]}/config/statsd.yml"
 run "ln -nfs #{shared_path}/config/redis_display_id.yml #{node[:rel_path]}/config/redis_display_id.yml"
 run "ln -nfs #{shared_path}/config/chat.yml #{node[:rel_path]}/config/chat.yml"
@@ -39,6 +40,7 @@ run "ln -nfs #{shared_path}/config/pod_info.yml #{node[:rel_path]}/config/pod_in
 run "ln -nfs #{shared_path}/config/infra_layer.yml #{node[:rel_path]}/config/infra_layer.yml"
 run "ln -nfs #{shared_path}/config/redis_routes.yml #{node[:rel_path]}/config/redis_routes.yml"
 run "ln -nfs #{shared_path}/config/integrations_config.yml #{node[:rel_path]}/config/integrations_config.yml"
+run "ln -nfs #{shared_path}/config/fd_node_config.yml #{node[:rel_path]}/config/fd_node_config.yml"
 run "ln -nfs #{shared_path}/config/mobile_config.yml #{node[:rel_path]}/config/mobile_config.yml"
 run "ln -nfs #{shared_path}/config/asset_sync.yml #{node[:rel_path]}/config/asset_sync.yml"
 run "ln -nfs #{shared_path}/config/config.yml #{node[:rel_path]}/config/config.yml"
@@ -51,6 +53,8 @@ run "ln -nfs #{shared_path}/config/pod_dns_config.yml #{node[:rel_path]}/config/
 run "ln -nfs #{shared_path}/config/helpdesk.yml #{node[:rel_path]}/config/helpdesk.yml"
 run "ln -nfs #{shared_path}/config/thrift.yml #{node[:rel_path]}/config/thrift.yml"
 run "ln -nfs #{shared_path}/config/delayed_job_watcher.yml #{node[:rel_path]}/config/delayed_job_watcher.yml"
+run "ln -nfs #{shared_path}/config/archive_note.yml #{node[:rel_path]}/config/archive_note.yml"
+run "ln -nfs #{shared_path}/config/lambda.yml #{node[:rel_path]}/config/lambda.yml"
 
 
 #search V2

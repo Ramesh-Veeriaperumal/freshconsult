@@ -1,0 +1,24 @@
+<ul class="cti-number-list">
+  <% cti_phones.each do |number| %>
+    <li>
+      <div class="span4"><%= number.phone %></div>
+      <% if used %>
+        <div class="name span4 muted"><%= number.agent.name %></div>
+      <% end %>
+      
+      <a href="#cti-phone-delete-confirmation"
+        rel="freshdialog"
+        class="delete-number-btn hide pull-right"
+        title="<%= t('integrations.cti_admin.phone.delete_number')%>"
+			 	data-number-id="<%=number.id%>"
+        data-number="<%=number.phone%>"
+			 	data-submit-label="Delete"
+			 	data-width="400px"
+			 	data-close-label="Cancel"
+			 	data-destroy-on-close="true"
+        >
+        <i class="ficon-trash cti-delete-icon"></i>
+      </a>
+    </li>
+  <% end %>
+</ul>

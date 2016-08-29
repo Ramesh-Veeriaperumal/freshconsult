@@ -1,0 +1,5 @@
+page.replace_html "cti_phone_unused_content", render(:partial => "cti_phone_number_list", :locals => {:cti_phones => @phones, :used => false})
+
+page.replace_html "cti_phone_unused_count", @phones.count
+page << "jQuery('#cti_unused_phone_loading').removeClass('sloading');"
+page << "jQuery('#cti_phone_unused_content').show();"

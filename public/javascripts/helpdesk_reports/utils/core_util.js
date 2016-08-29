@@ -2,8 +2,8 @@ HelpdeskReports.CoreUtil = HelpdeskReports.CoreUtil || {};
 HelpdeskReports.locals = HelpdeskReports.locals || {};
 
 HelpdeskReports.CoreUtil = {
-    MULTI_SELECT_SELECTION_LIMIT: 10,
-    FILTER_LIMIT: 5,
+    MULTI_SELECT_SELECTION_LIMIT: 50,
+    FILTER_LIMIT: 10,
     FILTER_LIMIT_MSG: I18n.t('helpdesk_reports.filter_error_msg'),
     CONST: {
         base_url    : "/reports/v2/",
@@ -32,10 +32,10 @@ HelpdeskReports.CoreUtil = {
     ** set to 1 min for now. Will be handled at backend later on.
     */
     timeouts: {
-        main_request: 60000,
-        glance_right_pane: 60000,
-        ticket_list: 60000,
-        custom_field: 60000
+        main_request: 120000,
+        glance_right_pane: 120000,
+        ticket_list: 120000,
+        custom_field: 120000
     },
     SHORTEN_LIMIT : 9999,
     getFilterDisplayData: function () {
@@ -260,7 +260,7 @@ HelpdeskReports.CoreUtil = {
         var current_group = this.setDefaultGroupByOptions(HelpdeskReports.locals.active_metric);
         
         if (locals.custom_fields_group_by.length) {
-            current_group.push(locals.custom_fields_group_by[0]);
+            current_group.push(HelpdeskReports.locals.active_custom_field);
         }
         locals.current_group_by = current_group;
     },
@@ -276,8 +276,13 @@ HelpdeskReports.CoreUtil = {
         if (constants.status_metrics.indexOf(active_metric) > -1) {
             groupby = constants.group_by_with_status.slice();
             if(active_metric == "UNRESOLVED_TICKETS")
-            {
-                groupby.push("historic_status")
+            {   
+                var account_end_date = HelpdeskReports.locals.endDate;
+                var date_range       = HelpdeskReports.locals.date_range.split(' - ')
+                var end_date         = date_range.length == 1 ? date_range[0] : date_range[1]
+                if((Date.parse(account_end_date) - Date.parse(end_date)) != 0){
+                    groupby.push("historic_status")
+                }
             }
         } else {
             groupby = constants.group_by_without_status.slice();
@@ -379,7 +384,15 @@ HelpdeskReports.CoreUtil = {
         });
         jQuery('#reports_wrapper').on('click.helpdesk_reports', '[data-action="pop-report-type-menu"]', function (event) {
             event.stopImmediatePropagation();
-            _this.actions.toggleReportTypeMenu();
+            var target_id = event.target.id;
+            var show_menu = true;
+            
+            if(target_id == 'last-updated' || jQuery(event.target).parents('#last-updated').length == 1 ) {
+                show_menu = false;
+            } 
+            if(show_menu) {
+                _this.actions.toggleReportTypeMenu();    
+            }
         });
         jQuery('#reports_wrapper').on('click.helpdesk_reports', function () {
             _this.actions.hideReportTypeMenu();
@@ -478,6 +491,7 @@ HelpdeskReports.CoreUtil = {
             }
         },
         openFilterMenu: function () {
+            jQuery("#report-filters").scrollTop(0);
             jQuery("#report-filters").show();
             jQuery('#inner').addClass('openedit');
             this.hideTicketList();
@@ -535,10 +549,15 @@ HelpdeskReports.CoreUtil = {
         },
         toggleReportTypeMenu: function () {
             var menu = jQuery('#reports_type_menu');
-            if (!menu.is(':visible')) {
-                menu.removeClass('hide');
+            var hash = HelpdeskReports.locals.report_filter_data;;
+            if(hash.length == 0 || ( hash.length == 1 && HelpdeskReports.SavedReportUtil.default_report_is_scheduled)) {
+                //No saved report or only one saved report entry[ Default saved report]
             } else {
-                menu.addClass('hide');
+                if (!menu.is(':visible')) {
+                    menu.removeClass('hide');
+                } else {
+                    menu.addClass('hide');
+                } 
             }
         },
         hideReportTypeMenu: function () {
@@ -1352,6 +1371,8 @@ HelpdeskReports.CoreUtil = {
     generatePdfAsync: function (){
         var _this = this;
         var params = _this.pdfParams();
+        if(HelpdeskReports.locals.report_type == 'glance')
+            params['active_custom_field'] = HelpdeskReports.locals.active_custom_field;
         var opts = {
             url: _this.CONST.base_url + HelpdeskReports.locals.report_type + _this.CONST.email_reports,
             type: 'POST',

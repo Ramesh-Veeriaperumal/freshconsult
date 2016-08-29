@@ -4,14 +4,14 @@ window.App.Tickets.Merge_tickets = window.App.Tickets.Merge_tickets || {};
 (function ($) {
   "use strict";
 
-  window.App.Tickets.Merge_tickets = {
+  App.Tickets.Merge_tickets = {
 
     global: {},
 
     ticketSearch: new Template(
                           '<li><div class="ticketdiv" data-id="#{display_id}">'+
                           '<span id="resp-icon"></span>'+
-                          '<div id="merge-ticket" class="merge_element" data-id="#{display_id}" data-created="#{created_at_int}">'+
+                          '<div id="merge-ticket" class="merge_element" data-id="#{display_id}" data-req-id="#{requester_id}" data-created="#{created_at_int}">'+
                           '<span class="item_info" title="#{subject}">##{display_id} #{subject}</span>'+
                           '<div class="info-data hideForList">'+
                           '<span class="merge-ticket-info">#{ticket_info}</span>'+
@@ -22,14 +22,16 @@ window.App.Tickets.Merge_tickets = window.App.Tickets.Merge_tickets || {};
       this.onVisit(data);
     },
     onVisit: function (data) {
-      App.Merge.initialize();
-      this.bindHandlers();
+      this.initialize();
     },
     onLeave: function () {
       jQuery('body').off('.merge_tickets');
       jQuery('#ticket-merge').parent().remove();
     },
-
+    initialize: function(){
+      App.Merge.initialize();
+      this.bindHandlers();
+    },
     bindHandlers: function () {
       this.typedClick();
       this.searchKeyup();
@@ -40,6 +42,7 @@ window.App.Tickets.Merge_tickets = window.App.Tickets.Merge_tickets || {};
       this.searchTypeChange();
       this.ticketDivClick();
       this.clickRespIcon();
+      this.clickCheckbox();
     },
 
     typedClick: function () {
@@ -130,6 +133,13 @@ window.App.Tickets.Merge_tickets = window.App.Tickets.Merge_tickets || {};
         jQuery(this).closest(".merge-cont").remove();
         $this.enableContinue();
         $this.changeTicketCount();
+        $this.toggleRecipientsCheckbox();
+      });
+    },
+
+    clickCheckbox: function () {
+      jQuery('body').on('mousedown.merge_tickets', '#add_recipients', function () {
+        jQuery(this).data('customerCheck', true);
       });
     },
 
@@ -141,6 +151,7 @@ window.App.Tickets.Merge_tickets = window.App.Tickets.Merge_tickets || {};
           jQuery(this).parent().addClass("clicked");
           var element = jQuery(".cont-primary").clone();
           App.Merge.appendToMergeList(element, jQuery(this));
+          $this.toggleRecipientsCheckbox();
           var replace_element = element.find('.item_info');
           var title =  replace_element.attr('title');
           var ticket_id = element.find("#merge-ticket").data("id")
@@ -236,7 +247,22 @@ window.App.Tickets.Merge_tickets = window.App.Tickets.Merge_tickets || {};
         }
       });
       return oldestTicket;
-    }
+    },
 
+    toggleRecipientsCheckbox: function () {
+      if (!jQuery('#add_recipients').data('customerCheck')) {
+        jQuery('#add_recipients').attr('checked', this.recipientsCheck());
+      }
+    },
+
+    recipientsCheck: function () {
+      var requesterIds = jQuery.map(jQuery('#merge-content #merge-ticket'), function (el) { return jQuery(el).data('reqId'); });
+      return jQuery('#merge-content #merge-ticket').length > 1 && jQuery.unique(requesterIds).length === 1;
+    },
+
+    unBindEvent: function () {
+      jQuery('body').off('.merge_tickets');
+      jQuery('#ticket-merge').parent().remove();
+    }
   };
 }(window.jQuery));

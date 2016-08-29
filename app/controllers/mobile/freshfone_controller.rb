@@ -1,9 +1,20 @@
 class Mobile::FreshfoneController < ApplicationController
 
-	before_filter :set_native_mobile, :only => [:can_accept_incoming_calls]
+	before_filter :set_native_mobile, :only => [:can_accept_incoming_calls, :is_ringing]
 
 	def numbers
 		render :json => {:freshfone_numbers => current_account.freshfone_numbers.map(&:as_numbers_mjson),:group_numbers => current_account.freshfone_numbers.accessible_freshfone_numbers(current_user).map(&:as_numbers_mjson)}
+	end
+
+	# return true if a call with given call_id is ringing
+	def is_ringing
+		call = current_account.freshfone_calls.find(params[:call_id])
+		respond_to do |format|
+			format.js {}
+			format.nmobile {
+				render :json => {ringing: call.default?}
+			}
+		end
 	end
 
 	# return true if incoming is allowed via desktop app
@@ -14,11 +25,11 @@ class Mobile::FreshfoneController < ApplicationController
 			format.nmobile {
 				freshfone_user = current_user.freshfone_user
 				unless freshfone_user.nil?
-					accept_incoming = current_user.freshfone_user_online? && !freshfone_user.available_on_phone 
+					accept_incoming = current_user.freshfone_user_online? && !freshfone_user.available_on_phone
 				end
 				render :json => {:accept_incoming => accept_incoming}
 			}
 		end
 	end
-	
+
 end

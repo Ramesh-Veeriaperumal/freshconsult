@@ -984,7 +984,7 @@ if Integrations::Application.count == 0
     s.account_id = Integrations::Constants::SYSTEM_ACCOUNT_ID
     s.listing_order = 40
     s.options = {:direct_install => true, 
-                 :edit_url => "infusionsoft/edit",
+                 :edit_url => "/integrations/infusionsoft/edit",
                  :oauth_url => "/auth/infusionsoft?origin=id%3D{{account_id}}", 
                  :default_fields => {:contact => ["First Name"], :account => ["Company"]}
                  }
@@ -1004,6 +1004,8 @@ if Integrations::Application.count == 0
     s.application_type = "freshsales"
   end
 
+  
+
   fullcontact = Integrations::Application.seed(:name) do |s|
     s.name = "fullcontact"
     s.display_name = "integrations.fullcontact.label"
@@ -1016,6 +1018,26 @@ if Integrations::Application.count == 0
                  }
     s.application_type = "fullcontact"
     s.dip = 3
+  end
+  
+  cti_admin = Integrations::Application.seed(:name) do |s|
+    s.name = "cti"
+    s.display_name = "integrations.cti_admin.label"
+    s.description = "integrations.cti_admin.desc"
+    s.account_id = Integrations::Constants::SYSTEM_ACCOUNT_ID
+    s.listing_order = 43
+    s.options = {
+      :direct_install => true,
+      :edit_url => "/integrations/cti_admin/edit",
+      :auth_url => "/integrations/cti_admin/edit",
+      :install => {:require_feature => {:notice => 'integrations.cti_admin.no_feature', :feature_name => :cti}},
+      :edit => {:require_feature => {:notice => 'integrations.cti_admin.no_feature', :feature_name => :cti}},
+      :after_commit => {
+        :clazz => 'Integrations::Cti',
+        :method => 'clear_memcache'
+      }
+    }
+    s.application_type = "cti_integration"
   end
 
 end

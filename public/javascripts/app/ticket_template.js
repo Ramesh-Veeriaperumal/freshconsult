@@ -201,6 +201,8 @@ var TicketTemplate = {
  templateSubmitCallback: function(){
    var _this = this;
    jQuery('form#apply_template_form').bind("ajax:complete", function(){
+    //  OFF the event binding for nested fields
+      jQuery(document).off('.nested_field');
      jQuery("#helpdesk_ticket_email").data("initialRequester", App.requesterValue);
      jQuery("#helpdesk_ticket_email").data("initialRequesterid", App.requesterId);
      jQuery("#helpdesk_ticket_requester_id").val("").val(App.requesterId);

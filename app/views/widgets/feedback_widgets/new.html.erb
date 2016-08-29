@@ -2,27 +2,45 @@
 <% disable_options = params[:disable]%>
 <% captcha = widget_option(:captcha) %>
 <% @params = params %>
-<% if(responsive != "no") %>
 
-	<%= stylesheet_link_tag_with_rtl :'cdn/responsive_widget' %>
+<% if(responsive != "no") %>
+  <%= stylesheet_link_tag_with_rtl :'cdn/responsive_widget' %>
 <% end %>
 
-<div class="modal-header">
-	<div class="modal-header-bg">
-	<%= content_tag(:h3, widget_option(:formTitle), :class => "ellipsis", :title => widget_option(:formTitle)) %>
-	</div>
-</div>
 <% widget_view = widget_option(:widgetView) %>
 <% widget_type = widget_option(:widgetType) %>
 <input type="hidden" name="widgetType" id="widgetType" value= "<%= widget_type %>" />
 <%= hidden_field_tag "searchInputFrom" %>
-<div class="modal-body">
-<%= form_for @ticket,
-		:url => widgets_feedback_widget_path(:submit_message => params[:submitThanks],
-																				:formTitle => params[:formTitle],
-																				:widgetType => widget_type),
-		:html => { :method => :post, :multipart => true, :class => "form form-widget", :id => "fd_feedback_widget" } do |f| %>
-  	<%#= f.error_messages %>
+<div class="modal-header feedback-header modal-body-change">
+  <div class="modal-header-bg">
+    <%= content_tag(:h3, widget_option(:formTitle), :class => "ellipsis lead pull-left form-title", :title => widget_option(:formTitle)) %>
+    <% if widget_option(:searchArea) && feature?(:auto_suggest_solutions) && allowed_in_portal?(:open_solutions) %>
+    <span class="embedded-search">
+    <%= content_tag(:h3, t('ticket.search_text'), :class => "ellipsis lead pull-left search-text active", :title => t('ticket.search_text')) %>
+    <div class="embedded-hightlight"></div>
+    <span id="search-count"></span>
+    </span>
+    <div class="pull-right search-panel">
+       <span class="search-help" data-search-option=true>
+       <%= t('ticket.search_text') %>
+       </span>
+      <div class="feedback-search">
+        <div class="feedback-search-icon text-center">
+          <i class="ficon-search set-search"></i>
+      </div>
+    </div>
+  </div>
+  <%end%>
+
+  </div>  
+</div>
+<div class="modal-body feedback-body modal-body-change">
+  <%= form_for @ticket,
+    :url => widgets_feedback_widget_path(:submit_message => params[:submitThanks],
+                                        :formTitle => params[:formTitle],
+                                        :widgetType => widget_type),
+    :html => { :method => :post, :multipart => true, :class => "form form-widget", :id => "fd_feedback_widget" } do |f| %>
+    <%#= f.error_messages %>
     <div class="errorExplanation hide" id="errorExplanation">
       <h2>1 error prohibited this ticket from being saved</h2>
       <p>There were problems with the following fields:</p>
@@ -55,118 +73,104 @@
     	<% if field.has_section?
         field.picklist_values.each do |picklist|
           next if picklist.section.blank?
-          %> <textarea class="picklist_section_<%= picklist.id %> hide"> <%
-	          picklist.section_ticket_fields.each do |section_tkt_field|
-	            if section_tkt_field.editable_in_portal
-	              %><div class="control-group ticket_section">
-	              <%= (ticket_field_container f,:helpdesk_ticket, section_tkt_field,
-	              	                  widget_prefilled_value(field), picklist.id.to_s).gsub("</textarea>", "&lt/textarea&gt").html_safe %>
-	              </div><%
-	            end
-	          end
-	        %> </textarea> <%
+          %> 
+        <textarea class="picklist_section_<%= picklist.id %> hide"> <%
+            picklist.section_ticket_fields.each do |section_tkt_field|
+              if section_tkt_field.editable_in_portal
+                %><div class="control-group ticket_section">
+                <%= (ticket_field_container f,:helpdesk_ticket, section_tkt_field,
+                                    widget_prefilled_value(field), picklist.id.to_s).gsub("</textarea>
+        ", "&lt/textarea&gt").html_safe %>
+                </div>
+      <%
+              end
+            end
+          %> </textarea> <%
         end
       end %>
-		<% end %>
-
-	</div>
-  <% if captcha == "yes" && !logged_in? %>
-    <div class="control-group">
-     <div class="controls recaptcha-control">
-  			<div id="captcha_wrap">
+  <% end %>
+</div>
+<% if captcha == "yes" && !logged_in? %>
+  <div class="control-group">
+    <div class="controls recaptcha-control">
+      <div id="captcha_wrap">
         <%= recaptcha_tags :display => { :theme => "white" , :size => "compact"}, :ssl => true %>
-  			<div class="recaptcha-error-message hide" id="helpdesk_ticket_captcha-error">
-					<%= t("recaptcha_require_message") %>
-  	    </div>
-      </div><!-- end captch_wrap -->
+        <div class="recaptcha-error-message hide" id="helpdesk_ticket_captcha-error">
+          <%= t("recaptcha_require_message") %>
+        </div>
+      </div>
+      <!-- end captch_wrap -->
       <input type="hidden" name="check_captcha" value="true" />
     </div>
   </div>
-  <% end %>
-	<% if widget_type="popup" %>
-		<div class="extra-space"></div>
-	<% end %>
+<% end %>
+<% if widget_type="popup" %>
+  <div class="extra-space"></div>
+<% end %>
 </div>
-<div class="modal-footer">
-	<div class="row-fluid">
-		<div class="span10">
-			<div class="copyright">
-				<% unless(current_account.subscription.paid_account?) %>
-					<%= link_to(t('footer.helpdesk_software'), "http://www.freshdesk.com", :target => "_blank") %>
-					<%= t('footer.by_freshdesk') %>
-					<div class="fw-privacy-policy">
-						<%= link_to(t('portal.cookie.privacy_policy'), "http://www.freshdesk.com/privacy", :target => "_blank") %>
-					</div>
-				<% end %>
-			</div>
-		</div>
-      	<input type="hidden" id="submit_message" value="<%= params[:submitThanks] %>" />
-		<input type="hidden" name="retainParams" id="retainParams" value= "<%=  ActiveSupport::JSON.encode params.except(:controller).except(:action) %>" />
-		<div class="span2 omega">
-			<%= f.submit t('ticket.submit_ticket'), :class => "btn btn-primary omega",
-				"data-loading-text" => t('ticket.submit_loading') %>
-			<%# Any fields named like meta[fieldname] will be saved by the helpdesk as metadata %>
-			<%= hidden_field_tag "meta[user_agent]", request.env["HTTP_USER_AGENT"] %>
-			<% referrer = h(request.referrer) %>
-			<%= hidden_field_tag "meta[referrer]", referrer %>
-		</div>
-	</div>
+<div class="modal-footer feedback-footer modal-body-change">
+  <div class="row-fluid">
+    <div class="span8">
+      <div class="copyright">
+        <% unless(current_account.subscription.paid_account?) %>
+          <%= link_to(t('footer.helpdesk_software'), "http://www.freshdesk.com", :target => "_blank") %>
+          <%= t('footer.by_freshdesk') %>
+          <div class="fw-privacy-policy">
+            <%= link_to(t('portal.cookie.privacy_policy'), "http://www.freshdesk.com/privacy", :target => "_blank") %>
+          </div> 
+        <% end %>
+      </div>
+    </div>
+    <input type="hidden" id="submit_message" value="<%= params[:submitThanks] %>" />
+    <input type="hidden" name="retainParams" id="retainParams" value= "<%=  ActiveSupport::JSON.encode params.except(:controller).except(:action) %>" />
+    <div class="span4 omega">
+      <%= f.submit t('ticket.submit_feedback'), :class => "btn btn-primary omega",
+        "data-loading-text" => t('ticket.submit_loading') %>
+      <%# Any fields named like meta[fieldname] will be saved by the helpdesk as metadata %>
+      <%= hidden_field_tag "meta[user_agent]", request.env["HTTP_USER_AGENT"] %>
+      <% referrer = h(request.referrer) %>
+      <%= hidden_field_tag "meta[referrer]", referrer %>
+    </div>
+  </div>
 </div>
 <% end %>
+
+
 <% if widget_option(:searchArea) && feature?(:auto_suggest_solutions) && allowed_in_portal?(:open_solutions) %>
-	<% if(responsive != "no") %>
-		<a class="mobile-search-icon" id="mobile-search-icon" href="#">
-			<span id="mobile-counter"></span>
-			<span class="wicon-mobile-search"></span>
-		</a>
-		<input type="hidden" name="responsive" id="responsive" value= "<%= responsive %>" />
-		<script type='text/javascript'>
-			jQuery(document).ready(function () {
-				var responsiveWidget = jQuery("#responsive").val();
-				if(responsiveWidget != "no") {
-					jQuery("#helpdesk_ticket_subject").after("<a href='#' id='subject-mobile-counter'></a>")
-					jQuery('.mobile-search-icon,#subject-mobile-counter').click(function(ev) {
-						if(!jQuery('.feedback-wrapper').hasClass('embedded-wrapper')){
-							ev.preventDefault('#subject-mobile-counter');
-							jQuery('.modal-body').toggleClass('modal-body-hide');
-							jQuery('.modal-panel').toggleClass('modal-panel-show');
-							jQuery('.mobile-search-icon').toggleClass('mobile-search-icon-selected');
-							jQuery('#helpdesk_ticket_submit').toggle();
-						}
-						if(jQuery('.feedback-wrapper').hasClass('embedded-wrapper'))
-					        jQuery('#fs-input').focus();
-					});
-				}
-			});
-		</script>
-	<% end %>
-	<div class="modal-panel" id="feedback-suggest">
-		<form class="hc-search-form" autocomplete="off" action="<%= solutions_support_search_path %>" id="hc-search-form">
-			<div class="hc-search-input">
-				<input placeholder="<%=t('.feedback_widgets_search')%>" type="text" id="fs-input"
-					name="term" class="span12 special" value=""
+  <% if(responsive != "no") %>
+    <a class="mobile-search-icon" id="mobile-search-icon" href="#">
+      <span id="mobile-counter"></span>
+      <span class="wicon-mobile-search"></span>
+    </a>
+    <input type="hidden" name="responsive" id="responsive" value= "<%= responsive %>" />
+  <% end %>
+  <div class="modal-panel suggest-panel" id="feedback-suggest">
+    <form class="hc-search-form" autocomplete="off" action="<%= solutions_support_search_path %>" id="hc-search-form">
+      <div class="suggest-search">
+        <input placeholder="<%=t('.feedback_widgets_search')%>" type="text" id="fs-input"
+					name="term" class="span12 special searchField" value=""
 		            rel="page-search" data-max-matches="10">
-			</div>
-		</form>
-		<div id="panel-content" class="panel-content hide">
-			<h4 id="ws-results-title"><%=t('.feedback_widgets_search_results')%></h4>
-			<ul class="unstyled" id="ws-results"></ul>
-		</div>
-		<div id="panel-info" class="panel-info">
-			<h2 class="lead"><%=t('.feedback_widgets_search_our')%><br />
-				<%=t('.feedback_widgets_knowledge_base')%></h2>
-			<%= link_to t('.feedback_widgets_help_articles'), support_solutions_path,
+      </div>
+    </form>
+    <div id="panel-content" class="panel-content feedback-suggest-panel hide">
+      <!-- <h4 id="ws-results-title"><%=t('.feedback_widgets_search_results')%></h4> -->
+      <ul class="unstyled" id="ws-results"></ul>
+    </div>
+    <div id="panel-info" class="panel-info">
+      <h2 class="lead"><%=t('.feedback_widgets_search_our')%><br />
+        <%=t('.feedback_widgets_knowledge_base')%></h2>
+      <%= link_to t('.feedback_widgets_help_articles'), support_solutions_path,
 					{ :target => "_blank", :class => "link-pointer" } %>
 		</div>
 	</div>
 
 	<script id="ws-tmpl" type="text/x-jquery-tmpl">
 		<li>
-			<div class="ellipsis">
-				<a href="${url}" target="_blank">{{html title}}</a>
-			</div>
-			<p class="help-text">{{html desc}}</p>
-		</li>
+      <a href="${url}" target="_blank">
+        <div class="ellipsis">{{html title}}</div>
+      </a>
+      <!-- <p class="help-text">{{html desc}}</p> -->
+    </li>
 	</script>
 	<script type="text/javascript">
 		var suggestQuery, suggestDelay, suggestForSubject = true;
@@ -175,127 +179,287 @@
 		jQuery("#feedback-widget-container").addClass("modal-panel-active");
 
 		var suggestResponse = function(data, term){
-			var searchInputFrom = jQuery("#searchInputFrom").val();
+      var searchInputFrom = jQuery("#searchInputFrom").val();
 
-			jQuery("#mobile-counter").removeClass("mobile-counter")
-			jQuery("#mobile-counter").text("")
-			jQuery("#subject-mobile-counter").removeClass("subject-mobile-counter")
-			jQuery("#subject-mobile-counter").text("")
+      jQuery("#mobile-counter").removeClass("mobile-counter").text("")
+      jQuery("#subject-mobile-counter").removeClass("subject-mobile-counter").text("");
+      jQuery("#search-count").removeClass("search-count").text("");
+    
+        if(data.item.length > 0){
+          if(data.count < 100){
+            jQuery("#mobile-counter,#search-count").text(data.count)
+            jQuery("#subject-mobile-counter").text(data.count + " matching articles")
+          }
+          else{
+            jQuery("#mobile-counter,#search-count").text("99+")
+            jQuery("#subject-mobile-counter").text("99+ matching articles")
+          }
+          jQuery("#mobile-counter").addClass("mobile-counter");
+          jQuery("#search-count").addClass("search-count");
+          jQuery("#subject-mobile-counter").addClass("subject-mobile-counter");
+        jQuery("#ws-results")
+          .html(jQuery.tmpl(jQuery("#ws-tmpl").template(), data.item));
 
-		    if(data.item.length > 0){
-		    	if(data.count < 100){
-			    	jQuery("#mobile-counter").text(data.count)
-			    	jQuery("#subject-mobile-counter").text(data.count + " matching articles found")
-		    	}
-		    	else{
-		    		jQuery("#mobile-counter").text("99+")
-		    		jQuery("#subject-mobile-counter").text("99+ matching articles found")
-		    	}
-		    	jQuery("#mobile-counter").addClass("mobile-counter")
-		    	jQuery("#subject-mobile-counter").addClass("subject-mobile-counter")
-				jQuery("#ws-results")
-					.html(jQuery.tmpl(jQuery("#ws-tmpl").template(), data.item))
-					.append("<li><a href='/support/search/solutions?term="+term+"' target='_blank'><%= t('widgets.feedback_widgets.new.show_all_results') %></a></li>")
-				jQuery("#panel-content").show()
+          if(data.item.length>=5){
+            jQuery("#ws-results").append("<li class='show_all_results'><a href='/support/search/solutions?term="+term+"' target='_blank'><div><%= t('widgets.feedback_widgets.new.show_all_results') %></div></a></li>")
+          }
+          if(jQuery('.embedded-hightlight').hasClass('embedded-highlight-move')){
+            jQuery('.embedded-hightlight').addClass('embedded-hightlight-count')
+          }
+          
+        jQuery("#panel-content").show()
+        if(searchInputFrom== "Subject"){
+          FeedbackSuggest(true);
+        }
 
-		    }else if(searchInputFrom == "Subject") {
-		    	jQuery("#panel-info").show();
-		    	jQuery("#fs-input").val("");
-		    }
-		    else {
-		    	jQuery("#ws-results").html("<%= t('widgets.feedback_widgets.new.no_results') %>" + escapeHtml(term))
-		    	jQuery("#panel-content").show()
-		    }
+        }else if(searchInputFrom == "Subject") {
+          jQuery("#panel-info").show();
+          jQuery("#fs-input").val("");
+           jQuery('.embedded-hightlight').removeClass('embedded-hightlight-count')
+        }
+        else {
+          jQuery("#ws-results").html("<div class='no-result ellipsis'><%= t('widgets.feedback_widgets.new.no_results') %>" + escapeHtml(term)+"</div>")
+          jQuery("#panel-content").show();
+           jQuery('.embedded-hightlight').removeClass('embedded-hightlight-count')
+          
+        }
 
-		    jQuery("#fs-input").removeClass("loading-right");
-		}
+        jQuery("#fs-input").removeClass("loading-right");
+    }
 
 		var callbackToSolutionSearch = function(string){
-			var term = string.trim(),
-		        cache = window['suggest-cache'],
-		        suggest_url = "/support/search/solutions.json",
-		        request = { max_matches:5, term:term, need_count:'true' };
+      var term = string.trim(),
+            cache = window['suggest-cache'],
+            suggest_url = "/support/search/solutions.json",
+            request = { max_matches:5, term:term, need_count:'true' };
 
-		    if(suggestQuery) suggestQuery.abort();
+        if(suggestQuery) suggestQuery.abort();
 
-		    if( term in cache || term == '' ) {
-		        suggestResponse( cache[ term ], term )
-		        return
-		    }
+        if( term in cache || term == '' ) {
+            suggestResponse( cache[ term ], term )
+            return
+        }
+        jQuery("#fs-input").addClass("loading-right");
 
-		    jQuery("#fs-input").addClass("loading-right");
+          suggestQuery = jQuery.getJSON(suggest_url, request, function( data, status, xhr ) {
+            window['suggest-cache'][ term ] = data;
+            suggestResponse( data, term )
+          });
+    }
 
-	        suggestQuery = jQuery.getJSON(suggest_url, request, function( data, status, xhr ) {
-				window['suggest-cache'][ term ] = data
-				suggestResponse( data, term )
-	        });
-		}
+	  	jQuery("#helpdesk_ticket_subject").on("blur keydown change paste", function(ev){
+        jQuery("#searchInputFrom").val("Subject");
+        var responsiveWidget = jQuery("#responsive").val();
+        var searchString = this.value.replace(/^\s+|\s+$/g, "");
 
-	  	jQuery("#helpdesk_ticket_subject").live("blur paste", function(ev){
-	  		jQuery("#searchInputFrom").val("Subject");
-	  		if(!suggestForSubject) return
-
-	  		var searchString = this.value.replace(/^\s+|\s+$/g, "");
-
-	  		if(searchString != '' && searchString.length >= 2){
-	  			jQuery("#fs-input").val(this.value);
-	  			jQuery("#panel-content").hide();
-	  			searchKnowledgeBase(this.value);
-	  		}
+        if(searchString != '' && searchString.length >= 2){
+          jQuery("#fs-input").val(this.value);
+          jQuery("#panel-content").hide();
+        }else{
+          jQuery('#subject-mobile-counter').removeClass("subject-mobile-counter").text("");
+          jQuery('#fs-input').val('');
+        }
+        searchKnowledgeBase(this.value);
 	  	});
 
-	  	jQuery("#fs-input").live("keydown change paste", function(ev){
-	  		jQuery("#searchInputFrom").val("Search");
-
-			var $this = jQuery(this);
-			clearTimeout(suggestDelay);
-		    suggestDelay = setTimeout(function() {
-		    	suggestForSubject = false
-
-		    	searchKnowledgeBase($this.val());
-
-		    }, 500)
-
-		    if(ev.keyCode == 13){
-	   			ev.preventDefault();
-	   			return false;
-	   		}
-
+	  	jQuery("#fs-input").on("keydown change paste", function(ev){
+        jQuery("#searchInputFrom").val("Search");
+    
+        var $this = jQuery(this);
+        clearTimeout(suggestDelay);
+          suggestDelay = setTimeout(function() {
+            suggestForSubject = false
+            searchKnowledgeBase($this.val());
+  
+          }, 500)
+  
+          if(ev.keyCode == 13){
+            ev.preventDefault();
+            return false;
+          }
 	  	});
 
-	  	function searchKnowledgeBase(searchInput)
-	  	{
-	  		var searchString = searchInput.replace(/^\s+|\s+$/g, "");
+      jQuery('.embedded-wrapper .form-title').live('click',function(){
+        EmbeddedSearch(true);
+      });
+      jQuery('.embedded-wrapper .search-text').live('click',function(){
+        EmbeddedSearch(false);
+      });
+      var checkScrollBars = function(){
+         if(jQuery('.modal-body').hasScrollBar()){
+              jQuery('.modal-body').css({paddingRight:0});
+         }  
+      }
+      checkScrollBars();
 
-			if(searchString != '' && searchString.length >= 2){
-				jQuery("#fs-input").addClass("loading-right");
-				jQuery("#panel-info").hide();
-				callbackToSolutionSearch(searchString);
-			}else{
-				jQuery("#fs-input").removeClass("loading-right");
-				jQuery("#ws-results").empty();
-				jQuery("#panel-content").hide()
-				jQuery("#panel-info").show();
+      function EmbeddedSearch(status){
+        if(status){
+          jQuery('.embedded-body').removeClass('embedded-body-hide');
+          jQuery('#feedback-suggest').removeClass('feedback-suggest-show');
+          jQuery('.embedded-wrapper .search-text').addClass('active');
+          jQuery('.embedded-wrapper .form-title').removeClass('active');
+          jQuery('#feedback-suggest').removeClass('show-suggest');
+          jQuery('.embedded-hightlight').removeClass('embedded-highlight-move embedded-hightlight-count');
+          jQuery('#helpdesk_ticket_submit').show();
+        }else{
+        	jQuery('#helpdesk_ticket_submit').hide();
+          jQuery('.embedded-body').addClass('embedded-body-hide');
+          jQuery('#feedback-suggest').addClass('feedback-suggest-show');
+          jQuery('.embedded-wrapper .form-title').addClass('active');
+          jQuery('.embedded-wrapper .search-text').removeClass('active');
+          jQuery('.embedded-hightlight').addClass('embedded-highlight-move');
+          if(jQuery('.search-count').text()!=''){
+            jQuery('.embedded-hightlight').addClass('embedded-hightlight-count')
+          }
+          setTimeout(function(){
+            jQuery('#feedback-suggest').addClass('show-suggest');
+            jQuery('#fs-input').focus();
+          },350)
+        }
+      }
+      function searchKnowledgeBase(searchInput){
+        var searchString = searchInput.replace(/^\s+|\s+$/g, "");
 
-				suggestForSubject = true;
+        if(searchString != '' && searchString.length >= 2){
+          jQuery("#fs-input").addClass("loading-right");
+          jQuery("#panel-info").hide();
+          callbackToSolutionSearch(searchString);
+        }else{
+          jQuery("#fs-input").removeClass("loading-right");
+          jQuery("#ws-results").empty();
+          jQuery("#panel-content").hide()
+          jQuery("#panel-info").show();
+        
+          suggestForSubject = true;
+  
+          jQuery("#mobile-counter").removeClass("mobile-counter").text("")
+          jQuery("#subject-mobile-counter").removeClass("subject-mobile-counter").text("");
+          jQuery('#search-count').removeClass("search-count").text("");
+          jQuery('.embedded-hightlight').removeClass('embedded-hightlight-count');
+        }
+      }
+      jQuery('.search-panel').on('click', function(e) {
+          if (jQuery('.search-help').attr('data-search-option')=='true') {
+              FeedbackSuggest(true);
+              jQuery('#fs-input').focus();
+          }
+          else if(jQuery('.search-help').attr('data-search-option')=='false') {
+              FeedbackSuggest(false);
+          }
+      });
+      
+      // Resize popup feedback widget 
+      function FeedbackSuggest(status) {
+         if (!jQuery('.embedded-wrapper').is(':visible') && !jQuery('html').hasClass('responsive-widget-wrap')) {
+          if (status) {
+              jQuery('.feedback-wrapper').addClass('feedback-wrapper-change');
+              jQuery('#feedback-suggest').addClass('feedback-suggest-change');
+              jQuery('.feedback-search-icon').addClass('feedback-search-icon-suggest').find('i').removeClass('ficon-search').addClass('ficon-cross');
+              jQuery('.search-help').replaceWith('<span class="search-help" data-search-option=false><%= t('ticket.search_close_text') %></span>')
+              jQuery('.search-help').addClass('close-article'); 
+          } else {
+              jQuery('.feedback-wrapper ').addClass('feedback-wrapper-change-close');
+              jQuery('#feedback-suggest').addClass('animate-suggest-close');
+              jQuery('.feedback-search-icon').removeClass('feedback-search-icon-suggest').find('i').removeClass('ficon-cross').addClass('ficon-search');  
+              jQuery('.search-help').replaceWith('<span class="search-help" data-search-option=true><%= t('ticket.search_text') %></span>')
+              jQuery('.search-help').removeClass('close-article');
+              window.setTimeout(function(){
+                 jQuery('#feedback-suggest').removeClass('animate-suggest-close feedback-suggest-change');
+                 jQuery('.feedback-wrapper ').removeClass('feedback-wrapper-change-close feedback-wrapper-change');
+              },300);
+          }
+          parent.postMessage((status ? 'showsearch': 'hidesearch'), "*");
+         }
+      }
+      //send message to parent to get parent size 
+      function getFrameSize() {
+          parent.postMessage('get_parent_size', '*');
+          if(jQuery('#feedback-widget-container').hasClass('modal-widget'))
+            jQuery('.feedback-wrapper').addClass('feedback-wrapper-container')
+      }
+      // twipsy trigger for camera icon
+      jQuery('document').ready(function() {
+          jQuery('.attachment-tooltip,.ficon-camera').on('mouseover', function() {
+              jQuery(".attachment-tooltip,.ficon-camera").twipsy({
+                trigger : 'hover'
+              });
+          });
+      });
 
-				jQuery("#mobile-counter").removeClass("mobile-counter")
-				jQuery("#mobile-counter").text("")
-				jQuery("#subject-mobile-counter").removeClass("subject-mobile-counter")
-				jQuery("#subject-mobile-counter").text("")
-			}
-	  	}
+      jQuery(window).on('load resize', getFrameSize);
+
+      //event handler declaration
+      var eventMethod = window.addEventListener ? "addEventListener" : "attachEvent",
+          eventer = window[eventMethod],
+          messageEvent = eventMethod == "attachEvent" ? "onmessage" : "message";
+      // Listen to message from child window to resize feedback widget
+      eventer(messageEvent, function(e) {
+          var offsetWidth;
+          if (e.data && typeof(e.data) === 'string') {
+              if (e.data.indexOf("offsetWidth") != -1) {
+                  offsetWidth = e.data.split(":")[1];
+                  if (offsetWidth && offsetWidth < 768) {
+                      jQuery('.feedback-wrapper').removeClass('feedback-wrapper-change');
+                      jQuery('#feedback-suggest').removeClass('feedback-suggest-change');
+                      jQuery('.feedback-header,.feedback-body,.feedback-footer').removeClass('modal-body-change');
+                      if(jQuery('.feedback-search-icon').hasClass('feedback-search-icon-suggest')){
+                        jQuery('.feedback-search-icon').removeClass('feedback-search-icon-suggest');
+                        jQuery('.search-help').replaceWith('<span class="search-help" data-search-option=true><%= t('ticket.search_text') %></span>');
+                      }
+                      jQuery('html').addClass('responsive-widget-wrap');
+                  } else {
+                      jQuery('html').removeClass('responsive-widget-wrap');
+                      jQuery('.feedback-header,.feedback-body,.feedback-footer').addClass('modal-body-change');
+                  }
+              }
+              if (e.data.indexOf("closewidget") != -1) {
+                  MobileWidget(e.data);
+              }
+          }
+
+      });
+      jQuery(document).ready(function() {
+          var responsiveWidget = jQuery("#responsive").val();
+          if (responsiveWidget != "no") {
+              jQuery("#helpdesk_ticket_subject").after("<a href='#' id='subject-mobile-counter'></a>")
+              jQuery('.mobile-search-icon,.modal-widget #subject-mobile-counter').click(function(ev) {
+                  ev.preventDefault()
+                  MobileWidget('');
+              });
+              jQuery('.embedded-wrapper #subject-mobile-counter').on('click', function(ev) {
+                  ev.preventDefault();
+                  jQuery('#fs-input').focus();
+              });
+          }
+          if(jQuery('.feedback-wrapper').hasClass('embedded-wrapper')){
+              jQuery("#helpdesk_ticket_subject").after("<a href='#' id='subject-mobile-counter'></a>");
+          }
+          jQuery('.embedded-wrapper #subject-mobile-counter,#search-count').live('click', function(ev) {
+              ev.preventDefault();
+              jQuery('#fs-input').focus();
+              EmbeddedSearch(false);
+          });
+      });
+      // toggle search result for mobile popup widget
+      function MobileWidget(message) {
+        if(!jQuery('.feedback-wrapper').hasClass('embedded-wrapper')){
+          jQuery('.modal-body').toggleClass('modal-body-hide');
+          jQuery('.modal-panel').toggleClass('modal-panel-show');
+          jQuery('#feedback-suggest').toggle();
+          jQuery('.mobile-search-icon').toggleClass('mobile-search-icon-selected');
+          jQuery('#helpdesk_ticket_submit').toggle();
+          if (message != 'closewidget')
+              parent.postMessage('arrow', "*"); // call parent to display goback icon 
+        }
+      }
 	</script>
 <% end %>
-
 <iframe id="freshwidget-submit-frame" name="freshwidget-submit-frame"
 	src="about:blank" frameborder="0" scrolling="auto"
 	allowTransparency="true" style="position:absolute; visibility:hidden; width:0px; height:0px;">
 </iframe>
-
-
 <%= javascript_tag do %>
-	jQuery('.modal-body').scroll(function() {
+  jQuery('.modal-body').scroll(function() {
 		if(this.scrollTop > 8){
 			jQuery(this).parent().addClass("modal-scroll");
 		}else{
@@ -311,12 +475,12 @@
 		var disabled_options = [];
 		var disabled_custom_options = [];
 		<% unless disable_options.blank? %>
-			disabled_options = <%= (disable_options.keys - ["custom_field"]).to_json.html_safe%>
-			<% unless disable_options[:custom_field].blank? %>
-				disabled_custom_options = <%= disable_options[:custom_field].keys.to_json.html_safe%>
-			<% end %>
-		<% end %>
-		for(var i = 0; i < disabled_options.length; i++)
+    disabled_options = <%= (disable_options.keys - ["custom_field"]).to_json.html_safe%>
+    <% unless disable_options[:custom_field].blank? %>
+      disabled_custom_options = <%= disable_options[:custom_field].keys.to_json.html_safe%>
+    <% end %>
+  <% end %>
+  for(var i = 0; i < disabled_options.length; i++)
 		{
 			var key = disabled_options[i];
 			if(key == "requester"){
@@ -349,7 +513,7 @@
 			jQuery(".modal-body").addClass("embedded-body");
 			jQuery(".modal-panel").addClass("embedded-panel");
 			jQuery(".modal-footer").addClass("embedded-footer");
-			jQuery(".hc-search-input").addClass("embedded-search-input");
+			jQuery(".suggest-search").addClass("embedded-search-input");
 		}
 
     jQuery('#helpdesk_ticket_ticket_type')
@@ -390,4 +554,4 @@
     });
 
 	});
-<% end %>
+  <% end %>

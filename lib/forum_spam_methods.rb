@@ -25,7 +25,7 @@ module ForumSpamMethods
 	end
 
 	def topic_id
-		(topic_timestamp / 10.power!(17)).to_i if self[:topic_timestamp].present?
+		(topic_timestamp / (10 ** 17)).to_i if self[:topic_timestamp].present?
 	end
 
 	def set_timestamp
@@ -41,7 +41,7 @@ module ForumSpamMethods
 	end
 
 	def user_id
-		(user_timestamp / 10.power!(17)).to_i if self[:user_timestamp].present?
+		(user_timestamp / (10 ** 17)).to_i if self[:user_timestamp].present?
 	end
 
 	def user
@@ -133,7 +133,7 @@ module ForumSpamMethods
 			query(
 				:account_id => Account.current.id, 
 				:topic_timestamp => 
-					[:between, topic_id.to_i * 10.power!(17) + (Time.now - ForumSpam::UPTO).utc.to_f * 10.power!(7), (topic_id.to_i + 1) * 10.power!(17)],
+					[:between, topic_id.to_i * (10 ** 17) + (Time.now - ForumSpam::UPTO).utc.to_f * (10 ** 7), (topic_id.to_i + 1) * (10 ** 17)],
 				:limit => 30,
 				:last_record => last
 				)

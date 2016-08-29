@@ -193,7 +193,7 @@ $.validator.addClassRules("validate_image", { validate_image: true });
 // Agent role validation
 // To check if atleast one role is present
 $.validator.addMethod("at_least_one_item", function(value, element, options) {
-  return($($(element).data("selector")).size() != 0)
+  return($($(element).data("selector")).length != 0)
 }, jQuery.validator.format("At least one role is required for the agent"));
 
 $.validator.addClassRules("at_least_one_item", { at_least_one_item: true});
@@ -315,7 +315,7 @@ $.validator.addClassRules("trim_spaces", { trim_spaces: true });
 // Redactor validator
 $.validator.addMethod("required_redactor", function(value, element, param) {
   return $(element).data('redactor').isNotEmpty();
-}, "This field is required.")
+}, $.validator.messages.required)
 $.validator.addClassRules("required_redactor", { required_redactor : true });
 
   // Color hex validation rules

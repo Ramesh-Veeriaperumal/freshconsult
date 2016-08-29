@@ -68,7 +68,7 @@
         });
     };
 
-    this.live("mouseover", function(event) {
+    this.on("mouseover", function(event) {
         var key = "u" + jQuery(this).attr("qid");
         if(!userData[key]) {
           jQuery.ajax({

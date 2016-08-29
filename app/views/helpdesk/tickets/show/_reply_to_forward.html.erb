@@ -136,7 +136,7 @@
         <span class="alert-text"><%= t('helpdesk.tickets.show.reply_form.not_sent') %></span>
         <%= t('helpdesk.tickets.note.attachment_size.exceed') %>
       </li>
-      <li class="attachment-options continous   <%= current_account.launched?(:multifile_attachments) ? "reply2forward_attachments" : "" %> id="attachment-options-reply">
+      <li class="attachment-options reply2forward continous   <%= current_account.launched?(:multifile_attachments) ? "reply2forward_attachments" : "" %> id="attachment-options-reply">
           <% unless local_assigns[:no_attachments] %>
            <% if current_account.launched?(:multifile_attachments)  %>
               <%= render :partial => "/helpdesk/tickets/show/multi_attachment_form", :locals => { :attach_id => "reply-to-forward-#{@note.id}" , :nsc_param => "helpdesk_note" } %>
@@ -187,13 +187,17 @@
       })
       .validate();  
 
-      jQuery('#HelpdeskReplyFwd_<%= @note.id%> select#reply_to_fwd_email_id').live('change',function(e){
-      var selectObj = jQuery(e.target),
+      jQuery('#HelpdeskReplyFwd_<%= @note.id%> select#reply_to_fwd_email_id').on('change',function(e){
+      try {
+        var selectObj = jQuery(e.target),
           form = e.target.form,
           fromEmail = selectObj.val();
           form['helpdesk_note[from_email]'].value = fromEmail;
           email_config_id = jQuery(selectObj).find(":selected").data().emailConfigId;
           form['helpdesk_note[email_config_id]'].value = email_config_id;
+      } catch(e) {
+
+      }
     });
 
   <% end %>

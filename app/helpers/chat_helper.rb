@@ -68,7 +68,7 @@ module ChatHelper
    return current_account.portals.find_by_product_id(product_id) ? current_account.portals.find_by_product_id(product_id).language : current_portal.language
   end
 
-  def livechat_setting widget
+  def livechat_setting(widget, convertToJson=true)
     widget_language = language(widget.product_id) unless widget.main_widget.blank?
     livechat_setting = {
       :widget_site_url => widget.main_widget ? current_account.full_domain : widget.product.portal ? widget.product.portal.portal_url : current_account.full_domain,
@@ -101,7 +101,8 @@ module ChatHelper
       :end_chat_end_title => t('livechat.end_chat_end_title'),
       :end_chat_cancel_title => t('livechat.end_chat_cancel_title')
     }
-    return livechat_setting.to_json.html_safe
+    setting = convertToJson ? livechat_setting.to_json : livechat_setting
+    return setting
   end
 
   def i18n_text
@@ -360,4 +361,11 @@ module ChatHelper
     return { :text=> response_body, :content_type => response_type, :status => response_code }
   end
   
+  def chat_widget_list(widgets)
+    widgetList = []
+    widgets.each do |widget|
+      widgetList << livechat_setting(widget, false)
+    end
+    return widgetList.to_json
+  end
 end

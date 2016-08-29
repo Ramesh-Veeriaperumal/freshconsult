@@ -4,16 +4,16 @@
 (function($){
 
 // Redactor validators
+var validation_messages = validation_messages || '';
+var requiredMessage=validation_messages ? validation_messages.required : "This field is required."; 
 $.validator.addMethod("required_redactor", function(value, element, param) {
   if ($(element).data('redactor')){
   	return $(element).data('redactor').isNotEmpty();	
   }else{
   	return ($(element).val() != "");
   }
-}, "This field is required.")
+}, requiredMessage);
 $.validator.addClassRules("required_redactor", { required_redactor : true });
-
-
 
 //Validator to check whether the file is an image file
 $.validator.addMethod("validate_image", function(value,element){

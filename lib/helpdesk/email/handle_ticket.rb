@@ -65,6 +65,7 @@ class Helpdesk::Email::HandleTicket
                                                             email[:subject],
                                                             email[:message_id][1..-2])
       finalize_ticket_save
+      Rails.logger.info "Email Processing Successful: Email successfully created as Ticket!!"
       mark_email(process_email_key(email[:message_id][1..-2]), email[:from][:email],
                                     email[:to][:email],
                                     email[:subject],
@@ -100,6 +101,7 @@ class Helpdesk::Email::HandleTicket
                                                             email[:subject],
                                                             email[:message_id][1..-2])
       note.save_note
+      Rails.logger.info "Email Processing Successful: Email successfully created as Note!!"
       cleanup_attachments note
       mark_email(process_email_key(email[:message_id][1..-2]), email[:from][:email],
                                     email[:to][:email],

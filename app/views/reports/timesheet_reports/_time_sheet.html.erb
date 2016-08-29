@@ -1,47 +1,20 @@
-<% total_time = 0 %>
 <% time_sheet.each do |group_title, time_entrys| %>
-  
-  <tr class="even">
-    <%unless group_by.include?(:workable) %>
-      <%group_title = t("none") if group_title.match(/^No +/) %>
-    <%end%>
-    <% group_title = formated_date(Time.parse(group_title),{:format => :short_day_with_week, :include_year => true}) if group_by.include?(:group_by_day_criteria)%>
-    <td colspan="<%=colspan%>"><strong><%= group_title %></strong></td> 
-    <td class="hours"><strong class="group_time"><%= get_total_time(time_entrys) %></strong></td>
-  </tr> 
+  <% if group_header != group_title %>
+    <tr class="even">
+      <% gt = "#{group_names[group_title]}" %>
+      <%unless group_by.include?(:workable) %>
+        <%gt = t("none") if gt.match(/^No +/) %>
+      <%end%>
+      <% gt = timesheet_formatted_date(Time.zone.parse("'#{group_title}'"),{:format => :short_day_with_week, :include_year => true}) if group_by.include?(:group_by_day_criteria)%>
+      <td colspan="<%=colspan%>"><strong><%= gt %></strong></td>
+      <td class="hours"><strong class="group_time"><%= get_time_in_hours(times_spent[group_title].round(2) * 3600) %></strong></td>
+    </tr>
+    <% group_header = group_title %>
+  <% end %>
+
   <% time_entrys.each do |time_entry| %>
   <tr class="odd">
-    <% @headers.each do |item| %> 
-      <% content = formated_date(time_entry.executed_at, {:format => :short_day_with_week, :include_year => true}) if item.eql?(:group_by_day_criteria)  
-        content ||= time_entry.send( item.eql?(:hours) ? :time_spent : item ) %>
-      <%if item.eql?(:workable)%>
-        <% if !generate_pdf_action? %>
-          <%= content_tag(:td, reports_ticket_link(content), :class => item) %> 
-        <% else %>
-          <td class="<%= item %>"><div><%= h(content) %></div></td>
-        <% end %>
-      <%else%>
-        <% if(item.eql?(:hours))%>
-          <td class='<%=item%>'>
-            <%if time_entry.billable %>
-              <span class='billable-block' title="billable">&nbsp;</span><%=get_time_in_hours(content)%>
-            <% else%>
-              <span class='non-billable-block' title="non-billable">&nbsp;</span><%=get_time_in_hours(content)%>
-            <%end%>
-          </td>
-        <%else%>
-          <% if( content.blank? || content.match(/^No +/) )
-            content = "-"
-          end%>
-          <%= content_tag(:td,h(content),:class => item) %>
-        <%end%>
-      <%end%>             
-    <% end %>
+    <%= construct_timesheet_entry_row(@headers, time_entry, load_time) %>
   </tr>
   <% end %>
-  <% total_time += total_time_in_seconds(time_entrys) %>
 <% end %>
-<tr>
-  <th colspan="<%=colspan%>" class="align-right">&nbsp;<%=t('helpdesk.time_sheets.report.total')%></th>
-  <th class="hours"><div id="totaltime"><%= get_time_in_hours(total_time) %></div></th>
-</tr>

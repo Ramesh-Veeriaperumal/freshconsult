@@ -146,7 +146,9 @@ class Support::Solutions::ArticlesController < SupportController
         store_location
         redirect_to support_login_path and return true
       end
-      solution_agent? && draft_preview? && @article.draft.present?
+      return (current_user && current_user.agent? && (@article.draft.present? || 
+            !@article.current_article.published?) && privilege?(:view_solutions)) if draft_preview?
+      true
     end
 
     def adapt_article

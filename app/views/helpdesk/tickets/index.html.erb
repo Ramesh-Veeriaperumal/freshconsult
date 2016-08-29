@@ -5,14 +5,19 @@
     $J("#tickets-expanded input[type=checkbox]").trigger('change');
   });
 
-  $J("#select_view_id").live("change", function(ev){
+  $J(document).on("change.ticketListEvents", "#select_view_id", function(ev){
     window.location = this.value;
   });
 
-  $J("#assign-options-link").live("click", function(ev){
+  $J(document).on("click.ticketListEvents", "#assign-options-link", function(ev){
     jQuery("#assign-options").show();
     jQuery(this).hide();
   });
+
+   $J(document).on('pjax:beforeSend.ticketListEvents', function () {
+      jQuery(document).off('.ticketListEvents');
+    });
+
   var rep_type_param = <%= params[:report_type].present?.to_s %> ? '?report_type=<%=params[:report_type]%>&tickets_in_current_page=<%= @items.size %>' : '?tickets_in_current_page=<%= @items.size %>';
 
   var paginate_url = '/helpdesk/tickets/full_paginate';
@@ -46,12 +51,7 @@
   <div id="rightCol" class="contentCol <%="hasRightCol" unless (['deleted', 'spam', 'monitored_by'].include?(@current_view)) %>">
     <%= render :partial => "helpdesk/shared/ticket_view", :locals => { :items => @items, :current_view => @current_view } , :inline => true %>
   </div>
-<% content_for :pagefixed do %>
-  <%= javascript_tag do %>
-      TicketListEvents();
-  <% end %>
-<% end %>
+
 <script type="text/javascript">
   Fjax.current_page = "ticket_list";
 </script>
-

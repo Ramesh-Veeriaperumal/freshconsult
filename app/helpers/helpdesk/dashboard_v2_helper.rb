@@ -26,7 +26,7 @@ module Helpdesk::DashboardV2Helper
       :tickets        =>  true,
       :activities     =>  true,
       :todo           =>  true,
-      :csat           =>  true,
+      :csat           =>  current_account.any_survey_feature_enabled_and_active?,
       :gamification   =>  gamification_feature?(current_account),
       :freshfone      =>  current_account.freshfone_active?,
       :chat           =>  chat_activated? && current_account.chat_setting.active,

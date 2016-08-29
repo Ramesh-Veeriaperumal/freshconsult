@@ -522,6 +522,20 @@ $survey-types: happy #82af56, neutral #f3ca6e, sad #ee715e;
 				}
 			}
 		}
+		.generate-csv-button{
+			@include float(right);
+			color: #06c;
+			background:none!important;
+			border:none; 
+			font: inherit;
+			cursor: pointer;
+			@include margin-right(8px);
+			margin-top: 7px;
+
+			&:hover{
+				color : #004080;
+			}
+		}
 		.survey-rep-filter{
 			border-top: 1px solid #EBEBEB;
 			background: #f8f8f8;

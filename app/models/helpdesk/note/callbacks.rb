@@ -318,7 +318,11 @@ class Helpdesk::Note < ActiveRecord::Base
       return if action == "destroy" && notable.archive # Dont reduce the count if destroy happens because its moved to archive
       note_category = reports_note_category
       if note_category && Helpdesk::SchemaLessTicket::COUNT_COLUMNS_FOR_REPORTS.include?(note_category)
-        notable.schema_less_ticket.send("update_#{note_category}_count", action)
+        if (notable.created_at < ('1-10-2015'.to_datetime) && notable.schema_less_ticket.reports_hash["recalculated_count"].nil?)
+          notable.schema_less_ticket.send("recalculate_note_count")
+        else
+          notable.schema_less_ticket.send("update_#{note_category}_count", action)
+        end
         notable.schema_less_ticket.save
       end
     end

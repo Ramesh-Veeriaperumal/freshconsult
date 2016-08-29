@@ -8,10 +8,12 @@ window.App.Tickets = window.App.Tickets || {};
   "use strict";
   
   App.Tickets.Watcher = {
-    currentUserID: (DataStore.get('current_user').currentData.user.id).toString(),
-    currentUserName: (DataStore.get('current_user').currentData.user.name).toString(),
+    currentUserID: 0,
+    currentUserName: "",
     init: function () {
       this.offEventBinding();
+      this.currentUserID = (DataStore.get('current_user').currentData.user.id).toString();
+      this.currentUserName = (DataStore.get('current_user').currentData.user.name).toString();
       this.addListeners();
     },
     addListeners: function () {

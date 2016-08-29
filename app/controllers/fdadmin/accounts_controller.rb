@@ -23,8 +23,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     account_summary[:invoice_emails] = fetch_invoice_emails(account)
     account_summary[:api_limit] = account.api_limit
     account_summary[:api_v2_limit] = get_api_redis_key(params[:account_id], account_summary[:subscription][:subscription_plan_id])
-    credit = account.freshfone_credit
-    account_summary[:freshfone_credit] = credit ? credit.available_credit : 0
+    account_summary[:freshfone_account_details] = get_freshfone_details(account)
     account_summary[:shard] = shard_info.shard_name
     account_summary[:pod] = shard_info.pod_info
     account_summary[:freshfone_feature] = account.features?(:freshfone)
@@ -406,6 +405,17 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
         end
       end
       
+    end
+
+    def get_freshfone_details(account)
+      return get_account_details(account
+        ) if freshfone_details_preconditions?(account)
+      { disabled: true }
+    end
+
+    def freshfone_details_preconditions?(account)
+      account.freshfone_account.present? || account.features?(:freshfone) ||
+        freshfone_activation_requested?(account)
     end
 
 end

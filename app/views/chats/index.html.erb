@@ -62,8 +62,9 @@
 <script type ="text/javascript" >
 	var liveChat =window.liveChat || {};
 	window.liveChat.widgetList = <%=@widgets%>
-	jQuery(document).on('ready pjax:end',function(){
-		 jQuery("#date_range_error").hide();
+
+	function customFunction(){
+				 jQuery("#date_range_error").hide();
 		 var archive_page_id = jQuery('#livechat_archive_page');
 		var $dateElement = archive_page_id.find('#date_range');
 		archive_page_id.addClass('lc-msg-archives');
@@ -152,7 +153,13 @@
 		 });
 
 		}
-	});
+
+	}
+
+
+	jQuery(document).ready(customFunction);
+	jQuery(document).on('pjax:end', customFunction);
+
 </script>
 
 <%= javascript_include_tag :'cdn/livechat_archive' %>

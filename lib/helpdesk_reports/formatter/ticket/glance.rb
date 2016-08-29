@@ -24,7 +24,11 @@ class HelpdeskReports::Formatter::Ticket::Glance
       result.each do |metric, res|
         next if (res.is_a?(Hash) && (res['errors'].present? || bucket_metric?(metric)))     
         if metric == "UNRESOLVED_PREVIOUS_BENCHMARK" 
-          @unresolved_previous_result = (res.is_a?(Hash) && res['error'] ) ? [] : res
+          @unresolved_previous_value = (res.is_a?(Hash) && res['error'] ) ? [] : res[0]["unresolved_count"]
+        elsif metric == "GLANCE_CURRENT"
+          @current_result =  (res.is_a?(Hash) && res['errors'] ) ? [] : res
+        elsif metric == "GLANCE_HISTORIC"  
+          @historic_result = (res.is_a?(Hash) && res['error'] ) ? [] : res
         else
           res.each do |gp_by, values|
             if gp_by == "general"
@@ -36,17 +40,15 @@ class HelpdeskReports::Formatter::Ticket::Glance
           end  
         end
       end
-        #calculating unresolved benchmark
-        if result["UNRESOLVED_TICKETS"] && result["UNRESOLVED_TICKETS"][:general]
-          pvalues = @unresolved_previous_result[0]["unresolved_count"].to_i
-          cvalues  = @result["UNRESOLVED_TICKETS"][:general][:metric_result]
-          result["UNRESOLVED_TICKETS"][:general][:diff_percentage] = calculate_difference_percentage(pvalues,cvalues,"UNRESOLVED_TICKETS")
-        end
-        #Removing group by historic status if both status and historic status are same
-        # if(result["UNRESOLVED_TICKETS"] && (result["UNRESOLVED_TICKETS"][:status] == result["UNRESOLVED_TICKETS"][:historic_status]))
-        #   result["UNRESOLVED_TICKETS"].delete(:historic_status)
-        # end
-      result.delete("UNRESOLVED_PREVIOUS_BENCHMARK")
+
+      if result["UNRESOLVED_TICKETS"] && result["UNRESOLVED_TICKETS"][:general]
+        @unresolved_current_value = result["UNRESOLVED_TICKETS"][:general][:metric_result]
+      end
+
+      construct_metric_value
+    
+      ["UNRESOLVED_PREVIOUS_BENCHMARK","GLANCE_CURRENT", "GLANCE_HISTORIC"].each { |k| result.delete(k) }#removnin unwanted stuff 
+
       result
     else
       result.each do |metric, res|
@@ -55,23 +57,23 @@ class HelpdeskReports::Formatter::Ticket::Glance
         elsif metric == "GLANCE_HISTORIC"  
           @historic_result = (res.is_a?(Hash) && res['error'] ) ? [] : res
         elsif metric == "UNRESOLVED_PREVIOUS_BENCHMARK" 
-          @unresolved_previous_result = (res.is_a?(Hash) && res['error'] ) ? [] : res
+          @unresolved_previous_value = (res.is_a?(Hash) && res['error'] ) ? [] : res[0]["unresolved_count"]
         elsif metric == "UNRESOLVED_CURRENT_BENCHMARK" 
-          @unresolved_current_result = (res.is_a?(Hash) && res['error'] ) ? [] : res
+          @unresolved_current_value = (res.is_a?(Hash) && res['error'] ) ? [] : res[0]["unresolved_count"]
         elsif bucket_metric?(metric)
           glance_output[metric] = res
         else
           @group_by_metric = metric
         end
       end
-
+     
       #condition to check for query from fetch_active_metric
       construct_metric_value if (result.has_key?('GLANCE_CURRENT') && result.has_key?('GLANCE_HISTORIC'))
 
       sort_group_by_chart_values
       glance_output[group_by_metric] = glance_output[group_by_metric] || {}
       glance_output[group_by_metric].reverse_merge!(result[group_by_metric])
-      
+
       #Removing group by historic status if both status and historic status are same
       # if(glance_output["UNRESOLVED_TICKETS"] && (glance_output["UNRESOLVED_TICKETS"][:status] == glance_output["UNRESOLVED_TICKETS"][:historic_status]))
       #   glance_output["UNRESOLVED_TICKETS"].delete(:historic_status)
@@ -98,12 +100,12 @@ class HelpdeskReports::Formatter::Ticket::Glance
       split_values_based_on_benchmark(@historic_result)
       set_value(HISTORIC_METRICS)
     end
-
-    if @unresolved_current_result.empty? && @unresolved_previous_result.empty?
+     
+    if @unresolved_current_value.nil? && @unresolved_previous_value.nil?
       set_default_value(UNRESOLVED_METRICS)
     else
-      current_values["unresolved_tickets"]  = @unresolved_current_result[0]["unresolved_count"]
-      previous_values["unresolved_tickets"] = @unresolved_previous_result[0]["unresolved_count"]
+      current_values["unresolved_tickets"]  = @unresolved_current_value
+      previous_values["unresolved_tickets"] = @unresolved_previous_value
       set_value(UNRESOLVED_METRICS)
     end
   end
@@ -154,5 +156,5 @@ class HelpdeskReports::Formatter::Ticket::Glance
       result[group_by_metric][gp_by] = values.to_h
     end
   end
-
+  
 end

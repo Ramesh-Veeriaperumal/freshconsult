@@ -7,7 +7,9 @@ begin
   $sqs_client = AWS::SQS.new.client
   
   $sqs_facebook =  AWS::SQS.new.queues.named(SQS[:facebook_realtime_queue])
-  
+
+  $sqs_facebook_messages = AWS::SQS.new.queues.named(SQS[:fb_message_realtime_queue])
+
   ##################### SQS RELATED TO TWITTER STARTS #########################
   
   #US Polls dircetly from the global queue - No region specific queues
@@ -37,6 +39,10 @@ begin
   # custom mailbox sqs queue
   $sqs_mailbox = AWS::SQS.new.queues.named(SQS[:custom_mailbox_realtime_queue])
 
+  # cti ticket creation queue
+  $sqs_cti = AWS::SQS.new.queues.named(SQS[:cti_call_queue])
+
+
   # Reports Service Export
   $sqs_reports_service_export = AWS::SQS.new.queues.named(SQS[:reports_service_export_queue])
 
@@ -58,7 +64,10 @@ begin
     SQS[:count_etl_queue]       => AwsWrapper::SqsV2.queue_url(SQS[:count_etl_queue]),
     SQS[:reports_etl_msg_queue] => AwsWrapper::SqsV2.queue_url(SQS[:reports_etl_msg_queue]),
     SQS[:activity_queue]        => AwsWrapper::SqsV2.queue_url(SQS[:activity_queue]),
-    SQS[:sqs_es_index_queue]    => AwsWrapper::SqsV2.queue_url(SQS[:sqs_es_index_queue])
+    SQS[:sqs_es_index_queue]    => AwsWrapper::SqsV2.queue_url(SQS[:sqs_es_index_queue]),
+    SQS[:cti_screen_pop]        => AwsWrapper::SqsV2.queue_url(SQS[:cti_screen_pop]),
+    SQS[:auto_refresh_queue]    => AwsWrapper::SqsV2.queue_url(SQS[:auto_refresh_queue]),
+    SQS[:agent_collision_queue] => AwsWrapper::SqsV2.queue_url(SQS[:agent_collision_queue])
   }
 
 rescue => e

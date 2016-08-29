@@ -35,7 +35,8 @@ module HelpdeskReports
         :customer_report          => "Top Customer Analysis",
         :timesheet_reports        => "Time Sheet Summary",
         :chat_summary             => "Chat Summary",
-        :phone_summary            => "Phone Summary"
+        :phone_summary            => "Phone Summary",
+        :satisfaction_survey      => "Satisfaction Survey"
       }
 
       VIEW_HELPER_NEW_REPORTS = ['ApplicationHelper']
@@ -85,6 +86,45 @@ module HelpdeskReports
           unresolved_current_benchmark: :trend
         }
       }
+
+      SURVEY_EXPORT_FIELDS = [
+        [ :created_at                                                         ],
+        [ :surveyable,                       :display_id                      ],
+        [ :rating_text_for_custom_questions, 0,             :cf_int01         ],
+        [ :rating_text_for_custom_questions, 1,             :cf_int02         ],
+        [ :rating_text_for_custom_questions, 2,             :cf_int03         ],
+        [ :rating_text_for_custom_questions, 3,             :cf_int04         ],
+        [ :rating_text_for_custom_questions, 4,             :cf_int05         ],
+        [ :rating_text_for_custom_questions, 5,             :cf_int06         ],
+        [ :rating_text_for_custom_questions, 6,             :cf_int07         ],
+        [ :rating_text_for_custom_questions, 7,             :cf_int08         ],
+        [ :rating_text_for_custom_questions, 8,             :cf_int09         ],
+        [ :rating_text_for_custom_questions, 9,             :cf_int10         ],
+        [ :rating_text_for_custom_questions, 10,            :cf_int11         ],
+        [ :survey_remark,                    :feedback,     :body,    :squish ],
+        [ :surveyable,                       :requester,    :name             ],
+        [ :surveyable,                       :requester,    :email            ],
+        [ :surveyable,                       :company,      :name             ],
+        [ :surveyable,                       :group,        :name             ],
+        [ :surveyable,                       :responder,    :name             ],
+      ]
+
+      SURVEY_CSV_HEADERS_1 = [ I18n.t("export_data.fields.survey_received"), 
+                               I18n.t("export_data.fields.ticket_id"), 
+                               I18n.t("export_data.fields.rating") ] 
+
+      SURVEY_CSV_HEADERS_2 = [ I18n.t("export_data.fields.comment"), 
+                               I18n.t("export_data.fields.requester_name"), 
+                               I18n.t("export_data.fields.requester_email"),
+                               I18n.t("export_data.fields.company"), 
+                               I18n.t("export_data.fields.group"), 
+                               I18n.t("export_data.fields.agent") ]
+
+      AGENT_ALL_URL_REF = 'a'
+      GROUP_ALL_URL_REF = 'g'
+      RATING_ALL_URL_REF = 'r'
+
+
     end
   end
 end      

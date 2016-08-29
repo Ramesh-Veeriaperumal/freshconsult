@@ -12,7 +12,9 @@ class Search::Dashboard::Docs < Search::Filters::Docs
 
   def aggregation(model_class)
     response = es_request(model_class,'_search?search_type=count', aggregation_query)
-    JSON.parse(response)["aggregations"]
+    parsed_response = JSON.parse(response)
+    Rails.logger.info "ES response:: Account -> #{Account.current.id}, Took:: #{parsed_response['took']}"
+    parsed_response["aggregations"]
   end
 
   private 

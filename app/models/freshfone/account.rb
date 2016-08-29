@@ -135,6 +135,10 @@ class Freshfone::Account < ActiveRecord::Base
 			{ created_at: created_on.beginning_of_day..created_on.end_of_day })
 	end
 
+	def trial_or_exhausted?
+		trial? || trial_exhausted?
+	end
+
 	def process_subscription
 		if suspended?
 			begin

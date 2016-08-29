@@ -1,0 +1,14 @@
+JSON.generate(@items.map do |folder|
+	parent = folder.parent
+ 	response_hash = {
+		id: parent.id,
+		name: folder.name,
+		description: folder.description,
+		visibility: parent.visibility,
+		created_at: folder.created_at,
+		updated_at: folder.updated_at
+	}
+ 	response_hash.merge!(company_ids: folder.company_ids) if folder.company_ids_visible?
+  response_hash
+end
+)

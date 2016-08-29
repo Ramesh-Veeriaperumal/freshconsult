@@ -243,15 +243,14 @@ function helpdesk_submit(url, method, params){
           field.value = source.value;
           form.appendChild(field);
    });
-
-   if(method == 'delete' || (url.includes("spam") && method == 'put')){
+   if(method == 'delete' || (url.indexOf("/helpdesk/tickets/multiple/spam") >= 0 && method == 'put')){
     jQuery('input.selector').each(function(index, element){
       if(jQuery(this).prop('checked')){
         NavSearchUtils.deleteRecentTicketById(jQuery(this).val());
       }
     });
-   } 
-   
+   }
+
    form.action = url;      
    form.submit();
 }
@@ -683,6 +682,7 @@ supports_html5_storage = function() {
   }
 }
 
+// TODO - Have to de move in to [ca_ticket_view.js] page
 var keyed_up = 0;
 function simpleTimedSearch(element, url, time){
   jQuery(element).keyup(function(ev){

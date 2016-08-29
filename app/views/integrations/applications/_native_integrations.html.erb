@@ -7,7 +7,9 @@
       <% if application.name == "slack" %>
         <% next if exists_in_installed_apps?(application, @installed_applications).blank? %>
       <% end %>
-      <%next if (!feature?(:timesheets) && (application.name == 'harvest' or application.name == 'workflow_max'))%>
+      <% next if ( application[:options][:install].present? &&
+        application[:options][:install][:require_feature].present? &&
+        !feature?(application[:options][:install][:require_feature][:feature_name])) %>
         <% if application.system_app? %>
           <li class="app-native">
             <div class="application">

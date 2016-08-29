@@ -35,7 +35,7 @@
 
         bindAddAllClear: function () {
             var $this = this;
-            $('[data-target=#' + this.element.attr('id') + ']').on('click' + $this.namespace(), function (ev) {
+            $('[data-target="#' + this.element.attr('id') + '"]').on('click' + $this.namespace(), function (ev) {
                 ev.preventDefault();
                 var target_select = $(this).data('target'), vals = ($(this).attr('class') === 'clear-all') ? [''] :
                                     $(target_select + ' option').map(function () { return $(this).val(); });

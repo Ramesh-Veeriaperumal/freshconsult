@@ -77,7 +77,7 @@
       </div>
       <% end %>
         <div class="grid report row-fluid"> 
-            <table width="100%">
+            <table id="timesheet_table" width="100%">
               <tr>
               <%colspan = @headers.length-1%>
                 <% @headers.each do |header|
@@ -86,16 +86,24 @@
               </tr>
               
             <% if @time_sheets.size > 0 %>
-              <%= render :partial => "reports/timesheet_reports/time_sheet.html.erb", :object => @time_sheets ,:locals=>{:colspan=>colspan,:group_by=>grp_data} %>
+              <%= render :partial => "reports/timesheet_reports/time_sheet.html.erb", :object => @time_sheets ,:locals=>{:colspan=>colspan,:group_by=>grp_data,:times_spent => @group_count, :group_header => nil, :group_names => @group_names, :load_time => @load_time } %>
               <%else%>
                 <tr>
                   <td colspan="<%=(colspan+1)%>">           
                   <div class="list-noinfo"><%=t('helpdesk.time_sheets.report.no_timeentry')%></div>
                   </td>         
-              </tr>
+                </tr>
             <%end%>
-             
            </table>
+           <table id="timesheet_total" width="100%" class="hide">
+            <tr>
+              <th colspan="<%=colspan%>" class="align-right">&nbsp;<%=t('helpdesk.time_sheets.report.total')%></th>
+              <th class="hours"><div id="totaltime"><%= get_time_in_hours(@group_count.values.sum.round(2) * 3600) %></div></th>
+            </tr>
+           </table>
+           <div id="timesheet_table_loading">
+              <a id="load-more" rel="load-more" href="javascript:void(0)" data-loading-text="Loading...">Load more...</a>
+           </div>
         </div>
         <!--end time_sheet_list-->
       </div>
@@ -110,19 +118,58 @@
     <% end %>
   
    <%= javascript_tag do%>
-     try{
-       total_mins = $$("strong.group_time")
-            .collect(function(t){ return t.innerHTML })
-            .inject(0, function(acc, n){
-              hm = n.split(':');
-              return parseInt(acc) + hm[0]*60 + parseInt(hm[1]);
-            });
-    hours = parseInt(total_mins/60);
-    mins = total_mins%60;           
-    hour_val = (jQuery.trim(hours).length === 1) ? '0' + hours : hours;
-     $("totaltime").innerHTML = hour_val+":"+sprintf("%02f",mins);
-    }catch(e){}  
+      var scroll_position = 20;
+      var load_time = "<%= @load_time %>";
+      var latest_timesheet_id = "<%= @latest_timesheet_id %>";
+      var current_group = "<%= @current_group %>";
+      var previous_group_id = "<%= @time_sheets.keys.last %>";
+      var previous_entry_id = <%= @time_sheets.values.flatten.last ? @time_sheets.values.flatten.last.id : 0 %>;
+      var group_count = JSON.parse('<%= @group_count.to_json.html_safe %>');
+      var group_names = `<%= @group_names.to_json.html_safe %>`;
+      var total_row_count = <%= @row_count %>;
+      var row_count = 2000;
+      var totaltime = <%= @group_count.values.sum %>;
+      var current_params = {current_params: JSON.parse(`<%= @current_params.to_json.html_safe %>`)};
+      var triggered = false;
+      if(total_row_count == 0){
+        jQuery('#timesheet_table_loading').remove();
+      }
+      else if(total_row_count <= 2000){
+        jQuery('#timesheet_table_loading').remove();
+        jQuery('#timesheet_total').removeClass('hide');
+      }
     jQuery(document).ready(function(){
+
+       jQuery('[rel=load-more]').on('click',function(){
+              jQuery(this).html('Loading...');
+              loadMore();
+       });
+
+        function loadMore(){
+          if(triggered)
+            return;
+          var load_params = {scroll_position: scroll_position, current_group: current_group, group_count: group_count, group_names: group_names, totaltime: totaltime, previous_group_id: previous_group_id, group_by: jQuery('#group_by_field').val(), previous_entry_id: previous_entry_id, latest_timesheet_id: latest_timesheet_id, load_time: load_time};
+          triggered = true;
+          jQuery.ajax({
+              url: '<%=time_entries_list_timesheet_reports_url%>',
+              contentType: 'application/json',
+              type: "POST",
+              data: Browser.stringify(jQuery.extend(current_params, load_params)),
+              success: function(data){
+                jQuery('[rel=load-more]').html('Load more...');
+                row_count += 100;
+                scroll_position += 1;
+                if(row_count < total_row_count) {
+                  
+                } else {
+                  jQuery('#timesheet_table_loading').remove();
+                  jQuery('#timesheet_total').removeClass('hide');
+                }
+                triggered = false;
+              }
+          });
+        }
+
         if(jQuery("#report-filter-edit").css('visibility') == 'visible'){
           jQuery('#sliding').slide();
           jQuery('#loading-box').hide();
@@ -205,11 +252,16 @@
     jQuery('#report-page').on('click.helpdesk_reports', '[data-action="pop-report-type-menu"]', function (event) {
               event.stopImmediatePropagation();
              var menu = jQuery('#reports_type_menu');
-              if (!menu.is(':visible')) {
-                  menu.removeClass('hide');
-              } else {
-                  menu.addClass('hide');
-              }
+             var hash = Helpkit.report_filter_data;
+            if(hash.length == 0 || ( hash.length == 1 && Helpkit.commonSavedReportUtil.default_report_is_scheduled)){
+
+            }else{
+                if (!menu.is(':visible')) {
+                    menu.removeClass('hide');
+                } else {
+                    menu.addClass('hide');
+                }
+            }
         });
     jQuery('#report-page').on('click.helpdesk_reports', function () {
         var menu = jQuery('#reports_type_menu');

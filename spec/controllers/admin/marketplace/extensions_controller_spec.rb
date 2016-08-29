@@ -31,7 +31,7 @@ describe Admin::Marketplace::ExtensionsController do
 
   describe "GET show" do
     it "renders the extension show page" do
-      url_params = { type: "#{Marketplace::Constants::EXTENSION_TYPE[:plug]}", version_id: '1' }
+      url_params = { type: "#{Marketplace::Constants::EXTENSION_TYPE[:plug]}", extension_id: '1' }
       controller.stubs(:extension_details).returns(extension_details)
       controller.stubs(:install_status).returns(install_status)
       get :show, url_params

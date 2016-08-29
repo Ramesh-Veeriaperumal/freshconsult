@@ -118,11 +118,11 @@
 
       @font-face {
   font-family: "glyphs";
-  src: url("../../assets/glyphs_6126c14a54f3ddc38dd044779b5d60df.eot");
-  src: url("../../assets/glyphs_6126c14a54f3ddc38dd044779b5d60df.eot?#iefix") format("embedded-opentype"),
-       url("../../assets/glyphs_6126c14a54f3ddc38dd044779b5d60df.woff") format("woff"),
-       url("../../assets/glyphs_6126c14a54f3ddc38dd044779b5d60df.ttf") format("truetype"),
-       url("../../assets/glyphs_6126c14a54f3ddc38dd044779b5d60df.svg#glyphs") format("svg");
+  src: url("../../assets/glyphs_c6805ca3c837295237c5a4ed808feb2a.eot");
+  src: url("../../assets/glyphs_c6805ca3c837295237c5a4ed808feb2a.eot?#iefix") format("embedded-opentype"),
+       url("../../assets/glyphs_c6805ca3c837295237c5a4ed808feb2a.woff") format("woff"),
+       url("../../assets/glyphs_c6805ca3c837295237c5a4ed808feb2a.ttf") format("truetype"),
+       url("../../assets/glyphs_c6805ca3c837295237c5a4ed808feb2a.svg#glyphs") format("svg");
   font-weight: normal;
   font-style: normal;
 }
@@ -130,7 +130,7 @@
 @media screen and (-webkit-min-device-pixel-ratio:0) {
   @font-face {
     font-family: "glyphs";
-    src: url("../../assets/glyphs_6126c14a54f3ddc38dd044779b5d60df.svg#glyphs") format("svg");
+    src: url("../../assets/glyphs_c6805ca3c837295237c5a4ed808feb2a.svg#glyphs") format("svg");
   }
 }
 
@@ -168,6 +168,7 @@
 .ficon-bell:before,
 .ficon-billing:before,
 .ficon-blank-file:before,
+.ficon-blind-transfer:before,
 .ficon-block:before,
 .ficon-blocked-call:before,
 .ficon-book:before,
@@ -179,6 +180,7 @@
 .ficon-business-hours:before,
 .ficon-calendar:before,
 .ficon-calling:before,
+.ficon-camera:before,
 .ficon-canned-response:before,
 .ficon-caret-down:before,
 .ficon-caret-left:before,
@@ -233,6 +235,7 @@
 .ficon-dispatcher:before,
 .ficon-dot:before,
 .ficon-dots:before,
+.ficon-down-arrow:before,
 .ficon-download:before,
 .ficon-dropbox:before,
 .ficon-dropdown-circle:before,
@@ -419,6 +422,7 @@
 .ficon-unverified:before,
 .ficon-user:before,
 .ficon-view-retweets:before,
+.ficon-warm-transfer:before,
 .ficon-warning:before,
 .ficon-web-page:before,
 .ficon-web-source:before,
@@ -469,6 +473,7 @@
 .ficon-bell:before { content: "\f10f"; }
 .ficon-billing:before { content: "\f110"; }
 .ficon-blank-file:before { content: "\f111"; }
+.ficon-blind-transfer:before { content: "\f22f"; }
 .ficon-block:before { content: "\f20c"; }
 .ficon-blocked-call:before { content: "\f20d"; }
 .ficon-book:before { content: "\f112"; }
@@ -480,6 +485,7 @@
 .ficon-business-hours:before { content: "\f115"; }
 .ficon-calendar:before { content: "\f1bc"; }
 .ficon-calling:before { content: "\f116"; }
+.ficon-camera:before { content: "\f232"; }
 .ficon-canned-response:before { content: "\f117"; }
 .ficon-caret-down:before { content: "\f118"; }
 .ficon-caret-left:before { content: "\f119"; }
@@ -534,6 +540,7 @@
 .ficon-dispatcher:before { content: "\f131"; }
 .ficon-dot:before { content: "\f212"; }
 .ficon-dots:before { content: "\f132"; }
+.ficon-down-arrow:before { content: "\f230"; }
 .ficon-download:before { content: "\f202"; }
 .ficon-dropbox:before { content: "\f133"; }
 .ficon-dropdown-circle:before { content: "\f224"; }
@@ -720,6 +727,7 @@
 .ficon-unverified:before { content: "\f1a4"; }
 .ficon-user:before { content: "\f1a5"; }
 .ficon-view-retweets:before { content: "\f1a6"; }
+.ficon-warm-transfer:before { content: "\f231"; }
 .ficon-warning:before { content: "\f1a7"; }
 .ficon-web-page:before { content: "\f1a8"; }
 .ficon-web-source:before { content: "\f1fc"; }
@@ -739,7 +747,7 @@
 
   <body class="characters-off">
     <header>
-      <h1>Font Icons (287)</h1>
+      <h1>Font Icons (291)</h1>
       <p>We can use font icon classes or use helper method as follows <code>&lt;%= font_icon "icon-name", :size => 18 %&gt;</code>, which generates the Markup</p>
     </header>
     <div id="page" class="container">
@@ -1026,6 +1034,15 @@
       
       <div class="glyph">
         <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-blind-transfer" class="ficon-blind-transfer"></i></span>
+        </div>
+        <div class="usage">
+          <span>blind-transfer</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
           <span class="step size-24"><span class="letters">Pp</span><i id="ficon-block" class="ficon-block"></i></span>
         </div>
         <div class="usage">
@@ -1120,6 +1137,15 @@
         </div>
         <div class="usage">
           <span>calling</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-camera" class="ficon-camera"></i></span>
+        </div>
+        <div class="usage">
+          <span>camera</span>
         </div>
       </div>
       
@@ -1606,6 +1632,15 @@
         </div>
         <div class="usage">
           <span>dots</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-down-arrow" class="ficon-down-arrow"></i></span>
+        </div>
+        <div class="usage">
+          <span>down-arrow</span>
         </div>
       </div>
       
@@ -3280,6 +3315,15 @@
         </div>
         <div class="usage">
           <span>view-retweets</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-warm-transfer" class="ficon-warm-transfer"></i></span>
+        </div>
+        <div class="usage">
+          <span>warm-transfer</span>
         </div>
       </div>
       

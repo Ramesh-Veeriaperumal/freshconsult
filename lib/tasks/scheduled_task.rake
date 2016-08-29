@@ -29,6 +29,22 @@ namespace :scheduled_task do
     process("dangling_tasks")
   end
 
+  #############################################################
+  desc "Updates 'next_run_at' for dead tasks. Runs at 7 , 19 UTC"
+  #############################################################
+
+  task :calculate_next_run_at => :environment do
+    base_time = Time.now.utc
+    Sharding.run_on_all_shards do
+      Helpdesk::ScheduledTask.dead_tasks(base_time).find_in_batches(batch_size: 500) do |tasks|
+        tasks.each do |task|
+          task.mark_available unless task.available?
+          task.save! 
+        end
+      end
+    end
+  end
+
 
 #######################################################
 

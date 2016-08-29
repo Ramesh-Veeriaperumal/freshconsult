@@ -103,7 +103,7 @@ window.App.Freshfonecallhistory = window.App.Freshfonecallhistory || {};
     },
     bindCostSplitUp: function() {
       var hidePopoverTimer, widgetPopup, hoverPopup;
-      $("span[rel=ff-cost-hover-popover]").live('mouseenter',function(ev) {
+      $("span[rel=ff-cost-hover-popover]").on('mouseenter',function(ev) {
         ev.preventDefault();
         var element = $(this);
         var timeoutDelayShow = setTimeout(function(){
@@ -114,7 +114,7 @@ window.App.Freshfonecallhistory = window.App.Freshfonecallhistory || {};
           }, 300);
           element.data('timeoutDelayShow', timeoutDelayShow);
 
-        }).live('mouseleave',function(ev) {
+        }).on('mouseleave',function(ev) {
             clearTimeout($(this).data('timeoutDelayShow'));
             hidePopoverTimer = setTimeout(function() {
               if(widgetPopup) widgetPopup.popover('hide');

@@ -7,14 +7,25 @@
 			<% end %>		  			 
 	</div>
 </div>
+<%if current_account.node_feature_list.present? %>
+	<%= javascript_include_tag :'cdn/fd_node_feature' %>
+	<script>
+	var FdSocket = fdio('<%= fd_socket_host %>','<%= fd_node_auth_params %>',{transports: ['websocket','xhr-polling','polling','htmlfile','flashsocket']});
+	</script>
+<% end %>
+
 <%= render :partial => 'shared/shortcuts_help_chart' %>
 
 <% if current_user && current_user.agent? %>
 	<% cti_app = current_account.cti_installed_app_from_cache %>
 	<% if cti_app.present? %>
-	<% cti_app_name = cti_app.application.name %>
-	<%= render :partial => 'layouts/shared/integrations/cti/cti_toolbar', :locals => {:app => cti_app.application} %>
-	<%= render :partial => 'layouts/shared/integrations/cti/' + cti_app_name, :locals => {:installed_app => cti_app} %>
+    <% if current_account.features?(:cti) && cti_app.application.name == 'cti' %>
+	    <%= render :partial => 'shared/integrations/cti/screen_pop' %>
+    <% else %>
+	    <% cti_app_name = cti_app.application.name %>
+	    <%= render :partial => 'layouts/shared/integrations/cti/cti_toolbar', :locals => {:app => cti_app.application} %>
+	    <%= render :partial => 'layouts/shared/integrations/cti/' + cti_app_name, :locals => {:installed_app => cti_app} %>
+    <% end %>
 	<% end %>
 <% end %>
 <%if @debuging %>

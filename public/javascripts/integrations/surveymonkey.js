@@ -76,7 +76,7 @@ SurveyMonkey.prototype = {
 			jQuery(this).find("option[selected=selected]").removeAttr("selected");
 
 			if(selected_survey_id !=null || selected_survey_id !="") {
-				jQuery(this).find("option[value='"+selected_survey_id+"']").attr("selected","selected");
+				jQuery(this).find("option[value='"+selected_survey_id+"']").prop("selected",true);
 			}
 
 			jQuery(this).parents(".m-survey-row").find(".survey_id").val(selected_survey_id);
@@ -113,7 +113,7 @@ SurveyMonkey.prototype = {
 				alert("Atleast one group should be associated with a survey. In case if not needed then please disable the integration.");
 			} else {
 				curr_value = jQuery(this).parents(".m-survey-row").find("select.group_list").val();
-				jQuery(".group_list").find("option[value="+curr_value+"]").removeAttr('disabled').removeClass("disabled");
+				jQuery(".group_list").find("option[value='"+curr_value+"']").removeAttr('disabled').removeClass("disabled");
 				jQuery(this).parents(".m-survey-row").remove();
 			}
 			sm.show_or_hide_add_group_button();
@@ -138,7 +138,7 @@ SurveyMonkey.prototype = {
 			sm.validate_group();
 			var group_id = jQuery(this).val();
 			var previous_group_val = jQuery(this).parents(".m-survey-row").find(".group_id").val();
-			jQuery(".group_list").find("option[value="+previous_group_val+"]").removeAttr('disabled').removeClass("disabled");
+			jQuery(".group_list").find("option[value='"+previous_group_val+"']").removeAttr('disabled').removeClass("disabled");
 			jQuery(this).parents(".m-survey-row").find(".group_id").val(group_id);
 			jQuery(this).parents(".m-survey-row").find(".survey_id").attr('name', 'configs[groups]['+group_id+'][survey_id]').val("");
 			jQuery(this).parents(".m-survey-row").find(".collector_id").attr('name', 'configs[groups]['+group_id+'][collector_id]').val("");
@@ -332,7 +332,7 @@ SurveyMonkey.prototype = {
 	validate_group: function() {
 		jQuery("select.group_list").map( function() {
 			if (jQuery(this).val() != "") {
-				jQuery("select.group_list").not(this).find("option[value=" + jQuery(this).val() + "]").attr('disabled', 'disabled').addClass("disabled");
+				jQuery("select.group_list").not(this).find("option[value='" + jQuery(this).val() + "']").prop('disabled', true).addClass("disabled");
 			} else {
 				jQuery(this).val(null);
 			}

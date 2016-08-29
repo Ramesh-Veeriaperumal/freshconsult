@@ -1,0 +1,66 @@
+<%= stylesheet_link_tag_with_rtl :'cdn/cti_screen_pop' %>
+<%= javascript_include_tag :'cdn/cti_screen_pop' %>
+<% if cti_app.present? %>
+  <div class="cti-widget">
+    <ul class="popupbox-tabs outgoing">
+      <li id ="cti_pop_icon_tooltip" class="cti_pop_icon_tooltip">
+        <a href="#cti_toolbar" id="cti_pop_icon" data-toggle="popupbox">
+          <i class='ficon-ff-phone fsize-16'></i>
+        </a>
+      </li>
+      <% if softfone_enabled? %>
+        <li>
+          <a href="#cti_soft_phone" data-toggle="popupbox">
+            <i class='ficon-ff-dialpad fsize-16'></i>
+          </a>
+        </li>
+      <% end %>
+    </ul>
+  </div>
+
+  <div class="popupbox-content hide cti-content-container" rel="cti-widget">
+    <div id="cti_toolbar" class="cti-context-container">
+      <%=render :partial => 'shared/integrations/cti/cti_context_container' %>
+      <div class="cti-phone-select hide" id="ctiPhoneSelect">
+        <label> <%= t("integrations.screen_pop.widget.agent_phone_details") %></label>
+        <select id="cti_phone_numbers" name="cti_phone_numbers" class="select2">
+        </select>
+        <button class="btn btn-primary update-cti-phone"> Update </button>
+      </div>
+      <div id="phone_list_loading" class="loading-block loading-small loading-align"> </div>
+      <div class="cti-phone-status hide" id="cti-phone-status">
+        <label class="status"> <i class="ficon-checkmark-round-o cti-phone-tick"></i><%= t("integrations.screen_pop.widget.agent_phone_updated")%></label>
+        <button class="btn btn-primary status-btn"> Ok </button>
+      </div>
+    </div>
+    <% if softfone_enabled? %>
+      <div id="cti_soft_phone" class="cti-softfone-container">
+        <% iframe_url = Liquid::Template.parse(cti_configs[:inputs]["cti_iframe_url"]).render('agent_id' => current_user.id) %>
+        <iframe src="<%= iframe_url %>" width=<%= cti_configs[:inputs]["cti_iframe_width"]%> height=<%= cti_configs[:inputs]["cti_iframe_height"]%> ></iframe>
+      </div>
+    <% end %>
+  </div>
+
+  <%= javascript_tag do %>
+   var screenPop;
+   jQuery(document).on('ready',function(){
+     screenPop = new ScreenPop();
+     <% cti_phone = current_user.cti_phone %>
+     screenPop.ctiCallNumber = <%= cti_phone.present? ? cti_phone.id : 'null' %>;
+     screenPop.ctiCallOldNumber = <%= cti_phone.present? ? 'null' : cti_phone_old_number || 'null' %>;
+     jQuery('#cti_pop_icon_tooltip').twipsy({
+       title: screenPop.setCtiPopIconTooltip.bind(screenPop),
+       placement: "left"
+     });
+   });
+   <% if cti_configs[:inputs]["click_to_dial"].to_bool %>
+   jQuery(document).on('ready pjax:end', function(){
+     jQuery('.can-make-calls').css({
+       cursor: "pointer",
+       color: "#06c"
+     });
+     jQuery('.can-make-calls').on('click', screenPop.click_to_dial);
+   });
+   <% end %>
+  <% end %>
+<% end %>

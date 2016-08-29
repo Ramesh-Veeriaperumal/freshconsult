@@ -389,6 +389,8 @@
     li{
       @include padding(0px 0 5px);
       color: #666;
+      text-overflow: ellipsis;
+      overflow: hidden;
     }
     .version{
       font-size: 12px;
@@ -1022,4 +1024,8 @@
       @include margin-right(0);
     }
   }
+}
+
+.display_policy {
+  margin-top: 10px;
 }

@@ -189,8 +189,8 @@ window.App.Freshfoneagents = window.App.Freshfoneagents || {};
           }  
     },
     sortLists: function() {                         
-      this.checkList(this.AvailableAgentList.size(),".no-available-agents","#ffone-tab-1");
-      this.checkList(this.UnavailableAgentList.size(),".no-unavailable-agents","#ffone-tab-2");  
+      this.checkList(this.AvailableAgentList.length,".no-available-agents","#ffone-tab-1");
+      this.checkList(this.UnavailableAgentList.length,".no-unavailable-agents","#ffone-tab-2");  
          
        for(var i=this.sort_order_list.length-1;i>=0;i--){
         this.sort_by=this.sort_order_list[i];

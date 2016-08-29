@@ -192,7 +192,7 @@
             font-weight: bold;
         }
         .shared_attachment_list{
-            @include padding(5px 10px);
+            /*@include padding(5px 10px);*/
             .item{
                 border: 0;
                 .attachment-type{
@@ -234,6 +234,9 @@
             .email-config a{
                 border: 0;
             }
+        }
+        .dropdown li {
+            border-bottom: none;
         }
     }
 

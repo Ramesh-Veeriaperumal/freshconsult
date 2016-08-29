@@ -5,12 +5,13 @@ class Dashboard::Grid
     @widgets = []
   end
 
-  def process_widgets(dashboard_widget,column_count)    
-    @max_columns = column_count
+  def process_widgets(dashboard_widget, snapshot)
+    @max_columns = (snapshot == 'standard') ? 3 : 6
     dashboard_widget.each_with_index.map do |widget, i|
       _widget = Dashboard::Widget.new(widget[1], widget[2], widget[3])
       @widgets.push calculate_position(_widget)
-    end
+    end    
+    calculateActivityHeight if snapshot == 'standard'    
     @widgets
   end
 
@@ -40,6 +41,17 @@ class Dashboard::Grid
       widget.increment_y_by(1)
     end
     widget
+  end
+
+  def calculateActivityHeight
+    # This sets the height of "recent helpdesk activities"
+    # according to the widgets available
+    exceptActivity = @widgets.reject { |n| n.name == 'activity' }
+    activityHeight = exceptActivity.length > 3 ? exceptActivity.length : 3
+    @widgets.map! { |w| 
+      w.height = activityHeight if w.name == 'activity' 
+      w
+    }
   end
 
 end

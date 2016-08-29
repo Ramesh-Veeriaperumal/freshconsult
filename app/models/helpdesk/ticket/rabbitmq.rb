@@ -1,5 +1,9 @@
 class Helpdesk::Ticket < ActiveRecord::Base
   
+  ACTOR_TYPE = {
+    :agent   => 1,
+    :contact => 2
+  }
   
   def manual_publish_to_rmq(action, key, options = {})
     # Manual publish for ticket model
@@ -47,7 +51,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
       "fr_escalated"     =>   fr_escalated,      
       "created_at"       =>   created_at.to_i,
       "outbound_email"   =>   outbound_email?,
-      "archive"          =>   archive || false
+      "archive"          =>   archive || false,
+      "actor_type"       =>   User.current.nil? ? nil : (User.current.agent? ? ACTOR_TYPE[:agent] : ACTOR_TYPE[:contact]), 
+      "actor_id"         =>   User.current.nil? ? nil : User.current.id
     }
   end
   

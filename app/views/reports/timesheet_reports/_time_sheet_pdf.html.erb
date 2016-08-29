@@ -1,51 +1,29 @@
 <% total_time = 0 %>
 <% row_count = 0 %>
-
 <%time_sheet.each do |group_title, time_entrys| %>
   <%row_count += 1 %>
   <% break if (row_count > row_max_limit) %>
   <tr class="even">
+    <% gt = group_names[group_title].to_s %>
     <%unless group_by.include?(:workable) %>
-      <%group_title = t("none") if group_title.match(/^No +/) %>
+      <%gt = t("none") if gt.match(/^No +/) %>
     <%end%>
-    <% group_title = pdf_formatted_date(Time.parse(group_title),{:format => :short_day_with_week, :include_year => true}) if group_by.include?(:group_by_day_criteria) %>
-    <td colspan="<%=colspan%>"><strong><%= group_title %></strong></td> 
-    <td class="hours"><strong class="group_time"><%= get_total_time(time_entrys) %></strong></td>
+    <% gt = timesheet_formatted_date(Time.zone.parse("'#{group_title}'"),{:format => :short_day_with_week, :include_year => true}) if group_by.include?(:group_by_day_criteria) %>
+    <td colspan="<%=colspan%>"><strong><%= gt %></strong></td> 
+    <td class="hours"><strong class="group_time"><%= get_time_in_hours(times_spent[group_title].round(2) * 3600) %></strong></td>
   </tr> 
   <%row_count += time_entrys.size %>
   <%time_entrys = time_entrys.take(row_max_limit-(row_count-time_entrys.size)) if (row_count > row_max_limit) %>
   <%time_entrys.each do |time_entry| %> 
     <tr class="odd">
-      <% headers.each do |item| %> 
-        <% content = pdf_formatted_date(time_entry.executed_at,{:format => :short_day_with_week, :include_year => true}) if item.eql?(:group_by_day_criteria)  
-          content ||= time_entry.send( item.eql?(:hours) ? :time_spent : item ) %>
-        <%if item.eql?(:workable)%>
-          <td class="<%= item %>"><div><%= h(content) %></div></td>
-        <%else%>
-          <%if(item.eql?(:hours))%>
-            <td class='<%=item%>'>
-              <%if time_entry.billable %>
-                <span class='billable-block' title="billable"> </span><%=get_time_in_hours(content)%>
-              <% else%>
-                <span class='non-billable-block' title="non-billable"> </span><%=get_time_in_hours(content)%>
-              <%end%>
-            </td>
-          <%else%> 
-            <% if( content.blank? || content.match(/^No +/) ) %>
-              <% content = "-" %>
-            <%end%>
-            <%= content_tag(:td,h(content),:class => item) %>
-          <%end%>
-        <%end%>             
-      <% end %>
+      <%= construct_timesheet_entry_row(headers, time_entry, load_time, true) %>
     </tr>
   <% end %>
-  <% total_time += total_time_in_seconds(time_entrys) %>
 <% end %>
 
 <% unless exceeds_row_limit %>
   <tr>
     <th colspan="<%=colspan%>" class="align-right"> <%=t('helpdesk.time_sheets.report.total')%></th>
-    <th class="hours"><div id="totaltime"><%= get_time_in_hours(total_time) %></div></th>
+    <th class="hours"><div id="totaltime"><%= get_time_in_hours(totaltime.round(2) * 3600) %></div></th>
   </tr>
 <% end %>

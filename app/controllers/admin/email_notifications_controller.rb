@@ -16,6 +16,11 @@ class Admin::EmailNotificationsController < Admin::AdminController
     @reply_templates = e_notifications.select { |n| n.reply_template? }
 
     @cc_notifications = e_notifications.select { |n| n.cc_notification? }
+
+    respond_to do |format|
+      format.html
+      format.any(:json) { render request.format.to_sym => e_notifications.map{|notify| {:id=>notify.id,:requester_notification => notify.requester_notification,:agent_notification => notify.agent_notification}}}
+    end
   end
   
   def update

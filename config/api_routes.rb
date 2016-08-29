@@ -2,7 +2,7 @@ Helpkit::Application.routes.draw do
   api_routes = proc do
     resources :tickets, except: [:new, :edit] do
       collection do
-        post :outbound_email, to: 'tickets#create', defaults: {_action: 'compose_email'}
+        post :outbound_email, to: 'tickets#create', defaults: { _action: 'compose_email' }
       end
       member do
         put :restore
@@ -81,6 +81,51 @@ Helpkit::Application.routes.draw do
 
     resources :roles, controller: 'api_roles', only: [:index, :show]
 
+    namespace :settings do
+      resources :helpdesk, only: [:index]
+    end
+
+    # Solution endpoints
+    namespace :api_solutions, path: 'solutions' do
+      resources :categories, only: [:create, :destroy], constraints: { id: /\d+/ } do
+        member do
+          resources :folders, only: [:create] do
+            collection do
+              get '(/:language)', to: :category_folders
+            end
+          end
+          post '/:language', to: :create
+          get '(/:language)', to: :show
+          put '(/:language)', to: :update
+        end
+
+        collection do
+          get '(/:language)', to: :index
+        end
+      end
+
+      resources :folders, only: [:destroy], constraints: { id: /\d+/ } do
+        member do
+          resources :articles, only: [:create] do
+            collection do
+              get '(/:language)', to: :folder_articles
+            end
+          end
+          post '/:language', to: :create
+          get '(/:language)', to: :show
+          put '(/:language)', to: :update
+        end
+      end
+
+      resources :articles, only: [:destroy], constraints: { id: /\d+/ } do
+        member do
+          post '/:language', to: :create
+          get '(/:language)', to: :show
+          put '(/:language)', to: :update
+        end
+      end
+    end
+
     resources :contact_fields, controller: 'api_contact_fields', only: [:index]
 
     resources :products, controller: 'api_products', only: [:index, :show]
@@ -93,11 +138,17 @@ Helpkit::Application.routes.draw do
 
     resources :company_fields, as: 'api_company_fields', controller: 'api_company_fields', only: [:index]
 
+    namespace :api_integrations, :path => "integrations" do
+      namespace :cti, :path => "cti" do
+        post :pop, :action => :create
+        get :details, :action => :index
+      end
+    end
     resources :sla_policies, controller: 'api_sla_policies', only: [:index, :update]
   end
 
-  match '/api/v2/_search/tickets' => 'tickets#search', :defaults => { :format => 'json' }, :as => :tickets_search, via: :get
-  
+  match '/api/v2/_search/tickets' => 'tickets#search', :defaults => { format: 'json' }, :as => :tickets_search, via: :get
+
   scope '/api', defaults: { version: 'v2', format: 'json' }, constraints: { format: /(json|$^)/ } do
     scope '/v2', &api_routes # "/api/v2/.."
     constraints ApiConstraints.new(version: 2), &api_routes # "/api/.." with Accept Header

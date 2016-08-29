@@ -39,6 +39,42 @@ class Fdadmin::FreshopsPodController < Fdadmin::DevopsMainController
     end
   end
 
+  def create_hoot_suite_user
+    Integrations::HootsuiteRemoteUser.new(params[:hootsuite_remote_user]).save
+  end
+
+  def create_shopify_user
+    shopify_account = Integrations::ShopifyRemoteUser.find_by_account_id(params[:shopify_remote_user][:account_id])
+    shopify_account ? shopify_account.remote_id = params[:shopify_remote_user][:remote_id] : 
+    shopify_account = Integrations::ShopifyRemoteUser.new(params[:shopify_remote_user])
+    shopify_account.save
+  end
+
+  def create_quickbooks_user
+    quickbooks_account = Integrations::QuickbooksRemoteUser.find_by_remote_id(params[:quickbooks_remote_user][:remote_id])
+    if quickbooks_account
+      quickbooks_account.account_id = params[:quickbooks_remote_user][:account_id]
+      quickbooks_account.configs = params[:quickbooks_remote_user][:configs]
+    else
+      quickbooks_account = Integrations::QuickbooksRemoteUser.new(params[:quickbooks_remote_user])
+    end
+    quickbooks_account.save
+  end
+
+  def create_global_ebay_integration
+   Ecommerce::EbayRemoteUser.new(params[:ebay_remote_user]).save
+  end
+
+  def remove_remote_integration_mapping
+    remote_user_record = RemoteIntegrationsMapping.find_by_remote_id(params[:remote_id])
+    (remote_user_record && remote_user_record.destroy)
+  end
+
+  def remove_account_based_remote_mapping
+    remote_user_record = RemoteIntegrationsMapping.find_by_account_id(params[:account_id])
+    (remote_user_record && remote_user_record.destroy)
+  end
+
   def check_domain_availability
     DomainMapping.find_by_domain(params[:new_domain]) ? true : false
   end

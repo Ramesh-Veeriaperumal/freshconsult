@@ -11,7 +11,7 @@
 
 <script type="text/javascript">
 	jQuery('#holiday_import').submit(function() {
-	  var calendar_id = jQuery('#import_holiday').attr('value');
+	  var calendar_id = jQuery('#import_holiday').val();
 
 	  new Ajax.Request('/admin/business_calendars/holidays', 
 	                   { parameters: {calendar_id: calendar_id},

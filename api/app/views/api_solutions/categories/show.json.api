@@ -1,0 +1,9 @@
+response_hash = {
+	id: @item.parent.id,
+	name: @item.name,
+	description: @item.description,
+	created_at: @item.created_at,
+	updated_at: @item.updated_at
+}
+response_hash.merge!(visible_in_portals: @item.visible_in_portals) if @item.portal_ids_visible?
+JSON.generate(response_hash)

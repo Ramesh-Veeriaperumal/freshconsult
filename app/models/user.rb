@@ -80,9 +80,8 @@ class User < ActiveRecord::Base
 
     c.disable_perishable_token_maintenance(true)
 
-    # enable for Phase 2
-    # c.periodic_logged_in_timeout = { :if => :periodic_login_enabled?,
-    #                                  :duration => :periodic_login_duration}
+    c.periodic_logged_in_timeout = { :if => :periodic_login_enabled?,
+                                      :duration => :periodic_login_duration}
   end
 
   validate :has_role?, :unless => :customer?
@@ -786,6 +785,7 @@ class User < ActiveRecord::Base
     set_company_name
     if update_attributes({:helpdesk_agent => false, :deleted => false})
       subscriptions.destroy_all
+      self.cti_phone = nil
       agent.destroy
       freshfone_user.destroy if freshfone_user
       email_notification_agents.destroy_all

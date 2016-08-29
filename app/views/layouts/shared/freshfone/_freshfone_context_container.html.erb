@@ -26,6 +26,11 @@
 			</div>
 		</div>
 	<% end %>
+	<% if current_account.features?(:freshfone_warm_transfer) %>
+		<div class="transfer-context hide" id="freshfone_transfer">
+			<%= render :partial => 'layouts/shared/freshfone/freshfone_transfer_context' %>
+		</div>
+	<% end %>
 	<div class="add-agent-context hide" id="freshfone_add_agent">
 		<%= render :partial => 'layouts/shared/freshfone/freshfone_agent_conference_context'%>
 	</div>

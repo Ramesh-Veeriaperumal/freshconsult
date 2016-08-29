@@ -29,16 +29,10 @@
 	<%= stylesheet_link_tag_with_rtl :'cdn/plugins'  %>
 	<%= stylesheet_link_tag_with_rtl :'cdn/sprites'  %>
 	<%= stylesheet_link_tag_with_rtl :'cdn/app' %>
-	<%= stylesheet_link_tag_with_rtl :'cdn/non_pattern' %>
 	<%= stylesheet_link_tag_with_rtl :'cdn/tour_my_app' %>
-	<%= stylesheet_link_tag_with_rtl :'cdn/ie_hacks' %>
 
-	<%= stylesheet_link_tag_with_rtl :'cdn/tkt_details', :media => "screen, print, projection"  %>
-
-	<%= stylesheet_link_tag_with_rtl :'cdn/community' %>
 	<%= stylesheet_link_tag_with_rtl :'cdn/freshfone_recording_playback' %>
 
-	<%= stylesheet_link_tag_with_rtl :'cdn/realtime_dashboard' %>
 	<script type="text/javascript">
 	  /* TODO-RAILS3 need to cross check this area */
 		PROFILE_BLANK_THUMB_PATH = '<%= asset_host_url %>/assets/misc/profile_blank_thumb.jpg';
@@ -61,13 +55,13 @@
 	<%= javascript_include_tag :'cdn/defaults'  %>
 	<%= javascript_include_tag :'cdn/frameworks' %>
 	<%= javascript_include_tag :'cdn/workspace' %>
-	<%= javascript_include_tag :'cdn/redactor' %>
 	<%= javascript_include_tag :'cdn/syntaxhighlighter' %>
 	<%= javascript_include_tag :'cdn/pattern'  %>
-	<%= javascript_include_tag :'cdn/merge'  %>
-	<%= javascript_include_tag :'cdn/custom_widget' %>
 	<%= javascript_include_tag :'cdn/plugins/fileupload' %>
 	<%= javascript_include_tag :'cdn/livechat_helper' %>
+
+	<!-- The following is the remote CDN file managed by Freshapps Team. It is to exec freshapps one by one -->
+  <%= javascript_include_tag :"#{MarketplaceConfig::FRESHAPPS_JS_URL}/js/common-0.2.0.min.js" %>
 
 	<% if current_account.features?(:freshfone) ||
 	  (current_account.features?(:chat) && current_account.chat_setting && !(is_assumed_user?)) %>
@@ -81,9 +75,9 @@
     <%= javascript_include_tag :'cdn/livechat_initializer' %>
 	<% end %> 
 
-	<%= javascript_include_tag :'cdn/livechat_admin_settings' %>
-	
+
 	<%= javascript_include_tag :"cdn/lang/#{I18n.locale.to_s.downcase}" %>
+	
 
 	<!-- for i18n-js translations -->
   <%= javascript_include_tag :"cdn/i18n/#{I18n.locale.to_s}" %>

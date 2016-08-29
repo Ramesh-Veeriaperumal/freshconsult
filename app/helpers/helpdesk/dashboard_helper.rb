@@ -26,8 +26,7 @@ module Helpdesk::DashboardHelper
   def widget_list snapshot
     dashboard_widget = dashboard_widget_list snapshot
     widget_object = Dashboard::Grid.new
-    column_count = (snapshot == 'standard') ? 3 : 6
-    widgets = widget_object.process_widgets(dashboard_widget,column_count)
+    widgets = widget_object.process_widgets(dashboard_widget, snapshot)
 
     widgets
   end

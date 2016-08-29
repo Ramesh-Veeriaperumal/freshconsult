@@ -16,8 +16,7 @@ module Helpdesk::Activities
         act_param.account_id = Account.current.id
         act_param.object     = "ticket"
         act_param.object_id  = ticket.display_id
-        event_type           = params[:event_type].to_i
-        act_param.event_type = event_type
+        act_param.event_type = ::HelpdeskActivities::EventType::ALL
         act_param.comparator = ActivityConstants::LESS_THAN
         act_param.shard_name = ActiveRecord::Base.current_shard_selection.shard
         if params[:since_id].present?

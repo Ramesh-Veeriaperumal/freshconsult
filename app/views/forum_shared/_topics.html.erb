@@ -99,7 +99,7 @@
 
 	function topic_submit(url, method){ 
 		var form = $("#topic-bulk-action");
-		form.find('input[name=_method]').attr('value', method);
+		form.find('input[name=_method]').val(method);
 		form.attr('action', url);
 		form.submit();
 	}

@@ -99,7 +99,7 @@ RealtimeDashboard.Widgets.AgentReceivedResolved = function(widget_name,container
 			}
 
 			if(isMainView) {
-				opts.height = 180;
+				opts.height = 220;
 				opts.chartClick = function(e) {
 					self.sidebarModalChart(data,'graph_space');
 				}
@@ -108,6 +108,7 @@ RealtimeDashboard.Widgets.AgentReceivedResolved = function(widget_name,container
 				opts.scrollbar = false;
 				opts.label_enabled = true;
 				opts.gridLineWidth = 1;
+				opts.chartCursor = true;
 				opts.showYAxisLabels = true;
 			} else {
 				opts.height = 250;

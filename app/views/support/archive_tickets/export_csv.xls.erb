@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<ss:Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:o="urn:schemas-microsoft-com:office:office"
+  xmlns:x="urn:schemas-microsoft-com:office:excel"
+  xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:html="http://www.w3.org/TR/REC-html40">
+  <ss:Worksheet ss:Name="Sheet1">
+    <ss:Table>
+      <ss:Row>
+      	<% @headers.each do |header| %>
+        	<ss:Cell><ss:Data ss:Type="String"><%= @xls_hash[header] %></ss:Data></ss:Cell>
+        <% end %>
+      </ss:Row>
+      <% @records.each do |data| %>
+      <ss:Row>
+      	<% data.each do |val| %>
+      		<% is_number = val.is_a? Integer %>
+        	<ss:Cell><ss:Data ss:Type="<%= is_number ? 'Number' : 'String' %>"><%= h(val) %></ss:Data></ss:Cell>
+        <% end %>
+      </ss:Row>
+      <% end %>
+    </ss:Table>
+  </ss:Worksheet>
+</ss:Workbook>

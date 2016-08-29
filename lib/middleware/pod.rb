@@ -37,7 +37,8 @@ class Middleware::Pod
   def determine_login(env)
     # check for provider
     Rails.logger.info 'determine_login'
-    provider_match = %r{/auth/([\w]+)/callback$}.match @fullpath
+    provider_match = %r{/(?:\bauth\b|\bintegrations\b|\badmin/ecommerce\b|\becommerce\b)/([\w]+)(?:/)?(?:callback$|home/.*|authorize|tickets)?}.match @fullpath
+    
     if (provider_match and provider_match[1])
       provider = provider_match[1]
       Rails.logger.info "Provider: #{provider}"
@@ -53,11 +54,32 @@ class Middleware::Pod
         when 'google_marketplace_sso', 'google_gadget'
           return
         when 'twitter'
-          return # For twitter redirection is based on customer portal rather than integrations url.
+          return
+        when 'hootsuite'
+          params = env["rack.request.query_hash"].merge(env["rack.request.form_hash"] || {})
+          shard = nil
+          if params.include?('freshdesk_domain')
+            shard = fetch_shard(params['freshdesk_domain'])
+          elsif params.include?('uid')
+            shard = fetch_remote_mapping(params['uid'])
+          end
+          determine_pod(shard)
+        when 'ebay_accounts', 'ebay_notifications'
+          shard = nil
+          params = env["rack.request.query_hash"].merge(env["action_dispatch.request.request_parameters"] || {})
+          if params['account_url']
+            shard = fetch_shard(params['account_url'])
+          elsif params.include?('uid')
+            shard = fetch_remote_mapping(params['uid'])
+          elsif params['Envelope'] && params['Envelope']['Body']
+            shard = fetch_remote_mapping(params['Envelope']['Body']["#{params['Envelope']['Body'].keys.first}"]['EIASToken'])
+          end
+          determine_pod(shard)
         else
           origin = env['rack.session']['omniauth.origin']
           account_id = nil
 
+          return if origin.nil?
           origin = CGI.parse(origin)
           Rails.logger.info "origin: #{origin}"
           if origin.has_key?('id') 
@@ -73,11 +95,19 @@ class Middleware::Pod
 
   def determine_pod(shard)
     Rails.logger.info "Shard #{shard.inspect}"
-    if PodConfig['CURRENT_POD'] != shard.pod_info
+    if shard && PodConfig['CURRENT_POD'] != shard.pod_info
       Rails.logger.error "Current POD #{PodConfig['CURRENT_POD']}"
-      # redirect_to_pod(shard) and return
-      @redirect_url = "/pod_redirect/#{shard.pod_info}" #Should match with the location directive in Nginx Proxy
+      @redirect_url = "/pod_redirect/#{shard.pod_info}"
     end
+  end
+  
+  def fetch_shard(url)
+    ShardMapping.lookup_with_domain(url.split("//").last)
+  end
+
+  def fetch_remote_mapping(uid)
+    remote_mapping = RemoteIntegrationsMapping.find_by_remote_id(uid)
+    ShardMapping.lookup_with_account_id(remote_mapping.account_id) if remote_mapping
   end
 
   def redirect?

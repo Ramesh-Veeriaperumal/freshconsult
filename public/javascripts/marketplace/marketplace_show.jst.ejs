@@ -19,7 +19,9 @@
         <li>
           <%= install_btn %>
         </li>
-        <li class="version"><%= translate.get('marketplace_ver') %> <%= app_version %></li>
+        <% if (typeof app_version != 'undefined') { %>
+          <li class="version"><%= translate.get('marketplace_ver') %> <%= app_version %></li>
+        <% } %>
         <li class="dev"><%= translate.get('developed_by') %><span class="bold"><%= account %></span></li>
         <li class="published"><%= published_date %> <%= translate.get('time_ago') %> </li>
         <li class="text-center">
@@ -34,17 +36,26 @@
         </li>
         <li class="help dot ttl"><%= translate.get('help_and_support') %></li>
         <li class="help dot"><a href="mailto:<%= contact_details["support_email"] %>"> <%= contact_details["support_email"] %> </a></li>
-        <li class="help"><a href="<%= contact_details["support_url"] %>" target="_blank"> <%= contact_details["support_url"] %> </a></li>
+        <li class="help <%= (typeof policy != 'undefined' && policy) ? 'dot' : '' %>"><a href="<%= contact_details["support_url"] %>" target="_blank" rel="noreferrer"> <%= contact_details["support_url"] %> </a></li>
+        <% if (typeof policy != 'undefined' && policy) { %>
+        <li class="help"><a href="#" class="toggle_policy"><%= translate.get('policy_on_tp_apps') %></a>
+        <div id="display_policy" class="hide display_policy">
+          <p><%= translate.get('third_party_app_policy') %></p>
+        </div>
+        </li>
+        <% } %>
       </ul>
     </div>
 
     <div class="app-desc">
       <p class="descript pre-wrap"><%- description %></p>
-      <% if (whats_new) { %>
-        <div class="whats-new">
-          <h6 class="version"><%= translate.get('marketplace_VERSION') %> <%= app_version %></h6>
-          <p class="version-info"><%- whats_new %></p>
-        </div>
+      <% if (typeof app_version != 'undefined') { %>
+         <% if (whats_new) { %>
+          <div class="whats-new">
+            <h6 class="version"><%= translate.get('marketplace_VERSION') %> <%= app_version %></h6>
+            <p class="version-info"><%- whats_new %></p>
+          </div>
+        <% } %>
       <% } %>
 
       <% if(screenshots.length >0){ %>

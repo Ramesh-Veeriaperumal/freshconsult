@@ -13,7 +13,9 @@ class Helpdesk::BulkTicketActionsController < ApplicationController
     
     @items.each do |ticket|
       params[nscname].each do |key, value|
-        ticket.send("#{key}=", value) if !value.blank? and ticket.respond_to?("#{key}=")
+        #handling unassign for agent and group. from ui, -1 will be sent for unassigned case
+        value = nil if value == '-1'
+        ticket.send("#{key}=", value) if (value.nil? || value.present?) and ticket.respond_to?("#{key}=")
       end
       update_tags(params[:helpdesk][:tags], false, ticket) unless params[:helpdesk].blank? or params[:helpdesk][:tags].nil?
       ticket.save_ticket

@@ -63,8 +63,12 @@ module Freshfone::Jobs
             @first_call_id = @calls.first.id
             calls_ids = @calls.map { |c| c.id }
             @calls.reject! { |c| c.parent_id.present? ? !calls_ids.include?(c.parent_id) : false }
-            @calls_hash = to_hash @calls
+            generate_call_hash
           end
+        end
+
+        def generate_call_hash
+          @calls_hash = @current_account.features?(:freshfone_warm_transfer) ? with_warm_transfer_hash(@calls) : to_hash(@calls)
         end
 
         def derive_query
@@ -85,7 +89,20 @@ module Freshfone::Jobs
         end
 
         def to_hash activerecord_relation
-          activerecord_relation.map { |phone_call| field_hash.call(phone_call) }
+          activerecord_relation.map { |phone_call|
+            field_hash.call(phone_call) 
+          }
+        end
+
+        def with_warm_transfer_hash activerecord_relation
+          count = 0
+          calls_array = []
+          activerecord_relation.each { |phone_call|
+            next if phone_call.meta.present? && phone_call.meta.warm_transfer_revert?
+            count += 1
+            calls_array << field_hash.call(phone_call, count)
+          }
+          calls_array
         end
 
         def all_numbers?
@@ -111,7 +128,7 @@ module Freshfone::Jobs
             title_row = headers.call(freshfone_call).keys
             csv << title_row
             @calls_hash.each do |phone_call|
-              csv << phone_call.values
+              csv << phone_call.values if phone_call.present?
             end
           end
         end
@@ -125,7 +142,7 @@ module Freshfone::Jobs
           @records ||= []
           @calls_hash.each do |phone_call|
             values = phone_call.values
-            @records << values.map { |record| escape_html(record) }
+            @records << values.map { |record| escape_html(record) } if values.present?
           end
           path =  "#{Rails.root}/app/views/support/tickets/export_csv.xls.erb"
           ERB.new(File.read(path)).result(binding)
@@ -137,10 +154,10 @@ module Freshfone::Jobs
           Freshfone::Call.new(call_params)
         end
 
-        def field_hash 
-          return Proc.new { |t_call|
+        def field_hash
+          return Proc.new { |t_call, count|
             data_hash = {
-              "Call ID" => t_call.id.blank? ? "-" : t_call.id - (@first_call_id - 1),
+              "Call ID" => t_call.id.blank? ? "-" : count || (t_call.id - (@first_call_id - 1)),
               "Customer Name" => t_call.customer.blank? ? "-" : t_call.customer_name,
               "Customer Number" => t_call.caller_number,
               "Customer Country" => t_call.caller_country.blank? ? "-" : t_call.caller_country,
@@ -148,8 +165,8 @@ module Freshfone::Jobs
               "Agent Name" => agent_name_class(t_call),
               "Helpdesk Number" => t_call.freshfone_number.blank? ? "-" : t_call.freshfone_number.number,
               "Call Status" => call_status_class(t_call),
-              "Transfer Count" => t_call.children_count,
-              "Parent Call ID" => t_call.parent_id.blank? ? "-" : t_call.parent_id - (@first_call_id - 1),
+              "Transfer Count" => count.blank? ? t_call.children_count : count_of_children(t_call),
+              "Parent Call ID" => t_call.parent_id.blank? ? "-" : count.blank? ? (t_call.parent_id - (@first_call_id - 1)) : parent_call_id(t_call, count),
               "Date" => t_call.created_at.to_s 
             }
             if call_metrics_enabled?(t_call)
@@ -188,6 +205,32 @@ module Freshfone::Jobs
           }
         end
 
+        def count_of_children(call)
+          return 0 unless call.children_count > 0
+          return if call.meta.blank?
+          count = 0
+          call.descendants_calls.each do |call|
+            count += 1 if !call.meta.warm_transfer_revert?
+          end
+          count
+        end
+
+        def parent_call_id(call, count)
+          return if call.meta.blank?
+          parent_call = select_parent(call.parent)
+          child_count = 0
+          parent_call.descendants_calls.each do |child|
+            child_count += 1 if !child.meta.warm_transfer_revert?
+            break if child.id == call.id
+          end
+          count = count - child_count
+        end
+
+        def select_parent(call)
+          call.meta.present? && call.meta.warm_transfer_revert? ?
+                            select_parent(call.parent) : call
+        end 
+
         def escape_html(val)
           ((val.blank? || val.is_a?(Integer)) ? val : CGI::unescapeHTML(val.to_s).gsub(/\s+/, " "))
         end
@@ -214,7 +257,7 @@ module Freshfone::Jobs
             call.agent_name
           elsif !call.direct_dial_number.blank?
             call.direct_dial_number
-          elsif call.group_id.present?
+          elsif call.group.present?
             call.group.name
           else
             "Helpdesk"

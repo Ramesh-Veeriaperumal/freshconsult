@@ -17,9 +17,10 @@ class Helpdesk::CommonsController < ApplicationController
     else
       current_account.agents.includes(:user)
     end
+    allow_none = params[:allow_none].blank? ? false : true
     respond_to do |format|
       format.html {
-        render :partial => "group_agents", :locals =>{ :blank_value => blank_value, :assigned_agent => assigned_agent }
+        render :partial => "group_agents", :locals =>{ :blank_value => blank_value, :assigned_agent => assigned_agent, :allow_none => allow_none }
       }
       format.mobile {
         array = []

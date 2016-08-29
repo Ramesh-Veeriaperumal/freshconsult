@@ -377,7 +377,7 @@ var FreshfoneUser,
 		},
 		bindUserPresenceHover: function () {
 			var self = this;
-			$('.ff_presence_options .availabilityOnPhone').live('click', function(){
+			$(document).on('click', '.ff_presence_options .availabilityOnPhone', function(){
 				var	to_phone = $(this).data('to_phone');
 				self.updateAvailability(to_phone, this);
 			});

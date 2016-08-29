@@ -40,7 +40,7 @@
                   return a == type;
                 });
 
-                var element_count = arr.size();
+                var element_count = arr.length;
 
                 self.inputArea[$(this).attr('rel')] ? "" : self.inputArea[$(this).attr('rel')] = {};
 
@@ -144,7 +144,7 @@
         },
         appendNewRule: function(){
 
-            var count = this.$currentElement.children('.rules_list_wrapper').children().size();
+            var count = this.$currentElement.children('.rules_list_wrapper').children().length;
             var self = this;
 
             var $list = $('<div class="list"/>');
@@ -170,7 +170,8 @@
 
             if(this.inputArea['dropdown'] != undefined && this.inputArea['dropdown'] != "") {
                 $.each(this.inputArea['dropdown'], function(key, object){
-                    var select2_count = self.$currentElement.children('.rules_list_wrapper').children().size();
+
+                    var select2_count = self.$currentElement.children('.rules_list_wrapper').children().length;
                     var size = 0;
                     if(self.customModule === "sync"){
                         $.each(object,function(index, item){
@@ -179,7 +180,7 @@
                             }
                         });
                     }
-                    if(object.size() == select2_count || (self.customModule === "sync" && (size == self.maximumSize || object.size() == size))){
+                    if(object.length== select2_count || (self.customModule === "sync" && (size == self.maximumSize || object.length == size))){
                         self.$currentElement.children('.add_menu_wrapper').find('.add_new_list').hide();
                         self.$currentElement.children('.add_menu_wrapper').find('.empty_list_alert').css('display','table-row');
                         return false;
