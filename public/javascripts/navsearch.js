@@ -22,6 +22,7 @@ jQuery(document).ready(function(){
 
 
 	callbackToSearch = function(string, search_url){
+			
 		jQuery('#SearchBar').addClass('sloading loading-small loading-right');
 		jQuery('.results').hide().find('li.spotlight_result').remove();
   	    jQuery.ajax({ url: search_url+string,
@@ -79,6 +80,7 @@ jQuery(document).ready(function(){
 		//reset search bar by removing search query
 		//and removing appended search results
 		$J('#header_search').val('');
+		currentString = "";
 		$J('ul.results li.spotlight_result').remove();
 		jQuery("ul.results").filter(function(){return jQuery(this).find('li.spotlight_result').length == 0; }).hide();
 	}	
@@ -145,7 +147,7 @@ jQuery(document).ready(function(){
 				var searchItem = JST["app/search/templates/spotlight_result_recent_search"](
 					{
 						id: j, 
-						path:'/search/all?term=' + NavSearchUtils.localRecentSearches[j], 
+						path:'/search/all?term=' + encodeURIComponent(NavSearchUtils.localRecentSearches[j]), 
 						content: NavSearchUtils.localRecentSearches[j]
 					});
 				jQuery('#SearchResultsBar .recent_searches_results').append(searchItem);
