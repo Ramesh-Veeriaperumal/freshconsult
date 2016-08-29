@@ -1,4 +1,4 @@
-
+var adjustingHeight = false;
 jQuery(document).ready(function() {
 
     jQuery("#exportLink").click(function(){
@@ -51,7 +51,12 @@ jQuery(document).ready(function() {
         Helpkit.presetRangesSelected = data.status;
         Helpkit.presetRangesPeriod = data.period;
     });
-
+    jQuery(document).on('click',"#sliding",function(){
+      adjustingHeight = true;
+      setTimeout(function() {
+          jQuery("#billable").select2().trigger('change');
+      },100);
+    });
     savedReportUtil.init();
 });
 
@@ -131,11 +136,12 @@ var savedReportUtil = (function() {
             var _this = this;
 
             jQuery(document).on('change', '#customers_filter,.filter_item,.ff_item', function (ev) { 
-                 if(ev.target && ev.target.id != "group_by_field"){
+                 if(ev.target && ev.target.id != "group_by_field" && !adjustingHeight){
                     _this.filterChanged = true; 
                     _this.save_util.filterChanged = true;
                     _this.setFlag('false');
                  }
+                 adjustingHeight = false;
             });
 
             jQuery(document).on("save.report",function() {
@@ -160,7 +166,7 @@ var savedReportUtil = (function() {
                 _this.setFlag('false');
             });
             jQuery(document).on("report_refreshed",function(ev,data){
-                if(_this.filterChanged) {
+                if(_this.filterChanged && !adjustingHeight) {
                      _this.save_util.controls.hideDeleteAndEditOptions();
                      _this.save_util.controls.hideScheduleOptions();
                      _this.save_util.controls.showSaveOptions(_this.last_applied_saved_report_index); 
