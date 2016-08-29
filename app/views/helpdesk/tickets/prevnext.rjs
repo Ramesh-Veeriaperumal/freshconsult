@@ -36,9 +36,11 @@ content << link_to(" <span class='arrow-previous'></span>".html_safe,  previous_
 						"data-highlight" => "true")
 content << '</li></ul>'
 content << '<div class="hide">'
-content << link_to("#{t('ticket.next')}", next_link, 
+content << link_to("#{t('ticket.next')}", next_link,
+                   "data-pjax" => "#body-container", 
                    "data-keybinding" => shortcut('pagination.alt_next'))
 content << link_to("#{t('ticket.previous')}", previous_link, 
+                   "data-pjax" => "#body-container",
                    "data-keybinding" => shortcut('pagination.alt_previous'))
 content << '</div>'
 
