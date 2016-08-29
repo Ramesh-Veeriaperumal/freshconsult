@@ -56,22 +56,24 @@ jQuery(document).ready(function() {
 });
 
 //Analytics
-
-function adjustFontSize(content, el) {
+function calculateBestFontSize(content) {
     var len = 0;
     if(content.indexOf('.') == -1) {
       len = content.length;
     } else {
       len = content.indexOf('.')+3  
     }
-    
-    if(len <= 12){
-        jQuery(el).css('font-size','36px');
+    if(len <= 12) {
+        return '36px';
     } else if( len <= 24){
-        jQuery(el).css('font-size','26px');
+        return '26px';
     } else {
-        jQuery(el).css('font-size','16px');
+        return '16px';
     }
+}
+
+function adjustFontSize(el,size) {
+    jQuery(el).css('font-size',size);
 }
 
 function recordAnalytics(){

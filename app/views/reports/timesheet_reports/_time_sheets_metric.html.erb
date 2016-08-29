@@ -54,13 +54,6 @@
 
               return "<div class='metric_tooltip billable'><div class='type'>Billable</div><div class='value'>" + billabale_perc + "%</div></div><div class='metric_tooltip non-billable'><div class='type'>Non-Billable</div><div class='value'>" + non_billable_perc + "%</div></div><div class='clear'></div>" }
           });
-
-            hours_tracked = '<%= @metric_data[:current][:total_time] %>';
-            billabe_hours = '<%= @metric_data[:current][:billable] %>';
-            non_billable_hours = '<%= @metric_data[:current][:non_billable] %>';
-           adjustFontSize(hours_tracked,'h1.total_time_metric');
-           adjustFontSize(billabe_hours,'h1.billable_time');
-           adjustFontSize(non_billable_hours,'h1.nonbillable_time');
       }
     <%else%>
       jQuery('.comparision_chart').hide();
