@@ -365,11 +365,11 @@ def set_time_range(prev_time = false)
         @group_count[hash_key] += (entry.time_spent || 0)
         if @group_names[hash_key].blank?
           if group_by_caluse == :workable
-            @group_names[hash_key] = "#{entry.send(group_by_caluse).subject} (##{entry.send(group_by_caluse).display_id})"
+            @group_names[hash_key] = "#{entry.send(group_by_caluse).subject} (##{entry.send(group_by_caluse).display_id})".gsub(/`|"/, " ")
           elsif group_by_caluse == :group_by_day_criteria
             @group_names[hash_key] = entry.send('executed_at')
           else
-            @group_names[hash_key] = entry.send(group_by_caluse)
+            @group_names[hash_key] = entry.send(group_by_caluse).gsub(/`|"/, " ")
           end
         end
       end
