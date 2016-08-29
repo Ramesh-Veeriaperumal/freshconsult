@@ -6,8 +6,9 @@ class CRM::AddToCRM
 
     def self.perform(args)
       item = scoper.find_by_account_id_and_id(Account.current.id,args[:item_id])
-      crm = CRM::Salesforce.new
-      perform_job(crm, item) if Rails.env.production?
+      # crm = CRM::Salesforce.new
+      crm = ""
+      perform_job(crm, item) if (Rails.env.production? or Rails.env.staging?)
     end
   end
 
@@ -19,7 +20,7 @@ class CRM::AddToCRM
     end
 
     def self.perform_job(crm, item)
-      crm.add_paid_customer_to_crm(item)
+      # crm.add_paid_customer_to_crm(item)
     end
   end
 
@@ -31,7 +32,7 @@ class CRM::AddToCRM
     end
 
     def self.perform_job(crm, item)
-      crm.add_free_customer_to_crm(item)
+      # crm.add_free_customer_to_crm(item)
     end
   end
 
@@ -40,7 +41,7 @@ class CRM::AddToCRM
     @queue = QUEUE
 
     def self.perform(account_id)
-      CRM::Salesforce.new.update_deleted_account_to_crm(Account.current.id) if Rails.env.production?
+      # CRM::Salesforce.new.update_deleted_account_to_crm(Account.current.id) if Rails.env.production?
     ensure
       CRM::FreshsalesUtility.new({ account: Account.current }).account_cancellation if (Rails.env.production? or Rails.env.staging?)
     end
@@ -54,7 +55,7 @@ class CRM::AddToCRM
     end
 
     def self.perform_job(crm, item)
-      crm.update_admin_info(item)
+      # crm.update_admin_info(item)
     ensure
       Resque.enqueue(CRM::Freshsales::AdminUpdate, { :account_id => Account.current.id })
     end
@@ -70,7 +71,7 @@ class CRM::AddToCRM
       account = Account.current
       return if account.subscription.active? or account.subscription.free?
 
-      CRM::Salesforce.new.update_trial_accounts(Account.current.id) if Rails.env.production?
+      # CRM::Salesforce.new.update_trial_accounts(Account.current.id) if Rails.env.production?
     end
   end
 
@@ -78,7 +79,7 @@ class CRM::AddToCRM
     extend Resque::AroundPerform
     @queue = QUEUE
     def self.perform(args)
-      CRM::Salesforce.new.update_customer_status if Rails.env.production?
+      # CRM::Salesforce.new.update_customer_status if Rails.env.production?
     end
   end
 
