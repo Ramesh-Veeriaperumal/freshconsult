@@ -830,6 +830,7 @@ GEM
       i18n (>= 0.6.4, <= 0.7.0)
       sixarm_ruby_unaccent (>= 1.1.1, < 2)
     mono_logger (1.1.0)
+    msgpack (1.0.0)
     multi_json (1.12.1)
     multi_xml (0.5.5)
     multipart-post (2.0.0)
@@ -946,6 +947,10 @@ GEM
       ffi (>= 0.5.0)
     rb-kqueue (0.2.4)
       ffi (>= 0.5.0)
+    rbtrace (0.4.8)
+      ffi (>= 1.0.6)
+      msgpack (>= 0.4.3)
+      trollop (>= 1.16.2)
     rbvmomi (1.8.2)
       builder
       nokogiri (>= 1.4.1)
@@ -1304,6 +1309,7 @@ DEPENDENCIES
   rails_autolink (= 1.1.6)
   rake (~> 10.4.0)
   rate-limiting!
+  rbtrace
   recaptcha!
   redis (= 3.0.7)
   request_store (~> 1.0)

@@ -238,3 +238,13 @@ ENV['RECAPTCHA_PRIVATE_KEY'] = '6LfNCb8SAAAAANC5TxzpWerRTLrxP3Hsfxw0hTNk'
 
 
 GC::Profiler.enable if defined?(GC) && defined?(GC::Profiler) && GC::Profiler.respond_to?(:enable)
+
+# Load rbtrace
+if defined?(PhusionPassenger)
+  PhusionPassenger.on_event(:starting_request_handler_thread) do
+    if Rails.env.staging?
+      Rails.logger.error("Loading rbtrace gem")
+      require 'rbtrace'
+    end
+  end
+end
