@@ -7,11 +7,24 @@ class ContactFieldDecorator < ApiDecorator
   end
 
   def contact_field_choices
-    @choices ||= case field_type.to_s
-    when 'default_language', 'default_time_zone'
-      choices.map { |x| x.values.reverse }.to_h
-    when 'custom_dropdown' # not_tested
-      choices.map { |x| x[:value] }
+    @choices ||= begin
+      case field_type.to_s
+      when 'default_language', 'default_time_zone'
+        choices.map { |x| x.values.reverse }.to_h
+      when 'custom_dropdown' # not_tested
+        choices.map { |x| x[:value] }
+      end
+    end
+  end
+
+  def choice_list
+    @choice_list ||= begin
+      case field_type.to_s
+      when 'default_language', 'default_time_zone'
+        choices.map { |x| { label: x[:name], value: x[:value] } }
+      when 'custom_dropdown' # not_tested
+        choices.map { |x| {  id: x[:id], label: x[:value], value: x[:value] } }
+      end
     end
   end
 end

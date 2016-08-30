@@ -106,6 +106,7 @@ Helpkit::Application.routes.draw do
       end
     end
     resources :ticket_filters, controller: 'ember/ticket_filters', only: :index
+    resources :contact_fields, controller: 'ember/contact_fields', only: :index
     resources :scenario_automations, controller: 'ember/scenario_automations', only: :index
   end
 
