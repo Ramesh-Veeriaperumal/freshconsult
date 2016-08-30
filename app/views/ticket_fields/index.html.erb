@@ -48,6 +48,8 @@
     // Localizing ticket fields js elements
     customFields = <%= @ticket_field_json.to_json.html_safe %>;
     customSection = <%= @section_data_json.to_json.html_safe %>;
+    shared_ownership_enabled = <%= Account.current.features?(:shared_ownership).to_json.html_safe %>;
+    sharedGroups = <%= @groups.to_json.html_safe %>;
 
     tf_lang = {
      untitled:                    "<%= t("ticket_fields.untitled") %>",
@@ -116,6 +118,7 @@
       nested_tree_validation:     '<%= t("ticket_fields.formfield_props.nested_tree_validation") %>',
       nested_unique_names:        '<%= t("ticket_fields.formfield_props.nested_unique_names") %>',
       nested_3rd_level:           '<%= t("ticket_fields.formfield_props.nested_3rd_level") %>',
+      mappedInternalGroup:        '<%= t("admin.contact_fields.formfield_props.mapped_internal_groups") %>',
 
       default:            '<%= t("admin.contact_fields.formfield_props.default") %>',
       number:             '<%= t("custom_fields.number") %>',

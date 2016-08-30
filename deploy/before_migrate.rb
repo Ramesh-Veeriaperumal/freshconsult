@@ -54,6 +54,7 @@ run "ln -nfs #{shared_path}/config/helpdesk.yml #{node[:rel_path]}/config/helpde
 run "ln -nfs #{shared_path}/config/thrift.yml #{node[:rel_path]}/config/thrift.yml"
 run "ln -nfs #{shared_path}/config/delayed_job_watcher.yml #{node[:rel_path]}/config/delayed_job_watcher.yml"
 run "ln -nfs #{shared_path}/config/archive_note.yml #{node[:rel_path]}/config/archive_note.yml"
+run "ln -nfs #{shared_path}/config/lambda.yml #{node[:rel_path]}/config/lambda.yml"
 
 
 #search V2

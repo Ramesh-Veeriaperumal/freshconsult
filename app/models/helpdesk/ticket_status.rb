@@ -15,7 +15,8 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
   validates_presence_of :name, :message => I18n.t('status_name_validate_presence_msg')
   validates_uniqueness_of :name, :scope => :account_id, :message => I18n.t('status_name_validate_uniqueness_msg'), :case_sensitive => false
 
-  attr_accessible :name, :customer_display_name, :stop_sla_timer, :deleted, :is_default, :ticket_field_id, :position
+  attr_accessible :name, :customer_display_name, :stop_sla_timer, :deleted, :is_default, :ticket_field_id, :position, :group_ids
+
   belongs_to :ticket_field, :class_name => 'Helpdesk::TicketField'
 
   has_many :tickets, :class_name => 'Helpdesk::Ticket', :foreign_key => "status", :primary_key => "status_id",
@@ -23,6 +24,11 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
 
   has_many :archived_tickets, :class_name => 'Helpdesk::ArchiveTicket', :foreign_key => "status", :primary_key => "status_id",
       :conditions => proc  { "archive_tickets.account_id = #{send(:account_id)}" }
+
+  has_many :status_groups, :foreign_key => :status_id, :dependent => :destroy
+  accepts_nested_attributes_for :status_groups, :allow_destroy => true
+
+  before_update :mark_status_groups_for_destruction, :if => :deleted?
 
   after_update :update_tickets_sla_on_status_change_or_delete
 
@@ -43,10 +49,23 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
   end
 
   def self.statuses_list(account)
-    statuses = account.ticket_status_values
-    statuses.map{|status| { :status_id => status.status_id, :name => Helpdesk::TicketStatus.translate_status_name(status,"name"), 
-      :customer_display_name => Helpdesk::TicketStatus.translate_status_name(status,"customer_display_name"), 
-      :stop_sla_timer => status.stop_sla_timer, :deleted => status.deleted } }
+    if Account.current.features?(:shared_ownership)
+      statuses = account.ticket_status_values.preload(:status_groups)
+      status_group_info = group_ids_with_names(statuses)
+    else
+      statuses = account.ticket_status_values
+    end
+    statuses.map{|status| 
+      status_hash = {
+        :status_id => status.status_id,
+        :name => Helpdesk::TicketStatus.translate_status_name(status,"name"),
+        :customer_display_name => Helpdesk::TicketStatus.translate_status_name(status,"customer_display_name"),
+        :stop_sla_timer => status.stop_sla_timer,
+        :deleted => status.deleted
+      }
+      status_hash[:group_ids] = status_group_info[status.id] if Account.current.features?(:shared_ownership)
+      status_hash
+    }
   end
   
   def self.statuses(account)
@@ -92,6 +111,56 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
 
   def self.resolved_statuses
     [RESOLVED, CLOSED]
+  end
+
+  def build_status_groups_hash(group_id, id = nil)
+    {:id => id, :group_id => group_id, :_destroy => id.present?}
+  end
+
+  def group_ids=(g_ids=nil)
+    return if !Account.current.features?(:shared_ownership) or self.is_default
+    @group_ids_array = g_ids.blank? ? [] : g_ids.map(&:to_i)
+    existing_group_ids = status_groups.map(&:group_id)
+
+    status_groups_array = []
+    group_ids_to_add    = @group_ids_array - existing_group_ids
+    group_ids_to_delete = existing_group_ids - @group_ids_array
+
+    group_ids_to_add.each do |group_id|
+      status_groups_array << build_status_groups_hash(group_id)
+    end
+    status_groups.select{|sg| group_ids_to_delete.include?(sg.group_id)}.each do |status_group|
+      status_groups_array << build_status_groups_hash(status_group.group_id, status_group.id)
+    end
+    self.status_groups_attributes = status_groups_array if status_groups_array.present?
+  end
+
+  def group_ids
+    @group_ids_array || self.status_groups.pluck(:group_id)
+  end
+
+  def self.group_ids_with_names statuses
+    status_group_info = {}
+    groups = Account.current.groups_from_cache
+    statuses.map do |status|
+      group_info = []
+      if !status.is_default?
+        status_group_ids = status.status_groups.map(&:group_id)
+        groups.inject(group_info) {|sg, g| group_info << g.id if status_group_ids.include?(g.id)}
+      end
+      status_group_info[status.id] = group_info
+    end
+    status_group_info
+  end
+
+  def mark_status_groups_for_destruction
+    return unless Account.current.features?(:shared_ownership)
+
+    status_groups_array = []
+    status_groups.each {|status_group|
+      status_groups_array << build_status_groups_hash(status_group.group_id, status_group.id)
+    }
+    self.status_groups_attributes = status_groups_array if status_groups_array.present?
   end
 
   def update_tickets_sla_on_status_change_or_delete

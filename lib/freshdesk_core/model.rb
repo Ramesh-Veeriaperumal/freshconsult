@@ -198,7 +198,8 @@ module FreshdeskCore::Model
                         "outgoing_email_domain_categories",
                         "ticket_templates",
                         "cti_calls",
-                        "cti_phones"
+                        "cti_phones",
+                        "status_groups"
                     ]
 
   STATUS = {

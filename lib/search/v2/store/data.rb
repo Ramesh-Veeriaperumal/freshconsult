@@ -107,10 +107,11 @@ module Search
             latest_cluster = Cluster.latest_cluster
 
             ES_V2_SUPPORTED_TYPES.inject({}) do |type_hash, (type, params)|
-              type_hash[type] = (params[:alias_prefix] % { alias_suffix: tenant_id }); type_hash
+              # To-do: Instead of populating tickets_1, users_1, etc., we need to use an index specific alias.
+              type_hash[type] = (params[:alias_prefix] % { alias_suffix: latest_cluster.alias_accessor }); type_hash
             end.merge(
               'tenant_id'     => tenant_id,
-              'home_cluster'  => latest_cluster
+              'home_cluster'  => latest_cluster.cluster_id
             )
           end
 
@@ -134,6 +135,7 @@ module Search
             Hash.new.tap do |cluster_params|
               cluster_params[:cluster_id] = cluster_id
               cluster_params[:current]    = 'true'
+              cluster_params[:accessor]   = 'p1s1v1' #=> Alias access pattern
               cluster_params[:timestamp]  = (Time.now.to_f * 1000).ceil
               ES_V2_SUPPORTED_TYPES.keys.each do |type|
                 cluster_params[type] = Hash.new.tap do |type_params|

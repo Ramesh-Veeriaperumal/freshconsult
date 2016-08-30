@@ -1149,6 +1149,25 @@ class TimeEntriesControllerTest < ActionController::TestCase
     Agent.any_instance.unstub(:ticket_permission)
   end
 
+  def test_index_with_internal_agent_has_assigned_ticket_permission
+    Agent.any_instance.stubs(:ticket_permission).returns(3)
+    user = add_new_user(@account)
+    Helpdesk::Ticket.update_all(responder_id: nil)
+    workable = Helpdesk::TimeSheet.first.workable
+    workable.internal_agent_id = @agent.id
+    workable.save
+    expected = @account.time_sheets.where(:workable_id => 
+        @account.tickets.joins(:schema_less_ticket).where("helpdesk_schema_less_tickets.long_tc04" => @agent.id).pluck(:id)).count
+    Account.any_instance.stubs(:features?).with(:shared_ownership).returns(true)
+    Account.any_instance.stubs(:features?).with(:timesheets).returns(true)
+    get :index, controller_params({})
+    assert_response 200
+    assert_equal expected, JSON.parse(response.body).count
+  ensure
+    Agent.any_instance.unstub(:ticket_permission)
+    Account.any_instance.unstub(:features)
+  end
+
   def test_index_with_agent_has_group_ticket_permission_and_ticket_requested
     Agent.any_instance.stubs(:ticket_permission).returns(2)
     Helpdesk::Ticket.update_all(responder_id: nil, group_id: nil)
@@ -1185,6 +1204,27 @@ class TimeEntriesControllerTest < ActionController::TestCase
   ensure
     Agent.any_instance.unstub(:ticket_permission)
     Group.find(group_id).destroy
+  end
+
+  def test_index_with_internal_agent_has_group_ticket_permission
+    Agent.any_instance.stubs(:ticket_permission).returns(2)
+    group = create_group_with_agents(@account, agent_list: [@agent.id])
+    user = add_new_user(@account)
+    Helpdesk::Ticket.update_all(responder_id: nil, group_id: nil, requester_id: user.id)
+    workable = Helpdesk::TimeSheet.first.workable
+    workable.internal_group_id = group.id
+    workable.save
+    expected = @account.time_sheets.where(:workable_id => 
+        @account.tickets.joins(:schema_less_ticket).where("helpdesk_schema_less_tickets.long_tc03" => group.id).pluck(:id)).count
+    Account.any_instance.stubs(:features?).with(:shared_ownership).returns(true)
+    Account.any_instance.stubs(:features?).with(:timesheets).returns(true)
+    get :index, controller_params({})
+    assert_response 200
+    assert_equal expected, JSON.parse(response.body).count
+  ensure
+    Agent.any_instance.unstub(:ticket_permission)
+    Group.find(group.id).destroy
+    Account.any_instance.unstub(:features)
   end
 
   def test_index_with_agent_has_all_ticket_permission

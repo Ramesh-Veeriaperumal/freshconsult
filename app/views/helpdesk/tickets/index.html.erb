@@ -44,7 +44,7 @@
       </div>
     <%else%>
       <div id="ticket-leftFilter" rel="remote" class="leftFilter">
-        <%= render :partial => "helpdesk/shared/filter_options", :locals => { :current_filter => @ticket_filter, :requester_id =>  params[:requester_id] } %>
+        <%= render :partial => "helpdesk/shared/filter_options", :locals => { :current_filter => @ticket_filter, :requester_id =>  params[:requester_id] , :shared_ownership_enabled => Account.current.features?(:shared_ownership)} %>
       </div>
     <%end%>
   </div>

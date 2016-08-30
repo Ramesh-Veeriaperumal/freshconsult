@@ -257,7 +257,7 @@ module Freshfone::Jobs
             call.agent_name
           elsif !call.direct_dial_number.blank?
             call.direct_dial_number
-          elsif call.group_id.present?
+          elsif call.group.present?
             call.group.name
           else
             "Helpdesk"

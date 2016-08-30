@@ -1,0 +1,12 @@
+<% if @groups.blank? %>
+  <option value=""><%= t("no_groups_mapped_for_status") %></option>
+<% else %>
+  <option value=""><%= blank_value %></option>
+  <% @groups.each do |group| %>
+    <% if !assigned_group_id.nil? && assigned_group_id.to_i == group.id %>
+    <option value="<%=group.id%>" selected="selected"><%=group.name%></option>
+    <% else %>
+	  <option value="<%=group.id%>"><%=group.name%></option>
+    <% end %>
+  <% end %>
+<% end %>

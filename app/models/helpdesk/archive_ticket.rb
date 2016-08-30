@@ -88,12 +88,14 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
     :reports_hash => "text_tc02",
     :sender_email => "string_tc03",
     :trashed      => 'boolean_tc02',
+    :internal_agent_id => "long_tc04",
+    :internal_group_id => "long_tc03",
     :product_id   => 'product_id'
   }
   NON_TEXT_FIELDS = ["custom_text", "custom_paragraph"]
 
 
-  scope :permissible , lambda { |user| { :conditions => agent_permission(user)} unless user.customer? }
+  scope :permissible , lambda { |user| { :conditions => permissible_condition(user)} unless user.customer? }
   scope :requester_active, lambda { |user| { :conditions => [ "requester_id=? ",
     user.id ], :order => 'created_at DESC' } }
   scope :newest, lambda { |num| { :limit => num, :order => 'created_at DESC' } }
@@ -124,12 +126,12 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
     end
   end
 
-  def self.agent_permission user
+  def self.permissible_condition user
     case Agent::PERMISSION_TOKENS_BY_KEY[user.agent.ticket_permission]
     when :assigned_tickets
       ["responder_id=?", user.id]
     when :group_tickets
-      ["group_id in (?) OR responder_id=?", user.agent_groups.pluck(:group_id).insert(0,0), user.id]
+      ["group_id in (?) OR responder_id=?", user.associated_group_ids, user.id]
     when :all_tickets
       []
     end

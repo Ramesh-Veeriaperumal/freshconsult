@@ -457,6 +457,36 @@ module Helpdesk::TicketsHelper
     return {:data => encoded_data}.to_json.html_safe
   end
 
+  def latest_note_helper(ticket)    
+    latest_note_obj = ticket.notes.visible.exclude_source('meta').newest_first.first
+    latest_note_hash = {}
+    unless latest_note_obj.nil?
+        action_msg = latest_note_obj.fwd_email? ? 'helpdesk.tickets.overlay_forward' : (latest_note_obj.note? ? 'helpdesk.tickets.overlay_note' : 'helpdesk.tickets.overlay_reply')
+        latest_note_hash = {
+          :user => latest_note_obj.user,
+          :created_at => latest_note_obj.created_at,
+          :body => latest_note_obj.body,
+          :overlay_time => time_ago_in_words(latest_note_obj.created_at),
+        }
+      else
+         action_msg = 'helpdesk.tickets.overlay_submitted_ticket'
+         latest_note_hash = {
+          :user => ticket.requester,
+          :created_at => ticket.created_at,
+          :body => ticket.description,
+          :overlay_time => time_ago_in_words(ticket.created_at),
+        }
+
+      end
+      latest_note_hash.merge!(:action_msg => t("#{action_msg}"))
+
+      unless ticket.group.nil?
+      latest_note_hash.merge!(:ticket_group => ticket.group)
+      end
+
+      latest_note_hash
+  end
+
   def agentcollision_socket_host
     "#{request.protocol}#{NodeConfig["socket_host"]}"
   end

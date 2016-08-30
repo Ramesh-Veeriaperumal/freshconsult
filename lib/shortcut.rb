@@ -23,7 +23,9 @@ class Shortcut
 		},
 		:pagination	=> {
 			:previous			=> "alt+left",
-			:next				=> "alt+right"
+			:next				=> "alt+right",
+			:alt_previous => "j",
+			:alt_next => "k"
 		},
 		:ticket_list => {
 			:ticket_show		=> "return",

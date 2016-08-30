@@ -1,6 +1,6 @@
 module TicketHelper
 
-  def create_ticket(params = {}, group = nil)
+  def create_ticket(params = {}, group = nil, internal_group = nil)
     requester_id = params[:requester_id] #|| User.find_by_email("rachel@freshdesk.com").id
     unless requester_id
       user = add_new_user(@account)
@@ -26,7 +26,11 @@ module TicketHelper
                                     :description => params[:attachments][:description], 
                                     :account_id => test_ticket.account_id)
     end
+    if params[:internal_agent_id]
+      test_ticket.internal_agent_id = params[:internal_agent_id]
+    end
     test_ticket.group_id = group ? group.id : nil
+    test_ticket.internal_group_id = internal_group ? internal_group.id : nil
     test_ticket.save_ticket
     test_ticket
   end

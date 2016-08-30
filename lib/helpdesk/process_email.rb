@@ -28,6 +28,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
 
   def perform(parsed_to_email = Hash.new, skip_encoding = false)
     # from_email = parse_from_email
+    encode_stuffs unless skip_encoding
     Rails.logger.info "Email received: Message-Id #{message_id}"
     self.start_time = Time.now.utc
     to_email = parsed_to_email.present? ? parsed_to_email : parse_to_email
@@ -44,7 +45,6 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       account.make_current
       verify
       TimeZone.set_time_zone
-      encode_stuffs unless skip_encoding
       from_email = parse_from_email(account)
       if from_email.nil?
         Rails.logger.info "Email Processing Failed: No From Email found!"
@@ -212,6 +212,16 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         unless params[t_format].nil?
           charset_encoding = (charsets[t_format.to_s] || "UTF-8").strip()
           # if !charset_encoding.nil? and !(["utf-8","utf8"].include?(charset_encoding.downcase))
+          if ((t_format == :subject || t_format == :headers) && (charsets[t_format.to_s].blank? || charsets[t_format.to_s].upcase == "UTF-8") && (!params[t_format].valid_encoding?))
+            begin
+              params[t_format] = params[t_format].encode(Encoding::UTF_8, :undef => :replace, 
+                                                                      :invalid => :replace, 
+                                                                      :replace => '')
+              next
+            rescue Exception => e
+              Rails.logger.error "Error While encoding in process email  \n#{e.message}\n#{e.backtrace.join("\n\t")} #{params}"
+            end
+          end
           replacement_char = "\uFFFD"
           if t_format.to_s == "subject" and (params[t_format] =~ /^=\?(.+)\?[BQ]?(.+)\?=/ or params[t_format].include? replacement_char)
             params[t_format] = decode_subject

@@ -6,11 +6,14 @@
 				<span><%= translate.get('forAgent') %></span>
 				<span><%= translate.get('forCustomer') %></span>
 				<span><%= translate.get('sla_timer') %></span>
+				<% if(shared_ownership_enabled) {%>
+					<span><%= translate.get('mappedInternalGroup') %></span>
+				<% } %>
 			</div>
 		<% }%>
 		<% _.each(obj.admin_choices, function(item){  %>
 			<%= JST['custom-form/template/custom_dropdown_choice']({
-				item: _.extend(item, {field_type : obj.field_type, has_section: obj.has_section}), picklistIds: picklistIds})%>
+				item: _.extend(item, {field_type : obj.field_type, has_section: obj.has_section}), picklistIds: picklistIds, shared_groups: shared_groups, shared_ownership_enabled: shared_ownership_enabled})%>
 		<% }) %>
 	</div>
 	<input type="text" name="choicelist" value="" />

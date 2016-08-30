@@ -213,6 +213,14 @@
                 jQuery('#report-title').html(title_block);
                 jQuery("#filter_text_others").html(filter_block);
                 trigger_event("report_refreshed",{});
+
+                var hours_tracked = jQuery('h1.total_time_metric').html().trim();
+                var billabe_hours = jQuery('h1.billable_time').html().trim();
+                var non_billable_hours = jQuery('h1.nonbillable_time').html().trim();
+                var size = calculateBestFontSize(hours_tracked);
+                adjustFontSize('h1.total_time_metric',size);
+                adjustFontSize('h1.billable_time',size);
+                adjustFontSize('h1.nonbillable_time',size);
               }
         });
 

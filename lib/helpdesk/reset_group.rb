@@ -11,6 +11,10 @@ module Helpdesk
         group_id = args[:group_id]
 
         account.tickets.where(group_id: group_id).update_all_with_publish({ group_id: nil }, {})
+        if account.features?(:shared_ownership)
+          internal_group_col = Helpdesk::SchemaLessTicket.internal_group_column
+          account.schema_less_tickets.where(internal_group_col => group_id).update_all_with_publish({internal_group_col => nil }, {})
+        end
 
         return unless account.features_included?(:archive_tickets)
 

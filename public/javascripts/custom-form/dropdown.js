@@ -48,6 +48,7 @@
 						value_elem = $(this).find("span.dropchoice input[name^='choice_']"),
 						cust_disp_elem = $(this).find("input[name='customer_display_name']"),
 						sla_elem = $(this).find("input[name='stop_sla_timer']"),
+						group_elem = $(this).find("span.dropchoice select[rel='shared_ownership']"),
 						isDestroyed = $(this).data('destroy'),
 						choice_id = $(this).data("choice-id");
 							
@@ -60,6 +61,9 @@
 					}
 					if( sla_elem.length ) {
 						temp['stop_sla_timer'] = sla_elem.prop('checked');
+					}
+					if(group_elem.length) {
+						temp['group_ids'] = group_elem.val();
 					}
 					temp['position'] = isDestroyed ? -1 : (++position);
 					temp['_destroy'] = isDestroyed ? 1 : 0;
@@ -108,7 +112,7 @@
 							);
 
 			if(!this.isMaxLimitReached()) {
-				var fieldSet = $(JST['custom-form/template/custom_dropdown_choice']({item: data}));
+				var fieldSet = $(JST['custom-form/template/custom_dropdown_choice']({item: data, shared_groups: sharedGroups, shared_ownership_enabled: shared_ownership_enabled}));
 				fieldSet.appendTo(dom);
 				fieldSet.find("input[name^='choice_']").focus();
 			}

@@ -98,7 +98,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"helpdesk/survey"
     resource :"admin/data_export" , :only => [:download]
     resource :"notification/product_notification", :only => [:index]
-    # resource :"helpdesk/common", :only => [:group_agents]
+    resource :"helpdesk/common", :only => [:status_groups]
 
     # ticket_templates
     resource :"helpdesk/ticket_template"

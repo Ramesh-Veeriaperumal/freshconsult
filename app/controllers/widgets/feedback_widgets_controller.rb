@@ -61,6 +61,8 @@ class Widgets::FeedbackWidgetsController < SupportController
       params[:meta][:referrer] = RailsFullSanitizer.sanitize params[:meta][:referrer] if params[:meta][:referrer].present?
     end
 
+    params[:helpdesk][:tags] = RailsFullSanitizer.sanitize params[:helpdesk][:tags] unless params[:helpdesk].blank? or params[:helpdesk][:tags].nil?
+
     if create_the_ticket(check_captcha)
       widget_response = {:success => true }
     else

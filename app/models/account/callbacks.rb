@@ -23,7 +23,6 @@ class Account < ActiveRecord::Base
   after_commit :disable_searchv2, :disable_count_es, on: :destroy
   after_commit :update_sendgrid, on: :create
 
-
   # Callbacks will be executed in the order in which they have been included. 
   # Included rabbitmq callbacks at the last
   include RabbitMq::Publisher 
@@ -235,6 +234,10 @@ class Account < ActiveRecord::Base
 
     def enable_count_es
       CountES::IndexOperations::EnableCountES.perform_async({ :account_id => self.id }) if Account.current.features?(:countv2_writes)
+    end
+
+    def enable_count_es
+      CountES::IndexOperations::EnableCountES.perform_async({ :account_id => self.id }) if Account.current.features?(:count_es_writes)
     end
     
     def disable_searchv2
