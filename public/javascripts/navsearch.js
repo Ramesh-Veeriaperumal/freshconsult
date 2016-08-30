@@ -183,7 +183,7 @@ jQuery(document).ready(function(){
 			var searchKey = NavSearchUtils.localRecentSearches[searchIndex];
 			NavSearchUtils.localRecentSearches.splice(searchIndex, 1);
 			NavSearchUtils.setLocalRecentSearches(NavSearchUtils.localRecentSearchKey);
-			jQuery.post('/search/remove_recent_search', { search_key: encodeURIComponent(searchKey)});
+			jQuery.post('/search/remove_recent_search', { search_key: searchKey});
 
 			if(searchIndex === 0 && NavSearchUtils.localRecentSearches.length === 0){
 				jQuery(ev.currentTarget).parents('#recent_search_' + searchIndex).remove();
