@@ -109,6 +109,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
   def change_api_limit
     result = {}
     account = Account.find(params[:account_id])
+    account.make_current
     if account.account_additional_settings.update_attributes(:api_limit => params[:new_limit].to_i)
       result[:status] = "success"
     else
@@ -116,6 +117,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     end
     result[:account_id] = account.id 
     result[:account_name] = account.name
+    Account.reset_current_account
     respond_to do |format|
       format.json do
         render :json => result
