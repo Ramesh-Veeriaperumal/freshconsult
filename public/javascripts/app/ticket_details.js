@@ -563,8 +563,9 @@ var scrollToError = function(){
 		var previous =  _this.data("previous");
 		_this.data("previous", _this.val());
 		var select_group = jQuery('#TicketProperties .default_internal_group select')[0];
+		var prev_val = ""
 		if(select_group){
-      		var prev_val = select_group.options[select_group.selectedIndex].value;
+      		prev_val = select_group.options[select_group.selectedIndex].value;
 		}
 
 		if(previous && select_group){
