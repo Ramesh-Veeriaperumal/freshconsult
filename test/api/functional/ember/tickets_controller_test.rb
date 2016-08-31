@@ -1,6 +1,7 @@
 require_relative '../../test_helper'
 class Ember::TicketsControllerTest < ActionController::TestCase
   include TicketsTestHelper
+  include ScenarioAutomationsTestHelper
 
   def wrap_cname(params)
     { ticket: params }
@@ -177,6 +178,38 @@ class Ember::TicketsControllerTest < ActionController::TestCase
     end
     put :bulk_spam, construct_params({ version: 'private' }, {ids: ticket_ids})
     assert_response 204
+  end
+
+  def test_execute_scenario
+    scenario_id = create_scn_automation_rule(scenario_automation_params).id
+    ticket_id = create_ticket(ticket_params_hash).display_id
+    put :execute_scenario, controller_params(version: 'private', id: ticket_id, scenario_id: scenario_id)
+    assert_response 204
+  end
+
+  def test_bulk_execute_scenario_with_invalid_ids
+    scenario_id = create_scn_automation_rule(scenario_automation_params).id
+    ticket_ids = []
+    rand(2..10).times do
+      ticket_ids << create_ticket(ticket_params_hash).display_id
+    end
+    invalid_ids = [ticket_ids[0] + 20, ticket_ids[0] + 30]
+    id_list = [*ticket_ids, *invalid_ids]
+    put :bulk_execute_scenario, construct_params({ version: 'private', scenario_id: scenario_id }, { ids: id_list })
+    errors = {}
+    invalid_ids.each { |id| errors[id] = :"is invalid" }
+    match_json(partial_success_response_pattern(ticket_ids, errors))
+    assert_response 202
+  end
+
+  def test_bulk_execute_scenario_with_valid_ids
+    scenario_id = create_scn_automation_rule(scenario_automation_params).id
+    ticket_ids = []
+    rand(2..10).times do
+      ticket_ids << create_ticket(ticket_params_hash).display_id
+    end
+    put :bulk_execute_scenario, construct_params({ version: 'private', scenario_id: scenario_id }, { ids: ticket_ids })
+    assert_response 202
   end
 
 end

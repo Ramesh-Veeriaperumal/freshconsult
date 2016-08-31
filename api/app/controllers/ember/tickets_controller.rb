@@ -31,7 +31,11 @@ module Ember
       return unless load_scenario
       fetch_objects
       Tickets::BulkScenario.perform_async(ticket_ids: @items.map(&:display_id), scenario_id: params[:scenario_id])
-      render_bulk_action_response(bulk_action_succeeded_items, bulk_action_errors)
+      if bulk_action_errors.any?
+        render_bulk_action_response(bulk_action_succeeded_items, bulk_action_errors)
+      else
+        head 202
+      end
     end
 
     def execute_scenario
@@ -66,7 +70,7 @@ module Ember
       end
 
       def fetch_objects(preload_options = [], items = scoper)
-        id_list = params[cname][:ids] || Array.wrap(params[:id])
+        id_list = params[:id] ? Array.wrap(params[:id]) : params[cname][:ids]
         @items = items.preload(preload_options).find_all_by_param(permissible_ticket_ids(id_list))
         @item = @items.first
       end
