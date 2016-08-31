@@ -465,6 +465,7 @@ Helpdesk = Helpdesk || {};
                         // check again
                         var c = confirm(_this.message.in_progress);
                         if (!c) {
+                            $("#nprogress").remove();
                             event.preventDefault();
                         } else {
                             _this.fileAbortAll();
@@ -688,6 +689,7 @@ Helpdesk = Helpdesk || {};
                         if (!c) {
                             event.preventDefault();
                             event.stopImmediatePropagation();
+                            $("#nprogress").remove();
                             return;
                         }
                     }
