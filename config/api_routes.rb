@@ -99,7 +99,11 @@ Helpkit::Application.routes.draw do
   ember_routes = proc do
     resources :ticket_fields, controller: 'ember/ticket_fields', only: [:index, :update]
     resources :bootstrap, controller: 'ember/bootstrap', only: :index
-    resources :tickets, controller: 'ember/tickets', only: :index
+    resources :tickets, controller: 'ember/tickets', only: [:index] do
+      member do
+        put :spam
+      end
+    end
     resources :contacts, controller: 'ember/contacts', except: [:new, :edit] do
       collection do
         put :bulk_delete
