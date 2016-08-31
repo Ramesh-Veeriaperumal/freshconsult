@@ -60,7 +60,7 @@ else
       unless (node[:bucket_exist]) 
         Chef::Log.info "key not present so compiling by itself"
         run "cd #{release_path} && RAILS_ENV=#{node[:opsworks][:environment]} bundle exec rake assets:clean_expired"
-        run "cd #{release_path} && RAILS_ENV=#{node[:opsworks][:environment]} bundle exec rake assets:precompile:primary"
+        run "cd #{release_path} && I18NEMA_ENABLE=false RAILS_ENV=#{node[:opsworks][:environment]} bundle exec rake assets:precompile:primary"
       else
         Chef::Log.info "compilation file is already present so downloading it"
         Chef::Log.info "cs3 reference is #{aws_config} "

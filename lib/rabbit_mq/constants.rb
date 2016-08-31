@@ -120,11 +120,14 @@ module RabbitMq::Constants
     "visible", "sla_policy_id", "is_escalated", "fr_escalated", "resolved_at", 
     "time_to_resolution_in_bhrs", "time_to_resolution_in_chrs", "inbound_count",
     "first_response_by_bhrs", "first_assign_by_bhrs", "created_at", "archive", "actor_type", "actor_id",
+    "internal_agent_id", "internal_group_id", 
+
     # columns stored in reports_hash in schema_less_ticket
     "first_response_id", "agent_reassigned_count", "group_reassigned_count", "reopened_count", 
     "private_note_count", "public_note_count", "agent_reply_count", "customer_reply_count",
     "agent_assigned_flag", "agent_reassigned_flag", "group_assigned_flag", "group_reassigned_flag",
-    "last_resolved_at"
+    "internal_agent_assigned_flag", "internal_agent_reassigned_flag", "internal_group_assigned_flag", "internal_group_reassigned_flag",
+    "internal_agent_first_assign_in_bhrs", "last_resolved_at"
   ]
   
   REPORTS_ARCHIVE_TICKET_KEYS = REPORTS_TICKET_KEYS

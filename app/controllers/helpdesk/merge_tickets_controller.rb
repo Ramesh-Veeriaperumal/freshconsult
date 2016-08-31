@@ -57,12 +57,12 @@ class Helpdesk::MergeTicketsController < ApplicationController
 		# end
 
 		def load_target_ticket
-			@target_ticket = current_account.tickets.permissible(current_user).find_by_display_id(params[:target][:ticket_id])
+			@target_ticket = current_account.tickets.permissible(current_user).readonly(false).find_by_display_id(params[:target][:ticket_id])
 		end
 
 		def load_source_tickets
 			@source_tickets = current_account.tickets
-													.permissible(current_user)
+													.permissible(current_user).readonly(false)
 													.where(:display_id => params[:source_tickets])
                           .order("status, created_at DESC")
 		end

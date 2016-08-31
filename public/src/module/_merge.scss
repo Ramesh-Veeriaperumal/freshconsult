@@ -10,7 +10,6 @@
 
 #merge-content{
 	overflow-y: scroll;
-	@include margin-left(10px);
 	max-height: 270px;
 }
 
@@ -289,7 +288,6 @@
 .contact-special{
 	@include float(left);
 	width: 340px;
-	@include margin-left(10px);
 	max-height: 300px;
 	overflow-y: scroll;
 	margin-bottom: 30px; 
@@ -379,7 +377,7 @@
 #mergeboxconfirm{
 	.button-container{
 		border-top: 1px solid #cecece;
-		@include margin-left(10px);
+		@include margin(0);
 		clear: both;
 	}
 }
@@ -410,9 +408,7 @@
 	}
 	.divide{
 		clear: both;
-		width: 97%;
-		@include margin-left(10px);
-		margin: 0 0 0 10px;
+		width: 99.5%;		
 		height: 1px;
 		background: #ccc;
 	}
@@ -425,13 +421,14 @@
 	}
 	.add_recipients {
 		@include float(left);
-		@include padding(5px 0 0 10px);
+		//@include padding(5px 0 0 10px);
+		padding-top: 5px;
 	}
 	#bulk_merge_tickets{
 		margin-bottom: 0;
 	}
 	#bulk_merge{
-		@include margin-right(10px);
+		@include margin-right(4px);
 	}
 	.private-note{
 		font-size: 12px;
@@ -472,7 +469,7 @@
 		}
 		.button-container{
 			border:none;
-			@include margin(3px 0 0 17px);
+			margin-top: 3px;
 		}
 	}
 	.search-item{
@@ -505,7 +502,6 @@
 	#mergebox{
 		.search-content{
 			width: 355px;
-			@include padding-right(5px);
 			margin-top: 2px;
 			margin-bottom: 10px;
 			.typed{
@@ -527,7 +523,6 @@
 				display: block;
 				width: 68%;
 				@include float(right);
-				@include margin-right(8px);
 			}
 			.display_id, .subject{
 				display: none;
@@ -627,6 +622,25 @@
 			@include right(13px);
 		}
 	}
+}
+
+.merge-notice {
+  margin-top:8px;
+  margin-bottom: 8px;
+
+  .merge-notice-important {    
+    padding: 2px 0px 2px 4px;
+    color: #949243;
+    font-weight: bold;
+    font-size: 12px;
+    background-color: #faf9d1;
+    border: 1px solid #e8e6ae;
+    -webkit-border-radius: 2px;
+    -moz-border-radius:2px;
+    border-radius:2px;
+    text-transform: uppercase;
+    @include margin-right(4px);
+  }
 }
 
 // ------------------------------------------------------------------------------------------------------------

@@ -27,18 +27,18 @@
 							<%=JST['custom-form/template/agent_behavior'](obj)%>
 							</div>
 						<% } %>
-						<% if(obj.field_type == 'default_requester') { %>
+						<% if(obj.field_type == 'default_requester' && obj.field_type != 'default_internal_group' && obj.field_type != 'default_internal_agent') { %>
 							<div class='<%= obj.spanClass %>'>
 							<%=JST['custom-form/template/customer_behavior_requester'](obj)%>
 							</div>
-						<% } else if(obj.custom_form_type != 'company') { %>
+						<% } else if(obj.custom_form_type != 'company' && obj.field_type != 'default_internal_group' && obj.field_type != 'default_internal_agent') { %>
 							<div class='<%= obj.spanClass %>'>
 							<%=JST['custom-form/template/customer_behavior'](obj)%>
 							</div>
 						<% } %>
 					</div>
 				</div> 
-				<div class="section">
+				<div class="section <%= (obj.field_type == 'default_internal_agent' || obj.field_type == 'default_internal_group') ? 'hide' : "" %>">
 					<% if (obj.field_type == 'nested_field') { %>
 						<%=JST['custom-form/template/nested_field_label'](obj)%>
 				    <% } else { %>
@@ -51,7 +51,7 @@
 				<% } */ %>
 
 				<% if (obj.field_type == 'custom_dropdown' || obj.field_type == 'default_status' || obj.field_type == 'default_ticket_type') { %>
-					<%=JST['custom-form/template/custom_dropdown']({obj:obj, picklistIds:picklistIds})%>
+					<%=JST['custom-form/template/custom_dropdown']({obj:obj, picklistIds:picklistIds, shared_groups: sharedGroups, shared_ownership_enabled: shared_ownership_enabled})%>
 				<% } %>
 				<% if (obj.field_type == 'nested_field') { %>
 					<%=JST['custom-form/template/nested_field_edit'](obj)%>

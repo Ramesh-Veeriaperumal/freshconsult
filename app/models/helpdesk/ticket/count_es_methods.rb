@@ -44,7 +44,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def schema_less_columns
-     @@schema_less_columns ||= Helpdesk::SchemaLessTicket.column_names.select {|v| v =~ /^long|int|datetime|string|boolean_/}.map(&:to_sym)
+    Helpdesk::SchemaLessTicket.column_names.select {|v| v =~ /^long|int|datetime|string|boolean_/}.map(&:to_sym)
   end
 
   def schema_less_fields

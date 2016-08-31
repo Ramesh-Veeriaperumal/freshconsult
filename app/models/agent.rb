@@ -13,6 +13,7 @@ class Agent < ActiveRecord::Base
 
   accepts_nested_attributes_for :user
   before_update :create_model_changes
+  before_create :mark_unavailable
   after_commit :enqueue_round_robin_process, on: :update
 
   after_commit :nullify_tickets, :agent_destroy_cleanup, on: :destroy
@@ -219,6 +220,10 @@ class Agent < ActiveRecord::Base
         conditions: [ "users.mobile = ? ", agent_filter.mobile ]
       }
     }
+  end
+
+  def mark_unavailable
+    !(self.available = false)
   end
 
 end

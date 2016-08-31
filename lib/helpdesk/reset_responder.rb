@@ -11,8 +11,12 @@ module Helpdesk
         user_id = args[:user_id]
         user = account.all_users.find_by_id(user_id)
         return if user.nil?
-        
+
         account.tickets.where(responder_id: user.id).update_all_with_publish({ responder_id: nil }, {})
+        if account.features?(:shared_ownership)
+          internal_agent_col = Helpdesk::SchemaLessTicket.internal_agent_column
+          account.schema_less_tickets.where(internal_agent_col => user.id).update_all_with_publish({internal_agent_col => nil }, {})
+        end
 
         return unless account.features_included?(:archive_tickets)
 

@@ -29,7 +29,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   SCHEMA_LESS_ATTRIBUTES = ["product_id","to_emails","product", "skip_notification",
                             "header_info", "st_survey_rating", "survey_rating_updated_at", "trashed", 
                             "access_token", "escalation_level", "sla_policy_id", "sla_policy", "manual_dueby", "sender_email", "parent_ticket",
-                            "reports_hash","sla_response_reminded","sla_resolution_reminded", "dirty_attributes"]
+                            "reports_hash","sla_response_reminded","sla_resolution_reminded", "dirty_attributes",
+                            "internal_group_id", "internal_group", "internal_agent_id", "internal_agent"]
 
   TICKET_STATE_ATTRIBUTES = ["opened_at", "pending_since", "resolved_at", "closed_at", "first_assigned_at", "assigned_at",
                              "first_response_time", "requester_responded_at", "agent_responded_at", "group_escalated", 
@@ -120,7 +121,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   } 
   }
         
-  scope :newest, lambda { |num| { :limit => num, :order => 'created_at DESC' } }
+  scope :newest, lambda { |num| { :limit => num, :order => 'helpdesk_tickets.created_at DESC' } }
   scope :updated_in, lambda { |duration| { :conditions => [ 
     "helpdesk_tickets.updated_at > ?", duration ] } }
   
@@ -132,7 +133,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   scope :assigned_to, lambda { |agent| { :conditions => ["responder_id=?", agent.id] } }
   scope :requester_active, lambda { |user| { :conditions => 
     [ "requester_id=? ",
-      user.id ], :order => 'created_at DESC' } }
+      user.id ], :order => 'helpdesk_tickets.created_at DESC' } }
       
   scope :requester_completed, lambda { |user| { :conditions => 
     [ "requester_id=? and status in (#{RESOLVED}, #{CLOSED})",
@@ -1118,6 +1119,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
       options << :fb_post if facebook?
       options << :tweet if twitter?
       options
+    end
+
+    def shared_ownership_fields_changed?
+      internal_group_column = Helpdesk::SchemaLessTicket.internal_group_column
+      internal_agent_column = Helpdesk::SchemaLessTicket.internal_agent_column
+      (@model_changes.key?(internal_group_column) or @model_changes.key?(internal_agent_column))
     end
 
     # def rl_exceeded_operation

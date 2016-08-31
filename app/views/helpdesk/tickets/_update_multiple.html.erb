@@ -6,7 +6,7 @@
     <div class="content clearfix scrollbar">
     <% helpdesk_submit_options = []%>
   	<% current_portal.ticket_fields.each  do |field| %>
-      <% next if field.section_field? %>
+      <% next if field.section_field? or field.shared_ownership_field? %>
       <% dom_type = (field.field_type == "nested_field") ? "nested_field" : field.dom_type %>
       <%= ticket_field_element(field, dom_type, {:class => "field-item"}) %>
 
@@ -152,7 +152,7 @@
 
   jQuery("[rel=inputselectbox],[rel=inputtextbox]").off('change');
  jQuery("[rel=inputselectbox],[rel=inputtextbox]").on('change',  function(ev){
-    if(jQuery(this).attr('id')=="helpdesk_ticket_group_id")
+    if(jQuery(this).attr('id')=="helpdesk_ticket_group_id" && jQuery("#helpdesk_ticket_group_id").val() != "-1")
     {
       if(jQuery('#helpdesk_ticket_responder_id_label').is(':checked'))
       {

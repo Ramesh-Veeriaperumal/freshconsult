@@ -9,7 +9,7 @@ module HelpdeskSystem
         redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) unless request.headers['X-PJAX']
         render :text => "abort" if request.headers['X-PJAX']
       }
-      format.json { 
+      format.any(:json,:nmobile) { 
         session.delete(:return_to) 
         render :json => current_user ? {:access_denied => true} : {:require_login => true}}
       format.js { 

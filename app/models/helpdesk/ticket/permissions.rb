@@ -1,62 +1,93 @@
 class Helpdesk::Ticket < ActiveRecord::Base
 
-  scope :permissible, lambda { |user| 
-    { 
-      :conditions => agent_permission(user)
-    } if user.agent? 
-  }
-
-  scope :assigned_tickets_permission, lambda { |user, ids| {
-    :select     => "helpdesk_tickets.display_id",
-    :conditions => ["responder_id=? and display_id in (?)", user.id, ids] }
-  }
-
-  scope :group_tickets_permission, lambda { |user, ids| {
-    :select     => "distinct helpdesk_tickets.display_id",
-    :joins      => "LEFT JOIN agent_groups on helpdesk_tickets.group_id = agent_groups.group_id and helpdesk_tickets.account_id = agent_groups.account_id",
-    :conditions => ["(agent_groups.user_id=? or helpdesk_tickets.responder_id=?) and display_id in (?)", user.id, user.id, ids] }
-  }
+  scope :permissible, lambda { |user| permissible_query_hash(user) }
+  scope :assigned_tickets_permission, lambda { |user, ids| assigned_tickets_query_hash(user, ids) }
+  scope :group_tickets_permission, lambda { |user, ids| group_tickets_query_hash(user, ids) }
 
   class << self
 
-    def agent_permission user
-      case Agent::PERMISSION_TOKENS_BY_KEY[user.agent.ticket_permission]
+    def agent_ticket_permission user
+      Agent::PERMISSION_TOKENS_BY_KEY[user.agent.ticket_permission]
+    end
+
+    def responder_id_with_table
+      "#{Helpdesk::Ticket.table_name}.responder_id"
+    end
+
+    def internal_agent_id_with_table
+      "#{Helpdesk::SchemaLessTicket.table_name}.#{Helpdesk::SchemaLessTicket.internal_agent_column}"
+    end
+
+    def group_id_with_table
+      "#{Helpdesk::Ticket.table_name}.group_id"
+    end
+
+    def internal_group_id_with_table
+      "#{Helpdesk::SchemaLessTicket.table_name}.#{Helpdesk::SchemaLessTicket.internal_group_column}"
+    end
+
+    def permissible_query_hash(user)
+      if user.agent?
+        query_hash = {:conditions => permissible_condition(user)}
+        query_hash[:joins] = permissible_join
+        query_hash
+      end
+    end
+
+    def permissible_join
+      :schema_less_ticket if Account.current.features?(:shared_ownership)
+    end
+
+    def permissible_condition user
+      case agent_ticket_permission(user)
       when :assigned_tickets
-        ["responder_id=?", user.id]
+        agent_condition user
       when :group_tickets
-        ["group_id in (?) OR responder_id=?", user.agent_groups.pluck(:group_id).insert(0,0), user.id]
+        group_condition user
       when :all_tickets
         []
       end
     end
-    
-  end
 
-  # Used in custom_ticket_filter.rb
-  def agent_permission_condition user
-    case Agent::PERMISSION_TOKENS_BY_KEY[user.agent.ticket_permission]
-    when :all_tickets
-      ""
-    when :group_tickets
-      " AND (group_id in (
-                    #{user.agent_groups.pluck(:group_id).insert(0,0)}) OR responder_id= #{user.id}) "
-    when :assigned_tickets
-      " AND (responder_id= #{user.id}) "
+    def agent_condition user
+      if Account.current.features?(:shared_ownership)
+        ["(#{responder_id_with_table} = ? OR #{internal_agent_id_with_table} = ?)", user.id, user.id]
+      else
+        ["#{responder_id_with_table} = ?", user.id]
+      end
     end
-  end
 
-  # Possible dead code
-  def get_default_filter_permissible_conditions user
-    case Agent::PERMISSION_TOKENS_BY_KEY[user.agent.ticket_permission]
-    when :all_tickets
-      ""
-    when :group_tickets
-      " [{\"condition\": \"responder_id\", \"operator\": \"is_in\",  \"value\": \"#{user.id}\"},
-         {\"condition\": \"group_id\", \"operator\": \"is_in\",
-                                     \"value\": \"#{user.agent_groups.pluck(:group_id).insert(0,0)}\"}] "
-    when :assigned_tickets
-      "[{\"condition\": \"responder_id\", \"operator\": \"is_in\", \"value\": \"#{user.id}\"}]"
+    def group_condition user
+      group_ids = user.associated_group_ids
+      if Account.current.features?(:shared_ownership)
+        ["(#{group_id_with_table} IN (?) OR #{responder_id_with_table} = ? OR #{internal_group_id_with_table} IN (?) OR #{internal_agent_id_with_table} = ?)", group_ids, user.id, group_ids, user.id]
+      else
+        ["(#{group_id_with_table} IN (?) OR #{responder_id_with_table} = ?)", group_ids, user.id]
+      end
     end
+
+    def group_tickets_query_hash(user, ids)
+      query_hash = {:select => "#{Helpdesk::Ticket.table_name}.display_id"}
+
+      query_hash[:conditions] = group_condition(user)
+      query_hash[:conditions][0] += " AND display_id IN (?)"
+      query_hash[:conditions] << ids
+
+      query_hash[:joins] = permissible_join
+      query_hash
+    end
+
+    def assigned_tickets_query_hash(user, ids)
+      query_hash = {:select => "#{Helpdesk::Ticket.table_name}.display_id"}
+
+      query_hash[:conditions] = agent_condition(user)
+      query_hash[:conditions][0] += " AND display_id IN (?)"
+      query_hash[:conditions] << ids
+
+      query_hash[:joins] = permissible_join
+      query_hash
+    end
+
   end
 
   def accessible_in_helpdesk?(user)
@@ -68,11 +99,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def group_agent_accessible?(user)
-    user.group_ticket_permission && (responder_id == user.id || Account.current.agent_groups.where(:user_id => user.id, :group_id => group_id).present? )
+    user.group_ticket_permission && (user.ticket_agent?(self) || user.group_ticket?(self) )
   end
 
   def restricted_agent_accessible?(user)
-    user.assigned_ticket_permission && responder_id == user.id
+    user.assigned_ticket_permission && user.ticket_agent?(self)
   end
 
 end

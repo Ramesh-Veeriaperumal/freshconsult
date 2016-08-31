@@ -255,7 +255,7 @@ module Cache::Memcache::Account
       expiry = 30.days.to_i
     end
     MemcacheKeys.fetch(key,expiry) do
-      CRM::Salesforce.new.account_owner(self.id)
+      # CRM::Salesforce.new.account_owner(self.id)
     end
   end
 

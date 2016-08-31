@@ -66,9 +66,9 @@ class RabbitmqWorker
       options = { function_name: $lambda_interchange[exchange], 
                   invocation_type: "Event",
                   payload: message }
-      response = $lambda_client.invoke(options) if options[:function_name].present?
-      if response[:status_code] != 202
-        raise LambdaRequestError, "Lambda returned #{status_code}"
+      if options[:function_name].present?
+        response = $lambda_client.invoke(options)
+        raise LambdaRequestError, "Lambda returned #{response[:status_code]}" if response[:status_code] != 202
       end
     rescue => e 
       NewRelic::Agent.notice_error(e, {

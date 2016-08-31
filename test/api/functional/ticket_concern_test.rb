@@ -5,6 +5,8 @@ class FakeController < ApiApplicationController
 end
 
 class FakeControllerTest < ActionController::TestCase
+  include TicketFieldsTestHelper
+
   def test_verify_ticket_permission_valid_without_params
     response = ActionDispatch::TestResponse.new
     @controller.response = response
@@ -86,6 +88,30 @@ class FakeControllerTest < ActionController::TestCase
     assert actual
   end
 
+  def test_verify_ticket_permission_with_internal_agent_ticket_permission_valid
+    response = ActionDispatch::TestResponse.new
+    @controller.response = response
+    group = Group.new(name: "#{Faker::Name.name}")
+    group.agents = [@agent]
+    group.save
+    status = create_custom_status
+
+    t = Helpdesk::Ticket.new(email: Faker::Internet.email, :status => status.status_id, internal_group_id: group.id, internal_agent_id: @agent.id)
+    t.save
+
+    Account.any_instance.stubs(:features?).with(:shared_ownership).returns(true)
+    status.group_ids = [group.id]
+    status.save
+
+    User.any_instance.stubs(:can_view_all_tickets?).returns(false).at_most_once
+    User.any_instance.stubs(:group_ticket_permission).returns(false).at_most_once
+    actual = @controller.send(:verify_ticket_permission, @agent, t)
+    User.any_instance.unstub(:can_view_all_tickets, :group_ticket_permission)
+    Helpdesk::Ticket.unstub(:assigned_tickets_permission, :responder_id)
+    Account.any_instance.unstub(:features?)
+    assert actual
+  end
+
   def test_verify_ticket_permission_with_requester_ticket_permission_valid
     response = ActionDispatch::TestResponse.new
     @controller.response = response
@@ -112,6 +138,32 @@ class FakeControllerTest < ActionController::TestCase
     actual = @controller.send(:verify_ticket_permission, @agent, t)
     Helpdesk::Ticket.unstub(:responder_id, :requester_id)
     User.any_instance.unstub(:can_view_all_tickets, :group_ticket_permission)
+    assert actual
+  end
+
+  def test_verify_ticket_permission_with_internal_group_ticket_permission_valid
+    response = ActionDispatch::TestResponse.new
+    @controller.response = response
+    group = Group.new(name: "#{Faker::Name.name}")
+    group.agents = [@agent]
+    group.save
+    status = create_custom_status
+
+    t = Helpdesk::Ticket.new(email: Faker::Internet.email, :status => status.status_id, internal_group_id: group.id)
+    t.save
+
+    Account.any_instance.stubs(:features?).with(:shared_ownership).returns(true)
+    status.group_ids = [group.id]
+    status.save
+
+    User.any_instance.stubs(:can_view_all_tickets?).returns(false).at_most_once
+    User.any_instance.stubs(:group_ticket_permission).returns(true).at_most_once
+    Helpdesk::Ticket.any_instance.stubs(:responder_id).returns(nil)
+    Helpdesk::Ticket.any_instance.stubs(:requester_id).returns(nil)
+    actual = @controller.send(:verify_ticket_permission, @agent, t)
+    Helpdesk::Ticket.unstub(:responder_id, :requester_id)
+    User.any_instance.unstub(:can_view_all_tickets, :group_ticket_permission)
+    Account.any_instance.unstub(:features?)
     assert actual
   end
 end

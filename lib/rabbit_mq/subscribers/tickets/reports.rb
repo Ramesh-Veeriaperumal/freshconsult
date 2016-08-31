@@ -6,7 +6,8 @@ module RabbitMq::Subscribers::Tickets::Reports
                              :priority, :ticket_type, :source,
                              :status, :product_id, :owner_id,
                              :sla_policy_id, :isescalated, :fr_escalated,
-                             :spam, :deleted, :parent_ticket
+                             :spam, :deleted, :parent_ticket, 
+                             :long_tc03, :long_tc04
                            ]
 
   def mq_reports_ticket_properties(action)
@@ -43,7 +44,13 @@ module RabbitMq::Subscribers::Tickets::Reports
   end
   
   def valid_changes
-    @model_changes.select{|k,v| PROPERTIES_TO_CONSIDER.include?(k) ||  non_text_ff_fields.include?(k.to_s) }
+    changes = @model_changes.select{|k,v| PROPERTIES_TO_CONSIDER.include?(k) ||  non_text_ff_fields.include?(k.to_s) }
+    #Replacing :long_tc03, :long_tc04 to internal_agent_id & internal_group_id
+    internal_agent_column = Helpdesk::SchemaLessTicket.internal_agent_column.to_sym
+    internal_group_column = Helpdesk::SchemaLessTicket.internal_group_column.to_sym
+    changes[:internal_agent_id] = changes.delete(internal_agent_column) if changes.keys.include?(internal_agent_column)
+    changes[:internal_group_id] = changes.delete(internal_group_column) if changes.keys.include?(internal_group_column)
+    changes
   end
 
   def valid_model?(model)

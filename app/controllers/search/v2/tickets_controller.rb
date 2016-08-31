@@ -56,6 +56,7 @@ class Search::V2::TicketsController < ApplicationController
     def search_users
       begin
         user_params = Hash.new.tap do |es_params|
+          es_params[:account_id]      = current_account.id
           es_params[:search_term]     = @es_search_term
           es_params[:request_id]      = request.uuid
           es_params[:sort_by]         = '_score'

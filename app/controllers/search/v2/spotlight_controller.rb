@@ -13,6 +13,8 @@ class Search::V2::SpotlightController < ApplicationController
   def all
     @search_context = :agent_spotlight_global
     @klasses        = esv2_klasses
+    # Store in recent searches
+    Search::RecentSearches.new(@search_key).store if !@search_key.blank? and User.current.present?
     search(esv2_agent_models)
   end
 

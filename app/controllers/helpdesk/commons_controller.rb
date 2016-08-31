@@ -2,6 +2,7 @@ class Helpdesk::CommonsController < ApplicationController
 
   before_filter :set_mobile, :only => [:group_agents]
   skip_before_filter :check_privilege, :verify_authenticity_token
+  before_filter :check_privilege, :only => [:status_groups]
 
   PHONE_REGEX = /.+\((.+)\)/
   TWITTER_REGEX = /@(.+)/
@@ -40,6 +41,21 @@ class Helpdesk::CommonsController < ApplicationController
       else
         format.json { render :json => {:error => "Record not found" }}
       end
+    end
+  end
+
+  def status_groups
+    if params[:status_id] and current_account.features?(:shared_ownership) 
+      assigned_group_id = params[:group_id]
+      status = current_account.ticket_status_values_from_cache.find{|s| s.status_id == params[:status_id].to_i and !s.is_default}
+      group_ids = status.try(:group_ids)
+      @groups = current_account.groups_from_cache.select { |g| group_ids.include?(g.id) } if group_ids.present?
+    end
+    respond_to do |format|
+      format.html {
+        blank_value = "..."
+        render :partial => "status_groups", :locals =>{ :blank_value => blank_value, :assigned_group_id => assigned_group_id }
+      }
     end
   end
 

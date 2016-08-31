@@ -3,7 +3,7 @@ module Mobile::Actions::User
 	include Mobile::Actions::Push_Notifier
 
   CONFIG_JSON_INCLUDE = {
-      only: [:id], 
+      only: [:id, :language], 
       :include =>{ :roles => { :only => [:id, :name, :default_role] } },
       :methods => [:display_name, :can_delete_ticket, :can_view_contacts, :can_delete_contact, :can_edit_ticket_properties, 
         :can_view_solutions, :can_merge_or_split_tickets,:can_reply_ticket, :manage_scenarios,:can_view_time_entries,
@@ -116,7 +116,7 @@ module Mobile::Actions::User
   def user_recent_tickets
     self.account.tickets.permissible(self).
         requester_active(self).visible.newest(10).find(:all, 
-          :select => [:id,:display_id,:subject,:status,:priority,:created_at,:requester_id,:source,:spam,:deleted,:responder_id])
+          :select => [:"helpdesk_tickets.id",:display_id,:subject,:status,:priority,:"helpdesk_tickets.created_at",:requester_id,:source,:spam,:deleted,:responder_id])
   end
 
   def contact_fields

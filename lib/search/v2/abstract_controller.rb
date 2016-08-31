@@ -49,8 +49,7 @@ module Search::V2::AbstractController
           @es_results = []
           @result_set = []
         end
-        # Store in recent searches
-        Search::RecentSearches.new(@search_key).store if !@search_key.blank? and User.current.present?
+        
         yield(@result_set) if block_given?
         process_results
       end

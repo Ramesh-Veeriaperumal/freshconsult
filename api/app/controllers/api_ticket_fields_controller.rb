@@ -5,8 +5,8 @@ class ApiTicketFieldsController < ApiApplicationController
 
     def validate_filter_params
       params.permit(:type, *ApiConstants::DEFAULT_INDEX_FIELDS) # We will allow pagination options, but they will be ignored, to be consistent with contact/company fields.
-      errors = [[:type, :not_included]] if params.key?(:type) && ApiTicketConstants::FIELD_TYPES.exclude?(params[:type])
-      render_errors errors, list: ApiTicketConstants::FIELD_TYPES.join(', ') if errors
+      errors = [[:type, :not_included]] if params.key?(:type) && allowed_field_types.exclude?(params[:type])
+      render_errors errors, list: allowed_field_types.join(', ') if errors
     end
 
     def scoper
@@ -18,6 +18,12 @@ class ApiTicketFieldsController < ApiApplicationController
 
     def exclude_products
       (!current_portal.main_portal || current_account.products_from_cache.empty?)
+    end
+
+    def allowed_field_types
+      current_account.features?(:shared_ownership) ? 
+          ApiTicketConstants::FIELD_TYPES :
+          ApiTicketConstants::FIELD_TYPES - ["default_internal_group", "default_internal_agent"]
     end
 
     def load_objects(items = scoper)

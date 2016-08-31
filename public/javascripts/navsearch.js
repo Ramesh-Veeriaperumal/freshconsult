@@ -22,6 +22,7 @@ jQuery(document).ready(function(){
 
 
 	callbackToSearch = function(string, search_url){
+			
 		jQuery('#SearchBar').addClass('sloading loading-small loading-right');
 		jQuery('.results').hide().find('li.spotlight_result').remove();
   	    jQuery.ajax({ url: search_url+string,
@@ -79,6 +80,7 @@ jQuery(document).ready(function(){
 		//reset search bar by removing search query
 		//and removing appended search results
 		$J('#header_search').val('');
+		currentString = "";
 		$J('ul.results li.spotlight_result').remove();
 		jQuery("ul.results").filter(function(){return jQuery(this).find('li.spotlight_result').length == 0; }).hide();
 	}	
@@ -100,6 +102,8 @@ jQuery(document).ready(function(){
 
 	$J(document).on('mouseleave',"#SearchResultsBar", function(){
 		insideSearch = false;
+		$J('#SearchResultsBar a').removeClass('active');
+		currentactive = null;
 	});	
 			
 	$J(document).on("focusout", "#header_search", function(ev){ 
@@ -143,8 +147,8 @@ jQuery(document).ready(function(){
 				var searchItem = JST["app/search/templates/spotlight_result_recent_search"](
 					{
 						id: j, 
-						path:'/search/all?term=' + NavSearchUtils.localRecentSearches[j], 
-						content: NavSearchUtils.localRecentSearches[j]
+						path:'/search/all?term=' + encodeURIComponent(NavSearchUtils.localRecentSearches[j]), 
+						content: escapeHtml(NavSearchUtils.localRecentSearches[j])
 					});
 				jQuery('#SearchResultsBar .recent_searches_results').append(searchItem);
 			}			
@@ -160,7 +164,7 @@ jQuery(document).ready(function(){
 					id: j, 
 					displayId: NavSearchUtils.localRecentTickets[j].displayId, 
 					path: NavSearchUtils.localRecentTickets[j].path, 
-					subject: NavSearchUtils.localRecentTickets[j].subject
+					subject: escapeHtml(NavSearchUtils.localRecentTickets[j].subject)
 				});
 				jQuery('#SearchResultsBar .recent_tickets_results').append(searchItem);
 			}
@@ -169,8 +173,9 @@ jQuery(document).ready(function(){
 		$J("#SearchResultsBar").css("display", "inline");
 		jQuery("ul.results").filter(function(){return jQuery(this).find('li.spotlight_result').length == 0; }).hide();
 		jQuery("ul.results").filter(function(){return jQuery(this).find('li.spotlight_result').length > 0; }).show();
+	}
 
-		jQuery(document).on('click.remove_recent_search', '.recent_search_cross_icon', function(ev){
+	jQuery(document).on('click.remove_recent_search', '.recent_search_cross_icon', function(ev){
 			ev.stopPropagation();
 			ev.preventDefault();
 			var recentSearchId = jQuery(ev.currentTarget).parents('li.spotlight_result').attr('id');
@@ -178,7 +183,6 @@ jQuery(document).ready(function(){
 			var searchKey = NavSearchUtils.localRecentSearches[searchIndex];
 			NavSearchUtils.localRecentSearches.splice(searchIndex, 1);
 			NavSearchUtils.setLocalRecentSearches(NavSearchUtils.localRecentSearchKey);
-
 			jQuery.post('/search/remove_recent_search', { search_key: searchKey});
 
 			if(searchIndex === 0 && NavSearchUtils.localRecentSearches.length === 0){
@@ -187,7 +191,6 @@ jQuery(document).ready(function(){
 			}				
 			jQuery('#header_search').focus();
 		});
-	}
 			
 	var move = function(diff){
 		searchlist 	= $J("#SearchResultsBar a");

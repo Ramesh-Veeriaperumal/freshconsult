@@ -53,5 +53,5 @@ module Helpdesk::Ticketfields::TicketStatus
         end
       end  
     end
-  
+
 end

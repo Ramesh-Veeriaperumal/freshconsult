@@ -121,6 +121,124 @@ RSpec.describe Helpdesk::TicketsController do
     response.body.should =~ /#{ticket.description_html}/
   end
 
+  it "should not show a ticket to a group restricted agent" do
+    ticket = create_ticket({:status => 2})
+    group_restricted_agent = add_agent(@account, {  :name => Faker::Name.name,
+                                        :email => Faker::Internet.email,
+                                        :active => 1,
+                                        :role => 1,
+                                        :agent => 1,
+                                        :ticket_permission => 2,
+                                        :role_ids => ["#{@account.roles.agent.first.id}"] })
+    log_in(group_restricted_agent)
+    get :show, :id => ticket.display_id
+    flash[:notice].should be_eql(I18n.t(:'flash.general.access_denied'))
+  end
+
+  it "should show a ticket to a group restricted agent if his group is assigned" do
+    ticket = create_ticket({:status => 2}, @group)
+    group_restricted_agent = add_agent(@account, {  :name => Faker::Name.name,
+                                        :email => Faker::Internet.email,
+                                        :active => 1,
+                                        :role => 1,
+                                        :agent => 1,
+                                        :ticket_permission => 2,
+                                        :role_ids => ["#{@account.roles.agent.first.id}"],
+                                        :group_id => @group.id })
+    log_in(group_restricted_agent)
+    get :show, :id => ticket.display_id
+    response.body.should =~ /#{ticket.description_html}/
+  end
+
+  it "should not show a ticket to an ticket restricted agent" do
+    ticket = create_ticket({:status => 2})
+    ticket_restricted_agent = add_agent(@account, {  :name => Faker::Name.name,
+                                        :email => Faker::Internet.email,
+                                        :active => 1,
+                                        :role => 1,
+                                        :agent => 1,
+                                        :ticket_permission => 3,
+                                        :role_ids => ["#{@account.roles.agent.first.id}"] })
+    log_in(ticket_restricted_agent)
+    get :show, :id => ticket.display_id
+    flash[:notice].should be_eql(I18n.t(:'flash.general.access_denied'))
+  end
+
+  it "should show a ticket to a ticket restricted agent if he is assigned to the ticket" do
+    ticket_restricted_agent = add_agent(@account, {  :name => Faker::Name.name,
+                                        :email => Faker::Internet.email,
+                                        :active => 1,
+                                        :role => 1,
+                                        :agent => 1,
+                                        :ticket_permission => 3,
+                                        :role_ids => ["#{@account.roles.agent.first.id}"] })
+    ticket = create_ticket({:status => 2, :responder_id => ticket_restricted_agent.id})
+    log_in(ticket_restricted_agent)
+    get :show, :id => ticket.display_id
+    response.body.should =~ /#{ticket.description_html}/
+  end
+
+  it "should show a ticket to a group restricted agent if his internal_group is assigned" do
+    @account.features.shared_ownership.create
+    status = Helpdesk::TicketStatus.where(:is_default => 0).first
+    status.group_ids = "#{@group.id}"
+    ticket = create_ticket({:status => status.status_id}, nil, @group)
+    group_restricted_agent = add_agent(@account, {  :name => Faker::Name.name,
+                                        :email => Faker::Internet.email,
+                                        :active => 1,
+                                        :role => 1,
+                                        :agent => 1,
+                                        :ticket_permission => 2,
+                                        :role_ids => ["#{@account.roles.agent.first.id}"],
+                                        :group_id => @group.id })
+    log_in(group_restricted_agent)
+    get :show, :id => ticket.display_id
+    response.body.should =~ /#{ticket.description_html}/
+    @account.features.shared_ownership.destroy
+    @account.reload
+  end
+
+  it "should show a ticket to a ticket restricted agent if he is assigned as an internal_agent to the ticket" do
+    @account.features.shared_ownership.create
+    status = Helpdesk::TicketStatus.where(:is_default => 0).first
+    status.group_ids = "#{@group.id}"
+    ticket_restricted_agent = add_agent(@account, {  :name => Faker::Name.name,
+                                        :email => Faker::Internet.email,
+                                        :active => 1,
+                                        :role => 1,
+                                        :agent => 1,
+                                        :ticket_permission => 3,
+                                        :role_ids => ["#{@account.roles.agent.first.id}"],
+                                        :group_id => @group.id })
+    ticket = create_ticket({:status => status.status_id, :internal_agent_id => ticket_restricted_agent.id}, nil, @group)
+    log_in(ticket_restricted_agent)
+    get :show, :id => ticket.display_id
+    response.body.should =~ /#{ticket.description_html}/
+    @account.features.shared_ownership.destroy
+    @account.reload
+  end
+
+  it "should not show a ticket to a ticket restricted agent if he is not assigned as an internal_agent to the ticket" do
+    @account.features.shared_ownership.create
+    status = Helpdesk::TicketStatus.where(:is_default => 0).first
+    status.group_ids = "#{@group.id}"
+    ticket_restricted_agent = add_agent(@account, {  :name => Faker::Name.name,
+                                        :email => Faker::Internet.email,
+                                        :active => 1,
+                                        :role => 1,
+                                        :agent => 1,
+                                        :ticket_permission => 3,
+                                        :role_ids => ["#{@account.roles.agent.first.id}"],
+                                        :group_id => @group.id })
+    ticket = create_ticket({:status => status.status_id}, nil, @group)
+    log_in(ticket_restricted_agent)
+    get :show, :id => ticket.display_id
+    flash[:notice].should be_eql(I18n.t(:'flash.general.access_denied'))
+    @account.features.shared_ownership.destroy
+    @account.reload
+  end
+
+
   # Following 2 tests are added to cover survey models
   it "should load the reply template with survey link" do
     @account.survey.update_attributes(:send_while => 1)
