@@ -5424,7 +5424,7 @@ en:
     info6: People in %{name}
     info7: No tickets have been created by the people in this company
     info8: More info regarding this company like address, phone number, website etc
-    info13: Contacts whose email addresses contain these domains will automatically associated to this company
+    info13: Contacts whose email addresses contain these domains will automatically be associated to this company
     info14: Contacts whose email addresses contain these domains will be whitelisted and automatically associated to this company
     info12: "eg: mycompany1.com, mycompany2.com"
     errors:
