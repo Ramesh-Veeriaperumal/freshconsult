@@ -34,6 +34,10 @@ class User < ActiveRecord::Base
   scope :visible, :conditions => { :deleted => false }
   scope :active, lambda { |condition| { :conditions => { :active => condition }} }
   scope :with_conditions, lambda { |conditions| { :conditions => conditions} }
+  scope :with_contractors, lambda { |conditions| { :joins => %(INNER JOIN user_companies ON
+                                                               user_companies.account_id = users.account_id AND
+                                                               user_companies.user_id = users.id),
+                                                   :conditions => conditions } }
   scope :company_users_via_customer_id, lambda { |cust_id| { :conditions => ["customer_id = ?", cust_id]} }
   # Using text_uc01 column as the preferences hash for storing user based settings
   serialize :text_uc01, Hash
