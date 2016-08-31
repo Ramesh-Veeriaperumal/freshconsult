@@ -27,7 +27,7 @@ class BaseWorker
         @sla_logger ||= CustomLogger.new(log_file)
       rescue Exception => e
         logger.info "Error occured while #{e}"
-        FreshdeskErrorsMailer.error_email(nil,nil,e,{
+        FreshdeskErrorsMailer.send_later(:error_email, nil,nil,e,{
           :subject => "Splunk logging Error for sla",
           :recipients => (Rails.env.production? ? Helpdesk::EMAIL[:production_dev_ops_email] : "dev-ops@freshpo.com")
         })  
