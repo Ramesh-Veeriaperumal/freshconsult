@@ -449,7 +449,6 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
     skip_bullet do
       scenario_id = create_scn_automation_rule(scenario_automation_params).id
       ticket_id = create_ticket(ticket_params_hash).display_id
-      byebug
       put "api/_/tickets/#{ticket_id}/execute_scenario/#{scenario_id}", nil, @write_headers
       assert_response 204
 
