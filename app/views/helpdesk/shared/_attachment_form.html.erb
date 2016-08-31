@@ -2,8 +2,8 @@
   attach_id ||= "ticket" 
   nsc_param = nsc_param || "helpdesk_ticket"
 %>
-<div class="attach-wrapper row-fluid single_file">
-  <div class="span8">    
+<div class="attach-wrapper row-fluid single_file <% if cloud_files_installed? and (@ticket.present? ? !@ticket.ecommerce? : true)  %> cloud<% end %>">
+  <div class="span10">    
     <% if cloud_files_installed? %>
       <div class="dropdown dropup">        
         <a class="dropdown-toggle attach-link" data-toggle="dropdown" href="#">
@@ -12,7 +12,7 @@
         <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
           <li class="portal-attach">
             <a data-file-id="<%=attach_id%>" href="javascript:void(0)" class="attach-link-wrap">
-                <%= I18n.t('portal.attach_file').html_safe %>
+                <%= I18n.t('portal.attach_file').html_safe %> <span class="attachment-help-info">( <%= t('total') %> <%= t('attachment_help_info') %> )</span>
                 <div class="attach-file attach-link-file" id="<%= attach_id %>-attach-container">  
                   <input type="file" name="emptyfile" 
                     id="<%=attach_id%>_file"
@@ -31,18 +31,18 @@
       </div>
     <% else %>      
       <div class="attach_wrapper clearfix">
-        <div class="attach_file">
+        <div class="attach_file span5">
         <label><%= t('attach_file_local') %></label>
         <input type="file" id="<%=attach_id%>_file" name="emptyfile" 
                nameWhenFilled="<%=nsc_param%>[attachments][][resource]" 
                fileContainer="<%=attach_id%>-container" fileList="<%=attach_id%>-attachments" 
                sendFocusTo="<%=attach_id%>-body" />
-        <div class="info-data">
-          <%=t('attachment_help_info')%>
-        </div> <span class="attachment-help-info">( <%= t('total') %> <%= t('attachment_help_info') %> )</span>
+        <span class="info-data">
+         <%= t('total') %> <%= t('attachment_help_info')%>
+        </span> 
       </div>
     <% end %>
-    <div class="attachments-list-form" id="<%= attach_id %>-container" style="display:none">
+    <div class="attachments-list-form span5" id="<%= attach_id %>-container" style="display:none">
       <div id="<%= attach_id %>-attachments" class="shared_attachment_list"></div>
     </div>
   </div>
