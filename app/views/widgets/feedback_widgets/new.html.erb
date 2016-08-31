@@ -78,9 +78,8 @@
             picklist.section_ticket_fields.each do |section_tkt_field|
               if section_tkt_field.editable_in_portal
                 %><div class="control-group ticket_section">
-                <%= (ticket_field_container f,:helpdesk_ticket, section_tkt_field,
-                                    widget_prefilled_value(field), picklist.id.to_s).gsub("</textarea>
-        ", "&lt/textarea&gt").html_safe %>
+                <%=  (ticket_field_container f,:helpdesk_ticket, section_tkt_field,
+                                    widget_prefilled_value(field), picklist.id.to_s).gsub("</textarea>", "&lt/textarea&gt").html_safe %>
                 </div>
       <%
               end
