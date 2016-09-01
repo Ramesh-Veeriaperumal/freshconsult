@@ -1485,7 +1485,7 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
   end
 
   def show_upgrade_plan?
-    current_user.privilege?(:manage_account) && current_account.subscription.trial_days < 11 && ((current_account.subscription.active? && current_account.subscription.free?) || current_account.subscription.trial?)
+    current_user.privilege?(:manage_account) && ((current_account.subscription.active? && current_account.subscription.free?) || (current_account.subscription.trial_days < 11 && current_account.subscription.trial?))
   end
 
   private
