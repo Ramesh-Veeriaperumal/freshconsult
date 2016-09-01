@@ -235,7 +235,7 @@ class Helpdesk::SlaPolicy < ActiveRecord::Base
         agent_ids = escalation[:agents_id].map {|x| (x == assigned_agent_id && responder_id) ? responder_id : x }
         unless agent_ids.blank? ||
         (agents = account.users.technicians.visible.find(:all, :conditions => ["id in (?)", agent_ids])).blank?
-          SlaNotifier.send_later(:send_email, ticket, agents, type)
+          SlaNotifier.send_email(ticket, agents, type)
         end
         return true
       end
