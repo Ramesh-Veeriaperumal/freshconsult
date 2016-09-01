@@ -99,7 +99,7 @@ module Admin::Sla::Escalation
                                     'ticket' => ticket, 'helpdesk_name' => ticket.account.portal_name)
         email_body = Liquid::Template.parse(message_template).render(
                                     'agent' => agent, 'ticket' => ticket, 'helpdesk_name' => ticket.account.portal_name)
-        SlaNotifier.escalation(ticket, agent, n_type, :email_body => email_body, :subject => email_subject)
+        SlaNotifier.send_later(:escalation, ticket, agent, :email_body => email_body, :subject => email_subject)
       ensure
         User.reset_current
       end      
