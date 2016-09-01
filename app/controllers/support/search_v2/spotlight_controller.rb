@@ -50,9 +50,8 @@ class Support::SearchV2::SpotlightController < SupportController
     @no_render      = true
     @klasses        = ['Topic']
     @search_context = :portal_spotlight_topic
-    search(esv2_portal_models) do |results|
-      @results = results
-    end
+    search(esv2_portal_models)
+    @results = @search_results
 
     render template: '/support/search/suggest_topic', :layout => false
   end
