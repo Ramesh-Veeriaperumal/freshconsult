@@ -2725,6 +2725,8 @@ Helpkit::Application.routes.draw do
         collection do
           put :update_global_blacklist_ips
           put :remove_blacklisted_ip
+          get :shards
+          post :operations_on_shard
         end
       end
 
