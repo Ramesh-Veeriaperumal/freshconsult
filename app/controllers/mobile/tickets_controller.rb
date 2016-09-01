@@ -64,7 +64,7 @@ class Mobile::TicketsController < ApplicationController
     ticket_list = filter_tickets(agent_filter)
     tickets_json = ticket_list.map(&:to_mob_json_index)
     respond_to do |format|
-      format.nmobile {render json: { tickets: tickets_json, top_view: top_view, sort_fields_options: sort_fields_options, sort_order_fields_options: sort_order_fields_options}} 
+      format.nmobile {render json: { tickets: tickets_json, top_view: top_view, sort_fields_options: sort_fields_options, sort_order_fields_options: sort_order_fields_options, ticket_filter_hash: ticket_filter_hash}} 
     end
   end
   
@@ -184,6 +184,13 @@ class Mobile::TicketsController < ApplicationController
         end
       end
     end
+  end
+
+  def ticket_filter_hash
+     {
+          :order =>  @ticket_filter.data[:wf_order],
+          :order_type => @ticket_filter.data[:wf_order_type]
+     }
   end
 
   def filter_tickets(agent_filter,selector = nil)
