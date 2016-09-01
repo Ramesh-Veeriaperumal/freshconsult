@@ -203,6 +203,10 @@ class Mobile::TicketsController < ApplicationController
     else
       if is_num?(params[:filter_name])
         @ticket_filter = current_account.ticket_filters.find_by_id(params[:filter_name])
+         
+         @ticket_filter.data[:wf_order] = params[:wf_order] if params[:wf_order]
+         @ticket_filter.data[:wf_order_type] = params[:wf_order_type] if params[:wf_order_type]
+
         @ticket_filter.query_hash = @ticket_filter.data[:data_hash]
         @ticket_filter.attributes['data']['wf_per_page'] = params[:wf_per_page]
         params.merge!(@ticket_filter.attributes["data"])
