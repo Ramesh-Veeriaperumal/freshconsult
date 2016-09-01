@@ -187,10 +187,12 @@ class Mobile::TicketsController < ApplicationController
   end
 
   def ticket_filter_hash
+    if is_num?(params[:filter_name])
      {
           :order =>  @ticket_filter.data[:wf_order],
           :order_type => @ticket_filter.data[:wf_order_type]
      }
+   end
   end
 
   def filter_tickets(agent_filter,selector = nil)
