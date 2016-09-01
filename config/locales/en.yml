@@ -4764,6 +4764,7 @@ en:
       company_tickets: Company Tickets
       social: Social
     search: Search
+    upgrade: Upgrade
   agent_adds_comment: Agent Adds Comment to Ticket
   notify_comment: Note added to ticket
   add_cc: Added CC to Ticket

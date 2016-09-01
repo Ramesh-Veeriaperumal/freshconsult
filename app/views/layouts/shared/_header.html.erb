@@ -112,13 +112,18 @@
 					<% end %>   
 					<span class="seperator"></span>			
 					<%= link_to t('header.signout').html_safe, logout_path, :class => "link signout_link" %>
-				</div>    
+				</div>
+				<% if show_upgrade_plan?  %>
+					<div class="header-upgrade-wrapper">
+						<%= link_to t('header.upgrade').html_safe, '/subscription?ref=header', :class => 'header-upgrade-link' %>
+				  </div>
+			  <% end %>    
 				<% if current_user.agent? %>
           <% unless Rails.env.development? %>
 					<div id="product_notify_header" class="header-notification-wrapper" rel="remote-load" 
 			    		data-url="/notification/product_notification">
 			    </div>
-          <% end %>
+          <% end %>			    
 			    <% unless freshfone_trial? || freshfone_trial_expired? %>
 				    <div class="ff_presence_options hide" id="FreshfonePresenceOptions">
 				    	<div class="ff_available"> 
