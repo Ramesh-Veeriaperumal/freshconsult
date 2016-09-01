@@ -64,7 +64,7 @@ class Mobile::TicketsController < ApplicationController
     ticket_list = filter_tickets(agent_filter)
     tickets_json = ticket_list.map(&:to_mob_json_index)
     respond_to do |format|
-      format.nmobile {render json: { tickets: tickets_json, top_view: top_view }} 
+      format.nmobile {render json: { tickets: tickets_json, top_view: top_view, sort_fields_options: sort_fields_options, sort_order_fields_options: sort_order_fields_options}} 
     end
   end
   
