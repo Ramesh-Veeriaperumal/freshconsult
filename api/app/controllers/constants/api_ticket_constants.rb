@@ -1,7 +1,6 @@
 module ApiTicketConstants
   # ControllerConstants
   ARRAY_FIELDS = %w(tags cc_emails attachments).freeze
-  BULK_ACTION_ARRAY_FIELDS = ['ids'].freeze
   HASH_FIELDS = ['custom_fields'].freeze
   COMPLEX_FIELDS = ARRAY_FIELDS | HASH_FIELDS
   CREATE_FIELDS = %w(description due_by email_config_id fr_due_by group_id priority
@@ -37,7 +36,6 @@ module ApiTicketConstants
   FIELD_TYPES = Helpdesk::TicketField::FIELD_CLASS.keys.map(&:to_s).freeze
   INDEX_FIELDS = %w(filter company_id requester_id email order_by order_type updated_since include).freeze
   INDEX_FILTER_FIELDS = %w(filter company_id requester_id email updated_since).freeze
-  BULK_ACTION_FIELDS = BULK_ACTION_ARRAY_FIELDS.freeze
 
   ATTRIBUTES_TO_BE_STRIPPED = %w(email phone name subject type tags cc_emails twitter_id custom_fields).freeze
 
@@ -57,7 +55,7 @@ module ApiTicketConstants
     bulk_spam: [:json]
   }.freeze
 
-  LOAD_OBJECT_EXCEPT = [:bulk_delete, :bulk_spam, :execute_scenario, :bulk_execute_scenario].freeze
+  LOAD_OBJECT_EXCEPT = [:bulk_delete, :bulk_spam, :bulk_execute_scenario].freeze
 
   MAX_EMAIL_COUNT = TicketConstants::MAX_EMAIL_COUNT - 1
 
@@ -65,4 +63,6 @@ module ApiTicketConstants
                      product: :product_id, ticket_type: :type }.freeze
 
   SEARCH_ALLOWED_DEFAULT_FIELDS = ['status'].freeze
+
+  BULK_ACTION_METHODS = [:bulk_spam, :bulk_execute_scenario].freeze
 end.freeze

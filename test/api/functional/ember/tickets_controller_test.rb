@@ -57,6 +57,7 @@ class Ember::TicketsControllerTest < ActionController::TestCase
     ids_to_delete = tickets.map(&:display_id)
     Helpdesk::Ticket.any_instance.stubs(:save).returns(false)
     put :bulk_delete, construct_params({ version: 'private' }, {ids: ids_to_delete})
+    Helpdesk::Ticket.any_instance.unstub(:save)
     errors = {}
     ids_to_delete.each { |id| errors[id] = :unable_to_perform }
     match_json(partial_success_response_pattern([], errors))
@@ -70,6 +71,7 @@ class Ember::TicketsControllerTest < ActionController::TestCase
     end
     User.any_instance.stubs(:can_view_all_tickets?).returns(false)
     put :bulk_delete, construct_params({ version: 'private' }, {ids: ticket_ids})
+    User.any_instance.unstub(:can_view_all_tickets?)
     errors = {}
     ticket_ids.each { |id| errors[id] = :"is invalid" }
     match_json(partial_success_response_pattern([], errors))
@@ -137,6 +139,7 @@ class Ember::TicketsControllerTest < ActionController::TestCase
     ids_list = tickets.map(&:display_id)
     Helpdesk::Ticket.any_instance.stubs(:save).returns(false)
     put :bulk_spam, construct_params({ version: 'private' }, {ids: ids_list})
+    Helpdesk::Ticket.any_instance.unstub(:save)
     errors = {}
     ids_list.each { |id| errors[id] = :unable_to_perform }
     match_json(partial_success_response_pattern([], errors))
@@ -150,6 +153,7 @@ class Ember::TicketsControllerTest < ActionController::TestCase
     end
     User.any_instance.stubs(:can_view_all_tickets?).returns(false)
     put :bulk_spam, construct_params({ version: 'private' }, {ids: ticket_ids})
+    User.any_instance.unstub(:can_view_all_tickets?)
     errors = {}
     ticket_ids.each { |id| errors[id] = :"is invalid" }
     match_json(partial_success_response_pattern([], errors))
@@ -187,7 +191,33 @@ class Ember::TicketsControllerTest < ActionController::TestCase
     assert_response 204
   end
 
-  def test_bulk_execute_scenario_with_invalid_ids
+  def test_execute_scenario_with_invalid_ticket_id
+    scenario_id = create_scn_automation_rule(scenario_automation_params).id
+    ticket_id = create_ticket(ticket_params_hash).display_id + 20
+    put :execute_scenario, controller_params(version: 'private', id: ticket_id, scenario_id: scenario_id)
+    assert_response 404
+  end
+
+  def test_execute_scenario_without_ticket_access
+    scenario_id = create_scn_automation_rule(scenario_automation_params).id
+    ticket_id = create_ticket(ticket_params_hash).display_id
+    User.any_instance.stubs(:has_ticket_permission?).returns(false)
+    put :execute_scenario, controller_params(version: 'private', id: ticket_id, scenario_id: scenario_id)
+    User.any_instance.unstub(:has_ticket_permission?)
+    assert_response 403
+  end
+
+  def test_execute_scenario_without_scenario_access
+    scenario_id = create_scn_automation_rule(scenario_automation_params).id
+    ticket_id = create_ticket(ticket_params_hash).display_id
+    ScenarioAutomation.any_instance.stubs(:check_user_privilege).returns(false)
+    put :execute_scenario, controller_params(version: 'private', id: ticket_id, scenario_id: scenario_id)
+    ScenarioAutomation.any_instance.unstub(:check_user_privilege)
+    assert_response 400
+    match_json([bad_request_error_pattern('scenario_id', :"is invalid")])
+  end
+
+  def test_bulk_execute_scenario_with_invalid_ticket_ids
     scenario_id = create_scn_automation_rule(scenario_automation_params).id
     ticket_ids = []
     rand(2..10).times do

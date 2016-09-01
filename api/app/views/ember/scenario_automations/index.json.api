@@ -3,11 +3,7 @@ JSON.generate(@scenarios.map do |scenario|
     id: scenario.id,
     name: scenario.name,
     description: scenario.description,
-    actions: scenario.action_data.map do |action|
-      action_response = { name: action[:name] }
-      action_response.merge!(value: action[:value]) if action[:value]
-      action_response
-    end
+    actions: scenario.action_data.map { |action| action.slice(:name, "name", :value, "value") }
   }
   response_hash
 end)
