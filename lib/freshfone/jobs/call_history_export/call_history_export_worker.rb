@@ -209,8 +209,9 @@ module Freshfone::Jobs
           return 0 unless call.children_count > 0
           return if call.meta.blank?
           count = 0
-          call.descendants_calls.each do |call|
-            count += 1 if !call.meta.warm_transfer_revert?
+          call.descendants_calls.each do |child|
+            next if child.meta.present? && child.meta.warm_transfer_revert?
+            count += 1
           end
           count
         end
@@ -220,7 +221,8 @@ module Freshfone::Jobs
           parent_call = select_parent(call.parent)
           child_count = 0
           parent_call.descendants_calls.each do |child|
-            child_count += 1 if !child.meta.warm_transfer_revert?
+            next if child.meta.present? && child.meta.warm_transfer_revert?
+            child_count += 1
             break if child.id == call.id
           end
           count = count - child_count
