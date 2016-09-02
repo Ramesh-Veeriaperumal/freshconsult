@@ -200,7 +200,7 @@ class Freshfone::CallMeta < ActiveRecord::Base
   end
 
   def warm_transfer_revert?
-    meta_info[:type] == 'warm_transfer' &&
+    meta_info.is_a?(Hash) && meta_info[:type] == 'warm_transfer' &&
                       freshfone_call.user_id == freshfone_call.parent.user_id
   end
 
