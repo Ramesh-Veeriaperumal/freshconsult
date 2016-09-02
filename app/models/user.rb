@@ -994,6 +994,10 @@ class User < ActiveRecord::Base
         ((@role_change_flag or new_record?) && self.roles.blank?)
     end
 
+    def password_updated?
+      @all_changes.has_key?(:crypted_password)
+    end
+
     #This is the current login method. It is fed to authlogic in user_sessions.rb
 
     def self.find_by_user_emails(login)

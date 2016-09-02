@@ -31,7 +31,8 @@ class User < ActiveRecord::Base
   #after_commit :discard_contact_field_data, on: :update, :if => [:helpdesk_agent_updated?, :agent?]
   after_commit :delete_forum_moderator, on: :update, :if => :helpdesk_agent_updated?
   after_commit :deactivate_monitorship, on: :update, :if => :blocked_deleted?
-  
+  after_commit :remove_user_mobile_registrations, on: :update, :if => :password_updated?
+
   # Callbacks will be executed in the order in which they have been included. 
   # Included rabbitmq callbacks at the last
   include RabbitMq::Publisher 

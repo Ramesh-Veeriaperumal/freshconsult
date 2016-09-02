@@ -96,7 +96,7 @@ module SsoUtil
     @user_session.web_session = true unless is_native_mobile?
     if (!@current_user.new_record? && @user_session.save)
       if is_native_mobile?
-        cookies["mobile_access_token"] = { :value => @current_user.helpdesk_agent ? @current_user.single_access_token : 'customer', :http_only => true } 
+        cookies["mobile_access_token"] = { :value => @current_user.mobile_auth_token, :http_only => true } 
         cookies["fd_mobile_email"] = { :value => @current_user.email, :http_only => true } 
       end
       remove_old_filters  if @current_user.agent?
