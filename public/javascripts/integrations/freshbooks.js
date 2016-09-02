@@ -100,15 +100,27 @@ FreshbooksWidget.prototype = {
 		}
 	},
 
+	company:function(){
+		if(freshbooksBundle) {
+			if(freshbooksBundle.ticket_company.length > 0){
+				return freshbooksBundle.ticket_company;
+			}else if(freshbooksBundle.reqCompany.length > 0){
+				return freshbooksBundle.reqCompany;
+			}
+		}
+		return "";
+	},
+
+
 	loadClientList:function(resData){
 		var client_org = undefined;
 		var client_email = undefined;
 		this.client_page++;
 		tot_pages = this.fetchMultiPages(resData, "clients", this.CLIENT_LIST_REQ, this.loadClientList)
-		if(freshbooksBundle.reqCompany){
-			selectedClientNode = this.loadFreshbooksEntries(resData, "freshbooks-timeentry-clients", "client", "client_id", ["organization", " ", "(", "first_name", " ", "last_name", ")"], null, freshbooksBundle.reqCompany.toLowerCase(), tot_pages>1,"organization");
+		if(this.company !== ""){
+			selectedClientNode = this.loadFreshbooksEntries(resData, "freshbooks-timeentry-clients", "client", "client_id", ["organization", " ", "(", "first_name", " ", "last_name", ")"], null, (this.company()).toLowerCase(), tot_pages>1,"organization");
 			client_org = XmlUtil.getNodeValueStr(selectedClientNode, "organization");
-			selected_value = (freshbooksBundle.reqCompany == client_org) ? jQuery("#freshbooks-timeentry-clients option:selected").val() : (typeof selected_value == "undefined") ? undefined : selected_value;
+			selected_value = ((this.company()) == client_org) ? jQuery("#freshbooks-timeentry-clients option:selected").val() : (typeof selected_value == "undefined") ? undefined : selected_value;
 		}
 		else{
 			selectedClientNode = this.loadFreshbooksEntries(resData, "freshbooks-timeentry-clients", "client", "client_id", ["organization", " ", "(", "first_name", " ", "last_name", ")"], null, freshbooksBundle.reqEmail, tot_pages>1);

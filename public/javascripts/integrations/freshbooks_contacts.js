@@ -126,7 +126,7 @@ FreshbooksContactWidget.prototype = {
 		var $this = this;
 		var freshbooksUtility = Freshdesk.NativeIntegration.freshbooksUtility;
 		var searchResults="";
-		var contacts=(freshbooksUtility.client_filter=="email")?(freshbooksBundle.reqEmail):(freshbooksBundle.reqCompany);
+		var contacts=(freshbooksUtility.client_filter=="email")?(freshbooksBundle.reqEmail):(freshbooksUtility.company());
 		for(var i=0;i<results.length;i++){
 			var client_name=XmlUtil.getNodeValue(results[i],"organization").escapeHTML();
 			searchResults += '<li><a class="multiple-contacts" href="#" data-client="' + i + '">'+client_name+'</a></li>';
