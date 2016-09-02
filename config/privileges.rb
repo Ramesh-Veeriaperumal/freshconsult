@@ -59,6 +59,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"integrations/hootsuite/ticket"
     resource :"integrations/sugarcrm", :only => [:renew_session_id, :check_session_id]
     resource :"integrations/service_proxy", :only => [:fetch]
+    resource :"integrations/data_pipe"
 
     #Freshfone
     resource :"freshfone", :only => [:dashboard_stats, :dial_check, :create_ticket, :create_note]
