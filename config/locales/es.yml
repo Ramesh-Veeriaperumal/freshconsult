@@ -638,7 +638,7 @@ es:
       forgot_password: "Olvidó la contraseña"
       profile_edit: "Perfil de usuario"
       search: "Resultados de la búsqueda."
-      solution_home: "Inicio / Prestatarios / General"
+      solution_home: "Inicio / Prestatarios"
       solution_category: "Inicio de la categoría soluciones"
       article_list: "Lista de artículos"
       article_view: "Vista de artículos"
@@ -3659,7 +3659,7 @@ es:
     no_topics_in_this_view: "~ No hay temas en esta vista ~"
     reported: declarado
     said: dicho
-    solutions_home: "Inicio / Prestatarios / General"
+    solutions_home: "Inicio / Prestatarios"
     print_title: "Imprimir este articulo"
     attach_file: "Adjunto a <b>archivo</b>"
     header:
