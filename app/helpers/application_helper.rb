@@ -1536,6 +1536,13 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
     return
   end
 
+  def fb_realtime_msg_disabled
+    if current_account.fb_realtime_msg_from_cache
+      return content_tag('div', "#{t('fb_realtime_enable')}".html_safe, :class =>
+        "alert-message block-message full-width")
+    end
+  end
+
   def check_twitter_reauth_required
     twt_handle= current_account.twitter_reauth_check_from_cache
     if twt_handle

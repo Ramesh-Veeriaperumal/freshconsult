@@ -2,6 +2,7 @@
 <% if current_user && current_user.privilege?(:admin_tasks) %>
     <%= check_fb_reauth_required  %>
     <%= check_twitter_reauth_required %>
+    <%= fb_realtime_msg_disabled %>
 <% end %>
 
 <div class="index-page-content" id="realtime-dashboard-content">
