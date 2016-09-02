@@ -1000,7 +1000,7 @@ Helpkit::Application.routes.draw do
 
   match '/http_request_proxy/fetch',
       :controller => 'http_request_proxy', :action => 'fetch', :as => :http_proxy
-
+  match '/mkp/data-pipe.:format', :controller => 'integrations/data_pipe', :action => 'router', :method => :post, :as => :data_pipe
   namespace :admin do
     resources :home, :only => :index
     resources :contact_fields, :only => :index do

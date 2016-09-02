@@ -39,6 +39,7 @@ describe Admin::Marketplace::InstalledExtensionsController do
 
   describe "POST install" do
     it "installs the extension" do
+      controller.stubs(:extension_details).returns(extension_details)
       controller.stubs(:install_extension).returns(success_response)
       post :install, { extension_id: 1, version_id: 1, configs: nil }
       expect(response.body).to eq(success_response.body)

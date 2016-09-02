@@ -6551,6 +6551,7 @@ en:
     terms_of_use: "Terms of Use"
     terms_of_use_link: "http://freshdesk.com/terms#marketplace"
     get_more_apps: Get more Apps
+    confirm_data_lose: "Your data will be lost."
     confirm_uninstall_message: "Are you sure you want to uninstall the %{human_name}?"
     app: app
     custom_app: custom app
