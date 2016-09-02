@@ -3983,7 +3983,7 @@ Redactor.prototype = {
 			
 			$('.redactor_link_text').val(text);
 			
-			var turl = url.replace(window.location.href, '');
+			var turl = url.replace(self.location.href, '');
 			
 			if (url.search('mailto:') === 0)
 			{
