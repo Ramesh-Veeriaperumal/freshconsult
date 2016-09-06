@@ -336,7 +336,11 @@ protected
       tag.contacts
     elsif !params[:query].blank?
       query = params[:query]
-      current_account.all_contacts.with_conditions(convert_query_to_conditions(query))
+      if query.include?("customer_id")
+        current_account.all_contacts.with_contractors(convert_query_to_conditions(query))
+      else
+        current_account.all_contacts.with_conditions(convert_query_to_conditions(query))
+      end
     else
       current_account.all_contacts
     end

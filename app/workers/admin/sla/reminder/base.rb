@@ -17,18 +17,16 @@ module Admin::Sla::Reminder
 
       # Response Reminder
       if (!response_reminder_rules.empty? && account.email_notifications.response_sla_reminder.first.agent_notification?)
-
         response_reminder_start_time = Time.now.utc
-        reminder_response_tickets = response_reminder(response_reminder_rules)
+        reminder_response_tickets = escalate_reminder(response_reminder_rules, "response")
         response_reminder_time_taken = Time.now.utc - response_reminder_start_time
         total_tickets += reminder_response_tickets
       end
 
       #Resolution Reminder
       if (!resolution_reminder_rules.empty? && account.email_notifications.resolution_sla_reminder.first.agent_notification?)
-
         reminder_tickets_start_time = Time.now.utc
-        reminder_resolution_tickets = resolution_reminder(resolution_reminder_rules)
+        reminder_resolution_tickets = escalate_reminder(resolution_reminder_rules, "resolution")
         reminder_ticket_time_taken = Time.now.utc - reminder_tickets_start_time
         total_tickets += reminder_resolution_tickets
       end
@@ -40,42 +38,29 @@ module Admin::Sla::Reminder
       Account.reset_current_account
     end
 
-    protected     
+    protected
 
-      def response_reminder(sla_rule_based)
-
+      def escalate_reminder(sla_rule_based, reminder_type)
         account = Account.current
-        response_reminder_overdue = Time.zone.now + Helpdesk::SlaPolicy::REMINDER_TIME_OPTIONS.first[-1].abs + Helpdesk::SlaPolicy::SLA_WORKER_INTERVAL
-    
-        response_reminder_tickets = execute_on_db {
-                                      account.tickets.unresolved.visible.response_sla(account,response_reminder_overdue.to_s(:db)).
-                                      response_reminder(sla_rule_based.keys).updated_in(2.month.ago).all
-                                    }
-        response_reminder_tickets.each do |ticket|
-          sla_policy = sla_rule_based[ticket.sla_policy_id]
-          sla_policy.escalate_response_reminder ticket 
+        reminder_overdue = Time.zone.now + 
+                           Helpdesk::SlaPolicy::REMINDER_TIME_OPTIONS.first[-1].abs +
+                           Helpdesk::SlaPolicy::SLA_WORKER_INTERVAL
+        reminder_tickets = account.tickets.unresolved.visible.
+                           send("#{reminder_type}_sla", account, reminder_overdue.to_s(:db)).
+                           send("#{reminder_type}_reminder", sla_rule_based.keys).
+                           updated_in(2.month.ago)
+
+        execute_on_db do
+          reminder_tickets_count = 0
+          reminder_tickets.find_each do |ticket|
+            reminder_tickets_count += 1
+            sla_policy = sla_rule_based[ticket.sla_policy_id]
+            execute_on_db("run_on_master") do
+              sla_policy.send("escalate_#{reminder_type}_reminder", ticket)
+            end
+          end
+          reminder_tickets_count
         end
-        response_reminder_tickets.length
-
-      end
-
-
-      def resolution_reminder(sla_rule_based)
-
-        account = Account.current
-        reminder_overdue_time  = Time.zone.now + Helpdesk::SlaPolicy::REMINDER_TIME_OPTIONS.first[-1].abs + Helpdesk::SlaPolicy::SLA_WORKER_INTERVAL 
-      
-        resolution_reminder_tickets = execute_on_db {
-                                        account.tickets.unresolved.visible.resolution_sla(account,reminder_overdue_time.to_s(:db)).
-                                        resolution_reminder(sla_rule_based.keys).updated_in(2.month.ago).all
-                                      }
-
-        resolution_reminder_tickets.each do |ticket| 
-          sla_policy = sla_rule_based[ticket.sla_policy_id] 
-          sla_policy.escalate_resolution_reminder ticket #escalate_resolution_overdue_reminder
-        end
-        resolution_reminder_tickets.length
-
       end
 
       def log_file

@@ -16,14 +16,14 @@ module Admin::Sla::Escalation
       
       #Resolution overdue
       overdue_tickets_start_time=Time.now.utc
-      overdue_tickets = resolution_overdue(sla_default,sla_rule_based)
+      overdue_tickets = escalate_overdue(sla_default,sla_rule_based,"resolution")
       overdue_tickets_end_time=Time.now.utc
       overdue_tickets_time_taken=overdue_tickets_end_time - overdue_tickets_start_time
       total_tickets += overdue_tickets
 
       #Response overdue
       froverdue_tickets_start_time=Time.now.utc
-      froverdue_tickets = response_overdue(sla_default,sla_rule_based)
+      froverdue_tickets = escalate_overdue(sla_default,sla_rule_based,"response")
       froverdue_tickets_end_time=Time.now.utc
       froverdue_tickets_time_taken=froverdue_tickets_end_time - froverdue_tickets_start_time
       total_tickets += froverdue_tickets
@@ -39,46 +39,38 @@ module Admin::Sla::Escalation
 
     protected
 
-      def resolution_overdue(sla_default, sla_rule_based)
+      def escalate_overdue(sla_default, sla_rule_based, overdue_type)
         account = Account.current
-        overdue_tickets =  execute_on_db {
-                            account.tickets.unresolved.visible.resolution_sla(account,Time.zone.now.to_s(:db)).
-                            updated_in(2.month.ago).all
-                          }
-        overdue_tickets.each do |ticket|
-          sla_policy = sla_rule_based[ticket.sla_policy_id] || sla_default
-          sla_policy.escalate_resolution_overdue ticket #escalate_resolution_overdue
+        overdue_tickets = account.tickets.unresolved.visible.
+                          send("#{overdue_type}_sla", account, Time.zone.now.to_s(:db)).
+                          updated_in(2.month.ago)
+        execute_on_db do
+          overdue_tickets_count = 0
+          overdue_tickets.find_each do |ticket|
+            overdue_tickets_count += 1
+            sla_policy = sla_rule_based[ticket.sla_policy_id] || sla_default
+            execute_on_db("run_on_master") do
+              sla_policy.send("escalate_#{overdue_type}_overdue", ticket)
+            end
+          end
+          overdue_tickets_count
         end
-        overdue_tickets.length
-      end
-
-      def response_overdue(sla_default, sla_rule_based)
-        account = Account.current
-      
-        froverdue_tickets = execute_on_db {
-                              account.tickets.unresolved.visible.response_sla(account,Time.zone.now.to_s(:db)).
-                              updated_in(2.month.ago).all
-                            }
-        froverdue_tickets.each do |fr_ticket|
-          fr_sla_policy = sla_rule_based[fr_ticket.sla_policy_id] || sla_default
-          fr_sla_policy.escalate_response_overdue fr_ticket
-          #If there is no email-id /agent still escalted will show as true. This is to avoid huge sending if 
-          # somebody changes the config.
-        end
-        froverdue_tickets.length
       end
 
       def group_escalate
         ##Tickets left unassigned in group
         account = Account.current
         
-        tickets_unpicked =  execute_on_db {
-                              account.tickets.unresolved.visible.group_escalate_sla(Time.zone.now.to_s(:db)).
-                              updated_in(2.month.ago).all
-                            }
-        tickets_unpicked.each do |gr_ticket| 
-          send_email(gr_ticket, gr_ticket.group.escalate, EmailNotification::TICKET_UNATTENDED_IN_GROUP) unless gr_ticket.group.escalate.nil?
-          gr_ticket.ticket_states.update_attribute(:group_escalated , true)
+        tickets_unpicked = account.tickets.unresolved.visible.
+                            group_escalate_sla(Time.zone.now.to_s(:db)).
+                            updated_in(2.month.ago)
+        execute_on_db do
+          tickets_unpicked.find_each do |gr_ticket|
+            send_email(gr_ticket, gr_ticket.group.escalate, EmailNotification::TICKET_UNATTENDED_IN_GROUP) unless gr_ticket.group.escalate.nil?
+            execute_on_db("run_on_master") do
+              gr_ticket.ticket_states.update_attribute(:group_escalated , true)
+            end
+          end
         end
       end
 
@@ -99,7 +91,7 @@ module Admin::Sla::Escalation
                                     'ticket' => ticket, 'helpdesk_name' => ticket.account.portal_name)
         email_body = Liquid::Template.parse(message_template).render(
                                     'agent' => agent, 'ticket' => ticket, 'helpdesk_name' => ticket.account.portal_name)
-        SlaNotifier.escalation(ticket, agent, n_type, :email_body => email_body, :subject => email_subject)
+        SlaNotifier.send_later(:escalation, ticket, agent, :email_body => email_body, :subject => email_subject)
       ensure
         User.reset_current
       end      

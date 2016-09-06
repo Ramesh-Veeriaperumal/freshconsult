@@ -83,7 +83,7 @@ QuickBooksContactsWidget.prototype = {
     },
 
     handleContactSuccess: function($this) {
-    	if (quickbooksBundle.reqCompany == '' && QuickBooksUtilWidget.customers.length == 1) {
+    	if ((QuickBooksUtilWidget.company() == "") && QuickBooksUtilWidget.customers.length == 1) {
 				$this.createCompanyinFreshdesk(QuickBooksUtilWidget.customers);
 			}
       $this.parse_contact(QuickBooksUtilWidget.customers);

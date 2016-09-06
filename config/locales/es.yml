@@ -638,7 +638,7 @@ es:
       forgot_password: "Olvidó la contraseña"
       profile_edit: "Perfil de usuario"
       search: "Resultados de la búsqueda."
-      solution_home: "Soluciones, inicio"
+      solution_home: "Inicio / Prestatarios"
       solution_category: "Inicio de la categoría soluciones"
       article_list: "Lista de artículos"
       article_view: "Vista de artículos"
@@ -3659,7 +3659,7 @@ es:
     no_topics_in_this_view: "~ No hay temas en esta vista ~"
     reported: declarado
     said: dicho
-    solutions_home: "Soluciones, inicio"
+    solutions_home: "Inicio / Prestatarios"
     print_title: "Imprimir este articulo"
     attach_file: "Adjunto a <b>archivo</b>"
     header:
@@ -4035,9 +4035,9 @@ es:
     char_count: Caracteres
     meta_keywords_message: "Separa las palabras por coma"
     user_details: "Por <span class='article-user'>%{user}</span>%{time}"
-    feedback_message_1: "necesita mas informacion"
-    feedback_message_2: "Dificil de comprender"
-    feedback_message_3: "Contenido inutil o irrelevante"
+    feedback_message_1: "Necesita más información"
+    feedback_message_2: "Difícil de comprender"
+    feedback_message_3: "Contenido inútil o irrelevante"
     feedback_message_4: "Link Perdido o Roto"
     properties: Propiedades
     solution_title: Título

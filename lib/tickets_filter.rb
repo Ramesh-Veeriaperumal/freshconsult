@@ -142,6 +142,23 @@ module TicketsFilter
   DEFAULT_VISIBLE_FILTERS_WITH_ARCHIVE = %w( new_and_my_open unresolved all_tickets raised_by_me monitored_by archived spam deleted )
   SHARED_OWNERSHIP_DEFAULT_VISIBLE_FILTERS_WITH_ARCHIVE = %w( new_and_my_open shared_by_me shared_with_me unresolved all_tickets raised_by_me monitored_by archived spam deleted )
 
+  def self.mobile_sort_fields_options
+    sort_fields = self.sort_fields_options
+
+    sort_fields.map { |i| {
+        :id       =>  i[1], 
+        :name     =>  i[0], 
+      } }
+  end
+
+  def self.mobile_sort_order_fields_options
+    sort_order_fields = self.sort_order_fields_options
+    sort_order_fields.map { |i| {
+        :id       =>  i[1], 
+        :name     =>  i[0], 
+      } }
+  end
+
   def self.default_views
     filters = if Account.current && Account.current.features_included?(:archive_tickets)
       Account.current.features?(:shared_ownership) ? SHARED_OWNERSHIP_DEFAULT_VISIBLE_FILTERS_WITH_ARCHIVE : DEFAULT_VISIBLE_FILTERS_WITH_ARCHIVE

@@ -1484,6 +1484,10 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
     AppConfig['base_domain'][Rails.env]
   end
 
+  def show_upgrade_plan?
+    current_user.privilege?(:manage_account) && (current_account.subscription.free? || (current_account.subscription.trial_days < 11 && current_account.subscription.trial?))
+  end
+
   private
 
     def forums_visibility?
@@ -1530,6 +1534,13 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
         "alert-message block-message warning full-width")
     end
     return
+  end
+
+  def fb_realtime_msg_disabled
+    if current_account.fb_realtime_msg_from_cache
+      return content_tag('div', "#{t('fb_realtime_enable')}".html_safe, :class =>
+        "alert-message block-message full-width")
+    end
   end
 
   def check_twitter_reauth_required

@@ -3,7 +3,7 @@ Encoding.default_external = Encoding::UTF_8
 source 'https://rubygems.org'
 
 gem "rake", "~> 10.4.0"
-gem "rails","3.2.22.2"
+gem "rails","3.2.22.3"
 
 gem "freemail", "0.2.0", :require => false 
 

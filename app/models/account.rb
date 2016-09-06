@@ -170,6 +170,10 @@ class Account < ActiveRecord::Base
     ismember?(DASHBOARD_DISABLED, self.id)
   end
 
+  def dashboardv2_enabled?
+   launched?(:admin_dashboard) || launched?(:supervisor_dashboard) || launched?(:agent_dashboard)
+  end
+
   def restricted_compose_enabled?
     ismember?(RESTRICTED_COMPOSE, self.id)
   end
