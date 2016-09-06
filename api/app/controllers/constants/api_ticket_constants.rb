@@ -14,6 +14,7 @@ module ApiTicketConstants
   ALLOWED_INCLUDE_PARAMS = %w(conversations requester company stats)
   SIDE_LOADING = ['requester', 'stats']
   INCLUDE_PRELOAD_MAPPING = { 'stats' => :ticket_states }
+  BULK_DELETE_PRELOAD_OPTIONS = [:tags, :schema_less_ticket].freeze
   ORDER_TYPE = TicketsFilter::SORT_ORDER_FIELDS.map(&:first).map(&:to_s).freeze
   ORDER_BY = TicketsFilter::SORT_FIELDS.map(&:first).map(&:to_s) - ['priority']
   DEFAULT_ORDER_BY = TicketsFilter::DEFAULT_SORT
@@ -49,8 +50,19 @@ module ApiTicketConstants
 
   ALLOWED_CONTENT_TYPE_FOR_ACTION = {
     create: [:json, :multipart_form],
-    update: [:json, :multipart_form]
+    update: [:json, :multipart_form],
+    bulk_delete: [:json],
+    bulk_spam: [:json],
+    bulk_unspam: [:json],
+    bulk_restore: [:json],
+    bulk_execute_scenario: [:json]
   }.freeze
+
+  REQUIRE_PRELOAD = [:bulk_delete, :bulk_spam, :bulk_unspam, :bulk_restore].freeze
+  BULK_ACTION_ASYNC_METHODS = [:bulk_execute_scenario].freeze
+  BULK_ACTION_METHODS = [:bulk_delete, :bulk_spam, :bulk_restore, :bulk_unspam] + BULK_ACTION_ASYNC_METHODS
+
+  LOAD_OBJECT_EXCEPT = BULK_ACTION_METHODS.freeze
 
   MAX_EMAIL_COUNT = TicketConstants::MAX_EMAIL_COUNT - 1
 
@@ -58,4 +70,5 @@ module ApiTicketConstants
                      product: :product_id, ticket_type: :type }.freeze
 
   SEARCH_ALLOWED_DEFAULT_FIELDS = ['status'].freeze
+
 end.freeze

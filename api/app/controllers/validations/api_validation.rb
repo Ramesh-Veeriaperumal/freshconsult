@@ -1,9 +1,11 @@
 class ApiValidation
   include ActiveModel::Validations
   include ActiveModel::Validations::Callbacks
-  attr_accessor :error_options, :allow_string_param
+  attr_accessor :error_options, :allow_string_param, :ids
 
   before_validation :trim_attributes
+  validates :ids, required: true, data_type: { rules: Array, allow_nil: false }, array: { custom_numericality: { only_integer: true, greater_than: 0, allow_nil: false, ignore_string: :allow_string_param, greater_than: 0 } }, if: :is_bulk_action?
+
   FORMATTED_TYPES = [ActiveSupport::TimeWithZone]
   CHECK_PARAMS_SET_FIELDS = []
 
@@ -78,4 +80,9 @@ class ApiValidation
       set_instance_variables(value) if value.is_a?(Hash)
     end
   end
+
+  def is_bulk_action?
+    ApiConstants::BULK_ACTION_METHODS.include?(validation_context)
+  end
+
 end

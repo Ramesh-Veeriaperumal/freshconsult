@@ -2,7 +2,8 @@ JSON.generate(@scenarios.map do |scenario|
   response_hash = {
     id: scenario.id,
     name: scenario.name,
-    description: scenario.description
+    description: scenario.description,
+    actions: scenario.action_data.map { |action| action.slice(:name, "name", :value, "value") }
   }
   response_hash
 end)

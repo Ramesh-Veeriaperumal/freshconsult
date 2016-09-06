@@ -16,7 +16,7 @@ class ContactValidation < ApiValidation
   MANDATORY_FIELD_STRING = MANDATORY_FIELD_ARRAY.join(', ').freeze
 
   attr_accessor :avatar, :view_all_tickets, :custom_fields, :company_name, :email, :fb_profile_id, :job_title,
-                :language, :mobile, :name, :other_emails, :phone, :tags, :time_zone, :twitter_id, :address, :description, :ids
+                :language, :mobile, :name, :other_emails, :phone, :tags, :time_zone, :twitter_id, :address, :description
 
   alias_attribute :company_id, :company_name
   alias_attribute :customer_id, :company_name
@@ -30,7 +30,7 @@ class ContactValidation < ApiValidation
                                 field_validations: DEFAULT_FIELD_VALIDATIONS
                               }
 
-  validates :name, data_type: { rules: String, required: true }, if: -> { !is_bulk_delete? }
+  validates :name, data_type: { rules: String, required: true }
   validates :name, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }
   validates :view_all_tickets, data_type: { rules: 'Boolean',  ignore_string: :allow_string_param }
   validates :tags, data_type: { rules: Array, allow_nil: false }, array: { data_type: { rules: String }, custom_length: { maximum: ApiConstants::TAG_MAX_LENGTH_STRING } }, string_rejection: { excluded_chars: [','], allow_nil: true }
@@ -59,8 +59,6 @@ class ContactValidation < ApiValidation
   validates :avatar, data_type: { rules: ApiConstants::UPLOADED_FILE_TYPE, allow_nil: true }, file_size: {
     max: ContactConstants::ALLOWED_AVATAR_SIZE }
   validate :validate_avatar, if: -> { avatar && errors[:avatar].blank? }
-
-  validates :ids, required: true, data_type: { rules: Array, allow_nil: false }, array: { custom_numericality: { only_integer: true, greater_than: 0, allow_nil: true, ignore_string: :allow_string_param, greater_than: 0 } }, on: :bulk_delete
 
   def initialize(request_params, item, allow_string_param = false)
     super(request_params, item, allow_string_param)
@@ -123,9 +121,5 @@ class ContactValidation < ApiValidation
 
     def attributes_to_be_stripped
       ContactConstants::ATTRIBUTES_TO_BE_STRIPPED
-    end
-
-    def is_bulk_delete?
-      [:bulk_delete].include?(validation_context)
     end
 end

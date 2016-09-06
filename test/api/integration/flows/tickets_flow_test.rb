@@ -2,6 +2,7 @@ require_relative '../../test_helper'
 
 class TicketsFlowTest < ActionDispatch::IntegrationTest
   include TicketsTestHelper
+  include ScenarioAutomationsTestHelper
 
   JSON_ROUTES = { '/api/tickets/1/restore' => 'put' }
 
@@ -14,6 +15,19 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
       assert_response 415
       response.body.must_match_json_expression(un_supported_media_type_error_pattern)
     end
+  end
+
+  def ticket_params_hash
+    cc_emails = [Faker::Internet.email, Faker::Internet.email]
+    subject = Faker::Lorem.words(10).join(' ')
+    description = Faker::Lorem.paragraph
+    email = Faker::Internet.email
+    tags = [Faker::Name.name, Faker::Name.name]
+    @create_group ||= create_group_with_agents(@account, agent_list: [@agent.id])
+    params_hash = { email: email, cc_emails: cc_emails, description: description, subject: subject,
+                    priority: 2, status: 3, type: 'Problem', responder_id: @agent.id, source: 1, tags: tags,
+                    due_by: 14.days.since.iso8601, fr_due_by: 1.days.since.iso8601, group_id: @create_group.id }
+    params_hash
   end
 
   def ticket
@@ -401,5 +415,54 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
     assert Delayed::Job.last.handler.include?('send_cc_email')
     10.times { Delayed::Job.reserve_and_run_one_job }
     assert_equal 0, Delayed::Job.count
+  end
+
+  def test_bulk_deletion
+    skip_bullet do
+      ticket_id = create_ticket(ticket_params_hash).display_id
+      put "api/_/tickets/bulk_delete", {ids: [ticket_id]}.to_json, @write_headers
+      assert_response 204
+
+      put "api/_/tickets/bulk_delete", {ids: [ticket_id, ticket_id + 20]}.to_json, @write_headers
+      assert_response 202
+
+      put "api/_/tickets/bulk_delete", nil, @write_headers
+      assert_response 400
+    end
+  end
+
+   def test_bulk_spam
+    skip_bullet do
+      ticket_id = create_ticket(ticket_params_hash).display_id
+      put "api/_/tickets/bulk_spam", {ids: [ticket_id]}.to_json, @write_headers
+      assert_response 204
+
+      put "api/_/tickets/bulk_spam", {ids: [ticket_id, ticket_id + 20]}.to_json, @write_headers
+      assert_response 202
+
+      put "api/_/tickets/bulk_spam", nil, @write_headers
+      assert_response 400
+    end
+  end
+
+  def test_execute_scenario
+    skip_bullet do
+      scenario_id = create_scn_automation_rule(scenario_automation_params).id
+      ticket_id = create_ticket(ticket_params_hash).display_id
+      put "api/_/tickets/#{ticket_id}/execute_scenario/#{scenario_id}", nil, @write_headers
+      assert_response 204
+
+      put "api/_/tickets/#{ticket_id + 20}/execute_scenario/#{scenario_id}", nil, @write_headers
+      assert_response 404
+    end
+  end
+
+  def test_bulk_execute_scenario
+    skip_bullet do
+      scenario_id = create_scn_automation_rule(scenario_automation_params).id
+      ticket_id = create_ticket(ticket_params_hash).display_id
+      put "api/_/tickets/bulk_execute_scenario/#{scenario_id}", {ids: [ticket_id]}.to_json, @write_headers
+      assert_response 202
+    end
   end
 end

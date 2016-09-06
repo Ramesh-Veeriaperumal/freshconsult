@@ -1,16 +1,16 @@
-class Ember::ScenarioAutomationsController < ApiApplicationController
-  
-  include Helpdesk::AccessibleElements
+module Ember
+  class ScenarioAutomationsController < ApiApplicationController
+    include Helpdesk::AccessibleElements
 
-  def index
-    load_objects
-    response.api_meta = { :count => @scenarios.count }
-  end
-  
-  private 
-
-    def load_objects
-      @scenarios = accessible_scenrios
+    def index
+      load_objects
+      response.api_meta = { count: @scenarios.count }
     end
 
+    private
+
+      def load_objects
+        @scenarios = accessible_scenrios
+      end
+  end
 end

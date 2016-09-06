@@ -88,7 +88,7 @@ class TicketValidation < ApiValidation
 
   def initialize(request_params, item, allow_string_param = false)
     @request_params = request_params
-    @status_ids = request_params[:statuses].map(&:status_id)
+    @status_ids = request_params[:statuses].map(&:status_id) if request_params.key?(:statuses)
     super(request_params, item, allow_string_param)
     @description = item.description_html if !request_params.key?(:description) && item
     @fr_due_by ||= item.try(:frDueBy).try(:iso8601) if item

@@ -184,7 +184,7 @@ class ApiContactsFlowTest < ActionDispatch::IntegrationTest
     skip_bullet do
       cid = add_new_user(@account).id
       put "api/_/contacts/bulk_delete", {ids: [cid]}.to_json, @write_headers
-      assert_response 205
+      assert_response 204
 
       put "api/_/contacts/bulk_delete", {ids: [cid, 1000]}.to_json, @write_headers
       assert_response 202
