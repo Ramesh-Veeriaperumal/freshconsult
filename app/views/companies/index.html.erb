@@ -33,8 +33,12 @@
 									<p class="text-info">
 										<strong><%= link_to(h(company.name), company_path(company), :class => "item_info", :'data-pjax' => "#body-container" ) %> <br/>
 										</strong>
-										<% company_user_size = company.users.size
-											 if company_user_size >= 1 %>
+										<% if current_account.features?(:multiple_user_companies)
+												 company_user_size = company.users.size %>
+										<% else
+												 company_user_size = current_account.users.contacts.company_users_via_customer_id(company.id).size %>
+										<% end %>
+											<% if company_user_size >= 1 %>
 											<% updated_contact_count = pluralize(company_user_size, t('contacts.contact'), t('contacts.contacts')) %>
 									    	<span class="muted"><%= t('contacts.contacts_in_companies', :contacts => updated_contact_count) %></span>
 									    <% else %>
