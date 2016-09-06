@@ -1107,6 +1107,9 @@ the specific language governing permissions and limitations under the Apache Lic
                 if (this.opts.element.data("select2-change-triggered") !== true) {
                     this.initSelection();
                 }
+                if ((jQuery("#created_at option:selected").val())!=='set_date'){   
+                    jQuery('.daterangepicker.dropdown-menu.opensright').hide();
+                }
             }));
 
             this._sync = this.bind(function () {
