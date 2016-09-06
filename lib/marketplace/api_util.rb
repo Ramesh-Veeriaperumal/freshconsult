@@ -31,8 +31,10 @@ module Marketplace::ApiUtil
       params_hash.blank? ? '' : "?#{params_hash.to_query}"
     end
 
-    def generate_md5_digest(url, key)
-      digest = OpenSSL::HMAC.hexdigest(OpenSSL::Digest.new('MD5'), key, url)
+    def generate_md5_digest(url)
+      digest = OpenSSL::HMAC.hexdigest(OpenSSL::Digest.new('MD5'),
+                              MarketplaceConfig::API_AUTH_KEY,
+                              url)
       "Freshdesk #{digest}"
     end
 
@@ -46,7 +48,7 @@ module Marketplace::ApiUtil
                                             'Content-Type' => 'application/json',
                                             'Accept' => 'application/json; 1.0.0',
                                             'Accept-Language' => curr_user_language,
-                                            'Authorization' => generate_md5_digest(url, MarketplaceConfig::API_AUTH_KEY)
+                                            'Authorization' => generate_md5_digest(url)
                                          },
                                 conn_timeout: timeout[:conn],
                                 read_timeout: timeout[:read]

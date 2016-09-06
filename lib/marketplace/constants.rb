@@ -43,9 +43,4 @@ module Marketplace::Constants
   API_PERMIT_PARAMS = [ :type, :category_id, :display_name, :installation_type,
                         :query, :version_id, :extension_id]
 
-  MKP_ROUTES =[
-    [:db, "db"]
-  ]
-
-  MKP_ROUTE = Hash[*MKP_ROUTES.map { |i| [i[0], i[1]] }.flatten]
 end

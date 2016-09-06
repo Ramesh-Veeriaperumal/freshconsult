@@ -122,7 +122,7 @@ module MemcacheKeys
 
   ACCOUNT_ADDITIONAL_SETTINGS = "v2/ACCOUNT_ADDITIONAL_SETTINGS:%{account_id}"
 
-  INSTALLED_FRESHPLUGS = "v2/FA:%{page}:PLUGS:%{account_id}"
+  INSTALLED_FRESHPLUGS = "v1/FA:%{page}:PLUGS:%{account_id}"
 
   FRESHPLUG_CODE = "v1/FA:PLUG:%{version_id}"
 
