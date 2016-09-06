@@ -5,6 +5,7 @@ Authority::Authorization::PrivilegeList.build do
                                       :execute_scenario, :bulk_execute_scenario]
     resource :"ember/scenario_automation", only: [:index]
     resource :"ember/ticket", only: [:index, :spam]
+    resource :"ember/ticket_filter", only: [:index, :show]
   end
 
   delete_contact do
