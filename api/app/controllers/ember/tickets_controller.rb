@@ -38,7 +38,7 @@ module Ember
       end
 
       def preload_options
-        if [:bulk_delete, :bulk_spam].include?(action_name.to_sym)
+        if ApiTicketConstants::REQUIRE_PRELOAD.include?(action_name.to_sym)
           ApiTicketConstants::BULK_DELETE_PRELOAD_OPTIONS
         end
       end

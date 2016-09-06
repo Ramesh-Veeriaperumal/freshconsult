@@ -79,26 +79,31 @@ class Ember::TicketsControllerTest < ActionController::TestCase
   end
 
   def test_bulk_delete_tickets_with_group_access
-    params = ticket_params_hash
-    @agent.agent.ticket_permission = Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets]
-    @agent.group_ids << @create_group.id
-    @agent.save
+    User.any_instance.stubs(:can_view_all_tickets?).returns(false).at_most_once
+    User.any_instance.stubs(:group_ticket_permission).returns(true).at_most_once
+    User.any_instance.stubs(:assigned_ticket_permission).returns(false).at_most_once
+    group = create_group_with_agents(@account, agent_list: [@agent.id])
     ticket_ids = []
     rand(2..10).times do
-      ticket_ids << create_ticket(params).display_id
+      ticket_ids << create_ticket(ticket_params_hash.merge(group_id: group.id)).display_id
     end
     put :bulk_delete, construct_params({ version: 'private' }, {ids: ticket_ids})
+    User.any_instance.unstub(:can_view_all_tickets?, :group_ticket_permission, :assigned_ticket_permission)
     assert_response 204
   end
 
   def test_bulk_delete_tickets_with_assigned_access
-    @agent.agent.ticket_permission = Agent::PERMISSION_KEYS_BY_TOKEN[:assigned_tickets]
-    @agent.save
+    User.any_instance.stubs(:can_view_all_tickets?).returns(false).at_most_once
+    User.any_instance.stubs(:group_ticket_permission).returns(false).at_most_once
+    User.any_instance.stubs(:assigned_ticket_permission).returns(true).at_most_once
+    Helpdesk::Ticket.any_instance.stubs(:responder_id).returns(@agent.id)
     ticket_ids = []
     rand(2..10).times do
       ticket_ids << create_ticket(ticket_params_hash).display_id
     end
     put :bulk_delete, construct_params({ version: 'private' }, {ids: ticket_ids})
+    User.any_instance.unstub(:can_view_all_tickets?, :group_ticket_permission, :assigned_ticket_permission)
+    Helpdesk::Ticket.any_instance.unstub(:responder_id)
     assert_response 204
   end
 
@@ -161,26 +166,31 @@ class Ember::TicketsControllerTest < ActionController::TestCase
   end
 
   def test_bulk_spam_tickets_with_group_access
-    params = ticket_params_hash
-    @agent.agent.ticket_permission = Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets]
-    @agent.group_ids << @create_group.id
-    @agent.save
+    User.any_instance.stubs(:can_view_all_tickets?).returns(false).at_most_once
+    User.any_instance.stubs(:group_ticket_permission).returns(true).at_most_once
+    User.any_instance.stubs(:assigned_ticket_permission).returns(false).at_most_once
+    group = create_group_with_agents(@account, agent_list: [@agent.id])
     ticket_ids = []
     rand(2..10).times do
-      ticket_ids << create_ticket(params).display_id
+      ticket_ids << create_ticket(ticket_params_hash.merge(group_id: group.id)).display_id
     end
     put :bulk_spam, construct_params({ version: 'private' }, {ids: ticket_ids})
+    User.any_instance.unstub(:can_view_all_tickets?, :group_ticket_permission, :assigned_ticket_permission)
     assert_response 204
   end
 
   def test_bulk_spam_tickets_with_assigned_access
-    @agent.agent.ticket_permission = Agent::PERMISSION_KEYS_BY_TOKEN[:assigned_tickets]
-    @agent.save
+    User.any_instance.stubs(:can_view_all_tickets?).returns(false).at_most_once
+    User.any_instance.stubs(:group_ticket_permission).returns(false).at_most_once
+    User.any_instance.stubs(:assigned_ticket_permission).returns(true).at_most_once
+    Helpdesk::Ticket.any_instance.stubs(:responder_id).returns(@agent.id)
     ticket_ids = []
     rand(2..10).times do
       ticket_ids << create_ticket(ticket_params_hash).display_id
     end
     put :bulk_spam, construct_params({ version: 'private' }, {ids: ticket_ids})
+    User.any_instance.unstub(:can_view_all_tickets?, :group_ticket_permission, :assigned_ticket_permission)
+    Helpdesk::Ticket.any_instance.unstub(:responder_id)
     assert_response 204
   end
 

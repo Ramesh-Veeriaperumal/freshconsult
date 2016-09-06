@@ -52,10 +52,17 @@ module ApiTicketConstants
     create: [:json, :multipart_form],
     update: [:json, :multipart_form],
     bulk_delete: [:json],
-    bulk_spam: [:json]
+    bulk_spam: [:json],
+    bulk_unspam: [:json],
+    bulk_restore: [:json],
+    bulk_execute_scenario: [:json]
   }.freeze
 
-  LOAD_OBJECT_EXCEPT = [:bulk_delete, :bulk_spam, :bulk_execute_scenario].freeze
+  REQUIRE_PRELOAD = [:bulk_delete, :bulk_spam, :bulk_unspam, :bulk_restore].freeze
+  BULK_ACTION_ASYNC_METHODS = [:bulk_execute_scenario].freeze
+  BULK_ACTION_METHODS = [:bulk_delete, :bulk_spam, :bulk_restore, :bulk_unspam] + BULK_ACTION_ASYNC_METHODS
+
+  LOAD_OBJECT_EXCEPT = BULK_ACTION_METHODS.freeze
 
   MAX_EMAIL_COUNT = TicketConstants::MAX_EMAIL_COUNT - 1
 
@@ -64,6 +71,4 @@ module ApiTicketConstants
 
   SEARCH_ALLOWED_DEFAULT_FIELDS = ['status'].freeze
 
-  BULK_ACTION_ASYNC_METHODS = [:bulk_execute_scenario].freeze
-  BULK_ACTION_METHODS = [:bulk_spam] + BULK_ACTION_ASYNC_METHODS
 end.freeze

@@ -103,14 +103,22 @@ Helpkit::Application.routes.draw do
       collection do
         put :bulk_delete
         put :bulk_spam
+        put :bulk_restore
+        put :bulk_unspam
       end
       member do
         put :spam
+        put :restore
+        put :unspam
       end
     end
     resources :contacts, controller: 'ember/contacts', except: [:new, :edit] do
       collection do
         put :bulk_delete
+        put :bulk_restore
+      end
+      member do
+        put :restore
       end
     end
     resources :ticket_filters, controller: 'ember/ticket_filters', only: :index
