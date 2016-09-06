@@ -106,6 +106,7 @@ Freshdesk.Widget.prototype={
 			if (reqData.resource == null) reqData.resource = reqData.rest_url;
 			merge_sym = (reqData.resource.indexOf('?') == -1) ? '?' : '&'
 			reqData.rest_url = reqData.resource + merge_sym + this.options.url_token_key + '=' + this.options.username;
+			reqData.app_name = this.options.app_name.toLowerCase().replace(' ', '_');
 		}
 		else if (this.options.auth_type == 'OAuth1') {
 			reqData.auth_type = 'OAuth1';

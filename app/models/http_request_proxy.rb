@@ -146,8 +146,7 @@ class HttpRequestProxy
             response_body = proxy_response.parsed_response.to_json
           end
         end
-
-        if response_type.include? 'xml'
+        if (response_type.include?('xml') && params['app_name'] != 'constantcontact')
           parsed_xml = Nokogiri::XML(response_body)
           parsed_xml.remove_namespaces!
           parsed_xml.xpath('//script', *XML_BLACKLIST_ATTRIBUTES).remove
