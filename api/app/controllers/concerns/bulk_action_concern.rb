@@ -32,6 +32,6 @@ module BulkActionConcern
     end
 
     def async_process?
-      [:bulk_execute_scenario].include?(action_name.to_sym)
+      ApiConstants::BULK_ACTION_ASYNC_METHODS.include?(action_name.to_sym)
     end
 end

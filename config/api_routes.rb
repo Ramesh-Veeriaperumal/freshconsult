@@ -99,7 +99,15 @@ Helpkit::Application.routes.draw do
   ember_routes = proc do
     resources :ticket_fields, controller: 'ember/ticket_fields', only: [:index, :update]
     resources :bootstrap, controller: 'ember/bootstrap', only: :index
-    resources :tickets, controller: 'ember/tickets', only: :index
+    resources :tickets, controller: 'ember/tickets', only: [:index, :destroy] do
+      collection do
+        put :bulk_delete
+        put :bulk_spam
+      end
+      member do
+        put :spam
+      end
+    end
     resources :contacts, controller: 'ember/contacts', except: [:new, :edit] do
       collection do
         put :bulk_delete
@@ -110,12 +118,6 @@ Helpkit::Application.routes.draw do
     match '/tickets/bulk_execute_scenario/:scenario_id' => 'ember/tickets#bulk_execute_scenario', via: :put
     match '/tickets/:id/execute_scenario/:scenario_id' => 'ember/tickets#execute_scenario', via: :put
     
-    resources :tickets, controller: 'ember/tickets' do
-      collection do
-        put :bulk_delete
-        put :bulk_spam
-      end
-    end
     resources :scenario_automations, controller: 'ember/scenario_automations', only: :index
   end
 

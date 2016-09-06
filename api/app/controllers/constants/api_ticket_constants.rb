@@ -64,5 +64,6 @@ module ApiTicketConstants
 
   SEARCH_ALLOWED_DEFAULT_FIELDS = ['status'].freeze
 
-  BULK_ACTION_METHODS = [:bulk_spam, :bulk_execute_scenario].freeze
+  BULK_ACTION_ASYNC_METHODS = [:bulk_execute_scenario].freeze
+  BULK_ACTION_METHODS = [:bulk_spam] + BULK_ACTION_ASYNC_METHODS
 end.freeze
