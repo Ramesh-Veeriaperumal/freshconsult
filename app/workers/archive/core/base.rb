@@ -205,11 +205,6 @@ module Archive
         unless note_ids.empty?
           delete_notes_association(note_ids,account_id)
           ActiveRecord::Base.connection.execute("delete from helpdesk_notes where id in (#{note_ids.join(',')}) and account_id=#{account_id}")
-
-          # Removing from ES
-          SearchV2::IndexOperations::PostArchiveProcess.perform_async({ 
-            account_id: account_id, ticket_id: ticket_id, note_ids: note_ids 
-          })
         end
       end
 
@@ -254,6 +249,12 @@ module Archive
             else
               ids = ActiveRecord::Base.connection.select_values("select id from #{key} where account_id=#{responder.account_id} and  #{value}_id=#{poly_id} and #{value}_type= '#{from_polymorphic_type}'")
               ActiveRecord::Base.connection.execute("update #{key} set #{value}_id=#{archive.id}, #{value}_type='#{to_polymorphic_type}' where id in (#{ids.join(',')}) and account_id=#{responder.account_id}") unless ids.empty?
+              
+              if(key.to_sym == :helpdesk_notes)
+                SearchV2::IndexOperations::PostArchiveProcess.perform_async({ 
+                  account_id: responder.account_id, archive_ticket_id: archive.id, ticket_id: poly_id, note_ids: ids 
+                })
+              end
             end
           end
         end
