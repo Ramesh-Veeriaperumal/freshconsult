@@ -41,11 +41,11 @@ module Admin::Sla::Escalation
 
       def escalate_overdue(sla_default, sla_rule_based, overdue_type)
         account = Account.current
-        overdue_tickets = account.tickets.unresolved.visible.
-                          send("#{overdue_type}_sla", account, Time.zone.now.to_s(:db)).
-                          updated_in(2.month.ago)
         execute_on_db do
           overdue_tickets_count = 0
+          overdue_tickets = account.tickets.unresolved.visible.
+                            send("#{overdue_type}_sla", account, Time.zone.now.to_s(:db)).
+                            updated_in(2.month.ago)
           overdue_tickets.find_each do |ticket|
             overdue_tickets_count += 1
             sla_policy = sla_rule_based[ticket.sla_policy_id] || sla_default
@@ -60,11 +60,10 @@ module Admin::Sla::Escalation
       def group_escalate
         ##Tickets left unassigned in group
         account = Account.current
-        
-        tickets_unpicked = account.tickets.unresolved.visible.
-                            group_escalate_sla(Time.zone.now.to_s(:db)).
-                            updated_in(2.month.ago)
         execute_on_db do
+          tickets_unpicked = account.tickets.unresolved.visible.
+                             group_escalate_sla(Time.zone.now.to_s(:db)).
+                             updated_in(2.month.ago)
           tickets_unpicked.find_each do |gr_ticket|
             send_email(gr_ticket, gr_ticket.group.escalate, EmailNotification::TICKET_UNATTENDED_IN_GROUP) unless gr_ticket.group.escalate.nil?
             execute_on_db("run_on_master") do
