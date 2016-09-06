@@ -21,4 +21,18 @@ class ContactDecorator < ApiDecorator
   def other_emails
     record.user_emails.reject(&:primary_role).map(&:email)
   end
+  
+  def avatar_hash
+    # Should be cached
+    return nil unless avatar.present?
+    {
+      id: avatar.id,
+      name: avatar.content_file_name,
+      content_type: avatar.content_content_type,
+      size: avatar.content_file_size,
+      created_at: avatar.created_at.try(:utc),
+      updated_at: avatar.updated_at.try(:utc),
+      avatar_url: avatar.attachment_url_for_api
+    }
+  end
 end

@@ -1,0 +1,61 @@
+(tickets = JSON.generate(@items.map do |item|
+  response_hash = {
+    cc_emails: item.cc_email.try(:[], :cc_emails),
+    fwd_emails: item.cc_email.try(:[], :fwd_emails),
+    reply_cc_emails: item.cc_email.try(:[], :reply_cc),
+    fr_escalated: item.fr_escalated,
+    spam: item.spam,
+    email_config_id: item.email_config_id,
+    group_id: item.group_id,
+    priority: item.priority,
+    requester_id: item.requester_id,
+    responder_id: item.responder_id,
+    source: item.source,
+    company_id: item.company_id,
+    status: item.status,
+    subject: item.subject,
+    to_emails: item.schema_less_ticket.try(:to_emails),
+    product_id: item.schema_less_ticket.try(:product_id),
+    id: item.display_id,
+    type: item.ticket_type,
+    due_by: item.due_by.try(:utc),
+    fr_due_by: item.frDueBy.try(:utc),
+    is_escalated: item.isescalated,
+    description: item.ticket_body.description_html,
+    description_text: item.ticket_body.description,
+    custom_fields: item.custom_fields,
+    created_at: item.created_at.try(:utc),
+    updated_at: item.updated_at.try(:utc)
+  }
+  stats_hash = item.stats
+  response_hash.merge!(deleted: item.deleted) if item.deleted
+  response_hash.merge!(stats: stats_hash) if stats_hash
+  response_hash
+end)
+
+requesters = JSON.generate(@requesters.map do |item|
+  response_hash = {
+    active: item.active,
+    address: item.address,
+    company_id: item.company_id,
+    description: item.description,
+    email: item.email,
+    id: item.id,
+    job_title: item.job_title,
+    language: item.language,
+    mobile: item.mobile,
+    name: item.name,
+    phone: item.phone,
+    time_zone: item.time_zone,
+    twitter_id: item.twitter_id,
+    created_at: item.created_at.try(:utc),
+    updated_at: item.updated_at.try(:utc),
+    avatar: item.avatar_hash
+  }
+  response_hash.merge!(deleted: true) if item.deleted
+  response_hash.merge!({custom_fields: item.custom_fields}) if item.custom_fields
+  response_hash.merge!(deleted: true) if item.deleted
+  response_hash
+end)
+return "{\"tickets\":#{tickets}, \"requesters\": #{requesters}}"
+)
