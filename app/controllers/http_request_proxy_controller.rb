@@ -4,7 +4,7 @@ class HttpRequestProxyController < ApplicationController
   include Integrations::Constants
   include Redis::IntegrationsRedis
 
-  skip_before_filter :check_privilege, :verify_authenticity_token
+  skip_before_filter :check_privilege
   before_filter :authenticated_agent_check 
   before_filter :populate_server_password
   before_filter :verify_domain
@@ -14,7 +14,9 @@ class HttpRequestProxyController < ApplicationController
   def fetch
     httpRequestProxy = HttpRequestProxy.new
     http_resp = httpRequestProxy.fetch(params, request);
-    
+    if request.method.upcase == 'GET'
+      Rails.logger.error "8fdb249d32ae991ca3969c27cbe927c9db4d4bca AccountID: #{current_account.id} PARAMS: #{params.inspect}"
+    end
     response.headers.merge!(http_resp.delete('x-headers')) if http_resp['x-headers'].present?
     render http_resp
   end
