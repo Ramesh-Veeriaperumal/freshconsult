@@ -33,6 +33,8 @@ class ApiApplicationController < MetalApiController
   include AuthenticationSystem
   include HelpdeskSystem
   include SubscriptionSystem
+  include Mobile::MobileHelperMethods
+  
   # App specific Before filters Ends
 
   include DecoratorConcern
