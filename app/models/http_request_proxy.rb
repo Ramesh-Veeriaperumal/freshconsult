@@ -151,7 +151,7 @@ class HttpRequestProxy
           parsed_xml = Nokogiri::XML(response_body)
           parsed_xml.remove_namespaces!
           parsed_xml.xpath('//script', *XML_BLACKLIST_ATTRIBUTES).remove
-          response_body = parsed_xml.to_xml
+          response_body = parsed_xml.to_xml(:save_with => Nokogiri::XML::Node::SaveOptions::AS_XML)
         end
       rescue Timeout::Error
         Rails.logger.error("Timeout trying to complete the request. \n#{params.inspect}")
