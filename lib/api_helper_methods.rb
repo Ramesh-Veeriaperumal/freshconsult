@@ -10,7 +10,7 @@ module APIHelperMethods
       value = validate(conditions[2],conditions[0])
       # Need to bring in when contact merge UI is enabled for all to check all emails of a user
       # fix_for_multiple_emails(conditions) if conditions.include?("email") 
-      if conditions[0] == "customer_id"
+      if conditions[0] == "customer_id" && current_account.features?(:multiple_user_companies)
         query[0] = "user_companies.company_id #{OPERATORS[conditions[1]]} ?"
       else
         query[0] = "#{conditions[0]} #{OPERATORS[conditions[1]]} ?"
