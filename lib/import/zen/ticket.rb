@@ -101,9 +101,12 @@ end
 
 def ticket_post_process ticket_prop , ticket
   custom_hash ={}              
+  custom_dropdown_hash = get_full_hash(zen_dropdown_key)              
   ticket_prop.custom_fields.each do |custom_field|
     ff_def_entry = FlexifieldDefEntry.first(:conditions =>{:flexifield_def_id => @current_account.ticket_field_def.id ,:import_id => custom_field.field_id.to_i()})
-    custom_hash.store(ff_def_entry.flexifield_alias ,custom_field.value) unless ff_def_entry.blank? 
+    redis_h_key = "#{custom_field.field_id}_#{custom_field.value}"
+    final_custom_field_value = custom_dropdown_hash[redis_h_key] || custom_field.value
+    custom_hash.store(ff_def_entry.flexifield_alias ,final_custom_field_value) unless ff_def_entry.blank? 
   end
   
   unless custom_hash.blank?      

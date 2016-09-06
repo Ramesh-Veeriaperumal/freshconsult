@@ -10,10 +10,12 @@ class Import::Zen::Start < Struct.new(:params)
     include Import::Zen::Organization
     include Helpdesk::ToggleEmailNotification
     include Import::Zen::Redis
+    include Redis::OthersRedis
     
     OBJECT_FILE_MAP = {:organization => "organizations.xml" ,:user => "users.xml" , :group => "groups.xml" ,:ticket => "tickets.xml" ,
                        :record => "ticket_fields.xml"  , :category => "categories.xml",:forum => "forums.xml"  , :entry=>"entries.xml", :post=>"posts.xml" }
     SUB_FUNCTION_MAP = {:customers =>[:organization, :user, :group] , :tickets =>[ :record, :ticket] , :forums => [:category,:forum,:entry,:post] }
+    ZEN_DROPDOWN_KEY_EXPIRY = 5.days.to_i
  
   
   attr_accessor :params, :username, :password
@@ -34,6 +36,7 @@ class Import::Zen::Start < Struct.new(:params)
       @base_dir = extract_zendesk_zip(params[:zendesk][:file_url], username, password)
       disable_notification(@current_account)
       handle_migration(params[:zendesk][:files] , @base_dir)
+      set_others_redis_expiry(zen_dropdown_key, ZEN_DROPDOWN_KEY_EXPIRY)
       enable_notification(@current_account)
       send_success_email
       delete_import_files @base_dir
