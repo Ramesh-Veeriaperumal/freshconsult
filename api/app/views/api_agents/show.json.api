@@ -12,6 +12,7 @@ response_hash = {
   available_since: @item.active_since.try(:utc),
   contact: {
     active: user.active,
+    company_id: user.company_id,
     email: user.email,
     job_title: user.job_title,
     language: user.language,
