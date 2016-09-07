@@ -5,7 +5,7 @@ module Ember
 
     def index
       super
-      response.api_meta = { count: contacts_filter(scoper).count }
+      response.api_meta = { count: @items_count }
       render 'api_contacts/index'
     end
 
@@ -14,6 +14,14 @@ module Ember
     end
 
     private
+
+      def scoper
+        if !params[:tag].blank?
+          tag = current_account.tags.find_by_name(params[:tag])
+          return (tag || Helpdesk::Tag.new).contacts
+        end
+        super
+      end
 
       def fetch_objects(items = scoper)
         @items = items.find_all_by_id(params[cname][:ids])

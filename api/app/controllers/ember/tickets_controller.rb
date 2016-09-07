@@ -6,7 +6,7 @@ module Ember
 
     def index
       super
-      response.api_meta = { count: tickets_filter.count }
+      response.api_meta = { count: @items_count }
       # TODO-EMBERAPI Optimize the way we fetch the count
     end
 
