@@ -9,7 +9,7 @@ class TopicsDependencyTest < ActionView::TestCase
                          :set_cache_buster, :remove_pjax_param, :set_shard_for_payload, :remove_rails_2_flash_after, :set_affiliate_cookie,
                          :verify_authenticity_token, :require_user, :find_topic, :portal_check, :fetch_monitorship, :set_page,
                          :after_destroy_path, :set_selected_tab, :verify_ticket_permission, :redirect_for_ticket, :set_last_active_time, :reset_language,
-                         :fetch_vote, :toggle_vote, :check_rate_limit]
+                         :fetch_vote, :toggle_vote]
     actual_filters = Discussions::TopicsController._process_action_callbacks.map { |c| c.filter.to_s }.reject { |f| f.starts_with?('_') }.compact
     assert_equal expected_filters.map(&:to_s).sort, actual_filters.sort
   end

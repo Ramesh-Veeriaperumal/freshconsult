@@ -110,6 +110,8 @@ class FakeControllerTest < ActionController::TestCase
     Helpdesk::Ticket.unstub(:assigned_tickets_permission, :responder_id)
     Account.any_instance.unstub(:features?)
     assert actual
+  ensure
+    status.destroy
   end
 
   def test_verify_ticket_permission_with_requester_ticket_permission_valid
@@ -165,5 +167,7 @@ class FakeControllerTest < ActionController::TestCase
     User.any_instance.unstub(:can_view_all_tickets, :group_ticket_permission)
     Account.any_instance.unstub(:features?)
     assert actual
+  ensure
+    status.destroy
   end
 end
