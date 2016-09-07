@@ -57,5 +57,5 @@ requesters = JSON.generate(@requesters.map do |item|
   response_hash.merge!(deleted: true) if item.deleted
   response_hash
 end)
-return "{\"tickets\":#{tickets}, \"requesters\": #{requesters}}"
+return "{\"tickets\":#{tickets}, \"contacts\": #{requesters}}"
 )

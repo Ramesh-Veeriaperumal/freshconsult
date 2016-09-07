@@ -3,7 +3,7 @@ module Ember
     include DeleteSpamConcern
 
     INDEX_PRELOAD_OPTIONS = [:ticket_old_body, :schema_less_ticket, :flexifield, { requester: [:avatar, :flexifield, :default_user_company] }].freeze
-
+    DEFAULT_TICKET_FILTER = :all_tickets.to_s.freeze
     def index
       super
       response.api_meta = { count: @items_count }
@@ -26,7 +26,7 @@ module Ember
     end
 
     private
-    
+
       def load_scenario
         @va_rule ||= current_account.scn_automations.find_by_id(params[:scenario_id])
         return true if @va_rule.present? && @va_rule.visible_to_me? && @va_rule.check_user_privilege
@@ -121,7 +121,7 @@ module Ember
         # ?email=** or ?requester_id=*** are NOT going to be supported as of now.
         # Has to be taken up post sprint while cleaning this up and writing a proper validator for this
         params.permit(*ApiTicketConstants::INDEX_FIELDS, *ApiConstants::DEFAULT_INDEX_FIELDS)
-
+        params[:filter] ||= DEFAULT_TICKET_FILTER
         if params[:filter].to_i.to_s == params[:filter] # Which means it is a string
           @ticket_filter = current_account.ticket_filters.find_by_id(params[:filter])
           if @ticket_filter.nil? || !@ticket_filter.has_permission?(api_current_user)
@@ -133,6 +133,7 @@ module Ember
           render_filter_errors
         else
           @ticket_filter = current_account.ticket_filters.new(Helpdesk::Filters::CustomTicketFilter::MODEL_NAME).default_filter(params[:filter])
+          params["filter_name"] = params[:filter]
         end
       end
 
