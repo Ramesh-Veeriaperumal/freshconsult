@@ -121,8 +121,7 @@ Helpkit::Application.routes.draw do
         put :restore
       end
     end
-    resources :ticket_filters, controller: 'ember/ticket_filters', only: :index
-
+    resources :ticket_filters, controller: 'ember/ticket_filters', only: [:index, :show]
     match '/tickets/bulk_execute_scenario/:scenario_id' => 'ember/tickets#bulk_execute_scenario', via: :put
     match '/tickets/:id/execute_scenario/:scenario_id' => 'ember/tickets#execute_scenario', via: :put
     resources :contact_fields, controller: 'ember/contact_fields', only: :index
