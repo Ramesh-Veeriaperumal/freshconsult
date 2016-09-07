@@ -74,7 +74,8 @@ RealtimeDashboard.CoreUtil = RealtimeDashboard.CoreUtil || {};
 		autorefresh: function () {
 			var self = this;
 			var reloader = setInterval(function() {
-				if(!document.hidden) {
+				var current_tab = jQuery(".header-tabs li.active").data('tab-name');
+				if(!document.hidden && current_tab == 'dashboard') {
 					//For full page refresh
 					//location.reload(true);
 					if(RealtimeDashboard.type == 'supervisor') {
@@ -174,8 +175,11 @@ RealtimeDashboard.CoreUtil = RealtimeDashboard.CoreUtil || {};
 					jQuery('.grid-stack').addClass('grid-stack-6');
 			}
 			//Set the page title
-			var page_title = RealtimeDashboard.snapshot_label + " : " + RealtimeDashboard.helpdesk_name;
-			jQuery(document).attr('title',page_title);
+			if(RealtimeDashboard.dashboard_enabled) {
+				var page_title = RealtimeDashboard.snapshot_label + " : " + RealtimeDashboard.helpdesk_name;
+				jQuery(document).attr('title',page_title);
+			}
+			
 			$('#grid-stack').gridstack(options);
 			$(".widget-scroll").mCustomScrollbar();
 

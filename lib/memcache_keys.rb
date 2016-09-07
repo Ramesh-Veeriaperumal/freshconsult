@@ -73,6 +73,8 @@ module MemcacheKeys
   SOLUTION_CATEGORIES = "v1/SOLUTION_CATEGORIES:%{portal_id}"
 
   FB_REAUTH_CHECK = "v1/FB_REAUTH_CHECK:%{account_id}"
+  
+  FB_REALTIME_MSG_ENABLED = "v1/FB_REALTIME_MSG_ENABLED:%{account_id}"
 
   TWITTER_REAUTH_CHECK = "v1/TWITTER_REAUTH_CHECK:%{account_id}"
 

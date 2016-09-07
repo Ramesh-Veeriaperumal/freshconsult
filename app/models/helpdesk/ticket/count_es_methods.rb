@@ -19,7 +19,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def count_es_columns
-    @@count_es_columns ||= ticket_indexed_fields.concat(ticket_states_columns).concat(count_es_ff_columns).concat(schema_less_columns)
+    @@count_es_columns ||= ticket_indexed_fields.concat(ticket_states_columns).concat(count_es_ff_columns).concat(schema_less_columns).concat([:tags])
   end
 
   def count_es_ff_columns

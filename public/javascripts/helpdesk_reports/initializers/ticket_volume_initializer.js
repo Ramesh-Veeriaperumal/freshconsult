@@ -395,6 +395,26 @@ HelpdeskReports.ChartsInitializer.TicketVolume = (function () {
             }
             var day_trend = new lineChart(settings);
             day_trend.lineChartGraph();
+            this.setDayTrendAvg(hash);            
+        },
+        setDayTrendAvg : function(hash){
+            var day = HelpdeskReports.locals.active_day;
+            var received_hash = hash['RECEIVED_TICKETS']['extra_details']['dow_avg'];
+            var resolved_hash = hash['RESOLVED_TICKETS']['extra_details']['dow_avg'];
+            var received_avg = 0,resolved_avg = 0;
+            switch(day) {
+                case 'Mondays' : received_avg = received_hash['Monday_avg'],resolved_avg = resolved_hash['Monday_avg'];break;
+                case 'Tuesdays' : received_avg = received_hash['Tuesday_avg'],resolved_avg = resolved_hash['Tuesday_avg'];break;
+                case 'Wednesdays' : received_avg = received_hash['Wednesday_avg'],resolved_avg = resolved_hash['Wednesday_avg'];break;
+                case 'Thursdays' : received_avg = received_hash['Thursday_avg'],resolved_avg = resolved_hash['Thursday_avg'];break;
+                case 'Fridays' : received_avg = received_hash['Friday_avg'],resolved_avg = resolved_hash['Friday_avg'];break;
+                case 'Saturdays' : received_avg = received_hash['Saturday_avg'],resolved_avg = resolved_hash['Saturday_avg'];break;
+                case 'Sundays' : received_avg = received_hash['Sunday_avg'],resolved_avg = resolved_hash['Sunday_avg'];break;
+            }
+
+            //Set the average tooltip
+            jQuery('#day_received_avg .received').html(I18n.t('helpdesk_reports.ticket_volume.avg_tickets',{ metric : 'received' , value : received_avg , color : 'rgb(5, 135, 192);' }));
+            jQuery('#day_received_avg .resolved').html(I18n.t('helpdesk_reports.ticket_volume.avg_tickets',{ metric : 'resolved' , value : resolved_avg , color : 'rgb(128, 180, 71);' }));
         },
         pdfDayTrend: function (hash) {
             var defaults = this.findDefaultDay();
@@ -620,9 +640,17 @@ HelpdeskReports.ChartsInitializer.TicketVolume = (function () {
             jQuery('#load_analysis_charts').on('mouseout', function(e){
                 jQuery('.load_analysis_avg').show();
             });
+
+            jQuery('#day_trend_chart').on('mouseover', function(e){
+                jQuery('#day_received_avg').hide();
+            });
+            jQuery('#day_trend_chart').on('mouseout', function(e){
+                jQuery('#day_received_avg').show();
+            });
         },
         redrawDayTrend: function (dow, prev_active, present) {
             HelpdeskReports.locals.active_day = this.DAY_MAPPING_LABEL[this.WEEKDAY_MAPPING[dow]];
+            this.setDayTrendAvg(HelpdeskReports.locals.chart_hash);
             var chart = jQuery('#day_trend_chart').highcharts();
             //Hack to manage different series length for DayChart & TimeChart (this.series.length - 1)
             for (i = 0; i < this.series.length-1; i++) {

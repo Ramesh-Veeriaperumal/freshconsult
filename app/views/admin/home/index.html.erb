@@ -1,6 +1,7 @@
 <% @page_title = t(".title") %>
 <%= check_fb_reauth_required  %>
 <%= check_twitter_reauth_required %>
+<%= fb_realtime_msg_disabled %>
 <%= check_ecommerce_reauth_required %>
 <% content_for :layoutType do -%>single<%- end %>
 <%= content_tag(:div, 

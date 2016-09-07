@@ -4,3 +4,4 @@ notifications_url:
     production: https://mobilepush.freshdesk.com
 
 secret_key: "20e5a9dcf1b18547978549d6cf16488c49f57c27f7315511d12e91c09cb17beda056cfab66d045e9c735201af53f4cd2ed0c4a57f92357abdf9af2ce61b7c559"
+mobile_token_key: "d04a05f8bc683464a728cebe2d15c50d1104f1a8b8d8ae819064038f679911b8b6be3c485f9dfb39be2679cb8db39fb6930f135384f4d3f3e46133d46590b544"

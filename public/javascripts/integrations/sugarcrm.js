@@ -84,6 +84,17 @@ SugarWidget.prototype= {
         });
     },
 
+    company:function(){
+        if(sugarcrmBundle) {
+            if(sugarcrmBundle.ticketCompanyId.length > 0){
+                return sugarcrmBundle.ticketCompanyId;
+            }else if(sugarcrmBundle.reqCompanyId.length > 0){
+                return sugarcrmBundle.reqCompanyId;
+            }
+        }
+        return "";
+    },
+
     get_sugar_contact:function(){
         var $this           = this,
             emailList       = "\'" + this.email_list.join("','") + "\'",
@@ -110,7 +121,7 @@ SugarWidget.prototype= {
         $this.freshdeskWidget.request({
             rest_url:     "service/v4/rest.php",
             method:       "post",
-            company_id:   $this.bundle.reqCompanyId, 
+            company_id:   $this.company(), 
             body:         entry_list_body.interpolate({email_query: "accounts.name='%{company_name}'", select_fields: selectFields}),//replace is used to escape single quotes in the company name.
             content_type: "",
             on_failure:   $this.processFailure,
@@ -162,7 +173,7 @@ SugarWidget.prototype= {
                 this.renderSearchResults(resJ);
             }
             if(module_name == "Contacts"){
-                if(this.bundle.reqCompanyId && this.bundle.accounts){
+                if((this.company()!="") && this.bundle.accounts){
                     this.get_sugar_account();
                 }
                 else {
@@ -263,7 +274,7 @@ SugarWidget.prototype= {
             }
             else if(module_name == "Contacts"){
                 this.contact_fields = JSON.parse(evt["responseText"])["module_fields"];
-                if(this.bundle.reqCompanyId){
+                if(this.company() != ""){
                     this.get_sugar_account_fields();
                 }
                 else if(this.entryList["Leads"]){

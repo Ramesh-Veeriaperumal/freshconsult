@@ -337,11 +337,10 @@ module Search::Filters::QueryHelper
     end
 
     def filtered_query(query_part={}, filter_part={})
-      query_base = Account.current.features?(:countv2_reads) ? :bool : :filtered
-      base = ({:query => { query_base => {}}})
+      base = ({:query => { :bool => {}}})
       
-      base[:query][query_base].update(:query => query_part) if query_part.present?
-      base[:query][query_base].update(:filter => filter_part) if filter_part.present?
+      base[:query][:bool].update(:query => query_part) if query_part.present?
+      base[:query][:bool].update(:filter => filter_part) if filter_part.present?
 
       base
     end

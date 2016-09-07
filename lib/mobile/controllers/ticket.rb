@@ -85,6 +85,14 @@ end
       
       [].concat(default_views).concat(dynamic_views)
   end
+
+  def sort_fields_options
+    TicketsFilter.mobile_sort_fields_options
+  end
+
+  def sort_order_fields_options
+    TicketsFilter.mobile_sort_order_fields_options
+  end
     
   def get_summary_count
       summary_count_array = [

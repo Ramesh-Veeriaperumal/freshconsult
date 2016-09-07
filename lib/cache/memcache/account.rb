@@ -133,6 +133,12 @@ module Cache::Memcache::Account
     key = FB_REAUTH_CHECK % {:account_id => self.id }
     MemcacheKeys.fetch(key) { self.facebook_pages.reauth_required.present? }
   end
+  
+  def fb_realtime_msg_from_cache
+    key = FB_REALTIME_MSG_ENABLED % {:account_id => self.id }
+    MemcacheKeys.fetch(key) { self.facebook_pages.realtime_messaging_disabled.present? }
+  end
+  
   def custom_dropdown_fields_from_cache
     @custom_dropdown_fields_from_cache ||= begin
       key = ACCOUNT_CUSTOM_DROPDOWN_FIELDS % { :account_id => self.id }
