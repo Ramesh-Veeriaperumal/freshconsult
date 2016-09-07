@@ -6,7 +6,7 @@ window.App = window.App || {};
 
   window.App.TicketAttachmentPreview = {
 
-    supportedFiles: ["png","gif","jpeg","jpg"]
+    supportedFiles: ["png","gif","jpeg","jpg","inline"]
 
     // This is a simple proxy method helper
     ,p: function(fn){
@@ -29,6 +29,10 @@ window.App = window.App || {};
       // When the user clicks the attachment link, catch it
       // and invoke the popup for the attachment viewer
       $(document).on('click.ticket_attachment_preview',".attach_content,.attachment-type",this.p(this.attachmentClicked));
+
+      // When the user clicks the inline image, catch it
+      // and invoke the popup for attachment viewer
+      $(document).on('click.ticket_attachment_preview',".helpdesk_note .details img",this.p(this.inlineImageClicked));
 
       // Close the popup when user clicks the close button
       $(document).on('click.ticket_attachment_preview','.av-close',this.p(this.removePopup));
@@ -64,6 +68,7 @@ window.App = window.App || {};
 
     ,attachmentClicked: function(event){
       this.getAllAttachments(event);
+      this.currentPosition = $(event.target).parents(".attachment").index();
 
       // Show the current file popup only for supported files.
       if(this.supportedFiles.indexOf(this.attachments[this.currentPosition].filetype)>-1){
@@ -74,6 +79,20 @@ window.App = window.App || {};
         if(event.stopPropogation) event.stopPropogation();
         return false;
       }
+    }
+
+    ,inlineImageClicked: function(event){
+      this.getAllInlineImages(event);
+      this.currentPosition = jQuery(event.target).parents('.helpdesk_note').find('img').index(event.target)
+
+      // Show the current file popup
+      this.showCurrentFile();
+
+      // Cancel event propogation
+      event.preventDefault();
+      if(event.stopPropogation) event.stopPropogation();
+      
+      return false;
     }
 
     ,showCurrentFile: function(){
@@ -114,8 +133,7 @@ window.App = window.App || {};
       
       // Iterate through all the attachments in the 
       // conversation and create the attachment objects array.
-      var attachmentElements = $(event.target).parents(".attachment_list").find('.attachment');
-      this.currentPosition = $(event.target).parents(".attachment").index();
+      var attachmentElements = $(event.target).parents(".helpdesk_note").find('.attachment_list .attachment');
       attachmentElements.each(function(i,el){
         var $el = $(el);
         self.attachments.push({
@@ -124,6 +142,22 @@ window.App = window.App || {};
           ,filetype: $el.find(".attachment-type .file-type").text().toLowerCase()
         })
       })
+    }
+
+    ,getAllInlineImages: function(event){
+      this.attachments = [];
+      self = this;
+
+      // Add the inline images
+      var inlineImages = $(event.target).parents(".helpdesk_note").find('.details img');
+      inlineImages.each(function(i,el){
+        var $el = $(el);
+        self.attachments.push({
+          filename: "Inline Image"
+        , filelink: $el.attr('src')
+        , filetype: "inline"
+        })
+      });
     }
 
     ,showPopup: function(viewerData){
