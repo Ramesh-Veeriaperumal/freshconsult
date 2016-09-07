@@ -661,16 +661,12 @@
 			font-weight:bold;
 		}
 		
-		//hyphens
-		.hyphernate {
-		    word-break: break-word;
-		    hyphens: auto;
-		}
-		@supports not (hyphens: auto) {
-		    .hyphernate {
-		        word-break: break-all;
-		    }
-		}
+		//Ticket list subject - word break fix
+        .hyphernate{
+            word-break: break-word;
+            -ms-word-wrap: break-word;
+            word-wrap: break-word;
+        }
     h3{
 			width: 100%;
 			overflow: hidden;
