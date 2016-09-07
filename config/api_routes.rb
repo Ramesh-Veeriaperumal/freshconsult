@@ -116,9 +116,11 @@ Helpkit::Application.routes.draw do
       collection do
         put :bulk_delete
         put :bulk_restore
+        put :bulk_send_invite
       end
       member do
         put :restore
+        put :send_invite
       end
     end
     resources :ticket_filters, controller: 'ember/ticket_filters', only: [:index, :show]

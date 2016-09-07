@@ -30,7 +30,9 @@ module ContactConstants
 
   LANGUAGES = I18n.available_locales.map(&:to_s).freeze
 
-  LOAD_OBJECT_EXCEPT = [:bulk_delete, :bulk_restore].freeze
+  BULK_ACTION_METHODS = [:bulk_delete, :bulk_restore, :bulk_send_invite].freeze
+
+  LOAD_OBJECT_EXCEPT = BULK_ACTION_METHODS.freeze
 
   # Max other email count excluding the primary email
   MAX_OTHER_EMAILS_COUNT = 4
@@ -46,7 +48,8 @@ module ContactConstants
     update: [:json, :multipart_form],
     make_agent: [:json],
     bulk_delete: [:json],
-    bulk_restore: [:json]
+    bulk_restore: [:json],
+    bulk_send_invite: [:json]
   }.freeze
 
   FIELD_MAPPINGS = { company_name: :company_id, default_user_company: :company_id, company: :company_id, :"primary_email.email" => :email, base: :email }.freeze

@@ -10,10 +10,13 @@ class ContactDelegator < BaseDelegator
   }
 
   validate :user_emails_validation, if: -> { @other_emails }
+  validate :validate_user_activation, on: :send_invite
 
   def initialize(record, options = {})
-    @other_emails = options[:email_objects][:old_email_objects]
-    @primary_email = options[:email_objects][:primary_email]
+    if options[:email_objects]
+      @other_emails = options[:email_objects][:old_email_objects]
+      @primary_email = options[:email_objects][:primary_email]
+    end
     @user_id = record.id
     check_params_set(options[:custom_fields]) if options[:custom_fields].is_a?(Hash)
     super(record)
@@ -34,5 +37,9 @@ class ContactDelegator < BaseDelegator
 
   def unassociated_emails
     @emails ||= @other_emails.select { |x| id != x.user_id }.map(&:email)
+  end
+
+  def validate_user_activation
+    errors[:id] << :unable_to_perform if deleted || blocked || active
   end
 end

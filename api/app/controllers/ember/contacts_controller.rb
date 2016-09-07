@@ -9,6 +9,19 @@ module Ember
       render 'api_contacts/index'
     end
 
+    def send_invite
+      send_activation_mail(@item) ? (head 204) : render_errors(@contact_delegator.errors, @contact_delegator.error_options)
+    end
+
+    def bulk_send_invite
+      bulk_action do
+        @items_failed = []
+        @items.each do |item|
+          @items_failed << item unless send_activation_mail(item)
+        end
+      end
+    end
+
     def self.wrap_params
       ContactConstants::EMBER_WRAP_PARAMS
     end
@@ -52,6 +65,13 @@ module Ember
 
       def render_201_with_location(template_name: "api_contacts/#{action_name}", location_url: 'api_contact_url', item_id: @item.id)
         render template_name, location: send(location_url, item_id), status: 201
+      end
+
+      def send_activation_mail(item)
+        @contact_delegator = ContactDelegator.new(item)
+        valid = @contact_delegator.valid?(:send_invite)
+        item.deliver_activation_instructions!(current_portal, true) if valid && item.has_email?
+        valid
       end
 
       wrap_parameters(*wrap_params)

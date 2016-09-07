@@ -21,7 +21,7 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   manage_users do
-    resource :"ember/contact", only: [:make_agent]
+    resource :"ember/contact", only: [:make_agent, :send_invite, :bulk_send_invite]
   end
 
 	delete_ticket do
