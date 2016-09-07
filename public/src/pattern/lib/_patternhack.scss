@@ -39,6 +39,9 @@ input[type="file"]{
     font-weight:500;
   }
 }
+.capping-limit{
+  width: 12%;
+}
 del{
   color:rgba(#000, 0.3);
   div,span,label{
@@ -50,6 +53,10 @@ h5{
     font-size:18px;
     line-height:20px;
   }
+}
+h5.mini-lead {
+  font-size: 14px;
+  font-weight: 500;
 }
 h5.lead.small-lead {
   font-size:14px;

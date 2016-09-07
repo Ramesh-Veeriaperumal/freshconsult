@@ -186,6 +186,12 @@ module Redis::RedisKeys
   SPAM_EMAIL_APPRX_REGEX_KEY = "SPAM_EMAIL_APPRX_REGEX"
   PROCESSING_FAILED_HELPKIT_FEEDS = "PROCESSING_FAILED_HELPKIT_FEEDS"
 
+  ROUND_ROBIN_CAPPING = "ROUND_ROBIN_CAPPING:%{account_id}:%{group_id}"
+  ROUND_ROBIN_CAPPING_PERMIT = "ROUND_ROBIN_CAPPING_PERMIT:%{account_id}:%{group_id}"
+  ROUND_ROBIN_AGENT_CAPPING = "ROUND_ROBIN_AGENT_CAPPING:%{account_id}:%{group_id}:%{user_id}"
+  RR_CAPPING_TICKETS_QUEUE = "RR_CAPPING_TICKETS_QUEUE:%{account_id}:%{group_id}"
+  RR_CAPPING_TEMP_TICKETS_QUEUE = "RR_CAPPING_TEMP_TICKETS_QUEUE:%{account_id}:%{group_id}"
+
 	def newrelic_begin_rescue
 		begin
 		  yield

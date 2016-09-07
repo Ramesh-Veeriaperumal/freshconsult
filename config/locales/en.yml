@@ -3677,7 +3677,8 @@ en:
     title: Groups
     business_calendar: Business Hours
     ticket_assignment: Automatic ticket assignment
-    auto_assignment_description: Once enabled, tickets assigned to this group will be automatically assigned to the available agents in the group through the round robin method
+    auto_assignment_description: Tickets coming into this group will be automatically assigned to available agents based on the assignment method you select
+    only_round_robin_description: Tickets coming into this group will be automatically assigned to available agents based on <strong>Round-robin method</strong>
     escalation_rule: Escalation Rule
     send_escalation_to: "....then send escalation email to :"
     info1: Agents
@@ -3696,21 +3697,28 @@ en:
     please_confirm: Please confirm...
     rr_v2_confimation_message: This action cannot be undone. Are you sure you want to proceed?
     tour: Help me create a new agent group
-    helptext: You can organize your agents into specific Groups like “Sales” and “Product Management”. Segmenting them into divisions lets you easily assign tickets, create specific canned responses, manage workflows and generate group-level reports. Note that the same agent can be a member of multiple groups as well
-    automatic_assignment: Once you create homogeneous agent groups, you can choose to automatically assign new tickets in this group to the next agent in Round Robin. <a href="https://support.freshdesk.com/support/solutions/articles/77157" target="_blank">Learn more</a>
+    helptext: You can organize your agents into specific Groups like “Sales” and “Product Management”. Segmenting them into divisions lets you easily assign tickets, create specific canned responses, manage workflows and generate group-level reports. Note that the same agent can be a member of multiple groups as well.
+    automatic_assignment: <b>For each group</b><br/>Once you’ve created your homogenous agent groups, you can use dispatch’r to route tickets to each group. <a href="https://support.freshdesk.com/support/solutions/articles/77157" target="_blank">Learn more</a><br/><br/><b>For agents within each group</b><br/>You can assign new tickets to the agent who is next available through round robin. Additionally, you can set the maximum number of tickets from one group that can be assigned to an available agent at any given time. <a href="https://support.freshdesk.com/support/solutions/articles/196581" target="_blank">Learn more</a>
     automatic_assignment_header: Auto-ticket Assignment
-    working_hours_header: Working Hours
-    working_hours: You can assign a different set of business hours and holidays to each Group. For example, you can separate agents by shifts and assign them different business hours, or create separate groups for each time zone your agents work at
+    working_hours_header: Business Hours
+    working_hours: You can assign each of these groups with a different set of business hours which is nothing but your working hours. For example, you can separate agents by shifts and assign them different business hours, or create separate groups for each time zone your agents work at.
     select_agents: Select Agents
     select_an_agent: Select Agent
     select_business_calendar: Select Business Hours
     learn_more: Learn more
     settings_saved: Your setting is successfully saved.
-    toggle_availability_for_rr: Allow agents the ability to turn on/off automatic ticket assignment
+    toggle_availability_for_rr: Allow agents to change their availability for automatic ticket assignment
     toggle_availability_enabled: Agents will be able to manually change their availability for round robin ticket assignment. Admins and supervisors can change the agent availability from the dashboard, if necessary.
     toggle_availability_disabled: If disabled, agents will always be set as “available”. Admins and supervisors can change the agent availability from the dashboard, if necessary.
+    toggle_availability_message: Admins and supervisors can override an agent's availability from the dashboard
     toggle_availability_note: "Note: Agents belonging to multiple groups will be able to change their availability only if they have permission to control their availability in all of the groups they belong to."
+    round_robin_capping: "Load balanced ticket assignment"
+    round_robin_capping_info: Limit the number of tickets an agent can handle simultaneously
+    round_robin_defalut: Round-robin ticket assignment
+    round_robin_default_info: Assign tickets to agents in a circular fashion
     round_robin_desc: "Once turned ON, tickets assigned to this group will be distributed among agents in round robin fashion. If you wish to manually assign tickets or dispatch them using the Dispatch'r or Supervisor automations, you can turn this OFF. "
+    capping_ticket: "ticket"
+    capping_tickets: "tickets"
     page_not_found: "This group could not be found. It might have been deleted or the URL mistyped."
     assigntime:
       half: 30 Minutes

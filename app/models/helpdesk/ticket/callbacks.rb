@@ -45,7 +45,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   after_commit :filter_observer_events, on: :update, :if => :execute_observer?
   after_commit :update_ticket_states, :notify_on_update, :update_activity, 
-  :stop_timesheet_timers, :fire_update_event, :push_update_notification, on: :update 
+               :stop_timesheet_timers, :fire_update_event, :push_update_notification, 
+               :update_old_group_capping, on: :update 
   #after_commit :regenerate_reports_data, on: :update, :if => :regenerate_data? 
   after_commit :push_create_notification, on: :create
   after_commit :update_group_escalation, on: :create, :if => :model_changes?
@@ -279,35 +280,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   #To be removed after dispatcher redis check removed
-  def assign_tickets_to_agents
-    #Ticket already has an agent assigned to it or doesn't have a group
-    return if group.nil? || self.responder_id
-    if group.round_robin_enabled?
-      schedule_round_robin_for_agents 
-      self.save
-    end
-  end 
-
-  #user changes will be passed when observer worker calls the function
-  def round_robin_on_ticket_update(user_changes={})
-    ticket_changes = self.changes
-    ticket_changes  = merge_to_observer_changes(user_changes,self.changes) if user_changes.present?
-    
-    #return if no change was made to the group
-    return if !ticket_changes.has_key?(:group_id)
-    #skip if agent is assigned in the transaction
-    return if ticket_changes.has_key?(:responder_id) && self.responder_id.present?
-    #skip if the existing agent also belongs to the new group
-    return if self.responder_id.present? && Account.current.agent_groups.exists?(:user_id => self.responder_id, :group_id => group_id) 
-
-    schedule_round_robin_for_agents
-  end
-
-  def rr_allowed_on_update?
-    group and (group.round_robin_enabled? and Account.current.features?(:round_robin_on_update))
-  end
-
-  #To be removed after dispatcher redis check removed
   def check_rules current_user
     evaluate_on = self
     account.va_rules.each do |vr|
@@ -442,21 +414,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
 private 
 
-  def skip_rr_on_update?
-    #Option to toggle round robin off in L2 script
-    return true unless rr_allowed_on_update?
-    return true if Thread.current[:skip_round_robin].present?
-
-    #Don't trigger in case this update is a user action and it will trigger observer
-    return true if user_present? && !filter_observer_events(false).blank?
-
-    #Don't trigger during an observer save, as we call RR explicitly in the worker
-    return true if Thread.current[:observer_doer_id].present?
-
-    #Trigger RR if the update is from supervisor 
-    false    
-  end
- 
   def push_create_notification
 	push_mobile_notification(:new)
   end 
@@ -497,6 +454,7 @@ private
   # TODO - Must change in new reports when this method is changed.
   def update_ticket_related_changes
     @model_changes = self.changes.to_hash
+    @model_changes.merge!(:round_robin_assignment => true) if round_robin_assignment
     @model_changes.merge!(schema_less_ticket.changes) unless schema_less_ticket.nil?
     @model_changes.merge!(flexifield.changes) unless flexifield.nil?
     @model_changes.merge!({ tags: [] }) if self.tags_updated #=> Hack for when only tags are updated to trigger ES publish

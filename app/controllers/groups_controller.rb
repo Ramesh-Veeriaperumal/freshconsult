@@ -3,7 +3,7 @@ class GroupsController < Admin::AdminController
   include GroupsHelper
 
   before_filter :load_group, :only => [:show, :edit, :update, :destroy]
-  before_filter :filter_params, :build_attributes, :only => [:create, :update]
+  before_filter :set_capping_limit, :filter_params, :build_attributes, :only => [:create, :update]
 
   def index
     @groups = current_user.accessible_groups.order(:name)
@@ -115,7 +115,7 @@ class GroupsController < Admin::AdminController
 
     def filter_params
       @filtered_group_params = global_access? ? params[nscname] :
-          params[nscname].slice(:ticket_assign_type, :toggle_availability)
+          params[nscname].slice(:ticket_assign_type, :toggle_availability, :capping_limit)
     end
 
     def build_attributes
@@ -126,4 +126,8 @@ class GroupsController < Admin::AdminController
       end
     end
 
+    def set_capping_limit
+      params[nscname][:capping_limit] = 0 if params[nscname].has_key?(:capping_enabled) && 
+                                             params[nscname][:capping_enabled] == "0"
+    end
 end
