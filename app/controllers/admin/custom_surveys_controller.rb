@@ -24,7 +24,8 @@ class Admin::CustomSurveysController < Admin::AdminController
       title:      "",
       id:         "",
       url:        admin_custom_surveys_path,
-      cancelUrl:  current_account.default_survey_enabled? ? "/admin/home" : admin_custom_surveys_path
+      cancelUrl:  current_account.default_survey_enabled? ? "/admin/home" : admin_custom_surveys_path,
+      order: true
     }
   end
 
@@ -45,7 +46,8 @@ class Admin::CustomSurveysController < Admin::AdminController
       title:        @survey.title_text,
       id:           @survey_id,
       url:          admin_custom_survey_path(@survey_id),
-      cancelUrl:    current_account.default_survey_enabled? ? "/admin/home" : admin_custom_surveys_path
+      cancelUrl:    current_account.default_survey_enabled? ? "/admin/home" : admin_custom_surveys_path,
+      order:     @survey.good_to_bad?
     }
     @survey_details = {
       survey:               @survey.to_json({:except => :account_id}),

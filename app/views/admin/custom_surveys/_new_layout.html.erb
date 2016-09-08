@@ -31,11 +31,31 @@
 				<label class="clearfix"> <%= t('admin.surveys.new_layout.title') %> </label>
 				<div class="clearfix">
 					<input type="text" maxlength="150" placeholder="<%= t('admin.surveys.new_layout.default_survey') %>" name="title_text" value="<%=@layout_params[:title]%>"/>
-					<label id="title_text-error" class="error" style="display:none;"><%= t('admin.surveys.new_layout.title_error_text') %></label>
+					<label id="title_text-error" class="error title_text_error hide"><%= t('admin.surveys.new_layout.title_error_text') %></label>
 				</div>
 			</div>
 		</div>
-		<div class="vertical-line">
+		<div class="survey_rating_order">
+			<div class="rating_order">
+				<%= t('admin.surveys.new_layout.rating_order').html_safe%>
+				<div class="dropdown btn-default rating_order_select">
+				  <a class="dropdown-toggle" id ="order_dropdown" role="button" data-toggle="dropdown" data-target="#">
+				      <% if @layout_params[:order] %>
+				      	<h5 class="good_to_bad"><%=t('admin.surveys.new_layout.good_to_bad')%><b class="caret"></b></h5>
+				      <% else%>
+				      	<h5 class="bad_to_good"><%=t('admin.surveys.new_layout.bad_to_good')%><b class="caret"></b></h5>
+				      <%end %>
+				  </a>
+				  <ul class="dropdown-menu" role="menu">
+					<li  class= "<%if @layout_params[:order]%>active<%end%>" data-state = "true" onclick="javascript:SurveyAdmin.flipChoiceOrder(this)">
+						<span class="good_to_bad"><%=t('admin.surveys.new_layout.good_to_bad')%></span>
+					</li>
+					<li class= "<%if !@layout_params[:order]%>active<%end%>" data-state = "false" onclick="javascript:SurveyAdmin.flipChoiceOrder(this)">
+				  		<span class="bad_to_good"><%=t('admin.surveys.new_layout.bad_to_good')%></span>
+					</li>
+				   </ul>
+				</div>
+			</div>
 		</div>
 		<div id="survey_rating" class="sub-container gradiant-border cust-satisfaction-rating">
 		</div>
@@ -80,6 +100,7 @@
  jQuery(document).ready(function(){
  	SurveyAdmin.fullSurvey = <%= !@account.default_survey_enabled? %>;
  	SurveyAdmin.hasLayoutCustomization = <%= @account.features?(:layout_customization) %>;
+ 	SurveyAdmin.surveyChoiceGoodToBad = <%= @layout_params[:order] %>;
  });
 
 </script>

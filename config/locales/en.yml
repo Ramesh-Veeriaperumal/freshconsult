@@ -1334,6 +1334,9 @@ en:
         default_survey: Default Survey
         survey: Survey
         title: Survey name
+        rating_order: Rating order &nbsp;
+        good_to_bad: Good to Bad
+        bad_to_good: Bad to Good
         title_error_text: Survey name has already been taken
         result_exist_msg: Since responses have already been collected for this survey, the point scale and no. of questions cannot be altered. However, you can edit the questions and answers.
         result_exist_msg_v2: Since responses have already been collected for this survey, the point scale and no. of questions cannot be altered. However, you can rephrase the questions and answer choices.

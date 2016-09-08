@@ -14,6 +14,7 @@ survey = CustomSurvey::Survey.seed(:account_id) do |s|
   s.send_while = Survey::RESOLVED_NOTIFICATION
   s.comments_text = "Add more details about customer experience."
   s.default = true
+  s.good_to_bad = true
 end
 
 CustomSurvey::SurveyQuestion.seed(:account_id) do |q|
