@@ -149,6 +149,13 @@ class Helpdesk::Tag < ActiveRecord::Base
         only: [ :name, :tag_uses_count, :account_id ]
       }).to_json
   end
+
+  def to_mob_json
+    options = { 
+      :only => [:id, :name]
+    }
+    as_json(options)
+  end
   
   private
     
