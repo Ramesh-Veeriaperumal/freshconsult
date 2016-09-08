@@ -26,7 +26,7 @@ module Helpdesk::Permissible
   private
 
   def access_denied_message
-    t("flash.general.access_denied") 
+    current_user ? t("flash.general.access_denied") : t("flash.general.need_login")
   end
 
   def handle_responses(redirect_url = send(Helpdesk::ACCESS_DENIED_ROUTE)) 
