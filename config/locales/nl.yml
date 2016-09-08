@@ -2439,6 +2439,16 @@ nl:
     tweet: tweet
     time_entry: tijdsinvoer
     note: notitie
+    supervisor: supervisor-regel
+    observer: observer-regel
+    business: dispatch'r-regel
+    round_robin: "tickets automatisch toewijzen"
+    scenario: scenario-automatisering
+    none: Geen
+    subject: onderwerp
+    description: beschrijving
+    set: instellen
+    rule_executed: "systeemregel uitgevoerd"
     tag:
       solutions: "Nieuwe oplossing"
       assigned_to_nobody: "Medewerker is niet toegewezen"
@@ -2457,6 +2467,10 @@ nl:
         new: "Tijd aangemeld"
         timer_started: "Timer gestart"
         timer_stopped: "Timer gestopt"
+        edit: "Timesheet bijgewerkt"
+        delete: "Timesheet verwijderd"
+        billable: Factureerbaar
+        non_billable: Niet-factureerbaar
       execute_scenario: "Scenario is uitgevoerd"
       ticket_merge: "Ticket is samengevoegd"
       ticket_split: Ticketsplitsing
@@ -2470,6 +2484,11 @@ nl:
       group_change_none: "Medewerkersgroep is gewijzigd"
       source_change: Ticketbron
       due_date_updated: "Vervaldatum bijgewerkt"
+      tag_change: "Tag bijgewerkt"
+      add_watcher: "Watcher toegevoegd"
+      remove_watcher: "Watcher verwijderd"
+      property_update: "Eigenschap bijgewerkt"
+      spam: "Gemarkeerd als spam"
     solutions:
       new_solution:
         short: "{{user_path}} heeft een nieuwe oplossing gemaakt."
@@ -2477,36 +2496,60 @@ nl:
       new_article:
         short: "{{user_path}} heeft een nieuw artikel gemaakt."
         long: "{{user_path}} heeft het nieuwe artikel {{notable_path}} gemaakt."
+      new_article_translation:
+        short: "{{user_path}} heeft een nieuw artikel vertaald naar het {{language_name}}"
+        long: "{{user_path}} heeft het nieuwe artikel vertaald naar het {{language_name}} '{{notable_path}}'"
       published_article:
-        short: "Het artikel van {{user_path}} is gepubliceerd."
+        short: "{{user_path}} heeft een artikel gepubliceerd."
         long: "{{user_path}} heeft het artikel {{notable_path}} gepubliceerd."
+      published_article_translation:
+        short: "{{user_path}} heeft het artikel vertaald naar het {{language_name}}"
+        long: "{{user_path}} heeft een artikel vertaald naar het {{language_name}} '{{notable_path}}'"
       unpublished_article:
-        short: "De publicatie van het artikel van {{user_path}} is ongedaan gemaakt."
-        long: "{{user_path}} heeft de publicatie van het artikel {{notable_path}} ongedaan gemaakt."
+        short: "{{user_path}} heeft de publicatie van een artikel ongedaan gemaakt."
+        long: "{{user_path}} heeft de publicatie van het artikel '{{notable_path}}' ongedaan gemaakt."
+      unpublished_article_translation:
+        short: "{{user_path}} heeft de vertaling van een artikel naar het {{language_name}} verwijderd"
+        long: "{{user_path}} heeft de vertaling van het artikel naar het {{language_name}} '{{notable_path}}' verwijderd"
       delete_article:
         short: "{{user_path}} heeft een artikel verwijderd."
         long: "{{user_path}} heeft het artikel {{notable_path}} verwijderd."
       new_solution_category:
         short: "{{user_path}} heeft een nieuwe oplossingscategorie gemaakt."
         long: "{{user_path}} heeft de nieuwe oplossingscategorie {{notable_path}} gemaakt."
+      new_solution_category_translation:
+        short: "{{user_path}} heeft een nieuwe oplossingscategorie vertaald naar het {{language_name}}"
+        long: "{{user_path}} heeft de nieuwe oplossingscategorie vertaald naar het {{language_name}} '{{notable_path}}'"
       delete_solution_category:
         short: "{{user_path}} heeft een oplossingscategorie verwijderd."
-        long: "{{user_path}} heeft de oplossingscategorie {{notable_path}} verwijderd."
+        long: "{{user_path}} heeft de oplossingscategorie '{{notable_path}}' verwijderd."
       new_folder:
         short: "{{user_path}} heeft een nieuwe map gemaakt."
         long: "{{user_path}} heeft de nieuwe map {{notable_path}} gemaakt."
+      new_folder_translation:
+        short: "{{user_path}} heeft een nieuwe map vertaald naar het {{language_name}}"
+        long: "{{user_path}} heeft de nieuwe map vertaald naar het {{language_name}} '{{notable_path}}'"
       delete_folder:
         short: "{{user_path}} heeft een map verwijderd."
-        long: "{{user_path}} heeft de map {{notable_path}} verwijderd."
+        long: "{{user_path}} heeft de map '{{notable_path}}' verwijderd."
       new_draft:
         short: "{{user_path}} heeft een concept voor een artikel gemaakt."
-        long: "{{user_path}} heeft het concept voor artikel {{notable_path}} gemaakt."
+        long: "{{user_path}} heeft het concept voor artikel '{{notable_path}}' gemaakt."
+      new_draft_translation:
+        short: "{{user_path}} heeft een concept voor een artikel vertaald naar het {{language_name}}"
+        long: "{{user_path}} heeft het concept voor een artikel vertaald naar het {{language_name}} '{{notable_path}}'"
       published_draft:
         short: "{{user_path}} heeft het concept van een artikel gepubliceerd."
-        long: "{{user_path}} heeft het concept voor artikel {{notable_path}} gepubliceerd."
+        long: "{{user_path}} heeft het concept voor artikel '{{notable_path}}' gepubliceerd."
+      published_draft_translation:
+        short: "{{user_path}} heeft de vertaling van een concept voor een artikel naar het {{language_name}} gepubliceerd"
+        long: "{{user_path}} heeft de vertaling van het concept voor een artikel naar het {{language_name}} gepubliceerd '{{notable_path}}'"
       delete_draft:
         short: "{{user_path}} heeft het concept van een artikel verwijderd."
-        long: "{{user_path}} heeft het concept van artikel {{notable_path}} verwijderd."
+        long: "{{user_path}} heeft het concept van artikel '{{notable_path}}' verwijderd."
+      delete_draft_translation:
+        short: "{{user_path}} heeft de vertaling van een concept voor de vertaling van een artikel verwijderd"
+        long: "{{user_path}} heeft de vertaling van een concept voor de vertaling van een artikel naar het {{language_name}} '{{notable_path}}' verwijderd"
     forums:
       new_forum_category:
         short: "{{user_path}} heeft een nieuwe forumcategorie gemaakt."
@@ -2579,13 +2622,16 @@ nl:
       priority_change:
         short: "{{user_path}} heeft de prioriteit gewijzigd in {{priority_name}}."
         long: "{{user_path}} heeft de ticketprioriteit van {{notable_path}} gewijzigd in {{priority_name}}."
-        without_user: "heeft de ticketprioriteit gewijzigd in<strong>{{priority_name}}.</strong>"
+        without_user: "heeft de ticketprioriteit gewijzigd in <strong>{{priority_name}}.</strong>"
+        new: "Prioriteit is <strong>%{priority_name}</strong>"
       new_ticket:
         short: "{{user_path}} heeft het ticket verstuurd."
         long: "{{user_path}} heeft het nieuwe ticket {{notable_path}} verstuurd."
+        new: "Heeft een nieuw ticket verstuurd"
       new_outbound:
         short: "{{user_path}} heeft een ticket gemaakt"
         long: "{{user_path}} heeft ticket {{notable_path}} gemaakt"
+        new: "E-mail is verstuurd en er is een nieuw ticket gemaakt."
       conversation:
         out_email:
           short: "{{user_path}} heeft een {{reply_path}} verstuurd."
@@ -2610,22 +2656,43 @@ nl:
           short: "{{user_path}} heeft een {{timesheet_path}} toegevoegd."
           long: "{{user_path}} heeft een {{timesheet_path}} aan het ticket {{notable_path}} toegevoegd."
           without_user: "heeft een {{timesheet_path}} toegevoegd."
+          new: "Tijdsinvoer toegevoegd"
         timer_started:
           short: "{{user_path}} heeft een timer gestart voor {{timesheet_path}}."
           without_user: "heeft een timer gestart voor {{timesheet_path}}."
           long: "{{user_path}} heeft een timer voor {{timesheet_path}} gestart voor het ticket {{notable_path}}."
+          new: "De timer is gestart op het timesheet"
         timer_stopped:
           short: "{{user_path}} heeft de timer voor {{timesheet_path}} gestopt."
           without_user: "heeft de timer gestopt voor {{timesheet_path}}."
           long: "{{user_path}} heeft de timer voor {{timesheet_path}} gestopt voor het ticket {{notable_path}}."
+          new: "De timer is gestopt op het timesheet"
+      timesheet_without_time:
+        new: "%{billable} uren voor %{user_path} op %{date}"
+      timesheet_with_time:
+        new: "%{time_spent} %{billable} uren voor %{user_path} op %{date}"
+      timesheet_timer_start:
+        new: "Timer op timesheet gestart met %{timesheet}"
+      timesheet_timer_stop:
+        new: "Timer op timesheet gestopt met %{timesheet}"
+      timesheet_create:
+        new: "Timesheet gemaakt met %{timesheet}"
+      timesheet_edit:
+        new: "Timesheet bijgewerkt <br> Timesheet met  %{old_timesheet} gewijzigd naar timesheet met %{new_timesheet}"
+      timesheet_delete:
+        new: "Timesheet verwijderd met %{timesheet}"
       assigned:
         short: "Toegewezen aan {{responder_path}} door {{user_path}}."
         without_user: "toegewezen aan <strong>{{responder_path}}</strong>"
         long: "{{user_path}} heeft het ticket {{notable_path}} toegewezen aan {{responder_path}}."
+        new: "Medewerker als %{responder_path}"
+      round_robin:
+        new: "Medewerker instellen <strong>%{responder_path}</strong> voor round robin toewijzing"
       execute_scenario:
         short: "{{user_path}} heeft het scenario '{{scenario_name | h}} uitgevoerd."
         without_user: "het scenario uitgevoerd <strong>{{scenario_name | h}}</strong>"
         long: "{{user_path}} heeft het scenario '{{scenario_name | h}}' uitgevoerd voor {{notable_path}}."
+        new: "Scenario is uitgevoerd <strong>%{scenario_name}</strong>"
       ticket_merge:
         short: "{{user_path}} heeft het ticket {{notable_path}} samengevoegd met {{merge_ticket_path}}. "
         long: "{{user_path}} heeft het ticket {{notable_path}} samengevoegd met {{merge_ticket_path}}."
@@ -2642,18 +2709,26 @@ nl:
         short: "{{user_path}} heeft de status bijgewerkt naar {{status_name}}."
         without_user: "heeft de status bijgewerkt naar <strong>{{status_name}}</strong>"
         long: "{{user_path}} heeft de ticketstatus van {{notable_path}} bijgewerkt naar {{status_name}}."
+        new: "Status als <strong>%{status_name}</strong>"
       deleted:
         short: "{{user_path}} heeft dit ticket verwijderd."
         without_user: "heeft het volgende ticket verwijderd:"
         long: "{{user_path}} heeft het ticket {{notable_path}} verwijderd."
+        new: "heeft dit ticket verwijderd"
       restored:
         short: "{{user_path}} heeft dit ticket hersteld."
         without_user: "heeft het volgende ticket hersteld:"
         long: "{{user_path}} heeft het ticket {{notable_path}} hersteld."
+        new: "heeft dit ticket teruggezet vanuit de prullenbak"
+      spam:
+        new: "heeft dit ticket als spam gemarkeerd"
+      unspam:
+        new: "Tickets teruggezet vanuit spam"
       product_change:
         short: "{{user_path}} heeft het product bijgewerkt naar {{product_name}}."
         without_user: "heeft het product bijgewerkt naar <strong>{{product_name}}.</strong>"
         long: "{{user_path}} heeft het product van {{notable_path}} bijgewerkt naar {{product_name}}."
+        new: "Product als <strong>%{product_name}</strong>"
       product_change_none:
         short: "{{user_path}} heeft het product bijgewerkt naar Geen."
         without_user: "heeft het product bijgewerkt naar <strong>Geen."
@@ -2662,10 +2737,12 @@ nl:
         short: "{{user_path}} heeft het tickettype bijgewerkt naar {{ticket_type}}."
         without_user: "heeft het tickettype bijgewerkt naar <strong>{{ticket_type}}.</strong>"
         long: "{{user_path}} heeft het tickettype van {{notable_path}} bijgewerkt naar {{ticket_type}}."
+        new: "Type als <strong>%{ticket_type}</strong>"
       group_change:
         short: "{{user_path}} heeft de groep bijgewerkt naar {{group_name}}."
         without_user: "heeft de groep bijgewerkt naar <strong>{{group_name}}.</strong>"
         long: "{{user_path}} heeft de groep van {{notable_path}} bijgewerkt naar {{group_name}}."
+        new: "Groep als <strong>%{group_name}</strong>"
       group_change_none:
         short: "{{user_path}} heeft de groep bijgewerkt naar Geen."
         without_user: "heeft de groep bijgewerkt naar <strong>Geen.</strong>"
@@ -2674,10 +2751,48 @@ nl:
         short: "{{user_path}} heeft de bron bijgewerkt naar {{source_name}}."
         without_user: "heeft de bron bijgewerkt naar <strong>{{source_name}}.</strong>"
         long: "{{user_path}} heeft de ticketbron van {{notable_path}} bijgewerkt naar {{source_name}}."
+        new: "Bron als <strong>%{source_name}</strong>"
       due_date_updated:
         short: "{{user_path}} heeft de vervaldatum bijgewerkt naar {{due_date_updated}}"
         without_user: "heeft de vervaldatum bijgewerkt naar <strong>{{due_date_updated}}</strong>"
         long: "{{user_path}} heeft de vervaldatum van {{notable_path}} bijgewerkt naar {{due_date_updated}}"
+        new: "vervaldatum als <strong>%{due_date_updated}</strong>"
+      requester_change:
+        new: "Aanvrager als %{requester_name}"
+      ticket_edit:
+        new: "<strong>%{fields}</strong> bewerkt"
+      custom_field_change:
+        new: "%{field_name} als <strong>%{field_value}</strong>"
+      custom_text_field_change:
+        new: "%{text_fields} bewerkt"
+      added_watcher:
+        new: "Watchers toegevoegd %{watcher_list}"
+      removed_watcher:
+        new: "Watcher verwijderd %{watcher_list}"
+      added_tag:
+        new: "Tags toegevoegd <strong>%{tag_name}</strong>"
+      removed_tag:
+        new: "Tags verwijderd <strong>%{tag_name}</strong>"
+      add_cc:
+        new: "CC toegevoegd %{cc_list}"
+      add_note:
+        new: "Aantekeningen toegevoegd"
+      ticket_merge_source:
+        new: "Dit ticket is samengevoegd met %{target_ticket}"
+      ticket_merge_target:
+        new: "%{source_ticket_list} samengevoegd met dit ticket"
+      ticket_split_source:
+        new: "Een antwoord splitsen om een nieuw ticket te maken %{target_ticket}"
+      ticket_split_target:
+        new: "Dit ticket is gemaakt door het af te splitsen van een antwoord in ticket %{source_ticket}"
+      ticket_import:
+        new: "Ticket geïmporteerd op %{imported_time}"
+      checkbox_checked:
+        new: "%{checkbox_list} geselecteerd"
+      checkbox_unchecked:
+        new: "Selectie ongedaan gemaakt %{checkbox_list}"
+      archive:
+        new: "Dit ticket is gearchiveerd."
   credit_card_info: Creditcardgegevens
   zendesk_backup_info: "Selecteer het back-upbestand in Zendesk:"
   backup_error_msg: "Het bestand is groter dan de voorgeschreven limiet van 50 MB. <a href='#' id='import_request'>Neem contact op met de ondersteuningsafdeling</a> om het importproces voort te zetten."
@@ -4719,7 +4834,16 @@ nl:
       user_not_following: "Deze gebruiker volgt uw Twitter-account niet"
     activities: Activiteiten
     activity_toggle: "Activiteiten weergeven"
+    activity_toggle_v2: Activiteiten
+    activity_toggle_tooltip: "Tussen activiteiten switchen"
+    show_activities_tooltip: "Activiteiten weergeven"
+    hide_activities_tooltip: "Activiteiten verbergen"
     activity_timestamp: "%{user_name} is bijgewerkt <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})."
+    user_activity_timestamp: "%{user_name} is bijgewerkt <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})."
+    deleted_rule: "verwijderde regel - %{rule_name}"
+    executed: " uitgevoerd "
+    performed: " uitgevoerd "
+    system_activity_timestamp: "<strong class='muted'>Systeem</strong> %{system_rule} <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date}) "
     requestor_info: Aanvragersgegevens
     view_twitter: "Weergeven op Twitter"
     view_facebook: "Weergeven op Facebook"
