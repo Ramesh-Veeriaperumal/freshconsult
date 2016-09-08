@@ -8,6 +8,7 @@ module Import::Zen::Redis
 
   def clear_redis_key
     remove_zen_import_redis_key(zi_key)
+    remove_zen_import_redis_key(zen_dropdown_key)
   end
 
   def set_import_user(value)
@@ -17,6 +18,10 @@ module Import::Zen::Redis
 
   def zi_key
     ZENDESK_IMPORT_STATUS % { :account_id => Account.current.id }
+  end
+
+  def zen_dropdown_key
+    ZENDESK_IMPORT_CUSTOM_DROP_DOWN % {:account_id => Account.current.id}
   end
 
   def increment_key node

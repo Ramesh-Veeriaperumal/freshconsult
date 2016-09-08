@@ -175,7 +175,7 @@ class HelpdeskReports::Formatter::Ticket::TicketVolume
     def week_trend_averages(metrics)
       metrics.each do |metric|
         metric.each do |dow, result|
-          result.each {|hour, value| result[hour] = (value/@datesByWeekday[dow.to_i])}
+          result.each {|hour, value| result[hour] = (value.to_f/@datesByWeekday[dow.to_i]).ceil }
         end
       end
     end
@@ -221,7 +221,7 @@ class HelpdeskReports::Formatter::Ticket::TicketVolume
     def calculate_dow_average count_data    
       extra_details = {}
       (0..6).each do |result|
-         avg = (count_data[result]/@datesByWeekday[result]).to_i
+         avg = (count_data[result].to_f/@datesByWeekday[result]).ceil
          extra_details[Date::DAYNAMES[result]+'_avg'] = avg
       end
       extra_details     
