@@ -12,7 +12,7 @@
   <% unless user_page %>
 		<td class="userpic">
 			<div class="hideForList">
-				<%= user_avatar(ticket.requester, :thumb, "preview_pic circle") %>
+				<%= senti_user_avatar(ticket.requester, ticket.sentiment, :thumb, "preview_pic circle") %>
 			</div>
 		</td>
 	<% end %>

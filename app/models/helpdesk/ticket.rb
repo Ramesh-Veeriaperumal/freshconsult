@@ -29,7 +29,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   SCHEMA_LESS_ATTRIBUTES = ["product_id","to_emails","product", "skip_notification",
                             "header_info", "st_survey_rating", "survey_rating_updated_at", "trashed", 
                             "access_token", "escalation_level", "sla_policy_id", "sla_policy", "manual_dueby", "sender_email", "parent_ticket",
-                            "reports_hash","sla_response_reminded","sla_resolution_reminded", "dirty_attributes"]
+                            "reports_hash","sla_response_reminded","sla_resolution_reminded", "dirty_attributes", "sentiment"]
 
   TICKET_STATE_ATTRIBUTES = ["opened_at", "pending_since", "resolved_at", "closed_at", "first_assigned_at", "assigned_at",
                              "first_response_time", "requester_responded_at", "agent_responded_at", "group_escalated", 

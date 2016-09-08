@@ -4219,3 +4219,22 @@ li {
     }
     /*// multifile attachments panels end*/
     /*//--------------------------------------*/
+
+
+
+
+/* ********************** STYLE FOR CUSTOMER SENTIMENT *********************** */
+
+#tickets-expanded .userpic img.senti-Ico{
+    position: absolute;
+    bottom: -5px;
+    right: -2px;
+    width: 20px;
+    height: auto; 
+    border-radius: 0;
+    background: none;
+}
+
+.ticket_show .avatar-wrap .preview_pic img.senti-Ico{width: 20px; height: 20px; position: absolute; top: 27px; right: -3px;}
+
+/* ********************** END OF STYLE FOR CUSTOMER SENTIMENT ********************** */

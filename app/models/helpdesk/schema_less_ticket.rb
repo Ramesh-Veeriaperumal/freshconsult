@@ -36,6 +36,8 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
 	alias_attribute :sla_resolution_reminded, :boolean_tc05
 	alias_attribute :dirty_attributes, :text_tc03	
 
+	alias_attribute :sentiment, :int_tc03
+
 
 	# Attributes used in Freshservice
 	alias_attribute :department_id, :long_tc10

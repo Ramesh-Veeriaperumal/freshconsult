@@ -34,7 +34,7 @@ end
 			<% end %>
 			class="conversation <%= 'minimized' if minimizable %> <%= 'source_email' if note.email? %>">
 	<% if note.user %>
-	<div class="avatar-wrap" name="note<%= note.id %>" id="note<%= note.id %>"><%= user_avatar(note.user, :thumb, 'preview_pic circle') %></div>
+	<div class="avatar-wrap" name="note<%= note.id %>" id="note<%= note.id %>"><%= senti_user_avatar(note.user, note.sentiment, :thumb, 'preview_pic circle') %></div>
 	<% end %>
   <div class="commentbox 
       <%= (note.user.blank? or notable_object.agent_performed?(note.user)) ? 'commentbox-gray' : 'commentbox-requester' %> 
