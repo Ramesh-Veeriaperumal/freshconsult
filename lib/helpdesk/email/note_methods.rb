@@ -109,8 +109,8 @@ module Helpdesk::Email::NoteMethods
 
   def sanitize_note_message msg
     sanitized_msg = run_with_timeout(NokogiriTimeoutError) { Nokogiri::HTML(msg).at_css("body") }
-    remove_identifier_span(sanitized_msg)
-    remove_survey_div(sanitized_msg)
+    remove_identifier_span(sanitized_msg) unless sanitized_msg.blank?
+    remove_survey_div(sanitized_msg) unless sanitized_msg.blank?
     sanitized_msg.inner_html unless sanitized_msg.blank?
   end
 
