@@ -422,7 +422,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         :requester => user,
         :to_email => to_email[:email],
         :to_emails => parse_to_emails,
-        :cc_email => {:cc_emails => global_cc, :fwd_emails => [], :reply_cc => global_cc, :tkt_cc => parse_cc_email },
+        :cc_email => {:cc_emails => global_cc, :fwd_emails => [], :bcc_emails => [], :reply_cc => global_cc, :tkt_cc => parse_cc_email },
         :email_config => email_config,
         :status => Helpdesk::Ticketfields::TicketStatus::OPEN,
         :source => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email]
