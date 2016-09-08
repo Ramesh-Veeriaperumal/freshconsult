@@ -128,6 +128,7 @@ Helpkit::Application.routes.draw do
     match '/tickets/:id/execute_scenario/:scenario_id' => 'ember/tickets#execute_scenario', via: :put
     resources :contact_fields, controller: 'ember/contact_fields', only: :index
     resources :scenario_automations, controller: 'ember/scenario_automations', only: :index
+    resources :attachments, controller: 'ember/attachments', only: [:create]
   end
 
   match '/api/v2/_search/tickets' => 'tickets#search', :defaults => { :format => 'json' }, :as => :tickets_search, via: :get
