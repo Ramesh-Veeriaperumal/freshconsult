@@ -14,6 +14,7 @@ none = I18n.t("filter_options.none")
 none_value = -1
 
 hash_val = []
+
 if selected_values
   if include_none and selected_values.include?(none_value)
     selected_values.delete(none_value)
@@ -78,9 +79,17 @@ jQuery(document).ready(function() {
           var include_none = <%= include_none %>
           var noneVal = "<%= none %>"
           var cc_company = jQuery("#cc_emails_filter").length;
+          var tags_filter = jQuery("#tags_filter").length;
+          var id_or_val;
 
           jQuery.each(data.results, function(i, item){
-            var id_or_val = cc_company ? item.email : item.id;
+            if(cc_company){
+              id_or_val = cc_company
+            }else if (tags_filter){
+              id_or_val = item.value
+            }else{
+              id_or_val = item.id
+            }
             results.push({id: id_or_val, value: escapeHtml(item.value), info: item.details});
           });
           if(include_none && noneVal.toLowerCase().indexOf(searchText.toLowerCase()) > -1){

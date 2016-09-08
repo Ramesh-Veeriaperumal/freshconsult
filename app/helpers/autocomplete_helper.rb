@@ -23,6 +23,11 @@ module AutocompleteHelper
 																	:url => "/search/autocomplete/company_users",
 																	:container => "cc_emails",
 																	:max_limit => MAX_CC_LIMIT	
+								},
+								:tags => {
+																	:url => "/search/autocomplete/tags",
+																	:container => "tags",
+																	:max_limit => MAX_SELECTION_SIZE
 								}
 							} 
 

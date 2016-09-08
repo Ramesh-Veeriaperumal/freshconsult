@@ -164,7 +164,15 @@ module Search::TicketSearch
     end
 
     if criteria_key == "helpdesk_tags.name"
-      return Account.current.tags_from_cache.collect { |au| [au.name, CGI.escapeHTML(au.name)] }
+      if @current_options && @current_options.has_key?("helpdesk_tags.name")
+        tag_name = @current_options["helpdesk_tags.name"].split(',')
+        if tag_name
+          tags     = Account.current.tags.where(name: tag_name) 
+          @selected_tags = tags.any? ? tags : nil
+        end
+      end
+      
+      return @selected_tags || [[1, ""]]
     end
 
     if criteria_key == :owner_id
@@ -173,7 +181,7 @@ module Search::TicketSearch
       end
       @selected_companies = Account.current.companies.find_all_by_id(company_id) if company_id
       @selected_companies << NONE_VALUE if company_id and company_id.include?(NONE_VALUE)
-
+      
       return @selected_companies || [[1,""]]
     end
 
@@ -184,6 +192,7 @@ module Search::TicketSearch
         requester_id = @current_options["requester_id"].split(',')
       end
       @selected_requesters = Account.current.users.find_all_by_id(requester_id) if requester_id
+      
       return @selected_requesters || [[1,""]]
     end
 

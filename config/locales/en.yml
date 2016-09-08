@@ -6188,6 +6188,7 @@ en:
     requester_placeholder: "Name or Email"
     user_placeholder: "Name or Email"
     cc_emails_placeholder: "Name or email of user from selected company"
+    tags_placeholder: ""
     customers_placeholder: ""
     company_id_placeholder: ""
     raised_by: "Tickets created by"

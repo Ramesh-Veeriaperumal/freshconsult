@@ -22,6 +22,9 @@
       else if(container == "customers"){
         value = jQuery('#customers_filter').val().toString() || '';
       }
+      else if(container == "tags"){
+        value = jQuery('#tags_filter').val().toString() || '';
+      }
       else if(container == "single_select"){
         if(jQuery('#created_at option:selected').val() != "any_time")
           value =  jQuery('#created_at option:selected').val();
@@ -108,7 +111,7 @@
             container = "nested_field"
           elsif c_hash[:name] == 'created_at'
             container = "single_select"
-          elsif ['requester', 'customers'].include?(c_hash[:name])
+          elsif ['requester', 'customers', 'tags'].include?(c_hash[:name])
             container = c_hash[:name]
           else
             container = (c_hash[:options].size < 5)? "dropdown" : "multi_select"
