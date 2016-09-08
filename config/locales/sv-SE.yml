@@ -4349,6 +4349,9 @@ sv-SE:
     note_content: Anteckningsinnehåll
     private_note_alert: "Använd e-postkommandot nedan i meddelandets brödtext för att skicka ett privat svar."
     ticket_url: Ärende-URL
+    submit_feedback: "Skicka feedback"
+    search_text: "Sök i artiklar"
+    search_close_text: "Stäng sök"
     integrations:
       jira:
         tooltip: "Visa det associerade JIRA-ärendet"
