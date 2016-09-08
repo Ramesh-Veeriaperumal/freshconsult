@@ -22,6 +22,7 @@ class ReportExportMailer < ActionMailer::Base
     @selected_metric = options[:selected_metric] if options[:selected_metric]
     @filter_to_display = filter_to_display?(options[:report_type], options[:ticket_export])
     @report_name = options[:filter_name] ? "#{@report_type} report - #{options[:filter_name]}" : "#{@report_type}"
+    @portal_name = options[:portal_name]
 
     mail(headers) do |part|
       part.text { render "bi_report_export.plain" }
