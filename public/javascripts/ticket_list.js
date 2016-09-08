@@ -12,6 +12,8 @@ window.App.Tickets = window.App.Tickets || {};
 			this.bindEventsInTicketToolbar();
 			TicketListEvents();
 			App.Tickets.Merge_tickets.initialize();
+			this.filterSearch();
+
 		},
 		// This script moved from html page (shared/_ticket_toolbar.html)
 		bindEventsInTicketToolbar: function () {
@@ -59,7 +61,13 @@ window.App.Tickets = window.App.Tickets || {};
 		},
 		onLeave: function() {
 			$(document).off('.ticket_list');
+			jQuery('body').off('.filterList');
 			App.Tickets.Merge_tickets.unBindEvent();
+		},
+		filterSearch: function(){
+			jQuery("#filter-template").filterList("#filter-template",".tkt_views",function(element){
+   				element.find('a').trigger('click');
+   			}); 
 		}
 	}
 }(jQuery));
@@ -344,9 +352,21 @@ jQuery('body').append('<div id="agent_collision_container" class="hide"></div>')
 		return false;
 	});
 
-	jQuery(document).on('click.ticket_list', '#leftViewMenu a[rel=default_filter]', function(ev) {
+	jQuery(document).on('click.ticket_list', '#leftViewMenu a[rel=default_filter]', function() {
 		setCookie('wf_order','created_at');
 		setCookie('wf_order_type','desc');
+	});
+
+	jQuery(document).on('click.ticket_list','.link-item',function(ev){
+		jQuery('#filter-template').focus();
+		if(jQuery('.tkt_views').size() > 15){
+            jQuery('#leftViewMenu').addClass('hasSearch');
+        }else{
+            jQuery('.filter-search').addClass('hide');
+         }
+		var currActive = jQuery('[data-picklist]').children('li.active');
+		currActive.removeClass('active');
+        jQuery('[data-picklist]').find('li:visible').first().addClass('active');
 	});
 
 	jQuery(document).on('click.ticket_list', '#toggle_select_all', function(ev) {

@@ -6213,6 +6213,7 @@ en:
       agent_responded_at: Agent Response
       asc: Ascending
       desc: Descending
+    search_views: Go to view
   click_to_change_sort_order: Click to change sort order
   user_sessions:
       new:
