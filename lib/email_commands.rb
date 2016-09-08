@@ -13,7 +13,7 @@ module EmailCommands
         custom_ff_fields = {}
         email_cmds = $1.gsub("\\r\\n","").gsub("\\n","").gsub(/[”“]/,'"').gsub("\r\n","").gsub("\n", "").gsub("\r", "") unless $1.blank?
         cmds = ActiveSupport::JSON.decode("{ #{email_cmds} }")  
-        Rails.logger.debug "The email commands are : #{cmds.inspect}"
+        Rails.logger.debug "The email commands are : #{cmds.inspect}, Account::  #{ticket.account_id}"
         cmds.each_pair do |cmd, value|
           begin
             cmd = cmd.downcase
