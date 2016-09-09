@@ -113,6 +113,7 @@ Helpkit::Application.routes.draw do
         post :reply, to: 'ember/conversations#reply'
         post :notes, to: 'ember/conversations#create'
       end
+      resources :canned_responses, controller: 'ember/tickets/canned_responses', only: [:show]
     end
     resources :contacts, controller: 'ember/contacts', except: [:new, :edit] do
       collection do
