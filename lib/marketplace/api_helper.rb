@@ -71,7 +71,7 @@ module Marketplace::ApiHelper
 
     def freshplug_liquids(installed_plug)
       config_liquids = installed_plug[:configs].blank? ? {} : {'iparam' => IparamDrop.new(installed_plug[:configs]) }
-      default_liquids.merge(config_liquids).merge({'app_id' => "app_#{installed_plug[:extension_id]}"})
+      default_liquids.merge(config_liquids).merge({'app_id' => "app_#{installed_plug[:extension_id]}_#{installed_plug[:version_id]}"})
     end
 
     def default_liquids
