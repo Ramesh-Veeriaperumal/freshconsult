@@ -32,7 +32,7 @@ window.App = window.App || {};
 
       // When the user clicks the inline image, catch it
       // and invoke the popup for attachment viewer
-      $(document).on('click.ticket_attachment_preview',".helpdesk_note .details img",this.p(this.inlineImageClicked));
+      $(document).on('click.ticket_attachment_preview',".helpdesk_note .details img, .commentbox.private-note img",this.p(this.inlineImageClicked));
 
       // Close the popup when user clicks the close button
       $(document).on('click.ticket_attachment_preview','.av-close',this.p(this.removePopup));
@@ -83,7 +83,7 @@ window.App = window.App || {};
 
     ,inlineImageClicked: function(event){
       this.getAllInlineImages(event);
-      this.currentPosition = jQuery(event.target).parents('.helpdesk_note').find('img').index(event.target)
+      this.currentPosition = jQuery(event.target).parents('.helpdesk_note,.commentbox.private-note').find('img').index(event.target)
 
       // Show the current file popup
       this.showCurrentFile();
@@ -133,7 +133,7 @@ window.App = window.App || {};
       
       // Iterate through all the attachments in the 
       // conversation and create the attachment objects array.
-      var attachmentElements = $(event.target).parents(".helpdesk_note").find('.attachment_list .attachment');
+      var attachmentElements = $(event.target).parents(".attachment_list").find('.attachment');
       attachmentElements.each(function(i,el){
         var $el = $(el);
         self.attachments.push({
@@ -149,7 +149,11 @@ window.App = window.App || {};
       self = this;
 
       // Add the inline images
-      var inlineImages = $(event.target).parents(".helpdesk_note").find('.details img');
+      if($(event.target).parents(".helpdesk_note").length){
+        var inlineImages = $(event.target).parents(".helpdesk_note").find('.details img');
+      } else {
+        var inlineImages = $(event.target).parents(".commentbox.private-note").find('img');
+      }
       inlineImages.each(function(i,el){
         var $el = $(el);
         self.attachments.push({
