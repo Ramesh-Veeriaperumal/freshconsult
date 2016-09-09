@@ -41,6 +41,9 @@ window.App = window.App || {};
       // Switching between attachments
       $(document).on('click.ticket_attachment_preview','.av-next',this.p(this.nextFile));
       $(document).on('click.ticket_attachment_preview','.av-prev',this.p(this.prevFile));
+
+      // Catch pjax before send to close the popup
+      $(document).on('pjax:beforeSend.ticket_attachment_preview',this.p(this.removePopup));
     }
 
     ,attachKeys: function(){
