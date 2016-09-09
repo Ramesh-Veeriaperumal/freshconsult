@@ -3004,6 +3004,12 @@ en:
         new: "Deselected %{checkbox_list}"
       archive:
         new: "Ticket archived"
+      email_to_requester:
+        new: "Sent email to requester %{requester_name}"
+      email_to_group:
+        new: "Sent email to group <strong>%{group_list}</strong>"
+      email_to_agent:
+        new: "Sent email to agent %{agent_list}"
   credit_card_info: Credit card information
   zendesk_backup_info: Select the Zendesk backup file downloaded from zendesk
   backup_error_msg: "The file exceeds the prescribed limit of 50MB, please <a href='#' id='import_request'>contact support</a> to proceed with the import."
