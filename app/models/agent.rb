@@ -6,6 +6,8 @@ class Agent < ActiveRecord::Base
   include Agents::Preferences
   include Social::Ext::AgentMethods
   include Chat::Constants
+  include Redis::RoundRobinRedis
+  include RoundRobinCapping::Methods
 
   concerned_with :associations, :constants
 
@@ -163,6 +165,46 @@ class Agent < ActiveRecord::Base
 
   def update_last_active(force=false)
     touch(:last_active_at) if force or last_active_at.nil? or ((Time.now - last_active_at) > 4.hours)
+  end
+
+  def current_load group
+    agent_key = group.round_robin_agent_capping_key(user_id)
+    [get_round_robin_redis(agent_key).to_i, agent_key]
+  end
+
+  def assign_next_ticket group
+    key = group.round_robin_capping_key
+    ticket_id = group.lpop_from_rr_capping_queue
+
+    Rails.logger.debug "RR popped ticket : #{ticket_id}"
+    
+    if ticket_id.present?
+      ticket = group.tickets.find_by_display_id(ticket_id)
+      if ticket.present? && ticket.capping_ready?
+        MAX_CAPPING_RETRY.times do
+          ticket_count, agent_key = current_load(group)
+    
+          if ticket_count < group.capping_limit
+            watch_round_robin_redis(agent_key)
+            new_score = generate_new_score(ticket_count + 1) #gen new score with the updated ticket count value
+            result    = group.update_agent_capping_with_lock user_id, new_score
+
+            if result.is_a?(Array) && result[1].present?
+              Rails.logger.debug "RR SUCCESS Agent's next ticket : #{ticket.display_id} - 
+                                #{user_id}, #{group.id}, #{new_score}, #{result.inspect}".squish
+              ticket.responder_id = user_id
+              ticket.round_robin_assignment = true
+              ticket.save
+              return true
+            end
+            Rails.logger.debug "RR FAILED Agent's next ticket : #{ticket.display_id} - 
+                                #{user_id}, #{group.id}, #{new_score}, #{result.inspect}".squish
+          end
+          Rails.logger.debug "Looping again for ticket : #{ticket.display_id}"
+        end
+      end
+      group.lpush_to_rr_capping_queue(ticket_id) if ticket.present?
+    end
   end
 
   protected

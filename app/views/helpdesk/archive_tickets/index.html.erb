@@ -13,12 +13,27 @@
     jQuery("#assign-options").show();
     jQuery(this).hide();
   });
-
   var rep_type_param = <%= params[:report_type].present?.to_s %> ? '?report_type=<%=params[:report_type]%>&tickets_in_current_page=<%= @items.length %>' : '?tickets_in_current_page=<%= @items.length %>';
 
   var paginate_url = '/helpdesk/archive_tickets/full_paginate';
   paginate_url = paginate_url + rep_type_param
   jQuery.getScript(paginate_url);
+
+  jQuery(document).on('click.ticket_list','.link-item',function(){
+    jQuery("#filter-template").filterList("#filter-template",".tkt_views",function(element){
+      element.find('a').trigger('click');
+     }); 
+    jQuery('#filter-template').focus();
+    if(jQuery('.tkt_views').size() > 15){
+            jQuery('#leftViewMenu').addClass('hasSearch');
+        }else{
+            jQuery('.filter-search').addClass('hide');
+         }
+    var currActive = jQuery('[data-picklist]').children('li.active');
+    currActive.removeClass('active');
+    jQuery('[data-picklist]').find('li:visible').first().addClass('active');
+  });
+
 <% end %>
 <% content_for :layoutType do -%>ticket_list<%- end %>
 <div id="archived-ticket-list">

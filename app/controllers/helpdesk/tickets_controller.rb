@@ -1,7 +1,11 @@
 class Helpdesk::TicketsController < ApplicationController
 
+  require 'freemail'
+
   include ActionView::Helpers::TextHelper
   include ParserUtil
+  include Redis::RedisKeys
+  include Redis::OthersRedis
   include HelpdeskControllerMethods
   include Helpdesk::TicketActions
   include Search::TicketSearch
@@ -20,11 +24,12 @@ class Helpdesk::TicketsController < ApplicationController
   include Helpdesk::TagMethods
   include Helpdesk::NotePropertiesMethods
   include Helpdesk::Activities::ActivityMethods
+  include Helpdesk::SpamAccountConstants
 
   before_filter :redirect_to_mobile_url
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => :show
   before_filter :portal_check, :verify_format_and_tkt_id, :only => :show
-  before_filter :check_compose_feature, :only => :compose_email
+  before_filter :check_compose_feature, :check_trial_outbound_limit, :only => :compose_email
 
   before_filter :find_topic, :redirect_merged_topics, :only => :new
   around_filter :run_on_slave, :only => [:user_ticket, :activities]
@@ -70,7 +75,7 @@ class Helpdesk::TicketsController < ApplicationController
   alias :build_ticket :build_item
   before_filter :build_ticket_body_attributes, :only => [:create]
   before_filter :build_ticket, :only => [:create, :compose_email]
-  before_filter :set_required_fields, :only => :create
+  before_filter :set_required_fields, :check_trial_customers_limit, :only => :create
 
   before_filter :set_date_filter ,    :only => [:export_csv]
   before_filter :csv_date_range_in_days , :only => [:export_csv]
@@ -327,6 +332,7 @@ class Helpdesk::TicketsController < ApplicationController
         hash.merge!({:reply_template => parsed_reply_template(@ticket,nil)})
         hash.merge!({:default_twitter_body_val => default_twitter_body_val(@ticket)}) if @item.twitter?
         hash.merge!({:twitter_handles_map => twitter_handles_map}) if @item.twitter?
+        hash.merge!({:tags => @item.tags.map(&:to_mob_json)})
         hash.merge!(@ticket_notes[0].to_mob_json) unless @ticket_notes[0].nil?
         render :json => hash
       }
@@ -774,7 +780,7 @@ class Helpdesk::TicketsController < ApplicationController
     cc_emails = fetch_valid_emails(params[:cc_emails])
 
     #Using .dup as otherwise its stored in reference format(&id0001 & *id001).
-    @item.cc_email = {:cc_emails => cc_emails, :fwd_emails => [], :reply_cc => cc_emails.dup, :tkt_cc => cc_emails.dup}
+    @item.cc_email = {:cc_emails => cc_emails, :fwd_emails => [], :bcc_emails => [], :reply_cc => cc_emails.dup, :tkt_cc => cc_emails.dup}
 
     @item.status = CLOSED if save_and_close?
     @item.display_id = params[:helpdesk_ticket][:display_id]
@@ -1416,6 +1422,32 @@ class Helpdesk::TicketsController < ApplicationController
 
     def check_compose_feature
       access_denied unless current_account.compose_email_enabled?
+    end
+
+    def check_trial_outbound_limit
+      if ((current_account.id > get_spam_account_id_threshold) && (current_account.subscription.trial?) && (!ismember?(SPAM_WHITELISTED_ACCOUNTS, current_account.id)))
+        outbound_per_day_key = OUTBOUND_EMAIL_COUNT_PER_DAY % {:account_id => current_account.id }
+        total_outbound_per_day = get_others_redis_key(outbound_per_day_key).to_i
+        if ((total_outbound_per_day >=5 ) || 
+            ( (Freemail.free?(current_account.admin_email)) &&
+              (current_account.email_configs.count == 1) &&
+              (current_account.email_configs[0].reply_email.end_with?(current_account.full_domain))))
+          access_denied
+        end
+      end
+    end
+
+    def check_trial_customers_limit
+      if ((current_account.id > get_spam_account_id_threshold) && (current_account.subscription.trial?) && (!ismember?(SPAM_WHITELISTED_ACCOUNTS, current_account.id)) && (Freemail.free?(current_account.admin_email)))
+        if @item.source == Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:outbound_email]
+          cc_emails = fetch_valid_emails(params[:cc_emails])
+          to_email = get_email_array(params[:helpdesk_ticket][:email])
+          if (cc_emails.count + to_email.count) > get_trial_account_max_to_cc_threshold
+              flash[:error] = t(:'flash.general.recipient_limit_exceeded', :limit => get_trial_account_max_to_cc_threshold )
+              redirect_to :back
+          end
+        end
+      end
     end
 
     def build_ticket_body_attributes

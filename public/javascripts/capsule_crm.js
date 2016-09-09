@@ -25,7 +25,7 @@ CapsuleWidget = {
         new Ajax.Request('/http_request_proxy/fetch', {
             asynchronous: true,
             evalScripts: true,
-            method: 'get',
+            method: 'post',
             parameters: parameters,
             onSuccess: function (response) {
                 if (response.responseJSON.person || response.responseJSON.organisation) {
@@ -169,7 +169,7 @@ CapsuleWidget = {
         new Ajax.Request('/http_request_proxy/fetch', {
             asynchronous: true,
             evalScripts: true,
-            method: 'get',
+            method: 'post',
             parameters: parameters,
             onSuccess: function (response) {
                 CapsuleWidget.processSearch(response);

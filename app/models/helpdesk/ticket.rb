@@ -18,6 +18,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   include Redis::ReportsRedis
   include Redis::OthersRedis
   include Redis::DisplayIdRedis
+  include Redis::RoundRobinRedis
   include Reports::TicketStats
   include Helpdesk::TicketsHelperMethods
   include ActionView::Helpers::TranslationHelper
@@ -25,6 +26,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   include Helpdesk::Services::Ticket
   include BusinessHoursCalculation
   include AccountConstants
+  include RoundRobinCapping::Methods
 
   SCHEMA_LESS_ATTRIBUTES = ["product_id","to_emails","product", "skip_notification",
                             "header_info", "st_survey_rating", "survey_rating_updated_at", "trashed", 
@@ -43,7 +45,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   serialize :cc_email
 
-  concerned_with :associations, :validations, :callbacks, :riak, :s3, :mysql, :attributes, :rabbitmq, :permissions, :esv2_methods, :count_es_methods
+  concerned_with :associations, :validations, :callbacks, :riak, :s3, :mysql, 
+                 :attributes, :rabbitmq, :permissions, :esv2_methods, :count_es_methods, 
+                 :round_robin_methods
   
   text_datastore_callbacks :class => "ticket"
   spam_watcher_callbacks :user_column => "requester_id"
@@ -53,7 +57,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   attr_accessor :email, :name, :custom_field ,:customizer, :nscname, :twitter_id, :external_id, 
     :requester_name, :meta_data, :disable_observer, :highlight_subject, :highlight_description, 
     :phone , :facebook_id, :send_and_set, :archive, :required_fields, :disable_observer_rule, 
-    :disable_activities, :tags_updated, :system_changes, :activity_type, :misc_changes
+    :disable_activities, :tags_updated, :system_changes, :activity_type, :misc_changes, 
+    :round_robin_assignment
   # Added :system_changes, :activity_type, :misc_changes for activity_revamp -
   # - will be clearing these after activity publish.
 
@@ -231,6 +236,14 @@ class Helpdesk::Ticket < ActiveRecord::Base
                             false, sla_rule_ids]
   }}
 
+  scope :unassigned, :conditions => ["helpdesk_tickets.responder_id is NULL"]
+  scope :sla_on_tickets, lambda { |status_ids| 
+    { :conditions => ["status IN (?)", status_ids] }
+  }
+  scope :agent_tickets, lambda { |status_ids, user_id| 
+    { :conditions => ["status IN (?) and responder_id = ?", status_ids, user_id] } 
+  }
+
   SCHEMA_LESS_ATTRIBUTES.each do |attribute|
     define_method("#{attribute}") do
       build_schema_less_ticket unless schema_less_ticket
@@ -292,7 +305,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
     
     def default_cc_hash
-      { :cc_emails => [], :fwd_emails => [], :reply_cc => [], :tkt_cc => [] }
+      { :cc_emails => [], :fwd_emails => [], :reply_cc => [], :tkt_cc => [], :bcc_emails => [] }
     end
 
   end
@@ -817,7 +830,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     
   def cc_email_hash
     if cc_email.is_a?(Array)     
-      {:cc_emails => cc_email, :fwd_emails => [], :reply_cc => cc_email}
+      {:cc_emails => cc_email, :fwd_emails => [], :bcc_emails => [] , :reply_cc => cc_email}
     else
       cc_email
     end
@@ -1049,14 +1062,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
       self.sqs_manual_publish
     end
     @touched ||= true
-  end
-
-  def schedule_round_robin_for_agents
-    next_agent = group.next_available_agent
-
-    return if next_agent.nil? #There is no agent available to assign ticket.
-    self.responder_id = next_agent.user_id
-    self.activity_type = {:type => "round_robin", :responder_id => [nil, self.responder_id]}
   end
 
   def add_tag_activity(tag)

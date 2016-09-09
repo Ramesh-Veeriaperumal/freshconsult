@@ -34,7 +34,7 @@ if node[:opsworks]
 
     # checking if this is deployment or new instance
     if node[:opsworks][:deployment]
-      deployment = opsworks.describe_deployments(:deployment_ids => node[:opsworks][:deployment])
+      deployment = opsworks.describe_deployments(:deployment_ids => [node[:opsworks][:deployment]])
       # getting the deployment details
       deployment_details = deployment[:deployments].first
       # getting the stack_id

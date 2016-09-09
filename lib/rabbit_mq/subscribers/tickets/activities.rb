@@ -10,7 +10,8 @@ module RabbitMq::Subscribers::Tickets::Activities
                               :source, :status, :product_id, :spam, :deleted, :parent_ticket, :due_by
                            ]
   PROPERTIES_TO_CONVERT  = [ :group_id, :product_id, :status]
-  PROPERTIES_AS_ARRAY    = [ :add_tag, :add_watcher, :rule, :add_a_cc, :add_comment ]
+  PROPERTIES_AS_ARRAY    = [ :add_tag, :add_watcher, :rule, :add_a_cc, :add_comment, 
+                              :email_to_requester, :email_to_group, :email_to_agent ]
 
   def mq_activities_ticket_properties(action)
     self.to_rmq_json(activities_keys,action) 

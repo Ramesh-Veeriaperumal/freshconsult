@@ -30,6 +30,7 @@ class Reports::Freshchat::SummaryReportsController < ApplicationController
 
   def export_pdf   
     params.merge!(:report_type   => report_type)    
+    params.merge!(:portal_name => current_portal.name) if current_portal  
     Reports::Export.perform_async(params)   
     render json: nil, status: :ok 
   end  

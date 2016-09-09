@@ -67,6 +67,11 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
       status_hash
     }
   end
+
+  def self.sla_timer_on_status_ids(account)
+    statuses = account.ticket_status_values
+    statuses.reject(&:stop_sla_timer).map(&:status_id)
+  end
   
   def self.statuses(account)
     disp_col_name = self.display_name
@@ -174,7 +179,7 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
       if redis_key_exists?(SLA_ON_STATUS_CHANGE)
         SlaOnStatusChange.perform_async({:status_id => self.id, :status_changed => true})
       else
-        send_later(:update_tickets_sla_on_status_change)  
+        send_later(:update_tickets_properties)  
       end
     end
   end
@@ -224,6 +229,11 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
       end
     end
   end
+  
+  def update_tickets_properties
+    update_tickets_sla_on_status_change
+    update_group_capping if Account.current.features?(:round_robin) and Account.current.round_robin_capping_enabled?
+  end
 
   def update_ticket_due_by(ticket)
     Sharding.run_on_master do
@@ -258,6 +268,19 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
       Sharding.run_on_slave do 
         tickets.preload(:ticket_states).visible.joins(:ticket_states).where("helpdesk_ticket_states.sla_timer_stopped_at IS NOT NULL").find_each(batch_size: 300) do |ticket|
           update_ticket_due_by(ticket)
+        end
+      end
+    end
+  end
+
+  def update_group_capping    
+    account.groups.round_robin_groups.capping_enabled_groups.find_each do |g|
+      g.tickets.where(:status => status_id).find_each do |ticket|
+        if stop_sla_timer?
+          ticket.decr_agent_capping_limit
+        else
+          ticket.incr_agent_capping_limit
+          ticket.save if ticket.responder_id_changed?
         end
       end
     end

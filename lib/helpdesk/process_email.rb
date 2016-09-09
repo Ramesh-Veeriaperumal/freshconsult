@@ -422,7 +422,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         :requester => user,
         :to_email => to_email[:email],
         :to_emails => parse_to_emails,
-        :cc_email => {:cc_emails => global_cc, :fwd_emails => [], :reply_cc => global_cc, :tkt_cc => parse_cc_email },
+        :cc_email => {:cc_emails => global_cc, :fwd_emails => [], :bcc_emails => [], :reply_cc => global_cc, :tkt_cc => parse_cc_email },
         :email_config => email_config,
         :status => Helpdesk::Ticketfields::TicketStatus::OPEN,
         :source => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email]
@@ -612,7 +612,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       parsed_cc_emails = parse_cc_email
       parsed_cc_emails.delete(ticket.account.kbase_email)
       note = ticket.notes.build(
-        :private => (from_fwd_recipients or reply_to_private_note?(all_message_ids) or rsvp_to_fwd?),
+        :private => (from_fwd_recipients or reply_to_private_note?(all_message_ids) or rsvp_to_fwd?(ticket, from_email)),
         :incoming => true,
         :note_body_attributes => {
           :body => tokenize_emojis(body) || "",
@@ -628,9 +628,9 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         :cc_emails => parsed_cc_emails
       )  
       note.subject = Helpdesk::HTMLSanitizer.clean(params[:subject])   
-      note.source = Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"] if (from_fwd_recipients or ticket.agent_performed?(user) or rsvp_to_fwd?)
+      note.source = Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"] if (from_fwd_recipients or ticket.agent_performed?(user) or rsvp_to_fwd?(ticket, from_email))
       
-      note.schema_less_note.category = ::Helpdesk::Note::CATEGORIES[:third_party_response] if rsvp_to_fwd?
+      note.schema_less_note.category = ::Helpdesk::Note::CATEGORIES[:third_party_response] if rsvp_to_fwd?(ticket, from_email)
 
       check_for_auto_responders(note)
       check_support_emails_from(ticket.account, note, user, from_email)
@@ -678,8 +678,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       end
     end
     
-    def rsvp_to_fwd?
-      @rsvp_to_fwd ||= (Account.current.features?(:threading_without_user_check) && reply_to_forward(all_message_ids))
+    def rsvp_to_fwd?(ticket, from_email)
+      @rsvp_to_fwd ||= ((Account.current.features?(:threading_without_user_check) || ticket.cc_email[:cc_emails].include?(from_email[:email])) && reply_to_forward(all_message_ids))
     end
 
     def can_be_added_to_ticket?(ticket, user, from_email={})

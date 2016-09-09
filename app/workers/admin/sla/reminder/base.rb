@@ -42,16 +42,16 @@ module Admin::Sla::Reminder
 
       def escalate_reminder(sla_rule_based, reminder_type)
         account = Account.current
-        reminder_overdue = Time.zone.now + 
+        reminder_overdue = Time.zone.now +
                            Helpdesk::SlaPolicy::REMINDER_TIME_OPTIONS.first[-1].abs +
                            Helpdesk::SlaPolicy::SLA_WORKER_INTERVAL
-        reminder_tickets = account.tickets.unresolved.visible.
-                           send("#{reminder_type}_sla", account, reminder_overdue.to_s(:db)).
-                           send("#{reminder_type}_reminder", sla_rule_based.keys).
-                           updated_in(2.month.ago)
 
         execute_on_db do
           reminder_tickets_count = 0
+          reminder_tickets = account.tickets.unresolved.visible.
+                             send("#{reminder_type}_sla", account, reminder_overdue.to_s(:db)).
+                             send("#{reminder_type}_reminder", sla_rule_based.keys).
+                             updated_in(2.month.ago)
           reminder_tickets.find_each do |ticket|
             reminder_tickets_count += 1
             sla_policy = sla_rule_based[ticket.sla_policy_id]

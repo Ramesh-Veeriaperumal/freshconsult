@@ -25,7 +25,7 @@ module Helpdesk::LeaderboardHelper
 		content = ""
 		agent_class = ""
 		group_class = ""
-		content << "<a href='/'>< #{ t('gamification.leaderboard.back_to_dashboard') }</a>"
+		content << "<a href='/' rel='dashboard_link'>< #{ t('gamification.leaderboard.back_to_dashboard') }</a>"
 		group_action? ? group_class = "active" : agent_class = "active"
 		content << "<ul class='nav nav-tabs'>"
 		content << "<li id='agent-tab' class='#{agent_class}'>#{ link_to 'Agent', agents_helpdesk_leaderboard_index_path(:params => params.except(:action, :controller))}</li>"

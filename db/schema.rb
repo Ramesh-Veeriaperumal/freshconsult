@@ -1800,6 +1800,7 @@ ActiveRecord::Schema.define(:version => 20160825085738) do
     t.integer  "ticket_assign_type",                :default => 0
     t.integer  "business_calendar_id", :limit => 8
     t.boolean  "toggle_availability",               :default => false
+    t.integer  "capping_limit",        :default => 0
   end
 
   add_index "groups", ["account_id", "name"], :name => "index_groups_on_account_id", :unique => true
@@ -3573,6 +3574,7 @@ ActiveRecord::Schema.define(:version => 20160825085738) do
     t.string   "neutral_text",                        :default => "Neutral"
     t.string   "unhappy_text",                        :default => "Not Good"
     t.boolean  "deleted",                             :default => false
+    t.boolean  "good_to_bad",                         :default => false
   end
 
   add_index "surveys", ["account_id"], :name => "index_account_id_on_surrveys"

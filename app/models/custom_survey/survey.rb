@@ -115,7 +115,7 @@ class CustomSurvey::Survey < ActiveRecord::Base
 
   def as_reports_json
     options = {
-      :only     => [:id, :title_text, :choices, :link_text, :active, :deleted, :created_at, :can_comment],
+      :only     => [:id, :title_text, :choices, :link_text, :active, :deleted, :created_at, :can_comment, :good_to_bad],
       :methods  => :choices,
       :include  => {
         :survey_questions => {
