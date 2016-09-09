@@ -24,11 +24,12 @@ class Group < ActiveRecord::Base
 
   def update_agent_capping_with_lock user_id, new_score, operation="incr"
     agent_key = round_robin_agent_capping_key(user_id)
-
-    multi_round_robin_redis
-      update_agent_capping(new_score, user_id)
-      send("#{operation}_round_robin_redis", agent_key)
-    exec_round_robin_redis
+    key = round_robin_capping_key
+    
+    $redis_round_robin.multi do |m|
+      m.zadd(key, new_score, user_id)
+      m.send(operation, agent_key)
+    end
   end
 
   def update_agent_capping score, user_id
@@ -99,7 +100,8 @@ class Group < ActiveRecord::Base
 
   def round_robin_queue
     if round_robin_capping_enabled?
-      zrange_round_robin_redis(round_robin_capping_key, 0, -1).reverse
+      res = zrange_round_robin_redis(round_robin_capping_key, 0, -1)
+      res.present? ? res.reverse : []
     else
       get_others_redis_list(round_robin_key)
     end
@@ -147,7 +149,7 @@ class Group < ActiveRecord::Base
       del_round_robin_redis(key)
     end
     [round_robin_capping_key, round_robin_tickets_key, round_robin_capping_permit_key, 
-     rr_temp_tickets_queue_key].each do |key|
+     rr_temp_tickets_queue_key, rr_tickets_default_zset_key].each do |key|
       del_round_robin_redis(key)
     end
   end
@@ -191,28 +193,71 @@ class Group < ActiveRecord::Base
 
   def round_robin_agent_capping_key(user_id)
     ROUND_ROBIN_AGENT_CAPPING % { :account_id => self.account_id, :group_id => self.id, :user_id => user_id }
-  end  
+  end
+
+  def rr_tickets_default_zset_key
+    RR_CAPPING_TICKETS_DEFAULT_SORTED_SET % { :account_id => self.account_id, :group_id => self.id }
+  end
 
 
 
   def lpush_to_rr_capping_queue ticket_id
+    update_sorted_set("lpush", ticket_id)
     lpush_round_robin_redis(round_robin_tickets_key, ticket_id)
   end
 
   def rpush_to_rr_capping_queue ticket_id
+    update_sorted_set("rpush", ticket_id)
     rpush_round_robin_redis(round_robin_tickets_key, ticket_id)
   end
 
   def lpop_from_rr_capping_queue
+    update_sorted_set("lpop")
     lpop_round_robin_redis(round_robin_tickets_key)
   end
 
   def lrem_from_rr_capping_queue ticket_id
+    update_sorted_set("lrem", ticket_id)
     lrem_round_robin_redis(round_robin_tickets_key, ticket_id)
   end
 
   
   private
+    def sorted_set_ticket_score
+      Time.now.utc.to_i
+    end
+
+    def sorted_set_ticket_score_for_lpush
+      res = zrange_round_robin_redis(rr_tickets_default_zset_key, 0, 0, true)[0]
+      res.present? ? (res[1].to_i - 1) : sorted_set_ticket_score
+    end
+
+    def zadd_to_sorted_set operation, ticket_id
+      score = operation=="rpush" ? sorted_set_ticket_score : 
+                                   sorted_set_ticket_score_for_lpush
+      zadd_round_robin_redis(rr_tickets_default_zset_key, score, ticket_id)
+    end
+
+    def update_sorted_set operation, ticket_id=nil
+      if ticket_id.present?
+        if ticket_id.is_a?(Array)
+          ticket_id.each do |id|
+            zadd_to_sorted_set(operation, id)
+          end
+        else
+          operation=="lrem" ? zrem_round_robin_redis(rr_tickets_default_zset_key, ticket_id) : 
+                              zadd_to_sorted_set(operation, ticket_id)
+        end
+      else
+        if operation=="lpop"
+          res = zrange_round_robin_redis(rr_tickets_default_zset_key, 0, 0, true)[0]
+          zrem_round_robin_redis(rr_tickets_default_zset_key, res[0]) if res.present?
+        end
+      end
+    rescue Exception => e
+      Rails.logger.debug "Exception while updating sorted set : #{e.message}"
+    end
+
     def old_round_robin_key
       GROUP_AGENT_TICKET_ASSIGNMENT % {:account_id => self.account_id, 
                               :group_id => self.id}

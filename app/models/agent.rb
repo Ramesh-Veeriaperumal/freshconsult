@@ -175,15 +175,16 @@ class Agent < ActiveRecord::Base
   def assign_next_ticket group
     key = group.round_robin_capping_key
     ticket_id = group.lpop_from_rr_capping_queue
+
     Rails.logger.debug "RR popped ticket : #{ticket_id}"
     
-    MAX_CAPPING_RETRY.times do
-      ticket_count, agent_key = current_load(group)
+    if ticket_id.present?
+      ticket = group.tickets.find_by_display_id(ticket_id)
+      if ticket.present? && ticket.capping_ready?
+        MAX_CAPPING_RETRY.times do
+          ticket_count, agent_key = current_load(group)
     
-      if ticket_count < group.capping_limit
-        if ticket_id.present?
-          ticket = group.tickets.find_by_display_id(ticket_id)
-          if ticket.present? && ticket.capping_ready?
+          if ticket_count < group.capping_limit
             watch_round_robin_redis(agent_key)
             new_score = generate_new_score(ticket_count + 1) #gen new score with the updated ticket count value
             result    = group.update_agent_capping_with_lock user_id, new_score
@@ -198,16 +199,12 @@ class Agent < ActiveRecord::Base
             end
             Rails.logger.debug "RR FAILED Agent's next ticket : #{ticket.display_id} - 
                                 #{user_id}, #{group.id}, #{new_score}, #{result.inspect}".squish
-          else
-            group.lpush_to_rr_capping_queue(ticket_id) if ticket.present?
-            return
           end
+          Rails.logger.debug "Looping again for ticket : #{ticket.display_id}"
         end
       end
-      Rails.logger.debug "Failed to match limit :::: looping again...."
+      group.lpush_to_rr_capping_queue(ticket_id) if ticket.present?
     end
-    group.lpush_to_rr_capping_queue(ticket_id) if ticket_id.present?
-    true
   end
 
   protected
