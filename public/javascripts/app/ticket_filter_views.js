@@ -94,12 +94,14 @@
 
         function moveElement() {
             var topElement = jQuery('[data-picklist] li.active') || jQuery('[data-picklist] li').first();
-            var topPosition = topElement.offset().top;
-            var index = jQuery('[data-picklist] li.active').index();
-            var height = jQuery('[data-picklist] li').innerHeight();
-            var recentHeight = jQuery('[data-picklist] .recent').innerHeight();
-            if (topPosition > 350 || topPosition < 200) {
-                jQuery('[data-picklist]').scrollTop(index * height);
+            if (topElement && topElement.offset()) {
+                var topPosition = topElement.offset().top;
+                var index = jQuery('[data-picklist] li.active').index();
+                var height = jQuery('[data-picklist] li').innerHeight();
+                var recentHeight = jQuery('[data-picklist] .recent').innerHeight();
+                if (topPosition > 350 || topPosition < 200) {
+                    jQuery('[data-picklist]').scrollTop(index * height);
+                }
             }
         }
 

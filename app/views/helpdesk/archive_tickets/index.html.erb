@@ -20,6 +20,7 @@
   jQuery.getScript(paginate_url);
 
   jQuery(document).on('click.ticket_list','.link-item',function(){
+    jQuery('body').off('.filterList');
     jQuery("#filter-template").filterList("#filter-template",".tkt_views",function(element){
       element.find('a').trigger('click');
      }); 
