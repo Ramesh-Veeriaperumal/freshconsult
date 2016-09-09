@@ -1,17 +1,51 @@
 module Ember
   class TicketFiltersController < ApiApplicationController
+    include AccessibleControllerMethods
 
     REMOVE_QUERY_HASH = ['spam', 'deleted', 'monitored_by']
     REMOVE_QUERY_CONDITIONS = ['spam', 'deleted']
 
+    WF_PREFIX = [:order, :order_type, :per_page]
+
+    before_filter :has_permission?, only: [:update, :destroy]
+
     def index
       load_objects
       append_default_filters
-      transform_response
+      transform_response(@items)
     end
 
     def show
-      @item = transform_each(required_attributes(@item))
+      @item = transform_single_response(required_attributes(@item))
+    end
+
+    def create
+      @item.validate!
+      if @item.errors?
+        render_errors(@item.errors, meta = {}) and return
+      else  
+        @item.save
+        create_helpdesk_accessible(@item, :ticket_filter)
+      end
+      @item = transform_single_response(required_attributes(@item))
+    end
+
+    def update
+      set_model_query_hash
+      prefix_ff_params
+      @item.deserialize_from_params(hasherized_params)
+      @item.visibility = params[:ticket_filter][:visibility]
+      if @item.save
+        update_helpdesk_accessible(@item, :ticket_filter) if visibility_present?
+      else
+        render_errors(@item.errors, meta = {}) and return
+      end
+      @item = transform_single_response(required_attributes(@item))
+    end
+
+    def destroy
+      @item.destroy
+      head 204
     end
 
     private
@@ -23,6 +57,7 @@ module Ember
       end
 
       def load_object
+        # Check whether the filter is accessible to the user
         if is_num?(params[:id])
           @item = scoper.find_by_id(params[:id])
         else
@@ -31,12 +66,20 @@ module Ember
         log_and_render_404 unless @item
       end
 
-      def after_load_object
-        has_permission?
-      end
-
       def scoper
         current_account.ticket_filters
+      end
+
+      def before_build_object
+        default_visibility
+        set_model_query_hash
+      end
+
+      def build_object
+        prefix_ff_params
+        @item = Helpdesk::Filters::CustomTicketFilter.deserialize_from_params(hasherized_params)
+        @item.visibility = params[:ticket_filter][:visibility]
+        @item.account_id = current_account.id
       end
 
       def required_attributes(obj)
@@ -84,50 +127,57 @@ module Ember
           true
       end
 
-      def transform_response
-        @items = @items.map { |item| transform_each(item) }
+      def transform_response(items)
+        items.map { |item| transform_single_response(item) }
       end
 
-      def transform_each(item = @item)
+      def transform_single_response(item)
         return item unless item[:query_hash]
         # remove the spam & deleted conditions from query hash
-        item[:query_hash] = item[:query_hash].select { |query| 
-          !REMOVE_QUERY_CONDITIONS.include?(query['condition'])
-        }
+        item[:query_hash] = remove_query_conditions(item)
         # transform query hash to a presentable form
-        item[:query_hash] = item[:query_hash].map { |query| query_output(query) }
+        item[:query_hash] = QueryHash.new(item[:query_hash]).to_json
         item
       end
 
-      def query_output(query)
-        result = query.slice('condition', 'operator', 'value')
-        result['value'] = query['value'].split(',') if query['value'].is_a?(String)
-        result['condition'] = TicketDecorator.display_name(query['ff_name']) if is_flexi_field?(query)
-        result['type'] = is_flexi_field?(query) ? 'custom_field' : 'default'
-        result
+      def remove_query_conditions(item)
+        # This is to be done in QueryHash
+        item[:query_hash].select { |query| 
+          !REMOVE_QUERY_CONDITIONS.include?(query['condition'])
+        }
       end
 
-      def is_flexi_field?(query)
-        query['ff_name'] != 'default' && query['condition'].include?('flexifield')
-      end
-
-      def query_input_transform(query_hash)
-        query_hash.map do |query|
-          result = query.slice('condition', 'operator', 'value')
-          result['value'] = query['value'].join(',') if query['value'].is_a?(Array)
-          result['ff_name'] = 'default'
-
-          if query['type'] == 'custom_field'
-            ff_name = "#{query['condition']}_#{current_account.id}"
-            result['condition'] = "flexifields.#{ff_field_name(ff_name)}"
-            result['ff_name'] = ff_name
-          end
-          result
+      def default_visibility
+        params[:ticket_filter][:visibility][:user_id] = api_current_user.id
+        unless privilege?(:manage_users)
+          params[:ticket_filter][:visibility][:visibility] = Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me]
+          params[:ticket_filter][:visibility][:group_id] = nil
         end
+        params[:ticket_filter][:visibility][:visibility] ||= Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me] if params[:ticket_filter][:visibility].present?
       end
 
-      def ff_field_name(name)
-        current_account.flexifield_def_entries.find_by_flexifield_alias(name).flexifield_name
+      def set_model_query_hash
+        params[:ticket_filter][:wf_model] = 'Helpdesk::Ticket'
+        params[:ticket_filter][:data_hash] = QueryHash.new(params[:ticket_filter][:query_hash]).to_system_format
       end
+
+      def visibility_present?
+        params[:ticket_filter][:visibility].present? && params[:ticket_filter][:visibility][:visibility].present?
+      end
+
+      def prefix_ff_params
+        WF_PREFIX.each do |key|
+          params[:ticket_filter]["wf_#{key}".to_sym] = params[:ticket_filter].delete(key) if params[:ticket_filter][key].present?
+        end
+        params[:ticket_filter][:filter_name] = params[:name] if params[:name].present?
+      end
+
+      def hasherized_params
+        new_params = params[:ticket_filter].to_h.with_indifferent_access.slice(:wf_model, :filter_name, :wf_order, :wf_order_type, :wf_per_page, :data_hash, :visibility)
+        new_params[:data_hash].map!(&:to_h).map(&:with_indifferent_access)
+        new_params
+      end
+
+      wrap_parameters(*Helpdesk::Filters::CustomTicketFilter::EMBER_WRAP_PARAMS)
   end
 end

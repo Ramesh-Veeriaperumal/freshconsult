@@ -8,6 +8,8 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   
   MODEL_NAME = "Helpdesk::Ticket"
 
+  EMBER_WRAP_PARAMS = [:ticket_filter, exclude: [], format: [:json]].freeze
+
   def self.deleted_condition(input)
     { "condition" => "deleted", "operator" => "is", "value" => input}
   end
