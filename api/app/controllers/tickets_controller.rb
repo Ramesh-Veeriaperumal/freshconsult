@@ -197,7 +197,7 @@ class TicketsController < ApiApplicationController
     end
 
     def sanitize_params
-      prepare_array_fields [:cc_emails, :attachments] # Tags not included as it requires more manipulation.
+      prepare_array_fields(ApiTicketConstants::ARRAY_FIELDS - ["tags"]) # Tags not included as it requires more manipulation.
 
       # Assign cc_emails serialized hash & collect it in instance variables as it can't be built properly from params
       cc_emails =  params[cname][:cc_emails]

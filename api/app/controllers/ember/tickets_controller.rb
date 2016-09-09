@@ -10,6 +10,23 @@ module Ember
       # TODO-EMBERAPI Optimize the way we fetch the count
     end
 
+    def create
+      assign_protected
+      ticket_delegator = TicketDelegator.new(@item, ticket_fields: @ticket_fields, custom_fields: params[cname][:custom_field], attachment_ids: @attachment_ids)
+      if !ticket_delegator.valid?(:create)
+        render_custom_errors(ticket_delegator, true)
+      else
+        @item.attachments = @item.attachments + ticket_delegator.draft_attachments if ticket_delegator.draft_attachments
+        if @item.save_ticket
+          @ticket = @item # Dirty hack. Should revisit.
+          render_201_with_location(item_id: @item.display_id)
+          notify_cc_people @cc_emails[:cc_emails] unless @cc_emails[:cc_emails].blank? || compose_email?
+        else
+          render_errors(@item.errors)
+        end
+      end
+    end
+
     def bulk_execute_scenario
       bulk_action do
         return unless load_scenario
@@ -26,6 +43,15 @@ module Ember
     end
 
     private
+
+      def sanitize_params
+        super
+        # attachment_ids must be handled separately, should not be passed to build_object method
+        if params[cname].key?(:attachment_ids)
+          @attachment_ids = params[cname][:attachment_ids].map(&:to_i)
+          params[cname].delete(:attachment_ids)
+        end
+      end
 
       def load_scenario
         @va_rule ||= current_account.scn_automations.find_by_id(params[:scenario_id])
@@ -150,6 +176,10 @@ module Ember
 
       def sideload_options
         [:requester, :stats]
+      end
+
+      def render_201_with_location(template_name: "tickets/#{action_name}", location_url: 'ticket_url', item_id: @item.id)
+        render template_name, location: send(location_url, item_id), status: 201
       end
 
       wrap_parameters(*wrap_params)

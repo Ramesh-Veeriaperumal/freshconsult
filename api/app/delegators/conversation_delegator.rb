@@ -6,6 +6,10 @@ class ConversationDelegator < BaseDelegator
 
   validate :validate_from_email, if: -> { email_conversation? && from_email.present? && attr_changed?('from_email', schema_less_note)}
 
+  def initialize(record, options = {})
+    super(record, options)
+  end
+
   def validate_agent_emails
     invalid_emails = to_emails - Account.current.agents_from_cache.map { |x| x.user.email }
     unless invalid_emails.empty?

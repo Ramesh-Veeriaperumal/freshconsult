@@ -1,6 +1,6 @@
 module ApiTicketConstants
   # ControllerConstants
-  ARRAY_FIELDS = %w(tags cc_emails attachments).freeze
+  ARRAY_FIELDS = %w(tags cc_emails attachments attachment_ids).freeze
   HASH_FIELDS = ['custom_fields'].freeze
   COMPLEX_FIELDS = ARRAY_FIELDS | HASH_FIELDS
   CREATE_FIELDS = %w(description due_by email_config_id fr_due_by group_id priority

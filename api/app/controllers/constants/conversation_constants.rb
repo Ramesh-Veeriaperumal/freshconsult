@@ -1,7 +1,7 @@
 module ConversationConstants
   # ControllerConstants
-  CREATE_ARRAY_FIELDS = ['notify_emails', 'attachments'].freeze
-  REPLY_ARRAY_FIELDS = %w(cc_emails bcc_emails attachments).freeze
+  CREATE_ARRAY_FIELDS = ['notify_emails', 'attachments', 'attachment_ids'].freeze
+  REPLY_ARRAY_FIELDS = %w(cc_emails bcc_emails attachments attachment_ids).freeze
   UPDATE_ARRAY_FIELDS = ['attachments'].freeze
 
   REPLY_FIELDS = %w(body user_id from_email).freeze | REPLY_ARRAY_FIELDS
