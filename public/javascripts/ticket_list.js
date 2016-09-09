@@ -352,12 +352,12 @@ jQuery('body').append('<div id="agent_collision_container" class="hide"></div>')
 		return false;
 	});
 
-	jQuery(document).on('click.ticket_list', '#leftViewMenu a[rel=default_filter]', function() {
+	jQuery(document).on('click.ticket_list', '#leftViewMenu a[rel=default_filter]', function(ev) {
 		setCookie('wf_order','created_at');
 		setCookie('wf_order_type','desc');
 	});
 
-	jQuery(document).on('click.ticket_list','.link-item',function(ev){
+	jQuery(document).on('click.ticket_list','.link-item',function(){
 		jQuery('#filter-template').focus();
 		if(jQuery('.tkt_views').size() > 15){
             jQuery('#leftViewMenu').addClass('hasSearch');
