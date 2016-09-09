@@ -78,14 +78,14 @@ jQuery(document).ready(function() {
           var results = [];
           var include_none = <%= include_none %>
           var noneVal = "<%= none %>"
-          var cc_company = jQuery("#cc_emails_filter").length;
-          var tags_filter = jQuery("#tags_filter").length;
-          var id_or_val;
+          var cc_company = jQuery("#cc_emails_filter").length,
+              container = "<%= container %>",
+              id_or_val;
 
           jQuery.each(data.results, function(i, item){
             if(cc_company){
-              id_or_val = cc_company
-            }else if (tags_filter){
+              id_or_val = item.email
+            }else if (container == "tags"){
               id_or_val = item.value
             }else{
               id_or_val = item.id
