@@ -65,7 +65,11 @@ class Freshfone::User < ActiveRecord::Base
 	def get_presence
 		self.presence
 	end
-	
+
+  def get_incoming_preference?
+    self.incoming_preference == INCOMING[:allowed]
+  end
+
 	def reset_presence
 		self.presence = incoming_preference
 		self
