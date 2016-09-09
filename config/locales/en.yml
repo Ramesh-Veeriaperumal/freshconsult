@@ -553,6 +553,8 @@ en:
       newlevel: "<b> Hurrah! </b><br/> Now you became <b>%{name}</b>."
       achieved_quest: "<b> Hurrah! </b><br/> You achieved the <b>%{name}</b>."
     leaderboard:
+      you: "You "
+      not_enough_points: "You don’t have enough points yet!"
       mvp_trophie_label: "Most Valuable Player"
       back_to_dashboard: "Back to Dashboard"
       agents_in: "Agents in"
