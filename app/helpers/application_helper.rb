@@ -741,32 +741,58 @@ module ApplicationHelper
   end
 
   def senti_avatar_image_generator(img_tag_options, profile_size, profile_class, sentiment)
-      senti_img_tag_options = { :onerror => "imgerror(this)", :alt => t('user.profile_picture'), :class => ['senti-Ico', 'tooltip']}
+      
       content_tag(:div, :class => "#{profile_class} image-lazy-load", :size_type => profile_size ) do
         image_tag("/assets/misc/profile_blank_#{profile_size}.jpg", img_tag_options)+
-        image_tag(senti_image_locator(sentiment), senti_img_tag_options)
+        get_senti_image_tag(sentiment)
       end
   end
 
   def senti_avatar_generator( username, profile_size = :thumb, profile_class, opt, sentiment )
-
+    
     img_tag_options = { :onerror => "imgerror(this)", :alt => t('user.profile_picture'), :class => [profile_size, profile_class]}
-    senti_img_tag_options = { :onerror => "imgerror(this)", :alt => t('user.profile_picture'), :class => ['senti-Ico', 'tooltip']}
     username = username.lstrip
     if username.present? && isalpha(username[0]).present?
       content_tag( :div, :class => "#{profile_class} avatar-text text-center #{profile_size} bg-#{unique_code(username)}" ) do
         content_tag(:p, username[0])+
-        image_tag(senti_image_locator(sentiment), senti_img_tag_options)
+        get_senti_image_tag(sentiment)
       end
     else
        content_tag( :div, :class => profile_class, :size_type => profile_size ) do
         (image_tag "/assets/misc/profile_blank_#{profile_size}.jpg", img_tag_options )+
-        image_tag(senti_image_locator(sentiment), senti_img_tag_options)
+        get_senti_image_tag(sentiment)
       end
     end
   end
 
+  def get_senti_image_tag(sentiment)
+
+    senti_img_tag_options = { :onerror => "imgerror(this)", :alt => t('user.profile_picture'), :class => ['senti-Ico', 'tooltip'], :title => get_senti_title(sentiment)}
+
+    if sentiment
+      return image_tag(senti_image_locator(sentiment), senti_img_tag_options)
+    else
+      return ""
+    end
+  end
+
+  def get_senti_title(sentiment)
+
+    if sentiment == -2
+      return "Angry"
+    elsif sentiment == -1
+      return "Sad"
+    elsif sentiment == 1
+      return "Happy"
+    elsif sentiment == 2
+      return "Very Happy"
+    else 
+      return "Neutral"   
+    end 
+  end
+
   # TODO: change it to get images from cdn
+  # TODO: Numbers - move to constants file 
   def senti_image_locator(sentiment)
 
     if sentiment == -2

@@ -1,5 +1,6 @@
 <% outbound_initiator = @ticket.outbound_initiator %>
-<%= link_to senti_user_avatar(outbound_initiator, @ticket.sentiment, :thumb, 'preview_pic circle'), outbound_initiator, :class => 'avatar-wrap' %>
+<!-- sentiment hard coded as 0 for outbound for time being -->
+<%= link_to senti_suser_avatar(outbound_initiator, 0, :thumb, 'preview_pic circle'), outbound_initiator, :class => 'avatar-wrap' %>
 <div class="commentbox commentbox-gray">
   <div>
   <h2 class="subject <%= 'show_full' if @ticket.deleted or @ticket.spam %>">
