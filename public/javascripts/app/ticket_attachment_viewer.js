@@ -32,7 +32,7 @@ window.App = window.App || {};
 
       // When the user clicks the inline image, catch it
       // and invoke the popup for attachment viewer
-      $(document).on('click.ticket_attachment_preview',".helpdesk_note .details img, .commentbox.private-note img",this.p(this.inlineImageClicked));
+      $(document).on('click.ticket_attachment_preview',".commentbox img",this.p(this.inlineImageClicked));
 
       // Close the popup when user clicks the close button
       $(document).on('click.ticket_attachment_preview','.av-close',this.p(this.removePopup));
@@ -85,8 +85,14 @@ window.App = window.App || {};
     }
 
     ,inlineImageClicked: function(event){
+      // Don't do anything if it is an inline image
+      // while editing a note.
+      if($(event.target).parents('.edit_helpdesk_note').length) return;
+
       this.getAllInlineImages(event);
-      this.currentPosition = jQuery(event.target).parents('.helpdesk_note,.commentbox.private-note').find('img').index(event.target)
+
+      // Find the current position of the element amond its siblings
+      this.currentPosition = jQuery(event.target).parents('.commentbox').find('img').index(event.target)
 
       // Show the current file popup
       this.showCurrentFile();
@@ -104,13 +110,15 @@ window.App = window.App || {};
 
       var currentFile = this.attachments[this.currentPosition];
 
-      this.showPopup({
-        filelink: currentFile.filelink,
-        filename: currentFile.filename,
-        currentPos: this.currentPosition,
-        length: this.attachments.length,
-        filetype: currentFile.filetype
-      });
+      if(currentFile){
+        this.showPopup({
+          filelink: currentFile.filelink,
+          filename: currentFile.filename,
+          currentPos: this.currentPosition,
+          length: this.attachments.length,
+          filetype: currentFile.filetype
+        });
+      }
     }
 
     ,imageLoaded: function(){
@@ -152,11 +160,7 @@ window.App = window.App || {};
       self = this;
 
       // Add the inline images
-      if($(event.target).parents(".helpdesk_note").length){
-        var inlineImages = $(event.target).parents(".helpdesk_note").find('.details img');
-      } else {
-        var inlineImages = $(event.target).parents(".commentbox.private-note").find('img');
-      }
+      var inlineImages = $(event.target).parents(".commentbox").find('img');
       inlineImages.each(function(i,el){
         var $el = $(el);
         self.attachments.push({
