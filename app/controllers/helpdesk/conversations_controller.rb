@@ -337,20 +337,29 @@ class Helpdesk::ConversationsController < ApplicationController
       end
 
       def check_trial_customers_limit
-        if ((current_account.id > get_spam_account_id_threshold) && (current_account.subscription.trial?) && (!ismember?(SPAM_WHITELISTED_ACCOUNTS, current_account.id)) &&  (Freemail.free?(current_account.admin_email)))
-          note_cc_email = get_email_array(@item.cc_emails_hash[:cc_emails])
-          note_to_email = get_email_array(@item.to_emails)
-          note_bcc_email = get_email_array(@item.bcc_emails)
-          cc_email_hash = @parent.cc_email_hash.nil? ? Helpdesk::Ticket.default_cc_hash : @parent.cc_email_hash
-
-          total_recipients = cc_email_hash[:cc_emails] | cc_email_hash[:fwd_emails] | note_cc_email | note_to_email | note_bcc_email
-          total_recipients = total_recipients | cc_email_hash[:bcc_emails] if cc_email_hash[:bcc_emails].present?
-
-          if (total_recipients.count) > get_trial_account_max_to_cc_threshold
-            flash[:error] = "Limit Exceeded"
-            create_error(action, false)
+        if ((current_account.id > get_spam_account_id_threshold) && (current_account.subscription.trial?) && (!ismember?(SPAM_WHITELISTED_ACCOUNTS, current_account.id)))
+          if (Freemail.free?(current_account.admin_email) && max_to_cc_threshold_crossed?) 
+              flash[:error] = "Limit Exceeded"
+              create_error(action, false)
+          elsif((current_account.email_configs.count == 1) && (current_account.email_configs[0].reply_email.end_with?(current_account.full_domain)) && max_to_cc_threshold_crossed?)
+            FreshdeskErrorsMailer.error_email(nil, {:domain_name => current_account.full_domain}, nil, {
+              :subject => "Maximum thread to, cc, bcc threshold crossed for Account :#{current_account.id} ", 
+              :recipients => ["mail-alerts@freshdesk.com", "noc@freshdesk.com"],
+              :additional_info => {:info => "Please check spam activity in Ticket : @parent.id"}
+              })
           end
         end
+      end
+
+      def max_to_cc_threshold_crossed?
+        note_cc_email = get_email_array(@item.cc_emails_hash[:cc_emails])
+        note_to_email = get_email_array(@item.to_emails)
+        note_bcc_email = get_email_array(@item.bcc_emails)
+        cc_email_hash = @parent.cc_email_hash.nil? ? Helpdesk::Ticket.default_cc_hash : @parent.cc_email_hash
+        total_recipients = cc_email_hash[:cc_emails] | cc_email_hash[:fwd_emails] | note_cc_email | note_to_email | note_bcc_email
+        total_recipients = total_recipients | cc_email_hash[:bcc_emails] if cc_email_hash[:bcc_emails].present?
+
+        return (total_recipients.count) > get_trial_account_max_to_cc_threshold
       end
 
       def run_on_slave(&block)
