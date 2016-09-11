@@ -86,7 +86,7 @@ gem "ipaddress", "0.8.0"
 
 gem 'sidekiq', "3.4.1"
 # This needs bundler 1.7.2 or 1.10.6 as other version has problem in resolving.
-source "https://a55d1643:d20410bb@gems.contribsys.com/" do 
+source "https://gems.contribsys.com/" do
   gem 'sidekiq-pro' 
 end 
 gem 'shoryuken', '2.0.4'
