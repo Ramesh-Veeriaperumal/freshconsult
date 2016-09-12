@@ -91,8 +91,8 @@ window.App = window.App || {};
 
       this.getAllInlineImages(event);
 
-      // Find the current position of the element amond its siblings
-      this.currentPosition = jQuery(event.target).parents('.commentbox').find('img').index(event.target)
+      // Find the current position of the element among its siblings
+      this.currentPosition = this.findInlineImagePosition(event);
 
       // Show the current file popup
       this.showCurrentFile();
@@ -163,12 +163,28 @@ window.App = window.App || {};
       var inlineImages = $(event.target).parents(".commentbox").find('img');
       inlineImages.each(function(i,el){
         var $el = $(el);
-        self.attachments.push({
-          filename: "Inline Image"
-        , filelink: $el.attr('src')
-        , filetype: "inline"
-        })
+        if(!$el.parents(".redactor_box").length){
+          self.attachments.push({
+            filename: "Inline Image"
+          , filelink: $el.attr('src')
+          , filetype: "inline"
+          })
+        }
       });
+    }
+
+    ,findInlineImagePosition: function(event){
+      var all = jQuery(event.target).parents('.commentbox').find('img');
+      var index = -1;
+      all.each(function(i,el){
+        if(!$(el).parents(".redactor_box").length){
+          index++;
+          if(el==event.target){
+            return false;
+          }
+        }
+      })
+      return index;
     }
 
     ,showPopup: function(viewerData){
