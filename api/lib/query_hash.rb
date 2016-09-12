@@ -1,7 +1,7 @@
 class QueryHash
-  
+
   attr_accessor :query_hash, :format
-  REMOVE_FFNAME_FOR = ['spam', 'deleted']
+  REMOVE_FFNAME_FOR = %w(spam deleted).freeze
 
   def initialize(params)
     @query_hash = params
@@ -24,9 +24,9 @@ class QueryHash
     end
 
     def transform_query(query)
-      return query if skip_transform?(query)
       result = query.slice('condition', 'operator', 'value')
       result['value'] = transform_value(result['value'])
+      return result if skip_transform?(query)
       result.merge!(transform_condition(query))
       if format == :presentable
         result['type'] = is_flexi_field?(query) ? 'custom_field' : 'default'
@@ -35,13 +35,8 @@ class QueryHash
     end
 
     def skip_transform?(query)
-      if format == :system
-        return !query['type'].present?
-      elsif format == :presentable
-        return query['type'].present?
-      else
-        false
-      end
+      ((format == :type) && query.has_key?("type")) ||
+        ((format == :system) && !query.has_key?("type"))
     end
 
     def transform_value(val)

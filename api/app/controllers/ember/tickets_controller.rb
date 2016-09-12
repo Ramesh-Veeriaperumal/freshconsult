@@ -146,7 +146,7 @@ module Ember
         # This is going to handle Default ticket filters and custom ticket filters.
         # ?email=** or ?requester_id=*** are NOT going to be supported as of now.
         # Has to be taken up post sprint while cleaning this up and writing a proper validator for this
-        params.permit(*ApiTicketConstants::INDEX_FIELDS, *ApiConstants::DEFAULT_INDEX_FIELDS)
+        params.permit(*ApiTicketConstants::INDEX_FIELDS, *ApiConstants::DEFAULT_INDEX_FIELDS, :query_hash, :order, :order_by)
         params[:filter] ||= DEFAULT_TICKET_FILTER
         if params[:filter].to_i.to_s == params[:filter] # Which means it is a string
           @ticket_filter = current_account.ticket_filters.find_by_id(params[:filter])
@@ -155,12 +155,18 @@ module Ember
           else
             params.merge!(@ticket_filter.attributes['data'])
           end
-        elsif !Helpdesk::Filters::CustomTicketFilter::DEFAULT_FILTERS.keys.include?(params[:filter])
-          render_filter_errors
-        else
+        elsif params[:query_hash].present?
+          params[:wf_model] = 'Helpdesk::Ticket'
+          params[:data_hash] = QueryHash.new(params[:query_hash].values).to_system_format
+          params.delete(:filter)
+        elsif Helpdesk::Filters::CustomTicketFilter::DEFAULT_FILTERS.keys.include?(params[:filter])
           @ticket_filter = current_account.ticket_filters.new(Helpdesk::Filters::CustomTicketFilter::MODEL_NAME).default_filter(params[:filter])
           params["filter_name"] = params[:filter]
+        else
+          render_filter_errors
         end
+        params[:wf_order] = params[:order]
+        params[:wf_order_by] = params[:order_by]
       end
 
       def render_filter_errors
