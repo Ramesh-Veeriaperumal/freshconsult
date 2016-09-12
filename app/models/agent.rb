@@ -194,6 +194,7 @@ class Agent < ActiveRecord::Base
                                 #{user_id}, #{group.id}, #{new_score}, #{result.inspect}".squish
               ticket.responder_id = user_id
               ticket.round_robin_assignment = true
+              ticket.set_round_robin_activity
               ticket.save
               return true
             end
