@@ -16,6 +16,13 @@
             searchElements.each(function(index) {
                 jQuery(this).toggle(window.lookups.scenario_execution_search(searchText, searchElementTexts[index]))
             });
+
+            var count = jQuery('[data-picklist] li:visible').size();
+            if (count == 0) {
+                jQuery('.no_result_view').removeClass('hide');
+            } else {
+                jQuery('.no_result_view').addClass('hide');
+            }
         });
 
         $('body').on('keyup.filterList', searchBox, function(event) {

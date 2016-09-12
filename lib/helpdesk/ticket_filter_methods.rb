@@ -68,9 +68,13 @@ module Helpdesk::TicketFilterMethods
                                 :menuid => "##{menuid}",
                                 :id => "active_filter"
                             } ), :class => "link-item" ) +
-        content_tag(:div, filter_search(viewlist) + filter_search_elements(viewlist, selected_item), :class => "fd-menu tkt_view_search", :id => menuid)
+        content_tag(:div, filter_search(viewlist) + filter_search_elements(viewlist, selected_item) + filter_no_results, :class => "fd-menu tkt_view_search", :id => menuid)
     end
     more_menu_drop.html_safe
+  end
+
+  def filter_no_results
+    content_tag(:div, "#{t('tickets_filter.no_match_view')}", class: "no_result_view hide")
   end
 
   def filter_search(viewlist)

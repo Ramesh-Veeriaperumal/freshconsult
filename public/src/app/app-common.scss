@@ -2073,6 +2073,12 @@ a.submit_link:hover{
 	}
 }
 
+.no_result_view{
+	@include text-align(center);
+	font-style:italic;
+	margin-top: 5px;
+}
+
 
 
 // ------------------------------------------------------------------------------------------------------------
