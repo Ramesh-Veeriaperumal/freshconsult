@@ -165,8 +165,12 @@ module Ember
         else
           render_filter_errors
         end
-        params[:wf_order] = params[:order]
-        params[:wf_order_by] = params[:order_by]
+        params[:wf_order] = params[:order_by]
+        params[:wf_order_type] = params[:order]
+      end
+      
+      def order_clause
+        nil
       end
 
       def render_filter_errors
