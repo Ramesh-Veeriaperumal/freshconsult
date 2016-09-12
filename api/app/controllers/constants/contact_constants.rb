@@ -37,7 +37,7 @@ module ContactConstants
   # Max other email count excluding the primary email
   MAX_OTHER_EMAILS_COUNT = 4
 
-  ATTRIBUTES_TO_BE_STRIPPED = %w(address email job_title language name mobile phone time_zone tag tags twitter_id custom_fields other_emails).freeze
+  ATTRIBUTES_TO_BE_STRIPPED = %w(address email job_title language name mobile phone time_zone tags twitter_id custom_fields other_emails).freeze
 
   # Wrap parameters args
   WRAP_PARAMS = [:api_contact, exclude: [], format: [:json, :multipart_form]].freeze
