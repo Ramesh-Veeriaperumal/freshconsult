@@ -4225,7 +4225,7 @@ li {
 
 /* ********************** STYLE FOR CUSTOMER SENTIMENT *********************** */
 
-#tickets-expanded .userpic img.senti-Ico{
+#tickets-expanded .userpic img.sentiment{ 
     position: absolute;
     bottom: -5px;
     right: -2px;
@@ -4235,6 +4235,13 @@ li {
     background: none;
 }
 
-.ticket_show .avatar-wrap .preview_pic img.senti-Ico{width: 20px; height: 20px; position: absolute; top: 27px; right: -3px;}
+
+.ticket_show .avatar-wrap .preview_pic img.sentiment{
+    width: 20px; 
+    height: 20px; 
+    position: absolute; 
+    top: 27px; 
+    right: -3px;
+}
 
 /* ********************** END OF STYLE FOR CUSTOMER SENTIMENT ********************** */

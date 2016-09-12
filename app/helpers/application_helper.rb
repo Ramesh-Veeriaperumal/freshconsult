@@ -767,7 +767,7 @@ module ApplicationHelper
 
   def get_senti_image_tag(sentiment)
 
-    senti_img_tag_options = { :onerror => "imgerror(this)", :alt => t('user.profile_picture'), :class => ['senti-Ico', 'tooltip'], :title => get_senti_title(sentiment)}
+    senti_img_tag_options = { :onerror => "imgerror(this)", :alt => t('user.profile_picture'), :class => ['sentiment', 'tooltip'], :title => get_senti_title(sentiment)}
 
     if sentiment
       return image_tag(senti_image_locator(sentiment), senti_img_tag_options)

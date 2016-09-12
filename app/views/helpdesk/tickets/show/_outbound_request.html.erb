@@ -1,6 +1,14 @@
 <% outbound_initiator = @ticket.outbound_initiator %>
 <!-- sentiment hard coded as 0 for outbound for time being -->
-<%= link_to senti_user_avatar(outbound_initiator, 0, :thumb, 'preview_pic circle'), outbound_initiator, :class => 'avatar-wrap' %>
+<% survey_association = Account.current.new_survey_enabled? ? "custom_survey_results" : "survey_results" %>
+<% unless @ticket.send(survey_association).nil? || @ticket.send(survey_association).last.nil? %>
+  <% if (Account.current.new_survey_enabled?) %>
+    <%= link_to user_avatar(@ticket.requester, @ticket.sentiment, :thumb, 'preview_pic circle'), @ticket.requester, :class => 'avatar-wrap' %>
+  <% end %>
+<% else %>
+  <%= link_to senti_user_avatar(@ticket.requester, @ticket.sentiment, :thumb, 'preview_pic circle'), @ticket.requester, :class => 'avatar-wrap' %>
+<% end %>
+
 <div class="commentbox commentbox-gray">
   <div>
   <h2 class="subject <%= 'show_full' if @ticket.deleted or @ticket.spam %>">
