@@ -136,6 +136,7 @@ cs:
     digits: "Prosím, zadejte pouze číslice."
     creditcard: "Prosím, zadejte platné číslo kreditní karty."
     equalTo: "Prosím, zadejte znova stejnou hodnotu."
+    two_decimal_place_warning: "Value cannot have more than 2 decimal digits"
   confirm_delete_message: "Jste si jistí, že chcete smazat %{human_name}?"
   any: Cokoli
   or: nebo

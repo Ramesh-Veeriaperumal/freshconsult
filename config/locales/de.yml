@@ -116,6 +116,7 @@ de:
     creditcard: "Geben Sie bitte eine gültige Kreditkartennummer ein."
     equalTo: "Bitte geben Sie den Wert nochmals ein."
   confirm_delete_message: "Möchten Sie %{human_name} wirklich löschen?"
+  two_decimal_place_warning: "Value cannot have more than 2 decimal digits"
   reload: "Neu laden"
   any: Jeder
   or: oder
