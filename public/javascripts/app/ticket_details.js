@@ -1229,11 +1229,6 @@ var scrollToError = function(){
 
 				Helpdesk.TicketStickyBar.check();
 
-				if(jQuery('#noticeajax').text() == "Limit Exceeded") {
-					$.scrollTo(jQuery('#noticeajax'));
-				}
-
-
 			},
 			error: function(response) {
 				releaseForm(_form);

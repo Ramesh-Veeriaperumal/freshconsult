@@ -1,7 +1,5 @@
 class Helpdesk::ConversationsController < ApplicationController
   
-  require 'freemail'
-
   helper  Helpdesk::TicketsHelper#TODO-RAILS3
   
   before_filter :load_parent_ticket_or_issue
@@ -19,7 +17,6 @@ class Helpdesk::ConversationsController < ApplicationController
   include Social::Util
   helper Helpdesk::NotesHelper
   include Ecommerce::Ebay::ReplyHelper
-  include Helpdesk::SpamAccountConstants
   
   before_filter :build_note_body_attributes, :build_conversation, :except => [:full_text, :traffic_cop]
   before_filter :validate_fwd_to_email, :only => [:forward, :reply_to_forward]
@@ -32,7 +29,6 @@ class Helpdesk::ConversationsController < ApplicationController
   before_filter :verify_permission, :only => [:reply, :forward, :reply_to_forward, :note, :twitter, :facebook, :mobihelp, :ecommerce, :traffic_cop, :full_text]
   before_filter :traffic_cop_warning, :only => [:reply, :twitter, :facebook, :mobihelp, :ecommerce]
   before_filter :check_for_public_notes, :only => [:note]
-  before_filter :check_trial_customers_limit, :only => [:reply, :forward, :reply_to_forward]
   before_filter :validate_ecommerce_reply, :only => :ecommerce
   around_filter :run_on_slave, :only => [:update_activities, :has_unseen_notes, :traffic_cop_warning]
 
@@ -232,9 +228,9 @@ class Helpdesk::ConversationsController < ApplicationController
         Thread.current[:notifications] = nil
     end
 
-    def create_error(note_type = nil, is_scroll = true)
+    def create_error(note_type = nil)
       respond_to do |format|
-        format.js { render :file => "helpdesk/notes/error.rjs", :locals => { :note_type => note_type, :is_scroll => is_scroll} }
+        format.js { render :file => "helpdesk/notes/error.rjs", :locals => { :note_type => note_type} }
         format.html { redirect_to @parent }
         format.nmobile { render :json => { :server_response => false } }
         format.any(:json, :xml) { render request.format.to_sym => @item.errors, :status => 400 }
@@ -334,23 +330,6 @@ class Helpdesk::ConversationsController < ApplicationController
 
       def check_for_public_notes
         traffic_cop_warning unless params[:helpdesk_note][:private].to_s.to_bool
-      end
-
-      def check_trial_customers_limit
-        if ((current_account.id > get_spam_account_id_threshold) && (current_account.subscription.trial?) && (!ismember?(SPAM_WHITELISTED_ACCOUNTS, current_account.id)) &&  (Freemail.free?(current_account.admin_email)))
-          note_cc_email = get_email_array(@item.cc_emails_hash[:cc_emails])
-          note_to_email = get_email_array(@item.to_emails)
-          note_bcc_email = get_email_array(@item.bcc_emails)
-          cc_email_hash = @parent.cc_email_hash.nil? ? Helpdesk::Ticket.default_cc_hash : @parent.cc_email_hash
-
-          total_recipients = cc_email_hash[:cc_emails] | cc_email_hash[:fwd_emails] | note_cc_email | note_to_email | note_bcc_email
-          total_recipients = total_recipients | cc_email_hash[:bcc_emails] if cc_email_hash[:bcc_emails].present?
-
-          if (total_recipients.count) > get_trial_account_max_to_cc_threshold
-            flash[:error] = "Limit Exceeded"
-            create_error(action, false)
-          end
-        end
       end
 
       def run_on_slave(&block)

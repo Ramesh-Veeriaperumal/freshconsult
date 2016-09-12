@@ -60,5 +60,4 @@ module AccountConstants
 
   SPAM_EMAIL_EXACT_REGEX = /bank|paypal|finance|erection|free|apple|amazon/i
   SPAM_EMAIL_APPRX_REGEX = /b[a]+[n]+[kc]+|p[auo]+[y]+[p]+[auo]+l|finance|erection|free|a[p]+le|[a]+[m]+[a]+[z]+[aoe]+n/i
-
 end

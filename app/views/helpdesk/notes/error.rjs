@@ -4,4 +4,4 @@ if note_type == :facebook || note_type == :twitter
 	button = "jQuery('#ReplyButton')"
 end
 show_ajax_flash(page)
-page << "setTimeout(function(){swapEmailNote('cnt-#{note_type}', #{button})}, 500);" if note_type and is_scroll
+page << "setTimeout(function(){swapEmailNote('cnt-#{note_type}', #{button})}, 500);" if note_type

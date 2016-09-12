@@ -305,7 +305,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
     
     def default_cc_hash
-      { :cc_emails => [], :fwd_emails => [], :reply_cc => [], :tkt_cc => [], :bcc_emails => [] }
+      { :cc_emails => [], :fwd_emails => [], :reply_cc => [], :tkt_cc => [] }
     end
 
   end
@@ -830,7 +830,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     
   def cc_email_hash
     if cc_email.is_a?(Array)     
-      {:cc_emails => cc_email, :fwd_emails => [], :bcc_emails => [] , :reply_cc => cc_email}
+      {:cc_emails => cc_email, :fwd_emails => [], :reply_cc => cc_email}
     else
       cc_email
     end

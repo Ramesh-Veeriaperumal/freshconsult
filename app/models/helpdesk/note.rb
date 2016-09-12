@@ -371,7 +371,6 @@ class Helpdesk::Note < ActiveRecord::Base
         tkt_cc_emails = self.cc_emails | cc_email_hash_value[:cc_emails]
         cc_emails = tkt_cc_emails.map { |email| parse_email(email)[:email].downcase }.compact.uniq
         cc_emails.delete_if {|email| (notable.requester.email.present? && email == notable.requester.email.downcase)}
-        cc_email_hash_value[:bcc_emails] = cc_email_hash_value[:bcc_emails].present? ? self.bcc_emails | cc_email_hash_value[:bcc_emails] : self.bcc_emails 
         cc_email_hash_value[:cc_emails] = cc_emails
       end
       notable.cc_email = cc_email_hash_value    

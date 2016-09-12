@@ -2574,7 +2574,6 @@ en:
       limit_exceeded: You've exceeded the limit for performing this action. Please try again.
       access_denied: You are not allowed to access this page!
       need_login: You must be logged in to access this page
-      recipient_limit_exceeded: You have reached the maximum recipient limit of %{limit}
       insufficient_privilege:
         admin: You don't have sufficient privilege to change this. Please login as Administrator..!!
       login_not_needed: You must be logged out to access this page
