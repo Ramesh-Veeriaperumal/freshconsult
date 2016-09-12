@@ -678,13 +678,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       end
     end
     
-<<<<<<< Updated upstream
-    def rsvp_to_fwd?(ticket, from_email)
-      @rsvp_to_fwd ||= ((Account.current.features?(:threading_without_user_check) || ticket.cc_email[:cc_emails].include?(from_email[:email]) || user.agent?) && reply_to_forward(all_message_ids))
-=======
     def rsvp_to_fwd?(ticket, from_email, user)
-      @rsvp_to_fwd ||= ((Account.current.features?(:threading_without_user_check) || ticket.cc_email[:cc_emails].include?(from_email[:email])) && reply_to_forward(all_message_ids))
->>>>>>> Stashed changes
+      @rsvp_to_fwd ||= ((Account.current.features?(:threading_without_user_check) || ticket.cc_email[:cc_emails].include?(from_email[:email]) || user.agent?) && reply_to_forward(all_message_ids))
     end
 
     def can_be_added_to_ticket?(ticket, user, from_email={})
