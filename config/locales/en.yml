@@ -6224,6 +6224,7 @@ en:
       asc: Ascending
       desc: Descending
     search_views: Jump to view
+    no_match_view: No matching views found
   click_to_change_sort_order: Click to change sort order
   user_sessions:
       new:
