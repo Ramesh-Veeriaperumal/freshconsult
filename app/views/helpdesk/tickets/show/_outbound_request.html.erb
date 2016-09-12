@@ -3,10 +3,12 @@
 <% survey_association = Account.current.new_survey_enabled? ? "custom_survey_results" : "survey_results" %>
 <% unless @ticket.send(survey_association).nil? || @ticket.send(survey_association).last.nil? %>
   <% if (Account.current.new_survey_enabled?) %>
-    <%= link_to user_avatar(@ticket.requester, @ticket.sentiment, :thumb, 'preview_pic circle'), @ticket.requester, :class => 'avatar-wrap' %>
+    <%= link_to user_avatar(@ticket.requester, :thumb, 'preview_pic circle'), @ticket.requester, :class => 'avatar-wrap' %>
+  <% else %>
+    <%= link_to user_avatar(@ticket.requester, :thumb, 'preview_pic circle'), @ticket.requester, :class => 'avatar-wrap' %>
   <% end %>
 <% else %>
-  <%= link_to senti_user_avatar(@ticket.requester, @ticket.sentiment, :thumb, 'preview_pic circle'), @ticket.requester, :class => 'avatar-wrap' %>
+  <%= link_to senti_user_avatar(@ticket.requester, 0, :thumb, 'preview_pic circle'), @ticket.requester, :class => 'avatar-wrap' %>
 <% end %>
 
 <div class="commentbox commentbox-gray">

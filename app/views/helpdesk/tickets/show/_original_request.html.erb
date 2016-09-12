@@ -2,7 +2,9 @@
 
 <% unless @ticket.send(survey_association).nil? || @ticket.send(survey_association).last.nil? %>
 	<% if (Account.current.new_survey_enabled?) %>
-		<%= link_to user_avatar(@ticket.requester, @ticket.sentiment, :thumb, 'preview_pic circle'), @ticket.requester, :class => 'avatar-wrap' %>
+		<%= link_to user_avatar(@ticket.requester, :thumb, 'preview_pic circle'), @ticket.requester, :class => 'avatar-wrap' %>
+	<% else %>
+    	<%= link_to user_avatar(@ticket.requester, :thumb, 'preview_pic circle'), @ticket.requester, :class => 'avatar-wrap' %>
 	<% end %>
 <% else %>
 	<%= link_to senti_user_avatar(@ticket.requester, @ticket.sentiment, :thumb, 'preview_pic circle'), @ticket.requester, :class => 'avatar-wrap' %>
