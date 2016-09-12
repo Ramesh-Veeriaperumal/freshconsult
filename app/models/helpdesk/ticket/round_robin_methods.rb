@@ -5,8 +5,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     #Ticket already has an agent assigned to it or doesn't have a group
     return if group.nil?
     if self.responder_id
-      change_agents_ticket_count(group, responder_id, "incr") \
-        if visible? && group.round_robin_capping_enabled? && has_capping_status?
+      update_capping_on_create
       return
     end
     if group.round_robin_enabled?
@@ -188,6 +187,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
       return true
     end
     false
+  end
+
+  def update_capping_on_create
+    if group.present? && responder_id.present? && visible? && 
+        group.round_robin_capping_enabled? && has_capping_status?
+      change_agents_ticket_count(group, responder_id, "incr")
+    end
   end
 
   private

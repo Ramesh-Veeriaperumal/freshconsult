@@ -58,8 +58,7 @@
       group = @ticket.group
       return if group.nil?
       if @ticket.responder_id
-        @ticket.change_agents_ticket_count(group, @ticket.responder_id, "incr") \
-          if @ticket.visible? && group.round_robin_capping_enabled? && @ticket.has_capping_status?
+        @ticket.update_capping_on_create
         return
       end
       if group.round_robin_enabled?
