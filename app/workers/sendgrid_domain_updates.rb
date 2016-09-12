@@ -77,7 +77,7 @@ class SendgridDomainUpdates < BaseWorker
       elsif ((account.helpdesk_name =~ spam_email_exact_match_regex || account.full_domain =~ spam_email_exact_match_regex) && Freemail.free?(account.admin_email))
         blacklist_spam_account(account, true, "Outgoing will be blocked for Account ID: #{account.id} , Reason: Account name contains exact suspicious words")
       elsif((account.helpdesk_name =~ spam_email_apprx_match_regex || account.full_domain =~ spam_email_apprx_match_regex) && Freemail.free?(account.admin_email)) 
-        blacklist_spam_account(account, false, "Reason: Account name looks suspicious")
+        blacklist_spam_account(account, false, "Outgoing will be blocked for Account ID: #{account.id} , Reason: Account name looks suspicious")
       end
     end
   end
