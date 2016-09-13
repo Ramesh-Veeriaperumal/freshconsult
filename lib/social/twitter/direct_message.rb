@@ -2,7 +2,7 @@ class Social::Twitter::DirectMessage
 
   #TODO @ARV : reorg this similar to Twitter:Feed where process is a class function and we create objects of type DirectMessage
 
-  attr_accessor :twitter, :twt_handle
+  attr_accessor :twitter, :twt_handle, :oauth_credential
   include Social::Twitter::TicketActions
   include Social::Twitter::ErrorHandler
   include Social::Constants
@@ -11,6 +11,7 @@ class Social::Twitter::DirectMessage
     wrapper         = TwitterWrapper.new twt_handle
     self.twitter    = wrapper.get_twitter
     self.twt_handle = twt_handle
+    self.oauth_credential = wrapper.get_oauth_credential
     @dynamo_helper = Social::Dynamo::Twitter.new
   end
 
@@ -44,6 +45,8 @@ class Social::Twitter::DirectMessage
     action_data = extract_action_data(twt_handle)
     default_stream = twt_handle.default_stream
     action_data.merge!(:stream_id => default_stream.id) if default_stream
+    media_url_hash = construct_media_url_hash(account, twt, oauth_credential)
+    action_data.merge!(:media_url_hash => media_url_hash) if(media_url_hash.length > 0)
     if last_reply && (Time.zone.now < (last_reply.created_at + twt_handle.dm_thread_time.seconds))
       add_as_note(twt, twt_handle, :dm, previous_ticket, user,  action_data)
     else

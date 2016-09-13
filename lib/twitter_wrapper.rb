@@ -52,5 +52,10 @@ class TwitterWrapper
     end
   end
   
-  
+  def get_oauth_credential
+    { consumer_key: TwitterConfig::CLIENT_ID,
+      consumer_secret: TwitterConfig::CLIENT_SECRET,
+      token: @twitter_handle.access_token,  
+      token_secret: @twitter_handle.access_secret }
+  end
 end

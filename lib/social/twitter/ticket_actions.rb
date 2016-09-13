@@ -105,6 +105,12 @@ module Social::Twitter::TicketActions
 
     def construct_params(twt, options)
       tweet_body = options[:tweet] ? twt[:body] : twt.text
+      if options[:media_url_hash].present?
+        options[:media_url_hash][:photo].present? && options[:media_url_hash][:photo].each do |photo_url_hash_key, photo_url_hash_val|
+            img_element = "<img src=\"#{photo_url_hash_val}\" class=\"inline-image\"/>"
+            tweet_body = tweet_body.gsub(photo_url_hash_key, img_element)
+          end
+      end
       hash = {
         :body         => tweet_body.to_s.tokenize_emoji,
         :tweet_id     => options[:tweet] ? twt[:id].split(":").last.to_i : twt.id ,

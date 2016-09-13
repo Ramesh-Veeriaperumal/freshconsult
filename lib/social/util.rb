@@ -101,4 +101,46 @@ module Social::Util
     }
   end
 
+  def construct_media_url_hash(account, tweet, oauth_credential)
+    media_url_hash = {}
+    begin
+      media_array = tweet.media
+      photo_url_hash = {}
+      media_array.each do |media|
+        if media.class.name == "Twitter::Media::Photo" || media.class.name == "Twitter::Media::AnimatedGif"
+          url = media.media_url_https.to_s
+          headers = SimpleOAuth::Header.new(:GET, url, {}, oauth_credential)
+          file_name = url[url.rindex('/')+1, url.length]
+          image_attachment = account.attachments.build({
+              :description      => "public",
+              :content          => open(url, "Authorization" => headers.to_s),
+              :attachable_type  => "Ticket image Upload",
+              :content_file_name => file_name,
+              :content_content_type => get_content_type(file_name)
+            })
+          image_attachment.save
+          photo_url_hash[media.url.to_s] = image_attachment.content.url
+        end
+      end
+      media_url_hash[:photo] = photo_url_hash if(photo_url_hash.length > 0)
+    rescue => e
+      Rails.logger.error("Exception while attaching media content to ticket Exception: #{e.class} Exception Message: #{e.message}")
+    end
+    media_url_hash
+  end
+
+  def get_content_type(basename)
+    case basename
+    when /\.gif$/i
+      'image/gif'
+    when /\.jpe?g/i
+      'image/jpeg'
+    when /\.png$/i
+      'image/png'
+    when /\.tiff?/i
+      'image/tiff'
+    else
+      'application/octet-stream'
+    end
+  end
 end
