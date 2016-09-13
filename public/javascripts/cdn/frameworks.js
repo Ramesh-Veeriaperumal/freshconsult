@@ -58,3 +58,4 @@
 //= require redactor/redactor.js
 //= require redactor/freshdesk_redactor.js
 //= require custom_widget.js
+//= require app/realtime_dashboard_persist.js

@@ -22,6 +22,7 @@ class ReportExportMailer < ActionMailer::Base
     @selected_metric = options[:selected_metric] if options[:selected_metric]
     @filter_to_display = filter_to_display?(options[:report_type], options[:ticket_export])
     @report_name = options[:filter_name] ? "#{@report_type} report - #{options[:filter_name]}" : "#{@report_type}"
+    @portal_name = options[:portal_name]
 
     mail(headers) do |part|
       part.text { render "bi_report_export.plain" }
@@ -37,6 +38,7 @@ class ReportExportMailer < ActionMailer::Base
     @date_range  = options[:date_range]
     @report_label = report_name(options[:report_type])
     @filter_to_display = filter_to_display?(options[:report_type], options[:ticket_export])
+    @portal_name = options[:portal_name]
 
     mail(headers) do |part|
       part.text { render "no_report_data.plain" }
@@ -52,6 +54,7 @@ class ReportExportMailer < ActionMailer::Base
     @date_range  = options[:date_range]
     @report_type = report_name(options[:report_type])
     @filter_name = options[:filter_name]
+    @portal_name = options[:portal_name]
 
     mail(headers) do |part|
       part.text { render "exceeds_file_size_limit.plain" }

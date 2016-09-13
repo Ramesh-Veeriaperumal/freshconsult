@@ -114,6 +114,7 @@ ko:
     digits: "숫자만 입력하십시오."
     creditcard: "유효한 신용 카드 번호를 입력하십시오."
     equalTo: "동일한 값을 다시 입력하십시오."
+    two_decimal_place_warning: "Value cannot have more than 2 decimal digits"
   confirm_delete_message: "%{human_name}을(를) 정말로 삭제하시겠습니까?"
   reload: 재로드
   any: 모든(어떠한)

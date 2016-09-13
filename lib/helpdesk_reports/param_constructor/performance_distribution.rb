@@ -6,7 +6,7 @@ class HelpdeskReports::ParamConstructor::PerformanceDistribution < HelpdeskRepor
       "AVG_RESOLUTION_TIME" => ["resolution_time"],
     }
 
-  DAY_TOGGLE =['this_week','previous_week','last_7','this_month','previous_month']
+  DAY_TOGGLE =['this_week','previous_week','last_7','last_30','this_month','previous_month']
   
   def initialize options
     @report_filter_params = options

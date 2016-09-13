@@ -14,22 +14,25 @@
 			var validation_messages = <%= I18n.translate('validation').to_json.html_safe %>	
 		<%- end -%>
 		<%= javascript_include_tag :'cdn/fdwidget' %>
-
 		<%= javascript_include_tag :'cdn/pattern' %>
 		<%= javascript_include_tag :'cdn/redactor' %>
+		<%= javascript_include_tag :"cdn/i18n/#{I18n.locale.to_s}" %>
 		
 		<%= javascript_tag do %>
 				jQuery.extend(jQuery.validator.messages, validation_messages );
 		<%- end -%>
+
 		<!--[if IE]><%= javascript_include_tag :'cdn/excanvas' %><![endif]-->
 
 	  	<%= yield :head %>
 		<script type="text/javascript">
 			var $J = jQuery.noConflict();
+				I18n.defaultLocale = "<%= I18n.locale.to_s %>";	
+				I18n.locale = "<%= I18n.locale.to_s %>";	
 		</script>
 		<%= render :partial => "layouts/support/google_analytics_integration" %>
 	</head>
-    <body>
+    <body data-lang="<%= I18n.locale.to_s %>">
     	<div class="feedback-wrapper">
 	    	<div class="modal modal-widget" id="feedback-widget-container">
 				<%= yield %>

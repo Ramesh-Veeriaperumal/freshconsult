@@ -115,6 +115,7 @@ es:
     digits: "Ingrese solo Digitos"
     creditcard: "Ingrese numero de targeta de credito"
     equalTo: "Ingrese el mismo valor nuevamente"
+    two_decimal_place_warning: "Value cannot have more than 2 decimal digits"
   confirm_delete_message: "Esta Ud. seguro de borrar a %{human_name}"
   reload: Recargar
   any: Cualquiera

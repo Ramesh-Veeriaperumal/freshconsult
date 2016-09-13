@@ -4,8 +4,21 @@
 var SurveyAdmin = {	
 		fullSurvey: true,
 		hasLayoutCustomization: false,
+		surveyChoiceGoodToBad: true,
 		path: "/admin/custom_surveys/",
-
+		flipChoiceOrder:function(obj){
+			if(jQuery(obj).data('state')!=SurveyAdmin.surveyChoiceGoodToBad){
+				SurveyAdmin.surveyChoiceGoodToBad = !SurveyAdmin.surveyChoiceGoodToBad;
+				SurveyProtocol.content.scale.change(jQuery("input[name='choice']:checked")[0]);
+				var question_scale = jQuery("input[name='question-choice']:checked")[0];
+				if(question_scale){
+					SurveyProtocol.content.scale.change(question_scale);
+				}
+				jQuery('.rating_order_select .dropdown-menu li').toggleClass('active');
+				jQuery('#order_dropdown h5').toggleClass('good_to_bad bad_to_good').html(jQuery(obj).text()+"<b class='caret'></b>");
+			}
+			
+		},
 		render:function(view){
 			SurveyDetail.rating.create(view);
 			SurveyDetail.thanks.create(view);

@@ -2,7 +2,7 @@ namespace :failed_helpkit_feeds do
 
 	# This cron runs every five mins
   # Has the following command
-  # "*/10  *   *   *   *"  bundle exec rake failed_helpkit_feeds:retry
+  # "*/10  *   *   *   *"  bundle exec rake failed_helpkit_feeds:requeue
 
 	task :requeue => :environment do
 		include Redis::RedisKeys

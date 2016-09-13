@@ -327,6 +327,7 @@ class Helpdesk::TicketsController < ApplicationController
         hash.merge!({:reply_template => parsed_reply_template(@ticket,nil)})
         hash.merge!({:default_twitter_body_val => default_twitter_body_val(@ticket)}) if @item.twitter?
         hash.merge!({:twitter_handles_map => twitter_handles_map}) if @item.twitter?
+        hash.merge!({:tags => @item.tags.map(&:to_mob_json)})
         hash.merge!(@ticket_notes[0].to_mob_json) unless @ticket_notes[0].nil?
         render :json => hash
       }

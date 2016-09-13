@@ -145,6 +145,7 @@ ja-JP:
     digits: 数字だけで入力してください。
     creditcard: 有効なクレジットカード番号を入力してください。
     equalTo: 同じ値を再度入力してください。
+    two_decimal_place_warning: "Value cannot have more than 2 decimal digits"
   confirm_delete_message: "%{human_name}を削除してよろしいですか？"
   reload: 更新
   any: 任意
