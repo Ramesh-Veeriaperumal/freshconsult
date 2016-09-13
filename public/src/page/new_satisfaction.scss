@@ -104,6 +104,7 @@ $survey-heading-color: #686868;
 	}
 	li{	
 		display: inline-block;
+		font-size: 0;
 		vertical-align: middle;
 	}
 }
@@ -168,6 +169,7 @@ $survey-heading-color: #686868;
 	background-color:$none;
 	vertical-align:middle;
 	display:inline-block;
+	@include margin-right(5px);
 	@include border-radius(100%);
 }
 .flexcontainer{
