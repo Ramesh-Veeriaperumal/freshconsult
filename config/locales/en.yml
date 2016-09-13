@@ -555,6 +555,7 @@ en:
       achieved_quest: "<b> Hurrah! </b><br/> You achieved the <b>%{name}</b>."
     leaderboard:
       you: "You "
+      congrats: "Congrats %{name}!"
       not_enough_points: "You don’t have enough points yet!"
       mvp_trophie_label: "Most Valuable Player"
       back_to_dashboard: "Back to Dashboard"
