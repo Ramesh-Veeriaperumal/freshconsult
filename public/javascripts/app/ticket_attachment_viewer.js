@@ -6,7 +6,7 @@ window.App = window.App || {};
 
   window.App.TicketAttachmentPreview = {
 
-    supportedFiles: ["png","gif","jpeg","jpg"]
+    supportedFiles: ["png","gif","jpeg","jpg","inline"]
 
     // This is a simple proxy method helper
     ,p: function(fn){
@@ -30,6 +30,10 @@ window.App = window.App || {};
       // and invoke the popup for the attachment viewer
       $(document).on('click.ticket_attachment_preview',".attach_content,.attachment-type",this.p(this.attachmentClicked));
 
+      // When the user clicks the inline image, catch it
+      // and invoke the popup for attachment viewer
+      $(document).on('click.ticket_attachment_preview',".commentbox img",this.p(this.inlineImageClicked));
+
       // Close the popup when user clicks the close button
       $(document).on('click.ticket_attachment_preview','.av-close',this.p(this.removePopup));
       $(document).on('click.ticket_attachment_preview','.av-media, .av-cannot-preview',this.p(this.removePopupCheck));
@@ -37,6 +41,9 @@ window.App = window.App || {};
       // Switching between attachments
       $(document).on('click.ticket_attachment_preview','.av-next',this.p(this.nextFile));
       $(document).on('click.ticket_attachment_preview','.av-prev',this.p(this.prevFile));
+
+      // Catch pjax before send to close the popup
+      $(document).on('pjax:beforeSend.ticket_attachment_preview',this.p(this.removePopup));
     }
 
     ,attachKeys: function(){
@@ -64,6 +71,7 @@ window.App = window.App || {};
 
     ,attachmentClicked: function(event){
       this.getAllAttachments(event);
+      this.currentPosition = $(event.target).parents(".attachment").index();
 
       // Show the current file popup only for supported files.
       if(this.supportedFiles.indexOf(this.attachments[this.currentPosition].filetype)>-1){
@@ -76,19 +84,41 @@ window.App = window.App || {};
       }
     }
 
+    ,inlineImageClicked: function(event){
+      // Don't do anything if it is an inline image
+      // while editing a note.
+      if($(event.target).parents('.edit_helpdesk_note').length) return;
+
+      this.getAllInlineImages(event);
+
+      // Find the current position of the element among its siblings
+      this.currentPosition = this.findInlineImagePosition(event);
+
+      // Show the current file popup
+      this.showCurrentFile();
+
+      // Cancel event propogation
+      event.preventDefault();
+      if(event.stopPropogation) event.stopPropogation();
+      
+      return false;
+    }
+
     ,showCurrentFile: function(){
       // Cleanup if necessary
       this.removePopup();
 
       var currentFile = this.attachments[this.currentPosition];
 
-      this.showPopup({
-        filelink: currentFile.filelink,
-        filename: currentFile.filename,
-        currentPos: this.currentPosition,
-        length: this.attachments.length,
-        filetype: currentFile.filetype
-      });
+      if(currentFile){
+        this.showPopup({
+          filelink: currentFile.filelink,
+          filename: currentFile.filename,
+          currentPos: this.currentPosition,
+          length: this.attachments.length,
+          filetype: currentFile.filetype
+        });
+      }
     }
 
     ,imageLoaded: function(){
@@ -115,7 +145,6 @@ window.App = window.App || {};
       // Iterate through all the attachments in the 
       // conversation and create the attachment objects array.
       var attachmentElements = $(event.target).parents(".attachment_list").find('.attachment');
-      this.currentPosition = $(event.target).parents(".attachment").index();
       attachmentElements.each(function(i,el){
         var $el = $(el);
         self.attachments.push({
@@ -124,6 +153,38 @@ window.App = window.App || {};
           ,filetype: $el.find(".attachment-type .file-type").text().toLowerCase()
         })
       })
+    }
+
+    ,getAllInlineImages: function(event){
+      this.attachments = [];
+      self = this;
+
+      // Add the inline images
+      var inlineImages = $(event.target).parents(".commentbox").find('img');
+      inlineImages.each(function(i,el){
+        var $el = $(el);
+        if(!$el.parents(".redactor_box").length){
+          self.attachments.push({
+            filename: "Inline Image"
+          , filelink: $el.attr('src')
+          , filetype: "inline"
+          })
+        }
+      });
+    }
+
+    ,findInlineImagePosition: function(event){
+      var all = jQuery(event.target).parents('.commentbox').find('img');
+      var index = -1;
+      all.each(function(i,el){
+        if(!$(el).parents(".redactor_box").length){
+          index++;
+          if(el==event.target){
+            return false;
+          }
+        }
+      })
+      return index;
     }
 
     ,showPopup: function(viewerData){

@@ -8,7 +8,7 @@ class TimeEntriesDependencyTest < ActionView::TestCase
                          :check_account_state, :set_time_zone, :check_day_pass_usage, :force_utf8_params, :persist_user_agent,
                          :set_cache_buster, :remove_pjax_param, :set_shard_for_payload, :remove_rails_2_flash_after,
                          :set_affiliate_cookie, :verify_authenticity_token, :load_time_entry, :load_ticket, :create_permission,
-                         :validate_params, :timer_permission, :check_agents_in_account, :set_mobile, :set_native_mobile, :verify_permission, :set_last_active_time, :reset_language, :check_rate_limit]
+                         :validate_params, :timer_permission, :check_agents_in_account, :set_mobile, :set_native_mobile, :verify_permission, :set_last_active_time, :reset_language]
     actual_filters = Helpdesk::TimeSheetsController._process_action_callbacks.map { |c| c.filter.to_s }.reject { |f| f.starts_with?('_') }.compact
     assert_equal expected_filters.map(&:to_s).sort, actual_filters.sort
   end

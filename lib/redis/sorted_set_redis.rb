@@ -34,6 +34,10 @@ module Redis::SortedSetRedis
     newrelic_begin_rescue { $redis_others.perform_redis_op("zrank", key, member) }
   end
 
+  def get_rank_from_sorted_set_redis(key, member)
+    newrelic_begin_rescue { $redis_others.perform_redis_op("zrevrank", key, member) }
+  end
+
   def get_member_at_sorted_set_redis(key, index)
     newrelic_begin_rescue { $redis_others.perform_redis_op("zrange", key, index, index, {:withscores => true}) }
   end
@@ -54,8 +58,8 @@ module Redis::SortedSetRedis
     newrelic_begin_rescue { $redis_others.perform_redis_op("zrange", key, 0, size, {:withscores => true}) }
   end
 
-  def get_largest_members_of_sorted_set_redis(key, count = 1)
-    newrelic_begin_rescue { $redis_others.perform_redis_op("zrevrange", key, 0, count - 1, {:withscores => true}) }
+  def get_largest_members_of_sorted_set_redis(key, count = 1, start = 0)
+    newrelic_begin_rescue { $redis_others.perform_redis_op("zrevrange", key, start, count - 1, {:withscores => true}) }
   end
 
 end

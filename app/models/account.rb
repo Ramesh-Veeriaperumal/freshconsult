@@ -204,6 +204,10 @@ class Account < ActiveRecord::Base
 
   #Temporary feature check methods - using redis keys - ends here
 
+  def round_robin_capping_enabled?
+    launched?(:round_robin_capping) # features?(:round_robin_capping)
+  end
+
   def validate_required_ticket_fields?
     ismember?(VALIDATE_REQUIRED_TICKET_FIELDS, self.id)
   end

@@ -12,7 +12,7 @@ class Agent < ActiveRecord::Base
   # Changing since got problem when deleting an agent in Rails3
   has_many :agent_groups, :class_name => 'AgentGroup', 
           :foreign_key =>'user_id', :primary_key => "user_id", 
-          :dependent => :delete_all 
+          :dependent => :destroy 
 
   has_many :groups, :through => :agent_groups, :dependent => :destroy
   

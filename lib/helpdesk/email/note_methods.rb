@@ -21,7 +21,7 @@ module Helpdesk::Email::NoteMethods
   end
 
   def rsvp_to_fwd?
-    @rsvp_to_fwd ||= (Account.current.features?(:threading_without_user_check) && reply_to_forward(header_processor.all_message_ids))
+    @rsvp_to_fwd ||= ((Account.current.features?(:threading_without_user_check) || (!ticket.cc_email.nil? && !ticket.cc_email[:cc_emails].nil? && ticket.cc_email[:cc_emails].include?(email[:from][:email])) || user.agent?) && reply_to_forward(header_processor.all_message_ids))
   end
 
   def note_params
@@ -109,8 +109,8 @@ module Helpdesk::Email::NoteMethods
 
   def sanitize_note_message msg
     sanitized_msg = run_with_timeout(NokogiriTimeoutError) { Nokogiri::HTML(msg).at_css("body") }
-    remove_identifier_span(sanitized_msg)
-    remove_survey_div(sanitized_msg)
+    remove_identifier_span(sanitized_msg) unless sanitized_msg.blank?
+    remove_survey_div(sanitized_msg) unless sanitized_msg.blank?
     sanitized_msg.inner_html unless sanitized_msg.blank?
   end
 

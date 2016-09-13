@@ -146,6 +146,7 @@ pt-BR:
     digits: "Digite apenas números"
     creditcard: "Forneça um número de cartão de crédito válido."
     equalTo: "Digite o mesmo valor novamente."
+    two_decimal_place_warning: "Value cannot have more than 2 decimal digits"
   confirm_delete_message: "Tem certeza de que deseja excluir %{human_name}?"
   reload: Recarregar
   any: Qualquer

@@ -248,7 +248,7 @@ $attachment-viewer-toolbar-height: 50px;
 	height: 100%;
 	content: '';
 	display: inline-block;
-	margin-right: -0.25%;
+	@include margin-right(0.25%);
 	vertical-align: middle;
 }
 
@@ -291,7 +291,7 @@ $attachment-viewer-toolbar-height: 50px;
 }
 
 .av-toolbar-col:last-child {
-	text-align: right;
+	@include text-align(right);
 }
 
 .av-toolbar-col.span4 {
@@ -318,6 +318,15 @@ $attachment-viewer-toolbar-height: 50px;
 	font-size: 20px;
 	margin-top: -17px;
 	display: inline-block;
+}
+
+html[dir="rtl"] .av-prev, html[dir="rtl"] .av-next {
+	float: left; // Only need this for rtl so not adding @include
+}
+
+// Needed to override the style in realtime_dashboard.scss
+html[dir="rtl"] .av-next .ficon-arrow-right:before {
+    content: "\f10b" !important;
 }
 
 .av-cannot-preview {

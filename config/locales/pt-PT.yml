@@ -1,6 +1,17 @@
 pt-PT:
   meta:
      language_name: 'Portuguese/Portugal'
+  validation:
+    required: "Este campo é obrigatório."
+    remote: "Por favor corrija este campo."
+    email: "Por favor insira um endereço de email válido."
+    url: "Por favor insira um URL válido."
+    date: "Por favor introduza uma data válida."
+    dateISO: "Por favor insira uma data ( ISO ) válida."
+    number: "Por favor introduza um número válido."
+    digits: "Por favor insira apenas dígitos."
+    creditcard: "Por favor introduza um número de cartão de crédito válido."
+    equalTo: "Por favor reintroduza o mesmo valor."
   account: 
     active_since: "Activo Desde"
     cancel: "Cancelar e retroceder"

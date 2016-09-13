@@ -14,3 +14,4 @@
 //= require app/ticket_attachment_viewer.js
 //= require ticket_list.js
 //= require app/ticket_details.js
+//= require app/ticket_filter_views.js

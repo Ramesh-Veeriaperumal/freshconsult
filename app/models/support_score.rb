@@ -100,6 +100,39 @@ class SupportScore < ActiveRecord::Base
     end
   end
 
+  def get_mini_list account, user, category
+    search_time = Time.now.in_time_zone account.time_zone
+    key = send("agents_leaderboard_key", category, search_time.month)
+
+    # Find length of the list
+    size = size_of_sorted_set_redis key
+
+    if size == 0
+    	MemcacheKeys.fetch(key, 3600) { store_leaderboard_in_redis key, account, "agents", category, search_time }
+    	size = size_of_sorted_set_redis key
+    	return nil if size == 0
+    end
+
+    rank = get_rank_from_sorted_set_redis key, user.id
+    return nil if rank.nil?
+
+    leaderboard = get_mini_leaderboard rank, size, key
+
+  end
+
+  def get_mini_leaderboard rank, size, key
+		start = rank - 2 > 0 ? rank - 2 : 1
+		stop = start + 5 > size ? size : start + 5 
+		start = stop == size ? (size - 5 > 0 ? size - 5 : 1) : start
+		largest = get_largest_members_of_sorted_set_redis key
+		others = get_largest_members_of_sorted_set_redis key, stop, start
+		others.each_with_index do |person, index|
+			person << start+1+index
+		end
+		largest << others
+		return largest
+  end 
+
   def agents_scoper account, start_time, end_time
     account.support_scores.by_performance.user_score({ :conditions => ["user_id is not null"] }).created_at_inside(start_time, end_time)
   end

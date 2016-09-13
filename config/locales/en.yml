@@ -75,6 +75,7 @@ en:
     digits: "Please enter only digits."
     creditcard: "Please enter a valid credit card number."
     equalTo: "Please enter the same value again."
+    two_decimal_place_warning: "Value cannot have more than 2 decimal digits"
   confirm_delete_message: Are you sure you want to delete the %{human_name}?
   reload: Reload
   any: Any
@@ -553,6 +554,9 @@ en:
       newlevel: "<b> Hurrah! </b><br/> Now you became <b>%{name}</b>."
       achieved_quest: "<b> Hurrah! </b><br/> You achieved the <b>%{name}</b>."
     leaderboard:
+      you: "You "
+      congrats: "Congrats %{name}!"
+      not_enough_points: "You don’t have enough points yet!"
       mvp_trophie_label: "Most Valuable Player"
       back_to_dashboard: "Back to Dashboard"
       agents_in: "Agents in"
@@ -1334,6 +1338,9 @@ en:
         default_survey: Default Survey
         survey: Survey
         title: Survey name
+        rating_order: Rating order &nbsp;
+        good_to_bad: Good to Bad
+        bad_to_good: Bad to Good
         title_error_text: Survey name has already been taken
         result_exist_msg: Since responses have already been collected for this survey, the point scale and no. of questions cannot be altered. However, you can edit the questions and answers.
         result_exist_msg_v2: Since responses have already been collected for this survey, the point scale and no. of questions cannot be altered. However, you can rephrase the questions and answer choices.
@@ -3000,6 +3007,12 @@ en:
         new: "Deselected %{checkbox_list}"
       archive:
         new: "Ticket archived"
+      email_to_requester:
+        new: "Sent email to requester %{requester_name}"
+      email_to_group:
+        new: "Sent email to group <strong>%{group_list}</strong>"
+      email_to_agent:
+        new: "Sent email to agent %{agent_list}"
   credit_card_info: Credit card information
   zendesk_backup_info: Select the Zendesk backup file downloaded from zendesk
   backup_error_msg: "The file exceeds the prescribed limit of 50MB, please <a href='#' id='import_request'>contact support</a> to proceed with the import."
@@ -3677,7 +3690,8 @@ en:
     title: Groups
     business_calendar: Business Hours
     ticket_assignment: Automatic ticket assignment
-    auto_assignment_description: Once enabled, tickets assigned to this group will be automatically assigned to the available agents in the group through the round robin method
+    auto_assignment_description: Tickets coming into this group will be automatically assigned to available agents based on the assignment method you select
+    only_round_robin_description: Tickets coming into this group will be automatically assigned to available agents based on <strong>Round-robin method</strong>
     escalation_rule: Escalation Rule
     send_escalation_to: "....then send escalation email to :"
     info1: Agents
@@ -3696,21 +3710,28 @@ en:
     please_confirm: Please confirm...
     rr_v2_confimation_message: This action cannot be undone. Are you sure you want to proceed?
     tour: Help me create a new agent group
-    helptext: You can organize your agents into specific Groups like “Sales” and “Product Management”. Segmenting them into divisions lets you easily assign tickets, create specific canned responses, manage workflows and generate group-level reports. Note that the same agent can be a member of multiple groups as well
-    automatic_assignment: Once you create homogeneous agent groups, you can choose to automatically assign new tickets in this group to the next agent in Round Robin. <a href="https://support.freshdesk.com/support/solutions/articles/77157" target="_blank">Learn more</a>
+    helptext: You can organize your agents into specific Groups like “Support” and “Sales”. This lets you easily assign tickets, create specific canned responses, manage workflows and generate group-level reports. Note that an agent can be a member of multiple groups as well.
+    automatic_assignment: <b>To each group</b><br/>Once you’ve created your agent groups, you can use set up rules in dispatch’r to route tickets to each group. <a href="https://support.freshdesk.com/support/solutions/articles/77157" target="_blank">Learn more</a><br/><br/><b>To agents within each group</b><br/>You can automatically assign tickets to online agents through two methods - <br/> 1. Round-robin ticket assignment, i.e. circular assignment of tickets <br/> 2. Load balanced ticket assignment, i.e. setting a maximum limit on number of tickets an agent can receive <br/> <a href="https://support.freshdesk.com/support/solutions/articles/196581" target="_blank">Click here to read more</a>
     automatic_assignment_header: Auto-ticket Assignment
-    working_hours_header: Working Hours
-    working_hours: You can assign a different set of business hours and holidays to each Group. For example, you can separate agents by shifts and assign them different business hours, or create separate groups for each time zone your agents work at
+    working_hours_header: Business Hours
+    working_hours: You can assign each of these groups with different business hours which is simply your working hours. For example, you can group agents by shifts and assign different business hours to each group, or create separate groups for different locations your agents work from.
     select_agents: Select Agents
     select_an_agent: Select Agent
     select_business_calendar: Select Business Hours
     learn_more: Learn more
     settings_saved: Your setting is successfully saved.
-    toggle_availability_for_rr: Allow agents the ability to turn on/off automatic ticket assignment
+    toggle_availability_for_rr: Allow agents to change their availability for automatic ticket assignment
     toggle_availability_enabled: Agents will be able to manually change their availability for round robin ticket assignment. Admins and supervisors can change the agent availability from the dashboard, if necessary.
     toggle_availability_disabled: If disabled, agents will always be set as “available”. Admins and supervisors can change the agent availability from the dashboard, if necessary.
+    toggle_availability_message: Admins and supervisors can override an agent's availability from the dashboard
     toggle_availability_note: "Note: Agents belonging to multiple groups will be able to change their availability only if they have permission to control their availability in all of the groups they belong to."
+    round_robin_capping: "Load balanced ticket assignment"
+    round_robin_capping_info: Limit the number of tickets an agent can handle simultaneously
+    round_robin_defalut: Round-robin ticket assignment
+    round_robin_default_info: Assign tickets to agents in a circular fashion
     round_robin_desc: "Once turned ON, tickets assigned to this group will be distributed among agents in round robin fashion. If you wish to manually assign tickets or dispatch them using the Dispatch'r or Supervisor automations, you can turn this OFF. "
+    capping_ticket: "ticket"
+    capping_tickets: "tickets"
     page_not_found: "This group could not be found. It might have been deleted or the URL mistyped."
     assigntime:
       half: 30 Minutes
@@ -6177,6 +6198,7 @@ en:
     requester_placeholder: "Name or Email"
     user_placeholder: "Name or Email"
     cc_emails_placeholder: "Name or email of user from selected company"
+    tags_placeholder: ""
     customers_placeholder: ""
     company_id_placeholder: ""
     raised_by: "Tickets created by"
@@ -6202,6 +6224,8 @@ en:
       agent_responded_at: Agent Response
       asc: Ascending
       desc: Descending
+    search_views: Jump to view
+    no_match_view: No matching views found
   click_to_change_sort_order: Click to change sort order
   user_sessions:
       new:
@@ -6551,6 +6575,7 @@ en:
     terms_of_use: "Terms of Use"
     terms_of_use_link: "http://freshdesk.com/terms#marketplace"
     get_more_apps: Get more Apps
+    confirm_data_lose: "Your data will be lost."
     confirm_uninstall_message: "Are you sure you want to uninstall the %{human_name}?"
     app: app
     custom_app: custom app
