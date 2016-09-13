@@ -104,8 +104,10 @@ $survey-heading-color: #686868;
 	}
 	li{	
 		display: inline-block;
-		font-size: 0;
 		vertical-align: middle;
+	}
+	.question-rating-option{	
+		font-size: 0;
 	}
 }
 .add-srvy-ques{
