@@ -1,5 +1,6 @@
 <% user_page ||= false %>
 <% ticket_style = subject_style(ticket,@onhold_and_closed_statuses) %>
+<% survey_association = Account.current.new_survey_enabled? ? "custom_survey_results" : "survey_results" %>
 <% modal ||= false %>
 
 <tr class="ticket-status-<%= ticket.status %> " data-ticket="<%= ticket.display_id %>">
@@ -12,7 +13,15 @@
   <% unless user_page %>
 		<td class="userpic">
 			<div class="hideForList">
-				<%= senti_user_avatar(ticket.requester, ticket.sentiment, :thumb, "preview_pic circle") %>
+				<% unless ticket.send(survey_association).nil? || ticket.send(survey_association).last.nil? %>
+					<% if (Account.current.new_survey_enabled?) %>
+						<%= user_avatar(ticket.requester, :thumb, 'preview_pic circle') %>
+					<% else %>
+				    	<%= user_avatar(ticket.requester, :thumb, 'preview_pic circle') %>
+					<% end %>
+				<% else %>
+					<%= senti_user_avatar(ticket.requester, ticket.sentiment, :thumb, 'preview_pic circle') %>
+				<% end %>
 			</div>
 		</td>
 	<% end %>
