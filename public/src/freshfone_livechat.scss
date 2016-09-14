@@ -7,11 +7,14 @@
 .chats-container {
   position: fixed;
   z-index: 99;
-  @include right(0);
   bottom: 0;
   @include left(0);
-  width: 100%;
   @include padding(7px 0);
+  &.-chat-active,
+  &.-fone-active {
+    @include right(0);
+    width: 100%;
+  }
   .freshfone-context-container {
     box-shadow: 0px 10px 20px 0px rgba(0, 0, 0, 0.1);
   }
