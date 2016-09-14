@@ -437,6 +437,28 @@ module SupportHelper
 	    end
 	end
 
+	def render_add_cc_field  field, condition
+	      	render(:partial => "/support/shared/add_cc_field", :locals => { :field => field, :_cc_condition => condition })
+	end
+
+	def fragment_cache_dom_options form_builder
+		cache_options = {
+			:cc_container => '',
+			:company_container => ''
+		}
+		if Account.current.launched?(:support_new_ticket_cache) && current_user.present?
+			cache_options[:company_cache_condition] = Account.current.features?(:multiple_user_companies) && (current_user.present? || current_user.agent? || current_user.contractor?)
+			if cache_options[:company_cache_condition]
+				company_field = Account.current.ticket_fields.default_company_field.first
+				cache_options[:company_container] = ticket_field_container(form_builder, :helpdesk_ticket, company_field, helpdesk_ticket_values(company_field,@params)).html_safe
+			end 
+			requester_field = Account.current.ticket_fields.requester_field.first
+			cache_options[:cc_cache_condition] = current_user.present? && requester_field.portal_cc_field? && ( current_user.company.present? || requester_field.all_cc_in_portal? || current_user.contractor? ) 
+			cache_options[:cc_container] = render_add_cc_field(requester_field, cache_options[:cc_cache_condition]).html_safe if cache_options[:cc_cache_condition]
+ 		end
+ 		cache_options
+	end
+
 	# The field_value(init value) for the nested field should be in the the following format
 	# { :category_val => "", :subcategory_val => "", :item_val => "" }
 	def nested_field_tag(_name, _fieldname, _field, _opt = {}, _htmlopts = {}, _field_values = {}, in_portal = false, required)
