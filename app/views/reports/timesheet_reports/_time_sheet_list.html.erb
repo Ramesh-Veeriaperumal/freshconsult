@@ -67,7 +67,7 @@
         </div>
         <div class="vertical-alignment">
           <%= select_tag :group_by_field , options_for_select(Helpdesk::TimeSheet.group_by_options,grp_data),
-                  { :multiple => false, :class => "select2 filter_item"}%>
+                  { :multiple => false, :class => "select2 filter_item", "data-width" => "150"}%>
         </div>
         <% if current_user.privilege?(:export_reports) %>
           <span class="pull-right time-sheet-top-margin">
