@@ -236,10 +236,6 @@ class Account < ActiveRecord::Base
       CountES::IndexOperations::EnableCountES.perform_async({ :account_id => self.id }) if Account.current.features?(:countv2_writes)
     end
 
-    def enable_count_es
-      CountES::IndexOperations::EnableCountES.perform_async({ :account_id => self.id }) if Account.current.features?(:count_es_writes)
-    end
-    
     def disable_searchv2
       SearchV2::Manager::DisableSearch.perform_async(account_id: self.id)
     end
