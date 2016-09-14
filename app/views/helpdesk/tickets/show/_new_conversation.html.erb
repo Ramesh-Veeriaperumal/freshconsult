@@ -8,7 +8,7 @@
 		      							helpdesk_canned_responses_index_path(@ticket.display_id), 
 		      							"data-width" => "700", "data-template-footer" => '', :rel => 'freshdialog', 
 		      							:id => "canned_response_show", "data-target" => "#canned_responses",
-		      							:title => t(:'ticket.canned_responses.ca_responses')) %>
+		      							'data-template-header' => "<div class='modal-header'><span><h3 class='modal-heading-with-button'>" + t('ticket.canned_responses.ca_responses') + "</h3></span><a href='/helpdesk/canned_responses/folders' target='_blank' class='pull-right modal-header-button'>" + t('ticket.create_new_ca') + "</a></div>") %>
 					<%= link_to( t('solution.title_singular'), 
 												"#related_solutions", 
 												:title => t(:'ticket.suggested_solutions.title'), :rel => 'freshdialog',

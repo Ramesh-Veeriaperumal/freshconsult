@@ -116,10 +116,11 @@
 				</div>
 				<% end %>
 				<li class="ticket-btns hide_on_collapse scenario reload-action">
-					<div class="tooltip keytitle" title='<%="#{t('ticket.execute_scenario')}"%>' data-placement = "below" data-hotkey='<%="#{shortcut('ticket_detail.scenario')}"%>'>
-					<%= link_to( t('ticket.scenarios'), "/helpdesk/tickets/#{@ticket.id}/component?component=scenarios", 
+					<div class="tooltip keytitle" title='<%="#{t('ticket.execute_scenario')}"%>' data-placement = "below" data-hotkey='<%="#{shortcut('ticket_detail.scenario')}"%>'>					
+					 <%= link_to( t('ticket.scenarios'), "/helpdesk/tickets/#{@ticket.id}/component?component=scenarios", 
 					  				:rel => 'freshdialog', "data-target" => "#execute_scenario", :class => 'btn btn-collapse', "data-keybinding" => shortcut('ticket_detail.scenario'), "data-highlight" => true, "data-template-footer" => "",
-					  				:title => t('ticket.execute_scenario')) %> 
+					  				'data-template-header' => "<div class='modal-header'><span><h3 class='modal-heading-with-button'>" + t('ticket.execute_scenario') + "</h3></span><a href='/helpdesk/scenario_automations/new' target='_blank' class='pull-right modal-header-button'>" + t('ticket.create_new_scenario') + "</a></div>")
+					  				 %> 
 					</div>
 				</li>
 

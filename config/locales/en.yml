@@ -5268,6 +5268,8 @@ en:
       add_tag: "Add a tag:"
     type: Type
     execute_scenario: Execute Scenario
+    create_new_scenario: Create new scenario
+    create_new_ca: Create new canned response
     execute: Execute
     search_scenario: Search Scenarios
     conv_form_status_set_as: "and set as <strong>%{status}</strong>"
