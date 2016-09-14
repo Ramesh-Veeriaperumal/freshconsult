@@ -101,6 +101,15 @@ class Helpdesk::TicketTemplate < ActiveRecord::Base
      }).to_json
   end
 
+  def to_count_es_json
+    as_json({
+    :root => false,
+    :tailored_json => true, 
+    :only => [:account_id, :name, :association_type],
+    :methods => [:es_access_type, :es_group_accesses, :es_user_accesses],
+    }).to_json
+  end
+
   def all_attachments
     @all_attachments ||= begin
       shared_attachments = self.attachments_sharable
