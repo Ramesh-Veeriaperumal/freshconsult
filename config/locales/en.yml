@@ -3016,6 +3016,7 @@ en:
   zendesk_backup_info: Select the Zendesk backup file downloaded from zendesk
   backup_error_msg: "The file exceeds the prescribed limit of 50MB, please <a href='#' id='import_request'>contact support</a> to proceed with the import."
   your_email_address: Your e-mail address
+  uncheck_remember_tooltip: You can uncheck this option if you're logging in from a shared device
   username: Username
   reply: Reply
   is_not: Is not
