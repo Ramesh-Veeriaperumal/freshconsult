@@ -124,6 +124,8 @@ Helpkit::Application.routes.draw do
       member do
         put :restore
         put :send_invite
+        put :update_password
+        get :activities
       end
     end
     resources :ticket_filters, controller: 'ember/ticket_filters', only: [:index, :show, :create, :update, :destroy]

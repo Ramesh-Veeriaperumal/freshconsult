@@ -3,6 +3,8 @@ module Ember
     include DeleteSpamConcern
     decorate_views
 
+    before_filter :can_change_password?, :validate_password_change, only: [:update_password]
+
     def index
       super
       response.api_meta = { count: @items_count }
@@ -19,6 +21,32 @@ module Ember
         @items.each do |item|
           @items_failed << item unless send_activation_mail(item)
         end
+      end
+    end
+
+    def update_password
+      @item.password = params[:password]
+      @item.active = true
+        
+      if @item.save
+        @item.reset_perishable_token!
+        head 204
+      else
+        ErrorHelper.rename_error_fields({ base: :password }, @item)
+        render_errors(@item.errors)
+      end
+    end
+
+    def activities
+      @user_activities = case params[:type]
+      when 'tickets'
+        ticket_activities
+      when 'archived_tickets'
+        archived_ticket_activities
+      when 'forums'
+        @item.recent_posts
+      else
+        combined_activities
       end
     end
 
@@ -73,6 +101,37 @@ module Ember
         item.deliver_activation_instructions!(current_portal, true) if valid && item.has_email?
         valid
       end
+
+      def can_change_password?
+        render_errors({ :password => :"Not allowed to change." }) unless @item.allow_password_update?
+      end
+
+      def validate_password_change
+        params[cname].permit(:password, :password_confirmation)
+        contacts_validation = ContactValidation.new(params, @item)
+        return true if contacts_validation.valid?(action_name.to_sym)
+        render_errors contacts_validation.errors, contacts_validation.error_options
+        false
+      end
+
+      def ticket_activities
+        @user_tickets = current_account.tickets.permissible(api_current_user).
+          requester_active(@item).visible.newest(11).find(:all,
+            include: [:ticket_states, :ticket_status, :responder, :requester])
+        @user_tickets.take(10)
+      end
+
+      def archived_ticket_activities
+        return [] unless current_account.features_included?(:archive_tickets)
+        @user_archived_tickets = current_account.archive_tickets.permissible(api_current_user).
+          requester_active(@item).newest(11).find(:all, include: [:responder, :requester])
+        @user_archived_tickets.take(10)
+      end
+
+      def combined_activities
+        user_activities = ticket_activities + (current_account.features?(:forums) ? @item.recent_posts : [])
+        user_activities.sort_by { |item| - item.created_at.to_i }.take(10)
+    end
 
       wrap_parameters(*wrap_params)
   end

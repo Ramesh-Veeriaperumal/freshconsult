@@ -24,7 +24,7 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   manage_contacts do
-    resource :"ember/contact", only: [:create, :update]
+    resource :"ember/contact", only: [:create, :update, :activities]
   end
 
   manage_users do
@@ -34,4 +34,8 @@ Authority::Authorization::PrivilegeList.build do
 	delete_ticket do
 		resource :"ember/ticket", only: [:destroy, :bulk_delete, :restore, :bulk_restore]
 	end
+
+  admin_tasks do
+    resource :"ember/contact", only: [:update_password]
+  end
 end

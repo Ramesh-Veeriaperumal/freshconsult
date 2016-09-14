@@ -16,7 +16,7 @@ class ContactValidation < ApiValidation
   MANDATORY_FIELD_STRING = MANDATORY_FIELD_ARRAY.join(', ').freeze
 
   attr_accessor :avatar, :view_all_tickets, :custom_fields, :company_name, :email, :fb_profile_id, :job_title,
-                :language, :mobile, :name, :other_emails, :phone, :tags, :time_zone, :twitter_id, :address, :description
+                :language, :mobile, :name, :other_emails, :phone, :tags, :time_zone, :twitter_id, :address, :description, :password
 
   alias_attribute :company_id, :company_name
   alias_attribute :customer_id, :company_name
@@ -59,6 +59,8 @@ class ContactValidation < ApiValidation
   validates :avatar, data_type: { rules: ApiConstants::UPLOADED_FILE_TYPE, allow_nil: true }, file_size: {
     max: ContactConstants::ALLOWED_AVATAR_SIZE }
   validate :validate_avatar, if: -> { avatar && errors[:avatar].blank? }
+
+  validates :password, data_type: { rules: String, required: true }, on: :update_password
 
   def initialize(request_params, item, allow_string_param = false)
     super(request_params, item, allow_string_param)

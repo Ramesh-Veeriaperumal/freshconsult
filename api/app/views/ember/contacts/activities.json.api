@@ -1,0 +1,21 @@
+JSON.generate(@user_activities.map do |item|
+  if item.is_a?(Post)
+    {
+      type: item.class.name,
+      id: item.id,
+      topic_id: item.topic.id,
+      topic_title: item.topic.title,
+      created_at: item.created_at,
+      replied: item.original_post? ? false : true
+    }
+  else
+    { 
+      type: item.class.name.gsub('Helpdesk::', ''),
+      id: item.display_id,
+      subject: item.subject,
+      created_at: item.created_at,
+      status: item.status,
+      agent_id: (item.responder || {})[:id]
+    }
+  end
+end)
