@@ -25,7 +25,7 @@ class QueryHash
 
     def transform_query(query)
       result = query.slice('condition', 'operator', 'value')
-      result['value'] = transform_value(result['value'])
+      result['value'] = transform_value(query)
       return result if skip_transform?(query)
       result.merge!(transform_condition(query))
       if format == :presentable
@@ -39,11 +39,12 @@ class QueryHash
         ((format == :system) && !query.has_key?("type"))
     end
 
-    def transform_value(val)
+    def transform_value(query)
+      val = query['value']
       if format.eql?(:system)
         val.is_a?(Array) ? val.join(',') : val
       else
-        val.is_a?(String) ? val.split(',') : val
+        (query['operator'] == 'is_in' && val.is_a?(String)) ? val.split(',') : val
       end
     end
 
