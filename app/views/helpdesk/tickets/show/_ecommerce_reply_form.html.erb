@@ -21,7 +21,7 @@
     <ul class="ui-form dont-validate">
       <li class="inline-field field clearField message">
           <%= render(:partial => 'helpdesk/tickets/show/editor_insert_buttons', :locals => { :id => id, :cntid => cntid}) %> 
-          <label class="ecom-from">From: <%= @ticket.ebay_account.name if @ticket.ebay_account.present? %></label>
+          <label class="ecom-from">From:</label> <span><%= @ticket.ebay_account.name if @ticket.ebay_account.present? %></span>
       </li>
       <li class="inline-field field clearField continous message">
         <%= f.fields_for :note_body, Helpdesk::NoteBody.new do |ff| %>
@@ -33,9 +33,9 @@
         <span class="alert-text"><%= t('helpdesk.tickets.show.reply_form.not_sent') %></span>
         <%= t('helpdesk.tickets.note.attachment_size.exceed') %>
       </li>
-      <li class="inline-field field attachment-options continous" id="attachment-options-reply">
+      <li class="attachment-options-reply" id="attachment-options-reply">
           <% unless local_assigns[:no_attachments] %>
-          <%= render :partial => "/helpdesk/tickets/show/attachment_form", :locals => { :attach_id => id , :nsc_param => "helpdesk_note", :max_attachment => 5, :max_size => 7  } %>
+          <%= render :partial => "/helpdesk/tickets/show/single_attachment_form", :locals => { :attach_id => id , :nsc_param => "helpdesk_note", :max_attachment => 5, :max_size => 7  } %>
           <% end %>    
       </li>
     </ul>
