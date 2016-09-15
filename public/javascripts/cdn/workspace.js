@@ -36,3 +36,4 @@
 //= require plugins/jquery.placeholder.js
 //= require i18n
 //= require i18n/translations
+//= require formdata.populate.js
