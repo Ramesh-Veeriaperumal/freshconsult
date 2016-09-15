@@ -555,6 +555,7 @@ en:
       achieved_quest: "<b> Hurrah! </b><br/> You achieved the <b>%{name}</b>."
     leaderboard:
       you: "You "
+      congrats: "Congrats %{name}!"
       not_enough_points: "You don’t have enough points yet!"
       mvp_trophie_label: "Most Valuable Player"
       back_to_dashboard: "Back to Dashboard"
@@ -1616,6 +1617,8 @@ en:
         feedbackwidget_search_area: Search Articles
         feedbackwidget_use_https: Use https
         feedbackwidget_mobile_view: Mobile View
+        feedbackwidget_submit_title: "Send Feedback"
+        feedbackwidget_form_submit_title: "Form Submit Button"
       popup_widget:
         feedbackwidget_button_type: Button type
         feedbackwidget_text_button: Text button
@@ -1641,6 +1644,8 @@ en:
         feedbackwidget_use_https: Use https
         feedbackwidget_mobile_view: Enable mobile view
         feedbackwidget_use_captcha: Enable CAPTCHA
+        feedbackwidget_submit_title: "Send Feedback"
+        feedbackwidget_form_submit_title: "Form Submit Button"
       embedded_widget:
         feedbackwidget_height_placeholder: "500"
         feedbackwidget_form_customization: Customize Form
@@ -1658,6 +1663,8 @@ en:
         feedbackwidget_search_area: Search Articles
         feedbackwidget_use_https: "Use https"
         feedbackwidget_use_captcha: Enable CAPTCHA
+        feedbackwidget_submit_title: "Send Feedback"
+        feedbackwidget_form_submit_title: "Form Submit Button"
     supervisor_rules:
       new_info_help: For <b>each ticket</b> updated within 30 days, execute all matching rules.
       index:

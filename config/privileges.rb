@@ -21,7 +21,7 @@ Authority::Authorization::PrivilegeList.build do
                                            :get_ca_response_content, :merge_with_this_request, :print, :latest_note,
                                            :clear_draft, :save_draft, :prevnext, :component, :custom_search,
                                            :quick_assign, :canned_reponse, :full_paginate, :custom_view_save, :apply_template, :accessible_templates, :search_templates,
-                                           :filter_options, :activities, :status, :get_top_view, :recent_tickets, :old_tickets, :summary, :bulk_scenario,
+                                           :filter_options, :filter_conditions, :activities, :status, :get_top_view, :recent_tickets, :old_tickets, :summary, :bulk_scenario,
                                            :execute_bulk_scenario, :activitiesv2, :activities_all]
     resource :"helpdesk/subscription"
     resource :"helpdesk/tag_use"

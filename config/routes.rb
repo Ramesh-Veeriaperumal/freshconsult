@@ -1752,6 +1752,7 @@ Helpkit::Application.routes.draw do
         post :latest_ticket_count
         match :add_requester
         get :filter_options
+        get :filter_conditions
         get :full_paginate
         get :summary
         get :compose_email

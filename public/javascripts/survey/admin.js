@@ -9,11 +9,14 @@ var SurveyAdmin = {
 		flipChoiceOrder:function(obj){
 			if(jQuery(obj).data('state')!=SurveyAdmin.surveyChoiceGoodToBad){
 				SurveyAdmin.surveyChoiceGoodToBad = !SurveyAdmin.surveyChoiceGoodToBad;
-				SurveyProtocol.content.scale.change(jQuery("input[name='choice']:checked")[0]);
-				var question_scale = jQuery("input[name='question-choice']:checked")[0];
-				if(question_scale){
-					SurveyProtocol.content.scale.change(question_scale);
-				}
+				var choice_default = jQuery('#survey_rating_options .flexcontainer textarea');
+				jQuery('#survey_rating_options .flexcontainer').prepend(choice_default.get().reverse());
+				var choice_questions = jQuery('#question_rating_options .flexcontainer textarea');
+				jQuery('#question_rating_options .flexcontainer').prepend(choice_questions.get().reverse());
+				jQuery('.question-rating-option').each(function(){
+					var choice_rating = jQuery(this).find('.survey-rating');
+					jQuery(this).append(choice_rating.get().reverse());
+				});
 				jQuery('.rating_order_select .dropdown-menu li').toggleClass('active');
 				jQuery('#order_dropdown h5').toggleClass('good_to_bad bad_to_good').html(jQuery(obj).text()+"<b class='caret'></b>");
 			}
