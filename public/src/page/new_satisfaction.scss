@@ -106,6 +106,9 @@ $survey-heading-color: #686868;
 		display: inline-block;
 		vertical-align: middle;
 	}
+	.question-rating-option{	
+		font-size: 0;
+	}
 }
 .add-srvy-ques{
 	padding: 15px;
@@ -168,6 +171,7 @@ $survey-heading-color: #686868;
 	background-color:$none;
 	vertical-align:middle;
 	display:inline-block;
+	@include margin-right(5px);
 	@include border-radius(100%);
 }
 .flexcontainer{

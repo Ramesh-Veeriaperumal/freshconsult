@@ -44,19 +44,23 @@
 						<% unless data.nil? %>
 							<% if data[:leader].id == current_user.id %>
 								<div class="category-leader" title="<%= t("gamification.leaderboard.you") %>(<%= data[:leader][:score].to_i %>)">
+									<%= user_avatar_with_expiry(data[:leader],3605) %>
+									<div><b><%= t("gamification.leaderboard.#{category}_trophie_label") %></b></div>
+									<div class="rank-user-name"><%= t("gamification.leaderboard.congrats", :name => data[:leader]) %></div>
+								</div>
 							<% else %>
-								<div class="category-leader" title="<%= data[:leader] %>(<%= data[:leader][:score].to_i %>)">
+								<div class="category-leader" title="<%= data[:leader] %> (<%= data[:leader][:score].to_i %>)">
+									<%= user_avatar_with_expiry(data[:leader],3605) %>
+									<div><b><%= t("gamification.leaderboard.#{category}_trophie_label") %></b></div>
+									<div class="rank-user-name"><%= data[:leader] %></div>
+								</div>
 							<% end %>
-								<%= user_avatar_with_expiry(data[:leader],3605) %>
-								<div><b><%= t("gamification.leaderboard.#{category}_trophie_label") %></b></div>
-								<div class="rank-user-name"><%= data[:leader] %></div>
-							</div>
 							<div class="category-ranks">
 								<% data[:others].each do |people| %>
 									<% if people.id == current_user.id %>
 										<div class="leaderboard-others self" title="<%= t("gamification.leaderboard.you") %>(<%= people[:score].to_i %>)">
 									<% else %>
-										<div class="leaderboard-others" title="<%= people %>(<%= people[:score].to_i %>)">
+										<div class="leaderboard-others" title="<%= people %> (<%= people[:score].to_i %>)">
 									<% end %>
 										<%= user_avatar_with_expiry(people,3605) %>
 										<p class="other-rank"><%= people[:rank]%></p>
