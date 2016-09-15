@@ -22,7 +22,7 @@ module Search
               :version_type => 'external',
               :version      => payload[:version].to_i
             }
-            Search::V2::Count::CountClient.new("put",document_path(model_class, document_id, version), query_params, model_object.to_count_es_json)
+            Search::V2::Count::CountClient.new("put",document_path(model_class, document_id, version), query_params.merge(version), model_object.to_count_es_json)
           end
         end
 
@@ -35,7 +35,7 @@ module Search
 
         def document_path(model_class, id, query_params={})
           model_class_name = model_class.demodulize.downcase
-          path    = [host, index_alias(model_class_name), id].join('/')
+          path    = [host, index_alias(model_class_name), model_class_name, id].join('/')
         end
 
         def query_params
