@@ -384,7 +384,7 @@ module ChatHelper
   def is_chat_support_plan?
     chat_support_plans = [ SubscriptionPlan::SUBSCRIPTION_PLANS[:estate],SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_classic],
                         SubscriptionPlan::SUBSCRIPTION_PLANS[:forest],SubscriptionPlan::SUBSCRIPTION_PLANS[:premium]  ]
-    chat_support_plans.include?(current_account.subscription_plan.name)
+    chat_support_plans.include?(current_account.subscription.subscription_plan.name)
   end
 
   def chat_widget_list(widgets)
