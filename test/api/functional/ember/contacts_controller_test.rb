@@ -20,9 +20,9 @@ class Ember::ContactsControllerTest < ActionController::TestCase
     invalid_ids = [1000, 2000]
     ids_to_delete = [*contact_ids, *invalid_ids]
     put :bulk_delete, construct_params({ version: 'private' }, {ids: ids_to_delete})
-    errors = {}
-    invalid_ids.each { |id| errors[id] = :"is invalid" }
-    match_json(partial_success_response_pattern(contact_ids, errors))
+    failures = {}
+    invalid_ids.each { |id| failures[id] = { :id => :"is invalid" } }
+    match_json(partial_success_response_pattern(contact_ids, failures))
     assert_response 202
   end
 
@@ -34,9 +34,9 @@ class Ember::ContactsControllerTest < ActionController::TestCase
     ids_to_delete = contacts.map(&:id)
     User.any_instance.stubs(:save).returns(false)
     put :bulk_delete, construct_params({ version: 'private' }, {ids: ids_to_delete})
-    errors = {}
-    ids_to_delete.each { |id| errors[id] = :unable_to_perform }
-    match_json(partial_success_response_pattern([], errors))
+    failures = {}
+    ids_to_delete.each { |id| failures[id] = { :id => :unable_to_perform } }
+    match_json(partial_success_response_pattern([], failures))
     assert_response 202
   end
 

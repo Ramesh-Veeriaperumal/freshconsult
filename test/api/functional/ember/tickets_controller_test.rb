@@ -35,9 +35,9 @@ module Ember
       invalid_ids = [ticket_ids[0] + 20, ticket_ids[0] + 30]
       ids_to_delete = [*ticket_ids, *invalid_ids]
       put :bulk_delete, construct_params({ version: 'private' }, {ids: ids_to_delete})
-      errors = {}
-      invalid_ids.each { |id| errors[id] = :"is invalid" }
-      match_json(partial_success_response_pattern(ticket_ids, errors))
+      failures = {}
+      invalid_ids.each { |id| failures[id] = { :id => :"is invalid" } }
+      match_json(partial_success_response_pattern(ticket_ids, failures))
       assert_response 202
     end
 
@@ -59,9 +59,9 @@ module Ember
       Helpdesk::Ticket.any_instance.stubs(:save).returns(false)
       put :bulk_delete, construct_params({ version: 'private' }, {ids: ids_to_delete})
       Helpdesk::Ticket.any_instance.unstub(:save)
-      errors = {}
-      ids_to_delete.each { |id| errors[id] = :unable_to_perform }
-      match_json(partial_success_response_pattern([], errors))
+      failures = {}
+      ids_to_delete.each { |id| failures[id] = { :id => :unable_to_perform } }
+      match_json(partial_success_response_pattern([], failures))
       assert_response 202
     end
 
@@ -73,9 +73,9 @@ module Ember
       User.any_instance.stubs(:can_view_all_tickets?).returns(false)
       put :bulk_delete, construct_params({ version: 'private' }, {ids: ticket_ids})
       User.any_instance.unstub(:can_view_all_tickets?)
-      errors = {}
-      ticket_ids.each { |id| errors[id] = :"is invalid" }
-      match_json(partial_success_response_pattern([], errors))
+      failures = {}
+      ticket_ids.each { |id| failures[id] = { :id => :"is invalid" } }
+      match_json(partial_success_response_pattern([], failures))
       assert_response 202
     end
 
@@ -122,9 +122,9 @@ module Ember
       invalid_ids = [ticket_ids[0] + 20, ticket_ids[0] + 30]
       ids_list = [*ticket_ids, *invalid_ids]
       put :bulk_spam, construct_params({ version: 'private' }, {ids: ids_list})
-      errors = {}
-      invalid_ids.each { |id| errors[id] = :"is invalid" }
-      match_json(partial_success_response_pattern(ticket_ids, errors))
+      failures = {}
+      invalid_ids.each { |id| failures[id] = { :id => :"is invalid" } }
+      match_json(partial_success_response_pattern(ticket_ids, failures))
       assert_response 202
     end
 
@@ -146,9 +146,9 @@ module Ember
       Helpdesk::Ticket.any_instance.stubs(:save).returns(false)
       put :bulk_spam, construct_params({ version: 'private' }, {ids: ids_list})
       Helpdesk::Ticket.any_instance.unstub(:save)
-      errors = {}
-      ids_list.each { |id| errors[id] = :unable_to_perform }
-      match_json(partial_success_response_pattern([], errors))
+      failures = {}
+      ids_list.each { |id| failures[id] = { :id => :unable_to_perform } }
+      match_json(partial_success_response_pattern([], failures))
       assert_response 202
     end
 
@@ -160,9 +160,9 @@ module Ember
       User.any_instance.stubs(:can_view_all_tickets?).returns(false)
       put :bulk_spam, construct_params({ version: 'private' }, {ids: ticket_ids})
       User.any_instance.unstub(:can_view_all_tickets?)
-      errors = {}
-      ticket_ids.each { |id| errors[id] = :"is invalid" }
-      match_json(partial_success_response_pattern([], errors))
+      failures = {}
+      ticket_ids.each { |id| failures[id] = { :id => :"is invalid" } }
+      match_json(partial_success_response_pattern([], failures))
       assert_response 202
     end
 
@@ -237,9 +237,9 @@ module Ember
       invalid_ids = [ticket_ids[0] + 20, ticket_ids[0] + 30]
       id_list = [*ticket_ids, *invalid_ids]
       put :bulk_execute_scenario, construct_params({ version: 'private', scenario_id: scenario_id }, { ids: id_list })
-      errors = {}
-      invalid_ids.each { |id| errors[id] = :"is invalid" }
-      match_json(partial_success_response_pattern(ticket_ids, errors))
+      failures = {}
+      invalid_ids.each { |id| failures[id] = { :id => :"is invalid" } }
+      match_json(partial_success_response_pattern(ticket_ids, failures))
       assert_response 202
     end
 

@@ -48,7 +48,7 @@ module Ember
     def bulk_execute_scenario
       bulk_action do
         return unless load_scenario
-        Tickets::BulkScenario.perform_async(ticket_ids: @items.map(&:display_id), scenario_id: params[:scenario_id])
+        ::Tickets::BulkScenario.perform_async(ticket_ids: @items.map(&:display_id), scenario_id: params[:scenario_id])
       end
     end
 
