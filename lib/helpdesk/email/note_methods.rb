@@ -129,14 +129,8 @@ module Helpdesk::Email::NoteMethods
   end
 
   def update_ticket_cc
-    sup_emails       = account.support_emails.map(&:downcase)
-    cc_email         = ticket.cc_email_hash || Helpdesk::Ticket.default_cc_hash
-    incoming_cc      = email[:cc].reject { |cc| requester_email?(cc) }
-    other_recipients = email[:to_emails].reject{|mail| email[:to][:email].include?(mail) or  sup_emails.include?(mail.downcase)}
-    new_cc           = incoming_cc.push(other_recipients).flatten
-    in_reply_to = email[:in_reply_to].to_s.include?("notification.freshdesk.com") ? :notification : :default
-    add_to_reply_cc(new_cc, ticket, note, cc_email, in_reply_to)
-    cc_email[:cc_emails] = new_cc | cc_email[:cc_emails].compact.collect! {|x| (parse_email x)[:email]}.compact
-    ticket.cc_email = cc_email
+    email[:cc].map!{ |val| parse_email(val.downcase)[:email]}
+    ticket.cc_email = updated_ticket_cc_emails(email[:cc], ticket, note, 
+      email[:in_reply_to], email[:to][:email], email[:to_emails])
   end
 end
