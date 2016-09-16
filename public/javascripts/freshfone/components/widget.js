@@ -98,6 +98,7 @@ var FreshfoneWidget;
 			this.bindEventsForTransferAndDial();
 			this.bindPageClose();
 			this.bindDeskNotifierButton();
+			$('.chats-container').addClass("-fone-active");
 		},
 		setupConferenceAndWarmTransferSetup: function() {
 			this.disableAgentConferenceSetup();
@@ -225,6 +226,7 @@ var FreshfoneWidget;
 		},
 		showOutgoing: function () {
 			this.hideAllWidgets();
+			$('.chats-container').removeClass("-fone-active");
 			if(!$.isEmptyObject(freshfone.numbersHash)){
 				this.outgoingCallWidget.show();				
 			}
