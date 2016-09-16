@@ -444,7 +444,9 @@ module SupportHelper
 	def fragment_cache_dom_options form_builder
 		cache_options = {
 			:cc_container => '',
-			:company_container => ''
+			:company_container => '',
+			:company_cache_condition => false,
+			:cc_cache_condition => false
 		}
 		if Account.current.launched?(:support_new_ticket_cache) && current_user.present?
 			cache_options[:company_cache_condition] = Account.current.features?(:multiple_user_companies) && (current_user.present? || current_user.agent? || current_user.contractor?)
