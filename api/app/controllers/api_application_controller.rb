@@ -238,9 +238,13 @@ class ApiApplicationController < MetalApiController
     end
 
     def validate_content_type
-      unless get_request? || request.delete? || valid_content_type?
+      unless get_request? || request.delete? || content_type_not_required? || valid_content_type?
         render_request_error :invalid_content_type, 415, content_type: request.content_type
       end
+    end
+
+    def content_type_not_required?
+      ApiConstants::NO_CONTENT_TYPE_REQUIRED.include?(action_name.to_sym)
     end
 
     def before_build_object
@@ -363,6 +367,11 @@ class ApiApplicationController < MetalApiController
     end
 
     def render_custom_errors(item = @item, merge_item_error_options = false)
+      errors, options = format_custom_errors(item, merge_item_error_options)
+      render_errors(errors, options || {})
+    end
+
+    def format_custom_errors(item = @item, merge_item_error_options = false)
       options = set_custom_errors(item) # this will set @error_options if necessary.
 
       # Remove raw errors from model if remove option specified
@@ -373,7 +382,7 @@ class ApiApplicationController < MetalApiController
         ErrorHelper.rename_keys(error_options_mappings, item.error_options)
         (options ||= {}).merge!(item.error_options)
       end
-      render_errors(item.errors, options || {})
+      [item.errors, options]
     end
 
     # Error options field mappings to rename the keys Say, agent in ticket error will be replaced with responder_id
@@ -394,10 +403,14 @@ class ApiApplicationController < MetalApiController
       end
     end
 
-    def render_partial_success(succeeded, errors, meta = {})
+    def render_partial_success(succeeded, failed)
       @succeeded = succeeded
-      @errors = ErrorHelper.format_error(errors, meta)
-      log_error_response @errors
+      @failed = failed
+      (@failed || []).each do |item|
+        item[:errors], item[:error_options] = format_custom_errors(item[:validation_errors], true) if item[:validation_errors]
+        item[:errors] = ErrorHelper.format_error(item[:errors], item[:error_options] || {})
+      end
+      log_error_response @failed
       render '/partial_success', status: 202
     end
 

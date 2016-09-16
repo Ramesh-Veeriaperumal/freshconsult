@@ -12,6 +12,7 @@ class TicketValidation < ApiValidation
   alias_attribute :group_id, :group
   alias_attribute :responder_id, :agent
 
+  before_validation :skip_base_validations
   # Default fields validation
   validates :subject, custom_absence: { message: :outbound_email_field_restriction }, if: :source_as_outbound_email?, on: :update
   validates :description, custom_absence: { message: :outbound_email_field_restriction }, if: :source_as_outbound_email?, on: :update
@@ -22,19 +23,25 @@ class TicketValidation < ApiValidation
                                 field_validations: proc { |x| x.default_field_validations }
                               }, if: :create_or_update?
 
+  validates :description, :ticket_type, :status, :subject, :priority, :product, :agent, :group, default_field:
+                              {
+                                required_fields: [],
+                                field_validations: proc { |x| x.default_field_validations }
+                              }, if: :is_bulk_update?
+
   validates :description, :ticket_type, :status, :priority, :group, default_field:
                               {
                                 required_fields: proc { |x| x.required_default_fields },
                                 field_validations: proc { |x| x.default_field_validations }
                               }, on: :compose_email
 
-  validates :source, custom_inclusion: { in: proc { |x| x.sources }, ignore_string: :allow_string_param, detect_type: true }, on: :update
+  validates :source, custom_inclusion: { in: proc { |x| x.sources }, ignore_string: :allow_string_param, detect_type: true }, if: :update_or_update_multiple?
   validates :source, custom_inclusion: { in: ApiTicketConstants::SOURCES, ignore_string: :allow_string_param, detect_type: true, allow_nil: true }, on: :create
   validates :requester_id, :email_config_id, custom_numericality: { only_integer: true, greater_than: 0, allow_nil: true, ignore_string: :allow_string_param, greater_than: 0  }
 
   validate :requester_detail_missing, if: -> { create_or_update? && requester_id_mandatory? }
   # validates :requester_id, required: { allow_nil: false, message: :fill_a_mandatory_field, message_options: { field_names: 'requester_id, phone, email, twitter_id, facebook_id' } }, if: :requester_id_mandatory? # No
-  validates :name, required: { allow_nil: false, message: :phone_mandatory }, if: :name_required?  # No
+  validates :name, required: { allow_nil: false, message: :phone_mandatory }, if: -> { !is_bulk_update? && name_required? }  # No
   validates :name, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }
 
   # Due by and First response due by validations
@@ -73,6 +80,7 @@ class TicketValidation < ApiValidation
 
   # Custom fields validations
   validates :custom_fields, data_type: { rules: Hash }
+  # TODO EMBER - error messages to be changed for validations that require values for fields on status change
   validates :custom_fields, custom_field: { custom_fields:
                               {
                                 validatable_custom_fields: proc { |x| TicketsValidationHelper.custom_non_dropdown_fields(x) },
@@ -81,7 +89,16 @@ class TicketValidation < ApiValidation
                                 ignore_string: :allow_string_param,
                                 section_field_mapping: proc { |x| TicketsValidationHelper.section_field_parent_field_mapping }
                               }
-                           }
+                           }, if: -> { !is_bulk_update? }
+  validates :custom_fields, custom_field: { custom_fields:
+                              {
+                                validatable_custom_fields: proc { |x| TicketsValidationHelper.custom_non_dropdown_fields(x) },
+                                required_based_on_status: false,
+                                required_attribute: :required,
+                                ignore_string: :allow_string_param,
+                                section_field_mapping: proc { |x| TicketsValidationHelper.section_field_parent_field_mapping }
+                              }
+                           }, if: :is_bulk_update?
   validates :twitter_id, :phone, :name, data_type: { rules: String, allow_nil: true }
   validates :twitter_id, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }
   validates :phone, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }
@@ -183,4 +200,17 @@ class TicketValidation < ApiValidation
       description: { data_type: { rules: String } }
     }
   end
+
+  def is_bulk_update?
+    [:bulk_update].include?(validation_context)
+  end
+
+  def update_or_update_multiple?
+    [:update, :bulk_update].include?(validation_context)
+  end
+
+  def skip_base_validations
+    self.skip_bulk_validations = true if is_bulk_update?
+  end
+
 end

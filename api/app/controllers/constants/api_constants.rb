@@ -31,6 +31,9 @@ module ApiConstants
                        ContactConstants::LOAD_OBJECT_EXCEPT +
                        ApiTicketConstants::LOAD_OBJECT_EXCEPT
 
+  NO_CONTENT_TYPE_REQUIRED = ApiTicketConstants::NO_CONTENT_TYPE_REQUIRED +
+                              ContactConstants::NO_CONTENT_TYPE_REQUIRED
+
   ALLOWED_DOMAIN = AppConfig['base_domain'][Rails.env]
   MAX_LENGTH_STRING = 255
 
@@ -50,6 +53,7 @@ module ApiConstants
 
   BULK_ACTION_ARRAY_FIELDS = ['ids'].freeze
   BULK_ACTION_FIELDS = BULK_ACTION_ARRAY_FIELDS.freeze
+  BULK_UPDATE_FIELDS = ['properties'].freeze
   BULK_ACTION_METHODS = ApiTicketConstants::BULK_ACTION_METHODS + 
                         ContactConstants::BULK_ACTION_METHODS
   BULK_ACTION_ASYNC_METHODS = ApiTicketConstants::BULK_ACTION_ASYNC_METHODS

@@ -70,17 +70,22 @@ module Ember
 
       def bulk_action_errors
         @bulk_action_errors ||=
-          params[cname][:ids].inject({}) { |a, e| a.merge retrieve_error_code(e) }
+          params[cname][:ids].inject([]) do |a, e|
+            error_hash = retrieve_error_code(e)
+            error_hash.any? ? a << error_hash : a
+          end
       end
 
       def retrieve_error_code(id)
+        ret_hash = { :id => id, :errors => {}, :error_options => {} }
         if bulk_action_failed_items.include?(id)
-          { id => :unable_to_perform }
+          ret_hash[:errors].merge!({:id => :unable_to_perform })
         elsif !bulk_action_succeeded_items.include?(id)
-          { id => :"is invalid" }
+          ret_hash[:errors].merge!({:id => :"is invalid" })
         else
-          {}
+          return {}
         end
+        return ret_hash
       end
 
       def bulk_action_succeeded_items

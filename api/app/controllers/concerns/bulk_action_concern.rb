@@ -12,7 +12,9 @@ module BulkActionConcern
     end
 
     def validate_bulk_action_params
-      params[cname].permit(*ApiConstants::BULK_ACTION_FIELDS)
+      action_fields = ApiConstants.const_defined?(action_name.upcase + '_FIELDS') ? "ApiConstants::#{action_name.upcase}_FIELDS".constantize : []
+      field = ApiConstants::BULK_ACTION_FIELDS | action_fields
+      params[cname].permit(*field)
       api_validation = ApiValidation.new(params, nil)
       return true if api_validation.valid?(action_name.to_sym)
       render_errors api_validation.errors, api_validation.error_options
@@ -23,9 +25,9 @@ module BulkActionConcern
       prepare_array_fields ApiConstants::BULK_ACTION_ARRAY_FIELDS.map(&:to_sym)
     end
 
-    def render_bulk_action_response(succeeded, errors)
-      if async_process? || errors.any?
-        render_partial_success(succeeded, errors)
+    def render_bulk_action_response(succeeded, failed)
+      if async_process? || failed.any?
+        render_partial_success(succeeded, failed)
       else
         head 204
       end

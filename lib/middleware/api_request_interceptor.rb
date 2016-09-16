@@ -99,7 +99,7 @@ class Middleware::ApiRequestInterceptor
   end
 
   def content_type_required_method?
-    CONTENT_TYPE_REQUIRED_METHODS.include?(@method)
+    @content_length && CONTENT_TYPE_REQUIRED_METHODS.include?(@method)
   end
 
   def notify_new_relic_agent(exception, uri, request_id, custom_params = {})

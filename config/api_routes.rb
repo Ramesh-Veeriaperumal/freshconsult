@@ -105,6 +105,7 @@ Helpkit::Application.routes.draw do
         put :bulk_spam
         put :bulk_restore
         put :bulk_unspam
+        put :bulk_update
       end
       member do
         put :spam

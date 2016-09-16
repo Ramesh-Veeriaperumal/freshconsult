@@ -27,6 +27,24 @@ module Ember
       end
     end
 
+    def bulk_update
+      bulk_action do
+        original_params_hash = params[cname][:properties].deep_dup
+        return unless validate_bulk_update_params
+        @items_failed = []
+        @validation_errors = {}
+        @items.each do |item|
+          unless validate_update_params(item, :update)
+            @items_failed << item
+            @validation_errors.merge!(item.display_id => @ticket_validation)
+          end
+        end
+        items_to_update = @items - @items_failed
+        execute_bulk_update_action(items_to_update) unless update_in_background?(items_to_update, original_params_hash)
+        params[cname][:ids] = @ticket_ids
+      end
+    end
+
     def bulk_execute_scenario
       bulk_action do
         return unless load_scenario
@@ -43,6 +61,42 @@ module Ember
     end
 
     private
+
+      # code duplicated - validate_params method of API Tickets controller
+      def process_request_params
+        @ticket_ids = params[cname][:ids]
+        params[cname] = params[cname][:properties]
+        # We are obtaining the mapping in order to swap the field names while rendering(both successful and erroneous requests), instead of formatting the fields again.
+        @ticket_fields = Account.current.ticket_fields_from_cache
+        @name_mapping = TicketsValidationHelper.name_mapping(@ticket_fields) # -> {:text_1 => :text}
+        # Should not allow any key value pair inside custom fields hash if no custom fields are available for accnt.
+        custom_fields = @name_mapping.empty? ? [nil] : @name_mapping.values
+        params[cname].permit(*(ApiTicketConstants::BULK_UPDATE_FIELDS | ['custom_fields' => custom_fields]))
+        set_default_values
+        @params_hash = params[cname].merge(statuses: Helpdesk::TicketStatus.status_objects_from_cache(current_account), ticket_fields: @ticket_fields)
+      end
+
+      def validate_update_params(item, validation_context)
+        @ticket_validation = TicketValidation.new(@params_hash, item, string_request_params?)
+        @ticket_validation.valid?(validation_context)
+      end
+
+      def validate_bulk_update_params
+        process_request_params
+        unless validate_update_params(nil, :bulk_update)
+          render_custom_errors(@ticket_validation, true)
+          return false
+        end
+        sanitize_params
+        @item = current_account.tickets.new
+        assign_attributes_for_update
+        ticket_delegator = TicketDelegator.new(@item, ticket_fields: @ticket_fields, custom_fields: @custom_fields)
+        unless ticket_delegator.valid?(:bulk_update)
+          render_custom_errors(ticket_delegator, true)
+          return false
+        end
+        true
+      end
 
       def sanitize_params
         super
@@ -70,6 +124,33 @@ module Ember
         end
       end
 
+      def execute_bulk_update_action(items)
+        items.each do |item|
+          @item = item
+          assign_attributes_for_update
+          @items_failed << item unless @item.update_ticket_attributes(params[cname])
+        end
+      end
+
+      # code duplicated - update method of API Tickets controller
+      def assign_attributes_for_update
+        assign_protected
+        # Assign attributes required as the ticket delegator needs it.
+        @custom_fields = params[cname][:custom_field] # Assigning it here as it would be deleted in the next statement while assigning.
+        @delegator_attributes ||= validatable_delegator_attributes
+        @item.assign_attributes(@delegator_attributes)
+        @item.assign_description_html(params[cname][:ticket_body_attributes]) if params[cname][:ticket_body_attributes]
+      end
+
+      def update_in_background?(items, params_hash)
+        return false if items.length <= ApiTicketConstants::BACKGROUND_THRESHOLD
+        tags = params_hash.delete(:tags)
+        args = { "action" => :update_multiple, "helpdesk_ticket" => params_hash }
+        args.merge!({"ids" => items.map(&:display_id)})
+        args[:tags] = tags.join(',') unless tags.nil?
+        ::Tickets::BulkTicketActions.perform_async(args)
+      end
+
       def permissible_ticket_ids(id_list)
         @permissible_ids ||= begin
           if api_current_user.can_view_all_tickets?
@@ -94,17 +175,26 @@ module Ember
 
       def bulk_action_errors
         @bulk_action_errors ||=
-          params[cname][:ids].inject({}) { |a, e| a.merge retrieve_error_code(e) }
+          params[cname][:ids].inject([]) do |a, e|
+            error_hash = retrieve_error_code(e)
+            error_hash.any? ? a << error_hash : a
+          end
       end
 
       def retrieve_error_code(id)
+        ret_hash = { :id => id, :errors => {}, :error_options => {} }
         if bulk_action_failed_items.include?(id)
-          { id => :unable_to_perform }
+          if @validation_errors && @validation_errors.key?(id)
+            ret_hash[:validation_errors] = @validation_errors[id]
+          else
+            ret_hash[:errors].merge!({:id => :unable_to_perform })
+          end
         elsif !bulk_action_succeeded_items.include?(id)
-          { id => :"is invalid" }
+          ret_hash[:errors].merge!({:id => :"is invalid" })
         else
-          {}
+          return {}
         end
+        return ret_hash
       end
 
       def bulk_action_succeeded_items

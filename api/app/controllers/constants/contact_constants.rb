@@ -53,4 +53,6 @@ module ContactConstants
   }.freeze
 
   FIELD_MAPPINGS = { company_name: :company_id, default_user_company: :company_id, company: :company_id, :"primary_email.email" => :email, base: :email }.freeze
+
+  NO_CONTENT_TYPE_REQUIRED = [:restore, :send_invite].freeze
 end.freeze

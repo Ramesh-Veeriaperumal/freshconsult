@@ -38,4 +38,8 @@ Authority::Authorization::PrivilegeList.build do
   admin_tasks do
     resource :"ember/contact", only: [:update_password]
   end
+
+  edit_ticket_properties do
+    resource :"ember/ticket", only: [:bulk_update]
+  end
 end

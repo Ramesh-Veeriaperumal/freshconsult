@@ -9,6 +9,7 @@ module ApiTicketConstants
   UPDATE_FIELDS = %w(description due_by email_config_id fr_due_by group_id priority
                      email phone twitter_id facebook_id requester_id name responder_id source status subject type product_id
                   ).freeze | (ARRAY_FIELDS - ['cc_emails']) | HASH_FIELDS
+  BULK_UPDATE_FIELDS = UPDATE_FIELDS - ['attachments'].freeze
   COMPOSE_EMAIL_FIELDS = (CREATE_FIELDS - %w(source product_id responder_id requester_id phone twitter_id facebook_id)).freeze
   SHOW_FIELDS = ['include']
   ALLOWED_INCLUDE_PARAMS = %w(conversations requester company stats)
@@ -59,7 +60,7 @@ module ApiTicketConstants
   }.freeze
 
   REQUIRE_PRELOAD = [:bulk_delete, :bulk_spam, :bulk_unspam, :bulk_restore].freeze
-  BULK_ACTION_ASYNC_METHODS = [:bulk_execute_scenario].freeze
+  BULK_ACTION_ASYNC_METHODS = [:bulk_execute_scenario, :bulk_update].freeze
   BULK_ACTION_METHODS = [:bulk_delete, :bulk_spam, :bulk_restore, :bulk_unspam] + BULK_ACTION_ASYNC_METHODS
 
   LOAD_OBJECT_EXCEPT = BULK_ACTION_METHODS.freeze
@@ -70,5 +71,9 @@ module ApiTicketConstants
                      product: :product_id, ticket_type: :type }.freeze
 
   SEARCH_ALLOWED_DEFAULT_FIELDS = ['status'].freeze
+
+  BACKGROUND_THRESHOLD = 5
+
+  NO_CONTENT_TYPE_REQUIRED = [:restore, :spam, :unspam].freeze
 
 end.freeze
