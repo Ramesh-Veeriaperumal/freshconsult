@@ -70,47 +70,7 @@
 
 
 		<% tab.create('meta', t('solution.articles.prop_tabs.meta')) do %>
-			
-			<%= article_version.fields_for :seo_data  do |s| %>
-								
-				<div class="control-group">
-					<%= s.label(:meta_title, t('solution.solution_meta_title'), :class => 'control-label') %>
-					<div class="controls">
-						<%= s.text_field :meta_title, :class => "text", :rel => "charcounter", 
-							'data-counter' => "TitleCounter", 'data-limit' => 72, 
-							:value => (@article.seo_data || {})[:meta_title] %>
-
-						<div class="muted">
-							<%= t('solution.article_properties.title_counter_message') %>
-						</div>
-					</div>
-				</div>
-				
-				<div class="control-group">
-					<%= s.label(:meta_description, t('solution.solution_meta_description'), :class => 'control-label') %>
-					<div class="controls">
-			    	<%= s.text_area  :meta_description, :rel => "charcounter", 
-							'data-counter' => "DescriptionCounter", 'data-limit' => 150, 
-							:value => (@article.seo_data || {})[:meta_description], 
-							:class => "solution-properties-description",
-							:id => :solution_article_seo_data_meta_description %>
-						<div class="muted">
-				    		<%= t('solution.article_properties.description_counter_message') %>
-			  		</div>
-			  	</div>
-			  </div>
-				
-				<div class="control-group">
-					<%= s.label(:meta_keywords, t('solution.solution_meta_keywords'), :class => 'control-label') %>
-					<div class="controls">
-						<%= s.text_field :meta_keywords, :class => "text", 
-							:value => (@article.seo_data || {})[:meta_keywords] %>
-						<div class="muted">
-							<%= t('solution.meta_keywords_message') %>
-						</div>
-					</div>
-				</div>
-			<% end %>
+			<%= render partial: 'seo_meta_form', locals: { article_version: article_version } %>	
 		<% end %>	
 		<%= dynamic_hidden_fields(:article) %>
 	<% end %>
