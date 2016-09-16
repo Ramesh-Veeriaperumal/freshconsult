@@ -5,7 +5,10 @@
     </script>
     <%= render :partial => 'layouts/shared/freshfone' %>
   <% end %>
-    <%= render :partial => "layouts/chat"%>
+  <%= render :partial => "layouts/chat"%>
+  <% if in_app_support? %>
+    <%= render :partial => "layouts/shared/chat/chat_support"%>
+  <% end %>
 </div>
 
 <% if current_user && current_user.agent? && (current_account.freshfone_active? || ( chat_activated? && !(is_assumed_user?))) %>

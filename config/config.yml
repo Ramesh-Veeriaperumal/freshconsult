@@ -156,3 +156,4 @@ billing_subdomain: billing
 
 # Show Trial Expiry notifier only if the trail days is less than 100 (dashboard/index.html)
 show_trail_notifier_in_days: 30
+

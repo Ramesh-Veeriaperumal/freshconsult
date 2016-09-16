@@ -6,7 +6,11 @@
 	<% end %>
 	<% if current_user %>
 		<%= link_to( t('footer.submit_feedback'), "#{AppConfig['support_url']}/support/tickets/new", :id => 'footer_feedback_widget' ) %>
-	<span class="muted"> &nbsp;&nbsp;&nbsp;| &nbsp;&nbsp;&nbsp;</span>
+		<span class="muted"> &nbsp;&nbsp;&nbsp;| &nbsp;&nbsp;&nbsp;</span>
+		<% if in_app_support? %>
+			<span id="chat-support-footer" class="chat-support-link"> <%= t('livechat.chat_with_us') %> </span>
+			<span class="muted"> &nbsp;&nbsp;&nbsp;| &nbsp;&nbsp;&nbsp;</span>
+		<% end %>	
 	<% end %>
 	<%= link_to(t('footer.browse_community'), "#{AppConfig['support_url']}/support/discussions", :target => "_blank") %>
 	<% if @privacy_policy %>

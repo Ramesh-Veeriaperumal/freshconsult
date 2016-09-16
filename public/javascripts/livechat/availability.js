@@ -2,7 +2,7 @@ window.liveChat = window.liveChat || {};
 
 (function($){
   'use strict';
-  
+
   $(document).on('agent-availability:success', function(event, agentData){
     if(!$('#chat-availability').length){
       

@@ -67,6 +67,17 @@
 	    	window.widget_updated = false;
 	    	FreshWidget.show();	
 	    });
+	    
+		jQuery("body").on("click",'.chat-support-link', function(ev){
+			ev.preventDefault();
+			try{
+				livechat.MainView.renderAgentSupport();
+			}
+			catch(err){
+				console.log('Livechat error: support chat has not loaded');
+			}
+		});
+		
 	  var APP_ENV = "<%= Rails.env %>";
 	</script>
 
