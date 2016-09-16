@@ -413,8 +413,8 @@ HelpdeskReports.ChartsInitializer.TicketVolume = (function () {
             }
 
             //Set the average tooltip
-            jQuery('#day_received_avg .received').html(I18n.t('helpdesk_reports.ticket_volume.avg_tickets',{ metric : 'received' , value : received_avg , color : 'rgb(5, 135, 192);' }));
-            jQuery('#day_received_avg .resolved').html(I18n.t('helpdesk_reports.ticket_volume.avg_tickets',{ metric : 'resolved' , value : resolved_avg , color : 'rgb(128, 180, 71);' }));
+            jQuery('#day_received_avg .received').html(I18n.t('helpdesk_reports.ticket_volume.avg_tickets',{ metric : 'received' , value : received_avg , color : 'rgb(5, 135, 192);', defaultValue: "Average tickets received : " + received_avg }));
+            jQuery('#day_received_avg .resolved').html(I18n.t('helpdesk_reports.ticket_volume.avg_tickets',{ metric : 'resolved' , value : resolved_avg , color : 'rgb(128, 180, 71);', defaultValue: "Average tickets resolved : " + resolved_avg }));
         },
         pdfDayTrend: function (hash) {
             var defaults = this.findDefaultDay();
