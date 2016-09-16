@@ -2,47 +2,38 @@ class HelpdeskReports::ParamConstructor::TicketVolume < HelpdeskReports::ParamCo
 
   METRICS = ["RECEIVED_RESOLVED_TICKETS","UNRESOLVED_PREVIOUS_BENCHMARK",
              "RECEIVED_RESOLVED_BENCHMARK","UNRESOLVED_CURRENT_BENCHMARK"]
-
+  
   DAY_TOGGLE = ['today','yesterday','this_week','previous_week','last_7','last_30','this_month','previous_month']
-
-  TREND_OPTION = { :h   => 'h',
-                   :dow => 'dow',
-                   :doy => 'doy',
-                   :w   => 'w',
-                   :mon => 'mon',
-                   :qtr => 'qtr',
-                   :y   => 'y'
-                   }
-
+  
   def initialize options
     @report_filter_params = options
     @report_type = :ticket_volume
-    @trend_conditions  =  TREND_OPTION.values
+    @trend_conditions  =  ["h", "dow", "doy", "w", "mon", "qtr", "y"]
     super options
   end
-
+  
   def build_params
     query_params
   end
 
   def query_params
-    if basic_param_structure[:scheduled_report]
-      @trend_conditions = [TREND_OPTION[:h], TREND_OPTION[:dow], TREND_OPTION[:y]]
+    if basic_param_structure[:scheduled_report] 
+      @trend_conditions = ["h","dow","y"]
       conditions = @report_filter_params[:date]["period"] || @report_filter_params[:date]["date_range"]
 
-      if ( DAY_TOGGLE.include?(conditions) || (1..31).include?(conditions) )
-        options[:trend] = TREND_OPTION[:doy]
-        @trend_conditions << TREND_OPTION[:doy]
+      if (DAY_TOGGLE | [6,29]).include?(conditions)
+        options[:trend] = "doy"
+        @trend_conditions << "doy"
       else
-        options[:trend] = TREND_OPTION[:mon]
-        @trend_conditions << TREND_OPTION[:mon]
+        options[:trend] = "mon"
+        @trend_conditions << "mon"
       end
 
-    end
+    end  
     tv_params = {
-      time_trend: true,
-      time_trend_conditions: @trend_conditions.uniq,
-      metric: "RECEIVED_RESOLVED_TICKETS",
+        time_trend: true,
+        time_trend_conditions: @trend_conditions.uniq,
+        metric: "RECEIVED_RESOLVED_TICKETS",
     }
 
     METRICS.inject([]) do |params, metric|
