@@ -30,7 +30,9 @@ window.App = window.App || {};
         $this.checkTranslations();
         
         // Check rendered SEO meta length on modal load
-        $this.validateSeoLength(jQuery(this).find('#article-form [rel=charcounter]'));
+        jQuery(this).find('#article-form [rel=charcounter]').each(function(pos,item){ 
+          $this.validateSeoLength(item) 
+        });
         // Bind keyup SEO meta checks
         $this.seoCharCounter();
       });
