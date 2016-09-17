@@ -378,7 +378,7 @@ module ChatHelper
   end
   
   def in_app_support?
-    current_account.subscription.state === 'active' && is_chat_support_plan? && current_account.full_domain != ChatConfig['support_account']['url'] && current_user.privilege?(:admin_tasks)
+    current_account.subscription.state === 'active' && is_chat_support_plan? && current_account.full_domain != ChatConfig['support_account']['url'] && current_user && current_user.privilege?(:admin_tasks)
   end
 
   def is_chat_support_plan?
