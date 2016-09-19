@@ -382,9 +382,13 @@ module ChatHelper
   end
 
   def is_chat_support_plan?
-    chat_support_plans = [ SubscriptionPlan::SUBSCRIPTION_PLANS[:estate],SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_classic],
-                        SubscriptionPlan::SUBSCRIPTION_PLANS[:forest],SubscriptionPlan::SUBSCRIPTION_PLANS[:premium]  ]
-    chat_support_plans.include?(current_account.subscription.subscription_plan.name)
+    if Rails.env.production?
+      # inappsupport chat restricted to five accounts for testing
+      chat_support_plan_accounts = ChatSetting::APP_SUPPORT_ENABLED_ACCOUNTS
+      chat_support_plan_accounts.include?(current_account.id)
+    else
+      return true
+    end
   end
 
   def chat_widget_list(widgets)
