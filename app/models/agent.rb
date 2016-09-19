@@ -23,6 +23,7 @@ class Agent < ActiveRecord::Base
   after_commit  ->(obj) { obj.update_agent_to_livechat } , on: :create
   after_commit  ->(obj) { obj.update_agent_to_livechat } , on: :update
   validates_presence_of :user_id
+  validate :validate_signature
   # validate :only_primary_email, :on => [:create, :update] moved to user.rb
 
   attr_accessible :signature_html, :user_id, :ticket_permission, :occasional, :available, :shortcuts_enabled,
@@ -114,6 +115,10 @@ class Agent < ActiveRecord::Base
 
   def signature_value
     self.signature_html || (RedCloth.new(self.signature).to_html unless @signature.blank?)
+  end
+  
+  def parsed_signature(placeholder_params)
+    Liquid::Template.parse(signature_value.to_s).render(placeholder_params)
   end
 
   def next_level
@@ -242,6 +247,14 @@ class Agent < ActiveRecord::Base
 
   def agent_destroy_cleanup
     AgentDestroyCleanup.perform_async({:user_id => self.user_id})
+  end
+  
+  def validate_signature
+    begin
+      Liquid::Template.parse(signature_value.presence)
+    rescue
+      errors.add(:base, I18n.t('agent.invalid_placeholder'))
+    end
   end
 
   # Used by API V2
