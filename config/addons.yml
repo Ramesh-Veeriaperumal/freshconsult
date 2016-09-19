@@ -52,3 +52,5 @@ Helpdesk Restriction:
   - :helpdesk_restriction_toggle
 Ticket Templates:
   - :ticket_templates
+Round Robin Load Balancing:
+  - :round_robin_load_balancing
