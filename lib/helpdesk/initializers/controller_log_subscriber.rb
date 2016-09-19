@@ -22,7 +22,7 @@ class ControllerLogSubscriber <  ActiveSupport::LogSubscriber
     payload[:db_runtime] = payload[:db_runtime].round(2) if payload[:db_runtime]
     payload[:view_runtime] = payload[:view_runtime].round(2) if payload[:view_runtime]
     payload[:duration] = payload[:duration].round(2)
-    log_file_format = "ip=#{payload[:ip]}, a=#{payload[:account_id]}, u=#{payload[:user_id]}, s=#{payload[:shard_name]}, d=#{payload[:domain]}, url=#{payload[:url]}, path=#{payload[:path]}, controller=#{payload[:controller]}, action=#{payload[:action]}, host=#{payload[:server_ip]}, status=#{payload[:status]}, format=#{payload[:format]}, db=#{payload[:db_runtime]}, view=#{payload[:view_runtime]}, duration=#{payload[:duration]}"
+    log_file_format = "ip=#{payload[:ip]}, a=#{payload[:account_id]}, u=#{payload[:user_id]}, s=#{payload[:shard_name]}, d=#{payload[:domain]}, url=#{payload[:url]}, path=#{payload[:path]}, c=#{payload[:controller]}, action=#{payload[:action]}, host=#{payload[:server_ip]}, status=#{payload[:status]}, format=#{payload[:format]}, db=#{payload[:db_runtime]}, view=#{payload[:view_runtime]}, duration=#{payload[:duration]}"
   end
 
   def log_file
