@@ -8,13 +8,13 @@
 		<div class="controls">
 		 	<input type="text" class="text" size="35" name="formTitle" id="formTitle"
 	 				value="" placeholder= "<%= t('feedbackwidget_defaulttitle').html_safe %>"
-	 				data-set-query-string="true" data-skip-options='true' />
+	 				data-set-query-string="true" data-skip-options='true' maxlength="16" />
 		</div>
   </div>
   <div class="control-group">
     <label class="control-label"><%= t('.feedbackwidget_form_submit_title') %></label>
     <div class="controls">
-      <input class="text" data-set-query-string="true" data-skip-options='true' id="submitTitle" name="submitTitle" placeholder="<%= t('.feedbackwidget_submit_title').html_safe %>" size="35" type="text" value=""/>
+      <input class="text" data-set-query-string="true" data-skip-options='true' id="submitTitle" name="submitTitle" placeholder="<%= t('.feedbackwidget_submit_title').html_safe %>" size="35" type="text" value="" maxlength="16"/>
     </div>
   </div>
   <div class="control-group">
