@@ -63,8 +63,8 @@
     var populateRequestForm = function(){
       var requester_input = $('#helpdesk_ticket_email');
       if(<%=cache_options[:company_cache_condition]%> && $('#helpdesk_ticket_company_id').length == 0){
-        var product_container = $('<div>', { 'class': 'control-group hide company_container' });
-        product_container.html('<%= cache_options[:company_container].gsub(/\r?\n/,'').html_safe %>')
+        var company_container = $('<div>', { 'class': 'control-group hide company_container' });
+        company_container.html('<%= cache_options[:company_container].gsub(/\r?\n/,'').html_safe %>')
           .insertAfter(requester_input);
       }
       if(<%= cache_options[:cc_cache_condition] %>){
@@ -73,7 +73,8 @@
             .after($('#cc-emails'));
         }
         else{
-          $('.cc-emails').eq(1).remove();
+          $('#cc-emails').remove();
+          requester_input.parent().after($('#cc-emails'));
         }
       }
       else{
