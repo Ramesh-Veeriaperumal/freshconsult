@@ -177,7 +177,7 @@ class HttpRequestProxy
         
       end
     rescue => e
-     Rails.logger.error("Error while parsing remote response.")
+     Rails.logger.error("Error while parsing remote response.\n#{e.message}\n#{e.backtrace.join('\n')}")
     end
     return {:text=>response_body, :content_type => response_type, :status => response_code, 'x-headers' => x_headers}
   end
