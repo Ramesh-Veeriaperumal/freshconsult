@@ -2,7 +2,7 @@ module ContactConstants
   ARRAY_FIELDS = ['tags', 'other_emails']
   HASH_FIELDS = ['custom_fields']
   COMPLEX_FIELDS = ARRAY_FIELDS | HASH_FIELDS
-  CONTACT_FIELDS = %w(address avatar view_all_tickets company_id description email job_title language mobile name other_emails phone time_zone twitter_id).freeze | ARRAY_FIELDS | HASH_FIELDS
+  CONTACT_FIELDS = %w(address avatar avatar_id view_all_tickets company_id description email job_title language mobile name other_emails phone time_zone twitter_id).freeze | ARRAY_FIELDS | HASH_FIELDS
 
   MAKE_AGENT_FIELDS = %w(occasional group_ids role_ids ticket_scope signature).freeze
   STATES = %w( verified unverified deleted blocked ).freeze
@@ -41,7 +41,7 @@ module ContactConstants
 
   # Wrap parameters args
   WRAP_PARAMS = [:api_contact, exclude: [], format: [:json, :multipart_form]].freeze
-  EMBER_WRAP_PARAMS = [:contact, exclude: [], format: [:json]].freeze
+  EMBER_WRAP_PARAMS = [:contact, exclude: [], format: [:json, :multipart_form]].freeze
 
   ALLOWED_CONTENT_TYPE_FOR_ACTION = {
     create: [:json, :multipart_form],
@@ -52,7 +52,7 @@ module ContactConstants
     bulk_send_invite: [:json]
   }.freeze
 
-  FIELD_MAPPINGS = { company_name: :company_id, default_user_company: :company_id, company: :company_id, :"primary_email.email" => :email, base: :email }.freeze
+  FIELD_MAPPINGS = { company_name: :company_id, default_user_company: :company_id, company: :company_id, :"primary_email.email" => :email, base: :email, attachment_ids: :avatar_id }.freeze
 
   NO_CONTENT_TYPE_REQUIRED = [:restore, :send_invite].freeze
 end.freeze

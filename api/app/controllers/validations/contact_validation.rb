@@ -16,7 +16,8 @@ class ContactValidation < ApiValidation
   MANDATORY_FIELD_STRING = MANDATORY_FIELD_ARRAY.join(', ').freeze
 
   attr_accessor :avatar, :view_all_tickets, :custom_fields, :company_name, :email, :fb_profile_id, :job_title,
-                :language, :mobile, :name, :other_emails, :phone, :tags, :time_zone, :twitter_id, :address, :description, :password
+                :language, :mobile, :name, :other_emails, :phone, :tags, :time_zone, :twitter_id, :address, :description, 
+                :password, :avatar_id
 
   alias_attribute :company_id, :company_name
   alias_attribute :customer_id, :company_name
@@ -59,6 +60,8 @@ class ContactValidation < ApiValidation
   validates :avatar, data_type: { rules: ApiConstants::UPLOADED_FILE_TYPE, allow_nil: true }, file_size: {
     max: ContactConstants::ALLOWED_AVATAR_SIZE }
   validate :validate_avatar, if: -> { avatar && errors[:avatar].blank? }
+  validate :validate_avatar_id_or_avatar, if: -> { avatar && avatar_id }
+  validates :avatar_id, custom_numericality: { only_integer: true, greater_than: 0, allow_nil: true, ignore_string: :allow_string_param }
 
   validates :password, data_type: { rules: String, required: true }, on: :update_password
 
@@ -123,5 +126,9 @@ class ContactValidation < ApiValidation
 
     def attributes_to_be_stripped
       ContactConstants::ATTRIBUTES_TO_BE_STRIPPED
+    end
+
+    def validate_avatar_id_or_avatar
+      errors[:avatar_id] << :only_avatar_or_avatar_id
     end
 end

@@ -81,3 +81,4 @@ api_error_messages:
   section_field_absence_check_error: "It cannot be set, when the %{field} is of value '%{value}'"
   agent_roles_and_scope_error: 'You cannot edit your own roles & ticket scopes'
   action_restricted: "Cannot perform '%{action}' when %{reason}"
+  only_avatar_or_avatar_id: "Cannot set both avatar and avatar_id"

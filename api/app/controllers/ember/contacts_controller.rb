@@ -5,6 +5,22 @@ module Ember
 
     before_filter :can_change_password?, :validate_password_change, only: [:update_password]
 
+    def create
+      assign_protected
+      contact_delegator = ContactDelegator.new(@item, email_objects: @email_objects, custom_fields: params[cname][:custom_field], 
+                                                avatar_id: params[cname][:avatar_id])
+      if !contact_delegator.valid?
+        render_custom_errors(contact_delegator, true)
+      else
+        build_user_emails_attributes if @email_objects.any?
+        if @item.create_contact!
+          render_201_with_location(item_id: @item.id)
+        else
+          render_custom_errors
+        end
+      end
+    end
+
     def index
       super
       response.api_meta = { count: @items_count }

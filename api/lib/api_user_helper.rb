@@ -1,7 +1,7 @@
 class ApiUserHelper
   class << self
     def avatar_extension_valid?(avatar)
-      ext = File.extname(avatar.original_filename).downcase
+      ext = File.extname(avatar.respond_to?(:original_filename) ? avatar.original_filename : avatar.content_file_name).downcase
       [ContactConstants::AVATAR_EXT.include?(ext), ext]
     end
 

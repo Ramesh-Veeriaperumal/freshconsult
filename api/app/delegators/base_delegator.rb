@@ -36,10 +36,11 @@ class BaseDelegator < SimpleDelegator
   end
 
   def validate_attachment_size
-    total_attachment_size = (@draft_attachments | self.attachments).collect{ |a| a.content_file_size }.sum
-    if total_attachment_size > 15.megabyte
+    all_attachments = @draft_attachments | (self.respond_to?(:attachments) ? self.attachments : [] )
+    total_attachment_size = all_attachments.collect{ |a| a.content_file_size }.sum
+    if total_attachment_size > attachment_size
       errors[:attachment_ids] << :'invalid_size'
-      @error_options = { attachment_ids: { current_size: number_to_human_size(total_attachment_size), max_size: number_to_human_size(ApiConstants::ALLOWED_ATTACHMENT_SIZE) } }
+      @error_options = { attachment_ids: { current_size: number_to_human_size(total_attachment_size), max_size: number_to_human_size(attachment_size) } }
     end
   end
 
@@ -47,5 +48,9 @@ class BaseDelegator < SimpleDelegator
 
     def retrieve_draft_attachments
       @draft_attachments = Account.current.attachments.where(id: @attachment_ids, attachable_type: AttachmentConstants::STANDALONE_ATTACHMENT_TYPE)
+    end
+
+    def attachment_size
+      ApiConstants::ALLOWED_ATTACHMENT_SIZE
     end
 end
