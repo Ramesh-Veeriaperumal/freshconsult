@@ -3774,6 +3774,7 @@ en:
     deleted_agent_info: "Note: All communication from the deleted agents will be marked as SPAM."
     new: New Agent
     edit: Edit Agent
+    invalid_placeholder: Invalid placeholders inserted
     showing: "Showing:"
     type: Agent Type
     delete_agent: Delete Agent
@@ -3823,6 +3824,7 @@ en:
     info4: Convert to a Contact
     contact_exists: A requester with email '%{existing_email}' already exists, %{use_email}
     signature: Signature
+    insert_placeholder: Insert Placeholder
     info3: Are you sure you want delete
     helpcard:
       tour: Help me add new agents
