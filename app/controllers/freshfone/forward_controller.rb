@@ -6,13 +6,15 @@ class Freshfone::ForwardController < FreshfoneBaseController
   include Freshfone::Queue
   include Freshfone::Endpoints
   include Freshfone::Conference::EndCallActions
+  include Freshfone::CustomForwardingUtil
 
   before_filter :validate_trial, :if => :trial?
   before_filter :set_dial_call_sid, :only => [:complete, :direct_dial_accept]
   before_filter :update_conference_sid, :only => [:direct_dial_wait]
-  before_filter :set_tranfer_call, :only => [:transfer_complete]
+  before_filter :set_tranfer_call, :only => [:transfer_complete, :process_custom_transfer]
   before_filter :update_agent_presence, :only => [:transfer_complete]
   before_filter :set_external_transfer_params, :only =>[:transfer_initiate]
+  before_filter :handle_incomplete_call, only: :complete, if: :custom_ignored_call?
   before_filter :check_and_initiate_voicemail, :only => [:complete], :if => :voicemail_preconditions?
   before_filter :update_agent_last_call_at, :only => [:complete], :unless => :voicemail_preconditions?
   before_filter :transfer_ignored, :only => [:transfer_complete], :if => :check_transfer_ignored?
@@ -109,6 +111,28 @@ class Freshfone::ForwardController < FreshfoneBaseController
     empty_twiml
   end
 
+  def initiate_custom
+    render xml: telephony.custom_forwarding_response(caller_name,
+      custom_forwarding_url, current_call.freshfone_number.voice_type)
+  end
+
+  def initiate_custom_transfer
+    render xml: telephony.custom_forwarding_response(current_call.agent_name,
+      transfer_forwarding_url, current_call.freshfone_number.voice_type)
+  end
+
+  def process_custom
+    return initiate if custom_forward_accept?
+    return handle_ignored_call if custom_forward_reject?
+    render_invalid_input(custom_forwarding_url, caller_name)
+  end
+
+  def process_custom_transfer
+    return transfer_initiate if custom_forward_accept?
+    return empty_twiml if custom_forward_reject?
+    render_invalid_input(transfer_forwarding_url, current_call.agent_name)
+  end
+
   private
     def telephony
       current_number ||= current_call.freshfone_number
@@ -161,10 +185,10 @@ class Freshfone::ForwardController < FreshfoneBaseController
 
     def voicemail_preconditions?
       params[:CallStatus] = 'no-answer' if answered_by_machine?
-      call_actions.update_agent_leg_response(params[:agent_id] || params[:agent], params[:CallStatus], current_call)
-      current_call.ringing? &&
+      update_agent_leg_call_response(params[:CallStatus])
+      (current_call.ringing? &&
         (answered_by_machine? || ignored_call?) &&
-        current_call.meta.all_agents_missed?
+         all_agents_missed?)
     end
 
     def set_external_transfer_params
@@ -181,6 +205,7 @@ class Freshfone::ForwardController < FreshfoneBaseController
     def transfer_ignored
       transferred_call = current_call.children.last
       params[:CallStatus] = 'no-answer' if answered_by_machine?
+      params[:CallStatus] = 'busy' if custom_ignored_transfer?
       update_transfer_leg_call_meta(transferred_call)
       params[:DialCallStatus] = params[:CallStatus]
       transferred_call.update_call(params)
@@ -195,7 +220,7 @@ class Freshfone::ForwardController < FreshfoneBaseController
     end
 
     def check_transfer_ignored?
-      answered_by_machine? || ignored_call?
+      answered_by_machine? || ignored_call? || custom_ignored_transfer?
     end
 
     def call_in_progress?
@@ -241,5 +266,45 @@ class Freshfone::ForwardController < FreshfoneBaseController
     def cancel_browser_agents
       return if current_call.user_id != (params[:agent_id].to_i)
       call_actions.cancel_browser_agents(current_call)
+    end
+
+    def custom_forwarding_url
+      forward_initiate_url(params[:call], params[:agent_id])
+    end
+
+    def transfer_forwarding_url
+      forward_transfer_url(params[:call], params[:agent_id])
+    end
+
+    def handle_ignored_call
+      update_agent_leg_call_response(:busy)  # updating only agent-response here. call will move to voicemail if all-agents are missed
+      empty_twiml                            #in round-robin or normal-flow based on the settings when status_callback event is triggered.
+    end
+
+    def update_agent_leg_call_response(response)
+      call_actions.update_agent_leg_response(params[:agent_id] ||
+        params[:agent], response, current_call)
+    end
+
+    def all_agents_missed?
+      current_call.meta.all_agents_missed?
+    end
+
+    def custom_ignored_call?
+      custom_forwarding_completed? && current_call.ringing?
+    end
+
+    def handle_incomplete_call
+      update_agent_leg_call_response(:busy)
+      return check_and_initiate_voicemail if all_agents_missed?
+      empty_twiml
+    end
+
+    def custom_ignored_transfer?
+      custom_forwarding_completed? && @transferred_call.ringing?
+    end
+
+    def custom_forwarding_completed?
+      custom_forwarding_enabled? && params[:CallStatus] == 'completed'
     end
 end

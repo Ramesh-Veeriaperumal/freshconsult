@@ -426,14 +426,12 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 		warmTransferCall: function (id) {
 			this.freshfoneWarmTransfer = new FreshfoneWarmTransfer(this, id);
 			this.freshfoneWarmTransfer.init();
-			this.freshfoneWarmTransfer.loadDependencies(this.freshfoneSocket);
 			this.saveCallNotes();
 		},
 		handleWarmTransferReceiverCall: function() {
 			this.setIsWarmTransfer('receiver');
 			this.freshfoneWarmTransfer = new FreshfoneWarmTransfer(this, '');
 			this.freshfoneWarmTransfer.receiverInit();
-			this.freshfoneWarmTransfer.loadReceiverDependencies(this.freshfoneSocket);
 		},
 		setIsWarmTransfer: function(status) {
 			this.warmTransfer.type = status;

@@ -8710,6 +8710,8 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     acw_availability_text: 'Move to Available:'
     via_browser: "via Browser / App"
     via_phone: "via Phone"
+    forwarded_call_message: "You are getting a call from %{caller_info}. Press 1 to answer, 2 to ignore."
+    invalid_input_message: "Please enter a valid input."
     subscription:
       auto_recharge_text: "We'll only charge your account when the balance falls below $5"
       current_balance: "Your current balance"

@@ -48,6 +48,7 @@ Call Center Advanced:
   - :freshfone_call_monitoring
   - :freshfone_caller_id_masking
   - :agent_conference
+  - :freshfone_warm_transfer
 Helpdesk Restriction:
   - :helpdesk_restriction_toggle
 Ticket Templates:

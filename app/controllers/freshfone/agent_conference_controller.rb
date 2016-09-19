@@ -3,12 +3,15 @@ module Freshfone
     include Freshfone::CallHistory
     include Freshfone::FreshfoneUtil
     include Freshfone::Presence
+    include Freshfone::CustomForwardingUtil
+    include Freshfone::Endpoints
 
     before_filter :validate_agent_conference_request, only: [:add_agent]
     before_filter :create_agent_conference_call, only: [:add_agent]
     before_filter :validate_add_agent_success, only: [:success]
     before_filter :update_status, only: [:success]
-    before_filter :update_agent_conference_call, only: [:status]
+    before_filter :handle_ignored_custom_forward, only: :status, if: :missed_custom_forward?
+    before_filter :update_agent_conference_call, only: :status
 
     def add_agent
       notifier.notify_agent_conference(current_call, @agent_conference_call)
@@ -39,6 +42,17 @@ module Freshfone
                                           .agent_conference_calls([Freshfone::SupervisorControl::CALL_STATUS_HASH[:default],
                                                                    Freshfone::SupervisorControl::CALL_STATUS_HASH[:ringing]])
       render json: { status: notify_cancel_agent_conference(active_agent_conference_call, current_call) }
+    end
+
+    def initiate_custom_forward
+      render xml: telephony.custom_forwarding_response(current_call.agent_name,
+        custom_agent_forwarding_url, current_call.freshfone_number.voice_type)
+    end
+
+    def process_custom_forward
+      return handle_transfer_success if custom_forward_accept?
+      return handle_ignored_transfer if custom_forward_reject?
+      render_invalid_input(custom_agent_forwarding_url, current_call.agent_name)
     end
 
   private
@@ -116,6 +130,37 @@ module Freshfone
     def validate_twilio_request
       @callback_params = params.except(*[:add_agent_call_id, :call])
       super
+    end
+
+    def custom_agent_forwarding_url
+      forward_agent_conference_url(params[:call], params[:add_agent_call_id])
+    end
+
+    def handle_transfer_success
+      update_status
+      success
+    end
+
+    def handle_ignored_transfer
+      agent_conference_call.update_status(Freshfone::SupervisorControl::
+        CALL_STATUS_HASH[:busy]) unless agent_conference_call.busy?
+      empty_twiml
+    end
+
+    def handle_ignored_custom_forward
+      update_mobile_user_presence
+      notifier.notify_agent_conference_status(
+        current_call, 'agent_conference_unanswered')
+      handle_ignored_transfer
+    end
+
+    def missed_custom_forward?
+      custom_forwarding_enabled? && (agent_conference_call.busy? ||
+        still_ringing?)
+    end
+
+    def still_ringing?
+      agent_conference_call.ringing? && params[:CallStatus] == 'completed'
     end
   end
 end
