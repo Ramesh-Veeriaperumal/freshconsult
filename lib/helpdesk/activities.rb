@@ -47,7 +47,7 @@ module Helpdesk::Activities
     if notes_to_fetch.present?
       @prefetched_notes = (archived ? prefetch_archive_notes(ticket, notes_to_fetch) : prefetch_notes(ticket, notes_to_fetch))
     end
-		activity_stack
+	activity_stack
   end
 
 	def activity_json
@@ -184,10 +184,16 @@ private
     options = [{:user => :avatar}]
     options << :fb_post if ticket.facebook?
     options << :tweet if ticket.twitter?
-
-    notes = Helpdesk::ArchiveNote.includes(options).where(:note_id => note_ids)
-    build_notes_last_modified_user_hash(notes)
-    Hash[*notes.map { |note| [note.note_id, note] }.flatten]
+    current_shard = ActiveRecord::Base.current_shard_selection.shard.to_s
+    if(ArchiveNoteConfig[current_shard] && (ticket.id <= ArchiveNoteConfig[current_shard].to_i))
+    	notes = Helpdesk::ArchiveNote.includes(options).where(:note_id => note_ids)
+    	build_notes_last_modified_user_hash(notes)
+    	Hash[*notes.map { |note| [note.note_id, note] }.flatten]
+    else
+    	notes = Helpdesk::Note.includes(options).where(:id => note_ids)
+    	build_notes_last_modified_user_hash(notes) if notes.present?
+    	Hash[*notes.map { |note| [note.id, note] }.flatten]
+    end
   end
 
 end
