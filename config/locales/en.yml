@@ -1646,7 +1646,7 @@ en:
         feedbackwidget_use_captcha: Enable CAPTCHA
         feedbackwidget_submit_title: "Send Feedback"
         feedbackwidget_form_submit_title: "Form Submit Button"
-        feedbackwidget_title_maxlength: "Maximum 35 characters"
+        feedbackwidget_title_maxlength: "Maximum 30 characters"
         feedbackwidget_submit_title_maxlength: "Maximum 16 characters"
       embedded_widget:
         feedbackwidget_height_placeholder: "500"
