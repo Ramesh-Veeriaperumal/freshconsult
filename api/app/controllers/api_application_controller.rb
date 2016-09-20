@@ -64,7 +64,10 @@ class ApiApplicationController < MetalApiController
   before_filter :validate_filter_params, only: [:index]
 
   before_filter :validate_url_params, only: [:show]
+  after_filter :set_root_key
 
+  SINGULAR_RESPONSE_FOR = %w(show create update)
+  COLLECTION_RESPONSE_FOR = %w(index search)
   def index
     load_objects
   end
@@ -686,4 +689,17 @@ class ApiApplicationController < MetalApiController
       render_request_error :invalid_credentials, 401
       #TODO-EMBERAPI Need to decide what exactly to send back
     end
+    
+    def set_root_key
+      return unless params[:version] == 'private' || response.api_root_key.present?
+      case action_name
+      when *SINGULAR_RESPONSE_FOR
+        response.api_root_key = controller_name.singularize
+      when *COLLECTION_RESPONSE_FOR
+        response.api_root_key = controller_name.pluralize
+      else
+        response.api_root_key = :data
+      end
+    end
+      
 end

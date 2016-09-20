@@ -212,17 +212,18 @@ module Ember
       def decorate_objects
         return if @error_ticket_filter.present?
         decorator, options = decorator_options
-        @requester_collection = @items.collect(&:requester).uniq
-        @requesters = @requester_collection.map { |contact| ContactDecorator.new(contact, name_mapping: contact_name_mapping) }
+        @requesters = @items.collect(&:requester).uniq.each_with_object({}) do |contact, hash| 
+          hash[contact.id] = ContactDecorator.new(contact, name_mapping: contact_name_mapping)
+        end
 
         @items.map! { |item| decorator.new(item, options) }
       end
 
       def contact_name_mapping
-        # will be called only for index and show.
-        # We want to avoid memcache call to get custom_field keys and hence following below approach.
-        custom_field = index? ? @requester_collection.first.try(:custom_field) : @requester.custom_field
-        custom_field.each_with_object({}) { |(name, value), hash| hash[name] = CustomFieldDecorator.display_name(name) } if custom_field
+        @contact_name_mapping ||= begin
+          custom_field = index? ? User.new.custom_field : @requester.custom_field
+          custom_field.each_with_object({}) { |(name, value), hash| hash[name] = CustomFieldDecorator.display_name(name) } if custom_field
+        end
       end
 
       def tickets_filter

@@ -35,4 +35,40 @@ class ContactDecorator < ApiDecorator
       avatar_url: avatar.attachment_url_for_api
     }
   end
+
+  def to_hash
+    User.current.privilege?(:view_contacts) ? to_full_hash : to_restricted_hash
+  end
+
+  private
+
+    def to_full_hash
+      {
+        id: id,
+        active: active,
+        address: address,
+        company_id: company_id,
+        description: description,
+        email: email,
+        job_title: job_title,
+        language: language,
+        mobile: mobile,
+        name: name,
+        phone: phone,
+        time_zone: time_zone,
+        twitter_id: twitter_id,
+        created_at: created_at.try(:utc),
+        updated_at: updated_at.try(:utc),
+        avatar: avatar_hash
+      }
+    end
+
+    def to_restricted_hash
+      {
+        id: id,
+        name: name,
+        avatar: avatar_hash
+      }
+    end
+
 end

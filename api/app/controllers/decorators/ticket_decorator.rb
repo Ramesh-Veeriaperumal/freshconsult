@@ -6,6 +6,9 @@ class TicketDecorator < ApiDecorator
 
   def initialize(record, options)
     super(record)
+    Rails.logger.debug "*" * 100
+    Rails.logger.debug options.inspect
+    Rails.logger.debug "*" * 100
     @name_mapping = options[:name_mapping]
     @sideload_options = options[:sideload_options]
   end
@@ -56,6 +59,37 @@ class TicketDecorator < ApiDecorator
       company = record.company
       company ? { id: company.id, name: company.name } : {}
     end
+  end
+  
+  def to_hash
+    hash = {
+      cc_emails: cc_email.try(:[], :cc_emails),
+      fwd_emails: cc_email.try(:[], :fwd_emails),
+      reply_cc_emails: cc_email.try(:[], :reply_cc),
+      fr_escalated: fr_escalated,
+      spam: spam,
+      email_config_id: email_config_id,
+      group_id: group_id,
+      priority: priority,
+      requester_id: requester_id,
+      responder_id: responder_id,
+      source: source,
+      company_id: company_id,
+      status: status,
+      subject: subject,
+      to_emails: schema_less_ticket.try(:to_emails),
+      product_id: schema_less_ticket.try(:product_id),
+      id: display_id,
+      type: ticket_type,
+      due_by: due_by.try(:utc),
+      fr_due_by: frDueBy.try(:utc),
+      is_escalated: isescalated,
+      description: ticket_body.description_html,
+      description_text: ticket_body.description,
+      custom_fields: custom_fields,
+      created_at: created_at.try(:utc),
+      updated_at: updated_at.try(:utc)
+    }
   end
 
   class << self
