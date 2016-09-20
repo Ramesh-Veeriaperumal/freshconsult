@@ -48,7 +48,7 @@
       </div>
       <div class="input-prepend span1">
         <span class="add-on">Offset:</span>
-        <input class="number" id="offset" name="offset" placeholder="<%=t('.feedbackwidget_offset_placeholder')%>" size="4" type="text" value="">
+        <input class="number" id="offset" name="offset" placeholder="<%=t('.feedbackwidget_offset_placeholder')%>" size="4" type="text" value="" style="padding-left: 6px;">
         <span class="add-on-outer"><%= t(".feedbackwidget_px") %></span>
       </div>
       <p class="info-data span12 clear-left-margin"><%= t('feedbackwidget_offset_info') %></p>
@@ -62,12 +62,14 @@
 		<label class="control-label"><%= t('feedbackwidget_form_heading') %></label>
     <div class="controls">
       <input class="text" data-set-query-string="true" data-skip-options='true' id="formTitle" name="formTitle" placeholder="<%= t('feedbackwidget_defaulttitle').html_safe %>" size="35" type="text" value="" maxlength="34"/>
+      <p class="info-data"><%= t('.feedbackwidget_title_maxlength') %></p>
     </div>
   </div>
   <div class="control-group">
     <label class="control-label"><%= t('.feedbackwidget_form_submit_title') %></label>
     <div class="controls">
       <input class="text" data-set-query-string="true" data-skip-options='true' id="submitTitle" name="submitTitle" placeholder="<%= t('.feedbackwidget_submit_title').html_safe %>" size="35" type="text" value="" maxlength="16"/>
+      <p class="info-data"><%= t('.feedbackwidget_submit_title_maxlength') %></p>
     </div>
   </div>
   <div class="control-group">
