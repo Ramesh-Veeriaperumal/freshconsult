@@ -77,14 +77,8 @@ var domHelper = domHelper || {};
         dh.domHelperCallValidator("onReplyClick", callback, isCallBack);
       },
 
-      /** @deprecated  */
       onFwdClick: function(callback) {
-        console.warn("onFwdClick API has been deprecated. Please use onForwardClick instead.")
-        dh.domHelperCallValidator("onForwardClick", callback, isCallBack);
-      },
-
-      onForwardClick: function(callback) {
-        dh.domHelperCallValidator("onForwardClick", callback, isCallBack);
+        dh.domHelperCallValidator("onFwdClick", callback, isCallBack);
       },
 
       onAddNoteClick: function(callback) {
@@ -166,14 +160,6 @@ var domHelper = domHelper || {};
         dh.domHelperCallValidator("convertToAgent", agent_type);
       }
     }
-  }
-
-  dh.getAgentEmail = function() {
-    return current_user.user.email;
-  }
-
-  dh.getDomainName = function() {
-    return current_account_full_domain
   }
 
   dh.showConfirm = function(evt, title, msg, ok_label, cancel_label, success_cb, failure_cb){
