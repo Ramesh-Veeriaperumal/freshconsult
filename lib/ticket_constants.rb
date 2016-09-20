@@ -12,6 +12,7 @@ module TicketConstants
    
   # DATE_RANGE_CSV = 31
 
+  ### Bump the version of "TICKETS_LIST_PAGE_FILTERS" key in fragment_cache/keys.rb when SOURCES are modified.
   SOURCES = [
     [ :email,            'email',            1 ],
     [ :portal,           'portal_key',       2 ],
@@ -23,8 +24,7 @@ module TicketConstants
     [ :mobihelp,         'mobihelp',         8 ],
     [ :feedback_widget,  'feedback_widget',  9 ],
     [ :outbound_email,   'outbound_email',   10],
-	[ :ecommerce,        'ecommerce',        11 ]
-  
+	  [ :ecommerce,        'ecommerce',        11 ]
   ]
 
   SOURCE_OPTIONS = SOURCES.map { |i| [i[1], i[2]] }
@@ -33,11 +33,12 @@ module TicketConstants
   SOURCE_KEYS_BY_NAME = Hash[*SOURCES.map { |i| [i[1], i[2]] }.flatten]
   SOURCE_TOKEN_BY_KEY = Hash[*SOURCES.map { |i| [i[2], i[0]] }.flatten]
 
+  ### Bump the version of "TICKETS_LIST_PAGE_FILTERS" key in fragment_cache/keys.rb when PRIORITIES are modified.
   PRIORITIES = [
     [ :low,       'low',         1,    '#7ebf00' ], 
     [ :medium,    'medium',      2,    '#008ff9' ], 
     [ :high,      'high',        3,    '#ffb613' ], 
-    [ :urgent,    'urgent',      4,    '#de0000' ]   
+    [ :urgent,    'urgent',      4,    '#de0000' ]
   ]
 
   PRIORITY_OPTIONS = PRIORITIES.map { |i| [i[1], i[2]] }
@@ -130,6 +131,7 @@ module TicketConstants
   SHARED_GROUP_COLUMNS_CONDITIONS_BY_MODE  = Hash[*SHARED_GROUP_COLUMNS.map { |i| [i[2], i[0]] }.flatten]
   SHARED_GROUP_COLUMNS_MODE_BY_NAME        = Hash[*SHARED_GROUP_COLUMNS.map { |i| [i[0], i[2]] }.flatten]
 
+  ### Bump the version of "TICKETS_LIST_PAGE_FILTERS" key in fragment_cache/keys.rb when DUE_BY_TYPES are modified.
   DUE_BY_TYPES = [
     [ :all_due,         'all_due',               1 ], # If modified, _auto_refresh.html.erb has to be modified.
     [ :due_today,       'due_today',             2 ], # By Shridar.
@@ -169,6 +171,7 @@ module TicketConstants
   ]
   ARCHIVE_CREATED_WITHIN_OPTIONS = ARCHIVE_CREATED_WITHIN_VALUES.map { |i| [i[2], i[1]] }
 
+  ### Bump the version of "TICKETS_LIST_PAGE_FILTERS" key in fragment_cache/keys.rb when CREATED_WITHIN_VALUES are modified.
   CREATED_WITHIN_VALUES = [
     [ :any_time,         'any_time',        "any_time"], # If modified, _auto_refresh.html.erb has to be modified.
     [ :five_minutes,     'five_minutes',            5 ], # By Shridar.

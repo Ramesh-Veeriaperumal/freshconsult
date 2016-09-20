@@ -5,9 +5,9 @@
   any = t('any')
   none = t("filter_options.none")
 %>
-<% 
+<%
 options = options.unshift([any,""], [none, "-1"]) %>
-<%= select_tag name, options_for_select(options.map {|k, v| [CGI.unescapeHTML(k), v.to_s]}, selected_val), 
+<%= select_tag name, options_for_select(options.map {|k, v| [CGI.unescapeHTML(k), v.to_s]}, selected_val),
                     :id => category_id, :class => "dropdown nested_field select2", "data-minimum-results-for-search" => 10 %>
 <%
   sub_category  = nested_fields[0] if nested_fields.size > 0
@@ -20,44 +20,54 @@ options = options.unshift([any,""], [none, "-1"]) %>
       sub_category_selected = current_options[sub_category[:condition].to_s]
 
       if !item.nil? && !sub_category_selected.blank?
-        sub_category_picklist_value = category_picklist_value.sub_picklist_values.find_by_id(sub_category_selected) 
+        sub_category_picklist_value = category_picklist_value.sub_picklist_values.find_by_id(sub_category_selected)
         item[:options] = sub_category_picklist_value.choices unless sub_category_picklist_value.nil?
         item[:options].unshift(["...",""])
       end
-    end 
+    end
   end
 %>
 <% unless sub_category.nil? %>
-  <%= content_tag :div,{ :id  => "div_ff_#{sub_category[:condition]}", 
-                :class       => "ff_item level_2", 
+  <%= content_tag :div,{ :id  => "div_ff_#{sub_category[:condition]}",
+                :class       => "ff_item level_2",
                 :condition   => sub_category[:condition],
                 :operator    => sub_category[:operator],
                 :ff_name     => sub_category[:ff_name],
-                :container   => 'nested_field' } do %>
+                :container   => 'nested_field',
+                :data => {
+                  :domtype => "nested_field",
+                  :id => sub_category[:condition]
+                }
+                } do %>
     <h4 class="title"><%= sub_category[:name].html_safe %></h4>
-    <%= select_tag sub_category[:name], "", :id => sub_category_id, 
+    <%= select_tag sub_category[:name], "", :id => sub_category_id,
                   :class => "dropdown nested_field select2", "data-minimum-results-for-search" => 10 %>
   <%end%>
-        
+
   <% unless item.nil? %>
       <% item_val = current_options[item[:condition].to_s].to_s %>
-      <%= content_tag :div,{ :id => "div_ff_#{item[:condition]}", 
-                    :class       => "ff_item level_3", 
+      <%= content_tag :div,{ :id => "div_ff_#{item[:condition]}",
+                    :class       => "ff_item level_3",
                     :condition   => item[:condition],
                     :operator    => item[:operator],
-                    :container   => 'nested_field' } do %>
+                    :container   => 'nested_field',
+                    :data => {
+                      :domtype => "nested_field",
+                      :id => item[:condition]
+                    }
+                    } do %>
         <h4 class="title"><%= item[:name].html_safe %></h4>
-        <%= select_tag item[:name], "", :id => sub_category_item_id, 
+        <%= select_tag item[:name], "", :id => sub_category_item_id,
                     :class => "dropdown nested_field select2", "data-minimum-results-for-search" => 10 %>
       <% end %>
   <% end %>
   <%= javascript_tag do %>
       jQuery('#<%=category_id%>')
         .nested_select_tag({
-          initValues: { 
+          initValues: {
             item_val: '<%= CGI.unescapeHTML(item_val.to_s) %>',
             subcategory_val: '<%= CGI.unescapeHTML(current_options[sub_category[:condition].to_s].to_s) %>',
-            category_val: '<%= selected_val.map { |val| CGI.unescapeHTML(val) } %>'            
+            category_val: '<%= selected_val.map { |val| CGI.unescapeHTML(val) } %>'
           },
           include_blank: "<%= any %>",
           include_none: "<%= none %>",

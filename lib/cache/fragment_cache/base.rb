@@ -26,6 +26,9 @@ module Cache
         else
           block.call
         end
+      # Rescue Dalli::RingError if memcache is down and make the call to DB directly.
+      rescue Dalli::RingError
+        block.call
       end
       
       def clear_fragment_caches(items = CACHED_ITEMS)

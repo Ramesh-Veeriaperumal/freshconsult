@@ -46,7 +46,8 @@ class Account < ActiveRecord::Base
 
     :estate => {
       :features => [ :collision, :layout_customization, :round_robin, :enterprise_reporting,
-        :custom_ssl, :custom_roles, :multiple_business_hours, :facebook_page_tab, :chat_routing, :dynamic_sections, :helpdesk_restriction_toggle],
+        :custom_ssl, :custom_roles, :multiple_business_hours, :facebook_page_tab, :chat_routing, :dynamic_sections,
+        :helpdesk_restriction_toggle, :round_robin_load_balancing],
       :inherits => [ :garden ]
     },
 
@@ -73,7 +74,8 @@ class Account < ActiveRecord::Base
 
     :estate_classic => {
       :features => [ :collision, :layout_customization, :round_robin, :enterprise_reporting,
-        :custom_ssl, :custom_roles, :multiple_business_hours, :facebook_page_tab, :chat_routing, :helpdesk_restriction_toggle ],
+        :custom_ssl, :custom_roles, :multiple_business_hours, :facebook_page_tab, :chat_routing,
+        :helpdesk_restriction_toggle, :round_robin_load_balancing ],
       :inherits => [ :garden_classic ]
     }
 
@@ -82,7 +84,7 @@ class Account < ActiveRecord::Base
   # Features added temporarily to avoid release for all the customers at one shot
   # Default feature when creating account has been made true :surveys & ::survey_links $^&WE^%$E
   TEMPORARY_FEATURES = {
-    :bi_reports => false, :contact_merge_ui => false, :social_revamp => false, :multiple_user_emails => false,  
+    :bi_reports => false, :contact_merge_ui => false, :social_revamp => true, :multiple_user_emails => false,  
     :round_robin_revamp => false, :solutions_meta_read => false, 
     :facebook_realtime => false, :autorefresh_node => false, :tokenize_emoji => false,
     :custom_dashboard => false, :updated_twilio_client => false,
@@ -108,7 +110,8 @@ class Account < ActiveRecord::Base
     :threading_without_user_check => false, :freshfone_call_monitoring => false, :freshfone_caller_id_masking => false,
     :agent_conference => false, :freshfone_warm_transfer => false, :restricted_helpdesk => false, :enable_multilingual => false,
     :count_es_writes => false, :count_es_reads => false, :activity_revamp => false, :countv2_writes => false, :countv2_reads => false,
-    :helpdesk_restriction_toggle => false, :freshfone_acw => false, :ticket_templates => false, :cti => false, :all_notify_by_custom_server => false }
+    :helpdesk_restriction_toggle => false, :freshfone_acw => false, :ticket_templates => false, :cti => false, :all_notify_by_custom_server => false,
+    :freshfone_custom_forwarding => false }
 
   # This list below is for customer portal features list only to prevent from adding addition features
   ADMIN_CUSTOMER_PORTAL_FEATURES =  {:anonymous_tickets => true, :open_solutions => true, :auto_suggest_solutions => true, 

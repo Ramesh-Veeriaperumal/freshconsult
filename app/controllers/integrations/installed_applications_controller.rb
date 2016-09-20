@@ -4,6 +4,7 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
 
   include Integrations::AppsUtil
   include Integrations::Slack::SlackConfigurationsUtil #Belongs to Old Slack. Remove when Slack v1 is obselete.
+  include Redis::OthersRedis
 
   before_filter :strip_slash, :only => [:install, :update]
   before_filter :load_object
@@ -11,7 +12,9 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
   before_filter :set_auth_key, :only => [:install,:update]
   before_filter :check_jira_authenticity, :only => [:install, :update]
   before_filter :redirect_old_slack, :only => [:update], :if => :application_is_slack? #Remove this when slackv1 is obselete.
+  before_filter :update_ratelimit, :only => [:update] #For security, prevent port scanning.
   after_filter  :destroy_all_slack_rule, :only => [:uninstall], :if =>  :application_is_slack? #Remove this when slackv1 is obselete.
+
 
 
   def install 
@@ -177,5 +180,16 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
 
   def application_is_slack? #Remove when slackv1 is obselete
     @installing_application.present? && @installing_application.slack?
+  end
+
+  def update_ratelimit
+    app_name = @installing_application.name
+    if ['jira', 'czentrix'].include?(app_name)
+      whitelist_key = "UPDATEWHITELIST_#{current_account.id}_#{app_name}"
+      count = increment_others_redis(whitelist_key)
+      Rails.logger.debug "setting ratelimit count for account #{current_account.id} and app #{app_name} : #{count}"
+      set_others_redis_expiry(whitelist_key, 3600) if(count == 1)
+      render :text => RateLimitHtml::HTML, :status => :forbidden if(count > 5) #Ratelimit updates to 5 per hour.
+    end
   end
 end

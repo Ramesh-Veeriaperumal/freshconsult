@@ -129,3 +129,10 @@ function uniqueArray(array) {
 
     return a;
 }
+
+// Get Cookie value based on name
+function getCookie(name) {
+  var value = "; " + document.cookie;
+  var parts = value.split("; " + name + "=");
+  if (parts.length == 2) return parts.pop().split(";").shift();
+}

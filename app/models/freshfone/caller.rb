@@ -2,6 +2,7 @@ class Freshfone::Caller < ActiveRecord::Base
   self.table_name =  :freshfone_callers
   self.primary_key = :id
   include Search::ElasticSearchIndex
+  include Freshfone::CallerLookup
 	
   belongs_to_account
 
@@ -29,4 +30,27 @@ class Freshfone::Caller < ActiveRecord::Base
     end
   end
 
+  def name_or_location
+    strange_number_name || location
+  end
+
+  def location
+    city_name || full_state_name || coded_country.name
+  end
+
+  def city_name
+    city if city.present?
+  end
+
+  def full_state_name
+    coded_country.subregions.coded(state).name if state.present?
+  end
+
+  def coded_country
+    Carmen::Country.coded(country)
+  end
+
+  def strange_number_name
+    caller_lookup(number) if strange_number?(number)
+  end
 end

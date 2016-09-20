@@ -109,7 +109,7 @@ module Reports
       }
       options.merge!(extra_options) if extra_options
       if file_path.blank?
-        ReportExportMailer.no_report_data(options)
+        ReportExportMailer.send_later(:no_report_data, options)
       else
         if @attachment_via_s3
           file_name = file_path.split("/").last
@@ -117,7 +117,7 @@ module Reports
         else
           options.merge!(file_path: file_path) # Attach file in mail itself
         end
-        ReportExportMailer.bi_report_export(options)
+        ReportExportMailer.send_later(:bi_report_export, options)
       end
     ensure
       FileUtils.rm_f(file_path) if file_path

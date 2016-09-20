@@ -442,6 +442,8 @@ Helpkit::Application.routes.draw do
         post :quit
         post :cancel
         post :resume
+        post :initiate_custom_forward
+        post :process_custom_forward
       end
     end
 
@@ -451,6 +453,8 @@ Helpkit::Application.routes.draw do
         post :success
         post :status
         post :cancel
+        post :initiate_custom_forward
+        post :process_custom_forward
       end
     end
 
@@ -470,6 +474,10 @@ Helpkit::Application.routes.draw do
     resources :forward do
       collection do
         post :initiate
+        post :initiate_custom
+        post :initiate_custom_transfer
+        post :process_custom
+        post :process_custom_transfer
         post :complete
         post :transfer_initiate
         post :transfer_complete
@@ -1752,6 +1760,7 @@ Helpkit::Application.routes.draw do
         post :latest_ticket_count
         match :add_requester
         get :filter_options
+        get :filter_conditions
         get :full_paginate
         get :summary
         get :compose_email

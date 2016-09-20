@@ -663,7 +663,7 @@ RSpec.describe Helpdesk::Email::Process do
 			new_cc_email = Faker::Internet.email
 			email = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :reply => email_id})
 			first_reply = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :reply => email_id, :include_cc => cc_email})
-			second_reply = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :reply => cc_email, :include_cc => new_cc_email})
+			second_reply = new_mailgun_email({:email_config => @account.primary_email_config.to_email, :reply => email_id, :include_cc => new_cc_email})
 			Helpdesk::Email::Process.new(email).perform
 			ticket = @account.tickets.last
 			first_reply["subject"] = first_reply["subject"]+" [##{ticket.display_id}]"
@@ -673,9 +673,102 @@ RSpec.describe Helpdesk::Email::Process do
 			ticket_incremented?(@ticket_size)
 			latest_ticket = @account.tickets.last
 			latest_ticket.cc_email_hash[:reply_cc].should include new_cc_email
-			latest_ticket.cc_email_hash[:reply_cc].should include cc_email
+			latest_ticket.cc_email_hash[:reply_cc].should_not include cc_email
 		end
+
+		it "verifies appended ticket cc emails to reply-cc and global-cc on 
+		replying to notification mail" do
+			@account.helpdesk_permissible_domains.create(:domain => 
+				"restrictedhelpdeskmailgun.com")
+			from = "user1@restrictedhelpdeskmailgun.com"
+			email = new_mailgun_email({:email_config => 
+				@account.primary_email_config.to_email, :from => from})
+			email["Reply-To"] = nil
+			Helpdesk::Email::Process.new(email).perform
+			ticket = @account.tickets.last
+			create_with_reply_cc =  new_mailgun_email({
+				:email_config => @account.primary_email_config.to_email, 
+				:reply => ticket.requester.email, 
+				:m_id => email["Message-Id"].gsub(/@.*/, 
+					"@notification.freshdesk.com>")})
+			create_with_reply_cc["subject"] = create_with_reply_cc["subject"]+
+				" [##{ticket.display_id}]"
+
+			first_cc_emails = create_with_reply_cc["Cc"].scan(/<([^>]+)>/).flatten
+			first_cc_emails = create_with_reply_cc["Cc"].split(',').map!{ 
+				|val| val.strip} if(first_cc_emails.length == 0)
+
+			Helpdesk::Email::Process.new(create_with_reply_cc).perform
+
+			create_with_reply_cc =  new_mailgun_email({
+				:email_config => @account.primary_email_config.to_email, 
+				:reply => ticket.requester.email, 
+				:m_id => email["Message-Id"].gsub(/@.*/, "@notification.freshdesk.com>")})
+			second_cc_emails = create_with_reply_cc["Cc"].scan(/<([^>]+)>/).flatten
+			second_cc_emails = create_with_reply_cc["Cc"].split(',').map!{ 
+				|val| val.strip} if(second_cc_emails.length == 0)
+
+			create_with_reply_cc["subject"] = create_with_reply_cc["subject"]+
+				" [##{ticket.display_id}]"
+			Helpdesk::Email::Process.new(create_with_reply_cc).perform
+
+			latest_ticket = @account.tickets.last
+			first_cc_emails = first_cc_emails.to_a
+			first_cc_emails[first_cc_emails.length, 0] = second_cc_emails
+			first_cc_emails.each { |val| expect(latest_ticket.
+				cc_email_hash[:reply_cc]).to include val }
+			first_cc_emails.each { |val| expect(latest_ticket.
+				cc_email_hash[:cc_emails]).to include val }
+		end
+
+		it "verifies appended ticket cc emails to reply-cc and global-cc on 
+		replying to automation mail" do
+			@account.helpdesk_permissible_domains.create(:domain => 
+				"restrictedhelpdeskmailgun.com")
+			from = "user1@restrictedhelpdeskmailgun.com"
+			email = new_mailgun_email({:email_config => 
+				@account.primary_email_config.to_email, :from => from})
+			email["Reply-To"] = nil
+			Helpdesk::Email::Process.new(email).perform
+			ticket = @account.tickets.last
+			create_with_reply_cc =  new_mailgun_email({
+				:email_config => @account.primary_email_config.to_email, 
+				:reply => ticket.requester.email, 
+				:m_id => email["Message-Id"].gsub(/@.*/, 
+					"@automation.freshdesk.com>")})
+			create_with_reply_cc["subject"] = create_with_reply_cc["subject"]+
+				" [##{ticket.display_id}]"
+
+			first_cc_emails = create_with_reply_cc["Cc"].scan(/<([^>]+)>/).flatten
+			first_cc_emails = create_with_reply_cc["Cc"].split(',').map!{ 
+				|val| val.strip} if(first_cc_emails.length == 0)
+
+			Helpdesk::Email::Process.new(create_with_reply_cc).perform
+
+			create_with_reply_cc =  new_mailgun_email({
+				:email_config => @account.primary_email_config.to_email, 
+				:reply => ticket.requester.email, 
+				:m_id => email["Message-Id"].gsub(/@.*/, "@automation.freshdesk.com>")})
+			second_cc_emails = create_with_reply_cc["Cc"].scan(/<([^>]+)>/).flatten
+			second_cc_emails = create_with_reply_cc["Cc"].split(',').map!{ 
+				|val| val.strip} if(second_cc_emails.length == 0)
+
+			create_with_reply_cc["subject"] = create_with_reply_cc["subject"]+
+				" [##{ticket.display_id}]"
+			Helpdesk::Email::Process.new(create_with_reply_cc).perform
+
+			latest_ticket = @account.tickets.last
+			first_cc_emails = first_cc_emails.to_a
+			first_cc_emails[first_cc_emails.length, 0] = second_cc_emails
+			first_cc_emails.each { |val| expect(latest_ticket.
+				cc_email_hash[:reply_cc]).to include val }
+			first_cc_emails.each { |val| expect(latest_ticket.
+				cc_email_hash[:cc_emails]).to include val }
+		end
+
 	end
+
+
   
   def before_all_call
     @agent = add_agent_to_account(@account, {:name => "Harry Potter", :email => Faker::Internet.email, :active => true})

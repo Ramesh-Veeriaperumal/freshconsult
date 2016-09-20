@@ -105,6 +105,7 @@
 
       <input type="hidden" name="unsaved_view" id="flag_unsaved_view" <%= "disabled" unless params[:unsaved_view] %> value="true" />
     </form>
+    <% enable_fragment_cache(:ticket_list_filters) do %>
       <% @show_options.each_with_index do |c_hash, i| %>
         <%
           if ((!c_hash[:field_type].nil?) && (c_hash[:field_type] == "nested_field"))
@@ -113,6 +114,8 @@
             container = "single_select"
           elsif ['requester', 'customers', 'tags'].include?(c_hash[:name])
             container = c_hash[:name]
+          elsif ['responder_id','group_id'].include?(c_hash[:name])
+            container = "multi_select"
           else
             container = (c_hash[:options].size < 5)? "dropdown" : "multi_select"
           end
@@ -140,7 +143,12 @@
                                 :condition   => c_hash[:condition],
                                 :operator    => c_hash[:operator],
                                 :ff_name     => c_hash[:ff_name],
-                                :container   => container } do %>
+                                :container   => container,
+                                :data => {                 
+                                  :domtype => container,    
+                                  :id => c_hash[:condition]            
+                                  }
+                                } do %>
             <% if(display_name === "responder_id" && shared_ownership_enabled) %>
               <div class="fd-menu shared_sort_menu" id="agentSort">
                 <ul>             
@@ -200,10 +208,19 @@
           <% end
           end
         end %>
+    <% end %>
 <%= javascript_tag do%>
 	var query_hash  = $A();
   var unassigned = "";
 	jQuery(document).ready(function(){
+    <% if Account.current.launched?(:ticket_list_page_filters_cache) %>
+      PopulateData.I18n_text.me = '<%= t("helpdesk.tickets.add_watcher.me") %>'
+      PopulateData.I18n_text.mygroups = '<%= t("filter_options.mygroups") %>'
+      PopulateData.I18n_text.unassigned = '<%= t("filter_options.unassigned") %>'
+      TicketListSidebar.getParams(function(params){
+          PopulateFormData.init(params);
+      });
+    <% end %>
   var selectedGroupTextId = jQuery(".group_text").attr("value");
   if(selectedGroupTextId && selectedGroupTextId.indexOf(".") > -1){
     var splitId = selectedGroupTextId.split(".");

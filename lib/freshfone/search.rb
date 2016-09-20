@@ -64,10 +64,55 @@ module Freshfone::Search
 		number_fileds
 	end
 
+	def search_customer
+	  customer = search_customer_with_id if customer_id.present?
+	  return customer if customer.present?
+	  search_customer_with_number_using_es(called_number)
+	end
+
+	#return contact only if it has phone or mobile number present.
+	# <> operator will check for both null and empty fields.
+	def search_customer_with_id
+	  Sharding.run_on_slave do
+	    users_scoper.where(id: customer_id).where(
+	      "(phone <> '') OR (mobile <> '')").first
+	  end
+	end
+
+	#If there are no no-deleted contacts with this number, returning the first deleted contact.
+	#this method was returning first user based on Id for the number, so changed to have ordering based on name
+	def search_customer_with_number_using_es(phone_number)
+	  begin
+	    search_user_with_number(phone_number.gsub(/^\+/, ''))
+	  rescue Exception => e
+	    Rails.logger.error "Error with elasticsearch for Accout::#{current_account.id} \n#{e.message}\n#{e.backtrace.join("\n\t")}"
+	    get_customer_with_number(phone_number)
+	  end
+	end
+
+	def get_customer_with_number(phone_number)
+	  Sharding.run_on_slave do
+	  	users_scoper.where('phone = ? or mobile = ?', phone_number,
+	  		phone_number).order('deleted ASC, name ASC').first
+	  end
+	end
+
 	private
 		def get_es_search_results(search_string, fields, size = 10, search_non_deleted=true)
 			es_response = search_user_using_es(search_string, fields, size) if search_non_deleted
 			return es_response if (es_response.present? && es_response.results.present?)
 			search_user_using_es(search_string, fields, size, false)
+		end
+
+		def users_scoper
+		  current_account.all_users
+		end
+
+		def called_number
+		  params[:PhoneNumber] || params[:To]
+		end
+
+		def customer_id
+		  params[:customer_id] || params[:customerId]
 		end
 end

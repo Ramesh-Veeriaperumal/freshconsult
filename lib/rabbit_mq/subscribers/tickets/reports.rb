@@ -5,9 +5,8 @@ module RabbitMq::Subscribers::Tickets::Reports
   PROPERTIES_TO_CONSIDER = [ :requester_id, :responder_id, :group_id, 
                              :priority, :ticket_type, :source,
                              :status, :product_id, :owner_id,
-                             :sla_policy_id, :isescalated, :fr_escalated,
-                             :spam, :deleted, :parent_ticket, 
-                             :long_tc03, :long_tc04
+                             :isescalated, :fr_escalated, :spam, :deleted,
+                             :long_tc01, :long_tc02, :long_tc03, :long_tc04
                            ]
 
   def mq_reports_ticket_properties(action)

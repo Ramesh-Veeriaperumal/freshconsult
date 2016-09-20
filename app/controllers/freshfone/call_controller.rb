@@ -6,6 +6,7 @@ class Freshfone::CallController < FreshfoneBaseController
 	include Freshfone::CallsRedisMethods
 	include Freshfone::TicketActions
 	include Freshfone::Call::EndCallActions
+	include Freshfone::Search
 	
 	include Freshfone::Search
 	before_filter :load_customer, :only => [:caller_data]
@@ -273,11 +274,5 @@ class Freshfone::CallController < FreshfoneBaseController
 
 		def ongoing_call
 			@ongoing_call ||= current_account.freshfone_calls.ongoing_by_caller(caller.id).first if caller.present?
-		end
-
-		def search_customer
-			customer = search_customer_with_id(params[:customerId]) if params[:customerId].present?
-			return customer if customer.present?
-			search_user_with_number(params[:PhoneNumber].gsub(/^\+/, ''))
 		end
 end

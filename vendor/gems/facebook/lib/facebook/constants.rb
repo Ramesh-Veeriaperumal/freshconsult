@@ -1,7 +1,7 @@
 module Facebook
   module Constants
     
-    ITEM_LIST         = ["status", "post", "comment", "reply_to_comment", "photo", "video", "share", "link", "like"]
+    ITEM_LIST         = ["status", "post", "comment", "reply_to_comment", "photo", "video", "share", "link"]
   
     AUXILLARY_LIST    = ["like"]
     

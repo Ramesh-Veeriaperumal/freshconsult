@@ -28,7 +28,7 @@ window.liveChat.widgetSettings = function($){
 				position = _widgetPreferences.window_position;
 
 			this.setTextColor(bgColor);
-			$("#lc_chat_header").text(max_txt);
+			$("#lc_chat_title").text(max_txt);
 			$("#cw_welcome_msg").text(wc_txt)
 			$("#window_color").val(bgColor).trigger('keyup');
 			$("#inputcontainer").text(input_txt);
@@ -92,11 +92,7 @@ window.liveChat.widgetSettings = function($){
 			});
 
 			$("#header_title").keyup(function() {
-				if($(this).val() != ""){
-					$("#lc_chat_header").text($(this).val());
-				}else{
-					$("#lc_chat_header").text(default_widget_preferences["header"]);
-				}
+				$("#lc_chat_title").text($(this).val() || default_widget_preferences["header"]);
 			});
 			
 			$("#welcome_message").keyup(function() {

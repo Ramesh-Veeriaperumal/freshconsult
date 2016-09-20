@@ -130,6 +130,18 @@ class Freshfone::Telephony #Wrapper for all telephony provider related actions
     current_number.read_non_business_hours_message(r)
   end
 
+  def say_info(xml_builder, msg)
+    telephony.say_twiml(xml_builder, msg)
+  end
+
+  def custom_forwarding_response(caller_name, url, voice_type)
+    telephony.custom_forwarding_twiml(caller_name, url, voice_type)
+  end
+
+  def forward_invalid_option(url, caller_name, voice_type)
+    telephony.forward_invalid_twiml(url, caller_name, voice_type)
+  end
+
   #TwiML actions end here
 
   #REST Calls start here 

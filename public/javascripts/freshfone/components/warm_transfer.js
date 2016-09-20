@@ -259,10 +259,6 @@ var FreshfoneWarmTransfer;
         $(document).off('warm_transfer');
       });      
     },
-    loadDependencies: function(freshfoneSocket) {
-      this.freshfoneSocket = freshfoneSocket;
-      this.bindSocketEvents();
-    },
     unhold: function() {
       var self = this;
       $.ajax({
@@ -276,32 +272,6 @@ var FreshfoneWarmTransfer;
       })
       .fail(function(){
         self.freshfone_call.resetHold();
-      });
-    },
-    bindSocketEvents: function() {
-      var self = this;
-      this.freshfoneSocket.freshfone_socket_channel.on('warm_transfer_success', function(data) {
-        self.success();
-      });
-
-      this.freshfoneSocket.freshfone_socket_channel.on(' warm_transfer_cancel_failed', function(data) {
-        self.cancelError();
-      });
-
-      this.freshfoneSocket.freshfone_socket_channel.on('warm_transfer_reverted', function(data) {
-        self.transfer_revert(data.call_sid, data.call_id);
-      });
-
-      this.freshfoneSocket.freshfone_socket_channel.on('warm_transfer_status', function(data) {
-        self.notAvailable(data.call_status, data.call_sid);
-      });
-
-      this.freshfoneSocket.freshfone_socket_channel.on('warm_transfer_cancel', function(data) {
-        self.callCompleted('canceled');
-      });
-
-      this.freshfoneSocket.freshfone_socket_channel.on('warm_transfer_resume', function(data) {
-        self.call_resume();
       });
     },
     // receiver 
@@ -340,16 +310,37 @@ var FreshfoneWarmTransfer;
     setReceiverStatus: function() {
       this.$transferInfo.find('.transfer-status div').hide();
       this.$transferInfo.find('.transfer-status .completed').show();
-    },
-    loadReceiverDependencies: function(freshfoneSocket) {
-      this.freshfoneSocket = freshfoneSocket;
-      this.bindReceiverSocketEvents();
-    },
-    bindReceiverSocketEvents: function() {
-      var self = this;
-      this.freshfoneSocket.freshfone_socket_channel.on('parent_call_completed', function(data) {
-        self.parentCallCompleted(data.call_sid, data.call_id);
-      });
     }
   }
+  $(document).ready(function() {
+    var freshfone_socket_event = freshfonesocket.freshfone_socket_channel;
+    freshfone_socket_event.on('parent_call_completed', function(data) {
+      freshfonecalls.freshfoneWarmTransfer.parentCallCompleted(data.call_sid, data.call_id);
+    });
+    
+    freshfone_socket_event.on('warm_transfer_success', function(data) {
+      freshfonecalls.freshfoneWarmTransfer.success();
+    });
+
+    freshfone_socket_event.on(' warm_transfer_cancel_failed', function(data) {
+      freshfonecalls.freshfoneWarmTransfer.cancelError();
+    });
+
+    freshfone_socket_event.on('warm_transfer_reverted', function(data) {
+      freshfonecalls.freshfoneWarmTransfer.transfer_revert(data.call_sid, data.call_id);
+    });
+
+    freshfone_socket_event.on('warm_transfer_status', function(data) {
+      freshfonecalls.freshfoneWarmTransfer.notAvailable(data.call_status, data.call_sid);
+    });
+
+    freshfone_socket_event.on('warm_transfer_cancel', function(data) {
+      freshfonecalls.freshfoneWarmTransfer.callCompleted('canceled');
+    });
+
+    freshfone_socket_event.on('warm_transfer_resume', function(data) {
+      freshfonecalls.freshfoneWarmTransfer.call_resume();
+    });
+  });
+
 }(jQuery));

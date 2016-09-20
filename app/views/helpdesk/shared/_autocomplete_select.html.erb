@@ -24,9 +24,10 @@ if selected_values
   end
 
   selected_values.each do |item|
-    hash_val << "{id: '#{item.id}',
-                  value: '#{escape_javascript(item.name)}',
-                  text: '#{escape_javascript(item.name)}'}"
+    item_id = (container == "tags" ? item.name : item.id)
+    hash_val << "{ id: '#{item_id}',
+                   value: '#{escape_javascript(item.name)}',
+                   text: '#{escape_javascript(item.name)}'}"
   end
 end
 %>

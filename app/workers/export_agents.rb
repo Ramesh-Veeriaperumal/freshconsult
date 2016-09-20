@@ -87,7 +87,7 @@ class ExportAgents < BaseWorker
     end
 
     def mail_to_user
-      DataExportMailer.deliver_agent_export({
+      DataExportMailer.send_later(:deliver_agent_export, {
         :user   => User.current, 
         :domain => @portal_url,
         :url    => hash_url(@portal_url)

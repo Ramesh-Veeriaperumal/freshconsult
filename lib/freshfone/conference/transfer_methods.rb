@@ -29,6 +29,7 @@ module Freshfone::Conference::TransferMethods
       begin
         notifier.notify_transfer_success(current_call)
         notifier.cancel_other_agents transfer_leg
+        current_call.children.last.inprogress!
         current_call.completed!
         telephony.initiate_agent_conference(
           wait_url: target_agent_wait_url, sid: params[:CallSid])

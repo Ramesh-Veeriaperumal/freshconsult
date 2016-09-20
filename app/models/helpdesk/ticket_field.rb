@@ -108,6 +108,8 @@ class Helpdesk::TicketField < ActiveRecord::Base
   scope :agent_required_fields, :conditions => { :required => true }
   scope :type_field, :conditions => { :name => "ticket_type" }
   scope :status_field, :conditions => { :name => "status" }
+  scope :default_company_field, :conditions => {:name => "company"}
+  scope :requester_field, :conditions => {:name => "requester"}
   scope :nested_fields, :conditions => ["flexifield_def_entry_id is not null and field_type = 'nested_field'"]
   scope :nested_and_dropdown_fields, :conditions=>["flexifield_def_entry_id is not null and (field_type = 'nested_field' or field_type='custom_dropdown')"]
   scope :event_fields, :conditions=>["flexifield_def_entry_id is not null and (field_type = 'nested_field' or field_type='custom_dropdown' or field_type='custom_checkbox')"]
