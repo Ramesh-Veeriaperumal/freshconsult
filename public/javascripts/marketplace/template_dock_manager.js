@@ -222,7 +222,6 @@ var TemplateDockManager   = Class.create({
           developed_by: extensions.account,
           is_suggestion: isSuggestion,
           is_from_search: that.isSearched,
-          is_from_installed : jQuery(obj).hasClass("moreinfo-lnk"),
           time: new Date()
         });
 
