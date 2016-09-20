@@ -64,9 +64,11 @@
     jQuery("#FilterOptions input[name=data_hash]").val(query_hash.toJSON()).trigger("change");
   }
 
-  function toggle_save_and_refresh() {
-    jQuery("#active_filter").addClass('unsaved');
-    refresh_tickets();
+  function toggle_save_and_refresh(params) {
+    if(params !== 'customTrigger'){
+      jQuery("#active_filter").addClass('unsaved');
+      refresh_tickets();
+    }
   }
 
   function showSave() {
