@@ -5,7 +5,7 @@ module Integrations::Marketplace::GoogleProxySignupHelper
     create_google_remote_account(@account, @remote_id, proxy_auth_user)
     user = @account.users.find_by_email(@email) || new_user(@account, @name, @email)
     create_auth(user, @uid, @account.id)
-    domain_arg = @account.full_domain
+    domain_arg = @account.host
     random_key = SecureRandom.hex
     set_redis_sso(random_key, @uid)
     url = redirect_url(@account, domain_arg, random_key)
