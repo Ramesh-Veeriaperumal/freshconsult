@@ -35,10 +35,10 @@ module HelpdeskReports
         options.merge!(extra_options) if extra_options
         
         if file_path.blank?
-          @scheduled_report ? ScheduledTaskMailer.send_later(:report_no_data_email, options, @scheduled_report) 
-                              : ReportExportMailer.send_later(:no_report_data, options)
+          @scheduled_report ? ScheduledTaskMailer.report_no_data_email(options, @scheduled_report) 
+                              : ReportExportMailer.no_report_data(options)
         elsif @attachment_via_s3 && @scheduled_report #scheduled report to be sent as email-attachment only(temporary)
-          ReportExportMailer.send_later(:exceeds_file_size_limit, options)  
+          ReportExportMailer.exceeds_file_size_limit(options)  
         else
           if @attachment_via_s3
             file_name = file_path.split("/").last
@@ -46,8 +46,8 @@ module HelpdeskReports
           else
             options.merge!(file_path: file_path) # Attach file in mail itself
           end
-          @scheduled_report ? ScheduledTaskMailer.send_later(:email_scheduled_report, options, @scheduled_report)
-                              : ReportExportMailer.send_later(:bi_report_export, options)
+          @scheduled_report ? ScheduledTaskMailer.email_scheduled_report(options, @scheduled_report)
+                              : ReportExportMailer.bi_report_export(options)
         end
       ensure
         FileUtils.rm_f(file_path) if file_path
