@@ -12,7 +12,7 @@
 # It's strongly recommended to check this file into your version control system.
 
 
-ActiveRecord::Schema.define(:version => 20160825085738) do
+ActiveRecord::Schema.define(:version => 20160831062456) do
   
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -3078,6 +3078,7 @@ ActiveRecord::Schema.define(:version => 20160825085738) do
   add_index "solution_articles", ["account_id", "folder_id", "created_at"], :name => "index_solution_articles_on_acc_folder_created_at"
   add_index "solution_articles", ["account_id", "folder_id", "position"], :name => "index_solution_articles_on_account_id_and_folder_id_and_position"
   add_index "solution_articles", ["account_id", "folder_id", "title"], :name => "index_solution_articles_on_account_id_and_folder_id_and_title", :length => {"account_id"=>nil, "folder_id"=>nil, "title"=>10}
+  add_index "solution_articles", ["account_id", "language_id", "hits"], :name => "index_solution_articles_on_account_id_language_id_hits"
   add_index "solution_articles", ["account_id", "parent_id", "language_id"], :name => "index_articles_on_account_id_parent_id_and_language"
   add_index "solution_articles", ["folder_id"], :name => "index_solution_articles_on_folder_id"
 
