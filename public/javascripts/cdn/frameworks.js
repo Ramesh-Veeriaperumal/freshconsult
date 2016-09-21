@@ -59,4 +59,7 @@
 //= require redactor/freshdesk_redactor.js
 //= require custom_widget.js
 //= require ticket_list_sidebar.js
+//= require app/realtime_dashboard/plugins/highstock
+//= require app/realtime_dashboard/plugins/highcharts-more
+//= require app/realtime_dashboard/plugins/solid-gauge
 //= require app/realtime_dashboard_persist.js
