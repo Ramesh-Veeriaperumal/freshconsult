@@ -40,6 +40,7 @@
       autoresize: false,
       mobile: false,
       buttons: ['bold', 'italic', 'underline', '|', 'unorderedlist', 'orderedlist', '|', 'fontcolor', 'backcolor', '|', 'link'],
+      popover: true,
       keyupCallback: function(ele,event) {
         var $item = $ticket_desc;
         var w = ele.$el.data('focusIncount') || 0
