@@ -15,6 +15,10 @@ class TicketFieldDecorator < ApiDecorator
     record.has_section?
   end
   
+  def belongs_to_section?
+    record.field_options.try(:[], 'section').present?
+  end
+  
   def default_requester?
     @field_type ||= field_type == 'default_requester'
   end
