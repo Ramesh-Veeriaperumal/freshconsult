@@ -2093,6 +2093,11 @@ li {
         margin-left: 5px;
         font-weight: bold;
     }
+    .hyphernate{
+            word-break: break-word;
+            -ms-word-wrap: break-word;
+            word-wrap: break-word;
+    }
 }
 
 .commentbox.u-styled {
