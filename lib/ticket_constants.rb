@@ -2,6 +2,8 @@ module TicketConstants
   
   CHAT_SOURCES = { :snapengage =>  "snapengage.com", :olark => "olark.com"}
 
+  MAX_RELATED_TICKETS = 300
+
   BUSINESS_HOUR_CALLER_THREAD = "business_hour"
   
   OUT_OF_OFF_SUBJECTS = [ "away from the office", "out of office", "away from office","mail delivery failed","returning your reply to helpdesk message", "vacation" ]
@@ -61,13 +63,37 @@ module TicketConstants
   TYPE_KEYS_BY_TOKEN = Hash[*TYPE.map { |i| [i[0], i[2]] }.flatten]
   TYPE_NAMES_BY_SYMBOL = Hash[*TYPE.map { |i| [i[0], i[1]] }.flatten]
 
+  TICKET_ASSOCIATION = [
+    [:parent, 1],
+    [:child, 2],
+    [:tracker, 3],
+    [:related, 4]
+  ]
+
+  TICKET_ASSOCIATION_KEYS_BY_TOKEN = Hash[*TICKET_ASSOCIATION.map { |i| [i[0], i[1]] }.flatten]
+  TICKET_ASSOCIATION_TOKEN_BY_KEY = Hash[*TICKET_ASSOCIATION.map { |i| [i[1], i[0]] }.flatten]
+
+  TICKET_ASSOCIATION_FILTER = [
+    [ :nil,               'dots',           []],
+    [ :parent,            'parent',         [TICKET_ASSOCIATION_KEYS_BY_TOKEN[:parent]]],
+    [ :child,             'child',          [TICKET_ASSOCIATION_KEYS_BY_TOKEN[:child]]], 
+    [ :tracker,           'tracker',        [TICKET_ASSOCIATION_KEYS_BY_TOKEN[:tracker]]], 
+    [ :related,           'related',        [TICKET_ASSOCIATION_KEYS_BY_TOKEN[:related]]], 
+    [ :both,              'both',           [TICKET_ASSOCIATION_KEYS_BY_TOKEN[:parent], TICKET_ASSOCIATION_KEYS_BY_TOKEN[:tracker]]], 
+    [ :no_association,    'no_association', [-1]]  
+  ]
+
+  TICKET_ASSOCIATION_FILTER_OPTIONS = TICKET_ASSOCIATION_FILTER.map { |i| [i[1], i[2].join(',')] }
+  TICKET_ASSOCIATION_FILTER_NAMES_BY_KEY = Hash[*TICKET_ASSOCIATION_FILTER.map { |i| [i[2].join(','), i[1]] }.flatten]
+  TICKET_ASSOCIATION_FILTER_KEYS_BY_TOKEN = Hash[*TICKET_ASSOCIATION_FILTER.map { |i| [i[0], i[2].join(',')] }.flatten]
+
   DEFAULT_COLUMNS_ORDER = [ :responder_id, :group_id, :created_at, :due_by, :status, :priority,
     :ticket_type, :source, "helpdesk_tags.name", :owner_id,
-    :requester_id, "helpdesk_schema_less_tickets.product_id" ]
+    :requester_id, "helpdesk_schema_less_tickets.product_id", "helpdesk_schema_less_tickets.#{Helpdesk::SchemaLessTicket.association_type_column}" ]
   
   ARCHIVE_DEFAULT_COLUMNS_ORDER = [ :responder_id, :group_id, :created_at, :due_by, :status, :priority,
     :ticket_type, :source, "helpdesk_tags.name", "users.customer_id", :owner_id,
-    :requester_id, :product_id ]
+    :requester_id, :product_id, "helpdesk_schema_less_tickets.#{Helpdesk::SchemaLessTicket.association_type_column}" ]
 
   SHARED_AGENT_COLUMNS_ORDER = ["helpdesk_schema_less_tickets.long_tc04", "any_agent_id"]
   SHARED_GROUP_COLUMNS_ORDER = ["helpdesk_schema_less_tickets.long_tc03", "any_group_id"]
@@ -84,7 +110,8 @@ module TicketConstants
     [ :owner_id,            "customers",        :customer],
     [ :created_at,          "created_at",       :created_at],
     [ :requester_id,        'requester',        :requester],
-    [ "helpdesk_schema_less_tickets.product_id",'products', :dropdown]
+    [ "helpdesk_schema_less_tickets.product_id",'products', :dropdown],
+    [ "helpdesk_schema_less_tickets.#{Helpdesk::SchemaLessTicket.association_type_column}",  'association_type', :dropdown]
   ]
   ARCHIVE_DEFAULT_COLUMNS =  [
     [ :status,              'status',           :dropdown],
@@ -99,7 +126,8 @@ module TicketConstants
     [ :owner_id,            "customers",        :customer],
     [ :created_at,          "created_at",       :created_at],
     [ :requester_id,        'requester',        :requester],
-    [ :product_id,          'products',         :dropdown]
+    [ :product_id,          'products',         :dropdown],
+    [ "helpdesk_schema_less_tickets.#{Helpdesk::SchemaLessTicket.association_type_column}",  'association_type', :dropdown]
   ]
   
   
@@ -292,5 +320,31 @@ module TicketConstants
   #TODO : change the format of the date based on the account config
   def self.created_date_range_default
     "#{1.month.ago.strftime("%d %b %Y")} - #{1.days.ago.strftime("%d %b %Y")}"
+  end
+
+  def self.feature_based_association_type
+    parent_child_feature = Account.current.features_included?(:parent_child_tickets)
+    link_tickets_feature = Account.current.link_tickets_enabled?
+    return [] unless parent_child_feature || link_tickets_feature
+    list = [TICKET_ASSOCIATION_FILTER[0]]
+    if parent_child_feature
+      list << TICKET_ASSOCIATION_FILTER[1]
+      list << TICKET_ASSOCIATION_FILTER[2]
+    end
+    if link_tickets_feature
+      list << TICKET_ASSOCIATION_FILTER[3]
+      list << TICKET_ASSOCIATION_FILTER[4]
+    end
+    list << TICKET_ASSOCIATION_FILTER[5] if parent_child_feature && link_tickets_feature
+    list << TICKET_ASSOCIATION_FILTER[6]
+    list
+  end
+
+  def self.association_type_filter_list
+    Hash[*feature_based_association_type.map { |i| [i[2].join(','), I18n.t(i[1])] }.flatten]
+  end
+
+  def self.association_type_filter_names
+    TICKET_ASSOCIATION_FILTER.map { |i| [i[1], i[2].join(',')] }
   end
 end

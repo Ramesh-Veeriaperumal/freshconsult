@@ -19,6 +19,7 @@ class Helpdesk::ConversationsController < ApplicationController
   include Ecommerce::Ebay::ReplyHelper
   
   before_filter :build_note_body_attributes, :build_conversation, :except => [:full_text, :traffic_cop]
+  before_filter :validate_tkt_type, :only => :broadcast
   before_filter :validate_fwd_to_email, :only => [:forward, :reply_to_forward]
   before_filter :check_for_kbase_email, :only => [:reply, :forward]
   before_filter :set_quoted_text, :only => :reply
@@ -26,7 +27,8 @@ class Helpdesk::ConversationsController < ApplicationController
     :fetch_item_attachments, :set_native_mobile, :except => [:full_text, :traffic_cop]
   before_filter :set_ticket_status, :except => [:forward, :reply_to_forward, :traffic_cop]
   before_filter :load_item, :only => [:full_text]
-  before_filter :verify_permission, :only => [:reply, :forward, :reply_to_forward, :note, :twitter, :facebook, :mobihelp, :ecommerce, :traffic_cop, :full_text]
+  before_filter :verify_permission, :only => [:reply, :forward, :reply_to_forward, :note, :twitter,
+   :facebook, :mobihelp, :ecommerce, :traffic_cop, :full_text, :broadcast]
   before_filter :traffic_cop_warning, :only => [:reply, :twitter, :facebook, :mobihelp, :ecommerce]
   before_filter :check_for_public_notes, :only => [:note]
   before_filter :validate_ecommerce_reply, :only => :ecommerce
@@ -146,6 +148,16 @@ class Helpdesk::ConversationsController < ApplicationController
     end
   end
 
+  def broadcast
+    if @item.save_note
+      flash_message "success"
+      process_and_redirect
+    else
+      flash_message "failure"
+      create_error(:note)
+    end
+  end
+
   protected
 
     def verify_permission
@@ -172,6 +184,10 @@ class Helpdesk::ConversationsController < ApplicationController
       @item.notable = @parent
       set_item_user
       @item
+    end
+
+    def validate_tkt_type
+      create_error(:note) unless @parent.tracker_ticket?
     end
 
     def cname
@@ -290,6 +306,8 @@ class Helpdesk::ConversationsController < ApplicationController
       def flash_message(status)
         if @item.source == Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['mobihelp_app_review']
           flash[:notice] = t(:"flash.tickets.notes.send_review_request.#{status}")
+        elsif @item.broadcast_note_to_tracker? and status == "success"
+          flash[:notice] = t(:"flash.tickets.notes.broadcast.#{status}", :count => @item.notable.related_tickets_count)
         else
           flash[:notice] = I18n.t(:"flash.general.create.#{status}", :human_name => cname.humanize.downcase)
         end

@@ -1,3 +1,4 @@
+@import "../common-popover";
 @import "../../fonts/glyphs-variables";
 
 // Requester Info Tabs in Ticket Details page
@@ -42,14 +43,17 @@ li {
     }
 }
 
-.tkt-wrapper-inner {
-    width: 98%;
+//ticket tracker ui changes
+
+
+.tkt-wrapper-inner{
+	width: 98%; 
     /* It must be adjust the width for ".leftcontent .at_the_top" class*/
-    @include padding-left(25px);
-    margin: 0 auto;
-    &.compose_email {
-        @include padding-left(0);
-    }
+	@include padding-left(25px);
+	margin: 0 auto;
+	&.compose_email {
+		@include padding-left(0);
+	}
 }
 
 .tkt-wrap {
@@ -1074,6 +1078,277 @@ li {
         padding-bottom: 10px;
     }
 }
+
+/*Comment-box*/
+.commentbox{
+	position: relative;
+	margin-top: 10px;
+	display: block;
+	@include margin-left(29px);
+	padding: 10px;
+	line-height: 150%;
+	background: #fefef0;
+	border: 1px solid #ddd;
+	@include min-height(30px);
+	@include border-radius(4px);
+	@include box-shadow(0px 2px 4px rgba(0, 0, 0, 0.05));
+
+	&:after, &:before {
+	 @include right(100%);
+		border: solid transparent;
+		content: " ";
+		height: 0;
+		width: 0;
+		position: absolute;
+		pointer-events: none;
+	}
+
+	&:after {
+		border-color: rgba(255, 253, 248, 0);
+		@include border-right-color(#fffdf8);
+		border-width: 8px;
+		top: 23px;
+		margin-top: -8px;
+	}
+
+	&:before {
+		border-color: rgba(204, 204, 204, 0);
+		@include border-right-color(#ddd);
+		border-width: 9px;
+		top: 23px;
+		margin-top: -9px;
+		@include transition(border 200ms cubic-bezier(0.65, 0.05, 0.36, 1));
+	}
+
+	&.broadcast_message_box {
+		background: #fafafa;
+		&:before, &:after {
+			display: none;
+		}
+
+        .ficon-broadcast-tracker{
+            position: relative;
+            top: 2px;
+            padding-right: 3px;
+        }
+
+        .q-marker {
+            margin-top: 0px;
+        }
+
+		#ticket_original_request {
+			margin-top: 10px;
+			height: auto;
+    		overflow: hidden;
+
+            &.collapsed {
+                height: 65px;
+                cursor: pointer;
+            }
+		}
+
+		.attach_broadcasted_msg{
+		    border-top: 1px solid #ddd;
+            margin-top: 15px;
+            padding-top: 8px;
+		}
+	}
+	&:hover{
+		&:before{
+			@include border-right-color(#bbb);
+			@include transition(border 200ms cubic-bezier(0.65, 0.05, 0.36, 1));
+		}
+	}
+
+	blockquote.freshdesk_quote {
+		font-size: 13px;
+		line-height: 18px;
+		margin: 10px 3px 5px;
+		color: #666;
+		@include border-left(1px dotted #999);
+		@include padding(0 0 0 7px);
+	}
+
+	.actions {
+		@include float(right);
+		display: block;
+		width: auto;
+		visibility: hidden;
+		@include opacity(0);
+		@include transition(opacity 200ms cubic-bezier(0.65, 0.05, 0.36, 1)); 
+		@include margin(-9px -10px 0 0);
+	}
+
+	.note-label{
+		position: absolute;
+		right: 15px;
+		top: 12px;
+		background-color: #ffd16d;
+		border-radius: 16px;
+		color: #333;
+		font-size: 10px;
+		box-shadow: 0 0 0px 1px #fff;
+		font-weight: 500;
+	}
+
+	a.conv-action-icon {
+		height:32px;
+		@include float(right);
+		display: block;
+		color: rgba(0,0,0,0.35);
+		font-size: 20px;
+		width: 35px;
+		padding-left: 15px;
+		padding-top: 10px;
+		&:first-child {
+			@include border-radius(0 4px 0 0);
+		}
+
+		&:hover {
+			color: #000;
+		}
+		&.conv-actions-edit {
+			font-size: 22px;
+		}
+		&.conv-actions-split {
+			font-size: 21px;
+		}
+	}
+
+
+
+	&:hover {
+		.actions {
+			visibility: visible;
+			@include opacity(1);
+			@include transition(opacity 200ms cubic-bezier(0.65, 0.05, 0.36, 1));
+		}
+	}
+
+	.commentbox-menu{
+		@include float(right);
+		@include margin-left(10px);
+	}
+
+	.author-mail-detail {
+		margin: 0;
+		color: #a2a19f;
+		@include text-align(left);
+		padding: 0;
+		line-height: 130%;
+		a{ font-weight:bold; }
+
+		.ticket-details-twitter{
+			width: 200px;
+			@include float(right);
+			margin: 0 10px;
+			@include text-align(right);
+			a{ font-weight: normal; }
+		}
+		.system-rule-link{
+			color: #a2a19f;
+			font-weight: 400;
+			&:hover{
+				color: #06c;
+			}
+		}
+	}
+
+	.last-modified-detail {
+		a{ 
+			font-weight:normal;
+			color: #999;
+			&:hover{
+				color:#037;
+			}
+		};
+	}
+
+	.details, #ticket_original_request {
+		margin-top: 30px;
+		overflow-x: auto;
+		@include text-formatting();
+		// table:not(.p-table){
+		// 	&, td, th{
+		// 		border: none;
+		// 	}
+		// }
+		.freshdesk_satisfaction_survey {
+			display: none;
+		}
+	}
+
+	.tag {
+		@include float(right);
+		background: #bbb;
+		color: #FFF;
+		border: solid 1px #FFF;
+		max-width: 150px;
+		display: block;
+		@include border-radius(5px);
+		font-size: 11px;
+		padding: 0px 8px 2px;
+		font-weight: 500;
+		text-overflow: ellipsis;
+		height: 18px;
+		white-space: nowrap;
+		overflow: hidden;
+	}
+
+	&.private-note .helpdesk_note,
+	.fb-reply {
+		@include border-left(solid 1px #e9e9e9);
+		display: block;
+		@include margin(-20px 0 0 25px);
+		@include padding-left(10px);
+	}
+	&.commentbox-social {
+		.helpdesk_note{
+			@include border-left(0);
+		}
+		.commentbox-social-icon{
+			position:relative;
+			top:6px;
+			color:#999;
+			font-size:23px;
+		}
+	}
+
+	/* For old satisfaction report block */
+	.old-survey-note{
+		border-left: 1px #e9e9e9 solid;
+		padding-left: 15px;
+	}
+	.details{
+		.old-survey-text{ 
+			font-size: 1.1em;
+			margin-bottom: 10px;
+			font-weight: bold;
+			margin-left: 0px;
+		}
+	}
+	/* old satisfaction report block ends here*/
+
+	.details .smiley{
+		position: static;
+		@include float(left);
+		display: inline-block;
+		width: 20px;
+		height: 20px;
+		@include margin-right(10px);
+	}
+
+	.details .survey-text {
+		font-size: 1.1em;
+		margin-bottom: 10px;
+		margin-left: 5px;
+		font-weight: bold;
+	}
+}
+.commentbox.u-styled{
+	border-radius: 0 0 5px 5px;
+}
+
 /*reply 2 forward*/
 .single_file.color {
     .attach-wrapper {
@@ -1085,6 +1360,7 @@ li {
         top: 14px;
     }
 }
+
 .single_file.bulk {
     margin-bottom: 15px;
    .attach-wrapper {
@@ -1843,6 +2119,20 @@ li {
         }
         &:hover {
             border: solid 1px #999;
+        }
+    }
+    #cnt-broadcast{
+        .ui-form .inline-field.clearField{
+            border-top: none;
+            border-radius: inherit;
+            margin-top: -1px;
+        }
+        .ficon-broadcast-tracker{
+            border-bottom: none;
+            font-size: 17px;
+            padding-right: 5px;
+            position: relative;
+            top: 1px;   
         }
     }
     .request_panel .ui-form .request_form_options {

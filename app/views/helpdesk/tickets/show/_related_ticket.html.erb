@@ -1,0 +1,77 @@
+<li id="related_ticket_list_item_<%= related_ticket.display_id %>">
+  <div class="row name td-ticket-details">
+    <div class="ticket_subject pull-left">
+      <span class="sc-item-cursor priority-border shorcuts-info"></span>
+      <h4 class="hyphernate">
+        <% if current_user.has_ticket_permission?(related_ticket) %>
+          <%= pjax_link_to(related_ticket.subject, helpdesk_ticket_url(related_ticket), :class => "ellipsis title_sub") %>
+        <% else %>
+          <%= related_ticket.subject %>
+        <% end -%>
+        <span>#<%= related_ticket.display_id %></span>
+      </h4>
+      <div class="info-data hideForList">
+        <div class="information ellipsis">
+          <% if related_ticket.outbound_email? %>
+            <%= t("ticket.ticket_to", :username => requester(related_ticket)).html_safe %>
+          <% else %>
+            <%= t("ticket.ticket_from", :username => requester(related_ticket)).html_safe %>          
+          <% end -%>
+        </div>
+        <div class="emphasize">
+          <%= sla_status(related_ticket, current_account.onhold_and_closed_statuses_from_cache ) %>
+        </div>
+      </div>
+    </div>
+    <div class="tkt_labels pull-right clear-left-margin">
+      <ul>
+        <li class="" title="" >
+          <label><%=t('ticket.assigned_agent')%>: </label>
+          <% if related_ticket.freshness == :new %>
+            <%=t('ticket.assigned_none')%>
+          <% else %>
+            <%=h(related_ticket.responder.display_name)%>
+          <% end %>
+        </li>
+        <li class="" title="">
+          <label><%=t('ticket.status')%>: </label>
+          <%= h(related_ticket.status_name.html_safe) %>
+        </li>
+        <li class="" title="">
+          <label><%=t('ticket.priority')%>: </label>
+            <%= h(related_ticket.priority_name) %>
+        </li>
+      </ul>
+    </div>
+    <div class="actions">
+        <a href="#unlink_from_tracker_<%=related_ticket.display_id%>"
+          data-action="unlink_from_tracker_<%=related_ticket.display_id%>"
+          id="unlink_asscociation"
+          class="btn pull-right btn-collapse"
+          data-width="375"
+          rel="freshdialog"
+          data-title="<%= t("ticket.link_tracker.unlink") %>"
+          data-template-footer="false"
+          data-target="#unlink_from_tracker_<%=related_ticket.display_id%>"
+          >
+          <span class="ficon-unlink-tracker "></span>
+           <%= t("ticket.link_tracker.unlink") %>
+        </a>
+    </div>
+    <div id="unlink_from_tracker_<%=related_ticket.display_id%>" class="hide">
+      <div class="text_info_lbl">
+        <span><%= t("ticket.link_tracker.unlink_warning") %> <%= link_to(@ticket.try(:subject), helpdesk_ticket_url(@ticket), class: "truncate") %> #<%= @ticket.display_id %>.</span><br>
+        <span><%= t("ticket.link_tracker.unlink_warning1") %></span>
+      </div>
+      <div class="btn-toolbar pull-right">
+        <a id="cancel_unlink" href="#" class="btn"><%= t('account.cancel') %></a>
+        <span class="btn-group dropdown">
+          <button id="confirm_unlink_ticket" value="<%= related_ticket.display_id %>" 
+            class="btn btn-primary" data-loading-text=<%= t("ticket.link_tracker.unlink_submitting") %> 
+            data-tracker-id="<%= @ticket.display_id %>" data-tracker="true">
+            <%= t("ticket.link_tracker.unlink_submit") %>
+        </span>  
+      </div>
+    </div>
+  </div>
+</li>

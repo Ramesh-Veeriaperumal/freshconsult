@@ -13,6 +13,11 @@
     field_label = ( field.is_default_field? ) ? I18n.t("ticket_fields.fields.#{(field.name)}").html_safe :
                                                 (field.label).html_safe
   %>
+  <% if tracker_ticket_requester?(field.dom_type) %>
+    <%= render :partial => "helpdesk/tickets/ticket_widget/agent_requester" %>
+    <% next %>
+  <% end %>
+
   <%= construct_new_ticket_element f, :helpdesk_ticket,
                                   field,
                                   field_label,

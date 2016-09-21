@@ -153,7 +153,13 @@ swapEmailNote = function(formid, link){
 	if (activeForm.data('type') == 'textarea') {
 		//For Facebook and Twitter Reply forms.
 		$element = $('#' + formid + ' textarea').get(0);
-		$element.value = $(link).data('replytoHandle');
+		//changes done as part of linked tickets
+		if($(link).data('replytoHandle')){
+			if($element.value.indexOf($(link).data('replytoHandle')) == -1){
+				$element.value = $(link).data('replytoHandle')+$element.value;
+				$element.trigger('change');
+			}
+		}
 		$element.value += $element.value.length ? " " : "";
 		setCaretToPos($element, $element.value.length);
 	} else {
@@ -599,6 +605,10 @@ var scrollToError = function(){
       		$('#helpdesk_ticket_internal_agent_id').html("<option value=''>...</option>").trigger('change');
 			$('#TicketProperties .default_internal_agent').removeClass('sloading loading-small loading-right');
 		}  
+	});
+
+	$('body').on("click.ticket_details", '.broadcast_message_box a:not("#FwdButton, .q-marker")', function(ev){
+		this.attr('target', '_blank');
 	});
 
 	$("body").on('click.ticket_details', '.widget.load_on_click.inactive', function(ev){
@@ -1062,6 +1072,8 @@ var scrollToError = function(){
 
 	});
 
+	jQuery('#ticket-association').trigger('afterShow');
+
 	var handleIEReply = function(_form) {
 		seperateQuoteText(_form);
 		if (_form.data('cntId') && _form.data('cntId') == 'cnt-reply') {
@@ -1519,6 +1531,32 @@ var scrollToError = function(){
 		if($(this).data('note-type') === 'note'){
 			addNoteAgents();
 		}
+
+		//code for collapsing the broadcat message box
+		if(parseFloat($('.broadcast_message_box #ticket_original_request [dir="ltr"]').css('height')) > 64) {
+			$('.broadcast_message_box #ticket_original_request').addClass('collapsed');
+			$('#recent_broadcasted_message .quoted_text').css('display', 'inherit');
+		}
+		//hiding attachment button while adding broadcast message
+		$('#cnt-broadcast #attachment-options-note').css('display', 'none');
+		//appending the broadcast message into reply---changes for linked tickets field
+		if($(this).data('reply-type') === 'broadcast'){
+			var element_id = $(this).data('editorId'),
+			$element = jQuery('[id$=' + element_id +']');
+			var broadcastMsg = $('.broadcast_message_box #ticket_original_request div').html();
+
+			if($element.data('redactor')){
+				$element.data('redactor').saveSelection();
+
+				if($element){
+					$element.data('redactor').insertOnCursorPosition('inserthtml',broadcastMsg);
+					$element.getEditor().focus();
+			 	}
+			}else {
+				var existingReplyMsg = $('[id$=cnt-reply-body]').val();
+				$('[id$=cnt-reply-body]').val(existingReplyMsg+'<br/>'+broadcastMsg).trigger('change');
+			}
+		}
 		swapEmailNote('cnt-' + $(this).data('note-type'), this);
 	});
 
@@ -1528,6 +1566,19 @@ var scrollToError = function(){
 		}
 		ev.preventDefault();
 		ev.stopPropagation();
+	});
+
+	//show full broadcast message
+	if(parseFloat($('.broadcast_message_box #ticket_original_request [dir="ltr"]').css('height')) <= 65) {
+		$('.broadcast_message_box #ticket_original_request').removeClass('collapsed');
+		$('.broadcast_message_box .quoted_text').css('display', 'none');
+	}
+	
+	$('body').on('click.ticket_details', '.broadcast_message_box .quoted_text, #ticket_original_request', function(e){
+		e.preventDefault();
+		e.stopPropagation();
+		$('.broadcast_message_box #ticket_original_request').removeClass('collapsed');
+		$('.broadcast_message_box .quoted_text').css('display', 'none');
 	});
 	//ScrollTo the latest conversation
 

@@ -1,3 +1,5 @@
+	@import "common-popover";
+
 	.view_filters{
 	display:inline-block;
 	span.unsaved_star {
@@ -474,6 +476,13 @@
 	.company-name{
 		&:before{ content: "("; }
 		&:after{ content: ")"; }
+	}
+
+	.association_type {
+		border: 1px solid #ccc;
+    	padding: 0px 5px;
+    	color: #333;
+    	border-radius: 2px;
 	}
 
 	.headings td.check {

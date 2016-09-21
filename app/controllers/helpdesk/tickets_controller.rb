@@ -60,8 +60,7 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :load_ticket,
     :only => [:edit, :update, :execute_scenario, :close, :change_due_by, :print, :clear_draft, :save_draft,
               :draft_key, :get_ticket_agents, :quick_assign, :prevnext, :status, :update_ticket_properties,
-              :activities, :activitiesv2, :activities_all]
-
+              :activities, :activitiesv2, :activities_all, :unlink, :related_tickets, :ticket_association]
   before_filter :load_ticket_with_notes, :only => [:show]
 
   before_filter :check_outbound_permission, :only => [:edit, :update]
@@ -90,6 +89,8 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :load_note_reply_cc, :only => [:reply_to_forward]
   before_filter :load_note_reply_from_email, :only => [:reply_to_forward]
   before_filter :show_password_expiry_warning, :only => [:index, :show]
+  before_filter :load_related_tickets, :only => [:related_tickets]
+  before_filter :load_tracker_ticket, :only => [:link, :unlink]
 
   after_filter  :set_adjacent_list, :only => [:index, :custom_search]
   before_filter :fetch_item_attachments, :only => [:create, :update]
@@ -330,6 +331,7 @@ class Helpdesk::TicketsController < ApplicationController
         @ticket_notes_total = run_on_slave { @ticket.conversation_count }
         last_public_note    = run_on_slave { @ticket.notes.visible.last_traffic_cop_note.first }
         @last_note_id       = last_public_note.blank? ? -1 : last_public_note.id
+        @last_broadcast_note = run_on_slave { @ticket.notes.last_broadcast_note.first } if @ticket.related_ticket?
       }
       format.atom
       format.xml  {
@@ -649,8 +651,9 @@ class Helpdesk::TicketsController < ApplicationController
     end
 
     msg1 = render_to_string(
-      :inline => t("helpdesk.flash.flagged_spam",
+      :inline => t("helpdesk.flash.spam",
                       :tickets => get_updated_ticket_count,
+                      :text => associations_flash_text,
                       :undo => "<%= link_to(t('undo'), { :action => :unspam, :ids => params[:ids] }, { :method => :put }) %>"
                   )).html_safe
 
@@ -722,6 +725,44 @@ class Helpdesk::TicketsController < ApplicationController
     })
     flash[:notice] = t(:'flash.tickets.empty_spam.delay_delete')
     redirect_to :back
+  end
+
+  def link
+    params[:ids].present? ? link_multiple : link_to_tracker
+
+    flash[:notice] = @item.errors[:base][0] if @item && @item.errors.any?
+    respond_to do |format|
+      format.html { redirect_to :back }
+      format.js
+    end
+  end
+
+  def unlink
+    @item.association_type = nil
+    @item.tracker_ticket_id = params[:tracker_id]
+    @item.save
+    flash[:notice] = @item.errors.any? ? @item.errors[:base][0] : t(:'flash.tickets.unlink.success')
+    respond_to do |format|
+      format.html { redirect_to :back }
+      format.js { render :file => 'helpdesk/tickets/link.rjs' }
+    end
+  end
+
+  def ticket_association
+    @associates = @ticket.associates unless @ticket.association_type.blank?
+    @last_broadcast_note = run_on_slave { @ticket.notes.last_broadcast_note.first } if @ticket.related_ticket?
+    respond_to do |format|
+      format.html { render :partial => "/helpdesk/tickets/show/ticket_association", :locals => { :ticket => @ticket } }
+    end
+  end
+
+  def related_tickets
+    if params[:page].present?
+      render( :partial => "helpdesk/tickets/show/related_ticket", 
+                    collection: @related_tickets)
+    else
+      render :partial => "helpdesk/tickets/show/related_tickets_container"
+    end
   end
 
   def change_due_by
@@ -813,10 +854,14 @@ class Helpdesk::TicketsController < ApplicationController
     @item.email = params[:helpdesk_ticket][:email]
     @item.group = current_account.groups.find_by_id(params[:helpdesk_ticket][:group_id]) if params[:helpdesk_ticket][:group_id]
     @item.tag_names = params[:helpdesk][:tags] unless params[:helpdesk].blank? or params[:helpdesk][:tags].nil?
-
+    if current_account.link_tickets_enabled? and params[:display_ids].present?
+      @item.association_type = TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:tracker]
+      @item.related_ticket_ids = params[:display_ids].split(',')
+    end
     build_attachments @item, :helpdesk_ticket
     persist_states_for_api
     if @item.save_ticket
+      set_redirect_path if @item.tracker_ticket?
       post_persist
       notify_cc_people cc_emails unless (cc_emails.blank? || @item.outbound_email?)
     else
@@ -1123,7 +1168,11 @@ class Helpdesk::TicketsController < ApplicationController
     end
 
     def get_updated_ticket_count
-      pluralize(@items.length, t('ticket_was'), t('tickets_were'))
+      if @items.length == 1 and @items.first.tracker_ticket?
+        t('tracker_was')
+      else
+        pluralize(@items.length, t('ticket_was'), t('tickets_were'))
+      end
   end
 
    def is_num?(str)
@@ -1684,6 +1733,54 @@ class Helpdesk::TicketsController < ApplicationController
     end
   end
 
+  def set_redirect_path
+    if @item.related_ticket_ids.count == 1
+      params[:redirect_to] = helpdesk_ticket_path(@item.related_tickets.first)
+    else 
+      params[:redirect_to] = helpdesk_tickets_path
+    end
+  end
+
+  def load_related_tickets
+    if @item.tracker_ticket?
+      preload_models = [:requester, :responder, :ticket_states, :ticket_status]
+      conditions = { display_id: @item.associates }
+      paginate_options = { :page => params[:page], :per_page => 30 }
+      @related_tickets = current_account.tickets.preload(preload_models).where(conditions).paginate(paginate_options)
+    end
+  end
+
+  def link_to_tracker
+    load_ticket
+    @item.association_type = TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:related]
+    @item.tracker_ticket_id = @tracker_ticket.display_id
+    flash[:notice] = t(:'flash.tickets.link.success') if @item.save
+  end
+
+  def link_multiple
+    return unless @tracker_ticket.tracker_ticket?
+    if( (@tracker_ticket.related_tickets_count + params[:ids].count) <= TicketConstants::MAX_RELATED_TICKETS ) 
+      Rails.logger.debug "Linking Related tickets [#{params[:ids]}] to tracker_ticket #{params[:tracker_id]}"
+      ::Tickets::LinkTickets.perform_async({ :tracker_id => params[:tracker_id],
+                :related_ticket_ids => params[:ids] })
+      flash[:notice] = t(:'flash.tickets.link.delay_link',
+            :tracker_ticket => params[:tracker_id],
+            :tracker_ticket_subject => h(@tracker_ticket.subject)).html_safe
+    else
+      Rails.logger.debug "Count exceeded when linking[#{params[:ids]}] to tracker_ticket #{params[:tracker_id]}"
+      remaining_count = TicketConstants::MAX_RELATED_TICKETS - @tracker_ticket.related_tickets_count
+      flash[:notice] = t("ticket.link_tracker.remaining_count", :count => remaining_count)
+    end
+  end
+
+  def load_tracker_ticket
+    @tracker_ticket = current_account.tickets.find_by_display_id(params[:tracker_id])
+  end
+
+  def associations_flash_text
+    return unless @items.count == 1 && @items.first.linked_ticket?
+    @items.first.tracker_ticket? ? t('ticket.link_tracker.tracker_delete_message') : t('ticket.link_tracker.related_delete_message')
+  end
 
   def check_domain_exists
       if @company.errors[:"company_domains.domain"].include?("has already been taken")

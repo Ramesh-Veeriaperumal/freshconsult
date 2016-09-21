@@ -6,7 +6,8 @@ module RabbitMq::Subscribers::Tickets::Reports
                              :priority, :ticket_type, :source,
                              :status, :product_id, :owner_id,
                              :isescalated, :fr_escalated, :spam, :deleted,
-                             :long_tc01, :long_tc02, :long_tc03, :long_tc04
+                             :long_tc01, :long_tc02, :long_tc03, :long_tc04,
+                             :int_tc03
                            ]
 
   def mq_reports_ticket_properties(action)

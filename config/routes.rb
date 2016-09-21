@@ -1446,6 +1446,8 @@ Helpkit::Application.routes.draw do
 
   match '/search/tickets.:format', :controller => 'search/tickets', :action => 'index', :method => :post
   match '/search/tickets/filter/:search_field' => 'search/tickets#index'
+  match '/search/ticket_associations/filter/:search_field' => 'search/ticket_associations#index'
+  match '/search/ticket_associations/recent_trackers' => 'search/ticket_associations#index', via: :post
   match '/search/all' => 'search/home#index'
   match '/search/home' => 'search/home#index', :as => :search_home
   match '/search/topics.:format' => 'search/forums#index'
@@ -1806,6 +1808,10 @@ Helpkit::Application.routes.draw do
         get :prevnext
         put :update_requester
         post :create # For Mobile apps backward compatibility.
+        put :link
+        put :unlink
+        get :related_tickets
+        get :ticket_association
       end
 
       resources :surveys do
@@ -1827,6 +1833,7 @@ Helpkit::Application.routes.draw do
           get :traffic_cop
           get :full_text
           post :ecommerce
+        post :broadcast
         end
       end
 

@@ -115,6 +115,8 @@ class Search::EsIndexDefinition
                                       :status_updated_at => { :type => :date, :format => 'dateOptionalTime', :include_in_all => false },
                                   }
                                 },
+                
+                :association_type => { :type => :integer, :include_in_all => false  },
                 :es_from => { :type => :string },
                 :to_emails => { :type => :string },
                 :es_cc_emails => { :type => :string },

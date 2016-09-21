@@ -117,7 +117,7 @@ module RabbitMq::Constants
   
   REPORTS_TICKET_KEYS = ["display_id", "id", "account_id", "agent_id", "group_id", 
     "product_id", "company_id", "status", "priority", "source", "requester_id", "ticket_type", 
-    "visible", "sla_policy_id", "is_escalated", "fr_escalated", "resolved_at", 
+    "visible", "sla_policy_id", "association_type", "is_escalated", "fr_escalated", "resolved_at", 
     "time_to_resolution_in_bhrs", "time_to_resolution_in_chrs", "inbound_count",
     "first_response_by_bhrs", "first_assign_by_bhrs", "created_at", "archive", "actor_type", "actor_id",
     "internal_agent_id", "internal_group_id", 

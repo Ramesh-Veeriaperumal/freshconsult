@@ -458,7 +458,7 @@ module Helpdesk::TicketsHelper
   end
 
   def latest_note_helper(ticket)    
-    latest_note_obj = ticket.notes.visible.exclude_source('meta').newest_first.first
+    latest_note_obj = ticket.notes.visible.exclude_source(['meta', 'tracker']).newest_first.first
     latest_note_hash = {}
     unless latest_note_obj.nil?
         action_msg = latest_note_obj.fwd_email? ? 'helpdesk.tickets.overlay_forward' : (latest_note_obj.note? ? 'helpdesk.tickets.overlay_note' : 'helpdesk.tickets.overlay_reply')
@@ -469,7 +469,7 @@ module Helpdesk::TicketsHelper
           :overlay_time => time_ago_in_words(latest_note_obj.created_at),
         }
       else
-         action_msg = 'helpdesk.tickets.overlay_submitted_ticket'
+         action_msg = "helpdesk.tickets.overlay_submitted_#{ticket.tracker_ticket? ? 'tracker' : 'ticket'}"
          latest_note_hash = {
           :user => ticket.requester,
           :created_at => ticket.created_at,
@@ -640,6 +640,28 @@ module Helpdesk::TicketsHelper
 
   def is_invoice_disabled?(installed_app)
     Integrations::Constants::INVOICE_APPS.include?(installed_app.application.name) && !installed_app.configs_invoices.to_s.to_bool
+  end
+
+  def ticket_association_box
+    links = []
+    links << %(<span class="mr12"> 
+                  <b><a href="#">#{I18n.t('ticket.parent_child.add_child')} </a></b>
+                </span>) if current_account.features_included?(:parent_child_tickets)
+    links << %(<span class="ml12">
+                  <b><a href="#" data-placement = "bottomLeft" class="lnk_tkt_tracker_show_dropdown" id="lnk_tkt_tracker"  role="button" data-toggle="popover" data-dropdown="close" data-ticket-id="#{@ticket.display_id}">#{t('ticket.link_tracker.link_to_tracker')}</a></b>
+                </span>) if current_account.link_tickets_enabled?
+    links.join(links.size > 1 ? '<span class="separator">OR</span>' : '')
+    content_tag(:span, 
+                links.join(links.size > 1 ? '<span class="separator">OR</span>' : '').html_safe, 
+                :class => "text-center block")
+  end
+
+  def tracker_ticket_requester? dom_type
+    dom_type.eql?("requester") and (params[:display_ids].present? || @item.tracker_ticket?) and current_account.link_tickets_enabled? 
+  end
+
+  def show_insert_into_reply?
+    privilege?(:reply_ticket) && !(@ticket.twitter? || @ticket.facebook? || @ticket.allow_ecommerce_reply?) && @ticket.from_email.present?
   end
 
   private 

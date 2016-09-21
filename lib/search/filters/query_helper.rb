@@ -12,7 +12,8 @@ module Search::Filters::QueryHelper
       'helpdesk_subscriptions.user_id'            =>  'watchers',
       'helpdesk_schema_less_tickets.product_id'   =>  'product_id',
       "helpdesk_schema_less_tickets.long_tc04"    =>  'long_tc04',
-      "helpdesk_schema_less_tickets.long_tc03"    =>  'long_tc03'
+      "helpdesk_schema_less_tickets.long_tc03"    =>  'long_tc03',
+      'helpdesk_schema_less_tickets.int_tc03'     =>  'int_tc03'
     }
 
     private

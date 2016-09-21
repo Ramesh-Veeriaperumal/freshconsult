@@ -5,7 +5,9 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
 	COUNT_COLUMNS_FOR_REPORTS = ["agent_reassigned", "group_reassigned", "reopened", 
                                   "private_note", "public_note", "agent_reply", "customer_reply"]
 
-  NOTE_COUNT_METRICS = ["private_note", "public_note", "agent_reply", "customer_reply"]
+  #When a field is added, Add value function in es_v2_methods, update mapping in es_index_definition                                                            
+	SCHEMA_LESS_SEARCH_FIELDS = ["association_type"] 
+  	NOTE_COUNT_METRICS = ["private_note", "public_note", "agent_reply", "customer_reply"]
   
 	self.table_name =  "helpdesk_schema_less_tickets"
 	self.primary_key = :id
@@ -41,6 +43,8 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
 	alias_attribute :dirty_attributes, :text_tc03
 	alias_attribute :internal_group_id, :long_tc03
 	alias_attribute :internal_agent_id, :long_tc04
+	alias_attribute :association_type, :int_tc03
+	alias_attribute :associates_rdb, :long_tc05
 
 
 	# Attributes used in Freshservice
@@ -50,6 +54,10 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
 	serialize :text_tc01, Hash
 	serialize :text_tc02, Hash
 	serialize :text_tc03, Hash
+
+	def self.association_type_column
+		:int_tc03
+	end
 
 	def self.trashed_column
 		:boolean_tc02
@@ -61,6 +69,10 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
 
 	def self.survey_rating_updated_at_column
 		:datetime_tc01
+	end
+
+	def self.associates_rdb_column
+		:long_tc05
 	end
 
   def self.internal_group_column

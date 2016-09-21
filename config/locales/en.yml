@@ -114,6 +114,14 @@ en:
   no_groups_mapped_for_status: "No groups mapped for the status"
   sidebar_help: "Help"
   support_title: "Support"
+  continue: Continue
+  parent: Parent
+  tracker: Tracker
+  both: Both
+  related: Related ticket
+  child: Child
+  dots: '...'
+  no_association: No association
   ticket_form:
     your_email_address: "Email"
     your_name: "Your Name"
@@ -140,6 +148,7 @@ en:
     tags: "Tags"
     requester: "Requesters"
     created_at: "Created"
+    association_type: "Association Type"
     mygroups: My Groups
     unassigned: Unassigned
     products: Products
@@ -2469,6 +2478,8 @@ en:
         send_review_request:
           success: Review request has been sent successfully
           failure: There was a problem sending the review request
+        broadcast:
+          success: The message has been added and broadcasted to %{count} related tickets.
       empty_spam:
         delay_delete: Please wait while we delete all tickets from spam. This might take a few minutes.
         success: All tickets in the spam folder were deleted.
@@ -2488,6 +2499,11 @@ en:
         failure: Ticket unwatch action failed.
         unsubscribe_success: The ticket has been removed from your watch-list.
       bulk_merge_success : 'The tickets with ids %{merged_tickets} were merged into  <a href="/helpdesk/tickets/%{target_ticket}">%{target_ticket_subject} #%{target_ticket}</a> '
+      link:
+        success: "The ticket has been successfully linked to the tracker"
+        delay_link: 'The tickets are being linked to the tracker ticket -  <a href="/helpdesk/tickets/%{tracker_ticket}">%{tracker_ticket_subject} #%{tracker_ticket}</a>'
+      unlink:
+        success: "The ticket has been successfully unlinked from the tracker"
     custom_fields:
       delete:
         failure: Ticket field failed to get deleted.
@@ -2598,6 +2614,7 @@ en:
       create:
         failure: Unable to save %{human_name}
         success: The %{human_name} has been created.
+        tracker_success: "The tracker has been created and the related tickets are linked to it"
         compose_email_success: Your email has been sent and a new ticket has been created.
       update:
         success: The %{human_name} has been updated.
@@ -2850,6 +2867,9 @@ en:
         short: "{{user_path}} submitted the ticket"
         long: "{{user_path}} submitted a new ticket {{notable_path}}"
         new: "Submitted a new ticket"
+      new_tracker_ticket:
+        short: "{{user_path}} submitted the tracker ticket"
+        long: "{{user_path}} submitted a new tracker ticket {{notable_path}}"      
       new_outbound:
         short: "{{user_path}} created a ticket"
         long: "{{user_path}} created a ticket {{notable_path}}"
@@ -3013,6 +3033,16 @@ en:
         new: "Deselected %{checkbox_list}"
       archive:
         new: "Ticket archived"
+      rlt_tkt_link:
+        new: "Linked this ticket with the tracker %{tracker_ticket_path}"
+      rlt_tkt_unlink:
+        new: "Unlinked this ticket from the tracker %{tracker_ticket_path}"
+      tracker_link:
+        new: "Linked %{related_tickets_count} %{related_ticket_path} with this tracker"
+      tracker_unlink:
+        new: "Unlinked %{related_tickets_count} %{related_ticket_path} from this tracker"
+      tracker_unlink_all:
+        new: "Unlinked all %{related_tickets_count} from this tracker"
       email_to_requester:
         new: "Sent email to requester %{requester_name}"
       email_to_group:
@@ -5116,6 +5146,7 @@ en:
     more_details: "More details..."
     reported: "reported"
     outbound: "emailed"
+    created_tracker: created a tracker
     new_ticket: New ticket
     new_tickets: New tickets
     agent_reply: Agent Reply
@@ -5216,6 +5247,56 @@ en:
     created_on: Created on %{time}
     restore_btn: Restore this ticket
     merge_btn: Merge
+    search_agent: "Search for an agent"
+    tracker_agent_error: "Please make sure to add an agent as a requester"
+    link_tracker:
+      link_to_tracker: Link to a Tracker
+      linking_to_tracker: "Linking to a Tracker"
+      unlinking_from_tracker: "Unlinking from Tracker"
+      options:
+        subject: Subject
+        tkt_id: Ticket ID
+        requester: Requester
+      btn: Link
+      view_tracker: "View Tracker"
+      title: Link Tickets
+      info: %{count} ticket(s) selected (link the selected ticket(s) to an existing problem or create a new problem ticket)
+      search_placeholder: Search for existing problem tickets   
+      create_new: " Create New "
+      recently_created: "Recently Created"
+      linked_to_tracker: "Tracker"
+      last_broadcast_message: "Last broadcasted message, <abbr data-livestamp='%{timestamp}'></abbr>"
+      tracker_details: "Tracker Details"
+      related_tickets: "Related Tickets (%{count})"
+      tracker_links:
+        zero: "No related ticket"
+        one: "%{count} related ticket"
+        other: "%{count} Related Tickets"
+      unlink: "Unlink"
+      insert_to_reply: "Insert this message into reply"
+      notifier_subject: "Broadcast Message Added - %{ticket_details}"
+      notifier_body: "Message Content: "
+      link_error: "Could not link to the tracker"
+      unlink_error: "Could not unlink from the tracker"
+      unlink_warning: "You are about to unlink this ticket from the Tracker:"
+      unlink_warning1: "Are you sure want to proceed?"
+      unlink_submit: "Confirm"
+      unlink_submitting: "Submitting.."
+      tracker_delete_message: " and the related tickets will be unlinked"
+      related_delete_message: " and will be unlinked from the tracker"
+      permission_denied: "Oops! You don't have the permission to link this ticket."
+      count_exceeded: "Linking failed! You have exceeded the limit of %{count} tickets in a tracker."
+      remaining_count: 
+        one: "You are allowed to link only one more ticket to the tracker"
+        other: "You are allowed to link only %{count} more tickets to the tracker"
+      no_tracker: "No Tracker available"
+      search_for_tracker: "Search for tracker by"
+      rlt_ticket_singular: "related ticket"
+      rlt_ticket_plural: "related tickets"
+    ticket_association: 
+       title: Ticket Association
+    parent_child:
+      add_child: "Add Child"
     singular: Ticket
     due_by_time: Due by time
     delete_btn_title: Move this ticket to trash
@@ -5251,6 +5332,7 @@ en:
     submit_ticket_title: Submit a ticket
     learn_more: Learn more.
     submit_ticket_new_title: Create a new ticket
+    submit_tracker_new_title: Create a new Tracker
     create_ticket_title: Create a ticket
     submit_a_ticket_info: "The requester will receive an email notification that a new ticket has been created. It can be disabled in Admin > Email notifications."
     convert_ticket_title: Convert as a ticket
@@ -5271,6 +5353,28 @@ en:
     close_btn: Close
     close_btn_title: Close this ticket
     close_without_notification: Shift + Close to skip notification mail
+    association:
+      cancel: All selected tickets have existing association and the action cannot be performed.
+      delete_ticket:
+        title_submit: Delete
+        tracker: You are about to delete a tracker and the its related tickets will be permanently unlinked which CANNOT be restored.
+        related: You are about to delete a related ticket and it will be permanently unlinked from the tracker which CANNOT be restored.
+      spam_ticket:
+        title_submit: Mark as spam
+        tracker: You are about to mark a tracker as spam and its {{count}} related tickets will be permanently unlinked which CANNOT be restored.
+        related: You are about to mark a related ticket as spam and it will be permanently unlinked from the tracker which CANNOT be restored.
+      merge_tickets:
+        one: There is {{count}} ticket with existing association in the selected list which will be SKIPPED while performing the merge action.
+        other: There are {{count}} tickets with existing association in the selected list which will be SKIPPED while performing the merge action.
+      link_tickets:
+        one: There is {{count}} ticket with existing association in the selected list which will be SKIPPED while performing the link action.
+        other: There are {{count}} tickets with existing association in the selected list which will be SKIPPED while performing the link action.
+      spam_tickets:
+        one: There is {{count}} ticket with existing association in the selected list and performing the spam action will remove their associations permanently which CANNOT be restored. 
+        other: There are {{count}} tickets with existing association in the selected list and performing the spam action will remove their associations permanently which CANNOT be restored. 
+      delete_tickets:
+        one: There is {{count}} ticket with existing association in the selected list and performing the delete action will remove their associations permanently which CANNOT be restored. 
+        other: There are {{count}} tickets with existing association in the selected list and performing the delete action will remove their associations permanently which CANNOT be restored.
     tags:
       no_match: No matches. Press enter to create tag.
       create_success: The tag was added
@@ -5292,6 +5396,9 @@ en:
       add_public_note: Add Public Note
       add_private_note: Add Private Note
       notify_agents: "Notify "
+      broadcast:
+        one: "Broadcast Message: %{count} related ticket"
+        other: "Broadcast Message: %{count} related tickets"
     tweet_form:
       tweet_and_resolve: Tweet and Resolve
       user_not_following: This user is not following your twitter account
@@ -5314,6 +5421,7 @@ en:
     created_by: "Created by:"
     reply_to: Reply
     add_note: Add note
+    broadcast: Broadcast
     monitor_btn_title: Monitor this ticket
     canned_responses:
       ca_responses : Canned Responses
@@ -5618,6 +5726,7 @@ en:
   message: Message
   ticket_was: ticket was
   tickets_were: tickets were
+  tracker_was: The tracker was
   undo: Undo
   total: "Total"
   export_to_CSV: Export to CSV
@@ -5763,6 +5872,7 @@ en:
       flagged_spam: "%{tickets} flagged as spam. %{undo}"
       flagged_unspam: "%{tickets} removed from the spam folder."
       tickets_background: "Please wait while we update the tickets. This might take a few minutes."
+      spam: "%{tickets} flagged as spam%{text}. %{undo}"
 
     shared:
       addcc: "Add cc"
@@ -5919,6 +6029,7 @@ en:
       overlay_fwd_time: " forwarded, %{time_in_words} ago"
       overlay_note_time: " added a note, %{time_in_words} ago"
       overlay_submitted_ticket: " submitted a new ticket"
+      overlay_submitted_tracker: " created a tracker"
       overlay_forward: " forwarded"
       overlay_reply: " replied"
       overlay_note: " added a note"
@@ -6118,6 +6229,8 @@ en:
           forward: "%{user_name} forwarded <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
           survey: "%{user_name} rated this ticket <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
           reply_to_forward: "%{user_name} replied to forward <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
+          broadcast_note: "%{user_name} added a broadcast message <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
+          broadcast_message: "Broadcasted Message"
         last_edited_info: "Last edited by: %{user_name} <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
         last_deleted_info: "Deleted by: %{user_name} <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
         edit_note: Edit Note
@@ -6131,6 +6244,7 @@ en:
         public_note_tip: Visible to the customer
         inbound_email: Incoming email
         outbound_email: Outbound email
+        broadcast_note: "Broadcast message"
         not_added: Note has not been added!
         attachment_size:
            exceed: Your attachments exceed 15 MB. Please make changes before you proceed.
@@ -6547,6 +6661,7 @@ en:
   loading:
     activities: Loading more activities
     items: Loading more items
+    related_tickets: "Loading more related tickets"
   application:
     desc: Integrate with other Apps to make your Freshdesk experience more awesome.
     title: Integrations

@@ -91,7 +91,19 @@ class Helpdesk::Note < ActiveRecord::Base
       start_time, end_time]}
   }
   
-  scope :exclude_source, lambda { |s| { :conditions => ['source <> ?', SOURCE_KEYS_BY_TOKEN[s]] } }
+  scope :exclude_source, lambda { |s| exclude_condition(s) }
+
+  scope :last_broadcast_note,
+    :conditions => [ "deleted = ? and source = ?",false, SOURCE_KEYS_BY_TOKEN['tracker'] ],
+    :order => "created_at DESC",
+    :limit => 1
+
+  scope :broadcast_notes,
+    :joins => 'INNER JOIN helpdesk_schema_less_notes on helpdesk_schema_less_notes.note_id ='\
+      ' helpdesk_notes.id and helpdesk_notes.account_id = helpdesk_schema_less_notes.account_id',
+    :conditions => ["notable_type = ? and deleted = 0 and "\
+      "helpdesk_schema_less_notes.#{Helpdesk::SchemaLessNote.category_column} = ?",
+      "Helpdesk::Ticket", Helpdesk::Note::CATEGORIES[:broadcast]]
 
   validates_presence_of  :source, :notable_id
   validates_numericality_of :source
@@ -119,6 +131,14 @@ class Helpdesk::Note < ActiveRecord::Base
     shared_attachments=self.attachments_sharable
     individual_attachments = self.attachments
     shared_attachments+individual_attachments
+  end
+
+  def self.exclude_condition source
+    if source.is_a?(Array)
+      { :conditions => ['`helpdesk_notes`.source NOT IN (?)', source.map{|s| SOURCE_KEYS_BY_TOKEN[s]} ] }
+    else
+      { :conditions => ['`helpdesk_notes`.source <> ?', SOURCE_KEYS_BY_TOKEN[source]] }
+    end
   end
 
 
@@ -186,6 +206,14 @@ class Helpdesk::Note < ActiveRecord::Base
     (self.incoming and self.notable) and !user.blocked? and (self.private ? user.customer? : true) and
       ((self.notable.facebook? and self.fb_post) ? self.fb_post.can_comment? : true) and 
         (!self.mobihelp?) and (!self.ecommerce?) and(!self.feedback?)
+  end
+
+  def broadcast_note_to_tracker?
+    source == SOURCE_KEYS_BY_TOKEN["note"] && schema_less_note.category == CATEGORIES[:broadcast]
+  end
+
+  def broadcast_note_to_related?
+    source == SOURCE_KEYS_BY_TOKEN["tracker"] && schema_less_note.category == CATEGORIES[:broadcast]
   end
 
   def as_json(options = {})
@@ -302,10 +330,11 @@ class Helpdesk::Note < ActiveRecord::Base
 
   def kind
     return "reply_to_forward" if reply_to_forward? 
-    return "private_note" if private_note?
+    return "private_note" if private_note? && !broadcast_note_to_tracker?
     return "public_note" if public_note?
     return "forward" if fwd_email?
     return "phone_note" if phone_note?
+    return "broadcast_note" if broadcast_note_to_tracker? or broadcast_note_to_related?
     "reply"
   end
 
@@ -398,7 +427,8 @@ class Helpdesk::Note < ActiveRecord::Base
     # end
 
     def human_note_for_ticket?
-      (self.notable.is_a? Helpdesk::Ticket) && user && (source != SOURCE_KEYS_BY_TOKEN['meta'])
+      (self.notable.is_a? Helpdesk::Ticket) && user && 
+          ( not ([SOURCE_KEYS_BY_TOKEN['meta'], SOURCE_KEYS_BY_TOKEN['tracker']].include?(source)) )
     end
 
     # Replied by third pary to the forwarded email
