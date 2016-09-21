@@ -20,14 +20,18 @@ class Middleware::ApiResponseWrapper
   def to_be_wrapped?
     defined?($infra) && 
       $infra['PRIVATE_API'] && 
-      WRAPPABLE_RESPONSE_CODES.include?(@response.code.to_i) &&
+      
       @response.respond_to?(:request) && 
       @response.request.env["ORIGINAL_FULLPATH"] && 
       @response.request.env["ORIGINAL_FULLPATH"].starts_with?('/api/_/') &&
+      
+      @response.respond_to?(:code) &&
+      WRAPPABLE_RESPONSE_CODES.include?(@response.code.to_i) &&
+      
       @headers["Content-Type"].present? &&
       @headers["Content-Type"].starts_with?(Mime::JSON)
   end
-  
+
   def api_root_key
     @response.try(:api_root_key) || :data
   end
