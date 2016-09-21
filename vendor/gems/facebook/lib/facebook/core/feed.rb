@@ -82,6 +82,10 @@ module Facebook
         comment_id || post_id
       end
       
+      def by_visitor?   
+        sender_id != @page_id   
+      end
+      
       def can_process_feed?
         !feed_converted?
       end 

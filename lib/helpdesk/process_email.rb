@@ -411,7 +411,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         end
         user = get_user(account, e_email , email_config, true) unless e_email.blank?
       end
-     
+
       global_cc = parse_all_cc_emails(account.kbase_email, account.support_emails)
 
       ticket = Helpdesk::Ticket.new(
@@ -882,13 +882,11 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     end
 
     def ticket_cc_emails_hash(ticket, note)
-      cc_email_hash_value = ticket.cc_email_hash.nil? ? Helpdesk::Ticket.default_cc_hash : ticket.cc_email_hash
-      cc_emails_val =  parse_all_cc_emails(ticket.account.kbase_email, ticket.account.support_emails)
-      cc_emails_val.delete_if{|email| (email == ticket.requester.email)}
-      reply_type = in_reply_to.to_s.include?("notification.freshdesk.com") ? :notification : :default
-      add_to_reply_cc(cc_emails_val, ticket, note, cc_email_hash_value, reply_type)
-      cc_email_hash_value[:cc_emails] = cc_emails_val | cc_email_hash_value[:cc_emails].compact.collect! {|x| (parse_email x)[:email]}
-      cc_email_hash_value
+      to_email   = parse_to_email[:email]
+      to_emails  = get_email_array(params[:to])
+      new_cc_emails = parse_cc_email
+      updated_ticket_cc_emails(new_cc_emails, ticket, note, in_reply_to, 
+        to_email, to_emails)
     end
 
     #possible unwanted code. Not used now.

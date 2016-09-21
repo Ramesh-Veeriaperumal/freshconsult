@@ -78,7 +78,7 @@ class Freshfone::Initiator::AgentCallLeg
   
     def select_current_call
       call = select_call
-      child_call = call.children.ongoing_calls.last
+      child_call = call.children.ongoing_or_completed_calls.last
       return call if child_call.blank?
       child_call.meta.warm_transfer_meta? ? child_call : call
     end
@@ -121,7 +121,7 @@ class Freshfone::Initiator::AgentCallLeg
     def browser_leg?
       new_notifications? && params[:forward].blank? &&
         params[:external_number].blank? && params[:external_transfer].blank? &&
-        params[:forward_call].blank? # checking forward cases alone
+        params[:forward_call].blank? #&& params[:warm_transfer_forward].blank? # checking forward cases alone
     end
 
     def browser_agent_leg

@@ -28,6 +28,13 @@ window.App = window.App || {};
         $this.setTagSelector();
         $this.articleProperties();
         $this.checkTranslations();
+        
+        // Check rendered SEO meta length on modal load
+        jQuery(this).find('#article-form [rel=charcounter]').each(function(pos,item){ 
+          $this.validateSeoLength(item) 
+        });
+        // Bind keyup SEO meta checks
+        $this.seoCharCounter();
       });
     },
 
@@ -83,6 +90,28 @@ window.App = window.App || {};
           $('#solution_article_seo_data_meta_description').val().replace(/\n+/g, " ").trim()
         );
       });
+    },
+    
+    seoCharCounter: function () {
+      var $this = this;
+      
+      // Validate on keyup
+      $('body').on('keyup.articles', '#article-form [rel=charcounter]', function (ev) {
+        $this.validateSeoLength(ev.target);
+      });
+    },
+    
+    validateSeoLength: function (element) {
+      var originalMsg = $(element).data('org-msg'),
+          limitMsg = $(element).data('limit-msg'),
+          recommended = $(element).data('limit'),
+          contentLength = $(element).val().length;
+
+      if(contentLength > recommended) {
+        $(element).next('div.muted').html(limitMsg);
+      } else {
+        $(element).next('div.muted').html(originalMsg);
+      }
     },
 
     bindForCancelBtn: function () {

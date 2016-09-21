@@ -1,13 +1,13 @@
 {
   "checksum": {
-    "previous": "c6805ca3c837295237c5a4ed808feb2ab74de19de9eddbf625922172d0b2b235",
-    "current": "c6805ca3c837295237c5a4ed808feb2ab74de19de9eddbf625922172d0b2b235"
+    "previous": "46282c3564453a253b89aa3f427682c9659aa7dd0451790d88e2be8170054700",
+    "current": "46282c3564453a253b89aa3f427682c9659aa7dd0451790d88e2be8170054700"
   },
   "fonts": [
-    "public/assets/glyphs_c6805ca3c837295237c5a4ed808feb2a.ttf",
-    "public/assets/glyphs_c6805ca3c837295237c5a4ed808feb2a.svg",
-    "public/assets/glyphs_c6805ca3c837295237c5a4ed808feb2a.woff",
-    "public/assets/glyphs_c6805ca3c837295237c5a4ed808feb2a.eot"
+    "public/assets/glyphs_46282c3564453a253b89aa3f427682c9.ttf",
+    "public/assets/glyphs_46282c3564453a253b89aa3f427682c9.svg",
+    "public/assets/glyphs_46282c3564453a253b89aa3f427682c9.woff",
+    "public/assets/glyphs_46282c3564453a253b89aa3f427682c9.eot"
   ],
   "glyphs": {
     "abandoned-call": {
@@ -285,6 +285,10 @@
     "compose-email": {
       "codepoint": 61896,
       "source": "public/glyphs/vectors/compose-email.svg"
+    },
+    "connect-chat": {
+      "codepoint": 62003,
+      "source": "public/glyphs/vectors/connect-chat.svg"
     },
     "conversation": {
       "codepoint": 61736,

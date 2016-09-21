@@ -178,7 +178,7 @@ RealtimeDashboard.CoreUtil = RealtimeDashboard.CoreUtil || {};
 			}
 			//Set the page title
 			if(RealtimeDashboard.dashboard_enabled) {
-				var page_title = RealtimeDashboard.snapshot_label + " : " + RealtimeDashboard.helpdesk_name;
+				var page_title = RealtimeDashboard.snapshot_label + " : " + unescapeHtml(RealtimeDashboard.helpdesk_name);
 				jQuery(document).attr('title',page_title);
 			}
 			

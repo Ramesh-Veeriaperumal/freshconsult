@@ -153,6 +153,35 @@ class Freshfone::Providers::Twilio
     end
   end
 
+  def forwarding_gather_twiml(xml_builder, caller_name, url, voice_type)
+    xml_builder.Gather action: url, timeout: 10, numDigits: 1,  finishOnKey: '' do |r|
+      say_twiml(r, forwarded_info(caller_name), voice_type)
+      r.Pause length: '2'
+      say_twiml(r, forwarded_info(caller_name), voice_type)
+      r.Pause length: '2'
+      say_twiml(r, forwarded_info(caller_name), voice_type)
+    end
+  end
+
+  def say_twiml(xml_builder, msg, voice_type)
+    xml_builder.Say msg, { voice: voice_type }
+  end
+
+  def custom_forwarding_twiml(caller_name, url, voice_type)
+    twiml_response do |r|
+      forwarding_gather_twiml(r, caller_name, url, voice_type)
+    end
+  end
+
+  def forward_invalid_twiml(url, caller_name, voice_type)
+    twiml_response do |r|
+      say_twiml(r, I18n.t('freshfone.invalid_input_message',
+        { locale: 'en' }), voice_type)    #for now, message will be played in english language only.
+                                          #it will be changed once we start supporting multilanguage transcription.
+      forwarding_gather_twiml(r, caller_name, url, voice_type)
+    end
+  end
+
   #TwiML actions end here
 
   #REST Calls start here 
@@ -236,5 +265,11 @@ class Freshfone::Providers::Twilio
 
     def muted
       { :muted => @muted } unless @muted.nil?
+    end
+
+    def forwarded_info(caller_name)
+      I18n.t('freshfone.forwarded_call_message', { locale: 'en' },
+        {caller_info: caller_name}) #for now, message will be played in english language only.
+                                    #it will be changed once we start supporting multilanguage transcription.
     end
 end

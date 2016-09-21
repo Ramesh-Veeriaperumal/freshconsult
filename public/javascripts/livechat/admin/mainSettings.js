@@ -31,6 +31,7 @@ window.liveChat.mainSettings = function($){
           if(resp.status == "success"){
             if(toggledState){
               $('#chat_widgets_list').removeClass("disable-widgets");
+              $('.chats-container').addClass("-fone-chat-enabled");
               if($('#livechat_layout') && window.liveChat.clientWrapper){
                 $('#livechat_layout,#chat-availability').show();
                 window.liveChat.clientWrapper.connectPrimaryClient();
@@ -40,6 +41,7 @@ window.liveChat.mainSettings = function($){
               }
             }else{
               $('#chat_widgets_list').addClass("disable-widgets");
+              $('.chats-container').removeClass("-fone-chat-enabled");
               $('#livechat_layout,#chat-availability').hide();
               if(window.liveChat.clientWrapper){
                 window.liveChat.clientWrapper.disconnectPrimaryClient();

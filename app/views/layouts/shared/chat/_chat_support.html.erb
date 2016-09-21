@@ -1,0 +1,36 @@
+<script type='text/javascript'>
+	var asset = <%= ChatConfig['asset_url'].to_json.html_safe %>;
+	var http_only = ((<%=ChatConfig['http_only']%> == "1")? true : false);
+	window.FC_HTTP_ONLY = http_only;
+	var LIVECHAT_SUPPORT = true,
+	    SUBSCRIPTION_STATE = '<%=current_account.subscription.state%>'
+	window.FRESHCHAT_VISITORINFO = {
+										name:"<%= current_user.name%>",
+										email:"<%= current_user.email%>",
+										custom_field1: window.location.hostname 
+									};
+
+	window.CURRENT_USER = window.CURRENT_USER || {};
+	window.CURRENT_USER.id = '<%=current_user.id%>';
+	window.CURRENT_ACCOUNT = window.CURRENT_ACCOUNT || {};
+	window.CURRENT_ACCOUNT.id = '<%=current_account.id%>';
+	var fc_CSS=document.createElement('link');
+	fc_CSS.setAttribute('rel','stylesheet');
+	var fc_isSecured = (window.location && window.location.protocol == 'https:');
+	var fc_lang = document.getElementsByTagName('html')[0].getAttribute('lang');
+	var fc_rtlLanguages = ['ar','he'];
+	var fc_rtlSuffix = (fc_rtlLanguages.indexOf(fc_lang) >= 0) ? '-rtl' : '';
+	fc_CSS.setAttribute('type','text/css');
+	
+	fc_CSS.setAttribute('href',((fc_isSecured) ? asset.cloudfront : asset.css)+'/css/visitor'+ fc_rtlSuffix +'.css');
+
+	document.getElementsByTagName('head')[0].appendChild(fc_CSS);
+	var fc_JS=document.createElement('script');
+	fc_JS.type='text/javascript';
+	fc_JS.defer=true;
+
+	fc_JS.src = ((fc_isSecured) ? asset.cloudfront : asset.js)+'/js/agent_support.js';
+	
+	(document.body?document.body:document.getElementsByTagName('head')[0]).appendChild(fc_JS);
+	window.livechat_setting = '<%=encoded_livechat_support_setting%>';
+</script>

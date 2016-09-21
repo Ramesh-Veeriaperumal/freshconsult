@@ -1,11 +1,14 @@
 module Freshfone
   module WarmTransferDisconnect
+    include Freshfone::CallsRedisMethods
+    include Freshfone::CustomForwardingUtil
 
     def handle_warm_transfer_end_call
       handle_warm_transfer_source if warm_transfer_source_agent? 
       handle_warm_transfer_call if warm_transfer_target_agent?
       notify_warm_transfer_busy(params[:CallStatus])
-      reset_presence(current_call.agent) if current_call.agent.present? && current_call.agent.available_on_phone?
+      handle_ignored_warm_transfer if ignored_transfer?
+      reset_phone_presence(current_call.agent)
     end
 
     def handle_warm_transfer_source
@@ -20,7 +23,7 @@ module Freshfone
 
     def handle_warm_transfer_call
       return if current_call.completed?
-      warm_transfer_user = warm_transfer_call.supervisor
+      warm_transfer_user = warm_transfer_call_leg.supervisor
       update_current_call
       update_warm_transfer_leg
       update_participant_cost
@@ -29,7 +32,7 @@ module Freshfone
       notifier.notify_warm_transfer_status(current_call, 'update_presence')
       notifier.notify_warm_transfer_status(child_call, 'warm_transfer_reverted')
       redirect_agent(child_call)
-      reset_presence(warm_transfer_user) if warm_transfer_user.available_on_phone?
+      reset_phone_presence(warm_transfer_user)
     end
 
     private
@@ -46,7 +49,7 @@ module Freshfone
 
     def warm_transfer_source_agent?
       warm_transfer_supervisor_leg.present? &&
-        (warm_transfer_call.blank? || !warm_transfer_call.inprogress?) &&
+        (warm_transfer_call_leg.blank? || !warm_transfer_call_leg.inprogress?) &&
         warm_transfer_supervisor_leg.inprogress?
     end
 
@@ -54,14 +57,20 @@ module Freshfone
       user.freshfone_user.reset_presence.save!
     end
 
-    def warm_transfer_target_agent?
-      warm_transfer_call.present? && warm_transfer_call.inprogress?
+    def reset_phone_presence(user)
+      reset_presence(user) if user.present? && user.available_on_phone?
     end
 
-    def disconnect_warm_transfer(call)
-      return unless split_client_id(params[:From]).blank? && call.present?
-      disconnect_call(call)
-      call.update_details(
+    def warm_transfer_target_agent?
+      warm_transfer_call_leg.present? && warm_transfer_call_leg.inprogress?
+    end
+
+    def disconnect_warm_transfer
+      return unless split_client_id(params[:From]).blank? && warm_transfer_supervisor_leg.present?
+      disconnect_call(warm_transfer_supervisor_leg)
+      reset_phone_presence(warm_transfer_supervisor_leg.supervisor)
+      remove_key user_agent_key(warm_transfer_supervisor_leg)
+      warm_transfer_supervisor_leg.update_details(
         status: Freshfone::SupervisorControl::CALL_STATUS_HASH[:completed])
     end
 
@@ -71,18 +80,30 @@ module Freshfone
     end
 
     def update_participant_cost
-      return if warm_transfer_call.duration.present?
-      warm_transfer_call.update_details(CallDuration: params[:CallDuration])
+      return if warm_transfer_call_leg.duration.present?
+      warm_transfer_call_leg.update_details(CallDuration: params[:CallDuration])
     end
 
     def notify_warm_transfer_busy(status)
-      return if warm_transfer_call.blank? || status == 'completed'
+      return if completed_or_no_warm_transfer?(status)
       create_child_call.update_call(DialCallStatus: status)
       notifier.notify_warm_transfer_status(current_call, 'warm_transfer_status',
           status) && update_warm_transfer_leg if ['no-answer','busy'].include?(status)
-      warm_transfer_call.update_details(
+      warm_transfer_call_leg.update_details(
         status: Freshfone::SupervisorControl::CALL_STATUS_HASH[status.to_sym]
         ) if status == 'canceled'
+    end
+
+    def handle_ignored_warm_transfer
+      status = 'busy'
+      notifier.notify_warm_transfer_status(current_call,
+        'warm_transfer_status', status)
+      warm_transfer_call_leg.update_details(
+        status: Freshfone::SupervisorControl::CALL_STATUS_HASH[status.to_sym])
+    end
+
+    def completed_or_no_warm_transfer?(status)
+      warm_transfer_call_leg.blank? || status == 'completed' || warm_transfer_supervisor_leg.blank? 
     end
 
     def update_warm_transfer_duration
@@ -96,23 +117,16 @@ module Freshfone
 
     def update_warm_transfer_leg(parent_call = false)
       return update_parent_leg if parent_call
-      warm_transfer_call.update_details(CallDuration: params[:CallDuration],
+      warm_transfer_call_leg.update_details(CallDuration: params[:CallDuration],
         status: Freshfone::SupervisorControl::CALL_STATUS_HASH[params[:CallStatus].to_sym])
-    end
-
-    def active_warm_transfer_call
-       current_call.supervisor_controls.warm_transfer_calls.initiated_or_inprogress_calls.first
     end
 
     def update_parent_leg
        warm_transfer_supervisor_leg.update_duration_and_status(params[:CallStatus])
     end
 
-    def warm_transfer_call
-      @warm_transfer_call ||= current_account.supervisor_controls.find_by_sid(params[:CallSid])
-    end
-
     def warm_transfer_supervisor_leg
+      return if current_call.blank?
       @supervisor_call ||= current_call.supervisor_controls
                                        .warm_transfer_calls.initiated_or_inprogress_calls.last
     end
@@ -131,6 +145,7 @@ module Freshfone
       call = current_call.has_children? ? current_call.get_child_call : current_call
       child_call = call.build_warm_transfer_child(build_child_params(reverted))
       current_call.root.increment(:children_count).save && create_meta(child_call, reverted) if child_call.save
+      remove_key user_agent_key(warm_transfer_supervisor_leg)
       child_call
     end
 
@@ -146,18 +161,26 @@ module Freshfone
     def meta_params
       meta = current_call.meta
       { account: current_call.account, device_type: meta.device_type,
-        meta_info: meta.meta_info.merge!(:type => 'warm_transfer'),
-        hunt_type: meta.hunt_type, pinged_agents: meta.pinged_agents }
+        meta_info: meta.meta_info.merge!(type: 'warm_transfer'),
+        hunt_type: meta.hunt_type, pinged_agents: meta.pinged_agents
+      }
     end
 
     def warm_transfer_meta_params(call)
       user =  current_account.freshfone_users.find_by_user_id(call.user_id)
-      { account: current_call.account, meta_info: current_call.meta.meta_info,
+      agent_info = get_key user_agent_key(warm_transfer_supervisor_leg)
+      { account: current_call.account, device_type: device_type(user, agent_info),
         transfer_by_agent: current_call.user_id,
         hunt_type: Freshfone::CallMeta::HUNT_TYPE_HASH[:agent],
-        meta_info: { :type => 'warm_transfer' },
+        meta_info: { type: 'warm_transfer', agent_info: agent_info },
         pinged_agents: [{ id: user.user_id, ff_user_id: user.id, name: user.name,
                         device_type: user.available_on_phone? ? :mobile : :browser }]}
+    end
+
+    def device_type(user, agent_info)
+      return Freshfone::CallMeta::USER_AGENT_TYPE_HASH[:available_on_phone] if  user.available_on_phone?
+      return mobile_device(agent_info) if agent_info.present? && agent_info[/#{AppConfig['app_name']}_Native/].present?
+      Freshfone::CallMeta::USER_AGENT_TYPE_HASH[:browser]
     end
 
     def build_child_params(reverted)
@@ -189,5 +212,9 @@ module Freshfone
         params, current_account, current_user, current_number)
     end
 
+    def ignored_transfer?
+      custom_forwarding_enabled? && params[:forward].present? &&
+        warm_transfer_call_leg.present? && warm_transfer_call_leg.default?
+    end
   end
 end

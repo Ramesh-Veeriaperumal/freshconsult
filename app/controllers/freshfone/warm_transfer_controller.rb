@@ -6,15 +6,16 @@ module Freshfone
     include Freshfone::Endpoints
     include Freshfone::WarmTransferDisconnect
     include Freshfone::Presence
+    include Freshfone::CustomForwardingUtil
 
-    before_filter :select_current_call, only: [:initiate, :cancel, :resume]
+    before_filter :select_current_call, only: [:initiate, :cancel, :resume, :warm_transfer_success]
     before_filter :validate_warm_transfer, only: [:initiate]
     before_filter :load_source_and_target_agent, only: [:initiate, :wait]
     before_filter :create_participation_leg, only: [:initiate]
     before_filter :clear_client_calls, only: [:initiate]
     before_filter :update_warm_transfer_leg, only: [:success]
     before_filter :publish_warm_transfer_state, only: [:success]
-    before_filter :update_presence, only: [:success], if: [:user_available_on_phone?]
+    before_filter :update_presence_to_busy, only: [:success], if: :user_available_on_phone?
     before_filter :update_queue_sid, only: [:wait]
     before_filter :update_agent_status, only: [:redirect_customer]
     before_filter :update_conference_sid, only: [:transfer_agent_wait]
@@ -80,6 +81,17 @@ module Freshfone
       render json: { status: :unhold_initiated }
     end
 
+    def initiate_custom_forward
+      render xml: telephony.custom_forwarding_response(current_call.agent_name,
+        custome_warm_transfer_url, current_call.freshfone_number.voice_type)
+    end
+
+    def process_custom_forward
+      return handle_transfer_sucess if custom_forward_accept?
+      return render xml: telephony.no_action if custom_forward_reject?
+      render_invalid_input(custome_warm_transfer_url, current_call.agent_name)
+    end
+
     private
 
     def validate_warm_transfer
@@ -130,7 +142,7 @@ module Freshfone
         status: Freshfone::SupervisorControl::CALL_STATUS_HASH[:'in-progress'])
     end
 
-    def update_presence
+    def update_presence_to_busy
       update_freshfone_presence(warm_transfer_user, Freshfone::User::PRESENCE[:busy])
     end
 
@@ -194,6 +206,16 @@ module Freshfone
                                          :transfer_type, :external_transfer,
                                          :warm_transfer_call_id])
       super
+    end
+
+    def custome_warm_transfer_url
+      forward_warm_transfer_url(params[:warm_transfer_call_id], params[:call])
+    end
+
+    def handle_transfer_sucess
+      update_warm_transfer_leg
+      update_presence_to_busy
+      success
     end
   end
 end

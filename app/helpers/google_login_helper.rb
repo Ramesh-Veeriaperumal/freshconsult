@@ -60,11 +60,8 @@ module GoogleLoginHelper
       portal = account.portals.find_by_portal_url(requested_portal_url(nmobile))
       user = account.users.new
       user.active = true
-      user.signup!(:user => {
-        :name => name,
-        :email => email,
-        :language => portal.present? ? portal.language : account.language
-      })
+      user_params = {:user => {:name => name,:email => email,:language => portal.present? ? portal.language : account.language }}
+      user.signup!(user_params,nil,false)
       user
     end
 

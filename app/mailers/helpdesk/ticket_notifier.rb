@@ -428,8 +428,8 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
   
   def email_to_requester(ticket, content, sub=nil)
     ActionMailer::Base.set_email_config ticket.reply_email_config
-
-    headers   = email_headers(ticket, nil).merge({
+    header_message_id = construct_email_header_message_id(:automation)
+    headers   = email_headers(ticket, header_message_id).merge({
       :subject    =>  (sub.blank? ? formatted_subject(ticket) : sub),
       :to         =>  ticket.from_email,
       :from       =>  ticket.friendly_reply_email,
@@ -459,8 +459,8 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
   
   def internal_email(ticket, receips, content, sub=nil)
     ActionMailer::Base.set_email_config ticket.reply_email_config
-
-    headers = email_headers(ticket, nil).merge({
+    header_message_id = construct_email_header_message_id(:automation)
+    headers = email_headers(ticket, header_message_id).merge({
       :subject    =>  (sub.blank? ? formatted_subject(ticket) : sub),
       :to         =>  receips,
       :from       =>  ticket.friendly_reply_email,
@@ -548,6 +548,10 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
   end
 
   private
+    def construct_email_header_message_id(email_type)
+      "#{Mail.random_tag}.#{::Socket.gethostname}@#{Helpdesk::EMAIL_TYPE_TO_MESSAGE_ID_DOMAIN[email_type]}"
+    end
+
     def account_bcc_email(ticket)
       ticket.account.bcc_email unless ticket.account.bcc_email.blank?
     end

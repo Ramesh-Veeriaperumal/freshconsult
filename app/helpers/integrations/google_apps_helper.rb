@@ -11,7 +11,7 @@ module Integrations::GoogleAppsHelper
     def sso account_id
       account = Account.find(account_id)
       account.make_current
-      acc_domain = account.full_domain #For the Marketplace-apps-sso always login to account full domain and not portal domain.
+      acc_domain = account.host 
       begin
         verify_domain_user(account, false)
       rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotSaved => e

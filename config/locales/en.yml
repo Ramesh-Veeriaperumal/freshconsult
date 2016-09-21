@@ -1617,6 +1617,8 @@ en:
         feedbackwidget_search_area: Search Articles
         feedbackwidget_use_https: Use https
         feedbackwidget_mobile_view: Mobile View
+        feedbackwidget_submit_title: "Send Feedback"
+        feedbackwidget_form_submit_title: "Form Submit Button"
       popup_widget:
         feedbackwidget_button_type: Button type
         feedbackwidget_text_button: Text button
@@ -1642,6 +1644,10 @@ en:
         feedbackwidget_use_https: Use https
         feedbackwidget_mobile_view: Enable mobile view
         feedbackwidget_use_captcha: Enable CAPTCHA
+        feedbackwidget_submit_title: "Send Feedback"
+        feedbackwidget_form_submit_title: "Form Submit Button"
+        feedbackwidget_title_maxlength: "Maximum 30 characters"
+        feedbackwidget_submit_title_maxlength: "Maximum 16 characters"
       embedded_widget:
         feedbackwidget_height_placeholder: "500"
         feedbackwidget_form_customization: Customize Form
@@ -1659,6 +1665,10 @@ en:
         feedbackwidget_search_area: Search Articles
         feedbackwidget_use_https: "Use https"
         feedbackwidget_use_captcha: Enable CAPTCHA
+        feedbackwidget_submit_title: "Send Feedback"
+        feedbackwidget_form_submit_title: "Form Submit Button"
+        feedbackwidget_title_maxlength: "Maximum 16 characters"
+        feedbackwidget_submit_title_maxlength: "Maximum 16 characters"
     supervisor_rules:
       new_info_help: For <b>each ticket</b> updated within 30 days, execute all matching rules.
       index:
@@ -3017,6 +3027,7 @@ en:
   zendesk_backup_info: Select the Zendesk backup file downloaded from zendesk
   backup_error_msg: "The file exceeds the prescribed limit of 50MB, please <a href='#' id='import_request'>contact support</a> to proceed with the import."
   your_email_address: Your e-mail address
+  uncheck_remember_tooltip: You can uncheck this option if you're logging in from a shared device
   username: Username
   reply: Reply
   is_not: Is not
@@ -3767,6 +3778,7 @@ en:
     deleted_agent_info: "Note: All communication from the deleted agents will be marked as SPAM."
     new: New Agent
     edit: Edit Agent
+    invalid_placeholder: Invalid placeholders inserted
     showing: "Showing:"
     type: Agent Type
     delete_agent: Delete Agent
@@ -3816,6 +3828,7 @@ en:
     info4: Convert to a Contact
     contact_exists: A requester with email '%{existing_email}' already exists, %{use_email}
     signature: Signature
+    insert_placeholder: Insert Placeholder
     info3: Are you sure you want delete
     helpcard:
       tour: Help me add new agents
@@ -3980,7 +3993,7 @@ en:
       enter_tags: 'Enter Tags'
     conversations:
       title: 'Conversations'
-      ticket_subject: "<a href='%{ticket_url}' data-pjax='#body-container'>%{ticket_subject}</a>"
+      ticket_subject: "<a href='%{ticket_url}' data-pjax='#body-container' title='%{ticket_desc}'>%{ticket_subject}</a>"
       created_forum_title: "Created a topic <a href='%{topic_url}' data-pjax='#body-container' class='bold-title'>%{topic_title}</a>"
       replied_forum_title: "Replied to topic <a href='%{topic_url}' data-pjax='#body-container' class='bold-title'>%{topic_title}</a>"
       user_forum_timeinfo: "%{time} ago in <a href='%{forum_url}' data-pjax='#body-container' class='muted'>%{forum_title}</a>"
@@ -4630,8 +4643,9 @@ en:
       folder: "This folder is not available in %{current_language}, view it in <a href='%{url}'>%{helpdesk_language}</a>"
       article: "This article is not available in %{current_language}, view it in <a href='%{url}'>%{helpdesk_language}</a>"
     article_properties:
-      title_counter_message: 'Recommended: 50-60 characters'
-      description_counter_message: 'Recommended: 150-160 characters'
+      title_counter_message: 'Recommended length: 50-60 characters'
+      description_counter_message: 'Recommended length: 150-160 characters'
+      exceeded_message: %{current_message} (current text exceeds recommendation)
   import_updated: Updated
   feedbackwidget_intro: Customize your freshdesk widget below and see a realtime preview.
   chatwidget_intro: Customize your Live Chat widget below and see a realtime preview.
@@ -5268,6 +5282,8 @@ en:
       add_tag: "Add a tag:"
     type: Type
     execute_scenario: Execute Scenario
+    create_new_scenario: Create new scenario
+    create_new_ca: Create new canned response
     execute: Execute
     search_scenario: Search Scenarios
     conv_form_status_set_as: "and set as <strong>%{status}</strong>"
@@ -8698,6 +8714,8 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     acw_availability_text: 'Move to Available:'
     via_browser: "via Browser / App"
     via_phone: "via Phone"
+    forwarded_call_message: "You are getting a call from %{caller_info}. Press 1 to answer, 2 to ignore."
+    invalid_input_message: "Please enter a valid input."
     subscription:
       auto_recharge_text: "We'll only charge your account when the balance falls below $5"
       current_balance: "Your current balance"
@@ -9324,6 +9342,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     visitor_details: "Visitor Details"
     enter_tags: "Enter the tags"
     chat_with: "Chat with"
+    chat_with_us: "Connect with us"
     ticket_success_msg: "New ticket has been created."
     ticket_error_msg: "Error while creating ticket"
     website_visitors: "Visitors"
@@ -9422,18 +9441,20 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     end_chat_end_title: "End"
     end_chat_cancel_title: "Cancel"
     cobrowse_request : "Waiting for visitor to accept your request"
-    visitor_cobrowse_request : "Can agent control your current screen? "
-    cobrowsing_start_msg : "Your screenshare session has started"
-    cobrowsing_stop_msg : "Your screensharing session has ended"
+    visitor_cobrowse_request : "Can agent control your current screen? "    
+    cobrowsing_start_msg : "Your screenshare session has started"   
+    cobrowsing_stop_msg : "Your screensharing session has ended"    
     cobrowsing_deny_msg : "Your request was declined"
-    cobrowsing_viewing_screen : "You are viewing the visitor’s screen"
-    cobrowsing_controlling_screen : "You are controlling the visitor’s screen"
-    cobrowsing_request_control : "Request visitor for control"
-    cobrowsing_stop_request : "End your screensharing session"
-    cobrowsing_request_control_rejected : "Your request was declined"
-    cobrowsing_cancel_visitor_msg : "Screensharing is currently unavailable"
-    cb_viewing_screen_vi : "Agent can view your screen "
-    cb_controlling_screen_vi : "Agent can control your screen"
+    cobrowsing_agent_busy : "Agent is in screen share session with customer"
+    cobrowsing_viewing_screen : "You are viewing the visitor’s screen"    
+    cobrowsing_controlling_screen : "You are controlling the visitor’s screen"    
+    cobrowsing_request_control : "Request visitor for control"    
+    cobrowsing_give_visitor_control : "Give control to visitor"            
+    cobrowsing_stop_request : "End your screensharing session"    
+    cobrowsing_request_control_rejected : "Your request was declined"   
+    cobrowsing_cancel_visitor_msg : "Screensharing is currently unavailable"    
+    cb_viewing_screen_vi : "Agent can view your screen "    
+    cb_controlling_screen_vi : "Agent can control your screen"    
     cb_give_control_vi :  "Allow agent to control your screen"
     help_text_agent_msg: "Use {{agent_name}} and {{helpdesk_name}} to display Agent Name and Helpdesk Name in your messages"
     date_invalid: Invalid date

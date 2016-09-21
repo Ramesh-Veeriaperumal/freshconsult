@@ -30,7 +30,7 @@ class Export::Customer
     check_and_create_export @type
     build_file(csv_string, @type)
     
-    DataExportMailer.deliver_customer_export({
+    DataExportMailer.send_later(:deliver_customer_export, {
       :user   => User.current, 
       :domain => @portal_url,
       :url    => hash_url(@portal_url),

@@ -64,6 +64,10 @@ module ChatHelper
     return Base64.strict_encode64(livechat_setting(current_chat_widget))
   end
 
+  def encoded_livechat_support_setting
+    return Base64.strict_encode64(livechat_support_setting())
+  end
+
   def language(product_id)
    return current_account.portals.find_by_product_id(product_id) ? current_account.portals.find_by_product_id(product_id).language : current_portal.language
   end
@@ -104,7 +108,16 @@ module ChatHelper
     setting = convertToJson ? livechat_setting.to_json : livechat_setting
     return setting
   end
-
+  def livechat_support_setting
+    livechat_support_setting = {
+          :widget_id => ChatConfig["support_account"]["widget_id"],
+          :fc_id => ChatConfig["support_account"]["site_id"],
+          :nodeurl => ChatConfig["communication_url"],
+          :environment => Rails.env,
+          :weburl => ChatConfig["support_account"]["url"],
+    }
+    return livechat_support_setting.to_json.html_safe
+  end
   def i18n_text
       text = { 
             :portal_name => t("current_portal.portal_name"),
@@ -271,10 +284,13 @@ module ChatHelper
             :cobrowse_request => t('livechat.cobrowse_request'),
             :cobrowsing_start_msg => t('livechat.cobrowsing_start_msg'), 
             :cobrowsing_stop_msg => t('livechat.cobrowsing_stop_msg'),    
-            :cobrowsing_deny_msg => t('livechat.cobrowsing_deny_msg'),    
+            :cobrowsing_deny_msg => t('livechat.cobrowsing_deny_msg'), 
+            :cobrowsing_agent_busy => t('livechat.cobrowsing_agent_busy'),   
             :cobrowsing_viewing_screen => t('livechat.cobrowsing_viewing_screen'),    
             :cobrowsing_controlling_screen => t('livechat.cobrowsing_controlling_screen'),    
             :cobrowsing_request_control => t('livechat.cobrowsing_request_control'),    
+            :cobrowsing_give_visitor_control => t('livechat.cobrowsing_give_visitor_control'),
+            :chat_with_us => t('livechat.chat_with_us'),
             :cobrowsing_stop_request => t('livechat.cobrowsing_stop_request'),    
             :cobrowsing_request_control_rejected => t('livechat.cobrowsing_request_control_rejected'),
             :agent_parallel_accept_error => t('livechat.agent_parallel_accept_error')
@@ -361,6 +377,20 @@ module ChatHelper
     return { :text=> response_body, :content_type => response_type, :status => response_code }
   end
   
+  def in_app_support?
+    current_account.subscription.state === 'active' && is_chat_support_plan? && current_account.full_domain != ChatConfig['support_account']['url'] && current_user && current_user.privilege?(:admin_tasks)
+  end
+
+  def is_chat_support_plan?
+    if Rails.env.production?
+      # inappsupport chat restricted to five accounts for testing
+      chat_support_plan_accounts = ChatSetting::APP_SUPPORT_ENABLED_ACCOUNTS
+      chat_support_plan_accounts.include?(current_account.id)
+    else
+      return true
+    end
+  end
+
   def chat_widget_list(widgets)
     widgetList = []
     widgets.each do |widget|

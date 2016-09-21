@@ -127,7 +127,7 @@ class Freshfone::CallMeta < ActiveRecord::Base
 
   def update_agent_ringing_time(agent_id)
     pinged_agents.each do |agent|
-      agent.merge!({ :ringing_time => (Time.zone.now - agent[:ringing_at]).to_i.abs }) if agent[:id] == agent_id.to_i
+      agent.merge!({ :ringing_time => (Time.zone.now - agent[:ringing_at]).to_i.abs }) if agent[:id] == agent_id.to_i && agent[:ringing_at].present?
     end
     save!
   end

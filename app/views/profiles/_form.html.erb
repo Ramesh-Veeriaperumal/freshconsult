@@ -4,6 +4,19 @@
     jQuery("#password_confirmation").rules("add", {  
 	          equalTo: "#password"
           });   
+    
+    // Code for inserting placeholders in agent signature
+    var content = jQuery('label[for=agent_signature_html]').html();
+    jQuery('label[for=agent_signature_html]')
+      .attr('class','placeholder_wrapper')
+      .html(content + '<a class="l_placeholder btn btn-mini btn-flat pull-right"><%= t('agent.insert_placeholder') %></a>');
+    
+    jQuery('.l_placeholder').bind("click", function(ev){
+        active_email_body = jQuery("#user_binfo");
+  			jQuery('#place-dialog').slideDown('fast', function(){
+          		jQuery(this).groupPlaceholders();
+  			});			
+  	});
   });
 <% end %>
 <% content_for :onload_script do %>
@@ -111,9 +124,13 @@ jQuery('.email').on('keyup', function(){
 				<%= label(:agent, :signature_html, t("agent.signature")) %>
 				<label class="overlabel" for="user_binfo">
 				</label>
-				<%= text_area(:agent, :signature_html, :class => "text", :id => "user_binfo" , :value =>@profile.signature_value  ) %>			
+				<%= text_area(:agent, :signature_html, :class => "text desc_info", :id => "user_binfo" , :value =>@profile.signature_value  ) %>			
 				<%= hidden_field(:agent, :user_id, :id => "user_id", :value =>@profile.user_id  ) %>
 		</li>
 		<%end%>
 	</ul>
+<% end %>
+
+<% content_for :pagefixed do %>
+	<%= render partial: "/shared/placeholder_help", locals: { placeholders: ticket_placeholders } %>
 <% end %>

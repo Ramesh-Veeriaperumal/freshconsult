@@ -18,7 +18,8 @@ module ContactsCompaniesHelper
     text = t('contacts.conversations.ticket_subject',
                 :ticket_url => ticket_url(ticket),
                 :ticket_subject => h("#{ticket.subject} ##{ticket.display_id}"),
-                :'data-pjax' => "#body-container").html_safe
+                :'data-pjax' => "#body-container",
+                :ticket_desc => h(truncate(ticket_desc(ticket), { :length => 350, :omission => "..." }))).html_safe
     text_wrapper = content_tag(:p, text, :class => "break-word timeline-head #{grey_class}")
 
     sentence_type = user_page ? "user_ticket_timeinfo" : "company_ticket_timeinfo"
@@ -31,6 +32,16 @@ module ContactsCompaniesHelper
     time_div = content_tag(:p, time_info, :class => 'muted')
 
     (icon_wrapper + text_wrapper + time_div)
+  end
+
+  def ticket_desc(ticket)
+    if ticket.class.eql?(Helpdesk::Ticket)
+      ticket.ticket_body.description
+    elsif ticket.class.eql?(Helpdesk::ArchiveTicket)
+      ticket.description
+    else
+      ""
+    end
   end
 
   def ticket_url(ticket)

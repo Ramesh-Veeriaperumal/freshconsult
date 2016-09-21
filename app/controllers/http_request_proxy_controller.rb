@@ -86,10 +86,13 @@ class HttpRequestProxyController < ApplicationController
       begin
         parsed_url = URI.parse(params[:domain])
         parsed_url = URI.parse("#{request.protocol}#{params[:domain]}") if parsed_url.scheme.nil?
-        whitelisted = value_in_set?(DOMAIN_WHITELIST, parsed_url.host)
+        host = parsed_url.host
+        host = "#{host}:#{parsed_url.port}" if [80, 443].exclude?(parsed_url.port)
+        whitelisted = value_in_set?(DOMAIN_WHITELIST, host)
         unless whitelisted
           main_domain_regex = /^(?:(?>[a-z0-9-]*\.)+?|)([a-z0-9-]+\.(?>[a-z]*(?>\.[a-z]{2})?))$/i
           main_domain = parsed_url.host.gsub(main_domain_regex, '\1')
+          main_domain = "#{main_domain}:#{parsed_url.port}" if [80, 443].exclude?(parsed_url.port)
           whitelisted = value_in_set?(DOMAIN_WHITELIST, main_domain)
         end
 

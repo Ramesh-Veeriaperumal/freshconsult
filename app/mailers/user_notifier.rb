@@ -1,4 +1,5 @@
 require 'mailer_deliver_alias'
+require 'mail'
 class UserNotifier < ActionMailer::Base
 
   layout "email_font"
@@ -19,10 +20,16 @@ class UserNotifier < ActionMailer::Base
   end
   
   def admin_activation(admin)
+    # Safe way to include name with email address 
+    address = Mail::Address.new AppConfig['from_email']
+    # Should we dup or are we using the latest mail gem?
+    # (latest mail gem does dup already)
+    address.display_name = AppConfig['app_name'].dup
+
     headers = {
-      :from           => AppConfig['from_email'],
+      :from           => address.format,
       :to             => admin.email,
-      :subject        => "#{AppConfig['app_name']} Account Activation",
+      :subject        => "Activate your #{AppConfig['app_name']} account",
       :sent_on        => Time.now
     }
     @admin          = admin

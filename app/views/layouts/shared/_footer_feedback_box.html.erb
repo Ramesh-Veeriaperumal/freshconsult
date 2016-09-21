@@ -25,7 +25,11 @@
 		  <%= link_to(t('footer.helpdesk_software'), AppConfig['app_website'], :target => "_blank") %>
 		  <%= t('footer.by_freshdesk') %>
 		  <span class="muted"> &nbsp;&nbsp;&nbsp;| &nbsp;&nbsp;&nbsp;</span>
-		<% end %>				 
+			<% if in_app_support? %>
+				<span id="chat-support-footer" class="chat-support-link"> <%= t('livechat.chat_with_us') %> </span>
+				<span class="muted"> &nbsp;&nbsp;&nbsp;| &nbsp;&nbsp;&nbsp;</span>
+			<% end %>
+		<% end %>
 		<%= link_to(t('footer.help_and_support'), "#{AppConfig['support_url']}/support/home", :target => "_blank") %>
 		<% if @privacy_policy %>
 			<span class="muted"> &nbsp;&nbsp;&nbsp;| &nbsp;&nbsp;&nbsp;</span>

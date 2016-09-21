@@ -209,6 +209,35 @@ class Helpdesk::TicketsController < ApplicationController
     render :partial => "helpdesk/shared/filter_options", :locals => { :current_filter => @ticket_filter , :shared_ownership_enabled => current_account.features?(:shared_ownership)}
   end
 
+  def filter_conditions
+    filter_str = get_cached_filters
+    if filter_str
+      query_hash = JSON.parse(filter_str["data_hash"])
+      is_default_filter = false
+   else
+      filter_name = params[:filter_key] || params[:filter_name]
+      return render :json => {:error => "Invalid filter name" } if filter_name.blank?
+      is_default_filter = !is_num?(filter_name) || invalid_custom_filter?(filter_name)
+      if is_default_filter
+        @ticket_filter = current_account.ticket_filters.new(Helpdesk::Filters::CustomTicketFilter::MODEL_NAME)
+        query_hash = @ticket_filter.default_filter(filter_name)
+      else
+        query_hash = @ticket_filter.data[:data_hash]
+      end
+    end
+    conditions_hash = query_hash.map{|i|{ i["condition"] => i["value"] }}.inject({}){|h, e|h.merge! e}
+    meta_data       = filters_meta_data(conditions_hash) if conditions_hash.keys.any? {|k| META_DATA_KEYS.include?(k.to_s)}
+    render :json => { :conditions => conditions_hash,
+                      :default => is_default_filter,
+                      :meta_data => meta_data
+                    }
+  end
+  
+  def invalid_custom_filter?(filter_name)
+    @ticket_filter = current_account.ticket_filters.find_by_id(filter_name)
+    @ticket_filter.nil? || !@ticket_filter.has_permission?(current_user)
+  end
+
   def latest_ticket_count # Possible dead code
     index_filter =  current_account.ticket_filters.new(Helpdesk::Filters::CustomTicketFilter::MODEL_NAME).deserialize_from_params(params)
     ticket_count =  current_account.tickets.permissible(current_user).latest_tickets(params[:latest_updated_at]).count(:id, :conditions=> index_filter.sql_conditions)
@@ -1094,10 +1123,10 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def load_email_params
-    @signature = current_user.agent.signature_value || ""
     @email_config = current_account.primary_email_config
     @reply_emails = current_account.features?(:personalized_email_replies) ? current_account.reply_personalize_emails(current_user.name) : current_account.reply_emails
     @ticket ||= current_account.tickets.find_by_display_id(params[:id])
+    @signature = current_user.agent.parsed_signature('ticket' => @ticket, 'helpdesk_name' => @ticket.account.portal_name)
     @selected_reply_email = current_account.features?(:personalized_email_replies) ? @ticket.friendly_reply_email_personalize(current_user.name) : @ticket.selected_reply_email
   end
 

@@ -214,4 +214,11 @@ ROLES:
             manage_reports:          true    # Can see and run reports
             view_users_info:        true    # Can see users info
 
+# Email type to header message-id tag.(for ex., scenario automation mails will 
+# be sent with message-id header as XXXXXXX@automation.freshdesk.com)
+
+EMAIL_TYPE_TO_MESSAGE_ID_DOMAIN:
+    automation: "automation.freshdesk.com"
+    notification: "notification.freshdesk.com"
+
 
