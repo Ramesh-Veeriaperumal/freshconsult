@@ -3719,7 +3719,7 @@ en:
     tour: Help me create a new agent group
     helptext: You can organize your agents into specific Groups like “Support” and “Sales”. This lets you easily assign tickets, create specific canned responses, manage workflows and generate group-level reports. Note that an agent can be a member of multiple groups as well.
     automatic_assignment: <b>To each group</b><br/>Once you’ve created your agent groups, you can use set up rules in dispatch’r to route tickets to each group. <a href="https://support.freshdesk.com/support/solutions/articles/77157" target="_blank">Learn more</a><br/><br/><b>To agents within each group</b><br/>You can automatically assign tickets to online agents through two methods - <br/> 1. Round-robin ticket assignment, i.e. circular assignment of tickets <br/> 2. Load balanced ticket assignment, i.e. setting a maximum limit on number of tickets an agent can receive <br/> <a href="https://support.freshdesk.com/support/solutions/articles/196581" target="_blank">Click here to read more</a>
-    automatic_assignment_header: Auto-ticket Assignment
+    automatic_assignment_header: Automatic Ticket Assignment
     working_hours_header: Business Hours
     working_hours: You can assign each of these groups with different business hours which is simply your working hours. For example, you can group agents by shifts and assign different business hours to each group, or create separate groups for different locations your agents work from.
     select_agents: Select Agents
