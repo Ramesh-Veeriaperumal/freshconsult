@@ -11,6 +11,40 @@ window.App.Discussions = window.App.Discussions || {};
     onVisit: function() {
       this.addListeners();
       this.setFirstEmail();
+      this.formsave();
+      this.confirmBeforeLeavingUnsavedContent();
+    },
+
+    formsave: function(){
+      $('#post-form').submit(function(){$(window).off('beforeunload.NewTopic');});
+    },
+
+    confirmBeforeLeavingUnsavedContent: function(){
+
+      var $this = this;
+      var msg = $this.STRINGS.unsavedContent
+      $(window).on('beforeunload.NewTopic', function(e) {
+          if (jQuery('#topic_body_html').data('redactor').isNotEmpty() || jQuery('#topic_title').val().length > 0)
+          {
+              if(!e)
+              {
+                e = window.event;
+              }
+              e.preventDefault();
+              e.stopPropagation();  
+              e.returnValue = true;
+              return msg;     
+          }
+      });
+
+      $(document).on('pjax:beforeSend.NewTopic',function(){
+        if(jQuery('#topic_body_html').data('redactor').isNotEmpty() || jQuery('#topic_title').val().length > 0)
+          if(!confirm($this.STRINGS.unsavedContent + " " + $this.STRINGS.leaveQuestion))
+          {
+            Fjax.resetLoading();
+            return false;
+          }
+      });
     },
 
     addListeners: function() {

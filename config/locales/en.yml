@@ -9676,6 +9676,9 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     tour: Help me setup my forums
     tour_v2: Help me setup my knowledge base
     show_more: Show more
+    general:  
+        unsaved_content: "You have unsaved content in this page."
+        leave_page_que: "Do you want to leave this page?"
     helpnote:
       title: Organizing your community
       para1: "Categories are top level hierarchies that let you broadly classify your community and target your discussions to different types of audiences."
