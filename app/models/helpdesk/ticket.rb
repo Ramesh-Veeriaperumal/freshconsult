@@ -244,6 +244,14 @@ class Helpdesk::Ticket < ActiveRecord::Base
     { :conditions => ["status IN (?) and responder_id = ?", status_ids, user_id] } 
   }
 
+  scope :next_autoplay_ticket, lambda {|account,responder_id| { 
+    :select => "helpdesk_tickets.display_id",
+    :conditions => ["status IN (?) and responder_id = ?", Helpdesk::TicketStatus::donot_stop_sla_statuses(account),responder_id],
+    :limit => 1,
+    :order => "helpdesk_tickets.due_by ASC",
+  }
+}
+
   SCHEMA_LESS_ATTRIBUTES.each do |attribute|
     define_method("#{attribute}") do
       build_schema_less_ticket unless schema_less_ticket
@@ -888,6 +896,17 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def ticket_changes
     @model_changes
+  end
+
+  def trigger_autoplay?
+    return false unless account.launched?(:autoplay)
+    return false unless (User.current && User.current.agent? && User.current.agent.available?)
+    can_trigger = false
+
+    can_trigger = self.onhold_and_closed? if ticket_changes.has_key?(:status)
+    can_trigger = ticket_changes[:responder_id][1] != User.current.try(:id) if ticket_changes.has_key?(:responder_id)
+
+    can_trigger
   end
 
   #Ecommerce methods

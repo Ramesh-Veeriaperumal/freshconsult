@@ -433,7 +433,9 @@ class Helpdesk::TicketsController < ApplicationController
           render :xml => @item.to_xml({:basic => true})
         }
         format.json {
-            render :json => request.xhr? ? { :success => true, :redirect => (params[:redirect] && params[:redirect].to_bool) }.to_json  : @item.to_json({:basic => true})
+            response_params = { :success => true, :redirect => (params[:redirect] && params[:redirect].to_bool) }
+            response_params.merge!(:autoplay_link => autoplay_link) if @item.trigger_autoplay?
+            render :json => request.xhr? ? response_params.to_json  : @item.to_json({:basic => true})
         }
       end
     else
@@ -1072,6 +1074,13 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   protected
+
+    def autoplay_link
+      next_ticket_id = run_on_slave { 
+        current_account.tickets.visible.next_autoplay_ticket(current_account,current_user.id).first.try(:display_id)
+      }
+      next_ticket_id ? helpdesk_ticket_path(next_ticket_id) : ""
+    end
 
     def item_url
       return compose_email_helpdesk_tickets_path if params[:save_and_compose]

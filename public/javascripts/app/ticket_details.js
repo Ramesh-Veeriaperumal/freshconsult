@@ -1285,8 +1285,11 @@ var scrollToError = function(){
 				}, 2000);
 
 				callback();
-
-				if(response.redirect)
+				
+				if (response.autoplay_link) {
+					pjaxify(response.autoplay_link);
+				}
+				else if(response.redirect || response.autoplay_link == "")
 				{
 					$('[rel=link_ticket_list]').click();
 				} else {
