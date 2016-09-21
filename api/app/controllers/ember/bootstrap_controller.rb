@@ -1,6 +1,6 @@
 class Ember::BootstrapController < ApiApplicationController
 
-  
+  COLLECTION_RESPONSE_FOR = []
   def index
     @agent = current_user.agent
     date_format = Account::DATEFORMATS[current_account.account_additional_settings.date_format]

@@ -4,7 +4,7 @@ module ApiDiscussions
     decorate_views(decorate_objects: [:followed_by, :forum_topics])
 
     before_filter :forum_exists?, only: [:forum_topics]
-
+    COLLECTION_RESPONSE_FOR = ['forum_topics'].freeze
     def create
       @item.user = api_current_user
       post = @item.posts.build(params[cname].select { |x| DiscussionConstants::TOPIC_COMMENT_CREATE_FIELDS.flat_map(&:last).include?(x) })

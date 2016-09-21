@@ -1,6 +1,8 @@
 class TimeEntriesController < ApiApplicationController
   include TicketConcern
 
+  COLLECTION_RESPONSE_FOR = ['ticket_time_entries'].freeze
+
   def create
     # If any validation is introduced in the TimeSheet model,
     # update_running_timer and @item.save should be wrapped in a transaction.

@@ -12,7 +12,7 @@ class ApiApplicationController < MetalApiController
   protect_from_forgery
   skip_before_filter :verify_authenticity_token
   before_filter :verify_authenticity_token, :if => :csrf_check_reqd?
-  
+
   # Do not change the order as record_not_unique is inheriting from statement invalid error
   rescue_from ActiveRecord::RecordNotUnique, with: :duplicate_value_error
   rescue_from ConsecutiveFailedLoginError, with: :login_error_handler
@@ -41,7 +41,7 @@ class ApiApplicationController < MetalApiController
 
   include DecoratorConcern
 
-  before_filter { |c| c.requires_feature *feature_name if feature_name }
+  before_filter { |c| c.requires_feature(*feature_name) if feature_name }
   skip_before_filter :check_privilege, only: [:route_not_found]
 
   # before_load_object and after_load_object are used to stop the execution exactly before and after the load_object call.
@@ -66,8 +66,8 @@ class ApiApplicationController < MetalApiController
   before_filter :validate_url_params, only: [:show]
   after_filter :set_root_key
 
-  SINGULAR_RESPONSE_FOR = %w(show create update)
-  COLLECTION_RESPONSE_FOR = %w(index search)
+  SINGULAR_RESPONSE_FOR = %w(show create update).freeze
+  COLLECTION_RESPONSE_FOR = %w(index search).freeze
   def index
     load_objects
   end
@@ -442,10 +442,10 @@ class ApiApplicationController < MetalApiController
       # should be defined in case of invalid credentials as api_current_user gets called repeatedly.
       @current_user ||= nil
     end
-    
+
     def session_auth
       if current_user_session # fall back to old session based auth
-        @current_user = (session.key?(:assumed_user)) ? (current_account.users.find session[:assumed_user]) : current_user_session.record
+        @current_user = session.key?(:assumed_user) ? (current_account.users.find session[:assumed_user]) : current_user_session.record
         stale_record = current_user_session.stale_record
         if @current_user
           @current_user.update_failed_login_count(true) if @current_user.failed_login_count != 0 && login_via_email?
@@ -456,7 +456,7 @@ class ApiApplicationController < MetalApiController
         end
       end
     end
-    
+
     def basic_auth
       # authenticate using auth headers
       authenticate_with_http_basic do |username, password| # authenticate_with_http_basic - AuthLogic method
@@ -679,27 +679,32 @@ class ApiApplicationController < MetalApiController
         yield
       end
     end
-    
+
     def csrf_check_reqd?
       return false unless $infra['PRIVATE_API']
-      request.cookies["_helpkit_session"] && !get_request?
+      request.cookies['_helpkit_session'] && !get_request?
     end
-    
+
     def handle_unverified_request
       render_request_error :invalid_credentials, 401
       #TODO-EMBERAPI Need to decide what exactly to send back
     end
-    
+
     def set_root_key
       return unless params[:version] == 'private' || response.api_root_key.present?
       case action_name
-      when *SINGULAR_RESPONSE_FOR
-        response.api_root_key = controller_name.singularize
-      when *COLLECTION_RESPONSE_FOR
-        response.api_root_key = controller_name.pluralize
+      when *self.class::SINGULAR_RESPONSE_FOR
+        response.api_root_key = api_root_key.singularize
+      when *self.class::COLLECTION_RESPONSE_FOR
+        response.api_root_key = api_root_key.pluralize
       else
         response.api_root_key = :data
       end
+    end
+
+    def api_root_key
+      @api_root_key ||=
+        defined?(self.class::ROOT_KEY) ? self.class::ROOT_KEY.to_s : controller_name.gsub('api_', '')
     end
       
 end

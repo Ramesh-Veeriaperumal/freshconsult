@@ -6,6 +6,7 @@ class ConversationsController < ApiApplicationController
 
   before_filter :can_send_user?, only: [:create, :reply]
 
+  COLLECTION_RESPONSE_FOR = ['ticket_conversations'].freeze
   def create
     conversation_delegator = ConversationDelegator.new(@item)
     if conversation_delegator.valid?

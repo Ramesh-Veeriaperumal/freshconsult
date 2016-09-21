@@ -2,7 +2,7 @@ module ApiDiscussions
   class ForumsController < ApiApplicationController
     include DiscussionMonitorConcern
     before_filter :category_exists?, only: [:category_forums]
-
+    COLLECTION_RESPONSE_FOR = ['category_forums'].freeze
     def destroy
       # Needed for removing es index for topic. Shouldn't be part of topic model. Performance constraints to enqueue jobs for each topic
       @item.backup_forum_topic_ids

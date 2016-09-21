@@ -2,6 +2,7 @@ class SatisfactionRatingsController < ApiApplicationController
   include TicketConcern
   include Concerns::SatisfactionRatingConcern
 
+  COLLECTION_RESPONSE_FOR = ['survey_results'].freeze
   def scoper(item = @ticket)
     custom_survey? ? custom_survey_results(item) : classic_survey_results(item)
   end
