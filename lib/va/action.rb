@@ -168,6 +168,7 @@ class Va::Action
   end
 
   def send_email_to_requester(act_on)
+    return if act_on.spam?
     if act_on.requester_has_email? && !(act_on.ecommerce? || act_on.requester.ebay_user?)
       act_on.account.make_current
       Helpdesk::TicketNotifier.send_later(:email_to_requester, act_on, 
@@ -178,6 +179,7 @@ class Va::Action
   end
   
   def send_email_to_group(act_on)
+    return if act_on.spam?
     group = get_group(act_on)
     if group && !group.agent_emails.empty?
       send_internal_email(act_on, group.agent_emails)
@@ -186,6 +188,7 @@ class Va::Action
   end
 
   def send_email_to_agent(act_on)
+    return if act_on.spam?
     agent = get_agent(act_on)
     if agent
       send_internal_email(act_on, agent.email)
