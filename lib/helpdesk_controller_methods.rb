@@ -255,11 +255,13 @@ protected
   end
 
   def build_shared_attachments item
-      (params[:shared_attachments] || []).each do |r|
-        a=Helpdesk::Attachment.find(r)
-        item.shared_attachments.build(:account_id => item.account_id,:attachment=>a )
+      if params[:shared_attachments].present?
+        uniq_shared_attachments=params[:shared_attachments].uniq 
+        (uniq_shared_attachments || []).each do |r|
+          a=Helpdesk::Attachment.find(r)
+          item.shared_attachments.build(:account_id => item.account_id,:attachment=>a )
+        end
       end
-
       unless params[:admin_canned_responses_response].nil?
         (params[:admin_canned_responses_response][:attachments]).each do |a|
           attachment_created=item.account.attachments.create(:content => a[:resource], :description => a[:description],:attachable_type=> "Account", :attachable_id=>current_account.id)
@@ -341,8 +343,10 @@ protected
   end
 
   def fetch_item_attachments
-    return unless (@item.is_a? Helpdesk::Note and @item.fwd_email?) or @item.is_a? Helpdesk::Ticket or
-      @item.is_a? Helpdesk::TicketTemplate
+    return unless (@item.is_a? Helpdesk::Note ) or @item.is_a? Helpdesk::Ticket or @item.is_a? Helpdesk::TicketTemplate 
+    if params[:sol_articles_cloud_file_attachments].present?
+      fetch_cloud_file_attachments
+    end
     (params[nscname][:attachments] || []).each do |a|
       begin
         if a[:resource].is_a?(String) and Integer(a[:resource]) # In case of forward, we are passing existing Attachment ID's to upload the file via URL's
@@ -358,6 +362,20 @@ protected
         NewRelic::Agent.notice_error(e)
         Rails.logger.error("Error while fetching item attachments using ID")
       end
+    end
+  end
+
+  def fetch_cloud_file_attachments
+    return unless (@item.is_a? Helpdesk::Note ) or @item.is_a? Helpdesk::Ticket or @item.is_a? Helpdesk::TicketTemplate 
+    params[:sol_articles_cloud_file_attachments].each do |a|
+        if a[:resource].present?
+          attachment_obj = current_account.cloud_files.find_by_id(a[:resource])
+          cloud_file_url = attachment_obj.url
+          cloud_file_app_id = attachment_obj.application_id
+          cloud_file_filename = attachment_obj.filename
+          result = {:url => cloud_file_url, :filename => cloud_file_filename,:application_id => cloud_file_app_id}
+          @item.cloud_files.build(result)
+        end
     end
   end
 
