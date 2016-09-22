@@ -180,7 +180,12 @@ class Export::Ticket < Struct.new(:export_params)
   end
 
   def parse_date(date_time)
-    date_time.strftime("%F %T")
+    case date_time.class
+      when String
+        DateTime.parse(date_time).strftime("%F %T")
+      when DateTime  
+        date_time.strftime("%F %T")
+    end
   end
 
   def sql_conditions
