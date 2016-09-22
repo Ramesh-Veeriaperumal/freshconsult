@@ -5440,6 +5440,7 @@ de:
         timesheet: Zeittabelle
         reply_form:
           title: "Antwort senden an"
+          from: "Von"
           cc: Cc
           addcc: "Cc hinzufügen"
           removecc: "Cc entfernen"

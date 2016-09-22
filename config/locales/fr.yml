@@ -5436,6 +5436,7 @@ fr:
         timesheet: "Feuille de temps"
         reply_form:
           title: "Répondre à"
+          from: "De"
           cc: Cc
           addcc: "Ajouter un champ Cc"
           removecc: "Supprimer le champ Cc"
