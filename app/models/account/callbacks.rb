@@ -170,7 +170,7 @@ class Account < ActiveRecord::Base
     end
 
     def make_shard_mapping_inactive
-      SendgridDomainUpdates.perform_async({:action => 'delete', :domain => full_domain, :vendor_id => Account::MAIL_PROVIDER[:sendgrid]})
+      SendgridDomainUpdates.perform_async({:account_id => self.id, :action => 'delete', :domain => full_domain, :vendor_id => Account::MAIL_PROVIDER[:sendgrid]})
       shard_mapping = ShardMapping.find_by_account_id(id)
       shard_mapping.status = ShardMapping::STATUS_CODE[:not_found]
       shard_mapping.save
@@ -223,8 +223,8 @@ class Account < ActiveRecord::Base
         Redis::RoutesRedis.delete_route_info(full_domain_was)
         Redis::RoutesRedis.set_route_info(full_domain, id, full_domain)
         Subscription::UpdatePartnersSubscription.perform_async({:event_type => :domain_updated })
-        SendgridDomainUpdates.perform_async({:action => 'delete', :domain => full_domain_was, :vendor_id => vendor_id})
-        SendgridDomainUpdates.perform_async({:action => 'create', :domain => full_domain, :vendor_id => vendor_id})
+        SendgridDomainUpdates.perform_async({:account_id => self.id, :action => 'delete', :domain => full_domain_was, :vendor_id => vendor_id})
+        SendgridDomainUpdates.perform_async({:account_id => self.id, :action => 'create', :domain => full_domain, :vendor_id => vendor_id})
       end
     end
     
@@ -248,6 +248,6 @@ class Account < ActiveRecord::Base
     end
 
     def update_sendgrid
-      SendgridDomainUpdates.perform_async({:action => 'create', :domain => full_domain, :vendor_id => Account::MAIL_PROVIDER[:sendgrid]})
+      SendgridDomainUpdates.perform_async({:account_id => self.id, :action => 'create', :domain => full_domain, :vendor_id => Account::MAIL_PROVIDER[:sendgrid]})
     end
 end
