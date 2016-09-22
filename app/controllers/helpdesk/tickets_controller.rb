@@ -934,10 +934,7 @@ class Helpdesk::TicketsController < ApplicationController
   def get_solution_detail
     language = Language.find_by_code(params[:language]) || Language.for_current_account
     sol_desc = current_account.solution_article_meta.find(params[:id]).send("#{language.to_key}_article")
-    @sol_attach = sol_desc.attachments
-    @sol_cloud_files = sol_desc.cloud_files
-    @sol_description = Helpdesk::HTMLSanitizer.sanitize_for_insert_solution(sol_desc.description) || ""
-    render :partial => '/helpdesk/tickets/components/insert_solutions.rjs'
+    render :text => Helpdesk::HTMLSanitizer.sanitize_for_insert_solution(sol_desc.description) || ""
   end
 
   def latest_note
