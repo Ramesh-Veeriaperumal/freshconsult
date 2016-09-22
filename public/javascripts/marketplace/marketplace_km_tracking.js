@@ -7,21 +7,54 @@
 
   //clicked browse apps button -Number of visits to the App Gallery 
   jQuery(document).on("click.km_track_evt", ".button-bar .browse-apps-btn", function(){
-    App.Marketplace.Metrics.push_event("Clicked Browse Apps Button", mktplace_domain);
+    App.Marketplace.Metrics.push_event(
+      "Opened App Gallery",
+      { "Domain Name": mktplace_domain,
+        "Opened App Gallery from" : "Browse apps button"
+      }
+    );
   });
   //clicked blank slate browse apps button - Number of visits to the App Gallery 
   jQuery(document).on("click.km_track_evt", ".btn-appgallery", function(){
-    App.Marketplace.Metrics.push_event("Clicked Blank State Browse Apps Button", mktplace_domain);
+    App.Marketplace.Metrics.push_event(
+      "Opened App Gallery",
+      { "Domain Name": mktplace_domain,
+        "Opened App Gallery from" : "Blank state browse apps button"
+      }
+    );
+  });
+
+  //clicked blank slate browse apps button - Number of visits to the App Gallery
+  jQuery(document).on("click.km_track_evt", ".fa-dd .category" , function(e){
+    App.Marketplace.Metrics.push_event(
+      "Filtered App Gallery",
+      { "Domain Name": mktplace_domain,
+        "App Category" : e.target.innerText.trim()
+      }
+    );
   });
 
   //clicked app box in app gallery - Number of visits to each app’s description page
   jQuery(document).on("viewed_app_description_page", function(e){
+    var _viewedAppFrom;
+    switch(true){
+      case e.is_suggestion:
+        _viewedAppFrom = "App Gallery Search Suggestion";
+        break;
+      case e.is_from_search:
+        _viewedAppFrom = "App Gallery Search Result";
+        break;
+      case e.is_from_installed:
+        _viewedAppFrom = "Installed App Listing";
+        break;
+      default:
+        _viewedAppFrom = "App Gallery Listing";
+    }
     App.Marketplace.Metrics.push_event(
-      "Viewed App Description Page", 
-      { "Domain Name": mktplace_domain, 
+      "Viewed app description",
+      { "Domain Name": mktplace_domain,
         "App Name": e.app_name,
-        "Viewed From Search Suggestions": e.is_suggestion,
-        "Viewed From Search Results" : e.is_from_search
+        "Viewed app description page from": _viewedAppFrom
       }
     );
   });

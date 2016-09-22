@@ -1574,9 +1574,8 @@ var scrollToError = function(){
 		$('.broadcast_message_box .quoted_text').css('display', 'none');
 	}
 	
-	$('body').on('click.ticket_details', '.broadcast_message_box .quoted_text, #ticket_original_request', function(e){
+	$('body').on('click.ticket_details', '.broadcast_message_box .quoted_text, .boadcast_expander', function(e){
 		e.preventDefault();
-		e.stopPropagation();
 		$('.broadcast_message_box #ticket_original_request').removeClass('collapsed');
 		$('.broadcast_message_box .quoted_text').css('display', 'none');
 	});
