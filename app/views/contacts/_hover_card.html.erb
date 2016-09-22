@@ -17,7 +17,8 @@
                 <%= h user.job_title %>
               </div>
           <% end %>
-        <%= render :partial => "helpdesk/tickets/components/company_info", :locals => { :user => user } %>
+        <%= render :partial => "helpdesk/tickets/components/company_info", 
+                   :locals => { :company => ticket.company } %>
         <% if feature?(:gamification) and feature?(:gamification_enable) and user.agent? %>
           <%= content_tag :div, h(user.agent.level.name) unless user.agent.level.blank? %>
         <% end %>

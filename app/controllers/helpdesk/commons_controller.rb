@@ -75,7 +75,8 @@ class Helpdesk::CommonsController < ApplicationController
           twitter_id = $1
           user = current_account.users.find_by_twitter_id(twitter_id)
       end
-      to_ret = user.companies.sorted.collect { |c| [c.name, c.id] } if (user && user.companies.present?)
+      to_ret = user.companies.sorted.collect { |c| [c.name, c.id] } if (user &&
+               user.companies.length > 1)
     end
     render :json => to_ret
   end

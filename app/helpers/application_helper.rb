@@ -1147,7 +1147,8 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
         end
       when "dropdown_blank" then
         dropdown_choices = field.html_unescaped_choices(@ticket)
-        disabled = true if field.field_type == "default_company" && dropdown_choices.empty?
+        disabled = true if field.field_type == "default_company" &&
+                                               dropdown_choices.length <= 1
         element = label + select(object_name, field_name,
                                               dropdown_choices,
                                               {:include_blank => "...", :selected => field_value},
@@ -1199,7 +1200,9 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
     end
     fd_class = "#{ dom_type } #{ field.field_type } field"
     fd_class += " dynamic_sections" if (field.has_sections_feature? && (field.field_type == "default_ticket_type" || field.field_type == "default_source"))
-    fd_class += " hide" if field.field_type == "default_company" && (@ticket.new_record? || dropdown_choices.empty?)
+    fd_class += " hide" if field.field_type == "default_company" &&
+                                               (@ticket.new_record? ||
+                                               dropdown_choices.length <= 1)
     fd_class += " tkt_cr_wrap" if field.field_type == "default_description"
     content_tag :li, element.html_safe, :class => fd_class
   end
