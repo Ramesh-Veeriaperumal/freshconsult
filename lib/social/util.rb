@@ -122,7 +122,7 @@ module Social::Util
           photo_url_hash[media.url.to_s] = image_attachment.content.url
         end
       end
-      media_url_hash[:photo] = photo_url_hash if(photo_url_hash.length > 0)
+      media_url_hash[:photo] = photo_url_hash if photo_url_hash.present?
     rescue => e
       Rails.logger.error("Exception while attaching media content to ticket Exception: #{e.class} Exception Message: #{e.message}")
     end

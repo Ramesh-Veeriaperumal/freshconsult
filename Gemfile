@@ -116,7 +116,7 @@ gem "newrelic_rpm","3.9.9.275"
 
 gem "faraday" , "0.9"
 gem 'faraday_middleware', '~> 0.10.0'
-gem "twitter", "~> 5.5.1"
+gem "twitter", "~> 5.16.0"
 gem "gnip-rule", "0.4.1"
 gem "curb", "~> 0.8.5"
 gem "sanitize", "2.0.3"

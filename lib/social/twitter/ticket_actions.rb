@@ -107,7 +107,7 @@ module Social::Twitter::TicketActions
       tweet_body = options[:tweet] ? twt[:body] : twt.text
       if options[:media_url_hash].present?
         options[:media_url_hash][:photo].present? && options[:media_url_hash][:photo].each do |photo_url_hash_key, photo_url_hash_val|
-            img_element = "<img src=\"#{photo_url_hash_val}\" class=\"inline-image\"/>"
+            img_element = INLINE_IMAGE_HTML_ELEMENT % photo_url_hash_val
             tweet_body = tweet_body.gsub(photo_url_hash_key, img_element)
           end
       end

@@ -128,4 +128,6 @@ module Social::Constants
   #Length+1 used in nobelcount.js for the manipulation of character count in UI
   TWITTER_URL_LENGTH = " " * 23
 
+  INLINE_IMAGE_HTML_ELEMENT = "<img src=\"%s\" class=\"inline-image\"/>"
+
 end
