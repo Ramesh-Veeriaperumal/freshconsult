@@ -6,8 +6,6 @@
     :class => "form-portal ticket-form", :rel => "validate" } do |f| %>
   <%= f.error_messages %>
 
-  <!-- Note: when any changes made to the block below or TICKET_FIELD_ELEMENTS PARTIAL in the future,
-    please update the memcache key version. key_name :: SUPPORT_NEW_TICKET_FORM in cache/fragment_cache/keys.rb -->
   <% enable_fragment_cache(:support_new_ticket) do %>
     <% current_portal.customer_editable_ticket_fields.each do |field| 
         next if field.section_field?

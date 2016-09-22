@@ -9,10 +9,12 @@ class DomainSearchController < ActionController::Base
     agents = urls = []
     
     Sharding.execute_on_all_shards do
-      agents = User.technicians.find_all_by_email(params[:user_email])
-      agents.each do |agent|
-        account = agent.account
-        urls.push(account.host)
+      Sharding.run_on_slave do
+        agents = User.technicians.find_all_by_email(params[:user_email])
+        agents.each do |agent|
+          account = agent.account
+          urls.push(account.host)
+        end
       end
     end
         

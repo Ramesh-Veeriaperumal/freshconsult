@@ -6,6 +6,7 @@ class SlaNotifier < ActionMailer::Base
 
 	def escalation(ticket, agent, n_type, params)
 		@ticket = ticket
+		ActionMailer::Base.set_email_config ticket.reply_email_config if ticket.account.features?(:all_notify_by_custom_server)
 		headers = {
 			:subject                   => params[:subject],
 			:to                        => agent.email,

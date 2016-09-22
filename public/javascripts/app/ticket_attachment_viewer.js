@@ -32,7 +32,7 @@ window.App = window.App || {};
 
       // When the user clicks the inline image, catch it
       // and invoke the popup for attachment viewer
-      $(document).on('click.ticket_attachment_preview',".commentbox img",this.p(this.inlineImageClicked));
+      $(document).on('click.ticket_attachment_preview',"a.image-enlarge-link img",this.p(this.inlineImageClicked));
 
       // Close the popup when user clicks the close button
       $(document).on('click.ticket_attachment_preview','.av-close',this.p(this.removePopup));

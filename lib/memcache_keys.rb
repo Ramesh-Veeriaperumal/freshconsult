@@ -158,6 +158,8 @@ module MemcacheKeys
 
   ACCOUNT_WEBHOOK_KEY = "ACCOUNT_WEBHOOK_KEY:%{account_id}:%{vendor_id}"
 
+  MOST_VIEWED_ARTICLES = "MOST_VIEWED_ARTICLES:%{account_id}:%{language_id}:%{cache_version}"
+
   class << self
 
     def newrelic_begin_rescue(&block)

@@ -148,7 +148,7 @@ var TktDetailDom = Class.create({
     });
   },
 
-  onForwardClick: function(callback) {
+  onFwdClick: function(callback) {
     // error in phone type -- without reply
     var _that = this;
     jQuery("[data-domhelper-name='fwd-button'], [data-domhelper-name='fwd-sticky-button']").on('click.ticket_details', function(e) {

@@ -36,25 +36,12 @@
 
   //clicked app box in app gallery - Number of visits to each app’s description page
   jQuery(document).on("viewed_app_description_page", function(e){
-    var _viewedAppFrom;
-    switch(true){
-      case e.is_suggestion:
-        _viewedAppFrom = "App Gallery Search Suggestion";
-        break;
-      case e.is_from_search:
-        _viewedAppFrom = "App Gallery Search Result";
-        break;
-      case e.is_from_installed:
-        _viewedAppFrom = "Installed App Listing";
-        break;
-      default:
-        _viewedAppFrom = "App Gallery Listing";
-    }
     App.Marketplace.Metrics.push_event(
       "Viewed app description",
       { "Domain Name": mktplace_domain,
         "App Name": e.app_name,
-        "Viewed app description page from": _viewedAppFrom
+        "Viewed From Search Suggestions": e.is_suggestion,
+        "Viewed From Search Results" : e.is_from_search
       }
     );
   });

@@ -1655,6 +1655,8 @@ en:
         feedbackwidget_use_captcha: Enable CAPTCHA
         feedbackwidget_submit_title: "Send Feedback"
         feedbackwidget_form_submit_title: "Form Submit Button"
+        feedbackwidget_title_maxlength: "Maximum 30 characters"
+        feedbackwidget_submit_title_maxlength: "Maximum 16 characters"
       embedded_widget:
         feedbackwidget_height_placeholder: "500"
         feedbackwidget_form_customization: Customize Form
@@ -1674,6 +1676,8 @@ en:
         feedbackwidget_use_captcha: Enable CAPTCHA
         feedbackwidget_submit_title: "Send Feedback"
         feedbackwidget_form_submit_title: "Form Submit Button"
+        feedbackwidget_title_maxlength: "Maximum 16 characters"
+        feedbackwidget_submit_title_maxlength: "Maximum 16 characters"
     supervisor_rules:
       new_info_help: For <b>each ticket</b> updated within 30 days, execute all matching rules.
       index:

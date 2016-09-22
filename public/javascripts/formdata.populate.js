@@ -78,7 +78,7 @@ var PopulateFormData = PopulateFormData ||  (function(){
   }
 
   function _populateFields(data, args){
-    var initialData = getInitialData(),
+    var initialData = getInitialData(args['defaultKey']),
         responseData = args.isAjax ? data.conditions : data;
         extendedData = jQuery.extend(initialData, responseData),
         selectedFields = _getKeys(extendedData),
@@ -93,11 +93,14 @@ var PopulateFormData = PopulateFormData ||  (function(){
 
   }
 
-  function getInitialData(){
+  function getInitialData(view_name){
     var initialObj = {}, key;
     jQuery(".ff_item").each(function(){
       key = jQuery(this).attr('condition');
       initialObj[key] = '';
+      if(key == 'created_at'){
+        initialObj[key] = (view_name == 'all_tickets') ? "last_month" : "any_time";
+      }
     });
     return initialObj;
   }

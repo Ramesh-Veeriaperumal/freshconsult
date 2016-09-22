@@ -131,6 +131,7 @@ class Freshfone::UsersController < ApplicationController
 
 		def select_warm_transfer_call
 			return warm_transfer_call_leg if new_notifications?
+			return if current_call.blank?
 			current_call.supervisor_controls.warm_transfer_calls.supervisor_progress_call(split_client_id(params[:To])).first
 		end
 	
