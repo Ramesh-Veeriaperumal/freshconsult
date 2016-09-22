@@ -114,6 +114,7 @@ var PopulateFormData = PopulateFormData ||  (function(){
         break;
 
       case 'dropdown':
+          jQuery("[condition='"+$wrapperData.id+"']").find('input').prop('checked', false);
           dataArray.each(function(val, index){
               jQuery("[condition='"+$wrapperData.id+"']").find('input[value="'+val+'"]').prop('checked', true);
           });
