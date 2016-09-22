@@ -10,6 +10,7 @@ module RabbitMq::Subscribers::Tickets::Activities
                               :source, :status, :product_id, :spam, :deleted, :parent_ticket, :due_by,
                               :int_tc03
                            ]
+  PROPERTIES_TO_RENAME   = [ :long_tc03, :long_tc04]
   PROPERTIES_TO_CONVERT  = [ :group_id, :product_id, :status, :int_tc03 ]
   PROPERTIES_AS_ARRAY    = [ :add_tag, :add_watcher, :rule, :add_a_cc, :add_comment, :email_to_requester, :email_to_group, :email_to_agent, :int_tc03]
 
@@ -113,7 +114,21 @@ module RabbitMq::Subscribers::Tickets::Activities
       value[0] = value[1].to_i
       value[1] = status.name
     end
-    value
+    {:status => value}
+  end
+
+  def activity_int_tc03(value)
+    v = value.compact
+    case v[0]
+    when 1
+    when 2
+    when 3
+      {:tracker_link => [@related_ticket.display_id]}
+      # for tracker tickets. doing manual push
+    when 4
+      tracker = tracker_ticket_id ? [ tracker_ticket_id.to_i ] : self.associates
+      value[0].nil? ? {:rel_tkt_link => tracker } : {:rel_tkt_unlink => tracker }
+    end
   end
 
   def activity_int_tc03(value)
@@ -161,12 +176,13 @@ module RabbitMq::Subscribers::Tickets::Activities
     hash = {}
     actions.each do |k,v|
       # using dup -> to avoid modifying model_changes values
-      v1 = PROPERTIES_AS_ARRAY.include?(k.to_sym) ? v.dup : add_dont_care(v.dup)
-      if PROPERTIES_TO_CONVERT.include?(k.to_sym)
-        value = send("activity_#{k}", v1.dup)
-        hash[k] = value if value != false
+      key = PROPERTIES_TO_RENAME.include?(k.to_sym) ? PROPERTIES_RENAME_MAP[k.to_sym] : k
+      v1 = PROPERTIES_AS_ARRAY.include?(key.to_sym) ? v.dup : add_dont_care(v.dup)
+      if PROPERTIES_TO_CONVERT.include?(key.to_sym)
+        value = send("activity_#{key}", v1.dup)
+        hash.merge!(value) if value != false
       else
-        hash[k] = v1
+        hash[key] = v1
       end
     end
     hash
