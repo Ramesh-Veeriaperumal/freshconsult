@@ -4,7 +4,7 @@
 			<span class="ficon-broadcast-tracker fsize-18 muted"></span>
 			<b><%= t("helpdesk.tickets.note.created_on_live.broadcast_message") %></b>, <abbr data-livestamp='<%= @last_broadcast_note.created_at.to_i %>'></abbr><br>
 		</div>
-		<div rel="image-enlarge" id="ticket_original_request" class="request_mail collapsed">
+		<div rel="image-enlarge" id="ticket_original_request" class="request_mail collapsed boadcast_expander">
 	    	<%= @last_broadcast_note.body_html.html_safe %>
 		</div>
 		<div class="freshdesk_quote quoted_text">
