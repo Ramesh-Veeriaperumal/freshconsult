@@ -1,0 +1,958 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Freshdesk Private API",
+    "version": "1.0.0"
+  },
+  "basePath": "/api/_",
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/contacts": {
+      "get": {
+        "tags": [
+          "contact"
+        ],
+        "summary": "List all",
+        "description": "Work in Progress",
+        "parameters": [
+          {
+            "name": "email",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "mobile",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "phone",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "company_id",
+            "in": "query",
+            "type": "number"
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "type": "string",
+            "enum": [
+              "blocked",
+              "deleted",
+              "unverified",
+              "verified"
+            ]
+          },
+          {
+            "name": "tag",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/array_of_contacts"
+            }
+          }
+        }
+      }
+    },
+    "/contacts/bulk_delete": {
+      "put": {
+        "tags": [
+          "contact"
+        ],
+        "summary": "Bulk Delete",
+        "description": "Bulk delete contacts",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/bulk_action_input"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Accepted",
+            "schema": {
+              "$ref": "#/definitions/partial_success_response"
+            }
+          },
+          "204": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/contacts/bulk_restore": {
+      "put": {
+        "tags": [
+          "contact"
+        ],
+        "summary": "Bulk Restore",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/bulk_action_input"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Accepted",
+            "schema": {
+              "$ref": "#/definitions/partial_success_response"
+            }
+          },
+          "204": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/contacts/{id}/restore": {
+      "put": {
+        "summary": "Restore Contact",
+        "tags": [
+          "contact"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "number",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        }
+      }
+    },
+    "/contacts/{id}/send_invite": {
+      "put": {
+        "summary": "Send Invite",
+        "tags": [
+          "contact"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "number",
+            "required": true,
+            "description": "ID of contact"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "404": {
+            "description": "User not found"
+          }
+        }
+      }
+    },
+    "/contacts/bulk_send_invite": {
+      "put": {
+        "summary": "Bulk Send Invite",
+        "tags": [
+          "contact"
+        ],
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/bulk_action_input"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Accepted",
+            "schema": {
+              "$ref": "#/definitions/partial_success_response"
+            }
+          }
+        }
+      }
+    },
+    "/contacts/{id}/change_password": {
+      "put": {
+        "tags": [
+          "contact"
+        ],
+        "summary": "Change Password",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "number"
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/change_password_input"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          }
+        }
+      }
+    },
+    "/contacts/{id}/make_agent": {
+      "put": {
+        "tags": [
+          "contact"
+        ],
+        "summary": "Make Agent",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "number",
+            "required": true
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/make_agent_response"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/make_agent_params"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "409": {
+            "description": "Inconsistent state"
+          }
+        }
+      }
+    },
+    "/contacts/{id}/recent_ticket_activities": {
+      "get": {
+        "summary": "Recent Ticket Activities",
+        "description": "List of recent activities on any tickets",
+        "tags": [
+          "contact"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "number",
+            "required": true
+          }
+        ],
+        "examples": [
+          {
+            "id": 22
+          },
+          {
+            "id": 23
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/array_of_tickets"
+            }
+          },
+          "404": {
+            "description": "User not found"
+          }
+        }
+      }
+    },
+    "/contacts/{id}/recent_forum_activities": {
+      "get": {
+        "summary": "Recent Forum Activities",
+        "tags": [
+          "contact"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "number",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/array_of_posts"
+            }
+          },
+          "404": {
+            "description": "User not found"
+          }
+        }
+      }
+    },
+    "/tickets/bulk_delete": {
+      "put": {
+        "tags": [
+          "ticket"
+        ],
+        "summary": "Bulk Delete tickets",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/bulk_action_input"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Accepted",
+            "schema": {
+              "$ref": "#/definitions/partial_success_response"
+            }
+          },
+          "204": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/tickets/bulk_spam": {
+      "put": {
+        "summary": "Bulk Spam",
+        "tags": [
+          "ticket"
+        ],
+        "description": "Mark multiple tickets as spam",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/bulk_action_input"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Accepted",
+            "schema": {
+              "$ref": "#/definitions/partial_success_response"
+            }
+          },
+          "204": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/tickets/{id}/execute_scenario/{scenario_id}": {
+      "put": {
+        "tags": [
+          "ticket"
+        ],
+        "summary": "Execute Scenario",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "number",
+            "description": "Display ID of ticket",
+            "required": true
+          },
+          {
+            "name": "scenario_id",
+            "in": "path",
+            "type": "number",
+            "description": "ID of scenario to be executed",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "404": {
+            "description": "Ticket not found"
+          }
+        }
+      }
+    },
+    "/tickets/bulk_execute_scenario/{scenario_id}": {
+      "put": {
+        "summary": "Bulk Execute Scenarios",
+        "operationId": "bulk_execute_scenario",
+        "tags": [
+          "ticket"
+        ],
+        "parameters": [
+          {
+            "name": "scenario_id",
+            "in": "path",
+            "type": "number",
+            "required": true,
+            "description": "ID of scenario to be executed"
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/bulk_action_input"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Accepted",
+            "schema": {
+              "$ref": "#/definitions/partial_success_response"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "contact": {
+      "type": "object",
+      "properties": {
+        "active": {
+          "type": "boolean"
+        },
+        "address": {
+          "type": "string"
+        },
+        "company_id": {
+          "type": "number"
+        },
+        "description": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "id": {
+          "type": "number"
+        },
+        "job_title": {
+          "type": "string"
+        },
+        "language": {
+          "type": "string"
+        },
+        "mobile": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "time_zone": {
+          "type": "string"
+        },
+        "twitter_id": {
+          "type": "string"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "custom_fields": {
+          "$ref": "#/definitions/custom_field"
+        }
+      }
+    },
+    "ticket": {
+      "type": "object",
+      "properties": {
+        "cc_emails": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "fwd_emails": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "reply_cc_emails": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "email_config_id": {
+          "type": "number"
+        },
+        "fr_escalated": {
+          "type": "boolean"
+        },
+        "group_id": {
+          "type": "number"
+        },
+        "priority": {
+          "type": "number",
+          "enum": [
+            1,
+            2,
+            3,
+            4
+          ]
+        },
+        "requester_id": {
+          "type": "number"
+        },
+        "responder_id": {
+          "type": "number"
+        },
+        "source": {
+          "type": "number",
+          "enum": [
+            1,
+            2,
+            3,
+            7,
+            8,
+            9,
+            10
+          ]
+        },
+        "spam": {
+          "type": "boolean"
+        },
+        "status": {
+          "type": "number",
+          "enum": [
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
+        },
+        "subject": {
+          "type": "string"
+        },
+        "company_id": {
+          "type": "number"
+        },
+        "id": {
+          "type": "number"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Question",
+            "Incident",
+            "Problem",
+            "Feature Request"
+          ]
+        },
+        "to_emails": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "product_id": {
+          "type": "number"
+        },
+        "due_by": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "fr_due_by": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "is_escalated": {
+          "type": "boolean"
+        },
+        "description_text": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "custom_fields": {
+          "type": "object"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "attachments": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "byte"
+          }
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "array_of_tickets": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/ticket"
+      }
+    },
+    "array_of_contacts": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/contact"
+      }
+    },
+    "custom_field": {
+      "type": "object"
+    },
+    "post": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "number"
+        },
+        "topic_id": {
+          "type": "number"
+        },
+        "body": {
+          "type": "string"
+        },
+        "published": {
+          "type": "boolean"
+        },
+        "forum_id": {
+          "type": "number"
+        },
+        "user_votes": {
+          "type": "number"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "array_of_posts": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/post"
+      }
+    },
+    "bulk_action_input": {
+      "title": "data",
+      "type": "object",
+      "properties": {
+        "ids": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "minimum": 1,
+            "example": 987
+          }
+        }
+      },
+      "required": [
+        "ids"
+      ]
+    },
+    "partial_success_response": {
+      "title": "data",
+      "type": "object",
+      "description": "Partial Success Response",
+      "properties": {
+        "succeeded": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "minimum": 1
+          }
+        },
+        "errors": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/bulk_action_error"
+          }
+        }
+      },
+      "example": {
+        "succeeded": [
+          11,
+          12
+        ],
+        "errors": [
+          {
+            "id": 13,
+            "message": "Invalid number",
+            "code": "invalid_number"
+          }
+        ]
+      }
+    },
+    "bulk_action_error": {
+      "title": "error",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "number"
+        },
+        "message": {
+          "description": "Error message",
+          "type": "string"
+        },
+        "code": {
+          "description": "Error code",
+          "type": "string"
+        }
+      }
+    },
+    "bad_request_error": {
+      "title": "data",
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string"
+        },
+        "errors": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/request_error"
+          }
+        }
+      }
+    },
+    "request_error": {
+      "type": "object",
+      "properties": {
+        "field": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        },
+        "code": {
+          "type": "string"
+        }
+      }
+    },
+    "change_password_input": {
+      "type": "object",
+      "properties": {
+        "password": {
+          "type": "string",
+          "format": "password"
+        },
+        "password_confirmation": {
+          "type": "string",
+          "format": "password"
+        }
+      },
+      "required": [
+        "password",
+        "password_confirmation"
+      ]
+    },
+    "make_agent_params": {
+      "type": "object",
+      "properties": {
+        "occasional": {
+          "type": "boolean",
+          "description": "Set to true if this is an occasional agent (true => occasional, false => full-time)"
+        },
+        "signature": {
+          "type": "string",
+          "description": "Signature of the agent in HTML format"
+        },
+        "ticket_scope": {
+          "type": "number",
+          "description": "Ticket permission of the agent (1 -> Global Access, 2 -> Group Access, 3 -> Restricted Access). Current logged in agent can't update his/her ticket_scope"
+        },
+        "group_ids": {
+          "type": "array",
+          "description": "Group IDs associated with the agent",
+          "items": {
+            "type": "number"
+          }
+        },
+        "role_ids": {
+          "type": "array",
+          "description": "Role IDs associated with the agent. Atleast one role should be assoicated with the agent. Current logged in agent can't update his/her role_ids",
+          "items": {
+            "type": "number"
+          }
+        }
+      }
+    },
+    "make_agent_response": {
+      "type": "object",
+      "properties": {
+        "active": {
+          "type": "boolean"
+        },
+        "email": {
+          "type": "string"
+        },
+        "job_title": {
+          "type": "string"
+        },
+        "language": {
+          "type": "string"
+        },
+        "last_login_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "mobile": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "time_zone": {
+          "type": "string"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "agent": {
+          "$ref": "#/definitions/agent"
+        }
+      }
+    },
+    "agent": {
+      "type": "object",
+      "properties": {
+        "available_since": {
+          "type": "string"
+        },
+        "available": {
+          "type": "boolean"
+        },
+        "occasional": {
+          "type": "boolean"
+        },
+        "signature": {
+          "type": "string"
+        },
+        "group_ids": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        },
+        "role_ids": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        },
+        "id": {
+          "type": "number"
+        },
+        "ticket_scope": {
+          "type": "string"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    }
+  }
+}

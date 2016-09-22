@@ -1,0 +1,29 @@
+/contacts:
+  $ref: ./contacts/crud.yaml
+/contacts/bulk_delete:
+  $ref: ./contacts/bulk_delete.yaml
+/contacts/bulk_restore:
+  $ref: ./contacts/bulk_restore.yaml
+/contacts/{id}/restore:
+  $ref: ./contacts/restore.yaml
+/contacts/{id}/send_invite:
+  $ref: ./contacts/send_invite.yaml
+/contacts/bulk_send_invite:
+  $ref: ./contacts/bulk_send_invite.yaml
+/contacts/{id}/change_password:
+  $ref: ./contacts/change_password.yaml
+/contacts/{id}/make_agent:
+  $ref: ./contacts/make_agent.yaml
+/contacts/{id}/recent_ticket_activities:
+  $ref: ./contacts/recent_ticket_activities.yaml
+/contacts/{id}/recent_forum_activities:
+  $ref: ./contacts/recent_forum_activities.yaml
+
+/tickets/bulk_delete:
+  $ref: ./tickets/bulk_delete.yaml
+/tickets/bulk_spam:
+  $ref: ./tickets/bulk_spam.yaml
+/tickets/{id}/execute_scenario/{scenario_id}:
+  $ref: ./tickets/execute_scenario.yaml
+/tickets/bulk_execute_scenario/{scenario_id}:
+  $ref: ./tickets/bulk_execute_scenario.yaml

@@ -1,0 +1,20 @@
+
+  put:
+    tags: [ticket]
+    summary: Execute Scenario
+    parameters:
+      - name: id
+        in: path
+        type: number
+        description: Display ID of ticket
+        required: true
+      - name: scenario_id
+        in: path
+        type: number
+        description: ID of scenario to be executed
+        required: true
+    responses:
+      204:
+        description: Success
+      404:
+        description: Ticket not found

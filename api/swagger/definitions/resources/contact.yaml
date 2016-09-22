@@ -1,0 +1,37 @@
+
+type: object
+properties:
+  active:
+    type: boolean
+  address:
+    type: string
+  company_id:
+    type: number
+  description:
+    type: string
+  email:
+    type: string
+  id:
+    type: number
+  job_title:
+    type: string
+  language:
+    type: string
+  mobile:
+    type: string
+  name:
+    type: string
+  phone:
+    type: string
+  time_zone:
+    type: string
+  twitter_id:
+    type: string
+  created_at:
+    type: string
+    format: date-time
+  updated_at:
+    type: string
+    format: date-time
+  custom_fields:
+    $ref: '#/definitions/custom_field'

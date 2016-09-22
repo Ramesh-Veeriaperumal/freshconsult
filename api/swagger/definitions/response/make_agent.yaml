@@ -1,0 +1,30 @@
+
+  type: object
+  properties:
+    active:
+      type: boolean
+    email:
+      type: string
+    job_title:
+      type: string
+    language:
+      type: string
+    last_login_at:
+      type: string
+      format: date-time
+    mobile:
+      type: string
+    name:
+      type: string
+    phone:
+      type: string
+    time_zone:
+      type: string
+    created_at:
+      type: string
+      format: date-time
+    updated_at:
+      type: string
+      format: date-time
+    agent:
+      $ref: '#/definitions/agent'

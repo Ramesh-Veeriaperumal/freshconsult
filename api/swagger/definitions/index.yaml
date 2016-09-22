@@ -1,0 +1,39 @@
+
+  contact:
+    $ref: ./resources/contact.yaml
+  ticket:
+    $ref: ./resources/ticket.yaml
+  array_of_tickets:
+    type: array
+    items:
+      $ref: '#/definitions/ticket'
+  array_of_contacts:
+    type: array
+    items:
+      $ref: '#/definitions/contact'
+  custom_field:
+    type: object
+  post:
+    $ref: ./resources/contact_post.yaml
+  array_of_posts:
+    type: array
+    items:
+      $ref: '#/definitions/post'
+  bulk_action_input:
+    $ref: ./request/bulk.yaml
+  partial_success_response:
+    $ref: ./response/bulk_partial_success.yaml
+  bulk_action_error:
+    $ref: ./error/bulk.yaml
+  bad_request_error:
+    $ref: ./error/bad_request.yaml
+  request_error:
+    $ref: ./error/request.yaml
+  change_password_input:
+    $ref: ./request/change_password.yaml
+  make_agent_params:
+    $ref: ./request/make_agent.yaml
+  make_agent_response:
+    $ref: ./response/make_agent.yaml
+  agent:
+    $ref: ./resources/agent.yaml

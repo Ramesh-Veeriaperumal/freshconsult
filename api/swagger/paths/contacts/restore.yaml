@@ -1,0 +1,15 @@
+put:
+  summary: Restore Contact
+  tags: [contact]
+  parameters:
+    - name: id
+      in: path
+      type: number
+      required: true
+  responses:
+    204:
+      description: Success
+    404:
+      description: User not found
+    403:
+      description: Access denied

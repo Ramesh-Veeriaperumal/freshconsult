@@ -1,0 +1,12 @@
+
+  title: data
+  type: object
+  properties:
+    ids:
+      type: array
+      items:
+        type: number
+        minimum: 1
+        example: 987
+  required:
+    - ids

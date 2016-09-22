@@ -1,0 +1,29 @@
+
+  type: object
+  properties:
+    available_since:
+      type: string
+    available:
+      type: boolean
+    occasional:
+      type: boolean
+    signature:
+      type: string
+    group_ids:
+      type: array
+      items:
+        type: number
+    role_ids:
+      type: array
+      items:
+        type: number
+    id:
+      type: number
+    ticket_scope:
+      type: string
+    created_at:
+      type: string
+      format: date-time
+    updated_at:
+      type: string
+      format: date-time

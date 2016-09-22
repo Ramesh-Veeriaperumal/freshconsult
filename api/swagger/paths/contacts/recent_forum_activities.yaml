@@ -1,0 +1,16 @@
+
+get:
+  summary: Recent Forum Activities
+  tags: [contact]
+  parameters:
+    - name: id
+      in: path
+      type: number
+      required: true
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/array_of_posts'
+    404:
+      description: User not found

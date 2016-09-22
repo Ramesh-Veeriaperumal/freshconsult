@@ -1,0 +1,19 @@
+
+put:
+  summary: Send Invite
+  tags: [contact]
+  parameters:
+    - name: id
+      in: path
+      type: number
+      required: true
+      description: ID of contact
+  responses:
+    204:
+      description: Success
+    404:
+      description: User not found
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'

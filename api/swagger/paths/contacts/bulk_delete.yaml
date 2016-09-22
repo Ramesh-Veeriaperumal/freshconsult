@@ -1,0 +1,17 @@
+put:
+  tags: [contact]
+  summary: Bulk Delete
+  description: Bulk delete contacts
+  parameters:
+    - name: data
+      in: body
+      required: true
+      schema:
+        $ref: '#/definitions/bulk_action_input'
+  responses:
+    204:
+      description: Success
+    202:
+      description: Accepted
+      schema:
+        $ref: '#/definitions/partial_success_response'

@@ -1,0 +1,20 @@
+put:
+  summary: Bulk Execute Scenarios
+  operationId: bulk_execute_scenario
+  tags: [ticket]
+  parameters:
+    - name: scenario_id
+      in: path
+      type: number
+      required: true
+      description: ID of scenario to be executed
+    - name: data
+      in: body
+      required: true
+      schema:
+        $ref: '#/definitions/bulk_action_input'
+  responses:
+    202:
+      description: Accepted
+      schema:
+        $ref: '#/definitions/partial_success_response'

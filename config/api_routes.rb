@@ -152,4 +152,7 @@ Helpkit::Application.routes.draw do
     match '*route_not_found',         to: 'api_application#route_not_found'
   end
   
+  # Dev only routes
+  match '/swagger/*path' => 'swagger#respond'
+  match '/swagger' => 'swagger#respond'
 end

@@ -1,0 +1,33 @@
+get:
+  tags: [contact]
+  summary: List all
+  description: Work in Progress
+  parameters:
+    - name: email
+      in: query
+      type: string
+    - name: mobile
+      in: query
+      type: string
+    - name: phone
+      in: query
+      type: string
+    - name: company_id
+      in: query
+      type: number
+    - name: state
+      in: query
+      type: string
+      enum:
+        - blocked
+        - deleted
+        - unverified
+        - verified
+    - name: tag
+      in: query
+      type: string
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/array_of_contacts'

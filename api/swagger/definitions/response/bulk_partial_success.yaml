@@ -1,0 +1,21 @@
+title: data
+type: object
+description: Partial Success Response
+properties:
+  succeeded:
+    type: array
+    items:
+      type: number
+      minimum: 1
+  errors:
+    type: array
+    items:
+      $ref: '#/definitions/bulk_action_error'
+example:
+  succeeded: 
+    - 11
+    - 12
+  errors:
+    - id: 13
+      message: Invalid number
+      code: invalid_number

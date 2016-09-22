@@ -1,0 +1,16 @@
+# this is an example of the Uber API
+# as a demonstration of an API spec in YAML
+swagger: '2.0'
+info:
+  title: Freshdesk Private API
+  version: "1.0.0"
+# the domain of the service
+# array of all schemes that your API supports
+# will be prefixed to all paths
+basePath: /api/_
+produces:
+  - application/json
+paths:
+  $ref: ./paths/index.yaml
+definitions:
+  $ref: ./definitions/index.yaml
