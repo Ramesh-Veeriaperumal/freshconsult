@@ -5365,7 +5365,7 @@ en:
         related: You are about to delete a related ticket and it will be permanently unlinked from the tracker which CANNOT be restored.
       spam_ticket:
         title_submit: Mark as spam
-        tracker: You are about to mark a tracker as spam and its {{count}} related tickets will be permanently unlinked which CANNOT be restored.
+        tracker: You are about to mark a tracker as spam and the associated related tickets will be permanently unlinked which CANNOT be restored.
         related: You are about to mark a related ticket as spam and it will be permanently unlinked from the tracker which CANNOT be restored.
       merge_tickets:
         one: There is {{count}} ticket with existing association in the selected list which will be SKIPPED while performing the merge action.

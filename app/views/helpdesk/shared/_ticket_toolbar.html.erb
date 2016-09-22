@@ -348,6 +348,7 @@
     }
   }
 
+  jQuery('body').off('click', '#invoke_merge_popup');
   jQuery('body').on('click', '#invoke_merge_popup', function(e){
      association = <%= escape_javascript TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN.values.to_json %>;
     var associated = fetchAssociations(association);
@@ -379,6 +380,7 @@
     }
   });
 
+  jQuery('body').off('click', '#delete_tickets_btn');
   jQuery('body').on('click', '#delete_tickets_btn', function(e){
     association = <%= escape_javascript TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN.values.to_json %>;
     var associated = fetchAssociations(association);
@@ -394,6 +396,7 @@
     }
   });
 
+  jQuery('body').off('click', '#spam_tickets_btn');
   jQuery('body').on('click', '#spam_tickets_btn', function(e){
     association = <%= escape_javascript TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN.values.to_json %>;
     var associated = fetchAssociations(association);
@@ -409,10 +412,12 @@
     }
   });
 
+  jQuery('body').off("click", "#confirm-action-popup-cancel")
   jQuery('body').on("click", "#confirm-action-popup-cancel", function(e){
     jQuery('#confirm-action-popup').modal('hide');
   });
 
+  jQuery('body').off("click", "#confirm-action-popup-submit");
   jQuery('body').on("click", "#confirm-action-popup-submit", function(e){
     e.preventDefault();
     e.stopPropagation();

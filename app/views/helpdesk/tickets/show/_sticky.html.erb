@@ -218,6 +218,7 @@
   }	
 
 
+  jQuery('body').off("click", "#delete_ticket, #spam_ticket");
   jQuery('body').on("click", "#delete_ticket, #spam_ticket", function(e){
   	var check = "<%= @ticket.association_type.present? %>";
   	var submit = jQuery(this).data('submit');
@@ -228,10 +229,12 @@
   	}
   });
 
+  jQuery('body').off("click", "#confirm-action-cancel");
   jQuery('body').on("click", "#confirm-action-cancel", function(e){
     jQuery('#confirm-action').modal('hide');
   });
 
+  jQuery('body').off("click", "#confirm-action-submit");
   jQuery('body').on("click", "#confirm-action-submit", function(e){
   	var action_id = jQuery('#modal-content').data('target');
     jQuery('#confirm-action').modal('hide');
