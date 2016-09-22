@@ -1,13 +1,20 @@
 <div class="custom-apps-list freshplugs-list tab-pane"  id="custom_apps">
   <div id="freshplug-tab-content" class="tab-content clear">
-    
-    <div class="no-custom-apps clear">
-      <p>
-        <%= t('marketplace.no_custom_apps') %>
-        <%= link_to t('integrations.custom_application.new_custom_app').html_safe, new_admin_integrations_freshplug_path, :class =>"new-customapp" %>
+
+    <div class="no-custom-apps clear text-center blank-slate">
+      <span class="ficon-cubes fsize-60" style="opacity: 0.4;"></span>
+      <h3><%= t('marketplace.no_custom_apps_installed') %></h3>
+      <p class="txt"><%= t('marketplace.no_custom_apps_note') %></p>
+      <p class="txt">
+        <%= t('marketplace.no_custom_apps_note_2') %>
       </p>
+      <a class="btn browse-btn btn-flat btn-primary btn-appgallery" href="" data-url="<%= custom_apps_admin_marketplace_extensions_path %>"><span class="ficon-cube-filled"></span> <%= t('marketplace.get_custom_apps') %></a>
     </div>
+
     <ul>
+        <!-- CUSTOM APPS -->
+        <%= render :partial => '/admin/marketplace/templates/installed_freshplugs/index', :locals => { :installed_extensions => installed_custom_apps } %>
+
         <!-- FRESH PLUGS -->
         <% custom_applications.each do |application|
           installed_app = application.installed_applications %>

@@ -1321,6 +1321,7 @@ Helpkit::Application.routes.draw do
     namespace :marketplace do
       resources :extensions, :only => [:index] do
         collection do
+          get :custom_apps
           get :search
           get :auto_suggest
           get '/:extension_id', :action => :show, :as => 'show'

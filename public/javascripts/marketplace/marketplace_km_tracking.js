@@ -6,7 +6,7 @@
   });
 
   //clicked browse apps button -Number of visits to the App Gallery 
-  jQuery(document).on("click.km_track_evt", ".button-bar .browse-btn", function(){
+  jQuery(document).on("click.km_track_evt", ".button-bar .browse-apps-btn", function(){
     App.Marketplace.Metrics.push_event("Clicked Browse Apps Button", mktplace_domain);
   });
   //clicked blank slate browse apps button - Number of visits to the App Gallery 
@@ -69,6 +69,16 @@
     );
   });
 
+  //When Custom App is installed successfully
+  jQuery(document).on("installed_custom_app", function (e) {
+    App.Marketplace.Metrics.push_event(
+      "Installed custom app", 
+      { "Domain Name": mktplace_domain, 
+        "App Name": e.app_name
+      }
+    );
+  });
+
   //when an app enabled
   jQuery(document).on("enabled_app", function(e){
     App.Marketplace.Metrics.push_event(
@@ -117,7 +127,18 @@
     }
   });
   //create new plug button clicked -additional
-  jQuery(document).on("click.km_track_evt", ".create-new .btn, .new-customapp", function(){
+  jQuery(document).on("click.km_track_evt", ".new-customapp", function(){
     App.Marketplace.Metrics.push_event( "Clicked Create New Custom App Button", mktplace_domain);
   });
+
+  //Clicked get custom apps button
+  jQuery(document).on("click.km_track_evt", ".get-custom-apps", function(){
+    App.Marketplace.Metrics.push_event( "Clicked get custom apps button", mktplace_domain);
+  });
+
+  //Clicked custom apps tab
+  jQuery(document).on("click.km_track_evt", ".cla-plugs", function(){
+    App.Marketplace.Metrics.push_event( "Clicked custom apps tab", mktplace_domain);
+  });
+
   /* Kissmetrics tracking code block ends */

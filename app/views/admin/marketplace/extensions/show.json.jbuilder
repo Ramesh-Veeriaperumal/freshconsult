@@ -5,9 +5,13 @@ json.categories @extension['categories'] do |category|
   json.url category_url(category)
 end
 
-json.back_url admin_marketplace_extensions_path + '?' + index_url_params
+json.back_url custom_app? ? custom_apps_admin_marketplace_extensions_path : admin_marketplace_extensions_path + '?' + index_url_params
 json.install_btn install_btn(@extension, @install_status)
 
-if third_party_developer?
+if custom_app?
+	json.custom_app true
+end
+
+if !custom_app? && third_party_developer?
   json.policy true
 end
