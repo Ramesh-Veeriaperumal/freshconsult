@@ -57,7 +57,7 @@ class Sanitize
         'a' => {'rel' => 'noreferrer'}
       },
       :protocols => {
-        'a'          => {'href' => ['ftp', 'http', 'https', 'mailto', :relative],'target' => ['_blank','_self','_parent','_top',:relative]},
+        'a'          => {'href' => ['ftp', 'http', 'https', 'mailto', 'tel', 'callto', :relative],'target' => ['_blank','_self','_parent','_top',:relative]},
         'blockquote' => {'cite' => ['http', 'https', :relative]},
         'del'        => {'cite' => ['http', 'https', :relative]},
         'img'        => {'src'  => ['http', 'https', :relative,'cid']},
