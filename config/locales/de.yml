@@ -5458,6 +5458,7 @@ de:
           not_sent: "Antwort wurde nicht weitergeleitet!"
         reply_to_forward:
           title: Antworten
+          from: "Von"
           cc: Cc
           to: An
           addcc: "Cc hinzufügen"
@@ -5471,6 +5472,7 @@ de:
         facebook_form:
           reply_to: "Antwort senden an"
           title: "%{user} antworten"
+          from: "Von :"
         ecommerce_reply_form:
           title: "Antwort senden an"
         history:

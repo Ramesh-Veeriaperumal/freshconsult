@@ -5454,6 +5454,7 @@ fr:
           not_sent: "La réponse n'a pas été transférée !"
         reply_to_forward:
           title: Répondre
+          from: "De"
           cc: Cc
           to: À
           addcc: "Ajouter Cc"
@@ -5467,6 +5468,7 @@ fr:
         facebook_form:
           reply_to: "Répondre à"
           title: "Répondre à %{user}"
+          from: "De :"
         ecommerce_reply_form:
           title: "Répondre à"
         history:
