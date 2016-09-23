@@ -224,10 +224,11 @@
   var unassigned = "";
 	jQuery(document).ready(function(){
     <% if Account.current.launched?(:ticket_list_page_filters_cache) %>
+      var fieldMap = <%= raw(TicketConstants::DASHBOARD_FILTER_MAPPING.to_json) %>;
       PopulateData.I18n_text.me = '<%= t("helpdesk.tickets.add_watcher.me") %>'
       PopulateData.I18n_text.mygroups = '<%= t("filter_options.mygroups") %>'
       PopulateData.I18n_text.unassigned = '<%= t("filter_options.unassigned") %>'
-      TicketListSidebar.getParams(function(params){
+      TicketListSidebar.getParams(fieldMap,function(params){
           PopulateFormData.init(params);
       });
     <% end %>
