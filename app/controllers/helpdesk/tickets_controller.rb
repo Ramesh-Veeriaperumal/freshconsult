@@ -1766,7 +1766,11 @@ class Helpdesk::TicketsController < ApplicationController
     else
       Rails.logger.debug "Count exceeded when linking[#{params[:ids]}] to tracker_ticket #{params[:tracker_id]}"
       remaining_count = TicketConstants::MAX_RELATED_TICKETS - @tracker_ticket.related_tickets_count
-      flash[:notice] = t("ticket.link_tracker.remaining_count", :count => remaining_count)
+      if remaining_count > 0
+        flash[:notice] = t("ticket.link_tracker.remaining_count", :count => remaining_count)
+      else
+        flash[:notice] = t("ticket.link_tracker.count_exceeded",:count => TicketConstants::MAX_RELATED_TICKETS)
+      end
     end
   end
 
