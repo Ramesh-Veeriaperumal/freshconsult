@@ -5330,9 +5330,9 @@ cs:
       new:
         feedback_widgets_search: Hledat
         feedback_widgets_search_results: "Výsledky hledání"
-        feedback_widgets_search_our: "Prohledat naši "
-        feedback_widgets_knowledge_base: "Databáze znalostí "
-        feedback_widgets_help_articles: "nebo Vyhledat mezi řešeními"
+        feedback_widgets_search_our: "Často kladené "
+        feedback_widgets_knowledge_base: "dotazy "
+        feedback_widgets_help_articles: "Možná, že odpověď na Váš dotaz naleznete v databázi často kladených dotazů - zobrazit ji můžete zde"
         show_all_results: "Ukázat všechny výsledky"
         no_results: "Žádné výsledky pro "
   reorder: "Změnit pořadí"
