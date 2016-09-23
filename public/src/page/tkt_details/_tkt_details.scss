@@ -2117,11 +2117,7 @@ li {
         margin-left: 5px;
         font-weight: bold;
     }
-    .hyphernate{
-            word-break: break-word;
-            -ms-word-wrap: break-word;
-            word-wrap: break-word;
-    }
+    
     &.broadcast_message_box {
         background: #fafafa;
         &:before, &:after {

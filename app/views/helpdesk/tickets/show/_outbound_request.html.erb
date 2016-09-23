@@ -2,7 +2,7 @@
 <%= link_to user_avatar(outbound_initiator, :thumb, 'preview_pic circle'), outbound_initiator, :class => 'avatar-wrap' %>
 <div class="commentbox commentbox-gray">
   <div>
-  <h2 class="subject hyphernate <%= 'show_full' if @ticket.deleted or @ticket.spam %>">
+  <h2 class="subject break-word <%= 'show_full' if @ticket.deleted or @ticket.spam %>">
     <% if @ticket.spam %>
       <span class='label spam'>
         <%= link_to("×", unspam_helpdesk_ticket_path(@ticket), :method => :put,
