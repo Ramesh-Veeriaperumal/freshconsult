@@ -3268,7 +3268,7 @@ Redactor.prototype = {
 					
 					if (new_h > min_h)
 					{
-						$(resize).height(new_h);
+						$(resize).attr('height', new_h + 'px');
 						$(resize).attr('data-height', new_h)
 					}
 					
