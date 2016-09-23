@@ -1763,6 +1763,7 @@ App.Tickets.TicketDetail = {
 		App.Tickets.Watcher.init();
 		App.Tickets.Merge_tickets.initialize();
 		App.TicketAttachmentPreview.init();
+		App.Tickets.NBA.init();
 
 		// Have tried in onLeave to off all the event binding. 
 		// But it cause errors in whole app, like modal, dropdown and some issues has occered.
@@ -1772,6 +1773,7 @@ App.Tickets.TicketDetail = {
 		App.Tickets.Merge_tickets.unBindEvent();
 		App.Tickets.Watcher.offEventBinding();
 		App.TicketAttachmentPreview.destroy();
+		App.Tickets.NBA.offEventBinding();
 	}
 };
 

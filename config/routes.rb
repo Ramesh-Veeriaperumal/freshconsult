@@ -1972,7 +1972,7 @@ Helpkit::Application.routes.draw do
         put :toggle_timer
       end
     end
-
+    
     match '/tags/:id/*filters' => 'tags#show', :as => :filter_tag_tickets
     match '/tickets/filter/tags' => 'tags#index', :as => :filter_tickets
     match '/tickets/filter/:filter_name' => 'tickets#index', :as => :filter_view_default
@@ -2331,6 +2331,7 @@ Helpkit::Application.routes.draw do
     end
   end
 
+  match '/helpdesk/tickets/:id/suggest/tickets' => 'helpdesk/tickets#suggest_tickets'
   match '/support/theme.:format' => 'theme/support#index'
   match '/support/theme_rtl.:format' => 'theme/support_rtl#index'
   match '/helpdesk/theme.:format' => 'theme/helpdesk#index'

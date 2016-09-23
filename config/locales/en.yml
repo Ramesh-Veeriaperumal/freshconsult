@@ -10149,5 +10149,15 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     try_again: "Go to Ticket and try again"
     actions_alert: "File attachment in progress. Do you want to leave this page?"
     reminder: "You have unsaved content in this page. Do you want to leave this page?"
-    traffic_cop: Unable to send your last response. Ticket was updated with new replies by another agent.<a href="%{ticket_url}" data-pjax="body-container"> Please review their reply before sending your reply </a>.
+  ml:
+    similat_tickets_found: Similar Tickets found
+    no_suggestions: Oops! No suggestions.
+    error: Oops! Failed to generate similar ticket suggestions.
+    feed_back: Are these suggestions helpful?
+    feed_back_thanks: Thanks for the feedback!
+    feed_back_thanks_text: Thanks for your feedback. Please feel free to contact karthikkp@freshdesk.com for any further suggestions!
+    submit: Submit
+    show: Show
+    hide: Hide
+    suggestion_text: What can we improve? (Optional).
 
