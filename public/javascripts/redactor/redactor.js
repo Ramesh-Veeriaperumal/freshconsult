@@ -827,7 +827,7 @@ Redactor.prototype = {
 			}, this));
 
 			// Drop Image in editor only for firefox
-			if(!$.browser.msie && !$.browser.mozilla)
+			if(!$.browser.msie)
 			{
 				this.$editor.bind('drop', $.proxy(function(e)
 				{ 
