@@ -82,7 +82,17 @@ module Admin::Sla::Escalation
       end 
 
       def send_email(ticket, agent, n_type)
-        SlaNotifier.send_later(:agent_escalation, ticket, agent, n_type)
+        e_notification = ticket.account.email_notifications.find_by_notification_type(n_type)
+        return unless e_notification.agent_notification
+        agent.make_current
+        subject_template, message_template = e_notification.get_agent_template(agent)
+        email_subject = Liquid::Template.parse(subject_template).render(
+                                    'ticket' => ticket, 'helpdesk_name' => ticket.account.portal_name)
+        email_body = Liquid::Template.parse(message_template).render(
+                                    'agent' => agent, 'ticket' => ticket, 'helpdesk_name' => ticket.account.portal_name)
+        SlaNotifier.send_later(:escalation, ticket, agent, n_type, :email_body => email_body, :subject => email_subject)
+      ensure
+        User.reset_current
       end      
   end
 end

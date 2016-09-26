@@ -76,6 +76,7 @@ function insertIntoSocialEditor(value, textarea){
 	textarea.focus();
 	insertTextAtCursor(textarea.get(0), textValue);
 	textarea.keyup(); // to update the SendTweetCounter value
+  jQuery(textarea).trigger('change');
 }
 
 function handleSolutionDetail(sol_id, title){

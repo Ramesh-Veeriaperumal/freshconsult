@@ -23,6 +23,7 @@
     <%= form_for note, :url => reply_helpdesk_ticket_conversations_path(@ticket), :html => { 
                         :multipart => true, 
                         :id => "HelpdeskReply",
+                        :class => "form-unsaved-changes-trigger",
                         "data-panel" => cntid,
                         "data-show-pseudo-reply" => 'true',
                         "data-fetch-latest" => 'true',

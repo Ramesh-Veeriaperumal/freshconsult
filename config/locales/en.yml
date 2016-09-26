@@ -2285,6 +2285,7 @@ en:
       description: "Agents added as followers receives email alerts when a new topic is posted"
   password_reset_email: Password Reset Email
   default_reply_template: Agent Reply Template
+  default_forward_template: Agent Forward Template
   additional_email_verification: Additional Email Verification
   new_ticket_cc: New Ticket Created
   public_note_cc: Note added to ticket
@@ -4847,10 +4848,12 @@ en:
     edit_reply_template: Edit Template
     default_reply_template_title: Agent Reply Template
     default_reply_template_info: Reply template will be automatically included in the ticket reply editor for ALL agents. The cursor position in this template will decide where your agent will start typing.
+    default_forward_template_title: Agent Forward Template
+    default_forward_template_info: Forward template will be automatically included in the ticket reply editor for ALL agents.
     modify_requester_template: Modify Requester Email Template
     requestor_notification: Requester Notification
     requestor_notifications: Requester Notifications
-    notification_template: Reply Templates
+    notification_template: Templates
     cc_notifications: CC Notifications
     title: Email Notifications
     singular_title: Notification
@@ -4945,6 +4948,9 @@ en:
       reply_template_15:
         topic: Agent Reply Template
         info1: "You can customize and prefill default information you want added in agent ticket replies using the Reply Template. Agent Reply Templates let you add dynamic content like the requester name, ticket URLs and agent signatures automatically.. <br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icon-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
+      forward_template_24:
+        topic: Agent Forward Template
+        info1: "You can customize and prefill default information you want added in agent ticket forwards using the Forward Template. Agent Forward Templates let you add dynamic content like the requester name, ticket URLs and agent signatures automatically.. <br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icon-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
     insert_placeholder: Insert Placeholders
     modify_agent_template: Modify Agent Email Template
     event: Event
@@ -5512,6 +5518,7 @@ en:
       in_progress_text_you: "A bulk update started by you is in progress."
       bulk_action_submit_label: "Confirm and update"
     cannot_preview_attachment: No preview available.
+    confirm_navigation: You have unsaved changes. Are you sure you want to leave?
   archive_ticket:
     title: Archived tickets
     no_reply_msg: This ticket has been archived.
