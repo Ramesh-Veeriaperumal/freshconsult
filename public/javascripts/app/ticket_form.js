@@ -24,7 +24,6 @@ var AutoSuggest = {
 
           var req_cachedBackend = new Autocompleter.Cache(req_lookup, {choices: 20});
           var req_cachedLookup = req_cachedBackend.lookup.bind(req_cachedBackend);
-          _results_array = req_cachedLookup; 
 
           new Autocompleter.Json(req_metaobj.obj+"_email", req_metaobj.obj+"_email_choices", req_cachedLookup, {
               afterUpdateElement: function(element, choice){      
