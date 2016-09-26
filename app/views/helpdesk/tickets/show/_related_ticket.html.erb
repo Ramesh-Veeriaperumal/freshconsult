@@ -2,7 +2,7 @@
   <div class="row name td-ticket-details">
     <div class="ticket_subject pull-left">
       <span class="sc-item-cursor priority-border shorcuts-info"></span>
-      <h4 class="break-word">
+      <h4 class="break-word ellipsis">
         <% if current_user.has_ticket_permission?(related_ticket) %>
           <%= pjax_link_to(related_ticket.subject, helpdesk_ticket_url(related_ticket), :class => "ellipsis title_sub") %>
         <% else %>
