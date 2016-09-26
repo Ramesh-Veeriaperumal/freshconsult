@@ -215,6 +215,7 @@ var TemplateDockManager   = Class.create({
       success: function(extensions){
         jQuery(that.extensionsWrapper).empty()
                                     .append(JST["marketplace/marketplace_show"](extensions));
+        var isFromInstalled = isSuggestion ? false : jQuery(obj).hasClass("moreinfo-lnk");
 
         jQuery(document).trigger({
           type: "viewed_app_description_page",
@@ -222,7 +223,7 @@ var TemplateDockManager   = Class.create({
           developed_by: extensions.account,
           is_suggestion: isSuggestion,
           is_from_search: that.isSearched,
-          is_from_installed : jQuery(obj).hasClass("moreinfo-lnk"),
+          is_from_installed : isFromInstalled,
           time: new Date()
         });
 

@@ -2,11 +2,16 @@
   var mktplace_domain, selected_app;
   // viewed integrations home - Number of visits to the top level Apps page
   jQuery(document).on("script_loaded", function (ev, data) {
-    App.Marketplace.Metrics.push_event("Viewed Apps Home Page", mktplace_domain);
+    if(window.location.hash && window.location.hash == "#custom_apps") {
+      App.Marketplace.Metrics.push_event("Clicked custom apps tab", mktplace_domain);
+    }
+    else {
+      App.Marketplace.Metrics.push_event("Viewed Apps Home Page", mktplace_domain);
+    }
   });
 
   //clicked browse apps button -Number of visits to the App Gallery 
-  jQuery(document).on("click.km_track_evt", ".button-bar .browse-apps-btn", function(){
+  jQuery(document).on("click.km_track_evt", ".browse-apps-btn", function(){
     App.Marketplace.Metrics.push_event(
       "Opened App Gallery",
       { "Domain Name": mktplace_domain,
@@ -14,8 +19,8 @@
       }
     );
   });
+  jQuery(document).on("click.km_track_evt", ".get-more-apps-blank-state", function(){
   //clicked blank slate browse apps button - Number of visits to the App Gallery 
-  jQuery(document).on("click.km_track_evt", ".btn-appgallery", function(){
     App.Marketplace.Metrics.push_event(
       "Opened App Gallery",
       { "Domain Name": mktplace_domain,
@@ -137,10 +142,9 @@
   jQuery(document).on("submit.km_track_evt", "#extension-search-form", function(e){
     var search_term = jQuery(e.target).find("#query").val();
     App.Marketplace.Metrics.push_event(
-      "Searched App Gallery", 
-      { "Searched Term": search_term, 
-        "Searched By": mktplace_domain
-      } 
+      "Searched App Gallery",
+      { "Searched Term": search_term
+      }
     );
   });
 
@@ -168,6 +172,10 @@
   //Clicked get custom apps button
   jQuery(document).on("click.km_track_evt", ".get-custom-apps", function(){
     App.Marketplace.Metrics.push_event( "Clicked get custom apps button", mktplace_domain);
+  });
+
+  jQuery(document).on("click.km_track_evt", ".get-custom-apps-blank-state", function() {
+    App.Marketplace.Metrics.push_event( "Clicked get custom apps button from blank state", mktplace_domain);
   });
 
   //Clicked custom apps tab
