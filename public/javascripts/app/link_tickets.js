@@ -148,6 +148,8 @@ jQuery(document).ready(function(){
         contentType: "application/text",
         success: function(data){
           jQuery('#related_tkts_view_freshdialog-content div').html(data);
+          var script = jQuery('#related_tkts_view_freshdialog-content script').text();
+          eval(script);
         }
       });
   });
