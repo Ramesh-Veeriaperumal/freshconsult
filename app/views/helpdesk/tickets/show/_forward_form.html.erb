@@ -179,7 +179,34 @@
 <% end %>
 
 <script type="text/javascript">
-    jQuery("#HelpdeskFwd_<%=cntid%>").bind("submit", function(ev){}).validate()
+    
+    jQuery(".cancel_btn").click(function() {
+      jQuery("#HelpdeskFwd_<%=cntid%>").find('.cc-error-message').remove();
+    })
+
+    jQuery('#HelpdeskFwd_<%=cntid%>')      
+      .bind("submit", function(ev){
+      var tkt_recipient_arr = [];
+      if( <%= do_spam_check? && free_admin_email_account? %>) {
+        tkt_recipient_arr = <%= unique_ticket_recipients(@ticket).to_json.html_safe %>;
+        var limit       = <%= get_trial_account_max_to_cc_threshold %>;
+        var msg         = "<%= t(:'flash.general.recipient_limit_exceeded', :limit =>get_trial_account_max_to_cc_threshold ) %>";
+        App.Tickets.LimitEmails.titleMsg = "<%= t(:'flash.general.recipient_limit_exceeded', :limit => get_trial_account_max_to_cc_threshold ) %>";
+        App.Tickets.LimitEmails.okBtnMsg = "<%= I18n.t('ok') %>";
+        if(!App.Tickets.LimitEmails.limitForwardEmails(jQuery('#HelpdeskFwd_<%=cntid%>'), '.cc_fields:visible:last' ,tkt_recipient_arr, limit, msg)) {
+          return false;
+        }
+      }
+
+      jQuery("#HelpdeskFwd_<%=cntid%>").find('.cc-error-message').remove();
+
+      if(!jQuery('#include_bcc').is(':checked')) {
+          jQuery('[name="helpdesk_note[bcc_emails][]"]').val('');
+          isDirty = false;
+      }
+      })
+      .validate();
+
       jQuery('html, body').animate({
         scrollTop: jQuery("#<%= cntid %>").offset().top-110
     }, 100);

@@ -2602,6 +2602,8 @@ en:
       limit_exceeded: You've exceeded the limit for performing this action. Please try again.
       access_denied: You are not allowed to access this page!
       need_login: You must be logged in to access this page
+      recipient_limit_exceeded: You can include a maximum of %{limit} email recipients per ticket during your trial period
+      outbound_limit_per_day_exceeded: You can send a maximum of 5 outbound emails a day per account during the trial period
       insufficient_privilege:
         admin: You don't have sufficient privilege to change this. Please login as Administrator..!!
       login_not_needed: You must be logged out to access this page

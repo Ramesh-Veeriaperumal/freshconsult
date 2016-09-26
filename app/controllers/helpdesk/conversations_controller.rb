@@ -1,5 +1,7 @@
 class Helpdesk::ConversationsController < ApplicationController
   
+  require 'freemail'
+
   helper  Helpdesk::TicketsHelper#TODO-RAILS3
   
   before_filter :load_parent_ticket_or_issue
@@ -17,6 +19,7 @@ class Helpdesk::ConversationsController < ApplicationController
   include Social::Util
   helper Helpdesk::NotesHelper
   include Ecommerce::Ebay::ReplyHelper
+  include Helpdesk::SpamAccountConstants
   
   before_filter :build_note_body_attributes, :build_conversation, :except => [:full_text, :traffic_cop]
   before_filter :validate_tkt_type, :only => :broadcast
@@ -31,6 +34,7 @@ class Helpdesk::ConversationsController < ApplicationController
    :facebook, :mobihelp, :ecommerce, :traffic_cop, :full_text, :broadcast]
   before_filter :traffic_cop_warning, :only => [:reply, :twitter, :facebook, :mobihelp, :ecommerce]
   before_filter :check_for_public_notes, :only => [:note]
+  before_filter :check_trial_customers_limit, :only => [:reply, :forward, :reply_to_forward]
   before_filter :validate_ecommerce_reply, :only => :ecommerce
   around_filter :run_on_slave, :only => [:update_activities, :has_unseen_notes, :traffic_cop_warning]
 
@@ -348,6 +352,42 @@ class Helpdesk::ConversationsController < ApplicationController
 
       def check_for_public_notes
         traffic_cop_warning unless params[:helpdesk_note][:private].to_s.to_bool
+      end
+
+      def check_trial_customers_limit
+        if ((current_account.id > get_spam_account_id_threshold) && (current_account.subscription.trial?) && (!ismember?(SPAM_WHITELISTED_ACCOUNTS, current_account.id)))
+          if (Freemail.free?(current_account.admin_email) && max_to_cc_threshold_crossed?) 
+            respond_to do |format|
+              format.js { render :file => "helpdesk/notes/inline_error.rjs", :locals => { :msg => t(:'flash.general.recipient_limit_exceeded', :limit => get_trial_account_max_to_cc_threshold )} }
+              format.html { redirect_to @parent }
+              format.nmobile { render :json => { :server_response => false } }
+              format.any(:json, :xml) { render request.format.to_sym => @item.errors, :status => 400 }
+            end
+          elsif((current_account.email_configs.count == 1) && (current_account.email_configs[0].reply_email.end_with?(current_account.full_domain)) && max_to_cc_threshold_crossed?)
+            FreshdeskErrorsMailer.error_email(nil, {:domain_name => current_account.full_domain}, nil, {
+              :subject => "Maximum thread to, cc, bcc threshold crossed for Account :#{current_account.id} ", 
+              :recipients => ["mail-alerts@freshdesk.com", "noc@freshdesk.com"],
+              :additional_info => {:info => "Please check spam activity in Ticket : @parent.id"}
+              })
+          end
+        end
+      end
+
+      def max_to_cc_threshold_crossed?
+        note_cc_email = get_email_array(@item.cc_emails_hash[:cc_emails])
+        note_to_email = get_email_array(@item.to_emails)
+        note_bcc_email = get_email_array(@item.bcc_emails)
+        ticket_from_email = get_email_array(@parent.from_email)
+        cc_email_hash = @parent.cc_email_hash.nil? ? Helpdesk::Ticket.default_cc_hash : @parent.cc_email_hash
+
+        bcc_emails = get_email_array(cc_email_hash[:bcc_emails])
+        cc_emails = get_email_array(cc_email_hash[:cc_emails])
+        fwd_emails = get_email_array(cc_email_hash[:fwd_emails])
+
+        old_recipients = bcc_emails.present? ? (cc_emails | fwd_emails | ticket_from_email | bcc_emails) : (cc_emails | fwd_emails | ticket_from_email)
+        total_recipients = old_recipients | note_cc_email | note_to_email | note_bcc_email
+
+        return (total_recipients.count != old_recipients.count ) && (total_recipients.count) > get_trial_account_max_to_cc_threshold
       end
 
       def run_on_slave(&block)

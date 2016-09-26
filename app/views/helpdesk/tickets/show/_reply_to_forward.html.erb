@@ -180,8 +180,28 @@
 </script>
   <%= javascript_tag do %>
 
+    jQuery(".cancel_btn").click(function() {
+      jQuery("#HelpdeskReplyFwd_<%= @note.id%>").find('.cc-error-message').remove();
+    })
+
     jQuery("#HelpdeskReplyFwd_<%= @note.id%>")      
       .bind("submit", function(ev){
+      var tkt_recipient_arr = [];
+      if( <%= do_spam_check? && free_admin_email_account? %>) {
+
+        tkt_recipient_arr = <%= unique_ticket_recipients(@ticket).to_json.html_safe %>;
+
+        var limit       = <%= get_trial_account_max_to_cc_threshold %>;
+        var msg         = "<%= t(:'flash.general.recipient_limit_exceeded', :limit =>get_trial_account_max_to_cc_threshold ) %>";
+        App.Tickets.LimitEmails.titleMsg = "<%= t(:'flash.general.recipient_limit_exceeded', :limit => get_trial_account_max_to_cc_threshold ) %>";
+
+        if(!App.Tickets.LimitEmails.limitForwardEmails(jQuery('#HelpdeskReplyFwd_<%= @note.id%>'), '.cc_fields:visible:last' ,tkt_recipient_arr, limit, msg)) {
+          return false;
+        }
+      }
+
+      jQuery("#HelpdeskReplyFwd_<%= @note.id%>").find('.cc-error-message').remove();
+
       if(!jQuery('#include_bcc').is(':checked'))
           jQuery('[name="helpdesk_note[bcc_emails][]"]').val('');
           isDirty = false;

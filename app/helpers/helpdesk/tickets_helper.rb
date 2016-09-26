@@ -18,6 +18,7 @@ module Helpdesk::TicketsHelper
   include Helpdesk::AccessibleElements
   include Cache::Memcache::Helpdesk::TicketTemplate #Methods for tkt templates count
   include Cache::FragmentCache::Base # Methods for fragment caching
+  include Helpdesk::SpamAccountConstants
   
   def ticket_sidebar
     tabs = [["TicketProperties", t('ticket.properties').html_safe,         "ticket"],
@@ -651,6 +652,26 @@ module Helpdesk::TicketsHelper
 
   def itil_ticket_filters
     ""
+  end
+
+  def do_spam_check?
+    ((current_account.id > get_spam_account_id_threshold) && (current_account.subscription.trial?) && (!ismember?(SPAM_WHITELISTED_ACCOUNTS, current_account.id)))
+  end
+
+  def free_admin_email_account?
+    Freemail.free?(current_account.admin_email)
+  end
+
+  def unique_ticket_recipients(ticket)
+    ticket_from_email = get_email_array(ticket.from_email)
+    cc_email_hash = ticket.cc_email_hash.nil? ? Helpdesk::Ticket.default_cc_hash : ticket.cc_email_hash
+    
+    bcc_emails = get_email_array(cc_email_hash[:bcc_emails])
+    cc_emails = get_email_array(cc_email_hash[:cc_emails])
+    fwd_emails = get_email_array(cc_email_hash[:fwd_emails])
+
+    total_recipients = bcc_emails.present? ? (cc_emails | fwd_emails | ticket_from_email | bcc_emails) : (cc_emails | fwd_emails | ticket_from_email)
+    return total_recipients
   end
 
   def default_hidden_fields

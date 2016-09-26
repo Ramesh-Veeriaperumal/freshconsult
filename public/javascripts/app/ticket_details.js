@@ -1179,6 +1179,25 @@ var scrollToError = function(){
 				releaseForm(_form);
 				var statusChangeField = $('#send_and_set');
 
+				if(App.Tickets.TicketDetail.inlineError) {
+					var msg = App.Tickets.TicketDetail.inlineErrorMessage;
+					App.Tickets.LimitEmails.appendErrorMessage(_form,'.cc_fields:visible:last' ,msg)
+					
+					if (_form.data('panel')) {
+
+						if(_form.data("form")){
+							var $form = $('#' + _form.data('panel')),
+								form_container = $form.find(".commentbox");
+
+							form_container.unblock();
+						} else {
+							$('#' + _form.data('panel')).unblock();
+						}
+					}
+					$.scrollTo(jQuery('.redactor.conversation_thread'));
+					return false;
+				}
+
 				if($('#response_added_alert').length > 0 && _form.parents('#all_notes').length < 1){
 					if (_form.data('panel')) {
 						$('#' + _form.data('panel')).unblock();
@@ -1802,6 +1821,12 @@ TICKET_DETAILS_CLEANUP = function() {
 
 	
 App.Tickets.TicketDetail = {
+	inlineError: false,
+	inlineErrorMessage: '',
+	setInlineMessage: function (status, msg) {
+		this.inlineError = status;
+		this.inlineErrorMessage = msg;
+	},
 	onVisit: function (data) {
 		if($("#HelpdeskReply").data('containDraft')) {
 			swapEmailNote('cnt-reply', null);
@@ -1825,5 +1850,118 @@ App.Tickets.TicketDetail = {
 	}
 };
 
+
+App.Tickets.LimitEmails = {
+	new_cc_bcc_emails: [],
+	limitForwardEmails: function(form, append_to, tkt_addr_arr, limit, msg) {
+	    var cc_emails  = [];
+	    var bcc_emails = [];
+	    var to_emails  = [];
+	    var fwd_emails = [];
+
+	    var _self = this;
+
+	    form.find("input[name='helpdesk_note[to_emails][]']").each( function() {
+	      to_emails.push(_self.get_email_address(jQuery(this).val()));
+	    });
+
+	    form.find("input[name='helpdesk_note[cc_emails][]']").each( function() {
+	      cc_emails.push(_self.get_email_address(jQuery(this).val()));
+	    });
+
+	    form.find("input[name='helpdesk_note[bcc_emails][]']").each( function() {
+	      bcc_emails.push(_self.get_email_address(jQuery(this).val()));
+	    });
+
+	    var current_emails = to_emails.concat(cc_emails, bcc_emails)
+
+	    fwd_emails = this.new_cc_bcc_emails.concat(tkt_addr_arr, current_emails );
+	    fwd_emails = jQuery.unique(fwd_emails);
+
+	    if( tkt_addr_arr.length != fwd_emails.length && fwd_emails.length > limit ) {
+	    	this.appendErrorMessage(form, append_to, msg);
+	    	$.scrollTo(jQuery('.redactor.conversation_thread'));
+	    	return false;
+	    }
+
+	    var newly_added_emails = this.new_cc_bcc_emails.concat(current_emails)
+	    this.new_cc_bcc_emails = jQuery.unique(newly_added_emails);
+
+	  	return true;
+	},
+	limitReplyEmails: function(_form, append_to, tkt_addr_arr, limit, msg) {
+	    var cc_emails  = []
+	    var bcc_emails  = []
+	    var reply_emails = []
+
+	    var _self = this;
+
+	    _form.find("input[name='helpdesk_note[cc_emails][]']").each( function() {
+	      cc_emails.push(_self.get_email_address(jQuery(this).val()));
+	    });
+
+	    _form.find("input[name='helpdesk_note[bcc_emails][]']").each( function() {
+	      bcc_emails.push(_self.get_email_address(jQuery(this).val()));
+	    });
+
+	    var current_emails = cc_emails.concat(bcc_emails)
+
+	    reply_emails = this.new_cc_bcc_emails.concat(tkt_addr_arr, current_emails );
+	    reply_emails = jQuery.unique(reply_emails);
+
+	    if( tkt_addr_arr.length != reply_emails.length && reply_emails.length > limit ) {
+	    	this.appendErrorMessage(_form, append_to, msg);
+	    	$.scrollTo(jQuery('.redactor.conversation_thread'));
+	    	return false;
+	    }
+
+	    var newly_added_emails = this.new_cc_bcc_emails.concat(current_emails)
+	    this.new_cc_bcc_emails = jQuery.unique(newly_added_emails);
+		return true;
+	},
+	limitComposeEmail: function(_form, append_to, limit, msg) {
+	    var cc_emails  = []
+	    var to_email = []
+
+	    _form.find("input[name='cc_emails[]']").each( function() {
+	      cc_emails.push(App.Tickets.LimitEmails.get_email_address(jQuery(this).val()));
+	    });
+
+	    to_email.push(App.Tickets.LimitEmails.get_email_address(_form.find("input[name='helpdesk_ticket[email]']").val()))
+	    var current_emails = cc_emails.concat(to_email)
+	    current_emails = jQuery.unique(current_emails);
+	    
+		if((current_emails.length) > limit) {
+				this.appendErrorMessage(_form, append_to, msg);
+
+		    return false;
+		}
+		return true;
+	},
+	appendErrorMessage(_form, append_to ,msg) {
+		if(!_form.find(".text-error").get(0)){
+			_form.find(append_to).append("<p class='cc-error-message text-error'> "+msg+"</p>")	
+		}
+	},
+	getNewlyAddedEmails() {
+		return this.new_cc_bcc_emails;
+	},
+	get_email_address(string) {
+		whole_match = /"?(.+?)"?\s+<(.+?)>/
+		res =  whole_match.exec(string)
+		if(res) {
+    		return res[2]
+		}
+	  	with_brackets =  /<(.+?)>/
+	  	res =  with_brackets.exec(string)
+		if(res) {
+    		return res[1]
+		}
+	   	return string
+	}
+
+}
+
 }(window.jQuery));
+
 

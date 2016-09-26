@@ -9,11 +9,13 @@
   <%= render "helpdesk/shared/single_attachment_template" %>
 <% end %>
 <div class="templates-header-wrapper">
-  <%= render :partial => "helpdesk/tickets/ticket_widget/new_email_title" %>
-  <div class="muted">
-        <%= t("ticket.compose.compose_email_info") %>
-        <a href="https://support.freshdesk.com/support/solutions/articles/211974" target="_blank"><%= t("ticket.compose.learn_more") %></a>
- </div>
+  
+    <%= render :partial => "helpdesk/tickets/ticket_widget/new_email_title" %>
+    <div class="muted">
+          <%= t("ticket.compose.compose_email_info") %>
+          <a href="https://support.freshdesk.com/support/solutions/articles/211974" target="_blank"><%= t("ticket.compose.learn_more") %></a>
+   </div>
+
 
 <% 
   sign_value = if (desp = @item.description_html).blank? & (sign = 
@@ -41,7 +43,10 @@
       <span class="show-cc" data-action="show-cc"><%= t('helpdesk.shared.cc_label') %></span>
     </div>
 
-      <div class="cc-address hide details-widget">
+      <div class="cc-address hide details-widget" 
+            data-is-trial="<%= do_spam_check? && free_admin_email_account? %>"
+            data-limit="<%= get_trial_account_max_to_cc_threshold %>"
+            data-msg="<%= t(:'flash.general.recipient_limit_exceeded', :limit =>get_trial_account_max_to_cc_threshold ) %>">
       <label class="inline-label" for="cc-email-address"><%= t('helpdesk.cc') %>: </label>
           <%= render :partial => "helpdesk/tickets/ticket_widget/new_email_cc" %>
           <span class="hide-cc" data-action="hide-cc"><%= t('helpdesk.shared.hide_cc') %></span>
