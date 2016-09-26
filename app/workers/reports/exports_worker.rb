@@ -12,7 +12,8 @@ module Reports
       batch = Sidekiq::Batch.new
       merge_required = ((tickets[:non_archive].present? && tickets[:archive].present?) ||
        (tickets[:non_archive].length > 5000 || tickets[:archive].length > 5000)) ? true : false
-      batch.on(:success, self, {:merge_required => merge_required, :headers => args[:headers], :options => args[:options]})
+      args[:merge_required] = merge_required
+      batch.on(:complete, self, {:merge_required => merge_required, :headers => args[:headers], :options => args[:options]})
       batch.jobs do
         tickets.each do |type, ticket_bunch|
           next if ticket_bunch.empty?
@@ -49,7 +50,7 @@ module Reports
       upload_batch_file(options[:export_id], args[:batch_id], ticket_data, TYPES[:csv])
     end
 
-    def on_success(status, args = {})
+    def on_complete(status, args = {})
       args.symbolize_keys!
       if args[:merge_required]
         options = args[:options].symbolize_keys
