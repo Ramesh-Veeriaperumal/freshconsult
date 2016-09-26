@@ -190,6 +190,10 @@
 <div class="clearfix"></div>
 <%= javascript_tag do -%>
   jQuery(document).on("click", '[data-action="merge"]', function(ev){
+  	<!-- Turn off the formChanged event flag when the merge button is clicked -->
+  	jQuery('.form-unsaved-changes-trigger').each(function(){
+  		jQuery(this).data('formChanged',false);
+  	})
   	var display_id = jQuery(this).data('ticketDisplayId');
       jQuery.ajax({
         type:              'POST',

@@ -4,6 +4,7 @@
 window.App = window.App || {};
 window.App.Tickets = window.App.Tickets || {};
 
+
 (function ($) {
 
 $(document).on("click.conversation_action", '.conv-action-icon', function(ev){
@@ -63,6 +64,9 @@ var autosaveDraft = function() {
 		  bcc_email_list = bcc_email_list.substr(0,bcc_email_list.length - 1);
 		if ($.trim(content) != '' || cc_email_list.length > 0 || bcc_email_list.length > 0)
 			save_draft(content, cc_email_list, bcc_email_list);
+
+		// When the reply draft is saved, turn the formChanged flag off on the reply
+		jQuery('#cnt-reply-body').parents('form').data('formChanged',false);
 	}
 
 	TICKET_DETAILS_DATA['draft']['hasChanged'] = false;
@@ -234,6 +238,7 @@ insertIntoConversation = function(value,element_id){
 			$element.focus();
 			insertTextAtCursor($element.get(0), textValue);
 			$element.keyup(); // to update the SendTweetCounter value
+			$element.trigger('change'); // to set formChanged flag
 		}
 		else{
 			$element.data('redactor').insertOnCursorPosition('inserthtml',value);
@@ -272,6 +277,23 @@ showHideToEmailContainer = function(){
 TICKET_DETAILS_DOMREADY = function() {
 activeForm = null, savingDraft = false, draftClearedFlag = TICKET_DETAILS_DATA['draft']['cleared_flag'];
 // $('#ticket_original_request *').css({position: ''}); //Resetting the Position
+
+$('body').on("click.conversation_action", '.conv-action-icon', function(ev){
+		var fetchedId = ev.target.id;
+	    //slicing 'conv-action-' prefix from conv-action-icon's id value
+	    var selectedId = fetchedId.slice(12);
+	    jQuery('#'+selectedId).show().trigger('afterShow');
+	    invokeRedactor(selectedId+'-body'); 
+
+	    // start-----hack for hiding multiple instance of fwd edit in public note-----
+		var noteIdNo = ev.target.getAttribute("noteId");
+		var typeOfBtn = selectedId.substring(0, 5);
+			if(typeOfBtn === "cnt-f")	//cnt-fwd-{noteId}
+					{jQuery("#edit-"+noteIdNo).hide();}
+			if(typeOfBtn === "edit-")	//edit-{noteId}
+					{jQuery("#cnt-fwd-"+noteIdNo).hide();}
+	    // end-------hack for hiding multiple instance of fwd edit in public note-----
+	});
 
 $('body').on('mouseover.ticket_details', ".ticket_show #draft-save", function() {
 	var hasMoment = $(this).attr('data-moment');
@@ -873,7 +895,7 @@ var scrollToError = function(){
 	});
 
 	$('body').on('click.ticket_details', '.collision_refresh', function(ev) {
-		window.location = TICKET_DETAILS_DATA['ticket_path'];
+		pjaxify(TICKET_DETAILS_DATA['ticket_path'])
 	});
 
 	$('body').on('click.ticket_details', ".conversation_thread .request_panel form .submit_btn", function(ev) {
@@ -928,6 +950,9 @@ var scrollToError = function(){
 			_form.find('.forward_email li.choice').remove();
 		}
 		$('#response_added_alert').remove();
+
+		// Remove formChanged field in the form
+		_form.data("formChanged",false);
 	});
 
 	// More Event bindings for Draft Saving
@@ -1067,6 +1092,9 @@ var scrollToError = function(){
 		} else {
 			_form.find('input[type=submit]').prop('disabled', false);
 		}
+
+		// Remove formChanged field in the form on any submit
+		$(".form-unsaved-changes-trigger").each(function(){$(this).data("formChanged",false)});
 	});
 
 
@@ -1248,6 +1276,8 @@ var scrollToError = function(){
 				if(_form.attr('rel') == 'tweet_form'){
 					getTweetTypeAndBind();
 				}
+
+				_form.data("formChanged",false)
 
 				Helpdesk.TicketStickyBar.check();
 
@@ -1708,6 +1738,26 @@ var scrollToError = function(){
 
 	//RECENT TICKETS SETUP
 	NavSearchUtils.saveToLocalRecentTickets(TICKET_DETAILS_DATA);	
+
+	// Check for when form changes occur
+	var selectors = [
+		".form-unsaved-changes-trigger input",
+		".form-unsaved-changes-trigger textarea",
+		".form-unsaved-changes-trigger .redactor_editor",
+		".form-unsaved-changes-trigger select"
+	];
+	$('body').on('change.ticket_details input.ticket_details', selectors.join(","), function(event){
+		// Ignore twitter handle and type changes
+		if(["twitter_handle","tweet_type"].indexOf($(event.target).attr('id'))>-1){
+			return;
+		}
+		var form = $(event.target).parents('.form-unsaved-changes-trigger');
+		form.data("formChanged",true);
+	})
+
+	// Need to set this on global for Fjax.js
+	if(typeof customMessages=='undefined') customMessages = {};
+	customMessages.confirmNavigate = TICKET_DETAILS_DATA.confirm_navigation;
 
 };
 // TICKET DETAILS DOMREADY ENDS
