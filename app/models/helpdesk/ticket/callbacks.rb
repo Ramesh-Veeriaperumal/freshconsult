@@ -4,8 +4,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
 	before_validation :populate_requester, :load_ticket_status, :set_default_values
   before_validation :assign_flexifield, :assign_email_config_and_product, :on => :create
-  before_validation :validate_related_tickets, :on => :create, :if => :tracker_ticket?
-  before_validation :validate_tracker_ticket, :on => :update, :if => :tracker_ticket_id
 
   before_create :set_outbound_default_values, :if => :outbound_email?
 
@@ -20,8 +18,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
 	before_update :assign_email_config
 
   before_update :update_message_id, :if => :deleted_changed?
-
-  before_update :reset_links, :if => :remove_associations?
 
   before_create :assign_outbound_agent, :if => :outbound_email?
 
@@ -57,9 +53,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
   after_commit :publish_to_update_channel, on: :update, :if => :model_changes?
   after_commit :subscribe_event_create, on: :create, :if => :allow_api_webhook?, :unless => :spam_or_deleted?
   after_commit :subscribe_event_update, on: :update, :if => :allow_api_webhook?, :unless => :spam_or_deleted?
-  after_commit :set_links, :on => :create, :if => :tracker_ticket?
-  after_commit :add_links, :on => :update, :if => :linked_now?
-  after_commit :remove_links, :on => :update, :if => :unlinked_now?
   
   # Callbacks will be executed in the order in which they have been included. 
   # Included rabbitmq callbacks at the last
@@ -419,76 +412,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
     NewRelic::Agent.notice_error("Redis Display ID - Retry limit exceeded in #{account_id}")
   end
 
-  def validate_related_tickets
-    if related_ticket_ids.count == 1
-      @related_ticket = Account.current.tickets.permissible(User.current).find_by_display_id(related_ticket_ids)
-      unless(@related_ticket && @related_ticket.association_type.nil? && @related_ticket.can_be_linked? )
-        errors.add(:base,t("ticket.link_tracker.permission_denied")) and return false
-      end
-    elsif links_limit_exceeded(related_ticket_ids.count)
-      errors.add(:base,t("ticket.link_tracker.count_exceeded", :count => TicketConstants::MAX_RELATED_TICKETS)) and return false
-    end
-  end
-
-  def validate_tracker_ticket
-    @tracker_ticket = Account.current.tickets.find_by_display_id(tracker_ticket_id)
-    unless @tracker_ticket && @tracker_ticket.tracker_ticket? && !@tracker_ticket.spam_or_deleted? && self.can_be_linked?
-      errors.add(:base,t("ticket.link_tracker.permission_denied")) and return false
-    end
-    if self.association_type && @tracker_ticket.associates.present? && links_limit_exceeded(@tracker_ticket.associates.count)
-      errors.add(:base,t("ticket.link_tracker.count_exceeded",:count => TicketConstants::MAX_RELATED_TICKETS)) and return false
-    end
-    self.associates_rdb = related_ticket? ? @tracker_ticket.display_id : nil
-  end
-
-  def set_links
-    Rails.logger.debug "Linking Related tickets [#{related_ticket_ids}] to tracker_ticket #{self.display_id}"
-    if @related_ticket.present? && update_related_ticket
-      self.associates = [ @related_ticket.display_id ]
-    elsif related_ticket_ids.count > 1
-      ::Tickets::LinkTickets.perform_async({:tracker_id => self.display_id, :related_ticket_ids => related_ticket_ids})
-    end
-  end
-
-  def linked_now?
-    tracker_ticket_id && related_ticket? && @model_changes.key?(Helpdesk::SchemaLessTicket.association_type_column) &&
-      @model_changes[Helpdesk::SchemaLessTicket.association_type_column][0].nil?
-  end
-
-  def unlinked_now?
-    tracker_ticket_id && !related_ticket? && @model_changes.key?(Helpdesk::SchemaLessTicket.association_type_column) && 
-      @model_changes[Helpdesk::SchemaLessTicket.association_type_column][0] == TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:related]
-  end
-
-  def add_links
-    Rails.logger.debug "Linking Related tickets [#{self.id}] to tracker_ticket #{@tracker_ticket.display_id}"
-    @tracker_ticket.add_associates([self.display_id])
-    create_tracker_activity(:tracker_link)
-    self.associates = [ @tracker_ticket.display_id ]
-    ::Tickets::AddBroadcastNote.perform_async({ :ticket_id => @tracker_ticket.id, :related_ticket_ids => [self.display_id] })
-  end
-
-  def remove_links
-    Rails.logger.debug "Uninking Related tickets [#{self.id}] from tracker_ticket #{@tracker_ticket.display_id}"
-    self.remove_all_associates
-    @tracker_ticket.remove_associates([self.display_id])
-    create_tracker_activity(:tracker_unlink)
-    self.delete_broadcast_notes
-  end
-
-  def reset_links
-    ::Tickets::ResetAssociations.perform_async([self.id])
-  end
-
-  def remove_associations?
-    deleted_or_spammed_now? && linked_ticket?
-  end
-
-  def deleted_or_spammed_now?
-    (deleted_changed? && @model_changes[:deleted][0] == false) or 
-        (spam_changed? && @model_changes[:spam][0] == false)
-  end
-
 private 
 
   def push_create_notification
@@ -581,9 +504,7 @@ private
       @requester_name ||= self.name # for MobiHelp
     end
 
-    assign_agent_requester if tracker_ticket?
-
-    self.requester ||= account.all_users.find_by_an_unique_id({ 
+    self.requester = account.all_users.find_by_an_unique_id({ 
       :email => self.email, 
       :twitter_id => twitter_id,
       :external_id => external_id,
@@ -591,15 +512,6 @@ private
       :phone => phone })
     
     create_requester unless requester
-  end
-
-  def assign_agent_requester
-    agent_requester = account.technicians.find_by_email(email)
-    if agent_requester.present?
-      self.requester = agent_requester
-    else
-      errors.add(:base,t("ticket.tracker_agent_error"))
-    end
   end
 
   def create_requester
@@ -813,23 +725,4 @@ private
   def execute_observer?
     user_present? and !disable_observer_rule
   end
-
-  def update_related_ticket
-    @related_ticket.associates = [ self.display_id ]
-    @related_ticket.update_attributes(
-      :association_type => TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:related],
-      :associates_rdb => self.display_id )
-  end
-
-  def links_limit_exceeded(tickets_count)
-    tickets_count > TicketConstants::MAX_RELATED_TICKETS
-  end
-
-  def create_tracker_activity(action)
-    if Account.current.features?(:activity_revamp)
-      @tracker_ticket.misc_changes = {action => [self.display_id]}
-      @tracker_ticket.manual_publish_to_rmq("update", RabbitMq::Constants::RMQ_ACTIVITIES_TICKET_KEY)
-    end
-  end
-
 end

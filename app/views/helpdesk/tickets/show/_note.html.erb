@@ -37,7 +37,7 @@ end
 	<div class="avatar-wrap" name="note<%= note.id %>" id="note<%= note.id %>"><%= user_avatar(note.user, :thumb, 'preview_pic circle') %></div>
 	<% end %>
   <div class="commentbox 
-      <%= (note.user.blank? or note.user.agent? or notable_object.agent_performed?(note.user)) ? 'commentbox-gray' : 'commentbox-requester' %> 
+      <%= (note.user.blank? or notable_object.agent_performed?(note.user)) ? 'commentbox-gray' : 'commentbox-requester' %> 
       <%= 'private-note' if note.private_note? || note.fwd_email? || (is_twitter_dm?(note, notable_object)) || is_facebook_message?(note, notable_object) %>">
 
     <%= note_lock_icon(note, notable_object) %>
@@ -64,40 +64,38 @@ end
 			</div>
 			<% else %>
 			<div class="actions">
-			  <% unless note.broadcast_note_to_tracker? %>
 				<% if privilege?(:edit_conversation) %>
 					<%= link_to('', helpdesk_ticket_note_path(notable_object.display_id, note.id), 
 								:remote => true,
 								:method => :delete, :confirm => t("helpdesk.tickets.note.delete_note"), 
-								:class => "red_links conv-action-icon conv-actions-delete tooltip", :title => t('delete')) if note.user && note.user.agent?    %>
-		        <% end %>
-		        <% if privilege?(:merge_or_split_ticket) %>
-							<%= link_to('', 
-										{ :action => :split_the_ticket, :controller => 'helpdesk/tickets', :id => notable_object.display_id, :note_id => note.id }, 
-										:method => :post, :confirm => t("helpdesk.tickets.note.split_ticket_confirm"),
-										:class => "tooltip conv-action-icon conv-actions-split tooltip",
-										:title => t("helpdesk.tickets.note.split_this_as_new_ticket")) if note.can_split? %> 
-		        <% end %>
-		        <% if privilege?(:reply_ticket) and note.fb_reply_allowed? %>
-								 <a href="#" class="conv-action-icon conv-actions-reply tooltip reply-facebook" data-original-title="Reply" data-note-id = "<%= note.id %>" data-note-requester-name="<%= note.user.blank? ? "" : note.user.name %>"><span class="ficon-reply"></span>
-		           </a>
-		        <% end %>  
-		        <% if privilege?(:forward_ticket) %>
-							<%= link_to_function('', 
-										"jQuery('##{forward_note_id}').show().trigger('afterShow'); invokeRedactor('#{forward_note_id}-body') " ,
-										:class => "conv-action-icon conv-actions-forward tooltip", :title => t('fwd_to')) unless note.private or note.feedback? %>
-		        <% end %>
-		        <% if privilege?(:forward_ticket) %>
-							<%= link_to_function('', 
-										"jQuery('##{reply_to_fwd_id}').show().trigger('afterShow'); invokeRedactor('#{reply_to_fwd_id}-body') " ,
-										:class => "conv-action-icon ficon-reply forward-reply tooltip", :title => t('reply_to_fwd'))  if note.third_party_response? || note.fwd_email? || note.reply_to_forward?  %>
-		        <% end %>
-		        <% if privilege?(:edit_note, note) %>
-							<%= link_to_function('', 
-										"jQuery('##{notedetails}').addClass('hide'); jQuery('##{edit_id}').show().trigger('afterShow')",
-										:class => "conv-action-icon conv-actions-edit tooltip", :title => t('edit')) if(note.note? && note.user && note.user.agent? && !note.reply_to_forward?) %>
-		        <% end %>
-		      <% end -%>
+								:class => "red_links conv-action-icon conv-actions-delete tooltip", :title => t('delete')) if note.user && note.user.agent?    %>   
+        <% end %>
+        <% if privilege?(:merge_or_split_ticket) %>
+					<%= link_to('', 
+								{ :action => :split_the_ticket, :controller => 'helpdesk/tickets', :id => notable_object.display_id, :note_id => note.id }, 
+								:method => :post, :confirm => t("helpdesk.tickets.note.split_ticket_confirm"),
+								:class => "tooltip conv-action-icon conv-actions-split tooltip",
+								:title => t("helpdesk.tickets.note.split_this_as_new_ticket")) if note.can_split? %> 
+        <% end %>
+        <% if privilege?(:reply_ticket) and note.fb_reply_allowed? %>
+						 <a href="#" class="conv-action-icon conv-actions-reply tooltip reply-facebook" data-original-title="Reply" data-note-id = "<%= note.id %>" data-note-requester-name="<%= note.user.blank? ? "" : note.user.name %>"><span class="ficon-reply"></span>
+           </a>
+        <% end %>  
+        <% if privilege?(:forward_ticket) %>
+					<%= link_to_function('', 
+								"jQuery('##{forward_note_id}').show().trigger('afterShow'); invokeRedactor('#{forward_note_id}-body') " ,
+								:class => "conv-action-icon conv-actions-forward tooltip", :title => t('fwd_to')) unless note.private or note.feedback? %>
+        <% end %>
+        <% if privilege?(:forward_ticket) %>
+					<%= link_to_function('', 
+								"jQuery('##{reply_to_fwd_id}').show().trigger('afterShow'); invokeRedactor('#{reply_to_fwd_id}-body') " ,
+								:class => "conv-action-icon ficon-reply forward-reply tooltip", :title => t('reply_to_fwd'))  if note.third_party_response? || note.fwd_email? || note.reply_to_forward?  %>
+        <% end %>
+        <% if privilege?(:edit_note, note) %>
+					<%= link_to_function('', 
+								"jQuery('##{notedetails}').addClass('hide'); jQuery('##{edit_id}').show().trigger('afterShow')",
+								:class => "conv-action-icon conv-actions-edit tooltip", :noteId => note.id , :title => t('edit')) if(note.note? && note.user && note.user.agent? && !note.reply_to_forward?) %>
+        <% end %>
 		    </div>
 		    <% end %>
 			<div class="author-mail-detail cc_bcc_info">

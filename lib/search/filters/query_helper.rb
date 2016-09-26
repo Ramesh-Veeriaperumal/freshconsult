@@ -12,8 +12,7 @@ module Search::Filters::QueryHelper
       'helpdesk_subscriptions.user_id'            =>  'watchers',
       'helpdesk_schema_less_tickets.product_id'   =>  'product_id',
       "helpdesk_schema_less_tickets.long_tc04"    =>  'long_tc04',
-      "helpdesk_schema_less_tickets.long_tc03"    =>  'long_tc03',
-      'helpdesk_schema_less_tickets.int_tc03'     =>  'int_tc03'
+      "helpdesk_schema_less_tickets.long_tc03"    =>  'long_tc03'
     }
 
     private
@@ -340,36 +339,10 @@ module Search::Filters::QueryHelper
     def filtered_query(query_part={}, filter_part={})
       base = ({:query => { :bool => {}}})
       
-      base[:query][:bool].update(query_part) if query_part.present?
+      base[:query][:bool].update(:query => query_part) if query_part.present?
       base[:query][:bool].update(:filter => filter_part) if filter_part.present?
 
       base
-    end
-
-    def ids_filter ids
-      {:ids => {values: ids}}
-    end
-
-    def account_id_filter
-      term_filter(:account_id, Account.current.id)
-    end
-
-    def multi_match_query(query, fields=[], operator=nil)
-      {
-        :multi_match => Hash.new.tap do |qparams|
-          qparams[:query] = query
-          qparams[:fields] = fields
-          qparams[:operator] = operator if operator
-        end
-      }
-    end          
-
-    def default_condition_block
-      {
-        :should   => [],
-        :must     => [],
-        :must_not => []
-      }
     end
 
 end
