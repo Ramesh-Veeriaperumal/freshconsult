@@ -48,7 +48,6 @@ class EmailNotification < ActiveRecord::Base
   DEFAULT_REPLY_TEMPLATE  = 15
   RESPONSE_SLA_REMINDER   = 22
   RESOLUTION_SLA_REMINDER = 23
-  DEFAULT_FORWARD_TEMPLATE = 24
 
   EMAIL_SUBJECTS = {
     NEW_TICKET                    => "Ticket Received - {{ticket.encoded_id}} {{ticket.subject}}",
@@ -88,8 +87,7 @@ class EmailNotification < ActiveRecord::Base
     :AGENT_ONLY            => 2,
     :REQUESTER_ONLY        => 3,
     :REPLY_TEMPLATE        => 4,
-    :CC_NOTIFICATION       => 5,
-    :FORWARD_TEMPLATE      => 6
+    :CC_NOTIFICATION       => 5
   }
 
   # notification_token, notification_type, visibility
@@ -109,7 +107,6 @@ class EmailNotification < ActiveRecord::Base
     [:agent_solves_tkt,               TICKET_RESOLVED,                VISIBILITY[:REQUESTER_ONLY]     ],
     [:agent_closes_tkt,               TICKET_CLOSED,                  VISIBILITY[:REQUESTER_ONLY]     ],
     [:default_reply_template,         DEFAULT_REPLY_TEMPLATE,         VISIBILITY[:REPLY_TEMPLATE]     ],
-    [:default_forward_template,       DEFAULT_FORWARD_TEMPLATE,       VISIBILITY[:FORWARD_TEMPLATE]   ],
     [:additional_email_verification,  ADDITIONAL_EMAIL_VERIFICATION,  VISIBILITY[:REQUESTER_ONLY]     ],
     [:notify_comment,                 NOTIFY_COMMENT,                 VISIBILITY[:AGENT_ONLY]         ],
     [:new_ticket_cc,                  NEW_TICKET_CC,                  VISIBILITY[:CC_NOTIFICATION]    ],
@@ -143,10 +140,6 @@ class EmailNotification < ActiveRecord::Base
 
   def reply_template?
     (VISIBILITY_BY_KEY[self.notification_type] == VISIBILITY[:REPLY_TEMPLATE])
-  end
-
-  def forward_template?
-    (VISIBILITY_BY_KEY[self.notification_type] == VISIBILITY[:FORWARD_TEMPLATE])
   end
 
   def cc_notification?
@@ -220,7 +213,7 @@ class EmailNotification < ActiveRecord::Base
   end
 
   def get_requester_template(requester)
-    if not_dynamic_content?(requester)
+    if (requester.language.nil? || account.language == requester.language || !account.features?(:dynamic_content))
       template = [ requester_subject_template, requester_template ]
     else  
       d_template = dynamic_notification_templates.requester_template.active.for_language(requester.language).first
@@ -229,39 +222,26 @@ class EmailNotification < ActiveRecord::Base
   end
 
   def get_reply_template(user)
-    if not_dynamic_content?(user)
+    if (user.language.nil? || user.account.language == user.language || !user.account.features?(:dynamic_content))
       template =requester_template
     else
        d_template = dynamic_notification_templates.requester_template.active.for_language(user.language).first
        d_template ? d_template.description : requester_template
     end     
-  end
-
-  def get_forward_template(user)
-    if not_dynamic_content?(user)
-      template =requester_template
-    else
-       d_template = dynamic_notification_templates.requester_template.active.for_language(user.language).first
-       d_template ? d_template.description : requester_template
-    end     
-  end
+  end  
 
   def self.disable_notification (account)
     Thread.current["notifications_#{account.id}"] = EmailNotification::DISABLE_NOTIFICATION  
   end
 
   def fetch_template
-    if self.reply_template? or self.cc_notification? or self.forward_template?
+    if self.reply_template? or self.cc_notification?
       "requester_template"
     end  
   end
 
   def bcc_disabled?
     BCC_DISABLED_NOTIFICATIONS.include?(self.notification_type)
-  end
-
-  def not_dynamic_content?(user)
-    user.language.nil? || user.account.language == user.language || !user.account.features?(:dynamic_content)
   end
 
   private

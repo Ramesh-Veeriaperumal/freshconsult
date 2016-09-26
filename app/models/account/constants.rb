@@ -34,19 +34,20 @@ class Account < ActiveRecord::Base
     
     :blossom => {
       :features => [ :gamification, :auto_refresh, :twitter, :facebook, :forums, :surveys , :scoreboard, :timesheets, 
-        :custom_domain, :multiple_emails, :advanced_reporting ],
+        :custom_domain, :multiple_emails, :advanced_reporting, :default_survey ],
       :inherits => [ :sprout ]
     },
     
     :garden => {
       :features => [ :multi_product, :customer_slas, :multi_timezone , :multi_language, 
-        :css_customization, :advanced_reporting, :multiple_business_hours, :dynamic_content, :chat, :ticket_templates ],
+        :css_customization, :advanced_reporting, :multiple_business_hours, :dynamic_content, :chat, :ticket_templates, :custom_survey ],
       :inherits => [ :blossom ]
     },
 
     :estate => {
       :features => [ :collision, :layout_customization, :round_robin, :enterprise_reporting,
-        :custom_ssl, :custom_roles, :multiple_business_hours, :facebook_page_tab, :chat_routing, :dynamic_sections, :helpdesk_restriction_toggle],
+        :custom_ssl, :custom_roles, :multiple_business_hours, :facebook_page_tab, :chat_routing, :dynamic_sections,
+        :helpdesk_restriction_toggle, :round_robin_load_balancing],
       :inherits => [ :garden ]
     },
 
@@ -73,7 +74,8 @@ class Account < ActiveRecord::Base
 
     :estate_classic => {
       :features => [ :collision, :layout_customization, :round_robin, :enterprise_reporting,
-        :custom_ssl, :custom_roles, :multiple_business_hours, :facebook_page_tab, :chat_routing, :helpdesk_restriction_toggle ],
+        :custom_ssl, :custom_roles, :multiple_business_hours, :facebook_page_tab, :chat_routing,
+        :helpdesk_restriction_toggle, :round_robin_load_balancing ],
       :inherits => [ :garden_classic ]
     }
 
@@ -82,16 +84,16 @@ class Account < ActiveRecord::Base
   # Features added temporarily to avoid release for all the customers at one shot
   # Default feature when creating account has been made true :surveys & ::survey_links $^&WE^%$E
   TEMPORARY_FEATURES = {
-    :bi_reports => false, :contact_merge_ui => false, :social_revamp => false, :multiple_user_emails => false,  
+    :bi_reports => false, :contact_merge_ui => false, :social_revamp => true, :multiple_user_emails => false,  
     :round_robin_revamp => false, :solutions_meta_read => false, 
     :facebook_realtime => false, :autorefresh_node => false, :tokenize_emoji => false,
     :custom_dashboard => false, :updated_twilio_client => false,
     :report_field_regenerate => false, :reports_regenerate_data => false, 
     :chat_enable => false, :saml_old_issuer => false, :spam_dynamo => true,
     :redis_display_id => false, :es_multilang_solutions => false,
-    :sort_by_customer_response => false, :survey_links => true, :default_survey => false, :custom_survey => false,
+    :sort_by_customer_response => false, :survey_links => true,
     :saml_unspecified_nameid => false, :multiple_user_companies => false,
-    :euc_hide_agent_metrics => false, :single_session_per_user => false
+    :euc_hide_agent_metrics => false, :single_session_per_user => false, :link_tickets => false, :parent_child_tickets => false
   }
 
 
@@ -108,7 +110,8 @@ class Account < ActiveRecord::Base
     :threading_without_user_check => false, :freshfone_call_monitoring => false, :freshfone_caller_id_masking => false,
     :agent_conference => false, :freshfone_warm_transfer => false, :restricted_helpdesk => false, :enable_multilingual => false,
     :count_es_writes => false, :count_es_reads => false, :activity_revamp => false, :countv2_writes => false, :countv2_reads => false,
-    :helpdesk_restriction_toggle => false, :freshfone_acw => false, :ticket_templates => false, :cti => false, :all_notify_by_custom_server => false }
+    :helpdesk_restriction_toggle => false, :freshfone_acw => false, :ticket_templates => false, :cti => false, :all_notify_by_custom_server => false,
+    :freshfone_custom_forwarding => false }
 
   # This list below is for customer portal features list only to prevent from adding addition features
   ADMIN_CUSTOMER_PORTAL_FEATURES =  {:anonymous_tickets => true, :open_solutions => true, :auto_suggest_solutions => true, 

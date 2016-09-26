@@ -3,6 +3,8 @@ module Search::TicketSearch
 
   NONE_VALUE = -1
 
+  META_DATA_KEYS = ["requester_id", "owner_id", "helpdesk_tags.name"]
+
   def show_options ( column_order = TicketConstants::DEFAULT_COLUMNS_ORDER,
    columns_keys_by_token = TicketConstants::DEFAULT_COLUMNS_KEYS_BY_TOKEN,
     columns_option = TicketConstants::DEFAULT_COLUMNS_OPTIONS)
@@ -200,7 +202,31 @@ module Search::TicketSearch
       return TicketConstants.created_within_list
     end
 
+    if criteria_key == "helpdesk_schema_less_tickets.#{Helpdesk::SchemaLessTicket.association_type_column}"
+      return TicketConstants.association_type_filter_list
+    end
+
     return []
   end
+
+  def filters_meta_data(c_hash)
+    meta_hash = {}
+    c_hash.each do |key, value|
+      next unless META_DATA_KEYS.include?(key.to_s)
+      ids = value.split(",")
+      next if ids.blank?
+      meta_hash[key] =  (key.to_s == "helpdesk_tags.name" ? tags_meta_data(key, ids) : customers_meta_data(key, ids))
+    end
+    meta_hash
+  end
   
+
+  def customers_meta_data(key, ids)
+    association = (key.to_s == "requester_id" ? "users" : "companies")
+    Account.current.send(association).where(id: ids ).select("id, name").map { |o| {id: o.id, value: o.name, text: o.name}}
+  end
+
+  def tags_meta_data(key, values)
+    Account.current.tags.where(name: values).select("id, name").map { |o| {id: o.name, value: o.name, text: o.name}}
+  end
 end

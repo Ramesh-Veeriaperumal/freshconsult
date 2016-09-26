@@ -215,10 +215,6 @@ module Helpdesk::TicketsHelper
     end
   end
 
-  def forward_template_draft(item, signature)
-    {"draft_text" => bind_last_conv(item, signature, true, false)}
-  end
-
   def draft_key
     HELPDESK_REPLY_DRAFTS % { :account_id => current_account.id, :user_id => current_user.id,
       :ticket_id => @ticket.id}
@@ -244,17 +240,17 @@ module Helpdesk::TicketsHelper
 
   def bind_last_conv(item, signature, forward = false, quoted = true)    
     ticket = (item.is_a? Helpdesk::Ticket) ? item : item.notable
-    default_reply_forward = (signature.blank?)? "<p/><p/><br/>": "<p/><p><br></br></p><p></p><p></p>
+    default_reply = (signature.blank?)? "<p/><p/><br/>": "<p/><p><br></br></p><p></p><p></p>
 <div>#{signature}</div>"
     quoted_text = ""
-    if quoted
+
+    if quoted or forward
       quoted_text = quoted_text(item, forward)
-    elsif forward 
-      default_reply_forward = parsed_forward_template(ticket, signature)
     else
-      default_reply_forward = parsed_reply_template(ticket, signature)
+      default_reply = parsed_reply_template(ticket, signature)
     end 
-    "#{default_reply_forward} #{quoted_text}"
+
+    "#{default_reply} #{quoted_text}"
   end
 
   def parsed_reply_template(ticket, signature)   
@@ -283,23 +279,6 @@ module Helpdesk::TicketsHelper
           #{ (@last_item.description_html || extract_quote_from_note(@last_item).to_s)}
         </blockquote>
        </div>) 
-  end
-
-  def parsed_forward_template(ticket, signature)   
-    # Adding <p> tag for the IE9 text not shown issue
-    # default_reply = (signature.blank?)? "<p/><br/>": "<p/><div>#{signature}</div>"
-    
-    if current_account.email_notifications.find_by_notification_type(EmailNotification::DEFAULT_FORWARD_TEMPLATE).present?
-      requester_template = current_account.email_notifications.find_by_notification_type(EmailNotification::DEFAULT_FORWARD_TEMPLATE).get_forward_template(ticket.requester)
-      if(requester_template.present?)
-        requester_template.gsub!('{{ticket.satisfaction_survey}}', '')
-        forward_email_template = Liquid::Template.parse(requester_template).render('ticket' => ticket,'helpdesk_name' => ticket.account.portal_name)
-        # Adding <p> tag for the IE9 text not shown issue
-        default_forward = (signature.blank?)? "<p/><div>#{forward_email_template}</div>" : "<p/><div>#{forward_email_template}<br/>#{signature}</div>"
-      end
-    end 
-  
-    default_forward
   end
 
   def user_details_template(item)

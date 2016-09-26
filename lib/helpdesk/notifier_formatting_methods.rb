@@ -18,26 +18,8 @@ module Helpdesk::NotifierFormattingMethods
   end
 
   def fwd_formatted_subject(ticket)
-    subject = fwd_subject(ticket)
+    subject = reply_subject(false, ticket)
     "#{FWD_PREFIX} #{subject}"
-  end
-
-  def fwd_subject(ticket)
-    template = nil
-
-    template = ticket.account.email_notifications.find_by_notification_type(EmailNotification::DEFAULT_FORWARD_TEMPLATE) if defined?(EmailNotification::DEFAULT_FORWARD_TEMPLATE)
-    
-    if template.nil?
-      # Case when the forward template does not exist 
-      # (Can be removed when all accounts have migrated)
-      reply_subject(false,ticket)
-    else
-      # The case when the forward template exists
-      subject_template = template.get_requester_template(ticket.requester).first
-      subject = Liquid::Template.parse(subject_template).render('ticket' => ticket,
-                'helpdesk_name' => ticket.account.portal_name ).html_safe
-      subject.blank? ? default_reply_subject(ticket) : subject
-    end
   end
 
   def reply_subject(reply, ticket)

@@ -4,7 +4,6 @@
     <%= check_twitter_reauth_required %>
     <%= fb_realtime_msg_disabled %>
 <% end %>
-
 <div class="index-page-content" id="realtime-dashboard-content">
     <%= render :partial => "/helpdesk/realtime_dashboard/summary" %>
     <%= render :partial => "/helpdesk/realtime_dashboard/trial_account" %>
@@ -39,6 +38,6 @@
         RealtimeDashboard.locals = {};
         RealtimeDashboard.month_name = <%=t('date.abbr_month_names').to_json.html_safe%>;
         RealtimeDashboard.full_domain = '<%= current_account.full_domain %>';
-        RealtimeDashboard.helpdesk_name = '<%= current_account.helpdesk_name %>';
+        RealtimeDashboard.helpdesk_name = '<%= current_account.portal_name %>';
         RealtimeDashboard.dashboard_enabled = <%= current_account.dashboardv2_enabled? %>;
 </script>
