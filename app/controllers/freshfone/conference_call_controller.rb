@@ -282,7 +282,7 @@ class Freshfone::ConferenceCallController < FreshfoneBaseController
     def agent_leg?
       new_notifications? &&
         params[:From].present? && split_client_id(params[:From]).present? &&
-        current_call.present? && (outgoing_child_leg? || warm_transfer_call.present?)
+        current_call.present? && (outgoing_child_leg? || warm_transfer_call_leg.present?)
     end
 
     def participant_leg
