@@ -770,6 +770,7 @@ hr.content-divider{
 
 
 .ticket-main{
+	@include word-hyphernate;
 	.user-details{
 		h4.user-name{
 			display: inline;

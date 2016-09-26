@@ -24,7 +24,7 @@ var PopulateFormData = PopulateFormData ||  (function(){
      PopulateData.fromStore("#responder_id", 'agent',true);
     // check is ajax required
     if(!args.isAjax){
-      var customizedData = _customizeData(args.data);
+      var customizedData = _customizeData(args.data, args.fieldMap);
       _populateFields(customizedData, args);
       return;
     }
@@ -45,12 +45,8 @@ var PopulateFormData = PopulateFormData ||  (function(){
    * @param  {[type]} args [description]
    * @return {[type]}      [description]
    */
-  function _customizeData(args){
-    var fieldMap = {
-      agent: "responder_id",
-      group: "group_id"
-    }, data = {}, newkey;
-
+  function _customizeData(args, fieldMap){
+    var data = {}, newkey;
     for(var key in args){
       newkey = (fieldMap[key]) ? fieldMap[key] : key
       data[newkey] = args[key];
@@ -83,7 +79,6 @@ var PopulateFormData = PopulateFormData ||  (function(){
         extendedData = jQuery.extend(initialData, responseData),
         selectedFields = _getKeys(extendedData),
         meta_data = data.meta_data;
-
     selectedFields.each(function(val, index){
 
       if(val !== 'spam' && val !== 'deleted'){

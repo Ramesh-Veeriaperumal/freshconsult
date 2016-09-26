@@ -48,8 +48,10 @@ module RabbitMq::Subscribers::Tickets::Reports
     #Replacing :long_tc03, :long_tc04 to internal_agent_id & internal_group_id
     internal_agent_column = Helpdesk::SchemaLessTicket.internal_agent_column.to_sym
     internal_group_column = Helpdesk::SchemaLessTicket.internal_group_column.to_sym
+    association_type_column = Helpdesk::SchemaLessTicket.association_type_column.to_sym
     changes[:internal_agent_id] = changes.delete(internal_agent_column) if changes.keys.include?(internal_agent_column)
     changes[:internal_group_id] = changes.delete(internal_group_column) if changes.keys.include?(internal_group_column)
+    changes[:association_type] = changes.delete(association_type_column) if changes.keys.include?(association_type_column)
     changes
   end
 

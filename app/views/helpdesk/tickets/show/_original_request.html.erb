@@ -11,7 +11,7 @@
 		<%= content_tag(:span, "", :class => "ficon-chat-bubble commentbox-social-icon") %>
 	<% end %>
 	<div class="<%= 'helpdesk_note' if (fb_message || twitter_dm || fb_comment) %>">
-	<h2 class="subject hyphernate <%= 'show_full' if @ticket.deleted or @ticket.spam or params[:format]=='widget' %>">
+	<h2 class="subject break-word <%= 'show_full' if @ticket.deleted or @ticket.spam or params[:format]=='widget' %>">
 		<% if @ticket.spam %>
 			<span class='label spam'>
 				<%= link_to("×", unspam_helpdesk_ticket_path(@ticket), :method => :put,

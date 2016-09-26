@@ -5,8 +5,6 @@ module TicketConstants
   MAX_RELATED_TICKETS = 300
 
   BUSINESS_HOUR_CALLER_THREAD = "business_hour"
-
-  NBA_NULL_PRODUCT_ID = "-1"
   
   OUT_OF_OFF_SUBJECTS = [ "away from the office", "out of office", "away from office","mail delivery failed","returning your reply to helpdesk message", "vacation" ]
 
