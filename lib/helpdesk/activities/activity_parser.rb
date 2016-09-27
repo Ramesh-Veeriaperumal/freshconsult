@@ -254,12 +254,12 @@ module Helpdesk::Activities
 
     def rel_tkt_link(value)
       str = get_string_name("rel_tkt_link")
-      @activity[:misc] << render_string(str, { :tracker_ticket_path => build_ticket_url(value.first)})
+      @activity[:misc] << render_string(str, { :tracker_ticket_path => build_ticket_url(value.first.to_i)})
     end
 
     def rel_tkt_unlink(value)
       str = get_string_name("rel_tkt_unlink")
-      @activity[:misc] << render_string(str, { :tracker_ticket_path => build_ticket_url(value.first)})    
+      @activity[:misc] << render_string(str, { :tracker_ticket_path => build_ticket_url(value.first.to_i)})    
     end
 
     def tracker_link(value)

@@ -825,10 +825,10 @@ private
     tickets_count > TicketConstants::MAX_RELATED_TICKETS
   end
 
-  def create_tracker_activity(action)
+  def create_tracker_activity(action, tracker = @tracker_ticket)
     if Account.current.features?(:activity_revamp)
-      @tracker_ticket.misc_changes = {action => [self.display_id]}
-      @tracker_ticket.manual_publish_to_rmq("update", RabbitMq::Constants::RMQ_ACTIVITIES_TICKET_KEY)
+      tracker.misc_changes = {action => [self.display_id]}
+      tracker.manual_publish_to_rmq("update", RabbitMq::Constants::RMQ_ACTIVITIES_TICKET_KEY)
     end
   end
 
