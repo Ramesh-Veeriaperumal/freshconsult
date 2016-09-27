@@ -148,6 +148,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
       tracker.remove_associates([self.display_id]) if tracker.present?
       self.update_attributes(:association_type => nil, :associates_rdb => nil)
       remove_all_associates
+      create_tracker_activity(:tracker_unlink)
       delete_broadcast_notes
     end
 end
