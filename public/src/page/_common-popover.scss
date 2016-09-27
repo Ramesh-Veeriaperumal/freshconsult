@@ -79,14 +79,19 @@
         }
 	}
 
-    #unlink_from_tracker {
-        #unlink_from_tracker-content {
+    [id^="unlink_from_tracker_"] {
+        [id$="-content"] {
             padding: 15px 30px 5px 30px;
             border: none;
 
             .text_info_lbl {
                 padding: 0 8px 15px 0px;
                 line-height: 20px;
+
+                span.ellipsis {
+                    max-width: 245px;
+                    @include float(left);
+                }
             }
         }
     }

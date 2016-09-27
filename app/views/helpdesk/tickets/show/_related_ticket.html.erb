@@ -63,7 +63,9 @@
     </div>
     <div id="unlink_from_tracker_<%=related_ticket.display_id%>" class="hide">
       <div class="text_info_lbl">
-        <span><%= t("ticket.link_tracker.unlink_warning") %> <%= link_to(@ticket.try(:subject), helpdesk_ticket_url(@ticket), class: "truncate") %> #<%= @ticket.display_id %>.</span><br>
+        <span><%= t("ticket.link_tracker.unlink_warning") %><br>
+        </span>
+        <span class="subject_line ellipsis"> <%= link_to(@ticket.try(:subject), helpdesk_ticket_url(@ticket), class: "truncate") %> </span>&nbsp;#<%= @ticket.display_id %>.<br>
         <span><%= t("ticket.link_tracker.unlink_warning1") %></span>
       </div>
       <div class="btn-toolbar pull-right">
