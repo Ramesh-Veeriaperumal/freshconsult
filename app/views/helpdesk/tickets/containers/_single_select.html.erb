@@ -1,13 +1,8 @@
-<% if name == "created_at" %>
-	<%= select_tag name, options_for_select(options.map {|k, v| [v, k.to_s]}, selected_val) , 
-		 { :class => "select2 filter_item", "data-minimum-results-for-search" => 100, "data-selected-value" => selected_val } %>
+<%= select_tag name, options_for_select(options.map {|k, v| [v, k.to_s]}, selected_val) , 
+	 { :class => "select2 filter_item", "data-minimum-results-for-search" => 100, "data-selected-value" => selected_val } %>
 
-	<div id="div_ff_created_date_range" class="created_date_range_container mt14">
-		<h4 class="title"><%= t('filter_options.created_date_range')%></h4>
-		<input class="text filter_item" id="created_date_range" name="created_date_range" type="text" value="">
-	</div>
-<% else %>
-	<%= select_tag name, options_for_select(options.map {|k, v| [v.html_safe, k.to_s]}, selected_val) , 
-		 {:class => "select2 filter_item" } %>
-<% end %>
+<div id="div_ff_created_date_range" class="created_date_range_container mt14">
+	<h4 class="title"><%= t('filter_options.created_date_range')%></h4>
+	<input class="text filter_item" id="created_date_range" name="created_date_range" type="text" value="">
+</div>
 

@@ -4,9 +4,7 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
 	
 	COUNT_COLUMNS_FOR_REPORTS = ["agent_reassigned", "group_reassigned", "reopened", 
                                   "private_note", "public_note", "agent_reply", "customer_reply"]
-
-  #When a field is added, Add value function in es_v2_methods, update mapping in es_index_definition                                                            
-	SCHEMA_LESS_SEARCH_FIELDS = ["association_type"] 
+	
   	NOTE_COUNT_METRICS = ["private_note", "public_note", "agent_reply", "customer_reply"]
   
 	self.table_name =  "helpdesk_schema_less_tickets"

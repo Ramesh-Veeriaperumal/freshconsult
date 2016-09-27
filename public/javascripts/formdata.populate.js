@@ -125,6 +125,9 @@ var PopulateFormData = PopulateFormData ||  (function(){
           jQuery("#"+val).val(dataArray).trigger('change.select2');
         }
         break;
+      case 'association_type':
+        jQuery("[condition='"+$wrapperData.id+"']").children('select').val(dataArray).trigger('change.select2');
+        break;
       case 'requester':
       case 'customers':
       case 'tags':

@@ -26,14 +26,12 @@
         value = jQuery('#tags_filter').val().toString() || '';
       }
       else if(container == "single_select"){
-        if(condition == "created_at") {
-          if(jQuery('#created_at option:selected').val() != "any_time")
-            value =  jQuery('#created_at option:selected').val();
-        }
-        else {
-          if(jQuery(this).children('select').val() != "")
+        if(jQuery('#created_at option:selected').val() != "any_time")
+          value =  jQuery('#created_at option:selected').val();
+      }
+      else if(container == "association_type"){
+        if(jQuery(this).children('select').val() != "")
             value = jQuery(this).children('select').val();
-        }
       }
       else {
         value = jQuery(this).find(_selector).map(function(){ return this.value; }).get();
@@ -118,9 +116,9 @@
         <%
           if ((!c_hash[:field_type].nil?) && (c_hash[:field_type] == "nested_field"))
             container = "nested_field"
-          elsif c_hash[:name] == 'created_at' || c_hash[:name] == 'association_type'
+          elsif c_hash[:name] == 'created_at'
             container = "single_select"
-          elsif ['requester', 'customers', 'tags'].include?(c_hash[:name])
+          elsif ['requester', 'customers', 'tags', 'association_type'].include?(c_hash[:name])
             container = c_hash[:name]
           elsif ['responder_id','group_id'].include?(c_hash[:name])
             container = "multi_select"
@@ -213,7 +211,7 @@
               <h4 class="title"><%= (c_hash[:f_type] == :default) ? t("filter_options.#{display_name}").html_safe.capitalize : display_name.html_safe.capitalize %></h4>
             <% end %>
             <%= render :partial => "/helpdesk/tickets/containers/#{container}", :locals => { :container => container, :options => c_hash[:options], :name => c_hash[:name], 
-             :selected_val => (container == "single_select") ? @current_options[c_hash[:condition].to_s].to_s : @current_options[c_hash[:condition].to_s].to_s.split(","), 
+             :selected_val => @current_options[c_hash[:condition].to_s].to_s.split(","), 
              :field_id => c_hash[:field_id], :nested_fields => c_hash[:nested_fields], :current_options => @current_options, :c_hash => c_hash} %>
           <% end
           end
