@@ -25,7 +25,7 @@ module Helpdesk::NotifierFormattingMethods
   def fwd_subject(ticket)
     template = nil
 
-    template = ticket.account.email_notifications.find_by_notification_type(EmailNotification::DEFAULT_FORWARD_TEMPLATE) if defined?(EmailNotification::DEFAULT_FORWARD_TEMPLATE)
+    template = ticket.account.email_notifications.find_by_notification_type(EmailNotification::DEFAULT_FORWARD_TEMPLATE)
     
     if template.nil?
       # Case when the forward template does not exist 
