@@ -5,7 +5,7 @@ class Tickets::LinkTickets < BaseWorker
   def perform(args)
     args.symbolize_keys!
     @tracker_ticket = Account.current.tickets.find_by_display_id(args[:tracker_id])
-    @related_tickets = Account.current.tickets.not_associated.permissible(User.current).where('display_id IN (?)', args[:related_ticket_ids])
+    @related_tickets = Account.current.tickets.not_associated.permissible(User.current).readonly(false).where('display_id IN (?)', args[:related_ticket_ids])
     @tracker_ticket.misc_changes = {:tracker_link => @related_tickets.pluck(:display_id)}
     if Account.current.features?(:activity_revamp)
       @tracker_ticket.manual_publish_to_rmq("update", RabbitMq::Constants::RMQ_ACTIVITIES_TICKET_KEY)

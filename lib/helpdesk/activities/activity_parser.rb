@@ -728,8 +728,8 @@ module Helpdesk::Activities
     def multiple_tickets_url(value)
       value.map do |v|
         title = "##{v.to_i}"
-       "#{build_url(title, helpdesk_ticket_path(v.to_i))}"}.join(', ')
-     end
+       "#{build_url(title, helpdesk_ticket_path(v.to_i))}"
+      end.join(', ')
     end
   end
 end

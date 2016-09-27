@@ -421,7 +421,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def validate_related_tickets
     if related_ticket_ids.count == 1
-      @related_ticket = Account.current.tickets.permissible(User.current).find_by_display_id(related_ticket_ids)
+      @related_ticket = Account.current.tickets.permissible(User.current).readonly(false).find_by_display_id(related_ticket_ids)
       unless(@related_ticket && @related_ticket.association_type.nil? && @related_ticket.can_be_linked? )
         errors.add(:base,t("ticket.link_tracker.permission_denied")) and return false
       end
