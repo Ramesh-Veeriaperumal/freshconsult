@@ -1,13 +1,13 @@
 {
   "checksum": {
-    "previous": "46282c3564453a253b89aa3f427682c9659aa7dd0451790d88e2be8170054700",
-    "current": "46282c3564453a253b89aa3f427682c9659aa7dd0451790d88e2be8170054700"
+    "previous": "56dec14d8b672b638af6bc657b07fa986208f311e314ba14dd6440d05aa9bc78",
+    "current": "56dec14d8b672b638af6bc657b07fa986208f311e314ba14dd6440d05aa9bc78"
   },
   "fonts": [
-    "public/assets/glyphs_46282c3564453a253b89aa3f427682c9.ttf",
-    "public/assets/glyphs_46282c3564453a253b89aa3f427682c9.svg",
-    "public/assets/glyphs_46282c3564453a253b89aa3f427682c9.woff",
-    "public/assets/glyphs_46282c3564453a253b89aa3f427682c9.eot"
+    "public/assets/glyphs_56dec14d8b672b638af6bc657b07fa98.ttf",
+    "public/assets/glyphs_56dec14d8b672b638af6bc657b07fa98.svg",
+    "public/assets/glyphs_56dec14d8b672b638af6bc657b07fa98.woff",
+    "public/assets/glyphs_56dec14d8b672b638af6bc657b07fa98.eot"
   ],
   "glyphs": {
     "abandoned-call": {
@@ -158,6 +158,10 @@
       "codepoint": 61914,
       "source": "public/glyphs/vectors/book-hollow.svg"
     },
+    "broadcast-tracker": {
+      "codepoint": 62005,
+      "source": "public/glyphs/vectors/broadcast-tracker.svg"
+    },
     "building": {
       "codepoint": 61990,
       "source": "public/glyphs/vectors/building.svg"
@@ -287,7 +291,7 @@
       "source": "public/glyphs/vectors/compose-email.svg"
     },
     "connect-chat": {
-      "codepoint": 62003,
+      "codepoint": 62006,
       "source": "public/glyphs/vectors/connect-chat.svg"
     },
     "conversation": {
@@ -1137,6 +1141,10 @@
     "twitter-source": {
       "codepoint": 61947,
       "source": "public/glyphs/vectors/twitter-source.svg"
+    },
+    "unlink-tracker": {
+      "codepoint": 62003,
+      "source": "public/glyphs/vectors/unlink-tracker.svg"
     },
     "unlock": {
       "codepoint": 61859,

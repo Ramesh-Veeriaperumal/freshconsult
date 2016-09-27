@@ -1,0 +1,9 @@
+@item = @item.reload if @item.errors.any?
+tracker = params[:tracker] && params[:tracker].to_bool
+show_ajax_flash(page) unless tracker
+page << "App.Tickets.link_tracker.tracker_ticket_actions('related_ticket_list_item_#{@item.display_id}', '#{t('ticket.link_tracker.related_tickets', count: @tracker_ticket.related_tickets_count )}')" if tracker
+page.replace :link_tracker_box, :partial => "helpdesk/tickets/show/ticket_association", 
+				:locals => {:ticket => tracker ? @tracker_ticket : @item}
+page << "App.Tickets.link_tracker.tracker_flash_widget();" if tracker
+page << "jQuery('.broadcast_message_box').fadeOut(1000);"
+flash.discard

@@ -154,7 +154,7 @@ class Integrations::JiraIssue
 
   def push_existing_notes_to_jira(issue_id, tkt_obj)
     obj_mapper = Integrations::ObjectMapper.new
-    tkt_obj.notes.visible.exclude_source('meta').each do |note| 
+    tkt_obj.notes.visible.exclude_source(['meta', 'tracker']).each do |note| 
         mapped_data = obj_mapper.map_it(Account.current.id, "add_comment_in_jira" , note, :ours_to_theirs, [:map])
         response = add_comment(issue_id, mapped_data)
         jira_key = INTEGRATIONS_JIRA_NOTIFICATION % {:account_id=> Account.current.id, :local_integratable_id=> tkt_obj.id, :remote_integratable_id=> issue_id, :comment_id => response[:json_data]["id"] }

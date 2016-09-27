@@ -130,7 +130,9 @@ module MemcacheKeys
 
   MKP_EXTENSIONS = "v1/FA:MKP_EXTENSIONS:%{category_id}:%{type}:%{locale_id}"
 
-  EXTENSION_DETAILS = "v1/FA:EXTENSION:%{extension_id}:%{locale_id}"
+  CUSTOM_APPS = "v1/FA:CUSTOM_APPS:%{account_id}:%{locale_id}"
+
+  EXTENSION_DETAILS = "v2/FA:EXTENSION:%{extension_id}:%{locale_id}"
 
   CONFIGURATION_DETAILS = "v1/FA:CONFIGURATIONS:%{version_id}:%{locale_id}"
 

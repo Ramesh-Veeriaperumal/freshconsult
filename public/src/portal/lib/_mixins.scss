@@ -466,3 +466,10 @@
   height: 0;
   width: 0;
 }
+
+// Mixin for Word Break
+@mixin word-hyphernate {
+    word-break: break-word;
+    -ms-word-wrap: break-word;
+    word-wrap: break-word;
+}

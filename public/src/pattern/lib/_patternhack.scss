@@ -234,7 +234,7 @@ html.touch .dialog-well .actions {
 }
 
 .break-word {
-  word-wrap: break-word;
+    @include word-hyphernate;
 }
 
 ul.unstyled,

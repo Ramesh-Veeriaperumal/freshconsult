@@ -4,6 +4,7 @@ module Marketplace::ApiEndpoint
     # Global API's
     #[:name,   "url",   "url params"]
     [:mkp_extensions,           "product/%{product_id}/extensions.json", [:type, :category_id]],
+    [:mkp_custom_apps,          "product/%{product_id}/account/%{account_id}/custom_apps.json", []],
     [:search_mkp_extensions,    "product/%{product_id}/extensions/search.json", [:type, :query]],
     [:auto_suggest_mkp_extensions,"product/%{product_id}/extensions/auto_suggest.json", [:type, :query]],
     [:all_categories,           "product/%{product_id}/categories.json", []],

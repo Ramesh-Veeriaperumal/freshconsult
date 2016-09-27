@@ -124,6 +124,10 @@ module Admin::Marketplace::ExtensionsHelper
     @extension['type'] == Marketplace::Constants::EXTENSION_TYPE[:external_app]
   end
 
+  def custom_app?
+    @extension['app_type'] == Marketplace::Constants::APP_TYPE[:custom]
+  end
+
   def third_party_developer?
     !is_external_app? && @extension['account'].downcase != Marketplace::Constants::DEVELOPED_BY_FRESHDESK
   end

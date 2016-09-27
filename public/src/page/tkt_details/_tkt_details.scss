@@ -1,3 +1,4 @@
+@import "../common-popover";
 @import "../../fonts/glyphs-variables";
 
 // Requester Info Tabs in Ticket Details page
@@ -42,14 +43,17 @@ li {
     }
 }
 
-.tkt-wrapper-inner {
-    width: 98%;
+//ticket tracker ui changes
+
+
+.tkt-wrapper-inner{
+	width: 98%; 
     /* It must be adjust the width for ".leftcontent .at_the_top" class*/
-    @include padding-left(25px);
-    margin: 0 auto;
-    &.compose_email {
-        @include padding-left(0);
-    }
+	@include padding-left(25px);
+	margin: 0 auto;
+	&.compose_email {
+		@include padding-left(0);
+	}
 }
 
 .tkt-wrap {
@@ -1074,6 +1078,7 @@ li {
         padding-bottom: 10px;
     }
 }
+
 /*reply 2 forward*/
 .single_file.color {
     .attach-wrapper {
@@ -1085,6 +1090,7 @@ li {
         top: 14px;
     }
 }
+
 .single_file.bulk {
     margin-bottom: 15px;
    .attach-wrapper {
@@ -1373,6 +1379,10 @@ li {
                 cursor: pointer;
             }
         }
+
+        .MsoListParagraph {
+            text-indent: 18.0pt !important;
+        }
     }
     .activity:hover {
         .commentbox {
@@ -1591,6 +1601,10 @@ li {
                 margin-top: 5px;
                 position: relative;
                 z-index: 2;
+            }
+            p.cc-error-message {
+                float: left;
+                margin: 10px 0 0 44px;
             }
             .email_container {
                 width: 100%;
@@ -1845,6 +1859,20 @@ li {
             border: solid 1px #999;
         }
     }
+    #cnt-broadcast{
+        .ui-form .inline-field.clearField{
+            border-top: none;
+            border-radius: inherit;
+            margin-top: -1px;
+        }
+        .ficon-broadcast-tracker{
+            border-bottom: none;
+            font-size: 17px;
+            padding-right: 5px;
+            position: relative;
+            top: 1px;   
+        }
+    }
     .request_panel .ui-form .request_form_options {
         position: relative;
         @include float(right);
@@ -2092,6 +2120,40 @@ li {
         margin-bottom: 10px;
         margin-left: 5px;
         font-weight: bold;
+    }
+    
+    &.broadcast_message_box {
+        background: #fafafa;
+        &:before, &:after {
+            display: none;
+        }
+
+        .ficon-broadcast-tracker{
+            position: relative;
+            top: 2px;
+            padding-right: 3px;
+        }
+
+        .q-marker {
+            margin-top: 0px;
+        }
+
+        #ticket_original_request {
+            margin-top: 10px;
+            height: auto;
+            overflow: hidden;
+
+                &.collapsed {
+                    height: 65px;
+                    cursor: pointer;
+                }
+            }
+
+        .attach_broadcasted_msg{
+            border-top: 1px solid #ddd;
+            margin-top: 15px;
+            padding-top: 8px;
+        }
     }
 }
 

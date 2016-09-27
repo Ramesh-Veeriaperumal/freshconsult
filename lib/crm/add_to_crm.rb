@@ -41,7 +41,7 @@ class CRM::AddToCRM
     @queue = QUEUE
 
     def self.perform(account_id)
-      # CRM::Salesforce.new.update_deleted_account_to_crm(Account.current.id) if Rails.env.production?
+      ThirdCRM.new.mark_as_deleted_customer
     ensure
       CRM::FreshsalesUtility.new({ account: Account.current }).account_cancellation if (Rails.env.production? or Rails.env.staging?)
     end

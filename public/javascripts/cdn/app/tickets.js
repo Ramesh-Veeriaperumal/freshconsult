@@ -15,3 +15,4 @@
 //= require ticket_list.js
 //= require app/ticket_details.js
 //= require app/ticket_filter_views.js
+//= require app/link_tickets.js

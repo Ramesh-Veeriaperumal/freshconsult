@@ -243,6 +243,11 @@ class Account < ActiveRecord::Base
     features?(:restricted_helpdesk) && helpdesk_restriction_enabled?
   end
 
+  def link_tickets_enabled?
+    launched?(:link_tickets) 
+    # feature?(:link_tickets)
+  end
+
   class << self # class methods
 
     def reset_current_account

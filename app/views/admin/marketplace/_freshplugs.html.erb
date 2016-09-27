@@ -57,13 +57,25 @@
     developed_by        : "<%= t('marketplace.developed_by') %>",
     time_ago            : "<%= t('marketplace.time_ago') %>",
     policy_on_tp_apps   : "<%= t('marketplace.policy_on_tp_apps') %>",
-    third_party_app_policy : "<%= t('marketplace.third_party_app_policy') %>"
+    third_party_app_policy     : "<%= t('marketplace.third_party_app_policy') %>",
+    policy_on_custom_apps      : "<%= t('marketplace.policy_on_custom_apps') %>",
+    custom_app_policy          : "<%= t('marketplace.custom_app_policy') %>",
+    marketplace_no_custom_apps : "<%= t('marketplace.no_custom_apps_html') %>",
+    custom_app_gallery         : "<%= t('marketplace.custom_app_gallery') %>"
   };
 
   window['translate'] = {}; 
   translate.get = function(name){
     return tf_lang[name] || "";
   };
+
+  app_details = {
+    custom_app_type        :   "<%= Marketplace::Constants::APP_TYPE[:custom] %>"
+  }
+
+  app_details.get = function(field) {
+    return app_details[field] || '';
+  }
 
   Fjax.afterNextPage = function() {
     templateDockManager.destroy();

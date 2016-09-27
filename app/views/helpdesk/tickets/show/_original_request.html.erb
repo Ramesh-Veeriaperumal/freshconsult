@@ -11,7 +11,7 @@
 		<%= content_tag(:span, "", :class => "ficon-chat-bubble commentbox-social-icon") %>
 	<% end %>
 	<div class="<%= 'helpdesk_note' if (fb_message || twitter_dm || fb_comment) %>">
-	<h2 class="subject <%= 'show_full' if @ticket.deleted or @ticket.spam or params[:format]=='widget' %>">
+	<h2 class="subject break-word <%= 'show_full' if @ticket.deleted or @ticket.spam or params[:format]=='widget' %>">
 		<% if @ticket.spam %>
 			<span class='label spam'>
 				<%= link_to("×", unspam_helpdesk_ticket_path(@ticket), :method => :put,
@@ -53,35 +53,41 @@
 	</h2>
 	<div class="author-mail-detail">
 		<div>
-			<%= link_to_user(@ticket.requester).html_safe %> <%= t('ticket.reported') %> 
-			<abbr data-livestamp="<%= @ticket.created_at.to_i %>"></abbr> 
-			(<%= formated_date(@ticket.created_at) %>)
-			<%= t('ticket.via')%>
-			<% if @ticket.twitter? %>
-				<span class="ficon-twitter fsize-12 pr5 pl5"></span> <%= @ticket.tweet.twitter_handle.screen_name %> 
-			<% elsif @ticket.facebook? %>
-				<span class="ficon-facebook-setting fsize-12 pr5 pl5"></span> <%= @ticket.fb_post.facebook_page.page_name %>
-			<% elsif @ticket.ecommerce? and @ticket.ebay_account.present? %>
-				<span class="ficon-ecommerce fsize-14 pr5 pl5"></span> <%= @ticket.ebay_account.name %>
-			<% else %>
-				<%= @ticket.source_name %>
-			<% end %>
-
-
-			<%= metainfo(@ticket) unless @ticket.mobihelp? %>
-			<% if @ticket.requester %>
-				<% if @ticket.twitter? && @ticket.tweet.is_mention? %>
-				<div class="ticket-details-twitter">
-					<span class="ficon-twitter fsize-16 mr6"></span><%= link_to(t('ticket.view_twitter'),
-					    "http://twitter.com/#{@ticket.requester.twitter_id}/status/#{@ticket.tweet.tweet_id}", 
-					     :id => "ViewConvo", :target => "_blank") %>
-				</div>
-				<% elsif @ticket.facebook? && @ticket.is_fb_wall_post? %>
-				<div class="ticket-details-twitter">
-					<span class="ficon-facebook-setting fsize-16 mr6"></span>
-						<%= link_to(t('ticket.view_facebook'), facebook_link, :id => "ViewConvo", :target => "_blank") %>
-				</div>
+			<% unless @ticket.tracker_ticket? %>
+				<%= link_to_user(@ticket.requester).html_safe %> <%= t('ticket.reported') %> 
+				<abbr data-livestamp="<%= @ticket.created_at.to_i %>"></abbr> 
+				(<%= formated_date(@ticket.created_at) %>)
+				<%= t('ticket.via')%>
+				<% if @ticket.twitter? %>
+					<span class="ficon-twitter fsize-12 pr5 pl5"></span> <%= @ticket.tweet.twitter_handle.screen_name %> 
+				<% elsif @ticket.facebook? %>
+					<span class="ficon-facebook-setting fsize-12 pr5 pl5"></span> <%= @ticket.fb_post.facebook_page.page_name %>
+				<% elsif @ticket.ecommerce? and @ticket.ebay_account.present? %>
+					<span class="ficon-ecommerce fsize-14 pr5 pl5"></span> <%= @ticket.ebay_account.name %>
+				<% else %>
+					<%= @ticket.source_name %>
 				<% end %>
+
+
+				<%= metainfo(@ticket) unless @ticket.mobihelp? %>
+				<% if @ticket.requester %>
+					<% if @ticket.twitter? && @ticket.tweet.is_mention? %>
+					<div class="ticket-details-twitter">
+						<span class="ficon-twitter fsize-16 mr6"></span><%= link_to(t('ticket.view_twitter'),
+						    "http://twitter.com/#{@ticket.requester.twitter_id}/status/#{@ticket.tweet.tweet_id}", 
+						     :id => "ViewConvo", :target => "_blank") %>
+					</div>
+					<% elsif @ticket.facebook? && @ticket.is_fb_wall_post? %>
+					<div class="ticket-details-twitter">
+						<span class="ficon-facebook-setting fsize-16 mr6"></span>
+							<%= link_to(t('ticket.view_facebook'), facebook_link, :id => "ViewConvo", :target => "_blank") %>
+					</div>
+					<% end %>
+				<% end %>
+			<% else %>
+				<%= link_to_user(@ticket.requester).html_safe %> <%= t('ticket.created_tracker') %> 
+				<abbr data-livestamp="<%= @ticket.created_at.to_i %>"></abbr> 
+				(<%= formated_date(@ticket.created_at) %>)
 			<% end %>
 		</div>
 		<% created_by_agent_info = created_by_agent(@ticket) %>

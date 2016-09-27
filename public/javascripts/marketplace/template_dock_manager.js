@@ -215,6 +215,7 @@ var TemplateDockManager   = Class.create({
       success: function(extensions){
         jQuery(that.extensionsWrapper).empty()
                                     .append(JST["marketplace/marketplace_show"](extensions));
+        var isFromInstalled = isSuggestion ? false : jQuery(obj).hasClass("moreinfo-lnk");
 
         jQuery(document).trigger({
           type: "viewed_app_description_page",
@@ -222,10 +223,12 @@ var TemplateDockManager   = Class.create({
           developed_by: extensions.account,
           is_suggestion: isSuggestion,
           is_from_search: that.isSearched,
+          is_from_installed : isFromInstalled,
           time: new Date()
         });
 
         that.appName = extensions.display_name;
+        that.appType = extensions.app_type;
         that.developedBy = extensions.account;
 
         if(!isSuggestion){
@@ -307,13 +310,20 @@ var TemplateDockManager   = Class.create({
         },
         success: function(resp_body, statustext, resp){
           if(resp.status == 200){
-            jQuery(document).trigger({
+            if(that.appType == app_details.get('custom_app_type')){
+              jQuery(document).trigger({
+                type: "installed_custom_app",
+                app_name: that.appName,
+                time: new Date()
+              });
+            } else {
+              jQuery(document).trigger({
                 type: "successful_installation",
-                message: "Success",
                 app_name: that.appName,
                 developed_by: that.developedBy,
                 time: new Date()
-            });
+              });
+            }
 
             jQuery('.install-form').remove();
             jQuery('.progress').removeClass('active');

@@ -14,8 +14,9 @@ var TicketListSidebar = (function(){
       parentWrapper = "ticket-leftFilter",
       childWrapper =  "filter_item";
 
-  function getParams(callback){
+  function getParams(fieldMap, callback){
     var isDataRequired = _isDataRequired(), params = {};
+    params['fieldMap'] = fieldMap;
     if(isDataRequired){
       params['isAjax'] = true;
       params['url'] = URL;

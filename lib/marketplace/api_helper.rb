@@ -26,16 +26,23 @@ module Marketplace::ApiHelper
     end
 
     def installed_mkp_app_details
-      installed_mkp_apps = []
+      installed_mkp_apps, installed_custom_apps = [], []
       @installed_list.body.try(:each) do |installed_mkp_app|
-        installed_mkp_apps << {:extension_details => extension_details(installed_mkp_app['extension_id']).body}
-                              .merge({:installation_details => installed_mkp_app})
+        extension_details = extension_details(installed_mkp_app['extension_id']).body
+        installed_extension_details = { :extension_details => extension_details }
+                                        .merge({:installation_details => installed_mkp_app})
+        if extension_details['app_type'] == Marketplace::Constants::APP_TYPE[:custom]
+          installed_custom_apps << installed_extension_details
+        else
+          installed_mkp_apps << installed_extension_details
+        end
       end
-      installed_mkp_apps
+      { :installed_mkp_apps => installed_mkp_apps,
+        :installed_custom_apps => installed_custom_apps }
     end
 
     def installed_params(page)
-      installed_params = { type: Marketplace::Constants::DEFAULT_EXTENSION_TYPES}
+      installed_params = { type: Marketplace::Constants::INSTALLED_LIST_EXTENSION_TYPES}
       installed_params.merge!(
         { 
           display_page: page,

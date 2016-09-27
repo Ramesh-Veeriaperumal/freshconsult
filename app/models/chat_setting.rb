@@ -15,7 +15,7 @@ class ChatSetting < ActiveRecord::Base
     [ I18n.t("livechat.missed_chat"), 5],
     [ I18n.t("livechat.spam_chat"), 6]
   ]
-  APP_SUPPORT_ENABLED_ACCOUNTS = [ 79003, 43011, 6113, 364541, 181510, 71468, 385105 ]
+  TEST_ACCOUNTS = [ 79003, 43011, 6113, 364541, 181510, 71468, 385105, 203218 ]
     
   CHAT_CONSTANTS_BY_KEY = Hash[*CHAT_CONSTANTS.map { |i| [i[0], i[1]] }.flatten]
 

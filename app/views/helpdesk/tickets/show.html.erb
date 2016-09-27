@@ -43,6 +43,13 @@
 					</div>
 				</div>
 				<%= render :partial => "helpdesk/tickets/show/conversations" %> 
+				<% if current_account.link_tickets_enabled? && @last_broadcast_note.present? %>
+					<div class="conversation_thread" id="recent_broadcasted_message">
+						<div class="conversation">
+							<%= render :partial => "helpdesk/tickets/show/broadcast_message" %> 
+						</div>
+					</div>
+				<% end -%>
 				<%= render :partial => "helpdesk/tickets/show/new_conversation" %> 
 			</div>
 		</div>

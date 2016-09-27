@@ -1,0 +1,8 @@
+<div class="requester-details">
+	<div class="requester-email">
+		<li class="dropdown_blank required field">
+			<label><%= t('helpdesk.shared.requester_label') %><span class="required_star">*</span></label>
+			<%= render(:partial => "/shared/autocomplete_email", :formats => [:html],  :locals => {:placeholder => t('ticket.search_agent'), :object_name => :helpdesk_ticket, :url => agents_search_autocomplete_index_path, :class_name => "agent_requester"}) %>
+		</li>
+	</div>
+</div>

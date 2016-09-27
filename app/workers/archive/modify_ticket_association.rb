@@ -18,6 +18,7 @@ module Archive
 
     def split_notes(ticket,archive_ticket)
       ticket.notes.each do |note|
+        next if note.broadcast_note_to_related? || note.broadcast_note_to_tracker?
         archive_note = @account.archive_notes.find_by_note_id(note.id)
         archive_core_base = Archive::Core::Base.new
         if !archive_note

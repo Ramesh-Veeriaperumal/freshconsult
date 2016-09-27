@@ -47,7 +47,7 @@ class SendgridDomainUpdates < BaseWorker
   def create_record(domain, vendor_id)
     generated_key = generate_callback_key
     check_spam_account
-    post_url = SendgridWebhookConfig::POST_URL % { :full_domain => domain, :key => generated_key }
+    post_url = SendgridWebhookConfig::POST_URL % { :protocol => get_protocol(domain), :full_domain => domain, :key => generated_key }
     post_args = {:hostname => domain, :url => post_url, :spam_check => false, :send_raw => false }
     response = send_request('post', SendgridWebhookConfig::SENDGRID_API["set_url"] , post_args)
     return false unless response.code == 200
@@ -68,24 +68,32 @@ class SendgridDomainUpdates < BaseWorker
       spam_email_exact_match_regex = spam_email_exact_regex_value.present? ? Regexp.compile(spam_email_exact_regex_value, true) : SPAM_EMAIL_EXACT_REGEX
       spam_email_apprx_match_regex = spam_email_apprx_regex_value.present? ? Regexp.compile(spam_email_apprx_regex_value, true) : SPAM_EMAIL_APPRX_REGEX
 
-      if( mxrecord.blank? || (ismember?(BLACKLISTED_SPAM_DOMAINS,admin_email_domain)) || 
-          ((account.helpdesk_name =~ spam_email_exact_match_regex || account.full_domain =~ spam_email_exact_match_regex) && Freemail.free_or_disposable?(account.admin_email)))
-        add_member_to_redis_set(SPAM_EMAIL_ACCOUNTS, Account.current.id)
-        add_member_to_redis_set(BLACKLISTED_SPAM_ACCOUNTS, Account.current.id)
-        FreshdeskErrorsMailer.error_email(nil, {:domain_name => account.full_domain}, nil, {
-          :subject => "Detected suspicious spam account :#{Account.current.id} ", 
-          :recipients => ["mail-alerts@freshdesk.com", "noc@freshdesk.com"],
-          :additional_info => {:info => "Outgoing may be blocked for Account ID: #{Account.current.id} , Reason: Account's contact address is invalid or its domain is blacklisted or Account name is suspicious "}
-        })
-      elsif((account.helpdesk_name =~ spam_email_apprx_match_regex || account.full_domain =~ spam_email_apprx_match_regex) && Freemail.free_or_disposable?(account.admin_email)) 
-        add_member_to_redis_set(BLACKLISTED_SPAM_ACCOUNTS, Account.current.id)
-        FreshdeskErrorsMailer.error_email(nil, {:domain_name => account.full_domain}, nil, {
-          :subject => "Detected suspicious spam account :#{Account.current.id} ", 
-          :recipients => ["mail-alerts@freshdesk.com", "noc@freshdesk.com"],
-          :additional_info => {:info => "Account ID: #{Account.current.id} , Reason: Account name looks suspicious"}
-        })
+      if mxrecord.blank? 
+        blacklist_spam_account(account, true, "Outgoing will be blocked for Account ID: #{account.id} , Reason: Invalid Admin contact address")
+      elsif ismember?(BLACKLISTED_SPAM_DOMAINS,admin_email_domain)
+        blacklist_spam_account(account, true, "Outgoing will be blocked for Account ID: #{account.id} , Reason: Blacklisted admin email domain") 
+      elsif Freemail.disposable?(account.admin_email)
+        blacklist_spam_account(account, true, "Outgoing will be blocked for Account ID: #{account.id} , Reason: Disposable admin email address")
+      elsif ((account.helpdesk_name =~ spam_email_exact_match_regex || account.full_domain =~ spam_email_exact_match_regex) && Freemail.free?(account.admin_email))
+        blacklist_spam_account(account, true, "Outgoing will be blocked for Account ID: #{account.id} , Reason: Account name contains exact suspicious words")
+      elsif((account.helpdesk_name =~ spam_email_apprx_match_regex || account.full_domain =~ spam_email_apprx_match_regex) && Freemail.free?(account.admin_email)) 
+        blacklist_spam_account(account, false, "Reason: Account name looks suspicious")
       end
     end
+  end
+
+  def blacklist_spam_account(account, is_spam_email_account, additional_info )
+    add_member_to_redis_set(SPAM_EMAIL_ACCOUNTS, account.id) if is_spam_email_account
+    add_member_to_redis_set(BLACKLISTED_SPAM_ACCOUNTS, account.id)
+    notify_spam_account_detection(account, additional_info)
+  end
+
+  def notify_spam_account_detection(account, additional_info)
+    FreshdeskErrorsMailer.error_email(nil, {:domain_name => account.full_domain}, nil, {
+            :subject => "Detected suspicious spam account :#{account.id} ", 
+            :recipients => ["mail-alerts@freshdesk.com", "noc@freshdesk.com"],
+            :additional_info => {:info => additional_info}
+          })
   end
 
   def notify_and_update(domain, vendor_id)
@@ -96,7 +104,7 @@ class SendgridDomainUpdates < BaseWorker
       })
 
     generated_key = generate_callback_key
-    post_url = SendgridWebhookConfig::POST_URL % { :full_domain => domain, :key => generated_key }
+    post_url = SendgridWebhookConfig::POST_URL % { :protocol => get_protocol(domain), :full_domain => domain, :key => generated_key }
     post_args = { :url => post_url, :spam_check => false, :send_raw => false }
     response = send_request('patch', SendgridWebhookConfig::SENDGRID_API['update_url'] + domain, post_args)
     AccountWebhookKey.find_by_account_id_and_vendor_id(Account.current.id, vendor_id).update_attributes(:webhook_key => generated_key)
@@ -111,6 +119,12 @@ class SendgridDomainUpdates < BaseWorker
 
   def generate_callback_key
     SecureRandom.hex(15)
+  end
+
+  def get_protocol(domain)
+    multi_level_domain = domain.gsub(/.freshdesk.com/, "")
+    domain_level_count = multi_level_domain.split('.').count
+    (domain_level_count > 1 ? "http" : "https" )
   end
 
 end

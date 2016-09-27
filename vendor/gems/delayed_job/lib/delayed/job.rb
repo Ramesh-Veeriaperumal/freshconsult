@@ -271,8 +271,10 @@ module Delayed
 
     # Moved into its own method so that new_relic can trace it.
     def invoke_job
+      Thread.current[:attempts] = self.attempts
       Account.reset_current_account
       payload_object.perform
+      Thread.current[:attempts] = nil
     end
 
   private

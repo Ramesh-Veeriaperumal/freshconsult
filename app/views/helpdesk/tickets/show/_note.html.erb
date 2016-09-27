@@ -83,18 +83,25 @@ end
         <% end %>  
         <% if privilege?(:forward_ticket) %>
 					<%= link_to_function('', 
-								"jQuery('##{forward_note_id}').show().trigger('afterShow'); invokeRedactor('#{forward_note_id}-body') " ,
-								:class => "conv-action-icon conv-actions-forward tooltip", :title => t('fwd_to')) unless note.private or note.feedback? %>
+
+								:id => "conv-action-"+forward_note_id,
+								:class => "conv-action-icon conv-actions-forward tooltip",
+								:noteId => note.id ,
+								:title => t('fwd_to')) unless note.private or note.feedback? %>
         <% end %>
         <% if privilege?(:forward_ticket) %>
 					<%= link_to_function('', 
-								"jQuery('##{reply_to_fwd_id}').show().trigger('afterShow'); invokeRedactor('#{reply_to_fwd_id}-body') " ,
-								:class => "conv-action-icon ficon-reply forward-reply tooltip", :title => t('reply_to_fwd'))  if note.third_party_response? || note.fwd_email? || note.reply_to_forward?  %>
+								:id => "conv-action-"+reply_to_fwd_id,
+								:class => "conv-action-icon ficon-reply forward-reply tooltip",
+								:noteId => note.id , 
+								:title => t('reply_to_fwd'))  if note.third_party_response? || note.fwd_email? || note.reply_to_forward?  %>
         <% end %>
         <% if privilege?(:edit_note, note) %>
 					<%= link_to_function('', 
-								"jQuery('##{notedetails}').addClass('hide'); jQuery('##{edit_id}').show().trigger('afterShow')",
-								:class => "conv-action-icon conv-actions-edit tooltip", :noteId => note.id , :title => t('edit')) if(note.note? && note.user && note.user.agent? && !note.reply_to_forward?) %>
+								:id => "conv-action-"+edit_id,
+								:class => "conv-action-icon conv-actions-edit tooltip", 
+								:noteId => note.id , 
+								:title => t('edit')) if(note.note? && note.user && note.user.agent? && !note.reply_to_forward?) %>
         <% end %>
 		    </div>
 		    <% end %>
