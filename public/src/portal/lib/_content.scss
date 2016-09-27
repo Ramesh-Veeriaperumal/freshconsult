@@ -12,6 +12,7 @@
 
 .content{ 
 	background-color: $page-background;
+	@include word-hyphernate;
 	.lead{
 		font-weight: 500;
 	}
