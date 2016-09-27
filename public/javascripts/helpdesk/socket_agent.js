@@ -203,7 +203,7 @@ var setEvents = function (hashed_params,current_username,current_userid) {
           var customer_reply_div = "<div id='ar_customer_reply' class='count-label auto-refresh-show hide' data-text-one='Customer Reply' data-text-other='Customer Replies'></div>";
           var agent_reply_div = "<div id='ar_agent_reply' class='count-label auto-refresh-show hide' data-text-one='Agent Reply' data-text-other='Agent Replies'></div>"
           var private_note_div = "<div id='ar_private_note' class='count-label auto-refresh-show hide' data-text-one='Private Note' data-text-other='Private Notes'></div>"
-          var broadcast_note_div = "<div id='ar_broadcast_note' class='count-label auto-refresh-show hide' data-text-one='Broadcast Note'></div>"
+          var broadcast_note_div = "<div id='ar_broadcast_note' class='auto-refresh-show hide' data-text-one='Broadcast Note'></div>"
           var properties_updated_div = "<div id='ar_tickets_updated' class='auto-refresh-show ar-properties hide'>Properties updated</div>"
           return customer_reply_div+agent_reply_div+private_note_div+properties_updated_div+broadcast_note_div;
         },

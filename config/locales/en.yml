@@ -2735,6 +2735,8 @@ en:
       add_watcher: "Watcher Added"
       remove_watcher: "Watcher Removed"
       spam: "Marked Spam"
+      rel_tkt_link: "Ticket Linked"
+      rel_tkt_unlink: "Ticket Unlinked"
     solutions:
       new_solution:
         short: "{{user_path}} created a new solution"
@@ -3040,14 +3042,14 @@ en:
         new: "Deselected %{checkbox_list}"
       archive:
         new: "Ticket archived"
-      rlt_tkt_link:
+      rel_tkt_link:
         new: "Linked this ticket with the tracker %{tracker_ticket_path}"
-      rlt_tkt_unlink:
+      rel_tkt_unlink:
         new: "Unlinked this ticket from the tracker %{tracker_ticket_path}"
       tracker_link:
-        new: "Linked %{related_tickets_count} %{related_ticket_path} with this tracker"
+        new: "Linked %{related_tickets_count} (%{related_ticket_path}) with this tracker"
       tracker_unlink:
-        new: "Unlinked %{related_tickets_count} %{related_ticket_path} from this tracker"
+        new: "Unlinked %{related_tickets_count} (%{related_ticket_path}) from this tracker"
       tracker_unlink_all:
         new: "Unlinked all %{related_tickets_count} from this tracker"
       email_to_requester:
