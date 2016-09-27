@@ -171,7 +171,7 @@ class Va::Action
     return if act_on.spam?
     if act_on.requester_has_email? && !(act_on.ecommerce? || act_on.requester.ebay_user?)
       act_on.account.make_current
-      Helpdesk::TicketNotifier.send_later(:email_to_requester, act_on, 
+      Helpdesk::TicketNotifier.email_to_requester(act_on, 
         substitute_placeholders_for_requester(act_on, :email_body),
                       substitute_placeholders_for_requester(act_on, :email_subject)) 
       record_action(act_on)
@@ -244,7 +244,7 @@ class Va::Action
 
     def send_internal_email act_on, receipients
       act_on.account.make_current
-      Helpdesk::TicketNotifier.send_later(:internal_email, act_on, 
+      Helpdesk::TicketNotifier.internal_email(act_on, 
         receipients, substitute_placeholders(act_on, :email_body),
           substitute_placeholders(act_on, :email_subject))      
     end
