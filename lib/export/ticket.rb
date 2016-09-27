@@ -18,10 +18,12 @@ class Export::Ticket < Struct.new(:export_params)
         send_no_ticket_email
       else
         build_file(file_string, "ticket", export_params[:format]) 
-        DataExportMailer.ticket_export({:user => User.current, 
-                                                :domain => export_params[:portal_url],
-                                                :url => hash_url(export_params[:portal_url]),
-                                                :export_params => export_params})
+        DataExportMailer.send_later(:ticket_export, {
+                                                      :user => User.current, 
+                                                      :domain => export_params[:portal_url],
+                                                      :url => hash_url(export_params[:portal_url]),
+                                                      :export_params => export_params
+                                                    })
       end
     rescue => e
       NewRelic::Agent.notice_error(e)
@@ -225,10 +227,10 @@ class Export::Ticket < Struct.new(:export_params)
   end
 
   def send_no_ticket_email
-    DataExportMailer.no_tickets({
-                                          :user => User.current,
-                                          :domain => export_params[:portal_url]
-                                        })
+    DataExportMailer.send_later(:no_tickets, {
+                                              :user => User.current,
+                                              :domain => export_params[:portal_url]
+                                            })
     @data_export.destroy
   end
 
