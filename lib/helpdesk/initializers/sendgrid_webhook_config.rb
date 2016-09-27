@@ -5,5 +5,5 @@ module SendgridWebhookConfig
 
 	SENDGRID_API = CONFIG['api']
 
-	POST_URL = "%{protocol}://%{full_domain}/email?verification_key=%{key}"
+	POST_URL = "https://%{full_domain}/email?verification_key=%{key}"
 end

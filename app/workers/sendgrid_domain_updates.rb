@@ -47,7 +47,7 @@ class SendgridDomainUpdates < BaseWorker
   def create_record(domain, vendor_id)
     generated_key = generate_callback_key
     check_spam_account
-    post_url = SendgridWebhookConfig::POST_URL % { :protocol => get_protocol(domain), :full_domain => domain, :key => generated_key }
+    post_url = SendgridWebhookConfig::POST_URL % { :full_domain => domain, :key => generated_key }
     post_args = {:hostname => domain, :url => post_url, :spam_check => false, :send_raw => false }
     response = send_request('post', SendgridWebhookConfig::SENDGRID_API["set_url"] , post_args)
     return false unless response.code == 200
@@ -104,7 +104,7 @@ class SendgridDomainUpdates < BaseWorker
       })
 
     generated_key = generate_callback_key
-    post_url = SendgridWebhookConfig::POST_URL % { :protocol => get_protocol(domain), :full_domain => domain, :key => generated_key }
+    post_url = SendgridWebhookConfig::POST_URL % { :full_domain => domain, :key => generated_key }
     post_args = { :url => post_url, :spam_check => false, :send_raw => false }
     response = send_request('patch', SendgridWebhookConfig::SENDGRID_API['update_url'] + domain, post_args)
     AccountWebhookKey.find_by_account_id_and_vendor_id(Account.current.id, vendor_id).update_attributes(:webhook_key => generated_key)
@@ -119,12 +119,6 @@ class SendgridDomainUpdates < BaseWorker
 
   def generate_callback_key
     SecureRandom.hex(15)
-  end
-
-  def get_protocol(domain)
-    multi_level_domain = domain.gsub(/.freshdesk.com/, "")
-    domain_level_count = multi_level_domain.split('.').count
-    (domain_level_count > 1 ? "http" : "https" )
   end
 
 end
