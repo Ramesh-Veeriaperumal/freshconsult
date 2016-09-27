@@ -6152,7 +6152,7 @@ en:
         facebook_form:
           reply_to: "Reply to"
           title: "Reply to %{user}"
-          from: "From :"
+          from: "From:"
         ecommerce_reply_form:
           title: "Reply to"
         history:
