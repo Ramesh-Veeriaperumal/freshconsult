@@ -217,12 +217,12 @@ var setEvents = function (hashed_params,current_username,current_userid) {
           },
           mouseleave: function () {
               jQuery(this).popover('hide');
-          },
-          click: function (){
-            if(jQuery(".source-badge-wrap .source").hasClass("collision_refresh")){
-              jQuery(".ticket_id").click();
-            }
           }
+          // click: function (){
+          //   if(jQuery(".source-badge-wrap .source").hasClass("collision_refresh")){
+          //     jQuery(".ticket_id").click();
+          //   }
+          // }
       });
 
       jQuery("[rel=notice-popover]").popover({
