@@ -1579,16 +1579,20 @@ class Helpdesk::TicketsController < ApplicationController
 
     def check_trial_customers_limit
       if ((current_account.id > get_spam_account_id_threshold) && (current_account.subscription.trial?) && (!ismember?(SPAM_WHITELISTED_ACCOUNTS, current_account.id)) && (Freemail.free?(current_account.admin_email)))
-        if @item.source == Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:outbound_email]
-          cc_emails = get_email_array(params[:cc_emails])
-          to_email = get_email_array(params[:helpdesk_ticket][:email])
-          total_recipients = cc_emails | to_email
-          if (total_recipients.count ) > get_trial_account_max_to_cc_threshold
+        if (@item.source == Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:outbound_email] || @item.source == Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:phone])
+          if max_to_cc_threshold_crossed?
               flash[:error] = t(:'flash.general.recipient_limit_exceeded', :limit => get_trial_account_max_to_cc_threshold )
               redirect_to :back
           end
         end
       end
+    end
+
+    def max_to_cc_threshold_crossed?
+      cc_emails = get_email_array(params[:cc_emails])
+      to_email = get_email_array(params[:helpdesk_ticket][:email])
+      total_recipients = cc_emails | to_email
+      return (total_recipients.count  > get_trial_account_max_to_cc_threshold)
     end
 
     def build_ticket_body_attributes
