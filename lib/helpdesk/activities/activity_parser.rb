@@ -209,6 +209,16 @@ module Helpdesk::Activities
             {:status_name => escapeHTML("#{text}")})
     end
 
+    def delete_status(value)
+      str  = get_string_name("property_delete")
+      deleted_property_value = value[0]
+      property_value = @data_hash[:status_name][value[1].to_i]
+      @activity[:set] << render_string(str,
+            {:property => "#{render_string("activities.status")}", 
+              :deleted_property_value => escapeHTML("#{deleted_property_value}"), 
+              :property_value => escapeHTML("#{property_value}")})
+    end
+
     def priority(value)
       str  = get_string_name("priority_change")
       text = TicketConstants.translate_priority_name(value[1].to_i)

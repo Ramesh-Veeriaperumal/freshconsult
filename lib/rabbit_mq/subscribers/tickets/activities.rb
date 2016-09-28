@@ -50,6 +50,8 @@ module RabbitMq::Subscribers::Tickets::Activities
       # do nothing
     elsif archive          # for archive
       ticket_changes.merge!(misc_changes) if misc_changes?
+    elsif delete_status?   # delete status
+      ticket_changes.merge!(misc_changes) if misc_changes?
     else
       changes = create_action?(action) ? flexifield.previous_changes : @model_changes
       custom_field_changes = process_flexifields(changes, "flexifield_name") unless destroy_action?(action)
@@ -279,6 +281,10 @@ module RabbitMq::Subscribers::Tickets::Activities
     true
   rescue ArgumentError, TypeError
     false
+  end
+
+  def delete_status?
+    self.misc_changes.present? and self.misc_changes[:delete_status]
   end
 
 end
