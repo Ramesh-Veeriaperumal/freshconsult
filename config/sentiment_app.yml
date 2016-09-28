@@ -1,0 +1,28 @@
+development: 
+  auth_key: 7F77DC551CFF7BAB845879ABD41DA
+  host: http://sentimentelb-866010645.us-east-1.elb.amazonaws.com
+  method: post
+  url: api/v1/predict/
+  timeout: 2
+  ticket_count: 12
+production: 
+  auth_key: 7F77DC551CFF7BAB845879ABD41DA
+  host: https://nba.freshdesk.com
+  method: post
+  url: api/v1/predict/
+  timeout: 2
+  ticket_count: 12
+staging: 
+  auth_key: 7F77DC551CFF7BAB845879ABD41DA
+  host: http://sentimentelb-866010645.us-east-1.elb.amazonaws.com
+  method: post
+  url: api/v1/predict/
+  timeout: 2
+  ticket_count: 12
+test: 
+  auth_key: 7F77DC551CFF7BAB845879ABD41DA
+  host: http://sentimentelb-866010645.us-east-1.elb.amazonaws.com
+  method: post
+  url: api/v1/predict/
+  timeout: 2
+  ticket_count: 12

@@ -35,3 +35,5 @@ ThirdPartyAppConfig = YAML::load_file File.join(Rails.root, 'config', 'third_par
 FdNodeConfig = YAML.load_file(File.join(Rails.root, 'config', 'fd_node_config.yml'))[Rails.env]
 
 ArchiveNoteConfig = YAML::load_file(File.join(Rails.root, 'config', 'archive_note.yml'))[Rails.env]
+
+SentimentAppConfig = YAML::load_file(File.join(Rails.root, 'config', 'sentiment_app.yml'))[Rails.env]
