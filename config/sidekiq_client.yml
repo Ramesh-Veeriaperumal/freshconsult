@@ -122,6 +122,7 @@ defaults: &defaults
     - [cti]
     - [sla_on_status_change]
     - [update_sentiment]
+    - [update_notes_sentiment]
 
 development:
   <<: *defaults

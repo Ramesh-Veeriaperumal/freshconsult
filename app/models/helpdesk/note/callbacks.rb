@@ -5,7 +5,7 @@ class Helpdesk::Note < ActiveRecord::Base
   before_create :validate_schema_less_note, :update_observer_events
   before_save :load_schema_less_note, :update_category, :load_note_body, :ticket_cc_email_backup
 
-  after_create :update_content_ids, :update_parent, :add_activity, :fire_create_event
+  after_create :update_content_ids, :update_parent, :add_activity, :fire_create_event, :update_sentiment
   # Doing update note count before pushing to ticket_states queue
   # So that note count will be reflected if the rmq publish happens via ticket states queue
   after_commit ->(obj) { obj.send(:update_note_count_for_reports)  }, on: :create , :if => :report_note_metrics?
@@ -66,6 +66,16 @@ class Helpdesk::Note < ActiveRecord::Base
     else
       notable.destroy_activity("activities.tickets.conversation.#{ACTIVITIES_HASH.fetch(source, "note")}.long", id)
     end
+  end
+
+  def update_sentiment 
+    user_id = User.current.id if User.current
+    puts "Came insode update_notes_sentiment"
+    Notes::UpdateNotesSentimentWorker.perform_async(
+          { :note_id => id,
+            :ticket_id => notable.display_id,
+            :note_body => note_body_content.body }
+    )
   end
 
   protected
