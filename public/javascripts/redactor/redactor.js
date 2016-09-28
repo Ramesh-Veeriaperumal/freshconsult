@@ -2642,7 +2642,7 @@ Redactor.prototype = {
 	},
 	buildButton: function(key, s)
 	{
-		var button = $('<a href="javascript:void(null);" title="' + s.title + '" class="redactor_btn_' + key + '" tabindex="-1"></a>');
+		var button = $('<a href="javascript:void(null);" title="' + s.title + '" class="redactor_btn_' + key + '" tabindex="-1"><span class="hide">' + s.title + '</span></a>');
 		
 		if (typeof s.func === 'undefined')
 		{
@@ -3882,7 +3882,10 @@ Redactor.prototype = {
 				if(json.isJSON())
 					data = $.parseJSON(json);
 				if(data.filelink != undefined){
-					html = '<p><img src="' + data.filelink + '" class= "inline-image" data-id = "' + data.fileid + '" /></p>';
+					// spliting file name
+					var temp = data.filelink.split('/');
+					var fileName = temp[temp.length-1].split('?')[0];
+					html = '<p><img src="' + data.filelink + '" class= "inline-image" data-id = "' + data.fileid + '" alt="'+ fileName +'"  title="'+ fileName +'"/></p>';
 					this.$editor.find("#uploading_images_"+data.uniquekey).replaceWith($(html))
 					this.syncCode();
 					if(this.$editor.find("img.image-loader").length == 0){
