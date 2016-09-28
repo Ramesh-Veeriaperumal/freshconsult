@@ -161,7 +161,12 @@
   @include box-sizing(border-box); // Makes inputs behave like true block-level elements
 }
 
-
+// Mixin for Word Break
+@mixin word-hyphernate {
+    word-break: break-word;
+    -ms-word-wrap: break-word;
+    word-wrap: break-word;
+}
 
 // Mixin for form field states
 @mixin formFieldState($textColor: #555, $borderColor: #ccc, $backgroundColor: #f5f5f5) {

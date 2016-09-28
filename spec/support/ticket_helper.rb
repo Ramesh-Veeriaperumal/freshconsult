@@ -26,6 +26,10 @@ module TicketHelper
                                     :description => params[:attachments][:description], 
                                     :account_id => test_ticket.account_id)
     end
+    if @account.link_tickets_enabled? && params[:display_ids].present?
+      test_ticket.association_type = TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:tracker]
+      test_ticket.related_ticket_ids = params[:display_ids]
+    end
     if params[:internal_agent_id]
       test_ticket.internal_agent_id = params[:internal_agent_id]
     end

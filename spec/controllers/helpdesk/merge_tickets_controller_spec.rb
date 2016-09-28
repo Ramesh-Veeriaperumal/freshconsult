@@ -193,4 +193,85 @@ RSpec.describe Helpdesk::MergeTicketsController do
     @target_ticket.reload
     @target_ticket.schema_less_ticket.text_tc01[:message_ids].should include(ids[1])
   end
+
+  it "should not merge if the target ticket is a tracker" do 
+    @account.launch(:link_tickets) 
+    Sidekiq::Testing.inline!
+    related_ticket = create_ticket
+    tracker = create_ticket({:display_ids => [related_ticket.display_id]})
+    post :complete_merge, { :target => { :ticket_id => tracker.display_id,
+                                          :note => "Tickets with ids #{@source_ticket1.display_id} and #{@source_ticket2.display_id} are merged into this ticket.",
+                                          :is_private => "false"
+                                          },
+                            :source_tickets => ["#{@source_ticket1.display_id}", "#{@source_ticket2.display_id}"],
+                            :source => { :note => "This ticket is closed and merged into ticket #{tracker.display_id}",
+                                         :is_private => "false"
+                                        }
+                          }
+    response.should redirect_to(helpdesk_ticket_path(tracker.display_id))
+    session[:flash][:error].should eql "Failure during merging of tickets."
+    Sidekiq::Testing.disable!
+    @account.rollback(:link_tickets)
+  end
+
+  it "should not merge if the target ticket is a related ticket" do 
+    @account.launch(:link_tickets) 
+    Sidekiq::Testing.inline!
+    related_ticket = create_ticket
+    tracker = create_ticket({:display_ids => [related_ticket.display_id]})
+    post :complete_merge, { :target => { :ticket_id => related_ticket.display_id,
+                                          :note => "Tickets with ids #{@source_ticket1.display_id} and #{@source_ticket2.display_id} are merged into this ticket.",
+                                          :is_private => "false"
+                                          },
+                            :source_tickets => ["#{@source_ticket1.display_id}", "#{@source_ticket2.display_id}"],
+                            :source => { :note => "This ticket is closed and merged into ticket #{related_ticket.display_id}",
+                                         :is_private => "false"
+                                        }
+                          }
+    response.should redirect_to(helpdesk_ticket_path(related_ticket.display_id))
+    session[:flash][:error].should eql "Failure during merging of tickets."
+    Sidekiq::Testing.disable!
+    @account.rollback(:link_tickets)
+  end
+
+  it "should not merge if the source ticket is a tracker" do 
+    @account.launch(:link_tickets) 
+    Sidekiq::Testing.inline!
+    related_ticket = create_ticket
+    tracker = create_ticket({:display_ids => [related_ticket.display_id]})
+    post :complete_merge, { :target => { :ticket_id => @target_ticket.display_id,
+                                          :note => "Tickets with ids #{tracker.display_id} are merged into this ticket.",
+                                          :is_private => "false"
+                                          },
+                            :source_tickets => ["#{tracker.display_id}"],
+                            :source => { :note => "This ticket is closed and merged into ticket #{@target_ticket.display_id}",
+                                         :is_private => "false"
+                                        }
+                          }
+    response.should redirect_to(helpdesk_ticket_path(@target_ticket.display_id))
+    session[:flash][:error].should eql "Failure during merging of tickets."
+    Sidekiq::Testing.disable!
+    @account.rollback(:link_tickets)
+  end
+
+  it "should not merge if the source ticket is a related ticket" do 
+    @account.launch(:link_tickets) 
+    Sidekiq::Testing.inline!
+    related_ticket = create_ticket
+    tracker = create_ticket({:display_ids => [related_ticket.display_id]})
+    post :complete_merge, { :target => { :ticket_id => @target_ticket.display_id,
+                                          :note => "Tickets with ids #{related_ticket.display_id} are merged into this ticket.",
+                                          :is_private => "false"
+                                          },
+                            :source_tickets => ["#{related_ticket.display_id}"],
+                            :source => { :note => "This ticket is closed and merged into ticket #{@target_ticket.display_id}",
+                                         :is_private => "false"
+                                        }
+                          }
+    response.should redirect_to(helpdesk_ticket_path(@target_ticket.display_id))
+    session[:flash][:error].should eql "Failure during merging of tickets."
+    Sidekiq::Testing.disable!
+    @account.rollback(:link_tickets)
+  end
+
 end

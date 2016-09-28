@@ -22,28 +22,47 @@
         <% if (typeof app_version != 'undefined') { %>
           <li class="version"><%= translate.get('marketplace_ver') %> <%= app_version %></li>
         <% } %>
-        <li class="dev"><%= translate.get('developed_by') %><span class="bold"><%= account %></span></li>
+        <% if(typeof custom_app == 'undefined'){ %>
+          <li class="dev"><%= translate.get('developed_by') %><span class="bold"><%= account %></span></li>
+        <% } %>
         <li class="published"><%= published_date %> <%= translate.get('time_ago') %> </li>
-        <li class="text-center">
-          <h6 class="cat"><%= translate.get('published_in') %></h6>
-          <% if(categories){ %>
+        
+        <% if(typeof custom_app == 'undefined' && categories.length > 0){ %>
+          <li class="text-center">
+            <h6 class="cat"><%= translate.get('published_in') %></h6>
             <p class="category-bubble">
               <% for(var i=0; i < categories.length; i++) { %>
                 <a href="#" class='tag index_btn category' data-url="<%= categories[i].url %>"><%= categories[i].name %></a>
               <% } %>
             </p>
-          <% } %>
-        </li>
-        <li class="help dot ttl"><%= translate.get('help_and_support') %></li>
-        <li class="help dot"><a href="mailto:<%= contact_details["support_email"] %>"> <%= contact_details["support_email"] %> </a></li>
-        <li class="help <%= (typeof policy != 'undefined' && policy) ? 'dot' : '' %>"><a href="<%= contact_details["support_url"] %>" target="_blank" rel="noreferrer"> <%= contact_details["support_url"] %> </a></li>
-        <% if (typeof policy != 'undefined' && policy) { %>
-        <li class="help"><a href="#" class="toggle_policy"><%= translate.get('policy_on_tp_apps') %></a>
-        <div id="display_policy" class="hide display_policy">
-          <p><%= translate.get('third_party_app_policy') %></p>
-        </div>
-        </li>
+          </li>
         <% } %>
+
+        <% if(Object.keys(contact_details).length !== 0){ %>
+          <li class="help ttl"><%= translate.get('help_and_support') %></li>
+          <% if(contact_details["support_email"]) { %>
+            <li class="help dot"><a href="mailto:<%= contact_details["support_email"] %>"> <%= contact_details["support_email"] %> </a></li>
+          <% } %>
+          <% if(contact_details["support_url"]) { %>
+            <li class="help dot"><a href="<%= contact_details["support_url"] %>" target="_blank" rel="noreferrer"> <%= contact_details["support_url"] %> </a></li>
+          <% } %>
+        <% } %>
+
+        <% if(typeof custom_app != 'undefined' && custom_app) { %>
+          <li class="help dot"><a href="#" class="toggle_policy"><%= translate.get('policy_on_custom_apps') %></a>
+            <div id="display_policy" class="hide display_policy">
+              <p><%= translate.get('custom_app_policy') %></p>
+            </div>
+          </li>
+        <% } %>
+        <% if(typeof policy != 'undefined' && policy) { %>
+          <li class="help dot"><a href="#" class="toggle_policy"><%= translate.get('policy_on_tp_apps') %></a>
+          <div id="display_policy" class="hide display_policy">
+            <p><%= translate.get('third_party_app_policy') %></p>
+          </div>
+          </li>
+        <% } %>
+        
       </ul>
     </div>
 

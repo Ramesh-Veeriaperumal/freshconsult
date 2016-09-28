@@ -52,8 +52,12 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
   belongs_to :ticket_status, :class_name =>'Helpdesk::TicketStatus', :foreign_key => "status", :primary_key => "status_id"
   belongs_to :product
   
-  has_many :public_notes,
+  has_many :public_notes_old,
     :class_name => 'Helpdesk::ArchiveNote',
+    :conditions => { :private =>  false, :deleted => false  }
+  
+  has_many :public_notes_new,
+    :class_name => 'Helpdesk::Note', :as => 'notable',
     :conditions => { :private =>  false, :deleted => false  }
   
   has_flexiblefields :class_name => 'Flexifield', :as => :flexifield_set
@@ -526,6 +530,15 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
       archive_notes_old
     else
       notes
+    end
+  end
+
+  def public_notes
+    current_shard = ActiveRecord::Base.current_shard_selection.shard.to_s
+    if(ArchiveNoteConfig[current_shard] && (self.id <= ArchiveNoteConfig[current_shard].to_i))
+      public_notes_old
+    else
+      public_notes_new
     end
   end
 

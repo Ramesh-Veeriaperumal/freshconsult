@@ -1,7 +1,7 @@
 <div class="content-meta">
 	<i class="forum-type-<%= @forum.type_symbol %> type-icon tooltip" title="<%= @forum.type_name%>"></i>
 	<div class="info ml10">
-		<h1 class="title">
+		<h1 class="title break-word">
 			<% unless @topic.published? %>
 				<span class="label label-topic">
 						<%= t(@first_post.spam? ? 'discussions.topics.spam' : 'discussions.topics.waiting_for_approval') %>

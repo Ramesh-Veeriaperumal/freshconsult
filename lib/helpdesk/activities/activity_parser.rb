@@ -252,6 +252,48 @@ module Helpdesk::Activities
       @activity[:set] << render_string(str, {:requester_name => "#{build_url(user.name, user_path(user))}"}) if user
     end
 
+    def rel_tkt_link(value)
+      str = get_string_name("rel_tkt_link")
+      @activity[:misc] << render_string(str, { :tracker_ticket_path => build_ticket_url(value.first.to_i)})
+    end
+
+    def rel_tkt_unlink(value)
+      str = get_string_name("rel_tkt_unlink")
+      @activity[:misc] << render_string(str, { :tracker_ticket_path => build_ticket_url(value.first.to_i)})    
+    end
+
+    def tracker_link(value)
+      str = get_string_name("tracker_link")
+      params = {
+        :related_tickets_count => pluralize(value.count,
+          I18n.t("ticket.link_tracker.rlt_ticket_singular"),
+          I18n.t("ticket.link_tracker.rlt_ticket_plural")),
+        :related_ticket_path => multiple_tickets_url(value)
+      }
+      @activity[:misc] << render_string(str, params)
+    end
+
+    def tracker_unlink(value)
+      str = get_string_name("tracker_unlink")
+      params = {
+        :related_tickets_count => pluralize(value.count,
+          I18n.t("ticket.link_tracker.rlt_ticket_singular"),
+          I18n.t("ticket.link_tracker.rlt_ticket_plural")),
+        :related_ticket_path => multiple_tickets_url(value)
+      }
+      @activity[:misc] << render_string(str, params)
+    end
+
+    def tracker_unlink_all(value)
+      str = get_string_name("tracker_unlink_all")
+      params = {
+        :related_tickets_count => pluralize(value.to_i,
+          I18n.t("ticket.link_tracker.rlt_ticket_singular"),
+          I18n.t("ticket.link_tracker.rlt_ticket_plural")),
+      }
+      @activity[:misc] << render_string(str, params)
+    end
+
     def group_id(value)
       if value[1].blank?
         params = {:group_name => "#{render_string("activities.none")}"}
@@ -681,6 +723,13 @@ module Helpdesk::Activities
 
     def note?
       @summary ==  TICKET_ACTIVITY_KEYS_BY_TOKEN[:conversation] || @activity[:note].present?
+    end
+
+    def multiple_tickets_url(value)
+      value.map do |v|
+        title = "##{v.to_i}"
+       "#{build_url(title, helpdesk_ticket_path(v.to_i))}"
+      end.join(', ')
     end
   end
 end

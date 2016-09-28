@@ -38,7 +38,7 @@ window.App.Admin = window.App.Admin || {};
     },
 
     portalLanguageConfig: function () {
-      var $this = this, initialSelectedOptions, key, langCode, visible;
+      var $this = this, initialSelectedOptions, key, langCode, visible, optionElements;
 
       // Initialize Select2 in the beginining
       $('#account_supported_languages').select2({
@@ -47,7 +47,9 @@ window.App.Admin = window.App.Admin || {};
       });
       
       // Generate the already selected options html
-      initialSelectedOptions = this.supportedLangEl.get(0).selectedOptions || [];
+      //code for unsupported browsers ====> selectedOptions is not supported in IE
+      optionElements = this.supportedLangEl.get(0).selectedOptions || this.supportedLangEl.find("option:selected");
+      initialSelectedOptions = optionElements || [];
       for (key = 0; key < initialSelectedOptions.length; key += 1) {
         langCode = $(initialSelectedOptions[key]).val();
         visible = (this.portalLanguages.indexOf(langCode) !== -1);

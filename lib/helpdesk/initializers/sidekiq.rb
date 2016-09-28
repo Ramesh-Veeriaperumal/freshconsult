@@ -50,7 +50,8 @@ Sidekiq.configure_client do |config|
       "Tickets::Export::PremiumTicketsExport",
       "Reports::ScheduledReports",
       "Reports::Export",
-      "LivechatWorker"
+      "LivechatWorker",
+      "Tickets::LinkTickets"
     ]
   end
 end
@@ -104,7 +105,8 @@ Sidekiq.configure_server do |config|
       "Tickets::Export::LongRunningTicketsExport",
       "Tickets::Export::PremiumTicketsExport",
       "Reports::Export",
-      "LivechatWorker"
+      "LivechatWorker",
+      "Tickets::LinkTickets"
     ]
 
     chain.add Middleware::Sidekiq::Server::JobDetailsLogger
@@ -149,7 +151,8 @@ Sidekiq.configure_server do |config|
       "Tickets::Export::LongRunningTicketsExport",
       "Tickets::Export::PremiumTicketsExport",
       "Reports::Export",
-      "LivechatWorker"
+      "LivechatWorker",
+      "Tickets::LinkTickets"
     ]
   end
 end

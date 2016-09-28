@@ -14,8 +14,11 @@ var TicketListSidebar = (function(){
       parentWrapper = "ticket-leftFilter",
       childWrapper =  "filter_item";
 
-  function getParams(callback){
-    var isDataRequired = _isDataRequired(), params = {};
+  function getParams(fieldMap, callback){
+    var queryString = _getUrlQueryString(),
+        isDataRequired = jQuery.isEmptyObject(queryString.qsObj),
+        params = {};
+    params['fieldMap'] = fieldMap;
     if(isDataRequired){
       params['isAjax'] = true;
       params['url'] = URL;
@@ -23,8 +26,12 @@ var TicketListSidebar = (function(){
       params['childWrapper'] = childWrapper;
       params['defaultKey'] = _getDefaultParams();
     }else{
-      params['isAjax'] = false;
-      params['data'] = _getUrlQueryString();
+      params['data'] = queryString.qsObj;
+      params['isAjax'] = queryString.ajax_flag;
+      if(params['isAjax']){
+        params['url'] = URL;
+        params['defaultKey'] = _getDefaultParams();
+      }
     }
     if(typeof callback === 'function'){
         callback(params);
@@ -43,28 +50,25 @@ var TicketListSidebar = (function(){
   }
 
   /**
-  * return true if query param is an empty object;
-  */
-
-  function _isDataRequired(){
-    var queryString = _getUrlQueryString();
-    return jQuery.isEmptyObject(queryString);
-  }
-
-  /**
   * returns query string as an object;
   */
 
   function _getUrlQueryString(){
-      var url = window.location.search.substr(1).split('&');
+      var dashboard_options = { 'ajax_flag' : false },
+          url = window.location.search.substr(1).split('&');
       if (url == "") return {};
       var qsObj = {};
       for (var i = 0; i < url.length; ++i){
         var p = url[i].split('=');
+        // To handle the case of hitting tickets list page from dashboard for top 10 customers/top 10 agents
+        if(p[0] == "requester" || p[0] == "agent"){
+          dashboard_options['ajax_flag'] = true;
+        }
         if (p.length != 2) continue;
         qsObj[p[0]] = decodeURIComponent(p[1].replace(/\+/g, " "));
       }
-      return qsObj; // Query string Object
+      dashboard_options['qsObj'] = qsObj;
+      return dashboard_options; // Return Query string Object 
   }
 
 }());

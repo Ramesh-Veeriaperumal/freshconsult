@@ -112,4 +112,28 @@ RSpec.describe Helpdesk::Ticket do
     responder_id.should == @ticket.responder_id
   end
 
+  it "should give next ticket if autoplay is enabled" do
+    agent = @account.technicians.first
+    @ticket.responder_id = agent.id
+    @ticket.status = 2
+    @ticket.save(:validate => false)
+    @new_ticket.responder_id = agent.id
+    @new_ticket.status = 2
+    @new_ticket.save(:validate => false)
+    @account.launch(:autoplay)
+    @account.reload
+    @account.tickets.next_autoplay_ticket(account,agent.id).should_not be_nil
+  end
+
+  it "should not give next ticket if autoplay is disabled" do
+    agent = @account.technicians.first
+    @ticket.responder_id = agent.id
+    @ticket.save(:validate => false)
+    @new_ticket.responder_id = agent.id
+    @new_ticket.save(:validate => false)
+    @account.rollback(:autoplay)
+    @account.reload
+    @account.tickets.next_autoplay_ticket(account,agent.id).should be_nil
+  end
+
 end

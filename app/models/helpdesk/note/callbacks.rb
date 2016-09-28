@@ -6,6 +6,7 @@ class Helpdesk::Note < ActiveRecord::Base
   before_save :load_schema_less_note, :update_category, :load_note_body, :ticket_cc_email_backup
 
   after_create :update_content_ids, :update_parent, :add_activity, :fire_create_event
+  after_commit :related_tickets_broadcast, on: :create, :if => :broadcast_note_to_tracker?
   # Doing update note count before pushing to ticket_states queue
   # So that note count will be reflected if the rmq publish happens via ticket states queue
   after_commit ->(obj) { obj.send(:update_note_count_for_reports)  }, on: :create , :if => :report_note_metrics?
@@ -104,7 +105,7 @@ class Helpdesk::Note < ActiveRecord::Base
     end
 
     def update_parent #Maybe after_save?!
-      return unless human_note_for_ticket?
+      return unless human_note_for_ticket? || broadcast_note_to_related?
       # syntax to move code from delayed jobs to resque.
       #Resque::MyNotifier.deliver_reply( notable.id, self.id , {:include_cc => true})
       notable.updated_at = created_at
@@ -272,7 +273,7 @@ class Helpdesk::Note < ActiveRecord::Base
   end
 
     def notify_ticket_monitor
-      return if meta?
+      return if meta? || broadcast_note_to_related?
       notable.subscriptions.each do |subscription|
         if subscription.user_id != user_id
           Helpdesk::WatcherNotifier.send_later(:deliver_notify_on_reply,
@@ -287,7 +288,7 @@ class Helpdesk::Note < ActiveRecord::Base
     
     # VA - Observer Rule 
     def update_observer_events
-      return if user.nil? || meta? || feedback? || !(notable.instance_of? Helpdesk::Ticket)
+      return if user.nil? || !human_note_for_ticket? || feedback? || !(notable.instance_of? Helpdesk::Ticket) || broadcast_note_to_tracker?
       if replied_by_customer? || replied_by_agent?
         @model_changes = {:reply_sent => :sent}
       else
@@ -307,7 +308,7 @@ class Helpdesk::Note < ActiveRecord::Base
     end
  
     def api_webhook_note_check
-      (notable.instance_of? Helpdesk::Ticket) && !meta? && allow_api_webhook? && !notable.spam_or_deleted?
+      (notable.instance_of? Helpdesk::Ticket) && !meta? && allow_api_webhook? && !notable.spam_or_deleted? && !broadcast_note_to_related?
     end
     
     ##### ****** Methods related to reports starts here ******* #####
@@ -344,8 +345,8 @@ class Helpdesk::Note < ActiveRecord::Base
       when CATEGORIES[:customer_response]
         "customer_reply"
       # Only agent added pvt notes, fwds and reply to fwd will be counted as pvt note
-      when CATEGORIES[:agent_private_response], CATEGORIES[:reply_to_forward]
-        "private_note"
+      when CATEGORIES[:agent_private_response], CATEGORIES[:reply_to_forward], CATEGORIES[:broadcast]
+        source == SOURCE_KEYS_BY_TOKEN["tracker"] ? nil : "private_note"
       when CATEGORIES[:agent_public_response]
         (note? ? "public_note" : "agent_reply")
       else
@@ -380,6 +381,10 @@ class Helpdesk::Note < ActiveRecord::Base
 
     def performed_by_client_manager?
       public_note? && notable.customer_performed?(user) && user.has_customer_ticket_permission?(notable) && (user.id != notable.requester_id)
+    end
+    
+    def related_tickets_broadcast
+      ::Tickets::AddBroadcastNote.perform_async( {:ticket_id => self.notable_id, :note_id => id } )
     end
 
 end

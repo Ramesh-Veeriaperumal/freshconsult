@@ -95,7 +95,7 @@
 					%>
 				</li>
 				<% end %>
-				<% if privilege?(:merge_or_split_ticket) %>
+				<% if privilege?(:merge_or_split_ticket) && @ticket.association_type.blank? %>
 				<li class="ticket-btns hide_on_collapse">
 					<a href="#merge_freshdialog" class="btn btn-collapse reload-action" 
 						data-width="800" 
@@ -115,6 +115,10 @@
 		            </span>
 				</div>
 				<% end %>
+				<!-- <li class="ticket-btns hide_on_collapse">
+		            <a href="#" data-placement = "below" class="btn btn-collapse lnk_tkt_tracker_show_dropdown" id="lnk_tkt_tracker" data-toggle="popover" data-dropdown="close" data-ticket-id="<%= @ticket.display_id %>"><%=t('ticket.link_tracker.btn')%></a>
+				</li>
+				<%= render(:partial => "helpdesk/tickets/show/link_tracker_template") %> -->
 				<li class="ticket-btns hide_on_collapse scenario reload-action">
 					<div class="tooltip keytitle" title='<%="#{t('ticket.execute_scenario')}"%>' data-placement = "below" data-hotkey='<%="#{shortcut('ticket_detail.scenario')}"%>'>					
 					 <%= link_to( t('ticket.scenarios'), "/helpdesk/tickets/#{@ticket.id}/component?component=scenarios", 
@@ -153,7 +157,10 @@
 			  	<li class = "collapse_on_default delete reload-action">
 			  		<%= link_to(t('ticket.delete_btn'),
 			  					helpdesk_ticket_path({:id => @ticket.display_id, :page => params[:page]}),
-			  					:method => :delete, "data-domhelper-name" => "ticket-delete-btn", "data-keybinding" => shortcut('ticket_detail.delete')) %>
+			  					:id => "delete_ticket",
+			  					:method => :delete, 
+			  					"data-domhelper-name" => "ticket-delete-btn", 
+			  					"data-keybinding" => shortcut('ticket_detail.delete')) %>
   				</li>
   				<% end %>
 			</ul>
@@ -183,6 +190,10 @@
 <div class="clearfix"></div>
 <%= javascript_tag do -%>
   jQuery(document).on("click", '[data-action="merge"]', function(ev){
+  	<!-- Turn off the formChanged event flag when the merge button is clicked -->
+  	jQuery('.form-unsaved-changes-trigger').each(function(){
+  		jQuery(this).data('formChanged',false);
+  	})
   	var display_id = jQuery(this).data('ticketDisplayId');
       jQuery.ajax({
         type:              'POST',
@@ -192,5 +203,47 @@
                             jQuery('#merge_freshdialog-content').html(data);
                            }
      });
+
+     
   });
+
+  callFreshdialog = function(target){
+  	var	confirm_text = I18n.t('ticket.association.'+target+'.<%= TicketConstants::TICKET_ASSOCIATION_TOKEN_BY_KEY[@ticket.association_type] %>');
+  		title_submit = I18n.t('ticket.association.'+target+'.title_submit');
+  		data = {
+	      targetId : '#confirm-action',
+	      title : title_submit,
+	      submitLabel: title_submit,
+	      width:  '500',
+	      destroyOnClose : true  
+	    }
+    jQuery.freshdialog(data);
+    jQuery('.modal-body').html("<div id='modal-content' data-target='#"+ target +"'>"+ confirm_text +"</div>");
+  }	
+
+
+  jQuery('body').off("click", "#delete_ticket, #spam_ticket");
+  jQuery('body').on("click", "#delete_ticket, #spam_ticket", function(e){
+  	var check = "<%= @ticket.association_type.present? %>";
+  	var submit = jQuery(this).data('submit');
+  	if(!submit && check == "true"){
+  		e.preventDefault();
+	    e.stopPropagation();
+	    callFreshdialog(jQuery(this).attr('id'));
+  	}
+  });
+
+  jQuery('body').off("click", "#confirm-action-cancel");
+  jQuery('body').on("click", "#confirm-action-cancel", function(e){
+    jQuery('#confirm-action').modal('hide');
+  });
+
+  jQuery('body').off("click", "#confirm-action-submit");
+  jQuery('body').on("click", "#confirm-action-submit", function(e){
+  	var action_id = jQuery('#modal-content').data('target');
+    jQuery('#confirm-action').modal('hide');
+    jQuery(action_id).data('submit', true);
+	jQuery(action_id).trigger('click');
+  });
+ 
 <% end %>

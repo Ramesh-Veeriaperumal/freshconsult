@@ -1,6 +1,6 @@
 class Helpdesk::Note < ActiveRecord::Base
 
-	SOURCES = %w{email form note status meta twitter feedback facebook forward_email phone mobihelp mobihelp_app_review ecommerce}
+	SOURCES = %w{email form note status meta twitter feedback facebook forward_email phone mobihelp mobihelp_app_review ecommerce tracker}
 
   NOTE_TYPE = { true => :private, false => :public }
   
@@ -30,7 +30,8 @@ class Helpdesk::Note < ActiveRecord::Base
     :third_party_response => 4,
     :meta_response => 5,
     :reply_to_forward => 6,  # Used for conversation with third party
-    :customer_feedback => 7
+    :customer_feedback => 7,
+    :broadcast => 8
   }
 	
 end

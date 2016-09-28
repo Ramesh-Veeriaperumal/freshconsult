@@ -16,7 +16,16 @@ module Marketplace::Constants
 
   EXTENSION_TYPE = Hash[*EXTENSION_TYPES.map { |i| [i[0], i[1]] }.flatten]
 
+  APP_TYPES = [ 
+    [:regular,               1],    
+    [:custom,                2]
+  ]
+
+  APP_TYPE = Hash[*APP_TYPES.map { |i| [i[0], i[1]] }.flatten]
+
   DEFAULT_EXTENSION_TYPES = "#{EXTENSION_TYPE[:plug]},#{EXTENSION_TYPE[:ni]},#{EXTENSION_TYPE[:external_app]}"
+
+  INSTALLED_LIST_EXTENSION_TYPES = "#{EXTENSION_TYPE[:plug]},#{EXTENSION_TYPE[:ni]}"
 
   FORM_FIELD_TYPES = [
     [:text, 1],

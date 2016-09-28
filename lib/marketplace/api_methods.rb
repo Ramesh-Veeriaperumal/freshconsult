@@ -27,6 +27,24 @@ module Marketplace::ApiMethods
       end
     end
 
+    def mkp_custom_apps
+      begin
+        key = MemcacheKeys::CUSTOM_APPS % { :account_id => Account.current.id, :locale_id => curr_user_language }
+
+        api_payload = payload(
+                           Marketplace::ApiEndpoint::ENDPOINT_URL[:mkp_custom_apps] %
+                           { :product_id => PRODUCT_ID, :account_id => Account.current.id },
+                           Marketplace::ApiEndpoint::ENDPOINT_PARAMS[:mkp_custom_apps] 
+                        )
+        mkp_memcache_fetch(key, MarketplaceConfig::CACHE_INVALIDATION_TIME) do
+          get_api(api_payload, MarketplaceConfig::GLOBAL_API_TIMEOUT) 
+        end
+
+      rescue *FRESH_REQUEST_EXP => e
+        exception_logger("Exception type #{e.class},URL: #{api_payload} #{e.message}\n#{e.backtrace}")
+      end
+    end
+
     def search_mkp_extensions
       begin
         api_payload = payload(

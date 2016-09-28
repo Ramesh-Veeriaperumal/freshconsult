@@ -827,7 +827,7 @@ Redactor.prototype = {
 			}, this));
 
 			// Drop Image in editor only for firefox
-			if(!$.browser.msie && !$.browser.mozilla)
+			if(!$.browser.msie)
 			{
 				this.$editor.bind('drop', $.proxy(function(e)
 				{ 
@@ -3268,7 +3268,7 @@ Redactor.prototype = {
 					
 					if (new_h > min_h)
 					{
-						$(resize).height(new_h);
+						$(resize).attr('height', new_h + 'px');
 						$(resize).attr('data-height', new_h)
 					}
 					
@@ -4018,10 +4018,11 @@ Redactor.prototype = {
 		{
 			$('#redactor_link_url').focus();
 		};
-
-
-		this.modalInit(RLANG.link, 'link', 460, handler, endCallback);
-
+		if(this.opts.popover){
+			this.popoverInit(RLANG.link, 'link', 350, handler, endCallback);
+		}else{
+			this.modalInit(RLANG.link, 'link', 460, handler, endCallback);
+		}
 	},
 	insertLink: function()
 	{
@@ -4157,7 +4158,59 @@ Redactor.prototype = {
 		this.modalClose();
 	},	
 
-	
+		// POPOVER
+	popoverInit: function(title, url, width, handler, endCallback)
+	{
+		if ($('#redactor_modal').length === 0)
+		{
+			this.popover = $('<div id="redactor_modal" style="display: none;"><span id="redactor_arrow_top"></span><div id="redactor_modal_inner"></div></div>');
+			$('.redactor_toolbar').after(this.popover);
+		}
+
+		this.hdlModalClose = $.proxy(function(e) { if ( e.keyCode === 27) { this.modalClose(); } }, this);
+		
+		$(document).keyup(this.hdlModalClose);
+		this.$editor.keyup(this.hdlModalClose);
+
+		$('#redactor_modal_inner').html(this.opts['modal_' + url]);
+
+		if (this.opts.overlay)
+		{
+			$('#redactor_modal').show();
+		}
+
+		$('#redactor_btn_modal_close').click($.proxy(this.modalClose, this)).css({marginRight: '5px'});
+		
+		// callback
+		if (typeof(handler) === 'function')
+		{
+			handler();
+		}
+		$('#redactor_tabs').hide()
+		
+		// // setup
+		var height = $('#redactor_modal').outerHeight(true);
+		if (this.isMobile() === false)
+		{		
+			$('#redactor_modal').css({  width: width+'px', height: 'auto', minHeight: 'auto',position:'absolute',left: '62px','box-shadow': '0 3px 5px #ccc','top':'30px'}).fadeIn('fast');
+			
+			this.modalSaveBodyOveflow = this.modalSaveBodyOveflow || $(document.body).css('overflow');
+			$(document.body).css('overflow', 'hidden');
+		}
+		else
+		{
+			$('#redactor_modal').css({  width: '100%', height: '100%', margin: '0', minHeight: '300px', position:'absolute','left':'62px','box-shadow': '0 3px 5px #ccc','top':'30px'  }).show();			
+		}
+		$('.redactor_tab input').css({'line-height': '23px', 'border': '1px solid #ccc','border-radius': '3px'});
+		$('#redactor_modal_footer').css({'padding':0})
+		
+		// end callback
+		if (typeof(endCallback) === 'function')
+		{
+			endCallback();
+		}
+
+	},
 	
 	// MODAL
 	modalInit: function(title, url, width, handler, endCallback)

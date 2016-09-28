@@ -29,6 +29,10 @@
         if(jQuery('#created_at option:selected').val() != "any_time")
           value =  jQuery('#created_at option:selected').val();
       }
+      else if(container == "association_type"){
+        if(jQuery(this).children('select').val() != "")
+            value = jQuery(this).children('select').val();
+      }
       else {
         value = jQuery(this).find(_selector).map(function(){ return this.value; }).get();
       }
@@ -114,7 +118,7 @@
             container = "nested_field"
           elsif c_hash[:name] == 'created_at'
             container = "single_select"
-          elsif ['requester', 'customers', 'tags'].include?(c_hash[:name])
+          elsif ['requester', 'customers', 'tags', 'association_type'].include?(c_hash[:name])
             container = c_hash[:name]
           elsif ['responder_id','group_id'].include?(c_hash[:name])
             container = "multi_select"
@@ -206,7 +210,9 @@
             <% else %>
               <h4 class="title"><%= (c_hash[:f_type] == :default) ? t("filter_options.#{display_name}").html_safe.capitalize : display_name.html_safe.capitalize %></h4>
             <% end %>
-            <%= render :partial => "/helpdesk/tickets/containers/#{container}", :locals => { :container => container, :options => c_hash[:options], :name => c_hash[:name], :selected_val => @current_options[c_hash[:condition].to_s].to_s.split(","), :field_id => c_hash[:field_id], :nested_fields => c_hash[:nested_fields], :current_options => @current_options, :c_hash => c_hash} %>
+            <%= render :partial => "/helpdesk/tickets/containers/#{container}", :locals => { :container => container, :options => c_hash[:options], :name => c_hash[:name], 
+             :selected_val => @current_options[c_hash[:condition].to_s].to_s.split(","), 
+             :field_id => c_hash[:field_id], :nested_fields => c_hash[:nested_fields], :current_options => @current_options, :c_hash => c_hash} %>
           <% end
           end
         end %>
@@ -216,10 +222,11 @@
   var unassigned = "";
 	jQuery(document).ready(function(){
     <% if Account.current.launched?(:ticket_list_page_filters_cache) %>
+      var fieldMap = <%= raw(TicketConstants::DASHBOARD_FILTER_MAPPING.to_json) %>;
       PopulateData.I18n_text.me = '<%= t("helpdesk.tickets.add_watcher.me") %>'
       PopulateData.I18n_text.mygroups = '<%= t("filter_options.mygroups") %>'
       PopulateData.I18n_text.unassigned = '<%= t("filter_options.unassigned") %>'
-      TicketListSidebar.getParams(function(params){
+      TicketListSidebar.getParams(fieldMap,function(params){
           PopulateFormData.init(params);
       });
     <% end %>
@@ -313,6 +320,22 @@
         success: function(msg){}
       });
     });
+
+    //hide link and merge when there is existing association
+    var association_type = jQuery('#association_type').val();
+    if(association_type == '<%= TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:tracker]%>' || association_type == '<%= TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:related]%>'){
+      jQuery('.bulk_action_buttons .lnk_tkt_tracker_show_dropdown').addClass('hide');
+      jQuery('#invoke_merge_popup').addClass('hide');
+    }
+    jQuery('#association_type').change(function(e){
+      if(this.value == '<%= TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:tracker]%>' || this.value == '<%= TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:related]%>'){
+        jQuery('.bulk_action_buttons .lnk_tkt_tracker_show_dropdown').addClass('hide');
+        jQuery('#invoke_merge_popup').addClass('hide');
+      }else {
+        jQuery('.bulk_action_buttons .lnk_tkt_tracker_show_dropdown').removeClass('hide');
+        jQuery('#invoke_merge_popup').removeClass('hide');
+      }
+    })
 
     // For Any Group, we will remove Unassigned values from the list - loading
     if(jQuery(".group_text").attr("value") != "" && jQuery(".group_text").attr("value") == "any_group_id"){

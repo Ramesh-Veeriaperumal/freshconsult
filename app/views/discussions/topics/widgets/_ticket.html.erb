@@ -1,4 +1,4 @@
-<div class="widget">
+<div class="widget break-word">
 
 	<% if @topic.ticket.nil? || @topic.ticket.deleted %>
 		<strong><%= link_to t('discussions.topics.convert_to_ticket'), new_helpdesk_ticket_path(:topic_id => @topic.id) %></strong>
