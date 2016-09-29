@@ -2,13 +2,28 @@
 			:url => discussions_topic_post_path(:topic_id => @post.topic_id, :id => @post),
 			:before => "if (!jQuery(this).valid()) { return false; }",
 			:html => { 
+				:multipart => true,
 				:method => :put, 
 				:rel=> "post-update", 
 				:class => 'cnt' 
 			} do |f| -%>
-	<%= f.rich_editor 	:body_html, 
-						:class => "required_redactor", :height => "150px", 
-						:index => @post.id, 'editor-type' => :forum  %>
+
+	<div class="controls flow-form">
+		<%= f.rich_editor 	:body_html, 
+					:class => "required_redactor", :height => "150px", 
+					:index => @post.id, 'editor-type' => :forum  %>
+		<% if current_account.launched?(:multifile_attachments) %>
+			<%= render :partial=> "discussions/topics/multi_attachment_form", :locals => {
+									:attachments => {
+										:regular => @post.attachments,
+										:cloud_files => @post.cloud_files},
+									}%>
+		<% else %>
+			<%= render :partial=> "discussions/topics/single_attachment_form" %>
+		<% end %>
+	</div>
+
+
 	<div class="button-container">
 		<%= submit_tag t('cancel'), {
 					:name => 'reset',
