@@ -109,23 +109,25 @@ class Va::Action
   end
   
   def add_watcher(act_on)
-    watchers = Hash.new
-    watcher_value = value.kind_of?(Array) ? value : value.to_a
-    watcher_value.each do |watcher_id|
-      watcher = act_on.subscriptions.find_by_user_id(watcher_id)
-      unless watcher.present?
-        user = Account.current.users.find_by_id(watcher_id)
-        subscription = act_on.subscriptions.build(:user_id => watcher_id)
-        if user && act_on.agent_performed?(user) && subscription.save
-          watchers.merge!({subscription.user.id => subscription.user.name})
+    watchers = {}
+    watcher_ids = value.kind_of?(Array) ? value : value.to_a
+    watcher_ids.map!(&:to_i)
+    resultant_user_ids = act_on.subscriptions.where(user_id: watcher_ids).pluck(:user_id)
+    filtered_user_ids = watcher_ids - resultant_user_ids
+    if filtered_user_ids.length > 0 
+      Account.current.users.where(id: filtered_user_ids).each do |user|
+        subscription = act_on.account.ticket_subscriptions.build(:user_id => user.id)
+        subscription.ticket_id = act_on.id
+        if act_on.agent_performed?(user) && subscription.save
+          watchers.merge!({user.id => user.name})
           Helpdesk::WatcherNotifier.send_later(:deliver_notify_new_watcher, 
                                                 act_on, 
                                                 subscription, 
                                                 "automations rule")
         end
       end
+      record_action(act_on, watchers) if watchers.present?
     end
-    record_action(act_on, watchers) if watchers.present?
   end
 
   def add_tag(act_on)
@@ -168,6 +170,7 @@ class Va::Action
   end
 
   def send_email_to_requester(act_on)
+    return if act_on.spam?
     if act_on.requester_has_email? && !(act_on.ecommerce? || act_on.requester.ebay_user?)
       act_on.account.make_current
       Helpdesk::TicketNotifier.send_later(:email_to_requester, act_on, 
@@ -178,6 +181,7 @@ class Va::Action
   end
   
   def send_email_to_group(act_on)
+    return if act_on.spam?
     group = get_group(act_on)
     if group && !group.agent_emails.empty?
       send_internal_email(act_on, group.agent_emails)
@@ -186,6 +190,7 @@ class Va::Action
   end
 
   def send_email_to_agent(act_on)
+    return if act_on.spam?
     agent = get_agent(act_on)
     if agent
       send_internal_email(act_on, agent.email)

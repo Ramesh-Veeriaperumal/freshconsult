@@ -18,10 +18,10 @@ module Cache
       ITEM_TO_LAUNCH_KEY_MAPPING    = Hash[*ITEM_DETAILS.map {|i| [i[0], i[2]]}.flatten]
       FRAGMENT_TO_LANG_MAPPING      = Hash[*ITEM_DETAILS.map {|i| [i[0], i[3]]}.flatten]
 
-      def enable_fragment_cache(cached_item, &block)
+      def enable_fragment_cache(cached_item, skip = false, &block)
         raise Exception unless CACHED_ITEMS.include?(cached_item)
         # Need not cache if User.current is nil -> Support new ticket => without logged in
-        if User.current and Account.current.launched?(ITEM_TO_LAUNCH_KEY_MAPPING[cached_item])
+        if !skip and User.current and Account.current.launched?(ITEM_TO_LAUNCH_KEY_MAPPING[cached_item])
           cache(language_specific_cache_key(cached_item), &block)
         else
           block.call

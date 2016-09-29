@@ -86,6 +86,10 @@ Autocompleter.Cache = Class.create({
   _lookupInCache: function(fullTerm, partialTerm, callback) {
     var partialTerm = partialTerm || fullTerm;
     var result = this.cache.get(partialTerm);
+    // code added for linked tickets new tracker page
+    // requester(agent) validation - starts
+    _results_array = result;
+    // requester(agent) validation - ends
 
     if (result == null) {
       if (partialTerm.length > 1) {

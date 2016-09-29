@@ -1,3 +1,5 @@
+	@import "common-popover";
+
 	.view_filters{
 	display:inline-block;
 	span.unsaved_star {
@@ -476,6 +478,13 @@
 		&:after{ content: ")"; }
 	}
 
+	.association_type {
+		border: 1px solid #ccc;
+    	padding: 0px 5px;
+    	color: #333;
+    	border-radius: 2px;
+	}
+
 	.headings td.check {
 		@include border-left(solid 6px #EEE);
 	}
@@ -661,34 +670,28 @@
 			font-weight:bold;
 		}
 		
-		//Ticket list subject - word break fix
-        .hyphernate{
-            word-break: break-word;
-            -ms-word-wrap: break-word;
-            word-wrap: break-word;
-        }
-    h3{
+   		 h3{
 			width: 100%;
 			overflow: hidden;
 			font-size:16px;
-		.ticket_id {
-			color:#888;
-		}
+			.ticket_id {
+				color:#888;
+			}
 
-		a{
-			font-size: 14px;
-			padding: 0;
-			color:#06C;
+			a{
+				font-size: 14px;
+				padding: 0;
+				color:#06C;
+			}
+			a:hover{
+				color:#037;
+			}
+	      	}
+		div{ color:#888; }
+		.info-data {
+			padding-bottom:0;
 		}
-		a:hover{
-			color:#037;
-		}
-      }
-      div{ color:#888; }
-      .info-data {
-      	padding-bottom:0;
-      }
-   }
+	 }
 	.name-user{
 		@include padding-left(20px);
 	}

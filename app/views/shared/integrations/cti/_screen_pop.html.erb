@@ -10,7 +10,7 @@
       </li>
       <% if softfone_enabled? %>
         <li>
-          <a href="#cti_soft_phone" data-toggle="popupbox">
+          <a href="#cti_soft_phone" id="cti_softphone_icon" data-toggle="popupbox">
             <i class='ficon-ff-dialpad fsize-16'></i>
           </a>
         </li>
@@ -45,9 +45,18 @@
    var screenPop;
    jQuery(document).on('ready',function(){
      screenPop = new ScreenPop();
-     <% cti_phone = current_user.cti_phone %>
+     <%
+       cti_phone = current_user.cti_phone
+       iframe_host = nil
+       if iframe_url.present?
+         parsed_iframe_url = URI.parse(iframe_url)
+         iframe_host = "#{parsed_iframe_url.scheme}://#{parsed_iframe_url.host}"
+       end
+     %>
+     
      screenPop.ctiCallNumber = <%= cti_phone.present? ? cti_phone.id : 'null' %>;
      screenPop.ctiCallOldNumber = <%= cti_phone.present? ? 'null' : cti_phone_old_number || 'null' %>;
+     screenPop.iframeHost = "<%= iframe_host.present? ? iframe_host : "null" %>";
      jQuery('#cti_pop_icon_tooltip').twipsy({
        title: screenPop.setCtiPopIconTooltip.bind(screenPop),
        placement: "left"

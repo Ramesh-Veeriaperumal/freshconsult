@@ -24,6 +24,7 @@
               :multipart => true, 
               :id => "HelpdeskFwd_#{cntid}", 
               :rel => 'forward_form', 
+              :class => "form-unsaved-changes-trigger",
               "data-panel" => conv_id.nil? ? "cnt-fwd" : "cnt-fwd-#{@note.id}",
               "data-form" => conv_id.nil? ? "" : "inline_form",
               "data-show-pseudo-reply" => conv_id.nil?.to_s,
@@ -117,15 +118,16 @@
   <li class="inline-field field clearField message">
     <%= render :partial => 'helpdesk/tickets/show/editor_insert_buttons', :locals => { :cntid => cntid } %>
     <% conv_item = conv_id.nil? ? @ticket : @note %>
+    <% fwd_draft = forward_template_draft(conv_item, @signature) %>
     <%= f.fields_for(:note_body, Helpdesk::NoteBody.new) do |ff| %>
-            <%= ff.text_area :body_html, :class => "body_html", :id => "#{cntid}-body",  :"data-wrap-font-family" => true, :"data-quoted-textarea" => "##{cntid}-quoted" %>
+            <%= ff.text_area :body_html, :class => "body_html", :id => "#{cntid}-body",  :"data-wrap-font-family" => true, :"data-quoted-textarea" => "##{cntid}-quoted", :value => fwd_draft["draft_text"]%>
             <%= ff.text_area :full_text_html, :id => "#{cntid}-body-fulltext", :value => "", 
                                   :style => "display:none;"%>
             <%if  current_browser == "Internet Explorer" %>
                 <%= text_area_tag "quoted_text_html", h(bind_last_conv(conv_item, @signature, true)), { :id => "#{cntid}-quoted", :class => "hide" } %>
             <% else %>
               <template name = "quoted_text_html" id = "<%= cntid %>-quoted" class="hide">
-                <%= h(bind_last_conv(conv_item, @signature, true)) %>
+                <%= h(quoted_text(conv_item, true)) %>
               </template>
             <% end %>
     <% end %>
@@ -177,7 +179,34 @@
 <% end %>
 
 <script type="text/javascript">
-    jQuery("#HelpdeskFwd_<%=cntid%>").bind("submit", function(ev){}).validate()
+    
+    jQuery(".cancel_btn").click(function() {
+      jQuery("#HelpdeskFwd_<%=cntid%>").find('.cc-error-message').remove();
+    })
+
+    jQuery('#HelpdeskFwd_<%=cntid%>')      
+      .bind("submit", function(ev){
+      var tkt_recipient_arr = [];
+      if( <%= do_spam_check? && free_admin_email_account? %>) {
+        tkt_recipient_arr = <%= unique_ticket_recipients(@ticket).to_json.html_safe %>;
+        var limit       = <%= get_trial_account_max_to_cc_threshold %>;
+        var msg         = "<%= t(:'flash.general.recipient_limit_exceeded', :limit =>get_trial_account_max_to_cc_threshold ) %>";
+        App.Tickets.LimitEmails.titleMsg = "<%= t(:'flash.general.recipient_limit_exceeded', :limit => get_trial_account_max_to_cc_threshold ) %>";
+        App.Tickets.LimitEmails.okBtnMsg = "<%= I18n.t('ok') %>";
+        if(!App.Tickets.LimitEmails.limitForwardEmails(jQuery('#HelpdeskFwd_<%=cntid%>'), '.cc_fields:visible:last' ,tkt_recipient_arr, limit, msg)) {
+          return false;
+        }
+      }
+
+      jQuery("#HelpdeskFwd_<%=cntid%>").find('.cc-error-message').remove();
+
+      if(!jQuery('#include_bcc').is(':checked')) {
+          jQuery('[name="helpdesk_note[bcc_emails][]"]').val('');
+          isDirty = false;
+      }
+      })
+      .validate();
+
       jQuery('html, body').animate({
         scrollTop: jQuery("#<%= cntid %>").offset().top-110
     }, 100);

@@ -115,8 +115,9 @@
                 settings.complete.call();
             }
 
+            //check for avoiding ajax call if next page is greater than total pages
             // listener was stopped or we've run out of pages
-            if (settings.totalPages <= settings.currentPage) {
+            if (settings.totalPages <= nextPage) {
               $this.stopListener();
               // if there is a afterStopListener callback we call it
               $this.evalAttr("end");

@@ -64,7 +64,7 @@
     <%= @ticket.description_html.html_safe %>
   </div>  
   <span class="seperator"></span>
-  <% @ticket_notes = @ticket.notes.visible.exclude_source('meta') %>
+  <% @ticket_notes = @ticket.notes.visible.exclude_source(['meta','tracker']) %>
   <% unless @ticket_notes.empty? %>
   <h3>Comments</h3>  
   <div>
@@ -72,7 +72,7 @@
       <div>
         by <strong><%= h(note.user.display_name) %></strong> on <strong><%= formated_date(note.created_at)  %></strong> as 
         <strong>
-        <% if note.private_note? %>	 
+        <% if note.private_note? && !note.broadcast_note_to_tracker? %>	 
   				<%= t("helpdesk.tickets.note.private_note") %>
   			<% elsif note.public_note? %>
   				<%= t("helpdesk.tickets.note.public_note") %>
@@ -82,6 +82,8 @@
   				<%= t("helpdesk.tickets.note.outbound_email") %>
   			<% elsif note.tweet? %>
   				tweet
+        <% elsif note.broadcast_note_to_tracker? %>
+          <%= t("helpdesk.tickets.note.broadcast_note") %>
   			<% end %>  
   			</strong>
       </div>

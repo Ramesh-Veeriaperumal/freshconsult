@@ -66,7 +66,7 @@ RealtimeDashboard.Widgets.UnresolvedTickets.Agent = function(container,widget_na
 					spliced = data.slice(0,_fd.list_limit);
 				}
 
-				if (resp[_fd.widget_name].length < 4) {
+				if (resp[_fd.widget_name].length <= 4) {
 					jQuery('[rel=view_all_old_tickets]').hide(); // hide the View All panel
 				}
 

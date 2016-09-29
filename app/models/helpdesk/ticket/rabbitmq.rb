@@ -62,7 +62,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
       "sla_policy_id"     => schema_less_ticket.sla_policy_id,
       "product_id"        => schema_less_ticket.product_id,
       "internal_agent_id" => schema_less_ticket.internal_agent_id,
-      "internal_group_id"  => schema_less_ticket.internal_group_id
+      "internal_group_id"  => schema_less_ticket.internal_group_id,
+      "association_type" => schema_less_ticket.association_type
     }.merge(schema_less_ticket.reports_hash)
   end
 

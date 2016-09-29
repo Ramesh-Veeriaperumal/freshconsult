@@ -83,6 +83,8 @@ class Search::TicketsController < Search::SearchController
 				f.filter :or, { :not => { :exists => { :field => :notable_spam } } },
 											{ :term => { :notable_spam => false } }
 			end
+			# To filter tickets that are not associated.
+			f.filter :not, { :exists => { :field => :association_type } }
 		end
 
 		def search_sort search

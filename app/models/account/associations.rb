@@ -312,4 +312,5 @@ class Account < ActiveRecord::Base
 
   has_many :account_webhook_key, dependent: :destroy
   
+  has_many :ticket_subscriptions, :class_name => 'Helpdesk::Subscription'
 end

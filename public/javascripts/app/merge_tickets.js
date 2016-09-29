@@ -173,7 +173,7 @@ window.App.Tickets.Merge_tickets = window.App.Tickets.Merge_tickets || {};
       new Ajax.Request('/search/tickets/filter/'+search_field,
                         { 
                           parameters: {
-                            term: searchString,
+                            term: searchString
                           },
                           onSuccess: function(response) {   
                             jQuery('.merge_results:visible').removeClass("sloading");

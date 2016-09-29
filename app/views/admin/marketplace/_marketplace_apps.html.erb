@@ -6,7 +6,7 @@
         <h3><%= t('marketplace.no_mktp_apps') %></h3>
         <p class="txt"><%= t('marketplace.no_mktp_apps_note') %></p>
         <p class="txt"><%= t('marketplace.no_mktp_apps_note_2') %></p>
-        <a class="btn browse-btn btn-flat btn-primary btn-appgallery" href="" data-url="<%= admin_marketplace_extensions_path %>?type=<%= Marketplace::Constants::DEFAULT_EXTENSION_TYPES%>"><span class="ficon-cube-filled"></span> <%= t('marketplace.get_more_apps') %></a>
+        <a class="btn browse-btn btn-flat btn-primary btn-appgallery get-more-apps-blank-state" href="" data-url="<%= admin_marketplace_extensions_path %>?type=<%= Marketplace::Constants::DEFAULT_EXTENSION_TYPES%>"><span class="ficon-cube-filled"></span> <%= t('marketplace.get_more_apps') %></a>
       </div>
 
     <% if installed_mkp_apps.kind_of?(Hash) and installed_mkp_apps[:error].present?%>

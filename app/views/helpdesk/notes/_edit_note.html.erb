@@ -6,8 +6,8 @@
 				"data-panel" => "edit-#{@item.id}",
 				"data-show-pseudo-reply" => 'false',
 				"data-fetch-latest" => 'false',
-				"data-cnt-id" => @item.id
-
+				"data-cnt-id" => @item.id,
+				:class => "form-unsaved-changes-trigger"
 			} do |f| %>
 	<ul class="ui-form dont-validate">
 		<li class="inline-field field continous">
@@ -29,7 +29,7 @@
 		</li>
 	</ul>
 	<div class="btn-toolbar">
-		<%= button_to_function(t('cancel'), "jQuery('#edit-#{@item.id}').slideUp();jQuery('#note_details_#{@item.id}').show();", :class => "btn editNoteCancelButton" , :noteId => @item.id)  %>
+		<%= button_to_function(t('cancel'), "jQuery('#edit-#{@item.id}').slideUp();jQuery('#note_details_#{@item.id}').show();jQuery(this.form).data('formChanged',false);", :class => "btn editNoteCancelButton" , :noteId => @item.id)  %>
     	<%= submit_tag(t("update"), :class => "btn btn-primary editNoteUpdateButton",:noteId => @item.id) %>
     </div>
     <div class="clearfix"></div>

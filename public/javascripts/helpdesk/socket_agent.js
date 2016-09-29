@@ -6,6 +6,7 @@ var current_agents_replying = {};
 var customer_replies = 0;
 var agent_replies = 0;
 var private_notes = 0;
+var broadcast_note = 0;
 var total_actions = 0;
 var ar_ticket_updated = 0;
 
@@ -39,8 +40,13 @@ function UpdateARNotification(action, params, current_userid){
         private_notes = private_notes + 1;
         count = private_notes;
         break;
+      case "autorefresh_broadcast_note":
+        id = "#ar_broadcast_note";
+        count = 1;
+        broadcast_note = 1;
+        break;
     }
-    total_actions = customer_replies + agent_replies + private_notes;
+    total_actions = customer_replies + agent_replies + private_notes + broadcast_note;
     if (count > 0) {
       update_ar_counter(id, count);
     }
@@ -65,6 +71,7 @@ var refresh_popup = function(){
   update_ar_counter("#ar_agent_reply", agent_replies);
   update_ar_counter("#ar_customer_reply", customer_replies);
   update_ar_counter("#ar_private_note", private_notes);
+  update_ar_counter("#ar_broadcast_note", broadcast_note);
   update_ar_counter("#ar_tickets_updated", ar_ticket_updated);
 }
 
@@ -196,8 +203,9 @@ var setEvents = function (hashed_params,current_username,current_userid) {
           var customer_reply_div = "<div id='ar_customer_reply' class='count-label auto-refresh-show hide' data-text-one='Customer Reply' data-text-other='Customer Replies'></div>";
           var agent_reply_div = "<div id='ar_agent_reply' class='count-label auto-refresh-show hide' data-text-one='Agent Reply' data-text-other='Agent Replies'></div>"
           var private_note_div = "<div id='ar_private_note' class='count-label auto-refresh-show hide' data-text-one='Private Note' data-text-other='Private Notes'></div>"
+          var broadcast_note_div = "<div id='ar_broadcast_note' class='count-label auto-refresh-show hide' data-text-one='Broadcast Note'></div>"
           var properties_updated_div = "<div id='ar_tickets_updated' class='auto-refresh-show ar-properties hide'>Properties updated</div>"
-          return customer_reply_div+agent_reply_div+private_note_div+properties_updated_div;
+          return customer_reply_div+agent_reply_div+private_note_div+properties_updated_div+broadcast_note_div;
         },
         template: '<div class="dbl_up arrow"></div><div class="hover_card ar-hover inner"><div class="content"><div></div></div></div>',
       }).on({
@@ -348,6 +356,10 @@ window.agentcollision = function(server,hashed_params,current_username,current_u
 
   node_socket.on('autorefresh_private_note', function(params){
     UpdateARNotification("autorefresh_private_note", params, current_userid);
+  });
+
+  node_socket.on('autorefresh_broadcast_note', function(params){
+    UpdateARNotification("autorefresh_broadcast_note", params, current_userid);
   });
 
   node_socket.on('disconnect', function(){  

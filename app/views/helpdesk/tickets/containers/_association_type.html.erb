@@ -1,0 +1,3 @@
+<%= select_tag name, 
+	options_for_select(options.map {|k, v| [v.html_safe, k.to_s]}, selected_val),
+	{ :class => "select2 filter_item" } %>

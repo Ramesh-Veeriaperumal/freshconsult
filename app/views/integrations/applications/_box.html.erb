@@ -47,6 +47,11 @@
                                 files: cloud_file_object
                             }).appendTo(".multiple-filelist-" + file_list);
                         }
+
+                    // Set formChanged to true.
+                    if(files.length){
+                        jQuery(inp).parents('form').data("formChanged","true");
+                    }
                 }
             });
   }
