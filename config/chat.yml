@@ -9,6 +9,7 @@ defaults: &defaults
         css: "http://localhost:4000"
         cloudfront: "http://localhost:4000"
     support_account:
+        livechat_server : "localhost"
         url : "localhost.freshdesk-dev.com"
         site_id: "a507c51cd62e2167b14d589e791b5132"
         widget_id : "b59415ea-269c-4f79-9323-ab9a2cd7c03e"
