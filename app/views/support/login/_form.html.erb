@@ -20,9 +20,9 @@
           </div>
        <% end %>
 		<div class="control-group">			
-	  		<div class="controls">
+	  		<div class="controls" title="<%= t('uncheck_remember_tooltip') %>">
 	  			<label class="checkbox">
-	  				<%= f.check_box :remember_me %>
+	  				<%= f.check_box :remember_me, {:checked => true} %>
 					<%= t('.remember') %>
 				</label>
 			</div>

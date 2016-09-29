@@ -17,7 +17,15 @@ class HttpRequestProxy
     "fe80::/10",
     "::1"].map {|a| IPAddr.new(a) }.freeze
 
-  TIMEOUT = 4
+  ACCEPT_TYPES = ['application/json', 'application/xml', 'text/plain', 'text/xml', 'application/atom+xml', 'application/jsonp']
+
+  XML_BLACKLIST_ATTRIBUTES = ["href", "onclick", "onblur", "onchange", "ondblclick", "onfocus", "onkeydown", "onkeypress", "onkeyup",
+    "onload", "onmousedown", "onmousemove", "onmouseout", "onmouseover", "onmouseup", "onselect", "onunload", "onbroadcast", "onclose",
+    "oncommand", "oncommandupdate", "oncontextmenu", "ondrag", "ondragdrop", "ondragend", "ondragenter", "ondragexit", "ondraggesture",
+    "ondragover", "oninput", "onoverflow", "onpopuphidden", "onpopuphiding", "onpopupshowing", "onpopupshown", "onsyncfrompreference",
+    "onsynctopreference", "onunderflow"].map {|attr| "//@#{attr}"}.freeze
+
+  TIMEOUT = 10
 
   def fetch(params, request)
     unless(request.blank?)
@@ -118,12 +126,32 @@ class HttpRequestProxy
           Rails.logger.debug "Response Code: #{proxy_response.code}"
           Rails.logger.debug "Response Headers: #{proxy_response.headers.inspect}"
         end
-
         # TODO Need to audit all the request and response calls to 3rd party api.
         response_body = proxy_response.body
         response_code = proxy_response.code
-        response_type = proxy_response.headers['content-type'] unless (params[:auth_type] == 'OAuth1')
+        response_type = proxy_response.content_type unless (params[:auth_type] == 'OAuth1')
+        
+        if accept_type == "application/json" && !(response_type == "application/json" || response_type == "js")
+          response_body = proxy_response.parsed_response.to_json
+          response_type = "application/json"
+        end
 
+        if proxy_response.present? && ACCEPT_TYPES.exclude?(response_type)
+          if valid_json?(response_body)
+            response_type = "application/json"
+          elsif valid_xml?(response_body)
+            response_type = "application/xml"
+          else
+            response_type = "application/json"
+            response_body = proxy_response.parsed_response.to_json
+          end
+        end
+        if (response_type.include?('xml') && params['app_name'] != 'constantcontact')
+          parsed_xml = Nokogiri::XML(response_body)
+          parsed_xml.remove_namespaces!
+          parsed_xml.xpath('//script', *XML_BLACKLIST_ATTRIBUTES).remove
+          response_body = parsed_xml.to_xml(:save_with => Nokogiri::XML::Node::SaveOptions::AS_XML)
+        end
       rescue Timeout::Error
         Rails.logger.error("Timeout trying to complete the request. \n#{params.inspect}")
         response_body = '{"result":"timeout"}'
@@ -146,13 +174,10 @@ class HttpRequestProxy
         proxy_response.headers.map { |key, value|
           x_headers[key] = value if key.start_with?("x-")
         }
-        if accept_type == "application/json" && !(response_type.start_with?("application/json") || response_type.start_with?("js"))
-          response_body = proxy_response.parsed_response.to_json
-          response_type = "application/json"
-        end
+        
       end
     rescue => e
-     Rails.logger.error("Error while parsing remote response.")
+     Rails.logger.error("Error while parsing remote response.\n#{e.message}\n#{e.backtrace.join('\n')}")
     end
     return {:text=>response_body, :content_type => response_type, :status => response_code, 'x-headers' => x_headers}
   end
@@ -166,6 +191,24 @@ class HttpRequestProxy
       if addr === ip_to_check
         raise "Invalid local address #{uri.host}"
       end
+    end
+  end
+
+  def valid_json?(data)
+    begin
+      JSON.parse(data)
+      return true
+    rescue JSON::ParserError => e
+      return false
+    end
+  end
+
+  def valid_xml?(data)
+    begin
+      Hash.from_xml(data)
+      return true
+    rescue Nokogiri::XML::SyntaxError => e
+      return false
     end
   end
   

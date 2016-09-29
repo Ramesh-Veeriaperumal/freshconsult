@@ -4,7 +4,7 @@ module Freshfone::Conference::EndCallActions
   def complete_call
     begin
       if warm_transfer_enabled?
-        disconnect_warm_transfer(active_warm_transfer_call) 
+        disconnect_warm_transfer
         return handle_warm_transfer if warm_transfer_source_agent?
       end
 
@@ -85,7 +85,7 @@ module Freshfone::Conference::EndCallActions
 
     def active_warm_transfer_call
        return if current_call.blank?
-       current_call.supervisor_controls.warm_transfer_calls.initiated_or_inprogress_calls.first
+       @active_warm_transfer_call ||= current_call.supervisor_controls.warm_transfer_calls.initiated_or_inprogress_calls.first
     end
 
     def disconnect_agent_conference(call_sid)

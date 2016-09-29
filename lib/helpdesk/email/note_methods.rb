@@ -21,7 +21,7 @@ module Helpdesk::Email::NoteMethods
   end
 
   def rsvp_to_fwd?
-    @rsvp_to_fwd ||= (Account.current.features?(:threading_without_user_check) && reply_to_forward(header_processor.all_message_ids))
+    @rsvp_to_fwd ||= ((Account.current.features?(:threading_without_user_check) || (!ticket.cc_email.nil? && !ticket.cc_email[:cc_emails].nil? && ticket.cc_email[:cc_emails].include?(email[:from][:email])) || user.agent?) && reply_to_forward(header_processor.all_message_ids))
   end
 
   def note_params
@@ -109,8 +109,8 @@ module Helpdesk::Email::NoteMethods
 
   def sanitize_note_message msg
     sanitized_msg = run_with_timeout(NokogiriTimeoutError) { Nokogiri::HTML(msg).at_css("body") }
-    remove_identifier_span(sanitized_msg)
-    remove_survey_div(sanitized_msg)
+    remove_identifier_span(sanitized_msg) unless sanitized_msg.blank?
+    remove_survey_div(sanitized_msg) unless sanitized_msg.blank?
     sanitized_msg.inner_html unless sanitized_msg.blank?
   end
 
@@ -129,14 +129,8 @@ module Helpdesk::Email::NoteMethods
   end
 
   def update_ticket_cc
-    sup_emails       = account.support_emails.map(&:downcase)
-    cc_email         = ticket.cc_email_hash || Helpdesk::Ticket.default_cc_hash
-    incoming_cc      = email[:cc].reject { |cc| requester_email?(cc) }
-    other_recipients = email[:to_emails].reject{|mail| email[:to][:email].include?(mail) or  sup_emails.include?(mail.downcase)}
-    new_cc           = incoming_cc.push(other_recipients).flatten
-    in_reply_to = email[:in_reply_to].to_s.include?("notification.freshdesk.com") ? :notification : :default
-    add_to_reply_cc(new_cc, ticket, note, cc_email, in_reply_to)
-    cc_email[:cc_emails] = new_cc | cc_email[:cc_emails].compact.collect! {|x| (parse_email x)[:email]}.compact
-    ticket.cc_email = cc_email
+    email[:cc].map!{ |val| parse_email(val.downcase)[:email]}
+    ticket.cc_email = updated_ticket_cc_emails(email[:cc], ticket, note, 
+      email[:in_reply_to], email[:to][:email], email[:to_emails])
   end
 end

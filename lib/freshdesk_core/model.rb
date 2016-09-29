@@ -196,7 +196,10 @@ module FreshdeskCore::Model
                         "user_companies",
                         "helpdesk_permissible_domains",
                         "outgoing_email_domain_categories",
-                        "ticket_templates"
+                        "ticket_templates",
+                        "cti_calls",
+                        "cti_phones",
+                        "status_groups"
                     ]
 
   STATUS = {
@@ -217,6 +220,7 @@ module FreshdeskCore::Model
     remove_card_info(account)
     remove_whitelist_users(account.id)
     remove_remote_integration_mappings(account.id)
+    remove_round_robin_redis_info(account)
     
     delete_data_from_tables(account.id)
     account.destroy
@@ -302,6 +306,12 @@ module FreshdeskCore::Model
     
     def remove_remote_integration_mappings(account_id)
       RemoteIntegrationsMapping.where(account_id: account_id).delete_all
+    end
+
+    def remove_round_robin_redis_info(account)
+      account.groups.find_each do |group|
+        group.remove_round_robin_data(group.agents.pluck(:id))
+      end
     end
 
     def delete_info_from_table(account_id)

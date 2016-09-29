@@ -296,6 +296,8 @@ class Account < ActiveRecord::Base
 
   has_many :subscription_invoices
   has_many :user_companies
+  has_many :cti_calls, :class_name => 'Integrations::CtiCall'
+  has_many :cti_phones, :class_name => 'Integrations::CtiPhone'
 
   has_many :helpdesk_permissible_domains, :dependent => :destroy
   accepts_nested_attributes_for :helpdesk_permissible_domains, allow_destroy: true
@@ -303,6 +305,8 @@ class Account < ActiveRecord::Base
   has_many :scheduled_tasks, :class_name => 'Helpdesk::ScheduledTask'
   has_many :outgoing_email_domain_categories, :dependent => :destroy
   has_many :authorizations, :class_name => '::Authorization'
+
+  has_many :status_groups
 
   has_many :ticket_templates, :class_name => "Helpdesk::TicketTemplate"
 

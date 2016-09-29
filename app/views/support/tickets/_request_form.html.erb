@@ -1,33 +1,37 @@
 <% @ticket ||= current_account.tickets.new %>
 <% @ticket.build_ticket_body %>
 <% @ticket.email = current_user.email if current_user %>
+<% cache_options = {}%>
 <%= form_for @ticket, :url => support_tickets_path, :html => { :multipart => true, 
     :class => "form-portal ticket-form", :rel => "validate" } do |f| %>
   <%= f.error_messages %>
-  <% current_portal.customer_editable_ticket_fields.each do |field| 
-      next if field.section_field?
-    %>
-    <div class="control-group <%= " hide company_container" if field.field_type == "default_company" %>" >
-      <%= ticket_field_container f,:helpdesk_ticket, field, 
-            helpdesk_ticket_values(field,@params) %>
-    </div>
-    <% if field.has_section?
-      field.picklist_values.each do |picklist|
-        next if picklist.section.blank? %>
-        <textarea class="picklist_section_<%=picklist.id%> hide">
-          <% picklist.section_ticket_fields.each do |section_tkt_field|
-            if section_tkt_field.editable_in_portal %>
-              <div class="control-group ticket_section">
-                <%= (ticket_field_container f,:helpdesk_ticket, section_tkt_field, 
-                                      helpdesk_ticket_values(section_tkt_field,@params), picklist.id.to_s).gsub("</textarea>", "&lt/textarea&gt") %>
-              </div>  
-            <% end
-          end %>
-        </textarea>
-      <% end
-    end %>
+
+  <% enable_fragment_cache(:support_new_ticket) do %>
+    <% current_portal.customer_editable_ticket_fields.each do |field| 
+        next if field.section_field?
+      %>
+      <div class="control-group <%= " hide company_container" if field.field_type == "default_company" %>" >
+        <%= ticket_field_container f,:helpdesk_ticket, field, 
+              helpdesk_ticket_values(field,@params) %>
+      </div>
+      <% if field.has_section?
+        field.picklist_values.each do |picklist|
+          next if picklist.section.blank? %>
+          <textarea class="picklist_section_<%=picklist.id%> hide">
+            <% picklist.section_ticket_fields.each do |section_tkt_field|
+              if section_tkt_field.editable_in_portal %>
+                <div class="control-group ticket_section">
+                  <%= (ticket_field_container f,:helpdesk_ticket, section_tkt_field, 
+                                        helpdesk_ticket_values(section_tkt_field,@params), picklist.id.to_s).gsub("</textarea>", "&lt/textarea&gt") %>
+                </div>  
+              <% end
+            end %>
+          </textarea>
+        <% end
+      end %>
     <% end %>
-     
+  <% end %>
+<!-- block ends here for fragment cache -->
   <% if feature?(:captcha) && !logged_in? %>
     <div class="control-group">
         <%= content_tag( :label, t('ticket.verify_human'), :class => "control-label" ) %>
@@ -47,11 +51,51 @@
 		<%= f.submit t('ticket.submit_ticket'), :class => "btn btn-primary" %>		
 		<%= link_to t("cancel"), support_home_path, :class => "btn" %>
 	</div>
+ 
+  <% cache_options = fragment_cache_dom_options f %>
+  <%= cache_options[:cc_container] if cache_options[:cc_container].present? %>
 <% end %>
 
 <%= javascript_tag do %>
   (function($){
+    var populateRequestForm = function(){
+      var requester_input = $('#helpdesk_ticket_email');
+      if(<%=cache_options[:company_cache_condition]%> && $('#helpdesk_ticket_company_id').length == 0){
+        var company_container = $('<div>', { 'class': 'control-group hide company_container' });
+        company_container.html('<%= cache_options[:company_container].gsub(/\r?\n/,'').html_safe %>')
+          .insertAfter(requester_input);
+      }
+      if(<%= cache_options[:cc_cache_condition] %>){
+        if($('#add-cc-button').length == 0){
+          requester_input.parent().append('<a href="#" data-toggle-dom="#cc-emails" data-toggle-text="<%= t('helpdesk.shared.hide_cc') %>" id="add-cc-button"><%= t('helpdesk.shared.addcc') %></a>')
+            .after($('#cc-emails'));
+        }
+        else{
+          $('#cc-emails').remove();
+          requester_input.parent().after($('#cc-emails'));
+        }
+      }
+      else{
+        $('.cc-emails, #add-cc-button').remove();
+      }
+      requester_input.val('<%= current_user.email if current_user.present? %>').trigger('focusout');
+      var repaint_store_data = <%= get_store_data.html_safe %>
+      var repaint_map = {'group': '#helpdesk_ticket_group_id', 'agent': '#helpdesk_ticket_responder_id'};
+      for( var key in repaint_map){
+        var element = $(repaint_map[key]);
+        if(element.length == 0)continue;
+        var emptyOption = $('<option>', {val: "", text: "..."});
+        var options = repaint_store_data[key].map(function(value, i){ 
+            return $('<option>', { val: value.id, text: value.name }); 
+        });
+        options.unshift(emptyOption);
+        element.html(options);
+      }
+    };  
     jQuery(document).ready(function(){
+      <% if Account.current.launched?(:support_new_ticket_cache) && current_user.present?%>
+        populateRequestForm();
+      <% end %>
       jQuery('#meta_referrer').val(document.referrer.escapeHTML());
       <% if feature?(:auto_suggest_solutions) && allowed_in_portal?(:open_solutions) %>
         callbackToSolutionSearch = function(string){
@@ -92,19 +136,21 @@
               }
           });
       <% end %>
-      if( jQuery.browser.desktop ){
+      if( jQBrowser.desktop ){
         <% if logged_in? %>
           invokeRedactor('helpdesk_ticket_ticket_body_attributes_description_html', 'ticket');
         <% else %>
           invokeRedactor('helpdesk_ticket_ticket_body_attributes_description_html');
         <% end %>
       }
-
-      <% if current_portal.customer_editable_ticket_fields.first.field_type  == "default_description" %>
-        jQuery("#helpdesk_ticket_ticket_body_attributes_description_html").data('redactor').$editor.focus();
-      <% else %>
-        Form.focusFirstElement(document.forms[0]); 
-      <% end %> 
+        
+        var focus_element = Form.findFirstElement(document.forms[0]); 
+        if ($(focus_element).prop('id')  == "helpdesk_ticket_ticket_body_attributes_description_html"){
+          jQuery(focus_element).data('redactor').$editor.focus();
+        }
+        else{
+          Form.focusFirstElement(document.forms[0]); 
+        }
 
       // Need to make the code generic to handle the custom dropdown fields sections.
       jQuery('#helpdesk_ticket_ticket_type')
@@ -120,6 +166,7 @@
           }
       });
       jQuery('#helpdesk_ticket_ticket_type').trigger('change');
+      jQuery('[id^="helpdesk_ticket_custom_field_"]').val("").trigger('change');
     }); 
 
     
@@ -146,12 +193,11 @@
               jQuery('.company-label').parent().insertAfter(jQuery("#helpdesk_ticket_email"));
               jQuery('#helpdesk_ticket_company_id').removeAttr("disabled");
               jQuery('.company-label').parent().slideDown();
-              jQuery('#add-cc-button').text("<%= t('helpdesk.shared.addcc') %>");
               jQuery('#add-cc-button').slideDown();
             }else{
               jQuery('#helpdesk_ticket_company_id').attr("disabled", true);
               jQuery('.company-label').parent().slideUp();
-              if(<%= @company_cc_in_portal %>)
+              if(<%= @company_cc_in_portal.present? %>)
                 jQuery('#add-cc-button, #cc-emails').slideUp();
             }
           }

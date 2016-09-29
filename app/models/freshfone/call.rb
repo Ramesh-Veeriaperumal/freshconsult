@@ -73,6 +73,8 @@ class Freshfone::Call < ActiveRecord::Base
     CALL_STATUS_HASH[:queued]
   ]
 
+  ONGOING_CALL_STATUS = [CALL_STATUS_HASH[:'in-progress'], CALL_STATUS_HASH[:'on-hold']]
+
   COMPLETED_CALL_STATUS = [ CALL_STATUS_HASH[:completed], CALL_STATUS_HASH[:busy],
           CALL_STATUS_HASH[:'no-answer'], CALL_STATUS_HASH[:failed],
           CALL_STATUS_HASH[:canceled], CALL_STATUS_HASH[:voicemail] ]
@@ -176,7 +178,7 @@ class Freshfone::Call < ActiveRecord::Base
     }
   }
 
-  scope :ongoing_calls, where('call_status in (?)', [CALL_STATUS_HASH[:'on-hold'], CALL_STATUS_HASH[:'in-progress']])
+  scope :ongoing_or_completed_calls, where('call_status in (?)', [CALL_STATUS_HASH[:'on-hold'], CALL_STATUS_HASH[:'in-progress'], CALL_STATUS_HASH[:completed]])
 
   def self.filter_call(call_sid)
     call = filter_by_call_sid(call_sid).first
@@ -600,6 +602,10 @@ class Freshfone::Call < ActiveRecord::Base
 
   def incoming_root_call?
     incoming? && is_root?
+  end
+
+  def outgoing_root_call?
+    outgoing? && is_root?
   end
 
   def missed_or_busy?

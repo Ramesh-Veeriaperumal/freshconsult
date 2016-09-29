@@ -18,7 +18,7 @@ class Reports::CustomSurveyReportsController < ApplicationController
   attr_accessor :report_type
   
   def index
-    @hide_agent_reporting = Account.current.features_included?(:euc_hide_agent_metrics)
+    @hide_agent_reporting = Account.current.hide_agent_metrics_feature?
     @surveys = surveys_json
     @agents = agents
     @groups = groups
@@ -86,6 +86,7 @@ class Reports::CustomSurveyReportsController < ApplicationController
 
   def export_csv
     params.merge!(:report_type => report_type)
+    params.merge!(:portal_name => current_portal.name) if current_portal
     Reports::Export.perform_async(params)
     render json: nil, status: :ok
   end

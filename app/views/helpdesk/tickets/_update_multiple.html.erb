@@ -6,7 +6,7 @@
     <div class="content clearfix scrollbar">
     <% helpdesk_submit_options = []%>
   	<% current_portal.ticket_fields.each  do |field| %>
-      <% next if field.section_field? %>
+      <% next if field.section_field? or field.shared_ownership_field? %>
       <% dom_type = (field.field_type == "nested_field") ? "nested_field" : field.dom_type %>
       <%= ticket_field_element(field, dom_type, {:class => "field-item"}) %>
 
@@ -61,6 +61,7 @@
 
 <div id="bulk-response-group" class="hide">
   <a id="no-response">&laquo; <%= t('canned_folders.back_to_bulk') %></a>
+  <a href="/helpdesk/canned_responses/folders" target="_blank" class="pull-right modal-bulk-header-button"><%= t('ticket.create_new_ca') %></a>
   <div id="bulk_canned_response_holder"> 
   </div> 
 </div>
@@ -152,7 +153,7 @@
 
   jQuery("[rel=inputselectbox],[rel=inputtextbox]").off('change');
  jQuery("[rel=inputselectbox],[rel=inputtextbox]").on('change',  function(ev){
-    if(jQuery(this).attr('id')=="helpdesk_ticket_group_id")
+    if(jQuery(this).attr('id')=="helpdesk_ticket_group_id" && jQuery("#helpdesk_ticket_group_id").val() != "-1")
     {
       if(jQuery('#helpdesk_ticket_responder_id_label').is(':checked'))
       {
@@ -217,7 +218,7 @@ function groupchange(value){
 	 blank_value = "No Change";
      jQuery.ajax({
        type:        'GET',
-       url: 		'/helpdesk/commons/group_agents/'+this.value+'?blank_value=<%=t('select')%>',
+       url: 		'/helpdesk/commons/group_agents/'+this.value+'?blank_value=<%=t('select')%>&allow_none=true',
        contentType: 'application/text',
        success:     function(data){
 
@@ -254,4 +255,7 @@ jQuery('.ui-icon-closethick').on('click', function(){
               .insertAfter(jQuery("#helpdesk_ticket_ticket_type").parent());
       }
   });
+
+  jQuery('#helpdesk_ticket_responder_id').append("<option value='-1'><%= t("unassign") %></option>");
+  jQuery('#helpdesk_ticket_group_id').append("<option value='-1'><%= t("unassign") %></option>");
 <% end %>

@@ -1,0 +1,12 @@
+<div id="incall_user_info" class="caller-pic circle pull-left">
+  <%= user_avatar(requester, :thumb, "preview_pic circle", {:width => "30px", :height => "30px" })%>
+</div>
+<div class="caller-details pull-left">
+  <div class="caller-name ellipsis"><%=link_to(h(requester.name), contact_path(requester), :'data-pjax' => "#body-container")%></div>
+  <div class="caller-title ellipsis"><%=requester.job_title%></div>
+  <% if requester.company.present? %>
+    <div class="caller-company ellipsis"><%=link_to(h(requester.company.name), company_path(requester.company), :class => "item_info", :'data-pjax' => "#body-container" )%></div>
+  <% end %>
+  <%= requester_namecard_render(requester).html_safe %>
+  <a class="cti-caller-more-details-toggle condensed hide" href="#">more</a>
+</div>

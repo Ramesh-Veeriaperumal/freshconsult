@@ -10,8 +10,9 @@ class Mobile::NotificationsController < ApplicationController
 			:notification_types => params[:notification_types].to_json,
      		:account_id => current_account.id,
 			:user_id => current_user.id,
+			:api_version => params[:api_version].blank? ? "V1" : params[:api_version],
+			:secret => current_user.mobile_jwt_secret
     	}
-
 		message.merge! ({:clean_up => true}) if params[:clean_up].present?
 		message.merge! ({:new_registration => true}) if params[:new_registration].present?
 		puts "DEBUG :: add_to_mobile_reg_queue : message : #{message}"

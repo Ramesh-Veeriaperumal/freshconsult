@@ -2,13 +2,22 @@
       please update the memcache key version. key_name :: COMPOSE_EMAIL_FORM  -->
 <% 
   default_field_order = [
-      "default_priority", "default_status", 
-      "default_source", "default_ticket_type", 
-      "default_group", 
-      "default_agent", 
+      "default_priority", "default_status",
+      "default_source", "default_ticket_type",
+      "default_group",
+      "default_agent",
       "default_product",
       "default_company"
   ]
+  default_field_order = ["default_priority", "default_status",
+      "default_group", 
+      "default_agent", 
+      "default_internal_group",
+      "default_internal_agent",
+      "default_source", "default_ticket_type",
+      "default_product",
+      "default_company"
+      ] if Account.current.features?(:shared_ownership)
 
   default_fields = []
   custom_fields = []
@@ -20,7 +29,7 @@
   next if field.section_field?
   if field.visible_in_view_form?
     if field.is_default_field?
-      field_value = @ticket.send(field.field_name)
+      field_value = @ticket.send(field.field_name).to_s
       field_label = t("ticket_fields.fields.#{field.name}")
     else
       field_value = @ticket.send(field.name) unless @ticket.new_record? and !params[:template_form]

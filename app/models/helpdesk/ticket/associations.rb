@@ -107,7 +107,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   has_one :article, :through => :article_ticket
   has_one :ebay_question, :as => :questionable, :class_name => 'Ecommerce::EbayQuestion', :dependent => :destroy
   has_one :ebay_account, :class_name => 'Ecommerce::EbayAccount', :through => :ebay_question
+  has_one :cti_call, :class_name => 'Integrations::CtiCall', :as => 'recordable', :dependent => :destroy
+  
   has_many :linked_applications, :through => :integrated_resources,
            :source => :installed_application
-
 end

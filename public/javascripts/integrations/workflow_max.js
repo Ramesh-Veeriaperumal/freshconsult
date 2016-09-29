@@ -592,14 +592,25 @@ WorkflowMaxWidget.prototype = {
 		this.loadClientDataList();
 	},
 
+	company:function(){
+        if(workflowMaxBundle) {
+            if(workflowMaxBundle.ticket_company.length > 0){
+                return workflowMaxBundle.ticket_company;
+            }else if(workflowMaxBundle.reqCompany.length > 0){
+                return workflowMaxBundle.reqCompany;
+            }
+        }
+        return "";
+    },
+
 	loadClientDataList:function() {
 		searchTerm = this.timeEntryXml ? this.get_time_entry_prop_value(this.timeEntryXml, ["Contact","Email"]) : null;
 		client_list = XmlUtil.extractEntities(this.clientData, "Client"); 
 		clientData=[];  //this will contain only the matching records
 		clientData_all=[]; //This will list all clients
-		var filter = {"Email":workflowMaxBundle.reqEmail, "Name":workflowMaxBundle.reqCompany};
+		var filter = {"Email":workflowMaxBundle.reqEmail, "Name":this.company()};
 		var filter_param = undefined;
-		if(workflowMaxBundle.reqCompany){
+		if(this.company()){
 			filter_param = "Name";
 		}
 		else if(workflowMaxBundle.reqEmail){

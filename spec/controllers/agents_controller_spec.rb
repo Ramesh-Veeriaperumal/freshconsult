@@ -57,6 +57,7 @@ describe AgentsController do
     created_user = @account.user_emails.user_for_email(test_email)
     created_user.should be_an_instance_of(User)
     created_user.agent.should be_an_instance_of(Agent)
+    created_user.agent.available.should be_falsey
     created_user.avatar.should_not be_nil
     created_user.avatar.content_file_name.should eql "image4kb.png"
     Delayed::Job.last.handler.should include("#{@account.name}: A new agent was added in your helpdesk")
@@ -445,7 +446,9 @@ describe AgentsController do
   it "should disable toggle_availability for an agent" do
     user = add_test_agent(@account)
     agent = user.agent
-    post :toggle_availability, :id => user.id, :value => "false"
+    agent.available = true
+    agent.save
+    post :toggle_availability, :id => user.id, :value => "false", :admin => true
     agent.reload
     agent.available.should be_falsey
     response.should be_success
@@ -456,7 +459,7 @@ describe AgentsController do
     agent = user.agent
     agent.available = false
     agent.save
-    post :toggle_availability, :id => user.id, :value => "true"
+    post :toggle_availability, :id => user.id, :value => "true", :admin => true
     agent.reload
     agent.available.should be true
     response.should be_success

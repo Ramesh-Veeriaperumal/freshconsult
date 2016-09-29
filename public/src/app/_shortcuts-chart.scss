@@ -31,6 +31,8 @@
 	}
 	.shortcut-key{
 		@include text-align(right);
+		font-weight: bold;
+		font-size: 12px;
 	}
 	.description{
 		font-weight: 200;

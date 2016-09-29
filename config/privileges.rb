@@ -21,8 +21,8 @@ Authority::Authorization::PrivilegeList.build do
                                            :get_ca_response_content, :merge_with_this_request, :print, :latest_note,
                                            :clear_draft, :save_draft, :prevnext, :component, :custom_search,
                                            :quick_assign, :canned_reponse, :full_paginate, :custom_view_save, :apply_template, :accessible_templates, :search_templates,
-                                           :filter_options, :activities, :status, :get_top_view, :recent_tickets, :old_tickets, :summary, :bulk_scenario,
-                                           :execute_bulk_scenario, :activitiesv2, :activities_all]
+                                           :filter_options, :filter_conditions, :activities, :status, :get_top_view, :recent_tickets, :old_tickets, :summary, :bulk_scenario,
+                                           :execute_bulk_scenario, :activitiesv2, :activities_all, :link, :unlink, :related_tickets, :ticket_association]
     resource :"helpdesk/subscription"
     resource :"helpdesk/tag_use"
     resource :"helpdesk/tag"
@@ -50,6 +50,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"integrations/user_credential"
     resource :"integrations/pivotal_tracker"
     resource :"integrations/cti/customer_detail"
+    resource :"integrations/cti/screen_pop"
     resource :"integrations/quickbook"
     resource :"integrations/dynamicscrm", :only => [:widget_data]
     resource :"integrations/infusionsoft", :only => [:fetch_user]
@@ -58,6 +59,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"integrations/hootsuite/ticket"
     resource :"integrations/sugarcrm", :only => [:renew_session_id, :check_session_id]
     resource :"integrations/service_proxy", :only => [:fetch]
+    resource :"integrations/data_pipe"
 
     #Freshfone
     resource :"freshfone", :only => [:dashboard_stats, :dial_check, :create_ticket, :create_note]
@@ -80,16 +82,17 @@ Authority::Authorization::PrivilegeList.build do
     resource :"freshfone/caller_id"
     resource :"freshfone/dashboard", :only => [:dashboard_stats, :calls_limit_notificaiton, :mute]
 
-    resource :"helpdesk/conversation", :only => [:note, :full_text]
+    resource :"helpdesk/conversation", :only => [:note, :full_text, :broadcast]
     resource :"helpdesk/canned_response"
     resource :"helpdesk/ca_folder"
     resource :"helpdesk/scenario_automation"
     resource :agent, :only => [:toggle_availability, :list]
-    resource :"search/home", :only => [:index, :suggest]
+    resource :"search/home", :only => [:index, :suggest, :recent_searches_tickets, :remove_recent_search]
     resource :"search/v2/suggest", :only => [:index]
     resource :"search/solution", :only => [:related_solutions, :search_solutions]
     resource :"search/v2/solution", :only => [:related_solutions, :search_solutions]
     resource :"search/ticket", :only => [:index]
+    resource :"search/ticket_association", :only => [:index, :recent_trackers]
     resource :"search/v2/ticket", :only => [:index]
     resource :"search/v2/spotlight", :only => [:all, :tickets]
     resource :"chat", :only => [:create_ticket, :add_note, :agents, :enable, :index, :visitor, :get_groups, :update_site, :toggle, :trigger]
@@ -97,7 +100,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"helpdesk/survey"
     resource :"admin/data_export" , :only => [:download]
     resource :"notification/product_notification", :only => [:index]
-    # resource :"helpdesk/common", :only => [:group_agents]
+    resource :"helpdesk/common", :only => [:status_groups]
 
     # ticket_templates
     resource :"helpdesk/ticket_template"
@@ -213,6 +216,11 @@ Authority::Authorization::PrivilegeList.build do
     resource :"search/v2/spotlight", :only => [:solutions]
     resource :"helpdesk/ticket", :only => [:get_solution_detail]
     resource :"solution/draft", :only => [:index]
+
+    # Used by V2 API
+    resource :"api_solutions/category", :only => [:index, :show]
+    resource :"api_solutions/folder", :only => [:category_folders, :show]
+    resource :"api_solutions/article", :only => [:folder_articles, :show]
   end
 
   publish_solution do
@@ -220,18 +228,28 @@ Authority::Authorization::PrivilegeList.build do
     resource :"solution/tag_use"
     resource :solutions_uploaded_image, :only => [:create, :create_file]
     resource :"solution/draft", :only => [:autosave, :publish, :attachments_delete, :destroy]
+
+    # Used by V2 API
+    resource :"api_solutions/article", :only => [:create, :update]
   end
 
   delete_solution do
     resource :"solution/article", :only => [:destroy, :reset_ratings], :owned_by =>
                                   { :scoper => :solution_articles }
     resource :"solution/draft", :only => [:destroy]
+
+    # Used by V2 API
+    resource :"api_solutions/article", :only => [:destroy], :owned_by => { :scoper => :solution_articles }
   end
 
   manage_solutions do
     resource :"solution/category", :only => [:new, :create, :edit, :update, :destroy, :reorder]
     resource :"solution/folder", :only => [:new, :create, :edit, :update, :destroy, :reorder, :move_to, :move_back, :visible_to]
     resource :"solution/article", :only => [:translate_parents]
+
+    # Used by V2 API
+    resource :"api_solutions/category", :only => [:create, :update, :destroy]
+    resource :"api_solutions/folder", :only => [:create, :update, :destroy]
   end
 
   # ************** FORUMS **************************
@@ -523,6 +541,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"integrations/salesforce"
     resource :"integrations/freshsale"
     resource :"integrations/slack_v2", :only => [:oauth, :new, :install, :edit, :update]
+    resource :"integrations/cti_admin"
     resource :"admin/integrations/freshplug"
     resource :"admin/marketplace/extension"
     resource :"admin/marketplace/installed_extension"
@@ -540,9 +559,11 @@ Authority::Authorization::PrivilegeList.build do
     resource :"api_group", :only => [:create, :update, :destroy, :index, :show]
     resource :"api_sla_policy", :only => [:index, :update]
     resource :"api_product", :only => [:index, :show]
+    resource :"settings/helpdesk", :only => [:index]
     resource :survey, :only => [:index]
     resource :"satisfaction_rating", :only => [:index]
     resource :"api_role", :only => [:index, :show]
+    resource :"api_integrations/cti", :only => [:create, :index]
   end
 
   manage_account do

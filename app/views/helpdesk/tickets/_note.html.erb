@@ -7,7 +7,7 @@
 <div id="<%= note_view_id %>" class="description count <%= cycle('stripe', '') %>">  
    	<a name="<%= "note#{note.id}" %>"></a>
    	<div class="conversation-sprite">
-			<% if note.private_note? %>	 
+			<% if note.private_note? && !note.broadcast_note_to_tracker? %>	 
 				<span class="image note-private tooltip" title='<%= t(".private_note") %>'></span>
 			<% elsif note.public_note? %>
 				<span class="image note-public tooltip" title='<%= t(".public_note") %>'></span>
@@ -18,7 +18,9 @@
 			<% elsif note.outbound_email? %>
 				<span class="image email-reply tooltip" title='<%= t(".outbound_email") %>'></span>
 			<% elsif note.tweet? %>
-				<span class="image tweet-note tooltip" title='Tweet'></span>			
+				<span class="image tweet-note tooltip" title='Tweet'></span>
+			<% elsif note.broadcast_note_to_tracker? %>
+				<span class="image note-private tooltip" title='<%= t(".broadcast_note") %>'></span>			
 			<% end %>
 		</div> 
 		<div class="actions">

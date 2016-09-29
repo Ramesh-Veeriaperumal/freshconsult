@@ -135,7 +135,7 @@ class Freshfone::CallMetric < ActiveRecord::Base
     end
 
     def round_robin_routing?
-      self.freshfone_call.round_robin_call? && self.queue_wait_time.blank?
+      self.freshfone_call.incoming? && self.freshfone_call.round_robin_call? && self.queue_wait_time.blank?
     end
 
     def calculate_ring_time(queued_at = nil)
@@ -160,7 +160,7 @@ class Freshfone::CallMetric < ActiveRecord::Base
 
     def warm_transfer_child?
       child_call = self.call.children.last
-      return false if child_call.blank? && child_call.meta.blank?
+      return false if child_call.blank? || child_call.meta.blank?
       child_call.meta.warm_transfer_meta?
     end
 

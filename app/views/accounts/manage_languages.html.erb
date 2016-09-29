@@ -4,7 +4,7 @@
 <div class="manage-languages-header">
 	<span class="button-container itil-hide language-form-btns">
 		<%= pjax_link_to(t('cancel'), edit_account_path, :class => "btn" ) %>
-	  <%= submit_tag t('save'), :class => "btn btn-primary", :id => "manage_languages_submit", :form => "manage_languages_form" %>
+	  <%= submit_tag t('save'), :class => "btn btn-primary", :id => "manage_languages_submit" %>
 	</span>
 	<%= breadcrumbs %>
 </div>
@@ -74,3 +74,12 @@
 		App.Admin.LanguageSettings.msgPortalHidden =  "<%= t('account.hidden_on_portal') %>";
 	});
 </script>
+
+<%= javascript_tag do %>
+	jQuery(document).ready(function(){
+		jQuery('body').off('click', '#manage_languages_submit')
+		jQuery('body').on('click', '#manage_languages_submit', function(){
+			jQuery('#manage_languages_form').submit();
+		});
+	});
+<% end %>

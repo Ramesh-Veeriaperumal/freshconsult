@@ -1,0 +1,105 @@
+<%
+inputs = @installed_app.configs[:inputs]
+%>
+<script src="/javascripts/ghost-mod.js" type="text/javascript"></script>
+<% content_for :helpcard do %>
+  <div class="helpcard">
+    <%=t("integrations.cti_admin.helptext").html_safe%>
+  </div>
+<% end%>
+<%= content_tag(:h3, t("integrations.cti_admin.title"), :class => "lead") %>
+<%= form_for @installed_app, :url => { :controller=> "cti_admin", :action => "update" }, :html => {:id => "cti_admin_form", :method => :put } do |f| %>
+  <div class = "cti-admin-container list-page clearfix">
+    <div>
+       <h3 class="title">
+         <%= check_box(:configs, 'call_note_private', :class => 'ml0',:checked => (inputs["call_note_private"] || '1').to_bool, "rel" => "toggle",  "data-checked-label" => "ON", "data-unchecked-label" => "OFF" )  %>
+         <%= t("integrations.cti_admin.save_agent_private_note") %>
+       </h3>
+    </div>
+    <div class="seperator"></div>
+    <div>
+       <h3 class="title"> 
+         <%= check_box(:configs, 'softfone_enabled', :id => 'softfone_enabled', :checked => (inputs["softfone_enabled"] || '').to_bool, "rel" => "toggle",  "data-checked-label" => "ON", "data-unchecked-label" => "OFF" )  %>
+         <%= t("integrations.cti_admin.iframe_toggle") %>
+       </h3>
+    </div>
+    <div  id="softfone_enabled_content" class="hide mt10 list-page-body row-fluid clearfix">
+      <div class="span6 pl10">
+        <label class="muted"> <%= t("integrations.cti_admin.softfone.url") %></label>
+        <%= text_field(:configs, "cti_iframe_url", size: 20, :value => inputs["cti_iframe_url"], :class => "required url") %>
+      </div>
+      <div class="span6">
+        <span class="pull-left pxsize-wrap">
+          <label class="muted"> <%= t("integrations.cti_admin.softfone.width") %></label>
+          <% width = inputs["cti_iframe_width"].present? ? inputs["cti_iframe_width"] : "550" %>
+          <%= text_field(:configs, "cti_iframe_width", size: 3, :value => width, :class => "size number pl5", :maxlength => 3) %>
+          <span class="info-text pxsize">px</span>
+        </span>
+        <span class="pull-left muted pl10 pxsize-wrap">
+          <label class="muted"> <%= t("integrations.cti_admin.softfone.height") %></label>
+          <% height = inputs["cti_iframe_height"].present? ? inputs["cti_iframe_height"] : "250" %>
+          <%= text_field(:configs, "cti_iframe_height", size: 3, :value => height, :class => "size number pl5", :maxlength => 3) %>
+          <span class="info-text pxsize">px</span>
+        </span>
+        <span class="pull-left muted pl10 mt20 pt8">
+          <%= t("integrations.cti_admin.softfone.max_dimension").html_safe %>
+        </span>
+      </div>
+
+    </div>
+    <div class="seperator"></div>
+    <div>
+      <h3 class="title">
+        <%= check_box(:configs, 'click_to_dial', :id => 'click_to_dial', :checked => (inputs["click_to_dial"] || '0').to_bool, "rel" => "toggle",  "data-checked-label" => "ON", "data-unchecked-label" => "OFF" )  %>
+       <%= t("integrations.cti_admin.ctd_toggle") %>
+     </h3>
+    </div>
+    <div id="cti_ctd_content" class="list-page-body mt10 cti-ctd row-fluid hide">
+      <%= render :partial => "cti_click_to_dial", :locals => {:f => f} %>
+    </div>
+
+    <%= render :partial => "cti_phone_number", :locals => {
+      :used_cti_phones => used_cti_phones,
+      :unused_cti_phones => unused_cti_phones
+    }
+    %>
+  </div>
+  <div class="button-container clearfix">
+	  <%= link_to t('back'), integrations_applications_path, :class => "floatl btn btn-default" %>
+	  <%= submit_tag "save", :class => "btn btn-primary" %>
+  </div>
+<% end %>
+
+<%= javascript_tag do %>
+  (function($){
+
+    if($('#click_to_dial')[0].checked){
+      $('#cti_ctd_content').show();
+    }
+
+    if($('#softfone_enabled')[0].checked) {
+      $('#softfone_enabled_content').show();
+    }
+    $("#click_to_dial").bind("change",function(e){
+      $("#cti_ctd_content").slideToggle(this.checked);
+    });
+
+    $("#softfone_enabled").bind("change",function(e){
+      $("#softfone_enabled_content").slideToggle(this.checked);
+    });
+
+    $('#cti_admin_form').validate();
+
+    $('#cti_admin_form').on('submit', function() {
+      if(!$('#softfone_enabled')[0].checked){
+        $('#softfone_enabled_content :input').val("");
+      }
+      if(!$('#click_to_dial')[0].checked){
+        $('#cti_ctd_content :input').val("")
+      }
+      if(!$('#configs_cti_ctd_req_auth')[0].checked){
+        $('.credentials :input').val("");
+      }
+    });
+  })(jQuery)
+<% end %>

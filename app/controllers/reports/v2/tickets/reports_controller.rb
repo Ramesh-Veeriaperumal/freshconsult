@@ -52,19 +52,23 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
   end
   
   def export_tickets
-    @query_params  = params[:export_params]
-    request_object = HelpdeskReports::Request::Ticket.new(@query_params[:query_hash], report_type)
+    @export_query_params = params[:export_params]
+    @query_params = [@export_query_params.delete(:query_hash)]
+    validate_scope
+    request_object = HelpdeskReports::Request::Ticket.new(@query_params[0], report_type)
     request_object.build_request
-    @query_params[:user_id]     = current_user.id
-    @query_params[:account_id]  = current_account.id
-    @query_params[:report_type] = report_type
-    @query_params[:portal_url]  = main_portal? ? current_account.host : current_portal.portal_url
-    @query_params[:query_hash]  = request_object.fetch_req_params
-    @query_params[:records_limit] = HelpdeskReports::Constants::Export::FILE_ROW_LIMITS[:export][:csv]
+    @export_query_params[:user_id]     = current_user.id
+    @export_query_params[:account_id]  = current_account.id
+    @export_query_params[:report_type] = report_type
+    @export_query_params[:portal_url]  = main_portal? ? current_account.host : current_portal.portal_url
+    @export_query_params[:portal_name] = current_portal.name if current_portal
+    @export_query_params[:query_hash]  = request_object.fetch_req_params
+    @export_query_params[:records_limit] = HelpdeskReports::Constants::Export::FILE_ROW_LIMITS[:export][:csv]
+    puts (@export_query_params.inspect)
     
     if generate_data_exports_id
       status_code = :ok
-      $sqs_reports_service_export.send_message(@query_params.to_json)
+      $sqs_reports_service_export.send_message(@export_query_params.to_json)
     else
       status_code = :unprocessable_entity
     end
@@ -83,6 +87,7 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
   def email_reports
     param_constructor = "HelpdeskReports::ParamConstructor::#{report_type.to_s.camelcase}".constantize.new(params.symbolize_keys) 
     req_params = param_constructor.build_pdf_params
+    req_params[:portal_name] = current_portal.name if current_portal
     Reports::Export.perform_async(req_params)
     render json: nil, status: :ok
   end
@@ -274,7 +279,7 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
                                   :status => DataExport::EXPORT_STATUS[:started]
                                 )
       @data_export.save
-      @query_params[:export_id] = @data_export.id
+      @export_query_params[:export_id] = @data_export.id
 
       acc_export = current_user.data_exports.send("reports_export")
       acc_export.first.destroy if acc_export.count >= TICKET_EXPORT_LIMIT

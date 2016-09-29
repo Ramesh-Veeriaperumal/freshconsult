@@ -4,8 +4,8 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
 	
 	COUNT_COLUMNS_FOR_REPORTS = ["agent_reassigned", "group_reassigned", "reopened", 
                                   "private_note", "public_note", "agent_reply", "customer_reply"]
-
-  NOTE_COUNT_METRICS = ["private_note", "public_note", "agent_reply", "customer_reply"]
+	
+  	NOTE_COUNT_METRICS = ["private_note", "public_note", "agent_reply", "customer_reply"]
   
 	self.table_name =  "helpdesk_schema_less_tickets"
 	self.primary_key = :id
@@ -15,6 +15,10 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
 
 	belongs_to :sla_policy, :class_name => "Helpdesk::SlaPolicy", :foreign_key => "long_tc01"
 	belongs_to :parent, :class_name => 'Helpdesk::Ticket', :foreign_key => 'long_tc02'
+  belongs_to :internal_group, :class_name => "Group", :foreign_key => "long_tc03"
+  belongs_to :internal_agent, :class_name => "User", :conditions => {:helpdesk_agent => true},
+    :foreign_key => "long_tc04"
+
 
 	belongs_to_account
 
@@ -34,7 +38,11 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
 	alias_attribute :reports_hash, :text_tc02
 	alias_attribute :sla_response_reminded, :boolean_tc04
 	alias_attribute :sla_resolution_reminded, :boolean_tc05
-	alias_attribute :dirty_attributes, :text_tc03	
+	alias_attribute :dirty_attributes, :text_tc03
+	alias_attribute :internal_group_id, :long_tc03
+	alias_attribute :internal_agent_id, :long_tc04
+	alias_attribute :association_type, :int_tc03
+	alias_attribute :associates_rdb, :long_tc05
 
 
 	# Attributes used in Freshservice
@@ -44,6 +52,10 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
 	serialize :text_tc01, Hash
 	serialize :text_tc02, Hash
 	serialize :text_tc03, Hash
+
+	def self.association_type_column
+		:int_tc03
+	end
 
 	def self.trashed_column
 		:boolean_tc02
@@ -56,6 +68,18 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
 	def self.survey_rating_updated_at_column
 		:datetime_tc01
 	end
+
+	def self.associates_rdb_column
+		:long_tc05
+	end
+
+  def self.internal_group_column
+    :long_tc03
+  end
+
+  def self.internal_agent_column
+    :long_tc04
+  end
 
 	def self.find_by_access_token(token)
 		find_by_string_tc01(token)
@@ -82,6 +106,15 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
   	self.reports_hash.merge!("first_assign_by_bhrs" => first_assign_by_bhrs)
 	end
 	
+	def set_internal_agent_first_assign_bhrs(created_at_time, first_assigned, group)
+		return if reports_hash.has_key?("internal_agent_first_assign_in_bhrs")
+		first_assign_by_bhrs = nil
+		BusinessCalendar.execute(self.ticket) {
+			first_assign_by_bhrs = calculate_time_in_bhrs(created_at_time, first_assigned, group)
+		}
+  	self.reports_hash.merge!("internal_agent_first_assign_in_bhrs" => first_assign_by_bhrs)
+	end
+
 	def set_first_response_id(note_id)
 		unless reports_hash.has_key?("first_response_id")
 			self.reports_hash.merge!("first_response_id" => note_id)
@@ -93,7 +126,7 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
 		self.reports_hash['last_resolved_at'] = time
 	end
 	
-	["agent", "group"].each do |type|
+	["agent", "group", "internal_agent", "internal_group"].each do |type|
 		define_method("set_#{type}_assigned_flag") do
 			return if reports_hash.has_key?("#{type}_reassigned_flag")
 			if reports_hash.has_key?("#{type}_assigned_flag")

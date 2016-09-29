@@ -16,7 +16,7 @@ class SearchV2::Manager
       Account.current.tickets.visible.find_in_batches(:batch_size => 300) do |tickets|
         tickets.map(&:sqs_manual_publish_without_feature_check)
       end
-      Account.current.notes.visible.exclude_source('meta').find_in_batches(:batch_size => 300) do |notes|
+      Account.current.notes.visible.exclude_source(['meta', 'tracker']).find_in_batches(:batch_size => 300) do |notes|
         notes.map(&:sqs_manual_publish_without_feature_check)
       end
       Account.current.archive_tickets.find_in_batches(:batch_size => 300) do |archive_tickets|

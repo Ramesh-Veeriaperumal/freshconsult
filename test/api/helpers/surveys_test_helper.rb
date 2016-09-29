@@ -1,3 +1,4 @@
+['ticket_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
 module SurveysTestHelper
   include TicketHelper
 

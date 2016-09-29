@@ -1,3 +1,4 @@
+@import "../common-popover";
 @import "../../fonts/glyphs-variables";
 
 // Requester Info Tabs in Ticket Details page
@@ -42,14 +43,17 @@ li {
     }
 }
 
-.tkt-wrapper-inner {
-    width: 98%;
+//ticket tracker ui changes
+
+
+.tkt-wrapper-inner{
+	width: 98%; 
     /* It must be adjust the width for ".leftcontent .at_the_top" class*/
-    @include padding-left(25px);
-    margin: 0 auto;
-    &.compose_email {
-        @include padding-left(0);
-    }
+	@include padding-left(25px);
+	margin: 0 auto;
+	&.compose_email {
+		@include padding-left(0);
+	}
 }
 
 .tkt-wrap {
@@ -504,12 +508,6 @@ li {
 
 
 /*// Multiple File Upload*/
-.attach-wrapper {
-    /*integration dropdowns*/
-    .dropdown-menu {
-        max-width: 230px;
-    }
-}
 .no-width {
     width: auto !important;
 }
@@ -534,7 +532,7 @@ li {
         position: relative;
         @include right(0);
         @include opacity(0);
-        @include padding-left(100%);
+        /*@include padding-left(100%);*/
         cursor: pointer;
         overflow: hidden;
         z-index: 10;
@@ -561,7 +559,7 @@ li {
         position: relative;
         @include right(0);
         @include opacity(0);
-        @include padding-left(100%);
+        /*@include padding-left(100%);*/
         cursor: pointer;
         overflow: hidden;
         z-index: 10;
@@ -883,6 +881,26 @@ li {
     }
   }
 }
+/*traffic cop for multifile*/
+#traffic-cop-attachment-error {
+    position: fixed;
+    @include border-left(0px);
+    top: 0px;
+    z-index: 999;
+    @include left(100px);
+    @include right(145px);
+    .alert-container {
+        border-radius: 2px;
+    }
+    label {
+        text-align: center;
+        a {
+           color: white;
+           text-decoration: underline;
+        }
+    }
+}
+/*end*/
 /*reply from forward*/
 .ticketSelect2Reply {
     border:none !important;
@@ -918,11 +936,11 @@ li {
 /*// Single file upload */
 
 .single_file {
-        border-radius:5px;
+        border-radius: 7px;
     // !Pattern?
     .hidden_upload {
         display: block;
-        width: 120px;
+        min-width: 100px;
         @include margin-left(3px);
         @include float(left);
         @include clear(both);
@@ -935,7 +953,7 @@ li {
         }
         input[type=file] {
             height: 22px;
-            width: 120px;
+            min-width: 120px;
             position: relative;
             @include right(0);
             @include opacity(0);
@@ -952,13 +970,12 @@ li {
         cursor: pointer;
         height: 22px;
         color: #1272de;
-        width: 120px;
         overflow: hidden;
         text-overflow: ellipsis;
         @include micro-position(14px);
         z-index: 2;
         white-space: nowrap;
-        top: 0px;
+        top: 10px;
         span {
             @include padding(0px 5px 5px 5px);
             color: #1272de;
@@ -972,9 +989,9 @@ li {
         background: #FDFDFD;
         padding: 0px;
         border-top:1px solid #F3F3F3;
-        border-bottom: 1px solid #ccc;
         display: block;
-
+        min-height: 30px;
+        top:0px;
     }
     .attachments-wrap div.item {
         border: none;
@@ -986,9 +1003,6 @@ li {
         a {
           color: #000000 !important;
         }
-    }
-    .attachments-wrap div.item:last-child {
-        margin-bottom: 10px;
     }
     .attachments-wrap div.item:hover {
         color: #000000 !important;
@@ -1011,7 +1025,60 @@ li {
     .attachmentTrigger {
         @include margin-left(10px !important);
     }
+    .attachment-help-info {
+        color: #999 !important;
+        font-size: 0.9em !important;
+        font-weight: normal !important;
+        position: relative;
+        top:16px;
+    }
+    #article-container {
+        .hidden_upload {
+            min-width: 100px;
+        }
+        .info-data {
+            top:15px;
+        }
+    }
+
 }
+.attachment-options.reply2forward {
+    width:100%;
+    padding: 0px;
+    margin-bottom: -15px;
+    .hidden_upload {
+        top:0px;
+    }
+   .cloud .attachmentTrigger {
+         .attachments-list-form {
+        padding-bottom:10px;
+      }
+    }
+
+}
+.attachment-options-reply ,.compose-new-email , .redactor_wrapper {
+  .single_file{
+        .attach-link {
+             position: relative;
+             top: 10px;
+        }
+    }
+}
+.single_file.cloud {
+    .attach-wrapper {
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+    .attachment-help-info {
+        top:0px !important;
+    }
+}
+.single_file.cloud.show {
+    .dropdown {
+        padding-bottom: 10px;
+    }
+}
+
 /*reply 2 forward*/
 .single_file.color {
     .attach-wrapper {
@@ -1023,7 +1090,9 @@ li {
         top: 14px;
     }
 }
+
 .single_file.bulk {
+    margin-bottom: 15px;
    .attach-wrapper {
         width: 100%;
         background: #fdfdfd !important;
@@ -1032,6 +1101,9 @@ li {
     }
     .add_attachment {
         top: 6px;
+    }
+    .attachment-help-info {
+        top: 12px;
     }
 }
 .commentbox.commentbox-gray  {
@@ -1049,7 +1121,8 @@ li {
     padding: 0px !important;
     width: 100% !important;
     position: relative;
-    top: 23px;
+    top: 15px;
+    margin-bottom: 0px !important;
 }
 /*attachment view*/
 
@@ -1090,6 +1163,9 @@ li {
         white-space: nowrap;
         text-overflow: ellipsis;
     }
+}
+.compose-new-email .single_file.cloud {
+    padding-bottom: 10px;
 }
 
 .compose-new-ticket .single_file .attach-wrapper {
@@ -1302,6 +1378,10 @@ li {
             .avatar-text{
                 cursor: pointer;
             }
+        }
+
+        .MsoListParagraph {
+            text-indent: 18.0pt !important;
         }
     }
     .activity:hover {
@@ -1521,6 +1601,10 @@ li {
                 margin-top: 5px;
                 position: relative;
                 z-index: 2;
+            }
+            p.cc-error-message {
+                float: left;
+                margin: 10px 0 0 44px;
             }
             .email_container {
                 width: 100%;
@@ -1775,6 +1859,20 @@ li {
             border: solid 1px #999;
         }
     }
+    #cnt-broadcast{
+        .ui-form .inline-field.clearField{
+            border-top: none;
+            border-radius: inherit;
+            margin-top: -1px;
+        }
+        .ficon-broadcast-tracker{
+            border-bottom: none;
+            font-size: 17px;
+            padding-right: 5px;
+            position: relative;
+            top: 1px;   
+        }
+    }
     .request_panel .ui-form .request_form_options {
         position: relative;
         @include float(right);
@@ -2022,6 +2120,40 @@ li {
         margin-bottom: 10px;
         margin-left: 5px;
         font-weight: bold;
+    }
+    
+    &.broadcast_message_box {
+        background: #fafafa;
+        &:before, &:after {
+            display: none;
+        }
+
+        .ficon-broadcast-tracker{
+            position: relative;
+            top: 2px;
+            padding-right: 3px;
+        }
+
+        .q-marker {
+            margin-top: 0px;
+        }
+
+        #ticket_original_request {
+            margin-top: 10px;
+            height: auto;
+            overflow: hidden;
+
+                &.collapsed {
+                    height: 65px;
+                    cursor: pointer;
+                }
+            }
+
+        .attach_broadcasted_msg{
+            border-top: 1px solid #ddd;
+            margin-top: 15px;
+            padding-top: 8px;
+        }
     }
 }
 
@@ -3027,8 +3159,7 @@ li {
         padding: 0px;
         margin: 0;
         width: 100%;
-        /*margin-bottom: -20px; ttt */
-        margin-bottom: -24px;
+        margin-bottom: -15px;
     }
     .attach-wrapper {
         background: #F8F8F8;
@@ -3041,6 +3172,7 @@ li {
         padding: 5px 0px;
         min-height: 29px;
         position: relative;
+        top:9px;
         .invalid_attachment {
             text-decoration: line-through;
         }
@@ -4005,7 +4137,7 @@ li {
         position: relative;
         display: block;
         width: 100%;
-        top: 11px !important;
+        top: -5px !important;
         .attach-wrapper {
             border: none !important;
         }
@@ -4016,7 +4148,7 @@ li {
         position: relative;
         display: block;
         width: 100%;
-        top: -3px;
+        top: -11px;
         .attachment-limit {
             padding-top: 10px;
         }

@@ -1,6 +1,7 @@
 class AgentObserver < ActiveRecord::Observer
 
   include MemcacheKeys
+  include RoundRobinCapping::Methods
 
   def before_create(agent)
     set_default_values(agent)
@@ -19,6 +20,10 @@ class AgentObserver < ActiveRecord::Observer
 
   def after_save(agent)
     update_agent_levelup(agent)
+  end
+
+  def after_update(agent)
+    handle_capping(agent)
   end
 
   protected
@@ -45,13 +50,21 @@ class AgentObserver < ActiveRecord::Observer
       end 
     end
 
-    def auto_refresh_key(agent)
-      AUTO_REFRESH_AGENT_DETAILS % { :account_id => agent.account_id, :user_id => agent.user_id }
-    end
       
     def update_crm(agent)
       if agent.account.full_time_agents.count > 1
         Resque.enqueue_at(15.minutes.from_now, CRM::AddToCRM::UpdateTrialAccounts, { :account_id => agent.account_id })
       end
+    end
+
+    def handle_capping(agent)
+      return unless agent.available_changed?
+
+      action = agent.available ? "add_agent_to_group_capping" : "remove_agent_from_group_capping"
+      agent.groups.each do |group|
+        group.send(action, agent.user_id) if group.round_robin_capping_enabled?
+      end
+
+      Groups::AssignTickets.perform_async({:agent_id => agent.id}) if agent.available
     end
 end

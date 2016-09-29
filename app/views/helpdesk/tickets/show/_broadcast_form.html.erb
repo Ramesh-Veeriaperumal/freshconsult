@@ -1,0 +1,57 @@
+<div class="request_panel" id="<%=cntid%>" style="display:none;" rel="emitter" data-node-name="agent_replying">
+  <%= form_for note, :url => broadcast_helpdesk_ticket_conversations_path(@ticket), :html => {
+                      :multipart => true,  
+                      :id => "HelpdeskNotes",
+                      :rel => 'note_form', 
+                      "data-panel" => cntid,
+                      "data-domhelper-name" => "cnt-note",
+                      "data-show-pseudo-reply" => 'true',
+                      "data-destroy-editor" => 'true',
+                      "data-fetch-latest" => 'true',
+                      "data-cnt-id" => cntid,
+                      "data-submitting" => 'false'
+                    } do |f| %>
+    <%= content_tag( :div, 
+      "<span class='ficon-broadcast-tracker muted'></span>#{t('ticket.note_form.broadcast', :count => @ticket.related_tickets_count)}".html_safe, 
+      :class => "form_title" ) %>
+    <div class="list_agents_replying" class="hide"></div>
+    <%= f.error_messages %>
+    <ul class="ui-form dont-validate botm-space">
+
+      <li class="inline-field field clearField message">
+        <%= render :partial => 'helpdesk/tickets/show/editor_insert_buttons', :locals => { :cntid => cntid } %>
+        <%= f.fields_for(:note_body, Helpdesk::NoteBody.new) do |ff| %>
+            <%= ff.text_area :body_html, :class => "body_html required", :id => "#{cntid}-body", :"data-wrap-font-family" => true, :"data-domhelper-name" => "#{cntid}-body" %>
+        <% end %>
+      </li>
+      <li class="inline-field field continous file_size_alert hide" id="file_size_alert_<%= cntid %>">
+        <span class="alert-text"><%= t('helpdesk.tickets.note.not_added') %></span>
+        <%= t('helpdesk.tickets.note.attachment_size.exceed') %>
+      </li>
+      <li class="inline-field field attachment-options continous" id="attachment-options-note">
+          <% unless local_assigns[:no_attachments] %>
+          <%= render :partial => "/helpdesk/tickets/show/attachment_form", :locals => { :attach_id => id , :nsc_param => "helpdesk_note" } %>
+          <% end %>
+      </li>
+    </ul> 
+    <%= f.hidden_field :source , :value => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"]%>
+    <%= f.hidden_field :category , :value => Helpdesk::Note::CATEGORIES[:broadcast] %>
+    <%= hidden_field_tag(:page , params[:page], :id=>:page  ) unless params[:page].nil? %>
+    <%= hidden_field_tag :last_note_id,'', :value => @last_note_id, :class => "last_note_id" %>
+
+    <div class="btn-toolbar">
+      
+      <span class="btn-group">
+        <button class="btn cancel_btn reply_agent_collision" data-show-pseudo-reply='true' data-cnt-id='<%= cntid %>'>
+          <%= t('cancel') %>
+        </button>
+      </span>
+      <span class="btn-group <% if privilege?(:edit_ticket_properties) %>dropup<%end%>">
+        <button class="btn btn-primary submit_btn reply_agent_collision"
+            data-public-text="Broadcast" >
+          <span rel="text"><%= t('helpdesk.ticket.broadcast') %></span>
+      </span>
+    </div>
+  <% end %>
+  <div class="clearfix overflowh" ></div>
+</div>

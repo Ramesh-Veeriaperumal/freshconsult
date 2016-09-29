@@ -12,6 +12,7 @@
 
 .content{ 
 	background-color: $page-background;
+	@include word-hyphernate;
 	.lead{
 		font-weight: 500;
 	}
@@ -770,6 +771,7 @@ hr.content-divider{
 
 
 .ticket-main{
+	@include word-hyphernate;
 	.user-details{
 		h4.user-name{
 			display: inline;

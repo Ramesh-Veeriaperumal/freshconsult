@@ -2,7 +2,7 @@
       please update the memcache key version. key_name :: AGENT_NEW_TICKET_FORM  -->
 
 <%= ticket_form.error_messages %>
-<% current_portal.ticket_fields.each do |field|
+<% current_portal.ticket_fields_including_nested_fields.each do |field|
     next if field.section_field?
     if is_edit or params[:template_form]
       field_value = @item.send(field.field_name)
@@ -13,6 +13,11 @@
     field_label = ( field.is_default_field? ) ? I18n.t("ticket_fields.fields.#{(field.name)}").html_safe :
                                                 (field.label).html_safe
   %>
+  <% if tracker_ticket_requester?(field.dom_type) %>
+    <%= render :partial => "helpdesk/tickets/ticket_widget/agent_requester" %>
+    <% next %>
+  <% end %>
+
   <%= construct_new_ticket_element f, :helpdesk_ticket,
                                   field,
                                   field_label,
@@ -35,3 +40,44 @@
 
 <%= ci_fields(ticket_form)%>
 <input type="hidden" id="companyurl" value="<%= helpdesk_commons_user_companies_path %>" />
+<%= javascript_tag do %>
+
+  jQuery('#helpdesk_ticket_status').bind('change' , function(event){
+    var select_group = jQuery('#Pagearea .default_internal_group select')[0];
+    var prev_val = "";
+    if(select_group){
+        prev_val = select_group.options[select_group.selectedIndex].value;
+    }
+
+    jQuery('#Pagearea .compose-new-ticket .default_internal_group label').addClass('sloading loading-small loading-right');
+    jQuery.ajax({
+      url: prev_val == "" ? "/helpdesk/commons/status_groups?status_id="+this.value : "/helpdesk/commons/status_groups?status_id="+this.value+"&group_id="+prev_val,
+      type: "GET",
+      contentType: "application/text",
+      success: function(data){
+        jQuery('#helpdesk_ticket_internal_group_id').html(data).trigger('change');
+        jQuery('#Pagearea .compose-new-ticket .default_internal_group label').removeClass('sloading loading-small loading-right');
+      }
+    });
+  });
+
+  jQuery('#helpdesk_ticket_internal_group_id').bind("change", function(e){
+    var select_group = jQuery('#Pagearea .default_internal_agent select')[0];
+    var prev_val = select_group.options[select_group.selectedIndex].value;
+    if(this.value){
+      jQuery('#Pagearea .compose-new-ticket .default_internal_agent label').addClass('sloading loading-small loading-right');
+
+      jQuery.ajax({
+        type: 'GET',
+        url:  prev_val== "" ? '/helpdesk/commons/group_agents/'+this.value : '/helpdesk/commons/group_agents/'+this.value+"?agent="+prev_val,
+        contentType: 'application/text',
+        success: function(data){
+          jQuery('#helpdesk_ticket_internal_agent_id').html(data).trigger('change');
+          jQuery('#Pagearea .compose-new-ticket .default_internal_agent label').removeClass('sloading loading-small loading-right');
+        }
+      });
+    }else{
+      jQuery('#helpdesk_ticket_internal_agent_id').html("<option value=''>...</option>").trigger('change');
+    }
+  });
+<% end %>

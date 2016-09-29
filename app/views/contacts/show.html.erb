@@ -20,7 +20,7 @@
 			<div class="btn-group pull-right">
 				<%= link_to t('assume_identity_button'), assume_identity_user_path(@user),{
 											:class => "btn"
-										} if is_allowed_to_assume?(@user) %>
+										} if is_allowed_to_assume?(@user) and !current_account.hide_agent_metrics_feature? %>
 				
 				<% if privilege?(:admin_tasks) and @user.allow_password_update?%>
 			    <%= link_to(t('change_password').html_safe, change_password_contact_path(@user), {:class => "btn", :'data-pjax' => "#body-container"}) %>
@@ -83,11 +83,13 @@
 					   	</div>
 					<% end %>
 					<%= render :partial => "helpdesk/tickets/components/company_info", 
-	                     :locals => { :user => @user, :companies => @selected_companies } unless @user.has_multiple_companies_feature? %>
+	                   :locals => { :company => @user.company,
+	                                :companies => @selected_companies } unless @user.has_multiple_companies_feature? %>
          			</div>
 				<ul class="show-fields">
 					<%= render :partial => "helpdesk/tickets/components/company_info", 
-	                     :locals => { :user => @user, :companies => @selected_companies } if @user.has_multiple_companies_feature? %>
+	                   :locals => { :company => @user.company,
+	                                :companies => @selected_companies } if @user.has_multiple_companies_feature? %>
 					<% view_contact_fields.each do |field| %>
 				    		<%=  render_as_list nil, field %>
 				    	<% end %>

@@ -67,7 +67,7 @@
         </div>
         <div class="vertical-alignment">
           <%= select_tag :group_by_field , options_for_select(Helpdesk::TimeSheet.group_by_options,grp_data),
-                  { :multiple => false, :class => "select2 filter_item"}%>
+                  { :multiple => false, :class => "select2 filter_item", "data-width" => "150"}%>
         </div>
         <% if current_user.privilege?(:export_reports) %>
           <span class="pull-right time-sheet-top-margin">
@@ -124,12 +124,12 @@
       var current_group = "<%= @current_group %>";
       var previous_group_id = "<%= @time_sheets.keys.last %>";
       var previous_entry_id = <%= @time_sheets.values.flatten.last ? @time_sheets.values.flatten.last.id : 0 %>;
-      var group_count = JSON.parse('<%= @group_count.to_json.html_safe %>');
-      var group_names = '<%= @group_names.to_json.html_safe %>';
+      var group_count = <%= @group_count.to_json.html_safe %>;
+      var group_names = <%= @group_names.to_json.html_safe %>;
       var total_row_count = <%= @row_count %>;
       var row_count = 2000;
       var totaltime = <%= @group_count.values.sum %>;
-      var current_params = {current_params: JSON.parse('<%= @current_params.to_json.html_safe %>')};
+      var current_params = {current_params: <%= @current_params.to_json.html_safe %>};
       var triggered = false;
       if(total_row_count == 0){
         jQuery('#timesheet_table_loading').remove();
@@ -213,6 +213,14 @@
                 jQuery('#report-title').html(title_block);
                 jQuery("#filter_text_others").html(filter_block);
                 trigger_event("report_refreshed",{});
+
+                var hours_tracked = jQuery('h1.total_time_metric').html().trim();
+                var billabe_hours = jQuery('h1.billable_time').html().trim();
+                var non_billable_hours = jQuery('h1.nonbillable_time').html().trim();
+                var size = calculateBestFontSize(hours_tracked);
+                adjustFontSize('h1.total_time_metric',size);
+                adjustFontSize('h1.billable_time',size);
+                adjustFontSize('h1.nonbillable_time',size);
               }
         });
 

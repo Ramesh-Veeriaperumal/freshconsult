@@ -1,0 +1,13 @@
+<%= "#{t('helpdesk.tickets.add_watcher.mail.hi')}," %>
+<br/>
+<br/>
+<%= "#{t('ticket.ticket_url')}: " %> <%= @url %>
+<br/>
+<br/>
+<%= "#{t('email_notifications.subject')}: " %> <%= @subject %>
+<br/>
+<br/>
+<%= t('ticket.link_tracker.notifier_body') %>
+<%= @content.html_safe %>
+<br/>
+<br/>

@@ -609,10 +609,21 @@ QuickBooksWidget.prototype = {
         return year + '-' + month + '-' + date;
     },
 
+    company:function(){
+        if(quickbooksBundle) {
+            if(quickbooksBundle.ticket_company.length > 0){
+                return quickbooksBundle.ticket_company;
+            }else if(quickbooksBundle.reqCompany.length > 0){
+                return quickbooksBundle.reqCompany;
+            }
+        }
+        return "";
+    },
+
     find_default_client: function(all_records) {
         var default_value = '-';
         for (i = 0; i < all_records.length; i++) {
-            if (all_records[i].DisplayName == quickbooksBundle.reqCompany) {
+            if (all_records[i].DisplayName == this.company()) {
                 default_value = all_records[i].Id;
                 break;
             }

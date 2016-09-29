@@ -292,8 +292,10 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 			}
 			if (!this.canDialNumber()) { return this.toggleInvalidNumberText(true); }
 
-			var params = { PhoneNumber : this.number, phone_country: this.callerLocation(),
-										number_id: this.outgoingNumberId(), agent: this.currentUser, type: "outgoing"};
+			var params = { PhoneNumber : this.number, type: "outgoing",
+				phone_country: this.callerLocation(),  agent: this.currentUser,
+				number_id: this.outgoingNumberId(), device_info: navigator.userAgent
+				};
 			if(this.customerId){ params.customer_id = this.customerId; }
 			if(!this.call_validation(true)) {
 				return false;
@@ -424,14 +426,12 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 		warmTransferCall: function (id) {
 			this.freshfoneWarmTransfer = new FreshfoneWarmTransfer(this, id);
 			this.freshfoneWarmTransfer.init();
-			this.freshfoneWarmTransfer.loadDependencies(this.freshfoneSocket);
 			this.saveCallNotes();
 		},
 		handleWarmTransferReceiverCall: function() {
 			this.setIsWarmTransfer('receiver');
 			this.freshfoneWarmTransfer = new FreshfoneWarmTransfer(this, '');
 			this.freshfoneWarmTransfer.receiverInit();
-			this.freshfoneWarmTransfer.loadReceiverDependencies(this.freshfoneSocket);
 		},
 		setIsWarmTransfer: function(status) {
 			this.warmTransfer.type = status;

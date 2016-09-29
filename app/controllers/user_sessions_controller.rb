@@ -80,7 +80,7 @@ include Mobile::Actions::Push_Notifier
       @user_session.web_session = true unless is_native_mobile?
       if saved && @user_session.save
         if is_native_mobile?
-          cookies["mobile_access_token"] = { :value => @current_user.helpdesk_agent ? @current_user.single_access_token : 'customer', :http_only => true } 
+          cookies["mobile_access_token"] = { :value => @current_user.mobile_auth_token, :http_only => true } 
           cookies["fd_mobile_email"] = { :value => @current_user.email, :http_only => true } 
         end
         flash.discard
@@ -110,7 +110,6 @@ include Mobile::Actions::Push_Notifier
       @current_user_session = @user_session
       @current_user = @user_session.record
       #Hack ends here      
-      
       if grant_day_pass 
         respond_to do |format|
           format.html {
@@ -121,8 +120,10 @@ include Mobile::Actions::Push_Notifier
             if @current_user.customer? 
               @current_user_session.destroy 
               render :json => {:login => 'customer'}.to_json
+            elsif @current_user.password_expired?
+              render :json => {login: 'failed', attr: 'base', message: 'The email and password you entered does not match'}
             else
-              render :json => {:login => 'success' , :auth_token => @current_user.single_access_token}.to_json
+              render :json => {:login => 'success' , :auth_token => @current_user.mobile_auth_token }.to_json
             end
           }
         end

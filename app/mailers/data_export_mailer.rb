@@ -100,6 +100,25 @@ class DataExportMailer < ActionMailer::Base
     end.deliver
   end
  
+  def broadcast_message options={}
+    message_id = "#{Mail.random_tag}.#{::Socket.gethostname}@private-notification.freshdesk.com"
+    headers = {
+      "Message-ID"                =>  "<#{message_id}>",
+      "Auto-Submitted"            =>  "auto-generated",
+      "X-Auto-Response-Suppress"  =>  "DR, RN, OOF, AutoReply",
+      :subject                    => options[:subject],
+      :to                         => options[:to_email],
+      :from                       => options[:from_email],
+      :sent_on                    => Time.now
+    }
+    @url = options[:url]
+    @subject = options[:ticket_subject]
+    @content = options[:content]
+    mail(headers) do |part|
+      part.html { render "broadcast_message", :formats => [:html] }
+    end.deliver
+  end
+
   private
     def formatted_export_subject(options)
       filter = I18n.t("export_data.#{options[:export_params][:ticket_state_filter]}")

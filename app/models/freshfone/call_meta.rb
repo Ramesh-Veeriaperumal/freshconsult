@@ -127,7 +127,7 @@ class Freshfone::CallMeta < ActiveRecord::Base
 
   def update_agent_ringing_time(agent_id)
     pinged_agents.each do |agent|
-      agent.merge!({ :ringing_time => (Time.zone.now - agent[:ringing_at]).to_i.abs }) if agent[:id] == agent_id.to_i
+      agent.merge!({ :ringing_time => (Time.zone.now - agent[:ringing_at]).to_i.abs }) if agent[:id] == agent_id.to_i && agent[:ringing_at].present?
     end
     save!
   end
@@ -200,7 +200,7 @@ class Freshfone::CallMeta < ActiveRecord::Base
   end
 
   def warm_transfer_revert?
-    meta_info[:type] == 'warm_transfer' &&
+    meta_info.is_a?(Hash) && meta_info[:type] == 'warm_transfer' &&
                       freshfone_call.user_id == freshfone_call.parent.user_id
   end
 

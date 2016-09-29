@@ -1,0 +1,17 @@
+<ul id="Pages" class="activityfeed">
+
+  <% if @related_tickets.present? %>
+    <%= render( :partial => "helpdesk/tickets/show/related_ticket", 
+            collection: @related_tickets ) %>
+    <% end -%>
+</ul>
+<%= will_paginate @related_tickets %>
+<%= load_more({
+  :totalPages   => @related_tickets.total_pages,
+  :url          => url_for(:action => 'related_tickets'),
+  :container    => '.activityfeed',
+  :currentPage  => 1,
+  :pageIncrement => true,
+  :loadMoreAppendAfter => '.activityfeed',
+  :complete     => '$this.$el.append(data);$this.loadMoreButton.button("reset");'
+   }) %>

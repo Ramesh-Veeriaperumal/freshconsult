@@ -40,7 +40,8 @@ module RabbitMq::Constants
     [  'time_sheet',          CRUD_KEYS_BY_TOKEN[:all],                 'time_sheet'      ],
     [  'tag',                 CRUD_KEYS_BY_TOKEN[:all],                 'tag'             ],
     [  'tag_use',             CRUD_KEYS_BY_TOKEN[:create_and_destroy],  'tag_use'         ],
-    [  'account',             CRUD_KEYS_BY_TOKEN[:destroy],             'account'         ]
+    [  'account',             CRUD_KEYS_BY_TOKEN[:destroy],             'account'         ],
+    [  "cti_call",            CRUD_KEYS_BY_TOKEN[:create],                  "cti_call"   ]
   ]
   
   # If the exchange mapping values ("ticket", "customer") is changed, please make sure that the changes
@@ -116,14 +117,17 @@ module RabbitMq::Constants
   
   REPORTS_TICKET_KEYS = ["display_id", "id", "account_id", "agent_id", "group_id", 
     "product_id", "company_id", "status", "priority", "source", "requester_id", "ticket_type", 
-    "visible", "sla_policy_id", "is_escalated", "fr_escalated", "resolved_at", 
+    "visible", "sla_policy_id", "association_type", "is_escalated", "fr_escalated", "resolved_at", 
     "time_to_resolution_in_bhrs", "time_to_resolution_in_chrs", "inbound_count",
     "first_response_by_bhrs", "first_assign_by_bhrs", "created_at", "archive", "actor_type", "actor_id",
+    "internal_agent_id", "internal_group_id", 
+
     # columns stored in reports_hash in schema_less_ticket
     "first_response_id", "agent_reassigned_count", "group_reassigned_count", "reopened_count", 
     "private_note_count", "public_note_count", "agent_reply_count", "customer_reply_count",
     "agent_assigned_flag", "agent_reassigned_flag", "group_assigned_flag", "group_reassigned_flag",
-    "last_resolved_at"
+    "internal_agent_assigned_flag", "internal_agent_reassigned_flag", "internal_group_assigned_flag", "internal_group_reassigned_flag",
+    "internal_agent_first_assign_in_bhrs", "last_resolved_at"
   ]
   
   REPORTS_ARCHIVE_TICKET_KEYS = REPORTS_TICKET_KEYS
@@ -131,5 +135,6 @@ module RabbitMq::Constants
   REPORTS_NOTE_KEYS           = ["id", "source", "user_id", "agent", "category", "private", "incoming", "deleted", "account_id", "created_at", "archive", "actor_type"]
   
   MANUAL_PUBLISH_SUBCRIBERS   = ["reports", "activities", "count"]
+  CTI_CALL_KEYS = ["id", "call_sid", "options", "account_id", "responder_id", "requester_id"]
 
 end

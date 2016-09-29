@@ -22,6 +22,7 @@
                   :maxlength => 240,
                   :id => :solution_article_title,
                   :value => (@article.new_record? ? @article.title : ''),
+
                   :placeholder => (Account.current.multilingual? ? t("solution.articles.enter_version_name", :language_name => @language.name) : t('solution.solution_title')) %>
       
         </div>

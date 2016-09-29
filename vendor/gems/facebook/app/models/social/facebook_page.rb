@@ -19,6 +19,7 @@ class Social::FacebookPage < ActiveRecord::Base
 
   scope :active, :conditions => ["enable_page=?", true]
   scope :reauth_required, :conditions => ["reauth_required=?", true]
+  scope :realtime_messaging_disabled, :conditions => ["realtime_messaging=?", false]
   scope :valid_pages, :conditions => ["reauth_required=? and enable_page=?", false, true]
   
   scope :paid_acc_pages, 

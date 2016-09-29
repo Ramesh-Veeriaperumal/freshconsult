@@ -1,0 +1,16 @@
+defaults: &defaults
+  key: "IHazSekretKey"
+  iv: "1234567890123456"
+  socket_host: "localhost:4000"
+
+development:
+  <<: *defaults
+
+slave:
+  <<: *defaults
+
+test:
+  <<: *defaults
+
+staging:
+  <<: *defaults

@@ -69,8 +69,7 @@ Helpdesk::TicketField.seed_many(:account_id, :name,
       :choices => f[:choices] || [],
       :field_options => f[:field_options],
       :default => true,
-      :ticket_form_id => account.ticket_field_def.id,
-      :column_name    => "default"
+      :ticket_form_id => account.ticket_field_def.id
     }
     field_hash.merge!(:picklist_values_attributes => f[:picklist_values]) if f[:name].eql?("ticket_type")
     field_hash

@@ -183,9 +183,6 @@
   }
   .apptype-head{
     @include padding(0 15px);
-    .logo{
-      width:106px;
-    }
     a.logo-link{
       @include margin(0);
       font-size: 20px;
@@ -389,6 +386,8 @@
     li{
       @include padding(0px 0 5px);
       color: #666;
+      text-overflow: ellipsis;
+      overflow: hidden;
     }
     .version{
       font-size: 12px;
@@ -415,7 +414,7 @@
       @include padding(6px 0);
     }
     .dot{
-      border-bottom: 1px dotted #ccc;
+      border-top: 1px dotted #ccc;
     }
     .ttl{
       @include padding(14px 0 8px 0);
@@ -425,7 +424,6 @@
     display: inline-block;
     width: calc(81vw - 245px);
     @include padding(10px 10px 10px 0);
-    height: 100vh;
     .carousel{
       border: solid 1px #ddd;
       @include border-radius(4px);
@@ -523,8 +521,6 @@
     display: block;
     width: 168px;
     @include float(left);
-    overflow: auto;
-    height: 100vh;
   }
   .install-box{
     @include text-align(center);

@@ -26,6 +26,8 @@ module HelpdeskControllerMethods
     #create_attachments
     if @item.is_a?(Helpdesk::Ticket) and @item.outbound_email?
       flash[:notice] = I18n.t('flash.general.create.compose_email_success')
+    elsif @item.is_a?(Helpdesk::Ticket) and @item.tracker_ticket?
+      flash[:notice] = I18n.t('flash.general.create.tracker_success')
     else
       flash[:notice] = I18n.t(:'flash.general.create.success', :human_name => cname.humanize.downcase)
     end
@@ -91,6 +93,7 @@ module HelpdeskControllerMethods
       else
         item.destroy
       end
+      Search::RecentTickets.new(item.display_id).delete if item.is_a?(Helpdesk::Ticket)
     end
 
     options = params[:basic].blank? ? {:basic=>true} : params[:basic].to_s.eql?("true") ? {:basic => true} : {}

@@ -10,7 +10,10 @@ module Search::Filters::QueryHelper
       'helpdesk_tags.id'                          =>  'tag_ids',
       'helpdesk_tags.name'                        =>  'tag_names',
       'helpdesk_subscriptions.user_id'            =>  'watchers',
-      'helpdesk_schema_less_tickets.product_id'   =>  'product_id'
+      'helpdesk_schema_less_tickets.product_id'   =>  'product_id',
+      "helpdesk_schema_less_tickets.long_tc04"    =>  'long_tc04',
+      "helpdesk_schema_less_tickets.long_tc03"    =>  'long_tc03',
+      'helpdesk_schema_less_tickets.int_tc03'     =>  'int_tc03'
     }
 
     private
@@ -32,9 +35,14 @@ module Search::Filters::QueryHelper
       }
 
       # Hack for handling permissible as used in tickets
-      #with_permissible will be false when queried from admin->tag as we dont need permisible there. 
-      condition_block[:must].push(permissible_filter) if with_permissible and User.current.agent? and User.current.restricted?
-      construct_conditions(condition_block[:must], conditions)
+      #with_permissible will be false when queried from admin->tag as we dont need permisible there.
+      if Account.current.features?(:shared_ownership)
+        condition_block[:must].push(shared_ownership_permissible_filter) if with_permissible and User.current.agent? and User.current.restricted?
+        construct_conditions_shared_ownership(condition_block[:must], conditions)
+      else
+        condition_block[:must].push(permissible_filter) if with_permissible and User.current.agent? and User.current.restricted?
+        construct_conditions(condition_block[:must], conditions)
+      end
       construct_conditions(condition_block[:must_not], neg_conditions)
       filtered_query(nil, bool_filter(condition_block))
     end
@@ -49,14 +57,51 @@ module Search::Filters::QueryHelper
       })[Agent::PERMISSION_TOKENS_BY_KEY[User.current.agent.ticket_permission]]
     end
 
+    def shared_ownership_permissible_filter
+      ({
+        :group_tickets    => bool_filter(:should => [
+                                                    group_id_es_filter('group_id', ['0']),
+                                                    group_id_es_filter('long_tc03', ['0']),
+                                                    term_filter('responder_id', User.current.id.to_s),
+                                                    term_filter('long_tc04', User.current.id.to_s)
+                                                    ]),
+        :assigned_tickets => bool_filter(:should => [
+                                                    term_filter('responder_id', User.current.id.to_s),
+                                                    term_filter('long_tc04', User.current.id.to_s)
+                                                    ])
+        })[Agent::PERMISSION_TOKENS_BY_KEY[User.current.agent.ticket_permission]]
+    end
+
     # Loop and construct ES conditions from WF filter conditions
     def construct_conditions(es_wrapper, wf_conditions)
       wf_conditions.each do |field|
         # Doing gsub as flexifields are flat now.
         cond_field = (COLUMN_MAPPING[field['condition']].presence || field['condition'].to_s).gsub('flexifields.','')
+        field_values = field['value'].to_s.split(',')
 
-        es_wrapper.push(handle_field(cond_field, 
-                                        field['value'].to_s.split(','))) if cond_field.present?
+        es_wrapper.push(handle_field(cond_field, field_values)) if cond_field.present?
+      end
+    end
+
+    # Loop and construct ES conditions from WF filter conditions
+    def construct_conditions_shared_ownership(es_wrapper, wf_conditions)
+      wf_conditions.each do |field|
+        # Doing gsub as flexifields are flat now.
+        cond_field = (COLUMN_MAPPING[field['condition']].presence || field['condition'].to_s).gsub('flexifields.','')
+        field_values = field['value'].to_s.split(',')
+
+        # Hack for any agent filter has unassigned and has value for any group filter
+        # Need to do (Agent = Unassigned & Group = X) OR (I.Agent = Unassigned  & I.Group = X)
+        any_group_condition = wf_conditions.select { |cond|  cond["condition"] == "any_group_id" }
+        any_group_values = (any_group_condition.first)["value"].to_s.split(",") unless any_group_condition.empty?
+
+        if cond_field.eql?('any_agent_id') and field_values.include?('-1') and !any_group_condition.empty?
+          field_values.delete('-1')
+          es_wrapper.push(handle_field("unassigned_any_agent", any_group_values))
+          next
+        end
+
+        es_wrapper.push(handle_field(cond_field, field_values)) if cond_field.present?
       end
     end
 
@@ -89,12 +134,79 @@ module Search::Filters::QueryHelper
       missing_es_filter(field_name, values)
     end
 
+    # For handling internal agent with hacks
+    def long_tc04_es_filter(field_name, values)
+      if values.include?('0')
+        values.delete('0')
+        values.push(User.current.id.to_s)
+      end
+
+      missing_es_filter(field_name, values)
+    end
+
+    # For handling internal group with hacks
+    def long_tc03_es_filter(field_name, values)
+      if values.include?('0')
+        values.delete('0')
+        values.concat(User.current.agent_groups.select(:group_id).map(&:group_id).map(&:to_s))
+      end
+
+      missing_es_filter(field_name, values)
+    end
+
+    def any_agent_id_es_filter(field_name, values)
+      if values.include?('0')
+        values.delete('0')
+        values.push(User.current.id.to_s)
+      end
+      if values.include?('-1')
+        values.delete('-1')
+        bool_filter(:should => [
+            missing_filter('responder_id'),
+            missing_filter('long_tc04'),
+            *terms_filter_any_agent(values)
+          ])
+      else
+        bool_filter(:should => [
+          *terms_filter_any_agent(values)
+        ])
+      end
+    end
+
+    def any_group_id_es_filter(field_name, values)
+      if values.include?('0')
+        values.delete('0')
+        values.concat(User.current.agent_groups.select(:group_id).map(&:group_id).map(&:to_s))
+      end
+      # usassigned in any group mode is not allowed
+      # add the check same as any_agent_id_es_filter
+      # method if that needs to be handled
+      bool_filter(:should => [
+        *terms_filter_any_group(values)
+      ])
+    end
+
+    # Handle special case where any agent has unassigned and
+    # any group has values
+    def unassigned_any_agent_es_filter(field_name, group_values)
+      bool_filter(:should => [
+        bool_filter(:must => [
+          missing_filter('responder_id'),
+          terms_filter('group_id', group_values.uniq)
+        ]),
+        bool_filter(:must => [
+          missing_filter('long_tc04'),
+          terms_filter('long_tc03', group_values.uniq)
+        ])
+      ])
+    end
+
     # Handle conditions with null queries
     def missing_es_filter(field_name, values)
       if values.include?('-1')
         values.delete('-1')
         bool_filter(:should => [
-          missing_filter(field_name), 
+          missing_filter(field_name),
           terms_filter(field_name, values.uniq)
         ])
       else
@@ -208,7 +320,7 @@ module Search::Filters::QueryHelper
     end
 
     # Cache default: true
-    def terms_filter(field_name, values) 
+    def terms_filter(field_name, values)
       { :terms => { field_name.to_s => values, :_cache => false }}
     end
 
@@ -217,14 +329,47 @@ module Search::Filters::QueryHelper
       { :term => { field_name.to_s => value, :_cache => false }}
     end
 
+    def terms_filter_any_agent(values)
+      ["responder_id","long_tc04"].map {|field_name| terms_filter(field_name, values)}
+    end
+
+    def terms_filter_any_group(values)
+      ["group_id","long_tc03"].map {|field_name| terms_filter(field_name, values)}
+    end
+
     def filtered_query(query_part={}, filter_part={})
-      query_base = Account.current.features?(:countv2_reads) ? :bool : :filtered
-      base = ({:query => { query_base => {}}})
+      base = ({:query => { :bool => {}}})
       
-      base[:query][query_base].update(:query => query_part) if query_part.present?
-      base[:query][query_base].update(:filter => filter_part) if filter_part.present?
+      base[:query][:bool].update(query_part) if query_part.present?
+      base[:query][:bool].update(:filter => filter_part) if filter_part.present?
 
       base
+    end
+
+    def ids_filter ids
+      {:ids => {values: ids}}
+    end
+
+    def account_id_filter
+      term_filter(:account_id, Account.current.id)
+    end
+
+    def multi_match_query(query, fields=[], operator=nil)
+      {
+        :multi_match => Hash.new.tap do |qparams|
+          qparams[:query] = query
+          qparams[:fields] = fields
+          qparams[:operator] = operator if operator
+        end
+      }
+    end          
+
+    def default_condition_block
+      {
+        :should   => [],
+        :must     => [],
+        :must_not => []
+      }
     end
 
 end

@@ -66,6 +66,11 @@ class Language
 			all.detect { |lang| lang.code == strip_bom(code)}
 		end
 
+		def find_by_codes(codes)
+			codes.map!{ |x| strip_bom(x) }
+			all.select { |lang| codes.include?(lang.code) }
+		end
+
 		def find_by_name(name)
 			all.detect { |lang| lang.name == name.to_s}
 		end

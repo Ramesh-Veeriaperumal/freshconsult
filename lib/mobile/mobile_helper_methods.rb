@@ -43,7 +43,11 @@ module Mobile::MobileHelperMethods
     def is_native_mobile?
       @native_mobile_agent ||= request.env["HTTP_USER_AGENT"] && request.env["HTTP_USER_AGENT"][/#{AppConfig['app_name']}_Native/].present? 
     end
-
+    
+    def decode_mobile_auth_token(token, secret)
+      JWT.decode(token, secret, true)
+    end
+      
     def set_mobile# TODO-RAILS3      
       Rails.logger.debug "mobile ::: #{mobile?} :: #{request.headers['HTTP_ACCEPT']}"
       if mobile?

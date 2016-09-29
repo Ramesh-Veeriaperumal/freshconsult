@@ -9,10 +9,9 @@
 		:attach_id => "ticket" , 
 		:nsc_param => object_name,
 		:template => true,
+		:rowfluid => true,
 		}) %>
 <% end %>
-
-
 <div class="attachments-wrap clearfix  <%= current_account.launched?(:multifile_attachments) ? "hide" : "" %> " id="prev-attachments">
 	<ul class="attachment_list">
 

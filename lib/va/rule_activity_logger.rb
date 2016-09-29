@@ -3,6 +3,7 @@ class Va::RuleActivityLogger
   EVENT_PERFORMER = -2
   ACTION_PREFIX = 'automations.activity.'
   DONT_CARE     = ActivityConstants::DONT_CARE_VALUE
+  RULE_MISC_CHANGES = [:email_to_requester, :email_to_group, :email_to_agent, :add_watcher, :add_a_cc, :add_comment]
   attr_accessor :action_key, :act_hash, :value, :doer, :bulk_scenario, :ticket, :rule_id
 
   def initialize(act_hash, doer, bulk_scenario = false, activity = {})
@@ -169,6 +170,7 @@ class Va::RuleActivityLogger
     end
 
     def send_email_to_requester
+      add_system_changes({:email_to_requester => [@ticket.requester_id]}) if @ticket.present?
       "#{fetch_activity_prefix('send')} #{I18n.t('automations.activity.email_to_requester')}"
     end
 
@@ -178,6 +180,7 @@ class Va::RuleActivityLogger
         "#{verb} #{I18n.t('automations.activity.bulk_email_to_group')}"
       else
         params = {:group_name => group.name}
+        add_system_changes({:email_to_group => [group.name]})
         "#{verb} #{I18n.t('automations.activity.email_to_group', params)}"
       end
     end
@@ -188,6 +191,7 @@ class Va::RuleActivityLogger
         "#{verb} #{I18n.t('automations.activity.bulk_email_to_agent')}"
       else
         params = {:agent_name => agent.name}
+        add_system_changes({:email_to_agent => [agent.id]})
         "#{verb} #{I18n.t('automations.activity.email_to_agent', params)}"
       end
     end
@@ -234,7 +238,7 @@ class Va::RuleActivityLogger
 
     def add_misc_changes(changes)
       # Hack to publish activities msg if system rule contains only add watcher/ add a cc action
-      if changes.has_key?(:add_watcher) or changes.has_key?(:add_a_cc) or changes.has_key?(:add_comment)
+      if (RULE_MISC_CHANGES & changes.keys).present?
         @ticket.misc_changes = {:misc_changes => [nil, "*"]}
       end
     end

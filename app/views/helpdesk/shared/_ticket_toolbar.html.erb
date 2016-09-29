@@ -40,6 +40,7 @@
           <% if privilege?(:merge_or_split_ticket)%>
             <a  href="#merge_freshdialog"
                 data-action="merge"
+                id="invoke_merge_popup"
                 class="btn hide_on_collapse"
                 data-width="800"
                 rel="freshdialog"
@@ -51,9 +52,11 @@
                 <%=t('ticket.merge_btn')%>
             </a>
           <% end %>
-
-          <input class="btn tooltip" title='<%= t('ticket.flag_spam') %>'
-              onclick="helpdesk_submit('/helpdesk/tickets/multiple/spam', 'put');" type="button"
+          <% if current_account.link_tickets_enabled? %>
+            <a href="#" data-placement = "partialLeft" disabled="disabled" class="btn btn-collapse lnk_tkt_tracker_open_dropdown" role="button" data-toggle="popover" ><%=t('ticket.link_tracker.btn')%></a>
+            <%= render(:partial => "helpdesk/tickets/show/link_tracker_template") %>
+          <% end %>
+          <input id="spam_tickets_btn" class="btn tooltip" title='<%= t('ticket.flag_spam') %>' type="button"
               value="<%=t('ticket.spam_header')%>" disabled="disabled"
               data-keybinding="<%= shortcut('ticket_list.spam') %>" data-highlight="true">
 
@@ -90,8 +93,7 @@
                     disabled="disabled" data-keybinding="<%= shortcut('ticket_list.delete') %>"
                     data-highlight="true">
     			<% else %>
-            <input class="btn tooltip" title='<%= t('delete') %>' 
-                onclick="helpdesk_submit('/helpdesk/tickets/multiple', 'delete');" type="button"
+            <input id="delete_tickets_btn" class="btn tooltip" title='<%= t('delete') %>' type="button"
                 value="<%=t('delete')%>" disabled="disabled"
                 data-keybinding="<%= shortcut('ticket_list.delete') %>" data-highlight="true">
     			<% end %>
@@ -107,6 +109,7 @@
             data-target="#execute_scenario"
             data-backdrop="false"
             data-classes="slider"
+            data-template-header="<div class='modal-header'><span><h3 class='modal-heading-with-button'><%= t('ticket.execute_scenario') %></h3></span><a href='/helpdesk/scenario_automations/new' target='_blank' class='pull-right modal-header-button'><%= t('ticket.create_new_scenario') %></a></div>"
             >
             <div data-hotkey='<%="#{shortcut('ticket_list.scenario')}"%>' title="<%=t('ticket.execute_scenario')%>" class="tooltip btn_with_freshdialog"><%=t('ticket.scenarios')%></div>
           </a>
@@ -190,6 +193,46 @@
   </script>
 
 <%= javascript_tag do -%>
+  //saving constants to be used in link tracker js file
+  statusLabel = '<%=t('ticket.status')%>';
+  search_label = '<%= t('ticket.link_tracker.search_for_tracker')%>';
+  no_trackers = '<%= t('ticket.link_tracker.no_tracker') %>';
+  search_results = '<%= t('search_results') %>';
+  link_text = '<%= t('ticket.link_tracker.link_to_tracker') %>';
+  view_tracker = '<%= t('ticket.link_tracker.view_tracker') %>';
+  recently_created = '<%= t('ticket.link_tracker.recently_created') %>';
+  asscociation_type = <%= TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:tracker]%>;
+  var action = "";
+  var association = [];
+
+  jQuery(document).on("click", '[data-action="merge"]', function(ev){
+     performMergeAction();
+  });
+
+  performMergeAction = function(){
+     var selected_tickets=[];
+      var parameters=[];
+      jQuery("#tickets-expanded .selector:checked").each(function(){
+        selected_tickets.push(jQuery(this).val());
+      });
+      jQuery.ajax({
+        type:              'POST',
+        url:               '/helpdesk/merge_tickets/bulk_merge',
+        data:              { source_tickets : selected_tickets, redirect_back : true },
+        success:           function(data){
+                            jQuery('#merge_freshdialog-content').html(data);
+                           }
+     });
+  }
+
+  jQuery(document).on('change', '#tickets-expanded .selector', function(ev){
+    var selected_tickets=[];
+    jQuery("#tickets-expanded .selector:checked").each(function(){
+      selected_tickets.push(jQuery(this).val());
+    });
+
+    jQuery(".create_new_tracker").attr('href', '/helpdesk/tickets/new?display_ids='+selected_tickets);
+  });
 
   setExportCreatedRange = function(){
   var startDate, endDate;
@@ -209,10 +252,179 @@
     jQuery('#end_date').val(endDate);
   };
 
+  cleanupParams = function (association) {
+    (association || []).each(function(value) {
+      jQuery('#ticket-list tr[data-association=' + value +'] input[type=checkbox]:checked').attr('checked', false);
+      jQuery('#ticket-list tr').removeClass('active');
+    })
+    if(action == 'link'){ 
+      jQuery('#ticket-list tr[data-association="true"] input[type=checkbox]:checked').attr('checked', false);
+    }
+    jQuery("#tickets-expanded .selector").trigger('change');
+  }
+
+  callFreshdialog = function(){
+    var data = {
+      targetId : '#confirm-action-popup',
+      title : "<%= t('confirm') %>",
+      width:  '500',
+      destroyOnClose : true,
+      submitLabel: submit_label
+    }
+    jQuery.freshdialog(data);
+    jQuery('.modal-body').html("<div>" + confirm_text + "</div>");
+  }
+
   jQuery('#export_tickets').click(function(){
     if(jQuery('#exportFilter').length > 0){
       setExportCreatedRange();
     }
   });
 
+  jQuery(document).on('click','.tooltip', function(){
+    jQuery(this).twipsy('hide');
+  });
+
+  jQuery(document).ready(function(){
+    jQuery('#ticket-toolbar .bulk_action_buttons .btn').addClass('disabled').prop('disabled', true).attr("disabled","disabled");
+
+    options = {
+      html: true,
+      trigger: 'manual',
+      placement: 'below',
+      container:'body',
+      content: function() {
+          return jQuery(".popover_content").html();
+      }
+    };
+    popup_target = '.lnk_tkt_tracker_open_dropdown';
+    jQuery(popup_target).popover(options);
+
+  });
+
+  jQuery(document).on('click', function(e){
+    if(jQuery('.popover.partialLeft').is(':visible')){
+      jQuery(popup_target).popover('toggle');
+    }
+  });
+
+  fetchAssociations = function(association){
+    var associated = 0;
+    jQuery('#ticket-list tr.active').each(function(){
+      if (jQuery.inArray(jQuery(this).data('association'), association) !== -1) {
+        associated++;
+      }
+    });
+    return associated;
+  }
+  fetchMergedTickets = function(){
+    var merged = 0;
+    jQuery('#ticket-list tr.active').each(function(){
+      if (jQuery.inArray(jQuery(this).data('association'), [true]) !== -1) {
+        merged++;
+      }
+    });
+    return merged;
+  }
+  triggerDefaultDialog = function(){
+    if(action == 'merge'){
+      var data = {
+        targetId : '#merge_freshdialog',
+        title : "<%=t('ticket.merge_title')%>",
+        width:  '800',
+        templateFooter : false,
+        destroyOnClose : true  
+      }
+      jQuery.freshdialog(data);
+      performMergeAction();
+    }else if(action == 'link'){
+      App.Tickets.link_tracker.show_link_tracker_popup(popup_target);
+    }else if(action == 'delete'){
+      //eval(jQuery('#delete_tickets_btn').attr('onclick'));
+      helpdesk_submit('/helpdesk/tickets/multiple', 'delete');
+    }else if(action == 'spam'){
+      //eval(jQuery('#spam_tickets_btn').attr('onclick'));
+      helpdesk_submit('/helpdesk/tickets/multiple/spam', 'put');
+    }
+  }
+
+  jQuery('body').off('click', '#invoke_merge_popup');
+  jQuery('body').on('click', '#invoke_merge_popup', function(e){
+     association = <%= escape_javascript TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN.values.to_json %>;
+    var associated = fetchAssociations(association);
+    var selected = jQuery('#ticket-list tr.active').length;
+    action = "merge";
+    if (associated > 0){
+      e.preventDefault();
+      e.stopPropagation();
+      confirm_text = selected === associated ? I18n.t('ticket.association.cancel') : I18n.t('ticket.association.merge_tickets', { count: associated });
+      submit_label = selected === associated ? "<%= t('ok') %>" : "<%= t('continue') %>"
+      callFreshdialog();
+    }
+  });
+
+  jQuery('body').off('click', '.bulk_action_buttons .lnk_tkt_tracker_open_dropdown');
+  jQuery('body').on('click', '.bulk_action_buttons .lnk_tkt_tracker_open_dropdown', function(e){
+    association = <%= escape_javascript TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN.values.to_json %>;
+    var associated = fetchAssociations(association) + fetchMergedTickets();
+    var selected = jQuery('#ticket-list tr.active').length;
+    action = "link";
+    e.preventDefault();
+    e.stopPropagation();
+    if (associated > 0){
+      confirm_text = selected === associated ? I18n.t('ticket.association.cancel') : I18n.t('ticket.association.link_tickets', { count: associated });
+      submit_label = selected === associated ? "<%= t('ok') %>" : "<%= t('continue') %>"
+      callFreshdialog();
+    }else {
+      App.Tickets.link_tracker.show_link_tracker_popup(popup_target);
+    }
+  });
+
+  jQuery('body').off('click', '#delete_tickets_btn');
+  jQuery('body').on('click', '#delete_tickets_btn', function(e){
+    association = <%= escape_javascript TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN.values.to_json %>;
+    var associated = fetchAssociations(association);
+    action = "delete";
+    if (associated > 0){
+      e.preventDefault();
+      e.stopPropagation();
+      confirm_text = I18n.t('ticket.association.delete_tickets', { count: associated });
+      submit_label = "<%= t('continue') %>";
+      callFreshdialog();
+    }else {
+      helpdesk_submit('/helpdesk/tickets/multiple', 'delete');
+    }
+  });
+
+  jQuery('body').off('click', '#spam_tickets_btn');
+  jQuery('body').on('click', '#spam_tickets_btn', function(e){
+    association = <%= escape_javascript TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN.values.to_json %>;
+    var associated = fetchAssociations(association);
+    action = "spam";
+    if (associated > 0){
+      e.preventDefault();
+      e.stopPropagation();
+      confirm_text = I18n.t('ticket.association.spam_tickets', { count: associated });
+      submit_label = "<%= t('continue') %>";
+      callFreshdialog();
+    }else {
+      helpdesk_submit('/helpdesk/tickets/multiple/spam', 'put');
+    }
+  });
+
+  jQuery('body').off("click", "#confirm-action-popup-cancel")
+  jQuery('body').on("click", "#confirm-action-popup-cancel", function(e){
+    jQuery('#confirm-action-popup').modal('hide');
+  });
+
+  jQuery('body').off("click", "#confirm-action-popup-submit");
+  jQuery('body').on("click", "#confirm-action-popup-submit", function(e){
+    e.preventDefault();
+    e.stopPropagation();
+    jQuery('#confirm-action-popup').modal('hide');
+    if (action == 'merge' || action == 'link'){ cleanupParams(association); }
+    if(jQuery("#tickets-expanded .selector:checked").length !== 0){
+      triggerDefaultDialog();
+    }
+   });
 <%- end %>

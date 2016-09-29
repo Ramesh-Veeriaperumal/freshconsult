@@ -1,0 +1,114 @@
+
+<% if ticket.related_ticket? %>
+ <% tracker_ticket = ticket.tracker_ticket %>
+  <div class="link_tracker_box p10" id="link_tracker_box">
+    <div class="row-fluid">
+      <p class="related_ticket_label">
+        <small>Related ticket</small>
+        <a href="#unlink_from_tracker"
+          data-action="unlink_from_tracker"
+          id="unlink_asscociation"
+          class="pull-right ficon-unlink-tracker"
+          data-width="375"
+          rel="freshdialog"
+          data-title="<%= t("ticket.link_tracker.unlink") %>"
+          data-template-footer="false"
+          data-target="#unlink_from_tracker"
+          >
+          <span title="<%= t("ticket.link_tracker.unlink") %>" class="tooltip unlink_tracker_tooltip"></span>
+        </a>
+      </p>
+      <p class="tracker_label">
+        <%= t('ticket.link_tracker.linked_to_tracker') %>:  <b><%= link_to(tracker_ticket.try(:subject), helpdesk_ticket_url(tracker_ticket), class: "truncate", target: "_blank") %></b>
+      </p>
+      <small class="block tracker_details">
+        <%=t('ticket.assigned_agent')%>:
+        <% if tracker_ticket.freshness == :new %>
+          <%=t('none')%>,
+        <% else %>
+          <%=h(tracker_ticket.responder.display_name)%>,
+        <% end -%>
+        <%= t("ticket.ticket_user_list_status_" + tracker_ticket.ticket_states.current_state(ticket.outbound_email?),
+                :time_ago => time_ago_in_words(tracker_ticket.ticket_states.send(tracker_ticket.ticket_states.current_state(tracker_ticket.outbound_email?)))
+                ).html_safe %>
+      </small>
+      <small class="block tracker_details"><%=t('ticket.status')%>: <%= h(tracker_ticket.status_name.html_safe) %></small>
+      <small class="tracker_details broadcast">
+        <%= t('ticket.link_tracker.last_broadcast_message', :timestamp => @last_broadcast_note.created_at.to_i).html_safe  if @last_broadcast_note %>
+      </small>
+    </div>
+  </div>
+  <div id="unlink_from_tracker" class="hide">
+    <div class="text_info_lbl">
+      <span><%= t("ticket.link_tracker.unlink_warning") %> <%= link_to(tracker_ticket.try(:subject), helpdesk_ticket_url(tracker_ticket), class: "truncate") %> #<%= tracker_ticket.display_id %>.</span><br>
+      <span><%= t("ticket.link_tracker.unlink_warning1") %></span>
+    </div>
+    <div class="btn-toolbar pull-right">
+      <a id="cancel_unlink" href="#" class="btn"><%= t('account.cancel') %></a>
+      <span class="btn-group dropdown">
+        <button id="confirm_unlink_ticket" value="<%= ticket.display_id %>" 
+          class="btn btn-primary" data-loading-text=<%= t("ticket.link_tracker.unlink_submitting") %> 
+          data-tracker-id="<%= tracker_ticket.display_id %>" data-tracker="false">
+          <%= t("ticket.link_tracker.unlink") %>
+      </span>  
+    </div>
+  </div>
+<% elsif ticket.tracker_ticket? %>
+  <div class="link_tracker_box p10" id="link_tracker_box">
+    <div class="row-fluid">
+      <p class="related_ticket_label"><small><%= t('tracker') %></small></p>
+      <p class="tracker_label">
+        <b>
+          <% if ticket.related_tickets_count > 0 %>
+            <a href="#related" class="truncate" data-width="600"
+              data-height="100" 
+              id="related_ticket_dialog" 
+              data-modal-type = "slide"
+              data-ticket-display-id = "<%= ticket.display_id %>"
+              rel="freshdialog"
+              data-action="related_tkts_view_freshdialog"
+              data-title="<%= t('ticket.link_tracker.related_tickets', count: ticket.related_tickets_count ) %>"
+              data-placement = "below"
+              data-template-footer="false"
+              data-target="#related_tkts_view_freshdialog">
+                <%= t('ticket.link_tracker.tracker_links', count: ticket.related_tickets_count ) %>
+            </a>
+          <% else %>
+            <%= t('ticket.link_tracker.tracker_links', count: ticket.related_tickets_count ) %>
+          <% end -%>
+        </b>
+      </p>
+       <!-- view all related  modal -->
+      <div class="activityfeed-wrap mCustomScrollbar hide" data-mcs-theme="minimal-dark" id="related_tkts_view_freshdialog">
+      </div>
+    </div>
+  </div>
+<% elsif ticket.association_type.blank? %>
+  <div class="link_tracker_box p10" id="link_tracker_box">
+    <%= ticket_association_box %>
+  </div>
+<% end -%>
+<!-- end of boxes -->
+<%= render(:partial => "helpdesk/tickets/show/link_tracker_template") %>
+
+<%= javascript_tag do %>
+    statusLabel = '<%=t('ticket.status')%>';
+    search_label = '<%= t('ticket.link_tracker.search_for_tracker')%>';
+    no_trackers = '<%= t('ticket.link_tracker.no_tracker') %>';
+    linking_to_tracker = '<%= t('ticket.link_tracker.linking_to_tracker') %>';
+    unlinking_from_tracker = '<%= t('ticket.link_tracker.unlinking_from_tracker') %>';
+    search_results = '<%= t('search_results') %>';
+    link_text = '<%= t('ticket.link_tracker.link_to_tracker') %>';
+    view_tracker = '<%= t('ticket.link_tracker.view_tracker') %>';
+    recently_created = '<%= t('ticket.link_tracker.recently_created') %>';
+    asscociation_type = <%= TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:tracker]%>;
+    jQuery('#related_ticket_dialog').on('click', function(ev) {
+        window.location.hash = jQuery(this).attr("href");
+    });
+    if (window.location.hash === "#related") {
+     if(jQuery('.modal#related_tkts_view_freshdialog').length === 0){
+      jQuery('#related_ticket_dialog').trigger('click');
+     }
+    }
+<% end %>
+

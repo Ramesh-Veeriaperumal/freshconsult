@@ -12,7 +12,7 @@
 # It's strongly recommended to check this file into your version control system.
 
 
-ActiveRecord::Schema.define(:version => 20160802094502) do
+ActiveRecord::Schema.define(:version => 20160921145313) do
   
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -27,7 +27,8 @@ ActiveRecord::Schema.define(:version => 20160802094502) do
     t.integer  "date_format",                       :default => 1
     t.text     "additional_settings"
     t.text     "resource_rlimit_conf"
-    t.integer  "webhook_limit",                      :default => 1000
+    t.integer  "webhook_limit",                     :default => 1000
+    t.text     "secret_keys"
   end
 
   add_index "account_additional_settings", ["account_id"], :name => "index_account_id_on_account_additional_settings"
@@ -886,6 +887,37 @@ ActiveRecord::Schema.define(:version => 20160802094502) do
   end
 
   add_index "conversion_metrics", ["account_id"], :name => "index_conversion_metrics_on_account_id"
+
+  create_table "cti_calls", :force => true do |t|
+    t.string   "call_sid"
+    t.string   "recordable_type"
+    t.integer  "recordable_id",            :limit => 8
+    t.integer  "account_id",               :limit => 8
+    t.integer  "responder_id",             :limit => 8
+    t.integer  "requester_id",             :limit => 8
+    t.integer  "installed_application_id", :limit => 8
+    t.text     "options"
+    t.integer  "status",                   :limit => 8
+    t.datetime "created_at",                            :null => false
+    t.datetime "updated_at",                            :null => false
+  end
+
+  add_index "cti_calls", ["account_id", "call_sid"], :name => "index_cti_calls_on_account_id_and_call_sid"
+  add_index "cti_calls", ["account_id", "created_at"], :name => "index_cti_calls_on_account_id_and_created_at"
+  add_index "cti_calls", ["account_id", "recordable_type", "recordable_id"], :name => "index_cti_call_on_account_id_and_recordable"
+  add_index "cti_calls", ["account_id", "responder_id", "status"], :name => "index_cti_calls_on_account_id_and_responder_id_and_status"
+
+  create_table "cti_phones", :force => true do |t|
+    t.integer  "account_id",               :limit => 8
+    t.integer  "agent_id",                 :limit => 8
+    t.string   "phone"
+    t.integer  "installed_application_id", :limit => 8
+    t.datetime "created_at",                            :null => false
+    t.datetime "updated_at",                            :null => false
+  end
+
+  add_index "cti_phones", ["account_id", "agent_id"], :name => "index_cti_phones_on_account_id_and_agent_id", :unique => true
+  add_index "cti_phones", ["account_id", "phone"], :name => "index_cti_phones_on_account_id_and_phone", :unique => true
 
   create_table "customer_forums", :force => true do |t|
     t.integer  "customer_id", :limit => 8
@@ -1768,6 +1800,7 @@ ActiveRecord::Schema.define(:version => 20160802094502) do
     t.integer  "ticket_assign_type",                :default => 0
     t.integer  "business_calendar_id", :limit => 8
     t.boolean  "toggle_availability",               :default => false
+    t.integer  "capping_limit",        :default => 0
   end
 
   add_index "groups", ["account_id", "name"], :name => "index_groups_on_account_id", :unique => true
@@ -3045,6 +3078,7 @@ ActiveRecord::Schema.define(:version => 20160802094502) do
   add_index "solution_articles", ["account_id", "folder_id", "created_at"], :name => "index_solution_articles_on_acc_folder_created_at"
   add_index "solution_articles", ["account_id", "folder_id", "position"], :name => "index_solution_articles_on_account_id_and_folder_id_and_position"
   add_index "solution_articles", ["account_id", "folder_id", "title"], :name => "index_solution_articles_on_account_id_and_folder_id_and_title", :length => {"account_id"=>nil, "folder_id"=>nil, "title"=>10}
+  add_index "solution_articles", ["account_id", "language_id", "hits"], :name => "index_solution_articles_on_account_id_language_id_hits"
   add_index "solution_articles", ["account_id", "parent_id", "language_id"], :name => "index_articles_on_account_id_parent_id_and_language"
   add_index "solution_articles", ["folder_id"], :name => "index_solution_articles_on_folder_id"
 
@@ -3148,6 +3182,16 @@ ActiveRecord::Schema.define(:version => 20160802094502) do
   add_index "solution_folders", ["account_id", "category_id", "position"], :name => "index_solution_folders_on_acc_cat_pos"
   add_index "solution_folders", ["account_id", "parent_id", "language_id"], :name => "index_solution_folders_on_account_id_parent_id_and_language"
   add_index "solution_folders", ["category_id", "position"], :name => "index_solution_folders_on_category_id_and_position"
+
+  create_table "status_groups", :force => true do |t|
+    t.integer  "status_id",  :limit => 8, :null => false
+    t.integer  "group_id",   :limit => 8, :null => false
+    t.integer  "account_id", :limit => 8, :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "status_groups", ["account_id", "status_id"], :name => "index_status_groups_on_account_id_and_status_id"
 
   create_table "subscription_addon_mappings", :force => true do |t|
     t.integer "subscription_addon_id", :limit => 8
@@ -3531,6 +3575,7 @@ ActiveRecord::Schema.define(:version => 20160802094502) do
     t.string   "neutral_text",                        :default => "Neutral"
     t.string   "unhappy_text",                        :default => "Not Good"
     t.boolean  "deleted",                             :default => false
+    t.boolean  "good_to_bad",                         :default => false
   end
 
   add_index "surveys", ["account_id"], :name => "index_account_id_on_surrveys"

@@ -68,21 +68,37 @@ module Helpdesk::TicketFilterMethods
                                 :menuid => "##{menuid}",
                                 :id => "active_filter"
                             } ), :class => "link-item" ) +
-        content_tag(:div, viewlist.map { |s| view_menu_links(s, "", (s[:id].to_s == selected_item[:id].to_s)) }.to_s.html_safe, :class => "fd-menu", :id => menuid)
+        content_tag(:div, filter_search(viewlist) + filter_search_elements(viewlist, selected_item) + filter_no_results, :class => "fd-menu tkt_view_search", :id => menuid)
     end
     more_menu_drop.html_safe
   end
 
+  def filter_no_results
+    content_tag(:div, "#{t('tickets_filter.no_match_view')}", class: "no_result_view hide")
+  end
+
+  def filter_search(viewlist)
+    content_tag(:div,text_field_tag('filter-template','',:class => "search-filter" ,:placeholder => "#{t('tickets_filter.search_views')}" ),:class => "filter-search center")
+  end
+
+  def filter_search_elements(viewlist,selected_item)
+    content_tag(:div, 
+      content_tag(:ul,viewlist.map { 
+        |s| view_menu_links(s, "", (s[:id].to_s == selected_item[:id].to_s)) }.to_s.html_safe, 
+        :id => "template-items",
+        :"data-picklist class" => ""))
+  end
+
   def view_menu_links( view, cls = "", selected = false )
     unless(view[:id] == :freshdesk_view_seperator)
-      link_to( ((content_tag(:span, "", :class => "icon ticksymbol") if selected).to_s + strip_tags(view[:name])).html_safe,
+      content_tag(:li, link_to( ((content_tag(:span, "", :class => "icon ticksymbol") if selected).to_s + strip_tags(view[:name])).html_safe,
                   filter_path(view),
                   :class => "#{selected ? 'active' : ''} #{cls}",
                   :rel => view[:default] ? "default_filter" : "" ,
                   :"data-pjax" => "#body-container",
                   :"data-parallel-url" => filter_parallel_path(view),
                   :"data-parallel-placeholder" => "#ticket-leftFilter"
-              )
+              ), :class => "tkt_views", :"data-id" => view[:id])
     else
       content_tag(:span, "", :class => "seperator")
     end
@@ -231,6 +247,20 @@ module Helpdesk::TicketFilterMethods
     return @cached_filter_data[:wf_order_type].to_sym if @cached_filter_data && !@cached_filter_data[:wf_order_type].blank?
     # return @cached_filter_data[:wf_order_type].to_sym if @cached_filter_data && !@cached_filter_data[:wf_order_type].blank?
     cookies[:wf_order_type] = (params[:wf_order_type] ? params[:wf_order_type] : ( (!cookies[:wf_order_type].blank?) ? cookies[:wf_order_type] : DEFAULT_SORT_ORDER )).to_sym
+  end
+
+  def current_agent_mode
+    return @agent_mode if @agent_mode.present?
+    return @cached_filter_data[:agent_mode].to_i if @cached_filter_data && !@cached_filter_data[:agent_mode].blank?
+    cookies[:agent_mode] = (params[:agent_mode] ? params[:agent_mode] : ( (!cookies[:agent_mode].blank?) ? cookies[:agent_mode] : DEFAULT_AGENT_MODE))
+    cookies[:agent_mode].to_i
+  end
+
+  def current_group_mode
+    return @group_mode if @group_mode.present?
+    return @cached_filter_data[:group_mode].to_i if @cached_filter_data && !@cached_filter_data[:group_mode].blank?
+    cookies[:group_mode] = (params[:group_mode] ? params[:group_mode] : ( (!cookies[:group_mode].blank?) ? cookies[:group_mode] : DEFAULT_GROUP_MODE))
+    cookies[:group_mode].to_i
   end
 
   def current_selector

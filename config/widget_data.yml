@@ -5,7 +5,7 @@
   script: |- 
           <script type="text/javascript">
               CustomWidget.include_js("/javascripts/capsule_crm.js")
-              capsuleBundle={ t:"{{capsule_crm.api_key}}", reqId:"{{requester.id}}", reqName:"{{requester.name | make_vaild_javascript}}", reqOrg:"{{requester.company_name | make_vaild_javascript}}", reqPhone:"{{requester.phone}}", reqEmail:"{{requester.email}}", domain:"{{capsule_crm.domain}}", title:"{{capsule_crm.title}}"};
+              capsuleBundle={ t:"{{capsule_crm.api_key}}", reqId:"{{requester.id}}", reqName:"{{requester.name | make_vaild_javascript}}", reqOrg:"{{requester.company_name | make_vaild_javascript}}",ticket_company:"{{ticket.company.name | make_vaild_javascript}}", reqPhone:"{{requester.phone}}", reqEmail:"{{requester.email}}", domain:"{{capsule_crm.domain}}", title:"{{capsule_crm.title}}"};
           </script>
   name: contact_widget
   id: 1
@@ -18,7 +18,7 @@
     - contacts_show_page_side_bar
   script: |-
           <script type="text/javascript">
-            freshbooksBundle={domain:"{{freshbooks.api_url}}", application_id:"{{application.id}}", integrated_resource_id:"{{integrated_resource.id}}", invoice_type:"{{freshbooks.invoice_option}}", remote_integratable_id:"{{integrated_resource.remote_integratable_id}}", ticketId:"{{ticket.display_id}}", agentEmail:"{{agent.email}}", reqEmail:"{{requester.email | make_vaild_javascript}}", reqCompany:"{{requester.company_name | make_vaild_javascript}}",reqName:"{{requester.name | make_vaild_javascript}}", widget_type:"{{widget_type}}"};
+            freshbooksBundle={domain:"{{freshbooks.api_url}}", application_id:"{{application.id}}", integrated_resource_id:"{{integrated_resource.id}}", invoice_type:"{{freshbooks.invoice_option}}", remote_integratable_id:"{{integrated_resource.remote_integratable_id}}", ticketId:"{{ticket.display_id}}", agentEmail:"{{agent.email}}", reqEmail:"{{requester.email | make_vaild_javascript}}", reqCompany:"{{requester.company_name | make_vaild_javascript}}", ticket_company:"{{ticket.company.name | make_vaild_javascript}}", reqName:"{{requester.name | make_vaild_javascript}}", widget_type:"{{widget_type}}"};
             Fjax.Assets.integration('freshbooks', function () {
               if ("{{widget_type}}" == "_contacts") {
                 new FreshbooksContactWidget(freshbooksBundle);
@@ -72,7 +72,7 @@
     - contacts_show_page_side_bar
   script: |-
          <script type="text/javascript">
-             sugarcrmBundle={domain:"{{sugarcrm.domain}}", reqEmail:"{{requester.all_emails}}", reqCompanyId:"{{requester.company.id}}", account_labels:"{{sugarcrm.account_labels | escape_html}}", contact_labels:"{{sugarcrm.contact_labels | escape_html}}", lead_labels:"{{sugarcrm.lead_labels | escape_html}}", accounts:"{{sugarcrm.accounts | escape_html}}", contacts:"{{sugarcrm.contacts | escape_html}}", leads:"{{sugarcrm.leads | escape_html}}"} ;
+             sugarcrmBundle={domain:"{{sugarcrm.domain}}", reqEmail:"{{requester.all_emails}}", reqCompanyId:"{{requester.company.id}}", ticketCompanyId:"{{ticket.company.id | make_vaild_javascript}}", account_labels:"{{sugarcrm.account_labels | escape_html}}", contact_labels:"{{sugarcrm.contact_labels | escape_html}}", lead_labels:"{{sugarcrm.lead_labels | escape_html}}", accounts:"{{sugarcrm.accounts | escape_html}}", contacts:"{{sugarcrm.contacts | escape_html}}", leads:"{{sugarcrm.leads | escape_html}}"} ;
              Fjax.Assets.integration('sugarcrm', function() { new SugarWidget(sugarcrmBundle); });
          </script>
   name: sugarcrm_widget
@@ -83,7 +83,7 @@
 - options: 
   script: |- 
           <script type="text/javascript">
-              workflowMaxBundle={ k:"{{workflow_max.api_key}}", a:"{{workflow_max.account_key}}", api_url:"https://api.workflowmax.com" , application_id:"{{application.id}}", integrated_resource_id:"{{integrated_resource.id}}", remote_integratable_id:"{{integrated_resource.remote_integratable_id}}", ticketId:"{{ticket.display_id}}", agentEmail:"{{agent.email}}", reqEmail:"{{requester.email}}", reqCompany:"{{requester.company_name | make_vaild_javascript}}" };
+              workflowMaxBundle={ k:"{{workflow_max.api_key}}", a:"{{workflow_max.account_key}}", api_url:"https://api.workflowmax.com" , application_id:"{{application.id}}", integrated_resource_id:"{{integrated_resource.id}}", remote_integratable_id:"{{integrated_resource.remote_integratable_id}}", ticketId:"{{ticket.display_id}}", agentEmail:"{{agent.email}}", reqEmail:"{{requester.email}}", reqCompany:"{{requester.company_name | make_vaild_javascript}}", ticket_company:"{{ticket.company.name | make_vaild_javascript}}" };
               CustomWidget.include_js("/javascripts/integrations/workflow_max.js");
           </script>
   name: workflow_max_timeentry_widget
@@ -344,7 +344,7 @@
     - helpdesk_tickets_show_page_side_bar
   script: |-
           <script type="text/javascript">
-            quickbooksBundle={domain:"https://quickbooks.api.intuit.com", token_renewal_date:"{{quickbooks.token_renewal_date}}", invoice_option:"{{quickbooks.invoice_option}}", companyId:"{{quickbooks.company_id}}", application_id:"{{application.id}}", integrated_resource_id:"{{integrated_resource.id}}", remote_integratable_id:"{{integrated_resource.remote_integratable_id}}", reqEmail:"{{requester.email}}", reqName:"{{requester.name | make_vaild_javascript}}", reqId:"{{requester.id}}", reqCompany:"{{requester.company_name | make_vaild_javascript}}", agentEmail:"{{agent.email}}", agentName:"{{agent.name | make_vaild_javascript}}", ticketId:"{{ticket.id}}"};
+            quickbooksBundle={domain:"https://quickbooks.api.intuit.com", token_renewal_date:"{{quickbooks.token_renewal_date}}", invoice_option:"{{quickbooks.invoice_option}}", companyId:"{{quickbooks.company_id}}", application_id:"{{application.id}}", integrated_resource_id:"{{integrated_resource.id}}", remote_integratable_id:"{{integrated_resource.remote_integratable_id}}", reqEmail:"{{requester.email}}", reqName:"{{requester.name | make_vaild_javascript}}", reqId:"{{requester.id}}", reqCompany:"{{requester.company_name | make_vaild_javascript}}", ticket_company:"{{ticket.company.name | make_vaild_javascript}}", agentEmail:"{{agent.email}}", agentName:"{{agent.name | make_vaild_javascript}}", ticketId:"{{ticket.id}}"};
             Fjax.Assets.integration('quickbooks', function () {
               if ("{{widget_type}}" == "_contacts") {
                 new QuickBooksContactsWidget(quickbooksBundle);
@@ -418,7 +418,8 @@
                                     accountLabels:"{{infusionsoft.account_labels}}", 
                                     accountFields:"{{infusionsoft.accounts}}", 
                                     reqName:"{{requester.name | make_vaild_javascript}}", 
-                                    reqCompany : "{{requester.company_name | make_vaild_javascript}}", 
+                                    reqCompany : "{{requester.company_name | make_vaild_javascript}}",
+                                    ticket_company : "{{ticket.company.name | make_vaild_javascript}}", 
                                     accountUrl: "{{infusionsoft.account_url}}" , 
                                     contactCustomFields: "{{infusionsoft.contact_custom_fields}}", 
                                     contactDataTypes: "{{infusionsoft.contact_data_types}}", 

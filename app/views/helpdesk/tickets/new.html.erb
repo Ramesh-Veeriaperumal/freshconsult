@@ -1,6 +1,11 @@
+<% tracker_ticket = Account.current.link_tickets_enabled? && params[:display_ids].present? %>
+<% content_for :helpcard do %>
+  <%= render :partial => "helpdesk/tickets/new_tracker_helpnote" if tracker_ticket %>
+<% end %>
 <% content_for :sidebar do %>
   <%= render :partial => "helpdesk/tickets/ticket_widget/sidebar", :locals => {:from_page => 'new_ticket_page_side_bar'}%>
 <% end %>
+
 <%# multifile attachments templates %>
 <% if  current_account.launched?(:multifile_attachments)  %>
   <%= render "helpdesk/tickets/ticket_widget/multifile_template_generator" %>
@@ -8,18 +13,16 @@
   <%= render "helpdesk/shared/single_attachment_template" %>
 <% end %>
 <div class="templates-header-wrapper">
-  <%= render :partial => "helpdesk/tickets/ticket_widget/new_ticket_title" %>
-  <div class="muted"><%= t("ticket.submit_a_ticket_info") %></div>
+  <%= render :partial => "helpdesk/tickets/ticket_widget/#{tracker_ticket ? 'new_tracker_title' : 'new_ticket_title'}" %>
 <div id="ticket-fields-wrapper">
   <%= form_for @item, :html => {:multipart => true, :id => "NewTicket", :ignore => "" , :rel=>"validate"} do |f| %>
-    <!-- Note: when any changes made to the block below or TICKET_FORM PARTIAL in the future,
-         please update the memcache key version. key_name :: AGENT_NEW_TICKET_FORM  -->
-    <% cache_based_on_launch(:cache_new_tkt_comps_forms, agent_new_tkt_form_memcache_key) do %>
+    <% enable_fragment_cache(:agent_new_ticket, tracker_ticket) do %>
       <ul class="compose-new-ticket">
         <%= render :partial => "ticket_form", :object => f, :locals => { :is_edit => (@item.errors.any? ? true : false), :f => f } %>
       </ul>
     <% end %>
-    <!-- block ends here -->
+    <!-- block ends here for fragment cache -->
+    <%= hidden_field_tag('display_ids', params[:display_ids]) %>
   <% end %>
 </div>
 </div>
@@ -31,12 +34,13 @@
   <input type="hidden" id="topic_req" value="<%= @topic.user.email %>" />
 <% end %>
 <%= render :partial => "/helpdesk/tickets/canned_loading"  %>
-
-<script>
-// To load data from store to populate group/agent/product for the first time.
-  jQuery(document).ready(function(){
-    PopulateData.fromStore("#helpdesk_ticket_group_id", 'group');
-    PopulateData.fromStore("#helpdesk_ticket_responder_id", 'agent');
-    PopulateData.fromStore("#helpdesk_ticket_product_id", 'product');
-  });
-</script>
+<% if Account.current.launched?(:agent_new_ticket_cache) %>
+  <script>
+  // To load data from store to populate group/agent/product for the first time.
+    jQuery(document).ready(function(){
+      PopulateData.fromStore("#helpdesk_ticket_group_id", 'group');
+      PopulateData.fromStore("#helpdesk_ticket_responder_id", 'agent');
+      //PopulateData.fromStore("#helpdesk_ticket_product_id", 'product');
+    });
+  </script>
+<% end %>

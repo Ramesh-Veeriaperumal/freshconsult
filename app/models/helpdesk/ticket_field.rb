@@ -68,8 +68,9 @@ class Helpdesk::TicketField < ActiveRecord::Base
   before_validation :populate_choices, :clear_ticket_type_cache
 
   before_destroy :delete_from_ticket_filter
-  # before_update :delete_from_ticket_filter
   before_save :set_portal_edit
+
+  before_update :set_internal_field_values
 
   # xss_terminate
   acts_as_list :scope => 'account_id = #{account_id}'
@@ -107,6 +108,8 @@ class Helpdesk::TicketField < ActiveRecord::Base
   scope :agent_required_fields, :conditions => { :required => true }
   scope :type_field, :conditions => { :name => "ticket_type" }
   scope :status_field, :conditions => { :name => "status" }
+  scope :default_company_field, :conditions => {:name => "company"}
+  scope :requester_field, :conditions => {:name => "requester"}
   scope :nested_fields, :conditions => ["flexifield_def_entry_id is not null and field_type = 'nested_field'"]
   scope :nested_and_dropdown_fields, :conditions=>["flexifield_def_entry_id is not null and (field_type = 'nested_field' or field_type='custom_dropdown')"]
   scope :event_fields, :conditions=>["flexifield_def_entry_id is not null and (field_type = 'nested_field' or field_type='custom_dropdown' or field_type='custom_checkbox')"]
@@ -115,33 +118,27 @@ class Helpdesk::TicketField < ActiveRecord::Base
 
 
   # Enumerator constant for mapping the CSS class name to the field type
-  FIELD_CLASS = { :default_subject        => { :type => :default, :dom_type => "text",
-                                               :form_field => "subject", :visible_in_view_form => false },
-                  :default_requester      => { :type => :default, :dom_type => "requester",
-                                               :form_field => "email"  , :visible_in_view_form => false },
+  FIELD_CLASS = { :default_subject        => { :type => :default, :dom_type => "text", :form_field => "subject", :visible_in_view_form => false },
+                  :default_requester      => { :type => :default, :dom_type => "requester", :form_field => "email"  , :visible_in_view_form => false },
                   :default_ticket_type    => { :type => :default, :dom_type => "dropdown_blank"},
                   :default_status         => { :type => :default, :dom_type => "dropdown"}, 
                   :default_priority       => { :type => :default, :dom_type => "dropdown"},
-                  :default_group          => { :type => :default, :dom_type => "dropdown_blank", 
-                                               :form_field => "group_id"},
-                  :default_agent          => { :type => :default, :dom_type => "dropdown_blank", 
-                                               :form_field => "responder_id"},
+                  :default_group          => { :type => :default, :dom_type => "dropdown_blank", :form_field => "group_id"},
+                  :default_agent          => { :type => :default, :dom_type => "dropdown_blank", :form_field => "responder_id"},
+                  :default_internal_group => { :type => :default, :dom_type => "dropdown_blank", :form_field => "internal_group_id"},
+                  :default_internal_agent => { :type => :default, :dom_type => "dropdown_blank", :form_field => "internal_agent_id"},
                   :default_source         => { :type => :default, :dom_type => "hidden"},
-                  :default_description    => { :type => :default, :dom_type => "html_paragraph", 
-                                               :form_field => "description_html", 
-                                               :visible_in_view_form => false },
-                  :default_product        => { :type => :default, :dom_type => "dropdown_blank",
-                                               :form_field => "product_id" },
-                  :default_company        => { :type => :default, :dom_type => "dropdown_blank", 
-                                               :form_field => "company_id" },
-                  :custom_text            => { :type => :custom, :dom_type => "text"},
-                  :custom_paragraph       => { :type => :custom, :dom_type => "paragraph"},
-                  :custom_checkbox        => { :type => :custom, :dom_type => "checkbox"},
-                  :custom_number          => { :type => :custom, :dom_type => "number"},
-                  :custom_date            => { :type => :custom, :dom_type => "date"},
-                  :custom_decimal         => { :type => :custom, :dom_type => "decimal"},
-                  :custom_dropdown        => { :type => :custom, :dom_type => "dropdown_blank"},
-                  :nested_field           => { :type => :custom, :dom_type => "nested_field"}
+                  :default_description    => { :type => :default, :dom_type => "html_paragraph", :form_field => "description_html", :visible_in_view_form => false },
+                  :default_product        => { :type => :default, :dom_type => "dropdown_blank", :form_field => "product_id" },
+                  :default_company        => { :type => :default, :dom_type => "dropdown_blank", :form_field => "company_id" },
+                  :custom_text            => { :type => :custom,  :dom_type => "text"},
+                  :custom_paragraph       => { :type => :custom,  :dom_type => "paragraph"},
+                  :custom_checkbox        => { :type => :custom,  :dom_type => "checkbox"},
+                  :custom_number          => { :type => :custom,  :dom_type => "number"},
+                  :custom_date            => { :type => :custom,  :dom_type => "date"},
+                  :custom_decimal         => { :type => :custom,  :dom_type => "decimal"},
+                  :custom_dropdown        => { :type => :custom,  :dom_type => "dropdown_blank"},
+                  :nested_field           => { :type => :custom,  :dom_type => "nested_field"}
                 }
 
   def dom_type
@@ -177,36 +174,40 @@ class Helpdesk::TicketField < ActiveRecord::Base
   end
 
   def choices(ticket = nil, admin_pg = false)
-     case field_type
-       when "custom_dropdown" then
-          if(admin_pg)
-            picklist_values.collect { |c| [c.value, c.value, c.id] }
-          else
-            picklist_values.collect { |c| [c.value, c.value] }
-          end
-       when "default_priority" then
-         TicketConstants.priority_names
-       when "default_source" then
-         TicketConstants.source_names
-       when "default_status" then
-         Helpdesk::TicketStatus.statuses_from_cache(Account.current)
-       when "default_ticket_type" then
-          if(admin_pg)
-            Account.current.ticket_types_from_cache.collect { |c| [c.value, c.value, c.id] }
-          else
-            Account.current.ticket_types_from_cache.collect { |c| [c.value, c.value] }
-          end
-       when "default_agent" then
+    case field_type
+      when "custom_dropdown" then
+        if(admin_pg)
+          picklist_values.collect { |c| [c.value, c.value, c.id] }
+        else
+          picklist_values.collect { |c| [c.value, c.value] }
+        end
+      when "default_priority" then
+       TicketConstants.priority_names
+      when "default_source" then
+       TicketConstants.source_names
+      when "default_status" then
+       Helpdesk::TicketStatus.statuses_from_cache(Account.current)
+      when "default_ticket_type" then
+        if(admin_pg)
+          Account.current.ticket_types_from_cache.collect { |c| [c.value, c.value, c.id] }
+        else
+          Account.current.ticket_types_from_cache.collect { |c| [c.value, c.value] }
+        end
+      when "default_agent" then
         return group_agents(ticket)
-       when "default_group" then
-         Account.current.groups_from_cache.collect { |c| [CGI.escapeHTML(c.name), c.id] }
-       when "default_product" then
-         Account.current.products.collect { |e| [CGI.escapeHTML(e.name), e.id] }
-       when "nested_field" then
-         picklist_values.collect { |c| [c.value, c.value] }
-       else
-         []
-     end
+      when "default_group" then
+        Account.current.groups_from_cache.collect { |c| [CGI.escapeHTML(c.name), c.id] }
+      when "default_internal_agent" then
+        return group_agents(ticket, true)
+      when "default_internal_group" then
+        return internal_group_choices(ticket)
+      when "default_product" then
+       Account.current.products.collect { |e| [CGI.escapeHTML(e.name), e.id] }
+      when "nested_field" then
+       picklist_values.collect { |c| [c.value, c.value] }
+      else
+        []
+    end
   end
 
   def nested_choices
@@ -262,30 +263,34 @@ class Helpdesk::TicketField < ActiveRecord::Base
 
   def html_unescaped_choices(ticket = nil)
     case field_type
-       when "custom_dropdown" then
-         picklist_values.collect { |c| [CGI.unescapeHTML(c.value), c.value] }
-       when "default_priority" then
-         TicketConstants.priority_names
-       when "default_source" then
-         TicketConstants.source_names
-       when "default_status" then
-         Helpdesk::TicketStatus.statuses_from_cache(Account.current).collect{|c|  [CGI.unescapeHTML(c[0]),c[1]] }
-       when "default_ticket_type" then
-         Account.current.ticket_types_from_cache.collect { |c| [CGI.unescapeHTML(c.value),
-                                                        c.value,
-                                                        {"data-id" => c.id}] }
-       when "default_agent" then
+      when "custom_dropdown" then
+        picklist_values.collect { |c| [CGI.unescapeHTML(c.value), c.value] }
+      when "default_priority" then
+        TicketConstants.priority_names
+      when "default_source" then
+        TicketConstants.source_names
+      when "default_status" then
+        Helpdesk::TicketStatus.statuses_from_cache(Account.current).collect{|c|  [CGI.unescapeHTML(c[0]),c[1]] }
+      when "default_ticket_type" then
+        Account.current.ticket_types_from_cache.collect { |c| [CGI.unescapeHTML(c.value),
+                                                      c.value,
+                                                      {"data-id" => c.id}] }
+      when "default_agent" then
         return group_agents(ticket)
-       when "default_group" then
-         Account.current.groups_from_cache.collect { |c| [c.name, c.id] }
-       when "default_product" then
-         Account.current.products.collect { |e| [e.name, e.id] }
-       when "default_company" then
+      when "default_group" then
+        Account.current.groups_from_cache.collect { |c| [c.name, c.id] }
+      when "default_internal_agent" then
+        return group_agents(ticket, true)
+      when "default_internal_group" then
+        internal_group_choices(ticket)
+      when "default_product" then
+        Account.current.products.collect { |e| [e.name, e.id] }
+      when "default_company" then
          requester_companies(ticket)
-       when "nested_field" then
-         picklist_values.collect { |c| [CGI.unescapeHTML(c.value), c.value] }
-       else
-         []
+      when "nested_field" then
+        picklist_values.collect { |c| [CGI.unescapeHTML(c.value), c.value] }
+      else
+        []
      end
   end
 
@@ -417,6 +422,10 @@ class Helpdesk::TicketField < ActiveRecord::Base
     field_options.blank? ? false : field_options.symbolize_keys.fetch(:section, false)
   end
 
+  def shared_ownership_field?
+    self.field_type == "default_internal_group" or self.field_type == "default_internal_agent"
+  end
+
   def has_sections_feature?
     Account.current.features?(:dynamic_sections)
   end
@@ -433,19 +442,32 @@ class Helpdesk::TicketField < ActiveRecord::Base
   
   protected
 
-    def group_agents(ticket)
-      if ticket && ticket.group_id
-        agent_list = AgentGroup.where({ :group_id => ticket.group_id, :users => {:account_id => Account.current.id , :deleted => false } }).joins(:user).select("users.id,users.name").order("users.name").collect{ |c| [c.name, c.id]}
-        if !ticket.responder_id || agent_list.any? { |a| a[1] == ticket.responder_id }
+    def group_agents(ticket, internal_group = false)
+      if ticket
+        group_id = (internal_group ? ticket.internal_group_id : ticket.group_id)
+        responder_id = (internal_group ? ticket.internal_agent_id : ticket.responder_id)
+        if group_id.present?
+          agent_list = AgentGroup.where({ :group_id => group_id, :users => {:account_id => Account.current.id , :deleted => false } }).joins(:user).select("users.id,users.name").order("users.name").collect{ |c| [c.name, c.id]}
+          if !responder_id || agent_list.any? { |a| a[1] == responder_id }
+            return agent_list
+          end
+
+          responder = Account.current.agents.find_by_user_id(responder_id)
+          agent_list += [[ responder.user.name, responder_id ]] if responder
           return agent_list
         end
-
-        responder = Account.current.agents.find_by_user_id(ticket.responder_id)
-        agent_list += [[ responder.user.name, ticket.responder_id ]] if responder
-        return agent_list
       end
-      
-      Account.current.agents_details_from_cache.collect { |c| [c.name, c.id] }
+
+      internal_group ? [] : Account.current.agents_details_from_cache.collect { |c| [c.name, c.id] }
+    end
+
+    def internal_group_choices ticket
+      group_choices = []
+      if ticket
+        status_group_ids = ticket.ticket_status.present? ? ticket.ticket_status.group_ids : []
+        group_choices = Account.current.groups_from_cache.collect {|c| [CGI.escapeHTML(c.name), c.id] if status_group_ids.include?(c.id)}.compact
+      end
+      group_choices
     end
 
     def populate_choices
@@ -511,6 +533,24 @@ class Helpdesk::TicketField < ActiveRecord::Base
     def set_portal_edit
       self.editable_in_portal = false unless visible_in_portal
       self
+    end
+
+    def set_internal_field_values
+      if (self.name == "internal_agent" or self.name == "internal_group") and Account.current.features?(:shared_ownership)
+        self.visible_in_portal = false
+        self.editable_in_portal = false
+        self.required_in_portal = false
+        self.required_for_closure = false
+        self.default = true
+      end
+    end
+
+    def save_form_field_mapping
+      save_form_field(self)
+    end
+
+    def remove_form_field_mapping
+      remove_form_field(self)
     end
 
   private

@@ -28,6 +28,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
 
   def perform(parsed_to_email = Hash.new, skip_encoding = false)
     # from_email = parse_from_email
+    encode_stuffs unless skip_encoding
     Rails.logger.info "Email received: Message-Id #{message_id}"
     self.start_time = Time.now.utc
     to_email = parsed_to_email.present? ? parsed_to_email : parse_to_email
@@ -44,7 +45,6 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       account.make_current
       verify
       TimeZone.set_time_zone
-      encode_stuffs unless skip_encoding
       from_email = parse_from_email(account)
       if from_email.nil?
         Rails.logger.info "Email Processing Failed: No From Email found!"
@@ -62,7 +62,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       
       if (to_email[:email] != kbase_email) || (get_envelope_to.size > 1)
         email_config = account.email_configs.find_by_to_email(to_email[:email])
-        if email_config && (from_email[:email] == email_config.reply_email)
+        if email_config && (from_email[:email].to_s.downcase == email_config.reply_email.to_s.downcase)
           Rails.logger.info "Email Processing Failed: From-email and reply-email are same!"
           return
         end
@@ -146,7 +146,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     end
     params[:cc] = permissible_ccs(user, params[:cc], account)
     if ticket
-      if(from_email[:email] == ticket.reply_email) #Premature handling for email looping..
+      if(from_email[:email].to_s.downcase == ticket.reply_email.to_s.downcase) #Premature handling for email looping..
         Rails.logger.info "Email Processing Failed: From-email and reply-email email are same!"
         return
       end
@@ -212,6 +212,16 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         unless params[t_format].nil?
           charset_encoding = (charsets[t_format.to_s] || "UTF-8").strip()
           # if !charset_encoding.nil? and !(["utf-8","utf8"].include?(charset_encoding.downcase))
+          if ((t_format == :subject || t_format == :headers) && (charsets[t_format.to_s].blank? || charsets[t_format.to_s].upcase == "UTF-8") && (!params[t_format].valid_encoding?))
+            begin
+              params[t_format] = params[t_format].encode(Encoding::UTF_8, :undef => :replace, 
+                                                                      :invalid => :replace, 
+                                                                      :replace => '')
+              next
+            rescue Exception => e
+              Rails.logger.error "Error While encoding in process email  \n#{e.message}\n#{e.backtrace.join("\n\t")} #{params}"
+            end
+          end
           replacement_char = "\uFFFD"
           if t_format.to_s == "subject" and (params[t_format] =~ /^=\?(.+)\?[BQ]?(.+)\?=/ or params[t_format].include? replacement_char)
             params[t_format] = decode_subject
@@ -401,7 +411,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         end
         user = get_user(account, e_email , email_config, true) unless e_email.blank?
       end
-     
+
       global_cc = parse_all_cc_emails(account.kbase_email, account.support_emails)
 
       ticket = Helpdesk::Ticket.new(
@@ -412,7 +422,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         :requester => user,
         :to_email => to_email[:email],
         :to_emails => parse_to_emails,
-        :cc_email => {:cc_emails => global_cc, :fwd_emails => [], :reply_cc => global_cc, :tkt_cc => parse_cc_email },
+        :cc_email => {:cc_emails => global_cc, :fwd_emails => [], :bcc_emails => [], :reply_cc => global_cc, :tkt_cc => parse_cc_email },
         :email_config => email_config,
         :status => Helpdesk::Ticketfields::TicketStatus::OPEN,
         :source => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email]
@@ -602,7 +612,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       parsed_cc_emails = parse_cc_email
       parsed_cc_emails.delete(ticket.account.kbase_email)
       note = ticket.notes.build(
-        :private => (from_fwd_recipients or reply_to_private_note?(all_message_ids) or rsvp_to_fwd?),
+        :private => (from_fwd_recipients or reply_to_private_note?(all_message_ids) or rsvp_to_fwd?(ticket, from_email, user)),
         :incoming => true,
         :note_body_attributes => {
           :body => tokenize_emojis(body) || "",
@@ -618,9 +628,9 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         :cc_emails => parsed_cc_emails
       )  
       note.subject = Helpdesk::HTMLSanitizer.clean(params[:subject])   
-      note.source = Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"] if (from_fwd_recipients or ticket.agent_performed?(user) or rsvp_to_fwd?)
+      note.source = Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"] if (from_fwd_recipients or ticket.agent_performed?(user) or rsvp_to_fwd?(ticket, from_email, user))
       
-      note.schema_less_note.category = ::Helpdesk::Note::CATEGORIES[:third_party_response] if rsvp_to_fwd?
+      note.schema_less_note.category = ::Helpdesk::Note::CATEGORIES[:third_party_response] if rsvp_to_fwd?(ticket, from_email, user)
 
       check_for_auto_responders(note)
       check_support_emails_from(ticket.account, note, user, from_email)
@@ -668,8 +678,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       end
     end
     
-    def rsvp_to_fwd?
-      @rsvp_to_fwd ||= (Account.current.features?(:threading_without_user_check) && reply_to_forward(all_message_ids))
+    def rsvp_to_fwd?(ticket, from_email, user)
+      @rsvp_to_fwd ||= ((Account.current.features?(:threading_without_user_check) || (!ticket.cc_email.nil? && !ticket.cc_email[:cc_emails].nil? && ticket.cc_email[:cc_emails].include?(from_email[:email])) || user.agent?) && reply_to_forward(all_message_ids))
     end
 
     def can_be_added_to_ticket?(ticket, user, from_email={})
@@ -872,13 +882,11 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     end
 
     def ticket_cc_emails_hash(ticket, note)
-      cc_email_hash_value = ticket.cc_email_hash.nil? ? Helpdesk::Ticket.default_cc_hash : ticket.cc_email_hash
-      cc_emails_val =  parse_all_cc_emails(ticket.account.kbase_email, ticket.account.support_emails)
-      cc_emails_val.delete_if{|email| (email == ticket.requester.email)}
-      reply_type = in_reply_to.to_s.include?("notification.freshdesk.com") ? :notification : :default
-      add_to_reply_cc(cc_emails_val, ticket, note, cc_email_hash_value, reply_type)
-      cc_email_hash_value[:cc_emails] = cc_emails_val | cc_email_hash_value[:cc_emails].compact.collect! {|x| (parse_email x)[:email]}
-      cc_email_hash_value
+      to_email   = parse_to_email[:email]
+      to_emails  = get_email_array(params[:to])
+      new_cc_emails = parse_cc_email
+      updated_ticket_cc_emails(new_cc_emails, ticket, note, in_reply_to, 
+        to_email, to_emails)
     end
 
     #possible unwanted code. Not used now.

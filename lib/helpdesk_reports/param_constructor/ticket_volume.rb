@@ -3,7 +3,7 @@ class HelpdeskReports::ParamConstructor::TicketVolume < HelpdeskReports::ParamCo
   METRICS = ["RECEIVED_RESOLVED_TICKETS","UNRESOLVED_PREVIOUS_BENCHMARK",
              "RECEIVED_RESOLVED_BENCHMARK","UNRESOLVED_CURRENT_BENCHMARK"]
   
-  DAY_TOGGLE = ['today','yesterday','this_week','previous_week','last_7','this_month','previous_month']
+  DAY_TOGGLE = ['today','yesterday','this_week','previous_week','last_7','last_30','this_month','previous_month']
   
   def initialize options
     @report_filter_params = options
@@ -19,15 +19,16 @@ class HelpdeskReports::ParamConstructor::TicketVolume < HelpdeskReports::ParamCo
   def query_params
     if basic_param_structure[:scheduled_report] 
       @trend_conditions = ["h","dow","y"]
-       conditions = @report_filter_params[:date]["period"] || @report_filter_params[:date]["date_range"]
-        @trend_conditions =   case conditions
-                              when  *DAY_TOGGLE, 6, 29
-                               options[:trend] = "doy"
-                               @trend_conditions << "doy"
-                              else 
-                               options[:trend] = "mon"
-                               @trend_conditions << "mon"
-                              end  
+      conditions = @report_filter_params[:date]["period"] || @report_filter_params[:date]["date_range"]
+
+      if (DAY_TOGGLE | [6,29]).include?(conditions)
+        options[:trend] = "doy"
+        @trend_conditions << "doy"
+      else
+        options[:trend] = "mon"
+        @trend_conditions << "mon"
+      end
+
     end  
     tv_params = {
         time_trend: true,

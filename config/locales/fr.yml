@@ -115,6 +115,7 @@ fr:
     digits: "Veuillez saisir des chiffres uniquement."
     creditcard: "Veuillez saisir un numéro de carte bancaire valide."
     equalTo: "Veuillez saisir la même valeur à nouveau."
+    two_decimal_place_warning: "Value cannot have more than 2 decimal digits"
   confirm_delete_message: "Êtes-vous sûr de vouloir supprimer%{human_name} ? "
   reload: Rafraîchir
   any: "Peu importe"
@@ -2439,6 +2440,16 @@ fr:
     tweet: tweet
     time_entry: durée
     note: remarque
+    supervisor: "règle de superviseur"
+    observer: "règle d'observateur"
+    business: "règle dispatch’r"
+    round_robin: "attribution automatique de tickets"
+    scenario: "Automatisation de scénario"
+    none: Aucun
+    subject: objet
+    description: description
+    set: Définir
+    rule_executed: "Règle système exécutée"
     tag:
       solutions: "Nouvelle solution"
       assigned_to_nobody: "Agent non affecté"
@@ -2457,6 +2468,10 @@ fr:
         new: "Temps consacré"
         timer_started: "Chronomètre démarré"
         timer_stopped: "Chronomètre arrêté"
+        edit: "Feuille de temps mise à jour"
+        delete: "Feuille de temps supprimée"
+        billable: Facturable
+        non_billable: "Non facturable"
       execute_scenario: "Scénario exécuté"
       ticket_merge: "Ticket fusionné"
       ticket_split: "Ticket divisé"
@@ -2470,6 +2485,11 @@ fr:
       group_change_none: "Groupe d'agents modifié"
       source_change: "Source du ticket"
       due_date_updated: "Date butoir mise à jour"
+      tag_change: "Balise mise à jour"
+      add_watcher: "Observateur ajouté"
+      remove_watcher: "Observateur supprimé"
+      property_update: "Propriété mise à jour"
+      spam: "Spam marqué"
     solutions:
       new_solution:
         short: "{{user_path}} a créé une nouvelle solution."
@@ -2477,36 +2497,60 @@ fr:
       new_article:
         short: "{{user_path}} a créé un article"
         long: "{{user_path}} a créé un article « {{notable_path}} »"
+      new_article_translation:
+        short: "{{user_path}} a créé une traduction d'article en {{language_name}}"
+        long: "{{user_path}} a créé une traduction d'article en {{language_name}} '{{notable_path}}'"
       published_article:
-        short: "L'article de {{user_path}} a été publié"
-        long: "{{user_path}} a publié un article « {{notable_path}} »"
+        short: "{{user_path}} a publié un article"
+        long: "{{user_path}} a publié un article « {{notable_path}} »."
+      published_article_translation:
+        short: "{{user_path}} a publié une traduction d'article en {{language_name}}"
+        long: "{{user_path}} a publié une traduction d'article en {{language_name}} '{{notable_path}}'"
       unpublished_article:
-        short: "La publication de l'article de {{user_path}} a été annulée"
+        short: "{{user_path}} a annulé la publication d'un article"
         long: "{{user_path}} a annulé la publication d'un article « {{notable_path}} »"
+      unpublished_article_translation:
+        short: "{{user_path}} a annulé la publication d'une traduction d'article en {{language_name}}"
+        long: "{{user_path}} a annulé la publication d'une traduction d'article en {{language_name}} '{{notable_path}}'"
       delete_article:
         short: "{{user_path}} a supprimé un article"
         long: "{{user_path}} a supprimé un article « {{notable_path}} »"
       new_solution_category:
         short: "{{user_path}} a créé une catégorie de solution"
         long: "{{user_path}} a créé une nouvelle catégorie de solution « {{notable_path}} »"
+      new_solution_category_translation:
+        short: "{{user_path}} a créé une traduction de catégorie de solutions en {{language_name}}"
+        long: "{{user_path}} a créé une traduction de catégorie de solutions en {{language_name}} '{{notable_path}}'"
       delete_solution_category:
         short: "{{user_path}} a supprimé une catégorie de solution"
-        long: "{{user_path}} a supprimé la catégorie de solution « {{notable_path}} »"
+        long: "{{user_path}} a supprimé une catégorie de solution « {{notable_path}} »"
       new_folder:
         short: "{{user_path}} a créé un nouveau dossier"
         long: "{{user_path}} a créé un nouveau dossier « {{notable_path}} »"
+      new_folder_translation:
+        short: "{{user_path}} a créé une nouvelle traduction de dossier en {{language_name}}"
+        long: "{{user_path}} a créé une nouvelle traduction de dossier en {{language_name}} '{{notable_path}}'"
       delete_folder:
         short: "{{user_path}} a supprimé un dossier"
-        long: "{{user_path}} a supprimé le dossier « {{notable_path}} »"
+        long: "{{user_path}} a supprimé un dossier « {{notable_path}} »"
       new_draft:
         short: "{{user_path}} a créé un brouillon pour un article"
-        long: "{{user_path}} a créé un brouillon pour l'article « {{notable_path}} »"
+        long: "{{user_path}} a créé un brouillon pour un article « {{notable_path}} »"
+      new_draft_translation:
+        short: "{{user_path}} a créé un brouillon pour une traduction d'article en {{language_name}}"
+        long: "{{user_path}} a créé un brouillon pour une traduction d'article en {{language_name}} '{{notable_path}}'"
       published_draft:
         short: "{{user_path}} a publié le brouillon d'un article"
         long: "{{user_path}} a publié le brouillon d'un article « {{notable_path}} »"
+      published_draft_translation:
+        short: "{{user_path}} a publié le brouillon d'une traduction d'article en {{language_name}}"
+        long: "{{user_path}} a publié le brouillon d'une traduction d'article en {{language_name}} '{{notable_path}}'"
       delete_draft:
         short: "{{user_path}} a ignoré le brouillon d'un article"
         long: "{{user_path}} a ignoré le brouillon d'un article « {{notable_path}} »"
+      delete_draft_translation:
+        short: "{{user_path}} a ignoré le brouillon d'une traduction d'article"
+        long: "{{user_path}} a ignoré le brouillon d'une traduction d'article en {{language_name}} '{{notable_path}}'"
     forums:
       new_forum_category:
         short: "{{user_path}} a créé une nouvelle catégorie de forum."
@@ -2571,7 +2615,7 @@ fr:
     tickets:
       assigned_to_nobody:
         short: "Attribué à « Personne » par {{user_path}}."
-        long: "{{user_path}} a attribué le ticket {{notable_path}} à &laquo; Personne &raquo;."
+        long: "{{user_path}} a attribué le ticket {{notable_path}} à « Personne »."
         without_user: "Attribué à <strong>« Personne »</strong>"
       reassigned:
         long: "{{user_path}} a réattribué le ticket {{notable_path}} à {{responder_path}}."
@@ -2580,12 +2624,15 @@ fr:
         short: "{{user_path}} a modifié la priorité pour attribuer le niveau {{priority_name}}."
         long: "{{user_path}} a modifié la priorité du ticket de {{notable_path}} qui est passée à {{priority_name}}."
         without_user: "a modifié la priorité du ticket qui est passée au niveau <strong>{{priority_name}}</strong>"
+        new: "Priorité en tant que <strong>%{priority_name}</strong>"
       new_ticket:
         short: "{{user_path}} a envoyé le ticket."
         long: "{{user_path}} a envoyé un nouveau ticket {{notable_path}}."
+        new: "a soumis un nouveau ticket"
       new_outbound:
         short: "{{user_path}} a créé un ticket"
         long: "{{user_path}} a créé un ticket {{notable_path}}"
+        new: "a envoyé un e-mail et a créé un ticket"
       conversation:
         out_email:
           short: "{{user_path}} a envoyé un {{reply_path}}."
@@ -2610,22 +2657,43 @@ fr:
           short: "{{user_path}} a ajouté un {{timesheet_path}}."
           long: "{{user_path}} a ajouté un {{timesheet_path}} au ticket {{notable_path}}."
           without_user: "a ajouté un {{timesheet_path}}."
+          new: "a ajouté une durée"
         timer_started:
           short: "{{user_path}} a démarré le chronomètre à {{timesheet_path}}."
           without_user: "a démarré le chronomètre à {{timesheet_path}}."
           long: "{{user_path}} a démarré le chronomètre à {{timesheet_path}} pour le ticket {{notable_path}}."
+          new: "a lancé le chronomètre sur l'entrée de feuille de temps"
         timer_stopped:
           short: "{{user_path}} a arrêté le chronomètre à {{timesheet_path}}."
           without_user: "a arrêté le chronomètre à {{timesheet_path}}."
           long: "{{user_path}} a arrêté le chronomètre à {{timesheet_path}} pour le ticket {{notable_path}}."
+          new: "a arrêté le chronomètre sur l'entrée de feuille de temps"
+      timesheet_without_time:
+        new: "%{billable} heures pour %{user_path} le %{date}"
+      timesheet_with_time:
+        new: "%{time_spent} %{billable} heures pour %{user_path} le %{date}"
+      timesheet_timer_start:
+        new: "a démarré le chronomètre sur la feuille de temps avec %{timesheet}"
+      timesheet_timer_stop:
+        new: "a arrêté le chronomètre sur la feuille de temps pour %{timesheet}"
+      timesheet_create:
+        new: "a créé une feuille de temps avec %{timesheet}"
+      timesheet_edit:
+        new: "a modifié une feuille de temps <br> Feuille de temps avec %{old_timesheet} modifiée en feuille de temps avec %{new_timesheet}"
+      timesheet_delete:
+        new: "a supprimé la feuille de temps avec %{timesheet}"
       assigned:
         short: "Attribué à {{responder_path}} par {{user_path}}."
         without_user: "attribué à <strong>{{responder_path}}</strong>"
         long: "{{user_path}} a attribué le ticket {{notable_path}} à {{responder_path}}."
+        new: "Agent en tant que %{responder_path}"
+      round_robin:
+        new: "Définir l'agent en tant que <strong>%{responder_path}</strong> via une attribution de type tourniquet"
       execute_scenario:
         short: "{{user_path}} a exécuté le scénario '{{scenario_name | h}}"
         without_user: "a exécuté le scénario <strong>{{scenario_name | h}}</strong>"
         long: "{{user_path}} a exécuté le scénario '{{scenario_name | h}}' sur {{notable_path}}"
+        new: "a exécuté le scénario <strong>%{scenario_name}</strong>"
       ticket_merge:
         short: "{{user_path}} a fusionné le ticket {{notable_path}} avec {{merge_ticket_path}}. "
         long: "{{user_path}} a fusionné le ticket {{notable_path}} avec {{merge_ticket_path}}."
@@ -2642,18 +2710,26 @@ fr:
         short: "{{user_path}} a modifié le statut qui est passé à {{status_name}}."
         without_user: "a modifié le statut qui est passé à<strong>{{status_name}}</strong>"
         long: "{{user_path}} a modifié le statut du ticket de {{notable_path}} pour indiquer {{status_name}}."
+        new: "Statut en tant que <strong>%{status_name}</strong>"
       deleted:
         short: "{{user_path}} a supprimé ce ticket."
         without_user: "a supprimé le ticket"
         long: "{{user_path}} a supprimé le ticket {{notable_path}}."
+        new: "a supprimé ce ticket"
       restored:
         short: "{{user_path}} a restauré ce ticket."
         without_user: "a restauré le ticket"
         long: "{{user_path}} a restauré le ticket {{notable_path}}."
+        new: "a restauré ce ticket à partir de la corbeille"
+      spam:
+        new: "Marqué ce ticket comme spam"
+      unspam:
+        new: "Restauré ce ticket à partir du dossier de spam"
       product_change:
         short: "{{user_path}} a modifié le produit pour indiquer {{product_name}}."
         without_user: "a modifié le produit pour indiquer<strong>{{product_name}}</strong>"
         long: "{{user_path}} a modifié le produit de {{notable_path}} pour indiquer {{product_name}}."
+        new: "Produit en tant que <strong>%{product_name}</strong>"
       product_change_none:
         short: "{{user_path}} a modifié le produit pour indiquer « aucun »."
         without_user: "a modifié le produit pour indiquer <strong>« aucun »."
@@ -2662,10 +2738,12 @@ fr:
         short: "{{user_path}} a modifié le type de ticket pour indiquer {{ticket_type}}."
         without_user: "a modifié le type de ticket pour indiquer<strong>{{ticket_type}}.</strong>"
         long: "{{user_path}} a modifié le type du ticket de {{notable_path}} pour indiquer {{ticket_type}}."
+        new: "Type en tant que <strong>%{ticket_type}</strong>"
       group_change:
         short: "{{user_path}} a modifié le groupe pour indiquer {{group_name}}."
         without_user: "a modifié le groupe pour indiquer <strong>{{group_name}}.</strong>"
         long: "{{user_path}} a modifié le groupe de {{notable_path}} pour indiquer {{group_name}}."
+        new: "Groupe en tant que <strong>%{group_name}</strong>"
       group_change_none:
         short: "{{user_path}} a modifié le groupe pour indiquer « aucun »."
         without_user: "a modifié le groupe pour indiquer<strong>« aucun ».</strong>"
@@ -2674,10 +2752,48 @@ fr:
         short: "{{user_path}} a modifié la source pour indiquer {{source_name}}."
         without_user: "a modifié la source pour indiquer <strong>{{source_name}}.</strong>"
         long: "{{user_path}} a modifié la source du ticket de {{notable_path}} pour indiquer {{source_name}}."
+        new: "Source en tant que <strong>%{source_name}</strong>"
       due_date_updated:
         short: "{{user_path}} a mis à jour la date butoir qui est dorénavant : {{due_date_updated}}"
         without_user: "a mis à jour la date butoir qui est dorénavant <strong>{{due_date_updated}}</strong>"
         long: "{{user_path}} a mis à jour la date butoir de {{notable_path}} qui est dorénavant {{due_date_updated}}"
+        new: "Heure d'échéance en tant que <strong>%{due_date_updated}</strong>"
+      requester_change:
+        new: "Demandeur en tant que %{requester_name}"
+      ticket_edit:
+        new: "a modifié <strong>%{fields}</strong>"
+      custom_field_change:
+        new: "%{field_name} en tant que <strong>%{field_value}</strong>"
+      custom_text_field_change:
+        new: "a modifié %{text_fields}"
+      added_watcher:
+        new: "a ajouté des observateurs à %{watcher_list}"
+      removed_watcher:
+        new: "a supprimé un observateur de %{watcher_list}"
+      added_tag:
+        new: "a ajouté des balises <strong>%{tag_name}</strong>"
+      removed_tag:
+        new: "a supprimé des balises <strong>%{tag_name}</strong>"
+      add_cc:
+        new: "a ajouté des personnes en copie %{cc_list}"
+      add_note:
+        new: "a ajouté des notes"
+      ticket_merge_source:
+        new: "a fusionné ce ticket avec %{target_ticket}"
+      ticket_merge_target:
+        new: "a fusionné %{source_ticket_list} avec ce ticket"
+      ticket_split_source:
+        new: "a créé un nouveau ticket %{target_ticket} à partir d'une réponse"
+      ticket_split_target:
+        new: "a créé ce ticket en extrayant une réponse du ticket %{source_ticket}"
+      ticket_import:
+        new: "Ticket importé à %{imported_time}"
+      checkbox_checked:
+        new: "Sélectionnés %{checkbox_list}"
+      checkbox_unchecked:
+        new: "Désélectionnés %{checkbox_list}"
+      archive:
+        new: "Ticket archivé"
   credit_card_info: "Informations sur la carte bancaire"
   zendesk_backup_info: "Sélectionnez le fichier de sauvegarde Zendesk téléchargé sur Zendesk."
   backup_error_msg: "Le fichier dépasse la limite fixée de 50 Mo. Veuillez <a href='#' id='import_request'>contacter l'assistance</a> pour pouvoir continuer l'importation."
@@ -4719,7 +4835,16 @@ fr:
       user_not_following: "Cet utilisateur ne suit pas votre compte Twitter"
     activities: Activités
     activity_toggle: "Afficher les activités"
+    activity_toggle_v2: Activités
+    activity_toggle_tooltip: "Activer/désactiver les activités"
+    show_activities_tooltip: "Afficher les activités"
+    hide_activities_tooltip: "Masquer les activités"
     activity_timestamp: "%{user_name} a mis à jour <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
+    user_activity_timestamp: "%{user_name} mis(e) à jour <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
+    deleted_rule: "règle supprimée - %{rule_name}"
+    executed: " exécuté "
+    performed: " effectué "
+    system_activity_timestamp: "<strong class='muted'>Système</strong> %{system_rule} <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date}) "
     requestor_info: "Informations sur le demandeur"
     view_twitter: "Afficher sur Twitter"
     view_facebook: "Afficher dans Facebook"
@@ -5311,6 +5436,7 @@ fr:
         timesheet: "Feuille de temps"
         reply_form:
           title: "Répondre à"
+          from: "De"
           cc: Cc
           addcc: "Ajouter un champ Cc"
           removecc: "Supprimer le champ Cc"
@@ -5328,6 +5454,7 @@ fr:
           not_sent: "La réponse n'a pas été transférée !"
         reply_to_forward:
           title: Répondre
+          from: "De"
           cc: Cc
           to: À
           addcc: "Ajouter Cc"
@@ -5341,6 +5468,7 @@ fr:
         facebook_form:
           reply_to: "Répondre à"
           title: "Répondre à %{user}"
+          from: "De:"
         ecommerce_reply_form:
           title: "Répondre à"
         history:

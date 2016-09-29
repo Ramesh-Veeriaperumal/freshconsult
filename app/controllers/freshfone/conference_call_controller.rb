@@ -204,7 +204,7 @@ class Freshfone::ConferenceCallController < FreshfoneBaseController
     def select_current_call
       return @current_call = participant_leg.call if current_call.blank? && participant_leg.present?
       return if current_call.blank?
-      child_call = current_call.children.ongoing_calls.last
+      child_call = current_call.children.ongoing_or_completed_calls.last
       return @current_call = child_call if child_call.present? && child_call.meta.warm_transfer_meta?
       return if current_call.blank? || current_call.parent.blank?
       @current_call = current_call.parent if (current_call.parent.inprogress? || current_call.parent.onhold?)
@@ -282,7 +282,7 @@ class Freshfone::ConferenceCallController < FreshfoneBaseController
     def agent_leg?
       new_notifications? &&
         params[:From].present? && split_client_id(params[:From]).present? &&
-        current_call.present? && (outgoing_child_leg? || warm_transfer_call.present?)
+        current_call.present? && (outgoing_child_leg? || warm_transfer_call_leg.present?)
     end
 
     def participant_leg

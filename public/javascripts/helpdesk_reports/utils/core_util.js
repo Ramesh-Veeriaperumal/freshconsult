@@ -2,8 +2,8 @@ HelpdeskReports.CoreUtil = HelpdeskReports.CoreUtil || {};
 HelpdeskReports.locals = HelpdeskReports.locals || {};
 
 HelpdeskReports.CoreUtil = {
-    MULTI_SELECT_SELECTION_LIMIT: 10,
-    FILTER_LIMIT: 5,
+    MULTI_SELECT_SELECTION_LIMIT: 50,
+    FILTER_LIMIT: 10,
     FILTER_LIMIT_MSG: I18n.t('helpdesk_reports.filter_error_msg'),
     CONST: {
         base_url    : "/reports/v2/",
@@ -32,10 +32,10 @@ HelpdeskReports.CoreUtil = {
     ** set to 1 min for now. Will be handled at backend later on.
     */
     timeouts: {
-        main_request: 60000,
-        glance_right_pane: 60000,
-        ticket_list: 60000,
-        custom_field: 60000
+        main_request: 120000,
+        glance_right_pane: 120000,
+        ticket_list: 120000,
+        custom_field: 120000
     },
     SHORTEN_LIMIT : 9999,
     getFilterDisplayData: function () {
@@ -491,6 +491,7 @@ HelpdeskReports.CoreUtil = {
             }
         },
         openFilterMenu: function () {
+            jQuery("#report-filters").scrollTop(0);
             jQuery("#report-filters").show();
             jQuery('#inner').addClass('openedit');
             this.hideTicketList();

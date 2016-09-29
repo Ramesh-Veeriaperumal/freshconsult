@@ -25,7 +25,7 @@ CapsuleWidget = {
         new Ajax.Request('/http_request_proxy/fetch', {
             asynchronous: true,
             evalScripts: true,
-            method: 'get',
+            method: 'post',
             parameters: parameters,
             onSuccess: function (response) {
                 if (response.responseJSON.person || response.responseJSON.organisation) {
@@ -169,7 +169,7 @@ CapsuleWidget = {
         new Ajax.Request('/http_request_proxy/fetch', {
             asynchronous: true,
             evalScripts: true,
-            method: 'get',
+            method: 'post',
             parameters: parameters,
             onSuccess: function (response) {
                 CapsuleWidget.processSearch(response);
@@ -233,7 +233,7 @@ CapsuleWidget = {
                 notFoundText += '<h5  class="lead">Add this contact to Capsule CRM?</h5>';
                 notFoundText += '<form id="cap-person" onsubmit="CapsuleWidget.addContact(this,capsuleResource);return false;">';
                 notFoundText += '<label for="name"><h5>Name</h5></label><input type="text" id="name" name="name" value="' + capsuleBundle.reqName.escapeHTML() + '">';
-                notFoundText += '<label for="org"><h5>Company</h5></label><input type="text" id="org" name="org" value="' + capsuleBundle.reqOrg.escapeHTML() + '">';
+                notFoundText += '<label for="org"><h5>Company</h5></label><input type="text" id="org" name="org" value="' + (CapsuleWidget.company()).escapeHTML() + '">';
                 notFoundText += '<label for="phone"><h5>Phone Number</h5></label><input type="text" id="phone" name="phone" value="' + capsuleBundle.reqPhone.escapeHTML() + '">';
                 notFoundText += '<label>Email</label>';
                 notFoundText += '<input type="text" name="email" value="' + capsuleBundle.reqEmail.escapeHTML() + '" />';
@@ -257,6 +257,17 @@ CapsuleWidget = {
             name = $("sidebar").select('.email a')[0].getAttribute('href').substring(7);
         }
         return name;
+    },
+
+    company: function() {
+        if(typeof(capsuleBundle)!='undefined') {
+            if(capsuleBundle.ticket_company.length > 0){
+                return capsuleBundle.ticket_company;
+            }else if(capsuleBundle.reqOrg.length > 0){
+                return capsuleBundle.reqOrg;
+            }
+        }
+        return "";
     },
 
     addContact: function(theForm, resource) {

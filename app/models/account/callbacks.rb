@@ -16,14 +16,12 @@ class Account < ActiveRecord::Base
 
   after_commit :add_to_billing, :enable_elastic_search, on: :create
   after_commit :clear_api_limit_cache, :update_redis_display_id, on: :update
-  after_commit :delete_reports_archived_data, on: :destroy
   after_commit ->(obj) { obj.clear_cache }, on: :update
   after_commit ->(obj) { obj.clear_cache }, on: :destroy
   
   after_commit :enable_searchv2, :enable_count_es, on: :create
   after_commit :disable_searchv2, :disable_count_es, on: :destroy
   after_commit :update_sendgrid, on: :create
-
 
   # Callbacks will be executed in the order in which they have been included. 
   # Included rabbitmq callbacks at the last
@@ -182,10 +180,6 @@ class Account < ActiveRecord::Base
       remove_member_from_redis_set(SLAVE_QUERIES,self.id)
     end
 
-    def delete_reports_archived_data
-      Resque.enqueue(Workers::DeleteArchivedData, {:account_id => id})
-    end
-
     def update_freshfone_voice_url
       if full_domain_changed? or ssl_enabled_changed?
         freshfone_account.update_voice_url
@@ -235,13 +229,16 @@ class Account < ActiveRecord::Base
     end
     
     def enable_searchv2
-      SearchV2::Manager::EnableSearch.perform_async if self.features_included?(:es_v2_writes)
+      if self.features?(:es_v2_writes)
+        SearchV2::Manager::EnableSearch.perform_async
+        self.launch(:es_v2_reads)
+      end
     end
 
     def enable_count_es
       CountES::IndexOperations::EnableCountES.perform_async({ :account_id => self.id }) if Account.current.features?(:countv2_writes)
     end
-    
+
     def disable_searchv2
       SearchV2::Manager::DisableSearch.perform_async(account_id: self.id)
     end

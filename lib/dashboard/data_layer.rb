@@ -62,7 +62,11 @@ class Dashboard::DataLayer < Dashboard
   end
 
   def limit_options
-    {:first_limit => DEFAULT_ORDER_LIMIT, :second_limit => DEFAULT_ORDER_LIMIT}
+    if include_missing
+      {:first_limit => first_group_by_limit, :second_limit => last_group_by_limit}
+    else
+      {:first_limit => DEFAULT_ORDER_LIMIT, :second_limit => DEFAULT_ORDER_LIMIT}
+    end
   end
 
   def group_workload?

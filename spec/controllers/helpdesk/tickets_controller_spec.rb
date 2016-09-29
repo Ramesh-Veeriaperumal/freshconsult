@@ -121,6 +121,124 @@ RSpec.describe Helpdesk::TicketsController do
     response.body.should =~ /#{ticket.description_html}/
   end
 
+  it "should not show a ticket to a group restricted agent" do
+    ticket = create_ticket({:status => 2})
+    group_restricted_agent = add_agent(@account, {  :name => Faker::Name.name,
+                                        :email => Faker::Internet.email,
+                                        :active => 1,
+                                        :role => 1,
+                                        :agent => 1,
+                                        :ticket_permission => 2,
+                                        :role_ids => ["#{@account.roles.agent.first.id}"] })
+    log_in(group_restricted_agent)
+    get :show, :id => ticket.display_id
+    flash[:notice].should be_eql(I18n.t(:'flash.general.access_denied'))
+  end
+
+  it "should show a ticket to a group restricted agent if his group is assigned" do
+    ticket = create_ticket({:status => 2}, @group)
+    group_restricted_agent = add_agent(@account, {  :name => Faker::Name.name,
+                                        :email => Faker::Internet.email,
+                                        :active => 1,
+                                        :role => 1,
+                                        :agent => 1,
+                                        :ticket_permission => 2,
+                                        :role_ids => ["#{@account.roles.agent.first.id}"],
+                                        :group_id => @group.id })
+    log_in(group_restricted_agent)
+    get :show, :id => ticket.display_id
+    response.body.should =~ /#{ticket.description_html}/
+  end
+
+  it "should not show a ticket to an ticket restricted agent" do
+    ticket = create_ticket({:status => 2})
+    ticket_restricted_agent = add_agent(@account, {  :name => Faker::Name.name,
+                                        :email => Faker::Internet.email,
+                                        :active => 1,
+                                        :role => 1,
+                                        :agent => 1,
+                                        :ticket_permission => 3,
+                                        :role_ids => ["#{@account.roles.agent.first.id}"] })
+    log_in(ticket_restricted_agent)
+    get :show, :id => ticket.display_id
+    flash[:notice].should be_eql(I18n.t(:'flash.general.access_denied'))
+  end
+
+  it "should show a ticket to a ticket restricted agent if he is assigned to the ticket" do
+    ticket_restricted_agent = add_agent(@account, {  :name => Faker::Name.name,
+                                        :email => Faker::Internet.email,
+                                        :active => 1,
+                                        :role => 1,
+                                        :agent => 1,
+                                        :ticket_permission => 3,
+                                        :role_ids => ["#{@account.roles.agent.first.id}"] })
+    ticket = create_ticket({:status => 2, :responder_id => ticket_restricted_agent.id})
+    log_in(ticket_restricted_agent)
+    get :show, :id => ticket.display_id
+    response.body.should =~ /#{ticket.description_html}/
+  end
+
+  it "should show a ticket to a group restricted agent if his internal_group is assigned" do
+    @account.features.shared_ownership.create
+    status = Helpdesk::TicketStatus.where(:is_default => 0).first
+    status.group_ids = "#{@group.id}"
+    ticket = create_ticket({:status => status.status_id}, nil, @group)
+    group_restricted_agent = add_agent(@account, {  :name => Faker::Name.name,
+                                        :email => Faker::Internet.email,
+                                        :active => 1,
+                                        :role => 1,
+                                        :agent => 1,
+                                        :ticket_permission => 2,
+                                        :role_ids => ["#{@account.roles.agent.first.id}"],
+                                        :group_id => @group.id })
+    log_in(group_restricted_agent)
+    get :show, :id => ticket.display_id
+    response.body.should =~ /#{ticket.description_html}/
+    @account.features.shared_ownership.destroy
+    @account.reload
+  end
+
+  it "should show a ticket to a ticket restricted agent if he is assigned as an internal_agent to the ticket" do
+    @account.features.shared_ownership.create
+    status = Helpdesk::TicketStatus.where(:is_default => 0).first
+    status.group_ids = "#{@group.id}"
+    ticket_restricted_agent = add_agent(@account, {  :name => Faker::Name.name,
+                                        :email => Faker::Internet.email,
+                                        :active => 1,
+                                        :role => 1,
+                                        :agent => 1,
+                                        :ticket_permission => 3,
+                                        :role_ids => ["#{@account.roles.agent.first.id}"],
+                                        :group_id => @group.id })
+    ticket = create_ticket({:status => status.status_id, :internal_agent_id => ticket_restricted_agent.id}, nil, @group)
+    log_in(ticket_restricted_agent)
+    get :show, :id => ticket.display_id
+    response.body.should =~ /#{ticket.description_html}/
+    @account.features.shared_ownership.destroy
+    @account.reload
+  end
+
+  it "should not show a ticket to a ticket restricted agent if he is not assigned as an internal_agent to the ticket" do
+    @account.features.shared_ownership.create
+    status = Helpdesk::TicketStatus.where(:is_default => 0).first
+    status.group_ids = "#{@group.id}"
+    ticket_restricted_agent = add_agent(@account, {  :name => Faker::Name.name,
+                                        :email => Faker::Internet.email,
+                                        :active => 1,
+                                        :role => 1,
+                                        :agent => 1,
+                                        :ticket_permission => 3,
+                                        :role_ids => ["#{@account.roles.agent.first.id}"],
+                                        :group_id => @group.id })
+    ticket = create_ticket({:status => status.status_id}, nil, @group)
+    log_in(ticket_restricted_agent)
+    get :show, :id => ticket.display_id
+    flash[:notice].should be_eql(I18n.t(:'flash.general.access_denied'))
+    @account.features.shared_ownership.destroy
+    @account.reload
+  end
+
+
   # Following 2 tests are added to cover survey models
   it "should load the reply template with survey link" do
     @account.survey.update_attributes(:send_while => 1)
@@ -1122,6 +1240,258 @@ RSpec.describe Helpdesk::TicketsController do
 
       ticket = @account.tickets.where(:subject => @topic.title).last
       ticket.topic.should be_nil
+    end
+  end
+
+  describe "Linked tickets" do
+    before(:all) do
+      @account.update_attributes(:ticket_display_id => rand(10000))
+    end
+
+    it "should not create tracker ticket with association if link tickets feature is not available" do
+      tickets = []
+      2.times do |i|
+        tickets << create_ticket
+      end
+      requester = @account.users.first
+      now = (Time.now.to_f*1000).to_i
+      post :create, {:helpdesk_ticket => {:email => Faker::Internet.email,
+                                         :requester_id => requester.id,
+                                         :subject => "New Ticket #{now}",
+                                         :ticket_type => "Question",
+                                         :source => "3",
+                                         :status => "2",
+                                         :priority => "1",
+                                         :group_id => "",
+                                         :responder_id => "",
+                                         :ticket_body_attributes => {"description_html"=>"<p>Testing</p>"}
+                                        },
+                    :display_ids => tickets.map(&:display_id)}
+      ticket = @account.tickets.find_by_subject("New Ticket #{now}")
+      ticket.should be_an_instance_of(Helpdesk::Ticket)
+      ticket.association_type.should be_nil
+      tickets.each do |t|
+        t.association_type.should be_nil
+      end
+    end
+
+    it "should create tracker ticket with association if link tickets feature is available - single ticket" do
+      @account.launch(:link_tickets)
+      related_ticket = create_ticket
+      agent_requester = @account.technicians.first
+      now = (Time.now.to_f*1000).to_i
+      post :create, {:helpdesk_ticket => {:email => agent_requester.email,
+                                         :requester_id => "",
+                                         :subject => "New Tracker #{now}",
+                                         :ticket_type => "Question",
+                                         :source => "3",
+                                         :status => "2",
+                                         :priority => "1",
+                                         :group_id => "",
+                                         :responder_id => "",
+                                         :ticket_body_attributes => {"description_html"=>"<p>Testing</p>"}
+                                        },
+                    :display_ids => related_ticket.display_id}
+      tracker = @account.tickets.find_by_subject("New Tracker #{now}")
+      tracker.should be_an_instance_of(Helpdesk::Ticket)
+      tracker.association_type.should eql(TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:tracker])
+      related_ticket.reload
+      related_ticket.association_type.should eql(TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:related])
+      @account.rollback(:link_tickets)
+    end
+
+
+    it "should create tracker ticket with association if link tickets feature is available - multiple tickets" do
+      @account.launch(:link_tickets)
+      Sidekiq::Testing.inline!
+      related_tickets = []
+      3.times do |i|
+        related_tickets << create_ticket
+      end
+      agent_requester = @account.technicians.first
+      now = (Time.now.to_f*1000).to_i
+      post :create, {:helpdesk_ticket => {:email => agent_requester.email,
+                                         :requester_id => "",
+                                         :subject => "New Tracker #{now}",
+                                         :ticket_type => "Question",
+                                         :source => "3",
+                                         :status => "2",
+                                         :priority => "1",
+                                         :group_id => "",
+                                         :responder_id => "",
+                                         :ticket_body_attributes => {"description_html"=>"<p>Testing</p>"}
+                                        },
+                    :display_ids => related_tickets.map(&:display_id).join(',')}
+      tracker = @account.tickets.find_by_subject("New Tracker #{now}")
+      tracker.should be_an_instance_of(Helpdesk::Ticket)
+      tracker.association_type.should eql(TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:tracker])
+      related_tickets.each do |t|
+        t.reload
+        t.association_type.should eql(TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:related])
+        t.associates.should =~ [tracker.display_id]
+      end
+      tracker.associates.should =~ related_tickets.map(&:display_id)
+      Sidekiq::Testing.disable!
+      @account.rollback(:link_tickets)
+    end
+
+    it "should throw error when requester of the tracker is not an agent" do
+      @account.launch(:link_tickets)
+      tickets = []
+      3.times do |i|
+        tickets << create_ticket
+      end
+      requester = @account.contacts.first
+      now = (Time.now.to_f*1000).to_i
+      post :create, {:helpdesk_ticket => {:email => requester.email,
+                                         :requester_id => requester.id,
+                                         :subject => "New Ticket #{now}",
+                                         :ticket_type => "Question",
+                                         :source => "3",
+                                         :status => "2",
+                                         :priority => "1",
+                                         :group_id => "",
+                                         :responder_id => "",
+                                         :ticket_body_attributes => {"description_html"=>"<p>Testing</p>"}
+                                        },
+                    :display_ids => tickets.map(&:display_id).join(',')}
+      ticket = @account.tickets.find_by_subject("New Ticket #{now}")
+      ticket.should be_nil
+      response.body.should =~ /Please make sure to add an agent as a requester/
+      @account.rollback(:link_tickets)
+    end
+
+
+    it "should link the ticket to the tracker - single" do
+      @account.launch(:link_tickets) 
+      ticket = create_ticket
+      tracker = create_ticket({:display_ids => [ticket.display_id]})
+      related_ticket = create_ticket
+      put :link, { :id => related_ticket.display_id, :tracker_id => tracker.display_id }
+      related_ticket.reload
+      related_ticket.association_type.should eql(TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:related])
+      related_ticket.associates.should =~ [tracker.display_id]
+      tracker.association_type.should eql(TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:tracker])
+      tracker.associates.should =~ [ticket.display_id, related_ticket.display_id]
+      @account.rollback(:link_tickets)
+    end
+
+
+    it "should link the ticket to the tracker - multiple" do
+      @account.launch(:link_tickets) 
+      Sidekiq::Testing.inline!
+      ticket = create_ticket
+      tracker = create_ticket({:display_ids => [ticket.display_id]})
+      related_tickets = []
+      3.times do |i|
+        related_tickets << create_ticket
+      end
+      put :link, { :ids => related_tickets.map(&:display_id), 
+                  :tracker_id => tracker.display_id,
+                  :id => 'multiple' }
+      related_tickets.each do |t|
+        t.reload
+        t.association_type.should eql(TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:related])
+        t.associates.should =~ [tracker.display_id]
+      end
+      tracker.association_type.should eql(TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:tracker])
+      tracker.associates.should =~ related_tickets.map(&:display_id) + [ticket.display_id]
+      Sidekiq::Testing.disable!
+      @account.rollback(:link_tickets)
+    end
+
+    it "should remove the association if the tracker is deleted" do
+      @account.launch(:link_tickets) 
+      Sidekiq::Testing.inline!
+      ticket = create_ticket
+      related_tickets = []
+      3.times do |i|
+        related_tickets << create_ticket
+      end
+      tracker = create_ticket({:display_ids => [ticket.display_id] + related_tickets.map(&:display_id)})
+      delete :destroy, { :id => tracker.display_id }
+      (related_tickets << ticket).each do |t|
+        t.reload
+        t.association_type.should be_nil
+        t.associates.should be_nil
+      end
+      tracker.reload
+      tracker.association_type.should be_nil
+      tracker.associates.should be_nil
+      Sidekiq::Testing.disable!
+      @account.rollback(:link_tickets)
+    end
+
+    it "should remove the association if the related_ticket is deleted" do
+      @account.launch(:link_tickets) 
+      Sidekiq::Testing.inline!
+      ticket = create_ticket
+      related_tickets = []
+      3.times do |i|
+        related_tickets << create_ticket
+      end
+      tracker = create_ticket({:display_ids => [ticket.display_id] + related_tickets.map(&:display_id)})
+      delete :destroy, { :id => ticket.display_id }
+      related_tickets.each do |t|
+        t.reload
+        t.association_type.should eql(TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:related])
+        t.associates.should =~ [tracker.display_id]
+      end
+      ticket.reload
+      ticket.association_type.should be_nil
+      ticket.associates.should be_nil
+      tracker.reload
+      tracker.association_type.should eql(TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:tracker])
+      tracker.associates.should =~ related_tickets.map(&:display_id)
+      Sidekiq::Testing.disable!
+      @account.rollback(:link_tickets)
+    end
+
+    it "should remove the association if the tracker is marked as spam" do
+      @account.launch(:link_tickets) 
+      Sidekiq::Testing.inline!
+      ticket = create_ticket
+      related_tickets = []
+      3.times do |i|
+        related_tickets << create_ticket
+      end
+      tracker = create_ticket({:display_ids => [ticket.display_id] + related_tickets.map(&:display_id)})
+      put :spam, { :id => tracker.display_id }
+      (related_tickets << ticket).each do |t|
+        t.reload
+        t.association_type.should be_nil
+        t.associates.should be_nil
+      end
+      tracker.reload
+      tracker.association_type.should be_nil
+      tracker.associates.should be_nil
+      Sidekiq::Testing.disable!
+      @account.rollback(:link_tickets)
+    end
+
+    it "should remove the association if the related_ticket is marked as spam" do
+      @account.launch(:link_tickets) 
+      Sidekiq::Testing.inline!
+      ticket = create_ticket
+      related_tickets = []
+      3.times do |i|
+        related_tickets << create_ticket
+      end
+      tracker = create_ticket({:display_ids => [ticket.display_id] + related_tickets.map(&:display_id)})
+      put :spam, { :id => ticket.display_id }
+      related_tickets.each do |t|
+        t.reload
+        t.association_type.should eql(TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:related])
+        t.associates.should =~ [tracker.display_id]
+      end
+      ticket.reload
+      ticket.association_type.should be_nil
+      ticket.associates.should be_nil
+      tracker.reload
+      tracker.association_type.should eql(TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:tracker])
+      tracker.associates.should =~ related_tickets.map(&:display_id)
+      Sidekiq::Testing.disable!
+      @account.rollback(:link_tickets)
     end
   end
 end

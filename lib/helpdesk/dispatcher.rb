@@ -1,4 +1,7 @@
   class Helpdesk::Dispatcher
+
+    include RoundRobinCapping::Methods
+    
     def self.enqueue(ticket_id, user_id, freshdesk_webhook)
       #based on account subscription, enqueue into proper queue
       account = Account.current
@@ -53,10 +56,13 @@
     def round_robin
       #Ticket already has an agent assigned to it or doesn't have a group
       group = @ticket.group
-      return if group.nil? || @ticket.responder_id
+      return if group.nil?
+      if @ticket.responder_id
+        @ticket.update_capping_on_create
+        return
+      end
       if group.round_robin_enabled?
-        @ticket.schedule_round_robin_for_agents
+        @ticket.assign_agent_via_round_robin
       end
     end
-
 end

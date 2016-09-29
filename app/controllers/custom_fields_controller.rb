@@ -1,7 +1,7 @@
 class CustomFieldsController < Admin::AdminController
 
   include Helpdesk::Ticketfields::ControllerMethods
-  include Cache::Memcache::Helpdesk::Ticket 
+  include Cache::FragmentCache::Base
 
   before_filter :check_ticket_field_count, :only => [ :update ]
   
@@ -42,7 +42,7 @@ class CustomFieldsController < Admin::AdminController
           end  
         end  
     end
-    clear_tkt_form_cache
+    clear_fragment_caches
     flash_message(err_str.to_s.html_safe)
     redirect_to :action => :index
   end

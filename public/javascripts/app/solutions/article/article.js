@@ -43,6 +43,7 @@ window.App = window.App || {};
       this.handleEdit();
       this.bindPropertiesToggle();
       this.formatSeoMeta();
+      this.seoCharCounter();
       this.setTagSelector();
       this.unsavedContentNotif();
       this.formValidate();

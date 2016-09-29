@@ -3,7 +3,9 @@ Encoding.default_external = Encoding::UTF_8
 source 'https://rubygems.org'
 
 gem "rake", "~> 10.4.0"
-gem "rails","3.2.22.2"
+gem "rails","3.2.22.3"
+
+gem "freemail", "0.2.0", :require => false 
 
 gem 'rack-cors', '~> 0.3.1'
 gem "syck",'1.0.5'
@@ -84,7 +86,7 @@ gem "ipaddress", "0.8.0"
 
 gem 'sidekiq', "3.4.1"
 # This needs bundler 1.7.2 or 1.10.6 as other version has problem in resolving.
-source "https://a55d1643:d20410bb@gems.contribsys.com/" do 
+source "https://690a8c5e:5d9334f0@gems.contribsys.com/" do
   gem 'sidekiq-pro' 
 end 
 gem 'shoryuken', '2.0.4'
@@ -301,3 +303,8 @@ gem 'doorkeeper', '2.2.1'
 
 # Search v2
 gem 'typhoeus'
+
+gem 'i18nema', :git => 'https://github.com/freshdesk/i18nema', :require => false
+
+# For debugging app in staging/production
+gem 'rbtrace', :require => false

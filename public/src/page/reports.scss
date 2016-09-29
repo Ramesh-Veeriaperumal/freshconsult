@@ -260,6 +260,10 @@ $Customer_hover_color:#866aa0;
 			height : $single_stackbar_chart_height/2;
 			width: 250px;
 		}
+
+		h1{
+			word-wrap : break-word;
+		}
 	}
 	#bar_chart_noinfo {
    		 margin: 10px 0px;

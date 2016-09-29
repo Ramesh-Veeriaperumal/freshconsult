@@ -78,7 +78,7 @@ module Support::TicketsHelper
       [:divider]].concat(@companies.map{ 
                     |x| [ x.name, 
                           filter_support_tickets_path(:requested_by_company => x.id, :requested_by => 0), 
-                          (@requested_by_company.to_i == x.id) ] unless( current_user.id == x.id )
+                          (@requested_by_company.to_i == x.id) ]
                     }), TOOLBAR_LINK_OPTIONS
   end
 

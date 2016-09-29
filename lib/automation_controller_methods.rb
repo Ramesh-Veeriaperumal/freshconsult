@@ -4,7 +4,10 @@ module AutomationControllerMethods
 
   def index
     @va_rules = all_scoper
-    @va_rules
+    respond_to do |format|
+      format.html { @va_rules } #index.html.erb
+      format.any(:json) { render request.format.to_sym => @va_rules.map {|rule| {:id => rule.id, :name => rule.name, :active => rule.active} }}
+    end
   end
 
   def new

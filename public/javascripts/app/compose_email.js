@@ -34,6 +34,9 @@ var ComposeEmail = {
     defaultSettings: function(){
       // Snippets moved from compose js
     jQuery('.default_agent, .default_source, .default_product').hide();
+    //removing internal fileds in compose email for negating form validation
+    //when these fields are set required in admin ticket fields
+    jQuery('.default_internal_agent, .default_internal_group').remove();
     jQuery('#helpdesk_ticket_source').val(10);
     jQuery('#helpdesk_ticket_status').val(5);
     jQuery("#helpdesk_ticket_product_id").removeClass("required");
@@ -142,9 +145,25 @@ var ComposeEmail = {
 			}
 		});
 
-    this.$body.on('click.compose', '#compose-submit', function(){
-      jQuery("#ComposeTicket").submit();
-    });
+	    this.$body.on('click.compose', '#compose-submit', function(ev){
+	    	var cc_email = jQuery('#compose-new-email');
+	    	var ele = jQuery('.cc-address'),
+	    		limit = ele.data('limit'),
+	    		is_trial = ele.data('isTrial'),
+	    		msg = ele.data('msg');
+
+
+	    	if(is_trial && !App.Tickets.LimitEmails.limitComposeEmail(jQuery('#compose-new-email'), '.cc-address', limit, msg)) {
+
+	    		if(!jQuery('.cc-address').is(':visible')) {
+	    			jQuery('.cc-address').show();
+	    		}
+	          	return false
+	        }
+
+	        jQuery(".cc-address .cc-error-message").remove();
+	        jQuery("#ComposeTicket").submit();
+	    });
 
 		this.$body.on('click.compose', 'a[rel="ticket_canned_response"]', function(ev){
 				ev.preventDefault();

@@ -21,6 +21,7 @@ module ApplicationHelper
   include Freshfone::SubscriptionsHelper
   include DateHelper
   include StoreHelper
+  include Redis::IntegrationsRedis
   include JsonEscape
   
   require "twitter"
@@ -173,14 +174,6 @@ module ApplicationHelper
     options = current_user && current_user.agent? ? {:"data-pjax" => "#body-container", :"data-keybinding" => shortcut("app_nav.#{strip_tags(title).downcase}")} : {}
     if tab_name.eql?(:tickets)
       options.merge!({:"data-parallel-url" => "/helpdesk/tickets/filter_options", :"data-parallel-placeholder" => "#ticket-leftFilter"})
-    end
-    if tab_name.eql?(:reports)
-      options.delete(:"data-pjax")
-    end
-    #Remove this patch after knocking off old reports
-    #When referrer is reports page, all tab navigations will be non pjax.
-    if request.fullpath.include? "reports"
-      options.delete(:"data-pjax")
     end
     content_tag('li', link_to(strip_tags(title), url, options), :class => ( cls ? "active": "" ), :"data-tab-name" => tab_name )
   end
@@ -1154,7 +1147,8 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
         end
       when "dropdown_blank" then
         dropdown_choices = field.html_unescaped_choices(@ticket)
-        disabled = true if field.field_type == "default_company" && dropdown_choices.empty?
+        disabled = true if field.field_type == "default_company" &&
+                                               dropdown_choices.length <= 1
         element = label + select(object_name, field_name,
                                               dropdown_choices,
                                               {:include_blank => "...", :selected => field_value},
@@ -1206,7 +1200,9 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
     end
     fd_class = "#{ dom_type } #{ field.field_type } field"
     fd_class += " dynamic_sections" if (field.has_sections_feature? && (field.field_type == "default_ticket_type" || field.field_type == "default_source"))
-    fd_class += " hide" if field.field_type == "default_company" && (@ticket.new_record? || dropdown_choices.empty?)
+    fd_class += " hide" if field.field_type == "default_company" &&
+                                               (@ticket.new_record? ||
+                                               dropdown_choices.length <= 1)
     fd_class += " tkt_cr_wrap" if field.field_type == "default_description"
     content_tag :li, element.html_safe, :class => fd_class
   end
@@ -1483,6 +1479,10 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
     AppConfig['base_domain'][Rails.env]
   end
 
+  def show_upgrade_plan?
+    current_user.privilege?(:manage_account) && (current_account.subscription.free? || current_account.subscription.trial?)
+  end
+
   private
 
     def forums_visibility?
@@ -1529,6 +1529,13 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
         "alert-message block-message warning full-width")
     end
     return
+  end
+
+  def fb_realtime_msg_disabled
+    if current_account.fb_realtime_msg_from_cache
+      return content_tag('div', "#{t('fb_realtime_enable')}".html_safe, :class =>
+        "alert-message block-message full-width")
+    end
   end
 
   def check_twitter_reauth_required
@@ -1766,6 +1773,21 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
     raw TabHelper::TabsRenderer.new( *options, &block ).render
   end
 
+  def fd_node_auth_params
+    aes = OpenSSL::Cipher::Cipher.new('aes-256-cbc')
+    aes.encrypt
+    aes.key = Digest::SHA256.digest(FdNodeConfig["key"]) 
+    aes.iv  = FdNodeConfig["iv"]
+
+    account_data = {
+      :account_id => current_user.account_id, 
+      :user_id    => current_user.id,
+      :features => current_account.node_feature_list
+    }.to_json
+    encoded_data = Base64.encode64(aes.update(account_data) + aes.final)
+    return encoded_data.to_json.html_safe
+  end
+
   def password_policies_for_popover
     return "" if (@password_policy.nil? or @password_policy.new_record?)
     list = Proc.new do
@@ -1781,6 +1803,32 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
     end
     
     content_tag :ul, &list
+  end
+  
+  def fd_socket_host
+    "#{request.protocol}#{FdNodeConfig["socket_host"]}"
+  end
+
+  def cti_app
+    @cti_app ||= current_account.cti_installed_app_from_cache if current_account.features?(:cti)
+    @cti_app
+  end
+
+  def cti_configs
+    if cti_app.present?
+      cti_app.configs
+    end
+  end
+
+  def cti_phone_old_number
+    cti_phone_redis_key = Redis::RedisKeys::INTEGRATIONS_CTI_OLD_PHONE % { :account_id => current_account.id, :user_id => current_user.id }
+    get_integ_redis_key(cti_phone_redis_key)
+  end
+
+  def softfone_enabled?
+    if cti_app.present?
+      cti_configs[:inputs]["softfone_enabled"].to_bool
+    end
   end
 
   def show_onboarding?

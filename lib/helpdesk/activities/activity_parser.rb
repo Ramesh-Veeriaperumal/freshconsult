@@ -252,6 +252,48 @@ module Helpdesk::Activities
       @activity[:set] << render_string(str, {:requester_name => "#{build_url(user.name, user_path(user))}"}) if user
     end
 
+    def rel_tkt_link(value)
+      str = get_string_name("rel_tkt_link")
+      @activity[:misc] << render_string(str, { :tracker_ticket_path => build_ticket_url(value.first.to_i)})
+    end
+
+    def rel_tkt_unlink(value)
+      str = get_string_name("rel_tkt_unlink")
+      @activity[:misc] << render_string(str, { :tracker_ticket_path => build_ticket_url(value.first.to_i)})    
+    end
+
+    def tracker_link(value)
+      str = get_string_name("tracker_link")
+      params = {
+        :related_tickets_count => pluralize(value.count,
+          I18n.t("ticket.link_tracker.rlt_ticket_singular"),
+          I18n.t("ticket.link_tracker.rlt_ticket_plural")),
+        :related_ticket_path => multiple_tickets_url(value)
+      }
+      @activity[:misc] << render_string(str, params)
+    end
+
+    def tracker_unlink(value)
+      str = get_string_name("tracker_unlink")
+      params = {
+        :related_tickets_count => pluralize(value.count,
+          I18n.t("ticket.link_tracker.rlt_ticket_singular"),
+          I18n.t("ticket.link_tracker.rlt_ticket_plural")),
+        :related_ticket_path => multiple_tickets_url(value)
+      }
+      @activity[:misc] << render_string(str, params)
+    end
+
+    def tracker_unlink_all(value)
+      str = get_string_name("tracker_unlink_all")
+      params = {
+        :related_tickets_count => pluralize(value.to_i,
+          I18n.t("ticket.link_tracker.rlt_ticket_singular"),
+          I18n.t("ticket.link_tracker.rlt_ticket_plural")),
+      }
+      @activity[:misc] << render_string(str, params)
+    end
+
     def group_id(value)
       if value[1].blank?
         params = {:group_name => "#{render_string("activities.none")}"}
@@ -492,23 +534,15 @@ module Helpdesk::Activities
     end
 
     def add_watcher(value)
-      watcher_arr = []
-      params      = {}
-      value.each do |user_id|
-        user = get_user(user_id.to_i)
-        watcher_arr << build_url(user.name, user_path(user)) if user.present?
-      end
-      @invalid = watcher_arr.count.zero?
-      str      = get_string_name("added_watcher")
-      params   = {:watcher_list => "#{watcher_arr.join(', ')}"}
-      @activity[:misc] << render_string(str, params)  if watcher_arr.present?
+      watcher_arr = build_user_arr(value)
+      @invalid    = watcher_arr.count.zero?
+      str         = get_string_name("added_watcher")
+      @activity[:misc] << render_string(str, {:watcher_list => "#{watcher_arr.join(', ')}"})  if watcher_arr.present?
     end
 
     def add_a_cc(value)
-      params = {}
       str    = get_string_name("add_cc")
-      params = {:cc_list => escapeHTML("#{value.join(', ')}")}
-      @activity[:misc] << render_string(str, params) if value.present?
+      @activity[:misc] << render_string(str, {:cc_list => escapeHTML("#{value.join(', ')}")}) if value.present?
     end
 
     def deleted(value)
@@ -518,6 +552,25 @@ module Helpdesk::Activities
         str = get_string_name("restored")
       end
       @activity[:misc] << render_string(str)
+    end
+
+    def email_to_requester(value)
+      str    = get_string_name("email_to_requester")
+      user   = get_user(value[0].to_i)
+      return if user.blank?
+      @activity[:misc] << render_string(str, {:requester_name => "#{build_url(user.name, user_path(user))}"})
+    end
+
+    def email_to_group(value)
+      str = get_string_name("email_to_group")
+      @activity[:misc] << render_string(str, {:group_list => escapeHTML("#{value.join(', ')}")}) if value.present?
+    end
+
+    def email_to_agent(value)
+      agent_arr   = build_user_arr(value)
+      @invalid    = agent_arr.count.zero?
+      str         = get_string_name("email_to_agent")
+      @activity[:misc] << render_string(str, {:agent_list => "#{agent_arr.join(', ')}"})  if agent_arr.present?      
     end
 
     def spam(value)
@@ -584,6 +637,15 @@ module Helpdesk::Activities
     def build_url(title, url)
       title = escapeHTML("#{title}")
       @type == :json ? "#{title}" : "<a href='#{url}'>#{title}</a>"
+    end
+
+    def build_user_arr(value)
+      user_arr = []
+      value.each do |user_id|
+        user = get_user(user_id.to_i)
+        user_arr << build_url(user.name, user_path(user)) if user.present?
+      end
+      user_arr
     end
 
     def get_string_name(value)
@@ -661,6 +723,13 @@ module Helpdesk::Activities
 
     def note?
       @summary ==  TICKET_ACTIVITY_KEYS_BY_TOKEN[:conversation] || @activity[:note].present?
+    end
+
+    def multiple_tickets_url(value)
+      value.map do |v|
+        title = "##{v.to_i}"
+       "#{build_url(title, helpdesk_ticket_path(v.to_i))}"
+      end.join(', ')
     end
   end
 end

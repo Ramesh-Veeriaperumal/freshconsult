@@ -116,15 +116,19 @@ module Admin::Marketplace::ExtensionsHelper
       t('marketplace.search_language_warning') : t('marketplace.search')
   end
 
-  def third_party_developer?
-    @extension['account'].downcase != Marketplace::Constants::DEVELOPED_BY_FRESHDESK ? true : false
-  end
-
   def is_ni?
     @extension['type'] == Marketplace::Constants::EXTENSION_TYPE[:ni]
   end
 
   def is_external_app?
     @extension['type'] == Marketplace::Constants::EXTENSION_TYPE[:external_app]
+  end
+
+  def custom_app?
+    @extension['app_type'] == Marketplace::Constants::APP_TYPE[:custom]
+  end
+
+  def third_party_developer?
+    !is_external_app? && @extension['account'].downcase != Marketplace::Constants::DEVELOPED_BY_FRESHDESK
   end
 end

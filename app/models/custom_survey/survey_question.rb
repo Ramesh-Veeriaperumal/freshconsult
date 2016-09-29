@@ -15,6 +15,16 @@ class CustomSurvey::SurveyQuestion < ActiveRecord::Base
                     :field_data_class => 'CustomSurvey::SurveyResultData',
                     :field_choices_class => 'CustomSurvey::SurveyQuestionChoice'
 
+  has_many  :custom_field_choices_asc, :class_name => '::CustomSurvey::SurveyQuestionChoice',
+                  :order => 'face_value', :dependent => :destroy
+
+  has_many  :custom_field_choices_desc, :class_name => '::CustomSurvey::SurveyQuestionChoice',
+                  :order => 'face_value DESC', :dependent => :destroy
+
+  def custom_field_choices
+    @custom_field_choices ||= (survey.good_to_bad? ? custom_field_choices_desc : custom_field_choices_asc)
+  end
+
   validates :name, uniqueness: {scope: [:account_id, :survey_id, :deleted], message: I18n.t('admin.surveys.thanks_contents.question_error_text')}
   validates_presence_of :name , :label
 

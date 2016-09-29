@@ -37,21 +37,6 @@
     }
   }
 }
-.no-custom-apps{
-	border: solid 1px #ececec;
-	height: 100px;
-	width: 100%;
-	background: #fffbee;
-  @include text-align(center);
-	position: relative;
-	display: block;
-	margin-top:10px;
-	p{
-		margin-top: 38px;
-		font-weight: 300;
-		font-size: 15px;
-	}
-}
 .tab-actions{
   @include padding-right(15px);
   .browse-apps, .create-new{

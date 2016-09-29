@@ -169,7 +169,7 @@ class AuthorizationsController < ApplicationController
     @user_session.web_session = true unless is_native_mobile?
     if @user_session.save
       if grant_day_pass
-        cookies["mobile_access_token"] = { :value => @current_user.single_access_token, :http_only => true } if is_native_mobile?
+        cookies["mobile_access_token"] = { :value => @current_user.mobile_auth_token, :http_only => true } if is_native_mobile?
         redirect_back_or_default('/') 
       end
     else

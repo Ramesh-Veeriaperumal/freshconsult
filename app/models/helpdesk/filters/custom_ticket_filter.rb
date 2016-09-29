@@ -31,6 +31,32 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
      { "condition" => "deleted", "operator" => "is", "value" => false}]
   end
 
+  def shared_by_me_filter
+    status_groups = Account.current.status_groups
+    shared_filter_condition(status_groups, "responder_id")
+  end
+
+  def shared_with_me_filter
+    status_groups = Account.current.status_groups.where(:group_id => User.current.group_ids)
+    shared_filter_condition(status_groups, TicketConstants::SHARED_AGENT_COLUMNS_ORDER[0])
+  end
+
+  def shared_filter_condition(status_groups, agent_type)
+    sg_group_ids  = status_groups.map(&:group_id).uniq
+    sg_status_ids = status_groups.map(&:status_id)
+    status_ids    = Account.current.ticket_status_values_from_cache.select{|s| 
+      sg_status_ids.include?(s.id)}.map(&:status_id)
+
+    conditions_array = [ 
+      { "condition" => agent_type, "operator" => "is_in", "value" => "0"},
+      Helpdesk::Filters::CustomTicketFilter.spam_condition(false),
+      Helpdesk::Filters::CustomTicketFilter.deleted_condition(false)
+    ]
+    conditions_array << { "condition" => "status", "operator" => "is_in", "value" => status_ids.join(',')} if status_ids.present?
+    conditions_array << { "condition" => TicketConstants::SHARED_GROUP_COLUMNS_ORDER[0], "operator" => "is_in", "value" => sg_group_ids.join(',')} if sg_group_ids.present?
+    conditions_array
+  end
+
   def api_all_tickets_filter
     [self.class.spam_condition(false), self.class.deleted_condition(false)]
   end
@@ -45,7 +71,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     {"condition" => "created_at", "operator" => "is_greater_than", "value" => "last_month"}
   end
 
-  DEFAULT_FILTERS ={ 
+  DEFAULT_FILTERS = { 
                       "spam" => [spam_condition(true),deleted_condition(false),trashed_condition(false)],
                       "deleted" =>  [deleted_condition(true),trashed_condition(false)],
                       "overdue" =>  [{ "condition" => "due_by", "operator" => "due_by_op", "value" => TicketConstants::DUE_BY_TYPES_KEYS_BY_TOKEN[:all_due]},spam_condition(false),deleted_condition(false) ],
@@ -60,8 +86,10 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
                       "article_feedback" => [spam_condition(false), deleted_condition(false)],
                       "my_article_feedback" => [spam_condition(false), deleted_condition(false)]
                    }
-                   
-                   
+
+  USER_COLUMNS = ["responder_id", "helpdesk_subscriptions.user_id", "helpdesk_schema_less_tickets.long_tc04"]
+  GROUP_COLUMNS = ["group_id", "helpdesk_schema_less_tickets.long_tc03"]
+
   after_create :create_accesible
   after_update :save_accessible
 
@@ -88,6 +116,17 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
         defs[name.to_sym] = { get_op_list(cont).to_sym => cont  , :name => name, :container => cont,     
         :operator => get_op_list(cont), :options => get_default_choices(name.to_sym) }
       end
+
+      #Shared columns
+      TicketConstants::SHARED_AGENT_COLUMNS_KEYS_BY_TOKEN.each do |name,cont|
+        defs[name.to_sym] = { get_op_list(cont).to_sym => cont  , :name => name, :container => cont,     
+        :operator => get_op_list(cont), :options => get_default_choices(:responder_id) }
+      end
+      TicketConstants::SHARED_GROUP_COLUMNS_KEYS_BY_TOKEN.each do |name,cont|
+        defs[name.to_sym] = { get_op_list(cont).to_sym => cont  , :name => name, :container => cont,     
+        :operator => get_op_list(cont), :options => get_default_choices(:group_id) }
+      end
+
       #Custome fields
       Account.current.custom_dropdown_fields_from_cache.each do |col|
         defs[get_id_from_field(col).to_sym] = {get_op_from_field(col).to_sym => get_container_from_field(col) ,:name => col.label, :container => get_container_from_field(col), :operator => get_op_from_field(col), :options => get_custom_choices(col) }
@@ -119,18 +158,22 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   end
 
   def default_filter(filter_name, from_export = false, from_api=false)
-     default_value = from_export ? "all_tickets" : "new_and_my_open"
-     self.name = filter_name.blank? ? default_value : filter_name
+    default_value = from_export ? "all_tickets" : "new_and_my_open"
+    self.name = filter_name.blank? ? default_value : filter_name
 
-     if "on_hold".eql?filter_name
-       on_hold_filter
-     elsif "raised_by_me".eql?filter_name
-       raised_by_me_filter
-     elsif (from_api && "all_tickets".eql?(filter_name))
-       api_all_tickets_filter
-     else
-       DEFAULT_FILTERS.fetch(filter_name, DEFAULT_FILTERS[default_value]).dclone
-     end
+    if "on_hold".eql?filter_name
+      on_hold_filter
+    elsif "raised_by_me".eql?filter_name
+      raised_by_me_filter
+    elsif (from_api && "all_tickets".eql?(filter_name))
+     api_all_tickets_filter
+    elsif("shared_by_me" == filter_name and Account.current.features?(:shared_ownership))
+      shared_by_me_filter
+    elsif("shared_with_me" == filter_name and Account.current.features?(:shared_ownership))
+      shared_with_me_filter
+    else
+      DEFAULT_FILTERS.fetch(filter_name, DEFAULT_FILTERS[default_value]).dclone
+    end
   end
   
   def self.deserialize_from_params(params)
@@ -220,7 +263,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
      helpdesk_tickets.frDueBy,helpdesk_tickets.source,helpdesk_tickets.group_id,helpdesk_tickets.isescalated,
      helpdesk_tickets.ticket_type,helpdesk_tickets.email_config_id,helpdesk_tickets.owner_id"
   end
-  
+
   def sql_conditions
     @sql_conditions  ||= begin
 
@@ -228,29 +271,25 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
         all_sql_conditions = [" 1 = 2 "] 
       else
         all_sql_conditions = [""]
-        condition_at(0)
-        0.upto(size - 1) do |index|
-          condition = condition_at(index)
-
+        conditions_array = conditions
+        conditions_array = handle_any_mode(conditions_array) if Account.current.features?(:shared_ownership)
+        conditions_array.each do |condition|
           handle_special_values(condition)
-
           sql_condition = condition.container.sql_condition
-          
           unless sql_condition
             raise Wf::FilterException.new("Unsupported operator  for container #{condition.container.class.name}")
           end
-          
+
           if all_sql_conditions[0].size > 0
             all_sql_conditions[0] << ( match.to_sym == :any ? "  OR" : " AND ")
           end
-          
+
           all_sql_conditions[0] << sql_condition[0]
           sql_condition[1..-1].each do |c|
             all_sql_conditions << c
           end
         end
       end
-      
       all_sql_conditions
     end
   end
@@ -300,7 +339,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
         recs = model_klass.paginate(:select => select,
                                    :order => order_clause, :page => page, 
                                    :per_page => per_page, :conditions => all_conditions, :joins => all_joins,
-                                   :total_entries => count_without_query).preload([:ticket_states, :ticket_status, :responder,:requester])
+                                   :total_entries => count_without_query).preload([:ticket_states, :ticket_status, :responder,:requester, :schema_less_ticket])
         recs.wf_filter = self
         recs
       end
@@ -311,15 +350,14 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     # ActiveRecord::Base.connection.select_values('SELECT FOUND_ROWS() AS "TOTAL_ROWS"').pop
     per_page.to_f*page.to_f+1
   end
-  
+
   def get_joins(all_conditions)
     all_joins = [""]
     all_joins = joins if all_conditions[0].include?("flexifields")
     all_joins[0].concat(monitor_ships_join) if all_conditions[0].include?("helpdesk_subscriptions.user_id")
-    all_joins[0].concat(schema_less_join) if all_conditions[0].include?("helpdesk_schema_less_tickets.boolean_tc02")
     all_joins[0].concat(tags_join) if all_conditions[0].include?("helpdesk_tags.name")
     all_joins[0].concat(statues_join) if all_conditions[0].include?("helpdesk_ticket_statuses")
-    all_joins[0].concat(schema_less_join) if all_conditions[0].include?("helpdesk_schema_less_tickets.product_id")
+    all_joins[0].concat(schema_less_join) if schema_less_join_condition(all_conditions)
     all_joins[0].concat(article_tickets_join) if self.name == "article_feedback"
     all_joins[0].concat(articles_join) if self.name == "my_article_feedback"
     all_joins[0].concat(states_join) if sort_by_response?
@@ -365,13 +403,13 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     " #{article_tickets_join} INNER JOIN `solution_articles` ON `solution_articles`.`id` = `article_tickets`.`article_id` 
       AND `article_tickets`.`account_id` = `solution_articles`.`account_id` "
   end
-  
+
   def joins
     ["INNER JOIN flexifields ON flexifields.flexifield_set_id = helpdesk_tickets.id and  flexifields.account_id = helpdesk_tickets.account_id "]
   end      
-  
+
   def order_field
-    "helpdesk_tickets.#{@order}"    
+    "helpdesk_tickets.#{@order}"
   end
 
   def order_clause
@@ -390,50 +428,21 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
           "#{model_class_name.constantize.table_name}.#{order_parts.first} #{order_type}"
         end
       end
-    end  
-  end
-  
-  def previous_ticket_sql(ticket, account, user)   
-    order_field_value = ticket.send(@order)
-    order_field_value =  order_field_value.to_formatted_s(:db) if order_field_value.kind_of?(Time)
-    cond_operator = (@order_type == "desc") ? ">" : "<"
-
-    prev_cond = " AND ((#{order_field} = '#{order_field_value}' AND helpdesk_tickets.id < #{ticket.send("id")} ) OR (#{order_field} #{cond_operator} '#{order_field_value}')) " << permissible_conditions(ticket, account, user)    
-    
-    previous_sql_query = "SELECT helpdesk_tickets.id, helpdesk_tickets.display_id, 'previous' from helpdesk_tickets INNER JOIN flexifields ON flexifields.flexifield_set_id = helpdesk_tickets.id WHERE  #{sql_conditions} "
-    
-    previous_sql_query << prev_cond << " ORDER BY " << reverse_order_clause << " LIMIT 1"
-  end
-  
-  def next_ticket_sql(ticket, account, user)
-    order_field_value = ticket.send(@order)
-    order_field_value =  order_field_value.to_formatted_s(:db) if order_field_value.kind_of?(Time)
-    cond_operator = (@order_type == "desc") ? "<" : ">"
-    
-    next_cond = "AND ((#{order_field} = '#{order_field_value}' AND helpdesk_tickets.id > #{ticket.send("id")} )  OR (#{order_field} #{cond_operator} '#{order_field_value}')) " << permissible_conditions(ticket, account, user) 
-    next_sql_query = "SELECT helpdesk_tickets.id, helpdesk_tickets.display_id, 'next' from helpdesk_tickets INNER JOIN flexifields ON flexifields.flexifield_set_id = helpdesk_tickets.id WHERE  #{sql_conditions} "
-    
-    next_sql_query << next_cond << " ORDER BY " << order_clause << " LIMIT 1"
-  end
-  
-  def adjacent_tickets(ticket, account, user)
-    handle_empty_filter!   
-    tickets = ActiveRecord::Base.connection().execute("(#{previous_ticket_sql(ticket, account, user)}) UNION ALL (#{next_ticket_sql(ticket, account, user)})")   
-  end
-  
-  def permissible_conditions(ticket, account, user)    
-    return (" AND (helpdesk_tickets.account_id = #{account.id}) " << ticket.agent_permission_condition(user))   
+    end
   end
 
   private
 
-  def handle_special_values(condition)
-    key = condition.key.to_s
+  def schema_less_join_condition all_conditions
+    (all_conditions[0].include?("helpdesk_schema_less_tickets.boolean_tc02") or all_conditions[0].include?("helpdesk_schema_less_tickets.product_id") or all_conditions[0].include?("helpdesk_schema_less_tickets.#{Helpdesk::SchemaLessTicket.association_type_column}")) and !Account.current.features?(:shared_ownership)
+  end
 
+  def handle_special_values(condition, user_types = USER_COLUMNS, group_types = GROUP_COLUMNS)
+    key = condition.key.to_s
     type = case 
-    when key.include?("responder_id"), key.include?("helpdesk_subscriptions.user_id")
+    when user_types.include?(key)
       :user
-    when key.include?("group_id")
+    when group_types.include?(key)
       :group
     when key.include?("status")
       :status
@@ -443,7 +452,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
       values = condition.container.value.split(",")
       if values.include?("0")
         values.delete("0")
-        values << convert_special_values(type)        
+        values << convert_special_values(type)
       end
       condition.container.values[0] = values.join(",")
     end
@@ -459,7 +468,34 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     when :status
       Helpdesk::TicketStatus::unresolved_statuses(Account.current)
     end
-  end  
+  end
+
+  # For handling a special case where the conditions contains any_agent with unassigned and any_group with some values
+  # Query will be something like below
+  # (responder_id in val OR internal_agent in val OR 
+  #   (group_id in val AND responder_id is NULL) OR (internal_group in val AND internal_agent is NULL ))
+  # For generating such sql condition combining agents and groups, we need values of both agent and group.
+  def handle_any_mode(conditions)
+    agent_index = group_index = nil
+    conditions.each_with_index do |condition, index|
+      handle_special_values(condition, ["any_agent_id"], ["any_group_id"])
+      values = condition.container.value.split(",")
+      key = condition.key.to_s
+
+      if key == "any_agent_id" and values.include?("-1")
+        agent_index = index
+      elsif key == "any_group_id" and values.present?
+        condition.container.values[0] = values.join(",") if values.delete("-1")
+        group_index = index
+      end
+    end
+
+    if agent_index and group_index
+      val = {:agent => conditions[agent_index].container.values, :group => conditions[group_index].container.values}
+      conditions[agent_index].container.values = val
+    end
+    conditions
+  end
 
   class << self
     include Cache::Memcache::Helpdesk::Filters::CustomTicketFilter

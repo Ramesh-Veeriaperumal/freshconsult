@@ -7,7 +7,7 @@ module SupportHelper
   include Portal::Helpers::DiscussionsVotingHelper
   include Portal::Helpers::Article
   include Portal::Helpers::SolutionsHelper
-
+	include Cache::FragmentCache::Base
 
   # TODO-RAILS3 the below helpers are added to use liquids truncate
   # HACK Need to scope down liquid helpers and include only the required ones
@@ -426,11 +426,39 @@ module SupportHelper
 	      		_output << %( #{ ff.text_area(field_name,
 	      			{ :class => element_class + " span12", :value => field_value, :rows => 6 }.merge(html_opts)) } )
 	      	end
-	      	_output << %( #{ render(:partial=>"/support/shared/attachment_form") } )
+	      	if(@widget_form)
+	      		_output << %( #{ render(:partial=>"/support/shared/widget_attachment_form") } )
+	      	else
+	      		_output << %( #{ render(:partial=>"/support/shared/attachment_form") } )
+	      	end
 	        # element = content_tag(:div, _output.join(" "), :class => "controls")
 	      	# %( #{ text_area(object_name, field_name, { :class => element_class + " span12", :value => field_value, :rows => 6 }.merge(html_opts)) }
 	      	   #{ render(:partial=>"/support/shared/attachment_form") } )
 	    end
+	end
+
+	def render_add_cc_field  field, condition
+	      	render(:partial => "/support/shared/add_cc_field", :locals => { :field => field, :_cc_condition => condition })
+	end
+
+	def fragment_cache_dom_options form_builder
+		cache_options = {
+			:cc_container => '',
+			:company_container => '',
+			:company_cache_condition => false,
+			:cc_cache_condition => false
+		}
+		if Account.current.launched?(:support_new_ticket_cache) && current_user.present?
+			cache_options[:company_cache_condition] = Account.current.features?(:multiple_user_companies) && (current_user.present? || current_user.agent? || current_user.contractor?)
+			if cache_options[:company_cache_condition]
+				company_field = Account.current.ticket_fields.default_company_field.first
+				cache_options[:company_container] = ticket_field_container(form_builder, :helpdesk_ticket, company_field, helpdesk_ticket_values(company_field,@params)).html_safe
+			end 
+			requester_field = Account.current.ticket_fields.requester_field.first
+			cache_options[:cc_cache_condition] = current_user.present? && requester_field.portal_cc_field? && ( current_user.company.present? || requester_field.all_cc_in_portal? || current_user.contractor? ) 
+			cache_options[:cc_container] = render_add_cc_field(requester_field, cache_options[:cc_cache_condition]).html_safe if cache_options[:cc_cache_condition]
+ 		end
+ 		cache_options
 	end
 
 	# The field_value(init value) for the nested field should be in the the following format

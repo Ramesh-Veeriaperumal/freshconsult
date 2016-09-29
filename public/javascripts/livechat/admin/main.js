@@ -11,7 +11,6 @@ window.App.Admin = window.App.Admin || {};
 App.Admin.LiveChatAdminSettings = {
 	// return {
 
-
 		widgetList: [],
 		currentWidget: null,
 		eventsRegistered: false,

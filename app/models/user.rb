@@ -34,6 +34,10 @@ class User < ActiveRecord::Base
   scope :visible, :conditions => { :deleted => false }
   scope :active, lambda { |condition| { :conditions => { :active => condition }} }
   scope :with_conditions, lambda { |conditions| { :conditions => conditions} }
+  scope :with_contractors, lambda { |conditions| { :joins => %(INNER JOIN user_companies ON
+                                                               user_companies.account_id = users.account_id AND
+                                                               user_companies.user_id = users.id),
+                                                   :conditions => conditions } }
   scope :company_users_via_customer_id, lambda { |cust_id| { :conditions => ["customer_id = ?", cust_id]} }
   # Using text_uc01 column as the preferences hash for storing user based settings
   serialize :text_uc01, Hash
@@ -654,12 +658,29 @@ class User < ActiveRecord::Base
     self.privilege?(:manage_tickets) && agent.group_ticket_permission
   end
 
+  def associated_group_ids
+    agent_groups.pluck(:group_id).insert(0,0)
+  end
+
+  def group_ticket?(ticket)
+    group_member?(ticket.group_id) or 
+        (Account.current.features?(:shared_ownership) ? group_member?(ticket.internal_group_id) : false)
+  end
+
+  def group_member?(group_id)
+    group_id && associated_group_ids.include?(group_id)
+  end
+
   def assigned_ticket_permission
     self.privilege?(:manage_tickets) && agent.assigned_ticket_permission
   end
 
+  def ticket_agent?(ticket)
+    ticket.responder_id == self.id || (Account.current.features?(:shared_ownership) ? ticket.internal_agent_id == self.id : false)
+  end
+
   def has_ticket_permission? ticket
-    (can_view_all_tickets?) or (ticket.responder_id == self.id ) or (group_ticket_permission && (ticket.group_id && (agent_groups.pluck(:group_id).insert(0,0)).include?( ticket.group_id)))
+    (can_view_all_tickets?) or (ticket_agent?(ticket)) or (group_ticket_permission && (group_ticket?(ticket))) 
   end
 
   # For a customer we need to check if he is the requester of the ticket
@@ -785,6 +806,7 @@ class User < ActiveRecord::Base
     set_company_name
     if update_attributes({:helpdesk_agent => false, :deleted => false})
       subscriptions.destroy_all
+      self.cti_phone = nil
       agent.destroy
       freshfone_user.destroy if freshfone_user
       email_notification_agents.destroy_all
@@ -970,6 +992,10 @@ class User < ActiveRecord::Base
     def has_role?
       self.errors.add(:base, I18n.t("activerecord.errors.messages.user_role")) if
         ((@role_change_flag or new_record?) && self.roles.blank?)
+    end
+
+    def password_updated?
+      @all_changes.has_key?(:crypted_password)
     end
 
     #This is the current login method. It is fed to authlogic in user_sessions.rb

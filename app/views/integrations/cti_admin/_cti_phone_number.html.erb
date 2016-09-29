@@ -1,0 +1,146 @@
+<div class = "cti-phone-number list-page-body row-fluid mt20" >
+  <div class="cti-phone-heading clearfix pl20 pr20 pt15 pb15">
+    <h5 class="pull-left"><b><%= t("integrations.cti_admin.phone.title")%></b></h5>
+    <a class="add_number pull-right"><%= t("integrations.cti_admin.phone.add_number")%></a>
+  </div>
+  
+  <div class='alert notice hide m0' id="cti_phone_notice"></div>
+  <div class='alert alert-error hide m0' id="cti_phone_error"></div>
+  <div class="row-fluid cti-phone-add-form">
+    <div class="loading-block loading-small loading-align hide" id="cti_phone_loading"></div>
+    <div class="row-fluid cti-phone-form-content hide">
+      <%= text_area(:cti_phone, "numbers_input", :class => "text", :rows => "10")%>
+      <span class="info-text"><%= t("integrations.cti_admin.phone.add_number_tooltip")%></span>
+      <div class="button-container p10">
+	      <span id="cti_phone_cancel" class="btn btn-default"><%= t("integrations.cti_admin.phone.cancel")%></span>
+        <span id="cti_phone_save" class="btn btn-primary"><%= t("integrations.cti_admin.phone.save")%></span>
+      </div>
+    </div>
+  </div>
+  <div class="row-fluid cti-phone-display pt5">
+    
+    <ul class="tabs nav-tabs sleek-tab">
+      <li class="active">
+        <a href="#cti_phone_used" data-toggle="tab"><%= t("integrations.cti_admin.phone.number_in_use")%> (<span id="cti_phone_used_count"><%= used_cti_phones.count %></span>)</a>
+      </li>
+      <li>
+        <a href="#cti_phone_unused" id="cti_phone_unused_link" data-toggle="tab"><%= t("integrations.cti_admin.phone.number_not_in_use")%> (<span id="cti_phone_unused_count"><%= unused_cti_phones.count %></span>)</a>
+      </li>
+    </ul>
+    
+    <div class="tab-content">
+      <div class="tab-pane fade in active cti-phone-list" id="cti_phone_used">
+        <ul>
+          <%= render :partial => "cti_phone_number_list", :locals => {:cti_phones => used_cti_phones, :used => true} %>
+        </ul>
+      </div>
+      <div class="tab-pane fade cti-phone-list" id="cti_phone_unused">
+        <div class="loading-block loading-small loading-align hide" id="cti_unused_phone_loading"></div>
+        <div class="row-fluid" id="cti_phone_unused_content">
+          <%= render :partial => "cti_phone_number_list", :locals => {:cti_phones => unused_cti_phones, :used => false} %>
+      </div>
+      </div>
+    </div>
+  </div>
+  <span id="delete_number_id" class="hide"></span>
+  <div id="cti-phone-delete-confirmation" class="hide">
+    <p class="margin-bottom">
+      <%= t("integrations.cti_admin.phone.delete_msg") %>(<span id="delete-number-value"></span>)
+    </p>
+  </div>
+</div>
+
+<%= javascript_tag do %>
+ jQuery(document).ready( function () {
+   jQuery('.add_number').on('click', function() {
+     jQuery('.cti-phone-form-content').show();
+     jQuery(this).hide();
+   });
+
+   jQuery('#cti_phone_cancel').on('click', function() {
+     jQuery('.cti-phone-form-content').hide();
+     jQuery('.add_number').show();
+     jQuery('#cti_phone_numbers_input').val("");
+   });
+
+   jQuery('#cti_phone_save').on('click', function() {
+     var close_button = "<a class='close' data-dismiss='alert'></a>";
+     jQuery('#cti_phone_loading').addClass("sloading");
+     jQuery('.cti-phone-form-content').hide();
+     jQuery.ajax({
+       url: '/integrations/cti_admin/add_phone_numbers',
+       type: "POST",
+       dataType: "json",
+       data: {numbers_text : jQuery('#cti_phone_numbers_input').val()},
+       async: true,
+       success: handleSaveResponse,
+       error: function (data) {
+         jQuery('#cti_phone_loading').removeClass("sloading");
+         jQuery('.add_number').show();
+         var errorText = JSON.parse(data.responseText).error;
+         closeableFlash(jQuery("#cti_phone_error").html(errorText).show());
+       }
+     });
+     jQuery('#cti_phone_numbers_input').val("");
+   });
+
+ });
+
+ jQuery(".cti-phone-number").on('click', '.delete-number-btn', function(){
+   jQuery('#delete-number-value').text(jQuery(this).attr('data-number'));
+	 jQuery("#delete_number_id").attr('data-number-id',jQuery(this).attr('data-number-id'));
+ });
+
+ jQuery(document).on("click", '#cti-phone-delete-confirmation-submit', function(){
+   var $this = jQuery(this);
+   var number_id = jQuery("#delete_number_id").attr('data-number-id');
+   $this.text("Deleting ...");
+   $this.addClass("disabled");
+   jQuery.ajax({
+     url: '/integrations/cti_admin/delete_number',
+     type: "DELETE",
+     dataType: "json",
+     data: {number_id : number_id},
+     async: true,
+     success: function (data) {
+       jQuery('#cti-phone-delete-confirmation').data('modal').hide();
+       jQuery('[data-number-id=' + number_id + ']').closest("li").remove();
+       var used_count = jQuery('#cti_phone_used').find("li").length;
+       jQuery('#cti_phone_used_count').text(used_count);
+       var unused_count = jQuery('#cti_phone_unused').find("li").length;
+       jQuery('#cti_phone_unused_count').text(unused_count);
+     },
+     error: function (data) {
+       jQuery('#cti-phone-delete-confirmation').data('modal').hide()
+       alert("Unable to delete number. Please try again");
+     }
+   });
+ });
+
+ function handleSaveResponse(data) {
+   var notice ="";
+   jQuery('#cti_phone_loading').removeClass("sloading");
+   closeableFlash(jQuery("#cti_phone_notice").html(data.notice).show());
+   jQuery('.add_number').show();
+   jQuery('#cti_unused_phone_loading').addClass('sloading');
+   jQuery('#cti_phone_unused_content').hide();
+   jQuery.ajax({
+     url: '/integrations/cti_admin/unused_numbers',
+     contentType: "application/json",
+     type: "GET",
+     async: true,
+   });
+ }
+
+ function display_unused_numbers(data) {
+   var $unused_number_ul = jQuery('#cti_phone_unused_content ul');
+   $unused_number_ul.html('');
+   var numbers = data.numbers;
+   numbers.forEach(function(number) {
+     $unused_number_ul.append(data.html);
+   });
+   jQuery('#cti_phone_unused_link').html("Not in use ("+ numbers.length + ")");
+   jQuery('#cti_unused_phone_loading').removeClass('sloading');
+   jQuery('#cti_phone_unused_content').show();
+ }
+<% end %>
