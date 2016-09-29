@@ -127,7 +127,7 @@ class Account < ActiveRecord::Base
 
   # List of Launchparty features available in code
   LAUNCHPARTY_FEATURES = [:activity_ui, :admin_dashboard, :agent_conference, :agent_dashboard, :agent_new_ticket_cache, :api_search_beta, 
-                          :autopilot_headsup, :autoplay, :countv2_template_read, :countv2_template_write, :delayed_dispatchr_feature, 
+                          :autopilot_headsup, :autoplay, :delayed_dispatchr_feature, 
                           :enable_old_sso, :es_count_reads, :es_count_writes, :es_down, :es_tickets, :es_v2_reads, :fb_msg_realtime, 
                           :force_index_tickets, :freshfone_call_tracker, :freshfone_new_notifications, :gamification_perf, 
                           :gamification_quest_perf, :helpdesk_ticket_templates, :lambda_exchange, :meta_read, :most_viewed_articles, 
