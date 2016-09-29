@@ -48,7 +48,11 @@ class Search::Utils
     merge_subject_exact:              'mergeSubjectExact',
     merge_requester:                  'mergeRequester',
     merge_topic_search:               'mergeTopicSearch',
-    merge_topic_search_exact:         'mergeTopicSearchExact'
+    merge_topic_search_exact:         'mergeTopicSearchExact',
+    assoc_tickets_display_id:         'assocTicketsDisplayId',
+    assoc_tickets_subject:            'assocTicketsSubject',
+    assoc_tickets_requester:          'assocTicketsRequester',
+    assoc_recent_trackers:            'assocRecentTrackers'
   }
 
   # _Note_: Parent ID to be used for routing.
