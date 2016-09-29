@@ -76,6 +76,7 @@ en:
     creditcard: "Please enter a valid credit card number."
     equalTo: "Please enter the same value again."
     two_decimal_place_warning: "Value cannot have more than 2 decimal digits"
+    select_atleast_one: "Select atleast one option."
   confirm_delete_message: Are you sure you want to delete the %{human_name}?
   reload: Reload
   any: Any
