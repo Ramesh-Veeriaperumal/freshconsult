@@ -70,7 +70,7 @@ class Freshfone::CallMetric < ActiveRecord::Base
     self.talk_time = ((self.hangup_at - self.answered_at).to_i.abs - self.hold_duration) if 
           talk_time.blank? && hangup_at && answered_at
     self.ringing_at = created_at if call.ancestry.present?
-    self.total_ringing_time = update_total_ring_time
+    self.total_ringing_time = update_total_ring_time unless self.call.voicemail?
     self.handle_time = calculate_handle_time
   end
 
@@ -116,9 +116,15 @@ class Freshfone::CallMetric < ActiveRecord::Base
 
     def call_accepted?
       #Old status should not be hold. Makes it easier to not check for multiple status like ringing, queued, connecting
-      return if call_changes[:call_status].blank? 
-      call_changes[:call_status].first != Freshfone::Call::CALL_STATUS_HASH[:'on-hold'] &&
-      call_changes[:call_status].last == Freshfone::Call::CALL_STATUS_HASH[:'in-progress']
+      return if call_changes[:call_status].blank?
+      (call_changes[:call_status].first != Freshfone::Call::CALL_STATUS_HASH[:'on-hold'] &&
+      call_changes[:call_status].last == Freshfone::Call::CALL_STATUS_HASH[:'in-progress']) || warm_transfer_status_changes?
+    end
+
+    def warm_transfer_status_changes?
+      call_changes[:call_status].first == Freshfone::Call::CALL_STATUS_HASH[:'on-hold'] &&
+      call_changes[:call_status].last == Freshfone::Call::CALL_STATUS_HASH[:'in-progress'] &&
+      self.call.meta.warm_transfer_meta?
     end
 
     def call_disconnected?
@@ -148,8 +154,14 @@ class Freshfone::CallMetric < ActiveRecord::Base
     end
 
     def recalculate_metrics
-      self.talk_time = self.talk_time - (self.hold_duration - self.hold_duration_was)
-      calculate_handle_time
+      self.talk_time = self.talk_time - (self.hold_duration - self.hold_duration_was) unless warm_transfer_child?
+      self.handle_time = calculate_handle_time
+    end
+
+    def warm_transfer_child?
+      child_call = self.call.children.last
+      return false if child_call.blank? && child_call.meta.blank?
+      child_call.meta.warm_transfer_meta?
     end
 
     def hold_duration_changed?
@@ -157,8 +169,9 @@ class Freshfone::CallMetric < ActiveRecord::Base
     end
 
     def queued_call?
-      self.ringing_at.present? &&  call_changes[:call_status].present? &&
+      self.ringing_at.present? &&  (call_changes[:call_status].present? &&
         call_changes[:call_status].first == Freshfone::Call::CALL_STATUS_HASH[:default] &&
-        call_changes[:call_status].last == Freshfone::Call::CALL_STATUS_HASH[:queued]
+        call_changes[:call_status].last == Freshfone::Call::CALL_STATUS_HASH[:queued]) || 
+        self.call.voicemail_initiated
     end
 end

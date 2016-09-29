@@ -21,7 +21,7 @@
   :currentPage  => 1,
   :pageIncrement => true,
 	:loadMoreAppendAfter => '#activity-feed',
-  :complete     => '$this.$el.append(data);$this.loadMoreButton.button("reset");App.RealtimeDashboard.scrollTopOnLoadMore()'
+  :complete     => '$this.$el.append(data);$this.loadMoreButton.button("reset");RealtimeDashboard.Widgets.Recent_activity.scrollTopOnLoadMore()'
    }) %>
 
 <%= javascript_tag do %>

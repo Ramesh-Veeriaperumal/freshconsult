@@ -31,6 +31,7 @@ class Account < ActiveRecord::Base
   has_many :dynamic_notification_templates
   has_many :google_accounts, :class_name => 'Integrations::GoogleAccount'
 
+
   accepts_nested_attributes_for :primary_email_config
   accepts_nested_attributes_for :main_portal
   accepts_nested_attributes_for :account_additional_settings
@@ -169,8 +170,7 @@ class Account < ActiveRecord::Base
 
   has_many :ticket_fields_including_nested_fields, :class_name => 'Helpdesk::TicketField', :conditions => {:parent_id => nil},
     :include => [:picklist_values, :flexifield_def_entry, :nested_ticket_fields], :order => "helpdesk_ticket_fields.position"
-
-  # added below mapping for multiform phase1 only
+    
   has_many :ticket_fields_with_nested_fields, :class_name => 'Helpdesk::TicketField'
 
   has_many :ticket_statuses, :class_name => 'Helpdesk::TicketStatus', :order => "position"
@@ -305,4 +305,7 @@ class Account < ActiveRecord::Base
   has_many :authorizations, :class_name => '::Authorization'
 
   has_many :ticket_templates, :class_name => "Helpdesk::TicketTemplate"
+
+  has_many :account_webhook_key, dependent: :destroy
+  
 end

@@ -20,6 +20,30 @@ module Facebook
     
     def user_blocked?(user_id)
       Account.current.users.find_by_fb_profile_id(user_id).try(:blocked?)
+    end     
+    
+    #via_comment - When the call to convert a post to a ticket is made by a comment
+    def convert_post_to_ticket?(core_obj, via_comment = false) 
+      core_obj.fetch_parent_data if via_comment 
+      unless social_revamp_enabled?
+        if via_comment
+          ((core_obj.koala_comment.by_visitor? && core_obj.koala_post.by_company? && core_obj.fan_page.import_company_posts) || (core_obj.koala_post.by_visitor? && core_obj.fan_page.import_visitor_posts)) && !user_blocked?(core_obj.koala_post.requester_fb_id)
+        else
+          core_obj.koala_post.by_visitor? && core_obj.fan_page.import_visitor_posts && !user_blocked?(core_obj.koala_post.requester_fb_id)
+        end
+      else
+        return false if user_blocked?(core_obj.koala_post.requester_fb_id)
+        if via_comment
+          core_obj.fan_page.default_ticket_rule.convert_fb_feed_to_ticket?(core_obj.koala_post.by_visitor?, core_obj.koala_post.by_company?, core_obj.koala_comment.by_visitor?)
+        else
+          core_obj.fan_page.default_ticket_rule.convert_fb_feed_to_ticket?(core_obj.koala_post.by_visitor?) 
+        end
+      end
+    end  
+    
+    def convert_comment_to_ticket?(core_obj)
+      core_obj.fetch_parent_data
+      core_obj.fan_page.default_ticket_rule.convert_fb_feed_to_ticket?(false, core_obj.koala_post.by_company?, core_obj.koala_comment.by_visitor?, core_obj.koala_comment.description) && !user_blocked?(core_obj.koala_comment.requester_fb_id)
     end
     
     #Parse the feed content from facebook post
@@ -69,7 +93,6 @@ module Facebook
     def html_content_from_message(message)
       message = HashWithIndifferentAccess.new(message)
       html_content =  CGI.escapeHTML(message[:message]) if message[:message]
-
       if message[:attachments]
         if message[:attachments][:data]
           html_content =  "<div class=\"facebook_post\"><p> #{html_content}</p><p>"
@@ -77,6 +100,18 @@ module Facebook
             if attachment[:image_data] && attachment[:image_data][:preview_url] && attachment[:image_data][:url]
               html_content = "#{html_content} <a href=\"#{attachment[:image_data][:url]}\" target=\"_blank\">
                                   <img src=\"#{attachment[:image_data][:preview_url]}\"></a>"
+            elsif attachment[:file_url] && attachment[:name] ### for file attachments
+              html_content = "#{html_content} <a href=\"#{attachment[:file_url]}\" target=\"_blank\"> #{attachment[:name]}</a>"
+            end
+          end
+          html_content = "#{html_content} </p></div>"
+        end
+      elsif message[:shares] #### for stickers 
+        if message[:shares][:data]
+          html_content =  "<div class=\"facebook_post\"><p> #{html_content}</p><p>"
+          message[:shares][:data].each do |share|
+            if share[:link]
+              html_content = "#{html_content} <a href=\"#{share[:link]}\" target=\"_blank\"> #{share[:link]} </a>"
             end
           end
           html_content = "#{html_content} </p></div>"
@@ -89,6 +124,10 @@ module Facebook
       message_id_arr   = data_set[:data].collect{|x| x["id"]}
       existing_msg_arr = Account.current.facebook_posts.where(:post_id => message_id_arr).pluck(:post_id)
       data_set[:data].reject{|d| existing_msg_arr.include? d["id"]}
+    end
+    
+    def social_revamp_enabled?
+      @social_revamp_enabled ||= Account.current.features?(:social_revamp)
     end
     
   end

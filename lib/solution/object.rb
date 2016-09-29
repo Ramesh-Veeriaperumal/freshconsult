@@ -103,7 +103,7 @@ class Solution::Object
 	
 	def build_for(lang)
 		object = @meta_obj.send("#{lang}_#{short_name}") || @meta_obj.send("build_#{lang}_#{short_name}") 
-		params_for(lang).slice(*VERSION_ATTRIBUTES[obj]).each do |k,v|
+		params_for(lang).with_indifferent_access.slice(*VERSION_ATTRIBUTES[obj]).each do |k,v|
 			object.send("#{k}=", v)
 		end
 		build_associations(object, lang)
@@ -127,7 +127,7 @@ class Solution::Object
 	def build_associations object, lang
 		attachment_builder(object, 
 			(@params["#{lang}_#{short_name}"] || {})[:attachments], 
-			(@params["#{lang}_#{short_name}"] || {})[:cloud_file_attachments] )
+			(@params["#{lang}_#{short_name}"] || {})[:cloud_file_attachments], @args["attachments_list"])
 	end
 
 	def primary_version_check?

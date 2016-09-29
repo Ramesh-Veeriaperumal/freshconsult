@@ -39,7 +39,7 @@ class SearchSidekiq::BaseWorker
         query_params  = { :source => query.to_hash[:query].to_json }
         request_url   = [Search::EsIndexDefinition.index_url(alias_name, Account.current.id), '_query'].join('/')
         
-        response = Tire::Configuration.client.delete("#{request_url}?#{query_params.to_params}")
+        response = Tire::Configuration.client.delete("#{request_url}?#{query_params.to_query}")
 
         (custom_logger.info(formatted_log(:es_query_remove, alias_name, nil, response.code, response.body))) rescue true
       end

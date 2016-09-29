@@ -1,6 +1,6 @@
 <div data-gs-x="<%= x %>" data-gs-y="<%= y %>" data-gs-width="<%= width %>" data-gs-height="<%= height %>" class="grid-stack-item widget widget-activity">
 	<div class="grid-stack-item-content widget-inner">
-	    <h3 class="widget-title"> <%= t('recent_activity')%> </h3>
+	    <h3 class="widget-title"> <%= t('helpdesk.realtime_dashboard.recent_activities') %> </h3>
 	    <%= content_tag :div, "", :rel => "remote", :id => "Activity", :class => 'widget-content',
             	"data-remote-url" => '/helpdesk/dashboard/activity_list' %>
 	</div>

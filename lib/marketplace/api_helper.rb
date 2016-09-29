@@ -28,7 +28,8 @@ module Marketplace::ApiHelper
     def installed_mkp_app_details
       installed_mkp_apps = []
       @installed_list.body.try(:each) do |installed_mkp_app|
-        installed_mkp_apps << extension_details(installed_mkp_app['version_id']).body.merge(installed_mkp_app)
+        installed_mkp_apps << {:extension_details => extension_details(installed_mkp_app['extension_id']).body}
+                              .merge({:installation_details => installed_mkp_app})
       end
       installed_mkp_apps
     end

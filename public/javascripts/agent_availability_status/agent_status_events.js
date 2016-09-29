@@ -62,11 +62,11 @@ window.App = window.App || {};
           $(this).addClass('current');
           $("#"+tab_id).addClass('current'); 
           if(tab_id=="ffone-tab-1"){                             
-            filter.checkList(filter.AvailableAgentList.size(),".no-available-agents","#ffone-tab-1");
+            filter.checkList(filter.AvailableAgentList.length,".no-available-agents","#ffone-tab-1");
              $(".no-unavailable-agents").hide();
           }
            if(tab_id=="ffone-tab-2"){
-            filter.checkList(filter.UnavailableAgentList.size(),".no-unavailable-agents","#ffone-tab-2");
+            filter.checkList(filter.UnavailableAgentList.length,".no-unavailable-agents","#ffone-tab-2");
             $(".no-available-agents").hide();
           }
        });
@@ -105,7 +105,10 @@ window.App = window.App || {};
             App.Freshfoneagents.Node.changeToUnavailableAgent(data.user);
             break;
           case "agent_busy":
-            App.Freshfoneagents.Node.changeToBusyAgent(data.user);
+            App.Freshfoneagents.Node.changeToBusyAgent(data.user,freshfone.call_in_progress);
+            break;
+          case "agent_in_acw_state":
+            App.Freshfoneagents.Node.changeToBusyAgent(data.user,freshfone.call_in_acw);
             break;
           case "toggle_device":
             App.Freshfoneagents.Node.changeAgentDevice(data.user);

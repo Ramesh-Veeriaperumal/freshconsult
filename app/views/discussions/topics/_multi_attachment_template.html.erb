@@ -1,0 +1,45 @@
+<!-- for cloud and existing forward files  -->
+<script id="attachment-template" type="text/x-jquery-tmpl">
+  {{if (render_type=="existing") }}
+       {{if (type=="attachment") }}
+           {{each files}}
+           <!-- updating forward file size -->
+                    <div class="existing-filelist"  data-file-size="${content_file_size}">
+                <div class="file pull-left mr10 mb10 tooltip" title="{{html Helpdesk.MultipleFileUpload.FilenameSplitter(content_file_name).fname}}.{{html Helpdesk.MultipleFileUpload.FilenameSplitter(content_file_name).type}}">
+                    <i class="ficon-cross file-close" data-attach-id="${id}" data-cloud-file=false></i> <span class="file-name">
+                    <span class="fname ellipsis">{{html Helpdesk.MultipleFileUpload.FilenameSplitter(content_file_name).fname}}</span><span class="ftype">.{{html Helpdesk.MultipleFileUpload.FilenameSplitter(content_file_name).type}}
+                    </span></span>
+                      <span class="file-size">(${Helpdesk.MultipleFileUpload.formatFileSize(content_file_size)})</span>
+                     <input type="hidden" name="post[ticket_attachments][][resource]" value="${id}" rel="original_attachment"/>
+              </div>
+              </div>
+            {{/each}}
+        {{/if}}
+          {{if (type=="cloud") }}
+              {{each files}}
+                   <div class="existing-filelist existing-filelist-cloud " >
+                    <div class="file pull-left mr10 mb10 tooltip" title="${cloud_file.filename}">
+                   <i class="ficon-cross file-close" data-attach-id="${cloud_file.id}" data-cloud-file=true></i> <span class="file-name"><span class="fname ellipsis">{{html Helpdesk.MultipleFileUpload.FilenameSplitter(cloud_file.filename).fname}}</span><span class="ftype">.{{html Helpdesk.MultipleFileUpload.FilenameSplitter(cloud_file.filename).type}}</span></span> 
+                      <input type="hidden" name="post[cloud_file_attachments][][resource]" value='{{html Helpdesk.MultipleFileUpload.fileObjectConvertor(cloud_file)}}' />
+                  </div>
+                  </div>
+              {{/each}}
+          {{/if}}
+  {{/if}}
+  {{if (render_type=="new")}}
+         {{if (type=="cloud")}}
+            {{each files}}
+                <div class="new-cloud-file file pull-left mr10 mb10 tooltip" title="${fileName}">
+               <i class="ficon-cross file-close"></i> <span class="file-name"><span class="fname ellipsis">{{html Helpdesk.MultipleFileUpload.FilenameSplitter(fileName).fname}}</span><span class="ftype">.{{html Helpdesk.MultipleFileUpload.FilenameSplitter(fileName).type}}</span></span><span class="file-size"> (${provider})</span>
+                  <input type="hidden" name="[cloud_file_attachments][]" value="${attachments}" />
+              </div>
+              {{/each}}
+         {{/if}}
+  {{/if}}
+  {{if (render_type=="error")}}
+     <div class="file-upload pull-left mr10 mb10 tooltip error error-file" title="Attachment failed - file > 15 MB">
+   <i class="ficon-notice file-close"></i> <span class="file-name"><span class="fname ellipsis">{{html Helpdesk.MultipleFileUpload.FilenameSplitter(files.name).fname}}</span><span class="ftype">.{{html Helpdesk.MultipleFileUpload.FilenameSplitter(files.name).type}}</span></span>
+   <span class="file-size">({{html Helpdesk.MultipleFileUpload.formatFileSize(files.size)}})</span>
+   </div>
+  {{/if}}
+ </script>

@@ -1,6 +1,0 @@
-response_hash = {
-  id: @item.id,
-  title: @item.title_text
-}
-response_hash.merge!(questions: @survey_questions) if @custom_survey
-JSON.generate(response_hash)

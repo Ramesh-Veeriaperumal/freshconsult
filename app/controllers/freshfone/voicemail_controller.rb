@@ -9,6 +9,7 @@ class Freshfone::VoicemailController <  FreshfoneBaseController
   def initiate #Used only in conference currently
     remove_notification_failure_recovery(current_account.id, current_call.id) if current_call.ringing?
     current_call.update_missed_abandon_status unless (current_call.present? && current_number.voicemail_active)
+    current_call.voicemail_initiated!
     render :xml => telephony.return_non_availability(false)
   end
   

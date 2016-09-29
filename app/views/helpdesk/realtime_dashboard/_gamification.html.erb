@@ -28,9 +28,9 @@
 				<% end %>
 			<%= yield :mini_leaderboard %>
 		</div>
-		<script type="text/javascript">
-			jQuery('body').one('assetLoaded.fjax', function() {
-				App.RealtimeDashboard.getAchievements();
-			});
-		</script>
+	<script type="text/javascript">
+		jQuery('body').one('assetLoaded.fjax', function() {
+			RealtimeDashboard.Widgets.Gamification.init();
+		});
+	</script>
 	</div>

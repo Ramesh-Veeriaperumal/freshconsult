@@ -1,7 +1,7 @@
 class Helpdesk::TicketTemplatesController < ApplicationController
 
   # Hiding personal templates(for time being)
-  before_filter :access_denied, :unless => :has_privilege?
+  before_filter :access_denied, :unless => :require_feature_and_priv
   before_filter :delimit_personal, :only => [:index]
   before_filter :restrict_only_me, :only => [:create, :update]
   # Ends here...
@@ -126,6 +126,12 @@ class Helpdesk::TicketTemplatesController < ApplicationController
     @item.data_description_html = @template_data_params[:description_html]
     @item.template_data = (@template_data_params.present? ?
       @item.sanitize_template_data(@template_data_params) : @template_data_params)
+  end
+
+  def require_feature_and_priv
+    (current_account.features?(:ticket_templates) || 
+      current_account.launched?(:helpdesk_ticket_templates)) && 
+        has_privilege?
   end
 
   # Hiding personal templates(for time being)

@@ -39,9 +39,13 @@
                 .appendTo(category);
             });
 
-         category
-            .val(_init.value)
-            .bind("change", function(ev){
+         category.val(_init.value);
+         // Fallback for case that sets the value of the category select to null.
+         if(!category.val()){
+            category.val('');
+          }
+            
+         category.bind("change", function(ev){
               subcategory.empty();
 
               (tree.getSubcategoryListWithNone(category.val())).each(function(pair){

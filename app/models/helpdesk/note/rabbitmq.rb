@@ -1,6 +1,10 @@
 class Helpdesk::Note < ActiveRecord::Base
   
-  
+  ACTOR_TYPE = {
+    :agent   => 1,
+    :contact => 2
+  }
+
   def manual_publish_to_rmq(action, key, options = {})
     # Manual publish for note model
     # Currently handled for reports and activities subscribers
@@ -39,7 +43,8 @@ class Helpdesk::Note < ActiveRecord::Base
       "ticket_id"   =>   (notable_type == "Helpdesk::Ticket") ? notable.display_id : "",
       # @ARCHIVE TODO Currently setting archive as false. 
       # Will change it once "archiving tickets" feature is rolled out.
-      "archive"     =>   notable.archive || false
+      "archive"     =>   notable.archive || false,
+      "actor_type"  =>   (user.agent? ? ACTOR_TYPE[:agent] : ACTOR_TYPE[:contact])
     }
   end
   

@@ -1,0 +1,23 @@
+<% session[:multiple_list] ||= session[:multiple_list]=0 %>
+<%= render "helpdesk/shared/multi_attachment_template" %>
+<!-- upload template -->
+<script id="upload-template-<%=session[:multiple_list]%>" type="text/x-tmpl">
+   {% for (var i=0, file; file=o.files[i]; i++) { %}
+      <div class="file-upload pull-left mr10 mb10 tooltip" id="file_{%=file.attach_id%}">
+      <div class="progress-bar progress-bar-striped active" id="progressBar" style="width:0%">
+   </div>
+      <i class="ficon-cross file-close file-abort"></i> <span class="file-name"><span class="fname ellipsis">{%=Helpdesk.MultipleFileUpload.FilenameSplitter(file.name).fname%}</span><span class="ftype">.{%=Helpdesk.MultipleFileUpload.FilenameSplitter(file.name).type%}</span></span>
+      <span class="file-size">({%=Helpdesk.MultipleFileUpload.formatFileSize(file.size)%})</span>
+      </div>
+   {% } %}
+</script>
+<!-- download template  -->
+<script id="download-template-<%=session[:multiple_list]%>" type="text/x-tmpl">
+   {% for (var i=0, files=o.files, length=files.length, file=files[0]; i<length; file=files[++i]) { %}
+   <div class="file pull-left mr10 mb10 tooltip" title="{%= file.name %}" id="file_{%=file.attach_id%}">
+    <i class="ficon-cross file-close file-remove" data-delete-url="{%=file.delete_url%}" data-file-id="{%=file.id%}" data-file-size="{%=file.size%}"></i> <span class="file-name"><span class="fname ellipsis">{%=Helpdesk.MultipleFileUpload.FilenameSplitter(file.name).fname%}</span><span class="ftype">.{%=Helpdesk.MultipleFileUpload.FilenameSplitter(file.name).type%}</span></span>
+    <span class="file-size">({%=Helpdesk.MultipleFileUpload.formatFileSize(file.size)%})</span>
+    </div>
+   {% } %}
+</script>
+<!-- init multi file -->

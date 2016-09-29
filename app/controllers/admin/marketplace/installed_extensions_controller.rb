@@ -63,25 +63,22 @@ class Admin::Marketplace::InstalledExtensionsController <  Admin::AdminControlle
         :configs => params[:configs], 
         :enabled => Marketplace::Constants::EXTENSION_STATUS[:enabled],
         :type => extn_details['type'],
-        :options => extn_details['options'],
+        :options => extn_details['page_options'],
       }
     end
 
     def uninstall_params
-      { :extension_id => params[:extension_id],
-        :version_id => params[:version_id]
+      { :extension_id => params[:extension_id]
       }
     end
 
     def enable_params
       { :extension_id => params[:extension_id],
-        :version_id => params[:version_id],
         :enabled => Marketplace::Constants::EXTENSION_STATUS[:enabled] }
     end
 
     def disable_params
       { :extension_id => params[:extension_id],
-        :version_id => params[:version_id],
         :enabled => Marketplace::Constants::EXTENSION_STATUS[:disabled] }
     end
 

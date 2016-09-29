@@ -44,13 +44,13 @@ liveChat.admin_short_codes = (function(){
           }
         });
 
-        jQuery('.fc-sc-edit').live('click',function(){
+        jQuery(document).on('click.chatShortHandsEvent', '.fc-sc-edit', function(){
           var _parent = jQuery(this).parents('.fc-item');
           _parent.addClass('editing').removeClass("error");
           _parent.find(".short_code_message").val(_parent.find(".message_view").text());
         });
 
-        jQuery('.fc-sc-save').live('click',function(){
+        jQuery(document).on('click.chatShortHandsEvent', '.fc-sc-save', function(){
           var _parent = jQuery(this).parents('.fc-item');
           var _key = _parent.find('.short_code_key').val();
           var _message = _parent.find('.short_code_message').val();
@@ -72,8 +72,7 @@ liveChat.admin_short_codes = (function(){
             _module.ajaxCall(_params, _module.createShortCodeId, _parent);
           }
         });
-
-        jQuery('.fc-sc-discard').live('click',function(){
+        jQuery(document).on('click.chatShortHandsEvent', '.fc-sc-discard', function(){
           var _parent = jQuery(this).parents('.fc-item');
           if(!jQuery.isNumeric(_parent.attr("id"))){
             jQuery('#short_code_add').removeClass('disabled');
@@ -86,8 +85,7 @@ liveChat.admin_short_codes = (function(){
           _parent.find(".short_code_message").val(_parent.find(".message_view").text());
           _parent.removeClass('editing');
         });
-
-        jQuery('.fc-sc-delete').live('click',function(){
+        jQuery(document).on('click.chatShortHandsEvent', '.fc-sc-delete', function(){
           if(window.confirm(_module.i18n.confirm)){
             var _parent = jQuery(this).parents('.fc-item'),
                 _params = {},
@@ -98,8 +96,9 @@ liveChat.admin_short_codes = (function(){
             _module.ajaxCall(_params, _module.deleteShortCode, _parent,  _code_id);
           }          
         });
-
-
+        jQuery(document).on('pjax:beforeSend.chatShortHandsEvent', function () {
+          jQuery(document).off('.chatShortHandsEvent');
+        });
       },
 
       getCodes: function(){

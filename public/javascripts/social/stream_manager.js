@@ -243,7 +243,7 @@ var StreamManager = Class.create({
                 social_streams: params
             },
             success: function() {
-                j.event.trigger({ //IMPORTANT TO REGISTER EVENTS AFTER STREAMS LOADED -  DOING IT with Custom Event
+                j(document).trigger({ //IMPORTANT TO REGISTER EVENTS AFTER STREAMS LOADED -  DOING IT with Custom Event
                     type: "streamLoadedEvent",
                     message: "Success",
                     time: new Date()
@@ -319,7 +319,7 @@ var StreamManager = Class.create({
                 'search': search_query_hash,
             },
             success: function() {
-                j.event.trigger({
+                j(document).trigger({
                     type: "streamLoadedEvent",
                     message: "Success",
                     time: new Date()
@@ -610,7 +610,7 @@ var StreamManager = Class.create({
             success: function() {
                 var textarea = j("#reply_text_area_" + feed_id),
                     val = textarea.val();
-                j.event.trigger({
+                j(document).trigger({
                     type: "convoLoadedEvent",
                     message: "Success",
                     time: new Date()

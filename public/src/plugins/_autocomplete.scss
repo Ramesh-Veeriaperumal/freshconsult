@@ -80,7 +80,7 @@ ul.multi_value_field li.choice {
 ul.multi_value_field li.choice a.close-link {
   font-family:arial;
   color: desaturate(darken($choicebg, 30%), 40%);
-  @include padding(0 4px 0 8px);
+  padding-right:5px; 
   position:relative;
   font-size: 13px;
   cursor: pointer;

@@ -1,0 +1,33 @@
+<% if (renderData && renderData.length) { %>
+	<ul>
+		<% for (i = 0; i < renderData.length; i++) { %>
+			
+			<%  var url = '/helpdesk/tickets?agent=' + renderData[	i].agent_id;
+				if(group_id != '-') {
+                    url += '&group=' + group_id;
+				}
+			%>
+	        <% if ( i %2 == 0) { %>
+	        	<li class='odd'> 
+	        		<a 
+	        		data-parallel-url="/helpdesk/tickets/filter_options"
+	        		data-parallel-placeholder="#ticket-leftFilter" data-pjax="#body-container"
+	        		href='<%= url%>'><%= renderData[i].name %>
+	        	    </a>
+	        		<span class='pull-right'><%= renderData[i].count %></span>
+	        			<div class="clear"></div>
+	        	</li>
+	        <% } else { %>
+	        	<li class='even'> 
+	        	<a 
+	        	data-parallel-url="/helpdesk/tickets/filter_options"
+	        	data-parallel-placeholder="#ticket-leftFilter" data-pjax="#body-container"
+	        	href='<%= url%>'><%= renderData[i].name %> 
+	        	 </a>
+				<span class='pull-right'><%= renderData[i].count %></span>
+	        		<div class="clear"></div>
+	        	 </li>
+	        <% } %>
+	    <% } %>
+    </ul>
+<%  } %>

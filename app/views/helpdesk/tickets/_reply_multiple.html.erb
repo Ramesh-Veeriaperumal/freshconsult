@@ -22,22 +22,21 @@
         </li>
         <li>
           <% unless local_assigns[:no_attachments] %>
-            <%= render :partial => "/helpdesk/tickets/show/attachment_form", :locals => { :attach_id => id , :nsc_param => "helpdesk_note" } %>
+              <%= render :partial => "/helpdesk/tickets/show/single_attachment_form", :locals => { :attach_id => id , :nsc_param => "helpdesk_note",:bulk => true } %>
+                  <%= render "helpdesk/shared/single_attachment_template" %>
           <% end %>
         </li>
     </ul>
 </div>
 
-<%= render :partial => "/helpdesk/tickets/show/multifile_template"  %>
-<%= render :partial => "/helpdesk/tickets/show/multifile_template_new"  %>
 
 <%= javascript_tag do %>
 
     invokeRedactor('reply-multiple-cnt-reply-multiple-body','bulk-reply');
     
    
-    jQuery('#canned_show').die('click');
-    jQuery('#canned_show').live('click', function(ev){
+    jQuery('#canned_show').off('click');
+    jQuery('#canned_show').on('click', function(ev){
         ev.preventDefault();
         jQuery('#bulk-response-group').removeClass('hide');
         jQuery('#bulktickets').addClass('bulk-tickets-animation');
@@ -49,7 +48,7 @@
       var user_id=jQuery('#helpdesk_note_user_id').val();
       jQuery("#bulk_canned_response_holder").append("<div class='sloading'></div>");
       jQuery("#bulk_canned_response_holder")
-        .load("/helpdesk/canned_responses")
+        .ajaxLoad({url: "/helpdesk/canned_responses"})
         .show();
     }
 
@@ -69,6 +68,13 @@
                                     }
                     });
         return true;
+        var input = jQuery("input[fileList]");
+                Helpdesk.Multifile.load()
+                Helpdesk.Multifile.addEventHandler(input)
+                jQuery(input.form).off("reset.Multifile")
+                jQuery(input.form).on("reset.Multifile", function(){
+                    Helpdesk.Multifile.resetAll(this)
+                });
     } 
-
 <% end %>
+

@@ -1,7 +1,13 @@
 module Freshfone::Conference::EndCallActions
+   include Freshfone::WarmTransferDisconnect
 
   def complete_call
     begin
+      if warm_transfer_enabled?
+        disconnect_warm_transfer(active_warm_transfer_call) 
+        return handle_warm_transfer if warm_transfer_source_agent?
+      end
+
       return empty_twiml if current_call.blank?
       return complete_transfer_leg if transfered_call_end? || external_transfer_call?
       handle_sip_end_call if current_call.sip?
@@ -38,8 +44,24 @@ module Freshfone::Conference::EndCallActions
       current_call.completed? && current_call.has_children? && current_call.descendants.present?
     end
 
+    def handle_warm_transfer
+      return if params[:agent_id].present?
+      handle_warm_transfer_source
+      empty_twiml
+    end
+
     def single_leg_outgoing?
       current_call.present? && current_call.outgoing? && current_call.is_root? && current_call.descendants.blank?
+    end
+
+    def outgoing_leg?
+      return warm_transfer_leg_outgoing? if warm_transfer_enabled?
+      single_leg_outgoing?
+    end
+
+    def warm_transfer_leg_outgoing?
+      current_call.present? && current_call.outgoing? && 
+          ((current_call.is_root? && current_call.descendants.blank?) || current_call.meta.warm_transfer_meta?)
     end
 
     def disconnect_ringing
@@ -48,17 +70,22 @@ module Freshfone::Conference::EndCallActions
     end
 
     def cancel_ringing_agents
-      return if current_call.blank?
+      return if current_call.blank? || current_call.meta.blank?
       #To cancel both browser and mobile agents in case of new notifications
       jid = Freshfone::RealtimeNotifier.perform_async({ call_id: current_call.id }, current_call.id, nil, 'cancel_other_agents') if new_notifications?
       Rails.logger.info "Account ID : #{current_account.id} - cancel_ringing_agents : Sidekiq Job ID #{jid} - TID #{Thread.current.object_id.to_s(36)}"
       Freshfone::NotificationWorker.perform_async({ call_id: current_call.id }, nil, 'cancel_other_agents')
-      current_call.meta.cancel_browser_agents if current_call.meta.present? && new_notifications? 
+      current_call.meta.cancel_browser_agents if new_notifications? 
     end
 
     def active_agent_conference_call
       current_call.supervisor_controls.agent_conference_calls([Freshfone::SupervisorControl::CALL_STATUS_HASH[:default],
                                                                Freshfone::SupervisorControl::CALL_STATUS_HASH[:ringing]]).first
+    end
+
+    def active_warm_transfer_call
+       return if current_call.blank?
+       current_call.supervisor_controls.warm_transfer_calls.initiated_or_inprogress_calls.first
     end
 
     def disconnect_agent_conference(call_sid)

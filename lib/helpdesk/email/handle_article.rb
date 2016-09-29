@@ -10,6 +10,7 @@ module Helpdesk::Email::HandleArticle
                         :attachments => common_email_data[:attached_items]
                       }    
     Helpdesk::KbaseArticles.create_article_from_email(article_params)
+    Rails.logger.info "Email Processing Successful: Email Successfully created as Article!!"
   end
 
   def article_title(text)

@@ -1,13 +1,13 @@
 {
   "checksum": {
-    "previous": "30ab57e6f71e25bc4569c35a168c51e78c6ec522ae7766ce29021e5a2a9ec1c7",
-    "current": "30ab57e6f71e25bc4569c35a168c51e78c6ec522ae7766ce29021e5a2a9ec1c7"
+    "previous": "974576f4af6f9ab06527254c78ea28116861b13f229fbe012c4fb12cfa4d7304",
+    "current": "974576f4af6f9ab06527254c78ea28116861b13f229fbe012c4fb12cfa4d7304"
   },
   "fonts": [
-    "public/assets/glyphs_30ab57e6f71e25bc4569c35a168c51e7.ttf",
-    "public/assets/glyphs_30ab57e6f71e25bc4569c35a168c51e7.svg",
-    "public/assets/glyphs_30ab57e6f71e25bc4569c35a168c51e7.woff",
-    "public/assets/glyphs_30ab57e6f71e25bc4569c35a168c51e7.eot"
+    "public/assets/glyphs_974576f4af6f9ab06527254c78ea2811.ttf",
+    "public/assets/glyphs_974576f4af6f9ab06527254c78ea2811.svg",
+    "public/assets/glyphs_974576f4af6f9ab06527254c78ea2811.woff",
+    "public/assets/glyphs_974576f4af6f9ab06527254c78ea2811.eot"
   ],
   "glyphs": {
     "abandoned-call": {
@@ -110,6 +110,10 @@
       "codepoint": 61956,
       "source": "public/glyphs/vectors/article.svg"
     },
+    "attachment": {
+      "codepoint": 61997,
+      "source": "public/glyphs/vectors/attachment.svg"
+    },
     "attachment-blank": {
       "codepoint": 61993,
       "source": "public/glyphs/vectors/attachment-blank.svg"
@@ -130,6 +134,10 @@
       "codepoint": 61713,
       "source": "public/glyphs/vectors/blank-file.svg"
     },
+    "blind-transfer": {
+      "codepoint": 61999,
+      "source": "public/glyphs/vectors/blind-transfer.svg"
+    },
     "block": {
       "codepoint": 61964,
       "source": "public/glyphs/vectors/block.svg"
@@ -141,6 +149,10 @@
     "book": {
       "codepoint": 61714,
       "source": "public/glyphs/vectors/book.svg"
+    },
+    "book-dark": {
+      "codepoint": 61998,
+      "source": "public/glyphs/vectors/book-dark.svg"
     },
     "book-hollow": {
       "codepoint": 61914,
@@ -385,6 +397,10 @@
     "dots": {
       "codepoint": 61746,
       "source": "public/glyphs/vectors/dots.svg"
+    },
+    "down-arrow": {
+      "codepoint": 62000,
+      "source": "public/glyphs/vectors/down-arrow.svg"
     },
     "download": {
       "codepoint": 61954,
@@ -1129,6 +1145,10 @@
     "view-retweets": {
       "codepoint": 61862,
       "source": "public/glyphs/vectors/view-retweets.svg"
+    },
+    "warm-transfer": {
+      "codepoint": 62001,
+      "source": "public/glyphs/vectors/warm-transfer.svg"
     },
     "warning": {
       "codepoint": 61863,

@@ -37,10 +37,10 @@ module Helpdesk::TagsHelper
   end
 
   def ticket_tags_count(tag)
-    if tag.account.launched?(:es_count_reads)
+    if Account.current.count_es_enabled?
       action_hash = [{"condition" => "helpdesk_tags.id", "operator" => "is_in", "value" => tag.id }]
       negative_conditions = [{ "condition" => "spam", "operator" => "is", "value" => "true" },{ "condition" => "deleted", "operator" => "is", "value" => "true" }]
-      Search::Filters::Docs.new(action_hash, negative_conditions,false).count(Helpdesk::Ticket)
+      Search::Tickets::Docs.new(action_hash, negative_conditions,false).count(Helpdesk::Ticket)
     else
       tag.tickets.visible.size
     end      

@@ -50,7 +50,7 @@ window.liveChat.widgetCode = function($){
 		updateCode: function(){
 			var attr = ['widget_preferences','prechat_message','non_availability_message','prechat_fields','offline_chat'];
 
-			var _widget = JSON.parse(JSON.stringify(window.liveChat.adminSettings.currentWidget));
+			var _widget = JSON.parse(JSON.stringify(App.Admin.LiveChatAdminSettings.currentWidget));
 			delete _widget.defaultMessages;
 			
 			_.each(attr, function(key){

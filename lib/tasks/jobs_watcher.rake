@@ -15,7 +15,8 @@ QUEUE_WATCHER_RULE = {
         "es_index_queue" => 10000,
         "sla_worker" => 25000,
         "free_sla_worker" => 25000,
-        "trail_sla_worker" => 25000
+        "trail_sla_worker" => 25000,
+        "Salesforcequeue" => 1000
     } ,
     :except => ["supervisor_worker",
               "gamification_ticket_quests",

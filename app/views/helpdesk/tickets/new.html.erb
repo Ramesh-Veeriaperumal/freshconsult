@@ -1,5 +1,11 @@
 <% content_for :sidebar do %>
-  <%= render :partial => "helpdesk/tickets/ticket_widget/sidebar", :locals => {:from_page => 'new_ticket_page_side_bar'}%> 
+  <%= render :partial => "helpdesk/tickets/ticket_widget/sidebar", :locals => {:from_page => 'new_ticket_page_side_bar'}%>
+<% end %>
+<%# multifile attachments templates %>
+<% if  current_account.launched?(:multifile_attachments)  %>
+  <%= render "helpdesk/tickets/ticket_widget/multifile_template_generator" %>
+<% else %>
+  <%= render "helpdesk/shared/single_attachment_template" %>
 <% end %>
 <div class="templates-header-wrapper">
   <%= render :partial => "helpdesk/tickets/ticket_widget/new_ticket_title" %>
@@ -17,8 +23,13 @@
   <% end %>
 </div>
 </div>
-<%= render :partial => "/helpdesk/tickets/show/multifile_template" %>
-<%= render :partial => "/helpdesk/tickets/show/multifile_template_new" %>
+<!-- Populate value if, ticket created form forum -->
+<input type="hidden" id="topic_id_stub" value="<%= params[:topic_id] %>" />
+<% if params[:topic_id] %>
+  <input type="hidden" id="topic_desc" value="<%= @topic.posts.first.body_html %>" />
+  <input type="hidden" id="topic_title" value="<%= @topic.title %>" />
+  <input type="hidden" id="topic_req" value="<%= @topic.user.email %>" />
+<% end %>
 <%= render :partial => "/helpdesk/tickets/canned_loading"  %>
 
 <script>

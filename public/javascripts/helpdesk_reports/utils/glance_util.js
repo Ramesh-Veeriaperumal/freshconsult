@@ -18,6 +18,12 @@ HelpdeskReports.ReportUtil.Glance = (function () {
                     _FD.actions.submitActiveMetric(this);
                 }
             });
+            
+            jQuery('#reports_wrapper').on('click.helpdesk_reports', '#current_status:not(".active"), #historic_status:not(".active")', function (event) {
+                jQuery('#current_status, #historic_status').toggleClass('active');
+                jQuery('#status_container, #historic_status_container').toggle();
+                jQuery('#status_view_more_container.active, #historic_status_view_more_container.active').toggle();
+            });
 
             jQuery('#reports_wrapper').on('click.helpdesk_reports', '[data-ticket="view_all"]', function() {
                 _FD.actions.viewAllTickets(this);
@@ -248,7 +254,11 @@ HelpdeskReports.ReportUtil.Glance = (function () {
 
                 var group_by = _FD.core.setDefaultGroupByOptions(active_metric);
                 if (HelpdeskReports.locals.custom_fields_group_by.length) {
-                    group_by.push(HelpdeskReports.locals.custom_fields_group_by[0]);
+                    if(HelpdeskReports.locals.active_custom_field)
+                        group_by.push(HelpdeskReports.locals.active_custom_field);
+                    else{
+                        group_by.push(HelpdeskReports.locals.custom_fields_group_by[0]);
+                    }
                 }
                 HelpdeskReports.locals.current_group_by = group_by;
 
@@ -259,6 +269,10 @@ HelpdeskReports.ReportUtil.Glance = (function () {
                 jQuery('#glance_chart_wrapper .loading-bar').removeClass('hide');
 
                 if(HelpdeskReports.locals.visited_metrics.indexOf(HelpdeskReports.locals.active_metric) > -1) {
+                    if(!HelpdeskReports.locals.chart_hash[active_metric].hasOwnProperty(HelpdeskReports.locals.active_custom_field)){
+                        if(HelpdeskReports.locals.active_custom_field)
+                            _FD.constructCustomFieldParams(HelpdeskReports.locals.active_custom_field,false);
+                    }
                     HelpdeskReports.ChartsInitializer.Glance.init(HelpdeskReports.locals.chart_hash);
                     jQuery('#glance_chart_wrapper .loading-bar').addClass('hide');
                     jQuery('#view_all_tickets').show();
@@ -388,7 +402,15 @@ HelpdeskReports.ReportUtil.Glance = (function () {
             },  
             constructMainListCondition: function (group_by, label, id) {
                 var list_hash = {};
-                var hash_group_by = HelpdeskReports.locals.report_options_hash[group_by];
+                var tmp_group='';
+                //Hack for historic status
+                if (group_by == "historic_status"){
+                    tmp_group = "status";
+                }else{
+                    tmp_group = group_by;
+                }
+
+                var hash_group_by = HelpdeskReports.locals.report_options_hash[tmp_group];
 
                 if (hash_group_by.hasOwnProperty(id)) {
                     list_hash = {

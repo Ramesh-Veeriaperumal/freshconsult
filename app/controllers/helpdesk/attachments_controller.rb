@@ -2,10 +2,11 @@
 class Helpdesk::AttachmentsController < ApplicationController
 
   include HelpdeskControllerMethods
+  include Helpdesk::MultiFileAttachment::Util
   skip_before_filter :check_privilege
-  before_filter :load_item, :only => [:text_content, :show]
+  before_filter :load_item, :only => [:text_content, :show, :delete_attachment]
   before_filter :check_download_permission, :only => [:show, :text_content]
-  before_filter :check_destroy_permission, :only => [:destroy]
+  before_filter :check_destroy_permission, :only => [:destroy, :delete_attachment]
   before_filter :set_native_mobile, :only => [:show]
   before_filter :load_shared, :only => [:unlink_shared]
   def show
@@ -57,6 +58,34 @@ class Helpdesk::AttachmentsController < ApplicationController
     end
   end
 
+  def create_attachment    
+    attachable_id = current_user.id
+    @attachment = Helpdesk::Attachment.new(content: params[:file], account_id: Account.current.id, attachable_type: "UserDraft", attachable_id: attachable_id)
+    if @attachment.save
+      mark_for_cleanup(@attachment.id)
+      respond_to do |format|
+        format.json do
+          render :json => {"files" => [@attachment.to_jq_upload]}.to_json
+        end
+      end
+    else
+      render :json => [{:error => "custom_failure"}], :status => 304
+    end
+  end
+
+  def delete_attachment
+    if @item.destroy
+      unmark_for_cleanup(@item.id)
+      respond_to do |format|
+        format.json do
+          render :json => @item.to_json    
+        end
+      end
+    else
+      render :json => [{:error => "custom_failure"}], :status => 304
+    end
+  end
+
   protected
 
     def load_shared
@@ -97,6 +126,8 @@ class Helpdesk::AttachmentsController < ApplicationController
 
       elsif ['Solution::Article'].include? @attachment.attachable_type
         return @attachment.attachable.solution_folder_meta.visible?(current_user)
+      elsif ['Solution::Draft'].include? @attachment.attachable_type
+        return current_user && current_user.privilege?(:view_solutions)
       elsif ['Post'].include? @attachment.attachable_type
         return @attachment.attachable && @attachment.attachable.forum.visible?(current_user)
       elsif ['Account', 'Portal'].include? @attachment.attachable_type
@@ -106,6 +137,8 @@ class Helpdesk::AttachmentsController < ApplicationController
         return ticket_access? call_record_ticket
       elsif ['DataExport'].include? @attachment.attachable_type
         return privilege?(:manage_account) || @attachment.attachable.owner?(current_user)
+      elsif ['UserDraft'].include? @attachment.attachable_type
+        return true if(current_user)
       elsif ['Helpdesk::TicketTemplate'].include? @attachment.attachable_type
         return true if template_priv? @attachment.attachable
       end

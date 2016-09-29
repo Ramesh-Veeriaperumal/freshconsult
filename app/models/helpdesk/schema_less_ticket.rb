@@ -4,6 +4,8 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
 	
 	COUNT_COLUMNS_FOR_REPORTS = ["agent_reassigned", "group_reassigned", "reopened", 
                                   "private_note", "public_note", "agent_reply", "customer_reply"]
+
+  NOTE_COUNT_METRICS = ["private_note", "public_note", "agent_reply", "customer_reply"]
   
 	self.table_name =  "helpdesk_schema_less_tickets"
 	self.primary_key = :id
@@ -86,6 +88,10 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
 			self.save
 		end
 	end
+
+	def set_last_resolved_at(time)
+		self.reports_hash['last_resolved_at'] = time
+	end
 	
 	["agent", "group"].each do |type|
 		define_method("set_#{type}_assigned_flag") do
@@ -105,7 +111,7 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
 			previous_count = self.reports_hash["#{count_type}_count"]
 			case action
 			when "create"
-				current_count = previous_count.to_i + 1
+				current_count  = previous_count.to_i + 1
 			when "destroy"
 				current_count = (previous_count.to_i == 0 ? nil : previous_count.to_i -  1)
 			else
@@ -115,4 +121,17 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
 		end
 	end
 	# Methods for new reports ends here
+
+	def recalculate_note_count
+		recalculated_count = Hash.new(0)
+		notes = self.ticket.notes.find(:all, :include => [:schema_less_note])
+		notes.each do |note|
+			category = note.send("reports_note_category")
+			recalculated_count["#{category}"]+=1
+	  end
+	  self.reports_hash = {} unless self.reports_hash.is_a?(Hash)
+	  NOTE_COUNT_METRICS.each { |metric| self.reports_hash["#{metric}_count"] = recalculated_count[metric] }
+	  self.reports_hash["recalculated_count"] = true
+	end
+
 end

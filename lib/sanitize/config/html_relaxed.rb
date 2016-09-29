@@ -32,7 +32,7 @@ class Sanitize
       :remove_contents => [ 'style','title','script' ],
       :attributes => {
         :all         => ['dir', 'lang', 'title','style', 'id', 'align', 'class', 'rel'],
-        'a'          => ['href','target'],
+        'a'          => ['href','target','download'],
         'blockquote' => ['cite',"class"],
         'col'        => ['span', 'width'],
         'colgroup'   => ['span', 'width'],

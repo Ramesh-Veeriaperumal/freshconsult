@@ -51,7 +51,7 @@
 
 <%= javascript_tag do %>
   (function($){
-    jQuery(document).ready(function(){      
+    jQuery(document).ready(function(){
       jQuery('#meta_referrer').val(document.referrer.escapeHTML());
       <% if feature?(:auto_suggest_solutions) && allowed_in_portal?(:open_solutions) %>
         callbackToSolutionSearch = function(string){
@@ -82,7 +82,7 @@
             });
           }
         
-          jQuery("#helpdesk_ticket_subject").live("blur", function(ev){
+          jQuery("#helpdesk_ticket_subject").on("blur", function(ev){
               var searchString = this.value.replace(/^\s+|\s+$/g, "");
               if(searchString != '' && searchString.length > 1){
                 jQuery(this).addClass("sloading loading-small loading-right");
@@ -92,8 +92,7 @@
               }
           });
       <% end %>
-
-      if( !isMobile.any() ){
+      if( jQuery.browser.desktop ){
         <% if logged_in? %>
           invokeRedactor('helpdesk_ticket_ticket_body_attributes_description_html', 'ticket');
         <% else %>
@@ -120,8 +119,11 @@
                 .insertAfter(jQuery("#helpdesk_ticket_ticket_type").parents('.control-group'));
           }
       });
+      jQuery('#helpdesk_ticket_ticket_type').trigger('change');
     }); 
 
+    
+    
     jQuery("#helpdesk_ticket_email").focusout(function(){
       var ticket_email = jQuery("#helpdesk_ticket_email").val();
       if(<%= current_user.present? && current_user.contractor? %>){

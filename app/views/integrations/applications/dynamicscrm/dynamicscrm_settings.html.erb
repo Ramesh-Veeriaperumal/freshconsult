@@ -140,7 +140,7 @@ jQuery("input[name='configs[instance_type]'][value=<%= crm_instance_types["on_de
 jQuery(document).ready(function() {
     <%if defined?(configs["instance_type"]) %>
       var value = "<%= configs['instance_type'] %>";
-      jQuery("input[name='configs[instance_type]'][value=" + value + "]").attr('checked', 'checked').change();
+      jQuery("input[name='configs[instance_type]'][value=" + value + "]").prop('checked', true).change();
     <%end%>
 });
 </script>

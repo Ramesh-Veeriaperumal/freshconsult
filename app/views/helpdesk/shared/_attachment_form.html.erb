@@ -1,9 +1,8 @@
-
 <% 
   attach_id ||= "ticket" 
   nsc_param = nsc_param || "helpdesk_ticket"
 %>
-<div class="attach-wrapper row-fluid">
+<div class="attach-wrapper row-fluid single_file">
   <div class="span8">    
     <% if cloud_files_installed? %>
       <div class="dropdown dropup">        
@@ -74,5 +73,4 @@
   The following is a template used by multifile.js to create rows in
   the attachments table.
  %>
-<%= render :partial => "/shared/multifile_template" %>
 <%= render :partial => "/shared/multifile_template_new" %>

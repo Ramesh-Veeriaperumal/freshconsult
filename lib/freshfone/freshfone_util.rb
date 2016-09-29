@@ -138,8 +138,8 @@ module Freshfone::FreshfoneUtil
     save_child_call_conf_meta(current_child_call,params[:target],:number)
   end
 
-  def outgoing_transfer?(call)
-    call.outgoing? && !call.is_root?
+  def outgoing_or_warm_transfer?(call)
+    call.outgoing? && !call.is_root? && !call.meta.warm_transfer_meta?
   end
 
   def incoming_transfer?(call)
@@ -147,7 +147,7 @@ module Freshfone::FreshfoneUtil
   end
 
   def transfered_leg?(call)
-    incoming_transfer?(call) || outgoing_transfer?(call)
+    incoming_transfer?(call) || outgoing_or_warm_transfer?(call)
   end
 
   def call_actions
@@ -273,6 +273,10 @@ module Freshfone::FreshfoneUtil
 
   def new_notifications?
     ::Account.current.launched?(:freshfone_new_notifications)
+  end
+
+  def warm_transfer_enabled?
+    current_account.features?(:freshfone_warm_transfer)
   end
 
   private

@@ -18,7 +18,7 @@
 		jQuery("#EnablePortal").prop("checked", true).trigger("change");
 		jQuery("#PortalUrl").trigger("focus");
 	}
-  jQuery('.fileAdminUpload').live("change", function(){
+  jQuery(document).on("change", '.fileAdminUpload', function(){
     setPostParam(this.form, "redirect_url", window.location)
     jQuery(this.form).submit()
   })

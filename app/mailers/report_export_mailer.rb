@@ -59,11 +59,37 @@ class ReportExportMailer < ActionMailer::Base
     end.deliver
   end
 
+  def report_export_task options
+    headers = mail_headers options
+    @date_range = options[:date_range]
+    @invalid_count = options[:invalid_count]
+    @task_start_time = options[:task_start_time]
+    @description = options[:description]
+
+    if options[:file_path].present?
+      if @description
+        attachment_file_name = "#{@description} #{Time.current.strftime("%d-%b-%y-%H:%M")}".gsub(/[-,\s+\/]/,'_').gsub(/_+/,'_').slice(0,235)
+      else
+        attachment_file_name = get_attachment_file_name(options[:file_path])
+      end
+      #encode64 to override the default '990 characters per row' limit on attached files
+      attachments[attachment_file_name] = { :data=> Base64.encode64(File.read(options[:file_path])), :encoding => 'base64' }
+    else
+      @export_url = options[:export_url]
+    end
+
+    mail(headers) do |part|
+      part.text { render "report_export_task.plain" }
+      part.html { render "report_export_task.html" }
+    end.deliver
+
+  end
+
   private
   def mail_headers options
     {
       :subject     => mail_subject( options ),
-      :to             => options[:user].email,
+      :to             => options[:task_email_ids] || options[:user].email,
       :from         => AppConfig['from_email'],
       "Reply-to" => "",
       :sent_on   => Time.now,
@@ -73,7 +99,7 @@ class ReportExportMailer < ActionMailer::Base
   end
 
   def mail_subject options
-    sub = "#{report_name(options[:report_type])} report for #{options[:date_range]}"
+    sub = options[:email_subject] || "#{report_name(options[:report_type])} report for #{options[:date_range]}"
     sub.prepend( "Ticket export | " ) if options[:ticket_export].present?
     sub
   end
@@ -83,7 +109,7 @@ class ReportExportMailer < ActionMailer::Base
   end
 
   def filter_to_display? report_type, ticket_export
-    ticket_export || [:agent_summary, :group_summary].include?(report_type)
+    ticket_export || [:agent_summary, :group_summary, :satisfaction_survey].include?(report_type)
   end
 
   def get_attachment_file_name file_path

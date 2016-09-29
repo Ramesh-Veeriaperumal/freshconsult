@@ -178,6 +178,7 @@ var SurveyProtocol = {
 		this.content["thanks"]={
 			title:surveysI18n.title_text,
 			default_text:surveysI18n.message_text,
+			message:'',
 			link:{
 					label:surveysI18n.label_text,				
 					action:"SurveyQuestion.create()"

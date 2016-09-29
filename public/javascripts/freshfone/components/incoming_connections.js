@@ -130,6 +130,7 @@ var INCOMING_RINGING_TYPES = ['incoming', 'transfer'];
         success: function (data) { 
           if(data.can_accept) {
             self.freshfoneNotification.setDirectionIncoming();
+            self.setWarmTransferCall(data);
             self.connect();
             freshfonetimer.resetCallTimer();
             freshfonewidget.handleWidgets('ongoing');
@@ -141,6 +142,11 @@ var INCOMING_RINGING_TYPES = ['incoming', 'transfer'];
           ffLogger.logIssue("Unable accept the incoming call for "+ freshfone.current_user_details.id, { "params" : data });
          }
       });
+    },
+    setWarmTransferCall: function(data) {
+      if(data.warm_transfer) {
+        freshfonecalls.setWarmTransfer(data.warm_transfer);
+      }
     },
     connect: function () {
         this.freshfoneNotification.setAcceptedConnection(this);
@@ -155,11 +161,21 @@ var INCOMING_RINGING_TYPES = ['incoming', 'transfer'];
           agent: freshfone.current_user,
           type: "agent_leg",
           agent_leg_type:  this.getAgentLegType(),
-          number: this.incomingCall['number']
+          number: this.incomingCall['number'],
+          warm_transfer_call_id: this.getWarmTransferCallId()
         };
         var twilioConnection = Twilio.Device.connect(params);
     },
+    getWarmTransferCallId: function() {
+      return this.incomingCall.warm_transfer_call_id ? this.incomingCall.warm_transfer_call_id : '';
+    },
     getAgentLegType:function(){
+      if (this.notificationType == "warm_transfer") {
+        return "agent_warm_transfer_leg";
+      }
+      return this.getCallType();
+    },
+    getCallType: function() {
       return this.notificationType == "transfer" ? "agent_transfer_leg" : "agent_leg";
     },
     createDesktopNotification: function () {

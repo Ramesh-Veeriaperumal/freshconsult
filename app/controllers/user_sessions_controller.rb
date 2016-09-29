@@ -77,6 +77,7 @@ include Mobile::Actions::Push_Notifier
       end
       
       @user_session = @current_user.account.user_sessions.new(@current_user)
+      @user_session.web_session = true unless is_native_mobile?
       if saved && @user_session.save
         if is_native_mobile?
           cookies["mobile_access_token"] = { :value => @current_user.helpdesk_agent ? @current_user.single_access_token : 'customer', :http_only => true } 
@@ -103,6 +104,7 @@ include Mobile::Actions::Push_Notifier
   
   def create  
     @user_session = current_account.user_sessions.new(params[:user_session])
+    @user_session.web_session = true unless is_native_mobile?
     if @user_session.save
       #Temporary hack due to current_user not returning proper value
       @current_user_session = @user_session
@@ -162,7 +164,11 @@ include Mobile::Actions::Push_Notifier
     flash.clear if mobile?
    remove_logged_out_user_mobile_registrations if is_native_mobile?
 
-    current_user_session.destroy unless current_user_session.nil?
+    if current_user_session
+      current_user_session.web_session = true unless is_native_mobile?
+      current_user_session.destroy
+    end
+
     if current_account.sso_enabled? and current_account.sso_logout_url.present? and !is_native_mobile?
       sso_redirect_url = generate_sso_url(current_account.sso_logout_url)
       redirect_to sso_redirect_url and return

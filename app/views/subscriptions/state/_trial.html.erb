@@ -46,7 +46,7 @@
       } );
   }
 
-  jQuery('#switch-currency').live('change', function(){
+  jQuery('#switch-currency').on('change', function(){
     jQuery("#ChangePlan").empty();
     jQuery("#ChangePlan").addClass("sloading");
     var currency = this.value;

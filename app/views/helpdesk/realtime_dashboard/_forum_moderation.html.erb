@@ -3,6 +3,9 @@
 		<div class="widget-title">
 			<%=t('helpdesk.realtime_dashboard.forum_moderation') %>
 		</div>
+		<div class="widget-title-muted muted">
+			<%=t('helpdesk.realtime_dashboard.across_helpdesk') %>
+		</div>
 		<div class="widget-content">
 			<%= content_tag :div, "", :rel => "remote", :class => "", :id=> "moderation-stats",
 							"data-remote-url" => '/discussions/unpublished/moderation_count' %>

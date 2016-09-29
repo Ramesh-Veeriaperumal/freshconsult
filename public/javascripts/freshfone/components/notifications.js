@@ -143,7 +143,7 @@ var FreshfoneNotification;
 
 		bindResetTitle: function () {
 			var self = this;
-			$(document).on('hover.freshfone', function () {
+			$(document).on('mouseenter.freshfone mouseleave.freshfone', function () {
 				self.resetTitle();
 			});
 		},
@@ -158,7 +158,7 @@ var FreshfoneNotification;
 			var self = this;
 			clearInterval(self.interval);
 			document.title = self.originalTitle;
-			$(document).die('hover.freshfone');
+			$(document).off('mouseenter.freshfone mouseleave.freshfone');
 			self.notifyTabsFlag=false;
 		},
 

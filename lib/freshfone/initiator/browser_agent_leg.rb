@@ -24,6 +24,8 @@ class Freshfone::Initiator::BrowserAgentLeg
       agent_leg
     when 'agent_transfer_leg'
       agent_transfer_leg
+    when 'agent_warm_transfer_leg'
+      agent_warm_transfer_leg
     end
   end
 
@@ -45,6 +47,11 @@ class Freshfone::Initiator::BrowserAgentLeg
       return transfer_answered unless intended_agent_for_transfer?
       remove_conf_transfer_job
       handle_transfer_success
+    end
+
+    def agent_warm_transfer_leg
+      warm_transfer_leg.update_inprogress_status(params[:CallSid])
+      handle_warm_transfer_success
     end
 
     def process_call_accept_callbacks

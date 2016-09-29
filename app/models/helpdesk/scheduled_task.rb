@@ -22,11 +22,10 @@ class Helpdesk::ScheduledTask < ActiveRecord::Base
   scope :by_schedulable_type, lambda{ |schedulable_type| {:conditions => ['schedulable_type = ?', schedulable_type]}}
 
   scope :upcoming_tasks, lambda{ |from = Time.now.utc| 
-    tasks_between(from, from.end_of_hour).where(
-      status: STATUS_NAME_TO_TOKEN[:available]) }
+    tasks_between(from, from.end_of_hour).where("status NOT IN (?)", INACTIVE_STATUS) }
 
   scope :dangling_tasks, lambda{ |from = Time.now.utc| 
-    tasks_between(from-2*CRON_FREQUENCY_IN_HOURS, from-30.minutes).where(
+    tasks_between(from-(MAX_DANGLE_HOUR*CRON_FREQUENCY_IN_HOURS), from-(MIN_DANGLE_TIME_IN_MINUTES)).where(
       "status NOT IN (?)", INACTIVE_STATUS) }
 
   scope :tasks_between, lambda{ |from, till| {
@@ -34,6 +33,11 @@ class Helpdesk::ScheduledTask < ActiveRecord::Base
             :include => [:user, :account] }}
 
   scope :active_tasks, lambda{ {:conditions => ['status NOT IN (?)', INACTIVE_STATUS] } }
+
+  scope :dead_tasks, lambda{ |base_time = Time.now.utc| {
+    :conditions => ['next_run_at < (?) AND status NOT IN (?)',(base_time-(DEAD_TASK_LIMIT_TIME_IN_HOURS)), Helpdesk::ScheduledTask::INACTIVE_STATUS]
+    }
+  }
 
   STATUS_NAME_TO_TOKEN.each_pair do |k, v|
     define_method("#{k}?") do
@@ -113,6 +117,7 @@ class Helpdesk::ScheduledTask < ActiveRecord::Base
     self.consecutive_failuers = self.consecutive_failuers.to_i + 1
     if consecutive_failuers >= CONSECUTIVE_FAILUERS_LIMIT
       self.status = STATUS_NAME_TO_TOKEN[:disabled]
+      # send_sns_notification
     end
     self
   end
@@ -139,12 +144,12 @@ class Helpdesk::ScheduledTask < ActiveRecord::Base
   def trigger(schedule_time = next_run_at)
     return unless (active? && worker.present?)
     return if schedule_time > (Time.now.utc.end_of_hour + CRON_FREQUENCY_IN_HOURS)
+    options = {task_id: id, next_run_at: next_run_at.to_i}
+    options[:account_id] = account_id unless ACCOUNT_INDEPENDENT_TASKS.include?(schedulable_name)
+    mark_enqueued.save!
 
     from_now = (schedule_time - Time.now.utc).to_i
-    from_now = 15 unless from_now > 15
-    options = { account_id: account_id, task_id: id, next_run_at: next_run_at.to_i }
-    mark_enqueued.save!
-    worker.perform_in(from_now, options)
+    (from_now > 0) ? worker.perform_in(from_now, options) : worker.perform_async(options.merge({dangling: true}))
   end
 
   def as_json(options = {}, config = true)
@@ -165,9 +170,17 @@ class Helpdesk::ScheduledTask < ActiveRecord::Base
       frequency_changed? || repeat_frequency_changed? || end_date_changed? 
   end
 
+  #For tasks picked by 'calculate_next_run_at' job
+  # and
+  #For last try of dangling tasks, 'next_run_at' will be updated only once when task is enqueued.
+  #Subsequent status changes will not update 'next_run_at' based on condition in upcoming_schedule
+  def dead_task?
+    active? && (next_run_at + MAX_DANGLE_TIME_IN_HOURS <= Time.now.utc)
+  end
+
   def calculate_next_run_at
-    if schedule_changed? || (available? && status_changed?)
-      self.next_run_at = find_next_schedule
+    if schedule_changed? || (available? && status_changed?) || dead_task?
+      self.next_run_at = find_next_schedule 
       if next_run_at > end_date
         self.next_run_at = nil
         mark_expired
@@ -228,11 +241,17 @@ class Helpdesk::ScheduledTask < ActiveRecord::Base
   end
 
   def upcoming_schedule(prev_schedule)
-    return prev_schedule if prev_schedule > Time.zone.now
+    return prev_schedule if prev_schedule > Time.zone.now #Do not remove this check. dead_task method depends on this control for subsequent updates.
     next_at_frequency = monthly? ? (repeat_frequency * FREQUENCY_UNIT[frequency_name]).months : (repeat_frequency * FREQUENCY_UNIT[frequency_name])
     next_at = prev_schedule + next_at_frequency
     next_at = to_monthly(next_at) if monthly?
     (next_at > Time.zone.now) ? next_at : upcoming_schedule(next_at)
+  end
+
+  def send_sns_notification
+    subject = "Scheduled task (id : #{id}) has been changed to 'disabled' status" 
+    message = "\n\n#{self.inspect}"
+    DevNotification.publish(SNS["reports_notification_topic"],subject,message)
   end
 
 end

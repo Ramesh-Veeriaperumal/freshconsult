@@ -24,16 +24,19 @@ module CustomFields
         @label          = content_tag :div, label+@required_star, :class => 'control-label'
         @dom_placeholder= dom_placeholder
         @bottom_note    = content_tag(:div, bottom_note.html_safe, :class => 'info-data')
+        @args           = args
       end
 
       def construct
-        element = (@disabled and @dom_type != :checkbox) ? construct_disabled : send(:"construct_#{@dom_type}") 
+        element = (@disabled and @dom_type != :checkbox) ? construct_disabled : send(:"construct_#{@dom_type}")
+        element += loading_gif if @args[:include_loading_symbol] and @dom_type != :checkbox
+        element += autocomplete_box if @args[:autocomplete]
         @dom_type == :checkbox ? wrap_checkbox(element).html_safe : wrap(element).html_safe
       end
 
       private
         def construct_text
-          regex_validity = (@field.field_options and @field.field_options['regex']) ? true : false; 
+          regex_validity = (@field.field_options and @field.field_options['regex']) ? true : false;
           maxlength_validity = @field.field_type != :default_domains ? true : false # Temp fix
           domains = @field.field_type == :default_domains ? true : false
 
@@ -41,76 +44,76 @@ module CustomFields
                             :class => "#{@field_class}" +
                                 (domains ? " domain_tokens" : '') +
                                 (regex_validity ? " regex_validity" : '') +
-                                (maxlength_validity ? ' field_maxlength' : ""), 
-                            :disabled => @disabled, 
+                                (maxlength_validity ? ' field_maxlength' : ""),
+                            :disabled => @disabled,
                             :type => 'text'
                           }
 
-          html_options[:placeholder] = @dom_placeholder if domains
+          html_options[:placeholder] = @dom_placeholder
           html_options['data-regex-pattern'] = "/#{CGI.unescapeHTML(@field.field_options['regex']['pattern'])}/#{@field.field_options['regex']['modifier']}" if regex_validity
           html_options['maxlength'] = '255' if maxlength_validity
-          
+
           text_field_tag("#{@object_name}[#{@field_name}]", @field_value, html_options);
         end
 
         alias_method :construct_number, :construct_text
 
         def construct_email
-          text_field_tag("#{@object_name}[#{@field_name}]", @field_value, 
-                    {:class => @field_class, 
-                      :disabled => @disabled, 
+          text_field_tag("#{@object_name}[#{@field_name}]", @field_value,
+                    {:class => @field_class,
+                      :disabled => @disabled,
                       :type => 'email'})
         end
 
         def construct_paragraph
-          text_area(@object_name, @field_name, 
-                    {:class => @field_class, 
-                      :value => @field_value, 
-                      :disabled => @disabled, 
-                      :rows => 5, 
+          text_area(@object_name, @field_name,
+                    {:class => @field_class,
+                      :value => @field_value,
+                      :disabled => @disabled,
+                      :rows => 5,
                       :placeholder => @dom_placeholder})
         end
-        
+
         def construct_dropdown_blank
-          select(@object_name, @field_name, @choices, 
-                                        {:include_blank => "...", :selected => @field_value}, 
-                                        {:class => "#{@field_class} input-xlarge select2", 
+          select(@object_name, @field_name, @choices,
+                                        {:include_blank => "...", :selected => @field_value},
+                                        {:class => "#{@field_class} input-xlarge select2",
                                          :disabled => @disabled})
         end
 
         def construct_dropdown
-          select(@object_name, @field_name, @choices, 
+          select(@object_name, @field_name, @choices,
                                           {:selected => @field_value},
                                           {:class => "#{@field_class} select2", :disabled => @disabled})
         end
 
         def construct_checkbox
-          checkbox_element = ( @required ? 
-            ( check_box_tag(%{#{@object_name}[#{@field_name}]}, 'true', (@field_value == :true), 
+          checkbox_element = ( @required ?
+            ( check_box_tag(%{#{@object_name}[#{@field_name}]}, 'true', (@field_value == :true),
                                 { :class => @field_class, :disabled => @disabled } )) :
-            ( check_box(@object_name, @field_name, {:class => @field_class, 
-                                                    :checked => (@field_value == :true), 
+            ( check_box(@object_name, @field_name, {:class => @field_class,
+                                                    :checked => (@field_value == :true),
                                                     :disabled => @disabled}, true, false) ) )
         end
 
         def construct_phone_number
-          text_field_tag("#{@object_name}[#{@field_name}]", @field_value, 
-                    {:class => "#{@field_class} field_maxlength", 
+          text_field_tag("#{@object_name}[#{@field_name}]", @field_value,
+                    {:class => "#{@field_class} field_maxlength",
                       :disabled => @disabled,
                       :maxlength => '255'})
         end
 
         def construct_url
-          text_field_tag("#{@object_name}[#{@field_name}]", CGI.unescapeHTML(@field_value.to_s), 
-                    {:class => "#{@field_class}", 
-                      :disabled => @disabled, 
+          text_field_tag("#{@object_name}[#{@field_name}]", CGI.unescapeHTML(@field_value.to_s),
+                    {:class => "#{@field_class}",
+                      :disabled => @disabled,
                       :type => 'url'})
         end
 
         def construct_date
           format_date
-          text_field_tag("#{@object_name}[#{@field_name}]", @field_value, 
-                    {:class => "#{@field_class} datepicker_popover", 
+          text_field_tag("#{@object_name}[#{@field_name}]", @field_value,
+                    {:class => "#{@field_class} datepicker_popover",
                       :disabled => @disabled,
                       :'data-show-image' => "true",
                       :'data-date-format' => AccountConstants::DATA_DATEFORMATS[date_format][:datepicker] })
@@ -126,11 +129,19 @@ module CustomFields
                 content_tag :a, CGI.unescapeHTML(@field_value.to_s), :href => @field_value, :target => '_blank'
               when :dropdown_blank
                 CGI.unescapeHTML(@field_value.to_s)
-              else 
+              else
                 @field_value
             end
           end
           content_tag :div, anchor, :class => "disabled-field"
+        end
+
+        def loading_gif
+          content_tag :div, '', :id => @object_name + "_" + @field_name + "_loading", :class => "progress-block"
+        end
+
+        def autocomplete_box
+          content_tag :div, '', :class => 'autocomplete', :id => @object_name + "_" + @field_name + "_choices"
         end
 
         def wrap element
@@ -140,7 +151,8 @@ module CustomFields
 
         def wrap_checkbox element
           @label = label_tag "#{@object_name}_#{@field.field_name}", @field_label
-          div    = content_tag(:div, (element + @label + @required_star), :class => 'controls')
+          loader_image = @args[:include_loading_symbol] ? loading_gif : ""
+          div    = content_tag(:div, (element + @label + @required_star + loader_image), :class => 'controls')
           content_tag(:li, div, :class => "control-group #{ @dom_type } #{ @field.field_type } field checkbox-wrap")
         end
 

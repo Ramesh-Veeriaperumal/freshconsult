@@ -82,7 +82,7 @@ module Community::MonitorshipHelper
     end
     agents.reject!{ |agent| !agent.user.privilege?(:view_forums)}
     agents.collect do |agent|
-      [agent.user_id, (agent.user_id == User.current.id) ? t("monitorships.me") : agent.user.name]
+      [agent.user_id, (agent.user_id == User.current.id) ? t("monitorships.me") + " (#{agent.user.name})" : agent.user.name]
     end
   end
 

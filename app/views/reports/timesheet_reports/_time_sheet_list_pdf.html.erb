@@ -30,7 +30,7 @@
       <div>
         <h3 class="header-lead"><span><%=t('adv_reports.summary')%> </span></h3>
         <div class="row-fluid report-summary-wrapper">
-          <%=render :partial =>"reports/timesheet_reports/time_sheets_metric.html.erb", :locals => {:timesheet_data => time_sheet_data, :old_timesheet_data => old_time_sheet_data, :activity_data_hash_var => activity_data_hash } %>
+          <%=render :partial =>"reports/timesheet_reports/time_sheets_metric.html.erb", :locals => {:metric_data_var => metric_data, :activity_data_hash_var => activity_data_hash } %>
         </div>
       </div>
       <% grp_data = [params[:group_by] ? params[:group_by].to_sym : Helpdesk::TimeSheet.group_by_options.first[1]]%>
@@ -55,7 +55,7 @@
           <% if time_sheets.size > 0 %>
             <% row_max_limit = params[:scheduled_report] ? HelpdeskReports::Constants::Export::FILE_ROW_LIMITS[:schedule][:pdf] : HelpdeskReports::Constants::Export::FILE_ROW_LIMITS[:export][:pdf] %>
             <% exceeds_row_limit = (time_sheets.values.flatten.size > row_max_limit) ? true : false %>
-            <%= render :partial => "reports/timesheet_reports/time_sheet_pdf.html.erb", :object => time_sheets ,:locals=>{:colspan=>colspan,:group_by=>grp_data, :headers => headers, :account_id => params[:account_id], :time_sheet => time_sheets, :row_max_limit => row_max_limit, :exceeds_row_limit => exceeds_row_limit} %>
+            <%= render :partial => "reports/timesheet_reports/time_sheet_pdf.html.erb", :object => time_sheets ,:locals=>{:colspan=>colspan,:group_by=>grp_data, :headers => headers, :account_id => params[:account_id], :time_sheet => time_sheets, :row_max_limit => row_max_limit, :exceeds_row_limit => exceeds_row_limit, :times_spent => group_count, :totaltime => group_count.values.sum, :group_names => group_names, :load_time => load_time} %>
           <%else%>
             <tr style="text-align:center">
               <td colspan="<%=(colspan+1)%>">           

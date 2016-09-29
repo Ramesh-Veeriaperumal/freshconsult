@@ -1,18 +1,18 @@
 module Freshfone::Disconnect
+   include Freshfone::WarmTransferDisconnect
   
   def initiate_disconnect
-    return telephony.no_action if current_call.meta.present? && current_call.meta.missed_response_present?(params[:agent] || params[:agent_id]) # for avoiding multiple missed response coming from different tabs for same agent
-    
+    return telephony.no_action if current_call.meta.present? && current_call.meta.missed_response_present?(params[:agent] || params[:agent_id]) && warm_transfer_supervisor_leg.blank?# for avoiding multiple missed response coming from different tabs for same agent
     params[:CallStatus] = 'no-answer' if params[:AnsweredBy] == 'machine'
 
-    perform_agent_cleanup
-    
+    update_total_duration
+    update_agent_last_call_at unless warm_transfer_target_agent? || warm_transfer_source_agent?
+
     #Call Redirect handlers
     handle_agent_missed if current_call.meta.pinged_agents.present? && current_call.meta.all_agents_missed?
     handle_round_robin_calls if round_robin_call?
-  
-    perform_call_cleanup
-    
+
+    handle_warm_transfer_end_call if warm_transfer_enabled?
     current_call.disconnect_customer if (current_call.onhold? && agent_connected? && !child_ringing?(current_call))#fix for: agent disconnect not ending the customer on hold.
   
     telephony.no_action
@@ -22,7 +22,6 @@ module Freshfone::Disconnect
 
     def perform_agent_cleanup
       update_secondary_leg_response
-      update_agent_last_call_at
       reset_outgoing_count
     end
 
@@ -37,6 +36,12 @@ module Freshfone::Disconnect
         check_for_queued_calls
         initiate_voicemail unless current_call.noanswer? #means client ended the call.
       end
+    end
+
+    def update_total_duration
+      return update_warm_transfer_duration if warm_transfer_disconnect?
+      perform_agent_cleanup 
+      perform_call_cleanup
     end
 
     def update_secondary_leg_response

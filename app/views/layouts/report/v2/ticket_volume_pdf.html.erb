@@ -14,8 +14,69 @@
         </div>
         
       </div>
+      <div>
+        <div class="stats">
+          <div class="stat">
+            <div class="stat_title"><%=t('helpdesk_reports.ticket_volume.total_received_tickets').html_safe %></div>
+            <div class="value_total total_received received"></div>
+          </div>
+          <div class="stat">
+            <div class="stat_title"><%=t('helpdesk_reports.ticket_volume.total_resolved_tickets').html_safe %></div>
+            <div class="value_total total_resolved resolved"></div>
+          </div>
+          <div class="stat">
+            <div class="stat_title"><%=t('helpdesk_reports.ticket_volume.total_unresolved_tickets').html_safe %></div>
+            <div class="value_total total_unresolved unresolved"></div>
+          </div>
+          <div class="stat">
+            <div class="stat_title"><%=t('helpdesk_reports.ticket_volume.average_received_tickets').html_safe %></div>
+            <div class="value_average avg_received received"></div>
+          </div>
+          <div class="stat">
+            <div class="stat_title"><%=t('helpdesk_reports.ticket_volume.average_resolved_tickets').html_safe %></div>
+            <div class="value_average avg_resolved resolved"></div>
+          </div>
+          <div class="stat">
+            <div class="stat_title"><%=t('helpdesk_reports.ticket_volume.average_unresolved_tickets').html_safe %> </div>
+            <div class="value_average avg_unresolved unresolved"></div>
+          </div>
+        </div>
+        <div class="charts_container time_trend_margin" id="time_trend_chart">
+        </div>
+      </div>
 
-      <div class="charts_container" id="time_trend_chart"></div>
+      <div class="row-fluid">
+        <div class="chart-title">
+          <%=t('helpdesk_reports.ticket_volume.load_analysis.title').html_safe %>
+        </div><br/>
+        </div class="row-fluid">
+        <div id='load_chart'>
+          <div class="load_analysis" id="load_analysis_charts">
+            <div>
+              <div class="load_analysis_chart" id="load_analysis_received">
+                <div class="load-analysis-pdf-title">
+                  <%=t('helpdesk_reports.ticket_volume.received_tickets')%> - <%=t("helpdesk_reports.ticket_volume.time_trends_part_title.#{trend}")%>
+                </div>
+                <div class="charts_container load_analysis" id="load_analysis_received_chart"></div><br/>
+              </div><br/>
+
+              <div class="load_analysis_chart" id="load_analysis_resolved">
+                <div class="load-analysis-pdf-title">
+                  <%=t('helpdesk_reports.ticket_volume.resolved_tickets')%> - <%=t("helpdesk_reports.ticket_volume.time_trends_part_title.#{trend}")%>
+                </div>
+                <div class="charts_container load_analysis" id="load_analysis_resolved_chart"></div><br/>
+              </div><br/>
+
+              <div class="load_analysis_chart" id="load_analysis_unresolved">
+                <div class="load-analysis-pdf-title">
+                  <%=t('helpdesk_reports.ticket_volume.unresolved_tickets')%> - <%=t("helpdesk_reports.ticket_volume.time_trends_part_title.#{trend}")%>
+                </div>
+                <div class="charts_container load_analysis" id="load_analysis_unresolved_chart"></div><br/>
+              </div><br/>
+            </div>
+          </div>
+        </div>
+      </div>
       
       <div class='comparision-chart-title'>
         <%=t('helpdesk_reports.ticket_volume.day_trend.title').html_safe %>
@@ -24,6 +85,24 @@
         <%=t('helpdesk_reports.ticket_volume.day_trend.subtitle').html_safe %>
       </div>
       
+      <div class="busy_period_pdf row">
+        <div class="stat busy_hour_received received_tickets">
+          <div><%=t('helpdesk_reports.ticket_volume.busiest_hour_received_tickets').html_safe %></div>
+          <div class="value"></div>
+        </div>
+        <div class="stat busy_hour_resolved resolved_tickets">
+          <div><%=t('helpdesk_reports.ticket_volume.busiest_hour_resolved_tickets').html_safe %></div>
+          <div class="value"></div>
+        </div>
+        <div class="stat busy_day_received received_tickets">
+          <div><%=t('helpdesk_reports.ticket_volume.busiest_day_received_tickets').html_safe %></div>
+          <div class="value"></div>
+        </div>
+        <div class="stat busy_day_resolved resolved_tickets">
+          <div><%=t('helpdesk_reports.ticket_volume.busiest_day_resolved_tickets').html_safe %></div>
+          <div class="value"></div>
+        </div>
+      </div>
       <div class="charts_container charts-container-pdf">
           <div id="pdf_day_trend"></div>
       </div>
@@ -48,26 +127,30 @@
     var err = <%= @filter_err ? @filter_err.to_json.html_safe : false %>;
     var locals = HelpdeskReports.locals;
    
-    if (err) {
-          var div = ['day_trend_chart', 'time_trend_chart'];
-          HelpdeskReports.CoreUtil.populateEmptyChart(div, err);
-        jQuery('#trend_type, #mini_chart_wrapper, .busy_period,.stats').hide();
-    } else if (!jQuery.isEmptyObject(locals.chart_hash["error"]) || !jQuery.isEmptyObject(locals.chart_hash[locals.metric]["error"])) {
-        var div = ['day_trend_chart', 'time_trend_chart'];
-        var msg = t('helpdesk_reports.something_went_wrong_msg');
+    var default_title_for_time_trend = I18n.t('helpdesk_reports.ticket_volume.time_trends.title') ;
+      if (err) {
+          var div = ['pdf_day_trend', 'time_trend_chart','load_chart'];
+           HelpdeskReports.CoreUtil.populateEmptyChart(div, err);
+          jQuery('#trend_type, #mini_chart_wrapper, .busy_period,.stats').hide();
+          jQuery('.trend-subtitle').html(default_title_for_time_trend);
+          jQuery('#load_chart').addClass('no-data-border');
+      } else if (!jQuery.isEmptyObject(locals.chart_hash["error"])) {
+          var div = ['pdf_day_trend', 'time_trend_chart','load_chart'];
+          var msg = I18n.t('helpdesk_reports.something_went_wrong_msg');
+            HelpdeskReports.CoreUtil.populateEmptyChart(div, msg);
+          jQuery('#trend_type, #mini_chart_wrapper, .busy_period, .stats').hide();
+          jQuery('.trend-subtitle').html(default_title_for_time_trend);
+          jQuery('#load_chart').addClass('no-data-border');
+      } else if (jQuery.isEmptyObject(locals.chart_hash)) {
+          var div = ['pdf_day_trend', 'time_trend_chart','load_chart'];
+          var msg = I18n.t('helpdesk_reports.no_data_to_display_msg');
           HelpdeskReports.CoreUtil.populateEmptyChart(div, msg);
-        jQuery('#trend_type, #mini_chart_wrapper, .busy_period, .stats').hide();
-    } else if (jQuery.isEmptyObject(locals.chart_hash[locals.metric])) {
-      var div = ['day_trend_chart', 'time_trend_chart'];
-        var msg = t('helpdesk_reports.no_data_to_display_msg');
-          HelpdeskReports.CoreUtil.populateEmptyChart(div, msg);
-        jQuery('#trend_type, #mini_chart_wrapper,.busy_period, .stats').hide();
-    } else if (!jQuery.isEmptyObject(locals.chart_hash[locals.metric]) && jQuery.isEmptyObject(locals.chart_hash[locals.metric]["error"])) {
-        HelpdeskReports.ChartsInitializer.TicketVolume.pdf(locals.chart_hash);
-        
-        jQuery(".busy_period .received_tickets .value").html(locals.chart_hash.RECEIVED_RESOLVED_TICKETS.RECEIVED_TICKETS.busiest_day_and_hours);
-        jQuery(".busy_period .resolved_tickets .value").html(locals.chart_hash.RECEIVED_RESOLVED_TICKETS.RESOLVED_TICKETS.busiest_day_and_hours);
-    }
+          jQuery('#trend_type, #mini_chart_wrapper,.busy_period, .stats').hide();
+          jQuery('.trend-subtitle').html(default_title_for_time_trend);
+          jQuery('#load_chart').addClass('no-data-border');
+      } else {
+            HelpdeskReports.ChartsInitializer.TicketVolume.pdf(locals.chart_hash);
+      } 
     HelpdeskReports.CoreUtil.setFilterDisplayData(); 
   });
 </script>

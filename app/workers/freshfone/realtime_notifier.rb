@@ -4,6 +4,7 @@ module Freshfone
     include Freshfone::CallerLookup
     include Freshfone::Endpoints
     include Freshfone::CallsRedisMethods
+    include Mobile::Actions::Push_Notifier
 
     sidekiq_options :queue => :freshfone_notifications, :retry => 0, :backtrace => true, :failures => :exhausted
 
@@ -25,7 +26,7 @@ module Freshfone
           logger.info "[#{jid}] - [#{tid}] RealtimeNotifier Job Latency is more than #{incoming_timeout} seconds for JID #{jid} TID #{tid}" if job_latency > job_latency_treshold
           return if job_latency > job_latency_treshold
         end
-        
+
         case type
           when "browser"
             @type ||= "incoming"
@@ -37,13 +38,16 @@ module Freshfone
             return cancel_other_agents
           when "complete_other_agents"
             return complete_other_agents
+          when "browser_warm_transfer"
+            @type ||= "warm_transfer"
         end
 
         set_sid
         enqueue_notification_recovery
         logger.info "Socket Notification pushed to SQS for account :: #{current_account.id} , call_id :: #{current_call.id} at #{Time.now}"
-        $freshfone_call_notifier.send_message notification_message.to_json
-
+        $freshfone_call_notifier.send_message notification_params.to_json
+        freshfone_notify_incoming_call(notification_params)
+        
       rescue Exception => e
         logger.error "[#{jid}] - [#{tid}] Error notifying for account #{current_account.id} for type #{type}"
         logger.error "[#{jid}] - [#{tid}] Message:: #{e.message}"
@@ -67,6 +71,12 @@ module Freshfone
         set_browser_sid(params["ConferenceSid"], current_call.call_sid)
       end
 
+      def notification_params
+        return notification_message.merge!(
+            warm_transfer_call_id: params['warm_transfer_call_id']) if params['warm_transfer_call_id'].present?
+        notification_message
+      end
+
       def notification_message
         {
           notification_type: @type,
@@ -77,6 +87,7 @@ module Freshfone
           number_id: current_call.freshfone_number_id,
           call_sid: current_call.call_sid,
           number: current_call.caller_number,
+          ringing_duration: current_call.freshfone_number.ringing_duration,
           enqueued_time: epoch_time,
           domain: current_account.freshfone_account.host
         }

@@ -39,12 +39,12 @@ class CustomSurvey::SurveyResult < ActiveRecord::Base
   }
 
   scope :agent_filter, lambda { |agent_id| { 
-      :conditions =>  ["survey_results.agent_id = ?", agent_id]
-  }}
+      :conditions =>  {:agent_id => agent_id} } unless agent_id.blank?
+  }
 
   scope :group_filter, lambda { |group_id| { 
-      :conditions =>  ["survey_results.group_id = ?", group_id]
-  }}
+      :conditions =>  {:group_id => group_id} } unless group_id.blank?
+  }
 
   scope :aggregate, lambda { |condition| {
       :select => "`survey_results`.id, `survey_results`.survey_id, 
@@ -85,4 +85,11 @@ class CustomSurvey::SurveyResult < ActiveRecord::Base
                         condition[:survey_id], condition[:start_date], condition[:end_date]]
 
   }}
+
+  scope :export_data, lambda {|condition| {
+    :conditions => ["`survey_results`.`survey_id` = ? and 
+                     `survey_results`.`created_at` between ? and ?",
+                     condition[:survey_id], condition[:start_date], condition[:end_date]]  
+  }}
+
 end

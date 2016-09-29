@@ -22,6 +22,7 @@ module Search::SearchResultJson
 		to_ret = {
 			:id => ticket.id,
 			:display_id => ticket.display_id,
+			:requester_id => ticket.requester_id,
 			:subject => h(ticket.subject),
 			:created_at => ticket.created_at,
 			:created_at_int => ticket.created_at.to_i,

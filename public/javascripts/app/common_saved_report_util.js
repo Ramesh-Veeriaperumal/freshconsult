@@ -338,7 +338,19 @@ Helpkit.commonSavedReportUtil = {
 	            	report_name = report_name.toLowerCase();
 	            }
 	            _this.saved_report_names.push(report_name);
-
+	            _this.showReportDropdown();
+	    },
+	    showReportDropdown : function() {
+	    	 //Show dropdown icon only when saved reports are available
+	    	var _this = this;
+            var hash = Helpkit.report_filter_data;
+            if(hash.length == 0 || ( hash.length == 1 && _this.default_report_is_scheduled)){
+            	jQuery('.report-title-block #report-title').css('cursor','auto');
+            	jQuery('.title-dropdown').css('display', 'none');
+            } else {
+            	jQuery('.report-title-block #report-title').css('cursor','pointer'); 
+            	jQuery('.title-dropdown').css('display', 'inline-block');
+            }
 	    },
 	    /* Utils */
 	    makeAjaxRequest: function (args) {
@@ -512,6 +524,7 @@ Helpkit.commonSavedReportUtil = {
 			                      //Show successfully saved message
 			                      _this.showResponseMessage(I18n.t('helpdesk_reports.saved_report.saved_message'));
 			                      _this.cacheLastAppliedReport(resp.id);
+			                      _this.showReportDropdown();
 	                  		}
 	                  		 //if this report was scheduled show it
 		                    if(resp.data.schedule_config.enabled){

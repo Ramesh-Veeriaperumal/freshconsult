@@ -52,7 +52,8 @@ class Admin::GettingStartedController < Admin::AdminController
     end
     
     def fb_client   
-      @fb_client = Facebook::Oauth::FbClient.new(nil, social_facebook_index_url) 
+      callback_url = current_account.features?(:social_revamp) ? admin_social_facebook_streams_url : social_facebook_index_url
+      @fb_client   = Facebook::Oauth::FbClient.new(callback_url) 
     end
     
     def set_session_state

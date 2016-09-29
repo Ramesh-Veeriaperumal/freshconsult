@@ -12,6 +12,7 @@ class Freshfone::ConferenceTransferController < FreshfoneBaseController
   before_filter :initialize_transfer, :only => [:initiate_transfer]
   before_filter :update_conference_sid, :only => [:transfer_agent_wait]
   before_filter :select_current_call, :only => [:initiate_transfer]
+  before_filter :select_child_call, :only => [:resume_transfer, :cancel_transfer]
   before_filter :cancel_child_call, :only => [:transfer_success], if: :call_in_progress? #checking for parent call is in progress, if so then child is canceled.
   before_filter :transfer_answered, :only => [:transfer_success], unless: :intended_agent_for_transfer?
   after_filter :remove_conf_transfer_job, :only => [:transfer_success]
@@ -85,12 +86,6 @@ class Freshfone::ConferenceTransferController < FreshfoneBaseController
       clear_client_calls
     end
 
-    def clear_client_calls
-      key = FRESHFONE_CLIENT_CALL % { :account_id => current_account.id }
-      remove_from_set(key, current_call.call_sid)
-    end
-
-
     def notifier
       current_number = current_call.freshfone_number
       @notifier ||= Freshfone::Notifier.new(params, current_account, current_user, current_number)
@@ -104,6 +99,11 @@ class Freshfone::ConferenceTransferController < FreshfoneBaseController
     def select_current_call
       @current_call = current_call.parent unless (current_call.inprogress? || current_call.onhold?)
       #Scenario: if an agent use cancel/resume functionality first then he try to make another transfer
+    end
+
+    def select_child_call
+      child_call = current_call.children.last
+      @current_call = child_call if child_call.present?
     end
 
     def set_group_transfer_param

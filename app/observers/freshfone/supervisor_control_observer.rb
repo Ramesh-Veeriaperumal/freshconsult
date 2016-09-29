@@ -6,7 +6,7 @@ class Freshfone::SupervisorControlObserver < ActiveRecord::Observer
 	def after_create(supervisor_control)
 		account = supervisor_control.account
     publish_disable_supervisor_call(supervisor_control.call_id,
-                  supervisor_control.supervisor_id, account) if supervisor_control.monitoring?
+                  supervisor_control.supervisor_id, account) if publish_monitoring_control?(supervisor_control)
 	end
 
 	def after_update(supervisor_control)
@@ -27,4 +27,8 @@ class Freshfone::SupervisorControlObserver < ActiveRecord::Observer
 	      return unless supervisor_control.supervisor_control_status_changed? && supervisor_control.cost.blank?
 	      add_cost_job supervisor_control if supervisor_control.completed?
     	end
+
+      def publish_monitoring_control?(supervisor_control)
+        supervisor_control.monitoring? || supervisor_control.warm_transfer?
+      end
 end

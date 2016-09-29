@@ -28,11 +28,12 @@ window.App = window.App || {};
       this.getAdjacentTickets();
       this.quoteText();
       this.toggleQuotedText();
+      this.updateLocalRecentTickets();
     },
     paginationScroll : function(){
-      var element = $("[data-activity-id ='"+TICKET_DETAILS_DATA['last_activity_batch']+"']")[0];
+      var element = $("[data-activity-id ='"+TICKET_DETAILS_DATA['last_activity_batch']+"']");
       if(element){
-        $(element)[0].scrollIntoView(false);
+        $.scrollTo(element,{offset: $(window).height()-jQuery('#sticky_header').outerHeight(true)});
       }
     },
     updateShowMore : function () {
@@ -77,7 +78,7 @@ window.App = window.App || {};
         if (showing_notes)
           href = TICKET_DETAILS_DATA['notes_pagination_url'] + 'before_id=' + TICKET_DETAILS_DATA['first_note_id'];
         else
-          href = TICKET_DETAILS_DATA['activities_pagination_url'] + 'before_id=' + TICKET_DETAILS_DATA['first_activity'] + '&limit=' +  TICKET_DETAILS_DATA['pagination_limit'] +'&event_type='+TICKET_DETAILS_DATA['activity_event_type'];
+          href = TICKET_DETAILS_DATA['activities_pagination_url'] + 'before_id=' + TICKET_DETAILS_DATA['first_activity'] + '&limit=' +  TICKET_DETAILS_DATA['pagination_limit'];
 
         $.get(href, function(response) {
           if(response.trim()!=''){
@@ -113,7 +114,7 @@ window.App = window.App || {};
         }
         _toggle.addClass('disabled')
         var showing_notes = $('#all_notes').length > 0;
-        var url = showing_notes ? TICKET_DETAILS_DATA['activities_pagination_url'] + 'limit=' + TICKET_DETAILS_DATA['pagination_limit'] + '&event_type='+TICKET_DETAILS_DATA['activity_event_type']  : TICKET_DETAILS_DATA['notes_pagination_url'];
+        var url = showing_notes ? TICKET_DETAILS_DATA['activities_pagination_url'] + 'limit=' + TICKET_DETAILS_DATA['pagination_limit'] : TICKET_DETAILS_DATA['notes_pagination_url'];
         
         if (showing_notes) {
           TICKET_DETAILS_DATA['first_activity'] = null;
@@ -141,6 +142,7 @@ window.App = window.App || {};
                 _toggle.attr('title',_toggle.data('hide-title')+_shortcut);
               }
               else{
+                $.scrollTo($('body'));
                 $("#original_request .commentbox").removeClass('minimizable minimized');
                 if(_toggle.data('show-title'))
                 _toggle.attr('title',_toggle.data('show-title')+_shortcut);
@@ -228,7 +230,13 @@ window.App = window.App || {};
         $(item).removeClass("request_archive_mail");
         $(item).attr("data-quoted", true);
       }
+    },
+
+    updateLocalRecentTickets: function(){
+      //RECENT TICKETS SETUP
+      NavSearchUtils.saveToLocalRecentTickets(TICKET_DETAILS_DATA);
     }
+
 
   }
 }(window.jQuery));

@@ -73,7 +73,6 @@
               disp_in_pages.include?('contacts_show_page_side_bar')%>
               <%= t('integrations.custom_apps.contact_detail_page') %>
             </label>
-            <% if current_account.plugs_enabled_in_new_ticket? %>
             <label class="checkwrapper">
               <%= check_box_tag "application[view_pages][]", "new_ticket_page_side_bar", 
               disp_in_pages.include?('new_ticket_page_side_bar')%>
@@ -85,7 +84,6 @@
               disp_in_pages.include?('new_outbound_email_page_side_bar')%>
               <%= t('integrations.freshplugs.outbound_email_page') %>
             </label>
-            <% end %>
             <% end %>
           </li>
         </ul>

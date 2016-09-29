@@ -7,10 +7,10 @@ class CountES::IndexOperations
   class UpdateTaggables < CountES::IndexOperations
     def perform(args)
       args.symbolize_keys!
-      tag = Account.current.tags.find(args[:tag_id])
-      tag.tag_uses.preload(:taggable).find_in_batches do |taguses|
-        taguses.map(&:taggable).map(&:count_es_manual_publish)
-      end if tag and Account.current.try(:features?, :countv2_writes)
+      tag = Account.current.tags.find_by_id(args[:tag_id])
+      tag.tickets.find_each do |t|
+        t.count_es_manual_publish
+      end if tag
     end
   end
 
@@ -26,8 +26,9 @@ class CountES::IndexOperations
 
   class DisableCountES < CountES::IndexOperations
     def perform(args)
+      return true #Since new signups wont have dashboard, we dont need to perform this job. We ll remove this line once we start enabling es for new signups.
       args.symbolize_keys!
-      Search::Dashboard::Count.new({},args[:account_id]).remove_alias
+      Search::Dashboard::Count.new({},args[:account_id], {:shard_name => args[:shard_name]}).remove_alias
     end
   end
 

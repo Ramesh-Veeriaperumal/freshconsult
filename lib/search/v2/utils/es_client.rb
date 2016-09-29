@@ -10,9 +10,9 @@ module Search
 
         attr_accessor :method, :path, :payload, :logger, :response, :log_data
 
-        def initialize(method, path, payload=nil, log_data=nil, request_uuid=nil)
+        def initialize(method, path, query_params={}, payload=nil, log_data=nil, request_uuid=nil)
           @method     = method.to_sym
-          @path       = path
+          @path       = query_params.present? ? "#{path}?#{query_params.to_query}" : path
           @payload    = payload
           @uuid       = request_uuid
           @logger     = EsLogger.new(@uuid)
@@ -27,7 +27,7 @@ module Search
           # _Note_: If Typhoeus is not a preferred client, can change here alone.
           #
           def es_request
-            request_to_es = Typhoeus::Request.new(@path, method: @method, body: @payload)
+            request_to_es = Typhoeus::Request.new(@path, method: @method, body: @payload, headers: { 'X-Request-Id' => @uuid })
             attach_callbacks(request_to_es)
 
             logger.log_request(

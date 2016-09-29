@@ -51,13 +51,29 @@
     <% end %>
     <input type="hidden" name="cancel_draft_changes" 
           value="1" id="cancel_draft_changes_input" disabled="disabled">
-    <hr />
-    <%= render	:partial => "/solution/shared/attachment_form",
-        :locals => { :attach_id => 'article', :nsc_param => "solution_article_meta[#{@language_scoper}]",
-          :original_attachments => { 
-            :cloud_files => active_attachments(:cloud_files, @article), 
-            :regular => active_attachments(:attachments, @article) }
-        } %>
+          <% if current_account.launched?(:multifile_attachments) %>
+            <%= render	:partial => "/solution/shared/multi_attachment_form",
+            :locals => { :attach_id => 'article', :nsc_param => 'solution_article',
+              :original_attachments => { 
+                :cloud_files => active_attachments(:cloud_files, @article), 
+                :regular => active_attachments(:attachments, @article) }
+            } %>
+            <% else %>
+              <%= render  :partial => "/solution/shared/single_attachment_form",
+              :locals => { :attach_id => 'article', :nsc_param => "solution_article_meta[#{@language_scoper}]",
+                :original_attachments => { 
+                  :cloud_files => active_attachments(:cloud_files, @article), 
+                  :regular => active_attachments(:attachments, @article) }
+              } %>
+            <% end %>
+    <% if is_application_installed?("screenr") %>
+      <div class="control-group">
+        <div class="controls">
+            <%= render :partial => "shared/screenr_recorder", :locals => { :location => "solution" } %>
+        </div>
+  
+      </div>
+    <% end %>
 
     <% if !@article.new_record? && @article_meta.solution_folder_meta.is_default? %>
       <div class="row-fluid select-folder">

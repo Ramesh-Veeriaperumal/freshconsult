@@ -7,15 +7,16 @@ class Freshfone::ConferenceCallController < FreshfoneBaseController
   include Freshfone::Endpoints
   include Freshfone::CallsRedisMethods
   include Freshfone::SupervisorActions
+  include Freshfone::AcwUtil
   
+  before_filter :select_current_call, :only => [:status]
   before_filter :complete_browser_leg, only: [:status], if: :agent_leg?
   before_filter :complete_supervisor_leg, :only => [:status], :if => :supervisor_leg?
   before_filter :check_conference_feature, :only => [:status]
-  before_filter :select_current_call, :only => [:status]
   before_filter :handle_blocked_numbers, :only => [:status]
   before_filter :terminate_ivr_preview, :only => [:status]
   before_filter :validate_dial_call_status, :only => [ :status ]
-  before_filter :update_agent_last_call_at, :only => [:status], :if => :single_leg_outgoing?
+  before_filter :update_agent_last_call_at, :only => [:status], :if => :outgoing_leg?
   before_filter :handle_direct_dial, :only => [:status]
   before_filter :populate_call_details, :only => [:status]
   before_filter :update_total_duration, :only => [:status]
@@ -23,6 +24,7 @@ class Freshfone::ConferenceCallController < FreshfoneBaseController
   before_filter :reset_outgoing_count, :only => [:status]
   before_filter :set_abandon_state, :only => [:status]
   before_filter :call_quality_monitoring_enabled?, :only => [:save_call_quality_metrics]
+  before_filter :handle_simultaneous_answer, only: :wrap_call, if: :acw_without_new_notifications?
 
   def status
     begin
@@ -46,7 +48,7 @@ class Freshfone::ConferenceCallController < FreshfoneBaseController
   def call_notes
     call = ongoing_call
     if call.present? && call.ancestry.present?
-      @call_sid ||= call.call_sid
+      @call_sid ||= select_notes_sid(call)
       notes = CGI.unescapeHTML get_key(call_notes_key).to_s      
       remove_key(call_notes_key) unless notes.nil? 
       render :json => {:call_notes => notes}
@@ -75,8 +77,10 @@ class Freshfone::ConferenceCallController < FreshfoneBaseController
       :RecordingDuration => params[:Duration]
     }
     call = current_account.freshfone_calls.find_by_conference_sid(params[:ConferenceSid])
+    warm_transfer_call = call.supervisor_controls.inprogress_warm_transfer_calls.last if call.present?
+
     if call.present?
-      call.set_call_duration(call_params)
+      call.set_call_duration(call_params, warm_transfer_call.blank?)
       call.update_call(call_params) 
     else
       Rails.logger.error "Unable to update recording for the conference #{params[:ConferenceSid]}"
@@ -86,12 +90,13 @@ class Freshfone::ConferenceCallController < FreshfoneBaseController
 
   def wrap_call
     return render :json => { :result => :failure } if current_call.blank?
-    acw if call_metrics_enabled?
+    acw
     current_call.meta.update_feedback(params) if current_call.meta.present?
     render :json => { :result => true }
   end
 
   def acw
+    return if !call_metrics_enabled? || phone_acw_enabled?
     current_call_leg = current_call.missed_child? ? current_call.parent : current_call
     current_call_leg.update_acw_duration
   end
@@ -102,6 +107,11 @@ class Freshfone::ConferenceCallController < FreshfoneBaseController
       return if caller.blank?
       call = current_account.freshfone_calls.first( :conditions => {:caller_number_id => caller.id}, 
                 :order => "freshfone_calls.id DESC")
+    end
+
+    def select_notes_sid(call)
+      return call.parent.call_sid if call.meta.warm_transfer_meta?
+      call.call_sid
     end
 
     def validate_dial_call_status
@@ -192,6 +202,10 @@ class Freshfone::ConferenceCallController < FreshfoneBaseController
     end
 
     def select_current_call
+      return @current_call = participant_leg.call if current_call.blank? && participant_leg.present?
+      return if current_call.blank?
+      child_call = current_call.children.ongoing_calls.last
+      return @current_call = child_call if child_call.present? && child_call.meta.warm_transfer_meta?
       return if current_call.blank? || current_call.parent.blank?
       @current_call = current_call.parent if (current_call.parent.inprogress? || current_call.parent.onhold?)
       #Scenario: call hanged up after the use of cancel/resume functionality
@@ -268,7 +282,11 @@ class Freshfone::ConferenceCallController < FreshfoneBaseController
     def agent_leg?
       new_notifications? &&
         params[:From].present? && split_client_id(params[:From]).present? &&
-        current_call.present? && outgoing_child_leg?
+        current_call.present? && (outgoing_child_leg? || warm_transfer_call.present?)
+    end
+
+    def participant_leg
+      current_account.supervisor_controls.where(sid: [params[:CallSid]]).last
     end
 
     def outgoing_child_leg?
@@ -279,5 +297,32 @@ class Freshfone::ConferenceCallController < FreshfoneBaseController
       return if current_call.blank?
       set_agent
       render xml: agent_call_leg.initiate_disconnect
+    end
+
+    def acw_without_new_notifications?
+      phone_acw_enabled? && !new_notifications?
+    end
+
+    def handle_simultaneous_answer
+      return if current_call.blank?
+      freshfone_user = current_user.freshfone_user
+      render json: { result: freshfone_user.reset_presence.save } if reset_preconditions?
+    end
+
+    def reset_preconditions?
+      current_call.incoming? && (simultaneous_accept? ||
+        simultaneous_canceled_transfer?)
+    end
+
+    #if two agents simultaneously accepted an incoming call, reset presence of
+    #disconnected agent on closing end-call form
+    def simultaneous_accept?
+      current_call.user_id != current_user.id
+    end
+
+    #if agent transferring the call cancels the transfer at same moment when the other agent accepted the transferred
+    #call, that agent will be stuck in busy state. reset presence on closing end-call form
+    def simultaneous_canceled_transfer?
+      current_call.ancestry.present? && current_call.canceled?
     end
 end

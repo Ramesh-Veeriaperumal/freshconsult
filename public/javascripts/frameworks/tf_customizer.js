@@ -84,16 +84,13 @@
          if (e.keyCode == 27) { $("#cancel-button").trigger("click"); } // Capturing ESC keypress event to make dialog hide after it becomes open
       });
 
-      $("input[rel=status-companion]")
-        .live({ 
-          "keyup": function(ev){            
-            if($(this).data("companionEmpty")) $(this).parent().parent().find("input[name=customer_display_name]").val(this.value);
-          }, 
-          "focus": function(ev){
-            _entity = $(this).parent().parent().find("input[name=customer_display_name]");
-            $(this).data("companionEmpty", (_entity && _entity.val().strip() === ""));
-          }
-      });
+      $(document).on('keyup.status-companion', "input[rel=status-companion]", function(ev){
+        if($(this).data("companionEmpty")) $(this).parent().parent().find("input[name=customer_display_name]").val(this.value);
+        
+      }).on('focus.status-companion', "input[rel=status-companion]", function(ev) {
+        _entity = $(this).parent().parent().find("input[name=customer_display_name]");
+        $(this).data("companionEmpty", (_entity && _entity.val().strip() === ""));
+      })
 
       // Init for Dropdown textarea
       $("#nestedTextarea")
@@ -203,7 +200,7 @@
                   });
                 }else{
                   $(dataItem.choices).each(function(ci, choice){
-                    field.append("<option " + choice[choice.size()-1] + ">" + choice[0] + "</option>");
+                    field.append("<option " + choice[choice.length-1] + ">" + choice[0] + "</option>");
                   });
                 }
                field.wrapInner("<select "+fieldAttr+" disabled='true' />");
@@ -337,7 +334,7 @@
             if(sourceData.field_type == 'default_ticket_type' || sourceData.field_type ==  'default_status'){
               if(next_ele.selector=="#nestedlvl3")
               {
-                next_ele.find("input:checkbox").attr("checked",true).attr("disabled",true);
+                next_ele.find("input:checkbox").prop("checked",true).attr("disabled",true);
               }
             }
         }else{
@@ -361,7 +358,7 @@
          data	= data || [ '', 0 ];
          var inputData = $("<input type='text' />")
                               .val(unescapeHtml(data[0]))
-                              .attr("data_id", data[data.size()-1])
+                              .attr("data_id", data[data.length-1])
                               .change(function(){$("#ChoiceListValidation").next("label").hide();});
          var dropSpan  = $("<span class='dropchoice' />").append(inputData);
 
@@ -438,8 +435,8 @@
       }
 
       jQuery("#DropFieldChoices .rounded-minus-icon")
-         .live('click', function(){
-                          if(jQuery(this).parent().siblings().size() !== 0) {
+         .on('click', function(){
+                          if(jQuery(this).parent().siblings().length !== 0) {
                             $($(this).siblings()[1]).children().attr("data-deleted",true);
                             jQuery(this).parent().hide();
                             saveAllChoices();
@@ -447,7 +444,7 @@
                         });
 
       jQuery("#statuschoices .rounded-minus-icon")
-         .live('click', function(){
+         .on('click', function(){
                           if(jQuery(this).hasClass('disabled')) return;
                             jQuery(this)
                               .parent()
@@ -457,12 +454,12 @@
                         });
 
       jQuery("#addchoice")
-         .live('click', function(){
+         .on('click', function(){
                            addChoiceinDialog();
                         }); 
 
       jQuery("#addstatus")
-        .live("click", function(){
+        .on("click", function(){
           addStatusinDialog();
         });
 
@@ -554,17 +551,16 @@
 
             $("#NestedFieldLabels").toggle(sourceData.field_type == 'nested_field');
             $("#FieldLabels").toggle(sourceData.field_type != 'nested_field');
+            dialogDOMMap.required.prop("checked", sourceData.required);
+            dialogDOMMap.required_for_closure.prop("checked", sourceData.required_for_closure);
 
-            dialogDOMMap.required.attr("checked", sourceData.required);
-            dialogDOMMap.required_for_closure.attr("checked", sourceData.required_for_closure);
-
-            dialogDOMMap.visible_in_portal.attr("checked", sourceData.visible_in_portal);
+            dialogDOMMap.visible_in_portal.prop("checked", sourceData.visible_in_portal);
             innerLevelExpand(dialogDOMMap.visible_in_portal.get(0));
 
-            dialogDOMMap.editable_in_portal.attr("checked", sourceData.editable_in_portal);
+            dialogDOMMap.editable_in_portal.prop("checked", sourceData.editable_in_portal);
             innerLevelExpand(dialogDOMMap.editable_in_portal.get(0));
             
-            dialogDOMMap.required_in_portal.attr("checked", sourceData.required_in_portal);
+            dialogDOMMap.required_in_portal.prop("checked", sourceData.required_in_portal);
 
             $("#DropFieldChoices").hide();
             $("#AgentMandatory").hide();
@@ -614,11 +610,11 @@
                {
                   
                   case 'portalcc':
-                      dialogDOMMap.portalcc.attr("checked", value);
+                      dialogDOMMap.portalcc.prop("checked", value);
                       if (value){$("#cc_to_option").show();}
                   break;
                   case 'portalcc_to':
-                      dialogDOMMap.portalcc_to.filter('[value='+value+']').attr('checked', true);
+                      dialogDOMMap.portalcc_to.filter('[value='+value+']').prop('checked', true);
                   break;
                 }
 
@@ -685,7 +681,7 @@
           levels = sourceData.get("levels");
           action = (sourceData.get("level_three_present")) ? ((nestedTree.third_level) ? "edit" : "delete") : "create";
 
-          if(levels.size() < 2) levels.push({level:3});
+          if(levels.length < 2) levels.push({level:3});
 
           if(!sourceData.get("level_three_present") && !nestedTree.third_level)
             levels.pop();
@@ -797,7 +793,7 @@
          });
 
          
-      $("#CustomFieldsDialog input").live("change", function(){
+      $("#CustomFieldsDialog input").on("change", function(){
          var sourceData = $H($(SourceField).data("raw"));
          switch(this.name){
             case 'choice':
@@ -822,15 +818,15 @@
             break;	
 
             case 'agentrequired':
-               sourceData.set("required", $(this).attr("checked"));
+               sourceData.set("required", $(this).prop("checked"));
             break;
             
             case 'agentclosure':
-               sourceData.set("required_for_closure", $(this).attr("checked"));
+               sourceData.set("required_for_closure", $(this).prop("checked"));
             break;
             
             case 'customervisible':
-               sourceData.set("visible_in_portal", $(this).attr("checked"));
+               sourceData.set("visible_in_portal", $(this).prop("checked"));
                if (sourceData.get("visible_in_portal") === false){
                   sourceData.set("editable_in_portal", false);
                   sourceData.set("required_in_portal", false);
@@ -838,13 +834,13 @@
             break;
 
             case 'customereditable':
-               sourceData.set("editable_in_portal", $(this).attr("checked"));
+               sourceData.set("editable_in_portal", $(this).prop("checked"));
                if (sourceData.get("editable_in_portal") === false)
                   sourceData.set("required_in_portal", false);
             break;
 
             case 'customerrequired':
-               sourceData.set("required_in_portal", $(this).attr("checked"));
+               sourceData.set("required_in_portal", $(this).prop("checked"));
 
             break;
             //For CC fields
@@ -868,7 +864,7 @@
          }
       };
 
-      $("#DeleteField").live("click", function(e){
+      $("#DeleteField").on("click", function(e){
          deleteField(SourceField);
       });
 
@@ -900,7 +896,7 @@
          }
       };
 
-      $("#custom_form li").live("click", function(e){           
+      $("#custom_form li").on("click", function(e){           
          showFieldDialog(this); 
       });
 

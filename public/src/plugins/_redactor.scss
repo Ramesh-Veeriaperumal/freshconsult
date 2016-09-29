@@ -171,10 +171,14 @@ body .redactor_air .redactor_toolbar {
 .redactor_toolbar li a:hover {
 	border-color: #98a6ba;
 	background-color: #dde4ef;
+	border-radius: 3px;
+
 }
 .redactor_toolbar li a:active, .redactor_toolbar li a.act {
 	border-color: #b5b5b5;
 	background-color: #e8e8e8;
+	border-radius: 3px;
+	
 }
 
 

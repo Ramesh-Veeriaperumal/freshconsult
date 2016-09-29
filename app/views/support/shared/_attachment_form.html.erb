@@ -6,7 +6,8 @@
   max_attachment ||= nil
   max_size ||= 15
 %>
-<div class="attach-wrapper row-fluid new-attach" id="attachment-type" data-multifile-enable="<%= current_account.launched?(:multifile_attachments) %>">
+<div class="single_file">
+<div class="attach-wrapper row-fluid new-attach" id="attachment-type" data-multifile-enable="<%= current_account.launched?(:multifile_attachments) %>" data-location="portal">
   <div class="<%= @widget_form ? 'span7 widget-multiple-list ' : '' %>attachments-list-wrap"> 
     <div class="attachments-list-form" id="<%= attach_id %>-container">
       <% total_attachments = original_attachments[:regular].size + original_attachments[:cloud_files].size if original_attachments.present? %>
@@ -54,10 +55,10 @@
           <li class="portal-attach">
             <a data-file-id="<%=attach_id%>" href="javascript:void(0)" class="attach-link-wrap">
       <% if @widget_form && widget_option(:attachFile) %>
-               <%= current_account.launched?(:multifile_attachments) ? t('attach_files') : t('attach_file') %>
+               <%= t('attach_file') %>
                <% end %>
           <% if !@widget_form %>
-              <%= current_account.launched?(:multifile_attachments) ? t('attach_files') : t('attach_file') %>
+              <%=  t('attach_file') %>
            <% end %>
                 <div class="attach-file attach-link-file" id="<%= attach_id %>-attach-container">  
                   <input type="file" name="emptyfile" 
@@ -67,7 +68,6 @@
                     fileContainer="<%=attach_id%>-container" 
                     fileList="<%=attach_id%>-attachments"
                     sendFocusTo="<%=attach_id%>-body" 
-                    <%= current_account.launched?(:multifile_attachments) ? "multiple" : ""%>
                     />
                 </div>
             </a>
@@ -80,10 +80,10 @@
     <% else %>      
       <div class="hidden_upload">
       <% if @widget_form && widget_option(:attachFile) %>
-        <div class="add_attachment" ><a class="attach-link-wrap"><span>+</span> <%= current_account.launched?(:multifile_attachments) ? t('attach_files') : t('attach_file') %></a></div>
+        <div class="add_attachment" ><a class="attach-link-wrap"><span>+</span> <%= t('attach_file') %></a></div>
         <% end %>
       <% if !@widget_form %>
-      <div class="add_attachment"><span>+</span> <%= current_account.launched?(:multifile_attachments) ? t('attach_files') : t('attach_file') %></div>
+      <div class="add_attachment"><span>+</span> <%= t('attach_file') %></div>
       <% end %>
         <input type="file" name="emptyfile" 
                     id="<%=attach_id%>_file"
@@ -94,7 +94,6 @@
                     sendFocusTo="<%=attach_id%>-body" 
                     max_size="<%=max_size%>"
                     max_attachment= "<%=max_attachment%>" 
-                    <%= current_account.launched?(:multifile_attachments) ? "multiple" : ""%>
                     >
       </div>
 
@@ -126,13 +125,10 @@
 
 </div>
 
-
-
-   <% if(current_account.launched?(:multifile_attachments)) %>
-     <%= render :partial => "/support/shared/multifile_template_new" %>
-    <% else %>
      <%= render :partial => "/support/shared/multifile_template"  %>
-    <% end %>
+
+
+   
     
     <script type="text/javascript">
       // Fix for Firefox/IE - To override :hover style persistance after click on input[type=file] element
@@ -160,9 +156,8 @@
 
 
 
-
+</div>
 <%# 
   The following is a template used by multifile.js to create rows in
   the attachments table.
  %>
-

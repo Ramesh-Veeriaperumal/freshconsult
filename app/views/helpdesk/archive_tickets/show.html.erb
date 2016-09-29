@@ -15,7 +15,8 @@
     fetch_notes_url   : "/helpdesk/archive_tickets/<%= escape_javascript(h(@ticket.display_id)) %>/archive_notes", 
     created_on      : new Date("<%= @ticket.created_at.strftime("%B %e, %Y %H:%M") %>"),
     pagination_limit: <%= ActivityConstants::QUERY_UI_LIMIT %>,
-    activity_event_type: <%= ::HelpdeskActivities::EventType::ALL %>
+    ticket_subject: "<%= escape_javascript(@ticket.subject.squish.html_safe) %>",
+    ticket_deleted: <%= @ticket.deleted %>
   };
 </script>
 

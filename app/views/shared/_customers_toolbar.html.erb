@@ -5,10 +5,10 @@
 		 
 			if(jQuery("#contacts-table").get(0) != undefined)
 				confirm_text = "<%= t('company.info11')%> " +
-					checked_items.size() + " <%= t('contacts.contacts')%>?"
+					checked_items.length + " <%= t('contacts.contacts')%>?"
 			else
 				confirm_text = "<%= t('company.info11')%> " + 
-				checked_items.size() + " <%= t('company.title1')%>" + "\n" + "<%= t('company.info10')%>"
+				checked_items.length + " <%= t('company.title1')%>" + "\n" + "<%= t('company.info10')%>"
 
 		var is_user = <%= type.eql?('user') %>
 		if (confirm(confirm_text)) {

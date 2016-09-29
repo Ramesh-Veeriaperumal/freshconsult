@@ -1,22 +1,21 @@
 module Freshfone::Conference::TransferMethods
+  include Freshfone::CallsRedisMethods
 
   def initiate_conference_transfer
     if current_call.onhold?
       params[:external_transfer] = "true" unless params[:external_number].blank?
       params[current_call.direction_in_words] = current_call.caller_number #setting parent's caller to child.
+      params[:call] = current_call.id
       transfer_notifier(current_call, @target_agent_id, @source_agent_id) 
     elsif current_call.inprogress?
-      customer_sid = outgoing_transfer?(current_call) ? current_call.root.customer_sid : current_call.customer_sid
-      initiate_hold(customer_sid, @target_agent_id, @source_agent_id)
+      initiate_hold(blind_transfer_hold_params)
     end
   end
 
-  def initiate_hold(customer_sid, target_agent_id, source_agent_id)
+  def initiate_hold(hold_params)
       current_call.onhold!
-      telephony.initiate_hold(customer_sid, 
-        { :target => target_agent_id, :group_transfer => group_transfer?, :source => source_agent_id, 
-          :transfer_type => params[:type], :external_number => params[:external_number],
-          :call => current_call.id })
+      customer_sid = outgoing_or_warm_transfer?(current_call) ? current_call.root.customer_sid : current_call.customer_sid
+      telephony.initiate_hold(customer_sid, hold_params)
   end
 
   def telephony(call = current_call)
@@ -36,13 +35,42 @@ module Freshfone::Conference::TransferMethods
       rescue Exception => e
         Rails.logger.error "Error in conference transfer success for #{current_account.id} \n#{e.message}\n#{e.backtrace.join("\n\t")}"
         current_call.cleanup_and_disconnect_call
-        telephony.no_action
+        no_action
       end
+    end
+
+    def blind_transfer_hold_params
+      { :target => @target_agent_id, :group_transfer => group_transfer?, :source => @source_agent_id, 
+        :transfer_type => params[:type], :external_number => params[:external_number],
+        :call => current_call.id }
+    end
+
+    def handle_warm_transfer_success
+      notifier.notify_warm_transfer_status(current_call, 'warm_transfer_success')
+      agent_sid = outgoing_or_warm_transfer?(current_call) ? current_call.dial_call_sid : current_call.agent_sid
+      telephony.redirect_call_to_conference(agent_sid,
+                   redirect_source_url(warm_transfer_leg.id))
+      telephony.initiate_conference(target_agent_conf_params)
+    end
+
+    def target_agent_conf_params
+      { sid: "#{params[:CallSid]}_warm_transfer", startConferenceOnEnter: true, beep: true,
+        endConferenceOnExit: false }
+    end
+
+    def clear_client_calls
+      key = FRESHFONE_CLIENT_CALL % { :account_id => current_account.id }
+      remove_from_set(key, current_call.call_sid)
+    end
+
+    def warm_transfer_leg
+      @warm_transfer_call ||= current_account.supervisor_controls.find(params[:warm_transfer_call_id])
     end
 
     def cancel_child_call
       current_call.children.last.canceled!
-      return telephony.no_action
+      return no_action if new_notifications?
+      empty_twiml
     end
 
     def transfer_answered
@@ -70,6 +98,10 @@ module Freshfone::Conference::TransferMethods
 
     def call_actions
       @call_actions ||= Freshfone::CallActions.new(params, current_account)
+    end
+
+    def no_action
+      telephony.no_action
     end
 
 end

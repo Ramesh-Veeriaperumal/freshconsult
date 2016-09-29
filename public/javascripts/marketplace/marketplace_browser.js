@@ -39,7 +39,7 @@ var MarketplaceBrowser  = Class.create({
   },
   setupSelectedTabs: function(){
     var tabSelected = this.pageURL.split('#')[1];
-    jQuery('.nav-tabs a[href=#'+tabSelected+']').tab('show');
+    jQuery('.nav-tabs a[href="#'+tabSelected+'"]').tab('show');
     jQuery('body,html').animate({scrollTop: 0}, 800);
   },
 	activationSwitchOnOFF: function(e){		//used
@@ -58,7 +58,7 @@ var MarketplaceBrowser  = Class.create({
         var selected_app = jQuery(list_box).find(".plug-data .plug-name").text().trim();
         if(jQuery(list_box).hasClass("disabled-app")){
           jQuery(list_box).removeClass("disabled-app");
-          jQuery.event.trigger({
+          jQuery(document).trigger({
               type: "enabled_app",
               app_name: selected_app,
               time: new Date()
@@ -66,7 +66,7 @@ var MarketplaceBrowser  = Class.create({
         }
         else{
           jQuery(list_box).addClass("disabled-app");
-          jQuery.event.trigger({
+          jQuery(document).trigger({
               type: "disabled_app",
               app_name: selected_app,
               time: new Date()

@@ -1,5 +1,7 @@
 class AccountInfoToDynamo < BaseWorker
 
+  SKIP_NOTIFICIATION_DOMAINS = ["freshdesk.com"]
+
   sidekiq_options :queue => :account_info_to_dynamo, :retry => 2, :backtrace => true, :failures => :exhausted
 
   def perform(args)
@@ -16,6 +18,11 @@ class AccountInfoToDynamo < BaseWorker
 
   private
 
+    def skip_notification? email
+      email_domain = email.split('@')[1]
+      SKIP_NOTIFICIATION_DOMAINS.include? email_domain
+    end
+
     def add_account_info_to_dynamo email, account_id, time_stamp
       AdminEmail::AssociatedAccounts.new email, account_id, time_stamp
     end
@@ -28,6 +35,7 @@ class AccountInfoToDynamo < BaseWorker
     end
 
     def raise_notification email, accounts_list
+      return if skip_notification? email
       notification_topic = SNS["dev_ops_notification_topic"]
       subject = "Accounts limit exceed for email : #{email}"
       options = { email: email, accounts_list: accounts_list, environment: Rails.env }

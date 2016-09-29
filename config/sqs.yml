@@ -3,6 +3,7 @@ development:
   facebook_realtime_queue: social_fb_feed_dev
   search_etl_queue: search_etl_queue_dev
   count_etl_queue: count_etl_queue_dev
+  sqs_es_index_queue: sqs_es_index_queue_dev
   auto_refresh_realtime_queue: auto_refresh_dev
   custom_mailbox_realtime_queue: custom_mailbox_dev
   forums_moderation_queue: forum_moderation_dev
@@ -11,6 +12,7 @@ development:
   activity_queue: fd_activities_dev
   reports_service_export_queue: reports_service_export_dev
   freshfone_call_tracker: freshfone_call_tracker_development
+  fb_message_realtime_queue: social_fb_messenger_dev
   freshfone_call_notifier_queue: freshfone_call_notifier_development
 staging:
   twitter_realtime_queue: social_gnip_tweet_staging1
@@ -25,6 +27,7 @@ staging:
   activity_queue: fd_activities_staging
   reports_service_export_queue: reports_service_export_staging
   freshfone_call_tracker: freshfone_call_tracker_staging
+  fb_message_realtime_queue: social_fb_messenger_staging
   freshfone_call_notifier_queue: freshfone_call_notifier_staging
 production:
   twitter_realtime_queue: social_gnip_tweet_production
@@ -39,6 +42,7 @@ production:
   activity_queue: fd_activities_production
   reports_service_export_queue: reports_service_export_production
   freshfone_call_tracker: freshfone_call_tracker_production
+  fb_message_realtime_queue: social_fb_messenger_prod
   freshfone_call_notifier_queue: freshfone_call_notifier_production
 test:
   twitter_realtime_queue: social_gnip_tweet_test
@@ -53,4 +57,5 @@ test:
   activity_queue: fd_activities_test
   reports_service_export_queue: reports_service_export_test
   freshfone_call_tracker: freshfone_call_tracker_test
+  fb_message_realtime_queue: social_fb_messenger_dev
   freshfone_call_notifier_queue: freshfone_call_notifier_test

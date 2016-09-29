@@ -239,7 +239,7 @@
 			jQuery(this).data('formChanged', true)
 		}
 	})
-	jQuery("[rel=customize-portal]").live("click", function(ev){
+	jQuery("[rel=customize-portal]").on("click", function(ev){
 		var form = jQuery(this).parents('form:first')
 		if(form.data('formChanged')){
 			ev.preventDefault()
@@ -259,7 +259,7 @@
 			}
 		}
 	})
-	jQuery('.fileAdminUpload').live("change", function(){ 
+	jQuery(document).on("change", '.fileAdminUpload', function(){ 
 		if ( jQuery(this.form).valid() ) {
 			jQuery("#redirect_url").val("<%= edit_account_path %>") 
 			this.form.submit()

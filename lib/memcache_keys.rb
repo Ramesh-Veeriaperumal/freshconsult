@@ -1,5 +1,7 @@
 module MemcacheKeys
 
+  include Cache::Memcache::Dashboard::MemcacheKeys
+
   AVAILABLE_QUEST_LIST = "AVAILABLE_QUEST_LIST:%{user_id}:%{account_id}"
 
   USER_TICKET_FILTERS = "v1/TICKET_VIEWS:%{user_id}:%{account_id}"
@@ -128,7 +130,7 @@ module MemcacheKeys
 
   MKP_EXTENSIONS = "v1/FA:MKP_EXTENSIONS:%{category_id}:%{type}:%{locale_id}"
 
-  EXTENSION_VERSION_DETAILS = "v1/FA:EXTENSION:%{version_id}:%{locale_id}"
+  EXTENSION_DETAILS = "v1/FA:EXTENSION:%{extension_id}:%{locale_id}"
 
   CONFIGURATION_DETAILS = "v1/FA:CONFIGURATIONS:%{version_id}:%{locale_id}"
 
@@ -142,12 +144,17 @@ module MemcacheKeys
 
   LEADERBOARD_MINILIST_REALTIME = "v2/LEADERBOARD_MINILIST_REALTIME:%{account_id}:%{agent_type}"
 
-  AGENT_NEW_TICKET_FORM = "v1/AGENT_NEW_TICKET_FORM:%{account_id}"
+  REQUESTER_WIDGET_FIELDS = "v1/REQUESTER_WIDGET_FIELDS:%{account_id}"
+
+  AGENT_NEW_TICKET_FORM = "v2/AGENT_NEW_TICKET_FORM:%{account_id}:%{language}"
+
   ACCOUNT_INSTALLED_APPS_IN_COMPANY_PAGE = "V1/ACCOUNT_INSTALLED_APPS_IN_COMPANY_PAGE:%{account_id}"
 
-  COMPOSE_EMAIL_FORM = "v1/COMPOSE_EMAIL_FORM:%{account_id}"
+  COMPOSE_EMAIL_FORM = "v2/COMPOSE_EMAIL_FORM:%{account_id}:%{language}"
 
   TKT_TEMPLATES_COUNT = "v1/TKT_TEMPLATES_COUNT:%{account_id}"
+
+  ACCOUNT_WEBHOOK_KEY = "ACCOUNT_WEBHOOK_KEY:%{account_id}:%{vendor_id}"
 
   class << self
 

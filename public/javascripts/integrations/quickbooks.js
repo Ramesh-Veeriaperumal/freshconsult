@@ -213,12 +213,12 @@ QuickBooksWidget.prototype = {
         this.freshdeskWidget.remote_integratable_id = remote_integratable_id;
         if (!is_delete_request){
             if (quickbooksBundle.remote_integratable_id){
-                jQuery('.quickbooks_timetracking_widget .app-logo input:checkbox').attr('checked',true);
+                jQuery('.quickbooks_timetracking_widget .app-logo input:checkbox').prop('checked',true);
                 jQuery('.quickbooks_timetracking_widget .integration_container').toggle(jQuery('.quickbooks_timetracking_widget .app-logo input:checkbox').prop('checked'));
                 this.retrieveTimeEntry();
             }
             else{
-                jQuery('.quickbooks_timetracking_widget .app-logo input:checkbox').attr('checked',false);
+                jQuery('.quickbooks_timetracking_widget .app-logo input:checkbox').prop('checked',false);
                 jQuery('.quickbooks_timetracking_widget .integration_container').toggle(jQuery('.quickbooks_timetracking_widgets .app-logo input:checkbox').prop('checked'));
                 this.resetTimeEntryForm();
             }

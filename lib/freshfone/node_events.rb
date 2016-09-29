@@ -51,7 +51,7 @@ module Freshfone::NodeEvents
 
   def publish_freshfone_presence(user, deleted=false)
     @user = user
-    (!deleted and user.freshfone_user_online?) ? publish_online : check_user_offline(user)
+    (!deleted and ff_user.online?) ? publish_online : check_user_offline
   end
 
   def publish_capability_token(user, token = nil)
@@ -64,8 +64,12 @@ module Freshfone::NodeEvents
     notify_socket(call_transfer_success_channel, success_transfer_message(success))
   end
 
-  def check_user_offline(user)
-    (user.freshfone_user_offline?) ? publish_offline : publish_busy
+  def check_user_offline
+    ff_user.offline? ? publish_offline : check_for_busy
+  end
+
+  def check_for_busy
+    ff_user.busy? ? publish_busy : publish_acw
   end
 
   def publish_online
@@ -78,6 +82,10 @@ module Freshfone::NodeEvents
 
   def publish_busy
     notify_socket(presence_channel("agent_busy"), offline_message)
+  end
+
+  def publish_acw
+    notify_socket(presence_channel('agent_in_acw_state'), offline_message)
   end
   
   def publish_agent_device(fuser,user)
@@ -257,5 +265,9 @@ module Freshfone::NodeEvents
     def external_transfer?(call)
       return if call.meta.blank?
       call.meta.device_type == Freshfone::CallMeta::USER_AGENT_TYPE_HASH[:external_transfer]
-  end
+    end
+
+    def ff_user
+      @user.freshfone_user
+    end
 end

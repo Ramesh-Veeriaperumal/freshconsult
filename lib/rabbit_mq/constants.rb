@@ -83,6 +83,12 @@ module RabbitMq::Constants
   RMQ_GENERIC_NOTE_KEY        = "*.1.*.1.#"  # Position 0 -> auto_refresh, 2 -> reports 4 -> activities
   RMQ_GENERIC_ARCHIVE_TKT_KEY = "1.*.1.#"    # Position 0 -> reports 2 -> activities
 
+  #when a spam or trash ticket is deleted after 30 days, we are firing a raw query. So deleting from all subscribers by manual publish
+  RMQ_CLEANUP_TICKET_KEY      = "*.1.*.1.1.#"
+  
+  #used for reports and count cluster tickets alone. 
+  RMQ_REPORTS_COUNT_TICKET_KEY = "*.1.*.1.*.#"
+
   # Manual publish keys - only for activities
   RMQ_ACTIVITIES_TICKET_KEY = "*.*.*.*.1.#"
   RMQ_ACTIVITIES_NOTE_KEY   = "*.*.*.1.#"
@@ -112,17 +118,18 @@ module RabbitMq::Constants
     "product_id", "company_id", "status", "priority", "source", "requester_id", "ticket_type", 
     "visible", "sla_policy_id", "is_escalated", "fr_escalated", "resolved_at", 
     "time_to_resolution_in_bhrs", "time_to_resolution_in_chrs", "inbound_count",
-    "first_response_by_bhrs", "first_assign_by_bhrs", "created_at", "archive",
+    "first_response_by_bhrs", "first_assign_by_bhrs", "created_at", "archive", "actor_type", "actor_id",
     # columns stored in reports_hash in schema_less_ticket
     "first_response_id", "agent_reassigned_count", "group_reassigned_count", "reopened_count", 
     "private_note_count", "public_note_count", "agent_reply_count", "customer_reply_count",
-    "agent_assigned_flag", "agent_reassigned_flag", "group_assigned_flag", "group_reassigned_flag"
+    "agent_assigned_flag", "agent_reassigned_flag", "group_assigned_flag", "group_reassigned_flag",
+    "last_resolved_at"
   ]
   
   REPORTS_ARCHIVE_TICKET_KEYS = REPORTS_TICKET_KEYS
   AUTO_REFRESH_NOTE_KEYS      = ["kind", "private"]
-  REPORTS_NOTE_KEYS           = ["id", "source", "user_id", "agent", "category", "private", "incoming", "deleted", "account_id", "created_at", "archive"]
+  REPORTS_NOTE_KEYS           = ["id", "source", "user_id", "agent", "category", "private", "incoming", "deleted", "account_id", "created_at", "archive", "actor_type"]
   
-  MANUAL_PUBLISH_SUBCRIBERS   = ["reports", "activities"]
+  MANUAL_PUBLISH_SUBCRIBERS   = ["reports", "activities", "count"]
 
 end

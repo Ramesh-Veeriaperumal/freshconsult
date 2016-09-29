@@ -18,6 +18,7 @@ module Search
 
         Utils::EsClient.new(:get, 
                             (@template_name? template_query_path : search_path), 
+                            query_params,
                             construct_payload(search_params),
                             Search::Utils::SEARCH_LOGGING[:request],
                             request_uuid
@@ -38,6 +39,14 @@ module Search
         #
         def template_query_path
           [@tenant.aliases_path(@types), '_search/template'].join('/')
+        end
+        
+        # The query params to be passed in the url
+        # Eg: http://localhost:9200/user_v1/_search?routing=1
+        def query_params
+          Hash.new.tap do |qparams|
+            qparams[:routing] = @tenant.id
+          end
         end
 
         # Params (w) chosen template for request

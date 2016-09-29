@@ -1,3 +1,68 @@
+/*jslint browser: true, devel: true */
+/*global  App, bulkActionButtonsDisabled, updateWorkingAgents */
+
+window.App = window.App || {};
+window.App.Tickets = window.App.Tickets || {};
+(function ($) {
+	"use strict";
+
+	App.Tickets.TicketList = {
+		onVisit: function (data) {
+			jQuery('#ticket-toolbar .bulk_action_buttons .btn').addClass('disabled').prop('disabled', true).attr("disabled","disabled");
+			this.bindEventsInTicketToolbar();
+			TicketListEvents();
+			App.Tickets.Merge_tickets.initialize();
+		},
+		// This script moved from html page (shared/_ticket_toolbar.html)
+		bindEventsInTicketToolbar: function () {
+			
+	  	jQuery(document).on("click.ticket_list", '#ticket-close-all-confirmation-submit', function(){
+		    jQuery('#close_all_ticket_btn').trigger('click');
+		  });
+
+		  jQuery(document).on("click.ticket_list", '#ticket-spam-all-confirmation-submit', function(){
+		    jQuery('#spam_all_ticket_btn').trigger('click');
+		  });
+
+		  jQuery(document).on("click.ticket_list", '#ticket-delete-all-confirmation-submit', function(){
+		    jQuery('#delete_all_ticket_btn').trigger('click');
+		  });
+
+		  jQuery(document).on("click.ticket_list", '#empty-spam-confirmation-submit', function(){
+		    jQuery('#empty_spam').trigger('click');
+		  });
+
+		  jQuery(document).on("click.ticket_list", '#empty-trash-confirmation-submit', function(){
+		    jQuery('#empty_trash').trigger('click');
+		  });
+
+		  jQuery(document).on("click.ticket_list", '[data-action="merge"]', function(ev){
+	      var selected_tickets=[];
+	      var parameters=[];
+	      jQuery("#tickets-expanded .selector:checked").each(function(){
+	        selected_tickets.push(jQuery(this).val());
+	      });
+	      jQuery.ajax({
+	        type: 'POST',
+	        url: '/helpdesk/merge_tickets/bulk_merge',
+	        data: { "source_tickets" : selected_tickets, "redirect_back" : true },
+	        success: function(data){
+						jQuery('#merge_freshdialog-content').html(data);
+					}
+		    });
+		  });
+
+		  jQuery(document).on('click.ticket_list','.tooltip', function(){
+		    jQuery(this).twipsy('hide');
+		  });
+
+		},
+		onLeave: function() {
+			$(document).off('.ticket_list');
+			App.Tickets.Merge_tickets.unBindEvent();
+		}
+	}
+}(jQuery));
 
 bulkActionButtonsDisabled = function () {
 	if (jQuery('#ticket-list .check .selector:checked').length > 0 && !jQuery("#all-views").data("selectallMode")) {
@@ -37,7 +102,7 @@ jQuery('body').append('<div id="agent_collision_container" class="hide"></div>')
 				}
 			},             
 			content: {
-				text: TICKET_STRINGS['tooltip_loading'],
+				text: "<div class='ui-tooltip-ticket-loading'>"+TICKET_STRINGS['tooltip_loading']+"</div>",
 				ajax: {
 					url: tipUrl,
 					once: true
@@ -176,7 +241,7 @@ jQuery('body').append('<div id="agent_collision_container" class="hide"></div>')
 
 
 		//Clicking on the row (for ticket list only), the check box is toggled.
-	// jQuery('.tickets tbody tr').live('click',function(ev) {
+	// jQuery('.tickets tbody tr').on('click',function(ev) {
 	// 	if (! jQuery(ev.target).is('input[type=checkbox]') && ! jQuery(ev.target).is('a') && ! jQuery(ev.target).is('.quick-action')) {
 	// 		var checkbox = jQuery(this).find('input[type=checkbox]').first();
 	// 		checkbox.prop('checked',!checkbox.prop('checked'));
@@ -184,28 +249,27 @@ jQuery('body').append('<div id="agent_collision_container" class="hide"></div>')
 	// 	}
 	// });
 
-		var checkboxStore = null;
-		jQuery('body').off('click.shiftMultiselect');
-		jQuery('body').on('click.shiftMultiselect', '.tickets tbody tr .check :checkbox',function(e){
-			var $checkboxes = jQuery('.tickets tbody tr .check :checkbox');
-			// Add selection border on click
-      var index = jQuery(e.target).parent().parent().index();
-      jQuery('#ticket-list').data('menuSelector').setCurrentElement(index);
+	var checkboxStore = null;
+	jQuery(document).on('click.ticket_list', '.tickets tbody tr .check :checkbox',function(e){
+	var $checkboxes = jQuery('.tickets tbody tr .check :checkbox');
+	
+	// Add selection border on click
+    var index = jQuery(e.target).parent().parent().index();
+    jQuery('#ticket-list').data('menuSelector').setCurrentElement(index);
 
-			if(!checkboxStore) {
-				checkboxStore = e.target;
-				return;
-			}
-			if(e.shiftKey) {
-				var start = $checkboxes.index(e.target);
-				var end = $checkboxes.index(checkboxStore);
-				$checkboxes.slice(Math.min(start,end), Math.max(start,end)+ 1).prop('checked', e.target.checked).change();
-			}
+		if(!checkboxStore) {
 			checkboxStore = e.target;
-		});
+			return;
+		}
+		if(e.shiftKey) {
+			var start = $checkboxes.index(e.target);
+			var end = $checkboxes.index(checkboxStore);
+			$checkboxes.slice(Math.min(start,end), Math.max(start,end)+ 1).prop('checked', e.target.checked).change();
+		}
+		checkboxStore = e.target;
+	});
 
-    jQuery('.tickets tbody tr .check :checkbox').die();
-    jQuery('.tickets tbody tr .check :checkbox').live('change', function() {
+	jQuery(document).on('change.ticket_list', 'tbody tr .check :checkbox', function() { 
         if (jQuery(this).prop('checked')) {
           jQuery(this).parent().parent().addClass('active');
         } else {
@@ -223,9 +287,8 @@ jQuery('body').append('<div id="agent_collision_container" class="hide"></div>')
 	//bulkActionButtonsDisabled();
 	
 	//TODO. Need to remove this. Added because dynamic menus are dom manuplations instead of style.
-	jQuery('.action_assign').die();
 	// Quick Actions
-	jQuery('.action_assign').live("click", function(ev) {
+	jQuery(document).on("click.ticket_list", '.action_assign', function(ev) {
 		ev.preventDefault();
 
 		selected_item = jQuery(this);
@@ -281,12 +344,12 @@ jQuery('body').append('<div id="agent_collision_container" class="hide"></div>')
 		return false;
 	});
 
-	jQuery('#leftViewMenu a[rel=default_filter]').click(function(ev) {
+	jQuery(document).on('click.ticket_list', '#leftViewMenu a[rel=default_filter]', function(ev) {
 		setCookie('wf_order','created_at');
 		setCookie('wf_order_type','desc');
 	});
-  jQuery('#toggle_select_all').die();
-	jQuery('#toggle_select_all').live('click', function(ev) {
+
+	jQuery(document).on('click.ticket_list', '#toggle_select_all', function(ev) {
       ev.preventDefault();
       var all_view_selector = jQuery("#all-views");
       updateBulkActionTicketCount();
@@ -392,11 +455,11 @@ jQuery('body').append('<div id="agent_collision_container" class="hide"></div>')
   });
 
 	// Uncheck select all checkbox before navigate to next & prev page (in pagination)
-	jQuery('body').on('click.ticket_list', '.next_page, .prev_page', function () {
+	jQuery(document).on('click.ticket_list', '.next_page, .prev_page', function () {
 		jQuery('#helpdesk-select-all').removeAttr('checked');
 	});
 
-  jQuery('body').on('click','a[data-target="#bulk"]', function () {
+  jQuery('body').on('click.ticket_list','a[data-target="#bulk"]', function () {
     jQuery("#bulk").remove();
   });
 

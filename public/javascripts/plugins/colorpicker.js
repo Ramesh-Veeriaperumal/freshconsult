@@ -91,7 +91,6 @@
   };
 
   $.fn.mColorPicker.start = function() {
-
     $('input[data-mcolorpicker!="true"]').filter(function() {
       return ($i.replace == '[type=color]')? this.getAttribute("type") == 'color': $(this).is($i.replace);
     }).mColorPicker();
@@ -99,22 +98,20 @@
 
   $.fn.mColorPicker.events = function() {
 
-    $("#mColorPickerBg").live('click', $.fn.mColorPicker.closePicker);
-
-    $('.mColorPicker').live({ "keyup": function () {
+    $(document).on('click.colorpickerEvents', "#mColorPickerBg", $.fn.mColorPicker.closePicker);
+    $(document).on('focusout.colorpickerEvents', ".mColorPicker", $.fn.mColorPicker.closePicker);
+    $(document).on('focusin.colorpickerEvents', ".mColorPicker", $.fn.mColorPicker.colorShow);
+    $(document).on("keyup.colorpickerEvents", '.mColorPicker', function () {
         try {    
           $(this).css({
             'border-right-color': $(this).val()
           }).trigger('change');
         } catch (r) {}
-      },
-      "focusin": $.fn.mColorPicker.colorShow,
-      "focusout": $.fn.mColorPicker.closePicker 
-    });
+      });
 
-    $('.mColorPickerTrigger').live('click', $.fn.mColorPicker.colorShow);
+    $(document).on('click.colorpickerEvents', '.mColorPickerTrigger', $.fn.mColorPicker.colorShow);
   
-    $('.mColor, .mPastColor').live('mousemove', function(e) {
+    $(document).on('mousemove.colorpickerEvents', '.mColor, .mPastColor', function(e) {
 
       if (!$o.changeColor) return false;
   
@@ -130,9 +127,9 @@
       else if (!$t.hasClass('mPastColor')) $o.color = $.fn.mColorPicker.whichColor(e.pageX - offset.left, e.pageY - offset.top, hex);
 
       $o.currentInput.mSetInputColor($o.color);
-    }).live('click', $.fn.mColorPicker.colorPicked);
+    }).on('click.colorpickerEvents', '.mColor, .mPastColor', $.fn.mColorPicker.colorPicked);
   
-    $('#mColorPickerInput').live('keyup', function (e) {
+    $(document).on('keyup.colorpickerEvents', '#mColorPickerInput', function (e) {
   
       try {
   
@@ -142,12 +139,12 @@
         if (e.which == 13) $.fn.mColorPicker.colorPicked();
       } catch (r) {}
 
-    }).live('blur', function () {
+    }).on('blur.colorpickerEvents', '#mColorPickerInput', function () {
   
       $o.currentInput.mSetInputColor($o.color);
     });
   
-    $('#mColorPickerWrapper').live('mouseleave', function () {
+    $(document).on('mouseleave.colorpickerEvents', '#mColorPickerWrapper', function () {
   
       if (!$o.changeColor) return false;
 
@@ -588,7 +585,9 @@
   $i = $.fn.mColorPicker.init;
 
   $document.ready(function () {
-
+    $(document).on('pjax:beforeSend.colorpickerEvents', function () {
+      jQuery(document).off('.colorpickerEvents');
+    });
     $b = $('body');
 
     $.fn.mColorPicker.events();
@@ -604,7 +603,7 @@
       } else {
   
         $.fn.mColorPicker.start();
-        $document.live('ajaxSuccess.mColorPicker', $.fn.mColorPicker.start);
+        $document.on('ajaxSuccess.mColorPicker', $.fn.mColorPicker.start);
       }
     }
   });

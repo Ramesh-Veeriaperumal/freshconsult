@@ -284,8 +284,8 @@ module Helpdesk::TicketActions
         db_type = get_db_type(params)
         Sharding.send(db_type) do
           @ticket_filter.deserialize_from_params(params)
-          if Account.current.launched?(:es_count_reads)
-            total_entries = Search::Filters::Docs.new(@ticket_filter.query_hash).count(Helpdesk::Ticket)
+          if current_account.count_es_enabled?
+            total_entries = Search::Tickets::Docs.new(@ticket_filter.query_hash).count(Helpdesk::Ticket)
           else
             joins = @ticket_filter.get_joins(@ticket_filter.sql_conditions)
             joins[0].concat(@ticket_filter.states_join) if @ticket_filter.sql_conditions[0].include?("helpdesk_ticket_states")

@@ -16,6 +16,10 @@ module Freshfone::CallHistory
   def update_conference_sid
     current_call.update_attributes(:conference_sid => params[:ConferenceSid])
   end
+
+  def child_call
+  	@child_call ||= current_call.children.last
+  end
 	
 	def current_call
 		@current_call ||= ( current_call_by_call_param || current_call_by_id || current_call_by_filter || current_call_by_parent_call_sid )
@@ -40,7 +44,7 @@ module Freshfone::CallHistory
 
 	def get_date_range(type, custom_value)
 		TimeZone.set_time_zone
-		options = {:format => :short_day_separated, :include_year => true}
+		options = {:format => :short_day_separated, :include_year => true, :translate => false}
 		case type
 			when "Today"
 				view_context.formated_date(Time.zone.now.to_date, options)

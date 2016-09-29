@@ -267,11 +267,11 @@ module SupportHelper
 	end
 
 	def portal_fav_ico
-		fav_icon = MemcacheKeys.fetch(["v7","portal","fav_ico",current_portal],30.days.to_i) do
+		fav_icon = MemcacheKeys.fetch(["v7","portal","fav_ico",current_portal],7.days.to_i) do
      			current_portal.fav_icon.nil? ? '/assets/misc/favicon.ico?123458' :
             		AwsWrapper::S3Object.url_for(current_portal.fav_icon.content.path,
             			current_portal.fav_icon.content.bucket_name,
-                        :expires => 30.days.to_i,
+                        :expires => 7.days.to_i,
                         :secure => true)
             end
 		"<link rel='shortcut icon' href='#{fav_icon}' />".html_safe
@@ -777,7 +777,7 @@ module SupportHelper
 		output = []
 
 		output << %(<div class="attachment">)
-		tooltip = "data-toggle='tooltip' title='#{cloud_file.filename}'" if cloud_file.filename.size > 15
+		tooltip = "data-toggle='tooltip' title='#{h(cloud_file.filename)}'" if cloud_file.filename.size > 15
 		output << %(<a href="#{cloud_file.delete_url}" data-method="delete" data-confirm="#{I18n.t('attachment_delete')}" class="delete mr5"></a>) if can_delete
 
 		output << %(<img src="/assets/#{cloud_file.provider}_big.png"></span>)
@@ -785,7 +785,7 @@ module SupportHelper
 		output << %(<div class="attach_content">)
 		output << %(<div class="ellipsis">)
 		output << %(<a href="#{cloud_file.url}" class="filename" target="_blank"
-			        #{tooltip}>#{ cloud_file.filename.truncate(15) } </a>)
+			        #{tooltip}>#{h(cloud_file.filename.truncate(15))} </a>)
 		output << %(<span class="file-size cloud-file"></span>)
 		output << %(</div>)
 		output << %(</div>)

@@ -24,6 +24,7 @@ stylesheets:
   :tour_my_app  => [ "plugins/tourmyapp_initial","plugins/tourmyapp"],
   :codemirror  => [ "plugins/codemirror"],
   :player360  => [ "freshfone/360player"],
+  :fileupload => ["plugins,fileupload"],
   :freshwidget  => [ "freshwidget"],
   :tkt_details  => [ "page/tkt_details/tkt_details","page/tkt_details/tkt_details_sprites"],
   :tkt_details_print  => [ "page/tkt_details/tkt_details_print"],
@@ -136,7 +137,6 @@ javascripts:
     - public/javascripts/frameworks/plugins/menuselector.js
     - public/javascripts/frameworks/plugins/jquery.autosuggester.js
     - public/javascripts/integrations/construct_rule.js
-    - public/javascripts/marketplace/freshapp.js
 
   # Code editor for portal cms
   codemirror:
@@ -153,6 +153,12 @@ javascripts:
     - public/javascripts/codemirror/util-search.js
     - public/javascripts/codemirror/util-searchcursor.js
 
+    #file upload
+  fileupload:
+    - public/javascripts/fileupload/jquery.ui.widget.js
+    - public/javascripts/fileupload/jquery.iframe-transport.js
+    - public/javascripts/fileupload/jquery.fileupload.js
+    - public/javascripts/fileupload/jquery.fileupload-ui.js
   colorpicker:
     - public/javascripts/mColorPicker.js
 
@@ -366,6 +372,7 @@ javascripts:
     - public/javascripts/freshfone/freshfone_monitor.js
     - public/javascripts/freshfone/components/freshfone_conference_connection.js
     - public/javascripts/freshfone/components/agent_conference.js
+    - public/javascripts/freshfone/components/warm_transfer.js
 
   freshfone_call_history:
     - public/javascripts/report/daterangepicker.jQuery.js
@@ -505,6 +512,9 @@ javascripts:
     - public/javascripts/custom-form/sortable.js
     - public/javascripts/custom-form/company_fields.js
     - public/javascripts/custom-form/template/*.jst
+
+  requester_widget:
+    - public/javascripts/admin/requester_widget_config.js
 
   survey:
     - public/javascripts/frameworks/jquery.js

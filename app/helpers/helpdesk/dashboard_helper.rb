@@ -1,4 +1,5 @@
 module Helpdesk::DashboardHelper
+  include Helpdesk::DashboardV2Helper
   include MemcacheKeys
 
   TOOLBAR_LINK_OPTIONS = {
@@ -8,89 +9,25 @@ module Helpdesk::DashboardHelper
     "data-loading-box"    => "#agents-list" 
   }
 
-  PLAN_TYPE_MAPPING = {
-    :sprout             =>  "type1",
-    :pro                =>  "type1",
-    :premium            =>  "type1",
-    :basic              =>  "type1",
-    :sprout_classic     =>  "type1",
-    :blossom            =>  "type2",
-    :blossom_classic    =>  "type2",
-    :garden            =>   "type2",
-    :garden_classic     =>  "type2",
-    :estate             =>  "type2",
-    :estate_classic     =>  "type2",
-    :forest             =>  "type2"
+  DEFAULT_DASHBOARDS_LABELS = {
+      :standard => 'Standard',
+      :agent => 'Agent Snapshot',
+      :supervisor => 'Supervisor Snapshot',
+      :admin => 'Admin Snapshot'
   }
 
-  DASHBOARD_WIDGETS = { 
-    "type1" => {
-      :widgets => [# ['NAME', XSIZE, YSIZE]
-        [:activity, 2, 4],
-        [:todo, 1, 1],
-        # [:unresolved_tickets_by_group_id, 1, 1],
-        [:phone, 1, 1],
-        [:agent_status, 1, 1]
+  DEFAULT_DASHBOARDS = [
+        { :name => DEFAULT_DASHBOARDS_LABELS[:standard] , :param => 'standard'},
+        { :name => DEFAULT_DASHBOARDS_LABELS[:agent] , :param => 'agent'},
+        { :name => DEFAULT_DASHBOARDS_LABELS[:supervisor] , :param => 'supervisor'},
+        { :name => DEFAULT_DASHBOARDS_LABELS[:admin] , :param => 'admin'}
       ]
-    },
 
-    "type2" => {
-      :widgets => [# ['NAME', XSIZE, YSIZE]
-        [:activity, 2, 6],
-        [:todo, 1, 1],
-        # [:unresolved_tickets_by_group_id, 1, 1],
-        [:phone, 1, 1],
-        [:chat, 1, 1],
-        [:agent_status, 1, 1],
-        [:gamification, 1, 1],
-        [:forum_moderation, 1, 1]
-      ]
-    },
-
-    "type3" => {
-      :widgets => [# ['NAME', XSIZE, YSIZE]
-        [:activity, 1, 2],
-        [:unresolved_tickets_by_group_id, 1, 1],
-        [:unresolved_tickets_by_status, 1, 1],
-        [:unresolved_tickets_by_priority, 1, 1],
-        [:unresolved_tickets_by_ticket_type, 1, 1],
-        [:phone, 1, 1],
-        [:chat, 1, 1],
-        [:agent_status, 1, 1],
-        [:todo, 1, 1],
-        [:gamification, 1, 1],
-        [:forum_moderation, 1, 1]
-      ]
-    }
-  }
-
-  ALL_WIDGET_TYPE = "type3"
-
-  def check_widget_privilege
-    privilege_object = {
-      :unresolved_tickets_by_group_id     =>  (@manage_dashboard && @global_dashboard && current_user.privilege?(:view_reports)),
-      :unresolved_tickets_by_status       =>  true,
-      :unresolved_tickets_by_priority     =>  true,
-      :unresolved_tickets_by_ticket_type  =>  true,
-      :activity                           =>  true,
-      :todo                               =>  true,
-      :gamification                       =>  (gamification_feature?(current_account)),
-      :phone                              =>  (current_account.freshfone_active?),
-      :chat                               =>  (chat_activated? && current_account.chat_setting.active),
-      :forum_moderation                   =>  (current_account.features?(:forums) && privilege?(:delete_topic)),
-      :agent_status                       =>  (round_robin? || current_account.freshfone_active? || (chat_activated? && current_account.chat_setting.active))
-    }
-    privilege_object
-  end
-
-  def widget_list
-    type = PLAN_TYPE_MAPPING[current_account.plan_name]
-    #type = ALL_WIDGET_TYPE if current_account.features?(:custom_dashboard)
-    dashboard_widget = DASHBOARD_WIDGETS[type][:widgets]
-
-    privilege = check_widget_privilege
+  def widget_list snapshot
+    dashboard_widget = dashboard_widget_list snapshot
     widget_object = Dashboard::Grid.new
-    widgets = widget_object.process_widgets(dashboard_widget, privilege, type)
+    column_count = (snapshot == 'standard') ? 3 : 6
+    widgets = widget_object.process_widgets(dashboard_widget,column_count)
 
     widgets
   end
@@ -176,6 +113,15 @@ module Helpdesk::DashboardHelper
     @freshfone_enabled ||=
       current_user.privilege?(:admin_tasks) and
       current_account.freshfone_active?
+  end
+
+  def dashboardv2_accessible_groups
+    all_groups = {"-" => "All"}
+    agent_groups = current_user.agent_groups.includes(:group)
+    groups = agent_groups.inject({}) do |group_hash, agent_group|
+        group_hash.merge!(agent_group.group.id => agent_group.group.name)
+      end
+    all_groups.merge(groups)
   end
 
   def accessible_groups
@@ -268,6 +214,28 @@ module Helpdesk::DashboardHelper
 
   def credit_low_toggle
     'hide' unless (!freshfone_trial_states? && freshfone_below_threshold?)
+  end
+
+  def snapshot_menu
+    options = [DEFAULT_DASHBOARDS[0]]
+    return options if !dashboardv2_available? || current_account.launched?(:es_down) #Show only Standard Dashboard if ES is down. This ideally shouldn't occur, fingers crossed.
+    if current_user.privilege?(:admin_tasks)
+      options << DEFAULT_DASHBOARDS[3] if current_account.launched?(:admin_dashboard)
+    elsif current_user.privilege?(:view_reports)
+      options << DEFAULT_DASHBOARDS[2] if current_account.launched?(:supervisor_dashboard)
+    else
+      options << DEFAULT_DASHBOARDS[1] if current_account.launched?(:agent_dashboard)
+    end
+    options
+  end
+
+  def snapshot_label type
+    DEFAULT_DASHBOARDS_LABELS[type.to_sym]
+  end
+
+  # Helper to determine whether to show Group Drop Down
+  def show_groups_selection? type
+    (type == 'supervisor') and current_user.privilege?(:view_reports)
   end
 end
 

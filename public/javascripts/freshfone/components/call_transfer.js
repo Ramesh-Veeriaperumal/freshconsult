@@ -22,6 +22,7 @@ var FreshfoneCallTransfer
       this.cancelled = false;
       this.cleanUpTimer();
       this.$transferList.hide();
+      $('#freshfone_transfer').hide();
       this.showTransferDetails(id, group_id, external_number);
       this.disableAllOtherControlles();
       var ringingTime = (freshfone.ringingTime || 30 )* 1000; // sec to milisec 
@@ -117,7 +118,6 @@ var FreshfoneCallTransfer
               "/freshfone/conference_transfer/initiate_transfer" : "/freshfone/call_transfer/initiate"
     },
     getTransferType: function () {
-      // if(this.isWarmTransfer()) { return "warm"; } 
       return "normal";
     },
     isWarmTransfer: function () {
@@ -173,10 +173,18 @@ var FreshfoneCallTransfer
         obj = {
           name: target.available_agents_name,
           agentsCount: target.agents_count,
-          avatar: avatar.replace("small","thumb")
+          avatar: this.getAvatar(avatar)
         }
       }
       return obj;
+    },
+    getAvatar: function(avatar) {
+      if (avatar.indexOf("small") >= 0) {
+        return avatar.replace("small","thumb");
+      }
+      var length =  avatar.indexOf("preview_pic") + 11;
+      var image_div = avatar.slice(0,length) + " thumb" + avatar.slice(length);
+      return image_div;
     },
     getNumberTemplateParams: function (number) {
       var params = {

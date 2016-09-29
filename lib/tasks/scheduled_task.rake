@@ -5,11 +5,11 @@ namespace :scheduled_task do
   # Do not add if no such distribution is required.
   TASK_DISTRIBUTION = {
 
-    :scheduled_report => { :min_delay        => 15.seconds,
-                           :max_delay        => 15.minute,
-                           :offset           => 15.seconds,
-                           :task_per_offset  => 5
-                         }
+    # :scheduled_report => { :min_delay        => 15.seconds,
+    #                        :max_delay        => 15.minute,
+    #                        :offset           => 15.seconds,
+    #                        :task_per_offset  => 5
+    #                      }
   }
 
   #######################################################
@@ -27,6 +27,22 @@ namespace :scheduled_task do
 
   task :trigger_dangling => :environment do
     process("dangling_tasks")
+  end
+
+  #############################################################
+  desc "Updates 'next_run_at' for dead tasks. Runs at 7 , 19 UTC"
+  #############################################################
+
+  task :calculate_next_run_at => :environment do
+    base_time = Time.now.utc
+    Sharding.run_on_all_shards do
+      Helpdesk::ScheduledTask.dead_tasks(base_time).find_in_batches(batch_size: 500) do |tasks|
+        tasks.each do |task|
+          task.mark_available unless task.available?
+          task.save! 
+        end
+      end
+    end
   end
 
 

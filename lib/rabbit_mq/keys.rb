@@ -10,7 +10,7 @@ module RabbitMq::Keys
   TOPIC_SUBSCRIBERS            =  ["search", "activities"]
   POST_SUBSCRIBERS             =  ["search", "activities"]
   TAG_SUBSCRIBERS              =  ["search"]
-  TAG_USE_SUBSCRIBERS          =  ["search", "count"]
+  TAG_USE_SUBSCRIBERS          =  ["search"]
   COMPANY_SUBSCRIBERS          =  ["search"]
   USER_SUBSCRIBERS             =  ["search"]
   FORUM_CATEGORY_SUBSCRIBERS   =  ["activities"]

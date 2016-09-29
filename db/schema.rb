@@ -11,8 +11,9 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20160629121214) do
 
+ActiveRecord::Schema.define(:version => 20160802094502) do
+  
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
     t.integer  "account_id",           :limit => 8
@@ -383,6 +384,7 @@ ActiveRecord::Schema.define(:version => 20160629121214) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.boolean  "active",                  :default => false
+    t.boolean  "enabled",                 :default => false
   end
 
   add_index "chat_settings", ["account_id"], :name => "index_chat_settings_on_account_id"
@@ -1387,6 +1389,7 @@ ActiveRecord::Schema.define(:version => 20160629121214) do
     t.boolean  "security_whitelist",                         :default => false
     t.text     "triggers"
     t.boolean  "caller_id_enabled",                     :default => false
+    t.integer  "acw_timeout",                           :default => 1
   end
 
   add_index "freshfone_accounts", ["account_id", "state", "expires_on"], :name => "index_freshfone_accounts_on_account_id_and_state_and_expires_on"
@@ -2186,10 +2189,14 @@ ActiveRecord::Schema.define(:version => 20160629121214) do
     t.integer  "parent_id",               :limit => 8
     t.string   "prefered_ff_col"
     t.integer  "import_id",               :limit => 8
+    t.integer  "ticket_form_id",       :limit => 8                   
+    t.string   "column_name"                                        
+    t.string   "flexifield_coltype"
   end
 
   add_index "helpdesk_ticket_fields", ["account_id", "field_type", "position"], :name => "index_tkt_flds_on_account_id_and_field_type_and_position"
   add_index "helpdesk_ticket_fields", ["account_id", "name"], :name => "index_helpdesk_ticket_fields_on_account_id_and_name", :unique => true
+  add_index "helpdesk_ticket_fields", ["account_id", "ticket_form_id", "column_name"], :name => "index_tkt_flds_on_account_id_ticket_form_id_column_name"
 
   create_table "helpdesk_ticket_issues", :force => true do |t|
     t.integer "ticket_id"
@@ -2878,6 +2885,7 @@ ActiveRecord::Schema.define(:version => 20160629121214) do
     t.text     "last_error"
     t.boolean  "realtime_subscription",              :default => false,             :null => false
     t.string   "page_token_tab"
+    t.boolean  "realtime_messaging",                 :default => false,             :null => false
   end
 
   add_index "social_facebook_pages", ["account_id", "page_id"], :name => "index_pages_on_account_id"
@@ -3503,6 +3511,7 @@ ActiveRecord::Schema.define(:version => 20160629121214) do
 
   add_index "survey_results", ["account_id", "survey_id"], :name => "nameindex_on_account_id_and_survey_id"
   add_index "survey_results", ["surveyable_id", "surveyable_type"], :name => "index_survey_results_on_surveyable_id_and_surveyable_type"
+  add_index "survey_results", ["account_id", "created_at"], :name => "index_survey_results_on_account_id_and_created_at"
   execute "ALTER TABLE survey_results ADD PRIMARY KEY (id,account_id)"
 
   create_table "surveys", :force => true do |t|
@@ -3878,8 +3887,9 @@ ActiveRecord::Schema.define(:version => 20160629121214) do
     t.datetime "updated_at", :null => false
   end
   
-  add_index "user_companies", ["account_id", "user_id", "company_id"], 
-            :name => "index_user_companies_on_account_id_user_id_company_id"
+  add_index "user_companies", ["account_id", "user_id", "company_id"],
+            :name => "index_user_companies_on_acc_id_user_id_company_id", 
+            :unique => true
   add_index "user_companies", ["account_id", "company_id"], 
             :name => "index_user_companies_on_account_id_company_id"
 

@@ -35,11 +35,13 @@
 	freshfone.current_user = <%= current_user.id %>;
 	freshfone.current_account = <%= current_account.id%>;
 	freshfone.user_phone = "<%= current_user.available_number %>";
-	freshfone.current_status = "<%= current_user.freshfone_user_incoming_preference ||
-												Freshfone::User::PRESENCE[:offline] %>";
+	freshfone.current_status = "<%= current_user.freshfone_user.presence %>";
+	freshfone.current_preference = "<%= current_user.freshfone_user_incoming_preference ||
+	  Freshfone::User::PRESENCE[:offline]%>";
   <% freshfone_account = current_account.freshfone_account %>
 	freshfone.isAgentConferenceEnabled = <%= current_account.features?(:agent_conference)%>;
   <% freshfone_numbers = current_account_freshfone_numbers %>
+  freshfone.isWarmTransferEnabled = <%= warm_transfer_enabled? %>;
 	freshfone.below_threshold = <%= !freshfone_trial_states? && freshfone_below_threshold? %>;
 	freshfone.available_on_phone = <%= current_user.available_on_phone? || false %>;
 	freshfone.recent_calls_path = "<%= recent_calls_freshfone_call_history_index_path %>";
@@ -49,6 +51,11 @@
 	freshfone.freshfone_user_online_text = "<%= t('freshfone.widget.available') %>";
 	freshfone.freshfone_user_offline_text = "<%= t('freshfone.widget.unavailable') %>";
 	freshfone.freshfone_user_busy_text = "<%= t('freshfone.widget.busy') %>";
+	<% if current_account.features?(:freshfone_acw) %>
+		freshfone.freshfone_user_in_acw_text = "<%= t('freshfone.widget.acw') %>";
+		freshfone.acw_timeout = <%= current_account.freshfone_account.acw_timeout.minutes %>;
+		freshfone.isAcwEnabled = true;
+	<% end %>
 	freshfone.forward_number_alert = "<%= t('freshfone.widget.forward_number_alert') %>";
 	freshfone.invalid_user_number_text = "<%= t('freshfone.widget.invalid_phone_number').html_safe%>";
 	freshfone.widget_inactive = "<%= t('freshfone.widget.low_credit') %>";
@@ -68,8 +75,8 @@
 	freshfone.account_url = '<%= current_account.url_protocol + "://" + current_account.full_domain %>';
 	freshfone.numbersHash = <%= Hash[*current_account_freshfone_number_hash.collect(&:reverse).flatten].to_json.html_safe %>;
 	freshfone.namesHash = <%= Hash[*current_account_freshfone_names.flatten].to_json.html_safe %>;
-	freshfone.ringingTimeOutHash = <%= Hash[*freshfone_numbers.map { |n| [n.id, n.ringing_time] }.flatten].to_json.html_safe %>;
-	freshfone.rrTimeOutHash = <%= Hash[*freshfone_numbers.map { |n| [n.id, n.rr_timeout] }.flatten].to_json.html_safe%>;
+	freshfone.ringingTimeOutHash = <%= Hash[*account_numbers.map { |n| [n.id, n.ringing_time] }.flatten].to_json.html_safe %>;
+	freshfone.rrTimeOutHash = <%= Hash[*account_numbers.map { |n| [n.id, n.rr_timeout] }.flatten].to_json.html_safe%>;
 	freshfone.requester_autocomplete_path = '<%= requester_search_freshfone_autocomplete_index_path %>';
 	freshfone.isDebuggingMode = <%= current_account.features?(:client_debugging)%>;
 	freshfone.isConferenceMode = <%= current_account.features?(:freshfone_conference)%>;
@@ -115,6 +122,7 @@
 <%= javascript_include_tag :'cdn/freshfone_client' %>
 <%= javascript_include_tag :'cdn/freshfone_subscription' if freshfone_trial_states? %>
 <%= javascript_include_tag :'cdn/freshfone_agent_conference' if current_account.features?(:agent_conference) %>
+<%= javascript_include_tag :'cdn/freshfone_warm_transfer' if current_account.features?(:freshfone_warm_transfer) %>
 <% unless AppMetrics::FRESHFONE_METRICS.blank? %>
   <%= javascript_tag do %>	
   App.Kissmetrics.kissMetricTrackingCode("<%= AppMetrics::FRESHFONE_METRICS %>");

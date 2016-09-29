@@ -23,8 +23,7 @@ def self.ticket_fields_data
       :picklist_values => [{ :value => "Question"},
                            { :value => "Incident"},
                            { :value => "Problem"},
-                           { :value => "Feature Request"},
-                           { :value => "Lead"}]
+                           { :value => "Feature Request"}]
     },
       
     { :name => "source", :label => "Source", :description => "Ticket source" },
@@ -69,7 +68,9 @@ Helpdesk::TicketField.seed_many(:account_id, :name,
       :required_for_closure => f[:required_for_closure] || false,
       :choices => f[:choices] || [],
       :field_options => f[:field_options],
-      :default => true
+      :default => true,
+      :ticket_form_id => account.ticket_field_def.id,
+      :column_name    => "default"
     }
     field_hash.merge!(:picklist_values_attributes => f[:picklist_values]) if f[:name].eql?("ticket_type")
     field_hash

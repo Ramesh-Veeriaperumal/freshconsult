@@ -105,6 +105,10 @@ class HttpRequestProxy
           Rails.logger.debug "Response Body: #{proxy_response.body}"
           Rails.logger.debug "Response Code: #{proxy_response.code}"
         else
+          if !Rails.env.development? && Integrations::PROXY_SERVER["host"].present? #host will not be present for layers other than integration layer.
+            options[:http_proxyaddr] = Integrations::PROXY_SERVER["host"]
+            options[:http_proxyport] = Integrations::PROXY_SERVER["port"]
+          end
           net_http_method = HTTP_METHOD_TO_CLASS_MAPPING[method.to_sym]
           final_url       = encode_url ? URI.encode(remote_url) : remote_url
           proxy_request   = HTTParty::Request.new(net_http_method, final_url, options)

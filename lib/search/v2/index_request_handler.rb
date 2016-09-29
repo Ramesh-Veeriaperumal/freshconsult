@@ -15,9 +15,12 @@ module Search
       #
       def send_to_es(version, routing_id, parent_id, payload)
         path = @tenant.document_path(@type, @document_id)
-        path << add_params(version, routing_id, parent_id)
         
-        Utils::EsClient.new(:put, path, payload, Search::Utils::SEARCH_LOGGING[:response]).response
+        Utils::EsClient.new(:put,
+                            path,
+                            add_params(version, @tenant.id, parent_id),
+                            payload,
+                            Search::Utils::SEARCH_LOGGING[:response]).response
       end
 
       # Delete individual records from ES
@@ -25,11 +28,15 @@ module Search
       def remove_from_es
         path = @tenant.document_path(@type, @document_id)
         
-        Utils::EsClient.new(:delete, path, nil, Search::Utils::SEARCH_LOGGING[:response]).response
+        Utils::EsClient.new(:delete,
+                            path,
+                            { routing: @tenant.id },
+                            nil,
+                            Search::Utils::SEARCH_LOGGING[:response]).response
       end
 
       # Remove many records based on conditions
-      # Eg: DELETE localhost:9200/users_1/_query?q=account_id=1&q=subject:test
+      # Eg: DELETE localhost:9200/users_1/_query?q=account_id=1 AND subject:test
       #
       def remove_by_query(query={})
         return unless query.present?
@@ -37,13 +44,15 @@ module Search
         
         query_params = Array.new.tap do |q_params|
           query.each do |field, value|
-            q_params.push("q=#{field}:#{value}")
+            q_params.push("#{field}:#{value}")
           end
-        end.join('&')
-        
-        path << "?#{query_params}"
+        end.join(' AND ')
 
-        Utils::EsClient.new(:delete, path, nil, Search::Utils::SEARCH_LOGGING[:response]).response
+        Utils::EsClient.new(:delete,
+                            path,
+                            { routing: @tenant.id, q: query_params },
+                            nil,
+                            Search::Utils::SEARCH_LOGGING[:response]).response
       end
 
       private
@@ -53,20 +62,16 @@ module Search
         # Parent ID takes precedence over routing key
         #
         def add_params(version, routing_id, parent_id)
-          es_query_params = Hash.new.tap do |es_params|
+          Hash.new.tap do |es_params|
             es_params[:version_type]  = 'external'
             es_params[:version]       = version
+            es_params[:routing]       = routing_id
             
             # Need both parent and routing as otherwise
             # exception is raised in ES due to alias
             #
-            if parent_id
-              es_params[:parent]        = parent_id
-              es_params[:routing]       = routing_id
-            end
+            es_params[:parent]        = parent_id if parent_id
           end
-          
-          "?#{es_query_params.to_query}"
         end
     end
 

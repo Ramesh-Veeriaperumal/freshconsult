@@ -263,7 +263,7 @@ Helpkit.GlanceReport = (function(){
         _FD.populate_charts();
       });
 
-      jQuery("#dialog-select-submit").live('click',function(event){
+      jQuery(document).on('click', "#dialog-select-submit", function(event){
         if(jQuery("#select_saved_report").val()){
           jQuery("#leftViewMenu > li[data-id='"+jQuery("#select_saved_report").val()+"']").click();
           jQuery("#dialog-select").modal("hide");
@@ -415,7 +415,7 @@ Helpkit.AnalysisReport = (function(){
         _FD.populate_charts();
       });
 
-      jQuery("#dialog-select-submit").live('click',function(event){
+      jQuery(document).on('click', "#dialog-select-submit", function(event){
         if(jQuery("#select_saved_report").val()){
           jQuery("#leftViewMenu > li[data-id='"+jQuery("#select_saved_report").val()+"']").click();
           jQuery("#dialog-select").modal("hide");
@@ -433,7 +433,7 @@ Helpkit.AnalysisReport = (function(){
         jQuery("#dialog-select").modal("hide");
       });
 
-      jQuery(".sort").live('click',function(){
+      jQuery(document).on('click', ".sort", function(){
         var _this_JQObj= jQuery(this)
         report_for = _this_JQObj.attr("data-report-for");
         if(_this_JQObj.hasClass('DESC')){
@@ -448,7 +448,7 @@ Helpkit.AnalysisReport = (function(){
         }
       });
 
-      jQuery('#dialog-select-cancel').live('click',function(event){
+      jQuery(document).on('click', '#dialog-select-cancel', function(event){
         window.location.replace('/reports/old');
         event.stopPropagation();
       });
@@ -586,7 +586,7 @@ Helpkit.ComparisonReport = (function(){
         }
       });
 
-      jQuery("#dialog-select-submit").live('click',function(event){
+      jQuery(document).on('click', "#dialog-select-submit", function(event){
         if(jQuery("#select_saved_report").val()){
           jQuery("#leftViewMenu > li[data-id='"+jQuery("#select_saved_report").val()+"']").click();
           jQuery("#dialog-select").modal("hide");
@@ -609,7 +609,7 @@ Helpkit.ComparisonReport = (function(){
         jQuery("#dialog-select").modal("hide");
       });
 
-      jQuery('#dialog-select-cancel').live('click',function(event){
+      jQuery(document).on('click', '#dialog-select-cancel', function(event){
         window.location.replace('/reports/old');
         event.stopPropagation();
       });

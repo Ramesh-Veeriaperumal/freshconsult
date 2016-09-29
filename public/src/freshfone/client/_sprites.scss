@@ -53,7 +53,6 @@ $freshfone-sprite: sprite-map("cdn-ignored/sprites/freshfone/*.png");
 	.outgoing_call_icon { @include freshfone-sprite(recentcall-outgoing); }
 	.outgoing_missed_call_icon { @include freshfone-sprite(recentcall-missed); }
 }
-.transfer_agent_pointer { @include freshfone-sprite(callhistory-transferred); }
 .callhistory_helpdesk_avatar { @include freshfone-sprite(callhistory-helpdesk); }
 .callhistory-payment-loader { background-image: image-url('/assets/animated/payment-loader.gif') }
 .dialpad_background_pattern {@include freshfone-sprite(ff-watermark-pattern-1x);}

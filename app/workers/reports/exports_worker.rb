@@ -87,7 +87,7 @@ module Reports
     end
 
     def build_file_and_email(data, file_type, options={})
-      file_path = build_file(data, file_type, options[:report_type].to_sym, TICKET_EXPORT_TYPE ,true, options[:scheduled_report])
+      file_path = build_file(data, file_type, options[:report_type].to_sym, TICKET_EXPORT_TYPE ,false, options[:scheduled_report])
       options.merge!(build_options_for_email(options))
       send_email( options, file_path, TICKET_EXPORT_TYPE )
     end

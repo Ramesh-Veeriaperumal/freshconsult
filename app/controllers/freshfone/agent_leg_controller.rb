@@ -26,10 +26,10 @@ module Freshfone
       self.freshfone_users = current_account.freshfone_users
       ringing_calls.each do |call|
         begin
-	        next if params[:call_ids].present? && call.meta.present? && !call.meta.agent_pinged_and_no_response?(params[:agent].to_i) 
+	        next if active_calls(call)
           self.current_call = call
           self.current_number = call.freshfone_number
-          if simultaneous_call?
+          if params[:agent_disconnected].blank? && simultaneous_call?
             move_call_to_queue
             next
           end
@@ -51,6 +51,12 @@ module Freshfone
         generated_hash = Digest::SHA512.hexdigest("#{FreshfoneConfig['secret_key']}::#{params[:agent]}")
         valid_user = request.headers['HTTP_X_FRESHFONE_SESSION'] == generated_hash
         head :forbidden unless valid_user
+      end
+
+      def active_calls(call)
+        params[:call_ids].present? && call.meta.present? && 
+            !call.meta.agent_pinged_and_no_response?(params[:agent].to_i) && 
+            call.supervisor_controls.warm_transfer_initiated_calls.blank?
       end
 
       def validate_new_notifications_feature

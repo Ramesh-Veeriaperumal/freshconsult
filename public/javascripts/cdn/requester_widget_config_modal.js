@@ -1,0 +1,1 @@
+//= require app/admin/requester_widget_config.js

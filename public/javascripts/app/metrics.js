@@ -76,7 +76,7 @@ window.App = window.App || {};
 	});
 }(window.jQuery));
 
-window.jQuery(document).one('ready', function () {
+window.jQuery(function () {
 	"use strict";
 	if (typeof (mixpanel) !== 'undefined') {
 		App.startMetrics();

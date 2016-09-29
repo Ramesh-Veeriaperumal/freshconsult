@@ -22,7 +22,7 @@
 	}
 });
 
-jQuery('.remove_image').live('click', function(){
+jQuery('.remove_image').on('click', function(){
 	if(confirm("<%= t('merge_contacts.email_remove') %>"))
 	{
 		jQuery('#emails_con').append('<input name="deleted[]" type="hidden" value='+jQuery(this).data("email")+'>');
@@ -30,19 +30,19 @@ jQuery('.remove_image').live('click', function(){
 	}
 });
 
-jQuery("#cancel_email").live('click', function(ev){
+jQuery("#cancel_email").on('click', function(ev){
 	ev.preventDefault();
 	jQuery(this).parent().remove();
 	jQuery('#add_new_mail').removeClass('disabled');
 });
 
-jQuery('#verify_email').live('click', function(){
+jQuery('#verify_email').on('click', function(){
 	jQuery(this).text("<%= t('merge_contacts.please_wait') %>");
 	jQuery(this).off('click');
 	jQuery(this).addClass('disabled');
 });
 
-jQuery('.email').live('keyup', function(){
+jQuery('.email').on('keyup', function(){
 	a = jQuery('#add_email').parent().prev().find('input[type=text]');
 	if(a.length)
 		jQuery('#add_new_mail').toggleClass('disabled', !jQuery.trim(a.last().val()));

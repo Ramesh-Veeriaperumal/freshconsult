@@ -8,7 +8,7 @@ class PopulateInfusionsoft < ActiveRecord::Migration
         :listing_order => 40,
         :options => {
         	:direct_install => true,  
-        	:edit_url => "infusionsoft/edit",
+        	:edit_url => "/integrations/infusionsoft/edit",
         	:oauth_url => "/auth/infusionsoft?origin=id%3D{{account_id}}", 
         	:default_fields => {:contact => ["First Name"], :account => ["Company"]}
         	},     

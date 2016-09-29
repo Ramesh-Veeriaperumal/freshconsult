@@ -13,6 +13,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   before_create :set_company_id
 
+  before_create :set_boolean_custom_fields
+
 	before_update :assign_email_config
 
   before_update :update_message_id, :if => :deleted_changed?
@@ -41,7 +43,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   after_commit :filter_observer_events, on: :update, :if => :execute_observer?
   after_commit :update_ticket_states, :notify_on_update, :update_activity, 
   :stop_timesheet_timers, :fire_update_event, :push_update_notification, on: :update 
-  after_commit :regenerate_reports_data, on: :update, :if => :regenerate_data? 
+  #after_commit :regenerate_reports_data, on: :update, :if => :regenerate_data? 
   after_commit :push_create_notification, on: :create
   after_commit :update_group_escalation, on: :create, :if => :model_changes?
   after_commit :publish_to_update_channel, on: :update, :if => :model_changes?
@@ -166,6 +168,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end 
     
     if reopened_now?
+      schema_less_ticket.set_last_resolved_at(ticket_states.resolved_at)
       ticket_states.opened_at=time_zone_now
       ticket_states.reset_tkt_states
       schema_less_ticket.update_reopened_count("create")
@@ -206,11 +209,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def pass_thro_biz_rules
     #Remove redis check if no issues after deployment
-    if Account.current.launched?(:sidekiq_dispatchr_feature)
+    if Account.current.launched?(:delayed_dispatchr_feature)
+      send_later(:delayed_rule_check, User.current, freshdesk_webhook?) unless (import_id or outbound_email?)
+    else
       # This queue includes dispatcher_rules, auto_reply, round_robin.
       Helpdesk::Dispatcher.enqueue(self.id, (User.current.blank? ? nil : User.current.id), freshdesk_webhook?) unless (import_id or outbound_email?)
-    else
-      send_later(:delayed_rule_check, User.current, freshdesk_webhook?) unless (import_id or outbound_email?)
     end
   end
 
@@ -308,7 +311,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def changed_condition?
-    group_id_changed? || source_changed? || has_product_changed? || ticket_type_changed?
+    group_id_changed? || source_changed? || has_product_changed? || ticket_type_changed? || company_id_changed?
   end
 
   def has_product_changed?
@@ -471,13 +474,19 @@ private
     end
   end
 
+  def set_boolean_custom_fields
+    Account.current.ticket_field_def.boolean_ff_aliases.each do |f|
+      set_ff_value(f, 0) unless self.send(f)
+    end
+  end
+
   def update_company_id
     # owner_id will be used as an alias attribute to refer to a ticket's company_id
     self.owner_id = self.requester.company_id if @model_changes.key?(:requester_id) && self.owner_id.nil?
   end
 
   def check_company_id
-    owner_id = owner_id_was if requester.contractor? && !requester.company_ids.include?(self.owner_id)
+    self.owner_id = owner_id_was unless requester.company_ids.include?(self.owner_id)
   end
 
   def populate_requester
