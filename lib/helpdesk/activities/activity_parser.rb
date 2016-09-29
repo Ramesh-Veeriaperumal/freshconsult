@@ -263,13 +263,13 @@ module Helpdesk::Activities
     end
 
     def rel_tkt_link(value)
-      str = get_string_name("rlt_tkt_link")
-      @activity[:misc] << render_string(str, { :tracker_ticket_path => build_tickets_path(value)})
+      str = get_string_name("rel_tkt_link")
+      @activity[:misc] << render_string(str, { :tracker_ticket_path => build_ticket_url(value.first.to_i)})
     end
 
     def rel_tkt_unlink(value)
-      str = get_string_name("rlt_tkt_unlink")
-      @activity[:misc] << render_string(str, { :tracker_ticket_path => build_tickets_path(value)})    
+      str = get_string_name("rel_tkt_unlink")
+      @activity[:misc] << render_string(str, { :tracker_ticket_path => build_ticket_url(value.first.to_i)})    
     end
 
     def tracker_link(value)
@@ -278,7 +278,7 @@ module Helpdesk::Activities
         :related_tickets_count => pluralize(value.count,
           I18n.t("ticket.link_tracker.rlt_ticket_singular"),
           I18n.t("ticket.link_tracker.rlt_ticket_plural")),
-        :related_ticket_path => build_tickets_path(value)
+        :related_ticket_path => multiple_tickets_url(value)
       }
       @activity[:misc] << render_string(str, params)
     end
@@ -289,7 +289,7 @@ module Helpdesk::Activities
         :related_tickets_count => pluralize(value.count,
           I18n.t("ticket.link_tracker.rlt_ticket_singular"),
           I18n.t("ticket.link_tracker.rlt_ticket_plural")),
-        :related_ticket_path => build_tickets_path(value)
+        :related_ticket_path => multiple_tickets_url(value)
       }
       @activity[:misc] << render_string(str, params)
     end
@@ -735,8 +735,11 @@ module Helpdesk::Activities
       @summary ==  TICKET_ACTIVITY_KEYS_BY_TOKEN[:conversation] || @activity[:note].present?
     end
 
-    def build_tickets_path(value)
-      value.map { |v| "#{build_url(v.to_i, helpdesk_ticket_path(v.to_i))}"}.join(',')
+    def multiple_tickets_url(value)
+      value.map do |v|
+        title = "##{v.to_i}"
+       "#{build_url(title, helpdesk_ticket_path(v.to_i))}"
+      end.join(', ')
     end
   end
 end

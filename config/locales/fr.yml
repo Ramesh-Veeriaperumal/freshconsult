@@ -5468,7 +5468,7 @@ fr:
         facebook_form:
           reply_to: "Répondre à"
           title: "Répondre à %{user}"
-          from: "De :"
+          from: "De:"
         ecommerce_reply_form:
           title: "Répondre à"
         history:

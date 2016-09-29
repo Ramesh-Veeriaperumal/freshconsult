@@ -1940,15 +1940,15 @@ App.Tickets.LimitEmails = {
 		}
 		return true;
 	},
-	appendErrorMessage(_form, append_to ,msg) {
+	appendErrorMessage: function(_form, append_to ,msg) {
 		if(!_form.find(".text-error").get(0)){
 			_form.find(append_to).append("<p class='cc-error-message text-error'> "+msg+"</p>")	
 		}
 	},
-	getNewlyAddedEmails() {
+	getNewlyAddedEmails: function() {
 		return this.new_cc_bcc_emails;
 	},
-	get_email_address(string) {
+	get_email_address: function(string) {
 		whole_match = /"?(.+?)"?\s+<(.+?)>/
 		res =  whole_match.exec(string)
 		if(res) {

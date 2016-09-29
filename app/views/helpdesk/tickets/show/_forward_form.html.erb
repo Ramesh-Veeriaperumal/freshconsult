@@ -200,10 +200,6 @@
 
       jQuery("#HelpdeskFwd_<%=cntid%>").find('.cc-error-message').remove();
 
-      if(!jQuery('#include_bcc').is(':checked')) {
-          jQuery('[name="helpdesk_note[bcc_emails][]"]').val('');
-          isDirty = false;
-      }
       })
       .validate();
 

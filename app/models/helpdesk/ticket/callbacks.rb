@@ -421,7 +421,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def validate_related_tickets
     if related_ticket_ids.count == 1
-      @related_ticket = Account.current.tickets.permissible(User.current).find_by_display_id(related_ticket_ids)
+      @related_ticket = Account.current.tickets.permissible(User.current).readonly(false).find_by_display_id(related_ticket_ids)
       unless(@related_ticket && @related_ticket.association_type.nil? && @related_ticket.can_be_linked? )
         errors.add(:base,t("ticket.link_tracker.permission_denied")) and return false
       end
@@ -825,10 +825,10 @@ private
     tickets_count > TicketConstants::MAX_RELATED_TICKETS
   end
 
-  def create_tracker_activity(action)
+  def create_tracker_activity(action, tracker = @tracker_ticket)
     if Account.current.features?(:activity_revamp)
-      @tracker_ticket.misc_changes = {action => [self.display_id]}
-      @tracker_ticket.manual_publish_to_rmq("update", RabbitMq::Constants::RMQ_ACTIVITIES_TICKET_KEY)
+      tracker.misc_changes = {action => [self.display_id]}
+      tracker.manual_publish_to_rmq("update", RabbitMq::Constants::RMQ_ACTIVITIES_TICKET_KEY)
     end
   end
 

@@ -6,7 +6,7 @@ var current_agents_replying = {};
 var customer_replies = 0;
 var agent_replies = 0;
 var private_notes = 0;
-var broadcast_note = 0;
+var broadcast_notes = 0;
 var total_actions = 0;
 var ar_ticket_updated = 0;
 
@@ -43,10 +43,10 @@ function UpdateARNotification(action, params, current_userid){
       case "autorefresh_broadcast_note":
         id = "#ar_broadcast_note";
         count = 1;
-        broadcast_note = 1;
+        broadcast_notes = broadcast_notes + 1;
         break;
     }
-    total_actions = customer_replies + agent_replies + private_notes + broadcast_note;
+    total_actions = customer_replies + agent_replies + private_notes + broadcast_notes;
     if (count > 0) {
       update_ar_counter(id, count);
     }
@@ -71,7 +71,7 @@ var refresh_popup = function(){
   update_ar_counter("#ar_agent_reply", agent_replies);
   update_ar_counter("#ar_customer_reply", customer_replies);
   update_ar_counter("#ar_private_note", private_notes);
-  update_ar_counter("#ar_broadcast_note", broadcast_note);
+  update_ar_counter("#ar_broadcast_note", broadcast_notes);
   update_ar_counter("#ar_tickets_updated", ar_ticket_updated);
 }
 
@@ -203,7 +203,7 @@ var setEvents = function (hashed_params,current_username,current_userid) {
           var customer_reply_div = "<div id='ar_customer_reply' class='count-label auto-refresh-show hide' data-text-one='Customer Reply' data-text-other='Customer Replies'></div>";
           var agent_reply_div = "<div id='ar_agent_reply' class='count-label auto-refresh-show hide' data-text-one='Agent Reply' data-text-other='Agent Replies'></div>"
           var private_note_div = "<div id='ar_private_note' class='count-label auto-refresh-show hide' data-text-one='Private Note' data-text-other='Private Notes'></div>"
-          var broadcast_note_div = "<div id='ar_broadcast_note' class='count-label auto-refresh-show hide' data-text-one='Broadcast Note'></div>"
+          var broadcast_note_div = "<div id='ar_broadcast_note' class='count-label auto-refresh-show hide' data-text-one='Broadcast Message' data-text-other='Broadcast Messages'></div>"
           var properties_updated_div = "<div id='ar_tickets_updated' class='auto-refresh-show ar-properties hide'>Properties updated</div>"
           return customer_reply_div+agent_reply_div+private_note_div+properties_updated_div+broadcast_note_div;
         },
@@ -217,12 +217,12 @@ var setEvents = function (hashed_params,current_username,current_userid) {
           },
           mouseleave: function () {
               jQuery(this).popover('hide');
-          },
-          click: function (){
-            if(jQuery(".source-badge-wrap .source").hasClass("collision_refresh")){
-              jQuery(".ticket_id").click();
-            }
           }
+          // click: function (){
+          //   if(jQuery(".source-badge-wrap .source").hasClass("collision_refresh")){
+          //     jQuery(".ticket_id").click();
+          //   }
+          // }
       });
 
       jQuery("[rel=notice-popover]").popover({
