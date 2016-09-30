@@ -22,6 +22,8 @@ class ControllerLogSubscriber <  ActiveSupport::LogSubscriber
     payload[:db_runtime] = payload[:db_runtime].round(2) if payload[:db_runtime]
     payload[:view_runtime] = payload[:view_runtime].round(2) if payload[:view_runtime]
     payload[:duration] = payload[:duration].round(2)
+    # Please inform devops when any change is made in the log_file_format
+    # We need to make the corresponding change in sumologic(for indexing data) and in the recipe for UnityMedia (parsed application.log)
     log_file_format = "ip=#{payload[:ip]}, a=#{payload[:account_id]}, u=#{payload[:user_id]}, s=#{payload[:shard_name]}, d=#{payload[:domain]}, url=#{payload[:url]}, path=#{payload[:path]}, c=#{payload[:controller]}, action=#{payload[:action]}, host=#{payload[:server_ip]}, status=#{payload[:status]}, format=#{payload[:format]}, db=#{payload[:db_runtime]}, view=#{payload[:view_runtime]}, duration=#{payload[:duration]}"
   end
 
