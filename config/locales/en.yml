@@ -5428,7 +5428,7 @@ en:
     hide_activities_tooltip: Hide activities
     activity_timestamp: "%{user_name} updated <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
     user_activity_timestamp: "%{user_name} updated <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
-    deleted_rule: "deleted rule - %{rule_name}"
+    deleted_rule: "Deleted rule - %{rule_name}"
     executed: " executed "
     performed: " performed "
     system_activity_timestamp: "<strong class='muted'>System</strong> %{system_rule} <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date}) "

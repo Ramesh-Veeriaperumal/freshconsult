@@ -512,7 +512,7 @@ module Helpdesk::Activities
       rule_name   = escapeHTML(get_rule_name(@rule_id))
       rule_type   = RULE_LIST[value[0].to_i]
       rule_exists = rule_name.present? ? true : false
-      rule_name   = value[1] if !rule_exists
+      rule_name   = escapeHTML(value[1]) if !rule_exists
       rule_type_name   = "#{render_string("activities.#{rule_type}")}"
       @activity[:rule] = {:type_name => rule_type_name, :name => rule_name, :id=> @rule_id, :type=> value[0].to_i, :exists => rule_exists}
     end
