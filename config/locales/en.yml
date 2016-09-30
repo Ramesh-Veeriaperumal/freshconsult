@@ -9442,6 +9442,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     dropdown: "Dropdown"
     dropdown_choices: "Dropdown choices"
     dropdown_info: "Enter each choice in a newline"
+    offline_form_req_error: "Error:Please select any of these: phone, email or both (phone and email) to proceed"
     edit: "Edit"
     cancel: "Cancel"
     save: "Save"

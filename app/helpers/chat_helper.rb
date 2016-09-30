@@ -247,6 +247,7 @@ module ChatHelper
             :loading_new_archives => t('livechat.loading_new_archives'),
             :incoming_chat => t('livechat.incoming_chat'),
             :dropdown_info => t('livechat.dropdown_info'),
+            :offline_form_req_error => t('livechat.offline_form_req_error'),
             :dropdown_choices => t('livechat.dropdown_choices'),
             :done => t('livechat.done'),
             :edit => t('livechat.edit'),

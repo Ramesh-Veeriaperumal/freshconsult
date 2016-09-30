@@ -6,17 +6,11 @@ window.liveChat.visitorFormSettings = function($){
 		
 		render: function(){
 			var _widget = App.Admin.LiveChatAdminSettings.currentWidget;
-			var form_details = _widget.prechat_fields;
 			var prechat_form = _widget.prechat_form;
 			var prechat_msg = _widget.prechat_message;
 			var _defaultMessages = _widget.defaultMessages;
 			var prechat_fields	= _defaultMessages.prechat_fields;
-
-			var form_details_list = [];
-			var show = _widget.show, required = _widget.required;
-			var labels = {'name': prechat_fields['name']['title'], 'phone': prechat_fields['phone']['title'], 'email': prechat_fields['email']['title'], 'textfield': prechat_fields['textfield']['title'], 'dropdown': prechat_fields['dropdown']['title']};
 			var offline_chat_form = App.Admin.LiveChatAdminSettings.currentWidget.offline_chat.form;
-			var default_offline_chat_form = _defaultMessages.offline_chat.form;
 			var old_dropdown_choices ;
 
 			if(prechat_form == 1){
@@ -36,16 +30,59 @@ window.liveChat.visitorFormSettings = function($){
 
 			$("#prechat_message").val(prechat_msg);
 			$("#prechat_message").attr("placeholder",_defaultMessages.prechat_message);
-			
-			if(offline_chat_form){
-				$("#missed_chat_name").val(offline_chat_form['name']);
-				$("#missed_chat_email").val(offline_chat_form['email']);
-				$("#missed_chat_message").val(offline_chat_form['message']);
-			}
-			$("#missed_chat_name").attr("placeholder",default_offline_chat_form['name']);
-			$("#missed_chat_email").attr("placeholder",default_offline_chat_form['email']);
-			$("#missed_chat_message").attr("placeholder",default_offline_chat_form['message']);
 
+			var offline_phone =  offline_chat_form['phone'];
+			var hasPhoneField = offline_phone ? true:false;
+			if(hasPhoneField){
+				var offline_phone_label = offline_phone.hasOwnProperty("title") ? offline_phone.title : null;
+				var offline_phone_show = offline_phone.hasOwnProperty("show") && offline_phone.show == 1 || offline_phone.show == 2 ?  true : false;
+				var offline_phone_required = offline_phone.hasOwnProperty("show") && offline_phone.show == 2 ?  true : false;
+			}
+
+			$("#prechat_form_fields").html(this.createFormFields().join('')).sortable({
+				revert: true
+			});
+
+			$("#offline_form_fields").html(this.createMissedChatFields().join('')).sortable({
+			 	revert: true
+			 });
+
+			$("#prechat_form_fields input:checkbox:not(:disabled)").on('click', function(){
+				var field = $(this).attr('data-field');
+				if(field == "show"){
+					if(!$(this).is(":checked")){
+						$(this).closest('label').next().find('input').removeAttr('checked');
+					}
+				}else{
+					if($(this).is(":checked")){
+						$(this).closest('label').prev().find('input').prop('checked', true);
+					}
+				}
+			});
+
+			$("#offline_form_fields input:checkbox:not(:disabled)").on('click', function(){
+				var field = $(this).attr('data-field');
+				$("#visitor_form_error_msg").hide();
+				if(field == "show"){
+					if(!$(this).is(":checked")){
+						$(this).closest('label').next().find('input').removeAttr('checked');
+					}
+				}else{
+					if($(this).is(":checked")){
+						$(this).closest('label').prev().find('input').prop('checked', true);
+					}
+				}
+			});
+		},
+		
+		createFormFields : function(){
+			var _widget = App.Admin.LiveChatAdminSettings.currentWidget;
+			var _defaultMessages = _widget.defaultMessages;
+			var prechat_fields	= _defaultMessages.prechat_fields;
+			var form_details = _widget.prechat_fields;
+			var form_details_list = [];
+			var show = _widget.show, required = _widget.required;
+			var labels = {'name': prechat_fields['name']['title'], 'phone': prechat_fields['phone']['title'], 'email': prechat_fields['email']['title'], 'textfield': prechat_fields['textfield']['title'], 'dropdown': prechat_fields['dropdown']['title']};
 			for(var k in form_details){
 				var list = '<li class="inline-field" data-type="'+k+'"><i class="ficon-rearrange"></i>';
 				var showCheck = '', reqCheck = '', isDisable = '';
@@ -85,23 +122,41 @@ window.liveChat.visitorFormSettings = function($){
 				list += '</li>';
 				form_details_list.push(list);
 			}
-
-			$("#prechat_form_fields").html(form_details_list.join('')).sortable({
-				revert: true
-			});
-
-			$("#prechat_form_fields input:checkbox:not(:disabled)").on('click', function(){
-				var field = $(this).attr('data-field');
-				if(field == "show"){
-					if(!$(this).is(":checked")){
-						$(this).closest('label').next().find('input').removeAttr('checked');
-					}
+			return form_details_list;
+		},
+		createMissedChatFields: function(){
+			var _widget = App.Admin.LiveChatAdminSettings.currentWidget;
+			var _defaultMessages = _widget.defaultMessages;
+			var form_details_list = [];
+			var show = _widget.show, required = _widget.required;
+			var offline_chat_form = _widget.offline_chat.form;
+			var default_offline_chat_form = _defaultMessages.offline_chat.form;
+			var labels = {'name': offline_chat_form['name']['title'] || default_offline_chat_form.name.title, 'phone': offline_chat_form['phone']['title'] || default_offline_chat_form.phone.title, 'email': offline_chat_form['email']['title'] || default_offline_chat_form.email.title, 'message': offline_chat_form['message']['title'] || default_offline_chat_form.message.title};
+			for(var k in offline_chat_form){
+				//var list = '';
+				var list = '<li class="inline-field" data-type="'+k+'"><i class="ficon-rearrange"></i>';
+				var showCheck = '', reqCheck = '', isDisable = '';
+				if(k == 'name' || k == 'message'){
+					isDisable = 'disabled ';
+					reqCheck = 'checked';
+					showCheck = 'checked';
 				}else{
-					if($(this).is(":checked")){
-						$(this).closest('label').prev().find('input').prop('checked', true);
+					if(offline_chat_form[k].show && offline_chat_form[k].show > 0){
+						if(offline_chat_form[k].show == 2){
+							reqCheck = 'checked';
+						}
+						showCheck = 'checked';
 					}
 				}
-			});
+				list += '<input type="text" class="prechat_input" id="missedchat_form_'+k+'" name="prechat_form_name" maxlength="35" value="'+offline_chat_form[k].title+'" placeholder="'+labels[k]+'">';
+				list += '<div class="fields"><div class="ff_item"><label class="item"> <input class="filter_item" data-field="show" type="checkbox" '+isDisable + showCheck+' value="'+show+'"><span> '+CHAT_I18n['show']+'</span></label><label class="item">';
+				list += '<input class="filter_item" data-field="req" type="checkbox" '+isDisable + reqCheck+' value="'+required+'"><span> '+CHAT_I18n['required']+'</span></label></div></div>';
+				list += '</li>';
+				form_details_list.push(list);
+			}
+			form_details_list.push('<li class="inline-field"><label id="visitor_form_error_msg" class="error" style="display: none">'+CHAT_I18n['offline_form_req_error']+'</label></li>')
+			return form_details_list;
+
 		},
 	        
 		visitorFormSave: function(){
@@ -143,15 +198,32 @@ window.liveChat.visitorFormSettings = function($){
 					}
 				}
 			});
+
 			data.prechat_fields = prechat_form_details;
-
-			data.offline_chat = _widget.offline_chat;
 			var form = {};
-			form['name'] = $("#missed_chat_name").val() || "";
-			form['email'] = $("#missed_chat_email").val() || "";
-			form['message'] = $("#missed_chat_message").val() || "";
-			data.offline_chat['form'] = form;
+			data.offline_chat = _widget.offline_chat;
+			var offline_valid = false;
+			$("#offline_form_fields li").each(function(){
+				var fieldName = $(this).attr('data-type');
+				var fieldValue = "";
+				if(fieldName == "name" || fieldName == "phone" || fieldName == "email" || fieldName == "message"){
+					form[fieldName] = {};
+					fieldValue = $(this).find('input:text').val();
+					form[fieldName]['title'] = fieldValue;
+					var fieldShow = $(this).find('input:checked:last').val() || '0';
+					if (fieldName == "phone" || fieldName == "email" ) {
+						offline_valid =($(this).find('input:checked:last').val() == "2" || offline_valid)? true: false;
+					} 
+	 				form[fieldName]['show'] = fieldShow;
+				}
+			});
 
+			if(!offline_valid){
+				$("#visitor_form_error_msg").show()
+				return false;
+			}
+			
+			data.offline_chat['form'] = form;
 			if(valid){
 				this.updateLiveChatWidgetSettings(data);
 			}
