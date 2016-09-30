@@ -298,6 +298,8 @@ module Helpdesk::TicketsHelper
         # Adding <p> tag for the IE9 text not shown issue
         default_forward = (signature.blank?)? "<p/><div>#{forward_email_template}</div>" : "<p/><div>#{forward_email_template}<br/>#{signature}</div>"
       end
+    else
+      default_forward = (signature.blank?)? "<p/>" : "<p/><p><br></br></p><p></p><p></p><div>#{signature}</div>"
     end 
   
     default_forward
