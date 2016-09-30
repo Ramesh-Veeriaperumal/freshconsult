@@ -17,6 +17,7 @@ module Delayed
     MAX_ATTEMPTS = 25
     MAX_RUN_TIME = 4.hours
     JOB_QUEUES = ["Premium" , "Free", "Trial" , "Active"]
+    PUSH_QUEUE = ["Free", "Trial"]
 
     # By default failed jobs are destroyed after too many attempts.
     # If you want to keep them around (perhaps to inspect the reason
@@ -98,6 +99,45 @@ module Delayed
       end
     end
 
+    def reschedule_without_lock(message, backtrace = [], time = nil)
+      if self.attempts < MAX_ATTEMPTS
+        reschedule_timespan = (attempts ** 4) + 5
+        reschedule_timespan = 4.hours if (reschedule_timespan > 4.hours) 
+        time ||= Job.db_time_now + reschedule_timespan
+
+        self.attempts    += 1
+        self.run_at       = time
+        self.last_error   = message + "\n" + backtrace.join("\n")
+        save!
+      else
+        Rails.logger.info "* [JOB] PERMANENTLY removing #{self.name} because of #{attempts} consequetive failures."
+        destroy_failed_jobs ? destroy : update_attribute(:failed_at, Delayed::Job.db_time_now)
+      end
+    end
+
+    def run_without_lock
+      max_run_time = MAX_RUN_TIME
+      begin
+        runtime =  Benchmark.realtime do
+          Timeout::timeout(max_run_time) do
+            invoke_job
+          end
+          destroy
+        end
+        # TODO: warn if runtime > max_run_time ?
+        # Rails.logger.info "* [JOB] #{name} completed after %.4f -- by worker - #{worker_name}" % runtime
+        return true  # did work
+      rescue Timeout::Error => e
+        NewRelic::Agent.notice_error(e, {:description => "Maximum run time - #{max_run_time} reached for [JOB] #{job.id}"})
+        reschedule_without_lock e.message, e.backtrace
+        log_exception(e)
+        raise e
+      rescue Exception => e
+        reschedule_without_lock e.message, e.backtrace
+        log_exception(e)
+        raise e  # work failed
+      end
+    end
 
     # Try to run one job. Returns true/false (work done/work failed) or nil if job can't be locked.
     def run_with_lock(max_run_time, worker_name)
@@ -170,7 +210,9 @@ module Delayed
       if smtp_mailboxes.any?{|smtp_mailbox| smtp_mailbox.enabled?}
         Mailbox::Job.create(:payload_object => object, :priority => priority.to_i, :run_at => run_at, :pod_info => pod_info)
       else
-        Object.const_get("#{job_queue}::Job").create(:payload_object => object, :priority => priority.to_i, :run_at => run_at, :pod_info => pod_info)
+        job = Object.const_get("#{job_queue}::Job").create(:payload_object => object, :priority => priority.to_i, :run_at => run_at, :pod_info => pod_info)
+        Object.const_get("DelayedJobs::#{job_queue}AccountJob").perform_async({:job_id => job.id}) if job && job.id && PUSH_QUEUE.include?(job_queue)
+        job
       end      
     end
 
