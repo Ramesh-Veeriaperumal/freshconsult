@@ -5,6 +5,7 @@ window.App.Tickets = window.App.Tickets || {};
 (function($) {
     App.Tickets.NBA = {
         similar_tickets: [],
+        removed_cards: [],
         widget_pos: 1,
         cardCount: 0,
         removedCards: 0,
@@ -14,6 +15,7 @@ window.App.Tickets = window.App.Tickets || {};
 
         init: function(e) {
         if(nba.enable == "true"){
+            $("#nba-loading").addClass("ml_nba") 
             $("#nba-loading").addClass("sloading") 
             this.kissMetricTrackingCode(nba.key)
             this.similar_tickets = [];
@@ -98,7 +100,7 @@ window.App.Tickets = window.App.Tickets || {};
         },
 
         toggleHoverOverCards: function(){   
-             if (this.widget_pos * this.cardCount < this.similar_tickets.length) {
+             if (this.widget_pos * this.cardCount < (this.similar_tickets.length-this.removed_cards.length)) {
                 $('.nxt').fadeToggle();
               }
               else{
@@ -148,6 +150,13 @@ window.App.Tickets = window.App.Tickets || {};
             this.cardCount = Math.floor(($('.sas-ctd').width()/$('.sas-cards ul li').width()) - 1)
             temp_array = []
             if (this.similar_tickets.length > this.widget_pos * this.cardCount) {
+                for(i =0;i<this.removed_cards.length;i++)
+                {
+                  index = ((this.widget_pos-1)*this.cardCount)+parseInt(this.removed_cards[i])
+                  index = index-i
+                  this.similar_tickets.splice(index, 1);  
+                }
+                this.removed_cards = []
                 temp_array = this.similar_tickets.slice(this.widget_pos * this.cardCount, (this.widget_pos * this.cardCount > this.similar_tickets.length) ? this.widget_pos * this.cardCount : this.similar_tickets.length)
                 this.widget_pos = this.widget_pos + 1;
                 this.load_similartickets_widget(temp_array);
@@ -174,6 +183,14 @@ window.App.Tickets = window.App.Tickets || {};
             this.cardCount = Math.floor(($('.sas-ctd').width()/$('.sas-cards ul li').width()) - 1)
             temp_array = []
             if (this.widget_pos != 1) {
+                this.removed_cards.sort()
+                for(i =0;i<this.removed_cards.length;i++)
+                {
+                  index = ((this.widget_pos-1)*this.cardCount)+parseInt(this.removed_cards[i])
+                  index = index-i
+                  this.similar_tickets.splice(index, 1);  
+                }
+                this.removed_cards = []
                 this.widget_pos = this.widget_pos - 1;
                 temp_array = this.similar_tickets.slice((this.widget_pos - 1) * this.cardCount, ((this.widget_pos - 1) * this.cardCount > this.similar_tickets.length) ? (this.widget_pos) * this.cardCount : this.similar_tickets.length)
                 this.load_similartickets_widget(temp_array);
@@ -187,18 +204,20 @@ window.App.Tickets = window.App.Tickets || {};
             this.removedCards=this.removedCards+1;
             jQuery(event.currentTarget).parent("li").fadeOut();
             index = $(event.currentTarget).parent("li").attr("data-index")
-            this.similar_tickets.splice(index-this.removedCards, 1);
+            this.removed_cards.push(parseInt(index))
+            //index = ((this.widget_pos-1)*this.cardCount)+parseInt(index)
+            //this.similar_tickets.splice(index, 1);
             //this.toggleHoverOverCards()
-            if (!(this.widget_pos * this.cardCount < this.similar_tickets.length))
+            if (!(this.widget_pos * this.cardCount < (this.similar_tickets.length-this.removed_cards.length)))
             {
              if($('.nxt').css("display")=="block"){
                     $('.nxt').css("display","none")
                 }   
             }
             this.cardCount = Math.floor(($('.sas-hd').width()/$('.sas-cards ul li').width()) - 1)
-            count_text = (((this.widget_pos - 1) * this.cardCount) + 1) + "-" + ((this.widget_pos * this.cardCount < this.similar_tickets.length) ? this.widget_pos * this.cardCount : this.similar_tickets.length) + " of " + this.similar_tickets.length;
+            count_text = (((this.widget_pos - 1) * this.cardCount) + 1) + "-" + ((this.widget_pos * this.cardCount < (this.similar_tickets.length-this.removed_cards.length)) ? this.widget_pos * this.cardCount : (this.similar_tickets.length-this.removed_cards.length)) + " of " + (this.similar_tickets.length-this.removed_cards.length);
             $(".sas-nav span").text(count_text)
-            if(((this.widget_pos-1)*this.cardCount) >= this.similar_tickets.length){
+            if(((this.widget_pos-1)*this.cardCount) >= (this.similar_tickets.length-this.removed_cards.length)){
                 if(this.widget_pos>1)
                 {
                     this.addPrevButton(event)
