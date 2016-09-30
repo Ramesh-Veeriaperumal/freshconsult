@@ -474,3 +474,111 @@ input[type=text].input-agent-count{
 }
 
 
+
+
+
+
+// -------------------------------------------------------------------------------------------- 
+//								 	Admin Daypass start
+// -------------------------------------------------------------------------------------------- 
+
+.daypass_table th{
+    background-color:#FAFAFA;
+    font-weight: 450;
+  }
+  
+  .passes-available-container{
+    background-color: #F8F8F8;
+    border: 1px solid #E2E2E2;
+    @include border-radius(7px);
+    box-sizing: border-box;
+  }
+
+  .daypass-no-result{
+  	height: 80px;
+  	text-align: center;
+  }
+
+  .mt30{
+  	margin-top: 30px;
+  }
+
+  .pl80{
+    @include padding-left(80px);
+  }
+  .usage-history-filter{
+  	padding-top: 6px;
+
+  	.fd-ajaxmenu{
+      @include right(14%); 
+  	}
+  	.search_container{
+      margin: -5px 0;
+      @include padding(6px 6px 0px 4px);
+      background: #EEE;
+      overflow: hidden;
+      @include border-radius(6px 6px 0 0);
+  	}
+
+  	.menu_search{
+    	border-color: #aaa;
+  	}
+
+  	.contents{
+	    @include text-align(left); 
+	    padding-top: 2px;
+	    max-height: 400px;
+    	overflow-y: scroll;
+  	}
+
+  	input:focus { 
+      border:1px solid #aaa;
+    }
+
+    .quick-action{
+  		position: relative;
+  	}
+
+  	.quick-action:after {
+  		@include right(0px);
+  	}
+  	.no_results{
+  		text-align: center;
+  	}
+
+  }
+
+  #agent_filter a{
+    color: #000;
+    @include padding-right(10px);
+  }
+
+  #days-filter-display {
+    color: #000;
+  }
+
+  #filterDaysMenu{
+  	display:none; 
+  	@include margin-left(45%); 
+  	@include text-align(left);
+  }
+
+  .usage-history-filter a .drop-right:after{
+  	@include margin(5px 0 0 5px);
+  }
+
+  .daypass_container{
+  	border-bottom: none;
+  }
+
+  .table{
+  	margin-bottom: 0px;
+  }
+
+  .usage_history_wrap{
+  	position: relative;
+  }
+
+// -------------------------------------------------------------------------------------------- 
+//								 	Admin -> Daypass end
+// -------------------------------------------------------------------------------------------- 

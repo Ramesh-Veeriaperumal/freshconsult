@@ -1039,6 +1039,7 @@ Helpkit::Application.routes.draw do
         post :update
         put :buy_now
         put :toggle_auto_recharge
+        get '/custom_filter', :action => :day_pass_history_filter
       end
     end
 
