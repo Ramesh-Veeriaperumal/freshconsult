@@ -1,0 +1,19 @@
+type: object
+allOf:
+  - $ref: '#/definitions/note'
+  - $ref: '#/definitions/extended_note'
+  - properties:
+      from_email:
+        type: string
+      cc_emails:
+        type: array
+        items:
+          type: string
+      bcc_emails:
+        type: array
+        items:
+          type: string
+      replied_to:
+        type: array
+        items:
+          type: string

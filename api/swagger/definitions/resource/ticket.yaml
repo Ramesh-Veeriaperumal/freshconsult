@@ -1,22 +1,8 @@
 
   type: object
   properties:
-    cc_emails:
-      type: array
-      items:
-        type: string
-    fwd_emails:
-      type: array
-      items:
-        type: string
-    reply_cc_emails:
-      type: array
-      items:
-        type: string
     email_config_id:
       type: number
-    fr_escalated:
-      type: boolean
     group_id:
       type: number
     priority:
@@ -29,24 +15,14 @@
     source:
       type: number
       enum: [1,2,3,7,8,9,10]
-    spam:
-      type: boolean
     status:
       type: number
       enum: [2,3,4,5,6,7]
     subject:
       type: string
-    company_id:
-      type: number
-    id:
-      type: number
     type:
       type: string
       enum: ['Question','Incident','Problem','Feature Request']
-    to_emails:
-      type: array
-      items:
-        type: string
     product_id:
       type: number
     due_by:
@@ -55,10 +31,6 @@
     fr_due_by:
       type: string
       format: date-time
-    is_escalated:
-      type: boolean
-    description_text:
-      type: string
     description:
       type: string
     custom_fields: 
@@ -72,9 +44,3 @@
       items:
         type: string
         format: byte
-    created_at:
-      type: string
-      format: date-time
-    updated_at:
-      type: string
-      format: date-time

@@ -1,0 +1,18 @@
+put:
+  tags: [ticket]
+  description: Bulk Update
+  parameters:
+    - name: data
+      in: body
+      required: true
+      schema:
+        $ref: '#/definitions/ticket_bulk_update_input'
+  responses:
+    202:
+      description: Accepted
+      schema:
+        $ref: '#/definitions/partial_success_response'
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'

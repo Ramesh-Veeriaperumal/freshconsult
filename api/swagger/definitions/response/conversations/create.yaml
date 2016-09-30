@@ -1,0 +1,15 @@
+type: object
+allOf:
+  - $ref: '#/definitions/note'
+  - $ref: '#/definitions/extended_note'
+  - properties:
+      incoming:
+        type: boolean
+      private:
+        type: boolean
+      support_email:
+        type: string
+      notified_to:
+        type: array
+        items:
+          type: string

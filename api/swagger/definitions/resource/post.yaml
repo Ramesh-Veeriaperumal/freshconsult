@@ -1,0 +1,15 @@
+
+type: object
+allOf:
+  - $ref: '#/definitions/extension_generic'
+  - properties:
+      topic_id:
+        type: number
+      body:
+        type: string
+      published:
+        type: boolean
+      forum_id:
+        type: number
+      user_votes:
+        type: number

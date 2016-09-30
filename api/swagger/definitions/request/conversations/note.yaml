@@ -1,0 +1,16 @@
+type: object
+allOf:
+  - $ref: '#/definitions/note'
+  - properties:
+      attachment_ids:
+        type: array
+        items:
+          type: id
+      incoming:
+        type: boolean
+      notify_emails:
+        type: array
+        items:
+          type: string
+      private:
+        type: boolean

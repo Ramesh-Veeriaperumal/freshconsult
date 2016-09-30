@@ -1,0 +1,14 @@
+type: object
+allOf:
+  - $ref: '#/definitions/ticket'
+  - properties:
+      name:
+        type: string
+      email:
+        type: string
+      facebook_id:
+        type: string
+      phone:
+        type: string
+      twitter_id:
+        type: string

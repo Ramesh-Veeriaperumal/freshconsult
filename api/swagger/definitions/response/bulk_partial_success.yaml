@@ -5,9 +5,8 @@ properties:
   succeeded:
     type: array
     items:
-      type: number
-      minimum: 1
-  errors:
+      type: id
+  failed:
     type: array
     items:
       $ref: '#/definitions/bulk_action_error'
@@ -15,7 +14,9 @@ example:
   succeeded: 
     - 11
     - 12
-  errors:
+  failed:
     - id: 13
-      message: Invalid number
-      code: invalid_number
+      errors:
+        - field: product_id
+          message: Invalid number
+          code: invalid_number

@@ -1,0 +1,12 @@
+type: object
+allOf:
+  - $ref: '#/definitions/extension_generic'
+  - properties:
+      content_type:
+        type: string
+      size:
+        type: number
+      name:
+        type: string
+      attachment_url:
+        type: string

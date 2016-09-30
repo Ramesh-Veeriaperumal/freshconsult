@@ -62,63 +62,58 @@
             }
           }
         }
-      }
-    },
-    "/contacts/bulk_delete": {
-      "put": {
+      },
+      "post": {
         "tags": [
           "contact"
         ],
-        "summary": "Bulk Delete",
-        "description": "Bulk delete contacts",
+        "description": "Create a contact",
         "parameters": [
           {
             "name": "data",
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/bulk_action_input"
+              "$ref": "#/definitions/contact_input"
             }
           }
         ],
         "responses": {
-          "202": {
-            "description": "Accepted",
+          "200": {
+            "description": "Success",
             "schema": {
-              "$ref": "#/definitions/partial_success_response"
+              "$ref": "#/definitions/extended_contact"
             }
           },
-          "204": {
-            "description": "Success"
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
           }
         }
       }
     },
-    "/contacts/bulk_restore": {
-      "put": {
+    "/contacts/{id}": {
+      "delete": {
+        "summary": "Delete Contact",
         "tags": [
           "contact"
         ],
-        "summary": "Bulk Restore",
         "parameters": [
           {
-            "name": "data",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/bulk_action_input"
-            }
+            "name": "id",
+            "in": "path",
+            "type": "number",
+            "required": true
           }
         ],
         "responses": {
-          "202": {
-            "description": "Accepted",
-            "schema": {
-              "$ref": "#/definitions/partial_success_response"
-            }
-          },
           "204": {
             "description": "Success"
+          },
+          "404": {
+            "description": "User not found"
           }
         }
       }
@@ -140,9 +135,6 @@
         "responses": {
           "204": {
             "description": "Success"
-          },
-          "403": {
-            "description": "Access denied"
           },
           "404": {
             "description": "User not found"
@@ -177,32 +169,6 @@
           },
           "404": {
             "description": "User not found"
-          }
-        }
-      }
-    },
-    "/contacts/bulk_send_invite": {
-      "put": {
-        "summary": "Bulk Send Invite",
-        "tags": [
-          "contact"
-        ],
-        "parameters": [
-          {
-            "name": "data",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/bulk_action_input"
-            }
-          }
-        ],
-        "responses": {
-          "202": {
-            "description": "Accepted",
-            "schema": {
-              "$ref": "#/definitions/partial_success_response"
-            }
           }
         }
       }
@@ -348,12 +314,305 @@
         }
       }
     },
+    "/contacts/bulk_delete": {
+      "put": {
+        "tags": [
+          "contact"
+        ],
+        "summary": "Bulk Delete",
+        "description": "Bulk delete contactssss",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/bulk_action_input"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Accepted",
+            "schema": {
+              "$ref": "#/definitions/partial_success_response"
+            }
+          },
+          "204": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/contacts/bulk_restore": {
+      "put": {
+        "tags": [
+          "contact"
+        ],
+        "summary": "Bulk Restore",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/bulk_action_input"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Accepted",
+            "schema": {
+              "$ref": "#/definitions/partial_success_response"
+            }
+          },
+          "204": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/contacts/bulk_send_invite": {
+      "put": {
+        "summary": "Bulk Send Invite",
+        "tags": [
+          "contact"
+        ],
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/bulk_action_input"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Accepted",
+            "schema": {
+              "$ref": "#/definitions/partial_success_response"
+            }
+          }
+        }
+      }
+    },
+    "/tickets": {
+      "post": {
+        "tags": [
+          "ticket"
+        ],
+        "description": "Create a ticket",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ticket_input"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/extended_ticket"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          }
+        }
+      }
+    },
+    "/tickets/{id}": {
+      "delete": {
+        "tags": [
+          "ticket"
+        ],
+        "summary": "Delete Ticket",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "number",
+            "description": "Display ID of ticket",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Ticket not found"
+          }
+        }
+      }
+    },
+    "/tickets/{id}/restore": {
+      "put": {
+        "tags": [
+          "ticket"
+        ],
+        "summary": "Restore Ticket",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "number",
+            "description": "Display ID of ticket",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Ticket not found"
+          }
+        }
+      }
+    },
+    "/tickets/{id}/spam": {
+      "put": {
+        "tags": [
+          "ticket"
+        ],
+        "summary": "Spam Ticket",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "number",
+            "description": "Display ID of ticket",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Ticket not found"
+          }
+        }
+      }
+    },
+    "/tickets/{id}/unspam": {
+      "put": {
+        "tags": [
+          "ticket"
+        ],
+        "summary": "unspam Ticket",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "number",
+            "description": "Display ID of ticket",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Ticket not found"
+          }
+        }
+      }
+    },
+    "/tickets/{id}/execute_scenario/{scenario_id}": {
+      "put": {
+        "tags": [
+          "ticket"
+        ],
+        "summary": "Execute Scenario",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "number",
+            "description": "Display ID of ticket",
+            "required": true
+          },
+          {
+            "name": "scenario_id",
+            "in": "path",
+            "type": "number",
+            "description": "ID of scenario to be executed",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Ticket not found"
+          }
+        }
+      }
+    },
     "/tickets/bulk_delete": {
       "put": {
         "tags": [
           "ticket"
         ],
         "summary": "Bulk Delete tickets",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/bulk_action_input"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Accepted",
+            "schema": {
+              "$ref": "#/definitions/partial_success_response"
+            }
+          },
+          "204": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/tickets/bulk_restore": {
+      "put": {
+        "tags": [
+          "ticket"
+        ],
+        "summary": "Bulk Restore tickets",
         "parameters": [
           {
             "name": "data",
@@ -407,34 +666,31 @@
         }
       }
     },
-    "/tickets/{id}/execute_scenario/{scenario_id}": {
+    "/tickets/bulk_unspam": {
       "put": {
+        "summary": "Bulk Unspam",
         "tags": [
           "ticket"
         ],
-        "summary": "Execute Scenario",
         "parameters": [
           {
-            "name": "id",
-            "in": "path",
-            "type": "number",
-            "description": "Display ID of ticket",
-            "required": true
-          },
-          {
-            "name": "scenario_id",
-            "in": "path",
-            "type": "number",
-            "description": "ID of scenario to be executed",
-            "required": true
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/bulk_action_input"
+            }
           }
         ],
         "responses": {
+          "202": {
+            "description": "Accepted",
+            "schema": {
+              "$ref": "#/definitions/partial_success_response"
+            }
+          },
           "204": {
             "description": "Success"
-          },
-          "404": {
-            "description": "Ticket not found"
           }
         }
       }
@@ -472,321 +728,158 @@
           }
         }
       }
+    },
+    "/tickets/bulk_update": {
+      "put": {
+        "tags": [
+          "ticket"
+        ],
+        "description": "Bulk Update",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ticket_bulk_update_input"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Accepted",
+            "schema": {
+              "$ref": "#/definitions/partial_success_response"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          }
+        }
+      }
+    },
+    "/tickets/{id}/notes": {
+      "post": {
+        "tags": [
+          "conversation"
+        ],
+        "description": "Create a Note",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/note_create_input"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/note_create"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          }
+        }
+      }
+    },
+    "/tickets/{id}/reply": {
+      "post": {
+        "tags": [
+          "conversation"
+        ],
+        "description": "Create a Reply",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/note_reply_input"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/note_reply"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          }
+        }
+      }
+    },
+    "/attachments": {
+      "post": {
+        "tags": [
+          "attachment"
+        ],
+        "summary": "Create a draft attachment",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/attachment_create_input"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/attachment"
+            }
+          },
+          "400": {
+            "description": "Bad request error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
     }
   },
   "definitions": {
-    "contact": {
-      "type": "object",
-      "properties": {
-        "active": {
-          "type": "boolean"
-        },
-        "address": {
-          "type": "string"
-        },
-        "company_id": {
-          "type": "number"
-        },
-        "description": {
-          "type": "string"
-        },
-        "email": {
-          "type": "string"
-        },
-        "id": {
-          "type": "number"
-        },
-        "job_title": {
-          "type": "string"
-        },
-        "language": {
-          "type": "string"
-        },
-        "mobile": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        },
-        "phone": {
-          "type": "string"
-        },
-        "time_zone": {
-          "type": "string"
-        },
-        "twitter_id": {
-          "type": "string"
-        },
-        "created_at": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "updated_at": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "custom_fields": {
-          "$ref": "#/definitions/custom_field"
-        }
-      }
-    },
-    "ticket": {
-      "type": "object",
-      "properties": {
-        "cc_emails": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "fwd_emails": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "reply_cc_emails": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "email_config_id": {
-          "type": "number"
-        },
-        "fr_escalated": {
-          "type": "boolean"
-        },
-        "group_id": {
-          "type": "number"
-        },
-        "priority": {
-          "type": "number",
-          "enum": [
-            1,
-            2,
-            3,
-            4
-          ]
-        },
-        "requester_id": {
-          "type": "number"
-        },
-        "responder_id": {
-          "type": "number"
-        },
-        "source": {
-          "type": "number",
-          "enum": [
-            1,
-            2,
-            3,
-            7,
-            8,
-            9,
-            10
-          ]
-        },
-        "spam": {
-          "type": "boolean"
-        },
-        "status": {
-          "type": "number",
-          "enum": [
-            2,
-            3,
-            4,
-            5,
-            6,
-            7
-          ]
-        },
-        "subject": {
-          "type": "string"
-        },
-        "company_id": {
-          "type": "number"
-        },
-        "id": {
-          "type": "number"
-        },
-        "type": {
-          "type": "string",
-          "enum": [
-            "Question",
-            "Incident",
-            "Problem",
-            "Feature Request"
-          ]
-        },
-        "to_emails": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "product_id": {
-          "type": "number"
-        },
-        "due_by": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "fr_due_by": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "is_escalated": {
-          "type": "boolean"
-        },
-        "description_text": {
-          "type": "string"
-        },
-        "description": {
-          "type": "string"
-        },
-        "custom_fields": {
-          "type": "object"
-        },
-        "tags": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "attachments": {
-          "type": "array",
-          "items": {
-            "type": "string",
-            "format": "byte"
-          }
-        },
-        "created_at": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "updated_at": {
-          "type": "string",
-          "format": "date-time"
-        }
-      }
-    },
-    "array_of_tickets": {
-      "type": "array",
-      "items": {
-        "$ref": "#/definitions/ticket"
-      }
-    },
-    "array_of_contacts": {
-      "type": "array",
-      "items": {
-        "$ref": "#/definitions/contact"
-      }
+    "id": {
+      "type": "number",
+      "minimum": 1
     },
     "custom_field": {
       "type": "object"
     },
-    "post": {
+    "bulk_action_error": {
       "type": "object",
       "properties": {
         "id": {
-          "type": "number"
-        },
-        "topic_id": {
-          "type": "number"
-        },
-        "body": {
-          "type": "string"
-        },
-        "published": {
-          "type": "boolean"
-        },
-        "forum_id": {
-          "type": "number"
-        },
-        "user_votes": {
-          "type": "number"
-        },
-        "created_at": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "updated_at": {
-          "type": "string",
-          "format": "date-time"
-        }
-      }
-    },
-    "array_of_posts": {
-      "type": "array",
-      "items": {
-        "$ref": "#/definitions/post"
-      }
-    },
-    "bulk_action_input": {
-      "title": "data",
-      "type": "object",
-      "properties": {
-        "ids": {
-          "type": "array",
-          "items": {
-            "type": "number",
-            "minimum": 1,
-            "example": 987
-          }
-        }
-      },
-      "required": [
-        "ids"
-      ]
-    },
-    "partial_success_response": {
-      "title": "data",
-      "type": "object",
-      "description": "Partial Success Response",
-      "properties": {
-        "succeeded": {
-          "type": "array",
-          "items": {
-            "type": "number",
-            "minimum": 1
-          }
+          "type": "id"
         },
         "errors": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/bulk_action_error"
+            "$ref": "#/definitions/request_error"
           }
-        }
-      },
-      "example": {
-        "succeeded": [
-          11,
-          12
-        ],
-        "errors": [
-          {
-            "id": 13,
-            "message": "Invalid number",
-            "code": "invalid_number"
-          }
-        ]
-      }
-    },
-    "bulk_action_error": {
-      "title": "error",
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "number"
-        },
-        "message": {
-          "description": "Error message",
-          "type": "string"
-        },
-        "code": {
-          "description": "Error code",
-          "type": "string"
         }
       }
     },
@@ -819,21 +912,21 @@
         }
       }
     },
-    "change_password_input": {
+    "bulk_action_input": {
+      "title": "data",
       "type": "object",
       "properties": {
-        "password": {
-          "type": "string",
-          "format": "password"
-        },
-        "password_confirmation": {
-          "type": "string",
-          "format": "password"
+        "ids": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "minimum": 1,
+            "example": 987
+          }
         }
       },
       "required": [
-        "password",
-        "password_confirmation"
+        "ids"
       ]
     },
     "make_agent_params": {
@@ -865,6 +958,709 @@
             "type": "number"
           }
         }
+      }
+    },
+    "attachment_create_input": {
+      "type": "object",
+      "properties": {
+        "user_id": {
+          "type": "number"
+        },
+        "body": {
+          "type": "string",
+          "format": "byte"
+        }
+      },
+      "required": [
+        "body"
+      ]
+    },
+    "contact_input": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/contact"
+        },
+        {
+          "properties": {
+            "view_all_tickets": {
+              "type": "boolean"
+            },
+            "avatar_id": {
+              "type": "number"
+            }
+          }
+        }
+      ]
+    },
+    "change_password_input": {
+      "type": "object",
+      "properties": {
+        "password": {
+          "type": "string",
+          "format": "password"
+        },
+        "password_confirmation": {
+          "type": "string",
+          "format": "password"
+        }
+      },
+      "required": [
+        "password",
+        "password_confirmation"
+      ]
+    },
+    "note_create_input": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/note"
+        },
+        {
+          "properties": {
+            "attachment_ids": {
+              "type": "array",
+              "items": {
+                "type": "id"
+              }
+            },
+            "incoming": {
+              "type": "boolean"
+            },
+            "notify_emails": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "private": {
+              "type": "boolean"
+            }
+          }
+        }
+      ]
+    },
+    "note_reply_input": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/note"
+        },
+        {
+          "properties": {
+            "attachment_ids": {
+              "type": "array",
+              "items": {
+                "type": "id"
+              }
+            },
+            "from_email": {
+              "type": "string"
+            },
+            "cc_emails": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "bcc_emails": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "ticket_input": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/ticket"
+        },
+        {
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "email": {
+              "type": "string"
+            },
+            "facebook_id": {
+              "type": "string"
+            },
+            "phone": {
+              "type": "string"
+            },
+            "twitter_id": {
+              "type": "string"
+            },
+            "attachment_ids": {
+              "type": "array",
+              "items": {
+                "type": "id"
+              }
+            },
+            "cc_emails": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        {
+          "required": {
+            "anyOf": [
+              "email",
+              "facebook_id",
+              "phone",
+              "twitter_id"
+            ]
+          }
+        }
+      ]
+    },
+    "ticket_bulk_update_input": {
+      "type": "object",
+      "properties": {
+        "ids": {
+          "type": "array",
+          "items": {
+            "type": "id"
+          }
+        },
+        "properties": {
+          "$ref": "#/definitions/ticket_update_input"
+        }
+      }
+    },
+    "ticket_update_input": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/ticket"
+        },
+        {
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "email": {
+              "type": "string"
+            },
+            "facebook_id": {
+              "type": "string"
+            },
+            "phone": {
+              "type": "string"
+            },
+            "twitter_id": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    },
+    "contact": {
+      "type": "object",
+      "properties": {
+        "address": {
+          "type": "string"
+        },
+        "company_id": {
+          "type": "id"
+        },
+        "description": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "job_title": {
+          "type": "string"
+        },
+        "language": {
+          "type": "string"
+        },
+        "mobile": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "time_zone": {
+          "type": "string"
+        },
+        "twitter_id": {
+          "type": "string"
+        },
+        "other_emails": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "avatar": {
+          "type": "string"
+        },
+        "custom_fields": {
+          "$ref": "#/definitions/custom_field"
+        }
+      }
+    },
+    "note": {
+      "type": "object",
+      "properties": {
+        "body": {
+          "type": "string"
+        },
+        "user_id": {
+          "type": "id"
+        },
+        "attachments": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "ticket": {
+      "type": "object",
+      "properties": {
+        "email_config_id": {
+          "type": "number"
+        },
+        "group_id": {
+          "type": "number"
+        },
+        "priority": {
+          "type": "number",
+          "enum": [
+            1,
+            2,
+            3,
+            4
+          ]
+        },
+        "requester_id": {
+          "type": "number"
+        },
+        "responder_id": {
+          "type": "number"
+        },
+        "source": {
+          "type": "number",
+          "enum": [
+            1,
+            2,
+            3,
+            7,
+            8,
+            9,
+            10
+          ]
+        },
+        "status": {
+          "type": "number",
+          "enum": [
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
+        },
+        "subject": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Question",
+            "Incident",
+            "Problem",
+            "Feature Request"
+          ]
+        },
+        "product_id": {
+          "type": "number"
+        },
+        "due_by": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "fr_due_by": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "description": {
+          "type": "string"
+        },
+        "custom_fields": {
+          "type": "object"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "attachments": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "byte"
+          }
+        }
+      }
+    },
+    "post": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/extension_generic"
+        },
+        {
+          "properties": {
+            "topic_id": {
+              "type": "number"
+            },
+            "body": {
+              "type": "string"
+            },
+            "published": {
+              "type": "boolean"
+            },
+            "forum_id": {
+              "type": "number"
+            },
+            "user_votes": {
+              "type": "number"
+            }
+          }
+        }
+      ]
+    },
+    "attachment": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/extension_generic"
+        },
+        {
+          "properties": {
+            "content_type": {
+              "type": "string"
+            },
+            "size": {
+              "type": "number"
+            },
+            "name": {
+              "type": "string"
+            },
+            "attachment_url": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    },
+    "agent": {
+      "type": "object",
+      "properties": {
+        "available_since": {
+          "type": "string"
+        },
+        "available": {
+          "type": "boolean"
+        },
+        "occasional": {
+          "type": "boolean"
+        },
+        "signature": {
+          "type": "string"
+        },
+        "group_ids": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        },
+        "role_ids": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        },
+        "id": {
+          "type": "number"
+        },
+        "ticket_scope": {
+          "type": "string"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "extension_generic": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "id"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "extended_contact": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/contact"
+        },
+        {
+          "type": "object",
+          "allOf": [
+            {
+              "$ref": "#/definitions/extension_generic"
+            },
+            {
+              "properties": {
+                "active": {
+                  "type": "boolean"
+                },
+                "deleted": {
+                  "type": "boolean"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "extended_note": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/note"
+        },
+        {
+          "type": "object",
+          "allOf": [
+            {
+              "$ref": "#/definitions/extension_generic"
+            },
+            {
+              "properties": {
+                "body_text": {
+                  "type": "string"
+                },
+                "ticket_id": {
+                  "type": "id"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "extended_ticket": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/ticket"
+        },
+        {
+          "type": "object",
+          "allOf": [
+            {
+              "$ref": "#/definitions/extension_generic"
+            },
+            {
+              "properties": {
+                "cc_emails": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "fwd_emails": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "reply_cc_emails": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "fr_escalated": {
+                  "type": "boolean"
+                },
+                "spam": {
+                  "type": "boolean"
+                },
+                "to_emails": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "is_escalated": {
+                  "type": "boolean"
+                },
+                "description_text": {
+                  "type": "string"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "array_of_tickets": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/extended_ticket"
+      }
+    },
+    "array_of_contacts": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/extended_contact"
+      }
+    },
+    "array_of_posts": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/post"
+      }
+    },
+    "note_create": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/note"
+        },
+        {
+          "$ref": "#/definitions/extended_note"
+        },
+        {
+          "properties": {
+            "incoming": {
+              "type": "boolean"
+            },
+            "private": {
+              "type": "boolean"
+            },
+            "support_email": {
+              "type": "string"
+            },
+            "notified_to": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "note_reply": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/note"
+        },
+        {
+          "$ref": "#/definitions/extended_note"
+        },
+        {
+          "properties": {
+            "from_email": {
+              "type": "string"
+            },
+            "cc_emails": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "bcc_emails": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "replied_to": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "partial_success_response": {
+      "title": "data",
+      "type": "object",
+      "description": "Partial Success Response",
+      "properties": {
+        "succeeded": {
+          "type": "array",
+          "items": {
+            "type": "id"
+          }
+        },
+        "failed": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/bulk_action_error"
+          }
+        }
+      },
+      "example": {
+        "succeeded": [
+          11,
+          12
+        ],
+        "failed": [
+          {
+            "id": 13,
+            "errors": [
+              {
+                "field": "product_id",
+                "message": "Invalid number",
+                "code": "invalid_number"
+              }
+            ]
+          }
+        ]
       }
     },
     "make_agent_response": {
@@ -908,49 +1704,6 @@
         },
         "agent": {
           "$ref": "#/definitions/agent"
-        }
-      }
-    },
-    "agent": {
-      "type": "object",
-      "properties": {
-        "available_since": {
-          "type": "string"
-        },
-        "available": {
-          "type": "boolean"
-        },
-        "occasional": {
-          "type": "boolean"
-        },
-        "signature": {
-          "type": "string"
-        },
-        "group_ids": {
-          "type": "array",
-          "items": {
-            "type": "number"
-          }
-        },
-        "role_ids": {
-          "type": "array",
-          "items": {
-            "type": "number"
-          }
-        },
-        "id": {
-          "type": "number"
-        },
-        "ticket_scope": {
-          "type": "string"
-        },
-        "created_at": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "updated_at": {
-          "type": "string",
-          "format": "date-time"
         }
       }
     }

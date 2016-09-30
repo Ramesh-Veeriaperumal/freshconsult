@@ -1,0 +1,18 @@
+post:
+  tags: [conversation]
+  description: Create a Reply
+  parameters:
+    - name: data
+      in: body
+      required: true
+      schema:
+        $ref: '#/definitions/note_reply_input'
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/note_reply'
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'

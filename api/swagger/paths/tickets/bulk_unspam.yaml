@@ -1,7 +1,6 @@
 put:
-  tags: [contact]
-  summary: Bulk Delete
-  description: Bulk delete contactssss
+  summary: Bulk Unspam
+  tags: [ticket]
   parameters:
     - name: data
       in: body

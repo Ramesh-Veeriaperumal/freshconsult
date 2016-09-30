@@ -31,3 +31,22 @@ get:
       description: Success
       schema:
         $ref: '#/definitions/array_of_contacts'
+
+post:
+  tags: [contact]
+  description: Create a contact
+  parameters:
+    - name: data
+      in: body
+      required: true
+      schema:
+        $ref: '#/definitions/contact_input'
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/extended_contact'
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'

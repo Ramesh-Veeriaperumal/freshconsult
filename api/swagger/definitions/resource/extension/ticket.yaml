@@ -1,0 +1,28 @@
+type: object
+allOf:
+  - $ref: '#/definitions/extension_generic'
+  - properties:
+      cc_emails:
+        type: array
+        items:
+          type: string
+      fwd_emails:
+        type: array
+        items:
+          type: string
+      reply_cc_emails:
+        type: array
+        items:
+          type: string
+      fr_escalated:
+        type: boolean
+      spam:
+        type: boolean
+      to_emails:
+        type: array
+        items:
+          type: string
+      is_escalated:
+        type: boolean
+      description_text:
+        type: string

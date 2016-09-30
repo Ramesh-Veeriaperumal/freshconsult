@@ -1,0 +1,8 @@
+type: object
+allOf:
+  - $ref: '#/definitions/contact'
+  - properties:
+      view_all_tickets:
+        type: boolean
+      avatar_id:
+        type: number

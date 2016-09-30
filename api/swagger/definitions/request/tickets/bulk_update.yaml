@@ -1,0 +1,8 @@
+type: object
+properties:
+  ids:
+    type: array
+    items:
+      type: id
+  properties:
+    $ref: '#/definitions/ticket_update_input'

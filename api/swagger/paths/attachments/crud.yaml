@@ -1,0 +1,20 @@
+post:
+  tags: [attachment]
+  summary: Create a draft attachment
+  parameters:
+    - name: data
+      in: body
+      required: true
+      schema:
+        $ref: '#/definitions/attachment_create_input'
+  responses:
+    201:
+      description: Success
+      schema:
+        $ref: '#/definitions/attachment'
+    403:
+      description: Access denied
+    400:
+      description: Bad request error
+      schema:
+        $ref: '#/definitions/bad_request_error'

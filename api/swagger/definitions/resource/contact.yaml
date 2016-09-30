@@ -1,18 +1,14 @@
 
 type: object
 properties:
-  active:
-    type: boolean
   address:
     type: string
   company_id:
-    type: number
+    type: id
   description:
     type: string
   email:
     type: string
-  id:
-    type: number
   job_title:
     type: string
   language:
@@ -27,11 +23,15 @@ properties:
     type: string
   twitter_id:
     type: string
-  created_at:
+  other_emails:
+    type: array
+    items:
+      type: string
+  tags:
+    type: array
+    items:
+      type: string
+  avatar:
     type: string
-    format: date-time
-  updated_at:
-    type: string
-    format: date-time
   custom_fields:
     $ref: '#/definitions/custom_field'

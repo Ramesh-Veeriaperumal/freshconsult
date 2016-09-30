@@ -1,0 +1,16 @@
+put:
+  tags: [ticket]
+  summary: Restore Ticket
+  parameters:
+    - name: id
+      in: path
+      type: number
+      description: Display ID of ticket
+      required: true
+  responses:
+    204:
+      description: Success
+    404:
+      description: Ticket not found
+    403:
+      description: Access denied
