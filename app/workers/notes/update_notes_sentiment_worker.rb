@@ -23,7 +23,7 @@ module Notes
         puts "Account: #{@account}"
         puts "Ticket: #{@ticket}"
         puts "Note: #{@note}"
-        puts "Note_body: #{@note_body}"
+        puts "Note Body: #{@note.body}"
 
         con = Faraday.new(SentimentAppConfig["host"]) do |faraday|
             faraday.response :json, :content_type => /\bjson$/                # log requests to STDOUT
@@ -53,7 +53,7 @@ module Notes
                   :account_id =>@account.id.to_s,
                   :ticket_id => @ticket.id.to_s,
                   :note_id => @note_id,
-                  :text => @note_body,
+                  :text => @note.body,
                   :source => @ticket.source.to_s
                 }
       }

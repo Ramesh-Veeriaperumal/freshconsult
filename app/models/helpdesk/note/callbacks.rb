@@ -73,8 +73,7 @@ class Helpdesk::Note < ActiveRecord::Base
     puts "Came insode update_notes_sentiment"
     Notes::UpdateNotesSentimentWorker.perform_async(
           { :note_id => id,
-            :ticket_id => notable.display_id,
-            :note_body => note_body_content.body }
+            :ticket_id => notable.id}
     )
   end
 
