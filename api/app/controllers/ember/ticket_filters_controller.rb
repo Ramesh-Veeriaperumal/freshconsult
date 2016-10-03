@@ -2,11 +2,6 @@ module Ember
   class TicketFiltersController < ApiApplicationController
     include AccessibleControllerMethods
 
-    REMOVE_QUERY_HASH = ['spam', 'deleted', 'monitored_by']
-    REMOVE_QUERY_CONDITIONS = ['spam', 'deleted']
-
-    WF_PREFIX = [:order, :order_type, :per_page]
-
     before_filter :has_permission?, only: [:update, :destroy]
 
     def index
@@ -49,6 +44,12 @@ module Ember
     end
 
     private
+
+      def validate_params
+        params[cname].permit(*CustomFilterConstants::INDEX_FIELDS)
+        @custom_ticket_filter = CustomTicketFilterValidation.new(params[cname])
+        render_errors(@custom_ticket_filter.errors, @custom_ticket_filter.error_options) unless @custom_ticket_filter.valid?
+      end
 
       def load_objects
         @items = scoper.my_ticket_filters(api_current_user).collect do |filter|
@@ -105,7 +106,7 @@ module Ember
           if filter[:id].eql?('raised_by_me')
             filter.merge(query_hash: Helpdesk::Filters::CustomTicketFilter.new.raised_by_me_filter)
           # We shouldn't show the query hash for these default filters
-          elsif REMOVE_QUERY_HASH.include?(filter[:id])
+          elsif CustomFilterConstants::REMOVE_QUERY_HASH.include?(filter[:id])
             filter
           else
             filter.merge(query_hash: Helpdesk::Filters::CustomTicketFilter::DEFAULT_FILTERS[filter[:id]])
@@ -114,7 +115,7 @@ module Ember
       end
 
       def has_permission?
-        if @item.is_a?(Helpdesk::Filters::CustomTicketFilter) && @item.accessible.user_id != api_current_user.id
+        unless @item.is_a?(Helpdesk::Filters::CustomTicketFilter) && @item.accessible.user_id == api_current_user.id
           render_request_error :access_denied, 403
         end
       end
@@ -143,7 +144,7 @@ module Ember
       def remove_query_conditions(item)
         # This is to be done in QueryHash
         item[:query_hash].select { |query| 
-          !REMOVE_QUERY_CONDITIONS.include?(query['condition'])
+          !CustomFilterConstants::REMOVE_QUERY_CONDITIONS.include?(query['condition'])
         }
       end
 
@@ -166,10 +167,10 @@ module Ember
       end
 
       def prefix_ff_params
-        WF_PREFIX.each do |key|
+        CustomFilterConstants::WF_PREFIX.each do |key|
           params[:ticket_filter]["wf_#{key}".to_sym] = params[:ticket_filter].delete(key) if params[:ticket_filter][key].present?
         end
-        params[:ticket_filter][:filter_name] = params[:name] if params[:name].present?
+        params[:ticket_filter][:filter_name] = params[:ticket_filter][:name] if params[:ticket_filter][:name].present?
       end
 
       def hasherized_params

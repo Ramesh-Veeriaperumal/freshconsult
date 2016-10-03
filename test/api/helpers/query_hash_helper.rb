@@ -18,17 +18,19 @@ module QueryHashHelper
       wf_order_type: "desc", 
       custom_ticket_filter: {
         visibility: {
-          visibility: "1", 
+          visibility: Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents], 
           user_id: User.current.id
         }
       }
     }
   end
 
-  def create_filter(custom_field)
-    condition = cf_query_hash(custom_field)
+  def create_filter(custom_field = nil)
     wf_filter_params = sample_filter_conditions
-    wf_filter_params[:data_hash] << condition
+    if custom_field
+      condition = cf_query_hash(custom_field)
+      wf_filter_params[:data_hash] << condition
+    end
     params = { filter_name: Faker::Name.name }.merge(wf_filter_params)
     wf_filter = Helpdesk::Filters::CustomTicketFilter.deserialize_from_params(params)
     wf_filter.visibility = params[:custom_ticket_filter][:visibility]
