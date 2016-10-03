@@ -26,6 +26,10 @@
   <% end %>
 </div>
 </div>
+<!-- For trial spam restriction -->
+<input type="hidden" id="trial_spam_error_msg" value="<%= t(:'flash.general.recipient_limit_exceeded', :limit =>get_trial_account_max_to_cc_threshold ) %>" />
+<input type="hidden" id="to_cc_spam_threshold" value=<%= get_trial_account_max_to_cc_threshold %> />
+<input type="hidden" id="is_trial_spam_account" value=<%= do_spam_check? &&free_admin_email_account? %> />
 <!-- Populate value if, ticket created form forum -->
 <input type="hidden" id="topic_id_stub" value="<%= params[:topic_id] %>" />
 <% if params[:topic_id] %>

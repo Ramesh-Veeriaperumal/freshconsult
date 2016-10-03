@@ -27,12 +27,12 @@ class Helpdesk::TicketsController < ApplicationController
   include Helpdesk::SpamAccountConstants
 
   before_filter :redirect_to_mobile_url
-  skip_before_filter :check_privilege, :verify_authenticity_token, :only => :show
+  skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:show,:suggest_tickets]
   before_filter :portal_check, :verify_format_and_tkt_id, :only => :show
   before_filter :check_compose_feature, :check_trial_outbound_limit, :only => :compose_email
 
   before_filter :find_topic, :redirect_merged_topics, :only => :new
-  around_filter :run_on_slave, :only => [:user_ticket, :activities]
+  around_filter :run_on_slave, :only => [:user_ticket, :activities, :suggest_tickets]
   before_filter :save_article_filter, :only => :index
   around_filter :run_on_db, :only => [:custom_search, :index, :full_paginate]
 
@@ -65,7 +65,7 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :load_ticket,
     :only => [:edit, :update, :execute_scenario, :close, :change_due_by, :print, :clear_draft, :save_draft,
               :draft_key, :get_ticket_agents, :quick_assign, :prevnext, :status, :update_ticket_properties,
-              :activities, :activitiesv2, :activities_all, :unlink, :related_tickets, :ticket_association]
+              :activities, :activitiesv2, :activities_all, :unlink, :related_tickets, :ticket_association, :suggest_tickets]
   before_filter :load_ticket_with_notes, :only => [:show]
 
   before_filter :check_outbound_permission, :only => [:edit, :update]
@@ -100,6 +100,61 @@ class Helpdesk::TicketsController < ApplicationController
   after_filter  :set_adjacent_list, :only => [:index, :custom_search]
   before_filter :fetch_item_attachments, :only => [:create, :update]
   before_filter :load_tkt_and_templates, :only => :apply_template
+  before_filter :check_ml_feature, :only => [:suggest_tickets]
+
+  
+  def suggest_tickets
+    tickets = []
+    similar_tickets = get_similar_tickets
+    tickets = current_account.tickets.visible.preload(:ticket_old_body).permissible(current_user).reorder("field(id,#{similar_tickets.join(',')})").where(id:similar_tickets) if similar_tickets.present?
+    respond_to do |format|
+      format.json do
+        render :json => tickets
+      end
+    end
+  end
+
+  def get_similar_tickets
+    begin
+      con = Faraday.new(MlAppConfig["host"]) do |faraday|
+            faraday.response :json, :content_type => /\bjson$/                # log requests to STDOUT
+            faraday.adapter  Faraday.default_adapter  # make requests with Net::HTTP
+          end
+      response = con.post do |req|
+        req.url "/"+MlAppConfig["url"]
+        req.headers['Content-Type'] = 'application/json'
+        req.headers['Authorization'] = MlAppConfig["auth_key"]
+        req.options.timeout = MlAppConfig["timeout"]
+        req.body = generate_body_suggest_tickets
+      end
+      Rails.logger.info "Response from ML : #{response.body["result"]}"
+      response.body["result"]
+    rescue Exception => e
+      NewRelic::Agent.notice_error(e)
+      []
+    end
+  end
+
+  def generate_body_suggest_tickets
+    body =  {
+            :account_id =>current_account.id.to_s,
+            :ticket_id => @ticket.id.to_s,
+            :product_id => @ticket.product_id.nil? ? TicketConstants::NBA_NULL_PRODUCT_ID: @ticket.product_id,
+            :ticket_subject => @ticket.subject,
+            :ticket_description => @ticket.description,
+            :count =>MlAppConfig["ticket_count"].to_s,
+            :source => @ticket.source.to_s
+            }
+    
+    if current_user.group_ticket_permission
+      body[:filter_condiiton] = {:group_id=>current_user.agent_groups.pluck(:group_id),:responder_id=> [current_user.id]}
+    elsif current_user.assigned_ticket_permission
+       body[:filter_condiiton] = {:responder_id => [current_user.id]}
+    end
+   Rails.logger.info "Resquest from ML : #{body}"
+   body.to_json
+  end
+
 
   def user_ticket
     if params[:email].present?
@@ -1023,7 +1078,7 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def activitiesv2
-    if Account.current.launched?(:activity_ui) and Account.current.features?(:activity_revamp) and request.format != "application/json" and ACTIVITIES_ENABLED
+    if !Account.current.launched?(:activity_ui_disable) and Account.current.features_included?(:activity_revamp) and request.format != "application/json" and ACTIVITIES_ENABLED
       type = :tkt_activity
       @activities_data = new_activities(params, @item, type)
       @total_activities  ||=  @activities_data[:total_count]
@@ -1524,16 +1579,20 @@ class Helpdesk::TicketsController < ApplicationController
 
     def check_trial_customers_limit
       if ((current_account.id > get_spam_account_id_threshold) && (current_account.subscription.trial?) && (!ismember?(SPAM_WHITELISTED_ACCOUNTS, current_account.id)) && (Freemail.free?(current_account.admin_email)))
-        if @item.source == Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:outbound_email]
-          cc_emails = get_email_array(params[:cc_emails])
-          to_email = get_email_array(params[:helpdesk_ticket][:email])
-          total_recipients = cc_emails | to_email
-          if (total_recipients.count ) > get_trial_account_max_to_cc_threshold
+        if (@item.source == Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:outbound_email] || @item.source == Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:phone])
+          if max_to_cc_threshold_crossed?
               flash[:error] = t(:'flash.general.recipient_limit_exceeded', :limit => get_trial_account_max_to_cc_threshold )
               redirect_to :back
           end
         end
       end
+    end
+
+    def max_to_cc_threshold_crossed?
+      cc_emails = get_email_array(params[:cc_emails])
+      to_email = get_email_array(params[:helpdesk_ticket][:email])
+      total_recipients = cc_emails | to_email
+      return (total_recipients.count  > get_trial_account_max_to_cc_threshold)
     end
 
     def build_ticket_body_attributes
@@ -1868,6 +1927,10 @@ class Helpdesk::TicketsController < ApplicationController
       recent_ids.compact!
       recent_ids
     end
+  end
+
+  def check_ml_feature
+    access_denied unless current_account.suggest_tickets_enabled? 
   end
 
 end

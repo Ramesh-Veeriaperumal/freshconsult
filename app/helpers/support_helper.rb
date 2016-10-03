@@ -114,7 +114,7 @@ module SupportHelper
 		output << %( <nav> )
 		if portal['can_submit_ticket_without_login']
 			output << %( <div>
-							<a href="#{ portal['new_ticket_url'] }" class="mobile-icon-nav-newticket new-ticket ellipsis">
+							<a href="#{ portal['new_ticket_url'] }" class="mobile-icon-nav-newticket new-ticket ellipsis" title="#{ I18n.t('header.new_support_ticket') }">
 								<span> #{ I18n.t('header.new_support_ticket') } </span>
 							</a>
 						</div>)
@@ -133,7 +133,7 @@ module SupportHelper
 			end
 		end
 		output << %(	<div>
-							<a href="#{ portal['tickets_home_url'] }" class="mobile-icon-nav-status check-status ellipsis">
+							<a href="#{ portal['tickets_home_url'] }" class="mobile-icon-nav-status check-status ellipsis" title="#{ I18n.t('header.check_ticket_status') }">
 								<span>#{ I18n.t('header.check_ticket_status') }</span>
 							</a>
 						</div> )
@@ -193,6 +193,7 @@ module SupportHelper
 						<h2 class="">#{ I18n.t('header.help_center') }</h2>
 						<form class="hc-search-form" autocomplete="off" action="#{ tab_based_search_url }" id="hc-search-form">
 							<div class="hc-search-input">
+								<label class="">#{ I18n.t('portal.search.placeholder') }</label>
 								<input placeholder="#{ I18n.t('portal.search.placeholder') }" type="text"
 									name="term" class="special" value="#{params[:term]}"
 						            rel="page-search" data-max-matches="10">
@@ -371,7 +372,12 @@ module SupportHelper
 	def ticket_label object_name, field
 		required = (field[:required_in_portal] && field[:editable_in_portal])
 		element_class = " #{required ? 'required' : '' } control-label #{field[:name]}-label #{"company_label" if field.field_type == "default_company" && @ticket.new_record?}"
-		label_tag "#{object_name}_#{field[:name]}", field[:label_in_portal].html_safe, :class => element_class
+		# adding :for attribute for requester(as email) element => to enable accessability
+		if field[:name] == "requester" 
+			label_tag "#{object_name}_#{field[:name]}", field[:label_in_portal].html_safe, :class => element_class, :for => "#{object_name}_email"
+		else 
+			label_tag "#{object_name}_#{field[:name]}", field[:label_in_portal].html_safe, :class => element_class
+		end
 	end
 
 	def ticket_form_element form_builder, object_name, field, field_value = "", html_opts = {}

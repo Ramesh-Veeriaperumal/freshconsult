@@ -116,6 +116,7 @@ es:
     creditcard: "Ingrese numero de targeta de credito"
     equalTo: "Ingrese el mismo valor nuevamente"
     two_decimal_place_warning: "Value cannot have more than 2 decimal digits"
+    select_atleast_one: "Selecciona, al menos, una opción."
   confirm_delete_message: "Esta Ud. seguro de borrar a %{human_name}"
   reload: Recargar
   any: Cualquiera
@@ -157,8 +158,8 @@ es:
   captcha_verify_message: "Verificación incorrecta. Vuelve a intentarlo."
   recaptcha_verify_message: "Verificación incorrecta. Vuelve a intentarlo."
   recaptcha_require_message: "Se requiere una verificación."
-  your_email: "tu email"
-  your_feedback: "Su opinion"
+  your_email: "Tu correo electrónico"
+  your_feedback: "Tu opinión"
   please_wait: "Por favor espera..."
   filter_options:
     status: estado
@@ -2957,7 +2958,7 @@ es:
     downvote: "No"
     link: "Enviar comentario"
     down_vote_form_title: "¿Podrías decirnos como mejorar este artículo?"
-    downvote_feedback_messasge: "Lo sentimos fuimos poco utiles, por favor ayudanos a mejorar este articulo dejando tus ideas o comentarios"
+    downvote_feedback_messasge: "Lo sentimos, fuimos poco útiles, por favor ayúdanos a mejorar este artículo dejando tus ideas o comentarios"
   solutions:
     status:
       draft: Preliminar
@@ -4039,7 +4040,7 @@ es:
     feedback_message_1: "Necesita más información"
     feedback_message_2: "Difícil de comprender"
     feedback_message_3: "Contenido inútil o irrelevante"
-    feedback_message_4: "Link Perdido o Roto"
+    feedback_message_4: "Enlace roto"
     properties: Propiedades
     solution_title: Título
     via: "a través de"

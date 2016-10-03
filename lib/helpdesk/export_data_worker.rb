@@ -32,12 +32,10 @@ class Helpdesk::ExportDataWorker < Struct.new(:params)
       url = Rails.application.routes.url_helpers.download_file_url(@data_export.source,hash_file_name, 
                     :host => @current_account.host, 
                     :protocol => 'https')
-      DataExportMailer.send_later(:data_backup, {
-                                              :email => params[:email], 
-                                              :domain => params[:domain],
-                                              :host => @current_account.host,
-                                              :url =>  url
-                                            })
+      DataExportMailer.data_backup({:email => params[:email], 
+                                            :domain => params[:domain],
+                                            :host => @current_account.host,
+                                            :url =>  url})
       delete_zip_file zip_file_path  #cleaning up the directory
       @data_export.completed!
     rescue Exception => e

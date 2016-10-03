@@ -76,6 +76,7 @@ en:
     creditcard: "Please enter a valid credit card number."
     equalTo: "Please enter the same value again."
     two_decimal_place_warning: "Value cannot have more than 2 decimal digits"
+    select_atleast_one: "Select atleast one option."
   confirm_delete_message: Are you sure you want to delete the %{human_name}?
   reload: Reload
   any: Any
@@ -1593,7 +1594,24 @@ en:
         recharge_quantity: "Recharge quantity:"
         day_passes: "Day Passes"
         helptext: "Your day passes will Auto-recharge once the number of available day passes comes down to 2."
-    widget_config:
+        helptext: "Day passes will Auto-recharge when available day passes comes down to 2."
+        available_passes: "Available Day passes"
+        buy_passes: "Buy Day passes"
+        time_period: "Time Period:"
+        filtered_by: "Filtered by:"
+        agent: "Agent:"
+        days_filter: "Last %{days} days"
+        wait: "Please wait..."
+        usage_history: "Usage History"
+        all: "All"
+        date: "Date"
+        agent: "Agent"
+        email: "Email"
+        no_result: "No results found for selected options."
+        auto_recharge_notice: "Current auto recharge quantity is set to "
+        auto_renewal_enabled_notice: "Day pass auto renewal enabled."
+        auto_renewal_disabled_notice: "Day pass auto renewal disabled."
+    widget_config:    
       errors:
         invalid_requester: Invalid Requester
       index:
@@ -2084,7 +2102,7 @@ en:
     home:
       index:
         group: Groups
-        day_pass: Day Passes
+        day_pass: Day Pass
         business-hours: Business Hours
         title: Admin
         email-notifications: Email Notifications
@@ -2694,6 +2712,7 @@ en:
     round_robin: "automatic ticket assignment"
     none: "None"
     subject: "subject"
+    status: "Status"
     description: "description"
     set: "Set"
     tag:
@@ -3058,6 +3077,8 @@ en:
         new: "Sent email to group <strong>%{group_list}</strong>"
       email_to_agent:
         new: "Sent email to agent %{agent_list}"
+      property_delete:
+        new: "%{property} as <strong>%{property_value}</strong> as the %{property} <strong>%{deleted_property_value}</strong> was deleted"
   credit_card_info: Credit card information
   zendesk_backup_info: Select the Zendesk backup file downloaded from zendesk
   backup_error_msg: "The file exceeds the prescribed limit of 50MB, please <a href='#' id='import_request'>contact support</a> to proceed with the import."
@@ -5424,7 +5445,7 @@ en:
     hide_activities_tooltip: Hide activities
     activity_timestamp: "%{user_name} updated <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
     user_activity_timestamp: "%{user_name} updated <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
-    deleted_rule: "deleted rule - %{rule_name}"
+    deleted_rule: "Deleted rule - %{rule_name}"
     executed: " executed "
     performed: " performed "
     system_activity_timestamp: "<strong class='muted'>System</strong> %{system_rule} <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date}) "
@@ -10162,5 +10183,15 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     try_again: "Go to Ticket and try again"
     actions_alert: "File attachment in progress. Do you want to leave this page?"
     reminder: "You have unsaved content in this page. Do you want to leave this page?"
-    traffic_cop: Unable to send your last response. Ticket was updated with new replies by another agent.<a href="%{ticket_url}" data-pjax="body-container"> Please review their reply before sending your reply </a>.
+  ml:
+    similat_tickets_found: Similar Tickets found
+    no_suggestions: Oops! No suggestions.
+    error: Oops! Failed to generate similar ticket suggestions.
+    feed_back: Are these suggestions helpful?
+    feed_back_thanks: Thanks for the feedback!
+    feed_back_thanks_text: Thanks for your feedback. Please feel free to contact karthikkp@freshdesk.com for any further suggestions!
+    submit: Submit
+    show: Show
+    hide: Hide
+    suggestion_text: What can we improve? (Optional).
 

@@ -35,7 +35,14 @@ Sidekiq.configure_client do |config|
       "Reports::BuildNoActivity",
       "Social::PremiumFacebookWorker",
       "Social::PremiumTwitterWorker",
-      "Reports::NoActivityWorker"
+      "Reports::NoActivityWorker",
+      "SendgridDomainUpdates",
+      "DelayedJobs::ActiveAccountJob",
+      "DelayedJobs::FreeAccountJob",
+      "DelayedJobs::TrialAccountJob",
+      "DelayedJobs::PremiumAccountJob",
+      "DelayedJobs::DelayedAccountJob"
+
     ]
     chain.add Middleware::Sidekiq::Client::SetCurrentUser, :required_classes => [
       "Tickets::BulkScenario",
@@ -91,7 +98,13 @@ Sidekiq.configure_server do |config|
       "Reports::BuildNoActivity",
       "Social::PremiumFacebookWorker",
       "Social::PremiumTwitterWorker",
-      "Reports::NoActivityWorker"
+      "Reports::NoActivityWorker",
+      "SendgridDomainUpdates",
+      "DelayedJobs::ActiveAccountJob",
+      "DelayedJobs::FreeAccountJob",
+      "DelayedJobs::TrialAccountJob",
+      "DelayedJobs::PremiumAccountJob",
+      "DelayedJobs::DelayedAccountJob"
     ]
     chain.add Middleware::Sidekiq::Server::SetCurrentUser, :required_classes => [
       "Tickets::BulkScenario",
@@ -137,7 +150,13 @@ Sidekiq.configure_server do |config|
       "Reports::BuildNoActivity",
       "Social::PremiumFacebookWorker",
       "Social::PremiumTwitterWorker",
-      "Reports::NoActivityWorker"
+      "Reports::NoActivityWorker",
+      "SendgridDomainUpdates",
+      "DelayedJobs::ActiveAccountJob",
+      "DelayedJobs::FreeAccountJob",
+      "DelayedJobs::TrialAccountJob",
+      "DelayedJobs::PremiumAccountJob",
+      "DelayedJobs::DelayedAccountJob"
     ]
     chain.add Middleware::Sidekiq::Client::SetCurrentUser, :required_classes => [
       "Tickets::BulkScenario",

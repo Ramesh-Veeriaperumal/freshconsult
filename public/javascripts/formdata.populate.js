@@ -104,44 +104,47 @@ var PopulateFormData = PopulateFormData ||  (function(){
     var $wrapper = jQuery("[condition='"+val+"']");
     var $wrapperData = $wrapper.data(),
         dataArray = data[val].toString().split(",");
-    switch ($wrapperData.domtype) {
+    if($wrapperData){
+      switch ($wrapperData.domtype) {
 
-      case "nested_field":
-        // jQuery("[condition='"+$wrapperData.id+"']").children('select').val(dataArray).trigger('change', ['customTrigger']);
-         jQuery("[condition='"+$wrapperData.id+"']").children('select').val(dataArray).trigger('change', ['customTrigger']);
-        break;
+        case "nested_field":
+          // jQuery("[condition='"+$wrapperData.id+"']").children('select').val(dataArray).trigger('change', ['customTrigger']);
+           jQuery("[condition='"+$wrapperData.id+"']").children('select').val(dataArray).trigger('change', ['customTrigger']);
+          break;
 
-      case 'dropdown':
-          jQuery("[condition='"+$wrapperData.id+"']").find('input').prop('checked', false);
-          dataArray.each(function(val, index){
-              jQuery("[condition='"+$wrapperData.id+"']").find('input[value="'+val+'"]').prop('checked', true);
-          });
-        break;
-      case 'multi_select':
-        if(jQuery("#"+val).length == 0){
+        case 'dropdown':
+            jQuery("[condition='"+$wrapperData.id+"']").find('input').prop('checked', false);
+            dataArray.each(function(val, index){
+                jQuery("[condition='"+$wrapperData.id+"']").find('input[value="'+val+'"]').prop('checked', true);
+            });
+          break;
+        case 'multi_select':
+          if(jQuery("#"+val).length == 0){
+            jQuery("[condition='"+$wrapperData.id+"']").children('select').val(dataArray).trigger('change.select2');
+          }
+          else{
+            jQuery("#"+val).val(dataArray).trigger('change.select2');
+          }
+          break;
+        case 'association_type':
           jQuery("[condition='"+$wrapperData.id+"']").children('select').val(dataArray).trigger('change.select2');
-        }
-        else{
-          jQuery("#"+val).val(dataArray).trigger('change.select2');
-        }
-        break;
-      case 'association_type':
-        jQuery("[condition='"+$wrapperData.id+"']").children('select').val(dataArray).trigger('change.select2');
-        break;
-      case 'requester':
-      case 'customers':
-      case 'tags':
-        if(meta_data && meta_data[$wrapperData.id]){
-          jQuery("#"+$wrapperData.domtype+"_filter").select2('data', meta_data[$wrapperData.id]);
-        }
-        else{
-          jQuery("#"+$wrapperData.domtype+"_filter").select2('data','');
-        }
-        break;
-      default:
-          jQuery("#"+val).val(dataArray).trigger('change.select2');
+          break;
+        case 'requester':
+        case 'customers':
+        case 'tags':
+          if(meta_data && meta_data[$wrapperData.id]){
+            jQuery("#"+$wrapperData.domtype+"_filter").select2('data', meta_data[$wrapperData.id]);
+          }
+          else{
+            jQuery("#"+$wrapperData.domtype+"_filter").select2('data','');
+          }
+          break;
+        default:
+            jQuery("#"+val).val(dataArray).trigger('change.select2');
 
+      }
     }
+    
   }
 
 }());

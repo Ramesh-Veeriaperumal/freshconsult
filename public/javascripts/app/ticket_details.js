@@ -1038,6 +1038,7 @@ var scrollToError = function(){
 						if(eligibleForReply(_form)){
 							handleIEReply(_form);
 							submitTicketProperties();
+							removeFormChangedFlag();
 							return true;
 						}
 						changeStatusTo(currentStatus);
@@ -1062,6 +1063,7 @@ var scrollToError = function(){
 				if($.browser.msie || $.browser.msedge) {
 					if(eligibleForReply(_form)){
 						handleIEReply(_form);
+						removeFormChangedFlag();
 						return true;
 					}
 					return false;
@@ -1083,8 +1085,7 @@ var scrollToError = function(){
 			_form.find('input[type=submit]').prop('disabled', false);
 		}
 
-		// Remove formChanged field in the form on any submit
-		$(".form-unsaved-changes-trigger").each(function(){$(this).data("formChanged",false)});
+		removeFormChangedFlag();
 	});
 
 
@@ -1764,6 +1765,11 @@ var scrollToError = function(){
 		form.data("formChanged",true);
 	})
 
+	function removeFormChangedFlag(){
+		// Remove formChanged field in the form on any submit
+		$(".form-unsaved-changes-trigger").each(function(){$(this).data("formChanged",false)});
+	}
+
 	// Need to set this on global for Fjax.js
 	if(typeof customMessages=='undefined') customMessages = {};
 	customMessages.confirmNavigate = TICKET_DETAILS_DATA.confirm_navigation;
@@ -1838,6 +1844,7 @@ App.Tickets.TicketDetail = {
 		App.Tickets.Watcher.init();
 		App.Tickets.Merge_tickets.initialize();
 		App.TicketAttachmentPreview.init();
+		App.Tickets.NBA.init();
 
 		// Have tried in onLeave to off all the event binding. 
 		// But it cause errors in whole app, like modal, dropdown and some issues has occered.
@@ -1847,6 +1854,7 @@ App.Tickets.TicketDetail = {
 		App.Tickets.Merge_tickets.unBindEvent();
 		App.Tickets.Watcher.offEventBinding();
 		App.TicketAttachmentPreview.destroy();
+		App.Tickets.NBA.offEventBinding();
 	}
 };
 
@@ -1938,15 +1946,15 @@ App.Tickets.LimitEmails = {
 		}
 		return true;
 	},
-	appendErrorMessage(_form, append_to ,msg) {
+	appendErrorMessage: function(_form, append_to ,msg) {
 		if(!_form.find(".text-error").get(0)){
 			_form.find(append_to).append("<p class='cc-error-message text-error'> "+msg+"</p>")	
 		}
 	},
-	getNewlyAddedEmails() {
+	getNewlyAddedEmails: function() {
 		return this.new_cc_bcc_emails;
 	},
-	get_email_address(string) {
+	get_email_address: function(string) {
 		whole_match = /"?(.+?)"?\s+<(.+?)>/
 		res =  whole_match.exec(string)
 		if(res) {

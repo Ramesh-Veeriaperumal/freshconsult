@@ -112,7 +112,7 @@ module ChatHelper
     livechat_support_setting = {
           :widget_id => ChatConfig["support_account"]["widget_id"],
           :fc_id => ChatConfig["support_account"]["site_id"],
-          :nodeurl => ChatConfig["communication_url"],
+          :nodeurl => ChatConfig["support_account"]["livechat_server"],
           :environment => Rails.env,
           :weburl => ChatConfig["support_account"]["url"],
     }

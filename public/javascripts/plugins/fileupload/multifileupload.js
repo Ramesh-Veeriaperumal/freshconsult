@@ -748,7 +748,7 @@ Helpdesk = Helpdesk || {};
             return attachments;
         },
         // render existing files
-        renderExistingFiles: function(attachments, cloudfile, count, template, nscname,softdelete) {
+        renderExistingFiles: function(attachments, cloudfile, count, template, nscname, softdelete, ticket_topic) {
            
             // for changing ticket templates nsc param
             if (typeof template == "undefined") {
@@ -772,6 +772,7 @@ Helpdesk = Helpdesk || {};
                 template: template,
                 nscname: nscname,
                 softdelete: softdelete,
+                ticket_topic: ticket_topic,
             }).appendTo(".existing-file-list[data-count='" + count + "']");
             // cloud files
             $("#attachment-template").tmpl({
@@ -781,6 +782,7 @@ Helpdesk = Helpdesk || {};
                 template: template,
                 nscname: nscname,
                 softdelete: softdelete,
+                ticket_topic: ticket_topic,
             }).appendTo(".existing-file-list[data-count='" + count + "']");
         },
         //on  note attachment delete

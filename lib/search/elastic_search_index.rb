@@ -9,14 +9,14 @@ module Search::ElasticSearchIndex
         SearchSidekiq::UpdateSearchIndex.perform_async({ :klass_name => self.class.name, 
                                                           :id => self.id }) if ES_ENABLED #and !queued?
 
-        add_to_es_count if (self.is_a?(Helpdesk::TicketTemplate)) && Account.current.launched?(:countv2_template_write)
+        add_to_es_count if (self.is_a?(Helpdesk::TicketTemplate))
       end
 
       def remove_es_document
         SearchSidekiq::RemoveFromIndex::Document.perform_async({ :klass_name => self.class.name, 
                                                                   :id => self.id }) if ES_ENABLED
 
-        remove_from_es_count if (self.is_a?(Helpdesk::TicketTemplate)) && Account.current.launched?(:countv2_template_write)
+        remove_from_es_count if (self.is_a?(Helpdesk::TicketTemplate))
       end
 
       def search_alias_name

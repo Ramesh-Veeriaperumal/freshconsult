@@ -59,6 +59,12 @@ class UserDrop < BaseDrop
 		@company ||= @source.company if @source.company
 	end
 
+	def formatted_timezone
+		Time.use_zone(source.time_zone) {
+			Time.zone.to_s
+		}
+	end
+
 	# !TODO This may be deprecated on a later release
 	# Removed reference from placeholders UI
 	def company_name

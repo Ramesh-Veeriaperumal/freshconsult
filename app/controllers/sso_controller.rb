@@ -28,7 +28,10 @@ class SsoController < ApplicationController
         curr_time = (DateTime.now.to_f * 1000).to_i
         if(random_hash == params['s'] and curr_time <= expiry)
           user_session = curr_user.account.user_sessions.new(curr_user)
-          user_session.web_session = true unless is_native_mobile?
+          unless is_native_mobile?
+            user_session.web_session = true 
+            session.delete :_csrf_token if session.has_key?(:_csrf_token)
+          end
           kv_store.remove_key
           facebook_redirect = '/facebook/support/home' if params[:portal_type] == 'facebook'
           if user_session.save
@@ -95,7 +98,10 @@ class SsoController < ApplicationController
 
     def create_user_session(protocol)
       @user_session = current_account.user_sessions.new(@current_user)
-      @user_session.web_session = true unless is_native_mobile?
+      unless is_native_mobile?
+        @user_session.web_session = true 
+        session.delete :_csrf_token if session.has_key?(:_csrf_token)
+      end
       if @user_session.save
         return unless grant_day_pass
         if is_native_mobile?

@@ -9,6 +9,9 @@
 //= require app/template/ticket_template.jst.ejs
 //= require app/ticket_template.js
 //= require app/watcher.js
+//= require tickets/templates/suggest-ticket-cards.jst.ejs
+//= require tickets/templates/suggest-ticket-cards-navigation.jst.ejs
+//= require app/nba_suggestions.js
 //= require app/ca_ticket_view.js
 //= require tickets/templates/attachment-viewer.jst.ejs
 //= require app/ticket_attachment_viewer.js

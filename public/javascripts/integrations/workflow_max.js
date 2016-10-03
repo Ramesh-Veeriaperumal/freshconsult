@@ -223,7 +223,7 @@ WorkflowMaxWidget.prototype = {
 					entity_name: "request",
 					accept_type: "application/xml",
 					method: "get", 
-					rest_url: "/job.api/tasks"+this.auth_keys,
+					rest_url: "job.api/get/"+$("workflow-max-timeentry-jobs").value+this.auth_keys,
 					on_success: function(evt){
 						isExists = this.validateResponse(evt);
 						if(!isExists)
@@ -304,7 +304,7 @@ WorkflowMaxWidget.prototype = {
 			} //if validateinput ends
 			return false;
 		} //if display none ends
-},
+    },
 
 	handleTimeEntrySuccess:function(resData) {
 		resXml = resData.responseXML;
@@ -1026,36 +1026,18 @@ WorkflowMaxWidget.prototype = {
 				});
 	},
 
-	validateResponse:function(evt)
-	{
-		this.jobs = evt.responseXML;
-		job_list = XmlUtil.extractEntities(this.jobs, "Job"); 
-		if(job_list.length)
-		{
-			for(var i=0;i<job_list.length;i++) 
-			{
-				job_node = job_list[i];
-				job_id = XmlUtil.getNodeValue(job_node, "ID");
-				if(job_id == $("workflow-max-timeentry-jobs").value)
-				{
-					task_list = XmlUtil.extractEntities(job_node, "Task");
-						if(task_list.length)
-						{
-							for(var k=0; k<task_list.length; k++)
-							{
-								task_node = task_list[k];
-								task_id = XmlUtil.getNodeValue(task_node, "ID");
-								if(task_id == $("workflow-max-timeentry-tasks").value)
-								{
-									return true;
-								}
-							}
-						}
-					}		
-				}
-				return false;
-			}
-
+	validateResponse:function(evt){
+      task_list = XmlUtil.extractEntities(evt.responseXML, "Task"); 
+      if(task_list.length){
+        for(var k=0; k<task_list.length; k++){
+          task_node = task_list[k];
+          task_id = XmlUtil.getNodeValue(task_node, "ID");
+          if(task_id == $("workflow-max-timeentry-tasks").value){
+            return true;
+          }
+        }
+      }
+      return false;
 	},
 
 	getTaskId:function(evt)

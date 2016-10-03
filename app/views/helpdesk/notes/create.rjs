@@ -3,7 +3,7 @@ show_ajax_flash(page)
 
 if params[:showing] == 'activities'
     @total_activities =  @parent.activities_count
-    if Account.current.launched?(:activity_ui)
+    if !Account.current.launched?(:activity_ui_disable) and Account.current.features_included?(:activity_revamp)
     	page.insert_html :bottom, 'all_activities', render(:partial => "helpdesk/tickets/show/custom_activity", :collection => @activities)
     else
     	page.insert_html :bottom, 'all_activities', render(:partial => "helpdesk/tickets/show/activity", :collection => @activities)

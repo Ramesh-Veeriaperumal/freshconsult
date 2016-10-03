@@ -298,6 +298,8 @@ module Helpdesk::TicketsHelper
         # Adding <p> tag for the IE9 text not shown issue
         default_forward = (signature.blank?)? "<p/><div>#{forward_email_template}</div>" : "<p/><div>#{forward_email_template}<br/>#{signature}</div>"
       end
+    else
+      default_forward = (signature.blank?)? "<p/>" : "<p/><p><br></br></p><p></p><p></p><div>#{signature}</div>"
     end 
   
     default_forward
@@ -515,6 +517,14 @@ module Helpdesk::TicketsHelper
 
   def autorefresh_socket_host
     "#{request.protocol}#{NodeConfig["socket_autorefresh_host"]}"
+  end
+
+  def agentcollision_alb_socket_host
+    "#{request.protocol}#{NodeConfig["socket_host_new"]}"
+  end
+
+  def autorefresh_alb_socket_host
+    "#{request.protocol}#{NodeConfig["socket_autorefresh_host_new"]}"
   end
 
   def agent_collision_index_channel
