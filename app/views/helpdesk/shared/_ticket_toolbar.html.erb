@@ -248,8 +248,12 @@
       endDate = "<%= formated_date(Time.now, Helpdesk::TicketsExportHelper::EXPORT_DATE_FORMAT)%>";
     }
     jQuery("#date_filter").trigger('change');
-    jQuery('#start_date').val(startDate);
-    jQuery('#end_date').val(endDate);
+    <!-- jQuery('#start_date').val(startDate); -->
+    jQuery('#start_date').attr("value", startDate);
+    jQuery('#start_date_clone').attr("value", startDate);
+    <!-- jQuery('#end_date').val(endDate); -->
+    jQuery('#end_date').attr("value", endDate);
+    jQuery('#end_date_clone').attr("value", endDate);
   };
 
   cleanupParams = function (association) {
