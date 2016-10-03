@@ -1379,10 +1379,6 @@ Helpkit::Application.routes.draw do
     match '/search/related_solutions/ticket/:ticket', to: 'search/v2/solutions#related_solutions',  via: :get, constraints: { format: /(html|js)/ }
     match '/search/search_solutions/ticket/:ticket',  to: 'search/v2/solutions#search_solutions',   via: :get, constraints: { format: /(html|js)/ }
     match '/search/tickets/filter/:search_field',     to: 'search/v2/tickets#index',                via: :post
-    
-    # Linked ticket routes
-    match '/search/ticket_associations/filter/:search_field', to: 'search/v2/ticket_associations#index'
-    match '/search/ticket_associations/recent_trackers',      to: 'search/v2/ticket_associations#recent_trackers', via: :post
 
     match '/support/search',                   to: 'support/search_v2/spotlight#all',               via: :get
     match '/support/search/tickets',           to: 'support/search_v2/spotlight#tickets',           via: :get
@@ -1424,7 +1420,6 @@ Helpkit::Application.routes.draw do
         end
       end
       resources :merge_contacts, :only => :index
-      resources :ticket_associations, :only => [:index, :recent_trackers]
     end
 
     resources :home, :only => :index do

@@ -13,7 +13,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     @@esv2_columns ||= [:subject, :description, :requester_id, :to_emails, :cc_email, :priority, 
                       :status, :ticket_type, :responder_id, :group_id, :source, :due_by, 
                       :frDueBy, :spam, :deleted, :product_id, :status_stop_sla_timer, :status_deleted,
-                      :tags, :association_type
+                      :tags
                     ].concat(esv2_ff_columns)
   end
 
@@ -32,7 +32,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
       :methods => [
                     :company_id, :tag_names, :tag_ids, :watchers, :status_stop_sla_timer, 
                     :status_deleted, :product_id, :trashed, :es_cc_emails, :es_fwd_emails,
-                    :closed_at, :resolved_at, :to_emails, :association_type
+                    :closed_at, :resolved_at, :to_emails
                   ],
       :only => [
                   :requester_id, :responder_id, :status, :source, :spam, :deleted, 
