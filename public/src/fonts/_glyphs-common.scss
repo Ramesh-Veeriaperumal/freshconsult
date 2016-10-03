@@ -273,8 +273,7 @@ i.#{$font-class-name}twitter{
 // -----------------------------------------------------------------------------------------------
 // 											Admin Chat Settings 		
 // -----------------------------------------------------------------------------------------------
-.prechat_form,
-.missed_chat_form{
+.prechat_form{
 	.inline-field{
 		.#{$font-class-name}rearrange{
 			@include float(left);
