@@ -118,12 +118,15 @@ class Va::Action
       Account.current.users.where(id: filtered_user_ids).each do |user|
         subscription = act_on.account.ticket_subscriptions.build(:user_id => user.id)
         subscription.ticket_id = act_on.id
-        if act_on.agent_performed?(user) && subscription.save
-          watchers.merge!({user.id => user.name})
-          Helpdesk::WatcherNotifier.send_later(:deliver_notify_new_watcher, 
-                                                act_on, 
-                                                subscription, 
-                                                "automations rule")
+        if act_on.agent_performed?(user)
+          subscription_saved = Sharding.run_on_master { subscription.save }
+          if subscription_saved
+            watchers.merge!({user.id => user.name})
+            Helpdesk::WatcherNotifier.send_later(:deliver_notify_new_watcher, 
+                                                  act_on, 
+                                                  subscription, 
+                                                  "automations rule")
+          end
         end
       end
       record_action(act_on, watchers) if watchers.present?
