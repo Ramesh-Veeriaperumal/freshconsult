@@ -9,7 +9,7 @@ if @daypass_history.present?%>
     <%@daypass_history.each do |day_pass|%>
       <tr>
         <td class="muted"><%=formated_date(day_pass.granted_on, {:include_year => true, :include_weekday => false})%></td>
-        <td><a href="/contacts/<%=day_pass.user.id%>"><%=day_pass.user.name%></a></td>
+        <td><a href="/users/<%=day_pass.user.id%>"><%=day_pass.user.name%></a></td>
         <td class="muted"><%=day_pass.user.email%></td>
       </tr>
     <%end%>
