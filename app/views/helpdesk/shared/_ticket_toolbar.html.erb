@@ -1,4 +1,4 @@
-  <table class="tickets btn-collapse" width="100%" data-show-by-default="false" data-class-for-btn-wrapper="inline-block" data-calc-parent-width-on=".bulk_action_buttons" data-button-text="<%= t("more") %>">
+  <table class="tickets btn-collapse" width="100%" data-set-disabled = "disabled" data-show-by-default="false" data-class-for-btn-wrapper="inline-block" data-calc-parent-width-on=".bulk_action_buttons" data-button-text="<%= t("more") %>">
 	  <thead>
 	  	<tr>
         <th class="priority-border"></th>
@@ -77,7 +77,7 @@
             <input class="btn tooltip" title="<%=t('undelete')%>"
                 onclick="helpdesk_submit('/helpdesk/tickets/multiple/restore', 'put');"
                 type="button" value="<%=t('undelete')%>" disabled="disabled">
-            <input class="btn tooltip" title='<%= t('ticket.delete_forever') %>'
+            <input class="btn tooltip hide_on_collapse" title='<%= t('ticket.delete_forever') %>'
                 onclick="helpdesk_submit('/helpdesk/tickets/delete_forever', 'delete');"
                 type="button" value="<%=t('ticket.delete_forever')%>"
                 disabled="disabled" data-keybinding="<%= shortcut('ticket_list.delete') %>"
@@ -87,7 +87,7 @@
                 onclick="helpdesk_submit('/helpdesk/tickets/multiple/unspam', 'put');" type="button" 
                 value="<%=t('ticket.unflag_spam')%>" disabled="disabled" 
                 data-keybinding="<%= shortcut('ticket_list.spam') %>" data-highlight="true">
-                <input class="btn tooltip" title='<%= t('ticket.delete_forever') %>' 
+                <input class="btn tooltip hide_on_collapse" title='<%= t('ticket.delete_forever') %>' 
                     onclick="helpdesk_submit('/helpdesk/tickets/delete_forever_spam', 'delete');" 
                     type="button" value="<%=t('ticket.delete_forever')%>" 
                     disabled="disabled" data-keybinding="<%= shortcut('ticket_list.delete') %>"
@@ -248,8 +248,12 @@
       endDate = "<%= formated_date(Time.now, Helpdesk::TicketsExportHelper::EXPORT_DATE_FORMAT)%>";
     }
     jQuery("#date_filter").trigger('change');
-    jQuery('#start_date').val(startDate);
-    jQuery('#end_date').val(endDate);
+    <!-- jQuery('#start_date').val(startDate); -->
+    jQuery('#start_date').attr("value", startDate);
+    jQuery('#start_date_clone').attr("value", startDate);
+    <!-- jQuery('#end_date').val(endDate); -->
+    jQuery('#end_date').attr("value", endDate);
+    jQuery('#end_date_clone').attr("value", endDate);
   };
 
   cleanupParams = function (association) {

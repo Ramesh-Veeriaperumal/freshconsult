@@ -1038,6 +1038,7 @@ var scrollToError = function(){
 						if(eligibleForReply(_form)){
 							handleIEReply(_form);
 							submitTicketProperties();
+							removeFormChangedFlag();
 							return true;
 						}
 						changeStatusTo(currentStatus);
@@ -1062,6 +1063,7 @@ var scrollToError = function(){
 				if($.browser.msie || $.browser.msedge) {
 					if(eligibleForReply(_form)){
 						handleIEReply(_form);
+						removeFormChangedFlag();
 						return true;
 					}
 					return false;
@@ -1083,8 +1085,7 @@ var scrollToError = function(){
 			_form.find('input[type=submit]').prop('disabled', false);
 		}
 
-		// Remove formChanged field in the form on any submit
-		$(".form-unsaved-changes-trigger").each(function(){$(this).data("formChanged",false)});
+		removeFormChangedFlag();
 	});
 
 
@@ -1763,6 +1764,11 @@ var scrollToError = function(){
 		var form = $(event.target).parents('.form-unsaved-changes-trigger');
 		form.data("formChanged",true);
 	})
+
+	function removeFormChangedFlag(){
+		// Remove formChanged field in the form on any submit
+		$(".form-unsaved-changes-trigger").each(function(){$(this).data("formChanged",false)});
+	}
 
 	// Need to set this on global for Fjax.js
 	if(typeof customMessages=='undefined') customMessages = {};

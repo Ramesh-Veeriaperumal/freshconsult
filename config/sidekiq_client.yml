@@ -128,6 +128,12 @@ defaults: &defaults
     - [round_robin_capping]
     - [assign_tickets_to_agents]
     - [modify_ticket_status]
+    - [active_account_jobs]
+    - [free_account_jobs]
+    - [premium_account_jobs]
+    - [trial_account_jobs]
+    - [delayed_jobs]
+
 development:
   <<: *defaults
 

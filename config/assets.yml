@@ -115,6 +115,7 @@ javascripts:
     - public/javascripts/helpdesk/multifile_upload.js
     - public/javascripts/frameworks/plugins/jquery.nested_select_tag.js
     - public/javascripts/frameworks/socket.io-1.2.1.js
+    - public/javascripts/frameworks/socket.io-1.4.5.js
     # - public/javascripts/frameworks/faye.js
     - public/javascripts/frameworks/socket.io-agent.js
     - public/javascripts/helpdesk/socket_agent.js

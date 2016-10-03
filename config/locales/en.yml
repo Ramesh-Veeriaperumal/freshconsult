@@ -1594,7 +1594,24 @@ en:
         recharge_quantity: "Recharge quantity:"
         day_passes: "Day Passes"
         helptext: "Your day passes will Auto-recharge once the number of available day passes comes down to 2."
-    widget_config:
+        helptext: "Day passes will Auto-recharge when available day passes comes down to 2."
+        available_passes: "Available Day passes"
+        buy_passes: "Buy Day passes"
+        time_period: "Time Period:"
+        filtered_by: "Filtered by:"
+        agent: "Agent:"
+        days_filter: "Last %{days} days"
+        wait: "Please wait..."
+        usage_history: "Usage History"
+        all: "All"
+        date: "Date"
+        agent: "Agent"
+        email: "Email"
+        no_result: "No results found for selected options."
+        auto_recharge_notice: "Current auto recharge quantity is set to "
+        auto_renewal_enabled_notice: "Day pass auto renewal enabled."
+        auto_renewal_disabled_notice: "Day pass auto renewal disabled."
+    widget_config:    
       errors:
         invalid_requester: Invalid Requester
       index:
@@ -2085,7 +2102,7 @@ en:
     home:
       index:
         group: Groups
-        day_pass: Day Passes
+        day_pass: Day Pass
         business-hours: Business Hours
         title: Admin
         email-notifications: Email Notifications
@@ -5428,7 +5445,7 @@ en:
     hide_activities_tooltip: Hide activities
     activity_timestamp: "%{user_name} updated <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
     user_activity_timestamp: "%{user_name} updated <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
-    deleted_rule: "deleted rule - %{rule_name}"
+    deleted_rule: "Deleted rule - %{rule_name}"
     executed: " executed "
     performed: " performed "
     system_activity_timestamp: "<strong class='muted'>System</strong> %{system_rule} <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date}) "

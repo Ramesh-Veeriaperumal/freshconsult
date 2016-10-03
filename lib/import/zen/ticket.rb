@@ -3,6 +3,7 @@ module Import::Zen::Ticket
  
   ZENDESK_TICKET_TYPES = {0 => "No Type Set", 1 => "Question", 2 => "Incident", 3 => "Problem", 4 => "Task"}                          
   ZENDESK_TICKET_STATUS = {1 => 2,  2=> 3, 3=> 4, 4 =>5 }         
+  ARCHIVED_TICKET_STATUS = 5      
 
  class Attachment < Import::FdSax
     element :url
@@ -49,6 +50,7 @@ def save_ticket ticket_xml
   increment_key 'tickets_completed'
 
   ticket_prop = TicketProp.parse(ticket_xml)    
+  return if ticket_prop.status.to_i.eql?(ARCHIVED_TICKET_STATUS)
   requester = @current_account.all_users.find_by_import_id(ticket_prop.requester_id)
   return unless requester
   priority_id = ticket_prop.priority_id.to_i() unless ticket_prop.priority_id.blank?

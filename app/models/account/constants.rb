@@ -126,7 +126,7 @@ class Account < ActiveRecord::Base
   FD_NODE_FEATURES = ['cti']
 
   # List of Launchparty features available in code
-  LAUNCHPARTY_FEATURES = [:activity_ui, :admin_dashboard, :agent_conference, :agent_dashboard, :agent_new_ticket_cache, :api_search_beta, 
+  LAUNCHPARTY_FEATURES = [:activity_ui_disable, :admin_dashboard, :agent_conference, :agent_dashboard, :agent_new_ticket_cache, :api_search_beta, 
                           :autopilot_headsup, :autoplay, :delayed_dispatchr_feature, 
                           :enable_old_sso, :es_count_reads, :es_count_writes, :es_down, :es_tickets, :es_v2_reads, :fb_msg_realtime, 
                           :force_index_tickets, :freshfone_call_tracker, :freshfone_new_notifications, :gamification_perf, 

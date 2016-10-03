@@ -25,7 +25,7 @@ class Widgets::FeedbackWidgetsController < SupportController
   end
 
   def create
-    check_captcha = params[:check_captcha] == "true"
+    check_captcha = params[:check_captcha] == "true" || (current_account && current_account.launched?(:feedback_widget_captcha))
     widget_response = {}
 
     if params[:meta].present?

@@ -15,9 +15,8 @@ var CollapseButton = function(element, options){
 	this.options = $.extend({}, $.fn.collapseButton.defaults, options, $(element).data());
 	this.collapseContainer = $(element).find('.collapse-content')
 	this.buttonContent = "";
-
 	this.template = '<div class="btn-group" id="more-btn">' +
-						'<a class="btn dropdown-toggle" data-toggle="dropdown"> ' +  this.options.buttonText +
+						'<a class="btn dropdown-toggle '+ (this.options.setDisabled || '') + '" data-toggle="dropdown"'+  (this.options.setDisabled || '') +  '>'  + this.options.buttonText +
 							'<span class="caret"></span>' +
 						'</a>' +
 						'<ul class="dropdown-menu" id="collapse-list" role="menu" style="display:none" data-domhelper-name="more-collapse-list"></ul>' +

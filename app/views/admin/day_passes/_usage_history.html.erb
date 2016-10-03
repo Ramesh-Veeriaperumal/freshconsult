@@ -1,0 +1,35 @@
+<%
+if @daypass_history.present?%>
+  <table class = "table table-bordered daypass_table">
+    <tr>
+      <th><%=t("admin.day_passes.index.date")%></th>
+      <th><%=t("admin.day_passes.index.agent")%></th>
+      <th><%=t("admin.day_passes.index.email")%></th>
+    </tr>
+    <%@daypass_history.each do |day_pass|%>
+      <tr>
+        <td class="muted"><%=formated_date(day_pass.granted_on, {:include_year => true, :include_weekday => false})%></td>
+        <td><a href="/contacts/<%=day_pass.user.id%>"><%=day_pass.user.name%></a></td>
+        <td class="muted"><%=day_pass.user.email%></td>
+      </tr>
+    <%end%>
+  </table>
+
+    <div class="toolbar">
+       <%=will_paginate @daypass_history,
+          :params => {:controller => "day_passes", :action => "day_pass_history_filter"},
+          :renderer => BootstrapPaginationRenderer,
+          :previous_label => "<b class='arrow-left'></b>",
+          :next_label => "<b class='arrow-right'></b>",
+          :class => "pagination pagination-centered"%>
+    </div>
+
+<%else%>
+  <div class="passes-available-container daypass-no-result">
+    <div class="mt30 muted"><%=t("admin.day_passes.index.no_result")%></div>
+  </div>
+<%end%>
+
+<script type="text/javascript">
+  jQuery("#process-request").hide();
+</script>
