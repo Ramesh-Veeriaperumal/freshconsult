@@ -195,7 +195,7 @@
 
 		// Form validation any form append to the dom will be tested via live query and then be validated via jquery
 		$("form[rel=validate]").livequery(function(ev){
-			var config = {
+			$(this).validate({
 				errorPlacement: function(error, element) {
 		          if (element.prop("type") == "checkbox")
 		            error.insertAfter(element.parent());
@@ -240,14 +240,7 @@
 			  	    	form.submit()
 			  	    }
 				}
-			};
-
-				jQuery.validator.addClassRules("date", {
-				date: false
-				});			
-
-
-		$(this).validate(config);
+			})
 		})
 		
 		var layzr;
@@ -285,66 +278,42 @@
 
     	// Uses the date format specified in the data attribute [date-format], else the default one 'yy-mm-dd'
 		$("input.datepicker_popover").livequery(function() {
+			var dateFormat = 'yy-mm-dd';
+			if($(this).data('date-format')) {
+				dateFormat = $(this).data('date-format');
+			}
+			$(this).datepicker({
+				dateFormat: dateFormat,
+				 changeMonth: true,
+                 changeYear: true,
+			});
+			 if($(this).data('showImage')) {
+		        $(this).datepicker('option', 'showOn', "both" );
+		        $(this).datepicker('option', 'buttonText', "<span class='icon-calendar'></span>" );
+		      }
+		      // custom clear button
+			var clearButton =  jQuery(this).siblings('.dateClear');
+			if(clearButton.length === 0) {
+				 clearButton = jQuery('<span class="dateClear" title="Clear Date"><i class="ficon-cross" ></i></div>');
+				jQuery(this).after(clearButton);
+			}
+			if(jQuery(this).val().length === 0) {
+				clearButton.hide();
+			}
+			jQuery(this).on("change",function(){
+				if(jQuery(this).val().length === 0) {
+					clearButton.hide();
+				}
+				else {
+					clearButton.show();
+				}
 
+			});
+			clearButton.on('click', function(e) {
+				 jQuery(this).siblings('input.date').val("");
+				 jQuery(this).hide(); 
+			 });
 		// clear button ends
-		var dateFormat = 'yy-mm-dd';
-  if(jQuery(this).data('dateFormat')) {
-    dateFormat = jQuery(this).data('dateFormat');
-  }
-// Cloning date element to process in ISO format
-	var clone_date = jQuery(this).clone().removeAttr('class');
-	var idForCloneElement = jQuery(this).prop("id");
-	  clone_date.attr('id', 'clone_'+idForCloneElement).appendTo(this);
-	jQuery(this).removeAttr('name');
-		if((jQuery(this).val())==""){
-	  	jQuery('#'+idForCloneElement).attr('data-initial-val', 'empty');}
-	  	else{
-	  	jQuery('#'+idForCloneElement).attr('data-initial-val', (jQuery(this).val()));}
-		jQuery('#clone_'+idForCloneElement).hide();
-
-	jQuery(this).datepicker({
-    dateFormat: dateFormat,
-    changeMonth: true,
-    changeYear: true,
-    altField: '#clone_'+idForCloneElement,
-    altFormat: 'yy-mm-dd'
-  });
-
-	if((jQuery('#'+idForCloneElement).data('initial-val'))!="empty")
-	{
-	var getDateVal = (jQuery('#'+'clone_'+idForCloneElement).val());
-	var DateVal = new Date(getDateVal);
-	jQuery('#'+idForCloneElement).datepicker('setDate', DateVal);
-}
-
-
-   if(jQuery(this).data('showImage')) {
-        jQuery(this).datepicker('option', 'showOn', "both" );
-        jQuery(this).datepicker('option', 'buttonText', "<span class='icon-calendar'></span>" );
-      }
-      // custom clear button
-  var clearButton =  jQuery(this).siblings('.dateClear');
-  if(clearButton.length === 0) {
-     clearButton = jQuery('<span class="dateClear" title="Clear Date"><i class="ficon-cross" ></i></div>');
-    jQuery(this).after(clearButton);
-  }
-  if(jQuery(this).val().length === 0) {
-    clearButton.hide();
-  }
-  jQuery(this).on("change",function(){
-    if(jQuery(this).val().length === 0) {
-      clearButton.hide();
-    }
-    else {
-      clearButton.show();
-    }
-
-  });
-  clearButton.on('click', function(e) {
-     jQuery(this).siblings('input.date').val("");
-     jQuery(this).hide(); 
-     jQuery('#'+'clone_'+idForCloneElement).val("");
-   });
 		});
 
 		$('[data-toggle=tooltip]').livequery(function() {

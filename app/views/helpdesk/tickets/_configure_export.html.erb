@@ -22,14 +22,8 @@
 			</div>
 		</li>
 		<div class="controls hide" id="datepicker">
-			<input type="text" id="start_date" date="" class="text auto" size="15" />&nbsp;-
-			<input type="text" id="end_date" date="" class="text auto" size="15" />
-		
-			<input type="hidden" id="start_date_clone" date="" name="start_date" size="10" />&nbsp;
-			<input type="hidden" id="end_date_clone" date="" name="end_date" size="10" />
-		
-
-
+			<input type="text" id="start_date" date="" name="start_date" class="text auto" size="15" />&nbsp;-
+			<input type="text" id="end_date" date="" class="text auto" name="end_date" size="15" />
 		</div>
 		<hr/>
 		<li>
@@ -128,44 +122,16 @@
 
   var date_today = new Date();
   jQuery(document).ready(function() {
-		var dates = jQuery( "#start_date" ).datepicker({
-			changeMonth: true, 
-			changeYear: true,
-			numberOfMonths: 3,
-			showButtonPanel: true,
-			maxDate: date_today,
-			showOn: "both", 
-			altField: "#start_date_clone",
-    		altFormat: 'yy-mm-dd',
-			dateFormat: getDateFormat('datepicker'),
-			disabled: false,
-			onChange: function( selectedDate ) {
-				var option = this.id == "start_date" ? "minDate" : "maxDate",
-					instance = jQuery( this ).data( "datepicker" ),
-					date = jQuery.datepicker.parseDate(
-						instance.settings.dateFormat ||
-						jQuery.datepicker._defaults.dateFormat,
-						selectedDate, instance.settings );
-				dates.not( this ).datepicker( "option", option, date );
-				jQuery(this).prop("date", date);
-			}
-		});
-		setExportCreatedRange();
-	});
-
-  	  jQuery(document).ready(function() {
-		var dates = jQuery( "#end_date" ).datepicker({
+		var dates = jQuery( "#start_date, #end_date" ).datepicker({
 			changeMonth: true, 
 			changeYear: true,
 			numberOfMonths: 3,
 			showButtonPanel: true,
 			maxDate: "today",
 			showOn: "both", 
-			altField: "#end_date_clone",
-    		altFormat: 'yy-mm-dd',
 			dateFormat: getDateFormat('datepicker'),
 			disabled: false,
-			onChange: function( selectedDate ) {
+			onSelect: function( selectedDate ) {
 				var option = this.id == "start_date" ? "minDate" : "maxDate",
 					instance = jQuery( this ).data( "datepicker" ),
 					date = jQuery.datepicker.parseDate(
@@ -178,10 +144,6 @@
 		});
 		setExportCreatedRange();
 	});
-
-
-
-
 	jQuery("#start_date, #end_date").bind('keypress keyup keydown', function(ev) {
 	ev.preventDefault();
    	return false;

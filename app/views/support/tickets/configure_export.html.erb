@@ -25,19 +25,13 @@
 		<div id="datepicker" class="hide">
  			<div class="span4">	
  				<label class="lead-small">From</label>
-				<input type="text" placeholder="<%=t('export_data.from')%>" id="start_date" date="" class="text auto" size="15" />
-				
-
-				<input type="hidden" id="start_date_clone" date="" name="start_date" size="10" />
-
+				<input type="text" placeholder="<%=t('export_data.from')%>" id="start_date" date="" 
+					name="start_date" class="text auto" size="15" />
 			</div>
 			<div class="span4 omega">
 				<label class="lead-small">To</label>
-				<input type="text" placeholder="<%=t('export_data.to')%>" id="end_date" date="" class="text auto" size="15" />
-				
-
-				<input type="hidden" id="end_date_clone" date="" name="end_date" size="10" />
-
+				<input type="text" placeholder="<%=t('export_data.to')%>" id="end_date" date="" 
+					class="text auto" name="end_date" size="15" />
 			</div>
 		</div>
 	</fieldset>
@@ -89,35 +83,13 @@
 				$("#datepicker").toggle($(this).val() == 4)
 			})
 
-			var dates = $( "#start_date" ).datepicker({
+			var dates = $( "#start_date, #end_date" ).datepicker({
 				changeMonth: true, 
 				changeYear: true,
 				numberOfMonths: 1,
 				maxDate: "today",
-				altField: "#start_date_clone",
-    			altFormat: 'yy-mm-dd',
 				dateFormat: getDateFormat('datepicker'),
-				onChange: function( selectedDate ) {
-					var option = this.id == "start_date" ? "minDate" : "maxDate",
-						instance = $( this ).data( "datepicker" ),
-						date = $.datepicker.parseDate(
-							instance.settings.dateFormat ||
-							$.datepicker._defaults.dateFormat,
-							selectedDate, instance.settings );
-					dates.not( this ).datepicker( "option", option, date )
-					$(this).prop("date", date)
-				}
-			})
-
-			var dates = $( "#end_date" ).datepicker({
-				changeMonth: true, 
-				changeYear: true,
-				numberOfMonths: 1,
-				maxDate: "today",
-				altField: "#end_date_clone",
-    			altFormat: 'yy-mm-dd',
-				dateFormat: getDateFormat('datepicker'),
-				onChange: function( selectedDate ) {
+				onSelect: function( selectedDate ) {
 					var option = this.id == "start_date" ? "minDate" : "maxDate",
 						instance = $( this ).data( "datepicker" ),
 						date = $.datepicker.parseDate(
@@ -130,9 +102,7 @@
 			})
 
 			$("#start_date").val("<%= formated_date(1.month.ago,{:format => :short_day_separated, :include_year => true, :translate => false})%>");
-			$("#start_date_clone").val("<%= formated_date(1.month.ago,{:format => :short_day_separated, :include_year => true, :translate => false})%>");
 			$("#end_date").val("<%= formated_date(Time.now,{:format => :short_day_separated, :include_year => true, :translate => false})%>");
-			$("#end_date_clone").val("<%= formated_date(Time.now,{:format => :short_day_separated, :include_year => true, :translate => false})%>");
 		})
 
 	}(window.jQuery)

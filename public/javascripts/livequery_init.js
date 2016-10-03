@@ -189,71 +189,23 @@ $("input.datepicker_popover").livequery(
 		if($(this).data('date-format')) {
 			dateFormat = $(this).data('date-format');
 		}
-
-// Cloning date element to process in ISO format
-	var clone_date = jQuery(this).clone().removeAttr('class data-date-format');
-	var idForCloneElement = jQuery(this).prop("id");
-
-  	clone_date.attr('id', 'clone_'+idForCloneElement).appendTo(this);
-  	jQuery(this).removeAttr('name');
-  	if((jQuery(this).val())==""){
-  		jQuery('#'+idForCloneElement).attr('data-initial-val', 'empty');
-  	}
-  	else{
-  		jQuery('#'+idForCloneElement).attr('data-initial-val', (jQuery(this).val()));
-  	}
-  	jQuery('#clone_'+idForCloneElement).hide();
-
-
-
-
-jQuery.validator.addClassRules("date", {
-				date: false
-				});	
-
-		
 		$(this).datepicker({
 			dateFormat: dateFormat,
-			changeMonth: true,
-            changeYear: true,
-            altField: '#clone_'+idForCloneElement,
-    		altFormat: 'yy-mm-dd',
+			 changeMonth: true,
+             changeYear: true,
 			beforeShow: function(){
 				Helpdesk.calenderSettings.insideCalendar = true;
 				Helpdesk.calenderSettings.closeCalendar = false;
 			},
 			onClose: function(){
 				Helpdesk.calenderSettings.closeCalendar = true;
-			},
-			showOn: "both",
-			buttonText: "<i class='ficon-date'></i>",			
+			}
 		});
+		if($(this).data('showImage')) {
+			$(this).datepicker('option', 'showOn', "both" );
+			$(this).datepicker('option', 'buttonText', "<i class='ficon-date'></i>" );
 
-// var varNewValue = (location.pathname).slice(-3); 
-// varNewValue checks if last three char url is 'new' refering the new method
-// if(!(varNewValue==="new")&&()){
-// 	var getDateVal = (jQuery('#'+'clone_'+idForCloneElement).val());
-//   	var DateVal = new Date(getDateVal);
-//   	jQuery('#'+idForCloneElement).datepicker('setDate', DateVal);
-// }
-
-
-if((jQuery('#'+idForCloneElement).data('initial-val'))!="empty")
-{
-	var getDateVal = (jQuery('#'+'clone_'+idForCloneElement).val());
-  	var DateVal = new Date(getDateVal);
-  	jQuery('#'+idForCloneElement).datepicker('setDate', DateVal);
-}
-
-
-
-
-	//already included above
-		// if($(this).data('showImage')) {	
-		// 	$(this).datepicker('option', 'showOn', "both" );
-		// 	$(this).datepicker('option', 'buttonText', "<i class='ficon-date'></i>" );
-		// }
-
+		}
 		// custom clear button
 		var clearButton =  jQuery(this).siblings('.dateClear');
 		if(clearButton.length === 0) {
@@ -275,13 +227,10 @@ if((jQuery('#'+idForCloneElement).data('initial-val'))!="empty")
 		clearButton.on('click', function(e) {
 			 jQuery(this).siblings('input.date').val("");
 			 jQuery(this).hide(); 
-			 jQuery('#'+'clone_'+idForCloneElement).val("");
 		 });
 		// clear button ends
 	}
 );
-
-
 
 $('input.datetimepicker_popover').livequery(
 	function() {
