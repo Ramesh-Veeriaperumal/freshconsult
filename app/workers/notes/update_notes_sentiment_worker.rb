@@ -18,7 +18,6 @@ module Notes
         @account = Account.current 
         @ticket = @account.tickets.find_by_id args[:ticket_id]
         @note = @account.notes.find_by_id args[:note_id]
-        @note_body = :note_body
 
         puts "Account: #{@account}"
         puts "Ticket: #{@ticket}"
