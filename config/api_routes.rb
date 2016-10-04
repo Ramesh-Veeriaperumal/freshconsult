@@ -121,9 +121,11 @@ Helpkit::Application.routes.draw do
         put :bulk_delete
         put :bulk_restore
         put :bulk_send_invite
+        put :bulk_whitelist
       end
       member do
         put :restore
+        put :whitelist
         put :send_invite
         put :update_password
         get :activities

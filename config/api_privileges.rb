@@ -16,7 +16,7 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   delete_contact do
-    resource :"ember/contact", only: [:bulk_delete, :destroy, :bulk_restore, :restore]
+    resource :"ember/contact", only: [:bulk_delete, :destroy, :bulk_restore, :restore, :whitelist, :bulk_whitelist]
   end
 
   view_contacts do

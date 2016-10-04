@@ -10,6 +10,8 @@
   $ref: ./contacts/change_password.yaml
 /contacts/{id}/make_agent:
   $ref: ./contacts/make_agent.yaml
+/contacts/{id}/whitelist:
+  $ref: ./contacts/whitelist.yaml
 /contacts/{id}/recent_ticket_activities:
   $ref: ./contacts/recent_ticket_activities.yaml
 /contacts/{id}/recent_forum_activities:
@@ -20,6 +22,8 @@
   $ref: ./contacts/bulk_restore.yaml
 /contacts/bulk_send_invite:
   $ref: ./contacts/bulk_send_invite.yaml
+/contacts/bulk_whitelist:
+  $ref: ./contacts/bulk_whitelist.yaml
 
 /tickets:
   $ref: ./tickets/crud.yaml

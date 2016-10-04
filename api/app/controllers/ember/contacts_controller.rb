@@ -66,6 +66,20 @@ module Ember
       end
     end
 
+    def whitelist
+      return head 204 if whitelist_item(@item)
+      render_errors(@item.errors) if @item.errors.any?
+    end
+
+    def bulk_whitelist
+      bulk_action do
+        @items_failed = []
+        @items.each do |item|
+          @items_failed << item unless whitelist_item(item)
+        end
+      end
+    end
+
     def self.wrap_params
       ContactConstants::EMBER_WRAP_PARAMS
     end
@@ -152,7 +166,19 @@ module Ember
       def combined_activities
         user_activities = ticket_activities + (current_account.features?(:forums) ? @item.recent_posts : [])
         user_activities.sort_by { |item| - item.created_at.to_i }.take(10)
-    end
+      end
+
+      def whitelist_item(item)
+        unless item.blocked
+          item.errors.add(:blocked, 'is false. You can whitelist only blocked users.')
+          return false
+        end
+        item.blocked = false
+        item.whitelisted = true
+        item.deleted = false
+        item.blocked_at = nil
+        item.save
+      end
 
       wrap_parameters(*wrap_params)
   end

@@ -142,4 +142,22 @@ module UsersTestHelper
     u = UserEmail.new(params)
     u.save
   end
+
+  def create_blocked_contact(account)
+    new_user = add_new_user(account)
+    new_user.blocked = true
+    new_user.blocked_at = Time.now
+    new_user.save
+    new_user
+  end
+
+  def confirm_user_whitelisting(ids = [])
+    return if ids.blank?
+    @account.users.where(id: ids).each do |user|
+      refute user.blocked
+      refute user.deleted
+      assert user.blocked_at == nil
+      assert user.whitelisted
+    end
+  end
 end

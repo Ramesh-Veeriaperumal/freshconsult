@@ -251,6 +251,37 @@
         }
       }
     },
+    "/contacts/{id}/whitelist": {
+      "put": {
+        "summary": "Whitelist",
+        "tags": [
+          "contact"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "number",
+            "required": true,
+            "description": "ID of contact"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "404": {
+            "description": "User not found"
+          }
+        }
+      }
+    },
     "/contacts/{id}/recent_ticket_activities": {
       "get": {
         "summary": "Recent Ticket Activities",
@@ -395,6 +426,36 @@
             "schema": {
               "$ref": "#/definitions/partial_success_response"
             }
+          }
+        }
+      }
+    },
+    "/contacts/bulk_whitelist": {
+      "put": {
+        "tags": [
+          "contact"
+        ],
+        "summary": "Bulk Whitelist",
+        "description": "Bulk whitelist contacts",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/bulk_action_input"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Accepted",
+            "schema": {
+              "$ref": "#/definitions/partial_success_response"
+            }
+          },
+          "204": {
+            "description": "Success"
           }
         }
       }
@@ -1108,16 +1169,6 @@
                 "type": "string"
               }
             }
-          }
-        },
-        {
-          "required": {
-            "anyOf": [
-              "email",
-              "facebook_id",
-              "phone",
-              "twitter_id"
-            ]
           }
         }
       ]
