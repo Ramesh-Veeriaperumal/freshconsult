@@ -154,6 +154,11 @@ class Account < ActiveRecord::Base
     freshchat_enabled? and features?(:chat_routing)
   end
 
+  def suggest_tickets_enabled?
+    Rails.logger.info "suggest_tickets : #{launched?(:suggest_tickets)}"
+    launched?(:suggest_tickets)
+  end
+
   def supervisor_feature_launched?
     features?(:freshfone_call_monitoring) || features?(:agent_conference)
   end

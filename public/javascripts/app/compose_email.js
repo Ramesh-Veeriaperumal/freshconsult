@@ -156,7 +156,7 @@ var ComposeEmail = {
 	    	if(is_trial && !App.Tickets.LimitEmails.limitComposeEmail(jQuery('#compose-new-email'), '.cc-address', limit, msg)) {
 
 	    		if(!jQuery('.cc-address').is(':visible')) {
-	    			jQuery('.cc-address').show();
+	    			jQuery("[data-action='show-cc']").click();
 	    		}
 	          	return false
 	        }

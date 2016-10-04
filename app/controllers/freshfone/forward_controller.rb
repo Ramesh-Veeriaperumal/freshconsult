@@ -12,6 +12,7 @@ class Freshfone::ForwardController < FreshfoneBaseController
   before_filter :set_dial_call_sid, :only => [:complete, :direct_dial_accept]
   before_filter :update_conference_sid, :only => [:direct_dial_wait]
   before_filter :set_tranfer_call, :only => [:transfer_complete, :process_custom_transfer]
+  before_filter :empty_twiml, only: :transfer_complete, if: :connected_to_other_agent?
   before_filter :update_agent_presence, :only => [:transfer_complete]
   before_filter :set_external_transfer_params, :only =>[:transfer_initiate]
   before_filter :handle_incomplete_call, only: :complete, if: :custom_ignored_call?
@@ -128,7 +129,7 @@ class Freshfone::ForwardController < FreshfoneBaseController
   end
 
   def process_custom_transfer
-    return transfer_initiate if custom_forward_accept?
+    return handle_transfer_accept if custom_forward_accept?
     return empty_twiml if custom_forward_reject?
     render_invalid_input(transfer_forwarding_url, current_call.agent_name)
   end
@@ -306,5 +307,24 @@ class Freshfone::ForwardController < FreshfoneBaseController
 
     def custom_forwarding_completed?
       custom_forwarding_enabled? && params[:CallStatus] == 'completed'
+    end
+
+    def handle_transfer_accept
+      set_tranfer_call
+      return handle_already_accepted_call if already_inprogress?
+      transfer_initiate
+    end
+
+    def already_inprogress?
+      @transferred_call.inprogress? && connected_to_other_agent?
+    end
+    
+    def connected_to_other_agent?
+      @transferred_call.user_id != params[:agent_id].to_i
+    end
+
+    def handle_already_accepted_call
+      Rails.logger.info "Handle Simultaneous Answer For Account Id :: #{current_account.id}, Call Id :: #{@transferred_call.id}, CallSid :: #{params[:CallSid]}, AgentId :: #{params[:agent_id]}"
+      render xml: telephony.incoming_answered(@transferred_call.agent)
     end
 end

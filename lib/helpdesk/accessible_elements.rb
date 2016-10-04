@@ -33,7 +33,7 @@ module Helpdesk::AccessibleElements
   end
 
   def visible_records ops, enclose, sort, db_limit
-    if(Account.current.launched?(:countv2_template_read) && (ops[:model_hash][:name] == "Helpdesk::TicketTemplate"))
+    if(ops[:model_hash][:name] == "Helpdesk::TicketTemplate")
       elements = accessible_from_esv2(ops[:model_hash][:name], enclose, default_visiblity, sort, nil, ops[:id_data], ops[:excluded_ids])
     else
       elements = accessible_from_es(ops[:model_hash][:name].constantize, enclose, default_visiblity, sort, nil, ops[:id_data], ops[:excluded_ids])

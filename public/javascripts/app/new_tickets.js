@@ -49,6 +49,18 @@ var CreateTicket = {
 
 	bindEvents: function(){
 		this.$body.on('click.newTicket', '#newticket-submit', function(){
+			var trial_spam_error_msg = jQuery("#trial_spam_error_msg").val();
+			var to_cc_spam_threshold = JSON.parse(jQuery("#to_cc_spam_threshold").val());
+			var is_trial_spam_account = JSON.parse(jQuery("#is_trial_spam_account").val());
+
+			if(is_trial_spam_account && !App.Tickets.LimitEmails.limitComposeEmail(jQuery('#NewTicket'), '.cc-address', to_cc_spam_threshold, trial_spam_error_msg)) {
+	    		if(!jQuery('.cc-address').is(':visible')) {
+	    			jQuery("[data-action='show-cc']").click();
+	    		}
+	          	return false
+	        }
+	        
+	        jQuery(".cc-address .cc-error-message").remove();
 			jQuery("#NewTicket").submit();
 		});
 
