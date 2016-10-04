@@ -13,8 +13,6 @@ module Tickets
     def perform(args)
       args.symbolize_keys!
       begin
-        puts "Came to tickets worker..."
-
         @account = Account.current
         @ticket = @account.tickets.find_by_id args[:id]
 

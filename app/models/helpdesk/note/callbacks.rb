@@ -74,11 +74,16 @@ class Helpdesk::Note < ActiveRecord::Base
 
     is_agent_performed = notable.agent_performed?(self.user)
 
-    if not is_agent_performed
+    if (not is_agent_performed) && (self.private != true)
+      if source == 9
+        self.sentiment = 0
+        self.save
+      else
         Notes::UpdateNotesSentimentWorker.perform_async(
               { :note_id => id,
                 :ticket_id => notable.id}
         )
+      end
     end
   end
 

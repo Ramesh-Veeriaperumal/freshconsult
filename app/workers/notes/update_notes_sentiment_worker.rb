@@ -13,8 +13,6 @@ module Notes
     def perform(args)
       args.symbolize_keys!
       begin
-        puts "Came to notes worker..."
-
         @account = Account.current 
         @ticket = @account.tickets.find_by_id args[:ticket_id]
         @note = @account.notes.find_by_id args[:note_id]

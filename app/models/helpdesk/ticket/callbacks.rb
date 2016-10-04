@@ -130,10 +130,15 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def update_sentiment 
-    user_id = User.current.id if User.current
-    Tickets::UpdateSentimentWorker.perform_async(
-          { :id => id }
-    )
+    if self.source == 3 || self.source == 7
+      self.sentiment = 0
+      self.save
+    else
+      user_id = User.current.id if User.current
+      Tickets::UpdateSentimentWorker.perform_async(
+            { :id => id }
+      )
+    end
   end
   
   def process_agent_and_group_changes 
