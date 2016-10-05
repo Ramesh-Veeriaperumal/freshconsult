@@ -371,6 +371,14 @@ module ApiSolutions
       match_json([bad_request_error_pattern('language', :invalid_field)])
     end
 
+    # default index params test
+    def test_index_with_invalid_page_and_per_page
+      get :index, controller_params(page: 'aaa', per_page: 'aaa')
+      assert_response 400
+      match_json([bad_request_error_pattern('page', :datatype_mismatch, expected_data_type: 'Positive Integer'),
+        bad_request_error_pattern('per_page', :per_page_invalid, max_value: 100)])
+    end
+
     # Position tests
     def test_index_for_position
       a = @account.portal_solution_categories.first

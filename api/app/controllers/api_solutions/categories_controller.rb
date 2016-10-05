@@ -4,6 +4,10 @@ module ApiSolutions
     include Solution::LanguageControllerMethods
     decorate_views
 
+    def index
+      super if validate_language
+    end
+
     def create
       if create_or_update_category
         render_201_with_location(item_id: @item.parent_id) 
@@ -78,7 +82,7 @@ module ApiSolutions
       end
 
       def validate_filter_params
-        validate_language
+        super(SolutionConstants::INDEX_FIELDS)
       end
 
       def load_objects(items = scoper)

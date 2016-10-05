@@ -462,5 +462,14 @@ module ApiSolutions
       assert_response 404
       match_json(request_error_pattern(:language_not_allowed, code: 'adadfa', list: (@account.supported_languages + [@account.language]).sort.join(', ')))
     end    
+
+    # default index params test
+    def test_index_with_invalid_page_and_per_page
+      sample_category_meta = get_category_with_folders
+      get :category_folders, controller_params(id: sample_category_meta.id, page: 'aaa', per_page: 'aaa')
+      assert_response 400
+      match_json([bad_request_error_pattern('page', :datatype_mismatch, expected_data_type: 'Positive Integer'),
+        bad_request_error_pattern('per_page', :per_page_invalid, max_value: 100)])
+    end
   end
 end
