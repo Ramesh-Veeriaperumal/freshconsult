@@ -12,9 +12,10 @@
 	<div class="control-group">
 		<label class="control-label"><%=t('description')%></label>
 		<div class="controls">
-			<%= form.text_area :description, :rows => 7, :class => "input-xxlarge" %>
+			<%= form.text_area :description, :rows => 7, :class => "input-xxlarge", :maxlength => 250 %>
+			<div class="muted"><%= t('forum.max_description_length_allowed') %></div>
 		</div>
-	</div>
+		</div>
 	<div class="control-group">
 		<%= form.label :forum_category_id, t('forum.category'), :class => "control-label" %>
 		<div class="controls">

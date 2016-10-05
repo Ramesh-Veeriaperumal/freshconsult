@@ -2288,6 +2288,7 @@ en:
     forum_deleted: The forum has been deleted.
     type: Forum Type
     visible_to: Visible to
+    max_description_length_allowed: "Maximum 250 characters"
     category: Forum Category
     spam: "Spam (%{count})"
     convert_to_ticket: Auto-Convert Topics to Tickets
