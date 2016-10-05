@@ -15,6 +15,7 @@ class Product < ActiveRecord::Base
   after_commit ->(obj) { obj.clear_fragment_caches } , on: :create
   after_commit ->(obj) { obj.clear_fragment_caches } , on: :destroy
   after_commit :clear_fragment_caches, on: :update, :if => :pdt_name_changed?
+  after_commit :unset_product_field, on: :destroy 
 
   belongs_to_account
   has_one    :portal               , :dependent => :destroy
@@ -33,6 +34,13 @@ class Product < ActiveRecord::Base
 
   delegate :portal_url, :to => :portal, :allow_nil => true 
   delegate :name, :to => :portal, :prefix => true, :allow_nil => true 
+
+  def unset_product_field
+    #This is done to ensure that required field is marked false on deletion of last multi product.
+    #Ticket creation through api might break, if req field is set to true.
+    acc = Account.current
+    acc.ticket_fields_with_nested_fields.find_by_name(:product).update_attributes({required: "false"}) if acc.products_from_cache.empty?
+  end
 
   def enable_portal=(p_str)
     @enable_portal = p_str
