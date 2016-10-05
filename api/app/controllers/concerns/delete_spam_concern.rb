@@ -40,25 +40,25 @@ module DeleteSpamConcern
 
   def destroy
     return head 204 if destroy_item(@item)
-    render_errors(@item.errors) if @item.errors.any?
+    return render_errors(@item.errors) if @item.errors.any?
     head 404
   end
 
   def spam
     return head 204 if spam_item(@item)
-    render_errors(@item.errors) if @item.errors.any?
+    return render_errors(@item.errors) if @item.errors.any?
     head 404
   end
 
   def restore
     return head 204 if restore_item(@item)
-    render_errors(@item.errors) if @item.errors.any?
+    return render_errors(@item.errors) if @item.errors.any?
     head 404
   end
 
   def unspam
     return head 204 if unspam_item(@item)
-    render_errors(@item.errors) if @item.errors.any?
+    return render_errors(@item.errors) if @item.errors.any?
     head 404
   end
 

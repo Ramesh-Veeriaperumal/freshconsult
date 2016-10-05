@@ -52,8 +52,10 @@ module UsersHelper
                                     :delta => 1,
                                     :deleted => options[:deleted] || 0,
                                     :blocked => options[:blocked] || 0,
+                                    :active => options.key?(:active) ? options[:active] : 1,
                                     :company_id => options[:customer_id] || nil,
-                                    :language => "en")
+                                    :language => "en",
+                                    :tag_names => options[:tags])
     new_user.custom_field = options[:custom_fields] if options.key?(:custom_fields)
     new_user.save
     new_user.reload

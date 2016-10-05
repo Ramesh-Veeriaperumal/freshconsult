@@ -445,6 +445,15 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
     end
   end
 
+  def test_bulk_execute_scenario
+    skip_bullet do
+      scenario_id = create_scn_automation_rule(scenario_automation_params).id
+      ticket_id = create_ticket(ticket_params_hash).display_id
+      put "api/_/tickets/bulk_execute_scenario/#{scenario_id}", {ids: [ticket_id]}.to_json, @write_headers
+      assert_response 202
+    end
+  end
+
   def test_execute_scenario
     skip_bullet do
       scenario_id = create_scn_automation_rule(scenario_automation_params).id
@@ -454,15 +463,6 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
 
       put "api/_/tickets/#{ticket_id + 20}/execute_scenario/#{scenario_id}", nil, @write_headers
       assert_response 404
-    end
-  end
-
-  def test_bulk_execute_scenario
-    skip_bullet do
-      scenario_id = create_scn_automation_rule(scenario_automation_params).id
-      ticket_id = create_ticket(ticket_params_hash).display_id
-      put "api/_/tickets/bulk_execute_scenario/#{scenario_id}", {ids: [ticket_id]}.to_json, @write_headers
-      assert_response 202
     end
   end
 end

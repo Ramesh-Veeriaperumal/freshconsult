@@ -205,10 +205,6 @@ module Ember
         @failed_ids ||= (@items_failed || []).map(&:display_id)
       end
 
-      def update?
-        @update ||= current_action?('update') || current_action?('execute_scenario')
-      end
-
       def decorate_objects
         return if @error_ticket_filter.present?
         decorator, options = decorator_options

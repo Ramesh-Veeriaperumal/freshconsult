@@ -59,6 +59,8 @@ module ApiTicketConstants
     bulk_execute_scenario: [:json]
   }.freeze
 
+  UPDATE_ACTIONS = [:update, :execute_scenario, :spam, :unspam, :restore].freeze
+
   REQUIRE_PRELOAD = [:bulk_delete, :bulk_spam, :bulk_unspam, :bulk_restore].freeze
   BULK_ACTION_ASYNC_METHODS = [:bulk_execute_scenario, :bulk_update].freeze
   BULK_ACTION_METHODS = [:bulk_delete, :bulk_spam, :bulk_restore, :bulk_unspam] + BULK_ACTION_ASYNC_METHODS

@@ -1,6 +1,11 @@
 require_relative '../unit_test_helper'
 
 class ContactValidationTest < ActionView::TestCase
+
+  def self.fixture_path
+    File.join(Rails.root, 'test/api/fixtures/')
+  end
+
   def tear_down
     Account.unstub(:current)
     Account.any_instance.unstub(:contact_form)
@@ -58,6 +63,15 @@ class ContactValidationTest < ActionView::TestCase
     assert errors.include?('Avatar datatype_mismatch')
     assert_equal({ email: {}, name: {}, avatar: { expected_data_type: 'valid file format', prepend_msg: :input_received, given_data_type: String } }, contact.error_options)
     assert errors.count == 1
+    String.any_instance.unstub(:size)
+    DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
+    controller_params = { 'name' => 'test', :email => Faker::Internet.email, avatar: fixture_file_upload('files/attachment.txt', 'plain/text', :binary), avatar_id: 10}
+    contact = ContactValidation.new(controller_params, item)
+    refute contact.valid?
+    DataTypeValidator.any_instance.unstub(:valid_type?)
+    errors = contact.errors.full_messages
+    assert errors.include?('Avatar upload_jpg_or_png_file')
+    assert errors.include?('Avatar only_avatar_or_avatar_id')
   end
 
   def test_complex_fields_with_nil
@@ -97,40 +111,6 @@ class ContactValidationTest < ActionView::TestCase
     errors = contact.errors.full_messages
     assert errors.include?('Email fill_a_mandatory_field')
     assert_equal({ name: {}, email: { field_names: 'email, mobile, phone, twitter_id' } }, contact.error_options)
-    Account.unstub(:current)
-  end
-
-  def test_bulk_delete_with_different_params
-    Account.stubs(:current).returns(Account.new)
-    Account.any_instance.stubs(:contact_form).returns(ContactForm.new)
-    ContactForm.any_instance.stubs(:default_contact_fields).returns([])
-
-    controller_params = { version: 'private' }
-    contact_validation = ContactValidation.new(controller_params, nil)
-    refute contact_validation.valid?(:bulk_delete)
-    assert contact_validation.errors.full_messages.include?('Ids missing_field')
-
-    controller_params = { version: 'private', ids: [] }
-    contact_validation = ContactValidation.new(controller_params, nil)
-    refute contact_validation.valid?(:bulk_delete)
-    assert contact_validation.errors.full_messages.include?('Ids blank')
-
-    controller_params = { version: 'private', ids: "Text" }
-    contact_validation = ContactValidation.new(controller_params, nil)
-    refute contact_validation.valid?(:bulk_delete)
-    assert contact_validation.errors.full_messages.include?('Ids datatype_mismatch')
-    assert_equal({ ids: { expected_data_type: Array, prepend_msg: :input_received, given_data_type: String } }, contact_validation.error_options)
-
-    controller_params = { version: 'private', ids: ["Text"] }
-    contact_validation = ContactValidation.new(controller_params, nil)
-    refute contact_validation.valid?(:bulk_delete)
-    assert contact_validation.errors.full_messages.include?('Ids array_datatype_mismatch')
-    assert_equal({ ids: { expected_data_type: :'Positive Integer' } }, contact_validation.error_options)
-
-    controller_params = { version: 'private', ids: [1, 2, 3] }
-    contact_validation = ContactValidation.new(controller_params, nil)
-    assert contact_validation.valid?(:bulk_delete)
-
     Account.unstub(:current)
   end
 end

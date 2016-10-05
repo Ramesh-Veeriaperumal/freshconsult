@@ -128,9 +128,13 @@ class TicketsController < ApiApplicationController
       preload_options
     end
 
+    def update_action?
+      ApiTicketConstants::UPDATE_ACTIONS.include?(action_name.to_sym)
+    end
+
     def after_load_object
       return false unless verify_object_state
-      if show? || update? || restore?
+      if show? || update_action?
         return false unless verify_ticket_permission
       end
 

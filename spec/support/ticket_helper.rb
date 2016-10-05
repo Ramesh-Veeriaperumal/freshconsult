@@ -19,7 +19,10 @@ module TicketHelper
                                          :cc_email => Helpdesk::Ticket.default_cc_hash.merge(cc_emails: cc_emails, fwd_emails: fwd_emails),
                                          :created_at => params[:created_at],
                                          :account_id => account_id,
-                                         :custom_field => params[:custom_field])
+                                         :deleted => params[:deleted] || 0,
+                                         :spam => params[:spam] || 0,
+                                         :custom_field => params[:custom_field],
+                                         :tag_names => params[:tag_names])
     test_ticket.build_ticket_body(:description => Faker::Lorem.paragraph)
     if params[:attachments]
       test_ticket.attachments.build(:content => params[:attachments][:resource], 

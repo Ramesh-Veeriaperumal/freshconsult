@@ -1,8 +1,12 @@
+
+title: error
 type: object
 properties:
   id:
-    type: id
-  errors:
-    type: array
-    items:
-      $ref: '#/definitions/request_error'
+    type: number
+  message:
+    description: Error message
+    type: string
+  code:
+    description: Error code
+    type: string

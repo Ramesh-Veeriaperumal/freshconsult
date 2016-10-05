@@ -12,14 +12,14 @@ module JsonPattern
     bad_request_error_pattern(nested_field, value, params_hash).merge(nested_field: "#{field}.#{nested_field}")
   end
 
-  def partial_success_response_pattern(succeeded_ids, failures = [], params_hash={})
+  def partial_success_response_pattern(succeeded_ids, failures = {})
     {
       succeeded: succeeded_ids,
       failed: failures.map do |rec_id, errors|
               {
                 id: rec_id,
                 errors: errors.map do |field, value|
-                  bad_request_error_pattern(field, value, params_hash)
+                  bad_request_error_pattern(field, *value)
                 end
               }
               end
