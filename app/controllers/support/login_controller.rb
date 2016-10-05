@@ -27,7 +27,6 @@ class Support::LoginController < SupportController
 	def create
 		@user_session = current_account.user_sessions.new(params[:user_session])
     @user_session.web_session = true
-    session.delete :_csrf_token if session.has_key?(:_csrf_token)
    	@verify_captcha = (params[:recaptcha_challenge_field] ? verify_recaptcha : true )
    	if @verify_captcha && @user_session.save 
 

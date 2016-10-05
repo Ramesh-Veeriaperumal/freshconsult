@@ -93,10 +93,7 @@ module SsoUtil
     end
 
     @user_session = @current_user.account.user_sessions.new(@current_user)
-    unless is_native_mobile?
-      @user_session.web_session = true 
-      session.delete :_csrf_token if session.has_key?(:_csrf_token)
-    end
+    @user_session.web_session = true unless is_native_mobile?
     if (!@current_user.new_record? && @user_session.save)
       if is_native_mobile?
         cookies["mobile_access_token"] = { :value => @current_user.mobile_auth_token, :http_only => true } 
