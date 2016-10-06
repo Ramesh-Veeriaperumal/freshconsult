@@ -13,7 +13,15 @@ module CannedResponseFoldersTestHelper
     create_response(canned_response_sample_params(folder_id, visibility))
   end
 
-  def ca_responses_pattern(folder_id)
+  def ca_responses_pattern(folder)
+    {
+      id: folder.id,
+      name: folder.display_name,
+      responses: responses_listing_pattern(folder.id)
+    }
+  end
+
+  def responses_listing_pattern(folder_id)
     (fetch_ca_responses_from_db(folder_id) || []).map do |ca_response|
       ca_response.attributes.slice('id', 'title')
     end

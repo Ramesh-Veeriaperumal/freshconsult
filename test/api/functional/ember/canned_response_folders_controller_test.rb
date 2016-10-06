@@ -57,17 +57,17 @@ module Ember
     def test_show_list_responses
       get :show, construct_params({ version: 'private' }, false).merge(id: @ca_folder_all.id)
       assert_response 200
-      match_json(ca_responses_pattern(@ca_folder_all.id))
+      match_json(ca_responses_pattern(@ca_folder_all))
     end
 
     def test_show_responses_in_personal_folder_of_self
       login_as(@agent)
       get :show, construct_params({ version: 'private' }, false).merge(id: @ca_folder_personal.id)
       assert_response 200
-      match_json(ca_responses_pattern(@ca_folder_personal.id))
-      body = ActiveSupport::JSON.decode(response.body)
-      assert body.include?(single_ca_response_pattern(@ca_response_3))
-      assert body.include?(single_ca_response_pattern(@ca_response_4))
+      match_json(ca_responses_pattern(@ca_folder_personal))
+      responses = ActiveSupport::JSON.decode(response.body)['responses']
+      assert responses.include?(single_ca_response_pattern(@ca_response_3))
+      assert responses.include?(single_ca_response_pattern(@ca_response_4))
     end
 
     def test_show_personal_responses_of_other_agents
@@ -75,10 +75,10 @@ module Ember
       login_as(new_agent.user)
       get :show, construct_params({ version: 'private' }, false).merge(id: @ca_folder_personal.id)
       assert_response 200
-      match_json(ca_responses_pattern(@ca_folder_personal.id))
-      body = ActiveSupport::JSON.decode(response.body)
-      refute body.include?(single_ca_response_pattern(@ca_response_3))
-      refute body.include?(single_ca_response_pattern(@ca_response_4))
+      match_json(ca_responses_pattern(@ca_folder_personal))
+      responses = ActiveSupport::JSON.decode(response.body)['responses']
+      refute responses.include?(single_ca_response_pattern(@ca_response_3))
+      refute responses.include?(single_ca_response_pattern(@ca_response_4))
     end
 
     def test_show_with_group_visibility_response
@@ -86,11 +86,11 @@ module Ember
       login_as(new_agent.user)
       get :show, construct_params({ version: 'private' }, false).merge(id: @ca_folder_all.id)
       assert_response 200
-      match_json(ca_responses_pattern(@ca_folder_all.id))
-      body = ActiveSupport::JSON.decode(response.body)
-      assert body.include?(single_ca_response_pattern(@ca_response_1))
-      assert body.include?(single_ca_response_pattern(@ca_response_2))
-      refute body.include?(single_ca_response_pattern(@ca_response_5))
+      match_json(ca_responses_pattern(@ca_folder_all))
+      responses = ActiveSupport::JSON.decode(response.body)['responses']
+      assert responses.include?(single_ca_response_pattern(@ca_response_1))
+      assert responses.include?(single_ca_response_pattern(@ca_response_2))
+      refute responses.include?(single_ca_response_pattern(@ca_response_5))
     end
 
     def test_show_invalid_folder_id
