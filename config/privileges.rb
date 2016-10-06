@@ -100,7 +100,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"helpdesk/survey"
     resource :"admin/data_export" , :only => [:download]
     resource :"notification/product_notification", :only => [:index]
-    resource :"helpdesk/common", :only => [:status_groups]
+    resource :"helpdesk/common", :only => [:fetch_company_by_name, :status_groups]
 
     # ticket_templates
     resource :"helpdesk/ticket_template"
