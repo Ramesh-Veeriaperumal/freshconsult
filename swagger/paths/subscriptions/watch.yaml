@@ -1,0 +1,22 @@
+post:
+  tags: [ticket]
+  summary: Add watcher
+  parameters:
+    - name: id
+      type: id
+      description: Display ID of ticket
+      in: path
+      required: true
+    - name: data
+      in: body
+      schema:
+        $ref: '#/definitions/add_watcher_input'
+  responses:
+    204:
+      description: Success
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+    404:
+      description: Ticket not found

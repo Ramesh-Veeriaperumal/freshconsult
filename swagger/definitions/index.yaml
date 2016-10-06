@@ -1,39 +1,90 @@
-
-  contact:
-    $ref: ./resources/contact.yaml
-  ticket:
-    $ref: ./resources/ticket.yaml
-  array_of_tickets:
-    type: array
-    items:
-      $ref: '#/definitions/ticket'
-  array_of_contacts:
-    type: array
-    items:
-      $ref: '#/definitions/contact'
+  id:
+    type: number
+    minimum: 1
   custom_field:
     type: object
-  post:
-    $ref: ./resources/contact_post.yaml
-  array_of_posts:
-    type: array
-    items:
-      $ref: '#/definitions/post'
-  bulk_action_input:
-    $ref: ./request/bulk.yaml
-  partial_success_response:
-    $ref: ./response/bulk_partial_success.yaml
+
+  # ERROR
   bulk_action_error:
     $ref: ./error/bulk.yaml
   bad_request_error:
     $ref: ./error/bad_request.yaml
   request_error:
     $ref: ./error/request.yaml
-  change_password_input:
-    $ref: ./request/change_password.yaml
+
+  # REQUEST
+  bulk_action_input:
+    $ref: ./request/bulk.yaml
   make_agent_params:
-    $ref: ./request/make_agent.yaml
+    $ref: ./request/contacts/make_agent.yaml
+  attachment_create_input:
+    $ref: ./request/attachments/attachment.yaml
+  contact_input:
+    $ref: ./request/contacts/contact.yaml
+  change_password_input:
+    $ref: ./request/contacts/change_password.yaml
+  note_create_input:
+    $ref: ./request/conversations/note.yaml
+  note_reply_input:
+    $ref: ./request/conversations/reply.yaml
+  ticket_input:
+    $ref: ./request/tickets/ticket.yaml
+  ticket_bulk_update_input:
+    $ref: ./request/tickets/bulk_update.yaml
+  ticket_update_input:
+    $ref: ./request/tickets/update.yaml
+  add_watcher_input:
+    $ref: ./request/subscriptions/add_watcher.yaml
+
+  # RESOURCE
+  contact:
+    $ref: ./resource/contact.yaml
+  note:
+    $ref: ./resource/note.yaml
+  ticket:
+    $ref: ./resource/ticket.yaml
+  post:
+    $ref: ./resource/post.yaml
+  attachment:
+    $ref: ./resource/attachment.yaml
+  agent:
+    $ref: ./resource/agent.yaml
+  extension_generic:
+    $ref: ./resource/extension/generic.yaml
+  extended_contact:
+    allOf:
+      - $ref: '#/definitions/contact'
+      - $ref: ./resource/extension/contact.yaml
+  extended_note:
+    allOf:
+      - $ref: '#/definitions/note'
+      - $ref: ./resource/extension/note.yaml
+  extended_ticket:
+    allOf:
+      - $ref: '#/definitions/ticket'
+      - $ref: ./resource/extension/ticket.yaml
+
+  array_of_tickets:
+    type: array
+    items:
+      $ref: '#/definitions/extended_ticket'
+  array_of_contacts:
+    type: array
+    items:
+      $ref: '#/definitions/extended_contact'
+  array_of_posts:
+    type: array
+    items:
+      $ref: '#/definitions/post'
+
+  # RESPONSE
+  note_create:
+    $ref: './response/conversations/create.yaml'
+  note_reply:
+    $ref: './response/conversations/reply.yaml'
+  partial_success_response:
+    $ref: ./response/bulk_partial_success.yaml
   make_agent_response:
     $ref: ./response/make_agent.yaml
-  agent:
-    $ref: ./resources/agent.yaml
+  watchers:
+    $ref: ./response/watchers.yaml

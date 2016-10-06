@@ -351,7 +351,7 @@
           "contact"
         ],
         "summary": "Bulk Delete",
-        "description": "Bulk delete contactssss",
+        "description": "Bulk delete contacts",
         "parameters": [
           {
             "name": "data",
@@ -920,6 +920,102 @@
           }
         }
       }
+    },
+    "/tickets/{id}/watch": {
+      "post": {
+        "tags": [
+          "ticket"
+        ],
+        "summary": "Add watcher",
+        "parameters": [
+          {
+            "name": "id",
+            "type": "id",
+            "description": "Display ID of ticket",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/add_watcher_input"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "404": {
+            "description": "Ticket not found"
+          }
+        }
+      }
+    },
+    "/tickets/{id}/unwatch": {
+      "put": {
+        "tags": [
+          "ticket"
+        ],
+        "summary": "Remove watcher",
+        "parameters": [
+          {
+            "name": "id",
+            "description": "Display ID of ticket",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "404": {
+            "description": "Ticket/Subscription not found"
+          }
+        }
+      }
+    },
+    "/tickets/{id}/watchers": {
+      "post": {
+        "tags": [
+          "ticket"
+        ],
+        "summary": "List watchers",
+        "parameters": [
+          {
+            "name": "id",
+            "type": "id",
+            "description": "Display ID of ticket",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/watchers"
+            }
+          },
+          "404": {
+            "description": "Ticket not found"
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -1213,6 +1309,15 @@
           }
         }
       ]
+    },
+    "add_watcher_input": {
+      "type": "object",
+      "properties": {
+        "user_id": {
+          "type": "id",
+          "description": "ID of agent to be added to list of watchers"
+        }
+      }
     },
     "contact": {
       "type": "object",
@@ -1755,6 +1860,18 @@
         },
         "agent": {
           "$ref": "#/definitions/agent"
+        }
+      }
+    },
+    "watchers": {
+      "title": "data",
+      "type": "object",
+      "properties": {
+        "watcher_ids": {
+          "type": "array",
+          "items": {
+            "type": "id"
+          }
         }
       }
     }

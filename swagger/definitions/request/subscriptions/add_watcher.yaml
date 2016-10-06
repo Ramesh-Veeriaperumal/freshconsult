@@ -1,0 +1,5 @@
+type: object
+properties:
+  user_id:
+    type: id
+    description: ID of agent to be added to list of watchers

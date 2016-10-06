@@ -1,0 +1,16 @@
+post:
+  tags: [ticket]
+  summary: List watchers
+  parameters:
+    - name: id
+      type: id
+      description: Display ID of ticket
+      in: path
+      required: true
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/watchers'
+    404:
+      description: Ticket not found

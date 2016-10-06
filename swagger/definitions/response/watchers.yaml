@@ -1,0 +1,7 @@
+  title: data
+  type: object
+  properties:
+    watcher_ids:
+      type: array
+      items:
+        type: id

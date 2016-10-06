@@ -1,0 +1,17 @@
+put:
+  tags: [ticket]
+  summary: Remove watcher
+  parameters:
+    - name: id
+      description: Display ID of ticket
+      in: path
+      required: true
+  responses:
+    204:
+      description: Success
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+    404:
+      description: Ticket/Subscription not found

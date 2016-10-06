@@ -57,3 +57,11 @@
 
 /attachments:
   $ref: ./attachments/crud.yaml
+
+#Subscriptions
+/tickets/{id}/watch:
+  $ref: ./subscriptions/watch.yaml
+/tickets/{id}/unwatch:
+  $ref: ./subscriptions/unwatch.yaml
+/tickets/{id}/watchers:
+  $ref: ./subscriptions/watchers.yaml

@@ -115,6 +115,12 @@ Helpkit::Application.routes.draw do
         post :notes, to: 'ember/conversations#create'
       end
       resources :canned_responses, controller: 'ember/tickets/canned_responses', only: [:show]
+
+      member do
+        post :watch, to: 'ember/subscriptions#watch'
+        put :unwatch, to: 'ember/subscriptions#unwatch'
+        get :watchers, to: 'ember/subscriptions#watchers'
+      end
     end
     resources :contacts, controller: 'ember/contacts', except: [:new, :edit] do
       collection do
