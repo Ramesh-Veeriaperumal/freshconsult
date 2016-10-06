@@ -6,11 +6,9 @@ class TicketDecorator < ApiDecorator
 
   def initialize(record, options)
     super(record)
-    Rails.logger.debug "*" * 100
-    Rails.logger.debug options.inspect
-    Rails.logger.debug "*" * 100
     @name_mapping = options[:name_mapping]
     @sideload_options = options[:sideload_options]
+    
   end
 
   def utc_format(value)
@@ -40,6 +38,8 @@ class TicketDecorator < ApiDecorator
     if @sideload_options.include?('stats')
       ticket_states = record.ticket_states
       {
+        agent_responded_at: ticket_states.agent_responded_at.try(:utc),
+        requester_responded_at: ticket_states.requester_responded_at.try(:utc),
         resolved_at: ticket_states.resolved_at.try(:utc),
         first_responded_at: ticket_states.first_response_time.try(:utc),
         closed_at: ticket_states.closed_at.try(:utc)

@@ -208,8 +208,11 @@ module Ember
       def decorate_objects
         return if @error_ticket_filter.present?
         decorator, options = decorator_options
-        @requesters = @items.collect(&:requester).uniq.each_with_object({}) do |contact, hash| 
-          hash[contact.id] = ContactDecorator.new(contact, name_mapping: contact_name_mapping)
+        
+        if sideload_options.include?('requester')
+          @requesters = @items.collect(&:requester).uniq.each_with_object({}) do |contact, hash| 
+            hash[contact.id] = ContactDecorator.new(contact, name_mapping: contact_name_mapping)
+          end
         end
 
         @items.map! { |item| decorator.new(item, options) }
@@ -272,7 +275,7 @@ module Ember
       end
 
       def sideload_options
-        [:requester, :stats]
+        ApiTicketConstants::SIDE_LOADING & params[:include].split(',').map!(&:strip)
       end
 
       def render_201_with_location(template_name: "tickets/#{action_name}", location_url: 'ticket_url', item_id: @item.id)
