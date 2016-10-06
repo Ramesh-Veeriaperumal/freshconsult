@@ -3986,25 +3986,27 @@ Redactor.prototype = {
 			
 			$('.redactor_link_text').val(text);
 			
-			var turl = url.replace(self.location.href, '');
+			if(url){
+				var turl = url.replace(window.location.href, '');
 			
-			if (url.search('mailto:') === 0)
-			{
-				this.setModalTab(2);
+				if (url.search('mailto:') === 0)
+				{
+					this.setModalTab(2);
 
-				$('#redactor_tab_selected').val(2);
-				$('#redactor_link_mailto').val(url.replace('mailto:', ''));
-			}
-			else if (turl.search(/^#/gi) === 0)
-			{
-				this.setModalTab(3);	
-				
-				$('#redactor_tab_selected').val(3);
-				$('#redactor_link_anchor').val(turl.replace(/^#/gi, ''));
-			}
-			else
-			{
-				$('#redactor_link_url').val(url);
+					$('#redactor_tab_selected').val(2);
+					$('#redactor_link_mailto').val(url.replace('mailto:', ''));
+				}
+				else if (turl.search(/^#/gi) === 0)
+				{
+					this.setModalTab(3);	
+					
+					$('#redactor_tab_selected').val(3);
+					$('#redactor_link_anchor').val(turl.replace(/^#/gi, ''));
+				}
+				else
+				{
+					$('#redactor_link_url').val(url);
+				}
 			}
 			
 			if (target === '_blank')
