@@ -39,7 +39,7 @@ class Product < ActiveRecord::Base
     #This is done to ensure that required field is marked false on deletion of last multi product.
     #Ticket creation through api might break, if req field is set to true.
     acc = Account.current
-    acc.ticket_fields_with_nested_fields.find_by_name(:product).update_attributes({required: "false"}) if acc.products_from_cache.empty?
+    acc.ticket_fields_with_nested_fields.find_by_name(:product).update_attributes({required: "false",required_for_closure: "false"}) if acc.products_from_cache.empty?
   end
 
   def enable_portal=(p_str)
