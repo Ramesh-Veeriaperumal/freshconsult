@@ -44,8 +44,8 @@ module TestClassMethods
     @request.env['CONTENT_TYPE'] = 'application/json'
   end
 
-  def set_request_auth_headers
-    auth = ActionController::HttpAuthentication::Basic.encode_credentials(@agent.single_access_token, 'X')
+  def set_request_auth_headers(user = nil)
+    auth = ActionController::HttpAuthentication::Basic.encode_credentials((user || @agent).single_access_token, 'X')
     @request.env['HTTP_AUTHORIZATION'] = auth
   end
 
@@ -105,6 +105,12 @@ module TestClassMethods
   ensure
     MetalApiController.perform_caching = false
     system "ps -ef | grep memcached | grep -v 'grep' | awk '{print $2}' | xargs kill"
+  end
+
+  def login_as(user)
+    session = UserSession.create!(user)
+    session.save
+    set_request_auth_headers(user)
   end
 end
 

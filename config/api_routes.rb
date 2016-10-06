@@ -143,6 +143,7 @@ Helpkit::Application.routes.draw do
     resources :contact_fields, controller: 'ember/contact_fields', only: :index
     resources :scenario_automations, controller: 'ember/scenario_automations', only: :index
     resources :attachments, controller: 'ember/attachments', only: [:create]
+    resources :canned_response_folders, controller: 'ember/canned_response_folders', only: [:index, :show]
   end
 
   match '/api/v2/_search/tickets' => 'tickets#search', :defaults => { :format => 'json' }, :as => :tickets_search, via: :get

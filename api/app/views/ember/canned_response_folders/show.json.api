@@ -1,0 +1,1 @@
+JSON.generate(@ca_responses.map { |item| item.attributes.slice('id', 'title') })
