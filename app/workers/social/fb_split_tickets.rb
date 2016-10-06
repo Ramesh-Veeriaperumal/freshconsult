@@ -14,7 +14,7 @@ module Social
         update_ticket_activity
         update_ticket_states
       end
-      update_dynamo_fd_links if Account.current.features?(:social_revamp)
+      #update_dynamo_fd_links if Account.current.features?(:social_revamp)
     end
     
     
