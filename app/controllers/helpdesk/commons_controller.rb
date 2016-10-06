@@ -2,7 +2,12 @@ class Helpdesk::CommonsController < ApplicationController
 
   before_filter :set_mobile, :only => [:group_agents]
   skip_before_filter :check_privilege, :verify_authenticity_token
-  before_filter :check_privilege, :only => [:status_groups]
+  before_filter :check_privilege, :only => [:fetch_company_by_name, :status_groups]
+
+  before_filter :only => [:group_agents, :user_companies] do |c| 
+    c.check_portal_scope :anonymous_tickets
+  end
+  before_filter :group_agent_fields_editable?, :only => [:group_agents]
 
   PHONE_REGEX = /.+\((.+)\)/
   TWITTER_REGEX = /@(.+)/
@@ -14,7 +19,7 @@ class Helpdesk::CommonsController < ApplicationController
     assigned_agent = params[:agent]
     blank_value = !params[:blank_value].blank? ? params[:blank_value] : "..."
     @agents = if group_id.present?
-      AgentGroup.where({ :group_id => group_id, :users => {:account_id => current_account.id , :deleted => false } }).joins(:user).order("users.name")
+      current_account.agent_groups.where({:group_id => group_id, :users => {:account_id => current_account.id, :deleted => false} }).preload(:user).joins(:user).order("users.name")
     else
       current_account.agents.includes(:user)
     end
@@ -80,4 +85,15 @@ class Helpdesk::CommonsController < ApplicationController
     end
     render :json => to_ret
   end
+
+  private
+
+    def group_agent_fields_editable?
+      if current_user.nil? || current_user.customer?
+        ticket_fields = current_account.ticket_fields_from_cache
+        group_field = ticket_fields.find { |tf| tf.name == "group"}
+        agent_field = ticket_fields.find { |tf| tf.name == "agent"}
+        access_denied if !group_field.editable_in_portal || !agent_field.editable_in_portal
+      end
+    end
 end

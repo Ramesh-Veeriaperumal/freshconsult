@@ -5,7 +5,8 @@ class Helpdesk::Note < ActiveRecord::Base
   before_create :validate_schema_less_note, :update_observer_events
   before_save :load_schema_less_note, :update_category, :load_note_body, :ticket_cc_email_backup
 
-  after_create :update_content_ids, :update_parent, :add_activity, :fire_create_event
+  after_create :update_content_ids, :update_parent, :add_activity
+  after_commit :fire_create_event, on: :create
   after_commit :related_tickets_broadcast, on: :create, :if => :broadcast_note_to_tracker?
   # Doing update note count before pushing to ticket_states queue
   # So that note count will be reflected if the rmq publish happens via ticket states queue
