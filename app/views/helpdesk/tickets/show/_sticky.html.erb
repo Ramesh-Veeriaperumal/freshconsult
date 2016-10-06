@@ -14,7 +14,7 @@
 				</li>
 			</ul>
 		</div>
-		<% if !Account.current.launched?(:activity_ui_disable) and Account.current.features_included?(:activity_revamp)%>
+		<% if !Account.current.launched?(:activity_ui_disable) and Account.current.features?(:activity_revamp)%>
 			<div id="activity_toggle" title='<%= t('ticket.show_activities_tooltip') %>'  data-show-title = '<%= t('ticket.show_activities_tooltip') %>' data-hide-title= '<%= t('ticket.hide_activities_tooltip') %>' data-keybinding="<%= shortcut('ticket_detail.show_activities_toggle') %>"
 				class="activity_toggle btn clearfix tooltip" data-toggle="button" data-placement = "below"
 				 data-highlight="true">
