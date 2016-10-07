@@ -195,9 +195,11 @@ $community-types: problem #e65e63,
 			text-align: center;
 		}
 		.comm-item-main{
+			@include word-hyphernate;
 			.comm-item-title{
 				font-size: 15px;
 				font-weight: inherit;
+				@include margin-left(40px);
 			}
 			.comm-item-details{
 				line-height: 1.6;
