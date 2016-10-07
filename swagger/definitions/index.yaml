@@ -21,8 +21,8 @@
     $ref: ./request/attachments/attachment.yaml
   contact_input:
     $ref: ./request/contacts/contact.yaml
-  change_password_input:
-    $ref: ./request/contacts/change_password.yaml
+  update_password:
+    $ref: ./request/contacts/update_password.yaml
   note_create_input:
     $ref: ./request/conversations/note.yaml
   note_reply_input:

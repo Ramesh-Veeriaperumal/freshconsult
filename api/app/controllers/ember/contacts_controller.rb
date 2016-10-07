@@ -41,9 +41,9 @@ module Ember
     end
 
     def update_password
-      @item.password = params[:password]
+      @item.password = params[cname][:password]
       @item.active = true
-        
+      
       if @item.save
         @item.reset_perishable_token!
         head 204
@@ -142,7 +142,7 @@ module Ember
       end
 
       def validate_password_change
-        params[cname].permit(:password, :password_confirmation)
+        params[cname].permit(:password)
         contacts_validation = ContactValidation.new(params, @item)
         return true if contacts_validation.valid?(action_name.to_sym)
         render_errors contacts_validation.errors, contacts_validation.error_options

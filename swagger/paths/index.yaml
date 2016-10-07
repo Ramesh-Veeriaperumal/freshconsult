@@ -6,8 +6,8 @@
   $ref: ./contacts/restore.yaml
 /contacts/{id}/send_invite:
   $ref: ./contacts/send_invite.yaml
-/contacts/{id}/change_password:
-  $ref: ./contacts/change_password.yaml
+/contacts/{id}/update_password:
+  $ref: ./contacts/update_password.yaml
 /contacts/{id}/make_agent:
   $ref: ./contacts/make_agent.yaml
 /contacts/{id}/whitelist:

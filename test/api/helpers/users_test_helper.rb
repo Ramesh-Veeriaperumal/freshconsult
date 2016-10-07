@@ -1,8 +1,9 @@
-['company_helper.rb', 'contact_fields_helper.rb', 'group_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
+['company_helper.rb', 'contact_fields_helper.rb', 'group_helper.rb', 'agent_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
 module UsersTestHelper
   include CompanyHelper
   include GroupHelper
   include ContactFieldsHelper
+  include AgentHelper
   # Patterns
   def contact_pattern(expected_output = {}, ignore_extra_keys = true, contact)
     expected_custom_field = (expected_output[:custom_fields] && ignore_extra_keys) ? expected_output[:custom_fields].ignore_extra_keys! : expected_output[:custom_fields]
@@ -160,4 +161,51 @@ module UsersTestHelper
       assert user.whitelisted
     end
   end
+
+  def random_password
+    Faker::Lorem.words(5).join[0..10]
+  end
+
+  def create_tweet_user
+    user = Account.current.users.build(
+      name:       Faker::Name.name,
+      twitter_id: Faker::Lorem.word
+    )
+    user.save
+    user
+  end
+
+  def password_change_error_pattern(error_type)
+    {
+      description: 'Validation failed',
+      errors: [
+        send("password_#{error_type}_error")
+      ]
+    }
+  end
+
+  def password_not_allowed_error
+    {
+      field: 'password',
+      message: 'Not allowed to change.',
+      code: 'invalid_value'
+    }
+  end
+
+  def password_missing_field_error
+    {
+      field: 'password',
+      message: 'It should be a/an String',
+      code: 'missing_field'
+    }
+  end
+
+  def password_datatype_mismatch_error
+    {
+      field: 'password',
+      message: 'Value set is of type Null.It should be a/an String',
+      code: 'datatype_mismatch'
+    }
+  end
+
 end

@@ -173,12 +173,12 @@
         }
       }
     },
-    "/contacts/{id}/change_password": {
+    "/contacts/{id}/update_password": {
       "put": {
         "tags": [
           "contact"
         ],
-        "summary": "Change Password",
+        "summary": "Update Password",
         "parameters": [
           {
             "name": "id",
@@ -191,12 +191,12 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/change_password_input"
+              "$ref": "#/definitions/update_password"
             }
           }
         ],
         "responses": {
-          "200": {
+          "204": {
             "description": "Success"
           },
           "400": {
@@ -1150,21 +1150,16 @@
         }
       ]
     },
-    "change_password_input": {
+    "update_password": {
       "type": "object",
       "properties": {
         "password": {
           "type": "string",
           "format": "password"
-        },
-        "password_confirmation": {
-          "type": "string",
-          "format": "password"
         }
       },
       "required": [
-        "password",
-        "password_confirmation"
+        "password"
       ]
     },
     "note_create_input": {
