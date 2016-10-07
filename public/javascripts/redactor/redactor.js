@@ -1029,11 +1029,18 @@ Redactor.prototype = {
 		return temp_div.html();
 	},
 	wrapElementWithDirection: function(content){
+		var dirWrap = $(content)
 		var temp_div = $("<div />");
-		var	div = $("<div dir='"+this.opts.direction+"'/>")
-			div.html(content)
-		temp_div.append(div)
-
+		if(dirWrap.length > 1){
+			var	div = $("<div dir='"+this.opts.direction+"'/>").html(content);
+			temp_div.append(div);
+		}
+		else{
+			if(!dirWrap.attr('dir')){
+				dirWrap.attr('dir',this.opts.direction);
+			}
+			temp_div.append(dirWrap)
+		}
 		return temp_div.html();
 	},
 	changesInTextarea: function(){
