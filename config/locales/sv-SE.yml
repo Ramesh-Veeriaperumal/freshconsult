@@ -2232,7 +2232,7 @@ sv-SE:
   import_user_notification: "Du kan skicka e-postmeddelandet om användaraktivering för de importerade kontakterna från kundfliken"
   what_is_cvv: "Vad är CVV?"
   pro_details: "Allt i basabonnemanget plus, scenarioautomationer, kundspecifika SLA:n, öppettider, forum och support för användargrupper och e-post."
-  open: Öppna
+  open: Öppen
   zendesk_url: "URL till Zendesk"
   special_beta_offer: "Specialerbjudande för beta-konton"
   click_to_select_filter: "Välj filter"
@@ -4724,7 +4724,7 @@ sv-SE:
       summary:
         title: Ärendesammanfattning
         overdue: Förfallna
-        open: Öppna
+        open: Öppen
         due_today: "Förfaller idag"
         unassigned: "Ej tilldelade"
         pending: Väntande
