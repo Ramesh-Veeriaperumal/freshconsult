@@ -7,7 +7,7 @@
     notes_per_page    : 50,
     notes_pagination_url: "/helpdesk/archive_tickets/<%= @ticket.display_id %>/archive_notes?v=2&", 
     last_note_id    : <%= @ticket_notes.present? ? @ticket_notes.last.id : -1 %>,
-    activities_pagination_url: "/helpdesk/archive_tickets/<%= @ticket.display_id %>/<%= (!Account.current.launched?(:activity_ui_disable) and Account.current.features_included?(:activity_revamp)) ?  'activitiesv2/?' : 'activities/?'%>",
+    activities_pagination_url: "/helpdesk/archive_tickets/<%= @ticket.display_id %>/<%= (!Account.current.launched?(:activity_ui_disable) and Account.current.features?(:activity_revamp)) ?  'activitiesv2/?' : 'activities/?'%>",
     last_activity   : -1,
     last_activity_batch : -1,
     loaded_activities : 0,

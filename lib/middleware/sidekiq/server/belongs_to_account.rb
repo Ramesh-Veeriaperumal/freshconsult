@@ -11,16 +11,16 @@ module Middleware
 
         def call(worker, msg, queue)
           #Logic starts to add uuid and job id to log tags to debug
-          begin
-            log_tags = (msg.try(:[], 'message_uuid') || [])
-            log_tags << msg["jid"]
-            Thread.current[:message_uuid] = log_tags
-          rescue Exception => e
-            log_tags = []
-          end
+          # begin
+          #   log_tags = (msg.try(:[], 'message_uuid') || [])
+          #   log_tags << msg["jid"]
+          #   Thread.current[:message_uuid] = log_tags
+          # rescue Exception => e
+          #   log_tags = []
+          # end
           #Logic ends to add uuid and job id to log tags to debug
 
-          Rails.logger.tagged(log_tags) do
+          #Rails.logger.tagged(log_tags) do
             if !@ignore.include?(worker.class.name)
               ::Account.reset_current_account
               account_id = msg['account_id']
@@ -32,7 +32,7 @@ module Middleware
             else
               yield
             end
-          end
+          #end
         rescue DomainNotReady => e
             puts "Just ignoring the DomainNotReady , #{e.inspect}"
         rescue ShardNotFound => e

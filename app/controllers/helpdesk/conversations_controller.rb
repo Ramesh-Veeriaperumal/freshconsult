@@ -284,7 +284,7 @@ class Helpdesk::ConversationsController < ApplicationController
       
       def update_activities
         if params[:showing] == 'activities'
-           if Account.current.features_included?(:activity_revamp) and !Account.current.launched?(:activity_ui_disable)
+           if Account.current.features?(:activity_revamp) and !Account.current.launched?(:activity_ui_disable)
             type = :tkt_activity
             params[:limit] = ActivityConstants::QUERY_UI_LIMIT
             params[:event_type] = ::HelpdeskActivities::EventType::ALL
