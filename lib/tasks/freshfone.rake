@@ -284,6 +284,8 @@ namespace :freshfone do
           next if account.blank?
           account.make_current
           ff_account.expire
+          account.features.freshfone_onboarding.destroy if account.features?(
+            :freshfone_onboarding)
           FreshfoneNotifier.deliver_freshfone_ops_notifier(
             account, message: "Numbers Deleted on Trial Expired Phone Account :: #{ff_account.account_id}", recipients: ["freshfone-ops@freshdesk.com","pulkit@freshdesk.com"])
         rescue Exception => e
