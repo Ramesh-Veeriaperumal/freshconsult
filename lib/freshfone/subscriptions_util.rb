@@ -30,6 +30,10 @@ module Freshfone
         ::Account.current.freshfone_subscription.present?
     end
 
+    def onboarding_enabled?
+      current_account.features?(:freshfone_onboarding)
+    end
+
     private
 
       def load_freshfone_account
