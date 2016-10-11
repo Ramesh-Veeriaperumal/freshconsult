@@ -14,7 +14,11 @@ if SH_ENABLED
   Shoryuken.configure_server do |config|
     config.server_middleware do |chain|
       chain.add Middleware::Shoryuken::Server::BelongsToAccount, :ignore => [
+        "Ryuken::SidekiqFallbackWorker",
         "Ryuken::FacebookRealtime"
+      ]
+      chain.insert_after Middleware::Shoryuken::Server::BelongsToAccount, Middleware::Shoryuken::Server::SidekiqFallback, :require => [
+        "Ryuken::SidekiqFallbackWorker"
       ]
     end
   end

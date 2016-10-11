@@ -11,7 +11,9 @@ module Community::Moderation::CleanUp
 
 	def empty_topic_spam
 
-		Community::ClearModerationRecords.perform_async(params[:id], "Topic")
+		Community::ClearModerationRecords.perform_async({ :obj_id =>  params[:id], 
+                                                      :obj_class => "Topic", 
+                                                      :topic_ids => nil })
 
 		flash[:notice] = t('discussions.unpublished.flash.empty_topic_spam')
 		respond_back

@@ -291,8 +291,10 @@ class Forum < ActiveRecord::Base
     account.agents_from_cache.reject{ |a| user_ids.include? a.user_id }
   end
 
-  def clear_moderation_records
-    Community::ClearModerationRecords.perform_async(self.id, self.class.to_s, @deleted_topic_ids)
+  def clear_moderation_record
+    Community::ClearModerationRecords.perform_async({ :obj_id =>  self.id, 
+                                                      :obj_class => self.class.to_s, 
+                                                      :topic_ids => @deleted_topic_ids })
   end
 
   private

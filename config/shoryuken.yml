@@ -10,5 +10,6 @@ aws:
   - <%= SQS[:search_etl_queue] %>
   - <%= ES_V2_QUEUE_KEY % { cluster: 'cluster1' } %>
   - <%= SQS[:facebook_realtime_queue] %>
-  - <%= SQS[:fb_message_realtime_queue] %>
+  - <%= SQS[:sidekiq_fallback_queue] %>
   - <%= SQS[:count_etl_queue] %>
+  - <%= SQS[:fb_message_realtime_queue] %>

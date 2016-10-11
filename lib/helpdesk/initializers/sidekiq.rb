@@ -1,11 +1,22 @@
+# Comment the below inclusion of Sidekiq::MethodOverride module,
+#   when Sidekiq::Client.reliable_push! needs to be activated
+include Sidekiq::MethodOverride
+
 config = YAML::load_file(File.join(Rails.root, 'config', 'sidekiq.yml'))[Rails.env]
 sidekiq_config = YAML::load_file(File.join(Rails.root, 'config', 'sidekiq_client.yml'))[Rails.env]
 
-$sidekiq_conn = Redis.new(:host => config["host"], :port => config["port"])
+$sidekiq_conn = Redis.new(:host => config["host"], :port => config["port"], :timeout => 2)
 $sidekiq_datastore = proc { Redis::Namespace.new(config["namespace"], :redis => $sidekiq_conn) }
 $sidekiq_redis_pool_size = sidekiq_config[:redis_pool_size] || sidekiq_config[:concurrency]
 $sidekiq_redis_timeout = sidekiq_config[:timeout]
 
+# Please include sidekiq worker classes of jobs which have batch initiation.
+# We skip the below jobs while enqueueing to Shoryuken(when redis is down), 
+#  as batch jobs use sidekiq redis internally.
+SIDEKIQ_BATCH_JOBS = ["Tickets::SelectAll::BatcherWorker"]
+
+# Sidekiq::Client.reliable_push! shouldn't be enabled while this fallback is present,
+# refer sidekiq/method_override.rb
 
 Sidekiq.configure_client do |config|
   config.redis = ConnectionPool.new(:size => 1, :timeoout => $sidekiq_redis_timeout, &$sidekiq_datastore)
@@ -137,6 +148,7 @@ Sidekiq.configure_server do |config|
       "PasswordExpiryWorker",
       "WebhookV1Worker",
       "DevNotificationWorker",
+      "PodDnsUpdate",
       "SearchV2::Manager::DisableSearch",
       "CountES::IndexOperations::DisableCountES",
       "Gamification::ProcessTicketQuests",

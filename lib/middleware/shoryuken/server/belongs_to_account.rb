@@ -2,13 +2,13 @@ module Middleware
   module Shoryuken
     module Server
       class BelongsToAccount
-             
+        
         IGNORE = []
 
         def initialize(options = {})
           @ignore = options.fetch(:ignore, IGNORE)
         end
-  
+
         def call(worker_instance, queue, sqs_msg, body)
           if !@ignore.include?(worker_instance.class.name)
             ::Account.reset_current_account
