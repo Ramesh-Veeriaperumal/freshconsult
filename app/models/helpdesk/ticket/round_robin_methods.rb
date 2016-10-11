@@ -65,7 +65,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
       balance_agent_capping({ :group_id => [old_group_id, new_group_id], 
                               :responder_id => [ticket_changes[:responder_id][0],
                                                 ticket_changes[:responder_id][1]]})
-      assign_agent_via_round_robin if !ticket_changes[:responder_id][1].present?
+      ticket_changes[:responder_id][1].present? ? self.group.lrem_from_rr_capping_queue(self.display_id) : 
+                                                  assign_agent_via_round_robin
       return
     end
     
