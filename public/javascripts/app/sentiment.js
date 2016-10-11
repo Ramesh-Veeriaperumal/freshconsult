@@ -62,7 +62,7 @@ App.Sentiment = {
 
 			jQuery('.cmi-fdbk').html("Successfully changed!");
 
-			this.post_feedback();
+			this.post_feedback(sentiment);
 		},
 		post_feedback : function(sentiment) {
 
@@ -71,21 +71,21 @@ App.Sentiment = {
 		},
 		getParams : function(sentiment) {
 			var _this = this;
+			var ticket_id = jQuery('#ticket-display-id')[0].innerHTML.split('#')[1];
+			var userInfo = jQuery('#LoggedOptions');
+			var author = jQuery(userInfo).find('span')[0].textContent;
 
 			var json_data = {
-				var ticket_id = jQuery('#ticket-display-id')[0].innerHTML.split('#')[1];
-				var userInfo = jQuery('#LoggedOptions');
-				var author = jQuery(userInfo).find('span')[0].textContent;
-
 				"data": {
 					"account_id": window.current_account_id,
-					"ticket_id": window.current_user_id,
+					"ticket_id": ticket_id,
 					"note_id": 0,
-					"predicted_value": get_sentiment_num(last_note_sentiment),
-					"feedback": get_sentiment_num(sentiment),
-					"user_id": author
+					"predicted_value": _this.get_sentiment_num(last_note_sentiment),
+					"feedback": _this.get_sentiment_num(sentiment),
+					"user_id": window.current_user_id
 				}
 			}
+			console.log(json_data);
 			var xhr_req = {
 					url: "http://sentimentelb-866010645.us-east-1.elb.amazonaws.com/api/v1/feedback/",
 		            type: 'POST',
