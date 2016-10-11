@@ -42,6 +42,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     account = Account.find_by_full_domain(to_email[:domain])
     if !account.nil? and account.active?
       # clip_large_html
+      Rails.logger.info "Processing email for account id : #{account.id} , envelope_to address: #{to_email[:email]}"
       account.make_current
       verify
       TimeZone.set_time_zone
