@@ -28,11 +28,11 @@ class Helpdesk::Email::Process
   end
 
   def perform
-    Rails.logger.info "Email received: Message-Id #{params["Message-Id"]}"
+    email_processing_log "Email received: Message-Id #{params["Message-Id"]}"
     self.start_time = Time.now.utc
     shardmapping = ShardMapping.fetch_by_domain(to_email[:domain])
     unless shardmapping.present?
-      Rails.logger.info "Email Processing Failed: No Shard Mapping found!"
+      email_processing_log "Email Processing Failed: No Shard Mapping found!"
       return
     end
     return shardmapping.status  unless shardmapping.ok?
@@ -51,14 +51,14 @@ class Helpdesk::Email::Process
     TimeZone.set_time_zone
     self.common_email_data = email_metadata #In parse_email_data
     if mail_from_email_config?
-      Rails.logger.info "Email Processing Failed: From-email and Reply-email are same!"
+      email_processing_log "Email Processing Failed: From-email and Reply-email are same!", account
       return
     end
       # encode_stuffs
     if account.features?(:domain_restricted_access)
       wl_domain  = account.account_additional_settings_from_cache.additional_settings[:whitelisted_domain]
       unless Array.wrap(wl_domain).include?(common_email_data[:from][:domain])
-        Rails.logger.info "Email Processing Failed: Not a White listed Domain!"
+        email_processing_log "Email Processing Failed: Not a White listed Domain!", account
         return
       end
     end    
@@ -73,9 +73,9 @@ class Helpdesk::Email::Process
 
     if ((user.nil? && !account.restricted_helpdesk?) or (user && user.blocked?))
       if (user.nil? && !account.restricted_helpdesk?)
-        Rails.logger.info "Email Processing Failed: Blank User!"
+        email_processing_log "Email Processing Failed: Blank User!", account
       else
-        Rails.logger.info "Email Processing Failed: Blocked User!"
+        email_processing_log "Email Processing Failed: Blocked User!", account
       end
       return
     end
@@ -135,7 +135,7 @@ class Helpdesk::Email::Process
       self.user ||= get_user(common_email_data[:from], common_email_data[:email_config], params["body-plain"], true)
     end
     if user.blank?
-      Rails.logger.info "Email Processing Failed: Blank User!"
+      email_processing_log "Email Processing Failed: Blank User!", account
       return
     end
     ticket ? email_handler.create_note(start_time) : create_archive_link(archive_ticket, email_handler, start_time)
@@ -205,5 +205,13 @@ class Helpdesk::Email::Process
   def stripped_html_blank?
     Helpdesk::HTMLSanitizer.plain(params["stripped-html"]).blank? && !params["stripped-text"].blank?
   end
+
+  def email_processing_log(msg, account = nil)
+    if account.present?
+      Rails.logger.info("#{msg} , account_id: #{account.id}") 
+    else
+      Rails.logger.info("#{msg}")
+    end
+  end 
 
 end
