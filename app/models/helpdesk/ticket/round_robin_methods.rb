@@ -57,6 +57,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
       end
       return
     end
+    return if self.round_robin_assignment
     if ticket_changes.has_key?(:responder_id) && self.group_id.present? && 
        !self.round_robin_assignment && !ticket_changes.has_key?(:round_robin_assignment)
       old_group_id = ticket_changes[:responder_id][0].present? ? self.group_id : nil
@@ -83,6 +84,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def balance_agent_capping ticket_changes
+    return unless has_capping_status?
     ["decr", "incr"].each_with_index do |operation, index|
       g_id = ticket_changes[:group_id][index]
       u_id = ticket_changes[:responder_id][index]
@@ -220,11 +222,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
     #skip if agent is assigned in the transaction
     if ticket_changes.has_key?(:responder_id)
       balance_agent_capping(ticket_changes)
+      self.round_robin_assignment = true
       return
     end
     #skip if the existing agent also belongs to the new group
     if agent_in_new_group?
       balance_agent_capping(ticket_changes.merge(:responder_id => [responder_id, responder_id]))
+      self.round_robin_assignment = true
       return
     end
     true
