@@ -195,6 +195,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     if group.present? && responder_id.present? && visible? && 
         group.round_robin_capping_enabled? && has_capping_status?
       change_agents_ticket_count(group, responder_id, "incr")
+      self.round_robin_assignment = true
     end
   end
 
@@ -210,6 +211,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
     #Don't trigger during an observer save, as we call RR explicitly in the worker
     return true if Thread.current[:observer_doer_id].present?
+
+    # Don't trigger if its already set via dispatcher
+    return true if round_robin_assignment
 
     #Trigger RR if the update is from supervisor 
     false    
