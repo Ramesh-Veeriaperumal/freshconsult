@@ -24,7 +24,11 @@
                    <div class="existing-filelist existing-filelist-cloud" >
                     <div class="file pull-left mr10 mb10 tooltip" title="${cloud_file.filename}">
                    <i class="ficon-cross file-close" data-attach-id="${cloud_file.id}" data-cloud-file=true data-softdelete=${softdelete}></i> <span class="file-name"><span class="fname ellipsis">{{html Helpdesk.MultipleFileUpload.FilenameSplitter(cloud_file.filename).fname}}</span><span class="ftype">.{{html Helpdesk.MultipleFileUpload.FilenameSplitter(cloud_file.filename).type}}</span></span> 
+                   {{if (sol_cloud == true) }}
+                      <input type="hidden" name="sol_articles_cloud_file_attachments[][resource]" value=${cloud_file.id} />
+                    {{else}}
                       <input type="hidden" name="[cloud_file_attachments][]" value='{{html Helpdesk.MultipleFileUpload.fileObjectConvertor(cloud_file)}}' />
+                    {{/if}}
                   </div>
                   </div>
               {{/each}}
