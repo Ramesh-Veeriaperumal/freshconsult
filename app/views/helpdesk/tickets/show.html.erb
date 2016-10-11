@@ -86,5 +86,11 @@ try {
 		
 		jQuery(".list_agents_replying").addClass("hide");
 }()
+jQuery('body').one('assetLoaded.fjax', function() {
+	console.log('assets loaded');
+	var is_sentiment_enable = true;//<%= @is_enabled %>;
+	App.Sentiment.init();
+});
+
 </script>
 <% content_for :layoutType do -%>ticket_details<%- end %>

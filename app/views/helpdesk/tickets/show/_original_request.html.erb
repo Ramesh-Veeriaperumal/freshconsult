@@ -13,7 +13,7 @@
 <% fb_message = @ticket.is_fb_message? %>
 <% twitter_dm = @ticket.twitter? && @ticket.tweet.is_dm? %>
 <% fb_comment = @ticket.is_fb_comment? %>
-<div class="commentbox private-note <%= 'commentbox-social' if (fb_message || twitter_dm) %>">
+<div class="commentbox private-note <%= 'commentbox-social' if (fb_message || twitter_dm) %>" rel="customer_msg">
 	<% if fb_message %>
 		<%= content_tag(:span, "", :class => "ficon-facebook-lock commentbox-social-icon") %>
 	<% elsif twitter_dm %>

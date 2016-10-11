@@ -4244,4 +4244,64 @@ li {
     right: -3px;
 }
 
+.ico {
+  display: inline-block;
+  background-size: contain;
+  vertical-align: top;
+  width: 25px;
+  height: 25px;
+  position: relative; }
+
+.ico-veryhappy {
+  background-image: url(http://imgh.us/emo-veryhappy.svg); }
+
+.ico-happy {
+  background-image: url(http://imgh.us/emo-happy.svg); }
+
+.ico-neutral {
+  background-image: url(http://imgh.us/emo-neutral.svg); }
+
+.ico-sad {
+  background-image: url(http://imgh.us/emo-sad.svg); }
+
+.ico-angry {
+  background-image: url(http://imgh.us/emo-angry.svg); }
+
+.cmi-plugin {
+  border-top: 1px dashed #b8b9b9;
+  padding: 10px 0 0 0;
+  margin-top: 20px;
+  overflow: hidden; }
+
+.cmi-plugin ul {
+  list-style: none;
+  float: left;
+  padding: 0;
+  margin: 0 15px 0 0; }
+
+.cmi-plugin ul li {
+  display: inline-block;
+  padding: 0 2px; }
+
+.cmi-plugin ul li a i {
+  opacity: 0.3; }
+
+.cmi-plugin ul li a:hover i {
+  transform: scale(1.2, 1.2);
+  opacity: 1; }
+
+.cmi-plugin ul li.selected a {
+  cursor: default; }
+
+.cmi-plugin ul li.selected a i {
+  transform: scale(1.2, 1.2);
+  opacity: 1; }
+
+.cmi-fdbk {
+  padding: 0 10px;
+  font-size: 13px;
+  color: #555;
+  line-height: 30px; }
+
+.cmi-plugin h3{color:#aaa; font-size:10px; text-transform:uppercase; margin-bottom:5px}
 /* ********************** END OF STYLE FOR CUSTOMER SENTIMENT ********************** */

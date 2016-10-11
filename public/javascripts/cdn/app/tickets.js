@@ -14,3 +14,5 @@
 //= require app/ticket_attachment_viewer.js
 //= require ticket_list.js
 //= require app/ticket_details.js
+//= require app/template/sentiment_feedback_template.jst.ejs
+//= require app/sentiment.js

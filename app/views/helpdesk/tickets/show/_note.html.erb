@@ -52,7 +52,7 @@ end
 	<% end %>
   <div class="commentbox 
       <%= (note.user.blank? or notable_object.agent_performed?(note.user)) ? 'commentbox-gray' : 'commentbox-requester' %> 
-      <%= 'private-note' if note.private_note? || note.fwd_email? || (is_twitter_dm?(note, notable_object)) || is_facebook_message?(note, notable_object) %>">
+      <%= 'private-note' if note.private_note? || note.fwd_email? || (is_twitter_dm?(note, notable_object)) || is_facebook_message?(note, notable_object) %>" rel="<%= (notable_object.agent_performed?(note.user)) ? 'agent_msg' : 'customer_msg' %>" >
 
     <%= note_lock_icon(note, notable_object) %>
 
