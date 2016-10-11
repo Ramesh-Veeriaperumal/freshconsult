@@ -9603,6 +9603,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     cobrowsing_stop_msg : "Your screensharing session has ended"    
     cobrowsing_deny_msg : "Your request was declined"
     cobrowsing_agent_busy : "Agent is in screen share session with customer"
+    cobrowsing_visitor_onhttp_error : "Unable to connect due to an unsecured connection(http site)" 
     cobrowsing_viewing_screen : "You are viewing the visitor’s screen"    
     cobrowsing_controlling_screen : "You are controlling the visitor’s screen"    
     cobrowsing_request_control : "Request visitor for control"    
