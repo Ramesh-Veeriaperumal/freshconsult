@@ -114,6 +114,8 @@ Helpkit::Application.routes.draw do
         post :reply, to: 'ember/conversations#reply'
         post :notes, to: 'ember/conversations#create'
       end
+      # This alternate route is to handle limitation in ember route generation : api/_/tickets/:ticket_id/canned_responses?id=Number
+      match '/canned_responses' => 'ember/tickets/canned_responses#show', via: :get
       resources :canned_responses, controller: 'ember/tickets/canned_responses', only: [:show]
 
       member do
