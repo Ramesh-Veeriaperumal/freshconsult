@@ -89,7 +89,9 @@ try {
 jQuery('body').one('assetLoaded.fjax', function() {
 	console.log('assets loaded');
 	var is_sentiment_enable = true;//<%= @is_enabled %>;
-	App.Sentiment.init();
+	<% if current_user.privilege?(:admin_tasks) || current_user.privilege?(:view_reports) %>
+		App.Sentiment.init();
+	<% end %>
 });
 
 </script>

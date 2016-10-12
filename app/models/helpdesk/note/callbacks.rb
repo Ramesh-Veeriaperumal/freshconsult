@@ -70,19 +70,21 @@ class Helpdesk::Note < ActiveRecord::Base
 
   def update_sentiment 
     user_id = User.current.id if User.current
-    puts "Came insode update_notes_sentiment"
 
-    is_agent_performed = notable.agent_performed?(self.user)
+    if (account.customer_sentiment_enabled?) && (self.user.language=="en")
 
-    if (not is_agent_performed) && (self.private != true)
-      if source == 9
-        self.sentiment = 0
-        self.save
-      else
-        Notes::UpdateNotesSentimentWorker.perform_async(
-              { :note_id => id,
-                :ticket_id => notable.id}
-        )
+      is_agent_performed = notable.agent_performed?(self.user)
+
+      if (not is_agent_performed) && (self.private != true)
+        if source == 9
+          self.sentiment = 0
+          self.save
+        else
+          Notes::UpdateNotesSentimentWorker.perform_async(
+                { :note_id => id,
+                  :ticket_id => notable.id}
+          )
+        end
       end
     end
   end
