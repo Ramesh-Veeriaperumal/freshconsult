@@ -4,6 +4,7 @@ module Ember
     include TicketsTestHelper
     include ScenarioAutomationsTestHelper
     include AttachmentsTestHelper
+    include CannedResponsesTestHelper
 
     def setup
       super
@@ -602,5 +603,58 @@ module Ember
       match_json(partial_success_response_pattern(ticket_ids, {}))
       assert_response 202
     end
+
+    # tests for latest note
+    # 1. invalid ticket id
+    # 2. ticket with no permission
+    # 2. with valid ticket id
+    #   a. with no notes
+    #   b. with a private note
+    #   c. with a public note
+    #   d. with a reply
+
+    def test_latest_note_ticket_with_invalid_id
+      get :latest_note, construct_params({ version: 'private', id: 0 }, false)
+      assert_response 404
+    end
+
+    def test_latest_note_ticket_without_permissison
+      ticket = create_ticket
+      user_stub_ticket_permission
+      get :latest_note, construct_params({ version: 'private', id: ticket.id }, false)
+      assert_response 403
+      user_unstub_ticket_permission
+    end
+
+    def test_latest_note_ticket_without_notes
+      ticket = create_ticket
+      get :latest_note, construct_params({ version: 'private', id: ticket.id }, false)
+      assert_response 204
+    end
+
+    def test_latest_note_ticket_with_private_note
+      ticket = create_ticket
+      note = create_note(custom_note_params(ticket, Helpdesk::Note::SOURCE_KEYS_BY_TOKEN[:note], true))
+      get :latest_note, construct_params({ version: 'private', id: ticket.id }, false)
+      assert_response 200
+      match_json(latest_note_response_pattern(note))
+    end
+
+    def test_latest_note_ticket_with_public_note
+      ticket = create_ticket
+      note = create_note(custom_note_params(ticket, Helpdesk::Note::SOURCE_KEYS_BY_TOKEN[:note]))
+      get :latest_note, construct_params({ version: 'private', id: ticket.id }, false)
+      assert_response 200
+      match_json(latest_note_response_pattern(note))
+    end
+
+    def test_latest_note_ticket_with_reply
+      ticket = create_ticket
+      reply = create_note(custom_note_params(ticket, Helpdesk::Note::SOURCE_KEYS_BY_TOKEN[:email]))
+      get :latest_note, construct_params({ version: 'private', id: ticket.id }, false)
+      assert_response 200
+      match_json(latest_note_response_pattern(reply))
+    end
+
   end
 end

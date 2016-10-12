@@ -175,4 +175,21 @@ module TicketsTestHelper
       due_by: 14.days.since.iso8601, frDueBy: 1.days.since.iso8601, group_id: Group.find(1).id
     }
   end
+
+  def custom_note_params(ticket, source, private_note = false)
+    sample_params = {
+      source: ticket.source,
+      ticket_id: ticket.id,
+      body: Faker::Lorem.paragraph,
+      user_id: @agent.id
+    }
+    sample_params.merge!(private: true) if private_note
+    sample_params
+  end
+
+  def latest_note_response_pattern(note)
+    pattern = reply_note_pattern({}, note).merge!({ user: Hash })
+    pattern.except(:user_id)
+  end
+
 end

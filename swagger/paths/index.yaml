@@ -49,6 +49,8 @@
   $ref: ./tickets/bulk_execute_scenario.yaml
 /tickets/bulk_update:
   $ref: ./tickets/bulk_update.yaml
+/tickets/{id}/latest_note:
+  $ref: ./tickets/latest_note.yaml
 /tickets/merge:
   $ref: ./tickets/merge.yaml
 

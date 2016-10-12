@@ -113,6 +113,7 @@ Helpkit::Application.routes.draw do
         put :unspam
         post :reply, to: 'ember/conversations#reply'
         post :notes, to: 'ember/conversations#create'
+        get :latest_note
       end
       # This alternate route is to handle limitation in ember route generation : api/_/tickets/:ticket_id/canned_responses?id=Number
       match '/canned_responses' => 'ember/tickets/canned_responses#show', via: :get

@@ -6,7 +6,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/scenario_automation", only: [:index]
     resource :"ember/canned_response_folder", only: [:index, :show]
     resource :"ember/tickets/canned_response", only: [:show]
-    resource :"ember/ticket", only: [:index, :spam]
+    resource :"ember/ticket", only: [:index, :spam, :latest_note]
     resource :"ember/ticket_filter", only: [:index, :show, :create, :update, :destroy]
     resource :"ember/attachment", only: [:create]
     resource :"ember/conversation", only: [:create]

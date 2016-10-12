@@ -1,9 +1,13 @@
 module Ember
   class TicketsController < ::TicketsController
     include DeleteSpamConcern
+    include TicketConcern
 
     INDEX_PRELOAD_OPTIONS = [:ticket_old_body, :schema_less_ticket, :flexifield, { requester: [:avatar, :flexifield, :default_user_company] }].freeze
     DEFAULT_TICKET_FILTER = :all_tickets.to_s.freeze
+
+    before_filter :ticket_permission?, only: [:latest_note]
+
     def index
       super
       response.api_meta = { count: @items_count }
@@ -58,6 +62,12 @@ module Ember
       @item.save
       @item.create_scenario_activity(@va_rule.name)
       head 204
+    end
+
+    def latest_note
+      @note = @item.conversation.first
+      head(204) and return if @note.nil?
+      @user = ContactDecorator.new(@note.user, {})
     end
 
     private
