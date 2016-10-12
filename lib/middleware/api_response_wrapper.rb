@@ -1,5 +1,5 @@
 class Middleware::ApiResponseWrapper
-  WRAPPABLE_RESPONSE_CODES = [200, 202].freeze
+  WRAPPABLE_RESPONSE_CODES = [200, 201, 202].freeze
   def initialize(app)
     @app = app
   end
