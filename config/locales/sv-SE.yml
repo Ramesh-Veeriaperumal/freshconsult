@@ -4875,7 +4875,7 @@ sv-SE:
         this_view: "den här vyn"
         all_tickets: "Alla ärenden"
         all: "Alla ärenden"
-        new_and_my_open: "Mina nya och öppna ärenden"
+        new_and_my_open: "Mina nya och Öppen ärenden"
         open: "Öppna ärenden"
         closed: "Stängda ärenden"
         deleted: Skräp
@@ -4894,7 +4894,7 @@ sv-SE:
         my_open: "Mina öppna ärenden"
         tickets_by: "Ärenden efter"
         tickets_twitter: "Ärenden via Twitter"
-        open_or_pending: "Öppna eller väntande"
+        open_or_pending: "Öppen eller väntande"
         resolved_or_closed: "Lösta eller stängda"
         no_tickets: "Du har inga ärenden i den aktuella vyn"
         article_feedback: "Feedback på artikel"
