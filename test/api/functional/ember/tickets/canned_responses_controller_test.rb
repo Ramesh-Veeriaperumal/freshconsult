@@ -38,13 +38,13 @@ module Ember
       end
 
       def test_show_with_invalid_response_id
-        get :show, construct_params({ version: 'private' }, false).merge(id: 0, ticket_id: @sample_ticket.id)
+        get :show, construct_params({ version: 'private' }, false).merge(id: 0, ticket_id: @sample_ticket.display_id)
         assert_response 404
       end
 
       def test_show_with_unauthorized_ticket_id
         user_stub_ticket_permission
-        get :show, construct_params({ version: 'private' }, false).merge(id: @ca_response.id, ticket_id: @sample_ticket.id)
+        get :show, construct_params({ version: 'private' }, false).merge(id: @ca_response.id, ticket_id: @sample_ticket.display_id)
         user_unstub_ticket_permission
         assert_response 403
         match_json(request_error_pattern(:access_denied))
@@ -52,7 +52,7 @@ module Ember
 
       def test_show_with_unauthorized_response_id
         Admin::CannedResponses::Response.any_instance.stubs(:visible_to_me?).returns(false)
-        get :show, construct_params({ version: 'private' }, false).merge(id: @ca_response.id, ticket_id: @sample_ticket.id)
+        get :show, construct_params({ version: 'private' }, false).merge(id: @ca_response.id, ticket_id: @sample_ticket.display_id)
         Admin::CannedResponses::Response.any_instance.unstub(:visible_to_me?)
         assert_response 403
         match_json(request_error_pattern(:access_denied))
@@ -64,20 +64,20 @@ module Ember
           content_html: Faker::Lorem.paragraph,
           visibility: Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents]
         )
-        get :show, construct_params({ version: 'private' }, false).merge(id: ca_response_2.id, ticket_id: @sample_ticket.id)
+        get :show, construct_params({ version: 'private' }, false).merge(id: ca_response_2.id, ticket_id: @sample_ticket.display_id)
         assert_response 200
         match_json(canned_responses_evaluated_pattern(false))
       end
 
       def test_show_with_response_having_attachments
-        get :show, construct_params({ version: 'private' }, false).merge(id: @ca_response.id, ticket_id: @sample_ticket.id)
+        get :show, construct_params({ version: 'private' }, false).merge(id: @ca_response.id, ticket_id: @sample_ticket.display_id)
         assert_response 200
         match_json(canned_responses_evaluated_pattern(false, @ca_response.attachments_sharable))
       end
 
       def test_show_response_strict
         evaluated_content = evaluate_response(@ca_response, @sample_ticket)
-        get :show, construct_params({ version: 'private' }, false).merge(id: @ca_response.id, ticket_id: @sample_ticket.id)
+        get :show, construct_params({ version: 'private' }, false).merge(id: @ca_response.id, ticket_id: @sample_ticket.display_id)
         assert_response 200
         match_json(canned_responses_evaluated_pattern(true, @ca_response.attachments_sharable, evaluated_content))
       end
