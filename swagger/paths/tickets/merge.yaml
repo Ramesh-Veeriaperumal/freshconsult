@@ -1,0 +1,20 @@
+put:
+  tags: [ticket]
+  summary: Merge tickets ***
+  parameters:
+    - name: data
+      in: body
+      required: true
+      schema:
+        $ref: '#/definitions/ticket_merge_input'
+  responses:
+    204:
+      description: Success
+    404:
+      description: Ticket not found
+    403:
+      description: Access denied
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'

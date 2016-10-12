@@ -822,6 +822,41 @@
         }
       }
     },
+    "/tickets/merge": {
+      "put": {
+        "tags": [
+          "ticket"
+        ],
+        "summary": "Merge tickets ***",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ticket_merge_input"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Ticket not found"
+          }
+        }
+      }
+    },
     "/tickets/{id}/notes": {
       "post": {
         "tags": [
@@ -1304,6 +1339,38 @@
           }
         }
       ]
+    },
+    "ticket_merge_input": {
+      "type": "object",
+      "properties": {
+        "primary_id": {
+          "type": "number",
+          "description": "ID of the Primary ticket",
+          "required": true
+        },
+        "ticket_ids": {
+          "type": "array",
+          "description": "Ids of the tickets that will be merged into the Primary ticket",
+          "minItems": 1,
+          "maxItems": 30,
+          "items": {
+            "type": "number"
+          }
+        },
+        "note_in_primary": {
+          "type": "string",
+          "required": false
+        },
+        "note_in_secondary": {
+          "type": "string",
+          "required": false
+        },
+        "convert_recepients_to_cc": {
+          "type": "boolean",
+          "default": false,
+          "description": "Whether to Add secondary ticket recipients to CC"
+        }
+      }
     },
     "add_watcher_input": {
       "type": "object",
