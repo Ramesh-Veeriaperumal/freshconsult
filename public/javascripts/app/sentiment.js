@@ -55,17 +55,15 @@ App.Sentiment = {
 
 			var sentiment = target.closest('a').classList[1];
 
-			if(sentiment != last_note_sentiment){
-				m1 = jQuery('.cmi-plugin .note_mood');
-				m1.closest('li').removeClass('selected');
+			m1 = jQuery('.cmi-plugin .note_mood');
+			m1.closest('li').removeClass('selected');
 
-				m = jQuery('.cmi-plugin .'+sentiment);
-				m.closest('li').addClass('selected');
+			m = jQuery('.cmi-plugin .'+sentiment);
+			m.closest('li').addClass('selected');
 
-				jQuery('.cmi-fdbk').html("Successfully changed!");
+			jQuery('.cmi-fdbk').html("Successfully changed!");
 
-				this.post_feedback(sentiment);
-			}
+			this.post_feedback(sentiment);
 		},
 		post_feedback : function(sentiment) {
 
