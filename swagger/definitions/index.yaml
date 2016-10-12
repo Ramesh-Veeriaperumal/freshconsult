@@ -33,6 +33,8 @@
     $ref: ./request/tickets/bulk_update.yaml
   ticket_update_input:
     $ref: ./request/tickets/update.yaml
+  ticket_merge_input:
+    $ref: ./request/tickets/merge.yaml
   add_watcher_input:
     $ref: ./request/subscriptions/add_watcher.yaml
 

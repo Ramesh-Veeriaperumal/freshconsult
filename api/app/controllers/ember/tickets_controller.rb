@@ -275,7 +275,7 @@ module Ember
       end
 
       def sideload_options
-        ApiTicketConstants::SIDE_LOADING & params[:include].split(',').map!(&:strip)
+        ApiTicketConstants::SIDE_LOADING & (params[:include] || '').split(',').map!(&:strip)
       end
 
       def render_201_with_location(template_name: "tickets/#{action_name}", location_url: 'ticket_url', item_id: @item.id)
