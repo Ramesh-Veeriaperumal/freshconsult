@@ -706,10 +706,5 @@ class ApiApplicationController < MetalApiController
       @api_root_key ||=
         defined?(self.class::ROOT_KEY) ? self.class::ROOT_KEY.to_s : controller_name.gsub('api_', '')
     end
-
-    # overiding this method in metal api controller
-    def self.inherited(subclass)
-      subclass.wrap_parameters(*wrap_params)
-    end
-      
+  
 end

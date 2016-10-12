@@ -17,10 +17,6 @@ module DecoratorConcern
       alias_method_chain :render, :before_render_action unless self.method_defined? :render_without_before_render_action
     end
 
-    def inherited(subclass)
-      subclass.instance_variable_set("@decorator_method_mapping", @decorator_method_mapping)
-    end
-
     def decorator_name
       @name ||= "#{name.gsub('Controller', '').gsub('Ember::', '').gsub('Api', '').singularize}Decorator".constantize
     end
@@ -28,7 +24,8 @@ module DecoratorConcern
 
   def decorator_method
     @decorator_method ||= 
-      self.class.decorator_method_mapping[action_name.to_sym]
+        (self.class.decorator_method_mapping || 
+          self.class.superclass.decorator_method_mapping)[action_name.to_sym]
   end
 
   def render_with_before_render_action(*options, &block)
