@@ -592,6 +592,10 @@ var scrollToError = function(){
 
 		var _this = $(this);
 		var previous =  _this.data("previous");
+		//in case of deleted status, manually pass the condition for api trigger
+		if(previous !== "" && !previous){
+			previous = true;
+		}
 		_this.data("previous", _this.val());
 		var select_group = jQuery('#TicketProperties .default_internal_group select')[0];
 		var prev_val = ""

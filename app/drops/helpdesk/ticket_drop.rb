@@ -4,7 +4,7 @@ class Helpdesk::TicketDrop < BaseDrop
   include TicketConstants
   include DateHelper
 
-  self.liquid_attributes += [ :requester , :group , :ticket_type , :deleted, :company ]
+  self.liquid_attributes += [ :requester , :group , :ticket_type , :deleted, :company, :internal_group ]
 
   def initialize(source)
     super source
@@ -72,6 +72,10 @@ class Helpdesk::TicketDrop < BaseDrop
 
   def agent
     @source.responder.presence
+  end
+
+  def internal_agent
+    @source.internal_agent.presence
   end
 
   def status

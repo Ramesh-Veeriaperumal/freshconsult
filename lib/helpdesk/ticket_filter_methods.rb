@@ -7,9 +7,10 @@ module Helpdesk::TicketFilterMethods
     :defaults => [:save_as, :cancel],
     :userdefined_views => [:save, :cancel, :save_as, :edit, :delete ],
   }
+  SHARED_OWNERSHIP_FILTERS = ["shared_with_me", "shared_by_me"]
 
-  def top_views(selected = "new_and_my_open", dynamic_view = [], show_max = 1)
-
+  def top_views(selected = DEFAULT_FILTER, dynamic_view = [], show_max = 1)
+    selected = current_account.features?(:shared_ownership) ? selected : DEFAULT_FILTER if SHARED_OWNERSHIP_FILTERS.include?(selected)
     default_views = fetch_default_views
     top_views_array = [].concat(split_and_arrange_views(dynamic_view)).concat(default_views)
     selected_item =  top_views_array.select { |v| v[:id].to_s == selected.to_s }.first
@@ -250,6 +251,7 @@ module Helpdesk::TicketFilterMethods
   end
 
   def current_agent_mode
+    return DEFAULT_AGENT_MODE unless current_account.features?(:shared_ownership)
     return @agent_mode if @agent_mode.present?
     return @cached_filter_data[:agent_mode].to_i if @cached_filter_data && !@cached_filter_data[:agent_mode].blank?
     cookies[:agent_mode] = (params[:agent_mode] ? params[:agent_mode] : ( (!cookies[:agent_mode].blank?) ? cookies[:agent_mode] : DEFAULT_AGENT_MODE))
@@ -257,6 +259,7 @@ module Helpdesk::TicketFilterMethods
   end
 
   def current_group_mode
+    return DEFAULT_GROUP_MODE unless current_account.features?(:shared_ownership)
     return @group_mode if @group_mode.present?
     return @cached_filter_data[:group_mode].to_i if @cached_filter_data && !@cached_filter_data[:group_mode].blank?
     cookies[:group_mode] = (params[:group_mode] ? params[:group_mode] : ( (!cookies[:group_mode].blank?) ? cookies[:group_mode] : DEFAULT_GROUP_MODE))

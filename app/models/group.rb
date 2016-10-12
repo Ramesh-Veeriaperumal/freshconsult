@@ -200,6 +200,6 @@ class Group < ActiveRecord::Base
     end
 
     def nullify_tickets
-      Helpdesk::ResetGroup.perform_async({:group_id => self.id })
+      Helpdesk::ResetGroup.perform_async({:group_id => self.id, :reason => {:delete_group => [self.name]}})
     end
 end

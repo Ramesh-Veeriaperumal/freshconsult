@@ -24,7 +24,11 @@ module Cache::Memcache::Helpdesk::TicketStatus
   def status_objects_from_cache(account)
     account.ticket_status_values_from_cache
   end
-  
+
+  def status_groups_from_cache
+    account.account_status_groups_from_cache.select{|status_group| status_group.status_id == self.id}
+  end
+
   private
     def onhold_and_closed_memcache_key(account_id)
       ACCOUNT_ONHOLD_CLOSED_STATUSES % { :account_id => account_id }
@@ -33,6 +37,5 @@ module Cache::Memcache::Helpdesk::TicketStatus
     def statuses_memcache_key(account_id)
       ACCOUNT_STATUSES % { :account_id => account_id }
     end
-
 
 end
