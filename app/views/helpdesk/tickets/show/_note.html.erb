@@ -46,7 +46,11 @@ end
 			    <div class="avatar-wrap" name="note<%= note.id %>" id="note<%= note.id %>"><%= user_avatar(note.user, :thumb, 'preview_pic circle') %></div>
 			  <% end %>
 			<% else %>
-			  <div class="avatar-wrap" name="note<%= note.id %>" id="note<%= note.id %>"><%= senti_user_avatar(note.user, note.sentiment, :thumb, 'preview_pic circle') %></div>
+				<% if (Account.current.customer_sentiment_enabled?) %>
+				    <div class="avatar-wrap" name="note<%= note.id %>" id="note<%= note.id %>"><%= senti_user_avatar(note.user, note.sentiment, :thumb, 'preview_pic circle') %></div>
+			  	<% else %>
+				    <div class="avatar-wrap" name="note<%= note.id %>" id="note<%= note.id %>"><%= user_avatar(note.user, :thumb, 'preview_pic circle') %></div>
+			  	<% end %>
 			<% end %>
 		<% end %>
 	<% end %>

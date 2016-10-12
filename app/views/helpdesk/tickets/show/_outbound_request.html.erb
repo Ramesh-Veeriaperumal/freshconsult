@@ -8,7 +8,11 @@
     <%= link_to user_avatar(@ticket.requester, :thumb, 'preview_pic circle'), @ticket.requester, :class => 'avatar-wrap' %>
   <% end %>
 <% else %>
-  <%= link_to senti_user_avatar(@ticket.requester, 0, :thumb, 'preview_pic circle'), @ticket.requester, :class => 'avatar-wrap' %>
+  <% if (Account.current.customer_sentiment_enabled?) %>
+    <%= link_to senti_user_avatar(@ticket.requester, @ticket.sentiment, :thumb, 'preview_pic circle'), @ticket.requester, :class => 'avatar-wrap' %>
+  <% else %>
+    <%= link_to user_avatar(@ticket.requester, :thumb, 'preview_pic circle'), @ticket.requester, :class => 'avatar-wrap' %>
+  <% end %>
 <% end %>
 
 <div class="commentbox commentbox-gray">

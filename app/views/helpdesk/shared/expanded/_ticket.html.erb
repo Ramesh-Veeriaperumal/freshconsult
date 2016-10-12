@@ -20,7 +20,11 @@
 				    	<%= user_avatar(ticket.requester, :thumb, 'preview_pic circle') %>
 					<% end %>
 				<% else %>
-					<%= senti_user_avatar(ticket.requester, ticket.sentiment, :thumb, 'preview_pic circle') %>
+					<% if (Account.current.customer_sentiment_enabled?) %>
+						<%= senti_user_avatar(ticket.requester, ticket.sentiment, :thumb, 'preview_pic circle') %>
+					<% else %>
+						<%= user_avatar(ticket.requester, :thumb, 'preview_pic circle') %>
+					<% end %>
 				<% end %>
 			</div>
 		</td>
