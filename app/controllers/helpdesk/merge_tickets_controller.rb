@@ -43,7 +43,7 @@ class Helpdesk::MergeTicketsController < ApplicationController
 			respond_to do |format|
 				format.html do
 					flash[:error] = t("helpdesk.merge.bulk_merge.merge_ticket_failed")
-					redirect_to ( params[:redirect_back].eql?("true") ? :back : helpdesk_ticket_path(@target_ticket) )
+					redirect_to ( params[:redirect_back].eql?("true") ? :back : helpdesk_ticket_path(params[:target][:ticket_id]) )
 				end
 				format.nmobile { render :json => {:error => t(:'helpdesk.merge.bulk_merge.merge_ticket_failed')}, :status => :forbidden}
 			end
@@ -57,11 +57,12 @@ class Helpdesk::MergeTicketsController < ApplicationController
 		# end
 
 		def load_target_ticket
-			@target_ticket = current_account.tickets.permissible(current_user).readonly(false).find_by_display_id(params[:target][:ticket_id])
+			@target_ticket = current_account.tickets.permissible(current_user).not_associated.readonly(false).find_by_display_id(params[:target][:ticket_id])
 		end
 
 		def load_source_tickets
 			@source_tickets = current_account.tickets
+													.not_associated
 													.permissible(current_user).readonly(false)
 													.where(:display_id => params[:source_tickets])
                           .order("status, created_at DESC")

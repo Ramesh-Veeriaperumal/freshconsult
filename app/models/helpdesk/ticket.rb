@@ -18,6 +18,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   include Redis::ReportsRedis
   include Redis::OthersRedis
   include Redis::DisplayIdRedis
+  include Redis::RoundRobinRedis
   include Reports::TicketStats
   include Helpdesk::TicketsHelperMethods
   include ActionView::Helpers::TranslationHelper
@@ -25,12 +26,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
   include Helpdesk::Services::Ticket
   include BusinessHoursCalculation
   include AccountConstants
+  include RoundRobinCapping::Methods
 
   SCHEMA_LESS_ATTRIBUTES = ["product_id","to_emails","product", "skip_notification",
                             "header_info", "st_survey_rating", "survey_rating_updated_at", "trashed", 
                             "access_token", "escalation_level", "sla_policy_id", "sla_policy", "manual_dueby", "sender_email", "parent_ticket",
                             "reports_hash","sla_response_reminded","sla_resolution_reminded", "dirty_attributes",
-                            "internal_group_id", "internal_group", "internal_agent_id", "internal_agent"]
+                            "internal_group_id", "internal_group", "internal_agent_id", "internal_agent","association_type", "associates_rdb"]
 
   TICKET_STATE_ATTRIBUTES = ["opened_at", "pending_since", "resolved_at", "closed_at", "first_assigned_at", "assigned_at",
                              "first_response_time", "requester_responded_at", "agent_responded_at", "group_escalated", 
@@ -43,7 +45,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   serialize :cc_email
 
-  concerned_with :associations, :validations, :callbacks, :riak, :s3, :mysql, :attributes, :rabbitmq, :permissions, :esv2_methods, :count_es_methods
+  concerned_with :associations, :validations, :callbacks, :riak, :s3, :mysql, 
+                 :attributes, :rabbitmq, :permissions, :esv2_methods, :count_es_methods, 
+                 :round_robin_methods, :link_methods
   
   text_datastore_callbacks :class => "ticket"
   spam_watcher_callbacks :user_column => "requester_id"
@@ -53,7 +57,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   attr_accessor :email, :name, :custom_field ,:customizer, :nscname, :twitter_id, :external_id, 
     :requester_name, :meta_data, :disable_observer, :highlight_subject, :highlight_description, 
     :phone , :facebook_id, :send_and_set, :archive, :required_fields, :disable_observer_rule, 
-    :disable_activities, :tags_updated, :system_changes, :activity_type, :misc_changes
+    :disable_activities, :tags_updated, :system_changes, :activity_type, :misc_changes, 
+    :round_robin_assignment, :related_ticket_ids, :tracker_ticket_id
   # Added :system_changes, :activity_type, :misc_changes for activity_revamp -
   # - will be clearing these after activity publish.
 
@@ -231,6 +236,26 @@ class Helpdesk::Ticket < ActiveRecord::Base
                             false, sla_rule_ids]
   }}
 
+  scope :not_associated,
+          :select => "helpdesk_tickets.*",
+          :joins => :schema_less_ticket,
+          :conditions => ["`helpdesk_schema_less_tickets`.#{Helpdesk::SchemaLessTicket.association_type_column} is null"]
+  scope :unassigned, :conditions => ["helpdesk_tickets.responder_id is NULL"]
+  scope :sla_on_tickets, lambda { |status_ids| 
+    { :conditions => ["status IN (?)", status_ids] }
+  }
+  scope :agent_tickets, lambda { |status_ids, user_id| 
+    { :conditions => ["status IN (?) and responder_id = ?", status_ids, user_id] } 
+  }
+
+  scope :next_autoplay_ticket, lambda {|account,responder_id| { 
+    :select => "helpdesk_tickets.display_id",
+    :conditions => ["status IN (?) and responder_id = ?", Helpdesk::TicketStatus::donot_stop_sla_statuses(account),responder_id],
+    :limit => 1,
+    :order => "helpdesk_tickets.due_by ASC",
+  }
+}
+
   SCHEMA_LESS_ATTRIBUTES.each do |attribute|
     define_method("#{attribute}") do
       build_schema_less_ticket unless schema_less_ticket
@@ -292,7 +317,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
     
     def default_cc_hash
-      { :cc_emails => [], :fwd_emails => [], :reply_cc => [], :tkt_cc => [] }
+      { :cc_emails => [], :fwd_emails => [], :reply_cc => [], :tkt_cc => [], :bcc_emails => [] }
     end
 
   end
@@ -442,19 +467,19 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def conversation(page = nil, no_of_records = 5, includes=[])
     includes = note_preload_options if includes.blank?
-    notes.visible.exclude_source('meta').newest_first.paginate(:page => page, :per_page => no_of_records, :include => includes)
+    notes.visible.exclude_source(['meta', 'tracker']).newest_first.paginate(:page => page, :per_page => no_of_records, :include => includes)
   end
 
   def conversation_since(since_id)
-    notes.visible.exclude_source('meta').since(since_id).includes(note_preload_options)
+    notes.visible.exclude_source(['meta', 'tracker']).since(since_id).includes(note_preload_options)
   end
 
   def conversation_before(before_id)
-    notes.visible.exclude_source('meta').newest_first.before(before_id).includes(note_preload_options)
+    notes.visible.exclude_source(['meta', 'tracker']).newest_first.before(before_id).includes(note_preload_options)
   end
 
   def conversation_count(page = nil, no_of_records = 5)
-    notes.visible.exclude_source('meta').size
+    notes.visible.exclude_source(['meta', 'tracker']).size
   end
 
   def latest_twitter_comment_user
@@ -613,7 +638,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def last_interaction
-    notes.visible.newest_first.exclude_source("feedback").exclude_source("meta").exclude_source("forward_email").first.try(:body).to_s
+    notes.visible.newest_first.exclude_source(["feedback","meta","forward_email","tracker"]).first.try(:body).to_s
   end
 
   #To use liquid template...
@@ -647,11 +672,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
   def latest_public_comment
-    notes.visible.exclude_source('meta').public.newest_first.first
+    notes.visible.exclude_source(['meta','tracker']).public.newest_first.first
   end
 
   def latest_private_comment
-    notes.visible.exclude_source('meta').private.newest_first.first
+    notes.visible.exclude_source(['meta','tracker']).private.newest_first.first
   end
   
   def liquidize_comment(comm, html=true)
@@ -817,7 +842,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     
   def cc_email_hash
     if cc_email.is_a?(Array)     
-      {:cc_emails => cc_email, :fwd_emails => [], :reply_cc => cc_email}
+      {:cc_emails => cc_email, :fwd_emails => [], :bcc_emails => [] , :reply_cc => cc_email}
     else
       cc_email
     end
@@ -875,6 +900,17 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def ticket_changes
     @model_changes
+  end
+
+  def trigger_autoplay?
+    return false unless account.launched?(:autoplay)
+    return false unless (User.current && User.current.agent? && User.current.agent.available?)
+    can_trigger = false
+
+    can_trigger = self.onhold_and_closed? if ticket_changes.has_key?(:status)
+    can_trigger = ticket_changes[:responder_id][1] != User.current.try(:id) if ticket_changes.has_key?(:responder_id)
+
+    can_trigger
   end
 
   #Ecommerce methods
@@ -1049,14 +1085,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
       self.sqs_manual_publish
     end
     @touched ||= true
-  end
-
-  def schedule_round_robin_for_agents
-    next_agent = group.next_available_agent
-
-    return if next_agent.nil? #There is no agent available to assign ticket.
-    self.responder_id = next_agent.user_id
-    self.activity_type = {:type => "round_robin", :responder_id => [nil, self.responder_id]}
   end
 
   def add_tag_activity(tag)

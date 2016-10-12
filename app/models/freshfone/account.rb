@@ -187,6 +187,10 @@ class Freshfone::Account < ActiveRecord::Base
 		update_conference_status_url("#{host}/freshfone/conference_call/status")
 	end
 
+	def enable_custom_forwarding
+		account.features.freshfone_custom_forwarding.create
+	end
+
 	def disable_conference
 		account.features.freshfone_conference.destroy if account.features?(:freshfone_conference)
 		update_conference_status_url

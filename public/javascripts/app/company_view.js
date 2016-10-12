@@ -14,6 +14,9 @@ window.App.Companies.Company_show = window.App.Companies.Company_show || {};
 		onVisit: function(data) {
 			this.bindEvents();
 			this.adjustWidthForNoContacts();
+
+			// Show the tooltip for tickets list
+			App.Customers.Tickets.init();
 		},
 		switchToForm: function(showForm) {
 			if($('.form-save').length > 0 && showForm) {
@@ -126,6 +129,8 @@ window.App.Companies.Company_show = window.App.Companies.Company_show || {};
 		onLeave: function() {
 			$('body').off('.company-view');
 			$(window).off('.company-view');
+
+			App.Customers.Tickets.destroy();
 		}
 	};
 }(window.jQuery));

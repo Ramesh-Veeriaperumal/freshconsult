@@ -35,7 +35,13 @@ Sidekiq.configure_client do |config|
       "Reports::BuildNoActivity",
       "Social::PremiumFacebookWorker",
       "Social::PremiumTwitterWorker",
-      "Reports::NoActivityWorker"
+      "Reports::NoActivityWorker",
+      "DelayedJobs::ActiveAccountJob",
+      "DelayedJobs::FreeAccountJob",
+      "DelayedJobs::TrialAccountJob",
+      "DelayedJobs::PremiumAccountJob",
+      "DelayedJobs::DelayedAccountJob"
+
     ]
     chain.add Middleware::Sidekiq::Client::SetCurrentUser, :required_classes => [
       "Tickets::BulkScenario",
@@ -50,7 +56,8 @@ Sidekiq.configure_client do |config|
       "Tickets::Export::PremiumTicketsExport",
       "Reports::ScheduledReports",
       "Reports::Export",
-      "LivechatWorker"
+      "LivechatWorker",
+      "Tickets::LinkTickets"
     ]
   end
 end
@@ -90,7 +97,12 @@ Sidekiq.configure_server do |config|
       "Reports::BuildNoActivity",
       "Social::PremiumFacebookWorker",
       "Social::PremiumTwitterWorker",
-      "Reports::NoActivityWorker"
+      "Reports::NoActivityWorker",
+      "DelayedJobs::ActiveAccountJob",
+      "DelayedJobs::FreeAccountJob",
+      "DelayedJobs::TrialAccountJob",
+      "DelayedJobs::PremiumAccountJob",
+      "DelayedJobs::DelayedAccountJob"
     ]
     chain.add Middleware::Sidekiq::Server::SetCurrentUser, :required_classes => [
       "Tickets::BulkScenario",
@@ -104,7 +116,8 @@ Sidekiq.configure_server do |config|
       "Tickets::Export::LongRunningTicketsExport",
       "Tickets::Export::PremiumTicketsExport",
       "Reports::Export",
-      "LivechatWorker"
+      "LivechatWorker",
+      "Tickets::LinkTickets"
     ]
 
     chain.add Middleware::Sidekiq::Server::JobDetailsLogger
@@ -135,7 +148,12 @@ Sidekiq.configure_server do |config|
       "Reports::BuildNoActivity",
       "Social::PremiumFacebookWorker",
       "Social::PremiumTwitterWorker",
-      "Reports::NoActivityWorker"
+      "Reports::NoActivityWorker",
+      "DelayedJobs::ActiveAccountJob",
+      "DelayedJobs::FreeAccountJob",
+      "DelayedJobs::TrialAccountJob",
+      "DelayedJobs::PremiumAccountJob",
+      "DelayedJobs::DelayedAccountJob"
     ]
     chain.add Middleware::Sidekiq::Client::SetCurrentUser, :required_classes => [
       "Tickets::BulkScenario",
@@ -149,7 +167,8 @@ Sidekiq.configure_server do |config|
       "Tickets::Export::LongRunningTicketsExport",
       "Tickets::Export::PremiumTicketsExport",
       "Reports::Export",
-      "LivechatWorker"
+      "LivechatWorker",
+      "Tickets::LinkTickets"
     ]
   end
 end

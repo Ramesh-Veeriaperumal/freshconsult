@@ -136,6 +136,7 @@ cs:
     digits: "Prosím, zadejte pouze číslice."
     creditcard: "Prosím, zadejte platné číslo kreditní karty."
     equalTo: "Prosím, zadejte znova stejnou hodnotu."
+    two_decimal_place_warning: "Value cannot have more than 2 decimal digits"
   confirm_delete_message: "Jste si jistí, že chcete smazat %{human_name}?"
   any: Cokoli
   or: nebo
@@ -4117,7 +4118,7 @@ cs:
   reply_comment: "Přidat komentář"
   create_password: "Create a Password"
   retype_password: "Retype Password"
-  feedbackwidget_defaulttitle: "Pomoc &amp;amp; Podpora"
+  feedbackwidget_defaulttitle: "Pomoc &amp; Podpora"
   two: "2 hodiny"
   set_status_as: "Nastavit stav jako"
   trigger_webhook: "Spouštěč Webhook"
@@ -5329,9 +5330,9 @@ cs:
       new:
         feedback_widgets_search: Hledat
         feedback_widgets_search_results: "Výsledky hledání"
-        feedback_widgets_search_our: "Prohledat naši "
-        feedback_widgets_knowledge_base: "Databáze znalostí "
-        feedback_widgets_help_articles: "nebo Vyhledat mezi řešeními"
+        feedback_widgets_search_our: "Často kladené "
+        feedback_widgets_knowledge_base: "dotazy "
+        feedback_widgets_help_articles: "Možná, že odpověď na Váš dotaz naleznete v databázi často kladených dotazů - zobrazit ji můžete zde"
         show_all_results: "Ukázat všechny výsledky"
         no_results: "Žádné výsledky pro "
   reorder: "Změnit pořadí"

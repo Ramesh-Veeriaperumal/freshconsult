@@ -7,7 +7,9 @@ class Integrations::ApplicationsController < Admin::AdminController
   before_filter :load_object, :only => [:show]
   def index
     if feature?(:marketplace)
-      @installed_mkp_apps = installed_mkp_apps(:integrations_list)
+      installed_extensions = installed_mkp_apps(:integrations_list)
+      @installed_mkp_apps = installed_extensions[:installed_mkp_apps]
+      @installed_custom_apps = installed_extensions[:installed_custom_apps]
     else
       @applications = Integrations::Application.available_apps(current_account)
       @installed_applications = get_installed_apps

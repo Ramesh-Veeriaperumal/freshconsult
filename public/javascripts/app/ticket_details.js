@@ -4,6 +4,7 @@
 window.App = window.App || {};
 window.App.Tickets = window.App.Tickets || {};
 
+
 (function ($) {
 
 var activeForm, savingDraft, draftClearedFlag, draftSavedTime,dontSaveDraft, replyEditor, draftInterval, currentStatus;
@@ -53,6 +54,9 @@ var autosaveDraft = function() {
 		  bcc_email_list = bcc_email_list.substr(0,bcc_email_list.length - 1);
 		if ($.trim(content) != '' || cc_email_list.length > 0 || bcc_email_list.length > 0)
 			save_draft(content, cc_email_list, bcc_email_list);
+
+		// When the reply draft is saved, turn the formChanged flag off on the reply
+		jQuery('#cnt-reply-body').parents('form').data('formChanged',false);
 	}
 
 	TICKET_DETAILS_DATA['draft']['hasChanged'] = false;
@@ -153,7 +157,13 @@ swapEmailNote = function(formid, link){
 	if (activeForm.data('type') == 'textarea') {
 		//For Facebook and Twitter Reply forms.
 		$element = $('#' + formid + ' textarea').get(0);
-		$element.value = $(link).data('replytoHandle');
+		//changes done as part of linked tickets
+		if($(link).data('replytoHandle')){
+			if($element.value.indexOf($(link).data('replytoHandle')) == -1){
+				$element.value = $(link).data('replytoHandle')+$element.value;
+				$element.trigger('change');
+			}
+		}
 		$element.value += $element.value.length ? " " : "";
 		setCaretToPos($element, $element.value.length);
 	} else {
@@ -218,6 +228,7 @@ insertIntoConversation = function(value,element_id){
 			$element.focus();
 			insertTextAtCursor($element.get(0), textValue);
 			$element.keyup(); // to update the SendTweetCounter value
+			$element.trigger('change'); // to set formChanged flag
 		}
 		else{
 			$element.data('redactor').insertOnCursorPosition('inserthtml',value);
@@ -256,6 +267,23 @@ showHideToEmailContainer = function(){
 TICKET_DETAILS_DOMREADY = function() {
 activeForm = null, savingDraft = false, draftClearedFlag = TICKET_DETAILS_DATA['draft']['cleared_flag'];
 // $('#ticket_original_request *').css({position: ''}); //Resetting the Position
+
+$('body').on("click.conversation_action", '.conv-action-icon', function(ev){
+		var fetchedId = ev.target.id;
+	    //slicing 'conv-action-' prefix from conv-action-icon's id value
+	    var selectedId = fetchedId.slice(12);
+	    jQuery('#'+selectedId).show().trigger('afterShow');
+	    invokeRedactor(selectedId+'-body'); 
+
+	    // start-----hack for hiding multiple instance of fwd edit in public note-----
+		var noteIdNo = ev.target.getAttribute("noteId");
+		var typeOfBtn = selectedId.substring(0, 5);
+			if(typeOfBtn === "cnt-f")	//cnt-fwd-{noteId}
+					{jQuery("#edit-"+noteIdNo).hide();}
+			if(typeOfBtn === "edit-")	//edit-{noteId}
+					{jQuery("#cnt-fwd-"+noteIdNo).hide();}
+	    // end-------hack for hiding multiple instance of fwd edit in public note-----
+	});
 
 $('body').on('mouseover.ticket_details', ".ticket_show #draft-save", function() {
 	var hasMoment = $(this).attr('data-moment');
@@ -601,6 +629,10 @@ var scrollToError = function(){
 		}  
 	});
 
+	$('body').on("click.ticket_details", '.broadcast_message_box a:not("#FwdButton, .q-marker")', function(ev){
+		this.attr('target', '_blank');
+	});
+
 	$("body").on('click.ticket_details', '.widget.load_on_click.inactive', function(ev){
 		var widget_code = $(this).find('textarea');
 		$(this).find('.content').append(widget_code.val());
@@ -853,7 +885,7 @@ var scrollToError = function(){
 	});
 
 	$('body').on('click.ticket_details', '.collision_refresh', function(ev) {
-		window.location = TICKET_DETAILS_DATA['ticket_path'];
+		pjaxify(TICKET_DETAILS_DATA['ticket_path'])
 	});
 
 	$('body').on('click.ticket_details', ".conversation_thread .request_panel form .submit_btn", function(ev) {
@@ -908,6 +940,9 @@ var scrollToError = function(){
 			_form.find('.forward_email li.choice').remove();
 		}
 		$('#response_added_alert').remove();
+
+		// Remove formChanged field in the form
+		_form.data("formChanged",false);
 	});
 
 	// More Event bindings for Draft Saving
@@ -1003,6 +1038,7 @@ var scrollToError = function(){
 						if(eligibleForReply(_form)){
 							handleIEReply(_form);
 							submitTicketProperties();
+							removeFormChangedFlag();
 							return true;
 						}
 						changeStatusTo(currentStatus);
@@ -1027,6 +1063,7 @@ var scrollToError = function(){
 				if($.browser.msie || $.browser.msedge) {
 					if(eligibleForReply(_form)){
 						handleIEReply(_form);
+						removeFormChangedFlag();
 						return true;
 					}
 					return false;
@@ -1047,6 +1084,8 @@ var scrollToError = function(){
 		} else {
 			_form.find('input[type=submit]').prop('disabled', false);
 		}
+
+		removeFormChangedFlag();
 	});
 
 
@@ -1061,6 +1100,8 @@ var scrollToError = function(){
 		}
 
 	});
+
+	jQuery('#ticket-association').trigger('afterShow');
 
 	var handleIEReply = function(_form) {
 		seperateQuoteText(_form);
@@ -1138,6 +1179,25 @@ var scrollToError = function(){
 			success: function(response, statusCode, xhr) {
 				releaseForm(_form);
 				var statusChangeField = $('#send_and_set');
+
+				if(App.Tickets.TicketDetail.inlineError) {
+					var msg = App.Tickets.TicketDetail.inlineErrorMessage;
+					App.Tickets.LimitEmails.appendErrorMessage(_form,'.cc_fields:visible:last' ,msg)
+					
+					if (_form.data('panel')) {
+
+						if(_form.data("form")){
+							var $form = $('#' + _form.data('panel')),
+								form_container = $form.find(".commentbox");
+
+							form_container.unblock();
+						} else {
+							$('#' + _form.data('panel')).unblock();
+						}
+					}
+					$.scrollTo(jQuery('.redactor.conversation_thread'));
+					return false;
+				}
 
 				if($('#response_added_alert').length > 0 && _form.parents('#all_notes').length < 1){
 					if (_form.data('panel')) {
@@ -1227,6 +1287,8 @@ var scrollToError = function(){
 					getTweetTypeAndBind();
 				}
 
+				_form.data("formChanged",false)
+
 				Helpdesk.TicketStickyBar.check();
 
 			},
@@ -1285,8 +1347,11 @@ var scrollToError = function(){
 				}, 2000);
 
 				callback();
-
-				if(response.redirect)
+				
+				if (response.autoplay_link) {
+					pjaxify(response.autoplay_link);
+				}
+				else if(response.redirect || response.autoplay_link == "")
 				{
 					$('[rel=link_ticket_list]').click();
 				} else {
@@ -1516,6 +1581,32 @@ var scrollToError = function(){
 		if($(this).data('note-type') === 'note'){
 			addNoteAgents();
 		}
+
+		//code for collapsing the broadcat message box
+		if(parseFloat($('.broadcast_message_box #ticket_original_request [dir="ltr"]').css('height')) > 64) {
+			$('.broadcast_message_box #ticket_original_request').addClass('collapsed');
+			$('#recent_broadcasted_message .quoted_text').css('display', 'inherit');
+		}
+		//hiding attachment button while adding broadcast message
+		$('#cnt-broadcast #attachment-options-note').css('display', 'none');
+		//appending the broadcast message into reply---changes for linked tickets field
+		if($(this).data('reply-type') === 'broadcast'){
+			var element_id = $(this).data('editorId'),
+			$element = jQuery('[id$=' + element_id +']');
+			var broadcastMsg = $('.broadcast_message_box #ticket_original_request div').html();
+
+			if($element.data('redactor')){
+				$element.data('redactor').saveSelection();
+
+				if($element){
+					$element.data('redactor').insertOnCursorPosition('inserthtml',broadcastMsg);
+					$element.getEditor().focus();
+			 	}
+			}else {
+				var existingReplyMsg = $('[id$=cnt-reply-body]').val();
+				$('[id$=cnt-reply-body]').val(existingReplyMsg+'<br/>'+broadcastMsg).trigger('change');
+			}
+		}
 		swapEmailNote('cnt-' + $(this).data('note-type'), this);
 	});
 
@@ -1525,6 +1616,18 @@ var scrollToError = function(){
 		}
 		ev.preventDefault();
 		ev.stopPropagation();
+	});
+
+	//show full broadcast message
+	if(parseFloat($('.broadcast_message_box #ticket_original_request [dir="ltr"]').css('height')) <= 65) {
+		$('.broadcast_message_box #ticket_original_request').removeClass('collapsed');
+		$('.broadcast_message_box .quoted_text').css('display', 'none');
+	}
+	
+	$('body').on('click.ticket_details', '.broadcast_message_box .quoted_text, .boadcast_expander', function(e){
+		e.preventDefault();
+		$('.broadcast_message_box #ticket_original_request').removeClass('collapsed');
+		$('.broadcast_message_box .quoted_text').css('display', 'none');
 	});
 	//ScrollTo the latest conversation
 
@@ -1646,6 +1749,31 @@ var scrollToError = function(){
 	//RECENT TICKETS SETUP
 	NavSearchUtils.saveToLocalRecentTickets(TICKET_DETAILS_DATA);	
 
+	// Check for when form changes occur
+	var selectors = [
+		".form-unsaved-changes-trigger input",
+		".form-unsaved-changes-trigger textarea",
+		".form-unsaved-changes-trigger .redactor_editor",
+		".form-unsaved-changes-trigger select"
+	];
+	$('body').on('change.ticket_details input.ticket_details', selectors.join(","), function(event){
+		// Ignore twitter handle and type changes
+		if(["twitter_handle","tweet_type"].indexOf($(event.target).attr('id'))>-1){
+			return;
+		}
+		var form = $(event.target).parents('.form-unsaved-changes-trigger');
+		form.data("formChanged",true);
+	})
+
+	function removeFormChangedFlag(){
+		// Remove formChanged field in the form on any submit
+		$(".form-unsaved-changes-trigger").each(function(){$(this).data("formChanged",false)});
+	}
+
+	// Need to set this on global for Fjax.js
+	if(typeof customMessages=='undefined') customMessages = {};
+	customMessages.confirmNavigate = TICKET_DETAILS_DATA.confirm_navigation;
+
 };
 // TICKET DETAILS DOMREADY ENDS
 
@@ -1699,6 +1827,12 @@ TICKET_DETAILS_CLEANUP = function() {
 
 	
 App.Tickets.TicketDetail = {
+	inlineError: false,
+	inlineErrorMessage: '',
+	setInlineMessage: function (status, msg) {
+		this.inlineError = status;
+		this.inlineErrorMessage = msg;
+	},
 	onVisit: function (data) {
 		if($("#HelpdeskReply").data('containDraft')) {
 			swapEmailNote('cnt-reply', null);
@@ -1710,6 +1844,7 @@ App.Tickets.TicketDetail = {
 		App.Tickets.Watcher.init();
 		App.Tickets.Merge_tickets.initialize();
 		App.TicketAttachmentPreview.init();
+		App.Tickets.NBA.init();
 
 		// Have tried in onLeave to off all the event binding. 
 		// But it cause errors in whole app, like modal, dropdown and some issues has occered.
@@ -1719,8 +1854,122 @@ App.Tickets.TicketDetail = {
 		App.Tickets.Merge_tickets.unBindEvent();
 		App.Tickets.Watcher.offEventBinding();
 		App.TicketAttachmentPreview.destroy();
+		App.Tickets.NBA.offEventBinding();
 	}
 };
 
+
+App.Tickets.LimitEmails = {
+	new_cc_bcc_emails: [],
+	limitForwardEmails: function(form, append_to, tkt_addr_arr, limit, msg) {
+	    var cc_emails  = [];
+	    var bcc_emails = [];
+	    var to_emails  = [];
+	    var fwd_emails = [];
+
+	    var _self = this;
+
+	    form.find("input[name='helpdesk_note[to_emails][]']").each( function() {
+	      to_emails.push(_self.get_email_address(jQuery(this).val()));
+	    });
+
+	    form.find("input[name='helpdesk_note[cc_emails][]']").each( function() {
+	      cc_emails.push(_self.get_email_address(jQuery(this).val()));
+	    });
+
+	    form.find("input[name='helpdesk_note[bcc_emails][]']").each( function() {
+	      bcc_emails.push(_self.get_email_address(jQuery(this).val()));
+	    });
+
+	    var current_emails = to_emails.concat(cc_emails, bcc_emails)
+
+	    fwd_emails = this.new_cc_bcc_emails.concat(tkt_addr_arr, current_emails );
+	    fwd_emails = jQuery.unique(fwd_emails);
+
+	    if( tkt_addr_arr.length != fwd_emails.length && fwd_emails.length > limit ) {
+	    	this.appendErrorMessage(form, append_to, msg);
+	    	$.scrollTo(jQuery('.redactor.conversation_thread'));
+	    	return false;
+	    }
+
+	    var newly_added_emails = this.new_cc_bcc_emails.concat(current_emails)
+	    this.new_cc_bcc_emails = jQuery.unique(newly_added_emails);
+
+	  	return true;
+	},
+	limitReplyEmails: function(_form, append_to, tkt_addr_arr, limit, msg) {
+	    var cc_emails  = []
+	    var bcc_emails  = []
+	    var reply_emails = []
+
+	    var _self = this;
+
+	    _form.find("input[name='helpdesk_note[cc_emails][]']").each( function() {
+	      cc_emails.push(_self.get_email_address(jQuery(this).val()));
+	    });
+
+	    _form.find("input[name='helpdesk_note[bcc_emails][]']").each( function() {
+	      bcc_emails.push(_self.get_email_address(jQuery(this).val()));
+	    });
+
+	    var current_emails = cc_emails.concat(bcc_emails)
+
+	    reply_emails = this.new_cc_bcc_emails.concat(tkt_addr_arr, current_emails );
+	    reply_emails = jQuery.unique(reply_emails);
+
+	    if( tkt_addr_arr.length != reply_emails.length && reply_emails.length > limit ) {
+	    	this.appendErrorMessage(_form, append_to, msg);
+	    	$.scrollTo(jQuery('.redactor.conversation_thread'));
+	    	return false;
+	    }
+
+	    var newly_added_emails = this.new_cc_bcc_emails.concat(current_emails)
+	    this.new_cc_bcc_emails = jQuery.unique(newly_added_emails);
+		return true;
+	},
+	limitComposeEmail: function(_form, append_to, limit, msg) {
+	    var cc_emails  = []
+	    var to_email = []
+
+	    _form.find("input[name='cc_emails[]']").each( function() {
+	      cc_emails.push(App.Tickets.LimitEmails.get_email_address(jQuery(this).val()));
+	    });
+
+	    to_email.push(App.Tickets.LimitEmails.get_email_address(_form.find("input[name='helpdesk_ticket[email]']").val()))
+	    var current_emails = cc_emails.concat(to_email)
+	    current_emails = jQuery.unique(current_emails);
+	    
+		if((current_emails.length) > limit) {
+				this.appendErrorMessage(_form, append_to, msg);
+
+		    return false;
+		}
+		return true;
+	},
+	appendErrorMessage: function(_form, append_to ,msg) {
+		if(!_form.find(".text-error").get(0)){
+			_form.find(append_to).append("<p class='cc-error-message text-error'> "+msg+"</p>")	
+		}
+	},
+	getNewlyAddedEmails: function() {
+		return this.new_cc_bcc_emails;
+	},
+	get_email_address: function(string) {
+		whole_match = /"?(.+?)"?\s+<(.+?)>/
+		res =  whole_match.exec(string)
+		if(res) {
+    		return res[2]
+		}
+	  	with_brackets =  /<(.+?)>/
+	  	res =  with_brackets.exec(string)
+		if(res) {
+    		return res[1]
+		}
+	   	return string
+	}
+
+}
+
 }(window.jQuery));
+
 

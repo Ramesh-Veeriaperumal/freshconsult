@@ -21,8 +21,8 @@ Authority::Authorization::PrivilegeList.build do
                                            :get_ca_response_content, :merge_with_this_request, :print, :latest_note,
                                            :clear_draft, :save_draft, :prevnext, :component, :custom_search,
                                            :quick_assign, :canned_reponse, :full_paginate, :custom_view_save, :apply_template, :accessible_templates, :search_templates,
-                                           :filter_options, :activities, :status, :get_top_view, :recent_tickets, :old_tickets, :summary, :bulk_scenario,
-                                           :execute_bulk_scenario, :activitiesv2, :activities_all]
+                                           :filter_options, :filter_conditions, :activities, :status, :get_top_view, :recent_tickets, :old_tickets, :summary, :bulk_scenario,
+                                           :execute_bulk_scenario, :activitiesv2, :activities_all, :link, :unlink, :related_tickets, :ticket_association]
     resource :"helpdesk/subscription"
     resource :"helpdesk/tag_use"
     resource :"helpdesk/tag"
@@ -59,6 +59,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"integrations/hootsuite/ticket"
     resource :"integrations/sugarcrm", :only => [:renew_session_id, :check_session_id]
     resource :"integrations/service_proxy", :only => [:fetch]
+    resource :"integrations/data_pipe"
 
     #Freshfone
     resource :"freshfone", :only => [:dashboard_stats, :dial_check, :create_ticket, :create_note]
@@ -81,7 +82,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"freshfone/caller_id"
     resource :"freshfone/dashboard", :only => [:dashboard_stats, :calls_limit_notificaiton, :mute]
 
-    resource :"helpdesk/conversation", :only => [:note, :full_text]
+    resource :"helpdesk/conversation", :only => [:note, :full_text, :broadcast]
     resource :"helpdesk/canned_response"
     resource :"helpdesk/ca_folder"
     resource :"helpdesk/scenario_automation"
@@ -91,6 +92,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"search/solution", :only => [:related_solutions, :search_solutions]
     resource :"search/v2/solution", :only => [:related_solutions, :search_solutions]
     resource :"search/ticket", :only => [:index]
+    resource :"search/ticket_association", :only => [:index, :recent_trackers]
     resource :"search/v2/ticket", :only => [:index]
     resource :"search/v2/spotlight", :only => [:all, :tickets]
     resource :"chat", :only => [:create_ticket, :add_note, :agents, :enable, :index, :visitor, :get_groups, :update_site, :toggle, :trigger]

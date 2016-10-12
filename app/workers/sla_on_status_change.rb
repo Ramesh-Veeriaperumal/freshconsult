@@ -7,7 +7,7 @@ class SlaOnStatusChange < BaseWorker
    	args.symbolize_keys!
    	@status = Account.current.ticket_statuses.find_by_id args[:status_id]
    	if args[:status_changed]
-   	  @status.update_tickets_sla_on_status_change
+   	  @status.update_tickets_properties
    	else
    	  @status.update_tickets_sla
    	end

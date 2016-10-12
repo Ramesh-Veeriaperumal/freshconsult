@@ -46,6 +46,7 @@ defaults: &defaults
     customer:             Wf::Containers::TextDelimited
     created_at:           Wf::Containers::Time
     resolved_at:          Wf::Containers::Time
+    tags:                 Wf::Containers::TextDelimited
     
   data_types:             # mapping between data types and containers 
     nil:                  [nil]
@@ -75,6 +76,7 @@ defaults: &defaults
          created_at:         [created_at]
          requester:          [requester]
          customer:           [customer]
+         tags:               [tags]
     freshfone_calls:
          datetime:           [created_at, date_time_range]
          int:                [numeric, numeric_delimited]

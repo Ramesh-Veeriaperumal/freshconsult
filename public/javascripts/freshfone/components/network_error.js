@@ -50,6 +50,7 @@ var FreshfoneNetworkError;
         this.freshfonewidget.hideAllWidgets();
         this.applyConnectionErrorClass();
         this.toggleNetworkErrorWidget(true);
+        freshfonewidget.togglePhoneActiveClass(true);
         this.applyErrorInfoClass();
       }
     },

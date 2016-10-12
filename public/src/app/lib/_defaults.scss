@@ -44,6 +44,12 @@ h6{ font-size:13px; text-transform:uppercase; line-height:24px; font-weight:bold
 .borderbottom{
 	border-bottom:1px dotted #EFEFEF;
 }
+.leftborder{
+  @include border-left(1px solid #ccc);
+}
+.topborder{
+  border-top:1px solid #ccc;
+}
 
 table td{ 
 	vertical-align:top; 

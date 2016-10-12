@@ -116,6 +116,7 @@ de:
     creditcard: "Geben Sie bitte eine gültige Kreditkartennummer ein."
     equalTo: "Bitte geben Sie den Wert nochmals ein."
   confirm_delete_message: "Möchten Sie %{human_name} wirklich löschen?"
+  two_decimal_place_warning: "Value cannot have more than 2 decimal digits"
   reload: "Neu laden"
   any: Jeder
   or: oder
@@ -2441,6 +2442,16 @@ de:
     tweet: Tweet
     time_entry: Zeiteintrag
     note: Notiz
+    supervisor: Supervisor-Regel
+    observer: Beobachterregel
+    business: Verteilerregel
+    round_robin: "automatische Ticketzuweisung"
+    scenario: Szenario-Automatisierung
+    none: Keine
+    subject: Betreff
+    description: Beschreibung
+    set: Festlegen
+    rule_executed: "Systemregel ausgeführt"
     tag:
       solutions: "Neue Lösung"
       assigned_to_nobody: "Bearbeiter nicht zugewiesen"
@@ -2459,6 +2470,10 @@ de:
         new: "Zeit aufgezeichnet"
         timer_started: "Timer gestartet"
         timer_stopped: "Timer gestoppt"
+        edit: "Zeittabelle aktualisiert"
+        delete: "Zeittabelle gelöscht"
+        billable: Abrechenbar
+        non_billable: "Nicht abrechenbar"
       execute_scenario: "Szenario ausgeführt"
       ticket_merge: "Tickets zusammengeführt"
       ticket_split: Ticketsplittung
@@ -2472,6 +2487,11 @@ de:
       group_change_none: "Bearbeitergruppe geändert"
       source_change: Ticket-Quelle
       due_date_updated: "Fälligkeitsdatum aktualisiert"
+      tag_change: "Tag aktualisiert"
+      add_watcher: "Beobachter hinzugefügt"
+      remove_watcher: "Beobachter entfernt"
+      property_update: "Property aktualisiert"
+      spam: "Als Spam markiert"
     solutions:
       new_solution:
         short: "{{user_path}} hat eine neue Lösung erstellt"
@@ -2479,36 +2499,60 @@ de:
       new_article:
         short: "{{user_path}} hat einen neuen Artikel erstellt"
         long: "{{user_path}} hat einen neuen Artikel „{{notable_path}}“ erstellt"
+      new_article_translation:
+        short: "{{user_path}} hat eine neue Artikelübersetzung auf {{language_name}} erstellt"
+        long: "{{user_path}} hat eine neue Artikelübersetzung „{{notable_path}}“ auf {{language_name}} erstellt"
       published_article:
-        short: "Der Artikel von {{user_path}} wurde veröffentlicht"
+        short: "{{user_path}} hat einen Artikel veröffentlicht"
         long: "{{user_path}} hat einen Artikel „{{notable_path}}“ veröffentlicht"
+      published_article_translation:
+        short: "{{user_path}} hat eine Artikelübersetzung auf {{language_name}} veröffentlicht"
+        long: "{{user_path}} hat eine Artikelübersetzung „{{notable_path}}“ auf {{language_name}} veröffentlicht"
       unpublished_article:
-        short: "Die Veröffentlichung des Artikels von {{user_path}} wurde rückgängig gemacht"
-        long: "{{user_path}} hat die Veröffentlichung eines Artikles „{{notable_path}}“ rückgängig gemacht"
+        short: "{{user_path}} hat die Veröffentlichung eines Artikels rückgängig gemacht"
+        long: "{{user_path}} hat die Veröffentlichung eines Artikels „{{notable_path}}“ rückgängig gemacht"
+      unpublished_article_translation:
+        short: "{{user_path}} hat die Veröffentlichung einer Artikelübersetzung auf {{language_name}} rückgängig gemacht"
+        long: "{{user_path}} hat die Veröffentlichung einer Artikelübersetzung „{{notable_path}}“ auf {{language_name}} rückgängig gemacht"
       delete_article:
         short: "{{user_path}} hat einen Artikel gelöscht"
         long: "{{user_path}} hat einen Artikel „{{notable_path}}“ gelöscht"
       new_solution_category:
         short: "{{user_path}} hat eine neue Lösungskategorie erstellt"
         long: "{{user_path}} hat eine neue Lösungskategorie „{{notable_path}}“ erstellt"
+      new_solution_category_translation:
+        short: "{{user_path}} hat eine neue Lösungskategorieübersetzung auf {{language_name}} erstellt"
+        long: "{{user_path}} hat eine neue Lösungskategorieübersetzung „{{notable_path}}“ auf {{language_name}} erstellt"
       delete_solution_category:
         short: "{{user_path}} hat eine Lösungskategorie gelöscht"
         long: "{{user_path}} hat eine Lösungskategorie „{{notable_path}}“ gelöscht"
       new_folder:
         short: "{{user_path}} hat einen neuen Ordner erstellt"
         long: "{{user_path}} hat einen neuen Ordner „{{notable_path}}“ erstellt"
+      new_folder_translation:
+        short: "{{user_path}} hat eine neue Ordnerübersetzung auf {{language_name}} erstellt"
+        long: "{{user_path}} hat eine neue Ordnerübersetzung „{{notable_path}}“ auf {{language_name}} erstellt"
       delete_folder:
         short: "{{user_path}} hat einen Ordner gelöscht"
-        long: "{{user_path}} hat den Ordner „{{notable_path}}“ gelöscht"
+        long: "{{user_path}} hat einen Ordner „{{notable_path}}“ gelöscht"
       new_draft:
         short: "{{user_path}} hat einen Entwurf für einen Artikel erstellt"
         long: "{{user_path}} hat einen Entwurf für einen Artikel „{{notable_path}}“ erstellt"
+      new_draft_translation:
+        short: "{{user_path}} hat einen Entwurf für eine Artikelübersetzung auf {{language_name}} erstellt"
+        long: "{{user_path}} hat einen Entwurf für eine Artikelübersetzung „{{notable_path}}“ auf {{language_name}} erstellt"
       published_draft:
         short: "{{user_path}} hat den Entwurf eines Artikels veröffentlicht"
-        long: "{{user_path}} hat den Entwurf des Artikels „{{notable_path}}“ veröffentlicht"
+        long: "{{user_path}} hat den Entwurf eines Artikels „{{notable_path}}“ veröffentlicht"
+      published_draft_translation:
+        short: "{{user_path}} hat den Entwurf einer Artikelübersetzung auf {{language_name}} veröffentlicht"
+        long: "{{user_path}} hat den Entwurf einer Artikelübersetzung „{{notable_path}}“ auf {{language_name}} veröffentlicht"
       delete_draft:
         short: "{{user_path}} hat den Entwurf eines Artikels verworfen"
-        long: "{{user_path}} hat den Entwurf des Artikels „{{notable_path}}“ verworfen"
+        long: "{{user_path}} hat den Entwurf eines Artikels „{{notable_path}}“ verworfen"
+      delete_draft_translation:
+        short: "{{user_path}} hat den Entwurf einer Artikelübersetzung verworfen"
+        long: "{{user_path}} hat den Entwurf einer Artikelübersetzung „{{notable_path}}“ auf {{language_name}} verworfen"
     forums:
       new_forum_category:
         short: "{{user_path}} hat eine neue Forenkatagorie erstellt"
@@ -2582,12 +2626,15 @@ de:
         short: "{{user_path}} hat die Priorität auf {{priority_name}} geändert"
         long: "{{user_path}} hat die Ticketpriorität von {{notable_path}} auf {{priority_name}} geändert"
         without_user: "hat die Ticketpriorität auf<strong>{{priority_name}} geändert</strong>"
+        new: "Priorität als <strong>%{priority_name}</strong>"
       new_ticket:
         short: "{{user_path}} hat das Ticket gesendet"
         long: "{{user_path}} hat ein neues Ticket „{{notable_path}}“ gesendet"
+        new: "Ein neues Ticket wurde gesendet"
       new_outbound:
         short: "{{user_path}} hat ein Ticket erstellt"
         long: "{{user_path}} hat ein Ticket erstellt {{notable_path}}"
+        new: "Es wurde eine E-Mail gesendet und ein neues Ticket erstellt"
       conversation:
         out_email:
           short: "{{user_path}} hat eine {{reply_path}} gesendet"
@@ -2612,22 +2659,43 @@ de:
           short: "{{user_path}} hat eine {{timesheet_path}} hinzugefügt"
           long: "{{user_path}} hat dem Ticket „{{notable_path}}“ eine {{timesheet_path}} hinzugefügt"
           without_user: "fügte eine {{timesheet_path}} hinzu"
+          new: "Ein Zeiteintrag wurde hinzugefügt"
         timer_started:
           short: "{{user_path}} hat den Timer in {{timesheet_path}} gestartet"
           without_user: "startete den Timer für {{timesheet_path}}"
           long: "{{user_path}} hat den Timer in {{timesheet_path}} für das Ticket „{{notable_path}}“ gestartet"
+          new: "Timer in Zeittabelleneingabe gestartet"
         timer_stopped:
           short: "{{user_path}} hat den Timer in {{timesheet_path}} gestoppt"
           without_user: "stoppte den Timer für {{timesheet_path}}"
           long: "{{user_path}} hat den Timer in {{timesheet_path}} für das Ticket „{{notable_path}}“ gestoppt"
+          new: "Timer in Zeittabelleneingabe gestoppt"
+      timesheet_without_time:
+        new: "%{billable} Stunden für %{user_path} am %{date}"
+      timesheet_with_time:
+        new: "%{time_spent} %{billable} Stunden für %{user_path} am %{date}"
+      timesheet_timer_start:
+        new: "Timer in Zeittabelle mit %{timesheet} gestartet"
+      timesheet_timer_stop:
+        new: "Timer in Zeittabelle für %{timesheet} gestoppt"
+      timesheet_create:
+        new: "Zeittabelle mit %{timesheet} erstellt"
+      timesheet_edit:
+        new: "Zeittabelle bearbeitet <br> Zeittabelle mit %{old_timesheet} zu Zeittabelle mit %{new_timesheet} geändert"
+      timesheet_delete:
+        new: "Zeittabelle mit %{timesheet} gelöscht"
       assigned:
         short: "Zugewiesen zu {{responder_path}} durch {{user_path}}"
         without_user: "zugewiesen zu <strong>{{responder_path}}</strong>"
         long: "{{user_path}} hat das Ticket „{{notable_path}}“ zu {{responder_path}} zugewiesen"
+        new: "Bearbeiter als %{responder_path}"
+      round_robin:
+        new: "Bearbeiter über Round-Robin-Zuweisung als <strong>%{responder_path}</strong> festlegen"
       execute_scenario:
         short: "{{user_path}} hat das Szenario '{{scenario_name | h}} ausgeführt"
         without_user: "hat das Szenario <strong>{{scenario_name | h}}</strong> ausgeführt"
         long: "{{user_path}} hat das Szenario '{{scenario_name | h}}' auf {{notable_path}} ausgeführt"
+        new: "Szenario <strong>%{scenario_name}</strong> ausgeführt"
       ticket_merge:
         short: "{{user_path}} hat Ticket „{{notable_path}}“ zu {{merge_ticket_path}} zusammengeführt "
         long: "{{user_path}} hat Ticket „{{notable_path}}“ zu {{merge_ticket_path}} zusammengeführt"
@@ -2644,18 +2712,26 @@ de:
         short: "{{user_path}} hat den Status auf {{status_name}} aktualisiert"
         without_user: "hat den Status auf <strong>{{status_name}}</strong> aktualisiert"
         long: "{{user_path}} hat den Ticket-Status von {{notable_path}} auf {{status_name}} aktualisiert"
+        new: "Status als <strong>%{status_name}</strong>"
       deleted:
         short: "{{user_path}} hat dieses Ticket gelöscht"
         without_user: "hat das Ticket gelöscht"
         long: "{{user_path}} hat das Ticket „{{notable_path}}“ gelöscht"
+        new: "Dieses Ticket wurde gelöscht"
       restored:
         short: "{{user_path}} hat dieses Ticket wiederhergestellt"
         without_user: "hat das Ticket wiederhergestellt"
         long: "{{user_path}} hat das Ticket „{{notable_path}}“ wiederhergestellt"
+        new: "Dieses Ticket wurde aus dem Papierkorb wiederhergestellt"
+      spam:
+        new: "Dieses Ticket wurde als Spam markiert"
+      unspam:
+        new: "Dieses Ticket wurde aus dem Spam-Ordner wiederhergestellt"
       product_change:
         short: "{{user_path}} hat das Produkt auf {{product_name}} aktualisiert"
         without_user: "aktualisierte das Produkt auf <strong>{{product_name}}</strong>"
         long: "{{user_path}} hat das Produkt von {{notable_path}} auf {{product_name}} aktualisiert"
+        new: "Produkt als <strong>%{product_name}</strong>"
       product_change_none:
         short: "{{user_path}} hat das Produkt auf „Nichts“ aktualisiert"
         without_user: "aktualisierte das Produkt auf <strong>Nichts"
@@ -2664,10 +2740,12 @@ de:
         short: "{{user_path}} hat den Tickettyp auf {{ticket_type}} aktualisiert"
         without_user: "aktualisierte den Tickettyp auf <strong>{{ticket_type}}</strong>"
         long: "{{user_path}} hat den Tickettyp von {{notable_path}} auf {{ticket_type}} aktualisiert"
+        new: "Typ als <strong>%{ticket_type}</strong>"
       group_change:
         short: "{{user_path}} hat die Gruppe auf {{group_name}} aktualisiert"
         without_user: "aktualisierte die Gruppe auf <strong>{{group_name}}</strong>"
         long: "{{user_path}} hat die Gruppe von {{notable_path}} auf {{group_name}} aktualisiert"
+        new: "Gruppe als <strong>%{group_name}</strong>"
       group_change_none:
         short: "{{user_path}} hat die Gruppe auf „Nichts“ aktualisiert"
         without_user: "aktualisierte die Gruppe auf <strong>Nichts</strong>"
@@ -2676,10 +2754,48 @@ de:
         short: "{{user_path}} hat die Quelle auf {{source_name}} aktualisiert"
         without_user: "aktualisierte die Quelle auf <strong>{{source_name}}</strong>"
         long: "{{user_path}} hat die Ticketquelle von {{notable_path}} auf {{source_name}} aktualisiert"
+        new: "Quelle als <strong>%{source_name}</strong>"
       due_date_updated:
         short: "{{user_path}} hat Fälligkeitsdatum  auf {{due_date_updated}} aktualisiert"
         without_user: "hat Fälligkeitsdatum  auf <strong>{{due_date_updated}}</strong> aktualisiert"
         long: "{{user_path}} hat Fälligkeitsdatum auf {{notable_path}} to {{due_date_updated}} aktualisiert"
+        new: "fällig nach Zeit als <strong>%{due_date_updated}</strong>"
+      requester_change:
+        new: "Anfragender als %{requester_name}"
+      ticket_edit:
+        new: "<strong>%{fields}</strong> bearbeitet"
+      custom_field_change:
+        new: "%{field_name} als <strong>%{field_value}</strong>"
+      custom_text_field_change:
+        new: "%{text_fields} verändert"
+      added_watcher:
+        new: "%{watcher_list} Beobachter hinzugefügt"
+      removed_watcher:
+        new: "%{watcher_list} Beobachter entfernt"
+      added_tag:
+        new: "<strong>%{tag_name}</strong> Tags hinzugefügt"
+      removed_tag:
+        new: "<strong>%{tag_name}</strong> Tags entfernt"
+      add_cc:
+        new: "%{cc_list} CC hinzugefügt"
+      add_note:
+        new: "Notizen hinzugefügt"
+      ticket_merge_source:
+        new: "Dieses Ticket mit %{target_ticket} zusammengeführt"
+      ticket_merge_target:
+        new: "%{source_ticket_list} mit diesem Ticket zusammengeführt"
+      ticket_split_source:
+        new: "Eine Antwort aufteilen, um ein neues Ticket %{target_ticket} zu erstellen"
+      ticket_split_target:
+        new: "Dieses Ticket durch Aufteilen einer Antwort von Ticket %{source_ticket} erstellt"
+      ticket_import:
+        new: "Ticket am %{imported_time} importiert"
+      checkbox_checked:
+        new: "%{checkbox_list} aktiviert"
+      checkbox_unchecked:
+        new: "%{checkbox_list} deaktiviert"
+      archive:
+        new: "Ticket archiviert"
   credit_card_info: Kreditkarteninformationen
   zendesk_backup_info: "Wählen Sie eine Backup-Datei von Zendesk aus, die von Zendesk heruntergeladen wurde."
   backup_error_msg: "Die Datei überschreitet die vorgeschriebene Grenze von 50 MB. <a href='#' id='import_request'>Wenden Sie sich bitte an den Support,</a> um mit dem Import fortfahren zu können."
@@ -4722,6 +4838,16 @@ de:
       user_not_following: "Dieser Benutzer folgt nicht Ihrem Twitter-Konto"
     activities: Aktivitäten
     activity_toggle: "Aktivitäten anzeigen"
+    activity_toggle_v2: Aktivitäten
+    activity_toggle_tooltip: "Aktivitäten umschalten"
+    show_activities_tooltip: "Aktivitäten anzeigen"
+    hide_activities_tooltip: "Aktivitäten ausblenden"
+    activity_timestamp: "%{user_name} aktualisiert <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
+    user_activity_timestamp: "%{user_name} aktualisiert <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
+    deleted_rule: "Regel gelöscht – %{rule_name}"
+    executed: " ausgeführt "
+    performed: " durchgeführt "
+    system_activity_timestamp: "<strong class='muted'>System</strong> %{system_rule} <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date}) "
     activity_timestamp: "%{user_name} aktualisiert <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
     requestor_info: "Infos zum Anforderer"
     view_twitter: "In Twitter anzeigen"
@@ -5314,6 +5440,7 @@ de:
         timesheet: Zeittabelle
         reply_form:
           title: "Antwort senden an"
+          from: "Von"
           cc: Cc
           addcc: "Cc hinzufügen"
           removecc: "Cc entfernen"
@@ -5331,6 +5458,7 @@ de:
           not_sent: "Antwort wurde nicht weitergeleitet!"
         reply_to_forward:
           title: Antworten
+          from: "Von"
           cc: Cc
           to: An
           addcc: "Cc hinzufügen"
@@ -5344,6 +5472,7 @@ de:
         facebook_form:
           reply_to: "Antwort senden an"
           title: "%{user} antworten"
+          from: "Von:"
         ecommerce_reply_form:
           title: "Antwort senden an"
         history:

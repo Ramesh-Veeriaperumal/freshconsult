@@ -1588,6 +1588,21 @@ p.info-text{
    		color: #888;
    }
 }
+
+.tkt_views a:hover{
+    color:$default_txt_color;
+    background: #FFF;
+    text-decoration:none;
+	@include text-shadow(none);	
+}
+
+.tkt_views.active a{
+   	color:#FFF;
+    background: #999;
+	@include text-shadow(none);
+}
+
+
 #tickets-expanded {
 	.fd-ajaxmenu {
 		width: auto;
@@ -2035,6 +2050,36 @@ a.submit_link:hover{
 		@include float(left);
 	}
 }
+
+.tkt_view_search {
+	&.hasSearch { 
+		padding-top: 0px;	
+	}
+}
+
+.filter-search{	
+	background-color: #EEE;
+}
+
+.filter-search input[type=text]{
+	margin-top: 9px;
+	border-color: #999;
+}
+
+.search-filter{
+	width:85%;
+	&:focus {
+		@include box-shadow(#999 0 0 3px);
+	}
+}
+
+.no_result_view{
+	@include text-align(center);
+	font-style:italic;
+	margin-top: 5px;
+}
+
+
 
 // ------------------------------------------------------------------------------------------------------------
 //							 Export link in the Ticket list of Self Service Portal
@@ -3836,7 +3881,16 @@ body.popup-body{ min-width: 0px; }
 //------------------------------------------------------------------------------------
 //								Scenario search by Ranjith
 //------------------------------------------------------------------------------------
-
+.modal-heading-with-button{
+	display:inline;
+}
+.modal-header-button{
+	font-weight: 500;
+	margin-top: 12px;
+}
+.modal-bulk-header-button{
+	font-weight: 500;	
+}
 .execute_scenario{
 	.scenario-search{
 		.searchicon{

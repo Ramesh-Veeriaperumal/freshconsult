@@ -10,6 +10,8 @@ defaults: &defaults
     iv: "1324659871023654"
   socket_host: "socket.freshpo.com"
   socket_autorefresh_host: "autorefresh-useast1.freshpo.com"
+  socket_host_new: "socketv2.freshpo.com"
+  socket_autorefresh_host_new: "autorefreshv2-useast1.freshpo.com"
 
 development:
   <<: *defaults

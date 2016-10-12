@@ -1,0 +1,544 @@
+.ticket_details, .ticket_list {
+	
+	.link_tracker_box {
+
+		&.inline-flash{
+			background: #ffffcc;
+		}
+
+        &.linking {
+            background-color: #f5f5f5;
+            text-align: center;
+
+            p{
+                margin: 0;
+                @include float(left);
+                margin-top: 15px;
+                width: 100%;
+                color: #777;
+                font-weight: 500;
+            }
+        }
+		.related_ticket_label {
+			small {
+				border: 1px solid #dfdfdf;
+			    padding: 1px 8px 2px 8px;
+			    text-align: center;
+			    border-radius: 2px;
+			    font-size: 10px;
+			}
+
+            .unlink_tracker_tooltip {
+                position: absolute;
+                padding: 14px 10px;
+                margin-top: -24px;
+                @include margin-left(-5px);
+            }
+		}
+
+        .separator {
+            color: #999;
+            font-weight: 500;
+        }
+
+        #linking_tracker_box {
+            p {
+                margin: 0;
+            }
+
+            #loading_block {
+                margin: 0;
+            }
+        }
+
+		.tracker_label {
+			text-overflow: ellipsis;
+		    overflow: hidden;
+		    white-space: nowrap;
+		    margin-bottom: 4px;
+		}
+
+		.tracker_details {
+			font-size: 12px;
+		    line-height: 17px;
+		    color: #999;
+
+            &.broadcast {
+                color: #333;
+            }
+		}
+
+        #unlink_asscociation {
+            font-size: 13px;
+            margin-top: -6px;
+            padding: 6px 2px 5px 3px;
+            border-radius: 2px;
+            background-image: linear-gradient(to right, #ffffff, #dfdfdf);
+            transform: rotate(90deg);
+            box-shadow: 0px 0px 0px 1px #bbb;
+        }
+	}
+
+    [id^="unlink_from_tracker_"] {
+        [id$="-content"] {
+            padding: 15px 30px 5px 30px;
+            border: none;
+
+            .text_info_lbl {
+                padding: 0 8px 15px 0px;
+                line-height: 20px;
+
+                span.ellipsis {
+                    max-width: 245px;
+                    @include float(left);
+                }
+            }
+        }
+    }
+
+	.popover {
+
+        &.partialLeft, &.bottomLeft {
+            .arrow {
+                top: -8px;
+                @include left(61%);
+
+                &:after, &:before {
+                    content: " ";
+                    display: block;
+                    position: absolute;
+                    width: 0;
+                    height: 0;
+                    border: solid transparent;
+                }
+            }
+            
+            .arrow:after {
+                border-width: 13px;
+                top: -11px;
+                @include margin-left(1px);
+                border-color: transparent;
+                border-bottom-color: #eee;
+            }
+
+            .arrow:before {
+                border-width: 14px;
+                top: -13px;
+                margin-top: 0px;
+                border-color: transparent;
+                border-bottom-color: #ccc;
+            }
+
+            .inner{
+                padding: 1px;
+                min-width: 318px;
+                background: rgba(120, 120, 120, 0.27);
+
+                .title{
+                    display: none;
+                }
+
+                .content{
+                    padding: 0px;
+
+                    .recent_trackers_available {
+
+                        max-width: 318px;
+
+                        .link_tracker {
+                            .search_box {
+                                padding: 10px;
+                                border-bottom: 1px solid #bbb;
+                                background-color: #eee;
+                            }
+                            .search_tracker {
+                                height: 30px;
+                                border: 1px solid #bbb;
+                                border-radius: 4px;
+
+                                .dropdown-box {
+                                    padding: 0;
+                                    @include border-left(1px solid #bbb);
+                                    cursor: pointer;
+                                    height: 30px;
+
+                                    a {
+                                        .caret {
+                                            vertical-align: middle;
+                                        }
+                                    }
+
+                                    .drop-right {
+                                        padding: 0px 20px 14px 12px;
+                                        line-height: 19px;
+                                        cursor: pointer;
+                                        @include margin-left(0px);
+
+                                        &:after {
+                                            margin: 14px 0 0 5px;
+                                            border-top: 5px solid #666;
+                                        }
+
+                                        .link_tracker_search_icon {
+                                            @include right(33px);
+                                            top: 27px;
+                                            height: 15px;
+                                            width: 15px;
+                                            cursor: pointer;
+                                            @include float(left);
+                                        }
+                                    }
+
+                                    .fd-menu {
+                                        min-width: 105px;
+                                        margin-top: 11px !important;
+                                        @include margin-left(-75px !important);
+
+                                        li {
+                                            &.active {
+                                                a {
+                                                    font-weight: 600;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+
+                                .search_tracker_box {
+                                    width: 88%;
+
+                                    .clear_search {
+                                        position: absolute;
+                                        @include right(60px);
+                                        margin-top: 8px;
+                                        cursor: pointer;
+                                        visibility: hidden;
+                                        font-size: 18px;
+                                    }
+
+                                    input {
+                                        width: 95%;
+                                        margin: 0;
+                                        padding: 2px 2px 2px 10px;
+                                        border: 0;
+                                        height: 26px;
+                                        border-radius: 0px;
+                                        @include border-top-left-radius(3px);
+                                        @include border-bottom-left-radius(3px);
+                                    }
+                                }
+                            }
+                        }
+
+                        .link_tracker_container {
+                            .tracker_list {
+                                max-height: 338px;
+                                overflow-y: auto;
+
+                                .tracker-link {
+                                    .actions {
+                                        @include float(right);
+                                        display: block;
+                                        width: auto;
+                                        display: none;
+                                        filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0);
+                                        opacity: 0;
+                                        -moz-transition: opacity 200ms cubic-bezier(0.65, 0.05, 0.36, 1);
+                                        -o-transition: opacity 200ms cubic-bezier(0.65, 0.05, 0.36, 1);
+                                        -webkit-transition: opacity 200ms cubic-bezier(0.65, 0.05, 0.36, 1);
+                                        transition: opacity 200ms cubic-bezier(0.65, 0.05, 0.36, 1);
+                                        margin: -5px -10px 0 0;
+
+                                        .ficon-open-in-new-window {
+                                            transform: rotate(90deg);
+                                        }
+
+                                        .ficon-open-in-new-window , .ficon-link {
+                                            @include float(right);
+                                            display: block;
+                                            font-size: 16px;
+                                            width: 22px;
+                                            height: 22px;
+                                            @include padding-left(7px);
+                                            padding-top: 7px;
+                                            border: none;
+                                            border-radius: 30px;
+                                            @include margin-right(5px);
+                                            background: #999;
+                                            line-height: 16px;
+                                            color: #fff;
+
+                                            &:hover {
+                                                background: #555;
+                                                color: #fff !important;
+                                                border: none;
+                                            }
+                                        }
+                                    }
+
+                                    &:hover {
+                                        .actions {
+                                            display: inherit;
+                                            filter: progid:DXImageTransform.Microsoft.Alpha(enabled=false);
+                                            opacity: 1;
+                                            -moz-transition: opacity 200ms cubic-bezier(0.65, 0.05, 0.36, 1);
+                                            -o-transition: opacity 200ms cubic-bezier(0.65, 0.05, 0.36, 1);
+                                            -webkit-transition: opacity 200ms cubic-bezier(0.65, 0.05, 0.36, 1);
+                                            transition: opacity 200ms cubic-bezier(0.65, 0.05, 0.36, 1);
+                                        }    
+                                    }
+                                }
+
+                                li {
+                                    padding: 10px;
+                                    font-size: 14px;
+                                    line-height: 18px;
+                                    border-bottom: 1px solid #eee;
+
+                                    .user_det {
+                                        color: #999;
+
+                                        &.truncate_line {
+                                            width: 78%;
+                                        }
+
+                                        .muted, .emphasize {
+                                            color: #333;
+                                        }
+
+                                        .user_name {
+                                            font-weight: normal;
+                                        }
+
+                                        br {
+                                            display : none;
+                                        }
+                                    }
+
+                                    .link_tracker_ticket {
+                                        font-weight: 500;
+                                        max-width: 200px;
+                                        @include float(left);
+                                    }
+
+                                    .ticket_id {
+                                        font-weight: 500;
+                                        color: #666;
+                                    }
+
+                                    .status_lbl {
+                                        color: #999;
+                                    }
+
+                                    .creator_name {
+                                        color: #666;
+                                    }
+                                    &:hover{
+                                        background-color: #f5f5f5;
+                                        cursor: pointer;
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    .recent_tracker_notavailable {
+                        padding: 10px;
+                        text-align: center;
+
+                        small {
+                            padding: 10px 10px 12px;
+                            border-bottom: 1px solid #bbb;
+                            color: #999;
+                        }
+
+                        p {
+                            padding: 17px 1px 5px;
+                            font-weight: 500;
+                        }
+                    }
+
+                    .row {
+                        margin: 0;
+                        padding: 8px 10px;
+                        border-bottom: 1px solid #bbb;
+
+                        .pull-left {
+                            color: #a2a19f;
+                            font-weight: 500;
+                        }
+                    }
+                }
+            }
+        }
+
+        &.maxbelowLeft {
+            .arrow {
+                @include left(53%);
+            }
+        }
+	}
+
+    #related_tkts_view_freshdialog {
+        .modal-header {
+            padding: 5px 15px;
+
+            .close {
+                color: #000;
+                font-weight: 600;
+            }
+        }
+    }
+
+	#related_tkts_view_freshdialog-content, #link_ticket_freshdialog {
+
+        padding: 0px 0px 20px;
+        height: 88%;
+
+        .activityfeed-wrap {
+            height: initial;
+        }
+
+        #load-more {
+            border: none;
+            background: none;
+            color: #0066cc;
+            font-weight: 500;
+            display: block;
+            border-top: 2px #f7f7f7 solid;
+            padding: 8px 0px;
+            bottom: 0px;
+            @include left(0);
+            width: 100%;
+            text-align: center;
+            border-radius: 0px 0px 4px 4px;
+            background-color: #fff;
+        }
+        
+		#Pages {
+			li {
+				padding: 5px 15px;
+    			border-bottom: 1px solid #eeeeee;
+
+				&.inline-flash{
+					background: #ffffcc;
+				}
+
+    			.emphasize {
+				   color: #333;
+                   font-size: 13px;
+				}
+
+    			a {
+    				color: #0066cc;
+                    font-size: 15px;
+    			}
+
+                span {
+                    font-size: 15px;
+                    font-weight: 500;
+                    color: #333;
+                }
+
+                .information {
+                    font-size: 13px;
+
+                    .emphasize {
+                        color: #333;
+                        font-weight: 400;
+                    }
+                }
+
+    			.td-ticket-details {
+    				margin: 0;
+
+                    .actions {
+                        margin-top: 16px;
+                        cursor: pointer;
+                        position: relative;
+                        display: none;
+
+                        a {
+                            font-size: 12px;
+                            padding: 5px 9px 5px 7px;
+                            border-radius: 4px;
+                            color: #333;
+                            position: absolute;
+                            @include right(40px);
+
+                            span {
+                                transform: rotate(90deg);
+                                display: inline-block;
+                                font-size: 14px;
+                            }
+                        }
+                    }
+
+    				.ticket_subject {
+    					width: 75%;
+    					padding: 0;
+    					padding-top: 5px;
+
+                        .hyphernate {
+                            a.title_sub{
+                                max-width: 80%;
+                                display: block;
+                                @include float(left);
+                            }
+                        }
+    				}
+
+                    &:hover {
+                        .tkt_labels {
+                            opacity : 0;
+                        }
+
+                        .actions {
+                            display: block;
+                        }
+                    }
+
+        			.tkt_labels {
+        				width: 20%;
+                        opacity : 1;
+
+        				li {
+        					padding: 0;
+    				    	line-height: 20px;
+    				    	border: 0;
+    				    	font-weight: 500;
+                            font-size: 12px;
+
+        					label {
+        						@include float(left);
+        						padding: 0;
+        						line-height: 20px;
+        						color: #888;
+                                font-weight: 500;
+                                font-size: 12px;
+                                width: 55px;
+        					}
+        				}
+        			}
+                }
+			}
+		}
+	}
+}
+
+.preventscroll{
+    overflow: hidden;
+}
+
+.ticket_list {
+    .popover {
+    }
+}
+
+.ticket_details {
+    .twipsy {
+        z-index: 1055;
+    }
+    .popover {
+    }
+}

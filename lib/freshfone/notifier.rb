@@ -184,7 +184,8 @@ class Freshfone::Notifier
 
   def cancel_warm_transfer(warm_transfer_call, call)
     Rails.logger.info "cancel_warm_transfer => #{warm_transfer_call.id}"
-    return new_notifications_cancel_warm_transfer(warm_transfer_call, call) if new_notifications?
+    return new_notifications_cancel_warm_transfer(warm_transfer_call, call) if 
+                                      new_notifications? && !warm_transfer_call.supervisor.available_on_phone?
     params.merge!({ warm_transfer_call_sid: warm_transfer_call.sid,
                     call_id: call.id})
     Freshfone::NotificationWorker.perform_async(params, nil, 'cancel_warm_transfer')

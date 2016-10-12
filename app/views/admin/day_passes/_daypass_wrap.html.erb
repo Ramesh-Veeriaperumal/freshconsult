@@ -1,0 +1,66 @@
+<div class="mt20 usage_history_wrap">
+    <div id ="process-request" class = "daypass-process-request"></div>
+    <div class="pt20 row">
+      <div class="row-fluid pl20 pr20">
+        <div class="span3">
+          <h4 class="lead"><%=t("admin.day_passes.index.usage_history")%></h4>
+        </div>
+        <div class="span7 text-right usage-history-filter">
+          <span class="muted"><%=t("admin.day_passes.index.filtered_by")%></span>
+          <span class="pl10"><%=t("admin.day_passes.index.agent")%></span>
+
+          <span class="quick-action dynamic-menu" title="Change Agent" data-type="agent" data-options="#ticket_agents"
+          id="agent_filter">
+              <a href="javascript:void(0)" title="Change Agent" data-type="agent" data-options="#ticket_agents" class="result drop-right" data-agent-id= "<%=@selected_filter[:user_id]%>"
+              data-agent-name="<%=h(@selected_filter[:user_name])%>"><b><%=@selected_filter[:user_name]%></b></a>
+          </span>
+
+          <div id="ticket_agents" class="hide">
+            <%if @selected_filter.present?%>
+            <a href="javascript:void(0)" class="action_assign" tabindex=99 data-agent-id= "<%=@selected_filter[:user_id]%>"
+                data-agent-name="<%=h(@selected_filter[:user_name])%>" ><%=h(@selected_filter[:user_name])%></a>
+            <%end%>
+            <span class="seperator"></span>
+            <%unless @selected_filter.try(:[], :user_id).to_i.zero? %>
+              <a href="javascript:void(0)" class="action_assign" tabindex=99 data-agent-id= ""
+                  data-agent-name=<%=t("admin.day_passes.index.all")%> ><%=t("admin.day_passes.index.all")%></a>
+            <%end%>
+            <% current_account.agents_details_from_cache.each do |agent| %>
+                <% unless @selected_filter.try(:[], :user_id) == agent.id.to_s%>
+                  <a href="javascript:void(0)" class="action_assign" tabindex=99 data-agent-id= "<%=agent.id%>"
+                  data-agent-name="<%=h(agent.name)%>" ><%=h(agent.name)%></a>
+                <%end%>
+
+            <%end%>
+          </div>
+
+
+
+          <span class="pl10"><%=t(".time_period")%></span>
+          <a class="drop-right nav-trigger" href="javascript:void(0)" menuid="#filterDaysMenu" id="days-filter-display" data-value="<%=@selected_filter[:end_day]%>">
+            <b><%=t("admin.day_passes.index.days_filter", :days => @selected_filter[:end_day])%></b>
+          </a>
+
+          <div class="fd-menu" id="filterDaysMenu">
+            <ul>
+                <%DayPassUsage::DAYS_FILTER.each do |day|%>
+                  <li>
+                      <a class="wf_order" href="javascript:void(0)" data-value="<%=day%>">
+                      <%if day == @selected_filter[:end_day].to_i%>
+                        <span class="icon ticksymbol"></span>
+                      <%end%>
+                      <%=t("admin.day_passes.index.days_filter", :days => day)%>
+                     </a>
+                  </li>
+                <%end%>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <div id ="history">
+      <%= render :partial => "usage_history",
+         :locals => { } %>
+    </div>
+  </div>

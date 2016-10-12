@@ -6,7 +6,7 @@ module MemcacheKeys
 
   USER_TICKET_FILTERS = "v1/TICKET_VIEWS:%{user_id}:%{account_id}"
 
-  ACCOUNT_CUSTOM_SURVEY = "v2/ACCOUNT_CUSTOM_SURVEY:%{account_id}"
+  ACCOUNT_CUSTOM_SURVEY = "v3/ACCOUNT_CUSTOM_SURVEY:%{account_id}"
 
   ACCOUNT_TICKET_TYPES = "v3/ACCOUNT_TICKET_TYPES:%{account_id}"
 
@@ -122,7 +122,7 @@ module MemcacheKeys
 
   ACCOUNT_ADDITIONAL_SETTINGS = "v2/ACCOUNT_ADDITIONAL_SETTINGS:%{account_id}"
 
-  INSTALLED_FRESHPLUGS = "v1/FA:%{page}:PLUGS:%{account_id}"
+  INSTALLED_FRESHPLUGS = "v2/FA:%{page}:PLUGS:%{account_id}"
 
   FRESHPLUG_CODE = "v1/FA:PLUG:%{version_id}"
 
@@ -130,7 +130,9 @@ module MemcacheKeys
 
   MKP_EXTENSIONS = "v1/FA:MKP_EXTENSIONS:%{category_id}:%{type}:%{locale_id}"
 
-  EXTENSION_DETAILS = "v1/FA:EXTENSION:%{extension_id}:%{locale_id}"
+  CUSTOM_APPS = "v1/FA:CUSTOM_APPS:%{account_id}:%{locale_id}"
+
+  EXTENSION_DETAILS = "v2/FA:EXTENSION:%{extension_id}:%{locale_id}"
 
   CONFIGURATION_DETAILS = "v1/FA:CONFIGURATIONS:%{version_id}:%{locale_id}"
 
@@ -155,6 +157,8 @@ module MemcacheKeys
   TKT_TEMPLATES_COUNT = "v1/TKT_TEMPLATES_COUNT:%{account_id}"
 
   ACCOUNT_WEBHOOK_KEY = "ACCOUNT_WEBHOOK_KEY:%{account_id}:%{vendor_id}"
+
+  MOST_VIEWED_ARTICLES = "MOST_VIEWED_ARTICLES:%{account_id}:%{language_id}:%{cache_version}"
 
   class << self
 

@@ -167,6 +167,7 @@ ru-RU:
     digits: "Введите только цифры."
     creditcard: "Введите допустимый номер кредитной карты."
     equalTo: "Введите это значение повторно."
+    two_decimal_place_warning: "Value cannot have more than 2 decimal digits"
   confirm_delete_message: "Действительно удалить %{human_name}?"
   reload: Обновить
   any: Любой

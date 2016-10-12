@@ -25,7 +25,6 @@ window.liveChat.URL = _url;
     var CHAT_CONSTANTS  = <%= ChatSetting::CHAT_CONSTANTS_BY_KEY.to_json.html_safe %>;
     var CHAT_I18n       = <%= i18n_text %>;
     var LIVECHAT_TOKEN  = '<%= livechat_token(current_account.chat_setting.site_id, current_user.id) %>';
-
     var CURRENT_USER    = {
             'id'        : '<%=current_user.id%>',
             'username'  : '<%=current_user.name%>',

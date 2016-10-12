@@ -292,6 +292,16 @@ module Freshfone::FreshfoneUtil
       current_account.features?(:freshfone_conference) ? params[:From].present? && params[:PhoneNumber].present? && params[:From].match(/(client:)/) : params[:To].blank? 
     end
 
+    def warm_transfer_call_leg
+      @warm_transfer_call_leg ||= current_account.supervisor_controls.find_by_sid(params[:CallSid])
+    end
+
+    def user_agent_key(warm_transfer_leg)
+      FRESHFONE_USER_AGENT % { account_id: warm_transfer_leg.account_id,
+                               user_id: warm_transfer_leg.supervisor_id,
+                               warm_transfer_id: warm_transfer_leg.id }
+    end
+
     def agent_leg?
       params[:type] == "agent_leg"
     end

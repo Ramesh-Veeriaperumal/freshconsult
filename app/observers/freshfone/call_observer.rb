@@ -214,8 +214,8 @@ class Freshfone::CallObserver < ActiveRecord::Observer
     end
 
     def on_app_or_mobile?(call)
-      call.meta.android_or_ios? || (call.incoming? &&
-        call.meta.available_on_phone?)
+      call.meta.android_or_ios? || (!call.outgoing_root_call? &&
+       call.meta.available_on_phone?)
     end
 
     def move_to_acw_state(call)
@@ -226,7 +226,7 @@ class Freshfone::CallObserver < ActiveRecord::Observer
 
     def transferred?(call)
       call.children.present? && call.children.last.call_status.in?(
-        Freshfone::Call::INTERMEDIATE_CALL_STATUS)
+        Freshfone::Call::ONGOING_CALL_STATUS)
     end
 
     def warm_transferred?(call)

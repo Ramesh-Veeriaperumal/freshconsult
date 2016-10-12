@@ -100,7 +100,7 @@ private
           format.html { redirect_to(edit_profile_url, :notice => 'Your profile has been updated successfully.') }
           format.xml  { head :ok }
       else
-        format.html { redirect_to(edit_profile_url, :notice => 'oops!.. Unable to update your profile.') }
+        format.html { redirect_to(edit_profile_url, flash: { error: activerecord_error_list(@profile.errors) }) }
         format.xml  { render :xml => @profile.errors, :status => :unprocessable_entity }
       end    
     end    

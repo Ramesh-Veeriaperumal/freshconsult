@@ -40,6 +40,7 @@
       autoresize: false,
       mobile: false,
       buttons: ['bold', 'italic', 'underline', '|', 'unorderedlist', 'orderedlist', '|', 'fontcolor', 'backcolor', '|', 'link'],
+      popover: true,
       keyupCallback: function(ele,event) {
         var $item = $ticket_desc;
         var w = ele.$el.data('focusIncount') || 0
@@ -97,6 +98,11 @@
 			onkeyup: false,
      		focusCleanup: true,
      		focusInvalid: false,
+     		messages : {	
+     			'helpdesk_ticket[email]': I18n.t('validation.email'),
+     			'helpdesk_ticket[subject]': I18n.t('validation.required'),
+     			'helpdesk_ticket[ticket_body_attributes][description_html]': I18n.t('validation.required')
+     		},
      		ignore:"select.nested_field:empty, .portal_url:not(:visible)",
 			errorElement: "div", // Adding div as the error container to highlight it in red
 			submitHandler: function(form, btn) {

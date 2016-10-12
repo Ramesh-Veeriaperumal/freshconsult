@@ -37,6 +37,7 @@
 //= require frameworks/plugins/jquery.nested_select_tag.js
 //= require frameworks/socket.io-1.2.1.js
 //= require frameworks/socket.io-agent.js
+//= require frameworks/socket.io-1.4.5.js
 //= require helpdesk/socket_agent.js
 //= require helpdesk/socket_agent_autorefresh.js
 //= require frameworks/plugins/jquery.ui.timepicker.addon.js
@@ -58,3 +59,8 @@
 //= require redactor/redactor.js
 //= require redactor/freshdesk_redactor.js
 //= require custom_widget.js
+//= require ticket_list_sidebar.js
+//= require app/realtime_dashboard/plugins/highstock
+//= require app/realtime_dashboard/plugins/highcharts-more
+//= require app/realtime_dashboard/plugins/solid-gauge
+//= require app/realtime_dashboard_persist.js

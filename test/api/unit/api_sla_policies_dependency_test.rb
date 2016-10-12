@@ -9,7 +9,7 @@ class ApiSlaPoliciesDependencyTest < ActionView::TestCase
                         :force_utf8_params, :persist_user_agent, :set_cache_buster, :remove_pjax_param, :set_shard_for_payload,
                         :remove_rails_2_flash_after, :set_affiliate_cookie, :verify_authenticity_token,
                         :set_selected_tab, :load_sla_policy, :load_item, :validate_params,
-                        :initialize_escalation_level_details, :set_last_active_time, :reset_language, :check_rate_limit]
+                        :initialize_escalation_level_details, :set_last_active_time, :reset_language]
     actual_filters = Helpdesk::SlaPoliciesController._process_action_callbacks.map { |c| c.filter.to_s }.reject { |f| f.starts_with?('_') }.compact
     assert_equal expected_filters.map(&:to_s).sort, actual_filters.sort
   end

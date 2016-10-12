@@ -33,7 +33,11 @@ module Helpdesk::AccessibleElements
   end
 
   def visible_records ops, enclose, sort, db_limit
-    elements = accessible_from_es(ops[:model_hash][:name].constantize, enclose, default_visiblity, sort, nil, ops[:id_data], ops[:excluded_ids])
+    if(ops[:model_hash][:name] == "Helpdesk::TicketTemplate")
+      elements = accessible_from_esv2(ops[:model_hash][:name], enclose, default_visiblity, sort, nil, ops[:id_data], ops[:excluded_ids])
+    else
+      elements = accessible_from_es(ops[:model_hash][:name].constantize, enclose, default_visiblity, sort, nil, ops[:id_data], ops[:excluded_ids])
+    end
     elements = accessible_elements(current_account.send(ops[:model_hash][:asstn]),
       query_hash(ops[:model_hash][:model], ops[:model_hash][:table], ops[:query], [], db_limit)) if elements.nil?
     elements
@@ -41,7 +45,7 @@ module Helpdesk::AccessibleElements
 
   def sort_records vis_elmts, model, recent
     vis_elmts.compact!
-    vis_elmts.sort! { |a,b| a.name.downcase <=> b.name.downcase } if recent.nil?
+    vis_elmts.sort! { |a,b| a.name.downcase <=> b.name.downcase } if recent.nil? && !search_query?
     accessible_types(vis_elmts.map(&:id), model)
     vis_elmts
   end
@@ -64,5 +68,9 @@ module Helpdesk::AccessibleElements
     end
     visible_elmts.map { |t| {:name => t.name, :id => t.id, 
         :type => (@access_types[t.id] == Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:users]) ? 'personal' : 'shared' }}
+  end
+
+  def search_query?
+    params.present? && params[:search_string].present?
   end
 end

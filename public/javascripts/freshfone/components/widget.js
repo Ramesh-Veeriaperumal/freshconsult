@@ -98,6 +98,7 @@ var FreshfoneWidget;
 			this.bindEventsForTransferAndDial();
 			this.bindPageClose();
 			this.bindDeskNotifierButton();
+			this.togglePhoneActiveClass(true);
 		},
 		setupConferenceAndWarmTransferSetup: function() {
 			this.disableAgentConferenceSetup();
@@ -225,6 +226,7 @@ var FreshfoneWidget;
 		},
 		showOutgoing: function () {
 			this.hideAllWidgets();
+			this.togglePhoneActiveClass(false);
 			if(!$.isEmptyObject(freshfone.numbersHash)){
 				this.outgoingCallWidget.show();				
 			}
@@ -439,6 +441,9 @@ var FreshfoneWidget;
 			if (typeof chatCollection != 'undefined' && chatCollection.getMaximizedChat()){
 				chatCollection.minimizeOpenWindow()
 			}
+		},
+		togglePhoneActiveClass: function(show){
+			$('.chats-container').toggleClass("-fone-active", show);
 		}
 	};
 	$(window).on("load", function () {

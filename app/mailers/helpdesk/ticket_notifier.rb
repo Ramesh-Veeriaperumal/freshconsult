@@ -1,11 +1,14 @@
 # encoding: utf-8
 class  Helpdesk::TicketNotifier < ActionMailer::Base
 
+  require 'freemail'
+
   extend ParserUtil
   include Helpdesk::NotifierFormattingMethods
 
   include Redis::RedisKeys
   include Redis::OthersRedis
+  include Helpdesk::SpamAccountConstants
   
   layout "email_font"
 
@@ -274,6 +277,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
   end
 
   def reply(ticket, note , options={})
+    check_spam_email(ticket, note)
     email_config = (note.account.email_configs.find_by_id(note.email_config_id) || ticket.reply_email_config)
     ActionMailer::Base.set_email_config email_config
 
@@ -332,6 +336,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
   end
   
   def forward(ticket, note, options={})
+    check_spam_email(ticket, note)
     email_config = (note.account.email_configs.find_by_id(note.email_config_id) || ticket.reply_email_config)
     ActionMailer::Base.set_email_config email_config
 
@@ -379,6 +384,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
   end
 
   def reply_to_forward(ticket, note, options={})
+    check_spam_email(ticket, note)
     email_config = (note.account.email_configs.find_by_id(note.email_config_id) || ticket.reply_email_config)
     ActionMailer::Base.set_email_config email_config
 
@@ -428,8 +434,8 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
   
   def email_to_requester(ticket, content, sub=nil)
     ActionMailer::Base.set_email_config ticket.reply_email_config
-
-    headers   = email_headers(ticket, nil).merge({
+    header_message_id = construct_email_header_message_id(:automation)
+    headers   = email_headers(ticket, header_message_id).merge({
       :subject    =>  (sub.blank? ? formatted_subject(ticket) : sub),
       :to         =>  ticket.from_email,
       :from       =>  ticket.friendly_reply_email,
@@ -459,8 +465,8 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
   
   def internal_email(ticket, receips, content, sub=nil)
     ActionMailer::Base.set_email_config ticket.reply_email_config
-
-    headers = email_headers(ticket, nil).merge({
+    header_message_id = construct_email_header_message_id(:automation)
+    headers = email_headers(ticket, header_message_id).merge({
       :subject    =>  (sub.blank? ? formatted_subject(ticket) : sub),
       :to         =>  receips,
       :from       =>  ticket.friendly_reply_email,
@@ -489,6 +495,8 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
   end
 
   def notify_outbound_email(ticket)
+    check_outbound_count(ticket)
+    check_spam_email(ticket)
     ActionMailer::Base.set_email_config ticket.reply_email_config
 
     from_email = if ticket.account.features?(:personalized_email_replies)
@@ -548,6 +556,10 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
   end
 
   private
+    def construct_email_header_message_id(email_type)
+      "#{Mail.random_tag}.#{::Socket.gethostname}@#{Helpdesk::EMAIL_TYPE_TO_MESSAGE_ID_DOMAIN[email_type]}"
+    end
+
     def account_bcc_email(ticket)
       ticket.account.bcc_email unless ticket.account.bcc_email.blank?
     end
@@ -596,6 +608,69 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       end
 
       headers
+    end
+
+
+    def check_spam_email(ticket, note = nil)
+      account = ticket.account
+      if ((ticket.account_id > get_spam_account_id_threshold) &&
+          (account.subscription.state.downcase == "trial") && 
+          (Freemail.free_or_disposable?(account.admin_email)) &&
+          (ticket.source == Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:outbound_email] || ticket.source == Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:phone] ))
+        if note.present?
+          to_emails = validate_emails(note.to_emails, note)
+          bcc_emails = validate_emails(note.bcc_emails, note)
+          cc_emails = validate_emails(note.cc_emails, note)
+          to_emails_count =  to_emails.present? ? to_emails.count : 0
+          bcc_emails_count =  bcc_emails.present? ? bcc_emails.count : 0
+          cc_emails_count =  cc_emails.present? ? cc_emails.count : 0
+          emails_count = to_emails_count + bcc_emails_count + cc_emails_count
+          if outgoing_email_limit_reached?(emails_count, ticket.account_id)
+            notify_spam_threshold_crossed(account)
+          end
+        else
+          emails_count = ticket.cc_email[:cc_emails].count
+          if outgoing_email_limit_reached?(emails_count, ticket.account_id)
+            notify_spam_threshold_crossed(account)
+          end
+        end
+      end
+    end
+
+    def outgoing_email_limit_reached?(no_of_outgoing, account_id)
+      outgoing_count_key = OUTGOING_COUNT_PER_HALF_HOUR % {:account_id => account_id }
+      total_outgoing = get_others_redis_key(outgoing_count_key).to_i
+      if Thread.current[:attempts].nil? || Thread.current[:attempts] == 0 
+        total_outgoing = total_outgoing + no_of_outgoing
+      end
+      set_others_redis_key(outgoing_count_key,total_outgoing,30.minutes.seconds)
+      mail_outgoing_threshold = get_others_redis_key(SPAM_OUTGOING_EMAILS_THRESHOLD) || 30
+      mail_outgoing_threshold = mail_outgoing_threshold.to_i 
+      if total_outgoing > mail_outgoing_threshold
+        return true
+      else
+        return false
+      end
+    end
+
+    def notify_spam_threshold_crossed(account)
+       FreshdeskErrorsMailer.error_email(nil, {:domain_name => account.full_domain}, nil, {
+                  :subject => "Outgoing Spam Threshold Crossed for Acc ID:#{account.id} ", 
+                  :recipients => ["mail-alerts@freshdesk.com", "noc@freshdesk.com"],
+                  :additional_info => {:info => "Account ID: #{account.id} has sent more outgoing emails . Check for spam in this account "}
+                  })
+    end
+
+    def check_outbound_count(ticket)
+      account = ticket.account
+      outbound_per_day_key = OUTBOUND_EMAIL_COUNT_PER_DAY % {:account_id => account.id }
+      total_outbound_per_day = get_others_redis_key(outbound_per_day_key).to_i
+      if total_outbound_per_day == 0
+        set_others_redis_key(outbound_per_day_key,total_outbound_per_day,1.days.seconds)
+        increment_others_redis(outbound_per_day_key)
+      else
+        increment_others_redis(outbound_per_day_key)
+      end
     end
 
     def message_key(account_id, message_id)

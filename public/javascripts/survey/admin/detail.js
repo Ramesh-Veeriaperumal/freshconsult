@@ -46,7 +46,7 @@ var SurveyDetail = {
 				survey[element.name] = element.value  || jQuery("input[name="+element.name+"]").attr('placeholder');
 			}
 		}
-
+		survey["good_to_bad"] = SurveyAdmin.surveyChoiceGoodToBad;
 		survey["can_comment"] = jQuery("input[name=can_comment]").length > 0 ? jQuery("input[name=can_comment]")[0].checked : true;
 		survey.active = jQuery("input[name=active]").length > 0 ? jQuery("input[name=active]")[0].checked : false;
 

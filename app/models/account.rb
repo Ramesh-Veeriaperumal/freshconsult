@@ -154,6 +154,11 @@ class Account < ActiveRecord::Base
     freshchat_enabled? and features?(:chat_routing)
   end
 
+  def suggest_tickets_enabled?
+    Rails.logger.info "suggest_tickets : #{launched?(:suggest_tickets)}"
+    launched?(:suggest_tickets)
+  end
+
   def supervisor_feature_launched?
     features?(:freshfone_call_monitoring) || features?(:agent_conference)
   end
@@ -204,6 +209,10 @@ class Account < ActiveRecord::Base
 
   #Temporary feature check methods - using redis keys - ends here
 
+  def round_robin_capping_enabled?
+    launched?(:round_robin_capping) #features?(:round_robin_load_balancing)
+  end
+
   def validate_required_ticket_fields?
     ismember?(VALIDATE_REQUIRED_TICKET_FIELDS, self.id)
   end
@@ -237,6 +246,11 @@ class Account < ActiveRecord::Base
 
   def restricted_helpdesk?
     features?(:restricted_helpdesk) && helpdesk_restriction_enabled?
+  end
+
+  def link_tickets_enabled?
+    launched?(:link_tickets) 
+    # feature?(:link_tickets)
   end
 
   class << self # class methods

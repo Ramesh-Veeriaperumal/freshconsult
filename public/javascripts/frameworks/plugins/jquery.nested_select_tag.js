@@ -22,7 +22,7 @@
           opts["none_option"] = "<option value='-1'>"+opts["include_none"]+"</option>";
          }
 
-          $(document).on('change.nested_field', "#"+cat_id, function(ev) {
+          $(document).on('change.nested_field', "#"+cat_id, function(ev, params) {
             var _items_present = false;
 
             _subcategory.html("");
@@ -42,7 +42,7 @@
               _subcategory.val("")
             }
             
-            _subcategory.trigger("change");
+            _subcategory.trigger("change", [params]);
             _condition = (!_items_present || (!_category.val() || _category.val() == -1));
 
             //Hacks for Select2 to behave nicely with nested fields
@@ -58,13 +58,13 @@
             _subcategory.prop("disabled", _disable_children && _condition).parent().toggle(!_condition);
          });
 
-           $(document).on('change.nested_field', "#"+sub_cat_id, function(ev) {         
+           $(document).on('change.nested_field', "#"+sub_cat_id, function(ev, params) {         
             if(!_subcategory.data("initialLoad")){              
               _subcategory.val(_vals["subcategory_val"]);
               _subcategory.data("initialLoad", true);
             }else{
               if(!_item.get(0))
-                opts.change_callback();
+                opts.change_callback(params);
             }
             if(_tree.third_level){
               var _items_present = false;
@@ -86,7 +86,7 @@
                 _item.val("")
               }
 
-              _item.trigger("change");
+              _item.trigger("change", [params]);
               _condition = (!_items_present || (!_subcategory.val() || _subcategory.val() == -1));
               
               if (typeof($.fn.select2) != 'undefined') {
@@ -101,9 +101,9 @@
             }
          });
 
-          $(document).on('change.nested_field', "#"+item_id, function(ev) {
+          $(document).on('change.nested_field', "#"+item_id, function(ev, params) {
             if(_item.data("initialLoad")){
-               opts.change_callback();             
+               opts.change_callback(params);             
             }else{              
               _item.val(_vals["item_val"]);
               _item.data("initialLoad", true);
@@ -112,7 +112,7 @@
 
          _category
           .val(_vals["category_val"])
-          .trigger("change");
+          .trigger("change", ['selfTrigger']);
 
        });
      }

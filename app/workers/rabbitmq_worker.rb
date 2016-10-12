@@ -29,6 +29,24 @@ class RabbitmqWorker
       sqs_msg_obj = (Ryuken::SearchSplitter.perform_async(message) rescue nil)
       puts "Searchv2 SQS Message id - #{sqs_msg_obj.try(:message_id)} :: ROUTING KEY -- #{rounting_key} :: Exchange - #{exchange_key}"
     end
+    
+    # Publish to Autorefresh and AgentCollision
+    #
+    if LAMBDA_ENABLED and lambda_feature
+      invoke_lambda(exchange_key, message)
+      # Hack - Lambda only pushes to one sqs. Manually pushing to New ALB Queue - Temporary
+    elsif agent_collision_routing_key?(exchange_key, rounting_key)
+      sqs_msg_obj = sqs_v2_push(SQS[:agent_collision_queue], message, nil)
+      puts " AgentCollision SQS Message id - #{sqs_msg_obj.message_id} :: ROUTING KEY -- #{rounting_key} :: Exchange - #{exchange_key}"
+      sqs_msg_obj = sqs_v2_push(SQS[:agent_collision_alb_queue], message, nil)
+      puts " AgentCollision ALB SQS Message id - #{sqs_msg_obj.message_id} :: ROUTING KEY -- #{rounting_key} :: Exchange - #{exchange_key}"                                            
+      if autorefresh_routing_key?(exchange_key, rounting_key)
+        sqs_msg_obj = sqs_v2_push(SQS[:auto_refresh_queue], message, nil)
+        puts " Autorefresh SQS Message id - #{sqs_msg_obj.message_id} :: ROUTING KEY -- #{rounting_key} :: Exchange - #{exchange_key}"
+        sqs_msg_obj = sqs_v2_push(SQS[:auto_refresh_alb_queue], message, nil) if autorefresh_routing_key?(exchange_key, rounting_key) 
+        puts " Autorefresh ALB SQS Message id - #{sqs_msg_obj.message_id} :: ROUTING KEY -- #{rounting_key} :: Exchange - #{exchange_key}"
+      end
+    end
 
     # Publish to Reports-v2
     #
@@ -42,19 +60,6 @@ class RabbitmqWorker
     if activities_routing_key?(exchange_key, rounting_key)
       sqs_msg_obj = sqs_v2_push(SQS[:activity_queue], message, nil)
       puts " SQS Activities Message id - #{sqs_msg_obj.message_id} :: ROUTING KEY -- #{rounting_key} :: Exchange - #{exchange_key}"
-    end
-
-    # Publish to Autorefresh and AgentCollision
-    #
-    if LAMBDA_ENABLED and lambda_feature
-      invoke_lambda(exchange_key, message)
-    elsif agent_collision_routing_key?(exchange_key, rounting_key)
-      sqs_msg_obj = sqs_v2_push(SQS[:agent_collision_queue], message, nil)
-      puts " AgentCollision SQS Message id - #{sqs_msg_obj.message_id} :: ROUTING KEY -- #{rounting_key} :: Exchange - #{exchange_key}"                      
-      if autorefresh_routing_key?(exchange_key, rounting_key)
-        sqs_msg_obj = sqs_v2_push(SQS[:auto_refresh_queue], message, nil)
-        puts " Autorefresh SQS Message id - #{sqs_msg_obj.message_id} :: ROUTING KEY -- #{rounting_key} :: Exchange - #{exchange_key}"
-      end
     end
     
     Rails.logger.info("Published RMQ message via Sidekiq")

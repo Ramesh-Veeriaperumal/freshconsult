@@ -6,6 +6,8 @@ class Agent < ActiveRecord::Base
   include Agents::Preferences
   include Social::Ext::AgentMethods
   include Chat::Constants
+  include Redis::RoundRobinRedis
+  include RoundRobinCapping::Methods
 
   concerned_with :associations, :constants
 
@@ -21,6 +23,7 @@ class Agent < ActiveRecord::Base
   after_commit  ->(obj) { obj.update_agent_to_livechat } , on: :create
   after_commit  ->(obj) { obj.update_agent_to_livechat } , on: :update
   validates_presence_of :user_id
+  validate :validate_signature
   # validate :only_primary_email, :on => [:create, :update] moved to user.rb
 
   attr_accessible :signature_html, :user_id, :ticket_permission, :occasional, :available, :shortcuts_enabled,
@@ -113,6 +116,10 @@ class Agent < ActiveRecord::Base
   def signature_value
     self.signature_html || (RedCloth.new(self.signature).to_html unless @signature.blank?)
   end
+  
+  def parsed_signature(placeholder_params)
+    Liquid::Template.parse(signature_value.to_s).render(placeholder_params)
+  end
 
   def next_level
     return unless points?
@@ -165,6 +172,47 @@ class Agent < ActiveRecord::Base
     touch(:last_active_at) if force or last_active_at.nil? or ((Time.now - last_active_at) > 4.hours)
   end
 
+  def current_load group
+    agent_key = group.round_robin_agent_capping_key(user_id)
+    [get_round_robin_redis(agent_key).to_i, agent_key]
+  end
+
+  def assign_next_ticket group
+    key = group.round_robin_capping_key
+    ticket_id = group.lpop_from_rr_capping_queue
+
+    Rails.logger.debug "RR popped ticket : #{ticket_id}"
+    
+    if ticket_id.present?
+      ticket = group.tickets.find_by_display_id(ticket_id)
+      if ticket.present? && ticket.capping_ready?
+        MAX_CAPPING_RETRY.times do
+          ticket_count, agent_key = current_load(group)
+    
+          if ticket_count < group.capping_limit
+            watch_round_robin_redis(agent_key)
+            new_score = generate_new_score(ticket_count + 1) #gen new score with the updated ticket count value
+            result    = group.update_agent_capping_with_lock user_id, new_score
+
+            if result.is_a?(Array) && result[1].present?
+              Rails.logger.debug "RR SUCCESS Agent's next ticket : #{ticket.display_id} - 
+                                #{user_id}, #{group.id}, #{new_score}, #{result.inspect}".squish
+              ticket.responder_id = user_id
+              ticket.round_robin_assignment = true
+              ticket.set_round_robin_activity
+              ticket.save
+              return true
+            end
+            Rails.logger.debug "RR FAILED Agent's next ticket : #{ticket.display_id} - 
+                                #{user_id}, #{group.id}, #{new_score}, #{result.inspect}".squish
+          end
+          Rails.logger.debug "Looping again for ticket : #{ticket.display_id}"
+        end
+      end
+      group.lpush_to_rr_capping_queue(ticket_id) if ticket.present?
+    end
+  end
+
   protected
     # adding the agent role ids through virtual attr agent_role_ids.
     # reason is this callback is getting executed before user roles update.
@@ -199,6 +247,14 @@ class Agent < ActiveRecord::Base
 
   def agent_destroy_cleanup
     AgentDestroyCleanup.perform_async({:user_id => self.user_id})
+  end
+  
+  def validate_signature
+    begin
+      Liquid::Template.parse(signature_value.presence)
+    rescue
+      errors.add(:base, I18n.t('agent.invalid_placeholder'))
+    end
   end
 
   # Used by API V2

@@ -18,6 +18,7 @@ module Helpdesk::TicketsHelper
   include Helpdesk::AccessibleElements
   include Cache::Memcache::Helpdesk::TicketTemplate #Methods for tkt templates count
   include Cache::FragmentCache::Base # Methods for fragment caching
+  include Helpdesk::SpamAccountConstants
   
   def ticket_sidebar
     tabs = [["TicketProperties", t('ticket.properties').html_safe,         "ticket"],
@@ -215,6 +216,10 @@ module Helpdesk::TicketsHelper
     end
   end
 
+  def forward_template_draft(item, signature)
+    {"draft_text" => bind_last_conv(item, signature, true, false)}
+  end
+
   def draft_key
     HELPDESK_REPLY_DRAFTS % { :account_id => current_account.id, :user_id => current_user.id,
       :ticket_id => @ticket.id}
@@ -240,17 +245,17 @@ module Helpdesk::TicketsHelper
 
   def bind_last_conv(item, signature, forward = false, quoted = true)    
     ticket = (item.is_a? Helpdesk::Ticket) ? item : item.notable
-    default_reply = (signature.blank?)? "<p/><p/><br/>": "<p/><p><br></br></p><p></p><p></p>
+    default_reply_forward = (signature.blank?)? "<p/><p/><br/>": "<p/><p><br></br></p><p></p><p></p>
 <div>#{signature}</div>"
     quoted_text = ""
-
-    if quoted or forward
+    if quoted
       quoted_text = quoted_text(item, forward)
+    elsif forward 
+      default_reply_forward = parsed_forward_template(ticket, signature)
     else
-      default_reply = parsed_reply_template(ticket, signature)
+      default_reply_forward = parsed_reply_template(ticket, signature)
     end 
-
-    "#{default_reply} #{quoted_text}"
+    "#{default_reply_forward} #{quoted_text}"
   end
 
   def parsed_reply_template(ticket, signature)   
@@ -279,6 +284,25 @@ module Helpdesk::TicketsHelper
           #{ (@last_item.description_html || extract_quote_from_note(@last_item).to_s)}
         </blockquote>
        </div>) 
+  end
+
+  def parsed_forward_template(ticket, signature)   
+    # Adding <p> tag for the IE9 text not shown issue
+    # default_reply = (signature.blank?)? "<p/><br/>": "<p/><div>#{signature}</div>"
+    
+    if current_account.email_notifications.find_by_notification_type(EmailNotification::DEFAULT_FORWARD_TEMPLATE).present?
+      requester_template = current_account.email_notifications.find_by_notification_type(EmailNotification::DEFAULT_FORWARD_TEMPLATE).get_forward_template(ticket.requester)
+      if(requester_template.present?)
+        requester_template.gsub!('{{ticket.satisfaction_survey}}', '')
+        forward_email_template = Liquid::Template.parse(requester_template).render('ticket' => ticket,'helpdesk_name' => ticket.account.portal_name)
+        # Adding <p> tag for the IE9 text not shown issue
+        default_forward = (signature.blank?)? "<p/><div>#{forward_email_template}</div>" : "<p/><div>#{forward_email_template}<br/>#{signature}</div>"
+      end
+    else
+      default_forward = (signature.blank?)? "<p/>" : "<p/><p><br></br></p><p></p><p></p><div>#{signature}</div>"
+    end 
+  
+    default_forward
   end
 
   def user_details_template(item)
@@ -458,7 +482,7 @@ module Helpdesk::TicketsHelper
   end
 
   def latest_note_helper(ticket)    
-    latest_note_obj = ticket.notes.visible.exclude_source('meta').newest_first.first
+    latest_note_obj = ticket.notes.visible.exclude_source(['meta', 'tracker']).newest_first.first
     latest_note_hash = {}
     unless latest_note_obj.nil?
         action_msg = latest_note_obj.fwd_email? ? 'helpdesk.tickets.overlay_forward' : (latest_note_obj.note? ? 'helpdesk.tickets.overlay_note' : 'helpdesk.tickets.overlay_reply')
@@ -469,7 +493,7 @@ module Helpdesk::TicketsHelper
           :overlay_time => time_ago_in_words(latest_note_obj.created_at),
         }
       else
-         action_msg = 'helpdesk.tickets.overlay_submitted_ticket'
+         action_msg = "helpdesk.tickets.overlay_submitted_#{ticket.tracker_ticket? ? 'tracker' : 'ticket'}"
          latest_note_hash = {
           :user => ticket.requester,
           :created_at => ticket.created_at,
@@ -493,6 +517,14 @@ module Helpdesk::TicketsHelper
 
   def autorefresh_socket_host
     "#{request.protocol}#{NodeConfig["socket_autorefresh_host"]}"
+  end
+
+  def agentcollision_alb_socket_host
+    "#{request.protocol}#{NodeConfig["socket_host_new"]}"
+  end
+
+  def autorefresh_alb_socket_host
+    "#{request.protocol}#{NodeConfig["socket_autorefresh_host_new"]}"
   end
 
   def agent_collision_index_channel
@@ -544,7 +576,7 @@ module Helpdesk::TicketsHelper
     email_content = []
     contents << content_tag(:div, (form_builder.text_field :subject, :class => "required text ticket-subject", :placeholder => t('ticket.compose.enter_subject')).html_safe)
     form_builder.fields_for(:ticket_body, @ticket.ticket_body ) do |builder|
-      field_value = if (desp = @item.description_html).blank? & (sign = current_user.agent.signature_value).blank?
+      field_value = if (desp = @item.description_html).blank? & (sign = current_user.agent.parsed_signature('ticket' => @ticket, 'helpdesk_name' => @ticket.account.portal_name)).blank?
                       desp.to_s
                     else
                       desp.present? ? (sign.present? ? desp + sign : desp) : ("<p><br /></p>"*2)+sign.to_s
@@ -632,6 +664,26 @@ module Helpdesk::TicketsHelper
     ""
   end
 
+  def do_spam_check?
+    ((current_account.id > get_spam_account_id_threshold) && (current_account.subscription.trial?) && (!ismember?(SPAM_WHITELISTED_ACCOUNTS, current_account.id)))
+  end
+
+  def free_admin_email_account?
+    Freemail.free?(current_account.admin_email)
+  end
+
+  def unique_ticket_recipients(ticket)
+    ticket_from_email = get_email_array(ticket.from_email)
+    cc_email_hash = ticket.cc_email_hash.nil? ? Helpdesk::Ticket.default_cc_hash : ticket.cc_email_hash
+    
+    bcc_emails = get_email_array(cc_email_hash[:bcc_emails])
+    cc_emails = get_email_array(cc_email_hash[:cc_emails])
+    fwd_emails = get_email_array(cc_email_hash[:fwd_emails])
+
+    total_recipients = bcc_emails.present? ? (cc_emails | fwd_emails | ticket_from_email | bcc_emails) : (cc_emails | fwd_emails | ticket_from_email)
+    return total_recipients
+  end
+
   def default_hidden_fields
     ["default_source"]
   end
@@ -640,6 +692,28 @@ module Helpdesk::TicketsHelper
 
   def is_invoice_disabled?(installed_app)
     Integrations::Constants::INVOICE_APPS.include?(installed_app.application.name) && !installed_app.configs_invoices.to_s.to_bool
+  end
+
+  def ticket_association_box
+    links = []
+    links << %(<span class="mr12"> 
+                  <b><a href="#">#{I18n.t('ticket.parent_child.add_child')} </a></b>
+                </span>) if current_account.features_included?(:parent_child_tickets)
+    links << %(<span class="ml12">
+                  <b><a href="#" data-placement = "bottomLeft" class="lnk_tkt_tracker_show_dropdown" id="lnk_tkt_tracker"  role="button" data-toggle="popover" data-dropdown="close" data-ticket-id="#{@ticket.display_id}">#{t('ticket.link_tracker.link_to_tracker')}</a></b>
+                </span>) if current_account.link_tickets_enabled?
+    links.join(links.size > 1 ? '<span class="separator">OR</span>' : '')
+    content_tag(:span, 
+                links.join(links.size > 1 ? '<span class="separator">OR</span>' : '').html_safe, 
+                :class => "text-center block")
+  end
+
+  def tracker_ticket_requester? dom_type
+    dom_type.eql?("requester") and (params[:display_ids].present? || @item.tracker_ticket?) and current_account.link_tickets_enabled? 
+  end
+
+  def show_insert_into_reply?
+    privilege?(:reply_ticket) && !(@ticket.twitter? || @ticket.facebook? || @ticket.allow_ecommerce_reply?) && @ticket.from_email.present?
   end
 
   private 

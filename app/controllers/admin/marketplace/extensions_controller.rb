@@ -12,6 +12,13 @@ class Admin::Marketplace::ExtensionsController <  Admin::AdminController
     @extensions = extensions.body.sort_by { |ext| ext['display_name'].downcase }
   end
 
+  def custom_apps
+    extensions = mkp_custom_apps
+    render_error_response and return if error_status?(extensions)
+    @extensions = extensions.body.sort_by { |ext| ext['display_name'].downcase }
+    render 'admin/marketplace/extensions/custom_apps'
+  end
+
   def show
     extension= extension_details
     render_error_response and return if error_status?(extension)

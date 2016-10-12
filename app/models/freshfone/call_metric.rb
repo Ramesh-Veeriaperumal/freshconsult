@@ -160,7 +160,7 @@ class Freshfone::CallMetric < ActiveRecord::Base
 
     def warm_transfer_child?
       child_call = self.call.children.last
-      return false if child_call.blank? && child_call.meta.blank?
+      return false if child_call.blank? || child_call.meta.blank?
       child_call.meta.warm_transfer_meta?
     end
 

@@ -2103,7 +2103,7 @@ class TicketsControllerTest < ActionController::TestCase
     match_json(request_error_pattern(:access_denied))
   end
 
-  def test_delete_assigned_ticket_permission_invalid
+  def test_delete_assigned_ticket_invalid_permission
     User.any_instance.stubs(:can_view_all_tickets?).returns(false).at_most_once
     User.any_instance.stubs(:group_ticket_permission).returns(false).at_most_once
     User.any_instance.stubs(:assigned_ticket_permission).returns(true).at_most_once
@@ -2581,7 +2581,7 @@ class TicketsControllerTest < ActionController::TestCase
     sidekiq_inline { user1.update_attributes(company_id: company.id) }
     user1.reload
 
-    expected_size = @account.tickets.where(deleted: 0, spam: 0, requester_id: user1.id).count
+    expected_size = @account.tickets.where(deleted: 0, spam: 0, requester_id: user1.id, owner_id: company.id).count
     get :index, controller_params(company_id: company.id, requester_id: "#{user1.id}")
     assert_response 200
     response = parse_response @response.body

@@ -4,6 +4,7 @@ module Freshfone
     include Freshfone::Endpoints
     include Freshfone::CallsRedisMethods
     include Freshfone::SubscriptionsUtil
+    include Freshfone::CustomForwardingUtil
 
     sidekiq_options :queue => :freshfone_notifications, :retry => 0, :backtrace => true, :failures => :exhausted
 
@@ -94,14 +95,14 @@ module Freshfone
         from = current_call.number #Showing freshfone number
         to = current_account.users.find(agent).available_number
         call_params  = {
-          :url             => forward_accept_url(current_call.id, agent),
+          :url             => mobile_agent_accept_url(current_call.id, agent),
           :status_callback => forward_status_url(current_call.id, agent),
           :from            => get_caller_id(current_call),
           :to              => to_number(from, to, agent),
           :timeout         => current_number.ringing_time,
-          :timeLimit       => ::Freshfone::Credit.call_time_limit(current_account, current_call),
-          :if_machine      => "hangup"
+          :timeLimit       => ::Freshfone::Credit.call_time_limit(current_account, current_call)
         }
+        call_params.merge!(if_machine: 'hangup') unless custom_forwarding_enabled?
         agent_call = telephony.make_call(call_params)   
       rescue => e
         call_actions.handle_failed_incoming_call current_call, agent
@@ -167,17 +168,17 @@ module Freshfone
       from = current_call.number
       to = current_account.users.find(agent).available_number
       call_params = {
-        url:             agent_conference_accept_url(params[:call_id],
-                                              params[:add_agent_call_id]),
+        url:             mobile_agent_conference_accept_url(params[:call_id],
+                                                    params[:add_agent_call_id]),
         status_callback: agent_conference_status_url(params[:call_id],
                                               params[:add_agent_call_id]),
         to:              to_number(from, to, agent),
         from:            from,
         timeLimit:       ::Freshfone::Credit.call_time_limit(current_account,
                                                              current_call),
-        timeout:         current_call.freshfone_number.ringing_time,
-        if_machine:      'hangup'
+        timeout:         current_call.freshfone_number.ringing_time
       }
+      call_params.merge!(if_machine: 'hangup') unless custom_forwarding_enabled?
       make_agent_conference_call(call_params, params[:add_agent_call_id], current_call)
     end
 
@@ -191,14 +192,16 @@ module Freshfone
         from = current_call.number
         to = freshfone_user.available_number
         call_params    = {
-          :url             => mobile_transfer_accept_url(current_call.id, params[:source_agent_id], agent),
+          :url             => mobile_transfer_url(current_call.id,
+                                                  params[:source_agent_id],
+                                                  agent),
           :status_callback => mobile_transfer_status_url(current_call.id, agent),
           :to              => to_number(from, to, agent),
           :from            => get_caller_id(current_call),
           :timeout         => current_number.ringing_time,
-          :timeLimit       => ::Freshfone::Credit.call_time_limit(current_account, current_call),
-          :if_machine      => "hangup"
+          :timeLimit       => ::Freshfone::Credit.call_time_limit(current_account, current_call)
         }
+        call_params.merge!(if_machine: 'hangup') unless custom_forwarding_enabled?
         agent_call = telephony.make_call(call_params)
       rescue => e
         call_actions.handle_failed_transfer_call current_call, agent
@@ -244,14 +247,16 @@ module Freshfone
         from = current_call.number
         to = freshfone_user.available_number
         call_params    = {
-          :url             => warm_transfer_accept_url(params[:warm_transfer_call_id], current_call.id),
-          :status_callback => transfer_status_url(current_call.id, agent),
+          :url             => mobile_warm_transfer_accept_url(
+                                params[:warm_transfer_call_id],
+                                current_call.id),
+          :status_callback => transfer_status_url(current_call.id, agent, true),
           :to              => to_number(from, to, agent),
           :from            => get_caller_id(current_call),
           :timeout         => current_number.ringing_time,
-          :timeLimit       => ::Freshfone::Credit.call_time_limit(current_account, current_call),
-          :if_machine      => "hangup"
+          :timeLimit       => ::Freshfone::Credit.call_time_limit(current_account, current_call)
         }
+        call_params.merge!(if_machine: 'hangup') unless custom_forwarding_enabled?
         agent_call = telephony.make_call(call_params)
         current_call.supervisor_controls.find(params[:warm_transfer_call_id])
                     .update_details(sid: agent_call.sid)
@@ -298,14 +303,14 @@ module Freshfone
         call_params    = {
           :url             => browser_agent? ?
                               round_robin_agent_wait_url(current_call) : 
-                              forward_accept_url(current_call.id, agent["id"]),
+                              mobile_agent_accept_url(current_call.id, agent["id"]),
           :status_callback => round_robin_call_status_url(current_call, agent["id"], !browser_agent?),
           :from            => browser_agent? ? browser_caller_id(params[:caller_id]) : get_caller_id(current_call),
           :to              => browser_agent? ? "client:#{agent['id']}" : to_number(from, to, agent["id"]),
           :timeout         => current_number.ringing_duration,
           :timeLimit       => ::Freshfone::Credit.call_time_limit(current_account, current_call)
         }
-        call_params.merge!(:if_machine => 'hangup') unless browser_agent?
+        call_params.merge!(if_machine: 'hangup') if !browser_agent? && !custom_forwarding_enabled?
         agent_call = telephony.make_call(call_params)
       rescue => e
         call_actions.handle_failed_round_robin_call(current_call, agent["id"])
@@ -452,6 +457,29 @@ module Freshfone
         call_actions.handle_failed_agent_conference current_call, add_agent_call_id
         raise e
       end
+    end
+
+    def mobile_agent_accept_url(call_id, agent)
+      return custom_accept_url(call_id, agent) if custom_forwarding_enabled?
+      forward_accept_url(call_id, agent)
+    end
+
+    def mobile_transfer_url(call_id, source_agent_id, agent)
+      return custom_mobile_transfer_url(call_id, source_agent_id,
+        agent) if custom_forwarding_enabled?
+      mobile_transfer_accept_url(call_id, source_agent_id, agent)
+    end
+
+    def mobile_agent_conference_accept_url(call_id, add_agent_call_id)
+      return custom_agent_conference_url(call_id,
+        add_agent_call_id) if custom_forwarding_enabled?
+      agent_conference_accept_url(call_id, add_agent_call_id)
+    end
+
+    def mobile_warm_transfer_accept_url(warm_transfer_call_id, call_id)
+      return custom_warm_transfer_url(warm_transfer_call_id,
+        call_id) if custom_forwarding_enabled?
+      warm_transfer_accept_url(warm_transfer_call_id, call_id)
     end
   end
 end

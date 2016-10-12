@@ -73,19 +73,21 @@ RealtimeDashboard.CoreUtil = RealtimeDashboard.CoreUtil || {};
 		},
 		autorefresh: function () {
 			var self = this;
-			var reloader = setInterval(function() {
-				var current_tab = jQuery(".header-tabs li.active").data('tab-name');
-				if(!document.hidden && current_tab == 'dashboard') {
-					//For full page refresh
-					//location.reload(true);
-					if(RealtimeDashboard.type == 'supervisor') {
-						jQuery(document).trigger('group_change',{ group_id : jQuery('.widget-filter.active .db-group-filter').data('groupId') });
-					} else {
-						jQuery(document).trigger('group_change',{ group_id : '-'});
+			if(RealtimeDashboard.reloader == undefined) {
+				RealtimeDashboard.reloader = setInterval(function() {
+					var current_tab = jQuery(".header-tabs li.active").data('tab-name');
+					if(!document.hidden && current_tab == 'dashboard') {
+						//For full page refresh
+						//location.reload(true);
+						if(RealtimeDashboard.type == 'supervisor') {
+							jQuery(document).trigger('group_change',{ group_id : jQuery('.widget-filter.active .db-group-filter').data('groupId') });
+						} else {
+							jQuery(document).trigger('group_change',{ group_id : '-'});
+						}
+						
 					}
-					
-				}
-			},self.intervalPeriod);
+				},self.intervalPeriod);
+			}
 		},
 		changeDropdownText: function (event, parentSelector, appendSelctor) {
 			$(parentSelector).removeClass('active');
@@ -176,10 +178,11 @@ RealtimeDashboard.CoreUtil = RealtimeDashboard.CoreUtil || {};
 			}
 			//Set the page title
 			if(RealtimeDashboard.dashboard_enabled) {
-				var page_title = RealtimeDashboard.snapshot_label + " : " + RealtimeDashboard.helpdesk_name;
+				var page_title = RealtimeDashboard.snapshot_label + " : " + unescapeHtml(RealtimeDashboard.helpdesk_name);
 				jQuery(document).attr('title',page_title);
 			}
 			
+			trigger_event("dashboard_visited",{ type : RealtimeDashboard.type });
 			$('#grid-stack').gridstack(options);
 			$(".widget-scroll").mCustomScrollbar();
 
@@ -188,7 +191,6 @@ RealtimeDashboard.CoreUtil = RealtimeDashboard.CoreUtil || {};
 			self.initWidgets();
 			self.dropDown();
 			self.refresh.storeLastUpdatedTime();
-
 			//Track custom dashboard visits
 			self.kissmetrics.push_event( 'DB :' + RealtimeDashboard.type + ' snapshot viewed', {});
 		},

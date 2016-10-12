@@ -1,5 +1,16 @@
----
 lv-LV:
+  validation:
+    required: "This field is required."
+    remote: "Please fix this field."
+    email: "Please enter a valid email address."
+    url: "Please enter a valid URL."
+    date: "Please enter a valid date."
+    dateISO: "Please enter a valid date ( ISO )."
+    number: "Please enter a valid number."
+    digits: "Please enter only digits."
+    creditcard: "Please enter a valid credit card number."
+    equalTo: "Please enter the same value again."
+    two_decimal_place_warning: "Value cannot have more than 2 decimal digits"
   tickets_filter:
     company_id_placeholder: ""
     title: "Filtrēt Vēstules"

@@ -339,7 +339,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
         recs = model_klass.paginate(:select => select,
                                    :order => order_clause, :page => page, 
                                    :per_page => per_page, :conditions => all_conditions, :joins => all_joins,
-                                   :total_entries => count_without_query).preload([:ticket_states, :ticket_status, :responder,:requester])
+                                   :total_entries => count_without_query).preload([:ticket_states, :ticket_status, :responder,:requester, :schema_less_ticket])
         recs.wf_filter = self
         recs
       end
@@ -357,7 +357,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     all_joins[0].concat(monitor_ships_join) if all_conditions[0].include?("helpdesk_subscriptions.user_id")
     all_joins[0].concat(tags_join) if all_conditions[0].include?("helpdesk_tags.name")
     all_joins[0].concat(statues_join) if all_conditions[0].include?("helpdesk_ticket_statuses")
-    all_joins[0].concat(schema_less_join) if (all_conditions[0].include?("helpdesk_schema_less_tickets.boolean_tc02") or all_conditions[0].include?("helpdesk_schema_less_tickets.product_id")) and !Account.current.features?(:shared_ownership)
+    all_joins[0].concat(schema_less_join) if schema_less_join_condition(all_conditions)
     all_joins[0].concat(article_tickets_join) if self.name == "article_feedback"
     all_joins[0].concat(articles_join) if self.name == "my_article_feedback"
     all_joins[0].concat(states_join) if sort_by_response?
@@ -432,6 +432,10 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   end
 
   private
+
+  def schema_less_join_condition all_conditions
+    (all_conditions[0].include?("helpdesk_schema_less_tickets.boolean_tc02") or all_conditions[0].include?("helpdesk_schema_less_tickets.product_id") or all_conditions[0].include?("helpdesk_schema_less_tickets.#{Helpdesk::SchemaLessTicket.association_type_column}")) and !Account.current.features?(:shared_ownership)
+  end
 
   def handle_special_values(condition, user_types = USER_COLUMNS, group_types = GROUP_COLUMNS)
     key = condition.key.to_s

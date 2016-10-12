@@ -144,7 +144,7 @@ class VaRule < ActiveRecord::Base
   end
 
   def add_rule_to_system_changes(evaluate_on, doer)
-    base_hash = {"#{self.id}" => {:rule => [self.rule_type, self.name.truncate(33)]}}
+    base_hash = {"#{self.id}" => {:rule => [self.rule_type, self.name.truncate(100)]}}
     if evaluate_on.system_changes.present?
       evaluate_on.system_changes.merge!(base_hash)
     else

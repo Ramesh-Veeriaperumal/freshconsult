@@ -27,11 +27,15 @@ var SurveyUtil = {
            for(var i=0;i<SurveyReportData.surveysList.length;i++){
                 var survey = SurveyReportData.surveysList[i];
                 survey.choices = JSON.parse(survey.choices);
-                survey.choices.reverse();
+                if(!survey.good_to_bad){
+                    survey.choices.reverse();
+                }
                 var questions = survey.survey_questions;
                 if(questions){
                     for(var j=0;j<questions.length;j++){
-                        questions[j].choices.reverse();
+                        if(!survey.good_to_bad){
+                            questions[j].choices.reverse();
+                        }
                     }
                 }
            }

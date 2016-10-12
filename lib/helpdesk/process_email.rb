@@ -411,7 +411,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         end
         user = get_user(account, e_email , email_config, true) unless e_email.blank?
       end
-     
+
       global_cc = parse_all_cc_emails(account.kbase_email, account.support_emails)
 
       ticket = Helpdesk::Ticket.new(
@@ -422,7 +422,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         :requester => user,
         :to_email => to_email[:email],
         :to_emails => parse_to_emails,
-        :cc_email => {:cc_emails => global_cc, :fwd_emails => [], :reply_cc => global_cc, :tkt_cc => parse_cc_email },
+        :cc_email => {:cc_emails => global_cc, :fwd_emails => [], :bcc_emails => [], :reply_cc => global_cc, :tkt_cc => parse_cc_email },
         :email_config => email_config,
         :status => Helpdesk::Ticketfields::TicketStatus::OPEN,
         :source => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email]
@@ -612,7 +612,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       parsed_cc_emails = parse_cc_email
       parsed_cc_emails.delete(ticket.account.kbase_email)
       note = ticket.notes.build(
-        :private => (from_fwd_recipients or reply_to_private_note?(all_message_ids) or rsvp_to_fwd?),
+        :private => (from_fwd_recipients or reply_to_private_note?(all_message_ids) or rsvp_to_fwd?(ticket, from_email, user)),
         :incoming => true,
         :note_body_attributes => {
           :body => tokenize_emojis(body) || "",
@@ -628,9 +628,9 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         :cc_emails => parsed_cc_emails
       )  
       note.subject = Helpdesk::HTMLSanitizer.clean(params[:subject])   
-      note.source = Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"] if (from_fwd_recipients or ticket.agent_performed?(user) or rsvp_to_fwd?)
+      note.source = Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"] if (from_fwd_recipients or ticket.agent_performed?(user) or rsvp_to_fwd?(ticket, from_email, user))
       
-      note.schema_less_note.category = ::Helpdesk::Note::CATEGORIES[:third_party_response] if rsvp_to_fwd?
+      note.schema_less_note.category = ::Helpdesk::Note::CATEGORIES[:third_party_response] if rsvp_to_fwd?(ticket, from_email, user)
 
       check_for_auto_responders(note)
       check_support_emails_from(ticket.account, note, user, from_email)
@@ -678,8 +678,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       end
     end
     
-    def rsvp_to_fwd?
-      @rsvp_to_fwd ||= (Account.current.features?(:threading_without_user_check) && reply_to_forward(all_message_ids))
+    def rsvp_to_fwd?(ticket, from_email, user)
+      @rsvp_to_fwd ||= ((Account.current.features?(:threading_without_user_check) || (!ticket.cc_email.nil? && !ticket.cc_email[:cc_emails].nil? && ticket.cc_email[:cc_emails].include?(from_email[:email])) || user.agent?) && reply_to_forward(all_message_ids))
     end
 
     def can_be_added_to_ticket?(ticket, user, from_email={})
@@ -882,13 +882,11 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     end
 
     def ticket_cc_emails_hash(ticket, note)
-      cc_email_hash_value = ticket.cc_email_hash.nil? ? Helpdesk::Ticket.default_cc_hash : ticket.cc_email_hash
-      cc_emails_val =  parse_all_cc_emails(ticket.account.kbase_email, ticket.account.support_emails)
-      cc_emails_val.delete_if{|email| (email == ticket.requester.email)}
-      reply_type = in_reply_to.to_s.include?("notification.freshdesk.com") ? :notification : :default
-      add_to_reply_cc(cc_emails_val, ticket, note, cc_email_hash_value, reply_type)
-      cc_email_hash_value[:cc_emails] = cc_emails_val | cc_email_hash_value[:cc_emails].compact.collect! {|x| (parse_email x)[:email]}
-      cc_email_hash_value
+      to_email   = parse_to_email[:email]
+      to_emails  = get_email_array(params[:to])
+      new_cc_emails = parse_cc_email
+      updated_ticket_cc_emails(new_cc_emails, ticket, note, in_reply_to, 
+        to_email, to_emails)
     end
 
     #possible unwanted code. Not used now.

@@ -25,7 +25,13 @@
 
 <script type="text/javascript">
   var data = <%= socket_auth_params("agentcollision") %>;
-  var server = "<%= agentcollision_socket_host %>"
+  <% if current_account.launched?(:agent_collision_alb) %>
+  var server = "<%= agentcollision_alb_socket_host %>"
+  var socket_client = helpkitio
+  <% else %>
+    var server = "<%= agentcollision_socket_host %>"
+    var socket_client = agentio
+  <% end %>
   var hashed_params = data;
   var draft = false; 
   <% unless @draft.nil? %>
@@ -35,7 +41,7 @@
     <% unless (ticket.nil?) %> 
       hashed_params["agent_collision_view"] = "<%= agent_collision_ticket_view_channel(ticket.display_id) %>"
       hashed_params["user_name"] = "<%= escape_javascript(current_user.name) %>";
-      window.agentcollision(server,hashed_params,"<%= escape_javascript(current_user.name) %>","<%=current_user.id%>",draft);
+      window.agentcollision(server,hashed_params,"<%= escape_javascript(current_user.name) %>","<%=current_user.id%>",draft, socket_client);
     <% end %>
   });
 </script>

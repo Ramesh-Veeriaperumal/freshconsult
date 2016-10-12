@@ -15,3 +15,5 @@
 //= require frameworks/plugins/jquery.form.js
 //= require feedback_widget_form.js
 //= require security.js
+//= require i18n.js
+//= require i18n/translations
