@@ -516,6 +516,7 @@
 }
 
 .solution-details{
+  @include word-hyphernate;
   padding: 20px;
   .sidebar-section{
     padding: 10px 0;
