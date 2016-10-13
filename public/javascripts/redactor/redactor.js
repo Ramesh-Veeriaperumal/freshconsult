@@ -1017,30 +1017,34 @@ Redactor.prototype = {
 		return (rtlDirCheck.test(block)) ? 'rtl' : 'ltr';
 	},
 	wrapElementWithFont: function(content){
+		var fontWrap = $(content)
 		var temp_div = $("<div />");
-		var	div = $("<div />")
-			div.css(this.opts.wrapFontSettings)
-			div.html(content)
-		if(this.opts.mixedDirectionSupport){
-			div.attr('dir',this.opts.direction);
+		if(fontWrap.length > 1  ||  ((fontWrap.length == 1) && fontWrap.not('div').length > 0)){
+			fontWrap = $("<div />").css(this.opts.wrapFontSettings).html(content);
 		}
-		temp_div.append(div)
-
+		else{
+			if(fontWrap.attr('style').indexOf('font-family') == -1){
+				fontWrap.css(this.opts.wrapFontSettings);
+			}
+		}
+		if(this.opts.mixedDirectionSupport){
+			fontWrap.attr('dir',this.opts.direction);
+		}
+		temp_div.append(fontWrap)
 		return temp_div.html();
 	},
 	wrapElementWithDirection: function(content){
 		var dirWrap = $(content)
 		var temp_div = $("<div />");
 		if(dirWrap.length > 1  ||  ((dirWrap.length == 1) && dirWrap.not('div').length > 0)){
-			var	div = $("<div dir='"+this.opts.direction+"'/>").html(content);
-			temp_div.append(div);
+			dirWrap = $("<div dir='"+this.opts.direction+"'/>").html(content);
 		}
 		else{
 			if(!dirWrap.attr('dir')){
 				dirWrap.attr('dir',this.opts.direction);
 			}
-			temp_div.append(dirWrap)
 		}
+		temp_div.append(dirWrap)
 		return temp_div.html();
 	},
 	changesInTextarea: function(){
