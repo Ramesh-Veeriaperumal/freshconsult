@@ -124,7 +124,7 @@ var CreateTicket = {
 				jQuery("#helpdesk_ticket_subject").val(jQuery("#topic_title").val());
 				jQuery("#helpdesk_ticket_email").val(jQuery("#topic_req").val());
 			}else{
-				jQuery(".redactor_editor").html("");
+				jQuery(".redactor_editor").html("<p><br></p>");
 				jQuery("#helpdesk_ticket_subject").val("");
 				jQuery("#helpdesk_ticket_email").val("");
 			}
