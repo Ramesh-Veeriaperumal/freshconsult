@@ -251,6 +251,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
       if responder_id.present?
         change_agents_ticket_count(old_group, responder_id, "decr")
       else
+        change_agents_ticket_count(old_group, 
+          @model_changes[:responder_id][0], "decr") if @model_changes.key?(:responder_id)
         old_group.lrem_from_rr_capping_queue(display_id)
       end
     end
