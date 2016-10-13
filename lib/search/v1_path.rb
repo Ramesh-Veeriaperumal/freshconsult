@@ -1,7 +1,7 @@
 # Constraint class for routing to V2 paths
 class Search::V1Path
 
-  PATHS_TO_CHECK = ['/search', '/support/search', '/contact_merge/search']
+  PATHS_TO_CHECK = ['/search', '/support/search', '/contact_merge/search', '/freshfone/autocomplete']
 
   def matches?(request)
     if ((PATHS_TO_CHECK.find { |path| request.path.starts_with?(path) }.present?) && 

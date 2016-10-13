@@ -172,6 +172,40 @@ Helpkit::Application.routes.draw do
     end
   end
 
+  # Constraint based routing to V2 paths
+  #
+  constraints Search::V1Path.new do
+    match '/search/home/suggest',              to: 'search/v2/suggest#index',                    via: :get
+    match '/search/all',                       to: 'search/v2/spotlight#all',                    via: :get
+    match '/search/tickets',                   to: 'search/v2/spotlight#tickets',                via: :get
+    match '/search/customers',                 to: 'search/v2/spotlight#customers',              via: :get
+    match '/search/forums',                    to: 'search/v2/spotlight#forums',                 via: :get
+    match '/search/solutions',                 to: 'search/v2/spotlight#solutions',              via: :get
+    match '/search/autocomplete/requesters',   to: 'search/v2/autocomplete#requesters',          via: :get
+    match '/search/autocomplete/agents',       to: 'search/v2/autocomplete#agents',              via: :get
+    match '/search/autocomplete/companies',    to: 'search/v2/autocomplete#companies',           via: :get
+    match '/search/autocomplete/tags',         to: 'search/v2/autocomplete#tags',                via: :get
+    match '/search/merge_topic',               to: 'search/v2/merge_topics#search_topics',       via: :post
+    match '/contact_merge/search',             to: 'search/v2/merge_contacts#index',             via: :get
+
+    match '/search/related_solutions/ticket/:ticket', to: 'search/v2/solutions#related_solutions',  via: :get, constraints: { format: /(html|js)/ }
+    match '/search/search_solutions/ticket/:ticket',  to: 'search/v2/solutions#search_solutions',   via: :get, constraints: { format: /(html|js)/ }
+    match '/search/tickets/filter/:search_field',     to: 'search/v2/tickets#index',                via: :post
+
+    match '/support/search',                   to: 'support/search_v2/spotlight#all',               via: :get
+    match '/support/search/tickets',           to: 'support/search_v2/spotlight#tickets',           via: :get
+    match '/support/search/topics',            to: 'support/search_v2/spotlight#topics',            via: :get
+    match '/support/search/solutions',         to: 'support/search_v2/spotlight#solutions',         via: :get
+    match '/support/search/topics/suggest',    to: 'support/search_v2/spotlight#suggest_topic',     via: :get
+
+    match 'support/search/articles/:article_id/related_articles', to: 'support/search_v2/solutions#related_articles', via: :get
+    
+    # Freshfone paths
+    match '/freshfone/autocomplete/requester_search', to: 'search/v2/freshfone/autocomplete#contact_by_numbers',  via: :get
+    match '/freshfone/autocomplete/customer_phone_number', to: 'search/v2/freshfone/autocomplete#customer_by_phone',  via: :get
+    match '/freshfone/autocomplete/customer_contact', to: 'search/v2/freshfone/autocomplete#contact_by_numberfields',  via: :get
+  end
+  
   root :to => 'home#index'
 
   match '/visitor/load/:id.:format' => 'chats#load', :via => :get
@@ -1361,35 +1395,6 @@ Helpkit::Application.routes.draw do
 
   match '/ecommerce/ebay_notifications', :controller => 'admin/ecommerce/ebay_accounts', :action => 'notify', :method => :post
 
-  # Constraint based routing to V2 paths
-  #
-  constraints Search::V1Path.new do
-    match '/search/home/suggest',              to: 'search/v2/suggest#index',                    via: :get
-    match '/search/all',                       to: 'search/v2/spotlight#all',                    via: :get
-    match '/search/tickets',                   to: 'search/v2/spotlight#tickets',                via: :get
-    match '/search/customers',                 to: 'search/v2/spotlight#customers',              via: :get
-    match '/search/forums',                    to: 'search/v2/spotlight#forums',                 via: :get
-    match '/search/solutions',                 to: 'search/v2/spotlight#solutions',              via: :get
-    match '/search/autocomplete/requesters',   to: 'search/v2/autocomplete#requesters',          via: :get
-    match '/search/autocomplete/agents',       to: 'search/v2/autocomplete#agents',              via: :get
-    match '/search/autocomplete/companies',    to: 'search/v2/autocomplete#companies',           via: :get
-    match '/search/autocomplete/tags',         to: 'search/v2/autocomplete#tags',                via: :get
-    match '/search/merge_topic',               to: 'search/v2/merge_topics#search_topics',       via: :post
-    match '/contact_merge/search',             to: 'search/v2/merge_contacts#index',             via: :get
-
-    match '/search/related_solutions/ticket/:ticket', to: 'search/v2/solutions#related_solutions',  via: :get, constraints: { format: /(html|js)/ }
-    match '/search/search_solutions/ticket/:ticket',  to: 'search/v2/solutions#search_solutions',   via: :get, constraints: { format: /(html|js)/ }
-    match '/search/tickets/filter/:search_field',     to: 'search/v2/tickets#index',                via: :post
-
-    match '/support/search',                   to: 'support/search_v2/spotlight#all',               via: :get
-    match '/support/search/tickets',           to: 'support/search_v2/spotlight#tickets',           via: :get
-    match '/support/search/topics',            to: 'support/search_v2/spotlight#topics',            via: :get
-    match '/support/search/solutions',         to: 'support/search_v2/spotlight#solutions',         via: :get
-    match '/support/search/topics/suggest',    to: 'support/search_v2/spotlight#suggest_topic',     via: :get
-
-    match 'support/search/articles/:article_id/related_articles', to: 'support/search_v2/solutions#related_articles', via: :get
-  end
-
   namespace :search do
 
     # Search v2 agent controller routes
@@ -1421,6 +1426,15 @@ Helpkit::Application.routes.draw do
         end
       end
       resources :merge_contacts, :only => :index
+      namespace :freshfone do
+        resources :autocomplete, only: [:contact_by_numbers, :customer_by_phone, :contact_by_numberfields] do
+          collection do
+            get :contact_by_numbers
+            get :customer_by_phone
+            get :contact_by_numberfields
+          end
+        end
+      end
     end
 
     resources :home, :only => :index do
