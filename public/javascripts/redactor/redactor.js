@@ -1031,7 +1031,7 @@ Redactor.prototype = {
 	wrapElementWithDirection: function(content){
 		var dirWrap = $(content)
 		var temp_div = $("<div />");
-		if(dirWrap.length > 1 || dirWrap.not('div')){
+		if(dirWrap.length > 1  ||  ((dirWrap.length == 1) && dirWrap.not('div').length > 0)){
 			var	div = $("<div dir='"+this.opts.direction+"'/>").html(content);
 			temp_div.append(div);
 		}
