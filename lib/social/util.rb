@@ -107,7 +107,7 @@ module Social::Util
       media_array = tweet.media
       photo_url_hash = {}
       media_array.each do |media|
-        if media.class.name == "Twitter::Media::Photo" || media.class.name == "Twitter::Media::AnimatedGif"
+        if(media.class.name == TWITTER_MEDIA_PHOTO || media.class.name == TWITTER_MEDIA_ANIMATEDGIF)
           url = media.media_url_https.to_s
           headers = SimpleOAuth::Header.new(:GET, url, {}, oauth_credential)
           file_name = url[url.rindex('/')+1, url.length]

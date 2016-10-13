@@ -130,4 +130,8 @@ module Social::Constants
 
   INLINE_IMAGE_HTML_ELEMENT = "<img src=\"%s\" class=\"inline-image\"/>"
 
+  TWITTER_MEDIA_PHOTO = "Twitter::Media::Photo"
+
+  TWITTER_MEDIA_ANIMATEDGIF = "Twitter::Media::AnimatedGif"
+  
 end
