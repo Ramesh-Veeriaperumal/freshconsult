@@ -58,12 +58,10 @@ function invokeEditor(element_id,type,attr) {
 				imageUploadParam: 'image[uploaded_data]',
 				imageUploadParams: {
 					'_uniquekey': new Date().getTime(),
-					'authenticity_token': jQuery('[name="csrf-token"]').attr('content'),
-					'isFroala': true // This is to reference for froala request
+					'authenticity_token': jQuery('[name="csrf-token"]').attr('content')
 				},
 				imageManagerLoadURL: '/solutions_uploaded_images',
-				imageUploadMethod: 'GET',
-				imageManagerLoadParams: {'isFroala': true},
+				imageManagerLoadMethod: 'GET',
 				sanitizeType: "solution"
 			})
 
