@@ -160,7 +160,8 @@ class RabbitmqWorker
       ((
         exchange.starts_with?("archive_notes") || exchange.starts_with?("articles") || 
         exchange.starts_with?("topics") || exchange.starts_with?("posts") || exchange.starts_with?("tags") || 
-        exchange.starts_with?("companies") || exchange.starts_with?("users") || exchange.starts_with?("tag_uses")
+        exchange.starts_with?("companies") || exchange.starts_with?("users") || exchange.starts_with?("tag_uses") || 
+        exchange.starts_with?("callers")
       ) && key[0] == "1")
     end
 
