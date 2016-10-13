@@ -14,9 +14,8 @@
 @import "plugins/360player";
 @import "plugins/codemirror";
 
-
-//SyntaxHighlighter styles
-@import "plugins/shcore_default";
+//prism styles
+@import "plugins/prism";
 
 //Dashboard page plugins
 @import "page/realtime_dashboard/gridstack";

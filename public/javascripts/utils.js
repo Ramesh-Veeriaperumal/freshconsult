@@ -982,20 +982,16 @@ function removeFromLocalStorage(key) {
 }
 
 function highlight_code() {
-    jQuery('[rel="highlighter"]').each(function(i,element){
-        var brush, attr = jQuery(element).attr('code-brush');
-        if(attr == 'html'){
-            brush = 'js ; html-script: true';
-        } else {
-            brush = attr;
-        }
-        jQuery(element).attr('type','syntaxhighlighter').addClass('brush: ' + brush);
-    })
-    // when doubleclick the code highlighter its giving the text in a single line in IE(11).so this featur is disabled
-    if( jQuery.browser.msie && parseInt(jQuery.browser.version, 10) == 11){
-        SyntaxHighlighter.defaults['quick-code'] = false;
-    }
-    SyntaxHighlighter.highlight();
+  jQuery('[rel="highlighter"]').each(function(i,element){
+      var attr = jQuery(element).data('code-brush'),
+          code = jQuery(element).children('code'),
+          preHTML = jQuery(element).html();
+
+    jQuery(element).addClass('line-numbers');
+    jQuery(element).html('<code  class="language-' + attr + '">' + preHTML + '</code>');
+  })
+
+  Prism.highlightAll()
 }
 
 function inMobile(){

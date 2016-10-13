@@ -190,6 +190,7 @@ Helpkit::Application.routes.draw do
 
   resources :solutions_uploaded_images, :only => [:index, :create]  do
     collection do
+      post :delete_file
       post :create_file
     end
   end

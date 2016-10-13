@@ -1,33 +1,6 @@
 @import "../../shared/mixins";
 .solutions {
 
-  #sticky_redactor_toolbar {
-    .redactor_toolbar {
-      background: none;
-      position: absolute;
-      padding: 0 20px !important;
-      box-sizing: border-box;
-      border-bottom: none;
-      top: 121px;
-      z-index: 2;
-    }
-
-    &.has-notification .redactor_toolbar {
-      top: 156px;
-    }
-  }
-  
-  .is_stuck #sticky_redactor_toolbar{
-    .redactor_toolbar {
-      top: 51px;
-      background: #fff;
-      box-shadow: 0 5px 5px -6px #333;
-    }
-    &.has-notification .redactor_toolbar {
-      top: 87px;
-    }
-  } 
-  
   #article-form {
     .attachment_list {
       .new_attachment {
@@ -162,9 +135,7 @@
     margin-top: 15px;
     margin-bottom: 15px;
     @include portal-text-formatting();
-    table {
-      width: 100%;
-    }
+    @include editor-text-formating();
   }
 
   .article-view .article-title {
@@ -173,25 +144,6 @@
   }
 
   .article-edit{
-    .editor-body{
-      width:100%;
-      box-sizing: border-box;
-      @include float(left);
-      min-height: 220px;
-      margin-top: 20px !important;
-      .redactor_box{
-        border: 0;
-        .redactor_editor {
-          @include portal-text-formatting();
-          min-height: 200px;
-          padding: 15px 0px !important;
-        }
-        .redactor_toolbar {
-          background: none;
-          border: none;
-        }
-      }
-    }
     .article-title{
       border: none;
       box-shadow: none;
@@ -199,7 +151,7 @@
       color: #333;
       font-weight: 300;
       height: 25px;
-      margin-bottom: 10px;
+      /*margin-bottom: 10px;*/
       border-bottom: 1px solid #eee;
       border-radius: 0;
       @include padding-left(0px);
@@ -658,9 +610,9 @@
           text-align: center;
           min-width: 45px;
           color: #333;
-          .ficon-like{@include padding-right(4px);} 
+          .ficon-like{padding-right: 4px;} 
           .ficon-dislike{
-            @include padding-right(4px);
+            padding-right: 4px;
             position: relative;
             top: 2px;
           }
@@ -707,29 +659,6 @@
 }
 
 .solutions.multilingual {
-  #sticky_redactor_toolbar {
-    .redactor_toolbar {
-      top: 152px;
-    }
-    &.has-notification.article-version .redactor_toolbar {
-      top: 192px;
-    }
-    &.article-version .redactor_toolbar {
-      top: 157px;
-    }
-  }
-  
-  .is_stuck {
-    #sticky_redactor_toolbar {
-      .redactor_toolbar {
-          top: 84px;
-      }
-      &.has-notification.article-version .redactor_toolbar {
-        top: 119px;
-      }
-    }
-  }
-
   .draft-qtip{
     &.ui-tooltip{
       min-width: 120px;
@@ -743,5 +672,4 @@
       .language_item{ font-weight: 500; }
     }
   }
-  
 }

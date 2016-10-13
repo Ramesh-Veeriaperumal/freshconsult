@@ -3473,10 +3473,11 @@ Redactor.prototype = {
 			{
 				$('#redactor_insert_code_btn').click($.proxy(this.insertCode, this));
 
-				if($(ev.target)[0].tagName == 'PRE'){
+				// if($(ev.target)[0].tagName == 'PRE' || $(ev.target)[0].tagName == 'CODE'){
+				if($(ev.target)[0].tagName == 'PRE') {
 					$("#redactorInsertCode_selector").find("option").each(function (i,e) {
 
-					    if ($(this).val() == $(ev.target).attr('code-brush')) {
+					    if ($(this).val() == $(ev.target).attr('data-code-brush')) {
 					        $(this).prop("selected", "selected");
 					    }
 					});
@@ -3513,7 +3514,8 @@ Redactor.prototype = {
 		if ( $.browser.msie && (parseInt($.browser.version, 10) < 9 ||  parseInt($.browser.version, 10) > 10) ) {
 			var selectedTarget = $(this.selectedEvent.target);
 
-			if(selectedTarget.is('pre')){ 
+			// if(selectedTarget.is('pre') || selectedTarget.is('code')){ 
+			if(selectedTarget.is('pre')) {
 				selectedTarget.attr('code-brush',$('#redactorInsertCode_selector').val())
 				.text(data);
 				selectedTarget.toggleClass('code-large',(codeClass != '' && codeClass != null));
@@ -3524,7 +3526,8 @@ Redactor.prototype = {
 		} else { 
 			var domElement = $(this.getSelection().anchorNode).parent();
 
-			if(domElement.is('pre')){ 
+			// if(domElement.is('pre') || domElement.is('code')){ 
+			if(domElement.is('pre')) {
 		        var temp_range = document.createRange();
 			 	temp_range.selectNode(domElement[0]);	
 			 	this.getSelection().removeAllRanges();
@@ -3574,13 +3577,35 @@ Redactor.prototype = {
 		tmp_div.append($('<p />').html('&nbsp;'))
 		tmp_div.append($('<pre />')
 			.attr('rel', 'highlighter')
-			.attr('code-brush',$('#redactorInsertCode_selector').val())
+			.attr('data-code-brush',$('#redactorInsertCode_selector').val())
 			.addClass(codeClass)
 			.text(data));
 		tmp_div.append($('<p />').html('&nbsp;'));
 
 		this.execCommand('inserthtml', tmp_div.html());
 	},
+	// This <code> tag is mainly for Prism. The format for prism is <pre></code></code></pre>
+	// appendCodeTag: function(data, codeClass){
+	// 	var tmp_div = $('<div />') 
+		
+	// 	if (type == 'insert') {
+	// 		var code = $('<code />').text(data);
+	// 		var pre = $('<pre />')
+	// 				.attr('rel', 'highlighter')
+	// 				.attr('data-code-brush',$('#redactorInsertCode_selector').val())
+	// 				.addClass(codeClass)
+	// 				.append(code) // have to pass code insted of data
+
+	// 		tmp_div.append($('<p />').html('&nbsp;'))
+	// 		tmp_div.append(pre)
+	// 		tmp_div.append($('<p />').html('&nbsp;'));
+	// 	} else {
+	// 		var code = $('<code />').text(data);
+	// 		tmp_div.append(code)
+	// 	}
+
+	// 	this.execCommand('inserthtml', tmp_div.html());
+	// },
 	// INSERT VIDEO
 	showVideo: function()
 	{
