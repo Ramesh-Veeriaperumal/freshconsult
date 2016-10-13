@@ -3898,7 +3898,7 @@ es:
         performance_title: "%{subject}'s performance"
       this_month: "This Month"
       view_all: "Ver todo"
-      ticket: Ticket
+      ticket: Ticket Assignment
       ticket_summary: "Resumen de tickets"
       filter_by: "Filtrar por"
       all_groups: "Todos los grupos"
