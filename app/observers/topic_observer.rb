@@ -101,9 +101,7 @@ class TopicObserver < ActiveRecord::Observer
 	def after_destroy(topic)
 		topic.account.clear_forum_categories_from_cache
 		update_forum_counter_cache(topic)
-    Community::ClearModerationRecords.perform_async({ :obj_id =>  topic.id, 
-                                                      :obj_class => topic.class.to_s, 
-                                                      :topic_ids => nil })
+		Community::ClearModerationRecords.perform_async(topic.id, topic.class.to_s)
 	end
 
 private
