@@ -256,7 +256,7 @@ class Helpdesk::Note < ActiveRecord::Base
 
     def update_ticket_states
       user_id = User.current.id if User.current
-      Tickets::UpdateTicketStatesWorker.perform_async(
+      ::Tickets::UpdateTicketStatesWorker.perform_async(
             { :id => id, :model_changes => @model_changes,
               :freshdesk_webhook => freshdesk_webhook?,
               :current_user_id =>  user_id }
