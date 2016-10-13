@@ -539,6 +539,7 @@ body .fr-overlay {
       margin-top: 20px !important;
       .redactor_box{
         border: 0;
+        margin-top: 15px;
         .redactor_editor {
           @include portal-text-formatting();
           min-height: 200px;
