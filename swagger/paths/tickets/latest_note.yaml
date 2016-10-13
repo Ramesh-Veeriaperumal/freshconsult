@@ -11,7 +11,7 @@ get:
     200:
       description: Success
       schema:
-        $ref: '#/definitions/extended_note'
+        $ref: '#/definitions/latest_note'
     404:
       description: Ticket not found
     403:

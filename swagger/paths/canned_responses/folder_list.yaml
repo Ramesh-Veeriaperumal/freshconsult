@@ -1,0 +1,16 @@
+
+get:
+  summary: Folder Listing
+  description: Listing all canned response folders
+  tags: ['canned response']
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/array_of_canned_response_folders'
+    404:
+      description: Canned response not found
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'

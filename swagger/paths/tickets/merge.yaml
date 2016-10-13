@@ -1,6 +1,6 @@
 put:
   tags: [ticket]
-  summary: Merge tickets ***
+  summary: Merge tickets **
   parameters:
     - name: data
       in: body

@@ -6,3 +6,15 @@ properties:
       type: id
   properties:
     $ref: '#/definitions/ticket_update_input'
+  reply:
+    type: object
+    description: '** pending implementation'
+    properties:
+      body:
+        type: string
+        description: reply content
+      attachment_ids:
+        type: array
+        description: attachment ids
+        items:
+          type: integer

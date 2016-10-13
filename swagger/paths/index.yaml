@@ -51,8 +51,15 @@
   $ref: ./tickets/bulk_update.yaml
 /tickets/{id}/latest_note:
   $ref: ./tickets/latest_note.yaml
+/tickets/{id}/split_note/{note_id}:
+  $ref: ./tickets/split_note.yaml
+/tickets/{id}/show_draft:
+  $ref: ./tickets/show_draft.yaml
+/tickets/{id}/save_draft:
+  $ref: ./tickets/save_draft.yaml
 /tickets/merge:
   $ref: ./tickets/merge.yaml
+
 
 #Ticket Conversations
 /tickets/{id}/notes:
@@ -70,3 +77,11 @@
   $ref: ./subscriptions/unwatch.yaml
 /tickets/{id}/watchers:
   $ref: ./subscriptions/watchers.yaml
+
+# Canned response
+/canned_response_folders:
+  $ref: ./canned_responses/folder_list.yaml
+/canned_response_folders/{id}:
+  $ref: ./canned_responses/folder_show.yaml
+/canned_responses/{id}:
+  $ref: ./canned_responses/show.yaml

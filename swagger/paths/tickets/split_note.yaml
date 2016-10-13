@@ -1,0 +1,23 @@
+  put:
+    tags: [ticket]
+    summary: Split Note **
+    description: Splitting the note of a ticket and creating a new ticket from that. A Ticket object will be returned on succesfull response.
+    parameters:
+      - name: id
+        in: path
+        type: number
+        description: Display ID of ticket
+        required: true
+      - name: note_id
+        in: path
+        type: integer
+        required: true
+    responses:
+      200:
+        description: Success
+        schema:
+          $ref: '#/definitions/extended_ticket'
+      404:
+        description: Ticket not found
+      403:
+        description: Access denied

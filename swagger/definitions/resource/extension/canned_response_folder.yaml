@@ -1,0 +1,5 @@
+type: object
+properties:
+  responses_count:
+    type: integer
+    description: count of canned responses inside the folder

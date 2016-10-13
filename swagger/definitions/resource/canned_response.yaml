@@ -1,0 +1,11 @@
+
+type: object
+properties:
+  id:
+    type: integer
+  title:
+    type: string
+  content:
+    type: string
+  content_html:
+    type: string

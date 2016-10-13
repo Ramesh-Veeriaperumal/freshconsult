@@ -1,0 +1,34 @@
+type: object
+properties:
+  id:
+    type: integer
+  from_email:
+    type: string
+  cc_emails:
+    type: array
+    items:
+      type: string
+  bcc_emails:
+    type: array
+    items:
+      type: string
+  body:
+    type: string
+  body_text:
+    type: string
+  ticket_id:
+    type: integer
+  to_emails:
+    type: array
+    items:
+      type: string
+  attachments:
+    type: array
+    items:
+      type: string
+  user:
+    $ref: '#/definitions/extended_contact'
+  created_at:
+    type: string
+  updated_at:
+    type: string

@@ -1,0 +1,22 @@
+
+get:
+  summary: Folder Details
+  description: Details of a canned response folder with the canned responses inside the folder
+  tags: ['canned response']
+  parameters:
+    - name: id
+      in: path
+      type: number
+      required: true
+      description: ID of canned response
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/canned_response_folder_details'
+    404:
+      description: Canned response not found
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'

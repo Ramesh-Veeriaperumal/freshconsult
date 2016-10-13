@@ -37,6 +37,8 @@
     $ref: ./request/tickets/merge.yaml
   add_watcher_input:
     $ref: ./request/subscriptions/add_watcher.yaml
+  ticket_save_draft:
+    $ref: ./request/tickets/draft.yaml
 
   # RESOURCE
   contact:
@@ -79,6 +81,23 @@
     items:
       $ref: '#/definitions/post'
 
+  canned_response:
+    $ref: ./resource/canned_response.yaml
+  extended_canned_response:
+    $ref: ./resource/extension/canned_response.yaml
+  canned_response_folder:
+    $ref: ./resource/canned_response_folder.yaml
+  extended_canned_response_folder:
+    allOf:
+      - $ref: '#/definitions/canned_response_folder'
+      - $ref: ./resource/extension/canned_response_folder.yaml
+  array_of_canned_response_folders:
+    type: array
+    items:
+      $ref: '#/definitions/extended_canned_response_folder'
+  canned_response_folder_details:
+    $ref: ./response/canned_response/folder_show.yaml
+
   # RESPONSE
   note_create:
     $ref: './response/conversations/create.yaml'
@@ -90,3 +109,5 @@
     $ref: ./response/make_agent.yaml
   watchers:
     $ref: ./response/watchers.yaml
+  latest_note:
+    $ref: './response/conversations/latest_note.yaml'

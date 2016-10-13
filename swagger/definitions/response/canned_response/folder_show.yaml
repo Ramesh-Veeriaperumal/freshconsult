@@ -1,0 +1,8 @@
+type: object
+allOf:
+  - $ref: '#/definitions/canned_response_folder'
+  - properties:
+      responses:
+        type: array
+        items:
+          $ref: '#/definitions/canned_response'

@@ -1,0 +1,20 @@
+
+get:
+  summary: Show **
+  description: Details of a canned response
+  tags: ['canned response']
+  parameters:
+    - name: id
+      in: path
+      type: number
+      required: true
+      description: ID of canned response
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/extended_canned_response'
+    403:
+      description: Access denied
+    404:
+      description: Canned response not found

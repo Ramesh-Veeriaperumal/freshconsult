@@ -1,0 +1,20 @@
+type: object
+properties:
+  body:
+    type: string
+    required: true
+    description: content of the ticket reply
+  cc_emails:
+    type: array
+    description: cc_emails for the ticket reply
+    items:
+      type: string
+  bcc_emails:
+    type: array
+    description: bcc_emails for the ticket reply
+    items:
+      type: string
+  attachment_ids:
+    type: array
+    items:
+      type: string

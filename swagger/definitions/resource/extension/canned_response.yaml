@@ -1,0 +1,6 @@
+type: object
+allOf:
+  - $ref: '#/definitions/canned_response'
+  - properties:
+      folder_id:
+        type: integer
