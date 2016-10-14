@@ -9,12 +9,14 @@ class ConversationsQueriesTest < ActionDispatch::IntegrationTest
       v2_expected = {
         api_create: 2,
         api_reply: 2,
+        #api_forward: 5,
         api_update: 6,
         api_destroy: 9,
         api_conversations: 6,
 
-        create: 54,
+        create: 53,
         reply: 52,
+        forward: 58,
         update: 23,
         destroy: 21,
         conversations: 16
@@ -22,8 +24,9 @@ class ConversationsQueriesTest < ActionDispatch::IntegrationTest
 
       ticket_id = Helpdesk::Ticket.first.display_id
       # create
+      v2_payload = v2_note_payload
       v2[:create], v2[:api_create], v2[:create_queries] = count_api_queries do
-        post("/api/tickets/#{ticket_id}/notes", v2_note_payload, @write_headers)
+        post("/api/tickets/#{ticket_id}/notes", v2_payload, @write_headers)
         assert_response 201
       end
       v1[:create] = count_queries do
@@ -77,6 +80,17 @@ class ConversationsQueriesTest < ActionDispatch::IntegrationTest
         post("/helpdesk/tickets/#{ticket_id}/conversations/reply.json", v1_reply_payload, @write_headers)
         assert_response 200
       end
+
+      # # forward
+      # v2[:forward], v2[:api_forward], v2[:forward_queries] = count_api_queries do
+      #   post("/api/tickets/#{ticket_id}/forward", v2_forward_payload, @write_headers)
+      #   assert_response 201
+      # end
+
+      # v1[:forward] = count_queries do
+      #   post("/helpdesk/tickets/#{ticket_id}/conversations/forward.json", v1_forward_payload, @write_headers)
+      #   assert_response 200
+      # end
 
       write_to_file(v1, v2)
 

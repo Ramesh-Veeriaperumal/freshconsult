@@ -2,9 +2,3 @@ type: object
 properties:
   body:
     type: string
-  user_id:
-    type: id
-  attachments:
-    type: array
-    items:
-      type: string

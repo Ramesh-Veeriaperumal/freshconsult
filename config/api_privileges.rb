@@ -17,6 +17,10 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/conversation", only: [:reply]
   end
 
+  forward_ticket do
+    resource :"ember/conversation", :only => [:forward]
+  end
+
   delete_contact do
     resource :"ember/contact", only: [:bulk_delete, :destroy, :bulk_restore, :restore, :whitelist, :bulk_whitelist]
   end

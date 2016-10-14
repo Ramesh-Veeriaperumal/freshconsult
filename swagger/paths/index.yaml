@@ -60,12 +60,13 @@
 /tickets/merge:
   $ref: ./tickets/merge.yaml
 
-
 #Ticket Conversations
 /tickets/{id}/notes:
   $ref: ./conversations/crud.yaml
 /tickets/{id}/reply:
   $ref: ./conversations/reply.yaml
+/tickets/{id}/forward:
+  $ref: ./conversations/forward.yaml
 
 /attachments:
   $ref: ./attachments/crud.yaml

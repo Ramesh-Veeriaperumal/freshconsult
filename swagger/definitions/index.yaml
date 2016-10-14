@@ -27,6 +27,8 @@
     $ref: ./request/conversations/note.yaml
   note_reply_input:
     $ref: ./request/conversations/reply.yaml
+  note_forward_input:
+    $ref: ./request/conversations/forward.yaml
   ticket_input:
     $ref: ./request/tickets/ticket.yaml
   ticket_bulk_update_input:
@@ -53,6 +55,10 @@
     $ref: ./resource/attachment.yaml
   agent:
     $ref: ./resource/agent.yaml
+  canned_response:
+    $ref: ./resource/canned_response.yaml
+  canned_response_folder:
+    $ref: ./resource/canned_response_folder.yaml
   extension_generic:
     $ref: ./resource/extension/generic.yaml
   extended_contact:
@@ -67,6 +73,12 @@
     allOf:
       - $ref: '#/definitions/ticket'
       - $ref: ./resource/extension/ticket.yaml
+  extended_canned_response:
+    $ref: ./resource/extension/canned_response.yaml
+  extended_canned_response_folder:
+    allOf:
+      - $ref: '#/definitions/canned_response_folder'
+      - $ref: ./resource/extension/canned_response_folder.yaml
 
   array_of_tickets:
     type: array
@@ -80,17 +92,6 @@
     type: array
     items:
       $ref: '#/definitions/post'
-
-  canned_response:
-    $ref: ./resource/canned_response.yaml
-  extended_canned_response:
-    $ref: ./resource/extension/canned_response.yaml
-  canned_response_folder:
-    $ref: ./resource/canned_response_folder.yaml
-  extended_canned_response_folder:
-    allOf:
-      - $ref: '#/definitions/canned_response_folder'
-      - $ref: ./resource/extension/canned_response_folder.yaml
   array_of_canned_response_folders:
     type: array
     items:
@@ -103,6 +104,8 @@
     $ref: './response/conversations/create.yaml'
   note_reply:
     $ref: './response/conversations/reply.yaml'
+  note_forward:
+    $ref: './response/conversations/forward.yaml'
   partial_success_response:
     $ref: ./response/bulk_partial_success.yaml
   make_agent_response:

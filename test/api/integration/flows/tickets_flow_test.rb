@@ -140,6 +140,23 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
     assert Helpdesk::Ticket.find(parent_ticket.id).updated_at > previous_updated_at
   end
 
+  def test_multipart_create_forward_with_all_params
+    body = Faker::Lorem.paragraph
+    to_emails = [Faker::Internet.email, Faker::Internet.email]
+    bcc_emails = [Faker::Internet.email, Faker::Internet.email]
+    email_config = @account.email_configs.where(active: true).first || create_email_config
+    params_hash = { body: body, to_emails: to_emails, cc_emails: to_emails, bcc_emails: bcc_emails, agent_id: @agent.id, from_email: email_config.reply_email }
+    parent_ticket = Helpdesk::Ticket.last
+    previous_updated_at = parent_ticket.updated_at
+    headers, params = encode_multipart(params_hash, 'attachments[]', File.join(Rails.root, 'test/api/fixtures/files/image33kb.jpg'), 'image/jpg', true)
+    skip_bullet do
+      post "/api/tickets/#{parent_ticket.display_id}/forward", params, @headers.merge(headers)
+    end
+    assert_response 201
+    assert_equal @agent.id, Helpdesk::Note.last.user_id
+    assert Helpdesk::Ticket.find(parent_ticket.id).updated_at > previous_updated_at
+  end
+
   def test_empty_tags_and_cc_emails
     skip_bullet do
       params = v2_ticket_params.merge(tags: [Faker::Name.name], cc_emails: [Faker::Internet.email])

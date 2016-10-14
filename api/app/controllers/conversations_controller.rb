@@ -93,6 +93,7 @@ class ConversationsController < ApiApplicationController
       @item.save_note
     end
 
+
     def render_response(success)
       if success
         render_201_with_location
@@ -102,7 +103,7 @@ class ConversationsController < ApiApplicationController
     end
 
     def set_custom_errors(item = @item)
-      ErrorHelper.rename_error_fields({ notable_id: :ticket_id, user: :user_id }, item)
+      ErrorHelper.rename_error_fields(ConversationConstants::ERROR_FIELD_MAPPINGS, item)
     end
 
     def can_update?
@@ -136,23 +137,24 @@ class ConversationsController < ApiApplicationController
       field = "ConversationConstants::#{action_name.upcase}_FIELDS".constantize
       params[cname].permit(*(field))
       @conversation_validation = ConversationValidation.new(params[cname], @item, string_request_params?)
-      valid = @conversation_validation.valid?
+      valid = @conversation_validation.valid?(action_name.to_sym)
       render_errors @conversation_validation.errors, @conversation_validation.error_options unless valid
       valid
     end
 
     def sanitize_params
       prepare_array_fields "ConversationConstants::#{action_name.upcase}_ARRAY_FIELDS".constantize.map(&:to_sym)
-      # set source only for create/reply action not for update action. Hence TYPE_FOR_ACTION is checked.
+
+      # set source only for create/reply/forward action not for update action. Hence TYPE_FOR_ACTION is checked.
       params[cname][:source] = ConversationConstants::TYPE_FOR_ACTION[action_name] if ConversationConstants::TYPE_FOR_ACTION.keys.include?(action_name)
 
       # only note can have choices for private field. others will be set to false always.
       params[cname][:private] = false unless params[cname][:source] == Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note']
 
-      # Set ticket id from already assigned ticket only for create/reply action not for update action.
+      # Set ticket id from already assigned ticket only for create/reply/forward action not for update action.
       params[cname][:notable_id] = @ticket.id if @ticket
 
-      ParamsHelper.assign_and_clean_params({ notify_emails: :to_emails }, params[cname])
+      ParamsHelper.assign_and_clean_params(ConversationConstants::PARAMS_MAPPINGS, params[cname])
       build_note_body_attributes
       params[cname][:attachments] = params[cname][:attachments].map { |att| { resource: att } } if params[cname][:attachments]
     end
@@ -165,8 +167,12 @@ class ConversationsController < ApiApplicationController
       return false unless super # break if there is no enough privilege.
 
       # load ticket and return 404 if ticket doesn't exists in case of APIs which has ticket_id in url
-      return false if (create? || reply? || ticket_conversations?) && !load_parent_ticket
+      return false if ticket_required? && !load_parent_ticket
       verify_ticket_permission(api_current_user, @ticket) if @ticket
+    end
+
+    def ticket_required?
+      ConversationConstants::TICKET_LOAD_REQUIRED.include?(action_name.to_sym)
     end
 
     def reply?

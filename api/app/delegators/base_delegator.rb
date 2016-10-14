@@ -31,7 +31,7 @@ class BaseDelegator < SimpleDelegator
     invalid_attachment_ids = @attachment_ids - @draft_attachments.map(&:id)
     if invalid_attachment_ids.any?
       errors[:attachment_ids] << :invalid_list
-      @error_options = { attachment_ids: { list: "#{invalid_attachment_ids.join(', ')}" } }
+      @error_options.merge!({ attachment_ids: { list: "#{invalid_attachment_ids.join(', ')}" } })
     end
   end
 
@@ -40,7 +40,7 @@ class BaseDelegator < SimpleDelegator
     total_attachment_size = all_attachments.collect{ |a| a.content_file_size }.sum
     if total_attachment_size > attachment_size
       errors[:attachment_ids] << :'invalid_size'
-      @error_options = { attachment_ids: { current_size: number_to_human_size(total_attachment_size), max_size: number_to_human_size(attachment_size) } }
+      @error_options.merge!({ attachment_ids: { current_size: number_to_human_size(total_attachment_size), max_size: number_to_human_size(attachment_size) } })
     end
   end
 

@@ -535,7 +535,7 @@ class ApiApplicationController < MetalApiController
     end
 
     def can_send_user? # if user_id or email of a user, is included in params, the api_current_user should have ability to assume that user.
-      user_id = params[cname][:user_id]
+      user_id = params[cname][:user_id] || params[cname][:agent_id]
       email = params[cname][:email]
       if user_id || email
         @user = current_account.user_emails.user_for_email(email) if email # should use user_for_email instead of find_by_email

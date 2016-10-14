@@ -1043,6 +1043,38 @@
         }
       }
     },
+    "/tickets/{id}/forward": {
+      "post": {
+        "tags": [
+          "conversation"
+        ],
+        "description": "Forward Ticket",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/note_forward_input"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/note_forward"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          }
+        }
+      }
+    },
     "/attachments": {
       "post": {
         "tags": [
@@ -1420,6 +1452,16 @@
         },
         {
           "properties": {
+            "user_id": {
+              "type": "id"
+            },
+            "attachments": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "format": "byte"
+              }
+            },
             "attachment_ids": {
               "type": "array",
               "items": {
@@ -1450,6 +1492,16 @@
         },
         {
           "properties": {
+            "user_id": {
+              "type": "id"
+            },
+            "attachments": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "format": "byte"
+              }
+            },
             "attachment_ids": {
               "type": "array",
               "items": {
@@ -1458,6 +1510,67 @@
             },
             "from_email": {
               "type": "string"
+            },
+            "cc_emails": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "bcc_emails": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "note_forward_input": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/note"
+        },
+        {
+          "properties": {
+            "include_quoted_text": {
+              "type": "boolean"
+            },
+            "include_original_attachments": {
+              "type": "boolean"
+            },
+            "agent_id": {
+              "type": "id"
+            },
+            "attachments": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "format": "byte"
+              }
+            },
+            "attachment_ids": {
+              "type": "array",
+              "items": {
+                "type": "id"
+              }
+            },
+            "cloud_file_ids": {
+              "type": "array",
+              "items": {
+                "type": "id"
+              }
+            },
+            "from_email": {
+              "type": "string"
+            },
+            "to_emails": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
             },
             "cc_emails": {
               "type": "array",
@@ -1704,15 +1817,6 @@
       "properties": {
         "body": {
           "type": "string"
-        },
-        "user_id": {
-          "type": "id"
-        },
-        "attachments": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
         }
       }
     },
@@ -1901,6 +2005,34 @@
         }
       }
     },
+    "canned_response": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "title": {
+          "type": "string"
+        },
+        "content": {
+          "type": "string"
+        },
+        "content_html": {
+          "type": "string"
+        }
+      }
+    },
+    "canned_response_folder": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
     "extension_generic": {
       "type": "object",
       "properties": {
@@ -2022,6 +2154,37 @@
         }
       ]
     },
+    "extended_canned_response": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/canned_response"
+        },
+        {
+          "properties": {
+            "folder_id": {
+              "type": "integer"
+            }
+          }
+        }
+      ]
+    },
+    "extended_canned_response_folder": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/canned_response_folder"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "responses_count": {
+              "type": "integer",
+              "description": "count of canned responses inside the folder"
+            }
+          }
+        }
+      ]
+    },
     "array_of_tickets": {
       "type": "array",
       "items": {
@@ -2039,65 +2202,6 @@
       "items": {
         "$ref": "#/definitions/post"
       }
-    },
-    "canned_response": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "integer"
-        },
-        "title": {
-          "type": "string"
-        },
-        "content": {
-          "type": "string"
-        },
-        "content_html": {
-          "type": "string"
-        }
-      }
-    },
-    "extended_canned_response": {
-      "type": "object",
-      "allOf": [
-        {
-          "$ref": "#/definitions/canned_response"
-        },
-        {
-          "properties": {
-            "folder_id": {
-              "type": "integer"
-            }
-          }
-        }
-      ]
-    },
-    "canned_response_folder": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "integer"
-        },
-        "name": {
-          "type": "string"
-        }
-      }
-    },
-    "extended_canned_response_folder": {
-      "allOf": [
-        {
-          "$ref": "#/definitions/canned_response_folder"
-        },
-        {
-          "type": "object",
-          "properties": {
-            "responses_count": {
-              "type": "integer",
-              "description": "count of canned responses inside the folder"
-            }
-          }
-        }
-      ]
     },
     "array_of_canned_response_folders": {
       "type": "array",
@@ -2134,6 +2238,9 @@
         },
         {
           "properties": {
+            "user_id": {
+              "type": "id"
+            },
             "incoming": {
               "type": "boolean"
             },
@@ -2147,6 +2254,12 @@
               "type": "array",
               "items": {
                 "type": "string"
+              }
+            },
+            "attachments": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/attachment"
               }
             }
           }
@@ -2164,6 +2277,9 @@
         },
         {
           "properties": {
+            "user_id": {
+              "type": "id"
+            },
             "from_email": {
               "type": "string"
             },
@@ -2183,6 +2299,57 @@
               "type": "array",
               "items": {
                 "type": "string"
+              }
+            },
+            "attachments": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/attachment"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "note_forward": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/note"
+        },
+        {
+          "$ref": "#/definitions/extended_note"
+        },
+        {
+          "properties": {
+            "agent_id": {
+              "type": "id"
+            },
+            "from_email": {
+              "type": "string"
+            },
+            "forwarded_to": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "cc_emails": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "bcc_emails": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "attachments": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/attachment"
               }
             }
           }

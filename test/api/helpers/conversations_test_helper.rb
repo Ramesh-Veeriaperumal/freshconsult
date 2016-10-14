@@ -56,6 +56,24 @@ module ConversationsTestHelper
     }
   end
 
+  def forward_note_pattern(expected_output = {}, note)
+    body_html = format_ticket_html(note, expected_output[:body]) if expected_output[:body]
+    {
+      body: body_html || note.body_html,
+      body_text: note.body,
+      id: Fixnum,
+      agent_id: expected_output[:agent_id] || note.user_id,
+      from_email: note.from_email,
+      forwarded_to: expected_output[:to_emails] || note.to_emails,
+      cc_emails: expected_output[:cc_emails] || note.cc_emails,
+      bcc_emails: expected_output[:bcc_emails] || note.bcc_emails,
+      ticket_id: expected_output[:ticket_id] || note.notable_id,
+      attachments: Array,
+      created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
+      updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
+    }
+  end
+
   def v1_note_payload
     { helpdesk_note: { body: Faker::Lorem.paragraph, to_emails: [Faker::Internet.email, Faker::Internet.email], private: true } }.to_json
   end
@@ -76,5 +94,13 @@ module ConversationsTestHelper
 
   def v2_reply_payload
     { body:  Faker::Lorem.paragraph, cc_emails: [Faker::Internet.email, Faker::Internet.email], bcc_emails: [Faker::Internet.email, Faker::Internet.email] }.to_json
+  end
+
+  def v1_forward_payload
+    { helpdesk_note: { body: Faker::Lorem.paragraph, to_emails: [Faker::Internet.email, Faker::Internet.email], cc_emails: [Faker::Internet.email, Faker::Internet.email], bcc_emails: [Faker::Internet.email, Faker::Internet.email], source: 8, private: true } }.to_json
+  end
+
+  def v2_forward_payload
+    { body:  Faker::Lorem.paragraph, to_emails: [Faker::Internet.email, Faker::Internet.email], cc_emails: [Faker::Internet.email, Faker::Internet.email], bcc_emails: [Faker::Internet.email, Faker::Internet.email] }.to_json
   end
 end

@@ -3,6 +3,8 @@ allOf:
   - $ref: '#/definitions/note'
   - $ref: '#/definitions/extended_note'
   - properties:
+      user_id:
+        type: id
       incoming:
         type: boolean
       private:
@@ -13,3 +15,7 @@ allOf:
         type: array
         items:
           type: string
+      attachments:
+        type: array
+        items:
+          $ref: '#/definitions/attachment'

@@ -29,6 +29,7 @@ module TicketHelper
                                     :description => params[:attachments][:description], 
                                     :account_id => test_ticket.account_id)
     end
+    test_ticket.cloud_files = params[:cloud_files] if params[:cloud_files]
     test_ticket.group_id = group ? group.id : nil
     test_ticket.save_ticket
     test_ticket

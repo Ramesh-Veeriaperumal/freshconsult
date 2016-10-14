@@ -1,0 +1,18 @@
+post:
+  tags: [conversation]
+  description: Forward Ticket
+  parameters:
+    - name: data
+      in: body
+      required: true
+      schema:
+        $ref: '#/definitions/note_forward_input'
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/note_forward'
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'

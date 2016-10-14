@@ -2,6 +2,13 @@ type: object
 allOf:
   - $ref: '#/definitions/note'
   - properties:
+      user_id:
+        type: id
+      attachments:
+        type: array
+        items:
+          type: string
+          format: byte
       attachment_ids:
         type: array
         items:
