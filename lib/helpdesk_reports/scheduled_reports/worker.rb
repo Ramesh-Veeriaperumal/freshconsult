@@ -12,6 +12,7 @@ class HelpdeskReports::ScheduledReports::Worker
   end
 
   def perform
+    HelpdeskReports::Logger.log("scheduled : account_id: #{Account.current.id}, agent_id: #{User.current.id}, agent_email: #{User.current.email}, task_id: #{@task.id}, report_type: #{@report_type}")
     build_date_range
     params = old_report? ? build_params_old_report : build_params
     trigger_export(params)
