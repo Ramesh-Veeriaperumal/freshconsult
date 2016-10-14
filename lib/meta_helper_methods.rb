@@ -62,7 +62,7 @@ module MetaHelperMethods
   end
 
   def os_shorthand(os)
-    ['windows', 'mac', 'linux', 'android', 'osx' ].each do |v|
+    ['windows', 'mac', 'linux', 'android', 'osx', 'ios' ].each do |v|
       return v if os.downcase.gsub!(/\s+/, '').include?(v)
     end
   end

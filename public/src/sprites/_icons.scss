@@ -19,7 +19,7 @@
 
 
 .meta-os { @include icons-sprite('os-generic'); }
-@each $os in mac, windows, android, linux, osx {
+@each $os in mac, windows, android, linux, osx, ios {
   .meta-os.os-#{$os} { @include icons-sprite('os-#{$os}'); }
 }
 .meta-browser { @include icons-sprite('browser-generic'); }
