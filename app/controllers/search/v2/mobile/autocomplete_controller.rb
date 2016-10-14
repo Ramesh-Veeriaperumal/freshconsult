@@ -9,7 +9,7 @@ class Search::V2::Mobile::AutocompleteController < Search::V2::AutocompleteContr
     search(esv2_autocomplete_models) do |results|
       results.each do |result|
         self.search_results[:results].push(*[{
-          id: result.email,
+          id: result.email.to_s,
           value: result.name,
           user_id: result.id
         }])

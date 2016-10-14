@@ -594,7 +594,7 @@ class User < ActiveRecord::Base
     if self.user_emails.present?
       self.user_emails.map{|x| {:id => id, :details => "#{format_name} <#{x.email}>", :value => name, :email => x.email}}
     else
-      [{:id => id, :details => self.name_details, :value => name, :email => email}]
+      [{:id => id, :details => self.name_details, :value => name, :email => email.to_s }]
     end
   end
 
