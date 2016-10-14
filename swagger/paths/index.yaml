@@ -24,6 +24,11 @@
   $ref: ./contacts/bulk_send_invite.yaml
 /contacts/bulk_whitelist:
   $ref: ./contacts/bulk_whitelist.yaml
+/contacts/merge:
+  $ref: ./contacts/merge.yaml
+
+/companies:
+  $ref: ./companies/crud.yaml
 
 /tickets:
   $ref: ./tickets/crud.yaml
@@ -59,6 +64,14 @@
   $ref: ./tickets/save_draft.yaml
 /tickets/merge:
   $ref: ./tickets/merge.yaml
+/tickets/empty_spam:
+  $ref: ./tickets/empty_spam.yaml
+/tickets/empty_trash:
+  $ref: ./tickets/empty_trash.yaml
+/tickets/delete_forever:
+  $ref: ./tickets/delete_forever.yaml
+/tickets/delete_forever_spam:
+  $ref: ./tickets/delete_forever_spam.yaml
 
 #Ticket Conversations
 /tickets/{id}/notes:
@@ -78,6 +91,10 @@
   $ref: ./subscriptions/unwatch.yaml
 /tickets/{id}/watchers:
   $ref: ./subscriptions/watchers.yaml
+/tickets/watch:
+  $ref: ./subscriptions/bulk_watch.yaml
+/tickets/unwatch:
+  $ref: ./subscriptions/bulk_unwatch.yaml
 
 # Canned response
 /canned_response_folders:

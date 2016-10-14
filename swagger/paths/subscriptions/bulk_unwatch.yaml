@@ -1,0 +1,15 @@
+put:
+  tags: [ticket]
+  summary: Bulk Unwatch**
+  parameters:
+    - name: data
+      in: body
+      required: true
+      description: Display Ids of tickets
+      schema:
+        $ref: '#/definitions/bulk_action_input'
+  responses:
+    202:
+      description: Accepted
+      schema:
+        $ref: '#/definitions/partial_success_response'

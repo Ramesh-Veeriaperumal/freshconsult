@@ -1,0 +1,13 @@
+type: object
+properties:
+  primary_id:
+    type: id
+    description: ID of the primary contact
+  target_ids:
+    type: array
+    description: Ids of contacts that will be merged into the Primary contact
+    items:
+      type: id
+required:
+  - primary_id
+  - target_ids

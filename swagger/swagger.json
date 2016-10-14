@@ -35,7 +35,7 @@
           {
             "name": "company_id",
             "in": "query",
-            "type": "number"
+            "type": "id"
           },
           {
             "name": "state",
@@ -52,13 +52,35 @@
             "name": "tag",
             "in": "query",
             "type": "string"
+          },
+          {
+            "name": "letter",
+            "in": "query",
+            "type": "string"
           }
         ],
         "responses": {
           "200": {
             "description": "Success",
             "schema": {
-              "$ref": "#/definitions/array_of_contacts"
+              "allOf": [
+                {
+                  "properties": {
+                    "contacts": {
+                      "$ref": "#/definitions/array_of_contacts"
+                    },
+                    "meta": {
+                      "$ref": "#/definitions/meta"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
             }
           }
         }
@@ -456,6 +478,85 @@
           },
           "204": {
             "description": "Success"
+          }
+        }
+      }
+    },
+    "/contacts/merge": {
+      "post": {
+        "tags": [
+          "contact"
+        ],
+        "summary": "Merge**",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/contact_merge_input"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Accepted",
+            "schema": {
+              "$ref": "#/definitions/partial_success_response"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          }
+        }
+      }
+    },
+    "/companies": {
+      "get": {
+        "tags": [
+          "company"
+        ],
+        "summary": "List all**",
+        "description": "Work in Progress",
+        "parameters": [
+          {
+            "name": "letter",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "include",
+            "in": "query",
+            "type": "string",
+            "description": "Comma-separated, possible values - contacts_count, sla_policies"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "allOf": [
+                {
+                  "properties": {
+                    "companies": {
+                      "$ref": "#/definitions/array_of_companies"
+                    },
+                    "meta": {
+                      "$ref": "#/definitions/meta"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
           }
         }
       }
@@ -979,6 +1080,92 @@
         }
       }
     },
+    "/tickets/empty_spam": {
+      "delete": {
+        "tags": [
+          "ticket"
+        ],
+        "summary": "Empty Spam**",
+        "responses": {
+          "202": {
+            "description": "Accepted",
+            "schema": {
+              "$ref": "#/definitions/partial_success_response"
+            }
+          }
+        }
+      }
+    },
+    "/tickets/empty_trash": {
+      "delete": {
+        "tags": [
+          "ticket"
+        ],
+        "summary": "Empty Trash**",
+        "responses": {
+          "202": {
+            "description": "Accepted",
+            "schema": {
+              "$ref": "#/definitions/partial_success_response"
+            }
+          }
+        }
+      }
+    },
+    "/tickets/delete_forever": {
+      "delete": {
+        "tags": [
+          "ticket"
+        ],
+        "summary": "Delete Forever**",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "description": "Display Ids of tickets",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/bulk_action_input"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Accepted",
+            "schema": {
+              "$ref": "#/definitions/partial_success_response"
+            }
+          }
+        }
+      }
+    },
+    "/tickets/delete_forever_spam": {
+      "delete": {
+        "tags": [
+          "ticket"
+        ],
+        "summary": "Delete Forever Spam**",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "description": "Display Ids of tickets",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/bulk_action_input"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Accepted",
+            "schema": {
+              "$ref": "#/definitions/partial_success_response"
+            }
+          }
+        }
+      }
+    },
     "/tickets/{id}/notes": {
       "post": {
         "tags": [
@@ -1202,6 +1389,65 @@
           },
           "404": {
             "description": "Ticket not found"
+          }
+        }
+      }
+    },
+    "/tickets/watch": {
+      "put": {
+        "tags": [
+          "ticket"
+        ],
+        "summary": "Bulk Watch**",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/definitions/bulk_action_input"
+                },
+                {
+                  "$ref": "#/definitions/add_watcher_input"
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Accepted",
+            "schema": {
+              "$ref": "#/definitions/partial_success_response"
+            }
+          }
+        }
+      }
+    },
+    "/tickets/unwatch": {
+      "put": {
+        "tags": [
+          "ticket"
+        ],
+        "summary": "Bulk Unwatch**",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "description": "Display Ids of tickets",
+            "schema": {
+              "$ref": "#/definitions/bulk_action_input"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Accepted",
+            "schema": {
+              "$ref": "#/definitions/partial_success_response"
+            }
           }
         }
       }
@@ -1430,6 +1676,26 @@
             }
           }
         }
+      ]
+    },
+    "contact_merge_input": {
+      "type": "object",
+      "properties": {
+        "primary_id": {
+          "type": "id",
+          "description": "ID of the primary contact"
+        },
+        "target_ids": {
+          "type": "array",
+          "description": "Ids of contacts that will be merged into the Primary contact",
+          "items": {
+            "type": "id"
+          }
+        }
+      },
+      "required": [
+        "primary_id",
+        "target_ids"
       ]
     },
     "update_password": {
@@ -1812,6 +2078,29 @@
         }
       }
     },
+    "company": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "domains": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "note": {
+          "type": "string"
+        },
+        "custom_fields": {
+          "$ref": "#/definitions/custom_field"
+        }
+      }
+    },
     "note": {
       "type": "object",
       "properties": {
@@ -2005,6 +2294,61 @@
         }
       }
     },
+    "sla_policy": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "active": {
+          "type": "boolean"
+        },
+        "applicable_to": {
+          "type": "object",
+          "properties": {
+            "product_ids": {
+              "type": "array",
+              "items": {
+                "type": "id"
+              }
+            },
+            "company_ids": {
+              "type": "array",
+              "items": {
+                "type": "id"
+              }
+            },
+            "group_ids": {
+              "type": "array",
+              "items": {
+                "type": "id"
+              }
+            },
+            "source": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "ticket_type": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "is_default": {
+          "type": "boolean"
+        },
+        "position": {
+          "type": "number"
+        }
+      }
+    },
     "canned_response": {
       "type": "object",
       "properties": {
@@ -2067,6 +2411,31 @@
                 },
                 "deleted": {
                   "type": "boolean"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "extended_company": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/company"
+        },
+        {
+          "type": "object",
+          "allOf": [
+            {
+              "$ref": "#/definitions/extension_generic"
+            },
+            {
+              "properties": {
+                "contacts_count": {
+                  "type": "number"
+                },
+                "sla_policies": {
+                  "$ref": "#/definitions/array_of_sla_policies"
                 }
               }
             }
@@ -2154,6 +2523,21 @@
         }
       ]
     },
+    "extended_sla_policy": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/sla_policy"
+        },
+        {
+          "type": "object",
+          "allOf": [
+            {
+              "$ref": "#/definitions/extension_generic"
+            }
+          ]
+        }
+      ]
+    },
     "extended_canned_response": {
       "type": "object",
       "allOf": [
@@ -2197,10 +2581,22 @@
         "$ref": "#/definitions/extended_contact"
       }
     },
+    "array_of_companies": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/extended_company"
+      }
+    },
     "array_of_posts": {
       "type": "array",
       "items": {
         "$ref": "#/definitions/post"
+      }
+    },
+    "array_of_sla_policies": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/extended_sla_policy"
       }
     },
     "array_of_canned_response_folders": {
@@ -2226,6 +2622,15 @@
           }
         }
       ]
+    },
+    "meta": {
+      "type": "object",
+      "title": "meta",
+      "properties": {
+        "count": {
+          "type": "number"
+        }
+      }
     },
     "note_create": {
       "type": "object",

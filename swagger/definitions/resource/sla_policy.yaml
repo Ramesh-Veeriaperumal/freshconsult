@@ -1,0 +1,35 @@
+type: object
+properties:
+  name:
+    type: string
+  description:
+    type: string
+  active:
+    type: boolean
+  applicable_to:
+    type: object
+    properties:
+      product_ids:
+        type: array
+        items:
+          type: id
+      company_ids:
+        type: array
+        items:
+          type: id
+      group_ids:
+        type: array
+        items:
+          type: id
+      source:
+        type: array
+        items:
+          type: string
+      ticket_type:
+        type: array
+        items:
+          type: string
+  is_default:
+    type: boolean
+  position:
+    type: number

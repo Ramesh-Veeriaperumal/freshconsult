@@ -1,0 +1,8 @@
+type: object
+allOf:
+  - $ref: '#/definitions/extension_generic'
+  - properties:
+      contacts_count:
+        type: number
+      sla_policies:
+        $ref: '#/definitions/array_of_sla_policies'

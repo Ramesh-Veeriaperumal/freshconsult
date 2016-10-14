@@ -21,6 +21,8 @@
     $ref: ./request/attachments/attachment.yaml
   contact_input:
     $ref: ./request/contacts/contact.yaml
+  contact_merge_input:
+    $ref: ./request/contacts/merge.yaml
   update_password:
     $ref: ./request/contacts/update_password.yaml
   note_create_input:
@@ -45,6 +47,8 @@
   # RESOURCE
   contact:
     $ref: ./resource/contact.yaml
+  company:
+    $ref: ./resource/company.yaml
   note:
     $ref: ./resource/note.yaml
   ticket:
@@ -55,6 +59,8 @@
     $ref: ./resource/attachment.yaml
   agent:
     $ref: ./resource/agent.yaml
+  sla_policy:
+    $ref: ./resource/sla_policy.yaml
   canned_response:
     $ref: ./resource/canned_response.yaml
   canned_response_folder:
@@ -65,6 +71,10 @@
     allOf:
       - $ref: '#/definitions/contact'
       - $ref: ./resource/extension/contact.yaml
+  extended_company:
+    allOf:
+      - $ref: '#/definitions/company'
+      - $ref: ./resource/extension/company.yaml
   extended_note:
     allOf:
       - $ref: '#/definitions/note'
@@ -73,6 +83,10 @@
     allOf:
       - $ref: '#/definitions/ticket'
       - $ref: ./resource/extension/ticket.yaml
+  extended_sla_policy:
+    allOf:
+      - $ref: '#/definitions/sla_policy'
+      - $ref: ./resource/extension/sla_policy.yaml
   extended_canned_response:
     $ref: ./resource/extension/canned_response.yaml
   extended_canned_response_folder:
@@ -88,10 +102,18 @@
     type: array
     items:
       $ref: '#/definitions/extended_contact'
+  array_of_companies:
+    type: array
+    items:
+      $ref: '#/definitions/extended_company'
   array_of_posts:
     type: array
     items:
       $ref: '#/definitions/post'
+  array_of_sla_policies:
+    type: array
+    items:
+      $ref: '#/definitions/extended_sla_policy'
   array_of_canned_response_folders:
     type: array
     items:
@@ -100,6 +122,8 @@
     $ref: ./response/canned_response/folder_show.yaml
 
   # RESPONSE
+  meta:
+    $ref: './response/meta.yaml'
   note_create:
     $ref: './response/conversations/create.yaml'
   note_reply:

@@ -14,7 +14,7 @@ get:
       type: string
     - name: company_id
       in: query
-      type: number
+      type: id
     - name: state
       in: query
       type: string
@@ -26,11 +26,23 @@ get:
     - name: tag
       in: query
       type: string
+    - name: letter
+      in: query
+      type: string
   responses:
     200:
       description: Success
       schema:
-        $ref: '#/definitions/array_of_contacts'
+        allOf:
+          - properties:
+              contacts:
+                $ref: '#/definitions/array_of_contacts'
+              meta:
+                $ref: '#/definitions/meta'
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
 
 post:
   tags: [contact]
