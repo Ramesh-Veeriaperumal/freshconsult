@@ -95,7 +95,7 @@ Number.prototype.toTime = function(format) {
 
 window.highlight_code = function() {
   jQuery('[rel="highlighter"]').each(function(i,element){
-      var attr = jQuery(element).data('code-brush'),
+      var attr = jQuery(element).data('code-brush') || jQuery(element).attr('code-brush'),
           code = jQuery(element).children('code'),
           preHTML = jQuery(element).html();
 

@@ -142,30 +142,30 @@ body .redactor_toolbar li a.redactor_btn_codeEditor 		{ background-position: -95
 	word-wrap: normal;
 }
 
-//Prism
-.article-body, .article-content {
-	div.prism-show-language > div.prism-show-language-label {
-		top: 7px;
-		border-radius: 0 5px;
-	}
-
-	pre[class*="language-"] {
-		color: #333;
-		box-shadow: none;
-		border: 1px solid #dfdfdf;
-		border-radius: 5px;
-		@include background-image(linear-gradient(rgba(0, 0, 0, 0) 50%, rgba(69, 142, 209, 0.03) 50%));
-		background-size: 3em 3em;
-	}
-
-	.line-numbers .line-numbers-rows {
-		border-right: 1px solid #358ccb;
-	}
-
-	.line-numbers-rows > span:before {
-		color: #aaa;
-	}
+//----- Prism ---
+div.prism-show-language > div.prism-show-language-label {
+	top: 7px;
+	border-radius: 0 5px;
 }
+
+pre[class*="language-"] {
+	color: #333;
+	box-shadow: none;
+	border: 1px solid #dfdfdf;
+	border-radius: 5px;
+	@include background-image(linear-gradient(rgba(0, 0, 0, 0) 50%, rgba(69, 142, 209, 0.03) 50%));
+	background-size: 3em 3em;
+}
+
+.line-numbers .line-numbers-rows {
+	border-right: 1px solid #358ccb;
+}
+
+.line-numbers-rows > span:before {
+	color: #aaa;
+}
+
+// ----------------
 
 // Date picker Hack
 //-----------------

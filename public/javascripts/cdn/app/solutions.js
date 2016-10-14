@@ -1,4 +1,3 @@
-//= require frameworks/plugins/prism.js
 //= require app/solutions/solutions.js
 //= require app/solutions/list_view.js
 //= require app/solutions/article/article.js
