@@ -114,7 +114,7 @@ class Search::V2::SpotlightController < ApplicationController
         
         es_params[:size]  = @size
         es_params[:from]  = @offset
-      end.merge(ES_V2_BOOST_VALUES[@search_context])
+      end
     end
 
     def process_results

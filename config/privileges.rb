@@ -15,6 +15,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"helpdesk/authorization"
     resource :"search/autocomplete", :only => [:requesters, :agents, :companies, :tags]
     resource :"search/v2/autocomplete", :only => [:requesters, :agents, :companies, :tags]
+    resource :"search/v2/mobile/autocomplete", :only => [:requesters, :agents, :companies, :tags, :autocomplete_requesters]
     resource :"helpdesk/ticket", :only => [:show, :new, :create, :compose_email, :show, :index, :user_tickets,
                                            :user_ticket, :search_tweets, :custom_search, :latest_ticket_count, :add_requester, :view_ticket,
                                            :spam, :unspam, :execute_scenario, :pick_tickets,
@@ -90,11 +91,14 @@ Authority::Authorization::PrivilegeList.build do
     resource :agent, :only => [:toggle_availability, :list]
     resource :"search/home", :only => [:index, :suggest, :recent_searches_tickets, :remove_recent_search]
     resource :"search/v2/suggest", :only => [:index]
+    resource :"search/v2/mobile/suggest", :only => [:index]
     resource :"search/solution", :only => [:related_solutions, :search_solutions]
     resource :"search/v2/solution", :only => [:related_solutions, :search_solutions]
+    resource :"search/v2/mobile/related_article", :only => [:index]
     resource :"search/ticket", :only => [:index]
     resource :"search/ticket_association", :only => [:index, :recent_trackers]
     resource :"search/v2/ticket", :only => [:index]
+    resource :"search/v2/mobile/merge_ticket", :only => [:index]
     resource :"search/v2/spotlight", :only => [:all, :tickets]
     resource :"chat", :only => [:create_ticket, :add_note, :agents, :enable, :index, :visitor, :get_groups, :update_site, :toggle, :trigger]
     resource :"chat_widget", :only => [:update, :toggle, :enable] 
@@ -351,6 +355,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :company,  :only => [:new, :create, :edit, :update, :create_company, :update_company, :update_notes, :quick, :sla_policies]
     resource :"search/autocomplete", :only => [:companies]
     resource :"search/v2/autocomplete", :only => [:companies]
+    resource :"search/v2/mobile/autocomplete", :only => [:companies]
     resource :customers_import
     resource :contact_merge
     resource :"search/v2/merge_contact", :only => [:index]

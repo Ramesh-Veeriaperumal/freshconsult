@@ -174,7 +174,20 @@ Helpkit::Application.routes.draw do
 
   # Constraint based routing to V2 paths
   #
-  constraints Search::V1Path.new do
+  constraints Search::V1Path::MobilePath.new do
+    match '/helpdesk/authorizations/autocomplete',            to: 'search/v2/mobile/autocomplete#autocomplete_requesters',        via: :get
+    match '/helpdesk/authorizations/company_autocomplete',    to: 'search/v2/mobile/autocomplete#companies',         via: :get
+    match '/helpdesk/autocomplete/requester',                 to: 'search/v2/mobile/autocomplete#requesters', via: :get
+    match '/helpdesk/autocomplete/agents',                    to: 'search/v2/mobile/autocomplete#agents',            via: :get
+    match '/helpdesk/autocomplete/companies',                 to: 'search/v2/mobile/autocomplete#companies',         via: :get
+    match '/search/autocomplete/tags',                        to: 'search/v2/mobile/autocomplete#tags',              via: :get
+    match '/search/home',                                     to: 'search/v2/mobile/suggest#index',           via: :get
+    match '/search/tickets/filter/:search_field',             to: 'search/v2/mobile/merge_tickets#index',     via: :post
+    match '/mobile/tickets/get_suggested_solutions/:ticket.:format',  to: 'search/v2/mobile/related_articles#index',  via: :get
+  end
+  #
+  constraints Search::V1Path::WebPath.new do
+    # Web paths
     match '/search/home/suggest',              to: 'search/v2/suggest#index',                    via: :get
     match '/search/all',                       to: 'search/v2/spotlight#all',                    via: :get
     match '/search/tickets',                   to: 'search/v2/spotlight#tickets',                via: :get
@@ -1426,6 +1439,22 @@ Helpkit::Application.routes.draw do
         end
       end
       resources :merge_contacts, :only => :index
+      
+      # Paths for mobile search v2
+      namespace :mobile do
+        resources :suggest, only: :index
+        resources :merge_tickets, only: :index
+        resources :related_articles, only: :index
+        resources :autocomplete, only: [:agents, :requesters, :companies, :tags] do
+          collection do
+            get :agents
+            get :requesters
+            get :companies
+            get :tags
+          end
+        end
+      end
+
       namespace :freshfone do
         resources :autocomplete, only: [:contact_by_numbers, :customer_by_phone, :contact_by_numberfields] do
           collection do

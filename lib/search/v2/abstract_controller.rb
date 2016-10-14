@@ -105,7 +105,7 @@ module Search::V2::AbstractController
       # Before filter to construct parameters
       #
       def initialize_search_parameters
-        @search_key     = (params[:term] || params[:search_key] || params[:q] || '')
+        @search_key     = (params[:term] || params[:search_key] || params[:q] || params[:v] || params[:name] || '')
         @exact_match    = true if Search::Utils.exact_match?(@search_key)
         @es_search_term = Search::Utils.extract_term(@search_key, @exact_match)
 
