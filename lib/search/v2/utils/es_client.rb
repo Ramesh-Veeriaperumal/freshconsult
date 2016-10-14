@@ -73,9 +73,11 @@ module Search
             # elsif response_from_es.code == 403
               # FORBIDDEN
               # raise Errors::DefaultSearchException.new(response_from_es.body)
-            # elsif response_from_es.code == 404
+            elsif response_from_es.code == 404
               # NOT_FOUND
-              # raise Errors::DefaultSearchException.new(response_from_es.body)
+              unless(response_from_es.request.original_options[:method].eql?(:delete))
+                raise Errors::DefaultSearchException.new(response_from_es.body)
+              end
             # elsif response_from_es.code == 405
               # METHOD_NOT_ALLOWED
               # raise Errors::DefaultSearchException.new(response_from_es.body)

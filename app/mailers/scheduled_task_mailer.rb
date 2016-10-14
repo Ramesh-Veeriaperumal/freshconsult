@@ -3,6 +3,8 @@ class ScheduledTaskMailer < ActionMailer::Base
   def expired_task task
     required_params task
     headers = mail_headers
+   
+    add_log_info 'expired_task'
 
     mail(headers) do |part|
       part.text { render "expired_task.plain" }
@@ -17,6 +19,8 @@ class ScheduledTaskMailer < ActionMailer::Base
     @task = task
     @user = task.user
     @options = options
+    
+    add_log_info 'notify_blocked_or_deleted'
 
     mail(headers) do |part|
       part.text { render "blocked_user_or_email.plain" }
@@ -32,6 +36,8 @@ class ScheduledTaskMailer < ActionMailer::Base
     @user = task.user
     @options = options
 
+    add_log_info 'notify_downgraded_user'
+    
     mail(headers) do |part|
       part.text { render "notify_downgraded_user.plain" }
       part.html { render "notify_downgraded_user.html" }
@@ -50,7 +56,9 @@ class ScheduledTaskMailer < ActionMailer::Base
       else
         @export_url = options[:export_url]
       end
-      
+
+      add_log_info 'email_scheduled_report'
+
       mail(headers) do |part|
         part.text { render "email_scheduled_report.plain" }
         part.html { render "email_scheduled_report.html" }
@@ -62,6 +70,8 @@ class ScheduledTaskMailer < ActionMailer::Base
   def report_no_data_email options, task
     required_params task
     headers = mail_headers
+
+    add_log_info 'report_no_data_email'
 
     mail(headers) do |part|
       part.text { render "report_no_data_email.plain" }
@@ -145,5 +155,8 @@ private
     file_name_arr.pop #removing secure random code
     file_name = file_name_arr.first.gsub(/_+/,"_").slice(0,235)
     "#{file_name}-#{file_name_arr[1..-1].join("-")}.#{format}"
+  end
+  def add_log_info action
+    HelpdeskReports::Logger.log("scheduled : triggering email : #{action} : account_id: #{@user.account.id}, agent_id: #{@user.id}, agent_email: #{@user.email}")
   end
 end

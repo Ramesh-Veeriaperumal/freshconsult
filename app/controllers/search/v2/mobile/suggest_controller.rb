@@ -40,7 +40,7 @@ class Search::V2::Mobile::SuggestController < Search::V2::SpotlightController
       # This block might not be used by mobile. But just in case.
       #
       @result_json[:current_page] = @current_page
-      @total_pages                = (@es_results['hits']['total'].to_f / @size).ceil
+      @total_pages                = (@result_set.total_entries.to_f / @size).ceil
 
       handle_rendering
     end
