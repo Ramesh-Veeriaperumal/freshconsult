@@ -18,7 +18,7 @@ module Delayed
     MAX_PAYLOAD_SIZE = 32768 #32KB
     MAX_RUN_TIME = 4.hours
     JOB_QUEUES = ["Premium" , "Free", "Trial" , "Active"]
-    PUSH_QUEUE = ["Free", "Trial"]
+    PUSH_QUEUE = ["Free", "Trial", "Premium", "Active"]
 
     # By default failed jobs are destroyed after too many attempts.
     # If you want to keep them around (perhaps to inspect the reason
