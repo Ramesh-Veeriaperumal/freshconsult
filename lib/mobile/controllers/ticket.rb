@@ -9,7 +9,7 @@ module Mobile::Controllers::Ticket
     fields = []
     all_fields = current_portal.ticket_fields_including_nested_fields if current_user.agent?
     all_fields.each do |field|
-      next if field.section_field? || field.field_type == "default_company"
+      next if field.section_field? || field.field_type == "default_company" || (field.shared_ownership_field? && !shared_ownership_supported?)
       if field.visible_in_view_form? || is_new        
         getField(field, item)
         
