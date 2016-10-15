@@ -232,7 +232,13 @@ class Helpdesk::SlaPolicy < ActiveRecord::Base
       if notify_time_interval <= Time.zone.now
         assigned_agent_id = Helpdesk::SlaPolicy.custom_users_id_by_type[:assigned_agent]
         responder_id = ticket.responder_id
-        agent_ids = escalation[:agents_id].map {|x| (x == assigned_agent_id && responder_id) ? responder_id : x }
+        agent_ids = escalation[:agents_id].clone
+        if agent_ids.include?(assigned_agent_id)
+          agent_ids.delete(assigned_agent_id)
+          agent_ids << responder_id if responder_id
+          agent_ids << ticket.internal_agent_id if ticket.internal_agent_id and Account.current.features?(:shared_ownership)
+        end
+        agent_ids.uniq!
         unless agent_ids.blank?
           SlaNotifier.send_later(:group_escalation, ticket, agent_ids, type)
         end

@@ -102,10 +102,7 @@ class Integrations::Marketplace::LoginController < ApplicationController
 
    def create_user_session(user)
      @user_session = current_account.user_sessions.new(user)
-     unless is_native_mobile?
-       @user_session.web_session = true 
-       session.delete :_csrf_token if session.has_key?(:_csrf_token)
-     end
+     @user_session.web_session = true unless is_native_mobile?
      redirect_url = get_redirect_url params[:app_name], current_account, params
      if @user_session.save
        return unless grant_day_pass

@@ -10,6 +10,7 @@ require 'search/v2/store/data'
 require 'search/v2/store/cache'
 require 'search/v2/utils/es_client'
 require 'search/v2/utils/es_logger'
+require 'search/v2/query_handler'
 
 module Search
   module V2

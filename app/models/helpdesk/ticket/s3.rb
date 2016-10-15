@@ -11,7 +11,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     #                  :requester_id => self.requester_id
     #                  # :table_name => table_name
     # }) if s3_create
-    Tickets::TicketBodyJobs.perform_async({:key_id => self.id, :create => true,:requester_id => self.requester_id})  if s3_create
+    ::Tickets::TicketBodyJobs.perform_async({:key_id => self.id, :create => true,:requester_id => self.requester_id})  if s3_create
   end
 
   def read_from_s3

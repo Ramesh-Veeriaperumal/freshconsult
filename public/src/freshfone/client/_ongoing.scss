@@ -678,8 +678,8 @@
 		@include margin-left(10px);
 	}
 	.searchicon {
-		top: 113px;
-	 	@include right(45px);
+		top: 75px;
+	 	@include right(50px);
 	}
 	.search_header {
 		border-bottom: 1px solid $ec-ticket-header-border;
@@ -819,12 +819,10 @@
 		.requesterLabel{
 		  font-weight: 400;
 		  margin-top: 0px;
-		  margin-left: 6px;
 		}
 		.select2-container{
-			width: 245px;
-			min-width: 243px;
-			margin-bottom: -16px;
+			width: 235px;
+			margin-bottom: -9px;
 		}
 		.or_border{
 			border-left: 1px solid #ccc; 
@@ -835,11 +833,11 @@
 			background: #fff;
 		}
 		.details_span{
-			width: 117px;
+			width: 130px;
 		}
 		.name_container_span{
-			width: 309px;
-			margin-top: 16px;
+			width: 295px;
+			margin-top: 15px;
 		}
 		.or_text{
 			color: #888888;

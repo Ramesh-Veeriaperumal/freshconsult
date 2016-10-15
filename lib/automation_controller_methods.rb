@@ -80,13 +80,19 @@ module AutomationControllerMethods
   end
 
   def load_config
+    current_account_agents = current_account.users.technicians.collect { |au| [au.id, au.name] }
     @agents = [[0, t('admin.observer_rules.assigned_agent')]]
     @agents.concat get_event_performer
-    @agents.concat [['', t('none')]]+current_account.users.technicians.collect { |au| [au.id, au.name] }
-    watcher_agents = current_account.users.technicians.collect { |au| [au.id, au.name] }
+    @agents.concat [['', t('none')]] + current_account_agents
+    watcher_agents = current_account_agents
 
     @groups = [[0, t('admin.observer_rules.assigned_group')], ['', t('none')]]
     @groups.concat current_account.groups.find(:all, :order=>'name' ).collect { |g| [g.id, g.name]}
+
+    status_group_ids = Account.current.account_status_groups_from_cache.collect(&:group_id).uniq
+    @internal_groups = [['', t('none')]]
+    @internal_groups.concat current_account.groups_from_cache.sort_by(&:name).collect {|c| [c.id, CGI.escapeHTML(c.name)] if status_group_ids.include?(c.id)}.compact
+    @internal_agents = [['', t('none')]] + current_account_agents
 
     @products = current_account.products.collect {|p| [p.id, p.name]}
 
@@ -136,6 +142,7 @@ module AutomationControllerMethods
         :condition => va_rules_controller? },
       { :name => -1, :value => "-----------------------" }
     ]
+    add_shared_ownership_actions(action_hash) if Account.current.features?(:shared_ownership) and automations_controller?
     append_integration_actions action_hash
     action_hash = action_hash.select{ |action| action.fetch(:condition, true) }
     add_custom_actions action_hash
@@ -190,6 +197,16 @@ module AutomationControllerMethods
                          :unique_action => true
       })
     end
+  end
+
+  def add_shared_ownership_actions action_hash
+    action_hash.push(
+      { :name => "internal_group_id", :value => t('ticket.assign_to_internal_group'), :domtype => 'dropdown',
+        :choices => @internal_groups, :unique_action => true  },
+      { :name => "internal_agent_id", :value => t('ticket.assign_to_internal_agent'), :domtype => 'dropdown',
+        :choices => @internal_agents, :unique_action => true  },
+      { :name => -1, :value => "-----------------------" }
+      )
   end
 
 

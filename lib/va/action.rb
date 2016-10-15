@@ -85,6 +85,16 @@ class Va::Action
     record_action(act_on, group)
   end
 
+  def internal_group_id(act_on)
+    ig_id = value.to_i
+    begin
+      internal_group = act_on.account.groups.find(ig_id)
+    rescue ActiveRecord::RecordNotFound
+    end
+    act_on.internal_group = internal_group if internal_group || value.empty?
+    record_action(act_on, internal_group)
+  end
+
   def responder_id(act_on)
     r_id = value.to_i
     begin
@@ -93,6 +103,26 @@ class Va::Action
     end
     act_on.responder = responder if responder || value.empty?
     record_action(act_on, responder)
+  end
+
+  def internal_agent_id(act_on)
+    ia_id = value.to_i
+    begin
+      internal_agent = (ia_id == EVENT_PERFORMER) ? (act_on.agent_performed?(doer) ? doer : nil) : act_on.account.users.find(value.to_i)
+    rescue ActiveRecord::RecordNotFound
+    end
+    act_on.internal_agent = internal_agent if internal_agent || value.empty?
+    record_action(act_on, internal_agent)
+  end
+
+  def product_id(act_on)
+    pr_id = value.to_i
+    begin
+      product = act_on.account.products.find(pr_id)
+    rescue ActiveRecord::RecordNotFound
+    end
+    act_on.product = product if product || value.empty?
+    record_action(act_on, product)
   end
 
   def add_comment(act_on)

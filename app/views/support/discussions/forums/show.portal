@@ -13,7 +13,7 @@
 		{{ forum.name|h}} <span class="item-count">{{ forum.topics_count }}</span>
 		<div class="pull-right align-right">{{ forum | follow_forum_button }}</div>
 	</div>
-	<p class="intro ellipsis" title="{{forum.description|h}}">
+	<p class="intro" title="{{forum.description|h}}">
 		{{ forum.description|h}}
 	</p>
 	

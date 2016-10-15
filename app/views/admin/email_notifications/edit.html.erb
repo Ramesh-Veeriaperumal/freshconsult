@@ -25,7 +25,10 @@
 			var lang = field.data('language')
 			if (jQuery('form#description_'+lang+'_form').valid()) {
 				var redr = jQuery('#description_'+lang).data('redactor')
-				redr.removeCursorImage();
+				if(redr){
+					redr.removeCursorImage();
+				}
+				
 				field.attr('disabled','disabled');
 				field.val(field.data('loadingText'));
 				var id = field.data('id')
@@ -133,9 +136,12 @@
 
 		});
 
-		setTimeout(function(){
- 			jQuery('#'+ current_tab ).data("redactor").focusOnCursor();
- 		}, 500)
+		//redactor is enable donly for desktop browsers
+		if(jQuery.browser.desktop){
+			setTimeout(function(){
+ 				jQuery('#'+ current_tab ).data("redactor").focusOnCursor();
+ 			}, 500);
+		}
 
 		jQuery('.link_placeholder').on("click", function(ev){
 		    ev.preventDefault();

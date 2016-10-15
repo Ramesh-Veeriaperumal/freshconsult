@@ -80,7 +80,7 @@
 			<div id="TicketPseudoReply" class="pseudo_reply">
 
 				<% if privilege?(:reply_ticket) && @ticket.show_reply? %>
-				<a href="" id="FwdButton" rel="note-button" data-note-type="reply" data-domhelper-name="reply-button" data-replyto-handle="<%= @ticket.twitter? ? @ticket.latest_twitter_comment_user : "" %>" ><%= t('ticket.reply_to')  %></a> / 
+				<a href="" id="FwdButton" rel="note-button" data-note-type="reply" data-domhelper-name="reply-button" data-replyto-handle="<%= @ticket.twitter? ? "#{@ticket.latest_twitter_comment_user} " : "" %>" data-user="<%= "@#{@ticket.requester.twitter_id} " %>" ><%= t('ticket.reply_to')  %></a> / 
 				<% end %>
         		<% if privilege?(:forward_ticket) %>
 			  		<a href="" id="FwdButton" rel="note-button" data-note-type="fwd" data-domhelper-name="fwd-button"><%= t('fwd_to') %></a> /

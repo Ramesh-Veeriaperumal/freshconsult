@@ -1,0 +1,33 @@
+
+page << "insertSolutionContent(\"#{escape_javascript(@sol_description)}\");"
+page << "jQuery('.request_panel:visible .attachments').show();"
+attachment_dom = ""
+if @sol_attach.present?
+  @sol_attach.each do |att|
+    attachment_dom << %(  <div class="item">
+                            <a href="#" class="removefile attachment-close" onclick="jQuery(this).parent().remove(); return false;" ></a>
+                            <a class="attachment-title" href="#"> #{CGI::escapeHTML(att.content_file_name)} </a>
+                            <input type="hidden" name="helpdesk_note[attachments][][resource]" value="#{att.id}"> 
+                        </div>)
+  end
+  if  current_account.launched?(:multifile_attachments)
+    page << "Helpdesk.MultipleFileUpload.sol_article_normal_attach(#{@sol_attach.to_json.html_safe},jQuery('.attachment-icon:visible').data('iconCount'))"
+  end
+end
+if @sol_cloud_files.present?
+  @sol_cloud_files.each do |cloud_file|
+    attachment_dom << %(  <div class="item">
+                            <a href="#" class="removefile attachment-close" onclick="jQuery(this).parent().remove(); return false;" ></a>
+                            <a class="attachment-title" href="#"> #{CGI::escapeHTML(cloud_file.filename)} </a>
+                            <input type="hidden" name="sol_articles_cloud_file_attachments[][resource]" value="#{cloud_file.id}"> 
+                          </div>)
+  end
+  if  current_account.launched?(:multifile_attachments)
+    page << "Helpdesk.MultipleFileUpload.sol_article_cloud_attach(#{@sol_cloud_files.to_json.html_safe},jQuery('.attachment-icon:visible').data('iconCount'))"
+  end
+end 
+page << "jQuery('.request_panel:visible .shared_attachment_list').append('#{escape_javascript(attachment_dom)}');" 
+page << 'jQuery(".request_panel:visible .a-count").html(jQuery(".shared_attachment_list").children(":visible").length);'
+
+
+

@@ -14,7 +14,7 @@
 				</li>
 			</ul>
 		</div>
-		<% if !Account.current.launched?(:activity_ui_disable) and Account.current.features_included?(:activity_revamp)%>
+		<% if !Account.current.launched?(:activity_ui_disable) and Account.current.features?(:activity_revamp)%>
 			<div id="activity_toggle" title='<%= t('ticket.show_activities_tooltip') %>'  data-show-title = '<%= t('ticket.show_activities_tooltip') %>' data-hide-title= '<%= t('ticket.hide_activities_tooltip') %>' data-keybinding="<%= shortcut('ticket_detail.show_activities_toggle') %>"
 				class="activity_toggle btn clearfix tooltip" data-toggle="button" data-placement = "below"
 				 data-highlight="true">
@@ -61,8 +61,8 @@
 						<% if privilege?(:reply_ticket)  && (@ticket.twitter? or @ticket.facebook? or @item.from_email.present? or @ticket.mobihelp? or @ticket.allow_ecommerce_reply?) %>
 							<a class="btn tooltip btn-collapse" title='<%= t('ticket.reply_to') %>' data-placement = "below" 
 					  		rel="note-button" data-note-type="reply" id="ReplyButton"  data-keybinding="<%= shortcut('ticket_detail.reply') %>" 
-					  		data-highlight="true" data-domhelper-name="reply-sticky-button"
-							  data-replyto-handle="<%= @ticket.twitter? ? default_twitter_body_val(@ticket) : "" %>" >
+					  		data-highlight="true" data-user='' data-domhelper-name="reply-sticky-button"
+							  data-replyto-handle="<%= @ticket.twitter? ? "#{default_twitter_body_val(@ticket)} " : "" %>" >
 					  		<span class="reply-inner"></span>
 				    		<%= t('ticket.reply_to')  %>
 				    	</a>

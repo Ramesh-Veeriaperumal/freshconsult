@@ -32,6 +32,7 @@ module MemcacheKeys
 
   ACCOUNT_STATUSES = "v2/ACCOUNT_STATUSES:%{account_id}"
 
+  ACCOUNT_STATUS_GROUPS = "v1/ACCOUNT_STATUS_GROUPS:%{account_id}"
 
   PORTAL_BY_URL = "v2/PORTAL_BY_URL:%{portal_url}"
 

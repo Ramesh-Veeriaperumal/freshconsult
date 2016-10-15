@@ -3,6 +3,10 @@ class Freshfone::Caller < ActiveRecord::Base
   self.primary_key = :id
   include Search::ElasticSearchIndex
   include Freshfone::CallerLookup
+
+  # Callbacks will be executed in the order in which they have been included. 
+  # Included rabbitmq callbacks at the last
+  include RabbitMq::Publisher
 	
   belongs_to_account
 
@@ -22,6 +26,14 @@ class Freshfone::Caller < ActiveRecord::Base
             :tailored_json => true,
             :only => [ :number, :account_id ]
             }).to_json
+  end
+  
+  def to_esv2_json
+    as_json({
+      root: false,
+      tailored_json: true,
+      only: [ :account_id, :number ]
+    }).to_json
   end
 
   CALLER_TYPE_HASH.each_pair do |k, v|

@@ -130,7 +130,7 @@ class Helpdesk::ArchiveTicketsController < ApplicationController
   end
 
   def activitiesv2
-    if !Account.current.launched?(:activity_ui_disable) and Account.current.features_included?(:activity_revamp) and request.format != "application/json" and ACTIVITIES_ENABLED
+    if !Account.current.launched?(:activity_ui_disable) and Account.current.features?(:activity_revamp) and request.format != "application/json" and ACTIVITIES_ENABLED
       type = :tkt_activity
       @activities_data = new_activities(params, @item, type, true)
       @total_activities  ||=  @activities_data[:total_count] 

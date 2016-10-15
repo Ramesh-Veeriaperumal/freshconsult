@@ -195,6 +195,7 @@ $community-types: problem #e65e63,
 			text-align: center;
 		}
 		.comm-item-main{
+			@include word-hyphernate;
 			.comm-item-title{
 				font-size: 15px;
 				font-weight: inherit;
@@ -500,7 +501,9 @@ $community-types: problem #e65e63,
 	border-bottom: solid 1px #EEE;
 	text-align: center;
 }
-
+.topic-list-form .comm-item-title{
+	@include margin-left(40px);
+}
 .comm-items{
 	.comm-item{
 		@include transition(padding .2s ease-out);

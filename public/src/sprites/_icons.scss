@@ -19,7 +19,7 @@
 
 
 .meta-os { @include icons-sprite('os-generic'); }
-@each $os in mac, windows, android, linux {
+@each $os in mac, windows, android, linux, osx, ios {
   .meta-os.os-#{$os} { @include icons-sprite('os-#{$os}'); }
 }
 .meta-browser { @include icons-sprite('browser-generic'); }
@@ -28,6 +28,10 @@
 }
 
 .meta-referrer { @include icons-sprite(meta-referrer); }
+
+.meta-location { @include icons-sprite('location-pin'); }
+
+.meta-ip-address {@include icons-sprite('ip-address'); }
 
 /* Importing chat availability icon */
 @import "cdn-ignored/sprites/chat/*.png";

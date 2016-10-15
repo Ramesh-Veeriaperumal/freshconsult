@@ -3,7 +3,7 @@ show_ajax_flash(page)
 
 if params[:showing] == 'activities'
     @total_activities =  @parent.activities_count
-    if !Account.current.launched?(:activity_ui_disable) and Account.current.features_included?(:activity_revamp)
+    if !Account.current.launched?(:activity_ui_disable) and Account.current.features?(:activity_revamp)
     	page.insert_html :bottom, 'all_activities', render(:partial => "helpdesk/tickets/show/custom_activity", :collection => @activities)
     else
     	page.insert_html :bottom, 'all_activities', render(:partial => "helpdesk/tickets/show/activity", :collection => @activities)
@@ -17,6 +17,9 @@ else
   unless @parent.fb_post.blank?
     page << "jQuery('#parent_post_id').val('')" 
     page << "jQuery('#fb_form_title').html('#{@parent.requester.name}')"
+    if @item.fb_post.blank?
+        page <<"jQuery.scrollTo('#noticeajax');"
+    end
   end
 
 	# Traffic cop related changes starts here

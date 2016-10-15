@@ -4,6 +4,7 @@ module ApiSolutions
     include Solution::LanguageControllerMethods
     include Helpdesk::TagMethods
     decorate_views(decorate_objects: [:folder_articles])
+    before_filter :validate_filter_params, only: [:folder_articles]
 
     def show
       @meta = @item.solution_article_meta
@@ -167,6 +168,10 @@ module ApiSolutions
             render_base_error(:method_not_allowed, 405, methods: 'GET, PUT', fired_method: 'POST')
           end
         end
+      end
+
+      def validate_filter_params
+        super(SolutionConstants::INDEX_FIELDS)
       end
 
       def load_meta(id)

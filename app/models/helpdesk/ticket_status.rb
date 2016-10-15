@@ -25,7 +25,7 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
   has_many :archived_tickets, :class_name => 'Helpdesk::ArchiveTicket', :foreign_key => "status", :primary_key => "status_id",
       :conditions => proc  { "archive_tickets.account_id = #{send(:account_id)}" }
 
-  has_many :status_groups, :foreign_key => :status_id, :dependent => :destroy
+  has_many :status_groups, :foreign_key => :status_id, :dependent => :destroy, :inverse_of => :status
   accepts_nested_attributes_for :status_groups, :allow_destroy => true
 
   before_update :mark_status_groups_for_destruction, :if => :deleted?
@@ -49,12 +49,9 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
   end
 
   def self.statuses_list(account)
-    if Account.current.features?(:shared_ownership)
-      statuses = account.ticket_status_values.preload(:status_groups)
-      status_group_info = group_ids_with_names(statuses)
-    else
-      statuses = account.ticket_status_values
-    end
+    statuses = account.ticket_status_values_from_cache
+    status_group_info = group_ids_with_names(statuses) if Account.current.features?(:shared_ownership)
+
     statuses.map{|status| 
       status_hash = {
         :status_id => status.status_id,
@@ -63,7 +60,7 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
         :stop_sla_timer => status.stop_sla_timer,
         :deleted => status.deleted
       }
-      status_hash[:group_ids] = status_group_info[status.id] if Account.current.features?(:shared_ownership)
+      status_hash[:group_ids] = status_group_info[status.status_id] if Account.current.features?(:shared_ownership)
       status_hash
     }
   end
@@ -123,9 +120,9 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
   end
 
   def group_ids=(g_ids=nil)
-    return if !Account.current.features?(:shared_ownership) or self.is_default
+    return if self.is_default or !Account.current.features?(:shared_ownership)
     @group_ids_array = g_ids.blank? ? [] : g_ids.map(&:to_i)
-    existing_group_ids = status_groups.map(&:group_id)
+    existing_group_ids = status_groups_from_cache.map(&:group_id)
 
     status_groups_array = []
     group_ids_to_add    = @group_ids_array - existing_group_ids
@@ -134,14 +131,15 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
     group_ids_to_add.each do |group_id|
       status_groups_array << build_status_groups_hash(group_id)
     end
-    status_groups.select{|sg| group_ids_to_delete.include?(sg.group_id)}.each do |status_group|
+
+    status_groups_from_cache.select{|sg| group_ids_to_delete.include?(sg.group_id)}.each do |status_group|
       status_groups_array << build_status_groups_hash(status_group.group_id, status_group.id)
     end
     self.status_groups_attributes = status_groups_array if status_groups_array.present?
   end
 
   def group_ids
-    @group_ids_array || self.status_groups.pluck(:group_id)
+    @group_ids_array || self.status_groups_from_cache.map(&:group_id)
   end
 
   def self.group_ids_with_names statuses
@@ -150,10 +148,10 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
     statuses.map do |status|
       group_info = []
       if !status.is_default?
-        status_group_ids = status.status_groups.map(&:group_id)
+        status_group_ids = status.status_groups_from_cache.map(&:group_id)
         groups.inject(group_info) {|sg, g| group_info << g.id if status_group_ids.include?(g.id)}
       end
-      status_group_info[status.id] = group_info
+      status_group_info[status.status_id] = group_info
     end
     status_group_info
   end
@@ -162,7 +160,7 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
     return unless Account.current.features?(:shared_ownership)
 
     status_groups_array = []
-    status_groups.each {|status_group|
+    status_groups_from_cache.each {|status_group|
       status_groups_array << build_status_groups_hash(status_group.group_id, status_group.id)
     }
     self.status_groups_attributes = status_groups_array if status_groups_array.present?
