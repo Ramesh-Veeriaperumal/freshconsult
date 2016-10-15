@@ -1023,7 +1023,7 @@ Redactor.prototype = {
 			fontWrap = $("<div />").css(this.opts.wrapFontSettings).html(content);
 		}
 		else{
-			if(!dirWrap.attr('style') || fontWrap.attr('style').indexOf('font-family') == -1){
+			if(!fontWrap.attr('style') || fontWrap.attr('style').indexOf('font-family') == -1){
 				fontWrap.css(this.opts.wrapFontSettings);
 			}
 		}
