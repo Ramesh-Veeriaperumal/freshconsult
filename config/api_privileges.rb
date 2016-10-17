@@ -48,4 +48,14 @@ Authority::Authorization::PrivilegeList.build do
   edit_ticket_properties do
     resource :"ember/ticket", only: [:bulk_update]
   end
+
+  view_time_entries do
+    resource :"ember/time_entry", :only => [:index, :create, :ticket_time_entries, :show]
+  end
+
+  edit_time_entries do
+    resource :"ember/time_entry", :only => [:update, :destroy, :toggle_timer], :owned_by =>
+      { :scoper => :time_sheets }
+  end
+
 end

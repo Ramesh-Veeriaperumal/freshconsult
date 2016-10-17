@@ -115,6 +115,8 @@ Helpkit::Application.routes.draw do
         post :reply, to: 'ember/conversations#reply'
         post :forward, to: 'ember/conversations#forward'
         get :latest_note
+        get :time_entries, to: 'ember/time_entries#ticket_time_entries'
+        post :time_entries, to: 'ember/time_entries#create'
       end
       # This alternate route is to handle limitation in ember route generation : api/_/tickets/:ticket_id/canned_responses?id=Number
       match '/canned_responses' => 'ember/tickets/canned_responses#show', via: :get
@@ -126,6 +128,13 @@ Helpkit::Application.routes.draw do
         get :watchers, to: 'ember/subscriptions#watchers'
       end
     end
+
+    resources :time_entries, controller: 'ember/time_entries', except: [:new, :edit, :create] do
+      member do
+        put :toggle_timer
+      end
+    end
+
     resources :contacts, controller: 'ember/contacts', except: [:new, :edit] do
       collection do
         put :bulk_delete
