@@ -130,17 +130,18 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def update_sentiment 
-    
-    if (self.account.customer_sentiment_enabled?) && (User.current != nil) && (User.current.language=="en")
 
-      if self.source == 3 || self.source == 7
-        self.sentiment = 0
-        self.save
-      else
-        user_id = User.current.id if User.current
-        Tickets::UpdateSentimentWorker.perform_async(
-              { :id => id }
-        )
+    if (self.account.customer_sentiment_enabled?) 
+      if (User.current == nil) || (User.current.language=="en")
+        if self.source == 3 || self.source == 7
+          self.sentiment = 0
+          self.save
+        else
+          user_id = User.current.id if User.current
+          Tickets::UpdateSentimentWorker.perform_async(
+                { :id => id }
+          )
+        end
       end
     end
   end
