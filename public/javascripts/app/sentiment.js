@@ -24,18 +24,23 @@ App.Sentiment = {
 		    if(jQuery('.cmi-plugin').length == 0){
 			    if(sentiment.last_note.note_id == undefined){
 			    	var desc_box = jQuery('.commentbox')[0];
-			    	jQuery(sentiment_tmpl).appendTo(desc_box);
-
 			    	predicted_sentiment = sentiment.ticket_sentiment;
-			    	_this.show_sentiment();
+
+			    	if(predicted_sentiment != undefined){
+			    		jQuery(sentiment_tmpl).appendTo(desc_box);
+			    		_this.show_sentiment();	
+			    	}
 			    }
 			    else{
 			    	if ( jQuery('#helpdesk_note_'+sentiment.last_note.note_id).length > 0 ){
 
 								var note_box = jQuery('#helpdesk_note_'+sentiment.last_note.note_id+' .commentbox')[0];
-								jQuery(sentiment_tmpl).appendTo(note_box);
 								predicted_sentiment = sentiment.last_note.note_sentiment;
-								_this.show_sentiment();
+								
+								if(predicted_sentiment != undefined){
+									jQuery(sentiment_tmpl).appendTo(note_box);
+									_this.show_sentiment();
+								}
 					}
 			    }
 			}
