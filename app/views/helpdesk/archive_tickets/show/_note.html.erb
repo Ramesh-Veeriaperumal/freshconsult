@@ -18,8 +18,13 @@ if current_account.custom_survey_enabled?
       # Removing this as Survey Remarks are archived and associations won't work.
       # Replacing it with instance methods in the model.      
       # ticket_info = note.custom_survey_remark.survey_result.ticket_info
-      ticket_info = note.survey_result.ticket_info
-      details = note.survey_result.note_details 
+      if note.is_a?(Helpdesk::Note)
+        ticket_info = note.custom_survey_remark.survey_result.ticket_info
+        details = note.custom_survey_remark.survey_result.note_details 
+      else
+        ticket_info = note.survey_result.ticket_info
+        details = note.survey_result.note_details
+      end
 
       unless details.blank?
         agent_name = details[:agent]
