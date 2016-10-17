@@ -59,7 +59,7 @@ class Helpdesk::Attachment < ActiveRecord::Base
     def create_for_3rd_party account, item, attached, i, content_id, mailgun=false
       limit = mailgun ? HelpdeskAttachable::MAILGUN_MAX_ATTACHMENT_SIZE : 
                         HelpdeskAttachable::MAX_ATTACHMENT_SIZE
-      if attached.class == Hash
+      if attached.is_a?(Hash)
         file_content = attached[:file_content] 
         original_filename = attached[:filename]
         content_type = attached[:content_type] 
@@ -73,7 +73,8 @@ class Helpdesk::Attachment < ActiveRecord::Base
         verify_attachment_size = true
       end
 
-      unless verify_attachment_size || item.validate_attachment_size({:content => file_content},{:attachment_limit => limit })
+      unless verify_attachment_size || item.validate_attachment_size(
+        {:content => file_content},{:attachment_limit => limit })
         filename = self.new.utf8_name original_filename,
                              "attachment-#{i+1}"
         attributes = { :content_file_name => filename,

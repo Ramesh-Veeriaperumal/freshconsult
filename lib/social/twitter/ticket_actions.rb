@@ -119,7 +119,7 @@ module Social::Twitter::TicketActions
       if twt.media?
         media_url_hash = construct_media_url_hash(account, item, twt, options[:oauth_credential])
         if media_url_hash.present?
-          media_url_hash[:photo].present? && media_url_hash[:photo].each do |photo_url_hash_key, photo_url_hash_val|
+          media_url_hash[:photo].each do |photo_url_hash_key, photo_url_hash_val|
               img_element = INLINE_IMAGE_HTML_ELEMENT % photo_url_hash_val
               tweet_body = tweet_body.gsub(photo_url_hash_key, img_element)
           end
