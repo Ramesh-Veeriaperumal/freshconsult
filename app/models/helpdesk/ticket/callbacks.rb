@@ -131,7 +131,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def update_sentiment 
     
-    if (self.account.customer_sentiment_enabled?) && (User.current.language=="en")
+    if (self.account.customer_sentiment_enabled?) && (User.current != nil) && (User.current.language=="en")
 
       if self.source == 3 || self.source == 7
         self.sentiment = 0
