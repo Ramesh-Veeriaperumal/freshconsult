@@ -535,7 +535,7 @@ li {
         /*@include padding-left(100%);*/
         cursor: pointer;
         overflow: hidden;
-        z-index: 10;
+        z-index: 5;
     }
 }
 
@@ -959,7 +959,7 @@ li {
             @include opacity(0);
             top: -20px;
             cursor: pointer;
-            z-index: 10;
+            z-index: 5;
         }
     }
     .info-data {

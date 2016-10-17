@@ -367,7 +367,7 @@ class Helpdesk::ConversationsController < ApplicationController
             FreshdeskErrorsMailer.error_email(nil, {:domain_name => current_account.full_domain}, nil, {
               :subject => "Maximum thread to, cc, bcc threshold crossed for Account :#{current_account.id} ", 
               :recipients => ["mail-alerts@freshdesk.com", "noc@freshdesk.com"],
-              :additional_info => {:info => "Please check spam activity in Ticket : @parent.id"}
+              :additional_info => {:info => "Please check spam activity in Ticket : #{@parent.id}"}
               })
           end
         end

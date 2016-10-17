@@ -19,7 +19,7 @@ class Search::V2::MergeTopicsController < ApplicationController
         es_params[:sort_direction]    = @sort_direction
         es_params[:size]              = @size
         es_params[:from]              = @offset
-      end.merge(ES_V2_BOOST_VALUES[@search_context])
+      end
     end
 
     def process_results

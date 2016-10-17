@@ -65,7 +65,6 @@ WorkflowMaxWidget.prototype = {
 
 	loadWorkflowmaxWidget: function(){
 		this.freshdeskWidget.request({
-			entity_name: "request",
 			accept_type: "application/xml",
 			method: "get", 
 			rest_url: "client.api/list"+this.auth_keys,
@@ -139,7 +138,6 @@ WorkflowMaxWidget.prototype = {
 			//Taking tasklist with the job id
 			jQuery('#workflowmaxNewJob').hide();
 			this.freshdeskWidget.request({
-			entity_name: "request",
 			accept_type: "application/xml",
 			method: "get", 
 			rest_url: "job.api/get/"+job_id+this.auth_keys,
@@ -152,7 +150,6 @@ WorkflowMaxWidget.prototype = {
 		jQuery('#workflow-max-timeentry-staff').addClass('header-spinner')
 
 		this.freshdeskWidget.request({
-		entity_name: "request",
 		accept_type: "application/xml",
 		method: "get", 
 		rest_url: "job.api/staff/"+staff_id+this.auth_keys,
@@ -220,7 +217,6 @@ WorkflowMaxWidget.prototype = {
 			{
 				this.showTimeEntryProgressStatus("Pushing");
 				this.freshdeskWidget.request({
-					entity_name: "request",
 					accept_type: "application/xml",
 					method: "get", 
 					rest_url: "job.api/get/"+$("workflow-max-timeentry-jobs").value+this.auth_keys,
@@ -371,7 +367,6 @@ WorkflowMaxWidget.prototype = {
 	loadClientInfoFromJob:function(job_id){
 		var obj = this;
 		this.freshdeskWidget.request({
-			entity_name: "request",
 			accept_type: "application/xml",
 			method: "get", 
 			rest_url: "job.api/get/"+job_id+this.auth_keys,
@@ -675,7 +670,6 @@ WorkflowMaxWidget.prototype = {
 		
 		//Taking Stafflist with the client id
 		this.freshdeskWidget.request({
-		entity_name: "request",
 		accept_type: "application/xml",
 		method: "get", 
 		rest_url: "job.api/client/"+client_id+this.auth_keys,
@@ -731,7 +725,6 @@ WorkflowMaxWidget.prototype = {
 		else {
 			//listing all Staffs
 			this.freshdeskWidget.request({
-				entity_name: "request",
 				accept_type: "application/xml",
 				method: "get", 
 				rest_url: "staff.api/list"+this.auth_keys,
@@ -860,7 +853,6 @@ WorkflowMaxWidget.prototype = {
 			else
 			{
 				this.freshdeskWidget.request({
-				entity_name: "request",
 				accept_type: "application/xml",
 				method: "get", 
 				rest_url: "/task.api/list"+this.auth_keys,

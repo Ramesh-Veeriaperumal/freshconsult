@@ -114,7 +114,7 @@ class Search::V2::SpotlightController < ApplicationController
         
         es_params[:size]  = @size
         es_params[:from]  = @offset
-      end.merge(ES_V2_BOOST_VALUES[@search_context])
+      end
     end
 
     def process_results
@@ -123,7 +123,7 @@ class Search::V2::SpotlightController < ApplicationController
       end
 
       @result_json[:current_page] = @current_page
-      @total_pages                = (@es_results['hits']['total'].to_f / @size).ceil
+      @total_pages                = (@result_set.total_entries.to_f / @size).ceil
       @search_results             = (@search_results.presence || []) + @result_set
 
       super

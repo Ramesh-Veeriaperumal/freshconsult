@@ -1903,6 +1903,10 @@ p.info-text{
 	@include text-align(left);
 }
 
+.custom_twipsy {
+	width: 280px;
+	text-align: left;
+}
 .strikethrough {
 	text-decoration: line-through;
 }

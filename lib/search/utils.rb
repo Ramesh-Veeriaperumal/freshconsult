@@ -48,7 +48,16 @@ class Search::Utils
     merge_subject_exact:              'mergeSubjectExact',
     merge_requester:                  'mergeRequester',
     merge_topic_search:               'mergeTopicSearch',
-    merge_topic_search_exact:         'mergeTopicSearchExact'
+    merge_topic_search_exact:         'mergeTopicSearchExact',
+    mobile_suggest_tickets:           'mobileSuggestTickets',
+    mobile_suggest_customers:         'mobileSuggestCustomers',
+    mobile_suggest_solutions:         'mobileSuggestSolutions',
+    mobile_suggest_topics:            'mobileSuggestTopics',
+    mobile_suggest_global:            'mobileSuggestGlobal',
+    ff_contact_by_props:              'freshfoneContactSearch',
+    ff_contact_by_phone:              'freshfoneContactByNumbers',
+    ff_contact_by_caller:             'freshfoneContactByCaller',
+    ff_contact_by_numfields:          'freshfoneContactByNumberfields'
   }
 
   # _Note_: Parent ID to be used for routing.

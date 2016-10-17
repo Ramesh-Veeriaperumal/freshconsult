@@ -24,6 +24,8 @@ class ReportExportMailer < ActionMailer::Base
     @report_name = options[:filter_name] ? "#{@report_type} report - #{options[:filter_name]}" : "#{@report_type}"
     @portal_name = options[:portal_name]
 
+    add_log_info 'bi_report_export'
+    
     mail(headers) do |part|
       part.text { render "bi_report_export.plain" }
       part.html { render "bi_report_export.html" }
@@ -40,6 +42,8 @@ class ReportExportMailer < ActionMailer::Base
     @filter_to_display = filter_to_display?(options[:report_type], options[:ticket_export])
     @portal_name = options[:portal_name]
 
+    add_log_info 'no_report_data'
+    
     mail(headers) do |part|
       part.text { render "no_report_data.plain" }
       part.html { render "no_report_data.html" }
@@ -55,6 +59,8 @@ class ReportExportMailer < ActionMailer::Base
     @report_type = report_name(options[:report_type])
     @filter_name = options[:filter_name]
     @portal_name = options[:portal_name]
+
+    add_log_info 'exceeds_file_size_limit'
 
     mail(headers) do |part|
       part.text { render "exceeds_file_size_limit.plain" }
@@ -121,6 +127,10 @@ class ReportExportMailer < ActionMailer::Base
     file_name_arr.pop #removing secure random code
     file_name = file_name_arr.first.gsub(/_+/,"_").slice(0,235)
     "#{file_name}-#{file_name_arr[1..-1].join("-")}.#{format}"
+  end
+
+  def add_log_info action
+    HelpdeskReports::Logger.log("export : triggering email : #{action} : account_id: #{@user.account.id}, agent_id: #{@user.id}, agent_email: #{@user.email}")
   end
 
 end

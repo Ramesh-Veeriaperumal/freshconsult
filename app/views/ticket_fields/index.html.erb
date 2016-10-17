@@ -20,7 +20,8 @@
             <li class="field tooltip" data-type="<%="#{details[:dom_type]}"%>" 
                 data-field-type="<%="#{field}"%>" data-fresh="true" 
                 data-drag-info="<%=t("custom_fields.#{details[:dom_type]}").html_safe %>"> 
-                <%= content_tag(:span, '', :class => font_class(details[:dom_type],nil,'dom-icon tooltip'), :title => t("custom_fields.#{details[:dom_type]}")) %> 
+                <% font_name = (details[:dom_type] == :'paragraph') ? "default-format" : details[:dom_type] %>
+                <%= content_tag(:span, '', :class => font_class(font_name,nil,'dom-icon tooltip'), :title => t("custom_fields.#{details[:dom_type]}")) %> 
             </li>
           <% end %>
         </ul> 

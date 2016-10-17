@@ -81,4 +81,16 @@ module EmailHelper
   def reply_to_forward(all_keys)
     all_keys.present? && all_keys.any? { |key| key.to_s.include?("forward.freshdesk.com") }
   end
+
+  def email_processing_log(msg, envelope_to_address = nil)
+    log_msg = msg
+    if Account.current.present?
+      log_msg += ", account_id: #{Account.current.id}"
+    end
+    if envelope_to_address.present?
+      log_msg += ", envelope_to: #{envelope_to_address}"
+    end
+    Rails.logger.info("#{log_msg}")
+  end 
+
 end

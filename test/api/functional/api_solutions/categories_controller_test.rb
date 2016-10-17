@@ -343,21 +343,21 @@ module ApiSolutions
     def test_index
       get :index, controller_params
       assert_response 200
-      categories = @account.solution_categories.where('language_id = ?',@account.language_object.id)
+      categories = @account.reload.solution_categories.joins(:solution_category_meta, {solution_category_meta: :portal_solution_categories}).where('solution_categories.language_id = ?',@account.language_object.id).order('portal_solution_categories.position').select{|x| x unless x.parent.is_default }
       pattern = categories.map { |category| solution_category_pattern(category) }
-      match_json(pattern.ordered!)
+      match_json(pattern)
     end
 
     def test_index_with_language_param
-      get :index, construct_params(language: @account.language)
+      get :index, controller_params(language: @account.language)
       assert_response 200
-      categories = @account.solution_categories.where('language_id = ?',@account.language_object.id)
+      categories = @account.reload.solution_categories.joins(:solution_category_meta, {solution_category_meta: :portal_solution_categories}).where('solution_categories.language_id = ?',@account.language_object.id).order('portal_solution_categories.position').select{|x| x unless x.parent.is_default }
       pattern = categories.map { |category| solution_category_pattern(category) }
-      match_json(pattern.ordered!)
+      match_json(pattern)
     end
 
     def test_index_with_invalid_language_param
-      get :index, construct_params(language: 'aaa')
+      get :index, controller_params(language: 'aaa')
       assert_response 404
       match_json(request_error_pattern(:language_not_allowed, code: 'aaa', list: (@account.supported_languages + [@account.language]).sort.join(', ')))
     end
@@ -369,6 +369,30 @@ module ApiSolutions
       put :update, construct_params({ id: sample_category_meta.id }, params_hash)
       assert_response 400
       match_json([bad_request_error_pattern('language', :invalid_field)])
+    end
+
+    # default index params test
+    def test_index_with_invalid_page_and_per_page
+      get :index, controller_params(page: 'aaa', per_page: 'aaa')
+      assert_response 400
+      match_json([bad_request_error_pattern('page', :datatype_mismatch, expected_data_type: 'Positive Integer'),
+        bad_request_error_pattern('per_page', :per_page_invalid, max_value: 100)])
+    end
+
+    # Position tests
+    def test_index_for_position
+      a = @account.portal_solution_categories.first
+      b = @account.portal_solution_categories.last
+      pos = a.position
+      a.position = b.position
+      b.position = pos
+      a.save
+      b.save
+      get :index, controller_params
+      assert_response 200
+      categories = @account.reload.solution_categories.joins(:solution_category_meta, {solution_category_meta: :portal_solution_categories}).where('solution_categories.language_id = ?',@account.language_object.id).order('portal_solution_categories.position').select{|x| x unless x.parent.is_default }
+      pattern = categories.map { |category| solution_category_pattern(category) }
+      match_json(pattern)
     end
   end
 end

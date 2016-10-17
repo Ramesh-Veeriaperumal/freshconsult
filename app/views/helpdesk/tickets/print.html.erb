@@ -56,7 +56,11 @@
 </div>
   <span class="seperator"></span>
   <div>
-     by <strong><%= h(@ticket.requester.display_name) %></strong> on <strong><%= formated_date(@ticket.created_at)  %></strong> via <strong><%= h(@ticket.source_name) %></strong>
+    <% if @ticket.outbound_email? %>
+      to <strong><%= h(@ticket.requester.display_name) %></strong> on <strong><%= formated_date(@ticket.created_at)  %></strong> via <strong><%= h(@ticket.source_name) %></strong>
+    <% else %>
+      by <strong><%= h(@ticket.requester.display_name) %></strong> on <strong><%= formated_date(@ticket.created_at)  %></strong> via <strong><%= h(@ticket.source_name) %></strong>
+    <% end %>
   </div>  
 
   <h3><%= h(@ticket.subject) %></h3>

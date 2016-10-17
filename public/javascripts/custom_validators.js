@@ -327,8 +327,28 @@ $.validator.addClassRules("trim_spaces", { trim_spaces: true });
 
 // Redactor validator
 $.validator.addMethod("required_redactor", function(value, element, param) {
-  return $(element).data('redactor').isNotEmpty();
+  //redactor is enabled for desktop browsers for others check for value and return accordingly
+  if(jQuery.browser.desktop) {
+    var isEmpty = false;
+
+    if ($(element).data('redactor')) {
+      isEmpty = $(element).data('redactor').isNotEmpty();
+    } else if($(element).data('froala.editor')){
+      isEmpty = !jQuery('.required_redactor').data('froala.editor').core.isEmpty();
+    }
+    
+    return isEmpty;
+  } else {
+    var is_valid = true;
+    
+    if(value == null || value == ""){
+      is_valid = false;
+    }
+    
+    return is_valid;
+  }
 }, $.validator.messages.required)
+
 $.validator.addClassRules("required_redactor", { required_redactor : true });
 
   // Color hex validation rules

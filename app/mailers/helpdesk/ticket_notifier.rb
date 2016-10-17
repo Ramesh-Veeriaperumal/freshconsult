@@ -12,14 +12,16 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
   
   layout "email_font"
 
-  def self.notify_by_email(notification_type, ticket, comment = nil)
+  def self.notify_by_email(notification_type, ticket, comment = nil, opts = {})
+    internal_notification = opts[:internal_notification]
     e_notification = ticket.account.email_notifications.find_by_notification_type(notification_type)
     if e_notification.agent_notification?
       if (notification_type == EmailNotification::NEW_TICKET)
         language_group_agent_notification(e_notification.agents, e_notification, ticket, comment)
       else  
-        i_receips = internal_receips(e_notification, ticket)
-        deliver_agent_notification(ticket.responder, i_receips, e_notification, ticket, comment)
+        i_receips = internal_receips(e_notification, ticket, internal_notification)
+        agent = internal_notification ? ticket.internal_agent : ticket.responder
+        deliver_agent_notification(agent, i_receips, e_notification, ticket, comment, nil, opts)
       end 
     end
     
@@ -57,9 +59,10 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       language_group_agent_notification(agents_list, email_notification, ticket, comment)
   end
 
-  def self.deliver_agent_notification(agent, receips, e_notification, ticket, comment, survey_id = nil)
-      agent_template = e_notification.get_agent_template(agent)
-      agent_plain_template = e_notification.get_agent_plain_template(agent)
+  def self.deliver_agent_notification(agent, receips, e_notification, ticket, comment, survey_id = nil, opts = {})
+      internal_notification = opts[:internal_notification]
+      agent_template = internal_notification ? e_notification.get_internal_agent_template(agent) : e_notification.get_agent_template(agent)
+      agent_plain_template = internal_notification ? e_notification.get_internal_agent_plain_template(agent) : e_notification.get_agent_plain_template(agent)
       a_template = Liquid::Template.parse(agent_template.last) 
       a_plain_template = Liquid::Template.parse(agent_plain_template.gsub("{{ticket.description}}", "{{ticket.description_text}}"))
       a_s_template = Liquid::Template.parse(agent_template.first) 
@@ -160,7 +163,6 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
        
        refined_receipts=get_email_array i_receips
        left_out_ccs=cc_emails - refined_receipts
-             
       deliver_requester_notification(users.first, i_receips, e_notification, ticket, comment,false,left_out_ccs,i_receips)
     end
     
@@ -173,14 +175,13 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     deliver_requester_notification(nil, non_db_user_ccs.join(", "), e_notification, ticket, comment, true,left_out_ccs,non_db_user_ccs) unless non_db_user_ccs.empty?
   end
 
-  def self.internal_receips(e_notification, ticket)
+  def self.internal_receips(e_notification, ticket, internal_notification)
     if(e_notification.notification_type == EmailNotification::TICKET_ASSIGNED_TO_GROUP)
-      unless ticket.group.nil?
-        to_ret = ticket.group.agent_emails
-        return to_ret unless to_ret.empty?
-      end
+      group = internal_notification ? ticket.internal_group : ticket.group
+      group.agent_emails if group.present? and !group.agent_emails.empty?
     else
-      ticket.responder.email unless ticket.responder.nil?
+      agent = internal_notification ? ticket.internal_agent : ticket.responder
+      agent.email if agent.present?
     end
   end
 

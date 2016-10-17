@@ -2,6 +2,8 @@
   <%= stylesheet_link_tag_with_rtl :'cdn/autosuggest_inquisitor' %>
   <%= javascript_include_tag :'cdn/conditional' %>
   <%= javascript_tag do %>
+    var groupToStatusText = "<%= I18n.t('admin.observer_rules.filter_jsinit.internal_group_actions') %>";
+    var agentToGroupText = "<%= I18n.t('admin.observer_rules.filter_jsinit.internal_agent_actions') %>";
     // Condition Parsing 
     // This template contains the dom population information 
     var conditional_dom = function(filter, id, compName, initFeed, val, classname, _dataAttr){

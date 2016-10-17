@@ -83,7 +83,7 @@ class Support::SearchV2::SpotlightController < SupportController
 
         es_params[:size] = @size
         es_params[:from] = @offset
-      end.merge(ES_V2_BOOST_VALUES[@search_context])
+      end
     end
 
     # Check tweaking user_visibility in article.rb

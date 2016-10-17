@@ -37,7 +37,7 @@ $.validator.addClassRules("password_confirmation", { password_confirmation : tru
 
 $.validator.addMethod("select_atleast_one", function(value,element,options){
   return $('[data-select-one]:checked').length > 0 || $('textarea[data-select-one]').val().length > 0;
- }, "Select atleast one option.");
+ }, "Select at least one option.");
 
 $.validator.addClassRules("select_atleast_one", { select_atleast_one: ['.select_atleast_one'] });
 

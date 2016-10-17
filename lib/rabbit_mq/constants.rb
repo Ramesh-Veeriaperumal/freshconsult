@@ -40,6 +40,7 @@ module RabbitMq::Constants
     [  'time_sheet',          CRUD_KEYS_BY_TOKEN[:all],                 'time_sheet'      ],
     [  'tag',                 CRUD_KEYS_BY_TOKEN[:all],                 'tag'             ],
     [  'tag_use',             CRUD_KEYS_BY_TOKEN[:create_and_destroy],  'tag_use'         ],
+    [  'caller',              CRUD_KEYS_BY_TOKEN[:all],                 'caller'          ],
     [  'account',             CRUD_KEYS_BY_TOKEN[:destroy],             'account'         ],
     [  "cti_call",            CRUD_KEYS_BY_TOKEN[:create],                  "cti_call"   ]
   ]
@@ -78,6 +79,7 @@ module RabbitMq::Constants
   RMQ_SEARCH_TAG_USE_KEY        = "1"
   RMQ_SEARCH_COMPANY_KEY        = "1"
   RMQ_SEARCH_USER_KEY           = "1"
+  RMQ_SEARCH_CALLER_KEY         = "1"
 
   # Manual publish keys - common for both activities and reports
   RMQ_GENERIC_TICKET_KEY      = "*.1.*.*.1.#"  # Position 0 -> auto_refresh, 2 -> reports 4 -> search 6-> es count 8-> activities

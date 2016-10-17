@@ -64,7 +64,7 @@ module Dashboard::UtilMethods
   private 
 
   def group_by_values
-    (@group_by == "responder_id") ? agents_list : groups_list
+    (@report_type == "responder_id") ? agents_list : groups_list
   end
 
   def ticket_types_list
@@ -142,7 +142,7 @@ module Dashboard::UtilMethods
   #Check if the agent belongs to the selected group or not
   #Check if group has the selected agent or not
   def valid_row?(group_by_id)
-    if (@group_by == "group_id" and @responder_id.present?) or (@group_by == "responder_id" and @group_id.present?)
+    if (@report_type == "group_id" and @responder_id.present?) or (@report_type == "responder_id" and @group_id.present?)
       @group_by_list.include?(group_by_id)
     else
       true
@@ -150,9 +150,9 @@ module Dashboard::UtilMethods
   end
 
   def build_group_by_list
-    @group_by_list = if @group_by == "group_id" and @responder_id.present?
+    @group_by_list = if @report_type == "group_id" and @responder_id.present?
        Account.current.agent_groups.where("user_id in (?)", @responder_id).pluck(:group_id).uniq
-    elsif @group_by == "responder_id" and @group_id.present?
+    elsif @report_type == "responder_id" and @group_id.present?
       Account.current.agent_groups.where("group_id in (?)", @group_id).pluck(:user_id).uniq
     else
       []

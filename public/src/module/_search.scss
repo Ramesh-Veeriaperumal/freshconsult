@@ -140,6 +140,7 @@
 				width:100%;
 				vertical-align:top;
 				.search-result-content{
+					@include word-hyphernate;
 					@include padding-left(50px);
 					@include margin-right($searchResultInfoWidth);
 					@include float(left);

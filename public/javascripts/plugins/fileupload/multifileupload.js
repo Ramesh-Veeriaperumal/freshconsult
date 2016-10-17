@@ -453,6 +453,27 @@ Helpdesk = Helpdesk || {};
                 files: data,
             }).appendTo(".multiple-filelist-" + count);
         },
+        sol_article_normal_attach: function(data,count){
+            $("#attach-limt-" + count).hide();
+            $("#attachment-template").tmpl({
+                render_type: "existing",
+                type: "attachment",
+                files: data,
+                softdelete:false,
+                template:false, 
+            }).appendTo(".multiple-filelist-" + count);
+        },
+        sol_article_cloud_attach: function(data,count){
+            $("#attach-limt-" + count).hide();
+            $("#attachment-template").tmpl({
+                render_type: "existing",
+                type: "cloud",
+                sol_cloud: true,
+                files: data,
+                softdelete:false,
+                template:false, 
+            }).appendTo(".multiple-filelist-" + count);
+        },
         // --------------- PJAX configurations ------
         PjaxSet: false,
         PjaxOn: function() {

@@ -110,4 +110,12 @@ module Mobile::MobileHelperMethods
         populate_private
       end 
     end
+
+    def shared_ownership_supported?
+      device_desc = JSON.parse(request.env["HTTP_REQUEST_ID"])["device_desc"]
+      app_version = Gem::Version.new(JSON.parse(request.env["HTTP_REQUEST_ID"])["app_version"])
+      devices = ["iPod touch", "iPad", "iPhone"]
+      app_version <= Gem::Version.new('4.4') && devices.include?(device_desc) ? false : true
+    end
+
 end

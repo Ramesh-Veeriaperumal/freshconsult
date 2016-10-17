@@ -97,8 +97,8 @@ module Search::Filters::QueryHelper
 
         if cond_field.eql?('any_agent_id') and field_values.include?('-1') and !any_group_condition.empty?
           field_values.delete('-1')
-          es_wrapper.push(handle_field("unassigned_any_agent", any_group_values))
-          next
+          es_wrapper[:should].push(handle_field("unassigned_any_agent", any_group_values))
+          next if field_values.empty?
         end
 
         es_wrapper.push(handle_field(cond_field, field_values)) if cond_field.present?

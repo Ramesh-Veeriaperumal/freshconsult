@@ -67,7 +67,8 @@ class Helpdesk::TicketField < ActiveRecord::Base
 
   before_validation :populate_choices, :clear_ticket_type_cache
 
-  before_destroy :delete_from_ticket_filter
+  before_destroy :update_ticket_filter
+
   before_save :set_portal_edit
 
   before_update :set_internal_field_values
@@ -76,31 +77,36 @@ class Helpdesk::TicketField < ActiveRecord::Base
   acts_as_list :scope => 'account_id = #{account_id}'
 
   after_commit :clear_cache
-  
-  def delete_from_ticket_filter
-    if is_dropdown_field?
-      Account.current.ticket_filters.each do |filter|
-        con_arr = filter.data[:data_hash]
-        unless  con_arr.blank?
-          con_arr.each do |condition|
-            con_arr.delete(condition) if condition["condition"].eql?("flexifields.#{flexifield_def_entry.flexifield_name}")
-          end
-          filter.query_hash = con_arr
-          filter.save
-        end
-      end
+
+  def update_ticket_filter
+    return unless dropdown_field? or field_type == "default_internal_group"
+    # 1. when the custom dropdown is being deleted, delete conditions associated with the field in ticket filters
+    # 2. when the shared_ownership feature is disabled, shared_ownership fields will be deleted.
+    #     Change the conditions with internal/any type to primary. Ex: any_agent_id to responder_id
+    conditions = case field_type
+    when "default_internal_group"
+      [
+        {:condition_key => TicketConstants::INTERNAL_GROUP_ID,  :replace_key => "group_id"},
+        {:condition_key => TicketConstants::ANY_GROUP_ID,       :replace_key => "group_id"},
+        {:condition_key => TicketConstants::INTERNAL_AGENT_ID,  :replace_key => "responder_id"},
+        {:condition_key => TicketConstants::ANY_AGENT_ID,       :replace_key => "responder_id"}
+      ]
+    else
+      [{:condition_key => "flexifields.#{flexifield_def_entry.flexifield_name}"}]
     end
+    Helpdesk::TicketFields::UpdateTicketFilter.perform_async({:conditions => conditions})
   end
-  
-  def is_dropdown_field?
-    field_type.include?("dropdown")
+
+  def dropdown_field?
+    self.field_type.include?("dropdown")
   end
    
   validates_presence_of :name
   validates_uniqueness_of :name, :scope => :account_id
+
   before_create :populate_label
-  
-  
+
+
   scope :custom_fields, :conditions => ["flexifield_def_entry_id is not null"]
   scope :custom_dropdown_fields, :conditions => ["flexifield_def_entry_id is not null and field_type = 'custom_dropdown'"]
   scope :customer_visible, :conditions => { :visible_in_portal => true }
@@ -162,6 +168,11 @@ class Helpdesk::TicketField < ActiveRecord::Base
     field_type == "nested_field"
   end
 
+  def self.default_field_order
+    Account.current.features?(:shared_ownership) ? 
+      TicketConstants::SHARED_DEFAULT_FIELDS_ORDER : TicketConstants::DEFAULT_FIELDS_ORDER
+  end
+
   # Used by API V2
   def formatted_nested_choices
     picklist_values.collect { |c| 
@@ -217,7 +228,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
       ]
     }
   end
-  
+
   def dropdown_choices_with_name
     level1_picklist_values.collect { |c| [c.value, c.value] }
   end
@@ -340,7 +351,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
       end
       selected_text
   end
-  
+
   def to_xml(options = {})
     options[:indent] ||= 2
     xml = options[:builder] ||= ::Builder::XmlMarkup.new(:indent => options[:indent])
@@ -381,7 +392,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
       end
     end
   end
-  
+
 
   #Use as_json instead of to_json for future support Rails3 refer:(http://jonathanjulian.com/2010/04/rails-to_json-or-as_json/)
   def as_json(options={})
@@ -439,7 +450,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
     #   return false
     # end
   end
-  
+
   protected
 
     def group_agents(ticket, internal_group = false)

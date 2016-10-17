@@ -27,7 +27,7 @@ module Search
           # _Note_: If Typhoeus is not a preferred client, can change here alone.
           #
           def es_request
-            request_to_es = Typhoeus::Request.new(@path, method: @method, body: @payload, headers: { 'X-Request-Id' => @uuid })
+            request_to_es = Typhoeus::Request.new(@path, method: @method, body: @payload, headers: { 'X-Request-Id' => @uuid, 'Connection' => 'keep-alive' })
             attach_callbacks(request_to_es)
 
             logger.log_request(
@@ -73,9 +73,11 @@ module Search
             # elsif response_from_es.code == 403
               # FORBIDDEN
               # raise Errors::DefaultSearchException.new(response_from_es.body)
-            # elsif response_from_es.code == 404
+            elsif response_from_es.code == 404
               # NOT_FOUND
-              # raise Errors::DefaultSearchException.new(response_from_es.body)
+              unless(response_from_es.request.original_options[:method].eql?(:delete))
+                raise Errors::DefaultSearchException.new(response_from_es.body)
+              end
             # elsif response_from_es.code == 405
               # METHOD_NOT_ALLOWED
               # raise Errors::DefaultSearchException.new(response_from_es.body)

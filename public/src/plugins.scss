@@ -1,6 +1,9 @@
 // Styles for plugins used in freshdesk
 @import "settings/settings";
 
+//prism styles
+@import "plugins/prism";
+
 @import "plugins/autocomplete";
 @import "plugins/jquery-ui";
 @import "plugins/gritter";
@@ -13,10 +16,6 @@
 @import "plugins/autosuggester";
 @import "plugins/360player";
 @import "plugins/codemirror";
-
-
-//SyntaxHighlighter styles
-@import "plugins/shcore_default";
 
 //Dashboard page plugins
 @import "page/realtime_dashboard/gridstack";
