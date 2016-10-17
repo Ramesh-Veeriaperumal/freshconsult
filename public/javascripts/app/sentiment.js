@@ -36,7 +36,7 @@ App.Sentiment = {
 
 								var note_box = jQuery('#helpdesk_note_'+sentiment.last_note.note_id+' .commentbox')[0];
 								predicted_sentiment = sentiment.last_note.note_sentiment;
-								
+
 								if(predicted_sentiment != undefined){
 									jQuery(sentiment_tmpl).appendTo(note_box);
 									_this.show_sentiment();
@@ -59,9 +59,16 @@ App.Sentiment = {
 			
 		},
 		change_sentiment : function(evt){
+			var _this = this;
 			var target = evt.target;
 
-			var changed_senti = target.closest('a').classList[1];
+			changed_senti = target.closest('a').classList[1];
+
+			//change immediate parent sentiment temp fix
+			kk = jQuery('.sentiment').last()[0];
+			kk.removeClassName(kk.classList[1]);
+			kk.addClassName(_this.get_sentiment_num(changed_senti));
+			kk.src = _this.get_source(_this.get_sentiment_num(changed_senti));
 
 			m1 = jQuery('.cmi-plugin .note_mood');
 			m1.closest('li').removeClass('selected');
@@ -206,6 +213,19 @@ App.Sentiment = {
 			if(sentiment == 2) return 'Very Happy';
 			if(sentiment == 0) return 'Neutral';
 
+		},
+		get_source : function(sentiment) {
+
+			if (sentiment == -2)
+		      return "http://imgh.us/emo-angry.svg"
+		    else if (sentiment == -1)
+		      return "http://imgh.us/emo-sad.svg"
+		    else if (sentiment == 1)
+		      return "http://imgh.us/emo-happy.svg"
+		    else if (sentiment == 2)
+		      return "http://imgh.us/emo-veryhappy.svg"
+		    else 
+		      return "http://imgh.us/emo-neutral.svg"   
 		}
 	},
 
