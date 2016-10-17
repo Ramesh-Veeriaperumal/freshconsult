@@ -47,7 +47,7 @@ module MetaHelperMethods
   end
 
   def browser_shorthand(browser)
-    ['chrome', 'firefox', 'internet-explorer', 'safari', 'opera'].each do |v|
+    ['chrome', 'firefox', 'internet-explorer', 'safari', 'opera', 'ie', 'edge'].each do |v|
       return v if browser.downcase.gsub(' ','-').include?(v)
     end
   end

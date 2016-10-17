@@ -23,7 +23,7 @@
   .meta-os.os-#{$os} { @include icons-sprite('os-#{$os}'); }
 }
 .meta-browser { @include icons-sprite('browser-generic'); }
-@each $browser in chrome, firefox, internet-explorer, opera, safari {
+@each $browser in chrome, firefox, internet-explorer, opera, safari, ie, edge {
   .meta-browser.browser-#{$browser} { @include icons-sprite('browser-#{$browser}'); }
 }
 
