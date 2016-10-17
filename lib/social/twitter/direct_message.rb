@@ -45,7 +45,7 @@ class Social::Twitter::DirectMessage
     action_data = extract_action_data(twt_handle)
     default_stream = twt_handle.default_stream
     action_data.merge!(:stream_id => default_stream.id) if default_stream
-    action_data.merge!(:media_url_hash => construct_media_url_hash(account, twt, oauth_credential)) if twt.media?
+    action_data.merge!(:oauth_credential => oauth_credential)
     if last_reply && (Time.zone.now < (last_reply.created_at + twt_handle.dm_thread_time.seconds))
       add_as_note(twt, twt_handle, :dm, previous_ticket, user,  action_data)
     else

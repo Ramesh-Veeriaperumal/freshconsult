@@ -101,7 +101,7 @@ module Social::Util
     }
   end
 
-  def construct_media_url_hash(account, tweet, oauth_credential)
+  def construct_media_url_hash(account, item, tweet, oauth_credential)
     media_url_hash = {}
     begin
       media_array = tweet.media
@@ -111,15 +111,17 @@ module Social::Util
           url = media.media_url_https.to_s
           headers = SimpleOAuth::Header.new(:GET, url, {}, oauth_credential)
           file_name = url[url.rindex('/')+1, url.length]
-          image_attachment = account.attachments.build({
-              :description      => "public",
-              :content          => open(url, "Authorization" => headers.to_s),
-              :attachable_type  => "Ticket image Upload",
-              :content_file_name => file_name,
-              :content_content_type => get_content_type(file_name)
-            })
-          image_attachment.save
-          photo_url_hash[media.url.to_s] = image_attachment.content.url
+          options = {
+            :file_content => open(url, "Authorization" => headers.to_s),
+            :filename => file_name,
+            :content_type => get_content_type(file_name),
+            :content_size => 1000
+          }
+
+          image_attachment = Helpdesk::Attachment.create_for_3rd_party(account,item, options, 1, 1)
+          if image_attachment.present? && image_attachment.content.present?
+            photo_url_hash[media.url.to_s] = image_attachment.content.url
+          end
         end
       end
       media_url_hash[:photo] = photo_url_hash if photo_url_hash.present?

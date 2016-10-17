@@ -59,15 +59,28 @@ class Helpdesk::Attachment < ActiveRecord::Base
     def create_for_3rd_party account, item, attached, i, content_id, mailgun=false
       limit = mailgun ? HelpdeskAttachable::MAILGUN_MAX_ATTACHMENT_SIZE : 
                         HelpdeskAttachable::MAX_ATTACHMENT_SIZE
-      unless item.validate_attachment_size({:content => attached.tempfile},
-                                           {:attachment_limit => limit })
-        filename = self.new.utf8_name attached.original_filename,
+      if attached.class == Hash
+        file_content = attached[:file_content] 
+        original_filename = attached[:filename]
+        content_type = attached[:content_type] 
+        content_size = attached[:content_size] 
+        verify_attachment_size = false 
+      else
+        file_content = attached.tempfile
+        original_filename = attached.original_filename
+        content_type = attached.content_type
+        content_size = attached.tempfile.size
+        verify_attachment_size = true
+      end
+
+      unless verify_attachment_size || item.validate_attachment_size({:content => file_content},{:attachment_limit => limit })
+        filename = self.new.utf8_name original_filename,
                              "attachment-#{i+1}"
         attributes = { :content_file_name => filename,
-                       :content_content_type => attached.content_type,
-                       :content_file_size => attached.tempfile.size.to_i
+                       :content_content_type => content_type,
+                       :content_file_size => content_size.to_i
                       }
-        write_options = { :content_type => attached.content_type }
+        write_options = { :content_type => content_type }
         if content_id
           model = item.is_a?(Helpdesk::Ticket) ? "Ticket" : "Note"
           attributes.merge!({:description => "content_id", :attachable_type => "#{model}::Inline"})
@@ -78,7 +91,7 @@ class Helpdesk::Attachment < ActiveRecord::Base
         if att.save
           path = s3_path(att.id, att.content_file_name)
           AwsWrapper::S3Object.store(path, 
-                                     attached.tempfile, 
+                                     file_content, 
                                      S3_CONFIG[:bucket], 
                                      write_options)
           att
