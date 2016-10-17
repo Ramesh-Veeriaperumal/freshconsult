@@ -40,7 +40,7 @@ class Support::LoginController < SupportController
       else
   			remove_old_filters if @current_user.agent?
 
-  			redirect_back_or_default('/') if grant_day_pass 
+  			redirect_back_or_default(default_return_url) if grant_day_pass 
   			#Unable to put 'grant_day_pass' in after_filter due to double render
       end
 		else
@@ -127,6 +127,15 @@ class Support::LoginController < SupportController
     def set_custom_flash_message      
       flash[:notice] = login_access_denied_message if params[:restricted_helpdesk_login_fail]
     end
+		
+		def default_return_url
+			@default_return_url ||= begin
+				from_cookie = cookies[:return_to] # The :return_url cookie will be used by Ember App
+				cookies.delete(:return_url) if from_cookie.present?
+				# TODO-EMBERAPI: Cookie deletion does not seem reflect properly on the client
+				from_cookie || '/'
+			end
+		end
 
 end
 
