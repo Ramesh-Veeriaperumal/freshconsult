@@ -1060,7 +1060,8 @@ Redactor.prototype = {
 		else if(this.opts.mixedDirectionSupport){
 			content = this.wrapElementWithDirection(content);
 		}
-
+		// adding space to empty <p> notepad ++
+	    content = content.replace(/<p>\n<\/p>/g,'<p>&nbsp;</p>');
 		this.$el.val(content);
 	},
 	removeCursorImage: function() {
