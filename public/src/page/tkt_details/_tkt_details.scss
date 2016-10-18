@@ -29,7 +29,13 @@ li {
     content: "";
     display: table;
 }
-
+.ticket_show {
+    .details[rel=image-enlarge] {
+        .hide {
+            display: block;
+        }
+    }
+}
 .ticket_show .clearfix:after {
     @include clear(both);
 }
