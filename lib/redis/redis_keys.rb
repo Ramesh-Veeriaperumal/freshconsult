@@ -205,6 +205,10 @@ module Redis::RedisKeys
 
   SPAM_WHITELISTED_ACCOUNTS = "SPAM_WHITELISTED_ACCOUNTS"
 
+  #Key check for read/write canned and scenario automations to count esv2
+  COUNT_ESV2_WRITE_ENABLED 	= "COUNT_ESV2_WRITE_ENABLED"
+  COUNT_ESV2_READ_ENABLED 	= "COUNT_ESV2_READ_ENABLED"
+
 	def newrelic_begin_rescue
 		begin
 		  yield

@@ -1,0 +1,96 @@
+curl -XPUT "172.16.210.126:9101/cannedresponse_index_v1" -d '{
+  "settings": {
+    "number_of_shards": 10,
+    "number_of_replicas": 2,
+    "analysis": {
+      "analyzer": {
+        "suggest_index": {
+          "type": "custom",
+          "tokenizer": "icu_tokenizer",
+          "filter": [
+            "generate_words",
+            "max_length",
+            "icu_normalizer",
+            "icu_folding",
+            "generate_edges",
+            "unique_tokens"
+          ]
+        },
+        "suggest_search": {
+          "type": "custom",
+          "tokenizer": "icu_tokenizer",
+          "filter": [
+            "min_length",
+            "icu_normalizer",
+            "icu_folding"
+          ]
+        }
+      },
+      "filter": {
+        "max_length": {
+          "type": "length",
+          "max": 20
+        },
+        "min_length": {
+          "type": "length",
+          "min": 2
+        },
+        "unique_tokens": {
+          "type": "unique",
+          "only_on_same_position": true
+        },
+        "generate_words": {
+          "type": "word_delimiter",
+          "preserve_original": true
+        },
+        "generate_edges": {
+          "type": "edgeNGram",
+          "min_gram": 1,
+          "max_gram": 20
+        }
+      }
+    }
+  },
+  "mappings": {
+    "cannedresponse": {
+      "properties": {
+        "title": {
+          "type": "string",
+          "analyzer": "suggest_index",
+          "search_analyzer": "suggest_search",
+          "term_vector": "with_positions_offsets"
+        },
+        "account_id": {
+          "type": "long"
+        },
+        "folder_id": {
+          "type": "long"
+        },
+        "es_group_accesses": {
+          "type": "long"
+        },
+        "es_user_accesses": {
+          "type": "long"
+        },
+        "es_access_type": {
+          "type": "long"
+        }
+      }
+    }
+  }
+}'
+
+
+curl -XPOST "172.16.210.126:9101/_aliases" -d '{
+ "actions" : [{
+   "add" : {
+     "index" : "cannedresponse_index_v1",
+     "alias" : "cannedresponse_alias",
+     "filter": {
+       "type": {
+         "value": "cannedresponse"
+       }
+     }
+   }
+ }]
+}'
