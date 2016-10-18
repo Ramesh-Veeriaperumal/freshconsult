@@ -9802,6 +9802,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       forward: "Forward"
       add_note: "Add note"
       scenario: "Scenarios"
+      jump_to_views: "Jump to views"
     ticket_list:
       title: "Ticket List"
       move_cursor: "Jump cursor to next / previous ticket"
