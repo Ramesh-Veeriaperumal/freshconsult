@@ -8,14 +8,18 @@
         type: number
         description: Display ID of ticket
         required: true
-      - name: scenario_id
-        in: path
-        type: number
-        description: ID of scenario to be executed
+      - name: data
+        in: body
         required: true
+        schema:
+          $ref: '#/definitions/execute_scenario_input'
     responses:
       204:
         description: Success
+      400:
+        description: Bad Request Error
+        schema:
+          $ref: '#/definitions/bad_request_error'
       404:
         description: Ticket not found
       403:

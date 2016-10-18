@@ -1,5 +1,5 @@
 put:
-  summary: Bulk Execute Scenarios
+  summary: Bulk Execute Scenario
   operationId: bulk_execute_scenario
   tags: [ticket]
   parameters:
@@ -12,9 +12,15 @@ put:
       in: body
       required: true
       schema:
-        $ref: '#/definitions/bulk_action_input'
+        allOf:
+          - $ref: '#/definitions/bulk_action_input'
+          - $ref: '#/definitions/execute_scenario_input'
   responses:
     202:
       description: Accepted
       schema:
         $ref: '#/definitions/partial_success_response'
+    400:
+        description: Bad Request Error
+        schema:
+          $ref: '#/definitions/bad_request_error'

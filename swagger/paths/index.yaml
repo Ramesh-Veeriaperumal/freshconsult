@@ -40,7 +40,7 @@
   $ref: ./tickets/spam.yaml
 /tickets/{id}/unspam:
   $ref: ./tickets/unspam.yaml
-/tickets/{id}/execute_scenario/{scenario_id}:
+/tickets/{id}/execute_scenario:
   $ref: ./tickets/execute_scenario.yaml
 /tickets/bulk_delete:
   $ref: ./tickets/bulk_delete.yaml
@@ -50,7 +50,7 @@
   $ref: ./tickets/bulk_spam.yaml
 /tickets/bulk_unspam:
   $ref: ./tickets/bulk_unspam.yaml
-/tickets/bulk_execute_scenario/{scenario_id}:
+/tickets/bulk_execute_scenario:
   $ref: ./tickets/bulk_execute_scenario.yaml
 /tickets/bulk_update:
   $ref: ./tickets/bulk_update.yaml

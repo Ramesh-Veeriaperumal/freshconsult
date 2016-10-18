@@ -43,6 +43,9 @@
     $ref: ./request/subscriptions/add_watcher.yaml
   ticket_save_draft:
     $ref: ./request/tickets/draft.yaml
+  execute_scenario_input:
+    $ref: ./request/tickets/execute_scenario.yaml
+
 
   # RESOURCE
   contact:

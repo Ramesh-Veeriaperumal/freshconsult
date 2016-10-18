@@ -2,6 +2,7 @@ module Ember
   class TicketsController < ::TicketsController
     include DeleteSpamConcern
     include TicketConcern
+    include HelperConcern
 
     INDEX_PRELOAD_OPTIONS = [:ticket_old_body, :schema_less_ticket, :flexifield, { requester: [:avatar, :flexifield, :default_user_company] }].freeze
     DEFAULT_TICKET_FILTER = :all_tickets.to_s.freeze
@@ -50,17 +51,24 @@ module Ember
     end
 
     def bulk_execute_scenario
-      bulk_action do
-        return unless load_scenario
-        ::Tickets::BulkScenario.perform_async(ticket_ids: @items.map(&:display_id), scenario_id: params[:scenario_id])
-      end
+      return unless validate_body_params
+      sanitize_body_params
+      @delegator_klass = 'ScenarioDelegator'
+      return unless validate_delegator(@item, { scenario_id: params[cname][:scenario_id] })
+      fetch_objects
+      ::Tickets::BulkScenario.perform_async(ticket_ids: @items.map(&:display_id), scenario_id: params[cname][:scenario_id])
+      render_bulk_action_response(bulk_action_succeeded_items, bulk_action_errors)
     end
 
     def execute_scenario
-      return unless load_scenario
-      @va_rule.trigger_actions(@item, api_current_user)
+      return unless validate_body_params
+      @delegator_klass = 'ScenarioDelegator'
+      return unless validate_delegator(@item, { scenario_id: params[cname][:scenario_id] })
+      va_rule = @delegator.va_rule
+      va_rule.trigger_actions(@item, api_current_user)
       @item.save
-      @item.create_scenario_activity(@va_rule.name)
+      #TODO-LongTerm create_scenario_activity should ideally be inside va_rule model and not in the controllers
+      @item.create_scenario_activity(va_rule.name)
       head 204
     end
 
@@ -115,13 +123,6 @@ module Ember
           @attachment_ids = params[cname][:attachment_ids].map(&:to_i)
           params[cname].delete(:attachment_ids)
         end
-      end
-
-      def load_scenario
-        @va_rule ||= current_account.scn_automations.find_by_id(params[:scenario_id])
-        return true if @va_rule.present? && @va_rule.visible_to_me? && @va_rule.check_user_privilege
-        render_errors(scenario_id: :"is invalid")
-        false
       end
 
       def fetch_objects(items = scoper)
@@ -286,6 +287,10 @@ module Ember
 
       def sideload_options
         ApiTicketConstants::SIDE_LOADING & (params[:include] || '').split(',').map!(&:strip)
+      end
+
+      def constants_class
+        :ApiTicketConstants.to_s.freeze
       end
 
       def render_201_with_location(template_name: "tickets/#{action_name}", location_url: 'ticket_url', item_id: @item.id)

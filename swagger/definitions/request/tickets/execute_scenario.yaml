@@ -1,0 +1,6 @@
+type: object
+properties:
+  scenario_id:
+    type: number
+    required: true
+    description: ID of scenario to be executed

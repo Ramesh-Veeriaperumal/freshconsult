@@ -5,7 +5,8 @@ class TicketValidation < ApiValidation
 
   attr_accessor :id, :cc_emails, :description, :due_by, :email_config_id, :fr_due_by, :group, :priority, :email,
                 :phone, :twitter_id, :facebook_id, :requester_id, :name, :agent, :source, :status, :subject, :ticket_type,
-                :product, :tags, :custom_fields, :attachments, :request_params, :item, :statuses, :status_ids, :ticket_fields
+                :product, :tags, :custom_fields, :attachments, :request_params, :item, :statuses, :status_ids, :ticket_fields,
+                :scenario_id
 
   alias_attribute :type, :ticket_type
   alias_attribute :product_id, :product
@@ -41,7 +42,7 @@ class TicketValidation < ApiValidation
 
   validate :requester_detail_missing, if: -> { create_or_update? && requester_id_mandatory? }
   # validates :requester_id, required: { allow_nil: false, message: :fill_a_mandatory_field, message_options: { field_names: 'requester_id, phone, email, twitter_id, facebook_id' } }, if: :requester_id_mandatory? # No
-  validates :name, required: { allow_nil: false, message: :phone_mandatory }, if: -> { !is_bulk_update? && name_required? }  # No
+  validates :name, required: { allow_nil: false, message: :phone_mandatory }, if: -> { create_or_update? && name_required? }  # No
   validates :name, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }
 
   # Due by and First response due by validations
@@ -89,7 +90,7 @@ class TicketValidation < ApiValidation
                                 ignore_string: :allow_string_param,
                                 section_field_mapping: proc { |x| TicketsValidationHelper.section_field_parent_field_mapping }
                               }
-                           }, if: -> { !is_bulk_update? }
+                           }, if: -> { create_or_update? }
   validates :custom_fields, custom_field: { custom_fields:
                               {
                                 validatable_custom_fields: proc { |x| TicketsValidationHelper.custom_non_dropdown_fields(x) },
@@ -102,6 +103,7 @@ class TicketValidation < ApiValidation
   validates :twitter_id, :phone, :name, data_type: { rules: String, allow_nil: true }
   validates :twitter_id, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }
   validates :phone, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }
+  validates :scenario_id, required: true, custom_numericality: { only_integer: true, greater_than: 0, allow_nil: false, ignore_string: :allow_string_param }, if: -> { execute_scenario? }
 
   def initialize(request_params, item, allow_string_param = false)
     @request_params = request_params
@@ -211,6 +213,10 @@ class TicketValidation < ApiValidation
 
   def skip_base_validations
     self.skip_bulk_validations = true if is_bulk_update?
+  end
+
+  def execute_scenario?
+    [:execute_scenario, :bulk_execute_scenario].include?(validation_context)
   end
 
 end

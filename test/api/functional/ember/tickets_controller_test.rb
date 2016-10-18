@@ -231,17 +231,18 @@ module Ember
       assert ticket.tags.count == 2
     end
 
-    def test_execute_scenario
+    def test_execute_scenario_without_params
       scenario_id = create_scn_automation_rule(scenario_automation_params).id
       ticket_id = create_ticket(ticket_params_hash).display_id
-      put :execute_scenario, controller_params(version: 'private', id: ticket_id, scenario_id: scenario_id)
-      assert_response 204
+      put :execute_scenario, construct_params({version: 'private', id: ticket_id}, {})
+      assert_response 400
+      match_json([bad_request_error_pattern('scenario_id', :missing_field)])
     end
 
     def test_execute_scenario_with_invalid_ticket_id
       scenario_id = create_scn_automation_rule(scenario_automation_params).id
       ticket_id = create_ticket(ticket_params_hash).display_id + 20
-      put :execute_scenario, controller_params(version: 'private', id: ticket_id, scenario_id: scenario_id)
+      put :execute_scenario, construct_params({version: 'private', id: ticket_id}, scenario_id: scenario_id)
       assert_response 404
     end
 
@@ -249,7 +250,7 @@ module Ember
       scenario_id = create_scn_automation_rule(scenario_automation_params).id
       ticket_id = create_ticket(ticket_params_hash).display_id
       User.any_instance.stubs(:has_ticket_permission?).returns(false)
-      put :execute_scenario, controller_params(version: 'private', id: ticket_id, scenario_id: scenario_id)
+      put :execute_scenario, construct_params({version: 'private', id: ticket_id}, scenario_id: scenario_id)
       User.any_instance.unstub(:has_ticket_permission?)
       assert_response 403
     end
@@ -258,10 +259,17 @@ module Ember
       scenario_id = create_scn_automation_rule(scenario_automation_params).id
       ticket_id = create_ticket(ticket_params_hash).display_id
       ScenarioAutomation.any_instance.stubs(:check_user_privilege).returns(false)
-      put :execute_scenario, controller_params(version: 'private', id: ticket_id, scenario_id: scenario_id)
+      put :execute_scenario, construct_params({version: 'private', id: ticket_id}, scenario_id: scenario_id)
       ScenarioAutomation.any_instance.unstub(:check_user_privilege)
       assert_response 400
-      match_json([bad_request_error_pattern('scenario_id', :"is invalid")])
+      match_json([bad_request_error_pattern('scenario_id', :inaccessible_value, resource: :scenario, attribute: :scenario_id)])
+    end
+
+    def test_execute_scenario
+      scenario_id = create_scn_automation_rule(scenario_automation_params).id
+      ticket_id = create_ticket(ticket_params_hash).display_id
+      put :execute_scenario, construct_params({version: 'private', id: ticket_id}, scenario_id: scenario_id)
+      assert_response 204
     end
 
     def test_bulk_delete_with_no_params
@@ -503,11 +511,33 @@ module Ember
       end
       invalid_ids = [ticket_ids.last + 20, ticket_ids.last + 30]
       id_list = [*ticket_ids, *invalid_ids]
-      put :bulk_execute_scenario, construct_params({ version: 'private', scenario_id: scenario_id }, { ids: id_list })
+      put :bulk_execute_scenario, construct_params({ version: 'private' }, { scenario_id: scenario_id, ids: id_list })
       failures = {}
       invalid_ids.each { |id| failures[id] = { :id => :"is invalid" } }
       match_json(partial_success_response_pattern(ticket_ids, failures))
       assert_response 202
+    end
+
+    def test_bulk_execute_scenario_without_scenario_id
+      scenario_id = create_scn_automation_rule(scenario_automation_params).id
+      ticket_ids = []
+      rand(2..10).times do
+        ticket_ids << create_ticket(ticket_params_hash).display_id
+      end
+      put :bulk_execute_scenario, construct_params({ version: 'private' }, { ids: ticket_ids })
+      assert_response 400
+      match_json([bad_request_error_pattern('scenario_id', :missing_field)])
+    end
+
+    def test_bulk_execute_scenario_with_invalid_scenario_id
+      scenario_id = create_scn_automation_rule(scenario_automation_params).id
+      ticket_ids = []
+      rand(2..10).times do
+        ticket_ids << create_ticket(ticket_params_hash).display_id
+      end
+      put :bulk_execute_scenario, construct_params({ version: 'private' }, { scenario_id: scenario_id + 10, ids: ticket_ids })
+      assert_response 400
+      match_json([bad_request_error_pattern('scenario_id', :absent_in_db, resource: :scenario, attribute: :scenario_id)])
     end
 
     def test_bulk_execute_scenario_with_valid_ids
@@ -516,7 +546,7 @@ module Ember
       rand(2..10).times do
         ticket_ids << create_ticket(ticket_params_hash).display_id
       end
-      put :bulk_execute_scenario, construct_params({ version: 'private', scenario_id: scenario_id }, { ids: ticket_ids })
+      put :bulk_execute_scenario, construct_params({ version: 'private' }, { scenario_id: scenario_id, ids: ticket_ids })
       assert_response 202
     end
 

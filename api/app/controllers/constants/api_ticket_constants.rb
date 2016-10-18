@@ -10,6 +10,7 @@ module ApiTicketConstants
                      email phone twitter_id facebook_id requester_id name responder_id source status subject type product_id
                   ).freeze | (ARRAY_FIELDS - ['cc_emails']) | HASH_FIELDS
   BULK_UPDATE_FIELDS = UPDATE_FIELDS - ['attachments'].freeze
+  EXECUTE_SCENARIO_FIELDS = %w(scenario_id).freeze
   COMPOSE_EMAIL_FIELDS = (CREATE_FIELDS - %w(source product_id responder_id requester_id phone twitter_id facebook_id)).freeze
   SHOW_FIELDS = ['include']
   ALLOWED_INCLUDE_PARAMS = %w(conversations requester company stats)
@@ -59,7 +60,7 @@ module ApiTicketConstants
     bulk_execute_scenario: [:json]
   }.freeze
 
-  UPDATE_ACTIONS = [:update, :execute_scenario, :spam, :unspam, :restore].freeze
+  UPDATE_ACTIONS = [:update, :execute_scenario, :spam, :unspam, :restore, :destroy].freeze
 
   REQUIRE_PRELOAD = [:bulk_delete, :bulk_spam, :bulk_unspam, :bulk_restore].freeze
   BULK_ACTION_ASYNC_METHODS = [:bulk_execute_scenario, :bulk_update].freeze
@@ -77,5 +78,8 @@ module ApiTicketConstants
   BACKGROUND_THRESHOLD = 5
 
   NO_CONTENT_TYPE_REQUIRED = [:restore, :spam, :unspam].freeze
+
+  VALIDATION_CLASS = 'TicketValidation'
+  DELEGATOR_CLASS = 'TicketDelegator'
 
 end.freeze

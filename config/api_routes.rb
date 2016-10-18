@@ -106,11 +106,13 @@ Helpkit::Application.routes.draw do
         put :bulk_restore
         put :bulk_unspam
         put :bulk_update
+        put :bulk_execute_scenario
       end
       member do
         put :spam
         put :restore
         put :unspam
+        put :execute_scenario
         post :notes, to: 'ember/conversations#create'
         post :reply, to: 'ember/conversations#reply'
         post :forward, to: 'ember/conversations#forward'
@@ -151,8 +153,6 @@ Helpkit::Application.routes.draw do
       end
     end
     resources :ticket_filters, controller: 'ember/ticket_filters', only: [:index, :show, :create, :update, :destroy]
-    match '/tickets/bulk_execute_scenario/:scenario_id' => 'ember/tickets#bulk_execute_scenario', via: :put
-    match '/tickets/:id/execute_scenario/:scenario_id' => 'ember/tickets#execute_scenario', via: :put
     resources :contact_fields, controller: 'ember/contact_fields', only: :index
     resources :scenario_automations, controller: 'ember/scenario_automations', only: :index
     resources :attachments, controller: 'ember/attachments', only: [:create]

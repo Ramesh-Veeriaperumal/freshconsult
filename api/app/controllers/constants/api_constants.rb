@@ -55,6 +55,7 @@ module ApiConstants
   BULK_ACTION_ARRAY_FIELDS = ['ids'].freeze
   BULK_ACTION_FIELDS = BULK_ACTION_ARRAY_FIELDS.freeze
   BULK_UPDATE_FIELDS = ['properties'].freeze
+  BULK_EXECUTE_SCENARIO_FIELDS = ApiTicketConstants::EXECUTE_SCENARIO_FIELDS.freeze
   BULK_ACTION_METHODS = ApiTicketConstants::BULK_ACTION_METHODS + 
                         ContactConstants::BULK_ACTION_METHODS
   BULK_ACTION_ASYNC_METHODS = ApiTicketConstants::BULK_ACTION_ASYNC_METHODS
