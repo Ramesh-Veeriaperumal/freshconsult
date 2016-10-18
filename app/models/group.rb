@@ -78,7 +78,7 @@ class Group < ActiveRecord::Base
       :agents => {
         :only => [:id,:name,:email,:created_at,:updated_at,:active,:job_title,
                   :phone,:mobile,:twitter_id, :description,:time_zone,:deleted,
-                  :helpdesk_agent,:fb_profile_id,:external_id,:language,:address],
+                  :helpdesk_agent,:fb_profile_id,:external_id,:language,:address, :unique_external_id],
         :methods => [:company_id] 
       }
     }

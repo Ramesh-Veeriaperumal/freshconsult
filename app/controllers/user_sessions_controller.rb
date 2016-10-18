@@ -41,7 +41,9 @@ include Mobile::Actions::Push_Notifier
       :name => saml_response.user_name,
       :email => saml_response.email,
       :phone => saml_response.phone,
-      :company => saml_response.company
+      :company => saml_response.company,
+      :title => saml_response.title,
+      :external_id => saml_response.external_id
     }
 
     if saml_response.valid?
@@ -85,7 +87,11 @@ include Mobile::Actions::Push_Notifier
         end
         flash.discard
         remove_old_filters  if @current_user.agent?
-        redirect_back_or_default(params[:redirect_to] || '/')  if grant_day_pass  
+        if grant_day_pass(true)
+          redirect_back_or_default(params[:redirect_to] || '/')
+        else
+          redirect_to login_normal_url
+        end
       else
         cookies["mobile_access_token"] = { :value => 'failed', :http_only => true } if is_native_mobile?
         flash[:notice] = t(:'flash.login.failed')
@@ -298,6 +304,8 @@ include Mobile::Actions::Push_Notifier
       @contact.name = options[:name] unless options[:name].blank?
       @contact.phone = options[:phone] unless options[:phone].blank?
       @contact.company_name = options[:company] if options[:company].present?
+      @contact.unique_external_id = options[:external_id] if options[:external_id].present?
+      @contact.job_title = options[:title] if options[:title].present?
       @contact.email = email
       @contact.helpdesk_agent = false
       @contact.language = current_portal.language

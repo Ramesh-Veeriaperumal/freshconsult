@@ -13,7 +13,7 @@ class User < ActiveRecord::Base
   COMMON_API_OPTIONS = { 
     :only     => [:id,:name,:email,:created_at,:updated_at,:active,:customer_id,:job_title,
                   :phone,:mobile,:twitter_id,:description,:time_zone,:deleted,:helpdesk_agent,
-                  :fb_profile_id,:external_id,:language,:address]
+                  :fb_profile_id,:external_id,:language,:address,:unique_external_id]
   }
 
   USER_API_OPTIONS = { 
@@ -32,11 +32,12 @@ class User < ActiveRecord::Base
                           "helpdesk_agent", "role_ids", "customer_attributes", "company_name"]
 
   USER_SECONDARY_ATTRIBUTES = ["twitter_id", "avatar", "time_zone", "phone", "mobile", "fb_profile_id", "address",
-                                "external_id", "job_title", "language", "description"] #client_manager will be moved directly
+                                "external_id", "job_title", "language", "description", "unique_external_id"] #client_manager will be moved directly
 
   MERGE_VALIDATIONS = [["emails", 5, "emails"], ["twitter_id", 1, "Twitter User"], 
     ["fb_profile_id", 1, "Facebook User"], ["external_id", 1, "Ecommerce User or Mobihelp User"], 
-    ["company_names", 20, "companies"], ["mobile", 1, "mobile phone"], ["phone", 1, "work phone"]] #[Attribute, limit, message] ["phone", 1, "Phone User"]
+    ["company_names", 20, "companies"], ["mobile", 1, "mobile phone"], ["phone", 1, "work phone"],
+    ["unique_external_id", 1, "Unique external id"]] #[Attribute, limit, message] ["phone", 1, "Phone User"]
 
   USER_FILTER_TYPES = ["verified","unverified","all","deleted","blocked"]
 

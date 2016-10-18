@@ -12,17 +12,21 @@ module SsoUtil
     "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname"].map &:to_sym
   PHONE_NO_STRS = [:phone]
   COMPANY_NAME_STRS = [:organization, :company]
+  TITLE_STRS = [:title, :job_title]
+  EXTERNAL_ID_STRS = [:unique_id]
 
   class SAMLResponse
 
-    attr_accessor :user_name, :email , :phone , :company , :error_message
+    attr_accessor :user_name, :email , :phone , :company , :title, :external_id, :error_message
 
-    def initialize(valid,user_name,email,phone,company,error_message)
+    def initialize(valid, user_name, email, phone, company, title, external_id, error_message)
       @valid = valid
       @user_name = user_name
       @email = email
       @phone = phone
       @company = company
+      @title = title
+      @external_id = external_id
       @error_message = error_message ? error_message : ""
     end
 
@@ -69,8 +73,15 @@ module SsoUtil
     user_name = sso_data[:name]
     phone = sso_data[:phone]
     company = sso_data[:company]
-
-    @current_user = current_account.user_emails.user_for_email(user_email_id)
+    title = sso_data[:title]
+    external_id = sso_data[:external_id]
+    
+    @current_user = current_account.users.where(:unique_external_id => external_id).first if external_id.present?
+    if !@current_user
+      unique_external_id_null_query = external_id.present? ? {users: {unique_external_id: nil}} : {}
+      user_email = current_account.user_emails.includes(:user).where({email: user_email_id}.merge(unique_external_id_null_query)).first #unity media use case where emails need not be unique
+      @current_user = user_email.user if user_email.present?
+    end
 
     if @current_user && @current_user.deleted?
       cookies["mobile_access_token"] = { :value => 'failed', :http_only => true } if is_native_mobile?
@@ -88,6 +99,12 @@ module SsoUtil
       @current_user.name =  user_name
       @current_user.phone = phone unless phone.blank?
       @current_user.company_name = company if company.present?
+      @current_user.job_title = title if title.present?
+      if external_id.present?
+        @current_user.unique_external_id = external_id
+        @current_user.email = user_email_id
+        @current_user.keep_user_active = true if @current_user.email_changed?
+      end
       @current_user.active = true
       saved = @current_user.save
     end
@@ -101,14 +118,18 @@ module SsoUtil
       end
       remove_old_filters  if @current_user.agent?
       flash[:notice] = t(:'flash.login.success')
-      if grant_day_pass
+      if grant_day_pass(true)
         unless relay_state_url.blank?
           redirect_to relay_state_url
         else
           redirect_back_or_default(params[:redirect_to] || '/')
         end
+      else
+        redirect_to login_normal_url  
       end
     else
+      Rails.logger.debug "User save status #{@current_user.errors.inspect}"
+      Rails.logger.debug "User session save status #{@user_session.errors.inspect}"
       cookies["mobile_access_token"] = { :value => 'failed', :http_only => true } if is_native_mobile?
       flash[:notice] = t(:'flash.login.failed')
       redirect_to login_normal_url
@@ -121,7 +142,6 @@ module SsoUtil
 
     response = OneLogin::RubySaml::Response.new(saml_xml, :allowed_clock_drift => SSO_CLOCK_DRIFT)
     response.settings = get_saml_settings(acc)
-
     if response.is_valid?
       user_email_id = response.name_id
       user_name = response.attributes[:username] # default user name is actually just the part before @ in the email
@@ -130,6 +150,8 @@ module SsoUtil
       last_name = get_first_match(response.attributes , LAST_NAME_STRS)
       phone = get_first_match(response.attributes , PHONE_NO_STRS)
       company = get_first_match(response.attributes , COMPANY_NAME_STRS)
+      title = get_first_match(response.attributes , TITLE_STRS)
+      external_id = get_first_match(response.attributes , EXTERNAL_ID_STRS)
 
       user_name = first_name if first_name
       user_name += " " + last_name if last_name
@@ -144,7 +166,7 @@ module SsoUtil
         error_message = " Validation Failed :  #{e.message}"
       end
     end
-    SAMLResponse.new(response.is_valid?, user_name, user_email_id, phone, company, error_message)
+    SAMLResponse.new(response.is_valid?, user_name, user_email_id, phone, company, title, external_id, error_message)
   end
 
   def generate_sso_url url
