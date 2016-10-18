@@ -47,7 +47,7 @@ class ChatsController < ApplicationController
       :ip_address => params[:ticket][:meta][:ip_address],
       :location => params[:ticket][:meta][:location],
       :visitor_os => params[:ticket][:meta][:visitor_os]
-    }
+    } if params[:ticket][:meta].present?
     
     status = @ticket.save_ticket
 
