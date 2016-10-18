@@ -2738,7 +2738,7 @@ li {
                 width: 100%;
                 display: block;
                 @include clear(both);
-                height: 19px;
+                height: auto;
                 font-size: 13px;
                 padding: 5px 0;
                 font-weight: 500;
