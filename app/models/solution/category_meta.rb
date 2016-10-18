@@ -10,7 +10,7 @@ class Solution::CategoryMeta < ActiveRecord::Base
 	include Solution::Constants
 	include Solution::ApiDelegator
 
-	attr_accessible :position, :portal_ids
+	attr_accessible :position, :portal_ids, :portal_solution_categories_attributes
 	
 	after_save :update_mh_solutions_category_time, :if => :valid_change?
 	before_destroy :update_mh_app_time
@@ -98,8 +98,15 @@ class Solution::CategoryMeta < ActiveRecord::Base
 		Account.current.clear_solution_categories_from_cache
 	end
 
+	def portal_solution_categories_attributes=(portal_attr)
+		portal_solution_categories.destroy_all
+		portal_attr[:portal_id].each do |portal_id|
+		  portal_solution_categories.build({:portal_id =>portal_id})
+		end
+	end
+
 	def set_default_portal
-	  self.portal_ids = [Account.current.main_portal.id] if self.portal_ids.blank?
+	  self.portal_ids = [Account.current.main_portal.id] if self.portal_ids.blank? && self.portal_solution_categories.blank?
 	end
 
   def validate_is_default

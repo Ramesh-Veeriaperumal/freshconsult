@@ -6,12 +6,14 @@ class Freshfone::CallObserver < ActiveRecord::Observer
   include Freshfone::SubscriptionsUtil
   include Freshfone::AcwUtil
   
-	def before_create(freshfone_call)
-		initialize_data_from_params(freshfone_call)
+	def before_create(call)
+		initialize_data_from_params(call)
+		build_outgoing_browser_meta call if outgoing_meta_buildable? call
 	end
 
   def after_create(freshfone_call)
     create_call_metrics(freshfone_call) if freshfone_call.account.features? :freshfone_call_metrics
+    publish_new_warm_transfer(freshfone_call) if freshfone_call.account.features? :freshfone_warm_transfer
   end
 
 	def before_save(freshfone_call)
@@ -53,7 +55,7 @@ class Freshfone::CallObserver < ActiveRecord::Observer
 		def initialize_data_from_params(freshfone_call)
 			params = freshfone_call.params || {}
 			freshfone_call.business_hour_call = freshfone_call.freshfone_number.working_hours?
-			freshfone_call.call_sid = params[:CallSid]
+			freshfone_call.call_sid = params[:CallSid] if freshfone_call.call_sid.blank?
 		end
 
     def update_caller_data(freshfone_call)
@@ -147,6 +149,12 @@ class Freshfone::CallObserver < ActiveRecord::Observer
       end
     end
 
+    def publish_new_warm_transfer(freshfone_call)
+      account = freshfone_call.account
+      trigger_new_active_call_publish(freshfone_call, account) if 
+                   freshfone_call.call_status == Freshfone::Call::CALL_STATUS_HASH[:'on-hold'] && freshfone_call.previous_changes[:call_status].blank?
+    end
+
     def trigger_queued_call_publish(freshfone_call, account)
       publish_queued_call(freshfone_call, freshfone_call.account)
     end
@@ -193,17 +201,21 @@ class Freshfone::CallObserver < ActiveRecord::Observer
     end
 
     def resolve_acw(call)
-      move_to_acw_state(call) if  outgoing_or_completed?(call) &&
-        !transferred?(call) && !on_app_or_mobile?(call)
+      move_to_acw_state(call) if acw_preconditions?(call)
     end
 
-    def outgoing_or_completed?(call)
-      call.outgoing? || (call.incoming? && call.completed?)
+    def acw_preconditions?(call)
+      single_leg_outgoing_or_completed?(call) && !transferred?(call) &&
+        !on_app_or_mobile?(call) && !warm_transferred?(call)
+    end
+
+    def single_leg_outgoing_or_completed?(call)
+      call.outgoing_root_call? || call.completed?
     end
 
     def on_app_or_mobile?(call)
-      call.meta.android_or_ios? || (call.incoming? &&
-        call.meta.available_on_phone?)
+      call.meta.android_or_ios? || (!call.outgoing_root_call? &&
+       call.meta.available_on_phone?)
     end
 
     def move_to_acw_state(call)
@@ -214,6 +226,21 @@ class Freshfone::CallObserver < ActiveRecord::Observer
 
     def transferred?(call)
       call.children.present? && call.children.last.call_status.in?(
-        Freshfone::Call::INTERMEDIATE_CALL_STATUS)
+        Freshfone::Call::ONGOING_CALL_STATUS)
+    end
+
+    def warm_transferred?(call)
+      call.supervisor_controls.inprogress_warm_transfer_calls.present?
+    end
+
+    def outgoing_meta_buildable?(call)
+      call.outgoing? && call.is_root? && call.params[:device_info].present? &&
+      	call.meta.blank?
+    end
+
+    def build_outgoing_browser_meta(call)
+      call.build_meta(
+        meta_info: {agent_info: call.params[:device_info]},
+        device_type: Freshfone::CallMeta::USER_AGENT_TYPE_HASH[:browser])
     end
 end

@@ -8,6 +8,8 @@ module Redis::RedisKeys
 	HELPDESK_TICKET_ADJACENTS_META	 	= "HELPDESK_TICKET_ADJACENTS_META:%{account_id}:%{user_id}:%{session_id}"
 	INTEGRATIONS_JIRA_NOTIFICATION = "INTEGRATIONS_JIRA_NOTIFY:%{account_id}:%{local_integratable_id}:%{remote_integratable_id}:%{comment_id}"
 	INTEGRATIONS_LOGMEIN = "INTEGRATIONS_LOGMEIN:%{account_id}:%{ticket_id}"
+	INTEGRATIONS_CTI = "INTEGRATIONS_CTI:%{account_id}:%{user_id}"
+	INTEGRATIONS_CTI_OLD_PHONE = "INTEGRATIONS_CTI_OLD_PHONE:%{account_id}:%{user_id}"
 	HELPDESK_TICKET_UPDATED_NODE_MSG    = "{\"account_id\":%{account_id},\"ticket_id\":%{ticket_id},\"agent\":\"%{agent_name}\",\"type\":\"%{type}\"}"
 	EMPTY_TRASH_TICKETS = "EMPTY_TRASH_TICKETS:%{account_id}"
 	EMPTY_SPAM_TICKETS = "EMPTY_SPAM_TICKETS:%{account_id}"
@@ -37,7 +39,7 @@ module Redis::RedisKeys
 	WEBHOOK_ERROR_NOTIFICATION = "WEBHOOK_ERROR_NOTIFICATION:%{account_id}:%{rule_id}"
 	
 	PREMIUM_GAMIFICATION_ACCOUNT = "PREMIUM_GAMIFICATION_ACCOUNT"
-    WEBHOOK_DROP_NOTIFY = "WEBHOOK_DROP_NOTIFY:%{account_id}"
+	WEBHOOK_DROP_NOTIFY = "WEBHOOK_DROP_NOTIFY:%{account_id}"
 	#AUTH_REDIRECT_CONFIG = "AUTH_REDIRECT:%{account_id}:%{user_id}:%{provider}:%{auth}"
 	SSO_AUTH_REDIRECT_OAUTH = "AUTH_REDIRECT:%{account_id}:%{user_id}:%{provider}:oauth"
 	APPS_AUTH_REDIRECT_OAUTH = "AUTH_REDIRECT:%{account_id}:%{provider}:oauth"
@@ -64,12 +66,14 @@ module Redis::RedisKeys
 	FRESHFONE_LOW_CREDITS_NOTIFIY = "FRESHFONE:LOW_CREDITS_NOTIFIY"
 	FRESHFONE_AUTORECHARGE_TIRGGER = "FRESHFONE:AUTORECHARGE_TRGGER:%{account_id}"
 	FRESHFONE_CALL = "FRESHFONE:CALL:%{account_id}:%{child_sid}"
+	FRESHFONE_USER_AGENT = "FRESHFONE:USER_AGENT:%{account_id}:%{user_id}:%{warm_transfer_id}"
 	ADMIN_FRESHFONE_FILTER = "ADMIN_FRESHFONE_FILTER:%{account_id}:%{user_id}"
 	ADMIN_FRESHFONE_REPORTS_FILTER = "ADMIN_FRESHFONE_REPORTS_FILTER:%{account_id}:%{user_id}"
 	ADMIN_CALLS_FILTER = "ADMIN_CALLS_FILTER:%{account_id}:%{user_id}"
 	FRESHFONE_PINGED_AGENTS = "FRESHFONE:PINGED_AGENTS:%{account_id}:%{call_id}"
 	FRESHFONE_CALL_NOTE = "FRESHFONE:CALL_NOTE:%{account_id}:%{call_sid}"
 	FRESHFONE_ACTIVATION_REQUEST = "FRESHFONE:ACTIVATION_REQUEST:%{account_id}"
+	INVALID_FORWARD_INPUT_COUNT = "FRESHFONE:INVALID_FORWARD_INPUT_COUNT:%{account_id}:%{call_id}"
 	FACEBOOK_APP_RATE_LIMIT = "FACEBOOK_APP_RATE_LIMIT"
 	FACEBOOK_LIKES          = "FACEBOOK_LIKES"
 	FACEBOOK_USER_RATE_LIMIT = "FACEBOOK_USER_RATE_LIMIT:%{page_id}"
@@ -89,6 +93,7 @@ module Redis::RedisKeys
 	SUBSCRIPTIONS_BILLING = "SUBSCRIPTIONS_BILLING:%{account_id}"
 	SEARCH_KEY = "SEARCH_KEY:%{account_id}:%{klass_name}:%{id}"
 	ZENDESK_IMPORT_STATUS = "ZENDESK_IMPORT_STATUS:%{account_id}"
+	ZENDESK_IMPORT_CUSTOM_DROP_DOWN = "ZENDESK_IMPORT_CUSTOM_DROP_DOWN_%{account_id}"
 	STREAM_RECENT_SEARCHES = "STREAM_RECENT_SEARCHES:%{account_id}:%{agent_id}"
 	STREAM_VOLUME = "STREAM_VOLUME:%{account_id}:%{stream_id}"
 	USER_OTP_KEY = "USER_OTP_KEY:%{email}"
@@ -124,6 +129,7 @@ module Redis::RedisKeys
 	BI_REPORTS_REAL_TIME_PDF = "BI_REPORTS_REAL_TIME_PDF"
 	BI_REPORTS_ATTACHMENT_VIA_S3 = "BI_REPORTS_ATTACHMENT_VIA_S3"
 	BI_REPORTS_MAIL_ATTACHMENT_LIMIT_IN_BYTES = "BI_REPORTS_MAIL_ATTACHMENT_LIMIT_IN_BYTES"
+	BI_REPORTS_INTERNAL_CSV_EXPORT = "BI_REPORTS_INTERNAL_CSV_EXPORT"
 	PREMIUM_TICKET_EXPORT = "PREMIUM_TICKET_EXPORT"
 	LONG_RUNNING_TICKET_EXPORT = "LONG_RUNNING_TICKET_EXPORT"
 	DASHBOARD_DISABLED = "DASHBOARD_DISABLED"
@@ -164,17 +170,49 @@ module Redis::RedisKeys
   GROUP_WIDGET_CACHE_GET =  "GROUP_WIDGET_CACHE_GET:%{account_id}"
   #Dashboard v2 caching keys ends
 
+  PERSISTENT_RECENT_SEARCHES = "PERSISTENT_RECENT_SEARCHES:%{account_id}:%{user_id}"
+  PERSISTENT_RECENT_TICKETS = "PERSISTENT_RECENT_TICKETS:%{account_id}:%{user_id}"
+
+  #update tickets sla - move from delayed job to sidekiq starts
+  SLA_ON_STATUS_CHANGE = "SLA_ON_STATUS_CHANGE"
+  #update tickets sla - move from delayed job to sidekiq ends
+
 	# List of languages used by agents in an account
-  AGENT_LANGUAGE_LIST = "AGENT_LANGUAGE_LIST:%{account_id}"
+  AGENT_LANGUAGE_LIST 	 = "AGENT_LANGUAGE_LIST:%{account_id}"
+  # List of languges used by customers in an account
+  CUSTOMER_LANGUAGE_LIST = "CUSTOMER_LANGUAGE_LIST:%{account_id}"
+
+  BLACKLISTED_SPAM_ACCOUNTS = "BLACKLISTED_SPAM_ACCOUNTS"
+  BLACKLISTED_SPAM_DOMAINS = "BLACKLISTED_SPAM_DOMAINS"
+
+  SPAM_EMAIL_EXACT_REGEX_KEY = "SPAM_EMAIL_EXACT_REGEX"
+  SPAM_EMAIL_APPRX_REGEX_KEY = "SPAM_EMAIL_APPRX_REGEX"
+  PROCESSING_FAILED_HELPKIT_FEEDS = "PROCESSING_FAILED_HELPKIT_FEEDS"
+
+  ROUND_ROBIN_CAPPING = "ROUND_ROBIN_CAPPING:%{account_id}:%{group_id}"
+  ROUND_ROBIN_CAPPING_PERMIT = "ROUND_ROBIN_CAPPING_PERMIT:%{account_id}:%{group_id}"
+  ROUND_ROBIN_AGENT_CAPPING = "ROUND_ROBIN_AGENT_CAPPING:%{account_id}:%{group_id}:%{user_id}"
+  RR_CAPPING_TICKETS_QUEUE = "RR_CAPPING_TICKETS_QUEUE:%{account_id}:%{group_id}"
+  RR_CAPPING_TEMP_TICKETS_QUEUE = "RR_CAPPING_TEMP_TICKETS_QUEUE:%{account_id}:%{group_id}"
+
+  RR_CAPPING_TICKETS_DEFAULT_SORTED_SET = "RR_CAPPING_TICKETS_DEFAULT_SORTED_SET:%{account_id}:%{group_id}"
+
+  OUTGOING_COUNT_PER_HALF_HOUR = "OUTGOING_COUNT_PER_HALF_HOUR:%{account_id}"
+  SPAM_ACCOUNT_ID_THRESHOLD = "SPAM_ACCOUNT_ID_THRESHOLD"
+  SPAM_OUTGOING_EMAILS_THRESHOLD = "SPAM_OUTGOING_EMAILS_THRESHOLD"
+  OUTBOUND_EMAIL_COUNT_PER_DAY = "OUTBOUND_EMAIL_COUNT_PER_DAY:%{account_id}"
+  TRIAL_ACCOUNT_MAX_TO_CC_THRESHOLD = "TRIAL_ACCOUNT_MAX_TO_CC_THRESHOLD"
+
+  SPAM_WHITELISTED_ACCOUNTS = "SPAM_WHITELISTED_ACCOUNTS"
 
 	def newrelic_begin_rescue
-	    begin
-	      yield
-	    rescue Exception => e
-	      NewRelic::Agent.notice_error(e)
-	      return
-	    end
-  	end
+		begin
+		  yield
+		rescue Exception => e
+		  NewRelic::Agent.notice_error(e)
+		  return
+		end
+	end
 
 	# def increment(key)
 	# 	newrelic_begin_rescue { $redis.INCR(key) }

@@ -4,21 +4,25 @@ development:
   search_etl_queue: search_etl_queue_dev
   count_etl_queue: count_etl_queue_dev
   sqs_es_index_queue: sqs_es_index_queue_dev
-  auto_refresh_realtime_queue: auto_refresh_dev
   custom_mailbox_realtime_queue: custom_mailbox_dev
   forums_moderation_queue: forum_moderation_dev
   helpdesk_reports_export_queue: helpdesk_reports_export_dev
   reports_etl_msg_queue: reports_etl_msgs_dev
+  cti_call_queue: cti_call_dev
   activity_queue: fd_activities_dev
   reports_service_export_queue: reports_service_export_dev
   freshfone_call_tracker: freshfone_call_tracker_development
+  cti_screen_pop: cti_screen_pop_dev
+  fb_message_realtime_queue: social_fb_messenger_dev
   freshfone_call_notifier_queue: freshfone_call_notifier_development
+  auto_refresh_queue: auto_refresh_new_dev
+  auto_refresh_alb_queue: auto_refresh_alb_dev
+  agent_collision_queue: agent_collision_new_dev
+  agent_collision_alb_queue: agent_collision_alb_dev
 staging:
   twitter_realtime_queue: social_gnip_tweet_staging1
   facebook_realtime_queue: social_fb_feed_staging
   search_etl_queue: search_etl_queue_staging
-  count_etl_queue: count_etl_queue_staging
-  auto_refresh_realtime_queue: auto_refresh_staging
   custom_mailbox_realtime_queue: custom_mailbox_staging
   forums_moderation_queue: forum_moderation_staging_rails3
   helpdesk_reports_export_queue: helpdesk_reports_export_staging
@@ -26,13 +30,19 @@ staging:
   activity_queue: fd_activities_staging
   reports_service_export_queue: reports_service_export_staging
   freshfone_call_tracker: freshfone_call_tracker_staging
+  cti_screen_pop: cti_screen_pop_staging
+  cti_call_queue: cti_call_staging
+  fb_message_realtime_queue: social_fb_messenger_staging
   freshfone_call_notifier_queue: freshfone_call_notifier_staging
+  auto_refresh_queue: auto_refresh_new_staging
+  auto_refresh_alb_queue: auto_refresh_alb_staging
+  agent_collision_queue: agent_collision_new_staging
+  agent_collision_alb_queue: agent_collision_alb_staging
 production:
   twitter_realtime_queue: social_gnip_tweet_production
   facebook_realtime_queue: social_fb_feed_production
   search_etl_queue: search_etl_queue_production
   count_etl_queue: count_etl_queue_procution
-  auto_refresh_realtime_queue: auto_refresh_production
   custom_mailbox_realtime_queue: custom_mailbox_production
   forums_moderation_queue: forum_moderation_production
   helpdesk_reports_export_queue: helpdesk_reports_export_production
@@ -40,13 +50,19 @@ production:
   activity_queue: fd_activities_production
   reports_service_export_queue: reports_service_export_production
   freshfone_call_tracker: freshfone_call_tracker_production
+  cti_screen_pop: cti_screen_pop_production
+  cti_call_queue: cti_call_production
+  fb_message_realtime_queue: social_fb_messenger_prod
   freshfone_call_notifier_queue: freshfone_call_notifier_production
+  auto_refresh_queue: auto_refresh_new_production
+  auto_refresh_alb_queue: auto_refresh_alb_production
+  agent_collision_queue: agent_collision_new_production
+  agent_collision_alb_queue: agent_collision_alb_production
 test:
   twitter_realtime_queue: social_gnip_tweet_test
   facebook_realtime_queue: social_fb_feed_test
   search_etl_queue: search_etl_queue_test
   count_etl_queue: count_etl_queue_test
-  auto_refresh_realtime_queue: auto_refresh_test
   custom_mailbox_realtime_queue: custom_mailbox_test
   forums_moderation_queue: forum_moderation_test
   helpdesk_reports_export_queue: helpdesk_reports_export_test
@@ -54,4 +70,9 @@ test:
   activity_queue: fd_activities_test
   reports_service_export_queue: reports_service_export_test
   freshfone_call_tracker: freshfone_call_tracker_test
+  cti_screen_pop: cti_screen_pop_test
+  cti_call_queue: cti_call_test
+  fb_message_realtime_queue: social_fb_messenger_dev
   freshfone_call_notifier_queue: freshfone_call_notifier_test
+  auto_refresh_queue: auto_refresh_new_test
+  agent_collision_queue: agent_collision_new_test

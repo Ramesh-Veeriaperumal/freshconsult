@@ -4,8 +4,24 @@
 var SurveyAdmin = {	
 		fullSurvey: true,
 		hasLayoutCustomization: false,
+		surveyChoiceGoodToBad: true,
 		path: "/admin/custom_surveys/",
-
+		flipChoiceOrder:function(obj){
+			if(jQuery(obj).data('state')!=SurveyAdmin.surveyChoiceGoodToBad){
+				SurveyAdmin.surveyChoiceGoodToBad = !SurveyAdmin.surveyChoiceGoodToBad;
+				var choice_default = jQuery('#survey_rating_options .flexcontainer textarea');
+				jQuery('#survey_rating_options .flexcontainer').prepend(choice_default.get().reverse());
+				var choice_questions = jQuery('#question_rating_options .flexcontainer textarea');
+				jQuery('#question_rating_options .flexcontainer').prepend(choice_questions.get().reverse());
+				jQuery('.question-rating-option').each(function(){
+					var choice_rating = jQuery(this).find('.survey-rating');
+					jQuery(this).append(choice_rating.get().reverse());
+				});
+				jQuery('.rating_order_select .dropdown-menu li').toggleClass('active');
+				jQuery('#order_dropdown h5').toggleClass('good_to_bad bad_to_good').html(jQuery(obj).text()+"<b class='caret'></b>");
+			}
+			
+		},
 		render:function(view){
 			SurveyDetail.rating.create(view);
 			SurveyDetail.thanks.create(view);

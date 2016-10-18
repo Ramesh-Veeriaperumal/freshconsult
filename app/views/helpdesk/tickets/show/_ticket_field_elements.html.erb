@@ -1,14 +1,7 @@
 <!-- Note: when any changes made to TICKET_FIELD_ELEMENTS PARTIAL in the future, 
       please update the memcache key version. key_name :: COMPOSE_EMAIL_FORM  -->
 <% 
-  default_field_order = [
-      "default_priority", "default_status", 
-      "default_source", "default_ticket_type", 
-      "default_group", 
-      "default_agent", 
-      "default_product",
-      "default_company"
-  ]
+  field_order = Helpdesk::TicketField.default_field_order
 
   default_fields = []
   custom_fields = []
@@ -20,7 +13,7 @@
   next if field.section_field?
   if field.visible_in_view_form?
     if field.is_default_field?
-      field_value = @ticket.send(field.field_name)
+      field_value = @ticket.send(field.field_name).to_s
       field_label = t("ticket_fields.fields.#{field.name}")
     else
       field_value = @ticket.send(field.name) unless @ticket.new_record? and !params[:template_form]
@@ -43,7 +36,7 @@
     section_container += construct_new_section_fields(form_builder, :helpdesk_ticket, field, false, @ticket, !@ticket.new_record?) if field.has_section?
   end
 end
-default_fields.sort! {|x,y| default_field_order.index(x.first) <=> default_field_order.index(y.first) }
+default_fields.sort! {|x,y| field_order.index(x.first) <=> field_order.index(y.first) }
 %>
 <% default_fields.each do |field| %>
   <%= field.last %>

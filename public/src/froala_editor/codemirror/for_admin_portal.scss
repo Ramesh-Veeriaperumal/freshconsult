@@ -1,0 +1,23 @@
+
+/* ======== Have to change the codemirror version and remove this file ======= */
+
+.edit_portal_template, .new_portal_page, .new_integrations_application, .edit_integrations_application {
+	.CodeMirror {
+		.CodeMirror-scroll {
+			margin-bottom: 0;
+	    margin-right: 0;
+	    padding-bottom: 0;
+		}
+	}
+}
+
+/* This snippet for whole app (including solution article page) */
+.CodeMirror {
+  font-size: 12px;
+  font-family: 'Monaco','Menlo','Ubuntu Mono','Droid Sans Mono','Consolas', monospace;
+  height: auto;
+}
+
+.CodeMirror-scroll {
+	height: 300px;
+}

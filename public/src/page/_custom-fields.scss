@@ -53,7 +53,7 @@
 	}
 	.status_dropdown{
 		padding: 5px;
-  	span{
+  		span{
 			@include margin-left(18px);
 			overflow: hidden;
 			word-break: break-all;
@@ -64,8 +64,25 @@
 		}
 	}
 	.section.colsets {
-		.dropchoice, .status_dropdown span{
+		.dropchoice{
 			width: 180px;
+			&.customdropchoice{
+				width: 160px;
+
+				.select2-container{
+					width: 160px;
+				}
+			}
+		}
+		.status_dropdown span{
+			width: 180px;
+			&:nth-child(3){
+				width: 100px;
+			}
+			&:nth-child(4){
+				width: 160px;
+				@include margin-left(0px);
+			}
 		}
 		input[name=choicelist] {
 			@include opacity(0);

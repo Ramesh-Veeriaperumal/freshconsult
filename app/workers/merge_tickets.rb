@@ -29,6 +29,13 @@ class MergeTickets < BaseWorker
     # notes are added to the target ticket via update_all. This wont trigger callback
     # So sending it manually
     update_target_ticket_notes_to_subscribers(target_ticket, source_ticket_note_ids.flatten, args[:source_ticket_ids])
+    #race condition when es version conflict happens and a recent update on source ticket is missed. sqs was processing it faster. hack to solve it
+    #need to revisit
+    if account.features?(:countv2_writes)
+      source_tickets.each do |ticket|
+        ticket.manual_publish_to_rmq("update", RabbitMq::Constants::RMQ_REPORTS_COUNT_TICKET_KEY, {:manual_publish => true})
+      end
+    end
   end
 
   def add_note_to_source_ticket(source_ticket, source_note_private, source_info_note)
@@ -101,7 +108,7 @@ class MergeTickets < BaseWorker
     # REPORTS: while doing manual publish of note it will take note's created at and hence it will not be
     # reflected in latest row. Doing a manual push for target ticket here so that the latest row of the ticket will 
     # have all the customer reply and agent reply count updated.
-    key  = Account.current.features?(:activity_revamp) ? RabbitMq::Constants::RMQ_GENERIC_TICKET_KEY : RabbitMq::Constants::RMQ_REPORTS_TICKET_KEY
+    key  = Account.current.features?(:activity_revamp) ? RabbitMq::Constants::RMQ_CLEANUP_TICKET_KEY : RabbitMq::Constants::RMQ_REPORTS_COUNT_TICKET_KEY
     target_ticket.manual_publish_to_rmq("update", key, {:manual_publish => true})
   end
 end

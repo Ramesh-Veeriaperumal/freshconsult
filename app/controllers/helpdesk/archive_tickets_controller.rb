@@ -62,6 +62,9 @@ class Helpdesk::ArchiveTicketsController < ApplicationController
   def show
     @to_emails = @ticket.to_emails
     @page_title = %([##{@ticket.display_id}] #{@ticket.subject})
+    
+    # Only store recent tickets in redis which are not spam or not deleted
+    Search::RecentTickets.new(@ticket.display_id).store unless @ticket.spam || @ticket.deleted
 
     respond_to do |format|
       format.html  {
@@ -127,7 +130,7 @@ class Helpdesk::ArchiveTicketsController < ApplicationController
   end
 
   def activitiesv2
-    if Account.current.launched?(:activity_ui) and Account.current.features?(:activity_revamp) and request.format != "application/json" and ACTIVITIES_ENABLED
+    if !Account.current.launched?(:activity_ui_disable) and Account.current.features?(:activity_revamp) and request.format != "application/json" and ACTIVITIES_ENABLED
       type = :tkt_activity
       @activities_data = new_activities(params, @item, type, true)
       @total_activities  ||=  @activities_data[:total_count] 

@@ -84,7 +84,7 @@ class Admin::Freshfone::NumbersController < Admin::AdminController
 		end
 
 		def trial_modifications
-			return unless trial_params?
+			return unless trial_params? && onboarding_enabled?
 			current_account.features.freshfone.create unless current_account.features?(:freshfone)
 		end
 

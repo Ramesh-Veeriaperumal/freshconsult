@@ -3,7 +3,7 @@ class Solution::Object
 	include CloudFilesHelper
 	
 	META_ATTRIBUTES = {
-		:solution_category => [:is_default, :portal_ids, :portals],
+		:solution_category => [:is_default, :portal_ids, :portals, :portal_solution_categories_attributes],
 		:solution_folder => [:visibility, :is_default, :customer_folders_attributes],
 		:solution_article => [:art_type]
 	}

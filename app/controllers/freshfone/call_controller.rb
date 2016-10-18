@@ -60,6 +60,7 @@ class Freshfone::CallController < FreshfoneBaseController
 		status = add_to_set(key, params[:call_sid])
 		result = { can_accept: ((status) ? 1 : 0) }
 		result[:agent_conference] = agent_conference_details if status
+		result[:warm_transfer] = warm_transfer_avatar if warm_transfer_enabled? && status
 		render :json => result
 	end
 
@@ -105,6 +106,7 @@ class Freshfone::CallController < FreshfoneBaseController
 											:company_name => (@user.present? && @user.company_name.present?) ? @user.company_name : "",
 										}
         call_data[:agent_conference] = agent_conference_meta(ongoing_call) if agent_conference_launched?
+        call_data[:warm_transfer] =  warm_transfer_avatar(ongoing_call) if warm_transfer_enabled?
 			end
 			call_data
 		end
@@ -199,11 +201,29 @@ class Freshfone::CallController < FreshfoneBaseController
    build_avatar(call.agent)
  end
 
+  def warm_transfer_avatar(call = nil)
+    transfer_call = warm_transfer_call(call)
+    return false unless transfer_call.present? && transfer_call.call.agent.present? && transfer_call.warm_transfer?
+    return build_avatar(transfer_call.call.agent).merge!(is_receiver: true)
+  end
+
  def agent_conference_details
    return unless agent_conference_launched?
-   agent_conference_call = agent_conference_call_by_sid(params[:call_sid])
-   return unless agent_conference_call.present?
-   build_avatar(agent_conference_call.call.agent).merge!(is_receiver: true)
+   conference_call = conference_call_by_sid(params[:call_sid])
+   return unless conference_call.present? && conference_call.agent_conference?
+   build_avatar(conference_call.call.agent).merge!(is_receiver: true)
+ end
+
+ def new_notifications_warm_transfer_call
+  freshfone_call.supervisor_controls.warm_transfer_initiated_calls.last if freshfone_call.present?
+ end
+
+ def freshfone_call
+  call = current_account.freshfone_calls.where(call_sid: params[:call_sid]).first
+  return if call.blank?
+  child_call = call.children.last
+  return child_call if child_call.present? && child_call.ongoing?
+  call 
  end
 
  def build_avatar(user)
@@ -217,7 +237,14 @@ class Freshfone::CallController < FreshfoneBaseController
                                   .find_by_supervisor_id(agent.id).present?
  end
 
- def agent_conference_call_by_sid(sid)
+ def warm_transfer_call(call = nil)
+    return @warm_transfer_call ||= call.supervisor_controls.warm_transfer_initiated_calls
+                                       .where(supervisor_id: agent.id).last if call.present?
+    @warm_transfer_call ||= new_notifications? ? new_notifications_warm_transfer_call :
+                                      conference_call_by_sid(params[:call_sid])
+ end
+
+ def conference_call_by_sid(sid)
  	  current_account.supervisor_controls.find_by_sid(params[:call_sid])
  end
 
@@ -246,11 +273,5 @@ class Freshfone::CallController < FreshfoneBaseController
 
 		def ongoing_call
 			@ongoing_call ||= current_account.freshfone_calls.ongoing_by_caller(caller.id).first if caller.present?
-		end
-
-		def search_customer
-			customer = search_customer_with_id(params[:customerId]) if params[:customerId].present?
-			return customer if customer.present?
-			search_user_with_number(params[:PhoneNumber].gsub(/^\+/, ''))
 		end
 end

@@ -10,7 +10,7 @@
 	<div class="control-group">
 		<label class="control-label"><%=thanks.title%></label>
 		<div class="">
-			<input type="text" maxlength=<%=SurveyConstants.limit.thanks_text%> name="thanks_text" placeholder="<%=thanks.default_text%>" value='<%=thanks.message%>' />
+			<input type="text" maxlength=<%=SurveyConstants.limit.thanks_text%> name="thanks_text" placeholder="<%=thanks.default_text%>" value="<%-thanks.message%>" />
 			<label id="thanks_text-error" class="error" style="display:none;"><%= surveysI18n.error_text %></label>
 		</div>
 	</div>
@@ -27,16 +27,16 @@
 			<% if(!surveyLimit){ %>
 				<label class="control-label" ><%= surveysI18n.additional_comments_feedback_statement %></label>
 			<% } %>
-			<input class="input-comment" rel="ghostwriter" name="comments_text" placeholder= "<%=surveysI18n.comments_feedback %>" type="text" width="100%" value='<%=comments_text%>' maxlength="250">
+			<input class="input-comment" rel="ghostwriter" name="comments_text" placeholder= "<%=surveysI18n.comments_feedback %>" type="text" width="100%" value='<%-comments_text%>' maxlength="250">
 		</div>
 		<div id="additional-thanks" <%if(!can_comment) {%>style="display:none;" <%}%>>
 			<label class="mt10 control-label"><%= surveysI18n.thanks_message_feedback %></label>
-			<input name="feedback_response_text" class="input-comment" placeholder="<%=surveysI18n.thanks_feedback%>" rel="ghostwriter" size="24" type="text" width="100%" value='<%=feedback_response_text%>'>
+			<input name="feedback_response_text" class="input-comment" placeholder="<%=surveysI18n.thanks_feedback%>" rel="ghostwriter" size="24" type="text" width="100%" value='<%-feedback_response_text%>'>
 		</div>
 	</div>
 </div>
 <% if(surveyLimit){%> 
-<div id="addQuestion" class="vertical-line1 survey-label">
+<div id="addQuestion" class="vertical-line survey-label">
 	<%if(!isSurveyResult){%>
 		<label>
 			<a href="javascript:<%=thanks.link.action%>;"><span class="rounded-add-icon mr10"></span><%=thanks.link.label%></a>

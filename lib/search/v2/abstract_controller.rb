@@ -4,7 +4,6 @@
 module Search::V2::AbstractController
 
   extend ActiveSupport::Concern
-
   #-----------------------------#
   #-- Instance variables used --#
   #-----------------------------#
@@ -31,26 +30,17 @@ module Search::V2::AbstractController
       # Method that makes call to ES and loads AR results
       #
       def search(es_models)
-        begin
-          @es_results = Search::V2::SearchRequestHandler.new(current_account.id,
-            Search::Utils.template_context(@search_context, @exact_match),
-            searchable_types
-          ).fetch(construct_es_params)
-
-          @result_set = Search::Utils.load_records(@es_results, es_models,
-            {
-              current_account_id: current_account.id,
-              page: @current_page,
-              from: @offset
-            }
-          )
-        rescue Exception => e
-          Rails.logger.error "Searchv2 exception - #{e.message} - #{e.backtrace.first}"
-          NewRelic::Agent.notice_error(e)
-          @es_results = []
-          @result_set = []
-        end
-
+        @result_set = Search::V2::QueryHandler.new({
+          account_id:   current_account.id,
+          context:      @search_context,
+          exact_match:  @exact_match,
+          es_models:    es_models,
+          current_page: @current_page,
+          offset:       @offset,
+          types:        searchable_types,
+          es_params:    construct_es_params
+        }).query_results
+        
         yield(@result_set) if block_given?
         process_results
       end
@@ -115,7 +105,7 @@ module Search::V2::AbstractController
       # Before filter to construct parameters
       #
       def initialize_search_parameters
-        @search_key     = (params[:term] || params[:search_key] || params[:q] || '')
+        @search_key     = (params[:term] || params[:search_key] || params[:q] || params[:v] || params[:name] || '')
         @exact_match    = true if Search::Utils.exact_match?(@search_key)
         @es_search_term = Search::Utils.extract_term(@search_key, @exact_match)
 

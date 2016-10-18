@@ -62,7 +62,7 @@ window.App.Discussions = window.App.Discussions || {};
 
 		openReplyForm: function () {
 			$('#new-reply').addClass('replying');
-			$('#post_body_html').setFocus();
+			setTimeout(function() { $('#post_body_html').setFocus(); }, 500)
 			$('.topic-reply').bringToView();
 		},
 
@@ -92,6 +92,7 @@ window.App.Discussions = window.App.Discussions || {};
 				ev.preventDefault();
 				var conv = $this.findPostElement(this);
 				conv.find('.post-content').hide();
+				conv.find('.attachment_wrapper.post-attachment.multifile').hide();
 				conv.find('.post-edit').show().trigger('afterShow');
 			});
 		},
@@ -102,6 +103,7 @@ window.App.Discussions = window.App.Discussions || {};
 				ev.preventDefault();
 				var conv = $this.findPostElement(this);
 				conv.find('.post-content').show();
+				conv.find('.attachment_wrapper.post-attachment.multifile').show();
 				conv.find('.post-edit').hide();
 			});
 		},

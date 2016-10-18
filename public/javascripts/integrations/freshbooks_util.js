@@ -17,8 +17,8 @@ FreshbooksUtility.prototype = {
 
 		$this.clients={};
 		$this.client_page=0;
-		if(freshbooksBundle.reqCompany){
-			$this.reqCompany = freshbooksBundle.reqCompany.toLowerCase();
+		if($this.company()){
+			$this.reqCompany = $this.company().toLowerCase();
 			$this.client_filter="organization";
 		}
 		else if(freshbooksBundle.reqEmail){
@@ -45,6 +45,17 @@ FreshbooksUtility.prototype = {
         $this.freshdeskWidget = new Freshdesk.Widget(freshbooksOptions);
 
 		$this.request_status="Requested";
+	},
+
+	company:function(){
+		if(freshbooksBundle) {
+			if(freshbooksBundle.ticket_company.length > 0){
+				return freshbooksBundle.ticket_company;
+			}else if(freshbooksBundle.reqCompany.length > 0){
+				return freshbooksBundle.reqCompany;
+			}
+		}
+		return "";
 	},
 
 

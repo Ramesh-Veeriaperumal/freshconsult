@@ -172,12 +172,16 @@ var SurveyProtocol = {
 					for(var i=0; i<choices.length;i++){
 						choices[i].value  =  choices[i].value || choices[i].text;
 					}
+					if(SurveyAdmin.surveyChoiceGoodToBad){
+						choices.reverse();
+					}
 					return choices;
 				}
 		},
 		this.content["thanks"]={
 			title:surveysI18n.title_text,
 			default_text:surveysI18n.message_text,
+			message:'',
 			link:{
 					label:surveysI18n.label_text,				
 					action:"SurveyQuestion.create()"

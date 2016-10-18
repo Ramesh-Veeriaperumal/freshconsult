@@ -1,10 +1,8 @@
 <% 
-  attach_id ||= "ticket" 
-  nsc_param = nsc_param || "helpdesk_ticket"
-  original_attachments ||= {:regular => [], :cloud_files => []}
-  max_attachment ||= nil
+  attach_id ||= "post" 
   max_size ||= 15
   forward ||= false
+  attachments ||= {:regular => [], :cloud_files => []}
   session[:multiple_list] ||= session[:multiple_list]=0
 %>
 <% # Below block is an hack for cloud files when ticket gets converted to topic %> 
@@ -68,13 +66,13 @@
     <% end %>    
   </div>
 </div>
-<%= render "multi_attachment_template" %>
 
+<%= render "discussions/topics/multi_attachment_template" %>
   <script type="text/javascript">
             <% attachments[:cloud_files].each do |cloud| 
                cloud[:provider] = cloud.provider
            end %>
-            Helpdesk.MultipleFileUpload.renderExistingFiles(<%= attachments[:regular].to_json.html_safe %>,<%= attachments[:cloud_files].to_json.html_safe %>,<%=session[:multiple_list]%>);
+            Helpdesk.MultipleFileUpload.renderExistingFiles(<%= attachments[:regular].to_json.html_safe %>,<%= attachments[:cloud_files].to_json.html_safe %>,<%=session[:multiple_list]%>, null, null, null,<%= @topic_ticket.present? %>);
 </script>
 
       

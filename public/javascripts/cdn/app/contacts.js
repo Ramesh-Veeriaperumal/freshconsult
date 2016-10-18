@@ -1,3 +1,4 @@
+//= require app/customers_tickets.js
 //= require app/contacts.js
 //= require app/contact_form.js
 //= require app/contacts_merge.js

@@ -20,9 +20,9 @@
       </li>
     <% end %>
   </ul>
-<% elsif user.company.present? %>
-  <div class="break-word user-company-name" title="<%= h user.company.name %>">
-    <%= link_to(h(user.company.name), user.company, :'data-pjax' => "#body-container")  %>
+<% elsif company.present? %>
+  <div class="break-word user-company-name" title="<%= h company.name %>">
+    <%= link_to(h(company.name), company, :'data-pjax' => "#body-container")  %>
   </div>
 <% end %>
 

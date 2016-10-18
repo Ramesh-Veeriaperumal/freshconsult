@@ -235,6 +235,22 @@ label.overlabel{
 	}
 }
 
+.header-upgrade-wrapper{
+	@include float(left);
+	margin-top: 10px;
+	@include margin-right(10px);
+	.header-upgrade-link{
+		border: 2px solid;
+		@include border-radius(4px);
+		font-weight: 500;
+		font-size: 13px;
+		padding-top: 4px;
+		padding-bottom: 4px;
+		@include padding-right(8px);
+		@include padding-left(8px);
+	}
+}
+
 .fd-branding{
 	@include pie-clearfix;
 	position:absolute;
@@ -401,7 +417,7 @@ label.overlabel{
 .ff_alert_card{
 	min-width: 250px !important;
 	position: relative;
-	left:260px;
+	left:300px;
 	top: -20px;
 }
 .adjust_arrow{

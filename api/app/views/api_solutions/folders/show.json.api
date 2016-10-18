@@ -1,0 +1,11 @@
+response_hash = {
+	id: @item.parent.id,
+	name: @item.name,
+	description: @item.description,
+	visibility: @meta.visibility,
+	category_id: @meta.category_id,
+	created_at: @item.created_at,
+	updated_at: @item.updated_at
+}
+response_hash.merge!(company_ids: @item.company_ids) if @item.company_ids_visible?
+JSON.generate(response_hash)

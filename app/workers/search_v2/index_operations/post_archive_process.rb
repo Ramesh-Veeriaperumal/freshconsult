@@ -4,6 +4,7 @@
 class SearchV2::IndexOperations::PostArchiveProcess < SearchV2::IndexOperations
   def perform(args)
     args.symbolize_keys!
+    return unless Account.current.features_included?(:es_v2_writes)
 
     # Publish to remove ticket
     ticket_uuid     = RabbitMq::Utils.generate_uuid
@@ -33,6 +34,26 @@ class SearchV2::IndexOperations::PostArchiveProcess < SearchV2::IndexOperations
       )
       RabbitMq::Utils.manual_publish_to_xchg(
         note_uuid, 'note', note_message, RabbitMq::Constants::RMQ_SEARCH_NOTE_KEY
+      )
+    end
+    
+    # Publish as archive notes
+    # Have to do this as archive notes are note a separate entity in DB
+    # Helpdesk::Note.update_all is done to flip notable
+    #
+    args[:note_ids].each do |anote_id|
+      anote_uuid     = RabbitMq::Utils.generate_uuid
+      anote_message  = generate_message(
+        'archivenote', #=> type in ES
+        'create',
+        anote_uuid,
+        args[:account_id],
+        anote_id,
+        'Helpdesk::Note', #=> Not using archive note class here.
+        args[:archive_ticket_id]
+      )
+      RabbitMq::Utils.manual_publish_to_xchg(
+        anote_uuid, 'archive_note', anote_message, RabbitMq::Constants::RMQ_SEARCH_ARCHIVE_NOTE_KEY
       )
     end
   end

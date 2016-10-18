@@ -104,6 +104,7 @@ class Social::FacebookPage < ActiveRecord::Base
 
   def fetch_fb_wall_posts
     Social::FacebookDelta.perform_async({ :page_id => self.page_id }) if fetch_delta?
+    subscribe_realtime if page_token_changed?
   end
 
   def send_mixpanel_event

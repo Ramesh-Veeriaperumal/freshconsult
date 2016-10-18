@@ -16,16 +16,38 @@ module ActiveRecord
       filter_conditions = conditions || frame_converse_conditions(updates_hash)
 
       begin
-        records = self.where(filter_conditions).limit(batch_size).pluck(:id)  
-        if records.present?
-          updated_count = self.where(id: records).update_all(updates_hash)
-          UpdateAllPublisher.perform_async(klass_name: self.klass.name, ids: records, updates: updates_hash)
-          count = count + records.count
+        record_ids = self.where(filter_conditions).limit(batch_size).pluck(:id)  
+        if record_ids.present?
+          records             = self.where(id: record_ids)
+          publish_record_ids  = records.update_all_record_ids
+          records.update_all(updates_hash)
+
+          UpdateAllPublisher.perform_async(klass_name: update_all_klass_name, ids: publish_record_ids, updates: updates_hash, options: options)
+          count = count + record_ids.count
         end
-      end while records.size == batch_size
-      
+      end while record_ids.size == batch_size
+
       count
     end
+
+    def update_all_klass_name
+      case klass.name
+      when "Helpdesk::SchemaLessTicket"
+        "Helpdesk::Ticket"
+      else
+        self.klass.name
+      end
+    end
+
+    def update_all_record_ids
+      case klass.name
+      when "Helpdesk::SchemaLessTicket"
+        self.map(&:ticket_id)
+      else
+        self.map(&:id)
+      end
+    end
+
 
     private
       

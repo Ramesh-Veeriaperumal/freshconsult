@@ -20,9 +20,9 @@
             <%= f.hidden_field :user_id, :value=> current_user && current_user.id %>
             <%= f.hidden_field :source, :value=> Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["email"]%>
         </li>
-        <li>
+        <li class="attachment-options-reply">
           <% unless local_assigns[:no_attachments] %>
-              <%= render :partial => "/helpdesk/tickets/show/single_attachment_form", :locals => { :attach_id => id , :nsc_param => "helpdesk_note",:bulk => true } %>
+              <%= render :partial => "/helpdesk/tickets/show/single_attachment_form", :locals => { :attach_id => id , :nsc_param => "helpdesk_note",:bulk => true , :rowfluid => true} %>
                   <%= render "helpdesk/shared/single_attachment_template" %>
           <% end %>
         </li>

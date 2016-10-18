@@ -133,6 +133,12 @@ module Cache::Memcache::Account
     key = FB_REAUTH_CHECK % {:account_id => self.id }
     MemcacheKeys.fetch(key) { self.facebook_pages.reauth_required.present? }
   end
+  
+  def fb_realtime_msg_from_cache
+    key = FB_REALTIME_MSG_ENABLED % {:account_id => self.id }
+    MemcacheKeys.fetch(key) { self.facebook_pages.realtime_messaging_disabled.present? }
+  end
+  
   def custom_dropdown_fields_from_cache
     @custom_dropdown_fields_from_cache ||= begin
       key = ACCOUNT_CUSTOM_DROPDOWN_FIELDS % { :account_id => self.id }
@@ -255,7 +261,7 @@ module Cache::Memcache::Account
       expiry = 30.days.to_i
     end
     MemcacheKeys.fetch(key,expiry) do
-      CRM::Salesforce.new.account_owner(self.id)
+      # CRM::Salesforce.new.account_owner(self.id)
     end
   end
 
@@ -281,15 +287,24 @@ module Cache::Memcache::Account
     MemcacheKeys.fetch(key) { self.account_additional_settings }
   end
 
+  def account_status_groups_from_cache
+    @account_status_groups_from_cache ||= begin
+      key = ACCOUNT_STATUS_GROUPS % {:account_id => self.id}
+      MemcacheKeys.fetch(key) { self.status_groups.all }
+    end
+  end
+
   def clear_account_additional_settings_from_cache
     key = ACCOUNT_ADDITIONAL_SETTINGS % { :account_id => self.id }
     MemcacheKeys.delete_from_cache(key)
   end
 
   def cti_installed_app_from_cache
-    key = INSTALLED_CTI_APP % { :account_id => self.id }
-    MemcacheKeys.fetch(key) do
-      self.installed_applications.with_type_cti.first ? self.installed_applications.with_type_cti.first : false
+    @cti_installed_app_from_cache ||= begin
+      key = INSTALLED_CTI_APP % { :account_id => self.id }
+      MemcacheKeys.fetch(key) do
+        self.installed_applications.with_type_cti.first ? self.installed_applications.with_type_cti.first : false
+      end
     end
   end
 
@@ -352,6 +367,16 @@ module Cache::Memcache::Account
   def clear_application_on_dip_from_cache
     key = ACCOUNT_INSTALLED_APPS_IN_COMPANY_PAGE % { :account_id => self.id }
     MemcacheKeys.delete_from_cache(key)
+  end
+
+  def clear_account_status_groups_cache
+    key = ACCOUNT_STATUS_GROUPS % {:account_id => self.id}
+    MemcacheKeys.delete_from_cache(key)
+  end
+
+  def clear_requester_widget_fields_from_cache
+    key = REQUESTER_WIDGET_FIELDS % { :account_id => current_account.id }
+    MemcacheKeys.delete_from_cache key
   end
 
   private

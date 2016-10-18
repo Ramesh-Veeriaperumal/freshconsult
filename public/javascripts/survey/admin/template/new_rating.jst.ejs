@@ -9,7 +9,7 @@
 		<div class="control-group row-fluid">
 			<label class="control-label span2"><%= surveysI18n.survey_question %></label>
 			<div class="pull-right span10">
-				<input type="text" maxlength="<%=SurveyConstants.limit.thanks_text%>" placeholder="<%= surveysI18n.link_text_input_label %>" name="link_text" value='<%=link_text%>' <%if(question_id){%> data-choicemap='<%=SurveyJSON.stringify(default_choice_map)%>'<%}%> />
+				<input type="text" maxlength="<%=SurveyConstants.limit.thanks_text%>" placeholder="<%= surveysI18n.link_text_input_label %>" name="link_text" value="<%-link_text%>" <%if(question_id){%> data-choicemap='<%=SurveyJSON.stringify(default_choice_map)%>'<%}%> />
 				<label id="link_text-error" class="error" style="display:none;"> <%= surveysI18n.error_text%> </label>
 			</div>
 		</div>

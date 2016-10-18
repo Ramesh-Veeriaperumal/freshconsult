@@ -15,6 +15,8 @@ class Subscription < ActiveRecord::Base
                   :address2 => :billing_addr2, :city => :billing_city, :state => :billing_state,
                   :country => :billing_country, :zip => :billing_zip  }
 
+  AUTOPILOT_FILEDS = ["state", "next_renewal_at", "renewal_period", "amount", "subscription_plan_id", "agent_limit"]
+
   
   ACTIVE = "active"
   TRIAL = "trial"
@@ -48,7 +50,7 @@ class Subscription < ActiveRecord::Base
 
   after_update :add_to_crm
   after_update :update_reseller_subscription
-  after_commit :update_social_subscription, :add_free_freshfone_credit, on: :update
+  after_commit :update_social_subscription, :add_free_freshfone_credit, :update_crm, on: :update
   after_commit :clear_account_susbcription_cache
   attr_accessor :creditcard, :address, :billing_cycle
   attr_reader :response
@@ -485,6 +487,12 @@ class Subscription < ActiveRecord::Base
                               cmrr: self.cmrr, payments_count: self.subscription_payments.count }) if changes.any?
     end
 
+    def update_crm
+      if autopilot_fields_changed? and (Rails.env.staging? or Rails.env.production?)
+        Resque.enqueue(Marketo::UpdateLeadToAutopilot, {})
+      end
+    end
+
     def update_reseller_subscription
       if state_changed? or (active? and amount_changed?) or subscription_currency_id_changed? or next_renewal_at_changed?
         Subscription::UpdatePartnersSubscription.perform_async({ :account_id => account_id, 
@@ -506,6 +514,13 @@ class Subscription < ActiveRecord::Base
     def clear_account_susbcription_cache
       key = MemcacheKeys::ACCOUNT_SUBSCRIPTION % { :account_id => self.account_id }
       MemcacheKeys.delete_from_cache key
+    end
+
+    def autopilot_fields_changed?
+      AUTOPILOT_FILEDS.each do |field|
+        return true if self.send(field) != @old_subscription.send(field)
+      end
+      return nil
     end
 
  end

@@ -525,6 +525,11 @@ ul.ffone-minimal-swap li, ul.ticket-minimal-swap li{
 .lc-offline{
   opacity: 0.5;
 }
+.lc-support-widget {
+  &.lc-offline {
+    opacity: 1;
+  }
+}
 .lc-offline-agents{
  text-align: left;
  list-style: none;

@@ -58,7 +58,7 @@
       <% end %>
       <p><%= default_question_label %></p>
       <div class="survey-buttons">
-        <% !JSON.parse(choices).blank? && JSON.parse(choices).reverse().each_with_index do |option, index|%>
+        <% !JSON.parse(choices).blank? && JSON.parse(choices).each_with_index do |option, index|%>
           <%= link_to "<span class=\"survey-rating #{CustomSurvey::Survey::CUSTOMER_RATINGS_STYLE[option["survey_question_choice"]["face_value"]]}\"></span><div class='survey-rating-label'>#{h(option["survey_question_choice"]["value"])}</div>".html_safe , support_portal_custom_survey_path(@ticket,option["survey_question_choice"]["face_value"]), :target => "_blank" %>       
           <%end%>
       </div>

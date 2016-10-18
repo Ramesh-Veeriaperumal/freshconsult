@@ -46,10 +46,21 @@ InfusionsoftWidget.prototype= {
         return fieldLabels;
     },
 
+    company:function(){
+        if(infusionsoftBundle) {
+            if(infusionsoftBundle.ticket_company.length > 0){
+                return infusionsoftBundle.ticket_company;
+            }else if(infusionsoftBundle.reqCompany.length > 0){
+                return infusionsoftBundle.reqCompany;
+            }
+        }
+        return "";
+    },
+
     getContactRequest: function(){
         var requestUrls = [],
             custEmail = this.bundle.reqEmail.split(','),
-            custCompany = this.bundle.reqCompany;
+            custCompany = this.company();
         this.searchCount = custEmail.length;
         this.searchResultsCount = 0;
         if( this.bundle.reqEmail ){
@@ -57,7 +68,7 @@ InfusionsoftWidget.prototype= {
                 requestUrls.push(this.getContactRequestParams(custEmail[i]));
             }  
         }
-        else if( custCompany ){
+        else if( custCompany != "" ){
             requestUrls.push(this.getAccountRequestParams("Company", custCompany));
         }
         if(!requestUrls.length){
@@ -274,11 +285,11 @@ InfusionsoftWidget.prototype= {
         if ( !this.allResponsesReceived() ){ 
             return;
         }
-        var custCompany = this.bundle.reqCompany;
-        if( custCompany || this.associatedCompanyIDs.length > 0){
+        var custCompany = this.company();
+        if( (custCompany != "") || this.associatedCompanyIDs.length > 0){
             this.searchCount = this.associatedCompanyIDs.length;
             this.searchResultsCount = 0;
-            if( custCompany ){
+            if( custCompany != "" ){
                 this.searchCount++;
                 $this.freshdeskWidget.request($this.getAccountRequestParams("Company", custCompany));
             }

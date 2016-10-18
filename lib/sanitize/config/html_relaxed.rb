@@ -50,14 +50,14 @@ class Sanitize
         'source'     => ['src', 'type'],
         'audio'      => ['controls', 'width', 'height'],
         'video'      => ['src', 'width', 'height', 'crossorigin', 'poster', 'preload', 'autoplay', 'mediagroup', 'loop', 'muted', 'controls'],
-        'pre'        => ['rel','code-brush'],
+        'pre'        => ['rel','code-brush','data-code-brush'],
         'font'       => ['color']
       },
       :add_attributes => {
         'a' => {'rel' => 'noreferrer'}
       },
       :protocols => {
-        'a'          => {'href' => ['ftp', 'http', 'https', 'mailto', :relative], 'target' => ['_blank','_self','_parent','_top',:relative]},
+        'a'          => {'href' => ['ftp', 'http', 'https', 'mailto', 'tel', 'callto', :relative], 'target' => ['_blank','_self','_parent','_top',:relative]},
         'blockquote' => {'cite' => ['http', 'https', :relative]},
         'del'        => {'cite' => ['http', 'https', :relative]},
         'img'        => {'src'  => ['http', 'https', :relative]},

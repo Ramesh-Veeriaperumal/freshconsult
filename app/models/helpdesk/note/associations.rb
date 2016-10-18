@@ -44,4 +44,6 @@ class Helpdesk::Note < ActiveRecord::Base
   
   has_one :ebay_question, :as => :questionable, :class_name => 'Ecommerce::EbayQuestion', :dependent => :destroy
 
+  has_one :cti_call, :class_name => 'Integrations::CtiCall', :as => 'recordable', :dependent => :destroy
+
 end

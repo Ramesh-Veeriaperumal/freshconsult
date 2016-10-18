@@ -50,4 +50,27 @@
 				<% if(item.stop_sla_timer){ %> checked="checked" <% } %> 
 				value=true />
 	<% } %>
+	<% if(isDisabled === 'delete_choice_btn' && item.field_type == "default_status" && shared_ownership_enabled) {%>
+
+		<span class="dropchoice customdropchoice">
+			<select class="select2" multiple="true" name="group_ids" rel="shared_ownership" data="<%= item.group_ids %>">
+				<% _.each(shared_groups, function(item){  %>
+					<option value="<%= item[0] %>"><%= item[1] %> </option>
+				<% }) %>
+			</select>
+		</span>
+	<% }%>
+
 </fieldset>
+<script type="text/javascript">
+	jQuery(document).ready(function(){
+		jQuery('[rel=shared_ownership]').livequery(function(){
+			var hash_val = [];
+			var _this = jQuery(this);
+			if(_this.attr("data").length > 0){
+				_this.attr("data").split(",").each(function(item, i){ hash_val.push(item); });
+				_this.val(hash_val);
+			}
+		});
+	});
+</script>

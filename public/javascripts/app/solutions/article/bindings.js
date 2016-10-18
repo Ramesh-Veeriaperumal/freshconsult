@@ -15,7 +15,7 @@ window.App = window.App || {};
       this.bindForCancelBtn();
       this.bindForEditBtn();
       this.bindForShowMaster();
-
+      
       this.modalBindings();
       this.outdateOrUpdate();
     },
@@ -28,6 +28,13 @@ window.App = window.App || {};
         $this.setTagSelector();
         $this.articleProperties();
         $this.checkTranslations();
+        
+        // Check rendered SEO meta length on modal load
+        jQuery(this).find('#article-form [rel=charcounter]').each(function(pos,item){ 
+          $this.validateSeoLength(item) 
+        });
+        // Bind keyup SEO meta checks
+        $this.seoCharCounter();
       });
     },
 
@@ -84,6 +91,28 @@ window.App = window.App || {};
         );
       });
     },
+    
+    seoCharCounter: function () {
+      var $this = this;
+      
+      // Validate on keyup
+      $('body').on('keyup.articles', '#article-form [rel=charcounter]', function (ev) {
+        $this.validateSeoLength(ev.target);
+      });
+    },
+    
+    validateSeoLength: function (element) {
+      var originalMsg = $(element).data('org-msg'),
+          limitMsg = $(element).data('limit-msg'),
+          recommended = $(element).data('limit'),
+          contentLength = $(element).val().length;
+
+      if(contentLength > recommended) {
+        $(element).next('div.muted').html(limitMsg);
+      } else {
+        $(element).next('div.muted').html(originalMsg);
+      }
+    },
 
     bindForCancelBtn: function () {
       var $this = this;
@@ -97,7 +126,6 @@ window.App = window.App || {};
         $this.autoSave.stopSaving();
         $(".article-edit-form")[0].reset();
         $('.breadcrumb').removeClass('breadcrumb-edit');
-        $this.highlightCode();
 
         if ($this.autoSave.totalCount > 0) {
           $this.setFormValues();
@@ -317,6 +345,7 @@ window.App = window.App || {};
 
 
     },
+
     toggleShowMaster: function () {
       $('#show_master_article').toggleClass('hide');
     }

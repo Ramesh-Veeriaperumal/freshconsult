@@ -3,7 +3,9 @@ Encoding.default_external = Encoding::UTF_8
 source 'https://rubygems.org'
 
 gem "rake", "~> 10.4.0"
-gem "rails","3.2.22.2"
+gem "rails","3.2.22.3"
+
+gem "freemail", "0.2.0", :require => false 
 
 gem 'rack-cors', '~> 0.3.1'
 gem "syck",'1.0.5'
@@ -35,6 +37,7 @@ gem 'fresh_request', :git => 'git@github.com:freshdesk/fresh_request.git', :bran
 #for ruby ~> 2.1.0 upgrade
 gem 'iconv', '~> 1.0.4'
 gem 'thrift', '~> 0.9.2.0'
+gem 'charlock_holmes', "0.7.3"
 
 group :development, :test do
   gem 'rails-dev-boost', :git => 'git://github.com/thedarkone/rails-dev-boost.git'
@@ -83,7 +86,7 @@ gem "ipaddress", "0.8.0"
 
 gem 'sidekiq', "3.4.1"
 # This needs bundler 1.7.2 or 1.10.6 as other version has problem in resolving.
-source "https://a55d1643:d20410bb@gems.contribsys.com/" do 
+source "https://690a8c5e:5d9334f0@gems.contribsys.com/" do
   gem 'sidekiq-pro' 
 end 
 gem 'shoryuken', '2.0.4'
@@ -176,6 +179,8 @@ gem "xml-simple", "1.1.4", :require => 'xmlsimple'
 gem "therubyracer"
 gem "premailer", "~> 1.8.0"
 
+# Email Related Gems
+gem 'html_to_plain_text', '1.0.5'
 gem "akismetor", :git => "git://github.com/freshdesk/akismetor.git"
 gem 'launchparty', "0.1.1", :git => 'git@github.com:freshdesk/launch-party.git', :branch => 'master'
 gem 'binarize', "0.1.1", :git => 'git@github.com:freshdesk/binarize.git', :branch => 'master'
@@ -298,3 +303,8 @@ gem 'doorkeeper', '2.2.1'
 
 # Search v2
 gem 'typhoeus'
+
+gem 'i18nema', :git => 'https://github.com/freshdesk/i18nema', :require => false
+
+# For debugging app in staging/production
+gem 'rbtrace', :require => false

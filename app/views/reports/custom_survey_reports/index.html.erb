@@ -91,6 +91,9 @@
 				<span class="grey-arrow-down title-dropdown"></span>
 			</span>
 			<%= render :partial => "reports/shared/save_report_controls"%>
+			<button class="generate-csv-button" id="export_csv" name="button" onclick="this.blur();" data-export-url="<%=reports_custom_survey_export_csv_url%>">
+        <%= t('helpdesk_reports.export.email_report_csv')%>
+	    </button>
 		</div>
 		<div class="survey-rep-filter custom-select2">
 			<ul>
@@ -147,13 +150,5 @@ current_user = {
 	name : '<%= current_user.name %>'
 };
 SurveyReport.agentReporting = <%= !@hide_agent_reporting %>;
-jQuery(document).ready(function(){
-	jQuery('.deleted_list').attr('disabled','disabled');
-	jQuery('#survey_main_layout').append(JST["survey/reports/template/main_content"]({
-		agentReporting: SurveyReport.agentReporting
-	}));
-	jQuery('#survey_main_layout').on('click.survey_reports', function(){
-		jQuery('#reports_type_menu').hide();
-	})
-});
+SurveyList.bind();
 </script>

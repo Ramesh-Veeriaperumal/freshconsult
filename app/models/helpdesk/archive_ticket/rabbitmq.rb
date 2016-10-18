@@ -55,7 +55,9 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
   
   def archive_ticket_schemaless_hash 
     @rmq_archive_ticket_schemaless_hash ||= {
-      "sla_policy_id"   =>  sla_policy_id
+      "sla_policy_id"   =>  sla_policy_id,
+      "internal_agent_id" => internal_agent_id,
+      "internal_group_id" => internal_group_id
     }.merge(reports_hash)
   end
 
@@ -69,7 +71,7 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
     @rmq_archive_ticket_states_hash ||= {
       "resolved_at"                 =>  resolved_at.to_i,
       "time_to_resolution_in_bhrs"  =>  resolution_time_by_bhrs,
-      "time_to_resolution_in_chrs"  =>  (resolved_at ? (resolved_at - created_at) : nil ),
+      "time_to_resolution_in_chrs"  =>  (resolved_at ? (resolved_at.to_time - created_at) : nil ),
       "first_response_by_bhrs"      =>  first_resp_time_by_bhrs,
       "inbound_count"               =>  inbound_count
     }

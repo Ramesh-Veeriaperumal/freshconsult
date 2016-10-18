@@ -22,9 +22,16 @@
       else if(container == "customers"){
         value = jQuery('#customers_filter').val().toString() || '';
       }
+      else if(container == "tags"){
+        value = jQuery('#tags_filter').val().toString() || '';
+      }
       else if(container == "single_select"){
         if(jQuery('#created_at option:selected').val() != "any_time")
           value =  jQuery('#created_at option:selected').val();
+      }
+      else if(container == "association_type"){
+        if(jQuery(this).children('select').val() != "")
+            value = jQuery(this).children('select').val();
       }
       else {
         value = jQuery(this).find(_selector).map(function(){ return this.value; }).get();
@@ -47,8 +54,6 @@
         value       : value.toString()
       }
     }
-    window.FreshdeskNode.getValue('faye_realtime').new_ticket_ids = [];
-    window.FreshdeskNode.getValue('faye_realtime').updated_ticket_ids = [];
   }
 
   function refresh_tickets() {
@@ -63,9 +68,11 @@
     jQuery("#FilterOptions input[name=data_hash]").val(query_hash.toJSON()).trigger("change");
   }
 
-  function toggle_save_and_refresh() {
-    jQuery("#active_filter").addClass('unsaved');
-    refresh_tickets();
+  function toggle_save_and_refresh(params) {
+    if(params !== 'customTrigger'){
+      jQuery("#active_filter").addClass('unsaved');
+      refresh_tickets();
+    }
   }
 
   function showSave() {
@@ -99,39 +106,135 @@
   		<input type="hidden" name="page" value="1" />
       <input type="hidden" name="total_entries" value="0">
       <input type="hidden" name="total_entries" value="0">
+      <input type="hidden" name="agent_mode" value="<%= current_agent_mode %>">
+      <input type="hidden" name="group_mode" value="<%= current_group_mode %>">
 
       <input type="hidden" name="unsaved_view" id="flag_unsaved_view" <%= "disabled" unless params[:unsaved_view] %> value="true" />
     </form>
+    <% enable_fragment_cache(:ticket_list_filters) do %>
       <% @show_options.each_with_index do |c_hash, i| %>
         <%
           if ((!c_hash[:field_type].nil?) && (c_hash[:field_type] == "nested_field"))
             container = "nested_field"
           elsif c_hash[:name] == 'created_at'
             container = "single_select"
-          elsif ['requester', 'customers'].include?(c_hash[:name])
+          elsif ['requester', 'customers', 'tags', 'association_type'].include?(c_hash[:name])
             container = c_hash[:name]
+          elsif ['responder_id','group_id'].include?(c_hash[:name])
+            container = "multi_select"
           else
             container = (c_hash[:options].size < 5)? "dropdown" : "multi_select"
           end
         %>
     	  <%=
         unless c_hash[:options].blank?
+          display_name = c_hash[:name]
+          agent_columns = ["responder_id", TicketConstants::SHARED_AGENT_COLUMNS_ORDER].flatten
+          group_columns = ["group_id", TicketConstants::SHARED_GROUP_COLUMNS_ORDER].flatten
+          if agent_columns.include?(c_hash[:name])
+            if current_agent_mode != TicketConstants::FILTER_MODES[:primary]
+              c_hash[:name] = TicketConstants::SHARED_AGENT_COLUMNS_CONDITIONS_BY_MODE[current_agent_mode]
+              c_hash[:condition] = TicketConstants::SHARED_AGENT_COLUMNS_CONDITIONS_BY_MODE[current_agent_mode]
+            end
+            agent_columns.each {|col| @current_options[c_hash[:condition].to_s] ||= @current_options[col] }
+          elsif group_columns.include?(c_hash[:name])
+            if current_group_mode != TicketConstants::FILTER_MODES[:primary]
+              c_hash[:name] = TicketConstants::SHARED_GROUP_COLUMNS_CONDITIONS_BY_MODE[current_group_mode]
+              c_hash[:condition] = TicketConstants::SHARED_GROUP_COLUMNS_CONDITIONS_BY_MODE[current_group_mode]
+            end
+            group_columns.each {|col| @current_options[c_hash[:condition].to_s] ||= @current_options[col] }
+          end
           content_tag :div,{ :id          => "div_ff_#{c_hash[:condition]}",
                                 :class       => "ff_item",
                                 :condition   => c_hash[:condition],
                                 :operator    => c_hash[:operator],
                                 :ff_name     => c_hash[:ff_name],
-                                :container   => container } do %>
-            <h4 class="title"><%= (c_hash[:f_type] == :default) ? t("filter_options.#{c_hash[:name]}").html_safe.capitalize : c_hash[:name].html_safe.capitalize %></h4>
-            <%= render :partial => "/helpdesk/tickets/containers/#{container}", :locals => { :container => container, :options => c_hash[:options], :name => c_hash[:name], :selected_val => @current_options[c_hash[:condition].to_s].to_s.split(","), :field_id => c_hash[:field_id], :nested_fields => c_hash[:nested_fields], :current_options => @current_options, :c_hash => c_hash} %>
+                                :container   => container,
+                                :data => {                 
+                                  :domtype => container,    
+                                  :id => c_hash[:condition]            
+                                  }
+                                } do %>
+            <% if(display_name === "responder_id" && shared_ownership_enabled) %>
+              <div class="fd-menu shared_sort_menu" id="agentSort">
+                <ul>             
+                    <% 
+                      current_sort_name = ""
+                      current_agent_sort = ""
+                    %>
+                    <% TicketsFilter.shared_agent_sort_fields_options.each do |sort_item| %> 
+                      <% agent_mode = sort_item[1]
+                        current_sort_name = sort_item[0] if sort_item[2].to_s == current_agent_mode.to_s
+                        current_agent_sort = sort_item[1] if sort_item[2].to_s == current_agent_mode.to_s
+                      %>
+                      <li>
+                        <a class="agent_mode" mode="<%= sort_item[2] %>" href="#" agent_mode="<%=agent_mode%>" >
+                          <%if(sort_item[2].to_s == current_agent_mode.to_s) %>
+                           <span class="icon ticksymbol"></span>
+                           <%end%>
+                            <%= sort_item[0] %>
+                         </a>
+                      </li>
+                    <% end %>
+                </ul> 
+              </div>
+              <a class="title drop-right nav-trigger agent_text shared_filter_text" href="#" value="<%= current_agent_sort %>" menuid="#agentSort">
+                <%= current_sort_name %>
+              </a>
+            <% elsif (display_name === "group_id" && shared_ownership_enabled) %>
+              <div class="fd-menu shared_sort_menu" id="groupSort">
+                <ul>             
+                    <% 
+                      current_sort_name = ""
+                      current_group_sort = ""
+                    %>
+                    <% TicketsFilter.shared_group_sort_fields_options.each do |sort_item| %> 
+                      <% group_mode = sort_item[1]
+                        current_sort_name = sort_item[0] if sort_item[2].to_s == current_group_mode.to_s
+                        current_group_sort = sort_item[1] if sort_item[2].to_s == current_group_mode.to_s
+                      %>
+                      <li>
+                        <a class="group_mode" mode="<%= sort_item[2] %>" href="#" group_mode="<%=group_mode%>" >
+                          <%if(sort_item[2].to_s == current_group_mode.to_s) %>
+                           <span class="icon ticksymbol"></span>
+                           <%end%>
+                          <%= sort_item[0] %>
+                         </a>
+                      </li>
+                    <% end %>
+                </ul> 
+              </div>
+              <a class="title drop-right nav-trigger group_text shared_filter_text" href="#" value="<%= current_group_sort %>" menuid="#groupSort">
+                <%= current_sort_name %>
+              </a>
+            <% else %>
+              <h4 class="title"><%= (c_hash[:f_type] == :default) ? t("filter_options.#{display_name}").html_safe.capitalize : display_name.html_safe.capitalize %></h4>
+            <% end %>
+            <%= render :partial => "/helpdesk/tickets/containers/#{container}", :locals => { :container => container, :options => c_hash[:options], :name => c_hash[:name], 
+             :selected_val => @current_options[c_hash[:condition].to_s].to_s.split(","), 
+             :field_id => c_hash[:field_id], :nested_fields => c_hash[:nested_fields], :current_options => @current_options, :c_hash => c_hash} %>
           <% end
           end
         end %>
+    <% end %>
 <%= javascript_tag do%>
 	var query_hash  = $A();
-
+  var unassigned = "";
 	jQuery(document).ready(function(){
-
+    <% if Account.current.launched?(:ticket_list_page_filters_cache) %>
+      var fieldMap = <%= raw(TicketConstants::DASHBOARD_FILTER_MAPPING.to_json) %>;
+      PopulateData.I18n_text.me = '<%= t("helpdesk.tickets.add_watcher.me") %>'
+      PopulateData.I18n_text.mygroups = '<%= t("filter_options.mygroups") %>'
+      PopulateData.I18n_text.unassigned = '<%= t("filter_options.unassigned") %>'
+      TicketListSidebar.getParams(fieldMap,function(params){
+          PopulateFormData.init(params);
+      });
+    <% end %>
+  var selectedGroupTextId = jQuery(".group_text").attr("value");
+  if(selectedGroupTextId && selectedGroupTextId.indexOf(".") > -1){
+    var splitId = selectedGroupTextId.split(".");
+    selectedGroupTextId = splitId[0]+"\\."+splitId[1];
+  }
   jQuery("#div_ff_created_date_range").hide();
   if(jQuery("#created_date_range").val() == ""){
     jQuery("#created_date_range").val('<%= TicketConstants.created_date_range_default %>');
@@ -218,9 +321,99 @@
       });
     });
 
+    //hide link and merge when there is existing association
+    var association_type = jQuery('#association_type').val();
+    if(association_type == '<%= TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:tracker]%>' || association_type == '<%= TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:related]%>'){
+      jQuery('.bulk_action_buttons .lnk_tkt_tracker_show_dropdown').addClass('hide');
+      jQuery('#invoke_merge_popup').addClass('hide');
+    }
+    jQuery('#association_type').change(function(e){
+      if(this.value == '<%= TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:tracker]%>' || this.value == '<%= TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:related]%>'){
+        jQuery('.bulk_action_buttons .lnk_tkt_tracker_show_dropdown').addClass('hide');
+        jQuery('#invoke_merge_popup').addClass('hide');
+      }else {
+        jQuery('.bulk_action_buttons .lnk_tkt_tracker_show_dropdown').removeClass('hide');
+        jQuery('#invoke_merge_popup').removeClass('hide');
+      }
+    })
+
+    // For Any Group, we will remove Unassigned values from the list - loading
+    if(jQuery(".group_text").attr("value") != "" && jQuery(".group_text").attr("value") == "any_group_id"){
+      unassigned = jQuery('#any_group_id option[value="-1"]');
+      var selectedVals = jQuery('#any_group_id').val();
+      if(selectedVals && selectedVals.indexOf("-1") > -1){
+        selectedVals.splice(selectedVals.indexOf("-1"), 1);
+        jQuery('#any_group_id').val(selectedVals);
+        jQuery('#any_group_id').trigger('change');
+      }
+      if(jQuery("#"+jQuery(".group_text").parent().attr("id")+" label.item input[value='-1']").length > 0){
+        unassigned = jQuery("#"+jQuery(".group_text").parent().attr("id")+" label.item input[value='-1']").parent();
+        
+      }
+      jQuery('#any_group_id option[value="-1"]').remove();
+      jQuery("#"+jQuery(".group_text").parent().attr("id")+" label.item input[value='-1']").parent().remove();
+      jQuery(".group_text.shared_filter_text").addClass('lengthier_text');
+    }
+
+    if(jQuery(".agent_text").attr("value") != "" && jQuery(".agent_text").attr("value") == "any_agent_id"){
+      jQuery(".agent_text.shared_filter_text").addClass('lengthier_text');
+    }else {
+      jQuery(".agent_text.shared_filter_text").removeClass('lengthier_text');
+    }
+
     jQuery(document).on("click.ticket_filter", ".wf_order_type, .wf_order", function(ev){
       ev.preventDefault();
       jQuery("#FilterOptions input[name="+this.className+"]").val(this.getAttribute(this.className)).trigger("change");
+    });
+
+    // For Any Group - on change
+    jQuery(".agent_mode, .group_mode").off();
+    jQuery(".agent_mode, .group_mode").on("click", function(ev){
+      ev.preventDefault();
+      jQuery(this).closest(".ff_item").attr("id", 'div_ff_'+this.getAttribute(this.className));
+      jQuery(this).closest(".ff_item").attr("condition", this.getAttribute(this.className));
+      jQuery(this).closest(".fd-menu").css("display", "none");
+      if(this.className == "agent_mode"){
+        jQuery(".agent_mode .ticksymbol").remove();
+        jQuery(".agent_text").text(jQuery(this).text());
+        if(this.getAttribute(this.className) == "any_agent_id"){
+          jQuery(".agent_text.shared_filter_text").addClass('lengthier_text');
+        }else{
+          jQuery(".agent_text.shared_filter_text").removeClass('lengthier_text');
+        }
+        jQuery(this).prepend("<span class='icon ticksymbol'></span>");
+      }else{
+        jQuery(".group_mode .ticksymbol").remove();
+        jQuery(".group_text").text(jQuery(this).text());
+        jQuery(this).prepend("<span class='icon ticksymbol'></span>");
+        if(this.getAttribute(this.className) == "any_group_id"){
+          jQuery(".group_text.shared_filter_text").addClass('lengthier_text');
+          unassigned = jQuery('#'+selectedGroupTextId+' option[value="-1"]');
+          var selectedVals = jQuery('#'+selectedGroupTextId).val();
+          if(selectedVals && selectedVals.indexOf("-1") > -1){
+            selectedVals.splice(selectedVals.indexOf("-1"), 1);
+            jQuery('#'+selectedGroupTextId).val(selectedVals);
+            jQuery('#'+selectedGroupTextId).trigger('change');
+          }
+          if(jQuery("#"+jQuery(".group_text").parent().attr("id")+" label.item input[value='-1']").length > 0){
+            unassigned = jQuery("#"+jQuery(".group_text").parent().attr("id")+" label.item input[value='-1']").parent();
+          }
+          jQuery('#'+selectedGroupTextId+' option[value="-1"]').remove();
+          jQuery("#"+jQuery(".group_text").parent().attr("id")+" label.item input[value='-1']").parent().remove();
+        }else{
+          jQuery(".group_text.shared_filter_text").addClass('lengthier_text');
+          if(jQuery('#'+selectedGroupTextId+' option[value="-1"]').length <= 0){
+            if(jQuery("#" + jQuery(".group_text").parent().attr("id") + " label.item").length > 0){
+              jQuery(".group_text").parent().append(unassigned);
+            }else{
+              jQuery('#' + selectedGroupTextId).append(unassigned);
+            }  
+          }
+        }
+      }
+      jQuery("#FilterOptions input[name="+this.className+"]").val(this.getAttribute("mode"));
+      jQuery("#active_filter").addClass('unsaved');
+      refresh_tickets();
     });
 
 		jQuery(document).on("click.ticket_filter", ".toolbar_pagination a, .toolbar_pagination_full a", function(ev){
@@ -245,10 +438,6 @@
     });
 
   jQuery("#FilterOptions").change(function(){
-    for(var i=0;i<window.FreshdeskNode.getValue('faye_realtime').faye_subscriptions.length;i++)
-    {
-      window.FreshdeskNode.getValue('faye_realtime').faye_subscriptions[i].cancel();
-    }
     <%
     # Select all should be persisted on pagination
     # but not when filter get changed, which is handled in change event of
@@ -296,7 +485,6 @@
           updated_ticket_ids = [];
           jQuery("#update_message, #new_ticket_message").hide();
         }
-        window.FreshdeskNode.addSubscriptions();
       }
     });
   });

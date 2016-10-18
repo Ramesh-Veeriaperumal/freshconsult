@@ -4,11 +4,25 @@ jQuery(document).ready(function(){
 	insideSearch 	= false,
 	focusedOnSearch = true,
 	currentString = "",
-	fullSearchString = "";	
-	NavSearchUtils.localRecentSearches = NavSearchUtils.getLocalRecentSearches(NavSearchUtils.localRecentSearchKey);
-	NavSearchUtils.localRecentTickets = NavSearchUtils.getLocalRecentTickets(NavSearchUtils.localRecentTicketKey);
+	fullSearchString = "";		
+
+	function getRecentSearchesTickets(callback) {
+		jQuery.ajax({
+			url: '/search/recent_searches_tickets',
+			dataType: 'json',
+			success: function(data){				
+				NavSearchUtils.saveServerRecents(data.recent_searches, true);
+				NavSearchUtils.saveServerRecents(data.recent_tickets, false);
+				callback();
+			}
+		})
+	}
+
+	NavSearchUtils.tryClearLocalRecents();
+
 
 	callbackToSearch = function(string, search_url){
+			
 		jQuery('#SearchBar').addClass('sloading loading-small loading-right');
 		jQuery('.results').hide().find('li.spotlight_result').remove();
   	    jQuery.ajax({ url: search_url+string,
@@ -61,29 +75,36 @@ jQuery(document).ready(function(){
 		
 	var hideSearchBar = function() {
 		$J("#SearchResultsBar").hide();
-		$J("#header_search").attr("placeholder", "");
 		$J("#SearchBar").removeClass("active");
+		$J("#header_search").attr("placeholder", "");
 		//reset search bar by removing search query
 		//and removing appended search results
 		$J('#header_search').val('');
+		currentString = "";
 		$J('ul.results li.spotlight_result').remove();
 		jQuery("ul.results").filter(function(){return jQuery(this).find('li.spotlight_result').length == 0; }).hide();
-	}
-	$J(document).on('mouseenter mouseleave', "#SearchResultsBar a", function () {
-      		$J(currentactive).removeClass("active");
+	}	
+
+	$J(document).on('mouseenter mouseleave', "#SearchResultsBar a", function(){
+		$J(currentactive).removeClass("active");
 		currentactive = $J(this).addClass("active");
-    	});
+	});
+
 	$J(document).on('click', "#SearchResultsBar a", function(){
 		hideSearchBar();
 		insideSearch = false;
 	});
-	$J(document).on('mouseenter', "#SearchResultsBar", function () {
-      		focusedOnSearch = false
+
+	$J(document).on('mouseenter', "#SearchResultsBar", function(){
+		focusedOnSearch = false;
 		insideSearch = true;
-    	});
-	$J(document).on('mouseleave', "#SearchResultsBar", function () {
+	});
+
+	$J(document).on('mouseleave',"#SearchResultsBar", function(){
 		insideSearch = false;
-    	});
+		$J('#SearchResultsBar a').removeClass('active');
+		currentactive = null;
+	});	
 			
 	$J(document).on("focusout", "#header_search", function(ev){ 
 		focusedOnSearch = false;
@@ -100,62 +121,76 @@ jQuery(document).ready(function(){
 		$J('#SearchBar').twipsy('hide');
 		NavSearchUtils.localRecentSearches = NavSearchUtils.getLocalRecentSearches(NavSearchUtils.localRecentSearchKey);
 		NavSearchUtils.localRecentTickets = NavSearchUtils.getLocalRecentTickets(NavSearchUtils.localRecentTicketKey);
-		if(NavSearchUtils.localRecentSearches || NavSearchUtils.localRecentTickets){
-			if(NavSearchUtils.localRecentSearches.length > 0){				
-				jQuery('.recent_searches_li').remove();
-				// Show most recent search to least recent
-				for(var j = NavSearchUtils.localRecentSearches.length - 1; j > -1; j--){
-					var searchItem = JST["app/search/templates/spotlight_result_recent_search"](
-						{
-							id: j, 
-							path:'/search/all?term=' + NavSearchUtils.localRecentSearches[j], 
-							content: NavSearchUtils.localRecentSearches[j]
-						});
-					jQuery('#SearchResultsBar .recent_searches_results').append(searchItem);
-				}			
-				
-			}
-			if(NavSearchUtils.localRecentTickets.length > 0){				
-				jQuery('.recent_tickets_li').remove();
-				//Show most recently viewed to least recently viewed
-				for(var j = NavSearchUtils.localRecentTickets.length - 1; j > -1; j--){
-					var searchItem = JST["app/search/templates/spotlight_result_recent_ticket"](
-					{
-						id: j, 
-						displayId: NavSearchUtils.localRecentTickets[j].displayId, 
-						path: NavSearchUtils.localRecentTickets[j].path, 
-						subject: NavSearchUtils.localRecentTickets[j].subject
-					});
-					jQuery('#SearchResultsBar .recent_tickets_results').append(searchItem);
-				}
-			}
-			// this is to hide/show recent searches/tickets in case of first load etc.
-			$J("#SearchResultsBar").css("display", "inline");
-			jQuery("ul.results").filter(function(){return jQuery(this).find('li.spotlight_result').length == 0; }).hide();
-			jQuery("ul.results").filter(function(){return jQuery(this).find('li.spotlight_result').length > 0; }).show();
 
-			jQuery(document).on('click.remove_recent_search','.recent_search_cross_icon', function(ev){
-				ev.stopPropagation();
-				ev.preventDefault();
-				var recentSearchId = jQuery(ev.currentTarget).parents('li.spotlight_result').attr('id');
-				var searchIndex = parseInt(recentSearchId.replace('recent_search_',''));
-
-				NavSearchUtils.localRecentSearches.splice(searchIndex, 1);
-				NavSearchUtils.setLocalRecentSearches(NavSearchUtils.localRecentSearchKey);
-
-				if(searchIndex === 0 && NavSearchUtils.localRecentSearches.length === 0){
-					jQuery(ev.currentTarget).parents('#recent_search_' + searchIndex).remove();
-					jQuery("ul.results").filter(function(){return jQuery(this).find('li.spotlight_result').length == 0; }).hide();
-				}				
-				jQuery('#header_search').focus();
-			});
-
-			
-		}
+		if(NavSearchUtils.localRecentSearches.length == 0 || NavSearchUtils.localRecentTickets.length == 0){
+			delay(function(){
+				jQuery('#SearchBar').addClass('sloading loading-small loading-right');
+				getRecentSearchesTickets(function(){
+					jQuery('#SearchBar').removeClass('sloading loading-small loading-right');
+					setupRecentSearchesTicketsFocus();
+				});
+			},100);			
+		}else{
+			setupRecentSearchesTicketsFocus();
+		}		
+		
 		if(searchString != '' && jQuery('#SearchResultsBar li').hasClass('spotlight_result')){
 			$J("#SearchResultsBar").css("display", "inline");
 		}
 	});
+
+	function setupRecentSearchesTicketsFocus(){
+		if(NavSearchUtils.localRecentSearches.length > 0){				
+			jQuery('.recent_searches_li').remove();
+			// Show most recent search to least recent
+			for(var j = NavSearchUtils.localRecentSearches.length - 1; j > -1; j--){
+				var searchItem = JST["app/search/templates/spotlight_result_recent_search"](
+					{
+						id: j, 
+						path:'/search/all?term=' + encodeURIComponent(NavSearchUtils.localRecentSearches[j]), 
+						content: escapeHtml(NavSearchUtils.localRecentSearches[j])
+					});
+				jQuery('#SearchResultsBar .recent_searches_results').append(searchItem);
+			}			
+			
+		}
+
+		if(NavSearchUtils.localRecentTickets.length > 0){				
+			jQuery('.recent_tickets_li').remove();
+			//Show most recently viewed to least recently viewed
+			for(var j = NavSearchUtils.localRecentTickets.length - 1; j > -1; j--){
+				var searchItem = JST["app/search/templates/spotlight_result_recent_ticket"](
+				{
+					id: j, 
+					displayId: NavSearchUtils.localRecentTickets[j].displayId, 
+					path: NavSearchUtils.localRecentTickets[j].path, 
+					subject: escapeHtml(NavSearchUtils.localRecentTickets[j].subject)
+				});
+				jQuery('#SearchResultsBar .recent_tickets_results').append(searchItem);
+			}
+		}
+		// this is to hide/show recent searches/tickets in case of first load etc.
+		$J("#SearchResultsBar").css("display", "inline");
+		jQuery("ul.results").filter(function(){return jQuery(this).find('li.spotlight_result').length == 0; }).hide();
+		jQuery("ul.results").filter(function(){return jQuery(this).find('li.spotlight_result').length > 0; }).show();
+	}
+
+	jQuery(document).on('click.remove_recent_search', '.recent_search_cross_icon', function(ev){
+			ev.stopPropagation();
+			ev.preventDefault();
+			var recentSearchId = jQuery(ev.currentTarget).parents('li.spotlight_result').attr('id');
+			var searchIndex = parseInt(recentSearchId.replace('recent_search_',''));
+			var searchKey = NavSearchUtils.localRecentSearches[searchIndex];
+			NavSearchUtils.localRecentSearches.splice(searchIndex, 1);
+			NavSearchUtils.setLocalRecentSearches(NavSearchUtils.localRecentSearchKey);
+			jQuery.post('/search/remove_recent_search', { search_key: searchKey});
+
+			if(searchIndex === 0 && NavSearchUtils.localRecentSearches.length === 0){
+				jQuery(ev.currentTarget).parents('#recent_search_' + searchIndex).remove();
+				jQuery("ul.results").filter(function(){return jQuery(this).find('li.spotlight_result').length == 0; }).hide();
+			}				
+			jQuery('#header_search').focus();
+		});
 			
 	var move = function(diff){
 		searchlist 	= $J("#SearchResultsBar a");
@@ -166,7 +201,7 @@ jQuery(document).ready(function(){
 			}
 		}
 		$J(currentactive).removeClass("active");
-		position = Math.min((searchlist.length - 1), Math.max(0, position + diff)); 
+		position = Math.min((searchlist.size()-1), Math.max(0, position + diff)); 
 		currentactive = $J(searchlist.get(position)).addClass("active"); 
 	};
 			
@@ -185,6 +220,24 @@ jQuery(document).ready(function(){
 				break; 
 		}
 	} 
+
+	var handleSearchAction = function(searchString){
+		search_url = "/search/home/suggest?term=";
+		if(searchString != '' && searchString.length > 1 && currentString != searchString){
+			delay(function(){
+				fullSearchString = self.value;
+				callbackToSearch(encodeURIComponent(searchString), search_url);
+				currentString = searchString;
+		    }, 450 ); 
+		}else if(currentString == searchString){
+			if(searchString != '' && jQuery('#SearchResultsBar li').hasClass('spotlight_result')){
+				$J("#SearchResultsBar").css("display", "inline"); 
+				$J("ul.results").filter(function(){return jQuery(this).find('li.spotlight_result').length > 0; }).show();
+			}
+		}else{
+			jQuery("#SearchResultsBar").hide();				
+		}
+	}
 			
 	$J("#header_search").bind("keyup", function(e){
 		 switch (e.keyCode) {
@@ -197,22 +250,18 @@ jQuery(document).ready(function(){
 			default:
 				var self = this;
 				searchString = self.value.replace(/^\s+|\s+$/g, "");
-				search_url = "/search/home/suggest?term=";
-				if(searchString != '' && searchString.length > 1 && currentString != searchString){
-					delay(function(){
-						fullSearchString = self.value;
-						callbackToSearch(encodeURIComponent(searchString), search_url);
-						currentString = searchString;
-				    }, 450 ); 
-				}else if(currentString == searchString){
-					if(searchString != '' && jQuery('#SearchResultsBar li').hasClass('spotlight_result')){
-						$J("#SearchResultsBar").css("display", "inline"); 
-						$J("ul.results").filter(function(){return jQuery(this).find('li.spotlight_result').length > 0; }).show();
-					}
-				}else{
-					jQuery("#SearchResultsBar").hide();				
-				}
+				handleSearchAction(searchString);
 			break;
+		}
+	});
+
+	$J("#header_search").on('paste', function(e){
+		if(!e.keyCode){
+			var self = this;
+			setTimeout(function() {
+				searchString = self.value.replace(/^\s+|\s+$/g, "");
+				handleSearchAction(searchString);
+			}, 100);
 		}
 	});
 
@@ -227,11 +276,18 @@ jQuery(document).ready(function(){
 
 	});
 
-	jQuery("[data-domhelper-name='ticket-delete-btn'], li a.spam").bind('click.remove_recent_ticket', function(ev){				
+	// Ticket Details Page Links
+	jQuery(document).on('click.remove_recent_ticket', "[data-domhelper-name='ticket-delete-btn'], li a.spam", function(ev){		
 		if(TICKET_DETAILS_DATA){
 			NavSearchUtils.deleteRecentTicketById(TICKET_DETAILS_DATA['displayId']);
 		}
 	});
+
+	jQuery(document).on('click.clear_local_recents', '.signout_link' ,function(ev){	
+		NavSearchUtils.clearLocalRecentTimestamp();	
+		NavSearchUtils.clearLocalRecents();	
+	})
+
 });
 
 

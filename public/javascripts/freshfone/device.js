@@ -107,7 +107,7 @@
 						freshfonecalls.freshfoneCallTransfer.resetTransferState();
 						jQuery('.popupbox-tabs .transfer_call').trigger('click');
 					}
-					if(freshfonecalls.isAgentConference) {
+					if(freshfonecalls.endCallFormForConference()) {
 						freshfonewidget.handleWidgets();
 					}
 					freshfoneuser.resetStatusAfterCall();

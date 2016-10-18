@@ -7,9 +7,9 @@ module Helpdesk
       from_name = from_email = from_index = nil
       if content
         t_content = decode_brackets_in_text(content.gsub("\r\n", "\n"))
-        from_index = (t_content =~ /^>*\s*\*?(?:From:|De:|Desde:|Von:|Van:)\*?\s*(.*)\s+<(.*)>$/ or 
-                      t_content =~ /^\s*\*?(?:From:|De:|Desde:|Von:|Van:)\*?\s(.*)\s+\[mailto:(.*)\]/ or
-                      t_content =~ /^\s*\*?(?:From:|De:|Desde:|Von:|Van:)\*?\s(.*)\s+\[mailto:(.*)\]/ or  
+        from_index = (t_content =~ /^>*\s*\*?(?:From\s?:|De\s?:|Desde\s?:|Von\s?:|Van\s?:)\*?\s*(.*)\s+<(.*)>$/ or 
+                      t_content =~ /^\s*\*?(?:From\s?:|De\s?:|Desde\s?:|Von\s?:|Van\s?:)\*?\s(.*)\s+\[mailto:(.*)\]/ or
+                      t_content =~ /^\s*\*?(?:From\s?:|De\s?:|Desde\s?:|Von\s?:|Van\s?:)\*?\s(.*)\s+\[mailto:(.*)\]/ or  
                       t_content =~ /^>>>+\s(.*)\s+<(.*)>$/) 
                       
        

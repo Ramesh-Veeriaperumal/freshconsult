@@ -436,7 +436,8 @@ function multiSeriesColumn(opts) {
             },
             series: {
                 shadow: false,
-                groupPadding: 0,
+                groupPadding: 0.1,
+                pointPadding : 0,
                 animation: {
                     duration: 1000,
                     easing: 'easeInOutQuart'

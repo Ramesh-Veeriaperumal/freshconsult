@@ -86,6 +86,13 @@ body { background: $background; }
 .header-notification-wrapper{ 
 	border-color: rgba($header_ctxt_color, .2);
 }
+
+.header-upgrade-wrapper{	
+	.header-upgrade-link{
+		color: rgba($header_ctxt_color, 0.8);
+		border-color: rgba($header_ctxt_color, 0.8)
+	}	
+}
 /* -------------------------------------------------------------------------------------------  */
 /* 										Tab color settings 										*/
 /* -------------------------------------------------------------------------------------------  */

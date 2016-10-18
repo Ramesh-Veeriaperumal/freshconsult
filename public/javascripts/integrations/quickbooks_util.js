@@ -26,17 +26,28 @@ var QuickBooksUtilWidget = {
 
   getQuery: function(query_type) {
     if (query_type == 'displayname') {
-      return { "query" : "select * from customer where displayname = '" + quickbooksBundle.reqCompany + "'" };
+      return { "query" : "select * from customer where displayname = '" + QuickBooksUtilWidget.company() + "'" };
     }
     else {
       return { "query" : "select * from customer where PrimaryEmailAddr like '%" + quickbooksBundle.reqEmail + "%'" };
     }
   },
 
+  company:function(){
+    if(quickbooksBundle) {
+        if(quickbooksBundle.ticket_company.length > 0){
+            return quickbooksBundle.ticket_company;
+        }else if(quickbooksBundle.reqCompany.length > 0){
+            return quickbooksBundle.reqCompany;
+        }
+    }
+    return "";
+  },
+
 	fetchCustomers: function(widget) {
     var customer_query;
     QuickBooksUtilWidget.process = 'PROCESSING';
-    if (quickbooksBundle.reqCompany == '') {
+    if (QuickBooksUtilWidget.company() == '') {
 			customer_query = QuickBooksUtilWidget.getQuery('email');
     }
     else {
@@ -63,14 +74,14 @@ var QuickBooksUtilWidget = {
   			QuickBooksUtilWidget.customers.push(resData.responseJSON.IntuitResponse.QueryResponse.Customer);
   		}
 
-  		if(quickbooksBundle.reqCompany == '') {
+  		if(QuickBooksUtilWidget.company() == '') {
   			QuickBooksUtilWidget.customers = QuickBooksUtilWidget.filter_records_by_email(QuickBooksUtilWidget.customers, quickbooksBundle.reqEmail);
   		}
   		QuickBooksUtilWidget.process = 'COMPLETED';
     	QuickBooksUtilWidget.executeCallback();
   	}
   	else {
-  		if (quickbooksBundle.reqCompany) {
+  		if (QuickBooksUtilWidget.company()) {
     		QuickBooksUtilWidget.fetchCustomersUsingEmail(widget);
     	}
     	else {

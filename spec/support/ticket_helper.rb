@@ -1,6 +1,6 @@
 module TicketHelper
 
-  def create_ticket(params = {}, group = nil)
+  def create_ticket(params = {}, group = nil, internal_group = nil)
     requester_id = params[:requester_id] #|| User.find_by_email("rachel@freshdesk.com").id
     unless requester_id
       user = add_new_user(@account)
@@ -30,7 +30,14 @@ module TicketHelper
                                     :account_id => test_ticket.account_id)
     end
     test_ticket.cloud_files = params[:cloud_files] if params[:cloud_files]
+
+    if @account.link_tickets_enabled? && params[:display_ids].present?
+      test_ticket.association_type = TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:tracker]
+      test_ticket.related_ticket_ids = params[:display_ids]
+    end
+    test_ticket.internal_agent_id = params[:internal_agent_id] if params[:internal_agent_id]
     test_ticket.group_id = group ? group.id : nil
+    test_ticket.internal_group_id = internal_group ? internal_group.id : nil
     test_ticket.save_ticket
     test_ticket
   end

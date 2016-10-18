@@ -4,7 +4,7 @@ class Freshfone::CallMeta < ActiveRecord::Base
 
   belongs_to_account
   serialize :meta_info, Hash
-  belongs_to :freshfone_call, :class_name => "Freshfone::Call"
+  belongs_to :freshfone_call, :class_name => "Freshfone::Call", :foreign_key => 'call_id'
   belongs_to :group
   
   serialize :pinged_agents
@@ -127,7 +127,7 @@ class Freshfone::CallMeta < ActiveRecord::Base
 
   def update_agent_ringing_time(agent_id)
     pinged_agents.each do |agent|
-      agent.merge!({ :ringing_time => (Time.zone.now - agent[:ringing_at]).to_i.abs }) if agent[:id] == agent_id.to_i
+      agent.merge!({ :ringing_time => (Time.zone.now - agent[:ringing_at]).to_i.abs }) if agent[:id] == agent_id.to_i && agent[:ringing_at].present?
     end
     save!
   end
@@ -193,6 +193,20 @@ class Freshfone::CallMeta < ActiveRecord::Base
 
   def android_or_ios?
     android? || ios?
+  end
+  
+  def warm_transfer_meta?
+    meta_info[:type] == 'warm_transfer'
+  end
+
+  def warm_transfer_revert?
+    meta_info.is_a?(Hash) && meta_info[:type] == 'warm_transfer' &&
+                      freshfone_call.user_id == freshfone_call.parent.user_id
+  end
+
+  def warm_transfer_success?
+    meta_info[:type] == 'warm_transfer' && 
+                      freshfone_call.user_id != freshfone_call.parent.user_id
   end
 
   private

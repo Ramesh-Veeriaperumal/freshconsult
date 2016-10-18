@@ -8,6 +8,9 @@ module Freshfone::CallerLookup
     :"86282452253" => 'UNAVAILABLE',
     :""            => 'UNKNOWN'
   }
+
+  UNAUTHORISED_NUMBERS_LIST = ['2024558888', '4086104900', '4153660260']
+  
   
   def remove_country_code(number)
     number.gsub(/^\+1|\D/, '') #removing phone numbers starting with +1 or non digits
@@ -54,15 +57,5 @@ module Freshfone::CallerLookup
   def browser_caller_id(number)
     return "+#{STRANGE_NUMBERS.invert['ANONYMOUS'].to_s}" if empty_number?(number)
     number
-  end
-
-  def users_scoper
-    current_account.all_users
-  end
-
-  #return contact only if it has phone or mobile number present.
-  # <> operator will check for both null and empty fields.
-  def search_customer_with_id(customer_id)
-    users_scoper.where(id: customer_id).where("(phone <> '') OR (mobile <> '')").first
   end
 end

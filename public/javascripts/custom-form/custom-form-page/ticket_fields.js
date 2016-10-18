@@ -39,7 +39,7 @@
       delete data.name;
       if(data.field_type == 'default_ticket_type' || data.field_type == 'custom_dropdown' ) {
       	data.picklist_values_attributes = data.choices;
-      }
+      }	
 			return data;
 		}	
 	}

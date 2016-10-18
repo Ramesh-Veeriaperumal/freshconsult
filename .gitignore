@@ -58,5 +58,10 @@ public/generated
 #Ignore test reports
 test/api/reports
 test/api/query_reports
+
 swagger/node_modules/*
 swagger/node_modules/**/*
+
+reports.csv
+reports.html
+reports.json

@@ -9,7 +9,7 @@ defaults: &defaults
     heartbeat: 30
     threaded: false
   shards: 1
-  resources: ['ticket', 'note', 'archive_ticket', 'archive_note', 'company', 'user', 'topic', 'post', 'article', 'tag', 'tag_use', 'account']
+  resources: ['ticket', 'note', 'archive_ticket', 'archive_note', 'company', 'user', 'topic', 'post', 'article', 'tag', 'tag_use', 'account', 'cti_call', 'caller']
   secret_key: UIQX9K3VE716I1CB1X1DMB4EGL9963FP
 
 development:

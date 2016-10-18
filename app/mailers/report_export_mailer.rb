@@ -22,7 +22,10 @@ class ReportExportMailer < ActionMailer::Base
     @selected_metric = options[:selected_metric] if options[:selected_metric]
     @filter_to_display = filter_to_display?(options[:report_type], options[:ticket_export])
     @report_name = options[:filter_name] ? "#{@report_type} report - #{options[:filter_name]}" : "#{@report_type}"
+    @portal_name = options[:portal_name]
 
+    add_log_info 'bi_report_export'
+    
     mail(headers) do |part|
       part.text { render "bi_report_export.plain" }
       part.html { render "bi_report_export.html" }
@@ -37,7 +40,10 @@ class ReportExportMailer < ActionMailer::Base
     @date_range  = options[:date_range]
     @report_label = report_name(options[:report_type])
     @filter_to_display = filter_to_display?(options[:report_type], options[:ticket_export])
+    @portal_name = options[:portal_name]
 
+    add_log_info 'no_report_data'
+    
     mail(headers) do |part|
       part.text { render "no_report_data.plain" }
       part.html { render "no_report_data.html" }
@@ -52,6 +58,9 @@ class ReportExportMailer < ActionMailer::Base
     @date_range  = options[:date_range]
     @report_type = report_name(options[:report_type])
     @filter_name = options[:filter_name]
+    @portal_name = options[:portal_name]
+
+    add_log_info 'exceeds_file_size_limit'
 
     mail(headers) do |part|
       part.text { render "exceeds_file_size_limit.plain" }
@@ -59,11 +68,37 @@ class ReportExportMailer < ActionMailer::Base
     end.deliver
   end
 
+  def report_export_task options
+    headers = mail_headers options
+    @date_range = options[:date_range]
+    @invalid_count = options[:invalid_count]
+    @task_start_time = options[:task_start_time]
+    @description = options[:description]
+
+    if options[:file_path].present?
+      if @description
+        attachment_file_name = "#{@description} #{Time.current.strftime("%d-%b-%y-%H:%M")}".gsub(/[-,\s+\/]/,'_').gsub(/_+/,'_').slice(0,235)
+      else
+        attachment_file_name = get_attachment_file_name(options[:file_path])
+      end
+      #encode64 to override the default '990 characters per row' limit on attached files
+      attachments[attachment_file_name] = { :data=> Base64.encode64(File.read(options[:file_path])), :encoding => 'base64' }
+    else
+      @export_url = options[:export_url]
+    end
+
+    mail(headers) do |part|
+      part.text { render "report_export_task.plain" }
+      part.html { render "report_export_task.html" }
+    end.deliver
+
+  end
+
   private
   def mail_headers options
     {
       :subject     => mail_subject( options ),
-      :to             => options[:user].email,
+      :to             => options[:task_email_ids] || options[:user].email,
       :from         => AppConfig['from_email'],
       "Reply-to" => "",
       :sent_on   => Time.now,
@@ -73,7 +108,7 @@ class ReportExportMailer < ActionMailer::Base
   end
 
   def mail_subject options
-    sub = "#{report_name(options[:report_type])} report for #{options[:date_range]}"
+    sub = options[:email_subject] || "#{report_name(options[:report_type])} report for #{options[:date_range]}"
     sub.prepend( "Ticket export | " ) if options[:ticket_export].present?
     sub
   end
@@ -83,7 +118,7 @@ class ReportExportMailer < ActionMailer::Base
   end
 
   def filter_to_display? report_type, ticket_export
-    ticket_export || [:agent_summary, :group_summary].include?(report_type)
+    ticket_export || [:agent_summary, :group_summary, :satisfaction_survey].include?(report_type)
   end
 
   def get_attachment_file_name file_path
@@ -92,6 +127,10 @@ class ReportExportMailer < ActionMailer::Base
     file_name_arr.pop #removing secure random code
     file_name = file_name_arr.first.gsub(/_+/,"_").slice(0,235)
     "#{file_name}-#{file_name_arr[1..-1].join("-")}.#{format}"
+  end
+
+  def add_log_info action
+    HelpdeskReports::Logger.log("export : triggering email : #{action} : account_id: #{@user.account.id}, agent_id: #{@user.id}, agent_email: #{@user.email}")
   end
 
 end

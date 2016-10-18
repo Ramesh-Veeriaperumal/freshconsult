@@ -20,21 +20,20 @@ module Concerns::TicketsViewConcern
       return ( draft_message || bind_last_conv(item, signature, false, quoted) )
     end
 
-    def bind_last_conv(item, signature, forward = false, quoted = true)
+    def bind_last_conv(item, signature, forward = false, quoted = true)    
       ticket = (item.is_a? Helpdesk::Ticket) ? item : item.notable
-      default_reply = (signature.blank?)? "<p/><p/><br/>": "<p/><p><br></br></p><p></p><p></p>
+      default_reply_forward = (signature.blank?)? "<p/><p/><br/>": "<p/><p><br></br></p><p></p><p></p>
   <div>#{signature}</div>"
       quoted_text = ""
-
-      if quoted or forward
+      if quoted
         quoted_text = quoted_text(item, forward)
+      elsif forward 
+        default_reply_forward = parsed_forward_template(ticket, signature)
       else
-        default_reply = parsed_reply_template(ticket, signature)
-      end
-
-      "#{default_reply} #{quoted_text}"
+        default_reply_forward = parsed_reply_template(ticket, signature)
+      end 
+      "#{default_reply_forward} #{quoted_text}"
     end
-
     def parsed_reply_template(ticket, signature)
       # Adding <p> tag for the IE9 text not shown issue
       # default_reply = (signature.blank?)? "<p/><br/>": "<p/><div>#{signature}</div>"
@@ -48,6 +47,25 @@ module Concerns::TicketsViewConcern
       end
 
       default_reply
+    end
+
+    def parsed_forward_template(ticket, signature)   
+      # Adding <p> tag for the IE9 text not shown issue
+      # default_reply = (signature.blank?)? "<p/><br/>": "<p/><div>#{signature}</div>"
+      
+      if current_account.email_notifications.find_by_notification_type(EmailNotification::DEFAULT_FORWARD_TEMPLATE).present?
+        requester_template = current_account.email_notifications.find_by_notification_type(EmailNotification::DEFAULT_FORWARD_TEMPLATE).get_forward_template(ticket.requester)
+        if(requester_template.present?)
+          requester_template.gsub!('{{ticket.satisfaction_survey}}', '')
+          forward_email_template = Liquid::Template.parse(requester_template).render('ticket' => ticket,'helpdesk_name' => ticket.account.portal_name)
+          # Adding <p> tag for the IE9 text not shown issue
+          default_forward = (signature.blank?)? "<p/><div>#{forward_email_template}</div>" : "<p/><div>#{forward_email_template}<br/>#{signature}</div>"
+        end
+      else
+        default_forward = (signature.blank?)? "<p/>" : "<p/><p><br></br></p><p></p><p></p><div>#{signature}</div>"
+      end 
+    
+      default_forward
     end
 
     def quoted_text(item, forward = false)

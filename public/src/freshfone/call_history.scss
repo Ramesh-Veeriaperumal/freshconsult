@@ -253,7 +253,9 @@
 		height: 15px;
 		display: inline-block;
 		top: -22px;
-	 @include left(10px);
+		@include left(15px);
+		color: #B3B3B3;
+		font-size: 16px;
 	}
 	.callhistory_helpdesk_avatar {
 		@include margin-right(10px);

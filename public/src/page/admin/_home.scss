@@ -277,4 +277,53 @@ input[type=text].as-hint {
 //   }
 // }
 
+/* support chat with us button style */
+.btn.btn-support-chat {
+	position: absolute;
+    right: 292px;
+    height: 28px;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 28px;
+    padding: 0 10px;
+    color : #06c;
+    background-color: #fff !important;
+    background-image: none;
+    box-shadow: none;
+    border : 1px solid #ccc;
+    .ficon {
+    	position: relative;
+    	top: 1px;
+    	display: inline-block;
+    	font-size: 15px;
+    	line-height: 1;
+    	margin: -3px 5px 0 0;
+    	color: #000;
+    }
+    &:focus,
+    &:active {
+    	outline: 0;
+    }
+    &:active {
+    	box-shadow: none;
+    }
+    &:hover {
+    	color: #004080;
+    }
+}
+
+#lc_chat_layout.lc-support-widget {
+	right: 15px;
+	left: inherit;
+	z-index: 90000;
+}
+
+.chat-support-link {
+	cursor: pointer;
+	color: #06c;
+	&:hover {
+		color: #004080;
+	}
+}
+
 /* Admin Home Page css end */

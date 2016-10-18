@@ -16,6 +16,9 @@ window.App.Contacts.Contact_show = window.App.Contacts.Contact_show || {};
 			App.Contacts.Contacts_merge.initialize();
 			this.checkForInfoMsgs();
 			this.bindEvents();
+
+			// To show the tooltip in the tickets list
+			App.Customers.Tickets.init();
 		},
 		switchToForm: function(showForm) {
 			if($('.form-save').length > 0 && showForm) {
@@ -168,6 +171,7 @@ window.App.Contacts.Contact_show = window.App.Contacts.Contact_show || {};
 		onLeave: function() {
 			$('body').off('.contact-view');
 			$(window).off('.contact-view');
+			App.Customers.Tickets.destroy();
 		}
 	};
 }(window.jQuery));

@@ -7,7 +7,7 @@ module Archive
 
       ASSOCIATIONS_TO_SERIALIZE = {
         :helpdesk_tickets => [:flexifield, :ticket_old_body, :schema_less_ticket, :ticket_states, :mobihelp_ticket_info, :reminders,:subscriptions],  #:subscriptions
-        :helpdesk_notes => [:survey_remark, :note_old_body, :schema_less_note, :external_note]
+        # :helpdesk_notes => [:survey_remark, :note_old_body, :schema_less_note, :external_note]
       }
 
       # :tag_uses => "taggable", :tags, :parent
@@ -16,15 +16,15 @@ module Archive
         :helpdesk_tickets => ["helpdesk_attachments" => "attachable", "helpdesk_dropboxes" => "droppable", "helpdesk_activities" => "notable", "survey_results" => "surveyable",
                               "support_scores" => "scorable", "helpdesk_time_sheets" => "workable", "social_tweets" => "tweetable",
                               "ticket_topics" => "ticketable","social_fb_posts" => "postable", "freshfone_calls" => "notable", "helpdesk_tag_uses" => "taggable", "article_tickets" => "ticketable","integrated_resources" => "local_integratable",
-                              "inline_attachments" => "attachable"],
-        :helpdesk_notes => ["social_tweets" => "tweetable", "social_fb_posts" => "postable", "freshfone_calls" => "notable", "helpdesk_attachments" => "attachable", "helpdesk_dropboxes" => "droppable", "helpdesk_shared_attachments" => "shared_attachable" ,"inline_attachments" => "attachable"]
+                              "inline_attachments" => "attachable", "helpdesk_notes" => "notable", :cti_calls => "recordable"]
+        # :helpdesk_notes => ["social_tweets" => "tweetable", "social_fb_posts" => "postable", "freshfone_calls" => "notable", "helpdesk_attachments" => "attachable", "helpdesk_dropboxes" => "droppable", "helpdesk_shared_attachments" => "shared_attachable" ,"inline_attachments" => "attachable", :cti_calls => "recordable"]
       }
 
       RAW_MYSQL_TICKET_ASSOCIATION = ["helpdesk_ticket_bodies","helpdesk_schema_less_tickets","helpdesk_ticket_states","mobihelp_ticket_infos","helpdesk_reminders","helpdesk_subscriptions"]  #helpdesk_subscriptions
       RAW_MYSQL_TICKET_POLYMORPHIC_ASSOCIATION = {
         "flexifields" => "flexifield_set"
       }
-      RAW_MYSQL_NOTE_ASSOCIATION = ["survey_remarks","helpdesk_note_bodies","helpdesk_schema_less_notes","helpdesk_external_notes"]
+      RAW_MYSQL_NOTE_ASSOCIATION = [] #["survey_remarks","helpdesk_note_bodies","helpdesk_schema_less_notes","helpdesk_external_notes"]
 
       # create archive ticket
       # expects ticket object as input
@@ -180,6 +180,7 @@ module Archive
         end
         ticket.manual_publish_to_rmq("update", key, {:manual_publish => true})
         ticket.count_es_manual_publish("destroy") if Account.current.features?(:countv2_writes)#for count es, its a delete action and we ll remove document from count cluster.
+        ticket.reset_associations
         if archive_ticket_destroy(ticket)
           Helpdesk::ArchiveTicket.where(:id => archive_ticket.id, :account_id => archive_ticket.account_id, :progress => true).update_all(:progress => false)
           archive_ticket.sqs_manual_publish
@@ -205,11 +206,6 @@ module Archive
         unless note_ids.empty?
           delete_notes_association(note_ids,account_id)
           ActiveRecord::Base.connection.execute("delete from helpdesk_notes where id in (#{note_ids.join(',')}) and account_id=#{account_id}")
-
-          # Removing from ES
-          SearchV2::IndexOperations::PostArchiveProcess.perform_async({ 
-            account_id: account_id, ticket_id: ticket_id, note_ids: note_ids 
-          })
         end
       end
 
@@ -220,7 +216,7 @@ module Archive
         RAW_MYSQL_TICKET_POLYMORPHIC_ASSOCIATION.each do |table_name,association_name|
           ActiveRecord::Base.connection.execute("delete from #{table_name} where account_id=#{account_id} and #{association_name}_id=#{ticket_id} and #{association_name}_type = 'Helpdesk::Ticket'")
         end
-        mysql_note_delete(ticket_id,account_id)
+        # mysql_note_delete(ticket_id,account_id)
       end
 
       def delete_notes_association(note_ids,account_id)
@@ -254,6 +250,12 @@ module Archive
             else
               ids = ActiveRecord::Base.connection.select_values("select id from #{key} where account_id=#{responder.account_id} and  #{value}_id=#{poly_id} and #{value}_type= '#{from_polymorphic_type}'")
               ActiveRecord::Base.connection.execute("update #{key} set #{value}_id=#{archive.id}, #{value}_type='#{to_polymorphic_type}' where id in (#{ids.join(',')}) and account_id=#{responder.account_id}") unless ids.empty?
+              
+              if(key.to_sym == :helpdesk_notes)
+                SearchV2::IndexOperations::PostArchiveProcess.perform_async({ 
+                  account_id: responder.account_id, archive_ticket_id: archive.id, ticket_id: poly_id, note_ids: ids 
+                })
+              end
             end
           end
         end

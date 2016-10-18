@@ -4,11 +4,11 @@
   <%row_count += 1 %>
   <% break if (row_count > row_max_limit) %>
   <tr class="even">
-    <% gt = group_names[group_title] %>
+    <% gt = group_names[group_title].to_s %>
     <%unless group_by.include?(:workable) %>
       <%gt = t("none") if gt.match(/^No +/) %>
     <%end%>
-    <% gt = timesheet_formatted_date(Time.parse(group_title),{:format => :short_day_with_week, :include_year => true}) if group_by.include?(:group_by_day_criteria) %>
+    <% gt = timesheet_formatted_date(Time.zone.parse("'#{group_title}'"),{:format => :short_day_with_week, :include_year => true}) if group_by.include?(:group_by_day_criteria) %>
     <td colspan="<%=colspan%>"><strong><%= gt %></strong></td> 
     <td class="hours"><strong class="group_time"><%= get_time_in_hours(times_spent[group_title].round(2) * 3600) %></strong></td>
   </tr> 

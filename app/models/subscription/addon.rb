@@ -21,9 +21,10 @@ class Subscription::Addon < ActiveRecord::Base
 	validates_presence_of :renewal_period, :only_integer => true, :greater_than => 0
 
 	ADDON_TYPES = {
-		:on_off => 1,
-		:agent_quantity => 2,
-		:portal_quantity => 3
+		:on_off           => 1,
+		:agent_quantity   => 2,
+		:portal_quantity  => 3,
+		:for_account      => 4
 	}
 
 	  
@@ -42,6 +43,8 @@ class Subscription::Addon < ActiveRecord::Base
 			subscription.agent_limit		
 		when ADDON_TYPES[:portal_quantity]
 			subscription.account.portals.count	
+		when ADDON_TYPES[:for_account]
+			1
 		end
 	end
 

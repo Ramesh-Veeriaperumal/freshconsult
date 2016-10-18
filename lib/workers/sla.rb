@@ -131,16 +131,6 @@ end
 
 
   def self.send_email(ticket, agent, n_type)
-    account = Account.current
-    e_notification = account.email_notifications.find_by_notification_type(n_type)
-    return unless e_notification.agent_notification
-    agent.make_current
-    agent_template = e_notification.get_agent_template(agent)
-    email_subject = Liquid::Template.parse(agent_template.first).render(
-                                'ticket' => ticket, 'helpdesk_name' => account.portal_name)
-    email_body = Liquid::Template.parse(agent_template.last).render(
-                                'agent' => agent, 'ticket' => ticket, 'helpdesk_name' => account.portal_name)
-    SlaNotifier.escalation(ticket, agent, :email_body => email_body, :subject => email_subject)
-    User.reset_current
+    SlaNotifier.send_later(:agent_escalation, ticket, agent, n_type)
   end
 end

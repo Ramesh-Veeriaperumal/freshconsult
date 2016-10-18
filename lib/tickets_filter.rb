@@ -14,6 +14,8 @@ module TicketsFilter
     [:my_on_hold,       I18n.t('helpdesk.tickets.views.my_on_hold'), [:visible, :responded_by, :on_hold]  ],
     [:monitored_by,     I18n.t('helpdesk.tickets.views.monitored_by'), [:visible]  ],
     [:raised_by_me,     I18n.t('helpdesk.tickets.views.raised_by_me'), [:visible] ],
+    [:shared_by_me,     I18n.t('helpdesk.tickets.views.shared_by_me'), [:visible] ],
+    [:shared_with_me,   I18n.t('helpdesk.tickets.views.shared_with_me'), [:visible] ],
     [:my_all,           I18n.t('helpdesk.tickets.views.my_all'), [:visible, :responded_by]  ],
     [:article_feedback, I18n.t('helpdesk.tickets.views.article_feedback'), [:visible]  ],
     [:my_article_feedback, I18n.t('helpdesk.tickets.views.my_article_feedback'), [:visible]  ],
@@ -75,6 +77,8 @@ module TicketsFilter
 
   SEARCH_FIELD_OPTIONS = SEARCH_FIELDS.map { |i| [i[1], i[0]] }
 
+  DEFAULT_AGENT_MODE  = 0
+  DEFAULT_GROUP_MODE  = 0
   DEFAULT_SORT        = :created_at
   DEFAULT_SORT_ORDER  = :desc
   DEFAULT_PORTAL_SORT = :created_at
@@ -88,6 +92,18 @@ module TicketsFilter
     [ :status     , "tickets_filter.sort_fields.status"        ]
   ]
 
+  AGENT_SORT_FIELDS = [
+    [ :responder_id , "filter_options.responder_id" , FILTER_MODES[:primary]],
+    [ "helpdesk_schema_less_tickets.long_tc04" , "filter_options.internal_agent" , FILTER_MODES[:internal]],
+    [ :any_agent_id , "filter_options.any_agent" , FILTER_MODES[:any]]
+  ]
+
+  GROUP_SORT_FIELDS = [
+    [ :group_id , "filter_options.group_id" , FILTER_MODES[:primary]],
+    [ "helpdesk_schema_less_tickets.long_tc03" , "filter_options.internal_group" , FILTER_MODES[:internal]],
+    [ :any_group_id , "filter_options.any_group" , FILTER_MODES[:any]]
+  ]
+
   def self.sort_fields_options
     sort_fields = SORT_FIELDS.clone
     if Account.current && Account.current.features_included?(:sort_by_customer_response)
@@ -95,6 +111,16 @@ module TicketsFilter
       sort_fields << [ :agent_responded_at, "tickets_filter.sort_fields.agent_responded_at"]
     end
     sort_fields.map { |i| [I18n.t(i[1]), i[0]] }
+  end
+
+  def self.shared_agent_sort_fields_options
+    sort_fields = AGENT_SORT_FIELDS.clone
+    sort_fields.map { |i| [I18n.t(i[1]), i[0], i[2]] }
+  end
+
+  def self.shared_group_sort_fields_options
+    sort_fields = GROUP_SORT_FIELDS.clone
+    sort_fields.map { |i| [I18n.t(i[1]), i[0], i[2]] }
   end
 
   SORT_FIELD_OPTIONS = SORT_FIELDS.map { |i| [i[1], i[0]] }
@@ -112,13 +138,32 @@ module TicketsFilter
   SORT_ORDER_FIELDS_BY_KEY  = Hash[*SORT_ORDER_FIELDS.map { |i| [i[0], i[0]] }.flatten]
 
   DEFAULT_VISIBLE_FILTERS = %w( new_and_my_open unresolved all_tickets raised_by_me monitored_by spam deleted )
+  SHARED_OWNERSHIP_DEFAULT_VISIBLE_FILTERS = %w( new_and_my_open shared_by_me shared_with_me unresolved all_tickets raised_by_me monitored_by spam deleted )
   DEFAULT_VISIBLE_FILTERS_WITH_ARCHIVE = %w( new_and_my_open unresolved all_tickets raised_by_me monitored_by archived spam deleted )
+  SHARED_OWNERSHIP_DEFAULT_VISIBLE_FILTERS_WITH_ARCHIVE = %w( new_and_my_open shared_by_me shared_with_me unresolved all_tickets raised_by_me monitored_by archived spam deleted )
+
+  def self.mobile_sort_fields_options
+    sort_fields = self.sort_fields_options
+
+    sort_fields.map { |i| {
+        :id       =>  i[1], 
+        :name     =>  i[0], 
+      } }
+  end
+
+  def self.mobile_sort_order_fields_options
+    sort_order_fields = self.sort_order_fields_options
+    sort_order_fields.map { |i| {
+        :id       =>  i[1], 
+        :name     =>  i[0], 
+      } }
+  end
 
   def self.default_views
     filters = if Account.current && Account.current.features_included?(:archive_tickets)
-      DEFAULT_VISIBLE_FILTERS_WITH_ARCHIVE
+      Account.current.features?(:shared_ownership) ? SHARED_OWNERSHIP_DEFAULT_VISIBLE_FILTERS_WITH_ARCHIVE : DEFAULT_VISIBLE_FILTERS_WITH_ARCHIVE
     else
-      DEFAULT_VISIBLE_FILTERS
+      Account.current.features?(:shared_ownership) ? SHARED_OWNERSHIP_DEFAULT_VISIBLE_FILTERS : DEFAULT_VISIBLE_FILTERS
     end
     filters.map { |i| {
         :id       =>  i, 

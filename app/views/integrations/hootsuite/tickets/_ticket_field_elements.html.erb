@@ -4,7 +4,8 @@
       "default_source", "default_ticket_type", 
       "default_group", 
       "default_agent", 
-      "default_product"
+      "default_product",
+      "default_company"
   ]
 
   default_fields = []
@@ -16,7 +17,7 @@
     field_label = t("ticket_fields.fields.#{field.name}")
     dom_type    = (field.field_type == "default_source") ? "dropdown" : field.dom_type
     field_value = nested_ticket_field_value(@ticket, field) if(field.field_type == "nested_field") and !@ticket.new_record?
-    field_html = construct_ticket_element(form_builder, :helpdesk_ticket, 
+    field_html = construct_new_ticket_element(form_builder, :helpdesk_ticket, 
                                           field, field_label, dom_type, 
                                           field.required, field_value, '', false, false)
     if(field.field_type == "default_ticket_type" && field.has_sections_feature?)

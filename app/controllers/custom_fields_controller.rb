@@ -1,7 +1,7 @@
 class CustomFieldsController < Admin::AdminController
 
-  include Import::CustomField
-  include Cache::Memcache::Helpdesk::Ticket 
+  include Helpdesk::Ticketfields::ControllerMethods
+  include Cache::FragmentCache::Base
 
   before_filter :check_ticket_field_count, :only => [ :update ]
   
@@ -42,7 +42,7 @@ class CustomFieldsController < Admin::AdminController
           end  
         end  
     end
-    clear_tkt_form_cache
+    clear_fragment_caches
     flash_message(err_str.to_s.html_safe)
     redirect_to :action => :index
   end
@@ -62,7 +62,13 @@ class CustomFieldsController < Admin::AdminController
           nested_field.symbolize_keys!
           nested_field[:action] ||= 'edit'
           action = nested_field.delete(:action)
-          send("#{action}_nested_field", custom_field, nested_field)
+          if action == "create"
+            nested_ff_def_entry = FlexifieldDefEntry.new ff_meta_data(nested_field, Account.current)
+            is_saved = create_nested_field(nested_ff_def_entry, custom_field, nested_field.merge(type: "nested_field"))
+            construct_child_levels(nested_ff_def_entry, custom_field, nested_field) if is_saved
+          else
+            send("#{action}_nested_field", custom_field, nested_field)
+          end
         end
       end
     end

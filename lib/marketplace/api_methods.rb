@@ -27,6 +27,24 @@ module Marketplace::ApiMethods
       end
     end
 
+    def mkp_custom_apps
+      begin
+        key = MemcacheKeys::CUSTOM_APPS % { :account_id => Account.current.id, :locale_id => curr_user_language }
+
+        api_payload = payload(
+                           Marketplace::ApiEndpoint::ENDPOINT_URL[:mkp_custom_apps] %
+                           { :product_id => PRODUCT_ID, :account_id => Account.current.id },
+                           Marketplace::ApiEndpoint::ENDPOINT_PARAMS[:mkp_custom_apps] 
+                        )
+        mkp_memcache_fetch(key, MarketplaceConfig::CACHE_INVALIDATION_TIME) do
+          get_api(api_payload, MarketplaceConfig::GLOBAL_API_TIMEOUT) 
+        end
+
+      rescue *FRESH_REQUEST_EXP => e
+        exception_logger("Exception type #{e.class},URL: #{api_payload} #{e.message}\n#{e.backtrace}")
+      end
+    end
+
     def search_mkp_extensions
       begin
         api_payload = payload(
@@ -54,15 +72,15 @@ module Marketplace::ApiMethods
       end
     end
 
-    def extension_details(version_id = params[:version_id])
+    def extension_details(extension_id = params[:extension_id])
       begin
-        key = MemcacheKeys::EXTENSION_VERSION_DETAILS % { 
-          :version_id => version_id, :locale_id => curr_user_language }
+        key = MemcacheKeys::EXTENSION_DETAILS % { 
+          :extension_id => extension_id, :locale_id => curr_user_language }
         api_payload = payload(
                             Marketplace::ApiEndpoint::ENDPOINT_URL[:extension_details]  % 
                             { 
                               :product_id => PRODUCT_ID,
-                              :version_id => version_id 
+                              :extension_id => extension_id 
                             },
                             Marketplace::ApiEndpoint::ENDPOINT_PARAMS[:extension_details] 
                           )
@@ -160,8 +178,7 @@ module Marketplace::ApiMethods
           Marketplace::ApiEndpoint::ENDPOINT_URL[:install_extension] %
                 { :product_id => PRODUCT_ID,
                   :account_id => Account.current.id,
-                  :extension_id => post_params[:extension_id],
-                  :version_id => post_params[:version_id] },
+                  :extension_id => post_params[:extension_id]},
           Marketplace::ApiEndpoint::ENDPOINT_PARAMS[:install_extension] )
         post_api(api_payload, post_params, MarketplaceConfig::ACC_API_TIMEOUT)
       rescue *FRESH_REQUEST_EXP => e
@@ -175,8 +192,7 @@ module Marketplace::ApiMethods
           Marketplace::ApiEndpoint::ENDPOINT_URL[:update_extension] %
                 { :product_id => PRODUCT_ID,
                   :account_id => Account.current.id,
-                  :extension_id => put_params[:extension_id],
-                  :version_id => put_params[:version_id] },
+                  :extension_id => put_params[:extension_id] },
           Marketplace::ApiEndpoint::ENDPOINT_PARAMS[:update_extension] )
         put_api(api_payload, put_params, MarketplaceConfig::ACC_API_TIMEOUT)
       rescue *FRESH_REQUEST_EXP => e
@@ -190,8 +206,7 @@ module Marketplace::ApiMethods
           Marketplace::ApiEndpoint::ENDPOINT_URL[:uninstall_extension] %
                 { :product_id => PRODUCT_ID,
                   :account_id => Account.current.id,
-                  :extension_id => delete_params[:extension_id],
-                  :version_id => delete_params[:version_id] },
+                  :extension_id => delete_params[:extension_id]},
           Marketplace::ApiEndpoint::ENDPOINT_PARAMS[:uninstall_extension] )
         delete_api(api_payload, MarketplaceConfig::ACC_API_TIMEOUT)
       rescue *FRESH_REQUEST_EXP => e

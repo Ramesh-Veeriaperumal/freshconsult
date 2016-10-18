@@ -9,7 +9,6 @@ var WidgetConfig = function () {};
 		this.urls = urls;
 		this.account_url = account_url;
 		this.asset_url = this.urls.http;
-
 		this.initialize();
 	};
 
@@ -24,7 +23,6 @@ var WidgetConfig = function () {};
 			this.setDefaults();
 			this.bindHandlers();
 			this.initWidget();
-
 			this.activeForm.trigger("change");
 		},
 		initWidget: function () {
@@ -33,7 +31,7 @@ var WidgetConfig = function () {};
 				"buttonBg": "#000000",
 				"alignment": "4",
 				"offset": "30%",
-				"assetUrl": this.urls.http,
+				"assetUrl": this.getUrl(),
 				"url": this.account_url
 			});
 		},
@@ -151,6 +149,9 @@ var WidgetConfig = function () {};
 			if (!$('[name="buttonText"]').is(":focus") && !$("#TabColor").is(":focus")) {
 				$("#popupCode").effect("highlight", { color: "#F8F8C3" }, 600);
 			}
+		},
+		getUrl: function(){
+			return (/^http?:\/\//.test(this.account_url)) ? this.urls.http : this.urls.https;
 		}
 	};
 }(window.jQuery));

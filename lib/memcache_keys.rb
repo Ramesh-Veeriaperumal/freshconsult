@@ -6,7 +6,7 @@ module MemcacheKeys
 
   USER_TICKET_FILTERS = "v1/TICKET_VIEWS:%{user_id}:%{account_id}"
 
-  ACCOUNT_CUSTOM_SURVEY = "v2/ACCOUNT_CUSTOM_SURVEY:%{account_id}"
+  ACCOUNT_CUSTOM_SURVEY = "v3/ACCOUNT_CUSTOM_SURVEY:%{account_id}"
 
   ACCOUNT_TICKET_TYPES = "v3/ACCOUNT_TICKET_TYPES:%{account_id}"
 
@@ -32,6 +32,7 @@ module MemcacheKeys
 
   ACCOUNT_STATUSES = "v2/ACCOUNT_STATUSES:%{account_id}"
 
+  ACCOUNT_STATUS_GROUPS = "v1/ACCOUNT_STATUS_GROUPS:%{account_id}"
 
   PORTAL_BY_URL = "v2/PORTAL_BY_URL:%{portal_url}"
 
@@ -73,6 +74,8 @@ module MemcacheKeys
   SOLUTION_CATEGORIES = "v1/SOLUTION_CATEGORIES:%{portal_id}"
 
   FB_REAUTH_CHECK = "v1/FB_REAUTH_CHECK:%{account_id}"
+  
+  FB_REALTIME_MSG_ENABLED = "v1/FB_REALTIME_MSG_ENABLED:%{account_id}"
 
   TWITTER_REAUTH_CHECK = "v1/TWITTER_REAUTH_CHECK:%{account_id}"
 
@@ -83,8 +86,6 @@ module MemcacheKeys
   SHARD_BY_DOMAIN = "v4/SHARD_BY_DOMAIN:%{domain}"
  
   SHARD_BY_ACCOUNT_ID = "v4/SHARD_BY_ACCOUNT_ID:%{account_id}"
-
-  AUTO_REFRESH_AGENT_DETAILS = "AGENT_DETAILS:%{account_id}:%{user_id}"
   
   DEFAULT_BUSINESS_CALENDAR = "v1/DEFAULT_BUSINESS_CALENDAR:%{account_id}"
 
@@ -122,7 +123,7 @@ module MemcacheKeys
 
   ACCOUNT_ADDITIONAL_SETTINGS = "v2/ACCOUNT_ADDITIONAL_SETTINGS:%{account_id}"
 
-  INSTALLED_FRESHPLUGS = "v1/FA:%{page}:PLUGS:%{account_id}"
+  INSTALLED_FRESHPLUGS = "v2/FA:%{page}:PLUGS:%{account_id}"
 
   FRESHPLUG_CODE = "v1/FA:PLUG:%{version_id}"
 
@@ -130,7 +131,9 @@ module MemcacheKeys
 
   MKP_EXTENSIONS = "v1/FA:MKP_EXTENSIONS:%{category_id}:%{type}:%{locale_id}"
 
-  EXTENSION_VERSION_DETAILS = "v1/FA:EXTENSION:%{version_id}:%{locale_id}"
+  CUSTOM_APPS = "v1/FA:CUSTOM_APPS:%{account_id}:%{locale_id}"
+
+  EXTENSION_DETAILS = "v2/FA:EXTENSION:%{extension_id}:%{locale_id}"
 
   CONFIGURATION_DETAILS = "v1/FA:CONFIGURATIONS:%{version_id}:%{locale_id}"
 
@@ -155,6 +158,8 @@ module MemcacheKeys
   TKT_TEMPLATES_COUNT = "v1/TKT_TEMPLATES_COUNT:%{account_id}"
 
   ACCOUNT_WEBHOOK_KEY = "ACCOUNT_WEBHOOK_KEY:%{account_id}:%{vendor_id}"
+
+  MOST_VIEWED_ARTICLES = "MOST_VIEWED_ARTICLES:%{account_id}:%{language_id}:%{cache_version}"
 
   class << self
 

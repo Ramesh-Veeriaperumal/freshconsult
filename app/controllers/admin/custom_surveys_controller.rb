@@ -24,7 +24,8 @@ class Admin::CustomSurveysController < Admin::AdminController
       title:      "",
       id:         "",
       url:        admin_custom_surveys_path,
-      cancelUrl:  current_account.default_survey_enabled? ? "/admin/home" : admin_custom_surveys_path
+      cancelUrl:  current_account.default_survey_enabled? ? "/admin/home" : admin_custom_surveys_path,
+      order: true
     }
   end
 
@@ -37,6 +38,7 @@ class Admin::CustomSurveysController < Admin::AdminController
   def edit
     @account = current_account
     @surveys = scoper
+    first_survey_result = @survey.survey_results.first
     @layout_params = {
       action:       "update",
       method:       "put",
@@ -45,16 +47,17 @@ class Admin::CustomSurveysController < Admin::AdminController
       title:        @survey.title_text,
       id:           @survey_id,
       url:          admin_custom_survey_path(@survey_id),
-      cancelUrl:    current_account.default_survey_enabled? ? "/admin/home" : admin_custom_surveys_path
+      cancelUrl:    current_account.default_survey_enabled? ? "/admin/home" : admin_custom_surveys_path,
+      order:     @survey.good_to_bad?
     }
     @survey_details = {
       survey:               @survey.to_json({:except => :account_id}),
       survey_questions:     @survey.feedback_questions.to_json,
       default_question:     @survey.default_question.to_json,
-      survey_result_exists: !@survey.survey_results.blank? 
+      survey_result_exists: first_survey_result.present? 
     }
-    flash[:notice] = t(:'admin.surveys.new_layout.result_exist_msg_v2') if @survey.survey_results.present? &&
-                                                                         !@survey.default?
+    flash[:notice] = t(:'admin.surveys.new_layout.result_exist_msg_v2') if !@survey.default? && first_survey_result.present?
+                                                                         
   end  
 
   def update

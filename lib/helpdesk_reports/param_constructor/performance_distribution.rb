@@ -6,7 +6,10 @@ class HelpdeskReports::ParamConstructor::PerformanceDistribution < HelpdeskRepor
       "AVG_RESOLUTION_TIME" => ["resolution_time"],
     }
 
+  DAY_TOGGLE =['this_week','previous_week','last_7','last_30','this_month','previous_month']
+  
   def initialize options
+    @report_filter_params = options
     @report_type = :performance_distribution
     @trend_conditions = ["doy", "w", "mon", "qtr", "y"]
     super options
@@ -18,7 +21,21 @@ class HelpdeskReports::ParamConstructor::PerformanceDistribution < HelpdeskRepor
 
   def query_params
     dr = @date_range.split("-")
-    single_day_date_range = (dr.size==1) || (dr[0].strip == dr[1].strip) #for one day time range, only bucket query is needed.
+    single_day_date_range = (dr.size == 1) || (dr[0].strip == dr[1].strip) #for one day time range, only bucket query is needed.
+    
+    unless single_day_date_range
+      if basic_param_structure[:scheduled_report]  
+        conditions = @report_filter_params[:date]["period"] || @report_filter_params[:date]["date_range"]
+        @trend_conditions =   case conditions
+                              when  *DAY_TOGGLE, 6, 29
+                                options[:resolution_trend] = options[:response_trend] = options[:trend] = "doy"
+                                ["doy","y"]
+                              else 
+                                options[:resolution_trend] = options[:response_trend] = options[:trend] = "mon"
+                                ["mon","y"]
+                              end  
+      end 
+    end
 
     METRICS_WITH_BUCKETS.keys.inject([]) do |params, metric|
       query = basic_param_structure

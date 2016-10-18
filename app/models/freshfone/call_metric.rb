@@ -116,9 +116,15 @@ class Freshfone::CallMetric < ActiveRecord::Base
 
     def call_accepted?
       #Old status should not be hold. Makes it easier to not check for multiple status like ringing, queued, connecting
-      return if call_changes[:call_status].blank? 
-      call_changes[:call_status].first != Freshfone::Call::CALL_STATUS_HASH[:'on-hold'] &&
-      call_changes[:call_status].last == Freshfone::Call::CALL_STATUS_HASH[:'in-progress']
+      return if call_changes[:call_status].blank?
+      (call_changes[:call_status].first != Freshfone::Call::CALL_STATUS_HASH[:'on-hold'] &&
+      call_changes[:call_status].last == Freshfone::Call::CALL_STATUS_HASH[:'in-progress']) || warm_transfer_status_changes?
+    end
+
+    def warm_transfer_status_changes?
+      call_changes[:call_status].first == Freshfone::Call::CALL_STATUS_HASH[:'on-hold'] &&
+      call_changes[:call_status].last == Freshfone::Call::CALL_STATUS_HASH[:'in-progress'] &&
+      self.call.meta.warm_transfer_meta?
     end
 
     def call_disconnected?
@@ -129,7 +135,7 @@ class Freshfone::CallMetric < ActiveRecord::Base
     end
 
     def round_robin_routing?
-      self.freshfone_call.round_robin_call? && self.queue_wait_time.blank?
+      self.freshfone_call.incoming? && self.freshfone_call.round_robin_call? && self.queue_wait_time.blank?
     end
 
     def calculate_ring_time(queued_at = nil)
@@ -148,8 +154,14 @@ class Freshfone::CallMetric < ActiveRecord::Base
     end
 
     def recalculate_metrics
-      self.talk_time = self.talk_time - (self.hold_duration - self.hold_duration_was)
-      calculate_handle_time
+      self.talk_time = self.talk_time - (self.hold_duration - self.hold_duration_was) unless warm_transfer_child?
+      self.handle_time = calculate_handle_time
+    end
+
+    def warm_transfer_child?
+      child_call = self.call.children.last
+      return false if child_call.blank? || child_call.meta.blank?
+      child_call.meta.warm_transfer_meta?
     end
 
     def hold_duration_changed?

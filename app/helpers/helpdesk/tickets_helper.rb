@@ -17,9 +17,9 @@ module Helpdesk::TicketsHelper
   include AutocompleteHelper
   include Helpdesk::AccessibleElements
   include Concerns::TicketsViewConcern
-  include Cache::Memcache::Helpdesk::Ticket #Methods for fragment caching in new ticket and compose email forms
   include Cache::Memcache::Helpdesk::TicketTemplate #Methods for tkt templates count
-
+  include Cache::FragmentCache::Base # Methods for fragment caching
+  include Helpdesk::SpamAccountConstants
   def ticket_sidebar
     tabs = [["TicketProperties", t('ticket.properties').html_safe,         "ticket"],
             ["RelatedSolutions", t('ticket.suggest_solutions').html_safe,  "related_solutions", privilege?(:view_solutions)],
@@ -216,6 +216,10 @@ module Helpdesk::TicketsHelper
     end
   end
 
+  def forward_template_draft(item, signature)
+    {"draft_text" => bind_last_conv(item, signature, true, false)}
+  end
+
   def draft_key
     HELPDESK_REPLY_DRAFTS % { :account_id => current_account.id, :user_id => current_user.id,
       :ticket_id => @ticket.id}
@@ -375,12 +379,50 @@ module Helpdesk::TicketsHelper
     return {:data => encoded_data}.to_json.html_safe
   end
 
+  def latest_note_helper(ticket)    
+    latest_note_obj = ticket.notes.visible.exclude_source(['meta', 'tracker']).newest_first.first
+    latest_note_hash = {}
+    unless latest_note_obj.nil?
+        action_msg = latest_note_obj.fwd_email? ? 'helpdesk.tickets.overlay_forward' : (latest_note_obj.note? ? 'helpdesk.tickets.overlay_note' : 'helpdesk.tickets.overlay_reply')
+        latest_note_hash = {
+          :user => latest_note_obj.user,
+          :created_at => latest_note_obj.created_at,
+          :body => latest_note_obj.body,
+          :overlay_time => time_ago_in_words(latest_note_obj.created_at),
+        }
+      else
+         action_msg = "helpdesk.tickets.overlay_submitted_#{ticket.tracker_ticket? ? 'tracker' : 'ticket'}"
+         latest_note_hash = {
+          :user => ticket.requester,
+          :created_at => ticket.created_at,
+          :body => ticket.description,
+          :overlay_time => time_ago_in_words(ticket.created_at),
+        }
+
+      end
+      latest_note_hash.merge!(:action_msg => t("#{action_msg}"))
+
+      unless ticket.group.nil?
+      latest_note_hash.merge!(:ticket_group => ticket.group)
+      end
+
+      latest_note_hash
+  end
+
   def agentcollision_socket_host
     "#{request.protocol}#{NodeConfig["socket_host"]}"
   end
 
   def autorefresh_socket_host
     "#{request.protocol}#{NodeConfig["socket_autorefresh_host"]}"
+  end
+
+  def agentcollision_alb_socket_host
+    "#{request.protocol}#{NodeConfig["socket_host_new"]}"
+  end
+
+  def autorefresh_alb_socket_host
+    "#{request.protocol}#{NodeConfig["socket_autorefresh_host_new"]}"
   end
 
   def agent_collision_index_channel
@@ -397,23 +439,6 @@ module Helpdesk::TicketsHelper
 
   def agent_collision_ticket_channel(ticket_id)
     AgentCollision.ticket_channel(current_account,ticket_id)
-  end
-
-
-  def agentcollision_host
-    "#{request.protocol}#{NodeConfig["agentcollision_host"]}"
-  end
-
-  def agentcollision_server
-    "#{request.protocol}#{NodeConfig["agentcollision_server"]}"
-  end
-
-  def autorefresh_host
-    "#{request.protocol}#{NodeConfig["autorefresh_host"]}"
-  end
-
-  def autorefresh_server
-    "#{request.protocol}#{NodeConfig["autorefresh_server"]}"
   end
 
   def facebook_link
@@ -449,7 +474,7 @@ module Helpdesk::TicketsHelper
     email_content = []
     contents << content_tag(:div, (form_builder.text_field :subject, :class => "required text ticket-subject", :placeholder => t('ticket.compose.enter_subject')).html_safe)
     form_builder.fields_for(:ticket_body, @ticket.ticket_body ) do |builder|
-      field_value = if (desp = @item.description_html).blank? & (sign = current_user.agent.signature_value).blank?
+      field_value = if (desp = @item.description_html).blank? & (sign = current_user.agent.parsed_signature('ticket' => @ticket, 'helpdesk_name' => @ticket.account.portal_name)).blank?
                       desp.to_s
                     else
                       desp.present? ? (sign.present? ? desp + sign : desp) : ("<p><br /></p>"*2)+sign.to_s
@@ -465,7 +490,7 @@ module Helpdesk::TicketsHelper
     end
   else
     contents << content_tag(:div) do 
-      render :partial => "/helpdesk/tickets/show/single_attachment_form", :locals => { :attach_id => "ticket" , :nsc_param => "helpdesk_ticket" , :template => true}
+      render :partial => "/helpdesk/tickets/show/single_attachment_form", :locals => { :attach_id => "ticket" , :nsc_param => "helpdesk_ticket" , :template => true,:rowfluid => true}
     end
   end
     contents.join(" ").html_safe
@@ -537,6 +562,26 @@ module Helpdesk::TicketsHelper
     ""
   end
 
+  def do_spam_check?
+    ((current_account.id > get_spam_account_id_threshold) && (current_account.subscription.trial?) && (!ismember?(SPAM_WHITELISTED_ACCOUNTS, current_account.id)))
+  end
+
+  def free_admin_email_account?
+    Freemail.free?(current_account.admin_email)
+  end
+
+  def unique_ticket_recipients(ticket)
+    ticket_from_email = get_email_array(ticket.from_email)
+    cc_email_hash = ticket.cc_email_hash.nil? ? Helpdesk::Ticket.default_cc_hash : ticket.cc_email_hash
+    
+    bcc_emails = get_email_array(cc_email_hash[:bcc_emails])
+    cc_emails = get_email_array(cc_email_hash[:cc_emails])
+    fwd_emails = get_email_array(cc_email_hash[:fwd_emails])
+
+    total_recipients = bcc_emails.present? ? (cc_emails | fwd_emails | ticket_from_email | bcc_emails) : (cc_emails | fwd_emails | ticket_from_email)
+    return total_recipients
+  end
+
   def default_hidden_fields
     ["default_source"]
   end
@@ -547,7 +592,29 @@ module Helpdesk::TicketsHelper
     Integrations::Constants::INVOICE_APPS.include?(installed_app.application.name) && !installed_app.configs_invoices.to_s.to_bool
   end
 
-  private
+  def ticket_association_box
+    links = []
+    links << %(<span class="mr12"> 
+                  <b><a href="#">#{I18n.t('ticket.parent_child.add_child')} </a></b>
+                </span>) if current_account.features_included?(:parent_child_tickets)
+    links << %(<span class="ml12">
+                  <b><a href="#" data-placement = "bottomLeft" class="lnk_tkt_tracker_show_dropdown" id="lnk_tkt_tracker"  role="button" data-toggle="popover" data-dropdown="close" data-ticket-id="#{@ticket.display_id}">#{t('ticket.link_tracker.link_to_tracker')}</a></b>
+                </span>) if current_account.link_tickets_enabled?
+    links.join(links.size > 1 ? '<span class="separator">OR</span>' : '')
+    content_tag(:span, 
+                links.join(links.size > 1 ? '<span class="separator">OR</span>' : '').html_safe, 
+                :class => "text-center block")
+  end
+
+  def tracker_ticket_requester? dom_type
+    dom_type.eql?("requester") and (params[:display_ids].present? || @item.tracker_ticket?) and current_account.link_tickets_enabled? 
+  end
+
+  def show_insert_into_reply?
+    privilege?(:reply_ticket) && !(@ticket.twitter? || @ticket.facebook? || @ticket.allow_ecommerce_reply?) && @ticket.from_email.present?
+  end
+
+  private 
 
     def ticket_cc_info cc_emails_hash
       CcViewHelper.new(nil, cc_emails_hash[:cc_emails], cc_emails_hash[:dropped_cc_emails]).cc_agent_inline_content.html_safe

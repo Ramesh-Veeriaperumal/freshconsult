@@ -8,6 +8,7 @@ class Helpdesk::Email::Process
   include WhiteListHelper
   include Helpdesk::ProcessByMessageId
   include AccountConstants
+  include EmailHelper
 
   #All email meta data and parsing of email values are done on parse_email_data.rb. Please refer while viewing this file.
 
@@ -28,9 +29,14 @@ class Helpdesk::Email::Process
   end
 
   def perform
+    email_processing_log "Email received: Message-Id #{params["Message-Id"]}"
     self.start_time = Time.now.utc
     shardmapping = ShardMapping.fetch_by_domain(to_email[:domain])
-    return unless shardmapping.present?
+    unless shardmapping.present?
+      email_processing_log "Email Processing Failed: No Shard Mapping found!", to_email[:email]
+      return
+    end
+    return shardmapping.status  unless shardmapping.ok?
     Sharding.select_shard_of(to_email[:domain]) do 
       accept_email if get_active_account
     end
@@ -45,11 +51,17 @@ class Helpdesk::Email::Process
     account.make_current
     TimeZone.set_time_zone
     self.common_email_data = email_metadata #In parse_email_data
-    return if mail_from_email_config?
-    # encode_stuffs
+    if mail_from_email_config?
+      email_processing_log "Email Processing Failed: From-email and Reply-email are same!", to_email[:email]
+      return
+    end
+      # encode_stuffs
     if account.features?(:domain_restricted_access)
       wl_domain  = account.account_additional_settings_from_cache.additional_settings[:whitelisted_domain]
-      return unless Array.wrap(wl_domain).include?(common_email_data[:from][:domain])
+      unless Array.wrap(wl_domain).include?(common_email_data[:from][:domain])
+        email_processing_log "Email Processing Failed: Not a White listed Domain!", to_email[:email]
+        return
+      end
     end    
     if (common_email_data[:from][:email] =~ EMAIL_VALIDATOR).nil?
       error_msg = "Invalid email address found in requester details - #{common_email_data[:from][:email]} for account : #{account.id}"
@@ -60,7 +72,14 @@ class Helpdesk::Email::Process
     construct_html_param
     self.user = get_user(common_email_data[:from], common_email_data[:email_config], params["body-plain"]) #In parse_email_data
 
-    return if ((user.nil? && !account.restricted_helpdesk?) or (user && user.blocked?))
+    if ((user.nil? && !account.restricted_helpdesk?) or (user && user.blocked?))
+      if (user.nil? && !account.restricted_helpdesk?)
+        email_processing_log "Email Processing Failed: Blank User!", to_email[:email]
+      else
+        email_processing_log "Email Processing Failed: Blocked User!", to_email[:email]
+      end
+      return
+    end
     self.common_email_data[:cc] = permissible_ccs(user, self.common_email_data[:cc], account)
 
     get_necessary_details
@@ -93,7 +112,7 @@ class Helpdesk::Email::Process
   end
 
   def mail_from_email_config?
-    common_email_data[:email_config] && (common_email_data[:from][:email] == common_email_data[:email_config].reply_email)
+    common_email_data[:email_config] && (common_email_data[:from][:email].to_s.downcase == common_email_data[:email_config].reply_email.to_s.downcase)
   end
 
   def assign_to_ticket_or_kbase
@@ -116,7 +135,10 @@ class Helpdesk::Email::Process
     if ticket.present? || (archive_ticket.present? && archive_ticket.is_a?(Helpdesk::Ticket))
       self.user ||= get_user(common_email_data[:from], common_email_data[:email_config], params["body-plain"], true)
     end
-    return if user.blank?    
+    if user.blank?
+      email_processing_log "Email Processing Failed: Blank User!", to_email[:email]
+      return
+    end
     ticket ? email_handler.create_note(start_time) : create_archive_link(archive_ticket, email_handler, start_time)
 	end
 
@@ -183,6 +205,6 @@ class Helpdesk::Email::Process
 
   def stripped_html_blank?
     Helpdesk::HTMLSanitizer.plain(params["stripped-html"]).blank? && !params["stripped-text"].blank?
-  end
+  end 
 
 end

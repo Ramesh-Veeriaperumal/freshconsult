@@ -17,12 +17,13 @@ class MailgunController < ApplicationController
   def create
     recipients = params[:recipient]
     if recipients.present? && multiple_envelope_to_address?(parse_recipients)
-      process_email_for_each_to_email_address
+      status = process_email_for_each_to_email_address 
     else
       @process_email = Helpdesk::Email::Process.new(params)
-      @process_email.perform
+      status =  @process_email.perform 
     end
-    render :nothing => true, :status => 200, :content_type => 'text/html'
+    status = (status == MAINTENANCE_STATUS ? :service_unavailable : :ok )
+    render :nothing => true, :status => status, :content_type => 'text/html'
   end
 
   private
@@ -36,20 +37,8 @@ class MailgunController < ApplicationController
     # end
 
     def determine_pod
-
-      # Rails.logger.info "Params: #{params}."
-      @process_email = Helpdesk::Email::Process.new(params)
-      pod_info = @process_email.determine_pod
-
-      if PodConfig['CURRENT_POD'] != pod_info
-        Rails.logger.error "Email is not for the current POD."
-        redirect_email(pod_info) and return
-      end
-    end
-
-    def determine_pod
       pod_infos = find_pods
-      unless email_for_current_pod?(pod_infos)
+      if pod_infos.present? && !email_for_current_pod?(pod_infos)
         Rails.logger.error "Email is not for the current POD."
         redirect_email(pod_infos.first) and return
       end
@@ -61,7 +50,7 @@ class MailgunController < ApplicationController
       to_emails.each do |to_email|
         shard = ShardMapping.fetch_by_domain(to_email[:domain])
         pod_info = shard.present? ? shard.pod_info : nil
-        pod_infos.push(pod_info)
+        pod_infos.push(pod_info) if pod_info.present?
       end
       return pod_infos
     end
@@ -75,12 +64,14 @@ class MailgunController < ApplicationController
 
     def process_email_for_each_to_email_address
       recipients = parse_recipients
+      status = MAINTENANCE_STATUS
       recipients.each do |to_address|
         params[:recipient] = to_address
         Rails.logger.info "Multiple Recipient case - starting Process email for :#{to_address} "
         process_email = Helpdesk::Email::Process.new(params)
-        process_email.perform
+        status = nil if process_email.perform != MAINTENANCE_STATUS
       end
+      status
     end
 
     def redirect_email(pod_info)

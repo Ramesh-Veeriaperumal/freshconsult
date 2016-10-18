@@ -135,6 +135,10 @@ class Freshfone::Account < ActiveRecord::Base
 			{ created_at: created_on.beginning_of_day..created_on.end_of_day })
 	end
 
+	def trial_or_exhausted?
+		trial? || trial_exhausted?
+	end
+
 	def process_subscription
 		if suspended?
 			begin
@@ -181,6 +185,10 @@ class Freshfone::Account < ActiveRecord::Base
 	def enable_conference
 		account.features.freshfone_conference.create unless account.features?(:freshfone_conference)
 		update_conference_status_url("#{host}/freshfone/conference_call/status")
+	end
+
+	def enable_custom_forwarding
+		account.features.freshfone_custom_forwarding.create
 	end
 
 	def disable_conference

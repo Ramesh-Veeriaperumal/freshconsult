@@ -136,6 +136,7 @@ pl:
     digits: "Wpisz same cyfry."
     creditcard: "Wpisz prawidłowy numer karty kredytowej."
     equalTo: "Wpisz ponownie taką samą wartość."
+    two_decimal_place_warning: "Value cannot have more than 2 decimal digits"
   confirm_delete_message: "Czy na pewno chcesz usunąć %{human_name}?"
   reload: "Wczytaj ponownie"
   any: Dowolne

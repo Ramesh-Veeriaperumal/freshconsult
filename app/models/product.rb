@@ -2,6 +2,7 @@ class Product < ActiveRecord::Base
   
   self.primary_key = :id
   include Cache::Memcache::Product
+  include Cache::FragmentCache::Base
 
   before_destroy :remove_primary_email_config_role
   validates_uniqueness_of :name , :case_sensitive => false, :scope => :account_id
@@ -11,6 +12,10 @@ class Product < ActiveRecord::Base
 
   after_commit :clear_cache
   after_update :widget_update
+  after_commit ->(obj) { obj.clear_fragment_caches } , on: :create
+  after_commit ->(obj) { obj.clear_fragment_caches } , on: :destroy
+  after_commit :clear_fragment_caches, on: :update, :if => :pdt_name_changed?
+  after_commit :unset_product_field, on: :destroy 
 
   belongs_to_account
   has_one    :portal               , :dependent => :destroy
@@ -29,6 +34,13 @@ class Product < ActiveRecord::Base
 
   delegate :portal_url, :to => :portal, :allow_nil => true 
   delegate :name, :to => :portal, :prefix => true, :allow_nil => true 
+
+  def unset_product_field
+    #This is done to ensure that required field is marked false on deletion of last multi product.
+    #Ticket creation through api might break, if req field is set to true.
+    acc = Account.current
+    acc.ticket_fields_with_nested_fields.find_by_name(:product).update_attributes({required: "false",required_for_closure: "false"}) if acc.products_from_cache.empty?
+  end
 
   def enable_portal=(p_str)
     @enable_portal = p_str
@@ -96,5 +108,9 @@ class Product < ActiveRecord::Base
         chat_widget.name = name
         chat_widget.save
       end
+    end
+
+    def pdt_name_changed?
+      self.previous_changes.keys.include?('name')
     end
 end

@@ -750,7 +750,7 @@ label.required:after{
    .dateClear {
    top: 2px;
      position: absolute;
-     right: 9px;
+     @include right (9px);
      padding: 5px;    
     cursor: pointer;
  }
@@ -762,7 +762,7 @@ label.required:after{
  }
  }
  .company_form_date + .dateClear {
-    right: 25px;
+    @include right(25px);
  }
 .support-date-field{
 input.date {
@@ -771,7 +771,7 @@ input.date {
 .dateClear {
   top: 3px;
     position: absolute;
-    right: 9px;
+    @include right(9px);
     padding: 5px;    
     cursor: pointer;
 }

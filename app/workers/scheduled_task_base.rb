@@ -19,6 +19,7 @@ class ScheduledTaskBase < BaseWorker
   def perform(options)
     begin
       logger.info "Received ScheduledTask with #{options.inspect} for execution."
+      HelpdeskReports::Logger.log("scheduled : account_id: #{options['account_id']}, task_id: #{options['task_id']}")
       initialize_task(options)
       #Account dependent tasks, Account independent tasks & rake invocations respectively
       if params[:account_id].present?
@@ -79,7 +80,12 @@ class ScheduledTaskBase < BaseWorker
         return
       end  
     end
-    task.completed!(exec_status)
+    if (exec_status || task.dead_task?)
+      task.completed!(exec_status)
+    else
+      task.increment_consecutive_failuers
+      task.save!
+    end 
   end
 
   def retry_count
@@ -87,7 +93,7 @@ class ScheduledTaskBase < BaseWorker
   end
 
   def valid_task?
-    task.present? && task.enqueued? && task.next_run_at.to_i == params[:next_run_at].to_i
+    task.present? && task.enqueued? && ((task.next_run_at.to_i == params[:next_run_at].to_i) || task.dead_task?)
   end
 
   def task_printable

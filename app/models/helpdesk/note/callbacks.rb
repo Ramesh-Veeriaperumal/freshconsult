@@ -5,7 +5,9 @@ class Helpdesk::Note < ActiveRecord::Base
   before_create :validate_schema_less_note, :update_observer_events
   before_save :load_schema_less_note, :update_category, :load_note_body, :ticket_cc_email_backup
 
-  after_create :update_content_ids, :update_parent, :add_activity, :fire_create_event
+  after_create :update_content_ids, :update_parent, :add_activity
+  after_commit :fire_create_event, on: :create
+  after_commit :related_tickets_broadcast, on: :create, :if => :broadcast_note_to_tracker?
   # Doing update note count before pushing to ticket_states queue
   # So that note count will be reflected if the rmq publish happens via ticket states queue
   after_commit ->(obj) { obj.send(:update_note_count_for_reports)  }, on: :create , :if => :report_note_metrics?
@@ -104,7 +106,7 @@ class Helpdesk::Note < ActiveRecord::Base
     end
 
     def update_parent #Maybe after_save?!
-      return unless human_note_for_ticket?
+      return unless human_note_for_ticket? || broadcast_note_to_related?
       # syntax to move code from delayed jobs to resque.
       #Resque::MyNotifier.deliver_reply( notable.id, self.id , {:include_cc => true})
       notable.updated_at = created_at
@@ -120,13 +122,15 @@ class Helpdesk::Note < ActiveRecord::Base
       if notable.customer_performed?(user)
         # Ticket re-opening, moved as an observer's default rule
         e_notification = account.email_notifications.find_by_notification_type(EmailNotification::REPLIED_BY_REQUESTER)
-        Helpdesk::TicketNotifier.send_later(:notify_by_email, (EmailNotification::REPLIED_BY_REQUESTER),
-                                              notable, self) if notable.responder && e_notification.agent_notification? && replied_by_customer?
-        if public_note? 
-          if performed_by_client_manager?
-            Helpdesk::TicketNotifier.send_later(:notify_by_email, EmailNotification::COMMENTED_BY_AGENT, notable, self)
-          end
+        if e_notification.agent_notification? && replied_by_customer?
+          send_requester_replied_notification if notable.responder
+          send_requester_replied_notification(true) if Account.current.features?(:shared_ownership) and notable.internal_agent
         end
+
+        if public_note? and performed_by_client_manager?
+          Helpdesk::TicketNotifier.send_later(:notify_by_email, EmailNotification::COMMENTED_BY_AGENT, notable, self)
+        end
+
         if inbound_email? && !self.private? && notable.included_in_cc?(user.email)          
           additional_emails = [notable.requester.email] if !notable.included_in_cc?(notable.requester.email)
           # Using cc notification to send notification to requester about new comment by cc
@@ -135,29 +139,30 @@ class Helpdesk::Note < ActiveRecord::Base
         end
         handle_notification_for_agent_as_req if ( !incoming && notable.agent_as_requester?(user.id))
 
-        if notable.cc_email.present? && !self.private?
-          if user.id == notable.requester_id
-            Helpdesk::TicketNotifier.send_later(:send_cc_email, notable , self, {})
-          end
+        if notable.cc_email.present? && user.id == notable.requester_id && !self.private?
+          Helpdesk::TicketNotifier.send_later(:send_cc_email, notable , self, {})
         end
 
-      else    
+      else
         e_notification = account.email_notifications.find_by_notification_type(EmailNotification::COMMENTED_BY_AGENT)  
         #notify the agents only for notes
         notifying_agents
         #notify the customer if it is public note
         if note? && !private && e_notification.requester_notification?
-        Helpdesk::TicketNotifier.send_later(:notify_by_email, EmailNotification::COMMENTED_BY_AGENT, notable, self)
-        Helpdesk::TicketNotifier.send_later(:send_cc_email, notable , self, {}) if notable.cc_email.present?
+          Helpdesk::TicketNotifier.send_later(:notify_by_email, EmailNotification::COMMENTED_BY_AGENT, notable, self)
+          Helpdesk::TicketNotifier.send_later(:send_cc_email, notable , self, {}) if notable.cc_email.present?
         #handle the email conversion either fwd email or reply
         elsif email_conversation?
           send_reply_email
           create_fwd_note_activity(self.to_emails) if fwd_email?
         end
-
         # notable.responder ||= self.user unless private_note? # Added as a default observer rule
-
       end
+    end
+
+    def send_requester_replied_notification(internal_notification = false)
+      Helpdesk::TicketNotifier.send_later(:notify_by_email, (EmailNotification::REPLIED_BY_REQUESTER),
+              notable, self, {:internal_notification => internal_notification})
     end
 
     def handle_notification_for_agent_as_req
@@ -254,7 +259,7 @@ class Helpdesk::Note < ActiveRecord::Base
 
     def update_ticket_states
       user_id = User.current.id if User.current
-      Tickets::UpdateTicketStatesWorker.perform_async(
+      ::Tickets::UpdateTicketStatesWorker.perform_async(
             { :id => id, :model_changes => @model_changes,
               :freshdesk_webhook => freshdesk_webhook?,
               :current_user_id =>  user_id }
@@ -272,7 +277,7 @@ class Helpdesk::Note < ActiveRecord::Base
   end
 
     def notify_ticket_monitor
-      return if meta?
+      return if meta? || broadcast_note_to_related?
       notable.subscriptions.each do |subscription|
         if subscription.user_id != user_id
           Helpdesk::WatcherNotifier.send_later(:deliver_notify_on_reply,
@@ -287,7 +292,7 @@ class Helpdesk::Note < ActiveRecord::Base
     
     # VA - Observer Rule 
     def update_observer_events
-      return if user.nil? || meta? || feedback? || !(notable.instance_of? Helpdesk::Ticket)
+      return if user.nil? || !human_note_for_ticket? || feedback? || !(notable.instance_of? Helpdesk::Ticket) || broadcast_note_to_tracker?
       if replied_by_customer? || replied_by_agent?
         @model_changes = {:reply_sent => :sent}
       else
@@ -307,7 +312,7 @@ class Helpdesk::Note < ActiveRecord::Base
     end
  
     def api_webhook_note_check
-      (notable.instance_of? Helpdesk::Ticket) && !meta? && allow_api_webhook? && !notable.spam_or_deleted?
+      (notable.instance_of? Helpdesk::Ticket) && !meta? && allow_api_webhook? && !notable.spam_or_deleted? && !broadcast_note_to_related?
     end
     
     ##### ****** Methods related to reports starts here ******* #####
@@ -318,7 +323,11 @@ class Helpdesk::Note < ActiveRecord::Base
       return if action == "destroy" && notable.archive # Dont reduce the count if destroy happens because its moved to archive
       note_category = reports_note_category
       if note_category && Helpdesk::SchemaLessTicket::COUNT_COLUMNS_FOR_REPORTS.include?(note_category)
-        notable.schema_less_ticket.send("update_#{note_category}_count", action)
+        if (notable.created_at < ('1-10-2015'.to_datetime) && notable.schema_less_ticket.reports_hash["recalculated_count"].nil?)
+          notable.schema_less_ticket.send("recalculate_note_count")
+        else
+          notable.schema_less_ticket.send("update_#{note_category}_count", action)
+        end
         notable.schema_less_ticket.save
       end
     end
@@ -340,8 +349,8 @@ class Helpdesk::Note < ActiveRecord::Base
       when CATEGORIES[:customer_response]
         "customer_reply"
       # Only agent added pvt notes, fwds and reply to fwd will be counted as pvt note
-      when CATEGORIES[:agent_private_response], CATEGORIES[:reply_to_forward]
-        "private_note"
+      when CATEGORIES[:agent_private_response], CATEGORIES[:reply_to_forward], CATEGORIES[:broadcast]
+        source == SOURCE_KEYS_BY_TOKEN["tracker"] ? nil : "private_note"
       when CATEGORIES[:agent_public_response]
         (note? ? "public_note" : "agent_reply")
       else
@@ -376,6 +385,10 @@ class Helpdesk::Note < ActiveRecord::Base
 
     def performed_by_client_manager?
       public_note? && notable.customer_performed?(user) && user.has_customer_ticket_permission?(notable) && (user.id != notable.requester_id)
+    end
+    
+    def related_tickets_broadcast
+      ::Tickets::AddBroadcastNote.perform_async( {:ticket_id => self.notable_id, :note_id => id } )
     end
 
 end

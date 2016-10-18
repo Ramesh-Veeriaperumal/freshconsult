@@ -84,8 +84,12 @@ class Ecommerce::Ebay::Api
     usr_external_id = ticket.requester.external_id.gsub("#{EBAY_PREFIX}-","")
 
     note.attachments.each do |attach|
-      attach_resp = upload_ebay_picture(attach.content_file_name, attach.authenticated_s3_get_url)
-      ebay_attachment_urls.push({:name => attach.content_file_name, :url => attach_resp[:site_hosted_picture_details][:full_url]}) if attach_resp[:ack] != EBAY_ERROR_MSG
+      attach_resp = upload_ebay_picture(attach.content_file_name, attach.authenticated_s3_get_url(:signature_version => :v3))
+      if attach_resp[:ack] != EBAY_ERROR_MSG and attach_resp.present?
+        ebay_attachment_urls.push({:name => attach.content_file_name, :url => attach_resp[:site_hosted_picture_details][:full_url]})
+      else 
+        Rails.logger.error "Error uploading Ebay attachment for account id #{Account.current}. --Response= #{attach_resp.inspect}\n"
+      end
     end
 
     Ebayr.call(:AddMemberMessageRTQ,@ebay_account_id, :MemberMessage => [{:Body => CGI.escapeHTML(note.body)},

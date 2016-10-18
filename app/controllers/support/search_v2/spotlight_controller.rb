@@ -50,9 +50,8 @@ class Support::SearchV2::SpotlightController < SupportController
     @no_render      = true
     @klasses        = ['Topic']
     @search_context = :portal_spotlight_topic
-    search(esv2_portal_models) do |results|
-      @results = results
-    end
+    search(esv2_portal_models)
+    @results = @search_results
 
     render template: '/support/search/suggest_topic', :layout => false
   end
@@ -84,7 +83,7 @@ class Support::SearchV2::SpotlightController < SupportController
 
         es_params[:size] = @size
         es_params[:from] = @offset
-      end.merge(ES_V2_BOOST_VALUES[@search_context])
+      end
     end
 
     # Check tweaking user_visibility in article.rb

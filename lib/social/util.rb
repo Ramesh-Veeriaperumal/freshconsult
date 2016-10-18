@@ -100,9 +100,5 @@ module Social::Util
       :account_id => Account.current.id
     }
   end
-  
-  def social_revamp_enabled?
-    Account.current.features?(:social_revamp)
-  end
 
 end

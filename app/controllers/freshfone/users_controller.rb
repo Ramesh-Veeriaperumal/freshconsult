@@ -13,6 +13,7 @@ class Freshfone::UsersController < ApplicationController
 	before_filter :validate_presence_from_node, :only => [:node_presence]
 	before_filter :load_or_build_freshfone_user
 	before_filter :set_native_mobile, :only => [:presence, :in_call, :refresh_token]
+	before_filter :set_meta_info, only: :in_call
 	before_filter :validate_presence, :only => [:presence]
 
 	def presence
@@ -120,6 +121,18 @@ class Freshfone::UsersController < ApplicationController
 
 		def current_outgoing_call
 			@outgoing_call ||= (current_user.freshfone_calls.outgoing_in_progress_calls || {})
+		end
+
+		def set_meta_info
+			warm_transfer_call = select_warm_transfer_call
+			return if warm_transfer_call.blank?
+			set_key(user_agent_key(warm_transfer_call), request.env['HTTP_USER_AGENT'], 14400)
+		end
+
+		def select_warm_transfer_call
+			return warm_transfer_call_leg if new_notifications?
+			return if current_call.blank?
+			current_call.supervisor_controls.warm_transfer_calls.supervisor_progress_call(split_client_id(params[:To])).first
 		end
 	
 		def current_incoming_call

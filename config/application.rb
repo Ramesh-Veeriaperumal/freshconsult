@@ -2,6 +2,19 @@ require File.expand_path('../boot', __FILE__)
 
 require 'rails/all'
 
+# Disable i18nema usage during asset compilation.
+#
+# During asset compilation, we use i18n-js to generate translation strings
+# for js. i18n-js gem is using non-public member ('translations') of
+# i18n.backend object which is not implemented in i18nema.
+#
+# Note that in development environment, asset compilation may happen on the
+# fly, so we will disable i18nema for development as well.
+if !Rails.env.development? && ENV['I18NEMA_ENABLE'] == 'true'
+  require 'i18nema'
+  I18n.backend = I18nema::Backend.new
+end
+
 require 'rack/throttle'
 require 'gapps_openid'
 require File.expand_path('../../lib/facebook_routing', __FILE__)
@@ -91,7 +104,6 @@ module Helpkit
 
     # Please check api_initializer.rb, for compatibility with the version 2 APIs, if any middleware related changes are being done.
     config.middleware.insert_before 0, "Middleware::CorsEnabler"
-    config.middleware.insert_before "ActionDispatch::Session::CookieStore","Rack::SSL"
     config.middleware.use "Middleware::GlobalRestriction"
     config.middleware.use "Middleware::ApiThrottler", :max =>  1000
     config.middleware.use "Middleware::TrustedIp"
@@ -103,6 +115,8 @@ module Helpkit
       r.define_rule( :match => "^/(support(?!\/(theme)))/.*", :type => :fixed, :metric => :rph, :limit => 1800,:per_ip => true ,:per_url => true )
       r.define_rule( :match => "^/(accounts\/new_signup_free).*", :type => :fixed, :metric => :rpd, :limit => 5,:per_ip => true)
       r.define_rule( :match => "^/(public\/tickets)/.*", :type => :fixed, :metric => :rpm, :limit => 10,:per_ip => true)
+      r.define_rule( :match => "^/(login\/sso).*", :type => :fixed, :metric => :rpm, :limit => 10,:per_ip => true)
+      r.define_rule( :match => "^/integrations\/sugarcrm\/settings_update", :type => :fixed, :metric => :rph, :limit => 5,:per_ip => true)
       store = Redis.new(:host => RateLimitConfig["host"], :port => RateLimitConfig["port"],:timeout => 0.5)
       r.set_cache(store) if store.present?
     end
@@ -204,7 +218,7 @@ module Helpkit
     # and looking at database.yml when running rake assets:precompile
     config.assets.initialize_on_precompile = false
 
-    config.middleware.insert_before "ActionDispatch::Session::CookieStore","Rack::SSL"
+    config.middleware.insert_before "ActionDispatch::Cookies","Rack::SSL"
     config.middleware.insert_before "Auth::Builder","Middleware::Pod"
 
     config.assets.handle_expiration = true
@@ -222,13 +236,15 @@ ENV['RECAPTCHA_PRIVATE_KEY'] = '6LfNCb8SAAAAANC5TxzpWerRTLrxP3Hsfxw0hTNk'
 
 
 
+
+GC::Profiler.enable if defined?(GC) && defined?(GC::Profiler) && GC::Profiler.respond_to?(:enable)
+
+# Load rbtrace
 if defined?(PhusionPassenger)
-  PhusionPassenger.on_event(:starting_worker_process) do |forked|
-    if forked
-       RABBIT_MQ_ENABLED = !Rails.env.development?
-       RabbitMq::Init.start if RABBIT_MQ_ENABLED
+  PhusionPassenger.on_event(:starting_request_handler_thread) do
+    if Rails.env.staging?
+      Rails.logger.error("Loading rbtrace gem")
+      require 'rbtrace'
     end
   end
 end
-
-GC::Profiler.enable if defined?(GC) && defined?(GC::Profiler) && GC::Profiler.respond_to?(:enable)

@@ -50,7 +50,15 @@ class Support::DiscussionsController < SupportController
       @page_meta ||= {
         :title => @category.name,
         :description => @category.description,
-        :canonical => support_discussion_url(@category, :host => current_portal.host)
+        :canonical => page_canonical
       }
+    end
+
+    def page_canonical
+      if current_portal.forum_categories.size == 1
+        support_discussions_url(:host => current_portal.host)
+      else
+        support_discussion_url(@category, :host => current_portal.host)
+      end
     end
 end 

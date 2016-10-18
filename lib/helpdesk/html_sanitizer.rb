@@ -1,4 +1,6 @@
 module Helpdesk::HTMLSanitizer
+
+  require 'html_to_plain_text'
    
   def self.clean(html)
     if html
@@ -43,6 +45,10 @@ module Helpdesk::HTMLSanitizer
         Sanitize.clean(html, Sanitize::Config::HTML_RELAXED) 
       end
     end
+  end
+
+  def self.html_to_plain_text(html)
+    HtmlToPlainText.plain_text(html)
   end
 
   private

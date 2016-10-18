@@ -252,6 +252,7 @@ Helpdesk = Helpdesk || {};
             form.on("submit", function(event) {
                 // turning of reminder
                 _this.reminder = false;
+                form.data("formChanged",false);
                 // preventing from edit note
                 function normal_attachments() {
                     if ($('#attachment-modal').length == 0) {
@@ -340,6 +341,18 @@ Helpdesk = Helpdesk || {};
             _this.currentProgress.abort();
             _this.currentProgress.xhr().abort();
             return "done";
+        },
+        fileAbortAll: function() {
+            var LoopInterval = setInterval(removeData,200);
+            function removeData() {
+                var _this = this;
+                 var newAttachments = $(".multiple-filelist").find('.file-upload .file-abort');
+                 newAttachments.first().click();
+                 var newLength = newAttachments.length - 1;
+                 if(newLength == 0) {
+                    clearInterval(LoopInterval);
+                 }
+            }
         },
         // --------------------- Background proccess starts here ---- 
         backgroundProcess: {
@@ -440,6 +453,27 @@ Helpdesk = Helpdesk || {};
                 files: data,
             }).appendTo(".multiple-filelist-" + count);
         },
+        sol_article_normal_attach: function(data,count){
+            $("#attach-limt-" + count).hide();
+            $("#attachment-template").tmpl({
+                render_type: "existing",
+                type: "attachment",
+                files: data,
+                softdelete:false,
+                template:false, 
+            }).appendTo(".multiple-filelist-" + count);
+        },
+        sol_article_cloud_attach: function(data,count){
+            $("#attach-limt-" + count).hide();
+            $("#attachment-template").tmpl({
+                render_type: "existing",
+                type: "cloud",
+                sol_cloud: true,
+                files: data,
+                softdelete:false,
+                template:false, 
+            }).appendTo(".multiple-filelist-" + count);
+        },
         // --------------- PJAX configurations ------
         PjaxSet: false,
         PjaxOn: function() {
@@ -453,8 +487,11 @@ Helpdesk = Helpdesk || {};
                         // check again
                         var c = confirm(_this.message.in_progress);
                         if (!c) {
+                            $("#nprogress").remove();
                             event.preventDefault();
                         } else {
+                            _this.fileAbortAll();
+                            _this.upload_status = _this.upload_status.splice(_this.upload_status.length);
                             _this.PjaxOff();
                         }
                     });
@@ -493,9 +530,7 @@ Helpdesk = Helpdesk || {};
             });
             // delete action for  - existing file upload
             $('body').on("click", ".existing-filelist .file-close , .existing-filelist-cloud .file-close", function() {
-                var c = confirm(_this.message.permanent_delete);
                 var element_this = $(this);
-                if (c) {
                     if (element_this.data('cloudFile')) {
                         var deleteUrl = window.location.origin + "/helpdesk/cloud_files/" + $(this).data('attachId');
                         if (App.namespace == "solution/articles/show") {
@@ -517,7 +552,11 @@ Helpdesk = Helpdesk || {};
                                 $("#helpdesk_attachment_" + element_this.data('attachId')).remove();
                             }
                         }
-
+                         // confirm message
+                        var c = confirm(_this.message.permanent_delete);
+                        if(!c) {
+                          return;
+                        }
                         $.ajax({
                             url: deleteUrl,
                             type: "delete",
@@ -551,6 +590,11 @@ Helpdesk = Helpdesk || {};
                                 $("#helpdesk_attachment_" + element_this.data('attachId')).remove();
                             }
                         }
+                        // confirm message
+                        var c = confirm(_this.message.permanent_delete);
+                        if(!c) {
+                          return;
+                        }
                         $.ajax({
                             url: deleteUrl,
                             type: "delete",
@@ -564,7 +608,6 @@ Helpdesk = Helpdesk || {};
                             }
                         });
                     }
-                }
 
             });
             // removing cloud files and canned response
@@ -660,27 +703,30 @@ Helpdesk = Helpdesk || {};
                     }
                 });
             });
-            // reminder
-            // jQuery(window).on("pjax:beforeSend.attachment-reminder", function(event) {
-            //     if (jQuery(".multiple-filelist .file").length !== 0 && _this.upload_status.length == 0 && jQuery(".attach-block-ui:visible").length == 0) {
-            //         if(_this.reminder) {
-            //             var c = confirm(_this.message.reminder);
-            //             if (!c) {
-            //                 event.preventDefault();
-            //                 event.stopImmediatePropagation();
-            //                 return;
-            //             }
-            //         }
-            //     }
-            // });
-            // jQuery(window).on("beforeunload", function() {
-            //     if (jQuery(".multiple-filelist .file").length !== 0) {
-            //         if(_this.reminder) {
-            //             return _this.message.reminder;
-            //         }
-            //     }
-            // });
-
+            // reminders 
+            $(window).on("pjax:beforeSend.attachment-reminder", function(event) {
+                if ($(".multiple-filelist .file").length !== 0 && _this.upload_status.length == 0 && $(".attach-block-ui:visible").length == 0) {
+                    if(_this.reminder) {
+                        var c = confirm(_this.message.reminder);
+                        if (!c) {
+                            event.preventDefault();
+                            event.stopImmediatePropagation();
+                            $("#nprogress").remove();
+                            return;
+                        }
+                    }
+                }
+            });
+            // on window reload or close
+            $(window).on("beforeunload", function() {
+                if(_this.reminder) {
+                    if (($(".multiple-filelist .file").length !== 0) && (_this.upload_status.length == 0)) {
+                    return "clear attachments ? ";
+                }
+            }
+                
+            });
+            
         },
 
         // ** global functions **
@@ -723,7 +769,7 @@ Helpdesk = Helpdesk || {};
             return attachments;
         },
         // render existing files
-        renderExistingFiles: function(attachments, cloudfile, count, template, nscname,softdelete) {
+        renderExistingFiles: function(attachments, cloudfile, count, template, nscname, softdelete, ticket_topic) {
            
             // for changing ticket templates nsc param
             if (typeof template == "undefined") {
@@ -747,6 +793,7 @@ Helpdesk = Helpdesk || {};
                 template: template,
                 nscname: nscname,
                 softdelete: softdelete,
+                ticket_topic: ticket_topic,
             }).appendTo(".existing-file-list[data-count='" + count + "']");
             // cloud files
             $("#attachment-template").tmpl({
@@ -756,6 +803,7 @@ Helpdesk = Helpdesk || {};
                 template: template,
                 nscname: nscname,
                 softdelete: softdelete,
+                ticket_topic: ticket_topic,
             }).appendTo(".existing-file-list[data-count='" + count + "']");
         },
         //on  note attachment delete
@@ -777,9 +825,6 @@ Helpdesk = Helpdesk || {};
                 }));
                 this.manage_counts(container);
             }
-
-
-
         },
         manage_counts: function(container) {
             // managing counts
@@ -798,7 +843,7 @@ Helpdesk = Helpdesk || {};
             } else {
                 $(container).children('h5').children('strong').text('');
             }
-        }
+        },
     };
 
 }(jQuery));

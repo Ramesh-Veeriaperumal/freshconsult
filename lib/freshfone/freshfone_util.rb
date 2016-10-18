@@ -138,8 +138,8 @@ module Freshfone::FreshfoneUtil
     save_child_call_conf_meta(current_child_call,params[:target],:number)
   end
 
-  def outgoing_transfer?(call)
-    call.outgoing? && !call.is_root?
+  def outgoing_or_warm_transfer?(call)
+    call.outgoing? && !call.is_root? && !call.meta.warm_transfer_meta?
   end
 
   def incoming_transfer?(call)
@@ -147,7 +147,7 @@ module Freshfone::FreshfoneUtil
   end
 
   def transfered_leg?(call)
-    incoming_transfer?(call) || outgoing_transfer?(call)
+    incoming_transfer?(call) || outgoing_or_warm_transfer?(call)
   end
 
   def call_actions
@@ -275,6 +275,10 @@ module Freshfone::FreshfoneUtil
     ::Account.current.launched?(:freshfone_new_notifications)
   end
 
+  def warm_transfer_enabled?
+    current_account.features?(:freshfone_warm_transfer)
+  end
+
   private
     def invalid_number_incoming_fix
       return if agent_leg? || agent_transfer_leg? || params[:From].blank? || sip_call? || supervisor?
@@ -286,6 +290,16 @@ module Freshfone::FreshfoneUtil
 
     def outgoing?
       current_account.features?(:freshfone_conference) ? params[:From].present? && params[:PhoneNumber].present? && params[:From].match(/(client:)/) : params[:To].blank? 
+    end
+
+    def warm_transfer_call_leg
+      @warm_transfer_call_leg ||= current_account.supervisor_controls.find_by_sid(params[:CallSid])
+    end
+
+    def user_agent_key(warm_transfer_leg)
+      FRESHFONE_USER_AGENT % { account_id: warm_transfer_leg.account_id,
+                               user_id: warm_transfer_leg.supervisor_id,
+                               warm_transfer_id: warm_transfer_leg.id }
     end
 
     def agent_leg?

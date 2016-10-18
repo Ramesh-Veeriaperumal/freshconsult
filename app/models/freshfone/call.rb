@@ -73,6 +73,8 @@ class Freshfone::Call < ActiveRecord::Base
     CALL_STATUS_HASH[:queued]
   ]
 
+  ONGOING_CALL_STATUS = [CALL_STATUS_HASH[:'in-progress'], CALL_STATUS_HASH[:'on-hold']]
+
   COMPLETED_CALL_STATUS = [ CALL_STATUS_HASH[:completed], CALL_STATUS_HASH[:busy],
           CALL_STATUS_HASH[:'no-answer'], CALL_STATUS_HASH[:failed],
           CALL_STATUS_HASH[:canceled], CALL_STATUS_HASH[:voicemail] ]
@@ -176,6 +178,8 @@ class Freshfone::Call < ActiveRecord::Base
     }
   }
 
+  scope :ongoing_or_completed_calls, where('call_status in (?)', [CALL_STATUS_HASH[:'on-hold'], CALL_STATUS_HASH[:'in-progress'], CALL_STATUS_HASH[:completed]])
+
   def self.filter_call(call_sid)
     call = filter_by_call_sid(call_sid).first
     call.blank? ? filter_by_dial_call_sid(call_sid).first : call
@@ -191,6 +195,10 @@ class Freshfone::Call < ActiveRecord::Base
   
   def self.recent_in_progress_call
     self.active_calls.first
+  end
+
+  def descendants_calls
+    self.descendants.includes(:meta).all
   end
 
   def self.outgoing_in_progress_calls
@@ -267,12 +275,17 @@ class Freshfone::Call < ActiveRecord::Base
     self.recording_url = params[:RecordingUrl] if recording_url.blank?
     set_call_duration(params) if !account.features?(:freshfone_conference) && call_duration.blank? # will set duration only for non-conf. mode here
     self.direct_dial_number = params[:direct_dial_number] if ivr_direct_dial?
+    update_queue_name(params[:QueueSid]) if params[:QueueSid].present?
     update_status(params)
   end
 
   def update_queue_duration(duration)
     self.queue_duration = duration.to_i
     save
+  end
+
+  def update_queue_name(queue_sid)
+    self.hold_queue = queue_sid
   end
 
   def queue_duration=(duration)
@@ -407,6 +420,20 @@ class Freshfone::Call < ActiveRecord::Base
       :params => params
     )
   end
+
+  def build_warm_transfer_child(child_params)
+    children.build(
+      call_type: call_type,
+      account: account,
+      freshfone_number_id: freshfone_number_id,
+      agent: child_params[:agent],
+      customer_id: customer_id,
+      call_sid: child_params[:call_sid],
+      dial_call_sid: child_params[:dial_call_sid],
+      caller_number_id: caller_number_id,
+      call_status: CALL_STATUS_HASH[:'on-hold']
+    )
+  end
   
   def direction_in_words
     incoming? ? CALL_DIRECTION_STR[:incoming] : CALL_DIRECTION_STR[:outgoing]
@@ -473,10 +500,15 @@ class Freshfone::Call < ActiveRecord::Base
   def disconnect_source_agent
     agent_call_sid = agent_sid
     if outgoing?
-      agent_call_sid = is_root? ? call_sid : dial_call_sid
+      agent_call_sid = is_root? || meta.warm_transfer_meta? ? call_sid : dial_call_sid
     end
     agent_leg = account.freshfone_subaccount.calls.get(agent_call_sid)
     agent_leg.update(:status => "completed")  
+  end
+
+  def get_child_call
+    child_call = children.last
+    (child_call.busy? || child_call.noanswer? || child_call.canceled?|| child_call.ringing?) ? child_call.parent : child_call
   end
 
   def disconnect_agent
@@ -551,10 +583,10 @@ class Freshfone::Call < ActiveRecord::Base
     self.total_duration = (Time.now.utc - created_at).to_i if incoming_root_call?
   end
 
-  def set_call_duration(params)
+  def set_call_duration(params, total_duration_flag = true)
     self.call_duration = params[:DialCallDuration] || params[:RecordingDuration] if self.call_duration.blank?
     self.call_duration = params[:CallDuration] if !freshfone_number.record? && self.call_duration.blank?
-    set_total_duration(params)
+    set_total_duration(params) if total_duration_flag
   end
 
   def pulse_rate
@@ -572,6 +604,10 @@ class Freshfone::Call < ActiveRecord::Base
     incoming? && is_root?
   end
 
+  def outgoing_root_call?
+    outgoing? && is_root?
+  end
+
   def missed_or_busy?
     busy? || noanswer? || canceled?
   end
@@ -583,6 +619,11 @@ class Freshfone::Call < ActiveRecord::Base
   def sip?
     return false if meta.blank?
     meta.sip?
+  end
+
+  def total_call_duration
+    self.total_duration = (Time.now.utc - created_at).to_i
+    save
   end
 
   def create_sip_meta

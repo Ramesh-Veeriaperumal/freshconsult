@@ -13,8 +13,10 @@ module RabbitMq::Keys
   TAG_USE_SUBSCRIBERS          =  ["search"]
   COMPANY_SUBSCRIBERS          =  ["search"]
   USER_SUBSCRIBERS             =  ["search"]
+  CALLER_SUBSCRIBERS           =  ["search"]
   FORUM_CATEGORY_SUBSCRIBERS   =  ["activities"]
   FORUM_SUBSCRIBERS            =  ["activities"]
   TIME_SHEET_SUBSCRIBERS       =  ["activities"]
+  CTI_CALL_SUBSCRIBERS          = ["cti"]
   
 end

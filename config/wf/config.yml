@@ -41,10 +41,12 @@ defaults: &defaults
     filter_list:          Wf::Containers::FilterList
     dropdown:             Wf::Containers::TextDelimited
     due_by:               Wf::Containers::DueBy
+    special_responder:    Wf::Containers::SpecialResponder
     requester:            Wf::Containers::TextDelimited
     customer:             Wf::Containers::TextDelimited
     created_at:           Wf::Containers::Time
     resolved_at:          Wf::Containers::Time
+    tags:                 Wf::Containers::TextDelimited
     
   data_types:             # mapping between data types and containers 
     nil:                  [nil]
@@ -69,10 +71,12 @@ defaults: &defaults
          text:               [text]
          dropdown:           [text_delimited]
          due_by:             [due_by]
+         special_responder:  [special_responder]
          boolean:            [boolean]
          created_at:         [created_at]
          requester:          [requester]
          customer:           [customer]
+         tags:               [tags]
     freshfone_calls:
          datetime:           [created_at, date_time_range]
          int:                [numeric, numeric_delimited]

@@ -15,7 +15,14 @@ class Admin::EmailNotificationsController < Admin::AdminController
     
     @reply_templates = e_notifications.select { |n| n.reply_template? }
 
+    @forward_templates = e_notifications.select { |n| n.forward_template? }
+
     @cc_notifications = e_notifications.select { |n| n.cc_notification? }
+
+    respond_to do |format|
+      format.html
+      format.any(:json) { render request.format.to_sym => e_notifications.map{|notify| {:id=>notify.id,:requester_notification => notify.requester_notification,:agent_notification => notify.agent_notification}}}
+    end
   end
   
   def update
@@ -94,7 +101,7 @@ class Admin::EmailNotificationsController < Admin::AdminController
   end
 
   def validate_params
-    if ['agent_template','requester_template', 'cc_notification', 'reply_template'].exclude? params[:type] #temp fix, if templates are added move to a constant
+    if ['agent_template','requester_template', 'cc_notification', 'reply_template','forward_template'].exclude? params[:type] #temp fix, if templates are added move to a constant
       redirect_to admin_email_notifications_path, :flash => { :error => t('email_notifications.page_not_found') }
     end
   end

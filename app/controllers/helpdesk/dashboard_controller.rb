@@ -13,12 +13,23 @@ class Helpdesk::DashboardController < ApplicationController
   include Gamification::GamificationUtil
   include DashboardControllerMethods
 
+
+  UNRESOLVED_COLUMN_KEY_MAPPING = {:group_id => "group_id", :responder_id => "responder_id", :status => "status", 
+      :internal_agent_id => "helpdesk_schema_less_tickets.long_tc04", :internal_group_id => "helpdesk_schema_less_tickets.long_tc03"}
+
+  UNRESOLVED_FILTER_HEADERS = {
+      UNRESOLVED_COLUMN_KEY_MAPPING[:responder_id]      => "agent_label", 
+      UNRESOLVED_COLUMN_KEY_MAPPING[:group_id]          => "group_label", 
+      UNRESOLVED_COLUMN_KEY_MAPPING[:internal_agent_id] => "internal_agent_label", 
+      UNRESOLVED_COLUMN_KEY_MAPPING[:internal_group_id] => "internal_group_label"
+    }
+
   skip_before_filter :check_account_state
   before_filter :check_account_state, :redirect_to_mobile_url, :set_mobile, :show_password_expiry_warning, :only => [:index]  
   before_filter :check_dashboard_privilege, :only => [:index]
   before_filter :set_selected_tab
   before_filter :round_robin_filter, :load_ffone_agents_by_group, :only => [:agent_status]
-  around_filter :run_on_slave,            :only => [:activity_list, :unresolved_tickets_data, :tickets_summary, :trend_count, :overdue, :due_today, :unresolved_tickets_dashboard, :unresolved_tickets_workload, :survey_info, :available_agents]
+  around_filter :run_on_slave,            :only => [:latest_activities,:activity_list, :unresolved_tickets_data, :tickets_summary, :trend_count, :overdue, :due_today, :unresolved_tickets_dashboard, :unresolved_tickets_workload, :survey_info, :available_agents]
   before_filter :load_unresolved_filter,  :only => [:unresolved_tickets_data]
   skip_after_filter :set_last_active_time, :only => [:latest_activities]
 
@@ -53,7 +64,7 @@ class Helpdesk::DashboardController < ApplicationController
   end
 
   def unresolved_tickets_data
-    header_array = (@group_by == "responder_id") ? ["Agent"] : ["Group"]
+    header_array = [I18n.t("unresolved_tickets.#{unresolved_ticket_headers[@group_by]}")]
     header_array << [status_list_from_cache.values, "Total"]
     header_array.flatten!
     unresolved_hash = {:data => header_array, :content => fetch_unresolved_tickets }
@@ -62,10 +73,19 @@ class Helpdesk::DashboardController < ApplicationController
   end
 
   def unresolved_tickets
+    @column_key_mapping = unresolved_column_key_mapping
     @status = Helpdesk::TicketStatus.status_names_from_cache(current_account)
     @groups = current_account.groups_from_cache.map { |group| [group.name, group.id] }
     @groups.insert(0,["My Groups", 0])
     @agents = current_account.agents_details_from_cache.map {|ag| [ag.name, ag.id]}
+  end
+
+  def unresolved_ticket_headers
+    UNRESOLVED_FILTER_HEADERS.clone
+  end
+
+  def unresolved_column_key_mapping
+    UNRESOLVED_COLUMN_KEY_MAPPING.clone
   end
 
   def tickets_summary
@@ -240,10 +260,15 @@ class Helpdesk::DashboardController < ApplicationController
   #### Functions for new dashboard start here
 
   def load_unresolved_filter
-    @group_by               = ["group_id","responder_id"].include?(params[:group_by]) ? params[:group_by] : "group_id"
+    group_by_key = params[:group_by].to_sym
+    column_key_mapping = unresolved_column_key_mapping
+    @group_by = column_key_mapping[group_by_key] || column_key_mapping[:group_id]
+    @report_type = 
+        [column_key_mapping[:responder_id], column_key_mapping[:internal_agent_id]].include?(@group_by) ?
+        column_key_mapping[:responder_id] : column_key_mapping[:group_id]
     @filter_condition       = {}
 
-    [:group_id, :responder_id, :status].each do |filter|  
+    column_key_mapping.keys.each do |filter|
       next unless params[filter].present?
       filter_values = params[filter].split(",")
       if filter_values.include?("0")
@@ -251,14 +276,25 @@ class Helpdesk::DashboardController < ApplicationController
         filter_values.concat(user_agent_groups.map(&:to_s))
         filter_values.uniq!
       end
-      self.instance_variable_set("@#{filter}", filter_values)
-      @filter_condition.merge!({filter => filter_values}) if filter_values.present?
+      instance_var = case filter
+          when :internal_agent_id
+            :responder_id
+          when :internal_group_id
+            :group_id
+          else
+            filter
+          end
+
+      self.instance_variable_set("@#{instance_var}", filter_values)
+      @filter_condition.merge!({column_key_mapping[filter] => filter_values}) if filter_values.present?
     end
-    
   end
 
   def fetch_unresolved_tickets
-    es_enabled = current_account.launched?(:es_count_reads)
+    es_enabled = current_account.count_es_enabled?
+    #Send only column names to ES for aggregation since column names are used as keys
+    #Ex: Change helpdesk_schema_less_tickets.long_tc04 to long_tc04
+    @group_by = @group_by.sub('helpdesk_schema_less_tickets.',"") if es_enabled && @group_by.include?("helpdesk_schema_less_tickets")
     options = {:group_by => [@group_by, "status"], :filter_condition => @filter_condition, :cache_data => false, :include_missing => true}
     ticket_counts = Dashboard::DataLayer.new(es_enabled,options).aggregated_data
     map_id_to_names(ticket_counts)

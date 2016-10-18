@@ -1,4 +1,4 @@
-
+var adjustingHeight = false;
 jQuery(document).ready(function() {
 
     jQuery("#exportLink").click(function(){
@@ -51,12 +51,36 @@ jQuery(document).ready(function() {
         Helpkit.presetRangesSelected = data.status;
         Helpkit.presetRangesPeriod = data.period;
     });
-
+    jQuery(document).on('click',"#sliding",function(){
+      adjustingHeight = true;
+      setTimeout(function() {
+          jQuery("#billable").select2().trigger('change');
+      },100);
+    });
     savedReportUtil.init();
 });
 
 //Analytics
-    
+function calculateBestFontSize(content) {
+    var len = 0;
+    if(content.indexOf('.') == -1) {
+      len = content.length;
+    } else {
+      len = content.indexOf('.')+3  
+    }
+    if(len <= 12) {
+        return '36px';
+    } else if( len <= 24){
+        return '26px';
+    } else {
+        return '16px';
+    }
+}
+
+function adjustFontSize(el,size) {
+    jQuery(el).css('font-size',size);
+}
+
 function recordAnalytics(){
 
     jQuery(document).on("script_loaded", function (ev, data) {
@@ -106,17 +130,18 @@ var savedReportUtil = (function() {
         },
         save_util : Helpkit.commonSavedReportUtil,
         remote_filters : ["customers_filter"],
-        filters : [ "customers_filter","user_id" ,"billable","products_id","group_id","ticket_type","priority","group_by_field"],
+        filters : [ "customers_filter","user_id" ,"billable","group_id","products_id","ticket_type","priority","group_by_field"],
         filterChanged : false,
         bindSavedReportEvents : function() {
             var _this = this;
 
             jQuery(document).on('change', '#customers_filter,.filter_item,.ff_item', function (ev) { 
-                 if(ev.target && ev.target.id != "group_by_field"){
+                 if(ev.target && ev.target.id != "group_by_field" && !adjustingHeight){
                     _this.filterChanged = true; 
                     _this.save_util.filterChanged = true;
                     _this.setFlag('false');
                  }
+                 adjustingHeight = false;
             });
 
             jQuery(document).on("save.report",function() {
@@ -141,12 +166,13 @@ var savedReportUtil = (function() {
                 _this.setFlag('false');
             });
             jQuery(document).on("report_refreshed",function(ev,data){
-                if(_this.filterChanged) {
+                if(_this.filterChanged && !adjustingHeight) {
                      _this.save_util.controls.hideDeleteAndEditOptions();
                      _this.save_util.controls.hideScheduleOptions();
                      _this.save_util.controls.showSaveOptions(_this.last_applied_saved_report_index); 
                 } else{
                   var index = parseInt(jQuery('.active [data-action="select-saved-report"]').attr('data-index'));
+                  _this.save_util.showReportDropdown();
                   if(index != -1) {
                       _this.save_util.controls.showDeleteAndEditOptions();
                       if(is_preset_selected){
@@ -453,7 +479,7 @@ var savedReportUtil = (function() {
 
  function setFilterText() {
 
-      var filters_name = [ "customers_filter","user_id" ,"billable","products_id","group_id","ticket_type","priority"];
+      var filters_name = [ "customers_filter","user_id" ,"billable","group_id","products_id","ticket_type","priority"];
 
       var labels = [
         I18n.t('helpdesk.time_sheets.customer'),
@@ -479,7 +505,7 @@ var savedReportUtil = (function() {
                 }
                 
                 if(i != selected_options.length -1){
-                  txt += ",";
+                  txt += " , ";
                 }
             });
             var data = {
@@ -502,7 +528,7 @@ function getPdfParams() {
   var remove = [];
   var params = {};
   var form_data = [];//jQuery('#report_filters').serializeArray(); 
-  var filters_name = [ "customers_filter","user_id" ,"billable","products_id","group_id","ticket_type","priority","group_by_field"];
+  var filters_name = [ "customers_filter","user_id" ,"billable","group_id","products_id","ticket_type","priority","group_by_field"];
   params.data_hash = {};
   jQuery.each(filters_name,function(idx,condition) {
     var val = jQuery('#' + condition).select2('val');
@@ -526,7 +552,7 @@ function getPdfParams() {
 }
 
 function getFilterTextPDF(){
-  var filters_name = [ "customers_filter","user_id" ,"billable","products_id","group_id","ticket_type","priority"];
+  var filters_name = [ "customers_filter","user_id" ,"billable","group_id","products_id","ticket_type","priority"];
   var labels = [
     I18n.t('helpdesk.time_sheets.customer'),
     I18n.t('helpdesk.time_sheets.agent'),
@@ -548,7 +574,7 @@ function getFilterTextPDF(){
             txt += option.value;
           }  
           if(i != selected_options.length -1){
-            txt += ",";
+            txt += " , ";
           }
       });
       var data = {

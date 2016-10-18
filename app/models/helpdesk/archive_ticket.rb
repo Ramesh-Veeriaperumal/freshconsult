@@ -15,9 +15,12 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
 
   belongs_to :company, :foreign_key => :owner_id
 
-  has_many :archive_notes,
+  has_many :archive_notes_old,
            :class_name => "Helpdesk::ArchiveNote",
            :dependent => :destroy
+
+  has_many :notes, :inverse_of => :notable, :class_name => 'Helpdesk::Note', :as => 'notable', :dependent => :destroy # TODO-RAILS3 Need to cross check, :foreign_key => :id
+
 
   has_many :inline_attachments, :class_name => "Helpdesk::Attachment",
                                 :conditions => { :attachable_type => "ArchiveTicket::Inline" },
@@ -49,8 +52,12 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
   belongs_to :ticket_status, :class_name =>'Helpdesk::TicketStatus', :foreign_key => "status", :primary_key => "status_id"
   belongs_to :product
   
-  has_many :public_notes,
+  has_many :public_notes_old,
     :class_name => 'Helpdesk::ArchiveNote',
+    :conditions => { :private =>  false, :deleted => false  }
+  
+  has_many :public_notes_new,
+    :class_name => 'Helpdesk::Note', :as => 'notable',
     :conditions => { :private =>  false, :deleted => false  }
   
   has_flexiblefields :class_name => 'Flexifield', :as => :flexifield_set
@@ -85,12 +92,14 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
     :reports_hash => "text_tc02",
     :sender_email => "string_tc03",
     :trashed      => 'boolean_tc02',
+    :internal_agent_id => "long_tc04",
+    :internal_group_id => "long_tc03",
     :product_id   => 'product_id'
   }
   NON_TEXT_FIELDS = ["custom_text", "custom_paragraph"]
 
 
-  scope :permissible , lambda { |user| { :conditions => agent_permission(user)} unless user.customer? }
+  scope :permissible , lambda { |user| { :conditions => permissible_condition(user)} unless user.customer? }
   scope :requester_active, lambda { |user| { :conditions => [ "requester_id=? ",
     user.id ], :order => 'created_at DESC' } }
   scope :newest, lambda { |num| { :limit => num, :order => 'created_at DESC' } }
@@ -121,12 +130,12 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
     end
   end
 
-  def self.agent_permission user
+  def self.permissible_condition user
     case Agent::PERMISSION_TOKENS_BY_KEY[user.agent.ticket_permission]
     when :assigned_tickets
       ["responder_id=?", user.id]
     when :group_tickets
-      ["group_id in (?) OR responder_id=?", user.agent_groups.pluck(:group_id).insert(0,0), user.id]
+      ["group_id in (?) OR responder_id=?", user.associated_group_ids, user.id]
     when :all_tickets
       []
     end
@@ -137,7 +146,9 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
   end
 
   def self.find_by_param(token, account, options = {})
-    where(display_id: token, account_id: account.id).includes(options).first
+    # hack for maintaingin tickets which are alreadu archived
+    # removing includes options as we have to determine
+    where(display_id: token, account_id: account.id).first
   end
 
   def self.sort_fields_options_array 
@@ -510,6 +521,25 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
         end
       end
      end
+  end
+
+
+  def archive_notes
+    current_shard = ActiveRecord::Base.current_shard_selection.shard.to_s
+    if(ArchiveNoteConfig[current_shard] && (self.id <= ArchiveNoteConfig[current_shard].to_i))
+      archive_notes_old
+    else
+      notes
+    end
+  end
+
+  def public_notes
+    current_shard = ActiveRecord::Base.current_shard_selection.shard.to_s
+    if(ArchiveNoteConfig[current_shard] && (self.id <= ArchiveNoteConfig[current_shard].to_i))
+      public_notes_old
+    else
+      public_notes_new
+    end
   end
 
   private

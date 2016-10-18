@@ -2,6 +2,7 @@
 
 <% current_number = (numbers_hash[call.freshfone_number_id] if @current_number.blank?) %> <!-- Used for All Numbers filter -->
 <% is_strange_number = strange_number_class(call.caller_number) %>
+<% if can_show_call?(call) %>
 <tr id="<%= dom_id(call) %>" class='<%= "#{dom_id(parent)} transfer_call" if children %>'>
 	<td class="user_details width1">
 		<div class="freshfone_customer relative tooltip">
@@ -27,10 +28,10 @@
 			<span class='<%= call_direction_class(call) %> call_direction tooltip' 
 				title='<%= call_status_title(call) %>'>
 			</span>
-			<% if call.children_count > 0 %>
+			<% if count_of_children(call) > 0 && call.is_root? %>
 				<span class="child_calls tooltip" data-id='<%= call.id %>'
 							title="<%= t('freshfone.call_history.view_transferred_calls') %>">
-					<%= call.children_count %> +
+					<%= count_of_children(call) %> +
 				</span>
 			<% end %>
 		</div>
@@ -39,7 +40,7 @@
 		<div class="vertical-alignment relative"
 			align="left">
 			<% if children %>
-				<div class="transfer_agent_pointer"></div>
+				<div class="transfer_agent_pointer ficon-down-arrow tooltip" title="<%= transfer_type_tooltip(call) %>"></div>
 			<% end %>
 			<% if call.agent.blank? %>
 				<div class="callhistory_helpdesk_avatar vertical-alignment"></div>
@@ -147,5 +148,6 @@
 		</td>
 	<% end %>
 </tr>
+<% end %>
 <% end %>
 

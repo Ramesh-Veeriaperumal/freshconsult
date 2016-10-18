@@ -1,5 +1,11 @@
 <div id="ticket-merge" class="ticket-merge">
-  <div id="merge_info" class="ml10">
+  <div id="merge_info">
+    <div class="merge-notice">
+      <span class="merge-notice-important">
+        <%= t('.important') %>
+      </span>
+      <%= t('ticket.merge_notice') %>
+    </div>
     <div class="merge-sub-title" 
       data-default-text="<%= t('ticket.ticket_selected') %>"
       data-pluralized-text="<%= t('ticket.tickets_selected') %>" >
@@ -10,7 +16,7 @@
       <%= t('ticket.merge_warning') %>
     </div>
   </div>
-  <div id="merge_confirm_info" class="ml10 hide">
+  <div id="merge_confirm_info" class="hide">
   </div><br />
   <div id="mergeboxconfirm"></div>
   <div id="mergebox" class="row-fluid">
@@ -23,7 +29,7 @@
             </div>
               <div id="contact-area">
     		        <span id="resp-icon" title="<%= t('.remove') %>"></span>
-    		       		<div id="merge-ticket" class="merge_element" data-id=<%= h(ticket.display_id) %> data-created=<%= (ticket.created_at.to_i) %>>
+    		       		<div id="merge-ticket" class="merge_element" data-id=<%= h(ticket.display_id) %> data-req-id=<%= h(ticket.requester_id) %> data-created=<%= (ticket.created_at.to_i) %>>
                     <%= link_to("##{ticket.display_id} #{ticket.subject}", ticket, :title => h(ticket.subject), 
                     :class =>"item_info", :target=>"_blank", :"data-pjax" => '#body-container' ) %>
     			          <div class="info-data hideForList">
@@ -65,7 +71,7 @@
       <input type="hidden" name="target[ticket_id]" id="target_ticket" />
         <div class="button-container" id="bulk-merge-button-container">
           <span class="add_recipients">
-            <%= check_box_tag 'add_recipients', 1, false %>
+            <%= check_box_tag 'add_recipients', 1, @source_tickets.length > 1 && @source_tickets.map(&:requester_id).uniq.length == 1 %>
             <span class="m8">
               <%= t('ticket.add_recipients') %>
             </span>

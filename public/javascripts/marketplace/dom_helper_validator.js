@@ -18,7 +18,7 @@ var domHelperValidator = domHelperValidator || {};
     openReply: { signature: "text", description: "Opens reply box and adds the text", helpURL: "" },
     openNote: { signature: "text", description: "Opens note box and adds the text", helpURL: "" },
     onReplyClick: { signature: "callbackFunction", description: "Executed when Reply is clicked", helpURL: "" },
-    onFwdClick: { signature: "callbackFunction", description: "Executed when Forward is clicked", helpURL: "" },
+    onForwardClick: { signature: "callbackFunction", description: "Executed when Forward is clicked", helpURL: "" },
     onAddNoteClick: { signature: "callbackFunction", description: "Executed when Add note is clicked", helpURL: "" },
     onSubmitClick: { signature: "callbackFunction, ['reply','forward','note']", description: "Executed when reply/forward/note is submitted based on the parameter", helpURL: "" },
     onTicketCloseClick: { signature: "callbackFunction", description: "Executed when a ticket is closed", helpURL: "" },

@@ -388,7 +388,7 @@ window.App.Freshfonecallhistory = window.App.Freshfonecallhistory || {};
         dateFormat: 'dd MM yy',
         closeOnSelect: true,
         onChange: function() {
-          $("#date_range").val($("#date_range").val());
+          $("#date_range").attr('value', $("#date_range").val());
           $("#date_range").data("value",$("#date_range").val());
         }
       });
@@ -450,7 +450,10 @@ window.App.Freshfonecallhistory = window.App.Freshfonecallhistory || {};
           results: self.ajaxResults
         },
         formatResult: self.select2FormatResult,
-        formatSelection: customeFormatSelection
+        formatSelection: customeFormatSelection,
+        formatNoMatches: function () { 
+          return freshfone.requester_not_found;
+        }
       });
     },
     select2FormatResult: function (result) {
@@ -463,7 +466,7 @@ window.App.Freshfonecallhistory = window.App.Freshfonecallhistory || {};
     },
     ajaxResults: function (data, page, query) {
       if (!data.results.length) {
-        return { results: [ { value: query.term, id: ""} ] }
+        return { results: [] }
       }
       return {results: data.results};
     },

@@ -1,6 +1,7 @@
 module Helpdesk::Activities
   module ActivityMethods
     include HelpdeskActivities::TicketActivities
+    include Helpdesk::NotePropertiesMethods
 
     DEFAULT_STATUS_KEYS = Helpdesk::Ticketfields::TicketStatus::DEFAULT_STATUSES.keys
     def new_activities(params, ticket, type, archive = false)
@@ -16,8 +17,7 @@ module Helpdesk::Activities
         act_param.account_id = Account.current.id
         act_param.object     = "ticket"
         act_param.object_id  = ticket.display_id
-        event_type           = params[:event_type].to_i
-        act_param.event_type = event_type
+        act_param.event_type = ::HelpdeskActivities::EventType::ALL
         act_param.comparator = ActivityConstants::LESS_THAN
         act_param.shard_name = ActiveRecord::Base.current_shard_selection.shard
         if params[:since_id].present?
@@ -119,9 +119,15 @@ module Helpdesk::Activities
     def prefetch_archive_notes_for_v2(ticket, note_ids)
       options = [{:user => :avatar}]
       options << :fb_post if ticket.facebook?
-      options << :tweet   if ticket.twitter?
-      note_hash = ticket.archive_notes.preload(options).where(:note_id => note_ids).collect{|note| [note.note_id, note]}.to_h
-      build_notes_last_modified_user_hash(note_hash.values)
+      options << :tweet if ticket.twitter?
+      current_shard = ActiveRecord::Base.current_shard_selection.shard.to_s
+      if(ArchiveNoteConfig[current_shard] && (ticket.id <= ArchiveNoteConfig[current_shard].to_i))
+        note_hash = Helpdesk::ArchiveNote.includes(options).where(:note_id => note_ids).collect{|note| [note.note_id, note]}.to_h
+        build_notes_last_modified_user_hash(note_hash.values)
+      else
+        note_hash = Helpdesk::Note.includes(options).where(:id => note_ids).collect{|note| [note.id, note]}.to_h
+        build_notes_last_modified_user_hash(note_hash.values)
+      end
       note_hash
     end
 

@@ -1,5 +1,9 @@
 class Helpdesk::Ticket < ActiveRecord::Base
   
+  ACTOR_TYPE = {
+    :agent   => 1,
+    :contact => 2
+  }
   
   def manual_publish_to_rmq(action, key, options = {})
     # Manual publish for ticket model
@@ -47,14 +51,19 @@ class Helpdesk::Ticket < ActiveRecord::Base
       "fr_escalated"     =>   fr_escalated,      
       "created_at"       =>   created_at.to_i,
       "outbound_email"   =>   outbound_email?,
-      "archive"          =>   archive || false
+      "archive"          =>   archive || false,
+      "actor_type"       =>   User.current.nil? ? nil : (User.current.agent? ? ACTOR_TYPE[:agent] : ACTOR_TYPE[:contact]), 
+      "actor_id"         =>   User.current.nil? ? nil : User.current.id
     }
   end
   
   def ticket_schemaless_hash 
     @rmq_ticket_schemaless_hash ||= {
-      "sla_policy_id"   =>  schema_less_ticket.sla_policy_id,
-      "product_id"       => schema_less_ticket.product_id
+      "sla_policy_id"     => schema_less_ticket.sla_policy_id,
+      "product_id"        => schema_less_ticket.product_id,
+      "internal_agent_id" => schema_less_ticket.internal_agent_id,
+      "internal_group_id"  => schema_less_ticket.internal_group_id,
+      "association_type" => schema_less_ticket.association_type
     }.merge(schema_less_ticket.reports_hash)
   end
 

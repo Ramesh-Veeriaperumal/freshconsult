@@ -89,12 +89,15 @@ var FreshfoneConnection;
 				type: 'GET',
 				dataType: "json",
 				url: '/freshfone/call/inspect_call',
-				data: { "call_sid": this.callSid() },
+				data: { "call_sid": this.callSid(), "user_id": freshfone.current_user_details.id,
+			          "PhoneNumber": this.customerNumber},
 				success: function (data) { 
 					if(data.can_accept) {
 						self.freshfoneNotification.setDirectionIncoming();
 						if(data.agent_conference) {
 							freshfonecalls.setAgentConferenceParams(data.agent_conference);
+						} else if(data.warm_transfer) {
+							freshfonecalls.setWarmTransfer(data.warm_transfer);
 						}
 						self.connection.accept();
 					}else{

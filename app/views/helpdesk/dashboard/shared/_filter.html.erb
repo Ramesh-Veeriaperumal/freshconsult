@@ -6,14 +6,56 @@
 		</h3>
 	</div>
 
-	<% unless feature?(:euc_hide_agent_metrics) %>
+	<% unless Account.current.hide_agent_metrics_feature? %>
 		<div id="responder-box" class="filter-metric-widget">
-			<label><%=t('unresolved_tickets.agent_label') %></label>
+			<% if current_account.features?(:shared_ownership) %>
+				<a class="title drop-right nav-trigger agent_text" href="#" value="" menuid="#agentSort">
+	          		
+	          	</a>
+				<div class="fd-menu shared_sort_menu" id="agentSort">
+	                <ul>
+	                  <li>
+	                    <a class="agent_mode" mode="responder_id" href="" agent_mode="<%= @column_key_mapping[:responder_id] %>">
+	                       <%=t('unresolved_tickets.agent_label') %>
+	                     </a>
+	                  </li>
+	                  <li>
+	                    <a class="agent_mode" mode="internal_agent_id" href="" agent_mode="<%= @column_key_mapping[:internal_agent_id] %>">
+	                       <%=t('unresolved_tickets.internal_agent_label') %>
+	                     </a>
+	                  </li>
+	                </ul> 
+	          	</div>
+         	<% else %>
+         		<label class="agent_text" value="responder_id"><%=t('unresolved_tickets.agent_label') %></label>
+         	<% end %>
 			<%= select_tag "unresolved_tickets[responder]", options_for_select(@agents), :multiple => true, :class => 'select2 reset-select2', "data-placeholder" => '', 'data-filterkey' => "responder_id"%>
 		</div>
 	<% end %>
 	<div id="group-box" class="filter-metric-widget">
-		<label><%=t('unresolved_tickets.group_label') %></label>
+		<% if current_account.features?(:shared_ownership) %>
+	      	<a class="title drop-right nav-trigger group_text" href="#" value="" menuid="#groupSort">
+	      		
+	      	</a>
+			<div class="fd-menu shared_sort_menu" id="groupSort">
+	            <ul>
+	              <li>
+	                <a class="group_mode" mode="group_id" href="javascript:viod(0)" group_mode="<%= @column_key_mapping[:group_id] %>">
+	                   <span class="icon ticksymbol"></span>
+	                   <%=t('unresolved_tickets.group_label') %>
+	                 </a>
+	              </li>
+	              <li>
+	                <a class="group_mode" mode="internal_group_id" href="#" group_mode="<%= @column_key_mapping[:internal_group_id] %>">
+	                   <span class="icon ticksymbol"></span>
+	                   <%=t('unresolved_tickets.internal_group_label') %>
+	                 </a>
+	              </li>
+	            </ul> 
+	      	</div>
+	    <% else %>
+         	<label class="group_text" value="group_id"><%=t('unresolved_tickets.group_label') %></label>
+     	<% end %>
 		<%= select_tag "unresolved_tickets[group]", 
 		options_for_select(@groups), 
 		:multiple => true, :class => 'select2 reset-select2', "data-placeholder" => '', 'data-filterkey' => "group_id"%>	

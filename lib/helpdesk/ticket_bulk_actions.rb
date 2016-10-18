@@ -14,7 +14,8 @@ class Helpdesk::TicketBulkActions
 
   def perform(ticket)
     @change_hash.each do |key, value|
-        ticket.send("#{key}=", value) if !value.blank? and ticket.respond_to?("#{key}=")
+      value = nil if value == '-1'
+      ticket.send("#{key}=", value) if (value.nil? || value.present?) and ticket.respond_to?("#{key}=")
     end
     update_tags(@tags,false,ticket) if @tags
     ticket.save

@@ -1,52 +1,75 @@
+<%
+day_pass_buy_now_options = @day_pass_amounts.collect.with_index {|item, index|
+  [t(".day_pass_pack", :quantity => item[0], :currency => fetch_currency_unit, :amount => item[1]), item[0],
+  {'data-amount' => "#{fetch_currency_unit}#{item[1]}"}]
+}
+
+day_pass_recharge_options = DayPassUsage::DAYPASS_QUANTITY.map do |x| ["#{x} #{t(".title")}", x] end
+
+%>
 <% content_for :helpcard do %>
   <%= render :partial => "helpnote" %>
 <% end %>
 
-      <div class="admin_icon_image">
+      <div class="admin_icon_image daypass_container">
         <div class="content">
-          <%= content_tag :h2, t(".title"), :class => "title" %>  
-					<% if current_account.subscription.active? %>  
-          <div class="intro">
-            <h3 class="title">
-              <%= t(".current_balance", :balance => pluralize(@day_pass_config.available_passes, "pass")) %>
-            </h3>
-          </div>
-		  <%if current_account.has_credit_card?%>
-          	<%= button_to_function t(".buy_pass"), "jQuery(this).hide();jQuery('#BuyPasses').slideDown();", :class => "uiButton special", :id => "daypass_button" %>
-		  <%end%>
-          <div id="BuyPasses" class="hide">
-           <span class="seperator"></span>
-           <%= content_tag :h2, t(".buy_pass"), :class => "title" %>        
-           <%= form_tag(buy_now_admin_day_pass_path(@day_pass_config), :method => :put) do %>
-             <%= ul @day_pass_amounts.map { |pass|
-                  content_tag :label,  
-                    radio_button_tag(:quantity, pass[0], (pass[0] == 10), "data-amount" => pass[1]) +
-                    day_pass_display_string(pass)    
-                 },  
-                 :class => "inputs-list"
-             %>
-            <p>
-        	    <%= submit_tag t(".buy_now"), :class => "uiButton special", :onclick => "return confirm('#{t(".add_confirm")} #{fetch_currency_unit}'  + jQuery('input[name=quantity]:checked').data('amount'));" %>
-        	    <%= button_to_function t("cancel"), "jQuery('#BuyPasses').slideUp(function(){jQuery('#daypass_button').show()});", :class => "uiButton" %>
-        		</p>
-        		<% end %>
-        	</div>       
+          <h4 class="lead"><%=t(".title")%></h4>
+					<% if current_account.subscription.active? %>
+             <div class="row-fluid passes-available-container p20">
+
+               <div class="span3">
+                <p class="text-center"><%=t(".available_passes")%></p>
+                <h2><p class="pl80 mt10"><%=@day_pass_config.available_passes%></p></h2>
+               </div>
+
+               <div class="span8 leftborder pl20">
+               <% if current_account.has_credit_card? %>
+                   <p><%=t(".buy_passes")%></p>
+                   <p>
+                    <%= form_tag(buy_now_admin_day_pass_path(@day_pass_config), :method => :put) do %>
+                       <%= select_tag :quantity, options_for_select(day_pass_buy_now_options) ,
+                                { :class => "select2 filter_item", :id => "day_passes_list" } %>
+
+                       <%= submit_tag t(".buy_now"), :class => "uiButton", :onclick => "return confirm('#{t(".add_confirm")}' + jQuery('#day_passes_list').find(':selected').data('amount'));" %>
+                    <%end%>
+                   </p>
+                   <p>
+                   <%= check_box_tag :day_pass_auto_recharge, 1, @day_pass_config.auto_recharge, :rel => "toggle",
+              "data-checked-label" => "ON", "data-unchecked-label" => "OFF",
+              :onchange => remote_function( :url => toggle_auto_recharge_admin_day_pass_path(@day_pass_config), :complete => "auto_recharge_post_process(this);",
+               :method => 'put') %> <span class = "ft-wt ml10"><%=t(".auto_recharge")%></span></p>
+                  <div id="auto_rc">
+                     <p><%=t(".recharge_quantity")%></p>
+                     <p>
+                       <%= select_tag :quantity, options_for_select(day_pass_recharge_options, "#{@day_pass_config.recharge_quantity.to_s}") , { :class => "select2 filter_item", :id => "recharge_quantity", :onchange => "autoRechargeQuantity()" } %>
+                     </p>
+                     <p class="muted"><%=t(".helptext")%></p>
+                  </div>
+                  <%end%>
+               </div>
+
+             </div>
   				<% else %>
-             <p class="alert alert-error">  
-								<strong><%= t('admin.day_passes.index.no_credit_card') %> </strong> <br /> <%= t('admin.day_passes.index.payment_info') %>   
-								<br />                
-								<br />                                               
-								<%= link_to( t('admin.day_passes.index.add_payment_info'), subscription_url, :class => "btn" ) %> 
+             <p class="alert alert-error">
+								<strong><%= t('admin.day_passes.index.no_credit_card') %> </strong> <br /> <%= t('admin.day_passes.index.payment_info') %>
+								<br />
+								<br />
+								<%= link_to( t('admin.day_passes.index.add_payment_info'), subscription_url, :class => "btn" ) %>
 						 </p>
 					<% end %>
+
+
+          <div id="usage-history-wrap">
+            <%= render :partial => "daypass_wrap", :locals => { } %>
+          </div>
         </div>
-      </div> 
-   
-  
-<!-- 	<% unless @day_pass_purchases.empty? %> 
+      </div>
+
+
+<!-- 	<% unless @day_pass_purchases.empty? %>
 	<br /><br />
 	<div class="tabbed">
-	  <%= content_tag :h4, t(".day_pass_history"), :class => "title" %>	  
+	  <%= content_tag :h4, t(".day_pass_history"), :class => "title" %>
 	  <table class="table">
       <thead>
         <tr>
@@ -59,32 +82,75 @@
         </tr>
       </thead>
       <tbody>
-       <%= render :partial => "purchases", :collection => @day_pass_purchases %> 
+       <%= render :partial => "purchases", :collection => @day_pass_purchases %>
 	    </tbody>
     </table>
-	</div> 
-  <% end %> -->	                     
+	</div>
+  <% end %> -->
 
-<% content_for :helpcard do -%>
-	<% if current_account.has_credit_card? %>      
-    <div class="actions">
-      <%= on_off_button(@day_pass_config.auto_recharge, toggle_auto_recharge_admin_day_pass_path(@day_pass_config) ) %>
-    </div>
-    <%= content_tag :h3, t(".auto_recharge").html_safe, :class => "title" %>
-    <p><%= content_tag :strong, t(".recharge_quantity") %> </p>
-    <div  id="text_daypass" class="intro"><%= t(".daypass_quantity", :quantity => @day_pass_config.recharge_quantity) %> (<a href="javascript:void(0)" onclick="jQuery(this).parent().hide(); jQuery('#update_daypass').slideDown();"><%= t("change") %></a>) </div>
-    <div id="update_daypass" class="intro hide">
-    <%= form_tag(admin_day_pass_path(@day_pass_config), :method => :put ) do %>
-      <%= select :day_pass_config, :recharge_quantity, options_for_select([ "5", "10", "25", "50" ], @day_pass_config.recharge_quantity.to_s)  %>
-      <%= t(".day_passes") %>
-      <br />      
-      <button class='button' style="margin-left:-2px;"><%= t("update") %></button> or <a href="javascript:void(0)" onclick="$('update_daypass').hide(); $('text_daypass').show()" ><%= t('cancel') %></a>
-    <% end %>
-    </div>
-    <span class="seperator"></span>
-    <br />
-    <p class="intro">
-      <%= t('.helptext') %>
-    </p>
-	<% end %>
-<% end %>
+<script type="text/javascript">
+<%unless @day_pass_config.auto_recharge%>
+  jQuery('#auto_rc').slideToggle();
+<%end%>
+  function autoRechargeQuantity()
+  {
+    var rc_quantity = jQuery('#recharge_quantity').val();
+    jQuery.ajax({
+      url: "<%= admin_day_pass_path(@day_pass_config)%>",
+      type: "PUT",
+      dataType: "html",
+      data: {day_pass_config: {recharge_quantity: rc_quantity}},
+      success: function (outcome)
+            {
+              jQuery("#noticeajax").html("<%=t(".auto_recharge_notice")%>"+rc_quantity).show();
+              closeableFlash('#noticeajax');
+            }
+      });
+  }
+
+  jQuery(function() {
+    jQuery(document).on("click", ".pagination a", function() {
+      agentDetails = jQuery("#agent_filter a")[0].dataset;
+      jQuery.get(this.href, {end_day: jQuery('#days-filter-display')[0].dataset.value,
+       agent_id: agentDetails.agentId, agent_name: agentDetails.agentName}, null, "script");
+      jQuery("#process-request").show();
+      return false;
+    });
+  });
+
+  // agent filter
+  jQuery(function() {
+    jQuery(document).on("click", ".contents a", function() {
+      jQuery.get("<%=custom_filter_admin_day_passes_path%>",
+        { agent_id: this.dataset.agentId, agent_name: this.dataset.agentName, end_day: jQuery('#days-filter-display')[0].dataset.value }, null, "script");
+      jQuery(this.parentElement.parentElement).css("display","none");
+      jQuery("#process-request").show();
+      return false;
+    });
+  });
+
+  // Days filter
+  jQuery(function() {
+    jQuery(document).on("click", "#filterDaysMenu li a", function() {
+      agentDetails = jQuery("#agent_filter a")[0].dataset;
+      response = jQuery.get("<%=custom_filter_admin_day_passes_path%>",
+        {end_day: this.dataset.value, agent_id: agentDetails.agentId, agent_name: agentDetails.agentName}, null, "script");
+      jQuery('#filterDaysMenu').css("display","none");
+      jQuery("#process-request").show();
+    });
+  });
+
+  function auto_recharge_post_process() {
+    jQuery('#auto_rc').slideToggle();
+    var auto_recharge = jQuery('#day_pass_auto_recharge')[0];
+    if(auto_recharge.checked)
+    {
+      jQuery("#noticeajax").html("<%=t(".auto_renewal_enabled_notice")%>").show();
+    }
+    else
+    {
+      jQuery("#noticeajax").html("<%=t(".auto_renewal_disabled_notice")%>").show();
+    }
+    closeableFlash('#noticeajax');
+  }
+</script>

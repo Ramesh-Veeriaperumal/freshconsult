@@ -13,6 +13,7 @@ class Freshfone::AccountObserver < ActiveRecord::Observer
 
 	def after_create(freshfone_account)
 		freshfone_account.enable_conference
+		freshfone_account.enable_custom_forwarding
 	end
 
 	def after_commit(freshfone_account)
@@ -27,6 +28,7 @@ class Freshfone::AccountObserver < ActiveRecord::Observer
 			Freshfone::UsageTrigger.remove_calls_usage_triggers(freshfone_account)
 			account = freshfone_account.account
 			insert_freshfone_credit(account)
+			remove_onboarding_feature(account)
 		end
 	end
 
@@ -63,6 +65,11 @@ class Freshfone::AccountObserver < ActiveRecord::Observer
 
 		def insert_freshfone_credit(account)
 			account.create_freshfone_credit if account.freshfone_credit.blank?
+		end
+
+		def remove_onboarding_feature(account)
+			account.features.freshfone_onboarding.destroy if account.features?(
+				:freshfone_onboarding)
 		end
 
 		def trial_removal_preconditions?(freshfone_account)

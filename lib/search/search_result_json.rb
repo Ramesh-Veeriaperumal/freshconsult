@@ -6,7 +6,7 @@ module Search::SearchResultJson
 	include Solution::PathHelper
 
 	def helpdesk_ticket_json ticket
-		return ticket_search_json(ticket) if @search_by_field
+		return ticket_search_json(ticket) if @search_by_field || @recent_trackers
 		return suggest_json(%{#{ticket.es_highlight('subject')} (##{ticket.display_id})},
 				helpdesk_ticket_path(ticket), ticket) if @suggest
 		to_ret = {
@@ -22,15 +22,20 @@ module Search::SearchResultJson
 		to_ret = {
 			:id => ticket.id,
 			:display_id => ticket.display_id,
+			:requester_id => ticket.requester_id,
 			:subject => h(ticket.subject),
 			:created_at => ticket.created_at,
 			:created_at_int => ticket.created_at.to_i,
 			:ticket_path => helpdesk_ticket_path(ticket),
-			:searchKey => (params[:search_field] == "requester") ? "#{ticket.requester_name} #{ticket.from_email}" : ticket.send(params[:search_field]),
+			:ticket_status => h(ticket.status_name),
 			:ticket_info => t("ticket.merge_ticket_list_status_created_at", 
 							:username => "<span class='muted'>#{ticket.requester}</span>", 
 							:time_ago => time_ago_in_words(ticket.created_at))
 		}
+		to_ret.merge!({ 
+			:searchKey => (params[:search_field] == "requester") ? "#{ticket.requester_name} #{ticket.from_email}" : ticket.send(params[:search_field]) 
+		}) if params[:search_field].present?
+		to_ret
 	end
 
 	def ticket_fields_for_note ticket

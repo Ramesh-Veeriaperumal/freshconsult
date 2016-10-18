@@ -14,11 +14,12 @@ class Social::FacebookPage < ActiveRecord::Base
   attr_accessible :profile_id, :access_token, :page_id, :page_name, :page_token, :page_img_url, :page_link,
                   :import_visitor_posts, :import_company_posts, :enable_page, :fetch_since, :product_id,
                   :dm_thread_time, :message_since, :import_dms, :reauth_required,
-                  :last_error, :realtime_subscription, :page_token_tab 
+                  :last_error, :realtime_subscription, :page_token_tab, :realtime_messaging 
 
 
   scope :active, :conditions => ["enable_page=?", true]
   scope :reauth_required, :conditions => ["reauth_required=?", true]
+  scope :realtime_messaging_disabled, :conditions => ["realtime_messaging=?", false]
   scope :valid_pages, :conditions => ["reauth_required=? and enable_page=?", false, true]
   
   scope :paid_acc_pages, 
@@ -81,5 +82,9 @@ class Social::FacebookPage < ActiveRecord::Base
   
   def log_api_hits
     increment_api_hit_count_to_redis(self.page_id)
+  end
+  
+  def default_ticket_rule
+    self.default_stream.ticket_rules.first
   end
 end

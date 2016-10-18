@@ -1,22 +1,21 @@
 module Freshfone::Conference::TransferMethods
+  include Freshfone::CallsRedisMethods
 
   def initiate_conference_transfer
     if current_call.onhold?
       params[:external_transfer] = "true" unless params[:external_number].blank?
       params[current_call.direction_in_words] = current_call.caller_number #setting parent's caller to child.
+      params[:call] = current_call.id
       transfer_notifier(current_call, @target_agent_id, @source_agent_id) 
     elsif current_call.inprogress?
-      customer_sid = outgoing_transfer?(current_call) ? current_call.root.customer_sid : current_call.customer_sid
-      initiate_hold(customer_sid, @target_agent_id, @source_agent_id)
+      initiate_hold(blind_transfer_hold_params)
     end
   end
 
-  def initiate_hold(customer_sid, target_agent_id, source_agent_id)
+  def initiate_hold(hold_params)
       current_call.onhold!
-      telephony.initiate_hold(customer_sid, 
-        { :target => target_agent_id, :group_transfer => group_transfer?, :source => source_agent_id, 
-          :transfer_type => params[:type], :external_number => params[:external_number],
-          :call => current_call.id })
+      customer_sid = outgoing_or_warm_transfer?(current_call) ? current_call.root.customer_sid : current_call.customer_sid
+      telephony.initiate_hold(customer_sid, hold_params)
   end
 
   def telephony(call = current_call)
@@ -30,6 +29,7 @@ module Freshfone::Conference::TransferMethods
       begin
         notifier.notify_transfer_success(current_call)
         notifier.cancel_other_agents transfer_leg
+        current_call.children.last.inprogress!
         current_call.completed!
         telephony.initiate_agent_conference(
           wait_url: target_agent_wait_url, sid: params[:CallSid])
@@ -40,6 +40,34 @@ module Freshfone::Conference::TransferMethods
       end
     end
 
+    def blind_transfer_hold_params
+      { :target => @target_agent_id, :group_transfer => group_transfer?, :source => @source_agent_id, 
+        :transfer_type => params[:type], :external_number => params[:external_number],
+        :call => current_call.id }
+    end
+
+    def handle_warm_transfer_success
+      notifier.notify_warm_transfer_status(current_call, 'warm_transfer_success')
+      agent_sid = outgoing_or_warm_transfer?(current_call) ? current_call.dial_call_sid : current_call.agent_sid
+      telephony.redirect_call_to_conference(agent_sid,
+                   redirect_source_url(warm_transfer_leg.id))
+      telephony.initiate_conference(target_agent_conf_params)
+    end
+
+    def target_agent_conf_params
+      { sid: "#{params[:CallSid]}_warm_transfer", startConferenceOnEnter: true, beep: true,
+        endConferenceOnExit: false }
+    end
+
+    def clear_client_calls
+      key = FRESHFONE_CLIENT_CALL % { :account_id => current_account.id }
+      remove_from_set(key, current_call.call_sid)
+    end
+
+    def warm_transfer_leg
+      @warm_transfer_call ||= current_account.supervisor_controls.find(params[:warm_transfer_call_id])
+    end
+
     def cancel_child_call
       current_call.children.last.canceled!
       return no_action if new_notifications?
@@ -48,7 +76,8 @@ module Freshfone::Conference::TransferMethods
 
     def transfer_answered
       @transfer_leg_call.meta.update_pinged_agents_with_response(get_agent_id, 'canceled') if @transfer_leg_call.meta.present?
-      telephony.incoming_answered(@transfer_leg_call.agent)
+      return incoming_answered if new_notifications?
+      render xml: incoming_answered
     end
 
     def intended_agent_for_transfer?
@@ -77,4 +106,7 @@ module Freshfone::Conference::TransferMethods
       telephony.no_action
     end
 
+    def incoming_answered
+      telephony.incoming_answered(@transfer_leg_call.agent)
+    end
 end

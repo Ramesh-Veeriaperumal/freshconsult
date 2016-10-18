@@ -8,7 +8,7 @@ class User < ActiveRecord::Base
   before_create :populate_privileges, :if => :helpdesk_agent?
 
   before_update :populate_privileges, :if => :roles_changed?
-  before_update :destroy_user_roles, :delete_freshfone_user,:remove_user_mobile_registrations, :if => :deleted?
+  before_update :destroy_user_roles, :delete_freshfone_user,:remove_user_mobile_registrations, :delete_user_authorizations, :if => :deleted?
 
   before_update :backup_user_changes, :clear_redis_for_agent
 
@@ -31,7 +31,8 @@ class User < ActiveRecord::Base
   #after_commit :discard_contact_field_data, on: :update, :if => [:helpdesk_agent_updated?, :agent?]
   after_commit :delete_forum_moderator, on: :update, :if => :helpdesk_agent_updated?
   after_commit :deactivate_monitorship, on: :update, :if => :blocked_deleted?
-  
+  after_commit :remove_user_mobile_registrations, on: :update, :if => :password_updated?
+
   # Callbacks will be executed in the order in which they have been included. 
   # Included rabbitmq callbacks at the last
   include RabbitMq::Publisher 
@@ -147,6 +148,10 @@ class User < ActiveRecord::Base
     freshfone_user.destroy if freshfone_user
   end
 
+  def delete_user_authorizations
+    self.authorizations.destroy_all if self.authorizations
+  end
+  
   def delete_forum_moderator
     forum_moderator.destroy if forum_moderator
   end

@@ -13,6 +13,8 @@ class Search::V2::SpotlightController < ApplicationController
   def all
     @search_context = :agent_spotlight_global
     @klasses        = esv2_klasses
+    # Store in recent searches
+    Search::RecentSearches.new(@search_key).store if !@search_key.blank? and User.current.present?
     search(esv2_agent_models)
   end
 
@@ -112,7 +114,7 @@ class Search::V2::SpotlightController < ApplicationController
         
         es_params[:size]  = @size
         es_params[:from]  = @offset
-      end.merge(ES_V2_BOOST_VALUES[@search_context])
+      end
     end
 
     def process_results
@@ -121,7 +123,7 @@ class Search::V2::SpotlightController < ApplicationController
       end
 
       @result_json[:current_page] = @current_page
-      @total_pages                = (@es_results['hits']['total'].to_f / @size).ceil
+      @total_pages                = (@result_set.total_entries.to_f / @size).ceil
       @search_results             = (@search_results.presence || []) + @result_set
 
       super

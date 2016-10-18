@@ -6,15 +6,18 @@ class Group < ActiveRecord::Base
   include Cache::Memcache::Group
   include Redis::RedisKeys
   include Redis::OthersRedis
+  include Redis::RoundRobinRedis
   include BusinessCalendarExt::Association
   include AccountOverrider
+  include RoundRobinCapping::Methods
 
-  after_commit :clear_cache
-  after_commit :create_round_robin_list, on: :create, :if => :round_robin_enabled?
-  after_commit :update_round_robin_list, on: :update
-  after_commit :delete_round_robin_list, :nullify_tickets, on: :destroy
-  before_save  :reset_toggle_availability, :create_model_changes
-  after_commit  :destroy_group_in_liveChat, on: :destroy
+  concerned_with :round_robin_methods
+  
+  before_save :reset_toggle_availability, :create_model_changes
+  before_destroy :backup_user_ids
+
+  after_commit :round_robin_actions, :clear_cache
+  after_commit :nullify_tickets, :destroy_group_in_liveChat, on: :destroy
 
   validates_presence_of :name
   validates_uniqueness_of :name, :scope => :account_id
@@ -39,13 +42,18 @@ class Group < ActiveRecord::Base
      }
     }
 
+  has_many :status_groups, :foreign_key => "group_id", :dependent => :destroy
+
   has_many :freshfone_number_groups, :class_name => "Freshfone::NumberGroup",
             :foreign_key => "group_id", :dependent => :delete_all
 
   has_many   :ecommerce_accounts, :class_name => 'Ecommerce::Account', :dependent => :nullify
 
   attr_accessible :name,:description,:email_on_assign,:escalate_to,:assign_time ,:import_id, 
-                   :ticket_assign_type, :toggle_availability, :business_calendar_id, :agent_groups_attributes
+                   :ticket_assign_type, :toggle_availability, :business_calendar_id, :agent_groups_attributes,
+                   :capping_limit
+
+  attr_accessor :capping_enabled
 
   accepts_nested_attributes_for :agent_groups, :allow_destroy => true
 
@@ -61,6 +69,8 @@ class Group < ActiveRecord::Base
   liquid_methods :name
 
   scope :round_robin_groups, :conditions => { :ticket_assign_type => true}, :order => :name
+  
+  scope :capping_enabled_groups, :conditions => ["capping_limit > 0"], :order => :name
 
   API_OPTIONS = {
     :except  => [:account_id,:email_on_assign,:import_id],
@@ -96,6 +106,10 @@ class Group < ActiveRecord::Base
   ASSIGNTIME_OPTIONS = ASSIGNTIME.map { |i| [i[1], i[2]] }
   ASSIGNTIME_NAMES_BY_KEY = Hash[*ASSIGNTIME.map { |i| [i[2], i[1]] }.flatten]
   ASSIGNTIME_KEYS_BY_TOKEN = Hash[*ASSIGNTIME.map { |i| [i[0], i[2]] }.flatten]
+
+  CAPPING_LIMIT_OPTIONS = (2..100).map { |i| 
+    ["#{i} #{I18n.t("group.capping_tickets")}", i] 
+    }.insert(0, ["1 #{I18n.t("group.capping_ticket")}", 1])
   
   def excluded_agents(account)      
    return account.users.find(:all , :conditions=>['helpdesk_agent = true and id not in (?)',agents.map(&:id)]) unless agents.blank? 
@@ -143,58 +157,6 @@ class Group < ActiveRecord::Base
     super options
   end
 
-  def next_available_agent
-    return nil unless round_robin_enabled?
-
-
-    current_agent_id = get_others_redis_rpoplpush(round_robin_key, round_robin_key)
-    return account.agents.find_by_user_id(current_agent_id)
-
-    #COMMENTING THE BELOW CODE to avoid complex logix . If required, we ll put back again.
-    # repetition_list = Set.new
-    # available_agent = nil
-    # break_condition = false
-
-    # until break_condition do
-    #   current_agent_id  = get_others_redis_rpoplpush(round_robin_key, round_robin_key)
-
-    #   break if current_agent_id.blank? #Empty list
-
-    #   agent = account.agents.find_by_user_id(current_agent_id)
-    #   available_agent = agent if agent and agent.available?
-    #   break_condition = true if (repetition_list.include?(current_agent_id) or available_agent)
-
-    #   repetition_list << current_agent_id #unless repetition_list.include?(current_agent_id)
-    # end
-    
-  end
-
-  def round_robin_enabled?
-    (ticket_assign_type == TICKET_ASSIGN_TYPE[:round_robin]) and Account.current.features?(:round_robin)
-  end
-
-  def round_robin_queue
-    get_others_redis_list(round_robin_key)
-  end
-
-  def remove_agent_from_round_robin(user_id)
-    delete_agent_from_round_robin(user_id) 
-  end
-
-  def round_robin_key
-    GROUP_ROUND_ROBIN_AGENTS % { :account_id => self.account_id, 
-                               :group_id => self.id}
-  end
-
-  def add_or_remove_agent(user_id, add=true)
-    newrelic_begin_rescue {
-      $redis_others.multi do 
-        $redis_others.lrem(round_robin_key,0,user_id)
-        $redis_others.lpush(round_robin_key,user_id) if add
-      end
-    }
-  end
-
   def build_agent_groups_attributes(agent_list)
     old_user_ids    = self.new_record? ? [] : self.agent_groups.pluck(:user_id)
     agent_list      = agent_list.split(',').map(&:to_i)
@@ -220,55 +182,24 @@ class Group < ActiveRecord::Base
   end
 
   private
-
-  def create_round_robin_list
-    user_ids = self.agent_groups.available_agents.map(&:user_id)
-    set_others_redis_lpush(round_robin_key, user_ids) if user_ids.any?
-  end
-
-  def update_round_robin_list
-    return unless @model_changes.key?(:ticket_assign_type)
-    round_robin_enabled? ? create_round_robin_list : delete_round_robin_list
-  end
-
-  def delete_round_robin_list
-    remove_others_redis_key(round_robin_key)
-  end 
-
-  def delete_agent_from_round_robin(user_id) #new key
-      get_others_redis_lrem(round_robin_key, user_id)
-  end
-
-  def create_model_changes
-    @model_changes = self.changes.to_hash
-    @model_changes.symbolize_keys!
-  end 
-
-  def reset_toggle_availability
-    self.toggle_availability = false if self.ticket_assign_type == TICKET_ASSIGN_TYPE[:default]
-    true
-  end  
-
-  def old_round_robin_key
-    GROUP_AGENT_TICKET_ASSIGNMENT % {:account_id => self.account_id, 
-                            :group_id => self.id}
-  end
-
-  def new_round_robin_key
-    GROUP_ROUND_ROBIN_AGENTS % { :account_id => self.account_id, 
-                               :group_id => self.id}
-  end
-
-  def destroy_group_in_liveChat
-    siteId = account.chat_setting.site_id
-    if account.features?(:chat) && siteId
-      LivechatWorker.perform_async({:worker_method =>"delete_group",
-                                          :siteId => siteId, :group_id => self.id})
+    def create_model_changes
+      @model_changes = self.changes.to_hash
+      @model_changes.symbolize_keys!
     end
-  end
 
-  def nullify_tickets
-    Helpdesk::ResetGroup.perform_async({:group_id => self.id })
-  end
+    def backup_user_ids
+      @user_ids = agents.pluck(:user_id)
+    end
 
+    def destroy_group_in_liveChat
+      siteId = account.chat_setting.site_id
+      if account.features?(:chat) && siteId
+        LivechatWorker.perform_async({:worker_method =>"delete_group",
+                                            :siteId => siteId, :group_id => self.id})
+      end
+    end
+
+    def nullify_tickets
+      Helpdesk::ResetGroup.perform_async({:group_id => self.id, :reason => {:delete_group => [self.name]}})
+    end
 end

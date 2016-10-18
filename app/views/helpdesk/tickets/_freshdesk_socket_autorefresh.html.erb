@@ -1,12 +1,17 @@
 <script type="text/javascript">
   var autoRefreshData    = <%= socket_auth_params("autorefresh") %>;
-  var autorefresh_server = "<%= autorefresh_socket_host %>";
-
+  <% if current_account.launched?(:auto_refresh_alb) %>
+    var autorefresh_server = "<%= autorefresh_alb_socket_host  %>";
+    var socket_client = helpkitio
+  <% else %>
+    var autorefresh_server = "<%= autorefresh_socket_host %>";
+    var socket_client = agentio
+  <% end %>
   jQuery(document).ready(function() {
       autoRefreshData["user_permission"] = "<%= current_user.agent.ticket_permission %>";
       autoRefreshData["groups"] = <%= escape_javascript(current_user.agent_groups.pluck(:group_id).to_json) %>;
       autoRefreshData["resolved_statuses"] = <%= Helpdesk::TicketStatus.resolved_statuses.to_json %>
-      window.autoRefresh(autorefresh_server, autoRefreshData, "<%= escape_javascript(current_user.name) %>","<%=current_user.id%>");
+      window.autoRefresh(autorefresh_server, autoRefreshData, "<%= escape_javascript(current_user.name) %>","<%=current_user.id%>", socket_client);
   });
 
   jQuery("#index_refresh_alert").bind("click", function(ev){
@@ -29,8 +34,9 @@
       'week' : Date.parse("<%= Time.now.monday %>"),
       'month' : Date.parse("<%= Time.now.beginning_of_month %>"),
       'two_months' : Date.parse("<%= Time.now.beginning_of_month - 2.months %>"),
-      'six_months' : Date.parse("<%= Time.now.beginning_of_month - 6.months %>") 
-  }
+      'six_months' : Date.parse("<%= Time.now.beginning_of_month - 6.months %>"),
+      'last_month' : Date.parse("<%= Time.now.midnight - 1.month %>")
+ }
 
   function slide_up(){
     jQuery("#index_refresh_alert").slideUp(100);

@@ -3,7 +3,9 @@ module Admin::Marketplace::ExtensionsHelper
   include Admin::Marketplace::CommonHelper
 
   def install_url
-    if @extension['type'] == Marketplace::Constants::EXTENSION_TYPE[:ni]
+    if is_external_app?
+      @extension['options']['redirect_url']
+    elsif is_ni?
       install_integrations_marketplace_app_path(@extension['name'])
     else
       admin_marketplace_installed_extensions_new_configs_path(@extension['extension_id'],
@@ -12,8 +14,10 @@ module Admin::Marketplace::ExtensionsHelper
   end
 
   def install_btn_text
-    if @install_status['installed']
-      if @install_status['installed_version'] == @extension['version_id']
+    if is_external_app?
+      t('marketplace.visit_site_to_install')
+    elsif @install_status['installed']
+      if is_ni? || @install_status['installed_version'] == @extension['version_id']
         t('marketplace.installed')
       else
         t('marketplace.update')
@@ -26,8 +30,6 @@ module Admin::Marketplace::ExtensionsHelper
   def install_btn_class
     if @install_status['installed'] && @install_status['installed_version'] == @extension['version_id']
       "disabled"
-    elsif @extension['type'] == Marketplace::Constants::EXTENSION_TYPE[:ni]
-      "nativeapp"
     else
       "install-form-btn"
     end
@@ -43,7 +45,10 @@ module Admin::Marketplace::ExtensionsHelper
 
   def generate_install_btn
     _btn = ""
-    if !@install_status['installed'] && @extension['type'] == Marketplace::Constants::EXTENSION_TYPE[:ni]
+    if is_external_app?
+      _btn << %(<a href="#{install_url}" class="btn btn-default btn-primary install-app" 
+                target='_blank' rel="noreferrer"> #{install_btn_text} </a>)
+    elsif !@install_status['installed'] && is_ni?
       _btn = ni_install_btn
     else
        _btn << %(<a class="btn btn-default btn-primary install-app #{install_btn_class}" 
@@ -76,9 +81,13 @@ module Admin::Marketplace::ExtensionsHelper
         )
     else
       _btn << %(<form id="nativeapp-form" action="#{install_url}" method="post"> </form>)
-      _btn << %(<a class="btn btn-default btn-primary install-app #{install_btn_class}"> #{install_btn_text} </a>)
+      _btn << %(<a class="btn btn-default btn-primary install-app #{ni_install_btn_class}"> #{install_btn_text} </a>)
     end
     _btn
+  end
+
+  def ni_install_btn_class
+    @install_status['installed'] ? "disabled" : "nativeapp"
   end
 
   def configs_url_params(extension, install_status)
@@ -105,5 +114,21 @@ module Admin::Marketplace::ExtensionsHelper
   def search_placeholder
     (User.current && User.current.language != I18n.default_locale.to_s) ? 
       t('marketplace.search_language_warning') : t('marketplace.search')
+  end
+
+  def is_ni?
+    @extension['type'] == Marketplace::Constants::EXTENSION_TYPE[:ni]
+  end
+
+  def is_external_app?
+    @extension['type'] == Marketplace::Constants::EXTENSION_TYPE[:external_app]
+  end
+
+  def custom_app?
+    @extension['app_type'] == Marketplace::Constants::APP_TYPE[:custom]
+  end
+
+  def third_party_developer?
+    !is_external_app? && @extension['account'].downcase != Marketplace::Constants::DEVELOPED_BY_FRESHDESK
   end
 end

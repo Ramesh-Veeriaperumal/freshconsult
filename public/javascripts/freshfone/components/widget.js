@@ -42,6 +42,7 @@ var FreshfoneWidget;
 			this.$ticketsLoading = $('.tickets-loading');
 			this.$addAgentContextContainer = $('.add-agent-container');
 			this.$freshfoneAddAgentContext = $('#freshfone_add_agent');
+			this.$freshfoneWarmTransferContext = $('#freshfone_transfer');
 			this.$addAgentInfo = $('.add-agent-info');
 			this.$freshfoneAvailableAgents = $('#freshfone_available_agents');
 			this.callerUserId = "";
@@ -86,30 +87,36 @@ var FreshfoneWidget;
 		showOngoing: function () {
 			var self = this;
 			this.hideAllWidgets();
-			if(freshfone.isAgentConferenceEnabled) {
-				this.bindForAgentConference();
-			}
+			this.resetForm();
+			this.setupConferenceAndWarmTransferSetup();
 			if (!freshfonecalls.isOutgoing()){
 				this.minimiseChatWidget();
 			}
+			
 			this.ongoingCallWidget.show('slide',{direction: 'down', duration:300},function(){self.loadContextContainer();});
 			this.desktopNotifierWidget.show();
 			this.bindEventsForTransferAndDial();
 			this.bindPageClose();
 			this.bindDeskNotifierButton();
+			this.togglePhoneActiveClass(true);
 		},
-		bindForAgentConference: function() {
+		setupConferenceAndWarmTransferSetup: function() {
 			this.disableAgentConferenceSetup();
-			if (this.freshfonecalls.isAgentConference) {
-				this.ongoingCallWidget.addClass("add_agent_call");
-				this.$contextContainer.find('.add_call_note').hide();
-				this.showOngoingAgentConferenceCall();
+			this.disableWarmTransferSetup();
+			if(freshfone.isAgentConferenceEnabled && this.freshfonecalls.isAgentConference) {
+				this.bindForAgentConference();
+			} else if(freshfone.isWarmTransferEnabled && this.freshfonecalls.isWarmTransferReceiver()) {
+				this.freshfonecalls.handleWarmTransferReceiverCall();
 			}
-			this.ongoingCallWidget.find('.transfer_call').removeClass("transfer-disabled");
+		},
+		bindForAgentConference: function() {		
+			this.ongoingCallWidget.addClass("add_agent_call");
+			this.showOngoingAgentConferenceCall();
 		},
 		showOngoingAgentConferenceCall: function() {
 			this.$freshfoneAddAgentContext.show();
 			this.$addAgentInfo.removeClass("adding_agent_state");
+			this.$contextContainer.find('.add_call_note').hide();
 			this.freshfonecalls.freshfoneUserInfo.agentConferenceInfo();
 			$(".add-agent-progress-bar").hide();
 			$(".add-agent-status div").hide();
@@ -119,6 +126,13 @@ var FreshfoneWidget;
 			this.ongoingCallWidget.removeClass("add_agent_call");
 			this.$contextContainer.find('.add_call_note').show();	
 			this.$freshfoneAddAgentContext.addClass("hide");
+			this.ongoingCallWidget.find('.transfer_call').removeClass("transfer-disabled");
+		},
+		disableWarmTransferSetup: function() {
+			this.ongoingCallWidget.removeClass("warm_transfer_call");
+			this.$contextContainer.find('.add_call_note').show();
+			this.$freshfoneWarmTransferContext.hide();
+			this.ongoingCallWidget.removeClass("tools-disabled");
 		},
 		bindEventsForTransferAndDial: function(){
 			var self = this;
@@ -212,6 +226,7 @@ var FreshfoneWidget;
 		},
 		showOutgoing: function () {
 			this.hideAllWidgets();
+			this.togglePhoneActiveClass(false);
 			if(!$.isEmptyObject(freshfone.numbersHash)){
 				this.outgoingCallWidget.show();				
 			}
@@ -303,7 +318,6 @@ var FreshfoneWidget;
 			if (this.force_disable_widget) {
 				this.disableFreshfoneWidget();
 			};
-			this.resetForm();
 		},
 		resetTransferingState: function(){
 			$('.ongoing .transfer_call.active').trigger('click');
@@ -380,7 +394,8 @@ var FreshfoneWidget;
 		},
 		renderNotes: function(data){
 			var headerFromAgent = $('.note_from_agent');
-			headerFromAgent.text('... added by '+freshfoneUserInfo.requestObject.transferAgentName);
+			var agentName = this.getNotesAgentName();
+			headerFromAgent.text('... added by '+agentName);
 			if(!$('#freshfone_add_notes').find('.call_notes').is(':visible') && this.widgetLoaded ){
 				this.showNotes();
 			}
@@ -389,6 +404,12 @@ var FreshfoneWidget;
 			this.callNote.on('keyup',function(){
 				headerFromAgent.text("");
 			});
+		},
+		getNotesAgentName: function() {
+			if(freshfoneUserInfo.requestObject.transferAgentName) {
+				return freshfoneUserInfo.requestObject.transferAgentName;
+			}
+			return freshfonecalls.warmTransfer.params.user_name;
 		},
 		resetNotesAgentHeader: function(){
 			$('.note_from_agent').text("");
@@ -420,6 +441,9 @@ var FreshfoneWidget;
 			if (typeof chatCollection != 'undefined' && chatCollection.getMaximizedChat()){
 				chatCollection.minimizeOpenWindow()
 			}
+		},
+		togglePhoneActiveClass: function(show){
+			$('.chats-container').toggleClass("-fone-active", show);
 		}
 	};
 	$(window).on("load", function () {

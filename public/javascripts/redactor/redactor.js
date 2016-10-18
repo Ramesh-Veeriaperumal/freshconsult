@@ -827,7 +827,7 @@ Redactor.prototype = {
 			}, this));
 
 			// Drop Image in editor only for firefox
-			if(!$.browser.msie && !$.browser.mozilla)
+			if(!$.browser.msie)
 			{
 				this.$editor.bind('drop', $.proxy(function(e)
 				{ 
@@ -1017,23 +1017,34 @@ Redactor.prototype = {
 		return (rtlDirCheck.test(block)) ? 'rtl' : 'ltr';
 	},
 	wrapElementWithFont: function(content){
+		var fontWrap = $(content)
 		var temp_div = $("<div />");
-		var	div = $("<div />")
-			div.css(this.opts.wrapFontSettings)
-			div.html(content)
-		if(this.opts.mixedDirectionSupport){
-			div.attr('dir',this.opts.direction);
+		if(fontWrap.length > 1  ||  ((fontWrap.length == 1) && fontWrap.not('div').length > 0)){
+			fontWrap = $("<div />").css(this.opts.wrapFontSettings).html(content);
 		}
-		temp_div.append(div)
-
+		else{
+			if(!fontWrap.attr('style') || fontWrap.attr('style').indexOf('font-family') == -1){
+				fontWrap.css(this.opts.wrapFontSettings);
+			}
+		}
+		if(this.opts.mixedDirectionSupport){
+			fontWrap.attr('dir',this.opts.direction);
+		}
+		temp_div.append(fontWrap)
 		return temp_div.html();
 	},
 	wrapElementWithDirection: function(content){
+		var dirWrap = $(content)
 		var temp_div = $("<div />");
-		var	div = $("<div dir='"+this.opts.direction+"'/>")
-			div.html(content)
-		temp_div.append(div)
-
+		if(dirWrap.length > 1  ||  ((dirWrap.length == 1) && dirWrap.not('div').length > 0)){
+			dirWrap = $("<div dir='"+this.opts.direction+"'/>").html(content);
+		}
+		else{
+			if(!dirWrap.attr('dir')){
+				dirWrap.attr('dir',this.opts.direction);
+			}
+		}
+		temp_div.append(dirWrap)
 		return temp_div.html();
 	},
 	changesInTextarea: function(){
@@ -2642,7 +2653,7 @@ Redactor.prototype = {
 	},
 	buildButton: function(key, s)
 	{
-		var button = $('<a href="javascript:void(null);" title="' + s.title + '" class="redactor_btn_' + key + '" tabindex="-1"></a>');
+		var button = $('<a href="javascript:void(null);" title="' + s.title + '" class="redactor_btn_' + key + '" tabindex="-1"><span class="hide">' + s.title + '</span></a>');
 		
 		if (typeof s.func === 'undefined')
 		{
@@ -3268,7 +3279,7 @@ Redactor.prototype = {
 					
 					if (new_h > min_h)
 					{
-						$(resize).height(new_h);
+						$(resize).attr('height', new_h + 'px');
 						$(resize).attr('data-height', new_h)
 					}
 					
@@ -3466,10 +3477,11 @@ Redactor.prototype = {
 			{
 				$('#redactor_insert_code_btn').click($.proxy(this.insertCode, this));
 
-				if($(ev.target)[0].tagName == 'PRE'){
+				// if($(ev.target)[0].tagName == 'PRE' || $(ev.target)[0].tagName == 'CODE'){
+				if($(ev.target)[0].tagName == 'PRE') {
 					$("#redactorInsertCode_selector").find("option").each(function (i,e) {
 
-					    if ($(this).val() == $(ev.target).attr('code-brush')) {
+					    if ($(this).val() == $(ev.target).attr('data-code-brush')) {
 					        $(this).prop("selected", "selected");
 					    }
 					});
@@ -3506,7 +3518,8 @@ Redactor.prototype = {
 		if ( $.browser.msie && (parseInt($.browser.version, 10) < 9 ||  parseInt($.browser.version, 10) > 10) ) {
 			var selectedTarget = $(this.selectedEvent.target);
 
-			if(selectedTarget.is('pre')){ 
+			// if(selectedTarget.is('pre') || selectedTarget.is('code')){ 
+			if(selectedTarget.is('pre')) {
 				selectedTarget.attr('code-brush',$('#redactorInsertCode_selector').val())
 				.text(data);
 				selectedTarget.toggleClass('code-large',(codeClass != '' && codeClass != null));
@@ -3517,7 +3530,8 @@ Redactor.prototype = {
 		} else { 
 			var domElement = $(this.getSelection().anchorNode).parent();
 
-			if(domElement.is('pre')){ 
+			// if(domElement.is('pre') || domElement.is('code')){ 
+			if(domElement.is('pre')) {
 		        var temp_range = document.createRange();
 			 	temp_range.selectNode(domElement[0]);	
 			 	this.getSelection().removeAllRanges();
@@ -3567,13 +3581,35 @@ Redactor.prototype = {
 		tmp_div.append($('<p />').html('&nbsp;'))
 		tmp_div.append($('<pre />')
 			.attr('rel', 'highlighter')
-			.attr('code-brush',$('#redactorInsertCode_selector').val())
+			.attr('data-code-brush',$('#redactorInsertCode_selector').val())
 			.addClass(codeClass)
 			.text(data));
 		tmp_div.append($('<p />').html('&nbsp;'));
 
 		this.execCommand('inserthtml', tmp_div.html());
 	},
+	// This <code> tag is mainly for Prism. The format for prism is <pre></code></code></pre>
+	// appendCodeTag: function(data, codeClass){
+	// 	var tmp_div = $('<div />') 
+		
+	// 	if (type == 'insert') {
+	// 		var code = $('<code />').text(data);
+	// 		var pre = $('<pre />')
+	// 				.attr('rel', 'highlighter')
+	// 				.attr('data-code-brush',$('#redactorInsertCode_selector').val())
+	// 				.addClass(codeClass)
+	// 				.append(code) // have to pass code insted of data
+
+	// 		tmp_div.append($('<p />').html('&nbsp;'))
+	// 		tmp_div.append(pre)
+	// 		tmp_div.append($('<p />').html('&nbsp;'));
+	// 	} else {
+	// 		var code = $('<code />').text(data);
+	// 		tmp_div.append(code)
+	// 	}
+
+	// 	this.execCommand('inserthtml', tmp_div.html());
+	// },
 	// INSERT VIDEO
 	showVideo: function()
 	{
@@ -3882,7 +3918,10 @@ Redactor.prototype = {
 				if(json.isJSON())
 					data = $.parseJSON(json);
 				if(data.filelink != undefined){
-					html = '<p><img src="' + data.filelink + '" class= "inline-image" data-id = "' + data.fileid + '" /></p>';
+					// spliting file name
+					var temp = data.filelink.split('/');
+					var fileName = temp[temp.length-1].split('?')[0];
+					html = '<p><img src="' + data.filelink + '" class= "inline-image" data-id = "' + data.fileid + '" alt="'+ fileName +'"  title="'+ fileName +'"/></p>';
 					this.$editor.find("#uploading_images_"+data.uniquekey).replaceWith($(html))
 					this.syncCode();
 					if(this.$editor.find("img.image-loader").length == 0){
@@ -3983,25 +4022,27 @@ Redactor.prototype = {
 			
 			$('.redactor_link_text').val(text);
 			
-			var turl = url.replace(self.location.href, '');
+			if(url){
+				var turl = url.replace(window.location.href, '');
 			
-			if (url.search('mailto:') === 0)
-			{
-				this.setModalTab(2);
+				if (url.search('mailto:') === 0)
+				{
+					this.setModalTab(2);
 
-				$('#redactor_tab_selected').val(2);
-				$('#redactor_link_mailto').val(url.replace('mailto:', ''));
-			}
-			else if (turl.search(/^#/gi) === 0)
-			{
-				this.setModalTab(3);	
-				
-				$('#redactor_tab_selected').val(3);
-				$('#redactor_link_anchor').val(turl.replace(/^#/gi, ''));
-			}
-			else
-			{
-				$('#redactor_link_url').val(url);
+					$('#redactor_tab_selected').val(2);
+					$('#redactor_link_mailto').val(url.replace('mailto:', ''));
+				}
+				else if (turl.search(/^#/gi) === 0)
+				{
+					this.setModalTab(3);	
+					
+					$('#redactor_tab_selected').val(3);
+					$('#redactor_link_anchor').val(turl.replace(/^#/gi, ''));
+				}
+				else
+				{
+					$('#redactor_link_url').val(url);
+				}
 			}
 			
 			if (target === '_blank')
@@ -4018,10 +4059,11 @@ Redactor.prototype = {
 		{
 			$('#redactor_link_url').focus();
 		};
-
-
-		this.modalInit(RLANG.link, 'link', 460, handler, endCallback);
-
+		if(this.opts.popover){
+			this.popoverInit(RLANG.link, 'link', 350, handler, endCallback);
+		}else{
+			this.modalInit(RLANG.link, 'link', 460, handler, endCallback);
+		}
 	},
 	insertLink: function()
 	{
@@ -4157,7 +4199,59 @@ Redactor.prototype = {
 		this.modalClose();
 	},	
 
-	
+		// POPOVER
+	popoverInit: function(title, url, width, handler, endCallback)
+	{
+		if ($('#redactor_modal').length === 0)
+		{
+			this.popover = $('<div id="redactor_modal" style="display: none;"><span id="redactor_arrow_top"></span><div id="redactor_modal_inner"></div></div>');
+			$('.redactor_toolbar').after(this.popover);
+		}
+
+		this.hdlModalClose = $.proxy(function(e) { if ( e.keyCode === 27) { this.modalClose(); } }, this);
+		
+		$(document).keyup(this.hdlModalClose);
+		this.$editor.keyup(this.hdlModalClose);
+
+		$('#redactor_modal_inner').html(this.opts['modal_' + url]);
+
+		if (this.opts.overlay)
+		{
+			$('#redactor_modal').show();
+		}
+
+		$('#redactor_btn_modal_close').click($.proxy(this.modalClose, this)).css({marginRight: '5px'});
+		
+		// callback
+		if (typeof(handler) === 'function')
+		{
+			handler();
+		}
+		$('#redactor_tabs').hide()
+		
+		// // setup
+		var height = $('#redactor_modal').outerHeight(true);
+		if (this.isMobile() === false)
+		{		
+			$('#redactor_modal').css({  width: width+'px', height: 'auto', minHeight: 'auto',position:'absolute',left: '62px','box-shadow': '0 3px 5px #ccc','top':'30px'}).fadeIn('fast');
+			
+			this.modalSaveBodyOveflow = this.modalSaveBodyOveflow || $(document.body).css('overflow');
+			$(document.body).css('overflow', 'hidden');
+		}
+		else
+		{
+			$('#redactor_modal').css({  width: '100%', height: '100%', margin: '0', minHeight: '300px', position:'absolute','left':'62px','box-shadow': '0 3px 5px #ccc','top':'30px'  }).show();			
+		}
+		$('.redactor_tab input').css({'line-height': '23px', 'border': '1px solid #ccc','border-radius': '3px'});
+		$('#redactor_modal_footer').css({'padding':0})
+		
+		// end callback
+		if (typeof(endCallback) === 'function')
+		{
+			endCallback();
+		}
+
+	},
 	
 	// MODAL
 	modalInit: function(title, url, width, handler, endCallback)
