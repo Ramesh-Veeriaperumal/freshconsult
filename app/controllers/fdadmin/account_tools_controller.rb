@@ -27,13 +27,19 @@ class Fdadmin::AccountToolsController < Fdadmin::DevopsMainController
     end
   end
 
-  def operations_on_shard
-    FreshopsToolsWorker.perform_async(params)
-      respond_to do |format|
-        format.json do
-          render :json => {:status => "success"}
-        end
+  def operations_on_shard 
+    if FreshopsToolsWorkerMethods::SHARD_OPS.has_value?(params["method_name"])
+      params["shards_name"].each do |shard_name|
+        FreshopsToolsWorker.perform_async({:shards_name => shard_name , :method_name => params["method_name"]})
       end
+    else
+      FreshopsToolsWorker.perform_async(params)
+    end
+    respond_to do |format|
+      format.json do
+        render :json => {:status => "success"}
+      end
+    end
   end
 
 	def update_global_blacklist_ips
