@@ -77,13 +77,7 @@ class TicketFieldDecorator < ApiDecorator
       when 'nested_field'
         nested_field_choices_by_id(record.picklist_values)
       when 'default_status'
-        Helpdesk::TicketStatus.status_objects_from_cache(Account.current).map do|status|
-          {
-            :id => status.status_id,
-            :value => Helpdesk::TicketStatus.translate_status_name(status, 'name'),
-            :customer_display_value => Helpdesk::TicketStatus.translate_status_name(status, 'customer_display_name')
-          }
-        end
+        Helpdesk::TicketStatus.statuses_list(Account.current)
       when 'default_ticket_type'
         choices_by_id(Hash[Account.current.ticket_types_from_cache.map { |tt| [tt.id, tt.value] }])
       when 'default_agent'

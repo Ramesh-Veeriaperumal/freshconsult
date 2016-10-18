@@ -11,6 +11,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/attachment", only: [:create]
     resource :"ember/conversation", only: [:create]
     resource :"ember/subscription"
+    resource :"ember/ticket_field", only: [:index]
   end
 
   reply_ticket do
