@@ -77,10 +77,6 @@
     &.fr-thick { border-width: 2px; }
   }
 
-  blockquote { border-left: solid 2px #5e35b1;margin-left: 0;padding-left: 5px;color: #5e35b1; }
-  blockquote blockquote {border-color: #00bcd4; color: #00bcd4; }
-  blockquote blockquote blockquote { border-color: #43a047; color: #43a047; }
-
   // Paregraph styles
   .fr-text-gray { color: #AAA !important; }
   .fr-text-bordered { border-top: solid 1px #9E9E9E; border-bottom: solid 1px #9E9E9E; padding: 10px 0; }

@@ -796,16 +796,13 @@
 		margin-top: 10px;
 		@include border-radius(6px);
 		.subject{
-		  width: 426px;
+		  width: 430px;
 		}
 		.ticket_sub{
 		  padding-top: 10px;
 		}
 		.requesterNameLabel{
 		  margin-top: 10px;
-		}
-		.requesterEmail{
-		  width: 240px;
 		}
 		.email_dom{
 		  margin-top: 16px;
@@ -821,7 +818,7 @@
 		  margin-top: 0px;
 		}
 		.select2-container{
-			width: 235px;
+			width: 100%;
 			margin-bottom: -9px;
 		}
 		.or_border{
@@ -836,8 +833,9 @@
 			width: 130px;
 		}
 		.name_container_span{
-			width: 295px;
 			margin-top: 15px;
+			margin-left: 0;
+			padding-left: 2.12766%;
 		}
 		.or_text{
 			color: #888888;
@@ -864,12 +862,7 @@
 	.save_ticket {
 		@include float(right);
 		margin-top: 10px;
-		margin-right: 7px;
-	}
-	.requester_name_container {
-		border-left: 1px solid #ccc;
-		margin-top: 0px;
-		padding-left: 8px;
+		margin-right: 3px;
 	}
 	.control-group {
 		margin-bottom:8px;

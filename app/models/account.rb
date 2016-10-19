@@ -155,7 +155,6 @@ class Account < ActiveRecord::Base
   end
 
   def suggest_tickets_enabled?
-    Rails.logger.info "suggest_tickets : #{launched?(:suggest_tickets)}"
     launched?(:suggest_tickets)
   end
 
