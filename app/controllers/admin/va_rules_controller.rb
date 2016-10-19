@@ -154,6 +154,8 @@ class Admin::VaRulesController < Admin::AdminController
       if supervisor_rules_controller?
         operator_types[:choicelist] = ["is", "is_not"]
         operator_types[:object_id] = ["is", "is_not"]
+        operator_types[:number] = ["is", "is_not"]
+        operator_types[:decimal] = ["is", "is_not"]
       end
       @op_types     = ActiveSupport::JSON.encode operator_types
       @op_list      = ActiveSupport::JSON.encode OPERATOR_LIST
