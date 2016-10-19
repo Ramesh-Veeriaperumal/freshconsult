@@ -350,6 +350,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
      source == SOURCE_KEYS_BY_TOKEN[:facebook] and (fb_post) and (fb_post.facebook_page)
   end
 
+  def facebook_realtime_message?
+    fb_post.realtime_message?
+  end
+
   #This is for mobile app since it expects twitter handle & facebook page and not a boolean value
   def is_twitter
     source == SOURCE_KEYS_BY_TOKEN[:twitter] ? (tweet and tweet.twitter_handle) : nil

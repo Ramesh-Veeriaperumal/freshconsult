@@ -57,6 +57,8 @@ module Facebook
     GRAPH_API_VERSION           = "v2.6"
 
     FB_MESSAGE_PREFIX           = "m_"
+
+    REALTIME_MESSSAGING_CHARACTER_LIMIT = 320
     
   end
 end

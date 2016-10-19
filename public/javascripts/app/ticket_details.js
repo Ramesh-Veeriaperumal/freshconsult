@@ -793,6 +793,22 @@ var scrollToError = function(){
 
 	//End of Twitter Replybox JS
 
+	//For Facebook DM Replybox
+
+	function bindFacebookDMCount() {
+	  $('#send-fb-post-cnt-reply-body').NobleCount('#SendReplyCounter', { on_negative : "error", max_chars : 320, on_update: updateCount });
+		updateCount();
+	}
+
+	function updateCount() {
+	  var char_val = $("#SendReplyCounter").text();
+	  $('#send-fb-post-cnt-reply-body').data("reply-count", char_val);
+	}
+
+
+	// End of Facebook DM Replybox
+
+
 	//For Clearing Bcc, Cc email list and hiding those containers
 	$('body').on('click.ticket_details', '[rel=toggle_email_container]',function(ev) {
 		ev.preventDefault();
@@ -1618,6 +1634,10 @@ var scrollToError = function(){
 	  	if ($('#cnt-reply').data('isTwitter')) {
 			getTweetTypeAndBind();
 	  	}
+	  	if($('#cnt-reply').data('is-facebook-realtime-dm') && $('#send-fb-post-cnt-reply-body').hasClass('facebook-realtime')) {
+	  		bindFacebookDMCount();
+	  	}
+
 		swapEmailNote('cnt-' + $(this).data('note-type'), this);
 	});
 
