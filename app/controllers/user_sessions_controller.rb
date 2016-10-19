@@ -78,9 +78,9 @@ include Mobile::Actions::Push_Notifier
         saved = @current_user.save
       end
       
-      @user_session = @current_user.account.user_sessions.new(@current_user)
-      @user_session.web_session = true unless is_native_mobile?
-      if saved && @user_session.save
+      @current_user_session = @current_user.account.user_sessions.new(@current_user)
+      @current_user_session.web_session = true unless is_native_mobile?
+      if saved && @current_user_session.save
         if is_native_mobile?
           cookies["mobile_access_token"] = { :value => @current_user.mobile_auth_token, :http_only => true } 
           cookies["fd_mobile_email"] = { :value => @current_user.email, :http_only => true } 
@@ -93,6 +93,8 @@ include Mobile::Actions::Push_Notifier
           redirect_to login_normal_url
         end
       else
+        Rails.logger.debug "User save status #{@current_user.errors.inspect}"
+        Rails.logger.debug "User session save status #{@current_user_session.errors.inspect}"
         cookies["mobile_access_token"] = { :value => 'failed', :http_only => true } if is_native_mobile?
         flash[:notice] = t(:'flash.login.failed')
         redirect_to login_normal_url
