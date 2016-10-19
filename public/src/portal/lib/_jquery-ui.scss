@@ -21,7 +21,18 @@
 
 
 /* states and images */
-.ui-icon { display: block; @include text-indent(-99999px); overflow: hidden; background-repeat: no-repeat; }
+.ui-icon { 
+	display: block; 
+	@include text-indent(-99999px); 
+	overflow: hidden; 
+	background-repeat: no-repeat; 
+}
+
+.ui-datepicker-next, .ui-datepicker-prev{
+	.ui-icon {
+		text-indent: -99999px;
+	}
+}
 /* Misc visuals
 ----------------------------------*/
 
