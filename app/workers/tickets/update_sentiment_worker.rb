@@ -27,7 +27,7 @@ module Tickets
           req.body = generate_predict_request_body
         end
 
-        puts "Response from ML : #{response.body["result"]}"
+        Rails.logger.info "Response from ML : #{response.body["result"]}"
 
         @ticket.sentiment = response.body["result"]["sentiment"]
         @ticket.save

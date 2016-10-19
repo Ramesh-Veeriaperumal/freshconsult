@@ -17,11 +17,6 @@ module Notes
         @ticket = @account.tickets.find_by_id args[:ticket_id]
         @note = @account.notes.find_by_id args[:note_id]
 
-        puts "Account: #{@account}"
-        puts "Ticket: #{@ticket}"
-        puts "Note: #{@note}"
-        puts "Note Body: #{@note.body}"
-
         con = Faraday.new(SentimentAppConfig["host"]) do |faraday|
             faraday.response :json, :content_type => /\bjson$/                # log requests to STDOUT
             faraday.adapter  Faraday.default_adapter  # make requests with Net::HTTP
@@ -33,7 +28,7 @@ module Notes
           req.body = generate_predict_request_body
         end
 
-        puts "Response from ML : #{response.body["result"]}"
+        Rails.logger.info "Response from ML : #{response.body["result"]}"
 
         @note.sentiment = response.body["result"]["sentiment"]
         @note.save
