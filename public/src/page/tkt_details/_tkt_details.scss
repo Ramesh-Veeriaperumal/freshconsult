@@ -29,8 +29,8 @@ li {
     content: "";
     display: table;
 }
-.ticket_show {
-    .details[rel=image-enlarge] {
+.ticket_show .commentbox {
+    [rel=image-enlarge] {
         .hide {
             display: block;
         }
