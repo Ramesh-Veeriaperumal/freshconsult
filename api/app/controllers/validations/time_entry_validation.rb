@@ -9,7 +9,7 @@ class TimeEntryValidation < ApiValidation
   validates :executed_at, date_time: { allow_nil: true }
 
   validates :time_spent, data_type: { rules: String }, custom_format: { with: /^\d+:[0-5][0-9]$/, accepted: :'hh:mm' }, allow_nil: true, if: -> { time_spent.is_a? String}
-  validates :time_spent, custom_numericality: { only_integer: true, greater_than: 0, ignore_string: :allow_string_param }, if: -> { !time_spent.is_a? String}
+  validates :time_spent, custom_numericality: { only_integer: true, greater_than: 0, ignore_string: :allow_string_param }, allow_nil: true, if: -> { !time_spent.is_a? String}
 
   # Start time specific validations*
   # start_time param has no meaning timer is already on in case of update.
