@@ -209,6 +209,8 @@ module Redis::RedisKeys
   COUNT_ESV2_WRITE_ENABLED 	= "COUNT_ESV2_WRITE_ENABLED"
   COUNT_ESV2_READ_ENABLED 	= "COUNT_ESV2_READ_ENABLED"
 
+  MAILGUN_EVENT_LAST_SYNC = "MAILGUN_EVENT_LAST_SYNC:%{domain}"
+
 	def newrelic_begin_rescue
 		begin
 		  yield
