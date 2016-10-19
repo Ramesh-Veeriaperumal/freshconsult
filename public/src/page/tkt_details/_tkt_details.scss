@@ -972,6 +972,9 @@ li {
         position: relative;
         top: 6px;
     }
+    .no-top {
+        top: 0px;
+    }
     .add_attachment {
         cursor: pointer;
         height: 22px;
