@@ -93,11 +93,7 @@ module Freshfone::Search
 	def search_customer
 	  customer = search_customer_with_id if customer_id.present?
 	  return customer if customer.present?
-		if Account.current.launched?(:es_v2_reads)
-			search_user_v2(called_number)
-		else
-	  	search_customer_with_number_using_es(called_number)
-		end
+	  search_customer_with_number_using_es(called_number)
 	end
 
 	#return contact only if it has phone or mobile number present.
