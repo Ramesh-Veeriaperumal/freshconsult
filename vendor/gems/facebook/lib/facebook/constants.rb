@@ -48,6 +48,8 @@ module Facebook
 
     MESSAGE_FIELDS              = FETCH_FIELDS[:message].join(',')
     
+    DM_FIELDS                   = "messages.fields(message, from, created_time)"
+    
     HASH_KEY_DELIMITER          = "::"
 
     MESSAGE_THREAD_ID_DELIMITER = "::"
