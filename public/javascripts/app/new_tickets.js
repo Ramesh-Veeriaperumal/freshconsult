@@ -61,12 +61,17 @@ var CreateTicket = {
 	        }
 	        
 	        jQuery(".cc-address .cc-error-message").remove();
-			jQuery("#NewTicket").submit();
+
+	        jQuery("#NewTicket").trigger('submit.newTicket');
+
 		});
 
-		this.$createForm.on('submit.newTicket', function(){
+		this.$createForm.on('submit.newTicket', function(ev){
+	    	preventDefault(ev);
+
 			var _form = jQuery("#NewTicket");
 			var topic_id = jQuery("#topic_id_stub").val();
+			
 			if(_form.valid()){
 				if (_form.find('input[name="cc_emails[]"]').length >= 50) {
 					alert('You can add upto 50 CC emails');
@@ -78,7 +83,12 @@ var CreateTicket = {
 				jQuery("#newticket-submit").text(jQuery("#newticket-submit").data('loading-text')).attr('disabled', true);
 				jQuery("#newticket-submit").next().attr('disabled', true);
 				jQuery(".cancel-btn").attr('disabled', true);
+
+				pjax_form_submit("#NewTicket");
 			}
+			
+			return false;
+
 		}.bind(this));
 
 		this.$body.on('click.newTicket', 'a[name="action_save"]', function(ev){
@@ -95,7 +105,8 @@ var CreateTicket = {
 						value: true
 					}));
 				}
-				_form.submit();
+
+				_form.trigger('submit.newTicket');
 			});
 
 			this.$body.on('click.newTicket', 'a[rel="ticket_canned_response"]', function(ev){

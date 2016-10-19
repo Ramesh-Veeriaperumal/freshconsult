@@ -132,17 +132,23 @@ var ComposeEmail = {
 				name: 'save_and_compose',
 				value: true
 			}));
-			_form.submit();
+			_form.trigger('submit.compose');
 		});
 
-		jQuery('#ComposeTicket').on("submit.compose", function(){
+		jQuery('#ComposeTicket').on("submit.compose", function(ev){
+			preventDefault(ev);
+
 			var _form = jQuery(this);
 			if(_form.valid()) {
         jQuery("#compose-submit").text(  jQuery("#compose-submit").data('loading-text')).attr('disabled', true);
         jQuery("#compose-submit").next().attr('disabled', true);
         jQuery(".cancel-btn").attr('disabled', true);
 				// _form.find("button, a.btn").attr('disabled',true);
+
+				pjax_form_submit("#ComposeTicket");
 			}
+
+			return false;
 		});
 
 	    this.$body.on('click.compose', '#compose-submit', function(ev){
@@ -162,7 +168,7 @@ var ComposeEmail = {
 	        }
 
 	        jQuery(".cc-address .cc-error-message").remove();
-	        jQuery("#ComposeTicket").submit();
+	        jQuery("#ComposeTicket").trigger('submit.compose');
 	    });
 
 		this.$body.on('click.compose', 'a[rel="ticket_canned_response"]', function(ev){
