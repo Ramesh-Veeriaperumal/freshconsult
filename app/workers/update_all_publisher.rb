@@ -13,6 +13,7 @@ class UpdateAllPublisher
     
     esv2_enabled      = Account.current.features_included?(:es_v2_writes)
     count_es_enabled  = Account.current.features?(:countv2_writes)
+    args[:options]    ||= {}
     options           = args[:options].deep_symbolize_keys!
     # Move feature check inside if multiple subscribers added
     if esv2_enabled || count_es_enabled || options[:manual_publish].present?
