@@ -27,8 +27,6 @@ else
   kind = note.survey_remark.nil? ? note.kind : 'survey'
 end
 %>
-
-<% survey_association = Account.current.new_survey_enabled? ? "custom_survey_results" : "survey_results" %>
 <div id="<%= note_view_id %>" 
 			data-timestamp="<%= note.created_at.to_i%>" 
 			<% if timestamp_id %>
@@ -39,18 +37,17 @@ end
 		<% if notable_object.agent_performed?(note.user) %>
 			<div class="avatar-wrap" name="note<%= note.id %>" id="note<%= note.id %>"><%= user_avatar(note.user, :thumb, 'preview_pic circle') %></div>
 		<% else %>
-			<% unless notable_object.send(survey_association).nil? || notable_object.send(survey_association).last.nil? %>
-			  <% if (Account.current.new_survey_enabled?) %>
-			    <div class="avatar-wrap" name="note<%= note.id %>" id="note<%= note.id %>"><%= user_avatar(note.user, :thumb, 'preview_pic circle') %></div>
-			  <% else %>
-			    <div class="avatar-wrap" name="note<%= note.id %>" id="note<%= note.id %>"><%= user_avatar(note.user, :thumb, 'preview_pic circle') %></div>
-			  <% end %>
-			<% else %>
-				<% if (Account.current.customer_sentiment_enabled?) %>
-				    <div class="avatar-wrap" name="note<%= note.id %>" id="note<%= note.id %>"><%= senti_user_avatar(note.user, note.sentiment, :thumb, 'preview_pic circle') %></div>
-			  	<% else %>
+			<% if (Account.current.customer_sentiment_enabled?) %>
+				<% survey_association = Account.current.new_survey_enabled? ? "custom_survey_results" : "survey_results" %>
+
+				<% unless notable_object.send(survey_association).nil? || notable_object.send(survey_association).last.nil? %>
 				    <div class="avatar-wrap" name="note<%= note.id %>" id="note<%= note.id %>"><%= user_avatar(note.user, :thumb, 'preview_pic circle') %></div>
-			  	<% end %>
+				<% else %>
+				    <div class="avatar-wrap" name="note<%= note.id %>" id="note<%= note.id %>"><%= senti_user_avatar(note.user, note.sentiment, :thumb, 'preview_pic circle') %></div>
+				<% end %>
+
+			<% else %>
+			    <div class="avatar-wrap" name="note<%= note.id %>" id="note<%= note.id %>"><%= user_avatar(note.user, :thumb, 'preview_pic circle') %></div>
 			<% end %>
 		<% end %>
 	<% end %>
