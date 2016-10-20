@@ -209,7 +209,8 @@ module Search::SearchResultJson
 		{
 			:result_type => class_name,
 			:content => content,
-			:path => path
+			:path => path,
+			:id => result.id || 0
 		}
 	end
 end

@@ -7977,6 +7977,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
   latest_ticket: "new update"
   latest_tickets: "new updates"
   search:
+    view_all_tickets: "View all tickets"
     recent_searches: "Recent Searches"
     recently_viewed: "Recently Viewed"
     no_results_msg: "No results found"
