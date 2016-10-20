@@ -29,6 +29,10 @@ module Facebook
               if app_rate_limit_exceeded?
                 throttle_processing unless app_rate_limit_reached?
                 notify_error(error_params)
+              elsif page_rate_limit_exceeded?
+                throttle_fb_page_processing(@fan_page.account_id, @fan_page.page_id)
+                notify_error(error_params)
+                raise_newrelic_error(error_params)
               elsif user_rate_limit_exceeded?
                 throttle_page_processing(@fan_page.page_id)
                 error_params.merge!({:api_hit_count => fb_api_hit_count(@fan_page.page_id)})
@@ -85,6 +89,10 @@ module Facebook
         
         def user_rate_limit_exceeded?
           @exception.fb_error_code == USER_RATE_LIMIT
+        end
+
+        def page_rate_limit_exceeded?
+          @exception.fb_error_code == PAGE_RATE_LIMIT_ERROR_CODE
         end
         
         def permission_error?
