@@ -36,7 +36,7 @@ module Facebook::RedisMethods
   
   #30 minutes expiry for PAGE RATE LIMITS
   def throttle_fb_page_processing(account_id, page_id)
-    set_others_redis_key(FACEBOOK_PAGE_RATE_LIMIT % {:account_id => account_id, :page_id => page_id}, 1, PAGE_RATE_LIMIT_EXPIRY) unless page_rate_limit_reached?(page_id)
+    set_others_redis_key(FACEBOOK_PAGE_RATE_LIMIT % {:account_id => account_id, :page_id => page_id}, 1, PAGE_RATE_LIMIT_EXPIRY) unless page_rate_limit_reached?(account_id, page_id)
   end  
 
   #30 minutes expiry for USER RATE LIMITS

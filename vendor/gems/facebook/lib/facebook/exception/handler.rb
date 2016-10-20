@@ -31,6 +31,7 @@ module Facebook
                 notify_error(error_params)
               elsif page_rate_limit_exceeded?
                 throttle_fb_page_processing(@fan_page.account_id, @fan_page.page_id)
+                Sqs::Message.new("{}").requeue(JSON.parse(@raw_obj)) if @raw_obj
                 notify_error(error_params)
                 raise_newrelic_error(error_params)
               elsif user_rate_limit_exceeded?
