@@ -37,7 +37,7 @@ end
 		<% if notable_object.agent_performed?(note.user) %>
 			<div class="avatar-wrap" name="note<%= note.id %>" id="note<%= note.id %>"><%= user_avatar(note.user, :thumb, 'preview_pic circle') %></div>
 		<% else %>
-			<% if (Account.current.customer_sentiment_enabled?) %>
+			<% if (Account.current.customer_sentiment_enabled? && current_user.language=="en") %>
 				<% survey_association = Account.current.new_survey_enabled? ? "custom_survey_results" : "survey_results" %>
 
 				<% unless notable_object.send(survey_association).nil? || notable_object.send(survey_association).last.nil? %>

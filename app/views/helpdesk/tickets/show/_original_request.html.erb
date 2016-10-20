@@ -1,4 +1,4 @@
-<% if (Account.current.customer_sentiment_enabled?) %>
+<% if (Account.current.customer_sentiment_enabled? && current_user.language=="en") %>
 	<% survey_association = Account.current.new_survey_enabled? ? "custom_survey_results" : "survey_results" %>
 	<% unless @ticket.send(survey_association).nil? || @ticket.send(survey_association).last.nil? %>
 		<%= link_to user_avatar(@ticket.requester, :thumb, 'preview_pic circle'), @ticket.requester, :class => 'avatar-wrap' %>

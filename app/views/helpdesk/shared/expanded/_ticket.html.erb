@@ -20,7 +20,7 @@
 				    	<%= user_avatar(ticket.requester, :thumb, 'preview_pic circle') %>
 					<% end %>
 				<% else %>
-					<% if (Account.current.customer_sentiment_enabled?) %>
+					<% if (Account.current.customer_sentiment_enabled? && current_user.language=="en") %>
 						<% if (ticket.notes.visible.customer_responses.last != nil) %>
 							<%= senti_user_avatar(ticket.requester, ticket.notes.visible.customer_responses.last.try("sentiment"), :thumb, 'preview_pic circle') %>
 						<% else %>
