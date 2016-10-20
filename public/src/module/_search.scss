@@ -156,6 +156,30 @@
 					padding: 0 15px 0;
 					@include margin-left(-($searchResultInfoWidth));
 				}
+				.search-result-info-actions{
+					display: inline-block
+				}
+				.search-result-info-action{
+					border: 1px solid #d9d9d9;
+					color: #333;
+					padding: 4px;
+					-webkit-border-radius: 4px;
+					-moz-border-radius: 4px;
+					-ms-border-radius: 4px;
+					-o-border-radius: 4px;
+					border-radius: 4px;
+				}
+				.search-result-info-details{
+					display: inline-block;
+
+					.search-result-info-attr{
+						@include margin-left(4px);
+						display: inline-block;
+						max-width:$searchResultInfoWidth - 80px ; //Search-label width 50px + padding 30px
+						vertical-align: top;
+						cursor: default;
+					}
+				}
 			}
 			.emphasize{
 				color:#333;
@@ -273,6 +297,15 @@
 				font-size:10px;
 				color:#888888;
 			}
+		}
+		// Adding display none instead of hide because hide adds a bottom padding
+		// We need to revisit the CSS for spotlight results (the whole dropdown).
+		// JS hacks have been made to compensate
+		.spotlight-result-hidden-user-tickets-link{
+			display: none;
+		}
+		.spotlight-result-user-ticket-icon {			
+			color: #fff;		
 		}
 		
 		a.user{
