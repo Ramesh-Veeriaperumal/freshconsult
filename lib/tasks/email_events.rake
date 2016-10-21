@@ -46,15 +46,26 @@ def fetch_api(event_url, last_sync = nil, end_time = nil)
     response = RestClient.get("https://api:#{MAILGUN_API_KEY}"\
       "#{event_url}")
   end
+  mailgun_events_logger.info "Response code: #{response.code}"
+  response
 end
 
 def log_events(events)
   events.each do |event_obj|
-    custom_variables = event_obj["user-variables"]["unique_args"]
+    if (defined? (ActionMailer::Base.decrypt_to_custom_variables(event_obj["user-variables"]["message_id"])))
+      custom_variables = ActionMailer::Base.decrypt_to_custom_variables(event_obj["user-variables"]["message_id"])
+    else 
+      custom_variables = get_custom_data(event_obj["user-variables"]["message_id"])
+    end
     mailgun_events_logger.info "Event type: #{event_obj["event"]}\nMessage-Id: #{event_obj["message"]["headers"]["message-id"]}\nSubject: #{event_obj["message"]["headers"]["subject"]}\nRecipient : #{event_obj["recipient"]}\nCustom variables: #{custom_variables.inspect}\nTimestamp: #{event_obj["timestamp"]}\nFrom: #{event_obj["message"]["headers"]["from"]}\n"
   end
 end
 
 def mailgun_events_logger
   @mailgun_events_logger ||= CustomLogger.new("#{Rails.root}/log/mailgun_events.log")
+end
+
+def get_custom_data(str)
+  custom_data = data.split('.')
+  {:account_id => custom_data[0], :ticket_id => custom_data[1], :note_id => custom_data[2], :type => custom_data[3]}
 end
