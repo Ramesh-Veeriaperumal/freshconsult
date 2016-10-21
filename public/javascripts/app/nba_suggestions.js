@@ -49,7 +49,7 @@ window.App.Tickets = window.App.Tickets || {};
             $(document).off("click.nba");
             $(document).off("hover.nba");
             $(document).off("nba_loaded");
-            $(document).off("sidebar_loaded");
+            //$(document).off("sidebar_loaded");
         },
 
         submitFeedBack: function(event){
