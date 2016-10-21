@@ -1,6 +1,8 @@
 module Helpdesk::AccessibleElements
 
   include HelpdeskAccessMethods
+  include Redis::RedisKeys
+  include Redis::OthersRedis
 
   ITEMS_TO_DISPLAY = 25
   RECENT_TEMPLATES = 10
@@ -33,7 +35,7 @@ module Helpdesk::AccessibleElements
   end
 
   def visible_records ops, enclose, sort, db_limit
-    if(ops[:model_hash][:name] == "Helpdesk::TicketTemplate")
+    if read_from_countv2?(ops)
       elements = accessible_from_esv2(ops[:model_hash][:name], enclose, default_visiblity, sort, nil, ops[:id_data], ops[:excluded_ids])
     else
       elements = accessible_from_es(ops[:model_hash][:name].constantize, enclose, default_visiblity, sort, nil, ops[:id_data], ops[:excluded_ids])
@@ -72,5 +74,21 @@ module Helpdesk::AccessibleElements
 
   def search_query?
     params.present? && params[:search_string].present?
+  end
+
+  def read_from_countv2?(ops)
+    model_class_name = ops[:model_hash][:name]
+    (model_class_name == "Helpdesk::TicketTemplate") ||
+    (redis_key_exists?(COUNT_ESV2_READ_ENABLED) && ["ScenarioAutomation", "Admin::CannedResponses::Response"].include?(model_class_name))
+  end
+
+  def fetch_from_es(model_name, enclose, visibility, sort = nil, folder_id = nil, id_data = nil, excluded_ids = nil)
+    if redis_key_exists?(COUNT_ESV2_READ_ENABLED)
+      method_name = "accessible_from_esv2"
+    else
+      method_name = "accessible_from_es"
+      model_name = model_name.constantize
+    end
+    send(method_name, model_name, enclose, visibility, sort, folder_id, id_data, excluded_ids)
   end
 end

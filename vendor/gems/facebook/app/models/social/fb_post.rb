@@ -32,6 +32,10 @@ class Social::FbPost < ActiveRecord::Base
   def message?
     msg_type == 'dm'
   end
+
+  def realtime_message?
+    message? and facebook_page.realtime_messaging
+  end
    
   def is_ticket?
     postable_type.eql?('Helpdesk::Ticket')

@@ -22,12 +22,17 @@
             }
             .survey-rating-label{
                 @include margin-left(25px);
+                cursor: pointer;
             }
         }
     }
     .rating-text,.default_question{
         font-weight: 600;
     }
+}
+
+#hidden_survey {
+    display: none;
 }
 
 /*Remove during clean up of old surveys code*/

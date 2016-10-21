@@ -29,7 +29,8 @@ class User < ActiveRecord::Base
 
   #------User email callbacks ends here------------------------------
 
-  before_update :make_inactive, :if => :email_changed?
+  before_update :make_inactive, if: -> { self.email_changed? && !@keep_user_active }
+
   after_commit :send_activation_email, on: :update, :if => [:email_updated?]
 
   def drop_authorization

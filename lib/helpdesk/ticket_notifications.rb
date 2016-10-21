@@ -77,7 +77,7 @@ module Helpdesk::TicketNotifications
   end
 
   def enqueue_notification(notification_type, time, internal_notification)
-    args = [notification_type, self, {:internal_notification => internal_notification}]
+    args = [notification_type, self, nil, {:internal_notification => internal_notification}]
     Delayed::Job.enqueue(Delayed::PerformableMethod.new(Helpdesk::TicketNotifier, :notify_by_email, args), 
           nil, time) 
   end

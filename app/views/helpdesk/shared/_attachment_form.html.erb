@@ -1,6 +1,7 @@
 <% 
   attach_id ||= "ticket" 
   nsc_param = nsc_param || "helpdesk_ticket"
+  public_ticket = public_ticket || false
 %>
 <div class="attach-wrapper row-fluid single_file <% if cloud_files_installed? and (@ticket.present? ? !@ticket.ecommerce? : true)  %> cloud<% end %>">
   <div class="span10">    
@@ -37,7 +38,7 @@
                nameWhenFilled="<%=nsc_param%>[attachments][][resource]" 
                fileContainer="<%=attach_id%>-container" fileList="<%=attach_id%>-attachments" 
                sendFocusTo="<%=attach_id%>-body" />
-        <span class="info-data">
+        <span class="info-data <%=(public_ticket)? "no-top":""%>">
          <%= t('total') %> <%= t('attachment_help_info')%>
         </span> 
       </div>

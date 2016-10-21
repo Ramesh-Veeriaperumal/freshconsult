@@ -330,7 +330,7 @@
         }
 
         else {
-          colors_html += '<span class="fr-command" data-cmd="tableCellBackgroundColor" data-param1="REMOVE" title="' + editor.language.translate('Clear Formatting') + '"><i class="fa fa-eraser"></i></span>';
+          colors_html += '<span class="fr-command" data-cmd="tableCellBackgroundColor" data-param1="REMOVE" title="' + editor.language.translate('Clear Formatting') + '"><i class="fa ficon-eraser"></i></span>';
         }
       }
 

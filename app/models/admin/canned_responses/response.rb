@@ -97,6 +97,15 @@ class Admin::CannedResponses::Response < ActiveRecord::Base
       })
   end
 
+  def to_count_es_json
+    to_json({
+      :root =>false,
+      :tailored_json => true,
+      :only => [:account_id, :title, :folder_id],
+      :methods => [:es_access_type, :es_group_accesses, :es_user_accesses],
+    })
+  end
+
   private
 
   def validate_title

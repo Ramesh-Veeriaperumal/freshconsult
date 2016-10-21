@@ -13,6 +13,7 @@ class SendgridDomainUpdates < BaseWorker
   sidekiq_options :queue => :sendgrid_domain_updates, :retry => 3, :backtrace => true, :failures => :exhausted
 
   def perform(args)
+    return if Rails.env.development?
     begin 
       unless args['action'].blank?
         domain_in_sendgrid = sendgrid_domain_exists?(args['domain'])
@@ -21,6 +22,7 @@ class SendgridDomainUpdates < BaseWorker
         elsif (domain_in_sendgrid && args['action'] == 'create')
           notify_and_update(args['domain'], args['vendor_id'])
         elsif (args['action'] == 'create' or args['action'] == 'delete')
+          Rails.logger.info "Sendgrid #{args['action']} triggered for domain #{args['domain']}"
           self.send("#{args['action']}_record", args['domain'], args['vendor_id'])
         end
       end
@@ -29,6 +31,7 @@ class SendgridDomainUpdates < BaseWorker
         :subject => "Error in updating domain in sendgrid", 
         :recipients => "mail-alerts@freshdesk.com" 
         })
+      raise e
     end
   end
 
@@ -39,8 +42,9 @@ class SendgridDomainUpdates < BaseWorker
 
   def delete_record(domain, vendor_id)
     response = send_request('delete', SendgridWebhookConfig::SENDGRID_API["delete_url"] + domain)
+    Rails.logger.info "Response code for sendgrid delete action code: #{response.code}, message: #{response.message}"
     return false unless response.code == 204
-    Rails.logger.info "Deleting domain #{domain} from sendgrid"
+    Rails.logger.info "Deleted domain #{domain} from sendgrid"
     AccountWebhookKey.destroy_all(account_id: Account.current.id, vendor_id: vendor_id)
   end
 
@@ -50,6 +54,7 @@ class SendgridDomainUpdates < BaseWorker
     post_url = SendgridWebhookConfig::POST_URL % { :full_domain => domain, :key => generated_key }
     post_args = {:hostname => domain, :url => post_url, :spam_check => false, :send_raw => false }
     response = send_request('post', SendgridWebhookConfig::SENDGRID_API["set_url"] , post_args)
+    Rails.logger.info "Response for sendgrid create action code: #{response.code}, message: #{response.message}"
     return false unless response.code == 200
     verification = AccountWebhookKey.new(:account_id => Account.current.id, 
       :webhook_key => generated_key, :vendor_id => vendor_id, :status => 1)
@@ -107,7 +112,9 @@ class SendgridDomainUpdates < BaseWorker
     post_url = SendgridWebhookConfig::POST_URL % { :full_domain => domain, :key => generated_key }
     post_args = { :url => post_url, :spam_check => false, :send_raw => false }
     response = send_request('patch', SendgridWebhookConfig::SENDGRID_API['update_url'] + domain, post_args)
-    AccountWebhookKey.find_by_account_id_and_vendor_id(Account.current.id, vendor_id).update_attributes(:webhook_key => generated_key)
+    Rails.logger.info "Response message for sendgrid update action code: #{response.code}, message: #{response.message}"
+    webhook_key = AccountWebhookKey.find_by_account_id_and_vendor_id(Account.current.id, vendor_id)
+    webhook_key.update_attributes(:webhook_key => generated_key) if webhook_key.present?
   end
 
   def send_request(action, url, post_args={})

@@ -155,8 +155,7 @@ class CompaniesController < ApplicationController
     def es_scoper(per_page)
       order_by = (params[:order_by] == "updated_at") ? :updated_at : :name
       order_type = (params[:order_type] == "desc") ? 'desc' : 'asc'
-      Company.es_filter(current_account.id,params[:letter],(params[:page] || 1),order_by, 
-                                                                              order_type, per_page)
+      Company.es_filter(current_account.id,params[:letter], (params[:page] || 1),order_by, order_type, per_page, request.try(:uuid))
     end
 
     def set_selected_tab

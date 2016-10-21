@@ -13,18 +13,35 @@
 				<% } %>
 			</div>
 			<div class="search-result-info pull-right info-data">
-				<% if (email !== null) { %>
-					<div>
-						<span class="emphasize ellipsis result-info"><%= email %></span>
-					</div>
-				<% } %>
-				<% if (phone !== null) { %>
-					<div>
-						<span class="muted"><%= SEARCH_RESULT_LANG["phone"] %></span> 
-						<span class="emphasize ellipsis result-info"><%= phone %></span>
-					</div>
-				<% } %>
+				<div class="search-result-info-actions pull-right">
+					<a href="/helpdesk/tickets/filter/requester/<%= id %>" data-parallel-url="/helpdesk/tickets/filter_options?filter_name=requester&requester_id=<%= id %>" class="search-result-info-action" data-parallel-placeholder="#ticket-leftFilter" data-pjax="#body-container" title="<%= lang.viewAllTickets %>">
+						<span>
+							<i class="helpdesk_ticket_icon ficon-16"></i>
+						</span>
+					</a>
+				</div>
+				<div class="search-result-info-details">
+					<% if (email !== null) { %>
+						<div>
+							<span>
+								<i class="muted ficon-mail fsize-18" />
+							</span>
+							<span class="emphasize ellipsis search-result-info-attr"><%= email %></span>
+						</div>
+					<% } %>
+					<% if (phone !== null) { %>
+						<div>
+							<span>
+								<i class="muted ficon-phone fsize-16" />
+							</span>
+							<span class="emphasize ellipsis search-result-info-attr"><%= phone %></span>
+						</div>
+					<% } %>
+				</div>
+				
+
 			</div>
+			
 		</div>
 	</div>
 </li>

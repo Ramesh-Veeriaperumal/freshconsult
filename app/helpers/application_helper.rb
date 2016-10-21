@@ -1570,7 +1570,7 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
   # This helper is for the partial expanded/_ticket.html.erb
   def requester(ticket)
     if privilege?(:view_contacts)
-      "<a class='user_name' href='/users/#{ticket.requester.id}' target='_blank' data-pjax='#body-container'>
+      "<a class='user_name' href='/users/#{ticket.requester.id}' target='_blank' data-pjax='#body-container' data-contact-id='#{ticket.requester.id}' data-contact-url='/contacts/#{ticket.requester.id}/hover_card' rel='contact-hover'>
           <span class='emphasize'>#{h(ticket.requester.display_name)}</span>
        </a>".html_safe
     else

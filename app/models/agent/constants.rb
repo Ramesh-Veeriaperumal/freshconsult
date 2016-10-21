@@ -6,7 +6,7 @@ class Agent < ActiveRecord::Base
       :user =>{ 
         :only => [:id,:name,:email,:created_at,:updated_at,:job_title, :active,
                   :phone,:mobile,:twitter_id, :description,:time_zone,:deleted,
-                  :helpdesk_agent,:fb_profile_id,:external_id,:language,:address],
+                  :helpdesk_agent,:fb_profile_id,:external_id,:language,:address, :unique_external_id],
         :methods => [] #User API_OPTIONS method keys are getting included if methods is not defined here.
       }
     }

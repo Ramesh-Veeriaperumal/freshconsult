@@ -15,7 +15,6 @@ window.App.Tickets = window.App.Tickets || {};
 
         init: function(e) {
         if(nba.enable == "true"){
-            $("#nba-loading").addClass("ml_nba") 
             $("#nba-loading").addClass("sloading") 
             this.kissMetricTrackingCode(nba.key)
             this.similar_tickets = [];
@@ -43,13 +42,14 @@ window.App.Tickets = window.App.Tickets || {};
             $(document).on("click.nba",".ficon-like",this.thumbsUp.bind(this));
             $(document).on("click.nba",".ficon-dislike",this.thumbsDown.bind(this));
             $(document).on("click.nba","#fdbk-button",this.submitFeedBack.bind(this));
+            $(document).on("click.nba","#help",this.showHelp.bind(this));
         },
 
         offEventBinding: function() {
             $(document).off("click.nba");
             $(document).off("hover.nba");
             $(document).off("nba_loaded");
-            $(document).off("sidebar_loaded");
+            //$(document).off("sidebar_loaded");
         },
 
         submitFeedBack: function(event){
@@ -59,6 +59,12 @@ window.App.Tickets = window.App.Tickets || {};
             $("#textthanksID").removeClass("sas-hidden");
             event.preventDefault(); 
             this.pushEventToKM("NBA_BETA_FeedBack_No_Text",this.userProperties(0,$("#sas-fdbk-txt").val(),0));
+        },
+
+        showHelp: function(event){
+            inline_manual_player.activateTopic("22248"); 
+            event.stopPropagation();
+            event.preventDefault();
         },
 
         thumbsUp: function(event){
@@ -128,18 +134,18 @@ window.App.Tickets = window.App.Tickets || {};
                 return 
             }
             $(".sas-hd i").toggleClass("ficon-caret-right ficon-caret-down");
-            if ($("#sas-hd-result a span").text() == "Show") {
+            if ($("#show span").text() == "Show") {
                 $("#sas-pnl").removeClass("sas-hidden");
-                $("#sas-hd-result a span").text("Hide");
+                $("#show span").text("Hide");
                 $(".sas-hd").addClass("opened");
                 event.preventDefault()
                 this.pushEventToKM("NBA_BETA_Expanded",this.userProperties(0,"",0));
                 return;
             }
-            if ($("#sas-hd-result a span").text() == "Hide") {
+            if ($("#show span").text() == "Hide") {
                 $(".sas-hd").removeClass("opened");
                 $("#sas-pnl").addClass("sas-hidden")
-                $("#sas-hd-result a span").text("Show");
+                $("#show span").text("Show");
                 event.preventDefault()
                 return;
             }
@@ -302,20 +308,7 @@ window.App.Tickets = window.App.Tickets || {};
         userProperties: function(closedTicket,feedback_text,childTicket){
             return {
                          'account_id': current_account_id,
-                         'parent_ticket_id': nba.ticket.id,
-                         'SAS_ticket_id': this.sas_ids,
-                         'agent_id': nba.ticket.responder.id,
-                         'group_id': nba.ticket.group.id,
-                         'first_response_done': this.isFirstRes,
-                         'source': nba.ticket.source,
-                         'status': nba.ticket.status,
-                         'type': nba.ticket.ticket_type,
-                         'logged_in_user_id': current_user_id,
-                         'page':this.widget_pos,
-                         'no_of_cards':this.cardCount,
-                         'closedTicket_id':closedTicket,
-                         'child_ticket_id':childTicket,
-                         'feedback_text':feedback_text
+                         'fields':current_account_id+'$$'+nba.ticket.id+'$$'+nba.ticket.responder.id+'$$'+nba.ticket.group.id+'$$'+this.isFirstRes+'$$'+nba.ticket.source+'$$'+nba.ticket.status+'$$'+nba.ticket.ticket_type+'$$'+current_user_id+'$$'+this.widget_pos+'$$'+this.cardCount+'$$'+closedTicket+'$$'+childTicket+'$$'+feedback_text+'$$'+this.sas_ids,
                     }
         },
 

@@ -48,6 +48,8 @@ module Facebook
 
     MESSAGE_FIELDS              = FETCH_FIELDS[:message].join(',')
     
+    DM_FIELDS                   = "messages.fields(message, from, created_time)"
+    
     HASH_KEY_DELIMITER          = "::"
 
     MESSAGE_THREAD_ID_DELIMITER = "::"
@@ -57,6 +59,8 @@ module Facebook
     GRAPH_API_VERSION           = "v2.6"
 
     FB_MESSAGE_PREFIX           = "m_"
+
+    REALTIME_MESSSAGING_CHARACTER_LIMIT = 320
     
   end
 end

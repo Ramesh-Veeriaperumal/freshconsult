@@ -228,7 +228,8 @@ end
 
 require 'active_record/connection_adapters/abstract_mysql_adapter'
 #Overridding datatype for primary key
-ActiveRecord::ConnectionAdapters::AbstractMysqlAdapter::NATIVE_DATABASE_TYPES[:primary_key] = "BIGINT UNSIGNED DEFAULT NULL auto_increment PRIMARY KEY"
+ActiveRecord::ConnectionAdapters::AbstractMysqlAdapter::NATIVE_DATABASE_TYPES[:primary_key] = "BIGINT UNSIGNED NOT NULL auto_increment PRIMARY KEY"
+
 
 # Captcha API Keys
 ENV['RECAPTCHA_PUBLIC_KEY']  = '6LfNCb8SAAAAACxs6HxOshDa4nso_gyk0sxKcwAI'

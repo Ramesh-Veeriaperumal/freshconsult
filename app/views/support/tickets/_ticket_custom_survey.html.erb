@@ -59,8 +59,15 @@
       <p><%= default_question_label %></p>
       <div class="survey-buttons">
         <% !JSON.parse(choices).blank? && JSON.parse(choices).each_with_index do |option, index|%>
-          <%= link_to "<span class=\"survey-rating #{CustomSurvey::Survey::CUSTOMER_RATINGS_STYLE[option["survey_question_choice"]["face_value"]]}\"></span><div class='survey-rating-label'>#{h(option["survey_question_choice"]["value"])}</div>".html_safe , support_portal_custom_survey_path(@ticket,option["survey_question_choice"]["face_value"]), :target => "_blank" %>       
+        <% face_value = option["survey_question_choice"]["face_value"]
+          url_new_via_portal = support_portal_custom_survey_path(@ticket,face_value) %>
+           <a class="survey-options" onclick='getSurvey(<%= "\"#{url_new_via_portal}\""%>)' >
+             <span class="survey-rating <%=CustomSurvey::Survey::CUSTOMER_RATINGS_STYLE[face_value] %>">
+             </span>
+             <div class='survey-rating-label'><%=h(option["survey_question_choice"]["value"])%></div>
+           </a> 
           <%end%>
+           <a href="#" id="hidden_survey" target="_blank"></a>
       </div>
     </div>
   </div>

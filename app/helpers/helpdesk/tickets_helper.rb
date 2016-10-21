@@ -716,6 +716,10 @@ module Helpdesk::TicketsHelper
     privilege?(:reply_ticket) && !(@ticket.twitter? || @ticket.facebook? || @ticket.allow_ecommerce_reply?) && @ticket.from_email.present?
   end
 
+  def multifile_enabled?
+    current_account.launched?(:multifile_attachments)
+  end
+
   private 
 
     def ticket_cc_info cc_emails_hash

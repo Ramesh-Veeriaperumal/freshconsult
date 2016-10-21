@@ -58,7 +58,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     :requester_name, :meta_data, :disable_observer, :highlight_subject, :highlight_description, 
     :phone , :facebook_id, :send_and_set, :archive, :required_fields, :disable_observer_rule, 
     :disable_activities, :tags_updated, :system_changes, :activity_type, :misc_changes, 
-    :round_robin_assignment, :related_ticket_ids, :tracker_ticket_id
+    :round_robin_assignment, :related_ticket_ids, :tracker_ticket_id, :unique_external_id
   # Added :system_changes, :activity_type, :misc_changes for activity_revamp -
   # - will be clearing these after activity publish.
 
@@ -348,6 +348,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def facebook?
      source == SOURCE_KEYS_BY_TOKEN[:facebook] and (fb_post) and (fb_post.facebook_page)
+  end
+
+  def facebook_realtime_message?
+    fb_post.realtime_message?
   end
 
   #This is for mobile app since it expects twitter handle & facebook page and not a boolean value

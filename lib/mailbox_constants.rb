@@ -8,7 +8,7 @@ module MailboxConstants
   # Array defination
   # [key, name, alert_mesage, timeout, server, imap_port, smtp_port]
   MAILBOX_SERVER_PROFILES = [
-    [:gmail,      "Gmail",    I18n.t('mailbox.smtp_alert_gmail'),    25, "gmail.com", 993, 587],
+    [:gmail,      "Gmail",    I18n.t('mailbox.smtp_alert_gmail'),    10, "gmail.com", 993, 587],
     [:aol,        "AOL",      I18n.t('mailbox.smtp_alert_aol'),      3,  "aol.com",   993, 587],
     [:other,      "Other",    I18n.t('mailbox.smtp_alert_other'),    4]
   ]

@@ -1,0 +1,10 @@
+<li class="spotlight_result">
+  <a href="<%= path %>" data-pjax="#body-container">
+    <span class="pull-right" title="<%= lang.viewAllTickets %>">
+      <i class="ficon-ticket ficon-16 spotlight-result-user-ticket-icon"></i>
+    </span>
+    <i class="user_icon"></i>      
+        <%= content %>                
+  </a>
+  <a href="/helpdesk/tickets/filter/requester/<%= id %>" data-parallel-url="/helpdesk/tickets/filter_options?filter_name=requester&requester_id=<%= id %>" class="spotlight-result-hidden-user-tickets-link" data-parallel-placeholder="#ticket-leftFilter" data-pjax="#body-container"></a>   
+</li>
