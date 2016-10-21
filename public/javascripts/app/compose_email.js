@@ -28,7 +28,7 @@ var ComposeEmail = {
     unbindEvents: function(){
     	this.$el.off('.compose');
     	jQuery('#ComposeTicket').off('.compose');
-    	jQuery('#ComposeTicket').off('.pjax_submit');
+    	jQuery('#ComposeTicket').off('.new_ticket_compose');
     	this.$body.off('.compose');
       TicketTemplate.destroy();
     },
@@ -137,7 +137,7 @@ var ComposeEmail = {
 			this.submitForm(_form);
 		}.bind(this));
 
-		jQuery('#ComposeTicket').on("submit.pjax_submit", function(ev){
+		jQuery('#ComposeTicket').on("submit.new_ticket_compose", function(ev){
 			preventDefault(ev);
 
 			var _form = jQuery(this);
@@ -189,7 +189,9 @@ var ComposeEmail = {
 		// If multifile enabled. Then the page will submit with pjax.
 		// In single file attachment, the file not attachec in pjax submit. So we checked multifile enable feature.
 		if(_form.data('multifileEnabled')) {
-			_form.trigger('submit.pjax_submit');
+			if(_form.valid()) {
+				_form.trigger('submit.pjax_submit');
+			}
 		} else {
 			_form.submit();
 		}
