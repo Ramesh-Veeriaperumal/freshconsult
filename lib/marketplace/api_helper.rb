@@ -70,18 +70,10 @@ module Marketplace::ApiHelper
     def freshplug_script(installed_plug)
       script = plug_code_from_cache(installed_plug[:version_id])
 
-      unless script.blank?
-        liquid_objs = freshplug_liquids(installed_plug)
-        Liquid::Template.parse(script.gsub("}}", " | encode_html}}")).render(liquid_objs, 
-            :filters => [Integrations::FDTextFilter],
-            :registers => { :plug_asset => installed_plug[:version_id]}).html_safe
-      else
-        error = []
-        error << %(<div class='alert alert-error'>)
-        error << t('marketplace.apps_unavailable')
-        error << %( </div> )
-        error.join(" ").html_safe
-      end
+      liquid_objs = freshplug_liquids(installed_plug)
+      Liquid::Template.parse(script.gsub("}}", " | encode_html}}")).render(liquid_objs, 
+          :filters => [Integrations::FDTextFilter],
+          :registers => { :plug_asset => installed_plug[:version_id]}).html_safe
     end
 
     def freshplug_liquids(installed_plug)
