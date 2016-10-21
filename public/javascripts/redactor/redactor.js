@@ -4773,7 +4773,8 @@ $.fn.insertExternal = function(html)
 
 	RemoveCursorImage.prototype = {
 		init: function(){
-			jQuery(this.$form).on("submit", $.proxy(this.remove, this));
+			// Pjax_submit namespace is to bind the new ticket and compose email form submit trigger.
+			jQuery(this.$form).on("submit.pjax_submit", $.proxy(this.remove, this));
 		},
 		remove: function(){
 			this.$editor.removeCursorImage();
