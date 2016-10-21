@@ -33,4 +33,5 @@ JSON.generate(@items.map do |item|
     end
     response_hash.merge!(custom_fields: custom_fields)
   end
+  response_hash
 end)

@@ -17,13 +17,16 @@ class ApiSearchController < ApiApplicationController
     sanitize_custom_fields(record) if custom_fields.any?
 
     ticket_validation = Search::TicketValidation.new(record.merge({ticket_fields: ticket_fields}))
-    render_custom_errors(ticket_validation, true) unless ticket_validation.valid?
+    
+    if ticket_validation.valid?
+      search_terms = tree.accept(visitor)
+      ticket_ids = ids_from_esv2_response(query_es(search_terms, :tickets))
 
-    search_terms = tree.accept(visitor)
-    ticket_ids = ids_from_esv2_response(query_es(search_terms, :tickets))
-
-    @items = paginate_items(ticket_ids.any? ? ticket_scoper.where(id: ticket_ids) : [])
-    @name_mapping = custom_fields
+      @items = ticket_ids.any? ? paginate_items(ticket_scoper.where(id: ticket_ids)) : []
+      @name_mapping = custom_fields
+    else
+      render_custom_errors(ticket_validation, true)
+    end
   end
 
   private

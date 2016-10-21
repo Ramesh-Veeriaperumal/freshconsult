@@ -21,9 +21,10 @@ module SearchHelper
   # API Search controller
   def ids_from_esv2_response(json)
     result = ActionController::Parameters.new(JSON.parse json)
-    if result[:hits][:hits].any?
+    if result[:hits] && result[:hits][:hits] && result[:hits][:hits].any?
       result[:hits][:hits].map{|x| x["_id"].to_i}
     else
+      # In case of error return empty array
       []
     end
   end
@@ -35,7 +36,7 @@ module SearchHelper
       url = "http://localhost:9200/ticket_index/ticket/#{ticket.id}"
       site = RestClient::Resource.new(url)
       begin
-        response = site.put(ticket.to_esv2_json, :content_type=>'application/json')
+        response = site.put(ticket.to_esv2_json, content_type: 'application/json')
       rescue RestClient::Exception
         puts "For ticket #{ticket.id} \nResponse Code: #{exception.response.code} \nResponse Body: #{exception.response.body} \n"
       end
@@ -56,17 +57,15 @@ module SearchHelper
   def query_es(terms, resource = :tickets)
     url = ""
     if resource == :tickets
-      #http://localhost:9200/tickets_p1s1v1/_search
-      url = "http://localhost:9200/ticket_index/ticket/_search"
+      url = "http://localhost:9200/tickets_p1s1v1/_search"
     elsif resource == :contacts
-      #http://localhost:9200/users_p1s1v1/_search
-      url = "http://localhost:9200/contact_index/contact/_search"
+      url = "http://localhost:9200/users_p1s1v1/_search"
     end
     search_query = { _source: 'false', query: { bool: { filter: [ terms ] } } }
     begin
       response = RestClient::Request.execute(method: :get, url: url, payload: search_query.to_json)
     rescue RestClient::Exception => exception
-      response = { error: "Response Code: #{exception.response.code} | Response Body: #{exception.response.body} \n" }
+      response = exception.response.body
     end
     return response
   end
