@@ -158,13 +158,16 @@ swapEmailNote = function(formid, link){
 		//For Facebook and Twitter Reply forms.
 		$element = $('#' + formid + ' textarea').get(0);
 		//changes done as part of linked tickets
-		if($(link).data('replytoHandle')){
-			if($element.value.indexOf($(link).data('replytoHandle')) == -1){
-				$element.value = $(link).data('replytoHandle')+$element.value;
-				$element.trigger('change');
+		if($(link).data('replytoHandle')) {
+			if($element.value.trim() !== $(link).data('replytoHandle')) {
+				if ($(link).data('replytoHandle').trim() == $(link).data('user').trim()) {
+					$(link).data('user', '');
+				}
+				$element.value = $(link).data('replytoHandle') + $(link).data('user');
+				$($element).trigger('keydown');
 			}
 		}
-		$element.value += $element.value.length ? " " : "";
+		//$element.value += $element.value.length ? " " : "";
 		setCaretToPos($element, $element.value.length);
 	} else {
 		//For all other reply forms using redactor.
@@ -279,17 +282,11 @@ $('body').on("click.conversation_action", '.conv-action-icon', function(ev){
 		var noteIdNo = ev.target.getAttribute("noteId");
 		var typeOfBtn = selectedId.substring(0, 5);
 			if(typeOfBtn === "cnt-f")	//cnt-fwd-{noteId}
-					{jQuery("#edit-"+noteIdNo).hide();
-					jQuery("#note_details_"+noteIdNo).hide();}
+					{jQuery("#edit-"+noteIdNo).hide();}
 			if(typeOfBtn === "edit-")	//edit-{noteId}
-					{jQuery("#cnt-fwd-"+noteIdNo).hide();
-					jQuery("#note_details_"+noteIdNo).hide();}
+					{jQuery("#cnt-fwd-"+noteIdNo).hide();}
 	    // end-------hack for hiding multiple instance of fwd edit in public note-----
 	});
-
-		$('body').on('click', ".editNoteCancelButton , .editNoteUpdateButton", function() {
-				jQuery('.details').show();
-				});
 
 $('body').on('mouseover.ticket_details', ".ticket_show #draft-save", function() {
 	var hasMoment = $(this).attr('data-moment');
@@ -595,6 +592,10 @@ var scrollToError = function(){
 
 		var _this = $(this);
 		var previous =  _this.data("previous");
+		//in case of deleted status, manually pass the condition for api trigger
+		if(previous !== "" && !previous){
+			previous = true;
+		}
 		_this.data("previous", _this.val());
 		var select_group = jQuery('#TicketProperties .default_internal_group select')[0];
 		var prev_val = ""
@@ -792,6 +793,22 @@ var scrollToError = function(){
 
 	//End of Twitter Replybox JS
 
+	//For Facebook DM Replybox
+
+	function bindFacebookDMCount() {
+	  $('#send-fb-post-cnt-reply-body').NobleCount('#SendReplyCounter', { on_negative : "error", max_chars : 320, on_update: updateCount });
+		updateCount();
+	}
+
+	function updateCount() {
+	  var char_val = $("#SendReplyCounter").text();
+	  $('#send-fb-post-cnt-reply-body').data("reply-count", char_val);
+	}
+
+
+	// End of Facebook DM Replybox
+
+
 	//For Clearing Bcc, Cc email list and hiding those containers
 	$('body').on('click.ticket_details', '[rel=toggle_email_container]',function(ev) {
 		ev.preventDefault();
@@ -901,7 +918,6 @@ var scrollToError = function(){
           window.replySubscription.cancel();
         }
 		$(this).parents('form').trigger('submit');
-		jQuery('.details').show();
 	});
 
 	$('body').on('click.ticket_details', ".conversation_thread .request_panel form .cancel_btn", function(ev) {
@@ -950,8 +966,6 @@ var scrollToError = function(){
 
 		// Remove formChanged field in the form
 		_form.data("formChanged",false);
-
-		jQuery('.details').show();
 	});
 
 	// More Event bindings for Draft Saving
@@ -980,7 +994,7 @@ var scrollToError = function(){
 	}
 
 	$('body').on('submit.ticket_details', ".conversation_thread .request_panel form", function(ev) {
-		
+
 		var _form = $(this);
 		if (_form.valid()) {
 
@@ -1047,6 +1061,7 @@ var scrollToError = function(){
 						if(eligibleForReply(_form)){
 							handleIEReply(_form);
 							submitTicketProperties();
+							removeFormChangedFlag();
 							return true;
 						}
 						changeStatusTo(currentStatus);
@@ -1071,6 +1086,7 @@ var scrollToError = function(){
 				if($.browser.msie || $.browser.msedge) {
 					if(eligibleForReply(_form)){
 						handleIEReply(_form);
+						removeFormChangedFlag();
 						return true;
 					}
 					return false;
@@ -1092,8 +1108,7 @@ var scrollToError = function(){
 			_form.find('input[type=submit]').prop('disabled', false);
 		}
 
-		// Remove formChanged field in the form on any submit
-		$(".form-unsaved-changes-trigger").each(function(){$(this).data("formChanged",false)});
+		removeFormChangedFlag();
 	});
 
 
@@ -1186,7 +1201,6 @@ var scrollToError = function(){
 			},
 			success: function(response, statusCode, xhr) {
 				releaseForm(_form);
-				
 				var statusChangeField = $('#send_and_set');
 
 				if(App.Tickets.TicketDetail.inlineError) {
@@ -1616,6 +1630,14 @@ var scrollToError = function(){
 				$('[id$=cnt-reply-body]').val(existingReplyMsg+'<br/>'+broadcastMsg).trigger('change');
 			}
 		}
+
+	  	if ($('#cnt-reply').data('isTwitter')) {
+			getTweetTypeAndBind();
+	  	}
+	  	if($('#cnt-reply').data('is-facebook-realtime-dm') && $('#send-fb-post-cnt-reply-body').hasClass('facebook-realtime')) {
+	  		bindFacebookDMCount();
+	  	}
+
 		swapEmailNote('cnt-' + $(this).data('note-type'), this);
 	});
 
@@ -1773,6 +1795,11 @@ var scrollToError = function(){
 		var form = $(event.target).parents('.form-unsaved-changes-trigger');
 		form.data("formChanged",true);
 	})
+
+	function removeFormChangedFlag(){
+		// Remove formChanged field in the form on any submit
+		$(".form-unsaved-changes-trigger").each(function(){$(this).data("formChanged",false)});
+	}
 
 	// Need to set this on global for Fjax.js
 	if(typeof customMessages=='undefined') customMessages = {};
