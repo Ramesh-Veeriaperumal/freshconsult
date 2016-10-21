@@ -880,7 +880,7 @@ module SupportHelper
 		output << %(<span>#{Language.current.name.truncate(10)}</span>)
 		output << %(<span class="caret"></span></h5>)
 		output << dropdown_menu(portal.language_list)
-		output << %(</div></li></ul>)
+		output << %(</li></ul></div>)
 		output.html_safe
 	end
 
