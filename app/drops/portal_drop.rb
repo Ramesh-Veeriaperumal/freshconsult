@@ -31,8 +31,7 @@ class PortalDrop < BaseDrop
               "/assets/misc/logo.png" :
               AwsWrapper::S3Object.url_for(source.logo.content.path(:logo), 
                             source.logo.content.bucket_name,
-                            :secure => true, 
-                            :expires => 7.days.to_i)
+                            :secure => true)
                 
     end
   end

@@ -6802,7 +6802,7 @@ en:
     published_in: "Published in"
     installs: Installs
     no_apps: No Apps available
-    no_custom_apps_html: "No custom apps have been published. To get started, please visit our <a href='https://developers.freshdesk.com' target='_blank'> developer site.</a>"
+    empty_custom_apps_msg_html: "No custom apps have been published. To get started, please visit our <a href='%{dev_url}' target='_blank'> developer site.</a>"
     no_apps_in_category: No Apps available in this category
     related_categories: "Apps from Related Categories:"
     similar_apps: "Similar Apps:"
@@ -7977,6 +7977,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
   latest_ticket: "new update"
   latest_tickets: "new updates"
   search:
+    view_all_tickets: "View all tickets"
     recent_searches: "Recent Searches"
     recently_viewed: "Recently Viewed"
     no_results_msg: "No results found"

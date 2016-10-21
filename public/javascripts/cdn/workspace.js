@@ -24,6 +24,7 @@
 //= require navsearch_utils.js
 //= require navsearch.js
 //= require app/search/templates/spotlight_result
+//= require app/search/templates/spotlight_result_user
 //= require app/search/templates/spotlight_result_recent_search
 //= require app/search/templates/spotlight_result_recent_ticket
 //= require report/date.js

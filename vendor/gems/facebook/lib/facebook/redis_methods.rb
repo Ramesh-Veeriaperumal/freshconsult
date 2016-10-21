@@ -6,6 +6,7 @@ module Facebook::RedisMethods
   APP_RATE_LIMIT_EXPIRY  = 600
   API_HIT_COUNT_EXPIRY   = 3600
   USER_RATE_LIMIT_EXPIRY = 1800
+  PAGE_RATE_LIMIT_EXPIRY = 1800
   
   #10 minutes expiry for APP RATE LIMITS
   def throttle_fb_feed_processing
@@ -20,6 +21,10 @@ module Facebook::RedisMethods
     redis_key_exists?(FACEBOOK_USER_RATE_LIMIT % {:page_id => page_id})
   end
   
+  def page_rate_limit_reached?(account_id, page_id)
+    redis_key_exists?(FACEBOOK_PAGE_RATE_LIMIT % {:account_id => account_id, :page_id => page_id})
+  end
+
   def fb_api_hit_count(page_id)
     get_others_redis_key(FACEBOOK_USER_RATE_LIMIT % {:page_id => page_id})
   end
@@ -29,6 +34,11 @@ module Facebook::RedisMethods
     set_others_redis_key(FACEBOOK_APP_RATE_LIMIT, 1, APP_RATE_LIMIT_EXPIRY) 
   end
   
+  #30 minutes expiry for PAGE RATE LIMITS
+  def throttle_fb_page_processing(account_id, page_id)
+    set_others_redis_key(FACEBOOK_PAGE_RATE_LIMIT % {:account_id => account_id, :page_id => page_id}, 1, PAGE_RATE_LIMIT_EXPIRY) unless page_rate_limit_reached?(account_id, page_id)
+  end  
+
   #30 minutes expiry for USER RATE LIMITS
   def throttle_page_processing(page_id)
     set_others_redis_key(FACEBOOK_USER_RATE_LIMIT % {:page_id => page_id}, 1, USER_RATE_LIMIT_EXPIRY) unless user_api_rate_limit_reached?(page_id)
