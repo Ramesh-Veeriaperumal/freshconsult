@@ -37,6 +37,7 @@ class Helpdesk::ConversationsController < ApplicationController
   before_filter :check_trial_customers_limit, :only => [:reply, :forward, :reply_to_forward]
   before_filter :validate_ecommerce_reply, :only => :ecommerce
   around_filter :run_on_slave, :only => [:update_activities, :has_unseen_notes, :traffic_cop_warning]
+  before_filter :validate_facebook_dm_reply, :only => [:facebook]
 
   TICKET_REDIRECT_MAPPINGS = {
     "helpdesk_ticket_index" => "/helpdesk/tickets"
@@ -258,6 +259,10 @@ class Helpdesk::ConversationsController < ApplicationController
     end
     
     private
+
+      def validate_facebook_dm_reply
+        create_error(:facebook) if @item.notable.facebook_realtime_message? and @item.body.length > Facebook::Constants::REALTIME_MESSSAGING_CHARACTER_LIMIT
+      end
       
       def add_forum_post
         @topic = Topic.find_by_id_and_account_id(@parent.ticket_topic.topic_id,current_account.id)
@@ -367,7 +372,7 @@ class Helpdesk::ConversationsController < ApplicationController
             FreshdeskErrorsMailer.error_email(nil, {:domain_name => current_account.full_domain}, nil, {
               :subject => "Maximum thread to, cc, bcc threshold crossed for Account :#{current_account.id} ", 
               :recipients => ["mail-alerts@freshdesk.com", "noc@freshdesk.com"],
-              :additional_info => {:info => "Please check spam activity in Ticket : @parent.id"}
+              :additional_info => {:info => "Please check spam activity in Ticket : #{@parent.id}"}
               })
           end
         end

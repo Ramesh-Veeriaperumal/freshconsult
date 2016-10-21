@@ -40,7 +40,7 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :normalize_params, :only => :index
   before_filter :cache_filter_params, :only => [:custom_search]
   before_filter :load_cached_ticket_filters, :load_ticket_filter, :check_autorefresh_feature, :load_sort_order , :only => [:index, :filter_options, :old_tickets,:recent_tickets]
-  before_filter :get_tag_name, :clear_filter, :only => :index
+  before_filter :get_tag_name, :clear_filter, :only => [:index, :filter_options]
   before_filter :add_requester_filter , :only => [:index, :user_tickets]
   before_filter :load_filter_params, :only => [:custom_search], :if => :es_tickets_enabled?
   before_filter :load_article_filter, :only => [:index, :custom_search, :full_paginate]
@@ -994,7 +994,10 @@ class Helpdesk::TicketsController < ApplicationController
   def get_solution_detail
     language = Language.find_by_code(params[:language]) || Language.for_current_account
     sol_desc = current_account.solution_article_meta.find(params[:id]).send("#{language.to_key}_article")
-    render :text => Helpdesk::HTMLSanitizer.sanitize_for_insert_solution(sol_desc.description) || ""
+    @sol_attach = sol_desc.attachments
+    @sol_cloud_files = sol_desc.cloud_files
+    @sol_description = Helpdesk::HTMLSanitizer.sanitize_for_insert_solution(sol_desc.description) || ""
+    render :partial => '/helpdesk/tickets/components/insert_solutions.rjs'
   end
 
   def latest_note

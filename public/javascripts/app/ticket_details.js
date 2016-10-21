@@ -158,13 +158,16 @@ swapEmailNote = function(formid, link){
 		//For Facebook and Twitter Reply forms.
 		$element = $('#' + formid + ' textarea').get(0);
 		//changes done as part of linked tickets
-		if($(link).data('replytoHandle')){
-			if($element.value.indexOf($(link).data('replytoHandle')) == -1){
-				$element.value = $(link).data('replytoHandle')+$element.value;
-				$element.trigger('change');
+		if($(link).data('replytoHandle')) {
+			if($element.value.trim() !== $(link).data('replytoHandle')) {
+				if ($(link).data('replytoHandle').trim() == $(link).data('user').trim()) {
+					$(link).data('user', '');
+				}
+				$element.value = $(link).data('replytoHandle') + $(link).data('user');
+				$($element).trigger('keydown');
 			}
 		}
-		$element.value += $element.value.length ? " " : "";
+		//$element.value += $element.value.length ? " " : "";
 		setCaretToPos($element, $element.value.length);
 	} else {
 		//For all other reply forms using redactor.
@@ -589,6 +592,10 @@ var scrollToError = function(){
 
 		var _this = $(this);
 		var previous =  _this.data("previous");
+		//in case of deleted status, manually pass the condition for api trigger
+		if(previous !== "" && !previous){
+			previous = true;
+		}
 		_this.data("previous", _this.val());
 		var select_group = jQuery('#TicketProperties .default_internal_group select')[0];
 		var prev_val = ""
@@ -785,6 +792,22 @@ var scrollToError = function(){
 
 
 	//End of Twitter Replybox JS
+
+	//For Facebook DM Replybox
+
+	function bindFacebookDMCount() {
+	  $('#send-fb-post-cnt-reply-body').NobleCount('#SendReplyCounter', { on_negative : "error", max_chars : 320, on_update: updateCount });
+		updateCount();
+	}
+
+	function updateCount() {
+	  var char_val = $("#SendReplyCounter").text();
+	  $('#send-fb-post-cnt-reply-body').data("reply-count", char_val);
+	}
+
+
+	// End of Facebook DM Replybox
+
 
 	//For Clearing Bcc, Cc email list and hiding those containers
 	$('body').on('click.ticket_details', '[rel=toggle_email_container]',function(ev) {
@@ -1607,6 +1630,14 @@ var scrollToError = function(){
 				$('[id$=cnt-reply-body]').val(existingReplyMsg+'<br/>'+broadcastMsg).trigger('change');
 			}
 		}
+
+	  	if ($('#cnt-reply').data('isTwitter')) {
+			getTweetTypeAndBind();
+	  	}
+	  	if($('#cnt-reply').data('is-facebook-realtime-dm') && $('#send-fb-post-cnt-reply-body').hasClass('facebook-realtime')) {
+	  		bindFacebookDMCount();
+	  	}
+
 		swapEmailNote('cnt-' + $(this).data('note-type'), this);
 	});
 

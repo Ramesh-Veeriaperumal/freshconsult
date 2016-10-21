@@ -15,7 +15,7 @@ window.App = window.App || {};
       this.bindForCancelBtn();
       this.bindForEditBtn();
       this.bindForShowMaster();
-
+      
       this.modalBindings();
       this.outdateOrUpdate();
     },
@@ -126,7 +126,6 @@ window.App = window.App || {};
         $this.autoSave.stopSaving();
         $(".article-edit-form")[0].reset();
         $('.breadcrumb').removeClass('breadcrumb-edit');
-        $this.highlightCode();
 
         if ($this.autoSave.totalCount > 0) {
           $this.setFormValues();
@@ -346,6 +345,7 @@ window.App = window.App || {};
 
 
     },
+
     toggleShowMaster: function () {
       $('#show_master_article').toggleClass('hide');
     }

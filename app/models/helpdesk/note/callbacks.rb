@@ -122,13 +122,15 @@ class Helpdesk::Note < ActiveRecord::Base
       if notable.customer_performed?(user)
         # Ticket re-opening, moved as an observer's default rule
         e_notification = account.email_notifications.find_by_notification_type(EmailNotification::REPLIED_BY_REQUESTER)
-        Helpdesk::TicketNotifier.send_later(:notify_by_email, (EmailNotification::REPLIED_BY_REQUESTER),
-                                              notable, self) if notable.responder && e_notification.agent_notification? && replied_by_customer?
-        if public_note? 
-          if performed_by_client_manager?
-            Helpdesk::TicketNotifier.send_later(:notify_by_email, EmailNotification::COMMENTED_BY_AGENT, notable, self)
-          end
+        if e_notification.agent_notification? && replied_by_customer?
+          send_requester_replied_notification if notable.responder
+          send_requester_replied_notification(true) if Account.current.features?(:shared_ownership) and notable.internal_agent
         end
+
+        if public_note? and performed_by_client_manager?
+          Helpdesk::TicketNotifier.send_later(:notify_by_email, EmailNotification::COMMENTED_BY_AGENT, notable, self)
+        end
+
         if inbound_email? && !self.private? && notable.included_in_cc?(user.email)          
           additional_emails = [notable.requester.email] if !notable.included_in_cc?(notable.requester.email)
           # Using cc notification to send notification to requester about new comment by cc
@@ -137,29 +139,30 @@ class Helpdesk::Note < ActiveRecord::Base
         end
         handle_notification_for_agent_as_req if ( !incoming && notable.agent_as_requester?(user.id))
 
-        if notable.cc_email.present? && !self.private?
-          if user.id == notable.requester_id
-            Helpdesk::TicketNotifier.send_later(:send_cc_email, notable , self, {})
-          end
+        if notable.cc_email.present? && user.id == notable.requester_id && !self.private?
+          Helpdesk::TicketNotifier.send_later(:send_cc_email, notable , self, {})
         end
 
-      else    
+      else
         e_notification = account.email_notifications.find_by_notification_type(EmailNotification::COMMENTED_BY_AGENT)  
         #notify the agents only for notes
         notifying_agents
         #notify the customer if it is public note
         if note? && !private && e_notification.requester_notification?
-        Helpdesk::TicketNotifier.send_later(:notify_by_email, EmailNotification::COMMENTED_BY_AGENT, notable, self)
-        Helpdesk::TicketNotifier.send_later(:send_cc_email, notable , self, {}) if notable.cc_email.present?
+          Helpdesk::TicketNotifier.send_later(:notify_by_email, EmailNotification::COMMENTED_BY_AGENT, notable, self)
+          Helpdesk::TicketNotifier.send_later(:send_cc_email, notable , self, {}) if notable.cc_email.present?
         #handle the email conversion either fwd email or reply
         elsif email_conversation?
           send_reply_email
           create_fwd_note_activity(self.to_emails) if fwd_email?
         end
-
         # notable.responder ||= self.user unless private_note? # Added as a default observer rule
-
       end
+    end
+
+    def send_requester_replied_notification(internal_notification = false)
+      Helpdesk::TicketNotifier.send_later(:notify_by_email, (EmailNotification::REPLIED_BY_REQUESTER),
+              notable, self, {:internal_notification => internal_notification})
     end
 
     def handle_notification_for_agent_as_req
@@ -256,7 +259,7 @@ class Helpdesk::Note < ActiveRecord::Base
 
     def update_ticket_states
       user_id = User.current.id if User.current
-      Tickets::UpdateTicketStatesWorker.perform_async(
+      ::Tickets::UpdateTicketStatesWorker.perform_async(
             { :id => id, :model_changes => @model_changes,
               :freshdesk_webhook => freshdesk_webhook?,
               :current_user_id =>  user_id }

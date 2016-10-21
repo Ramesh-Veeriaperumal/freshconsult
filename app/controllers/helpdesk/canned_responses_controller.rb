@@ -9,13 +9,18 @@ class Helpdesk::CannedResponsesController < ApplicationController
   def index
     respond_to do |format|
       format.html { 
-         ca_facets = ca_folders_from_es(Admin::CannedResponses::Response, {:size => 300}, default_visiblity)
-         process_ca_data(ca_facets)
+        if redis_key_exists?(COUNT_ESV2_READ_ENABLED)
+          ca_folders_response = ca_folders_from_esv2("Admin::CannedResponses::Response", {:size => 300}, default_visiblity)
+          parse_esv2_ca_data(ca_folders_response)
+        else
+          ca_facets = ca_folders_from_es(Admin::CannedResponses::Response, {:size => 300}, default_visiblity)
+          process_ca_data(ca_facets)
+        end
         #render :partial => "helpdesk/tickets/components/canned_responses"
         render :partial => "helpdesk/tickets/components/ticket_canned_responses"
       }
       format.nmobile {
-        @ca_responses = accessible_from_es(Admin::CannedResponses::Response, {:load => Admin::CannedResponses::Response::INCLUDE_ASSOCIATIONS_BY_CLASS, :size => 300}, default_visiblity, "raw_title")
+        @ca_responses = fetch_from_es("Admin::CannedResponses::Response", {:load => Admin::CannedResponses::Response::INCLUDE_ASSOCIATIONS_BY_CLASS, :size => 300}, default_visiblity, "raw_title")
         @ca_responses = accessible_elements(scoper, query_hash('Admin::CannedResponses::Response', 'admin_canned_responses', nil, [:folder])) if @ca_responses.nil?
         canned_responses = @ca_responses.map{ |canned_response| canned_response.to_mob_json }
         render :json => canned_responses
@@ -37,7 +42,7 @@ class Helpdesk::CannedResponsesController < ApplicationController
   def recent
     @id_data = ActiveSupport::JSON.decode params[:ids] || []
     @ticket = current_account.tickets.find(params[:ticket_id].to_i) unless params[:ticket_id].blank?
-    @ca_responses = accessible_from_es(Admin::CannedResponses::Response, {:load => Admin::CannedResponses::Response::INCLUDE_ASSOCIATIONS_BY_CLASS}, default_visiblity,"raw_title", nil, @id_data)
+    @ca_responses = fetch_from_es("Admin::CannedResponses::Response", {:load => Admin::CannedResponses::Response::INCLUDE_ASSOCIATIONS_BY_CLASS}, default_visiblity,"raw_title", nil, @id_data)
     @ca_responses = accessible_elements(scoper, query_hash('Admin::CannedResponses::Response', 'admin_canned_responses', ["`admin_canned_responses`.id IN (?)",@id_data])) if @ca_responses.nil?
     @ca_responses.blank? ? @ca_responses : @ca_responses.compact!
     respond_to do |format|
@@ -50,7 +55,7 @@ class Helpdesk::CannedResponsesController < ApplicationController
 
   def search
     @ticket = current_account.tickets.find(params[:ticket].to_i) unless params[:ticket].blank?
-    @ca_responses = accessible_from_es(Admin::CannedResponses::Response, {:load => Admin::CannedResponses::Response::INCLUDE_ASSOCIATIONS_BY_CLASS}, default_visiblity,"raw_title")
+    @ca_responses = fetch_from_es("Admin::CannedResponses::Response", {:load => Admin::CannedResponses::Response::INCLUDE_ASSOCIATIONS_BY_CLASS, :size => 20}, default_visiblity,"raw_title")
     @ca_responses = accessible_elements(scoper, query_hash('Admin::CannedResponses::Response', 'admin_canned_responses', ["`admin_canned_responses`.title like ?","%#{params[:search_string]}%"])) if @ca_responses.nil?
     @ca_responses.blank? ? @ca_responses : @ca_responses.compact!
     respond_to do |format|
@@ -104,6 +109,27 @@ class Helpdesk::CannedResponsesController < ApplicationController
       end
     rescue Exception => e
       #Any ES execption fallback to db
+      fetch_ca_folders_from_db
+    end
+  end
+
+  def parse_esv2_ca_data response
+    begin
+      if response.nil?
+        fetch_ca_folders_from_db
+      else
+        folders_list = response["aggregations"]["ca_folders"]["buckets"]
+        folder_hash = {}
+        folders_list.each do |folder_obj|
+          folder_hash[folder_obj["key"]] = folder_obj["doc_count"]
+        end
+        folder_ids = folder_hash.keys
+        @ca_folders = current_account.canned_response_folders.where(id: folder_ids) unless folder_ids.blank?
+        @ca_folders.each do |folder|
+          folder.visible_responses_count = folder_hash[folder.id]
+        end
+      end
+    rescue Exception => e
       fetch_ca_folders_from_db
     end
   end

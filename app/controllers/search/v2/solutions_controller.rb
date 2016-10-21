@@ -35,7 +35,7 @@ class Search::V2::SolutionsController < ApplicationController
         es_params[:sort_direction]      = @sort_direction
         es_params[:size]                = @size
         es_params[:from]                = @offset
-      end.merge(ES_V2_BOOST_VALUES[@search_context])
+      end
     end
 
     def search_and_assign

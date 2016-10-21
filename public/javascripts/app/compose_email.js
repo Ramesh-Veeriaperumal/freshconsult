@@ -28,6 +28,7 @@ var ComposeEmail = {
     unbindEvents: function(){
     	this.$el.off('.compose');
     	jQuery('#ComposeTicket').off('.compose');
+    	jQuery('#ComposeTicket').off('.pjax_submit');
     	this.$body.off('.compose');
       TicketTemplate.destroy();
     },
@@ -132,17 +133,28 @@ var ComposeEmail = {
 				name: 'save_and_compose',
 				value: true
 			}));
-			_form.submit();
-		});
 
-		jQuery('#ComposeTicket').on("submit.compose", function(){
+			this.submitForm(_form);
+		}.bind(this));
+
+		jQuery('#ComposeTicket').on("submit.pjax_submit", function(ev){
+			preventDefault(ev);
+
 			var _form = jQuery(this);
 			if(_form.valid()) {
         jQuery("#compose-submit").text(  jQuery("#compose-submit").data('loading-text')).attr('disabled', true);
         jQuery("#compose-submit").next().attr('disabled', true);
         jQuery(".cancel-btn").attr('disabled', true);
 				// _form.find("button, a.btn").attr('disabled',true);
+
+				pjax_form_submit("#ComposeTicket");
 			}
+
+			// To prevent the normal submit on pjax form submit
+			if(!_form.data('multifileEnabled')) {
+				return false;
+			}
+
 		});
 
 	    this.$body.on('click.compose', '#compose-submit', function(ev){
@@ -162,15 +174,26 @@ var ComposeEmail = {
 	        }
 
 	        jQuery(".cc-address .cc-error-message").remove();
-	        jQuery("#ComposeTicket").submit();
-	    });
+
+	        var _form = jQuery("#ComposeTicket");
+	        this.submitForm(_form);
+	    }.bind(this));
 
 		this.$body.on('click.compose', 'a[rel="ticket_canned_response"]', function(ev){
 				ev.preventDefault();
     		  	jQuery("#canned_response_show").attr('data-tiny-mce-id', "#helpdesk_ticket_ticket_body_attributes_description_html");
 				jQuery('#canned_response_show').trigger('click');
 		});
-    }
+    },
+    submitForm: function (_form) {
+		// If multifile enabled. Then the page will submit with pjax.
+		// In single file attachment, the file not attachec in pjax submit. So we checked multifile enable feature.
+		if(_form.data('multifileEnabled')) {
+			_form.trigger('submit.pjax_submit');
+		} else {
+			_form.submit();
+		}
+	}
 };
 
 

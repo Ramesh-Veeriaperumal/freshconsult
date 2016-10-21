@@ -187,7 +187,7 @@ Helpdesk = Helpdesk || {};
                                 form.find(".existing-file-list input[name='helpdesk_note[attachments][][resource]']").remove();
                                 form.find(".existing-file-list input[name='[cloud_file_attachments][]']").remove();
                             }
-                            form.submit();
+                            form.trigger('submit');
                             $("#attachment-modal").remove();
                         }
                     }
@@ -249,7 +249,7 @@ Helpdesk = Helpdesk || {};
                 e.stopImmediatePropagation();
             });
 
-            form.on("submit", function(event) {
+            form.on("submit.pjax_submit", function(event) {
                 // turning of reminder
                 _this.reminder = false;
                 form.data("formChanged",false);
@@ -319,6 +319,14 @@ Helpdesk = Helpdesk || {};
                 if(App.namespace == "helpdesk/tickets/edit" || App.namespace == "solution/articles/show") {
                     form.find(".existing-file-list input[name='helpdesk_note[attachments][][resource]']").remove();
                     form.find(".existing-file-list input[name='[cloud_file_attachments][]']").remove();
+                }
+
+                if(App.namespace == "helpdesk/tickets/new" || App.namespace == "helpdesk/tickets/compose_email") {
+                    event.preventDefault();
+                    event.stopImmediatePropagation();
+
+                    pjax_form_submit("#" + $(form).attr('id'));
+                    return false;
                 }
             });
             // calling onload functions
@@ -451,6 +459,27 @@ Helpdesk = Helpdesk || {};
                 render_type: "new",
                 type: "canned_response",
                 files: data,
+            }).appendTo(".multiple-filelist-" + count);
+        },
+        sol_article_normal_attach: function(data,count){
+            $("#attach-limt-" + count).hide();
+            $("#attachment-template").tmpl({
+                render_type: "existing",
+                type: "attachment",
+                files: data,
+                softdelete:false,
+                template:false, 
+            }).appendTo(".multiple-filelist-" + count);
+        },
+        sol_article_cloud_attach: function(data,count){
+            $("#attach-limt-" + count).hide();
+            $("#attachment-template").tmpl({
+                render_type: "existing",
+                type: "cloud",
+                sol_cloud: true,
+                files: data,
+                softdelete:false,
+                template:false, 
             }).appendTo(".multiple-filelist-" + count);
         },
         // --------------- PJAX configurations ------

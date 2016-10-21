@@ -58,7 +58,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     :requester_name, :meta_data, :disable_observer, :highlight_subject, :highlight_description, 
     :phone , :facebook_id, :send_and_set, :archive, :required_fields, :disable_observer_rule, 
     :disable_activities, :tags_updated, :system_changes, :activity_type, :misc_changes, 
-    :round_robin_assignment, :related_ticket_ids, :tracker_ticket_id
+    :round_robin_assignment, :related_ticket_ids, :tracker_ticket_id, :unique_external_id
   # Added :system_changes, :activity_type, :misc_changes for activity_revamp -
   # - will be clearing these after activity publish.
 
@@ -348,6 +348,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def facebook?
      source == SOURCE_KEYS_BY_TOKEN[:facebook] and (fb_post) and (fb_post.facebook_page)
+  end
+
+  def facebook_realtime_message?
+    fb_post.realtime_message?
   end
 
   #This is for mobile app since it expects twitter handle & facebook page and not a boolean value
@@ -1134,9 +1138,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
       description_html_changed? || requester_id_changed? || responder_id_changed? || group_id_changed? || deleted_changed?
     end
 
-    def send_agent_assigned_notification?
+    def send_agent_assigned_notification?(internal_notification = false)
       doer_id = Thread.current[:observer_doer_id]
-      @model_changes[:responder_id] && responder && responder_id != doer_id && responder != User.current
+      agent_changed, agent = internal_notification ? [internal_agent_id_changed?, internal_agent] :
+          [@model_changes.key?(:responder_id), responder]
+
+      agent_changed && agent && agent.id != doer_id && agent != User.current
     end
 
     def note_preload_options
@@ -1150,9 +1157,17 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
 
     def shared_ownership_fields_changed?
+      internal_group_id_changed? or internal_agent_id_changed?
+    end
+
+    def internal_group_id_changed?
       internal_group_column = Helpdesk::SchemaLessTicket.internal_group_column
+      @model_changes.key?(internal_group_column)
+    end
+
+    def internal_agent_id_changed?
       internal_agent_column = Helpdesk::SchemaLessTicket.internal_agent_column
-      (@model_changes.key?(internal_group_column) or @model_changes.key?(internal_agent_column))
+      @model_changes.key?(internal_agent_column)
     end
 
     # def rl_exceeded_operation

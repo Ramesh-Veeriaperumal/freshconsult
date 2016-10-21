@@ -3,7 +3,7 @@ class Admin::Ecommerce::EbayAccountsController < Admin::Ecommerce::AccountsContr
   include ::Ecommerce::Ebay::Util
   include ::Ecommerce::Ebay::Notifications
 
-
+  skip_filter :determine_pod, :select_shard ,:set_current_account,:ensure_proper_protocol, :only => [:authorize, :notify] , :if => :non_global_pods?
   skip_before_filter :check_account_state, :set_time_zone, :check_day_pass_usage, :set_locale, :check_privilege, 
     :verify_authenticity_token, :only => [:authorize,:notify]
   before_filter(:only => [:new, :update, :destroy, :enable, :generate_session, :failure]) { |c| c.requires_feature :ecommerce }
@@ -161,5 +161,9 @@ class Admin::Ecommerce::EbayAccountsController < Admin::Ecommerce::AccountsContr
         flash[:error] = t('admin.ecommerce.new.max_limit')
         redirect_to admin_ecommerce_accounts_path
       end
+    end
+
+    def non_global_pods?
+      Fdadmin::APICalls.non_global_pods? && (request.host == INTEGRATION_URL)
     end
 end

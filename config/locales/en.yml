@@ -76,7 +76,7 @@ en:
     creditcard: "Please enter a valid credit card number."
     equalTo: "Please enter the same value again."
     two_decimal_place_warning: "Value cannot have more than 2 decimal digits"
-    select_atleast_one: "Select atleast one option."
+    select_atleast_one: "Select at least one option."
   confirm_delete_message: Are you sure you want to delete the %{human_name}?
   reload: Reload
   any: Any
@@ -502,6 +502,7 @@ en:
         loading_feedback: Loading Feedback
         load_questions: View More
         comments: Comments
+        survey_on_open_ticket: Could not submit survey rating as ticket is not resolved.
     login:
       form:
         email: Email
@@ -1764,6 +1765,8 @@ en:
         checked: is checked
         unchecked: is unchecked
         deselected: Deselected
+        internal_group_actions: "Only applicable if the selected group is mapped to the ticket status as an internal group at the time of rule execution."
+        internal_agent_actions: "Only applicable if the selected agent is mapped to the internal group at the time of rule execution."
     va_rules:
       webhook:
         custom_headers_limit_error: "You cannot set more than %{limit} custom headers"
@@ -2288,6 +2291,7 @@ en:
     forum_deleted: The forum has been deleted.
     type: Forum Type
     visible_to: Visible to
+    max_description_length_allowed: "Maximum 250 characters"
     category: Forum Category
     spam: "Spam (%{count})"
     convert_to_ticket: Auto-Convert Topics to Tickets
@@ -3061,6 +3065,22 @@ en:
         new: "Deselected %{checkbox_list}"
       archive:
         new: "Ticket archived"
+      internal_group:
+        new: "Internal Group as <strong>%{group_name}</strong>"
+      internal_agent:
+        new: "Internal Agent as %{responder_path}"
+      remove_group:
+        new: "Set Internal Agent as None, Internal Group as None as the mapping was removed between group <strong>%{group_name}</strong> and status <strong>%{status_name}</strong>"
+      remove_agent:
+        new: "Set Internal Agent as None as the agent %{responder_path} was removed from group <strong>%{group_name}</strong>"
+      delete_internal_group:
+        new: "Set Internal Agent as None, Internal Group as None as the group <strong>%{group_name}</strong> was deleted"
+      delete_internal_agent:
+        new: "Set Internal Agent as None as the agent %{responder_path} was deleted"
+      delete_status:
+        new: "Set Internal Agent as None, Internal Group as None as the status <strong>%{status_name}</strong> was deleted"
+      automation_execution:
+        new: " after automation rule execution"
       rel_tkt_link:
         new: "Linked this ticket with the tracker %{tracker_ticket_path}"
       rel_tkt_unlink:
@@ -3275,8 +3295,12 @@ en:
       product: "product as <b>%{product_name}</b>"
       group_success: "group as <b>%{group_name}</b>"
       group_failure: "<b>Unable to set the group, consider updating this scenario if the group has been deleted recently.</b>"
+      internal_group_success: "internal group as <b>%{internal_group_name}</b>"
+      internal_group_failure: "<b>Unable to set the internal group, consider updating this scenario if the group has been deleted recently or the status to group mapping changed.</b>"
       agent_success: "agent as <b>%{agent_name}</b>"
       agent_failure: "<b>Unable to set the agent, consider updating this scenario if the agent has been deleted recently.</b>"
+      internal_agent_success: "internal agent as <b>%{internal_agent_name}</b>"
+      internal_agent_failure: "<b>Unable to set the internal agent, consider updating this scenario if the agent has been deleted recently or removed from the respective internal group.</b>"
       private_note: "a <b>private note</b>"
       note: "<b>note</b>"
       add_watchers: "Watcher(s) - <b>%{watchers}</b>"
@@ -5470,6 +5494,8 @@ en:
     empty_spam: Empty Spam
     empty_view_confirmation: "All the tickets in %{current_view} will be deleted permanently. Please note that this action cannot be undone. Are you sure you want to proceed?"
     assign_to_agent: Assign to Agent
+    assign_to_internal_group: Assign to Internal Group
+    assign_to_internal_agent: Assign to Internal Agent
     assign_to: Assign
     select_to_agent: Select an Agent
     export: Export
@@ -6776,7 +6802,7 @@ en:
     published_in: "Published in"
     installs: Installs
     no_apps: No Apps available
-    no_custom_apps_html: "No custom apps have been published. To get started, please visit our <a href='https://developers.freshdesk.com' target='_blank'> developer site.</a>"
+    empty_custom_apps_msg_html: "No custom apps have been published. To get started, please visit our <a href='%{dev_url}' target='_blank'> developer site.</a>"
     no_apps_in_category: No Apps available in this category
     related_categories: "Apps from Related Categories:"
     similar_apps: "Similar Apps:"
@@ -7886,6 +7912,8 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
   delete_the_ticket: "Delete the Ticket"
   mark_as_spam: "Mark as Spam"
   bulk_actions: "Bulk Actions"
+  internal_group_actions: "Please select a ticket status that maps to an internal group assignment."
+  internal_agent_actions: "Please select an internal group to assign an internal agent."
   update_multiple_tickets: "Update Multiple Tickets"
   no_change: "No Change"
   select: "Select ..."
@@ -7949,6 +7977,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
   latest_ticket: "new update"
   latest_tickets: "new updates"
   search:
+    view_all_tickets: "View all tickets"
     recent_searches: "Recent Searches"
     recently_viewed: "Recently Viewed"
     no_results_msg: "No results found"
@@ -9602,10 +9631,11 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     cobrowsing_stop_msg : "Your screensharing session has ended"    
     cobrowsing_deny_msg : "Your request was declined"
     cobrowsing_agent_busy : "Agent is in screen share session with customer"
+    cobrowsing_visitor_onhttp_error : "Unable to connect due to an unsecured connection(http site)" 
     cobrowsing_viewing_screen : "You are viewing the visitor’s screen"    
-    cobrowsing_controlling_screen : "You are controlling the visitor’s screen"    
-    cobrowsing_request_control : "Request visitor for control"    
-    cobrowsing_give_visitor_control : "Give control to visitor"            
+    cobrowsing_controlling_screen : "You have access to visitor’s screen"    
+    cobrowsing_request_control : "Request visitor for access"    
+    cobrowsing_give_visitor_control : "Give access back to visitor"            
     cobrowsing_stop_request : "End your screensharing session"    
     cobrowsing_request_control_rejected : "Your request was declined"   
     cobrowsing_cancel_visitor_msg : "Screensharing is currently unavailable"    
@@ -9774,6 +9804,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       forward: "Forward"
       add_note: "Add note"
       scenario: "Scenarios"
+      jump_to_views: "Jump to views"
     ticket_list:
       title: "Ticket List"
       move_cursor: "Jump cursor to next / previous ticket"
@@ -10141,7 +10172,9 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     no_data: "No data to display"
     connection_error: "We have encountered an error. Please try again in some time."
     agent_label: "Agent"
+    internal_agent_label: "Internal Agent"
     group_label: "Group"
+    internal_group_label: "Internal Group"
     filtered_by_label: "Filtered by"
     filter_by_label: "Filter by"
     filter_label: "Filter"
@@ -10194,4 +10227,5 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     show: Show
     hide: Hide
     suggestion_text: What can we improve? (Optional).
+    help: What's this?
 

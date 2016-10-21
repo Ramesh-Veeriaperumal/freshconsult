@@ -56,7 +56,8 @@ run "ln -nfs #{shared_path}/config/delayed_job_watcher.yml #{node[:rel_path]}/co
 run "ln -nfs #{shared_path}/config/archive_note.yml #{node[:rel_path]}/config/archive_note.yml"
 run "ln -nfs #{shared_path}/config/lambda.yml #{node[:rel_path]}/config/lambda.yml"
 run "ln -nfs #{shared_path}/config/redis_round_robin.yml #{node[:rel_path]}/config/redis_round_robin.yml"
-
+run "ln -nfs #{shared_path}/config/ml_app.yml #{node[:rel_path]}/config/ml_app.yml"
+run "ln -nfs #{shared_path}/config/sendgrid_webhook_api.yml #{node[:rel_path]}/config/sendgrid_webhook_api.yml"
 
 #search V2
 run "ln -nfs #{shared_path}/config/search/boost_values.yml #{node[:rel_path]}/config/search/boost_values.yml"

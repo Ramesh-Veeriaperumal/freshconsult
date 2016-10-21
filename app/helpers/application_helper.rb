@@ -564,7 +564,15 @@ module ApplicationHelper
                       ['{{ticket.product_description}}', 'Product description', 'Product specific description in multiple product/brand environments.',         'ticket_product_description']
                     ]
     }
-    
+
+    #Shared ownership placeholders
+    if current_account.features?(:shared_ownership)
+      place_holders[:tickets] += 
+        [['{{ticket.internal_group.name}}',      'Internal Group name',       "",         'ticket_group_name'],
+        ['{{ticket.internal_agent.name}}',       'Internal Agent name',       "",         'ticket_agent_name'],
+        ['{{ticket.internal_agent.email}}',      'Internal Agent email',      "",         'ticket_agent_email']]
+    end
+
     # Custom Field Placeholders
     current_account.ticket_fields.custom_fields.each { |custom_field|
       nested_vals = []
@@ -598,7 +606,7 @@ module ApplicationHelper
     place_holders[:tickets] << ['{{ticket.surveymonkey_survey}}', 'Surveymonkey survey',
                       'Includes text/link to survey in Surveymonkey', 'ticket_suverymonkey_survey'
                       ] if Integrations::SurveyMonkey.placeholder_allowed?
-    
+
 
     # Ticket Public URL placeholder
     place_holders[:tickets] << ['{{ticket.public_url}}', 'Public Ticket URL' , 
@@ -1562,7 +1570,7 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
   # This helper is for the partial expanded/_ticket.html.erb
   def requester(ticket)
     if privilege?(:view_contacts)
-      "<a class='user_name' href='/users/#{ticket.requester.id}' target='_blank' data-pjax='#body-container'>
+      "<a class='user_name' href='/users/#{ticket.requester.id}' target='_blank' data-pjax='#body-container' data-contact-id='#{ticket.requester.id}' data-contact-url='/contacts/#{ticket.requester.id}/hover_card' rel='contact-hover'>
           <span class='emphasize'>#{h(ticket.requester.display_name)}</span>
        </a>".html_safe
     else

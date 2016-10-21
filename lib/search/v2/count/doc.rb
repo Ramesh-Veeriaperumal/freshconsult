@@ -3,6 +3,7 @@ module Search
     module Count
 
       class Doc
+        include Search::V2::Count::HelperMethods
         attr_accessor :account_id, :payload, :options
 
         def initialize(payload = nil, account_id = Account.current.id, options = {})
@@ -34,7 +35,7 @@ module Search
         end
 
         def document_path(model_class, id, query_params={})
-          model_class_name = model_class.demodulize.downcase
+          model_class_name = form_model_class_name model_class
           path    = [host, index_alias(model_class_name), model_class_name, id].join('/')
         end
 
@@ -44,10 +45,6 @@ module Search
 
         def index_alias name 
           "#{name}_alias"
-        end
-
-        def host
-          ::COUNT_V2_HOST
         end
 
       end

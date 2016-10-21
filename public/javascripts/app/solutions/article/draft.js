@@ -50,7 +50,7 @@ window.App = window.App || {};
       }
 
       if (new_draft_record) {
-        $('#sticky_redactor_toolbar').removeClass('has-notification');
+        $('.sticky_editor_toolbar').removeClass('has-notification');
       }
       
     },
@@ -125,7 +125,7 @@ window.App = window.App || {};
 							this.themeChange(!success);
 							this.lastUpdatedAt(response);
 							this.toggleButtons(success);
-							$('#sticky_redactor_toolbar').addClass('has-notification');
+							$('.sticky_editor_toolbar').addClass('has-notification');
 							this.disableViewOnPortal(deleted);
 						}
 					}

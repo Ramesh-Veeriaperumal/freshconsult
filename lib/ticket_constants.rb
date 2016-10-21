@@ -97,8 +97,13 @@ module TicketConstants
     :ticket_type, :source, "helpdesk_tags.name", "users.customer_id", :owner_id,
     :requester_id, :product_id, "helpdesk_schema_less_tickets.#{Helpdesk::SchemaLessTicket.association_type_column}" ]
 
-  SHARED_AGENT_COLUMNS_ORDER = ["helpdesk_schema_less_tickets.long_tc04", "any_agent_id"]
-  SHARED_GROUP_COLUMNS_ORDER = ["helpdesk_schema_less_tickets.long_tc03", "any_group_id"]
+  INTERNAL_AGENT_ID = "helpdesk_schema_less_tickets.long_tc04"
+  ANY_AGENT_ID      = "any_agent_id"
+  INTERNAL_GROUP_ID = "helpdesk_schema_less_tickets.long_tc03"
+  ANY_GROUP_ID      = "any_group_id"
+
+  SHARED_AGENT_COLUMNS_ORDER = [INTERNAL_AGENT_ID, ANY_AGENT_ID]
+  SHARED_GROUP_COLUMNS_ORDER = [INTERNAL_GROUP_ID, ANY_GROUP_ID]
   
   DEFAULT_COLUMNS =  [
     [ :status,              'status',           :dropdown],
@@ -262,9 +267,25 @@ module TicketConstants
     :status => "status",
     :requester => "requester_id",
     :company => "owner_id",
-    :internal_agent => SHARED_AGENT_COLUMNS_ORDER[0],
-    :internal_group => SHARED_GROUP_COLUMNS_ORDER[0]
+    :internal_agent => INTERNAL_AGENT_ID,
+    :internal_group => INTERNAL_GROUP_ID
   }
+
+  DEFAULT_FIELDS_ORDER = [
+    "default_priority", "default_status",
+    "default_source",   "default_ticket_type",
+    "default_group",    "default_agent",
+    "default_product",  "default_company"
+  ]
+
+  SHARED_DEFAULT_FIELDS_ORDER = [
+    "default_priority",       "default_status",
+    "default_group",          "default_agent", 
+    "default_internal_group", "default_internal_agent",
+    "default_source",         "default_ticket_type",
+    "default_product",        "default_company"
+  ]
+
   # CC emails count
   MAX_EMAIL_COUNT = 50
 

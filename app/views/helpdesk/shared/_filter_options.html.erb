@@ -401,7 +401,7 @@
           jQuery('#'+selectedGroupTextId+' option[value="-1"]').remove();
           jQuery("#"+jQuery(".group_text").parent().attr("id")+" label.item input[value='-1']").parent().remove();
         }else{
-          jQuery(".group_text.shared_filter_text").removeClass('lengthier_text');
+          jQuery(".group_text.shared_filter_text").addClass('lengthier_text');
           if(jQuery('#'+selectedGroupTextId+' option[value="-1"]').length <= 0){
             if(jQuery("#" + jQuery(".group_text").parent().attr("id") + " label.item").length > 0){
               jQuery(".group_text").parent().append(unassigned);

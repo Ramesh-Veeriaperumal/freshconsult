@@ -192,17 +192,19 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   #Shared onwership Validations
   def reset_internal_group_agent
-    return unless @model_changes.key?(:status) and Account.current.features?(:shared_ownership)
+    schema_less_ticket.internal_agent_id = schema_less_ticket.internal_group_id = nil unless Account.current.features?(:shared_ownership)
+    return unless @model_changes.key?(:status) && Account.current.features?(:shared_ownership)
 
-    #Reset internal group and internal agent when the status(without the particular group mapped) is changed
+    #Reset internal group and internal agent when the status(without the particular group mapped) is changed.
+    #If the new status has the same group mapped to it, preserve internal group and internal agent.
     internal_group_column = Helpdesk::SchemaLessTicket.internal_group_column
     internal_agent_column = Helpdesk::SchemaLessTicket.internal_agent_column
-    if internal_group_id.present? and !@model_changes.include?(internal_group_column) and ticket_status.group_ids.exclude?(schema_less_ticket.internal_group_id)
+    if internal_group_id.present? && !internal_group_id_changed? && ticket_status.group_ids.exclude?(schema_less_ticket.internal_group_id)
       schema_less_ticket.internal_group_id = nil
       @model_changes.merge!(schema_less_ticket.changes.slice(internal_group_column.to_s))
     end
 
-    if internal_agent_id.present? and !@model_changes.include?(internal_agent_column) and ticket_status.group_ids.exclude?(schema_less_ticket.internal_group_id)
+    if internal_agent_id.present? && !internal_agent_id_changed? && ticket_status.group_ids.exclude?(schema_less_ticket.internal_group_id)
       schema_less_ticket.internal_agent_id = nil
       @model_changes.merge!(schema_less_ticket.changes.slice(internal_agent_column.to_s))
     end
@@ -217,11 +219,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
     #Reset internal group and internal agent to old value if the mapping is incorrect
     if internal_group_id.present? and ticket_status.group_ids.exclude?(internal_group_id)
-      schema_less_ticket.internal_group_id = @model_changes.key?(internal_group_column) ? @model_changes[internal_group_column][0] : nil
+      schema_less_ticket.internal_group_id = internal_group_id_changed? ? @model_changes[internal_group_column][0] : nil
       @model_changes.delete(internal_group_column)
     end
     if internal_agent_id.present? and (internal_group.blank? or internal_group.agents.pluck(:user_id).exclude?(internal_agent_id))
-      schema_less_ticket.internal_agent_id = @model_changes.key?(internal_agent_column) ? @model_changes[internal_agent_column][0] : nil
+      schema_less_ticket.internal_agent_id = internal_agent_id_changed? ? @model_changes[internal_agent_column][0] : nil
       @model_changes.delete(internal_agent_column)
     end
   end
@@ -588,7 +590,8 @@ private
       :twitter_id => twitter_id,
       :external_id => external_id,
       :fb_profile_id => facebook_id,
-      :phone => phone })
+      :phone => phone,
+      :unqiue_external_id => unique_external_id })
     
     create_requester unless requester
   end
@@ -611,9 +614,9 @@ private
       requester.signup!({:user => {
         :email => self.email, #user_email changed
         :twitter_id => twitter_id, :external_id => external_id,
-        :name => name || twitter_id || @requester_name || external_id,
+        :name => name || twitter_id || @requester_name || external_id || unique_external_id,
         :helpdesk_agent => false, :active => email.blank?,
-        :phone => phone, :language => language
+        :phone => phone, :language => language, :unqiue_external_id => unique_external_id
         }}, 
         portal, !outbound_email?) # check @requester_name and active
       
@@ -622,7 +625,7 @@ private
   end
 
   def can_add_requester?
-    email.present? || twitter_id.present? || external_id.present? || phone.present?
+    email.present? || twitter_id.present? || external_id.present? || phone.present? || unique_external_id.present?
   end
 
   def update_content_ids

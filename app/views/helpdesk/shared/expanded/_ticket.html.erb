@@ -7,7 +7,7 @@
   <td class="priority-border priority-<%=ticket.priority_key%>"></td>
 
     <td class="check">
-    	<input class="selector mousetrap" id="ids_" name="ids[]" type="checkbox" value="<%=ticket.to_param%>">
+    	<input class="selector mousetrap" id="ids_" name="ids[]" type="checkbox" value="<%=ticket.to_param%>" data-ticket-status="<%= ticket.status %> ">
     </td>
 
   <% unless user_page %>

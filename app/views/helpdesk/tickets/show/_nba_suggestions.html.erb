@@ -1,7 +1,12 @@
  <div id = "nba-loading"></div>
  <div class="nba-sas sas-hidden">
          <div class="sas-hd" id="sas-hd"> 
-          <div id = "sas-hd-result"><span class="beta-tag">Beta</span><a href="#"><span><%=t('ml.show')%></span><i class="ficon-caret-right"></i></a> <%=t('ml.similat_tickets_found')%> <span class = "sas-cnt">8</span></div>
+          <div id = "sas-hd-result">
+            <span class="beta-tag sas-hidden">Beta</span>
+            <span class = "sas-cnt">8</span><%=t('ml.similat_tickets_found')%> 
+            <a class="help" id="help" href="#"><span><%=t('ml.help')%></span></a>
+            <a class="toggle" id = "show" href="#"><span><%=t('ml.show')%></span><i class="ficon-caret-right"></i></a>
+          </div>
           <div id = "sas-hd-no-result" class = "sas-hidden"><span class="sas-hd"><%=t('ml.no_suggestions')%></span></div>
           <div id = "sas-hd-error" class = "sas-hidden"><a href="#"><span>Reload</span> <i class="ficon-refresh-source"></i></a> <span class="err-msg">
           <%=t('ml.error')%></span></div> 

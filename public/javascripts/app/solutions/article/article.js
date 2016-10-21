@@ -1,5 +1,5 @@
 /*jslint browser: true, devel: true */
-/*global  App, moment, highlight_code, Fjax, invokeRedactor */
+/*global  App, moment, highlight_code, Fjax, invokeRedactor, invokeEditor */
 
 window.App = window.App || {};
 (function ($) {
@@ -18,7 +18,13 @@ window.App = window.App || {};
     onVisit: function (data) {
       if (App.namespace === "solution/articles/new" || App.namespace === "solution/articles/create" || App.namespace === "solution/articles/edit") {
         $('#sticky_redactor_toolbar').removeClass('hide');
-        invokeRedactor('solution_article_description', 'solution');
+
+        if($('#solution_article_description').data('newEditor')) {
+          invokeEditor('solution_article_description', 'solution');
+        } else {
+          invokeRedactor('solution_article_description', 'solution');
+        }
+
         this.eventsForNewPage();
       } else {
         this.eventsForShowPage();

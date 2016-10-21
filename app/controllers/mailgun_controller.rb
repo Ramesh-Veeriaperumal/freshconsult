@@ -37,20 +37,8 @@ class MailgunController < ApplicationController
     # end
 
     def determine_pod
-
-      # Rails.logger.info "Params: #{params}."
-      @process_email = Helpdesk::Email::Process.new(params)
-      pod_info = @process_email.determine_pod
-
-      if PodConfig['CURRENT_POD'] != pod_info
-        Rails.logger.error "Email is not for the current POD."
-        redirect_email(pod_info) and return
-      end
-    end
-
-    def determine_pod
       pod_infos = find_pods
-      unless email_for_current_pod?(pod_infos)
+      if pod_infos.present? && !email_for_current_pod?(pod_infos)
         Rails.logger.error "Email is not for the current POD."
         redirect_email(pod_infos.first) and return
       end
@@ -62,7 +50,7 @@ class MailgunController < ApplicationController
       to_emails.each do |to_email|
         shard = ShardMapping.fetch_by_domain(to_email[:domain])
         pod_info = shard.present? ? shard.pod_info : nil
-        pod_infos.push(pod_info)
+        pod_infos.push(pod_info) if pod_info.present?
       end
       return pod_infos
     end

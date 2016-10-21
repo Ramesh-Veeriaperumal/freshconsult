@@ -43,6 +43,7 @@ var CreateTicket = {
 		this.$el.off('.newTicket');
 		this.$createForm.off('.newTicket');
 		this.$body.off('.newTicket');
+		this.$createForm.off('.pjax_submit');
 		TicketForm.unBindEvents();
 		TicketTemplate.destroy();
 	},
@@ -61,13 +62,19 @@ var CreateTicket = {
 	        }
 	        
 	        jQuery(".cc-address .cc-error-message").remove();
-			jQuery("#NewTicket").submit();
-		});
 
-		this.$createForm.on('submit.newTicket', function(){
+	        var _form = jQuery("#NewTicket");
+	        this.submitForm(_form);
+
+		}.bind(this));
+
+		this.$createForm.on('submit.pjax_submit', function(ev){
+	    	preventDefault(ev);
+
 			var _form = jQuery("#NewTicket");
 			var topic_id = jQuery("#topic_id_stub").val();
-			if(_form.valid()){
+			
+			if(_form.valid()) {
 				if (_form.find('input[name="cc_emails[]"]').length >= 50) {
 					alert('You can add upto 50 CC emails');
 					return false;
@@ -78,7 +85,15 @@ var CreateTicket = {
 				jQuery("#newticket-submit").text(jQuery("#newticket-submit").data('loading-text')).attr('disabled', true);
 				jQuery("#newticket-submit").next().attr('disabled', true);
 				jQuery(".cancel-btn").attr('disabled', true);
+
+				pjax_form_submit("#NewTicket", ev);
 			}
+			
+			// To prevent the normal submit on pjax form submit
+			if(!_form.data('multifileEnabled')) {
+				return false;
+			}
+
 		}.bind(this));
 
 		this.$body.on('click.newTicket', 'a[name="action_save"]', function(ev){
@@ -95,8 +110,9 @@ var CreateTicket = {
 						value: true
 					}));
 				}
-				_form.submit();
-			});
+
+				this.submitForm(_form)
+			}.bind(this));
 
 			this.$body.on('click.newTicket', 'a[rel="ticket_canned_response"]', function(ev){
 				ev.preventDefault();
@@ -124,10 +140,19 @@ var CreateTicket = {
 				jQuery("#helpdesk_ticket_subject").val(jQuery("#topic_title").val());
 				jQuery("#helpdesk_ticket_email").val(jQuery("#topic_req").val());
 			}else{
-				jQuery(".redactor_editor").html("");
+				jQuery(".redactor_editor").html("<p><br></p>");
 				jQuery("#helpdesk_ticket_subject").val("");
 				jQuery("#helpdesk_ticket_email").val("");
 			}
+		}
+	},
+	submitForm: function (_form) {
+		// If multifile enabled. Then the page will submit with pjax.
+		// In single file attachment, the file not attachec in pjax submit. So we checked multifile enable feature.
+		if(_form.data('multifileEnabled')) {
+			_form.trigger('submit.pjax_submit');
+		} else {
+			_form.submit();
 		}
 	}
 }

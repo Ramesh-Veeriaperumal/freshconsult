@@ -23,6 +23,9 @@ company:
 tag: 
   :index_prefix: tags_%{index_suffix}
   :alias_prefix: tags_%{alias_suffix}
+caller:
+  :index_prefix: callers_%{index_suffix}
+  :alias_prefix: callers_%{alias_suffix}
 archiveticket: 
   :index_prefix: archivetickets_%{index_suffix}
   :alias_prefix: archivetickets_%{alias_suffix}

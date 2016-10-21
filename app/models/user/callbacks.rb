@@ -2,6 +2,7 @@ class User < ActiveRecord::Base
 
   before_validation :discard_blank_email, :unless => :email_available?
   before_validation :set_password, :if => [:active?, :email_available?, :no_password?]
+  before_validation :remove_white_space
   
   before_create :set_company_name, :unless => :helpdesk_agent?
   before_create :decode_name
@@ -189,5 +190,9 @@ class User < ActiveRecord::Base
         self.customer_id = !self.default_user_company.marked_for_destruction? ? self.default_user_company.company_id : nil
       end
     end
+  end
+
+  def remove_white_space
+    self.name.squish! unless self.name.nil?
   end
 end

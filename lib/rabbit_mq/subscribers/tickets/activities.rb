@@ -6,13 +6,14 @@ module RabbitMq::Subscribers::Tickets::Activities
   include RabbitMq::Subscribers::Subscriptions::Activities
   VALID_MODELS = ["ticket", "ticket_old_body", "subscription"]
 
-  PROPERTIES_TO_CONSIDER = [  :requester_id, :responder_id, :group_id, :priority, :ticket_type, :subject,
-                              :source, :status, :product_id, :spam, :deleted, :parent_ticket, :due_by,
-                              :int_tc03
-                           ]
-  PROPERTIES_TO_RENAME   = [ :long_tc03, :long_tc04]
-  PROPERTIES_TO_CONVERT  = [ :group_id, :product_id, :status, :int_tc03 ]
-  PROPERTIES_AS_ARRAY    = [ :add_tag, :add_watcher, :rule, :add_a_cc, :add_comment, :email_to_requester, :email_to_group, :email_to_agent, :int_tc03]
+  PROPERTIES_TO_CONSIDER      = [:requester_id, :responder_id, :group_id, :priority, :ticket_type, :subject,
+                                 :source, :status, :product_id, :spam, :deleted, :parent_ticket, :due_by,
+                                 :int_tc03, :long_tc03, :long_tc04]
+  PROPERTIES_TO_CONVERT       = [:group_id, :product_id, :status, :int_tc03, :internal_group_id]
+  PROPERTIES_AS_ARRAY         = [:add_tag, :add_watcher, :rule, :add_a_cc, :add_comment, :email_to_requester,
+                                 :email_to_group, :email_to_agent, :int_tc03]
+  PROPERTIES_RENAME_MAP       = {:long_tc03 => :internal_group_id, :long_tc04 => :internal_agent_id}
+  SHARED_OWNERSHIP_PROPERTIES = [:long_tc03, :long_tc04]
 
   def mq_activities_ticket_properties(action)
     self.to_rmq_json(activities_keys,action) 
@@ -37,6 +38,10 @@ module RabbitMq::Subscribers::Tickets::Activities
     ticket_changes = {}
     # Adding info for ticket import
     self.activity_type = {:type => "ticket_import"} if ticket_import? and create_action?(action)
+
+    # Adding shared ownership reset changes. if shared ownership attributes present in model changes and not in system changes.
+    # When status is changed, resetting shared ownership fields should be captured.
+    self.activity_type = shared_ownership_reset_changes if va_rule_changes? and self.activity_type.nil? and Account.current.features?(:shared_ownership)
 
     # Add activity type info to ticket changes if any
     if activity_type?
@@ -84,13 +89,20 @@ module RabbitMq::Subscribers::Tickets::Activities
 
   private
 
-  def activity_group_id(value)
+  def fetch_group_name(value)
     if is_num?(value[1])
       group = Account.current.groups_from_cache.find{|x| x.id == value[1].to_i}
       return false if !group
       value[1] = group.name
     end
-    {:group_id => add_dont_care(value)}
+  end
+
+  def activity_group_id(value)
+    fetch_group_name(value) == false ? false : {:group_id => add_dont_care(value)}
+  end
+
+  def activity_internal_group_id(value)
+    fetch_group_name(value) == false ? false : {:internal_group_id => add_dont_care(value)}
   end
 
   def activity_product_id(value)
@@ -159,13 +171,34 @@ module RabbitMq::Subscribers::Tickets::Activities
     @model_changes.nil?  ? {} : @model_changes.dup.select{|k,v| PROPERTIES_TO_CONSIDER.include?(k) || ff_fields.include?(k.to_s) }
   end
 
+
+  def shared_ownership_reset_changes
+    reset_changes = {}
+    SHARED_OWNERSHIP_PROPERTIES.each do |key|
+      renamed_key = PROPERTIES_RENAME_MAP[key]
+      reset_changes[renamed_key] = @model_changes[key] if (@model_changes.present? and @model_changes[key].present? and @model_changes[key][1].nil?) and
+      no_reset_actions_in_system_changes?(renamed_key)
+    end
+    if reset_changes.present?
+      reset_changes[:type] = "shared_ownership_reset"
+      reset_changes
+    end
+  end
+
+  def no_reset_actions_in_system_changes?(key)
+    system_changes.each do |rule_id, actions|
+      return false if actions[key].present? and actions[key][1].nil?
+    end
+    true
+  end
+
   # Change ids to string and replace dont care value for old values
   def i_to_s(actions)
     hash = {}
     actions.each do |k,v|
       # using dup -> to avoid modifying model_changes values
-      key = PROPERTIES_TO_RENAME.include?(k.to_sym) ? PROPERTIES_RENAME_MAP[k.to_sym] : k
-      v1 = PROPERTIES_AS_ARRAY.include?(key.to_sym) ? v.dup : add_dont_care(v.dup)
+      key = PROPERTIES_RENAME_MAP[k.to_sym] || k
+      v1  = PROPERTIES_AS_ARRAY.include?(key.to_sym) ? v.dup : add_dont_care(v.dup)
       if PROPERTIES_TO_CONVERT.include?(key.to_sym)
         value = send("activity_#{key}", v1.dup)
         hash.merge!(value) if value != false

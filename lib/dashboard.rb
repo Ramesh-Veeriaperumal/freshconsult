@@ -79,7 +79,9 @@ class Dashboard
     "group_id"      => "group_list_from_cache",
     "ticket_type"   => "ticket_type_list_from_cache",
     "priority"      => "priority_list_from_cache",
-    "status"        => "status_list_from_cache"
+    "status"        => "status_list_from_cache",
+    "long_tc03"     => "group_list_from_cache",
+    "long_tc04"     => "agent_list_from_cache"
   }
 
   DEFAULT_ORDER_LIMIT = 50
