@@ -325,7 +325,7 @@ Helpdesk = Helpdesk || {};
                     event.preventDefault();
                     event.stopImmediatePropagation();
 
-                    form.trigger('submit.new_ticket_compose');
+                    form.trigger('submit.redactor');
 
                     return false;
                 }

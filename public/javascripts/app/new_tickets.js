@@ -74,21 +74,23 @@ var CreateTicket = {
 
 			var _form = jQuery("#NewTicket");
 			var topic_id = jQuery("#topic_id_stub").val();
-			
-			if (_form.find('input[name="cc_emails[]"]').length >= 50) {
-				alert('You can add upto 50 CC emails');
-				return false;
-			}
-			if(topic_id){
-					this.createHiddenElement('topic_id', topic_id, _form);
-			}
-			jQuery("#newticket-submit").text(jQuery("#newticket-submit").data('loading-text')).attr('disabled', true);
-			jQuery("#newticket-submit").next().attr('disabled', true);
-			jQuery(".cancel-btn").attr('disabled', true);
 
-
-			pjax_form_submit("#NewTicket", ev);
+			if(_form.valid()) {
 			
+				if (_form.find('input[name="cc_emails[]"]').length >= 50) {
+					alert('You can add upto 50 CC emails');
+					return false;
+				}
+				if(topic_id){
+						this.createHiddenElement('topic_id', topic_id, _form);
+				}
+				jQuery("#newticket-submit").text(jQuery("#newticket-submit").data('loading-text')).attr('disabled', true);
+				jQuery("#newticket-submit").next().attr('disabled', true);
+				jQuery(".cancel-btn").attr('disabled', true);
+
+				pjax_form_submit("#NewTicket", ev);
+			}
+
 			// To prevent the normal submit on pjax form submit
 			if(_form.data('multifileEnabled')) {
 				return false;
@@ -151,7 +153,7 @@ var CreateTicket = {
 		// In single file attachment, the file not attachec in pjax submit. So we checked multifile enable feature.
 		if(_form.data('multifileEnabled')) {
 			if(_form.valid()) {
-				// First it will trigger the multifile form submit
+				// First it will trigger the multifile form submit.
 				// From there the new ticket submit form will trigger once the attachment has uploaded
 				_form.trigger('submit.pjax_submit');
 			}
