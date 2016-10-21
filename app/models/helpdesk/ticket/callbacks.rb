@@ -132,7 +132,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def update_sentiment 
 
     if (self.account.customer_sentiment_enabled?) 
-      #if (User.current == nil) || (User.current.language=="en")
+      if (User == nil) || (User.current == nil) || (User.current.language=="en")
         if self.source == 3 || self.source == 7
           self.sentiment = 0
           self.save
@@ -142,7 +142,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
                 { :id => id }
           )
         end
-      #end
+      end
     end
   end
   
