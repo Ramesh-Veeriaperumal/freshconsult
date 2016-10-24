@@ -148,6 +148,9 @@
 							selectedDate, instance.settings );
 					dates.not( this ).datepicker( "option", option, date )
 					$(this).prop("date", date);
+						var maxDate = jQuery("#end_date").datepicker('getDate');
+	         		   	maxDate.setDate(maxDate.getDate()); 
+	         		   	jQuery("#start_date").datepicker( "option", "maxDate", maxDate);
 						<!-- logic check : startdate <= enddate -->
 						var startISO = $("#start_date_clone").val();
 						var endISO = $("#end_date_clone").val();

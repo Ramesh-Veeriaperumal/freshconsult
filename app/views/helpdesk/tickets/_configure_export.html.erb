@@ -148,6 +148,10 @@
 						selectedDate, instance.settings );
 				dates.not( this ).datepicker( "option", option, date );
 				jQuery(this).prop("date", date);
+
+			var minDate = jQuery("#start_date").datepicker('getDate');
+            minDate.setDate(minDate.getDate()); 
+            jQuery("#end_date").datepicker( "option", "minDate", minDate);
  		
  			<!-- logic check : startdate <= enddate -->
 			var startISO = jQuery("#start_date_clone").val();
@@ -185,6 +189,11 @@
 						selectedDate, instance.settings );
 				dates.not( this ).datepicker( "option", option, date );
 				jQuery(this).prop("date", date);
+
+			var maxDate = jQuery("#end_date").datepicker('getDate');
+            maxDate.setDate(maxDate.getDate()); 
+            jQuery("#start_date").datepicker( "option", "maxDate", maxDate);
+
 				 <!-- logic check : startdate <= enddate -->
             var startISO = jQuery("#start_date_clone").val();
             var endISO = jQuery("#end_date_clone").val();
