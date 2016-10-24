@@ -2,6 +2,7 @@ module Facebook
   module KoalaWrapper
     class DirectMessage
       
+      include Facebook::Constants
       include TicketActions::DirectMessage
 
       def initialize(fan_page)
@@ -12,8 +13,8 @@ module Facebook
 
       #fetching message threads
       def fetch_messages
-        options = {} 
-        options.merge!(since: @fan_page.message_since) if @fan_page.message_since != 0
+        options = {:fields => DM_FIELDS} 
+        options.merge!(:since => @fan_page.message_since) if @fan_page.message_since != 0
         threads = @rest.get_connections('me', 'conversations', options)
 
         updated_time = threads.collect {|f| f["updated_time"]}.compact.max

@@ -80,6 +80,10 @@ module Helpdesk::Accessible::ElasticSearchMethods
       Search::V2::Count::AccessibleMethods.new(model_name, options, visible_options).es_request(query_options)
     end
 
+    def ca_folders_from_esv2(model_name, options, visible_options)
+      Search::V2::Count::AccessibleMethods.new(model_name, options, visible_options).ca_folders_es_request()
+    end
+
     def accessible_from_es(model_name,options,visible_options={}, sort_option = nil, folder_id = nil, id_data = nil, excluded_ids = nil)
       begin
         Search::EsIndexDefinition.es_cluster(current_account.id)

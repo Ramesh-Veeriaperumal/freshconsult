@@ -272,7 +272,6 @@ module SupportHelper
      			current_portal.fav_icon.nil? ? '/assets/misc/favicon.ico?123458' :
             		AwsWrapper::S3Object.url_for(current_portal.fav_icon.content.path,
             			current_portal.fav_icon.content.bucket_name,
-                        :expires => 7.days.to_i,
                         :secure => true)
             end
 		"<link rel='shortcut icon' href='#{fav_icon}' />".html_safe
@@ -881,7 +880,7 @@ module SupportHelper
 		output << %(<span>#{Language.current.name.truncate(10)}</span>)
 		output << %(<span class="caret"></span></h5>)
 		output << dropdown_menu(portal.language_list)
-		output << %(</div></li></ul>)
+		output << %(</li></ul></div>)
 		output.html_safe
 	end
 

@@ -31,6 +31,10 @@ module Social
 
     private
       def fetch_from_fb fan_page
+        if page_rate_limit_reached?(fan_page.account_id, fan_page.page_id)
+          Rails.logger.debug "#{fan_page.page_id} #{fan_page.account_id} Return on page rate limit reached"
+          return 
+        end
         fetch_fb_posts(fan_page) if fan_page.message_since.nil?
         fetch_fb_messages(fan_page) if (fan_page.import_dms && !fan_page.realtime_messaging)
       end

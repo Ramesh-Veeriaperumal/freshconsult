@@ -27,6 +27,7 @@ class User < ActiveRecord::Base
 
   validates_uniqueness_of :twitter_id, :scope => :account_id, :allow_nil => true, :allow_blank => true
   validates_uniqueness_of :external_id, :scope => :account_id, :allow_nil => true, :allow_blank => true
+  validates_uniqueness_of :unique_external_id, :scope => :account_id, :allow_nil => true, :allow_blank => true
 
   xss_sanitize  :only => [:name,:email,:language, :job_title, :twitter_id, :address, :description, :fb_profile_id], :plain_sanitizer => [:name,:email,:language, :job_title, :twitter_id, :address, :description, :fb_profile_id]
   scope :contacts, :conditions => { :helpdesk_agent => false }
@@ -126,7 +127,7 @@ class User < ActiveRecord::Base
   end
 
   attr_accessor :import, :highlight_name, :highlight_job_title, :created_from_email,
-                :primary_email_attributes, :tags_updated, :role_ids_changed # (This role_ids_changed used to forcefully call user callbacks only when role_ids are there.
+                :primary_email_attributes, :tags_updated, :keep_user_active, :role_ids_changed # (This role_ids_changed used to forcefully call user callbacks only when role_ids are there.
   # As role_ids are not part of user_model(it is an association_reader), agent.update_attributes won't trigger user callbacks since user doesn't have any change.
   # Hence user.send(:attribute_will_change!, :role_ids_changed) is being called in api_agents_controller.)
 
@@ -232,6 +233,7 @@ class User < ActiveRecord::Base
       return self.where(fb_profile_id: options[:fb_profile_id]).first if options.key?(:fb_profile_id)
       return self.where(external_id: options[:external_id]).first if options.key?(:external_id)
       return self.where(phone: options[:phone]).first if options.key?(:phone)
+      return self.where(unique_external_id: options[:unique_external_id]).first if options.key?(:unique_external_id)
     end
 
     def update_posts_count
@@ -310,11 +312,12 @@ class User < ActiveRecord::Base
   def chk_email_validation?
     (is_not_deleted?) and (twitter_id.blank? || !email.blank?) and (fb_profile_id.blank? || !email.blank?) and
                           (external_id.blank? || !email.blank?) and (phone.blank? || !email.blank?) and
-                          (mobile.blank? || !email.blank?)
+                          (mobile.blank? || !email.blank?) and (unique_external_id.blank? || !email.blank?)
   end
 
   def email_required?
-    is_not_deleted? and twitter_id.blank? and fb_profile_id.blank? and external_id.blank? and phone.blank? and mobile.blank?
+    is_not_deleted? and twitter_id.blank? and fb_profile_id.blank? and external_id.blank? and phone.blank? and mobile.blank? and
+                        unique_external_id.blank?
   end
 
   def add_tag(tag)
@@ -417,6 +420,7 @@ class User < ActiveRecord::Base
     self.mobile = params[:user][:mobile]
     self.twitter_id = params[:user][:twitter_id]
     self.external_id = params[:user][:external_id]
+    self.unique_external_id = params[:user][:unique_external_id]
     self.description = params[:user][:description]
     self.company_name = params[:user][:company_name] if params[:user].include?(:company_name)
     self.company_id = params[:user][:company_id] if params[:user].include?(:company_id)
@@ -519,7 +523,7 @@ class User < ActiveRecord::Base
   end
 
   def has_no_credentials?
-    self.crypted_password.blank? && active? && !account.sso_enabled? && !deleted && self.authorizations.empty? && self.twitter_id.blank? && self.fb_profile_id.blank? && self.external_id.blank?
+    self.crypted_password.blank? && active? && !account.sso_enabled? && !deleted && self.authorizations.empty? && self.twitter_id.blank? && self.fb_profile_id.blank? && self.external_id.blank? && self.unique_external_id.blank?
   end
 
   def first_name
@@ -643,7 +647,7 @@ class User < ActiveRecord::Base
   end
 
   def get_info
-    (email) || (twitter_id) || (external_id) || (name)
+    (email) || (twitter_id) || (external_id) || (unique_external_id) || (name)
   end
 
   def twitter_style_id

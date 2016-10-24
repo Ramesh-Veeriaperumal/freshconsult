@@ -6,6 +6,12 @@
   // Tweet custom class
   $.validator.addMethod("facebook", $.validator.methods.maxlength, "Your Facebook reply was over 8000 characters. You'll have to be more clever." );   
   $.validator.addClassRules("facebook", { facebook: 8000 });
+  $.validator.addMethod("facebook-realtime", function(value, element) {
+    if($(element).data('reply-count') >= 0){
+      return true;
+    }
+  }, "Oops! You have exceeded Facebook Messenger Platform's character limit. Please modify your response." );
+  
   $.validator.addMethod("notEqual", function(value, element, param) {
     return ((this.optional(element) || value).strip().toLowerCase() != $(param).val().strip().toLowerCase());
   }, "This element should not be equal to");

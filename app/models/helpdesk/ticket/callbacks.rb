@@ -590,7 +590,8 @@ private
       :twitter_id => twitter_id,
       :external_id => external_id,
       :fb_profile_id => facebook_id,
-      :phone => phone })
+      :phone => phone,
+      :unqiue_external_id => unique_external_id })
     
     create_requester unless requester
   end
@@ -613,9 +614,9 @@ private
       requester.signup!({:user => {
         :email => self.email, #user_email changed
         :twitter_id => twitter_id, :external_id => external_id,
-        :name => name || twitter_id || @requester_name || external_id,
+        :name => name || twitter_id || @requester_name || external_id || unique_external_id,
         :helpdesk_agent => false, :active => email.blank?,
-        :phone => phone, :language => language
+        :phone => phone, :language => language, :unqiue_external_id => unique_external_id
         }}, 
         portal, !outbound_email?) # check @requester_name and active
       
@@ -624,7 +625,7 @@ private
   end
 
   def can_add_requester?
-    email.present? || twitter_id.present? || external_id.present? || phone.present?
+    email.present? || twitter_id.present? || external_id.present? || phone.present? || unique_external_id.present?
   end
 
   def update_content_ids

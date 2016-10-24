@@ -116,7 +116,7 @@ class CustomersController < ApplicationController # Will be Deprecated. Use Comp
     def es_scoper(per_page)
       order_by = (params[:order_by] == "updated_at") ? :updated_at : :name
       order_type = (params[:order_type] == "desc") ? 'desc' : 'asc'
-      Customer.es_filter(current_account.id,params[:letter],(params[:page] || 1),order_by, order_type, per_page)
+      Customer.es_filter(current_account.id,params[:letter],(params[:page] || 1),order_by, order_type, per_page, request.try(:uuid))
     end
 
     def set_selected_tab

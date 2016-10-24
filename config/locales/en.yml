@@ -6801,7 +6801,7 @@ en:
     published_in: "Published in"
     installs: Installs
     no_apps: No Apps available
-    no_custom_apps_html: "No custom apps have been published. To get started, please visit our <a href='https://developers.freshdesk.com' target='_blank'> developer site.</a>"
+    empty_custom_apps_msg_html: "No custom apps have been published. To get started, please visit our <a href='%{dev_url}' target='_blank'> developer site.</a>"
     no_apps_in_category: No Apps available in this category
     related_categories: "Apps from Related Categories:"
     similar_apps: "Similar Apps:"
@@ -7976,6 +7976,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
   latest_ticket: "new update"
   latest_tickets: "new updates"
   search:
+    view_all_tickets: "View all tickets"
     recent_searches: "Recent Searches"
     recently_viewed: "Recently Viewed"
     no_results_msg: "No results found"
@@ -9670,7 +9671,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     widget_option_info: "If feedback widget not available, new ticket page will be opened"
     no_matching_agents: "No matching agents"
     chat_enabled_label: "Enable Chat"
-    cobrowsing : "Screenshare"
+    cobrowsing : "Onpage Help"
     cobrowsing_info : "Guide your customers more effectively during your chat conversations by having an option to view and control their screen."
     routing: "Chat routing"
     routing_info: "Route all incoming chats to specific groups"
@@ -9802,6 +9803,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       forward: "Forward"
       add_note: "Add note"
       scenario: "Scenarios"
+      jump_to_views: "Jump to views"
     ticket_list:
       title: "Ticket List"
       move_cursor: "Jump cursor to next / previous ticket"
@@ -10224,4 +10226,5 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     show: Show
     hide: Hide
     suggestion_text: What can we improve? (Optional).
+    help: What's this?
 

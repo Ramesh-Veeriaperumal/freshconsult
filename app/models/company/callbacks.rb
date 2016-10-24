@@ -1,5 +1,7 @@
 class Company < ActiveRecord::Base
   
+  before_validation :remove_white_space
+
   after_commit :clear_cache
   after_commit :nullify_contact_mapping, on: :destroy
   after_commit :inst_app_business_event_create, on: :create, :if => :allow_inst_app_business_rule?
@@ -45,5 +47,9 @@ class Company < ActiveRecord::Base
         old_dom << x.domain unless x.new_record?
       end
       return {:domains => [ old_dom, new_dom] } if old_dom != new_dom
+    end
+
+    def remove_white_space
+      self.name.squish! unless self.name.nil?
     end
 end

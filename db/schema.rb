@@ -11,8 +11,8 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
+ActiveRecord::Schema.define(:version => 20160923062730) do
 
-ActiveRecord::Schema.define(:version => 20160921145313) do
   
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -4015,6 +4015,7 @@ ActiveRecord::Schema.define(:version => 20160921145313) do
     t.string   "string_uc04"
     t.string   "string_uc05"
     t.string   "string_uc06"
+    t.string   "unique_external_id"
   end
 
   add_index "users", ["email", "account_id"], :name => "index_users_on_email_and_account_id", :unique => true
@@ -4025,6 +4026,7 @@ ActiveRecord::Schema.define(:version => 20160921145313) do
   add_index "users", ["account_id", "name"], :name => "index_users_on_account_id_and_name"
   add_index "users", ["account_id", "phone"], :name => "index_users_on_account_id_phone"
   add_index "users", ["account_id", "twitter_id"], :name => "index_users_on_account_id_twitter_id"
+  add_index "users", ["account_id", "unique_external_id"], :name => "index_users_on_account_id_and_unique_external_id", :unique => true
   add_index "users", ["customer_id", "account_id"], :name => "index_users_on_customer_id_and_account_id"
   add_index "users", ["perishable_token", "account_id"], :name => "index_users_on_perishable_token_and_account_id"
   add_index "users", ["persistence_token", "account_id"], :name => "index_users_on_persistence_token_and_account_id"
@@ -4101,5 +4103,15 @@ ActiveRecord::Schema.define(:version => 20160921145313) do
     t.integer "user_id",    :limit => 8
     t.integer "account_id", :limit => 8
   end
+
+  create_table "account_webhook_keys", :force => true do |t|
+    t.integer "account_id", :limit => 8, :null => false
+    t.string  "webhook_key", :limit => 35
+    t.integer "vendor_id", :limit => 11
+    t.integer "status", :limit => 1
+  end
+
+  add_index "account_webhook_keys", ["account_id", "vendor_id"], :name => 'index_account_webhook_keys_on_account_id_and_vendor_id'
+  add_index "account_webhook_keys", "webhook_key", :unique => true
 
 end

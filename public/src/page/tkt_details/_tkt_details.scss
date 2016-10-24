@@ -29,7 +29,13 @@ li {
     content: "";
     display: table;
 }
-
+.ticket_show .commentbox {
+    [rel=image-enlarge] {
+        .hide {
+            display: block;
+        }
+    }
+}
 .ticket_show .clearfix:after {
     @include clear(both);
 }
@@ -966,6 +972,9 @@ li {
         position: relative;
         top: 6px;
     }
+    .no-top {
+        top: 0px;
+    }
     .add_attachment {
         cursor: pointer;
         height: 22px;
@@ -1466,7 +1475,7 @@ li {
             height: 185px;
         }
     }
-    .tweet-counter {
+    .tweet-counter, .dm-reply-counter {
         position: static;
         color: #888;
     }
@@ -2732,7 +2741,7 @@ li {
                 width: 100%;
                 display: block;
                 @include clear(both);
-                height: 19px;
+                height: auto;
                 font-size: 13px;
                 padding: 5px 0;
                 font-weight: 500;
@@ -4331,21 +4340,29 @@ li {
         padding: 2px 6px;
         border-radius: 10px;
         font-weight: 500;
+        margin-right:6px;
         font-size: 12px;
         vertical-align: top;
       }
     }
-    a {
+    a.toggle {
       @include float(right); 
       font-weight: 400;
       font-size: 12px;
+      color:#666;
       i {
         opacity: 0.5;
         font-size: 16px;
         vertical-align: middle;
         color: #222;
-        padding-left: 2px;
-      }
+        padding-left: 8px;
+      }  
+    }
+    a.help {
+      @include float(none); 
+      font-weight: 400;
+      font-size: 12px;
+      margin:0 10px;
     }
   }
   .sas-ctd {
