@@ -37,7 +37,7 @@ module Sqs
             @account_id = account.id
           end
           if page_rate_limit_reached?(@account_id,page_id)
-            requeue(raw_obj,{:delay_seconds => 900})
+            requeue(JSON.parse(raw_obj),{:delay_seconds => 900})
           else
             fb_feed.process_feed(raw_obj)
           end
@@ -72,9 +72,9 @@ module Sqs
         options[:delay_seconds] = msg["counter"] * FB_DELAY_SECONDS
       end
       if msg["entry"] && msg["entry"]["changes"].kind_of?(Array)
-        $sqs_facebook.send_message(msg.to_json, options)
+        Rails.logger.debug $sqs_facebook.send_message(msg.to_json, options)
       elsif msg["entry"] && msg["entry"]["messaging"].kind_of?(Array)
-        $sqs_facebook_messages.send_message(msg.to_json, options)
+        Rails.logger.debug $sqs_facebook_messages.send_message(msg.to_json, options)
       end
     end
     
