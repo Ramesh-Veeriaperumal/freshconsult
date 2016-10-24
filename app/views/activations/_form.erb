@@ -26,35 +26,44 @@
 	</fieldset>
 <% end %>
 
-<script type="text/javascript">
-	jQuery(document).ready(function(ev){
-		setTimeout(function(){
-			jQuery("#user_password_confirmation").rules("add", {
-				equalTo: "#user_password",
-				messages: {
-					equalTo: "<%= t('profile.confirm_password_message') %>"
-				}
-			})
-		}, 100)
+<%= javascript_tag do %>
+ 	(function($){
+ 	var mediaQcheck = window.matchMedia( "(max-device-width: 480px)" );
+ 		var $placement = ($("html").attr("dir") == "rtl") ? 'left' :'right';
+		$("input.popover-enabled").focus(function(){
+		  var popover_message= $(this).attr("data-content");
 
-		jQuery(document).on("focus","input.popover-enabled",function(){
-		  var popover_message = jQuery(this).attr("data-content");
-		  if(popover_message){
-		    jQuery(this).popover({
-	  	  	html: true,
-	  	  	trigger: 'manual',
-	  	  	template: '<div class="popover"><div class="arrow"></div><div class="popover-inner"><div class="popover-content"><p></p></div></div></div>',
-	  	  	content:function(){
-                  return "<div class='password-wrapper'><h5 class='policy-title'><%= t("admin.security.password_policy_popover.password_must") %></h5>" 
-                  	+popover_message + "</div>"
-                }
-	  	  }).popover("show");
-		  }
+					if (mediaQcheck.matches) {
+					    if(popover_message){
+					    $(this).popover({
+			  	   		  html: true,
+			  	   		  trigger: 'manual',
+			  	   		   placement: 'top',
+			  	   		  template: '<div class="popover"><div class="arrow"></div><div class="popover-inner"><div class="popover-content"><p></p></div></div></div>',
+			  	   		  content:function(){
+			                  return "<div class='password-wrapper'><h5 class='policy-title'><%= t("admin.security.password_policy_popover.password_must") %></h5>" 
+			                  	+popover_message + "</div>"
+			                }
+			  	   	    }).popover("show");
+			  	   	}} 
+					else {
+					  if(popover_message){
+					    $(this).popover({
+			  	   		  html: true,
+			  	   		  trigger: 'manual',
+			  	   		   placement: $placement,
+			  	   		  template: '<div class="popover"><div class="arrow"></div><div class="popover-inner"><div class="popover-content"><p></p></div></div></div>',
+			  	   		  content:function(){
+			                  return "<div class='password-wrapper'><h5 class='policy-title'><%= t("admin.security.password_policy_popover.password_must") %></h5>" 
+			                  	+popover_message + "</div>"
+			                }
+			  	   	    }).popover("show");
+			  	   	}}
+		});	
+		$(".popover-enabled").blur(function(){
+	  	  $(this).popover("hide");
 		});
 	
-		jQuery(".popover-enabled").blur(function(){
-	  		jQuery(this).popover("hide");
-		});
-	
-	})
-</script>
+	})(jQuery);
+
+<% end %>
