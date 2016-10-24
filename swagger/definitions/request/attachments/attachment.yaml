@@ -2,7 +2,7 @@ type: object
 properties:
   user_id:
     type: number
-  body:
+  content:
     type: string
     format: byte
 required:

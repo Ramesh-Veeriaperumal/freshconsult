@@ -32,6 +32,7 @@ module CannedResponseFoldersTestHelper
       {
         id: folder.id,
         name: folder.display_name,
+        personal: folder.personal?,
         responses_count: folder.visible_responses_count
       }
     end

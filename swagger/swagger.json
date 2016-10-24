@@ -1671,7 +1671,7 @@
         "user_id": {
           "type": "number"
         },
-        "body": {
+        "content": {
           "type": "string",
           "format": "byte"
         }
@@ -2591,6 +2591,9 @@
         {
           "type": "object",
           "properties": {
+            "personal": {
+              "type": "boolean"
+            },
             "responses_count": {
               "type": "integer",
               "description": "count of canned responses inside the folder"
