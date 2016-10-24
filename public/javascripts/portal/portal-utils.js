@@ -17,23 +17,6 @@ function log() {
   }
 }
 
- function getSurvey(url_new_via_portal) {
-    $j.ajax({
-      type: 'GET',
-      url: url_new_via_portal,
-      success: function(data){
-        if(data.url_new_via_handle == ""){
-          location.reload();
-        } else {
-          //open the survey url in new tab
-          $j('#hidden_survey').attr('href',data.url_new_via_handle);
-          $j('#hidden_survey')[0].click();
-        }
-      }
-    });
-  }
-  
-
 // Image error issues
 function imgerror(source){
     if (source.width <= 50) {

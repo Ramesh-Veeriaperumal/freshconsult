@@ -20,7 +20,8 @@ class CustomSurvey::SurveyHandle < ActiveRecord::Base
 
   def self.create_handle_for_portal(ticket, notification_type)
     send_while = NOTIFICATION_VS_SEND_WHILE[notification_type]
-    create_handle_internal(ticket, send_while, survey_id=nil, note=nil, preview=false, portal=true) if send_while
+    create_handle_internal(ticket, send_while, survey_id=nil, note=nil, preview=false, portal=true, 
+                            save=false) if send_while
   end
 
   def self.create_handle_for_preview(survey_id, send_while)
@@ -72,7 +73,7 @@ class CustomSurvey::SurveyHandle < ActiveRecord::Base
     end
 
     def self.create_handle_internal(ticket, send_while, survey_id = nil, note = nil,
-                                      preview = false, portal = false)
+                                      preview = false, portal = false, save = true)
     
       return nil unless (preview or portal or ticket.can_send_survey?(send_while))
 
@@ -91,7 +92,7 @@ class CustomSurvey::SurveyHandle < ActiveRecord::Base
         s_handle.group_id = ticket.group_id
         s_handle.agent_id ||= ticket.responder_id
       end
-      s_handle.save
+      s_handle.save if save
       s_handle
     end
 end
