@@ -1,4 +1,4 @@
-<%= form_for @item, :html => {:multipart => true, :id => "NewTicket", :ignore => "" , :rel=>"validate", :"data-multifile-enabled" => multifile_enabled? } do |f| %>
+<%= form_for @item, :html => {:multipart => true, :id => "NewTicket", :ignore => "" , :rel=>"validate"} do |f| %>
   <ul class="compose-new-ticket">
     <%= render :partial => "ticket_form", :object => f, :locals => { :is_edit => (@item.errors.any? ? true : false), :f => f } %>
   </ul>

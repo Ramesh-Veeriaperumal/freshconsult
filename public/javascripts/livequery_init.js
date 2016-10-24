@@ -2,16 +2,6 @@
 'use strict';
 
 $(document).ready(function() {
-
-$(".alert").livequery(
-	function(ev) {
-  		var flash = $(this).not('[rel=permanent]');
-  		if(flash.get(0)) {
-         	try{ closeableFlash(flash); } catch(e){}
-      	}
-	}
-)
-
 //Added for social tweet links
 $(".autolink").livequery(function(ev){
   $(this).autoLink();

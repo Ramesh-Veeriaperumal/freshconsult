@@ -23,7 +23,6 @@ class ApplicationController < ActionController::Base
   before_filter :set_cache_buster
   #before_filter :logging_details 
   before_filter :remove_pjax_param 
-  before_filter :set_pjax_url
   after_filter :set_last_active_time, :reset_language
 
   after_filter :remove_rails_2_flash_after
@@ -52,13 +51,6 @@ class ApplicationController < ActionController::Base
   # from your application log (in this case, all fields with names like "password"). 
   # filter_parameter_logging :password
   #
-
-  # Will set the request url for pjax to change the state
-  def set_pjax_url
-    if request.xhr?
-      response.headers['X-PJAX-URL'] = request.url
-    end
-  end
 
   def set_locale
     I18n.locale =  (current_user && current_user.language) ? current_user.language : (current_portal ? current_portal.language : I18n.default_locale) 
