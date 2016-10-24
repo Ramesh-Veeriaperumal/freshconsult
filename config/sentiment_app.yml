@@ -3,6 +3,7 @@ development:
   host: http://sentimentelb-866010645.us-east-1.elb.amazonaws.com
   method: post
   url: api/v1/predict/
+  feedback_url: api/v1/feedback/
   timeout: 2
   ticket_count: 12
 production: 
@@ -10,6 +11,7 @@ production:
   host: https://nba.freshdesk.com
   method: post
   url: api/v1/predict/
+  feedback_url: api/v1/feedback/
   timeout: 2
   ticket_count: 12
 staging: 
@@ -17,6 +19,7 @@ staging:
   host: http://sentimentelb-866010645.us-east-1.elb.amazonaws.com
   method: post
   url: api/v1/predict/
+  feedback_url: api/v1/feedback/
   timeout: 2
   ticket_count: 12
 test: 
@@ -24,5 +27,6 @@ test:
   host: http://sentimentelb-866010645.us-east-1.elb.amazonaws.com
   method: post
   url: api/v1/predict/
+  feedback_url: api/v1/feedback/
   timeout: 2
   ticket_count: 12

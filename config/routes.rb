@@ -1750,6 +1750,7 @@ Helpkit::Application.routes.draw do
         post :custom_search
         post :export_csv
         post :latest_ticket_count
+        post :sentiment_feedback
         match :add_requester
         get :filter_options
         get :full_paginate

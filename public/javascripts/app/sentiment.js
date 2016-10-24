@@ -111,11 +111,10 @@ App.Sentiment = {
 			}
 			console.log(json_data);
 			var xhr_req = {
-					url: "http://sentimentelb-866010645.us-east-1.elb.amazonaws.com/api/v1/feedback/",
+					url: "/helpdesk/tickets/sentiment_feedback",
 		            type: 'POST',
-		            crossDomain: true,
 		            dataType: 'json',
-		            data: Browser.stringify(json_data),
+		            data: json_data,
 		            success: function (data) {
 		                console.log("Success: "+data);
 		            },
