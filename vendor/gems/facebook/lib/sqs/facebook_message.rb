@@ -33,7 +33,7 @@ module Sqs
               @account_id = account.id
             end
             if page_rate_limit_reached?(@account_id,page_id)
-              Sqs::Message.new("{}").requeue(@raw_obj,{:delay_seconds => 900})
+              Sqs::Message.new("{}").requeue(JSON.parse(@raw_obj),{:delay_seconds => 900})
             else           
               fb_message.process(@raw_obj)
             end
