@@ -6802,7 +6802,7 @@ en:
     published_in: "Published in"
     installs: Installs
     no_apps: No Apps available
-    no_custom_apps_html: "No custom apps have been published. To get started, please visit our <a href='https://developers.freshdesk.com' target='_blank'> developer site.</a>"
+    empty_custom_apps_msg_html: "No custom apps have been published. To get started, please visit our <a href='%{dev_url}' target='_blank'> developer site.</a>"
     no_apps_in_category: No Apps available in this category
     related_categories: "Apps from Related Categories:"
     similar_apps: "Similar Apps:"
@@ -9672,7 +9672,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     widget_option_info: "If feedback widget not available, new ticket page will be opened"
     no_matching_agents: "No matching agents"
     chat_enabled_label: "Enable Chat"
-    cobrowsing : "Screenshare"
+    cobrowsing : "Onpage Help"
     cobrowsing_info : "Guide your customers more effectively during your chat conversations by having an option to view and control their screen."
     routing: "Chat routing"
     routing_info: "Route all incoming chats to specific groups"

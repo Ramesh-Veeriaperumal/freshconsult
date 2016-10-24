@@ -43,11 +43,13 @@ var CreateTicket = {
 		this.$el.off('.newTicket');
 		this.$createForm.off('.newTicket');
 		this.$body.off('.newTicket');
+		this.$createForm.off('.new_ticket_compose');
 		TicketForm.unBindEvents();
 		TicketTemplate.destroy();
 	},
 
 	bindEvents: function(){
+		var self = this;
 		this.$body.on('click.newTicket', '#newticket-submit', function(){
 			var trial_spam_error_msg = jQuery("#trial_spam_error_msg").val();
 			var to_cc_spam_threshold = JSON.parse(jQuery("#to_cc_spam_threshold").val());
@@ -62,17 +64,19 @@ var CreateTicket = {
 	        
 	        jQuery(".cc-address .cc-error-message").remove();
 
-	        jQuery("#NewTicket").trigger('submit.newTicket');
+	        var _form = jQuery("#NewTicket");
+	        this.submitForm(_form);
 
-		});
+		}.bind(this));
 
-		this.$createForm.on('submit.newTicket', function(ev){
+		this.$createForm.on('submit.new_ticket_compose', function(ev){
 	    	preventDefault(ev);
 
 			var _form = jQuery("#NewTicket");
 			var topic_id = jQuery("#topic_id_stub").val();
+
+			if(_form.valid()) {
 			
-			if(_form.valid()){
 				if (_form.find('input[name="cc_emails[]"]').length >= 50) {
 					alert('You can add upto 50 CC emails');
 					return false;
@@ -84,10 +88,13 @@ var CreateTicket = {
 				jQuery("#newticket-submit").next().attr('disabled', true);
 				jQuery(".cancel-btn").attr('disabled', true);
 
-				pjax_form_submit("#NewTicket");
+				pjax_form_submit("#NewTicket", ev);
 			}
-			
-			return false;
+
+			// To prevent the normal submit on pjax form submit
+			if(_form.data('multifileEnabled')) {
+				return false;
+			}
 
 		}.bind(this));
 
@@ -106,7 +113,7 @@ var CreateTicket = {
 					}));
 				}
 
-				_form.trigger('submit.newTicket');
+				self.submitForm(_form)
 			});
 
 			this.$body.on('click.newTicket', 'a[rel="ticket_canned_response"]', function(ev){
@@ -139,6 +146,19 @@ var CreateTicket = {
 				jQuery("#helpdesk_ticket_subject").val("");
 				jQuery("#helpdesk_ticket_email").val("");
 			}
+		}
+	},
+	submitForm: function (_form) {
+		// If multifile enabled. Then the page will submit with pjax.
+		// In single file attachment, the file not attachec in pjax submit. So we checked multifile enable feature.
+		if(_form.data('multifileEnabled')) {
+			if(_form.valid()) {
+				// First it will trigger the multifile form submit.
+				// From there the new ticket submit form will trigger once the attachment has uploaded
+				_form.trigger('submit.pjax_submit');
+			}
+		} else {
+			_form.submit();
 		}
 	}
 }

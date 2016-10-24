@@ -1072,10 +1072,12 @@ function uniqueCodeGenerator(name){
 
 function pjax_form_submit (element) {
   var tkt_form = jQuery(element);
-  jQuery.pjax({
-      container: "#body-container",
-      type: tkt_form.attr('method'),
-      url: tkt_form.attr('action'),
-      data: tkt_form.serialize()
-  });
+  if(tkt_form.data('multifileEnabled')) {
+    jQuery.pjax({
+        container: "#body-container",
+        type: tkt_form.attr('method'),
+        url: tkt_form.attr('action'),
+        data: tkt_form.serialize()
+    });
+  }
 }
