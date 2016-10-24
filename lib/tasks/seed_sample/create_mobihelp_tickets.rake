@@ -44,7 +44,7 @@ namespace :seed_sample do
     end
   end
 
-  def device_id
+  def device_number
     @user_device_id ||= Faker::Number.number(20)
   end
 
@@ -69,9 +69,9 @@ namespace :seed_sample do
   end
 
   def create_user_device(app, user)
-    mh_device = user.mobihelp_devices.find_by_device_uuid(device_id)
+    mh_device = user.mobihelp_devices.find_by_device_uuid(device_number)
     return mh_device unless mh_device.nil?
-    mh_device = FactoryGirl.build(:mobihelp_device, user_id: user.id , app_id: app.id , device_uuid: device_id)
+    mh_device = FactoryGirl.build(:mobihelp_device, user_id: user.id , app_id: app.id , device_uuid: device_number)
     mh_device.save
     mh_device
   end
@@ -99,11 +99,11 @@ namespace :seed_sample do
       ticket: {
         source: 8,
         subject: Faker::Lorem.sentence(3),
-        external_id: device_id,
+        external_id: device_number,
         requester_id: @user.id,
         ticket_body_attributes: { description_html: Faker::Lorem.paragraph },
         mobihelp_ticket_info_attributes:  {
-          device_id: @user.mobihelp_devices.find_by_device_uuid(device_id).id,
+          device_id: @user.mobihelp_devices.find_by_device_uuid(device_number).id,
           app_name: Faker::App.name,
           app_version: Faker::App.version,
           os: "ANDROID",
