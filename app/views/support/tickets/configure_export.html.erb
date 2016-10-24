@@ -117,9 +117,10 @@
 			            console.log('endISO', endISO);
 			         
 			         	if(endISO == ''){
-			         	$("#end_date").val("<%= formated_date(Time.now,{:format => :short_day_separated, :include_year => true, :translate => true})%>");
+			         	$("#end_date").val("<%= formated_date(Time.now,{:format => :short_day_separated, :include_year => true, :translate => false})%>");
 						$("#end_date_clone").val("<%= formated_date(Time.now,{:format => :date_iso_format, :include_year => true, :translate => false})%>");
 						var endISO = $("#end_date_clone").val();
+						 console.log('endISO', endISO);
 			         	}
 
 			              if($.datepicker.parseDate('yy-mm-dd', startISO) > $.datepicker.parseDate('yy-mm-dd', endISO))
@@ -150,7 +151,9 @@
 					$(this).prop("date", date);
 						<!-- logic check : startdate <= enddate -->
 						var startISO = $("#start_date_clone").val();
+						console.log('startISO', startISO);
 						var endISO = $("#end_date_clone").val();
+						console.log('endISO', endISO);
 							if($.datepicker.parseDate('yy-mm-dd', startISO) > $.datepicker.parseDate('yy-mm-dd', endISO))
 							{
 								$('#start_date_clone').datepicker( "setDate", endISO );
