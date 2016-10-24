@@ -30,8 +30,8 @@ class QueryHash
     def transform_query(query)
       result = query.slice('condition', 'operator', 'ff_name', 'value', 'type')
       result = (format == :system ? result.except('type') : result.except('ff_name'))
-      return result if skip_transform?(query)
       result['value'] = transform_value(query)
+      return result if skip_transform?(query)
       result.merge!(transform_condition(query))
       if format == :presentable
         result['type'] = is_flexi_field?(query) ? 'custom_field' : 'default'
@@ -51,7 +51,8 @@ class QueryHash
       if format.eql?(:system)
         val.is_a?(Array) ? val.join(',') : val
       else
-        (query['operator'] == 'is_in' && val.is_a?(String)) ? val.split(',') : val
+        return val unless query['operator'] == 'is_in'
+        val.is_a?(String) ? val.split(',') : (val.is_a?(Array) ? val : [val])
       end
     end
 

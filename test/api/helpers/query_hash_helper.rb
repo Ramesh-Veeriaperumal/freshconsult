@@ -139,10 +139,15 @@ module QueryHashHelper
 
   def output_format_query_check(query)
     match_custom_json(query, output_basic_pattern(query))
+    array_value_for_is_in_operator(query)
   end
 
   def output_basic_pattern(query)
     basic_query_pattern(query).merge({ 'type' => query['type'] })
+  end
+
+  def array_value_for_is_in_operator(query)
+    assert query['value'].is_a?(Array) if query['operator'] == 'is_in'
   end
 
 end

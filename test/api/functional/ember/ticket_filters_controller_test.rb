@@ -110,6 +110,16 @@ module Ember
       match_custom_json(response.body, ticket_filter_show_pattern(filter))
     end
 
+    def test_update_with_valid_params_without_visibility
+      filter_params = sample_filter_input_params
+      new_name = "#{Faker::Name.name} - #{Time.now.to_s}"
+      filter_params[:name] = new_name
+      put :update, construct_params({ version: 'private', id: @filter1.id },  filter_params.except(:visibility))
+      assert_response 200
+      filter = Helpdesk::Filters::CustomTicketFilter.find_by_name(new_name)
+      match_custom_json(response.body, ticket_filter_show_pattern(filter))
+    end
+
     def test_destroy_filter_with_invalid_id
       get :destroy, construct_params({ version: 'private', id: 0 }, false)
       assert_response 404

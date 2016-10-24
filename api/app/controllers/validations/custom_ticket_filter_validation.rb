@@ -7,12 +7,16 @@ class CustomTicketFilterValidation < FilterValidation
   validates :order_type, required: true, custom_inclusion: { in: ApiTicketConstants::ORDER_TYPE }
   validates :query_hash, required: true, data_type: { rules: Array, allow_nil: false }
   validates :query_hash, required: true, array: { data_type: { rules: Hash, allow_nil: false } }
-  validates :visibility, required: true, data_type: { rules: Hash }
-  validates :visibility_id, required: true, data_type: { rules: Integer }, custom_inclusion: { in: Admin::UserAccess::VISIBILITY_NAMES_BY_KEY.keys }
-  validates :group_id, required: true, data_type: { rules: Integer }, if: -> { visibility_id == Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:group_agents] }
+  validates :visibility, data_type: { rules: Hash }
+  validates :visibility_id, data_type: { rules: Integer }, custom_inclusion: { in: Admin::UserAccess::VISIBILITY_NAMES_BY_KEY.keys }
+  validates :group_id, data_type: { rules: Integer }, if: -> { visibility_id == Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:group_agents] }
+
+  validates :visibility, required: true, on: :create
+  validates :visibility_id, required: true, on: :create
+  validates :group_id, required: true, on: :create
 
   validate :query_hash_integrity
-  validate :group_id_validation, if: -> { visibility_id == Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:group_agents] }
+  validate :group_id_validation, if: -> { visibility_id && visibility_id == Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:group_agents] }
 
 
   def initialize(request_params, item = nil, allow_string_param = false)
