@@ -502,7 +502,6 @@ en:
         loading_feedback: Loading Feedback
         load_questions: View More
         comments: Comments
-        survey_on_open_ticket: Could not submit survey rating as ticket is not resolved.
     login:
       form:
         email: Email

@@ -40,14 +40,14 @@ class Support::CustomSurveysController < SupportController #for Portal Customiza
       elsif @ticket.closed?
         CustomSurvey::SurveyHandle.create_handle_for_portal(@ticket, EmailNotification::TICKET_CLOSED)
       end
+      @survey_handle.record_survey_result @rating
 
-      if @survey_handle.nil?
-         flash[:notice] = t('support.tickets.ticket_survey.survey_on_open_ticket')
-         render :json => {:url_new_via_handle => ""}
-       else
-         survey_handle_hash = @survey_handle.id_token
-         render :json => {:url_new_via_handle => support_customer_custom_survey_url(survey_handle_hash, CustomSurvey::Survey::CUSTOMER_RATINGS[@rating.to_i])}
-       end
+      respond_to do |format|
+        format.html do
+          set_portal_page :csat_survey 
+          render 'new'
+        end
+      end
     end
   end
 
