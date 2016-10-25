@@ -16,8 +16,6 @@
 
 .icons-edit-forum{ @include icons-sprite(edit-forum); }
 
-
-
 .meta-os { @include icons-sprite('os-generic'); }
 @each $os in mac, windows, android, linux {
   .meta-os.os-#{$os} { @include icons-sprite('os-#{$os}'); }
@@ -69,4 +67,5 @@ $chat-layout:horizontal;
 		height: #{$size}px;
 	}
 }
+
 

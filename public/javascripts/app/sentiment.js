@@ -13,7 +13,6 @@ App.Sentiment = {
 			console.log("Ticket sentiment: "+sentiment.ticket_sentiment);
 			console.log("Note sentiment: "+sentiment.last_note.note_sentiment);
 
-			
 			var _this = this;
 		    var sentiment_tmpl = JST["app/template/sentiment_feedback_template"]({
             	'data': 'data'
@@ -66,9 +65,13 @@ App.Sentiment = {
 
 			//change immediate parent sentiment temp fix
 			kk = jQuery('.sentiment').last()[0];
-			kk.removeClassName(kk.classList[1]);
+
+			kk.removeClassName(kk.classList[kk.classList.length-1]);
+			kk.removeClassName(kk.classList[kk.classList.length-1]);
 			kk.addClassName(_this.get_sentiment_num(changed_senti));
-			kk.src = _this.get_source(_this.get_sentiment_num(changed_senti));
+			kk.addClassName(_this.get_sentiment_class(_this.get_sentiment_num(changed_senti)));
+
+			kk.setAttribute("data-original-title",_this.get_sentiment_title_from_num(_this.get_sentiment_num(changed_senti)))
 
 			m1 = jQuery('.cmi-plugin .note_mood');
 			m1.closest('li').removeClass('selected');
@@ -225,6 +228,19 @@ App.Sentiment = {
 		      return "http://imgh.us/emo-veryhappy.svg"
 		    else 
 		      return "http://imgh.us/emo-neutral.svg"   
+		},
+		get_sentiment_class : function(sentiment) {
+
+			if (sentiment == -2)
+		      return "symbols-emo-angry-20"
+		    else if (sentiment == -1)
+		      return "symbols-emo-sad-20"
+		    else if (sentiment == 1)
+		      return "symbols-emo-happy-20"
+		    else if (sentiment == 2)
+		      return "symbols-emo-veryHappy-20"
+		    else 
+		      return "symbols-emo-neutral-20"   
 		}
 	},
 

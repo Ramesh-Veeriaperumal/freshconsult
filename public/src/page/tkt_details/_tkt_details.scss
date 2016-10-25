@@ -4235,6 +4235,16 @@ li {
     background: none;
 }
 
+#tickets-expanded .userpic i.sentiment{ 
+    position: absolute;
+    bottom: -5px;
+    right: -2px;
+    width: 20px;
+    height: 20px; 
+    border-radius: 0;
+    display: inline-block;
+}
+
 
 .ticket_show .avatar-wrap .preview_pic img.sentiment{
     width: 20px; 
@@ -4244,9 +4254,16 @@ li {
     right: -3px;
 }
 
+.ticket_show .avatar-wrap .preview_pic i.sentiment{
+    width: 20px; 
+    height: 20px; 
+    position: absolute; 
+    top: 27px; 
+    right: -3px;
+}
+
 .ico {
   display: inline-block;
-  background-size: contain;
   vertical-align: top;
   width: 25px;
   height: 25px;

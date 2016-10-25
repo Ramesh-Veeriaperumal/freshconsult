@@ -744,7 +744,7 @@ module ApplicationHelper
       
       content_tag(:div, :class => "#{profile_class} image-lazy-load", :size_type => profile_size ) do
         image_tag("/assets/misc/profile_blank_#{profile_size}.jpg", img_tag_options)+
-        get_senti_image_tag(sentiment)
+        get_senti_i_tag(sentiment)
       end
   end
 
@@ -755,12 +755,12 @@ module ApplicationHelper
     if username.present? && isalpha(username[0]).present?
       content_tag( :div, :class => "#{profile_class} avatar-text text-center #{profile_size} bg-#{unique_code(username)}" ) do
         content_tag(:p, username[0])+
-        get_senti_image_tag(sentiment)
+        get_senti_i_tag(sentiment)
       end
     else
        content_tag( :div, :class => profile_class, :size_type => profile_size ) do
         (image_tag "/assets/misc/profile_blank_#{profile_size}.jpg", img_tag_options )+
-        get_senti_image_tag(sentiment)
+        get_senti_i_tag(sentiment)
       end
     end
   end
@@ -774,6 +774,14 @@ module ApplicationHelper
     else
       return ""
     end
+
+  end
+
+  def get_senti_i_tag(sentiment)
+    i_tag = content_tag( :i, :class => "sentiment tooltip #{sentiment} #{senti_class_locator(sentiment)}", :title => "#{get_senti_title(sentiment)}" ) do
+    end
+
+    return i_tag
   end
 
   def get_senti_title(sentiment)
@@ -789,6 +797,21 @@ module ApplicationHelper
     else 
       return "Neutral"   
     end 
+  end
+
+  def senti_class_locator(sentiment)
+
+    if sentiment == -2
+      return "symbols-emo-angry-20"
+    elsif sentiment == -1
+      return "symbols-emo-sad-20"
+    elsif sentiment == 1
+      return "symbols-emo-happy-20"
+    elsif sentiment == 2
+      return "symbols-emo-veryHappy-20"
+    else 
+      return "symbols-emo-neutral-20"   
+    end  
   end
 
   # TODO: change it to get images from cdn
