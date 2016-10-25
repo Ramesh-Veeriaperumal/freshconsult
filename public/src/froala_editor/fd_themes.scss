@@ -2,6 +2,9 @@
 @import "../../fonts/glyphs-variables";
 @import "../../shared/mixins";
 
+/* To break the unicode character in production. have to fix this bug */
+i{}
+
 .solutions .editor-body {
   .fr-box {
     margin-top: 15px;
