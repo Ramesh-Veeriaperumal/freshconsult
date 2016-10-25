@@ -162,7 +162,14 @@
 			}
 			fieldContainer.data("raw", dataItem);
 			fieldContainer.addClass(dataItem.dom_type).append(controlGroup);
-			
+			var fieldtype = dataItem.field_type;
+			if ($.inArray(fieldtype, this.settings.inVisbileFields) == 0) {
+				fieldContainer.addClass("hide");
+				fieldContainer.addClass("cf-client-manager");
+			}
+			if (fieldtype == "default_company_name") {
+				fieldContainer.addClass("cf-company-name");
+			}
 			if(this.settings.customFieldType != 'company') {
 				this.showSecurityIconForAgentFields(fieldContainer);
 			}
@@ -368,6 +375,14 @@
 			this.value = $(this).data("commit")
 			$(this.settings.saveBtn).prop("disabled", true);
 			$(this.settings.submitForm).trigger("submit");
+		},
+
+		setClientManagerPosition: function() {
+			var company_elements = $('.cf-company-name.ui-sortable-handle');
+			if(!company_elements.next().hasClass('.cf-client-manager')) {
+				var client_manager_elements = $('.cf-client-manager.ui-sortable-handle');
+				company_elements.after(client_manager_elements);
+			}
 		},
 
 		deletePostData: function(data) {
@@ -728,6 +743,13 @@
 			$(this.settings.customPropertiesDiv)
 					.on('submit',function(){ return false; });
 
+			$(document).on('click', '.saveBtn', function(){ 
+				var li = $('.cf-company-name').next()
+				if(!li.hasClass('.cf-client-manager')) {
+					li.next($('.cf-client-manager'))
+				}
+			});
+
 			this.settings.validateOptions = {
 							submitHandler: function(){
 								self.setCurrentData(true);
@@ -783,6 +805,7 @@
 					 };
 
 			$(this.settings.saveBtn).on('click', function(e) {
+				self.setClientManagerPosition();
 				self.saveCustomFields(e);
 			});
 

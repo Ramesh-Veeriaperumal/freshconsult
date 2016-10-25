@@ -159,7 +159,13 @@ window.App.Contacts.Contact_form = window.App.Contacts.Contact_form || {};
 
     bindMenuItemClick: function () {
       $('body').on('click.contact_form', ".ui-menu-item", function(ev){
-        $("#user_address").focus();
+        var add_company_element = $('body').find("#add_new_company");
+        if(add_company_element.length != 0) {
+          add_company_element.focus();
+        }
+        else {
+          $('#user_client_manager').focus();
+        }
       });
     },
 
