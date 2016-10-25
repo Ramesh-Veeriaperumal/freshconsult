@@ -2,7 +2,7 @@
 es:
   validation:
     two_decimal_place_warning: "Value cannot have more than 2 decimal digits"
-    select_atleast_one: "Select atleast one option."
+    select_atleast_one: "Selecciona, al menos, una opción"
     required: "Este campo es requerido"
     remote: "Por favor agrega este campo"
     email: "Por favor ingresa un email valido"
@@ -2479,7 +2479,7 @@ es:
     downvote: "No"
     link: "Enviar comentario"
     down_vote_form_title: "¿Podrías decirnos como mejorar este artículo?"
-    downvote_feedback_messasge: "Lo sentimos, fuimos poco útiles, por favor ayúdanos a mejorar este artículo dejando tus ideas o comentarios"
+    downvote_feedback_messasge: "Por favor ayúdanos a mejorar dejando tus ideas o comentarios"
   group:
     only_round_robin_description: "Tickets coming into this group will be automatically assigned to available agents based on <strong>Round-robin method</strong>"
     toggle_availability_message: "Admins and supervisors can override an agent's availability from the dashboard"

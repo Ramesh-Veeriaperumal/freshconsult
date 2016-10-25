@@ -2,7 +2,7 @@
 de:
   validation:
     two_decimal_place_warning: "Value cannot have more than 2 decimal digits"
-    select_atleast_one: "Select atleast one option."
+    select_atleast_one: "Wahlen Sie eine option."
     required: "Dies ist eine Pflichtangabe."
     remote: "Bitte reparieren Sie dieses Feld."
     email: "Bitte geben Sie eine gültige E-Mail-Adresse an."
