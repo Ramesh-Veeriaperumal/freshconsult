@@ -217,8 +217,8 @@ class Support::SearchV2::SpotlightController < SupportController
       @@esv2_portal_spotlight ||= {
         'ticket'        => { model: 'Helpdesk::Ticket',         associations: [ :ticket_old_body ] },
         'archiveticket' => { model: 'Helpdesk::ArchiveTicket',  associations: [] },
-        'topic'         => { model: 'Topic',                    associations: [] },
-        'article'       => { model: 'Solution::Article',        associations: [ :folder, :article_body ] }
+        'topic'         => { model: 'Topic',                    associations: [ :forum ] },
+        'article'       => { model: 'Solution::Article',        associations: [:article_body, { :solution_folder_meta => :solution_category_meta } ] }
       }
     end
 
