@@ -420,6 +420,7 @@ class Helpdesk::TicketsController < ApplicationController
         hash.merge!({:twitter_handles_map => twitter_handles_map}) if @item.twitter?
         hash.merge!({:tags => @item.tags.map(&:to_mob_json)})
         hash.merge!(@ticket_notes[0].to_mob_json) unless @ticket_notes[0].nil?
+        hash.merge!({:ticket_draft => draft_hash})
         render :json => hash
       }
       format.mobile {
