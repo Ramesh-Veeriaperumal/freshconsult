@@ -680,15 +680,28 @@ class Helpdesk::TicketsController < ApplicationController
 
     Rails.logger.info "In sentiment_feedback"
 
-    con = Faraday.new(SentimentAppConfig["host"]) do |faraday|
-        faraday.response :json, :content_type => /\bjson$/                # log requests to STDOUT
-        faraday.adapter  Faraday.default_adapter  # make requests with Net::HTTP
-    end
+    if current_user.has_ticket_permission?(@item)
 
-    response = con.post do |req|
-      req.url "/"+SentimentAppConfig["feedback_url"]
-      req.headers['Content-Type'] = 'application/json'
-      req.body = params.to_json
+      fb_params = {}
+
+      con = Faraday.new(SentimentAppConfig["host"]) do |faraday|
+          faraday.response :json, :content_type => /\bjson$/                # log requests to STDOUT
+          faraday.adapter  Faraday.default_adapter  # make requests with Net::HTTP
+      end
+
+      fb_params = {"data"=> {:account_id=>current_account.id, 
+                            :ticket_id=>params["data"]["ticket_id"],
+                            :note_id=>params["data"]["note_id"],
+                            :predicted_value=>params["data"]["predicted_value"],
+                            :feedback=>params["data"]["feedback"],
+                            :user_id=>current_user.id,
+                            }}
+
+      response = con.post do |req|
+        req.url "/"+SentimentAppConfig["feedback_url"]
+        req.headers['Content-Type'] = 'application/json'
+        req.body = fb_params.to_json
+      end
     end
     render :json => {"success"=>"true"}.to_json
 
