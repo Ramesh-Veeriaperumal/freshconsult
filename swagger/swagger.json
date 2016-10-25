@@ -1070,7 +1070,8 @@
         "tags": [
           "ticket"
         ],
-        "summary": "Merge tickets **",
+        "summary": "Merge tickets",
+        "description": "Some part of this merge is done in sidekiq workers. For the merge tickets action to be completed you need to run sidekiq workers.",
         "parameters": [
           {
             "name": "data",
@@ -1989,12 +1990,26 @@
           }
         },
         "note_in_primary": {
-          "type": "string",
-          "required": false
+          "type": "object",
+          "properties": {
+            "body": {
+              "type": "string"
+            },
+            "private": {
+              "type": "boolean"
+            }
+          }
         },
         "note_in_secondary": {
-          "type": "string",
-          "required": false
+          "type": "object",
+          "properties": {
+            "body": {
+              "type": "string"
+            },
+            "private": {
+              "type": "boolean"
+            }
+          }
         },
         "convert_recepients_to_cc": {
           "type": "boolean",

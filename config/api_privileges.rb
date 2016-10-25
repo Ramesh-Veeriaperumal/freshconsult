@@ -19,7 +19,11 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   forward_ticket do
-    resource :"ember/conversation", :only => [:forward]
+    resource :"ember/conversation", only: [:forward]
+  end
+
+  merge_or_split_ticket do
+    resource :"ember/tickets/merge", only: [:merge]
   end
 
   delete_contact do

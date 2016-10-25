@@ -49,6 +49,7 @@ module ApiTicketConstants
 
   # Wrap parameters args
   WRAP_PARAMS = [:ticket, exclude: [], format: [:json, :multipart_form]].freeze
+  MERGE_WRAP_PARAMS = [:merge, exclude: [], format: [:json]].freeze
 
   ALLOWED_CONTENT_TYPE_FOR_ACTION = {
     create: [:json, :multipart_form],
@@ -66,7 +67,7 @@ module ApiTicketConstants
   BULK_ACTION_ASYNC_METHODS = [:bulk_execute_scenario, :bulk_update].freeze
   BULK_ACTION_METHODS = [:bulk_delete, :bulk_spam, :bulk_restore, :bulk_unspam] + BULK_ACTION_ASYNC_METHODS
 
-  LOAD_OBJECT_EXCEPT = BULK_ACTION_METHODS.freeze
+  LOAD_OBJECT_EXCEPT = (BULK_ACTION_METHODS + [:merge]).freeze
 
   MAX_EMAIL_COUNT = TicketConstants::MAX_EMAIL_COUNT - 1
 
@@ -81,5 +82,7 @@ module ApiTicketConstants
 
   VALIDATION_CLASS = 'TicketValidation'
   DELEGATOR_CLASS = 'TicketDelegator'
+  
+  MERGE_PARAMS = [:primary_id, :ticket_ids, :convert_recepients_to_cc, note_in_primary: [:body, :private], note_in_secondary: [:body, :private]].freeze
 
 end.freeze

@@ -1,6 +1,7 @@
 put:
   tags: [ticket]
-  summary: Merge tickets **
+  summary: Merge tickets
+  description: Some part of this merge is done in sidekiq workers. For the merge tickets action to be completed you need to run sidekiq workers.
   parameters:
     - name: data
       in: body

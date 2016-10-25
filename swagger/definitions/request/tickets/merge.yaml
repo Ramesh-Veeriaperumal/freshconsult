@@ -12,11 +12,19 @@ properties:
     items:
       type: number
   note_in_primary:
-    type: string
-    required: false
+    type: object
+    properties:
+      body:
+        type: string
+      private:
+        type: boolean
   note_in_secondary:
-    type: string
-    required: false
+    type: object
+    properties:
+      body:
+        type: string
+      private:
+        type: boolean
   convert_recepients_to_cc:
     type: boolean
     default: false

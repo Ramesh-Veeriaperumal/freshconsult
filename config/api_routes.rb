@@ -158,6 +158,7 @@ Helpkit::Application.routes.draw do
         put :bulk_unspam
         put :bulk_update
         put :bulk_execute_scenario
+        put :merge, to: 'ember/tickets/merge#merge'
       end
       member do
         put :spam

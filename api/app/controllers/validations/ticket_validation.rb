@@ -5,8 +5,8 @@ class TicketValidation < ApiValidation
 
   attr_accessor :id, :cc_emails, :description, :due_by, :email_config_id, :fr_due_by, :group, :priority, :email,
                 :phone, :twitter_id, :facebook_id, :requester_id, :name, :agent, :source, :status, :subject, :ticket_type,
-                :product, :tags, :custom_fields, :attachments, :request_params, :item, :statuses, :status_ids, :ticket_fields,
-                :scenario_id
+                :product, :tags, :custom_fields, :attachments, :request_params, :item, :statuses, :status_ids, :ticket_fields, :scenario_id,
+                :primary_id, :ticket_ids, :note_in_primary, :note_in_secondary, :convert_recepients_to_cc
 
   alias_attribute :type, :ticket_type
   alias_attribute :product_id, :product
@@ -104,6 +104,12 @@ class TicketValidation < ApiValidation
   validates :twitter_id, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }
   validates :phone, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }
   validates :scenario_id, required: true, custom_numericality: { only_integer: true, greater_than: 0, allow_nil: false, ignore_string: :allow_string_param }, if: -> { execute_scenario? }
+
+  validates :primary_id, data_type: { rules: Integer }, required: true, on: :merge
+  validates :ticket_ids, data_type: { rules: Array }, array: { data_type: { rules: Integer } }, required: true, on: :merge
+  validates :convert_recepients_to_cc, custom_inclusion: { in: [true, false] }, on: :merge
+  validates :note_in_primary, data_type: { rules: Hash }, hash: { validatable_fields_hash: proc { |x| x.merge_note_fields_validation } }, required: true, on: :merge
+  validates :note_in_secondary, data_type: { rules: Hash }, hash: { validatable_fields_hash: proc { |x| x.merge_note_fields_validation } }, required: true, on: :merge
 
   def initialize(request_params, item, allow_string_param = false)
     @request_params = request_params
@@ -217,6 +223,13 @@ class TicketValidation < ApiValidation
 
   def execute_scenario?
     [:execute_scenario, :bulk_execute_scenario].include?(validation_context)
+  end
+
+  def merge_note_fields_validation
+    { 
+      body: { data_type: { rules: String }, required: true },
+      private: { custom_inclusion: { in: [true, false] }, required: true }
+    }
   end
 
 end
