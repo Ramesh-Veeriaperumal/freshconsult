@@ -805,8 +805,8 @@
 					 };
 
 			$(this.settings.saveBtn).on('click', function(e) {
-				self.setClientManagerPosition();
 				self.saveCustomFields(e);
+				self.setClientManagerPosition();
 			});
 
 		},
