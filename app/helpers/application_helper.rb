@@ -778,10 +778,13 @@ module ApplicationHelper
   end
 
   def get_senti_i_tag(sentiment)
-    i_tag = content_tag( :i, :class => "sentiment tooltip #{sentiment} #{senti_class_locator(sentiment)}", :title => "#{get_senti_title(sentiment)}" ) do
+    if sentiment
+      i_tag = content_tag( :i, :class => "sentiment tooltip #{sentiment} #{senti_class_locator(sentiment)}", :title => "#{get_senti_title(sentiment)}" ) do
+      end
+      return i_tag
+    else
+      return ""
     end
-
-    return i_tag
   end
 
   def get_senti_title(sentiment)
