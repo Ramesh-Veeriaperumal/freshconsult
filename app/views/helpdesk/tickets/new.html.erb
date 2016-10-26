@@ -15,7 +15,7 @@
 <div class="templates-header-wrapper">
   <%= render :partial => "helpdesk/tickets/ticket_widget/#{tracker_ticket ? 'new_tracker_title' : 'new_ticket_title'}" %>
 <div id="ticket-fields-wrapper">
-  <%= form_for @item, :html => {:multipart => true, :id => "NewTicket", :ignore => "" , :rel=>"validate", :"data-multifile-enabled" => multifile_enabled?} do |f| %>
+  <%= form_for @item, :html => {:multipart => true, :id => "NewTicket", :ignore => "" , :rel=>"validate"} do |f| %>
     <% enable_fragment_cache(:agent_new_ticket, tracker_ticket) do %>
       <ul class="compose-new-ticket">
         <%= render :partial => "ticket_form", :object => f, :locals => { :is_edit => (@item.errors.any? ? true : false), :f => f } %>

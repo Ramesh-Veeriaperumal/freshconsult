@@ -1,4 +1,4 @@
- <%= form_for @item, :html => {:multipart => true, :id => "ComposeTicket", :ignore => "", :rel => "validate" ,:"data-multifile-enabled" => multifile_enabled? } do |f| %>
+ <%= form_for @item, :html => {:multipart => true, :id => "ComposeTicket", :ignore => "", :rel => "validate" } do |f| %>
   <div class="address-details">
     <div class="requester-email details-widget light-border">
     <label class="inline-label" for="cc-email-address"><%= t('ticket.compose.from') %> </label>

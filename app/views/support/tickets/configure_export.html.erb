@@ -83,7 +83,7 @@
 	  			$(this).siblings(".nested-child").children("input").prop({ "checked": _condition })
 			})
 
-			var date_today = new Date()
+			var date_today = new Date();
 
 			$("#date_filter").on("change", function(ev){
 				$("#datepicker").toggle($(this).val() == 4)
@@ -97,15 +97,37 @@
 				altField: "#start_date_clone",
     			altFormat: 'yy-mm-dd',
 				dateFormat: getDateFormat('datepicker'),
-				onChange: function( selectedDate ) {
-					var option = this.id == "start_date" ? "minDate" : "maxDate",
+				onSelect: function( selectedDate ) {
+					var option = "minDate",
 						instance = $( this ).data( "datepicker" ),
 						date = $.datepicker.parseDate(
 							instance.settings.dateFormat ||
 							$.datepicker._defaults.dateFormat,
 							selectedDate, instance.settings );
 					dates.not( this ).datepicker( "option", option, date )
-					$(this).prop("date", date)
+					$(this).prop("date", date);
+
+					<!-- logic check : startdate <= enddate -->
+
+
+
+						var startISO = $("#start_date_clone").val();
+						console.log('startISO', startISO);
+			            var endISO = $("#end_date_clone").val();
+			            console.log('endISO', endISO);
+			         
+			         	if(endISO == ''){
+			         	$("#end_date").val("<%= formated_date(Time.now,{:format => :short_day_separated, :include_year => true, :translate => true})%>");
+						$("#end_date_clone").val("<%= formated_date(Time.now,{:format => :date_iso_format, :include_year => true, :translate => false})%>");
+						var endISO = $("#end_date_clone").val();
+			         	}
+
+			              if($.datepicker.parseDate('yy-mm-dd', startISO) > $.datepicker.parseDate('yy-mm-dd', endISO))
+			              {
+			                $('#end_date_clone').datepicker( "setDate", startISO );
+			                var datepickerStart = $('#start_date').val();
+			                $('#end_date').datepicker( "setDate", datepickerStart );
+			              }
 				}
 			})
 
@@ -117,22 +139,37 @@
 				altField: "#end_date_clone",
     			altFormat: 'yy-mm-dd',
 				dateFormat: getDateFormat('datepicker'),
-				onChange: function( selectedDate ) {
-					var option = this.id == "start_date" ? "minDate" : "maxDate",
+				onSelect: function( selectedDate ) {
+					var option = "maxDate",
 						instance = $( this ).data( "datepicker" ),
 						date = $.datepicker.parseDate(
 							instance.settings.dateFormat ||
 							$.datepicker._defaults.dateFormat,
 							selectedDate, instance.settings );
 					dates.not( this ).datepicker( "option", option, date )
-					$(this).prop("date", date)
+					$(this).prop("date", date);
+						var maxDate = jQuery("#end_date").datepicker('getDate');
+	         		   	maxDate.setDate(maxDate.getDate()); 
+	         		   	jQuery("#start_date").datepicker( "option", "maxDate", maxDate);
+						<!-- logic check : startdate <= enddate -->
+						var startISO = $("#start_date_clone").val();
+						var endISO = $("#end_date_clone").val();
+							if($.datepicker.parseDate('yy-mm-dd', startISO) > $.datepicker.parseDate('yy-mm-dd', endISO))
+							{
+								$('#start_date_clone').datepicker( "setDate", endISO );
+								var datepickerEnd = $('#end_date').val();
+								$('#start_date').datepicker( "setDate", datepickerEnd );
+							}
+
 				}
 			})
 
+			<!-- in next build take all dates through date object for innitialisation below  -->
+
 			$("#start_date").val("<%= formated_date(1.month.ago,{:format => :short_day_separated, :include_year => true, :translate => false})%>");
-			$("#start_date_clone").val("<%= formated_date(1.month.ago,{:format => :short_day_separated, :include_year => true, :translate => false})%>");
+			$("#start_date_clone").val("<%= formated_date(1.month.ago,{:format => :date_iso_format, :include_year => true, :translate => false})%>");
 			$("#end_date").val("<%= formated_date(Time.now,{:format => :short_day_separated, :include_year => true, :translate => false})%>");
-			$("#end_date_clone").val("<%= formated_date(Time.now,{:format => :short_day_separated, :include_year => true, :translate => false})%>");
+			$("#end_date_clone").val("<%= formated_date(Time.now,{:format => :date_iso_format, :include_year => true, :translate => false})%>");
 		})
 
 	}(window.jQuery)

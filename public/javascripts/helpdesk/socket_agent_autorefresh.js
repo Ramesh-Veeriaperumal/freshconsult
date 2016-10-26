@@ -199,7 +199,7 @@ var presentInList = function(filter_values, msg_val){
 }
 
 window.autoRefresh = function(server, hashed_params, current_username, current_userid, socket_client){
-  var node_socket = socket_client.connect(server, {'force new connection':true, 'sync disconnect on unload':true, transports: ['websocket','xhr-polling','polling','htmlfile','flashsocket'],  'reconnectionDelay': 3000, 'reconnectionDelayMax': 60000});
+  var node_socket = socket_client.connect(server, {'force new connection':true, 'sync disconnect on unload':true, 'reconnectionDelay': 3000, 'reconnectionDelayMax': 60000});
   window.node_socket = node_socket;
   jQuery("#index_refresh_alert").data("updated", {});
   jQuery("#index_refresh_alert").data("created", {});
