@@ -58,12 +58,13 @@ window.App.Contacts.Contact_form = window.App.Contacts.Contact_form || {};
           },
           minLength: 1,
           select: function (event, ui) {
-            if ($(this).parent().next().length == 0) {
-              $("#user_address").focus();
-              $("#add_new_company").focus();
-            } else{
-              $(this).parent().next().children(".user_company").focus();
-            };
+            var $addCompany = $("#add_new_company");
+            if($addCompany.length) {
+              $addCompany.focus();
+            }
+            else {
+              $('#user_client_manager').focus();
+            }
           },
           open: function () {
             $(this).autocomplete("widget").css({'display':'block', 'z-index': 1060});
