@@ -10,6 +10,7 @@ class Mobile::NotificationsController < ApplicationController
 			:notification_types => params[:notification_types].to_json,
      		:account_id => current_account.id,
 			:user_id => current_user.id,
+			:notifier_type => params[:notifier_type],
 			:api_version => params[:api_version].blank? ? "V1" : params[:api_version],
 			:secret => current_user.mobile_jwt_secret
     	}
