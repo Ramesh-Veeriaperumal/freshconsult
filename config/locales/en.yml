@@ -7366,6 +7366,37 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       form:
         shop_name: "Shop Name"
         shop_name_info: "For example, if your Shopify URL is <strong>https://my_shop_name.shopify.com</strong>, please enter <strong>my_shop_name</strong>."
+    outlook_contacts:
+      label: "Outlook Contacts Sync"
+      desc: "Periodically synchronize contacts between Outlook and Freshdesk."
+      form:
+        title: "Outlook contacts sync settings"
+        import_group: "Select folders to import (optional)"
+        submit: "Import & Activate"
+        mail_box_detail: "Sync with"
+        sync_tag: "Sync Setting"
+        sync_tag_label: "Sync tag"
+        sync_tag_info: "Using the same sync tag across multiple Outlook accounts allows you to share Freshdesk contacts with all the accounts. If you do not want to sync any contacts into Outlook, you may leave it empty."
+        sync_group_info: "A new contact group <strong>%{group_name}</strong> will be created in your Outlook account for syncing contacts."
+        overwrite_existing_user: "Overwrite existing contact details in Freshdesk"
+        account_not_configured: "<br/>Outlook account settings are not yet configured. Click on 'Sync new account' to configure new account with Outlook.<br/><br/>"
+      edit_form:
+        account: "Account"
+        tag_label: "Sync tag"
+        last_sync_time: "Last sync time"
+        import_complete: "One time import completed."
+        not_yet_synced: "Syncing not started."
+        syncing_in_progress: "Syncing in progress"
+        delete_account: "Delete"
+        edit_account: "Edit"
+        add_more: "Sync new account"
+      delete_action:
+        success: "Succesfully deleted Outlook account."
+        error: "Error while deleting Outlook account."
+      sync_settings:
+        freshdesk_fields: "Freshdesk Fields"
+        outlook_fields: "Outlook Fields"
+        progress: "Sync in progress"
     magento:
       label: "Magento"
       desc: "View recent orders and order details of the customer in Freshdesk while resolving tickets"
@@ -9158,11 +9189,11 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
         unsuccessful: "Call Recording couldn't be deleted, Please try againg after some time"
         error: "Error while deleting a Call Record!!! Please try again after some time"
       strange_numbers:
-      	restricted: "RESTRICTED"
-      	blocked: "BLOCKED"
-      	unknown: "UNKNOWN"
-      	anonymous: "ANONYMOUS"
-      	empty: "EMPTY"
+        restricted: "RESTRICTED"
+        blocked: "BLOCKED"
+        unknown: "UNKNOWN"
+        anonymous: "ANONYMOUS"
+        empty: "EMPTY"
       total_duration: "Duration"
       minutes: "Minutes"
     ticket:

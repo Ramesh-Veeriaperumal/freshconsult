@@ -4104,6 +4104,40 @@ ActiveRecord::Schema.define(:version => 20160923062730) do
     t.integer "account_id", :limit => 8
   end
 
+  create_table "sync_accounts", :force => true do |t|
+    t.string   "name"
+    t.string   "email"
+    t.string   "oauth_token",              :limit => 1000
+    t.string   "refresh_token",            :limit => 1000
+    t.integer  "account_id",               :limit => 8
+    t.integer  "installed_application_id", :limit => 8
+    t.boolean  "active",                                   :default => true
+    t.string   "sync_group_id"
+    t.string   "sync_group_name",                          :default => "Freshdesk Contacts", :null => false
+    t.integer  "sync_tag_id",              :limit => 8
+    t.datetime "sync_start_time"
+    t.datetime "last_sync_time"
+    t.boolean  "overwrite_existing_user",                  :default => false
+    t.string   "last_sync_status"
+    t.text     "configs"
+    t.datetime "created_at",                                                                 :null => false
+    t.datetime "updated_at",                                                                 :null => false
+  end
+
+  add_index "sync_accounts", ["installed_application_id", "email"], :name => "index_sync_accounts_on_installed_application_id_email", :unique => true
+
+  create_table "sync_entity_mappings", :force => true do |t|
+    t.integer  "user_id",         :limit => 8
+    t.string   "entity_id"
+    t.integer  "sync_account_id", :limit => 8
+    t.integer  "account_id",      :limit => 8
+    t.text     "configs"
+    t.datetime "created_at",                   :null => false
+    t.datetime "updated_at",                   :null => false
+  end
+
+  add_index "sync_entity_mappings", ["sync_account_id", "account_id", "user_id", "entity_id"], :name => "index_on_sync_account_id_account_id_user_id_entity_id", :unique => true
+
   create_table "account_webhook_keys", :force => true do |t|
     t.integer "account_id", :limit => 8, :null => false
     t.string  "webhook_key", :limit => 35
