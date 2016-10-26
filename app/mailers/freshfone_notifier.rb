@@ -1,5 +1,6 @@
 class FreshfoneNotifier < ActionMailer::Base
   layout "email_font"
+  include EmailHelper
 
   def account_expiring(account, remaining_days = nil)
     headers = {
@@ -11,6 +12,8 @@ class FreshfoneNotifier < ActionMailer::Base
       "Auto-Submitted" => "auto-generated", 
       "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     }
+
+    headers.merge!(make_header(nil, nil, account.id, "Account Expiring"))
     @remaining_days = remaining_days
     @account = account
     mail(headers) do |part|
@@ -28,6 +31,8 @@ class FreshfoneNotifier < ActionMailer::Base
       "Auto-Submitted" => "auto-generated", 
       "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     }
+
+    headers.merge!(make_header(nil, nil, account.id, "Number Renewal Failure"))
     @account = account
     @number  = number
     mail(headers) do |part|
@@ -45,6 +50,8 @@ class FreshfoneNotifier < ActionMailer::Base
       "Auto-Submitted" => "auto-generated", 
       "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     }
+
+    headers.merge!(make_header(nil, nil, account.id, "Suspended Account"))
     @body = { :account => account }
     @account = account
     mail(headers) do |part|
@@ -62,6 +69,8 @@ class FreshfoneNotifier < ActionMailer::Base
       "Auto-Submitted" => "auto-generated", 
       "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     }
+
+    headers.merge!(make_header(nil, nil, account.id, "Recharge Success"))
     @recharge_amount = recharge_amount
     @balance         = balance
     @account         = account
@@ -81,6 +90,8 @@ class FreshfoneNotifier < ActionMailer::Base
       "Auto-Submitted" => "auto-generated", 
       "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     }
+
+    headers.merge!(make_header(nil, nil, account.id, "Low Balance"))
     @account = account
     @balance = balance
     mail(headers) do |part|
@@ -98,6 +109,8 @@ class FreshfoneNotifier < ActionMailer::Base
       "Auto-Submitted" => "auto-generated", 
       "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     }
+
+    headers.merge!(make_header(nil, nil, account.id, "Trial Number Expiring"))
     @account  = account
     @number   = number
     @trial_days = trial_days
@@ -116,6 +129,8 @@ class FreshfoneNotifier < ActionMailer::Base
       "Auto-Submitted" => "auto-generated", 
       "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     }
+
+    headers.merge!(make_header(nil, nil, account.id, "Billing Failure"))
     @account = account
     @args = args
     @call = current_call
@@ -135,6 +150,8 @@ class FreshfoneNotifier < ActionMailer::Base
       "Auto-Submitted" => "auto-generated", 
       "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     }
+
+    headers.merge!(make_header(nil, nil, account.id, "Recharge Failure"))
     @account = account
     @recharge_amount = recharge_amount
     @balance = balance
@@ -155,6 +172,8 @@ class FreshfoneNotifier < ActionMailer::Base
       "Auto-Submitted" => "auto-generated", 
       "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     }
+
+    headers.merge!(make_header(nil, nil, account.id, "Ops Alert"))
     @account = account
     @message = message
     mail(headers) do |part|
@@ -172,6 +191,8 @@ class FreshfoneNotifier < ActionMailer::Base
       "Auto-Submitted" => "auto-generated", 
       "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     }
+
+    headers.merge!(make_header(nil, nil, account.id, params[:type]))
     headers[:cc] = params[:cc] if params[:cc].present?
     @account = account
     @message = params[:message]
@@ -184,6 +205,7 @@ class FreshfoneNotifier < ActionMailer::Base
     params[:subject] ||= params[:message]
     params[:recipients] ||=   FreshfoneConfig['ops_alert']['mail']['to']
     params[:from]        =  FreshfoneConfig['ops_alert']['mail']['from']
+    params[:type]   = "Freshfone Ops Notifier"
     freshfone_email_template(account, params)
   end
 
@@ -197,6 +219,8 @@ class FreshfoneNotifier < ActionMailer::Base
       "Auto-Submitted" => "auto-generated", 
       "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     }
+
+    headers.merge!(make_header(nil, nil, account.id, params[:type]))
     headers[:cc] = params[:cc] if params[:cc].present?
     @account = account
     @user = user
@@ -216,6 +240,7 @@ class FreshfoneNotifier < ActionMailer::Base
       'Auto-Submitted' => 'auto-generated',
       'X-Auto-Response-Suppress' => 'DR, RN, OOF, AutoReply'
     }
+    headers.merge!(make_header(nil, nil, account.id, "Account Closing"))
     @account = account
     mail(headers) do |part|
       part.html { render "account_closing", :formats => [:html] }
@@ -232,6 +257,8 @@ class FreshfoneNotifier < ActionMailer::Base
   		"Auto-Submitted" => "auto-generated",
   		"X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
   	}
+
+    headers.merge!(make_header(nil, nil, params[:account_id], "Call Recording Deletion Failure"))
   	@params = params
   	mail(headers) do |part|
   		part.html { render "call_recording_deletion_failure"}
@@ -239,7 +266,7 @@ class FreshfoneNotifier < ActionMailer::Base
   end
 
   def phone_trial_reminder(account, days_left)
-     headers = {
+    headers = {
       :subject => "Phone Trial will End within #{days_left} days for your Freshdesk Account",
       :to      => account.admin_email,
       :from    => AppConfig['billing_email'],
@@ -248,6 +275,8 @@ class FreshfoneNotifier < ActionMailer::Base
       'Auto-Submitted' => 'auto-generated',
       'X-Auto-Response-Suppress' => 'DR, RN, OOF, AutoReply'
     }
+
+    headers.merge!(make_header(nil, nil, account.id, "Phone Trial Reminder"))
     @account = account
     @days_left = days_left
     mail(headers) do |part|
@@ -265,6 +294,8 @@ class FreshfoneNotifier < ActionMailer::Base
       'Auto-Submitted' => 'auto-generated',
       'X-Auto-Response-Suppress' => 'DR, RN, OOF, AutoReply'
     }
+
+    headers.merge!(make_header(nil, nil, account.id, partial))
     @account = account
     mail(headers) do |part|
       part.html { render partial, :formats => [:html] }

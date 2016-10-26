@@ -1,5 +1,6 @@
 class SecurityEmailNotification < ActionMailer::Base
   layout "email_font"
+  include EmailHelper
 
   def agent_alert_mail(model, subject, changed_attributes)
     Time.zone = model.time_zone
@@ -12,6 +13,11 @@ class SecurityEmailNotification < ActionMailer::Base
       "Auto-Submitted" => "auto-generated", 
       "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     }
+
+    account_id = -1
+    account_id = Account.current.id if Account.current
+
+    headers.merge!(make_header(nil, nil, account_id, "Agent Alert Email"))
     @changes = changed_attributes
     @time = Time.zone.now.strftime('%B %e at %l:%M %p %Z')
     @model = model
@@ -35,6 +41,7 @@ class SecurityEmailNotification < ActionMailer::Base
       "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     }
 
+    headers.merge!(make_header(nil, nil, Account.current.id, "Admin Alert Email"))
     @changes = changed_attributes
     @time = Time.zone.now.strftime('%B %e at %l:%M %p %Z')
     @model = model

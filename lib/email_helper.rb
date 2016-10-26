@@ -93,4 +93,13 @@ module EmailHelper
     Rails.logger.info("#{log_msg}")
   end 
 
+  def make_header(ticket_id=nil, note_id=nil, account_id=nil,type)
+    headers = {
+        "X-FD-Account-Id" => account_id,
+        "X-FD-Type" => type
+      }
+    headers.merge!({"X-FD-Ticket-Id" => ticket_id}) if ticket_id
+    headers.merge!({"X-FD-Note-Id" => note_id}) if note_id
+    headers
+  end  
 end

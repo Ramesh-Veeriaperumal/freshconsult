@@ -1,7 +1,8 @@
 class Admin::DataImportMailer < ActionMailer::Base
 
   layout "email_font"
-  
+  include EmailHelper
+
  def import_email(options={})
     headers = {
       :to      => options[:email],
@@ -12,6 +13,8 @@ class Admin::DataImportMailer < ActionMailer::Base
       "Auto-Submitted" => "auto-generated", 
       "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     }
+
+    headers.merge!(make_header(nil, nil, Account.current.id, "Import Email"))
     mail(headers) do |part|
       part.html { render "import_email", :formats => [:html] }
     end.deliver
@@ -27,6 +30,8 @@ class Admin::DataImportMailer < ActionMailer::Base
       "Auto-Submitted" => "auto-generated", 
       "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     }
+
+    headers.merge!(make_header(nil, nil, options[:user].account_id, "Import Error Email"))
     @user = options[:user][:name]
     mail(headers) do |part|
       part.html { render "import_error_email", :formats => [:html] }
@@ -43,6 +48,8 @@ class Admin::DataImportMailer < ActionMailer::Base
       "Auto-Submitted" => "auto-generated", 
       "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     }
+
+    headers.merge!(make_header(nil, nil, options[:user].account_id, "Import Format Error Email"))
     @user = options[:user][:name]
     mail(headers) do |part|
       part.html { render "import_format_error_email", :formats => [:html] }
@@ -59,6 +66,7 @@ class Admin::DataImportMailer < ActionMailer::Base
       "Auto-Submitted" => "auto-generated", 
       "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     }
+    headers.merge!(make_header(nil, nil, options[:user].account_id, "Import Summary"))
     @user = options[:user][:name]
     mail(headers) do |part|
       part.html { render "import_summary", :formats => [:html] }
@@ -75,6 +83,8 @@ class Admin::DataImportMailer < ActionMailer::Base
       "Auto-Submitted" => "auto-generated", 
       "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     }
+
+    headers.merge!(make_header(nil, nil, Account.current.id, "Google Contacts Import Email"))
     @last_stats = options[:status]
     mail(headers) do |part|
       part.html { render "google_contacts_import_email", :formats => [:html] }
