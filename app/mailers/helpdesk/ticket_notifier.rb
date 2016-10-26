@@ -82,7 +82,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
        :disable_bcc_notification => e_notification.bcc_disabled?,
        :private_comment => comment ? comment.private : false,
       }
-      headers[:comment] = comment unless comment.nil?
+      headers[:note_id] = comment.id unless comment.nil?
       deliver_email_notification(headers) unless receips.nil?
   end
 
