@@ -59,7 +59,7 @@ class Helpdesk::TicketsController < ApplicationController
   skip_before_filter :load_item
   alias :load_ticket :load_item
 
-  before_filter :set_native_mobile, :only => [:show, :load_reply_to_all_emails, :index,:recent_tickets,:old_tickets , :delete_forever,:change_due_by,:reply_to_forward, :save_draft]
+  before_filter :set_native_mobile, :only => [:show, :load_reply_to_all_emails, :index,:recent_tickets,:old_tickets , :delete_forever,:change_due_by,:reply_to_forward, :save_draft, :clear_draft]
   before_filter :verify_ticket_permission_by_id, :only => [:component]
 
   before_filter :load_ticket,
@@ -1053,7 +1053,7 @@ class Helpdesk::TicketsController < ApplicationController
       if count<tries
           count += 1
           retry
-      end
+      end      
     end
 
      respond_to do |format|
@@ -1069,7 +1069,14 @@ class Helpdesk::TicketsController < ApplicationController
 
   def clear_draft
     remove_tickets_redis_key(draft_key)
-    render :nothing => true
+     respond_to do |format|
+         format.html {
+            render :nothing => true
+         }
+         format.nmobile{
+            render :json => {:success => true}
+         }
+     end
   end
 
   def activities
