@@ -47,21 +47,26 @@ module ActionMailerCallbacks
         self.smtp_settings = smtp_settings
         mail.delivery_method(:smtp, smtp_settings)
       elsif (email_config && email_config.category)
-        mail.header['X-SMTPAPI'] = "{\"unique_args\":{\"account_id\": #{account_id},\"ticket_id\":#{ticket_id},\"type\":\"#{mail_type}\"}}"
         Rails.logger.debug "Used EXISTING category : #{email_config.category} in email config : #{email_config.id} while email delivery"
         category_id = email_config.category
         self.smtp_settings = read_smtp_settings(category_id)
         mail.delivery_method(:smtp, read_smtp_settings(category_id))
+        set_custom_headers(mail, category_id, account_id, ticket_id, mail_type)
       else
-        mail.header['X-SMTPAPI'] = "{\"unique_args\":{\"account_id\": #{account_id},\"ticket_id\":#{ticket_id},\"type\":\"#{mail_type}\"}}"
-        reset_smtp_settings(mail)
+        mailgun_traffic = get_mailgun_percentage
+        if mailgun_traffic > 0 && Random::DEFAULT.rand(100) < mailgun_traffic
+          category_id = reset_smtp_settings(mail, true)
+        else
+          category_id = reset_smtp_settings(mail)
+        end
+        set_custom_headers(mail, category_id, account_id, ticket_id, mail_type)
       end
       @email_confg = nil
     end
 
-    def reset_smtp_settings(mail)
+    def reset_smtp_settings(mail, use_mailgun = false)
       begin
-        category_id = get_category_header(mail) || get_category_id
+        category_id = get_category_header(mail) || get_category_id(use_mailgun)
       rescue Exception => e
         Rails.logger.debug "Exception occurred while getting category id : #{e} - #{e.message} - #{e.backtrace}"
         NewRelic::Agent.notice_error(e)
@@ -70,6 +75,17 @@ module ActionMailerCallbacks
       Rails.logger.debug "Fetched category : #{category_id} while email delivery"
       self.smtp_settings = read_smtp_settings(category_id)
       mail.delivery_method(:smtp, read_smtp_settings(category_id))
+      return category_id
+    end
+
+    def set_custom_headers(mail, category_id, account_id, ticket_id, mail_type)
+      if category_id.to_i > 10
+        Rails.logger.debug "Sending email via mailgun"
+        mail.header['X-Mailgun-Variables'] = "{\"account_id\": #{account_id},\"ticket_id\": #{ticket_id},\"type\": \"#{mail_type}\"}"
+      else
+        Rails.logger.debug "Sending email via sendgrid"
+        mail.header['X-SMTPAPI'] = "{\"unique_args\":{\"account_id\": #{account_id},\"ticket_id\":#{ticket_id},\"type\":\"#{mail_type}\"}}"
+      end
     end   
         
     def read_smtp_settings(category_id)
