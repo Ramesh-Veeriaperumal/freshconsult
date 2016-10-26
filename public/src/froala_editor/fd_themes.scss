@@ -3,12 +3,10 @@
 @import "../../shared/mixins";
 
 .solutions .editor-body {
-  .fr-box {
-    /* To break the unicode character in production. have to fix this bug */
-    i{
-      cursor: default;
-    }
+  /* To break the unicode character in production. have to fix this bug */
+  .dumm-class {cursor: default;}
 
+  .fr-box {    
     margin-top: 15px;
 
     &.fr-basic.fr-top .fr-wrapper {
