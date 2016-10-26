@@ -902,11 +902,15 @@ en:
         time_zone: Time Zone
         language: Language
         description: Background Information
+        multiple_company: Associate one contact with multiple companies
       untitled: Untitled
       first_choice: First Choice
       second_choice: Second Choice
       confirm_delete: Are you sure you want to delete this field?
       no_choice_message: "At least one valid choice has to be present"
+      multiple_company_dialog_help_text: When turned on,contacts(resellers or partners) will be able to choose one of the companies associated to them while submitting a ticket.
+      multiple_company_dialog_on: Contacts (resellers or partners) will be able to choose one of the companies associated to them while submitting a ticket. 
+      multiple_company_dialog_warning: "Turning this off will permanently delete all the secondary companies from all the contacts.While the old tickets will remain unaffected, new tickets can be raised only for the primary company."
       index:
         add_custom_field: Add a Custom Field
         customize_form: "Customize your “New Contact form."
@@ -960,6 +964,7 @@ en:
         regexp_example_html: "For example, To match a string that contains only alphabets & numbers: <b> /^[a-zA-Z0-9]*$/ </b>. To match a string that starts with word \"fresh\" <b> %{regex} </b>."
         max_choices: "Maximum items reached"
         mapped_internal_groups: "Mapped Internal Groups"
+        multiple_company_message : "Contacts can be associated with only one company"
     portal:
       delete_confirm:
         title: "Deleting this portal will remove"

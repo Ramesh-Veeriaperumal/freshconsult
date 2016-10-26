@@ -186,6 +186,30 @@
 					</div> 
 				<% } %>
 			</div>
+			<% if( field_type == "default_company_name" && is_multiple_contact_feature_present) { %>
+				<div class="multiple_companies_section">
+					<div class="pull-left">
+		                <input type="checkbox" name="multiple_companies" rel="toggle" >
+		            </div>
+		            <div class="span6">
+			              <label for="multiple_companies">
+			                  <h5 class="mini-lead floatl mb2 mr7">
+			                    	<%= translate.get('multiple_company_field_label') %>
+			                  </h5>                    
+			              </label>
+			              <p class="muted lead-desc clear" rel="neutral">
+			                	<%= translate.get('multiple_company_dialog_help_text') %>
+			              </p>
+			              <p class="muted lead-desc clear hide" rel="on">
+			                	<%= translate.get('multiple_company_dialog_on') %>
+			              </p>
+			              <p class="muted lead-desc clear hide warning_text" rel="warning">
+			                	<b>Warning</b> : <%= translate.get('multiple_company_dialog_warning') %>
+			              </p>
+		       		 </div>	
+		       		 <div class="clear"></div>				
+				</div>
+       		 <% } %>
 		</form>
 	</div>
 	<span class="seperator"></span> 
