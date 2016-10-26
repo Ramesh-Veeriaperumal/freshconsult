@@ -61,10 +61,10 @@ App.Sentiment = {
 			var _this = this;
 			var target = evt.target;
 
-			changed_senti = target.closest('a').classList[1];
+			var changed_senti = target.closest('a').classList[1];
 
 			//change immediate parent sentiment temp fix
-			kk = jQuery('.sentiment').last()[0];
+			var kk = jQuery('.sentiment').last()[0];
 
 			kk.removeClassName(kk.classList[kk.classList.length-1]);
 			kk.removeClassName(kk.classList[kk.classList.length-1]);
@@ -73,10 +73,10 @@ App.Sentiment = {
 
 			kk.setAttribute("data-original-title",_this.get_sentiment_title_from_num(_this.get_sentiment_num(changed_senti)))
 
-			m1 = jQuery('.cmi-plugin .note_mood');
+			var m1 = jQuery('.cmi-plugin .note_mood');
 			m1.closest('li').removeClass('selected');
 
-			m = jQuery('.cmi-plugin .'+changed_senti);
+			var m = jQuery('.cmi-plugin .'+changed_senti);
 			m.closest('li').addClass('selected');
 
 			jQuery('.cmi-fdbk').html("Successfully changed!");
