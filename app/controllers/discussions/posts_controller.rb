@@ -16,6 +16,7 @@ class Discussions::PostsController < ApplicationController
 
 	def update
 		@post.attributes = params[:post]
+		build_attachments
 		@post.save!
 		rescue ActiveRecord::RecordInvalid
 			flash[:error] = 'An error occurred'

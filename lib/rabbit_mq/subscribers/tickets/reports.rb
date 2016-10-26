@@ -5,8 +5,9 @@ module RabbitMq::Subscribers::Tickets::Reports
   PROPERTIES_TO_CONSIDER = [ :requester_id, :responder_id, :group_id, 
                              :priority, :ticket_type, :source,
                              :status, :product_id, :owner_id,
-                             :sla_policy_id, :isescalated, :fr_escalated,
-                             :spam, :deleted, :parent_ticket
+                             :isescalated, :fr_escalated, :spam, :deleted,
+                             :long_tc01, :long_tc02, :long_tc03, :long_tc04,
+                             :int_tc03
                            ]
 
   def mq_reports_ticket_properties(action)
@@ -43,7 +44,15 @@ module RabbitMq::Subscribers::Tickets::Reports
   end
   
   def valid_changes
-    @model_changes.select{|k,v| PROPERTIES_TO_CONSIDER.include?(k) ||  non_text_ff_fields.include?(k.to_s) }
+    changes = @model_changes.select{|k,v| PROPERTIES_TO_CONSIDER.include?(k) ||  non_text_ff_fields.include?(k.to_s) }
+    #Replacing :long_tc03, :long_tc04 to internal_agent_id & internal_group_id
+    internal_agent_column = Helpdesk::SchemaLessTicket.internal_agent_column.to_sym
+    internal_group_column = Helpdesk::SchemaLessTicket.internal_group_column.to_sym
+    association_type_column = Helpdesk::SchemaLessTicket.association_type_column.to_sym
+    changes[:internal_agent_id] = changes.delete(internal_agent_column) if changes.keys.include?(internal_agent_column)
+    changes[:internal_group_id] = changes.delete(internal_group_column) if changes.keys.include?(internal_group_column)
+    changes[:association_type] = changes.delete(association_type_column) if changes.keys.include?(association_type_column)
+    changes
   end
 
   def valid_model?(model)

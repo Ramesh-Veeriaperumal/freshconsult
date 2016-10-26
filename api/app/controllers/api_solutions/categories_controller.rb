@@ -4,6 +4,10 @@ module ApiSolutions
     include Solution::LanguageControllerMethods
     decorate_views
 
+    def index
+      super if validate_language
+    end
+
     def create
       if create_or_update_category
         render_201_with_location(item_id: @item.parent_id) 
@@ -78,11 +82,11 @@ module ApiSolutions
       end
 
       def validate_filter_params
-        validate_language
+        super(SolutionConstants::INDEX_FIELDS)
       end
 
       def load_objects(items = scoper)
-        super(items.where(language_id: @lang_id).preload(:solution_category_meta, { solution_category_meta: :portal_solution_categories }))
+        super(items.where(language_id: @lang_id).joins(:solution_category_meta, {solution_category_meta: :portal_solution_categories}).where('solution_category_meta.is_default = false').order('portal_solution_categories.position').preload(:solution_category_meta))
       end
 
       def load_meta(id)

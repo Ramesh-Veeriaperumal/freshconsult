@@ -93,6 +93,8 @@ class HelpdeskReports::Formatter::Ticket::TicketVolume
       overall[metric.upcase] ||= {}
       overall[metric.upcase]["extra_details"] = extra_details
     end
+    overall["RECEIVED_TICKETS"]["extra_details"]["dow_avg"] = calculate_dow_average(@received_count_week_trend)
+    overall["RESOLVED_TICKETS"]["extra_details"]["dow_avg"] = calculate_dow_average(@resolved_count_week_trend)
   end
 
   def calculate_difference_percentage previous_val, current_val
@@ -106,12 +108,17 @@ class HelpdeskReports::Formatter::Ticket::TicketVolume
     def general_and_week_trend_data
       counts = Hash.new(0)
       res_week_trend, rec_week_trend = days_of_week, days_of_week
+      @received_count_week_trend, @resolved_count_week_trend = Array.new(7,0), Array.new(7,0)
+      @datesByWeekday  = Array.new(7,1)
+      values = (start_date..end_date).group_by(&:wday)
+      values.each { |k,v| @datesByWeekday[k] = v.count }   
+
       overall.each do |row|
         queried_metrics.each do |metric, redshift_column|
           counts[metric] += row[redshift_column].to_i
         end
-        rec_week_trend[row["dow"]][row["h"]] += row[COLUMN_MAP[:received_avg]].to_f
-        res_week_trend[row["dow"]][row["h"]] += row[COLUMN_MAP[:resolved_avg]].to_f
+        rec_week_trend[row["dow"]][row["h"]] += row[COLUMN_MAP[:received_count]].to_i
+        res_week_trend[row["dow"]][row["h"]] += row[COLUMN_MAP[:resolved_count]].to_i
       end
 
       queried_metrics.each do |metric, redshift_column|
@@ -120,8 +127,11 @@ class HelpdeskReports::Formatter::Ticket::TicketVolume
 
       return if rec_res_benchmark.empty?
 
+      rec_week_trend.each { |k,v| @received_count_week_trend[k.to_i] = v.values.reduce(:+) }
+      res_week_trend.each { |k,v| @resolved_count_week_trend[k.to_i] = v.values.reduce(:+) }
+      
       # Ceil Final average values for week trend calculated in above interations
-      ceil_week_trend_averages([rec_week_trend, res_week_trend])
+      week_trend_averages([rec_week_trend, res_week_trend])
 
       rec_busiest_day_and_hours = calculate_busiest_day_and_hours(rec_week_trend)
       processed_result["RECEIVED_TICKETS"][:week_trend] = rec_week_trend
@@ -162,10 +172,10 @@ class HelpdeskReports::Formatter::Ticket::TicketVolume
       day_of_week
     end
 
-    def ceil_week_trend_averages(metrics)
+    def week_trend_averages(metrics)
       metrics.each do |metric|
         metric.each do |dow, result|
-          result.each {|hour, value| result[hour] = value.ceil}
+          result.each {|hour, value| result[hour] = (value.to_f/@datesByWeekday[dow.to_i]).ceil }
         end
       end
     end
@@ -206,6 +216,15 @@ class HelpdeskReports::Formatter::Ticket::TicketVolume
           processed_result[metric][trend] = range(trend)
         end
       end
+    end
+
+    def calculate_dow_average count_data    
+      extra_details = {}
+      (0..6).each do |result|
+         avg = (count_data[result].to_f/@datesByWeekday[result]).ceil
+         extra_details[Date::DAYNAMES[result]+'_avg'] = avg
+      end
+      extra_details     
     end
 
     def queried_metrics_with_zero_vals

@@ -179,6 +179,12 @@ ul.ui-form .ui-form-inline{
 				width:100%;
 			}				
 		}
+		.dropchoice{
+			&.customdropchoice{
+				@include float(right);
+				@include margin(0 10px 0 0);
+			}
+		}
 		.tags{ 
 			width:50%; 
 			display:none;
@@ -245,6 +251,9 @@ ul.ui-form .ui-form-inline{
 	li{
 		h3{
 			padding:0px;
+		}
+		label.placeholder_wrapper {
+			padding-bottom: 5px;
 		}
 		label{
 			padding:0px;	

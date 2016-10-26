@@ -111,7 +111,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def search_fields_updated?
     attribute_fields = ["subject", "description", "responder_id", "group_id", "requester_id", "product_id",
                        "status", "spam", "deleted", "source", "priority", "due_by", "to_emails", "cc_email"]
-    include_fields = es_flexifield_columns
+    include_fields = es_flexifield_columns | ['int_tc03']
     all_fields = attribute_fields | include_fields
     (@model_changes.keys.map(&:to_s) & all_fields).any?
   end
@@ -122,7 +122,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     as_json({
             :root => "helpdesk/ticket",
             :tailored_json => true,
-            :methods => [ :company_id, :es_from, :to_emails, :es_cc_emails, :es_fwd_emails],
+            :methods => [ :company_id, :es_from, :to_emails, :es_cc_emails, :es_fwd_emails, :association_type],
             :only => [ :display_id, :subject, :description, :account_id, :responder_id,
                        :group_id, :requester_id, :status, :spam, :deleted, :source, :priority, :due_by,
                        :created_at, :updated_at ],

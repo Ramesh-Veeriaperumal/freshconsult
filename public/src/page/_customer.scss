@@ -880,3 +880,8 @@ ul.user_list{
 //------------------------------------------------------------------------------------
 //								Multiple companies changes end
 //------------------------------------------------------------------------------------
+
+// For customers ticket list tooltip
+.ui-tooltip-ticket.ui-tooltip-ticket-customers .ui-tooltip-content{
+	padding: 10px 15px !important;
+}

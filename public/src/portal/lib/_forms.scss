@@ -747,11 +747,11 @@ label.required:after{
 }
 /*-----------------Date picker custom clear Button-----------------------*/
 .controls {
-   .dateClear {
-   top: 2px;
-     position: absolute;
-     right: 9px;
-     padding: 5px;    
+  .dateClear {
+    top: 2px;
+    position: absolute;
+    @include right(9px);
+    padding: 5px;    
     cursor: pointer;
  }
  .dateClear {
@@ -762,16 +762,16 @@ label.required:after{
  }
  }
  .company_form_date + .dateClear {
-    right: 25px;
+    @include right(25px);
  }
 .support-date-field{
-input.date {
-  width:100%;
-}
-.dateClear {
-  top: 3px;
+  input.date {
+    width:100%;
+  }
+  .dateClear {
+    top: 3px;
     position: absolute;
-    right: 9px;
+    @include right(9px);
     padding: 5px;    
     cursor: pointer;
 }

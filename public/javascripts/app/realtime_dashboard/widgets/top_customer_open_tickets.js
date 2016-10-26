@@ -38,8 +38,10 @@ RealtimeDashboard.Widgets.OpenTickets.Customers = function(container,widget_name
 					spliced = data.slice(0,_fd.list_limit);
 				}
 
-				if (data.length < 4) {
+				if (data.length <= 4) {
 					jQuery('[rel=view_all_open_tickets_by_customer]').hide(); // hide the View All panel
+				} else {
+					jQuery('[rel=view_all_open_tickets_by_customer]').show();
 				}
 
 				self.core.Utils.renderTemplate(targetContainer,

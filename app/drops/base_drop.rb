@@ -32,6 +32,16 @@ class BaseDrop < Liquid::Drop
   def before_method(method)
     @liquid[method.to_s]
   end
+  
+  # Overriding to silent ignore errors with empty string
+  #
+  def invoke_drop(method_or_key)
+    super(method_or_key) rescue "" 
+  end
+  
+  # Overriding to avoid aliasing to superclass
+  #
+  alias :[] :invoke_drop
 
   def eql?(comparison_object)
     self == (comparison_object)

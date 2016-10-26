@@ -75,6 +75,8 @@ en:
     digits: "Please enter only digits."
     creditcard: "Please enter a valid credit card number."
     equalTo: "Please enter the same value again."
+    two_decimal_place_warning: "Value cannot have more than 2 decimal digits"
+    select_atleast_one: "Select at least one option."
   confirm_delete_message: Are you sure you want to delete the %{human_name}?
   reload: Reload
   any: Any
@@ -110,8 +112,17 @@ en:
   no_agents_in_selected_group: "No agents in selected group"
   unassign: "Unassign"
   send_feedback: "Send"
+  no_groups_mapped_for_status: "No groups mapped for the status"
   sidebar_help: "Help"
   support_title: "Support"
+  continue: Continue
+  parent: Parent
+  tracker: Tracker
+  both: Both
+  related: Related ticket
+  child: Child
+  dots: '...'
+  no_association: No association
   ticket_form:
     your_email_address: "Email"
     your_name: "Your Name"
@@ -125,8 +136,12 @@ en:
   filter_options:
     status: "Status"
     responder_id: "Agents"
+    internal_agent: "Internal Agents"
+    any_agent: "Agents or Internal Agents"
     ticket_type: "Type"
     group_id: "Groups"
+    internal_group: "Internal Groups"
+    any_group: "Groups or Internal Groups"
     source: "Source"
     priority: "Priority"
     due_by: "Due By"
@@ -134,6 +149,7 @@ en:
     tags: "Tags"
     requester: "Requesters"
     created_at: "Created"
+    association_type: "Association Type"
     mygroups: My Groups
     unassigned: Unassigned
     products: Products
@@ -165,6 +181,7 @@ en:
   trail_expiry_after_trial: "Your trial will self-destruct in <b>%{no_of_days}</b>. Choose a plan to continue using Freshdesk"
   hard_pressed_for_time: Hard pressed for time? Get advice, tips and best practices from a Freshdesk expert.
   facebook_reauth: "Your Facebook channel is inaccessible. It looks like your username, password, or permission has been changed recently."
+  fb_realtime_enable: "Facebook real-time messaging is now live! Reauthorize your existing Facebook Pages to enable the feature for your account. Read more <a target='_blank' href='https://support.freshdesk.com/support/solutions/articles/221711'>here</a>"
   reauthorize_facebook: "Reauthorize your facebook account."
   twitter_reauth:  "Your Twitter channel is inaccessible. It looks like your username or password has been changed recently. "
   reauthorize_twitter: Reauthorize your twitter handle.
@@ -311,6 +328,8 @@ en:
       status: Status
       group: Group
       agent: Agent
+      internal_group: Internal Group
+      internal_agent: Internal Agent
       priority: Priority
       description: Description
       product: Product
@@ -545,6 +564,9 @@ en:
       newlevel: "<b> Hurrah! </b><br/> Now you became <b>%{name}</b>."
       achieved_quest: "<b> Hurrah! </b><br/> You achieved the <b>%{name}</b>."
     leaderboard:
+      you: "You "
+      congrats: "Congrats %{name}!"
+      not_enough_points: "You don’t have enough points yet!"
       mvp_trophie_label: "Most Valuable Player"
       back_to_dashboard: "Back to Dashboard"
       agents_in: "Agents in"
@@ -937,6 +959,7 @@ en:
         validate_regexp: Validate using Regular Expression
         regexp_example_html: "For example, To match a string that contains only alphabets & numbers: <b> /^[a-zA-Z0-9]*$/ </b>. To match a string that starts with word \"fresh\" <b> %{regex} </b>."
         max_choices: "Maximum items reached"
+        mapped_internal_groups: "Mapped Internal Groups"
     portal:
       delete_confirm:
         title: "Deleting this portal will remove"
@@ -1325,6 +1348,9 @@ en:
         default_survey: Default Survey
         survey: Survey
         title: Survey name
+        rating_order: Rating order &nbsp;
+        good_to_bad: Good to Bad
+        bad_to_good: Bad to Good
         title_error_text: Survey name has already been taken
         result_exist_msg: Since responses have already been collected for this survey, the point scale and no. of questions cannot be altered. However, you can edit the questions and answers.
         result_exist_msg_v2: Since responses have already been collected for this survey, the point scale and no. of questions cannot be altered. However, you can rephrase the questions and answer choices.
@@ -1568,7 +1594,24 @@ en:
         recharge_quantity: "Recharge quantity:"
         day_passes: "Day Passes"
         helptext: "Your day passes will Auto-recharge once the number of available day passes comes down to 2."
-    widget_config:
+        helptext: "Day passes will Auto-recharge when available day passes comes down to 2."
+        available_passes: "Available Day passes"
+        buy_passes: "Buy Day passes"
+        time_period: "Time Period:"
+        filtered_by: "Filtered by:"
+        agent: "Agent:"
+        days_filter: "Last %{days} days"
+        wait: "Please wait..."
+        usage_history: "Usage History"
+        all: "All"
+        date: "Date"
+        agent: "Agent"
+        email: "Email"
+        no_result: "No results found for selected options."
+        auto_recharge_notice: "Current auto recharge quantity is set to "
+        auto_renewal_enabled_notice: "Day pass auto renewal enabled."
+        auto_renewal_disabled_notice: "Day pass auto renewal disabled."
+    widget_config:    
       errors:
         invalid_requester: Invalid Requester
       index:
@@ -1601,6 +1644,8 @@ en:
         feedbackwidget_search_area: Search Articles
         feedbackwidget_use_https: Use https
         feedbackwidget_mobile_view: Mobile View
+        feedbackwidget_submit_title: "Send Feedback"
+        feedbackwidget_form_submit_title: "Form Submit Button"
       popup_widget:
         feedbackwidget_button_type: Button type
         feedbackwidget_text_button: Text button
@@ -1626,6 +1671,10 @@ en:
         feedbackwidget_use_https: Use https
         feedbackwidget_mobile_view: Enable mobile view
         feedbackwidget_use_captcha: Enable CAPTCHA
+        feedbackwidget_submit_title: "Send Feedback"
+        feedbackwidget_form_submit_title: "Form Submit Button"
+        feedbackwidget_title_maxlength: "Maximum 30 characters"
+        feedbackwidget_submit_title_maxlength: "Maximum 16 characters"
       embedded_widget:
         feedbackwidget_height_placeholder: "500"
         feedbackwidget_form_customization: Customize Form
@@ -1643,6 +1692,10 @@ en:
         feedbackwidget_search_area: Search Articles
         feedbackwidget_use_https: "Use https"
         feedbackwidget_use_captcha: Enable CAPTCHA
+        feedbackwidget_submit_title: "Send Feedback"
+        feedbackwidget_form_submit_title: "Form Submit Button"
+        feedbackwidget_title_maxlength: "Maximum 16 characters"
+        feedbackwidget_submit_title_maxlength: "Maximum 16 characters"
     supervisor_rules:
       new_info_help: For <b>each ticket</b> updated within 30 days, execute all matching rules.
       index:
@@ -1711,6 +1764,8 @@ en:
         checked: is checked
         unchecked: is unchecked
         deselected: Deselected
+        internal_group_actions: "Only applicable if the selected group is mapped to the ticket status as an internal group at the time of rule execution."
+        internal_agent_actions: "Only applicable if the selected agent is mapped to the internal group at the time of rule execution."
     va_rules:
       webhook:
         custom_headers_limit_error: "You cannot set more than %{limit} custom headers"
@@ -1856,7 +1911,7 @@ en:
         have_special_character: Have a special character
       password_policy_popover:
         password_must: Password must
-        minimum_characters: Contain atleast %{count} characters
+        minimum_characters: Contain at least %{count} characters
         cannot_contain_user_name: Not contain the username
         cannot_be_same_as_past_passwords: Be different from your past passwords
         atleast_an_alphabet_and_number: Contain atleast 1 alphabet and 1 number
@@ -2049,7 +2104,7 @@ en:
     home:
       index:
         group: Groups
-        day_pass: Day Passes
+        day_pass: Day Pass
         business-hours: Business Hours
         title: Admin
         email-notifications: Email Notifications
@@ -2235,6 +2290,7 @@ en:
     forum_deleted: The forum has been deleted.
     type: Forum Type
     visible_to: Visible to
+    max_description_length_allowed: "Maximum 250 characters"
     category: Forum Category
     spam: "Spam (%{count})"
     convert_to_ticket: Auto-Convert Topics to Tickets
@@ -2250,6 +2306,7 @@ en:
       description: "Agents added as followers receives email alerts when a new topic is posted"
   password_reset_email: Password Reset Email
   default_reply_template: Agent Reply Template
+  default_forward_template: Agent Forward Template
   additional_email_verification: Additional Email Verification
   new_ticket_cc: New Ticket Created
   public_note_cc: Note added to ticket
@@ -2447,6 +2504,8 @@ en:
         send_review_request:
           success: Review request has been sent successfully
           failure: There was a problem sending the review request
+        broadcast:
+          success: The message has been added and broadcasted to %{count} related tickets.
       empty_spam:
         delay_delete: Please wait while we delete all tickets from spam. This might take a few minutes.
         success: All tickets in the spam folder were deleted.
@@ -2466,6 +2525,11 @@ en:
         failure: Ticket unwatch action failed.
         unsubscribe_success: The ticket has been removed from your watch-list.
       bulk_merge_success : 'The tickets with ids %{merged_tickets} were merged into  <a href="/helpdesk/tickets/%{target_ticket}">%{target_ticket_subject} #%{target_ticket}</a> '
+      link:
+        success: "The ticket has been successfully linked to the tracker"
+        delay_link: 'The tickets are being linked to the tracker ticket -  <a href="/helpdesk/tickets/%{tracker_ticket}">%{tracker_ticket_subject} #%{tracker_ticket}</a>'
+      unlink:
+        success: "The ticket has been successfully unlinked from the tracker"
     custom_fields:
       delete:
         failure: Ticket field failed to get deleted.
@@ -2559,6 +2623,8 @@ en:
       limit_exceeded: You've exceeded the limit for performing this action. Please try again.
       access_denied: You are not allowed to access this page!
       need_login: You must be logged in to access this page
+      recipient_limit_exceeded: You can include a maximum of %{limit} email recipients per ticket during your trial period
+      outbound_limit_per_day_exceeded: You can send a maximum of 5 outbound emails a day per account during the trial period
       insufficient_privilege:
         admin: You don't have sufficient privilege to change this. Please login as Administrator..!!
       login_not_needed: You must be logged out to access this page
@@ -2576,6 +2642,7 @@ en:
       create:
         failure: Unable to save %{human_name}
         success: The %{human_name} has been created.
+        tracker_success: "The tracker has been created and the related tickets are linked to it"
         compose_email_success: Your email has been sent and a new ticket has been created.
       update:
         success: The %{human_name} has been updated.
@@ -2648,6 +2715,7 @@ en:
     round_robin: "automatic ticket assignment"
     none: "None"
     subject: "subject"
+    status: "Status"
     description: "description"
     set: "Set"
     tag:
@@ -2689,6 +2757,8 @@ en:
       add_watcher: "Watcher Added"
       remove_watcher: "Watcher Removed"
       spam: "Marked Spam"
+      rel_tkt_link: "Ticket Linked"
+      rel_tkt_unlink: "Ticket Unlinked"
     solutions:
       new_solution:
         short: "{{user_path}} created a new solution"
@@ -2828,6 +2898,9 @@ en:
         short: "{{user_path}} submitted the ticket"
         long: "{{user_path}} submitted a new ticket {{notable_path}}"
         new: "Submitted a new ticket"
+      new_tracker_ticket:
+        short: "{{user_path}} submitted the tracker ticket"
+        long: "{{user_path}} submitted a new tracker ticket {{notable_path}}"      
       new_outbound:
         short: "{{user_path}} created a ticket"
         long: "{{user_path}} created a ticket {{notable_path}}"
@@ -2991,10 +3064,45 @@ en:
         new: "Deselected %{checkbox_list}"
       archive:
         new: "Ticket archived"
+      internal_group:
+        new: "Internal Group as <strong>%{group_name}</strong>"
+      internal_agent:
+        new: "Internal Agent as %{responder_path}"
+      remove_group:
+        new: "Set Internal Agent as None, Internal Group as None as the mapping was removed between group <strong>%{group_name}</strong> and status <strong>%{status_name}</strong>"
+      remove_agent:
+        new: "Set Internal Agent as None as the agent %{responder_path} was removed from group <strong>%{group_name}</strong>"
+      delete_internal_group:
+        new: "Set Internal Agent as None, Internal Group as None as the group <strong>%{group_name}</strong> was deleted"
+      delete_internal_agent:
+        new: "Set Internal Agent as None as the agent %{responder_path} was deleted"
+      delete_status:
+        new: "Set Internal Agent as None, Internal Group as None as the status <strong>%{status_name}</strong> was deleted"
+      automation_execution:
+        new: " after automation rule execution"
+      rel_tkt_link:
+        new: "Linked this ticket with the tracker %{tracker_ticket_path}"
+      rel_tkt_unlink:
+        new: "Unlinked this ticket from the tracker %{tracker_ticket_path}"
+      tracker_link:
+        new: "Linked %{related_tickets_count} (%{related_ticket_path}) with this tracker"
+      tracker_unlink:
+        new: "Unlinked %{related_tickets_count} (%{related_ticket_path}) from this tracker"
+      tracker_unlink_all:
+        new: "Unlinked all %{related_tickets_count} from this tracker"
+      email_to_requester:
+        new: "Sent email to requester %{requester_name}"
+      email_to_group:
+        new: "Sent email to group <strong>%{group_list}</strong>"
+      email_to_agent:
+        new: "Sent email to agent %{agent_list}"
+      property_delete:
+        new: "%{property} as <strong>%{property_value}</strong> as the %{property} <strong>%{deleted_property_value}</strong> was deleted"
   credit_card_info: Credit card information
   zendesk_backup_info: Select the Zendesk backup file downloaded from zendesk
   backup_error_msg: "The file exceeds the prescribed limit of 50MB, please <a href='#' id='import_request'>contact support</a> to proceed with the import."
   your_email_address: Your e-mail address
+  uncheck_remember_tooltip: You can uncheck this option if you're logging in from a shared device
   username: Username
   reply: Reply
   is_not: Is not
@@ -3186,8 +3294,12 @@ en:
       product: "product as <b>%{product_name}</b>"
       group_success: "group as <b>%{group_name}</b>"
       group_failure: "<b>Unable to set the group, consider updating this scenario if the group has been deleted recently.</b>"
+      internal_group_success: "internal group as <b>%{internal_group_name}</b>"
+      internal_group_failure: "<b>Unable to set the internal group, consider updating this scenario if the group has been deleted recently or the status to group mapping changed.</b>"
       agent_success: "agent as <b>%{agent_name}</b>"
       agent_failure: "<b>Unable to set the agent, consider updating this scenario if the agent has been deleted recently.</b>"
+      internal_agent_success: "internal agent as <b>%{internal_agent_name}</b>"
+      internal_agent_failure: "<b>Unable to set the internal agent, consider updating this scenario if the agent has been deleted recently or removed from the respective internal group.</b>"
       private_note: "a <b>private note</b>"
       note: "<b>note</b>"
       add_watchers: "Watcher(s) - <b>%{watchers}</b>"
@@ -3668,7 +3780,8 @@ en:
     title: Groups
     business_calendar: Business Hours
     ticket_assignment: Automatic ticket assignment
-    auto_assignment_description: Once enabled, tickets assigned to this group will be automatically assigned to the available agents in the group through the round robin method
+    auto_assignment_description: Tickets coming into this group will be automatically assigned to available agents based on the assignment method you select
+    only_round_robin_description: Tickets coming into this group will be automatically assigned to available agents based on <strong>Round-robin method</strong>
     escalation_rule: Escalation Rule
     send_escalation_to: "....then send escalation email to :"
     info1: Agents
@@ -3687,21 +3800,28 @@ en:
     please_confirm: Please confirm...
     rr_v2_confimation_message: This action cannot be undone. Are you sure you want to proceed?
     tour: Help me create a new agent group
-    helptext: You can organize your agents into specific Groups like “Sales” and “Product Management”. Segmenting them into divisions lets you easily assign tickets, create specific canned responses, manage workflows and generate group-level reports. Note that the same agent can be a member of multiple groups as well
-    automatic_assignment: Once you create homogeneous agent groups, you can choose to automatically assign new tickets in this group to the next agent in Round Robin. <a href="https://support.freshdesk.com/support/solutions/articles/77157" target="_blank">Learn more</a>
-    automatic_assignment_header: Auto-ticket Assignment
-    working_hours_header: Working Hours
-    working_hours: You can assign a different set of business hours and holidays to each Group. For example, you can separate agents by shifts and assign them different business hours, or create separate groups for each time zone your agents work at
+    helptext: You can organize your agents into specific Groups like “Support” and “Sales”. This lets you easily assign tickets, create specific canned responses, manage workflows and generate group-level reports. Note that an agent can be a member of multiple groups as well.
+    automatic_assignment: <b>To each group</b><br/>Once you’ve created your agent groups, you can use set up rules in dispatch’r to route tickets to each group. <a href="https://support.freshdesk.com/support/solutions/articles/77157" target="_blank">Learn more</a><br/><br/><b>To agents within each group</b><br/>You can automatically assign tickets to online agents through two methods - <br/> 1. Round-robin ticket assignment, i.e. circular assignment of tickets <br/> 2. Load balanced ticket assignment, i.e. setting a maximum limit on number of tickets an agent can receive <br/> <a href="https://support.freshdesk.com/support/solutions/articles/196581" target="_blank">Click here to read more</a>
+    automatic_assignment_header: Automatic Ticket Assignment
+    working_hours_header: Business Hours
+    working_hours: You can assign each of these groups with different business hours which is simply your working hours. For example, you can group agents by shifts and assign different business hours to each group, or create separate groups for different locations your agents work from.
     select_agents: Select Agents
     select_an_agent: Select Agent
     select_business_calendar: Select Business Hours
     learn_more: Learn more
     settings_saved: Your setting is successfully saved.
-    toggle_availability_for_rr: Allow agents the ability to turn on/off automatic ticket assignment
+    toggle_availability_for_rr: Allow agents to change their availability for automatic ticket assignment
     toggle_availability_enabled: Agents will be able to manually change their availability for round robin ticket assignment. Admins and supervisors can change the agent availability from the dashboard, if necessary.
     toggle_availability_disabled: If disabled, agents will always be set as “available”. Admins and supervisors can change the agent availability from the dashboard, if necessary.
+    toggle_availability_message: Admins and supervisors can override an agent's availability from the dashboard
     toggle_availability_note: "Note: Agents belonging to multiple groups will be able to change their availability only if they have permission to control their availability in all of the groups they belong to."
+    round_robin_capping: "Load balanced ticket assignment"
+    round_robin_capping_info: Limit the number of tickets an agent can handle simultaneously
+    round_robin_defalut: Round-robin ticket assignment
+    round_robin_default_info: Assign tickets to agents in a circular fashion
     round_robin_desc: "Once turned ON, tickets assigned to this group will be distributed among agents in round robin fashion. If you wish to manually assign tickets or dispatch them using the Dispatch'r or Supervisor automations, you can turn this OFF. "
+    capping_ticket: "ticket"
+    capping_tickets: "tickets"
     page_not_found: "This group could not be found. It might have been deleted or the URL mistyped."
     assigntime:
       half: 30 Minutes
@@ -3737,6 +3857,7 @@ en:
     deleted_agent_info: "Note: All communication from the deleted agents will be marked as SPAM."
     new: New Agent
     edit: Edit Agent
+    invalid_placeholder: Invalid placeholders inserted
     showing: "Showing:"
     type: Agent Type
     delete_agent: Delete Agent
@@ -3786,6 +3907,7 @@ en:
     info4: Convert to a Contact
     contact_exists: A requester with email '%{existing_email}' already exists, %{use_email}
     signature: Signature
+    insert_placeholder: Insert Placeholder
     info3: Are you sure you want delete
     helpcard:
       tour: Help me add new agents
@@ -3950,7 +4072,7 @@ en:
       enter_tags: 'Enter Tags'
     conversations:
       title: 'Conversations'
-      ticket_subject: "<a href='%{ticket_url}' data-pjax='#body-container'>%{ticket_subject}</a>"
+      ticket_subject: "<a href='%{ticket_url}' data-pjax='#body-container' title='%{ticket_desc}'>%{ticket_subject}</a>"
       created_forum_title: "Created a topic <a href='%{topic_url}' data-pjax='#body-container' class='bold-title'>%{topic_title}</a>"
       replied_forum_title: "Replied to topic <a href='%{topic_url}' data-pjax='#body-container' class='bold-title'>%{topic_title}</a>"
       user_forum_timeinfo: "%{time} ago in <a href='%{forum_url}' data-pjax='#body-container' class='muted'>%{forum_title}</a>"
@@ -4600,8 +4722,9 @@ en:
       folder: "This folder is not available in %{current_language}, view it in <a href='%{url}'>%{helpdesk_language}</a>"
       article: "This article is not available in %{current_language}, view it in <a href='%{url}'>%{helpdesk_language}</a>"
     article_properties:
-      title_counter_message: 'Recommended: 50-60 characters'
-      description_counter_message: 'Recommended: 150-160 characters'
+      title_counter_message: 'Recommended length: 50-60 characters'
+      description_counter_message: 'Recommended length: 150-160 characters'
+      exceeded_message: %{current_message} (current text exceeds recommendation)
   import_updated: Updated
   feedbackwidget_intro: Customize your freshdesk widget below and see a realtime preview.
   chatwidget_intro: Customize your Live Chat widget below and see a realtime preview.
@@ -4715,6 +4838,7 @@ en:
     info1: Freshdesk's integrated Live Chat solution lets you view and chat with users on your website, online software, or support portal directly from within Freshdesk. You can customize the whole chat window (including default texts, color, etc) and even proactively initiate chat sessions when visitors spend more time on your site.
     info2: Each chat session will capture meta information about visitors including their location, device, etc and their support history with you. Once you finish a chat session, you can choose to convert the conversation into a ticket and continue following up with the visitor over email, or archive the chat transcript.
     info3: <a href="https://support.freshdesk.com/support/solutions/folders/246519" target="_blank" >Learn more about using Live Chat inside Freshdesk</a>
+    info4: Help me setup live chat
   low: Low
   agents: Agents
   header:
@@ -4755,6 +4879,7 @@ en:
       company_tickets: Company Tickets
       social: Social
     search: Search
+    upgrade: Upgrade
   agent_adds_comment: Agent Adds Comment to Ticket
   notify_comment: Note added to ticket
   add_cc: Added CC to Ticket
@@ -4771,10 +4896,12 @@ en:
     edit_reply_template: Edit Template
     default_reply_template_title: Agent Reply Template
     default_reply_template_info: Reply template will be automatically included in the ticket reply editor for ALL agents. The cursor position in this template will decide where your agent will start typing.
+    default_forward_template_title: Agent Forward Template
+    default_forward_template_info: Forward template will be automatically included in the forwarded message editor for ALL agents.
     modify_requester_template: Modify Requester Email Template
     requestor_notification: Requester Notification
     requestor_notifications: Requester Notifications
-    notification_template: Reply Templates
+    notification_template: Templates
     cc_notifications: CC Notifications
     title: Email Notifications
     singular_title: Notification
@@ -4869,6 +4996,9 @@ en:
       reply_template_15:
         topic: Agent Reply Template
         info1: "You can customize and prefill default information you want added in agent ticket replies using the Reply Template. Agent Reply Templates let you add dynamic content like the requester name, ticket URLs and agent signatures automatically.. <br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icon-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
+      forward_template_24:
+        topic: Agent Forward Template
+        info1: "You can customize and prefill default information you want added in agent ticket forwards using the Forward Template. Agent Forward Templates let you add dynamic content like the requester name, ticket URLs and agent signatures automatically.. <br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icon-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
     insert_placeholder: Insert Placeholders
     modify_agent_template: Modify Agent Email Template
     event: Event
@@ -5074,6 +5204,7 @@ en:
     more_details: "More details..."
     reported: "reported"
     outbound: "emailed"
+    created_tracker: created a tracker
     new_ticket: New ticket
     new_tickets: New tickets
     agent_reply: Agent Reply
@@ -5109,6 +5240,7 @@ en:
     ticket_selected: " ticket selected (Conversations from the merged tickets will be added to the primary ticket)"
     tickets_selected: " tickets selected (Conversations from the merged tickets will be added to the primary ticket)"
     add_recipients: "Add secondary ticket recipients to CC"
+    merge_notice: Please review your merge and edit notes. You cannot undo changes once they're done.
     merge_warning: "We recommend that you retain the oldest ticket as the primary ticket to avoid mistakes in SLA calculation."
     merge_confirm_info: "Review your merge and edit notes as necessary."
     reply_cc_limit_exceeded: "You have reached the maximum threshold of 50 recipients per ticket. Recipients over and above this threshold value will be dropped."
@@ -5173,6 +5305,56 @@ en:
     created_on: Created on %{time}
     restore_btn: Restore this ticket
     merge_btn: Merge
+    search_agent: "Search for an agent"
+    tracker_agent_error: "Please make sure to add an agent as a requester"
+    link_tracker:
+      link_to_tracker: Link to a Tracker
+      linking_to_tracker: "Linking to a Tracker"
+      unlinking_from_tracker: "Unlinking from Tracker"
+      options:
+        subject: Subject
+        tkt_id: Ticket ID
+        requester: Requester
+      btn: Link
+      view_tracker: "View Tracker"
+      title: Link Tickets
+      info: %{count} ticket(s) selected (link the selected ticket(s) to an existing problem or create a new problem ticket)
+      search_placeholder: Search for existing problem tickets   
+      create_new: " Create New "
+      recently_created: "Recently Created"
+      linked_to_tracker: "Tracker"
+      last_broadcast_message: "Last broadcasted message, <abbr data-livestamp='%{timestamp}'></abbr>"
+      tracker_details: "Tracker Details"
+      related_tickets: "Related Tickets (%{count})"
+      tracker_links:
+        zero: "No related ticket"
+        one: "%{count} related ticket"
+        other: "%{count} Related Tickets"
+      unlink: "Unlink"
+      insert_to_reply: "Insert this message into reply"
+      notifier_subject: "Broadcast Message Added - %{ticket_details}"
+      notifier_body: "Message Content: "
+      link_error: "Could not link to the tracker"
+      unlink_error: "Could not unlink from the tracker"
+      unlink_warning: "You are about to unlink this ticket from the Tracker:"
+      unlink_warning1: "Are you sure want to proceed?"
+      unlink_submit: "Confirm"
+      unlink_submitting: "Submitting.."
+      tracker_delete_message: " and the related tickets will be unlinked"
+      related_delete_message: " and will be unlinked from the tracker"
+      permission_denied: "Oops! You don't have the permission to link this ticket."
+      count_exceeded: "Linking failed! You have exceeded the limit of %{count} tickets in a tracker."
+      remaining_count: 
+        one: "You are allowed to link only one more ticket to the tracker"
+        other: "You are allowed to link only %{count} more tickets to the tracker"
+      no_tracker: "No Tracker available"
+      search_for_tracker: "Search for tracker by"
+      rlt_ticket_singular: "related ticket"
+      rlt_ticket_plural: "related tickets"
+    ticket_association: 
+       title: Ticket Association
+    parent_child:
+      add_child: "Add Child"
     singular: Ticket
     due_by_time: Due by time
     delete_btn_title: Move this ticket to trash
@@ -5208,6 +5390,7 @@ en:
     submit_ticket_title: Submit a ticket
     learn_more: Learn more.
     submit_ticket_new_title: Create a new ticket
+    submit_tracker_new_title: Create a new Tracker
     create_ticket_title: Create a ticket
     submit_a_ticket_info: "The requester will receive an email notification that a new ticket has been created. It can be disabled in Admin > Email notifications."
     convert_ticket_title: Convert as a ticket
@@ -5228,6 +5411,28 @@ en:
     close_btn: Close
     close_btn_title: Close this ticket
     close_without_notification: Shift + Close to skip notification mail
+    association:
+      cancel: All selected tickets have existing association and the action cannot be performed.
+      delete_ticket:
+        title_submit: Delete
+        tracker: You are about to delete a tracker and the its related tickets will be permanently unlinked which CANNOT be restored.
+        related: You are about to delete a related ticket and it will be permanently unlinked from the tracker which CANNOT be restored.
+      spam_ticket:
+        title_submit: Mark as spam
+        tracker: You are about to mark a tracker as spam and the associated related tickets will be permanently unlinked which CANNOT be restored.
+        related: You are about to mark a related ticket as spam and it will be permanently unlinked from the tracker which CANNOT be restored.
+      merge_tickets:
+        one: There is {{count}} ticket with existing association in the selected list which will be SKIPPED while performing the merge action.
+        other: There are {{count}} tickets with existing association in the selected list which will be SKIPPED while performing the merge action.
+      link_tickets:
+        one: There is {{count}} ticket with existing association in the selected list which will be SKIPPED while performing the link action.
+        other: There are {{count}} tickets with existing association in the selected list which will be SKIPPED while performing the link action.
+      spam_tickets:
+        one: There is {{count}} ticket with existing association in the selected list and performing the spam action will remove their associations permanently which CANNOT be restored. 
+        other: There are {{count}} tickets with existing association in the selected list and performing the spam action will remove their associations permanently which CANNOT be restored. 
+      delete_tickets:
+        one: There is {{count}} ticket with existing association in the selected list and performing the delete action will remove their associations permanently which CANNOT be restored. 
+        other: There are {{count}} tickets with existing association in the selected list and performing the delete action will remove their associations permanently which CANNOT be restored.
     tags:
       no_match: No matches. Press enter to create tag.
       create_success: The tag was added
@@ -5235,6 +5440,8 @@ en:
       add_tag: "Add a tag:"
     type: Type
     execute_scenario: Execute Scenario
+    create_new_scenario: Create new scenario
+    create_new_ca: Create new canned response
     execute: Execute
     search_scenario: Search Scenarios
     conv_form_status_set_as: "and set as <strong>%{status}</strong>"
@@ -5247,6 +5454,9 @@ en:
       add_public_note: Add Public Note
       add_private_note: Add Private Note
       notify_agents: "Notify "
+      broadcast:
+        one: "Broadcast Message: %{count} related ticket"
+        other: "Broadcast Message: %{count} related tickets"
     tweet_form:
       tweet_and_resolve: Tweet and Resolve
       user_not_following: This user is not following your twitter account
@@ -5258,7 +5468,7 @@ en:
     hide_activities_tooltip: Hide activities
     activity_timestamp: "%{user_name} updated <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
     user_activity_timestamp: "%{user_name} updated <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
-    deleted_rule: "deleted rule - %{rule_name}"
+    deleted_rule: "Deleted rule - %{rule_name}"
     executed: " executed "
     performed: " performed "
     system_activity_timestamp: "<strong class='muted'>System</strong> %{system_rule} <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date}) "
@@ -5269,6 +5479,7 @@ en:
     created_by: "Created by:"
     reply_to: Reply
     add_note: Add note
+    broadcast: Broadcast
     monitor_btn_title: Monitor this ticket
     canned_responses:
       ca_responses : Canned Responses
@@ -5282,6 +5493,8 @@ en:
     empty_spam: Empty Spam
     empty_view_confirmation: "All the tickets in %{current_view} will be deleted permanently. Please note that this action cannot be undone. Are you sure you want to proceed?"
     assign_to_agent: Assign to Agent
+    assign_to_internal_group: Assign to Internal Group
+    assign_to_internal_agent: Assign to Internal Agent
     assign_to: Assign
     select_to_agent: Select an Agent
     export: Export
@@ -5355,6 +5568,7 @@ en:
       in_progress_text_you: "A bulk update started by you is in progress."
       bulk_action_submit_label: "Confirm and update"
     cannot_preview_attachment: No preview available.
+    confirm_navigation: You have unsaved changes. Are you sure you want to leave?
   archive_ticket:
     title: Archived tickets
     no_reply_msg: This ticket has been archived.
@@ -5414,7 +5628,7 @@ en:
     info6: People in %{name}
     info7: No tickets have been created by the people in this company
     info8: More info regarding this company like address, phone number, website etc
-    info13: Contacts whose email addresses contain these domains will automatically associated to this company
+    info13: Contacts whose email addresses contain these domains will automatically be associated to this company
     info14: Contacts whose email addresses contain these domains will be whitelisted and automatically associated to this company
     info12: "eg: mycompany1.com, mycompany2.com"
     errors:
@@ -5573,6 +5787,7 @@ en:
   message: Message
   ticket_was: ticket was
   tickets_were: tickets were
+  tracker_was: The tracker was
   undo: Undo
   total: "Total"
   export_to_CSV: Export to CSV
@@ -5718,6 +5933,7 @@ en:
       flagged_spam: "%{tickets} flagged as spam. %{undo}"
       flagged_unspam: "%{tickets} removed from the spam folder."
       tickets_background: "Please wait while we update the tickets. This might take a few minutes."
+      spam: "%{tickets} flagged as spam%{text}. %{undo}"
 
     shared:
       addcc: "Add cc"
@@ -5874,6 +6090,7 @@ en:
       overlay_fwd_time: " forwarded, %{time_in_words} ago"
       overlay_note_time: " added a note, %{time_in_words} ago"
       overlay_submitted_ticket: " submitted a new ticket"
+      overlay_submitted_tracker: " created a tracker"
       overlay_forward: " forwarded"
       overlay_reply: " replied"
       overlay_note: " added a note"
@@ -5969,6 +6186,7 @@ en:
           not_sent:  Reply was not forwarded!
         reply_to_forward:
           title: Reply
+          from: "From"
           cc: Cc
           to: To
           addcc: Add Cc
@@ -5982,6 +6200,7 @@ en:
         facebook_form:
           reply_to: "Reply to"
           title: "Reply to %{user}"
+          from: "From:"
         ecommerce_reply_form:
           title: "Reply to"
         history:
@@ -6040,6 +6259,8 @@ en:
         spam: Spam
         monitored_by: Tickets I'm Watching
         raised_by_me: Tickets I Requested
+        shared_by_me: Tickets I've shared
+        shared_with_me: Tickets shared with me
         my_closed: My Closed Tickets
         my_open: My Open Tickets
         tickets_by: Tickets by
@@ -6071,6 +6292,8 @@ en:
           forward: "%{user_name} forwarded <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
           survey: "%{user_name} rated this ticket <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
           reply_to_forward: "%{user_name} replied to forward <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
+          broadcast_note: "%{user_name} added a broadcast message <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
+          broadcast_message: "Broadcasted Message"
         last_edited_info: "Last edited by: %{user_name} <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
         last_deleted_info: "Deleted by: %{user_name} <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
         edit_note: Edit Note
@@ -6084,6 +6307,7 @@ en:
         public_note_tip: Visible to the customer
         inbound_email: Incoming email
         outbound_email: Outbound email
+        broadcast_note: "Broadcast message"
         not_added: Note has not been added!
         attachment_size:
            exceed: Your attachments exceed 15 MB. Please make changes before you proceed.
@@ -6163,6 +6387,7 @@ en:
     requester_placeholder: "Name or Email"
     user_placeholder: "Name or Email"
     cc_emails_placeholder: "Name or email of user from selected company"
+    tags_placeholder: ""
     customers_placeholder: ""
     company_id_placeholder: ""
     raised_by: "Tickets created by"
@@ -6188,6 +6413,8 @@ en:
       agent_responded_at: Agent Response
       asc: Ascending
       desc: Descending
+    search_views: Jump to view
+    no_match_view: No matching views found
   click_to_change_sort_order: Click to change sort order
   user_sessions:
       new:
@@ -6497,6 +6724,7 @@ en:
   loading:
     activities: Loading more activities
     items: Loading more items
+    related_tickets: "Loading more related tickets"
   application:
     desc: Integrate with other Apps to make your Freshdesk experience more awesome.
     title: Integrations
@@ -6537,14 +6765,15 @@ en:
     terms_of_use: "Terms of Use"
     terms_of_use_link: "http://freshdesk.com/terms#marketplace"
     get_more_apps: Get more Apps
+    confirm_data_lose: "Your data will be lost."
     confirm_uninstall_message: "Are you sure you want to uninstall the %{human_name}?"
     app: app
     custom_app: custom app
     app_gallery: App Gallery
+    custom_app_gallery: Custom App Gallery
     app_description: "Apps allow you to integrate with other applications to make your Freshdesk experience more awesome. They also enable you to customize and personalize your Freshdesk portal."
     apps: Apps
     custom_apps: Custom Apps
-    no_custom_apps: "You have no custom apps installed. Create and Install a new custom app by clicking "
     all_categories: All categories
     settings: Settings
     coming_soon: Coming Soon
@@ -6556,6 +6785,9 @@ en:
     no_mktp_apps: "No Apps installed"
     no_mktp_apps_note: "We've integrated with some of your favorite applications."
     no_mktp_apps_note_2: "Click 'Get more Apps' to browse the selection."
+    no_custom_apps_installed: "No custom apps installed"
+    no_custom_apps_note: "Create custom apps and publish them in the developer portal."
+    no_custom_apps_note_2: "Click 'Get Custom Apps' to browse and install them."
     go_to_dev_portal: Go to Developer Portal
     developer_shortcuts: Developer Shortcuts
     custom_app_info: "Did you know, now there is a better way to write and manage and even share your apps to all of Freshdesk community."
@@ -6569,6 +6801,7 @@ en:
     published_in: "Published in"
     installs: Installs
     no_apps: No Apps available
+    empty_custom_apps_msg_html: "No custom apps have been published. To get started, please visit our <a href='%{dev_url}' target='_blank'> developer site.</a>"
     no_apps_in_category: No Apps available in this category
     related_categories: "Apps from Related Categories:"
     similar_apps: "Similar Apps:"
@@ -6580,7 +6813,7 @@ en:
     field_blank: Please fill all the fields.
     installed: Installed
     helpnote1: "Apps in Freshdesk let you share data with third party solutions and services that you use regularly. They also enable you to add additional features to the ticket and contact details page. Freshdesk offers several apps out-of-the-box. To browse our selection of apps, click on the “Get more Apps” button."
-    helpnote2: "In addition to the apps, you can bring in data from any other third party solution, legacy system or database into the tickets and contacts pages with custom apps. You can customize your custom app widget by pushing relevant information from Freshdesk to your data source with an AJAX call, and format and display information with HTML, CSS, and Javascript."
+    helpnote_custom_apps_html: "Can't find an app that fits your needs? With our Custom Apps (earlier called Freshplugs), you can bring in contextual information from any third party solution, legacy system or database. These Custom Apps can also be used to make visual changes to your helpdesk and boost productivity. Click <a href='https://support.freshdesk.com/support/solutions/articles/121846' target='_blank'>here</a> to learn more!"
     no_configs: "This app does not require any configs."
     search: "Search"
     search_language_warning: "Search available in English only"
@@ -6596,6 +6829,8 @@ en:
     time_ago: "ago"
     policy_on_tp_apps: "Policy on third party apps"
     third_party_app_policy: "You are downloading an App that has not been developed by Freshdesk. By downloading this App you understand that you are bound by the terms and privacy policies provided by its developer. For more details about such terms and privacy policies, please contact the developer or visit the developer's page."
+    policy_on_custom_apps: "Policy on custom apps"
+    custom_app_policy: "\"Custom App\" is an application developed specifically for a Freshdesk customer and not listed in the App Gallery. Custom Apps may be developed by Freshdesk or any other developer who may or may not be registered with Freshdesk as a Developer. Please note that the Custom App is provided on an \"AS IS\" basis without any warranties of any kind to the fullest extent permitted by applicable law. Freshdesk expressly disclaims any and all conditions, representations, warranties or other terms, whether express or implied, including, but not limited to, any implied warranties of merchantability, title, fitness for a particular purpose, and non-infringement. By installing the Custom App, you understand and acknowledge that Freshdesk does not warrant that the Custom App will be uninterrupted, timely, secure, error-free or free from viruses or other malicious software. Freshdesk shall not be liable to you or any person claiming through you for any direct, indirect, incidental, special, punitive, or consequential damages for your use of the Custom Apps."
   integrations:
     native_integrations: Native Integrations
     cti_app_title: CTI Integrations
@@ -7253,6 +7488,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       script: "Script"
       label: "Custom Widget"
       new_custom_app: "New Custom app"
+      get_custom_apps: Get Custom Apps
       edit_custom_app: "Edit Custom app"
       desc: "You can add a custom widget to display any detail using your own custom script."
       helpnote: "<h4>Custom Apps</h4><p><br/> You can develop your own custom app using HTML, CSS and JavaScript, and bring data from any 3rd party app or database right into your tickets and contacts. <br/><br/> To create a custom app, first give it a name and description. Then enter your code in the ‘Script’ area. You can pass any ticket or requester field, including the custom fields you have created, as JSONP objects.<br/><br/>You can click <b>‘Show Preview’</b> to view how your widget will look like both in the ticket and contact pages.<br/><br/>Refer to our <a href='http://support.freshdesk.com/solution/categories/4/folders/15/articles/32031-using-freshplugs-to-integrate-third-party-apps'> solutions page </a> to learn more about custom apps."
@@ -7675,6 +7911,8 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
   delete_the_ticket: "Delete the Ticket"
   mark_as_spam: "Mark as Spam"
   bulk_actions: "Bulk Actions"
+  internal_group_actions: "Please select a ticket status that maps to an internal group assignment."
+  internal_agent_actions: "Please select an internal group to assign an internal agent."
   update_multiple_tickets: "Update Multiple Tickets"
   no_change: "No Change"
   select: "Select ..."
@@ -7738,6 +7976,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
   latest_ticket: "new update"
   latest_tickets: "new updates"
   search:
+    view_all_tickets: "View all tickets"
     recent_searches: "Recent Searches"
     recently_viewed: "Recently Viewed"
     no_results_msg: "No results found"
@@ -8415,6 +8654,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       day_trend:
         title: Day of the week and Hour of the day trend
         subtitle: See which hour of which day receives the most number of tickets and allocate your staff accordingly
+      avg_tickets: 'Average tickets %{metric} : <span style="color:%{color}">%{value}</span>'
     glance:
       index_title: Helpdesk<br/>In-depth
       title: Helpdesk In-depth
@@ -8658,6 +8898,8 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     acw_availability_text: 'Move to Available:'
     via_browser: "via Browser / App"
     via_phone: "via Phone"
+    forwarded_call_message: "You are getting a call from %{caller_info}. Press 1 to answer, 2 to ignore."
+    invalid_input_message: "Please enter a valid input."
     subscription:
       auto_recharge_text: "We'll only charge your account when the balance falls below $5"
       current_balance: "Your current balance"
@@ -9065,7 +9307,9 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
         queue_position_disable: "OFF"
       numbers:
         sidebar_title: "Phone channel"
-        sidebar_content: "Using the phone channel, you can make and receive calls through your browser, mobile phone or using the phone channel in Freshdesk’s mobile apps. It is tightly integrated with Freshdesk’s ticketing system. So you can keep track of phone calls by recording them and converting them into tickets whenever necessary. <br/><br/> <b>Setting up Phone</b></br>To start using phone, you will first need to enable it and purchase a support number. You can purchase local numbers from the <a href='https://support.freshdesk.com/support/solutions/articles/169322' target='_blank'>countries listed here</a> and make or take calls from anywhere in the world. If your customers will be calling you in the US, UK or Canada you can also purchase toll-free support numbers (or freephone in the UK). <br/><br/><b>Provide Complete Phone Support</b><br/>With our phone channel, you can<br/><ul><li>Start making and taking calls using your web browser or mobile phones</li><li>Create voicemails, forward calls, or transfer calls to any agent, anywhere</li><li>Monitor calls, barge when needed, add other agents into on-going calls, and more*</li></ul><br/><p>*Please reach <a href='mailto:support@freshdesk.com'>support@freshdesk.com</a> to enable advanced features for your account. These include call monitoring, call barging, call conferencing, call masking, and call lifetime metrics.</p><br/><p><a href='http://freshdesk.com/multichannel-support/phone-support' target='_blank'>Learn more about phone’s powerful capabilities and features</a><p>"
+        sidebar_content: "Using the phone channel, you can make and receive calls through your browser, mobile phone or using the phone channel in Freshdesk’s mobile apps. It is tightly integrated with Freshdesk’s ticketing system. So you can keep track of phone calls by recording them and converting them into tickets whenever necessary. <br/><br/> <b>Setting up Phone</b></br>To start using phone, you will first need to enable it and purchase a support number. You can purchase local numbers from the <a href='https://support.freshdesk.com/support/solutions/articles/169322' target='_blank'>countries listed here</a> and make or take calls from anywhere in the world. If your customers will be calling you in the US, UK or Canada you can also purchase toll-free support numbers (or freephone in the UK). <br/><br/><b>Provide Complete Phone Support</b><br/>With our phone channel, you can<br/><ul><li>Start making and taking calls using your web browser or mobile phones</li><li>Create voicemails, forward calls, or transfer calls to any agent, anywhere</li><li>Monitor calls, barge when needed, add other agents into on-going calls, and more*</li></ul><br/><p>*Please reach <a href='mailto:support@freshdesk.com'>support@freshdesk.com</a> to enable advanced features for your account. These include call monitoring, call barging, call conferencing, call masking, and call lifetime metrics.</p><br/><p><a href='http://freshdesk.com/multichannel-support/phone-support' target='_blank'>Learn more about phone’s powerful capabilities and features</a><p>"        
+        sidebar_content_v2: "Using the phone channel, you can make and receive calls through your browser, mobile phone or using the phone channel in Freshdesk’s mobile apps. It is tightly integrated with Freshdesk’s ticketing system. So you can keep track of phone calls by recording them and converting them into tickets whenever necessary. <br/><br/> <b>Setting up Phone</b></br>To start using phone, you will first need to enable it and purchase a support number. You can purchase local numbers from the <a href='https://support.freshdesk.com/support/solutions/articles/169322' target='_blank'>countries listed here</a> and make or take calls from anywhere in the world. If your customers will be calling you in the US, UK or Canada you can also purchase toll-free support numbers (or freephone in the UK). <br/><br/><b>Provide Complete Phone Support</b><br/>With our phone channel, you can<br/><ul><li>Start making and taking calls using your web browser or mobile phones</li><li>Create voicemails, forward calls, or transfer calls to any agent, anywhere</li><li>Monitor calls, barge when needed, add other agents into on-going calls, and more*</li></ul><br/><p>*Please reach <a href='mailto:support@freshdesk.com'>support@freshdesk.com</a> to enable advanced features for your account. These include call monitoring, call barging, call conferencing, call masking, and call lifetime metrics.</p><br/>"
+        tour_link: "Help me setup phone channel"
         purchase_number: "Purchase Number"
         purchase_phone_number: "Buy Number (%{number})"
         buy: "Buy Number"
@@ -9282,6 +9526,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     visitor_details: "Visitor Details"
     enter_tags: "Enter the tags"
     chat_with: "Chat with"
+    chat_with_us: "Connect with us"
     ticket_success_msg: "New ticket has been created."
     ticket_error_msg: "Error while creating ticket"
     website_visitors: "Visitors"
@@ -9380,18 +9625,21 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     end_chat_end_title: "End"
     end_chat_cancel_title: "Cancel"
     cobrowse_request : "Waiting for visitor to accept your request"
-    visitor_cobrowse_request : "Can agent control your current screen? "
-    cobrowsing_start_msg : "Your screenshare session has started"
-    cobrowsing_stop_msg : "Your screensharing session has ended"
+    visitor_cobrowse_request : "Can agent control your current screen? "    
+    cobrowsing_start_msg : "Your screenshare session has started"   
+    cobrowsing_stop_msg : "Your screensharing session has ended"    
     cobrowsing_deny_msg : "Your request was declined"
-    cobrowsing_viewing_screen : "You are viewing the visitor’s screen"
-    cobrowsing_controlling_screen : "You are controlling the visitor’s screen"
-    cobrowsing_request_control : "Request visitor for control"
-    cobrowsing_stop_request : "End your screensharing session"
-    cobrowsing_request_control_rejected : "Your request was declined"
-    cobrowsing_cancel_visitor_msg : "Screensharing is currently unavailable"
-    cb_viewing_screen_vi : "Agent can view your screen "
-    cb_controlling_screen_vi : "Agent can control your screen"
+    cobrowsing_agent_busy : "Agent is in screen share session with customer"
+    cobrowsing_visitor_onhttp_error : "Unable to connect due to an unsecured connection(http site)" 
+    cobrowsing_viewing_screen : "You are viewing the visitor’s screen"    
+    cobrowsing_controlling_screen : "You have access to visitor’s screen"    
+    cobrowsing_request_control : "Request visitor for access"    
+    cobrowsing_give_visitor_control : "Give access back to visitor"            
+    cobrowsing_stop_request : "End your screensharing session"    
+    cobrowsing_request_control_rejected : "Your request was declined"   
+    cobrowsing_cancel_visitor_msg : "Screensharing is currently unavailable"    
+    cb_viewing_screen_vi : "Agent can view your screen "    
+    cb_controlling_screen_vi : "Agent can control your screen"    
     cb_give_control_vi :  "Allow agent to control your screen"
     help_text_agent_msg: "Use {{agent_name}} and {{helpdesk_name}} to display Agent Name and Helpdesk Name in your messages"
     date_invalid: Invalid date
@@ -9423,7 +9671,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     widget_option_info: "If feedback widget not available, new ticket page will be opened"
     no_matching_agents: "No matching agents"
     chat_enabled_label: "Enable Chat"
-    cobrowsing : "Screenshare"
+    cobrowsing : "Onpage Help"
     cobrowsing_info : "Guide your customers more effectively during your chat conversations by having an option to view and control their screen."
     routing: "Chat routing"
     routing_info: "Route all incoming chats to specific groups"
@@ -9555,6 +9803,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       forward: "Forward"
       add_note: "Add note"
       scenario: "Scenarios"
+      jump_to_views: "Jump to views"
     ticket_list:
       title: "Ticket List"
       move_cursor: "Jump cursor to next / previous ticket"
@@ -9617,6 +9866,9 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     tour: Help me setup my forums
     tour_v2: Help me setup my knowledge base
     show_more: Show more
+    general:  
+        unsaved_content: "You have unsaved content in this page."
+        leave_page_que: "Do you want to leave this page?"
     helpnote:
       title: Organizing your community
       para1: "Categories are top level hierarchies that let you broadly classify your community and target your discussions to different types of audiences."
@@ -9919,7 +10171,9 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     no_data: "No data to display"
     connection_error: "We have encountered an error. Please try again in some time."
     agent_label: "Agent"
+    internal_agent_label: "Internal Agent"
     group_label: "Group"
+    internal_group_label: "Internal Group"
     filtered_by_label: "Filtered by"
     filter_by_label: "Filter by"
     filter_label: "Filter"
@@ -9961,5 +10215,16 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     try_again: "Go to Ticket and try again"
     actions_alert: "File attachment in progress. Do you want to leave this page?"
     reminder: "You have unsaved content in this page. Do you want to leave this page?"
-    traffic_cop: Unable to send your last response. Ticket was updated with new replies by another agent.<a href="%{ticket_url}" data-pjax="body-container"> Please review their reply before sending your reply </a>.
+  ml:
+    similat_tickets_found: Similar Tickets found
+    no_suggestions: Oops! No suggestions.
+    error: Oops! Failed to generate similar ticket suggestions.
+    feed_back: Are these suggestions helpful?
+    feed_back_thanks: Thanks for the feedback!
+    feed_back_thanks_text: Thanks for your feedback. Please feel free to contact karthikkp@freshdesk.com for any further suggestions!
+    submit: Submit
+    show: Show
+    hide: Hide
+    suggestion_text: What can we improve? (Optional).
+    help: What's this?
 

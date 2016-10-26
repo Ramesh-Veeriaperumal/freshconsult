@@ -29,6 +29,24 @@ class RabbitmqWorker
       sqs_msg_obj = (Ryuken::SearchSplitter.perform_async(message) rescue nil)
       puts "Searchv2 SQS Message id - #{sqs_msg_obj.try(:message_id)} :: ROUTING KEY -- #{rounting_key} :: Exchange - #{exchange_key}"
     end
+    
+    # Publish to Autorefresh and AgentCollision
+    #
+    if LAMBDA_ENABLED and lambda_feature
+      invoke_lambda(exchange_key, message)
+      # Hack - Lambda only pushes to one sqs. Manually pushing to New ALB Queue - Temporary
+    elsif agent_collision_routing_key?(exchange_key, rounting_key)
+      sqs_msg_obj = sqs_v2_push(SQS[:agent_collision_queue], message, nil)
+      puts " AgentCollision SQS Message id - #{sqs_msg_obj.message_id} :: ROUTING KEY -- #{rounting_key} :: Exchange - #{exchange_key}"
+      sqs_msg_obj = sqs_v2_push(SQS[:agent_collision_alb_queue], message, nil)
+      puts " AgentCollision ALB SQS Message id - #{sqs_msg_obj.message_id} :: ROUTING KEY -- #{rounting_key} :: Exchange - #{exchange_key}"                                            
+      if autorefresh_routing_key?(exchange_key, rounting_key)
+        sqs_msg_obj = sqs_v2_push(SQS[:auto_refresh_queue], message, nil)
+        puts " Autorefresh SQS Message id - #{sqs_msg_obj.message_id} :: ROUTING KEY -- #{rounting_key} :: Exchange - #{exchange_key}"
+        sqs_msg_obj = sqs_v2_push(SQS[:auto_refresh_alb_queue], message, nil) if autorefresh_routing_key?(exchange_key, rounting_key) 
+        puts " Autorefresh ALB SQS Message id - #{sqs_msg_obj.message_id} :: ROUTING KEY -- #{rounting_key} :: Exchange - #{exchange_key}"
+      end
+    end
 
     # Publish to Reports-v2
     #
@@ -43,19 +61,6 @@ class RabbitmqWorker
       sqs_msg_obj = sqs_v2_push(SQS[:activity_queue], message, nil)
       puts " SQS Activities Message id - #{sqs_msg_obj.message_id} :: ROUTING KEY -- #{rounting_key} :: Exchange - #{exchange_key}"
     end
-
-    # Publish to Autorefresh and AgentCollision
-    #
-    if LAMBDA_ENABLED and lambda_feature
-      invoke_lambda(exchange_key, message)
-    elsif agent_collision_routing_key?(exchange_key, rounting_key)
-      sqs_msg_obj = sqs_v2_push(SQS[:agent_collision_queue], message, nil)
-      puts " AgentCollision SQS Message id - #{sqs_msg_obj.message_id} :: ROUTING KEY -- #{rounting_key} :: Exchange - #{exchange_key}"                      
-      if autorefresh_routing_key?(exchange_key, rounting_key)
-        sqs_msg_obj = sqs_v2_push(SQS[:auto_refresh_queue], message, nil)
-        puts " Autorefresh SQS Message id - #{sqs_msg_obj.message_id} :: ROUTING KEY -- #{rounting_key} :: Exchange - #{exchange_key}"
-      end
-    end
     
     Rails.logger.info("Published RMQ message via Sidekiq")
   end
@@ -66,9 +71,9 @@ class RabbitmqWorker
       options = { function_name: $lambda_interchange[exchange], 
                   invocation_type: "Event",
                   payload: message }
-      response = $lambda_client.invoke(options) if options[:function_name].present?
-      if response[:status_code] != 202
-        raise LambdaRequestError, "Lambda returned #{status_code}"
+      if options[:function_name].present?
+        response = $lambda_client.invoke(options)
+        raise LambdaRequestError, "Lambda returned #{response[:status_code]}" if response[:status_code] != 202
       end
     rescue => e 
       NewRelic::Agent.notice_error(e, {
@@ -155,7 +160,8 @@ class RabbitmqWorker
       ((
         exchange.starts_with?("archive_notes") || exchange.starts_with?("articles") || 
         exchange.starts_with?("topics") || exchange.starts_with?("posts") || exchange.starts_with?("tags") || 
-        exchange.starts_with?("companies") || exchange.starts_with?("users") || exchange.starts_with?("tag_uses")
+        exchange.starts_with?("companies") || exchange.starts_with?("users") || exchange.starts_with?("tag_uses") || 
+        exchange.starts_with?("callers")
       ) && key[0] == "1")
     end
 

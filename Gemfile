@@ -3,7 +3,7 @@ Encoding.default_external = Encoding::UTF_8
 source 'https://rubygems.org'
 
 gem "rake", "~> 10.4.0"
-gem "rails","3.2.22.2"
+gem "rails","3.2.22.3"
 
 gem "freemail", "0.2.0", :require => false 
 
@@ -86,7 +86,7 @@ gem "ipaddress", "0.8.0"
 
 gem 'sidekiq', "3.4.1"
 # This needs bundler 1.7.2 or 1.10.6 as other version has problem in resolving.
-source "https://a55d1643:d20410bb@gems.contribsys.com/" do 
+source "https://690a8c5e:5d9334f0@gems.contribsys.com/" do
   gem 'sidekiq-pro' 
 end 
 gem 'shoryuken', '2.0.4'
@@ -116,7 +116,7 @@ gem "newrelic_rpm","3.9.9.275"
 
 gem "faraday" , "0.9"
 gem 'faraday_middleware', '~> 0.10.0'
-gem "twitter", "~> 5.5.1"
+gem "twitter", "~> 5.16.0"
 gem "gnip-rule", "0.4.1"
 gem "curb", "~> 0.8.5"
 gem "sanitize", "2.0.3"

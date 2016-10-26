@@ -1,6 +1,10 @@
 
 <div class="tkt-sidebar" id="ticket_details_sidebar" data-domhelper-name="ticket-details-sidebar">
 	<%= render :partial => 'helpdesk/tickets/show/status', :locals => {:ticket => @ticket} unless @ticket.deleted or @ticket.spam %>
+	<% if @ticket.can_be_linked? && 
+		current_account.link_tickets_enabled? || feature?(:parent_child_tickets) %>
+		<div id="ticket-association" data-remote-url="<%= ticket_association_helpdesk_ticket_path(@ticket)%>" rel="remote"></div>
+	<% end -%>
 	<%= render :partial => "helpdesk/tickets/show/requester" %> 
 	<%= render :partial => "helpdesk/tickets/show/app_info" , :locals => {:ticket => @ticket} if @ticket.mobihelp? and @ticket.mobihelp_ticket_info %>
 	<% unless @ticket.deleted or @ticket.spam %>

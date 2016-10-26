@@ -32,6 +32,7 @@ module Search
       end
       
       #_Note_: Will have a problem is alias is somehow removed at ES.
+      # Might not be using this if we're not using aliases
       def index_name(alias_name)
         Search::V2::Utils::EsClient.new(:get,
                                         [cluster_path, '_alias', alias_name].join('/')
@@ -41,48 +42,16 @@ module Search
       # When account is newly registered/details updated
       # (*) Clear Memcache
       # (*) Store config details in data store
-      # (*) Create corresponding aliases in ES
       def bootstrap
         Store::Data.instance.store_config(id)
-        cluster_obj = Cluster.fetch(home_cluster)
-        aliases = ES_V2_SUPPORTED_TYPES.each_pair.map do |type, params|
-          {
-            add: (Hash.new.tap do |alias_props|
-              alias_props[:index]           = params[:index_prefix] % { index_suffix: cluster_obj.index_suffix(type) }
-              alias_props[:alias]           = self.alias(type)
-              alias_props[:routing]         = id
-              alias_props[:filter]          = ({ bool: {
-                                                  must: [
-                                                    { type: { value: type }},
-                                                    { term: { account_id: id }}
-                                                  ]
-                                                }})
-            end)
-          }
-        end
-
-        Utils::EsClient.new(:post, 
-                            [cluster_path, '_aliases'].join('/'), 
-                            ({ actions: aliases }.to_json),
-                            Search::Utils::SEARCH_LOGGING[:all]
-                          ).response
+        # Removed registering aliases to Cluster as using routing now.
       end
 
+      # When account is removed
+      # (*) Remove config details from data store
+      # (*) Clear Memcache
       def rollback
-        aliases = ES_V2_SUPPORTED_TYPES.each_pair.map do |type, params|
-          { remove: {
-            index: self.index_name(self.alias(type)), #=> Hit request and get as it'll be single source of truth.
-            alias: self.alias(type)
-          }
-          }
-        end
-        
-        Utils::EsClient.new(:post, 
-                            [cluster_path, '_aliases'].join('/'), 
-                            ({ actions: aliases }.to_json),
-                            Search::Utils::SEARCH_LOGGING[:all]
-                          ).response
-        
+        # Removed unregistering aliases from Cluster as using routing now.
         Store::Data.instance.remove_config(id)
       end
       

@@ -4,7 +4,7 @@ class HelpdeskReports::Logger
 
     def log(subject, exception=nil, options=nil)
       if exception.is_a?(Exception)
-        subject = "[ERROR] - #{subject} - #{Time.now.utc}"
+        subject = "Reports | Error - #{subject} - #{Time.now.utc}"
         message = "#{subject} \n #{exception.message} \n #{(exception.backtrace||[]).join("\n")} \n #{options.inspect}"
         sns_notification(subject[0..90], message)
         NewRelic::Agent.notice_error(exception, {
@@ -14,7 +14,7 @@ class HelpdeskReports::Logger
         }})
         Rails.logger.error(message)
       else
-        message = "[INFO] - #{subject} - #{Time.now.utc}"
+        message = "Reports | Info - #{subject} - #{Time.now.utc}"
         Rails.logger.info(message)
       end
     rescue => e

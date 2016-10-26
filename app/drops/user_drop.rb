@@ -5,7 +5,7 @@ class UserDrop < BaseDrop
 	include DateHelper
 
 	self.liquid_attributes += [:name, :first_name, :last_name, :email, :phone, :mobile, 
-						:job_title, :time_zone, :twitter_id, :external_id, :language, :address, :description, :active]
+						:job_title, :time_zone, :twitter_id, :external_id, :language, :address, :description, :active, :unique_external_id]
 
 	def initialize(source)
 		super source
@@ -57,6 +57,12 @@ class UserDrop < BaseDrop
 	# To access User's company details
 	def company
 		@company ||= @source.company if @source.company
+	end
+
+	def formatted_timezone
+		Time.use_zone(source.time_zone) {
+			Time.zone.to_s
+		}
 	end
 
 	# !TODO This may be deprecated on a later release

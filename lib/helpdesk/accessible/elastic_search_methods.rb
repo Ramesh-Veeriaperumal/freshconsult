@@ -27,7 +27,7 @@ module Helpdesk::Accessible::ElasticSearchMethods
       }
     end
 
-    def es_users_conditions(user = current_user)
+    def es_users_conditions(user = User.current)
       {
         :bool => {
           :must => [
@@ -69,12 +69,27 @@ module Helpdesk::Accessible::ElasticSearchMethods
       permissions
     end
 
+    def accessible_from_esv2(model_name, options, visible_options={}, sort_option = nil, folder_id = nil, id_data = nil, excluded_ids = nil)
+      query_options = {
+        sort_option:  sort_option,
+        folder_id:    folder_id,
+        id_data:      id_data,
+        excluded_ids: excluded_ids,
+        query_params: params
+      }
+      Search::V2::Count::AccessibleMethods.new(model_name, options, visible_options).es_request(query_options)
+    end
+
+    def ca_folders_from_esv2(model_name, options, visible_options)
+      Search::V2::Count::AccessibleMethods.new(model_name, options, visible_options).ca_folders_es_request()
+    end
+
     def accessible_from_es(model_name,options,visible_options={}, sort_option = nil, folder_id = nil, id_data = nil, excluded_ids = nil)
       begin
         Search::EsIndexDefinition.es_cluster(current_account.id)
         es_alias = Search::EsIndexDefinition.searchable_aliases([model_name],current_account.id)
         return nil unless Tire.index(es_alias).exists?
-        user_groups = current_user.agent_groups.map(&:group_id)
+        user_groups = es_user_groups
         search_text = params[:search_string]
         item = Tire.search Search::EsIndexDefinition.searchable_aliases([model_name], current_account.id), options do |search|
           search.query do |query|
@@ -120,6 +135,10 @@ module Helpdesk::Accessible::ElasticSearchMethods
 
     def default_visiblity
       {:global_type => true, :user_type => true, :group_type => true}
+    end
+
+    def es_user_groups user = User.current
+      user.agent_groups.map(&:group_id)
     end
 
 

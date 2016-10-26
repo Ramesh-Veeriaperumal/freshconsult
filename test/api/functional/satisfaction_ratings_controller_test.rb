@@ -49,7 +49,7 @@ class SatisfactionRatingsControllerTest < ActionController::TestCase
   def test_create_with_invalid_data_type
     post :create, construct_params({ id: ticket.display_id }, ratings: { 'default_question' => 'test' }, feedback: [])
     assert_response 400
-    match_json([bad_request_error_pattern_with_nested_field('ratings', 'default_question', :not_included, list: '-103,100,103'),
+    match_json([bad_request_error_pattern_with_nested_field('ratings', 'default_question', :not_included, list: @account.survey.survey_questions.first.face_values.join(',')),
                 bad_request_error_pattern('feedback', :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: Array)])
   end
 
@@ -79,7 +79,7 @@ class SatisfactionRatingsControllerTest < ActionController::TestCase
   def test_create_without_default_question
     post :create, construct_params({ id: ticket.display_id }, ratings: { 'question_2' => -103, 'question_3' => 100 }, feedback: 'Feedback given Surveys')
     assert_response 400
-    match_json([bad_request_error_pattern_with_nested_field('ratings', 'default_question', :not_included, code: :missing_field, list: '-103,100,103')])
+    match_json([bad_request_error_pattern_with_nested_field('ratings', 'default_question', :not_included, code: :missing_field, list: @account.survey.survey_questions.first.face_values.join(','))])
   end
 
   def test_create_with_invalid_custom_ratings
@@ -91,14 +91,14 @@ class SatisfactionRatingsControllerTest < ActionController::TestCase
   def test_create_with_invalid_custom_ratings_type
     post :create, construct_params({ id: ticket.display_id }, ratings: { 'default_question' => 103, 'question_3' => 'Test' }, feedback: 'Feedback given Surveys')
     assert_response 400
-    match_json([bad_request_error_pattern_with_nested_field('ratings', 'question_3', :not_included, list: '-103,100,103')])
+    match_json([bad_request_error_pattern_with_nested_field('ratings', 'question_3', :not_included, list: @account.survey.survey_questions.first.face_values.join(','))])
   end
 
   def test_create_with_invalid_custom_ratings_value
     post :create, construct_params({ id: ticket.display_id }, ratings: { 'default_question' => 103, 'question_3' => -102, 'question_2' => 110 }, feedback: 'Feedback given Surveys')
     assert_response 400
-    match_json([bad_request_error_pattern_with_nested_field('ratings', 'question_3', :not_included, list: '-103,100,103'),
-                bad_request_error_pattern_with_nested_field('ratings', 'question_2', :not_included, list: '-103,100,103')])
+    match_json([bad_request_error_pattern_with_nested_field('ratings', 'question_3', :not_included, list: @account.survey.survey_questions.first.face_values.join(',')),
+                bad_request_error_pattern_with_nested_field('ratings', 'question_2', :not_included, list: @account.survey.survey_questions.first.face_values.join(','))])
   end
 
   def test_create_with_invalid_custom_ratings_data_type

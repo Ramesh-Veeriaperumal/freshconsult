@@ -27,6 +27,7 @@ class User < ActiveRecord::Base
 
   validates_uniqueness_of :twitter_id, :scope => :account_id, :allow_nil => true, :allow_blank => true
   validates_uniqueness_of :external_id, :scope => :account_id, :allow_nil => true, :allow_blank => true
+  validates_uniqueness_of :unique_external_id, :scope => :account_id, :allow_nil => true, :allow_blank => true
 
   xss_sanitize  :only => [:name,:email,:language, :job_title, :twitter_id, :address, :description, :fb_profile_id], :plain_sanitizer => [:name,:email,:language, :job_title, :twitter_id, :address, :description, :fb_profile_id]
   scope :contacts, :conditions => { :helpdesk_agent => false }
@@ -34,6 +35,10 @@ class User < ActiveRecord::Base
   scope :visible, :conditions => { :deleted => false }
   scope :active, lambda { |condition| { :conditions => { :active => condition }} }
   scope :with_conditions, lambda { |conditions| { :conditions => conditions} }
+  scope :with_contractors, lambda { |conditions| { :joins => %(INNER JOIN user_companies ON
+                                                               user_companies.account_id = users.account_id AND
+                                                               user_companies.user_id = users.id),
+                                                   :conditions => conditions } }
   scope :company_users_via_customer_id, lambda { |cust_id| { :conditions => ["customer_id = ?", cust_id]} }
   # Using text_uc01 column as the preferences hash for storing user based settings
   serialize :text_uc01, Hash
@@ -122,7 +127,7 @@ class User < ActiveRecord::Base
   end
 
   attr_accessor :import, :highlight_name, :highlight_job_title, :created_from_email,
-                :primary_email_attributes, :tags_updated, :role_ids_changed # (This role_ids_changed used to forcefully call user callbacks only when role_ids are there.
+                :primary_email_attributes, :tags_updated, :keep_user_active, :role_ids_changed # (This role_ids_changed used to forcefully call user callbacks only when role_ids are there.
   # As role_ids are not part of user_model(it is an association_reader), agent.update_attributes won't trigger user callbacks since user doesn't have any change.
   # Hence user.send(:attribute_will_change!, :role_ids_changed) is being called in api_agents_controller.)
 
@@ -228,6 +233,7 @@ class User < ActiveRecord::Base
       return self.where(fb_profile_id: options[:fb_profile_id]).first if options.key?(:fb_profile_id)
       return self.where(external_id: options[:external_id]).first if options.key?(:external_id)
       return self.where(phone: options[:phone]).first if options.key?(:phone)
+      return self.where(unique_external_id: options[:unique_external_id]).first if options.key?(:unique_external_id)
     end
 
     def update_posts_count
@@ -306,11 +312,12 @@ class User < ActiveRecord::Base
   def chk_email_validation?
     (is_not_deleted?) and (twitter_id.blank? || !email.blank?) and (fb_profile_id.blank? || !email.blank?) and
                           (external_id.blank? || !email.blank?) and (phone.blank? || !email.blank?) and
-                          (mobile.blank? || !email.blank?)
+                          (mobile.blank? || !email.blank?) and (unique_external_id.blank? || !email.blank?)
   end
 
   def email_required?
-    is_not_deleted? and twitter_id.blank? and fb_profile_id.blank? and external_id.blank? and phone.blank? and mobile.blank?
+    is_not_deleted? and twitter_id.blank? and fb_profile_id.blank? and external_id.blank? and phone.blank? and mobile.blank? and
+                        unique_external_id.blank?
   end
 
   def add_tag(tag)
@@ -413,6 +420,7 @@ class User < ActiveRecord::Base
     self.mobile = params[:user][:mobile]
     self.twitter_id = params[:user][:twitter_id]
     self.external_id = params[:user][:external_id]
+    self.unique_external_id = params[:user][:unique_external_id]
     self.description = params[:user][:description]
     self.company_name = params[:user][:company_name] if params[:user].include?(:company_name)
     self.company_id = params[:user][:company_id] if params[:user].include?(:company_id)
@@ -515,7 +523,7 @@ class User < ActiveRecord::Base
   end
 
   def has_no_credentials?
-    self.crypted_password.blank? && active? && !account.sso_enabled? && !deleted && self.authorizations.empty? && self.twitter_id.blank? && self.fb_profile_id.blank? && self.external_id.blank?
+    self.crypted_password.blank? && active? && !account.sso_enabled? && !deleted && self.authorizations.empty? && self.twitter_id.blank? && self.fb_profile_id.blank? && self.external_id.blank? && self.unique_external_id.blank?
   end
 
   def first_name
@@ -590,7 +598,7 @@ class User < ActiveRecord::Base
     if self.user_emails.present?
       self.user_emails.map{|x| {:id => id, :details => "#{format_name} <#{x.email}>", :value => name, :email => x.email}}
     else
-      [{:id => id, :details => self.name_details, :value => name, :email => email}]
+      [{:id => id, :details => self.name_details, :value => name, :email => email.to_s }]
     end
   end
 
@@ -639,7 +647,7 @@ class User < ActiveRecord::Base
   end
 
   def get_info
-    (email) || (twitter_id) || (external_id) || (name)
+    (email) || (twitter_id) || (external_id) || (unique_external_id) || (name)
   end
 
   def twitter_style_id
@@ -654,12 +662,29 @@ class User < ActiveRecord::Base
     self.privilege?(:manage_tickets) && agent.group_ticket_permission
   end
 
+  def associated_group_ids
+    agent_groups.pluck(:group_id).insert(0,0)
+  end
+
+  def group_ticket?(ticket)
+    group_member?(ticket.group_id) or 
+        (Account.current.features?(:shared_ownership) ? group_member?(ticket.internal_group_id) : false)
+  end
+
+  def group_member?(group_id)
+    group_id && associated_group_ids.include?(group_id)
+  end
+
   def assigned_ticket_permission
     self.privilege?(:manage_tickets) && agent.assigned_ticket_permission
   end
 
+  def ticket_agent?(ticket)
+    ticket.responder_id == self.id || (Account.current.features?(:shared_ownership) ? ticket.internal_agent_id == self.id : false)
+  end
+
   def has_ticket_permission? ticket
-    (can_view_all_tickets?) or (ticket.responder_id == self.id ) or (group_ticket_permission && (ticket.group_id && (agent_groups.pluck(:group_id).insert(0,0)).include?( ticket.group_id)))
+    (can_view_all_tickets?) or (ticket_agent?(ticket)) or (group_ticket_permission && (group_ticket?(ticket))) 
   end
 
   # For a customer we need to check if he is the requester of the ticket
@@ -971,6 +996,10 @@ class User < ActiveRecord::Base
     def has_role?
       self.errors.add(:base, I18n.t("activerecord.errors.messages.user_role")) if
         ((@role_change_flag or new_record?) && self.roles.blank?)
+    end
+
+    def password_updated?
+      @all_changes.has_key?(:crypted_password)
     end
 
     #This is the current login method. It is fed to authlogic in user_sessions.rb

@@ -104,7 +104,6 @@ module Helpkit
 
     # Please check api_initializer.rb, for compatibility with the version 2 APIs, if any middleware related changes are being done.
     config.middleware.insert_before 0, "Middleware::CorsEnabler"
-    config.middleware.insert_before "ActionDispatch::Session::CookieStore","Rack::SSL"
     config.middleware.use "Middleware::GlobalRestriction"
     config.middleware.use "Middleware::ApiThrottler", :max =>  1000
     config.middleware.use "Middleware::TrustedIp"
@@ -117,6 +116,7 @@ module Helpkit
       r.define_rule( :match => "^/(accounts\/new_signup_free).*", :type => :fixed, :metric => :rpd, :limit => 5,:per_ip => true)
       r.define_rule( :match => "^/(public\/tickets)/.*", :type => :fixed, :metric => :rpm, :limit => 10,:per_ip => true)
       r.define_rule( :match => "^/(login\/sso).*", :type => :fixed, :metric => :rpm, :limit => 10,:per_ip => true)
+      r.define_rule( :match => "^/integrations\/sugarcrm\/settings_update", :type => :fixed, :metric => :rph, :limit => 5,:per_ip => true)
       store = Redis.new(:host => RateLimitConfig["host"], :port => RateLimitConfig["port"],:timeout => 0.5)
       r.set_cache(store) if store.present?
     end
@@ -218,7 +218,7 @@ module Helpkit
     # and looking at database.yml when running rake assets:precompile
     config.assets.initialize_on_precompile = false
 
-    config.middleware.insert_before "ActionDispatch::Session::CookieStore","Rack::SSL"
+    config.middleware.insert_before "ActionDispatch::Cookies","Rack::SSL"
     config.middleware.insert_before "Auth::Builder","Middleware::Pod"
 
     config.assets.handle_expiration = true
@@ -228,7 +228,8 @@ end
 
 require 'active_record/connection_adapters/abstract_mysql_adapter'
 #Overridding datatype for primary key
-ActiveRecord::ConnectionAdapters::AbstractMysqlAdapter::NATIVE_DATABASE_TYPES[:primary_key] = "BIGINT UNSIGNED DEFAULT NULL auto_increment PRIMARY KEY"
+ActiveRecord::ConnectionAdapters::AbstractMysqlAdapter::NATIVE_DATABASE_TYPES[:primary_key] = "BIGINT UNSIGNED NOT NULL auto_increment PRIMARY KEY"
+
 
 # Captcha API Keys
 ENV['RECAPTCHA_PUBLIC_KEY']  = '6LfNCb8SAAAAACxs6HxOshDa4nso_gyk0sxKcwAI'

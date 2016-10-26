@@ -1,7 +1,11 @@
 class Helpdesk::TicketsController < ApplicationController
 
+  require 'freemail'
+
   include ActionView::Helpers::TextHelper
   include ParserUtil
+  include Redis::RedisKeys
+  include Redis::OthersRedis
   include HelpdeskControllerMethods
   include Helpdesk::TicketActions
   include Search::TicketSearch
@@ -20,14 +24,15 @@ class Helpdesk::TicketsController < ApplicationController
   include Helpdesk::TagMethods
   include Helpdesk::NotePropertiesMethods
   include Helpdesk::Activities::ActivityMethods
+  include Helpdesk::SpamAccountConstants
 
   before_filter :redirect_to_mobile_url
-  skip_before_filter :check_privilege, :verify_authenticity_token, :only => :show
+  skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:show,:suggest_tickets]
   before_filter :portal_check, :verify_format_and_tkt_id, :only => :show
-  before_filter :check_compose_feature, :only => :compose_email
+  before_filter :check_compose_feature, :check_trial_outbound_limit, :only => :compose_email
 
   before_filter :find_topic, :redirect_merged_topics, :only => :new
-  around_filter :run_on_slave, :only => [:user_ticket, :activities]
+  around_filter :run_on_slave, :only => [:user_ticket, :activities, :suggest_tickets]
   before_filter :save_article_filter, :only => :index
   around_filter :run_on_db, :only => [:custom_search, :index, :full_paginate]
 
@@ -35,7 +40,7 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :normalize_params, :only => :index
   before_filter :cache_filter_params, :only => [:custom_search]
   before_filter :load_cached_ticket_filters, :load_ticket_filter, :check_autorefresh_feature, :load_sort_order , :only => [:index, :filter_options, :old_tickets,:recent_tickets]
-  before_filter :get_tag_name, :clear_filter, :only => :index
+  before_filter :get_tag_name, :clear_filter, :only => [:index, :filter_options]
   before_filter :add_requester_filter , :only => [:index, :user_tickets]
   before_filter :load_filter_params, :only => [:custom_search], :if => :es_tickets_enabled?
   before_filter :load_article_filter, :only => [:index, :custom_search, :full_paginate]
@@ -60,8 +65,7 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :load_ticket,
     :only => [:edit, :update, :execute_scenario, :close, :change_due_by, :print, :clear_draft, :save_draft,
               :draft_key, :get_ticket_agents, :quick_assign, :prevnext, :status, :update_ticket_properties,
-              :activities, :activitiesv2, :activities_all]
-
+              :activities, :activitiesv2, :activities_all, :unlink, :related_tickets, :ticket_association, :suggest_tickets]
   before_filter :load_ticket_with_notes, :only => [:show]
 
   before_filter :check_outbound_permission, :only => [:edit, :update]
@@ -70,7 +74,7 @@ class Helpdesk::TicketsController < ApplicationController
   alias :build_ticket :build_item
   before_filter :build_ticket_body_attributes, :only => [:create]
   before_filter :build_ticket, :only => [:create, :compose_email]
-  before_filter :set_required_fields, :only => :create
+  before_filter :set_required_fields, :check_trial_customers_limit, :only => :create
 
   before_filter :set_date_filter ,    :only => [:export_csv]
   before_filter :csv_date_range_in_days , :only => [:export_csv]
@@ -90,10 +94,67 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :load_note_reply_cc, :only => [:reply_to_forward]
   before_filter :load_note_reply_from_email, :only => [:reply_to_forward]
   before_filter :show_password_expiry_warning, :only => [:index, :show]
+  before_filter :load_related_tickets, :only => [:related_tickets]
+  before_filter :load_tracker_ticket, :only => [:link, :unlink]
 
   after_filter  :set_adjacent_list, :only => [:index, :custom_search]
   before_filter :fetch_item_attachments, :only => [:create, :update]
   before_filter :load_tkt_and_templates, :only => :apply_template
+  before_filter :check_ml_feature, :only => [:suggest_tickets]
+
+  
+  def suggest_tickets
+    tickets = []
+    similar_tickets = get_similar_tickets
+    tickets = current_account.tickets.visible.preload(:ticket_old_body).permissible(current_user).reorder("field(id,#{similar_tickets.join(',')})").where(id:similar_tickets) if similar_tickets.present?
+    respond_to do |format|
+      format.json do
+        render :json => tickets
+      end
+    end
+  end
+
+  def get_similar_tickets
+    begin
+      con = Faraday.new(MlAppConfig["host"]) do |faraday|
+            faraday.response :json, :content_type => /\bjson$/                # log requests to STDOUT
+            faraday.adapter  Faraday.default_adapter  # make requests with Net::HTTP
+          end
+      response = con.post do |req|
+        req.url "/"+MlAppConfig["url"]
+        req.headers['Content-Type'] = 'application/json'
+        req.headers['Authorization'] = MlAppConfig["auth_key"]
+        req.options.timeout = MlAppConfig["timeout"]
+        req.body = generate_body_suggest_tickets
+      end
+      Rails.logger.info "Response from ML : #{response.body["result"]}"
+      response.body["result"]
+    rescue Exception => e
+      NewRelic::Agent.notice_error(e)
+      []
+    end
+  end
+
+  def generate_body_suggest_tickets
+    body =  {
+            :account_id =>current_account.id.to_s,
+            :ticket_id => @ticket.id.to_s,
+            :product_id => @ticket.product_id.nil? ? TicketConstants::NBA_NULL_PRODUCT_ID: @ticket.product_id,
+            :ticket_subject => @ticket.subject,
+            :ticket_description => @ticket.description,
+            :count =>MlAppConfig["ticket_count"].to_s,
+            :source => @ticket.source.to_s
+            }
+    
+    if current_user.group_ticket_permission
+      body[:filter_condiiton] = {:group_id=>current_user.agent_groups.pluck(:group_id),:responder_id=> [current_user.id]}
+    elsif current_user.assigned_ticket_permission
+       body[:filter_condiiton] = {:responder_id => [current_user.id]}
+    end
+   Rails.logger.info "Resquest from ML : #{body}"
+   body.to_json
+  end
+
 
   def user_ticket
     if params[:email].present?
@@ -208,7 +269,36 @@ class Helpdesk::TicketsController < ApplicationController
     @show_options = show_options
     @is_default_filter = (!is_num?(view_context.current_filter))
     @current_view = @ticket_filter.id || @ticket_filter.name if is_custom_filter_ticket?
-    render :partial => "helpdesk/shared/filter_options", :locals => { :current_filter => @ticket_filter }
+    render :partial => "helpdesk/shared/filter_options", :locals => { :current_filter => @ticket_filter , :shared_ownership_enabled => current_account.features?(:shared_ownership)}
+  end
+
+  def filter_conditions
+    filter_str = get_cached_filters
+    if filter_str
+      query_hash = JSON.parse(filter_str["data_hash"])
+      is_default_filter = false
+   else
+      filter_name = params[:filter_key] || params[:filter_name]
+      return render :json => {:error => "Invalid filter name" } if filter_name.blank?
+      is_default_filter = !is_num?(filter_name) || invalid_custom_filter?(filter_name)
+      if is_default_filter
+        @ticket_filter = current_account.ticket_filters.new(Helpdesk::Filters::CustomTicketFilter::MODEL_NAME)
+        query_hash = @ticket_filter.default_filter(filter_name)
+      else
+        query_hash = @ticket_filter.data[:data_hash]
+      end
+    end
+    conditions_hash = query_hash.map{|i|{ i["condition"] => i["value"] }}.inject({}){|h, e|h.merge! e}
+    meta_data       = filters_meta_data(conditions_hash) if conditions_hash.keys.any? {|k| META_DATA_KEYS.include?(k.to_s)}
+    render :json => { :conditions => conditions_hash,
+                      :default => is_default_filter,
+                      :meta_data => meta_data
+                    }
+  end
+  
+  def invalid_custom_filter?(filter_name)
+    @ticket_filter = current_account.ticket_filters.find_by_id(filter_name)
+    @ticket_filter.nil? || !@ticket_filter.has_permission?(current_user)
   end
 
   def latest_ticket_count # Possible dead code
@@ -303,6 +393,7 @@ class Helpdesk::TicketsController < ApplicationController
         @ticket_notes_total = run_on_slave { @ticket.conversation_count }
         last_public_note    = run_on_slave { @ticket.notes.visible.last_traffic_cop_note.first }
         @last_note_id       = last_public_note.blank? ? -1 : last_public_note.id
+        @last_broadcast_note = run_on_slave { @ticket.notes.last_broadcast_note.first } if @ticket.related_ticket?
       }
       format.atom
       format.xml  {
@@ -329,7 +420,9 @@ class Helpdesk::TicketsController < ApplicationController
         hash.merge!({:reply_template => parsed_reply_template(@ticket,nil)})
         hash.merge!({:default_twitter_body_val => default_twitter_body_val(@ticket)}) if @item.twitter?
         hash.merge!({:twitter_handles_map => twitter_handles_map}) if @item.twitter?
+        hash.merge!({:tags => @item.tags.map(&:to_mob_json)})
         hash.merge!(@ticket_notes[0].to_mob_json) unless @ticket_notes[0].nil?
+        hash.merge!({:ticket_draft => draft_hash})
         render :json => hash
       }
       format.mobile {
@@ -405,7 +498,9 @@ class Helpdesk::TicketsController < ApplicationController
           render :xml => @item.to_xml({:basic => true})
         }
         format.json {
-            render :json => request.xhr? ? { :success => true, :redirect => (params[:redirect] && params[:redirect].to_bool) }.to_json  : @item.to_json({:basic => true})
+            response_params = { :success => true, :redirect => (params[:redirect] && params[:redirect].to_bool) }
+            response_params.merge!(:autoplay_link => autoplay_link) if @item.trigger_autoplay?
+            render :json => request.xhr? ? response_params.to_json  : @item.to_json({:basic => true})
         }
       end
     else
@@ -619,8 +714,9 @@ class Helpdesk::TicketsController < ApplicationController
     end
 
     msg1 = render_to_string(
-      :inline => t("helpdesk.flash.flagged_spam",
+      :inline => t("helpdesk.flash.spam",
                       :tickets => get_updated_ticket_count,
+                      :text => associations_flash_text,
                       :undo => "<%= link_to(t('undo'), { :action => :unspam, :ids => params[:ids] }, { :method => :put }) %>"
                   )).html_safe
 
@@ -725,6 +821,44 @@ class Helpdesk::TicketsController < ApplicationController
     redirect_to :back
   end
 
+  def link
+    params[:ids].present? ? link_multiple : link_to_tracker
+
+    flash[:notice] = @item.errors[:base][0] if @item && @item.errors.any?
+    respond_to do |format|
+      format.html { redirect_to :back }
+      format.js
+    end
+  end
+
+  def unlink
+    @item.association_type = nil
+    @item.tracker_ticket_id = params[:tracker_id]
+    @item.save
+    flash[:notice] = @item.errors.any? ? @item.errors[:base][0] : t(:'flash.tickets.unlink.success')
+    respond_to do |format|
+      format.html { redirect_to :back }
+      format.js { render :file => 'helpdesk/tickets/link.rjs' }
+    end
+  end
+
+  def ticket_association
+    @associates = @ticket.associates unless @ticket.association_type.blank?
+    @last_broadcast_note = run_on_slave { @ticket.notes.last_broadcast_note.first } if @ticket.related_ticket?
+    respond_to do |format|
+      format.html { render :partial => "/helpdesk/tickets/show/ticket_association", :locals => { :ticket => @ticket } }
+    end
+  end
+
+  def related_tickets
+    if params[:page].present?
+      render( :partial => "helpdesk/tickets/show/related_ticket", 
+                    collection: @related_tickets)
+    else
+      render :partial => "helpdesk/tickets/show/related_tickets_container"
+    end
+  end
+
   def change_due_by
     due_date = get_due_by_time
     update_success = true
@@ -807,17 +941,21 @@ class Helpdesk::TicketsController < ApplicationController
     cc_emails = fetch_valid_emails(params[:cc_emails])
 
     #Using .dup as otherwise its stored in reference format(&id0001 & *id001).
-    @item.cc_email = {:cc_emails => cc_emails, :fwd_emails => [], :reply_cc => cc_emails.dup, :tkt_cc => cc_emails.dup}
+    @item.cc_email = {:cc_emails => cc_emails, :fwd_emails => [], :bcc_emails => [], :reply_cc => cc_emails.dup, :tkt_cc => cc_emails.dup}
 
     @item.status = CLOSED if save_and_close?
     @item.display_id = params[:helpdesk_ticket][:display_id]
     @item.email = params[:helpdesk_ticket][:email]
     @item.group = current_account.groups.find_by_id(params[:helpdesk_ticket][:group_id]) if params[:helpdesk_ticket][:group_id]
     @item.tag_names = params[:helpdesk][:tags] unless params[:helpdesk].blank? or params[:helpdesk][:tags].nil?
-
+    if current_account.link_tickets_enabled? and params[:display_ids].present?
+      @item.association_type = TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:tracker]
+      @item.related_ticket_ids = params[:display_ids].split(',')
+    end
     build_attachments @item, :helpdesk_ticket
     persist_states_for_api
     if @item.save_ticket
+      set_redirect_path if @item.tracker_ticket?
       post_persist
       notify_cc_people cc_emails unless (cc_emails.blank? || @item.outbound_email?)
     else
@@ -890,15 +1028,38 @@ class Helpdesk::TicketsController < ApplicationController
   def get_solution_detail
     language = Language.find_by_code(params[:language]) || Language.for_current_account
     sol_desc = current_account.solution_article_meta.find(params[:id]).send("#{language.to_key}_article")
-    render :text => Helpdesk::HTMLSanitizer.sanitize_for_insert_solution(sol_desc.description) || ""
+    @sol_attach = sol_desc.attachments
+    @sol_cloud_files = sol_desc.cloud_files
+    @sol_description = Helpdesk::HTMLSanitizer.sanitize_for_insert_solution(sol_desc.description) || ""
+    render :partial => '/helpdesk/tickets/components/insert_solutions.rjs'
   end
 
   def latest_note
     ticket = current_account.tickets.permissible(current_user).find_by_display_id(params[:id])
-    if ticket.nil?
-      render :text => t("flash.general.access_denied")
-    else
-      render :partial => "/helpdesk/shared/ticket_overlay", :locals => {:ticket => ticket}
+    respond_to do |format|
+
+      format.html {
+        if ticket.nil?
+          render :text => t("flash.general.access_denied")
+        else
+          render :partial => "/helpdesk/shared/ticket_overlay", :locals => {:ticket => ticket}
+        end
+      }
+      format.nmobile {
+        if ticket.nil?  
+            access_denied
+        else   
+          latest_note_hash = latest_note_helper(ticket)
+          overlay_user = latest_note_hash[:user]
+          user_hash = {
+            :user => { :name => overlay_user.name, :avatar_url => overlay_user.medium_avatar}            
+          }           
+          user_hash[:group] =  {:name => latest_note_hash[:ticket_group].name, :id => latest_note_hash[:ticket_group].id} if latest_note_hash[:ticket_group]
+          latest_note_hash.except!(:user, :ticket_group)
+          latest_note_hash.merge!(user_hash)
+          render :json => latest_note_hash.to_json()
+        end 
+      }    
     end
   end
 
@@ -954,7 +1115,7 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def activitiesv2
-    if Account.current.launched?(:activity_ui) and Account.current.features?(:activity_revamp) and request.format != "application/json" and ACTIVITIES_ENABLED
+    if !Account.current.launched?(:activity_ui_disable) and Account.current.features?(:activity_revamp) and request.format != "application/json" and ACTIVITIES_ENABLED
       type = :tkt_activity
       @activities_data = new_activities(params, @item, type)
       @total_activities  ||=  @activities_data[:total_count]
@@ -1056,6 +1217,13 @@ class Helpdesk::TicketsController < ApplicationController
 
   protected
 
+    def autoplay_link
+      next_ticket_id = run_on_slave { 
+        current_account.tickets.visible.next_autoplay_ticket(current_account,current_user.id).first.try(:display_id)
+      }
+      next_ticket_id ? helpdesk_ticket_path(next_ticket_id) : ""
+    end
+
     def item_url
       return compose_email_helpdesk_tickets_path if params[:save_and_compose]
       return new_helpdesk_ticket_path if params[:save_and_create]
@@ -1094,7 +1262,11 @@ class Helpdesk::TicketsController < ApplicationController
     end
 
     def get_updated_ticket_count
-      pluralize(@items.length, t('ticket_was'), t('tickets_were'))
+      if @items.length == 1 and @items.first.tracker_ticket?
+        t('tracker_was')
+      else
+        pluralize(@items.length, t('ticket_was'), t('tickets_were'))
+      end
   end
 
    def is_num?(str)
@@ -1106,10 +1278,10 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def load_email_params
-    @signature = current_user.agent.signature_value || ""
     @email_config = current_account.primary_email_config
     @reply_emails = current_account.features?(:personalized_email_replies) ? current_account.reply_personalize_emails(current_user.name) : current_account.reply_emails
     @ticket ||= current_account.tickets.find_by_display_id(params[:id])
+    @signature = current_user.agent.parsed_signature('ticket' => @ticket, 'helpdesk_name' => @ticket.account.portal_name)
     @selected_reply_email = current_account.features?(:personalized_email_replies) ? @ticket.friendly_reply_email_personalize(current_user.name) : @ticket.selected_reply_email
   end
 
@@ -1311,6 +1483,7 @@ class Helpdesk::TicketsController < ApplicationController
         @cached_filter_data = get_cached_filters
         @cached_filter_data.symbolize_keys!
         handle_unsaved_view
+        set_modes(action_hash)
         initialize_ticket_filter
         params.merge!(@cached_filter_data)
       elsif custom_filter?
@@ -1391,6 +1564,7 @@ class Helpdesk::TicketsController < ApplicationController
         @ticket_filter = current_account.ticket_filters.find_by_id(filter_name)
         return load_default_filter(TicketsFilter::DEFAULT_FILTER) if @ticket_filter.nil? or !@ticket_filter.has_permission?(current_user)
         @ticket_filter.query_hash = @ticket_filter.data[:data_hash]
+        set_modes(@ticket_filter.query_hash)
         params.merge!(@ticket_filter.attributes["data"])
       end
     end
@@ -1401,6 +1575,20 @@ class Helpdesk::TicketsController < ApplicationController
       @ticket_filter.query_hash = @ticket_filter.default_filter(filter_name)
       @ticket_filter.accessible = current_account.user_accesses.new
       @ticket_filter.accessible.visibility = Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me]
+      set_modes(@ticket_filter.query_hash)
+    end
+
+    def set_modes(conditions)
+      return unless current_account.features?(:shared_ownership)
+      @agent_mode = TicketConstants::FILTER_MODES[:primary]
+      @group_mode = TicketConstants::FILTER_MODES[:primary]
+      conditions.each do |condition|
+        if TicketConstants::SHARED_AGENT_COLUMNS_ORDER.include?(condition["condition"])
+          @agent_mode = TicketConstants::SHARED_AGENT_COLUMNS_MODE_BY_NAME[condition["condition"]]
+        elsif TicketConstants::SHARED_GROUP_COLUMNS_ORDER.include?(condition["condition"])
+          @group_mode = TicketConstants::SHARED_GROUP_COLUMNS_MODE_BY_NAME[condition["condition"]]
+        end
+      end
     end
 
     def portal_check
@@ -1413,6 +1601,35 @@ class Helpdesk::TicketsController < ApplicationController
 
     def check_compose_feature
       access_denied unless current_account.compose_email_enabled?
+    end
+
+    def check_trial_outbound_limit
+      if ((current_account.id > get_spam_account_id_threshold) && (current_account.subscription.trial?) && (!ismember?(SPAM_WHITELISTED_ACCOUNTS, current_account.id)))
+        outbound_per_day_key = OUTBOUND_EMAIL_COUNT_PER_DAY % {:account_id => current_account.id }
+        total_outbound_per_day = get_others_redis_key(outbound_per_day_key).to_i
+        if (total_outbound_per_day >=5 )
+          @outbound_limit_crossed = true
+          flash.now[:error] = t(:'flash.general.outbound_limit_per_day_exceeded', :limit => get_trial_account_max_to_cc_threshold )
+        end
+      end
+    end
+
+    def check_trial_customers_limit
+      if ((current_account.id > get_spam_account_id_threshold) && (current_account.subscription.trial?) && (!ismember?(SPAM_WHITELISTED_ACCOUNTS, current_account.id)) && (Freemail.free?(current_account.admin_email)))
+        if (@item.source == Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:outbound_email] || @item.source == Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:phone])
+          if max_to_cc_threshold_crossed?
+              flash[:error] = t(:'flash.general.recipient_limit_exceeded', :limit => get_trial_account_max_to_cc_threshold )
+              redirect_to :back
+          end
+        end
+      end
+    end
+
+    def max_to_cc_threshold_crossed?
+      cc_emails = get_email_array(params[:cc_emails])
+      to_email = get_email_array(params[:helpdesk_ticket][:email])
+      total_recipients = cc_emails | to_email
+      return (total_recipients.count  > get_trial_account_max_to_cc_threshold)
     end
 
     def build_ticket_body_attributes
@@ -1639,6 +1856,58 @@ class Helpdesk::TicketsController < ApplicationController
     end
   end
 
+  def set_redirect_path
+    if @item.related_ticket_ids.count == 1
+      params[:redirect_to] = helpdesk_ticket_path(@item.related_tickets.first)
+    else 
+      params[:redirect_to] = helpdesk_tickets_path
+    end
+  end
+
+  def load_related_tickets
+    if @item.tracker_ticket?
+      preload_models = [:requester, :responder, :ticket_states, :ticket_status]
+      conditions = { display_id: @item.associates }
+      paginate_options = { :page => params[:page], :per_page => 30 }
+      @related_tickets = current_account.tickets.preload(preload_models).where(conditions).paginate(paginate_options)
+    end
+  end
+
+  def link_to_tracker
+    load_ticket
+    @item.association_type = TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:related]
+    @item.tracker_ticket_id = @tracker_ticket.display_id
+    flash[:notice] = t(:'flash.tickets.link.success') if @item.save
+  end
+
+  def link_multiple
+    return unless @tracker_ticket.tracker_ticket?
+    if( (@tracker_ticket.related_tickets_count + params[:ids].count) <= TicketConstants::MAX_RELATED_TICKETS ) 
+      Rails.logger.debug "Linking Related tickets [#{params[:ids]}] to tracker_ticket #{params[:tracker_id]}"
+      ::Tickets::LinkTickets.perform_async({ :tracker_id => params[:tracker_id],
+                :related_ticket_ids => params[:ids] })
+      flash[:notice] = t(:'flash.tickets.link.delay_link',
+            :tracker_ticket => params[:tracker_id],
+            :tracker_ticket_subject => h(@tracker_ticket.subject)).html_safe
+    else
+      Rails.logger.debug "Count exceeded when linking[#{params[:ids]}] to tracker_ticket #{params[:tracker_id]}"
+      remaining_count = TicketConstants::MAX_RELATED_TICKETS - @tracker_ticket.related_tickets_count
+      if remaining_count > 0
+        flash[:notice] = t("ticket.link_tracker.remaining_count", :count => remaining_count)
+      else
+        flash[:notice] = t("ticket.link_tracker.count_exceeded",:count => TicketConstants::MAX_RELATED_TICKETS)
+      end
+    end
+  end
+
+  def load_tracker_ticket
+    @tracker_ticket = current_account.tickets.find_by_display_id(params[:tracker_id])
+  end
+
+  def associations_flash_text
+    return unless @items.count == 1 && @items.first.linked_ticket?
+    @items.first.tracker_ticket? ? t('ticket.link_tracker.tracker_delete_message') : t('ticket.link_tracker.related_delete_message')
+  end
 
   def check_domain_exists
       if @company.errors[:"company_domains.domain"].include?("has already been taken")
@@ -1695,6 +1964,10 @@ class Helpdesk::TicketsController < ApplicationController
       recent_ids.compact!
       recent_ids
     end
+  end
+
+  def check_ml_feature
+    access_denied unless current_account.suggest_tickets_enabled? 
   end
 
 end

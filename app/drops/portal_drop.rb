@@ -3,6 +3,13 @@ class PortalDrop < BaseDrop
   include Rails.application.routes.url_helpers
   
   self.liquid_attributes += [:name, :language]
+
+  MOST_VIEWED_ARTICLES_COUNT = 10
+  MAX_ARTICLES_LIMIT = 30
+  ARTICLE_CACHE_EXPIRY = 1.day
+
+  include Redis::RedisKeys
+  include Redis::PortalRedis
   
   def initialize(source)
     super source
@@ -24,8 +31,7 @@ class PortalDrop < BaseDrop
               "/assets/misc/logo.png" :
               AwsWrapper::S3Object.url_for(source.logo.content.path(:logo), 
                             source.logo.content.bucket_name,
-                            :secure => true, 
-                            :expires => 7.days.to_i)
+                            :secure => true)
                 
     end
   end
@@ -199,6 +205,32 @@ class PortalDrop < BaseDrop
   def articles_count
     @articles_count ||= folders.map{ |f| f.solution_article_meta.published.count }.sum
   end
+
+	def most_viewed_articles
+		return [] unless Account.current.launched?(:most_viewed_articles)
+		@most_viewed_articles ||= begin
+			fetched_articles = MemcacheKeys.fetch(view_key, ARTICLE_CACHE_EXPIRY) {
+				all_articles_ids = Account.current.solution_articles.most_viewed(MAX_ARTICLES_LIMIT).pluck(:parent_id)
+				Account.current.solution_article_meta
+					.where(:id => all_articles_ids)
+					.preload(:solution_folder_meta, { :solution_category_meta  => [:portal_solution_categories, :portals]}).to_a
+			}
+			# List of objects from the cache is an array(not collection). So we use ActiveRecord::Associations::Preloader.
+			ActiveRecord::Associations::Preloader.new(fetched_articles, :current_article).run
+			art_list = []
+			sort_articles(fetched_articles).each do |article_meta|
+				art_list << article_meta if article_meta.visible?(portal_user) && article_meta.visible_in?(source)
+				break if art_list.count == MOST_VIEWED_ARTICLES_COUNT
+			end
+			art_list
+		end
+	end
+
+	def sort_articles fetched_articles
+		@sort_articles ||= fetched_articles
+												.select{ |a| a.current_article.present? && a.current_article.published? }
+												.sort{|x,y| y.current_article.hits <=> x.current_article.hits }
+	end
   
   def url_options
     @url_options ||= { :host => source.host }    
@@ -244,5 +276,14 @@ class PortalDrop < BaseDrop
           :label => (s[3] || I18n.t("header.tabs.#{s[1].to_s}")), :tab_type => s[1].to_s ) if s[2]
       }.reject(&:blank?)
     end
+
+		def view_key
+			MemcacheKeys::MOST_VIEWED_ARTICLES % { :account_id => source.account_id, :language_id => Language.current.id, :cache_version => cache_version }
+		end
+
+		def cache_version
+			key = PORTAL_CACHE_VERSION % { :account_id => source.account_id }
+			get_portal_redis_key(key) || "0"
+		end
     
 end

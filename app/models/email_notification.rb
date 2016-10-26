@@ -15,14 +15,14 @@ class EmailNotification < ActiveRecord::Base
     end
     self
   end
-  
+
   has_many :email_notification_agents, :class_name => "EmailNotificationAgent", :dependent => :destroy
-  
+
   has_many :agents, :through => :email_notification_agents, :source => :user, 
               :conditions => { :users => {:deleted =>  false}}, :select => "users.id, users.email, users.name, users.language"
-  
+
   validates_uniqueness_of :notification_type, :scope => :account_id
-  
+
   #Notification types
   NEW_TICKET                = 1
   TICKET_ASSIGNED_TO_GROUP  = 2
@@ -33,7 +33,7 @@ class EmailNotification < ActiveRecord::Base
   TICKET_RESOLVED           = 7
   TICKET_CLOSED             = 8
   # TICKET_REOPENED = 9
-  
+
   #2nd batch
   USER_ACTIVATION               = 10
   TICKET_UNATTENDED_IN_GROUP    = 11
@@ -48,20 +48,8 @@ class EmailNotification < ActiveRecord::Base
   DEFAULT_REPLY_TEMPLATE  = 15
   RESPONSE_SLA_REMINDER   = 22
   RESOLUTION_SLA_REMINDER = 23
+  DEFAULT_FORWARD_TEMPLATE = 24
 
-  EMAIL_SUBJECTS = {
-    NEW_TICKET                    => "Ticket Received - {{ticket.encoded_id}} {{ticket.subject}}",
-    TICKET_ASSIGNED_TO_GROUP      => "Assigned to Group - {{ticket.encoded_id}} {{ticket.subject}}",
-    TICKET_ASSIGNED_TO_AGENT      => "Ticket Assigned - {{ticket.encoded_id}} {{ticket.subject}}",
-    COMMENTED_BY_AGENT            => "Ticket Updated - {{ticket.encoded_id}} {{ticket.subject}}",
-    REPLIED_BY_REQUESTER          => "New Reply Received - {{ticket.encoded_id}} {{ticket.subject}}",
-    TICKET_RESOLVED               => "Ticket Resolved - {{ticket.encoded_id}} {{ticket.subject}}",
-    TICKET_CLOSED                 => "Ticket Closed - {{ticket.encoded_id}} {{ticket.subject}}",
-    # TICKET_REOPENED               => "Ticket re-opened - {{ticket.encoded_id}} {{ticket.subject}}",
-    TICKET_UNATTENDED_IN_GROUP    => "Unattended Ticket - {{ticket.encoded_id}} {{ticket.subject}}",
-    FIRST_RESPONSE_SLA_VIOLATION  => "Response time SLA violated - {{ticket.encoded_id}} {{ticket.subject}}",
-    RESOLUTION_TIME_SLA_VIOLATION => "Resolution time SLA violated - {{ticket.encoded_id}} {{ticket.subject}}"
-  }
 
   DISABLE_NOTIFICATION = {
     NEW_TICKET =>  { 
@@ -79,7 +67,7 @@ class EmailNotification < ActiveRecord::Base
     USER_ACTIVATION               =>  {:requester_notification => false},
     ADDITIONAL_EMAIL_VERIFICATION =>  {:requester_notification => false}
   }
-                          
+
 
   # Admin settings for email notifications
   VISIBILITY = {
@@ -87,7 +75,8 @@ class EmailNotification < ActiveRecord::Base
     :AGENT_ONLY            => 2,
     :REQUESTER_ONLY        => 3,
     :REPLY_TEMPLATE        => 4,
-    :CC_NOTIFICATION       => 5
+    :CC_NOTIFICATION       => 5,
+    :FORWARD_TEMPLATE      => 6
   }
 
   # notification_token, notification_type, visibility
@@ -107,12 +96,13 @@ class EmailNotification < ActiveRecord::Base
     [:agent_solves_tkt,               TICKET_RESOLVED,                VISIBILITY[:REQUESTER_ONLY]     ],
     [:agent_closes_tkt,               TICKET_CLOSED,                  VISIBILITY[:REQUESTER_ONLY]     ],
     [:default_reply_template,         DEFAULT_REPLY_TEMPLATE,         VISIBILITY[:REPLY_TEMPLATE]     ],
+    [:default_forward_template,       DEFAULT_FORWARD_TEMPLATE,       VISIBILITY[:FORWARD_TEMPLATE]   ],
     [:additional_email_verification,  ADDITIONAL_EMAIL_VERIFICATION,  VISIBILITY[:REQUESTER_ONLY]     ],
     [:notify_comment,                 NOTIFY_COMMENT,                 VISIBILITY[:AGENT_ONLY]         ],
     [:new_ticket_cc,                  NEW_TICKET_CC,                  VISIBILITY[:CC_NOTIFICATION]    ],
     [:public_note_cc,                 PUBLIC_NOTE_CC,                 VISIBILITY[:CC_NOTIFICATION]    ]
   ]
-  
+
   # List of notfications to agents which cannot be turned off
   AGENT_MANDATORY_LIST = [ :user_activation_email, :password_reset_email, :notify_comment ]
   # List of notfications to requester which cannot be turned off
@@ -142,6 +132,10 @@ class EmailNotification < ActiveRecord::Base
     (VISIBILITY_BY_KEY[self.notification_type] == VISIBILITY[:REPLY_TEMPLATE])
   end
 
+  def forward_template?
+    (VISIBILITY_BY_KEY[self.notification_type] == VISIBILITY[:FORWARD_TEMPLATE])
+  end
+
   def cc_notification?
     (VISIBILITY_BY_KEY[self.notification_type] == VISIBILITY[:CC_NOTIFICATION])
   end
@@ -163,12 +157,8 @@ class EmailNotification < ActiveRecord::Base
       self.outdated_agent_content = templates.any?{|x| x.outdated}
     end
     save
-  end 
-
-  def ticket_subject(ticket)
-    Liquid::Template.parse(EMAIL_SUBJECTS[notification_type]).render('ticket' => ticket)
   end
-  
+
   def agent_notification?
     agent_notification && allowed_in_thread_local?(:agent_notification)
   end
@@ -204,16 +194,32 @@ class EmailNotification < ActiveRecord::Base
     end
   end
 
+  def get_internal_agent_template(agent)
+    subject, description = get_agent_template(agent)
+    [replace_agent_group_placeholders(subject), replace_agent_group_placeholders(description)]
+  end
+
+  def get_internal_agent_plain_template(agent)
+    template = get_agent_plain_template(agent)
+    replace_agent_group_placeholders(template)
+  end
+
+  def replace_agent_group_placeholders(content)
+    content.gsub!("{{ticket.agent.", "{{ticket.internal_agent.")
+    content.gsub!("{{ticket.group.", "{{ticket.internal_group.")
+    content
+  end
+
   def return_template(type,language)
     if (type == DynamicNotificationTemplate::CATEGORIES[:requester])
       dynamic_notification_templates.requester_template.for_language(language)
     else
       dynamic_notification_templates.agent_template.for_language(language)
-    end  
+    end
   end
 
   def get_requester_template(requester)
-    if (requester.language.nil? || account.language == requester.language || !account.features?(:dynamic_content))
+    if not_dynamic_content?(requester)
       template = [ requester_subject_template, requester_template ]
     else  
       d_template = dynamic_notification_templates.requester_template.active.for_language(requester.language).first
@@ -222,26 +228,39 @@ class EmailNotification < ActiveRecord::Base
   end
 
   def get_reply_template(user)
-    if (user.language.nil? || user.account.language == user.language || !user.account.features?(:dynamic_content))
+    if not_dynamic_content?(user)
       template =requester_template
     else
        d_template = dynamic_notification_templates.requester_template.active.for_language(user.language).first
        d_template ? d_template.description : requester_template
     end     
-  end  
+  end
+
+  def get_forward_template(user)
+    if not_dynamic_content?(user)
+      template =requester_template
+    else
+       d_template = dynamic_notification_templates.requester_template.active.for_language(user.language).first
+       d_template ? d_template.description : requester_template
+    end
+  end
 
   def self.disable_notification (account)
     Thread.current["notifications_#{account.id}"] = EmailNotification::DISABLE_NOTIFICATION  
   end
 
   def fetch_template
-    if self.reply_template? or self.cc_notification?
+    if self.reply_template? or self.cc_notification? or self.forward_template?
       "requester_template"
-    end  
+    end
   end
 
   def bcc_disabled?
     BCC_DISABLED_NOTIFICATIONS.include?(self.notification_type)
+  end
+
+  def not_dynamic_content?(user)
+    user.language.nil? || user.account.language == user.language || !user.account.features?(:dynamic_content)
   end
 
   private
@@ -254,7 +273,7 @@ class EmailNotification < ActiveRecord::Base
       (n_hash = Thread.current["notifications_#{account_id}"]).nil? || 
         (my_hash = n_hash[notification_type]).nil? || !my_hash[user_role].eql?(false)
     end
-    
+
 
     def set_default_version
       self.version = 2

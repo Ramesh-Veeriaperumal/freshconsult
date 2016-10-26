@@ -175,14 +175,6 @@ module ApplicationHelper
     if tab_name.eql?(:tickets)
       options.merge!({:"data-parallel-url" => "/helpdesk/tickets/filter_options", :"data-parallel-placeholder" => "#ticket-leftFilter"})
     end
-    if tab_name.eql?(:reports)
-      options.delete(:"data-pjax")
-    end
-    #Remove this patch after knocking off old reports
-    #When referrer is reports page, all tab navigations will be non pjax.
-    if request.fullpath.include? "reports"
-      options.delete(:"data-pjax")
-    end
     content_tag('li', link_to(strip_tags(title), url, options), :class => ( cls ? "active": "" ), :"data-tab-name" => tab_name )
   end
 
@@ -572,7 +564,15 @@ module ApplicationHelper
                       ['{{ticket.product_description}}', 'Product description', 'Product specific description in multiple product/brand environments.',         'ticket_product_description']
                     ]
     }
-    
+
+    #Shared ownership placeholders
+    if current_account.features?(:shared_ownership)
+      place_holders[:tickets] += 
+        [['{{ticket.internal_group.name}}',      'Internal Group name',       "",         'ticket_group_name'],
+        ['{{ticket.internal_agent.name}}',       'Internal Agent name',       "",         'ticket_agent_name'],
+        ['{{ticket.internal_agent.email}}',      'Internal Agent email',      "",         'ticket_agent_email']]
+    end
+
     # Custom Field Placeholders
     current_account.ticket_fields.custom_fields.each { |custom_field|
       nested_vals = []
@@ -606,7 +606,7 @@ module ApplicationHelper
     place_holders[:tickets] << ['{{ticket.surveymonkey_survey}}', 'Surveymonkey survey',
                       'Includes text/link to survey in Surveymonkey', 'ticket_suverymonkey_survey'
                       ] if Integrations::SurveyMonkey.placeholder_allowed?
-    
+
 
     # Ticket Public URL placeholder
     place_holders[:tickets] << ['{{ticket.public_url}}', 'Public Ticket URL' , 
@@ -1285,7 +1285,8 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
         end
       when "dropdown_blank" then
         dropdown_choices = field.html_unescaped_choices(@ticket)
-        disabled = true if field.field_type == "default_company" && dropdown_choices.empty?
+        disabled = true if field.field_type == "default_company" &&
+                                               dropdown_choices.length <= 1
         element = label + select(object_name, field_name,
                                               dropdown_choices,
                                               {:include_blank => "...", :selected => field_value},
@@ -1337,7 +1338,9 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
     end
     fd_class = "#{ dom_type } #{ field.field_type } field"
     fd_class += " dynamic_sections" if (field.has_sections_feature? && (field.field_type == "default_ticket_type" || field.field_type == "default_source"))
-    fd_class += " hide" if field.field_type == "default_company" && (@ticket.new_record? || dropdown_choices.empty?)
+    fd_class += " hide" if field.field_type == "default_company" &&
+                                               (@ticket.new_record? ||
+                                               dropdown_choices.length <= 1)
     fd_class += " tkt_cr_wrap" if field.field_type == "default_description"
     content_tag :li, element.html_safe, :class => fd_class
   end
@@ -1614,6 +1617,10 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
     AppConfig['base_domain'][Rails.env]
   end
 
+  def show_upgrade_plan?
+    current_user.privilege?(:manage_account) && (current_account.subscription.free? || current_account.subscription.trial?)
+  end
+
   private
 
     def forums_visibility?
@@ -1662,6 +1669,13 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
     return
   end
 
+  def fb_realtime_msg_disabled
+    if current_account.fb_realtime_msg_from_cache
+      return content_tag('div', "#{t('fb_realtime_enable')}".html_safe, :class =>
+        "alert-message block-message full-width")
+    end
+  end
+
   def check_twitter_reauth_required
     twt_handle= current_account.twitter_reauth_check_from_cache
     if twt_handle
@@ -1686,7 +1700,7 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
   # This helper is for the partial expanded/_ticket.html.erb
   def requester(ticket)
     if privilege?(:view_contacts)
-      "<a class='user_name' href='/users/#{ticket.requester.id}' target='_blank' data-pjax='#body-container'>
+      "<a class='user_name' href='/users/#{ticket.requester.id}' target='_blank' data-pjax='#body-container' data-contact-id='#{ticket.requester.id}' data-contact-url='/contacts/#{ticket.requester.id}/hover_card' rel='contact-hover'>
           <span class='emphasize'>#{h(ticket.requester.display_name)}</span>
        </a>".html_safe
     else

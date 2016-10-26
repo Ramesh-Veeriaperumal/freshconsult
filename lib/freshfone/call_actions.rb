@@ -3,6 +3,7 @@ class Freshfone::CallActions
   include Freshfone::NodeEvents
   include Freshfone::FreshfoneUtil
   include Freshfone::Conference::Branches::RoundRobinHandler
+  include Freshfone::Search
 
 	attr_accessor :params, :current_account, :current_number, :agent, :outgoing
 	
@@ -15,7 +16,7 @@ class Freshfone::CallActions
 	def register_incoming_call
 		current_account.freshfone_calls.create(
 			:freshfone_number => current_number,
-			:customer => search_customer_with_number(params[:From]),
+			:customer => search_customer_with_number_using_es(params[:From]),
 			:call_type => Freshfone::Call::CALL_TYPE_HASH[:incoming],
 			:params => params
 		)
@@ -24,7 +25,7 @@ class Freshfone::CallActions
 	def register_blocked_call
 		current_account.freshfone_calls.create(
 			:freshfone_number => current_number,
-			:customer => search_customer_with_number(params[:From]),
+			:customer => search_customer_with_number_using_es(params[:From]),
 			:call_type => Freshfone::Call::CALL_TYPE_HASH[:incoming],
 			:call_status => Freshfone::Call::CALL_STATUS_HASH[:blocked],
 			:params => params
@@ -240,7 +241,7 @@ class Freshfone::CallActions
 			call = current_call.has_children? ? current_call.get_child_call : current_call
 			direction = call.direction_in_words
 			if call.customer_id.blank?
-				params[:customer] = search_customer_with_number(params["#{direction}"])
+				params[:customer] = search_customer_with_number_using_es(params["#{direction}"])
 			end
 			Rails.logger.debug "Child Call Id:: #{current_call.id} :: Group_id::  #{current_call.group_id} :: params :: #{params[:group_id]}"
 			params[:group_id] ||= call.group_id if call.group_id.present? && params[:group_transfer] == 'true'
@@ -255,19 +256,9 @@ class Freshfone::CallActions
 			end
 		end
 		
-		def called_number
-			params[:PhoneNumber] || params[:To]
-		end
-		
 		def call_sid
 			return params[:CallSid] if current_account.features?(:freshfone_conference)
 			outgoing ? params[:ParentCallSid] : params[:CallSid]
-		end
-
-		#If there are no no-deleted contacts with this number, returning the first deleted contact.
-		#this method was returning first user based on Id for the number, so changed to have ordering based on name
-		def search_customer_with_number(phone_number)
-			users_scoper.find(:first, :conditions => ['phone = ? or mobile = ?',phone_number, phone_number], :order => "deleted ASC, name ASC")
 		end
 
     def telephony
@@ -295,11 +286,5 @@ class Freshfone::CallActions
       target_group = (type == :group) ? performer : nil # group type check is for safety, this is needed for simple routing with all groups
       meta.pinged_agents = pinged_agents(performer, type) || load_target_agents(target_group)
       meta.save!
-    end
-
-    def search_customer
-      customer = search_customer_with_id(params[:customer_id]) if params[:customer_id].present?
-      return customer if customer.present?
-      search_customer_with_number(called_number)
     end
 end

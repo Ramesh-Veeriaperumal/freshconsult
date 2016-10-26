@@ -1,10 +1,23 @@
-<% @page_title = t(".title") %>
+<% 
+	@page_title = t(".title") 
+	header_content ='';
+%>
 <%= check_fb_reauth_required  %>
 <%= check_twitter_reauth_required %>
+<%= fb_realtime_msg_disabled %>
 <%= check_ecommerce_reauth_required %>
 <% content_for :layoutType do -%>single<%- end %>
+			
+<% header_content = content_tag(:button,
+					content_tag(:i, '', :class => 'ficon ficon-connect-chat') +
+					I18n.t('livechat.chat_with_us'),
+					:class => 'btn btn-default btn-support-chat chat-support-link', :id => 'chat-support-header') if in_app_support?
+
+
+%>
 <%= content_tag(:div, 
 		content_tag(:div, 
+			header_content.html_safe +
 			text_field_tag(:admin_search, "", :class => "as-input", :placeholder => "Search admin settings") + 
 			text_field_tag(:admin_search_hint, "", :class => "as-hint", :disabled => true) + 
 			link_to("&times;".html_safe, "#", :class => "as-clear") +

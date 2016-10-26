@@ -3,6 +3,7 @@ module Import::Zen::Ticket
  
   ZENDESK_TICKET_TYPES = {0 => "No Type Set", 1 => "Question", 2 => "Incident", 3 => "Problem", 4 => "Task"}                          
   ZENDESK_TICKET_STATUS = {1 => 2,  2=> 3, 3=> 4, 4 =>5 }         
+  ARCHIVED_TICKET_STATUS = 5      
 
  class Attachment < Import::FdSax
     element :url
@@ -49,6 +50,7 @@ def save_ticket ticket_xml
   increment_key 'tickets_completed'
 
   ticket_prop = TicketProp.parse(ticket_xml)    
+  return if ticket_prop.status.to_i.eql?(ARCHIVED_TICKET_STATUS)
   requester = @current_account.all_users.find_by_import_id(ticket_prop.requester_id)
   return unless requester
   priority_id = ticket_prop.priority_id.to_i() unless ticket_prop.priority_id.blank?
@@ -101,9 +103,12 @@ end
 
 def ticket_post_process ticket_prop , ticket
   custom_hash ={}              
+  custom_dropdown_hash = get_full_hash(zen_dropdown_key)              
   ticket_prop.custom_fields.each do |custom_field|
     ff_def_entry = FlexifieldDefEntry.first(:conditions =>{:flexifield_def_id => @current_account.ticket_field_def.id ,:import_id => custom_field.field_id.to_i()})
-    custom_hash.store(ff_def_entry.flexifield_alias ,custom_field.value) unless ff_def_entry.blank? 
+    redis_h_key = "#{custom_field.field_id}_#{custom_field.value}"
+    final_custom_field_value = custom_dropdown_hash[redis_h_key] || custom_field.value
+    custom_hash.store(ff_def_entry.flexifield_alias ,final_custom_field_value) unless ff_def_entry.blank? 
   end
   
   unless custom_hash.blank?      

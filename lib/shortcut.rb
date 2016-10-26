@@ -23,14 +23,16 @@ class Shortcut
 		},
 		:pagination	=> {
 			:previous			=> "alt+left",
-			:next				=> "alt+right"
+			:next				=> "alt+right",
+			:alt_previous => "j",
+			:alt_next => "k"
 		},
 		:ticket_list => {
 			:ticket_show		=> "return",
 			:select 			=> "x",
 			:select_all 		=> "shift+x",
+			:search_view 		=> "v",
 			:show_description	=> "space",
-			:toggle_list_view	=> "shift+v",
 			:unwatch			=> "w",
 			:delete				=> "#",
 			:pickup 			=> "@",

@@ -3,6 +3,7 @@ module ApiSolutions
     include SolutionConcern
     include Solution::LanguageControllerMethods
     decorate_views(decorate_objects: [:category_folders])
+    before_filter :validate_filter_params, only: [:category_folders]
 
     def create
       if create_or_update_folder
@@ -25,7 +26,7 @@ module ApiSolutions
       if validate_language
         @item = solution_category_meta(params[:id])
         if @item
-          @items = paginate_items(@item.solution_folders.where(language_id: @lang_id).preload(:solution_folder_meta, { solution_folder_meta: :customer_folders }))
+          @items = paginate_items(@item.solution_folders.where(language_id: @lang_id).order('solution_folder_meta.position').preload(:solution_folder_meta))
           render '/api_solutions/folders/index'
         else
           log_and_render_404
@@ -113,6 +114,10 @@ module ApiSolutions
 
       def solution_category_meta(id)
         current_account.solution_category_meta.where(is_default: false, id: id).first
+      end
+
+      def validate_filter_params
+        super(SolutionConstants::INDEX_FIELDS)
       end
 
       def set_custom_errors(item = @item)

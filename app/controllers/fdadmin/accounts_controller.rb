@@ -26,7 +26,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     account_summary[:freshfone_account_details] = get_freshfone_details(account)
     account_summary[:shard] = shard_info.shard_name
     account_summary[:pod] = shard_info.pod_info
-    account_summary[:freshfone_feature] = account.features?(:freshfone)
+    account_summary[:freshfone_feature] = account.features?(:freshfone) || account.features?(:freshfone_onboarding)
     respond_to do |format|
       format.json do
         render :json => account_summary
@@ -41,6 +41,8 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     feature_info[:chat] = { :enabled => account.features?(:chat) , :active => (account.chat_setting.active && account.chat_setting.site_id?) }
     feature_info[:mailbox] = account.features?(:mailbox)
     feature_info[:freshfone] = account.features?(:freshfone)
+    feature_info[:domain_restricted_access] = account.features?(:domain_restricted_access)
+    feature_info[:restricted_helpdesk] = account.restricted_helpdesk?
     respond_to do |format|
       format.json do
         render :json => feature_info
@@ -109,6 +111,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
   def change_api_limit
     result = {}
     account = Account.find(params[:account_id])
+    account.make_current
     if account.account_additional_settings.update_attributes(:api_limit => params[:new_limit].to_i)
       result[:status] = "success"
     else
@@ -116,6 +119,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     end
     result[:account_id] = account.id 
     result[:account_name] = account.name
+    Account.reset_current_account
     respond_to do |format|
       format.json do
         render :json => result

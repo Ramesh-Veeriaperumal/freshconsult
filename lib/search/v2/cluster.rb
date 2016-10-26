@@ -17,7 +17,7 @@ module Search
       
       def self.latest_cluster
         Store::Cache.instance.fetch(Store::Cache::LASTEST_CLUSTER) do
-          Store::Data.instance.latest_cluster_info['cluster_id']
+          Cluster.new(Store::Data.instance.latest_cluster_info['cluster_id'])
         end
       end
       
@@ -25,6 +25,10 @@ module Search
         Store::Cache.instance.fetch(Store::Cache::CLUSTER_INDEX_SUFFIX % { cluster_id: cluster_id, type: type }) do
           suffix_pattern(type) % suffix_params(type)
         end
+      end
+      
+      def alias_accessor
+        Store::Data.instance.cluster_info(cluster_id)['accessor']
       end
       
       private

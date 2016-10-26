@@ -58,7 +58,8 @@ module UploadedImagesControllerMethods
     end
 
     def success_response
-      { :filelink => @image.content.url, :fileid => @image.id, :uniquekey => CGI.escapeHTML(params["_uniquekey"]) }
+      # :link For Froala
+      { :link => @image.content.url, :filelink => @image.content.url, :fileid => @image.id, :uniquekey => CGI.escapeHTML(params["_uniquekey"]) }
     end
 
     def error_response

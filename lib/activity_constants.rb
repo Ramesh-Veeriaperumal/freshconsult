@@ -14,7 +14,7 @@ module ActivityConstants
                   :timesheet_delete, :ticket_merge_source, :ticket_merge_target,
                   :ticket_split_source, :ticket_split_target, :archive,
                   :conversation, :round_robin, :ticket_import, :system_changes,
-                  :other_update
+                  :other_update, :rel_tkt_link, :rel_tkt_unlink
                 ]
 
   TICKET_ACTIVITY_KEYS_BY_TOKEN = Hash[*TICKET_LIST.each_with_index.map { |key, index| [key, index] }.flatten]
@@ -78,7 +78,8 @@ module ActivityConstants
                     :remove_tag => "tag_change", :add_watcher => "add_watcher", 
                     :remove_watcher => "remove_watcher", :timesheet_edit => "timesheet.edit",
                     :timesheet_delete => "timesheet.delete", :execute_scenario => "execute_scenario",
-                    :spam => "spam", :undo_spam => "restored", :round_robin => "assigned"
+                    :spam => "spam", :undo_spam => "restored", :round_robin => "assigned",
+                    :rel_tkt_link => "rel_tkt_link", :rel_tkt_unlink => "rel_tkt_unlink"
                   }
                   
   # UI string map for token

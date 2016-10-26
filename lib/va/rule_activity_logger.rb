@@ -3,6 +3,7 @@ class Va::RuleActivityLogger
   EVENT_PERFORMER = -2
   ACTION_PREFIX = 'automations.activity.'
   DONT_CARE     = ActivityConstants::DONT_CARE_VALUE
+  RULE_MISC_CHANGES = [:email_to_requester, :email_to_group, :email_to_agent, :add_watcher, :add_a_cc, :add_comment]
   attr_accessor :action_key, :act_hash, :value, :doer, :bulk_scenario, :ticket, :rule_id
 
   def initialize(act_hash, doer, bulk_scenario = false, activity = {})
@@ -87,9 +88,13 @@ class Va::RuleActivityLogger
       "#{fetch_activity_prefix('change')} #{I18n.t('automations.activity.status', params)}"
     end
 
-    def product_id
-      product_name = (value.blank? ? I18n.t('automations.activity.none') : value)
-      add_system_changes({:product_id => (value.blank? ? [DONT_CARE, nil] : [nil, value])})
+    def product_id(product = nil)
+      if product.nil?
+        pr_id = value.to_i
+        product = Account.current.products.find(pr_id)
+      end
+      product_name = (value.blank? ? I18n.t('automations.activity.none') : product.name)
+      add_system_changes({:product_id => (value.blank? ? [DONT_CARE, nil] : [nil, product.name])})
       params = {:product_name => product_name }
       "#{fetch_activity_prefix('set')} #{I18n.t('automations.activity.product', params)}"
     end
@@ -115,12 +120,27 @@ class Va::RuleActivityLogger
       end
     end
 
+    def internal_group_id(internal_group = nil)
+      if internal_group.nil?
+        ig_id = value.to_i
+        internal_group = Account.current.groups.find_by_id(ig_id)
+      end
+      if internal_group.present? || value.blank?
+        internal_group_name = (value.blank? ? I18n.t('automations.activity.none') : internal_group.name )
+        add_system_changes({:internal_group_id => (value.blank? ? [DONT_CARE, nil] : [nil, internal_group.name])})
+        params = {:internal_group_name => internal_group_name}
+        "#{fetch_activity_prefix('set')} #{I18n.t('automations.activity.internal_group_success', params)}"
+      else
+        I18n.t('automations.activity.internal_group_failure')
+      end
+    end
+
     def responder_id(responder = nil)
       if responder.nil?
         r_id = value.to_i
         responder = (r_id == EVENT_PERFORMER) ? (doer.agent? ? doer : nil) : Account.current.users.find_by_id(value.to_i)
       end
-      
+
       if responder || value.blank?
         responder_name = (value.blank? ? I18n.t('automations.activity.none') : responder.name )
         add_system_changes({:responder_id => (value.blank? ? ["*", nil] : [nil, responder.id])})
@@ -128,6 +148,22 @@ class Va::RuleActivityLogger
         "#{fetch_activity_prefix('set')} #{I18n.t('automations.activity.agent_success', params)}"
       else
         I18n.t('automations.activity.agent_failure')
+      end
+    end
+
+    def internal_agent_id(internal_agent = nil)
+      if internal_agent.nil?
+        ia_id = value.to_i
+        internal_agent = (ia_id == EVENT_PERFORMER) ? (doer.agent? ? doer : nil) : Account.current.users.find_by_id(value.to_i)
+      end
+
+      if internal_agent || value.blank?
+        internal_agent_name = (value.blank? ? I18n.t('automations.activity.none') : internal_agent.name )
+        add_system_changes({:internal_agent_id => (value.blank? ? ["*", nil] : [nil, internal_agent.id])})
+        params = {:internal_agent_name => internal_agent_name}
+        "#{fetch_activity_prefix('set')} #{I18n.t('automations.activity.internal_agent_success', params)}"
+      else
+        I18n.t('automations.activity.internal_agent_failure')
       end
     end
 
@@ -169,6 +205,7 @@ class Va::RuleActivityLogger
     end
 
     def send_email_to_requester
+      add_system_changes({:email_to_requester => [@ticket.requester_id]}) if @ticket.present?
       "#{fetch_activity_prefix('send')} #{I18n.t('automations.activity.email_to_requester')}"
     end
 
@@ -178,6 +215,7 @@ class Va::RuleActivityLogger
         "#{verb} #{I18n.t('automations.activity.bulk_email_to_group')}"
       else
         params = {:group_name => group.name}
+        add_system_changes({:email_to_group => [group.name]})
         "#{verb} #{I18n.t('automations.activity.email_to_group', params)}"
       end
     end
@@ -188,6 +226,7 @@ class Va::RuleActivityLogger
         "#{verb} #{I18n.t('automations.activity.bulk_email_to_agent')}"
       else
         params = {:agent_name => agent.name}
+        add_system_changes({:email_to_agent => [agent.id]})
         "#{verb} #{I18n.t('automations.activity.email_to_agent', params)}"
       end
     end
@@ -234,7 +273,7 @@ class Va::RuleActivityLogger
 
     def add_misc_changes(changes)
       # Hack to publish activities msg if system rule contains only add watcher/ add a cc action
-      if changes.has_key?(:add_watcher) or changes.has_key?(:add_a_cc) or changes.has_key?(:add_comment)
+      if (RULE_MISC_CHANGES & changes.keys).present?
         @ticket.misc_changes = {:misc_changes => [nil, "*"]}
       end
     end

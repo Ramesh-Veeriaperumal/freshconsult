@@ -29,7 +29,8 @@ module HelpdeskReports
           :domain        => Account.current.host,
           :report_type   => report_type,
           :date_range    => date_range,
-          :filter_name   => filter_name
+          :filter_name   => filter_name,
+          :portal_name   => params[:portal_name] || Account.current.helpdesk_name
         }
         options.merge!(extra_options) if extra_options
         

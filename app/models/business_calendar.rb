@@ -221,7 +221,7 @@ class BusinessCalendar < ActiveRecord::Base
               :worker_method => "update_widget",
               :widget_id => widget.widget_id,
               :siteId => site_id,
-              :attributes => { :business_calendar => calendar_data}
+              :attributes => { :business_calendar => calendar_data.to_json}
             }
           )
         end

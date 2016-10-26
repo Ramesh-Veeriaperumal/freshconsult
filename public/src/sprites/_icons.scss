@@ -17,15 +17,19 @@
 .icons-edit-forum{ @include icons-sprite(edit-forum); }
 
 .meta-os { @include icons-sprite('os-generic'); }
-@each $os in mac, windows, android, linux {
+@each $os in mac, windows, android, linux, osx, ios {
   .meta-os.os-#{$os} { @include icons-sprite('os-#{$os}'); }
 }
 .meta-browser { @include icons-sprite('browser-generic'); }
-@each $browser in chrome, firefox, internet-explorer, opera, safari {
+@each $browser in chrome, firefox, internet-explorer, opera, safari, ie, edge {
   .meta-browser.browser-#{$browser} { @include icons-sprite('browser-#{$browser}'); }
 }
 
 .meta-referrer { @include icons-sprite(meta-referrer); }
+
+.meta-location { @include icons-sprite('location-pin'); }
+
+.meta-ip-address {@include icons-sprite('ip-address'); }
 
 /* Importing chat availability icon */
 @import "cdn-ignored/sprites/chat/*.png";

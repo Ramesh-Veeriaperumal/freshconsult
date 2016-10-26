@@ -6,6 +6,12 @@
   // Tweet custom class
   $.validator.addMethod("facebook", $.validator.methods.maxlength, "Your Facebook reply was over 8000 characters. You'll have to be more clever." );   
   $.validator.addClassRules("facebook", { facebook: 8000 });
+  $.validator.addMethod("facebook-realtime", function(value, element) {
+    if($(element).data('reply-count') >= 0){
+      return true;
+    }
+  }, "Oops! You have exceeded Facebook Messenger Platform's character limit. Please modify your response." );
+  
   $.validator.addMethod("notEqual", function(value, element, param) {
     return ((this.optional(element) || value).strip().toLowerCase() != $(param).val().strip().toLowerCase());
   }, "This element should not be equal to");
@@ -114,10 +120,9 @@
       url_without_protocol : { url_without_protocol : true }
   });
 
-  // Valid Requester field check
-  $.validator.addMethod("requester", function(value, element) {
-
-    var _returnCondition = jQuery(element).data("requesterCheck"),
+  function requesterValidate(value, element) {
+    
+     var _returnCondition = jQuery(element).data("requesterCheck"),
         _partial_list = jQuery(element).data("partialRequesterList") || []
         _user = jQuery(element).data("currentUser"), //for not editing add new requester
         _requester = jQuery(element).data("initialRequester"),
@@ -140,10 +145,24 @@
  
     return _returnCondition
     
+  }
+
+  // Valid Requester field check
+  $.validator.addMethod("requester", function(value, element) {
+    return requesterValidate(value, element);
  },jQuery.validator.format('Please enter a valid requester details or <a href="#" id="add_requester_btn_proxy">add new requester.</a>'));
 
   $.validator.addClassRules("requester", { requester: true });
 
+  $.validator.addMethod("agent_requester", function(value, element) {
+    
+    var _returnCondition = requesterValidate(value, element);
+    if(_results_array.length === 0) { _returnCondition = false }
+    return _returnCondition
+
+ },jQuery.validator.format('Please enter valid agent details'));
+
+  $.validator.addClassRules("agent_requester", { agent_requester: true });
 
 //Check if one of the two fields is filled 
 $.validator.addMethod("require_from_group", function(value, element, options) {
@@ -314,8 +333,28 @@ $.validator.addClassRules("trim_spaces", { trim_spaces: true });
 
 // Redactor validator
 $.validator.addMethod("required_redactor", function(value, element, param) {
-  return $(element).data('redactor').isNotEmpty();
+  //redactor is enabled for desktop browsers for others check for value and return accordingly
+  if(jQuery.browser.desktop) {
+    var isEmpty = false;
+
+    if ($(element).data('redactor')) {
+      isEmpty = $(element).data('redactor').isNotEmpty();
+    } else if($(element).data('froala.editor')){
+      isEmpty = !jQuery('.required_redactor').data('froala.editor').core.isEmpty();
+    }
+    
+    return isEmpty;
+  } else {
+    var is_valid = true;
+    
+    if(value == null || value == ""){
+      is_valid = false;
+    }
+    
+    return is_valid;
+  }
 }, $.validator.messages.required)
+
 $.validator.addClassRules("required_redactor", { required_redactor : true });
 
   // Color hex validation rules

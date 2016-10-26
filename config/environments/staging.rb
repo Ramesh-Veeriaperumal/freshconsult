@@ -1,68 +1,81 @@
 Helpkit::Application.configure do
-  # Settings specified here will take precedence over those in config/environment.rb
+  # Settings specified here will take precedence over those in config/application.rb
 
-  # The production environment is meant for finished, "live" apps.
   # Code is not reloaded between requests
-  config.log_level = :debug
-
   config.cache_classes = true
-  config.action_controller.allow_forgery_protection = true
-
-  # Use a different logger for distributed setups
-  # config.logger = SyslogLogger.new
-
-  #ActiveRecord::Base.logger = Logger.new("log/debug.log")
 
   # Full error reports are disabled and caching is turned on
-  config.action_controller.perform_caching             = true
-  config.action_view.cache_template_loading            = true
-  # config.reload_plugins = true
+  config.consider_all_requests_local       = false
+  config.action_controller.perform_caching = true
 
-  config.after_initialize do
-    ActiveMerchant::Billing::Base.gateway_mode = :test
-    Bullet.enable         = true
-    Bullet.bullet_logger  = true
-    Bullet.console        = true
-  end
+  # Disable Rails's static asset server (Apache or nginx will already do this)
+  config.serve_static_assets = true
 
-  # Don't auto compile css in production
-  config.after_initialize do
-  	Sass::Plugin.options[:never_update] = true
-  end
+  # Compress JavaScripts and CSS
+  config.assets.compress = true
 
-  # Use a different cache store in production
-  # config.cache_store = :mem_cache_store
+  # Don't fallback to assets pipeline if a precompiled asset is missed
+  config.assets.compile = true
 
-  #ActiveRecord::Base.logger = Logger.new("log/debug.log")
+  # Generate digests for assets URLs
+  config.assets.digest = true
+
+  # Defaults to nil and saved in location specified by config.assets.prefix
+  # config.assets.manifest = YOUR_PATH
+
+  # Specifies the header that your server uses for sending files
+  # config.action_dispatch.x_sendfile_header = "X-Sendfile" # for apache
+  # config.action_dispatch.x_sendfile_header = 'X-Accel-Redirect' # for nginx
+
+  # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
+  # config.force_ssl = true
+
+  # See everything in the log (default is :info)
+  config.log_level = :debug
+
+  config.active_record.mass_assignment_sanitizer = :logger
 
   # Prepend all log lines with the following tags
   config.log_tags = [:uuid]
 
+  # Use a different logger for distributed setups
+  # config.logger = ActiveSupport::TaggedLogging.new(SyslogLogger.new)
+
+  # Use a different cache store in production
+  # config.cache_store = :mem_cache_store
+
+  # Enable serving of images, stylesheets, and JavaScripts from an asset server
+  # config.action_controller.asset_host = "http://assets.example.com"
+
+  # Precompile additional assets (application.js, application.css, and all non-JS/CSS are already added)
+  # config.assets.precompile += %w( search.js )
+
   # Disable delivery errors, bad email addresses will be ignored
   # config.action_mailer.raise_delivery_errors = false
 
+  # Enable threaded mode
+  # config.threadsafe!
+
+  # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
+  # the I18n.default_locale when a translation can not be found)
+  config.i18n.fallbacks = true
+
+  # Send deprecation notices to registered listeners
+  config.active_support.deprecation = :notify
+
+  # Log the query plan for queries taking more than this (works
+  # with SQLite, MySQL, and PostgreSQL)
+  # config.active_record.auto_explain_threshold_in_seconds = 0.5
+
   config.after_initialize do
     Sass::Plugin.options[:never_update] = true
-    ActiveMerchant::Billing::Base.gateway_mode = :test
-  end   
-  # config.middleware.insert_after "Middleware::GlobalRestriction",RateLimiting do |r|
-  #   # during the ddos attack uncomment the below line
-  #   # r.define_rule(:match => ".*", :type => :frequency, :metric => :rph, :limit => 200, :frequency_limit => 12, :per_ip => true ,:per_url => true )
-  #   r.define_rule( :match => "^/(mobihelp)/.*", :type => :fixed, :metric => :rph, :limit => 100,:per_ip => true ,:per_url => true )
-  #   r.define_rule( :match => "^/(support\/mobihelp)/.*", :type => :fixed, :metric => :rph, :limit => 100,:per_ip => true ,:per_url => true )
-  #   r.define_rule( :match => "^/(support(?!\/(theme)))/.*", :type => :fixed, :metric => :rph, :limit => 100,:per_ip => true ,:per_url => true )
-  #   r.define_rule( :match => "^/(accounts\/new_signup_free).*", :type => :fixed, :metric => :rpd, :limit => 5,:per_ip => true)
-  #   r.define_rule( :match => "^/(public\/tickets)/.*", :type => :fixed, :metric => :rph, :limit => 10,:per_ip => true)
-  #   store = Redis.new(:host => RateLimitConfig["host"], :port => RateLimitConfig["port"], :network_timeout => 0.5)
-  #   r.set_cache(store) if store.present?
-  # end
+  end
+
+  # Need to set records for assets1..10.freshdesk.com
   if defined?(PhusionPassenger)
     config.action_controller.asset_host = Proc.new { |source, request= nil, *_|
       $asset_sync_https_url.sample
     }
   end
+
 end
-
-
-# Disable delivery errors, bad email addresses will be ignored
-# config.action_mailer.raise_delivery_errors = false

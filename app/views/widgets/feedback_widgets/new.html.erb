@@ -6,7 +6,6 @@
 <% if(responsive != "no") %>
   <%= stylesheet_link_tag_with_rtl :'cdn/responsive_widget' %>
 <% end %>
-
 <% widget_view = widget_option(:widgetView) %>
 <% widget_type = widget_option(:widgetType) %>
 <input type="hidden" name="widgetType" id="widgetType" value= "<%= widget_type %>" />
@@ -78,9 +77,8 @@
             picklist.section_ticket_fields.each do |section_tkt_field|
               if section_tkt_field.editable_in_portal
                 %><div class="control-group ticket_section">
-                <%= (ticket_field_container f,:helpdesk_ticket, section_tkt_field,
-                                    widget_prefilled_value(field), picklist.id.to_s).gsub("</textarea>
-        ", "&lt/textarea&gt").html_safe %>
+                <%=  (ticket_field_container f,:helpdesk_ticket, section_tkt_field,
+                                    widget_prefilled_value(field), picklist.id.to_s).gsub("</textarea>", "&lt/textarea&gt").html_safe %>
                 </div>
       <%
               end
@@ -124,7 +122,7 @@
     <input type="hidden" id="submit_message" value="<%= params[:submitThanks] %>" />
     <input type="hidden" name="retainParams" id="retainParams" value= "<%=  ActiveSupport::JSON.encode params.except(:controller).except(:action) %>" />
     <div class="span4 omega">
-      <%= f.submit t('ticket.submit_feedback'), :class => "btn btn-primary omega",
+      <%= f.submit widget_option(:submitTitle), :class => "btn btn-primary omega",
         "data-loading-text" => t('ticket.submit_loading') %>
       <%# Any fields named like meta[fieldname] will be saved by the helpdesk as metadata %>
       <%= hidden_field_tag "meta[user_agent]", request.env["HTTP_USER_AGENT"] %>

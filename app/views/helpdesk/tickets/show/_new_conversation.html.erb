@@ -8,7 +8,7 @@
 		      							helpdesk_canned_responses_index_path(@ticket.display_id), 
 		      							"data-width" => "700", "data-template-footer" => '', :rel => 'freshdialog', 
 		      							:id => "canned_response_show", "data-target" => "#canned_responses",
-		      							:title => t(:'ticket.canned_responses.ca_responses')) %>
+		      							'data-template-header' => "<div class='modal-header'><span><h3 class='modal-heading-with-button'>" + t('ticket.canned_responses.ca_responses') + "</h3></span><a href='/helpdesk/canned_responses/folders' target='_blank' class='pull-right modal-header-button'>" + t('ticket.create_new_ca') + "</a></div>") %>
 					<%= link_to( t('solution.title_singular'), 
 												"#related_solutions", 
 												:title => t(:'ticket.suggested_solutions.title'), :rel => 'freshdialog',
@@ -67,16 +67,28 @@
 										:cntid => "cnt-note", 
 										:note => [@ticket, Helpdesk::Note.new(:private => true)] 
 									}) %>
+
+			<% if privilege?(:reply_ticket) && current_account.link_tickets_enabled? && @ticket.tracker_ticket? %>
+				<%= render(:partial => '/helpdesk/tickets/show/broadcast_form',
+				 :locals => {
+				 	  :id => 'broadcast-request',
+				 	  :cntid => 'cnt-broadcast',
+				 	  :note => [@ticket, Helpdesk::Note.new(:private => true)] 
+				 	}) %>
+			<% end -%>
 			</div> 
 			<div id="TicketPseudoReply" class="pseudo_reply">
 
 				<% if privilege?(:reply_ticket) && @ticket.show_reply? %>
-				<a href="" id="FwdButton" rel="note-button" data-note-type="reply" data-domhelper-name="reply-button" data-replyto-handle="<%= @ticket.twitter? ? @ticket.latest_twitter_comment_user : "" %>" ><%= t('ticket.reply_to')  %></a> / 
+				<a href="" id="FwdButton" rel="note-button" data-note-type="reply" data-domhelper-name="reply-button" data-replyto-handle="<%= @ticket.twitter? ? "#{@ticket.latest_twitter_comment_user} " : "" %>" data-user="<%= "@#{@ticket.requester.twitter_id} " %>" ><%= t('ticket.reply_to')  %></a> / 
 				<% end %>
-        <% if privilege?(:forward_ticket) %>
-				  <a href="" id="FwdButton" rel="note-button" data-note-type="fwd" data-domhelper-name="fwd-button"><%= t('fwd_to') %></a> /
-        <% end %>
+        		<% if privilege?(:forward_ticket) %>
+			  		<a href="" id="FwdButton" rel="note-button" data-note-type="fwd" data-domhelper-name="fwd-button"><%= t('fwd_to') %></a> /
+    			<% end %>
 				<a href="#"  rel="note-button" data-note-type="note" data-domhelper-name="note-button"><%= t('ticket.add_note') %></a>
+				<% if privilege?(:reply_ticket) && current_account.link_tickets_enabled? && @ticket.tracker_ticket? && @ticket.related_tickets_count > 0 %>
+					/ <a href="#" id="BroadcastBtn"  rel="note-button" data-note-type="broadcast" data-domhelper-name="broadcast-button"><%= t('ticket.broadcast') %></a>
+				<% end -%>
         <% if @ticket.mobihelp? %>
         	/ <%= link_to 'Request App review', "#", :id => "ReviewButton", :rel => "review-button" %>
 					<%= render(:partial => '/helpdesk/tickets/show/app_review_form', 

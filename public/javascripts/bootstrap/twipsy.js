@@ -95,57 +95,44 @@
         actualHeight = $tip[0].offsetHeight
         placement = maybeCall(this.options.placement, this, [ $tip[0], this.$element[0] ])
         
-        this.checkPlacement(placement, pos, actualWidth, actualHeight, $tip);
+        switch (placement) {
+          case 'below':
+            tp = {top: pos.top + pos.height + this.options.offset, left: pos.left + pos.width / 2 - actualWidth / 2}
+            break
+          case 'above':
+            tp = {top: pos.top - actualHeight - this.options.offset, left: pos.left + pos.width / 2 - actualWidth / 2}
+            break
+          case 'left':
+            tp = {top: pos.top + pos.height / 2 - actualHeight / 2, left: pos.left - actualWidth - this.options.offset}
+            break
+          case 'topLeft':
+            tp = {top: pos.top - (pos.height + 10), left: pos.left - actualWidth - this.options.offset}
+            break
+          case 'right':
+            tp = {top: pos.top + pos.height / 2 - actualHeight / 2, left: pos.left + pos.width + this.options.offset}
+            break
+          case 'topRight':
+            tp = {top: pos.top - (pos.height + 10), left: pos.left + this.options.offset}
+            break
+          case 'belowLeft':
+            tp = {top: pos.top + pos.height + this.options.offset, left: pos.left + pos.width - actualWidth  + this.options.offset}
+            break
+          case 'belowRight':
+            tp = {top: pos.top + pos.height + this.options.offset, left: pos.left + pos.width/2  - actualWidth/5 + this.options.offset}
+            break
+          case 'partialLeft':
+            tp = {top: pos.top + pos.height + this.options.offset + pos.height/3, left: pos.left + pos.width - (actualWidth/4 * 4)  + this.options.offset}
+            break
+          case 'bottomLeft':
+            tp = {top: pos.top + pos.height*2 + this.options.offset - 5, left: pos.left + pos.width - (actualWidth/3 * 2.88)  + this.options.offset}
+            break
+        }
 
-      }
-    }
-
-  , checkPlacement: function (placement, pos, actualWidth, actualHeight, $tip) {
-      var tp = this.setPlacement(placement, pos, actualWidth, actualHeight );
-
-      if((tp.left + $tip.innerWidth()) > (window.innerWidth - 50)) {
-        placement = "left";
-        tp = this.setPlacement(placement, pos, actualWidth, actualHeight);
-      } else if ((tp.top + $tip.innerHeight()) > (window.innerHeight - 50)){
-        placement = "above";
-        tp = this.setPlacement(placement, pos, actualWidth, actualHeight);
-      }
-
-      $tip.css(tp)
+        $tip
+          .css(tp)
           .addClass(placement)
           .addClass('in')
-  }
-
-  , setPlacement: function (placement, pos, actualWidth, actualHeight) {
-      var tp;
-      switch (placement) {
-        case 'below':
-          tp = {top: pos.top + pos.height + this.options.offset, left: pos.left + pos.width / 2 - actualWidth / 2}
-          break
-        case 'above':
-          tp = {top: pos.top - actualHeight - this.options.offset, left: pos.left + pos.width / 2 - actualWidth / 2}
-          break
-        case 'left':
-          tp = {top: pos.top + pos.height / 2 - actualHeight / 2, left: pos.left - actualWidth - this.options.offset}
-          break
-        case 'topLeft':
-          tp = {top: pos.top - (pos.height + 10), left: pos.left - actualWidth - this.options.offset}
-          break
-        case 'right':
-          tp = {top: pos.top + pos.height / 2 - actualHeight / 2, left: pos.left + pos.width + this.options.offset}
-          break
-        case 'topRight':
-          tp = {top: pos.top - (pos.height + 10), left: pos.left + this.options.offset}
-          break
-        case 'belowLeft':
-          tp = {top: pos.top + pos.height + this.options.offset, left: pos.left + pos.width - actualWidth  + this.options.offset}
-          break
-        case 'belowRight':
-          tp = {top: pos.top + pos.height + this.options.offset, left: pos.left + pos.width/2  - actualWidth/5 + this.options.offset}
-          break
       }
-
-      return tp;
     }
 
   , setContent: function () {

@@ -405,7 +405,7 @@ body,
 
 .embedded-wrapper {
   .modal-panel-active.modal-scroll .modal-header{
-    width: 60%;
+    width: 100%;
     @media(max-width: 45em){
         width:100%;
     }
@@ -434,7 +434,7 @@ body,
     }
     &.modal-panel {
       position: absolute;
-      width: 60%;
+      width: 100%;
       @include left(0%);
       padding-bottom: 140px;
       height: 100%;
@@ -538,7 +538,7 @@ body,
     }
   }
   .modal-header {
-    width: 60%;
+    width: 100%;
     display: inline-block;
     position: absolute;
     top:0;
@@ -597,7 +597,7 @@ body,
   }
   .embedded-body {
     max-height: 82%;
-    width: 60.6%;
+    width: 100%;
     position: absolute;
     top:40px;
     bottom:50px;
@@ -618,6 +618,9 @@ body,
     .form-portal {
       .controls,.checkbox-error-message {
         @include margin-left(0px);
+      }
+      .control-label{
+        width: 100%
       }
     }
     #attachment-type {
@@ -682,7 +685,7 @@ body,
   .embedded-footer {
     border-top: 0;
     background: none;
-    width: 60%;
+    width: 100%;
     position: absolute;
     bottom:0; 
     padding: 6px 0;
@@ -1171,7 +1174,7 @@ body,
 }
 
 input.date.datepicker_popover {
-  padding: 4px 4px 4px 25px;
+  @include padding (4px 4px 4px 25px);
   height: auto;
   width: 99%;
 }

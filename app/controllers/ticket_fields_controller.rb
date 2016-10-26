@@ -10,6 +10,7 @@ class TicketFieldsController < CustomFieldsController
       format.html {
         @ticket_field_json = ticket_field_hash(@ticket_fields, current_account)
         @section_data_json = section_data_hash(@section_data, current_account)
+        @groups = current_account.features?(:shared_ownership) ? current_account.groups_from_cache.collect { |g| [g.id, CGI.escapeHTML(g.name)]} : []
       }
       format.xml  { render :xml => @ticket_fields.to_xml }
       format.json  { render :json => @ticket_fields }

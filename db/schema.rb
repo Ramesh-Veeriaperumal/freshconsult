@@ -11,8 +11,8 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
+ActiveRecord::Schema.define(:version => 20160923062730) do
 
-ActiveRecord::Schema.define(:version => 20160802094502) do
   
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -1800,6 +1800,7 @@ ActiveRecord::Schema.define(:version => 20160802094502) do
     t.integer  "ticket_assign_type",                :default => 0
     t.integer  "business_calendar_id", :limit => 8
     t.boolean  "toggle_availability",               :default => false
+    t.integer  "capping_limit",        :default => 0
   end
 
   add_index "groups", ["account_id", "name"], :name => "index_groups_on_account_id", :unique => true
@@ -3077,6 +3078,7 @@ ActiveRecord::Schema.define(:version => 20160802094502) do
   add_index "solution_articles", ["account_id", "folder_id", "created_at"], :name => "index_solution_articles_on_acc_folder_created_at"
   add_index "solution_articles", ["account_id", "folder_id", "position"], :name => "index_solution_articles_on_account_id_and_folder_id_and_position"
   add_index "solution_articles", ["account_id", "folder_id", "title"], :name => "index_solution_articles_on_account_id_and_folder_id_and_title", :length => {"account_id"=>nil, "folder_id"=>nil, "title"=>10}
+  add_index "solution_articles", ["account_id", "language_id", "hits"], :name => "index_solution_articles_on_account_id_language_id_hits"
   add_index "solution_articles", ["account_id", "parent_id", "language_id"], :name => "index_articles_on_account_id_parent_id_and_language"
   add_index "solution_articles", ["folder_id"], :name => "index_solution_articles_on_folder_id"
 
@@ -3180,6 +3182,16 @@ ActiveRecord::Schema.define(:version => 20160802094502) do
   add_index "solution_folders", ["account_id", "category_id", "position"], :name => "index_solution_folders_on_acc_cat_pos"
   add_index "solution_folders", ["account_id", "parent_id", "language_id"], :name => "index_solution_folders_on_account_id_parent_id_and_language"
   add_index "solution_folders", ["category_id", "position"], :name => "index_solution_folders_on_category_id_and_position"
+
+  create_table "status_groups", :force => true do |t|
+    t.integer  "status_id",  :limit => 8, :null => false
+    t.integer  "group_id",   :limit => 8, :null => false
+    t.integer  "account_id", :limit => 8, :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "status_groups", ["account_id", "status_id"], :name => "index_status_groups_on_account_id_and_status_id"
 
   create_table "subscription_addon_mappings", :force => true do |t|
     t.integer "subscription_addon_id", :limit => 8
@@ -3563,6 +3575,7 @@ ActiveRecord::Schema.define(:version => 20160802094502) do
     t.string   "neutral_text",                        :default => "Neutral"
     t.string   "unhappy_text",                        :default => "Not Good"
     t.boolean  "deleted",                             :default => false
+    t.boolean  "good_to_bad",                         :default => false
   end
 
   add_index "surveys", ["account_id"], :name => "index_account_id_on_surrveys"
@@ -4002,6 +4015,7 @@ ActiveRecord::Schema.define(:version => 20160802094502) do
     t.string   "string_uc04"
     t.string   "string_uc05"
     t.string   "string_uc06"
+    t.string   "unique_external_id"
   end
 
   add_index "users", ["email", "account_id"], :name => "index_users_on_email_and_account_id", :unique => true
@@ -4012,6 +4026,7 @@ ActiveRecord::Schema.define(:version => 20160802094502) do
   add_index "users", ["account_id", "name"], :name => "index_users_on_account_id_and_name"
   add_index "users", ["account_id", "phone"], :name => "index_users_on_account_id_phone"
   add_index "users", ["account_id", "twitter_id"], :name => "index_users_on_account_id_twitter_id"
+  add_index "users", ["account_id", "unique_external_id"], :name => "index_users_on_account_id_and_unique_external_id", :unique => true
   add_index "users", ["customer_id", "account_id"], :name => "index_users_on_customer_id_and_account_id"
   add_index "users", ["perishable_token", "account_id"], :name => "index_users_on_perishable_token_and_account_id"
   add_index "users", ["persistence_token", "account_id"], :name => "index_users_on_persistence_token_and_account_id"
@@ -4088,5 +4103,15 @@ ActiveRecord::Schema.define(:version => 20160802094502) do
     t.integer "user_id",    :limit => 8
     t.integer "account_id", :limit => 8
   end
+
+  create_table "account_webhook_keys", :force => true do |t|
+    t.integer "account_id", :limit => 8, :null => false
+    t.string  "webhook_key", :limit => 35
+    t.integer "vendor_id", :limit => 11
+    t.integer "status", :limit => 1
+  end
+
+  add_index "account_webhook_keys", ["account_id", "vendor_id"], :name => 'index_account_webhook_keys_on_account_id_and_vendor_id'
+  add_index "account_webhook_keys", "webhook_key", :unique => true
 
 end

@@ -1,10 +1,11 @@
 class Sanitize
   module Config
+    SANDBOX_BLACKLIST = %w(allow-pointer-lock allow-popups allow-modals allow-top-navigation).freeze
     ARTICLE_WHITELIST = {
       :elements => HTML_RELAXED[:elements] + ['iframe', 'object', 'param', 'embed', 'canvas', 'video', 'track'],
       :attributes => {
         :all => HTML_RELAXED[:attributes][:all] + ['name'],
-        'iframe' => ['src', 'width', 'height', 'frameborder', 'allowfullscreen', 'align'],
+        'iframe' => ['src', 'width', 'height', 'frameborder', 'allowfullscreen', 'align', 'sandbox'],
         'audio' => HTML_RELAXED[:attributes]['audio'] + ['src', 'crossorigin', 'preload', 'autoplay', 'mediagroup', 'loop', 'muted'],
         'source' => HTML_RELAXED[:attributes]['source'] + ['media'],
         'object' => ['type', 'data', 'height', 'width', 'typemustmatch', 'form', 'classid', 'codebase'],
@@ -35,13 +36,16 @@ class Sanitize
         node      = env[:node]
         
         return if env[:is_whitelisted] || !node.element? || ARTICLE_WHITELIST[:elements].exclude?(node.name)
-
+        
         if node.name == 'iframe'
           uri = URI.parse(node['src'])
           if uri.host.blank? || uri.host == Account.current.full_domain || Account.current.portals.map(&:portal_url).compact.include?(uri.host)
             node.unlink
             return
           end
+
+          node['sandbox'] ||= "allow-scripts allow-forms allow-same-origin allow-presentation"
+          node['sandbox'].gsub!(Regexp.union(SANDBOX_BLACKLIST), '')
         end
 
         data_attrs = node.attribute_nodes.select{|a_n| a_n.name =~ /^data-/ }

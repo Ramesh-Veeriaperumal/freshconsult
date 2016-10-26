@@ -2,7 +2,11 @@ module TicketConstants
   
   CHAT_SOURCES = { :snapengage =>  "snapengage.com", :olark => "olark.com"}
 
+  MAX_RELATED_TICKETS = 300
+
   BUSINESS_HOUR_CALLER_THREAD = "business_hour"
+
+  NBA_NULL_PRODUCT_ID = "-1"
   
   OUT_OF_OFF_SUBJECTS = [ "away from the office", "out of office", "away from office","mail delivery failed","returning your reply to helpdesk message", "vacation" ]
 
@@ -12,6 +16,7 @@ module TicketConstants
    
   # DATE_RANGE_CSV = 31
 
+  ### Bump the version of "TICKETS_LIST_PAGE_FILTERS" key in fragment_cache/keys.rb when SOURCES are modified.
   SOURCES = [
     [ :email,            'email',            1 ],
     [ :portal,           'portal_key',       2 ],
@@ -23,8 +28,7 @@ module TicketConstants
     [ :mobihelp,         'mobihelp',         8 ],
     [ :feedback_widget,  'feedback_widget',  9 ],
     [ :outbound_email,   'outbound_email',   10],
-	[ :ecommerce,        'ecommerce',        11 ]
-  
+	  [ :ecommerce,        'ecommerce',        11 ]
   ]
 
   SOURCE_OPTIONS = SOURCES.map { |i| [i[1], i[2]] }
@@ -33,11 +37,12 @@ module TicketConstants
   SOURCE_KEYS_BY_NAME = Hash[*SOURCES.map { |i| [i[1], i[2]] }.flatten]
   SOURCE_TOKEN_BY_KEY = Hash[*SOURCES.map { |i| [i[2], i[0]] }.flatten]
 
+  ### Bump the version of "TICKETS_LIST_PAGE_FILTERS" key in fragment_cache/keys.rb when PRIORITIES are modified.
   PRIORITIES = [
     [ :low,       'low',         1,    '#7ebf00' ], 
     [ :medium,    'medium',      2,    '#008ff9' ], 
     [ :high,      'high',        3,    '#ffb613' ], 
-    [ :urgent,    'urgent',      4,    '#de0000' ]   
+    [ :urgent,    'urgent',      4,    '#de0000' ]
   ]
 
   PRIORITY_OPTIONS = PRIORITIES.map { |i| [i[1], i[2]] }
@@ -59,14 +64,46 @@ module TicketConstants
   TYPE_NAMES_BY_KEY = Hash[*TYPE.map { |i| [i[2], i[1]] }.flatten]
   TYPE_KEYS_BY_TOKEN = Hash[*TYPE.map { |i| [i[0], i[2]] }.flatten]
   TYPE_NAMES_BY_SYMBOL = Hash[*TYPE.map { |i| [i[0], i[1]] }.flatten]
-  
+
+  TICKET_ASSOCIATION = [
+    [:parent, 1],
+    [:child, 2],
+    [:tracker, 3],
+    [:related, 4]
+  ]
+
+  TICKET_ASSOCIATION_KEYS_BY_TOKEN = Hash[*TICKET_ASSOCIATION.map { |i| [i[0], i[1]] }.flatten]
+  TICKET_ASSOCIATION_TOKEN_BY_KEY = Hash[*TICKET_ASSOCIATION.map { |i| [i[1], i[0]] }.flatten]
+
+  TICKET_ASSOCIATION_FILTER = [
+    [ :nil,               'dots',           []],
+    [ :parent,            'parent',         [TICKET_ASSOCIATION_KEYS_BY_TOKEN[:parent]]],
+    [ :child,             'child',          [TICKET_ASSOCIATION_KEYS_BY_TOKEN[:child]]], 
+    [ :tracker,           'tracker',        [TICKET_ASSOCIATION_KEYS_BY_TOKEN[:tracker]]], 
+    [ :related,           'related',        [TICKET_ASSOCIATION_KEYS_BY_TOKEN[:related]]], 
+    [ :both,              'both',           [TICKET_ASSOCIATION_KEYS_BY_TOKEN[:parent], TICKET_ASSOCIATION_KEYS_BY_TOKEN[:tracker]]], 
+    [ :no_association,    'no_association', [-1]]  
+  ]
+
+  TICKET_ASSOCIATION_FILTER_OPTIONS = TICKET_ASSOCIATION_FILTER.map { |i| [i[1], i[2].join(',')] }
+  TICKET_ASSOCIATION_FILTER_NAMES_BY_KEY = Hash[*TICKET_ASSOCIATION_FILTER.map { |i| [i[2].join(','), i[1]] }.flatten]
+  TICKET_ASSOCIATION_FILTER_KEYS_BY_TOKEN = Hash[*TICKET_ASSOCIATION_FILTER.map { |i| [i[0], i[2].join(',')] }.flatten]
+
   DEFAULT_COLUMNS_ORDER = [ :responder_id, :group_id, :created_at, :due_by, :status, :priority,
     :ticket_type, :source, "helpdesk_tags.name", :owner_id,
-    :requester_id, "helpdesk_schema_less_tickets.product_id" ]
+    :requester_id, "helpdesk_schema_less_tickets.product_id", "helpdesk_schema_less_tickets.#{Helpdesk::SchemaLessTicket.association_type_column}" ]
   
   ARCHIVE_DEFAULT_COLUMNS_ORDER = [ :responder_id, :group_id, :created_at, :due_by, :status, :priority,
     :ticket_type, :source, "helpdesk_tags.name", "users.customer_id", :owner_id,
-    :requester_id, :product_id ]
+    :requester_id, :product_id, "helpdesk_schema_less_tickets.#{Helpdesk::SchemaLessTicket.association_type_column}" ]
+
+  INTERNAL_AGENT_ID = "helpdesk_schema_less_tickets.long_tc04"
+  ANY_AGENT_ID      = "any_agent_id"
+  INTERNAL_GROUP_ID = "helpdesk_schema_less_tickets.long_tc03"
+  ANY_GROUP_ID      = "any_group_id"
+
+  SHARED_AGENT_COLUMNS_ORDER = [INTERNAL_AGENT_ID, ANY_AGENT_ID]
+  SHARED_GROUP_COLUMNS_ORDER = [INTERNAL_GROUP_ID, ANY_GROUP_ID]
   
   DEFAULT_COLUMNS =  [
     [ :status,              'status',           :dropdown],
@@ -76,11 +113,12 @@ module TicketConstants
     [ :source,              'source',           :dropdown],
     [ :priority,            'priority',         :dropdown],
     [ :due_by,              'due_by',           :due_by],
-    [ "helpdesk_tags.name", "tags",             :dropdown],
+    [ "helpdesk_tags.name", "tags",             :tags],
     [ :owner_id,            "customers",        :customer],
     [ :created_at,          "created_at",       :created_at],
     [ :requester_id,        'requester',        :requester],
-    [ "helpdesk_schema_less_tickets.product_id",'products', :dropdown]
+    [ "helpdesk_schema_less_tickets.product_id",'products', :dropdown],
+    [ "helpdesk_schema_less_tickets.#{Helpdesk::SchemaLessTicket.association_type_column}",  'association_type', :dropdown]
   ]
   ARCHIVE_DEFAULT_COLUMNS =  [
     [ :status,              'status',           :dropdown],
@@ -95,7 +133,8 @@ module TicketConstants
     [ :owner_id,            "customers",        :customer],
     [ :created_at,          "created_at",       :created_at],
     [ :requester_id,        'requester',        :requester],
-    [ :product_id,          'products',       :dropdown]
+    [ :product_id,          'products',         :dropdown],
+    [ "helpdesk_schema_less_tickets.#{Helpdesk::SchemaLessTicket.association_type_column}",  'association_type', :dropdown]
   ]
   
   
@@ -106,7 +145,28 @@ module TicketConstants
   ARCHIVE_DEFAULT_COLUMNS_OPTIONS = Hash[*ARCHIVE_DEFAULT_COLUMNS.map { |i| [i[0], i[1]] }.flatten]
   ARCHIVE_DEFAULT_COLUMNS_BY_KEY = Hash[*ARCHIVE_DEFAULT_COLUMNS.map { |i| [i[2], i[1]] }.flatten]
   ARCHIVE_DEFAULT_COLUMNS_KEYS_BY_TOKEN = Hash[*ARCHIVE_DEFAULT_COLUMNS.map { |i| [i[0], i[2]] }.flatten]
-  
+
+  FILTER_MODES = {:primary => 0, :internal => 1, :any => 2}
+
+  SHARED_AGENT_COLUMNS = [
+    ["helpdesk_schema_less_tickets.long_tc04",  :dropdown,          FILTER_MODES[:internal] ],
+    ["any_agent_id",                            :special_responder, FILTER_MODES[:any] ]
+  ]
+
+  SHARED_GROUP_COLUMNS = [
+    ["helpdesk_schema_less_tickets.long_tc03",  :dropdown,          FILTER_MODES[:internal] ],
+    ["any_group_id",                            :special_responder, FILTER_MODES[:any] ]
+  ]
+
+  SHARED_AGENT_COLUMNS_KEYS_BY_TOKEN       = Hash[*SHARED_AGENT_COLUMNS.map { |i| [i[0], i[1]] }.flatten]
+  SHARED_AGENT_COLUMNS_CONDITIONS_BY_MODE  = Hash[*SHARED_AGENT_COLUMNS.map { |i| [i[2], i[0]] }.flatten]
+  SHARED_AGENT_COLUMNS_MODE_BY_NAME        = Hash[*SHARED_AGENT_COLUMNS.map { |i| [i[0], i[2]] }.flatten]
+
+  SHARED_GROUP_COLUMNS_KEYS_BY_TOKEN       = Hash[*SHARED_GROUP_COLUMNS.map { |i| [i[0], i[1]] }.flatten]
+  SHARED_GROUP_COLUMNS_CONDITIONS_BY_MODE  = Hash[*SHARED_GROUP_COLUMNS.map { |i| [i[2], i[0]] }.flatten]
+  SHARED_GROUP_COLUMNS_MODE_BY_NAME        = Hash[*SHARED_GROUP_COLUMNS.map { |i| [i[0], i[2]] }.flatten]
+
+  ### Bump the version of "TICKETS_LIST_PAGE_FILTERS" key in fragment_cache/keys.rb when DUE_BY_TYPES are modified.
   DUE_BY_TYPES = [
     [ :all_due,         'all_due',               1 ], # If modified, _auto_refresh.html.erb has to be modified.
     [ :due_today,       'due_today',             2 ], # By Shridar.
@@ -146,6 +206,7 @@ module TicketConstants
   ]
   ARCHIVE_CREATED_WITHIN_OPTIONS = ARCHIVE_CREATED_WITHIN_VALUES.map { |i| [i[2], i[1]] }
 
+  ### Bump the version of "TICKETS_LIST_PAGE_FILTERS" key in fragment_cache/keys.rb when CREATED_WITHIN_VALUES are modified.
   CREATED_WITHIN_VALUES = [
     [ :any_time,         'any_time',        "any_time"], # If modified, _auto_refresh.html.erb has to be modified.
     [ :five_minutes,     'five_minutes',            5 ], # By Shridar.
@@ -205,8 +266,26 @@ module TicketConstants
     :source => "source",
     :status => "status",
     :requester => "requester_id",
-    :company => "owner_id"
+    :company => "owner_id",
+    :internal_agent => INTERNAL_AGENT_ID,
+    :internal_group => INTERNAL_GROUP_ID
   }
+
+  DEFAULT_FIELDS_ORDER = [
+    "default_priority", "default_status",
+    "default_source",   "default_ticket_type",
+    "default_group",    "default_agent",
+    "default_product",  "default_company"
+  ]
+
+  SHARED_DEFAULT_FIELDS_ORDER = [
+    "default_priority",       "default_status",
+    "default_group",          "default_agent", 
+    "default_internal_group", "default_internal_agent",
+    "default_source",         "default_ticket_type",
+    "default_product",        "default_company"
+  ]
+
   # CC emails count
   MAX_EMAIL_COUNT = 50
 
@@ -264,5 +343,31 @@ module TicketConstants
   #TODO : change the format of the date based on the account config
   def self.created_date_range_default
     "#{1.month.ago.strftime("%d %b %Y")} - #{1.days.ago.strftime("%d %b %Y")}"
+  end
+
+  def self.feature_based_association_type
+    parent_child_feature = Account.current.features_included?(:parent_child_tickets)
+    link_tickets_feature = Account.current.link_tickets_enabled?
+    return [] unless parent_child_feature || link_tickets_feature
+    list = [TICKET_ASSOCIATION_FILTER[0]]
+    if parent_child_feature
+      list << TICKET_ASSOCIATION_FILTER[1]
+      list << TICKET_ASSOCIATION_FILTER[2]
+    end
+    if link_tickets_feature
+      list << TICKET_ASSOCIATION_FILTER[3]
+      list << TICKET_ASSOCIATION_FILTER[4]
+    end
+    list << TICKET_ASSOCIATION_FILTER[5] if parent_child_feature && link_tickets_feature
+    list << TICKET_ASSOCIATION_FILTER[6]
+    list
+  end
+
+  def self.association_type_filter_list
+    Hash[*feature_based_association_type.map { |i| [i[2].join(','), I18n.t(i[1])] }.flatten]
+  end
+
+  def self.association_type_filter_names
+    TICKET_ASSOCIATION_FILTER.map { |i| [i[1], i[2].join(',')] }
   end
 end

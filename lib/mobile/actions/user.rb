@@ -2,8 +2,10 @@ module Mobile::Actions::User
 
 	include Mobile::Actions::Push_Notifier
 
+  JWT_ALGO = 'HS256'
+
   CONFIG_JSON_INCLUDE = {
-      only: [:id], 
+      only: [:id, :language], 
       :include =>{ :roles => { :only => [:id, :name, :default_role] } },
       :methods => [:display_name, :can_delete_ticket, :can_view_contacts, :can_delete_contact, :can_edit_ticket_properties, 
         :can_view_solutions, :can_merge_or_split_tickets,:can_reply_ticket, :manage_scenarios,:can_view_time_entries,
@@ -116,7 +118,7 @@ module Mobile::Actions::User
   def user_recent_tickets
     self.account.tickets.permissible(self).
         requester_active(self).visible.newest(10).find(:all, 
-          :select => [:id,:display_id,:subject,:status,:priority,:created_at,:requester_id,:source,:spam,:deleted,:responder_id])
+          :select => [:"helpdesk_tickets.id",:display_id,:subject,:status,:priority,:"helpdesk_tickets.created_at",:requester_id,:source,:spam,:deleted,:responder_id])
   end
 
   def contact_fields
@@ -127,4 +129,49 @@ module Mobile::Actions::User
     Account.current.company_form.custom_company_fields
   end
 
+  #JWT Authentication methods
+  def mobile_auth_token
+    if self.helpdesk_agent?
+      payload = jwt_payload
+      secret  = mobile_jwt_secret
+      JWT.encode payload, secret, JWT_ALGO
+    else
+      'customer'
+    end
+  end
+  
+  def mobile_jwt_secret
+    generate_hmac_secret(generate_mobile_access_token)
+  end
+
+  private 
+    def generate_hmac_secret(tokenstring)
+      OpenSSL::HMAC.hexdigest('sha512',MobileConfig['mobile_token_key'],tokenstring.to_s)
+    end
+
+    def generate_mobile_access_token
+      token_param = self.id.to_s + (self.created_at.to_f * 1000).to_i.to_s + self.crypted_password.to_s
+      OpenSSL::HMAC.hexdigest('sha512',MobileConfig['mobile_token_key'],token_param.to_s)
+    end
+
+    def jwt_payload
+      payload = Hash.new
+      if self.email.nil?
+        # Note :: Mobile app supports email only for now.
+        # if self.fb_profile_id.present?
+        #   payload.store(:type, :facebook)
+        #   payload.store(:id, self.fb_profile_id)
+        # elsif self.twitter_id.present?
+        #   payload.store(:type, :twitter)
+        #   payload.store(:id, self.twitter_id)
+        # elsif self.phone.present? || self.mobile.present?
+        #   payload.store(:type, :phone)
+        #   payload.store(:id, (self.phone || self.mobile))
+        # end
+      else
+        payload.store(:type, :email)
+        payload.store(:id,self.email)
+      end
+      payload
+    end
 end

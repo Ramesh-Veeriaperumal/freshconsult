@@ -4,6 +4,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
 	before_validation :populate_requester, :load_ticket_status, :set_default_values
   before_validation :assign_flexifield, :assign_email_config_and_product, :on => :create
+  before_validation :validate_related_tickets, :on => :create, :if => :tracker_ticket?
+  before_validation :validate_tracker_ticket, :on => :update, :if => :tracker_ticket_id
 
   before_create :set_outbound_default_values, :if => :outbound_email?
 
@@ -19,11 +21,16 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   before_update :update_message_id, :if => :deleted_changed?
 
-  before_save :assign_outbound_agent, :if => :outbound_email?
+  before_update :reset_links, :if => :remove_associations?
+
+  before_create :assign_outbound_agent, :if => :outbound_email?
 
   before_save  :update_ticket_related_changes, :update_company_id, :set_sla_policy
 
   before_save :check_and_reset_company_id, :if => :company_id_changed?
+
+  before_update :reset_internal_group_agent
+  before_save   :allow_valid_internal_group_agent
 
   before_update :update_sender_email
 
@@ -38,17 +45,21 @@ class Helpdesk::Ticket < ActiveRecord::Base
   after_create :refresh_display_id, :create_meta_note, :update_content_ids, :update_sentiment
 
   after_commit :create_initial_activity, :pass_thro_biz_rules, on: :create
-  after_commit :send_outbound_email, on: :create, :if => :outbound_email?
+  after_commit :send_outbound_email, :update_capping_on_create, on: :create, :if => :outbound_email?
 
   after_commit :filter_observer_events, on: :update, :if => :execute_observer?
   after_commit :update_ticket_states, :notify_on_update, :update_activity, 
-  :stop_timesheet_timers, :fire_update_event, :push_update_notification, on: :update 
+               :stop_timesheet_timers, :fire_update_event, :push_update_notification, 
+               :update_old_group_capping, on: :update 
   #after_commit :regenerate_reports_data, on: :update, :if => :regenerate_data? 
   after_commit :push_create_notification, on: :create
   after_commit :update_group_escalation, on: :create, :if => :model_changes?
   after_commit :publish_to_update_channel, on: :update, :if => :model_changes?
   after_commit :subscribe_event_create, on: :create, :if => :allow_api_webhook?, :unless => :spam_or_deleted?
   after_commit :subscribe_event_update, on: :update, :if => :allow_api_webhook?, :unless => :spam_or_deleted?
+  after_commit :set_links, :on => :create, :if => :tracker_ticket?
+  after_commit :add_links, :on => :update, :if => :linked_now?
+  after_commit :remove_links, :on => :update, :if => :unlinked_now?
   
   # Callbacks will be executed in the order in which they have been included. 
   # Included rabbitmq callbacks at the last
@@ -147,7 +158,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
   def process_agent_and_group_changes 
-    
     if (@model_changes.key?(:responder_id) && responder)
       if @model_changes[:responder_id][0].nil?
         unless ticket_states.first_assigned_at 
@@ -165,15 +175,20 @@ class Helpdesk::Ticket < ActiveRecord::Base
       schema_less_ticket.update_group_reassigned_count("create") if @model_changes[:group_id][0]
       schema_less_ticket.set_group_assigned_flag
     end
-    
+    #for internal_agent_id
+    if @model_changes.key?(:long_tc04)
+      schema_less_ticket.set_internal_agent_assigned_flag
+      schema_less_ticket.set_internal_agent_first_assign_bhrs(self.created_at, time_zone_now, self.group) if (self.reports_hash["internal_agent_assigned_flag"]==true )
+    end
+    schema_less_ticket.set_internal_group_assigned_flag if @model_changes.key?(:long_tc03)
   end
-  
+
   def process_status_changes
     return unless @model_changes.key?(:status)
-    
+
     ticket_states.status_updated_at = time_zone_now
-    
-    ticket_states.pending_since = nil if @model_changes[:status][0] == PENDING  
+
+    ticket_states.pending_since = nil if @model_changes[:status][0] == PENDING
     ticket_states.pending_since=time_zone_now if (status == PENDING)
     ticket_states.set_resolved_at_state if (status == RESOLVED)
     ticket_states.set_closed_at_state if closed?
@@ -182,8 +197,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
       ticket_states.sla_timer_stopped_at ||= time_zone_now 
     else
       ticket_states.sla_timer_stopped_at = nil
-    end 
-    
+    end
+
     if reopened_now?
       schema_less_ticket.set_last_resolved_at(ticket_states.resolved_at)
       ticket_states.opened_at=time_zone_now
@@ -191,6 +206,45 @@ class Helpdesk::Ticket < ActiveRecord::Base
       schema_less_ticket.update_reopened_count("create")
     end
   end
+
+  #Shared onwership Validations
+  def reset_internal_group_agent
+    schema_less_ticket.internal_agent_id = schema_less_ticket.internal_group_id = nil unless Account.current.features?(:shared_ownership)
+    return unless @model_changes.key?(:status) && Account.current.features?(:shared_ownership)
+
+    #Reset internal group and internal agent when the status(without the particular group mapped) is changed.
+    #If the new status has the same group mapped to it, preserve internal group and internal agent.
+    internal_group_column = Helpdesk::SchemaLessTicket.internal_group_column
+    internal_agent_column = Helpdesk::SchemaLessTicket.internal_agent_column
+    if internal_group_id.present? && !internal_group_id_changed? && ticket_status.group_ids.exclude?(schema_less_ticket.internal_group_id)
+      schema_less_ticket.internal_group_id = nil
+      @model_changes.merge!(schema_less_ticket.changes.slice(internal_group_column.to_s))
+    end
+
+    if internal_agent_id.present? && !internal_agent_id_changed? && ticket_status.group_ids.exclude?(schema_less_ticket.internal_group_id)
+      schema_less_ticket.internal_agent_id = nil
+      @model_changes.merge!(schema_less_ticket.changes.slice(internal_agent_column.to_s))
+    end
+    @model_changes.symbolize_keys!
+  end
+
+  def allow_valid_internal_group_agent
+    return unless shared_ownership_fields_changed? and Account.current.features?(:shared_ownership)
+
+    internal_group_column = Helpdesk::SchemaLessTicket.internal_group_column
+    internal_agent_column = Helpdesk::SchemaLessTicket.internal_agent_column
+
+    #Reset internal group and internal agent to old value if the mapping is incorrect
+    if internal_group_id.present? and ticket_status.group_ids.exclude?(internal_group_id)
+      schema_less_ticket.internal_group_id = internal_group_id_changed? ? @model_changes[internal_group_column][0] : nil
+      @model_changes.delete(internal_group_column)
+    end
+    if internal_agent_id.present? and (internal_group.blank? or internal_group.agents.pluck(:user_id).exclude?(internal_agent_id))
+      schema_less_ticket.internal_agent_id = internal_agent_id_changed? ? @model_changes[internal_agent_column][0] : nil
+      @model_changes.delete(internal_agent_column)
+    end
+  end
+  #Shared onwership Validations ends here
 
   def refresh_display_id #by Shan temp
       self.display_id = Helpdesk::Ticket.select(:display_id).where(id: id).first.display_id  if display_id.nil? #by Shan hack need to revisit about self as well.
@@ -249,35 +303,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
       klass = action[:klass].constantize
       klass.send(action[:method], action[:args])
     end
-  end
-
-  #To be removed after dispatcher redis check removed
-  def assign_tickets_to_agents
-    #Ticket already has an agent assigned to it or doesn't have a group
-    return if group.nil? || self.responder_id
-    if group.round_robin_enabled?
-      schedule_round_robin_for_agents 
-      self.save
-    end
-  end 
-
-  #user changes will be passed when observer worker calls the function
-  def round_robin_on_ticket_update(user_changes={})
-    ticket_changes = self.changes
-    ticket_changes  = merge_to_observer_changes(user_changes,self.changes) if user_changes.present?
-    
-    #return if no change was made to the group
-    return if !ticket_changes.has_key?(:group_id)
-    #skip if agent is assigned in the transaction
-    return if ticket_changes.has_key?(:responder_id) && self.responder_id.present?
-    #skip if the existing agent also belongs to the new group
-    return if self.responder_id.present? && Account.current.agent_groups.exists?(:user_id => self.responder_id, :group_id => group_id) 
-
-    schedule_round_robin_for_agents
-  end
-
-  def rr_allowed_on_update?
-    group and (group.round_robin_enabled? and Account.current.features?(:round_robin_on_update))
   end
 
   #To be removed after dispatcher redis check removed
@@ -413,23 +438,78 @@ class Helpdesk::Ticket < ActiveRecord::Base
     NewRelic::Agent.notice_error("Redis Display ID - Retry limit exceeded in #{account_id}")
   end
 
+  def validate_related_tickets
+    if related_ticket_ids.count == 1
+      @related_ticket = Account.current.tickets.permissible(User.current).readonly(false).find_by_display_id(related_ticket_ids)
+      unless(@related_ticket && @related_ticket.association_type.nil? && @related_ticket.can_be_linked? )
+        errors.add(:base,t("ticket.link_tracker.permission_denied")) and return false
+      end
+    elsif links_limit_exceeded(related_ticket_ids.count)
+      errors.add(:base,t("ticket.link_tracker.count_exceeded", :count => TicketConstants::MAX_RELATED_TICKETS)) and return false
+    end
+  end
+
+  def validate_tracker_ticket
+    @tracker_ticket = Account.current.tickets.find_by_display_id(tracker_ticket_id)
+    unless @tracker_ticket && @tracker_ticket.tracker_ticket? && !@tracker_ticket.spam_or_deleted? && self.can_be_linked?
+      errors.add(:base,t("ticket.link_tracker.permission_denied")) and return false
+    end
+    if self.association_type && @tracker_ticket.associates.present? && links_limit_exceeded(@tracker_ticket.associates.count)
+      errors.add(:base,t("ticket.link_tracker.count_exceeded",:count => TicketConstants::MAX_RELATED_TICKETS)) and return false
+    end
+    self.associates_rdb = related_ticket? ? @tracker_ticket.display_id : nil
+  end
+
+  def set_links
+    Rails.logger.debug "Linking Related tickets [#{related_ticket_ids}] to tracker_ticket #{self.display_id}"
+    if @related_ticket.present? && update_related_ticket
+      self.associates = [ @related_ticket.display_id ]
+    elsif related_ticket_ids.count > 1
+      ::Tickets::LinkTickets.perform_async({:tracker_id => self.display_id, :related_ticket_ids => related_ticket_ids})
+    end
+  end
+
+  def linked_now?
+    tracker_ticket_id && related_ticket? && @model_changes.key?(Helpdesk::SchemaLessTicket.association_type_column) &&
+      @model_changes[Helpdesk::SchemaLessTicket.association_type_column][0].nil?
+  end
+
+  def unlinked_now?
+    tracker_ticket_id && !related_ticket? && @model_changes.key?(Helpdesk::SchemaLessTicket.association_type_column) && 
+      @model_changes[Helpdesk::SchemaLessTicket.association_type_column][0] == TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:related]
+  end
+
+  def add_links
+    Rails.logger.debug "Linking Related tickets [#{self.id}] to tracker_ticket #{@tracker_ticket.display_id}"
+    @tracker_ticket.add_associates([self.display_id])
+    create_tracker_activity(:tracker_link)
+    self.associates = [ @tracker_ticket.display_id ]
+    ::Tickets::AddBroadcastNote.perform_async({ :ticket_id => @tracker_ticket.id, :related_ticket_ids => [self.display_id] })
+  end
+
+  def remove_links
+    Rails.logger.debug "Uninking Related tickets [#{self.id}] from tracker_ticket #{@tracker_ticket.display_id}"
+    self.remove_all_associates
+    @tracker_ticket.remove_associates([self.display_id])
+    create_tracker_activity(:tracker_unlink)
+    self.delete_broadcast_notes
+  end
+
+  def reset_links
+    ::Tickets::ResetAssociations.perform_async([self.id])
+  end
+
+  def remove_associations?
+    deleted_or_spammed_now? && linked_ticket?
+  end
+
+  def deleted_or_spammed_now?
+    (deleted_changed? && @model_changes[:deleted][0] == false) or 
+        (spam_changed? && @model_changes[:spam][0] == false)
+  end
+
 private 
 
-  def skip_rr_on_update?
-    #Option to toggle round robin off in L2 script
-    return true unless rr_allowed_on_update?
-    return true if Thread.current[:skip_round_robin].present?
-
-    #Don't trigger in case this update is a user action and it will trigger observer
-    return true if user_present? && !filter_observer_events(false).blank?
-
-    #Don't trigger during an observer save, as we call RR explicitly in the worker
-    return true if Thread.current[:observer_doer_id].present?
-
-    #Trigger RR if the update is from supervisor 
-    false    
-  end
- 
   def push_create_notification
 	push_mobile_notification(:new)
   end 
@@ -470,9 +550,10 @@ private
   # TODO - Must change in new reports when this method is changed.
   def update_ticket_related_changes
     @model_changes = self.changes.to_hash
+    @model_changes.merge!(:round_robin_assignment => [nil, true]) if round_robin_assignment
     @model_changes.merge!(schema_less_ticket.changes) unless schema_less_ticket.nil?
     @model_changes.merge!(flexifield.changes) unless flexifield.nil?
-		@model_changes.merge!({ tags: [] }) if self.tags_updated #=> Hack for when only tags are updated to trigger ES publish
+    @model_changes.merge!({ tags: [] }) if self.tags_updated #=> Hack for when only tags are updated to trigger ES publish
     @model_changes.symbolize_keys!
   end
 
@@ -519,14 +600,26 @@ private
       @requester_name ||= self.name # for MobiHelp
     end
 
-    self.requester = account.all_users.find_by_an_unique_id({ 
+    assign_agent_requester if tracker_ticket?
+
+    self.requester ||= account.all_users.find_by_an_unique_id({ 
       :email => self.email, 
       :twitter_id => twitter_id,
       :external_id => external_id,
       :fb_profile_id => facebook_id,
-      :phone => phone })
+      :phone => phone,
+      :unqiue_external_id => unique_external_id })
     
     create_requester unless requester
+  end
+
+  def assign_agent_requester
+    agent_requester = account.technicians.find_by_email(email)
+    if agent_requester.present?
+      self.requester = agent_requester
+    else
+      errors.add(:base,t("ticket.tracker_agent_error"))
+    end
   end
 
   def create_requester
@@ -538,9 +631,9 @@ private
       requester.signup!({:user => {
         :email => self.email, #user_email changed
         :twitter_id => twitter_id, :external_id => external_id,
-        :name => name || twitter_id || @requester_name || external_id,
+        :name => name || twitter_id || @requester_name || external_id || unique_external_id,
         :helpdesk_agent => false, :active => email.blank?,
-        :phone => phone, :language => language
+        :phone => phone, :language => language, :unqiue_external_id => unique_external_id
         }}, 
         portal, !outbound_email?) # check @requester_name and active
       
@@ -549,7 +642,7 @@ private
   end
 
   def can_add_requester?
-    email.present? || twitter_id.present? || external_id.present? || phone.present?
+    email.present? || twitter_id.present? || external_id.present? || phone.present? || unique_external_id.present?
   end
 
   def update_content_ids
@@ -740,4 +833,23 @@ private
   def execute_observer?
     user_present? and !disable_observer_rule
   end
+
+  def update_related_ticket
+    @related_ticket.associates = [ self.display_id ]
+    @related_ticket.update_attributes(
+      :association_type => TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:related],
+      :associates_rdb => self.display_id )
+  end
+
+  def links_limit_exceeded(tickets_count)
+    tickets_count > TicketConstants::MAX_RELATED_TICKETS
+  end
+
+  def create_tracker_activity(action, tracker = @tracker_ticket)
+    if Account.current.features?(:activity_revamp)
+      tracker.misc_changes = {action => [self.display_id]}
+      tracker.manual_publish_to_rmq("update", RabbitMq::Constants::RMQ_ACTIVITIES_TICKET_KEY)
+    end
+  end
+
 end

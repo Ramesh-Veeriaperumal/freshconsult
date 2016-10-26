@@ -10,7 +10,7 @@
 		</div>
 	<% end %>
 	<div class="ticket-header-btn btn-toolbar pull-right">
-		<%= link_to t('cancel'), (@item.new_record? ? {:action => 'index'} : @item ), :class => "btn cancel-btn" %>
+		<%= link_to t('cancel'), (@item.new_record? ? {:action => 'index'} : @item ), :class => "btn cancel-btn", :"data-parallel-placeholder"=>"#ticket-leftFilter", :"data-parallel-url"=>"/helpdesk/tickets/filter_options", :"data-pjax"=>"#body-container" %>
 		<span class="btn-group dropdown">
 			<button class="btn btn-primary" id="newticket-submit" data-loading-text="<%= t('ticket.submit_loading')  %>">
 				<%= t('ticket.submit_ticket')  %>
@@ -26,6 +26,7 @@
 					<%= link_to t('submit_and_new').html_safe, '#', :name => "action_save" %>
 				</li>
 			</ul>
-		</span>
-	</div>
+		</span>  
+	</div> 
 </div>
+<div class="muted"><%= t("ticket.submit_a_ticket_info") %></div>

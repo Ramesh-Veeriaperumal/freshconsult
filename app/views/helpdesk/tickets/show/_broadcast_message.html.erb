@@ -1,0 +1,19 @@
+<div class="commentbox private-note broadcast_message_box">
+	<div class="">
+		<div class="author-mail-detail">
+			<span class="ficon-broadcast-tracker fsize-18 muted"></span>
+			<b><%= t("helpdesk.tickets.note.created_on_live.broadcast_message") %></b>, <abbr data-livestamp='<%= @last_broadcast_note.created_at.to_i %>'></abbr><br>
+		</div>
+		<div rel="image-enlarge" id="ticket_original_request" class="request_mail collapsed boadcast_expander">
+	    	<%= @last_broadcast_note.body_html.html_safe %>
+		</div>
+		<div class="freshdesk_quote quoted_text">
+			<a href="#" class="q-marker tooltip" data-original-title="View complete message" twipsy-content-set="true"></a>
+		</div>
+		<% if show_insert_into_reply? %>
+		<div class="attach_broadcasted_msg">
+			<a href="" id="FwdButton" data-replyto-handle="<%= @ticket.twitter? ? @ticket.latest_twitter_comment_user : "" %>" rel="note-button" data-note-type="reply" data-reply-type="broadcast" data-domhelper-name="reply-button" data-editor-id="cnt-reply-body"><%= t("ticket.link_tracker.insert_to_reply") %></a>
+		</div>
+		<% end %>
+	</div>
+</div>

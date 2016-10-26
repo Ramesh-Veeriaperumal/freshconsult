@@ -17,7 +17,7 @@ module Helpdesk::S3
     # here key is the full path after bucket_name
     # value is json string
     def create(key, value, bucket_name)
-      AWS::S3::Bucket.new(bucket_name).objects[key].write(value,:content_type => 'application/json')
+      AWS::S3::Bucket.new(bucket_name).objects[key].write(value,:content_type => 'application/json',:server_side_encryption => :aes256)
     end
 
     # gets key and bucket_name as params

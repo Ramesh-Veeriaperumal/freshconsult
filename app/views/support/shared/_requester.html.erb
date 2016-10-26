@@ -13,25 +13,7 @@
 	</div>
 
 	<% if _cc_condition %>		
-		<a href="#" data-toggle-dom="#cc-emails" data-toggle-text="Hide cc" id="add-cc-button"><%= t('helpdesk.shared.addcc') %></a>
+		<a href="#" data-toggle-dom="#cc-emails" data-toggle-text="<%= t('helpdesk.shared.hide_cc') %>" id="add-cc-button"><%= t('helpdesk.shared.addcc') %></a>
 	<% end %>
 </div>
-<% if _cc_condition %>
-	<div id="cc-emails" class="cc-emails hide">
-		<span class="cc-label"><%= t('helpdesk.shared.cc') %>:</span>
-		<% if field.company_cc_in_portal?
-			if current_user.contractor? %>
-				<%= render_autocomplete({ :selected_values => [], 
-															:type => :cc_emails, 
-															:include_none => true }) %>
-			<% else %>
-				<%= select_tag(:cc_emails, 
-							options_for_select(current_user.company.users.collect{ |c| [c.email, c.email] }),
-							{:multiple => true, 
-							"data-placeholder" => t("ticket_form.select_contacts", :contact_name => current_user.company.name) }) %>
-			<% end %>
-	  <% else %>
-	    <input type="text" id="cc_emails" name="cc_emails" class="non_company_ccs" />
-	  <% end %>
-	</div>
-<% end %>
+<%= render_add_cc_field field, _cc_condition%>

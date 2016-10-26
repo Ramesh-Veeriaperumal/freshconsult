@@ -20,12 +20,8 @@ class Search::Filters::Docs
   end
 
   # Doing this as there will be only one cluster
-  def host(request_type = "put")
-    if request_type == "put"
-      ::COUNT_HOST
-    else
-      Account.current.features?(:countv2_reads) ? ::COUNT_V2_HOST : ::COUNT_HOST
-    end
+  def host
+    ::COUNT_V2_HOST
   end
 
   ####################
@@ -57,6 +53,7 @@ class Search::Filters::Docs
     
     # Get document IDs from ES response
     parsed_response = JSON.parse(response)
+    Rails.logger.info "ES records response:: Account -> #{Account.current.id}, Took:: #{parsed_response['took']}"
     record_ids      = parsed_response['hits']['hits'].collect { |record| record['_id'] }
     total_entries   = parsed_response['hits']['total']
     
@@ -106,7 +103,7 @@ class Search::Filters::Docs
       deserialized_params = es_query(params, negative_params, permissible_value).merge(options)
       error_handle do
         request = RestClient::Request.new(method: :get,
-                                           url: [host("get"), alias_name("get"), end_point].join('/'),
+                                           url: [host, alias_name, end_point].join('/'),
                                            payload: deserialized_params.to_json)
         log_request(request)
         response = request.execute
@@ -116,12 +113,8 @@ class Search::Filters::Docs
     end
 
     #_Note_: Include type if not doing only for ticket
-    def alias_name(request_type = "put")
-      if request_type == "put"
-        "es_filters_#{Account.current.id}"
-      else
-        Account.current.features?(:countv2_reads) ? "es_count_#{Account.current.id}" : "es_filters_#{Account.current.id}"
-      end
+    def alias_name
+      "es_count_#{Account.current.id}"
     end
 
     def document_path(model_class, id, query_params={})

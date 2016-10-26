@@ -38,6 +38,10 @@ class Helpdesk::SchemaLessNote < ActiveRecord::Base
 		:int_nc03
 	end
 
+	def self.category_column
+		:int_nc01
+	end
+	
 	def last_modified_user_id
 		note_properties[:last_modified_user_id] if note_properties.is_a?(Hash)
 	end

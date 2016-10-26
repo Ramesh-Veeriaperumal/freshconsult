@@ -159,6 +159,10 @@ class Account < ActiveRecord::Base
     freshchat_enabled? and features?(:chat_routing)
   end
 
+  def suggest_tickets_enabled?
+    launched?(:suggest_tickets)
+  end
+
   def supervisor_feature_launched?
     features?(:freshfone_call_monitoring) || features?(:agent_conference)
   end
@@ -173,6 +177,10 @@ class Account < ActiveRecord::Base
 
   def dashboard_disabled?
     ismember?(DASHBOARD_DISABLED, self.id)
+  end
+
+  def dashboardv2_enabled?
+   launched?(:admin_dashboard) || launched?(:supervisor_dashboard) || launched?(:agent_dashboard)
   end
 
   def restricted_compose_enabled?
@@ -204,6 +212,10 @@ class Account < ActiveRecord::Base
   end
 
   #Temporary feature check methods - using redis keys - ends here
+
+  def round_robin_capping_enabled?
+    launched?(:round_robin_capping) #features?(:round_robin_load_balancing)
+  end
 
   def validate_required_ticket_fields?
     ismember?(VALIDATE_REQUIRED_TICKET_FIELDS, self.id)
@@ -238,6 +250,11 @@ class Account < ActiveRecord::Base
 
   def restricted_helpdesk?
     features?(:restricted_helpdesk) && helpdesk_restriction_enabled?
+  end
+
+  def link_tickets_enabled?
+    launched?(:link_tickets) 
+    # feature?(:link_tickets)
   end
 
   class << self # class methods

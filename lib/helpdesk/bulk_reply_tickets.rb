@@ -83,6 +83,7 @@ class Helpdesk::BulkReplyTickets
     def add_reply ticket
       note = ticket.notes.build note_params(ticket)
       note.from_email = get_from_email if params[:email_config] and params[:email_config]["reply_email"]
+      self.cc_emails = self.notable.cc_email_hash[:reply_cc]
       # Injecting '@skip_resource_rate_limit' instance variable to skip spam watcher
       note.instance_variable_set(:@skip_resource_rate_limit, true)
       build_attachments note

@@ -2,11 +2,12 @@
 <% ticket_style = subject_style(ticket,@onhold_and_closed_statuses) %>
 <% modal ||= false %>
 
-<tr class="ticket-status-<%= ticket.status %> " data-ticket="<%= ticket.display_id %>">
+<tr class="ticket-status-<%= ticket.status %> " data-ticket="<%= ticket.display_id %>" 
+	data-association="<%= ticket.association_type || ticket.parent_ticket.present? if current_account.link_tickets_enabled? %>">
   <td class="priority-border priority-<%=ticket.priority_key%>"></td>
 
     <td class="check">
-    	<input class="selector mousetrap" id="ids_" name="ids[]" type="checkbox" value="<%=ticket.to_param%>">
+    	<input class="selector mousetrap" id="ids_" name="ids[]" type="checkbox" value="<%=ticket.to_param%>" data-ticket-status="<%= ticket.status %> ">
     </td>
 
   <% unless user_page %>
@@ -37,7 +38,7 @@
   <td class="name td-ticket-details <%= 'user-page' if user_page %>">
 		<div class="ticket_subject">
 			<span class="sc-item-cursor priority-border  priority-<%=ticket.priority_key%> shorcuts-info"></span>
-			<h3 class="ticket-description-tip <%= ticket_style %>_ticket hyphernate" data-tip-url="<%= latest_note_helpdesk_ticket_url(ticket) %>">
+			<h3 class="ticket-description-tip <%= ticket_style %>_ticket break-word" data-tip-url="<%= latest_note_helpdesk_ticket_url(ticket) %>">
 				<%= link_to( h(ticket.subject) + content_tag(:span, " ##{h(ticket.display_id)}", :class => "ticket_id"), ticket, "data-pjax" => "#body-container" ) %>
 
 				<% if (feature?(:agent_collision) || feature?(:collision)) %>
@@ -59,6 +60,11 @@
 			<% unless ticket.requester.nil? %>
 				<div class="info-data hideForList">
 					<div class="information ellipsis">
+						<% if current_account.link_tickets_enabled? %>
+							<%= content_tag(:span, 
+									t("#{TicketConstants::TICKET_ASSOCIATION_TOKEN_BY_KEY[ticket.association_type]}"),
+									:class => "association_type") if ticket.association_type.present? %>
+						<% end %>
 						<% if ticket.outbound_email? %>
 							<%= t("ticket.ticket_to", :username => requester(ticket)).html_safe %>
 						<% else %>

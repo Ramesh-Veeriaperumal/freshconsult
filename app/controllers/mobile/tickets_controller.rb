@@ -64,7 +64,7 @@ class Mobile::TicketsController < ApplicationController
     ticket_list = filter_tickets(agent_filter)
     tickets_json = ticket_list.map(&:to_mob_json_index)
     respond_to do |format|
-      format.nmobile {render json: { tickets: tickets_json, top_view: top_view }} 
+      format.nmobile {render json: { tickets: tickets_json, top_view: top_view, sort_fields_options: sort_fields_options, sort_order_fields_options: sort_order_fields_options, ticket_filter_hash: ticket_filter_hash}} 
     end
   end
   
@@ -186,6 +186,15 @@ class Mobile::TicketsController < ApplicationController
     end
   end
 
+  def ticket_filter_hash
+    if is_num?(params[:filter_name])
+     {
+          :order =>  @ticket_filter.data[:wf_order],
+          :order_type => @ticket_filter.data[:wf_order_type]
+     }
+   end
+  end
+
   def filter_tickets(agent_filter,selector = nil)
     filter_scope   = scoper
     filter_scope   = scoper.where(:responder_id => current_user.id) if agent_filter
@@ -194,6 +203,10 @@ class Mobile::TicketsController < ApplicationController
     else
       if is_num?(params[:filter_name])
         @ticket_filter = current_account.ticket_filters.find_by_id(params[:filter_name])
+         
+         @ticket_filter.data[:wf_order] = params[:wf_order] if params[:wf_order]
+         @ticket_filter.data[:wf_order_type] = params[:wf_order_type] if params[:wf_order_type]
+
         @ticket_filter.query_hash = @ticket_filter.data[:data_hash]
         @ticket_filter.attributes['data']['wf_per_page'] = params[:wf_per_page]
         params.merge!(@ticket_filter.attributes["data"])

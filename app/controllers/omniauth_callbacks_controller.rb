@@ -20,7 +20,7 @@ class OmniauthCallbacksController < ApplicationController
       :user_id => @user_id,
       :state_params => @state_params
     )
-
+    
     result = authenticator.after_authenticate(params)
     flash[:notice] = result.flash_message if result.flash_message.present?
     render result.render and return if result.render.present?
@@ -59,11 +59,8 @@ class OmniauthCallbacksController < ApplicationController
     origin = CGI.parse(origin) if origin.present?
     @app_name ||= Integrations::Constants::PROVIDER_TO_APPNAME_MAP["#{@provider}"] if @provider.present?
 
-    if params[:state].present?
-      assign_state_variables(origin)
-    elsif origin.present? && origin.has_key?('id')
-      assign_default_variables(origin)
-    end
+    assign_state_variables(origin) if params[:state].present?
+    assign_default_variables(origin) if origin.present? && origin.has_key?('id')
   end
 
   def assign_default_variables origin

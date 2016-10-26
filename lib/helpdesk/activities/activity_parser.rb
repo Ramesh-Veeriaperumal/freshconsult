@@ -25,7 +25,7 @@ module Helpdesk::Activities
       @invalid        = false     # to denote, the activity will be show in UI or not
       @suffix         = TYPE[type]
       @current_user   = User.current
-      @summary        = ticketdata.summary.to_i
+      @summary        = ticketdata.summary.nil? ? nil : ticketdata.summary.to_i
       @activity       = {
                         :new  => [], :set  => [], :edit => [], :custom => [], 
                         :misc => [], :rule => {}, :text => [], :note   => [],
@@ -128,12 +128,12 @@ module Helpdesk::Activities
     def build_activity
       activity_str = []
       if new_ticket? or outbound_email? or split_ticket_target?
-        if @activity[:new].present?
-          str = "#{@activity[:new]}"
+        str = if @activity[:new].present?
+          "#{@activity[:new]}"
         elsif new_ticket?
-          str = render_string(get_string_name("new_ticket"))
+          render_string(get_string_name("new_ticket"))
         elsif outbound_email?
-          str = render_string(get_string_name("new_outbound"))
+          render_string(get_string_name("new_outbound"))
         end
         activity_str << str
       end
@@ -209,6 +209,16 @@ module Helpdesk::Activities
             {:status_name => escapeHTML("#{text}")})
     end
 
+    def delete_status(value)
+      str  = get_string_name("property_delete")
+      deleted_property_value = value[0]
+      property_value = @data_hash[:status_name][value[1].to_i]
+      @activity[:set] << render_string(str,
+            {:property => "#{render_string("activities.status")}", 
+              :deleted_property_value => escapeHTML("#{deleted_property_value}"), 
+              :property_value => escapeHTML("#{property_value}")})
+    end
+
     def priority(value)
       str  = get_string_name("priority_change")
       text = TicketConstants.translate_priority_name(value[1].to_i)
@@ -224,25 +234,37 @@ module Helpdesk::Activities
     end
 
     def ticket_type(value)
-      if value[1].blank?
-        params = {:ticket_type => "#{render_string("activities.none")}"}
+      params = if value[1].blank?
+        {:ticket_type => "#{render_string("activities.none")}"}
       else
-        params = {:ticket_type => escapeHTML("#{value[1]}")}
+        {:ticket_type => escapeHTML("#{value[1]}")}
       end
       str = get_string_name("ticket_type_change")
       @activity[:set] << render_string(str, params)
     end
 
     def responder_id(value)
-      if value[1].blank?
-        params = {:responder_path => "#{render_string("activities.none")}"}
+      params = if value[1].blank?
+        {:responder_path => "#{render_string("activities.none")}"}
       else
         user = get_user(value[1].to_i)
         return if user.blank?
-        params = {:responder_path => "#{build_url(user.name, user_path(user))}"}
+        {:responder_path => "#{build_url(user.name, user_path(user))}"}
       end
       str = get_string_name("assigned")
       @activity[:set] << render_string(str, params)
+    end
+
+    def internal_agent_id(value)
+      params = if value[1].blank?
+        {:responder_path => "#{render_string("activities.none")}"}
+      else
+        user = get_user(value[1].to_i)
+        return if user.blank?
+        {:responder_path => "#{build_url(user.name, user_path(user))}"}
+      end
+      str = get_string_name("internal_agent")
+      @activity[:set] << render_string(str, params)      
     end
 
     def requester_id(value)
@@ -252,13 +274,65 @@ module Helpdesk::Activities
       @activity[:set] << render_string(str, {:requester_name => "#{build_url(user.name, user_path(user))}"}) if user
     end
 
+    def rel_tkt_link(value)
+      str = get_string_name("rel_tkt_link")
+      @activity[:misc] << render_string(str, { :tracker_ticket_path => build_ticket_url(value.first.to_i)})
+    end
+
+    def rel_tkt_unlink(value)
+      str = get_string_name("rel_tkt_unlink")
+      @activity[:misc] << render_string(str, { :tracker_ticket_path => build_ticket_url(value.first.to_i)})    
+    end
+
+    def tracker_link(value)
+      str = get_string_name("tracker_link")
+      params = {
+        :related_tickets_count => pluralize(value.count,
+          I18n.t("ticket.link_tracker.rlt_ticket_singular"),
+          I18n.t("ticket.link_tracker.rlt_ticket_plural")),
+        :related_ticket_path => multiple_tickets_url(value)
+      }
+      @activity[:misc] << render_string(str, params)
+    end
+
+    def tracker_unlink(value)
+      str = get_string_name("tracker_unlink")
+      params = {
+        :related_tickets_count => pluralize(value.count,
+          I18n.t("ticket.link_tracker.rlt_ticket_singular"),
+          I18n.t("ticket.link_tracker.rlt_ticket_plural")),
+        :related_ticket_path => multiple_tickets_url(value)
+      }
+      @activity[:misc] << render_string(str, params)
+    end
+
+    def tracker_unlink_all(value)
+      str = get_string_name("tracker_unlink_all")
+      params = {
+        :related_tickets_count => pluralize(value.to_i,
+          I18n.t("ticket.link_tracker.rlt_ticket_singular"),
+          I18n.t("ticket.link_tracker.rlt_ticket_plural")),
+      }
+      @activity[:misc] << render_string(str, params)
+    end
+
     def group_id(value)
-      if value[1].blank?
-        params = {:group_name => "#{render_string("activities.none")}"}
+      params = if value[1].blank?
+        {:group_name => "#{render_string("activities.none")}"}
       else
-        params = {:group_name => escapeHTML("#{value[1]}")}
+        {:group_name => escapeHTML("#{value[1]}")}
       end
       str = get_string_name("group_change")
+      @activity[:set] << render_string(str, params)
+    end
+
+    def internal_group_id(value)
+      params = if value[1].blank?
+        {:group_name => "#{render_string("activities.none")}"}
+      else
+        {:group_name => escapeHTML("#{value[1]}")}
+      end
+      str = get_string_name("internal_group")
       @activity[:set] << render_string(str, params)
     end
 
@@ -270,10 +344,10 @@ module Helpdesk::Activities
     end
 
     def product_id(value)
-      if value[1].blank?
-        params = {:product_name => "#{render_string("activities.none")}"}
+      params = if value[1].blank?
+        {:product_name => "#{render_string("activities.none")}"}
       else
-        params = {:product_name => escapeHTML("#{value[1]}")}
+        {:product_name => escapeHTML("#{value[1]}")}
       end
       str = get_string_name("product_change")
       @activity[:set] << render_string(str, params)
@@ -301,10 +375,10 @@ module Helpdesk::Activities
       prop       = value[:time_spent][1].to_i.zero? ? get_string_name("timesheet_without_time") : get_string_name("timesheet_with_time")
       properties = render_string(prop, params)
       params     = {:timesheet => properties}
-      if value.has_key?(:timer_running)
-        str    = get_string_name("timesheet_timer_start")
+      str = if value.has_key?(:timer_running)
+        get_string_name("timesheet_timer_start")
       else
-        str    = get_string_name("timesheet_create")
+        get_string_name("timesheet_create")
       end
       @activity[:misc] << render_string(str, params)
     end
@@ -353,10 +427,10 @@ module Helpdesk::Activities
     end
 
     def timer_running(value)
-      if value[:timer_running][1] == true 
-        str = get_string_name("timesheet.timer_started")
+      str = if value[:timer_running][1] == true 
+        get_string_name("timesheet.timer_started")
       else
-        str = get_string_name("timesheet.timer_stopped")
+        get_string_name("timesheet.timer_stopped")
       end
       @activity[:misc] << render_string(str)
     end
@@ -455,12 +529,19 @@ module Helpdesk::Activities
       @activity[:set] << render_string(str, params)
     end
 
+    def shared_ownership_reset(value)
+      internal_group_id(value[:internal_group_id]) if value[:internal_group_id].present?
+      internal_agent_id(value[:internal_agent_id]) if value[:internal_agent_id].present?
+      str = render_string(get_string_name("automation_execution"))
+      @activity[:set].last.concat(str) if value[:internal_group_id].present? or value[:internal_agent_id].present?
+    end
+
     # System rule
     def rule(value)    
       rule_name   = escapeHTML(get_rule_name(@rule_id))
       rule_type   = RULE_LIST[value[0].to_i]
       rule_exists = rule_name.present? ? true : false
-      rule_name   = value[1] if !rule_exists
+      rule_name   = escapeHTML(value[1]) if !rule_exists
       rule_type_name   = "#{render_string("activities.#{rule_type}")}"
       @activity[:rule] = {:type_name => rule_type_name, :name => rule_name, :id=> @rule_id, :type=> value[0].to_i, :exists => rule_exists}
     end
@@ -492,41 +573,86 @@ module Helpdesk::Activities
     end
 
     def add_watcher(value)
-      watcher_arr = []
-      params      = {}
-      value.each do |user_id|
-        user = get_user(user_id.to_i)
-        watcher_arr << build_url(user.name, user_path(user)) if user.present?
-      end
-      @invalid = watcher_arr.count.zero?
-      str      = get_string_name("added_watcher")
-      params   = {:watcher_list => "#{watcher_arr.join(', ')}"}
-      @activity[:misc] << render_string(str, params)  if watcher_arr.present?
+      watcher_arr = build_user_arr(value)
+      @invalid    = watcher_arr.count.zero?
+      str         = get_string_name("added_watcher")
+      @activity[:misc] << render_string(str, {:watcher_list => "#{watcher_arr.join(', ')}"})  if watcher_arr.present?
     end
 
     def add_a_cc(value)
-      params = {}
       str    = get_string_name("add_cc")
-      params = {:cc_list => escapeHTML("#{value.join(', ')}")}
-      @activity[:misc] << render_string(str, params) if value.present?
+      @activity[:misc] << render_string(str, {:cc_list => escapeHTML("#{value.join(', ')}")}) if value.present?
     end
 
     def deleted(value)
-      if value[1] == true
-        str = get_string_name("deleted")
+      str = if value[1] == true
+        get_string_name("deleted")
       else
-        str = get_string_name("restored")
+        get_string_name("restored")
       end
       @activity[:misc] << render_string(str)
     end
 
+    def email_to_requester(value)
+      str    = get_string_name("email_to_requester")
+      user   = get_user(value[0].to_i)
+      return if user.blank?
+      @activity[:misc] << render_string(str, {:requester_name => "#{build_url(user.name, user_path(user))}"})
+    end
+
+    def email_to_group(value)
+      str = get_string_name("email_to_group")
+      @activity[:misc] << render_string(str, {:group_list => escapeHTML("#{value.join(', ')}")}) if value.present?
+    end
+
+    def email_to_agent(value)
+      agent_arr   = build_user_arr(value)
+      @invalid    = agent_arr.count.zero?
+      str         = get_string_name("email_to_agent")
+      @activity[:misc] << render_string(str, {:agent_list => "#{agent_arr.join(', ')}"})  if agent_arr.present?      
+    end
+
     def spam(value)
-      if value[1] == true
-        str = get_string_name("spam")
+      str = if value[1] == true
+        get_string_name("spam")
       else
-        str = get_string_name("unspam")
+        get_string_name("unspam")
       end
       @activity[:misc] << render_string(str)
+    end
+
+    def remove_group(value)
+      str = get_string_name("remove_group")
+      params = {:group_name => escapeHTML("#{value[0]}"), :status_name => escapeHTML("#{value[1]}")}
+      @activity[:misc] << render_string(str, params)
+    end
+
+    def remove_agent(value)
+      str = get_string_name("remove_agent")
+      user = get_user(value[0].to_i)
+      return if user.blank?
+      params = {:responder_path => "#{build_url(user.name, user_path(user))}", :group_name => escapeHTML("#{value[1]}")}
+      @activity[:misc] << render_string(str, params)
+    end
+
+    def delete_internal_group(value)
+      str = get_string_name("delete_internal_group")
+      params = {:group_name => escapeHTML("#{value[0]}")}
+      @activity[:misc] << render_string(str, params)
+    end
+
+    def delete_internal_agent(value)
+      str = get_string_name("delete_internal_agent")
+      user = get_user(value[0].to_i)
+      return if user.blank?
+      params = {:responder_path => "#{build_url(user.name, user_path(user))}"}
+      @activity[:misc] << render_string(str, params)
+    end
+
+    def remove_status(value)
+      str = get_string_name("delete_status")
+      params = {:status_name => escapeHTML("#{value[0]}")}
+      @activity[:misc] << render_string(str, params)
     end
 
     # custom checkboxes
@@ -547,10 +673,10 @@ module Helpdesk::Activities
       if text_field?(value)    # text fields
         @activity[:text] << field_name.to_s
       else
-        if value.blank?
-          params = {:field_value => "#{render_string("activities.none")}"}  
+        params = if value.blank?
+          {:field_value => "#{render_string("activities.none")}"}  
         else
-          params = {:field_value => escapeHTML("#{value}")}
+          {:field_value => escapeHTML("#{value}")}
         end
         params[:field_name] = escapeHTML("#{field_name.to_s}")
         str = get_string_name("custom_field_change")
@@ -584,6 +710,15 @@ module Helpdesk::Activities
     def build_url(title, url)
       title = escapeHTML("#{title}")
       @type == :json ? "#{title}" : "<a href='#{url}'>#{title}</a>"
+    end
+
+    def build_user_arr(value)
+      user_arr = []
+      value.each do |user_id|
+        user = get_user(user_id.to_i)
+        user_arr << build_url(user.name, user_path(user)) if user.present?
+      end
+      user_arr
     end
 
     def get_string_name(value)
@@ -661,6 +796,13 @@ module Helpdesk::Activities
 
     def note?
       @summary ==  TICKET_ACTIVITY_KEYS_BY_TOKEN[:conversation] || @activity[:note].present?
+    end
+
+    def multiple_tickets_url(value)
+      value.map do |v|
+        title = "##{v.to_i}"
+       "#{build_url(title, helpdesk_ticket_path(v.to_i))}"
+      end.join(', ')
     end
   end
 end

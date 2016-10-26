@@ -6,8 +6,9 @@ class Freshfone::CallObserver < ActiveRecord::Observer
   include Freshfone::SubscriptionsUtil
   include Freshfone::AcwUtil
   
-	def before_create(freshfone_call)
-		initialize_data_from_params(freshfone_call)
+	def before_create(call)
+		initialize_data_from_params(call)
+		build_outgoing_browser_meta call if outgoing_meta_buildable? call
 	end
 
   def after_create(freshfone_call)
@@ -213,8 +214,8 @@ class Freshfone::CallObserver < ActiveRecord::Observer
     end
 
     def on_app_or_mobile?(call)
-      call.meta.android_or_ios? || (call.incoming? &&
-        call.meta.available_on_phone?)
+      call.meta.android_or_ios? || (!call.outgoing_root_call? &&
+       call.meta.available_on_phone?)
     end
 
     def move_to_acw_state(call)
@@ -225,10 +226,21 @@ class Freshfone::CallObserver < ActiveRecord::Observer
 
     def transferred?(call)
       call.children.present? && call.children.last.call_status.in?(
-        Freshfone::Call::INTERMEDIATE_CALL_STATUS)
+        Freshfone::Call::ONGOING_CALL_STATUS)
     end
 
     def warm_transferred?(call)
       call.supervisor_controls.inprogress_warm_transfer_calls.present?
+    end
+
+    def outgoing_meta_buildable?(call)
+      call.outgoing? && call.is_root? && call.params[:device_info].present? &&
+      	call.meta.blank?
+    end
+
+    def build_outgoing_browser_meta(call)
+      call.build_meta(
+        meta_info: {agent_info: call.params[:device_info]},
+        device_type: Freshfone::CallMeta::USER_AGENT_TYPE_HASH[:browser])
     end
 end

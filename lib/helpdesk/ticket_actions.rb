@@ -15,7 +15,7 @@ module Helpdesk::TicketActions
     
     @ticket = current_account.tickets.build(params[:helpdesk_ticket])
     #Using .dup as otherwise its stored in reference format(&id0001 & *id001).
-    @ticket.cc_email = {:cc_emails => cc_emails , :fwd_emails => [], :reply_cc => cc_emails.dup, :tkt_cc => cc_emails.dup}
+    @ticket.cc_email = {:cc_emails => cc_emails , :fwd_emails => [], :bcc_emails => [], :reply_cc => cc_emails.dup, :tkt_cc => cc_emails.dup}
     set_default_values
     # The below is_native_mobile? check is valid for iPhone app version 1.0.0 and Android app update 1.0.3 
     # Once substantial amout of users have upgraded from these version, we need to remove 
@@ -26,6 +26,7 @@ module Helpdesk::TicketActions
     build_ticket_attachments
     @ticket.skip_notification = skip_notifications
     @ticket.meta_data = params[:meta] if params[:meta]
+    @ticket.tag_names = params[:helpdesk][:tags] unless params[:helpdesk].blank? or params[:helpdesk][:tags].nil? 
     
     return false unless @ticket.save_ticket
 
@@ -115,8 +116,10 @@ module Helpdesk::TicketActions
   end
 
   def component
-    @ticket = current_account.tickets.find_by_id(params[:id])   
-    render :partial => "helpdesk/tickets/show/#{params[:component]}", :locals => { :ticket => @ticket , :search_query =>params[:q] } 
+    render_404 and return if params[:component].blank?
+    @ticket = current_account.tickets.find_by_id(params[:id])
+    render :partial => "helpdesk/tickets/show/#{params[:component]}",
+           :locals => { :ticket => @ticket , :search_query =>params[:q] } 
   end
   
   def update_split_activities

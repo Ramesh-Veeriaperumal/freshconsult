@@ -28,7 +28,8 @@ class Social::TicketRule < ActiveRecord::Base
   end
 
   def group_id
-    action_data[:group_id].to_i
+    grp_id = action_data[:group_id].to_i
+    grp_id == 0 ? nil : grp_id
   end
 
   def product_id(twitter_stream)

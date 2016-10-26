@@ -1,0 +1,47 @@
+ <div id = "nba-loading"></div>
+ <div class="nba-sas sas-hidden">
+         <div class="sas-hd" id="sas-hd"> 
+          <div id = "sas-hd-result">
+            <span class="beta-tag sas-hidden">Beta</span>
+            <span class = "sas-cnt">8</span><%=t('ml.similat_tickets_found')%> 
+            <a class="help" id="help" href="#"><span><%=t('ml.help')%></span></a>
+            <a class="toggle" id = "show" href="#"><span><%=t('ml.show')%></span><i class="ficon-caret-right"></i></a>
+          </div>
+          <div id = "sas-hd-no-result" class = "sas-hidden"><span class="sas-hd"><%=t('ml.no_suggestions')%></span></div>
+          <div id = "sas-hd-error" class = "sas-hidden"><a href="#"><span>Reload</span> <i class="ficon-refresh-source"></i></a> <span class="err-msg">
+          <%=t('ml.error')%></span></div> 
+         </div>
+        <div id="sas-pnl" class = "sas-hidden">
+        <div class="sas-ctd">
+        <div class="sas-cards">  
+            </div>
+           
+        </div>
+         <div class="sas-foot">
+        	<div class="sas-nav">
+            	<span></span>
+              <div class="sas-hidden">
+               	<a id = "prv" class="prv dbl" href="#" title="Previous"><i class="ficon-arrow-left-2"></i></a>
+                <a id = "nxt" class="nxt dbl" href="#"  title="Next"><i class="ficon-arrow-right-2"></i></a>
+            </div>
+          </div>
+        	<div class="sas-fdbk"><%=t('ml.feed_back')%> <i class="ficon-like fsize-18"  title="Thumbs up"></i> <i class="ficon-dislike fsize-18" title="Thumbs down"></i></div>
+          <div id = "thanksID" class = "sas-fdbk sas-hidden"><%=t('ml.feed_back_thanks')%></div>
+          <div id = "textthanksID" class = "sas-fdbk sas-hidden"><%=t('ml.feed_back_thanks_text')%></div>
+          <div class="sas-fdbk-txt sas-hidden"><input placeholder = "<%=t('ml.suggestion_text')%>"  id="sas-fdbk-txt" type="text"/> <a id="fdbk-button" class="btn" href=""><%=t('ml.submit')%></a></div>
+        </div>
+        </div>
+      </div>  
+    <%= javascript_tag do %>
+    if (typeof nba === "undefined") { nba = {};nba.ticket={};nba.ticket.group={};nba.ticket.responder={}
+    nba.ticket.id = "<%=@ticket.display_id%>"
+    nba.ticket.source = "<%=@ticket.source%>"
+    nba.ticket.status = "<%=@ticket.status%>"
+    nba.ticket.ticket_type = "<%=@ticket.ticket_type%>"
+    nba.ticket.group.id = "<%=@ticket.group_id%>"
+    nba.ticket.responder.id = "<%=@ticket.responder_id%>"
+    nba.domain = "<%= current_account.full_domain %>"
+    nba.key = "<%= MlAppConfig["kissmetrics"] %>"
+    nba.enable = "<%= current_account.suggest_tickets_enabled? && current_user.language=="en"%>"
+    }
+    <% end %>

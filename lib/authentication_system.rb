@@ -44,13 +44,63 @@ module AuthenticationSystem
 
     def current_user_session
       return @current_user_session if defined?(@current_user_session)
-      assume_agent_email = handle_api_key(request, params)
+      if is_native_mobile?
+        handle_mobile_authentication(request,params)
+      else
+        assume_agent_email = handle_api_key(request, params)
+      end
       @current_user_session = current_account.user_sessions.find
       handle_assume_identity_for_api(assume_agent_email) unless assume_agent_email.blank?
-      
       @current_user_session
     end
 
+    def handle_mobile_authentication(request,params)
+      http_auth_header = request.headers['HTTP_AUTHORIZATION']
+      return if http_auth_header.nil?
+      basic_auth_match = /Basic (.*)/.match(http_auth_header)
+      if !basic_auth_match.blank? && basic_auth_match.length > 1
+        token_with_x = Base64.decode64(basic_auth_match[1])
+        token = token_with_x.split(":")[0] 
+        payload = token.split(".")[1] 
+        if payload.nil?
+          params['k'] = token
+          return 
+        end
+        user = fetch_mobile_user(Base64.decode64(payload))
+        secret = user.mobile_jwt_secret if !user.nil? && !user.password_expired?
+        begin
+          decoded_token = decode_mobile_auth_token(token, secret.to_s) 
+        rescue JWT::DecodeError
+          Rails.logger.error "Invalid Mobile JWT Token"
+        else 
+          params['k'] = user.single_access_token          
+        end
+      end
+    end
+
+    def fetch_mobile_user(payload)
+      payload = JSON.parse(payload, symbolize_names: true)
+      if valid_payload?(payload)
+        case payload[:type]
+        when "email"
+          current_account.user_emails.user_for_email(payload[:id])
+        # Note :: Mobile app supports email only for now.
+        # when "twitter" 
+        #   current_account.all_users.find_by_twitter_id(payload[:id])
+        # when "facebook"
+        #   current_account.all_users.find_by_fb_profile_id(payload[:id])
+        # when "phone"
+        #   current_account.all_users.find_by_phone(payload[:id]) || current_account.all_users.find_by_mobile(payload[:id])
+        else
+          Rails.logger.error "Mobile Auth :: Unsupported Login Type :: #{payload[:type]}"
+        end
+      end
+    end
+
+    def valid_payload?(payload)
+      payload.key?(:type) && payload.key?(:id)
+    end
+    
     def handle_api_key(request, params)
       if params['k'].blank?
         if SUPPORTED_API_KEY_FORMATS.include?(params['format'])
@@ -186,12 +236,12 @@ module AuthenticationSystem
       end
     end
     
-    def grant_day_pass #Need to refactor this code..
+    def grant_day_pass(dont_redirect = false)#Need to refactor this code..
       if (qualify_for_day_pass? && !current_user.day_pass_granted_on)
         unless current_account.day_pass_config.grant_day_pass(current_user, params)
           log_out!
           flash[:notice] = I18n.t('agent.insufficient_day_pass')
-          redirect_to login_url
+          redirect_to login_url unless dont_redirect
           return nil
         end
       end

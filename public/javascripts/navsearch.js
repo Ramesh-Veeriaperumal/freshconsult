@@ -22,6 +22,7 @@ jQuery(document).ready(function(){
 
 
 	callbackToSearch = function(string, search_url){
+			
 		jQuery('#SearchBar').addClass('sloading loading-small loading-right');
 		jQuery('.results').hide().find('li.spotlight_result').remove();
   	    jQuery.ajax({ url: search_url+string,
@@ -46,8 +47,14 @@ jQuery(document).ready(function(){
     		var result = search_results[i];
     		if(result){
     			var result_type = result.result_type
-    			resultHtml[result_type] = (typeof(resultHtml[result_type]) == "undefined" ? "" : resultHtml[result_type] ) + 
+    			if(result_type == 'user'){
+    				resultHtml[result_type] = (typeof(resultHtml[result_type]) == "undefined" ? "" : resultHtml[result_type] ) + 
+									    	JST["app/search/templates/spotlight_result_user"](result)
+    			}else{
+    				resultHtml[result_type] = (typeof(resultHtml[result_type]) == "undefined" ? "" : resultHtml[result_type] ) + 
 									    	JST["app/search/templates/spotlight_result"](result)
+    			}
+    			
     		}
 		}
     	
@@ -61,6 +68,8 @@ jQuery(document).ready(function(){
     	jQuery("ul.results").filter(function(){return jQuery(this).find('li.spotlight_result').length > 0; }).show();
 
     	jQuery('ul.results').on('click.add_to_recent_search', 'li.spotlight_result a' , function(ev){
+    		// Dont run this if we are trying to go to user tickets
+    		if (jQuery(ev.target).hasClass("spotlight-result-user-ticket-icon")) return;
     		NavSearchUtils.saveToLocalRecentSearches(fullSearchString);
     	});
 
@@ -79,6 +88,7 @@ jQuery(document).ready(function(){
 		//reset search bar by removing search query
 		//and removing appended search results
 		$J('#header_search').val('');
+		currentString = "";
 		$J('ul.results li.spotlight_result').remove();
 		jQuery("ul.results").filter(function(){return jQuery(this).find('li.spotlight_result').length == 0; }).hide();
 	}	
@@ -100,6 +110,8 @@ jQuery(document).ready(function(){
 
 	$J(document).on('mouseleave',"#SearchResultsBar", function(){
 		insideSearch = false;
+		$J('#SearchResultsBar a').removeClass('active');
+		currentactive = null;
 	});	
 			
 	$J(document).on("focusout", "#header_search", function(ev){ 
@@ -143,8 +155,8 @@ jQuery(document).ready(function(){
 				var searchItem = JST["app/search/templates/spotlight_result_recent_search"](
 					{
 						id: j, 
-						path:'/search/all?term=' + NavSearchUtils.localRecentSearches[j], 
-						content: NavSearchUtils.localRecentSearches[j]
+						path:'/search/all?term=' + encodeURIComponent(NavSearchUtils.localRecentSearches[j]), 
+						content: escapeHtml(NavSearchUtils.localRecentSearches[j])
 					});
 				jQuery('#SearchResultsBar .recent_searches_results').append(searchItem);
 			}			
@@ -160,7 +172,7 @@ jQuery(document).ready(function(){
 					id: j, 
 					displayId: NavSearchUtils.localRecentTickets[j].displayId, 
 					path: NavSearchUtils.localRecentTickets[j].path, 
-					subject: NavSearchUtils.localRecentTickets[j].subject
+					subject: escapeHtml(NavSearchUtils.localRecentTickets[j].subject)
 				});
 				jQuery('#SearchResultsBar .recent_tickets_results').append(searchItem);
 			}
@@ -169,8 +181,9 @@ jQuery(document).ready(function(){
 		$J("#SearchResultsBar").css("display", "inline");
 		jQuery("ul.results").filter(function(){return jQuery(this).find('li.spotlight_result').length == 0; }).hide();
 		jQuery("ul.results").filter(function(){return jQuery(this).find('li.spotlight_result').length > 0; }).show();
+	}
 
-		jQuery(document).on('click.remove_recent_search', '.recent_search_cross_icon', function(ev){
+	jQuery(document).on('click.remove_recent_search', '.recent_search_cross_icon', function(ev){
 			ev.stopPropagation();
 			ev.preventDefault();
 			var recentSearchId = jQuery(ev.currentTarget).parents('li.spotlight_result').attr('id');
@@ -178,7 +191,6 @@ jQuery(document).ready(function(){
 			var searchKey = NavSearchUtils.localRecentSearches[searchIndex];
 			NavSearchUtils.localRecentSearches.splice(searchIndex, 1);
 			NavSearchUtils.setLocalRecentSearches(NavSearchUtils.localRecentSearchKey);
-
 			jQuery.post('/search/remove_recent_search', { search_key: searchKey});
 
 			if(searchIndex === 0 && NavSearchUtils.localRecentSearches.length === 0){
@@ -187,7 +199,13 @@ jQuery(document).ready(function(){
 			}				
 			jQuery('#header_search').focus();
 		});
-	}
+
+	jQuery(document).on('click.search_open_user_tickets', '.spotlight-result-user-ticket-icon', function(ev){
+			ev.stopPropagation();
+			ev.preventDefault();						
+			jQuery(ev.currentTarget).parents('li.spotlight_result').find('a.spotlight-result-hidden-user-tickets-link').click();
+
+		});
 			
 	var move = function(diff){
 		searchlist 	= $J("#SearchResultsBar a");
@@ -217,6 +235,24 @@ jQuery(document).ready(function(){
 				break; 
 		}
 	} 
+
+	var handleSearchAction = function(searchString, self){
+		search_url = "/search/home/suggest?term=";
+		if(searchString != '' && searchString.length > 1 && currentString != searchString){
+			delay(function(){
+				fullSearchString = self.value;
+				callbackToSearch(encodeURIComponent(searchString), search_url);
+				currentString = searchString;
+		    }, 450 ); 
+		}else if(currentString == searchString){
+			if(searchString != '' && jQuery('#SearchResultsBar li').hasClass('spotlight_result')){
+				$J("#SearchResultsBar").css("display", "inline"); 
+				$J("ul.results").filter(function(){return jQuery(this).find('li.spotlight_result').length > 0; }).show();
+			}
+		}else{
+			jQuery("#SearchResultsBar").hide();				
+		}
+	}
 			
 	$J("#header_search").bind("keyup", function(e){
 		 switch (e.keyCode) {
@@ -229,22 +265,18 @@ jQuery(document).ready(function(){
 			default:
 				var self = this;
 				searchString = self.value.replace(/^\s+|\s+$/g, "");
-				search_url = "/search/home/suggest?term=";
-				if(searchString != '' && searchString.length > 1 && currentString != searchString){
-					delay(function(){
-						fullSearchString = self.value;
-						callbackToSearch(encodeURIComponent(searchString), search_url);
-						currentString = searchString;
-				    }, 450 ); 
-				}else if(currentString == searchString){
-					if(searchString != '' && jQuery('#SearchResultsBar li').hasClass('spotlight_result')){
-						$J("#SearchResultsBar").css("display", "inline"); 
-						$J("ul.results").filter(function(){return jQuery(this).find('li.spotlight_result').length > 0; }).show();
-					}
-				}else{
-					jQuery("#SearchResultsBar").hide();				
-				}
+				handleSearchAction(searchString, self);
 			break;
+		}
+	});
+
+	$J("#header_search").on('paste', function(e){
+		if(!e.keyCode){
+			var self = this;
+			setTimeout(function() {
+				searchString = self.value.replace(/^\s+|\s+$/g, "");
+				handleSearchAction(searchString, self);
+			}, 100);
 		}
 	});
 

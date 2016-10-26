@@ -1,5 +1,5 @@
 <% current_portal.ticket_fields_including_nested_fields.each do |field|
-    next if field.section_field? || ["email","source"].include?(field.field_name)
+    next if field.section_field? || ["email","source"].include?(field.field_name) || field.shared_ownership_field?
     @ticket ||= current_account.tickets.new
     if is_edit
       field_value = field.field_type == "nested_field" ? nested_ticket_field_value(@tkt_template, field) : @tkt_template.template_data[field.field_name]

@@ -134,7 +134,11 @@ class CompaniesController < ApplicationController
         @company_archive_tickets = @total_company_archive_tickets.sort_by {|item| -item.created_at.to_i}.take(10)
       end
 
-      company_user_list      = current_account.users.company_users_via_customer_id(@company.id)
+      if current_account.features?(:multiple_user_companies)
+        company_user_list      = @company.users
+      else
+        company_user_list      = current_account.users.company_users_via_customer_id(@company.id)
+      end
       @company_users         = company_user_list.limit(6)
       @company_users_size    = company_user_list.count("1")
     end
@@ -151,8 +155,7 @@ class CompaniesController < ApplicationController
     def es_scoper(per_page)
       order_by = (params[:order_by] == "updated_at") ? :updated_at : :name
       order_type = (params[:order_type] == "desc") ? 'desc' : 'asc'
-      Company.es_filter(current_account.id,params[:letter],(params[:page] || 1),order_by, 
-                                                                              order_type, per_page)
+      Company.es_filter(current_account.id,params[:letter], (params[:page] || 1),order_by, order_type, per_page, request.try(:uuid))
     end
 
     def set_selected_tab

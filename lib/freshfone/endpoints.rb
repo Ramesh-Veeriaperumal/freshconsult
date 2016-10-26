@@ -12,6 +12,10 @@ module Freshfone::Endpoints
     "#{host}/freshfone/forward/initiate?call=#{call_id}&agent_id=#{agent_id}"
   end
 
+  def custom_accept_url(call_id, agent_id)
+    "#{host}/freshfone/forward/initiate_custom?call=#{call_id}&agent_id=#{agent_id}"
+  end
+
   def forward_status_url(call_id, agent_id)
     "#{host}/freshfone/forward/complete?call=#{call_id}&agent=#{agent_id}"
   end
@@ -30,6 +34,10 @@ module Freshfone::Endpoints
 
   def mobile_transfer_accept_url(call_id, source_agent_id, target_agent_id)
     "#{host}/freshfone/forward/transfer_initiate?call=#{call_id}&agent_id=#{target_agent_id}&transferred_from=#{source_agent_id}"
+  end
+
+  def custom_mobile_transfer_url(call_id, source_agent_id, target_agent_id)
+    "#{host}/freshfone/forward/initiate_custom_transfer?call=#{call_id}&agent_id=#{target_agent_id}&transferred_from=#{source_agent_id}"
   end
 
   def mobile_transfer_status_url(call_id, agent_id)
@@ -154,12 +162,16 @@ module Freshfone::Endpoints
     "#{host}/freshfone/hold/initiate?hold_queue=hold_#{customer_sid}#{transfer_options}"
   end
 
-  def transfer_status_url(call_id, agent_id)
-    "#{client_status_url(call_id, agent_id)}&transfer_call=true"
+  def transfer_status_url(call_id, agent_id, warm_transfer_forward = false)
+    "#{client_status_url(call_id, agent_id)}&transfer_call=true#{'&forward=true' if warm_transfer_forward}"
   end
 
   def agent_conference_accept_url(call_id, add_agent_call_id)
     "#{host}/freshfone/agent_conference/success?call=#{call_id}&add_agent_call_id=#{add_agent_call_id}"
+  end
+
+  def custom_agent_conference_url(call_id, add_agent_call_id)
+    "#{host}/freshfone/agent_conference/initiate_custom_forward?call=#{call_id}&add_agent_call_id=#{add_agent_call_id}"
   end
 
   def agent_conference_status_url(call_id, add_agent_call_id)
@@ -199,6 +211,10 @@ module Freshfone::Endpoints
     "#{host}/freshfone/warm_transfer/success?warm_transfer_call_id=#{warm_transfer_call_id}&call=#{call_id}"
   end
 
+  def custom_warm_transfer_url(warm_transfer_call_id, call_id)
+    "#{host}/freshfone/warm_transfer/initiate_custom_forward?warm_transfer_call_id=#{warm_transfer_call_id}&call=#{call_id}"
+  end
+
   def warm_transfer_unhold_url(call)
     "#{host}/freshfone/warm_transfer/unhold?call=#{call}"
   end
@@ -229,6 +245,22 @@ module Freshfone::Endpoints
 
   def redirect_source_url(call_id)
     "#{host}/freshfone/warm_transfer/redirect_source_agent?warm_transfer_call_id=#{call_id}"
+  end
+
+  def forward_initiate_url(call_id, agent_id)
+    "#{host}/freshfone/forward/process_custom?call=#{call_id}&agent_id=#{agent_id}"
+  end
+
+  def forward_transfer_url(call_id, agent_id)
+    "#{host}/freshfone/forward/process_custom_transfer?call=#{call_id}&agent_id=#{agent_id}"
+  end
+
+  def forward_agent_conference_url(call_id, add_agent_call_id)
+    "#{host}/freshfone/agent_conference/process_custom_forward?call=#{call_id}&add_agent_call_id=#{add_agent_call_id}"
+  end
+
+  def forward_warm_transfer_url(warm_transfer_call_id, call_id)
+    "#{host}/freshfone/warm_transfer/process_custom_forward?warm_transfer_call_id=#{warm_transfer_call_id}&call=#{call_id}"
   end
 
   private 

@@ -1,5 +1,4 @@
 <%= render :partial => "/support/shared/ticket_show_sidebar" %> 
-
 <div class="request_details">
   <% if @ticket.deleted %>
     <div class="info-highlight-deleted">    
@@ -82,6 +81,7 @@
     <div class="requestCnt request-conversation">
       <%= render :partial => '/helpdesk/tickets/note', :collection => @ticket.notes.visible.public.exclude_source('meta') %>
     </div>
+    <script type="text/javascript">jQuery("a.delete").hide();</script>
   <% end %>
 </div>
 

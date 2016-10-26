@@ -182,6 +182,11 @@
                 href += "#"+key;
             $('.' + _selectedListItemClass + ' .ticket_subject a').attr('href', href);
             showSelectedTicket(ev);
+        },
+        searchTicketViews = function(ev, key) {
+            _preventDefault(ev);
+            jQuery('#active_filter').click();
+            jQuery('.search-filter').focus();
         },        
         // ----------  Ticket Detail view  -------------
         toggleWatcher = function (ev) {
@@ -297,7 +302,8 @@
                 reply               : selectedTicketReply,
                 forward             : selectedTicketReply,
                 add_note            : selectedTicketReply,
-                scenario            : selectScenario
+                scenario            : selectScenario,
+                search_view         : searchTicketViews
             },
             ticket_detail : {
                 toggle_watcher      : toggleWatcher,
@@ -444,7 +450,7 @@
             }
         })        
         .ready(function(){ 
-        	$(document).trigger("shortcuts:invoke"); 
+            $(document).trigger("shortcuts:invoke"); 
         });
 
 }(jQuery));

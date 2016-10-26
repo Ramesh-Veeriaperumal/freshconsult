@@ -4,11 +4,11 @@
 
 @font-face {
   font-family: "glyphs";
-  src: font-url("glyphs_c6805ca3c837295237c5a4ed808feb2a.eot");
-  src: font-url("glyphs_c6805ca3c837295237c5a4ed808feb2a.eot?#iefix") format("embedded-opentype"),
-       font-url("glyphs_c6805ca3c837295237c5a4ed808feb2a.woff") format("woff"),
-       font-url("glyphs_c6805ca3c837295237c5a4ed808feb2a.ttf") format("truetype"),
-       font-url("glyphs_c6805ca3c837295237c5a4ed808feb2a.svg#glyphs") format("svg");
+  src: font-url("glyphs_e22914da2766d57941494c902614f56c.eot");
+  src: font-url("glyphs_e22914da2766d57941494c902614f56c.eot?#iefix") format("embedded-opentype"),
+       font-url("glyphs_e22914da2766d57941494c902614f56c.woff") format("woff"),
+       font-url("glyphs_e22914da2766d57941494c902614f56c.ttf") format("truetype"),
+       font-url("glyphs_e22914da2766d57941494c902614f56c.svg#glyphs") format("svg");
   font-weight: normal;
   font-style: normal;
 }
@@ -16,7 +16,7 @@
 @media screen and (-webkit-min-device-pixel-ratio:0) {
   @font-face {
     font-family: "glyphs";
-    src: font-url("glyphs_c6805ca3c837295237c5a4ed808feb2a.svg#glyphs") format("svg");
+    src: font-url("glyphs_e22914da2766d57941494c902614f56c.svg#glyphs") format("svg");
   }
 }
 
@@ -31,6 +31,10 @@
 .ficon-agent-fchat-on:before,
 .ficon-agent_summary:before,
 .ficon-alert:before,
+.ficon-align-center:before,
+.ficon-align-justify:before,
+.ficon-align-left:before,
+.ficon-align-right:before,
 .ficon-all-streams:before,
 .ficon-android:before,
 .ficon-answer-checked:before,
@@ -47,19 +51,24 @@
 .ficon-arrow-right-2:before,
 .ficon-arrow-up:before,
 .ficon-arrow-up-2:before,
+.ficon-arrows-alt:before,
+.ficon-arrows-v:before,
 .ficon-article:before,
 .ficon-attachment:before,
 .ficon-attachment-blank:before,
 .ficon-available-on-mobile:before,
+.ficon-bars:before,
 .ficon-bell:before,
 .ficon-billing:before,
 .ficon-blank-file:before,
 .ficon-blind-transfer:before,
 .ficon-block:before,
 .ficon-blocked-call:before,
+.ficon-bold:before,
 .ficon-book:before,
 .ficon-book-dark:before,
 .ficon-book-hollow:before,
+.ficon-broadcast-tracker:before,
 .ficon-building:before,
 .ficon-bulb:before,
 .ficon-bullhorn:before,
@@ -87,11 +96,15 @@
 .ficon-checkmark-thick:before,
 .ficon-chrome:before,
 .ficon-clone:before,
+.ficon-code:before,
+.ficon-code-snippet:before,
 .ficon-comment-multi:before,
 .ficon-comments:before,
 .ficon-comments1:before,
 .ficon-company:before,
 .ficon-compose-email:before,
+.ficon-compress:before,
+.ficon-connect-chat:before,
 .ficon-conversation:before,
 .ficon-cross:before,
 .ficon-cross-filled:before,
@@ -114,6 +127,7 @@
 .ficon-db-sand-clock:before,
 .ficon-db-unassigned:before,
 .ficon-decimal:before,
+.ficon-default-format:before,
 .ficon-delete:before,
 .ficon-deleted:before,
 .ficon-disconnected:before,
@@ -134,6 +148,11 @@
 .ficon-email:before,
 .ficon-email-notifications:before,
 .ficon-email_commands_setting:before,
+.ficon-eraser:before,
+.ficon-eraser-o:before,
+.ficon-exchange:before,
+.ficon-expand:before,
+.ficon-external-link:before,
 .ficon-eye:before,
 .ficon-eye-disabled:before,
 .ficon-facebook:before,
@@ -166,6 +185,7 @@
 .ficon-folder:before,
 .ficon-folder-o:before,
 .ficon-folder-open-o:before,
+.ficon-font:before,
 .ficon-forum-source:before,
 .ficon-forward:before,
 .ficon-forward-tkt:before,
@@ -181,28 +201,38 @@
 .ficon-grouping-disable:before,
 .ficon-grouping-enable:before,
 .ficon-hangup:before,
+.ficon-header:before,
 .ficon-help:before,
 .ficon-help-icon:before,
 .ficon-helpdesk:before,
 .ficon-helpdesk-settings:before,
+.ficon-horizontal-line:before,
 .ficon-ie:before,
 .ficon-ilos-icon:before,
+.ficon-image:before,
 .ficon-import:before,
 .ficon-incoming-call:before,
+.ficon-indent:before,
 .ficon-infinity-5:before,
+.ficon-info:before,
 .ficon-integrations:before,
 .ficon-ios:before,
+.ficon-italic:before,
 .ficon-left-arrow-thick:before,
 .ficon-like:before,
 .ficon-link:before,
+.ficon-link-copy:before,
 .ficon-linkedin:before,
 .ficon-linux:before,
+.ficon-list-ol:before,
+.ficon-list-ul:before,
 .ficon-live_chat:before,
 .ficon-livechat:before,
 .ficon-lock:before,
 .ficon-lock-2:before,
 .ficon-lock-open:before,
 .ficon-mac:before,
+.ficon-magic:before,
 .ficon-mail:before,
 .ficon-mail-filled:before,
 .ficon-mail-source:before,
@@ -232,7 +262,9 @@
 .ficon-open-in-new-window:before,
 .ficon-open-in-portal:before,
 .ficon-opera:before,
+.ficon-outdent:before,
 .ficon-outgoing-call:before,
+.ficon-paint-brush:before,
 .ficon-paperplane:before,
 .ficon-paragraph:before,
 .ficon-pencil:before,
@@ -242,11 +274,13 @@
 .ficon-phone-disable:before,
 .ficon-phone-disable-thin:before,
 .ficon-phone_summary:before,
+.ficon-plain-text:before,
 .ficon-plus:before,
 .ficon-plus-circle:before,
 .ficon-portal-source:before,
 .ficon-portals:before,
 .ficon-post-edit:before,
+.ficon-preserve-format:before,
 .ficon-pushpin:before,
 .ficon-puzzle:before,
 .ficon-rearrange:before,
@@ -273,19 +307,24 @@
 .ficon-shared:before,
 .ficon-sidebar-list:before,
 .ficon-sla:before,
+.ficon-smile-o:before,
 .ficon-sorting-asc:before,
 .ficon-sorting-default:before,
 .ficon-sorting-dsc:before,
 .ficon-split:before,
+.ficon-square-o:before,
 .ficon-star:before,
 .ficon-star-o:before,
+.ficon-strikethrough:before,
 .ficon-supervisor:before,
 .ficon-survey-happy:before,
 .ficon-survey-neutral:before,
 .ficon-survey-sad:before,
 .ficon-survey-settings:before,
+.ficon-table:before,
 .ficon-tags:before,
 .ficon-text:before,
+.ficon-text-height:before,
 .ficon-tick:before,
 .ficon-ticket:before,
 .ficon-ticket-fields:before,
@@ -295,6 +334,7 @@
 .ficon-time_sheet:before,
 .ficon-timeline-forum:before,
 .ficon-timeline-ticket:before,
+.ficon-tint:before,
 .ficon-transfer-round:before,
 .ficon-trash:before,
 .ficon-trash-o:before,
@@ -304,9 +344,14 @@
 .ficon-twitter-lock:before,
 .ficon-twitter-o:before,
 .ficon-twitter-source:before,
+.ficon-underline:before,
+.ficon-unlink:before,
+.ficon-unlink-tracker:before,
 .ficon-unlock:before,
 .ficon-unverified:before,
+.ficon-upload:before,
 .ficon-user:before,
+.ficon-video-camera:before,
 .ficon-view-retweets:before,
 .ficon-warm-transfer:before,
 .ficon-warning:before,
@@ -336,6 +381,10 @@
 .ficon-agent-fchat-on:before { content: "\f1b1"; }
 .ficon-agent_summary:before { content: "\f21a"; }
 .ficon-alert:before { content: "\f201"; }
+.ficon-align-center:before { content: "\f237"; }
+.ficon-align-justify:before { content: "\f238"; }
+.ficon-align-left:before { content: "\f239"; }
+.ficon-align-right:before { content: "\f23a"; }
 .ficon-all-streams:before { content: "\f102"; }
 .ficon-android:before { content: "\f103"; }
 .ficon-answer-checked:before { content: "\f104"; }
@@ -352,19 +401,24 @@
 .ficon-arrow-right-2:before { content: "\f10c"; }
 .ficon-arrow-up:before { content: "\f10d"; }
 .ficon-arrow-up-2:before { content: "\f10e"; }
+.ficon-arrows-alt:before { content: "\f23b"; }
+.ficon-arrows-v:before { content: "\f23c"; }
 .ficon-article:before { content: "\f204"; }
 .ficon-attachment:before { content: "\f22d"; }
 .ficon-attachment-blank:before { content: "\f229"; }
 .ficon-available-on-mobile:before { content: "\f1b6"; }
+.ficon-bars:before { content: "\f23d"; }
 .ficon-bell:before { content: "\f10f"; }
 .ficon-billing:before { content: "\f110"; }
 .ficon-blank-file:before { content: "\f111"; }
 .ficon-blind-transfer:before { content: "\f22f"; }
 .ficon-block:before { content: "\f20c"; }
 .ficon-blocked-call:before { content: "\f20d"; }
+.ficon-bold:before { content: "\f23e"; }
 .ficon-book:before { content: "\f112"; }
 .ficon-book-dark:before { content: "\f22e"; }
 .ficon-book-hollow:before { content: "\f1da"; }
+.ficon-broadcast-tracker:before { content: "\f235"; }
 .ficon-building:before { content: "\f226"; }
 .ficon-bulb:before { content: "\f113"; }
 .ficon-bullhorn:before { content: "\f114"; }
@@ -392,11 +446,15 @@
 .ficon-checkmark-thick:before { content: "\f123"; }
 .ficon-chrome:before { content: "\f124"; }
 .ficon-clone:before { content: "\f22a"; }
+.ficon-code:before { content: "\f23f"; }
+.ficon-code-snippet:before { content: "\f240"; }
 .ficon-comment-multi:before { content: "\f125"; }
 .ficon-comments:before { content: "\f126"; }
 .ficon-comments1:before { content: "\f1d5"; }
 .ficon-company:before { content: "\f127"; }
 .ficon-compose-email:before { content: "\f1c8"; }
+.ficon-compress:before { content: "\f241"; }
+.ficon-connect-chat:before { content: "\f236"; }
 .ficon-conversation:before { content: "\f128"; }
 .ficon-cross:before { content: "\f129"; }
 .ficon-cross-filled:before { content: "\f220"; }
@@ -419,6 +477,7 @@
 .ficon-db-sand-clock:before { content: "\f20a"; }
 .ficon-db-unassigned:before { content: "\f20b"; }
 .ficon-decimal:before { content: "\f1c9"; }
+.ficon-default-format:before { content: "\f242"; }
 .ficon-delete:before { content: "\f215"; }
 .ficon-deleted:before { content: "\f1b3"; }
 .ficon-disconnected:before { content: "\f12f"; }
@@ -439,6 +498,11 @@
 .ficon-email:before { content: "\f139"; }
 .ficon-email-notifications:before { content: "\f13a"; }
 .ficon-email_commands_setting:before { content: "\f13b"; }
+.ficon-eraser:before { content: "\f243"; }
+.ficon-eraser-o:before { content: "\f244"; }
+.ficon-exchange:before { content: "\f245"; }
+.ficon-expand:before { content: "\f246"; }
+.ficon-external-link:before { content: "\f247"; }
 .ficon-eye:before { content: "\f13c"; }
 .ficon-eye-disabled:before { content: "\f225"; }
 .ficon-facebook:before { content: "\f13d"; }
@@ -471,6 +535,7 @@
 .ficon-folder:before { content: "\f1df"; }
 .ficon-folder-o:before { content: "\f14d"; }
 .ficon-folder-open-o:before { content: "\f14e"; }
+.ficon-font:before { content: "\f248"; }
 .ficon-forum-source:before { content: "\f1f5"; }
 .ficon-forward:before { content: "\f14f"; }
 .ficon-forward-tkt:before { content: "\f1ac"; }
@@ -486,28 +551,38 @@
 .ficon-grouping-disable:before { content: "\f156"; }
 .ficon-grouping-enable:before { content: "\f157"; }
 .ficon-hangup:before { content: "\f20e"; }
+.ficon-header:before { content: "\f249"; }
 .ficon-help:before { content: "\f158"; }
 .ficon-help-icon:before { content: "\f1d9"; }
 .ficon-helpdesk:before { content: "\f1ca"; }
 .ficon-helpdesk-settings:before { content: "\f1cb"; }
+.ficon-horizontal-line:before { content: "\f24a"; }
 .ficon-ie:before { content: "\f159"; }
 .ficon-ilos-icon:before { content: "\f200"; }
+.ficon-image:before { content: "\f24b"; }
 .ficon-import:before { content: "\f15a"; }
 .ficon-incoming-call:before { content: "\f20f"; }
+.ficon-indent:before { content: "\f24c"; }
 .ficon-infinity-5:before { content: "\f15b"; }
+.ficon-info:before { content: "\f24d"; }
 .ficon-integrations:before { content: "\f216"; }
 .ficon-ios:before { content: "\f15d"; }
+.ficon-italic:before { content: "\f24e"; }
 .ficon-left-arrow-thick:before { content: "\f1d6"; }
 .ficon-like:before { content: "\f15e"; }
 .ficon-link:before { content: "\f15f"; }
+.ficon-link-copy:before { content: "\f24f"; }
 .ficon-linkedin:before { content: "\f160"; }
 .ficon-linux:before { content: "\f161"; }
+.ficon-list-ol:before { content: "\f250"; }
+.ficon-list-ul:before { content: "\f251"; }
 .ficon-live_chat:before { content: "\f1ec"; }
 .ficon-livechat:before { content: "\f222"; }
 .ficon-lock:before { content: "\f162"; }
 .ficon-lock-2:before { content: "\f163"; }
 .ficon-lock-open:before { content: "\f164"; }
 .ficon-mac:before { content: "\f165"; }
+.ficon-magic:before { content: "\f252"; }
 .ficon-mail:before { content: "\f166"; }
 .ficon-mail-filled:before { content: "\f1aa"; }
 .ficon-mail-source:before { content: "\f1f6"; }
@@ -537,7 +612,9 @@
 .ficon-open-in-new-window:before { content: "\f176"; }
 .ficon-open-in-portal:before { content: "\f1e0"; }
 .ficon-opera:before { content: "\f177"; }
+.ficon-outdent:before { content: "\f253"; }
 .ficon-outgoing-call:before { content: "\f210"; }
+.ficon-paint-brush:before { content: "\f254"; }
 .ficon-paperplane:before { content: "\f178"; }
 .ficon-paragraph:before { content: "\f179"; }
 .ficon-pencil:before { content: "\f17a"; }
@@ -547,11 +624,13 @@
 .ficon-phone-disable:before { content: "\f17d"; }
 .ficon-phone-disable-thin:before { content: "\f1b5"; }
 .ficon-phone_summary:before { content: "\f1ee"; }
+.ficon-plain-text:before { content: "\f255"; }
 .ficon-plus:before { content: "\f17e"; }
 .ficon-plus-circle:before { content: "\f1c5"; }
 .ficon-portal-source:before { content: "\f1f9"; }
 .ficon-portals:before { content: "\f1cf"; }
 .ficon-post-edit:before { content: "\f17f"; }
+.ficon-preserve-format:before { content: "\f256"; }
 .ficon-pushpin:before { content: "\f180"; }
 .ficon-puzzle:before { content: "\f1d7"; }
 .ficon-rearrange:before { content: "\f181"; }
@@ -578,19 +657,24 @@
 .ficon-shared:before { content: "\f18f"; }
 .ficon-sidebar-list:before { content: "\f190"; }
 .ficon-sla:before { content: "\f191"; }
+.ficon-smile-o:before { content: "\f257"; }
 .ficon-sorting-asc:before { content: "\f1e6"; }
 .ficon-sorting-default:before { content: "\f1e7"; }
 .ficon-sorting-dsc:before { content: "\f1e8"; }
 .ficon-split:before { content: "\f192"; }
+.ficon-square-o:before { content: "\f258"; }
 .ficon-star:before { content: "\f193"; }
 .ficon-star-o:before { content: "\f194"; }
+.ficon-strikethrough:before { content: "\f259"; }
 .ficon-supervisor:before { content: "\f195"; }
 .ficon-survey-happy:before { content: "\f1b8"; }
 .ficon-survey-neutral:before { content: "\f1b9"; }
 .ficon-survey-sad:before { content: "\f1ba"; }
 .ficon-survey-settings:before { content: "\f196"; }
+.ficon-table:before { content: "\f25a"; }
 .ficon-tags:before { content: "\f205"; }
 .ficon-text:before { content: "\f198"; }
+.ficon-text-height:before { content: "\f25b"; }
 .ficon-tick:before { content: "\f217"; }
 .ficon-ticket:before { content: "\f199"; }
 .ficon-ticket-fields:before { content: "\f19a"; }
@@ -600,6 +684,7 @@
 .ficon-time_sheet:before { content: "\f1f2"; }
 .ficon-timeline-forum:before { content: "\f19b"; }
 .ficon-timeline-ticket:before { content: "\f19c"; }
+.ficon-tint:before { content: "\f25c"; }
 .ficon-transfer-round:before { content: "\f221"; }
 .ficon-trash:before { content: "\f19d"; }
 .ficon-trash-o:before { content: "\f19e"; }
@@ -609,9 +694,14 @@
 .ficon-twitter-lock:before { content: "\f1a1"; }
 .ficon-twitter-o:before { content: "\f1a2"; }
 .ficon-twitter-source:before { content: "\f1fb"; }
+.ficon-underline:before { content: "\f25d"; }
+.ficon-unlink:before { content: "\f25e"; }
+.ficon-unlink-tracker:before { content: "\f233"; }
 .ficon-unlock:before { content: "\f1a3"; }
 .ficon-unverified:before { content: "\f1a4"; }
+.ficon-upload:before { content: "\f25f"; }
 .ficon-user:before { content: "\f1a5"; }
+.ficon-video-camera:before { content: "\f260"; }
 .ficon-view-retweets:before { content: "\f1a6"; }
 .ficon-warm-transfer:before { content: "\f231"; }
 .ficon-warning:before { content: "\f1a7"; }

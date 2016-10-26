@@ -1,0 +1,1 @@
+//=require lang/datepicker/datepicker-th.js

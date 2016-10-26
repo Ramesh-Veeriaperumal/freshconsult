@@ -1,4 +1,4 @@
-<div class="request_panel" id="<%=cntid%>" style="display:none;" data-type="textarea" rel="emitter" data-node-name="agent_replying">
+<div class="request_panel" id="<%=cntid%>" style="display:none;" data-type="textarea" rel="emitter" data-is-facebook-realtime-dm=<%= @ticket.facebook_realtime_message? %> data-node-name="agent_replying">
   <div class="form_title">
      <%= t(".reply_to") %> <span id ="fb_form_title" class = "fb-title"> <%= @ticket.requester.name %> </span>
   </div>
@@ -23,16 +23,16 @@
     <ul class="ui-form dont-validate">
       <li class="inline-field field">
         <%= render(:partial => 'helpdesk/tickets/show/editor_insert_buttons', :locals => { :id => id, :cntid => cntid }) %> 
-        <%= f.label(:reply_email, "From:", :class => "mailaddr-label from" ) %>
+        <%= f.label(:reply_email, t('.from'), :class => "mailaddr-label from" ) %>
         &nbsp;<%= @ticket.fb_post.facebook_page.page_name if @ticket.fb_post && @ticket.fb_post.facebook_page %>
       </li>       
       <li class="inline-field field clearField continous message">
         <%= f.fields_for :note_body, Helpdesk::NoteBody.new do |ff| %>
-        <%= ff.text_area :body, { :class => 'required facebook auto-height', :id => "#{id}-#{cntid}-body", :rows => "6", "data-domhelper-name" => "content-body" } %>
+        <%= ff.text_area :body, { :class => "required facebook auto-height #{@ticket.facebook_realtime_message? ? 'facebook-realtime' : '' }", :id => "#{id}-#{cntid}-body", :rows => "6", "data-domhelper-name" => "content-body", "data-reply-count" => "320" } %>
         <% end %>
       </li>
     </ul>
-
+    <span class="dm-reply-counter" id="SendReplyCounter"></span>
     <div class="btn-toolbar">
       <span>
         <%= link_to(t('cancel'), '#', :id => "facebook-cancel-reply", :class => "btn cancel_btn", "data-show-pseudo-reply" => 'true',"data-cnt-id" => cntid , "data-clear-draft" => 'true', "data-editor-id" => "#{id}-#{cntid}-body") %>

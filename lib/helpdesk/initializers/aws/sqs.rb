@@ -67,7 +67,9 @@ begin
     SQS[:sqs_es_index_queue]    => AwsWrapper::SqsV2.queue_url(SQS[:sqs_es_index_queue]),
     SQS[:cti_screen_pop]        => AwsWrapper::SqsV2.queue_url(SQS[:cti_screen_pop]),
     SQS[:auto_refresh_queue]    => AwsWrapper::SqsV2.queue_url(SQS[:auto_refresh_queue]),
-    SQS[:agent_collision_queue] => AwsWrapper::SqsV2.queue_url(SQS[:agent_collision_queue])
+    SQS[:auto_refresh_alb_queue]    => AwsWrapper::SqsV2.queue_url(SQS[:auto_refresh_alb_queue]),
+    SQS[:agent_collision_queue] => AwsWrapper::SqsV2.queue_url(SQS[:agent_collision_queue]),
+    SQS[:agent_collision_alb_queue] => AwsWrapper::SqsV2.queue_url(SQS[:agent_collision_alb_queue])
   }
 
 rescue => e

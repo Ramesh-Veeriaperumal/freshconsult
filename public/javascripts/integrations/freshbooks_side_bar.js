@@ -275,7 +275,7 @@ FreshbooksInvoiceWidget.prototype = {
 		var $this = this;
 		var freshbooksUtility = Freshdesk.NativeIntegration.freshbooksUtility;
 		var searchResults="";
-		var requester_info=(freshbooksUtility.client_filter=="email")?(freshbooksBundle.reqEmail):(freshbooksBundle.reqCompany);
+		var requester_info=(freshbooksUtility.client_filter=="email")?(freshbooksBundle.reqEmail):(freshbooksUtility.company());
 		for(var i=0;i<clients.length;i++){
 			var client_name=XmlUtil.getNodeValue(clients[i],"organization");
 			searchResults += '<li><a class="multiple-contacts" href="#" data-client="' + i + '">'+client_name+'</a></li>';

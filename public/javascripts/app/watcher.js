@@ -19,7 +19,7 @@ window.App.Tickets = window.App.Tickets || {};
     addListeners: function () {
       $("body").on('change.watcher', '.watcher_input', this.addWatcher.bind(this));
       $("body").on('click.watcher', '.unwatch', this.removeWatcher.bind(this));
-      $("body").on('click.watcher', '#monitor', this.toggleWatcher.bind(this));
+      $("body").on('click.watcher', '#watcher_toggle', this.toggleWatcher.bind(this));
       $("body").on('click.watcher', '.watcher-close', this.closeWatcher.bind(this));
       $("body").on('click.watcher', this.clickedOutside.bind(this));
     },

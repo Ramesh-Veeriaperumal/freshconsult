@@ -7,7 +7,7 @@
 	</div>
 	<div class="breadcrumb hide">
 		<i class="ficon-arrow-left fsize-18"></i> 
-		<a href="/helpdesk" data-pjax="#body-container"> 
+		<a href="/helpdesk" rel="dashboard_link" data-pjax="#body-container"> 
 			<%=t('unresolved_tickets.dashboard_link') %>
 		</a>
 	</div>
@@ -34,11 +34,11 @@
 <script id="filter-data-template" type="text/x-jquery-tmpl">
 	<li class="muted"><%=t('unresolved_tickets.filtered_by_label') %>:</li>
 	<li>
-		<%=t('unresolved_tickets.group_label') %> : <strong> {{html Array.prototype.join.call(groupfilter, ", ") }} </strong>
+		{{html groupfilterlabel }} : <strong> {{html Array.prototype.join.call(groupfilter, ", ") }} </strong>
 	</li>
 	<% unless Account.current.hide_agent_metrics_feature? %>
 		<li>
-			<%=t('unresolved_tickets.agent_label') %> : <strong> {{html Array.prototype.join.call(agentfilter, ", ") }} </strong>
+			{{html agentfilterlabel }} : <strong> {{html Array.prototype.join.call(agentfilter, ", ") }} </strong>
 		</li>
 	<% end %>
 </script>
@@ -55,4 +55,5 @@
 		status_filtered_array.push(["Total" , "Total"]);
 		status_filtered_array.push(["" , ""]);
 		status_filtered_array.unshift(["Agent" , "Agent"]);
+		shared_ownership_enabled = <%= current_account.features?(:shared_ownership) %>;
 <% end %>

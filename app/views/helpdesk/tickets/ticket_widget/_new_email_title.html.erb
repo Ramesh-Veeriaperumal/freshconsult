@@ -4,24 +4,27 @@
 		<h3 class="lead"> <%= t('ticket.compose.send_email') %></h3>
 	</div>
 	<% if Account.current.features?(:ticket_templates) || Account.current.launched?(:helpdesk_ticket_templates) %>
-		<div id="template-wrapper" class="template-wrapper pull-left">
-			<%= render :partial => "ticket_template", :locals => {:form => "compose_email"} %>
-		</div>
+			<div id="template-wrapper" class="template-wrapper pull-left">
+				<%= render :partial => "ticket_template", :locals => {:form => "compose_email"} %>
+			</div>
 	<% end %>
 	<div class="ticket-header-btn btn-toolbar pull-right">
-		<%= link_to t('cancel'), (@item.new_record? ? {:action => 'index'} : @item ), :class => "btn cancel-btn" %>
-		<span class="btn-group dropdown">
-			<button class="btn btn-primary" id="compose-submit" data-loading-text="Sending...">
-				<%= t('ticket.compose.send') %>
-				<button class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
-					<span class="caret"></span>
+		<%= link_to t('cancel'), (@item.new_record? ? {:action => 'index'} : @item ), :class => "btn cancel-btn", :"data-parallel-placeholder"=>"#ticket-leftFilter", :"data-parallel-url"=>"/helpdesk/tickets/filter_options", :"data-pjax"=>"#body-container" %>
+		<% if @outbound_limit_crossed.blank? || @outbound_limit_crossed == false %>
+			<span class="btn-group dropdown">
+				<button class="btn btn-primary" id="compose-submit" data-loading-text="Sending...">
+					<%= t('ticket.compose.send') %>
+					<button class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+						<span class="caret"></span>
+					</button>
 				</button>
-			</button>
-			<ul class="dropdown-menu pull-right">
-				<li>
-					<%= link_to t('ticket.compose.send_and_new').html_safe, compose_email_helpdesk_tickets_path, :name => "action_save", :id => "compose_and_new" %>
-				</li>
-			</ul>
-		</span>
+				<ul class="dropdown-menu pull-right">
+					<li>
+						<%= link_to t('ticket.compose.send_and_new').html_safe, compose_email_helpdesk_tickets_path, :name => "action_save", :id => "compose_and_new" %>
+					</li>
+				</ul>
+			</span>
+		<% end %>
 	</div>
+	
 </div>

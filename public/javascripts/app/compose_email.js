@@ -28,12 +28,16 @@ var ComposeEmail = {
     unbindEvents: function(){
     	this.$el.off('.compose');
     	jQuery('#ComposeTicket').off('.compose');
+    	jQuery('#ComposeTicket').off('.new_ticket_compose');
     	this.$body.off('.compose');
       TicketTemplate.destroy();
     },
     defaultSettings: function(){
       // Snippets moved from compose js
     jQuery('.default_agent, .default_source, .default_product').hide();
+    //removing internal fileds in compose email for negating form validation
+    //when these fields are set required in admin ticket fields
+    jQuery('.default_internal_agent, .default_internal_group').remove();
     jQuery('#helpdesk_ticket_source').val(10);
     jQuery('#helpdesk_ticket_status').val(5);
     jQuery("#helpdesk_ticket_product_id").removeClass("required");
@@ -129,29 +133,69 @@ var ComposeEmail = {
 				name: 'save_and_compose',
 				value: true
 			}));
-			_form.submit();
-		});
 
-		jQuery('#ComposeTicket').on("submit.compose", function(){
+			this.submitForm(_form);
+		}.bind(this));
+
+		jQuery('#ComposeTicket').on("submit.new_ticket_compose", function(ev){
+			preventDefault(ev);
+
 			var _form = jQuery(this);
 			if(_form.valid()) {
         jQuery("#compose-submit").text(  jQuery("#compose-submit").data('loading-text')).attr('disabled', true);
         jQuery("#compose-submit").next().attr('disabled', true);
         jQuery(".cancel-btn").attr('disabled', true);
 				// _form.find("button, a.btn").attr('disabled',true);
+
+				pjax_form_submit("#ComposeTicket");
 			}
+
+			// To prevent the normal submit on pjax form submit
+			if(!_form.data('multifileEnabled')) {
+				return false;
+			}
+
 		});
 
-    this.$body.on('click.compose', '#compose-submit', function(){
-      jQuery("#ComposeTicket").submit();
-    });
+	    this.$body.on('click.compose', '#compose-submit', function(ev){
+	    	var cc_email = jQuery('#compose-new-email');
+	    	var ele = jQuery('.cc-address'),
+	    		limit = ele.data('limit'),
+	    		is_trial = ele.data('isTrial'),
+	    		msg = ele.data('msg');
+
+
+	    	if(is_trial && !App.Tickets.LimitEmails.limitComposeEmail(jQuery('#compose-new-email'), '.cc-address', limit, msg)) {
+
+	    		if(!jQuery('.cc-address').is(':visible')) {
+	    			jQuery("[data-action='show-cc']").click();
+	    		}
+	          	return false
+	        }
+
+	        jQuery(".cc-address .cc-error-message").remove();
+
+	        var _form = jQuery("#ComposeTicket");
+	        this.submitForm(_form);
+	    }.bind(this));
 
 		this.$body.on('click.compose', 'a[rel="ticket_canned_response"]', function(ev){
 				ev.preventDefault();
     		  	jQuery("#canned_response_show").attr('data-tiny-mce-id', "#helpdesk_ticket_ticket_body_attributes_description_html");
 				jQuery('#canned_response_show').trigger('click');
 		});
-    }
+    },
+    submitForm: function (_form) {
+		// If multifile enabled. Then the page will submit with pjax.
+		// In single file attachment, the file not attachec in pjax submit. So we checked multifile enable feature.
+		if(_form.data('multifileEnabled')) {
+			if(_form.valid()) {
+				_form.trigger('submit.pjax_submit');
+			}
+		} else {
+			_form.submit();
+		}
+	}
 };
 
 

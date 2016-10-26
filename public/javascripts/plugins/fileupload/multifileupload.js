@@ -187,7 +187,7 @@ Helpdesk = Helpdesk || {};
                                 form.find(".existing-file-list input[name='helpdesk_note[attachments][][resource]']").remove();
                                 form.find(".existing-file-list input[name='[cloud_file_attachments][]']").remove();
                             }
-                            form.submit();
+                            form.trigger('submit');
                             $("#attachment-modal").remove();
                         }
                     }
@@ -249,9 +249,10 @@ Helpdesk = Helpdesk || {};
                 e.stopImmediatePropagation();
             });
 
-            form.on("submit", function(event) {
+            form.on("submit.pjax_submit", function(event) {
                 // turning of reminder
                 _this.reminder = false;
+                form.data("formChanged",false);
                 // preventing from edit note
                 function normal_attachments() {
                     if ($('#attachment-modal').length == 0) {
@@ -318,6 +319,15 @@ Helpdesk = Helpdesk || {};
                 if(App.namespace == "helpdesk/tickets/edit" || App.namespace == "solution/articles/show") {
                     form.find(".existing-file-list input[name='helpdesk_note[attachments][][resource]']").remove();
                     form.find(".existing-file-list input[name='[cloud_file_attachments][]']").remove();
+                }
+
+                if(App.namespace == "helpdesk/tickets/new" || App.namespace == "helpdesk/tickets/compose_email") {
+                    event.preventDefault();
+                    event.stopImmediatePropagation();
+
+                    form.trigger('submit.redactor');
+
+                    return false;
                 }
             });
             // calling onload functions
@@ -452,6 +462,27 @@ Helpdesk = Helpdesk || {};
                 files: data,
             }).appendTo(".multiple-filelist-" + count);
         },
+        sol_article_normal_attach: function(data,count){
+            $("#attach-limt-" + count).hide();
+            $("#attachment-template").tmpl({
+                render_type: "existing",
+                type: "attachment",
+                files: data,
+                softdelete:false,
+                template:false, 
+            }).appendTo(".multiple-filelist-" + count);
+        },
+        sol_article_cloud_attach: function(data,count){
+            $("#attach-limt-" + count).hide();
+            $("#attachment-template").tmpl({
+                render_type: "existing",
+                type: "cloud",
+                sol_cloud: true,
+                files: data,
+                softdelete:false,
+                template:false, 
+            }).appendTo(".multiple-filelist-" + count);
+        },
         // --------------- PJAX configurations ------
         PjaxSet: false,
         PjaxOn: function() {
@@ -465,6 +496,7 @@ Helpdesk = Helpdesk || {};
                         // check again
                         var c = confirm(_this.message.in_progress);
                         if (!c) {
+                            $("#nprogress").remove();
                             event.preventDefault();
                         } else {
                             _this.fileAbortAll();
@@ -688,6 +720,7 @@ Helpdesk = Helpdesk || {};
                         if (!c) {
                             event.preventDefault();
                             event.stopImmediatePropagation();
+                            $("#nprogress").remove();
                             return;
                         }
                     }
@@ -745,7 +778,7 @@ Helpdesk = Helpdesk || {};
             return attachments;
         },
         // render existing files
-        renderExistingFiles: function(attachments, cloudfile, count, template, nscname,softdelete) {
+        renderExistingFiles: function(attachments, cloudfile, count, template, nscname, softdelete, ticket_topic) {
            
             // for changing ticket templates nsc param
             if (typeof template == "undefined") {
@@ -769,6 +802,7 @@ Helpdesk = Helpdesk || {};
                 template: template,
                 nscname: nscname,
                 softdelete: softdelete,
+                ticket_topic: ticket_topic,
             }).appendTo(".existing-file-list[data-count='" + count + "']");
             // cloud files
             $("#attachment-template").tmpl({
@@ -778,6 +812,7 @@ Helpdesk = Helpdesk || {};
                 template: template,
                 nscname: nscname,
                 softdelete: softdelete,
+                ticket_topic: ticket_topic,
             }).appendTo(".existing-file-list[data-count='" + count + "']");
         },
         //on  note attachment delete

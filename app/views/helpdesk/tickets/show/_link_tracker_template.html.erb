@@ -1,0 +1,71 @@
+<div class='popover_content hide'>
+  <div class="recent_trackers_available hide">
+    <div class="link_tracker">
+      <div class="search_box">
+        <div class="search_tracker">
+          <div class="pull-left search_tracker_box">
+            <span class="ficon-cross-filled clear_search"></span>
+            <input type="text" id="tracker_filter" placeholder="<%= t('ticket.link_tracker.search_for_tracker')%> <%= t('ticket.link_tracker.options.subject') %>" autofocus>
+          </div>
+          <div class="pull-left dropdown-box p4 pr16">
+            <a class="drop-right nav-trigger" href="#" menuid="#SortTracker">
+              <span class="searchicon link_tracker_search_icon"></span>
+            </a>
+            <div class="fd-menu" id="SortTracker">
+              <ul>
+                <li class="active">
+                  <a href="#" data-filter="subject">
+                    <span class="icon ticksymbol"></span>
+                    <%= t('ticket.link_tracker.options.subject') %>
+                  </a>
+                </li>
+                <li>
+                  <a href="#" data-filter="display_id">
+                    <span class=""></span>
+                    <%= t('ticket.link_tracker.options.tkt_id') %>
+                  </a>
+                </li>
+                <li>
+                  <a href="#" data-filter="requester">
+                    <span class=""></span>
+                    <%= t('ticket.link_tracker.options.requester') %>
+                  </a>
+                </li>
+              </ul>  
+            </div>
+          </div>
+        </div>
+      </div>
+      <span class="clearfix"></span>
+      <div class="row">
+       <div class="pull-left result_label"><%= t('ticket.link_tracker.recently_created') %></div>
+       <div class="pull-right">  
+          <% if @ticket.present? %>
+            <b><%= pjax_link_to t('ticket.link_tracker.create_new'),
+               new_helpdesk_ticket_path(display_ids: @ticket.display_id) %></b>
+          <% else %>
+            <b><a href="#" class="create_new_tracker"><%= t('ticket.link_tracker.create_new') %></a></b>
+          <% end -%>
+        </div>
+      </div>
+    </div>
+    <div class="link_tracker_container">
+      <ul class="tracker_list">
+        <div id="loading_block"></div>
+      </ul>
+    </div>
+  </div>
+  <div class="recent_tracker_notavailable hide">
+    <small class="block"><%= t('ticket.link_tracker.no_tracker') %></small>
+    <p>
+      <% if @ticket.present? %>
+        <%= link_to t('ticket.link_tracker.create_new'),
+           new_helpdesk_ticket_path(display_ids: @ticket.display_id) %>
+      <% else %>
+        <a href="#" class="create_new_tracker"><%= t('ticket.link_tracker.create_new') %></a>
+      <% end -%>
+    </p>
+  </div>
+  <div id="initial_loading" class="loading-block sloading loading-small">  
+  </div>
+</div>

@@ -337,9 +337,9 @@ var ScreenPop;
           UIUtil.constructDropDown(data, "json", "cti_phone_numbers", null, "id", ["phone"], null, "");
           if(data.length > 0) {
             $("#cti_phone_numbers").select2("val", self.ctiCallNumber || self.ctiCallOldNumber || data[0].id);
-          }
-          if (!jQuery("#cti_phone_numbers").select2("val")) {    //This is a fallback when a number gets deleted and redis entry is not removed.
-            $("#cti_phone_numbers").select2("val", data[0].id);
+            if (!jQuery("#cti_phone_numbers").select2("val")) {    //This is a fallback when a number gets deleted and redis entry is not removed.
+              $("#cti_phone_numbers").select2("val", data[0].id);
+            }
           }
           if (!!data.length && !self.ctiCallNumber) {
             self.showPop();

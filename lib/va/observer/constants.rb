@@ -13,7 +13,7 @@ module Va::Observer::Constants
                   }
 
 	TICKET_EVENTS = [ :status, :priority, :ticket_type, :group_id, :responder_id, :due_by, :deleted, :spam,
-										:time_sheet_action, :reply_sent, :note_type, :customer_feedback]
+										:time_sheet_action, :reply_sent, :note_type, :customer_feedback, :round_robin_assignment]
 
 	TICKET_UPDATED = { :ticket_action => :update }
 	TICKET_DELETED = { :ticket_action => :delete }

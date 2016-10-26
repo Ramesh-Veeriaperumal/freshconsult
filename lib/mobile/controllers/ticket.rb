@@ -9,14 +9,16 @@ module Mobile::Controllers::Ticket
     fields = []
     all_fields = current_portal.ticket_fields_including_nested_fields if current_user.agent?
     all_fields.each do |field|
-      next if field.section_field? || field.field_type == "default_company"
+      next if field.section_field? || field.field_type == "default_company" || (field.shared_ownership_field? && !shared_ownership_supported?)
       if field.visible_in_view_form? || is_new        
-        
         getField(field, item)
         
         #For Agent Field     
-        field[:agent_groups] = agent_group_map if field.field_type == "default_agent"                
-        
+        field[:agent_groups] = agent_group_map if field.field_type == "default_agent"
+
+        #For shared ownership
+        field[:status_groups] = status_group_map if field.field_type == "default_status" and current_account.features?(:shared_ownership)
+
         #Dynamic Sections  
         # field[:has_sections] = field.has_section? ? true : false
         field[:sections] = sectionFields(field,item)
@@ -85,6 +87,14 @@ end
       
       [].concat(default_views).concat(dynamic_views)
   end
+
+  def sort_fields_options
+    TicketsFilter.mobile_sort_fields_options
+  end
+
+  def sort_order_fields_options
+    TicketsFilter.mobile_sort_order_fields_options
+  end
     
   def get_summary_count
       summary_count_array = [
@@ -120,11 +130,21 @@ end
 
   def agent_group_map
     result = []
-    current_account.agents_from_cache.each { |c| 
-      result.push( 
+    current_account.agents_from_cache.each { |c|
+      result.push(
         :agent_id => c.user.id,
         :group_ids => c.agent_groups.collect { |grp| grp.group_id})
     }
     return result
   end
+
+  def status_group_map
+    status_group_info = Helpdesk::TicketStatus.group_ids_with_names(current_account.ticket_status_values_from_cache)
+    status_group_info.inject([]) { |status_groups, (status_id, group_ids)|
+      status_groups.push(
+        :status_id => status_id, 
+        :group_ids => group_ids)
+    }
+  end
+
 end

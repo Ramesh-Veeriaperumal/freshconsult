@@ -1,8 +1,11 @@
 module Helpdesk::Email::OutgoingCategory
 
+  require 'freemail'
+
   include Redis::RedisKeys
   include Redis::OthersRedis
   include Spam::SpamAction
+  include Helpdesk::SpamAccountConstants
 
   CATEGORIES = [
     [:trial,      1],
@@ -28,15 +31,28 @@ module Helpdesk::Email::OutgoingCategory
 
   def get_category_id
     key = get_subscription
-    if (key == "trial") && (!account_whitelisted?) && ismember?(BLACKLISTED_SPAM_ACCOUNTS, Account.current.id)
+    if  ( (!account_whitelisted?) &&
+          (account_created_recently? || 
+            ( (key == "trial") && 
+            ( ismember?(BLACKLISTED_SPAM_ACCOUNTS, Account.current.id) || Freemail.free_or_disposable?(Account.current.admin_email))
+            )))
       key = "spam"
     end 
     CATEGORY_BY_TYPE[key.to_sym]
   end
 
   def account_whitelisted?
-    acc_id = Account.current.id
-    whitelisted_domain_key =SPAM_NOTIFICATION_WHITELISTED_DOMAINS_EXPIRY % {:account_id => acc_id}
-    !get_others_redis_key(whitelisted_domain_key).nil? || !$spam_watcher.get("#{acc_id}-").nil?
+    if Account.current
+      return ismember?(SPAM_WHITELISTED_ACCOUNTS, Account.current.id)
+    end
+    return false
+  end
+
+  def account_created_recently?
+    if Account.current
+      account_time_limit = get_spam_check_time_limit
+      return Account.current.created_at > account_time_limit.days.ago
+    end
+    return false
   end
 end

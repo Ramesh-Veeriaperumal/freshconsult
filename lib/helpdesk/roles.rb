@@ -63,7 +63,7 @@ module Helpdesk
       :untitled_core_acc_admin_3,
       :untitled_core_acc_admin_4,
       :untitled_core_acc_admin_5,
-      :untitled_core_admin_1,
+      :manage_tags,
       :untitled_core_admin_2,
       :untitled_core_admin_3,
       :untitled_core_admin_4,
@@ -74,7 +74,7 @@ module Helpdesk
       :untitled_core_supervisor_4,
       :untitled_core_supervisor_5,
       :untitled_core_supervisor_6,
-      :untitled_core_agent_1,
+      :create_tags,
       :untitled_core_agent_2,
       :untitled_core_agent_3,
       :untitled_core_agent_4,
@@ -169,7 +169,7 @@ module Helpdesk
       :solution_view_versions,
       :forum_advanced_moderator,
       :forum_basic_moderator,
-      :untitled_core_admin_1,
+      :manage_tags,
       :untitled_core_admin_2,
       :untitled_core_admin_3,
       :untitled_core_admin_4,
@@ -180,7 +180,7 @@ module Helpdesk
       :untitled_core_supervisor_4,
       :untitled_core_supervisor_5,
       :untitled_core_supervisor_6,
-      :untitled_core_agent_1,
+      :create_tags,
       :untitled_core_agent_2,
       :untitled_core_agent_3,
       :untitled_core_agent_4,
@@ -268,7 +268,7 @@ module Helpdesk
       :untitled_core_supervisor_4,
       :untitled_core_supervisor_5,
       :untitled_core_supervisor_6,
-      :untitled_core_agent_1,
+      :create_tags,
       :untitled_core_agent_2,
       :untitled_core_agent_3,
       :untitled_core_agent_4,
@@ -337,7 +337,7 @@ module Helpdesk
       :compose_email,
       :solution_view_versions,
       :forum_basic_moderator,
-      :untitled_core_agent_1,
+      :create_tags,
       :untitled_core_agent_2,
       :untitled_core_agent_3,
       :untitled_core_agent_4,
@@ -397,7 +397,8 @@ module Helpdesk
       :livechat_view_transcripts,
       :livechat_edit_transcripts,
       :livechat_accept_chat,
-      :livechat_initiat_agent_chat
+      :livechat_initiat_agent_chat,
+      :create_tags
     ]
 
     DEFAULT_ROLES_LIST = 

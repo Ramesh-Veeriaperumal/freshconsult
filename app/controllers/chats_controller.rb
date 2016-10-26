@@ -40,6 +40,15 @@ class ChatsController < ApplicationController
     ticket_params[:group_id] = group.id if group
 
     @ticket = current_account.tickets.build(ticket_params)
+    
+    @ticket.meta_data =  { 
+      :referrer => params[:ticket][:meta][:referrer], 
+      :user_agent =>params[:ticket][:meta][:user_agent], 
+      :ip_address => params[:ticket][:meta][:ip_address],
+      :location => params[:ticket][:meta][:location],
+      :visitor_os => params[:ticket][:meta][:visitor_os]
+    } if params[:ticket][:meta].present?
+    
     status = @ticket.save_ticket
 
     render :json => { :external_id => @ticket.display_id , :status => status }

@@ -165,7 +165,7 @@ jQuery.fn.daterangepicker = function(settings){
 	   var year = date.getFullYear();
 	   month++; // adjust javascript month
 	   var dateFormat = options.dateFormat;
-	   return jQuery.datepicker.formatDate( dateFormat, date ); 
+	   return jQuery.datepicker.formatDate( dateFormat, date, jQuery.datepicker.regional[ "en-US" ] ); 
 	}
 	
 	

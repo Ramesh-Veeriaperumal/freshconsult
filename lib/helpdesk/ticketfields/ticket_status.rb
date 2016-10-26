@@ -27,6 +27,7 @@ module Helpdesk::Ticketfields::TicketStatus
     
     attr.delete(:status_id)
     unless t_s.nil?
+      ModifyTicketStatus.perform_async({ :status_id => t_s.status_id, :status_name => t_s.name }) if attr[:deleted] && !t_s[:deleted]
       t_s.attributes = attr
       validate_default_statuses(t_s)
       ticket_statuses[index] = t_s
@@ -53,5 +54,5 @@ module Helpdesk::Ticketfields::TicketStatus
         end
       end  
     end
-  
+
 end

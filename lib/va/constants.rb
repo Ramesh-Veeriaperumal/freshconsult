@@ -6,15 +6,14 @@ module Va
       :text        => [ "is", "is_not", "contains", "does_not_contain", "starts_with", "ends_with" ],
       :checkbox    => [ "selected", "not_selected" ],
       :choicelist  => [ "in", "not_in" ],
-      :number      => [ "is", "is_not" ],
-      :decimal     => [ "is", "is_not" ],
+      :number      => [ "is", "is_not", "greater_than", "less_than" ],
+      :decimal     => [ "is", "is_not", "greater_than", "less_than" ],
       :hours       => [ "is", "greater_than", "less_than" ],
       :nestedlist  => [ "is" ],
       :greater     => [ "greater_than" ],
       :object_id   => [ "in", "not_in"],
       :date_time   => [ "during" ],
       :date        => [ "is" , "is_not", "greater_than", "less_than" ],
-      :number_for_contacts => [ "is", "is_not", "greater_than", "less_than" ],
       :object_id_array  => [ "in", "and", "not_in" ]
     }
 
@@ -30,7 +29,7 @@ module Va
     CF_CUSTOMER_TYPES = {
       "custom_dropdown"     => "choicelist",
       "custom_checkbox"     => "checkbox",
-      "custom_number"       => "number_for_contacts",
+      "custom_number"       => "number",
       "custom_url"          => "text",
       "custom_phone_number" => "text",
       "custom_paragraph"    => "text",
