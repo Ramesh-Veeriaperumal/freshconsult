@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20160923062730) do
+ActiveRecord::Schema.define(:version => 20161018121347) do
 
   
   create_table "account_additional_settings", :force => true do |t|
@@ -1417,7 +1417,7 @@ ActiveRecord::Schema.define(:version => 20160923062730) do
     t.datetime "expires_on"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "twilio_client_version",   :limit => 10, :default => "1.2"
+    t.string   "twilio_client_version",   :limit => 10, :default => "1.3"
     t.boolean  "security_whitelist",                         :default => false
     t.text     "triggers"
     t.boolean  "caller_id_enabled",                     :default => false
