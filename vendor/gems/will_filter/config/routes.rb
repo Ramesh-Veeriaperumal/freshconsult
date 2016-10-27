@@ -9,7 +9,7 @@ Rails.application.routes.draw do
     match 'filter/load_filter',           :to => 'filter#load_filter'
     match 'filter/save_filter',           :to => 'filter#save_filter'
     match 'filter/update_filter',         :to => 'filter#update_filter'
-    match 'filter/delete_filter',         :to => 'filter#delete_filter'
+    match 'filter/delete_filter',         :to => 'filter#delete_filter', :via => :delete
 
     match 'calendar',                     :to => 'calendar#index'
     match 'calendar/index',               :to => 'calendar#index'
