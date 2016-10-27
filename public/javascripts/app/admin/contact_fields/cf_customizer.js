@@ -381,22 +381,23 @@
 			}
 			this.settings.currentData.set(key, regexValue);
 		},
-			
-		saveCustomFields: function(ev) {
-			ev.preventDefault();
-			var jsonData = this.getCustomFieldJson();
-			$(this.settings.fieldValues).val(jsonData.toJSON());
-			this.value = $(this).data("commit")
-			$(this.settings.saveBtn).prop("disabled", true);
-			$(this.settings.submitForm).trigger("submit");
-		},
 
 		setClientManagerPosition: function() {
 			var company_elements = $('.cf-company-name.ui-sortable-handle');
-			if(!company_elements.next().hasClass('.cf-client-manager')) {
+			if(!company_elements.next().hasClass('cf-client-manager')) {
 				var client_manager_elements = $('.cf-client-manager.ui-sortable-handle');
-				company_elements.after(client_manager_elements);
+				company_elements.after(client_manager_elements.first());
 			}
+		},
+
+		saveCustomFields: function(ev) {
+			ev.preventDefault();
+			this.setClientManagerPosition();
+			var jsonData = this.getCustomFieldJson();
+			$(this.settings.fieldValues).val(jsonData.toJSON());
+			this.value = $(this).data("commit");
+			$(this.settings.saveBtn).prop("disabled", true);
+			$(this.settings.submitForm).trigger("submit");
 		},
 
 		deletePostData: function(data) {
@@ -850,7 +851,6 @@
 
 			$(this.settings.saveBtn).on('click', function(e) {
 				self.saveCustomFields(e);
-				self.setClientManagerPosition();
 			});
 
 		},
