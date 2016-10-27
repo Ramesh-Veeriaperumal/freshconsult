@@ -1156,19 +1156,43 @@ class Helpdesk::Ticket < ActiveRecord::Base
       options
     end
 
+  #Shared ownership methods
+
     def shared_ownership_fields_changed?
       internal_group_id_changed? or internal_agent_id_changed?
     end
 
     def internal_group_id_changed?
       internal_group_column = Helpdesk::SchemaLessTicket.internal_group_column
-      @model_changes.key?(internal_group_column)
+      schema_less_ticket.changes.symbolize_keys.key?(internal_group_column)
     end
 
     def internal_agent_id_changed?
       internal_agent_column = Helpdesk::SchemaLessTicket.internal_agent_column
-      @model_changes.key?(internal_agent_column)
+      schema_less_ticket.changes.symbolize_keys.key?(internal_agent_column)
     end
+
+    def internal_group_id_changes
+      internal_group_column = Helpdesk::SchemaLessTicket.internal_group_column
+      schema_less_ticket.changes.symbolize_keys[internal_group_column]
+    end
+
+    def internal_agent_id_changes
+      internal_agent_column = Helpdesk::SchemaLessTicket.internal_agent_column
+      schema_less_ticket.changes.symbolize_keys[internal_agent_column]
+    end
+
+    def valid_internal_group?(ig_id = schema_less_ticket.internal_group_id)
+      return true if ig_id.blank?
+      ticket_status.group_ids.include?(ig_id)
+    end
+
+    def valid_internal_agent?(ia_id = schema_less_ticket.internal_agent_id)
+      return true if ia_id.blank?
+      valid_internal_group? && (internal_group.try(:agent_ids) || []).include?(ia_id)
+    end
+
+  #Shared ownership methods ends here
 
     # def rl_exceeded_operation
     #   key = "RL_%{table_name}:%{account_id}:%{user_id}" % {:table_name => self.class.table_name, :account_id => self.account_id,

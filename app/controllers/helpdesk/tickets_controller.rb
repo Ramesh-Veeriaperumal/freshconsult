@@ -286,7 +286,7 @@ class Helpdesk::TicketsController < ApplicationController
     if filter_str
       query_hash = JSON.parse(filter_str["data_hash"])
       is_default_filter = false
-   else
+    else
       filter_name = params[:filter_key] || params[:filter_name]
       return render :json => {:error => "Invalid filter name" } if filter_name.blank?
       is_default_filter = !is_num?(filter_name) || invalid_custom_filter?(filter_name)
@@ -297,12 +297,19 @@ class Helpdesk::TicketsController < ApplicationController
         query_hash = @ticket_filter.data[:data_hash]
       end
     end
+
+    set_modes(query_hash)
+    response_hash = current_account.features?(:shared_ownership) ? {:agent_mode => @agent_mode, :group_mode => @group_mode} : {}
+
     conditions_hash = query_hash.map{|i|{ i["condition"] => i["value"] }}.inject({}){|h, e|h.merge! e}
     meta_data       = filters_meta_data(conditions_hash) if conditions_hash.keys.any? {|k| META_DATA_KEYS.include?(k.to_s)}
-    render :json => { :conditions => conditions_hash,
-                      :default => is_default_filter,
-                      :meta_data => meta_data
-                    }
+    response_hash.merge!(
+        { :conditions => conditions_hash,
+          :default => is_default_filter,
+          :meta_data => meta_data
+        })
+
+    render :json => response_hash
   end
   
   def invalid_custom_filter?(filter_name)

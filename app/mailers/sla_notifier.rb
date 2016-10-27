@@ -24,7 +24,8 @@ class SlaNotifier < ActionMailer::Base
                          .find(:all, :conditions => ["id in (?)", agent_ids])
 
       agents_arr.each do |agent|
-        email_subject, email_body = get_email_content(e_notification, agent, ticket)
+        i_notif = (ticket.internal_agent_id == agent.id)
+        email_subject, email_body = get_email_content(e_notification, agent, ticket, i_notif)
         trigger_escalation(ticket, agent, n_type, 
                           { :email_body => email_body,  :subject => email_subject })
       end 
@@ -60,8 +61,8 @@ class SlaNotifier < ActionMailer::Base
     end.deliver
   end
 
-  def get_email_content e_notification, agent, ticket
-    subject_template, message_template = e_notification.get_agent_template(agent)
+  def get_email_content(e_notification, agent, ticket, i_notif=false)
+    subject_template, message_template = i_notif ? e_notification.get_internal_agent_template(agent) : e_notification.get_agent_template(agent)
     email_subject = Liquid::Template.parse(subject_template).render(
                                 'ticket' => ticket, 'helpdesk_name' => ticket.account.portal_name)
     email_body = Liquid::Template.parse(message_template).render(

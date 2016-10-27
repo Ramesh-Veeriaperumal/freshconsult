@@ -376,6 +376,7 @@
       ev.preventDefault();
       jQuery(this).closest(".ff_item").attr("id", 'div_ff_'+this.getAttribute(this.className));
       jQuery(this).closest(".ff_item").attr("condition", this.getAttribute(this.className));
+      jQuery(this).closest(".ff_item").attr("data-id", this.getAttribute(this.className));
       jQuery(this).closest(".fd-menu").css("display", "none");
       if(this.className == "agent_mode"){
         jQuery(".agent_mode .ticksymbol").remove();
@@ -405,7 +406,7 @@
           jQuery('#'+selectedGroupTextId+' option[value="-1"]').remove();
           jQuery("#"+jQuery(".group_text").parent().attr("id")+" label.item input[value='-1']").parent().remove();
         }else{
-          jQuery(".group_text.shared_filter_text").addClass('lengthier_text');
+          jQuery(".group_text.shared_filter_text").removeClass('lengthier_text');
           if(jQuery('#'+selectedGroupTextId+' option[value="-1"]').length <= 0){
             if(jQuery("#" + jQuery(".group_text").parent().attr("id") + " label.item").length > 0){
               jQuery(".group_text").parent().append(unassigned);
@@ -416,7 +417,10 @@
         }
       }
       jQuery("#FilterOptions input[name="+this.className+"]").val(this.getAttribute("mode"));
-      jQuery("#active_filter").addClass('unsaved');
+      if(!jQuery(this).closest(".ff_item").data("fromFilters")){
+        jQuery("#active_filter").addClass('unsaved');
+      }
+      jQuery(this).closest(".ff_item").data("fromFilters", false);
       refresh_tickets();
     });
 

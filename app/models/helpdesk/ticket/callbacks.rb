@@ -25,12 +25,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   before_save  :assign_outbound_agent,  :if => :new_outbound_email?
 
+  before_save :reset_internal_group_agent
+
   before_save  :update_ticket_related_changes, :update_company_id, :set_sla_policy
 
   before_save :check_and_reset_company_id, :if => :company_id_changed?
-
-  before_update :reset_internal_group_agent
-  before_save   :allow_valid_internal_group_agent
 
   before_update :update_sender_email
 
@@ -209,41 +208,24 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   #Shared onwership Validations
   def reset_internal_group_agent
-    schema_less_ticket.internal_agent_id = schema_less_ticket.internal_group_id = nil unless Account.current.features?(:shared_ownership)
-    return unless @model_changes.key?(:status) && Account.current.features?(:shared_ownership)
+    (schema_less_ticket.internal_agent_id = schema_less_ticket.internal_group_id = nil) or return unless Account.current.features?(:shared_ownership)
+    return unless (status_changed? || shared_ownership_fields_changed?)
 
-    #Reset internal group and internal agent when the status(without the particular group mapped) is changed.
+    #Nullify internal group when the status(without the particular group mapped) is changed.
     #If the new status has the same group mapped to it, preserve internal group and internal agent.
-    internal_group_column = Helpdesk::SchemaLessTicket.internal_group_column
-    internal_agent_column = Helpdesk::SchemaLessTicket.internal_agent_column
-    if internal_group_id.present? && !internal_group_id_changed? && ticket_status.group_ids.exclude?(schema_less_ticket.internal_group_id)
-      schema_less_ticket.internal_group_id = nil
-      @model_changes.merge!(schema_less_ticket.changes.slice(internal_group_column.to_s))
+    if !valid_internal_group?
+      previous_ig_id = internal_group_id_changed? ? internal_group_id_changes[0] : schema_less_ticket.internal_group_id
+      schema_less_ticket.internal_group_id = (valid_internal_group?(previous_ig_id) ? previous_ig_id : nil)
     end
 
-    if internal_agent_id.present? && !internal_agent_id_changed? && ticket_status.group_ids.exclude?(schema_less_ticket.internal_group_id)
-      schema_less_ticket.internal_agent_id = nil
-      @model_changes.merge!(schema_less_ticket.changes.slice(internal_agent_column.to_s))
-    end
-    @model_changes.symbolize_keys!
-  end
-
-  def allow_valid_internal_group_agent
-    return unless shared_ownership_fields_changed? and Account.current.features?(:shared_ownership)
-
-    internal_group_column = Helpdesk::SchemaLessTicket.internal_group_column
-    internal_agent_column = Helpdesk::SchemaLessTicket.internal_agent_column
-
-    #Reset internal group and internal agent to old value if the mapping is incorrect
-    if internal_group_id.present? and ticket_status.group_ids.exclude?(internal_group_id)
-      schema_less_ticket.internal_group_id = internal_group_id_changed? ? @model_changes[internal_group_column][0] : nil
-      @model_changes.delete(internal_group_column)
-    end
-    if internal_agent_id.present? and (internal_group.blank? or internal_group.agents.pluck(:user_id).exclude?(internal_agent_id))
-      schema_less_ticket.internal_agent_id = internal_agent_id_changed? ? @model_changes[internal_agent_column][0] : nil
-      @model_changes.delete(internal_agent_column)
+    #Nullify internal agent when the status or internal group(without the particular agent mapped) is changed.
+    #If the new group has the same agent mapped to it, preserve internal agent.
+    if !valid_internal_agent?
+      previous_ia_id = internal_agent_id_changed? ? internal_agent_id_changes[0] : schema_less_ticket.internal_agent_id
+      schema_less_ticket.internal_agent_id = (valid_internal_agent?(previous_ia_id) ? previous_ia_id : nil)
     end
   end
+
   #Shared onwership Validations ends here
 
   def refresh_display_id #by Shan temp

@@ -30,6 +30,9 @@ var PopulateFormData = PopulateFormData ||  (function(){
       return;
     }
     _getData(args.url, args.defaultKey, function(data){
+      if(data.agent_mode >= 0 || data.group_mode >= 0){
+        _setCustomFilterModes(data.agent_mode, data.group_mode);
+      }
       _populateFields(data, args);
       _resetFilterDataHash(args.defaultKey);
     });
@@ -80,6 +83,18 @@ var PopulateFormData = PopulateFormData ||  (function(){
 
   function _getKeys(data){
     return Object.keys(data)
+  }
+
+  function _setCustomFilterModes(agent, group){
+    if(agent >= 0){
+      jQuery("#agentSort").parent().data("fromFilters", true);
+      jQuery(".shared_sort_menu .agent_mode[mode='"+agent+"']").trigger('click');
+    }
+
+    if(group >= 0){
+      jQuery("#groupSort").parent().data("fromFilters", true);
+      jQuery(".shared_sort_menu .group_mode[mode='"+group+"']").trigger('click');
+    }
   }
 
   function _populateFields(data, args){
