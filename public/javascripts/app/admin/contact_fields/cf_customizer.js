@@ -294,15 +294,17 @@
 		},
 
 		showFieldDialog: function(element){
+			var self = this;
 			this.settings.currentData = $(element).data("raw");
 			var fieldtype = this.settings.currentData['field_type'];//$H(listItem.data("raw")).get('field_type');
 			if(this.settings.currentData.multiple_companies_contact == undefined) {
 				this.settings.currentData.multiple_companies_contact = is_multiple_contact_feature_enabled;
+				self.multiple_companies_toggle = is_multiple_contact_feature_enabled;
 			}
 			if ($.inArray(fieldtype, this.settings.nonEditableFields) == -1) {
 				$(this.settings.dialogContainer).html(JST['app/admin/'+this.settings.customFieldType+'_fields/formfield_props'](this.settings.currentData));
 				this.dialogOnLoad(element);
-				if(this.settings.currentData.multiple_companies_contact) {
+				if(self.multiple_companies_toggle) {
 					jQuery("[name=multiple_companies]").prop('checked',true);
 				}else{
 					jQuery("[name=multiple_companies]").prop('checked',false);
@@ -766,6 +768,7 @@
 			jQuery("#CustomFieldsPropsDialog").on('change',"[name=multiple_companies]",function(){
 				
 				var is_selected = jQuery(this).is(':checked');
+				self.multiple_companies_toggle = is_selected;
 				if(is_multiple_contact_feature_enabled) {
 					if(!is_selected){
 						jQuery('[rel="warning"]').removeClass('hide');
