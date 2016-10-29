@@ -6,8 +6,6 @@ class Users::RemoveSecondaryCompanies < BaseWorker
   :failures => :exhausted
 
   def perform
-    Account.current.user_companies.find_each do |user_company|
-      user_company.destroy unless user_company.default
-    end
+    Account.current.remove_secondary_companies
   end
 end
