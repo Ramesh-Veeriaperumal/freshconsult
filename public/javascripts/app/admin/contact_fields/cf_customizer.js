@@ -477,14 +477,18 @@
 							if((key == 'label' || key == 'label_in_portal') && val !== undefined) {
 								val = escapeHtml(val);
 							}
-
+							
 							if( key == 'multiple_companies_contact') {
-								if(val == is_multiple_contact_feature_enabled) {
-									val = false;
+								if(is_multiple_contact_feature_present) {
+									if(val == is_multiple_contact_feature_enabled) {
+										val = false;
+									} else {
+										val = true;
+									}
 								} else {
-									val = true;
+									val = false;
 								}
-							}
+							}	
 							self.settings.currentData.set(key, val);							
 						}
 
