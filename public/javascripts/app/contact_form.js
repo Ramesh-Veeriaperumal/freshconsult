@@ -23,6 +23,7 @@ window.App.Contacts.Contact_form = window.App.Contacts.Contact_form || {};
       this.bindHandlers();
       this.manageNewEmail();
       this.manageNewCompany();
+      this.setClientManagerPosition();
     },
 
     bindGroupValidation: function() {
@@ -388,6 +389,14 @@ window.App.Contacts.Contact_form = window.App.Contacts.Contact_form || {};
                                              "default_comp" : default_comp})).appendTo('ul.companies');
           $('#user_companies').find('input[type="text"]').last().focus();
         }
+    },
+
+    setClientManagerPosition: function() {
+      var company_element = $('body').find("#user_company_name").parents("li");
+      if(!company_element.next().hasClass('default_client_manager')) {
+        var client_manager_element = $(".default_client_manager")
+        company_element.after(client_manager_element);
+      }
     }
 
   };

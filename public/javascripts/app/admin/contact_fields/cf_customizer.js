@@ -855,6 +855,7 @@
 							onkeyup: false,
 							onclick: false
 					 };
+			this.setClientManagerPosition();
 
 			$(this.settings.saveBtn).on('click', function(e) {
 				self.saveCustomFields(e);
