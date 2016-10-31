@@ -1,4 +1,9 @@
 <% content_for :sidebar do -%>&nbsp;<%- end %>
+<% content_for :helpcard do %>
+  <p>
+  	<%= t('contacts.helptext').html_safe %>
+  </p>
+<% end %>
 <% if false %>	
   <p> You have reached the maximum number of users you can have with your account level.  You can either delete some of your users or <a href="/account/plan">upgrade your account</a> to be able to create a new user. </p>	
 <% else %>
