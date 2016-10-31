@@ -177,7 +177,11 @@
 			}
 
 			if(dataItem['field_type'] == 'default_company_name' && is_multiple_contact_feature_present) {
-				$(field).append("<div class='info_message'>" + translate.get('multiple_company_message') + "<a href=\"#\"> Change </a></span>");
+				if(is_multiple_contact_feature_enabled){
+					$(field).append("<div class='info_message'>" + translate.get('multiple_company_message_enable') + "<a href=\"#\"> Change </a></span>");
+				}else{
+					$(field).append("<div class='info_message'>" + translate.get('multiple_company_message') + "<a href=\"#\"> Change </a></span>");
+				}
 			}
 
 			this.hideDeleteIconForDefaultFields(fieldContainer);

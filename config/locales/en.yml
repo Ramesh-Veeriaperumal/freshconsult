@@ -965,6 +965,7 @@ en:
         max_choices: "Maximum items reached"
         mapped_internal_groups: "Mapped Internal Groups"
         multiple_company_message : "Contacts can be associated with only one company"
+        multiple_company_message_enable : "Contacts can be associated with multiple companies"
     portal:
       delete_confirm:
         title: "Deleting this portal will remove"
