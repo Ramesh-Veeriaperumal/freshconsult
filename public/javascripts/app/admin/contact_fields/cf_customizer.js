@@ -480,7 +480,7 @@
 
 							if( key == 'multiple_companies_contact') {
 								if(val == is_multiple_contact_feature_enabled) {
-									val = 'nil';
+									val = false;
 								} else {
 									val = true;
 								}
