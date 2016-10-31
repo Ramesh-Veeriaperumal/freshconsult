@@ -2,6 +2,7 @@ class Admin::CustomSurveysMailer < ActionMailer::Base
 
   helper Admin::CustomSurveysHelper
   layout "email_font"
+  include EmailHelper
   
   def preview_email(options={})
     options.symbolize_keys!
@@ -23,6 +24,7 @@ class Admin::CustomSurveysMailer < ActionMailer::Base
       "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     }
 
+    headers.merge!(make_header(nil, nil, Account.current.id, "Preview Email"))
     mail(headers) do |part|
       part.text { render "preview_email.text.plain" }
       part.html { render "preview_email.text.html" }

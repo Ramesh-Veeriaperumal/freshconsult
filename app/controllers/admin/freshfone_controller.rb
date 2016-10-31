@@ -20,7 +20,8 @@ class Admin::FreshfoneController < Admin::AdminController
 			:subject => "Phone Request - #{current_account.name}",
 			:from => current_user.email,
 			:cc => current_account.admin_email,
-			:message => "Request to enable the phone channel in your Freshdesk account."
+			:message => "Request to enable the phone channel in your Freshdesk account.",
+			:type => "Request Freshfone Feature"
 		}
 		FreshfoneNotifier.send_later(
 				:deliver_freshfone_request_template,

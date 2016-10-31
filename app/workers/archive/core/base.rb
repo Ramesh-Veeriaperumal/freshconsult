@@ -48,6 +48,7 @@ module Archive
           :archive_updated_at => current_time,
           :progress => true,
           :access_token => ticket.access_token,
+          :product_id => ticket.schema_less_ticket.product_id,
           :owner_id => ticket.owner_id # ticket's company_id
         )
       end

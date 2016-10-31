@@ -58,7 +58,9 @@ class Search::Utils
     ff_contact_by_phone:              'freshfoneContactByNumbers',
     ff_contact_by_caller:             'freshfoneContactByCaller',
     ff_contact_by_numfields:          'freshfoneContactByNumberfields',
-    company_v2_search:                'companyApiSearch'
+    company_v2_search:                'companyApiSearch',
+    hstickets_dispid:                 'hsTicketsByDisplayId',
+    hstickets_subject:                'hsTicketsBySubject'
   }
 
   # _Note_: Parent ID to be used for routing.

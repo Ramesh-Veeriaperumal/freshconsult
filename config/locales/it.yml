@@ -3349,7 +3349,7 @@ it:
     skip_notification_no: "No"
   header_logo: "Logo intestazione"
   feedback:
-    title: "Questa risposta ti è stata d'aiuto?"
+    title: "Questa risposta ti è stata utile?"
     up_vote_thank_you_message: "Siamo felici di esserti stati d'aiuto. Grazie per il tuo feedback"
     upvote: Sì
     downvote: "No"

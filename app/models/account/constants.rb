@@ -47,7 +47,8 @@ class Account < ActiveRecord::Base
     :estate => {
       :features => [ :collision, :layout_customization, :round_robin, :enterprise_reporting,
         :custom_ssl, :custom_roles, :multiple_business_hours, :facebook_page_tab, :chat_routing, :dynamic_sections,
-        :helpdesk_restriction_toggle, :round_robin_load_balancing],
+        :helpdesk_restriction_toggle, :round_robin_load_balancing, :multiple_user_companies, 
+        :multiple_companies_toggle ],
       :inherits => [ :garden ]
     },
 
@@ -75,7 +76,8 @@ class Account < ActiveRecord::Base
     :estate_classic => {
       :features => [ :collision, :layout_customization, :round_robin, :enterprise_reporting,
         :custom_ssl, :custom_roles, :multiple_business_hours, :facebook_page_tab, :chat_routing,
-        :helpdesk_restriction_toggle, :round_robin_load_balancing ],
+        :helpdesk_restriction_toggle, :round_robin_load_balancing, :multiple_user_companies,
+        :multiple_companies_toggle ],
       :inherits => [ :garden_classic ]
     }
 
@@ -92,8 +94,8 @@ class Account < ActiveRecord::Base
     :chat_enable => false, :saml_old_issuer => false, :spam_dynamo => true,
     :redis_display_id => false, :es_multilang_solutions => false,
     :sort_by_customer_response => false, :survey_links => true,
-    :saml_unspecified_nameid => false, :multiple_user_companies => false,
-    :euc_hide_agent_metrics => false, :single_session_per_user => false, :link_tickets => false, :parent_child_tickets => false
+    :saml_unspecified_nameid => false, :euc_hide_agent_metrics => false, 
+    :single_session_per_user => false, :link_tickets => false, :parent_child_tickets => false
   }
 
 

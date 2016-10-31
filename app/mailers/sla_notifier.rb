@@ -1,7 +1,7 @@
 class SlaNotifier < ActionMailer::Base
 	
   include Helpdesk::NotifierFormattingMethods
-
+  include EmailHelper
 	layout "email_font"
 
   def agent_escalation(ticket, agent, n_type)
@@ -41,11 +41,9 @@ class SlaNotifier < ActionMailer::Base
       :sent_on                   => Time.now,
       "Reply-to"                 => "#{ticket.account.default_friendly_email}",
       "Auto-Submitted"           => "auto-generated", 
-      "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply",
-          "Account-Id" =>  ticket.account_id,
-          "Ticket-Id"  =>  ticket.display_id,
-          "Type"  =>  n_type
+      "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     }
+    headers.merge!(make_header(ticket.display_id, nil, ticket.account_id, n_type))
     headers.merge!({"X-FD-Email-Category" => ticket.reply_email_config.category}) if ticket.reply_email_config.category.present?
       references = generate_email_references(ticket)
         headers["References"] = references unless references.blank?

@@ -1,5 +1,6 @@
 class Fdadmin::DevopsMainController < Fdadmin::MetalApiController
   
+  before_filter :permit_internal_tools_ip  
   before_filter :set_time_zone
   before_filter :verify_signature
   before_filter :check_freshops_subdomain
@@ -60,6 +61,12 @@ class Fdadmin::DevopsMainController < Fdadmin::MetalApiController
       Sharding.run_on_slave do
         yield
       end
+    end
+
+    def permit_internal_tools_ip
+      unless $redis_routes.perform_redis_op("sismember", Redis::RedisKeys::INTERNAL_TOOLS_IP, request.remote_ip)
+        head 401
+      end 
     end
 
 end

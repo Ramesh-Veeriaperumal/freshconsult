@@ -24,6 +24,5 @@ class Admin::ContactFieldsController < Admin::AdminController
 
     def index_scoper
       @index_scoper ||= current_account.contact_form.contact_fields # ||= saves MemCache calls
-      @index_scoper.reject { |f| f.name == "client_manager" }
     end
 end

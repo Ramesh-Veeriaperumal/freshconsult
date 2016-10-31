@@ -1,10 +1,12 @@
 class ScheduledTaskMailer < ActionMailer::Base
   
+  include EmailHelper
   def expired_task task
     required_params task
     headers = mail_headers
    
     add_log_info 'expired_task'
+    headers = mail_headers(nil, task.account_id, "Expired Task")
 
     mail(headers) do |part|
       part.text { render "expired_task.plain" }
@@ -14,7 +16,7 @@ class ScheduledTaskMailer < ActionMailer::Base
   
   def notify_blocked_or_deleted task, options
     @to_emails = task.user.email
-    headers = mail_headers({subject: "[Important] Scheduled Report - Recipient Update Required"})
+    headers = mail_headers({subject: "[Important] Scheduled Report - Recipient Update Required"}, task.account_id, "Notify Blocked or Deleted")
 
     @task = task
     @user = task.user
@@ -30,7 +32,7 @@ class ScheduledTaskMailer < ActionMailer::Base
   
   def notify_downgraded_user task, options
     @to_emails = task.user.email
-    headers = mail_headers({subject: "[Important] Scheduled Report - Recipient Update Required"})
+    headers = mail_headers({subject: "[Important] Scheduled Report - Recipient Update Required"}, task.account_id, "Notify Downgraded User")
     
     @task = task
     @user = task.user
@@ -48,7 +50,7 @@ class ScheduledTaskMailer < ActionMailer::Base
     required_params task
 
     if @to_emails.present?
-      headers = mail_headers
+      headers = mail_headers(nil, task.account_id, "Email Scheduled Report")
       
       if options[:file_path].present?
         attachment_name = get_attachment_file_name(options[:file_path])
@@ -69,7 +71,7 @@ class ScheduledTaskMailer < ActionMailer::Base
   
   def report_no_data_email options, task
     required_params task
-    headers = mail_headers
+    headers = mail_headers(nil, task.account_id, "Report No Data Email")
 
     add_log_info 'report_no_data_email'
 
@@ -88,9 +90,9 @@ class ScheduledTaskMailer < ActionMailer::Base
   
 private
 
-  def mail_headers options = {}
-    {
-      :subject     => options[:subject] || mail_subject,
+  def mail_headers(options = {}, account_id, n_type)
+    headers = {
+      :subject     => (!options.nil? && !options[:subject].nil?) ? options[:subject] : mail_subject,
       :to          => @to_emails,
       :from        => AppConfig['from_email'],
       "Reply-to"   => "",
@@ -98,6 +100,7 @@ private
       "Auto-Submitted" => "auto-generated",
       "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     }
+    headers.merge!(make_header(nil, nil, account_id, n_type))
   end
   
   def mail_subject
