@@ -153,7 +153,7 @@ class Integrations::Hootsuite::HomeController < Integrations::Hootsuite::Hootsui
     return unless params[:active].present?
 
     page_size   = 10
-    page_offset = page_size * ((params[:page].presence || 2).to_i - 1)
+    page_offset = page_size * ((params[:page].presence || 1).to_i - 1)
 		@tickets = Search::V2::QueryHandler.new({
 			account_id:   current_account.id,
 			context:      (params[:search_type].eql?('ticket') ? :hstickets_dispid : :hstickets_subject),
@@ -163,7 +163,7 @@ class Integrations::Hootsuite::HomeController < Integrations::Hootsuite::Hootsui
 			offset:       page_offset,
 			types:        ['ticket'],
 			es_params:    (Hash.new.tap do |es_params|
-				es_params[:search_term] = params[:search_text]
+				es_params[:search_term] = params[:search_text].presence
 				es_params[:account_id]  = current_account.id
 				es_params[:request_id]  = request.try(:uuid)
         es_params[:size]        = page_size
