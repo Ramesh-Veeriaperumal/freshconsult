@@ -25,8 +25,8 @@
 			<input type="text" id="start_date" date="" class="text auto" size="15" />&nbsp;-
 			<input type="text" id="end_date" date="" class="text auto" size="15" />
 		
-			<input type="hidden" id="start_date_clone" date="" name="start_date" size="10" />&nbsp;
-			<input type="hidden" id="end_date_clone" date="" name="end_date" size="10" />
+			<input type="hidden" id="start_export_clone" date="" name="start_date" size="10" />&nbsp;
+			<input type="hidden" id="end_export_clone" date="" name="end_date" size="10" />
 		
 
 
@@ -128,6 +128,7 @@
 
   var date_today = new Date();
   jQuery(document).ready(function() {
+
 		var dates = jQuery( "#start_date" ).datepicker({
 			changeMonth: true, 
 			changeYear: true,
@@ -135,7 +136,7 @@
 			showButtonPanel: true,
 			maxDate: date_today,
 			showOn: "both", 
-			altField: "#start_date_clone",
+			altField: "#start_export_clone",
     		altFormat: 'yy-mm-dd',
 			dateFormat: getDateFormat('datepicker'),
 			disabled: false,
@@ -153,22 +154,20 @@
             minDate.setDate(minDate.getDate()); 
             jQuery("#end_date").datepicker( "option", "minDate", minDate);
  		
- 			<!-- logic check : startdate <= enddate -->
-			var startISO = jQuery("#start_date_clone").val();
-            var endISO = jQuery("#end_date_clone").val();
+ 			//logic check : startdate <= enddate 
+			var startISO = jQuery("#start_export_clone").val();
+            var endISO = jQuery("#end_export_clone").val();
               if(jQuery.datepicker.parseDate('yy-mm-dd', startISO) > jQuery.datepicker.parseDate('yy-mm-dd', endISO))
               {
-                jQuery('#end_date_clone').datepicker( "setDate", startISO );
+                jQuery('#end_export_clone').datepicker( "setDate", startISO );
                 var datepickerStart = jQuery('#start_date').val();
                 jQuery('#end_date').datepicker( "setDate", datepickerStart );
               }
 
 			}
 		});
-		setExportCreatedRange();
-	});
+		
 
-  	  jQuery(document).ready(function() {
 		var dates = jQuery( "#end_date" ).datepicker({
 			changeMonth: true, 
 			changeYear: true,
@@ -176,7 +175,7 @@
 			showButtonPanel: true,
 			maxDate: date_today,
 			showOn: "both", 
-			altField: "#end_date_clone",
+			altField: "#end_export_clone",
     		altFormat: 'yy-mm-dd',
 			dateFormat: getDateFormat('datepicker'),
 			disabled: false,
@@ -194,18 +193,19 @@
             maxDate.setDate(maxDate.getDate()); 
             jQuery("#start_date").datepicker( "option", "maxDate", maxDate);
 
-				 <!-- logic check : startdate <= enddate -->
-            var startISO = jQuery("#start_date_clone").val();
-            var endISO = jQuery("#end_date_clone").val();
+			//logic check : startdate <= enddate 
+            var startISO = jQuery("#start_export_clone").val();
+            var endISO = jQuery("#end_export_clone").val();
               if(jQuery.datepicker.parseDate('yy-mm-dd', startISO) > jQuery.datepicker.parseDate('yy-mm-dd', endISO))
               {
-                jQuery('#start_date_clone').datepicker( "setDate", endISO );
+                jQuery('#start_export_clone').datepicker( "setDate", endISO );
                 var datepickerEnd = jQuery('#end_date').val();
                 jQuery('#start_date').datepicker( "setDate", datepickerEnd );
               }
 
 			}
 		});
+		
 		setExportCreatedRange();
 	});
 
