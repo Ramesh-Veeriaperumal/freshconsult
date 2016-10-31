@@ -3,7 +3,7 @@ module Ember
     include Concerns::ApplicationViewConcern
     include Concerns::TicketsViewConcern
     before_filter :can_send_user?, :set_defaults, only: [:forward]
-
+    SINGULAR_RESPONSE_FOR = %w(reply forward).freeze
     def create
       assign_note_attributes
       conversation_delegator = ConversationDelegator.new(@item, attachment_ids: @attachment_ids)
