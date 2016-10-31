@@ -118,7 +118,7 @@ class Integrations::Hootsuite::HomeController < Integrations::Hootsuite::Hootsui
     if current_account.launched?(:es_v2_reads)
       filter_tickets_v2
     else
-      page_size = 10
+      page_size = 30
       Search::EsIndexDefinition.es_cluster(current_account.id)
       items = Tire.search Search::EsIndexDefinition.searchable_aliases([Helpdesk::Ticket], current_account.id),{:load => {Helpdesk::Ticket => { :include => [{:requester => :avatar}, :ticket_states, :ticket_old_body, :ticket_status, :responder, :group]}},
       :size => page_size,:without_archive => true} do |tire_search|

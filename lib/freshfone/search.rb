@@ -110,7 +110,7 @@ module Freshfone::Search
 	def search_customer_with_number_using_es(phone_number)
 	  begin
 			if Account.current.launched?(:es_v2_reads)
-				search_user_v2(called_number)
+				search_user_v2(phone_number)
 			else
 				search_user_with_number(phone_number.gsub(/^\+/, ''))
 			end
