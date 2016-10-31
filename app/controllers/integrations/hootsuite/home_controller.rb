@@ -152,7 +152,7 @@ class Integrations::Hootsuite::HomeController < Integrations::Hootsuite::Hootsui
     @tickets = []
     return unless params[:active].present?
 
-    page_size   = 10
+    page_size   = 30
     page_offset = page_size * ((params[:page].presence || 1).to_i - 1)
 		@tickets = Search::V2::QueryHandler.new({
 			account_id:   current_account.id,
