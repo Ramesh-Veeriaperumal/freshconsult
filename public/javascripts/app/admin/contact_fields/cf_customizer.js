@@ -43,7 +43,8 @@
 				required_in_portal : ["customer-required", "checked"],
 				validate_using_regex : ["custom-regex-required", "checked"],
 				field_options: ["custom-reg-exp", "value"],
-				admin_choices : ["custom-choices", "function"]
+				admin_choices : ["custom-choices", "function"],
+				multiple_companies_contact : [ "multiple_companies","checked"]
 			},
 			disabledByDefault: [],
 			customFieldType: '', 
@@ -70,6 +71,7 @@
 			editable_in_portal:     true, 
 			editable_in_signup:     false, 
 			required_in_portal:     false,
+			multiple_companies_contact : false,
 			id:                     null, 
 			admin_choices:          [],
 			field_options: 			{},
@@ -162,10 +164,26 @@
 			}
 			fieldContainer.data("raw", dataItem);
 			fieldContainer.addClass(dataItem.dom_type).append(controlGroup);
-			
+			var fieldtype = dataItem.field_type;
+			if ($.inArray(fieldtype, this.settings.inVisbileFields) == 0) {
+				fieldContainer.addClass("hide");
+				fieldContainer.addClass("cf-client-manager");
+			}
+			if (fieldtype == "default_company_name") {
+				fieldContainer.addClass("cf-company-name");
+			}
 			if(this.settings.customFieldType != 'company') {
 				this.showSecurityIconForAgentFields(fieldContainer);
 			}
+
+			if(dataItem['field_type'] == 'default_company_name' && is_multiple_contact_feature_present) {
+				if(is_multiple_contact_feature_enabled){
+					$(field).append("<div class='info_message'>" + translate.get('multiple_company_message_enable') + "<a href=\"#\"> Change </a></span>");
+				}else{
+					$(field).append("<div class='info_message'>" + translate.get('multiple_company_message') + "<a href=\"#\"> Change </a></span>");
+				}
+			}
+
 			this.hideDeleteIconForDefaultFields(fieldContainer);
 			this.hideEditIconForFields(fieldContainer);
 
@@ -280,12 +298,21 @@
 		},
 
 		showFieldDialog: function(element){
+			var self = this;
 			this.settings.currentData = $(element).data("raw");
 			var fieldtype = this.settings.currentData['field_type'];//$H(listItem.data("raw")).get('field_type');
-
+			if(this.settings.currentData.multiple_companies_contact == undefined) {
+				this.settings.currentData.multiple_companies_contact = is_multiple_contact_feature_enabled;
+				self.multiple_companies_toggle = is_multiple_contact_feature_enabled;
+			}
 			if ($.inArray(fieldtype, this.settings.nonEditableFields) == -1) {
 				$(this.settings.dialogContainer).html(JST['app/admin/'+this.settings.customFieldType+'_fields/formfield_props'](this.settings.currentData));
 				this.dialogOnLoad(element);
+				if(self.multiple_companies_toggle) {
+					jQuery("[name=multiple_companies]").prop('checked',true);
+				}else{
+					jQuery("[name=multiple_companies]").prop('checked',false);
+				}
 				$(this.settings.customPropsModal).modal('show');
 			}
 		},
@@ -360,12 +387,21 @@
 			}
 			this.settings.currentData.set(key, regexValue);
 		},
-			
+
+		setClientManagerPosition: function() {
+			var company_elements = $('.cf-company-name.ui-sortable-handle');
+			if(!company_elements.next().hasClass('cf-client-manager')) {
+				var client_manager_elements = $('.cf-client-manager.ui-sortable-handle');
+				company_elements.after(client_manager_elements.first());
+			}
+		},
+
 		saveCustomFields: function(ev) {
 			ev.preventDefault();
+			this.setClientManagerPosition();
 			var jsonData = this.getCustomFieldJson();
 			$(this.settings.fieldValues).val(jsonData.toJSON());
-			this.value = $(this).data("commit")
+			this.value = $(this).data("commit");
 			$(this.settings.saveBtn).prop("disabled", true);
 			$(this.settings.submitForm).trigger("submit");
 		},
@@ -441,6 +477,18 @@
 							if((key == 'label' || key == 'label_in_portal') && val !== undefined) {
 								val = escapeHtml(val);
 							}
+							
+							if( key == 'multiple_companies_contact') {
+								if(is_multiple_contact_feature_present) {
+									if(val == is_multiple_contact_feature_enabled) {
+										val = false;
+									} else {
+										val = true;
+									}
+								} else {
+									val = false;
+								}
+							}	
 							self.settings.currentData.set(key, val);							
 						}
 
@@ -724,9 +772,39 @@
 					$(self.settings.customPropertiesDiv).submit();
 				}
 			});
+			
+			jQuery("#CustomFieldsPropsDialog").on('change',"[name=multiple_companies]",function(){
+				
+				var is_selected = jQuery(this).is(':checked');
+				self.multiple_companies_toggle = is_selected;
+				if(is_multiple_contact_feature_enabled) {
+					if(!is_selected){
+						jQuery('[rel="warning"]').removeClass('hide');
+						jQuery('[rel="neutral"],[rel="on"]').addClass('hide');
+					} else {
+						jQuery('[rel="warning"],[rel="neutral"]').addClass('hide');
+						jQuery('[rel="on"]').removeClass('hide');
+					}
+				}else{
+					if(is_selected){
+						jQuery('[rel="on"]').removeClass('hide');
+						jQuery('[rel="neutral"]').addClass('hide');
+					}else{
+						jQuery('[rel="neutral"]').removeClass('hide');
+						jQuery('[rel="on"]').addClass('hide');
+					}
+				}
+			});
 
 			$(this.settings.customPropertiesDiv)
 					.on('submit',function(){ return false; });
+
+			$(document).on('click', '.saveBtn', function(){ 
+				var li = $('.cf-company-name').next()
+				if(!li.hasClass('.cf-client-manager')) {
+					li.next($('.cf-client-manager'))
+				}
+			});
 
 			this.settings.validateOptions = {
 							submitHandler: function(){
@@ -781,6 +859,7 @@
 							onkeyup: false,
 							onclick: false
 					 };
+			this.setClientManagerPosition();
 
 			$(this.settings.saveBtn).on('click', function(e) {
 				self.saveCustomFields(e);

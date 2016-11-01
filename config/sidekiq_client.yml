@@ -136,6 +136,11 @@ defaults: &defaults
     - [premium_account_jobs]
     - [trial_account_jobs]
     - [delayed_jobs]
+    - [contacts_sync]
+    - [contacts_sync_free]
+    - [contacts_sync_paid]
+    - [contacts_sync_trial]
+    - [remove_secondary_companies]
 
 development:
   <<: *defaults

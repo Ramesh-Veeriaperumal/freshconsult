@@ -54,7 +54,9 @@ class Tickets::AddBroadcastNote < BaseWorker
         :from_email => @tracker_ticket.reply_email,
         :url => url,
         :ticket_subject => ticket.subject,
-        :content => @broadcast_note.body_html
+        :content => @broadcast_note.body_html,
+        :ticket => ticket,
+        :note => @broadcast_note
       })
     end
   end

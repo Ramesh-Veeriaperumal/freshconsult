@@ -45,9 +45,11 @@ def self.ticket_fields_data
       
     { :name => "description", :label => "Description", :description => "Ticket description",
       :required => true, :visible_in_portal => true, :editable_in_portal => true, 
+      :required_in_portal => true },
+
+    { :name => "company", :label => "Company", :description => "Ticket Company",
+      :required => true, :visible_in_portal => true, :editable_in_portal => true,
       :required_in_portal => true }
-      
- 
   ]
 end
 

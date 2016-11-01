@@ -18,7 +18,7 @@ module Freshfone::Search
 			es_params:    ({ 
 				search_term: phone_number,
 				account_id: current_account.id,
-				request_id: request.try(:uuid),
+				request_id: Thread.current[:message_uuid].try(:first), #=> Msg ID is casted as array.
 				is_deleted: false,
 				phone_fields_str: custom_field_data_columns.join('\",\"'),
 				phone_fields_arr: custom_field_data_columns
@@ -109,7 +109,11 @@ module Freshfone::Search
 	#this method was returning first user based on Id for the number, so changed to have ordering based on name
 	def search_customer_with_number_using_es(phone_number)
 	  begin
-	    search_user_with_number(phone_number.gsub(/^\+/, ''))
+			if Account.current.launched?(:es_v2_reads)
+				search_user_v2(phone_number)
+			else
+				search_user_with_number(phone_number.gsub(/^\+/, ''))
+			end
 	  rescue Exception => e
 	    Rails.logger.error "Error with elasticsearch for Accout::#{current_account.id} \n#{e.message}\n#{e.backtrace.join("\n\t")}"
 	    get_customer_with_number(phone_number)

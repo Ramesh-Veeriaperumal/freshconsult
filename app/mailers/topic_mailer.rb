@@ -3,6 +3,7 @@ class TopicMailer < ActionMailer::Base
   include Helpdesk::NotifierFormattingMethods
   include Mailbox::MailerHelperMethods
   include Community::MailerHelper
+  include EmailHelper
 
   layout "email_font"
 
@@ -21,6 +22,7 @@ class TopicMailer < ActionMailer::Base
     @host = host
     @account = topic.account
 
+    headers.merge!(make_header(nil, nil, topic.account_id, "TopicMailer Monitor Email"))
     if attachments.present? && attachments.inline.present?
       handle_inline_attachments(attachments, topic.posts.first.body_html, topic.account)
     end
@@ -46,6 +48,7 @@ class TopicMailer < ActionMailer::Base
       :sent_on => Time.now
     }
     
+    headers.merge!(make_header(nil, nil, topic.account_id, "Stamp Change Email"))
     inline_attachments =[]
     @topic = topic
     @user = user
@@ -76,6 +79,7 @@ class TopicMailer < ActionMailer::Base
       :sent_on => Time.now
     }
 
+    headers.merge!(make_header(nil, nil, source_topic.account_id, "Topic merge Email"))
     @source_topic = source_topic
     @target_topic = target_topic
     @user = monitor.user

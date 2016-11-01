@@ -1,11 +1,11 @@
   <table class="tickets btn-collapse" width="100%" data-set-disabled = "disabled" data-show-by-default="false" data-class-for-btn-wrapper="inline-block" data-calc-parent-width-on=".bulk_action_buttons" data-button-text="<%= t("more") %>">
-	  <thead>
-	  	<tr>
+    <thead>
+      <tr>
         <th class="priority-border"></th>
-				<th class="check">
-					<input type="checkbox" id="helpdesk-select-all" data-keybinding="<%= shortcut('ticket_list.select_all') %>" />
-				</th>
-		    <th class="bulk_action_buttons collapse-content">
+        <th class="check">
+          <input type="checkbox" id="helpdesk-select-all" data-keybinding="<%= shortcut('ticket_list.select_all') %>" />
+        </th>
+        <th class="bulk_action_buttons collapse-content">
 
         <% unless ["deleted", "spam"].include?(@current_view) %>
           <input class="btn tooltip" title='<%= t('ticket.pick_up') %>'
@@ -73,7 +73,7 @@
         <% end %>
 
         <% if privilege?(:delete_ticket) %>
-		    	<% if @current_view == "deleted"%>
+          <% if @current_view == "deleted"%>
             <input class="btn tooltip" title="<%=t('undelete')%>"
                 onclick="helpdesk_submit('/helpdesk/tickets/multiple/restore', 'put');"
                 type="button" value="<%=t('undelete')%>" disabled="disabled">
@@ -92,11 +92,11 @@
                     type="button" value="<%=t('ticket.delete_forever')%>" 
                     disabled="disabled" data-keybinding="<%= shortcut('ticket_list.delete') %>"
                     data-highlight="true">
-    			<% else %>
+          <% else %>
             <input id="delete_tickets_btn" class="btn tooltip" title='<%= t('delete') %>' type="button"
                 value="<%=t('delete')%>" disabled="disabled"
                 data-keybinding="<%= shortcut('ticket_list.delete') %>" data-highlight="true">
-    			<% end %>
+          <% end %>
         <% end %>
 
         <% unless ["deleted", "spam"].include?(@current_view) %>
@@ -120,7 +120,7 @@
         <% if @current_view == "deleted" || @current_view == "spam" %>
           <th class="toolbar_right_spam_trash">        
         <% else %>
-      	 <th class="toolbar_right">
+         <th class="toolbar_right">
         <% end %>
           <% if @current_view == "deleted" %>
             <span class="pl3 muted"> <%= t('ticket.auto_delete_notification_trash') %></span>
@@ -236,28 +236,46 @@
 
   setExportCreatedRange = function(){
   var startDate, endDate;
+
     if(jQuery('#created_date_range').is(':visible')){
+
         jQuery("#date_filter").val(<%=TicketConstants::CREATED_BY_KEYS_BY_TOKEN[:custom_filter]%>);
         var dateFormat = getDateFormat('mediumDate');
         var createdDateRange = jQuery('#created_date_range').val().split(' - ');
         startDate = (new Date(createdDateRange[0])).toString(dateFormat);
         endDate = (new Date(createdDateRange[1])).toString(dateFormat);
-    }else{
-      jQuery("#date_filter").val(<%=TicketConstants::CREATED_BY_KEYS_BY_TOKEN[:thirt_days]%>);
-      startDate = "<%= formated_date(1.month.ago, Helpdesk::TicketsExportHelper::EXPORT_DATE_FORMAT)%>";
-      endDate = "<%= formated_date(Time.now, Helpdesk::TicketsExportHelper::EXPORT_DATE_FORMAT)%>";
-    }
-    jQuery("#date_filter").trigger('change');
-    <!-- jQuery('#start_date').val(startDate); -->
-    jQuery('#start_date').attr("value", startDate);
-    jQuery("#start_date_clone").val("<%= formated_date(1.month.ago,{:format => :date_iso_format, :include_year => true, :translate => false})%>");
-    <!-- jQuery('#end_date').val(endDate); -->
-    jQuery('#end_date').attr("value", endDate);
-    jQuery("#end_date_clone").val("<%= formated_date(Time.now,{:format => :date_iso_format, :include_year => true, :translate => false})%>");
+        
+        jQuery("#date_filter").trigger('change');
+        jQuery('#start_date').attr("value", startDate);
+        jQuery('#end_date').attr("value", endDate);
+        var dateTypeVarStart = new Date(jQuery('#start_date').val());
+        var setStart_date_Clone = jQuery.datepicker.formatDate('yy-mm-dd', dateTypeVarStart);
+        jQuery('#start_export_clone').val(setStart_date_Clone);
+        var dateTypeVarEnd = new Date(jQuery('#end_date').val());
+        var setend_date_Clone = jQuery.datepicker.formatDate('yy-mm-dd', dateTypeVarEnd);
+        jQuery('#end_export_clone').val(setend_date_Clone);
 
-    <!-- logic check : startdate <= enddate -->
-            var startISO = jQuery("#start_date_clone").val();
-            var endISO = jQuery("#end_date_clone").val();
+
+    }else{
+       
+        jQuery("#date_filter").val(<%=TicketConstants::CREATED_BY_KEYS_BY_TOKEN[:thirt_days]%>);
+        startDate = "<%= formated_date(1.month.ago, Helpdesk::TicketsExportHelper::EXPORT_DATE_FORMAT)%>";
+        endDate = "<%= formated_date(Time.now, Helpdesk::TicketsExportHelper::EXPORT_DATE_FORMAT)%>";
+
+        jQuery("#date_filter").trigger('change');
+        jQuery('#start_date').attr("value", startDate);
+        jQuery('#end_date').attr("value", endDate);
+        var dateTypeVarStart = new Date(jQuery('#start_date').val());
+        var setStart_date_Clone = jQuery.datepicker.formatDate('yy-mm-dd', dateTypeVarStart);
+        jQuery('#start_export_clone').val(setStart_date_Clone);
+        var dateTypeVarEnd = new Date(jQuery('#end_date').val());
+        var setend_date_Clone = jQuery.datepicker.formatDate('yy-mm-dd', dateTypeVarEnd);
+        jQuery('#end_export_clone').val(setend_date_Clone);
+    }
+
+    //logic check : startdate <= enddate 
+            var startISO = jQuery("#start_export_clone").val();
+            var endISO = jQuery("#end_export_clone").val();
               if(jQuery.datepicker.parseDate('yy-mm-dd', startISO) > jQuery.datepicker.parseDate('yy-mm-dd', endISO))
               {
                 jQuery('#start_date_clone').datepicker( "setDate", endISO );

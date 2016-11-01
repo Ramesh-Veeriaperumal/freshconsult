@@ -59,7 +59,7 @@ class Helpdesk::TicketsController < ApplicationController
   skip_before_filter :load_item
   alias :load_ticket :load_item
 
-  before_filter :set_native_mobile, :only => [:show, :load_reply_to_all_emails, :index,:recent_tickets,:old_tickets , :delete_forever,:change_due_by,:reply_to_forward]
+  before_filter :set_native_mobile, :only => [:show, :load_reply_to_all_emails, :index,:recent_tickets,:old_tickets , :delete_forever,:change_due_by,:reply_to_forward, :save_draft, :clear_draft]
   before_filter :verify_ticket_permission_by_id, :only => [:component]
 
   before_filter :load_ticket,
@@ -420,6 +420,7 @@ class Helpdesk::TicketsController < ApplicationController
         hash.merge!({:twitter_handles_map => twitter_handles_map}) if @item.twitter?
         hash.merge!({:tags => @item.tags.map(&:to_mob_json)})
         hash.merge!(@ticket_notes[0].to_mob_json) unless @ticket_notes[0].nil?
+        hash.merge!({:ticket_draft => draft_hash})
         render :json => hash
       }
       format.mobile {
@@ -1032,6 +1033,7 @@ class Helpdesk::TicketsController < ApplicationController
   def save_draft
     count = 0
     tries = 3
+    success = true
     begin
       params[:draft_data] = Helpdesk::HTMLSanitizer.clean(params[:draft_data])
       draft_cc = fetch_valid_emails(params[:draft_cc]).map {|e| "#{e};"}.to_s.sub(/;$/,"")
@@ -1043,6 +1045,7 @@ class Helpdesk::TicketsController < ApplicationController
       }
       set_tickets_redis_hash_key(draft_key, draft_hash_data)
     rescue Exception => e
+      success = false
       NewRelic::Agent.notice_error(e,{:key => draft_key,
         :value => params[:draft_data],
         :description => "Redis issue",
@@ -1050,14 +1053,30 @@ class Helpdesk::TicketsController < ApplicationController
       if count<tries
           count += 1
           retry
-      end
+      end      
     end
-    render :nothing => true
+
+     respond_to do |format|
+         format.html {
+            render :nothing => true
+         }
+         format.nmobile{
+            render :json => {:success => success} 
+         }
+     end
+    
   end
 
   def clear_draft
     remove_tickets_redis_key(draft_key)
-    render :nothing => true
+     respond_to do |format|
+         format.html {
+            render :nothing => true
+         }
+         format.nmobile{
+            render :json => {:success => true}
+         }
+     end
   end
 
   def activities

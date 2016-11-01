@@ -1,6 +1,7 @@
 class SpamDigestMailer < ActionMailer::Base
   
   layout "email_font"
+  include EmailHelper
   
   def spam_digest(options={}) 
     headers        = {
@@ -11,6 +12,11 @@ class SpamDigestMailer < ActionMailer::Base
       :content_type => "text/html"
     }
 
+    account_id = -1
+
+    account_id = options[:account].id if(options[:account])
+
+    headers.merge!(make_header(nil, nil, account_id, "Spam Digest"))
     @moderation_digest = options[:moderation_digest]
     @moderator = options[:moderator]
     @host = options[:host]

@@ -123,4 +123,94 @@ category-9:
     test:
       <<: *defaults
     staging:
-      <<: *defaults      
+      <<: *defaults 
+
+category-11:
+    defaults: &defaults
+      address: smtp.mailgun.org
+      port: 587
+      domain: freshpo.com
+      authentication: :plain
+      user_name: postmaster@trialmg.freshdesk.com
+      password: e60abb3c5ee0060db5ed7ef0020bde7a
+    development:
+      <<: *defaults
+    test:
+      <<: *defaults
+    staging:
+      <<: *defaults
+
+category-12:
+    defaults: &defaults
+      address: smtp.mailgun.org
+      port: 587
+      domain: freshpo.com
+      authentication: :plain
+      user_name: postmaster@trialmg.freshdesk.com
+      password: e60abb3c5ee0060db5ed7ef0020bde7a
+    development:
+      <<: *defaults
+    test:
+      <<: *defaults
+    staging:
+      <<: *defaults
+
+category-13:
+    defaults: &defaults
+      address: smtp.mailgun.org
+      port: 587
+      domain: freshpo.com
+      authentication: :plain
+      user_name: postmaster@trialmg.freshdesk.com
+      password: e60abb3c5ee0060db5ed7ef0020bde7a
+    development:
+      <<: *defaults
+    test:
+      <<: *defaults
+    staging:
+      <<: *defaults
+
+category-14:
+    defaults: &defaults
+      address: smtp.mailgun.org
+      port: 587
+      domain: freshpo.com
+      authentication: :plain
+      user_name: postmaster@trialmg.freshdesk.com
+      password: e60abb3c5ee0060db5ed7ef0020bde7a
+    development:
+      <<: *defaults
+    test:
+      <<: *defaults
+    staging:
+      <<: *defaults
+
+category-15:
+    defaults: &defaults
+      address: smtp.mailgun.org
+      port: 587
+      domain: freshpo.com
+      authentication: :plain
+      user_name: postmaster@trialmg.freshdesk.com
+      password: e60abb3c5ee0060db5ed7ef0020bde7a
+    development:
+      <<: *defaults
+    test:
+      <<: *defaults
+    staging:
+      <<: *defaults
+
+category-19:
+    defaults: &defaults
+      address: smtp.mailgun.org
+      port: 587
+      domain: freshpo.com
+      authentication: :plain
+      user_name: postmaster@trialmg.freshdesk.com
+      password: e60abb3c5ee0060db5ed7ef0020bde7a
+    development:
+      <<: *defaults
+    test:
+      <<: *defaults
+    staging:
+      <<: *defaults            

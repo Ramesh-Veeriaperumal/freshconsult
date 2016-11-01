@@ -23,8 +23,10 @@ module Admin
             tickets = account.tickets.where(negate_conditions).where(conditions).updated_in(1.month.ago).visible.joins(joins).select("helpdesk_tickets.*")
             tickets.each do |ticket|
               begin
-                rule.trigger_actions ticket
-                execute_on_db("run_on_master") { ticket.save_ticket! }
+                execute_on_db("run_on_master") { 
+                  rule.trigger_actions ticket
+                  ticket.save_ticket! 
+                }
               rescue Exception => e
                 logger.info "::::::::::::::::::::error:::::::::::::#{rule.inspect}"
                 logger.info e

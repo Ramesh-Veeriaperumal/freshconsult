@@ -1,0 +1,70 @@
+<% content_for :helpcard do %>
+  <div class="helpcard"><%=t("integrations.#{app_name}.helptext").html_safe%></div>
+<% end %>
+<h3 class="title"><%=t("integrations.#{app_name}.form.title").html_safe%></h3>
+
+<%= form_tag(url, { :method => :post }) do %>
+  <div class="ui-form google_accounts">
+
+    <div class="error alert hide" id="error_display"></div>
+
+    <h4 class="title"><%= t("integrations.#{app_name}.form.mail_box_detail").html_safe %> <%= @sync_account.name %> ( <%= @sync_account.email %> )</h4>
+
+    <fieldset>
+      <legend><%= t("integrations.#{app_name}.form.import_group").html_safe %></legend>
+      <div class="fields">
+        <label class="checkwrapper">
+          <%= check_box_tag "contacts_sync[import_folders][]", "--all--" %>All Contacts
+        </label>
+      </div>
+      <div class="fields">
+        <% import_folders.each do |group| %>
+          <label class="checkwrapper">
+            <%= check_box_tag "contacts_sync[import_folders][]", group[:id] %><%= group[:name] %>
+          </label>
+        <% end %>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend><%= t("integrations.#{app_name}.form.sync_tag") %></legend>
+      <div class="fields">
+        <label class="caption" for="contacts_sync_sync_tag"><%= t("integrations.#{app_name}.form.sync_tag_label") %></label>
+        <%= text_field_tag "contacts_sync[sync_tag]", sync_tag, "data-placement" => "right", :class => "form-tooltip mini", :title => t("integrations.#{app_name}.form.sync_tag_info") %>
+      </div>
+
+      <div class="special-notice">
+        <%= t("integrations.#{app_name}.form.sync_group_info", :group_name => h(@sync_account.sync_group_name)).html_safe %>
+      </div>
+
+      <div class="fields">
+        <label>
+          <%= t("integrations.#{app_name}.form.overwrite_existing_user") %> <%= check_box_tag "contacts_sync[overwrite_existing_user]", 1, true, :class => 'iphone', "data-active-text" => "Yes", "data-inactive-text" => "No" %>
+        </label>
+      </div>
+    </fieldset>
+
+    <div class="button-container">
+      <%= submit_tag t("integrations.#{app_name}.form.submit"), :class => "uiButton special" %>
+    </div>
+
+  </div>
+<% end %>
+
+<script type="text/javascript">
+
+  jQuery('.ui-form').on('click', '#contacts_sync_import_folders_', function() {
+    curr_obj = this;
+    if (curr_obj.value == '--all--') {
+      jQuery('.fields #contacts_sync_import_folders_').each(function(index, obj) {
+        obj.checked = curr_obj.checked;
+      });
+    }
+    else {
+      if (curr_obj.checked == false) {
+        jQuery('[value=--all--]')[0].checked = false;
+      }
+    }
+  });
+
+</script>

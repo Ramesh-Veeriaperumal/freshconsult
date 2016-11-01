@@ -73,7 +73,13 @@
       learnMore:     '<%= t("group.learn_more") %>',
       cancel:     '<%= t("cancel") %>',
       done:     '<%= t("done") %>',
-      maxItemsReached: '<%= t("admin.contact_fields.formfield_props.max_choices") %>'
+      maxItemsReached: '<%= t("admin.contact_fields.formfield_props.max_choices") %>',
+      multiple_company_message : '<%= t("admin.contact_fields.formfield_props.multiple_company_message") %>',
+      multiple_company_field_label : '<%= t("admin.contact_fields.fields.multiple_company") %>',
+      multiple_company_dialog_help_text : '<%= t("admin.contact_fields.multiple_company_dialog_help_text") %>',
+      multiple_company_dialog_on : '<%= t("admin.contact_fields.multiple_company_dialog_on") %>',
+      multiple_company_dialog_warning : '<%= t("admin.contact_fields.multiple_company_dialog_warning") %>',
+      multiple_company_message_enable : '<%= t("admin.contact_fields.formfield_props.multiple_company_message_enable") %>'
     };
 
     window['translate'] = {}; 
@@ -81,10 +87,13 @@
       return tf_lang[name] || "";
     };
 
+    var is_multiple_contact_feature_present = <%= Account.current.features?(:multiple_companies_toggle)%>;
+    var is_multiple_contact_feature_enabled = <%= Account.current.features?(:multiple_user_companies)%>;
 
     var customField = new CustomFields({existingFields : customFields, 
                         customMessages: tf_lang,
                         nonEditableFields: ['default_tag_names', 'default_description', 'default_client_manager'],
+                        inVisbileFields: ['default_client_manager'],
                         disabledByDefault: {
                                 'default_company_name' : 
                                       {

@@ -15,6 +15,13 @@ module AwsWrapper
       end
     end
 
+    def self.public_url_for(content_path,bucket_name,options={})
+      unless content_path.blank?
+        bucket = AWS::S3::Bucket.new(bucket_name)
+        s3object = AWS::S3::S3Object.new(bucket,content_path).public_url.to_s
+      end
+    end
+
     def self.read(content_path,bucket_name,options={})
       bucket = AWS::S3::Bucket.new(bucket_name)
       s3object = AWS::S3::S3Object.new(bucket,content_path)

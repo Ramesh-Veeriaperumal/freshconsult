@@ -23,6 +23,7 @@ window.App.Contacts.Contact_form = window.App.Contacts.Contact_form || {};
       this.bindHandlers();
       this.manageNewEmail();
       this.manageNewCompany();
+      this.setClientManagerPosition();
     },
 
     bindGroupValidation: function() {
@@ -58,12 +59,13 @@ window.App.Contacts.Contact_form = window.App.Contacts.Contact_form || {};
           },
           minLength: 1,
           select: function (event, ui) {
-            if ($(this).parent().next().length == 0) {
-              $("#user_address").focus();
-              $("#add_new_company").focus();
-            } else{
-              $(this).parent().next().children(".user_company").focus();
-            };
+            var $addCompany = $("#add_new_company");
+            if($addCompany.length) {
+              $addCompany.focus();
+            }
+            else {
+              $('#user_client_manager').focus();
+            }
           },
           open: function () {
             $(this).autocomplete("widget").css({'display':'block', 'z-index': 1060});
@@ -159,7 +161,13 @@ window.App.Contacts.Contact_form = window.App.Contacts.Contact_form || {};
 
     bindMenuItemClick: function () {
       $('body').on('click.contact_form', ".ui-menu-item", function(ev){
-        $("#user_address").focus();
+        var add_company_element = $('body').find("#add_new_company");
+        if(add_company_element.length != 0) {
+          add_company_element.focus();
+        }
+        else {
+          $('#user_client_manager').focus();
+        }
       });
     },
 
@@ -381,6 +389,14 @@ window.App.Contacts.Contact_form = window.App.Contacts.Contact_form || {};
                                              "default_comp" : default_comp})).appendTo('ul.companies');
           $('#user_companies').find('input[type="text"]').last().focus();
         }
+    },
+
+    setClientManagerPosition: function() {
+      var company_element = $('body').find("#user_company_name").parents("li");
+      if(!company_element.next().hasClass('default_client_manager')) {
+        var client_manager_element = $(".default_client_manager")
+        company_element.after(client_manager_element);
+      }
     }
 
   };

@@ -2,6 +2,7 @@ class DraftMailer < ActionMailer::Base
 
   include Mailbox::MailerHelperMethods
   include Helpdesk::NotifierFormattingMethods
+  include EmailHelper
 
   layout "email_font"
 
@@ -20,6 +21,7 @@ class DraftMailer < ActionMailer::Base
       :sent_on   => Time.now
     }
 
+    headers.merge!(make_header(nil, nil, current_user.account_id, "Discard Email"))
     @draft = draft
     @article = article
     @current_author = current_author

@@ -41,6 +41,8 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     feature_info[:chat] = { :enabled => account.features?(:chat) , :active => (account.chat_setting.active && account.chat_setting.site_id?) }
     feature_info[:mailbox] = account.features?(:mailbox)
     feature_info[:freshfone] = account.features?(:freshfone)
+    feature_info[:domain_restricted_access] = account.features?(:domain_restricted_access)
+    feature_info[:restricted_helpdesk] = account.restricted_helpdesk?
     respond_to do |format|
       format.json do
         render :json => feature_info

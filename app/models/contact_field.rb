@@ -8,6 +8,7 @@ class ContactField < ActiveRecord::Base
 
   before_save   :set_portal_edit
   before_create :populate_label
+  after_commit :toggle_multiple_companies_feature, on: :update
 
   validates_uniqueness_of :name, :scope => [:account_id, :contact_form_id]
 
@@ -42,6 +43,7 @@ class ContactField < ActiveRecord::Base
     :text         => { :column_name => "cf_text",     :column_limits => 10 }
   }
 
+  attr_accessor :multiple_companies_contact
   inherits_custom_field :form_class => 'ContactForm', :form_id => :contact_form_id,
                         :custom_form_method => :default_contact_form,
                         :field_data_class => 'ContactFieldData',
@@ -62,6 +64,17 @@ class ContactField < ActiveRecord::Base
   def populate_label
     self.label = name.titleize if label.blank?
     self.label_in_portal = label if label_in_portal.blank?
+  end
+
+  def toggle_multiple_companies_feature
+    if self.name == "company_name" && self.multiple_companies_contact
+      if Account.current.features?(:multiple_user_companies)
+        Account.current.features.multiple_user_companies.destroy
+        Users::RemoveSecondaryCompanies.perform_async
+      else
+        Account.current.features.multiple_user_companies.create        
+      end
+    end
   end
 
   def label

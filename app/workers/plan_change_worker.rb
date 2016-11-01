@@ -171,6 +171,10 @@ class PlanChangeWorker
     # account.account_additional_settings.update_attributes(:additional_settings => new_settings)
   end
 
+  def drop_multiple_companies_toggle_data(account)
+    account.remove_secondary_companies
+  end
+
 =begin
   @conditions, @batch size are created using VALUES hash that is passed
   If need to check additional conditions, pass in a where that is prepended before the where using @conditions
