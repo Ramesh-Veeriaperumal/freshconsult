@@ -34,11 +34,26 @@ end
 			<% end %>
 			class="conversation <%= 'minimized' if minimizable %> <%= 'source_email' if note.email? %>">
 	<% if note.user %>
-	<div class="avatar-wrap" name="note<%= note.id %>" id="note<%= note.id %>"><%= user_avatar(note.user, :thumb, 'preview_pic circle') %></div>
+		<% if notable_object.agent_performed?(note.user) %>
+			<div class="avatar-wrap" name="note<%= note.id %>" id="note<%= note.id %>"><%= user_avatar(note.user, :thumb, 'preview_pic circle') %></div>
+		<% else %>
+			<% if (Account.current.customer_sentiment_enabled? && current_user.language=="en") %>
+				<% survey_association = Account.current.new_survey_enabled? ? "custom_survey_results" : "survey_results" %>
+
+				<% unless notable_object.send(survey_association).nil? || notable_object.send(survey_association).last.nil? %>
+				    <div class="avatar-wrap" name="note<%= note.id %>" id="note<%= note.id %>"><%= user_avatar(note.user, :thumb, 'preview_pic circle') %></div>
+				<% else %>
+				    <div class="avatar-wrap" name="note<%= note.id %>" id="note<%= note.id %>"><%= senti_user_avatar(note.user, note.sentiment, :thumb, 'preview_pic circle') %></div>
+				<% end %>
+
+			<% else %>
+			    <div class="avatar-wrap" name="note<%= note.id %>" id="note<%= note.id %>"><%= user_avatar(note.user, :thumb, 'preview_pic circle') %></div>
+			<% end %>
+		<% end %>
 	<% end %>
   <div class="commentbox 
       <%= (note.user.blank? or notable_object.agent_performed?(note.user)) ? 'commentbox-gray' : 'commentbox-requester' %> 
-      <%= 'private-note' if note.private_note? || note.fwd_email? || (is_twitter_dm?(note, notable_object)) || is_facebook_message?(note, notable_object) %>">
+      <%= 'private-note' if note.private_note? || note.fwd_email? || (is_twitter_dm?(note, notable_object)) || is_facebook_message?(note, notable_object) %>" rel="<%= (notable_object.agent_performed?(note.user)) ? 'agent_msg' : 'customer_msg' %>" >
 
     <%= note_lock_icon(note, notable_object) %>
 

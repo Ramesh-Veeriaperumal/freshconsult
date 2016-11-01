@@ -5,7 +5,7 @@ class Helpdesk::Note < ActiveRecord::Base
   before_create :validate_schema_less_note, :update_observer_events
   before_save :load_schema_less_note, :update_category, :load_note_body, :ticket_cc_email_backup
 
-  after_create :update_content_ids, :update_parent, :add_activity
+  after_create :update_content_ids, :update_parent, :add_activity, :update_sentiment
   after_commit :fire_create_event, on: :create
   after_commit :related_tickets_broadcast, on: :create, :if => :broadcast_note_to_tracker?
   # Doing update note count before pushing to ticket_states queue
@@ -67,6 +67,27 @@ class Helpdesk::Note < ActiveRecord::Base
       notable.destroy_activity('activities.tickets.conversation.in_email.long', id)
     else
       notable.destroy_activity("activities.tickets.conversation.#{ACTIVITIES_HASH.fetch(source, "note")}.long", id)
+    end
+  end
+
+  def update_sentiment 
+    user_id = User.current.id if User.current
+
+    if (account.customer_sentiment_enabled?) && (self.user.language=="en")
+
+      is_agent_performed = notable.agent_performed?(self.user)
+
+      if (not is_agent_performed) && (self.private != true)
+        if source == 9
+          self.sentiment = 0
+          self.save
+        else
+          Notes::UpdateNotesSentimentWorker.perform_async(
+                { :note_id => id,
+                  :ticket_id => notable.id}
+          )
+        end
+      end
     end
   end
 

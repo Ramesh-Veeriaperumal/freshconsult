@@ -201,6 +201,8 @@ class Helpdesk::TicketsController < ApplicationController
         flash[:notice] = t(:'flash.tickets.empty_trash.delay_delete') if @current_view == "deleted" and key_exists?(empty_trash_key)
         flash[:notice] = t(:'flash.tickets.empty_spam.delay_delete') if @current_view == "spam" and key_exists?(empty_spam_key)
         @is_default_filter = (!is_num?(view_context.current_filter))
+
+        #@sentiments = {:ticket_id => sentiment_value}
         # if request.headers['X-PJAX']
         #   render :layout => "maincontent"
         # end
@@ -768,6 +770,37 @@ class Helpdesk::TicketsController < ApplicationController
       :ticket_ids => @items.map(&:id)
     })
     render_delete_forever
+  end
+
+  def sentiment_feedback
+
+    Rails.logger.info "In sentiment_feedback"
+
+    if current_user.has_ticket_permission?(@item)
+
+      fb_params = {}
+
+      con = Faraday.new(MlAppConfig["sentiment_host"]) do |faraday|
+          faraday.response :json, :content_type => /\bjson$/                # log requests to STDOUT
+          faraday.adapter  Faraday.default_adapter  # make requests with Net::HTTP
+      end
+
+      fb_params = {"data"=> {:account_id=>current_account.id, 
+                            :ticket_id=>params["data"]["ticket_id"],
+                            :note_id=>params["data"]["note_id"],
+                            :predicted_value=>params["data"]["predicted_value"],
+                            :feedback=>params["data"]["feedback"],
+                            :user_id=>current_user.id,
+                            }}
+
+      response = con.post do |req|
+        req.url "/"+MlAppConfig["feedback_url"]
+        req.headers['Content-Type'] = 'application/json'
+        req.body = fb_params.to_json
+      end
+    end
+    render :json => {"success"=>"true"}.to_json
+
   end
 
   def empty_trash
@@ -1814,7 +1847,7 @@ class Helpdesk::TicketsController < ApplicationController
     if es_tickets_enabled? and params[:html_format]
       tickets_from_es(params)
     else
-      current_account.tickets.preload({requester: [:avatar]}, :company).permissible(current_user).filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
+      current_account.tickets.preload({requester: [:avatar]}, :company, :schema_less_ticket).permissible(current_user).filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
     end
   end
 

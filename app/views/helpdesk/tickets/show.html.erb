@@ -94,5 +94,26 @@ try {
 		
 		jQuery(".list_agents_replying").addClass("hide");
 }()
+jQuery('body').one('assetLoaded.fjax', function() {
+	console.log('assets loaded');
+	<% survey_association = current_account.new_survey_enabled? ? "custom_survey_results" : "survey_results" %>
+	<% if current_account.customer_sentiment_enabled? && current_user.language=="en" %>;
+		<% if current_user.privilege?(:admin_tasks) || current_user.privilege?(:view_reports) %>
+			<% if @ticket.send(survey_association).nil? || @ticket.send(survey_association).last.nil? %>
+				sentiment = {};sentiment.last_note={};
+				sentiment.ticket_id = <%= @ticket.id %>
+				sentiment.display_id = <%= @ticket.display_id %>
+				sentiment.ticket_sentiment = <%= @ticket.sentiment %>
+				<% if (@ticket.notes.visible.customer_responses.last != nil) %>
+		 			sentiment.last_note.note_id = <%= @ticket.notes.visible.customer_responses.last.id %>
+		 			sentiment.last_note.note_sentiment = <%= @ticket.notes.visible.customer_responses.last.sentiment %> 
+	 			<% end %>
+			 	
+				App.Sentiment.init();
+			<% end %>		
+		<% end %>
+	<% end %>
+});
+
 </script>
 <% content_for :layoutType do -%>ticket_details<%- end %>

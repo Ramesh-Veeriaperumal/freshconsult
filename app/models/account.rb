@@ -142,6 +142,11 @@ class Account < ActiveRecord::Base
     features?(:custom_survey)
   end
 
+  def customer_sentiment_enabled?
+    Rails.logger.info "customer_sentiment : #{launched?(:customer_sentiment)}"
+    launched?(:customer_sentiment)
+  end
+
   def freshfone_enabled?
     features?(:freshfone) and freshfone_account.present?
   end

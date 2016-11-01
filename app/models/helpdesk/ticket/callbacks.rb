@@ -42,7 +42,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   before_save :update_dueby, :unless => :manual_sla?
 
-  after_create :refresh_display_id, :create_meta_note, :update_content_ids
+  after_create :refresh_display_id, :create_meta_note, :update_content_ids, :update_sentiment
 
   after_commit :create_initial_activity, :pass_thro_biz_rules, on: :create
   after_commit :send_outbound_email, :update_capping_on_create, on: :create, :if => :outbound_email?
@@ -133,11 +133,28 @@ class Helpdesk::Ticket < ActiveRecord::Base
     schema_less_ticket.save if schema_less_ticket.changed?
   end
 
-  def update_ticket_states 
+  def update_ticket_states
     process_agent_and_group_changes
     process_status_changes
     ticket_states.save if ticket_states.changed?
     schema_less_ticket.save
+  end
+
+  def update_sentiment 
+
+    if (self.account.customer_sentiment_enabled?) 
+      if (User.current == nil) || (User.current.language==nil) || (User.current.language=="en")
+        if self.source == 3 || self.source == 7
+          self.sentiment = 0
+          self.save
+        else
+          user_id = User.current.id if User.current
+          Tickets::UpdateSentimentWorker.perform_async(
+                { :id => id }
+          )
+        end
+      end
+    end
   end
   
   def process_agent_and_group_changes 

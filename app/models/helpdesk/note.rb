@@ -12,7 +12,7 @@ class Helpdesk::Note < ActiveRecord::Base
 
   SCHEMA_LESS_ATTRIBUTES = ['from_email', 'to_emails', 'cc_emails', 'bcc_emails', 'header_info', 'category', 
                             'response_time_in_seconds', 'response_time_by_bhrs', 'email_config_id', 'subject',
-                            'last_modified_user_id', 'last_modified_timestamp'
+                            'last_modified_user_id', 'last_modified_timestamp', 'sentiment'
                           ]
 
   self.table_name =  "helpdesk_notes"
