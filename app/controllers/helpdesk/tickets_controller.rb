@@ -780,7 +780,7 @@ class Helpdesk::TicketsController < ApplicationController
 
       fb_params = {}
 
-      con = Faraday.new(SentimentAppConfig["host"]) do |faraday|
+      con = Faraday.new(MlAppConfig["sentiment_host"]) do |faraday|
           faraday.response :json, :content_type => /\bjson$/                # log requests to STDOUT
           faraday.adapter  Faraday.default_adapter  # make requests with Net::HTTP
       end
@@ -794,7 +794,7 @@ class Helpdesk::TicketsController < ApplicationController
                             }}
 
       response = con.post do |req|
-        req.url "/"+SentimentAppConfig["feedback_url"]
+        req.url "/"+MlAppConfig["feedback_url"]
         req.headers['Content-Type'] = 'application/json'
         req.body = fb_params.to_json
       end

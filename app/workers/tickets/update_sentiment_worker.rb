@@ -16,13 +16,13 @@ module Tickets
         @account = Account.current
         @ticket = @account.tickets.find_by_id args[:id]
 
-        con = Faraday.new(SentimentAppConfig["host"]) do |faraday|
+        con = Faraday.new(MlAppConfig["sentiment_host"]) do |faraday|
             faraday.response :json, :content_type => /\bjson$/                # log requests to STDOUT
             faraday.adapter  Faraday.default_adapter  # make requests with Net::HTTP
         end
 
         response = con.post do |req|
-          req.url "/"+SentimentAppConfig["url"]
+          req.url "/"+MlAppConfig["predict_url"]
           req.headers['Content-Type'] = 'application/json'
           req.body = generate_predict_request_body
         end
