@@ -123,7 +123,7 @@ class User < ActiveRecord::Base
   end
 
   def has_multiple_companies_feature?
-    account.features_included?(:multiple_user_companies)
+    account.features?(:multiple_user_companies)
   end
 
   attr_accessor :import, :highlight_name, :highlight_job_title, :created_from_email,

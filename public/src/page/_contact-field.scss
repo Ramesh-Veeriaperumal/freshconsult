@@ -147,6 +147,10 @@
 				color: #999;
 			}
 		}
+		.info_message {
+			color : #666;
+			margin-top : 7px;
+		}
 	}
 	.cloned-custom-fields {
 		.custom-field {
@@ -348,4 +352,13 @@
 			font-size: 16px;
 		}
 	}
+}
+
+.multiple_companies_section {
+    margin-top: 15px;
+    margin-left: -10px;
+}
+
+.warning_text{
+	color : #ba3e3c;
 }

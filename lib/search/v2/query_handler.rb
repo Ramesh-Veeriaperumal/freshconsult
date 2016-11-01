@@ -29,7 +29,7 @@ module Search
             {
               current_account_id: @account_id,
               page: @current_page,
-              from: @offset
+              es_offset: @offset
             }
           )
         rescue Exception => e

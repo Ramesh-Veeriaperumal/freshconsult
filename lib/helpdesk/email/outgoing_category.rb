@@ -15,8 +15,19 @@ module Helpdesk::Email::OutgoingCategory
     [:default,    5],
     [:spam,       9]  
   ]
+
+#for default we still use sendgrid for outgoing- due to DKIM
+  MAILGUN_CATEGORIES = [
+    [:trial,      11],
+    [:active,     12],
+    [:premium,    13],
+    [:free,       14],
+    [:default,    5],
+    [:spam,       19]
+  ]
   
   CATEGORY_BY_TYPE = Hash[*CATEGORIES.flatten]
+  MAILGUN_CATEGORY_BY_TYPE = Hash[*MAILGUN_CATEGORIES.flatten]
   CATEGORY_SET = CATEGORIES.map{|a| a[0]}
   
   def get_subscription
@@ -29,7 +40,7 @@ module Helpdesk::Email::OutgoingCategory
     return state
   end
 
-  def get_category_id
+  def get_category_id(use_mailgun = false)
     key = get_subscription
     if  ( (!account_whitelisted?) &&
           (account_created_recently? || 
@@ -37,8 +48,12 @@ module Helpdesk::Email::OutgoingCategory
             ( ismember?(BLACKLISTED_SPAM_ACCOUNTS, Account.current.id) || Freemail.free_or_disposable?(Account.current.admin_email))
             )))
       key = "spam"
-    end 
-    CATEGORY_BY_TYPE[key.to_sym]
+    end
+    if use_mailgun
+      MAILGUN_CATEGORY_BY_TYPE[key.to_sym]
+    else 
+      CATEGORY_BY_TYPE[key.to_sym]
+    end
   end
 
   def account_whitelisted?
@@ -54,5 +69,13 @@ module Helpdesk::Email::OutgoingCategory
       return Account.current.created_at > account_time_limit.days.ago
     end
     return false
+  end
+
+  def get_mailgun_percentage
+    if $mailgun_percentage.blank? || $last_time_checked.blank? || $last_time_checked < 5.minutes.ago
+      $mailgun_percentage = get_others_redis_key(Redis::RedisKeys::MAILGUN_TRAFFIC_PERCENTAGE).to_i
+      $last_time_checked = Time.now
+    end
+    return $mailgun_percentage
   end
 end

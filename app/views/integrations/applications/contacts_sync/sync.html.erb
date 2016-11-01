@@ -1,0 +1,143 @@
+ <% content_for :helpcard do -%>
+  <div class="helpcard">
+      <%=t("integrations.#{app_name}.helptext").html_safe%>
+  </div>
+<%- end %>
+<h3 class="lead"><%=t("integrations.#{app_name}.form.title").html_safe%></h3>
+<% method_type = (@action == "install") ? "post" : "put" %>
+
+<%= form_tag("/integrations/outlook_contacts/#{@action}", :method => method_type)  do %>
+  <% if @action == 'update' %>
+    <%= hidden_field_tag  'id', params[:id] %>
+  <% end %>
+  <div class="well">
+    <div class="tab-content row-fluid">
+      <label class="caption span3">
+        <div class="logo application-logo-<%= app_name %>"></div>
+        <div class="logo info-data">
+          <%=t("integrations.#{app_name}.desc")%>
+        </div>
+      </label>
+      <div class="tab-pane span9 active" id="field-mapping-tab">
+        <div class="sf-title-wrapper">
+          <label for="enble_sync"> Outlook Contact Sync </label>
+          <input type="checkbox" rel="toggle" name="enble_sync" id="enble_sync" data-checked-label="ON" data-unchecked-label="OFF" <% if @element_config['enble_sync'] == "on" %> checked=checked <% end %> onchange="change(this)">
+        </div>
+        <div class="field-mapping">
+          <div id="field-wrap"></div>
+          <div class="row-fluid" id="rule-list">
+            <div class="tab-content">
+              <div class="tab-pane active" id="contact-mapping-tab">
+                <div class="contact-wrapper">
+                  <div class="contact-tabel-head">
+                    <div class="contact-tabel-data field-1">
+                      <span class="field-1-text"><%=t("integrations.#{app_name}.sync_settings.freshdesk_fields")%>
+                      </span>
+                    </div>
+                    <div class="contact-tabel-data field-2">
+                      <a class="center-icon"><%= font_icon "left-direction", { :size => 20 } %></a>
+                    </div>
+                    <div class="contact-tabel-data field-3">
+                      <span><%=t("integrations.#{app_name}.sync_settings.outlook_fields")%></span>
+                    </div>
+                  </div>
+                  <div rel="construct_contact_rules" id="construct_contact_rule" class="rules_wrapper" data-render-template = '.construct_contact' ></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="no-display" class="alert notice error">Please resolve the errors in the form before proceeding!!</div>
+  <div class="button-container">
+    <% if @action == 'install' %>
+      <%= link_to t('back'), {:controller => '/integrations/applications', :action => 'index'}, :class => "btn pull-left" %>
+    <% else %>
+      <%= link_to t('back'), {:controller => "/integrations/#{app_name}", :action => 'edit'}, :class => "btn pull-left" %>
+    <% end %>
+    <%= submit_tag t('update'), :class => "btn btn-primary",:onclick => "return fillLabels();" %>
+  </div>
+<%end%>
+
+<script class="construct_contact" type="text/html" data-default-value='<%= @element_config['existing_contacts'].to_json.html_safe %>'>
+  <% fd_contact = @element_config["fd_contact"] %>
+  <%= select_tag('inputs[contacts][][fd_field]', options_for_select(fd_contact.collect{ |k,v| [v,k,{'data-field-type' => @element_config['fd_contact_types'][v]} ]}),
+          { :class => "" , :rel => "dropdown", "data-refer-key" => 'fd_field', 'data-header-label' => ''}) %>
+  <% outlook_contact = @element_config["contact_fields"] %>
+  <%= select_tag('inputs[contacts][][outlook_field]', options_for_select(outlook_contact.collect{ |k,v| [v,k,{'data-field-type' => @element_config['contact_fields_types'][v]} ]}),
+            { :class => "" , :rel => "dropdown", "data-refer-key" => 'outlook_field', 'data-header-label' => ''}) %>
+</script>
+<script type="text/javascript">
+
+  function fillLabels(){
+    if(validateFields()){
+      return true;
+    }else{
+      jQuery("#no-display").slideDown(function() {
+        setTimeout(function() {
+          jQuery("#no-display").slideUp();
+        }, 3000);
+      });
+      return false;
+    }
+  }
+
+  jQuery(document).ready(function(){
+    <%if @action == 'install' %>
+       jQuery('.sf-title-wrapper').hide();
+    <% end %>
+    if(!jQuery('#enble_sync').is(':checked')){
+      change();
+    }
+    jQuery('#enble_sync').prop('checked', "<%= @element_config['enble_sync'] %>");
+  });
+  function change(){
+    jQuery('#field-wrap').toggleClass('field-disable');
+  }
+  /*
+      content for field mapping starts here.
+  */
+  var fdTypeValidator= <%= raw @element_config['fd_validator'].to_json%>;
+  var crmTypeValidator= <%= raw @element_config['element_validator'].to_json%>;
+  var maximumSelectionSizeContact = 10;
+  var customModule = "sync";
+  jQuery(function(){
+   jQuery('[rel="construct_contact_rules"]').constructRules({fdTypeValidator, crmTypeValidator, maximumSelectionSizeContact, customModule});
+  });
+
+  function validateFields(){
+    var valid = true;
+    //checking for error in contact mapping fields
+    jQuery('#construct_contact_rule .rules_list_wrapper .list').not('.overlay').find('.error').remove();
+    jQuery('#construct_contact_rule .rules_list_wrapper .list').not('.overlay').each(function(index, list){
+      var FDContactSelected = jQuery(this).find('.dropdown_1 .select2-chosen').text();
+      var OutlookContactSelected = jQuery(this).find('.dropdown_2 .select2-chosen').text();
+      if(FDContactSelected.toLowerCase() == "select"){
+        jQuery(this).find('[data-refer-key=fd_field]').after("<p class='error'>Field is required. </p>");
+        valid = false;
+        return false;
+      }
+      if(OutlookContactSelected.toLowerCase() == "select" ){
+        jQuery(this).find('[data-refer-key=outlook_field]').after("<p class='error'>Field is required. </p>");
+        valid = false;
+        return false;
+      }
+    });
+    if(valid){
+      return true;
+    }else{
+      return false;
+    }
+  }
+
+  jQuery(document).ready(function(){
+    //setting first 3 contact fields as compulsary and  disabled
+    jQuery('#construct_contact_rule .rules_list_wrapper .list').slice(0,4).each(function(){
+      jQuery(this).find('.list-icon').remove();
+      jQuery(this).find('.select2-choice').addClass('disabled');
+      jQuery(this).addClass('overlay');
+    });
+  });
+</script>

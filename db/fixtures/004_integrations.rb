@@ -573,14 +573,12 @@ if Integrations::Application.count == 0
     s.script = %(
       <link href="/stylesheets/pattern/pattern.css" media="screen" rel="stylesheet" type="text/css">
       <script src="/javascripts/pattern/bootstrap-typeahead.js" type="text/javascript"></script>
-
       <div id="google_calendar_widget"">
         <div class="content">
           <div class="title">
             <span>
               Google Calendar
             </span>
-
             <a href="#" class="pull-right" id="add_event_link">Add Event</a><br>
             <span id="gcal-email-container" class="hide">{{installed_app.user_registered_email}}</span>
             <br>
@@ -592,7 +590,6 @@ if Integrations::Application.count == 0
           </div>
         </div>
       </div>
-
       <script type="text/javascript">
         var google_calendar_options={
           domain:"www.googleapis.com",
@@ -1038,6 +1035,19 @@ if Integrations::Application.count == 0
       }
     }
     s.application_type = "cti_integration"
+  end
+
+  outlook_contacts = Integrations::Application.seed(:name) do |s|
+    s.name = "outlook_contacts"
+    s.display_name = "integrations.outlook_contacts.label"
+    s.description = "integrations.outlook_contacts.desc"
+    s.account_id = Integrations::Constants::SYSTEM_ACCOUNT_ID
+    s.listing_order = 44
+    s.options = { :direct_install => true,
+                  :oauth_url => "/auth/outlook_contacts?origin=id%3D{{account_id}}",
+                  :edit_url => "/integrations/outlook_contacts/edit"
+                }
+    s.application_type = "outlook_contacts"
   end
 
 end

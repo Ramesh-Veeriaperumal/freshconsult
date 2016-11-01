@@ -73,7 +73,7 @@ class Helpdesk::Attachment < ActiveRecord::Base
         verify_attachment_size = true
       end
 
-      unless verify_attachment_size || item.validate_attachment_size(
+      unless verify_attachment_size && item.validate_attachment_size(
         {:content => file_content},{:attachment_limit => limit })
         filename = self.new.utf8_name original_filename,
                              "attachment-#{i+1}"

@@ -187,7 +187,7 @@ Helpdesk = Helpdesk || {};
                                 form.find(".existing-file-list input[name='helpdesk_note[attachments][][resource]']").remove();
                                 form.find(".existing-file-list input[name='[cloud_file_attachments][]']").remove();
                             }
-                            form.trigger('submit');
+                            form.submit();
                             $("#attachment-modal").remove();
                         }
                     }
@@ -249,7 +249,7 @@ Helpdesk = Helpdesk || {};
                 e.stopImmediatePropagation();
             });
 
-            form.on("submit.pjax_submit", function(event) {
+            form.on("submit", function(event) {
                 // turning of reminder
                 _this.reminder = false;
                 form.data("formChanged",false);
@@ -319,15 +319,6 @@ Helpdesk = Helpdesk || {};
                 if(App.namespace == "helpdesk/tickets/edit" || App.namespace == "solution/articles/show") {
                     form.find(".existing-file-list input[name='helpdesk_note[attachments][][resource]']").remove();
                     form.find(".existing-file-list input[name='[cloud_file_attachments][]']").remove();
-                }
-
-                if(App.namespace == "helpdesk/tickets/new" || App.namespace == "helpdesk/tickets/compose_email") {
-                    event.preventDefault();
-                    event.stopImmediatePropagation();
-
-                    form.trigger('submit.redactor');
-
-                    return false;
                 }
             });
             // calling onload functions

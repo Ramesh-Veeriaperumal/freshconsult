@@ -446,6 +446,11 @@ window.xhrPool = [];
           }
         });
 
+      var flash = $("div.alert").not('[rel=permanent]');
+      if(flash.get(0)){
+         try{ closeableFlash(flash); } catch(e){}
+      }
+
       $('body').on('click.freshdesk', '#scroll-to-top', function(ev) {
         $.scrollTo('body');
       })

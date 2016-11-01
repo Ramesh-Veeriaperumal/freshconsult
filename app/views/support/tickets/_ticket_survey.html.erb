@@ -1,5 +1,7 @@
-<% if current_account.new_survey_enabled? %>
-    <%= render :partial => 'ticket_custom_survey' %>
-<%else %>
-    <%= render :partial => 'old_ticket_survey' %>
-<%end%>
+<% unless @ticket.parent_ticket.present? %>
+	<% if current_account.new_survey_enabled? %>
+	    <%= render :partial => 'ticket_custom_survey' %>
+	<% else %>
+	    <%= render :partial => 'old_ticket_survey' %>
+	<% end %>
+<% end %>

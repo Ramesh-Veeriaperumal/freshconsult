@@ -4773,20 +4773,10 @@ $.fn.insertExternal = function(html)
 
 	RemoveCursorImage.prototype = {
 		init: function(){
-			// Pjax_submit namespace is to bind the new ticket and compose email form submit trigger.
-			jQuery(this.$form).on("submit.redactor", $.proxy(this.remove, this));
+			jQuery(this.$form).on("submit", $.proxy(this.remove, this));
 		},
-		remove: function(ev){
+		remove: function(){
 			this.$editor.removeCursorImage();
-
-			if(jQuery(this.$form).data('multifileEnabled') && (App.namespace == "helpdesk/tickets/new" || App.namespace == "helpdesk/tickets/compose_email")) {
-                ev.preventDefault();
-                ev.stopImmediatePropagation();
-
-                jQuery(this.$form).trigger('submit.new_ticket_compose');
-
-                return false;
-            }
 		}
 	}
 

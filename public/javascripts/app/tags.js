@@ -103,7 +103,7 @@ $(document).ready(function(){
         }
     );
 
-    $('.tag-list tbody tr :checkbox').on('change', function() {
+    $('body').on('change', '.tag-list tbody tr :checkbox', function() {
         $("#tag-select-all").prop('checked', $('.table tbody tr :checkbox:checked').length == $('.table tbody tr :checkbox').length);
         $('#tag-delete').prop('disabled', $('.table tbody tr :checkbox:checked').length == 0);
     });
@@ -294,6 +294,17 @@ $(document).ready(function(){
         merge_tags(tag_id,tag_name);
     })
 
+    $(document).on("keypress.tag_index", '#addhelpdesk_tag', function(event) { 
+        tag_name = jQuery(this).val();
+        if(event.keyCode == 13 && tag_name!=''){
+          jQuery.ajax({
+              type: 'POST',
+              url: '/helpdesk/tags',
+              data: {name: tag_name},
+              success: function() {}
+          });
+        }
+    });
 
 });
 })(jQuery)

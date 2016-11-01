@@ -4,6 +4,7 @@ jQuery('body').on('assetLoaded.fjax', function() {
   jQuery.extend(window.App.Contacts.Contact_form, {
     confirm_text : "<%= t('merge_contacts.email_remove') %>",
     tags_options : "<%= escape_javascript(current_account.tags.most_used(25).collect{|tag| tag.name}.join(',').html_safe) %>",
+    create_tag_privilege : <%= current_user.privilege?(:create_tags) %>,
     primary_text : "<%= t('merge_contacts.primary') %>",
     unverified_text : "<%= t('merge_contacts.not_verified') %>",
     mark_text : "<%= t('merge_contacts.make_primary') %>",

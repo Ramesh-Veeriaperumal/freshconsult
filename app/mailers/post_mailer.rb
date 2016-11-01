@@ -2,6 +2,7 @@ class PostMailer < ActionMailer::Base
 
   include Helpdesk::NotifierFormattingMethods
   include Mailbox::MailerHelperMethods
+  include EmailHelper
 
   layout "email_font"
 
@@ -14,6 +15,7 @@ class PostMailer < ActionMailer::Base
       :sent_on => Time.now
     }
 
+    headers.merge!(make_header(nil, nil, post.account_id, "Monitor Email"))
     inline_attachments = []
     @post = post
     @user = user

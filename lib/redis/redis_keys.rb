@@ -213,6 +213,10 @@ module Redis::RedisKeys
 
   MAILGUN_EVENT_LAST_SYNC = "MAILGUN_EVENT_LAST_SYNC:%{domain}"
 
+  MAILGUN_TRAFFIC_PERCENTAGE = "MAILGUN_TRAFFIC_PERCENTAGE"
+  INTERNAL_TOOLS_IP = "INTERNAL_TOOLS_IP"
+
+
 	def newrelic_begin_rescue
 		begin
 		  yield

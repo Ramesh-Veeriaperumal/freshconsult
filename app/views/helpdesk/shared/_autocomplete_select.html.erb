@@ -59,7 +59,7 @@ jQuery(document).ready(function() {
   
   jQuery("#<%= dom_id %>_filter").select2({
     placeholder: '<%= t("tickets_filter.#{container}_placeholder") %>',
-    minimumInputLength: 2,
+    minimumInputLength: <%= (container == "tags") ? 1: 2 %>,
     multiple: true,
     allowClear: true,
     maximumSelectionSize: <%= max_limit %>,
@@ -108,9 +108,9 @@ jQuery(document).ready(function() {
     formatSelection: select2_format,
     formatNoMatches: function () { return "No matching <%=container.capitalize.singularize%> found"; },
     formatInputTooShort: function (input, min) { 
-      return "Please type " + (min - input.length) + " or more letters"; },
+      return I18n.t('validation.select2_minimum_limit', {char_count : min - input.length}); },
     formatSelectionTooBig: function (limit) { 
-      return "You can only select " + limit + (limit == 1 ? " <%=container.capitalize.singularize %>" : "   <%=container.capitalize.pluralize %>"); },
+      return I18n.t('validation.select2_maximum_limit', {limit: limit, container : (limit== 1) ? "<%=container.capitalize.singularize %>" : "<%=container.capitalize.pluralize %>"}); },
   });
 
   if("<%= bulk_action %>" !== "true") {

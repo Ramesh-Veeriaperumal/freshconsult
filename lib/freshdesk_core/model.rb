@@ -199,7 +199,9 @@ module FreshdeskCore::Model
                         "ticket_templates",
                         "cti_calls",
                         "cti_phones",
-                        "status_groups"
+                        "status_groups",
+                        "sync_accounts",
+                        "sync_entity_mappings"
                     ]
 
   STATUS = {

@@ -58,12 +58,13 @@ window.App.Contacts.Contact_form = window.App.Contacts.Contact_form || {};
           },
           minLength: 1,
           select: function (event, ui) {
-            if ($(this).parent().next().length == 0) {
-              $("#user_address").focus();
-              $("#add_new_company").focus();
-            } else{
-              $(this).parent().next().children(".user_company").focus();
-            };
+            var $addCompany = $("#add_new_company");
+            if($addCompany.length) {
+              $addCompany.focus();
+            }
+            else {
+              $('#user_client_manager').focus();
+            }
           },
           open: function () {
             $(this).autocomplete("widget").css({'display':'block', 'z-index': 1060});
@@ -79,11 +80,15 @@ window.App.Contacts.Contact_form = window.App.Contacts.Contact_form || {};
     },
 
     bindCompanySelect2: function () {
-      var self = this;
-      $("input[name='user[tag_names]']").select2({
-        tags: self.tags_options.split(","),
-        tokenSeparators: [',']
-      });
+      var self = this,
+              select_init_data = {
+                tags: self.tags_options.split(","),
+                tokenSeparators: [',']
+              };
+      if(self.create_tag_privilege != true){
+        select_init_data['createSearchChoice'] = function(){return null;};
+      }
+      $("input[name='user[tag_names]']").select2(select_init_data);
     },
 
     bindHandlers: function () {

@@ -539,6 +539,12 @@ class Account < ActiveRecord::Base
     account_additional_settings.additional_settings[:portal_languages]
   end
 
+  def remove_secondary_companies
+    user_companies.find_each do |user_company|
+      user_company.destroy unless user_company.default
+    end
+  end
+
   protected
   
     def external_url_is_valid?(url) 

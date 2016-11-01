@@ -39,14 +39,9 @@ module Helpdesk
 			:edit_ticket_properties => [:assign_agent,:assign_group]
 		}
 		
-		TAGS_PRIVILEGE_MAP = {
-			:admin_tasks      => [:manage_tags],
-			:manage_tickets   => [:create_tags]
-		}
-
 
 		ALL_PRIVILEGES = [HELPDESK_PRIVILEGE_MAP,SOCIAL_PRIVILEGES_MAP,CUSTOMER_PRIVILEGE_MAP,
-			               SOLUTION_PRIVILEGES_MAP,FORUM_PRIVILEGES_MAP,CHAT_PRIVILEGE_MAP, TAGS_PRIVILEGE_MAP]
+			               SOLUTION_PRIVILEGES_MAP,FORUM_PRIVILEGES_MAP,CHAT_PRIVILEGE_MAP]
 
 		MIGRATION_MAP = ALL_PRIVILEGES.inject({}) do |hash, pr_map|
 							hash.merge!(pr_map) {|key,oldval,newval| oldval | newval}

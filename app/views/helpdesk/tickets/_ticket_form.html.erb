@@ -36,7 +36,7 @@
 <% end %>
 
 <% values = params[:template_form] ? @template.template_data[:tags] : @item.tags.collect{|tag| tag.name}.join(',')%>
-<%= render :partial => "/helpdesk/tickets/remote_tags" , :locals => {:values => values }%>
+<%= render :partial => "/helpdesk/tickets/remote_tags" , :locals => {:values => values ,  :element_id => :helpdesk_ticket_tags_input, :element_name => "helpdesk[tags]"}%>
 
 <%= ci_fields(ticket_form)%>
 <input type="hidden" id="companyurl" value="<%= helpdesk_commons_user_companies_path %>" />

@@ -250,10 +250,20 @@
     jQuery("#date_filter").trigger('change');
     <!-- jQuery('#start_date').val(startDate); -->
     jQuery('#start_date').attr("value", startDate);
-    jQuery('#start_date_clone').attr("value", startDate);
+    jQuery("#start_date_clone").val("<%= formated_date(1.month.ago,{:format => :date_iso_format, :include_year => true, :translate => false})%>");
     <!-- jQuery('#end_date').val(endDate); -->
     jQuery('#end_date').attr("value", endDate);
-    jQuery('#end_date_clone').attr("value", endDate);
+    jQuery("#end_date_clone").val("<%= formated_date(Time.now,{:format => :date_iso_format, :include_year => true, :translate => false})%>");
+
+    <!-- logic check : startdate <= enddate -->
+            var startISO = jQuery("#start_date_clone").val();
+            var endISO = jQuery("#end_date_clone").val();
+              if(jQuery.datepicker.parseDate('yy-mm-dd', startISO) > jQuery.datepicker.parseDate('yy-mm-dd', endISO))
+              {
+                jQuery('#start_date_clone').datepicker( "setDate", endISO );
+                var datepickerEnd = jQuery('#end_date').val();
+                jQuery('#start_date').datepicker( "setDate", datepickerEnd );
+              }
   };
 
   cleanupParams = function (association) {

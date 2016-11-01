@@ -28,7 +28,7 @@ class Freshfone::Initiator::Incoming
     return preview_ivr if params[:preview]
     return agent_call_leg.process if agent_leg_of_incoming?
     return block_call if blacklisted?
-    return handle_unauthorized_call if from_unauthorized_number?
+    return handle_unauthorized_call if trial? && unauthorized_caller?
     
     self.current_call ||= @call_actions.register_incoming_call
     return telephony.return_non_business_hour_call if current_number.present? && !current_number.working_hours?
@@ -178,18 +178,22 @@ class Freshfone::Initiator::Incoming
 
     def handle_unauthorized_call
       Rails.logger.info "Call from spam number. Account ID::#{current_account.id} CallSid:: #{params[:CallSid]}"
-      message = "Account #{current_account.id} is using spam numbers."
-      notification = "Call from spam number"
+      message = "Account #{current_account.id} is using spam number :: #{params[:From]}"
+      notification = "Call from spam number :: #{params[:From]}"
       FreshfoneNotifier.deliver_ops_alert(current_account, notification, message)
       suspend_account_and_block_call
     end
 
     def suspend_account_and_block_call
       begin
-        current_account.freshfone_account.expire
+        # current_account.freshfone_account.expire # commented to avoid deletion of numbers, may need in future
         block_call
       rescue Exception => e
         Rails.logger.info "Error expiring spam account : Account ID::#{current_account.id} CallSid:: #{params[:CallSid]} : #{e.message}"  
       end
+    end
+
+    def unauthorized_caller?
+      from_unauthorized_number? && !current_account.features?(:freshfone_gv_forward)
     end
 end
