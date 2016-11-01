@@ -77,6 +77,8 @@ en:
     equalTo: "Please enter the same value again."
     two_decimal_place_warning: "Value cannot have more than 2 decimal digits"
     select_atleast_one: "Select at least one option."
+    select2_minimum_limit: "Please type %{char_count} or more letters"
+    select2_maximum_limit: "You can only select %{limit} %{container}"
   confirm_delete_message: Are you sure you want to delete the %{human_name}?
   reload: Reload
   any: Any
@@ -2052,6 +2054,7 @@ en:
         customers: Customers
         reports: Reports
         administration: Administration
+        general: General
       permissions: Permissions
       helpcard:
         title1: Understanding Roles
@@ -2107,6 +2110,9 @@ en:
         manage_ticket_templates: Manage Ticket Templates
         admin_tasks: Play God with Super Admin controls
         manage_account: Include account management
+        create_tags: 'Create new tags for tickets, contacts and articles'
+        manage_tags: Manage tags
+        general: General
     home:
       index:
         group: Groups
@@ -5660,6 +5666,7 @@ en:
   state: State
   deactivate: Deactivate
   add_tags: Add Tag
+  tag_exists: Tag already exists
   edit_tags: Edit Tags
   change_to_free_info: Downgrading your plan will result in loss of functionality and data. Are you sure you want to downgrade?
   import_step1_info: Select a CSV file and click import
@@ -5893,6 +5900,7 @@ en:
         no_tags: No tags found
         view: View
         all_tags: All Tags
+        add_new_tag: Add new tag
         tags_merge: Tag with the same name exists. Do you want to merge these tags?
         remove_tags: Remove Tag association
         remove_confirmation: Are you sure you want to remove the tag association?

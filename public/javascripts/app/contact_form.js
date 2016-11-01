@@ -80,11 +80,15 @@ window.App.Contacts.Contact_form = window.App.Contacts.Contact_form || {};
     },
 
     bindCompanySelect2: function () {
-      var self = this;
-      $("input[name='user[tag_names]']").select2({
-        tags: self.tags_options.split(","),
-        tokenSeparators: [',']
-      });
+      var self = this,
+              select_init_data = {
+                tags: self.tags_options.split(","),
+                tokenSeparators: [',']
+              };
+      if(self.create_tag_privilege != true){
+        select_init_data['createSearchChoice'] = function(){return null;};
+      }
+      $("input[name='user[tag_names]']").select2(select_init_data);
     },
 
     bindHandlers: function () {

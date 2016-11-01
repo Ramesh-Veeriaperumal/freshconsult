@@ -77,7 +77,7 @@
       },
       :tags                            =>   {
         :url                           =>   "/helpdesk/tags",
-        :privilege                     =>   privilege?(:admin_tasks)
+        :privilege                     =>   privilege?(:manage_tags)
       },
       :dispatcher                      =>   {
         :url                           =>   "/admin/va_rules",

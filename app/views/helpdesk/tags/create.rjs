@@ -1,0 +1,11 @@
+unless @new_tag.blank?
+  page << "jQuery('#addhelpdesk_tag').val('');"
+  page << "jQuery('#{escape_javascript( render :partial => 'tag', :locals => { :tag => @new_tag})}').prependTo('.tags-table tbody').find('td').addClass('record_highlight');"
+else
+  page << "jQuery('#tag_duplicate_error').fadeIn(100).delay(1500).fadeOut(400);"
+end
+
+
+
+
+

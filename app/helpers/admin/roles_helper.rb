@@ -110,13 +110,15 @@ module Admin::RolesHelper
 
                  [{ :dom_type => "check_box", :id => "manage_users" },
                   { :dom_type => "check_box", :id => "manage_availability" },
+                  { :dom_type => "check_box", :id => "manage_tags" },
                   { :dom_type => "check_box", :id => "manage_canned_responses" },
                   { :dom_type => "check_box", :id => "manage_dispatch_rules" },
                   { :dom_type => "check_box", :id => "manage_supervisor_rules" },
                   { :dom_type => "check_box", :id => "manage_scenario_automation_rules" },
                   { :dom_type => "check_box", :id => "manage_email_settings" },
                   { :dom_type => "hidden_field", :id => "manage_dashboard" },
-                  { :dom_type => "check_box", :id => "manage_ticket_templates" }]
+                  { :dom_type => "check_box", :id => "manage_ticket_templates" },
+                  ]
              },
 
              { :dom_type => "radio_button", :id => "admin_tasks", :class => "nested",
@@ -135,14 +137,19 @@ module Admin::RolesHelper
                   { :dom_type => "check_box",    :id => "manage_account" }]
 
              }]
-       }
+       },
+       
+        # *************************** General **************************
 
+       { :dom_type => "label", :id => "general", 
+          :children =>
+            [{ :dom_type => "check_box", :id => "create_tags"}]
+       },
     ]
 
   def build_role_form
     form = ""
     ROLE_SECTIONS.each do |section|
-
      form +=  content_tag( :div, {:class => "row-fluid margin-bottom", :id => section[:id] }) do
         content_tag( :div, content_tag( :p, t('admin.roles.privilege.'+ section[:id]).html_safe, :class => "lead-sub"), :class => "span2") +
         content_tag( :div, :class => "span10 role-section") do
