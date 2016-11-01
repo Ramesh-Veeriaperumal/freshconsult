@@ -31,6 +31,9 @@ var PopulateFormData = PopulateFormData ||  (function(){
 
     _getData(args.url, args.defaultKey, function(data){
       _populateFields(data, args);
+
+      getFilterData();
+      jQuery("#FilterOptions input[name=data_hash]").val(query_hash.toJSON());
     });
 
   }
