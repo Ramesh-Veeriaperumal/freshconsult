@@ -54,16 +54,23 @@ window.App.Tickets.Merge_tickets = window.App.Tickets.Merge_tickets || {};
     },
 
     searchKeyup: function () {
-      jQuery('body').on('keyup.merge_tickets', '.search_merge', function(){
-        var search_type = jQuery('#search-type option:selected').val();
-        var minChars = ( search_type == "display_id" ) ? 1 : 2
-        jQuery('.merge_results').hide();
-        if((jQuery(this).val() != "") && (jQuery(this).val().length >= minChars))
-          jQuery('#'+search_type+'_results').show();
-        else
-          jQuery('#'+search_type+'_results').hide();
+      jQuery('body').on('keyup.merge_tickets', '.search_merge', function(event){
+        if(event.keyCode != 13)
+        {
+          var search_type = jQuery('#search-type option:selected').val();
+          var minChars = ( search_type == "display_id" ) ? 1 : 2
+          jQuery('.merge_results').hide();
+          if((jQuery(this).val() != "") && (jQuery(this).val().length >= minChars))
+          { 
+           jQuery('#'+search_type+'_results').show();
+          }
+          else
+          {
+           jQuery('#'+search_type+'_results').hide();
+          }
+        }
       });
-    },
+    },          
 
     checkRequester: function () {
       var requester = jQuery('.requester_name').html();
@@ -75,7 +82,9 @@ window.App.Tickets.Merge_tickets = window.App.Tickets.Merge_tickets || {};
           return false;
         }
       });
+      var id_info = jQuery('#merge-ticket').data('req-id');
       if(same){
+        jQuery(".searchidinfo").data("id-info",id_info);
         jQuery('#select-requester').val('<'+requester+'>').keyup();
         if(App.Tickets.Merge_tickets.global['select-requester']){
           App.Tickets.Merge_tickets.global['select-requester'].onSearchFieldKeyDown(42);
@@ -168,18 +177,24 @@ window.App.Tickets.Merge_tickets = window.App.Tickets.Merge_tickets || {};
       var type = jQuery('#search-type option:selected').val();
       var list =  jQuery('#'+type+'_results').find('ul');
       var search_field = jQuery('#search-type option:selected').val();
+      var reqid;
+      if(type == 'requester')
+      {
+        reqid = jQuery('.searchidinfo').data('idInfo');
+      }
       list.empty();
       jQuery('#'+type+'_results').addClass("sloading");
       new Ajax.Request('/search/tickets/filter/'+search_field,
-                        { 
+      { 
                           parameters: {
-                            term: searchString
+                            term: searchString,
+                            reqid: reqid,
                           },
                           onSuccess: function(response) {   
                             jQuery('.merge_results:visible').removeClass("sloading");
                             callback(response.responseJSON.results);
                           } 
-                        });
+      });
     },
 
     bindAutocompleter: function () {
@@ -211,7 +226,7 @@ window.App.Tickets.Merge_tickets = window.App.Tickets.Merge_tickets || {};
       x.each(function(){
         var y = jQuery(this);
         jQuery('.merge-cont #merge-ticket').each( function(){
-          
+
           if(jQuery(this).data('id') == y.data('id'))
           {
             y.children('#resp-icon').addClass('clicked');
@@ -223,7 +238,7 @@ window.App.Tickets.Merge_tickets = window.App.Tickets.Merge_tickets || {};
 
     enableContinue: function () {
       if( (jQuery('.merge-cont').hasClass('cont-primary')) && (jQuery('.merge-cont').length > 1) )
-        jQuery("#bulk_merge").attr("disabled", false );
+        jQuery("#bulk_merge").attr("disabled", false ); 
       else
         jQuery("#bulk_merge").attr("disabled", true );
     },
@@ -263,6 +278,74 @@ window.App.Tickets.Merge_tickets = window.App.Tickets.Merge_tickets || {};
     unBindEvent: function () {
       jQuery('body').off('.merge_tickets');
       jQuery('#ticket-merge').parent().remove();
+    },
+
+    requesterFieldSearchbox: function(){
+
+     var select2_format = function(result, container, query){
+        return result.value;
+      }
+
+      var select2_results = function(result, container, query) {
+        var display_results = "<b>"+ result.name + "</b>"; 
+        var split_info = result.info.split(/<|\(/);
+        var detail;
+        if(result.info != undefined)
+        {
+         display_results += "<br><span class='select2_list_detail'>" + result.info + "</span>";
+        }
+        return display_results;
+      }
+
+      jQuery("#select-requester").select2({
+        minimumInputLength: 2,
+        ajax: {
+          url: "/search/autocomplete/requesters",
+          dataType: 'json',
+          data: function(term){
+            var toRet = { q: term };
+            return toRet; 
+          },
+          results: function (data) {
+            var results = [];
+            var detail_info,searchterm;
+            jQuery.each(data.results, function(i,item){
+              var split_info = item.details.split(/<|\(/);
+              detail_info="";
+              if(item.details != undefined)
+              {
+                if(split_info[1]) {
+                  detail_info = split_info[1].slice(0,-1);
+                }
+                else {
+                  detail_info = item.details;
+                }
+                if(detail_info.length > 25) {
+                  detail_info = split_info[1].substring(0,26)+ "...";
+                }
+              }
+              searchterm = item.value + '(' + detail_info + ')';
+              results.push({id: item.id, value: searchterm, name: item.value, info: detail_info});
+            });
+            return { results: results }
+          }
+        },
+        specialFormatting: true,
+        formatResult: select2_results,
+        formatSelection: select2_format,
+        width: 'resolve',
+      });
+
+      jQuery("#select-requester").on('change', function(e){ 
+        var requester_field = jQuery("#select-requester");
+        var searchTermEmail = requester_field.select2('data')['value'];
+        var id_data =  requester_field.select2('data')['id'];
+        jQuery(".searchidinfo").data("id-info",id_data);
+        requester_field.val(searchTermEmail).keyup(); 
+        if(App.Tickets.Merge_tickets.global['select-requester']){
+          App.Tickets.Merge_tickets.global['select-requester'].onSearchFieldKeyDown(42);
+        }
+      });
     }
   };
 }(window.jQuery));

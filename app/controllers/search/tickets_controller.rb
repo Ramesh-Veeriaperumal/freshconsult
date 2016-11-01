@@ -31,10 +31,14 @@ class Search::TicketsController < Search::SearchController
     
 	protected
 
-		def search_with_requester
-			users = User.search_by_name(@search_key, current_account.id,
+		def search_with_requester	
+			if params[:reqid].present?
+					@requester_ids = params[:reqid].to_a
+			else
+				users = User.search_by_name(@search_key, current_account.id,
 										{:page => 1, :size => 1000, :preference => :_primary_first })
-			@requester_ids = users.blank? ? [] : users.results.map(&:id)
+				@requester_ids = users.blank? ? [] : users.results.map(&:id)
+			end
 		end
 
 		def search_classes
