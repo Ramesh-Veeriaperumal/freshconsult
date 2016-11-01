@@ -2726,6 +2726,14 @@ Helpkit::Application.routes.draw do
     # end
   end
 
+  namespace :supreme do
+    resources :sql_console, :only => :none do
+      collection do
+        get :execute_query
+      end
+    end
+  end
+
   constraints(lambda {|req| FreshopsSubdomains.include?(req.subdomain) })  do
     namespace :fdadmin, :name_prefix => "fdadmin_", :path_prefix => nil do
 
