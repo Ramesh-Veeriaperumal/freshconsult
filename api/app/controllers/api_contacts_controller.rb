@@ -47,6 +47,15 @@ class ApiContactsController < ApiApplicationController
     end
   end
 
+  def restore
+    if @item.deleted && @item.parent_id != 0    
+      head 404    
+    else    
+      @item.update_attribute(:deleted, false)   
+      head 204    
+    end
+  end
+
   def self.wrap_params
     ContactConstants::WRAP_PARAMS
   end
@@ -71,6 +80,11 @@ class ApiContactsController < ApiApplicationController
     end
 
     def after_load_object
+      if ContactConstants::NO_PARAM_ROUTES.include?(action_name) && params[cname].present?
+        render_request_error :no_content_required, 400
+        return false
+      end
+
       @item.account = current_account if scoper.attribute_names.include?('account_id')
       action_scopes = ContactConstants::SCOPE_BASED_ON_ACTION[action_name] || {}
       action_scopes.each_pair do |scope_attribute, value|

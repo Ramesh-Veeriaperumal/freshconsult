@@ -14,7 +14,8 @@ module ContactConstants
   SCOPE_BASED_ON_ACTION = {
     'update'  => { deleted: false, blocked: false },
     'destroy' => { deleted: false, blocked: false },
-    'make_agent' => { deleted: false, blocked: false }
+    'make_agent' => { deleted: false, blocked: false },
+    'restore' => { deleted: true, blocked: false }
   }.freeze
 
   # Based on limitation specified in Helpdesk::Attachment ( def image? )
@@ -32,6 +33,9 @@ module ContactConstants
 
   # Max other email count excluding the primary email
   MAX_OTHER_EMAILS_COUNT = 4
+
+  # Routes that doesn't accept any params
+  NO_PARAM_ROUTES = %w(restore).freeze
 
   ATTRIBUTES_TO_BE_STRIPPED = %w(address email job_title language name mobile phone time_zone tags twitter_id custom_fields other_emails).freeze
 

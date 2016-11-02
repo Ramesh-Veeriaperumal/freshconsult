@@ -5683,6 +5683,7 @@ es-LA:
       new: "Sin asignar"
       overdue: Vencidos
       unresolve_tickets: "Tickets sin resolver"
+      recent_activities: "Actividad reciente de helpdesk"
       unresolved_tickets_by_status: "Tickets sin resolver por estado"
       unresolved_tickets_by_type: "Tickets sin resolver por tipo"
       unresolved_tickets_by_group: "Tickets sin resolver por grupo"
