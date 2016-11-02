@@ -171,7 +171,7 @@ class PlanChangeWorker
     # account.account_additional_settings.update_attributes(:additional_settings => new_settings)
   end
 
-  def drop_multiple_user_companies_data(account)
+  def drop_multiple_companies_toggle_data(account)
     account.remove_secondary_companies
   end
 

@@ -166,9 +166,17 @@ module MemcacheKeys
     def newrelic_begin_rescue(&block)
       begin
         block.call
+      rescue Dalli::UnmarshalError => e
+        x = ["undefined class/module CompanyField","undefined class/module ContactFieldChoice",
+            "undefined class/module CustomSurvey::SurveyQuestion"]
+        if x.any? {|word| e.message.include?(word)}
+           Rails.logger.debug "#{Account.current}  #{e.message}"
+        end
+       NewRelic::Agent.notice_error(e)
+      return  
       rescue Exception => e
         NewRelic::Agent.notice_error(e)
-        return
+      return
       end 
     end
 

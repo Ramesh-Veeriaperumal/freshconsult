@@ -152,7 +152,7 @@ class Helpdesk::Attachment < ActiveRecord::Base
    if self.description == "logo"
       return {:logo => "x50>"}
    elsif  self.description == "fav_icon"
-      return {:fav_icon  => "16x16>" }
+      return {:fav_icon  => "32x32>" }
    else
       return {:medium => "127x177>",:thumb  => "50x50#" }
     end

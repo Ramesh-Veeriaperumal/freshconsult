@@ -180,7 +180,7 @@ class Agent < ActiveRecord::Base
 
   def assign_next_ticket group
     key = group.round_robin_capping_key
-    capping_condition, ticket = nil
+    capping_condition, ticket, ticket_id = nil
     MAX_CAPPING_RETRY.times do
       ticket_id = group.lpop_from_rr_capping_queue
 
@@ -216,7 +216,7 @@ class Agent < ActiveRecord::Base
         Rails.logger.debug "Looping again for ticket : #{ticket.display_id}"
       end
     end
-    group.lpush_to_rr_capping_queue(ticket_id) if ticket.present?
+    group.lpush_to_rr_capping_queue(ticket_id) if capping_condition
   end
 
   protected

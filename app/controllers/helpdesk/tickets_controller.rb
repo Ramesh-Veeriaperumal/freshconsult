@@ -1964,7 +1964,12 @@ class Helpdesk::TicketsController < ApplicationController
 
   def build_tkt_body
     @item.build_ticket_body
-    source = compose_email? ? :outbound_email : :phone
+    if compose_email?
+      @item.status = CLOSED
+      source = :outbound_email 
+    else
+      source = :phone
+    end
     @item.source = Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[source]
   end
 

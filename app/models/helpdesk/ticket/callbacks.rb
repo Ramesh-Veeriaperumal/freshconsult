@@ -23,7 +23,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   before_update :reset_links, :if => :remove_associations?
 
-  before_create :assign_outbound_agent, :if => :outbound_email?
+  before_save  :assign_outbound_agent,  :if => :new_outbound_email?
 
   before_save  :update_ticket_related_changes, :update_company_id, :set_sla_policy
 
@@ -850,6 +850,10 @@ private
       tracker.misc_changes = {action => [self.display_id]}
       tracker.manual_publish_to_rmq("update", RabbitMq::Constants::RMQ_ACTIVITIES_TICKET_KEY)
     end
+  end
+
+  def new_outbound_email?
+    outbound_email? && new_record?
   end
 
 end

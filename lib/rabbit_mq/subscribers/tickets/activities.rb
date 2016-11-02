@@ -297,7 +297,7 @@ module RabbitMq::Subscribers::Tickets::Activities
           (v[1] == true || v[1] == "1") ? checked << "#{tf.label}" : unchecked << "#{tf.label}"
         # for date field
         elsif tf.field_type == "custom_date"
-          value = v[1].is_a?(Time)  ? [nil,v[1].to_date.strftime('%-d %b, %Y')] : add_dont_care(v)
+          value = v[1].is_a?(Time)  ? [nil,v[1].utc.strftime('%-d %b, %Y')] : add_dont_care(v)
         elsif tf.field_type == "custom_number"
           value = v[1].is_a?(Integer) ? [nil, v[1].to_s] : add_dont_care(v)
         else

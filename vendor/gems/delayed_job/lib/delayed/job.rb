@@ -213,7 +213,9 @@ module Delayed
       #Note: Right now if any smtp_mailbox for the current account is active ,it is added to
       #mailbox::Job queue. In Future we should check each individual smtp_mailbox based on the ticket and change the queue. 
       if smtp_mailboxes.any?{|smtp_mailbox| smtp_mailbox.enabled?}
-        Mailbox::Job.create(:payload_object => object, :priority => priority.to_i, :run_at => run_at, :pod_info => pod_info)
+        job = Object.const_get("Mailbox::Job").create(:payload_object => object, :priority => priority.to_i, :run_at => run_at, :pod_info => pod_info)
+        Object.const_get("DelayedJobs::MailboxJob").perform_async({:job_id => job.id}) if job && job.id && PUSH_QUEUE.include?(job_queue)
+        job
       else
         job = Object.const_get("#{job_queue}::Job").create(:payload_object => object, :priority => priority.to_i, :run_at => run_at, :pod_info => pod_info)
         Object.const_get("DelayedJobs::#{job_queue}AccountJob").perform_async({:job_id => job.id}) if job && job.id && PUSH_QUEUE.include?(job_queue)

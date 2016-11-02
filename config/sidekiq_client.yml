@@ -143,6 +143,7 @@ defaults: &defaults
     - [contacts_sync_paid]
     - [contacts_sync_trial]
     - [remove_secondary_companies]
+    - [mailbox_jobs]
 
 development:
   <<: *defaults
