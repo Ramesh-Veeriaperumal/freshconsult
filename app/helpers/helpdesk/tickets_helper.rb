@@ -204,25 +204,20 @@ module Helpdesk::TicketsHelper
   end
 
   def reply_draft(item, signature)
-    last_reply_info = get_tickets_redis_hash_key(draft_key)
-    if last_reply_info.empty?
+    last_reply_info = @ticket.draft
+    if last_reply_info.exists?
+      {"draft_text" => last_reply_info.body,
+       "draft_cc" =>  last_reply_info.cc_emails,
+       "draft_bcc" => last_reply_info.bcc_emails }
+    else
       {"draft_text" => bind_last_conv(item, signature, false, false),
        "draft_cc" => @to_cc_emails,
        "draft_bcc" => bcc_drop_box_email }
-    else
-      {"draft_text" => last_reply_info["draft_data"],
-       "draft_cc" =>  last_reply_info["draft_cc"].split(";"),
-       "draft_bcc" => last_reply_info["draft_bcc"].split(";") }
     end
   end
 
   def forward_template_draft(item, signature)
     {"draft_text" => bind_last_conv(item, signature, true, false)}
-  end
-
-  def draft_key
-    HELPDESK_REPLY_DRAFTS % { :account_id => current_account.id, :user_id => current_user.id,
-      :ticket_id => @ticket.id}
   end
 
   def default_twitter_body_val (ticket)

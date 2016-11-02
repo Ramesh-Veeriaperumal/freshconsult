@@ -171,6 +171,9 @@ Helpkit::Application.routes.draw do
         get :latest_note
         get :time_entries, to: 'ember/time_entries#ticket_time_entries'
         post :time_entries, to: 'ember/time_entries#create'
+        post :draft, to: 'ember/tickets/drafts#save_draft'
+        get :draft, to: 'ember/tickets/drafts#show_draft'
+        delete :draft, to: 'ember/tickets/drafts#clear_draft'
         match '/split_note/:note_id' => 'ember/tickets#split_note', via: :put
       end
       # This alternate route is to handle limitation in ember route generation : api/_/tickets/:ticket_id/canned_responses?id=Number

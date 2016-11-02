@@ -1,0 +1,61 @@
+post:
+  tags: [ticket]
+  summary: Save Draft
+  description: Agent specific draft version of the reply for a ticket will be saved.
+  parameters:
+    - name: id
+      description: Display ID of ticket
+      in: path
+      required: true
+    - name: data
+      in: body
+      required: true
+      schema:
+        $ref: '#/definitions/draft_create_input'
+  responses:
+    204:
+      description: Success
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+    404:
+      description: Ticket not found
+    403:
+      description: Access denied
+
+get:
+  tags: [ticket]
+  summary: Show Draft
+  description: Retrieves agent specific draft version of the reply for a ticket
+  parameters:
+    - name: id
+      description: Display ID of ticket
+      in: path
+      required: true
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/draft'
+    404:
+      description: Ticket not found
+    403:
+      description: Access denied
+
+delete:
+  tags: [ticket]
+  summary: Discard Draft
+  description: Clears the draft version of the reply for a ticket
+  parameters:
+    - name: id
+      description: Display ID of ticket
+      in: path
+      required: true
+  responses:
+    204:
+      description: Success
+    404:
+      description: Ticket not found
+    403:
+      description: Access denied

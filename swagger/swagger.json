@@ -1012,18 +1012,37 @@
         }
       }
     },
-    "/tickets/{id}/show_draft": {
-      "get": {
+    "/tickets/{id}/draft": {
+      "post": {
         "tags": [
           "ticket"
         ],
-        "summary": "Draft **",
-        "description": "Agent specific draft version of the reply for a ticket.",
-        "responses": {
-          "200": {
-            "description": "Success",
+        "summary": "Save Draft",
+        "description": "Agent specific draft version of the reply for a ticket will be saved.",
+        "parameters": [
+          {
+            "name": "id",
+            "description": "Display ID of ticket",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
             "schema": {
-              "$ref": "#/definitions/ticket_save_draft"
+              "$ref": "#/definitions/draft_create_input"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
             }
           },
           "403": {
@@ -1033,23 +1052,48 @@
             "description": "Ticket not found"
           }
         }
-      }
-    },
-    "/tickets/{id}/save_draft": {
-      "put": {
+      },
+      "get": {
         "tags": [
           "ticket"
         ],
-        "summary": "Save Draft **",
-        "description": "Agent specific draft version of the reply for a ticket will be saved.",
+        "summary": "Show Draft",
+        "description": "Retrieves agent specific draft version of the reply for a ticket",
         "parameters": [
           {
-            "name": "data",
-            "in": "body",
-            "required": true,
+            "name": "id",
+            "description": "Display ID of ticket",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
             "schema": {
-              "$ref": "#/definitions/ticket_save_draft"
+              "$ref": "#/definitions/draft"
             }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Ticket not found"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "ticket"
+        ],
+        "summary": "Discard Draft",
+        "description": "Clears the draft version of the reply for a ticket",
+        "parameters": [
+          {
+            "name": "id",
+            "description": "Display ID of ticket",
+            "in": "path",
+            "required": true
           }
         ],
         "responses": {
@@ -2027,7 +2071,7 @@
         }
       }
     },
-    "ticket_save_draft": {
+    "draft_create_input": {
       "type": "object",
       "properties": {
         "body": {
@@ -2049,10 +2093,13 @@
             "type": "string"
           }
         },
+        "from_email": {
+          "type": "string"
+        },
         "attachment_ids": {
           "type": "array",
           "items": {
-            "type": "string"
+            "type": "number"
           }
         }
       }
@@ -2393,6 +2440,23 @@
           "type": "number"
         }
       }
+    },
+    "draft": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/draft_create_input"
+        },
+        {
+          "properties": {
+            "saved_at": {
+              "type": "string",
+              "format": "date-time",
+              "description": "Represents the time at which the draft is saved"
+            }
+          }
+        }
+      ]
     },
     "canned_response": {
       "type": "object",

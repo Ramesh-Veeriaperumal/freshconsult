@@ -1,0 +1,10 @@
+response_hash = {
+  body: @item.body,
+  cc_emails: @item.cc_emails,
+  bcc_emails: @item.bcc_emails,
+  from_email: @item.from_email,
+  attachment_ids: @item.attachment_ids,
+  saved_at: @item.saved_at
+} if @item
+
+JSON.generate(response_hash || {})

@@ -58,10 +58,8 @@
   $ref: ./tickets/latest_note.yaml
 /tickets/{id}/split_note/{note_id}:
   $ref: ./tickets/split_note.yaml
-/tickets/{id}/show_draft:
-  $ref: ./tickets/show_draft.yaml
-/tickets/{id}/save_draft:
-  $ref: ./tickets/save_draft.yaml
+/tickets/{id}/draft:
+  $ref: ./drafts/crud.yaml
 /tickets/merge:
   $ref: ./tickets/merge.yaml
 /tickets/empty_spam:

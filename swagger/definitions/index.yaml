@@ -41,8 +41,8 @@
     $ref: ./request/tickets/merge.yaml
   add_watcher_input:
     $ref: ./request/subscriptions/add_watcher.yaml
-  ticket_save_draft:
-    $ref: ./request/tickets/draft.yaml
+  draft_create_input:
+    $ref: ./request/drafts/draft.yaml
   execute_scenario_input:
     $ref: ./request/tickets/execute_scenario.yaml
 
@@ -64,6 +64,8 @@
     $ref: ./resource/agent.yaml
   sla_policy:
     $ref: ./resource/sla_policy.yaml
+  draft:
+    $ref: ./resource/draft.yaml
   canned_response:
     $ref: ./resource/canned_response.yaml
   canned_response_folder:
@@ -138,6 +140,6 @@
   make_agent_response:
     $ref: ./response/make_agent.yaml
   watchers:
-    $ref: ./response/watchers.yaml
+    $ref: ./response/tickets/watchers.yaml
   latest_note:
     $ref: './response/conversations/latest_note.yaml'

@@ -128,6 +128,22 @@ module TicketsTestHelper
     ticket_pattern(expected_output, ignore_extra_keys, ticket).merge(description: description)
   end
 
+  def latest_note_response_pattern(note)
+    pattern = reply_note_pattern({}, note).merge!({ user: Hash })
+    pattern.except(:user_id)
+  end
+
+  def reply_draft_pattern(expected_output)
+    {
+      body: expected_output[:body],
+      cc_emails: expected_output[:cc_emails] || [],
+      bcc_emails: expected_output[:bcc_emails] || [],
+      from_email: expected_output[:from_email] || "",
+      attachment_ids: (expected_output[:attachment_ids] || []).map(&:to_s),
+      saved_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
+    }
+  end
+
   # Helpers
   def v2_outbound_payload
     product = (Product.first || create_product)
@@ -189,12 +205,6 @@ module TicketsTestHelper
     sample_params.merge!(private: true) if private_note
     sample_params
   end
-
-  def latest_note_response_pattern(note)
-    pattern = reply_note_pattern({}, note).merge!({ user: Hash })
-    pattern.except(:user_id)
-  end
-
 
   # for ticket split
 
@@ -283,5 +293,4 @@ module TicketsTestHelper
     assert new_ticket.attachments.map(&:id) == attachment_ids
     assert new_ticket.cloud_files.present?
   end
-
 end

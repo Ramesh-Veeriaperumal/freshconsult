@@ -4,7 +4,7 @@ module ApiConstants
     per_page: 30,
     max_per_page: 100,
     page: 1
-  }
+  }.freeze
 
   # https://github.com/mislav/will_paginate/blob/master/lib/will_paginate/page_number.rb
   PAGE_MAX = WillPaginate::PageNumber::BIGINT
@@ -29,11 +29,12 @@ module ApiConstants
                        SolutionConstants::LOAD_OBJECT_EXCEPT +
                        SurveyConstants::LOAD_OBJECT_EXCEPT +
                        ContactConstants::LOAD_OBJECT_EXCEPT +
-                       ApiTicketConstants::LOAD_OBJECT_EXCEPT
+                       ApiTicketConstants::LOAD_OBJECT_EXCEPT +
+                       DraftConstants::LOAD_OBJECT_EXCEPT
 
   NO_CONTENT_TYPE_REQUIRED = ApiTicketConstants::NO_CONTENT_TYPE_REQUIRED +
-                              ContactConstants::NO_CONTENT_TYPE_REQUIRED +
-                              SubscriptionConstants::NO_CONTENT_TYPE_REQUIRED
+                             ContactConstants::NO_CONTENT_TYPE_REQUIRED +
+                             SubscriptionConstants::NO_CONTENT_TYPE_REQUIRED
 
   ALLOWED_DOMAIN = AppConfig['base_domain'][Rails.env]
   MAX_LENGTH_STRING = 255
@@ -56,7 +57,7 @@ module ApiConstants
   BULK_ACTION_FIELDS = BULK_ACTION_ARRAY_FIELDS.freeze
   BULK_UPDATE_FIELDS = ['properties'].freeze
   BULK_EXECUTE_SCENARIO_FIELDS = ApiTicketConstants::EXECUTE_SCENARIO_FIELDS.freeze
-  BULK_ACTION_METHODS = ApiTicketConstants::BULK_ACTION_METHODS + 
+  BULK_ACTION_METHODS = ApiTicketConstants::BULK_ACTION_METHODS +
                         ContactConstants::BULK_ACTION_METHODS
   BULK_ACTION_ASYNC_METHODS = ApiTicketConstants::BULK_ACTION_ASYNC_METHODS
 end.freeze

@@ -16,6 +16,7 @@ Authority::Authorization::PrivilegeList.build do
 
   reply_ticket do
     resource :"ember/conversation", only: [:reply]
+    resource :"ember/tickets/draft", only: [:save_draft, :show_draft, :clear_draft]
   end
 
   forward_ticket do
@@ -43,9 +44,9 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/contact", only: [:make_agent, :send_invite, :bulk_send_invite]
   end
 
-	delete_ticket do
-		resource :"ember/ticket", only: [:destroy, :bulk_delete, :restore, :bulk_restore]
-	end
+  delete_ticket do
+    resource :"ember/ticket", only: [:destroy, :bulk_delete, :restore, :bulk_restore]
+  end
 
   admin_tasks do
     resource :"ember/contact", only: [:update_password]

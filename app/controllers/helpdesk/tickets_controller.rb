@@ -64,7 +64,7 @@ class Helpdesk::TicketsController < ApplicationController
 
   before_filter :load_ticket,
     :only => [:edit, :update, :execute_scenario, :close, :change_due_by, :print, :clear_draft, :save_draft,
-              :draft_key, :get_ticket_agents, :quick_assign, :prevnext, :status, :update_ticket_properties,
+              :get_ticket_agents, :quick_assign, :prevnext, :status, :update_ticket_properties,
               :activities, :activitiesv2, :activities_all, :unlink, :related_tickets, :ticket_association, :suggest_tickets]
   before_filter :load_ticket_with_notes, :only => [:show]
 
@@ -84,7 +84,7 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :set_default_filter , :only => [:custom_search, :export_csv]
 
   before_filter :verify_permission, :only => [:show, :edit, :update, :execute_scenario, :close, :change_due_by, :print, :clear_draft, :save_draft,
-              :draft_key, :get_ticket_agents, :quick_assign, :prevnext, :status, :update_ticket_properties, :activities, :unspam, :restore, :activitiesv2, :activities_all]
+              :get_ticket_agents, :quick_assign, :prevnext, :status, :update_ticket_properties, :activities, :unspam, :restore, :activitiesv2, :activities_all]
 
   before_filter :load_email_params, :only => [:show, :reply_to_conv, :forward_conv, :reply_to_forward]
   before_filter :load_conversation_params, :only => [:reply_to_conv, :forward_conv, :reply_to_forward]
@@ -221,7 +221,7 @@ class Helpdesk::TicketsController < ApplicationController
           render :json => array
         end
       end
-	    format.mobile do
+      format.mobile do
         unless @response_errors.nil?
           render :json => {:errors => @response_errors}.to_json
         else
@@ -371,8 +371,8 @@ class Helpdesk::TicketsController < ApplicationController
   def show
     @to_emails = @ticket.to_emails
 
-    draft_hash = get_tickets_redis_hash_key(draft_key)
-    @draft = draft_hash ? draft_hash["draft_data"] : ""
+    draft_hash = @ticket.draft
+    @draft = draft_hash.exists? ? draft_hash.body : ""
 
     @subscription = current_user && @item.subscriptions.find(
       :first,
@@ -397,9 +397,9 @@ class Helpdesk::TicketsController < ApplicationController
       format.xml  {
         render :xml => @item.to_xml
       }
-	    format.json {
-		    render :json => @item.to_json
-	    }
+      format.json {
+        render :json => @item.to_json
+      }
       format.js
       format.nmobile {
         hash = {}
@@ -423,8 +423,8 @@ class Helpdesk::TicketsController < ApplicationController
         render :json => hash
       }
       format.mobile {
-		 render :json => @item.to_mob_json
-	  }
+     render :json => @item.to_mob_json
+    }
     end
   end
 
@@ -748,7 +748,7 @@ class Helpdesk::TicketsController < ApplicationController
     respond_to do |format|
       format.html { redirect_to (@items.size == 1) ? helpdesk_ticket_path(@items.first) : :back }
       format.js
-	  format.mobile {  render :json => { :success => true , :success_message => t("helpdesk.flash.flagged_unspam",
+    format.mobile {  render :json => { :success => true , :success_message => t("helpdesk.flash.flagged_unspam",
                      :tickets => get_updated_ticket_count) }.to_json }
     end
   end
@@ -1030,33 +1030,21 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def save_draft
-    count = 0
-    tries = 3
-    begin
-      params[:draft_data] = Helpdesk::HTMLSanitizer.clean(params[:draft_data])
-      draft_cc = fetch_valid_emails(params[:draft_cc]).map {|e| "#{e};"}.to_s.sub(/;$/,"")
-      draft_bcc = fetch_valid_emails(params[:draft_bcc]).map {|e| "#{e};"}.to_s.sub(/;$/,"")
-      draft_hash_data = {
-        "draft_data" => params[:draft_data],
-        "draft_cc" => draft_cc,
-        "draft_bcc" => draft_bcc
-      }
-      set_tickets_redis_hash_key(draft_key, draft_hash_data)
-    rescue Exception => e
-      NewRelic::Agent.notice_error(e,{:key => draft_key,
-        :value => params[:draft_data],
-        :description => "Redis issue",
-        :count => count})
-      if count<tries
-          count += 1
-          retry
-      end
-    end
+    params[:draft_data] = Helpdesk::HTMLSanitizer.clean(params[:draft_data])
+    draft_cc = fetch_valid_emails(params[:draft_cc])
+    draft_bcc = fetch_valid_emails(params[:draft_bcc])
+    draft_hash_data = {
+      "body" => params[:draft_data],
+      "cc_emails" => draft_cc,
+      "bcc_emails" => draft_bcc
+    }
+    @ticket.draft.build(draft_hash_data)
+    @ticket.draft.save
     render :nothing => true
   end
 
   def clear_draft
-    remove_tickets_redis_key(draft_key)
+    @ticket.draft.clear
     render :nothing => true
   end
 
@@ -1326,7 +1314,7 @@ class Helpdesk::TicketsController < ApplicationController
     end
 
     def find_topic
-    	@topic = current_account.topics.find(:first, :conditions => {:id => params[:topic_id]}) unless params[:topic_id].nil?
+      @topic = current_account.topics.find(:first, :conditions => {:id => params[:topic_id]}) unless params[:topic_id].nil?
     end
 
     def redirect_merged_topics

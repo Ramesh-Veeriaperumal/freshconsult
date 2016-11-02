@@ -1,0 +1,8 @@
+type: object
+allOf:
+  - $ref: '#/definitions/draft_create_input'
+  - properties:
+      saved_at:
+        type: string
+        format: date-time
+        description: Represents the time at which the draft is saved

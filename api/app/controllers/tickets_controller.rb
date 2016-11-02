@@ -1,5 +1,4 @@
 class TicketsController < ApiApplicationController
-
   include Helpdesk::TicketActions
   include Helpdesk::TagMethods
   include CloudFilesHelper
@@ -12,20 +11,18 @@ class TicketsController < ApiApplicationController
 
   before_filter :ticket_permission?, only: [:destroy]
   before_filter :check_search_feature, :validate_search_params, only: [:search]
-  
+
   def create
     assign_protected
     ticket_delegator = TicketDelegator.new(@item, ticket_fields: @ticket_fields, custom_fields: params[cname][:custom_field])
     if !ticket_delegator.valid?(:create)
       render_custom_errors(ticket_delegator, true)
+    elsif @item.save_ticket
+      @ticket = @item # Dirty hack. Should revisit.
+      render_201_with_location(item_id: @item.display_id)
+      notify_cc_people @cc_emails[:cc_emails] unless @cc_emails[:cc_emails].blank? || compose_email?
     else
-      if @item.save_ticket
-        @ticket = @item # Dirty hack. Should revisit.
-        render_201_with_location(item_id: @item.display_id)
-        notify_cc_people @cc_emails[:cc_emails] unless @cc_emails[:cc_emails].blank? || compose_email?
-      else
-        render_errors(@item.errors)
-      end
+      render_errors(@item.errors)
     end
   end
 
@@ -69,6 +66,10 @@ class TicketsController < ApiApplicationController
     super
   end
 
+  def self.wrap_params
+    ApiTicketConstants::WRAP_PARAMS
+  end
+
   protected
 
     def requires_feature(feature)
@@ -82,7 +83,10 @@ class TicketsController < ApiApplicationController
     # extract the keys from the hash & delete the same in the original hash to avoid repeat assignments
     def validatable_delegator_attributes
       params[cname].select do |key, value|
-        (params[cname].delete(key); true) if ApiTicketConstants::VALIDATABLE_DELEGATOR_ATTRIBUTES.include?(key)
+        if ApiTicketConstants::VALIDATABLE_DELEGATOR_ATTRIBUTES.include?(key)
+          params[cname].delete(key)
+          true
+        end
       end
     end
 
@@ -95,8 +99,8 @@ class TicketsController < ApiApplicationController
     end
 
     def decorator_options
-      options =  { name_mapping: (@name_mapping || get_name_mapping) }
-      options.merge!(sideload_options: sideload_options.to_a) if index? || show?
+      options = { name_mapping: (@name_mapping || get_name_mapping) }
+      options[:sideload_options] = sideload_options.to_a if index? || show?
       super(options)
     end
 
@@ -128,13 +132,13 @@ class TicketsController < ApiApplicationController
       preload_options
     end
 
-    def update_action?
-      ApiTicketConstants::UPDATE_ACTIONS.include?(action_name.to_sym)
+    def ticket_permission_required?
+      ApiTicketConstants::PERMISSION_REQUIRED.include?(action_name.to_sym)
     end
 
     def after_load_object
       return false unless verify_object_state
-      if show? || update_action?
+      if ticket_permission_required?
         return false unless verify_ticket_permission
       end
 
@@ -150,7 +154,7 @@ class TicketsController < ApiApplicationController
     end
 
     def order_clause
-      order_by =  params[:order_by] || ApiTicketConstants::DEFAULT_ORDER_BY
+      order_by = params[:order_by] || ApiTicketConstants::DEFAULT_ORDER_BY
       order_type = params[:order_type] || ApiTicketConstants::DEFAULT_ORDER_TYPE
       "helpdesk_tickets.#{order_by} #{order_type} "
     end
@@ -172,7 +176,7 @@ class TicketsController < ApiApplicationController
       # For deleted filter, spam is a don't care and deleted: true from model method #filter_conditions would override deleted: false set here.
       # For all others spam: false and deleted: false would be set.
       conditions = { deleted: false }
-      conditions.merge!(spam: false) unless filter_conditions.include?(:deleted)
+      conditions[:spam] = false unless filter_conditions.include?(:deleted)
       conditions
     end
 
@@ -201,7 +205,7 @@ class TicketsController < ApiApplicationController
     end
 
     def sanitize_params
-      prepare_array_fields(ApiTicketConstants::ARRAY_FIELDS - ["tags"]) # Tags not included as it requires more manipulation.
+      prepare_array_fields(ApiTicketConstants::ARRAY_FIELDS - ['tags']) # Tags not included as it requires more manipulation.
 
       # Assign cc_emails serialized hash & collect it in instance variables as it can't be built properly from params
       cc_emails =  params[cname][:cc_emails]
@@ -252,7 +256,7 @@ class TicketsController < ApiApplicationController
       # Should not allow any key value pair inside custom fields hash if no custom fields are available for accnt.
       custom_fields = @name_mapping.empty? ? [nil] : @name_mapping.values
       field = "ApiTicketConstants::#{original_action_name.upcase}_FIELDS".constantize | ['custom_fields' => custom_fields]
-      params[cname].permit(*(field))
+      params[cname].permit(*field)
       set_default_values
       params_hash = params[cname].merge(statuses: Helpdesk::TicketStatus.status_objects_from_cache(current_account), ticket_fields: @ticket_fields)
       ticket = TicketValidation.new(params_hash, @item, string_request_params?)
@@ -285,14 +289,13 @@ class TicketsController < ApiApplicationController
       action_scopes = ApiTicketConstants::SCOPE_BASED_ON_ACTION[action_name] || {}
       action_scopes.each_pair do |scope_attribute, value|
         item_value = @item.send(scope_attribute)
-        if item_value != value
-          Rails.logger.debug "Ticket display_id: #{@item.display_id} with #{scope_attribute} is #{item_value}"
-          # Render 405 in case of update/delete as it acts on ticket endpoint itself
-          # And User will be able to GET the same ticket via Show
-          # other URLs such as tickets/id/restore will result in 404 as it is a separate endpoint
-          update? || destroy? ? render_405_error(['GET']) : head(404)
-          return false
-        end
+        next if item_value == value
+        Rails.logger.debug "Ticket display_id: #{@item.display_id} with #{scope_attribute} is #{item_value}"
+        # Render 405 in case of update/delete as it acts on ticket endpoint itself
+        # And User will be able to GET the same ticket via Show
+        # other URLs such as tickets/id/restore will result in 404 as it is a separate endpoint
+        update? || destroy? ? render_405_error(['GET']) : head(404)
+        return false
       end
       true
     end
@@ -354,11 +357,6 @@ class TicketsController < ApiApplicationController
       Search::Tickets::Docs.new(conditions, neg_conditions).records('Helpdesk::Ticket', es_options)
     end
 
-  def self.wrap_params
-    ApiTicketConstants::WRAP_PARAMS
-  end
-
-  # Since wrap params arguments are dynamic & needed for checking if the resource allows multipart, placing this at last.
-  wrap_parameters(*wrap_params)
-  
+    # Since wrap params arguments are dynamic & needed for checking if the resource allows multipart, placing this at last.
+    wrap_parameters(*wrap_params)
 end

@@ -27,7 +27,10 @@ module Ember
         assign_conversation_attributes(conversation_delegator)
         is_success = @item.save_note
         # publish solution is being set in kbase_email_included based on privilege and email params
-        create_solution_article if is_success && @publish_solution
+        if is_success
+          create_solution_article if @publish_solution
+          @ticket.draft.clear
+        end
         render_response(is_success)
       else
         render_custom_errors(conversation_delegator, true)
@@ -40,8 +43,8 @@ module Ember
       build_object
       kbase_email_included? params[cname] # kbase_email_included? present in Email module
       assign_note_attributes
-      delegator_hash = {attachment_ids: @attachment_ids, cloud_file_ids: @cloud_file_ids, 
-                        parent_attachments: parent_attachments, include_original_attachments: @include_original_attachments}
+      delegator_hash = { attachment_ids: @attachment_ids, cloud_file_ids: @cloud_file_ids,
+                         parent_attachments: parent_attachments, include_original_attachments: @include_original_attachments }
       conversation_delegator = ConversationDelegator.new(@item, delegator_hash)
       if conversation_delegator.valid?
         assign_conversation_attributes(conversation_delegator)
@@ -92,16 +95,18 @@ module Ember
           url = attach.authenticated_s3_get_url
           io  = open(url)
           if io
-            def io.original_filename; base_uri.path.split('/').last.gsub("%20"," "); end
+            def io.original_filename
+              base_uri.path.split('/').last.gsub('%20', ' ')
+            end
           end
-          attachments_array.push({resource: io})
+          attachments_array.push(resource: io)
         end
         params[cname][:attachments] = attachments_array
       end
 
       def build_cloud_files(delegator_item)
         (parent_cloud_files(delegator_item) || []).each do |cloud_file|
-          @item.cloud_files.build({ url:cloud_file.url, filename: cloud_file.filename, application_id: cloud_file.application_id })
+          @item.cloud_files.build(url: cloud_file.url, filename: cloud_file.filename, application_id: cloud_file.application_id)
         end
       end
 
@@ -128,14 +133,14 @@ module Ember
         @item.attachments = @item.attachments + conversation_delegator.draft_attachments if conversation_delegator.draft_attachments
         return unless forward?
         @item.from_email ||= current_account.primary_email_config.reply_email
-        @item.note_body.full_text_html = (@item.note_body.body_html || "")
+        @item.note_body.full_text_html = (@item.note_body.body_html || '')
         @item.note_body.full_text_html = @item.note_body.full_text_html + bind_last_conv(@ticket, signature, true) if @include_quoted_text
         build_cloud_files(conversation_delegator)
       end
 
       def signature
         agent = (@user || api_current_user).agent
-        agent ? agent.signature_value : ""
+        agent ? agent.signature_value : ''
       end
 
       def set_custom_errors(item = @item)
