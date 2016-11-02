@@ -295,7 +295,7 @@ $(document).ready(function(){
     })
 
     $(document).on("keypress.tag_index", '#addhelpdesk_tag', function(event) { 
-        tag_name = jQuery(this).val();
+        tag_name = jQuery(this).val().trim();
         if(event.keyCode == 13 && tag_name!=''){
           jQuery.ajax({
               type: 'POST',
