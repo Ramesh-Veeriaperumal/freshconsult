@@ -53,6 +53,8 @@ module ApiConstants
 
   VALUE_NOT_DEFINED = :value_not_defined
 
+  ALPHABETS = ('A'..'Z').to_a.freeze
+
   BULK_ACTION_ARRAY_FIELDS = ['ids'].freeze
   BULK_ACTION_FIELDS = BULK_ACTION_ARRAY_FIELDS.freeze
   BULK_UPDATE_FIELDS = ['properties'].freeze

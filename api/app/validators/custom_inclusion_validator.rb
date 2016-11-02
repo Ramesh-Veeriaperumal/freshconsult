@@ -8,12 +8,13 @@ class CustomInclusionValidator < ApiValidator
     end
 
     def invalid?
-      modified_inclusion_list.exclude?(value)
+      modified_inclusion_list.exclude?(value.is_a?(String) ? value.downcase : value)
     end
 
     def modified_inclusion_list
       modified_inclusion_list = inclusion_list
       modified_inclusion_list |= modified_inclusion_list.map(&:to_s) if allow_string?
+      modified_inclusion_list = modified_inclusion_list.collect { |x| x.is_a?(String) ? x.downcase : x }
       modified_inclusion_list += [nil] if inclusion_list.empty?
       modified_inclusion_list
     end
@@ -29,7 +30,7 @@ class CustomInclusionValidator < ApiValidator
 
     def custom_error_options
       error_options = add_input_info? ? { prepend_msg: :input_received, given_data_type: String } : {}
-      error_options.merge!(list: inclusion_list.map(&:to_s).uniq.join(',')) unless options[:exclude_list]
+      error_options[:list] = inclusion_list.map(&:to_s).uniq.join(',') unless options[:exclude_list]
       error_options
     end
 

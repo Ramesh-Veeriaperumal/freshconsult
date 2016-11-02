@@ -27,9 +27,13 @@ class ApiCompaniesController < ApiApplicationController
 
   private
 
-    def load_objects
+    def load_objects(filter = nil)
       # preload(:flexifield, :company_domains) will avoid n + 1 query to company field data & company domains
-      super scoper.preload(:flexifield, :company_domains).order(:name)
+      super (filter || scoper).preload(preload_options).order(:name)
+    end
+
+    def preload_options
+      [:flexifield, :company_domains]
     end
 
     def scoper
@@ -41,7 +45,7 @@ class ApiCompaniesController < ApiApplicationController
       @name_mapping = CustomFieldDecorator.name_mapping(@company_fields)
       custom_fields = @name_mapping.empty? ? [nil] : @name_mapping.values
       fields = CompanyConstants::FIELDS | ['custom_fields' => custom_fields]
-      params[cname].permit(*(fields))
+      params[cname].permit(*fields)
       ParamsHelper.modify_custom_fields(params[cname][:custom_fields], @name_mapping.invert)
       company = ApiCompanyValidation.new(params[cname], @item)
       render_custom_errors(company, true) unless company.valid?
@@ -62,8 +66,12 @@ class ApiCompaniesController < ApiApplicationController
       @name_mapping
     end
 
+    def decorator_options_hash
+      { name_mapping: (@name_mapping || get_name_mapping) }
+    end
+
     def decorator_options
-      super({ name_mapping: (@name_mapping || get_name_mapping) })
+      super decorator_options_hash
     end
 
     def get_name_mapping

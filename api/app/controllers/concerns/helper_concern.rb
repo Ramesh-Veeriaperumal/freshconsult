@@ -2,11 +2,11 @@ module HelperConcern
   extend ActiveSupport::Concern
 
   def validate_body_params(item = nil)
-    params[cname].permit(*fields_to_validate)
-    @validator = validation_klass.new(params[cname], item, string_request_params?)
-    valid = @validator.valid?(action_name.to_sym)
-    render_errors @validator.errors, @validator.error_options unless valid
-    valid
+    validate_request(item, params[cname])
+  end
+
+  def validate_url_params(item = nil)
+    validate_request(item, params)
   end
 
   def sanitize_body_params
@@ -23,8 +23,16 @@ module HelperConcern
 
   private
 
+    def validate_request(item, request_params)
+      request_params.permit(*fields_to_validate)
+      @validator = validation_klass.new(request_params, item, string_request_params?)
+      valid = @validator.valid?(action_name.to_sym)
+      render_errors @validator.errors, @validator.error_options unless valid
+      valid
+    end
+
     def constants_klass
-      @cklass_computed ||= (bulk_action? ? 'ApiConstants' : "#{constants_class}").constantize
+      @cklass_computed ||= (bulk_action? ? 'ApiConstants' : constants_class.to_s).constantize
     end
 
     def validation_klass

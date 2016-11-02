@@ -19,6 +19,21 @@ module CompaniesTestHelper
     }
   end
 
+  def company_pattern_with_associations(expected_output = {}, company, include_options)
+    response_pattern = company_pattern(expected_output, company)
+    if include_options.include?('contacts_count')
+      response_pattern.merge!(contacts_count: company.users.count)
+    end
+    if include_options.include?('sla_policies')
+      sla_array = []
+      (expected_output[:sla_policies] || []).each do |sla_policy|
+        sla_array << sla_policy_pattern(sla_policy)
+      end
+      response_pattern.merge!(sla_policies: sla_array)
+    end
+    response_pattern
+  end
+
   def company_field_pattern(_expected_output = {}, company_field)
     company_field_json = company_field_response_pattern company_field
     company_field_json[:choices] = company_field.choices.map { |x| x[:value] } if company_field.field_type.to_s == 'custom_dropdown'

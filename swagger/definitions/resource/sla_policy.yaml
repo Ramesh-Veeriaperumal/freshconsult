@@ -21,11 +21,11 @@ properties:
         type: array
         items:
           type: id
-      source:
+      sources:
         type: array
         items:
           type: string
-      ticket_type:
+      ticket_types:
         type: array
         items:
           type: string

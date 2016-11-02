@@ -208,6 +208,9 @@ Helpkit::Application.routes.draw do
         get :activities
       end
     end
+
+    resources :companies, controller: 'ember/companies', only: [:index]
+
     resources :ticket_filters, controller: 'ember/ticket_filters', only: [:index, :show, :create, :update, :destroy]
     resources :contact_fields, controller: 'ember/contact_fields', only: :index
     resources :scenario_automations, controller: 'ember/scenario_automations', only: :index

@@ -519,8 +519,8 @@
         "tags": [
           "company"
         ],
-        "summary": "List all**",
-        "description": "Work in Progress",
+        "summary": "List all",
+        "description": "Lists all companies with its associations",
         "parameters": [
           {
             "name": "letter",
@@ -2419,13 +2419,13 @@
                 "type": "id"
               }
             },
-            "source": {
+            "sources": {
               "type": "array",
               "items": {
                 "type": "string"
               }
             },
-            "ticket_type": {
+            "ticket_types": {
               "type": "array",
               "items": {
                 "type": "string"
