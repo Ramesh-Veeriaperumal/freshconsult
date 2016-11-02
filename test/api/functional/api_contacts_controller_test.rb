@@ -1580,4 +1580,45 @@ class ApiContactsControllerTest < ActionController::TestCase
     assert response['other_emails'].sort == email_array.sort
     assert response['email'] == email
   end
+
+  def test_restore_extra_params
+    sample_user = get_user
+    sample_user.update_column(:deleted, true)
+    put :restore, construct_params({ id: sample_user.id }, test: 1)
+    assert_response 400
+    match_json(request_error_pattern('no_content_required'))
+  end
+
+  def test_restore_load_object_not_present
+    put :restore, construct_params(id: 9999)
+    assert_response :missing
+    assert_equal ' ', @response.body
+  end
+
+  def test_restore_without_privilege
+    User.any_instance.stubs(:privilege?).with(:delete_contact).returns(false).at_most_once
+    put :restore, construct_params(id: User.first.id)
+    User.any_instance.unstub(:privilege?)
+    assert_response 403
+    match_json(request_error_pattern(:access_denied))
+  end
+
+  def test_restore_with_permission
+    sample_user = get_user
+    sample_user.update_column(:deleted, true)
+    put :restore, construct_params({ id: sample_user.id })
+    assert_response 204
+    refute sample_user.reload.deleted
+  end
+
+  def test_restore_with_merged_source_contact
+    sample_user = get_user
+    sample_user.deleted = true
+    sample_user.parent_id = 999
+    sample_user.save
+    put :restore, construct_params({ id: sample_user.id })
+    assert_response 404
+    sample_user.parent_id = nil
+  end
+
 end
