@@ -10,7 +10,6 @@ module ActionMailer
       recipients_array.push(event.payload[:bcc]) if event.payload[:bcc]
       recipients = Array.wrap(recipients_array).join(', ')
       from = Array.wrap(event.payload[:from]).join(', ')
-      debugger
       logger.info("Sent mail From #{from} to #{recipients} (%1.fms)" % event.duration)
       logger.info("Headers : #{extract_header(event.payload[:mail])}")
       email_logger.debug(event.payload[:mail])
