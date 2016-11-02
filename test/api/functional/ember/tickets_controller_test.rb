@@ -686,5 +686,81 @@ module Ember
       match_json(latest_note_response_pattern(reply))
     end
 
+    # tests for split note
+    # 1. invalid ticket id
+    # 2. invalid note id
+    # 3. ticket with no permission
+    # 4. Successfull split with
+    #     a. normal reply
+    #     b. twitter reply
+    #     c. fb reply
+    # 5. error in saving ticket
+    # 6. verify attachmnets moving
+
+    def test_split_note_invalid_ticket_id
+      put :split_note, construct_params({ version: 'private', id: 0, note_id: 2 }, false)
+      assert_response 404
+    end
+
+    def test_split_note_invalid_note_id
+      ticket = create_ticket
+      put :split_note, construct_params({ version: 'private', id: ticket.id, note_id: 2 }, false)
+      assert_response 404
+    end
+
+    def test_split_note_ticket_without_permission
+      ticket = create_ticket
+      user_stub_ticket_permission
+      put :split_note, construct_params({ version: 'private', id: ticket.id, note_id: 2 }, false)
+      assert_response 403
+      user_unstub_ticket_permission
+    end
+
+    def test_split_note_with_normal_reply
+      ticket = create_ticket
+      note = create_normal_reply_for(ticket)
+      put :split_note, construct_params({ version: 'private', id: ticket.id, note_id: note.id }, false)
+      assert_response 200
+      verify_split_note_activity(ticket, note)
+    end
+
+    def test_split_note_with_twitter_reply
+      ticket, note = twitter_ticket_and_note
+      put :split_note, construct_params({ version: 'private', id: ticket.id, note_id: note.id }, false)
+      assert_response 200
+      verify_split_note_activity(ticket, note)
+    end
+
+    def test_split_note_with_fb_reply
+      ticket, note = create_fb_ticket_and_note
+      put :split_note, construct_params({ version: 'private', id: ticket.id, note_id: note.id }, false)
+      assert_response 200
+      verify_split_note_activity(ticket, note)
+    end
+
+    def test_split_note_error_in_saving
+      ticket = create_ticket
+      note = create_normal_reply_for(ticket)
+      @controller.stubs(:ticket_attributes).returns({})
+      put :split_note, construct_params({ version: 'private', id: ticket.id, note_id: note.id }, false)
+      @controller.unstub(:ticket_attributes)
+      assert_response 400
+    end
+
+    def test_split_note_with_attachments
+      ticket = create_ticket
+      note = create_normal_reply_for(ticket)
+      add_attachments_to_note(note, rand(2..5))
+
+      attachment_ids = note.attachments.map(&:id)
+      assert note.cloud_files.present?
+      assert note.attachments.present?
+
+      put :split_note, construct_params({ version: 'private', id: ticket.id, note_id: note.id }, false)
+      assert_response 200
+      verify_split_note_activity(ticket, note)
+      verify_attachments_moving(attachment_ids)
+    end
+
   end
 end

@@ -3,11 +3,13 @@ module Ember
     include DeleteSpamConcern
     include TicketConcern
     include HelperConcern
+    include SplitNoteHelper
 
     INDEX_PRELOAD_OPTIONS = [:ticket_old_body, :schema_less_ticket, :flexifield, { requester: [:avatar, :flexifield, :default_user_company] }].freeze
     DEFAULT_TICKET_FILTER = :all_tickets.to_s.freeze
 
-    before_filter :ticket_permission?, only: [:latest_note]
+    before_filter :ticket_permission?, only: [:latest_note, :split_note]
+    before_filter :load_note, only: [:split_note]
 
     def index
       super
@@ -76,6 +78,17 @@ module Ember
       @note = @item.conversation.first
       head(204) and return if @note.nil?
       @user = ContactDecorator.new(@note.user, {})
+    end
+
+    def split_note
+      split_the_note
+      if @new_ticket.errors.present?
+        render_errors(@new_ticket.errors)
+      else
+        options = { name_mapping: (@name_mapping || get_name_mapping), sideload_options: [] }
+        @item = TicketDecorator.new(@new_ticket, options)
+        render '/tickets/show'
+      end
     end
 
     private
@@ -295,6 +308,11 @@ module Ember
 
       def render_201_with_location(template_name: "tickets/#{action_name}", location_url: 'ticket_url', item_id: @item.id)
         render template_name, location: send(location_url, item_id), status: 201
+      end
+
+      def load_note
+        @note = @item.notes.find_by_id(params[:note_id])
+        log_and_render_404 unless @note
       end
 
       wrap_parameters(*wrap_params)

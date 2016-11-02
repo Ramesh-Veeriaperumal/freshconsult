@@ -1,5 +1,6 @@
 ['ticket_fields_test_helper.rb', 'conversations_test_helper.rb'].each { |file| require "#{Rails.root}/test/api/helpers/#{file}" }
 ['ticket_helper.rb', 'company_helper.rb', 'group_helper.rb', 'note_helper.rb', 'email_configs_helper.rb', 'products_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
+require "#{Rails.root}/spec/helpers/social_tickets_helper.rb"
 module TicketsTestHelper
   include GroupHelper
   include ConversationsTestHelper
@@ -9,6 +10,8 @@ module TicketsTestHelper
   include CompanyHelper
   include TicketHelper
   include NoteHelper
+  include SocialTicketsHelper
+
   # Patterns
   def deleted_ticket_pattern(expected_output = {}, ticket)
     ticket_pattern(expected_output, ticket).merge(deleted: (expected_output[:deleted] || ticket.deleted).to_s.to_bool)
@@ -190,6 +193,95 @@ module TicketsTestHelper
   def latest_note_response_pattern(note)
     pattern = reply_note_pattern({}, note).merge!({ user: Hash })
     pattern.except(:user_id)
+  end
+
+
+  # for ticket split
+
+  def create_normal_reply_for(ticket)
+    note = ticket.notes.build(note_params(ticket))
+    note.save_note
+    note
+  end
+
+  def twitter_ticket_and_note
+    @account.make_current
+    social_related_factories_definition
+    #create a twitter ticket
+    stream_id = get_twitter_stream_id
+    twitter_handle = get_twitter_handle
+
+    tweet = new_tweet({ stream_id: stream_id })
+    requester = create_tweet_user(tweet[:user])
+    ticket = create_twitter_ticket({
+      twitter_handle: twitter_handle,
+      tweet: tweet,
+      requester: requester
+    })
+    note_options = {
+      tweet: new_tweet({ 
+        twitter_user: tweet[:user],
+        body: Faker::Lorem.sentence
+      }),
+      twitter_handle: twitter_handle,
+      stream_id: stream_id
+    }
+    note = twitter_reply_to_ticket(ticket, note_options, false)
+    [ticket, note]
+  end
+
+  def create_fb_ticket_and_note
+    social_related_factories_definition
+    options = {}
+    options[:fb_page] ||= Account.current.facebook_pages.first || create_fb_page(true)
+    options[:post] = fb_post_params
+    ticket = create_fb_ticket(options)
+    options[:post] = fb_post_params
+    note = fb_reply_to_ticket(ticket, options, false)
+    [ticket, note]
+  end
+
+  def note_params(ticket)
+    {
+      note_body_attributes: {
+        body_html: Faker::Lorem.paragraph
+      },
+      incoming: true,
+      user_id:  ticket.requester.id,
+      source: Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:twitter]
+    }
+  end
+
+  def social_related_factories_definition
+    define_social_factories
+  rescue
+    true
+  end
+
+  def verify_split_note_activity(ticket, note)
+    ticket_id = ActiveSupport::JSON.decode(response.body)['id']
+    new_ticket = @account.tickets.find_by_display_id(ticket_id)
+    match_json(ticket_pattern({}, new_ticket))
+    refute ticket.notes.find_by_id(note.id).present?
+  end
+
+  def add_attachments_to_note(note, count = 1)
+    count.times do 
+      note.attachments.build(
+        content: fixture_file_upload('/files/attachment.txt', 'text/plain', :binary),
+        description: Faker::Lorem.characters(10),
+        account_id: @account.id
+      )
+      note.cloud_files.build({ filename: "#{Faker::Name.name}.jpg", url: "https://www.dropbox.com/image.jpg", application_id: 20 })
+    end
+    note.save
+  end
+
+  def verify_attachments_moving(attachment_ids)
+    ticket_id = ActiveSupport::JSON.decode(response.body)['id']
+    new_ticket = @account.tickets.reload.find_by_display_id(ticket_id)
+    assert new_ticket.attachments.map(&:id) == attachment_ids
+    assert new_ticket.cloud_files.present?
   end
 
 end
