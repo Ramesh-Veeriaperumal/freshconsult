@@ -128,8 +128,18 @@ window.App.Tickets.Merge_tickets = window.App.Tickets.Merge_tickets || {};
         jQuery('.searchticket').each(function(){
           jQuery(this).toggle(jQuery(this).hasClass(type));
         });
-        if(jQuery('.'+type).find('.search_merge').val() != "")
-          jQuery('#'+type+'_results').show() 
+        if(type == 'requester')
+        {
+          if(jQuery("#select-requester").val() != "") {
+            jQuery('#'+type+'_results').show();
+          }
+        }
+        else
+        {
+          if(jQuery('.'+type).find('.search_merge').val () != ""){
+           jQuery('#'+type+'_results').show();
+          }
+        }
       });
     },
 
