@@ -96,3 +96,4 @@ api_error_messages:
   action_restricted: "Cannot perform '%{action}' when %{reason}"
   access_denied_list: "Permission denied for records with ids : '%{denied_ids}'."
   access_denied_and_invalid_list: "There are no records matching the ids: '%{list}'. Permission denied for records with ids : '%{denied_ids}'."
+  contact_merge_validation: "Cannot add more than %{max_value} %{field}"

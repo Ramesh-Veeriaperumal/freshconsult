@@ -487,7 +487,7 @@
         "tags": [
           "contact"
         ],
-        "summary": "Merge**",
+        "summary": "Merge",
         "parameters": [
           {
             "name": "data",
@@ -499,17 +499,17 @@
           }
         ],
         "responses": {
-          "202": {
-            "description": "Accepted",
-            "schema": {
-              "$ref": "#/definitions/partial_success_response"
-            }
+          "204": {
+            "description": "Success"
           },
           "400": {
             "description": "Bad Request Error",
             "schema": {
               "$ref": "#/definitions/bad_request_error"
             }
+          },
+          "404": {
+            "description": "Contact not found"
           }
         }
       }
@@ -1747,14 +1747,14 @@
       "type": "object",
       "properties": {
         "primary_id": {
-          "type": "id",
-          "description": "ID of the primary contact"
+          "description": "ID of the primary contact",
+          "type": "number"
         },
         "target_ids": {
-          "type": "array",
           "description": "Ids of contacts that will be merged into the Primary contact",
+          "type": "array",
           "items": {
-            "type": "id"
+            "type": "number"
           }
         }
       },

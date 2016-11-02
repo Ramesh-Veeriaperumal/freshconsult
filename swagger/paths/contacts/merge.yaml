@@ -1,6 +1,6 @@
 post:
   tags: [contact]
-  summary: Merge**
+  summary: Merge
   parameters:
     - name: data
       in: body
@@ -8,10 +8,10 @@ post:
       schema:
         $ref: '#/definitions/contact_merge_input'
   responses:
-    202:
-      description: Accepted
-      schema:
-        $ref: '#/definitions/partial_success_response'
+    204:
+      description: Success
+    404:
+      description: Contact not found
     400:
       description: Bad Request Error
       schema:

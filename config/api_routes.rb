@@ -199,6 +199,7 @@ Helpkit::Application.routes.draw do
         put :bulk_restore
         put :bulk_send_invite
         put :bulk_whitelist
+        post :merge, to: 'ember/contacts/merge#merge'
       end
       member do
         put :restore
