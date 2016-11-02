@@ -5,8 +5,13 @@ module ActionMailer
     include EmailCustomLogger
 
     def deliver(event)
-      recipients = Array.wrap(event.payload[:to]).join(', ')
-      logger.info("Sent mail to #{recipients} (%1.fms)" % event.duration)
+      recipients_array = event.payload[:to].dup
+      recipients_array.push(event.payload[:cc]) if event.payload[:cc]
+      recipients_array.push(event.payload[:bcc]) if event.payload[:bcc]
+      recipients = Array.wrap(recipients_array).join(', ')
+      from = Array.wrap(event.payload[:from]).join(', ')
+      debugger
+      logger.info("Sent mail From #{from} to #{recipients} (%1.fms)" % event.duration)
       logger.info("Headers : #{extract_header(event.payload[:mail])}")
       email_logger.debug(event.payload[:mail])
     end
