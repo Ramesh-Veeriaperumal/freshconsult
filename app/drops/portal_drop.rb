@@ -29,7 +29,7 @@ class PortalDrop < BaseDrop
     @logo_url ||=  MemcacheKeys.fetch(["v7", "portal", "logo_href", source],7.days.to_i) do
             source.logo.nil? ? 
               "/assets/misc/logo.png" :
-              AwsWrapper::S3Object.url_for(source.logo.content.path(:logo), 
+              AwsWrapper::S3Object.public_url_for(source.logo.content.path(:logo), 
                             source.logo.content.bucket_name,
                             :secure => true)
                 

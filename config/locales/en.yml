@@ -7383,6 +7383,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     outlook_contacts:
       label: "Outlook Contacts Sync"
       desc: "Periodically synchronize contacts between Outlook and Freshdesk."
+      helptext: "<h4>Outlook contacts sync setup help</h4><p><br/> Click on <b>‘Sync new account’</b> to add new Outlook account for syncing. When prompted, grant access to Freshdesk to use Outlook contacts (Enter your Outlook user name & password if prompted).<br/><br/>You can delete an account if you do not want to sync with that account anymore.<br/><br/><b>Note:</b> It is recommended that you take and store a back-up of your Outlook contacts before start syncing."
       form:
         title: "Outlook contacts sync settings"
         import_group: "Select folders to import (optional)"

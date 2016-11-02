@@ -80,8 +80,8 @@ development:
    consumer_token:  pymmum7erkmq5vm4vsbqamut
    consumer_secret: DzWRNku2hu
  outlook_contacts:
-   consumer_token: c2130438-7263-442a-bf4f-befadd64af92
-   consumer_secret: daqBArJGQt9jg6MJZhLr7dm
+   consumer_token: fc02555f-2d3b-47c4-a66f-7a45d15c2a1a
+   consumer_secret: vcx3eeApBi82xmpXE2CDjzt
 
 defaults: &defaults
  salesforce:
@@ -173,8 +173,8 @@ staging:
    consumer_token:  pymmum7erkmq5vm4vsbqamut
    consumer_secret: DzWRNku2hu
  outlook_contacts:
-   consumer_token: c2130438-7263-442a-bf4f-befadd64af92
-   consumer_secret: daqBArJGQt9jg6MJZhLr7dm
+   consumer_token: 83ffd1da-0e5a-427f-9986-a8879b7a4aca
+   consumer_secret: bRhQjg9xynB92EEnmjEWxMX
 
 production:
  salesforce:
@@ -226,5 +226,5 @@ production:
    consumer_token:  pymmum7erkmq5vm4vsbqamut
    consumer_secret: DzWRNku2hu
  outlook_contacts:
-   consumer_token: c2130438-7263-442a-bf4f-befadd64af92
-   consumer_secret: daqBArJGQt9jg6MJZhLr7dm
+   consumer_token: 83ffd1da-0e5a-427f-9986-a8879b7a4aca
+   consumer_secret: bRhQjg9xynB92EEnmjEWxMX
