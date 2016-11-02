@@ -9,7 +9,7 @@ module DelayedJobs
 
     def perform(args)
       job = Mailbox::Job.find_by_id(args["job_id"])
-      job.run_without_lock if job
+      job.run_without_lock(args["account_id"]) if job
     end
   end
 end
