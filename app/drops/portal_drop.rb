@@ -60,7 +60,7 @@ class PortalDrop < BaseDrop
   end
   
   def can_signup_feature
-    allowed_in_portal? :signup_link
+    feature? :signup_link
   end
 
   def can_submit_ticket_without_login
