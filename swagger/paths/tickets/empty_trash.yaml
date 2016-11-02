@@ -1,8 +1,6 @@
 delete:
   tags: [ticket]
-  summary: Empty Trash**
+  summary: Empty Trash
   responses:
-    202:
-      description: Accepted
-      schema:
-        $ref: '#/definitions/partial_success_response'
+    204:
+      description: Success

@@ -11,7 +11,22 @@ module TicketConcern
     true
   end
 
+  def permissible_ticket_ids(id_list)
+    @permissible_ids ||= begin
+      if api_current_user.can_view_all_tickets?
+        id_list
+      elsif api_current_user.group_ticket_permission
+        tickets_with_group_permission(id_list)
+      elsif api_current_user.assigned_ticket_permission
+        tickets_with_assigned_permission(id_list)
+      else
+        []
+      end
+    end
+  end
+
   private
+
     def ticket_permission?
       ticket_id = params[:ticket_id] || params[:id]
       # Should allow to delete ticket based on agents ticket permission privileges.
@@ -30,4 +45,11 @@ module TicketConcern
       api_current_user.assigned_ticket_permission && (tickets_scoper || scoper).assigned_tickets_permission(api_current_user, ids).present?
     end
 
+    def tickets_with_group_permission(ids)
+      scoper.group_tickets_permission(api_current_user, ids).map(&:display_id)
+    end
+
+    def tickets_with_assigned_permission(ids)
+      scoper.assigned_tickets_permission(api_current_user, ids).map(&:display_id)
+    end
 end

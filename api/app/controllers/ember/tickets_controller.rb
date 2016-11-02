@@ -56,7 +56,7 @@ module Ember
       return unless validate_body_params
       sanitize_body_params
       @delegator_klass = 'ScenarioDelegator'
-      return unless validate_delegator(@item, { scenario_id: params[cname][:scenario_id] })
+      return unless validate_delegator(@item, scenario_id: params[cname][:scenario_id])
       fetch_objects
       ::Tickets::BulkScenario.perform_async(ticket_ids: @items.map(&:display_id), scenario_id: params[cname][:scenario_id])
       render_bulk_action_response(bulk_action_succeeded_items, bulk_action_errors)
@@ -65,18 +65,18 @@ module Ember
     def execute_scenario
       return unless validate_body_params
       @delegator_klass = 'ScenarioDelegator'
-      return unless validate_delegator(@item, { scenario_id: params[cname][:scenario_id] })
+      return unless validate_delegator(@item, scenario_id: params[cname][:scenario_id])
       va_rule = @delegator.va_rule
       va_rule.trigger_actions(@item, api_current_user)
       @item.save
-      #TODO-LongTerm create_scenario_activity should ideally be inside va_rule model and not in the controllers
+      # TODO-LongTerm create_scenario_activity should ideally be inside va_rule model and not in the controllers
       @item.create_scenario_activity(va_rule.name)
       head 204
     end
 
     def latest_note
       @note = @item.conversation.first
-      head(204) and return if @note.nil?
+      return head(204) if @note.nil?
       @user = ContactDecorator.new(@note.user, {})
     end
 
@@ -169,32 +169,10 @@ module Ember
       def update_in_background?(items, params_hash)
         return false if items.length <= ApiTicketConstants::BACKGROUND_THRESHOLD
         tags = params_hash.delete(:tags)
-        args = { "action" => :update_multiple, "helpdesk_ticket" => params_hash }
-        args.merge!({"ids" => items.map(&:display_id)})
+        args = { 'action' => :update_multiple, 'helpdesk_ticket' => params_hash }
+        args['ids'] = items.map(&:display_id)
         args[:tags] = tags.join(',') unless tags.nil?
         ::Tickets::BulkTicketActions.perform_async(args)
-      end
-
-      def permissible_ticket_ids(id_list)
-        @permissible_ids ||= begin
-          if api_current_user.can_view_all_tickets?
-            id_list
-          elsif api_current_user.group_ticket_permission
-            tickets_with_group_permission(id_list)
-          elsif api_current_user.assigned_ticket_permission
-            tickets_with_assigned_permission(id_list)
-          else
-            []
-          end
-        end
-      end
-
-      def tickets_with_group_permission(ids)
-        scoper.group_tickets_permission(api_current_user, ids).map(&:display_id)
-      end
-
-      def tickets_with_assigned_permission(ids)
-        scoper.assigned_tickets_permission(api_current_user, ids).map(&:display_id)
       end
 
       def bulk_action_errors
@@ -206,19 +184,19 @@ module Ember
       end
 
       def retrieve_error_code(id)
-        ret_hash = { :id => id, :errors => {}, :error_options => {} }
+        ret_hash = { id: id, errors: {}, error_options: {} }
         if bulk_action_failed_items.include?(id)
           if @validation_errors && @validation_errors.key?(id)
             ret_hash[:validation_errors] = @validation_errors[id]
           else
-            ret_hash[:errors].merge!({:id => :unable_to_perform })
+            ret_hash[:errors][:id] = :unable_to_perform
           end
         elsif !bulk_action_succeeded_items.include?(id)
-          ret_hash[:errors].merge!({:id => :"is invalid" })
+          ret_hash[:errors][:id] = :"is invalid"
         else
           return {}
         end
-        return ret_hash
+        ret_hash
       end
 
       def bulk_action_succeeded_items
@@ -232,9 +210,9 @@ module Ember
       def decorate_objects
         return if @error_ticket_filter.present?
         decorator, options = decorator_options
-        
+
         if sideload_options.include?('requester')
-          @requesters = @items.collect(&:requester).uniq.each_with_object({}) do |contact, hash| 
+          @requesters = @items.collect(&:requester).uniq.each_with_object({}) do |contact, hash|
             hash[contact.id] = ContactDecorator.new(contact, name_mapping: contact_name_mapping)
           end
         end
@@ -275,14 +253,14 @@ module Ember
           params.delete(:filter)
         elsif Helpdesk::Filters::CustomTicketFilter::DEFAULT_FILTERS.keys.include?(params[:filter])
           @ticket_filter = current_account.ticket_filters.new(Helpdesk::Filters::CustomTicketFilter::MODEL_NAME).default_filter(params[:filter])
-          params["filter_name"] = params[:filter]
+          params['filter_name'] = params[:filter]
         else
           render_filter_errors
         end
         params[:wf_order] = params[:order_by]
         params[:wf_order_type] = params[:order]
       end
-      
+
       def order_clause
         nil
       end

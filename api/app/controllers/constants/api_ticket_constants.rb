@@ -4,18 +4,16 @@ module ApiTicketConstants
   HASH_FIELDS = ['custom_fields'].freeze
   COMPLEX_FIELDS = ARRAY_FIELDS | HASH_FIELDS
   CREATE_FIELDS = %w(description due_by email_config_id fr_due_by group_id priority
-                     email phone twitter_id facebook_id requester_id name responder_id source status subject type product_id
-                  ).freeze | ARRAY_FIELDS | HASH_FIELDS
+                     email phone twitter_id facebook_id requester_id name responder_id source status subject type product_id).freeze | ARRAY_FIELDS | HASH_FIELDS
   UPDATE_FIELDS = %w(description due_by email_config_id fr_due_by group_id priority
-                     email phone twitter_id facebook_id requester_id name responder_id source status subject type product_id
-                  ).freeze | (ARRAY_FIELDS - ['cc_emails']) | HASH_FIELDS
+                     email phone twitter_id facebook_id requester_id name responder_id source status subject type product_id).freeze | (ARRAY_FIELDS - ['cc_emails']) | HASH_FIELDS
   BULK_UPDATE_FIELDS = UPDATE_FIELDS - ['attachments'].freeze
   EXECUTE_SCENARIO_FIELDS = %w(scenario_id).freeze
   COMPOSE_EMAIL_FIELDS = (CREATE_FIELDS - %w(source product_id responder_id requester_id phone twitter_id facebook_id)).freeze
-  SHOW_FIELDS = ['include']
-  ALLOWED_INCLUDE_PARAMS = %w(conversations requester company stats)
-  SIDE_LOADING = ['requester', 'stats']
-  INCLUDE_PRELOAD_MAPPING = { 'stats' => :ticket_states }
+  SHOW_FIELDS = ['include'].freeze
+  ALLOWED_INCLUDE_PARAMS = %w(conversations requester company stats).freeze
+  SIDE_LOADING = %w(requester stats).freeze
+  INCLUDE_PRELOAD_MAPPING = { 'stats' => :ticket_states }.freeze
   BULK_DELETE_PRELOAD_OPTIONS = [:tags, :schema_less_ticket].freeze
   ORDER_TYPE = TicketsFilter::SORT_ORDER_FIELDS.map(&:first).map(&:to_s).freeze
   ORDER_BY = TicketsFilter::SORT_FIELDS.map(&:first).map(&:to_s) - ['priority']
@@ -33,7 +31,7 @@ module ApiTicketConstants
 
   # all_tickets is not included because it is the default filter applied.
   # monitored_by is renamed as 'watching'
-  FILTER = %w( new_and_my_open watching spam deleted ).freeze
+  FILTER = %w(new_and_my_open watching spam deleted).freeze
 
   FIELD_TYPES = Helpdesk::TicketField::FIELD_CLASS.keys.map(&:to_s).freeze
   INDEX_FIELDS = %w(filter company_id requester_id email order_by order_type updated_since include).freeze
@@ -64,10 +62,10 @@ module ApiTicketConstants
   PERMISSION_REQUIRED = [:show, :update, :execute_scenario, :spam, :unspam, :restore, :destroy].freeze
 
   REQUIRE_PRELOAD = [:bulk_delete, :bulk_spam, :bulk_unspam, :bulk_restore].freeze
-  BULK_ACTION_ASYNC_METHODS = [:bulk_execute_scenario, :bulk_update].freeze
+  BULK_ACTION_ASYNC_METHODS = [:bulk_execute_scenario, :bulk_update, :delete_forever, :delete_forever_spam].freeze
   BULK_ACTION_METHODS = [:bulk_delete, :bulk_spam, :bulk_restore, :bulk_unspam] + BULK_ACTION_ASYNC_METHODS
 
-  LOAD_OBJECT_EXCEPT = (BULK_ACTION_METHODS + [:merge]).freeze
+  LOAD_OBJECT_EXCEPT = (BULK_ACTION_METHODS + [:merge, :empty_trash, :empty_spam]).freeze
 
   MAX_EMAIL_COUNT = TicketConstants::MAX_EMAIL_COUNT - 1
 
@@ -80,9 +78,8 @@ module ApiTicketConstants
 
   NO_CONTENT_TYPE_REQUIRED = [:restore, :spam, :unspam].freeze
 
-  VALIDATION_CLASS = 'TicketValidation'
-  DELEGATOR_CLASS = 'TicketDelegator'
-  
-  MERGE_PARAMS = [:primary_id, :ticket_ids, :convert_recepients_to_cc, note_in_primary: [:body, :private], note_in_secondary: [:body, :private]].freeze
+  VALIDATION_CLASS = 'TicketValidation'.freeze
+  DELEGATOR_CLASS = 'TicketDelegator'.freeze
 
+  MERGE_PARAMS = [:primary_id, :ticket_ids, :convert_recepients_to_cc, note_in_primary: [:body, :private], note_in_secondary: [:body, :private]].freeze
 end.freeze

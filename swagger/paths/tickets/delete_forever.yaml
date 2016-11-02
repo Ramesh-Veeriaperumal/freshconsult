@@ -1,6 +1,6 @@
 delete:
   tags: [ticket]
-  summary: Delete Forever**
+  summary: Delete Forever
   parameters:
     - name: data
       in: body
@@ -13,3 +13,7 @@ delete:
       description: Accepted
       schema:
         $ref: '#/definitions/partial_success_response'
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'

@@ -1150,13 +1150,10 @@
         "tags": [
           "ticket"
         ],
-        "summary": "Empty Spam**",
+        "summary": "Empty Spam",
         "responses": {
-          "202": {
-            "description": "Accepted",
-            "schema": {
-              "$ref": "#/definitions/partial_success_response"
-            }
+          "204": {
+            "description": "Success"
           }
         }
       }
@@ -1166,13 +1163,10 @@
         "tags": [
           "ticket"
         ],
-        "summary": "Empty Trash**",
+        "summary": "Empty Trash",
         "responses": {
-          "202": {
-            "description": "Accepted",
-            "schema": {
-              "$ref": "#/definitions/partial_success_response"
-            }
+          "204": {
+            "description": "Success"
           }
         }
       }
@@ -1182,7 +1176,7 @@
         "tags": [
           "ticket"
         ],
-        "summary": "Delete Forever**",
+        "summary": "Delete Forever",
         "parameters": [
           {
             "name": "data",
@@ -1199,6 +1193,12 @@
             "description": "Accepted",
             "schema": {
               "$ref": "#/definitions/partial_success_response"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
             }
           }
         }
@@ -1209,7 +1209,7 @@
         "tags": [
           "ticket"
         ],
-        "summary": "Delete Forever Spam**",
+        "summary": "Delete Forever Spam",
         "parameters": [
           {
             "name": "data",
@@ -1226,6 +1226,12 @@
             "description": "Accepted",
             "schema": {
               "$ref": "#/definitions/partial_success_response"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
             }
           }
         }

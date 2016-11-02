@@ -46,9 +46,10 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/contact", only: [:make_agent, :send_invite, :bulk_send_invite]
   end
 
-  delete_ticket do
-    resource :"ember/ticket", only: [:destroy, :bulk_delete, :restore, :bulk_restore]
-  end
+	delete_ticket do
+		resource :"ember/ticket", only: [:destroy, :bulk_delete, :restore, :bulk_restore]
+    resource :"ember/tickets/delete_spam", only: [:empty_trash, :empty_spam, :delete_forever, :delete_forever_spam]
+	end
 
   admin_tasks do
     resource :"ember/contact", only: [:update_password]
