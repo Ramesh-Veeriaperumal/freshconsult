@@ -534,6 +534,9 @@ child - class of child checkbox
 })(jQuery);
 
 (function($){
+  // If this check is mainly for portal. we won't use the bindFirst method in portal.
+  Helpdesk.can_bind_first = true;
+  
   $.fn.bindFirst = function(event, handler) {
     this.unbind(event, handler);
     this.bind(event, handler);
