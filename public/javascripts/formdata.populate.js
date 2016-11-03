@@ -26,16 +26,14 @@ var PopulateFormData = PopulateFormData ||  (function(){
     if(!args.isAjax){
       var customizedData = _customizeData(args.data, args.fieldMap);
       _populateFields(customizedData, args);
-      return;
     }
-
-    _getData(args.url, args.defaultKey, function(data){
-      _populateFields(data, args);
-
-      getFilterData();
-      jQuery("#FilterOptions input[name=data_hash]").val(query_hash.toJSON());
-    });
-
+    else{
+      _getData(args.url, args.defaultKey, function(data){
+        _populateFields(data, args);
+      });
+    }
+    getFilterData();
+    jQuery("#FilterOptions input[name=data_hash]").val(query_hash.toJSON());
   }
 
   return {
