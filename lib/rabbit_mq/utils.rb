@@ -27,7 +27,7 @@ module RabbitMq::Utils
     { 
       "object"                =>  model,
       "action"                =>  action,
-      "action_epoch"          =>  Time.zone.now.to_f,
+      "action_epoch"          =>  [Time.zone.now.to_f, self.updated_at.to_f].max, #to avoid race condition in ingest time.
       "uuid"                  =>  uuid,
       "actor"                 =>  User.current.try(:id).to_i,
       "account_id"            =>  Account.current.id,
