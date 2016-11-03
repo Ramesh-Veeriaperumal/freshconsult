@@ -227,6 +227,7 @@
       PopulateData.I18n_text.mygroups = '<%= t("filter_options.mygroups") %>'
       PopulateData.I18n_text.unassigned = '<%= t("filter_options.unassigned") %>'
       TicketListSidebar.getParams(fieldMap,function(params){
+          params.defaultDateRange = "<%= TicketConstants.created_date_range_default%>";
           PopulateFormData.init(params);
       });
     <% end %>

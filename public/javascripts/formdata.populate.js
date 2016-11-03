@@ -88,8 +88,8 @@ var PopulateFormData = PopulateFormData ||  (function(){
         extendedData = jQuery.extend(initialData, responseData),
         selectedFields = _getKeys(extendedData),
         meta_data = data.meta_data;
+        initialData.defaultDateRange = args.defaultDateRange;
     selectedFields.each(function(val, index){
-
       if(val !== 'spam' && val !== 'deleted'){
         _populateIndividualField(val, extendedData, meta_data);
       }
@@ -136,6 +136,23 @@ var PopulateFormData = PopulateFormData ||  (function(){
           break;
         case 'association_type':
           jQuery("[condition='"+$wrapperData.id+"']").children('select').val(dataArray).trigger('change.select2');
+          break;
+        case 'single_select':
+          var dateRange = dataArray[0].split("-");
+          if(dateRange.length==2){
+            jQuery("#created_date_range").val(dataArray);
+            jQuery("#"+val).data('selectedValue',dataArray).val('set_date').trigger('change.select2');
+            jQuery('#div_ff_created_date_range').show();
+          }
+          else{
+            dateRange = data.defaultDateRange.split("-");
+            jQuery("#"+val).val(dataArray).trigger('change.select2');
+            jQuery('#div_ff_created_date_range').hide();
+            jQuery('#created_date_range').val('');
+          }
+          var datePicker = jQuery("#created_date_range").data('bootstrapdaterangepicker');
+          datePicker.setStartDate(dateRange[0]);
+          datePicker.setEndDate(dateRange[1]);
           break;
         case 'requester':
         case 'customers':
