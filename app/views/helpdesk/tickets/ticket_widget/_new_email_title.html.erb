@@ -9,7 +9,7 @@
 			</div>
 	<% end %>
 	<div class="ticket-header-btn btn-toolbar pull-right">
-		<%= link_to t('cancel'), (@item.new_record? ? {:action => 'index'} : @item ), :class => "btn cancel-btn" %>
+		<%= link_to t('cancel'), (@item.new_record? ? {:action => 'index'} : @item ), :class => "btn cancel-btn" , :"data-parallel-placeholder"=>"#ticket-leftFilter", :"data-parallel-url"=>"/helpdesk/tickets/filter_options", :"data-pjax"=>"#body-container" %>
 		<% if @outbound_limit_crossed.blank? || @outbound_limit_crossed == false %>
 			<span class="btn-group dropdown">
 				<button class="btn btn-primary" id="compose-submit" data-loading-text="Sending...">

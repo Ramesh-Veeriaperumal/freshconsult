@@ -446,11 +446,6 @@ window.xhrPool = [];
           }
         });
 
-      var flash = $("div.alert").not('[rel=permanent]');
-      if(flash.get(0)){
-         try{ closeableFlash(flash); } catch(e){}
-      }
-
       $('body').on('click.freshdesk', '#scroll-to-top', function(ev) {
         $.scrollTo('body');
       })
@@ -536,4 +531,20 @@ child - class of child checkbox
         });
         }
     });
+})(jQuery);
+
+(function($){
+  $.fn.bindFirst = function(event, handler) {
+    this.unbind(event, handler);
+    this.bind(event, handler);
+
+    var events = this.data('events')[event], index = 0;
+
+    // events.find(function(i, obj) { if(a.namespace == "validate") { index=i, return i} });
+    // events.splice(index, 0, events.pop());
+
+    events.unshift(events.pop());
+
+    this.data('events')[event] = events;
+  }
 })(jQuery);

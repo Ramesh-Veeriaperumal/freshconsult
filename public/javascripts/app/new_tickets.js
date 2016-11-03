@@ -63,8 +63,11 @@ var CreateTicket = {
 	        jQuery(".cc-address .cc-error-message").remove();
 			jQuery("#NewTicket").submit();
 		});
+		// This form Submit should be bind at last. Then only the pjax_form_submit will work correct.
+		// The workaround for binding the .on('submit') befor this event capture use .bindFirst('submit').
 
-		this.$createForm.on('submit.newTicket', function(){
+
+		this.$createForm.on('submit.newTicket', function(ev){
 			var _form = jQuery("#NewTicket");
 			var topic_id = jQuery("#topic_id_stub").val();
 			if(_form.valid()){
@@ -78,7 +81,14 @@ var CreateTicket = {
 				jQuery("#newticket-submit").text(jQuery("#newticket-submit").data('loading-text')).attr('disabled', true);
 				jQuery("#newticket-submit").next().attr('disabled', true);
 				jQuery(".cancel-btn").attr('disabled', true);
+			
+			} else {
+				ev.preventDefault();
+				return false;
 			}
+
+			pjax_form_submit("#NewTicket", ev);
+
 		}.bind(this));
 
 		this.$body.on('click.newTicket', 'a[name="action_save"]', function(ev){
@@ -120,11 +130,12 @@ var CreateTicket = {
 		var topic_id = jQuery("#topic_id_stub").val();
 		if(App.namespace === 'helpdesk/tickets/new'){
 			if(topic_id){
-				jQuery(".redactor_editor").html(jQuery("#topic_desc").val());
+				var redactor = jQuery('#helpdesk_ticket_ticket_body_attributes_description_html').data('redactor')
+				redactor.insertHtml(jQuery("#topic_desc").val());
+
 				jQuery("#helpdesk_ticket_subject").val(jQuery("#topic_title").val());
 				jQuery("#helpdesk_ticket_email").val(jQuery("#topic_req").val());
 			}else{
-				jQuery(".redactor_editor").html("<p><br></p>");
 				jQuery("#helpdesk_ticket_subject").val("");
 				jQuery("#helpdesk_ticket_email").val("");
 			}
