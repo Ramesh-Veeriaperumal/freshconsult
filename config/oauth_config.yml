@@ -108,6 +108,9 @@ defaults: &defaults
  slack:
    consumer_token: "3575209657.3577497590"
    consumer_secret: 7193779dab625ec3e6764dd5df21309e
+ outlook_contacts:
+   consumer_token: fc02555f-2d3b-47c4-a66f-7a45d15c2a1a
+   consumer_secret: vcx3eeApBi82xmpXE2CDjzt
   
 test:
  <<: *defaults
