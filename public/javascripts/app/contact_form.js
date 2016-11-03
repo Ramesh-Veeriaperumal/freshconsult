@@ -87,7 +87,7 @@ window.App.Contacts.Contact_form = window.App.Contacts.Contact_form || {};
                 tokenSeparators: [',']
               };
       if(self.create_tag_privilege != true){
-        select_init_data['createSearchChoice'] = function(){return null;};
+        select_init_data['createSearchChoice'] = null;
       }
       $("input[name='user[tag_names]']").select2(select_init_data);
     },

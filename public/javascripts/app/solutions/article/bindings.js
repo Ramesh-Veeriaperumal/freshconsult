@@ -311,17 +311,14 @@ window.App = window.App || {};
                     },
                     formatInputTooShort: function (input, min) { 
                       return I18n.t('validation.select2_minimum_limit', {char_count : min - input.length}); 
-                    },
-                    createSearchChoice: function (term, data) {
-                      if ($(data).filter(function () { return this.text.localeCompare(term) === 0; }).length === 0) {
-                        return { id: term, text: term };
-                      }
                     }
                  };
 
-      if($('.article-tags').data('allowCreate') == false){
-            select_init_data.createSearchChoice = function(){
-              return null;
+      if($('.article-tags').data('allowCreate') != false){
+            select_init_data.createSearchChoice = function (term, data) {
+                  if ($(data).filter(function () { return this.text.localeCompare(term) === 0; }).length === 0) {
+                    return { id: term, text: term };
+                  }
             };
       }
 

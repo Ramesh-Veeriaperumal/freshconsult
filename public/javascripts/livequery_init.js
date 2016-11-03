@@ -560,17 +560,14 @@ $('.btn-collapse').livequery(
       			},
 		    	formatInputTooLong: function () { 
       				return MAX_TAG_LENGTH_MSG; 
-      			},
-		  	createSearchChoice: function(term, data) { 
+      			}
+		};
+
+		if(_this.data('allowCreate') != false){
+			select_init_data.createSearchChoice = function(term, data) { 
 		  	//Check if not already existing & then return
 			        if ($(data).filter(function() { return this.text.localeCompare(term)===0; }).length===0)
 				        return { id: term, text: term };
-			}
-		};
-
-		if(_this.data('allowCreate') == false){
-			select_init_data.createSearchChoice = function(){
-				return null;
 			};
 		}
 		_this.val().split(",").each(function(item, i){ hash_val.push({ id: item, text: item }); });
