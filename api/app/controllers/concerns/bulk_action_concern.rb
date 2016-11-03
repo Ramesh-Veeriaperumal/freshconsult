@@ -33,6 +33,42 @@ module BulkActionConcern
       end
     end
 
+    def bulk_action_errors
+      @bulk_action_errors ||=
+        params[cname][:ids].inject([]) do |a, e|
+          error_hash = retrieve_error_code(e)
+          error_hash.any? ? a << error_hash : a
+        end
+    end
+
+    def retrieve_error_code(id)
+      ret_hash = { :id => id, :errors => {}, :error_options => {} }
+      if bulk_action_failed_items.include?(id)
+        if @validation_errors && @validation_errors.key?(id)
+          ret_hash[:validation_errors] = @validation_errors[id]
+        else
+          ret_hash[:errors].merge!({:id => :unable_to_perform })
+        end
+      elsif !bulk_action_succeeded_items.include?(id)
+        ret_hash[:errors].merge!({:id => :"is invalid" })
+      else
+        return {}
+      end
+      return ret_hash
+    end
+
+    def bulk_action_succeeded_items
+      @succeeded_ids ||= @items.map(&id_param) - bulk_action_failed_items
+    end
+
+    def bulk_action_failed_items
+      @failed_ids ||= (@items_failed || []).map(&id_param)
+    end
+
+    def id_param
+      @identifier ||= (@items || @items_failed || []).first.is_a?(Helpdesk::Ticket) ? (:display_id) : (:id)
+    end 
+
     def async_process?
       ApiConstants::BULK_ACTION_ASYNC_METHODS.include?(action_name.to_sym)
     end

@@ -1,6 +1,6 @@
 module SubscriptionConstants
   # ControllerConstants
-  WATCH_FIELDS = %w(user_id).freeze
+  WATCH_FIELDS = BULK_WATCH_FIELDS = %w(user_id).freeze
   # Wrap parameters args
   WRAP_PARAMS = [:subscription, exclude: [], format: [:json]].freeze
 
@@ -9,5 +9,12 @@ module SubscriptionConstants
   NO_PARAM_ROUTES = %w(unwatch).freeze
 
   NO_CONTENT_TYPE_REQUIRED = [:watch, :unwatch].freeze
+
+  BULK_ACTION_METHODS = [:bulk_watch, :bulk_unwatch].freeze
+
+  LOAD_OBJECT_EXCEPT = BULK_ACTION_METHODS.freeze
+
+  VALIDATION_CLASS = 'SubscriptionValidation'
+  DELEGATOR_CLASS = 'SubscriptionDelegator'
 
 end.freeze

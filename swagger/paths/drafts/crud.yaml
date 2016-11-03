@@ -23,6 +23,8 @@ post:
       description: Ticket not found
     403:
       description: Access denied
+    424:
+      description: Failed dependancy
 
 get:
   tags: [ticket]

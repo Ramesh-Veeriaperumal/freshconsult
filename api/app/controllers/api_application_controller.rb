@@ -412,7 +412,7 @@ class ApiApplicationController < MetalApiController
       @succeeded = succeeded
       @failed = failed
       (@failed || []).each do |item|
-        item[:errors], item[:error_options] = format_custom_errors(item[:validation_errors], true) if item[:validation_errors]
+        item[:errors], item[:error_options] = format_custom_errors(item[:validation_errors], item[:validation_errors].respond_to?(:error_options)) if item[:validation_errors]
         item[:errors] = ErrorHelper.format_error(item[:errors], item[:error_options] || {})
       end
       log_error_response @failed

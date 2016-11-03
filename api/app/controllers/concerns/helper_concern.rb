@@ -32,7 +32,7 @@ module HelperConcern
     end
 
     def constants_klass
-      @cklass_computed ||= (bulk_action? ? 'ApiConstants' : constants_class.to_s).constantize
+      @cklass_computed ||= constants_class.to_s.constantize
     end
 
     def validation_klass
@@ -44,7 +44,8 @@ module HelperConcern
     end
 
     def fields_to_validate
-      fields = constants_klass.const_get("#{action_name.upcase}_FIELDS")
+      field_string = "#{action_name.upcase}_FIELDS"
+      fields = constants_klass.const_defined?(field_string) ? constants_klass.const_get(field_string) : []
       bulk_action? ? (fields | ApiConstants::BULK_ACTION_FIELDS) : fields
     end
 

@@ -1023,6 +1023,9 @@
           },
           "404": {
             "description": "Ticket not found"
+          },
+          "424": {
+            "description": "Failed dependancy"
           }
         }
       },
@@ -1442,7 +1445,7 @@
         "tags": [
           "ticket"
         ],
-        "summary": "Bulk Watch**",
+        "summary": "Bulk Watch",
         "parameters": [
           {
             "name": "data",
@@ -1465,6 +1468,15 @@
             "schema": {
               "$ref": "#/definitions/partial_success_response"
             }
+          },
+          "204": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
           }
         }
       }
@@ -1474,7 +1486,7 @@
         "tags": [
           "ticket"
         ],
-        "summary": "Bulk Unwatch**",
+        "summary": "Bulk Unwatch",
         "parameters": [
           {
             "name": "data",
@@ -1491,6 +1503,15 @@
             "description": "Accepted",
             "schema": {
               "$ref": "#/definitions/partial_success_response"
+            }
+          },
+          "204": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
             }
           }
         }

@@ -1,6 +1,6 @@
 put:
   tags: [ticket]
-  summary: Bulk Watch**
+  summary: Bulk Watch
   parameters:
     - name: data
       in: body
@@ -13,3 +13,9 @@ put:
       description: Accepted
       schema:
         $ref: '#/definitions/partial_success_response'
+    204:
+      description: Success
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'

@@ -175,38 +175,6 @@ module Ember
         ::Tickets::BulkTicketActions.perform_async(args)
       end
 
-      def bulk_action_errors
-        @bulk_action_errors ||=
-          params[cname][:ids].inject([]) do |a, e|
-            error_hash = retrieve_error_code(e)
-            error_hash.any? ? a << error_hash : a
-          end
-      end
-
-      def retrieve_error_code(id)
-        ret_hash = { id: id, errors: {}, error_options: {} }
-        if bulk_action_failed_items.include?(id)
-          if @validation_errors && @validation_errors.key?(id)
-            ret_hash[:validation_errors] = @validation_errors[id]
-          else
-            ret_hash[:errors][:id] = :unable_to_perform
-          end
-        elsif !bulk_action_succeeded_items.include?(id)
-          ret_hash[:errors][:id] = :"is invalid"
-        else
-          return {}
-        end
-        ret_hash
-      end
-
-      def bulk_action_succeeded_items
-        @succeeded_ids ||= @items.map(&:display_id) - bulk_action_failed_items
-      end
-
-      def bulk_action_failed_items
-        @failed_ids ||= (@items_failed || []).map(&:display_id)
-      end
-
       def decorate_objects
         return if @error_ticket_filter.present?
         decorator, options = decorator_options

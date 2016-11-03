@@ -8,7 +8,7 @@ module ApiTicketConstants
   UPDATE_FIELDS = %w(description due_by email_config_id fr_due_by group_id priority
                      email phone twitter_id facebook_id requester_id name responder_id source status subject type product_id).freeze | (ARRAY_FIELDS - ['cc_emails']) | HASH_FIELDS
   BULK_UPDATE_FIELDS = UPDATE_FIELDS - ['attachments'].freeze
-  EXECUTE_SCENARIO_FIELDS = %w(scenario_id).freeze
+  EXECUTE_SCENARIO_FIELDS = BULK_EXECUTE_SCENARIO_FIELDS = %w(scenario_id).freeze
   COMPOSE_EMAIL_FIELDS = (CREATE_FIELDS - %w(source product_id responder_id requester_id phone twitter_id facebook_id)).freeze
   SHOW_FIELDS = ['include'].freeze
   ALLOWED_INCLUDE_PARAMS = %w(conversations requester company stats).freeze

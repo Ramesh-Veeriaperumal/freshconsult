@@ -163,6 +163,8 @@ Helpkit::Application.routes.draw do
         delete :empty_spam, to: 'ember/tickets/delete_spam#empty_spam'
         put :delete_forever, to: 'ember/tickets/delete_spam#delete_forever'
         put :delete_forever_spam, to: 'ember/tickets/delete_spam#delete_forever_spam'
+        put :bulk_watch, to: 'ember/subscriptions#bulk_watch'
+        put :bulk_unwatch, to: 'ember/subscriptions#bulk_unwatch'
       end
       member do
         put :spam
@@ -179,16 +181,13 @@ Helpkit::Application.routes.draw do
         get :draft, to: 'ember/tickets/drafts#show_draft'
         delete :draft, to: 'ember/tickets/drafts#clear_draft'
         match '/split_note/:note_id' => 'ember/tickets#split_note', via: :put
-      end
-      # This alternate route is to handle limitation in ember route generation : api/_/tickets/:ticket_id/canned_responses?id=Number
-      match '/canned_responses' => 'ember/tickets/canned_responses#show', via: :get
-      resources :canned_responses, controller: 'ember/tickets/canned_responses', only: [:show]
-
-      member do
         post :watch, to: 'ember/subscriptions#watch'
         put :unwatch, to: 'ember/subscriptions#unwatch'
         get :watchers, to: 'ember/subscriptions#watchers'
       end
+      # This alternate route is to handle limitation in ember route generation : api/_/tickets/:ticket_id/canned_responses?id=Number
+      match '/canned_responses' => 'ember/tickets/canned_responses#show', via: :get
+      resources :canned_responses, controller: 'ember/tickets/canned_responses', only: [:show]
     end
 
     resources :time_entries, controller: 'ember/time_entries', except: [:new, :edit, :create] do

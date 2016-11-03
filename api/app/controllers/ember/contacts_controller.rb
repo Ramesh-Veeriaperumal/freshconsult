@@ -100,34 +100,6 @@ module Ember
         @items = items.find_all_by_id(params[cname][:ids])
       end
 
-      def bulk_action_errors
-        @bulk_action_errors ||=
-          params[cname][:ids].inject([]) do |a, e|
-            error_hash = retrieve_error_code(e)
-            error_hash.any? ? a << error_hash : a
-          end
-      end
-
-      def retrieve_error_code(id)
-        ret_hash = { :id => id, :errors => {}, :error_options => {} }
-        if bulk_action_failed_items.include?(id)
-          ret_hash[:errors].merge!({:id => :unable_to_perform })
-        elsif !bulk_action_succeeded_items.include?(id)
-          ret_hash[:errors].merge!({:id => :"is invalid" })
-        else
-          return {}
-        end
-        return ret_hash
-      end
-
-      def bulk_action_succeeded_items
-        @succeeded_ids ||= @items.map(&:id) - bulk_action_failed_items
-      end
-
-      def bulk_action_failed_items
-        @failed_ids ||= @items_failed.map(&:id)
-      end
-
       def render_201_with_location(template_name: "api_contacts/#{action_name}", location_url: 'api_contact_url', item_id: @item.id)
         render template_name, location: send(location_url, item_id), status: 201
       end
