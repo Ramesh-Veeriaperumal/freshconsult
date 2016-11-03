@@ -26,14 +26,13 @@ var PopulateFormData = PopulateFormData ||  (function(){
     if(!args.isAjax){
       var customizedData = _customizeData(args.data, args.fieldMap);
       _populateFields(customizedData, args);
+      return;
     }
-    else{
-      _getData(args.url, args.defaultKey, function(data){
-        _populateFields(data, args);
-      });
-    }
-    getFilterData();
-    jQuery("#FilterOptions input[name=data_hash]").val(query_hash.toJSON());
+
+    _getData(args.url, args.defaultKey, function(data){
+      _populateFields(data, args);
+    });
+
   }
 
   return {
@@ -86,6 +85,9 @@ var PopulateFormData = PopulateFormData ||  (function(){
         _populateIndividualField(val, extendedData, meta_data);
       }
     });
+    
+    getFilterData();
+    jQuery("#FilterOptions input[name=data_hash]").val(query_hash.toJSON());
 
   }
 
