@@ -910,7 +910,7 @@ en:
       second_choice: Second Choice
       confirm_delete: Are you sure you want to delete this field?
       no_choice_message: "At least one valid choice has to be present"
-      multiple_company_dialog_help_text: When turned on,contacts(resellers or partners) will be able to choose one of the companies associated to them while submitting a ticket.
+      multiple_company_dialog_help_text: When turned on, contacts(resellers or partners) will be able to choose one of the companies associated to them while submitting a ticket.
       multiple_company_dialog_on: Contacts (resellers or partners) will be able to choose one of the companies associated to them while submitting a ticket. 
       multiple_company_dialog_warning: "Turning this off will permanently delete all the secondary companies from all the contacts.While the old tickets will remain unaffected, new tickets can be raised only for the primary company."
       index:

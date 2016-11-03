@@ -173,10 +173,10 @@
 			if(this.settings.customFieldType != 'company') {
 				this.showSecurityIconForAgentFields(fieldContainer);
 			}
-
 			if(this.settings.customFieldType == 'contact'){
 				if(dataItem['field_type'] == 'default_company_name' && is_multiple_contact_feature_present) {
-					if(is_multiple_contact_feature_enabled){
+					var enabled = this.multiple_companies_toggle == undefined ? is_multiple_contact_feature_enabled : this.multiple_companies_toggle;
+					if(enabled){
 						$(field).append("<div class='info_message'>" + translate.get('multiple_company_message_enable') + "<a href=\"#\"> Change </a></span>");
 					}else{
 						$(field).append("<div class='info_message'>" + translate.get('multiple_company_message') + "<a href=\"#\"> Change </a></span>");
@@ -782,7 +782,6 @@
 			if(this.settings.customFieldType == 'contact') {
 				jQuery("#CustomFieldsPropsDialog").on('change',"[name=multiple_companies]",function(){
 						var is_selected = jQuery(this).is(':checked');
-						self.multiple_companies_toggle = is_selected;
 						if(is_multiple_contact_feature_enabled) {
 							if(!is_selected){
 								jQuery('[rel="warning"]').removeClass('hide');
@@ -819,6 +818,13 @@
 								$(this.settings.currentField).removeClass('active');
 								self.cloneAllFields();
 								self.hideDialog();
+								var is_selected = jQuery("[name=multiple_companies]").is(':checked');
+								self.multiple_companies_toggle = is_selected;
+								if(is_selected){
+									jQuery('.cf-company-name .info_message').html(translate.get('multiple_company_message_enable') + "<a href=\"#\"> Change </a>");
+								}else{
+									jQuery('.cf-company-name .info_message').html(translate.get('multiple_company_message') + "<a href=\"#\"> Change </a>");
+								}
 							},
 							rules: {
 								choicelist: {
