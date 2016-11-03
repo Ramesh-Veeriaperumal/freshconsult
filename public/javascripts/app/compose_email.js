@@ -56,8 +56,7 @@ var ComposeEmail = {
     appendSignature: function(){
 		signature = jQuery("#signature").val();
 		if(signature != "") {
-			var redactor = jQuery('#helpdesk_ticket_ticket_body_attributes_description_html').data('redactor')
-			redactor.insertHtml(signature);
+			jQuery(".redactor_editor").html(signature);
 		}
     },
     

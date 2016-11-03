@@ -130,9 +130,8 @@ var CreateTicket = {
 		var topic_id = jQuery("#topic_id_stub").val();
 		if(App.namespace === 'helpdesk/tickets/new'){
 			if(topic_id){
-				var redactor = jQuery('#helpdesk_ticket_ticket_body_attributes_description_html').data('redactor')
-				redactor.insertHtml(jQuery("#topic_desc").val());
-
+				jQuery(".redactor_editor").html(jQuery("#topic_desc").val());
+				
 				jQuery("#helpdesk_ticket_subject").val(jQuery("#topic_title").val());
 				jQuery("#helpdesk_ticket_email").val(jQuery("#topic_req").val());
 			}else{
