@@ -26,11 +26,12 @@ var PopulateFormData = PopulateFormData ||  (function(){
     if(!args.isAjax){
       var customizedData = _customizeData(args.data, args.fieldMap);
       _populateFields(customizedData, args);
+      _resetFilterDataHash();
       return;
     }
-
     _getData(args.url, args.defaultKey, function(data){
       _populateFields(data, args);
+      _resetFilterDataHash(args.defaultKey);
     });
 
   }
@@ -40,11 +41,19 @@ var PopulateFormData = PopulateFormData ||  (function(){
   }
 
   // PRIVATE
+
+  function _resetFilterDataHash(defaultKey){
+    var special_case_views = ['deleted','spam','monitored_by'];
+    if(defaultKey && special_case_views.indexOf(defaultKey) !=-1) return;
+    getFilterData();
+    jQuery("#FilterOptions input[name=data_hash]").val(query_hash.toJSON());
+  }
   /**
    * [_customizeData description]
    * @param  {[type]} args [description]
    * @return {[type]}      [description]
    */
+
   function _customizeData(args, fieldMap){
     var data = {}, newkey;
     for(var key in args){
@@ -85,10 +94,6 @@ var PopulateFormData = PopulateFormData ||  (function(){
         _populateIndividualField(val, extendedData, meta_data);
       }
     });
-    
-    getFilterData();
-    jQuery("#FilterOptions input[name=data_hash]").val(query_hash.toJSON());
-
   }
 
   function getInitialData(view_name){
