@@ -4225,8 +4225,7 @@ li {
 .nba-sas {
   position: relative;
   line-height: normal;
-  top: -50px;
-  margin:0 30px 0 45px;
+  margin:0 0 0 30px;
   .sas-hd span.err-msg {
     color: #A90329;
     font-weight: normal;
@@ -4288,6 +4287,12 @@ li {
         padding-left: 8px;
       }  
     }
+    a.reload {
+      @include float(right); 
+      font-weight: 400;
+      font-size: 12px;
+      color:#666;
+    }
     a.help {
       @include float(none); 
       font-weight: 400;
@@ -4327,6 +4332,7 @@ li {
       vertical-align: top;
       cursor: pointer;
       position: relative;
+      word-wrap: break-word;
       .user-name {
         font-style: italic;
         color: #999;

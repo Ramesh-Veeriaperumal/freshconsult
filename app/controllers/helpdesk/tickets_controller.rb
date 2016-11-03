@@ -102,16 +102,25 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :load_tkt_and_templates, :only => :apply_template
   before_filter :check_ml_feature, :only => [:suggest_tickets]
 
-  
+
   def suggest_tickets
     tickets = []
-    similar_tickets = get_similar_tickets
-    tickets = current_account.tickets.visible.preload(:ticket_old_body).permissible(current_user).reorder("field(id,#{similar_tickets.join(',')})").where(id:similar_tickets) if similar_tickets.present?
-    respond_to do |format|
-      format.json do
-        render :json => tickets
-      end
+    similar_tickets_list = get_similar_tickets
+    tickets = current_account.tickets.visible.preload(:requester,:ticket_status,:ticket_old_body).permissible(current_user).where(id:similar_tickets_list) if similar_tickets_list.present?   
+    tickets_list = []
+    tickets.each do |ticket|
+      similar_tickets = Hash.new
+      similar_tickets["helpdesk_ticket"] = Hash.new
+      ticket_id = ticket.id.to_s
+      similar_tickets["helpdesk_ticket"]["display_id"] = ticket.display_id
+      similar_tickets["helpdesk_ticket"]["subject"] = ticket.subject
+      similar_tickets["helpdesk_ticket"]["description"] = ticket.description
+      similar_tickets["helpdesk_ticket"]["updated_at"] = ticket.updated_at
+      similar_tickets["helpdesk_ticket"]["requester_name"] = ticket.requester_name
+      similar_tickets["helpdesk_ticket"]["status_name"] = ticket.status_name
+      tickets_list[similar_tickets_list.index(ticket_id)] = similar_tickets
     end
+    render :json =>  tickets_list.compact.to_json
   end
 
   def get_similar_tickets
