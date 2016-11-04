@@ -97,6 +97,9 @@
 </script>
   <% special_case_views = ['deleted','spam','monitored_by'] %>
     <h5 class="lead"><%= t("tickets_filter.title") %></h5>
+    <% if Account.current.launched?(:ticket_list_page_filters_cache) %>
+      <div class="sloading loading-small loading-block filter-loading"></div>
+    <% end %>
     <%= itil_ticket_filters.html_safe %>
     <form id="FilterOptions" action="#">
       <input type="hidden" name="data_hash" value="" />

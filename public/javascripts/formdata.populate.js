@@ -94,6 +94,7 @@ var PopulateFormData = PopulateFormData ||  (function(){
         _populateIndividualField(val, extendedData, meta_data);
       }
     });
+    jQuery(".sloading.filter-loading").hide();
   }
 
   function getInitialData(view_name){
