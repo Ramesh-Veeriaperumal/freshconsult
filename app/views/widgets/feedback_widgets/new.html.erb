@@ -108,7 +108,7 @@
 </div>
 <div class="modal-footer feedback-footer modal-body-change">
   <div class="row-fluid">
-    <div class="span8">
+    <div class="span6">
       <div class="copyright">
         <% unless(current_account.subscription.paid_account?) %>
           <%= link_to(t('footer.helpdesk_software'), "http://www.freshdesk.com", :target => "_blank") %>
@@ -121,7 +121,7 @@
     </div>
     <input type="hidden" id="submit_message" value="<%= params[:submitThanks] %>" />
     <input type="hidden" name="retainParams" id="retainParams" value= "<%=  ActiveSupport::JSON.encode params.except(:controller).except(:action) %>" />
-    <div class="span4 omega">
+    <div class="span6 omega">
       <%= f.submit widget_option(:submitTitle), :class => "btn btn-primary omega",
         "data-loading-text" => t('ticket.submit_loading') %>
       <%# Any fields named like meta[fieldname] will be saved by the helpdesk as metadata %>

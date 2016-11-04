@@ -243,7 +243,7 @@ $animation-type: ease-in;
                 }
                 .btn {
                     margin-top: 0;
-                    width: 25%;
+                    /*width: 25%;*/
                 }
                 .copyright {
                     width: 65%;
@@ -304,7 +304,7 @@ $animation-type: ease-in;
     }
     @media (max-width: 768px) {
     .feedback-wrapper .modal-widget .modal-footer .btn{
-        width:35%;
+        /*width:35%;*/
         }
     }
 }
