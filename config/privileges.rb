@@ -97,6 +97,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"search/v2/mobile/related_article", :only => [:index]
     resource :"search/ticket", :only => [:index]
     resource :"search/ticket_association", :only => [:index, :recent_trackers]
+    resource :"search/v2/ticket_association", :only => [:index, :recent_trackers]
     resource :"search/v2/ticket", :only => [:index]
     resource :"search/v2/mobile/merge_ticket", :only => [:index]
     resource :"search/v2/spotlight", :only => [:all, :tickets]

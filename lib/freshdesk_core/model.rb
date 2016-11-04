@@ -50,6 +50,7 @@ module FreshdeskCore::Model
                           "helpdesk_note_bodies",
                           "helpdesk_schema_less_notes",
                           "helpdesk_external_notes", 
+                          "helpdesk_broadcast_messages",
                         
                         "helpdesk_tickets",
                           "helpdesk_ticket_bodies",
@@ -194,6 +195,7 @@ module FreshdeskCore::Model
                         "smtp_mailboxes",
                         "ticket_form_fields",
                         "user_companies",
+                        "company_domains",
                         "helpdesk_permissible_domains",
                         "outgoing_email_domain_categories",
                         "ticket_templates",

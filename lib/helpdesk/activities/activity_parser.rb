@@ -312,8 +312,14 @@ module Helpdesk::Activities
         :related_tickets_count => pluralize(value.to_i,
           I18n.t("ticket.link_tracker.rlt_ticket_singular"),
           I18n.t("ticket.link_tracker.rlt_ticket_plural")),
+        :all => (value.to_i == 1) ? "" : "all "
       }
       @activity[:misc] << render_string(str, params)
+    end
+
+    def tracker_reset(value)
+      str = get_string_name("tracker_reset")
+      @activity[:misc] << render_string(str)
     end
 
     def group_id(value)

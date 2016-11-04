@@ -46,4 +46,7 @@ class Helpdesk::Note < ActiveRecord::Base
 
   has_one :cti_call, :class_name => 'Integrations::CtiCall', :as => 'recordable', :dependent => :destroy
 
+  has_one :broadcast_message, :class_name => 'Helpdesk::BroadcastMessage', :foreign_key =>'note_id',
+          :dependent => :destroy
+
 end

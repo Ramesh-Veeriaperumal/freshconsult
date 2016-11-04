@@ -137,7 +137,7 @@ module RabbitMq::Subscribers::Tickets::Activities
     when 1
     when 2
     when 3
-      {:tracker_link => [@related_ticket.display_id]}
+      value[0].nil? ? {:tracker_link => [@related_ticket.display_id]} : {:tracker_reset => []}
       # for tracker tickets. doing manual push
     when 4
       tracker = tracker_ticket_id ? [ tracker_ticket_id.to_i ] : self.associates

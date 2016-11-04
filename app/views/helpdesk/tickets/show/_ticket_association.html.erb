@@ -34,7 +34,8 @@
       </small>
       <small class="block tracker_details"><%=t('ticket.status')%>: <%= h(tracker_ticket.status_name.html_safe) %></small>
       <small class="tracker_details broadcast">
-        <%= t('ticket.link_tracker.last_broadcast_message', :timestamp => @last_broadcast_note.created_at.to_i).html_safe  if @last_broadcast_note %>
+        <%= t('ticket.link_tracker.last_broadcast_message',
+         :timestamp => @last_broadcast_message.created_at.to_i).html_safe  if @last_broadcast_message %>
       </small>
     </div>
   </div>

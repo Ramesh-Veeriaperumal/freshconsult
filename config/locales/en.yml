@@ -3101,7 +3101,9 @@ en:
       tracker_unlink:
         new: "Unlinked %{related_tickets_count} (%{related_ticket_path}) from this tracker"
       tracker_unlink_all:
-        new: "Unlinked all %{related_tickets_count} from this tracker"
+        new: "Unlinked %{all}%{related_tickets_count} from this tracker"
+      tracker_reset:
+        new: "Tracker converted to a ticket"
       email_to_requester:
         new: "Sent email to requester %{requester_name}"
       email_to_group:
@@ -3686,6 +3688,7 @@ en:
         user_emails: Please enter at least one contact detail
         max_user_emails: A contact cannot have more than 5 emails
         max_user_companies: A contact cannot have more than 20 companies
+        edit_broadcast_note: "Broadcast message can't be edited"
       full_messages:
         format: "%{attribute} %{message}"
       template:

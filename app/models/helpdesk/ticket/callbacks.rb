@@ -454,7 +454,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     unless @tracker_ticket && @tracker_ticket.tracker_ticket? && !@tracker_ticket.spam_or_deleted? && self.can_be_linked?
       errors.add(:base,t("ticket.link_tracker.permission_denied")) and return false
     end
-    if self.association_type && @tracker_ticket.associates.present? && links_limit_exceeded(@tracker_ticket.associates.count)
+    if self.association_type && @tracker_ticket.associates.present? && links_limit_exceeded(@tracker_ticket.associates.count + 1)
       errors.add(:base,t("ticket.link_tracker.count_exceeded",:count => TicketConstants::MAX_RELATED_TICKETS)) and return false
     end
     self.associates_rdb = related_ticket? ? @tracker_ticket.display_id : nil
@@ -484,7 +484,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
     @tracker_ticket.add_associates([self.display_id])
     create_tracker_activity(:tracker_link)
     self.associates = [ @tracker_ticket.display_id ]
-    ::Tickets::AddBroadcastNote.perform_async({ :ticket_id => @tracker_ticket.id, :related_ticket_ids => [self.display_id] })
   end
 
   def remove_links
@@ -492,11 +491,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
     self.remove_all_associates
     @tracker_ticket.remove_associates([self.display_id])
     create_tracker_activity(:tracker_unlink)
-    self.delete_broadcast_notes
   end
 
   def reset_links
-    ::Tickets::ResetAssociations.perform_async([self.id])
+    ::Tickets::ResetAssociations.perform_async({:ticket_ids=>[self.id]})
   end
 
   def remove_associations?

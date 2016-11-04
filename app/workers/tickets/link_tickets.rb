@@ -22,17 +22,14 @@ class Tickets::LinkTickets < BaseWorker
       end
     end
     @tracker_ticket.add_associates(linked)
-    add_broadcast_notes(linked)
+  rescue Exception => e
+    NewRelic::Agent.notice_error(e, {:custom_params => {
+                                            :description => "Link Tickets error",
+                                            :args => args }})
+    Rails.logger.error("Link Tickets Error: \n#{e.message}\n#{e.backtrace.join("\n")}")
   end
 
   private
-
-    def add_broadcast_notes linked_ticket_ids
-      ::Tickets::AddBroadcastNote.perform_async(
-        { :ticket_id => @tracker_ticket.id,
-          :related_ticket_ids => linked_ticket_ids
-        })
-    end
 
     def associations_count_exceeded?
       ( @tracker_ticket.associates.nil? ? 0 : @tracker_ticket.associates.count ) + @related_tickets.count > TicketConstants::MAX_RELATED_TICKETS

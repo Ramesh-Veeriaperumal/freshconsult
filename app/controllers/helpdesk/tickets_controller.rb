@@ -402,7 +402,7 @@ class Helpdesk::TicketsController < ApplicationController
         @ticket_notes_total = run_on_slave { @ticket.conversation_count }
         last_public_note    = run_on_slave { @ticket.notes.visible.last_traffic_cop_note.first }
         @last_note_id       = last_public_note.blank? ? -1 : last_public_note.id
-        @last_broadcast_note = run_on_slave { @ticket.notes.last_broadcast_note.first } if @ticket.related_ticket?
+        @last_broadcast_message = run_on_slave { @ticket.last_broadcast_message } if @ticket.related_ticket?
       }
       format.atom
       format.xml  {
@@ -853,7 +853,7 @@ class Helpdesk::TicketsController < ApplicationController
 
   def ticket_association
     @associates = @ticket.associates unless @ticket.association_type.blank?
-    @last_broadcast_note = run_on_slave { @ticket.notes.last_broadcast_note.first } if @ticket.related_ticket?
+    @last_broadcast_message = run_on_slave { @ticket.last_broadcast_message } if @ticket.related_ticket?
     respond_to do |format|
       format.html { render :partial => "/helpdesk/tickets/show/ticket_association", :locals => { :ticket => @ticket } }
     end
