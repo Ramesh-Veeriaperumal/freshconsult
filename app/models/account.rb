@@ -217,6 +217,10 @@ class Account < ActiveRecord::Base
     launched?(:round_robin_capping) #features?(:round_robin_load_balancing)
   end
 
+  def gnip_2_0_enabled?
+    launched?(:gnip_2_0)
+  end
+
   def validate_required_ticket_fields?
     ismember?(VALIDATE_REQUIRED_TICKET_FIELDS, self.id)
   end
