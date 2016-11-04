@@ -9,6 +9,7 @@ module QueryHashHelper
     {
       data_hash: [
         { "condition"=>"responder_id", "operator"=>"is_in", "ff_name"=>"default", "value"=>"0,-1" },
+        { "condition"=>"due_by", "operator"=>"due_by_op", "ff_name"=>"default", "value"=>"1,2,3,4" },
         { "condition"=>"group_id", "operator"=>"is_in", "ff_name"=>"default", "value"=>"0,3" },
         { "condition"=>"status", "operator"=>"is_in", "ff_name"=>"default", "value"=>"2" },
         { "condition"=>"created_at", "operator"=>"is_greater_than", "ff_name"=>"default", "value"=>"13 Sep 2016 - 23 Feb 2016" },
@@ -147,7 +148,7 @@ module QueryHashHelper
   end
 
   def array_value_for_is_in_operator(query)
-    assert query['value'].is_a?(Array) if query['operator'] == 'is_in'
+    assert query['value'].is_a?(Array) if CustomFilterConstants::ARRAY_VALUED_OPERATORS.include?(query['operator'])
   end
 
 end

@@ -7,7 +7,7 @@ class QueryHashValidation < FilterValidation
   validates :type, required: true, data_type: { rules: String }, custom_inclusion: { in: CustomFilterConstants::QUERY_TYPE_OPTIONS }
   validates :value, required: true
 
-  validates :value, data_type: { rules: Array }, if: -> { operator == 'is_in' }
+  validates :value, data_type: { rules: Array }, if: -> { CustomFilterConstants::ARRAY_VALUED_OPERATORS.include?(operator) }
 
   validate :ticket_fields_condition
 

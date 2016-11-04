@@ -5,6 +5,7 @@ class QueryHash
 
   SPAM_CONDITION = { 'condition' => 'spam', 'operator' => 'is', 'value' => false }
   DELETED_CONDITION = { 'condition' => 'deleted', 'operator' => 'is', 'value' => false }
+  ARRAY_VALUED_OPERATORS = ['is_in', 'due_by_op'].freeze
 
   def initialize(params)
     @query_hash = params
@@ -51,7 +52,7 @@ class QueryHash
       if format.eql?(:system)
         val.is_a?(Array) ? val.join(',') : val
       else
-        return val unless query['operator'] == 'is_in'
+        return val unless ARRAY_VALUED_OPERATORS.include?(query['operator'])
         val.is_a?(String) ? val.split(',') : (val.is_a?(Array) ? val : [val])
       end
     end

@@ -15,4 +15,6 @@ module CustomFilterConstants
 
   WF_PREFIX = [:order, :order_type, :per_page].freeze
 
+  ARRAY_VALUED_OPERATORS = ['is_in', 'due_by_op'].freeze
+
 end

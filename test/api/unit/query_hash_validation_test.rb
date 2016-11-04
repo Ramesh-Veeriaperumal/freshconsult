@@ -105,6 +105,17 @@ class QueryHashValidationTest < ActionView::TestCase
     assert query_validation.errors.full_messages.include?('Value datatype_mismatch')
   end
 
+  def test_due_by_should_have_array_value
+    stub_account
+    query = sample_query_params
+    query[:condition] = 'due_by'
+    query[:operator] = 'due_by_op'
+    query[:value] = '1,2'
+    query_validation = QueryHashValidation.new(query)
+    refute query_validation.valid?
+    assert query_validation.errors.full_messages.include?('Value datatype_mismatch')
+  end
+
   def test_valid_query_hash
     stub_account
     query_validation = QueryHashValidation.new(sample_query_params)
