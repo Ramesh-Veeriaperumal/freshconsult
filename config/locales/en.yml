@@ -6943,8 +6943,8 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       invalid_ticket_id: "Invalid ticket id"
       invalid_requester_id: "Invalid requester id"
       invalid_responder_id: "Invalid responder id"
+      invalid_responder_detail: "There is no responder matching the give responder details"
       contact_creation_failed: "Unable to create contact"
-      no_agent_with_phone: "No agent found with the given number"
     czentrix:
       label: "C-Zentrix"
       desc: "Answer calls or trigger an outgoing call with this powerful C-zentrix's telephony capabilities embedded inside Freshdesk"
