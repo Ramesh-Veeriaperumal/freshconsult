@@ -360,15 +360,7 @@ $("div.request_mail").livequery(function(){ quote_text(this); });
 $("input.datepicker").livequery(
 	function(){
 		$(this).datepicker(
-			$.extend( {}, $(this).data() , { 
-				dateFormat: getDateFormat('datepicker'),
-				changeMonth: true,
-				changeYear: true,
-				// To use datepicker localisation, 
-				// use date in hidden field with id as altField value while submit form
-				altField: "#cloned_date",
-    			altFormat: 'yy-mm-dd'
-			}  )
+			$.extend( {}, $(this).data() , { dateFormat: getDateFormat('datepicker'),changeMonth: true,changeYear: true }  )
 			)
 	}
 );
