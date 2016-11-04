@@ -42,14 +42,12 @@ module Helpdesk::Email::OutgoingCategory
 
   def get_category_id(use_mailgun = false)
     key = get_subscription
-    if !account_whitelisted?
-      if((key == "trial") && 
+    if  ( (!account_whitelisted?) &&
+          (account_created_recently? || 
+            ( (key == "trial") && 
             ( ismember?(BLACKLISTED_SPAM_ACCOUNTS, Account.current.id) || Freemail.free_or_disposable?(Account.current.admin_email))
-            )
-        key = "spam"
-      elsif( account_created_recently?)
-        key = "trial"
-      end
+            )))
+      key = "spam"
     end
     if use_mailgun
       MAILGUN_CATEGORY_BY_TYPE[key.to_sym]
