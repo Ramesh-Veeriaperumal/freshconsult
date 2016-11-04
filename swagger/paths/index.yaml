@@ -12,10 +12,8 @@
   $ref: ./contacts/make_agent.yaml
 /contacts/{id}/whitelist:
   $ref: ./contacts/whitelist.yaml
-/contacts/{id}/recent_ticket_activities:
-  $ref: ./contacts/recent_ticket_activities.yaml
-/contacts/{id}/recent_forum_activities:
-  $ref: ./contacts/recent_forum_activities.yaml
+/contacts/{id}/activities:
+  $ref: ./contacts/activities.yaml
 /contacts/bulk_delete:
   $ref: ./contacts/bulk_delete.yaml
 /contacts/bulk_restore:
@@ -81,6 +79,7 @@
 
 /attachments:
   $ref: ./attachments/crud.yaml
+
 
 #Subscriptions
 /tickets/{id}/watch:

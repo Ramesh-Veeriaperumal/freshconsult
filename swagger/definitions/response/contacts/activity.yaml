@@ -1,0 +1,35 @@
+  title: data
+  type: object
+  properties:
+    type:
+      type: string
+      enum: [
+              "Post",
+              "Ticket"
+            ]
+    id:
+      type: integer
+    created_at:
+      type: string
+    topic_id:
+      description: Will be present for Forum Activity
+      type: integer
+    topic_title:
+      description: Will be present for Forum Activity
+      type: string
+    replied:
+      description: Will be present for Forum Activity
+      type: boolean
+      enum: [
+              "True",
+              "False"
+            ]
+    status:
+      description: Will be present for Ticket Activity
+      type: integer
+    agent_id:
+      description: Will be present for Ticket Activity
+      type: integer
+    subject:
+      description: Will be present for Ticket Activity
+      type: string

@@ -304,10 +304,10 @@
         }
       }
     },
-    "/contacts/{id}/recent_ticket_activities": {
+    "/contacts/{id}/activities": {
       "get": {
-        "summary": "Recent Ticket Activities",
-        "description": "List of recent activities on any tickets",
+        "summary": "Activities",
+        "description": "Recent Activities of the User based on Tickets & Forums. You can filter activity by using params in url : 1. ?type=tickets for tickets, 2. ?type=forums for forums & 3. ?type=archived_tickets for archived tickets activities.",
         "tags": [
           "contact"
         ],
@@ -331,34 +331,7 @@
           "200": {
             "description": "Success",
             "schema": {
-              "$ref": "#/definitions/array_of_tickets"
-            }
-          },
-          "404": {
-            "description": "User not found"
-          }
-        }
-      }
-    },
-    "/contacts/{id}/recent_forum_activities": {
-      "get": {
-        "summary": "Recent Forum Activities",
-        "tags": [
-          "contact"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "type": "number",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "schema": {
-              "$ref": "#/definitions/array_of_posts"
+              "$ref": "#/definitions/contact_activity"
             }
           },
           "404": {
@@ -2298,33 +2271,6 @@
         }
       }
     },
-    "post": {
-      "type": "object",
-      "allOf": [
-        {
-          "$ref": "#/definitions/extension_generic"
-        },
-        {
-          "properties": {
-            "topic_id": {
-              "type": "number"
-            },
-            "body": {
-              "type": "string"
-            },
-            "published": {
-              "type": "boolean"
-            },
-            "forum_id": {
-              "type": "number"
-            },
-            "user_votes": {
-              "type": "number"
-            }
-          }
-        }
-      ]
-    },
     "attachment": {
       "type": "object",
       "allOf": [
@@ -2705,12 +2651,6 @@
         "$ref": "#/definitions/extended_company"
       }
     },
-    "array_of_posts": {
-      "type": "array",
-      "items": {
-        "$ref": "#/definitions/post"
-      }
-    },
     "array_of_sla_policies": {
       "type": "array",
       "items": {
@@ -3021,6 +2961,53 @@
           "type": "string"
         },
         "updated_at": {
+          "type": "string"
+        }
+      }
+    },
+    "contact_activity": {
+      "title": "data",
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "Post",
+            "Ticket"
+          ]
+        },
+        "id": {
+          "type": "integer"
+        },
+        "created_at": {
+          "type": "string"
+        },
+        "topic_id": {
+          "description": "Will be present for Forum Activity",
+          "type": "integer"
+        },
+        "topic_title": {
+          "description": "Will be present for Forum Activity",
+          "type": "string"
+        },
+        "replied": {
+          "description": "Will be present for Forum Activity",
+          "type": "boolean",
+          "enum": [
+            "True",
+            "False"
+          ]
+        },
+        "status": {
+          "description": "Will be present for Ticket Activity",
+          "type": "integer"
+        },
+        "agent_id": {
+          "description": "Will be present for Ticket Activity",
+          "type": "integer"
+        },
+        "subject": {
+          "description": "Will be present for Ticket Activity",
           "type": "string"
         }
       }

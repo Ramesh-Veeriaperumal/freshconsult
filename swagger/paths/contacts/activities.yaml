@@ -1,0 +1,24 @@
+
+  get:
+    summary: Activities
+    description: "Recent Activities of the User based on Tickets & Forums. You can filter activity by using params in url : 
+    1. ?type=tickets for tickets, 
+    2. ?type=forums for forums & 
+    3. ?type=archived_tickets for archived tickets 
+    activities."
+    tags: [contact]
+    parameters:
+      - name: id
+        in: path
+        type: number
+        required: true
+    examples:
+      - id: 22
+      - id: 23
+    responses:
+      200:
+        description: Success
+        schema:
+          $ref: '#/definitions/contact_activity'
+      404:
+        description: User not found

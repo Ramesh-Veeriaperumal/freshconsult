@@ -56,8 +56,6 @@
     $ref: ./resource/note.yaml
   ticket:
     $ref: ./resource/ticket.yaml
-  post:
-    $ref: ./resource/post.yaml
   attachment:
     $ref: ./resource/attachment.yaml
   agent:
@@ -111,10 +109,6 @@
     type: array
     items:
       $ref: '#/definitions/extended_company'
-  array_of_posts:
-    type: array
-    items:
-      $ref: '#/definitions/post'
   array_of_sla_policies:
     type: array
     items:
@@ -143,3 +137,5 @@
     $ref: ./response/tickets/watchers.yaml
   latest_note:
     $ref: './response/conversations/latest_note.yaml'
+  contact_activity:
+    $ref: './response/contacts/activity.yaml'
