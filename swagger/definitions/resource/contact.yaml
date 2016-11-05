@@ -31,7 +31,5 @@ properties:
     type: array
     items:
       type: string
-  avatar:
-    type: string
   custom_fields:
     $ref: '#/definitions/custom_field'

@@ -1,0 +1,7 @@
+
+  type: object
+  allOf:
+    - $ref: '#/definitions/attachment'
+    - properties:
+        thumb_url:
+          type: string

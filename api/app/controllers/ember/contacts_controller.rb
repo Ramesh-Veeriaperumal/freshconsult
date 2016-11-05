@@ -14,17 +14,19 @@ module Ember
       else
         build_user_emails_attributes if @email_objects.any?
         if @item.create_contact!
-          render_201_with_location(item_id: @item.id)
+          render :show, location: api_contact_url(@item.id), status: 201
         else
           render_custom_errors
         end
       end
     end
 
+    def show
+    end
+
     def index
       super
       response.api_meta = { count: @items_count }
-      render 'api_contacts/index'
     end
 
     def send_invite

@@ -10,19 +10,6 @@ module UsersTestHelper
     custom_field = contact.custom_field.map { |k, v| [CustomFieldDecorator.display_name(k), v] }.to_h
     contact_custom_field = (custom_field && ignore_extra_keys) ? custom_field.ignore_extra_keys! : custom_field
 
-    if contact.avatar
-      contact_avatar = {
-
-        content_type: contact.avatar.content_content_type,
-        size: contact.avatar.content_file_size,
-        name: contact.avatar.content_file_name,
-        avatar_url: String,
-        created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
-        updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
-        id: contact.avatar.id
-      }
-    end
-
     result = {
       active: expected_output[:active] || contact.active,
       address: expected_output[:address] || contact.address,
@@ -41,13 +28,35 @@ module UsersTestHelper
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
       custom_fields:  expected_custom_field || contact_custom_field,
-      avatar: expected_output[:avatar] || contact_avatar
-
+      avatar: expected_output[:avatar] || get_contact_avatar(contact)
     }
 
     result.merge!(other_emails: expected_output[:other_emails] || contact.user_emails.where(primary_role: false).map(&:email))
     result.merge!(deleted: true) if contact.deleted
     result
+  end
+
+  def get_contact_avatar(contact)
+    return nil unless contact.avatar
+    contact_avatar = {
+      content_type: contact.avatar.content_content_type,
+      size: contact.avatar.content_file_size,
+      name: contact.avatar.content_file_name,
+      created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
+      updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
+      id: contact.avatar.id
+    }
+
+    if @private_api
+      contact_avatar.merge!({
+        # changing from direct url to string because of changing X-Amz-Signature in the URL
+        attachment_url: String,
+        thumb_url: String
+      })
+    else
+      contact_avatar[:avatar_url] = String
+    end
+    contact_avatar
   end
 
   def deleted_contact_pattern(expected_output = {}, contact)
@@ -206,6 +215,23 @@ module UsersTestHelper
       message: 'Value set is of type Null.It should be a/an String',
       code: 'datatype_mismatch'
     }
+  end
+
+  def add_avatar_to_user(contact)
+    file = fixture_file_upload('/files/image33kb.jpg', 'image/jpeg')
+    contact.build_avatar(
+      content: file,
+      description: Faker::Lorem.characters(10),
+      account_id: @account.id
+    )
+    contact.save
+  end
+
+  def private_api_index_contact_pattern
+    users = @account.all_contacts.order('users.name').select { |x| x.deleted == false && x.blocked == false }
+    users.first(ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page]).map do |contact|
+      contact_pattern(contact)
+    end
   end
 
 end

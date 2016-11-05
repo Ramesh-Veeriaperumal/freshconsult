@@ -1,3 +1,4 @@
+
 type: object
 allOf:
   - $ref: '#/definitions/extension_generic'
@@ -6,3 +7,5 @@ allOf:
         type: boolean
       deleted:
         type: boolean
+      avatar:
+        $ref: '#/definitions/avatar'

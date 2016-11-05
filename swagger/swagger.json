@@ -2141,13 +2141,25 @@
             "type": "string"
           }
         },
-        "avatar": {
-          "type": "string"
-        },
         "custom_fields": {
           "$ref": "#/definitions/custom_field"
         }
       }
+    },
+    "avatar": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/attachment"
+        },
+        {
+          "properties": {
+            "thumb_url": {
+              "type": "string"
+            }
+          }
+        }
+      ]
     },
     "company": {
       "type": "object",
@@ -2472,6 +2484,9 @@
                 },
                 "deleted": {
                   "type": "boolean"
+                },
+                "avatar": {
+                  "$ref": "#/definitions/avatar"
                 }
               }
             }

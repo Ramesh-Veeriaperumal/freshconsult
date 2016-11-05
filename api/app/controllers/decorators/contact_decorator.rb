@@ -25,15 +25,7 @@ class ContactDecorator < ApiDecorator
   def avatar_hash
     # Should be cached
     return nil unless avatar.present?
-    {
-      id: avatar.id,
-      name: avatar.content_file_name,
-      content_type: avatar.content_content_type,
-      size: avatar.content_file_size,
-      created_at: avatar.created_at.try(:utc),
-      updated_at: avatar.updated_at.try(:utc),
-      avatar_url: avatar.attachment_url_for_api
-    }
+    AttachmentDecorator.new(avatar).to_hash.merge(thumb_url: record.avatar.attachment_url_for_api(true, :thumb))
   end
 
   def to_hash
@@ -43,7 +35,7 @@ class ContactDecorator < ApiDecorator
   private
 
     def to_full_hash
-      {
+      response_hash = {
         id: id,
         active: active,
         address: address,
@@ -57,10 +49,15 @@ class ContactDecorator < ApiDecorator
         phone: phone,
         time_zone: time_zone,
         twitter_id: twitter_id,
+        custom_fields: custom_fields,
+        other_emails: other_emails,
+        tags: tags,
         created_at: created_at.try(:utc),
         updated_at: updated_at.try(:utc),
         avatar: avatar_hash
       }
+      response_hash.merge!(deleted: true) if record.deleted
+      response_hash
     end
 
     def to_restricted_hash

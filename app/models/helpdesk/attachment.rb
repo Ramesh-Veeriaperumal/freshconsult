@@ -148,8 +148,8 @@ class Helpdesk::Attachment < ActiveRecord::Base
     [:account_id, :description, :content_updated_at, :attachable_id, :attachable_type]
   end
 
-  def attachment_url_for_api(secure=true)
-    AwsWrapper::S3Object.url_for(content.path, content.bucket_name, { :expires => 1.days, :secure => true })
+  def attachment_url_for_api(secure = true, type = :original)
+    AwsWrapper::S3Object.url_for(content.path(valid_size_type(type)), content.bucket_name, { :expires => 1.days, :secure => true })
   end
 
   def as_json(options = {})
@@ -221,6 +221,10 @@ class Helpdesk::Attachment < ActiveRecord::Base
         self.account_id = attachable.account_id
       end
     end
+  end
+
+  def valid_size_type(type)
+    attachment_sizes.keys.include?(type) ? type : :original
   end
 
 end

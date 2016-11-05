@@ -50,6 +50,8 @@
   # RESOURCE
   contact:
     $ref: ./resource/contact.yaml
+  avatar:
+    $ref: ./resource/avatar.yaml
   company:
     $ref: ./resource/company.yaml
   note:

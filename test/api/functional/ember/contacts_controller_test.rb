@@ -4,6 +4,11 @@ module Ember
     include UsersTestHelper
     include AttachmentsTestHelper
 
+    def setup
+      super
+      @private_api = true
+    end
+
     def wrap_cname(params)
       { contact: params }
     end
@@ -77,9 +82,31 @@ module Ember
       params_hash = contact_params_hash.merge({avatar_id: avatar_id})
       post :create, construct_params({version: 'private'}, params_hash)
       assert_response 201
-      match_json(deleted_contact_pattern(params_hash, User.last))
-      match_json(deleted_contact_pattern({}, User.last))
+      match_json(contact_pattern(User.last))
+      match_json(contact_pattern(User.last))
       assert User.last.avatar.id == avatar_id
+    end
+
+    # Show User
+    def test_show_a_contact
+      sample_user = add_new_user(@account)
+      get :show, construct_params({ version: 'private', id: sample_user.id })
+      match_json(contact_pattern(sample_user.reload))
+      assert_response 200
+    end
+
+    def test_show_a_contact_with_avatar
+      file = fixture_file_upload('files/image33kb.jpg', 'image/jpg')
+      sample_user = add_new_user(@account)
+      sample_user.build_avatar(content_content_type: file.content_type, content_file_name: file.original_filename)
+      get :show, construct_params({ version: 'private', id: sample_user.id })
+      match_json(contact_pattern(sample_user.reload))
+      assert_response 200
+    end
+
+    def test_show_a_non_existing_contact
+      get :show, construct_params({ version: 'private', id: 0 })
+      assert_response :missing
     end
 
     def test_deletion
@@ -167,6 +194,17 @@ module Ember
       get :index, controller_params({version: 'private', tag: Faker::Lorem.word})
       assert_response 200
       assert response.api_meta[:count] == 0
+    end
+
+    def test_index_with_contacts_having_avatar
+      contact_ids = []
+      rand(2..10).times do
+        contact = add_new_user(@account)
+        add_avatar_to_user(contact)
+      end
+      get :index, controller_params({ version: 'private' })
+      assert_response 200
+      match_json(private_api_index_contact_pattern)
     end
 
     def test_bulk_delete_with_no_params
