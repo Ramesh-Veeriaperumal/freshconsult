@@ -97,7 +97,7 @@ class ApiTicketFieldsControllerTest < ActionController::TestCase
     get :index, controller_params({}, {})
     assert_response 200
     response = parse_response @response.body
-    assert_equal 12, response.count
+    assert_equal @account.ticket_fields.size, response.count
     cd_field = response.find { |x| x['type'] == 'custom_dropdown' }
     assert_equal ['Get Smart', 'Pursuit of Happiness', 'Armaggedon'], cd_field['choices']
   end

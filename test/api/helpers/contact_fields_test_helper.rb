@@ -3,7 +3,7 @@ module ContactFieldsTestHelper
   include ContactFieldsHelper
   # Patterns
   def contact_field_pattern_without_choices(expected_output = {}, contact_field)
-    default_contact_field = contact_field.column_name == 'default'
+    default_contact_field = contact_field.default_field?
 
     {
       default: expected_output[:default] || default_contact_field,

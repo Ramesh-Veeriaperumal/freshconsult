@@ -5,11 +5,25 @@ class ApiContactFieldsControllerTest < ActionController::TestCase
     { api_contact_field: params }
   end
 
+  def setup
+    super
+    initial_setup
+  end
+
+  @@initial_setup_run = false
+
+  def initial_setup
+    return if @@initial_setup_run
+    @account.features.multiple_user_companies.create
+    @account.reload
+    @@initial_setup_run = true
+  end
+
   # Contact Field Index
   def test_contact_field_index
     get :index, controller_params
     assert_response 200
-    contact_fields = ContactField.scoped.order(:position)
+    contact_fields = @account.contact_form.contact_fields
     pattern = contact_fields.map { |contact_field| contact_field_pattern(contact_field) }
     match_json(pattern.ordered!)
   end
@@ -47,7 +61,7 @@ class ApiContactFieldsControllerTest < ActionController::TestCase
 
     get :index, controller_params
     assert_response 200
-    contact_fields = ContactField.all
+    contact_fields = @account.reload.contact_form.contact_fields
     pattern = contact_fields.map { |contact_field| contact_field_pattern(contact_field) }
     match_json(pattern)
   end
