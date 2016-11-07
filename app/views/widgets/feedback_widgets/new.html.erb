@@ -289,15 +289,15 @@
          }  
       }
       checkScrollBars();
-
       function EmbeddedSearch(status){
+         var formTitleWidth = jQuery('.form-title').width(), searchTextWidth= jQuery('.search-text').width(),searchTextPadding = formTitleWidth + 30;
         if(status){
           jQuery('.embedded-body').removeClass('embedded-body-hide');
           jQuery('#feedback-suggest').removeClass('feedback-suggest-show');
           jQuery('.embedded-wrapper .search-text').addClass('active');
           jQuery('.embedded-wrapper .form-title').removeClass('active');
           jQuery('#feedback-suggest').removeClass('show-suggest');
-          jQuery('.embedded-hightlight').removeClass('embedded-highlight-move embedded-hightlight-count');
+          jQuery('.embedded-hightlight').css({'width':(formTitleWidth+'px'),'transform':'translateX(0px)'}).removeClass('embedded-highlight-move embedded-hightlight-count');
           jQuery('#helpdesk_ticket_submit').show();
         }else{
         	jQuery('#helpdesk_ticket_submit').hide();
@@ -305,7 +305,7 @@
           jQuery('#feedback-suggest').addClass('feedback-suggest-show');
           jQuery('.embedded-wrapper .form-title').addClass('active');
           jQuery('.embedded-wrapper .search-text').removeClass('active');
-          jQuery('.embedded-hightlight').addClass('embedded-highlight-move');
+          jQuery('.embedded-hightlight').addClass('embedded-highlight-move').css({'width':+searchTextWidth+'px','transform':'translateX('+ searchTextPadding+'px)'});
           if(jQuery('.search-count').text()!=''){
             jQuery('.embedded-hightlight').addClass('embedded-hightlight-count')
           }
@@ -512,6 +512,7 @@
 			jQuery(".modal-panel").addClass("embedded-panel");
 			jQuery(".modal-footer").addClass("embedded-footer");
 			jQuery(".suggest-search").addClass("embedded-search-input");
+      jQuery('.embedded-hightlight').css({'width':(jQuery('.form-title').width()+'px')})
 		}
 
     jQuery('#helpdesk_ticket_ticket_type')

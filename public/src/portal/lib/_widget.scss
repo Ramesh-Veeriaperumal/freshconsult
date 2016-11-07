@@ -564,13 +564,9 @@ body,
       position: absolute;
       background: #999;
       height: 3px;
-      width: 106px;
       top: 92%;
       @include transition(transform .2s ease-in);
       @include transform(translateX(0px));
-      &.embedded-highlight-move{
-        @include transform(translateX(127%));
-      }
       &.embedded-hightlight-count{
         width: 134px;
         @include left(-35px)
