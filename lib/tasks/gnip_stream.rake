@@ -128,6 +128,24 @@ namespace :gnip_stream do
     end
   end
 
+  task :poll_v2 => :environment do
+    #Should be the pod specific queue
+    queue = $sqs_gnip_2_0
+    attributes = Rails.env.production? ? [] : [:sent_at]
+
+    queue.poll(:initial_timeout => false,
+               :batch_size => 10, :attributes => attributes) do |sqs_msg|
+      tweet = sqs_msg.body
+      unless tweet.blank?
+        gnip_msg = Social::Gnip::TwitterFeed.new(tweet, queue)
+        unless gnip_msg.nil?
+          gnip_msg.process
+          log_timeline(gnip_msg, sqs_msg.sent_at) unless Rails.env.production?
+        end
+      end
+    end
+  end
+
   def log_timeline(tweet, sent_at)
     return unless tweet.posted_time && tweet.tweet_id
     posted_time = Time.parse(tweet.posted_time)

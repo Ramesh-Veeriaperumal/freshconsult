@@ -104,7 +104,7 @@ class Company < ActiveRecord::Base
         offset:       per_page * (page.to_i - 1),
         types:        ['company'],
         es_params:    ({ 
-          search_term: letter ? letter.downcase[0] : nil,
+          search_term: letter ? letter.downcase : nil,
           account_id: account_id,
           request_id: uuid,
           size: per_page,

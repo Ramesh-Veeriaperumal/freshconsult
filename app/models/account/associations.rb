@@ -5,6 +5,7 @@ class Account < ActiveRecord::Base
   has_many :notes, :class_name => 'Helpdesk::Note'
   has_many :note_bodies, :class_name => 'Helpdesk::NoteBody'
   has_many :external_notes, :class_name => 'Helpdesk::ExternalNote'
+  has_many :broadcast_messages, :class_name => 'Helpdesk::BroadcastMessage'
   has_many :activities, :class_name => 'Helpdesk::Activity'
   has_many :flexifields
   has_many :ticket_states, :class_name =>'Helpdesk::TicketState'

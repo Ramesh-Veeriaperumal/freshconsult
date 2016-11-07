@@ -83,12 +83,16 @@ module Helpdesk::AccessibleElements
   end
 
   def fetch_from_es(model_name, enclose, visibility, sort = nil, folder_id = nil, id_data = nil, excluded_ids = nil)
-    if redis_key_exists?(COUNT_ESV2_READ_ENABLED)
+    v2_read_enabled = redis_key_exists?(COUNT_ESV2_READ_ENABLED)
+    if v2_read_enabled
       method_name = "accessible_from_esv2"
     else
       method_name = "accessible_from_es"
       model_name = model_name.constantize
     end
-    send(method_name, model_name, enclose, visibility, sort, folder_id, id_data, excluded_ids)
+    results = send(method_name, model_name, enclose, visibility, sort, folder_id, id_data, excluded_ids)
+    return results if (!v2_read_enabled || results.blank? || sort.blank?)
+    sort_element = Search::V2::Count::AccessibleMethods::MULTI_MATCH_STRING_SEARCH[model_name].first    
+    results.sort! { |a,b| a.try(sort_element).to_s.downcase <=> b.try(sort_element).to_s.downcase }
   end
 end

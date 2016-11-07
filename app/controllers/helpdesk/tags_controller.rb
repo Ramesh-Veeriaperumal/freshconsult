@@ -1,12 +1,23 @@
 class Helpdesk::TagsController < ApplicationController
   helper Helpdesk::TicketsHelper
 
-  before_filter :set_selected_tab, :check_admin_user_privilege
+  before_filter :set_selected_tab, :check_manage_tags_privilege
 
   include HelpdeskControllerMethods
 
-  def index
+  def create
+    tag_name = params[:name]
+    if scoper.where(name: tag_name).blank?
+      @new_tag = scoper.create(name: tag_name)
+    else
+      flash.now[:notice] = t('tag_exists')
+    end
+    respond_to do |format|
+      format.js { }
+    end
+  end
 
+  def index
     tag_id = params[:tag_id].present? ? [params[:tag_id]] : :all
     sort_order = params[:sort] || cookies[:tag_sort_key] || :activity_desc 
     @archive_feature = current_account.features_included?(:archive_tickets)
@@ -14,7 +25,6 @@ class Helpdesk::TagsController < ApplicationController
         :page => params[:page],
         :include => [:tag_uses],
         :per_page => 50)
-
     cookies[:tag_sort_key] = sort_order;
     if params[:sort].present? and params[:page].blank?
       render :partial => "sort_results"
@@ -63,8 +73,8 @@ class Helpdesk::TagsController < ApplicationController
     end
   end
 
-  def check_admin_user_privilege
-    if !(current_user and  current_user.privilege?(:admin_tasks))
+  def check_manage_tags_privilege
+    if !(current_user and  current_user.privilege?(:manage_tags))
       flash[:notice] = t('flash.general.access_denied')
       redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) 
     end
@@ -78,6 +88,10 @@ class Helpdesk::TagsController < ApplicationController
 
    def after_destroy_url
       helpdesk_tags_url
+   end
+   
+   def scoper
+    current_account.tags
    end
 
 end

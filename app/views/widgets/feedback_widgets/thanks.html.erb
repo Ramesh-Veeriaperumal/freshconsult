@@ -12,7 +12,7 @@
 	<div class="modal-body">
 	<br />
 		<h3 class="title">
-			<center><%= (params[:submit_message] || t("ticket.thanks").html_safe) %></center>
+			<center><%= (params[:submit_message] || t("ticket.thanks_v1").html_safe) %></center>
 		</h3>
 		<br /><br />
 		<center><%= link_to t('go_back'), new_widgets_feedback_widget_path(ActiveSupport::JSON.decode params[:retainParams]) %></center>

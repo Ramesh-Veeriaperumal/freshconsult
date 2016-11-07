@@ -1,12 +1,5 @@
 <% 
-  default_field_order = [
-      "default_priority", "default_status", 
-      "default_source", "default_ticket_type", 
-      "default_group", 
-      "default_agent", 
-      "default_product",
-      "default_company"
-  ]
+  field_order = Helpdesk::TicketField.default_field_order
 
   default_fields = []
   default_ticket_type_field = ""
@@ -27,7 +20,7 @@
     end
   end
 end
-default_fields.sort! {|x,y| default_field_order.index(x.first) <=> default_field_order.index(y.first) }
+default_fields.sort! {|x,y| field_order.index(x.first) <=> field_order.index(y.first) }
 %>
 <% default_fields.each do |field| %>
   <%= field.last %>

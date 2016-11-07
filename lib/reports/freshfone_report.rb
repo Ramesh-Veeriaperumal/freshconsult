@@ -65,7 +65,7 @@ module Reports::FreshfoneReport
        @call_type]
       conditions.push(@freshfone_number) if @freshfone_number != ALL_NUMBERS
       conditions.push(@group_id) unless all_or_unassigned?
-      conditions.push(@business_hours) unless ( @business_hours.blank? || @business_hours == ALL_CALLS )
+      conditions.push(@business_hours) unless @business_hours.blank?
       conditions
     end
 
@@ -80,7 +80,7 @@ module Reports::FreshfoneReport
     end
 
     def business_hours_condition
-      "and freshfone_calls.business_hour_call = ? " unless ( @business_hours.blank? || @business_hours == ALL_CALLS )
+      "and freshfone_calls.business_hour_call = ? " unless @business_hours.blank?
     end
 
     def all_or_unassigned?

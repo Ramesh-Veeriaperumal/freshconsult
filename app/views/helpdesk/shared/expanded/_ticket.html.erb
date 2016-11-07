@@ -13,7 +13,24 @@
   <% unless user_page %>
 		<td class="userpic">
 			<div class="hideForList">
-				<%= user_avatar(ticket.requester, :thumb, "preview_pic circle") %>
+				
+				<% if (Account.current.customer_sentiment_enabled? && current_user.language=="en") %>
+					<% survey_association = Account.current.new_survey_enabled? ? "custom_survey_results" : "survey_results" %>
+
+					<% unless ticket.send(survey_association).nil? || ticket.send(survey_association).last.nil? %>
+					    <%= user_avatar(ticket.requester, :thumb, 'preview_pic circle') %>
+					<% else %>
+					    <% if (ticket.notes.visible.customer_responses.last != nil) %>
+							<%= senti_user_avatar(ticket.requester, ticket.notes.visible.customer_responses.last.try("sentiment"), :thumb, 'preview_pic circle') %>
+						<% else %>
+							<%= senti_user_avatar(ticket.requester, ticket.sentiment, :thumb, 'preview_pic circle') %>
+						<% end %>
+					<% end %>
+
+				<% else %>
+				    <%= user_avatar(ticket.requester, :thumb, 'preview_pic circle') %>
+				<% end %>
+
 			</div>
 		</td>
 	<% end %>

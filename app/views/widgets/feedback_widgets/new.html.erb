@@ -108,7 +108,7 @@
 </div>
 <div class="modal-footer feedback-footer modal-body-change">
   <div class="row-fluid">
-    <div class="span8">
+    <div class="span6">
       <div class="copyright">
         <% unless(current_account.subscription.paid_account?) %>
           <%= link_to(t('footer.helpdesk_software'), "http://www.freshdesk.com", :target => "_blank") %>
@@ -121,7 +121,7 @@
     </div>
     <input type="hidden" id="submit_message" value="<%= params[:submitThanks] %>" />
     <input type="hidden" name="retainParams" id="retainParams" value= "<%=  ActiveSupport::JSON.encode params.except(:controller).except(:action) %>" />
-    <div class="span4 omega">
+    <div class="span6 omega">
       <%= f.submit widget_option(:submitTitle), :class => "btn btn-primary omega",
         "data-loading-text" => t('ticket.submit_loading') %>
       <%# Any fields named like meta[fieldname] will be saved by the helpdesk as metadata %>
@@ -289,15 +289,15 @@
          }  
       }
       checkScrollBars();
-
       function EmbeddedSearch(status){
+         var formTitleWidth = jQuery('.form-title').width(), searchTextWidth= jQuery('.search-text').width(),searchTextPadding = formTitleWidth + 30;
         if(status){
           jQuery('.embedded-body').removeClass('embedded-body-hide');
           jQuery('#feedback-suggest').removeClass('feedback-suggest-show');
           jQuery('.embedded-wrapper .search-text').addClass('active');
           jQuery('.embedded-wrapper .form-title').removeClass('active');
           jQuery('#feedback-suggest').removeClass('show-suggest');
-          jQuery('.embedded-hightlight').removeClass('embedded-highlight-move embedded-hightlight-count');
+          jQuery('.embedded-hightlight').css({'width':(formTitleWidth+'px'),'transform':'translateX(0px)'}).removeClass('embedded-highlight-move embedded-hightlight-count');
           jQuery('#helpdesk_ticket_submit').show();
         }else{
         	jQuery('#helpdesk_ticket_submit').hide();
@@ -305,7 +305,7 @@
           jQuery('#feedback-suggest').addClass('feedback-suggest-show');
           jQuery('.embedded-wrapper .form-title').addClass('active');
           jQuery('.embedded-wrapper .search-text').removeClass('active');
-          jQuery('.embedded-hightlight').addClass('embedded-highlight-move');
+          jQuery('.embedded-hightlight').addClass('embedded-highlight-move').css({'width':+searchTextWidth+'px','transform':'translateX('+ searchTextPadding+'px)'});
           if(jQuery('.search-count').text()!=''){
             jQuery('.embedded-hightlight').addClass('embedded-hightlight-count')
           }
@@ -512,6 +512,7 @@
 			jQuery(".modal-panel").addClass("embedded-panel");
 			jQuery(".modal-footer").addClass("embedded-footer");
 			jQuery(".suggest-search").addClass("embedded-search-input");
+      jQuery('.embedded-hightlight').css({'width':(jQuery('.form-title').width()+'px')})
 		}
 
     jQuery('#helpdesk_ticket_ticket_type')

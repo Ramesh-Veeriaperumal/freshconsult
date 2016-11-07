@@ -4,6 +4,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
   TABLE_NAME = "helpkit_ticket"
   HASH_KEY = "ticket_account"
   ASSOCIATES = "associates"
+  
+  DEFAULT_TABLE_NAME = "helpkit_ticket_shard_default"
+  TICKET_DYNAMO_NEXT_SHARD = "shard_1"
 
   TicketConstants::TICKET_ASSOCIATION.each do |type|
     define_method("#{type[0]}_ticket?") do
@@ -36,11 +39,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def delete_broadcast_notes
-    if self.tracker_ticket?
-      self.notes.broadcast_notes.readonly(false).each { |note| note.update_attributes(:deleted => true) }
-    else
-      self.notes.where(:source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['tracker']).update_all(:deleted => true)
-    end
+    self.notes.broadcast_notes.destroy_all if self.tracker_ticket?
   end
 
   def reset_associations
@@ -57,7 +56,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
          :value => "#{self.display_id}_#{self.account.id}"
         }
         resp = Helpdesk::Tickets::Dynamo::DynamoHelper.get_item(
-                  TABLE_NAME, 
+                  table_name, 
                   hash, 
                   nil, 
                   "#{HASH_KEY}, #{ASSOCIATES}",
@@ -74,7 +73,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
          :value => "#{self.display_id}_#{self.account.id}"
         }
       resp = Helpdesk::Tickets::Dynamo::DynamoHelper.put_item(
-                TABLE_NAME, 
+                table_name, 
                 hash, 
                 nil, 
                 {ASSOCIATES => val.to_set}) #dynamo needs the value to be in a set
@@ -97,7 +96,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
      :value => "#{self.display_id}_#{self.account.id}"
     }
     resp = Helpdesk::Tickets::Dynamo::DynamoHelper.update_set_attributes(
-                TABLE_NAME, 
+                table_name, 
                 hash, nil,
                 {ASSOCIATES => val}, action)
     return resp.data.attributes[ASSOCIATES].map {|e| e.to_i} if resp_data?(resp)
@@ -111,7 +110,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
      :value => "#{self.display_id}_#{self.account.id}"
     }
     resp = Helpdesk::Tickets::Dynamo::DynamoHelper.delete_attributes(
-                TABLE_NAME, 
+                table_name, 
                 hash, nil,
                 [ASSOCIATES])
     return resp.data.attributes[ASSOCIATES].map {|e| e.to_i} if resp_data?(resp)
@@ -126,6 +125,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
     resp and resp.data and resp.data.item and resp.data.item[ASSOCIATES]
   end
 
+  def last_broadcast_message
+    if self.related_ticket?
+      Account.current.broadcast_messages.where(:tracker_display_id => associates.first).last
+    end
+  end
 
   private
 
@@ -133,9 +137,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
       self.related_tickets.each do |r|
         r.update_attributes(:association_type => nil, :associates_rdb => nil)
         r.remove_all_associates
-        r.delete_broadcast_notes
       end
-      if Account.current.features?(:activity_revamp)
+      if Account.current.features?(:activity_revamp) and (self.related_tickets_count > 0)
         self.misc_changes = {:tracker_unlink_all => self.related_tickets_count}
         self.manual_publish_to_rmq("update", RabbitMq::Constants::RMQ_ACTIVITIES_TICKET_KEY)
       end 
@@ -149,6 +152,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
       self.update_attributes(:association_type => nil, :associates_rdb => nil)
       remove_all_associates
       create_tracker_activity(:tracker_unlink, tracker)
-      delete_broadcast_notes
+    end
+
+    def table_name
+      return @table_name if @table_name
+      settings = self.account.account_additional_settings_from_cache.additional_settings
+      @table_name = (settings.present? and settings[:tkt_dynamo_shard].present?) ? 
+                                "#{TABLE_NAME}_#{settings[:tkt_dynamo_shard]}" : DEFAULT_TABLE_NAME
     end
 end

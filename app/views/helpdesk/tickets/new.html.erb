@@ -15,7 +15,7 @@
 <div class="templates-header-wrapper">
   <%= render :partial => "helpdesk/tickets/ticket_widget/#{tracker_ticket ? 'new_tracker_title' : 'new_ticket_title'}" %>
 <div id="ticket-fields-wrapper">
-  <%= form_for @item, :html => {:multipart => true, :id => "NewTicket", :ignore => "" , :rel=>"validate"} do |f| %>
+  <%= form_for @item, :html => {:multipart => true, :id => "NewTicket", :ignore => "" } do |f| %>
     <% enable_fragment_cache(:agent_new_ticket, tracker_ticket) do %>
       <ul class="compose-new-ticket">
         <%= render :partial => "ticket_form", :object => f, :locals => { :is_edit => (@item.errors.any? ? true : false), :f => f } %>
@@ -38,6 +38,9 @@
   <input type="hidden" id="topic_req" value="<%= @topic.user.email %>" />
 <% end %>
 <%= render :partial => "/helpdesk/tickets/canned_loading"  %>
+<script>
+    var isMultifileEnabled = <%= current_account.launched?(:multifile_attachments) %>
+</script>
 <% if Account.current.launched?(:agent_new_ticket_cache) %>
   <script>
   // To load data from store to populate group/agent/product for the first time.

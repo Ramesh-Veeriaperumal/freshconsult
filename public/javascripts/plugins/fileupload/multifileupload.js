@@ -87,6 +87,7 @@ Helpdesk = Helpdesk || {};
                     _this.backgroundProcess.execute(0, multifileCount);
                 }
 
+                _this.upload_status.pop();
             };
             // on upload
             $("body").on("fileuploadadd", "#fileupload-form-" + count, function(e, data) {

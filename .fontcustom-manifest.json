@@ -1,13 +1,13 @@
 {
   "checksum": {
-    "previous": "e22914da2766d57941494c902614f56c75e918a041d64a91831538c52ab0b1af",
-    "current": "e22914da2766d57941494c902614f56c75e918a041d64a91831538c52ab0b1af"
+    "previous": "5c7a9cecebd97f3886f1835c08187f9a69b8971dcab8a8202b3d69c25d5e990e",
+    "current": "5c7a9cecebd97f3886f1835c08187f9a69b8971dcab8a8202b3d69c25d5e990e"
   },
   "fonts": [
-    "public/assets/glyphs_e22914da2766d57941494c902614f56c.ttf",
-    "public/assets/glyphs_e22914da2766d57941494c902614f56c.svg",
-    "public/assets/glyphs_e22914da2766d57941494c902614f56c.woff",
-    "public/assets/glyphs_e22914da2766d57941494c902614f56c.eot"
+    "public/assets/glyphs_5c7a9cecebd97f3886f1835c08187f9a.ttf",
+    "public/assets/glyphs_5c7a9cecebd97f3886f1835c08187f9a.svg",
+    "public/assets/glyphs_5c7a9cecebd97f3886f1835c08187f9a.woff",
+    "public/assets/glyphs_5c7a9cecebd97f3886f1835c08187f9a.eot"
   ],
   "glyphs": {
     "abandoned-call": {
@@ -55,7 +55,7 @@
       "source": "public/glyphs/vectors/align-left.svg"
     },
     "align-right": {
-      "codepoint": 62010,
+      "codepoint": 62049,
       "source": "public/glyphs/vectors/align-right.svg"
     },
     "all-streams": {

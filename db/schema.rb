@@ -366,6 +366,17 @@ ActiveRecord::Schema.define(:version => 20161018121347) do
 
   add_index "business_calendars", ["account_id"], :name => "index_business_calendars_on_account_id"
 
+  create_table "helpdesk_broadcast_messages", :force => true do |t|
+    t.integer  "account_id",         :limit => 8
+    t.integer  "tracker_display_id", :limit => 8
+    t.integer  "note_id",            :limit => 8
+    t.text     "body",               :limit => 16777215
+    t.text     "body_html",          :limit => 16777215
+    t.timestamps
+  end
+
+  add_index "helpdesk_broadcast_messages", ["account_id", "tracker_display_id"], :name => "index_broadcast_messages_on_account_id_tracker_display_id"
+
   create_table "ca_folders", :force => true do |t|
     t.string   "name"
     t.boolean  "is_default",               :default => false

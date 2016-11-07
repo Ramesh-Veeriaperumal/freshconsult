@@ -1585,6 +1585,8 @@ fr:
         feedbackwidget_search_area: "Chercher des articles"
         feedbackwidget_use_https: "Utiliser https"
         feedbackwidget_mobile_view: "Affichage mobile"
+        feedbackwidget_submit_title: "Envoyer vos commentaires"
+        feedbackwidget_form_submit_title: "Le Bouton \"Soumettre un Formulaire\""
       popup_widget:
         feedbackwidget_button_type: "Type de bouton"
         feedbackwidget_text_button: "Bouton texte"
@@ -1611,6 +1613,10 @@ fr:
         feedbackwidget_use_https: "Utiliser https"
         feedbackwidget_mobile_view: "Activer la vue mobile"
         feedbackwidget_use_captcha: "Activer la fonction CAPTCHA"
+        feedbackwidget_submit_title: "Envoyer vos commentaires"
+        feedbackwidget_form_submit_title: "Le Bouton \"Soumettre un Formulaire\""
+        feedbackwidget_title_maxlength: "30 caractères maximum"
+        feedbackwidget_submit_title_maxlength: "16 caractères maximum"
       embedded_widget:
         feedbackwidget_height_placeholder: 500
         feedbackwidget_form_customization: "Personnalisation du formulaire"
@@ -1628,6 +1634,10 @@ fr:
         feedbackwidget_search_area: "Chercher des articles"
         feedbackwidget_use_https: "Utiliser https"
         feedbackwidget_use_captcha: "Activer la fonction CAPTCHA"
+        feedbackwidget_submit_title: "Envoyer vos commentaires"
+        feedbackwidget_form_submit_title: "Le Bouton \"Soumettre un Formulaire\""
+        feedbackwidget_title_maxlength: "16 caractères maximum"
+        feedbackwidget_submit_title_maxlength: "16 caractères maximum"
     supervisor_rules:
       new_info_help: "Exécute toutes les règles applicables pour <b>chaque ticket</b> mis à jour au cours des 30 derniers jours."
       index:
@@ -5077,6 +5087,7 @@ fr:
     note_saved: "Note enregistrée"
     edit_note: "<b>Modifier la note</b>"
     thanks: "Merci pour vos commentaires"
+    thanks_v1: "Merci pour vos commentaires."
     portal_created_on: "Créé par <span class='emphasize'>%{username}</span> le <span class='emphasize'>%{date}</span>"
     portal_created_on_same_user: "Créé le <span class='emphasize'>%{date}</span>"
     fb_portal_created_on: "Créé par <span class='emphasize'>%{username}</span> le<span class='emphasize'>%{date}</span>"
@@ -5269,6 +5280,9 @@ fr:
     note_content: "Contenu de la note"
     private_note_alert: "Pour envoyer une réponse privée, utilisez les commandes e-mail ci-dessous dans le corps de votre message."
     ticket_url: "URL du ticket"
+    submit_feedback: "Envoyer des commentaires"
+    search_text: "Chercher des Articles"
+    search_close_text: "Fermer la recherche"
     integrations:
       jira:
         tooltip: "Afficher le problème JIRA associé"
@@ -7284,6 +7298,7 @@ fr:
         feedback_widgets_search_our: "Chercher dans "
         feedback_widgets_knowledge_base: "Base de connaissances "
         feedback_widgets_help_articles: "ou parcourir les articles de l'aide"
+        feedback_widgets_help_articles_v1: "ou Parcourir les articles"
         show_all_results: "Afficher tous les résultats"
         no_results: "Aucun résultat pour "
   reorder: Réorganiser

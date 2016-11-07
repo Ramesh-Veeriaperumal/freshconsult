@@ -102,16 +102,25 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :load_tkt_and_templates, :only => :apply_template
   before_filter :check_ml_feature, :only => [:suggest_tickets]
 
-  
+
   def suggest_tickets
     tickets = []
-    similar_tickets = get_similar_tickets
-    tickets = current_account.tickets.visible.preload(:ticket_old_body).permissible(current_user).reorder("field(id,#{similar_tickets.join(',')})").where(id:similar_tickets) if similar_tickets.present?
-    respond_to do |format|
-      format.json do
-        render :json => tickets
-      end
+    similar_tickets_list = get_similar_tickets
+    tickets = current_account.tickets.visible.preload(:requester,:ticket_status,:ticket_old_body).permissible(current_user).where(id:similar_tickets_list) if similar_tickets_list.present?   
+    tickets_list = []
+    tickets.each do |ticket|
+      similar_tickets = Hash.new
+      similar_tickets["helpdesk_ticket"] = Hash.new
+      ticket_id = ticket.id.to_s
+      similar_tickets["helpdesk_ticket"]["display_id"] = ticket.display_id
+      similar_tickets["helpdesk_ticket"]["subject"] = ticket.subject
+      similar_tickets["helpdesk_ticket"]["description"] = ticket.description
+      similar_tickets["helpdesk_ticket"]["updated_at"] = ticket.updated_at
+      similar_tickets["helpdesk_ticket"]["requester_name"] = ticket.requester_name
+      similar_tickets["helpdesk_ticket"]["status_name"] = ticket.status_name
+      tickets_list[similar_tickets_list.index(ticket_id)] = similar_tickets
     end
+    render :json =>  tickets_list.compact.to_json
   end
 
   def get_similar_tickets
@@ -201,6 +210,8 @@ class Helpdesk::TicketsController < ApplicationController
         flash[:notice] = t(:'flash.tickets.empty_trash.delay_delete') if @current_view == "deleted" and key_exists?(empty_trash_key)
         flash[:notice] = t(:'flash.tickets.empty_spam.delay_delete') if @current_view == "spam" and key_exists?(empty_spam_key)
         @is_default_filter = (!is_num?(view_context.current_filter))
+
+        #@sentiments = {:ticket_id => sentiment_value}
         # if request.headers['X-PJAX']
         #   render :layout => "maincontent"
         # end
@@ -391,7 +402,7 @@ class Helpdesk::TicketsController < ApplicationController
         @ticket_notes_total = run_on_slave { @ticket.conversation_count }
         last_public_note    = run_on_slave { @ticket.notes.visible.last_traffic_cop_note.first }
         @last_note_id       = last_public_note.blank? ? -1 : last_public_note.id
-        @last_broadcast_note = run_on_slave { @ticket.notes.last_broadcast_note.first } if @ticket.related_ticket?
+        @last_broadcast_message = run_on_slave { @ticket.last_broadcast_message } if @ticket.related_ticket?
       }
       format.atom
       format.xml  {
@@ -770,6 +781,37 @@ class Helpdesk::TicketsController < ApplicationController
     render_delete_forever
   end
 
+  def sentiment_feedback
+
+    Rails.logger.info "In sentiment_feedback"
+
+    if current_user.has_ticket_permission?(@item)
+
+      fb_params = {}
+
+      con = Faraday.new(MlAppConfig["sentiment_host"]) do |faraday|
+          faraday.response :json, :content_type => /\bjson$/                # log requests to STDOUT
+          faraday.adapter  Faraday.default_adapter  # make requests with Net::HTTP
+      end
+
+      fb_params = {"data"=> {:account_id=>current_account.id, 
+                            :ticket_id=>params["data"]["ticket_id"],
+                            :note_id=>params["data"]["note_id"],
+                            :predicted_value=>params["data"]["predicted_value"],
+                            :feedback=>params["data"]["feedback"],
+                            :user_id=>current_user.id,
+                            }}
+
+      response = con.post do |req|
+        req.url "/"+MlAppConfig["feedback_url"]
+        req.headers['Content-Type'] = 'application/json'
+        req.body = fb_params.to_json
+      end
+    end
+    render :json => {"success"=>"true"}.to_json
+
+  end
+
   def empty_trash
     set_tickets_redis_key(empty_trash_key, true, 1.day)
     Tickets::ClearTickets::EmptyTrash.perform_async({
@@ -811,7 +853,7 @@ class Helpdesk::TicketsController < ApplicationController
 
   def ticket_association
     @associates = @ticket.associates unless @ticket.association_type.blank?
-    @last_broadcast_note = run_on_slave { @ticket.notes.last_broadcast_note.first } if @ticket.related_ticket?
+    @last_broadcast_message = run_on_slave { @ticket.last_broadcast_message } if @ticket.related_ticket?
     respond_to do |format|
       format.html { render :partial => "/helpdesk/tickets/show/ticket_association", :locals => { :ticket => @ticket } }
     end
@@ -1814,7 +1856,7 @@ class Helpdesk::TicketsController < ApplicationController
     if es_tickets_enabled? and params[:html_format]
       tickets_from_es(params)
     else
-      current_account.tickets.preload({requester: [:avatar]}, :company).permissible(current_user).filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
+      current_account.tickets.preload({requester: [:avatar]}, :company, :schema_less_ticket).permissible(current_user).filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
     end
   end
 
@@ -1931,7 +1973,12 @@ class Helpdesk::TicketsController < ApplicationController
 
   def build_tkt_body
     @item.build_ticket_body
-    source = compose_email? ? :outbound_email : :phone
+    if compose_email?
+      @item.status = CLOSED
+      source = :outbound_email 
+    else
+      source = :phone
+    end
     @item.source = Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[source]
   end
 

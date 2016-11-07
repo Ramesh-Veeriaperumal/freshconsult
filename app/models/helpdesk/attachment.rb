@@ -44,6 +44,7 @@ class Helpdesk::Attachment < ActiveRecord::Base
     }
 
 
+    before_create :randomize_filename, :if => :inline_image?
     before_post_process :image?, :valid_image?
     before_create :set_content_type
     before_save :set_account_id
@@ -152,7 +153,7 @@ class Helpdesk::Attachment < ActiveRecord::Base
    if self.description == "logo"
       return {:logo => "x50>"}
    elsif  self.description == "fav_icon"
-      return {:fav_icon  => "16x16>" }
+      return {:fav_icon  => "32x32>" }
    else
       return {:medium => "127x177>",:thumb  => "50x50#" }
     end
@@ -221,6 +222,10 @@ class Helpdesk::Attachment < ActiveRecord::Base
     }
   end
 
+  Paperclip.interpolates :filename do |attachment, style|
+    attachment.instance.content_file_name
+  end
+
   private
 
   def set_random_secret
@@ -235,6 +240,18 @@ class Helpdesk::Attachment < ActiveRecord::Base
         self.account_id = attachable.account_id
       end
     end
+  end
+
+  def inline_image?
+    # Inline image will have attachable type as one of these :
+    # ArchiveNote::Inline, ArchiveTicket::Inline, Ticket::Inline, Note::Inline
+    # Image Upload, Email Notification Image Upload, Forums Image Upload, Templates Image Upload, Tickets Image Upload
+    return false unless self.attachable_type
+    self.attachable_type.include?("Inline") || self.attachable_type.include?("Image Upload")
+  end
+
+  def randomize_filename
+    self.content_file_name = SecureRandom.urlsafe_base64(25) + File.extname(self.content_file_name)
   end
 
 end

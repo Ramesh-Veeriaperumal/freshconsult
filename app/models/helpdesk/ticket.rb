@@ -32,7 +32,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
                             "header_info", "st_survey_rating", "survey_rating_updated_at", "trashed", 
                             "access_token", "escalation_level", "sla_policy_id", "sla_policy", "manual_dueby", "sender_email", "parent_ticket",
                             "reports_hash","sla_response_reminded","sla_resolution_reminded", "dirty_attributes",
-                            "internal_group_id", "internal_group", "internal_agent_id", "internal_agent","association_type", "associates_rdb"]
+                            "internal_group_id", "internal_group", "internal_agent_id", "internal_agent","association_type", "associates_rdb", "sentiment"]
 
   TICKET_STATE_ATTRIBUTES = ["opened_at", "pending_since", "resolved_at", "closed_at", "first_assigned_at", "assigned_at",
                              "first_response_time", "requester_responded_at", "agent_responded_at", "group_escalated", 
@@ -471,19 +471,19 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def conversation(page = nil, no_of_records = 5, includes=[])
     includes = note_preload_options if includes.blank?
-    notes.visible.exclude_source(['meta', 'tracker']).newest_first.paginate(:page => page, :per_page => no_of_records, :include => includes)
+    notes.visible.exclude_source('meta').newest_first.paginate(:page => page, :per_page => no_of_records, :include => includes)
   end
 
   def conversation_since(since_id)
-    notes.visible.exclude_source(['meta', 'tracker']).since(since_id).includes(note_preload_options)
+    notes.visible.exclude_source('meta').since(since_id).includes(note_preload_options)
   end
 
   def conversation_before(before_id)
-    notes.visible.exclude_source(['meta', 'tracker']).newest_first.before(before_id).includes(note_preload_options)
+    notes.visible.exclude_source('meta').newest_first.before(before_id).includes(note_preload_options)
   end
 
   def conversation_count(page = nil, no_of_records = 5)
-    notes.visible.exclude_source(['meta', 'tracker']).size
+    notes.visible.exclude_source('meta').size
   end
 
   def latest_twitter_comment_user
@@ -642,7 +642,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def last_interaction
-    notes.visible.newest_first.exclude_source(["feedback","meta","forward_email","tracker"]).first.try(:body).to_s
+    notes.visible.newest_first.exclude_source(["feedback","meta","forward_email"]).first.try(:body).to_s
   end
 
   #To use liquid template...
@@ -676,11 +676,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
   def latest_public_comment
-    notes.visible.exclude_source(['meta','tracker']).public.newest_first.first
+    notes.visible.exclude_source('meta').public.newest_first.first
   end
 
   def latest_private_comment
-    notes.visible.exclude_source(['meta','tracker']).private.newest_first.first
+    notes.visible.exclude_source('meta').private.newest_first.first
   end
   
   def liquidize_comment(comm, html=true)

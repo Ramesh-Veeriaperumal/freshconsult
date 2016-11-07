@@ -252,10 +252,11 @@
     submitBulkUpdate();
   });
 
-  jQuery("#helpdesk_tags").select2({  
-    tags: "<%= escape_javascript(current_account.tags.most_used(25).collect{|tag| tag.name}.join(',').html_safe) %>".split(","),
-    tokenSeparators: [',']
-  });
+    jQuery("#helpdesk_tags").select2({  
+      <%= 'createSearchChoice: null,' if !current_user.privilege?(:create_tags) %>
+      tags: "<%= escape_javascript(current_account.tags.most_used(25).collect{|tag| tag.name}.join(',').html_safe) %>".split(","),
+      tokenSeparators: [',']
+    });
 
   // Need to make the code generic to handle the custom dropdown fields sections.
   jQuery("#helpdesk_ticket_ticket_type")
