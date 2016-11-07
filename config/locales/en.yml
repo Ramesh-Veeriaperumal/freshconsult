@@ -6943,7 +6943,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       invalid_ticket_id: "Invalid ticket id"
       invalid_requester_id: "Invalid requester id"
       invalid_responder_id: "Invalid responder id"
-      invalid_responder_detail: "There is no responder matching the give responder details"
+      invalid_responder_detail: "There is no responder matching the given responder details"
       contact_creation_failed: "Unable to create contact"
     czentrix:
       label: "C-Zentrix"
