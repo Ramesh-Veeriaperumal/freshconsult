@@ -16,6 +16,12 @@ class ChatsController < ApplicationController
       @widgetsSelectOption = widget_values.map{ |i| [i[1], i[0]] }
       @agentsAvailable = current_account.agents_from_cache.collect { |c| [c.user.name, c.user.id] }
       @dateRange = "#{30.days.ago.strftime("%d %b, %Y")} - #{0.days.ago.strftime("%d %b, %Y")}"
+      @export_options = [{ i18n: t('export_data.csv'), en: "CSV" }, { i18n: t('export_data.xls'), en: "Excel" }]
+      @export_messages = { :success_message  => t('livechat.export_success', email: current_user.email ),
+                           :error_message    => t('livechat.export_error'),
+                           :range_limit_message => t('livechat.range_limit_message', range: ChatSetting::EXPORT_DATE_LIMIT) }
+      @export_date_limit = ChatSetting::EXPORT_DATE_LIMIT
+      @time_zone_offset_in_min = (Time.now.in_time_zone(current_account.time_zone).utc_offset)/60
     else
       render_404
     end
@@ -141,6 +147,36 @@ class ChatsController < ApplicationController
     content = params[:content]
     content = JSON.parse(params[:content], symbolize_names: true) if content.is_a?(String)
     send(event, content)
+  end
+
+  def export 
+    request_params = {  :account_name    => current_account.name,
+                        :account_domain  => "#{current_account.url_protocol}://#{current_account.full_domain}",
+                        :agent_name      => current_user.name,
+                        :agent_email     => current_user.email,
+                        :filters         => params[:filters], 
+                        :format          => params[:format],
+                        :support_email   => AppConfig['from_email'],
+                        :time_zone_offset_in_min=> (Time.now.in_time_zone(current_account.time_zone).utc_offset)/60 }
+    response = livechat_request("export", request_params, 'archive/export', 'POST')
+    if response && response[:status] == 200
+      status = "success"
+    else
+      status = "error"
+    end
+    render :json => { :status => status}
+  end
+
+  def download_export
+    request_params = { :exporttoken => params[:token]}
+    response = livechat_request("getExportUrl", request_params, 'archive/exportUrl', 'POST')
+    if response && response[:status] == 200
+      result = JSON.parse(response[:text])['data']
+      url = result['url']
+      redirect_to url
+    else
+      render :json => { :status=> "error", :message => "Error while downloading export!"}
+    end
   end
 
   private

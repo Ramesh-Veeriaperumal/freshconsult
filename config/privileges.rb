@@ -101,7 +101,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"search/v2/ticket", :only => [:index]
     resource :"search/v2/mobile/merge_ticket", :only => [:index]
     resource :"search/v2/spotlight", :only => [:all, :tickets]
-    resource :"chat", :only => [:create_ticket, :add_note, :agents, :enable, :index, :visitor, :get_groups, :update_site, :toggle, :trigger]
+    resource :"chat", :only => [:create_ticket, :add_note, :agents, :enable, :index, :visitor, :get_groups, :update_site, :toggle, :trigger, :export, :download_export]
     resource :"chat_widget", :only => [:update, :toggle, :enable]
     resource :"helpdesk/survey"
     resource :"admin/data_export" , :only => [:download]

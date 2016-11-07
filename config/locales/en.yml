@@ -9782,6 +9782,10 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     reported: "reported"
     view_ticket: "View ticket"
     agent_parallel_accept_error: "You have already initiated a chat, please try after a few seconds."
+    export_success: "Your chat history will be sent to your email (%{email}) shortly!"
+    export_error: We were unable to start the export. Please try again or contact Freshdesk support.
+    range_limit_message: We only allow exporting chat history in a %{range} month range. Please change your filter accordingly. Apologies for the inconvenience.
+    export_help_text: Export is only for visitor chat
   facebook_tab:
     remove_tab: "Remove page Tab"
     tab_not_removed: "Could not remove tab"

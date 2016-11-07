@@ -3018,9 +3018,11 @@ Helpkit::Application.routes.draw do
       put  :toggle
       put  :update_site
       put  :trigger
+      get  :export
     end
   end
   match '/livechat/visitor/:type', :controller => 'chats', :action => 'visitor', :method => :get
+  match '/livechat/downloadexport/:token', :controller => 'chats', :action => 'download_export', :method => :get
   match '/livechat/*letter', :controller => 'chats', :action => 'index', :method => :get
 
   use_doorkeeper do
