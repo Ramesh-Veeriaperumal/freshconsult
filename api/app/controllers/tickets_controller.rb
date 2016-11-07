@@ -132,19 +132,8 @@ class TicketsController < ApiApplicationController
       preload_options
     end
 
-    def ticket_permission_required?
-      ApiTicketConstants::PERMISSION_REQUIRED.include?(action_name.to_sym)
-    end
-
     def after_load_object
-      return false unless verify_object_state
-      if ticket_permission_required?
-        return false unless verify_ticket_permission
-      end
-
-      if ApiTicketConstants::NO_PARAM_ROUTES.include?(action_name) && params[cname].present?
-        render_request_error :no_content_required, 400
-      end
+      verify_ticket_state_and_permission
     end
 
     def paginate_options(is_array = false)
@@ -283,21 +272,6 @@ class TicketsController < ApiApplicationController
         @item.schema_less_ticket.product ||= current_portal.product unless params[cname].key?(:product_id)
       end
       assign_ticket_status
-    end
-
-    def verify_object_state
-      action_scopes = ApiTicketConstants::SCOPE_BASED_ON_ACTION[action_name] || {}
-      action_scopes.each_pair do |scope_attribute, value|
-        item_value = @item.send(scope_attribute)
-        next if item_value == value
-        Rails.logger.debug "Ticket display_id: #{@item.display_id} with #{scope_attribute} is #{item_value}"
-        # Render 405 in case of update/delete as it acts on ticket endpoint itself
-        # And User will be able to GET the same ticket via Show
-        # other URLs such as tickets/id/restore will result in 404 as it is a separate endpoint
-        update? || destroy? ? render_405_error(['GET']) : head(404)
-        return false
-      end
-      true
     end
 
     def check_search_feature

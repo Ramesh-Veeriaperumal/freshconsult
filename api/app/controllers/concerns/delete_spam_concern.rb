@@ -1,5 +1,6 @@
 module DeleteSpamConcern
   extend ActiveSupport::Concern
+  include Helpdesk::TagMethods
   include BulkActionConcern
 
   def bulk_delete

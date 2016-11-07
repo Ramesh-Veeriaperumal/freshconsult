@@ -1,6 +1,6 @@
 module Ember
   class TicketsController < ::TicketsController
-    include DeleteSpamConcern
+    include BulkActionConcern
     include TicketConcern
     include HelperConcern
     include SplitNoteHelper
@@ -139,13 +139,7 @@ module Ember
       end
 
       def fetch_objects(items = scoper)
-        @items = items.preload(preload_options).find_all_by_param(permissible_ticket_ids(params[cname][:ids]))
-      end
-
-      def preload_options
-        if ApiTicketConstants::REQUIRE_PRELOAD.include?(action_name.to_sym)
-          ApiTicketConstants::BULK_DELETE_PRELOAD_OPTIONS
-        end
+        @items = items.find_all_by_param(permissible_ticket_ids(params[cname][:ids]))
       end
 
       def execute_bulk_update_action(items)

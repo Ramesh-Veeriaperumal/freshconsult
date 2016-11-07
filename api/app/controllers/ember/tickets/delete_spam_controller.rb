@@ -2,7 +2,7 @@ module Ember
   module Tickets
     class DeleteSpamController < ApiApplicationController
       include TicketConcern
-      include BulkActionConcern
+      include DeleteSpamConcern
       include Redis::RedisKeys
 
       def empty_trash
@@ -42,7 +42,22 @@ module Ember
         end
 
         def fetch_objects(items = scoper)
-          @items = items.find_all_by_param(permissible_ticket_ids(params[cname][:ids]))
+          @items = items.preload(preload_options).find_all_by_param(permissible_ticket_ids(params[cname][:ids]))
+        end
+
+        def preload_options
+          if ApiTicketConstants::REQUIRE_PRELOAD.include?(action_name.to_sym)
+            ApiTicketConstants::BULK_DELETE_PRELOAD_OPTIONS
+          end
+        end
+
+        def load_object
+          @item = scoper.find_by_display_id(params[:id])
+          log_and_render_404 unless @item
+        end
+
+        def after_load_object
+          verify_ticket_state_and_permission
         end
 
         def clear_all(spam = false)
@@ -71,34 +86,6 @@ module Ember
 
         def empty_spam_key
           EMPTY_SPAM_TICKETS % { account_id: current_account.id }
-        end
-
-        def bulk_action_errors
-          @bulk_action_errors ||=
-            params[cname][:ids].inject([]) do |a, e|
-              error_hash = retrieve_error_code(e)
-              error_hash.any? ? a << error_hash : a
-            end
-        end
-
-        def retrieve_error_code(id)
-          ret_hash = { id: id, errors: {}, error_options: {} }
-          if bulk_action_failed_items.include?(id)
-            ret_hash[:errors][:id] = :unable_to_perform
-          elsif !bulk_action_succeeded_items.include?(id)
-            ret_hash[:errors][:id] = :"is invalid"
-          else
-            return {}
-          end
-          ret_hash
-        end
-
-        def bulk_action_succeeded_items
-          @succeeded_ids ||= @items.map(&:display_id) - bulk_action_failed_items
-        end
-
-        def bulk_action_failed_items
-          @failed_ids ||= (@items_failed || []).map(&:display_id)
         end
     end
   end

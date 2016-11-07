@@ -150,12 +150,12 @@ Helpkit::Application.routes.draw do
   ember_routes = proc do
     resources :ticket_fields, controller: 'ember/ticket_fields', only: [:index, :update]
     resources :bootstrap, controller: 'ember/bootstrap', only: :index
-    resources :tickets, controller: 'ember/tickets', only: [:index, :destroy, :create] do
+    resources :tickets, controller: 'ember/tickets', only: [:index, :create] do
       collection do
-        put :bulk_delete
-        put :bulk_spam
-        put :bulk_restore
-        put :bulk_unspam
+        put :bulk_delete, to: 'ember/tickets/delete_spam#bulk_delete'
+        put :bulk_spam, to: 'ember/tickets/delete_spam#bulk_spam'
+        put :bulk_restore, to: 'ember/tickets/delete_spam#bulk_restore'
+        put :bulk_unspam, to: 'ember/tickets/delete_spam#bulk_unspam'
         put :bulk_update
         put :bulk_execute_scenario
         put :merge, to: 'ember/tickets/merge#merge'
@@ -167,9 +167,10 @@ Helpkit::Application.routes.draw do
         put :bulk_unwatch, to: 'ember/subscriptions#bulk_unwatch'
       end
       member do
-        put :spam
-        put :restore
-        put :unspam
+        delete :destroy, to: 'ember/tickets/delete_spam#destroy'
+        put :spam, to: 'ember/tickets/delete_spam#spam'
+        put :restore, to: 'ember/tickets/delete_spam#restore'
+        put :unspam, to: 'ember/tickets/delete_spam#unspam'
         put :execute_scenario
         post :notes, to: 'ember/conversations#create'
         post :reply, to: 'ember/conversations#reply'
