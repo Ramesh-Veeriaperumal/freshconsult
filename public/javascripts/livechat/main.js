@@ -206,9 +206,9 @@
  		//Time Period 
  		var timePeriod = $filterForm.find("#date_range").val();
  		if(timePeriod){
- 			var accountTimeZoneOffsetInMin = parseInt(jQuery('#livechat_archive_page').attr("data-time-zone-offset"));
-	 		var currentTimeZoneOffetInMin = new Date().getTimezoneOffset();
-	 		var newOffsetInMin = accountTimeZoneOffsetInMin + currentTimeZoneOffetInMin;
+ 			// var accountTimeZoneOffsetInMin = parseInt(jQuery('#livechat_archive_page').attr("data-time-zone-offset"));
+	 		// var currentTimeZoneOffetInMin = new Date().getTimezoneOffset();
+	 		// var newOffsetInMin = accountTimeZoneOffsetInMin + currentTimeZoneOffetInMin;
 			filterName.timePeriod = timePeriod;
 			var fromDate = timePeriod.split('-')[0];
 			var	toDate;
@@ -229,9 +229,12 @@
 			var actualFrm = frm.getDate() + ' '+ actualFromMonth + ', ' + frm.getFullYear();
 			var actualTo = to.getDate() + ' '+ actualToMonth + ', ' + to.getFullYear(); 
 			filterVal.actualRange = filterVal.isOneDayFilter ? actualFrm : actualFrm + ' - ' + actualTo;
-			
-			filterVal.frm = new Date(frm.setMinutes(frm.getMinutes() + newOffsetInMin));
-			filterVal.to = new Date(to.setMinutes(to.getMinutes() + newOffsetInMin));
+			filterVal.frm = frm.toUTCString();
+			filterVal.to = to.toUTCString(); 
+			// var newFrom = new Date();
+			// var newTo = new Date();
+			// filterVal.frm = newFrom.setTime(frm.getTime() + (newOffsetInMin * 60 * 1000));
+			// filterVal.to = newTo.setTime(to.getTime() + (newOffsetInMin * 60 * 1000));
  		}
 
  		//Agent 
