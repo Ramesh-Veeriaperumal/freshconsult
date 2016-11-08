@@ -1608,6 +1608,10 @@ es-LA:
         feedbackwidget_use_https: "Usar https"
         feedbackwidget_mobile_view: "Habilitar vista para dispositivos móviles"
         feedbackwidget_use_captcha: "Habilitar CAPTCHA"
+        feedbackwidget_submit_title: "Enviar comentarios"
+        feedbackwidget_form_submit_title: "Desde botón de ingresar"
+        feedbackwidget_title_maxlength: "Máximo 30 caracteres"
+        feedbackwidget_submit_title_maxlength: "Máximo 16 caracteres"
       embedded_widget:
         feedbackwidget_height_placeholder: 500
         feedbackwidget_form_customization: "Personalizar formulario"
@@ -1625,6 +1629,10 @@ es-LA:
         feedbackwidget_search_area: "Buscar artículos"
         feedbackwidget_use_https: "Usar https"
         feedbackwidget_use_captcha: "Habilitar CAPTCHA"
+        feedbackwidget_submit_title: "Enviar comentarios"
+        feedbackwidget_form_submit_title: "Desde botón de ingresar"
+        feedbackwidget_title_maxlength: "Máximo 16 caracteres"
+        feedbackwidget_submit_title_maxlength: "Máximo 16 caracteres"
     supervisor_rules:
       new_info_help: "Para <b>cada ticket</b> actualizado dentro de los 30 días, se ejecutan todas las reglas coincidentes."
       index:
@@ -5075,6 +5083,7 @@ es-LA:
     note_saved: "Nota guardada"
     edit_note: "<b>Editar Nota </b>"
     thanks: "Gracias por enviar tus comentarios."
+    thanks_v1: "gracias por sus comentarios"
     portal_created_on: "Creado por <span class='emphasize'>%{username}</span> el <span class='emphasize'>%{date}</span>"
     portal_created_on_same_user: "Creado el <span class='emphasize'>%{date}</span>"
     fb_portal_created_on: "Creado por <span class='emphasize'>%{username}</span><span class='emphasize'>%{date}</span>"
@@ -5267,6 +5276,9 @@ es-LA:
     note_content: "Contenido de la nota"
     private_note_alert: "Para enviar una respuesta privada, usa el comando de correo electrónico que aparece a continuación en el cuerpo de tu mensaje."
     ticket_url: "URL del ticket"
+    submit_feedback: "Enviar comentarios"
+    search_text: "Buscar artículos"
+    search_close_text: "Cerrar búsqueda"
     integrations:
       jira:
         tooltip: "Ver el problema de JIRA asociado"
@@ -7280,6 +7292,7 @@ es-LA:
         feedback_widgets_search_our: "Buscar nuestro "
         feedback_widgets_knowledge_base: "Preguntas Frecuentes"
         feedback_widgets_help_articles: "o examinar artículos de ayuda"
+        feedback_widgets_help_articles_v1: "o examinar artículos de ayuda"
         show_all_results: "Mostrar todos los resultados"
         no_results: "Sin resultados para "
   reorder: Reordenar
