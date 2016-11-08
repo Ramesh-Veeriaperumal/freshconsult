@@ -477,6 +477,9 @@ function getPdfParams() {
     if(cmp != null) {
       var val = cmp.id;
       var text = cmp.value || cmp.text;
+      if(condition === 'business_hours'){
+        val = cmp.business_hour_call;
+      }
       if(val != "") {
         var opt = {
             name : condition,

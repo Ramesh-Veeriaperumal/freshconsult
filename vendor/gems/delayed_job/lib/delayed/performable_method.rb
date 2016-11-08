@@ -39,9 +39,10 @@ module Delayed
         load(object).send(method, *args.map{|a| load(a)})
         # $statsd.increment "email_counter.#{account_id}"
       end
-      #rescue ActiveRecord::RecordNotFound
-           # We cannot do anything about objects which were deleted in the meantime
       true
+    rescue ShardNotFound => e
+        Rails.logger.info("Shard not found. #{e.inspect} Account : #{account_id}")
+        false
     end
 
     private

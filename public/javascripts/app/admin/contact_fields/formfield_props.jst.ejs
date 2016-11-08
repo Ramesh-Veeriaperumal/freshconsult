@@ -191,7 +191,7 @@
 					<div class="pull-left">
 		                <input type="checkbox" name="multiple_companies" rel="toggle" >
 		            </div>
-		            <div class="span6">
+		            <div class="pull-left help_text_dialog">
 			              <label for="multiple_companies">
 			                  <h5 class="mini-lead floatl mb2 mr7">
 			                    	<%= translate.get('multiple_company_field_label') %>
@@ -212,7 +212,6 @@
        		 <% } %>
 		</form>
 	</div>
-	<span class="seperator"></span> 
 	<div class="alignright modal-footer">
 	 	<% if (field_type == 'custom_dropdown') { %>
 			<a class="add-choice" id="addchoice" href="#"> 

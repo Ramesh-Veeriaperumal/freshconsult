@@ -6,6 +6,32 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
                                   "private_note", "public_note", "agent_reply", "customer_reply"]
 	
   	NOTE_COUNT_METRICS = ["private_note", "public_note", "agent_reply", "customer_reply"]
+
+  COLUMN_TO_ATTRIBUTE_MAPPING = {
+    :boolean_tc01     =>    :skip_notification,
+    :text_tc01        =>    :header_info,
+    :int_tc01         =>    :st_survey_rating,
+    :datetime_tc01    =>    :survey_rating_updated_at,
+    :boolean_tc02     =>    :trashed,
+    :string_tc03      =>    :sender_email,
+    :string_tc01      =>    :access_token,
+    :int_tc02         =>    :escalation_level,
+    :long_tc01        =>    :sla_policy_id,
+    :boolean_tc03     =>    :manual_dueby,
+    :long_tc02        =>    :parent_ticket,
+    :text_tc02        =>    :reports_hash,
+    :boolean_tc04     =>    :sla_response_reminded,
+    :boolean_tc05     =>    :sla_resolution_reminded,
+    :text_tc03        =>    :dirty_attributes,
+    :long_tc03        =>    :internal_group_id,
+    :long_tc04        =>    :internal_agent_id,
+    :int_tc03         =>    :association_type,
+    :long_tc05        =>    :associates_rdb
+  }
+
+  COLUMN_TO_ATTRIBUTE_MAPPING.keys.each do |key|
+    alias_attribute(COLUMN_TO_ATTRIBUTE_MAPPING[key], key)
+  end
   
 	self.table_name =  "helpdesk_schema_less_tickets"
 	self.primary_key = :id
@@ -43,6 +69,8 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
 	alias_attribute :internal_agent_id, :long_tc04
 	alias_attribute :association_type, :int_tc03
 	alias_attribute :associates_rdb, :long_tc05
+
+	alias_attribute :sentiment, :int_tc03
 
 
 	# Attributes used in Freshservice

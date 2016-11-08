@@ -23,7 +23,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   before_update :reset_links, :if => :remove_associations?
 
-  before_create :assign_outbound_agent, :if => :outbound_email?
+  before_save  :assign_outbound_agent,  :if => :new_outbound_email?
 
   before_save  :update_ticket_related_changes, :update_company_id, :set_sla_policy
 
@@ -42,7 +42,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   before_save :update_dueby, :unless => :manual_sla?
 
-  after_create :refresh_display_id, :create_meta_note, :update_content_ids
+  after_create :refresh_display_id, :create_meta_note, :update_content_ids, :update_sentiment
 
   after_commit :create_initial_activity, :pass_thro_biz_rules, on: :create
   after_commit :send_outbound_email, :update_capping_on_create, on: :create, :if => :outbound_email?
@@ -133,11 +133,28 @@ class Helpdesk::Ticket < ActiveRecord::Base
     schema_less_ticket.save if schema_less_ticket.changed?
   end
 
-  def update_ticket_states 
+  def update_ticket_states
     process_agent_and_group_changes
     process_status_changes
     ticket_states.save if ticket_states.changed?
     schema_less_ticket.save
+  end
+
+  def update_sentiment 
+
+    if (self.account.customer_sentiment_enabled?) 
+      if (User.current == nil) || (User.current.language==nil) || (User.current.language=="en")
+        if self.source == 3 || self.source == 7
+          self.sentiment = 0
+          self.save
+        else
+          user_id = User.current.id if User.current
+          Tickets::UpdateSentimentWorker.perform_async(
+                { :id => id }
+          )
+        end
+      end
+    end
   end
   
   def process_agent_and_group_changes 
@@ -437,7 +454,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     unless @tracker_ticket && @tracker_ticket.tracker_ticket? && !@tracker_ticket.spam_or_deleted? && self.can_be_linked?
       errors.add(:base,t("ticket.link_tracker.permission_denied")) and return false
     end
-    if self.association_type && @tracker_ticket.associates.present? && links_limit_exceeded(@tracker_ticket.associates.count)
+    if self.association_type && @tracker_ticket.associates.present? && links_limit_exceeded(@tracker_ticket.associates.count + 1)
       errors.add(:base,t("ticket.link_tracker.count_exceeded",:count => TicketConstants::MAX_RELATED_TICKETS)) and return false
     end
     self.associates_rdb = related_ticket? ? @tracker_ticket.display_id : nil
@@ -467,7 +484,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
     @tracker_ticket.add_associates([self.display_id])
     create_tracker_activity(:tracker_link)
     self.associates = [ @tracker_ticket.display_id ]
-    ::Tickets::AddBroadcastNote.perform_async({ :ticket_id => @tracker_ticket.id, :related_ticket_ids => [self.display_id] })
   end
 
   def remove_links
@@ -475,11 +491,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
     self.remove_all_associates
     @tracker_ticket.remove_associates([self.display_id])
     create_tracker_activity(:tracker_unlink)
-    self.delete_broadcast_notes
   end
 
   def reset_links
-    ::Tickets::ResetAssociations.perform_async([self.id])
+    ::Tickets::ResetAssociations.perform_async({:ticket_ids=>[self.id]})
   end
 
   def remove_associations?
@@ -833,6 +848,10 @@ private
       tracker.misc_changes = {action => [self.display_id]}
       tracker.manual_publish_to_rmq("update", RabbitMq::Constants::RMQ_ACTIVITIES_TICKET_KEY)
     end
+  end
+
+  def new_outbound_email?
+    outbound_email? && new_record?
   end
 
 end

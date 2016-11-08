@@ -9,9 +9,9 @@ class SupportController < ApplicationController
   around_filter :run_on_slave , :only => [:index,:show],
     :if => proc {|controller| 
       path = controller.controller_path
-      path.include?("/solutions") || path.include?("/home")
+      path.include?("/solutions") || path.include?("/home") || path.include?("/topics")
     }
-  
+      
   include Redis::RedisKeys
   include Redis::PortalRedis
   include Portal::Helpers::SolutionsHelper

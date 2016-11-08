@@ -482,7 +482,7 @@ module Helpdesk::TicketsHelper
   end
 
   def latest_note_helper(ticket)    
-    latest_note_obj = ticket.notes.visible.exclude_source(['meta', 'tracker']).newest_first.first
+    latest_note_obj = ticket.notes.visible.exclude_source('meta').newest_first.first
     latest_note_hash = {}
     unless latest_note_obj.nil?
         action_msg = latest_note_obj.fwd_email? ? 'helpdesk.tickets.overlay_forward' : (latest_note_obj.note? ? 'helpdesk.tickets.overlay_note' : 'helpdesk.tickets.overlay_reply')

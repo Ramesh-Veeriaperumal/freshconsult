@@ -14,13 +14,15 @@ class ApiContactsQueriesTest < ActionDispatch::IntegrationTest
         api_index: 4,
         api_destroy: 6,
         api_make_agent: 6,
+        api_restore: 6,
 
         create: 36,
         update: 34,
         show: 15,
         index: 16,
-        destroy: 22,
-        make_agent: 50
+        destroy: 23,
+        make_agent: 50,
+        restore: 21 
       }
 
       # Assigning in prior so that query invoked as part of contruction of this payload will not be counted.
@@ -104,6 +106,32 @@ class ApiContactsQueriesTest < ActionDispatch::IntegrationTest
       id1 = User.where(helpdesk_agent: false, deleted: false, customer_id: nil).last(2).first.id
       id2 = User.where(helpdesk_agent: false, deleted: false, customer_id: nil).last.id
 
+
+      user1 = User.find_by_id(id1)
+      user1.deleted = true 
+      user1.save
+
+      v1[:restore] = count_queries do 
+        post("/contacts/restore.json", {:ids => [user1.id]}.to_json, @write_headers)
+        assert_response 200
+      end
+
+      user1.deleted = true 
+      user1.save
+
+      user1 = User.find_by_id(id1)      
+      user1.deleted = true 
+      user1.save
+
+      v2[:restore], v2[:api_restore], v2[:restore_queries] = count_api_queries do
+        put("/api/v2/contacts/#{user1.id}/restore", {}.to_json, @write_headers)
+        assert_response 204
+      end
+
+      user1.deleted = false 
+      user1.save
+
+
       # make_agent
       v1[:make_agent] = count_queries do
         put("/contacts/#{id2}/make_agent.json", {}.to_json, @write_headers)
@@ -116,8 +144,9 @@ class ApiContactsQueriesTest < ActionDispatch::IntegrationTest
 
       v1[:make_agent] += 2 # trusted_ip
 
-      write_to_file(v1, v2)
+      
 
+      write_to_file(v1, v2)
       v1.keys.each do |key|
         api_key = "api_#{key}".to_sym
         assert v2[key] <= v1[key]

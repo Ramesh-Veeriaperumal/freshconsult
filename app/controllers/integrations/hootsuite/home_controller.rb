@@ -151,7 +151,6 @@ class Integrations::Hootsuite::HomeController < Integrations::Hootsuite::Hootsui
   def filter_tickets_v2
     @tickets = []
     return unless params[:active].present?
-
     page_size   = 30
     page_offset = page_size * ((params[:page].presence || 1).to_i - 1)
 		@tickets = Search::V2::QueryHandler.new({

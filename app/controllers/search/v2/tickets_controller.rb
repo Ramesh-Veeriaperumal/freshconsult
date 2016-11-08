@@ -55,20 +55,24 @@ class Search::V2::TicketsController < ApplicationController
     #
     def search_users
       begin
-        user_params = Hash.new.tap do |es_params|
-          es_params[:account_id]      = current_account.id
-          es_params[:search_term]     = @es_search_term
-          es_params[:request_id]      = request.uuid
-          es_params[:sort_by]         = '_score'
-          es_params[:sort_direction]  = 'desc'
-        end
+        if params[:reqid].present?
+          @requester_ids = params[:reqid].to_a
+        else
+          user_params = Hash.new.tap do |es_params|
+           es_params[:account_id]      = current_account.id
+           es_params[:search_term]     = @es_search_term
+           es_params[:request_id]      = request.uuid
+           es_params[:sort_by]         = '_score'
+           es_params[:sort_direction]  = 'desc'
+          end
 
-        es_results  = Search::V2::SearchRequestHandler.new(current_account.id,
+          es_results  = Search::V2::SearchRequestHandler.new(current_account.id,
                                                                 Search::Utils.template_context(:requester_autocomplete, @exact_match),
                                                                 ['user']
                                                               ).fetch(user_params.merge(ES_V2_BOOST_VALUES[:requester_autocomplete])
                                                                 )
-        @requester_ids  = es_results['hits']['hits'].collect { |doc| doc['_id'].to_i }
+          @requester_ids  = es_results['hits']['hits'].collect { |doc| doc['_id'].to_i }
+        end
       rescue Exception => e
         Rails.logger.error "Searchv2 exception - #{e.message} - #{e.backtrace.first}"
         NewRelic::Agent.notice_error(e)

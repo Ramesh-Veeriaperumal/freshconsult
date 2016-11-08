@@ -136,7 +136,7 @@ class User < ActiveRecord::Base
                   :description, :time_zone, :customer_id, :avatar_attributes, :company_id,
                   :company_name, :tag_names, :import_id, :deleted, :fb_profile_id, :language,
                   :address, :client_manager, :helpdesk_agent, :role_ids, :parent_id, :string_uc04,
-                  :contractor
+                  :contractor, :unique_external_id
 
   def time_zone
     tz = self.read_attribute(:time_zone)

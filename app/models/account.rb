@@ -142,6 +142,11 @@ class Account < ActiveRecord::Base
     features?(:custom_survey)
   end
 
+  def customer_sentiment_enabled?
+    Rails.logger.info "customer_sentiment : #{launched?(:customer_sentiment)}"
+    launched?(:customer_sentiment)
+  end
+
   def freshfone_enabled?
     features?(:freshfone) and freshfone_account.present?
   end
@@ -210,6 +215,10 @@ class Account < ActiveRecord::Base
 
   def round_robin_capping_enabled?
     launched?(:round_robin_capping) #features?(:round_robin_load_balancing)
+  end
+
+  def gnip_2_0_enabled?
+    launched?(:gnip_2_0)
   end
 
   def validate_required_ticket_fields?

@@ -2,7 +2,8 @@ module Social::Constants
   
   SOURCE = {
       :twitter  => "Twitter",
-      :facebook => "Facebook"
+      :facebook => "Facebook",
+      :gnip_2_0 => "Gnip_2_0"
     }
 
   GNIP_RULE_STATES = [

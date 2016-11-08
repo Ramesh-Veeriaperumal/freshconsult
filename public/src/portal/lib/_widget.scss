@@ -355,14 +355,14 @@ body,
         color: #fff;
         font-weight: 500;
         border-radius: 3px;
-        width: 100%;
+        /*width: 100%;*/
         border-width: 0 0px 3px;
         border-color: #364F4B;
         background-image: none;
         letter-spacing: 1px;
         font-family: 'Source Sans Pro', sans-serif;
         font-size: 14px;
-        height: 32px;
+        /*height: 32px;*/
         &:hover {
           margin-top: 6px;
           border-bottom-width: 2px;
@@ -564,13 +564,9 @@ body,
       position: absolute;
       background: #999;
       height: 3px;
-      width: 106px;
       top: 92%;
       @include transition(transform .2s ease-in);
       @include transform(translateX(0px));
-      &.embedded-highlight-move{
-        @include transform(translateX(127%));
-      }
       &.embedded-hightlight-count{
         width: 134px;
         @include left(-35px)

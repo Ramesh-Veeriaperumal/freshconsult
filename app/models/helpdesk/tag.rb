@@ -5,9 +5,9 @@ class Helpdesk::Tag < ActiveRecord::Base
   include Cache::Memcache::Helpdesk::Tag
   include Search::ElasticSearchIndex
 
-  after_commit :clear_cache
-  after_commit :update_taggables, on: :update
-  after_commit :remove_taguses, on: :destroy
+  after_commit  :clear_cache
+  after_commit  :update_taggables, on: :update
+  after_commit  :remove_taguses, on: :destroy
   
   # Callbacks will be executed in the order in which they have been included. 
   # Included rabbitmq callbacks at the last
@@ -125,13 +125,15 @@ class Helpdesk::Tag < ActiveRecord::Base
     existing_tags = self.where(name: tags_to_be_added).all
     tag_list.push(*existing_tags) # Pushing to the array so that when .any? called is made, it wont trigger (converting AR relation to array)
     
-    tags_to_be_added.each do |new_tag|
-      next if tag_list.any? { |tag_in_db| tag_in_db.name.casecmp(new_tag) == 0 }
-      missing_tags << new_tag
+    if User.current.privilege?(:create_tags)
+      tags_to_be_added.each do |new_tag|
+        next if tag_list.any? { |tag_in_db| tag_in_db.name.casecmp(new_tag) == 0 }
+        missing_tags << new_tag
+      end
+      missing_tags.each { |tag_name| tag_list.push(self.create(name: tag_name))}
     end
-    missing_tags.each { |tag_name| tag_list.push(self.create(name: tag_name)) }
-
-    tag_list
+    
+    tag_list.compact
   end
 
   def to_indexed_json

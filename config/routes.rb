@@ -204,6 +204,10 @@ Helpkit::Application.routes.draw do
     match '/search/related_solutions/ticket/:ticket', to: 'search/v2/solutions#related_solutions',  via: :get, constraints: { format: /(html|js)/ }
     match '/search/search_solutions/ticket/:ticket',  to: 'search/v2/solutions#search_solutions',   via: :get, constraints: { format: /(html|js)/ }
     match '/search/tickets/filter/:search_field',     to: 'search/v2/tickets#index',                via: :post
+    
+    # Linked ticket routes
+    match '/search/ticket_associations/filter/:search_field', to: 'search/v2/ticket_associations#index'
+    match '/search/ticket_associations/recent_trackers',      to: 'search/v2/ticket_associations#recent_trackers', via: :post
 
     match '/support/search',                   to: 'support/search_v2/spotlight#all',               via: :get
     match '/support/search/tickets',           to: 'support/search_v2/spotlight#tickets',           via: :get
@@ -1474,6 +1478,8 @@ Helpkit::Application.routes.draw do
           end
         end
       end
+      
+      resources :ticket_associations, :only => [:index, :recent_trackers]
     end
 
     resources :home, :only => :index do
@@ -1816,6 +1822,7 @@ Helpkit::Application.routes.draw do
         post :custom_search
         post :export_csv
         post :latest_ticket_count
+        post :sentiment_feedback
         match :add_requester
         get :filter_options
         get :filter_conditions
@@ -3011,9 +3018,11 @@ Helpkit::Application.routes.draw do
       put  :toggle
       put  :update_site
       put  :trigger
+      get  :export
     end
   end
   match '/livechat/visitor/:type', :controller => 'chats', :action => 'visitor', :method => :get
+  match '/livechat/downloadexport/:token', :controller => 'chats', :action => 'download_export', :method => :get
   match '/livechat/*letter', :controller => 'chats', :action => 'index', :method => :get
 
   use_doorkeeper do

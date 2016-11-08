@@ -124,7 +124,7 @@ class DataExportMailer < ActionMailer::Base
       :sent_on                    => Time.now
     }
 
-    headers.merge!(make_header(options[:ticket].display_id, options[:note].id, options[:ticket].account_id, "Broadcast Message"))
+    headers.merge!(make_header(options[:ticket_id], nil, options[:account_id], "Broadcast Message"))
     @url = options[:url]
     @subject = options[:ticket_subject]
     @content = options[:content]

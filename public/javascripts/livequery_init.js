@@ -2,6 +2,16 @@
 'use strict';
 
 $(document).ready(function() {
+
+$(".alert").livequery(
+	function(ev) {
+  		var flash = $(this).not('[rel=permanent]');
+  		if(flash.get(0)) {
+         	try{ closeableFlash(flash); } catch(e){}
+      	}
+	}
+)
+
 //Added for social tweet links
 $(".autolink").livequery(function(ev){
   $(this).autoLink();
@@ -521,42 +531,50 @@ $('.btn-collapse').livequery(
 	$('[rel=remote-tag]').livequery(function() {
 		var hash_val = []
 		var _this = $(this);
-		_this.val().split(",").each(function(item, i){ hash_val.push({ id: item, text: item }); });
-		_this.select2({
+		var select_init_data = {
 			multiple: true,
+			minimumInputLength: 1,
 			maximumInputLength: 32,
 			data: hash_val,
 			quietMillis: 500,
 			ajax: { 
-        url: '/search/autocomplete/tags',
-        dataType: 'json',
-        data: function (term) {
-            return { q: term };
-        },
-        results: function (data) {
-          var results = [];
-          jQuery.each(data.results, function(i, item){
-          	var result = escapeHtml(item.value);
-            results.push({ id: result, text: result });
-          });
-          return { results: results }
-        }
+			        url: '/search/autocomplete/tags',
+			        dataType: 'json',
+			        data: function (term) {
+			            return { q: term };
+			        },
+			        results: function (data) {
+			          var results = [];
+			          jQuery.each(data.results, function(i, item){
+			          	var result = escapeHtml(item.value);
+			            results.push({ id: result, text: result });
+			          });
+			          return { results: results }
+			        }
 			},
 			initSelection : function (element, callback) {
 			  callback(hash_val);
 			},
-		    formatInputTooLong: function () { 
-      	return MAX_TAG_LENGTH_MSG; },
-		  createSearchChoice:function(term, data) { 
-		  	//Check if not already existing & then return
-        if ($(data).filter(function() { return this.text.localeCompare(term)===0; }).length===0)
-	        return { id: term, text: term };
-		    }
-				});
-		}, function(){
-			$(this).select2('destroy');
-		});
+			formatInputTooShort : function (input, min) { 
+      				return I18n.t('validation.select2_minimum_limit', {char_count : min - input.length});
+      			},
+		    	formatInputTooLong: function () { 
+      				return MAX_TAG_LENGTH_MSG; 
+      			}
+		};
 
+		if(_this.data('allowCreate') != false){
+			select_init_data.createSearchChoice = function(term, data) { 
+		  	//Check if not already existing & then return
+			        if ($(data).filter(function() { return this.text.localeCompare(term)===0; }).length===0)
+				        return { id: term, text: term };
+			};
+		}
+		_this.val().split(",").each(function(item, i){ hash_val.push({ id: item, text: item }); });
+		_this.select2(select_init_data);
+	}, function(){
+		$(this).select2('destroy');
+	});
 });
 
 })(jQuery);
