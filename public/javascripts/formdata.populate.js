@@ -166,9 +166,15 @@ var PopulateFormData = PopulateFormData ||  (function(){
             jQuery('#div_ff_created_date_range').hide();
             jQuery('#created_date_range').val('');
           }
-          var datePicker = jQuery("#created_date_range").data('bootstrapdaterangepicker');
-          datePicker.setStartDate(dateRange[0]);
-          datePicker.setEndDate(dateRange[1]);
+          try{
+            var datePicker = jQuery("#created_date_range").data('bootstrapdaterangepicker');
+            datePicker.setStartDate(dateRange[0]);
+            datePicker.setEndDate(dateRange[1]);
+          }
+          catch(e){
+            console.log(e)
+          }
+          
           break;
         case 'requester':
         case 'customers':
