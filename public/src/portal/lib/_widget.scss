@@ -567,10 +567,6 @@ body,
       top: 92%;
       @include transition(transform .2s ease-in);
       @include transform(translateX(0px));
-      &.embedded-hightlight-count{
-        width: 134px;
-        @include left(-35px)
-      }
     }
   }
   #feedback-suggest {

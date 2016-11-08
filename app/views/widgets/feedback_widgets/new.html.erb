@@ -178,11 +178,11 @@
 
 		var suggestResponse = function(data, term){
       var searchInputFrom = jQuery("#searchInputFrom").val();
-
+      var formTitleWidth = jQuery('.form-title').width(), searchTextWidth= jQuery('.search-text').width(),searchTextPadding = formTitleWidth + 30;
       jQuery("#mobile-counter").removeClass("mobile-counter").text("")
       jQuery("#subject-mobile-counter").removeClass("subject-mobile-counter").text("");
       jQuery("#search-count").removeClass("search-count").text("");
-    
+      
         if(data.item.length > 0){
           if(data.count < 100){
             jQuery("#mobile-counter,#search-count").text(data.count)
@@ -195,14 +195,14 @@
           jQuery("#mobile-counter").addClass("mobile-counter");
           jQuery("#search-count").addClass("search-count");
           jQuery("#subject-mobile-counter").addClass("subject-mobile-counter");
-        jQuery("#ws-results")
-          .html(jQuery.tmpl(jQuery("#ws-tmpl").template(), data.item));
+          jQuery("#ws-results")
+            .html(jQuery.tmpl(jQuery("#ws-tmpl").template(), data.item));
 
           if(data.item.length>=5){
             jQuery("#ws-results").append("<li class='show_all_results'><a href='/support/search/solutions?term="+term+"' target='_blank'><div><%= t('widgets.feedback_widgets.new.show_all_results') %></div></a></li>")
           }
           if(jQuery('.embedded-hightlight').hasClass('embedded-highlight-move')){
-            jQuery('.embedded-hightlight').addClass('embedded-hightlight-count')
+            jQuery('.embedded-hightlight').addClass('embedded-highlight-move').css({'width':+(searchTextWidth + jQuery('#search-count').outerWidth())+'px'});
           }
           
         jQuery("#panel-content").show()
@@ -213,13 +213,10 @@
         }else if(searchInputFrom == "Subject") {
           jQuery("#panel-info").show();
           jQuery("#fs-input").val("");
-           jQuery('.embedded-hightlight').removeClass('embedded-hightlight-count')
         }
         else {
           jQuery("#ws-results").html("<div class='no-result ellipsis'><%= t('widgets.feedback_widgets.new.no_results') %>" + escapeHtml(term)+"</div>")
           jQuery("#panel-content").show();
-           jQuery('.embedded-hightlight').removeClass('embedded-hightlight-count')
-          
         }
 
         jQuery("#fs-input").removeClass("loading-right");
@@ -268,7 +265,6 @@
           suggestDelay = setTimeout(function() {
             suggestForSubject = false
             searchKnowledgeBase($this.val());
-  
           }, 500)
   
           if(ev.keyCode == 13){
@@ -297,7 +293,7 @@
           jQuery('.embedded-wrapper .search-text').addClass('active');
           jQuery('.embedded-wrapper .form-title').removeClass('active');
           jQuery('#feedback-suggest').removeClass('show-suggest');
-          jQuery('.embedded-hightlight').css({'width':(formTitleWidth+'px'),'transform':'translateX(0px)'}).removeClass('embedded-highlight-move embedded-hightlight-count');
+          jQuery('.embedded-hightlight').css({'width':(formTitleWidth+'px'),'transform':'translateX(0px)'}).removeClass('embedded-highlight-move');
           jQuery('#helpdesk_ticket_submit').show();
         }else{
         	jQuery('#helpdesk_ticket_submit').hide();
@@ -305,9 +301,10 @@
           jQuery('#feedback-suggest').addClass('feedback-suggest-show');
           jQuery('.embedded-wrapper .form-title').addClass('active');
           jQuery('.embedded-wrapper .search-text').removeClass('active');
-          jQuery('.embedded-hightlight').addClass('embedded-highlight-move').css({'width':+searchTextWidth+'px','transform':'translateX('+ searchTextPadding+'px)'});
           if(jQuery('.search-count').text()!=''){
-            jQuery('.embedded-hightlight').addClass('embedded-hightlight-count')
+            jQuery('.embedded-hightlight').addClass('embedded-highlight-move').css({'width':+(searchTextWidth + jQuery('#search-count').outerWidth())+'px','transform':'translateX('+ searchTextPadding +'px)'});
+          }else{
+            jQuery('.embedded-hightlight').addClass('embedded-highlight-move').css({'width':+searchTextWidth+'px','transform':'translateX('+ searchTextPadding+'px)'});
           }
           setTimeout(function(){
             jQuery('#feedback-suggest').addClass('show-suggest');
@@ -333,7 +330,11 @@
           jQuery("#mobile-counter").removeClass("mobile-counter").text("")
           jQuery("#subject-mobile-counter").removeClass("subject-mobile-counter").text("");
           jQuery('#search-count').removeClass("search-count").text("");
-          jQuery('.embedded-hightlight').removeClass('embedded-hightlight-count');
+          if(jQuery('.embedded-hightlight').hasClass('embedded-highlight-move')){
+            jQuery('.embedded-hightlight').css({'width':+ jQuery('.search-text').width() +'px'});
+          }else{
+            jQuery('.embedded-hightlight').css({'width':+ jQuery('.form-title').width() +'px'});
+          }
         }
       }
       jQuery('.search-panel').on('click', function(e) {
