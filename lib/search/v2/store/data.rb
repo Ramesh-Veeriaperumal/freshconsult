@@ -14,11 +14,28 @@ module Search
 
         # Get tenant info from cache/data store
         def tenant_info(tenant_id)
-          get_item(
+          unless Rails.env.development?
+            get_item(
             TENANT_TABLE,
             Cache::TENANT_INFO % { tenant_id: tenant_id },
             ({ tenant_id: tenant_id })
           )
+          else
+            {
+              "ticket"=>"tickets_p1s1v1",
+              "note"=>"notes_p1s1v1",
+              "user"=>"users_p1s1v1",
+              "topic"=>"topics_p1s1v1",
+              "post"=>"posts_p1s1v1",
+              "article"=>"articles_p1s1v1",
+              "company"=>"companies_p1s1v1",
+              "tag"=>"tags_p1s1v1",
+              "archiveticket"=>"archivetickets_p1s1v1",
+              "archivenote"=>"archivenotes_p1s1v1",
+              'tenant_id'=> 1,
+              'home_cluster'=>'cluster1'
+            }
+          end
         end
 
         # Store the tenant config in data store
