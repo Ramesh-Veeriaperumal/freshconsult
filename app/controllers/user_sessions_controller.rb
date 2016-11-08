@@ -73,7 +73,7 @@ include Mobile::Actions::Push_Notifier
       else
         @current_user.name =  params[:name]
         @current_user.phone = params[:phone] unless params[:phone].blank?
-        @current_user.company_name = params[:company] if params[:company].present?
+        assign_company if params[:company].present?
         @current_user.active = true
         saved = @current_user.save
       end
@@ -312,5 +312,15 @@ include Mobile::Actions::Push_Notifier
       @contact.helpdesk_agent = false
       @contact.language = current_portal.language
       return @contact
+    end
+
+    def assign_company
+      if current_account.features?(:multiple_user_companies)
+        comp = current_account.companies.find_or_create_by_name(params[:company])
+        @current_user.user_companies.build(:company_id => comp.id) if 
+          @current_user.user_companies.find_by_company_id(comp.id).blank?
+      else
+        @current_user.company_name = params[:company]
+      end
     end
 end
