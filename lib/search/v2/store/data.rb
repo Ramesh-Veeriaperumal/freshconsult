@@ -21,20 +21,12 @@ module Search
             ({ tenant_id: tenant_id })
           )
           else
-            {
-              "ticket"=>"tickets_p1s1v1",
-              "note"=>"notes_p1s1v1",
-              "user"=>"users_p1s1v1",
-              "topic"=>"topics_p1s1v1",
-              "post"=>"posts_p1s1v1",
-              "article"=>"articles_p1s1v1",
-              "company"=>"companies_p1s1v1",
-              "tag"=>"tags_p1s1v1",
-              "archiveticket"=>"archivetickets_p1s1v1",
-              "archivenote"=>"archivenotes_p1s1v1",
-              'tenant_id'=> 1,
-              'home_cluster'=>'cluster1'
-            }
+             ES_V2_SUPPORTED_TYPES.inject({}) do |type_hash, (type, params)|
+              type_hash[type] = (params[:alias_prefix] % { alias_suffix: 'p1s1v1' }); type_hash
+            end.merge(
+              'tenant_id'     => tenant_id,
+              'home_cluster'  => 'cluster1'
+            )
           end
         end
 
