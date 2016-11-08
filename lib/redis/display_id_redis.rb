@@ -15,4 +15,13 @@ module Redis::DisplayIdRedis
   def increment_display_id_redis_key key, value = 1
     $redis_display_id.perform_redis_op("INCRBY", key, value)
   end
+
+  def remove_display_id_redis_key key
+    $redis_display_id.perform_redis_op("del", key)
+  end
+
+  def display_id_redis_key_exists? key
+    $redis_display_id.perform_redis_op("exists", key)
+  end
+
 end
