@@ -2,11 +2,11 @@ module Search
 	class TermVisitor < Search::V2::Parser::NodeVisitor
 		include SearchHelper
 
-		attr_accessor :column_names, :parser
+		attr_accessor :column_names, :resource
 
-		def initialize(column_names, parser)
+		def initialize(column_names, resource)
 			@column_names = column_names
-			@parser = parser
+			@resource = resource
 		end
 
 		def visit_operator(node)
@@ -28,7 +28,7 @@ module Search
 		end
 
 		def visit_operand(node)
-			if ApiSearchConstants::PRE_FETCH.keys.include?(node.key)
+			if ApiSearchConstants::PRE_FETCH[@resource] && ApiSearchConstants::PRE_FETCH[@resource].keys.include?(node.key)
 				search_term = { terms: { construct_key(node) => [node.value] } }
 				contact_ids = ids_from_esv2_response(query_es(search_term, :contacts))
 				value = contact_ids.any? ? contact_ids[0] : 0

@@ -61,6 +61,8 @@ Helpkit::Application.routes.draw do
     resources :search, controller: 'api_search' do
       collection do
         get :tickets
+        get :contacts
+        get :companies
       end
     end
 

@@ -376,7 +376,10 @@ Authority::Authorization::PrivilegeList.build do
     resource :"api_contact", :only => [:create, :update]
     resource :"api_company", :only => [:create, :update]
 
-    # This privilege should only be used for API. This should have only read permission.
+    # Used by API V2 Search
+    resource :"api_search", :only => [:contacts, :companies]
+
+    # This privilege should only be used for API. This should have only read permission. 
     # Agent who has access to contact/company create will obviously know the custom field names.
     # So access to read the list of custom fields for an account through API should also be given at the same level of privilege as contact/company create.
     resource :api_contact_field, :only => [:index]

@@ -18,7 +18,7 @@ module SearchHelper
     params[:search_conditions][key] = value unless value.blank?
   end
 
-  # API Search controller
+  # API Search helpers
   def ids_from_esv2_response(json)
     result = ActionController::Parameters.new(JSON.parse json)
     if result[:hits] && result[:hits][:hits] && result[:hits][:hits].any?
@@ -60,6 +60,8 @@ module SearchHelper
       url = "http://localhost:9200/tickets_p1s1v1/_search"
     elsif resource == :contacts
       url = "http://localhost:9200/users_p1s1v1/_search"
+    elsif resource == :companies
+      url = "http://localhost:9200/companies_p1s1v1/_search"
     end
     search_query = { _source: 'false', query: { bool: { filter: [ terms ] } } }
     begin

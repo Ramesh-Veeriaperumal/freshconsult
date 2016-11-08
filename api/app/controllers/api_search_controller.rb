@@ -1,10 +1,17 @@
 class ApiSearchController < ApiApplicationController
   include SearchHelper
 
-  before_filter :validate_url_params, only: [:tickets]
+  actions = [:tickets, :contacts, :companies]
 
-  def tickets
-    @query = params[:query]
+  before_filter :validate_url_params, only: actions
+
+  actions.each do |method_name|
+    define_method(method_name) do
+      search(method_name.to_s.singularize)
+    end
+  end
+
+  def search(resource)
     tree = parser.expression_tree
     record = ActionController::Parameters.new
     tree.each do |node|
@@ -14,18 +21,18 @@ class ApiSearchController < ApiApplicationController
       end
     end
 
-    sanitize_custom_fields(record) if custom_fields.any?
+    sanitize_custom_fields(record, resource) if custom_fields(resource).any?
 
-    ticket_validation = Search::TicketValidation.new(record.merge({ticket_fields: ticket_fields}))
+    validation = "Search::#{resource.capitalize}Validation".constantize.new(record.merge({"#{resource}_fields".to_sym => allowed_fields(resource)}))
     
-    if ticket_validation.valid?
-      search_terms = tree.accept(visitor)
-      ticket_ids = ids_from_esv2_response(query_es(search_terms, :tickets))
+    if validation.valid?
+      search_terms = tree.accept(visitor(resource))
+      ids = ids_from_esv2_response(query_es(search_terms, resource.pluralize.to_sym))
 
-      @items = ticket_ids.any? ? paginate_items(ticket_scoper.where(id: ticket_ids)) : []
-      @name_mapping = custom_fields
+      @items = ids.any? ? paginate_items(send("#{resource}_scoper").where(id: ids)) : []
+      @name_mapping = custom_fields(resource)
     else
-      render_custom_errors(ticket_validation, true)
+      render_custom_errors(validation, true)
     end
   end
 
@@ -41,31 +48,31 @@ class ApiSearchController < ApiApplicationController
       # Override base class method
     end
 
-    def sanitize_custom_fields(record)
-      record.permit(*ApiSearchConstants::TICKET_FIELDS | custom_fields.values)
-      
+    def sanitize_custom_fields(record, resource)
+      record.permit(*"ApiSearchConstants::#{resource.upcase}_FIELDS".constantize | custom_fields(resource).values)
+
       record[:custom_fields] = {}
-      custom_fields.each do |field_name, display_name|
+      custom_fields(resource).each do |field_name, display_name|
         if record.key?(display_name)
           record[:custom_fields][field_name] = record.delete(display_name)
         end
       end
     end
 
-    def visitor
-      @visitor ||= Search::TermVisitor.new(column_names, parser)
+    def visitor(resource)
+      @visitor ||= Search::TermVisitor.new(column_names(resource), resource)
     end
 
-    def ticket_fields
-      @ticket_fields ||= Account.current.ticket_fields_from_cache
+    def allowed_fields(resource)
+      @allowed_fields ||= SearchValidationHelper.send("#{resource}_fields")
     end
 
-    def custom_fields
-      @custom_fields ||= SearchValidationHelper.ticket_field_names
+    def custom_fields(resource)
+      @custom_fields ||= SearchValidationHelper.send("#{resource}_field_names")
     end
 
-    def column_names
-      @column_names ||= SearchValidationHelper.ticket_field_column_names
+    def column_names(resource)
+      @column_names ||= SearchValidationHelper.send("#{resource}_field_column_names")
     end
 
     def parser
@@ -82,5 +89,13 @@ class ApiSearchController < ApiApplicationController
 
     def ticket_scoper
       current_account.tickets.preload([:ticket_old_body, :schema_less_ticket, :flexifield])
+    end
+
+    def contact_scoper
+      current_account.all_contacts.preload(:flexifield, :default_user_company)
+    end
+
+    def company_scoper
+      current_account.companies.preload(:flexifield, :company_domains)
     end
 end
