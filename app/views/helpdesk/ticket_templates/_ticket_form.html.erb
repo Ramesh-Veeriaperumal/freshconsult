@@ -23,7 +23,7 @@
     <%=content_tag(:li, section_container.html_safe)%>
   <% end %>
 <% end %>
-<%= render :partial => "/helpdesk/tickets/remote_tags" , :locals => {:values => @tkt_template.template_data[:tags],  :element_id => :template_data_tags, :element_name => "template_data[tags]"}%>
+<%= render :partial => "/helpdesk/tickets/remote_tags" , :locals => {:values => @tkt_template.template_data[:tags],  :element_id => :template_data_tags, :element_label => :template_data_tags,:element_name => "template_data[tags]"}%>
 <% content_for :onload_script do -%>
   var MAX_TAG_LENGTH_MSG = "<%= I18n.t('helpdesk.tickets.show.max_tag_length_msg') %>";
 <%- end %>
