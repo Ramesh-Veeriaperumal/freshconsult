@@ -283,7 +283,7 @@ body,
     position: absolute;
     bottom: 0;
     @include left(0);
-    height: 54px;
+    height: auto;
     padding: 3px 21px;
     background: #fff;
     @include border-right(none);
