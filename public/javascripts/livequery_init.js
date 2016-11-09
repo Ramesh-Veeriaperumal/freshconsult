@@ -175,7 +175,7 @@ $("[rel=remote-load]").livequery(
 
 		$.ajax({
 			type: 'GET',
-			url: $(this).data("url"), 
+			url: $(this).data("url"),
 			dataType: 'html',
 			success: function(html){
 				$this.html(html);
@@ -195,16 +195,16 @@ $("[rel=remote-load]").livequery(
 // Uses the date format specified in the data attribute [date-format], else the default one 'yy-mm-dd'
 $("input.datepicker_popover").livequery(
 	function() {
-		var dateFormat = 'yy-mm-dd';
-		if($(this).data('date-format')) {
-			dateFormat = $(this).data('date-format');
-		}
+
+      var dateFormat = $(this).data('date-format') || 'yy-mm-dd';
 
 // Cloning date element to process in ISO format
 	var clone_date = jQuery(this).clone().removeAttr('class data-date-format');
-	var idForCloneElement = jQuery(this).prop("id");
+      // Generating UUID based on timestamp
+	    var idForCloneElement = jQuery(this).prop("id") || new Date().getTime().toString();
 
-  	clone_date.attr('id', 'clone_'+idForCloneElement).appendTo(this);
+      // Appending the cloned element
+  	  clone_date.attr('id', 'clone_' + idForCloneElement).insertAfter(this);
   	jQuery(this).removeAttr('name');
   	if((jQuery(this).val())==""){
   		jQuery('#'+idForCloneElement).attr('data-initial-val', 'empty');
@@ -219,9 +219,10 @@ $("input.datepicker_popover").livequery(
 
 jQuery.validator.addClassRules("date", {
 				date: false
-				});	
+				});
 
-		
+
+
 		$(this).datepicker({
 			dateFormat: dateFormat,
 			changeMonth: true,
@@ -236,10 +237,13 @@ jQuery.validator.addClassRules("date", {
 				Helpdesk.calenderSettings.closeCalendar = true;
 			},
 			showOn: "both",
-			buttonText: "<i class='ficon-date'></i>",			
+			buttonText: "<i class='ficon-date'></i>",
 		});
 
-// var varNewValue = (location.pathname).slice(-3); 
+		$(this).datepicker("setDate",new Date($(this).val()));
+
+
+// var varNewValue = (location.pathname).slice(-3);
 // varNewValue checks if last three char url is 'new' refering the new method
 // if(!(varNewValue==="new")&&()){
 // 	var getDateVal = (jQuery('#'+'clone_'+idForCloneElement).val());
@@ -259,7 +263,7 @@ if((jQuery('#'+idForCloneElement).data('initial-val'))!="empty")
 
 
 	//already included above
-		// if($(this).data('showImage')) {	
+		// if($(this).data('showImage')) {
 		// 	$(this).datepicker('option', 'showOn', "both" );
 		// 	$(this).datepicker('option', 'buttonText', "<i class='ficon-date'></i>" );
 		// }
@@ -284,7 +288,7 @@ if((jQuery('#'+idForCloneElement).data('initial-val'))!="empty")
 		});
 		clearButton.on('click', function(e) {
 			 jQuery(this).siblings('input.date').val("");
-			 jQuery(this).hide(); 
+			 jQuery(this).hide();
 			 jQuery('#'+'clone_'+idForCloneElement).val("");
 		 });
 		// clear button ends
@@ -346,7 +350,7 @@ $("input.select2").livequery(
 			return "  ";
 			}
 		}
-		
+
 		$(this).select2($.extend( defaults, $(this).data()));
 	},
 	function(){
@@ -499,7 +503,7 @@ $('.btn-collapse').livequery(
 );
 
 	// Image enlarger - Ticket details
-	$("[rel='image-enlarge'] img").livequery(function () {			
+	$("[rel='image-enlarge'] img").livequery(function () {
     var img = $(this);
   	$("<img/>")
     .attr("src", img.attr("src"))
@@ -514,7 +518,7 @@ $('.btn-collapse').livequery(
 
       if(aspectRatio !== originalAspectRatio) {
         img.outerHeight(outerWidth/originalAspectRatio);
-        
+
         if(!img.parent('a').get(0)) {
 			  	img.wrap(function(){
 				    return "<a target='_blank' class='image-enlarge-link' href='" + this.src + "'/>";
@@ -527,7 +531,7 @@ $('.btn-collapse').livequery(
 
 	// Remote tags
 	// default value should be given in VALUE attribute
-	// 
+	//
 	$('[rel=remote-tag]').livequery(function() {
 		var hash_val = []
 		var _this = $(this);
@@ -537,7 +541,7 @@ $('.btn-collapse').livequery(
 			maximumInputLength: 32,
 			data: hash_val,
 			quietMillis: 500,
-			ajax: { 
+			ajax: {
 			        url: '/search/autocomplete/tags',
 			        dataType: 'json',
 			        data: function (term) {
@@ -555,16 +559,16 @@ $('.btn-collapse').livequery(
 			initSelection : function (element, callback) {
 			  callback(hash_val);
 			},
-			formatInputTooShort : function (input, min) { 
+			formatInputTooShort : function (input, min) {
       				return I18n.t('validation.select2_minimum_limit', {char_count : min - input.length});
       			},
-		    	formatInputTooLong: function () { 
-      				return MAX_TAG_LENGTH_MSG; 
+		    	formatInputTooLong: function () {
+      				return MAX_TAG_LENGTH_MSG;
       			}
 		};
 
 		if(_this.data('allowCreate') != false){
-			select_init_data.createSearchChoice = function(term, data) { 
+			select_init_data.createSearchChoice = function(term, data) {
 		  	//Check if not already existing & then return
 			        if ($(data).filter(function() { return this.text.localeCompare(term)===0; }).length===0)
 				        return { id: term, text: term };
