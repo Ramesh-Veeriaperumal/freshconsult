@@ -173,11 +173,11 @@ class VaRule < ActiveRecord::Base
     query_strings.empty? ? [] : ([ query_strings.join(c_operator) ] + params)
   end
 
-  def negation_query
+  def negation_query(negatable_columns =[])
     query_strings = []
     params = []
     c_operator = VAConfig::NEGATE_CONDITION_OPERATOR
-    negatable_conditions.each do |c|
+    negatable_conditions(negatable_columns).each do |c|
       c_query = c.filter_query
       query_strings << c_query.shift
       params = params + c_query
@@ -324,9 +324,8 @@ class VaRule < ActiveRecord::Base
       Base64.encode64(public_key.public_encrypt(data))
     end  
 
-    def negatable_conditions
+    def negatable_conditions(negatable_columns = [])
       conditions = []
-      negatable_columns = VAConfig.negatable_columns(account)
       actions.map do |act|
         if negatable_columns.include? act.action_key
           conditions << (Va::Condition.new({ 
