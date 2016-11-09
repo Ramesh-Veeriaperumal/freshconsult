@@ -1,5 +1,5 @@
 class FilterValidation < ApiValidation
-  attr_accessor :per_page, :page
+  attr_accessor :per_page, :page, :order_type
 
   validates :page, custom_numericality: { only_integer: true, greater_than: 0, ignore_string: :allow_string_param }
   validates :per_page, custom_numericality: { only_integer: true, greater_than: 0, ignore_string: :allow_string_param,

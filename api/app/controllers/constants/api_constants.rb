@@ -5,7 +5,8 @@ module ApiConstants
     max_per_page: 100,
     page: 1
   }.freeze
-
+  DEFAULT_ORDER_TYPES = %w(asc desc).freeze
+  
   # https://github.com/mislav/will_paginate/blob/master/lib/will_paginate/page_number.rb
   PAGE_MAX = WillPaginate::PageNumber::BIGINT
 

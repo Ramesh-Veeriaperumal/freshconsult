@@ -4,6 +4,20 @@ module Ember
     include Concerns::TicketsViewConcern
     before_filter :can_send_user?, :set_defaults, only: [:forward]
     SINGULAR_RESPONSE_FOR = %w(reply forward).freeze
+    
+    def ticket_conversations
+      return if validate_filter_params(%w(order_type))
+      order_type = params[:order_type]
+      order_conditions = "created_at #{order_type}"
+      ticket_conversations = @ticket.notes.visible.exclude_source('meta')
+                                    .preload(:schema_less_note, :note_old_body, :attachments)
+                                    .order(order_conditions)
+                                    
+      # @items = paginate_items(ticket_conversations)
+      load_objects(ticket_conversations)
+      response.api_meta = { count: @items_count }
+    end
+
     def create
       assign_note_attributes
       conversation_delegator = ConversationDelegator.new(@item, attachment_ids: @attachment_ids)

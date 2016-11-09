@@ -175,6 +175,7 @@ Helpkit::Application.routes.draw do
         post :reply, to: 'ember/conversations#reply'
         post :forward, to: 'ember/conversations#forward'
         get :latest_note
+        get :conversations, to: 'ember/conversations#ticket_conversations'
         get :time_entries, to: 'ember/time_entries#ticket_time_entries'
         post :time_entries, to: 'ember/time_entries#create'
         post :draft, to: 'ember/tickets/drafts#save_draft'

@@ -9,7 +9,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/ticket", only: [:index, :spam, :latest_note]
     resource :"ember/ticket_filter", only: [:index, :show, :create, :update, :destroy]
     resource :"ember/attachment", only: [:create]
-    resource :"ember/conversation", only: [:create]
+    resource :"ember/conversation", only: [:create, :ticket_conversations]
     resource :"ember/subscription"
     resource :"ember/ticket_field", only: [:index]
   end
