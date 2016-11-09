@@ -261,6 +261,10 @@ class Account < ActiveRecord::Base
     # feature?(:link_tickets)
   end
 
+  def parent_child_tkts_enabled?
+    @pc ||= launched?(:parent_child_tickets)
+  end
+
   class << self # class methods
 
     def reset_current_account

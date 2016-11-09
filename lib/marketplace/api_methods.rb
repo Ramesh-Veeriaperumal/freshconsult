@@ -227,4 +227,16 @@ module Marketplace::ApiMethods
         exception_logger("Exception type #{e.class},URL: #{api_payload} #{e.message}\n#{e.backtrace}")
       end
     end
+
+    def fetch_tokens
+      begin
+        api_payload = mkp_oauth_payload(
+                        Marketplace::ApiEndpoint::ENDPOINT_URL[:fetch_tokens],
+                        Marketplace::ApiEndpoint::ENDPOINT_PARAMS[:fetch_tokens]
+                      )
+          get_api(api_payload, MarketplaceConfig::MKP_OAUTH_TIMEOUT)
+      rescue *FRESH_REQUEST_EXP => e
+        exception_logger("Exception type #{e.class},URL: #{api_payload} #{e.message}\n#{e.backtrace}")
+      end
+    end
 end

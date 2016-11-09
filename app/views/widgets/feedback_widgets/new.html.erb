@@ -479,6 +479,8 @@
       disabled_custom_options = <%= disable_options[:custom_field].keys.to_json.html_safe%>
     <% end %>
   <% end %>
+   // auto focus
+   jQuery("#helpdesk_ticket_email").focus();
   for(var i = 0; i < disabled_options.length; i++)
 		{
 			var key = disabled_options[i];

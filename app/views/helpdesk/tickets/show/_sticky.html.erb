@@ -123,7 +123,7 @@
 					<div class="tooltip keytitle" title='<%="#{t('ticket.execute_scenario')}"%>' data-placement = "below" data-hotkey='<%="#{shortcut('ticket_detail.scenario')}"%>'>					
 					 <%= link_to( t('ticket.scenarios'), "/helpdesk/tickets/#{@ticket.id}/component?component=scenarios", 
 					  				:rel => 'freshdialog', "data-target" => "#execute_scenario", :class => 'btn btn-collapse', "data-keybinding" => shortcut('ticket_detail.scenario'), "data-highlight" => true, "data-template-footer" => "",
-					  				'data-template-header' => "<div class='modal-header'><span><h3 class='modal-heading-with-button'>" + t('ticket.execute_scenario') + "</h3></span><a href='/helpdesk/scenario_automations/new' target='_blank' class='pull-right modal-header-button'>" + t('ticket.create_new_scenario') + "</a></div>")
+					  				'data-template-header' => "<div class='modal-header'><span><h3 class='modal-heading-with-button'>" + t('ticket.execute_scenario') + "</h3></span><a href='/helpdesk/scenario_automations/new' target='_blank' class='pull-right modal-header-button'>" + t('ticket.create_new_scenario') + "</a></div>", "data-association" => @ticket.association_type, :id => "scenario")
 					  				 %> 
 					</div>
 				</li>
@@ -213,12 +213,12 @@
   		data = {
 	      targetId : '#confirm-action',
 	      title : title_submit,
-	      submitLabel: title_submit,
+	      submitLabel: target == "scenario" ? "Continue" : title_submit,
 	      width:  '500',
 	      destroyOnClose : true  
 	    }
     jQuery.freshdialog(data);
-    jQuery('.modal-body').html("<div id='modal-content' data-target='#"+ target +"'>"+ confirm_text +"</div>");
+    jQuery('#confirm-action .modal-body').html("<div id='modal-content' data-target='#"+ target +"'>"+ confirm_text +"</div>");
   }	
 
 
@@ -230,6 +230,20 @@
   		e.preventDefault();
 	    e.stopPropagation();
 	    callFreshdialog(jQuery(this).attr('id'));
+  	}
+  });
+
+  jQuery('body').off('click', '#scenario');
+  jQuery('body').on('click', '#scenario', function(e){
+    var parent = '<%= TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:assoc_parent]%>';
+    var submit = jQuery(this).data('submit');
+    if(!submit && parent == jQuery(this).data('association')){
+      e.preventDefault();
+      e.stopPropagation();
+      callFreshdialog("scenario");
+      jQuery('#confirm-action-cancel').hide();
+    }else{
+  		jQuery(this).data('submit', false);
   	}
   });
 

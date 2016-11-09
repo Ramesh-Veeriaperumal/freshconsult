@@ -549,6 +549,29 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     update_ticket_header_info(ticket.id, message_id)
   end
 
+  def notify_bulk_child_creation options = {}
+    headers = {
+      :subject                    => "sub for bulk tkt create",
+      :to                         => options[:user].email,
+      :from                       => options[:user].account.default_friendly_email,
+      :bcc                        => AppConfig['reports_email'],
+      :sent_on                    => Time.now,
+      :"Reply-to"                 => "#{options[:user].account.default_friendly_email}", 
+      :"Auto-Submitted"           => "auto-generated", 
+      :"X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
+    }
+
+    @user_name     = options[:user].name
+    @assoc_parent  = options[:parent_tkt]
+    @error_msg     = options[:error_msg]
+    @failed_items  = options[:failed_items]
+
+    mail(headers) do |part|
+      part.text { render "notify_bulk_child_creation.text.plain" }
+      part.html { render "notify_bulk_child_creation.text.html" }
+    end.deliver
+  end
+
   private
     def construct_email_header_message_id(email_type)
       "#{Mail.random_tag}.#{::Socket.gethostname}@#{Helpdesk::EMAIL_TYPE_TO_MESSAGE_ID_DOMAIN[email_type]}"

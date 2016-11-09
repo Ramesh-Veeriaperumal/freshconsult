@@ -3,7 +3,7 @@ if params[:id].present? and !params[:tkt_cr]
 else
   page << 'var $msg_body_element = jQuery(".ta_insert_cr");'
   page << '$msg_body_element.data("redactor").focusOnCursor();'
-  page << "$msg_body_element.insertHtml(\"#{escape_javascript(@ca_resp.content_html)}\");"
+  page << "$msg_body_element.insertHtml(\"#{escape_javascript(@template_content)}\");"
   page << 'jQuery(document).trigger({ type:"textInserted", message:"success", time:new Date() });'
   page << '$msg_body_element.getEditor().focus();'
 end

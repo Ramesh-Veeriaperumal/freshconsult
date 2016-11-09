@@ -307,9 +307,18 @@ class Account < ActiveRecord::Base
   has_many :outgoing_email_domain_categories, :dependent => :destroy
   has_many :authorizations, :class_name => '::Authorization'
 
-  has_many :status_groups
-
   has_many :ticket_templates, :class_name => "Helpdesk::TicketTemplate"
+  has_many :prime_templates, 
+            :class_name => "Helpdesk::TicketTemplate", 
+            :conditions =>['association_type != ?', Helpdesk::TicketTemplate::ASSOCIATION_TYPES_KEYS_BY_TOKEN[:child]]
+  has_many :parent_templates,
+            :class_name => "Helpdesk::TicketTemplate", 
+            :conditions => {:association_type => Helpdesk::TicketTemplate::ASSOCIATION_TYPES_KEYS_BY_TOKEN[:parent]}
+  has_many :child_templates, 
+            :class_name => "Helpdesk::TicketTemplate", 
+            :conditions => {:association_type => Helpdesk::TicketTemplate::ASSOCIATION_TYPES_KEYS_BY_TOKEN[:child]}
+
+  has_many :status_groups
 
   has_many :account_webhook_key, dependent: :destroy
   
