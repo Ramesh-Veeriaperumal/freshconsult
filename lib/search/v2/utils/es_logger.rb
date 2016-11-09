@@ -54,6 +54,27 @@ module Search
           log(output.join(' '))
         end
 
+        # For easily parseble
+        # (*) Log account_id
+        # (*) Log cluster_name
+        # (*) Log search_type
+        # (*) Log response code
+        # (*) Log time taken by libcurl client(typhoeus)
+        # (*) Log time taken by es if timedout it should be -1
+        # (*) Log error message if any
+        #
+        def log_details(account_id,cluster, search_type, response_code, client_time, es_response_time=nil)
+          output = []
+          output << "account_id=#{account_id}"
+          output << "cluster=#{cluster}"
+          output << "search_type=#{search_type}"
+          output << "response_code=#{response_code}"
+          output << "client_time=#{client_time}"
+          output << "es_response_time=#{es_response_time}"
+
+          log(output.join(', '))
+        end
+
         private
 
           # 2015-10-15 11:36:15:542

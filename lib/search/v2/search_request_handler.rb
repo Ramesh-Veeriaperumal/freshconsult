@@ -21,7 +21,10 @@ module Search
                             query_params,
                             construct_payload(search_params),
                             Search::Utils::SEARCH_LOGGING[:request],
-                            request_uuid
+                            request_uuid,
+                            search_params[:account_id],
+                            @tenant.home_cluster,
+                            @template_name
                           ).response
       end
 
