@@ -145,17 +145,26 @@ class HelpdeskReports::Formatter::Ticket::TicketVolume
 
     def calculate_busiest_day_and_hours hash
       busiest_day = hash.values.collect{|h| h.values.sum}.each_with_index.max[1].to_s
-      busy_hours = hash.values.collect{|d| d.max_by{|k,v| v}}
-      max_busy = busy_hours.max_by{|a| a[1]}[1]
-      busiest_hours = {}
-      busy_hours.each_with_index{|b,i| busiest_hours[i.to_s] = b if b[1] == max_busy}
-      if busiest_hours.size == 1
-        start_index, end_index = [busiest_hours.values.first[0].to_i, busiest_hours.values.first[0].to_i+1]
-      else
-        #Calculating busiest range by extending the range by (+/-)1 hour and calculating maximum number of tickets
-        max_tickets, start_index, end_index = busiest_hours.collect do |k,v|
-          [[v[1]+hash[k][(v[0].to_i-1).to_s],v[0].to_i-1,v[0].to_i],[v[1]+hash[k][(v[0].to_i+1).to_s],v[0].to_i,v[0].to_i+1]] unless v[0] == "0" || v[0] == "23"
-        end.flatten(1).compact.max
+      busy_hours = hash.inject({}) do |busy_hours, (day, hours)|
+      hours.each do |hour, ticket_count|
+        busy_hours[hour] = busy_hours[hour].to_i + ticket_count.to_i
+      end
+      busy_hours
+      end
+      max_value = busy_hours.values.max
+      if max_value > 0
+        max_value_keys  = busy_hours.select{|k, v| v == max_value}.keys
+        if max_value_keys.size == 1
+          start_index, end_index = [max_value_keys.first.to_i,max_value_keys.first.to_i+1]
+        else
+          #Calculating busiest range by extending the range by (+/-)1 hour and calculating maximum number of tickets
+          result = max_value_keys.inject({}) do |result,k|
+            result[k] = [ busy_hours[(k.to_i+1).to_s] + busy_hours[(k.to_i-1).to_s] ] unless k == "0" || k == "23"
+            result
+          end
+          max_result = result.max_by{|k,v| v}
+          start_index, end_index = [max_result.first.to_i,max_result.first.to_i+1]
+        end
       end
       if(start_index == end_index)
         ["-", "-"]
