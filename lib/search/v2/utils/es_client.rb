@@ -8,15 +8,21 @@ module Search
 
       class EsClient
 
+        ES_TIME_DEFAULT=-1
+
         attr_accessor :method, :path, :payload, :logger, :response, :log_data
 
-        def initialize(method, path, query_params={}, payload=nil, log_data=nil, request_uuid=nil)
+        def initialize(method, path, query_params={}, payload=nil, log_data=nil, request_uuid=nil, account_id=nil,cluster=nil,search_type=nil)
           @method     = method.to_sym
           @path       = query_params.present? ? "#{path}?#{query_params.to_query}" : path
           @payload    = payload
           @uuid       = request_uuid
           @logger     = EsLogger.new(@uuid)
           @log_data   = log_data
+          @account_id = account_id.presence
+          @cluster    = cluster.presence
+          @search_type= search_type.presence
+          @es_response_time = nil
           
           es_request
         end
@@ -42,6 +48,7 @@ module Search
           #
           def attach_callbacks(request)
             request.on_failure do |response_from_es|
+              @es_response_time = ES_TIME_DEFAULT
               es_response(response_from_es) unless response_from_es.code.zero?
               handle_failure(response_from_es)
             end
@@ -139,13 +146,26 @@ module Search
           #
           def es_response(response_from_es)
             @response         = JSON.parse(response_from_es.body)
+            @es_response_time ||= @response["took"]
             
             logger.log_response(
                                 response_from_es.code, 
-                                @response["took"], 
+                                @es_response_time, 
                                 @response["error"],
                                 (log_response_payload? ? response_from_es.body : nil)
                               )
+
+            if @search_type
+              logger.log_details(
+                                @account_id,
+                                @cluster,
+                                @search_type,
+                                response_from_es.code,
+                                response_from_es.total_time*1000, 
+                                @es_response_time
+                              )
+              
+             end
           end
 
           # Log payload in development and in other 
