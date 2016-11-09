@@ -10,7 +10,7 @@ if @user_session.errors.any? %>
     <% end %>
     <%= link_to(t('support.login.form.forgot'), "", 
 					:id => "forgot_password",
-					"data-toggle-dom" => "#forgot-form, #login-form" ) if @user_session.attempted_record.failed_login_count > 1 %>
+					"data-toggle-dom" => "#forgot-form, #login-form" ) if @user_session.attempted_record && @user_session.attempted_record.failed_login_count > 1%>
   </ul>
   </div>
 <% end %>
