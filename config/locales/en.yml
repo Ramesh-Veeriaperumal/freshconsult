@@ -510,7 +510,7 @@ en:
         password: Password
         remember: Remember me on this computer
         login: Login
-        forgot: forgot your password?
+        forgot: Forgot your password?
         sign_in_using: Sign In
         sign_in_using_google: Sign in using your Google account
         help: Help
