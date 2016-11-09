@@ -6785,6 +6785,9 @@ en:
     get_more_apps: Get more Apps
     confirm_data_lose: "Your data will be lost."
     confirm_uninstall_message: "Are you sure you want to uninstall the %{human_name}?"
+    reauthorize_oauth_app: "If your app stopped working please try reauthorizing it by clicking on reauthorize button"
+    cancel: "Cancel"
+    reauthorize: "Reauthorize"
     app: app
     custom_app: custom app
     app_gallery: App Gallery
@@ -6840,6 +6843,8 @@ en:
       error: "Error while deleting the App."
     install_action:
       success: "App installed successfully."
+      failure: "Could not process the request"
+      auth_error: "Error while authorizing the app"
     update_action:
       success: "App updated successfully."
     help_and_support: "Help and Support"

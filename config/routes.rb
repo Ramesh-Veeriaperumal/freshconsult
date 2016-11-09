@@ -1395,8 +1395,11 @@ Helpkit::Application.routes.draw do
         scope ':extension_id/:version_id' do
           get :new_configs
           get :edit_configs
+          get :oauth_callback
+          get :edit_oauth_configs
         end
         scope ':extension_id' do
+          get :oauth_configs
           post :install
           put :reinstall
           delete :uninstall
