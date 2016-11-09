@@ -1,5 +1,4 @@
 //= require app/parentchildtemplates.js
-//= require app/parent_child.js
 //= require app/TemplateIndex.js
 //= require app/TemplateNewChild.js
 //= require app/TemplateEdit.js

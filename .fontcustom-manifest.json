@@ -1,13 +1,13 @@
 {
   "checksum": {
-    "previous": "00ea78f96bd59cf2c6dbeb67d6c919f2ab863ef23c935344cb5074cf00ae99fd",
-    "current": "00ea78f96bd59cf2c6dbeb67d6c919f2ab863ef23c935344cb5074cf00ae99fd"
+    "previous": "8ea5ffcdcd6eb872dd423d14862d588a99c673bc0c8b414dcd8121475808752d",
+    "current": "8ea5ffcdcd6eb872dd423d14862d588a99c673bc0c8b414dcd8121475808752d"
   },
   "fonts": [
-    "public/assets/glyphs_00ea78f96bd59cf2c6dbeb67d6c919f2.ttf",
-    "public/assets/glyphs_00ea78f96bd59cf2c6dbeb67d6c919f2.svg",
-    "public/assets/glyphs_00ea78f96bd59cf2c6dbeb67d6c919f2.woff",
-    "public/assets/glyphs_00ea78f96bd59cf2c6dbeb67d6c919f2.eot"
+    "public/assets/glyphs_8ea5ffcdcd6eb872dd423d14862d588a.ttf",
+    "public/assets/glyphs_8ea5ffcdcd6eb872dd423d14862d588a.svg",
+    "public/assets/glyphs_8ea5ffcdcd6eb872dd423d14862d588a.woff",
+    "public/assets/glyphs_8ea5ffcdcd6eb872dd423d14862d588a.eot"
   ],
   "glyphs": {
     "abandoned-call": {
@@ -797,6 +797,10 @@
     "italic": {
       "codepoint": 62030,
       "source": "public/glyphs/vectors/italic.svg"
+    },
+    "keyicon": {
+      "codepoint": 62053,
+      "source": "public/glyphs/vectors/keyicon.svg"
     },
     "left-arrow-thick": {
       "codepoint": 61910,

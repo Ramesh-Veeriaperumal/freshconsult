@@ -118,11 +118,11 @@
 
       @font-face {
   font-family: "glyphs";
-  src: url("../../assets/glyphs_00ea78f96bd59cf2c6dbeb67d6c919f2.eot");
-  src: url("../../assets/glyphs_00ea78f96bd59cf2c6dbeb67d6c919f2.eot?#iefix") format("embedded-opentype"),
-       url("../../assets/glyphs_00ea78f96bd59cf2c6dbeb67d6c919f2.woff") format("woff"),
-       url("../../assets/glyphs_00ea78f96bd59cf2c6dbeb67d6c919f2.ttf") format("truetype"),
-       url("../../assets/glyphs_00ea78f96bd59cf2c6dbeb67d6c919f2.svg#glyphs") format("svg");
+  src: url("../../assets/glyphs_8ea5ffcdcd6eb872dd423d14862d588a.eot");
+  src: url("../../assets/glyphs_8ea5ffcdcd6eb872dd423d14862d588a.eot?#iefix") format("embedded-opentype"),
+       url("../../assets/glyphs_8ea5ffcdcd6eb872dd423d14862d588a.woff") format("woff"),
+       url("../../assets/glyphs_8ea5ffcdcd6eb872dd423d14862d588a.ttf") format("truetype"),
+       url("../../assets/glyphs_8ea5ffcdcd6eb872dd423d14862d588a.svg#glyphs") format("svg");
   font-weight: normal;
   font-style: normal;
 }
@@ -130,7 +130,7 @@
 @media screen and (-webkit-min-device-pixel-ratio:0) {
   @font-face {
     font-family: "glyphs";
-    src: url("../../assets/glyphs_00ea78f96bd59cf2c6dbeb67d6c919f2.svg#glyphs") format("svg");
+    src: url("../../assets/glyphs_8ea5ffcdcd6eb872dd423d14862d588a.svg#glyphs") format("svg");
   }
 }
 
@@ -334,6 +334,7 @@
 .ficon-integrations:before,
 .ficon-ios:before,
 .ficon-italic:before,
+.ficon-keyicon:before,
 .ficon-left-arrow-thick:before,
 .ficon-like:before,
 .ficon-link:before,
@@ -687,6 +688,7 @@
 .ficon-integrations:before { content: "\f216"; }
 .ficon-ios:before { content: "\f15d"; }
 .ficon-italic:before { content: "\f24e"; }
+.ficon-keyicon:before { content: "\f265"; }
 .ficon-left-arrow-thick:before { content: "\f1d6"; }
 .ficon-like:before { content: "\f15e"; }
 .ficon-link:before { content: "\f15f"; }
@@ -843,7 +845,7 @@
 
   <body class="characters-off">
     <header>
-      <h1>Font Icons (339)</h1>
+      <h1>Font Icons (340)</h1>
       <p>We can use font icon classes or use helper method as follows <code>&lt;%= font_icon "icon-name", :size => 18 %&gt;</code>, which generates the Markup</p>
     </header>
     <div id="page" class="container">
@@ -2619,6 +2621,15 @@
         </div>
         <div class="usage">
           <span>italic</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-keyicon" class="ficon-keyicon"></i></span>
+        </div>
+        <div class="usage">
+          <span>keyicon</span>
         </div>
       </div>
       
