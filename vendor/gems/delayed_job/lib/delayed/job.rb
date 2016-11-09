@@ -214,7 +214,7 @@ module Delayed
       #mailbox::Job queue. In Future we should check each individual smtp_mailbox based on the ticket and change the queue. 
       if smtp_mailboxes.any?{|smtp_mailbox| smtp_mailbox.enabled?}
         job = Object.const_get("Mailbox::Job").create(:payload_object => object, :priority => priority.to_i, :run_at => run_at, :pod_info => pod_info)
-        Object.const_get("DelayedJobs::MailboxJob").perform_async({:job_id => job.id, :account_id => account_id}) if job && job.id 
+        # Object.const_get("DelayedJobs::MailboxJob").perform_async({:job_id => job.id, :account_id => account_id}) if job && job.id 
         job
       else
         job = Object.const_get("#{job_queue}::Job").create(:payload_object => object, :priority => priority.to_i, :run_at => run_at, :pod_info => pod_info)
