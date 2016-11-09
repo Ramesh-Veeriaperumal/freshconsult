@@ -118,7 +118,7 @@ en:
   sidebar_help: "Help"
   support_title: "Support"
   continue: Continue
-  parent: Parent
+  assoc_parent: Parent
   tracker: Tracker
   both: Both
   related: Related ticket
@@ -911,7 +911,7 @@ en:
       confirm_delete: Are you sure you want to delete this field?
       no_choice_message: "At least one valid choice has to be present"
       multiple_company_dialog_help_text: When turned on, contacts(resellers or partners) will be able to choose one of the companies associated to them while submitting a ticket.
-      multiple_company_dialog_on: Contacts (resellers or partners) will be able to choose one of the companies associated to them while submitting a ticket. 
+      multiple_company_dialog_on: Contacts (resellers or partners) will be able to choose one of the companies associated to them while submitting a ticket.
       multiple_company_dialog_warning: "Turning this off will permanently delete all the secondary companies from all the contacts.While the old tickets will remain unaffected, new tickets can be raised only for the primary company."
       index:
         add_custom_field: Add a Custom Field
@@ -1619,7 +1619,7 @@ en:
         auto_recharge_notice: "Current auto recharge quantity is set to "
         auto_renewal_enabled_notice: "Day pass auto renewal enabled."
         auto_renewal_disabled_notice: "Day pass auto renewal disabled."
-    widget_config:    
+    widget_config:
       errors:
         invalid_requester: Invalid Requester
       index:
@@ -2912,7 +2912,7 @@ en:
         new: "Submitted a new ticket"
       new_tracker_ticket:
         short: "{{user_path}} submitted the tracker ticket"
-        long: "{{user_path}} submitted a new tracker ticket {{notable_path}}"      
+        long: "{{user_path}} submitted a new tracker ticket {{notable_path}}"
       new_outbound:
         short: "{{user_path}} created a ticket"
         long: "{{user_path}} created a ticket {{notable_path}}"
@@ -3376,11 +3376,13 @@ en:
   ticket_templates:
     title: "Ticket Templates"
     select_template: "Select a template"
+    form_title: "Ticket/Email Form"
     helptext:
       info1: "Templates allow you to pre-fill new tickets and outgoing emails with a single click. You can save time spent on typing out the same content again and again, and quickly create tickets or send outbound emails."
       info2: "For example, you can create a template called 'Initiate Refund' by filling the body of the ticket and setting the priority 'medium'. So the next time you receive a phone call about a refund, you can create a medium priority ticket for your customer and initiate the refund request with a single click."
     new_template: "Add New"
     create_template: "Create Template"
+    edit: "edit"
     template_note: "Selecting a template will replace <br/>the form with new values."
     template_info: "Ticket templates help to pre-fill this <br/>form in a single click and are helpful for <br/>recurring issues and communications."
     new_title: "New Template"
@@ -3403,6 +3405,9 @@ en:
     acc_templ_count: "%{templ_count} of %{total_templ} Templates"
     total_templ_count: "Reached %{total_templ} Templates"
     ticket_email_form: "Ticket/Email Form"
+    child_creation: "Please wait while we create the tickets in the background. Refresh the page to view the child tickets."
+    parent_not_accessible: "Oops! Looks like we are not able to access the ticket templates to create child tickets. "
+    limit_exceeded: "Unable to apply the template as the number of child tickets would exceed the prescribed limit of %{limit}."
     visibility:
       groups: Agents in group
       all_agents: All agents
@@ -3410,6 +3415,90 @@ en:
       available_for: Available for
     errors:
       duplicate_title: "Duplicate template. Title already exists"
+    parent_child_templates:
+      title: Parent Child Templates
+      helptext:
+        info: "Template Group with Parent Ticket and minimum one or more Child tickets within the Parent"
+    template_create: "Create"
+    template_title: "Template"
+    save_and_continue:
+      title: "Warning! You haven't saved changes"
+      info1: "In a hurry to move on, it looks like you forgot to save this template. We suggest you to save the changes right away. But if you really hated what you created, you can proceed and lose all changes."
+      proceed: "Proceed anyway"
+      cancel: "Take me back"
+    child_template:
+      new_title: "Create child template"
+      blank_template: "Blank Template"
+      existing_template: "Existing Template"
+      edit_title: "Edit child template"
+      insert_placeholder: "Insert Placeholder"
+      inherit_parent: "Inherit all values from parent"
+      undo_parent_inherit: "Undo inherit all values from parent"
+      select_one: "select one"
+      new: "new"
+      existing: "existing"
+      noname: "No Name"
+      parent_tooltip: "Inherit Parent"
+      undo_parent_tooltip: "Undo Inherit Parent"
+      applying_template: "Applying Child Template"
+    delete: "Delete"
+    parent: "Parent"
+    child: "Child"
+    child_out_of: "of"
+    remove: "Remove"
+    edit_template:
+      delete:
+        delete_title: "Delete Template"
+        info1: "Are you sure you want delete this template?"
+      cancel: "Cancel"
+      confirm: "Confirm"
+    edit_child_template:
+      unlink:
+        title: "Unlink from parent template"
+        unlink_title: "Unlink from parent template"
+        info1: "Are you sure you want to unlink this child template from the parent template <b>%{parent_title}</b>?"
+      delete:
+        delete_title: "Delete Template"
+        info: "This child template will be lost forever. Are you sure you want to delete?"
+        parent_info: "This child template is being used in %{parent_count} other parent templates. Deleting this template will remove its association from the %{parent_count} parent templates. Are you sure you want to delete?"
+    order:
+      title: "Sorted"
+      recent_created: "Recently Created"
+      a_to_z: "A to Z"
+    success:
+      unlink_parent: "Successfully unlinked from the parent template."
+      add_existing_child: "Child template added successfully."
+    failure:
+      unlink_parent: "Unlink from the parent template has failed."
+      add_existing_child: "Child template could not be added."
+    child_limit_reached: "You have reached the maximum limit for child templates."
+    parent_not_available: "This parent template is not available."
+    child_create:
+      success: "The child template has been successfully created."
+      failure: "The child template could not be created."
+    child_update:
+      success: "The child template has been updated successfully."
+      update: "The child template could not be updated."
+    new_add_child_message: 'To create parent template click on <b>"Save and add child"</b>'
+    add_new_child_message: ''
+    add_another_child_message: 'To add another child template click on <b>"Save and add child"</b>'
+    edit_normal_template_message: '<b>"Save and add child"</b> makes this a parent template and allows you to start creating child templates'
+    edit_add_child_message: '<b>"Save and add child"</b> allows to create child templates to the parent'
+    clone_message: "Template has been cloned."
+    add_child_linking:
+      child_count_text: "Child Tickets (%{count})"
+  list_all_template:
+    title: "Templates"
+    helptext:
+      info1: "Templates which can be used to quickly send out replies to tickets."
+      info2: "You can use placeholders in your canned responses to fill in dynamic content like the requestor’s name, ticket ID and URL inside the response."
+    deleteMessage: "Are you sure you want delete this template?"
+    parent_child_templates:
+      title: "Parent Child Templates"
+      helptext:
+        info1: "Templates with one major Parent ticket and one (minimum) or more Child tickets(s) within the parent"
+        info2: "Child ticket(s) are set of sub task(s) for a Parent’s ticket problem to be solved. On closing each of child ticket Parent ticket would be able to get a closure."
+      deleteMessage: "If you proceed with delete, <ul class='delete-msg-ul'><li>The parent template configuration will be lost.</li><li> Any child template which is associated to only this particular parent template will be deleted.</li></ul> Are you sure you want to delete?"
   solution_category:
     all: All Categories
     name: Name
@@ -4744,6 +4833,7 @@ en:
   feedbackwidget_intro: Customize your freshdesk widget below and see a realtime preview.
   chatwidget_intro: Customize your Live Chat widget below and see a realtime preview.
   save: Save
+  save_add_child: Save and add child
   import_added_newly: Added Newly
   quick_create: Quick Create
   select_a_plan_gain_access: Select a plan from below to regain access to your account.
@@ -5195,6 +5285,8 @@ en:
     insert: "Insert"
     auto_delete_notification_spam: 'Tickets in spam for more than 30 days will be automatically deleted'
     auto_delete_notification_trash: 'Tickets in trash for more than 30 days will be automatically deleted'
+    parent_ticket: 'Parent ticket'
+    unresolved_child: 'Ticket cannot be closed or resolved since one or more of the child tickets associated with this ticket are unresolved.'
     compose:
       choose_email: Pick a From Address
       properties: Properties
@@ -5335,7 +5427,7 @@ en:
       view_tracker: "View Tracker"
       title: Link Tickets
       info: %{count} ticket(s) selected (link the selected ticket(s) to an existing problem or create a new problem ticket)
-      search_placeholder: Search for existing problem tickets   
+      search_placeholder: Search for existing problem tickets
       create_new: " Create New "
       recently_created: "Recently Created"
       linked_to_tracker: "Tracker"
@@ -5360,17 +5452,36 @@ en:
       related_delete_message: " and will be unlinked from the tracker"
       permission_denied: "Oops! You don't have the permission to link this ticket."
       count_exceeded: "Linking failed! You have exceeded the limit of %{count} tickets in a tracker."
-      remaining_count: 
+      remaining_count:
         one: "You are allowed to link only one more ticket to the tracker"
         other: "You are allowed to link only %{count} more tickets to the tracker"
       no_tracker: "No Tracker available"
       search_for_tracker: "Search for tracker by"
       rlt_ticket_singular: "related ticket"
       rlt_ticket_plural: "related tickets"
-    ticket_association: 
+    ticket_association:
        title: Ticket Association
     parent_child:
+      permission_denied: "Oops! You are not allowed to create a child ticket."
+      count_exceeded: "Failed to create child to the parent ticket as it already reached the limit of %{count} tickets."
       add_child: "Add Child"
+      hi: "Hi %{name},"
+      tmpl_inaccessible: "We were unable to create the child tickets for %{tkt_url} since the template you were trying to apply is no longer accessible to you due to change in permission settings."
+      tmpl_unavailable: "We were unable to create the child tickets for %{tkt_url} since the template you were trying to apply has been deleted from your account."
+      assoc_prt_tkt_unavailable: "We were unable to create the child tickets since the %{tkt_url} has been deleted/spammed."
+      child_tkt_limit_reached: "We were unable to create the child tickets since the %{tkt_url} has reached the maximum limit of %{total_child_count} child tickets."
+      failed_items: "We were unable to create %{failed_count} of the %{total_child_count} child tickets for the %{tkt_url}. The details are below."
+      failed_info1: "Child tickets that were not created."
+      failed_info2: "Please re-initiate the creation of these child tickets from the %{tkt_url}."
+      no_parent_template: "No templates found."
+      no_matching_template: "No matching template."
+      using_template: "Using a Template"
+      select_from_existing: "Select from an existing parent template"
+      new_child_ticket: "New Child Ticket"
+      subline: "Create a new child ticket"
+      template_desc: "Select the parent template to apply the associated child templates"
+      recently_used: "Recently Used"
+      template: "Template"
     singular: Ticket
     due_by_time: Due by time
     delete_btn_title: Move this ticket to trash
@@ -5406,6 +5517,7 @@ en:
     submit_ticket_title: Submit a ticket
     learn_more: Learn more.
     submit_ticket_new_title: Create a new ticket
+    submit_child_new_title: Create child ticket
     submit_tracker_new_title: Create a new Tracker
     create_ticket_title: Create a ticket
     submit_a_ticket_info: "The requester will receive an email notification that a new ticket has been created. It can be disabled in Admin > Email notifications."
@@ -5429,14 +5541,19 @@ en:
     close_without_notification: Shift + Close to skip notification mail
     association:
       cancel: All selected tickets have existing association and the action cannot be performed.
+      parent: The action cannot be performed on a parent ticket.
       delete_ticket:
         title_submit: Delete
         tracker: You are about to delete a tracker and the its related tickets will be permanently unlinked which CANNOT be restored.
         related: You are about to delete a related ticket and it will be permanently unlinked from the tracker which CANNOT be restored.
+        assoc_parent: You are about to delete a associated parent ticket and the its child tickets will be permanently unlinked which CANNOT be restored.
+        child: You are about to delete a child ticket and it will be permanently unlinked from the parent which CANNOT be restored.
       spam_ticket:
         title_submit: Mark as spam
         tracker: You are about to mark a tracker as spam and the associated related tickets will be permanently unlinked which CANNOT be restored.
         related: You are about to mark a related ticket as spam and it will be permanently unlinked from the tracker which CANNOT be restored.
+        assoc_parent: You are about to mark a associated parent as spam and the associated child tickets will be permanently unlinked which CANNOT be restored.
+        child: You are about to mark a child ticket as spam and it will be permanently unlinked from the parent which CANNOT be restored.
       merge_tickets:
         one: There is {{count}} ticket with existing association in the selected list which will be SKIPPED while performing the merge action.
         other: There are {{count}} tickets with existing association in the selected list which will be SKIPPED while performing the merge action.
@@ -5444,11 +5561,20 @@ en:
         one: There is {{count}} ticket with existing association in the selected list which will be SKIPPED while performing the link action.
         other: There are {{count}} tickets with existing association in the selected list which will be SKIPPED while performing the link action.
       spam_tickets:
-        one: There is {{count}} ticket with existing association in the selected list and performing the spam action will remove their associations permanently which CANNOT be restored. 
-        other: There are {{count}} tickets with existing association in the selected list and performing the spam action will remove their associations permanently which CANNOT be restored. 
+        one: There is {{count}} ticket with existing association in the selected list and performing the spam action will remove their associations permanently which CANNOT be restored.
+        other: There are {{count}} tickets with existing association in the selected list and performing the spam action will remove their associations permanently which CANNOT be restored.
       delete_tickets:
-        one: There is {{count}} ticket with existing association in the selected list and performing the delete action will remove their associations permanently which CANNOT be restored. 
+        one: There is {{count}} ticket with existing association in the selected list and performing the delete action will remove their associations permanently which CANNOT be restored.
         other: There are {{count}} tickets with existing association in the selected list and performing the delete action will remove their associations permanently which CANNOT be restored.
+      close_tickets:
+        one: There is {{count}} parent ticket in the selected list which will be SKIPPED while performing the close action if it has active child tickets associated.
+        other: There are {{count}} parent tickets in the selected list which will be SKIPPED while performing the close action if they have active child tickets associated.
+      bulk_close_tickets:
+        one: There is {{count}} parent ticket in the selected list which will be SKIPPED while performing the close action if it has active child tickets associated.
+        other: There are {{count}} parent tickets in the selected list which will be SKIPPED while performing the close action if they have active child tickets associated.
+      scenario:
+        title_submit: WARNING
+        assoc_parent: "Please note that any action to close or resolve parent tickets with unresolved child tickets will be skipped."
     tags:
       no_match: No matches. Press enter to create tag.
       create_success: The tag was added
@@ -5488,7 +5614,7 @@ en:
     executed: " executed "
     performed: " performed "
     system_activity_timestamp: "<strong class='muted'>System</strong> %{system_rule} <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date}) "
-    requestor_info: Requester Info
+    requestor_info: Requestor Info
     view_twitter: View on Twitter
     view_facebook: View on Facebook
     via: via
@@ -5567,7 +5693,8 @@ en:
         text: "You are about to close all %{count} tickets in this view."
         list1: Related observer rules, if any, will not be triggered
         list2: "'Ticket Closed' Notification emails will not be sent to the customer."
-        list3: This action cannot be undone.
+        list3: Parent tickets with active child association will be SKIPPED.
+        list4: This action cannot be undone.
         are_you_sure: Are you sure you want to proceed?
       bulk_all_notification:
         text: "You are about to execute bulk actions on all %{count} tickets in this view."
@@ -9363,7 +9490,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
         queue_position_disable: "OFF"
       numbers:
         sidebar_title: "Phone channel"
-        sidebar_content: "Using the phone channel, you can make and receive calls through your browser, mobile phone or using the phone channel in Freshdesk’s mobile apps. It is tightly integrated with Freshdesk’s ticketing system. So you can keep track of phone calls by recording them and converting them into tickets whenever necessary. <br/><br/> <b>Setting up Phone</b></br>To start using phone, you will first need to enable it and purchase a support number. You can purchase local numbers from the <a href='https://support.freshdesk.com/support/solutions/articles/169322' target='_blank'>countries listed here</a> and make or take calls from anywhere in the world. If your customers will be calling you in the US, UK or Canada you can also purchase toll-free support numbers (or freephone in the UK). <br/><br/><b>Provide Complete Phone Support</b><br/>With our phone channel, you can<br/><ul><li>Start making and taking calls using your web browser or mobile phones</li><li>Create voicemails, forward calls, or transfer calls to any agent, anywhere</li><li>Monitor calls, barge when needed, add other agents into on-going calls, and more*</li></ul><br/><p>*Please reach <a href='mailto:support@freshdesk.com'>support@freshdesk.com</a> to enable advanced features for your account. These include call monitoring, call barging, call conferencing, call masking, and call lifetime metrics.</p><br/><p><a href='http://freshdesk.com/multichannel-support/phone-support' target='_blank'>Learn more about phone’s powerful capabilities and features</a><p>"        
+        sidebar_content: "Using the phone channel, you can make and receive calls through your browser, mobile phone or using the phone channel in Freshdesk’s mobile apps. It is tightly integrated with Freshdesk’s ticketing system. So you can keep track of phone calls by recording them and converting them into tickets whenever necessary. <br/><br/> <b>Setting up Phone</b></br>To start using phone, you will first need to enable it and purchase a support number. You can purchase local numbers from the <a href='https://support.freshdesk.com/support/solutions/articles/169322' target='_blank'>countries listed here</a> and make or take calls from anywhere in the world. If your customers will be calling you in the US, UK or Canada you can also purchase toll-free support numbers (or freephone in the UK). <br/><br/><b>Provide Complete Phone Support</b><br/>With our phone channel, you can<br/><ul><li>Start making and taking calls using your web browser or mobile phones</li><li>Create voicemails, forward calls, or transfer calls to any agent, anywhere</li><li>Monitor calls, barge when needed, add other agents into on-going calls, and more*</li></ul><br/><p>*Please reach <a href='mailto:support@freshdesk.com'>support@freshdesk.com</a> to enable advanced features for your account. These include call monitoring, call barging, call conferencing, call masking, and call lifetime metrics.</p><br/><p><a href='http://freshdesk.com/multichannel-support/phone-support' target='_blank'>Learn more about phone’s powerful capabilities and features</a><p>"
         sidebar_content_v2: "Using the phone channel, you can make and receive calls through your browser, mobile phone or using the phone channel in Freshdesk’s mobile apps. It is tightly integrated with Freshdesk’s ticketing system. So you can keep track of phone calls by recording them and converting them into tickets whenever necessary. <br/><br/> <b>Setting up Phone</b></br>To start using phone, you will first need to enable it and purchase a support number. You can purchase local numbers from the <a href='https://support.freshdesk.com/support/solutions/articles/169322' target='_blank'>countries listed here</a> and make or take calls from anywhere in the world. If your customers will be calling you in the US, UK or Canada you can also purchase toll-free support numbers (or freephone in the UK). <br/><br/><b>Provide Complete Phone Support</b><br/>With our phone channel, you can<br/><ul><li>Start making and taking calls using your web browser or mobile phones</li><li>Create voicemails, forward calls, or transfer calls to any agent, anywhere</li><li>Monitor calls, barge when needed, add other agents into on-going calls, and more*</li></ul><br/><p>*Please reach <a href='mailto:support@freshdesk.com'>support@freshdesk.com</a> to enable advanced features for your account. These include call monitoring, call barging, call conferencing, call masking, and call lifetime metrics.</p><br/>"
         tour_link: "Help me setup phone channel"
         purchase_number: "Purchase Number"
@@ -9681,21 +9808,21 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     end_chat_end_title: "End"
     end_chat_cancel_title: "Cancel"
     cobrowse_request : "Waiting for visitor to accept your request"
-    visitor_cobrowse_request : "Can agent control your current screen? "    
-    cobrowsing_start_msg : "Your screenshare session has started"   
-    cobrowsing_stop_msg : "Your screensharing session has ended"    
+    visitor_cobrowse_request : "Can agent control your current screen? "
+    cobrowsing_start_msg : "Your screenshare session has started"
+    cobrowsing_stop_msg : "Your screensharing session has ended"
     cobrowsing_deny_msg : "Your request was declined"
     cobrowsing_agent_busy : "Agent is in screen share session with customer"
-    cobrowsing_visitor_onhttp_error : "Unable to connect due to an unsecured connection(http site)" 
-    cobrowsing_viewing_screen : "You are viewing the visitor’s screen"    
-    cobrowsing_controlling_screen : "You have access to visitor’s screen"    
-    cobrowsing_request_control : "Request visitor for access"    
-    cobrowsing_give_visitor_control : "Give access back to visitor"            
-    cobrowsing_stop_request : "End your screensharing session"    
-    cobrowsing_request_control_rejected : "Your request was declined"   
-    cobrowsing_cancel_visitor_msg : "Screensharing is currently unavailable"    
-    cb_viewing_screen_vi : "Agent can view your screen "    
-    cb_controlling_screen_vi : "Agent can control your screen"    
+    cobrowsing_visitor_onhttp_error : "Unable to connect due to an unsecured connection(http site)"
+    cobrowsing_viewing_screen : "You are viewing the visitor’s screen"
+    cobrowsing_controlling_screen : "You have access to visitor’s screen"
+    cobrowsing_request_control : "Request visitor for access"
+    cobrowsing_give_visitor_control : "Give access back to visitor"
+    cobrowsing_stop_request : "End your screensharing session"
+    cobrowsing_request_control_rejected : "Your request was declined"
+    cobrowsing_cancel_visitor_msg : "Screensharing is currently unavailable"
+    cb_viewing_screen_vi : "Agent can view your screen "
+    cb_controlling_screen_vi : "Agent can control your screen"
     cb_give_control_vi :  "Allow agent to control your screen"
     help_text_agent_msg: "Use {{agent_name}} and {{helpdesk_name}} to display Agent Name and Helpdesk Name in your messages"
     date_invalid: Invalid date
@@ -9922,7 +10049,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     tour: Help me setup my forums
     tour_v2: Help me setup my knowledge base
     show_more: Show more
-    general:  
+    general:
         unsaved_content: "You have unsaved content in this page."
         leave_page_que: "Do you want to leave this page?"
     helpnote:
@@ -10283,4 +10410,3 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     hide: Hide
     suggestion_text: What can we improve? (Optional).
     help: What's this?
-

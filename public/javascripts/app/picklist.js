@@ -54,6 +54,7 @@
 					 $list.removeClass('active');
 					 var src = event.srcElement || event.target;
 					 $(src).addClass('active');
+					 showParentIcon();
 				 });
 			 }
 
@@ -91,7 +92,7 @@
             $(currActive).removeClass('active');
 						moveElement();
           }
-
+          showParentIcon();
        }
 
 			 function moveElement(){
@@ -113,6 +114,14 @@
 				 e.preventDefault();
 				 obj.callback();
        }
+
+       	function showParentIcon(){
+       		var activeElement = jQuery('[data-picklist] li.active');
+       		jQuery('[data-picklist] li').removeClass('parent').children('i').addClass('hide').removeClass('parent_icon_indicator');
+       		if(activeElement.data('assoc') == 2){
+		 		activeElement.addClass('parent').children('i').removeClass('hide').addClass('parent_icon_indicator');
+		 	}
+       	}
 
 		}
 })(jQuery);

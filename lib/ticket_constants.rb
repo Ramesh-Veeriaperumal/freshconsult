@@ -4,6 +4,8 @@ module TicketConstants
 
   MAX_RELATED_TICKETS = 300
 
+  CHILD_TICKETS_PER_ASSOC_PARENT = 10
+
   BUSINESS_HOUR_CALLER_THREAD = "business_hour"
 
   NBA_NULL_PRODUCT_ID = "-1"
@@ -39,9 +41,9 @@ module TicketConstants
 
   ### Bump the version of "TICKETS_LIST_PAGE_FILTERS" key in fragment_cache/keys.rb when PRIORITIES are modified.
   PRIORITIES = [
-    [ :low,       'low',         1,    '#7ebf00' ], 
-    [ :medium,    'medium',      2,    '#008ff9' ], 
-    [ :high,      'high',        3,    '#ffb613' ], 
+    [ :low,       'low',         1,    '#7ebf00' ],
+    [ :medium,    'medium',      2,    '#008ff9' ],
+    [ :high,      'high',        3,    '#ffb613' ],
     [ :urgent,    'urgent',      4,    '#de0000' ]
   ]
 
@@ -51,13 +53,13 @@ module TicketConstants
   PRIORITY_KEYS_BY_NAME = Hash[*PRIORITIES.map { |i| [i[1], i[2]] }.flatten]
   PRIORITY_TOKEN_BY_KEY = Hash[*PRIORITIES.map { |i| [i[2], i[0]] }.flatten]
   PRIORITY_COLOR_BY_KEY = Hash[*PRIORITIES.map { |i| [i[2], i[3]] }.flatten]
-  
+
   TYPE = [
-    [ :how_to,    I18n.t('how_to'),          1 ], 
-    [ :incident,  I18n.t('incident'),        2 ], 
-    [ :problem,   I18n.t('problem'),         3 ], 
+    [ :how_to,    I18n.t('how_to'),          1 ],
+    [ :incident,  I18n.t('incident'),        2 ],
+    [ :problem,   I18n.t('problem'),         3 ],
     [ :f_request, I18n.t('f_request'),       4 ],
-    [ :lead,      I18n.t('lead'),            5 ]   
+    [ :lead,      I18n.t('lead'),            5 ]
   ]
 
   TYPE_OPTIONS = TYPE.map { |i| [i[1], i[2]] }
@@ -66,8 +68,8 @@ module TicketConstants
   TYPE_NAMES_BY_SYMBOL = Hash[*TYPE.map { |i| [i[0], i[1]] }.flatten]
 
   TICKET_ASSOCIATION = [
-    [:parent, 1],
-    [:child, 2],
+    [:assoc_parent,  1],
+    [:child,   2],
     [:tracker, 3],
     [:related, 4]
   ]
@@ -77,12 +79,12 @@ module TicketConstants
 
   TICKET_ASSOCIATION_FILTER = [
     [ :nil,               'dots',           []],
-    [ :parent,            'parent',         [TICKET_ASSOCIATION_KEYS_BY_TOKEN[:parent]]],
-    [ :child,             'child',          [TICKET_ASSOCIATION_KEYS_BY_TOKEN[:child]]], 
-    [ :tracker,           'tracker',        [TICKET_ASSOCIATION_KEYS_BY_TOKEN[:tracker]]], 
-    [ :related,           'related',        [TICKET_ASSOCIATION_KEYS_BY_TOKEN[:related]]], 
-    [ :both,              'both',           [TICKET_ASSOCIATION_KEYS_BY_TOKEN[:parent], TICKET_ASSOCIATION_KEYS_BY_TOKEN[:tracker]]], 
-    [ :no_association,    'no_association', [-1]]  
+    [ :assoc_parent,      'assoc_parent',   [TICKET_ASSOCIATION_KEYS_BY_TOKEN[:assoc_parent]]],
+    [ :child,             'child',          [TICKET_ASSOCIATION_KEYS_BY_TOKEN[:child]]],
+    [ :tracker,           'tracker',        [TICKET_ASSOCIATION_KEYS_BY_TOKEN[:tracker]]],
+    [ :related,           'related',        [TICKET_ASSOCIATION_KEYS_BY_TOKEN[:related]]],
+    [ :both,              'both',           [TICKET_ASSOCIATION_KEYS_BY_TOKEN[:assoc_parent], TICKET_ASSOCIATION_KEYS_BY_TOKEN[:tracker]]],
+    [ :no_association,    'no_association', [-1]]
   ]
 
   TICKET_ASSOCIATION_FILTER_OPTIONS = TICKET_ASSOCIATION_FILTER.map { |i| [i[1], i[2].join(',')] }
@@ -170,7 +172,7 @@ module TicketConstants
   DUE_BY_TYPES = [
     [ :all_due,         'all_due',               1 ], # If modified, _auto_refresh.html.erb has to be modified.
     [ :due_today,       'due_today',             2 ], # By Shridar.
-    [ :due_tomo,        'due_tomo',              3 ], 
+    [ :due_tomo,        'due_tomo',              3 ],
     [ :due_next_eight,  'due_next_eight',        4 ]
   ]
 
@@ -178,10 +180,10 @@ module TicketConstants
   DUE_BY_TYPES_NAMES_BY_KEY = Hash[*DUE_BY_TYPES.map { |i| [i[2], i[1]] }.flatten]
   DUE_BY_TYPES_KEYS_BY_TOKEN = Hash[*DUE_BY_TYPES.map { |i| [i[0], i[2]] }.flatten]
   DUE_BY_TYPES_NAMES_BY_SYMBOL = Hash[*DUE_BY_TYPES.map { |i| [i[0], i[1]] }.flatten]
-  
+
   CREATED_BY_VALUES = [
-    [ :thirt_days,    I18n.t("export_data.thirt_days"),   30 ], 
-    [ :seven_days,    I18n.t("export_data.seven_days"),    7 ], 
+    [ :thirt_days,    I18n.t("export_data.thirt_days"),   30 ],
+    [ :seven_days,    I18n.t("export_data.seven_days"),    7 ],
     [ :twenty_four,   I18n.t("export_data.twenty_four"),   1 ],
     [ :custom_filter, I18n.t("export_data.custom_filter"), 4 ]
   ]
@@ -304,6 +306,9 @@ module TicketConstants
     :merged_ticket => 4
   }
 
+  CHILD_DEFAULT_FD_MAPPING = ["email", "requester_id", "subject", "status", "ticket_type", "group_id", "responder_id",
+    "priority", "product_id", "description_html", "tags"]
+
   def self.translate_priority_name(priority)
     I18n.t(PRIORITY_NAMES_BY_KEY[priority])
   end
@@ -346,11 +351,11 @@ module TicketConstants
   end
 
   def self.feature_based_association_type
-    parent_child_feature = Account.current.features_included?(:parent_child_tickets)
+    assoc_parent_child_feature = Account.current.parent_child_tkts_enabled?
     link_tickets_feature = Account.current.link_tickets_enabled?
-    return [] unless parent_child_feature || link_tickets_feature
+    return [] unless assoc_parent_child_feature || link_tickets_feature
     list = [TICKET_ASSOCIATION_FILTER[0]]
-    if parent_child_feature
+    if assoc_parent_child_feature
       list << TICKET_ASSOCIATION_FILTER[1]
       list << TICKET_ASSOCIATION_FILTER[2]
     end
@@ -358,7 +363,7 @@ module TicketConstants
       list << TICKET_ASSOCIATION_FILTER[3]
       list << TICKET_ASSOCIATION_FILTER[4]
     end
-    list << TICKET_ASSOCIATION_FILTER[5] if parent_child_feature && link_tickets_feature
+    list << TICKET_ASSOCIATION_FILTER[5] if assoc_parent_child_feature && link_tickets_feature
     list << TICKET_ASSOCIATION_FILTER[6]
     list
   end

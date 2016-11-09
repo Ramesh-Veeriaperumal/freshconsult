@@ -1,0 +1,39 @@
+<% if !parent_template.nil? %>
+  <div class="tree parent_id_holder" data-parent-template-id="<%= parent_template.id %>">
+    <%if parent_template.parent_template? %>
+      <div class="parent_title ellipsis parent_det" data-parent-template-id="<%= parent_template.id %>">
+        <span class="label_tag">
+          child listed from: <span class="name"><%= parent_template.name %></span>
+        </span>
+      </div>
+      <ul class="pl10 pr10">
+        <span class="child-title parent-title-label">Parent</span>
+        <li class="child-li child-first-li nochild-last-li">
+            <span class="child edit"> 
+                <i class="ficon-pencil"></i><%= parent_template.name %></span>
+        </li>
+        <li class="parent-li"> 
+            <ul>
+                <span class="child-title">Child</span>
+                <% child_templates.each_with_index do |child, index| %>
+                  <li class="child-li child_template_items <%= 'first-child' if index.zero? %> active" data-template-id="<%= child.id %>">
+                    <input type="checkbox" class="select_child" name="child-select" checked="true">
+                    <span class="child"> 
+                      <label class="ellipsis"><%= child.name %></label>
+                    </span>
+                  </li>
+                <% end %>
+            </ul>
+        </li>
+      </ul>
+      <div class="action-buttons">
+        <a href="#" id="cancel_create_child" class="btn">Cancel</a>
+        <input class="btn btn-primary" id="create_child_templates" data-commit="Save" name="commit" type="submit" value="Create child tickets">
+      </div>
+    <% end %>
+  </div>
+<% else %>
+  <div class="tree parent_id_holder">
+    <p id="no_child_message"><%= message %></p>
+  </div>
+<% end %>

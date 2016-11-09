@@ -1,13 +1,13 @@
 {
   "checksum": {
-    "previous": "41fa20ecda321edf97445da36d641d170bf3ee8a07ec56a99b43f83272e37ee4",
-    "current": "41fa20ecda321edf97445da36d641d170bf3ee8a07ec56a99b43f83272e37ee4"
+    "previous": "00ea78f96bd59cf2c6dbeb67d6c919f2ab863ef23c935344cb5074cf00ae99fd",
+    "current": "00ea78f96bd59cf2c6dbeb67d6c919f2ab863ef23c935344cb5074cf00ae99fd"
   },
   "fonts": [
-    "public/assets/glyphs_41fa20ecda321edf97445da36d641d17.ttf",
-    "public/assets/glyphs_41fa20ecda321edf97445da36d641d17.svg",
-    "public/assets/glyphs_41fa20ecda321edf97445da36d641d17.woff",
-    "public/assets/glyphs_41fa20ecda321edf97445da36d641d17.eot"
+    "public/assets/glyphs_00ea78f96bd59cf2c6dbeb67d6c919f2.ttf",
+    "public/assets/glyphs_00ea78f96bd59cf2c6dbeb67d6c919f2.svg",
+    "public/assets/glyphs_00ea78f96bd59cf2c6dbeb67d6c919f2.woff",
+    "public/assets/glyphs_00ea78f96bd59cf2c6dbeb67d6c919f2.eot"
   ],
   "glyphs": {
     "abandoned-call": {
@@ -293,6 +293,10 @@
     "checkmark-thick": {
       "codepoint": 61731,
       "source": "public/glyphs/vectors/checkmark-thick.svg"
+    },
+    "child-icon": {
+      "codepoint": 62050,
+      "source": "public/glyphs/vectors/child-icon.svg"
     },
     "chrome": {
       "codepoint": 61732,
@@ -778,6 +782,10 @@
       "codepoint": 62029,
       "source": "public/glyphs/vectors/info.svg"
     },
+    "inherit-parent": {
+      "codepoint": 62051,
+      "source": "public/glyphs/vectors/inherit-parent.svg"
+    },
     "integrations": {
       "codepoint": 61974,
       "source": "public/glyphs/vectors/integrations.svg"
@@ -789,10 +797,6 @@
     "italic": {
       "codepoint": 62030,
       "source": "public/glyphs/vectors/italic.svg"
-    },
-    "keyicon": {
-      "codepoint": 62050,
-      "source": "public/glyphs/vectors/keyicon.svg"
     },
     "left-arrow-thick": {
       "codepoint": 61910,
@@ -1301,6 +1305,10 @@
     "underline": {
       "codepoint": 62045,
       "source": "public/glyphs/vectors/underline.svg"
+    },
+    "undo-inherit": {
+      "codepoint": 62052,
+      "source": "public/glyphs/vectors/undo-inherit.svg"
     },
     "unlink": {
       "codepoint": 62046,

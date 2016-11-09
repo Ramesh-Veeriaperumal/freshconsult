@@ -1,0 +1,11 @@
+<h3 class="title"><%=t('list_all_template.title')%></h3>
+<p><%=t('list_all_template.helptext.info1')%></p>
+<p><%=t('list_all_template.helptext.info2')%></p>
+<% if check_for_parent_child_feature? %>
+<h3 class="title parent-sidebar-title"><%=t('list_all_template.parent_child_templates.title')%></h3>
+<span class="list-templates-parent-wrapper tooltip" data-original-title="<%=t('ticket_templates.parent') %>"> 
+	<i class="ficon-inherit-parent fsize-16 list-templates-parent"></i>
+</span>
+<p><%=t('list_all_template.parent_child_templates.helptext.info1')%></p>
+<p><%=t('list_all_template.parent_child_templates.helptext.info2')%></p>
+<% end %>

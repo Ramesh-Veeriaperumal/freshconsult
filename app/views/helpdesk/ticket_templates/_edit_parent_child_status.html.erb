@@ -1,0 +1,37 @@
+<div class="tree edit-template-tree">
+	<span class="parent-title"><%= t('ticket_templates.parent') %></span>
+    <ul>
+        <li class="parent-li">
+            <span class="parent <%= @tkt_template.parent_template? ? 'edit' : 'save' %>">
+              <% if @tkt_template.child_template? %>
+                <i class="ficon-pencil" ></i>
+              <% end %>
+            <%= link_to @parent.name, edit_helpdesk_ticket_template_path(@parent.id), :class => "statusbar-redirect" %>
+            </span>
+            <% if @children.present? %>
+            <ul>
+            	<span class="child-title <%= 'hide' if @children.length.zero? %>"><%= t('ticket_templates.child') %>
+                <% if @children && children_count > 6 %>
+                  ( <%= children_count%> <%= t('ticket_templates.child_out_of') %> <%= Helpdesk::TicketTemplate::TOTAL_CHILD_TEMPLATES %> )
+                <% elsif @children %>
+                  ( <%= children_count%>  )
+                <%end%>
+                </span>
+                
+                <% @children.each_with_index do |child,index| %>
+                <% if !child.name.blank? %>
+                <li class=" child-li <%= 'child-first-li' if index.zero? %> <%= 'nochild-last-li' if @children.length ==  1 %>">
+                	<span class="child <%= params[:id].to_i==child.id ? 'edit' : 'save'%>"> 
+                     <% if params[:id].to_i == child.id %> 
+                        <i class="ficon-pencil" ></i>
+                     <% end %> 
+                    <%= link_to child.name, "/helpdesk/parent_template/#{@parent.id}/child/#{child.id}/edit", :class => "statusbar-redirect" %>
+                    </span>
+                </li>
+                <% end %>
+                <% end %>
+            </ul>
+            <% end %>
+        </li>   
+    </ul>
+</div>

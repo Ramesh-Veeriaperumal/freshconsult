@@ -989,8 +989,8 @@ Helpkit::Application.routes.draw do
       post :update
     end
 
-    namespace :xero do 
-      get :authorize 
+    namespace :xero do
+      get :authorize
       post :update_params
       get :edit
       get :fetch
@@ -1558,7 +1558,7 @@ Helpkit::Application.routes.draw do
     end
   end
   get   'reports/:id'   => 'reports#show', constraints: { id: /[1-2]+/ }
-  match "/reports/:report_type",           :controller => 'reports/v2/tickets/reports', :action => 'index', :method => :get  
+  match "/reports/:report_type",           :controller => 'reports/v2/tickets/reports', :action => 'index', :method => :get
 
   namespace :reports do
 
@@ -1843,6 +1843,8 @@ Helpkit::Application.routes.draw do
         get :search_templates
         get :accessible_templates
         post :apply_template
+        get :show_children
+        post :bulk_child_tkt_create
       end
 
       member do
@@ -1874,11 +1876,13 @@ Helpkit::Application.routes.draw do
         get :prevnext
         put :update_requester
         post :create # For Mobile apps backward compatibility.
+        get :associated_tickets
         put :link
         put :unlink
-        get :related_tickets
         get :ticket_association
       end
+
+      resources :child, :only => [:new], :controller => "tickets"
 
       resources :surveys do
         collection do
@@ -2129,20 +2133,28 @@ Helpkit::Application.routes.draw do
     match 'commons/status_groups'         => "commons#status_groups"
 
     resources :ticket_templates do
-      member do 
+      member do
         get :clone
-      end 
+        post :unlink_parent
+        post :add_existing_child
+      end
       collection do
+        get :all_children
+        get :search_children
+        get :verify_template_name
+        post :apply_existing_child
         delete :delete_multiple
       end
     end
-    match '/ticket_templates/tab/:current_tab' => 'ticket_templates#index'
-    
+    match '/ticket_templates/tab/:current_tab'    => 'ticket_templates#index',     :as => :my_ticket_templates
+    match '/parent_template/:p_id/child/new'      => 'ticket_templates#new_child', :as => :new_child_template
+    match '/parent_template/:p_id/child/:id/edit' => 'ticket_templates#edit_child',:as => :edit_child_template
+
     resources :scenario_automations do
-      member do 
+      member do
         get :clone
-      end 
-      collection do 
+      end
+      collection do
         get :search
         get :recent
       end

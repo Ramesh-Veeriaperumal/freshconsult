@@ -5,11 +5,11 @@ module SharedPersonalMethods
   def self.included(base)
     base.class_eval {
       before_filter :reset_access_type,         :only => [:create, :update]
+      around_filter :run_on_slave,              :only => [:index]
       before_filter :manage_personal_tab,       :only => [:index]
       before_filter :set_selected_tab
-      before_filter :build_item,                :only => [:new, :create]
-      before_filter :load_item,                 :only => [:edit, :update, :clone, :destroy]
-      before_filter :load_items,                :only => [:delete_multiple]
+      before_filter :build_item,                :only => [:new, :new_child, :create, :apply_existing_child, :verify_template_name]
+      before_filter :load_item,                 :only => [:edit, :edit_child, :update, :clone, :destroy, :unlink_parent, :add_existing_child]
       before_filter :reset_user_and_group_ids,  :only => :update
     }
   end
@@ -17,14 +17,15 @@ module SharedPersonalMethods
   def index
     @current_tab = params[:current_tab] || default_tab
     cookies[:"#{human_name}_show_tab"] = @current_tab
-    @per_page =  ((params[:per_page].blank? || params[:per_page].to_i.zero? || params[:per_page].to_i > 15) ? 
+    @order_by = params[:recently_created] ? "created_at desc" : "name"
+    @per_page =  ((params[:per_page].blank? || params[:per_page].to_i.zero? || params[:per_page].to_i > 15) ?
       15 :  params[:per_page])
     @page = params[:page].to_i.zero? ? nil : params[:page]
-    @all_items = if current_tab_shared? 
-      scoper.send("shared_#{human_name.pluralize}", current_user).paginate(:per_page => @per_page, 
-        :page => @page)
+    @all_items = if current_tab_shared?
+      scoper.send("shared_#{human_name.pluralize}", current_user).order(@order_by).paginate(:per_page =>
+        @per_page, :page => @page)
     else
-      scoper.only_me(current_user).paginate(:per_page => @per_page, :page => @page)
+      scoper.only_me(current_user).order(@order_by).paginate(:per_page => @per_page, :page => @page)
     end
   end
 
@@ -47,6 +48,10 @@ module SharedPersonalMethods
     super
   end
 
+  def run_on_slave(&block)
+    Sharding.run_on_slave(&block)
+  end
+
   private
 
   def load_item
@@ -58,12 +63,8 @@ module SharedPersonalMethods
     end
   end
 
-  def load_items
-    @items = scoper.find_all_by_id(params[:ids])
-  end
-
   def manage_personal_tab
-    if (params[:current_tab] and !ALLOWED_TABS.include?(params[:current_tab])) or 
+    if (params[:current_tab] and !ALLOWED_TABS.include?(params[:current_tab])) or
         (!has_privilege? and params[:current_tab] == "shared")
       redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
     end
@@ -137,5 +138,5 @@ module SharedPersonalMethods
 
   def current_tab_shared?
     @current_tab == "shared"
-  end 
+  end
 end

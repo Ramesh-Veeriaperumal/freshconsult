@@ -2,15 +2,15 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   #Dynamo constants
   TABLE_NAME = "helpkit_ticket"
-  HASH_KEY = "ticket_account"
+  HASH_KEY   = "ticket_account"
   ASSOCIATES = "associates"
-  
+
   DEFAULT_TABLE_NAME = "helpkit_ticket_shard_default"
   TICKET_DYNAMO_NEXT_SHARD = "shard_1"
 
   TicketConstants::TICKET_ASSOCIATION.each do |type|
     define_method("#{type[0]}_ticket?") do
-      self.association_type && self.association_type == type[1]
+      self.association_type.present? && self.association_type == type[1]
     end
   end
 
@@ -18,24 +18,41 @@ class Helpdesk::Ticket < ActiveRecord::Base
     self.tracker_ticket? || self.related_ticket?
   end
 
-  def tracker_ticket
-    if self.related_ticket? && self.associates.present?
+  def assoc_parent_child_ticket?
+    self.assoc_parent_ticket? || self.child_ticket?
+  end
+
+  def associated_prime_ticket type #prime => parent or tracker ticket
+    return false unless ["child", "related"].include? type
+    if self.send("#{type}_ticket?") and self.associates.present?
       account.tickets.find_by_display_id(self.associates.first)
     end
   end
 
-  def related_tickets(options=[])
-    account.tickets.preload(options).where(:display_id => self.associates) if self.tracker_ticket? && self.associates.present?
+  def associated_subsidiary_tickets(type, options=[]) #subsidiary => child or related tickets
+    return false unless ["assoc_parent", "tracker"].include? type
+    account.tickets.preload(options).where(:display_id => self.associates) if self.send("#{type}_ticket?") && self.associates.present?
   end
 
-  def can_be_linked?
+  def can_be_associated?
     !(deleted || spam || parent_ticket.present?)
   end
 
+  def child_tkt_limit_reached?
+    association_type.nil? || (assoc_parent_ticket?  && asstn_obj_count < TicketConstants::CHILD_TICKETS_PER_ASSOC_PARENT)
+  end
+
   def related_tickets_count
-    if tracker_ticket?
-      associates.present? ? associates.count : 0
-    end
+    asstn_obj_count if tracker_ticket?
+  end
+
+  def child_tkts_count
+    asstn_obj_count if assoc_parent_ticket?
+  end
+
+  def validate_assoc_parent_tkt_status
+    child_tkt_states = self.associated_subsidiary_tickets("assoc_parent").pluck(:status)
+    child_tkt_states.present? and (child_tkt_states - [CLOSED, RESOLVED]).present?
   end
 
   def delete_broadcast_notes
@@ -43,8 +60,14 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def reset_associations
-    if self.linked_ticket? 
-      self.tracker_ticket? ? reset_tracker : reset_related
+    if tracker_ticket?
+      reset_tracker
+    elsif related_ticket?
+      reset_related
+    elsif assoc_parent_ticket?
+      reset_assoc_parent
+    elsif child_ticket?
+      reset_child
     end
   end
 
@@ -52,13 +75,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
       #get item
       @associates ||= begin
         hash =  {
-         :key => HASH_KEY, 
+         :key => HASH_KEY,
          :value => "#{self.display_id}_#{self.account.id}"
         }
         resp = Helpdesk::Tickets::Dynamo::DynamoHelper.get_item(
-                  table_name, 
-                  hash, 
-                  nil, 
+                  table_name,
+                  hash,
+                  nil,
                   "#{HASH_KEY}, #{ASSOCIATES}",
                   true)
        resp_item?(resp) ? resp.data.item[ASSOCIATES].map {|e| e.to_i} : nil
@@ -67,15 +90,15 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def associates=(val)
       @associates = nil
-      #get item
+      #put item
       hash =  {
-         :key => HASH_KEY, 
+         :key => HASH_KEY,
          :value => "#{self.display_id}_#{self.account.id}"
         }
       resp = Helpdesk::Tickets::Dynamo::DynamoHelper.put_item(
-                table_name, 
-                hash, 
-                nil, 
+                table_name,
+                hash,
+                nil,
                 {ASSOCIATES => val.to_set}) #dynamo needs the value to be in a set
      return resp.data.attributes[ASSOCIATES].map {|e| e.to_i} if resp_data?(resp)
      nil
@@ -92,11 +115,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def update_associates(val, action="ADD")
     @associates = nil
     hash =  {
-     :key => HASH_KEY, 
+     :key => HASH_KEY,
      :value => "#{self.display_id}_#{self.account.id}"
     }
     resp = Helpdesk::Tickets::Dynamo::DynamoHelper.update_set_attributes(
-                table_name, 
+                table_name,
                 hash, nil,
                 {ASSOCIATES => val}, action)
     return resp.data.attributes[ASSOCIATES].map {|e| e.to_i} if resp_data?(resp)
@@ -106,11 +129,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def remove_all_associates
     @associates = nil
     hash =  {
-     :key => HASH_KEY, 
+     :key => HASH_KEY,
      :value => "#{self.display_id}_#{self.account.id}"
     }
     resp = Helpdesk::Tickets::Dynamo::DynamoHelper.delete_attributes(
-                table_name, 
+                table_name,
                 hash, nil,
                 [ASSOCIATES])
     return resp.data.attributes[ASSOCIATES].map {|e| e.to_i} if resp_data?(resp)
@@ -134,30 +157,56 @@ class Helpdesk::Ticket < ActiveRecord::Base
   private
 
     def reset_tracker
-      self.related_tickets.each do |r|
-        r.update_attributes(:association_type => nil, :associates_rdb => nil)
-        r.remove_all_associates
-      end
+      remove_prime_associates("tracker")
       if Account.current.features?(:activity_revamp) and (self.related_tickets_count > 0)
         self.misc_changes = {:tracker_unlink_all => self.related_tickets_count}
         self.manual_publish_to_rmq("update", RabbitMq::Constants::RMQ_ACTIVITIES_TICKET_KEY)
-      end 
+      end
       remove_all_associates
       delete_broadcast_notes
     end
 
+    def reset_assoc_parent
+      remove_prime_associates("assoc_parent")
+      nullify_assoc_type
+    end
+
     def reset_related
-      tracker = self.tracker_ticket
-      tracker.remove_associates([self.display_id]) if tracker.present?
-      self.update_attributes(:association_type => nil, :associates_rdb => nil)
-      remove_all_associates
-      create_tracker_activity(:tracker_unlink, tracker)
+      remove_subsidiary_associates("related")
+      create_tracker_activity(:tracker_unlink, @prime_tkt)
     end
 
     def table_name
       return @table_name if @table_name
       settings = self.account.account_additional_settings_from_cache.additional_settings
-      @table_name = (settings.present? and settings[:tkt_dynamo_shard].present?) ? 
+      @table_name = (settings.present? and settings[:tkt_dynamo_shard].present?) ?
                                 "#{TABLE_NAME}_#{settings[:tkt_dynamo_shard]}" : DEFAULT_TABLE_NAME
+    end
+
+    def reset_child
+      remove_subsidiary_associates("child")
+      nullify_assoc_type(@prime_tkt) unless @prime_tkt.associates.present?
+    end
+
+    def remove_prime_associates type
+      self.associated_subsidiary_tickets(type).each do |r|
+        nullify_assoc_type(r)
+        r.remove_all_associates
+      end
+    end
+
+    def remove_subsidiary_associates type
+      @prime_tkt = self.associated_prime_ticket(type)
+      @prime_tkt.remove_associates([self.display_id]) if @prime_tkt.present?
+      nullify_assoc_type
+      remove_all_associates
+    end
+
+    def nullify_assoc_type item = self
+      item.update_attributes(:association_type => nil, :associates_rdb => nil)
+    end
+
+    def asstn_obj_count
+      @asstn_obj_count ||= associates.present? ? associates.count : 0
     end
 end

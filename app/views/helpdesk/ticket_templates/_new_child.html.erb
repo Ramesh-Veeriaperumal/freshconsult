@@ -1,0 +1,16 @@
+<%= form_for @item, :html => { :multipart => true, :rel => "validate",:method => 'post', :class => 'child-form new-form ticket_template_form template_form', :id => "ticket_template"}  do |f| %>
+  <%= render :partial => "child_form", :locals => { :f => f, :is_edit => true } %>
+  <div class="modal hide fade" id="toggle-confirm" aria-hidden="true" role="dialog">
+    <div class="modal-header">
+      <a class="close" data-dismiss="modal"></a>
+      <h3><%= t('ticket_templates.save_and_continue.title') %></h3>
+    </div>
+    <div class="modal-body">
+      <p><%= t('ticket_templates.save_and_continue.info1') %></p>
+    </div>
+    <div class="modal-footer">
+      <%= link_to(t('ticket_templates.save_and_continue.cancel'),'' ,:class => "btn btn-primary pull-right take_back",:method => 'delete' )%>	
+      <%= link_to(t('ticket_templates.save_and_continue.proceed'), '' ,:class => "btn pull-right proceed_anyway" )%>	
+    </div>
+  </div>
+<% end %>
