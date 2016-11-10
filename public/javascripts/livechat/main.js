@@ -41,7 +41,9 @@
 			}
 		 });
 
-		showLoaderPage();	
+		 // export
+		bindExport();
+		showLoaderPage();
 	});
 	// There is conflict between pjax and backbone routing. So once pjax is loaded. we are stopping backbone routing
 	// and removing all references.
@@ -65,7 +67,7 @@
 	
 	jQuery(document).one('pjax:end',pjaxCallback);	
 
-	var changeFilterHeader = function($filterElem,filterName){
+	var changeFilterHeader = function(filterName){
 		var newFilterName = {};
             _.each(filterName,function(value,key){
                 newFilterName[key] = _.escape(value);
@@ -94,83 +96,15 @@
 	});
  	// Triggered when the user clicks submit button
  	jQuery("#submit").click(function(ev){
- 		var $filterForm = jQuery('#archive_filter');
- 		var filterVal = {};
- 		var filterName = {};
-
- 		//Keyword 
- 		var keyword = $filterForm.find('#filter_keyword').val();
- 		if(keyword){
- 			filterVal.keyword = keyword;
- 			filterName.keyword = keyword;
- 		}
- 		// Widget
- 		var widgetData = $filterForm.find('#widget_filter').select2('data');
- 		if(widgetData.length === 0 ){
- 			filterVal.widgetId = 0;
- 			filterName.widget = "All";
- 		}else{
- 			filterVal.widgetId = _.pluck(widgetData,"id").join(',');
- 			filterName.widget = _.pluck(widgetData,"text").join(',');
- 		}
-
- 		//Time Period 
- 		var timePeriod = $filterForm.find("#date_range").val();
- 		if(timePeriod){
-			filterName.timePeriod = timePeriod;
-			var fromDate = timePeriod.split('-')[0];
-			var	toDate;
-			if(timePeriod.split('-')[1]){
-				toDate = timePeriod.split('-')[1];
-			}else{
-				toDate = timePeriod.split('-')[0];
-			}
-			var frm = new Date(fromDate);
-			frm.setHours(0, 0, 0, 0);
-			var to = new Date(toDate);
-			to.setHours(23, 59, 59, 999);
-			filterVal.frm = frm.toUTCString();
-			filterVal.to  = to.toUTCString();
- 		}
-
- 		//Agent 
- 		var agentData = $filterForm.find('#agent_filter').select2('data');
- 		if(agentData.length === 0 ){
- 			filterVal.agentId = 0;
- 			filterName.agent = "All";
- 		}else{
- 			filterVal.agentId = _.pluck(agentData,"id").join(',');
- 			filterName.agent = _.pluck(agentData,"text").join(',');
- 		}
-
- 		//Chat Type 
- 		var $chatType = $filterForm.find('#type_filter :selected');
- 		filterVal.type = $chatType.val();
- 		filterName.type = $chatType.html();
-
- 		//Visitor ID 
- 		var visitorId = $filterForm.find('#visitor_id').val();
- 		if(visitorId){
- 			filterVal.visitorId = visitorId;
- 			filterName.visitorId = visitorId;
- 		}
-
- 		//Specific Agent to Agent Chats
- 		var agentIds = $filterForm.find('#agent_ids').val();
- 		if(agentIds){
- 			filterVal.agentIds = agentIds;
- 			filterVal.type = "4";
- 		}
-
- 		//Sorting Filter 
- 		filterVal.sort = jQuery('#sorting-filter-head').data('sortType');
-
- 		changeFilterHeader($filterForm,filterName);
-
- 		if(window.archiveRouter){
- 			window.archiveRouter.archiveCollection.setFilter(filterVal);
- 			window.archiveRouter.archiveCollection.loadHomePage();
- 		}
+ 		jQuery('#sliding').click();
+ 		getFilterValues(function(filterName, filterVal){
+ 			changeFilterHeader(filterName);
+	 		if(window.archiveRouter){
+	 			window.archiveRouter.archiveCollection.setFilter(filterVal);
+	 			window.archiveRouter.archiveCollection.loadHomePage();
+	 		}	
+	 		checkAndHideExportButton(filterVal.type);
+ 		});
   	});	
 	// Triggered when the user changes sorting
 	jQuery('#sorting-filter').on('click',function(event){
@@ -247,9 +181,162 @@
 			jQuery(document).off('chatLoaded');
 		});
 	}
+
+    var getFilterValues = function(callback){
+    	var $filterForm = jQuery('#archive_filter');
+ 		var filterVal = {};
+ 		var filterName = {};
+
+ 		//Keyword 
+ 		var keyword = $filterForm.find('#filter_keyword').val();
+ 		if(keyword){
+ 			filterVal.keyword = keyword;
+ 			filterName.keyword = keyword;
+ 		}
+ 		// Widget
+ 		var widgetData = $filterForm.find('#widget_filter').select2('data');
+ 		if(widgetData.length === 0 ){
+ 			filterVal.widgetId = 0;
+ 			filterName.widget = "All";
+ 		}else{
+ 			filterVal.widgetId = _.pluck(widgetData,"id").join(',');
+ 			filterName.widget = _.pluck(widgetData,"text").join(',');
+ 		}
+
+ 		//Time Period 
+ 		var timePeriod = $filterForm.find("#date_range").val();
+ 		if(timePeriod){
+ 			// var accountTimeZoneOffsetInMin = parseInt(jQuery('#livechat_archive_page').attr("data-time-zone-offset"));
+	 		// var currentTimeZoneOffetInMin = new Date().getTimezoneOffset();
+	 		// var newOffsetInMin = accountTimeZoneOffsetInMin + currentTimeZoneOffetInMin;
+			filterName.timePeriod = timePeriod;
+			var fromDate = timePeriod.split('-')[0];
+			var	toDate;
+			if(timePeriod.split('-')[1]){
+				toDate = timePeriod.split('-')[1];
+			}else{
+				filterVal.isOneDayFilter = true; 
+				toDate = timePeriod.split('-')[0];
+			}
+			var frm = new Date(fromDate);
+			frm.setHours(0, 0, 0, 0);
+			var to = new Date(toDate);
+			to.setHours(23, 59, 59, 999);
+
+			// getting actual range for mail subject and content
+			var actualFromMonth = frm.toString().split(" ")[1];
+			var actualToMonth = to.toString().split(" ")[1];
+			var actualFrm = frm.getDate() + ' '+ actualFromMonth + ', ' + frm.getFullYear();
+			var actualTo = to.getDate() + ' '+ actualToMonth + ', ' + to.getFullYear(); 
+			filterVal.actualRange = filterVal.isOneDayFilter ? actualFrm : actualFrm + ' - ' + actualTo;
+			filterVal.frm = frm.toUTCString();
+			filterVal.to = to.toUTCString(); 
+			// var newFrom = new Date();
+			// var newTo = new Date();
+			// filterVal.frm = newFrom.setTime(frm.getTime() + (newOffsetInMin * 60 * 1000));
+			// filterVal.to = newTo.setTime(to.getTime() + (newOffsetInMin * 60 * 1000));
+ 		}
+
+ 		//Agent 
+ 		var agentData = $filterForm.find('#agent_filter').select2('data');
+ 		if(agentData.length === 0 ){
+ 			filterVal.agentId = 0;
+ 			filterName.agent = "All";
+ 		}else{
+ 			filterVal.agentId = _.pluck(agentData,"id").join(',');
+ 			filterName.agent = _.pluck(agentData,"text").join(',');
+ 		}
+
+ 		//Chat Type 
+ 		var $chatType = $filterForm.find('#type_filter :selected');
+ 		filterVal.type = $chatType.val();
+ 		filterName.type = $chatType.html();
+
+ 		//Visitor ID 
+ 		var visitorId = $filterForm.find('#visitor_id').val();
+ 		if(visitorId){
+ 			filterVal.visitorId = visitorId;
+ 			filterName.visitorId = visitorId;
+ 		}
+
+ 		//Specific Agent to Agent Chats
+ 		var agentIds = $filterForm.find('#agent_ids').val();
+ 		if(agentIds){
+ 			filterVal.agentIds = agentIds;
+ 			filterVal.type = "4";
+ 		}
+
+ 		//Sorting Filter 
+ 		filterVal.sort = jQuery('#sorting-filter-head').data('sortType');
+ 		callback && callback(filterName, filterVal);
+    };
+
+	// Chat Archive Export
+
+	var checkAndHideExportButton = function(type){
+		var exportElement = jQuery('.chat_archive_export');
+		if(type == '4' || type == '6'){  // 4 - agent to agent chat / 6 - spam chat
+			exportElement.hide();
+		}else{
+			exportElement.show();
+		}
+	};
+
+	var showExportAlerts = function(message) {
+      jQuery("#noticeajax").html("<div>" + message + "</div>").show();
+      setTimeout(function() {closeableFlash('#noticeajax');}, 3000);
+    };
+
+    var validateExportDateRange = function(fromDate){
+    	if(!fromDate) return false;
+    	fromDate = new Date(fromDate);
+    	var dateLimit = jQuery('.chat_archive_export').attr("data-export-date-limit");
+	   	return (new Date() < fromDate.setMonth(fromDate.getMonth() + dateLimit));
+    };
+
+    var showProgress = function(progress) {
+      	if (progress === undefined) { progress = 0 };
+      	if (progress >= 1.0) { return; }
+      	NProgress.set(progress);
+      	showProgress(progress + 0.2);
+    };
+
+    var cleanupLoader = function() {
+      	NProgress.done();
+      	setTimeout(NProgress.remove, 500);
+    };
+
+    var bindExport = function () {
+      var self = this;
+      var $export_div = jQuery('.chat_archive_export');
+      jQuery('#livechat_archive_page').on("click.export_button",".export_option",
+        function(ev) {
+			var format = jQuery(ev.target).attr('data-format');
+			ev.preventDefault();
+			showProgress();
+			getFilterValues(function(filterName, filterVal){
+				if(validateExportDateRange(filterVal.frm)){
+					var data = { filters: filterVal };
+					data.format = format;
+					jQuery.ajax({
+					    url   : '/livechat/export',
+					    type  : "GET",
+					    data  : data,
+					    success : function( result, status, xhr ) {
+							cleanupLoader();			
+							showExportAlerts($export_div.attr("data-success-message"));
+					    },
+					    error : function( xhr, status, error ){
+							cleanupLoader();
+							showExportAlerts($export_div.attr("data-error-message"));
+					    }
+					});
+				}else{
+					cleanupLoader();
+					showExportAlerts($export_div.attr("data-range-limit-message"));
+				}
+			});
+        });
+    };
+
 })();
-
-
-
-
-

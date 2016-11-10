@@ -848,7 +848,7 @@ class User < ActiveRecord::Base
   end
 
   def update_search_index
-    SearchSidekiq::IndexUpdate::UserTickets.perform_async({ :user_id => id }) if ES_ENABLED
+    SearchSidekiq::IndexUpdate::UserTickets.perform_async({ :user_id => id }) if Account.current.esv1_enabled?
   end
 
   def moderator_of?(forum)

@@ -40,6 +40,11 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
     attachments.pluck(:content_file_name)
   end
 
+  # For linked tickets
+  def association_type
+    parent['int_tc03']
+  end
+
   def es_cc_emails
     cc_email_hash[:cc_emails] if cc_email_hash
   end

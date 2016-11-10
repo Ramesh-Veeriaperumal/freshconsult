@@ -129,6 +129,12 @@ class Account < ActiveRecord::Base
   def count_es_enabled?
     (launched?(:es_count_reads) || launched?(:list_page_new_cluster)) && features?(:countv2_reads)
   end
+      
+  # Feature check to prevent data from being sent to v1 conditionally
+  # V1 is allowed in EU alone for now
+  def esv1_enabled?
+    PodConfig['CURRENT_POD'].eql?('podeuwest1') || (ES_ENABLED && launched?(:es_v1_enabled))
+  end
 
   def permissible_domains
     helpdesk_permissible_domains.pluck(:domain).join(",")

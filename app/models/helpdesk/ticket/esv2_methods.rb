@@ -177,13 +177,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
   # _Note_: Will be deprecated and removed in near future
   #
   def delete_from_es_notes
-    SearchSidekiq::Notes::DeleteNotesIndex.perform_async({ :ticket_id => id }) if ES_ENABLED
+    SearchSidekiq::Notes::DeleteNotesIndex.perform_async({ :ticket_id => id }) if Account.current.esv1_enabled?
   end
 
   # _Note_: Will be deprecated and removed in near future
   #
   def restore_es_notes
-    SearchSidekiq::Notes::RestoreNotesIndex.perform_async({ :ticket_id => id }) if ES_ENABLED
+    SearchSidekiq::Notes::RestoreNotesIndex.perform_async({ :ticket_id => id }) if Account.current.esv1_enabled?
   end                                                         ###
 
 end

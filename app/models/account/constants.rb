@@ -137,6 +137,6 @@ class Account < ActiveRecord::Base
                           :supervisor_dashboard, :support_new_ticket_cache, :ticket_list_page_filters_cache, :translate_solutions, 
                           :sidekiq_dispatchr_feature, :list_page_new_cluster, :freshfone_onboarding, :disable_old_sso, 
                           :round_robin_capping, :cache_new_tkt_comps_forms, :restricted_helpdesk, :solutions_meta_read, 
-                          :freshfone_caller_id_masking, :bi_reports]
+                          :freshfone_caller_id_masking, :bi_reports, :es_v1_enabled]
 
 end

@@ -1,5 +1,6 @@
 class ChatSetting < ActiveRecord::Base
   self.primary_key = :id
+  EXPORT_DATE_LIMIT = 6
 	CHAT_CONSTANTS =  [
 	  [ :HIDE,             0], 
       [ :SHOW,              1],
