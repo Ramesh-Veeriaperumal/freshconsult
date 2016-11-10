@@ -145,31 +145,46 @@ class HelpdeskReports::Formatter::Ticket::TicketVolume
 
     def calculate_busiest_day_and_hours hash
       busiest_day = hash.values.collect{|h| h.values.sum}.each_with_index.max[1].to_s
-      busy_hours = hash.inject({}) do |busy_hours, (day, hours)|
-      hours.each do |hour, ticket_count|
-        busy_hours[hour] = busy_hours[hour].to_i + ticket_count.to_i
+      max_value = 0
+      max_keys = busy_hours = {} 
+      max_value_keys = []
+      hash.each do |day, hours|
+        hours.each do |hour, ticket_count|
+          busy_hours[hour] = busy_hours[hour].to_i + ticket_count
+            if busy_hours[hour]>= max_value
+                max_value = busy_hours[hour]
+                max_keys[max_value] = (max_keys[max_value] || []) << hour
+            end
+        end
+      max_value_keys = max_keys[max_value].uniq
       end
-      busy_hours
-      end
-      max_value = busy_hours.values.max
-      if max_value > 0
-        max_value_keys  = busy_hours.select{|k, v| v == max_value}.keys
+      if max_value > 0    
         if max_value_keys.size == 1
           start_index, end_index = [max_value_keys.first.to_i,max_value_keys.first.to_i+1]
         else
           #Calculating busiest range by extending the range by (+/-)1 hour and calculating maximum number of tickets
-          result = max_value_keys.inject({}) do |result,k|
-            result[k] = [ busy_hours[(k.to_i+1).to_s] + busy_hours[(k.to_i-1).to_s] ] unless k == "0" || k == "23"
-            result
-          end
-          max_result = result.max_by{|k,v| v}
-          start_index, end_index = [max_result.first.to_i,max_result.first.to_i+1]
+          max = value = 0;
+          key = nil
+          max_value_keys.each do |k|
+            if k == "0"
+              value = busy_hours[(k.to_i+1).to_s] + busy_hours[(k.to_i+2).to_s]
+            elsif k == "23"
+              value = busy_hours[(k.to_i-1).to_s] + busy_hours[(k.to_i-2).to_s]
+            else
+              value = busy_hours[(k.to_i+1).to_s] + busy_hours[(k.to_i-1).to_s]
+            end
+            if (value >= max )
+                max = value
+                key = k
+            end
+          end  
+          start_index, end_index = [key.to_i,key.to_i+1]
         end
       end
       if(start_index == end_index)
         ["-", "-"]
       else
-        [Date::DAYNAMES[busiest_day.to_i], "#{convert_no_to_time(start_index)} - #{convert_no_to_time(end_index)}"]
+        [Date::DAYNAMES[busiest_day.to_i], "#{convert_no_to_time(start_index%24)} - #{convert_no_to_time(end_index%24)}"]
       end
     end
 
@@ -244,7 +259,7 @@ class HelpdeskReports::Formatter::Ticket::TicketVolume
         end
       end
     end
-
+                     
     def trends_to_show
       @trends ||= []
       return @trends unless @trends.empty?
