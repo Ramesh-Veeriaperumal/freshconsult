@@ -108,7 +108,7 @@ class Helpdesk::TicketsController < ApplicationController
   def suggest_tickets
     tickets = []
     similar_tickets_list = get_similar_tickets
-    tickets = current_account.tickets.visible.preload(:requester,:ticket_status,:ticket_old_body).permissible(current_user).where(id:similar_tickets_list) if similar_tickets_list.present?
+    tickets = current_account.tickets.visible.preload(:requester,:ticket_status,:ticket_old_body).permissible(current_user).reorder("field(helpdesk_tickets.id,#{similar_tickets_list.join(',')})").where(id:similar_tickets_list) if similar_tickets_list.present?
     tickets_list = []
     tickets.each do |ticket|
       similar_tickets = Hash.new
@@ -120,7 +120,7 @@ class Helpdesk::TicketsController < ApplicationController
       similar_tickets["helpdesk_ticket"]["updated_at"] = ticket.updated_at
       similar_tickets["helpdesk_ticket"]["requester_name"] = ticket.requester_name
       similar_tickets["helpdesk_ticket"]["status_name"] = ticket.status_name
-      tickets_list[similar_tickets_list.index(ticket_id)] = similar_tickets
+      tickets_list << similar_tickets
     end
     render :json =>  tickets_list.compact.to_json
   end
