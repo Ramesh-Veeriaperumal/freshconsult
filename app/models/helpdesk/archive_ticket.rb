@@ -259,9 +259,18 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
   end
 
   SCHEMA_LESS_FIELDS.each do |alias_attribute, field_name|
+    next if alias_attribute == "product_id"
     define_method "#{alias_attribute}" do
       parent[field_name]
     end
+  end
+
+  def product_id=(product_id)
+    self.send(:write_attribute,:product_id,product_id)
+  end
+
+  def product_id
+    return self.read_attribute(:product_id) || parent["product_id"]
   end
 
   def custom_field
