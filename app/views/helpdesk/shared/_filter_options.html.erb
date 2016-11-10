@@ -237,6 +237,7 @@
       PopulateData.I18n_text.unassigned = '<%= t("filter_options.unassigned") %>'
       TicketListSidebar.getParams(fieldMap,function(params){
           params.defaultDateRange = "<%= TicketConstants.created_date_range_default%>";
+          params.sharedOwnershipFlag = <%= shared_ownership_enabled %>
           PopulateFormData.init(params);
       });
     <% end %>
@@ -378,7 +379,7 @@
 
     // For Any Group - on change
     jQuery(".agent_mode, .group_mode").off();
-    jQuery(".agent_mode, .group_mode").on("click", function(ev){
+    jQuery(".agent_mode, .group_mode").on("click", function(ev,params){
       ev.preventDefault();
       jQuery(this).closest(".ff_item").attr("id", 'div_ff_'+this.getAttribute(this.className));
       jQuery(this).closest(".ff_item").attr("condition", this.getAttribute(this.className));
@@ -427,7 +428,7 @@
         jQuery("#active_filter").addClass('unsaved');
       }
       jQuery(this).closest(".ff_item").data("fromFilters", false);
-      refresh_tickets();
+      if(params !== 'customTrigger')refresh_tickets();
     });
 
 		jQuery(document).on("click.ticket_filter", ".toolbar_pagination a, .toolbar_pagination_full a", function(ev){

@@ -24,15 +24,11 @@ var PopulateFormData = PopulateFormData ||  (function(){
      PopulateData.fromStore("#responder_id", 'agent',true);
     // check is ajax required
     if(!args.isAjax){
-      var customizedData = _customizeData(args.data, args.fieldMap);
-      _populateFields(customizedData, args);
+      _populateFields(args.data, args);
       _resetFilterDataHash();
       return;
     }
     _getData(args.url, args.defaultKey, function(data){
-      if(data.agent_mode >= 0 || data.group_mode >= 0){
-        _setCustomFilterModes(data.agent_mode, data.group_mode);
-      }
       _populateFields(data, args);
       _resetFilterDataHash(args.defaultKey);
     });
@@ -88,22 +84,26 @@ var PopulateFormData = PopulateFormData ||  (function(){
   function _setCustomFilterModes(agent, group){
     if(agent >= 0){
       jQuery("#agentSort").parent().data("fromFilters", true);
-      jQuery(".shared_sort_menu .agent_mode[mode='"+agent+"']").trigger('click');
+      jQuery(".shared_sort_menu .agent_mode[mode='"+agent+"']").trigger('click',['customTrigger']);
     }
 
     if(group >= 0){
       jQuery("#groupSort").parent().data("fromFilters", true);
-      jQuery(".shared_sort_menu .group_mode[mode='"+group+"']").trigger('click');
+      jQuery(".shared_sort_menu .group_mode[mode='"+group+"']").trigger('click',['customTrigger']);
     }
   }
 
   function _populateFields(data, args){
-    var initialData = getInitialData(args['defaultKey']),
-        responseData = args.isAjax ? data.conditions : data;
-        extendedData = jQuery.extend(initialData, responseData),
-        selectedFields = _getKeys(extendedData),
-        meta_data = data.meta_data;
-        initialData.defaultDateRange = args.defaultDateRange;
+    var initialData, responseData, extendedData, selectedFields, meta_data;
+    responseData = args.isAjax ? data.conditions : _customizeData(data, args.fieldMap);
+    if(args.sharedOwnershipFlag){
+       _setCustomFilterModes(data.agent_mode || 0, data.group_mode || 0)
+    }
+    initialData = getInitialData(args['defaultKey']);
+    extendedData = jQuery.extend(initialData, responseData);
+    selectedFields = _getKeys(extendedData);
+    meta_data = data.meta_data;
+    initialData.defaultDateRange = args.defaultDateRange;
     selectedFields.each(function(val, index){
       if(val !== 'spam' && val !== 'deleted'){
         _populateIndividualField(val, extendedData, meta_data);
