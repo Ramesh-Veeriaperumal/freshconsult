@@ -120,7 +120,7 @@ class Solution::FolderMeta < ActiveRecord::Base
 	end
 
 	def update_search_index
-	  SearchSidekiq::IndexUpdate::FolderArticles.perform_async({ :folder_id => id }) if ES_ENABLED
+	  SearchSidekiq::IndexUpdate::FolderArticles.perform_async({ :folder_id => id }) if Account.current.esv1_enabled?
 
 	  SearchV2::IndexOperations::UpdateArticleFolder.perform_async({ :folder_id => id }) if Account.current.features_included?(:es_v2_writes)
 	end
