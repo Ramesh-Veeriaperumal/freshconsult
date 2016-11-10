@@ -966,8 +966,8 @@ en:
         regexp_example_html: "For example, To match a string that contains only alphabets & numbers: <b> /^[a-zA-Z0-9]*$/ </b>. To match a string that starts with word \"fresh\" <b> %{regex} </b>."
         max_choices: "Maximum items reached"
         mapped_internal_groups: "Mapped Internal Groups"
-        multiple_company_message : "Contacts can be associated with only one company"
-        multiple_company_message_enable : "Contacts can be associated with multiple companies"
+        multiple_company_message : "Contacts can be associated with only one company."
+        multiple_company_message_enable : "Contacts can be associated with multiple companies."
     portal:
       delete_confirm:
         title: "Deleting this portal will remove"
@@ -7076,7 +7076,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       invalid_ticket_id: "Invalid ticket id"
       invalid_requester_id: "Invalid requester id"
       invalid_responder_id: "Invalid responder id"
-      invalid_responder_detail: "There is no responder matching the give responder details"
+      invalid_responder_detail: "There is no responder matching the given responder details"
       contact_creation_failed: "Unable to create contact"
     czentrix:
       label: "C-Zentrix"
@@ -9916,6 +9916,10 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     reported: "reported"
     view_ticket: "View ticket"
     agent_parallel_accept_error: "You have already initiated a chat, please try after a few seconds."
+    export_success: "Your chat history will be sent to your email (%{email}) shortly!"
+    export_error: We were unable to start the export. Please try again or contact Freshdesk support.
+    range_limit_message: We only allow exporting chat history in a %{range} month range. Please change your filter accordingly. Apologies for the inconvenience.
+    export_help_text: Export is only for visitor chat
   facebook_tab:
     remove_tab: "Remove page Tab"
     tab_not_removed: "Could not remove tab"

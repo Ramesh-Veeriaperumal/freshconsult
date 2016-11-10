@@ -6,7 +6,7 @@
 		<div class="sloading loading-left loading-small reports-loading"><%=t('livechat.fetching')%></div>
 	</div>
 	<!-- report content -->
-	<div class="row-fluid" id="livechat_archive_page">
+	<div class="row-fluid" id="livechat_archive_page" data-time-zone-offset="<%= @time_zone_offset_in_min %>">
 		<div class="report-page normal-twipsy" id="report-page">
 			<div class="report-content-wrapper">
 			<!--report header-->
@@ -16,6 +16,29 @@
 							<div class="vertical-alignment report-inner-heading">
 								<h1 class="lead fc-archive-title" id="report_header_title"><i class="ficon-agent-fchat-on fsize-28"></i><%=t('livechat.message_archives')%></h1>
 							</div>
+							<!-- Chat History Export Start -->
+			          		<div class="chat_archive_export pull-right" 
+			          		  data-success-message="<%= @export_messages[:success_message] %>"
+				              data-error-message="<%= @export_messages[:error_message] %>"
+				              data-range-limit-message="<%= @export_messages[:range_limit_message] %>"
+				              data-export-date-limit="<%= @export_date_limit %>">    
+					          <span class="dropdown export_button">
+								<a role="button" class="dropdown-toggle" id="export_dropdown" data-toggle="dropdown" href="#">	<span><%= t('export_data.export') %></span>
+								  <b class="caret"></b>
+								</a>
+								<ul class="dropdown-menu pull-right" role="menu" aria-labelledby="export_options">
+									<% @export_options.each do |option| %>
+										<li>
+											<a href="#" class="export_option" data-format="<%=option[:en].downcase%>">
+												<%=option[:i18n]%>
+											</a>
+										</li>
+									<% end %>
+								</ul>
+							  </span>
+							  <p class="export_help_text pull-right"><%=t('livechat.export_help_text')%></p>
+					        </div>
+		        			<!-- Chat History Export End -->
 						</div>
 					</div>
 					<div class="row-fluid">
@@ -102,7 +125,7 @@
 	      		{
 	                text: '<%= t('helpdesk_reports.this_month') %>',
 	                dateStart: date.this_month_start,
-	                dateEnd: date.previous_week_end,
+	                dateEnd: 'Today',
 	                period : "this_month"
 	            },
 	            {
