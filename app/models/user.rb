@@ -942,6 +942,16 @@ class User < ActiveRecord::Base
     self.accessible_groups.round_robin_groups
   end
 
+  def assign_company comp_name
+    if has_multiple_companies_feature?
+      comp = account.companies.find_or_create_by_name(comp_name)
+      self.user_companies.build(:company_id => comp.id) if 
+        self.user_companies.find_by_company_id(comp.id).blank?
+    else
+      self.company_name = comp_name
+    end
+  end
+
   private
 
     def name_part(part)
