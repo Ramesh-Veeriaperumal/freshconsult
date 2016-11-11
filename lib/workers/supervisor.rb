@@ -74,6 +74,7 @@ class Workers::Supervisor
         tickets = Sharding.run_on_slave { account.tickets.where(negate_conditions).where(conditions).updated_in(1.month.ago).visible.find(:all, :joins => joins, :select => "helpdesk_tickets.*") }
         tickets.each do |ticket|
           begin
+            next if ticket.sent_for_enrichment?
             rule.trigger_actions ticket
             ticket.save_ticket!
           rescue Exception => e

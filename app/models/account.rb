@@ -553,6 +553,14 @@ class Account < ActiveRecord::Base
     account_additional_settings.additional_settings[:portal_languages]
   end
 
+  def marketplace_app_enabled?
+    features?(:marketplace_app)
+  end
+
+  def skip_dispatcher?
+    marketplace_app_enabled? && launched?(:synchronous_apps)
+  end
+
   def remove_secondary_companies
     user_companies.find_each do |user_company|
       user_company.destroy unless user_company.default

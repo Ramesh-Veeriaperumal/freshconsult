@@ -95,7 +95,8 @@ class Account < ActiveRecord::Base
     :redis_display_id => false, :es_multilang_solutions => false,
     :sort_by_customer_response => false, :survey_links => true,
     :saml_unspecified_nameid => false, :euc_hide_agent_metrics => false, 
-    :single_session_per_user => false, :link_tickets => false, :parent_child_tickets => false
+    :single_session_per_user => false, :link_tickets => false, :parent_child_tickets => false,
+    :marketplace_app => false
   }
 
 
@@ -137,6 +138,6 @@ class Account < ActiveRecord::Base
                           :supervisor_dashboard, :support_new_ticket_cache, :ticket_list_page_filters_cache, :translate_solutions, 
                           :sidekiq_dispatchr_feature, :list_page_new_cluster, :freshfone_onboarding, :disable_old_sso, 
                           :round_robin_capping, :cache_new_tkt_comps_forms, :restricted_helpdesk, :solutions_meta_read, 
-                          :freshfone_caller_id_masking, :bi_reports, :es_v1_enabled]
+                          :freshfone_caller_id_masking, :bi_reports, :es_v1_enabled, :synchronous_apps]
 
 end

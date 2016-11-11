@@ -61,6 +61,7 @@ module RabbitMq::Utils
     if valid  
       message["#{model}_properties"].deep_merge!(send("mq_#{s}_#{model}_properties", action))
       message["subscriber_properties"].merge!({ s => send("mq_#{s}_subscriber_properties", action) })
+      send("mq_custom_#{s}_#{model}_method", message) if CUSTOM_METHODS[model] && CUSTOM_METHODS[model].include?(s)
     end
     valid
   end

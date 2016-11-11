@@ -260,6 +260,9 @@ module Redis::RedisKeys
 
 
 
+  MARKETPLACE_APP_TICKET_DETAILS = "MARKETPLACE_APP_TICKET_DETAILS:%{account_id}"
+  AUTOMATION_TICKET_PARAMS = "AUTOMATION_TICKET_PARAMS:%{account_id}:%{ticket_id}"
+
 	def newrelic_begin_rescue
 		begin
 		  yield

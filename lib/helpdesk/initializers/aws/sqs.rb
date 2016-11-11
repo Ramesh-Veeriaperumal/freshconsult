@@ -70,7 +70,8 @@ begin
     SQS[:auto_refresh_queue]    => AwsWrapper::SqsV2.queue_url(SQS[:auto_refresh_queue]),
     SQS[:auto_refresh_alb_queue]    => AwsWrapper::SqsV2.queue_url(SQS[:auto_refresh_alb_queue]),
     SQS[:agent_collision_queue] => AwsWrapper::SqsV2.queue_url(SQS[:agent_collision_queue]),
-    SQS[:agent_collision_alb_queue] => AwsWrapper::SqsV2.queue_url(SQS[:agent_collision_alb_queue])
+    SQS[:agent_collision_alb_queue] => AwsWrapper::SqsV2.queue_url(SQS[:agent_collision_alb_queue]),
+    SQS[:marketplace_app_queue]     => AwsWrapper::SqsV2.queue_url(SQS[:marketplace_app_queue])
   }
 
 rescue => e
