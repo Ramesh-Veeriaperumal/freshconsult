@@ -2858,6 +2858,8 @@ Helpkit::Application.routes.draw do
           put :twilio_port_away
           put :activate_trial
           put :launch_feature
+          get :launched_feature_details
+          put :activate_onboarding
         end
       end
 
@@ -2884,6 +2886,8 @@ Helpkit::Application.routes.draw do
             get :deleted_freshfone_csv_by_account
             get :deleted_freshfone_csv
             get :all_freshfone_number_csv
+            get :purchased_numbers_csv
+            get :purchased_numbers_csv_by_account
           end
         end
 
