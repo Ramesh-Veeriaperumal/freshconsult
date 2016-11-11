@@ -204,7 +204,7 @@ module FreshdeskCore::Model
                         "status_groups",
                         "sync_accounts",
                         "sync_entity_mappings",
-                        "parent_children"
+                        "parent_child_templates"
                     ]
 
   STATUS = {
