@@ -121,6 +121,9 @@ class HelpdeskReports::Formatter::Ticket::TicketVolume
         res_week_trend[row["dow"]][row["h"]] += row[COLUMN_MAP[:resolved_count]].to_i
       end
 
+      rec_busiest_day_and_hours = calculate_busiest_day_and_hours(rec_week_trend)
+      res_busiest_day_and_hours = calculate_busiest_day_and_hours(res_week_trend)
+      
       queried_metrics.each do |metric, redshift_column|
         processed_result[metric][:general] = {metric_result: counts[metric]}
       end
@@ -132,12 +135,9 @@ class HelpdeskReports::Formatter::Ticket::TicketVolume
       
       # Ceil Final average values for week trend calculated in above interations
       week_trend_averages([rec_week_trend, res_week_trend])
-
-      rec_busiest_day_and_hours = calculate_busiest_day_and_hours(rec_week_trend)
       processed_result["RECEIVED_TICKETS"][:week_trend] = rec_week_trend
       processed_result["RECEIVED_TICKETS"][:busiest_day_and_hours] = rec_busiest_day_and_hours
 
-      res_busiest_day_and_hours = calculate_busiest_day_and_hours(res_week_trend)
       processed_result["RESOLVED_TICKETS"][:week_trend] = res_week_trend
       processed_result["RESOLVED_TICKETS"][:busiest_day_and_hours] = res_busiest_day_and_hours
       @overall = processed_result
