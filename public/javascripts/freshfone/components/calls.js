@@ -263,7 +263,7 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 		addDialCode: function(number){ 
 			var selectedCountryData = this.$number.intlTelInput("getSelectedCountryData");
 			 number = number || this.$number.val();
-			return number.startsWith('+') ? number : ['+',selectedCountry.dialCode, number].join('');
+			return number.startsWith('+') ? number : ['+',selectedCountryData.dialCode, number].join('');
 		},
 		makeCall: function (item) {
 			if (Twilio.Device.status() !== 'busy') {
