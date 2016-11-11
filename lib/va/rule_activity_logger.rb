@@ -130,10 +130,11 @@ class Va::RuleActivityLogger
         internal_group_name = (value.blank? ? I18n.t('automations.activity.none') : internal_group.name )
         add_system_changes({:internal_group_id => (value.blank? ? [DONT_CARE, nil] : [nil, internal_group.name])})
         params = {:internal_group_name => internal_group_name}
-        "#{fetch_activity_prefix('set')} #{I18n.t('automations.activity.internal_group_success', params)}"
+        msg_log = "#{fetch_activity_prefix('set')} #{I18n.t('automations.activity.internal_group_success', params)}"
       else
-        I18n.t('automations.activity.internal_group_failure')
+        msg_log = I18n.t('automations.activity.internal_group_failure')
       end
+      {:internal_group_id => msg_log.html_safe}
     end
 
     def responder_id(responder = nil)
@@ -163,10 +164,11 @@ class Va::RuleActivityLogger
         internal_agent_name = (value.blank? ? I18n.t('automations.activity.none') : internal_agent.name )
         add_system_changes({:internal_agent_id => (value.blank? ? ["*", nil] : [nil, internal_agent.id])})
         params = {:internal_agent_name => internal_agent_name}
-        "#{fetch_activity_prefix('set')} #{I18n.t('automations.activity.internal_agent_success', params)}"
+        msg_log = "#{fetch_activity_prefix('set')} #{I18n.t('automations.activity.internal_agent_success', params)}"
       else
-        I18n.t('automations.activity.internal_agent_failure')
+        msg_log = I18n.t('automations.activity.internal_agent_failure')
       end
+      {:internal_agent_id => msg_log.html_safe}
     end
 
     def add_comment
