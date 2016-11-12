@@ -11,7 +11,7 @@ module Fdadmin
         begin
           result[:details] = [fd_account_details, number_details, calls_usage,
             call_and_numbers_usage, ff_credit_purchase, ff_trial_start_date,
-            addon_enable_date, ff_trial_end_date, ff_active].inject(&:merge)
+            addon_enable_date, ff_trial_end_date, ff_active, onboarding_info].inject(&:merge)
           result[:status] = 'success'
         rescue => e
           Rails.logger.error "Exception while fetching freshfone account details
@@ -181,6 +181,10 @@ module Fdadmin
              (@account.features?(:freshfone) && freshfone_account.blank?) }
         end
 
+        def onboarding_info
+          { onboarding_enabled:  @account.features?(:freshfone_onboarding) }
+        end
+
         def subscription_present?
           freshfone_account.present? && subscription.present?
         end
@@ -193,14 +197,6 @@ module Fdadmin
             'Numbers Usage(In USD)', 'First Credit purchased Date',
             'Add On Enabled Date', 'Trial End Date'
           ]
-        end
-
-        def construct_csv(data_list, headers)
-          return if data_list.blank?
-          result = CSVBridge.generate do |csv_data|
-            csv_data << headers
-            construct_csv_data(csv_data, data_list)
-          end
         end
 
         def construct_data(data_list)
@@ -221,38 +217,6 @@ module Fdadmin
               ::Account.reset_current_account
             end
           end
-        end
-
-        def construct_csv_data(csv_data, data_list)
-          data_list.each do |ff_account|
-            begin
-              next if ff_account.account.blank?
-              account = ff_account.account
-              account.make_current
-              first_number_created_at = account.freshfone_numbers.pluck(
-                :created_at).first
-              ff_subscription = ff_account.subscription
-              ff_payment = account.freshfone_payments
-                      .where(status: true, status_message: nil).first
-              csv_data << [
-                account.id, account.full_domain,
-                account.admin_email,
-                account.subscription.state, account.subscription.cmrr,
-                first_number_created_at.present? ? first_number_created_at.utc.
-                  strftime('%-d %b %Y') : nil,
-                get_calls_and_numbers_usage(ff_subscription),
-                ff_payment.present? ? ff_payment.created_at.utc.
-                  strftime('%-d %b %Y') : nil,
-                get_addon_enabled_date(account),
-                get_subscription_expiry_date(ff_subscription) ].flatten
-            rescue => e
-              Rails.logger.error "Exception Message :: #{e.message}\n
-                Exception Stacktrace :: #{e.backtrace.join('\n\t')}"
-              ensure
-              ::Account.reset_current_account
-            end
-          end
-          csv_data
         end
 
         def get_addon_enabled_date(account)

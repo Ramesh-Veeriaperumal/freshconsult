@@ -206,7 +206,7 @@ class Solution::Article < ActiveRecord::Base
   end
 
   def reset_ratings
-    self.class.update_all_with_publish({:thumbs_up => 0, :thumbs_down => 0}, { :id => self.id})
+    self.class.where({ :id => self.id}).update_all_with_publish({:thumbs_up => 0, :thumbs_down => 0}, {})
     meta_class.update_counters(self.parent_id, :thumbs_up => -self.thumbs_up, :thumbs_down => -self.thumbs_down)
     self.votes.destroy_all
   end

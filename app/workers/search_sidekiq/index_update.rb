@@ -2,6 +2,8 @@ class SearchSidekiq::IndexUpdate < SearchSidekiq::BaseWorker
 
   class UserTickets < SearchSidekiq::IndexUpdate
     def perform(args)
+      return unless Account.current.esv1_enabled?
+
       args.symbolize_keys!
       user = Account.current.all_users.find(args[:user_id])
       user.tickets.find_in_batches(:batch_size => 500) do |user_tickets|
@@ -12,6 +14,8 @@ class SearchSidekiq::IndexUpdate < SearchSidekiq::BaseWorker
 
   class FolderArticles < SearchSidekiq::IndexUpdate
     def perform(args)
+      return unless Account.current.esv1_enabled?
+
       args.symbolize_keys!
       folder = Account.current.solution_folder_meta.find(args[:folder_id])
       folder_articles = folder.solution_articles
@@ -21,6 +25,8 @@ class SearchSidekiq::IndexUpdate < SearchSidekiq::BaseWorker
 
   class ForumTopics < SearchSidekiq::IndexUpdate
     def perform(args)
+      return unless Account.current.esv1_enabled?
+
       args.symbolize_keys!
       forum = Account.current.forums.find(args[:forum_id])
       forum_topics = forum.topics

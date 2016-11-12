@@ -129,6 +129,12 @@ class Account < ActiveRecord::Base
   def count_es_enabled?
     (launched?(:es_count_reads) || launched?(:list_page_new_cluster)) && features?(:countv2_reads)
   end
+      
+  # Feature check to prevent data from being sent to v1 conditionally
+  # V1 is allowed in EU alone for now
+  def esv1_enabled?
+    PodConfig['CURRENT_POD'].eql?('podeuwest1') || (ES_ENABLED && launched?(:es_v1_enabled))
+  end
 
   def permissible_domains
     helpdesk_permissible_domains.pluck(:domain).join(",")
@@ -259,6 +265,10 @@ class Account < ActiveRecord::Base
   def link_tickets_enabled?
     launched?(:link_tickets) 
     # feature?(:link_tickets)
+  end
+
+  def parent_child_tkts_enabled?
+    @pc ||= launched?(:parent_child_tickets)
   end
 
   class << self # class methods
@@ -541,6 +551,14 @@ class Account < ActiveRecord::Base
 
   def portal_languages
     account_additional_settings.additional_settings[:portal_languages]
+  end
+
+  def marketplace_app_enabled?
+    features?(:marketplace_app)
+  end
+
+  def skip_dispatcher?
+    marketplace_app_enabled? && launched?(:synchronous_apps)
   end
 
   def remove_secondary_companies

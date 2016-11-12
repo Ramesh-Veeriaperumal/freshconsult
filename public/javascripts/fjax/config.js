@@ -50,11 +50,13 @@ window.Fjax = window.Fjax || {};
 
 			"/helpdesk/tickets/archived/": "archiveticketdetails",			
 			"/helpdesk/tickets": 'tickets',
+			"/helpdesk/ticket_templates": 'parentchildtemplates',
+			"/helpdesk/parent_template": 'parentchildtemplates',
 			"/helpdesk/dashboard/agent_status": 'freshfoneagents',
 			"/helpdesk/tickets/compose_email": 'tickets',
 			"/helpdesk/dashboard/unresolved_tickets": 'unresolvedtickets',
 
-			"/helpdesk" : 'realtime_dashboard' 
+			"/helpdesk" : 'realtime_dashboard'
 		},
 		LOADING_WAIT: 60
 	};

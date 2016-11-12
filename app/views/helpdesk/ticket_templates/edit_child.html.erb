@@ -1,0 +1,110 @@
+<% parent_count_for_child = @tkt_template.parent_templates_count
+  children_count = @children.count 
+%>
+<% content_for :sidebar do %>
+  <%= render :partial => "edit_parent_child_status" , :locals => { :children_count => children_count  } %>
+<% end %>
+<% inherit_parent_value =  @tkt_template[:template_data][:inherit_parent] %>
+<% content_for :pagefixed do %>
+	<%= render :partial => "shared/placeholder_help" , :locals => {:placeholders => ticket_placeholders} %>
+<% end %>
+<% if  current_account.launched?(:multifile_attachments)  %>
+  <%= render "helpdesk/tickets/ticket_widget/multifile_template_generator" %>
+ <% else %>
+  <%= render "helpdesk/shared/single_attachment_template" %>
+<% end %>
+<%= form_for @tkt_template, :url => helpdesk_ticket_template_path, :html => { :method => :put, :multipart => true, :rel => "validate", :class => 'child-form  ticket_template_form edit_child_form template_form', :id => "ticket_template"}  do |f| %>
+	<div class='page-header-sticky parent-header-sticky' rel='sticky'>
+		<div class='sticky-header-wrapper'>
+			<h3 class='lead pull-left'>
+				<%= t('ticket_templates.child_template.edit_title') %>
+			</h3>
+			<div class="pull-right">
+        <%= link_to t('ticket_templates.child_template.insert_placeholder'), "", :class => "insert_placeholder"  %>
+				<%= link_to t('cancel'), helpdesk_ticket_templates_path(), :class => "btn form_btn statusbar-redirect" %>
+				<%= f.submit t('save_add_child'), :class => "btn form_btn add_child" if !(children_count >= Helpdesk::TicketTemplate::TOTAL_CHILD_TEMPLATES) %>
+				<%= f.submit t('save'), :class => "btn btn-primary form_btn" %>
+			</div>
+		</div>
+    <span class="pull-right template-msg"><%= t('ticket_templates.edit_add_child_message').html_safe%></span>
+	</div>
+	<br/>
+  <% if inherit_parent_value %>
+    <input type="hidden" id='inherit-parent' name='template_data[inherit_parent]' value="<%=  inherit_parent_value %>">
+  <% end %>
+	<%= render :partial => "child_form", :locals => { :f => f, :is_edit => true } %>
+	<div class="edit-template-footer">
+		<hr/>
+    <% if @tkt_template.child_template? and parent_count_for_child > 1 %>
+      <a href="" class="btn unlink-template" data-controls-modal="#edit-unlink" data-backdrop="static"><%= t('ticket_templates.edit_child_template.unlink.title') %></a>
+    <% end %>
+    <a href="" class="btn delete-template" data-controls-modal="child-delete-template"  data-backdrop="static"><%= t('ticket_templates.delete') %></a>
+	</div>
+<% end %>
+<div class="modal hide fade" id="child-delete-template" style="width:600px;margin-left: -300px" aria-hidden="true" role="dialog">
+  <div class="modal-header">
+    <button class="close" data-dismiss="modal"></button>
+    <h3><%= t('ticket_templates.edit_child_template.delete.delete_title') %></h3>
+  </div>
+  <div class="modal-body">
+    <p>
+      <% if parent_count_for_child > 1 %>
+        <%= t('ticket_templates.edit_child_template.delete.parent_info', :parent_count => (parent_count_for_child-1)) %>
+      <% else %>
+         <%= t('ticket_templates.edit_child_template.delete.info') %>
+      <% end %>
+    </p>
+  </div>
+  <div class="modal-footer">
+  	<%= link_to(t('ticket_templates.edit_template.cancel'), '' ,:class => "btn",:data => { :dismiss => 'modal' } )%>
+    <%= link_to(t('ticket_templates.edit_template.confirm'), '' ,:class => "btn btn-primary child-delete-confirm",:method => 'delete' )%>
+   </div>
+</div>
+<div class="modal hide fade" id="edit-unlink" style="width:600px;margin-left: -300px" aria-hidden="true" role="dialog">
+  <div class="modal-header">
+    <button class="close" data-dismiss="modal"></button>
+    <h3><%= t('ticket_templates.edit_child_template.unlink.unlink_title') %></h3>
+  </div>
+  <div class="modal-body">
+    <p><%= t('ticket_templates.edit_child_template.unlink.info1', :parent_title => @parent.name).html_safe %></p>
+  </div>
+  <div class="modal-footer">
+    <%= link_to(t('ticket_templates.edit_template.cancel'), '' ,:class => "btn",:data => { :dismiss => 'modal' } )%>
+    <%= link_to(t('ticket_templates.edit_template.confirm'), '' ,:class => "btn btn-primary unlink-confirm",:method => 'post' )%>
+   </div>
+</div>
+<div class="modal hide fade" id="toggle-confirm" style="width:600px;margin-left: -300px" aria-hidden="true" role="dialog">
+  <div class="modal-header">
+    <button class="close" data-dismiss="modal"></button>
+    <h3><%= t('ticket_templates.save_and_continue.title') %></h3>
+  </div>
+  <div class="modal-body">
+    <p><%= t('ticket_templates.save_and_continue.info1') %></p>
+  </div>
+  <div class="modal-footer">
+    <%= link_to(t('ticket_templates.save_and_continue.proceed'), '' ,:class => "btn proceed_anyway")%>
+    <%= link_to(t('ticket_templates.save_and_continue.cancel'),'' ,:class => "btn btn-primary take_back" )%>
+   </div>
+</div>
+
+<!-- Canned response dialog -->
+<%= render :partial => "/helpdesk/ticket_templates/canned"  %>
+
+<%= javascript_tag do %>
+	var customMessages  = {
+    insertParent: '<%= t("ticket_templates.child_template.inherit_parent") %>',
+    undoParentInherit: '<%= t("ticket_templates.child_template.undo_parent_inherit") %>',
+    parent: '<%= t("ticket_templates.parent") %>',
+    parentId:'<%= params[:p_id]%>',
+    deletePath: '<%= helpdesk_ticket_template_path(@tkt_template, {:p_id=>@parent.id}) %>',
+    unlinkPath:'<%= unlink_parent_helpdesk_ticket_template_path(@tkt_template, {:p_id=>@parent.id}) %>',
+    inherit_tooltip:'<%= t('ticket_templates.child_template.parent_tooltip') %>',
+    undo_inherit_tooltip:'<%= t('ticket_templates.child_template.undo_parent_tooltip') %>',
+    edit:true,
+    noName:'<%= t('ticket_templates.child_template.noname') %>',
+    <% if (inherit_parent_value) %>
+    intialInheritParent: '<%=  inherit_parent_value %>',
+    inheritParentFields: ('<%= inherit_parent_value.inspect.html_safe %>').replace(/[\[\]/\s"/']+/g,'').split(',')
+    <% end %>
+  };
+<% end %>

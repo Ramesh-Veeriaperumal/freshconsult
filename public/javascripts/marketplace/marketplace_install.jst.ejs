@@ -53,9 +53,9 @@
                   <label class="form-lbl"> <%- configs[i].label %> </label>           
                   
                   <% if (configs[i].field_type == 1) { %>
-                    <input type="text" class="fa-textip required" name="[configs][<%- configs[i].name %>]" value="<%- configs[i].default_value %>">
+                    <input type="text" class="fa-textip required fa-elements" name="[configs][<%- configs[i].name %>]" value="<%- configs[i].default_value %>">
                   <% } else { %>
-                    <select name="[configs][<%- configs[i].name %>]" class="select2" style="width:200px;">
+                    <select name="[configs][<%- configs[i].name %>]" class="select2 fa-elements" style="width:200px;">
                       <% for(var j=0; j < configs[i].default_value.length; j++){ %>
                         <option value="<%- configs[i].default_value[j] %>"><%- configs[i].default_value[j] %></option>
                       <% } %>
@@ -75,7 +75,7 @@
         <% } %>
 
 
-        <div class="button-container text-left">
+        <div class="span10 button-container text-left">
         <!-- TODO: Show Terms of use after 2.0 launch
           <% if (installation_type == 'install') { %>
             <p class="install-note"><%= translate.get('marketplace_agree') %>
@@ -83,9 +83,14 @@
             </p>
           <% } %>
          -->
-          <button class="col-md-6 btn btn-primary install-btn" data-url="<%= install_btn['url'] %>" data-method="<%= install_btn['method'] %>"> <%= install_btn['text'] %></button>
-          <button class="show_btn btn btn-default" style="margin-left: 10px;" data-url="<%= back_url %>"><%= translate.get('cancel') %></button>
-        </div> 
+         <% if(install_btn['is_oauth_app']) { %>
+           <button id="oauth_link" class="col-md-6 btn btn-primary" data-url="<%= install_btn['url'] %>" data-method="<%= install_btn['method'] %>"> <%= install_btn['text'] %> </button>
+         <% }
+            else { %>
+           <button class="col-md-6 btn btn-primary install-btn" data-url="<%= install_btn['url'] %>" data-method="<%= install_btn['method'] %>"> <%= install_btn['text'] %></button>
+         <% } %>
+            <button class="show_btn btn btn-default" style="margin-left: 10px;" data-url="<%= back_url %>"><%= translate.get('cancel') %></button>
+        </div>
 
       </div>
 

@@ -52,7 +52,7 @@ class Account < ActiveRecord::Base
   end
 
   def enable_elastic_search
-    SearchSidekiq::CreateAlias.perform_async({ :sign_up => true }) if ES_ENABLED
+    SearchSidekiq::CreateAlias.perform_async({ :sign_up => true }) if self.esv1_enabled?
   end
 
   def populate_features

@@ -42,6 +42,14 @@
 			
 		<% end %>
 
+		<% if current_account.parent_child_tkts_enabled? %>
+			<% if @ticket.assoc_parent_ticket?%>
+				<span class="ficon-inherit-parent parent_child_icon"></span>
+			<% elsif @ticket.child_ticket?%>
+				<span class="ficon-child-icon parent_child_icon"></span>
+			<% end %>
+		<% end %>
+
 		<%
             customer_opinion = "" 
             survey_association = Account.current.new_survey_enabled? ? "custom_survey_results" : "survey_results"

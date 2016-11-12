@@ -98,7 +98,7 @@ module SsoUtil
     elsif current_account.sso_enabled?
       @current_user.name =  user_name
       @current_user.phone = phone unless phone.blank?
-      @current_user.company_name = company if company.present?
+      @current_user.assign_company(company) if company.present?
       @current_user.job_title = title if title.present?
       if external_id.present?
         @current_user.unique_external_id = external_id

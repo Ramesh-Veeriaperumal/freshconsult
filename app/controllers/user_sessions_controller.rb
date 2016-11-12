@@ -73,7 +73,7 @@ include Mobile::Actions::Push_Notifier
       else
         @current_user.name =  params[:name]
         @current_user.phone = params[:phone] unless params[:phone].blank?
-        @current_user.company_name = params[:company] if params[:company].present?
+        @current_user.assign_company(params[:company]) if params[:company].present?
         @current_user.active = true
         saved = @current_user.save
       end
@@ -169,7 +169,7 @@ include Mobile::Actions::Push_Notifier
 
     session.delete :assumed_user if session.has_key?(:assumed_user)
     session.delete :original_user if session.has_key?(:original_user)
-    reset_session #Required to expire the CSRF token
+
     flash.clear if mobile?
     remove_logged_out_user_mobile_registrations if is_native_mobile?
 

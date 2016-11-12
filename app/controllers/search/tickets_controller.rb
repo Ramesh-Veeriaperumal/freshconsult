@@ -6,8 +6,8 @@ class Search::TicketsController < Search::SearchController
 
 	before_filter :set_native_mobile, :only => [:index]
 
-	TICKET_SEARCH_FIELDS = ["display_id", "subject", "requester"]
 
+	TICKET_SEARCH_FIELDS = ["display_id", "subject", "requester"]
 
 	def index
 		if @search_by_field
@@ -27,8 +27,7 @@ class Search::TicketsController < Search::SearchController
 		else
 			super
 		end
-  	end
-    
+  end
 	protected
 
 		def search_with_requester	

@@ -15,9 +15,13 @@
 		<% } %>
     <% for (var i = 0; i < data.recent_templates.length; i++) { %>
       <% if (i === data.recent_templates.length - 1 ){%>
-        <li class="tkt-tmpl recent-tmpl last" data-id="<%= data.recent_templates[i].id %>"><%= trimTitle(data.recent_templates[i].name) %></li>
+        <li class="tkt-tmpl recent-tmpl last"  data-assoc="<%= data.recent_templates[i].assoc_type %>" data-id="<%= data.recent_templates[i].id %>">
+        <span data-id="<%= data.recent_templates[i].id %>" class="template_title_label ellipsis"><%= trimTitle(data.recent_templates[i].name) %></span>
+        <i class="ficon-inherit-parent hide"></i></li>
       <% } else {%>
-        <li class="tkt-tmpl recent-tmpl" data-id="<%= data.recent_templates[i].id %>"><%= trimTitle(data.recent_templates[i].name) %></li>
+        <li class="tkt-tmpl recent-tmpl" data-assoc="<%= data.recent_templates[i].assoc_type %>" data-id="<%= data.recent_templates[i].id %>">
+        <span data-id="<%= data.recent_templates[i].id %>" class="template_title_label ellipsis"><%= trimTitle(data.recent_templates[i].name) %></span>
+        <i class="ficon-inherit-parent hide"></i></li>
       <% } %>
     <% } %>
     <% if (data.all_acc_templates && data.all_acc_templates.length > 0) { %>
@@ -27,7 +31,9 @@
 
   <% if (data.all_acc_templates && data.all_acc_templates.length > 0) { %>
   <% for (var i = 0; i < data.all_acc_templates.length; i++) { %>
-    <li class="tkt-tmpl" data-id="<%= data.all_acc_templates[i].id %>"><%= trimTitle(data.all_acc_templates[i].name) %></li>
+    <li class="tkt-tmpl"  data-assoc="<%= data.all_acc_templates[i].assoc_type %>" data-id="<%= data.all_acc_templates[i].id %>">
+    <span data-id="<%= data.all_acc_templates[i].id %>" class="template_title_label ellipsis"><%= trimTitle(data.all_acc_templates[i].name) %></span>
+    <i class="ficon-inherit-parent hide"></i></li>
   <% } %>
   <% } %>
 

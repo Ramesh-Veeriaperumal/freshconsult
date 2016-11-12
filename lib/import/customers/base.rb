@@ -155,11 +155,11 @@ class Import::Customers::Base
 
   def mailer_params corrupted
     hash = { 
-      :user => @current_user, 
-      :type => @params[:type].pluralize, 
+      :user => @current_user,
+      :type => @params[:type].pluralize,
       :created_count => @created,
       :updated_count => @updated,
-      :failed_count => @failed_items.count 
+      :failed_count => @failed_items.count
     }
 
     if corrupted

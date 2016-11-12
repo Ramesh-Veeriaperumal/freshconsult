@@ -4,7 +4,7 @@
  	<ul class="template-details">
  		<li>
  			<%= f.label :name, t('title') , :class => "required" %>
-			<%= f.text_field :name , :class => "text required", :placeholder => t('ticket_templates.name') %>
+			<%= f.text_field :name , :class => "text required", :placeholder => t('ticket_templates.name'), :data => { :state => params[:action],:access_type => @tkt_template.accessible.access_type,:template_id => @tkt_template.id,:template_name => @tkt_template.name} %>
  		</li>
  		<li>
  			 <%= f.label :description, t('description'), :class => "" %>
@@ -34,12 +34,7 @@
 				<%end%>
 		</li>
 	</ul>
-	<div class='ticket-form-title'>
-		<h3 class="lead"><%= t('ticket_templates.ticket_email_form') %></h3>
-	</div>
-	<ul class="compose-new-ticket">
- 		<%= render :partial => "ticket_form", :object => f, :locals => { :is_edit =>is_edit, :f => f } %>
-	</ul>
+	<%= render :partial => "common_form", :object => f, :locals => { :is_edit =>is_edit, :f => f } %>
 </div>
 
 <%= javascript_tag do %>
@@ -52,7 +47,7 @@ jQuery(document).ready(function(){
 		jQuery('#all_agents,#group_agents,#only_me').children().attr('disabled','disabled');
 		jQuery('#all_agents,#group_agents').addClass("muted");
 	}
-	jQuery(".remove_shared_attachment").on("click", function(){
+	jQuery("body").on("click", ".remove_shared_attachment",function(){
 		id=jQuery(this).attr("id");
 		jQuery(this).parent().append('<input type="hidden" value="'+id+'" name="remove_attachments[]">');
 		jQuery("#helpdesk_attachment_"+id).addClass("hide");
@@ -81,11 +76,6 @@ function toggleGroup(access_id)
 	}
 }
 
-jQuery('body').on('click', 'a[rel="ticket_canned_response"]', function(ev){
-	ev.preventDefault();
-	jQuery("#canned_response_show").attr('data-tiny-mce-id', "#helpdesk_ticket_ticket_body_attributes_description_html");
-	jQuery('#canned_response_show').trigger('click');
-});
 // Sync data of agent select box with group
 jQuery(window).on('load', function(){
   jQuery("#template_data_group_id").trigger('change');

@@ -26,7 +26,11 @@ class RabbitmqWorker
     #
     if search_routing_key?(exchange_key, rounting_key)
       # sqs_msg_obj = sqs_v2_push(SQS[:search_etl_queue], message, 0)
-      sqs_msg_obj = (Ryuken::SearchSplitter.perform_async(message) rescue nil)
+      unless Rails.env.development?
+        sqs_msg_obj = (Ryuken::SearchSplitter.perform_async(message) rescue nil)
+      else
+        sqs_msg_obj = (Ryuken::SearchPoller.new.perform(nil, JSON.parse(message)) rescue nil)
+      end
       puts "Searchv2 SQS Message id - #{sqs_msg_obj.try(:message_id)} :: ROUTING KEY -- #{rounting_key} :: Exchange - #{exchange_key}"
     end
     
@@ -35,16 +39,22 @@ class RabbitmqWorker
     if LAMBDA_ENABLED and lambda_feature
       invoke_lambda(exchange_key, message)
       # Hack - Lambda only pushes to one sqs. Manually pushing to New ALB Queue - Temporary
-    elsif agent_collision_routing_key?(exchange_key, rounting_key)
-      sqs_msg_obj = sqs_v2_push(SQS[:agent_collision_queue], message, nil)
-      puts " AgentCollision SQS Message id - #{sqs_msg_obj.message_id} :: ROUTING KEY -- #{rounting_key} :: Exchange - #{exchange_key}"
-      sqs_msg_obj = sqs_v2_push(SQS[:agent_collision_alb_queue], message, nil)
-      puts " AgentCollision ALB SQS Message id - #{sqs_msg_obj.message_id} :: ROUTING KEY -- #{rounting_key} :: Exchange - #{exchange_key}"                                            
-      if autorefresh_routing_key?(exchange_key, rounting_key)
-        sqs_msg_obj = sqs_v2_push(SQS[:auto_refresh_queue], message, nil)
-        puts " Autorefresh SQS Message id - #{sqs_msg_obj.message_id} :: ROUTING KEY -- #{rounting_key} :: Exchange - #{exchange_key}"
-        sqs_msg_obj = sqs_v2_push(SQS[:auto_refresh_alb_queue], message, nil) if autorefresh_routing_key?(exchange_key, rounting_key) 
-        puts " Autorefresh ALB SQS Message id - #{sqs_msg_obj.message_id} :: ROUTING KEY -- #{rounting_key} :: Exchange - #{exchange_key}"
+    else
+      if agent_collision_routing_key?(exchange_key, rounting_key)
+        sqs_msg_obj = sqs_v2_push(SQS[:agent_collision_queue], message, nil)
+        puts " AgentCollision SQS Message id - #{sqs_msg_obj.message_id} :: ROUTING KEY -- #{rounting_key} :: Exchange - #{exchange_key}"
+        sqs_msg_obj = sqs_v2_push(SQS[:agent_collision_alb_queue], message, nil)
+        puts " AgentCollision ALB SQS Message id - #{sqs_msg_obj.message_id} :: ROUTING KEY -- #{rounting_key} :: Exchange - #{exchange_key}"                                            
+        if autorefresh_routing_key?(exchange_key, rounting_key)
+          sqs_msg_obj = sqs_v2_push(SQS[:auto_refresh_queue], message, nil)
+          puts " Autorefresh SQS Message id - #{sqs_msg_obj.message_id} :: ROUTING KEY -- #{rounting_key} :: Exchange - #{exchange_key}"
+          sqs_msg_obj = sqs_v2_push(SQS[:auto_refresh_alb_queue], message, nil) if autorefresh_routing_key?(exchange_key, rounting_key) 
+          puts " Autorefresh ALB SQS Message id - #{sqs_msg_obj.message_id} :: ROUTING KEY -- #{rounting_key} :: Exchange - #{exchange_key}"
+        end
+      end
+      if marketplace_app_routing_key?(exchange_key, rounting_key)
+        sqs_msg_obj = sqs_v2_push(SQS[:marketplace_app_queue], message, nil)
+        puts " Marketplace App Message id - #{sqs_msg_obj.message_id} :: ROUTING KEY -- #{rounting_key} :: Exchange - #{exchange_key}"
       end
     end
 
@@ -167,6 +177,10 @@ class RabbitmqWorker
 
     def count_routing_key?(exchange, key)
       (exchange.starts_with?("tickets") && key[6] == "1")
+    end
+
+    def marketplace_app_routing_key?(exchange, key)
+      (exchange.starts_with?("tickets") && key[10] == "1")
     end
 
 end

@@ -24,8 +24,7 @@ var PopulateFormData = PopulateFormData ||  (function(){
      PopulateData.fromStore("#responder_id", 'agent',true);
     // check is ajax required
     if(!args.isAjax){
-      var customizedData = _customizeData(args.data, args.fieldMap);
-      _populateFields(customizedData, args);
+      _populateFields(args.data, args);
       _resetFilterDataHash();
       return;
     }
@@ -82,13 +81,29 @@ var PopulateFormData = PopulateFormData ||  (function(){
     return Object.keys(data)
   }
 
+  function _setCustomFilterModes(agent, group){
+    if(agent >= 0){
+      jQuery("#agentSort").parent().data("fromFilters", true);
+      jQuery(".shared_sort_menu .agent_mode[mode='"+agent+"']").trigger('click',['customTrigger']);
+    }
+
+    if(group >= 0){
+      jQuery("#groupSort").parent().data("fromFilters", true);
+      jQuery(".shared_sort_menu .group_mode[mode='"+group+"']").trigger('click',['customTrigger']);
+    }
+  }
+
   function _populateFields(data, args){
-    var initialData = getInitialData(args['defaultKey']),
-        responseData = args.isAjax ? data.conditions : data;
-        extendedData = jQuery.extend(initialData, responseData),
-        selectedFields = _getKeys(extendedData),
-        meta_data = data.meta_data;
-        initialData.defaultDateRange = args.defaultDateRange;
+    var initialData, responseData, extendedData, selectedFields, meta_data;
+    responseData = args.isAjax ? data.conditions : _customizeData(data, args.fieldMap);
+    if(args.sharedOwnershipFlag){
+       _setCustomFilterModes(data.agent_mode || 0, data.group_mode || 0)
+    }
+    initialData = getInitialData(args['defaultKey']);
+    extendedData = jQuery.extend(initialData, responseData);
+    selectedFields = _getKeys(extendedData);
+    meta_data = data.meta_data;
+    initialData.defaultDateRange = args.defaultDateRange;
     selectedFields.each(function(val, index){
       if(val !== 'spam' && val !== 'deleted'){
         _populateIndividualField(val, extendedData, meta_data);
@@ -151,9 +166,15 @@ var PopulateFormData = PopulateFormData ||  (function(){
             jQuery('#div_ff_created_date_range').hide();
             jQuery('#created_date_range').val('');
           }
-          var datePicker = jQuery("#created_date_range").data('bootstrapdaterangepicker');
-          datePicker.setStartDate(dateRange[0]);
-          datePicker.setEndDate(dateRange[1]);
+          try{
+            var datePicker = jQuery("#created_date_range").data('bootstrapdaterangepicker');
+            datePicker.setStartDate(dateRange[0]);
+            datePicker.setEndDate(dateRange[1]);
+          }
+          catch(e){
+            console.log(e)
+          }
+          
           break;
         case 'requester':
         case 'customers':

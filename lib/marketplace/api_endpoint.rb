@@ -18,7 +18,12 @@ module Marketplace::ApiEndpoint
     [:install_extension,        "product/%{product_id}/account/%{account_id}/extensions/%{extension_id}.json", []],
     [:update_extension,         "product/%{product_id}/account/%{account_id}/extensions/%{extension_id}.json", []],
     [:uninstall_extension,      "product/%{product_id}/account/%{account_id}/extensions/%{extension_id}.json", []],
-    [:installed_extensions,     "product/%{product_id}/account/%{account_id}/extensions.json", [:type]] 
+    [:installed_extensions,     "product/%{product_id}/account/%{account_id}/extensions.json", [:type]],
+
+    # Marketplace OAuth
+    [:oauth_install,            "product/%{product_id}/account/%{account_id}/versions/%{version_id}/oauth_install", []],
+    [:fetch_tokens,             "fetch_tokens", [:code]],
+
   ]
 
   ENDPOINT_URL = Hash[*ENDPOINTS.map { |i| [i[0], i[1]] }.flatten]

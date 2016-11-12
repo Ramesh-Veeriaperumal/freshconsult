@@ -2,27 +2,25 @@
 
 <div class="requester-details">
 	<div class="requester-email">
-		<label><%= t('helpdesk.shared.requester_label') %><span class="required_star">*</span></label>
+		<label class="requester-email-title"><%= t('helpdesk.shared.requester_label') %><span class="required_star">*</span></label>
 		<div>
-		<%= render(:partial => "/shared/autocomplete_email", :formats => [:html],  :locals => {:object_name => :helpdesk_ticket, 
+		<%= render(:partial => "/shared/autocomplete_email", :formats => [:html],  :locals => {:object_name => defined?(object_name) ? object_name : :helpdesk_ticket, 
 			:placeholder => t('helpdesk.shared.search_reqester'), :url => requesters_search_autocomplete_index_path }) %>
 	<div class="add-requester">
-		<span class="add-req-label <% if is_edit %>hide <% end %>"><%= search_req %></span>
+		<span class="add-req-label <% if is_edit || object_name.eql?("template_data") %>hide <% end %>"><%= search_req %></span>
 		<% if show_cc %>
 		<span data-action="show-cc" class="cc-label"><%= t('helpdesk.shared.cc_label') %></span>
 		<% end %>
 	</div>
 	</div>
 	</div>
-	<div class="cc-address hide">
-		<label class="cc-label" for="cc-email-address"><%= t('helpdesk.shared.cc_label') %></label>
-		<input type="text" class="required cc-email" id="cc_emails" name="cc_emails" />
-		<span data-action="hide-cc" class="hide-cc-label"><%= t('helpdesk.shared.hide_cc') %></span>
-		<div data-url="<%= requesters_search_autocomplete_index_path %>" data-isagent = "<%= current_user.agent? %>" id="meta-cc">
+	<% if !object_name.eql?("template_data") %>
+		<div class="cc-address hide">
+			<label class="cc-label" for="cc-email-address"><%= t('helpdesk.shared.cc_label') %></label>
+			<input type="text" class="required cc-email" id="cc_emails" name="cc_emails" />
+			<span data-action="hide-cc" class="hide-cc-label"><%= t('helpdesk.shared.hide_cc') %></span>
+			<div data-url="<%= requesters_search_autocomplete_index_path %>" data-isagent = "<%= current_user.agent? %>" id="meta-cc">
+			</div>
 		</div>
-	</div>
+	<% end %>
 </div>
-
-
-
-

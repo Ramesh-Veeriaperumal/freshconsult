@@ -70,6 +70,7 @@ module Search
           folder_id     = query_options[:folder_id]
           id_data       = query_options[:id_data]
           excluded_ids  = query_options[:excluded_ids]
+          type_ids      = query_options[:type_ids]
           search_string = query_options[:query_params][:search_string]
 
           condition_block = default_condition_block
@@ -77,6 +78,7 @@ module Search
           condition_block[:must].push(folder_id_query(folder_id)) if folder_id
           condition_block[:must].push(id_data_query(id_data)) if id_data
           condition_block[:must_not].push(excluded_ids_query(excluded_ids)) if excluded_ids.present?
+          condition_block[:must].push(type_ids_query(type_ids)) if type_ids.present?
           condition_block[:must].push(account_id_filter)
 
           query = filtered_query({:must => partial_match_query(model_class, search_string)}, bool_filter(condition_block))
@@ -93,6 +95,10 @@ module Search
 
         def excluded_ids_query ids
           ids_filter(ids)
+        end
+
+        def type_ids_query type_ids
+          terms_filter("association_type", type_ids)
         end
 
         def partial_match_query model_klass, search_term

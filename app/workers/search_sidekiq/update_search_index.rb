@@ -1,6 +1,8 @@
 class SearchSidekiq::UpdateSearchIndex < SearchSidekiq::BaseWorker
 
   def perform(args)
+    return unless Account.current.esv1_enabled?
+
     args.symbolize_keys!
     return if Account.current && $redis_others.sismember("DISABLE_ES_WRITES", Account.current.id)
     @update_item = args[:klass_name].constantize.find_by_id(args[:id])

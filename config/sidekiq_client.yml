@@ -145,6 +145,9 @@ defaults: &defaults
     - [contacts_sync_trial]
     - [remove_secondary_companies]
     - [mailbox_jobs]
+    - [delete_account]
+    - [templates_cleanup]
+    - [bulk_child_tkt_creation]
 
 development:
   <<: *defaults

@@ -205,9 +205,8 @@ class EmailNotification < ActiveRecord::Base
   end
 
   def replace_agent_group_placeholders(content)
-    content.gsub!("{{ticket.agent.", "{{ticket.internal_agent.")
-    content.gsub!("{{ticket.group.", "{{ticket.internal_group.")
-    content
+    content = content.gsub("{{ticket.agent.", "{{ticket.internal_agent.")
+    content.gsub("{{ticket.group.", "{{ticket.internal_group.")
   end
 
   def return_template(type,language)

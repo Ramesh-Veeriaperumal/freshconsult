@@ -377,13 +377,11 @@ class AccountsController < ApplicationController
 
     def schedule_cleanup
       current_account.subscription.update_attributes(:state => "suspended")
-
-      Resque.enqueue_at(14.days.from_now, Workers::ClearAccountData, 
-                                    { :account_id => current_account.id })
+      AccountCleanup::DeleteAccount.perform_in(14.days.from_now, {:account_id => current_account.id})
     end
 
     def clear_account_data
-      Resque.enqueue(Workers::ClearAccountData, { :account_id => current_account.id })
+      AccountCleanup::DeleteAccount.perform_async({:account_id => current_account.id})
       ::MixpanelWrapper.send_to_mixpanel(self.class.name)
     end
 

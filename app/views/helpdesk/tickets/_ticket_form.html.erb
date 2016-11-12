@@ -2,9 +2,11 @@
       please update the memcache key version. key_name :: AGENT_NEW_TICKET_FORM  -->
 
 <%= ticket_form.error_messages %>
+<%= hidden_field_tag :assoc_parent_id, params[:ticket_id] %>
+<% is_new_child_tkt = params[:action].eql?("new") && @assoc_parent_ticket %>
 <% current_portal.ticket_fields_including_nested_fields.each do |field|
     next if field.section_field?
-    if is_edit or params[:template_form]
+    if is_edit or params[:template_form] or is_new_child_tkt
       field_value = @item.send(field.field_name)
       field_value = nested_ticket_field_value(@item, field) if field.field_type == "nested_field"
     elsif field.is_default_field? or !params[:topic_id].blank?
@@ -35,8 +37,14 @@
   <%#= render(:partial => "/shared/nested_fields", :locals => { :ticket => nil, :category => field, :category_field_value =>  field_value, :type => "edit"}) if field.field_type == "nested_field"%>
 <% end %>
 
-<% values = params[:template_form] ? @template.template_data[:tags] : @item.tags.collect{|tag| tag.name}.join(',')%>
-<%= render :partial => "/helpdesk/tickets/remote_tags" , :locals => {:values => values ,  :element_id => :helpdesk_ticket_tags_input, :element_name => "helpdesk[tags]"}%>
+<% values = if params[:template_form]
+    @template.template_data[:tags]
+  elsif is_new_child_tkt
+    @assoc_parent_ticket.tag_names.join(',')
+  else
+    @item.tags.collect{|tag| tag.name}.join(',')
+  end %>
+<%= render :partial => "/helpdesk/tickets/remote_tags" , :locals => {:values => values,  :element_id => :helpdesk_ticket_tags_input, :element_name => "helpdesk[tags]" }%>
 
 <%= ci_fields(ticket_form)%>
 <input type="hidden" id="companyurl" value="<%= helpdesk_commons_user_companies_path %>" />

@@ -9,13 +9,14 @@ module Admin
         supervisor_rules = account.supervisor_rules
         return unless supervisor_rules.count > 0 
         start_time = Time.now.utc
+        account_negatable_columns = ::VAConfig.negatable_columns(account)
         supervisor_rules.each do |rule|
           begin
             rule_start_time = Time.now.utc
             conditions = rule.filter_query
             next if conditions.empty?
             negate_conditions = [""]
-            negate_conditions = rule.negation_query if $redis_others.perform_redis_op("get", "SUPERVISOR_NEGATION")
+            negate_conditions = rule.negation_query(account_negatable_columns) if $redis_others.perform_redis_op("get", "SUPERVISOR_NEGATION")
             logger.info "rule name::::::::::#{rule.name}"
             logger.info "conditions::::::: #{conditions.inspect}"
             logger.info "negate_conditions::::#{negate_conditions.inspect}"
@@ -23,6 +24,7 @@ module Admin
             tickets = account.tickets.where(negate_conditions).where(conditions).updated_in(1.month.ago).visible.joins(joins).select("helpdesk_tickets.*")
             tickets.each do |ticket|
               begin
+                next if ticket.sent_for_enrichment?
                 execute_on_db("run_on_master") { 
                   rule.trigger_actions ticket
                   ticket.save_ticket! 

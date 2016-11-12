@@ -11,9 +11,8 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20161018121347) do
+ActiveRecord::Schema.define(:version => 20161103085738) do
 
-  
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
     t.integer  "account_id",           :limit => 8
@@ -3846,6 +3845,17 @@ ActiveRecord::Schema.define(:version => 20161018121347) do
 
   add_index "ticket_templates", ["account_id", "name"], :name => "index_ticket_templates_on_account_id_and_name", :length => {"account_id"=>nil, "name"=>20}
   add_index "ticket_templates", ["account_id", "association_type"], :name => "index_ticket_templates_on_account_id_and_association_type"
+
+  create_table "parent_child_templates", :force => true do |t|
+    t.integer "account_id",         :limit => 8
+    t.integer "parent_template_id", :limit => 8, :null => false
+    t.integer "child_template_id",  :limit => 8, :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "parent_child_templates", ["parent_template_id"], :name => "index_parent_child_templates_on_parent_template_id"
+  add_index "parent_child_templates", ["child_template_id"], :name => "index_parent_child_templates_on_child_template_id"
 
   create_table "ticket_topics", :force => true do |t|
     t.integer  "ticket_id",       :limit => 8

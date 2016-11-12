@@ -17,7 +17,7 @@ class SubscriptionAdmin::SpamWatchController < ApplicationController
 
   def block_user
     if params[:user_id]
-      User.update_all_with_publish({:blocked => true, :blocked_at => Time.now}, {:id => params[:user_id]})
+      User.where({:id => params[:user_id]}).update_all_with_publish({:blocked => true, :blocked_at => Time.now}, {})
       flash[:notice] = "User success fully blocked!"
     end
     redirect_to :back
@@ -25,7 +25,7 @@ class SubscriptionAdmin::SpamWatchController < ApplicationController
   
   def hard_block
     if params[:user_id]
-      User.update_all_with_publish({:blocked => true, :blocked_at => "2200-01-01 00:00:00"}, {:id => params[:user_id]})
+      User.where({:id => params[:user_id]}).update_all_with_publish({:blocked => true, :blocked_at => "2200-01-01 00:00:00"}, {})
       flash[:notice] = "User success fully blocked!"
     end
     redirect_to :back
@@ -33,7 +33,7 @@ class SubscriptionAdmin::SpamWatchController < ApplicationController
 
   def spam_user
     if params[:user_id]
-      User.update_all_with_publish({:deleted => true, :deleted_at => Time.now}, {:id => params[:user_id]})
+      User.where({:id => params[:user_id]}).update_all_with_publish({:deleted => true, :deleted_at => Time.now},{})
       flash[:notice] = "User success fully marked as Spam!"
     end
     redirect_to :back

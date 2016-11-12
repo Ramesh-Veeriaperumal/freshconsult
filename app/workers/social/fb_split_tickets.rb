@@ -22,8 +22,8 @@ module Social
       child_post_ids  = @child_fb_notes.map(&:id)
       comment_fb_post = @comment_ticket.fb_post
       
-      @account.notes.update_all_with_publish({ notable_id: @comment_ticket.id }, 
-                                  [ "id IN (?) and notable_id != ?", @child_fb_notes.map(&:postable_id), @comment_ticket.id ])
+      @account.notes.where([ "id IN (?) and notable_id != ?", @child_fb_notes.map(&:postable_id), @comment_ticket.id ]).update_all_with_publish({ notable_id: @comment_ticket.id }, 
+                                  {})
       
       @account.facebook_posts.update_all("ancestry = #{comment_fb_post.id}", [ "id IN (?)", child_post_ids ] )
       if Account.current.features?(:activity_revamp)

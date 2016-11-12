@@ -534,10 +534,10 @@ de:
         feedbackwidget_use_https: "HTTPS verwenden"
         feedbackwidget_mobile_view: "Mobile Ansicht aktivieren"
         feedbackwidget_use_captcha: "CAPTCHA aktivieren"
-        feedbackwidget_submit_title: "Send Feedback"
-        feedbackwidget_form_submit_title: "Form Submit Button"
-        feedbackwidget_title_maxlength: "Maximum 30 characters"
-        feedbackwidget_submit_title_maxlength: "Maximum 16 characters"
+        feedbackwidget_submit_title: "Feedback senden"
+        feedbackwidget_form_submit_title: "Formular abschicken Button"
+        feedbackwidget_title_maxlength: "Maximal 30 Zeichen"
+        feedbackwidget_submit_title_maxlength: "Maximal 16 Zeichen"
       embedded_widget:
         feedbackwidget_height_placeholder: 500
         feedbackwidget_form_customization: "Formular anpassen"
@@ -555,10 +555,10 @@ de:
         feedbackwidget_search_area: "Artikel durchsuchen"
         feedbackwidget_use_https: "HTTPS verwenden"
         feedbackwidget_use_captcha: "CAPTCHA aktivieren"
-        feedbackwidget_submit_title: "Send Feedback"
-        feedbackwidget_form_submit_title: "Form Submit Button"
-        feedbackwidget_title_maxlength: "Maximum 16 characters"
-        feedbackwidget_submit_title_maxlength: "Maximum 16 characters"
+        feedbackwidget_submit_title: "Feedback senden"
+        feedbackwidget_form_submit_title: "Formular abschicken Button"
+        feedbackwidget_title_maxlength: "Maximal 16 Zeichen"
+        feedbackwidget_submit_title_maxlength: "Maximal 16 Zeichen"
     products:
       portal:
         show_author_name: "Show author names"
@@ -3583,7 +3583,7 @@ de:
     note_saved: "Notiz gespeichert"
     edit_note: "<b>Notiz bearbeiten</b>"
     thanks: "Vielen Dank für Ihr Feedback"
-    thanks_v1: "Thank you for your feedback"
+    thanks_v1: "Vielen Dank für Ihr Feedback"
     portal_created_on: "Von <span class='emphasize'>%{username}</span> am <span class='emphasize'>%{date}</span> erstellt"
     portal_created_on_same_user: "Am <span class='emphasize'>%{date}</span> erstellt"
     fb_portal_created_on: "Erstellt von <span class='emphasize'>%{username}</span> am <span class='emphasize'>%{date}</span>"
@@ -3767,9 +3767,9 @@ de:
     note_content: "Inhalt der Notiz"
     private_note_alert: "Verwenden Sie bitte den nachfolgenden E-Mail-Befehl in Ihrem Nachrichtentext, um eine private Antwort zu schicken."
     ticket_url: Ticket-URL
-    submit_feedback: "Send Feedback"
-    search_text: "Search Articles"
-    search_close_text: "Close search"
+    submit_feedback: "Feedback senden"
+    search_text: "Artikel durchsuchen"
+    search_close_text: "Suche beenden"
     integrations:
       jira:
         tooltip: "Zugeordnetes JIRA-Problem anzeigen"
@@ -9365,8 +9365,8 @@ de:
         feedback_widgets_search_results: Suchergebnisse
         feedback_widgets_search_our: "Durchsuchen Sie unser/e "
         feedback_widgets_knowledge_base: "Wissensdatenbank "
-        feedback_widgets_help_articles: "oder Hilfeartikel durchsuchen"
-        feedback_widgets_help_articles_v1: "or Browse articles"
+        feedback_widgets_help_articles: "oder Artikel durchsuchen"
+        feedback_widgets_help_articles_v1: "oder Artikel durchsuchen"
         show_all_results: "Alle Ergebnisse anzeigen"
         no_results: "Keine Ergebnisse für "
   reorder: Sortieren

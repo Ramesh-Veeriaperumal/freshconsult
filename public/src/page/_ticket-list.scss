@@ -891,6 +891,17 @@
 
 }
 
+.parent_error_alert {
+	padding: 5px 35px 5px 14px;
+	margin: 0;
+	margin-bottom: 10px;
+	color: #9e0000;
+
+	.close {
+		top: 2px;
+	}
+}
+
 #ticket-toolbar [disabled] {
 	opacity: .4;
 	cursor: default;

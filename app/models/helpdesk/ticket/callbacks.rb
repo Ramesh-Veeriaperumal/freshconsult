@@ -4,6 +4,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
 	before_validation :populate_requester, :load_ticket_status, :set_default_values
   before_validation :assign_flexifield, :assign_email_config_and_product, :on => :create
+  before_validation :validate_assoc_parent_ticket, :on => :create, :if => :child_ticket?
   before_validation :validate_related_tickets, :on => :create, :if => :tracker_ticket?
   before_validation :validate_tracker_ticket, :on => :update, :if => :tracker_ticket_id
 
@@ -21,37 +22,40 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   before_update :update_message_id, :if => :deleted_changed?
 
-  before_update :reset_links, :if => :remove_associations?
-
   before_save  :assign_outbound_agent,  :if => :new_outbound_email?
+
+  before_save :reset_internal_group_agent
 
   before_save  :update_ticket_related_changes, :update_company_id, :set_sla_policy
 
   before_save :check_and_reset_company_id, :if => :company_id_changed?
 
-  before_update :reset_internal_group_agent
-  before_save   :allow_valid_internal_group_agent
-
   before_update :update_sender_email
 
   before_update :stop_recording_timestamps, :unless => :model_changes?
-  
+
   before_update :round_robin_on_ticket_update, :unless => :skip_rr_on_update?
+
+  before_update :reset_assoc_tkts, :if => :remove_associations?
+
+  before_update :reset_assoc_parent_tkt_status, :if => :assoc_parent_ticket?
 
   after_update :start_recording_timestamps, :unless => :model_changes?
 
   before_save :update_dueby, :unless => :manual_sla?
 
   after_create :refresh_display_id, :create_meta_note, :update_content_ids, :update_sentiment
+  after_create :set_parent_child_assn, :if => :child_ticket?
+  after_save :check_child_tkt_status, :if => :child_ticket?
 
   after_commit :create_initial_activity, :pass_thro_biz_rules, on: :create
   after_commit :send_outbound_email, :update_capping_on_create, on: :create, :if => :outbound_email?
 
   after_commit :filter_observer_events, on: :update, :if => :execute_observer?
-  after_commit :update_ticket_states, :notify_on_update, :update_activity, 
-               :stop_timesheet_timers, :fire_update_event, :push_update_notification, 
-               :update_old_group_capping, on: :update 
-  #after_commit :regenerate_reports_data, on: :update, :if => :regenerate_data? 
+  after_commit :update_ticket_states, :notify_on_update, :update_activity,
+               :stop_timesheet_timers, :fire_update_event, :push_update_notification,
+               :update_old_group_capping, on: :update
+  #after_commit :regenerate_reports_data, on: :update, :if => :regenerate_data?
   after_commit :push_create_notification, on: :create
   after_commit :update_group_escalation, on: :create, :if => :model_changes?
   after_commit :publish_to_update_channel, on: :update, :if => :model_changes?
@@ -60,10 +64,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
   after_commit :set_links, :on => :create, :if => :tracker_ticket?
   after_commit :add_links, :on => :update, :if => :linked_now?
   after_commit :remove_links, :on => :update, :if => :unlinked_now?
-  
-  # Callbacks will be executed in the order in which they have been included. 
+
+  # Callbacks will be executed in the order in which they have been included.
   # Included rabbitmq callbacks at the last
-  include RabbitMq::Publisher 
+  include RabbitMq::Publisher
 
 
   def set_outbound_default_values
@@ -90,9 +94,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
       :version => self.ticket_body_content.version,
       :account_id => self.account_id,
       :ticket_id => self.id
-    } 
+    }
   end
-  
+
   def set_default_values
     self.source       = TicketConstants::SOURCE_KEYS_BY_TOKEN[:portal] if self.source == 0
     self.ticket_type  = nil if self.ticket_type.blank?
@@ -101,9 +105,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
     self.group_id   ||= email_config.try(:group_id)
     self.priority   ||= PRIORITY_KEYS_BY_TOKEN[:low]
     self.created_at ||= Time.now.in_time_zone(account.time_zone)
-    
+
     build_ticket_body(:description_html => self.description_html,
-      :description => self.description) unless ticket_body    
+      :description => self.description) unless ticket_body
   end
 
   def save_ticket_states
@@ -121,14 +125,14 @@ class Helpdesk::Ticket < ActiveRecord::Base
     ticket_states.sla_timer_stopped_at = time_zone_now if (ticket_status.stop_sla_timer?)
     #Setting inbound as 0 and outbound as 1 for outbound emails as its agent initiated
     if outbound_email?
-      ticket_states.inbound_count = 0 
+      ticket_states.inbound_count = 0
       ticket_states.outbound_count = 1
     end
   end
 
   def update_sender_email
     assign_sender_email
-    
+
     # save only if there are any changes. unnecessary transaction is avoided.
     schema_less_ticket.save if schema_less_ticket.changed?
   end
@@ -140,9 +144,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
     schema_less_ticket.save
   end
 
-  def update_sentiment 
+  def update_sentiment
 
-    if (self.account.customer_sentiment_enabled?) 
+    if (self.account.customer_sentiment_enabled?)
       if (User.current == nil) || (User.current.language==nil) || (User.current.language=="en")
         if self.source == 3 || self.source == 7
           self.sentiment = 0
@@ -156,12 +160,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
       end
     end
   end
-  
-  def process_agent_and_group_changes 
+
+  def process_agent_and_group_changes
     if (@model_changes.key?(:responder_id) && responder)
       if @model_changes[:responder_id][0].nil?
-        unless ticket_states.first_assigned_at 
-          ticket_states.first_assigned_at = time_zone_now 
+        unless ticket_states.first_assigned_at
+          ticket_states.first_assigned_at = time_zone_now
           schema_less_ticket.set_first_assign_bhrs(self.created_at, ticket_states.first_assigned_at, self.group)
         end
       else
@@ -170,7 +174,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
       schema_less_ticket.set_agent_assigned_flag
       ticket_states.assigned_at=time_zone_now
     end
-    
+
     if (@model_changes.key?(:group_id) && group)
       schema_less_ticket.update_group_reassigned_count("create") if @model_changes[:group_id][0]
       schema_less_ticket.set_group_assigned_flag
@@ -192,9 +196,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
     ticket_states.pending_since=time_zone_now if (status == PENDING)
     ticket_states.set_resolved_at_state if (status == RESOLVED)
     ticket_states.set_closed_at_state if closed?
-    
+
     if(ticket_status.stop_sla_timer)
-      ticket_states.sla_timer_stopped_at ||= time_zone_now 
+      ticket_states.sla_timer_stopped_at ||= time_zone_now
     else
       ticket_states.sla_timer_stopped_at = nil
     end
@@ -209,41 +213,24 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   #Shared onwership Validations
   def reset_internal_group_agent
-    schema_less_ticket.internal_agent_id = schema_less_ticket.internal_group_id = nil unless Account.current.features?(:shared_ownership)
-    return unless @model_changes.key?(:status) && Account.current.features?(:shared_ownership)
+    (schema_less_ticket.internal_agent_id = schema_less_ticket.internal_group_id = nil) or return unless Account.current.features?(:shared_ownership)
+    return unless (status_changed? || shared_ownership_fields_changed?)
 
-    #Reset internal group and internal agent when the status(without the particular group mapped) is changed.
+    #Nullify internal group when the status(without the particular group mapped) is changed.
     #If the new status has the same group mapped to it, preserve internal group and internal agent.
-    internal_group_column = Helpdesk::SchemaLessTicket.internal_group_column
-    internal_agent_column = Helpdesk::SchemaLessTicket.internal_agent_column
-    if internal_group_id.present? && !internal_group_id_changed? && ticket_status.group_ids.exclude?(schema_less_ticket.internal_group_id)
-      schema_less_ticket.internal_group_id = nil
-      @model_changes.merge!(schema_less_ticket.changes.slice(internal_group_column.to_s))
+    if !valid_internal_group?
+      previous_ig_id = internal_group_id_changed? ? internal_group_id_changes[0] : schema_less_ticket.internal_group_id
+      schema_less_ticket.internal_group_id = (valid_internal_group?(previous_ig_id) ? previous_ig_id : nil)
     end
 
-    if internal_agent_id.present? && !internal_agent_id_changed? && ticket_status.group_ids.exclude?(schema_less_ticket.internal_group_id)
-      schema_less_ticket.internal_agent_id = nil
-      @model_changes.merge!(schema_less_ticket.changes.slice(internal_agent_column.to_s))
-    end
-    @model_changes.symbolize_keys!
-  end
-
-  def allow_valid_internal_group_agent
-    return unless shared_ownership_fields_changed? and Account.current.features?(:shared_ownership)
-
-    internal_group_column = Helpdesk::SchemaLessTicket.internal_group_column
-    internal_agent_column = Helpdesk::SchemaLessTicket.internal_agent_column
-
-    #Reset internal group and internal agent to old value if the mapping is incorrect
-    if internal_group_id.present? and ticket_status.group_ids.exclude?(internal_group_id)
-      schema_less_ticket.internal_group_id = internal_group_id_changed? ? @model_changes[internal_group_column][0] : nil
-      @model_changes.delete(internal_group_column)
-    end
-    if internal_agent_id.present? and (internal_group.blank? or internal_group.agents.pluck(:user_id).exclude?(internal_agent_id))
-      schema_less_ticket.internal_agent_id = internal_agent_id_changed? ? @model_changes[internal_agent_column][0] : nil
-      @model_changes.delete(internal_agent_column)
+    #Nullify internal agent when the status or internal group(without the particular agent mapped) is changed.
+    #If the new group has the same agent mapped to it, preserve internal agent.
+    if !valid_internal_agent?
+      previous_ia_id = internal_agent_id_changed? ? internal_agent_id_changes[0] : schema_less_ticket.internal_agent_id
+      schema_less_ticket.internal_agent_id = (valid_internal_agent?(previous_ia_id) ? previous_ia_id : nil)
     end
   end
+
   #Shared onwership Validations ends here
 
   def refresh_display_id #by Shan temp
@@ -261,7 +248,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
           :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['meta'],
           :account_id => self.account.id,
           :user_id => self.requester.id
-        ) 
+        )
         meta_note.attachments = meta_note.inline_attachments = []
         meta_note.save_note
       end
@@ -279,6 +266,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def pass_thro_biz_rules
+    return if Account.current.skip_dispatcher?
     #Remove redis check if no issues after deployment
     if Account.current.launched?(:delayed_dispatchr_feature)
       send_later(:delayed_rule_check, User.current, freshdesk_webhook?) unless (import_id or outbound_email?)
@@ -293,9 +281,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
    begin
     set_account_time_zone
     evaluate_on = check_rules(current_user) unless freshdesk_webhook
-    autoreply 
+    autoreply
     assign_tickets_to_agents unless spam? || deleted?
-   rescue Exception => e #better to write some rescue code 
+   rescue Exception => e #better to write some rescue code
     NewRelic::Agent.notice_error(e)
    end
     save #Should move this to unless block.. by Shan
@@ -319,8 +307,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def stop_timesheet_timers
     if @model_changes.key?(:status) && [RESOLVED, CLOSED].include?(status)
        running_timesheets =  time_sheets.find(:all , :conditions =>{:timer_running => true})
-       running_timesheets.each{|timer| 
-        timer.stop_timer 
+       running_timesheets.each{|timer|
+        timer.stop_timer
         Integrations::TimeSheetsSync.update(timer, User.current)
        }
     end
@@ -329,8 +317,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def update_message_id
     (self.header_info[:message_ids] || []).each do |parent_message|
       message_key = EMAIL_TICKET_ID % {:account_id => self.account_id, :message_id => parent_message}
-      deleted ? remove_others_redis_key(message_key) : set_others_redis_key(message_key, 
-                                                                            "#{self.display_id}:#{parent_message}", 
+      deleted ? remove_others_redis_key(message_key) : set_others_redis_key(message_key,
+                                                                            "#{self.display_id}:#{parent_message}",
                                                                             86400*7)
     end
   end
@@ -357,7 +345,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def has_product_changed?
-    self.schema_less_ticket.changes.key?('product_id') 
+    self.schema_less_ticket.changes.key?('product_id')
   end
 
   def update_dueby(ticket_status_changed=false)
@@ -376,30 +364,30 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def set_sla_time(ticket_status_changed)
     if self.new_record? || priority_changed? || changed_condition? || status_changed? || ticket_status_changed
       sla_detail = self.sla_policy.sla_details.where(priority: priority).first
-      set_dueby_on_priority_change(sla_detail) if (self.new_record? || priority_changed? || changed_condition?)      
+      set_dueby_on_priority_change(sla_detail) if (self.new_record? || priority_changed? || changed_condition?)
       set_dueby_on_status_change(sla_detail) if !self.new_record? && (status_changed? || ticket_status_changed)
-      Rails.logger.debug "sla_detail_id :: #{sla_detail.id} :: due_by::#{self.due_by} and fr_due:: #{self.frDueBy} " 
+      Rails.logger.debug "sla_detail_id :: #{sla_detail.id} :: due_by::#{self.due_by} and fr_due:: #{self.frDueBy} "
     end
   end
 
   #end of SLA
-  
-  def set_account_time_zone  
+
+  def set_account_time_zone
     self.account.make_current
-    Time.zone = self.account.time_zone    
+    Time.zone = self.account.time_zone
   end
 
   def set_user_time_zone
     begin
-      Time.zone = User.current.time_zone 
-    rescue ArgumentError => e 
+      Time.zone = User.current.time_zone
+    rescue ArgumentError => e
       Rails.logger.info  "User timezone is invalid:: userid:: #{User.current.id}, Timezone :: #{User.current.time_zone}"
       set_account_time_zone
     end
   end
 
   def set_display_id?
-    Account.current.features?(:redis_display_id) && display_id.nil?
+    display_id.nil? && Account.current.features?(:redis_display_id)
   end
 
   def assign_display_id
@@ -419,7 +407,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
         return
       #first time, when the key is a huge -ve value
       elsif computed_display_id < 0
-        if set_display_id_redis_with_expiry(lock_key, 1, { :ex => TicketConstants::TICKET_ID_LOCK_EXPIRY, 
+        if set_display_id_redis_with_expiry(lock_key, 1, { :ex => TicketConstants::TICKET_ID_LOCK_EXPIRY,
                                                        :nx => true })
           computed_display_id = account.get_max_display_id
           set_display_id_redis_key(key, computed_display_id)
@@ -433,15 +421,16 @@ class Helpdesk::Ticket < ActiveRecord::Base
     notification_topic = SNS["dev_ops_notification_topic"]
     options = { :account_id => account_id, :environment => Rails.env }
     DevNotification.publish(notification_topic, "Redis Display ID - Retry limit exceeded", options.to_json)
-    
+
     Rails.logger.debug "Redis Display ID - Retry limit exceeded in #{account_id}"
     NewRelic::Agent.notice_error("Redis Display ID - Retry limit exceeded in #{account_id}")
   end
 
+  # Linked ticket validations...
   def validate_related_tickets
     if related_ticket_ids.count == 1
       @related_ticket = Account.current.tickets.permissible(User.current).readonly(false).find_by_display_id(related_ticket_ids)
-      unless(@related_ticket && @related_ticket.association_type.nil? && @related_ticket.can_be_linked? )
+      unless(@related_ticket && @related_ticket.association_type.nil? && @related_ticket.can_be_associated? )
         errors.add(:base,t("ticket.link_tracker.permission_denied")) and return false
       end
     elsif links_limit_exceeded(related_ticket_ids.count)
@@ -451,7 +440,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def validate_tracker_ticket
     @tracker_ticket = Account.current.tickets.find_by_display_id(tracker_ticket_id)
-    unless @tracker_ticket && @tracker_ticket.tracker_ticket? && !@tracker_ticket.spam_or_deleted? && self.can_be_linked?
+    unless @tracker_ticket && @tracker_ticket.tracker_ticket? && !@tracker_ticket.spam_or_deleted? && self.can_be_associated?
       errors.add(:base,t("ticket.link_tracker.permission_denied")) and return false
     end
     if self.association_type && @tracker_ticket.associates.present? && links_limit_exceeded(@tracker_ticket.associates.count + 1)
@@ -462,7 +451,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def set_links
     Rails.logger.debug "Linking Related tickets [#{related_ticket_ids}] to tracker_ticket #{self.display_id}"
-    if @related_ticket.present? && update_related_ticket
+    if @related_ticket.present? && set_tkt_assn_type(@related_ticket, :related)
       self.associates = [ @related_ticket.display_id ]
     elsif related_ticket_ids.count > 1
       ::Tickets::LinkTickets.perform_async({:tracker_id => self.display_id, :related_ticket_ids => related_ticket_ids})
@@ -475,7 +464,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def unlinked_now?
-    tracker_ticket_id && !related_ticket? && @model_changes.key?(Helpdesk::SchemaLessTicket.association_type_column) && 
+    tracker_ticket_id && !related_ticket? && @model_changes.key?(Helpdesk::SchemaLessTicket.association_type_column) &&
       @model_changes[Helpdesk::SchemaLessTicket.association_type_column][0] == TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:related]
   end
 
@@ -493,30 +482,66 @@ class Helpdesk::Ticket < ActiveRecord::Base
     create_tracker_activity(:tracker_unlink)
   end
 
-  def reset_links
-    ::Tickets::ResetAssociations.perform_async({:ticket_ids=>[self.id]})
+  # Parent Child ticket validations...
+  def validate_assoc_parent_ticket
+    @assoc_parent_ticket = Account.current.tickets.permissible(User.current).readonly(false).find_by_display_id(assoc_parent_tkt_id)
+    if !(@assoc_parent_ticket && @assoc_parent_ticket.can_be_associated?)
+      errors.add(:base,t("ticket.parent_child.permission_denied")) and return false # msg confirm with vikram
+    elsif !@assoc_parent_ticket.child_tkt_limit_reached?
+      errors.add(:base,t("ticket.parent_child.count_exceeded",:count => TicketConstants::CHILD_TICKETS_PER_ASSOC_PARENT)) and return false
+    end
+    self.associates_rdb = @assoc_parent_ticket.display_id
   end
 
-  def remove_associations?
-    deleted_or_spammed_now? && linked_ticket?
+  def set_parent_child_assn
+    Rails.logger.debug "Creating child ticket #{self.display_id} for the assoc_parent_ticket #{assoc_parent_tkt_id}"
+    if @assoc_parent_ticket && update_assoc_parent_tkt
+      self.associates = [@assoc_parent_ticket.display_id]
+    end
   end
 
-  def deleted_or_spammed_now?
-    (deleted_changed? && @model_changes[:deleted][0] == false) or 
-        (spam_changed? && @model_changes[:spam][0] == false)
+  #reset associated parent tkt status if any of the child is not resolved/closed
+  def reset_assoc_parent_tkt_status
+    if status_changed_now? and self.validate_assoc_parent_tkt_status
+      self.status = @model_changes[:status][0]
+      # scenario automation
+      action_log = Thread.current[:scenario_action_log]
+      Thread.current[:scenario_action_log][:status] = I18n.t('ticket.unresolved_child') if action_log.present? and action_log[:status].present?
+      # for activities
+      self.system_changes.each do |key, value| #confirm with vikram and RAM
+        value.delete(:status) if value[:status].present?
+      end if system_changes.present?
+    end
   end
 
-private 
+  def check_child_tkt_status
+    if status_changed? and ![RESOLVED, CLOSED].include?(status)
+      assoc_parent_ticket = @assoc_parent_ticket ? @assoc_parent_ticket : self.associated_prime_ticket("child")
+      if [RESOLVED, CLOSED].include?(assoc_parent_ticket.status)
+        assoc_parent_ticket.update_attributes(:status => OPEN)
+      end
+    end
+  end
+
+  def status_changed_now?
+    status_changed? && !previous_state_was_resolved_or_closed? && changed_to_closed_or_resolved?
+  end
+
+  def reset_assoc_tkts
+    ::Tickets::ResetAssociations.perform_async({:ticket_ids=>[self.display_id]})
+  end
+
+private
 
   def push_create_notification
 	push_mobile_notification(:new)
-  end 
+  end
 
   def push_update_notification
     if @model_changes.key?(:responder_id)
       return unless send_agent_assigned_notification?
     end
-    push_mobile_notification(:update) unless spam? || deleted? 
+    push_mobile_notification(:update) unless spam? || deleted?
   end
 
   def push_mobile_notification(type)
@@ -532,7 +557,7 @@ private
                 :time => updated_at.to_i
               }
 	send_mobile_notification(type,message)
-  end 
+  end
 
   def model_changes?
     @model_changes.present?
@@ -542,7 +567,7 @@ private
     Account.current.features?(:auto_refresh)
   end
 
-  #RAILS3 Hack. TODO - @model_changes is a HashWithIndifferentAccess so we dont need symbolize_keys!, 
+  #RAILS3 Hack. TODO - @model_changes is a HashWithIndifferentAccess so we dont need symbolize_keys!,
   #but observer excpects all keys to be symbols and not strings. So doing a workaround now.
   #After Rails3, we will cleanup this part
   # TODO - Must change in new reports when this method is changed.
@@ -576,7 +601,7 @@ private
     end
   end
 
-  def update_company_id 
+  def update_company_id
     # owner_id will be used as an alias attribute to refer to a ticket's company_id
     self.owner_id = self.requester.company_id if @model_changes.key?(:requester_id) &&
                                                  (self.owner_id.nil? ||
@@ -600,14 +625,14 @@ private
 
     assign_agent_requester if tracker_ticket?
 
-    self.requester ||= account.all_users.find_by_an_unique_id({ 
-      :email => self.email, 
+    self.requester ||= account.all_users.find_by_an_unique_id({
+      :email => self.email,
       :twitter_id => twitter_id,
       :external_id => external_id,
       :fb_profile_id => facebook_id,
       :phone => phone,
       :unqiue_external_id => unique_external_id })
-    
+
     create_requester unless requester
   end
 
@@ -632,9 +657,9 @@ private
         :name => name || twitter_id || @requester_name || external_id || unique_external_id,
         :helpdesk_agent => false, :active => email.blank?,
         :phone => phone, :language => language, :unqiue_external_id => unique_external_id
-        }}, 
+        }},
         portal, !outbound_email?) # check @requester_name and active
-      
+
       self.requester = requester
     end
   end
@@ -646,9 +671,9 @@ private
   def update_content_ids
     header = self.header_info
     return if inline_attachments.empty? or header.nil? or header[:content_ids].blank?
-    
+
     description_updated = false
-    inline_attachments.each_with_index do |attach, index| 
+    inline_attachments.each_with_index do |attach, index|
       content_id = header[:content_ids][attach.content_file_name+"#{index}"]
       self.ticket_body.description_html = self.ticket_body.description_html.sub("cid:#{content_id}", attach.content.url) if content_id
     end
@@ -680,7 +705,7 @@ private
     assign_schema_less_attributes unless schema_less_ticket
     if schema_less_ticket.changed.include?("product_id")
       if self.product
-        self.email_config = self.product.primary_email_config if email_config.nil? || (email_config.product.nil? || (email_config.product.id != self.product.id))      
+        self.email_config = self.product.primary_email_config if email_config.nil? || (email_config.product.nil? || (email_config.product.id != self.product.id))
       else
         self.email_config = nil
       end
@@ -688,11 +713,11 @@ private
     schema_less_ticket.save unless schema_less_ticket.changed.empty?
   end
 
-  def set_token   
+  def set_token
     self.access_token ||= generate_token
   end
 
-  def generate_token    
+  def generate_token
     public_ticket_token = Account.current.public_ticket_token
     if public_ticket_token.present?
       # using OpenSSL::HMAC.hexdigest for a 64 char hash
@@ -711,9 +736,9 @@ private
   def publish_to_update_channel
     return unless Account.current.features?(:agent_collision)
     agent_name = User.current ? User.current.name : ""
-    message = HELPDESK_TICKET_UPDATED_NODE_MSG % {:account_id => self.account_id, 
-                                                  :ticket_id => self.id, 
-                                                  :agent_name => agent_name, 
+    message = HELPDESK_TICKET_UPDATED_NODE_MSG % {:account_id => self.account_id,
+                                                  :ticket_id => self.id,
+                                                  :agent_name => agent_name,
                                                   :type => "updated"}
     publish_to_tickets_channel("tickets:#{self.account.id}:#{self.id}", message)
   end
@@ -721,14 +746,14 @@ private
   def set_dueby_on_priority_change(sla_detail)
     created_time = self.created_at.in_time_zone(Time.zone.name) || time_zone_now
     business_calendar = Group.default_business_calendar(group)
-    self.due_by = sla_detail.calculate_due_by_time_on_priority_change(created_time, business_calendar)      
-    self.frDueBy = sla_detail.calculate_frDue_by_time_on_priority_change(created_time, business_calendar) 
+    self.due_by = sla_detail.calculate_due_by_time_on_priority_change(created_time, business_calendar)
+    self.frDueBy = sla_detail.calculate_frDue_by_time_on_priority_change(created_time, business_calendar)
   end
 
   def set_dueby_on_status_change(sla_detail)
     if calculate_dueby_and_frdueby?
       business_calendar = Group.default_business_calendar(group)
-      self.due_by = sla_detail.calculate_due_by_time_on_status_change(self,business_calendar)      
+      self.due_by = sla_detail.calculate_due_by_time_on_status_change(self,business_calendar)
       self.frDueBy = sla_detail.calculate_frDue_by_time_on_status_change(self,business_calendar)
       if changed_to_closed_or_resolved?
         update_ticket_state_sla_timer
@@ -757,7 +782,7 @@ private
   end
 
   def previous_state_was_sla_stop_state?
-    Helpdesk::TicketStatus.status_objects_from_cache(account).find {|x| x.status_id == @model_changes[:status][0] }.stop_sla_timer? 
+    Helpdesk::TicketStatus.status_objects_from_cache(account).find {|x| x.status_id == @model_changes[:status][0] }.stop_sla_timer?
   end
 
   def update_ticket_state_sla_timer
@@ -767,7 +792,7 @@ private
 
   def regenerate_reports_data
     set_reports_redis_key(account_id, created_at)
-    set_reports_redis_key(account_id, self.ticket_states.resolved_at) if is_resolved_or_closed? 
+    set_reports_redis_key(account_id, self.ticket_states.resolved_at) if is_resolved_or_closed?
   end
 
   def is_resolved_or_closed?
@@ -804,7 +829,7 @@ private
       ticket_states.save if ticket_states.changed?
     end
   end
-  
+
   def build_reports_hash
     current_action_time = created_at || time_zone_now
     if responder_id
@@ -832,15 +857,38 @@ private
     user_present? and !disable_observer_rule
   end
 
-  def update_related_ticket
-    @related_ticket.associates = [ self.display_id ]
-    @related_ticket.update_attributes(
-      :association_type => TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:related],
-      :associates_rdb => self.display_id )
+  def update_assoc_parent_tkt
+    is_inactive = [RESOLVED, CLOSED].include?(@assoc_parent_ticket.status)
+    if @assoc_parent_ticket.assoc_parent_ticket?
+      @assoc_parent_ticket.add_associates([self.display_id])
+      is_inactive ? @assoc_parent_ticket.update_attributes(:status => OPEN) : true
+    else
+      set_tkt_assn_type(@assoc_parent_ticket, :assoc_parent, is_inactive)
+    end
+  end
+
+  def set_tkt_assn_type item, value, set_status_open = false
+    item.associates = [self.display_id]
+    update_hash = { :association_type => TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[value] }
+    if value == :related
+      update_hash.merge!(:associates_rdb => self.display_id)
+    elsif value == :assoc_parent and set_status_open
+      update_hash.merge!(:status => OPEN)
+    end
+    item.update_attributes(update_hash)
   end
 
   def links_limit_exceeded(tickets_count)
     tickets_count > TicketConstants::MAX_RELATED_TICKETS
+  end
+
+  def remove_associations?
+    deleted_or_spammed_now? && (assoc_parent_child_ticket? || linked_ticket?)
+  end
+
+  def deleted_or_spammed_now?
+    (deleted_changed? && @model_changes[:deleted][0] == false) or
+      (spam_changed? && @model_changes[:spam][0] == false)
   end
 
   def create_tracker_activity(action, tracker = @tracker_ticket)
@@ -853,5 +901,4 @@ private
   def new_outbound_email?
     outbound_email? && new_record?
   end
-
 end
