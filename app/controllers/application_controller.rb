@@ -46,6 +46,7 @@ class ApplicationController < ActionController::Base
   # Uncomment the :secret if you're not using the cookie session store
   protect_from_forgery # :secret => 'cf40acf193a63c36888fc1c1d4e94d32'
   skip_before_filter :verify_authenticity_token
+  before_filter :print_logs
   before_filter :verify_authenticity_token, :if => :web_request?
   # See ActionController::Base for details 
   # Uncomment this to filter the contents of submitted sensitive data parameters
@@ -285,6 +286,14 @@ class ApplicationController < ActionController::Base
 
     def set_last_active_time
       current_user.agent.update_last_active if Account.current && current_user && current_user.agent? && !current_user.agent.nil?
+    end
+
+    def print_logs
+      return unless Account.current && Account.current.launched?(:logout_logs)
+      Rails.logger.error "Session CSRF key = #{session[:_csrf_token]}"
+      Rails.logger.error "Request CSRF key = #{request.headers['X-CSRF-Token']}"
+      Rails.logger.error "Form CSRF key = #{form_authenticity_token}"
+      Rails.logger.error "protocol = #{request.protocol}"
     end
 end
 
