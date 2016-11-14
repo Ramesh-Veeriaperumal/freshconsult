@@ -230,87 +230,21 @@
   var query_hash  = $A();
   var unassigned = "";
   jQuery(document).ready(function(){
+    var selectedGroupTextId = jQuery(".group_text").attr("value");
+    if(selectedGroupTextId && selectedGroupTextId.indexOf(".") > -1){
+      var splitId = selectedGroupTextId.split(".");
+      selectedGroupTextId = splitId[0]+"\\."+splitId[1];
+    }
+    jQuery("#div_ff_created_date_range").hide();
+    if(jQuery("#created_date_range").val() == ""){
+      jQuery("#created_date_range").val('<%= TicketConstants.created_date_range_default %>');
+    }
 
-    // For Any Group - on change 
-    jQuery(".agent_mode, .group_mode").off();
-    jQuery(".agent_mode, .group_mode").on("click", function(ev,params){
-      ev.preventDefault();
-      jQuery(this).closest(".ff_item").attr("id", 'div_ff_'+this.getAttribute(this.className));
-      jQuery(this).closest(".ff_item").attr("condition", this.getAttribute(this.className));
-      jQuery(this).closest(".ff_item").attr("data-id", this.getAttribute(this.className));
-      jQuery(this).closest(".fd-menu").css("display", "none");
-      if(this.className == "agent_mode"){
-        jQuery(".agent_mode .ticksymbol").remove();
-        jQuery(".agent_text").text(jQuery(this).text());
-        if(this.getAttribute(this.className) == "any_agent_id"){
-          jQuery(".agent_text.shared_filter_text").addClass('lengthier_text');
-        }else{
-          jQuery(".agent_text.shared_filter_text").removeClass('lengthier_text');
-        }
-        jQuery(this).prepend("<span class='icon ticksymbol'></span>");
-      }else{
-        jQuery(".group_mode .ticksymbol").remove();
-        jQuery(".group_text").text(jQuery(this).text());
-        jQuery(this).prepend("<span class='icon ticksymbol'></span>");
-        if(this.getAttribute(this.className) == "any_group_id"){
-          jQuery(".group_text.shared_filter_text").addClass('lengthier_text');
-          unassigned = jQuery('#'+selectedGroupTextId+' option[value="-1"]');
-          var selectedVals = jQuery('#'+selectedGroupTextId).val();
-          if(selectedVals && selectedVals.indexOf("-1") > -1){
-            selectedVals.splice(selectedVals.indexOf("-1"), 1);
-            jQuery('#'+selectedGroupTextId).val(selectedVals);
-            jQuery('#'+selectedGroupTextId).trigger('change');
-          }
-          if(jQuery("#"+jQuery(".group_text").parent().attr("id")+" label.item input[value='-1']").length > 0){
-            unassigned = jQuery("#"+jQuery(".group_text").parent().attr("id")+" label.item input[value='-1']").parent();
-          }
-          jQuery('#'+selectedGroupTextId+' option[value="-1"]').remove();
-          jQuery("#"+jQuery(".group_text").parent().attr("id")+" label.item input[value='-1']").parent().remove();
-        }else{
-          jQuery(".group_text.shared_filter_text").removeClass('lengthier_text');
-          if(jQuery('#'+selectedGroupTextId+' option[value="-1"]').length <= 0){
-            if(jQuery("#" + jQuery(".group_text").parent().attr("id") + " label.item").length > 0){
-              jQuery(".group_text").parent().append(unassigned);
-            }else{
-              jQuery('#' + selectedGroupTextId).append(unassigned);
-            }
-          }
-        }
-      }
-      jQuery("#FilterOptions input[name="+this.className+"]").val(this.getAttribute("mode"));
-      if(!jQuery(this).closest(".ff_item").data("fromFilters")){
-        jQuery("#active_filter").addClass('unsaved');
-      }
-      jQuery(this).closest(".ff_item").data("fromFilters", false);
-      if(params !== 'customTrigger')refresh_tickets();
-    });
-
-    <% if Account.current.launched?(:ticket_list_page_filters_cache) %>
-      var fieldMap = <%= raw(TicketConstants::DASHBOARD_FILTER_MAPPING.to_json) %>;
-      PopulateData.I18n_text.me = '<%= t("helpdesk.tickets.add_watcher.me") %>'
-      PopulateData.I18n_text.mygroups = '<%= t("filter_options.mygroups") %>'
-      PopulateData.I18n_text.unassigned = '<%= t("filter_options.unassigned") %>'
-      TicketListSidebar.getParams(fieldMap,function(params){
-          params.defaultDateRange = "<%= TicketConstants.created_date_range_default%>";
-          params.sharedOwnershipFlag = <%= shared_ownership_enabled %>;
-          PopulateFormData.init(params);
-      });
-    <% end %>
-  var selectedGroupTextId = jQuery(".group_text").attr("value");
-  if(selectedGroupTextId && selectedGroupTextId.indexOf(".") > -1){
-    var splitId = selectedGroupTextId.split(".");
-    selectedGroupTextId = splitId[0]+"\\."+splitId[1];
-  }
-  jQuery("#div_ff_created_date_range").hide();
-  if(jQuery("#created_date_range").val() == ""){
-    jQuery("#created_date_range").val('<%= TicketConstants.created_date_range_default %>');
-  }
-
-  if(jQuery("#created_at").data("selectedValue").toString().split("-").length == 2){
-    jQuery("#created_date_range").val(jQuery("#created_at").data("selectedValue"));
-    jQuery("#created_at").val("set_date").change();
-    jQuery("#div_ff_created_date_range").show();
-  }
+    if(jQuery("#created_at").data("selectedValue").toString().split("-").length == 2){
+      jQuery("#created_date_range").val(jQuery("#created_at").data("selectedValue"));
+      jQuery("#created_at").val("set_date").change();
+      jQuery("#div_ff_created_date_range").show();
+    }
 
     // #TODO : change the format of the date based on the account config
     jQuery('#created_date_range').bootstrapDaterangepicker(
@@ -432,6 +366,60 @@
       jQuery("#FilterOptions input[name="+this.className+"]").val(this.getAttribute(this.className)).trigger("change");
     });
 
+    // For Any Group - on change
+    jQuery(".agent_mode, .group_mode").off();
+    jQuery(".agent_mode, .group_mode").on("click", function(ev,params){
+      ev.preventDefault();
+      jQuery(this).closest(".ff_item").attr("id", 'div_ff_'+this.getAttribute(this.className));
+      jQuery(this).closest(".ff_item").attr("condition", this.getAttribute(this.className));
+      jQuery(this).closest(".ff_item").attr("data-id", this.getAttribute(this.className));
+      jQuery(this).closest(".fd-menu").css("display", "none");
+      if(this.className == "agent_mode"){
+        jQuery(".agent_mode .ticksymbol").remove();
+        jQuery(".agent_text").text(jQuery(this).text());
+        if(this.getAttribute(this.className) == "any_agent_id"){
+          jQuery(".agent_text.shared_filter_text").addClass('lengthier_text');
+        }else{
+          jQuery(".agent_text.shared_filter_text").removeClass('lengthier_text');
+        }
+        jQuery(this).prepend("<span class='icon ticksymbol'></span>");
+      }else{
+        jQuery(".group_mode .ticksymbol").remove();
+        jQuery(".group_text").text(jQuery(this).text());
+        jQuery(this).prepend("<span class='icon ticksymbol'></span>");
+        if(this.getAttribute(this.className) == "any_group_id"){
+          jQuery(".group_text.shared_filter_text").addClass('lengthier_text');
+          unassigned = jQuery('#'+selectedGroupTextId+' option[value="-1"]');
+          var selectedVals = jQuery('#'+selectedGroupTextId).val();
+          if(selectedVals && selectedVals.indexOf("-1") > -1){
+            selectedVals.splice(selectedVals.indexOf("-1"), 1);
+            jQuery('#'+selectedGroupTextId).val(selectedVals);
+            jQuery('#'+selectedGroupTextId).trigger('change');
+          }
+          if(jQuery("#"+jQuery(".group_text").parent().attr("id")+" label.item input[value='-1']").length > 0){
+            unassigned = jQuery("#"+jQuery(".group_text").parent().attr("id")+" label.item input[value='-1']").parent();
+          }
+          jQuery('#'+selectedGroupTextId+' option[value="-1"]').remove();
+          jQuery("#"+jQuery(".group_text").parent().attr("id")+" label.item input[value='-1']").parent().remove();
+        }else{
+          jQuery(".group_text.shared_filter_text").removeClass('lengthier_text');
+          if(jQuery('#'+selectedGroupTextId+' option[value="-1"]').length <= 0){
+            if(jQuery("#" + jQuery(".group_text").parent().attr("id") + " label.item").length > 0){
+              jQuery(".group_text").parent().append(unassigned);
+            }else{
+              jQuery('#' + selectedGroupTextId).append(unassigned);
+            }
+          }
+        }
+      }
+      jQuery("#FilterOptions input[name="+this.className+"]").val(this.getAttribute("mode"));
+      if(!jQuery(this).closest(".ff_item").data("fromFilters")){
+        jQuery("#active_filter").addClass('unsaved');
+      }
+      jQuery(this).closest(".ff_item").data("fromFilters", false);
+      if(params !== 'customTrigger')refresh_tickets();
+    });
+
 		jQuery(document).on("click.ticket_filter", ".toolbar_pagination a, .toolbar_pagination_full a", function(ev){
 			ev.preventDefault();
 			jQuery(document).scrollTop(0);
@@ -451,7 +439,19 @@
 
     jQuery('#all-views').html($J('#all-views-tmpl').html());
     jQuery('#all-views-tmpl').html('');
-    });
+    <% if Account.current.launched?(:ticket_list_page_filters_cache) %>
+      var fieldMap = <%= raw(TicketConstants::DASHBOARD_FILTER_MAPPING.to_json) %>;
+      PopulateData.I18n_text.me = '<%= t("helpdesk.tickets.add_watcher.me") %>'
+      PopulateData.I18n_text.mygroups = '<%= t("filter_options.mygroups") %>'
+      PopulateData.I18n_text.unassigned = '<%= t("filter_options.unassigned") %>'
+      TicketListSidebar.getParams(fieldMap,function(params){
+          params.defaultDateRange = "<%= TicketConstants.created_date_range_default%>";
+          params.sharedOwnershipFlag = <%= shared_ownership_enabled %>;
+          PopulateFormData.init(params);
+      });
+    <% end %>
+
+  });
 
   jQuery("#FilterOptions").change(function(){
     <%
