@@ -2617,8 +2617,14 @@ en:
       sso:
         expected_params: "One or more of the expected parameters name, email, and hash are missing."
         invalid_time_entry: "Invalid time entry"
+      jwt_sso:
+        expected_time_params: "Issued at time(iat) and Expire at time(iat) are missing"
+        exceeded_max_expire_time: "Max expiry time of 30 minutes is allowed"
+        expected_user_params: "name and unique_id/email must be present"
+        wrong_param_type: "One or more user fields have the wrong type."
       success: Login successful!
       failed: Login was unsuccessful!
+      blocked_user: Sorry, login was unsuccessful as your account is blocked. Please contact your account administrator to regain access.
       deleted_user: We are sorry. The login was unsuccessful because your account has been deleted. Please contact your account administrator to regain access.
       credentials_incorrect: "The email and password you entered does not match"
       failed_login_warning_line_1:

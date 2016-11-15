@@ -201,6 +201,7 @@ module Redis::RedisKeys
 
   SPAM_WHITELISTED_ACCOUNTS = "SPAM_WHITELISTED_ACCOUNTS"
   SPAM_ACCOUNT_TIME_LIMIT = "SPAM_ACCOUNT_TIME_LIMIT"
+  JWT_SSO_JTI = "JTI_%{account_id}_%{jti}"
 
   #Key check for read/write canned and scenario automations to count esv2
   COUNT_ESV2_WRITE_ENABLED 	= "COUNT_ESV2_WRITE_ENABLED"

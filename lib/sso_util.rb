@@ -14,7 +14,19 @@ module SsoUtil
   COMPANY_NAME_STRS = [:organization, :company]
   TITLE_STRS = [:title, :job_title]
   EXTERNAL_ID_STRS = [:unique_id]
+  ALLOWED_USER_DEFAULT_FIELDS = ["name", "unique_external_id", "email", "company_name", "job_title", "time_zone", "language", "mobile", "phone"].freeze
+  SSO_USER_CUSTOM_FIELD_MAPPING = {
+    :number => Fixnum,
+    :url => String,
+    :date => Date,
+    :phone_number => String,
+    :checkbox => "Boolean",
+    :paragraph => String,
+    :text => String
+  }
 
+  SSO_MAX_EXPIRE_TIME = 900
+  
   class SAMLResponse
 
     attr_accessor :user_name, :email , :phone , :company , :title, :external_id, :error_message
@@ -33,6 +45,9 @@ module SsoUtil
     def valid?
       @valid
     end
+  end
+
+  class SsoFieldValidationError < StandardError
   end
 
   def sso_login_page_redirect
@@ -176,8 +191,78 @@ module SsoUtil
       return url
   end
 
+  def update_user_for_jwt_sso(account, user, user_fields, user_custom_fields, override)
+    user_hash = ALLOWED_USER_DEFAULT_FIELDS.inject({}) do |uh, k| 
+      if user_fields[k]
+        raise SsoFieldValidationError if user_fields[k].class != String
+        uh[k] = user_fields[k]
+      end
+      uh
+    end
+    if user.customer?
+      allowed_custom_fields = account.contact_form.custom_non_dropdown_fields.map { |cf| [cf.name, cf.dom_type]  }
+      allowed_custom_fields.map.each do |k|
+        field_name = k[0][3..-1]
+        if !user_custom_fields[field_name].nil?
+          validate_custom_field(user_custom_fields[field_name], SSO_USER_CUSTOM_FIELD_MAPPING[k[1]])
+          user_hash[k[0]] = user_custom_fields[field_name] 
+        end
+      end
+    end
+
+    user_hash.each do |key, value|
+      if key == 'company_name' #no need to check if company exists as it will only add a company and not overwrite it.
+        user.assign_company(value)
+      else
+        user.send("#{key}=", value) if !value.nil? && (override || user.send(key).nil?) 
+      end
+    end
+    user.active = true
+    user.keep_user_active = true if user.email_changed?
+    user.save
+  end
+
+  def set_user_companies_for_jwt_sso(account, user, user_companies, overwrite)
+    companies = user.companies
+    company_names = companies.map { |c| c.name }
+    if overwrite
+      to_be_removed = company_names - user_companies
+      remove_ids = to_be_removed.map{ |company_name| companies.find { |c| c.name == company_name}.id }
+      UserCompany.destroy_all(:account_id => account.id,
+                              :user_id => user.id,
+                              :company_id => remove_ids) if remove_ids.any?
+      user.user_companies.reload
+    end
+
+    to_be_added = user_companies - company_names
+    to_be_added.each do |company_name|
+      raise SsoFieldValidationError if company_name.class != String
+      new_comp = account.companies.find_or_create_by_name(company_name)
+      user.user_companies.build(:company_id => new_comp.id,
+                                         :client_manager => false,
+                                         :default => false)
+    end
+    user.save
+  end
+
+  def validate_custom_field(value, type)
+    valid = true
+    if type == Date
+      begin
+        DateTime.parse(value)
+      rescue Exception => e
+        valid = false
+      end
+    elsif type == "Boolean"
+        valid = false if [true, false].exclude?(value)
+    else
+      valid = false if value.class != type
+    end
+    raise SsoFieldValidationError unless valid
+  end
+
   private
-    
+  
     def get_first_match(attributes , keys)
       keys.each do |key|
         return attributes[key] if attributes[key]
