@@ -5,7 +5,7 @@ class BroadcastMessages::NotifyBroadcastMessages < BaseWorker
   def perform(args)
     args.symbolize_keys!
     tracker = Account.current.tickets.find_by_display_id(args[:tracker_display_id])
-    related_tickets = tracker.related_tickets if tracker.present?
+    related_tickets = tracker.associated_subsidiary_tickets("tracker") if tracker.present?
     return unless related_tickets.present?
 
     related_tickets.each do |rt|
