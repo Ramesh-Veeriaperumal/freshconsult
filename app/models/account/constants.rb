@@ -133,7 +133,7 @@ class Account < ActiveRecord::Base
                           :autopilot_headsup, :autoplay, :delayed_dispatchr_feature,
                           :enable_old_sso, :es_count_reads, :es_count_writes, :es_down, :es_tickets, :es_v2_reads, :fb_msg_realtime,
                           :force_index_tickets, :freshfone_call_tracker, :freshfone_new_notifications, :gamification_perf,
-                          :gamification_quest_perf, :helpdesk_ticket_templates, :lambda_exchange, :meta_read, :most_viewed_articles,
+                          :gamification_quest_perf, :lambda_exchange, :meta_read, :most_viewed_articles,
                           :multifile_attachments, :new_footer_feedback_box, :new_leaderboard, :periodic_login_feature, :shared_ownership,
                           :supervisor_dashboard, :support_new_ticket_cache, :ticket_list_page_filters_cache, :translate_solutions,
                           :sidekiq_dispatchr_feature, :list_page_new_cluster, :freshfone_onboarding, :disable_old_sso,
