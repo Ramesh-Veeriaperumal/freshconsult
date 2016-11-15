@@ -8,6 +8,9 @@ if @user_session.errors.any? %>
     <% @user_session.errors.full_messages.each_with_index do |msg, line| %>
       <li class="<%= (line_classes[line] || "") if @user_session.errors.size > 1 %>"><%= msg %></li>
     <% end %>
+    <%= link_to(t('support.login.form.forgot'), "", 
+					:id => "forgot_password",
+					"data-toggle-dom" => "#forgot-form, #login-form" ) if @user_session.attempted_record && @user_session.attempted_record.failed_login_count > 1 && @user_session.attempted_record.failed_login_count < UserSession.consecutive_failed_logins_limit %>
   </ul>
   </div>
 <% end %>

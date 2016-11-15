@@ -1,11 +1,11 @@
 module Freshfone::Search
 	def search_user_with_number(phone_number)
-		return if !ES_ENABLED || phone_number.blank?
+		return if phone_number.blank? || !Account.current.esv1_enabled?
 		get_es_search_results(phone_number, ['phone', 'mobile']).first
 	end
 	
 	def search_user_v2(phone_number)
-		return if !ES_ENABLED || phone_number.blank?
+		return if phone_number.blank?
 
 		Search::V2::QueryHandler.new({
 			account_id:   current_account.id,
@@ -27,12 +27,12 @@ module Freshfone::Search
 	end
 
 	def search_requester(requester_name, search_non_deleted)
-		return if !ES_ENABLED || requester_name.blank?
+		return if requester_name.blank? || !Account.current.esv1_enabled?
 		search_user_using_es(requester_name, ['name', 'email', 'phone', 'mobile'], 10, search_non_deleted)
 	end
 	
 	def search_contact(contact, size = 10, search_non_deleted)
-		return if !ES_ENABLED || contact.blank?
+		return if contact.blank? || !Account.current.esv1_enabled?
 		get_es_search_results(contact, ['name', 'phone', 'mobile', custom_field_data_columns].flatten, size, search_non_deleted)
 	end
 
@@ -68,7 +68,7 @@ module Freshfone::Search
 	end
 
 	def search_customer_number(phone_number)
-		return if !ES_ENABLED || phone_number.blank?
+		return if phone_number.blank? || !Account.current.esv1_enabled?
 		Search::EsIndexDefinition.es_cluster(Account.current.id)
 		index_name = Search::EsIndexDefinition.searchable_aliases([Freshfone::Caller], Account.current.id)
 		Tire.search(index_name, {load: true}) do |search|

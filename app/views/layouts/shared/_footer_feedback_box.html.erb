@@ -31,9 +31,7 @@
 			<span class="muted"> &nbsp;&nbsp;&nbsp;| &nbsp;&nbsp;&nbsp;</span>
 		<% end %>
 		<%= link_to(t('footer.help_and_support'), "#{AppConfig['support_url']}/support/home", :target => "_blank") %>
-		<% if @privacy_policy %>
-			<span class="muted"> &nbsp;&nbsp;&nbsp;| &nbsp;&nbsp;&nbsp;</span>
-			<%= link_to(t('footer.privacy_policy'), AppConfig['privacy_policy'], :target => "_blank") %>
-		<% end %>
+		<span class="muted"> &nbsp;&nbsp;&nbsp;| &nbsp;&nbsp;&nbsp;</span>
+		<%= link_to(t('footer.privacy_policy'), AppConfig['privacy_policy'], :target => "_blank") %>
 	</div>
 </div>

@@ -13,7 +13,7 @@ class Tickets::LinkTickets < BaseWorker
     return unless @tracker_ticket && @tracker_ticket.tracker_ticket? && @related_tickets.present? && !associations_count_exceeded?
     linked = []
     @related_tickets.each do |t|
-      if t.can_be_linked?
+      if t.can_be_associated?
         t.associates = [@tracker_ticket.display_id]
         t.update_attributes(
           :association_type => TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:related],

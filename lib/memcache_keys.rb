@@ -13,7 +13,7 @@ module MemcacheKeys
   ACCOUNT_AGENTS = "v4/ACCOUNT_AGENTS:%{account_id}"
 
   ACCOUNT_AGENTS_DETAILS = "v3/ACCOUNT_AGENTS_DETAILS:%{account_id}"
-  
+
   ACCOUNT_ROLES = "v1/ACCOUNT_ROLES:%{account_id}"
 
   ACCOUNT_SUBSCRIPTION = "ACCOUNT_SUBSCRIPTION:%{account_id}"
@@ -51,13 +51,13 @@ module MemcacheKeys
   ACCOUNT_TICKET_FIELDS = "v1/ACCOUNT_TICKET_FIELDS:%{account_id}"
 
   ACCOUNT_SECTION_FIELDS_WITH_FIELD_VALUE_MAPPING = "v1/ACCOUNT_SECTION_FIELDS_WITH_FIELD_VALUE_MAPPING:%{account_id}"
- 
+
   ACCOUNT_OBSERVER_RULES = "v1/ACCOUNT_OBSERVER_RULES:%{account_id}"
-  
+
   ACCOUNT_TWITTER_HANDLES = "v2/ACCOUNT_TWITTER_HANDLES:%{account_id}"
 
   FORUM_CATEGORIES = "v1/FORUM_CATEGORIES:%{account_id}"
-  
+
   ALL_SOLUTION_CATEGORIES = "v1/ALL_SOLUTION_CATEGORIES:%{account_id}"
 
   CONTACT_FORM_FIELDS = "v1/CONTACT_FORM_FIELDS:%{account_id}:%{contact_form_id}"
@@ -74,7 +74,7 @@ module MemcacheKeys
   SOLUTION_CATEGORIES = "v1/SOLUTION_CATEGORIES:%{portal_id}"
 
   FB_REAUTH_CHECK = "v1/FB_REAUTH_CHECK:%{account_id}"
-  
+
   FB_REALTIME_MSG_ENABLED = "v1/FB_REALTIME_MSG_ENABLED:%{account_id}"
 
   TWITTER_REAUTH_CHECK = "v1/TWITTER_REAUTH_CHECK:%{account_id}"
@@ -82,17 +82,17 @@ module MemcacheKeys
   WHITELISTED_IP_FIELDS = "v3/WHITELISTED_IP_FIELDS:%{account_id}"
 
   FEATURES_LIST = "v4/FEATURES_LIST:%{account_id}"
-  
+
   SHARD_BY_DOMAIN = "v4/SHARD_BY_DOMAIN:%{domain}"
- 
+
   SHARD_BY_ACCOUNT_ID = "v4/SHARD_BY_ACCOUNT_ID:%{account_id}"
-  
+
   DEFAULT_BUSINESS_CALENDAR = "v1/DEFAULT_BUSINESS_CALENDAR:%{account_id}"
 
   ACCOUNT_AGENT_NAMES = "AGENT_NAMES:%{account_id}"
 
   GLOBAL_BLACKLISTED_IPS = "v1/GLOBAL_BLACKLISTED_IPS"
-  
+
   WHITELISTED_USERS = "v1/WHITELISTED_USERS"
 
   API_LIMIT = "v1/API_LIMIT:%{account_id}"
@@ -114,9 +114,9 @@ module MemcacheKeys
   MOBIHELP_SOLUTION_CATEGORY_IDS = "MOBIHELP_SOLUTION_CATEGORY_IDS:%{account_id}:%{app_key}"
 
   MOBIHELP_SOLUTIONS = "v1/MOBIHELP_SOLUTIONS:%{account_id}:%{category_id}"
-  
+
   MOBIHELP_SOLUTION_UPDATED_TIME = "v3/MOBIHELP_SOLUTION_UPDATED_TIME:%{account_id}:%{app_id}"
-  
+
   PRODUCT_NOTIFICATION = "v3/%{language}/PRODUCT_NOTIFICATION"
 
   POD_SHARD_ACCOUNT_MAPPING = "v2/POD_SHARD_ACCOUNT_MAPPING:%{pod_info}:%{shard_name}"
@@ -173,11 +173,11 @@ module MemcacheKeys
            Rails.logger.debug "#{Account.current}  #{e.message}"
         end
        NewRelic::Agent.notice_error(e)
-      return  
+      return
       rescue Exception => e
         NewRelic::Agent.notice_error(e)
       return
-      end 
+      end
     end
 
     def agent_type(user) #pass user as argument
@@ -193,7 +193,7 @@ module MemcacheKeys
     end
 
     def memcache_delete(key, account=Account.current, user=User.current)
-      newrelic_begin_rescue { $memcache.delete(memcache_view_key(key, account, user)) } 
+      newrelic_begin_rescue { $memcache.delete(memcache_view_key(key, account, user)) }
     end
 
     def get_from_cache(key, raw=false)
@@ -224,15 +224,6 @@ module MemcacheKeys
         cache(key, (cache_data = set_null(block.call)), expiry)
       end
       unset_null(cache_data)
-    end
-  end
-  
-  # Fragment caching based on launch key...
-  def cache_based_on_launch launch_key, memcache_key, &block
-    if Account.current.launched?(launch_key)
-      cache(memcache_key, &block)
-    else
-      block.call
     end
   end
 end

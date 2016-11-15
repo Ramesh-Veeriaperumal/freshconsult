@@ -3,6 +3,7 @@ defaults: &defaults
   admin_url: "http://localhost:3002"
   api_url: "http://localhost:3003"
   acc_api_url: "http://localhost:3004"
+  mkp_oauth_url: "http://localhost:3005"
   api_auth_key: 18a9cc87b8aaab31a31262e93841174765439bdef0f9857b
   cdn_static_assets: "d3fbrmmbx555lt.cloudfront.net/app-assets/test_data"
   dev_oauth_key: dd2dfdc28f5d160992137b6f6e81eb3dd051ae9d9099fee39ee6938d15fc3395
@@ -14,6 +15,8 @@ defaults: &defaults
   acc_api_conn_timeout: 2 ### In Seconds
   global_api_read_timeout: 5 ### In Seconds
   global_api_conn_timeout: 5 ### In Seconds
+  mkp_oauth_read_timeout: 5 ### In Seconds
+  mkp_oauth_conn_timeout: 5 ### In Seconds
   data_pipe_url: http://localhost:4001
   data_pipe_timeout: 5
   data_pipe_key: vyz8wvmoQGIGkCQPUP0431rUE4x8LtO2qIjeyMF1

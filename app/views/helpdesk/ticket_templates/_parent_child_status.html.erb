@@ -1,0 +1,41 @@
+<div class="tree">
+	<span class="parent-title"><%= t('ticket_templates.parent') %></span>
+  <ul>
+    <li class="parent-li">
+      <span class="parent <%= 'save' if @children && children_count > 0 %> ">
+        <% if @children && children_count <= 0 %>
+          <i class="ficon-ellipsis"></i>
+        <% else %>
+          <i class="ficon-save"></i>
+        <% end %>
+        <%= link_to @parent.name, edit_helpdesk_ticket_template_path(@parent.id), :class => "statusbar-redirect" %>
+      </span>
+      <ul>
+      	<span class="child-title"><%= t('ticket_templates.child') %>
+          <% if @children && children_count > 6 %>
+            ( <%= children_count + 1 %> <%= t('ticket_templates.child_out_of') %> <%= Helpdesk::TicketTemplate::TOTAL_CHILD_TEMPLATES %> )
+          <% elsif @children %>
+            ( <%= children_count + 1 %>  )
+          <%end%>    
+        </span>
+        <% if children_count > 0 %>
+          <% @children.each_with_index do |child,index| %>
+            <% if !child.name.blank? %>
+              <li class=" child-li <%= 'child-first-li' if index.zero? %>">
+              	<span class="child save"> 
+                  <i class="ficon-save"></i>
+                <%= child.name %></span>
+              </li>
+            <%end %>
+          <% end %>
+        <% end %>
+        <li class="child-li <%='child-first-li nochild-last-li' if (!@children || children_count.zero?) %>">
+          <span class="child edit"> 
+            <i class="ficon-pencil"></i>
+            <%= t('ticket_templates.child_template.noname') %>
+          </span>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>

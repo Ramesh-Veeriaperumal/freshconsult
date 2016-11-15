@@ -2,6 +2,7 @@ module HelpdeskSystem
 
  def access_denied  
     store_location unless current_user
+    Rails.logger.error "Access denied :: #{access_denied_message}" if Account.current.launched?(:logout_logs)
     respond_to do |format|
       format.html { 
         flash[:notice] = access_denied_message

@@ -25,8 +25,12 @@
               "data-toggle" => toggle_path, :rel => "toggle", :class=>"switch", :name => "onoffswitch", :id => "indplug_#{installation_details['extension_id']}" %>
               </div>
               <% if !is_ni_integration && extension_details['version_id'] != installation_details['version_id'] %>
-                  <%= link_to t('update'), "#",
-                      "data-url"=> "#{admin_marketplace_installed_extensions_new_configs_path(extension_details['extension_id'],extension_details['version_id'])}?type=#{Marketplace::Constants::EXTENSION_TYPE[:plug]}&installation_type=update&display_name=#{ERB::Util.url_encode(extension_details['display_name'])}", :class => "btn btn-mini btn-settings update", "data-developedby"=> extension_details['account'] %>
+                <% update_params = { "type" => "#{Marketplace::Constants::EXTENSION_TYPE[:plug]}", "installation_type" => "update", "display_name" => "#{ERB::Util.url_encode(extension_details['display_name'])}" } %>
+                <% if (extension_details['features'].present? && extension_details['features'].include?('oauth')) %>
+                    <% update_params["is_oauth_app"] = true %>
+                <% end %>
+                <%= link_to t('update'), "#",
+                    "data-url"=> "#{admin_marketplace_installed_extensions_new_configs_path(extension_details['extension_id'],extension_details['version_id'])}?#{update_params.to_query}", :class => "btn btn-mini btn-settings update", "data-developedby"=> extension_details['account'] %>
               <% end %>
               <% if installation_details['configs'] %>
                 <% if is_ni_integration %>
@@ -34,17 +38,31 @@
                     <%= link_to "<span class='#{font_class('settings1', 16)}'></span>".html_safe, edit_integrations_marketplace_app_path(ERB::Util.url_encode(extension_details['name'])), :class => "btn btn-mini btn-settings tooltip", "data-placement" => "below", "data-original-title" => t('application.tooltip.settings') %>
                   <% end %>
                 <% else %>
-                  <%= link_to "<span class='#{font_class('settings1', 16)}'></span>".html_safe, "", 
-                  "data-url"=> "#{admin_marketplace_installed_extensions_edit_configs_path(installation_details['extension_id'], installation_details['version_id'])}?type=#{Marketplace::Constants::EXTENSION_TYPE[:plug]}&installation_type=settings&display_name=#{ERB::Util.url_encode(extension_details['display_name'])}",
-                  :class => "btn btn-mini btn-settings update tooltip", "data-placement" => "below", "data-original-title" => t('application.tooltip.settings'), "data-developedby"=> extension_details['account'] %>
+                  <%
+                    enable_settings = true
+                    if (extension_details['features'].present? && extension_details['features'].include?('oauth'))
+                      if installation_details['configs'].except("access_token", "refresh_token").blank?
+                        enable_settings = false 
+                      end
+                    end
+                  %>
+                  <% if enable_settings %>
+                    <%= link_to "<span class='#{font_class('settings1', 16)}'></span>".html_safe, "",
+                    "data-url"=> "#{admin_marketplace_installed_extensions_edit_configs_path(installation_details['extension_id'], installation_details['version_id'])}?type=#{Marketplace::Constants::EXTENSION_TYPE[:plug]}&installation_type=settings&display_name=#{ERB::Util.url_encode(extension_details['display_name'])}",
+                    :class => "btn btn-mini btn-settings update tooltip", "data-placement" => "below", "data-original-title" => t('application.tooltip.settings'), "data-developedby"=> extension_details['account'] %>
+                  <% end %>
                 <% end %>
               <% end %>
-
+              <% if extension_details["features"].present? && extension_details["features"].include?('oauth') %>
+                <% reauthorize_url = send("admin_marketplace_installed_extensions_edit_oauth_configs_path", extension_details['extension_id'], extension_details['version_id']) + "?installed_extn_id=" + installation_details['installed_extension_id'].to_s %>
+                <a href="#toggle-confirm" rel="freshdialog" class="btn btn-mini tooltip reauthorize-btn" title="<%= t('marketplace.reauthorize') %>" data-placement="below" data-original-title="<%= t('integrations.uninstall') %>" data-width="600" data-close-on-submit="true" data-show-close="true" data-destroy-on-close="true"  data-url="<%= reauthorize_url %>" data-confirm-content="<%= t('marketplace.reauthorize_oauth_app')%>" data-close-label="<%= t('marketplace.cancel') %>" data-submit-label="<%= t('marketplace.reauthorize') %>" data-submit-class="btn btn-primary reauthorize-confirm" >
+                  <span class="<%= font_class('keyicon', 16) %>"></span>
+                </a>
+              <% end %>
               <% delete_url = is_ni_integration ? uninstall_integrations_marketplace_app_path(ERB::Util.url_encode(extension_details['name'])) : admin_marketplace_installed_extensions_uninstall_path(installation_details['extension_id']) %>
               <a href="#toggle-confirm" rel="freshdialog" class="btn btn-mini tooltip delete-btn" title="<%= t('integrations.uninstall') %>" data-placement="below" data-original-title="<%= t('integrations.uninstall') %>" data-width="600" data-close-on-submit="true" data-show-close="true" data-destroy-on-close="true"  data-url="<%= delete_url %>"  <% if extension_details['features'].present? && extension_details['features'].include?("db") %> data-delete-url="<%= data_pipe_path(:data_pipe => {"action" => "batchDelete"}, :format => :json)%>" data-mkp-route="<%= Marketplace::Constants::MKP_ROUTE[:db]%>" data-extn-id="<%= installation_details['extension_id']%>" data-version-id="<%=installation_details['version_id']%>" data-confirm-content=" <%= t('marketplace.confirm_data_lose')%> <%= t('marketplace.confirm_uninstall_message', :human_name => t('marketplace.app')) %>" <%end%> data-confirm-content=" <%= t('marketplace.confirm_uninstall_message', :human_name => t('marketplace.app')) %>"  data-close-label="<%= t('plain_no') %>" data-submit-label="<%= t('plain_yes') %>" data-submit-class="btn btn-primary delete-confirm" >
                 <span class="<%= font_class('trash-o', 16) %>"></span>
               </a>
-
             </div>
           </div>
           <p class="desc"><%= truncate(extension_details['description'], :length => 160, :separator => ' ') %></p>
@@ -52,5 +70,5 @@
       </div>
     </section>
   </li>
-<% end %>
 
+<% end %>

@@ -9,7 +9,7 @@
   <%= render "helpdesk/shared/single_attachment_template" %>
 <% end %>
 <div class="templates-header-wrapper">
-  
+
     <%= render :partial => "helpdesk/tickets/ticket_widget/new_email_title" %>
     <div class="muted">
           <%= t("ticket.compose.compose_email_info") %>
@@ -17,8 +17,8 @@
    </div>
 
 
-<% 
-  sign_value = if (desp = @item.description_html).blank? & (sign = 
+<%
+  sign_value = if (desp = @item.description_html).blank? & (sign =
                   current_user.agent.parsed_signature('ticket' => @ticket, 'helpdesk_name' => @ticket.account.portal_name)).blank?
                 desp.to_s
               else
@@ -43,7 +43,7 @@
       <span class="show-cc" data-action="show-cc"><%= t('helpdesk.shared.cc_label') %></span>
     </div>
 
-      <div class="cc-address hide details-widget" 
+      <div class="cc-address hide details-widget"
             data-is-trial="<%= do_spam_check? && free_admin_email_account? %>"
             data-limit="<%= get_trial_account_max_to_cc_threshold %>"
             data-msg="<%= t(:'flash.general.recipient_limit_exceeded', :limit =>get_trial_account_max_to_cc_threshold ) %>">
@@ -68,62 +68,18 @@
     </div>
   <% end %>
   <!-- block ends here for fragment cache -->
-  </div>
-
-<% content_for :onload_script do -%> 
-<!--  -->
-     jQuery(".from_address_wrapper").select2({minimumResultsForSearch: 10});
-
-      jQuery(".from_address_wrapper").on("select2-open", function() { 
-           jQuery('body').addClass('compose-from-select2');
-      });
-      jQuery(".from_address_wrapper").on("select2-close", function() { 
-           jQuery('body').removeClass('compose-from-select2');
-      });
-
-
-
-
-   jQuery("#helpdesk_tags").select2({  
-    tags: "<%= escape_javascript(current_account.tags.most_used(25).collect{|tag| tag.name}.join(',').html_safe) %>".split(","),
-    tokenSeparators: [',']
-  });
-
- jQuery('body').on('assetLoaded.fjax', function(){
-  window.App.Tickets.Compose.original_requester_error_message = jQuery.validator.messages.requester;
- })
-      jQuery("[data-action='show-cc']").on('click', function(){
-          jQuery('.show-cc').addClass('muted');
-          jQuery('.cc-address ').removeClass('hide');
-           jQuery('.to-address').addClass('light-border');
-      });
-
-      jQuery("[data-action='hide-cc']").on('click', function(){
-           jQuery('.show-cc').removeClass('muted');
-          jQuery('.cc-address ').addClass('hide');
-           jQuery('.to-address').removeClass('light-border');
-      });
-      var close_flash = jQuery("#compose-notice")
-      closeableFlash(close_flash);
-    //TODO - Change to a generic truncate function.
-  jQuery('.invalid_attachment a').livequery(function(ev){
-      jQuery(this).text(jQuery(this).text().substring(0,19)+"...");
-    });
-<% end %>
-  <!-- block ends here -->
-<% end %>
+  <% end %>
   </div>
   </div>
   <input type="hidden" id="tags-value" value="<%= escape_javascript(current_account.tags.most_used(25).collect{|tag| tag.name}.join(',').html_safe) %>" />
 
-<%= render :partial => "/helpdesk/tickets/canned_loading"  %>
-
+<%= render :partial => "/helpdesk/tickets/canned_loading" %>
 <script>
  var isMultifileEnabled = <%= current_account.launched?(:multifile_attachments) %>
 </script>
 
 <% if Account.current.launched?(:agent_new_ticket_cache) %>
-  <script>    
+  <script>
     // To load data from store to populate group for the first time.
     jQuery(document).ready(function(){
       // Load data into group, agent and product from data store if the page is cached

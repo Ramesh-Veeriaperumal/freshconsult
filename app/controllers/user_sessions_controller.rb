@@ -73,7 +73,7 @@ include Mobile::Actions::Push_Notifier
       else
         @current_user.name =  params[:name]
         @current_user.phone = params[:phone] unless params[:phone].blank?
-        @current_user.company_name = params[:company] if params[:company].present?
+        @current_user.assign_company(params[:company]) if params[:company].present?
         @current_user.active = true
         saved = @current_user.save
       end

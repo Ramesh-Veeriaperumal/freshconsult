@@ -1154,7 +1154,7 @@ module ApplicationHelper
 
 def construct_new_ticket_element_for_google_gadget(form_builder,object_name, field, field_label, dom_type, required, field_value = "", field_name = "", in_portal = false , is_edit = false, pl_value_id=nil)
     dom_type = (field.field_type == "nested_field") ? "nested_field" : dom_type
-    element_class   = " #{ (required) ? 'required' : '' } #{ dom_type }"
+    element_class   = " #{ (required && !object_name.eql?(:template_data)) ? 'required' : '' } #{ dom_type }" 
     element_class  += " required_closure" if (field.required_for_closure && !field.required)
     element_class  += " section_field" if field.section_field?
     field_label    += '<span class="required_star">*</span>'.html_safe if required
@@ -1180,14 +1180,14 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
         unless is_edit or params[:format] == 'widget'
           show_cc = show_cc_field  field
         end
-            element = render(:partial => "/helpdesk/tickets/ticket_widget/requester", :formats => [:html], :locals => {:search_req => search_req , :placeholder => description, :show_cc => show_cc, :is_edit => is_edit})
+            element = render(:partial => "/helpdesk/tickets/ticket_widget/requester", :formats => [:html], :locals => {:search_req => search_req , :placeholder => description, :show_cc => show_cc, :is_edit => is_edit, :object_name => object_name})
             element+= hidden_field(object_name, :requester_id, :value => @item.requester_id)
       when "email" then
         element = label + text_field(object_name, field_name, :class => element_class, :value => field_value)
         element = add_cc_field_tag element ,field if (field.portal_cc_field? && !is_edit && controller_name.singularize != "feedback_widget") #dirty fix
         element += add_name_field if !is_edit and !current_user
       when "text", "number", "decimal" then
-        element = label + text_field(object_name, field_name, :class => element_class, :value => field_value)
+        element = label + text_field(object_name, field_name, :class => element_class, :value => "#{field_value}")
       when "paragraph" then
         element = label + text_area(object_name, field_name, :class => element_class, :value => field_value)
       when "dropdown" then
@@ -1263,11 +1263,12 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
         end
       when "requester" then
          search_req =   "#{add_requester_field}".html_safe #if (!is_edit)
-        unless is_edit or params[:format] == 'widget'
+        unless is_edit or params[:format] == 'widget' or @parent_id#(for child template)
           show_cc = show_cc_field  field
         end
-            element = render(:partial => "/helpdesk/tickets/ticket_widget/requester", :formats => [:html], :locals => {:search_req => search_req , :placeholder => description, :show_cc => show_cc, :is_edit => is_edit})
-            element+= hidden_field(object_name, :requester_id, :value => @item.requester_id)
+        element = render(:partial => "/helpdesk/tickets/ticket_widget/requester", :formats => [:html], :locals => {:search_req => search_req , :placeholder => description, :show_cc => show_cc, :is_edit => is_edit, :object_name => object_name})
+        value   = object_name.eql?("template_data") ? @item.template_data[:requester_id] : @item.requester_id
+        element+= hidden_field(object_name, :requester_id, :value => value)
       when "email" then
         element = label + text_field(object_name, field_name, :class => element_class, :value => field_value)
         element = add_cc_field_tag element ,field if (field.portal_cc_field? && !is_edit && controller_name.singularize != "feedback_widget") #dirty fix
@@ -1657,7 +1658,9 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
     end
 
     def inm_tour_button(text,topic_id)
-      link_to(text, '#', :rel => 'guided-inlinemanual', "data-topic-id" => topic_id, :class=> 'inm_tour_button')
+      if current_account.launched?(:onboarding_inlinemanual)
+        link_to(text, '#', :rel => 'guided-inlinemanual', "data-topic-id" => topic_id, :class=> 'inm_tour_button')
+      end
     end
 
   def check_fb_reauth_required

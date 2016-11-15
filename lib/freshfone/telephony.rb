@@ -192,7 +192,7 @@ class Freshfone::Telephony #Wrapper for all telephony provider related actions
 
   def mute_participants
     conference = current_call.conference
-    telephony.mute_participants(conference)
+    telephony.mute_participants(conference, customer_sid(current_call))
   end
 
   def unmute_participants
@@ -239,6 +239,10 @@ class Freshfone::Telephony #Wrapper for all telephony provider related actions
     def agent_conf_moderation_params
       { :beep => true,
         :startConferenceOnEnter => true, :endConferenceOnExit => true }
+    end
+
+    def customer_sid(call)
+      outgoing_or_warm_transfer?(call) ? call.root.customer_sid : call.customer_sid
     end
 
     def default_moderation_params(actor)

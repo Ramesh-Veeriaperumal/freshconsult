@@ -70,14 +70,24 @@ var TicketTemplate = {
   getTemplateData: function(event){
     var recentTemplate = this.getRecentTemplate(), loadParams = "";
     var recentTemplateArray = JSON.parse(recentTemplate);
+    var searchParams = {};
+
+    if(App.namespace === "helpdesk/tickets/new"){
+      loadParams = {prime : "prime"};
+      searchParams.prime = "prime";
+    }
     if(recentTemplateArray.length > 0){
-      loadParams = {recent_ids: recentTemplate};
+      if(typeof loadParams == 'string'){
+        loadParams = {recent_ids: recentTemplate};
+      }else{
+        loadParams.recent_ids = recentTemplate;
+      }
     }
     var searchUrl = "/helpdesk/tickets/search_templates",
         loadUrl = "/helpdesk/tickets/accessible_templates";
-        searchString = jQuery("#filter-template").val(),
-        searchParams = {search_string: searchString},
-        params = ((event === 'keypress' && searchString !== "") ? searchParams : loadParams),
+        searchString = jQuery("#filter-template").val();
+        searchParams.search_string = searchString;
+    var params = ((event === 'keypress' && searchString !== "") ? searchParams : loadParams),
         endpoint = ((event === 'keypress' && searchString !== "") ? searchUrl : loadUrl),
         _this = this, xhr = "";
         if(xhr && xhr.readyState != 4){
@@ -172,7 +182,9 @@ var TicketTemplate = {
   		listId: jQuery("#template-items"),
   		callback: function(){
   			var activeElem = jQuery("#template-items li.active");
-  			_this.changeTemplate(activeElem);
+        if(activeElem.length > 0){
+          _this.changeTemplate(activeElem);
+        }
   		}
 	 });
  },
@@ -190,6 +202,8 @@ var TicketTemplate = {
      this.showLoader();
      if(CreateTicket && App.namespace === "helpdesk/tickets/new"){
        this.newTicketHooks();
+       //parent child template changes
+       jQuery('#child_select_template_wrapper').empty();
      }
      if(ComposeEmail && App.namespace === "helpdesk/tickets/compose_email"){
        this.composeTicketHooks();
@@ -201,6 +215,7 @@ var TicketTemplate = {
  templateSubmitCallback: function(){
    var _this = this;
    jQuery('form#apply_template_form').bind("ajax:complete", function(){
+
     //  OFF the event binding for nested fields
       jQuery(document).off('.nested_field');
      jQuery("#helpdesk_ticket_email").data("initialRequester", App.requesterValue);

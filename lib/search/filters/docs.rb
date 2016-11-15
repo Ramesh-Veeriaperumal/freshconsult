@@ -41,6 +41,7 @@ class Search::Filters::Docs
     
     # Options for querying ES
     es_page_size    = (options[:per_page].presence || ES_PAGINATION_SIZE).to_i
+    joins           = []
     es_offset       = es_page_size * (options[:page].to_i - 1)
     es_defaults     = ({
                         :_source  => false, 
@@ -57,7 +58,9 @@ class Search::Filters::Docs
     record_ids      = parsed_response['hits']['hits'].collect { |record| record['_id'] }
     total_entries   = parsed_response['hits']['total']
     
-    records         = model_class.constantize.where(account_id: Account.current.id, id: record_ids)
+    joins           = [:ticket_states] if ["requester_responded_at", "agent_responded_at"].include?(options[:order_entity].to_s)
+    
+    records         = model_class.constantize.joins(joins).where(account_id: Account.current.id, id: record_ids)
                                               .order("#{options[:order_entity]} #{options[:order_sort]}")
                                               .preload([:schema_less_ticket, :ticket_states, :ticket_status, :responder,:requester, flexifield: { flexifield_def: :flexifield_def_entries }])
     

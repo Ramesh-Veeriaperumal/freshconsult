@@ -1,2 +1,0 @@
-flash[:notice] = @err_tpl_ids.present? ? t('ticket_templates.partial_delete') : t('ticket_templates.delete_multiple')
-page.redirect_to (:back)

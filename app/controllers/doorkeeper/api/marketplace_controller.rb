@@ -7,7 +7,8 @@ class Doorkeeper::Api::MarketplaceController < Doorkeeper::Api::ApiController
     if current_resource_owner && allow_login? && ssl_enabled?
       render :json => 
         { :product_user_id => current_resource_owner.id,
-          :product_account_id => current_resource_owner.account_id
+          :product_account_id => current_resource_owner.account_id,
+          :pod_info => PodConfig['CURRENT_POD']
         }
     else
       render :nothing => true

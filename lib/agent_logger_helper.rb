@@ -20,6 +20,9 @@ module AgentLoggerHelper
       end
       action_type = destroy ? "destroy" : "create" 
       Rails.logger.debug "::Agent Account Sharing::: #{Time.now.to_formatted_s}, account_id=#{current_user.account_id}, user_id=#{current_user.id}, user_agent=#{controller.request.env['HTTP_USER_AGENT']}, ip=#{controller.request.remote_ip}, device_id=#{controller.cookies['fd']}, action=#{action_type}"
+      if Account.current.launched?(:logout_logs)
+        Rails.logger.debug caller.join("\n")
+      end
     end
   rescue Exception => e
     NewRelic::Agent.notice_error(e)
