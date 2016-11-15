@@ -35,7 +35,7 @@
 		};
 
 		//no need to add the negative margin if it's slider
-		if(!this.options.modalType == "slide"){
+		if(this.options.modalType !== "slide"){
 			this.$placement[direction] = -(parseInt(this.options.width)/2);
 		}
 		
