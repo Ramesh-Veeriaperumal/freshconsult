@@ -1438,7 +1438,7 @@ class Helpdesk::TicketsController < ApplicationController
     end
 
     def params_for_bulk_action
-      params.slice('ids','responder_id')
+      params.slice('ids','responder_id','disable_notification')
     end
 
     def ticket_actions_background
