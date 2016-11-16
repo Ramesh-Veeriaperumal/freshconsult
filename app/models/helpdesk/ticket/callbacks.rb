@@ -42,7 +42,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   before_save :update_dueby, :unless => :manual_sla?
 
-  after_create :refresh_display_id, :create_meta_note, :update_content_ids, :update_sentiment
+  after_create :refresh_display_id, :create_meta_note, :update_content_ids
 
   after_commit :create_initial_activity, :pass_thro_biz_rules, on: :create
   after_commit :send_outbound_email, :update_capping_on_create, on: :create, :if => :outbound_email?
@@ -60,6 +60,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   after_commit :set_links, :on => :create, :if => :tracker_ticket?
   after_commit :add_links, :on => :update, :if => :linked_now?
   after_commit :remove_links, :on => :update, :if => :unlinked_now?
+  after_commit :save_sentiment, on: :create 
   
   # Callbacks will be executed in the order in which they have been included. 
   # Included rabbitmq callbacks at the last
@@ -140,20 +141,16 @@ class Helpdesk::Ticket < ActiveRecord::Base
     schema_less_ticket.save
   end
 
-  def update_sentiment 
-
-    if (self.account.customer_sentiment_enabled?) 
-      if (User.current == nil) || (User.current.language==nil) || (User.current.language=="en")
-        if self.source == 3 || self.source == 7
-          self.sentiment = 0
-          self.save
-        else
-          user_id = User.current.id if User.current
-          Tickets::UpdateSentimentWorker.perform_async(
-                { :id => id }
-          )
-        end
-      end
+  def save_sentiment
+    if Account.current.customer_sentiment_enabled?
+     if User.current.nil? || User.current.language.nil? || User.current.language = "en"
+       if [SOURCE_KEYS_BY_TOKEN[:chat],SOURCE_KEYS_BY_TOKEN[:phone]].include?(self.source)
+         schema_less_ticket.sentiment = 0
+         schema_less_ticket.save
+       else
+          Tickets::UpdateSentimentWorker.perform_async( { :id => id } )
+       end
+     end
     end
   end
   

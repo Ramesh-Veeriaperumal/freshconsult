@@ -44,7 +44,7 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
 	alias_attribute :association_type, :int_tc03
 	alias_attribute :associates_rdb, :long_tc05
 
-	alias_attribute :sentiment, :int_tc03
+	alias_attribute :sentiment, :int_tc04
 
 
 	# Attributes used in Freshservice
