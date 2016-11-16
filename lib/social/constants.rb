@@ -134,5 +134,7 @@ module Social::Constants
   TWITTER_MEDIA_PHOTO = "Twitter::Media::Photo"
 
   TWITTER_MEDIA_ANIMATEDGIF = "Twitter::Media::AnimatedGif"
+
+  WHITELISTED_SPECIAL_CHARS_REGEX = /[,.():;=\-\<\>\/&!?%+"']/
   
 end
