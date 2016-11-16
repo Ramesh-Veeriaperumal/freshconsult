@@ -278,7 +278,7 @@ nl:
   emails_dropped_message: "De volgende e-mails zijn na controle verwijderd - %{emails}"
   emails_added_to_cc: "E-mail(s) toegevoegd aan cc."
   attach_file_local: "Bestand op uw computer toevoegen"
-  attach_file: "Bestand bijvoegen"
+  attach_file: "Bijlage"
   dropbox_attach_label: "Bijvoegen vanuit"
   dropbox_attach_from_text: "Bijvoegen vanuit <b>Dropbox</b>"
   dropbox_choose_file: "Bestand kiezen"
@@ -4123,7 +4123,7 @@ nl:
     said: zei
     solutions_home: "Startpagina oplossing"
     print_title: "Dit artikel afdrukken"
-    attach_file: "Een <b>bestand bijvoegen</b>"
+    attach_file: "Een <b>Bijlage</b>"
     header:
       preview_message: "<b>Voorbeeldmodus</b> - <a href='javascript:window.close()'>klik hier</a> om terug te gaan."
     new_support_ticket: "Nieuw ondersteuningsticket"
@@ -4604,7 +4604,7 @@ nl:
   change_password: "Wachtwoord wijzigen"
   answered: Beantwoord
   errors_in_payment_info: "Er zijn fouten gevonden in uw betalingsgegevens:"
-  attach_files: "Bestanden bijvoegen"
+  attach_files: "Bijlage"
   plan_amount: "per medewerker/maand"
   free_plan_agents: "voor %{free_agents} medewerkers"
   current_plan_details: "%{plan_name}"
