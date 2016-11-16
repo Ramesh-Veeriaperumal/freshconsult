@@ -292,7 +292,6 @@ class ApplicationController < ActionController::Base
       return unless Account.current && Account.current.launched?(:logout_logs)
       Rails.logger.error "Session CSRF key = #{session[:_csrf_token]}"
       Rails.logger.error "Request CSRF key = #{request.headers['X-CSRF-Token']}"
-      Rails.logger.error "Form CSRF key = #{form_authenticity_token}"
       Rails.logger.error "protocol = #{request.protocol}"
     end
 end
