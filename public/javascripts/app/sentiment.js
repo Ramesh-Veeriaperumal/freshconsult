@@ -18,11 +18,11 @@ App.Sentiment = {
             	'data': 'data'
         	});
 
-        	customer_msges = jQuery('div[rel="customer_msg"]');
+        	var customer_msges = jQuery('div[rel="customer_msg"]');
 
 		    if(jQuery('.cmi-plugin').length == 0){
 			    if(sentiment.last_note.note_id == undefined){
-			    	var desc_box = jQuery('.commentbox')[0];
+			    	var desc_box = customer_msges[0];
 			    	predicted_sentiment = sentiment.ticket_sentiment;
 
 			    	if(predicted_sentiment != undefined){
