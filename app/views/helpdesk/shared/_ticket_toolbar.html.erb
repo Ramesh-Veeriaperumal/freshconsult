@@ -402,8 +402,7 @@
     }
   }
 
-  jQuery('body').off('click', '#invoke_merge_popup');
-  jQuery('body').on('click', '#invoke_merge_popup', function(e){
+  jQuery('body').on('click.ticket_list', '#invoke_merge_popup', function(e){
      association = <%= escape_javascript TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN.values.to_json %>;
     var associated = fetchAssociations(association);
     var selected = jQuery('#ticket-list tr.active').length;
@@ -420,8 +419,7 @@
     }
   });
 
-  jQuery('body').off('click', '.bulk_action_buttons .lnk_tkt_tracker_open_dropdown');
-  jQuery('body').on('click', '.bulk_action_buttons .lnk_tkt_tracker_open_dropdown', function(e){
+  jQuery('body').on('click.ticket_list', '.bulk_action_buttons .lnk_tkt_tracker_open_dropdown', function(e){
     association = <%= escape_javascript TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN.values.to_json %>;
     var associated = fetchAssociations(association) + fetchMergedTickets();
     var selected = jQuery('#ticket-list tr.active').length;
@@ -440,8 +438,7 @@
     }
   });
 
-  jQuery('body').off('click', '#delete_tickets_btn');
-  jQuery('body').on('click', '#delete_tickets_btn', function(e){
+  jQuery('body').on('click.ticket_list', '#delete_tickets_btn', function(e){
     association = <%= escape_javascript TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN.values.to_json %>;
     var associated = fetchAssociations(association);
     action = "delete";
@@ -456,8 +453,7 @@
     }
   });
 
-  jQuery('body').off('click', '#spam_tickets_btn');
-  jQuery('body').on('click', '#spam_tickets_btn', function(e){
+  jQuery('body').on('click.ticket_list', '#spam_tickets_btn', function(e){
     association = <%= escape_javascript TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN.values.to_json %>;
     var associated = fetchAssociations(association);
     action = "spam";
@@ -472,8 +468,28 @@
     }
   });
 
-  jQuery('body').off('click', '#scenario');
-  jQuery('body').on('click', '#scenario', function(e){
+  jQuery('body').on('click.ticket_list', '#close_ticket_btn', function(e){
+    var parent = '<%= TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:assoc_parent]%>';
+    var associated = 0;
+    var selected = jQuery('#ticket-list tr.active').length;
+    action = 'close';
+    jQuery('#ticket-list tr.active').each(function(){
+      if (jQuery(this).data('association') == parent) {
+        associated++;
+      }
+    });
+    if(associated > 0){
+      e.preventDefault();
+      e.stopPropagation();
+      confirm_text = I18n.t('ticket.association.close_tickets', { count: associated });
+      submit_label = "<%= t('continue') %>";
+      callFreshdialog();
+    }else {
+      helpdesk_submit('/helpdesk/tickets/multiple/close_multiple', 'put' , [{name: 'disable_notification' , value: e.shiftKey}]);
+    }
+  });
+
+  jQuery('body').on('click.ticket_list', '#scenario', function(e){
     var associated = 0;
     var parent = '<%= TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:assoc_parent]%>';
     action = 'scenario';
@@ -492,14 +508,12 @@
     }
   });
 
-  jQuery('body').off("click", "#confirm-action-popup-cancel")
-  jQuery('body').on("click", "#confirm-action-popup-cancel", function(e){
+  jQuery('body').on("click.ticket_list", "#confirm-action-popup-cancel", function(e){
     jQuery('#confirm-action-popup').modal('hide');
     jQuery('#confirm-action-popup-content').parent().modal('hide');
   });
 
-  jQuery('body').off("click", "#confirm-action-popup-submit");
-  jQuery('body').on("click", "#confirm-action-popup-submit", function(e){
+  jQuery('body').on("click.ticket_list", "#confirm-action-popup-submit", function(e){
     e.preventDefault();
     e.stopPropagation();
     jQuery('#confirm-action-popup').modal('hide');
