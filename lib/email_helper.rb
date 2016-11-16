@@ -113,4 +113,11 @@ module EmailHelper
       NewRelic::Agent.notice_error(e,{:description => "Charset Encoding issue while replacing invalid characters with ===============> #{charset_encoding}"})
     end
   end
+  def configure_email_config email_config
+    Thread.current[:email_config] = email_config
+  end
+
+  def remove_email_config
+    Thread.current[:email_config] = nil
+  end
 end
