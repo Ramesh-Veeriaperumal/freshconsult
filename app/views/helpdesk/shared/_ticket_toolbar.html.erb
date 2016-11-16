@@ -472,28 +472,6 @@
     }
   });
 
-  jQuery('body').off('click', '#close_ticket_btn');
-  jQuery('body').on('click', '#close_ticket_btn', function(e){
-    var parent = '<%= TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:assoc_parent]%>';
-    var associated = 0;
-    var selected = jQuery('#ticket-list tr.active').length;
-    action = 'close';
-    jQuery('#ticket-list tr.active').each(function(){
-      if (jQuery(this).data('association') == parent) {
-        associated++;
-      }
-    });
-    if(associated > 0){
-      e.preventDefault();
-      e.stopPropagation();
-      confirm_text = I18n.t('ticket.association.close_tickets', { count: associated });
-      submit_label = "<%= t('continue') %>";
-      callFreshdialog();
-    }else {
-      helpdesk_submit('/helpdesk/tickets/multiple/close_multiple', 'put' , [{name: 'disable_notification' , value: e.shiftKey}]);
-    }
-  });
-
   jQuery('body').off('click', '#scenario');
   jQuery('body').on('click', '#scenario', function(e){
     var associated = 0;
