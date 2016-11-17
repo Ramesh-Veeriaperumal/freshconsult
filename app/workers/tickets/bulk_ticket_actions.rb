@@ -6,7 +6,7 @@ class Tickets::BulkTicketActions < BaseWorker
   def perform(params)
     @account = Account.current
     items    = Helpdesk::Ticket.find_all_by_param(params["ids"])
-    disable_notification(@account) if params["disable_notification"].present?
+    disable_notification(@account) if params["disable_notification"].present? && params["disable_notification"].to_bool
     items.each do |ticket|
       bulk_action_handler = Helpdesk::TicketBulkActions.new(params)
       bulk_action_handler.perform(ticket)
