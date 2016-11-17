@@ -58,7 +58,6 @@ module Freshfone
         Rails.logger.info "Completion time :: #{Time.now.strftime('%H:%M:%S.%L')}"
       rescue Exception => e
         Rails.logger.error "Error notifying for account #{current_account.id} for type #{type}. \n#{e.message}\n#{e.backtrace.join("\n\t")}"
-        NewRelic::Agent.notice_error(e, {description: "Error in Notification Worker Account #{current_account.id} for type #{type}. \n#{e.message}\n#{e.backtrace.join("\n\t")}"})
         notify_error(e, params)
       end
     end
