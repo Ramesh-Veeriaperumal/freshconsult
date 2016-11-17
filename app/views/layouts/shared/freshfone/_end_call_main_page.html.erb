@@ -4,6 +4,13 @@
 	<textarea id="end_call_notes" class="final_call_notes" tabindex="1"
 						placeholder="<%= t('freshfone.widget.note_placeholder') %>"></textarea>
 	<div class="end_call_form_btns">
+		<div class='end_call_added_ticket hide'>
+			<div class='added_ticket_details'>
+				<div class='added_ticket_subject'> </div>
+				<div class='ficon-cross fsize-18 unattach_added_ticket pull-right'> </div>
+			</div>
+			<div class='btn btn-primary set-ticket-btn pull-right'> <%= t('freshfone.widget.save') %> </div>
+		</div>
 		<button class="btn end_call_save" tabindex="2">
 			<%= t('freshfone.widget.new_ticket') %><span class="arrow-right"></span>
 		</button>

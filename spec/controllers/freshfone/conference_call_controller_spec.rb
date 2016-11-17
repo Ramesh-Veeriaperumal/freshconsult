@@ -96,6 +96,7 @@ RSpec.describe Freshfone::ConferenceCallController do
 
   it 'should make the agent add to the conference while a conference call is incoming' do
   	create_freshfone_call
+    create_call_meta
   	params = conference_call_params.except(*[:direct_dial_number, :agent]).merge(:CallStatus => 'in-progress')
   	set_twilio_signature('freshfone/conference_call/in_call', params)
   	setup_batch
@@ -163,18 +164,18 @@ RSpec.describe Freshfone::ConferenceCallController do
 
   it 'should save call notes when an agent transfers call to another agent' do
     create_call_family
-    params = {:call_sid => @parent_call.children.first.call_sid, :call_notes => 'test'}
-    post :save_call_notes, params
+    params = {call_id: @parent_call.children.first.id, call_notes: 'test'}
+    post :save_notable, params
     expect(json).to be_truthy
     expect(json[:notes_saved]).to be true
   end
 
-  it 'should get the saved call notes when an agent receives the transferred call' do 
-    key = 'FRESHFONE:CALL_NOTE:1:CA1d4ae9fae956528fdf5e61a64084f191'
+  it 'should get the saved call notes when an agent receives the transferred call' do
+    create_call_family 
+    key = "FRESHFONE:CALL_NOTE:1:#{@parent_call.id}"
     $redis_integrations.set(key,'test')
-    create_call_family
     params = {:PhoneNumber => @parent_call.children.first.caller.number}
-    get :call_notes, params
+    get :load_notable, params
     nil_notes = $redis_integrations.get(key)
     nil_notes.should be_nil
     expect(json).to be_truthy
@@ -184,7 +185,7 @@ RSpec.describe Freshfone::ConferenceCallController do
   it 'should get empty notes when notes not saved' do 
     create_call_family
     params = {:PhoneNumber => @parent_call.children.first.caller.number}
-    get :call_notes, params
+    get :load_notable, params
     expect(json).to be_truthy
     expect(json[:call_notes]).to be_blank
   end
@@ -192,9 +193,46 @@ RSpec.describe Freshfone::ConferenceCallController do
   it 'should be blank notes when call is not a transferred call' do 
     create_freshfone_caller
     params = {:PhoneNumber => @caller.number}
-    get :call_notes, params
+    get :load_notable, params
     expect(json).to be_truthy
     expect(json[:call_notes]).to be_blank
+  end
+
+  it 'should save added ticket-details when an agent transfers call to another agent' do
+    create_call_family
+    params = {call_id: @parent_call.children.first.id,
+      ticket_details: '11 Call with Sachin Kumar'}
+    post :save_notable, params
+    expect(json).to be_truthy
+    expect(json[:ticket_set]).to be true
+  end
+
+  it 'should get the saved added ticket-details when an agent receives the transferred call' do
+    create_call_family 
+    key = "FRESHFONE:CALL_TICKET:1:#{@parent_call.id}"
+    $redis_integrations.set(key,'12 Call with Sachin Kumar')
+    params = {PhoneNumber: @parent_call.children.first.caller.number}
+    get :load_notable, params
+    nil_notes = $redis_integrations.get(key)
+    nil_notes.should be_nil
+    expect(json).to be_truthy
+    expect(json[:ticket_details]).to be_eql('12 Call with Sachin Kumar')
+  end
+
+  it 'should be blank ticket-details when call is not a transferred call' do 
+    create_freshfone_caller
+    params = {PhoneNumber: @caller.number}
+    get :load_notable, params
+    expect(json).to be_truthy
+    expect(json[:ticket_details]).to be_blank
+  end
+
+  it 'should get empty ticket-details when ticket not added' do 
+    create_call_family
+    params = {PhoneNumber: @parent_call.children.first.caller.number}
+    get :load_notable, params
+    expect(json).to be_truthy
+    expect(json[:ticket_details]).to be_blank
   end
 
   it 'should update ringing abandon status on force termination' do
@@ -267,7 +305,7 @@ RSpec.describe Freshfone::ConferenceCallController do
     @freshfone_call_meta.meta_info[:quality_feedback][:comment].should be_eql("Bad Call Quality")
   end
 
-  it 'should not have a rating' do
+  it 'should not have call feedback' do
     create_freshfone_call
     create_call_meta
     params = {:CallSid => "CA2db76c748cb6f081853f80dace462a04"}
@@ -275,9 +313,7 @@ RSpec.describe Freshfone::ConferenceCallController do
     expect(json).to be_truthy
     expect(json[:result]).to be true
     @freshfone_call_meta.reload
-    @freshfone_call_meta.meta_info[:quality_feedback][:rating].should be(nil)
-    @freshfone_call_meta.meta_info[:quality_feedback][:issue].should be_eql(nil)
-    @freshfone_call_meta.meta_info[:quality_feedback][:comment].should be_eql(nil)
+    @freshfone_call_meta.meta_info[:quality_feedback].should be(nil)
   end
 
   it 'should not have issue for good calls' do
