@@ -169,34 +169,30 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 			this.warmTransfer.type = 'receiver';
 			this.warmTransfer.params = params;
 		},
-		saveCallNotesAndTicket: function(){
+		saveCallNotes: function(){
 			var self = this;
-			if(!freshfonewidget.isNotesOrTicketAdded()) { return; }
-			var params = { "call_id": this.callId };
-			if(freshfonewidget.isCallNotesPresent()) { params["call_notes"] = freshfonewidget.callNote.val();}
-			if(freshfonewidget.isTicketAdded()) {
-				params["ticket_details"] = { "id": freshfonewidget.addedTicketId, "subject": freshfonewidget.ticketSubject }
+			if(freshfonewidget.callNote.val()!="" && (freshfone.isConferenceMode)){
+	            $.ajax({
+					type: 'POST',
+					dataType: "json",
+					url: '/freshfone/conference_call/save_call_notes',
+					data: { "call_sid": this.getCallSid(),
+						"call_notes": freshfonewidget.callNote.val() }
+				});
 			}
-      $.ajax({
-				type: 'POST',
-				dataType: "json",
-				url: '/freshfone/conference_call/save_notable',
-				data: params
-			});
 		},
-		getSavedCallNotesAndTicket: function(phoneNumber){
+		getSavedCallNotes: function(phoneNumber){
 			var self = this;
-			if(self.canFetchNotesAndTicket()){
+			if(freshfone.isConferenceMode && (freshfonecalls.isIncomingTransfer || freshfonecalls.isWarmTransferReceiver)){
 				$.ajax({
 					type: 'GET',
-					dataType: "json",
-					url: '/freshfone/conference_call/load_notable',
-					data: {"PhoneNumber": phoneNumber }
-				})
-				.done(function(data){
-					if(data.call_notable){
-						if(data.call_notable.notes && !freshfonewidget.isAgentConferenceCall()) { freshfonewidget.renderNotes(data); }
-						if(data.call_notable.ticket) { freshfonewidget.renderTicket(data); }
+					dataTyp: "json",
+					url: '/freshfone/conference_call/call_notes',
+					data: {"PhoneNumber": phoneNumber },
+					success: function (data){
+						if(data && data.call_notes){
+							freshfonewidget.renderNotes(data);
+						}
 					}
 				});
 			}	
@@ -419,16 +415,15 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 		transferCall: function (id, group_id, external_number) {
 			this.transfered = true;
 			this.freshfoneCallTransfer = new FreshfoneCallTransfer(this, id, group_id, external_number);
-			this.saveCallNotesAndTicket();
+            this.saveCallNotes();
 		},
 		addAgent: function (id) {
 			this.freshfoneAgentConference = new FreshfoneAgentConference(this, id);
-			this.saveCallNotesAndTicket();
 		},
 		warmTransferCall: function (id) {
 			this.freshfoneWarmTransfer = new FreshfoneWarmTransfer(this, id);
 			this.freshfoneWarmTransfer.init();
-			this.saveCallNotesAndTicket();
+			this.saveCallNotes();
 		},
 		handleWarmTransferReceiverCall: function() {
 			this.setIsWarmTransfer('receiver');
@@ -624,9 +619,7 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 		},
 		canTrackQuality: function(){
 			return !this.isAgentConference && freshfone.isCallQualityMetricsEnabled && this.freshfone_monitor; 
-		},
-		canFetchNotesAndTicket: function(){
-			return freshfonecalls.isIncomingTransfer || freshfonecalls.isWarmTransferReceiver() || freshfonewidget.isAgentConferenceCall();
 		}
+
 	};
 }(jQuery));

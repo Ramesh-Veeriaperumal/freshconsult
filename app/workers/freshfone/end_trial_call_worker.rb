@@ -21,14 +21,12 @@ module Freshfone
             #{Freshfone::Call::CALL_TYPE_REVERSE_HASH[params[:call_type]]}
             For Account Id :: #{::Account.current.id} For Call SId :: #{call.call_sid}\n
           Exception Message :: #{e.message}\nException Stacktrace :: #{e.backtrace.join('\n\t')}"
-          NewRelic::Agent.notice_error(e, {description: "Error in End Trial Call Worker for Account #{::Account.current.id} Call SId :: #{call.call_sid}. \n#{e.message}\n#{e.backtrace.join("\n\t")}"})
         end
       end
     rescue => e
       Rails.logger.error "Error on End Trial Call
         For Account ::#{::Account.current.id}\n
         Exception Message :: #{e.message}\nException Stacktrace :: #{e.backtrace.join('\n\t')}"
-        NewRelic::Agent.notice_error(e, {description: "Error in End Trial Call Worker for Account #{::Account.current.id} Call SId :: #{call.call_sid}. \n#{e.message}\n#{e.backtrace.join("\n\t")}"})
     end
   end
 end

@@ -61,11 +61,6 @@ class Freshfone::SupervisorControl < ActiveRecord::Base
     supervisor_control_status: [CALL_STATUS_HASH[:default],
                                 CALL_STATUS_HASH[:'in-progress']])
 
-  scope :connecting_or_inprogress_calls, where(
-    supervisor_control_status: [CALL_STATUS_HASH[:default],
-                                CALL_STATUS_HASH[:ringing],
-                                CALL_STATUS_HASH[:'in-progress']])
-
   CALL_TYPE_HASH.each_pair do |k, v|
     define_method("#{k}?") do
       supervisor_control_type == v

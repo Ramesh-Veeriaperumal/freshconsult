@@ -117,13 +117,4 @@ module Freshfone::CallsRedisMethods
     @pinged_agents_key ||= FRESHFONE_PINGED_AGENTS % { :account_id => account.id, :call_id => call_id } 
   end
 
-  def call_notable_key
-    @call_notes_key ||= FRESHFONE_CALL_NOTABLE % {
-      account_id: @current_account.id, call_id: @call_id }
-  end
-
-  def call_quality_metrics_key(dial_call_sid)
-    @call_quality_metrics_key ||= FRESHFONE_CALL_QUALITY_METRICS % {
-      account_id: @current_account.id, dial_call_sid: dial_call_sid }
-  end
 end

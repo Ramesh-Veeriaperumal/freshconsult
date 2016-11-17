@@ -7,9 +7,7 @@ var globalconn;
 		var $widget = $('.freshfone_widget'),
 			$contentContainer = $('.freshfone_content_container'),
 			$recentCalls = $contentContainer.find('#recent_calls'),
-			$recentCallsContainer = $recentCalls.find('.recent_calls_container'),
-			$contextContainer = $('.freshfone-context-container'),
-			$freshfoneAddTicket = $contextContainer.find('.freshfone_add_ticket');
+			$recentCallsContainer = $recentCalls.find('.recent_calls_container');
 
 		$widget.popupbox();
 
@@ -18,18 +16,6 @@ var globalconn;
 		$("#hold").click(function(){freshfonecalls.handleHold();});
 		$('#hangup_call').click(function () { freshfonecalls.hangup(); });
 		$("#freshfone-presence-toggle").click(function () { freshfoneuser.toggleUserPresence(); });
-		$freshfoneAddTicket.on('click', '#current_ticket_id, #saved_ticket_container', function (ev) {
-			ev.stopPropagation();
-			var ticket_id = (this.id == 'current_ticket_id') ? freshfonewidget.currentTicketId : freshfonewidget.addedTicketId;
-			pjaxify('/helpdesk/tickets/' + ticket_id);
-		});
-		$freshfoneAddTicket.on('click', '#add_ticket_container',function () {
-			freshfonewidget.showSavedTicketContext();
-		});
-		$freshfoneAddTicket.on('click', '.unattach_ticket_icon',function (ev) {
-			ev.stopPropagation();
-			freshfonewidget.unattachAddedTicket();
-		});
 		$widget.find('.availabilityOnPhone').click(function () {
 			if (!freshfone.isTrial){
 				freshfoneuser.toggleAvailabilityOnPhone(false);

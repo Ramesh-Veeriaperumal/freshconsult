@@ -52,7 +52,6 @@ module Freshfone
         logger.error "[#{jid}] - [#{tid}] Error notifying for account #{current_account.id} for type #{type}"
         logger.error "[#{jid}] - [#{tid}] Message:: #{e.message}"
         logger.error "[#{jid}] - [#{tid}] Trace :: #{e.backtrace.join('\n\t')}"
-        NewRelic::Agent.notice_error(e, {description: "Error in Realtime Notifier for account #{current_account.id} for type #{type}. \n#{e.message}\n#{e.backtrace.join("\n\t")}"})
         notify_error(e)
       end
     end

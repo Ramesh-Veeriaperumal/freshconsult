@@ -41,7 +41,6 @@ module Freshfone
     rescue Exception => e
       log_error e
       notify_error e
-      NewRelic::Agent.notice_error(e, {description: "Error in Disconnect Worker for account #{current_account.id} for User #{params[:agent]}. \n#{e.message}\n#{e.backtrace.join("\n\t")}"})
     ensure
       errors.each { |err| notify_error(err) }
       logger.info "[#{jid}] - [#{tid}] Job Completed"
