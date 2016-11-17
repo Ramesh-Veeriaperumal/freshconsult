@@ -175,6 +175,13 @@ class PlanChangeWorker
     account.remove_secondary_companies
   end
 
+  def drop_round_robin_load_balancing_data(account)
+    account.groups.capping_enabled_groups.find_each do |group|
+      group.capping_limit = 0
+      group.save
+    end
+  end
+
 =begin
   @conditions, @batch size are created using VALUES hash that is passed
   If need to check additional conditions, pass in a where that is prepended before the where using @conditions

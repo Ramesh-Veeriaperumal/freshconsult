@@ -220,7 +220,7 @@ class Account < ActiveRecord::Base
   #Temporary feature check methods - using redis keys - ends here
 
   def round_robin_capping_enabled?
-    launched?(:round_robin_capping) #features?(:round_robin_load_balancing)
+    features?(:round_robin_load_balancing)
   end
 
   def gnip_2_0_enabled?
