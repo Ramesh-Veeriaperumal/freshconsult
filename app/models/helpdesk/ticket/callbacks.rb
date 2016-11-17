@@ -911,6 +911,7 @@ private
 
   def update_isescalated
     self.isescalated = false
+    self.escalation_level = nil
     true
   end
 
