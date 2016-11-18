@@ -5921,7 +5921,7 @@ it:
         overdue: "Ticket scaduti"
         due_today: "Tickets in scadenza oggi"
         resolved: "Ticket risolti"
-        unresolved: "Tutti i ticket irrisolti"
+        unresolved: "Tutti i ticket non risolti"
         my_overdue: "I miei ticket scaduti"
         tags: "Tag dei ticket"
         my_due_today: "I miei ticket in scadenza oggi"
@@ -5930,7 +5930,7 @@ it:
         select: "Seleziona visualizzazione..."
         spam: Spam
         monitored_by: "Ticket da me monitorati"
-        raised_by_me: "Ticket che ho richiesto"
+        raised_by_me: "Ticket aperti da me"
         my_closed: "I miei ticket chiusi"
         my_open: "I miei ticket aperti"
         tickets_by: "Ticket per"
@@ -8170,10 +8170,12 @@ it:
       compliant: Conformi
       performance_distribution:
         avg_first_response_time: "Avg first response time"
+      all_unresolved: "Tutti i ticket non risolti"
     ticket_list_title:
       created_tickets: "Tutti i ticket creati"
       resolved_tickets: "Tutti i ticket risolti"
       reopened_tickets: "Tutti i ticket riaperti"
+      unresolved_tickets: "Tutti i ticket non risolti"
       avg_first_response_time: "Tutti i ticket con 1st response"
       avg_response_time: "Tutti i ticket con risposta"
       avg_resolution_time: "Tutti i ticket risolti"
