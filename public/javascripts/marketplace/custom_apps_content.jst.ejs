@@ -1,0 +1,9 @@
+<% if(extensions.length > 0) { %>
+  <%= JST['marketplace/app_content']({extensions : extensions}) %>
+<% } else { %>  
+  <div class="zero-apps">
+    <h5 class="msg">
+      <%= translate.get('marketplace_no_apps') %> 
+    </h5>
+  </div> 
+<% } %>  

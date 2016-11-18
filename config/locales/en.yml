@@ -6924,7 +6924,7 @@ en:
     app_installation_agreement: "By installing this app, you agree to abide by our "
     terms_of_use: "Terms of Use"
     terms_of_use_link: "http://freshdesk.com/terms#marketplace"
-    get_more_apps: Get more Apps
+    get_more_apps: Get More Apps
     confirm_data_lose: "Your data will be lost."
     confirm_uninstall_message: "Are you sure you want to uninstall the %{human_name}?"
     reauthorize_oauth_app: "If your app stopped working please try reauthorizing it by clicking on reauthorize button"
@@ -6937,17 +6937,23 @@ en:
     app_description: "Apps allow you to integrate with other applications to make your Freshdesk experience more awesome. They also enable you to customize and personalize your Freshdesk portal."
     apps: Apps
     custom_apps: Custom Apps
-    all_categories: All categories
+    all_apps: All Apps
+    popular_apps: Popular Apps
+    latest_apps: Latest Apps 
+    popular: Popular
+    latest: Latest
     settings: Settings
     coming_soon: Coming Soon
     install: Install
     update: Update
+    instructions : Instructions
+    description: description
     visit_site_to_install: Visit site to install
     installing_text: "Please wait..."
     in_development: In Development
     no_mktp_apps: "No Apps installed"
     no_mktp_apps_note: "We've integrated with some of your favorite applications."
-    no_mktp_apps_note_2: "Click 'Get more Apps' to browse the selection."
+    no_mktp_apps_note_2: "Click 'Get More Apps' to browse the selection."
     no_custom_apps_installed: "No custom apps installed"
     no_custom_apps_note: "Create custom apps and publish them in the developer portal."
     no_custom_apps_note_2: "Click 'Get Custom Apps' to browse and install them."
@@ -6961,10 +6967,13 @@ en:
     screenshots: Screenshots
     version: VERSION
     ver: "Version: "
-    published_in: "Published in"
+    published_in: "in"
     installs: Installs
     no_apps: No Apps available
+    view_all: View all
+    view_more: View more
     empty_custom_apps_msg_html: "No custom apps have been published. To get started, please visit our <a href='%{dev_url}' target='_blank'> developer site.</a>"
+    no_search_results: We couldn't find what you are looking for. Why don't you try again with a different keyword?
     no_apps_in_category: No Apps available in this category
     related_categories: "Apps from Related Categories:"
     similar_apps: "Similar Apps:"
@@ -6975,10 +6984,10 @@ en:
     results: results
     field_blank: Please fill all the fields.
     installed: Installed
-    helpnote1: "Apps in Freshdesk let you share data with third party solutions and services that you use regularly. They also enable you to add additional features to the ticket and contact details page. Freshdesk offers several apps out-of-the-box. To browse our selection of apps, click on the “Get more Apps” button."
+    helpnote1: "Apps in Freshdesk let you share data with third party solutions and services that you use regularly. They also enable you to add additional features to the ticket and contact details page. Freshdesk offers several apps out-of-the-box. To browse our selection of apps, click on the “Get More Apps” button."
     helpnote_custom_apps_html: "Can't find an app that fits your needs? With our Custom Apps (earlier called Freshplugs), you can bring in contextual information from any third party solution, legacy system or database. These Custom Apps can also be used to make visual changes to your helpdesk and boost productivity. Click <a href='https://support.freshdesk.com/support/solutions/articles/121846' target='_blank'>here</a> to learn more!"
     no_configs: "This app does not require any configs."
-    search: "Search"
+    search: "Search for apps"
     search_language_warning: "Search available in English only"
     delete_action:
       success: "App deleted successfully."
@@ -6990,8 +6999,9 @@ en:
     update_action:
       success: "App updated successfully."
     help_and_support: "Help and Support"
-    developed_by: "By "
+    developed_by: "Published By "
     time_ago: "ago"
+    share_app: "Share this app"
     policy_on_tp_apps: "Policy on third party apps"
     third_party_app_policy: "You are downloading an App that has not been developed by Freshdesk. By downloading this App you understand that you are bound by the terms and privacy policies provided by its developer. For more details about such terms and privacy policies, please contact the developer or visit the developer's page."
     policy_on_custom_apps: "Policy on custom apps"

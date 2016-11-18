@@ -1,11 +1,31 @@
 <div id="app-window" class="fa-container fa-bg">
   <div id="fa-nav" class="fa-sidehead">
-    <div class="fa-breadcrumb">
-      <a class="back2list_btn pull-left" href="#" data-url="<%= back_url %>">
-        <span class="ficon-left-arrow-thick fsize-12"></span>
-      </a>
-      <h1 class="app-name"><%- display_name %></h1>
+    <div class="apptype-head span6">
+      <div class="logo pull-left">
+        <a id="appGalleryLogo" data-url="<%= back_url %>" class="logo-link">
+          <% if(typeof custom_app == 'undefined') { %>
+            <%= translate.get('app_gallery') %>
+          <% }else{ %>
+            <%= translate.get('custom_app_gallery') %>
+          <% } %>
+        </a>
+        <% if (category_id) { %>
+          <a class="back2catg_btn selected logo-link" id="categoryname" href="#" data-url="<%= back_categ_url %>">/ <span><%= category_name %></span></a>
+        <% } %>
+      </div>
     </div>
+     
+    <% if(typeof custom_app == 'undefined') { %>
+      <form action="<%= search_url %>" id="extension-search-form" class="span4 pull-right search-form">
+        <div class="appsearch-box ui-widget">
+          <input id="query" name="query" class="search-query" required type="text" placeholder="<%= search_placeholder %>" value="<% if(search_term) { %><%- search_term %><% } %>" data-url="<%= auto_suggest_url %>">
+          <i class="ficon-search search-apps"></i>
+          <div class="sloading loading-small search-loader" style="display:none;"></div>
+          <button class="remove-query" style="display:none;" type="reset"><span class="ficon-cross fsize-16"></span></button>
+          <input style="display:none" type="submit" id="search-btn">
+        </div>
+      </form>
+    <% } %>
   </div>
 
   <div class="head-spacer o-VH">
@@ -16,9 +36,7 @@
         </div>
       </div>
       <ul class="app-info">
-        <li>
-          <%= install_btn %>
-        </li>
+        <li> <%= install_btn %> </li>
         <% if (typeof app_version != 'undefined') { %>
           <li class="version"><%= translate.get('marketplace_ver') %> <%= app_version %></li>
         <% } %>
@@ -28,46 +46,106 @@
         <li class="published"><%= published_date %> <%= translate.get('time_ago') %> </li>
         
         <% if(typeof custom_app == 'undefined' && categories.length > 0){ %>
-          <li class="text-center">
-            <h6 class="cat"><%= translate.get('published_in') %></h6>
-            <p class="category-bubble">
+          <li class="text-center"><%= translate.get('published_in') %>
+            <span class="category-bubble">
               <% for(var i=0; i < categories.length; i++) { %>
-                <a href="#" class='tag index_btn category' data-url="<%= categories[i].url %>"><%= categories[i].name %></a>
+                <a href="#" class='index_btn category comma' data-url="<%= categories[i].url %>"><%= categories[i].name %></a>
               <% } %>
-            </p>
+            </span>
           </li>
         <% } %>
 
         <% if(Object.keys(contact_details).length !== 0){ %>
-          <li class="help ttl"><%= translate.get('help_and_support') %></li>
+          <li class="help dash ttl help-sprt"><%= translate.get('help_and_support') %></li>
           <% if(contact_details["support_email"]) { %>
-            <li class="help dot"><a href="mailto:<%= contact_details["support_email"] %>"> <%= contact_details["support_email"] %> </a></li>
+            <li class="help dash"><a href="mailto:<%= contact_details["support_email"] %>"> <%= contact_details["support_email"] %> </a></li>
           <% } %>
           <% if(contact_details["support_url"]) { %>
-            <li class="help dot"><a href="<%= contact_details["support_url"] %>" target="_blank" rel="noreferrer"> <%= contact_details["support_url"] %> </a></li>
+            <li class="help dash"><a href="<%= contact_details["support_url"] %>" target="_blank" rel="noreferrer"> <%= contact_details["support_url"] %> </a></li>
           <% } %>
         <% } %>
 
         <% if(typeof custom_app != 'undefined' && custom_app) { %>
-          <li class="help dot"><a href="#" class="toggle_policy"><%= translate.get('policy_on_custom_apps') %></a>
+          <li class="help dash"><a href="#" class="toggle_policy"><%= translate.get('policy_on_custom_apps') %></a>
             <div id="display_policy" class="hide display_policy">
               <p><%= translate.get('custom_app_policy') %></p>
             </div>
           </li>
         <% } %>
         <% if(typeof policy != 'undefined' && policy) { %>
-          <li class="help dot"><a href="#" class="toggle_policy"><%= translate.get('policy_on_tp_apps') %></a>
+          <li class="help dash"><a href="#" class="toggle_policy"><%= translate.get('policy_on_tp_apps') %></a>
           <div id="display_policy" class="hide display_policy">
             <p><%= translate.get('third_party_app_policy') %></p>
           </div>
           </li>
         <% } %>
-        
+
+        <li class="help dash share-app hide"><%= translate.get('share_app') %></li>
+        <div class="share-links hide">
+          <a href="#">
+            <div class="img-out"><i class="fsize-18 ficon-facebook-setting"></i></div>
+          </a>
+          <a href="#"><div class="img-out"><i class="fsize-18 ficon-twitter"></i></div></a>
+          <a href="#"><div class="img-out"><i class="fsize-18 ficon-googleplus"></i></div></a>
+        </div>        
       </ul>
     </div>
 
     <div class="app-desc">
-      <p class="descript pre-wrap"><%- description %></p>
+      <div class="app-dtl">
+        <h4 class="app-names"><%- display_name %></h4>
+        <p class="app-sdesc"><%- overview %></p>
+      </div>
+
+      <div class="tabbable">
+        <ul class="nav nav-tabs app-tab" id="app-tabs">
+          <li class="active"><a href="#app-description" data-toggle="tab"><%= translate.get('description') %></a></li>
+          <% if (instructions) { %>
+            <li><a href="#app-instructions" data-toggle="tab"><%= translate.get('instructions') %></a></li>
+          <% } %> 
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane active" id="app-description">
+            <pre class="descript pre-wrap"><%- description %></pre>
+            <% if(screenshots.length >0){ %>
+              <div class="screenshots">
+                <div id="screenshots">
+                  <div class="carousel slide" id="screenshotsCarousel">
+                    <!-- Carousel items -->
+                    <% if(screenshots.length > 1) { %>
+                      <div class="carousel-nav">
+                        <ol class="carousel-indicators">
+                        <% for(var i=0; i < screenshots.length; i++) { %>
+                          <% if (i == 0 ) { var active = "active" } else{ active = '' }%>
+                          <li data-target="#carousel" data-slide-to="<%= i %>" class="carousel-dot <%= active %>"></li>
+                        <% } %>
+                        </ol>
+                      </div>
+                    <% } %>
+                    <div class="carousel-inner">
+                      <% for(var i=0; i < screenshots.length; i++) { %>
+                        <% if (i == 0 ) { var active = "active" } else{ active = '' }%>
+                        <div class="item <%= active %>" data-slide-number="<%= i %>">
+                          <img src="<%= screenshots[i]['large'] %>" srcset="<%= screenshots[i]['large'] %> 1x, <%= screenshots[i]['large2x'] %> 2x">
+                        </div>
+                      <% } %>
+                    </div><!-- Carousel nav -->
+                    <% if(screenshots.length > 1) { %>
+                      <a class="carousel-control left" data-slide="prev" href="#screenshotsCarousel"><span class="ficon-arrow-left"></span></a> 
+                      <a class="carousel-control right" data-slide="next" href="#screenshotsCarousel"><span class="ficon-arrow-right"></span></a>
+                    <% } %>
+                  </div>
+                </div>
+              </div>
+            <% } %>
+          </div>
+          <div class="tab-pane" id="app-instructions">
+            <% if (instructions) { %>
+              <pre class="pre-wrap"><%- instructions %></pre>
+            <% } %>
+          </div>
+        </div>  
+      </div>  
       <% if (typeof app_version != 'undefined') { %>
          <% if (whats_new) { %>
           <div class="whats-new">
@@ -76,51 +154,6 @@
           </div>
         <% } %>
       <% } %>
-
-      <% if(screenshots.length >0){ %>
-        <div class="screenshots">
-          <div id="screenshots">
-            <div class="carousel slide" id="screenshotsCarousel">
-              <!-- Carousel items -->
-              <% if(screenshots.length > 1) { %>
-                <div class="carousel-nav">
-                  <ol class="carousel-indicators">
-                  <% for(var i=0; i < screenshots.length; i++) { %>
-                    <% if (i == 0 ) { var active = "active" } else{ active = '' }%>
-                    <li data-target="#carousel" data-slide-to="<%= i %>" class="carousel-dot <%= active %>"></li>
-                  <% } %>
-                  </ol>
-                </div>
-              <% } %>
-              <div class="carousel-inner">
-                <% for(var i=0; i < screenshots.length; i++) { %>
-                  <% if (i == 0 ) { var active = "active" } else{ active = '' }%>
-                  <div class="item <%= active %>" data-slide-number="<%= i %>">
-                    <img src="<%= screenshots[i]['large'] %>" srcset="<%= screenshots[i]['large'] %> 1x, <%= screenshots[i]['large2x'] %> 2x">
-                  </div>
-                <% } %>
-              </div><!-- Carousel nav -->
-              <% if(screenshots.length > 1) { %>
-                <a class="carousel-control left" data-slide="prev" href="#screenshotsCarousel"><span class="ficon-arrow-left"></span></a> 
-                <a class="carousel-control right" data-slide="next" href="#screenshotsCarousel"><span class="ficon-arrow-right"></span></a>
-              <% } %>
-            </div>
-          </div>
-
-        </div>
-      <% } %>
-
-      <% if (instructions) { %>
-        <div class="instr">
-          <h3><%= translate.get('marketplace_instr') %></h3>
-          <pre class="pre-wrap"><%- instructions %></pre>
-        </div>
-      <% } %>
-      
-
     </div>
-
-
-
   </div>
 </div>
