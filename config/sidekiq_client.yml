@@ -148,6 +148,7 @@ defaults: &defaults
     - [delete_account]
     - [templates_cleanup]
     - [bulk_child_tkt_creation]
+    - [code_console_execution]
 
 development:
   <<: *defaults
