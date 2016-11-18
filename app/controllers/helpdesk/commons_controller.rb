@@ -18,20 +18,25 @@ class Helpdesk::CommonsController < ApplicationController
   	group_id = params[:id]
     assigned_agent = params[:agent]
     blank_value = !params[:blank_value].blank? ? params[:blank_value] : "..."
-    @agents = if group_id.present?
-      current_account.agent_groups.where({:group_id => group_id, :users => {:account_id => current_account.id, :deleted => false} }).preload(:user).joins(:user).order("users.name")
-    else
-      current_account.agents.includes(:user)
-    end
     allow_none = params[:allow_none].blank? ? false : true
     respond_to do |format|
       format.html {
+        @agents = if group_id.present?
+          current_account.agent_groups.where({:group_id => group_id, :users => {:account_id => current_account.id, :deleted => false} }).preload(:user).joins(:user).select(["users.id","users.name"]).order("users.name")
+        else
+          current_account.users.technicians.visible.select("id, name")
+        end
         render :partial => "group_agents", :locals =>{ :blank_value => blank_value, :assigned_agent => assigned_agent, :allow_none => allow_none }
       }
       format.mobile {
+        @agents = if group_id.present?
+          current_account.agent_groups.where({:group_id => group_id, :users => {:account_id => current_account.id, :deleted => false} }).preload(:user).joins(:user).order("users.name")
+        else
+          current_account.users.technicians.visible
+        end
         array = []
           @agents.each { |agent_group|
-            array << agent_group.user.to_mob_json(:root => false)
+            array << agent_group.to_mob_json(:root => false)
           }
         render :json => array
       }
