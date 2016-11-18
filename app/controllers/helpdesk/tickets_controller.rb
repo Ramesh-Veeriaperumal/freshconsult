@@ -795,6 +795,7 @@ class Helpdesk::TicketsController < ApplicationController
 
       response = con.post do |req|
         req.url "/"+MlAppConfig["feedback_url"]
+        req.headers['Authorization'] = MlAppConfig["auth_key"]
         req.headers['Content-Type'] = 'application/json'
         req.body = fb_params.to_json
       end
