@@ -7,7 +7,9 @@ module Onboarding::AccountChannels
   end
 
   def toggle_forums_channel enable=true
-    enable ? current_account.features.forums.save : current_account.features.forums.delete
+    enable ? current_account.features.forums.save : current_account.features.forums.destroy
+    #to prevent trusted ip middleware caching the association cache
+    current_account.clear_association_cache
   end
 
   def toggle_social_channel enable=true
