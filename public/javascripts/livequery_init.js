@@ -263,7 +263,7 @@ jQuery.validator.addClassRules("date", {
 		clearButton.on('click', function(e) {
 			 jQuery(this).siblings('input.date').val("");
 			 jQuery(this).hide();
-			 jQuery('#'+'clone_'+idForCloneElement).val("");
+			 jQuery(cloneId).val("");
 		 });
 		// clear button ends
 	}
