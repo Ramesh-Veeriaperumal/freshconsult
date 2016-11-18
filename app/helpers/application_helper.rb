@@ -1607,6 +1607,10 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
     _output.join("").html_safe
   end
 
+  def admin_account_verification_message
+    render partial: "shared/account_verification_message" unless current_account.verified?
+  end
+
   def get_logo
     unless @account.main_portal.logo.blank?
       return @account.main_portal.logo.content.url(:logo)
@@ -1625,7 +1629,7 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
   private
 
     def forums_visibility?
-      feature?(:forums) && allowed_in_portal?(:open_forums) && privilege?(:view_forums)
+      current_account.features_included?(:forums) && allowed_in_portal?(:open_forums) && privilege?(:view_forums)
     end
 
     def social_tab

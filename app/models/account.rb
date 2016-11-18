@@ -12,6 +12,7 @@ class Account < ActiveRecord::Base
   include Redis::OthersRedis
   include ErrorHandle
   include AccountConstants
+  include Onboarding::OnboardingRedisMethods
 
   has_many_attachments
   
@@ -551,6 +552,21 @@ class Account < ActiveRecord::Base
 
   def portal_languages
     account_additional_settings.additional_settings[:portal_languages]
+  end
+
+  def verified?
+    self.reputation > 0
+  end
+
+  def verify_account_with_email
+    unless verified?
+      self.reputation = 1 
+      self.save
+    end
+  end
+
+  def onboarding_pending?
+    account_onboarding_pending?
   end
 
   def marketplace_app_enabled?

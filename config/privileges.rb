@@ -585,6 +585,7 @@ Authority::Authorization::PrivilegeList.build do
     # new item day passes && getting started
     resource :"admin/day_pass"
     resource :"admin/freshfone/credit"
+    resource :"admin/onboarding"
     resource :"admin/getting_started"
     resource :"agent", :only => [:api_key]
   end

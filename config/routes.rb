@@ -1172,6 +1172,14 @@ Helpkit::Application.routes.draw do
       end
     end
     match '/email_notifications/:type/:id/edit' => 'email_notifications#edit', :as => :edit_notification
+    resources :onboarding, only: [:index] do
+      collection do 
+        post :update_channel_configs
+        post :update_activation_email
+        post :resend_activation_email
+      end
+    end
+
     resources :getting_started do
       collection do
         put :rebrand

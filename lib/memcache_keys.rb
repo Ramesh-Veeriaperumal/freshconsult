@@ -36,7 +36,7 @@ module MemcacheKeys
 
   PORTAL_BY_URL = "v2/PORTAL_BY_URL:%{portal_url}"
 
-  ACCOUNT_BY_FULL_DOMAIN = "v2/ACCOUNT_BY_FULL_DOMAIN:%{full_domain}"
+  ACCOUNT_BY_FULL_DOMAIN = "v3/ACCOUNT_BY_FULL_DOMAIN:%{full_domain}"
 
   ACCOUNT_MAIN_PORTAL = "v3/ACCOUNT_MAIN_PORTAL:%{account_id}"
 

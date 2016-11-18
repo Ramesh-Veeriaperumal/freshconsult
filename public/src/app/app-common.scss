@@ -2574,6 +2574,13 @@ a.mobile_switchBtn {
 	.lead{ font-weight: 400; }
 	label{ margin-bottom:0; }
 	.linkback-url{ margin: 5px 0; }
+	.account-forum-toggle .controls{
+	  padding-top: 5px;
+    .toggle-button{
+    	@include margin-left(0px);
+      margin-bottom: 7px;
+    }
+	}
 	.reset-color{ margin-top: 5px; }
 
 	.multilingual-enabled {

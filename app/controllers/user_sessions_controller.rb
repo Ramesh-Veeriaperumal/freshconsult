@@ -264,7 +264,7 @@ include Mobile::Actions::Push_Notifier
       @current_user.deliver_admin_activation
       #SubscriptionNotifier.send_later(:deliver_welcome, current_account)
       flash[:notice] = t('signup_complete_activate_info')
-      redirect_to_getting_started
+      redirect_to '/'
     else
       flash[:notice] = "Please provide valid login details!"
       render :action => :new

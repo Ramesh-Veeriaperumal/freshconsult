@@ -39,7 +39,7 @@ class Search::V2::SpotlightController < ApplicationController
   # Forums scoped spotlight search
   #
   def forums
-    redirect_user unless privilege?(:view_forums)
+    redirect_user unless forums_visible?
 
     @search_context = :agent_spotlight_topic
     @klasses        = ['Topic']
@@ -63,7 +63,7 @@ class Search::V2::SpotlightController < ApplicationController
         model_names.concat(['Helpdesk::Ticket', 'Helpdesk::ArchiveTicket'])
 
         model_names.concat(['User', 'Company']) if privilege?(:view_contacts)
-        model_names.push('Topic')               if privilege?(:view_forums)
+        model_names.push('Topic')               if forums_visible?
         model_names.push('Solution::Article')   if privilege?(:view_solutions)
       end
     end
@@ -146,6 +146,10 @@ class Search::V2::SpotlightController < ApplicationController
           render :json => @result_json
         end
       end
+    end
+
+    def forums_visible?
+      current_account.features_included?(:forums) && privilege?(:view_forums)
     end
     
     def redirect_user

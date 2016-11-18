@@ -56,9 +56,11 @@ ActiveRecord::Schema.define(:version => 20161103085738) do
     t.string   "google_domain"
     t.boolean  "ssl_enabled",                    :default => false
     t.boolean  "premium",                        :default => false
+    t.integer  "reputation",        :limit => 1, :default => 0
   end
 
   add_index "accounts", ["full_domain"], :name => "index_accounts_on_full_domain", :unique => true
+  add_index "accounts", ["reputation"], :name => "index_accounts_on_reputation"
   add_index "accounts", ["time_zone"], :name => "index_accounts_on_time_zone"
 
   create_table "achieved_quests", :force => true do |t|

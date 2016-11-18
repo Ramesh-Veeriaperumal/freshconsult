@@ -1919,6 +1919,7 @@ en:
         have_special_character: Have a special character
       password_policy_popover:
         password_must: Password must
+        password_should: Your password should
         minimum_characters: Contain at least %{count} characters
         cannot_contain_user_name: Not contain the username
         cannot_be_same_as_past_passwords: Be different from your past passwords
@@ -5124,6 +5125,7 @@ en:
   last_renewed_on: "Last Renewed on"
   update_and_log_in: "Update & Log in"
   activate_and_log_in: "Activate & Log in"
+  activate_and_log_in_long: "Activate and Log in"
   password: "Password"
   enter_payment: Proceed to Payment
   downgrade_confirm: "<span class=\"label label-important\">Important</span>&nbsp;&nbsp;You are currently downgrading from <b>%{from}</b> plan to the <b>%{to}</b> plan. Please note that all data and configurations associated with features available in %{from} plan will be lost permanently.<br /><br /> To see the full list of plans and features, please visit <a target=\"_blank\" href=\"http://freshdesk.com/pricing\">Plans and Pricing</a>. <br />Still not sure? <a href = \"mailto:support@freshdesk.com\" >Let us help you decide</a>"
@@ -5792,6 +5794,10 @@ en:
   no_topics_text: No topics
   send_email_to_group: Send Email to Group
   activate_account: Activate your account
+  activations:
+    activate_freshdesk_account: Activate your Freshdesk account
+    helpnote1: Tell us a little more about you and help us personalize your experience.
+    helpnote2: Login to your account using %{email}
   enter_message: Enter your message here
   not_selected: Not Selected
   enter_billing_for_free: Please enter the credit card details before you choose the paid plan
@@ -5826,6 +5832,9 @@ en:
     name: Account Name
     cancel: Cancel
     customize_portal: "Helpdesk rebranding"
+    forums_toggle: 
+        title: "Forums"
+        helpnote: "Disabling this will turn off forums in all of your product portals for all users"
     page_colors:
       title: Helpdesk Colors
       background: Background
@@ -10398,6 +10407,50 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
   add_new_company: "Add Company"
   more_companies: "%{count} more"
   n_companies: "%{count} companies"
+  admin_onboarding: 
+    account_verification_message:
+      non_admin_message: "Your account hasn’t been activated yet. Please contact your administrator."
+      check_inbox_message: "Please check your inbox at <span class='email-wrapper'>%{admin_email}</span>  for your activation email."
+      helpnote1: "Can't see it?" 
+      helpnote_or: "or"
+      resend_message : "Resend activation"
+      change_email: "change your email"
+      modal_title: Signed up using the wrong email address?
+      modal_helpnote1: "Enter your correct email below to receive the activation link."
+      modal_invalid_email_error: "Please enter a valid email address."
+      modal_user_exists_error: "Email already associated to an agent."
+      modal_send_button : Send Activation
+      modal_sending_button : Sending Activation
+      cancel_button : Cancel
+    modal:
+      welcome_frame:
+        title: Welcome to Freshdesk
+        message: "I'm Girish, the CEO of Freshdesk and I wanted to personally welcome you onboard and let you know that our team is here to help if you need anything."
+        message2: "During your trial, you will experience how easy it is to use Freshdesk to talk to your customers. Let's get you started with the basics."
+        forward_link: Select support channels
+      channels_frame:
+        title: How do you talk to your customers today?
+        message: "In addition to email, Freshdesk lets you support your customers over phone, chat, social and more. Click on the channels you would like to try to enable them in your account."
+        message2: Don't worry, you can add or remove them later too.
+        forward_link: Invite your team 
+        default_channel: Added by default
+        email_channel: Email
+        phone_channel: Phone
+        chat_channel: Live Chat
+        social_channel: Social
+        forums_channel: Forums
+      agents_frame:
+        title: Who will you be working with?
+        message: Add your teammates to your account and explore Freshdesk together
+        forward_link: Watch overview
+        emails_placeholder: "bruce@just.ly, diana@just.ly, clark@just.ly"
+        emails_invalid: One or more of your email is invalid.
+        emails_exceeded: You can invite more than %{limit} agents from Admin > Agents. 
+        send_invite: Send Invite
+      overview_frame:
+        title: Getting started with Freshdesk
+        message: Before you get started, here's a 2 minute video overview of your helpdesk.
+        forward_link: Let’s get started
   multifile_attachments:
     label: "Attach files"
     sending: "Sending..."

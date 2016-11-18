@@ -62,7 +62,7 @@ class Signup < ActivePresenter::Base
       user.helpdesk_agent = true
       user.build_agent()
       user.agent.account = account
-      user.build_primary_email({:email => user.email, :primary_role => true, :verified => user.active}) #user_email key sets after creation of account
+      user.build_primary_email({:email => user.email, :primary_role => true, :verified => false}) #user_email key sets after creation of account
       user.primary_email.account = account
       user.language = account.main_portal.language
     end
