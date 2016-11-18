@@ -36,7 +36,11 @@ class Helpdesk::CommonsController < ApplicationController
         end
         array = []
           @agents.each { |agent_group|
-            array << agent_group.to_mob_json(:root => false)
+            if group_id.present?
+              array << agent_group.user.to_mob_json(:root => false)
+            else
+              array << agent_group.to_mob_json(:root => false)
+            end
           }
         render :json => array
       }
