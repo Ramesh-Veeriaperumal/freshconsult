@@ -7,6 +7,7 @@ class Search::V2::SpotlightController < ApplicationController
   helper Search::SearchHelper
   
   before_filter :set_search_sort_cookie
+  before_filter :detect_multilingual_search, only: [:solutions]
 
   # Unscoped spotlight search
   #
@@ -167,6 +168,14 @@ class Search::V2::SpotlightController < ApplicationController
       @size           = Search::Utils::MAX_PER_PAGE #=> Overriding just to be safe.
       @result_json    = { :results => [], :current_page => @current_page }
     end
+
+		# Hack for getting language and hitting corresponding alias
+		# Probably will be moved to search/search_controller when dynamic solutions goes live
+		def detect_multilingual_search
+			if params[:language].present? && current_account.es_multilang_soln?
+				@es_locale = params[:language].presence
+			end
+		end
 
     def set_search_sort_cookie
       cookies[:search_sort] = @search_sort
