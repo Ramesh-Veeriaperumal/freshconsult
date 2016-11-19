@@ -25,7 +25,7 @@ module Search::SearchHelper
 					[t('search.solutions'), 'solutions', 
 						search_solutions_path(:term => @search_key), privilege?(:view_solutions)],
 					[t('search.forums'), 'forums', 
-					    search_forums_path(:term => @search_key), privilege?(:view_forums)],
+					    search_forums_path(:term => @search_key), current_account.features_included?(:forums) && privilege?(:view_forums)],
 					[t('search.customers'), 'customers', 
 						search_customers_path(:term => @search_key), privilege?(:view_contacts)]]
 

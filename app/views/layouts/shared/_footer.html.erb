@@ -80,24 +80,31 @@
 		
 	  var APP_ENV = "<%= Rails.env %>";
 	</script>
-<% if current_account.launched?(:onboarding_inlinemanual) %>
-	<% if Rails.env.production? %>
-		<script src="https://inlinemanual.com/embed/player.a16aba7cb34cb7248e7691132ba76af3.js" async ></script>
-	<% else %>
-		<script>!function(){var e=document.createElement("script"),t=document.getElementsByTagName("script")[0];e.async=1,e.src="https://inlinemanual.com/embed/player.0194c5f73ce632c6cf883f38b6dcec9d.js",e.charset="UTF-8",t.parentNode.insertBefore(e,t)}();</script>
+
+<% if (current_user.privilege?(:admin_tasks) && current_account.onboarding_pending?)  %>
+  <%= javascript_include_tag :'cdn/admin_onboarding' %>
+  <%= render partial: "admin_onboarding/onboarding_modal" %>
+<% else %>
+	<% if current_account.launched?(:onboarding_inlinemanual) %>
+		<% if Rails.env.production? %>
+			<script src="https://inlinemanual.com/embed/player.a16aba7cb34cb7248e7691132ba76af3.js" async ></script>
+		<% else %>
+			<script>!function(){var e=document.createElement("script"),t=document.getElementsByTagName("script")[0];e.async=1,e.src="https://inlinemanual.com/embed/player.0194c5f73ce632c6cf883f38b6dcec9d.js",e.charset="UTF-8",t.parentNode.insertBefore(e,t)}();</script>
+		<% end %>
+		<script type="text/javascript" >
+			window.inlineManualTracking = <%= inline_manual_people_tracing.to_json.html_safe %>
+			window.im_option = {
+				to_activate : <%= show_onboarding? %>,	
+				topic_id : <%= inlinemanual_topic_id %>
+			}
+		</script>
+		<%= javascript_include_tag :'cdn/inline_manual_trigger' %>
+		<div class="hide" id="inline-manual-meta">
+			<span class="<%= inline_manual_classes_for_multilingual %>" id="multilingual-meta-info"></span>
+		</div>
 	<% end %>
-	<script type="text/javascript" >
-		window.inlineManualTracking = <%= inline_manual_people_tracing.to_json.html_safe %>
-		window.im_option = {
-			to_activate : <%= show_onboarding? %>,	
-			topic_id : <%= inlinemanual_topic_id %>
-		}
-	</script>
-	<%= javascript_include_tag :'cdn/inline_manual_trigger' %>
-	<div class="hide" id="inline-manual-meta">
-		<span class="<%= inline_manual_classes_for_multilingual %>" id="multilingual-meta-info"></span>
-	</div>
 <% end %>
+
 <script >
 	//TODO: Migrate to i18n Js
 	window.feedback_subject_required_error = "<%= t('footer.errors.feedback_subject_required') %>"
@@ -121,3 +128,4 @@
 		}
 	</script>
 <% end %>
+

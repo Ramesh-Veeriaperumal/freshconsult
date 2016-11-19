@@ -112,7 +112,7 @@ module Admin::Marketplace::ExtensionsHelper
   end
 
   def category_name(categories)
-    params[:category_id] ? categories.find {|x| x['id'] == params[:category_id].to_i}['name'] : t('marketplace.all_categories')
+    params[:category_id] ? categories.find {|x| x['id'] == params[:category_id].to_i}['name'] : t('marketplace.all_apps')
   end
 
   def search_placeholder
@@ -136,8 +136,14 @@ module Admin::Marketplace::ExtensionsHelper
     !is_external_app? && @extension['account'].downcase != Marketplace::Constants::DEVELOPED_BY_FRESHDESK
   end
 
+  def app_gallery_params
+    {}.tap do |app_gallery_params| 
+      app_gallery_params[:type] = params[:type]
+      app_gallery_params[:sort_by] = Marketplace::Constants::EXTENSION_SORT_TYPES
+    end.to_query                                      
+  end
+
   def is_oauth_app?
     @extension['features'].include?('oauth')
   end
-
 end

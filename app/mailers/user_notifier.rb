@@ -5,18 +5,30 @@ class UserNotifier < ActionMailer::Base
   layout "email_font"
   include EmailHelper
   def user_activation(user, params, reply_email_config)
-    ActionMailer::Base.set_email_config reply_email_config
-    send_the_mail(user, params[:subject], params[:email_body], params[:reply_email], EmailNotification::USER_ACTIVATION)
+    begin
+      configure_email_config reply_email_config
+      send_the_mail(user, params[:subject], params[:email_body], params[:reply_email], EmailNotification::USER_ACTIVATION)
+    ensure
+      remove_email_config
+    end
   end
 
   def email_activation(email_id, params, reply_email_config)
-    ActionMailer::Base.set_email_config reply_email_config
-    send_the_mail(email_id, params[:subject], params[:email_body], params[:reply_email], "Email Activation")
+    begin
+      configure_email_config reply_email_config
+      send_the_mail(email_id, params[:subject], params[:email_body], params[:reply_email], "Email Activation")
+    ensure
+      remove_email_config
+    end
   end
 
-  def password_reset_instructions(user, params, reply_email_config)  
-    ActionMailer::Base.set_email_config reply_email_config  
-    send_the_mail(user, params[:subject], params[:email_body], params[:reply_email], EmailNotification::PASSWORD_RESET)
+  def password_reset_instructions(user, params, reply_email_config)
+    begin
+      configure_email_config reply_email_config  
+      send_the_mail(user, params[:subject], params[:email_body], params[:reply_email], EmailNotification::PASSWORD_RESET)
+    ensure
+      remove_email_config
+    end
   end
   
   def admin_activation(admin)

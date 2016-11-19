@@ -1,0 +1,19 @@
+if current_user.errors.present?
+  if current_user.errors[:base][0] == "Email has already been taken"
+    error_message_html = "<label class='email_exists error'>#{t('admin_onboarding.account_verification_message.modal_user_exists_error')}</label>"
+  else
+    error_message_html = "<label class='email_exists error'>#{t('admin_onboarding.account_verification_message.modal_invalid_email_error')}</label>"
+  end
+  page << "jQuery('#account-verification-email-edit-dialog .btn-primary').text('#{t('admin_onboarding.account_verification_message.modal_send_button')}');"
+  page << "jQuery('#account-verification-email-edit-dialog .btn-primary').removeClass('disabled');"
+  page << "jQuery('#account-verification-email-edit-dialog .btn-primary').removeAttr('disabled');"
+  page << 'jQuery("#account-verification-email-edit-dialog .account-email-update-form").append("'+error_message_html+'");'
+  page << "jQuery('#account-verification-email-edit-dialog .error.email_exists').delay(5000).fadeOut('slow');"
+else
+  page << "jQuery('.alert-admin-account-verification .email-wrapper').text('#{current_user.email}');"
+  page << "jQuery('#account-verification-email-edit-dialog').modal('hide');"
+  page << "jQuery('#account-verification-email-edit-dialog .btn-primary').text('#{t('admin_onboarding.account_verification_message.modal_send_button')}');"
+  page << "jQuery('#account-verification-email-edit-dialog .btn-primary').removeClass('disabled');"
+  page << "jQuery('#account-verification-email-edit-dialog .btn-primary').removeAttr('disabled');"
+end
+

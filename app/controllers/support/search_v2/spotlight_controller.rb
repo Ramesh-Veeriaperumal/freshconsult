@@ -3,6 +3,8 @@ class Support::SearchV2::SpotlightController < SupportController
 
   include ActionView::Helpers::TextHelper
   include Search::V2::AbstractController
+  
+  before_filter :set_es_locale
 
   # Unscoped customer-side spotlight search
   #
@@ -208,6 +210,10 @@ class Support::SearchV2::SpotlightController < SupportController
 
     def require_user_login
       redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
+    end
+    
+    def set_es_locale
+      @es_locale = current_portal.language if (current_portal && current_account.es_multilang_soln?)
     end
 
     # ESType - [model, associations] mapping

@@ -44,6 +44,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   before_save :update_dueby, :unless => :manual_sla?
 
+  before_update :update_isescalated, :if => :check_due_by_change
+  before_update :update_fr_escalated, :if => :check_frdue_by_change
+
   after_create :refresh_display_id, :create_meta_note, :update_content_ids, :update_sentiment
   after_create :set_parent_child_assn, :if => :child_ticket?
   after_save :check_child_tkt_status, :if => :child_ticket?
@@ -900,5 +903,25 @@ private
 
   def new_outbound_email?
     outbound_email? && new_record?
+  end
+
+  def check_due_by_change
+    due_by_changed? and self.due_by > time_zone_now and self.isescalated
+  end
+
+  def update_isescalated
+    self.isescalated = false
+    self.escalation_level = nil
+    true
+  end
+
+  def check_frdue_by_change
+    frDueBy_changed? and self.frDueBy > time_zone_now and
+    self.fr_escalated and first_response_time.nil?
+  end
+
+  def update_fr_escalated
+    self.fr_escalated = false
+    true
   end
 end

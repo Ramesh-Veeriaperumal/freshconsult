@@ -36,7 +36,7 @@ module MemcacheKeys
 
   PORTAL_BY_URL = "v2/PORTAL_BY_URL:%{portal_url}"
 
-  ACCOUNT_BY_FULL_DOMAIN = "v2/ACCOUNT_BY_FULL_DOMAIN:%{full_domain}"
+  ACCOUNT_BY_FULL_DOMAIN = "v3/ACCOUNT_BY_FULL_DOMAIN:%{full_domain}"
 
   ACCOUNT_MAIN_PORTAL = "v3/ACCOUNT_MAIN_PORTAL:%{account_id}"
 
@@ -129,8 +129,8 @@ module MemcacheKeys
 
   EXTENSION_CATEGORIES = "v1/FA:EXTENSION_CATEGORIES"
 
-  MKP_EXTENSIONS = "v1/FA:MKP_EXTENSIONS:%{category_id}:%{type}:%{locale_id}"
-
+  MKP_EXTENSIONS = "v1/FA:MKP_EXTENSIONS:%{category_id}:%{type}:%{locale_id}:%{sort_by}"
+  
   CUSTOM_APPS = "v1/FA:CUSTOM_APPS:%{account_id}:%{locale_id}"
 
   EXTENSION_DETAILS = "v2/FA:EXTENSION:%{extension_id}:%{locale_id}"

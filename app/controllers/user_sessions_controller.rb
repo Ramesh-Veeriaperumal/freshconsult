@@ -8,6 +8,7 @@ require 'openid'
 
 include Redis::RedisKeys
 include Redis::TicketsRedis
+include Redis::OthersRedis
 include SsoUtil
 include Mobile::Actions::Push_Notifier
 
@@ -18,7 +19,8 @@ include Mobile::Actions::Push_Notifier
   skip_before_filter :check_day_pass_usage
   before_filter :set_native_mobile, :only => [:create, :destroy]
   skip_after_filter :set_last_active_time
-  
+  before_filter :decode_jwt_payload, :check_jwt_required_fields, :only => [:jwt_sso_login]
+
   def new
     flash.keep
     # Login normal supersets all login access (can be used by agents)
@@ -105,6 +107,62 @@ include Mobile::Actions::Push_Notifier
       redirect_to login_normal_url
     end  
   end
+
+  def jwt_sso_login
+    begin
+      user = @decoded_payload["user"]
+      phone_unique_flag = @decoded_payload["phone_unique"]
+      user_overwrite = @decoded_payload["overwrite_user_fields"]
+      user_companies_overwrite = @decoded_payload["overwrite_user_companies"]
+      user_custom_fields = user.delete("custom_fields")
+      user_companies = user.delete("user_companies")
+      
+      @current_user = current_account.all_users.where(:unique_external_id => user["unique_external_id"]).first if user["unique_external_id"].present?
+      @current_user = current_account.user_emails.user_for_email(user["email"])  if( !@current_user && user["email"].present? )
+      @current_user = current_account.all_users.where(:phone => user["phone"]).first if( !@current_user && phone_unique_flag && user["phone"].present? )
+      
+      if @current_user && (@current_user.deleted? || @current_user.blocked?)
+        flash[:notice] = t(:'flash.login.blocked_user') if @current_user.blocked?
+        flash[:notice] = t(:'flash.login.deleted_user') if @current_user.deleted?
+        redirect_to login_normal_url and return
+      end
+
+      @current_user = current_account.users.new unless @current_user
+      saved = update_user_for_jwt_sso(current_account, @current_user, user, user_custom_fields || {}, @current_user.new_record? || user_overwrite)
+
+      if saved && user_companies.present? && current_account.features?(:multiple_user_companies)
+        saved = set_user_companies_for_jwt_sso(current_account, @current_user, user_companies, user_companies_overwrite)
+      end
+      
+      @current_user_session = current_account.user_sessions.new(@current_user)
+      @current_user_session.web_session = true unless is_native_mobile?
+      if saved && @current_user_session.save
+        if is_native_mobile?
+          cookies["mobile_access_token"] = { :value => @current_user.mobile_auth_token, :http_only => true } 
+          cookies["fd_mobile_email"] = { :value => @current_user.email, :http_only => true } 
+        end
+        flash.discard
+        remove_old_filters  if @current_user.agent?
+        if grant_day_pass(true)
+          redirect_back_or_default(params[:redirect_to] || '/')
+        else
+          Rails.logger
+          redirect_to login_normal_url
+        end 
+      else
+        Rails.logger.debug "User save status #{@current_user.errors.inspect}"
+        Rails.logger.debug "User session save status #{@current_user_session.errors.inspect}"
+        cookies["mobile_access_token"] = { :value => 'failed', :http_only => true } if is_native_mobile?
+        flash[:notice] = t(:'flash.login.failed')
+        redirect_to login_normal_url
+      end
+
+    rescue SsoFieldValidationError => e
+      Rails.logger.debug "Field validation Error"
+      flash[:notice] = t(:'flash.login.jwt_sso.wrong_param_type')
+      redirect_to login_normal_url
+    end
+  end  
 
   def show
     redirect_to :action => :new
@@ -206,7 +264,7 @@ include Mobile::Actions::Push_Notifier
       @current_user.deliver_admin_activation
       #SubscriptionNotifier.send_later(:deliver_welcome, current_account)
       flash[:notice] = t('signup_complete_activate_info')
-      redirect_to_getting_started
+      redirect_to '/'
     else
       flash[:notice] = "Please provide valid login details!"
       render :action => :new
@@ -236,7 +294,7 @@ include Mobile::Actions::Push_Notifier
     def check_sso_params
       time_in_utc = get_time_in_utc
       if ![:name, :email, :hash].all? {|key| params[key].present?}
-        flash[:notice] = t(:'flash.login.sso.expected_params')
+        flash[:notice] = t(:'flash.login.jwt_sso.expected_params')
         redirect_to login_normal_url
       elsif !params[:timestamp].blank? and !params[:timestamp].to_i.between?((time_in_utc - SSO_ALLOWED_IN_SECS),( time_in_utc + SSO_CLOCK_DRIFT ))
         flash[:notice] = t(:'flash.login.sso.invalid_time_entry')
@@ -313,4 +371,50 @@ include Mobile::Actions::Push_Notifier
       @contact.language = current_portal.language
       return @contact
     end
+
+    def decode_jwt_payload
+      begin
+        hmac_secret = current_account.shared_secret
+        token = params[:jwt_token]
+        @decoded_payload = (JWT.decode token, hmac_secret, true, { :leeway => SSO_CLOCK_DRIFT, :verify_iat => true, :algorithm => 'HS512', :verify_jti => ->(jti) { validate_jti(jti) } })[0]
+        exp = @decoded_payload["exp"] #expire at time
+        iat = @decoded_payload["iat"] #issued at time
+        if exp.blank? || iat.blank?
+          flash[:notice] = t(:'flash.login.jwt_sso.expected_time_params')
+          redirect_to login_normal_url and return
+        end
+        if (exp - iat > SSO_MAX_EXPIRE_TIME)
+          flash[:notice] = t(:'flash.login.jwt_sso.exceeded_max_expire_time')
+          redirect_to login_normal_url
+        end
+      rescue JWT::DecodeError => jwt_error
+        Rails.logger.error "Error in validating paykiad : #{jwt_error.inspect} #{jwt_error.backtrace.join("\n\t")}"
+        flash[:notice] = jwt_error.message
+        redirect_to login_normal_url
+      rescue Exception => e
+        Rails.logger.error "Error in validating paykiad2 : #{e.inspect} #{e.backtrace.join("\n\t")}"
+        flash[:notice] = t(:'flash.login.failed')
+        redirect_to login_normal_url
+      end
+    end
+
+    def check_jwt_required_fields
+      user = @decoded_payload["user"]
+      unless user["name"].present? && (user["unique_external_id"].present? || user["email"].present?)
+        flash[:notice] = t(:'flash.login.jwt_sso.expected_user_params')
+        redirect_to login_normal_url
+      end
+    end
+
+    def validate_jti(jti)
+      key = JWT_SSO_JTI % { :account_id => current_account.id, :jti => jti }
+      val = get_others_redis_key key
+      if val.nil?
+        set_others_redis_with_expiry(key, 1, {:ex => SSO_MAX_EXPIRE_TIME})
+        return true
+      else
+        return false
+      end
+    end
+
 end

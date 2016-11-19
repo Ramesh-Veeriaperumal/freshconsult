@@ -1,5 +1,6 @@
 <div class="customize-pages" id="PortalPages">
 	<% Portal::Page::PAGE_GROUPS.each do |group_hash| %>
+	  <% next if group_hash.include?(:discussions) && !current_account.features_included?(:forums) %>
 		<% group_hash.each do |key, group| %>
 		<h5><%= t("portal_pages.groups.#{key}") %></h5>
 		<ul id="PortalPageList<%= key %>" class="portal-pages-list">

@@ -1,0 +1,30 @@
+<div class="apps-category-ttl">
+  <p class="pull-left"><%= category_name %></p>
+</div>
+
+<% if (extensions.length > 0) { %>
+  <% if (!category_id) { %>
+    <div class="tabbable apptypelist">
+      <ul class="nav nav-tabs app-type-tab" id="app-type-tabs">
+        <li class="active"><a href="#popular" data-toggle="tab"><%= translate.get('popular') %></a></li>
+        <li><a href="#latest" data-toggle="tab"><%= translate.get('latest') %></a></li>
+      </ul>
+      <div class="tab-content">
+        <div class="tab-pane active" id="popular">
+          <%= JST['marketplace/app_content']({extensions : popular_extensions}) %>
+        </div>
+        <div class="tab-pane" id="latest">
+          <%= JST['marketplace/app_content']({extensions : latest_extensions}) %>
+        </div>
+      </div>  
+    </div>
+  <% } else { %>
+    <%= JST['marketplace/app_content']({extensions : extensions}) %>
+  <% } %>  
+<% } else { %>  
+  <div class="zero-apps">
+    <h5 class="msg">
+      <%= translate.get('marketplace_no_apps') %> 
+    </h5>
+  </div> 
+<% } %>    
