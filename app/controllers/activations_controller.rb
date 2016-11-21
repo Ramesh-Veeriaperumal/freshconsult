@@ -25,7 +25,6 @@ class ActivationsController < SupportController
       return redirect_to new_password_reset_path
     end
     load_password_policy
-    set_portal_page :activation_form
   end  
 
   def new_email
@@ -37,7 +36,6 @@ class ActivationsController < SupportController
       if !@email.user.active? or @email.user.crypted_password.blank?
         @user = @email.user
         load_password_policy
-        set_portal_page :activation_form 
         return
       else
         if @email.verified?
@@ -65,7 +63,6 @@ class ActivationsController < SupportController
       redirect_to(root_url) if grant_day_pass
     else
       load_password_policy
-      set_portal_page :activation_form
       render :action => :new
     end
   end

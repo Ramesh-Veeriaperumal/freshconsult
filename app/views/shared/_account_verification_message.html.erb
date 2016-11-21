@@ -1,0 +1,45 @@
+<% if current_user.privilege?(:admin_tasks) %>
+  <div class="alert-admin-account-verification alert-solid">
+    <%= t('admin_onboarding.account_verification_message.check_inbox_message', admin_email: current_user.email).html_safe %>
+    <%= t('admin_onboarding.account_verification_message.helpnote1') %>
+      <%= link_to(t('admin_onboarding.account_verification_message.resend_message'), "#", 
+    :class => "link resend_activation_email") %>
+
+      <%= t('admin_onboarding.account_verification_message.helpnote_or') %>
+
+      <%= link_to t('admin_onboarding.account_verification_message.change_email'),
+        "#account-verification-email-edit-dialog",
+        :rel => 'freshdialog',
+        :title => t('admin_onboarding.account_verification_message.modal_title'),
+        "data-width" => '500',
+        "data-submit-label" => t('admin_onboarding.account_verification_message.modal_send_button'),
+        "data-submit-loading" => t('admin_onboarding.account_verification_message.modal_sending_button'),
+        "data-close-label" => t('admin_onboarding.account_verification_message.cancel_button')
+       %>.
+
+  </div>
+
+
+  <div id="account-verification-email-edit-dialog" style="display:none;">
+    <p><%=t('admin_onboarding.account_verification_message.modal_helpnote1') %></p>
+    <%= form_for :admin_email_update, :remote => true,  url: update_activation_email_admin_onboarding_index_path, 
+    method: :post, html: {class: 'account-email-update-form'}  do  |f| %> 
+       <%= f.text_field :email , class: "text required email", value: current_user.email %>
+    <% end %>
+  </div>
+<% else %>
+   <div class="alert-admin-account-verification alert-solid">
+    <%= t('admin_onboarding.account_verification_message.non_admin_message') %>
+  </div>
+<% end %>
+
+
+<%= javascript_tag do %>
+  jQuery(document).ready(function(){
+    jQuery('.alert-admin-account-verification').on('click', '.resend_activation_email',function(){
+      jQuery.post( '<%= resend_activation_email_admin_onboarding_index_path %>',function(){});
+      jQuery(this).addClass('disabled');
+      return false;
+    });
+  });
+<% end %>

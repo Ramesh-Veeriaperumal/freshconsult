@@ -8501,10 +8501,10 @@ de:
   done: Fertig
   reset: Zurücksetzen
   ticket_due_by_time: "Fällig am"
-  ticket_past_due_by: "Seit %{time} fällig"
-  ticket_past_due_by_live: "Seit <abbr data-livestamp='%{timestamp}'>%{time} fällig</abbr>"
-  ticket_future_due_by: "In %{time} fällig"
-  ticket_future_due_by_live: "In <abbr data-livestamp='%{timestamp}'> %{time} fällig</abbr>"
+  ticket_past_due_by: "Fällig seit %{time}"
+  ticket_past_due_by_live: "Fällig seit <abbr data-livestamp='%{timestamp}'>%{time} </abbr>"
+  ticket_future_due_by: "Fällig in %{time}"
+  ticket_future_due_by_live: "Fällig in <abbr data-livestamp='%{timestamp}'> %{time} </abbr>"
   ticket_pending_since_time: "Ausstehend seit"
   ticket_resolved_at_time: "Gelöst um"
   ticket_closed_at_time: "Geschlossen um"

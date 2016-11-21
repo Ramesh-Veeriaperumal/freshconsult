@@ -513,7 +513,8 @@ class User < ActiveRecord::Base
     self.name = params[:user][:name]
     self.password = params[:user][:password]
     self.password_confirmation = params[:user][:password_confirmation]
-    # self.user_emails.first.update_attributes({:verified => true}) unless self.user_emails.blank?
+    self.user_emails.first.update_attributes({:verified => true}) unless self.user_emails.blank?
+    self.account.verify_account_with_email  if self.privilege?(:admin_tasks)
     #self.openid_identifier = params[:user][:openid_identifier]
     save
   end

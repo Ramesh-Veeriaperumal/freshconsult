@@ -199,16 +199,15 @@ class Ticket::ChildTicketWorker < BaseWorker
   end
 
   def validate_requester
-    unless (req = @item.requester).nil?
-     (req.deleted? || req.spam? || req.blocked?) ? (@item.requester_id = nil) : (@item.email = nil)
-    end
-    if !@item.requester_id and @item.email
+    if (req = @item.requester)
+      @item.email = nil
+      @item.requester_id = nil if (req.deleted? || req.spam? || req.blocked?)
+    elsif @item.email
       user = execute_on_db { @account.all_users.find_by_an_unique_id({ :email => @item.email }) }
       if user
         (user.deleted? || user.spam? || user.blocked?) ? (@item.email = nil) : (@item.requester_id = user.id)
       end
     end
-
     @item.requester_id = (@assoc_parent_ticket.responder_id.nil? ? @current_user.id :
       @assoc_parent_ticket.responder_id) if @item.requester_id.nil? and !@item.email
   end

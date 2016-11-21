@@ -38,7 +38,8 @@ module Search::V2::AbstractController
           current_page: @current_page,
           offset:       @offset,
           types:        searchable_types,
-          es_params:    construct_es_params
+          es_params:    construct_es_params,
+          locale:       @es_locale
         }).query_results
         
         yield(@result_set) if block_given?
@@ -113,6 +114,7 @@ module Search::V2::AbstractController
         @size           = (limit.zero? or (limit > Search::Utils::MAX_PER_PAGE)) ? Search::Utils::MAX_PER_PAGE : limit
         @current_page   = (params[:page].to_i.zero? ? Search::Utils::DEFAULT_PAGE : params[:page].to_i)
         @offset         = @size * (@current_page - 1)
+        @es_locale      = '' #=> Initialising as blank. Can override and use wherever needed.
       end
   end
 

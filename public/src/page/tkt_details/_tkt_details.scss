@@ -2133,11 +2133,12 @@ li {
         font-size: 20px;
         border: 1px solid;
         border-radius: 50%;
-        padding: 3px 4px 0px 4px;
+        padding: 5px 4px 0px 4px;
         color: #969696 !important;
         font-weight: bold;
-        top: 6px;
         position: relative;
+        @include float(left);
+        @include margin-right(5px);
     }
 }
 

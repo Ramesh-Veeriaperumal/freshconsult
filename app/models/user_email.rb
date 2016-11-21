@@ -106,7 +106,7 @@ class UserEmail < ActiveRecord::Base
     end
 
     def set_verified
-      self.verified = user.active
+      self.verified = user.active if self.verified.nil?
       true
     end
 

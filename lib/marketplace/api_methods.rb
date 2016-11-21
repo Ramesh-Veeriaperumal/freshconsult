@@ -7,16 +7,18 @@ module Marketplace::ApiMethods
   private
 
     # Global API's
-    def mkp_extensions
+    def mkp_extensions(sort_key = nil)
       begin
+        sort_params = sort_key ? sort_key : 'popular'
         category = params[:category_id] ? params[:category_id] : 'ALL'
         key = MemcacheKeys::MKP_EXTENSIONS % { 
-          :category_id => category, :type => params[:type], :locale_id => curr_user_language }
-
+          :category_id => category, :type => params[:type],:locale_id => curr_user_language,
+          :sort_by => sort_params }
         api_payload = payload(
                            Marketplace::ApiEndpoint::ENDPOINT_URL[:mkp_extensions] %
                            { :product_id => PRODUCT_ID },
-                           Marketplace::ApiEndpoint::ENDPOINT_PARAMS[:mkp_extensions] 
+                           Marketplace::ApiEndpoint::ENDPOINT_PARAMS[:mkp_extensions],
+                           {:sort_by => sort_key } 
                         )
         mkp_memcache_fetch(key, MarketplaceConfig::CACHE_INVALIDATION_TIME) do
           get_api(api_payload, MarketplaceConfig::GLOBAL_API_TIMEOUT) 

@@ -7,9 +7,16 @@ class Admin::Marketplace::ExtensionsController <  Admin::AdminController
   rescue_from Exception, :with => :mkp_exception
 
   def index
-    extensions = mkp_extensions
-    render_error_response and return if error_status?(extensions)
-    @extensions = extensions.body.sort_by { |ext| ext['display_name'].downcase }
+    if params[:sort_by]
+      @extensions = Hash.new
+      params[:sort_by].each do |sort_key| 
+        @extensions[sort_key.to_sym] = mkp_extensions(sort_key).body
+        render_error_response and return if error_status?(mkp_extensions(sort_key))
+      end
+    else
+      @extensions = mkp_extensions.body
+      render_error_response and return if error_status?(mkp_extensions)
+    end
   end
 
   def custom_apps
@@ -20,7 +27,7 @@ class Admin::Marketplace::ExtensionsController <  Admin::AdminController
   end
 
   def show
-    extension= extension_details
+    extension = extension_details
     render_error_response and return if error_status?(extension)
     @extension = extension.body
 
@@ -51,5 +58,4 @@ class Admin::Marketplace::ExtensionsController <  Admin::AdminController
       render_error_response and return if error_status?(categories)
       @categories = categories.body
     end
-
 end

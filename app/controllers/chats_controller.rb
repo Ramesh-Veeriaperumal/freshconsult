@@ -92,29 +92,7 @@ class ChatsController < ApplicationController
   end
 
   def enable
-    attributes = {
-                  :external_id        => current_account.id,
-                  :site_url           => current_account.full_domain,
-                  :name               => current_account.main_portal.name,
-                  :expires_at         => current_account.subscription.next_renewal_at.utc,
-                  :suspended          => !current_account.active?,
-                  :language           => current_account.language ? current_account.language : I18n.default_locale,
-                  :timezone           => current_account.time_zone
-                }
-    request_params = { :options    => { :widget => true }, :attributes => attributes }
-    response = livechat_request("create_site", request_params, 'sites', 'POST')
-    if response && response[:status] === 201
-      result = JSON.parse(response[:text])['data']
-      current_account.chat_setting.update_attributes({ :active => true, :enabled => true, :site_id => result['site']['site_id']})
-      current_account.main_chat_widget.update_attributes({ :widget_id => result['widget']['widget_id']})
-      create_widget_for_product
-      # added Livechat sync
-      # Livechat::Sync.new.sync_data_to_livechat(result['site_id'])
-      LivechatWorker.perform_async({:worker_method => "livechat_sync", :siteId => result['site']['site_id']})
-      status = "success"
-    else
-      status = "error"
-    end
+    status = enable_livechat_feature
     render :json => { :status => status }
   end
 
@@ -210,23 +188,6 @@ class ChatsController < ApplicationController
     @note.save_note
   end
 
-  def create_widget_for_product
-    products = current_account.products
-    unless products.blank?
-      products.each do |product|
-        if product.chat_widget.blank?
-          product.build_chat_widget
-          product.chat_widget.account_id = current_account.id
-          product.chat_widget.chat_setting_id = current_account.chat_setting.id
-          product.chat_widget.main_widget = false
-          product.chat_widget.show_on_portal = false
-          product.chat_widget.portal_login_required = false
-          product.chat_widget.name = product.name
-          product.chat_widget.save
-        end
-      end
-    end
-  end
 
   # *******  livechat trigger events *******
 

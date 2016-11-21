@@ -12,6 +12,7 @@ class Account < ActiveRecord::Base
   include Redis::OthersRedis
   include ErrorHandle
   include AccountConstants
+  include Onboarding::OnboardingRedisMethods
 
   has_many_attachments
   
@@ -220,7 +221,7 @@ class Account < ActiveRecord::Base
   #Temporary feature check methods - using redis keys - ends here
 
   def round_robin_capping_enabled?
-    launched?(:round_robin_capping) #features?(:round_robin_load_balancing)
+    features?(:round_robin_load_balancing)
   end
 
   def gnip_2_0_enabled?
@@ -233,6 +234,10 @@ class Account < ActiveRecord::Base
 
   def freshfone_active?
     features?(:freshfone) and freshfone_numbers.present?
+  end
+  
+  def es_multilang_soln?
+    features_included?(:es_multilang_solutions) || launched?(:es_multilang_solutions)
   end
 
   def active_groups
@@ -551,6 +556,21 @@ class Account < ActiveRecord::Base
 
   def portal_languages
     account_additional_settings.additional_settings[:portal_languages]
+  end
+
+  def verified?
+    self.reputation > 0
+  end
+
+  def verify_account_with_email
+    unless verified?
+      self.reputation = 1 
+      self.save
+    end
+  end
+
+  def onboarding_pending?
+    account_onboarding_pending?
   end
 
   def marketplace_app_enabled?

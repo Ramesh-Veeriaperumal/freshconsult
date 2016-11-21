@@ -14,7 +14,7 @@
 	</div>
 	</div>
 	</div>
-	<% if !object_name.eql?("template_data") %>
+	<% if !object_name.eql?("template_data") and !@item.not_editable? %>
 		<div class="cc-address hide">
 			<label class="cc-label" for="cc-email-address"><%= t('helpdesk.shared.cc_label') %></label>
 			<input type="text" class="required cc-email" id="cc_emails" name="cc_emails" />

@@ -1,0 +1,13 @@
+<div class="apps-category-ttl">
+  <p class="pull-left">Search results for: "<%- search_term %>"</p>
+</div>
+
+<% if (extensions.length > 0) { %>  
+  <%= JST['marketplace/app_content']({extensions : extensions}) %>
+<% } else { %>  
+  <div class="zero-apps">
+    <h5 class="msg">
+      <%= translate.get('marketplace_no_results') %> 
+    </h5>
+  </div> 
+<% } %>    

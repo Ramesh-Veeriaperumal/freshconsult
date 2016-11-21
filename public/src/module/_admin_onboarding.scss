@@ -1,0 +1,314 @@
+// account activation bar styles
+.alert-admin-account-verification {
+  font-size: 14px;
+  border-bottom: 1px solid #e2e2e2;
+  margin: 0;
+  text-align: center;
+  background: #F9F6CF;
+  font-weight: 400;
+  @include padding(13px 35px);
+
+  .email-wrapper {
+    font-weight: 500;
+    color: #B96712;
+  }
+
+  a {
+    font-weight: 500;
+  }
+}
+
+#account-verification-email-edit-dialog .modal-body {
+  border: none;
+  padding-bottom: 0px;
+}
+
+#admin-onboarding-modal {
+  position: fixed;
+  top: 50%;
+  @include left(50%);
+  z-index: 1050;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  width: 610px;
+  @include margin(-250px 0 0 -305px);
+
+  .modal-shadow-wrapper{
+    box-shadow: 0px 0px 50px #5c5c5c;
+    @include border-radius(4px);
+  }
+
+  .modal-header {
+    padding: 0px;
+    line-height: 0;
+    border:none;
+    background:#fff;
+
+    .modal-header--image-container{
+      height: 145px;
+    }
+
+    img {
+      width: 100%;
+      position:relative;
+      margin-top: -175px;
+    }
+  }
+
+  .modal-body, .modal-footer {
+    background: #fff;
+    margin: 0;
+    border: none;
+    border-top: 1px solid #eee;
+    padding-top:23px;
+    min-height: 60px;
+    box-sizing: border-box;
+    @include border-radius(4px);
+  }
+
+  .modal-body {
+    margin-top: -1px;
+    font-weight: 300;
+    line-height: 18px;
+    padding: 30px;
+    padding-bottom: 10px;
+    max-height: 460px;
+    overflow: hidden;
+
+    .ceo-avatar {
+      float: left;
+      border-radius: 50%;
+      @include margin-right(40px);
+      overflow: hidden;
+      height: 100px;
+      width: 100px;
+      margin-bottom: 30px;
+      border: 1px solid #16A085;
+
+      img{
+        width:100%;
+      }
+    }
+
+    .title-text {
+      font-size: 19px;
+      margin-bottom: 15px;
+      &.video-overview-title{
+        margin-top: -10px;
+      }
+    }
+
+    .text-content {
+      margin-bottom: 20px;
+      font-size: 14px;
+      line-height: 21px;
+    }
+
+
+    #s2id_agents_invite_email_input{
+      width: 100%;
+      &.disabled{
+        .select2-choices{
+          background:#eee;
+        }
+      }
+      .select2-choices{
+        min-height: 80px;
+        max-height: 80px;
+        overflow-y: scroll;
+        box-shadow: none;
+        border: 1px solid #ccc;
+      }
+      .select2-search-field{
+        width:auto;
+      }
+
+      .select2-input::-webkit-input-placeholder{
+        color:#ccc;
+      }
+
+      .select2-input{
+        padding-top:7px;
+      }
+    }
+
+  
+    .select2-search-choice {
+      @include padding(5px 25px 6px 10px);
+      background: #DEE7F8;
+      border: 1px solid #b4c8ef;
+      box-shadow: none;
+
+      &.error_bubble {
+        background-color: #E75069;
+        color: #fff;
+        border-color: #E75069;
+
+        .select2-search-choice-close:after {
+          color: #fff;
+        }
+      }
+
+      .select2-search-choice-close:after {
+        color: #8697b7;
+        margin-top: 3px;
+      }
+    }
+    
+    .agent_invite_status, .agent_email_count_status{
+      font-weight: 400;
+      @include float(left);
+      padding: 13px 0px;
+    }
+
+
+    .invite-button {
+      @include float(right);
+      color: #fff;
+      font-weight: 500;
+      border-radius: 5px;
+      font-size: 15px;
+      border: none;
+      background: #16A085;
+      @include margin(20px 2px 30px);
+      @include padding(10px 30px);
+      border-bottom: 2px solid #006E5D;
+
+      &.disabled{
+        background:#C0C0C0;
+        border:none;
+      }
+
+      &:focus{
+        outline:0;
+      }
+    }
+
+    .video-wrapper {
+      margin-top: 20px;
+      overflow: hidden;
+      @include margin-left(-31px);
+      margin-bottom: -30px;
+      @include margin-right(-31px);
+    }
+
+    .footer-action {
+      color: #16A085;
+      font-weight: 500;
+      position: absolute;
+      @include right(20px);
+      bottom: 14px;
+      z-index: 4;
+      font-size: 15px;
+      cursor: pointer;
+
+      .forward-arrow {
+        @include margin-left(8px);
+        padding: 5px 9px;
+        font-size: 12px;
+        border-radius: 15px;
+        display: inline-block;
+        color: #fff;
+        background: #16A085;     
+     }
+    }
+
+    .channel-selector {
+      position: relative;
+      bottom: -5px;
+      height: 120px;
+
+      .item {
+        width: 20%;
+        text-align: center;
+        padding: 2px 20px;
+        margin-top: 12px;
+        box-sizing: border-box;
+        float: left;
+
+        .status-circle {
+          float: right;
+          padding: 2px 3px;
+          line-height: 0px;
+          border-radius: 50%;
+          background: #fff;
+          border: 1px solid #CCC;
+          box-shadow: 0 0 1px 3px #FFF;
+          cursor: pointer;
+        }
+
+        .ficon-checkmark {
+          color: #fff;
+        }
+
+        &.active .status-circle {
+          background: #16A085;
+          border-color: #16A085;
+        }
+
+        &.default .status-circle{
+          background: #CCC;
+          border-color: #CCC;
+        }
+
+        .ficon-wrapper {
+          font-size: 28px;
+          border: 2px solid #ccc;
+          border-radius: 50%;
+          padding: 19px;
+          color: #16A085;
+          cursor: pointer;
+
+          .channel-icon {
+            position: relative;
+            top: 2px;
+            left: 1px;
+          }
+        }
+
+        &.active .ficon-wrapper, &:hover .ficon-wrapper{
+          border: 2px solid #16A085;
+        }
+
+        .item-name {
+          margin-top: 8px;
+          font-size: 15px;
+          font-weight: 500;
+          color:#9A9A9A;
+        }
+
+        &.active .item-name{
+          color:#16A085;
+        }
+
+      }
+    }
+  }
+
+  .onboarding-frame-nav-container {
+    margin: 0px auto;
+    width: 52px;
+
+    .nav, .nav:hover {
+      padding: 0px;
+      margin: 0px;
+    }
+
+    .nav a {
+      background: transparent;
+      color: #D8D8D8;
+      text-align: center;
+      cursor: pointer;
+      width: 13px;
+      text-align: center;
+      font-size: 15px;
+      @include float(left);
+    }
+
+    .nav.active a {
+      color: #16A085;
+      cursor: default;
+    }
+  }
+}

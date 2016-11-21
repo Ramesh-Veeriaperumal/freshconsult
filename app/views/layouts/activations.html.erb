@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<%= open_html_tag %>
+<head>
+  <title><%= h(page_title) %></title>
+  <%= csrf_meta_tag %>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <% unless page_canonical.blank? %>
+    <link rel="canonical" href="<%= page_canonical %>" />
+  <% end %>
+  <link rel="canonical shortcut icon" href="<%= fav_icon_url %>" />
+  <script type="text/javascript">
+    cloudfront_version = "<%= CLOUDFRONT_VERSION %>";
+    cloudfront_host_url = "<%= asset_host_url %>";
+  </script>
+
+  <%= stylesheet_link_tag_with_rtl :'cdn/common' %>
+  <%= stylesheet_link_tag_with_rtl :'cdn/activations' %>
+
+  <%= javascript_include_tag :'cdn/defaults'  %>
+  <%= javascript_include_tag :'cdn/frameworks' %>
+  <%= javascript_include_tag :'cdn/workspace' %>
+
+  <style type="text/css">
+    .body-wrapper{
+      background:<%=  current_portal["preferences"]["bg_color"] %>;
+    }
+
+    .banner{
+      background:<%=  current_portal["preferences"]["header_color"] %>;
+    }
+  </style>
+</head>
+
+<body class="body-wrapper">
+  <div class="activation-page page">
+    <header class="banner">
+      <div class="banner-wrapper">
+        <div class="banner-title">
+          <%= link_to (portal_pref(current_portal, :logo_link).empty?) ? "/home" : portal_pref(current_portal, :logo_link), :class => "logo" do %>
+          <div class="vertical-align logo-image">
+            <%= image_tag logo_url, :alt => t('logo'), :onerror => "default_image_error(this)",:"data-type" => "logo" %>
+          </div>
+          <% end %>
+          <h1 class="ellipsis heading"><%= current_portal.name %></h1>
+        </div>
+        <div class="clearfix"></div>
+      </div>
+    </header>
+
+    <div id="wrap">
+      <div class="content" id="body-container">
+        <%= yield %>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>

@@ -11,7 +11,7 @@ module Social::Util
         account = Account.current
         yield(account) if block_given?
       end
-    rescue ActiveRecord::RecordNotFound, ShardNotFound => e
+    rescue ActiveRecord::RecordNotFound, ShardNotFound, DomainNotReady => e
       Rails.logger.debug "#{e.inspect} -- #{account_id}"
       custom_params = {
         :account_id => account_id,
