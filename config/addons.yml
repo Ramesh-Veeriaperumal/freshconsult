@@ -39,6 +39,7 @@ Layout Customization:
   - :survey_links
 Round Robin:
   - :round_robin
+  - :round_robin_on_update
 Whitelisted Ips:
   - :whitelisted_ips
 Custom Surveys:
