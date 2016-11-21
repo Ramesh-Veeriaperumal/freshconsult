@@ -90,7 +90,7 @@ class Helpdesk::TicketTemplatesController < ApplicationController
   end
 
   def add_existing_child
-    if @item.child_template? and !has_parent and load_parent
+    if @item and @item.child_template? and !has_parent and load_parent
       @item.build_parent_assn_attributes(@parent.id)
       if @item.save
         @parent.update_attributes(association_type:

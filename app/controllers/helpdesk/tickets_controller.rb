@@ -942,7 +942,7 @@ class Helpdesk::TicketsController < ApplicationController
       @item.requester = @topic.user
     elsif params[:ticket_id].present? #create child tkt manually
       can_be_assoc_parent? ? assign_parent_to_new_child : redirect_to(helpdesk_ticket_path(params[:ticket_id]),
-        :flash => { :notice => t('flash.general.access_denied') }) #txt confirm with vikram
+        :flash => { :notice => t('flash.general.access_denied') })
     else
       build_tkt_body
     end
