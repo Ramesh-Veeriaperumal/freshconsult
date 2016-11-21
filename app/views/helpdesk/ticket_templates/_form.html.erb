@@ -75,9 +75,4 @@ function toggleGroup(access_id)
 		jQuery('#accessible_group select').select2('val', '')
 	}
 }
-
-// Sync data of agent select box with group
-jQuery(window).on('load', function(){
-  jQuery("#template_data_group_id").trigger('change');
-});
 <% end %>

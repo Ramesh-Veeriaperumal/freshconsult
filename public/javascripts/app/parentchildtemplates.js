@@ -614,7 +614,33 @@ window.App = window.App || {};
 		changeInheritParentID: function(){
 	    jQuery('#inherit-parent').val(customMessages.intialInheritParent)
 	  },
-	  checkDuplicate: function(){
+	  formSubmit: function(srcElement){
+  		this.disableBtnFields();
+    	if($(srcElement).hasClass('template_add_child') || $(srcElement).hasClass('add_child')){ //redirects to add child template page after saving by passing 'add_child' param
+    		this.appendHiddenField($('#ticket_template'),'add_child','true','add_child');
+    	}
+    	var id=$('#id').val();
+	  	if(id && !$('#ticket_template').hasClass('edit_child_form')){ // if child template is created using apply child template action, then sends child_id before saving and it is allowed in creation action
+			this.addExistingChild(id,$(srcElement));
+			return
+			}
+			if(inherit_parent.length>0){ // if inherit parent field name values contains, append all values before saving
+				this.appendHiddenField($('#ticket_template'),'template_data[inherit_parent]',inherit_parent,'inherit-parent');
+			}
+			if(customMessages.edit){
+				if( $('#inherit-parent').val() && $('#inherit-parent').val().length===0) {
+					$('#inherit-parent').remove();
+				}
+			}
+			if(!$('#ticket_template').hasClass('edit_child_form') && !$('#ticket_template').hasClass('clone_parent_form')){
+				$('#ticket_template').find('#id').remove();
+			}
+			if($('#ticket_template').hasClass('clone_parent_form')){ // if form is parent clone action then append child ids before saving
+				this.appendHiddenField($('#ticket_template'),'clone_child_ids',customMessages.clone_child_ids.toJSON(),'clone_child_ids');
+			}
+	    $('#ticket_template').submit();
+	  },
+	  checkDuplicate: function(srcElement){
 	  	var $element =$('#helpdesk_ticket_template_name'),
           state = $element.data("state"),
           prev_access_type = $element.data("access-type"),
@@ -629,7 +655,7 @@ window.App = window.App || {};
           	name: nameValue,
           	state: state,
           	template_id: template_id,
-          };
+          },self = this;
       if(access_type_val != 1 && (nameChanged || accesstypeChanged || state === 'clone')){ 
         $.ajax({
           url: "/helpdesk/ticket_templates/verify_template_name",
@@ -644,12 +670,15 @@ window.App = window.App || {};
 							closeableFlash('#noticeajax');
 							$(document).scrollTop(0); 
 							failureStatus= data["failure"]
+            } else {
+            	self.formSubmit(srcElement)
             }
           },
-          async: false
         });
+      } else  {
+         self.formSubmit(srcElement)
       }
-      return failureStatus
+      // return failureStatus
 	  },
 		bindEvents:function(){ //bind events
 			invokeRedactor('template_data_ticket_body_attributes_description_html', 'template');
@@ -919,34 +948,10 @@ window.App = window.App || {};
 				e.preventDefault();
 				var formValid=$('#ticket_template').valid() && $('#helpdesk_ticket_template_name').valid();
 				if(formValid){
-					if(!this.checkDuplicate()){
-						this.disableBtnFields();
-				    	if($(srcElement).hasClass('template_add_child') || $(srcElement).hasClass('add_child')){ //redirects to add child template page after saving by passing 'add_child' param
-				    		this.appendHiddenField($('#ticket_template'),'add_child','true','add_child');
-				    	}
-				    	var id=$('#id').val();
-					  	if(id && !$('#ticket_template').hasClass('edit_child_form')){ // if child template is created using apply child template action, then sends child_id before saving and it is allowed in creation action
-							this.addExistingChild(id,$(srcElement));
-							return
-						}
-						if(inherit_parent.length>0){ // if inherit parent field name values contains, append all values before saving
-							this.appendHiddenField($('#ticket_template'),'template_data[inherit_parent]',inherit_parent,'inherit-parent');
-						}
-						if(customMessages.edit){
-							if( $('#inherit-parent').val() && $('#inherit-parent').val().length===0) {
-								$('#inherit-parent').remove();
-							}
-						}
-						if(!$('#ticket_template').hasClass('edit_child_form') && !$('#ticket_template').hasClass('clone_parent_form')){
-							$('#ticket_template').find('#id').remove();
-						}
-						if($('#ticket_template').hasClass('clone_parent_form')){ // if form is parent clone action then append child ids before saving
-							this.appendHiddenField($('#ticket_template'),'clone_child_ids',customMessages.clone_child_ids.toJSON(),'clone_child_ids');
-						}
-				    $('#ticket_template').submit();
-					}
+					this.checkDuplicate(srcElement);
 				}
 		  }.bind(this));
+
 		  // enable save and cancel button action on popup close event
 		  $('.modal').on('hidden.bs.modal', function (e) {
 			   if($('.form_btn').attr('disabled') === 'disabled'){
