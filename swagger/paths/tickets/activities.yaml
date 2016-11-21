@@ -1,0 +1,79 @@
+get:
+  tags: [ticket]
+  summary: Activities
+  parameters:
+    - name: page
+      in: path
+      type: number
+  responses:
+    200:
+      description: Success
+      schema:
+        type: array
+        items:
+          type: object
+          properties:
+            performer:
+              type: object
+              properties:
+                type: 
+                  type: string
+                  enum:
+                    - user
+                    - system
+                user:
+                  type: object
+                  properties:
+                    id:
+                      type: number
+                    name:
+                      type: string
+                    agent:
+                      type: boolean
+                    avatar_url:
+                      type: string
+                    email:
+                      type: string
+                rule:
+                  type: object
+                  properties:
+                    id:
+                      type: number
+                    name:
+                      type: string
+                    type:
+                      type: string
+                      enum:
+                        - observer
+                        - dispatcher
+                        - supervisor
+                        - scenario_automation
+                        - api_webhook
+                        - business
+            performed_at:
+              type: string
+              format: date-time
+            actions:
+              type: array
+              items:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    description: "Eg: note, priority, status, responder_id and the custom_fields would start with custom_field."
+                  custom_field:
+                    type: boolean
+                    description: Whether the property is a custom field or not(default field)
+                  value:
+                    type: string
+                    description: Can be any type based on the property. Will be empty if it is reply/note/forward...
+                  label:
+                    type: string
+                    description: Sometimes the value cannot be converted to labels, as the option might have been removed. In those cases, this label can be used
+                  note:
+                    type: string
+                    description: Will be present only for notes
+            highlight:
+              type: string
+              description: Shows which action has to be highlighted
+  

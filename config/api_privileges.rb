@@ -3,6 +3,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/bootstrap"
     resource :"ember/ticket", only: [:create, :index, :execute_scenario, :bulk_execute_scenario]
     resource :"ember/tickets/delete_spam", only: [:spam, :bulk_spam, :unspam, :bulk_unspam]
+    resource :"ember/ticket/activity"
     resource :"ember/scenario_automation", only: [:index]
     resource :"ember/canned_response_folder", only: [:index, :show]
     resource :"ember/tickets/canned_response", only: [:show]

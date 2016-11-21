@@ -11,32 +11,13 @@ module Helpdesk::Activities
       }
       return res_hash if !(ACTIVITIES_ENABLED and Account.current.features?(:activity_revamp))
       begin
-        $thrift_transport.open()
-        client    = ::HelpdeskActivities::TicketActivities::Client.new($thrift_protocol)
-        act_param = ::HelpdeskActivities::TicketDetail.new
-        act_param.account_id = Account.current.id
-        act_param.object     = "ticket"
-        act_param.object_id  = ticket.display_id
-        act_param.event_type = ::HelpdeskActivities::EventType::ALL
-        act_param.comparator = ActivityConstants::LESS_THAN
-        act_param.shard_name = ActiveRecord::Base.current_shard_selection.shard
-        if params[:since_id].present?
-          act_param.range_key  = params[:since_id].to_i
-          act_param.comparator = ActivityConstants::GREATER_THAN
-        elsif params[:before_id].present?
-          act_param.range_key  = params[:before_id].to_i
-        end
-        limit    = params[:limit].present? ? params[:limit].to_i : ActivityConstants::QUERY_UI_LIMIT
-        limit    = (limit < ActivityConstants::QUERY_MAX_LIMIT) ? limit : ActivityConstants::QUERY_MAX_LIMIT
-        response = client.get_activities(act_param, limit)
-        if response.error_message.present?
-          return res_hash
-        end
+        response = fetch_activities(params, ticket, type, archive)
 
         # for querying
         query_hash = response.members.present? ? JSON.parse(response.members).symbolize_keys : {}
         data_hash  = parse_query_hash(query_hash, ticket, archive)
         activities = response.ticket_data
+        
         act_arr    = []
         activities.each do |act|
           begin
@@ -67,8 +48,46 @@ module Helpdesk::Activities
             :trace       => e.backtrace.join("\n")})
       ensure
         $thrift_transport.close()
-        return res_hash
       end
+    end
+    
+    def fetch_activities(params, ticket, type, archive = false)
+      $thrift_transport.open()
+      client    = ::HelpdeskActivities::TicketActivities::Client.new($thrift_protocol)
+      act_param = ::HelpdeskActivities::TicketDetail.new
+      act_param.account_id = Account.current.id
+      act_param.object     = "ticket"
+      act_param.object_id  = ticket.display_id
+      act_param.event_type = ::HelpdeskActivities::EventType::ALL
+      act_param.comparator = ActivityConstants::LESS_THAN
+      act_param.shard_name = ActiveRecord::Base.current_shard_selection.shard
+      if params[:since_id].present?
+        act_param.range_key  = params[:since_id].to_i
+        act_param.comparator = ActivityConstants::GREATER_THAN
+      elsif params[:before_id].present?
+        act_param.range_key  = params[:before_id].to_i
+      end
+      limit    = params[:limit].present? ? params[:limit].to_i : ActivityConstants::QUERY_UI_LIMIT
+      limit    = (limit < ActivityConstants::QUERY_MAX_LIMIT) ? limit : ActivityConstants::QUERY_MAX_LIMIT
+      response = client.get_activities(act_param, limit)
+      if response.error_message.present?
+        return false
+      end
+      
+      return response
+
+    rescue Exception => e
+      Rails.logger.error e.backtrace.join("\n")
+      Rails.logger.error e.message
+      dev_notification("Error in fetching and processing activites", 
+        { :exception    => e.to_s, 
+          :content     => e.message,
+          :account_id  => Account.current.id,
+          :display_id  => ticket.display_id,
+          :trace       => e.backtrace.join("\n")})
+      return false
+    ensure
+      $thrift_transport.close()
     end
 
   private

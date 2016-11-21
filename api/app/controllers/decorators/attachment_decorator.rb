@@ -9,7 +9,8 @@ class AttachmentDecorator < ApiDecorator
       size: record.content_file_size,
       created_at: record.created_at.try(:utc),
       updated_at: record.updated_at.try(:utc),
-      attachment_url: record.attachment_url_for_api
+      attachment_url: record.attachment_url_for_api #See if this is needed in all cases
     }
   end
+
 end
