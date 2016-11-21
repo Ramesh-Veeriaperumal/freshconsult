@@ -1,6 +1,6 @@
 <%= f.error_messages %>
 <div class="ticket-template-form">
-	<% if @tkt_template.new_record? %>
+	<% unless params[:action].eql?("edit_child") %>
 		<div class="controls child-form-radio-wrapper templates-header-wrapper">
 			<label class="radio inline child-form-radio-content">
 				<%= radio_button_tag(:child_template, t('ticket_templates.child_template.new'), true)%>
