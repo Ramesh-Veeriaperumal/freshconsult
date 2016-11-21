@@ -5834,6 +5834,9 @@ en:
     customize_portal: "Helpdesk rebranding"
     forums_toggle: 
         title: "Forums"
+        forums_disabled: "Forums have been disabled for this account."
+        enable_forums: "enable forums in your account"
+        go_back_message: "Go back to your helpdesk"
         helpnote: "Disabling this will turn off forums in all of your product portals for all users"
     page_colors:
       title: Helpdesk Colors
