@@ -2,7 +2,8 @@ module Social::Constants
   
   SOURCE = {
       :twitter  => "Twitter",
-      :facebook => "Facebook"
+      :facebook => "Facebook",
+      :gnip_2_0 => "Gnip_2_0"
     }
 
   GNIP_RULE_STATES = [
@@ -133,5 +134,7 @@ module Social::Constants
   TWITTER_MEDIA_PHOTO = "Twitter::Media::Photo"
 
   TWITTER_MEDIA_ANIMATEDGIF = "Twitter::Media::AnimatedGif"
+
+  WHITELISTED_SPECIAL_CHARS_REGEX = /[,.():;=\-\<\>\/&!?%+"']/
   
 end

@@ -11,7 +11,7 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
                     :company_id, :tag_names, :tag_ids, :watchers, :status_stop_sla_timer, 
                     :status_deleted, :product_id, :trashed, :es_cc_emails, :es_fwd_emails, 
                     :closed_at, :resolved_at, :to_emails, :spam, :description, :due_by, 
-                    :frDueBy
+                    :frDueBy, :association_type
                   ],
       :only => [
                   :requester_id, :responder_id, :status, :source, :deleted, 
@@ -38,6 +38,11 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
   #
   def es_v2_attachments
     attachments.pluck(:content_file_name)
+  end
+
+  # For linked tickets
+  def association_type
+    parent['int_tc03']
   end
 
   def es_cc_emails

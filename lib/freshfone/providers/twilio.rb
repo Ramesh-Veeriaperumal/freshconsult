@@ -195,9 +195,9 @@ class Freshfone::Providers::Twilio
     call.update(:url => hook) # Need to handle if that api call was ended.
   end
 
-  def mute_participants(conference)
+  def mute_participants(conference, customer_sid)
     conference.participants.list.each do |participant|
-      participant.update(:muted => true)
+      participant.update(:muted => true) unless participant.call_sid == customer_sid
     end
   end
 

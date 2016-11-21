@@ -22,7 +22,8 @@ class ApplicationController < ActionController::Base
   before_filter :persist_user_agent
   before_filter :set_cache_buster
   #before_filter :logging_details 
-  before_filter :remove_pjax_param 
+  before_filter :remove_pjax_param
+  before_filter :set_pjax_url
   after_filter :set_last_active_time, :reset_language
 
   after_filter :remove_rails_2_flash_after
@@ -45,12 +46,20 @@ class ApplicationController < ActionController::Base
   # Uncomment the :secret if you're not using the cookie session store
   protect_from_forgery # :secret => 'cf40acf193a63c36888fc1c1d4e94d32'
   skip_before_filter :verify_authenticity_token
+  before_filter :print_logs
   before_filter :verify_authenticity_token, :if => :web_request?
   # See ActionController::Base for details 
   # Uncomment this to filter the contents of submitted sensitive data parameters
   # from your application log (in this case, all fields with names like "password"). 
   # filter_parameter_logging :password
   #
+
+  # Will set the request url for pjax to change the state
+  def set_pjax_url
+    if request.xhr?
+      response.headers['X-PJAX-URL'] = request.url
+    end
+  end
 
   def set_locale
     I18n.locale =  (current_user && current_user.language) ? current_user.language : (current_portal ? current_portal.language : I18n.default_locale) 
@@ -277,6 +286,13 @@ class ApplicationController < ActionController::Base
 
     def set_last_active_time
       current_user.agent.update_last_active if Account.current && current_user && current_user.agent? && !current_user.agent.nil?
+    end
+
+    def print_logs
+      return unless Account.current && Account.current.launched?(:logout_logs)
+      Rails.logger.error "Session CSRF key = #{session[:_csrf_token]}"
+      Rails.logger.error "Request CSRF key = #{request.headers['X-CSRF-Token']}"
+      Rails.logger.error "protocol = #{request.protocol}"
     end
 end
 

@@ -3,6 +3,8 @@ class Support::SearchV2::SpotlightController < SupportController
 
   include ActionView::Helpers::TextHelper
   include Search::V2::AbstractController
+  
+  before_filter :set_es_locale
 
   # Unscoped customer-side spotlight search
   #
@@ -209,13 +211,17 @@ class Support::SearchV2::SpotlightController < SupportController
     def require_user_login
       redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
     end
+    
+    def set_es_locale
+      @es_locale = current_portal.language if (current_portal && current_account.es_multilang_soln?)
+    end
 
     # ESType - [model, associations] mapping
     # Needed for loading records from DB
     #
     def esv2_portal_models
       @@esv2_portal_spotlight ||= {
-        'ticket'        => { model: 'Helpdesk::Ticket',         associations: [ :ticket_old_body ] },
+        'ticket'        => { model: 'Helpdesk::Ticket',         associations: [ :ticket_old_body, :group, :requester, :company ] },
         'archiveticket' => { model: 'Helpdesk::ArchiveTicket',  associations: [] },
         'topic'         => { model: 'Topic',                    associations: [ :forum ] },
         'article'       => { model: 'Solution::Article',        associations: [:article_body, { :solution_folder_meta => :solution_category_meta } ] }

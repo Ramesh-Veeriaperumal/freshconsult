@@ -1,7 +1,7 @@
 <% content_for :onload_script do %>  
 	var tags_options = "<%= escape_javascript(current_account.tags.most_used(25).collect{|tag| tag.name}.join(',').html_safe) %>";
 	jQuery("input[name='user[tag_names]']").select2({
-		<%= 'createSearchChoice: function(){return null;},' if !current_user.privilege?(:create_tags) %>
+		<%= 'createSearchChoice: null,' if !current_user.privilege?(:create_tags) %>
 		tags: tags_options.split(","),
 		tokenSeparators: [',']
 	});

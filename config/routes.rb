@@ -204,6 +204,10 @@ Helpkit::Application.routes.draw do
     match '/search/related_solutions/ticket/:ticket', to: 'search/v2/solutions#related_solutions',  via: :get, constraints: { format: /(html|js)/ }
     match '/search/search_solutions/ticket/:ticket',  to: 'search/v2/solutions#search_solutions',   via: :get, constraints: { format: /(html|js)/ }
     match '/search/tickets/filter/:search_field',     to: 'search/v2/tickets#index',                via: :post
+    
+    # Linked ticket routes
+    match '/search/ticket_associations/filter/:search_field', to: 'search/v2/ticket_associations#index'
+    match '/search/ticket_associations/recent_trackers',      to: 'search/v2/ticket_associations#recent_trackers', via: :post
 
     match '/support/search',                   to: 'support/search_v2/spotlight#all',               via: :get
     match '/support/search/tickets',           to: 'support/search_v2/spotlight#tickets',           via: :get
@@ -412,6 +416,7 @@ Helpkit::Application.routes.draw do
   match '/logout' => 'user_sessions#destroy', :as => :logout
   match '/login' => 'user_sessions#new', :as => :login
   match '/login/sso' => 'user_sessions#sso_login', :as => :sso_login
+  match '/login/sso_v2' => 'user_sessions#jwt_sso_login', :as => :jwt_sso_login
   match '/login/saml' => 'user_sessions#saml_login', :as => :saml_login
   match '/login/normal' => 'user_sessions#new', :as => :login_normal
   match '/signup_complete/:token' => 'user_sessions#signup_complete', :as => :signup_complete
@@ -985,8 +990,8 @@ Helpkit::Application.routes.draw do
       post :update
     end
 
-    namespace :xero do 
-      get :authorize 
+    namespace :xero do
+      get :authorize
       post :update_params
       get :edit
       get :fetch
@@ -1167,6 +1172,14 @@ Helpkit::Application.routes.draw do
       end
     end
     match '/email_notifications/:type/:id/edit' => 'email_notifications#edit', :as => :edit_notification
+    resources :onboarding, only: [:index] do
+      collection do 
+        post :update_channel_configs
+        post :update_activation_email
+        post :resend_activation_email
+      end
+    end
+
     resources :getting_started do
       collection do
         put :rebrand
@@ -1391,8 +1404,11 @@ Helpkit::Application.routes.draw do
         scope ':extension_id/:version_id' do
           get :new_configs
           get :edit_configs
+          get :oauth_callback
+          get :edit_oauth_configs
         end
         scope ':extension_id' do
+          get :oauth_configs
           post :install
           put :reinstall
           delete :uninstall
@@ -1474,6 +1490,8 @@ Helpkit::Application.routes.draw do
           end
         end
       end
+      
+      resources :ticket_associations, :only => [:index, :recent_trackers]
     end
 
     resources :home, :only => :index do
@@ -1549,7 +1567,7 @@ Helpkit::Application.routes.draw do
     end
   end
   get   'reports/:id'   => 'reports#show', constraints: { id: /[1-2]+/ }
-  match "/reports/:report_type",           :controller => 'reports/v2/tickets/reports', :action => 'index', :method => :get  
+  match "/reports/:report_type",           :controller => 'reports/v2/tickets/reports', :action => 'index', :method => :get
 
   namespace :reports do
 
@@ -1834,6 +1852,8 @@ Helpkit::Application.routes.draw do
         get :search_templates
         get :accessible_templates
         post :apply_template
+        get :show_children
+        post :bulk_child_tkt_create
       end
 
       member do
@@ -1865,11 +1885,13 @@ Helpkit::Application.routes.draw do
         get :prevnext
         put :update_requester
         post :create # For Mobile apps backward compatibility.
+        get :associated_tickets
         put :link
         put :unlink
-        get :related_tickets
         get :ticket_association
       end
+
+      resources :child, :only => [:new], :controller => "tickets"
 
       resources :surveys do
         collection do
@@ -2120,20 +2142,28 @@ Helpkit::Application.routes.draw do
     match 'commons/status_groups'         => "commons#status_groups"
 
     resources :ticket_templates do
-      member do 
+      member do
         get :clone
-      end 
+        post :unlink_parent
+        post :add_existing_child
+      end
       collection do
+        get :all_children
+        get :search_children
+        get :verify_template_name
+        post :apply_existing_child
         delete :delete_multiple
       end
     end
-    match '/ticket_templates/tab/:current_tab' => 'ticket_templates#index'
-    
+    match '/ticket_templates/tab/:current_tab'    => 'ticket_templates#index',     :as => :my_ticket_templates
+    match '/parent_template/:p_id/child/new'      => 'ticket_templates#new_child', :as => :new_child_template
+    match '/parent_template/:p_id/child/:id/edit' => 'ticket_templates#edit_child',:as => :edit_child_template
+
     resources :scenario_automations do
-      member do 
+      member do
         get :clone
-      end 
-      collection do 
+      end
+      collection do
         get :search
         get :recent
       end
@@ -2837,6 +2867,8 @@ Helpkit::Application.routes.draw do
           put :twilio_port_away
           put :activate_trial
           put :launch_feature
+          get :launched_feature_details
+          put :activate_onboarding
         end
       end
 
@@ -2863,6 +2895,8 @@ Helpkit::Application.routes.draw do
             get :deleted_freshfone_csv_by_account
             get :deleted_freshfone_csv
             get :all_freshfone_number_csv
+            get :purchased_numbers_csv
+            get :purchased_numbers_csv_by_account
           end
         end
 
@@ -3012,9 +3046,11 @@ Helpkit::Application.routes.draw do
       put  :toggle
       put  :update_site
       put  :trigger
+      get  :export
     end
   end
   match '/livechat/visitor/:type', :controller => 'chats', :action => 'visitor', :method => :get
+  match '/livechat/downloadexport/:token', :controller => 'chats', :action => 'download_export', :method => :get
   match '/livechat/*letter', :controller => 'chats', :action => 'index', :method => :get
 
   use_doorkeeper do

@@ -15,6 +15,7 @@ window.App.Tickets.Scenario = window.App.Tickets.Scenario || {};
       this.bindHandlers();
       this.hideSearchBox();
       this.toggleSearchBox();
+      //this.showAssocParentInfo();
     },
 
     bindHandlers: function(){
@@ -67,6 +68,26 @@ window.App.Tickets.Scenario = window.App.Tickets.Scenario || {};
 
     destroy: function () {
       jQuery(document).off('.scenario');
+    },
+
+    showAssocParentInfo: function(){
+      if(parentChildEnabled){
+        var association = "1";
+        var associated = 0;
+        var confirm_text = "";
+        jQuery('#ticket-list tr.active').each(function(){
+          if (jQuery(this).data('association') == association) {
+            associated++;
+          }
+          if(associated > 0){
+            confirm_text = I18n.t('ticket.association.bulk_close_tickets', { count: associated });
+          }
+        });
+
+        if(confirm_text !== ""){
+          jQuery('.execute_scenario').prepend("<p class='parent_warn'>"+ confirm_text + "</p>");
+        }
+      }
     }
   };
 }(window.jQuery));

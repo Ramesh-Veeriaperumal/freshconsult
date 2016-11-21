@@ -12,7 +12,6 @@ window.App.Tickets = window.App.Tickets || {};
 		},
 		onVisit: function (data) {
 			CreateTicket.init();
-			CreateTicket.ticketFromForum();
 		},
 		onLeave: function (data) {
 			CreateTicket.unBindEvents();
@@ -48,6 +47,8 @@ var CreateTicket = {
 	},
 
 	bindEvents: function(){
+		var saveAndCreate = false;
+
 		this.$body.on('click.newTicket', '#newticket-submit', function(){
 			var trial_spam_error_msg = jQuery("#trial_spam_error_msg").val();
 			var to_cc_spam_threshold = JSON.parse(jQuery("#to_cc_spam_threshold").val());
@@ -59,31 +60,56 @@ var CreateTicket = {
 	    		}
 	          	return false
 	        }
-	        
+
 	        jQuery(".cc-address .cc-error-message").remove();
 			jQuery("#NewTicket").submit();
 		});
+		// This form Submit should be bind at last. Then only the pjax_form_submit will work correct.
+		// The workaround for binding the .on('submit') befor this event capture use .bindFirst('submit').
 
-		this.$createForm.on('submit.newTicket', function(){
+
+		this.$createForm.on('submit.newTicket', function(ev){
 			var _form = jQuery("#NewTicket");
-			var topic_id = jQuery("#topic_id_stub").val();
+			//check for childrens added from apply template action
+			if(jQuery('#child_select_template_wrapper .tree').length > 0){
+				CreateTicket.includeChildTemplates(_form);
+			}
+
 			if(_form.valid()){
 				if (_form.find('input[name="cc_emails[]"]').length >= 50) {
 					alert('You can add upto 50 CC emails');
 					return false;
 				}
-				if(topic_id){
-						this.createHiddenElement('topic_id', topic_id, _form);
+				if(!saveAndCreate){
+					jQuery("#newticket-submit").text(jQuery("#newticket-submit").data('loading-text')).attr('disabled', true);
+				}else{
+					saveAndCreate = false;
+					jQuery(".save_and_create_child").text(jQuery(".save_and_create_child").data('loading-text')).attr('disabled', true);
+					jQuery(".save_and_create_child").next().attr('disabled', true);
 				}
-				jQuery("#newticket-submit").text(jQuery("#newticket-submit").data('loading-text')).attr('disabled', true);
+
 				jQuery("#newticket-submit").next().attr('disabled', true);
+				jQuery(".save_and_create_child").attr('disabled', true);
 				jQuery(".cancel-btn").attr('disabled', true);
+
+			} else {
+				ev.preventDefault();
+				return false;
 			}
+
+			pjax_form_submit("#NewTicket", ev);
+
 		}.bind(this));
 
 		this.$body.on('click.newTicket', 'a[name="action_save"]', function(ev){
 				preventDefault(ev);
+				if(jQuery(this).data('trigger') == "add_child"){
+					saveAndCreate = true;
+				}
 				var _form = jQuery("#NewTicket");
+				if(jQuery('#child_select_template_wrapper .tree').length > 0){
+					CreateTicket.includeChildTemplates(_form);
+				}
 				if(jQuery(this).prop('id') == 'save_and_close') {
 					jQuery('#helpdesk_ticket_status').val(TICKET_STATUS.CLOSED);
 					jQuery('#helpdesk_ticket_status').trigger('change');
@@ -109,26 +135,33 @@ var CreateTicket = {
 	              jQuery('#add_requester_btn').trigger("click");
         	  });
 	},
+	includeChildTemplates: function(form){
+		var child_ids = [];
+      	jQuery('.child_template_items.active').each(function(){
+	        var id = jQuery(this).data('template-id');
+	        child_ids.push(id);
+      	});
+
+      	if(child_ids.length > 0){
+      		form.append(new Element('input', {
+				type: 'hidden',
+				name: 'parent_templ_id',
+				value: jQuery('#child_select_template_wrapper .parent_id_holder').data('parent-template-id')
+			}));
+
+			form.append(new Element('input', {
+				type: 'hidden',
+				name: 'child_ids',
+				value: child_ids
+			}));
+      	}
+	},
 	createHiddenElement: function(fieldName, val, appendForm){
 		jQuery('<input>').attr({
 			type: 'hidden',
 			value: val,
 			name: fieldName
 		}).appendTo(appendForm);
-	},
-	ticketFromForum: function(){
-		var topic_id = jQuery("#topic_id_stub").val();
-		if(App.namespace === 'helpdesk/tickets/new'){
-			if(topic_id){
-				jQuery(".redactor_editor").html(jQuery("#topic_desc").val());
-				jQuery("#helpdesk_ticket_subject").val(jQuery("#topic_title").val());
-				jQuery("#helpdesk_ticket_email").val(jQuery("#topic_req").val());
-			}else{
-				jQuery(".redactor_editor").html("<p><br></p>");
-				jQuery("#helpdesk_ticket_subject").val("");
-				jQuery("#helpdesk_ticket_email").val("");
-			}
-		}
 	}
 }
 

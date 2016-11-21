@@ -1,3 +1,9 @@
+<% if current_account.parent_child_tkts_enabled? %>
+  <div class="alert notice parent_error_alert hide">
+
+    <a href="#" onclick="jQuery('.parent_error_alert').hide();return false;" class="close"></a>
+  </div>
+<% end %>
 <div id="bulkcontent">
 <div id="bulkfull">
 <div class="bulktickets" id="bulktickets">
@@ -26,10 +32,10 @@
               <textarea class="hide" id='<%="picklist_section_#{picklist.id}"%>'>
                 <div class="ticket_section">
                 <% picklist.section_ticket_fields.each do |section_tkt_field|
-                  dom_type = (section_tkt_field.field_type == "nested_field") ? "nested_field" : 
+                  dom_type = (section_tkt_field.field_type == "nested_field") ? "nested_field" :
                                                                       section_tkt_field.dom_type
-                  %><%= ticket_field_element(section_tkt_field, 
-                                             dom_type, 
+                  %><%= ticket_field_element(section_tkt_field,
+                                             dom_type,
                                              { :class => "hide field-item",
                                                :style => "display:inline;"},
                                               picklist.id.to_s) %><%
@@ -58,27 +64,27 @@
       <div class="field-item" id="bulkreplycheck">
         <label for="addbulkreply" rel="inputcheckbox">
           <input id="addbulkreply" type="checkbox" name="Add Bulk Reply" value="addbulkreply" /> Add Bulk Reply
-        </label> 
+        </label>
       </div>
       <div class="request_panel clearBoth hide" id="bulkreplyform">
         <%= render :partial => "/helpdesk/tickets/reply_multiple", :locals => { :helpdesk_submit_options=>helpdesk_submit_options, :id => 'reply-multiple', :cntid => "cnt-reply-multiple", :email_configs => current_account.email_configs, :f => f} %>
       </div>
-    </div>  
-  </div> 
+    </div>
+  </div>
 <% end %>
 </div>
 
 <div id="bulk-response-group" class="hide">
   <a id="no-response">&laquo; <%= t('canned_folders.back_to_bulk') %></a>
   <a href="/helpdesk/canned_responses/folders" target="_blank" class="pull-right modal-bulk-header-button"><%= t('ticket.create_new_ca') %></a>
-  <div id="bulk_canned_response_holder"> 
-  </div> 
+  <div id="bulk_canned_response_holder">
+  </div>
 </div>
 <% if select_all %>
   <div class="admin_bulk_actions_notification hide">
-    <%= t('ticket.admin_select_all.bulk_all_notification.text', 
+    <%= t('ticket.admin_select_all.bulk_all_notification.text',
             :count => "<span class='admin_select_all_ticket_count'></span>"
-        ).html_safe 
+        ).html_safe
     %><br/>
     <%= t('ticket.admin_select_all.please_note') %>
     <ol class="admin_select_all_notification_list">
@@ -95,19 +101,21 @@
     <a href="javascript:void(0)" class="btn hide" id="bulk_back"><%= t('back') %></a>
     <a href="javascript:void(0)" class="btn" id="bulk_cancel" data-dismiss="modal"><%= t('cancel') %></a>
     <a href="javascript:void(0)" class="btn btn-primary" id="bulk_toggle"><%= t('confirm') %></a>
-    <%= submit_tag t('update'),:class => "btn btn-primary hide", 
-      "data-submit" => "modal", :id => "bulk_submit", 
-      "data-loading-text" => t('please_wait') 
+    <%= submit_tag t('update'),:class => "btn btn-primary hide",
+      "data-submit" => "modal", :id => "bulk_submit",
+      "data-loading-text" => t('please_wait')
     %>
   </div>
 <% end %>
 </div>
 <% end %>
-<%= javascript_tag do %> 
+<%= javascript_tag do %>
+  var parentChildFeatureEnabled = <%= current_account.parent_child_tkts_enabled? %>;
   var groupToStatusText = "<%= I18n.t('internal_group_actions') %>";
   var agentToGroupText = "<%= I18n.t('internal_agent_actions') %>";
   var enableDropDowns = false;
   var sharedOwnershipEnabled = <%= current_account.features?(:shared_ownership) %>;
+
   jQuery('#ticket_cancel_multiple_button').off('click')
   jQuery('#ticket_cancel_multiple_button').on('click', function(){
   		active_dialog.dialog('close');
@@ -150,7 +158,7 @@
         <%= "helpdesk_generic_submit('replymultiple', '#{update_multiple_helpdesk_select_all_ticket_actions_path}', 'put', (jQuery('#update-fields .update-check-for-fields:checked').parent().parent().find('select, input:text').get()).concat(jQuery('#FilterOptions').serializeArray()))".html_safe %>
       <% end %>
       jQuery("#ticket_update_multiple_button, #ticket_cancel_multiple_button").attr('disabled','disabled');
-      jQuery('#loader').addClass("sloading loading-small loading-align");      
+      jQuery('#loader').addClass("sloading loading-small loading-align");
     }
   }
   jQuery('#no-response').off('click');
@@ -169,12 +177,12 @@
     {
       if(jQuery('#helpdesk_ticket_responder_id_label').is(':checked'))
       {
-        jQuery('#helpdesk_ticket_responder_id_label').prop('checked', false); 
+        jQuery('#helpdesk_ticket_responder_id_label').prop('checked', false);
         jQuery('#helpdesk_ticket_responder_id_label').parent().removeClass('active');
       }
       value=jQuery(this).find(':selected').val();
       jQuery('.responder_id label').addClass('sloading loading-small loading-right');
-      
+
       groupchange(value);
     }
     if(jQuery(this).attr('id')=="bulk_customers_filter"){
@@ -194,8 +202,8 @@
     jQuery(this).parent().find("input").prop("checked", false);
     jQuery(this).parent().find("label").removeClass("active");
   }
-  }); 
-  
+  });
+
   jQuery("[rel=inputcheckbox]").off('click');
   jQuery("[rel=inputcheckbox]").on('click',  function(ev){
     if(jQuery(this).parent().find("input").is(':checked'))
@@ -252,11 +260,11 @@
     submitBulkUpdate();
   });
 
-    jQuery("#helpdesk_tags").select2({  
-      <%= 'createSearchChoice: function(){return null;},' if !current_user.privilege?(:create_tags) %>
-      tags: "<%= escape_javascript(current_account.tags.most_used(25).collect{|tag| tag.name}.join(',').html_safe) %>".split(","),
-      tokenSeparators: [',']
-    });
+  jQuery("#helpdesk_tags").select2({
+    <%= 'createSearchChoice: null,' if !current_user.privilege?(:create_tags) %>
+    tags: "<%= escape_javascript(current_account.tags.most_used(25).collect{|tag| tag.name}.join(',').html_safe) %>".split(","),
+    tokenSeparators: [',']
+  });
 
   // Need to make the code generic to handle the custom dropdown fields sections.
   jQuery("#helpdesk_ticket_ticket_type")
@@ -300,7 +308,7 @@
               return false;
             }
           }
-        }); 
+        });
       }else{
         enableDropDowns = true;
       }
@@ -337,13 +345,13 @@
       });
     }
 
-    jQuery('#bulktickets #helpdesk_ticket_status').change(function(event){ 
+    jQuery('#bulktickets #helpdesk_ticket_status').change(function(event){
       var select_group = jQuery('.internal_group_id select')[0];
       var prev_val = select_group.options[select_group.selectedIndex].value;
       var status = jQuery(".status #helpdesk_ticket_status").val();
       if(jQuery('#helpdesk_ticket_internal_group_id_label').is(':checked'))
       {
-        jQuery('#helpdesk_ticket_internal_group_id_label').prop('checked', false); 
+        jQuery('#helpdesk_ticket_internal_group_id_label').prop('checked', false);
         jQuery('#helpdesk_ticket_internal_group_id_label').parent().removeClass('active');
       }
       loadGroupsForStatus(prev_val, status);
@@ -355,7 +363,7 @@
       var prev_val = select_group.options[select_group.selectedIndex].value;
       if(jQuery('#helpdesk_ticket_internal_agent_id_label').is(':checked'))
       {
-        jQuery('#helpdesk_ticket_internal_agent_id_label').prop('checked', false); 
+        jQuery('#helpdesk_ticket_internal_agent_id_label').prop('checked', false);
         jQuery('#helpdesk_ticket_internal_agent_id_label').parent().removeClass('active');
       }
       jQuery("#bulk-submit, #bulk-cancel").attr('disabled', 'disabled');
@@ -385,11 +393,34 @@
         jQuery('.internal_agent_id label').removeClass('sloading loading-small loading-right');
         jQuery("#bulk-submit, #bulk-cancel").attr('disabled', 'false');
         jQuery("#bulk-submit, #bulk-cancel").removeAttr('disabled');
-      }  
+      }
     });
 
   }
-  
+
   jQuery('#helpdesk_ticket_responder_id').append("<option value='-1'><%= t("unassign") %></option>");
   jQuery('#helpdesk_ticket_group_id').append("<option value='-1'><%= t("unassign") %></option>");
+
+  //code added for parent child
+  if(parentChildFeatureEnabled){
+    jQuery('body').on('change', '#helpdesk_ticket_status', function(e){
+      if((this.value == "4" || this.value == "5") && confirm_text !== ""){
+        jQuery('#bulk .modal-body .parent_error_alert').show();
+      }else{
+        jQuery('#bulk .modal-body .parent_error_alert').hide();
+      }
+    });
+    var association = "1";
+    var associated = 0;
+    var confirm_text = "";
+    jQuery('#ticket-list tr.active').each(function(){
+      if (jQuery(this).data('association') == association) {
+        associated++;
+      }
+    });
+    if(associated > 0){
+      confirm_text = I18n.t('ticket.association.bulk_close_tickets', { count: associated });
+      jQuery('#bulk .modal-body .parent_error_alert').prepend(confirm_text);
+    }
+  }
 <% end %>

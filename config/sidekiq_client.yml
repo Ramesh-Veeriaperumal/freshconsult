@@ -78,6 +78,7 @@ defaults: &defaults
     - [update_users_company_id]
     - [update_tickets_company_id]
     - [broadcast_note]
+    - [notify_broadcast_message]
     - [solution_binarize_sync]
     - [clear_tickets]
     - [email_notification_spam_queue]
@@ -144,6 +145,10 @@ defaults: &defaults
     - [contacts_sync_trial]
     - [remove_secondary_companies]
     - [mailbox_jobs]
+    - [delete_account]
+    - [templates_cleanup]
+    - [bulk_child_tkt_creation]
+    - [code_console_execution]
 
 development:
   <<: *defaults

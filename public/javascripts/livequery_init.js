@@ -2,6 +2,16 @@
 'use strict';
 
 $(document).ready(function() {
+
+$(".alert").livequery(
+	function(ev) {
+  		var flash = $(this).not('[rel=permanent]');
+  		if(flash.get(0)) {
+         	try{ closeableFlash(flash); } catch(e){}
+      	}
+	}
+)
+
 //Added for social tweet links
 $(".autolink").livequery(function(ev){
   $(this).autoLink();
@@ -165,7 +175,7 @@ $("[rel=remote-load]").livequery(
 
 		$.ajax({
 			type: 'GET',
-			url: $(this).data("url"), 
+			url: $(this).data("url"),
 			dataType: 'html',
 			success: function(html){
 				$this.html(html);
@@ -185,38 +195,22 @@ $("[rel=remote-load]").livequery(
 // Uses the date format specified in the data attribute [date-format], else the default one 'yy-mm-dd'
 $("input.datepicker_popover").livequery(
 	function() {
-		var dateFormat = 'yy-mm-dd';
-		if($(this).data('date-format')) {
-			dateFormat = $(this).data('date-format');
-		}
 
-// Cloning date element to process in ISO format
-	var clone_date = jQuery(this).clone().removeAttr('class data-date-format');
-	var idForCloneElement = jQuery(this).prop("id");
-
-  	clone_date.attr('id', 'clone_'+idForCloneElement).appendTo(this);
-  	jQuery(this).removeAttr('name');
-  	if((jQuery(this).val())==""){
-  		jQuery('#'+idForCloneElement).attr('data-initial-val', 'empty');
-  	}
-  	else{
-  		jQuery('#'+idForCloneElement).attr('data-initial-val', (jQuery(this).val()));
-  	}
-  	jQuery('#clone_'+idForCloneElement).hide();
-
-
-
+      var dateFormat = $(this).data('date-format') || 'yy-mm-dd';
+      var cloneId = createDatePickerClone(this);
 
 jQuery.validator.addClassRules("date", {
 				date: false
-				});	
+				});
 
-		
+
+
 		$(this).datepicker({
-			dateFormat: dateFormat,
+			// dateFormat: dateFormat,
+        dateFormat: getDateFormat('datepicker'),
 			changeMonth: true,
             changeYear: true,
-            altField: '#clone_'+idForCloneElement,
+        altField: cloneId,
     		altFormat: 'yy-mm-dd',
 			beforeShow: function(){
 				Helpdesk.calenderSettings.insideCalendar = true;
@@ -226,33 +220,27 @@ jQuery.validator.addClassRules("date", {
 				Helpdesk.calenderSettings.closeCalendar = true;
 			},
 			showOn: "both",
-			buttonText: "<i class='ficon-date'></i>",			
+			buttonText: "<i class='ficon-date'></i>",
 		});
 
-// var varNewValue = (location.pathname).slice(-3); 
-// varNewValue checks if last three char url is 'new' refering the new method
-// if(!(varNewValue==="new")&&()){
+      if($(this).val() !== ""){
+          
+		      $(this).datepicker("setDate",new Date($(this).val()));
+      }
+
+
+
+
+// if((jQuery('#'+idForCloneElement).data('initial-val'))!="empty")
+// {
 // 	var getDateVal = (jQuery('#'+'clone_'+idForCloneElement).val());
 //   	var DateVal = new Date(getDateVal);
 //   	jQuery('#'+idForCloneElement).datepicker('setDate', DateVal);
 // }
 
 
-if((jQuery('#'+idForCloneElement).data('initial-val'))!="empty")
-{
-	var getDateVal = (jQuery('#'+'clone_'+idForCloneElement).val());
-  	var DateVal = new Date(getDateVal);
-  	jQuery('#'+idForCloneElement).datepicker('setDate', DateVal);
-}
 
 
-
-
-	//already included above
-		// if($(this).data('showImage')) {	
-		// 	$(this).datepicker('option', 'showOn', "both" );
-		// 	$(this).datepicker('option', 'buttonText', "<i class='ficon-date'></i>" );
-		// }
 
 		// custom clear button
 		var clearButton =  jQuery(this).siblings('.dateClear');
@@ -274,8 +262,8 @@ if((jQuery('#'+idForCloneElement).data('initial-val'))!="empty")
 		});
 		clearButton.on('click', function(e) {
 			 jQuery(this).siblings('input.date').val("");
-			 jQuery(this).hide(); 
-			 jQuery('#'+'clone_'+idForCloneElement).val("");
+			 jQuery(this).hide();
+			 jQuery(cloneId).val("");
 		 });
 		// clear button ends
 	}
@@ -336,7 +324,7 @@ $("input.select2").livequery(
 			return "  ";
 			}
 		}
-		
+
 		$(this).select2($.extend( defaults, $(this).data()));
 	},
 	function(){
@@ -349,9 +337,21 @@ $("div.request_mail").livequery(function(){ quote_text(this); });
 
 $("input.datepicker").livequery(
 	function(){
-		$(this).datepicker(
-			$.extend( {}, $(this).data() , { dateFormat: getDateFormat('datepicker'),changeMonth: true,changeYear: true }  )
-			)
+      var cloneId = createDatePickerClone(this);
+		$(this).datepicker($.extend( {}, $(this).data() ,
+                  {
+                      dateFormat: getDateFormat('datepicker'),
+                    changeMonth: true,
+                    changeYear: true,
+                    altField: cloneId,
+                    altFormat: "yy-mm-dd"
+                  }));
+      if($(this).val() !== ""){
+        
+		    $(this).datepicker("setDate",new Date($(this).val()));
+    }
+
+
 	}
 );
 
@@ -489,7 +489,7 @@ $('.btn-collapse').livequery(
 );
 
 	// Image enlarger - Ticket details
-	$("[rel='image-enlarge'] img").livequery(function () {			
+	$("[rel='image-enlarge'] img").livequery(function () {
     var img = $(this);
   	$("<img/>")
     .attr("src", img.attr("src"))
@@ -504,7 +504,7 @@ $('.btn-collapse').livequery(
 
       if(aspectRatio !== originalAspectRatio) {
         img.outerHeight(outerWidth/originalAspectRatio);
-        
+
         if(!img.parent('a').get(0)) {
 			  	img.wrap(function(){
 				    return "<a target='_blank' class='image-enlarge-link' href='" + this.src + "'/>";
@@ -517,7 +517,7 @@ $('.btn-collapse').livequery(
 
 	// Remote tags
 	// default value should be given in VALUE attribute
-	// 
+	//
 	$('[rel=remote-tag]').livequery(function() {
 		var hash_val = []
 		var _this = $(this);
@@ -527,7 +527,7 @@ $('.btn-collapse').livequery(
 			maximumInputLength: 32,
 			data: hash_val,
 			quietMillis: 500,
-			ajax: { 
+			ajax: {
 			        url: '/search/autocomplete/tags',
 			        dataType: 'json',
 			        data: function (term) {
@@ -545,22 +545,19 @@ $('.btn-collapse').livequery(
 			initSelection : function (element, callback) {
 			  callback(hash_val);
 			},
-			formatInputTooShort : function (input, min) { 
+			formatInputTooShort : function (input, min) {
       				return I18n.t('validation.select2_minimum_limit', {char_count : min - input.length});
       			},
-		    	formatInputTooLong: function () { 
-      				return MAX_TAG_LENGTH_MSG; 
-      			},
-		  	createSearchChoice: function(term, data) { 
+		    	formatInputTooLong: function () {
+      				return MAX_TAG_LENGTH_MSG;
+      			}
+		};
+
+		if(_this.data('allowCreate') != false){
+			select_init_data.createSearchChoice = function(term, data) {
 		  	//Check if not already existing & then return
 			        if ($(data).filter(function() { return this.text.localeCompare(term)===0; }).length===0)
 				        return { id: term, text: term };
-			}
-		};
-
-		if(_this.data('allowCreate') == false){
-			select_init_data.createSearchChoice = function(){
-				return null;
 			};
 		}
 		_this.val().split(",").each(function(item, i){ hash_val.push({ id: item, text: item }); });
@@ -569,5 +566,33 @@ $('.btn-collapse').livequery(
 		$(this).select2('destroy');
 	});
 });
+
+    // Create a clone element for datepicker and return its id with a #
+    function createDatePickerClone(originalEl){
+        var $el = $(originalEl);
+
+        // Cloning date element to process in ISO format
+	      var $cloneEl = $el.clone().removeAttr('class data-date-format');
+
+        // Generating UUID based on timestamp, if there is no id value
+	      var originalId = $el.prop("id") || new Date().getTime().toString();
+
+        var cloneId = 'clone_' + originalId;
+
+        // Append and hide the cloned element
+  	    $cloneEl.attr('id', cloneId)
+            .insertAfter(originalEl)
+            .hide();
+
+        // Removing the name attribute so that it can not be submitted via form
+  	    $el.removeAttr('name');
+
+        // Setting initial value for datepicker initialization
+        var initialValue = $el.val() === "" ? 'empty' : $el.val();
+        $el.attr('data-initial-val',initialValue);
+
+        return  '#' + cloneId;
+        
+    }
 
 })(jQuery);

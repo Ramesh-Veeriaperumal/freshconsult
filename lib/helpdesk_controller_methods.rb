@@ -5,7 +5,7 @@ module HelpdeskControllerMethods
   include Helpdesk::NoteActions
   include CloudFilesHelper
   include Helpdesk::Permissible
-  
+
   def self.included(base)
     base.send :before_filter, :build_item,          :only => [:new, :create]
     base.send :before_filter, :load_item,           :only => [:show, :edit, :update ]
@@ -24,12 +24,14 @@ module HelpdeskControllerMethods
 
   def post_persist #Need to check whether this should be called only inside create by Shan to do
     #create_attachments
-    if @item.is_a?(Helpdesk::Ticket) and @item.outbound_email?
-      flash[:notice] = I18n.t('flash.general.create.compose_email_success')
-    elsif @item.is_a?(Helpdesk::Ticket) and @item.tracker_ticket?
-      flash[:notice] = I18n.t('flash.general.create.tracker_success')
-    else
-      flash[:notice] = I18n.t(:'flash.general.create.success', :human_name => cname.humanize.downcase)
+    unless flash[:notice].present?
+      if @item.is_a?(Helpdesk::Ticket) and @item.outbound_email?
+        flash[:notice] = I18n.t('flash.general.create.compose_email_success')
+      elsif @item.is_a?(Helpdesk::Ticket) and @item.tracker_ticket?
+        flash[:notice] = I18n.t('flash.general.create.tracker_success')
+      else
+        flash[:notice] = I18n.t(:'flash.general.create.success', :human_name => cname.humanize.downcase)
+      end
     end
     process_item #
     options = {}
@@ -258,7 +260,7 @@ protected
 
   def build_shared_attachments item
       if params[:shared_attachments].present?
-        uniq_shared_attachments=params[:shared_attachments].uniq 
+        uniq_shared_attachments=params[:shared_attachments].uniq
         (uniq_shared_attachments || []).each do |r|
           a=Helpdesk::Attachment.find(r)
           item.shared_attachments.build(:account_id => item.account_id,:attachment=>a )
@@ -345,7 +347,7 @@ protected
   end
 
   def fetch_item_attachments
-    return unless (@item.is_a? Helpdesk::Note ) or @item.is_a? Helpdesk::Ticket or @item.is_a? Helpdesk::TicketTemplate 
+    return unless (@item.is_a? Helpdesk::Note ) or @item.is_a? Helpdesk::Ticket or @item.is_a? Helpdesk::TicketTemplate
     if params[:sol_articles_cloud_file_attachments].present?
       fetch_cloud_file_attachments
     end
@@ -368,7 +370,7 @@ protected
   end
 
   def fetch_cloud_file_attachments
-    return unless (@item.is_a? Helpdesk::Note ) or @item.is_a? Helpdesk::Ticket or @item.is_a? Helpdesk::TicketTemplate 
+    return unless (@item.is_a? Helpdesk::Note ) or @item.is_a? Helpdesk::Ticket or @item.is_a? Helpdesk::TicketTemplate
     params[:sol_articles_cloud_file_attachments].each do |a|
         if a[:resource].present?
           attachment_obj = current_account.cloud_files.find_by_id(a[:resource])
@@ -381,7 +383,7 @@ protected
     end
   end
 
-  # If there is any change in this method related to ticket permission, 
+  # If there is any change in this method related to ticket permission,
   # Please change the same in api/tickets_controller#ticket_permission?
   def filter_params_ids
     if current_user.group_ticket_permission

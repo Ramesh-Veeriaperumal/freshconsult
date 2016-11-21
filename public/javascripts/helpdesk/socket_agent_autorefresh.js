@@ -119,18 +119,30 @@ var refreshCallBack = function (message, hashed_params, current_userid,updated_t
               }
             }
             else if ((filter_options[i].ff_name == "default")) {
-              var message_key = filter_options[i].condition === "helpdesk_schema_less_tickets.product_id" ?
-                "product_id"
-                : filter_options[i].condition;
+              var message_key = "";
+              switch (filter_options[i].condition) {
+                case "helpdesk_schema_less_tickets.product_id":
+                  message_key = "product_id";
+                  break;
+                case "helpdesk_schema_less_tickets.long_tc04":
+                  message_key = "internal_agent_id";
+                  break;
+                case "helpdesk_schema_less_tickets.long_tc03":
+                  message_key = "internal_group_id";
+                  break;
+                default:
+                  message_key = filter_options[i].condition;
+              }
+
               var message_val = (message[message_key]) ? 
                 message[message_key]
                 : "-1";
-              if (filter_options[i].condition == "responder_id") {
+              if( ["responder_id", "internal_agent_id", "any_agent_id"].indexOf(message_key) >= 0 ){
                 if (filter_values.indexOf('0') >= 0) {
                     filter_values[filter_values.indexOf('0')] = current_userid;
                 }
               }
-              if (filter_options[i].condition == "group_id") {
+              if( ["group_id", "internal_group_id", "any_group_id"].indexOf(message_key) >= 0 ){
                 if (filter_values.indexOf('0') >= 0) {
                     filter_values[filter_values.indexOf('0')] = undefined;
                     filter_values = filter_values.concat(hashed_params['groups'].map(function(val){ return val+'';}));
@@ -155,6 +167,23 @@ var refreshCallBack = function (message, hashed_params, current_userid,updated_t
                   }
                 } 
               }
+
+              if(filter_options[i].condition == "any_agent_id"){
+                if(presentInList(filter_values, message["internal_agent_id"]) >= 0 ||
+                  presentInList(filter_values, message["agent_id"]) >= 0 ){
+                  count++;
+                  continue;
+                }
+              }
+
+              if(filter_options[i].condition == "any_group_id"){
+                if(presentInList(filter_values, message["internal_group_id"]) >= 0 ||
+                  presentInList(filter_values, message["group_id"]) >= 0 ){
+                  count++;
+                  continue;
+                }
+              }
+
               if (presentInList(filter_values, message_val) >= 0) {
                 count++;
               } 

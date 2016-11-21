@@ -1,6 +1,19 @@
-<% tracker_ticket = Account.current.link_tickets_enabled? && params[:display_ids].present? %>
-<% content_for :helpcard do %>
-  <%= render :partial => "helpdesk/tickets/new_tracker_helpnote" if tracker_ticket %>
+<%
+  acc = Account.current
+  tracker_ticket = acc.link_tickets_enabled? && params[:display_ids].present?
+  is_child_form  = acc.parent_child_tkts_enabled? && params[:ticket_id] && @assoc_parent_ticket
+  ticket_title = if tracker_ticket
+    "new_tracker_title"
+  elsif is_child_form
+    "child_ticket_title"
+  else
+    "new_ticket_title"
+  end
+%>
+<% if tracker_ticket %>
+  <% content_for :helpcard do %>
+    <%= render :partial => "helpdesk/tickets/new_tracker_helpnote" %>
+  <% end %>
 <% end %>
 <% content_for :sidebar do %>
   <%= render :partial => "helpdesk/tickets/ticket_widget/sidebar", :locals => {:from_page => 'new_ticket_page_side_bar'}%>
@@ -12,39 +25,82 @@
 <% else %>
   <%= render "helpdesk/shared/single_attachment_template" %>
 <% end %>
+
 <div class="templates-header-wrapper">
-  <%= render :partial => "helpdesk/tickets/ticket_widget/#{tracker_ticket ? 'new_tracker_title' : 'new_ticket_title'}" %>
+  <%= render :partial => "helpdesk/tickets/ticket_widget/#{ticket_title}" %>
 <div id="ticket-fields-wrapper">
-  <%= form_for @item, :html => {:multipart => true, :id => "NewTicket", :ignore => "" , :rel=>"validate"} do |f| %>
-    <% enable_fragment_cache(:agent_new_ticket, tracker_ticket) do %>
+  <%= form_for @item, :html => {:multipart => true, :id => "NewTicket", :ignore => "" } do |f| %>
+    <!-- fragment caching starts here -->
+    <% enable_fragment_cache(:agent_new_ticket, (tracker_ticket || is_child_form || params[:topic_id].present?)) do %>
       <ul class="compose-new-ticket">
         <%= render :partial => "ticket_form", :object => f, :locals => { :is_edit => (@item.errors.any? ? true : false), :f => f } %>
       </ul>
     <% end %>
     <!-- block ends here for fragment cache -->
+    <%= hidden_field_tag('topic_id', params[:topic_id]) %>
     <%= hidden_field_tag('display_ids', params[:display_ids]) %>
   <% end %>
 </div>
 </div>
+
 <!-- For trial spam restriction -->
 <input type="hidden" id="trial_spam_error_msg" value="<%= t(:'flash.general.recipient_limit_exceeded', :limit =>get_trial_account_max_to_cc_threshold ) %>" />
 <input type="hidden" id="to_cc_spam_threshold" value=<%= get_trial_account_max_to_cc_threshold %> />
 <input type="hidden" id="is_trial_spam_account" value=<%= do_spam_check? &&free_admin_email_account? %> />
-<!-- Populate value if, ticket created form forum -->
-<input type="hidden" id="topic_id_stub" value="<%= params[:topic_id] %>" />
-<% if params[:topic_id] %>
-  <input type="hidden" id="topic_desc" value="<%= @topic.posts.first.body_html %>" />
-  <input type="hidden" id="topic_title" value="<%= @topic.title %>" />
-  <input type="hidden" id="topic_req" value="<%= @topic.user.email %>" />
-<% end %>
+
 <%= render :partial => "/helpdesk/tickets/canned_loading"  %>
+<script>
+    var isMultifileEnabled = <%= current_account.launched?(:multifile_attachments) %>
+</script>
 <% if Account.current.launched?(:agent_new_ticket_cache) %>
   <script>
   // To load data from store to populate group/agent/product for the first time.
     jQuery(document).ready(function(){
-      PopulateData.fromStore("#helpdesk_ticket_group_id", 'group');
-      PopulateData.fromStore("#helpdesk_ticket_responder_id", 'agent');
-      //PopulateData.fromStore("#helpdesk_ticket_product_id", 'product');
+      if(location.pathname.indexOf('helpdesk/tickets/') == -1 && location.pathname.indexOf('/child/new') == -1){
+        PopulateData.fromStore("#helpdesk_ticket_group_id", 'group');
+        PopulateData.fromStore("#helpdesk_ticket_responder_id", 'agent');
+        //PopulateData.fromStore("#helpdesk_ticket_product_id", 'product');
+      }
     });
   </script>
+<% end %>
+
+<%
+attachment_dom = ""
+  if current_account.launched?(:multifile_attachments)
+    attachment_dom = ""
+  else
+    if @all_attachments.present?
+      @all_attachments.each do |att|
+        if att.attachable_type != "Account"
+          attachment_dom << send(:description_attachment, {:filename=>"#{escape_javascript(att.content_file_name)}",:value => "#{att.id}", :name => "template_data[attachments][][resource]"})
+        else
+          attachment_dom << send(:description_attachment, {:filename=>"#{escape_javascript(att.content_file_name)}", :value => "#{att.id}", :name => "shared_attachments[]"})
+        end
+      end
+    end
+
+    if @cloud_files.present?
+      @cloud_files.each do |att|
+        attachment_dom << send(:description_attachment, {:filename=>"#{escape_javascript(att.filename)}", :value => "#{att.serialize}", :name => "[cloud_file_attachments][]"})
+      end
+    end
+  end
+%>
+
+<% content_for :onload_script do  %>
+  function unescapeHtml(text) {
+      var temp = document.createElement("div");
+      temp.innerHTML = text;
+      var result = temp.childNodes[0].nodeValue;
+      temp.removeChild(temp.firstChild);
+      return result;
+  }
+  <% if @all_attachments.present? or @cloud_files.present? %>
+
+  var x = '<%= escape_javascript(attachment_dom) %>';
+  jQuery('#ticket-attachments').html(unescapeHtml(x));
+  jQuery("#prev-attachments").html("");
+
+  <% end %>
 <% end %>

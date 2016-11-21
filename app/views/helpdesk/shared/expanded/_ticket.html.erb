@@ -3,7 +3,7 @@
 <% modal ||= false %>
 
 <tr class="ticket-status-<%= ticket.status %> " data-ticket="<%= ticket.display_id %>" 
-	data-association="<%= ticket.association_type || ticket.parent_ticket.present? if current_account.link_tickets_enabled? %>">
+	data-association="<%= ticket.association_type || ticket.parent_ticket.present? if (current_account.link_tickets_enabled? || current_account.parent_child_tkts_enabled?) %>">
   <td class="priority-border priority-<%=ticket.priority_key%>"></td>
 
     <td class="check">
@@ -60,7 +60,7 @@
 			<% unless ticket.requester.nil? %>
 				<div class="info-data hideForList">
 					<div class="information ellipsis">
-						<% if current_account.link_tickets_enabled? %>
+						<% if current_account.link_tickets_enabled? || current_account.parent_child_tkts_enabled?%>
 							<%= content_tag(:span, 
 									t("#{TicketConstants::TICKET_ASSOCIATION_TOKEN_BY_KEY[ticket.association_type]}"),
 									:class => "association_type") if ticket.association_type.present? %>

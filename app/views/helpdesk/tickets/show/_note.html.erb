@@ -83,7 +83,7 @@ end
 					<%= link_to('', helpdesk_ticket_note_path(notable_object.display_id, note.id), 
 								:remote => true,
 								:method => :delete, :confirm => t("helpdesk.tickets.note.delete_note"), 
-								:class => "red_links conv-action-icon conv-actions-delete tooltip", :title => t('delete')) if note.user && note.user.agent?    %>   
+								:class => "red_links conv-action-icon conv-actions-delete tooltip", :title => t('delete')) if note.user && note.user.agent? && !note.broadcast_note? %>   
         <% end %>
         <% if privilege?(:merge_or_split_ticket) %>
 					<%= link_to('', 
@@ -116,7 +116,7 @@ end
 								:id => "conv-action-"+edit_id,
 								:class => "conv-action-icon conv-actions-edit tooltip", 
 								:noteId => note.id , 
-								:title => t('edit')) if(note.note? && note.user && note.user.agent? && !note.reply_to_forward?) %>
+								:title => t('edit')) if(note.note? && note.user && note.user.agent? && !note.reply_to_forward?) && !note.broadcast_note? %>
         <% end %>
 		    </div>
 		    <% end %>

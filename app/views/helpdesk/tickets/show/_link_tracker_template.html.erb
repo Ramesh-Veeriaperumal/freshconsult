@@ -1,4 +1,4 @@
-<div class='popover_content hide'>
+<div class='popover_content link_tracker_data hide'>
   <div class="recent_trackers_available hide">
     <div class="link_tracker">
       <div class="search_box">
@@ -31,7 +31,7 @@
                     <%= t('ticket.link_tracker.options.requester') %>
                   </a>
                 </li>
-              </ul>  
+              </ul>
             </div>
           </div>
         </div>
@@ -39,7 +39,7 @@
       <span class="clearfix"></span>
       <div class="row">
        <div class="pull-left result_label"><%= t('ticket.link_tracker.recently_created') %></div>
-       <div class="pull-right">  
+       <div class="pull-right">
           <% if @ticket.present? %>
             <b><%= pjax_link_to t('ticket.link_tracker.create_new'),
                new_helpdesk_ticket_path(display_ids: @ticket.display_id) %></b>
@@ -66,6 +66,5 @@
       <% end -%>
     </p>
   </div>
-  <div id="initial_loading" class="loading-block sloading loading-small">  
-  </div>
+  <div id="initial_loading" class="loading-block sloading loading-small"></div>
 </div>

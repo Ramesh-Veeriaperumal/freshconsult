@@ -69,12 +69,13 @@ module Helpdesk::Accessible::ElasticSearchMethods
       permissions
     end
 
-    def accessible_from_esv2(model_name, options, visible_options={}, sort_option = nil, folder_id = nil, id_data = nil, excluded_ids = nil)
+    def accessible_from_esv2(model_name, options, visible_options={}, sort_option = nil, folder_id = nil, id_data = nil, excluded_ids = nil, type_ids = [])
       query_options = {
         sort_option:  sort_option,
         folder_id:    folder_id,
         id_data:      id_data,
         excluded_ids: excluded_ids,
+        type_ids:     type_ids,
         query_params: params
       }
       Search::V2::Count::AccessibleMethods.new(model_name, options, visible_options).es_request(query_options)
@@ -84,7 +85,7 @@ module Helpdesk::Accessible::ElasticSearchMethods
       Search::V2::Count::AccessibleMethods.new(model_name, options, visible_options).ca_folders_es_request()
     end
 
-    def accessible_from_es(model_name,options,visible_options={}, sort_option = nil, folder_id = nil, id_data = nil, excluded_ids = nil)
+    def accessible_from_es(model_name,options,visible_options={}, sort_option = nil, folder_id = nil, id_data = nil, excluded_ids = nil, type_ids = [])
       begin
         Search::EsIndexDefinition.es_cluster(current_account.id)
         es_alias = Search::EsIndexDefinition.searchable_aliases([model_name],current_account.id)
@@ -99,6 +100,7 @@ module Helpdesk::Accessible::ElasticSearchMethods
               f.filter :bool, :must => { :term => { :folder_id => folder_id } } if folder_id
               f.filter :bool, :must => { :ids => { :values => id_data }} if id_data
               f.filter :bool, :must_not => { :ids => { :values => excluded_ids }} if excluded_ids.present?
+              f.filter :bool, :must => { :term => { :association_type => type_ids } } if type_ids.present?
             end
           end
           search.sort { |t| t.by(sort_option,'asc') } if sort_option

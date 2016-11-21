@@ -121,6 +121,9 @@ class HelpdeskReports::Formatter::Ticket::TicketVolume
         res_week_trend[row["dow"]][row["h"]] += row[COLUMN_MAP[:resolved_count]].to_i
       end
 
+      rec_busiest_day_and_hours = calculate_busiest_day_and_hours(rec_week_trend)
+      res_busiest_day_and_hours = calculate_busiest_day_and_hours(res_week_trend)
+      
       queried_metrics.each do |metric, redshift_column|
         processed_result[metric][:general] = {metric_result: counts[metric]}
       end
@@ -132,12 +135,9 @@ class HelpdeskReports::Formatter::Ticket::TicketVolume
       
       # Ceil Final average values for week trend calculated in above interations
       week_trend_averages([rec_week_trend, res_week_trend])
-
-      rec_busiest_day_and_hours = calculate_busiest_day_and_hours(rec_week_trend)
       processed_result["RECEIVED_TICKETS"][:week_trend] = rec_week_trend
       processed_result["RECEIVED_TICKETS"][:busiest_day_and_hours] = rec_busiest_day_and_hours
 
-      res_busiest_day_and_hours = calculate_busiest_day_and_hours(res_week_trend)
       processed_result["RESOLVED_TICKETS"][:week_trend] = res_week_trend
       processed_result["RESOLVED_TICKETS"][:busiest_day_and_hours] = res_busiest_day_and_hours
       @overall = processed_result
@@ -145,22 +145,46 @@ class HelpdeskReports::Formatter::Ticket::TicketVolume
 
     def calculate_busiest_day_and_hours hash
       busiest_day = hash.values.collect{|h| h.values.sum}.each_with_index.max[1].to_s
-      busy_hours = hash.values.collect{|d| d.max_by{|k,v| v}}
-      max_busy = busy_hours.max_by{|a| a[1]}[1]
-      busiest_hours = {}
-      busy_hours.each_with_index{|b,i| busiest_hours[i.to_s] = b if b[1] == max_busy}
-      if busiest_hours.size == 1
-        start_index, end_index = [busiest_hours.values.first[0].to_i, busiest_hours.values.first[0].to_i+1]
-      else
-        #Calculating busiest range by extending the range by (+/-)1 hour and calculating maximum number of tickets
-        max_tickets, start_index, end_index = busiest_hours.collect do |k,v|
-          [[v[1]+hash[k][(v[0].to_i-1).to_s],v[0].to_i-1,v[0].to_i],[v[1]+hash[k][(v[0].to_i+1).to_s],v[0].to_i,v[0].to_i+1]] unless v[0] == "0" || v[0] == "23"
-        end.flatten(1).compact.max
+      max_value = 0
+      max_keys = busy_hours = {} 
+      max_value_keys = []
+      hash.each do |day, hours|
+        hours.each do |hour, ticket_count|
+          busy_hours[hour] = busy_hours[hour].to_i + ticket_count
+            if busy_hours[hour]>= max_value
+                max_value = busy_hours[hour]
+                max_keys[max_value] = (max_keys[max_value] || []) << hour
+            end
+        end
+      max_value_keys = max_keys[max_value].uniq
+      end
+      if max_value > 0    
+        if max_value_keys.size == 1
+          start_index, end_index = [max_value_keys.first.to_i,max_value_keys.first.to_i+1]
+        else
+          #Calculating busiest range by extending the range by (+/-)1 hour and calculating maximum number of tickets
+          max = value = 0;
+          key = nil
+          max_value_keys.each do |k|
+            if k == "0"
+              value = busy_hours[(k.to_i+1).to_s] + busy_hours[(k.to_i+2).to_s]
+            elsif k == "23"
+              value = busy_hours[(k.to_i-1).to_s] + busy_hours[(k.to_i-2).to_s]
+            else
+              value = busy_hours[(k.to_i+1).to_s] + busy_hours[(k.to_i-1).to_s]
+            end
+            if (value >= max )
+                max = value
+                key = k
+            end
+          end  
+          start_index, end_index = [key.to_i,key.to_i+1]
+        end
       end
       if(start_index == end_index)
         ["-", "-"]
       else
-        [Date::DAYNAMES[busiest_day.to_i], "#{convert_no_to_time(start_index)} - #{convert_no_to_time(end_index)}"]
+        [Date::DAYNAMES[busiest_day.to_i], "#{convert_no_to_time(start_index%24)} - #{convert_no_to_time(end_index%24)}"]
       end
     end
 
@@ -235,7 +259,7 @@ class HelpdeskReports::Formatter::Ticket::TicketVolume
         end
       end
     end
-
+                     
     def trends_to_show
       @trends ||= []
       return @trends unless @trends.empty?

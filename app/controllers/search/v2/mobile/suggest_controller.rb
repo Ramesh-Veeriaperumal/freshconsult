@@ -55,7 +55,6 @@ class Search::V2::Mobile::SuggestController < Search::V2::SpotlightController
 
     def initialize_search_parameters
       super
-      @suggest        = true
       @klasses        = esv2_mobile_klasses
     end
 

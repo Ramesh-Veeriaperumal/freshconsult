@@ -1,0 +1,17 @@
+<div class='all_child'>
+  <%= link_to("#{@associates.count} child", children_helpdesk_ticket_path, 
+          :class => "",
+          :"data-width" => "600",
+          :"data-modal-type" => "slide",
+          :rel => "freshdialog",
+          :"data-action" => "link_tkt_view_all",
+          :"data-title" => "Child Tickets (#{@ticket.associates.count})",
+          :"data-placement" => "below",
+          :"data-template-footer" => "false",
+          :"data-target" => "#all_children") %>
+</div>
+<% if @associates.count < 10 %>
+<div class='new_child'>
+     <%= pjax_link_to("Add Child", new_helpdesk_ticket_child_path(@ticket.id)) %>
+</div>
+<% end %>

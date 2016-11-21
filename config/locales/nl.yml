@@ -278,7 +278,7 @@ nl:
   emails_dropped_message: "De volgende e-mails zijn na controle verwijderd - %{emails}"
   emails_added_to_cc: "E-mail(s) toegevoegd aan cc."
   attach_file_local: "Bestand op uw computer toevoegen"
-  attach_file: "Bestand bijvoegen"
+  attach_file: "Bijlage"
   dropbox_attach_label: "Bijvoegen vanuit"
   dropbox_attach_from_text: "Bijvoegen vanuit <b>Dropbox</b>"
   dropbox_choose_file: "Bestand kiezen"
@@ -587,7 +587,7 @@ nl:
         feedback_info: "Uw feedback wordt zeer op prijs gesteld."
         feedback_optional: "Het geven van feedback is optioneel."
         send: Versturen
-        submit: Indienen
+        submit: Verzenden
         additional_comments: "Aanvullende opmerkingen"
         thanks: "Hartelijk dank voor uw beoordeling."
         sorry: "Onze excuses voor het ongemak."
@@ -1612,6 +1612,10 @@ nl:
         feedbackwidget_use_https: "HTTPS gebruiken"
         feedbackwidget_mobile_view: "Mobiele weergave inschakelen"
         feedbackwidget_use_captcha: "CAPTCHA inschakelen"
+        feedbackwidget_submit_title: "Feedback versturen"
+        feedbackwidget_form_submit_title: Versturen
+        feedbackwidget_title_maxlength: "Maximaal 30 karakters"
+        feedbackwidget_submit_title_maxlength: "Maximaal 16 karakters"
       embedded_widget:
         feedbackwidget_height_placeholder: 500
         feedbackwidget_form_customization: "Formulier aanpassen"
@@ -1629,6 +1633,10 @@ nl:
         feedbackwidget_search_area: "Artikelen zoeken"
         feedbackwidget_use_https: "HTTPS gebruiken"
         feedbackwidget_use_captcha: "CAPTCHA inschakelen"
+        feedbackwidget_submit_title: "Feedback versturen"
+        feedbackwidget_form_submit_title: Versturen
+        feedbackwidget_title_maxlength: "Maximaal 30 karakters"
+        feedbackwidget_submit_title_maxlength: "Maximaal 16 karakters"
     supervisor_rules:
       new_info_help: "Voor <b>elk ticket</b> dat binnen 30 dagen wordt bijgewerkt, worden alle overeenkomende regels uitgevoerd."
       index:
@@ -4115,7 +4123,7 @@ nl:
     said: zei
     solutions_home: "Startpagina oplossing"
     print_title: "Dit artikel afdrukken"
-    attach_file: "Een <b>bestand bijvoegen</b>"
+    attach_file: "Een <b>Bijlage</b>"
     header:
       preview_message: "<b>Voorbeeldmodus</b> - <a href='javascript:window.close()'>klik hier</a> om terug te gaan."
     new_support_ticket: "Nieuw ondersteuningsticket"
@@ -4596,7 +4604,7 @@ nl:
   change_password: "Wachtwoord wijzigen"
   answered: Beantwoord
   errors_in_payment_info: "Er zijn fouten gevonden in uw betalingsgegevens:"
-  attach_files: "Bestanden bijvoegen"
+  attach_files: "Bijlage"
   plan_amount: "per medewerker/maand"
   free_plan_agents: "voor %{free_agents} medewerkers"
   current_plan_details: "%{plan_name}"
@@ -5077,7 +5085,8 @@ nl:
     default_note_text: "Standaardopmerking wordt toegevoegd"
     note_saved: "Opmerking opgeslagen"
     edit_note: "<b>Opmerking bewerken</b>"
-    thanks: "Bedankt voor uw feedback."
+    thanks: "Hartelijk dank voor uw beoordeling."
+    thanks_v1: "Hartelijk dank voor uw beoordeling."
     portal_created_on: "Gemaakt door <span class='emphasize'>%{username}</span> op <span class='emphasize'>%{date}</span>"
     portal_created_on_same_user: "Gemaakt op <span class='emphasize'>%{date}</span>"
     fb_portal_created_on: "Gemaakt door <span class='emphasize'>%{username}</span><span class='emphasize'>%{date}</span>"
@@ -5270,6 +5279,9 @@ nl:
     note_content: "Inhoud opmerking"
     private_note_alert: "Als u een privéantwoord wilt versturen, voegt u de onderstaande e-mailopdracht aan de hoofdtekst van de e-mail toe."
     ticket_url: Ticket-URL
+    submit_feedback: "Feedback versturen"
+    search_text: "Artikelen zoeken"
+    search_close_text: "Zoekfunctie sluiten"
     integrations:
       jira:
         tooltip: "Gekoppelde JIRA-probleem bekijken"
@@ -7282,6 +7294,7 @@ nl:
         feedback_widgets_search_our: "Zoeken in onze "
         feedback_widgets_knowledge_base: "Kennisbank "
         feedback_widgets_help_articles: "of Helpartikelen zoeken"
+        feedback_widgets_help_articles_v1: "of Helpartikelen zoeken"
         show_all_results: "Alle resultaten weergeven"
         no_results: "Geen resultaten voor "
   reorder: "Volgorde wijzigen"

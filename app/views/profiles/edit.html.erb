@@ -64,7 +64,7 @@ jQuery(document).ready(function() {
         reloadContent: false,
         template: "<div class='arrow'></div><div class='inner'><div class='content'><p></p></div></div>",
         content: function(){
-                  return "<div class='password-wrapper'><h5 class='policy-title'><%= t("admin.security.password_policy_popover.password_must") %></h5>" +jQuery("#password").attr("data-content") + "</div>"
+                  return "<div class='password-wrapper'><h5 class='policy-title'><%= t("admin.security.password_policy_popover.password_should") %></h5>" +jQuery("#password").attr("data-content") + "</div>"
                 }
       }).focus(function(){
           jQuery(this).popover("show");

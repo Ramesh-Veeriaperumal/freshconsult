@@ -5,7 +5,8 @@ module Marketplace::Constants
   ADMIN_PORTAL_NAME = 'Marketplace Admin Portal'
   PLG_FILENAME = 'build/index.html'
   DEVELOPED_BY_FRESHDESK = 'freshdesk'
-
+  EXTENSION_SORT_TYPES = ['latest','popular']
+  
   EXTENSION_TYPES = [ 
     [:plug,               1],    
     [:theme,              2],

@@ -164,6 +164,6 @@ class Admin::Ecommerce::EbayAccountsController < Admin::Ecommerce::AccountsContr
     end
 
     def non_global_pods?
-      Fdadmin::APICalls.non_global_pods? && (request.host == INTEGRATION_URL)
+      Fdadmin::APICalls.non_global_pods? && (request.host == GLOBAL_INTEGRATION_URL)
     end
 end

@@ -1,0 +1,18 @@
+<%= "#{t('ticket.parent_child.hi', :name => @user_name)}".html_safe %>
+
+<% if @error_msg.present? %>
+  <% @error_msg.each do |msg| %>
+    <%= t("ticket.parent_child.#{msg}", :tkt_url => link_to("ticket ##{@assoc_parent.display_id}", helpdesk_ticket_url(@assoc_parent, :host => @assoc_parent.account.host, :protocol=> @assoc_parent.url_protocol)), :total_child_count => TicketConstants::CHILD_TICKETS_PER_ASSOC_PARENT).html_safe %>
+  <%end%>
+<% elsif @failed_items.present? %>
+  <%= t('ticket.parent_child.failed_items', :tkt_url => link_to("ticket ##{@assoc_parent.display_id}", helpdesk_ticket_url(@assoc_parent, :host => @assoc_parent.account.host, :protocol=> @assoc_parent.url_protocol)), :total_child_count => TicketConstants::CHILD_TICKETS_PER_ASSOC_PARENT, :failed_count => @failed_items.count).html_safe %>
+  <%= t(:'ticket.parent_child.failed_info1').html_safe %>
+  <% @failed_items.to_enum.with_index(1) do |msg, i| %>
+    <%= "#{i}. #{msg}".html_safe %>
+  <%end%>
+  <%= t('ticket.parent_child.failed_info2', :tkt_url => link_to("ticket ##{@assoc_parent.display_id}", helpdesk_ticket_url(@assoc_parent, :host => @assoc_parent.account.host, :protocol=> @assoc_parent.url_protocol))).html_safe %>
+<% end %>
+
+<%= t(:'ticket.import.help_desk').html_safe%>
+<%= t(:'ticket.import.regards').html_safe%>
+<%= t(:'ticket.import.freshdesk').html_safe%>

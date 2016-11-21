@@ -18,6 +18,7 @@ $spam_watcher = Redis.new(:host => rate_limit["host"], :port => rate_limit["port
 $rate_limit = Redis.new(:host => rate_limit["host"], :port => rate_limit["port"], :timeout => 0.5) # Used by fd_api_throttler.
 $redis_routes = Redis.new(:host => routes_config["host"], :port => routes_config["port"], :timeout => 5)
 $redis_display_id = Redis.new(:host => display_id_config["host"], :port => display_id_config["port"], :timeout => 5)
+$redis_mkp = Redis.new(:host => config["host"], :port => config["port"], :timeout => 5)
 $redis_round_robin = Redis.new(:host => round_robin_config["host"], :port => round_robin_config["port"], :timeout => 5)
 
 mobile_config = YAML::load_file(File.join(Rails.root, 'config', 'redis_mobile.yml'))[Rails.env]

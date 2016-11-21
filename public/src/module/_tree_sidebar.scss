@@ -1,0 +1,194 @@
+.tree {
+    min-height:20px;
+    @include padding(22px 37px 22px 20px);
+    margin-bottom:20px;
+    margin-top: 44px;
+    li {
+      list-style-type:none;
+      margin:0;
+      padding-top:20px;
+      @include padding-right(5px);
+      position:relative;
+      span {
+          -moz-border-radius:5px;
+          -webkit-border-radius:5px;
+          border:1px solid #e5e1e1;
+          border-radius:3px;
+          display:inline-block;
+          @include padding(5px 10px 5px 14px);
+          text-decoration:none;
+          width: 88%;
+          @include border-left-width(4px);
+          &.child-title{
+            border: none;
+            position: absolute;
+            padding-top: 12px;
+            @include padding-left(26px);
+            unicode-bidi: plaintext;
+          }
+          &.edit{
+              background: #4299f1;
+              border-color: #1f78d1;
+              color:#fff;
+              @include border-left-width(1px);
+          }
+          &.save{
+            @include border-left-color(#4299f1);
+            background: #eee;
+          }
+          .clone-remove{
+            position: absolute;
+            @include right(-35.5px);
+            color: #990001;
+            cursor:pointer;
+          }
+    }
+    .child{
+        @include margin-left(25px);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    &::before{
+      @include border-left(1px solid #e5e1e1);
+      bottom:50px;
+      height:100%;
+      top:-1px;
+      width:1px
+    }
+    &::after{
+      border-top:1px solid #e5e1e1;
+      height:20px;
+      top:34px;
+      width:25px
+    }
+    &::before,&::after{
+      content:'';
+      position:absolute;
+      right:auto
+    }
+    &:last-child::before {
+      height:35px
+    }
+    &.child-first-li {
+        padding-top: 40px;
+        &::after{
+          top:54px;
+        }
+    }
+    &.nochild-last-li:last-child::before {
+      height:56px
+    }
+  }
+  .parent-li{
+    padding-top:8px;
+  }
+  .parent-title,.child-title{
+    color:#6b6b6b;
+    font-style:italic;
+  }
+  .ficon-pencil,.ficon-save,.ficon-ellipsis{
+      position: absolute;
+      font-size: 11px;
+      border: 1px solid;
+      padding: 0px;
+      z-index:1;
+      &:before{
+        @include margin-left(2px);
+      }
+  }
+  .ficon-pencil{
+      @include left(19px);
+      border-radius: 10px;
+      background: inherit;
+      border-color: #1f78d1;
+      width: 14px;
+      height: 14px;
+      margin-top: 1px;
+      line-height: 1.2;
+  }
+  .ficon-save{
+      background: #4299f1;
+      border-color: #4299f1;
+      color: #fff;
+      width: 12px;
+      border-radius: 7px;
+      height: 12px;
+      margin-top: 1px;
+      @include left(20px);
+      line-height: 1;
+  }
+  .parent{
+    color:#1b76d1;
+    .ficon-save,.ficon-pencil{
+      @include left(-5px);
+    }
+    .ficon-ellipsis{
+      border-color: #e0dbdb;
+      background: #f0f0f0;
+      color: #4299f1;
+      border-radius: 8px;
+      left: -6px;
+      height: 13px;
+      width: 13px;
+      line-height: 1.2;
+      border-width:2px;
+      &:before{
+          @include margin-left(2px);
+      }
+    }
+    &.save{
+      background:#fff;
+    }
+    .ficon-pencil{
+      border-radius: 8px;
+      height: 14px;
+      width: 14px;
+      line-height: 1.4;
+      background: #4299f1;
+      border-color: #1f78d1;
+      color: #fff;
+      font-size: 10px;
+      margin-top:0px;
+      &:before{
+        @include margin-left(2px);
+        margin-top:2px;
+      }
+    }
+  }
+  &>ul{
+    &>li{
+      &::before,&::after{
+        border:0
+      }
+    }
+  }
+}
+.edit-template-tree{
+  li{
+    .edit{
+      a{
+        color:#fff;
+      }
+    }
+    &.child-li{
+      span{
+        background:#fff;
+        color:#4299f1;
+        &.edit{
+          background: #4299f1;
+          border-color: #1f78d1;
+          color:#fff;
+          @include border-left-width(1px);
+        }
+      }
+    }
+  }
+}
+.clone-template-tree{
+  li{
+    span.save{
+      background:#fff;
+    }
+  }
+}

@@ -1,4 +1,4 @@
-<%= link_to senti_user_avatar(@ticket.requester, @ticket.sentiment, :thumb, 'preview_pic circle'), @ticket.requester, :class => 'avatar-wrap' %>
+<%= link_to user_avatar(@ticket.requester, :thumb, 'preview_pic circle'), @ticket.requester, :class => 'avatar-wrap' %>
 <% fb_message = @ticket.is_fb_message? %>
 <% twitter_dm = @ticket.twitter? && @ticket.tweet.is_dm? %>
 <% fb_comment = @ticket.is_fb_comment? %>

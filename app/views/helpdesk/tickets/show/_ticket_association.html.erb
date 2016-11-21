@@ -1,7 +1,6 @@
-
 <% if ticket.related_ticket? %>
- <% tracker_ticket = ticket.tracker_ticket %>
-  <div class="link_tracker_box p10" id="link_tracker_box">
+ <% tracker_ticket = ticket.associated_prime_ticket("related") %>
+  <div class="link_tracker_box related_box " id="link_tracker_box">
     <div class="row-fluid">
       <p class="related_ticket_label">
         <small>Related ticket</small>
@@ -34,7 +33,8 @@
       </small>
       <small class="block tracker_details"><%=t('ticket.status')%>: <%= h(tracker_ticket.status_name.html_safe) %></small>
       <small class="tracker_details broadcast">
-        <%= t('ticket.link_tracker.last_broadcast_message', :timestamp => @last_broadcast_note.created_at.to_i).html_safe  if @last_broadcast_note %>
+        <%= t('ticket.link_tracker.last_broadcast_message',
+         :timestamp => @last_broadcast_message.created_at.to_i).html_safe  if @last_broadcast_message %>
       </small>
     </div>
   </div>
@@ -46,23 +46,23 @@
     <div class="btn-toolbar pull-right">
       <a id="cancel_unlink" href="#" class="btn"><%= t('account.cancel') %></a>
       <span class="btn-group dropdown">
-        <button id="confirm_unlink_ticket" value="<%= ticket.display_id %>" 
-          class="btn btn-primary" data-loading-text=<%= t("ticket.link_tracker.unlink_submitting") %> 
+        <button id="confirm_unlink_ticket" value="<%= ticket.display_id %>"
+          class="btn btn-primary" data-loading-text=<%= t("ticket.link_tracker.unlink_submitting") %>
           data-tracker-id="<%= tracker_ticket.display_id %>" data-tracker="false">
           <%= t("ticket.link_tracker.unlink") %>
-      </span>  
+      </span>
     </div>
   </div>
 <% elsif ticket.tracker_ticket? %>
-  <div class="link_tracker_box p10" id="link_tracker_box">
+  <div class="link_tracker_box" id="link_tracker_box">
     <div class="row-fluid">
       <p class="related_ticket_label"><small><%= t('tracker') %></small></p>
       <p class="tracker_label">
         <b>
           <% if ticket.related_tickets_count > 0 %>
-            <a href="#related" class="truncate" data-width="600"
-              data-height="100" 
-              id="related_ticket_dialog" 
+            <a href="#associated" class="truncate" data-width="600"
+              data-height="100"
+              id="related_ticket_dialog"
               data-modal-type = "slide"
               data-ticket-display-id = "<%= ticket.display_id %>"
               rel="freshdialog"
@@ -83,13 +83,79 @@
       </div>
     </div>
   </div>
-<% elsif ticket.association_type.blank? %>
-  <div class="link_tracker_box p10" id="link_tracker_box">
+<% elsif @ticket.assoc_parent_ticket? %>
+  <div class="link_tracker_box mb10" id="link_tracker_box">
+    <div class="row-fluid">
+      <p class="related_ticket_label">
+        <a href="#associated" class="truncate" data-width="600"
+          data-height="100"
+          id="related_ticket_dialog"
+          data-modal-type = "slide"
+          data-ticket-display-id = "<%= ticket.display_id %>"
+          rel="freshdialog"
+          data-action="related_tkts_view_freshdialog"
+          data-title="<%= t('ticket_templates.add_child_linking.child_count_text', count: ticket.child_tkts_count ) %>"
+          data-placement = "below"
+          data-template-footer="false"
+          data-target="#related_tkts_view_freshdialog">
+            <%= t('ticket_templates.add_child_linking.child_count_text', count: ticket.child_tkts_count ) %>
+        </a>
+      </p>
+      <% if ticket.child_tkts_count < 10 %>
+        <span class="seperator"></span>
+        <p class="tracker_label">
+          <a href="#" data-parent="tracker-label" data-placement = "bottomLeft" data-trigger="add_child" class="lnk_tkt_tracker_show_dropdown" id="add_child_tkt"  role="button" data-toggle="popover" data-dropdown="close" data-ticket-id="<%= ticket.display_id %>">Add Child </a>
+        </p>
+      <% end %>
+       <!-- view all related  modal -->
+      <div class="activityfeed-wrap mCustomScrollbar hide" data-mcs-theme="minimal-dark" id="related_tkts_view_freshdialog">
+      </div>
+    </div>
+  </div>
+<% elsif @ticket.child_ticket? %>
+  <% assoc_parent_ticket = ticket.associated_prime_ticket("child") %>
+  <div class="link_tracker_box mb10 child_ticket_box" id="link_tracker_box">
+    <div class="row-fluid">
+      <span class="block mb5 parent">
+        Associated Parent
+        <span class="pull-right show_parent">
+          <%=h(assoc_parent_ticket.status_name.html_safe)%>
+        </span>
+      </span>
+      <span class="block ellipsis">
+        <b><%= pjax_link_to(assoc_parent_ticket.try(:subject), helpdesk_ticket_url(assoc_parent_ticket), class: "truncate") %></b>
+      </span>
+      <small class="block tracker_details">
+        <%=t('ticket.assigned_agent')%>: &nbsp;
+        <% if assoc_parent_ticket.freshness == :new %>
+          <%=t('none')%>
+        <% else %>
+          <%=h(assoc_parent_ticket.responder.display_name)%>
+        <% end -%>
+      </small>
+      <small class="block tracker_details">
+        <%= t("ticket.ticket_user_list_status_" + ticket.ticket_states.current_state(ticket.outbound_email?),
+          :time_ago => time_ago_in_words(ticket.ticket_states.send(ticket.ticket_states.current_state(ticket.outbound_email?)))
+          ).html_safe %>
+      </small>
+    </div>
+  </div>
+<% elsif @ticket.association_type.blank? %>
+  <div class="link_tracker_box mb10" id="link_tracker_box">
     <%= ticket_association_box %>
   </div>
 <% end -%>
 <!-- end of boxes -->
-<%= render(:partial => "helpdesk/tickets/show/link_tracker_template") %>
+<% if current_account.link_tickets_enabled? %>
+  <%= render(:partial => "helpdesk/tickets/show/link_tracker_template") %>
+<% end %>
+
+<% if Account.current.parent_child_tkts_enabled? %>
+  <input type="hidden" id="template_previlage" value="<%= privilege?(:manage_ticket_templates) %>" />
+  <input type="hidden" id="template_count" value="<%= templates_count_from_cache < Helpdesk::TicketTemplate::TOTAL_SHARED_TEMPLATES %>" />
+
+  <%= render(:partial => "helpdesk/tickets/show/add_child_template") %>
+<% end %>
 
 <%= javascript_tag do %>
     statusLabel = '<%=t('ticket.status')%>';
@@ -101,11 +167,14 @@
     link_text = '<%= t('ticket.link_tracker.link_to_tracker') %>';
     view_tracker = '<%= t('ticket.link_tracker.view_tracker') %>';
     recently_created = '<%= t('ticket.link_tracker.recently_created') %>';
-    asscociation_type = <%= TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:tracker]%>;
+    no_matching_template = '<%= t('ticket.parent_child.no_matching_template') %>';
+    no_parent_template = '<%= t('ticket.parent_child.no_parent_template') %>';
+    asscociation_type = [<%= TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:tracker]%>];
     jQuery('#related_ticket_dialog').on('click', function(ev) {
         window.location.hash = jQuery(this).attr("href");
     });
-    if (window.location.hash === "#related") {
+
+    if (window.location.hash === "#associated") {
      if(jQuery('.modal#related_tkts_view_freshdialog').length === 0){
       jQuery('#related_ticket_dialog').trigger('click');
      }

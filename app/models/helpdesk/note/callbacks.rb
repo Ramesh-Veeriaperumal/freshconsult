@@ -3,11 +3,11 @@ class Helpdesk::Note < ActiveRecord::Base
   # rate_limit :rules => lambda{ |obj| Account.current.account_additional_settings_from_cache.resource_rlimit_conf['helpdesk_notes'] }, :if => lambda{|obj| obj.rl_enabled? }
 
   before_create :validate_schema_less_note, :update_observer_events
+  before_create :create_broadcast_message, :if => :broadcast_note?
   before_save :load_schema_less_note, :update_category, :load_note_body, :ticket_cc_email_backup
 
   after_create :update_content_ids, :update_parent, :add_activity
   after_commit :fire_create_event, on: :create
-  after_commit :related_tickets_broadcast, on: :create, :if => :broadcast_note_to_tracker?
   # Doing update note count before pushing to ticket_states queue
   # So that note count will be reflected if the rmq publish happens via ticket states queue
   after_commit ->(obj) { obj.send(:update_note_count_for_reports)  }, on: :create , :if => :report_note_metrics?
@@ -124,7 +124,7 @@ class Helpdesk::Note < ActiveRecord::Base
     end
 
     def update_parent #Maybe after_save?!
-      return unless human_note_for_ticket? || broadcast_note_to_related?
+      return unless human_note_for_ticket?
       # syntax to move code from delayed jobs to resque.
       #Resque::MyNotifier.deliver_reply( notable.id, self.id , {:include_cc => true})
       notable.updated_at = created_at
@@ -295,7 +295,7 @@ class Helpdesk::Note < ActiveRecord::Base
   end
 
     def notify_ticket_monitor
-      return if meta? || broadcast_note_to_related?
+      return if meta?
       notable.subscriptions.each do |subscription|
         if subscription.user_id != user_id
           Helpdesk::WatcherNotifier.send_later(:deliver_notify_on_reply,
@@ -310,7 +310,7 @@ class Helpdesk::Note < ActiveRecord::Base
     
     # VA - Observer Rule 
     def update_observer_events
-      return if user.nil? || !human_note_for_ticket? || feedback? || !(notable.instance_of? Helpdesk::Ticket) || broadcast_note_to_tracker?
+      return if user.nil? || !human_note_for_ticket? || feedback? || !(notable.instance_of? Helpdesk::Ticket) || broadcast_note?
       if replied_by_customer? || replied_by_agent?
         @model_changes = {:reply_sent => :sent}
       else
@@ -330,7 +330,7 @@ class Helpdesk::Note < ActiveRecord::Base
     end
  
     def api_webhook_note_check
-      (notable.instance_of? Helpdesk::Ticket) && !meta? && allow_api_webhook? && !notable.spam_or_deleted? && !broadcast_note_to_related?
+      (notable.instance_of? Helpdesk::Ticket) && !meta? && allow_api_webhook? && !notable.spam_or_deleted?
     end
     
     ##### ****** Methods related to reports starts here ******* #####
@@ -368,7 +368,7 @@ class Helpdesk::Note < ActiveRecord::Base
         "customer_reply"
       # Only agent added pvt notes, fwds and reply to fwd will be counted as pvt note
       when CATEGORIES[:agent_private_response], CATEGORIES[:reply_to_forward], CATEGORIES[:broadcast]
-        source == SOURCE_KEYS_BY_TOKEN["tracker"] ? nil : "private_note"
+        "private_note"
       when CATEGORIES[:agent_public_response]
         (note? ? "public_note" : "agent_reply")
       else
@@ -404,9 +404,14 @@ class Helpdesk::Note < ActiveRecord::Base
     def performed_by_client_manager?
       public_note? && notable.customer_performed?(user) && user.has_customer_ticket_permission?(notable) && (user.id != notable.requester_id)
     end
-    
-    def related_tickets_broadcast
-      ::Tickets::AddBroadcastNote.perform_async( {:ticket_id => self.notable_id, :note_id => id } )
-    end
 
+    def create_broadcast_message
+      params = {
+        :tracker_display_id => notable.display_id,
+        :body => note_body.body,
+        :body_html => note_body.body_html
+      }
+      build_broadcast_message(params)
+    end
 end
+

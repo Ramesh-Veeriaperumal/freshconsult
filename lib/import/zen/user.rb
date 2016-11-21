@@ -26,7 +26,7 @@ module Import::Zen::User
   end
   
   # Not a customer
-  if user_prop.user_role.to_i != 0
+  if user_prop.email and user_prop.user_role.to_i != 0
     user_params[:user][:helpdesk_agent] = true
     user_params[:user][:role_ids] =
       [@current_account.roles.find_by_name(ZENDESK_ROLE_MAP[user_prop.user_role.to_i]).id]

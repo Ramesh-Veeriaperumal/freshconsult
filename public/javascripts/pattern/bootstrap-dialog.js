@@ -33,7 +33,11 @@
 		this.$placement = {
 			"width": this.options.width
 		};
-		this.$placement[direction] = -(parseInt(this.options.width)/2);
+
+		//no need to add the negative margin if it's slider
+		if(this.options.modalType !== "slide"){
+			this.$placement[direction] = -(parseInt(this.options.width)/2);
+		}
 		
 		this.$dynamicTarget = $('<div class="modal fade" role="dialog" aria-hidden="true"></div>')
 									.attr('id', this.$dialogid)
@@ -131,8 +135,9 @@
 			var $this = $(this)
 			, data = $this.data('freshdialog')
 			, options = typeof option == 'object' && option
+			, allowed = eval($this.data('check') || true)
 
-			if(!data) {
+			if(!data && allowed) {
 				$this.data('freshdialog', (data = new Freshdialog($this, options, this.getAttribute('title'))));
 			}
 

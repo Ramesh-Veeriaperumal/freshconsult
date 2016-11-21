@@ -205,10 +205,10 @@ GIT
 
 GIT
   remote: git@github.com:freshdesk/launch-party.git
-  revision: ad0b4c9db935036be7df6ae5a3e8c6eaccf30122
-  branch: master
+  revision: 34e028196e89ab01c5c83e92a9a19f182dc59d83
+  tag: v0.1.2
   specs:
-    launchparty (0.1.1)
+    launchparty (0.1.2)
       newrelic_rpm (~> 3.9.9.275)
       redis (>= 3)
       redis-namespace (>= 1)
@@ -1264,7 +1264,7 @@ DEPENDENCIES
   json_expressions
   jwt (= 1.5.4)
   koala (= 1.10.1)
-  launchparty (= 0.1.1)!
+  launchparty!
   lhm!
   liquid!
   lockfile (= 1.4.3)

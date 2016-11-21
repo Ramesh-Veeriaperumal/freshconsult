@@ -5,7 +5,7 @@ class Tickets::LinkTickets < BaseWorker
   def perform(args)
     args.symbolize_keys!
     @tracker_ticket = Account.current.tickets.find_by_display_id(args[:tracker_id])
-    @related_tickets = Account.current.tickets.not_associated.permissible(User.current).readonly(false).where('display_id IN (?)', args[:related_ticket_ids])
+    @related_tickets = Account.current.tickets.includes(:schema_less_ticket).not_associated.permissible(User.current).readonly(false).where('display_id IN (?)', args[:related_ticket_ids])
     @tracker_ticket.misc_changes = {:tracker_link => @related_tickets.pluck(:display_id)}
     if Account.current.features?(:activity_revamp)
       @tracker_ticket.manual_publish_to_rmq("update", RabbitMq::Constants::RMQ_ACTIVITIES_TICKET_KEY)
@@ -13,7 +13,7 @@ class Tickets::LinkTickets < BaseWorker
     return unless @tracker_ticket && @tracker_ticket.tracker_ticket? && @related_tickets.present? && !associations_count_exceeded?
     linked = []
     @related_tickets.each do |t|
-      if t.can_be_linked?
+      if t.can_be_associated?
         t.associates = [@tracker_ticket.display_id]
         t.update_attributes(
           :association_type => TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:related],
@@ -22,17 +22,14 @@ class Tickets::LinkTickets < BaseWorker
       end
     end
     @tracker_ticket.add_associates(linked)
-    add_broadcast_notes(linked)
+  rescue Exception => e
+    NewRelic::Agent.notice_error(e, {:custom_params => {
+                                            :description => "Link Tickets error",
+                                            :args => args }})
+    Rails.logger.error("Link Tickets Error: \n#{e.message}\n#{e.backtrace.join("\n")}")
   end
 
   private
-
-    def add_broadcast_notes linked_ticket_ids
-      ::Tickets::AddBroadcastNote.perform_async(
-        { :ticket_id => @tracker_ticket.id,
-          :related_ticket_ids => linked_ticket_ids
-        })
-    end
 
     def associations_count_exceeded?
       ( @tracker_ticket.associates.nil? ? 0 : @tracker_ticket.associates.count ) + @related_tickets.count > TicketConstants::MAX_RELATED_TICKETS

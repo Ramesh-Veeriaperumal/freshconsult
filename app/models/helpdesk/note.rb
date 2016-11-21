@@ -93,11 +93,6 @@ class Helpdesk::Note < ActiveRecord::Base
   
   scope :exclude_source, lambda { |s| exclude_condition(s) }
 
-  scope :last_broadcast_note,
-    :conditions => [ "deleted = ? and source = ?",false, SOURCE_KEYS_BY_TOKEN['tracker'] ],
-    :order => "created_at DESC",
-    :limit => 1
-
   scope :broadcast_notes,
     :joins => 'INNER JOIN helpdesk_schema_less_notes on helpdesk_schema_less_notes.note_id ='\
       ' helpdesk_notes.id and helpdesk_notes.account_id = helpdesk_schema_less_notes.account_id',
@@ -109,6 +104,11 @@ class Helpdesk::Note < ActiveRecord::Base
   validates_numericality_of :source
   validates_inclusion_of :source, :in => 0..SOURCES.size-1
   validates :user, presence: true, if: -> {user_id.present?}
+  validate :edit_broadcast_note, on: :update, :if => :broadcast_note?
+
+  def edit_broadcast_note
+    self.errors.add(:base, I18n.t('activerecord.errors.messages.edit_broadcast_note'))
+  end
 
   SCHEMA_LESS_ATTRIBUTES.each do |attribute|
     define_method("#{attribute}") do
@@ -205,15 +205,12 @@ class Helpdesk::Note < ActiveRecord::Base
   def can_split?
      human_note_for_ticket? and (self.incoming and self.notable) and !user.blocked? and (self.private ? user.customer? : true) and
       ((self.notable.facebook? and self.fb_post) ? self.fb_post.can_comment? : true) and 
-        (!self.mobihelp?) and (!self.ecommerce?) and(!self.feedback?) and self.notable.customer_performed?(self.user)
+        (!self.mobihelp?) and (!self.ecommerce?) and(!self.feedback?) and 
+        self.notable.customer_performed?(self.user) and (!self.broadcast_note?)
   end
 
-  def broadcast_note_to_tracker?
+  def broadcast_note?
     source == SOURCE_KEYS_BY_TOKEN["note"] && schema_less_note.category == CATEGORIES[:broadcast]
-  end
-
-  def broadcast_note_to_related?
-    source == SOURCE_KEYS_BY_TOKEN["tracker"] && schema_less_note.category == CATEGORIES[:broadcast]
   end
 
   def as_json(options = {})
@@ -330,11 +327,11 @@ class Helpdesk::Note < ActiveRecord::Base
 
   def kind
     return "reply_to_forward" if reply_to_forward? 
-    return "private_note" if private_note? && !broadcast_note_to_tracker?
+    return "private_note" if private_note? && !broadcast_note?
     return "public_note" if public_note?
     return "forward" if fwd_email?
     return "phone_note" if phone_note?
-    return "broadcast_note" if broadcast_note_to_tracker? or broadcast_note_to_related?
+    return "broadcast_note" if broadcast_note?
     "reply"
   end
 
@@ -428,8 +425,7 @@ class Helpdesk::Note < ActiveRecord::Base
     # end
 
     def human_note_for_ticket?
-      (self.notable.is_a? Helpdesk::Ticket) && user && 
-          ( not ([SOURCE_KEYS_BY_TOKEN['meta'], SOURCE_KEYS_BY_TOKEN['tracker']].include?(source)) )
+      (self.notable.is_a? Helpdesk::Ticket) && user && (source != SOURCE_KEYS_BY_TOKEN['meta'])
     end
 
     # Replied by third pary to the forwarded email

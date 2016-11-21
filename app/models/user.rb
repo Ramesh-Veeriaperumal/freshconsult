@@ -136,7 +136,7 @@ class User < ActiveRecord::Base
                   :description, :time_zone, :customer_id, :avatar_attributes, :company_id,
                   :company_name, :tag_names, :import_id, :deleted, :fb_profile_id, :language,
                   :address, :client_manager, :helpdesk_agent, :role_ids, :parent_id, :string_uc04,
-                  :contractor
+                  :contractor, :unique_external_id
 
   def time_zone
     tz = self.read_attribute(:time_zone)
@@ -513,7 +513,8 @@ class User < ActiveRecord::Base
     self.name = params[:user][:name]
     self.password = params[:user][:password]
     self.password_confirmation = params[:user][:password_confirmation]
-    # self.user_emails.first.update_attributes({:verified => true}) unless self.user_emails.blank?
+    self.user_emails.first.update_attributes({:verified => true}) unless self.user_emails.blank?
+    self.account.verify_account_with_email  if self.privilege?(:admin_tasks)
     #self.openid_identifier = params[:user][:openid_identifier]
     save
   end
@@ -848,7 +849,7 @@ class User < ActiveRecord::Base
   end
 
   def update_search_index
-    SearchSidekiq::IndexUpdate::UserTickets.perform_async({ :user_id => id }) if ES_ENABLED
+    SearchSidekiq::IndexUpdate::UserTickets.perform_async({ :user_id => id }) if Account.current.esv1_enabled?
   end
 
   def moderator_of?(forum)
@@ -940,6 +941,16 @@ class User < ActiveRecord::Base
 
   def accessible_roundrobin_groups
     self.accessible_groups.round_robin_groups
+  end
+
+  def assign_company comp_name
+    if has_multiple_companies_feature?
+      comp = account.companies.find_or_create_by_name(comp_name)
+      self.user_companies.build(:company_id => comp.id) if 
+        self.user_companies.find_by_company_id(comp.id).blank?
+    else
+      self.company_name = comp_name
+    end
   end
 
   private

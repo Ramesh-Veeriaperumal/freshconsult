@@ -21,9 +21,10 @@ Authority::Authorization::PrivilegeList.build do
                                            :spam, :unspam, :execute_scenario, :pick_tickets,
                                            :get_ca_response_content, :merge_with_this_request, :print, :latest_note,
                                            :clear_draft, :save_draft, :prevnext, :component, :custom_search,
-                                           :quick_assign, :canned_reponse, :full_paginate, :custom_view_save, :apply_template, :accessible_templates, :search_templates,
+                                           :quick_assign, :canned_reponse, :full_paginate, :custom_view_save, :apply_template, :accessible_templates, :search_templates, :show_children,
                                            :filter_options, :filter_conditions, :activities, :status, :get_top_view, :recent_tickets, :old_tickets, :summary, :bulk_scenario,
-                                           :execute_bulk_scenario, :activitiesv2, :activities_all, :link, :unlink, :related_tickets, :ticket_association, :sentiment_feedback]
+                                           :execute_bulk_scenario, :activitiesv2, :activities_all, :link, :unlink, :ticket_association,
+                                           :bulk_child_tkt_create, :associated_tickets, :sentiment_feedback]
     resource :"helpdesk/subscription"
     resource :"helpdesk/tag_use"
     resource :"helpdesk/tag"
@@ -97,10 +98,11 @@ Authority::Authorization::PrivilegeList.build do
     resource :"search/v2/mobile/related_article", :only => [:index]
     resource :"search/ticket", :only => [:index]
     resource :"search/ticket_association", :only => [:index, :recent_trackers]
+    resource :"search/v2/ticket_association", :only => [:index, :recent_trackers]
     resource :"search/v2/ticket", :only => [:index]
     resource :"search/v2/mobile/merge_ticket", :only => [:index]
     resource :"search/v2/spotlight", :only => [:all, :tickets]
-    resource :"chat", :only => [:create_ticket, :add_note, :agents, :enable, :index, :visitor, :get_groups, :update_site, :toggle, :trigger]
+    resource :"chat", :only => [:create_ticket, :add_note, :agents, :enable, :index, :visitor, :get_groups, :update_site, :toggle, :trigger, :export, :download_export]
     resource :"chat_widget", :only => [:update, :toggle, :enable]
     resource :"helpdesk/survey"
     resource :"admin/data_export" , :only => [:download]
@@ -583,6 +585,7 @@ Authority::Authorization::PrivilegeList.build do
     # new item day passes && getting started
     resource :"admin/day_pass"
     resource :"admin/freshfone/credit"
+    resource :"admin/onboarding"
     resource :"admin/getting_started"
     resource :"agent", :only => [:api_key]
   end

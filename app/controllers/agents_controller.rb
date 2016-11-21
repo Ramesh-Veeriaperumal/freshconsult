@@ -137,7 +137,6 @@ class AgentsController < ApplicationController
   
   def create_multiple_items
     @agent_emails = params[:agents_invite_email].reject {|e| e.empty?}
-
     @responseObj = {}
     if !account_whitelisted? && current_account.subscription.agent_limit.nil? && (@agent_emails.length > 25)
       @responseObj[:reached_limit] = :blocked

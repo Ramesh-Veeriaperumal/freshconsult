@@ -60,6 +60,10 @@ module RabbitMq::Constants
     :agent_reply     =>  "agent_reply", 
     :customer_reply  =>  "customer_reply"
   }
+
+  CUSTOM_METHODS = {
+    "ticket" => ["marketplace_app"]
+  }
   
 
   # Manual publish keys - only for reports
@@ -138,5 +142,9 @@ module RabbitMq::Constants
   
   MANUAL_PUBLISH_SUBCRIBERS   = ["reports", "activities", "count"]
   CTI_CALL_KEYS = ["id", "call_sid", "options", "account_id", "responder_id", "requester_id"]
+
+  MARKETPLACE_APP_TICKET_KEYS = ["id", "display_id", "subject", "account_id", "user_id", "responder_id", "group_id", "status",
+    "priority", "ticket_type", "source", "requester_id", "due_by", "created_at", "is_escalated", "fr_escalated", "company_id", "tag_names",
+    "product_id", "updated_at"]
 
 end

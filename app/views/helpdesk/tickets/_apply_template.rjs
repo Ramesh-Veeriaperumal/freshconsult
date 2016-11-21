@@ -3,6 +3,9 @@ if @template.present?
     page.replace_html "compose-new-email", :partial => '/helpdesk/tickets/compose_email'
     page << "ComposeEmail.init();"
   else
+    if @template.parent_template?
+      page.replace_html "child_select_template_wrapper", :partial => 'helpdesk/tickets/show/select_childs_template' , :locals => { :child_templates => @template.child_templates, :parent_template => @template }
+    end
     page.replace_html "ticket-fields-wrapper", :partial => '/helpdesk/tickets/new'
     page << "CreateTicket.init();"
   end
@@ -18,11 +21,7 @@ if @template.present?
   else
     if @all_attachments.present?
       @all_attachments.each do |att|
-        if att.attachable_type != "Account"
-          attachment_dom << send(:description_attachment, {:filename=>"#{escape_javascript(att.content_file_name)}",:value => "#{att.id}", :name => "helpdesk_ticket[attachments][][resource]"})
-        else
-          attachment_dom << send(:description_attachment, {:filename=>"#{escape_javascript(att.content_file_name)}", :value => "#{att.id}", :name => "shared_attachments[]"})
-        end
+        attachment_dom << send(:description_attachment, {:filename=>"#{escape_javascript(att.content_file_name)}",:value => "#{att.id}", :name => "helpdesk_ticket[attachments][][resource]"})
       end
     end
     if @cloud_files.present?

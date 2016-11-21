@@ -315,7 +315,7 @@ class Helpdesk::ConversationsController < ApplicationController
       def flash_message(status)
         if @item.source == Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['mobihelp_app_review']
           flash[:notice] = t(:"flash.tickets.notes.send_review_request.#{status}")
-        elsif @item.broadcast_note_to_tracker? and status == "success"
+        elsif @item.broadcast_note? and status == "success"
           flash[:notice] = t(:"flash.tickets.notes.broadcast.#{status}", :count => @item.notable.related_tickets_count)
         else
           flash[:notice] = I18n.t(:"flash.general.create.#{status}", :human_name => cname.humanize.downcase)

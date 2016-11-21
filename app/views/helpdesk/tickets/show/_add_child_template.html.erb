@@ -1,0 +1,36 @@
+<div class='popover_content add_child_data hide'>
+  <div class="add_child_popup_content">
+    <div class="selecet_template p10">
+      <div data-trigger="existing" class="add_child_link pl10 pr10 pt5 pb5">
+        <span class="block"><%= t('ticket.parent_child.using_template') %></span>
+        <small><%= t('ticket.parent_child.select_from_existing') %></small>
+      </div>
+      <span class="seperator"></span>
+      <div data-trigger="new" data-url="<%= new_helpdesk_ticket_child_path(@ticket) %>" class="add_child_link pl15 pr15 pt5 pb5">
+        <span class="block"><%= t('ticket.parent_child.new_child_ticket') %></span>
+        <small><%= t('ticket.parent_child.subline') %></small>
+      </div>
+    </div>
+
+    <div class="existing_template_list hide">
+      <div class="search_templates_container pl15 pr15 pt5 pb5">
+        <div class="title_text p10">
+          <span class="block"><%= t('ticket.parent_child.template') %></span>
+          <small><%= t('ticket.parent_child.template_desc') %></small>
+        </div>
+        
+        <div class="search_templates pr5 pl5">
+          <input type="text" name="templates" id="template_search" placeholder="Search templates" autofocus="true">
+        </div>
+        <span class="block pt5 pb5 pl10 pr10 result_label_container"><%= t('ticket.parent_child.recently_used') %></span>
+        <ul class="recent_templates">
+        </ul>
+      </div>
+      <span class="seperator dark_dashed"></span>
+      <div class="search_templates_list pl15 pr15 pt5 pb5">
+        <ul class="all_templates">
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

@@ -5,6 +5,7 @@ require 'charlock_holmes'
 class EmailController < ApplicationController
 
   include EnvelopeParser
+  include EmailHelper
 
   skip_filter :select_shard
   skip_before_filter :check_privilege
@@ -119,6 +120,8 @@ class EmailController < ApplicationController
               }
               if mapping_encoding[charset_encoding.downcase]
                 params[t_format] = Iconv.new('utf-8//IGNORE', mapping_encoding[charset_encoding.downcase]).iconv(params[t_format])
+              elsif ((charsets[t_format.to_s].blank? || charsets[t_format.to_s].upcase == "UTF-8") && (!params[t_format].valid_encoding?))
+                  replace_invalid_characters t_format
               else
                 Rails.logger.error "Error While encoding in process email  \n#{e.message}\n#{e.backtrace.join("\n\t")} #{params}"
                 NewRelic::Agent.notice_error(e,{:description => "Charset Encoding issue with ===============> #{charset_encoding}"})

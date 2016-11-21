@@ -24,7 +24,8 @@ class SlaNotifier < ActionMailer::Base
                          .find(:all, :conditions => ["id in (?)", agent_ids])
 
       agents_arr.each do |agent|
-        email_subject, email_body = get_email_content(e_notification, agent, ticket)
+        i_notif = (ticket.internal_agent_id == agent.id)
+        email_subject, email_body = get_email_content(e_notification, agent, ticket, i_notif)
         trigger_escalation(ticket, agent, n_type, 
                           { :email_body => email_body,  :subject => email_subject })
       end 
@@ -33,35 +34,39 @@ class SlaNotifier < ActionMailer::Base
 
   def trigger_escalation(ticket, agent, n_type, params)
     @ticket = ticket
-    ActionMailer::Base.set_email_config ticket.reply_email_config if ticket.account.features?(:all_notify_by_custom_server)
-    headers = {
-      :subject                   => params[:subject],
-      :to                        => agent.email,
-      :from                      => ticket.account.default_friendly_email,
-      :sent_on                   => Time.now,
-      "Reply-to"                 => "#{ticket.account.default_friendly_email}",
-      "Auto-Submitted"           => "auto-generated", 
-      "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
-    }
-    headers.merge!(make_header(ticket.display_id, nil, ticket.account_id, n_type))
-    headers.merge!({"X-FD-Email-Category" => ticket.reply_email_config.category}) if ticket.reply_email_config.category.present?
-      references = generate_email_references(ticket)
-        headers["References"] = references unless references.blank?
-    mail(headers) do |part|
-      part.text do
-        @body = Helpdesk::HTMLSanitizer.plain(params[:email_body])
-        render "escalation.text.plain" 
-      end
-      part.html do
-        @body = params[:email_body]
-        @account = ticket.account
-        render "escalation.text.html" 
-      end
-    end.deliver
+    begin
+      configure_email_config ticket.reply_email_config if ticket.account.features?(:all_notify_by_custom_server)
+      headers = {
+        :subject                   => params[:subject],
+        :to                        => agent.email,
+        :from                      => ticket.account.default_friendly_email,
+        :sent_on                   => Time.now,
+        "Reply-to"                 => "#{ticket.account.default_friendly_email}",
+        "Auto-Submitted"           => "auto-generated", 
+        "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
+      }
+      headers.merge!(make_header(ticket.display_id, nil, ticket.account_id, n_type))
+      headers.merge!({"X-FD-Email-Category" => ticket.reply_email_config.category}) if ticket.reply_email_config.category.present?
+        references = generate_email_references(ticket)
+          headers["References"] = references unless references.blank?
+      mail(headers) do |part|
+        part.text do
+          @body = Helpdesk::HTMLSanitizer.plain(params[:email_body])
+          render "escalation.text.plain" 
+        end
+        part.html do
+          @body = params[:email_body]
+          @account = ticket.account
+          render "escalation.text.html" 
+        end
+      end.deliver
+    ensure
+      remove_email_config
+    end
   end
 
-  def get_email_content e_notification, agent, ticket
-    subject_template, message_template = e_notification.get_agent_template(agent)
+  def get_email_content(e_notification, agent, ticket, i_notif=false)
+    subject_template, message_template = i_notif ? e_notification.get_internal_agent_template(agent) : e_notification.get_agent_template(agent)
     email_subject = Liquid::Template.parse(subject_template).render(
                                 'ticket' => ticket, 'helpdesk_name' => ticket.account.portal_name)
     email_body = Liquid::Template.parse(message_template).render(

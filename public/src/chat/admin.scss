@@ -407,6 +407,26 @@ $font-class: "ficon-"; // Change this when font class changed in glyphs comman
 			color:#888;
 		}
 	}
+	
+	.chat_archive_export{
+		.dropdown{
+			display: block;
+			text-align: right;
+			padding: 0 10px;
+			color: #000;
+		}
+		.dropdown-menu{
+			min-width: 75px;
+    		width: auto;
+    		text-align: center;
+		}
+		.export_help_text{
+			display: inline-block;
+			margin-right: 8px;
+	    	font-size: 12px;
+	    	color: #aaa;
+		}
+	}
 }
 .lc-info-ip{
 	padding-left: 20px;

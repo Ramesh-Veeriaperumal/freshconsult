@@ -1,5 +1,6 @@
+<% element_label ||= 'ticket_tags'%>
 <li class="text default_tags field">
-	<label for="ticket_tags"><%=t('tag.title')%></label>
+	<label for="<%=element_label%>"><%=t('tag.title')%></label>
 	<input type="hidden" rel="remote-tag" data-allow-create = <%= current_user.privilege?(:create_tags) %> id="<%= element_id %>"
 		name="<%= element_name %>" value= "<%= values %>" />
 </li>

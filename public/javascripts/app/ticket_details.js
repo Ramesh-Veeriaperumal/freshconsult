@@ -1369,29 +1369,33 @@ var scrollToError = function(){
 					submit.button('reset').removeClass('done');
 				}, 2000);
 
-				callback();
+				if(response.err_msg){
+					jQuery("#noticeajax").html(response.err_msg).show();
+    				closeableFlash('#noticeajax');
+        			jQuery(document).scrollTop(0);
+				}else{
+					callback();
 				
-				if (response.autoplay_link) {
-					pjaxify(response.autoplay_link);
-				}
-				else if(response.redirect || response.autoplay_link == "")
-				{
-					$('[rel=link_ticket_list]').click();
-				} else {
-					var statusChangeField = $('#send_and_set');
-					if(statusChangeField.length) {
-						if(statusChangeField.data('val') != '') {
-							refreshStatusBox();
-							if(statusChangeField.data('val') == TICKET_CONSTANTS.statuses.resolved || statusChangeField.data('val') == TICKET_CONSTANTS.statuses.closed) {
-								$('[rel=link_ticket_list]').click();
-							}
-							statusChangeField.data('val', '');
-						}
+					if (response.autoplay_link) {
+						pjaxify(response.autoplay_link);
 					}
-					afterTktPropertiesUpdate();
+					else if(response.redirect || response.autoplay_link == "")
+					{
+						$('[rel=link_ticket_list]').click();
+					} else {
+						var statusChangeField = $('#send_and_set');
+						if(statusChangeField.length) {
+							if(statusChangeField.data('val') != '') {
+								refreshStatusBox();
+								if(statusChangeField.data('val') == TICKET_CONSTANTS.statuses.resolved || statusChangeField.data('val') == TICKET_CONSTANTS.statuses.closed) {
+									$('[rel=link_ticket_list]').click();
+								}
+								statusChangeField.data('val', '');
+							}
+						}
+						afterTktPropertiesUpdate();
+					}
 				}
-
-
 
 			},
 			error: function(jqXHR, textStatus, errorThrown) {

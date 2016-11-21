@@ -24,16 +24,13 @@ var PopulateFormData = PopulateFormData ||  (function(){
      PopulateData.fromStore("#responder_id", 'agent',true);
     // check is ajax required
     if(!args.isAjax){
-      var customizedData = _customizeData(args.data, args.fieldMap);
-      _populateFields(customizedData, args);
+      _populateFields(args.data, args);
+      _resetFilterDataHash();
       return;
     }
-
     _getData(args.url, args.defaultKey, function(data){
       _populateFields(data, args);
-
-      getFilterData();
-      jQuery("#FilterOptions input[name=data_hash]").val(query_hash.toJSON());
+      _resetFilterDataHash(args.defaultKey);
     });
 
   }
@@ -43,11 +40,19 @@ var PopulateFormData = PopulateFormData ||  (function(){
   }
 
   // PRIVATE
+
+  function _resetFilterDataHash(defaultKey){
+    var special_case_views = ['deleted','spam','monitored_by'];
+    if(defaultKey && special_case_views.indexOf(defaultKey) !=-1) return;
+    getFilterData();
+    jQuery("#FilterOptions input[name=data_hash]").val(query_hash.toJSON());
+  }
   /**
    * [_customizeData description]
    * @param  {[type]} args [description]
    * @return {[type]}      [description]
    */
+
   function _customizeData(args, fieldMap){
     var data = {}, newkey;
     for(var key in args){
@@ -76,19 +81,35 @@ var PopulateFormData = PopulateFormData ||  (function(){
     return Object.keys(data)
   }
 
-  function _populateFields(data, args){
-    var initialData = getInitialData(args['defaultKey']),
-        responseData = args.isAjax ? data.conditions : data;
-        extendedData = jQuery.extend(initialData, responseData),
-        selectedFields = _getKeys(extendedData),
-        meta_data = data.meta_data;
-    selectedFields.each(function(val, index){
+  function _setCustomFilterModes(agent, group){
+    if(agent >= 0){
+      jQuery("#agentSort").parent().data("fromFilters", true);
+      jQuery(".shared_sort_menu .agent_mode[mode='"+agent+"']").trigger('click',['customTrigger']);
+    }
 
+    if(group >= 0){
+      jQuery("#groupSort").parent().data("fromFilters", true);
+      jQuery(".shared_sort_menu .group_mode[mode='"+group+"']").trigger('click',['customTrigger']);
+    }
+  }
+
+  function _populateFields(data, args){
+    var initialData, responseData, extendedData, selectedFields, meta_data;
+    responseData = args.isAjax ? data.conditions : _customizeData(data, args.fieldMap);
+    if(args.sharedOwnershipFlag){
+       _setCustomFilterModes(data.agent_mode || 0, data.group_mode || 0)
+    }
+    initialData = getInitialData(args['defaultKey']);
+    extendedData = jQuery.extend(initialData, responseData);
+    selectedFields = _getKeys(extendedData);
+    meta_data = data.meta_data;
+    initialData.defaultDateRange = args.defaultDateRange;
+    selectedFields.each(function(val, index){
       if(val !== 'spam' && val !== 'deleted'){
         _populateIndividualField(val, extendedData, meta_data);
       }
     });
-
+    jQuery(".sloading.filter-loading").hide();
   }
 
   function getInitialData(view_name){
@@ -131,6 +152,29 @@ var PopulateFormData = PopulateFormData ||  (function(){
           break;
         case 'association_type':
           jQuery("[condition='"+$wrapperData.id+"']").children('select').val(dataArray).trigger('change.select2');
+          break;
+        case 'single_select':
+          var dateRange = dataArray[0].split("-");
+          if(dateRange.length==2){
+            jQuery("#created_date_range").val(dataArray);
+            jQuery("#"+val).data('selectedValue',dataArray).val('set_date').trigger('change.select2');
+            jQuery('#div_ff_created_date_range').show();
+          }
+          else{
+            dateRange = data.defaultDateRange.split("-");
+            jQuery("#"+val).val(dataArray).trigger('change.select2');
+            jQuery('#div_ff_created_date_range').hide();
+            jQuery('#created_date_range').val('');
+          }
+          try{
+            var datePicker = jQuery("#created_date_range").data('bootstrapdaterangepicker');
+            datePicker.setStartDate(dateRange[0]);
+            datePicker.setEndDate(dateRange[1]);
+          }
+          catch(e){
+            console.log(e)
+          }
+          
           break;
         case 'requester':
         case 'customers':

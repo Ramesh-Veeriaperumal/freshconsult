@@ -1069,3 +1069,23 @@ function uniqueCodeGenerator(name){
     });
     return hash % 10;
 }
+
+function pjax_form_submit (element, ev) {
+  if (isMultifileEnabled && !jQBrowser.msie && !jQBrowser.msedge) {
+    var _form = jQuery(element);
+
+    if(_form.valid()) {
+      
+      jQuery.pjax({
+        container: "#body-container",
+        type: _form.attr('method'),
+        url: _form.attr('action'),
+        data: _form.serialize()
+      });
+    }
+
+    ev.preventDefault();
+    ev.stopImmediatePropagation();
+    return false;
+  }
+}

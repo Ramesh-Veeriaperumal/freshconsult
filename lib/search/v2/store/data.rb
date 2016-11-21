@@ -14,11 +14,20 @@ module Search
 
         # Get tenant info from cache/data store
         def tenant_info(tenant_id)
-          get_item(
+          unless Rails.env.development?
+            get_item(
             TENANT_TABLE,
             Cache::TENANT_INFO % { tenant_id: tenant_id },
             ({ tenant_id: tenant_id })
           )
+          else
+             ES_V2_SUPPORTED_TYPES.inject({}) do |type_hash, (type, params)|
+              type_hash[type] = (params[:alias_prefix] % { alias_suffix: 'p1s1v1' }); type_hash
+            end.merge(
+              'tenant_id'     => tenant_id,
+              'home_cluster'  => 'cluster1'
+            )
+          end
         end
 
         # Store the tenant config in data store

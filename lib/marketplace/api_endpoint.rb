@@ -3,7 +3,7 @@ module Marketplace::ApiEndpoint
   ENDPOINTS = [
     # Global API's
     #[:name,   "url",   "url params"]
-    [:mkp_extensions,           "product/%{product_id}/extensions.json", [:type, :category_id]],
+    [:mkp_extensions,           "product/%{product_id}/extensions.json", [:type, :category_id, :sort_by]],
     [:mkp_custom_apps,          "product/%{product_id}/account/%{account_id}/custom_apps.json", []],
     [:search_mkp_extensions,    "product/%{product_id}/extensions/search.json", [:type, :query]],
     [:auto_suggest_mkp_extensions,"product/%{product_id}/extensions/auto_suggest.json", [:type, :query]],
@@ -18,7 +18,12 @@ module Marketplace::ApiEndpoint
     [:install_extension,        "product/%{product_id}/account/%{account_id}/extensions/%{extension_id}.json", []],
     [:update_extension,         "product/%{product_id}/account/%{account_id}/extensions/%{extension_id}.json", []],
     [:uninstall_extension,      "product/%{product_id}/account/%{account_id}/extensions/%{extension_id}.json", []],
-    [:installed_extensions,     "product/%{product_id}/account/%{account_id}/extensions.json", [:type]] 
+    [:installed_extensions,     "product/%{product_id}/account/%{account_id}/extensions.json", [:type]],
+
+    # Marketplace OAuth
+    [:oauth_install,            "product/%{product_id}/account/%{account_id}/versions/%{version_id}/oauth_install", []],
+    [:fetch_tokens,             "fetch_tokens", [:code]],
+
   ]
 
   ENDPOINT_URL = Hash[*ENDPOINTS.map { |i| [i[0], i[1]] }.flatten]

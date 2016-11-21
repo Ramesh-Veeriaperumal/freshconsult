@@ -5,10 +5,11 @@ module Search
 
       attr_accessor :types, :tenant, :template_name
 
-      def initialize(tenant_id, search_context, types=[])
+      def initialize(tenant_id, search_context, types=[], locale='')
         @tenant         = Tenant.fetch(tenant_id)
         @template_name  = Search::Utils::TEMPLATE_BY_CONTEXT[search_context]
         @types          = types
+        @locale         = locale
       end
 
       # Search for hits in ES and send response
@@ -21,7 +22,10 @@ module Search
                             query_params,
                             construct_payload(search_params),
                             Search::Utils::SEARCH_LOGGING[:request],
-                            request_uuid
+                            request_uuid,
+                            search_params[:account_id],
+                            @tenant.home_cluster,
+                            @template_name
                           ).response
       end
 
@@ -31,14 +35,14 @@ module Search
         # Eg: http://localhost:9200/ticket_v1,user_v1/_search
         #
         def search_path
-          [@tenant.aliases_path(@types), '_search'].join('/')
+          [@tenant.aliases_path(@types, @locale), '_search'].join('/')
         end
 
         # The path to direct search requests using templates
         # Eg: http://localhost:9200/ticket_v1,user_v1/_search/template (w) payload
         #
         def template_query_path
-          [@tenant.aliases_path(@types), '_search/template'].join('/')
+          [@tenant.aliases_path(@types, @locale), '_search/template'].join('/')
         end
         
         # The query params to be passed in the url
@@ -63,7 +67,7 @@ module Search
 
         def tenant_aliases
           @types.collect { |type| 
-            ["#{type}_alias", @tenant.alias(type)]
+            ["#{type}_alias", @tenant.multilang_alias(type, @locale)]
           }.to_h
         end
     end

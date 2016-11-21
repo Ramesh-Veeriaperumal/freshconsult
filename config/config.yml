@@ -112,6 +112,13 @@ integrations_url:
     # staging: "https://login.freshitil.com"
     #staging: "https://login.freshpo.com"
 
+global_integration_url:
+  development: "http://localhost:3000"
+  staging: "https://login.freshpo.com"
+  production: "https://login.freshdesk.com"
+  test: "https://login.freshpo.com"
+
+
 reseller_portal:
   user_name: "freshdesk"
   password: "FDRP$6M"

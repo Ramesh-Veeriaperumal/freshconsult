@@ -522,7 +522,7 @@ li {
         color: #1272de;
         font-size: 22px;
     }
-  
+
     input[type=file] {
         @include size(40px, 40px);
         position: relative;
@@ -686,7 +686,7 @@ li {
         width: 6px;
         position: relative;
         @include left(-4px);
-        
+
     }
     .ficon-cross:hover {
         background-color: #999;
@@ -771,7 +771,7 @@ li {
     .select2-input {
         margin:0px !important;
     }
-    .select2-search-choice 
+    .select2-search-choice
     {
         background: none !important;
         background-image: none !important;
@@ -1010,7 +1010,7 @@ li {
     .attachments-wrap .attachment-type {
         @include padding(3px 0 3px 5px);
     }
-  
+
     .attachment-type span a,
     .attachment-type a {
         color: #000;
@@ -2010,7 +2010,7 @@ li {
         }
     }
     .last-modified-detail {
-        a{ 
+        a{
             font-weight:normal;
             color: #999;
             &:hover{
@@ -2093,6 +2093,52 @@ li {
         margin-bottom: 10px;
         margin-left: 5px;
         font-weight: bold;
+    }
+
+    &.broadcast_message_box {
+        background: #fafafa;
+        &:before, &:after {
+            display: none;
+        }
+
+        .ficon-broadcast-tracker{
+            position: relative;
+            top: 2px;
+            padding-right: 3px;
+        }
+
+        .q-marker {
+            margin-top: 0px;
+        }
+
+        #ticket_original_request {
+            margin-top: 10px;
+            height: auto;
+            overflow: hidden;
+
+                &.collapsed {
+                    height: 65px;
+                    cursor: pointer;
+                }
+            }
+
+        .attach_broadcasted_msg{
+            border-top: 1px solid #ddd;
+            margin-top: 15px;
+            padding-top: 8px;
+        }
+    }
+
+    .parent_child_icon {
+        font-size: 20px;
+        border: 1px solid;
+        border-radius: 50%;
+        padding: 5px 4px 0px 4px;
+        color: #969696 !important;
+        font-weight: bold;
+        position: relative;
+        @include float(left);
+        @include margin-right(5px);
     }
 }
 
@@ -4081,7 +4127,7 @@ li {
             border: none !important;
         }
     }
-    
+
     .attachmentPanel,
     .cannedResponsePanel {
         position: relative;
@@ -4164,7 +4210,7 @@ li {
               min-height: 32px;
             }
         }
-        
+
     }
     .progressHolder {
         height: 25px;
@@ -4225,8 +4271,7 @@ li {
 .nba-sas {
   position: relative;
   line-height: normal;
-  top: -50px;
-  margin:0 30px 0 45px;
+  margin:0 0 0 30px;
   .sas-hd span.err-msg {
     color: #A90329;
     font-weight: normal;
@@ -4276,7 +4321,7 @@ li {
       }
     }
     a.toggle {
-      @include float(right); 
+      @include float(right);
       font-weight: 400;
       font-size: 12px;
       color:#666;
@@ -4286,10 +4331,16 @@ li {
         vertical-align: middle;
         color: #222;
         padding-left: 8px;
-      }  
+      }
+    }
+    a.reload {
+      @include float(right);
+      font-weight: 400;
+      font-size: 12px;
+      color:#666;
     }
     a.help {
-      @include float(none); 
+      @include float(none);
       font-weight: 400;
       font-size: 12px;
       margin:0 10px;
@@ -4327,6 +4378,7 @@ li {
       vertical-align: top;
       cursor: pointer;
       position: relative;
+      word-wrap: break-word;
       .user-name {
         font-style: italic;
         color: #999;
@@ -4429,7 +4481,7 @@ li {
   }
 }
 .sas-nav {
-  @include float(right); 
+  @include float(right);
   a {
     display: inline-block;
     border: 1px solid #d0d0d0;
@@ -4474,45 +4526,42 @@ li {
 }
 /* Next Best Action - Ends */
 
-
-
-
 /* ********************** STYLE FOR CUSTOMER SENTIMENT *********************** */
 
-#tickets-expanded .userpic img.sentiment{ 
+#tickets-expanded .userpic img.sentiment{
     position: absolute;
     bottom: -5px;
     right: -2px;
     width: 20px;
-    height: auto; 
+    height: auto;
     border-radius: 0;
     background: none;
 }
 
-#tickets-expanded .userpic i.sentiment{ 
+#tickets-expanded .userpic i.sentiment{
     position: absolute;
     bottom: -5px;
     right: -2px;
     width: 20px;
-    height: 20px; 
+    height: 20px;
     border-radius: 0;
     display: inline-block;
 }
 
 
 .ticket_show .avatar-wrap .preview_pic img.sentiment{
-    width: 20px; 
-    height: 20px; 
-    position: absolute; 
-    top: 27px; 
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    top: 27px;
     right: -3px;
 }
 
 .ticket_show .avatar-wrap .preview_pic i.sentiment{
-    width: 20px; 
-    height: 20px; 
-    position: absolute; 
-    top: 27px; 
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    top: 27px;
     right: -3px;
 }
 

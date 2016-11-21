@@ -174,9 +174,9 @@ $(document).ready(function(){
         var this_tag_text = $(this)
 
         tag_id = this_tag_text.parents("tr").data("tagId");
-        tag_name = this_tag_text.val();
+        tag_name = this_tag_text.val().trim();
         var tag_name_id = $("#tag_name_"+tag_id)
-        if(!(this_tag_text.val() == tag_name_id.data("tagName") || this_tag_text.val() == "" || this_tag_text.val() == null))
+        if(!(tag_name == tag_name_id.data("tagName") || tag_name == "" || tag_name == null))
         {
             change_tag_name(tag_id, tag_name);
         }

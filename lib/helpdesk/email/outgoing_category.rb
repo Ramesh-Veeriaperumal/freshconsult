@@ -42,12 +42,14 @@ module Helpdesk::Email::OutgoingCategory
 
   def get_category_id(use_mailgun = false)
     key = get_subscription
-    if  ( (!account_whitelisted?) &&
-          (account_created_recently? || 
-            ( (key == "trial") && 
+    if !account_whitelisted?
+      if((key == "trial") && 
             ( ismember?(BLACKLISTED_SPAM_ACCOUNTS, Account.current.id) || Freemail.free_or_disposable?(Account.current.admin_email))
-            )))
-      key = "spam"
+            )
+        key = "spam"
+      elsif( account_created_recently?)
+        key = "trial"
+      end
     end
     if use_mailgun
       MAILGUN_CATEGORY_BY_TYPE[key.to_sym]
@@ -71,11 +73,12 @@ module Helpdesk::Email::OutgoingCategory
     return false
   end
 
+
   def get_mailgun_percentage
-    if $mailgun_percentage.blank? || $last_time_checked.blank? || $last_time_checked < 5.minutes.ago
-      $mailgun_percentage = get_others_redis_key(Redis::RedisKeys::MAILGUN_TRAFFIC_PERCENTAGE).to_i
-      $last_time_checked = Time.now
+    if eval("$#{get_subscription}_mailgun_percentage").blank? || eval("$#{get_subscription}_last_time_checked").blank? || eval("$#{get_subscription}_last_time_checked") < 5.minutes.ago
+      eval("$#{get_subscription}_mailgun_percentage = #{get_others_redis_key(Object.const_get("Redis::RedisKeys::#{(get_subscription).upcase}_MAILGUN_TRAFFIC_PERCENTAGE")).to_i}")
+      eval("$#{get_subscription}_last_time_checked = Time.now")
     end
-    return $mailgun_percentage
+    return eval("$#{get_subscription}_mailgun_percentage")
   end
 end

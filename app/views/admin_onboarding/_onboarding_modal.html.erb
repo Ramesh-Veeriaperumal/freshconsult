@@ -1,0 +1,124 @@
+<!-- Modal -->
+<div id="admin-onboarding-modal"  class="" data-keyboard="false" role="dialog" tabindex="-1" class="hide">
+<div class="modal-shadow-wrapper">
+  <div class="tab-content">
+    <div class="tab-pane active" id="welcome">
+      <div class="modal-header">
+        <div class="modal-header--image-container">
+        </div>
+        <%= image_tag '/assets/onboarding/ob-welcome.png'%>
+      </div>
+      <div class="modal-body">
+        <div class="ceo-avatar">
+          <%= image_tag '/assets/onboarding/girish.jpg'%>
+        </div>
+        <div class="title-text"> <%= t('admin_onboarding.modal.welcome_frame.title') %></div>
+        <div class="text-content">
+          <p> <%= t('admin_onboarding.modal.welcome_frame.message') %></p>
+          <p> <%= t('admin_onboarding.modal.welcome_frame.message2') %></p>
+        </div>
+        <div class="footer-action" data-target="channels">
+          <%= t('admin_onboarding.modal.welcome_frame.forward_link') %>
+          <i class="forward-arrow ficon-arrow-right-2"></i></div>
+      </div>
+    </div>
+
+    <div class="tab-pane" id="channels">
+      <div class="modal-header">
+        <div class="modal-header--image-container">
+        </div>
+        <%= image_tag '/assets/onboarding/ob-choose.png'%>
+      </div>
+      <div class="modal-body">
+        <div class="title-text"><%= t('admin_onboarding.modal.channels_frame.title') %></div>
+        <div class="text-content">
+          <p>
+            <%= t('admin_onboarding.modal.channels_frame.message') %>
+            <span class=""><%= t('admin_onboarding.modal.channels_frame.message2') %></span>
+          </p>          
+          <%= render partial: "admin_onboarding/channel_selector" %>
+        </div>
+        <div class="footer-action" data-target="invite">
+          <%= t('admin_onboarding.modal.channels_frame.forward_link') %>
+          <i class="forward-arrow ficon-arrow-right-2"></i></div>
+      </div>
+    </div>
+
+
+    <div class="tab-pane" id="invite">
+      <div class="modal-header">
+        <div class="modal-header--image-container">
+        </div>
+        <%= image_tag '/assets/onboarding/ob-invite-agents.png'%>
+      </div>
+      <div class="modal-body">
+        <div class="title-text"> <%= t('admin_onboarding.modal.agents_frame.title') %> </div>
+        <div class="text-content">
+          <p>
+            <%= t('admin_onboarding.modal.agents_frame.message') %>  
+    
+            <%= form_for "", :url => create_multiple_items_agents_path(),
+            :remote => true,
+            :html => { :method => :put, :id => "agent_invite", "data-type" => "script" } do |f| %>
+
+              <input class="text select2-offscreen" id="agents_invite_email_input" name="agents_invite_email_input" placeholder="<%= t('admin_onboarding.modal.agents_frame.emails_placeholder') %>" type="text" value="" tabindex="-1">
+              <input type="hidden" name="agents_invite_email[]" value="" />
+
+              <div class="agent_invite_status hide">
+                <div id="status_update" class="failure">
+                    <div class="gs_failure"><%= t('admin_onboarding.modal.agents_frame.emails_invalid') %></div>
+                </div>
+              </div>
+              <div class="agent_email_count_status hide">
+                <div class="failure">
+                    <div class="gs_failure"><%= t('admin_onboarding.modal.agents_frame.emails_exceeded', {limit: 25}) %></div>
+                </div>
+              </div>
+              <button class="invite-button disabled"><%= t('admin_onboarding.modal.agents_frame.send_invite') %></button>
+            <% end %>
+
+          </p>
+        </div>
+        <div class="footer-action" data-target="overview">
+          <%= t('admin_onboarding.modal.agents_frame.forward_link') %> 
+          <i class="forward-arrow ficon-arrow-right-2"></i>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="tab-pane" id="overview">
+      <div class="modal-header">
+      </div>
+      <div class="modal-body">
+        <div class="title-text video-overview-title"> <%= t('admin_onboarding.modal.overview_frame.title') %>  </div>
+        <div class="text-content">
+          <p>
+          <%= t('admin_onboarding.modal.overview_frame.message') %> 
+          </p>
+          <div class="video-wrapper">
+            <div class="wistia_responsive_padding" style="padding:56.25% 0 0 0;position:relative;"><div class="wistia_responsive_wrapper" style="height:100%;left:0;position:absolute;top:0;width:100%;"><iframe src="//fast.wistia.net/embed/iframe/z9oqmkaq82?seo=false&videoFoam=true" allowtransparency="true" frameborder="0" scrolling="no" class="wistia_embed" name="wistia_embed" allowfullscreen mozallowfullscreen webkitallowfullscreen oallowfullscreen msallowfullscreen width="100%" height="100%"></iframe></div></div>
+            <script src="//fast.wistia.net/assets/external/E-v1.js" async></script>    
+          </div>
+        
+        </div>
+        <div class="footer-action onboarding-modal--close" data-target="">
+          <%= t('admin_onboarding.modal.overview_frame.forward_link') %> 
+          <i class="forward-arrow ficon-arrow-right-2"></i>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+  
+  <div class="modal-footer">
+    <ul class="nav onboarding-frame-nav-container">
+      <li class="nav active"> <a data-toggle="tab"  href="#welcome">●</a></li>
+      <li class="nav"> <a data-toggle="tab" class="channel-config" href="#channels">●</a></li>
+      <li class="nav"><a data-toggle="tab" href="#invite">●</a></li>
+      <li class="nav"> <a data-toggle="tab" href="#overview">●</a></li>
+    </ul>
+  </div>
+</div>
+</div>
+

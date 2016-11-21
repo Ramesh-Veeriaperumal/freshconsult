@@ -55,7 +55,9 @@ var ComposeEmail = {
 
     appendSignature: function(){
 		signature = jQuery("#signature").val();
-    	jQuery(".redactor_editor").html(signature);
+		if(signature != "") {
+			jQuery(".redactor_editor").html(signature);
+		}
     },
     
     bindEvents: function(){
@@ -133,15 +135,20 @@ var ComposeEmail = {
 			_form.submit();
 		});
 
-		jQuery('#ComposeTicket').on("submit.compose", function(){
-			var _form = jQuery(this);
+		jQuery('#ComposeTicket').on("submit.compose", function(ev){			
+			var _form = jQuery("#ComposeTicket");
 			if(_form.valid()) {
         jQuery("#compose-submit").text(  jQuery("#compose-submit").data('loading-text')).attr('disabled', true);
         jQuery("#compose-submit").next().attr('disabled', true);
         jQuery(".cancel-btn").attr('disabled', true);
 				// _form.find("button, a.btn").attr('disabled',true);
+			} else {
+				ev.preventDefault();
+				return false;
 			}
-		});
+
+			pjax_form_submit("#ComposeTicket", ev)
+		}.bind(this));
 
 	    this.$body.on('click.compose', '#compose-submit', function(ev){
 	    	var cc_email = jQuery('#compose-new-email');

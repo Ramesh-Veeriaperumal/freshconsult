@@ -1,0 +1,66 @@
+<% children_count = @children.count %>
+<% content_for :sidebar do %>
+  <%= render :partial => "parent_child_status" , :locals => { :children_count => children_count }  %>
+<% end %>
+
+<% content_for :pagefixed do %>
+	<%= render :partial => "shared/placeholder_help" , :locals => {:placeholders => ticket_placeholders} %>
+<% end %>
+<% if  current_account.launched?(:multifile_attachments)  %>
+	<%= render "helpdesk/tickets/ticket_widget/multifile_template_generator" %>
+ <% else %>
+  <%= render "helpdesk/shared/single_attachment_template" %>
+<% end %>
+<div class='page-header-sticky parent-header-sticky template-sticky' rel='sticky'>
+	<div class='sticky-header-wrapper'>
+		<h3 class='lead pull-left'> 
+			<%= t('ticket_templates.child_template.new_title') %>  
+		</h3>
+		<div class="pull-right">
+			<%= link_to t('ticket_templates.child_template.insert_placeholder'), "", :class => "insert_placeholder"  %>
+			<%= link_to t('cancel'), edit_helpdesk_ticket_template_path(@parent.id) , :class => "btn statusbar-redirect form_btn" %> 
+			<%= submit_tag t('save_add_child'), :class => "btn add_child form_btn" if !((@children.count + 1) >= Helpdesk::TicketTemplate::TOTAL_CHILD_TEMPLATES) %>
+			<%= submit_tag t('save'), :class => "btn btn-primary save_template form_btn" %>
+		</div>
+	</div>
+	<span class="pull-right template-msg"><%= t('ticket_templates.add_another_child_message').html_safe%></span>
+</div>
+<br/>
+<div id="ticket-template-wrapper">
+	<%= form_for @tkt_template, :url => { :controller => "ticket_templates", :action => "create" }, :html => { :multipart => true, :rel => "validate", :class => 'child-form new-form ticket_template_form template_form', :id => "ticket_template"}  do |f| %>
+		<%= render :partial => "child_form", :locals => { :f => f, :is_edit => (@tkt_template.errors.any? ? true : false)} %>
+		<div class="modal hide fade" id="toggle-confirm" style="width:600px;margin-left: -300px" aria-hidden="true" role="dialog">
+		  <div class="modal-header">
+		    <button class="close" data-dismiss="modal"></button>
+		    <h3><%= t('ticket_templates.save_and_continue.title') %></h3>
+		  </div>
+		  <div class="modal-body">
+		    <p><%= t('ticket_templates.save_and_continue.info1') %></p>
+		  </div>
+		  <div class="modal-footer">	
+		  	<%= link_to(t('ticket_templates.save_and_continue.proceed'), '' ,:class => "btn proceed_anyway")%>
+		  	<%= link_to(t('ticket_templates.save_and_continue.cancel'),'' ,:class => "btn btn-primary take_back",:method => 'delete' )%>
+		   </div>
+		</div>
+	<% end %>
+</div>
+<!-- Canned response dialog -->
+<%= render :partial => "/helpdesk/ticket_templates/canned"  %>
+
+<%= javascript_tag do %>
+	var customMessages  = {
+		insertParent: '<%= t("ticket_templates.child_template.inherit_parent") %>',
+		undoParentInherit: '<%= t("ticket_templates.child_template.undo_parent_inherit") %>',
+		parent: '<%= t("ticket_templates.parent") %>',
+		select_one:'<%= t('ticket_templates.child_template.select_one') %>',
+		new:'<%= t('ticket_templates.child_template.new') %>',
+		existing: '<%= t('ticket_templates.child_template.existing') %>',
+		<% if(@children) %>
+		child_ids:<%= @children.map(&:id).inspect %>,
+		<%end %>
+		noName:'<%= t('ticket_templates.child_template.noname') %>',
+		parentId:'<%= params[:p_id]%>',
+		inherit_tooltip:'<%= t('ticket_templates.child_template.parent_tooltip') %>',
+		undo_inherit_tooltip:'<%= t('ticket_templates.child_template.undo_parent_tooltip') %>'
+	};
+<% end %>

@@ -1,0 +1,37 @@
+<div class="link_tracker_box p10">
+  <span class="text-center block">
+    <span class="mr12"> 
+    <a href="<%= new_helpdesk_ticket_child_path(@ticket.id) %>">Add Child </a>
+    </span> 
+    <span class="or">or</span> 
+    <span class="ml12">
+    <a href="#"  class="lnk_tkt_tracker" id="lnk_tkt_tracker" role="button" data-toggle="popover"><%= t('ticket.link_tracker.link_to_tracker') %></a>
+    </span>
+ </span>
+</div>
+<hr>
+ <div class='popover_content hide'>
+  <div class="inline-field">
+    <div class="fields">
+     <button type="button" class="btn btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="false" aria-expanded="false"><span class="caret"></span></button>
+      <ul class="dropdown-menu problem_tkt_search_type">
+        <li class="active"><a href="#" data-filter="subject"><%= t('ticket.link_tracker.options.subject') %></a></li>
+        <li><a href="#" data-filter="display_id"><%= t('ticket.link_tracker.options.tkt_id') %></a></li>
+        <li><a href="#" data-filter="requester"><%= t('ticket.link_tracker.options.requester') %></a></li>
+      </ul>
+    <input type='text' class='problem_tkt_search_name'>
+    </div>
+    </div>
+ <div class="span 12">
+   <div class="span 6 pull-left">
+    Recently Created
+   </div>
+   <div class="span 6 pull-right">
+      <%= link_to ' + Create New ', '/helpdesk/tickets/link_tracker', 
+            data: { ticket_display_id: @ticket.display_id ,url: '/helpdesk/tickets/link_tracker' },class:"new_problem_ticket" %>
+   </div>
+ </div>
+ <!-- result -->
+ <span class="loading-block sloading loading-small">
+ </div>
+

@@ -2,6 +2,8 @@ class SearchSidekiq::RemoveFromIndex < SearchSidekiq::BaseWorker
 
   class Document < SearchSidekiq::RemoveFromIndex
     def perform(args)
+      return unless Account.current.esv1_enabled?
+
       args.symbolize_keys!
       klass = args[:klass_name].constantize
       index_alias = Search::EsIndexDefinition.searchable_aliases(Array(klass), Account.current.id).to_s
@@ -11,6 +13,8 @@ class SearchSidekiq::RemoveFromIndex < SearchSidekiq::BaseWorker
 
   class ForumTopics < SearchSidekiq::RemoveFromIndex
     def perform(args)
+      return unless Account.current.esv1_enabled?
+
       args.symbolize_keys!
       query = Tire.search do |search|
                 search.query do |query|
@@ -27,6 +31,8 @@ class SearchSidekiq::RemoveFromIndex < SearchSidekiq::BaseWorker
 
   class AllDocuments < SearchSidekiq::RemoveFromIndex
     def perform
+      return unless Account.current.esv1_enabled?
+
       query = Tire.search do |search|
         search.query { |q| q.term :account_id, Account.current.id }
       end
