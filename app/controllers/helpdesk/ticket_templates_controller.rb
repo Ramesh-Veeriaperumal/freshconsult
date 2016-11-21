@@ -16,7 +16,7 @@ class Helpdesk::TicketTemplatesController < ApplicationController
   include Helpdesk::Accessible::ElasticSearchMethods
 
   before_filter :initialize_parent,                   :only => [:edit, :edit_child, :update, :clone, :destroy,
-                                                                :unlink_parent, :add_existing_child]
+                                                                :unlink_parent]
   before_filter :audit_items,                         :only => [:new_child, :edit, :edit_child]
   before_filter :load_child,                          :only => [:new_child, :edit, :edit_child, :clone]
   before_filter :assign_description,                  :only => [:edit, :edit_child]
@@ -90,6 +90,7 @@ class Helpdesk::TicketTemplatesController < ApplicationController
   end
 
   def add_existing_child
+    @item = scoper(:child).find_by_id(params[:id])
     if @item and @item.child_template? and !has_parent and load_parent
       @item.build_parent_assn_attributes(@parent.id)
       if @item.save

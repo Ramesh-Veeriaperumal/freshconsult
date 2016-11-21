@@ -9,7 +9,7 @@ module SharedPersonalMethods
       before_filter :manage_personal_tab,       :only => [:index]
       before_filter :set_selected_tab
       before_filter :build_item,                :only => [:new, :new_child, :create, :apply_existing_child, :verify_template_name]
-      before_filter :load_item,                 :only => [:edit, :edit_child, :update, :clone, :destroy, :unlink_parent, :add_existing_child]
+      before_filter :load_item,                 :only => [:edit, :edit_child, :update, :clone, :destroy, :unlink_parent]
       before_filter :reset_user_and_group_ids,  :only => :update
     }
   end
