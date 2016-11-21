@@ -117,7 +117,7 @@ namespace :gnip_stream do
 
     queue.poll(:initial_timeout => false,
                :batch_size => 10, :attributes => attributes) do |sqs_msg|
-      process_tweet sqs_msg
+      process_tweet sqs_msg, queue
     end
   end
 
@@ -128,11 +128,11 @@ namespace :gnip_stream do
 
     queue.poll(:initial_timeout => false,
                :batch_size => 10, :attributes => attributes) do |sqs_msg|
-      process_tweet sqs_msg
+      process_tweet sqs_msg, queue
     end
   end
 
-  def process_tweet sqs_msg
+  def process_tweet sqs_msg, queue
     tweet = sqs_msg.body
     unless tweet.blank?
       gnip_msg = Social::Gnip::TwitterFeed.new(tweet, queue)
