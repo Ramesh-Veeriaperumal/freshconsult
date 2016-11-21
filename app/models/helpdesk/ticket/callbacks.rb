@@ -489,7 +489,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def validate_assoc_parent_ticket
     @assoc_parent_ticket = Account.current.tickets.permissible(User.current).readonly(false).find_by_display_id(assoc_parent_tkt_id)
     if !(@assoc_parent_ticket && @assoc_parent_ticket.can_be_associated?)
-      errors.add(:base,t("ticket.parent_child.permission_denied")) and return false # msg confirm with vikram
+      errors.add(:base,t("ticket.parent_child.permission_denied")) and return false
     elsif !@assoc_parent_ticket.child_tkt_limit_reached?
       errors.add(:base,t("ticket.parent_child.count_exceeded",:count => TicketConstants::CHILD_TICKETS_PER_ASSOC_PARENT)) and return false
     end
@@ -511,7 +511,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
       action_log = Thread.current[:scenario_action_log]
       Thread.current[:scenario_action_log][:status] = I18n.t('ticket.unresolved_child') if action_log.present? and action_log[:status].present?
       # for activities
-      self.system_changes.each do |key, value| #confirm with vikram and RAM
+      self.system_changes.each do |key, value|
         value.delete(:status) if value[:status].present?
       end if system_changes.present?
     end
