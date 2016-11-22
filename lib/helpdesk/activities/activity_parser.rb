@@ -352,7 +352,7 @@ module Helpdesk::Activities
 
     def delete_group(value)
       str  = get_string_name("property_delete")
-      deleted_property_value = escapeHTML("#{value[0]}")}
+      deleted_property_value = escapeHTML("#{value[0]}")
       property_value = "#{render_string("activities.none")}"
       @activity[:set] << render_string(str,
             {:property => "#{render_string("activities.group")}", 
