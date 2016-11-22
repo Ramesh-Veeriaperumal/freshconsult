@@ -12,7 +12,7 @@
       %>
       <div class="control-group <%= " hide company_container" if field.field_type == "default_company" %>" >
         <%= ticket_field_container f,:helpdesk_ticket, field, 
-              helpdesk_ticket_values(field,@params) %>
+              helpdesk_ticket_values(field,@params), nil, {:pre_fill_flag => false}%>
       </div>
       <% if field.has_section?
         field.picklist_values.each do |picklist|
@@ -60,42 +60,43 @@
   (function($){
     var populateRequestForm = function(){
       var requester_input = $('#helpdesk_ticket_email');
-      if(<%=cache_options[:company_cache_condition]%> && $('#helpdesk_ticket_company_id').length == 0){
-        var company_container = $('<div>', { 'class': 'control-group hide company_container' });
-        company_container.html('<%= cache_options[:company_container].gsub(/\r?\n/,'').html_safe %>')
-          .insertAfter(requester_input);
-      }
-      if(<%= cache_options[:cc_cache_condition] %>){
-        if($('#add-cc-button').length == 0){
-          requester_input.parent().append('<a href="#" data-toggle-dom="#cc-emails" data-toggle-text="<%= t('helpdesk.shared.hide_cc') %>" id="add-cc-button"><%= t('helpdesk.shared.addcc') %></a>')
-            .after($('#cc-emails'));
+      <% if current_account.launched?(:support_new_ticket_cache) && current_user.present?%>
+
+        if(<%=cache_options[:company_cache_condition]%> && $('#helpdesk_ticket_company_id').length == 0){
+          var company_container = $('<div>', { 'class': 'control-group hide company_container' });
+          company_container.html('<%= cache_options[:company_container].gsub(/\r?\n/,'').html_safe %>')
+            .insertAfter(requester_input);
+        }
+        if(<%= cache_options[:cc_cache_condition] %>){
+          if($('#add-cc-button').length == 0){
+            requester_input.parent().append('<a href="#" data-toggle-dom="#cc-emails" data-toggle-text="<%= t('helpdesk.shared.hide_cc') %>" id="add-cc-button"><%= t('helpdesk.shared.addcc') %></a>')
+              .after($('#cc-emails'));
+          }
+          else{
+            $('#cc-emails').remove();
+            requester_input.parent().after($('#cc-emails'));
+          }
         }
         else{
-          $('#cc-emails').remove();
-          requester_input.parent().after($('#cc-emails'));
+          $('.cc-emails, #add-cc-button').remove();
         }
-      }
-      else{
-        $('.cc-emails, #add-cc-button').remove();
-      }
+        var repaint_store_data = <%= get_store_data.html_safe %>
+        var repaint_map = {'group': '#helpdesk_ticket_group_id', 'agent': '#helpdesk_ticket_responder_id'};
+        for( var key in repaint_map){
+          var element = $(repaint_map[key]);
+          if(element.length == 0)continue;
+          var emptyOption = $('<option>', {val: "", text: "..."});
+          var options = repaint_store_data[key].map(function(value, i){ 
+              return $('<option>', { val: value.id, text: value.name }); 
+          });
+          options.unshift(emptyOption);
+          element.html(options);
+        }
+      <% end %>
       requester_input.val('<%= current_user.email if current_user.present? %>').trigger('focusout');
-      var repaint_store_data = <%= get_store_data.html_safe %>
-      var repaint_map = {'group': '#helpdesk_ticket_group_id', 'agent': '#helpdesk_ticket_responder_id'};
-      for( var key in repaint_map){
-        var element = $(repaint_map[key]);
-        if(element.length == 0)continue;
-        var emptyOption = $('<option>', {val: "", text: "..."});
-        var options = repaint_store_data[key].map(function(value, i){ 
-            return $('<option>', { val: value.id, text: value.name }); 
-        });
-        options.unshift(emptyOption);
-        element.html(options);
-      }
     };  
     jQuery(document).ready(function(){
-      <% if Account.current.launched?(:support_new_ticket_cache) && current_user.present?%>
-        populateRequestForm();
-      <% end %>
+      populateRequestForm();
       jQuery('#meta_referrer').val(document.referrer.escapeHTML());
       <% if feature?(:auto_suggest_solutions) && allowed_in_portal?(:open_solutions) %>
         callbackToSolutionSearch = function(string){
