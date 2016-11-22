@@ -22,6 +22,7 @@ class Account < ActiveRecord::Base
   after_commit :enable_searchv2, :enable_count_es, on: :create
   after_commit :disable_searchv2, :disable_count_es, on: :destroy
   after_commit :update_sendgrid, on: :create
+  after_commit :add_features_to_binary_column, on: :create
 
   # Callbacks will be executed in the order in which they have been included. 
   # Included rabbitmq callbacks at the last
@@ -108,6 +109,23 @@ class Account < ActiveRecord::Base
         Rails.logger.info "Shard mapping exception caught"
         errors[:base] << "Domain is not available!"
         return false
+      end
+    end
+
+    #Note:: Deliberately doing update column as we are only doing writes and dont need to clear cache now
+    #Will decide on callbacks later in other phase.
+    #set_feature in loop wont save in DB. add_feature in loop will trigger multiple update queries
+    #signup needs just set_feature with just a value. 
+    def add_features_to_binary_column
+      begin
+        bitmap_value = 0
+        FEATURES_DATA[:plan_features][:feature_list].each do |key, value|
+          bitmap_value = self.set_feature(key)
+        end
+        self.update_column(:plan_features, bitmap_value)
+      rescue Exception => e
+        Rails.logger.info "Issue in bitmap calculation - account signup #{e.message}"
+        NewRelic::Agent.notice_error(e)
       end
     end
 

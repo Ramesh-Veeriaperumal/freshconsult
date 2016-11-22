@@ -13,6 +13,7 @@ class Account < ActiveRecord::Base
   include ErrorHandle
   include AccountConstants
   include Onboarding::OnboardingRedisMethods
+  include FreshdeskFeatures::Feature
 
   has_many_attachments
   
