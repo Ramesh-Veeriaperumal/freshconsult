@@ -372,7 +372,7 @@ module Helpdesk::Activities
 
     def delete_internal_group(value)
       str    = get_string_name("internal_agent_group_none")
-      params = {:property => "#{render_string("activities.group")}" 
+      params = {:property => "#{render_string("activities.group")}",
                 :deleted_value => escapeHTML("#{value[0]}")}
       @activity[:misc] << render_string(str, params)
     end
@@ -678,7 +678,7 @@ module Helpdesk::Activities
 
     def remove_status(value)
       str    = get_string_name("internal_agent_group_none")
-      params = {:property => "#{render_string("activities.status")}" 
+      params = {:property => "#{render_string("activities.status")}", 
                 :deleted_value => escapeHTML("#{value[0]}")}      
       @activity[:misc] << render_string(str, params)
     end
