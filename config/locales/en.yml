@@ -2735,6 +2735,9 @@ en:
     none: "None"
     subject: "subject"
     status: "Status"
+    group: "Group"
+    agent: "Agent"
+    internal_agent: "Internal Agent"
     description: "description"
     set: "Set"
     tag:
@@ -3087,16 +3090,14 @@ en:
         new: "Internal Group as <strong>%{group_name}</strong>"
       internal_agent:
         new: "Internal Agent as %{responder_path}"
+      internal_agent_group_none:
+        new: "Set Internal Agent as None, Internal Group as None as the %{property} <strong>%{deleted_value}</strong> was deleted"
+      delete_agent:
+        new: "Set %{property} as None as the agent %{responder_path} was deleted"
       remove_group:
         new: "Set Internal Agent as None, Internal Group as None as the mapping was removed between group <strong>%{group_name}</strong> and status <strong>%{status_name}</strong>"
       remove_agent:
         new: "Set Internal Agent as None as the agent %{responder_path} was removed from group <strong>%{group_name}</strong>"
-      delete_internal_group:
-        new: "Set Internal Agent as None, Internal Group as None as the group <strong>%{group_name}</strong> was deleted"
-      delete_internal_agent:
-        new: "Set Internal Agent as None as the agent %{responder_path} was deleted"
-      delete_status:
-        new: "Set Internal Agent as None, Internal Group as None as the status <strong>%{status_name}</strong> was deleted"
       automation_execution:
         new: " after automation rule execution"
       rel_tkt_link:
