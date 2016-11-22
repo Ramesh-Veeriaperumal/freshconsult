@@ -285,6 +285,13 @@
             }
         },
 
+        ticket_show_pickup = function (ev, key) {
+            var user = DataStore.get('current_user').currentData.user.id;
+            jQuery('#helpdesk_ticket_responder_id').val(user).trigger('change')
+
+            $("#helpdesk_ticket_submit").trigger('click');
+        },
+
         KB = {
             global        : {
                 help                : shortcutHelp,
@@ -311,7 +318,8 @@
                 close               : closeTicket,
                 silent_close        : closeTicket,
                 expand              : expand,
-                select_watcher      : selectWatcher              
+                select_watcher      : selectWatcher,
+                pickup              : ticket_show_pickup           
             },
             social_stream   : {
                 open_stream         : socialOpenStream,
