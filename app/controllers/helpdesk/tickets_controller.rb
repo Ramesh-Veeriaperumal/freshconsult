@@ -211,8 +211,29 @@ class Helpdesk::TicketsController < ApplicationController
         flash[:notice] = t(:'flash.tickets.empty_trash.delay_delete') if @current_view == "deleted" and key_exists?(empty_trash_key)
         flash[:notice] = t(:'flash.tickets.empty_spam.delay_delete') if @current_view == "spam" and key_exists?(empty_spam_key)
         @is_default_filter = (!is_num?(view_context.current_filter))
+        
+        #Changes for customer sentiment - Beta feature
 
         #@sentiments = {:ticket_id => sentiment_value}
+        if Account.current.customer_sentiment_ui_enabled?
+          survey_association = Account.current.new_survey_enabled? ? "custom_survey_results" : "survey_results"
+          @sentiments = {}
+          #Collect all ticket ids by looping @items
+          ticket_ids =  @items.map(&:id)
+          note_senti = ActiveRecord::Base.connection.execute("select id,int_nc04 from helpdesk_schema_less_notes where account_id = #{Account.current.id} and id in (#{ticket_ids.join(',')}) ").collect{|i| i}.to_h
+          @items.each do |ticket|
+            #While colling check for customer survey
+            if ticket.send(survey_association).nil? || ticket.send(survey_association).last.nil?
+              if note_senti[ticket.id].present?
+                @sentiments[ticket.id] = note_senti[ticket.id]
+              else
+                @sentiments[ticket.id] = ticket.sentiment
+              end
+            end
+          end
+        end
+        #End of changes for customer sentiment - Beta feature
+
         # if request.headers['X-PJAX']
         #   render :layout => "maincontent"
         # end
@@ -383,6 +404,29 @@ class Helpdesk::TicketsController < ApplicationController
   def custom_search
     params[:html_format] = true
     @items = fetch_tickets
+
+    #Changes for customer sentiment - Beta feature
+        
+    #@sentiments = {:ticket_id => sentiment_value}
+    if Account.current.customer_sentiment_ui_enabled?
+      survey_association = Account.current.new_survey_enabled? ? "custom_survey_results" : "survey_results"
+      @sentiments = {}
+      #Collect all ticket ids by looping @items
+      ticket_ids =  @items.map(&:id)
+      note_senti = ActiveRecord::Base.connection.execute("select id,int_nc04 from helpdesk_schema_less_notes where account_id = #{Account.current.id} and id in (#{ticket_ids.join(',')}) ").collect{|i| i}.to_h
+      @items.each do |ticket|
+        #While colling check for customer survey
+        if ticket.send(survey_association).nil? || ticket.send(survey_association).last.nil?
+          if note_senti[ticket.id].present?
+            @sentiments[ticket.id] = note_senti[ticket.id]
+          else
+            @sentiments[ticket.id] = ticket.sentiment
+          end
+        end
+      end
+    end
+    #End of changes for customer sentiment - Beta feature
+
     @current_view = view_context.current_filter
     render :partial => "custom_search"
   end
@@ -1924,7 +1968,12 @@ class Helpdesk::TicketsController < ApplicationController
     if es_tickets_enabled? and params[:html_format]
       tickets_from_es(params)
     else
-      current_account.tickets.preload({requester: [:avatar]}, :company, :schema_less_ticket).permissible(current_user).filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
+      if Account.current.customer_sentiment_ui_enabled?
+        survey_association = Account.current.new_survey_enabled? ? "custom_survey_results" : "survey_results"
+        current_account.tickets.preload({requester: [:avatar]}, :company, :schema_less_ticket, survey_association).permissible(current_user).filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
+      else
+        current_account.tickets.preload({requester: [:avatar]}, :company).permissible(current_user).filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
+      end 
     end
   end
 
