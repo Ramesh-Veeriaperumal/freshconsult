@@ -15,7 +15,7 @@ module RabbitMq::Subscribers::Tickets::AutoRefresh
   end
 
   def mq_auto_refresh_valid(action, model)
-    destroy_action?(action) ? false : (valid_model?(model) && auto_refresh_allowed? && model_changes?)
+    destroy_action?(action) ? false : (auto_refresh_valid_model?(model) && auto_refresh_allowed? && model_changes?)
   end
 
   private
@@ -48,7 +48,7 @@ module RabbitMq::Subscribers::Tickets::AutoRefresh
     changes
   end
 
-  def valid_model?(model)
+  def auto_refresh_valid_model?(model)
     ["ticket"].include?(model)
   end
 

@@ -14,7 +14,7 @@ module RabbitMq::Subscribers::Users::Reports
   def mq_reports_valid(action, model)
     false
     # TODO currently commenting out the code
-    # valid_model?(model) && (create_action?(action) || destroy_action?(action) || @model_changes.keys.select {|key|  valid_key?(key) }.any?)
+    # activity_valid_model?(model) && (create_action?(action) || destroy_action?(action) || @model_changes.keys.select {|key|  valid_key?(key) }.any?)
   end
   
   private
@@ -23,7 +23,7 @@ module RabbitMq::Subscribers::Users::Reports
       PROPERTIES_TO_CONSIDER.include?(key) || non_text_ff_fields.include?(key)
     end
     
-    def valid_model?(model)
+    def activity_valid_model?(model)
       ["user"].include?(model)
     end
 
