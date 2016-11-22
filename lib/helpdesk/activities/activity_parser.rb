@@ -261,7 +261,7 @@ module Helpdesk::Activities
       return if user.blank?
       @activity[:misc] << render_string(str, 
         { :property => "#{render_string("activities.agent")}",
-          :responder_path => "#{build_url(user.name, user_path(user))}"}
+          :responder_path => "#{build_url(user.name, user_path(user))}"})
     end
 
     def internal_agent_id(value)
