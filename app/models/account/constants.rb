@@ -47,7 +47,8 @@ class Account < ActiveRecord::Base
     :estate => {
       :features => [ :collision, :layout_customization, :round_robin, :enterprise_reporting,
         :custom_ssl, :custom_roles, :multiple_business_hours, :facebook_page_tab, :chat_routing, :dynamic_sections,
-        :helpdesk_restriction_toggle, :round_robin_load_balancing],
+        :helpdesk_restriction_toggle, :round_robin_load_balancing, :multiple_user_companies, 
+        :multiple_companies_toggle, :round_robin_on_update ],
       :inherits => [ :garden ]
     },
 
@@ -75,7 +76,8 @@ class Account < ActiveRecord::Base
     :estate_classic => {
       :features => [ :collision, :layout_customization, :round_robin, :enterprise_reporting,
         :custom_ssl, :custom_roles, :multiple_business_hours, :facebook_page_tab, :chat_routing,
-        :helpdesk_restriction_toggle, :round_robin_load_balancing ],
+        :helpdesk_restriction_toggle, :round_robin_load_balancing, :multiple_user_companies,
+        :multiple_companies_toggle, :round_robin_on_update ],
       :inherits => [ :garden_classic ]
     }
 
@@ -92,8 +94,9 @@ class Account < ActiveRecord::Base
     :chat_enable => false, :saml_old_issuer => false, :spam_dynamo => true,
     :redis_display_id => false, :es_multilang_solutions => false,
     :sort_by_customer_response => false, :survey_links => true,
-    :saml_unspecified_nameid => false, :multiple_user_companies => false,
-    :euc_hide_agent_metrics => false, :single_session_per_user => false, :link_tickets => false, :parent_child_tickets => false
+    :saml_unspecified_nameid => false, :euc_hide_agent_metrics => false, 
+    :single_session_per_user => false, :link_tickets => false, :parent_child_tickets => false,
+    :marketplace_app => false
   }
 
 
@@ -106,12 +109,12 @@ class Account < ActiveRecord::Base
     :disable_rr_toggle => false, :domain_restricted_access => false, :freshfone_conference => false, 
     :marketplace => true, :fa_developer => true,:archive_tickets => false, :compose_email => false,
     :limit_mobihelp_results => false, :ecommerce => false, :es_v2_writes => true, :shared_ownership => false,
-    :salesforce_sync => false, :round_robin_on_update => false, :freshfone_call_metrics => false, :cobrowsing => false,
+    :salesforce_sync => false, :freshfone_call_metrics => false, :cobrowsing => false,
     :threading_without_user_check => false, :freshfone_call_monitoring => false, :freshfone_caller_id_masking => false,
     :agent_conference => false, :freshfone_warm_transfer => false, :restricted_helpdesk => false, :enable_multilingual => false,
     :count_es_writes => false, :count_es_reads => false, :activity_revamp => true, :countv2_writes => false, :countv2_reads => false,
     :helpdesk_restriction_toggle => false, :freshfone_acw => false, :ticket_templates => false, :cti => false, :all_notify_by_custom_server => false,
-    :freshfone_custom_forwarding => false, :freshfone_onboarding => false }
+    :freshfone_custom_forwarding => false, :freshfone_onboarding => false, :freshfone_gv_forward => false }
 
   # This list below is for customer portal features list only to prevent from adding addition features
   ADMIN_CUSTOMER_PORTAL_FEATURES =  {:anonymous_tickets => true, :open_solutions => true, :auto_suggest_solutions => true, 
@@ -126,15 +129,15 @@ class Account < ActiveRecord::Base
   FD_NODE_FEATURES = ['cti']
 
   # List of Launchparty features available in code
-  LAUNCHPARTY_FEATURES = [:activity_ui_disable, :admin_dashboard, :agent_conference, :agent_dashboard, :agent_new_ticket_cache, :api_search_beta, 
-                          :autopilot_headsup, :autoplay, :delayed_dispatchr_feature, 
-                          :enable_old_sso, :es_count_reads, :es_count_writes, :es_down, :es_tickets, :es_v2_reads, :fb_msg_realtime, 
-                          :force_index_tickets, :freshfone_call_tracker, :freshfone_new_notifications, :gamification_perf, 
-                          :gamification_quest_perf, :helpdesk_ticket_templates, :lambda_exchange, :meta_read, :most_viewed_articles, 
-                          :multifile_attachments, :new_footer_feedback_box, :new_leaderboard, :periodic_login_feature, :shared_ownership, 
-                          :supervisor_dashboard, :support_new_ticket_cache, :ticket_list_page_filters_cache, :translate_solutions, 
-                          :sidekiq_dispatchr_feature, :list_page_new_cluster, :freshfone_onboarding, :disable_old_sso, 
-                          :round_robin_capping, :cache_new_tkt_comps_forms, :restricted_helpdesk, :solutions_meta_read, 
-                          :freshfone_caller_id_masking, :bi_reports]
+  LAUNCHPARTY_FEATURES = [:activity_ui_disable, :admin_dashboard, :agent_conference, :agent_dashboard, :agent_new_ticket_cache, :api_search_beta,
+                          :autopilot_headsup, :autoplay, :delayed_dispatchr_feature,
+                          :enable_old_sso, :es_count_reads, :es_count_writes, :es_down, :es_tickets, :es_v2_reads, :fb_msg_realtime,
+                          :force_index_tickets, :freshfone_call_tracker, :freshfone_new_notifications, :gamification_perf,
+                          :gamification_quest_perf, :lambda_exchange, :meta_read, :most_viewed_articles,
+                          :multifile_attachments, :new_footer_feedback_box, :new_leaderboard, :periodic_login_feature, :shared_ownership,
+                          :supervisor_dashboard, :support_new_ticket_cache, :ticket_list_page_filters_cache, :translate_solutions,
+                          :sidekiq_dispatchr_feature, :list_page_new_cluster, :freshfone_onboarding, :disable_old_sso,
+                          :round_robin_capping, :cache_new_tkt_comps_forms, :restricted_helpdesk, :solutions_meta_read,
+                          :freshfone_caller_id_masking, :bi_reports, :es_v1_enabled, :synchronous_apps, :parent_child_tickets, :link_tickets]
 
 end

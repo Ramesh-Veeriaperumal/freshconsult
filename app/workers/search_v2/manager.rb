@@ -6,7 +6,7 @@ class SearchV2::Manager
   
   class EnableSearch < SearchV2::Manager
     def perform
-      Search::V2::Tenant.new(Account.current.id).bootstrap
+      Search::V2::Tenant.new(Account.current.id).bootstrap unless Rails.env.development?
       
       # Push initially bootstrapped data to ES
       #
@@ -52,7 +52,7 @@ class SearchV2::Manager
         Search::V2::IndexRequestHandler.new(es_type, args[:account_id], nil).remove_by_query({ account_id: args[:account_id] })
       end
       
-      Search::V2::Tenant.new(args[:account_id]).rollback
+      Search::V2::Tenant.new(args[:account_id]).rollback unless Rails.env.development?
     end
   end
 end

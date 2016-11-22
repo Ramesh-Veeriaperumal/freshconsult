@@ -12,10 +12,10 @@ class EsEnabledAccount < ActiveRecord::Base
   private
 
     def clear_cache
-      SearchSidekiq::RemoveFromIndex::AllDocuments.perform_async if ES_ENABLED
+      SearchSidekiq::RemoveFromIndex::AllDocuments.perform_async if self.account.esv1_enabled?
     end
 
     def create_aliases
-      Search::EsIndexDefinition.create_aliases(self.account_id)
+      Search::EsIndexDefinition.create_aliases(self.account_id) if self.account.esv1_enabled?
     end
 end

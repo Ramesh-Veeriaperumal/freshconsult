@@ -1,0 +1,19 @@
+<% if(extensions.length > 0) { %>
+  <div class="apps-category-ttl">
+    <p class="pull-left"><%= translate.get('latest_apps') %></p>
+    <a href="#" data-url="<%= app_gallery_url %>" class="pull-right view-all" id="latest"><%= translate.get('view_all') %></a>
+  </div>
+  <%= JST['marketplace/app_content']({extensions : latest_extensions.slice(0,6) }) %>
+
+  <div class="apps-category-ttl">
+    <p class="pull-left"><%= translate.get('popular_apps') %></p>
+    <a href="#" data-url="<%= app_gallery_url %>" class="pull-right view-all" id="popular"><%= translate.get('view_all') %></a>
+  </div>
+  <%= JST['marketplace/app_content']({extensions : popular_extensions.slice(0,6) }) %>
+<% } else { %>  
+  <div class="zero-apps">
+    <h5 class="msg">
+      <%= translate.get('marketplace_no_apps') %> 
+    </h5>
+  </div> 
+<% } %>  

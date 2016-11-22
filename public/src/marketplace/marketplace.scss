@@ -129,15 +129,14 @@
   .fa-container{
     width: 100%;
     @include clear(both);
+    background-color: #fafafa;
   }
   .fa-sidehead{
     display: inline-block;
     width: 100%;
-    height: 50px;
+    height: 60px;
     @include margin(0);
-    background:#fff url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyRpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoTWFjaW50b3NoKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDpFOTA1MzQ3ODE2NkIxMUU0QUU1N0NDOTYxMTJFMTczNyIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDpFOTA1MzQ3OTE2NkIxMUU0QUU1N0NDOTYxMTJFMTczNyI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkU5MDUzNDc2MTY2QjExRTRBRTU3Q0M5NjExMkUxNzM3IiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOkU5MDUzNDc3MTY2QjExRTRBRTU3Q0M5NjExMkUxNzM3Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+FpmV3QAAEzZJREFUeNrUnQlz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');
-    background-size: 50px;
-    border-bottom: solid 1px #ddd;
+    background: #eee;
     position: absolute;
     top: 0;
     @include left(0);
@@ -145,9 +144,8 @@
   }
   .remove-query{
     position: absolute;
-    top: 15px;
-    @include padding(2px 4px);
-    @include right(10px);
+    top: 20px;
+    @include right(30px);
     background: none;
     border: none;
     outline: none;
@@ -163,12 +161,24 @@
   .search-query:not(:valid) ~ .remove-query {
     display: none !important;
   }
+  .search-query:not(:valid) ~ .search-apps {
+    display: block !important;
+  }
+  .ficon-search{
+    color: #ccc;
+    width: 24px;
+    height: 24px;
+    top: 23px;
+    right: 24px;
+    @include left(inherit);
+    position: absolute;
+  }
   .search-loader{
     width: 24px;
     height: 24px;
-    top: 25px;
+    top: 28px;
     @include left(inherit);
-    @include right(-2px);
+    @include right(18px);
     position: absolute;
   }
   .dtl-box{
@@ -178,19 +188,44 @@
     @include clear(both);
     width: 100%;
   }
+  .apps-category{
+    float: left;
+    width: 16.5%;
+    min-height: 250px; 
+    margin: 25px 0 25px 25px;
+    list-style: none;
+  }
+  .apps-category a {
+    font-size: 14px;
+    line-height: 2.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    display: block;
+    text-decoration: none;
+  }
   .head-spacer{
-    margin-top: 50px;
+    margin-top: 60px;
   }
   .apptype-head{
-    @include padding(0 15px);
-    a.logo-link{
+    @include padding(3px 23px);
+    .gallery-index{
+      color: #333333;
       @include margin(0);
       font-size: 20px;
       font-weight: 300;
       line-height: 50px;
       display: inline-table;
-      color: #333333;
+    }
+    a.logo-link{
+      @include margin(0 7px 0 0);
+      font-size: 20px;
+      font-weight: 300;
+      line-height: 50px;
+      display: inline-table;
       cursor: pointer;
+      span{
+        margin-left: 5px;
+      }
       &:hover{
         color: #004080;
       }
@@ -198,16 +233,14 @@
   }
   .search-form{
     @include margin-left(-15px);
-    @include margin-right(10px);
     border-bottom: 0px;
   }
   .appsearch-box{
-    @include padding(0 12px 0px 0px);
     font-weight: 400;
     position: relative;
     .search-query{
-      width: 96%;
-      @include margin(8px 4px 8px 6px);
+      width: 86%;
+      @include margin(13px 4px 8px 6px);
       @include border-radius(4px);
       border: solid 1px #ccc;
       @include padding(8px);
@@ -247,10 +280,52 @@
   .content-box{
     @include clear(both);
     height:100%;
+    width:76.5%;
+    display: inline-block;
+    .apps-type-list{
+      margin-top: 14px;
+    }
+    .app-type-list-ttl{
+      display: inline-block;
+      span{
+        font-weight: 300;
+        font-size: 20px;
+      }
+    }
+    .apptypelist{
+      margin: 22px 0 15px 0;
+      .nav-tabs > li {
+        padding-right: 15px;
+      }
+      .nav-tabs > li > a{
+        border: none;
+        border-bottom: 3px solid transparent;
+        border-radius: 0;
+        background: transparent;
+        font-weight: 400;
+      }
+      .nav-tabs > li.active > a{
+        color: #555;
+        border-bottom: 3px solid #a5a5a5;
+        border-radius: 2px;
+        font-weight: 500;
+      }
+    }
+    .apps-category-ttl {
+      padding-bottom: 20px;
+      margin: 10px 7px 25px 0;
+      p{
+        font-size: 20px;
+        font-weight: 300;
+      }
+    }
     .applist{
       margin-bottom: 35px;
-      overflow: auto;
+      overflow: hidden;
     }
+  }
+  .custom-apps-box{
+    width: 96%;
   }
   .fa-headd{
     padding-top: 12px;
@@ -350,8 +425,7 @@
   }
   .logo-box{
     display: block;
-    width: 166px;
-    height: 86px;
+    width: 210px;
     border: solid 1px #ccc;
     @include border-radius(3px);
     vertical-align: middle;
@@ -366,25 +440,25 @@
     }
     .img-helper{
       @include text-align(center);
-      margin-top: 3px;
     }
     img {
-      width: 160px;
-      max-height: 80px;
+      width: 210px;
       position: relative;
       @include margin-left(auto);
       @include margin-right(auto);
       overflow: hidden;
       vertical-align: middle;
+      border-radius: 4px;
     }
   }
   .install-app{
     width: calc(100% - 42px);
     margin-top: 10px;
+    @include padding(9px 20px 9px 20px);
   }
   .app-info{
     li{
-      @include padding(0px 0 5px);
+      @include padding(0px 0 9px);
       color: #666;
       text-overflow: ellipsis;
       overflow: hidden;
@@ -406,24 +480,50 @@
     .dev{
       text-align: center;
       padding-bottom: 4px;
-      padding-top: 15px;
+      padding-top: 35px;
     }
     .help{
       font-size: 12px;
       text-align: center;
       @include padding(6px 0);
     }
-    .dot{
-      border-top: 1px dotted #ccc;
+    .help-sprt{
+      padding-top: 30px;
+      font-weight: 500;
+      font-size: 13px;
+    }
+    .dash{
+      border-bottom: 1px dashed #ccc;
+      font-size: 13px;
     }
     .ttl{
       @include padding(14px 0 8px 0);
     }
+    .share-app{
+      margin-top: 35px;
+      font-weight: 500;
+    }
+    .share-links {
+      margin: 10px 35px 35px 35px;
+      a{
+        display: inline-block;
+        margin: 5px;
+      }
+    }  
+    .share-links a i{
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      color: #cecece;
+      padding: 8px;
+      display: block;
+      border: 1px solid #cecece;
+    }
   }
   .app-desc{
     display: inline-block;
-    width: calc(81vw - 245px);
-    @include padding(10px 10px 10px 0);
+    width: calc(76vw - 250px);
+    @include padding(30px 10px 10px 35px);
     .carousel{
       border: solid 1px #ddd;
       @include border-radius(4px);
@@ -459,6 +559,11 @@
       background-color: #999;
       border: none;
     }
+  }
+  .app-names{
+    font-weight: 500;
+    margin-bottom: 10px;
+    text-transform: capitalize;
   }
   .instr{
     line-height: 18px;
@@ -516,10 +621,10 @@
     overflow: auto;
   }
   .app-meta{
-    @include padding(15px);
+    @include margin(25px 0 0 25px);
     @include clear(both);
     display: block;
-    width: 168px;
+    width: 212px;
     @include float(left);
   }
   .install-box{
@@ -554,7 +659,10 @@
       font-size: 18px;
     }
     .back2list_btn{
-      @include padding(17px 20px 18px 20px);
+      @include padding(19px 20px 18px 25px);
+      span{
+        font-size: 16px;
+      }
       &:hover{
         span{
           color: #004080;
@@ -585,109 +693,117 @@
     }
   }
   .fplugs-box{
-    height: 168px;
-    border: solid 1px #ccc;
+    height: 90px;
+    background: #fff;
+    border: solid 1px #e6e6e6;
     @include border-radius(4px);
     @include float(left);
-    transition: none;
-    transition-delay: 0ms;
-    .slide-caption{
-      line-height: 18px;
-      box-shadow: 0 1px 0 0 #eee;
+    .figure-box{
+      @include cursor(pointer);
+      position: relative;
+      overflow: hidden;
+      border-radius: 4px;
+      -webkit-mask-image: -webkit-radial-gradient(circle, white, black);
+    } 
+    .caption {
+      z-index: 100;
+      transition: all 200ms ease-out;
+      -webkit-transition: all 200ms ease-out;
+      transition-delay: 500ms;
+      -webkit-transition-delay: 500ms;
     }
+    .app-fig-box{
+      position: absolute;
+      @include margin(auto);
+      top: 0;
+      @include left(0);
+      @include right(0);
+      bottom: 0; 
+      outline: 1px solid transparent;
+      border-radius: 4px;
+      transition: all 200ms ease-out;
+      -webkit-transition: all 200ms ease-out;
+      transition-delay: 500ms;
+      -webkit-transition-delay: 500ms;
+      outline: 1px solid transparent;
+    }
+    .app-img-box{
+      height: 70px;
+      position: relative;
+      overflow: hidden;
+      width: 70px;
+      margin: 9px;
+      border: 1px solid #e6e6e6;
+      border-radius: 4px;
+      -webkit-mask-image: -webkit-radial-gradient(circle, white, black);
+      img {
+        width: 70px;
+        height: auto;
+      }
+    }
+    .app-name-box{
+      width: calc(100% - 102px);
+      margin: 35px 7px 7px 0;
+      p{
+        font-size: 16px;
+        height: 18px;
+        font-weight: 500;
+        color: #4f4f4f;
+        text-transform: capitalize;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+      } 
+    }  
+    .slide-caption{
+      @include text-align(left);
+      bottom: 90px;
+      @include padding(10px);
+      border-radius: 4px !important;
+      color: #666;
+      font-size: 12px;
+      font-weight: 400;
+      line-height: 18px;
+      background: #FFF;
+      height: 70px;
+      position: relative;
+      overflow: hidden;
+      z-index: 100;
+      text-transform: capitalize;
+      .view-more{
+        color: #0066cc;
+      }
+    }  
     &:hover{
       color:#333;
       text-decoration: none;
-      box-shadow: 0 0 10px rgba(0,0,0,0.15);
+      text-transform: capitalize;
       border-color: #aaa;
+      box-shadow: 0 0 10px rgba(0,0,0,0.15);
       transition: all 500ms cubic-bezier(0, 0 , 0.2, 1);
       -webkit-transition: all 500ms cubic-bezier(0, 0 , 0.2, 1);
+      .app-fig-box, .app-img-box{
+        border-radius: 4px;
+      }
       .slide-caption {
-        transform: translateY(100%);
+        transform: translateY(100);
         -webkit-transform: translateY(100%);
-        @include border-radius(6px);
-        @include border-top-left-radius(0);
-        @include border-top-right-radius(0);
         transition-delay:500ms;
         -webkit-transition-delay: 500ms;
         opacity: 1;
+        border-radius: 4px !important;
       }
       img, span.assets-missing{
         transform: translateY(100%);
         -webkit-transform: translateY(100%);
         transition-delay:500ms;
-        -webkit-transition-delay: 500ms;
         opacity: 1
       }
       h3{
         color: #004080;
       }
-    }
-    .figure-box{
-      @include cursor(pointer);
-      height: 132px;
-      position: relative;
-      overflow: hidden;
-      width: 100%;
-      @include border-bottom-right-radius(3px);
-      @include border-bottom-left-radius(3px);
-      .caption {
-        z-index: 100;
-        transition: all 200ms ease-out;
-        -webkit-transition: all 200ms ease-out;
-        transition-delay: 500ms;
-        -webkit-transition-delay: 500ms;
-      }
-      img {
-        position: absolute;
-        @include margin(auto);
-        top: 0;
-        @include left(0);
-        @include right(0);
-        bottom: 0;
-        width: 160px;
-        height: auto;
-        transition: all 200ms ease-out;
-        -webkit-transition: all 200ms ease-out;
-        transition-delay: 500ms;
-        -webkit-transition-delay: 500ms;
-        outline: 1px solid transparent;
-      }
-      span.assets-missing{
-        position: absolute;
-        color: #ccc;
-        @include text-align(center);
-        @include margin(auto);
-        top: 0;
-        @include left(0);
-        @include right(0);
-        bottom: 0;
-        transition: all 200ms ease-out;
-        -webkit-transition: all 200ms ease-out;
-        transition-delay: 500ms;
-        -webkit-transition-delay: 500ms;
-        &.ficon-puzzle:before {
-          margin-top: 15%;
-        }
-      }
-      .slide-caption{
-        @include text-align(left);
-        @include padding(15px);
-        bottom: 140px;
-        @include border-radius(4px);
-        @include border-top-left-radius(0);
-        @include border-top-right-radius(0);
-        color: #666;
-        font-size: 12px;
-        font-weight: 400;
-        line-height: 26px;
-        background: #F7F7F7;
-        height: 106px;
-        position: relative;
-        overflow: hidden;
-      }
-    }
-  }
+    } 
+  } 
   .fa-navc a{
     @include margin-right(4px);
     font-size: 13px;
@@ -706,10 +822,25 @@
     @include margin-right(4px);
   }
   .fa-content{
-    @include padding(15px);
+    @include padding(20px 0 0 25px);
     @include margin(0);
   }
   .app-desc{
+    .app-dtl{
+      margin-bottom: 25px;
+    }
+    .nav-tabs > li > a{
+      border: none;
+      border-bottom: 3px solid transparent;
+      border-radius: 0;
+      background: transparent;
+      font-weight: 500;
+    }
+    .nav-tabs > li.active > a{
+      border-bottom: 3px solid #a5a5a5;
+      border-radius: 2px;
+    }
+    
     .whats-new{
       padding-top: 15px;
     }
@@ -720,6 +851,9 @@
     p{
       line-height: 18px;
     }
+    .screenshots{
+      margin-top: 35px;
+    }
   }
   .morecontent span {
     display: none;
@@ -729,16 +863,8 @@
     font-weight: bold;
     list-style: none;
   }
-  .fa-appdesc{
-    background: #fff;
-    @include padding(0 20px 20px 20px);
-    .pre-wrap{
-      white-space: pre-wrap;      
-      white-space: -moz-pre-wrap;
-      word-wrap: break-word;
-    }
-  }
   .pre-wrap{
+    line-height: 25px;
     white-space: pre-wrap;      
     white-space: -moz-pre-wrap;
     word-wrap: break-word;
@@ -755,20 +881,8 @@
   .category-bubble{
     padding-bottom: 3px;
     margin-bottom: 0;
-  }
-  .tag{
-    @include text-align(center);
-    background-color: rgba(0,0,0, 0.03);
-    @include border-radius(20px);
-    border: solid 1px #eee;
-    color: #333;
-    font-size: 11px;
-    @include padding(1px 10px);
-    @include clear(both);
-    display: inline-table;
-    @include margin(2px);
-    &:hover{
-      border-color: #bbb;
+    .comma:not(:last-child):after {
+      content: ", ";
     }
   }
   .carousel-inner{
@@ -950,11 +1064,9 @@
     }
   }
   .zero-apps{
-    border: solid 1px #ececec;
     height: 100px;
     width: 100%;
     background: #fafafa;
-    @include text-align(center);
     position: relative;
     display: block;
     margin-top: 10px;
@@ -1001,9 +1113,9 @@
 
 @media only screen and (max-width: 1599px) {
   .marketplace-listing .fplugs-box{
-    width: 24%;
-    @include margin(0 1% 1% 0);
-    &:nth-child(4n){
+    width: 31.5%;
+    @include margin(0 2% 2% 0);
+    &:nth-child(3n){
       @include margin-right(0);
     }
   }

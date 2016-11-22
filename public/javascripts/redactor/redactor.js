@@ -1060,7 +1060,8 @@ Redactor.prototype = {
 		else if(this.opts.mixedDirectionSupport){
 			content = this.wrapElementWithDirection(content);
 		}
-
+		// adding space to empty <p> notepad ++
+	    content = content.replace(/<p>\n<\/p>/g,'<p>&nbsp;</p>');
 		this.$el.val(content);
 	},
 	removeCursorImage: function() {
@@ -4772,7 +4773,11 @@ $.fn.insertExternal = function(html)
 
 	RemoveCursorImage.prototype = {
 		init: function(){
-			jQuery(this.$form).on("submit", $.proxy(this.remove, this));
+			if(Helpdesk.can_bind_first) {
+				jQuery(this.$form).bindFirst("submit", $.proxy(this.remove, this));
+			} else {
+				jQuery(this.$form).on("submit", $.proxy(this.remove, this));
+			}
 		},
 		remove: function(){
 			this.$editor.removeCursorImage();

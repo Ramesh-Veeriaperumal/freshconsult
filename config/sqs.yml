@@ -1,5 +1,6 @@
 development:
   twitter_realtime_queue: social_gnip_tweet_dev
+  gnip_2_0_realtime_queue: social_gnip_2_0_tweet_dev
   facebook_realtime_queue: social_fb_feed_dev
   search_etl_queue: search_etl_queue_dev
   count_etl_queue: count_etl_queue_dev
@@ -19,8 +20,10 @@ development:
   auto_refresh_alb_queue: auto_refresh_alb_dev
   agent_collision_queue: agent_collision_new_dev
   agent_collision_alb_queue: agent_collision_alb_dev
+  marketplace_app_queue: marketplace_app_dev
 staging:
   twitter_realtime_queue: social_gnip_tweet_staging1
+  gnip_2_0_realtime_queue: social_gnip_2_0_tweet_staging
   facebook_realtime_queue: social_fb_feed_staging
   search_etl_queue: search_etl_queue_staging
   custom_mailbox_realtime_queue: custom_mailbox_staging
@@ -38,6 +41,7 @@ staging:
   auto_refresh_alb_queue: auto_refresh_alb_staging
   agent_collision_queue: agent_collision_new_staging
   agent_collision_alb_queue: agent_collision_alb_staging
+  marketplace_app_queue: marketplace_app_staging
 production:
   twitter_realtime_queue: social_gnip_tweet_production
   facebook_realtime_queue: social_fb_feed_production
@@ -58,8 +62,10 @@ production:
   auto_refresh_alb_queue: auto_refresh_alb_production
   agent_collision_queue: agent_collision_new_production
   agent_collision_alb_queue: agent_collision_alb_production
+  marketplace_app_queue: marketplace_app_production
 test:
   twitter_realtime_queue: social_gnip_tweet_test
+  gnip_2_0_realtime_queue: social_gnip_2_0_tweet_test
   facebook_realtime_queue: social_fb_feed_test
   search_etl_queue: search_etl_queue_test
   count_etl_queue: count_etl_queue_test
@@ -76,3 +82,4 @@ test:
   freshfone_call_notifier_queue: freshfone_call_notifier_test
   auto_refresh_queue: auto_refresh_new_test
   agent_collision_queue: agent_collision_new_test
+  marketplace_app_queue: marketplace_app_test

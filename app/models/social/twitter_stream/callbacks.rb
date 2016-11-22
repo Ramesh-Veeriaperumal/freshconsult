@@ -23,6 +23,10 @@ class Social::TwitterStream < Social::Stream
     }
   end
 
+  def twitter_source
+    account.gnip_2_0_enabled? ? SOURCE[:gnip_2_0] : SOURCE[:twitter]
+  end
+
   def clear_volume_in_redis
     newrelic_begin_rescue { $redis_others.perform_redis_op("del", stream_volume_redis_key) }
   end
@@ -42,7 +46,8 @@ class Social::TwitterStream < Social::Stream
     args = {
       :rule       => rule,
       :env        => envs,
-      :action     => RULE_ACTION[:delete]
+      :action     => RULE_ACTION[:delete],
+      :source     => twitter_source
     }
   end
 
@@ -67,7 +72,8 @@ class Social::TwitterStream < Social::Stream
         args = {
           :rule       => gnip_rule,
           :env        => envs,
-          :action     => RULE_ACTION[:add]
+          :action     => RULE_ACTION[:add],
+          :source     => twitter_source
         }
         Social::Gnip::RuleWorker.perform_async(args) if valid_params?(args)
       end

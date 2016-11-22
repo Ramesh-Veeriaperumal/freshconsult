@@ -77,5 +77,6 @@
    if(App.namespace == "helpdesk/tickets/compose_email") {
     jQuery(".attach-wrapper").parent('div').removeClass('attachmentPanel').addClass('emailAttachmentPanel');
    }
+   Helpdesk.MultipleFileUpload.backgroundProcess.init(<%=session[:multiple_list]%>, false);
 </script>
 </div>

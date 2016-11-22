@@ -97,7 +97,7 @@ module Search::Filters::QueryHelper
 
         if cond_field.eql?('any_agent_id') and field_values.include?('-1') and !any_group_condition.empty?
           field_values.delete('-1')
-          es_wrapper[:should].push(handle_field("unassigned_any_agent", any_group_values))
+          es_wrapper.push(handle_field_ext("unassigned_any_agent", field_values, any_group_values))
           next if field_values.empty?
         end
 
@@ -188,7 +188,7 @@ module Search::Filters::QueryHelper
 
     # Handle special case where any agent has unassigned and
     # any group has values
-    def unassigned_any_agent_es_filter(field_name, group_values)
+    def unassigned_any_agent_es_filter(field_name, field_values, group_values)
       bool_filter(:should => [
         bool_filter(:must => [
           missing_filter('responder_id'),
@@ -197,7 +197,17 @@ module Search::Filters::QueryHelper
         bool_filter(:must => [
           missing_filter('long_tc04'),
           terms_filter('long_tc03', group_values.uniq)
-        ])
+        ]),
+        bool_filter(:must => [
+          bool_filter(:should => [
+            terms_filter('responder_id', field_values.uniq),
+            terms_filter('long_tc04', field_values.uniq)
+          ]),
+          bool_filter(:should => [
+            terms_filter('group_id', group_values.uniq),
+            terms_filter('long_tc03', group_values.uniq)
+          ])
+        ]),
       ])
     end
 
@@ -299,6 +309,11 @@ module Search::Filters::QueryHelper
     # For generically handling other fields
     def handle_field(field_name, values)
       send("#{field_name}_es_filter", field_name, values) rescue missing_es_filter(field_name, values)
+    end
+
+    # for handling a specific case where the method needs two args
+    def handle_field_ext(field_name, field_values, group_values)
+      send("#{field_name}_es_filter", field_name, field_values, group_values) rescue missing_es_filter(field_name, field_values)
     end
 
     ### ES METHODS ###

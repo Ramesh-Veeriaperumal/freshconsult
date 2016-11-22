@@ -236,12 +236,12 @@ module AuthenticationSystem
       end
     end
     
-    def grant_day_pass #Need to refactor this code..
+    def grant_day_pass(dont_redirect = false)#Need to refactor this code..
       if (qualify_for_day_pass? && !current_user.day_pass_granted_on)
         unless current_account.day_pass_config.grant_day_pass(current_user, params)
           log_out!
           flash[:notice] = I18n.t('agent.insufficient_day_pass')
-          redirect_to login_url
+          redirect_to login_url unless dont_redirect
           return nil
         end
       end

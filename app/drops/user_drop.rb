@@ -5,7 +5,7 @@ class UserDrop < BaseDrop
 	include DateHelper
 
 	self.liquid_attributes += [:name, :first_name, :last_name, :email, :phone, :mobile, 
-						:job_title, :time_zone, :twitter_id, :external_id, :language, :address, :description, :active]
+						:job_title, :time_zone, :twitter_id, :external_id, :language, :address, :description, :active, :unique_external_id]
 
 	def initialize(source)
 		super source

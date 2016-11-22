@@ -1,48 +1,33 @@
 <div class="fa-sidehead">
   <div class="apptype-head span6">
     <div class="logo pull-left">
-      <a id="appGalleryLogo" data-url="<%= app_gallery_url %>" class="logo-link">
-        <% if(typeof custom_app == 'undefined') { %>
-          <%= translate.get('app_gallery') %>
-        <% }else{ %>
-          <%= translate.get('custom_app_gallery') %>
-        <% } %>
-      </a>
-    </div>
-
-    <% if(typeof custom_app == 'undefined') { %>
-      <div class="fa-dd dropdown fa-headd">
-        <% if(search_term) { %> 
-          <a id="dd-categories" class="dropdown-toggle searched-box" data-toggle="dropdown">
-            <span class="searched" title="<%- search_term %>"> / Searched: <%- search_term %> </span>
-            <span class="results search-count">&nbsp;(<%= extensions.length %>)&#x200E;</span> <span class="caret"></span>
-          </a>
-        <% }else{ %>
-          <a id="dd-categories" class="dropdown-toggle" data-toggle="dropdown">
-            <span id="categoryname" class="selected"> / <%= category_name %> </span>
-            <span class="results">(<%= extensions.length %>)&#x200E;</span> <span class="caret"></span>
-          </a>
-        <% } %>
-        <ul class="dropdown-menu dd-left dd-categories <% if(search_term) { %> searched-dd <% } %>" role="menu" aria-labelledby="dd-categories" style="z-index:9999;">
-          <% for(var i=0; i < categories.length; i++) { %>
-            <li role="presentation">
-              <a role="menuitem" class="category" href="#" data-url="<%= categories[i].url %>" 
-                style="<% if(categories[i].selected) { %> font-weight:bold; <% } %>"><%= categories[i].name %>
-              </a>
-            </li>
+      <% if(category_specific) { %>
+         <a id="appGalleryLogo" data-url="<%= app_gallery_url %>" class="logo-link">
+          <% if(typeof custom_app == 'undefined') { %>
+            <%= translate.get('app_gallery') %>
+          <% }else{ %>
+            <%= translate.get('custom_app_gallery') %>
           <% } %>
-        </ul>
-      </div>
-    <% } %>
-
+        </a>
+      <% } else { %>
+        <p class="gallery-index">
+          <% if(typeof custom_app == 'undefined') { %>
+            <%= translate.get('app_gallery') %>
+          <% }else{ %>
+            <%= translate.get('custom_app_gallery') %>
+          <% } %>
+        </p>
+      <% } %>  
+    </div>
   </div>
 
   <% if(typeof custom_app == 'undefined') { %>
     <form action="<%= search_url %>" id="extension-search-form" class="span4 pull-right search-form">
       <div class="appsearch-box ui-widget">
         <input id="query" name="query" class="search-query" required type="text" placeholder="<%= search_placeholder %>" value="<% if(search_term) { %><%- search_term %><% } %>" data-url="<%= auto_suggest_url %>">
+        <i class="ficon-search search-apps"></i>
         <div class="sloading loading-small search-loader" style="display:none;"></div>
-        <button class="remove-query" type="reset"><span class="ficon-cross fsize-16"></span></button>
+        <button class="remove-query" style="display:none;" type="reset"><span class="ficon-cross fsize-16"></span></button>
         <input style="display:none" type="submit" id="search-btn">
       </div>
     </form>
@@ -50,35 +35,33 @@
 </div>
 
 <div class="dtl-box head-spacer">
-  <div class="fa-content content-box">
-
-    <% if (extensions.length >0) { %>
-      <div id="freshappslist" class="applist clear">
-        <% for(var i=0; i < extensions.length; i++) { %>
-          <a href="#" class="fplugs-box" data-url="<%= extensions[i].url %>">
-            <div class="app-ttl">
-              <h3 title="<%- extensions[i].display_name %>"><%- extensions[i].display_name %></h3>
-            </div>
-            <figure class="figure-box">
-              <img src="<%= extensions[i].cover_art['thumb'] %>" srcset="<%= extensions[i].cover_art['thumb'] %> 1x, <%= extensions[i].cover_art['thumb2x'] %> 2x" alt="<%- extensions[i].display_name %>" height="100">
-              <figcaption class="caption slide-caption">
-                <%- extensions[i].description.substr(0, 120) %> <% if (extensions[i].description.length > 120) { %>... <% } %>
-              </figcaption>
-            </figure>
+  <% if(typeof custom_app == 'undefined') { %>
+    <div class="apps-category list-group">
+      <% for(var i=0; i < categories.length; i++) { %>
+        <li>
+          <a style="<% if(categories[i].selected) { %> font-weight:bold; color: #555; <% } %>" class="category" id="category_<%=i%>" href="#" data-url="<%= categories[i].url %>"><%= categories[i].name %>
           </a>
-        <% } %>
-      </div>
-    <% } else { %>
-      <div class="zero-apps">
-        <h5 class="msg">
-          <% if(typeof custom_app == 'undefined') { %>
-            <%= translate.get('marketplace_no_apps') %>
-          <% }else{ %>
-            <%= translate.get('marketplace_no_custom_apps') %>
-          <% } %>
-        </h5>
-      </div>
-    <% } %>
+        </li>
+      <% } %>
+    </div>
+    <div class="fa-content content-box">
+      <% if(search_term) { %> 
+        <%= JST['marketplace/search_specific_content']({extensions : extensions,search_term: search_term }) %>  
+      <% }else if(category_specific) { %>
+        <% if(category_id) { %> 
+          <% extensions_params = { extensions: extensions,category_name: category_name, category_id: category_id } %>
+        <% } else { %>
+           <% extensions_params = { extensions: popular_extensions,latest_extensions: latest_extensions,popular_extensions: popular_extensions,category_name: category_name, category_id: category_id } %> 
+        <% } %>   
+        <%= JST['marketplace/category_specific_content'](extensions_params) %>
+      <% } else { %>
+        <%= JST['marketplace/marketplace_content']({extensions: popular_extensions,latest_extensions : latest_extensions,popular_extensions: popular_extensions,app_gallery_url: app_gallery_url}) %>
+      <% } %> 
+    </div>
+  <% } else { %>
+    <div class="fa-content content-box custom-apps-box">
+      <%= JST['marketplace/custom_apps_content']({extensions : extensions, app_gallery_url: app_gallery_url}) %>
+    </div>  
+  <% } %>
     
-  </div>
 </div>

@@ -37,6 +37,7 @@ class Helpdesk::ConversationsController < ApplicationController
   before_filter :check_trial_customers_limit, :only => [:reply, :forward, :reply_to_forward]
   before_filter :validate_ecommerce_reply, :only => :ecommerce
   around_filter :run_on_slave, :only => [:update_activities, :has_unseen_notes, :traffic_cop_warning]
+  before_filter :validate_facebook_dm_reply, :only => [:facebook]
 
   TICKET_REDIRECT_MAPPINGS = {
     "helpdesk_ticket_index" => "/helpdesk/tickets"
@@ -258,6 +259,10 @@ class Helpdesk::ConversationsController < ApplicationController
     end
     
     private
+
+      def validate_facebook_dm_reply
+        create_error(:facebook) if @item.notable.facebook_realtime_message? and @item.body.length > Facebook::Constants::REALTIME_MESSSAGING_CHARACTER_LIMIT
+      end
       
       def add_forum_post
         @topic = Topic.find_by_id_and_account_id(@parent.ticket_topic.topic_id,current_account.id)
@@ -310,7 +315,7 @@ class Helpdesk::ConversationsController < ApplicationController
       def flash_message(status)
         if @item.source == Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['mobihelp_app_review']
           flash[:notice] = t(:"flash.tickets.notes.send_review_request.#{status}")
-        elsif @item.broadcast_note_to_tracker? and status == "success"
+        elsif @item.broadcast_note? and status == "success"
           flash[:notice] = t(:"flash.tickets.notes.broadcast.#{status}", :count => @item.notable.related_tickets_count)
         else
           flash[:notice] = I18n.t(:"flash.general.create.#{status}", :human_name => cname.humanize.downcase)

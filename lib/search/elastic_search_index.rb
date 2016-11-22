@@ -1,22 +1,24 @@
 module Search::ElasticSearchIndex
+
+  include Redis::RedisKeys
+  include Redis::OthersRedis
+
   def self.included(base)
     base.class_eval do
 
       include Tire::Model::Search if ES_ENABLED
 
       def update_es_index
-        return if self.account_id.to_s == "273518"
         SearchSidekiq::UpdateSearchIndex.perform_async({ :klass_name => self.class.name, 
-                                                          :id => self.id }) if ES_ENABLED #and !queued?
-
-        add_to_es_count if (self.is_a?(Helpdesk::TicketTemplate))
+                                                          :id => self.id }) if Account.current.esv1_enabled?
+        add_to_es_count if add_to_count_esv2?
       end
 
       def remove_es_document
         SearchSidekiq::RemoveFromIndex::Document.perform_async({ :klass_name => self.class.name, 
-                                                                  :id => self.id }) if ES_ENABLED
+                                                                  :id => self.id }) if Account.current.esv1_enabled?
 
-        remove_from_es_count if (self.is_a?(Helpdesk::TicketTemplate))
+        remove_from_es_count if add_to_count_esv2?
       end
 
       def search_alias_name
@@ -25,6 +27,14 @@ module Search::ElasticSearchIndex
         else
           "#{self.class.table_name}_#{self.account_id}"
         end
+      end
+
+      def add_to_count_esv2?
+        (self.is_a?(Helpdesk::TicketTemplate)) || (es_v2_models? && redis_key_exists?(COUNT_ESV2_WRITE_ENABLED))
+      end
+
+      def es_v2_models? 
+        ["ScenarioAutomation", "Admin::CannedResponses::Response"].include?(self.class.name)
       end
 
       def es_highlight(item)

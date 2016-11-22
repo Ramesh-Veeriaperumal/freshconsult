@@ -76,6 +76,9 @@
     translate.get = function(name){
       return tf_lang[name] || "";
     };
+    
+    var is_multiple_contact_feature_present = false;
+    var is_multiple_contact_feature_enabled = false;
 
     var customField = new CustomFields({existingFields : customFields, 
                     customMessages: tf_lang,

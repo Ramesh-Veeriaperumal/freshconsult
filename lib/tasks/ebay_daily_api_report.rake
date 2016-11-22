@@ -27,7 +27,7 @@ namespace :ebay_daily_api_report do
     file_path = File.join(Rails.root.to_s ,file_name)
     File.delete(file_path) if File.exist?(file_name)
       File.open(file_path, 'w') {|f| f.write(csv_string) }
-    EcommerceNotifier.daily_api_usage(file_name)
+    EcommerceNotifier.daily_api_usage(file_name, account.id)
   end
 end
 

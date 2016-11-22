@@ -26,8 +26,14 @@
         value = jQuery('#tags_filter').val().toString() || '';
       }
       else if(container == "single_select"){
-        if(jQuery('#created_at option:selected').val() != "any_time")
-          value =  jQuery('#created_at option:selected').val();
+        if(condition == "created_at") {
+          if(jQuery('#created_at option:selected').val() != "any_time")
+            value =  jQuery('#created_at option:selected').val();
+        }
+        else {
+          if(jQuery(this).children('select').val() != "")
+            value = jQuery(this).children('select').val();
+        }
       }
       else if(container == "association_type"){
         if(jQuery(this).children('select').val() != "")
@@ -97,6 +103,9 @@
 </script>
   <% special_case_views = ['deleted','spam','monitored_by'] %>
     <h5 class="lead"><%= t("tickets_filter.title") %></h5>
+    <% if Account.current.launched?(:ticket_list_page_filters_cache) %>
+      <div class="sloading loading-small loading-block filter-loading"></div>
+    <% end %>
     <%= itil_ticket_filters.html_safe %>
     <form id="FilterOptions" action="#">
       <input type="hidden" name="data_hash" value="" />
@@ -150,19 +159,19 @@
                                 :operator    => c_hash[:operator],
                                 :ff_name     => c_hash[:ff_name],
                                 :container   => container,
-                                :data => {                 
-                                  :domtype => container,    
-                                  :id => c_hash[:condition]            
+                                :data => {
+                                  :domtype => container,
+                                  :id => c_hash[:condition]
                                   }
                                 } do %>
             <% if(display_name === "responder_id" && shared_ownership_enabled) %>
               <div class="fd-menu shared_sort_menu" id="agentSort">
-                <ul>             
-                    <% 
+                <ul>
+                    <%
                       current_sort_name = ""
                       current_agent_sort = ""
                     %>
-                    <% TicketsFilter.shared_agent_sort_fields_options.each do |sort_item| %> 
+                    <% TicketsFilter.shared_agent_sort_fields_options.each do |sort_item| %>
                       <% agent_mode = sort_item[1]
                         current_sort_name = sort_item[0] if sort_item[2].to_s == current_agent_mode.to_s
                         current_agent_sort = sort_item[1] if sort_item[2].to_s == current_agent_mode.to_s
@@ -176,19 +185,19 @@
                          </a>
                       </li>
                     <% end %>
-                </ul> 
+                </ul>
               </div>
               <a class="title drop-right nav-trigger agent_text shared_filter_text" href="#" value="<%= current_agent_sort %>" menuid="#agentSort">
                 <%= current_sort_name %>
               </a>
             <% elsif (display_name === "group_id" && shared_ownership_enabled) %>
               <div class="fd-menu shared_sort_menu" id="groupSort">
-                <ul>             
-                    <% 
+                <ul>
+                    <%
                       current_sort_name = ""
                       current_group_sort = ""
                     %>
-                    <% TicketsFilter.shared_group_sort_fields_options.each do |sort_item| %> 
+                    <% TicketsFilter.shared_group_sort_fields_options.each do |sort_item| %>
                       <% group_mode = sort_item[1]
                         current_sort_name = sort_item[0] if sort_item[2].to_s == current_group_mode.to_s
                         current_group_sort = sort_item[1] if sort_item[2].to_s == current_group_mode.to_s
@@ -202,7 +211,7 @@
                          </a>
                       </li>
                     <% end %>
-                </ul> 
+                </ul>
               </div>
               <a class="title drop-right nav-trigger group_text shared_filter_text" href="#" value="<%= current_group_sort %>" menuid="#groupSort">
                 <%= current_sort_name %>
@@ -210,41 +219,32 @@
             <% else %>
               <h4 class="title"><%= (c_hash[:f_type] == :default) ? t("filter_options.#{display_name}").html_safe.capitalize : display_name.html_safe.capitalize %></h4>
             <% end %>
-            <%= render :partial => "/helpdesk/tickets/containers/#{container}", :locals => { :container => container, :options => c_hash[:options], :name => c_hash[:name], 
-             :selected_val => @current_options[c_hash[:condition].to_s].to_s.split(","), 
+            <%= render :partial => "/helpdesk/tickets/containers/#{container}", :locals => { :container => container, :options => c_hash[:options], :name => c_hash[:name],
+             :selected_val => @current_options[c_hash[:condition].to_s].to_s.split(","),
              :field_id => c_hash[:field_id], :nested_fields => c_hash[:nested_fields], :current_options => @current_options, :c_hash => c_hash} %>
           <% end
           end
         end %>
     <% end %>
 <%= javascript_tag do%>
-	var query_hash  = $A();
+  var query_hash  = $A();
   var unassigned = "";
-	jQuery(document).ready(function(){
-    <% if Account.current.launched?(:ticket_list_page_filters_cache) %>
-      var fieldMap = <%= raw(TicketConstants::DASHBOARD_FILTER_MAPPING.to_json) %>;
-      PopulateData.I18n_text.me = '<%= t("helpdesk.tickets.add_watcher.me") %>'
-      PopulateData.I18n_text.mygroups = '<%= t("filter_options.mygroups") %>'
-      PopulateData.I18n_text.unassigned = '<%= t("filter_options.unassigned") %>'
-      TicketListSidebar.getParams(fieldMap,function(params){
-          PopulateFormData.init(params);
-      });
-    <% end %>
-  var selectedGroupTextId = jQuery(".group_text").attr("value");
-  if(selectedGroupTextId && selectedGroupTextId.indexOf(".") > -1){
-    var splitId = selectedGroupTextId.split(".");
-    selectedGroupTextId = splitId[0]+"\\."+splitId[1];
-  }
-  jQuery("#div_ff_created_date_range").hide();
-  if(jQuery("#created_date_range").val() == ""){
-    jQuery("#created_date_range").val('<%= TicketConstants.created_date_range_default %>');
-  }
+  jQuery(document).ready(function(){
+    var selectedGroupTextId = jQuery(".group_text").attr("value");
+    if(selectedGroupTextId && selectedGroupTextId.indexOf(".") > -1){
+      var splitId = selectedGroupTextId.split(".");
+      selectedGroupTextId = splitId[0]+"\\."+splitId[1];
+    }
+    jQuery("#div_ff_created_date_range").hide();
+    if(jQuery("#created_date_range").val() == ""){
+      jQuery("#created_date_range").val('<%= TicketConstants.created_date_range_default %>');
+    }
 
-  if(jQuery("#created_at").data("selectedValue").toString().split("-").length == 2){
-    jQuery("#created_date_range").val(jQuery("#created_at").data("selectedValue"));
-    jQuery("#created_at").val("set_date").change();
-    jQuery("#div_ff_created_date_range").show();
-  }
+    if(jQuery("#created_at").data("selectedValue").toString().split("-").length == 2){
+      jQuery("#created_date_range").val(jQuery("#created_at").data("selectedValue"));
+      jQuery("#created_at").val("set_date").change();
+      jQuery("#div_ff_created_date_range").show();
+    }
 
     // #TODO : change the format of the date based on the account config
     jQuery('#created_date_range').bootstrapDaterangepicker(
@@ -275,7 +275,7 @@
     });
 
     setDivider();
-    
+
     jQuery("#FilterOptions input[name=data_hash]").val($A(<%= (@ticket_filter.query_hash.to_json.gsub('</','<\/')).html_safe %>).toJSON());
 
     getFilterData();
@@ -323,16 +323,16 @@
 
     //hide link and merge when there is existing association
     var association_type = jQuery('#association_type').val();
-    if(association_type == '<%= TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:tracker]%>' || association_type == '<%= TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:related]%>'){
-      jQuery('.bulk_action_buttons .lnk_tkt_tracker_show_dropdown').addClass('hide');
+    if(association_type == '<%= TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:tracker]%>' || association_type == '<%= TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:related]%>' || association_type == '<%= TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:assoc_parent]%>' || association_type == '<%= TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:child]%>'){
+      jQuery('.bulk_action_buttons .lnk_tkt_tracker_open_dropdown').addClass('hide');
       jQuery('#invoke_merge_popup').addClass('hide');
     }
     jQuery('#association_type').change(function(e){
-      if(this.value == '<%= TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:tracker]%>' || this.value == '<%= TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:related]%>'){
-        jQuery('.bulk_action_buttons .lnk_tkt_tracker_show_dropdown').addClass('hide');
+      if(this.value == '<%= TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:tracker]%>' || this.value == '<%= TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:related]%>' || this.value == '<%= TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:assoc_parent]%>' || this.value == '<%= TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:child]%>'){
+        jQuery('.bulk_action_buttons .lnk_tkt_tracker_open_dropdown').addClass('hide');
         jQuery('#invoke_merge_popup').addClass('hide');
       }else {
-        jQuery('.bulk_action_buttons .lnk_tkt_tracker_show_dropdown').removeClass('hide');
+        jQuery('.bulk_action_buttons .lnk_tkt_tracker_open_dropdown').removeClass('hide');
         jQuery('#invoke_merge_popup').removeClass('hide');
       }
     })
@@ -348,7 +348,7 @@
       }
       if(jQuery("#"+jQuery(".group_text").parent().attr("id")+" label.item input[value='-1']").length > 0){
         unassigned = jQuery("#"+jQuery(".group_text").parent().attr("id")+" label.item input[value='-1']").parent();
-        
+
       }
       jQuery('#any_group_id option[value="-1"]').remove();
       jQuery("#"+jQuery(".group_text").parent().attr("id")+" label.item input[value='-1']").parent().remove();
@@ -368,10 +368,11 @@
 
     // For Any Group - on change
     jQuery(".agent_mode, .group_mode").off();
-    jQuery(".agent_mode, .group_mode").on("click", function(ev){
+    jQuery(".agent_mode, .group_mode").on("click", function(ev,params){
       ev.preventDefault();
       jQuery(this).closest(".ff_item").attr("id", 'div_ff_'+this.getAttribute(this.className));
       jQuery(this).closest(".ff_item").attr("condition", this.getAttribute(this.className));
+      jQuery(this).closest(".ff_item").attr("data-id", this.getAttribute(this.className));
       jQuery(this).closest(".fd-menu").css("display", "none");
       if(this.className == "agent_mode"){
         jQuery(".agent_mode .ticksymbol").remove();
@@ -401,19 +402,22 @@
           jQuery('#'+selectedGroupTextId+' option[value="-1"]').remove();
           jQuery("#"+jQuery(".group_text").parent().attr("id")+" label.item input[value='-1']").parent().remove();
         }else{
-          jQuery(".group_text.shared_filter_text").addClass('lengthier_text');
+          jQuery(".group_text.shared_filter_text").removeClass('lengthier_text');
           if(jQuery('#'+selectedGroupTextId+' option[value="-1"]').length <= 0){
             if(jQuery("#" + jQuery(".group_text").parent().attr("id") + " label.item").length > 0){
               jQuery(".group_text").parent().append(unassigned);
             }else{
               jQuery('#' + selectedGroupTextId).append(unassigned);
-            }  
+            }
           }
         }
       }
       jQuery("#FilterOptions input[name="+this.className+"]").val(this.getAttribute("mode"));
-      jQuery("#active_filter").addClass('unsaved');
-      refresh_tickets();
+      if(!jQuery(this).closest(".ff_item").data("fromFilters")){
+        jQuery("#active_filter").addClass('unsaved');
+      }
+      jQuery(this).closest(".ff_item").data("fromFilters", false);
+      if(params !== 'customTrigger')refresh_tickets();
     });
 
 		jQuery(document).on("click.ticket_filter", ".toolbar_pagination a, .toolbar_pagination_full a", function(ev){
@@ -435,7 +439,19 @@
 
     jQuery('#all-views').html($J('#all-views-tmpl').html());
     jQuery('#all-views-tmpl').html('');
-    });
+    <% if Account.current.launched?(:ticket_list_page_filters_cache) %>
+      var fieldMap = <%= raw(TicketConstants::DASHBOARD_FILTER_MAPPING.to_json) %>;
+      PopulateData.I18n_text.me = '<%= t("helpdesk.tickets.add_watcher.me") %>'
+      PopulateData.I18n_text.mygroups = '<%= t("filter_options.mygroups") %>'
+      PopulateData.I18n_text.unassigned = '<%= t("filter_options.unassigned") %>'
+      TicketListSidebar.getParams(fieldMap,function(params){
+          params.defaultDateRange = "<%= TicketConstants.created_date_range_default%>";
+          params.sharedOwnershipFlag = <%= shared_ownership_enabled %>;
+          PopulateFormData.init(params);
+      });
+    <% end %>
+
+  });
 
   jQuery("#FilterOptions").change(function(){
     <%

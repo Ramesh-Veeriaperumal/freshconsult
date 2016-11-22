@@ -167,6 +167,8 @@
       });
       jQuery('#helpdesk_ticket_ticket_type').trigger('change');
       jQuery('[id^="helpdesk_ticket_custom_field_"]').val("").trigger('change');
+
+      jQuery('[id^="helpdesk_ticket_custom_field_"][type*="checkbox"]').val(1).trigger('change');
     }); 
 
     

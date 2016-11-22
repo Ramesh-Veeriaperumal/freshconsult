@@ -29,7 +29,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def assign_agent_via_round_robin
     return unless group.present?
     next_agent = if group.round_robin_capping_enabled?
-      group.next_agent_with_capping(self.display_id) if capping_ready?
+      if capping_ready?
+        self.round_robin_assignment = true
+        group.next_agent_with_capping(self.display_id)
+      end
     elsif group.round_robin_enabled?
       group.next_available_agent
     end

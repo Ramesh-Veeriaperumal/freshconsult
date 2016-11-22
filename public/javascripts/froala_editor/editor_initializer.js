@@ -42,8 +42,12 @@ function invokeEditor(element_id,type,attr) {
 					"'Times New Roman',Times,serif": 'Times New Roman',
 					'Terminal, monospace' : 'Terminal',
 					'Verdana,Geneva,sans-serif': 'Verdana',
-					'Webdings': 'Webdings',
 					'Windings': 'Windings'
+				},
+				tableStyles: {
+					'fr-dashed-borders': 'Dashed Borders',
+  					'fr-alternate-rows': 'Alternate Rows',
+  					'fr-no-borders': 'No Borders'
 				},
 				fontSize: ['8', '9', '10', '11', '12', '13', '14', '16', '18', '24', '30', '36', '48', '60', '72', '96'],
 				toolbarSticky: false,

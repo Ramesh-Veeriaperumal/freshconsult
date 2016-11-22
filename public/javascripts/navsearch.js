@@ -47,8 +47,14 @@ jQuery(document).ready(function(){
     		var result = search_results[i];
     		if(result){
     			var result_type = result.result_type
-    			resultHtml[result_type] = (typeof(resultHtml[result_type]) == "undefined" ? "" : resultHtml[result_type] ) + 
+    			if(result_type == 'user'){
+    				resultHtml[result_type] = (typeof(resultHtml[result_type]) == "undefined" ? "" : resultHtml[result_type] ) + 
+									    	JST["app/search/templates/spotlight_result_user"](result)
+    			}else{
+    				resultHtml[result_type] = (typeof(resultHtml[result_type]) == "undefined" ? "" : resultHtml[result_type] ) + 
 									    	JST["app/search/templates/spotlight_result"](result)
+    			}
+    			
     		}
 		}
     	
@@ -62,6 +68,8 @@ jQuery(document).ready(function(){
     	jQuery("ul.results").filter(function(){return jQuery(this).find('li.spotlight_result').length > 0; }).show();
 
     	jQuery('ul.results').on('click.add_to_recent_search', 'li.spotlight_result a' , function(ev){
+    		// Dont run this if we are trying to go to user tickets
+    		if (jQuery(ev.target).hasClass("spotlight-result-user-ticket-icon")) return;
     		NavSearchUtils.saveToLocalRecentSearches(fullSearchString);
     	});
 
@@ -191,6 +199,13 @@ jQuery(document).ready(function(){
 			}				
 			jQuery('#header_search').focus();
 		});
+
+	jQuery(document).on('click.search_open_user_tickets', '.spotlight-result-user-ticket-icon', function(ev){
+			ev.stopPropagation();
+			ev.preventDefault();						
+			jQuery(ev.currentTarget).parents('li.spotlight_result').find('a.spotlight-result-hidden-user-tickets-link').click();
+
+		});
 			
 	var move = function(diff){
 		searchlist 	= $J("#SearchResultsBar a");
@@ -221,7 +236,7 @@ jQuery(document).ready(function(){
 		}
 	} 
 
-	var handleSearchAction = function(searchString){
+	var handleSearchAction = function(searchString, self){
 		search_url = "/search/home/suggest?term=";
 		if(searchString != '' && searchString.length > 1 && currentString != searchString){
 			delay(function(){
@@ -250,7 +265,7 @@ jQuery(document).ready(function(){
 			default:
 				var self = this;
 				searchString = self.value.replace(/^\s+|\s+$/g, "");
-				handleSearchAction(searchString);
+				handleSearchAction(searchString, self);
 			break;
 		}
 	});
@@ -260,7 +275,7 @@ jQuery(document).ready(function(){
 			var self = this;
 			setTimeout(function() {
 				searchString = self.value.replace(/^\s+|\s+$/g, "");
-				handleSearchAction(searchString);
+				handleSearchAction(searchString, self);
 			}, 100);
 		}
 	});

@@ -1,0 +1,1 @@
+API_CONFIG_TOOLS= YAML::load_file(File.join(Rails.root, 'config', 'api_config_internal_tools.yml'))[Rails.env].symbolize_keys!

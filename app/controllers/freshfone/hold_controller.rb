@@ -7,6 +7,7 @@ class Freshfone::HoldController < FreshfoneBaseController
   before_filter :valid_hold_request?, :only => [:add, :remove]
   before_filter :reset_resume_call, :only =>[:add, :wait, :remove, :unhold]
   before_filter :initialize_hold, :only => [:wait]
+  before_filter :mute_participants, only: [:initiate]
   before_filter :cancel_browser_agents, only: [:transfer_fallback_unhold, :transfer_unhold]
 
   def add
@@ -115,6 +116,9 @@ class Freshfone::HoldController < FreshfoneBaseController
     def initialize_hold
       params[:customer] = current_call.customer
       current_call.update_attributes(:hold_queue => params[:QueueSid])
+    end
+
+    def mute_participants
       telephony.mute_participants
     end
     

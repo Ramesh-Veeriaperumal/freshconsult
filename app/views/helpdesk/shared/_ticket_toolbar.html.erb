@@ -1,11 +1,11 @@
   <table class="tickets btn-collapse" width="100%" data-set-disabled = "disabled" data-show-by-default="false" data-class-for-btn-wrapper="inline-block" data-calc-parent-width-on=".bulk_action_buttons" data-button-text="<%= t("more") %>">
-	  <thead>
-	  	<tr>
+    <thead>
+      <tr>
         <th class="priority-border"></th>
-				<th class="check">
-					<input type="checkbox" id="helpdesk-select-all" data-keybinding="<%= shortcut('ticket_list.select_all') %>" />
-				</th>
-		    <th class="bulk_action_buttons collapse-content">
+        <th class="check">
+          <input type="checkbox" id="helpdesk-select-all" data-keybinding="<%= shortcut('ticket_list.select_all') %>" />
+        </th>
+        <th class="bulk_action_buttons collapse-content">
 
         <% unless ["deleted", "spam"].include?(@current_view) %>
           <input class="btn tooltip" title='<%= t('ticket.pick_up') %>'
@@ -25,18 +25,17 @@
             <div title="<%=t('ticket.assign_to_agent')%>" class="tooltip btn_with_freshdialog"><%=t('ticket.assign_to')%></div>
           </a>
             <input id="close_ticket_btn" class="btn tooltip" title="<%= t('ticket.close_without_notification') %>"
-                onclick="helpdesk_submit('/helpdesk/tickets/multiple/close_multiple', 'put' , [{name: 'disable_notification' , value: event.shiftKey}]);"
                 type="button" value="<%=t('close')%>" disabled="disabled" data-domhelper-name="ticket-close-button">
           <% end %>
 
           <% if privilege?(:edit_ticket_properties) || privilege?(:reply_ticket) %>
             <a href="/helpdesk/tickets/update_multiple_tickets"
+                id="bulk_actions_btn"
                 data-target="#bulk" rel="freshdialog" data-width="709px" disabled="disabled"
                 class="btn hide_on_collapse" title="<%=t('bulk_actions')%>" data-destroy-on-close="true"
                 data-submit-label="<%= t('update') %>" data-submit-loading="<%= t('ticket.updating')%>..."
                 data-close-label="<%= t('cancel') %>" ><%= t('bulk_actions') %></a>
           <% end %>
-
           <% if privilege?(:merge_or_split_ticket)%>
             <a  href="#merge_freshdialog"
                 data-action="merge"
@@ -71,9 +70,8 @@
               data-keybinding="<%= shortcut('ticket_list.unwatch') %>" data-highlight="true">
           <% end %>
         <% end %>
-
         <% if privilege?(:delete_ticket) %>
-		    	<% if @current_view == "deleted"%>
+          <% if @current_view == "deleted"%>
             <input class="btn tooltip" title="<%=t('undelete')%>"
                 onclick="helpdesk_submit('/helpdesk/tickets/multiple/restore', 'put');"
                 type="button" value="<%=t('undelete')%>" disabled="disabled">
@@ -83,20 +81,21 @@
                 disabled="disabled" data-keybinding="<%= shortcut('ticket_list.delete') %>"
                 data-highlight="true">
           <% elsif @current_view == "spam" %>
-            <input class="btn tooltip" title='<%= t('ticket.unflag_spam') %>' 
-                onclick="helpdesk_submit('/helpdesk/tickets/multiple/unspam', 'put');" type="button" 
-                value="<%=t('ticket.unflag_spam')%>" disabled="disabled" 
+            <input class="btn tooltip" title='<%= t('ticket.unflag_spam') %>'
+                onclick="helpdesk_submit('/helpdesk/tickets/multiple/unspam', 'put');" type="button"
+                value="<%=t('ticket.unflag_spam')%>" disabled="disabled"
                 data-keybinding="<%= shortcut('ticket_list.spam') %>" data-highlight="true">
-                <input class="btn tooltip hide_on_collapse" title='<%= t('ticket.delete_forever') %>' 
-                    onclick="helpdesk_submit('/helpdesk/tickets/delete_forever_spam', 'delete');" 
-                    type="button" value="<%=t('ticket.delete_forever')%>" 
-                    disabled="disabled" data-keybinding="<%= shortcut('ticket_list.delete') %>"
-                    data-highlight="true">
+
+            <input class="btn tooltip hide_on_collapse" title='<%= t('ticket.delete_forever') %>'
+                onclick="helpdesk_submit('/helpdesk/tickets/delete_forever_spam', 'delete');"
+                type="button" value="<%=t('ticket.delete_forever')%>"
+                disabled="disabled" data-keybinding="<%= shortcut('ticket_list.delete') %>"
+                data-highlight="true">
     			<% else %>
             <input id="delete_tickets_btn" class="btn tooltip" title='<%= t('delete') %>' type="button"
                 value="<%=t('delete')%>" disabled="disabled"
                 data-keybinding="<%= shortcut('ticket_list.delete') %>" data-highlight="true">
-    			<% end %>
+          <% end %>
         <% end %>
 
         <% unless ["deleted", "spam"].include?(@current_view) %>
@@ -118,9 +117,9 @@
         </th>
         <%= render :partial => "/helpdesk/shared/select_all_toolbar" %>
         <% if @current_view == "deleted" || @current_view == "spam" %>
-          <th class="toolbar_right_spam_trash">        
+          <th class="toolbar_right_spam_trash">
         <% else %>
-      	 <th class="toolbar_right">
+         <th class="toolbar_right">
         <% end %>
           <% if @current_view == "deleted" %>
             <span class="pl3 muted"> <%= t('ticket.auto_delete_notification_trash') %></span>
@@ -139,7 +138,7 @@
               <div id="empty-trash-confirmation" class="hide">
                 <%=t('ticket.empty_view_confirmation', :current_view => "trash")%>
               </div>
-              <input id="empty_trash" class="hide"  
+              <input id="empty_trash" class="hide"
                   onclick="helpdesk_submit('<%= empty_trash_helpdesk_tickets_path %>', 'delete');"
                   type="button" value="Delete" />
             <% end %>
@@ -160,7 +159,7 @@
               <div id="empty-spam-confirmation" class="hide">
                 <%=t('ticket.empty_view_confirmation', :current_view => "spam")%>
               </div>
-              <input id="empty_spam" class="hide"  
+              <input id="empty_spam" class="hide"
                   onclick="helpdesk_submit('<%= empty_spam_helpdesk_tickets_path %>', 'delete');"
                   type="button" value="Delete" />
             <% end %>
@@ -177,7 +176,7 @@
             <li class="icon active"><a class="ticket-view-detail ticket-view-choice"></a></li>
             <li class="icon right"><a class="ticket-view-list ticket-view-choice"></a></li>
           </ul>
-          
+
         </th>
       </tr>
     </thead>
@@ -202,6 +201,7 @@
   view_tracker = '<%= t('ticket.link_tracker.view_tracker') %>';
   recently_created = '<%= t('ticket.link_tracker.recently_created') %>';
   asscociation_type = <%= TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:tracker]%>;
+  parentChildEnabled = <%= current_account.parent_child_tkts_enabled? %>;
   var action = "";
   var association = [];
 
@@ -225,6 +225,17 @@
      });
   }
 
+  performScenarioAction = function(){
+    jQuery("#execute_scenario .modal-body").html('<span class="loading-block sloading loading-small">');
+    jQuery.ajax({
+      type: 'GET',
+      url: '/helpdesk/tickets/bulk_scenario',
+      success: function(data){
+        jQuery('#execute_scenario .modal-body').html(data);
+      }
+    });
+  }
+
   jQuery(document).on('change', '#tickets-expanded .selector', function(ev){
     var selected_tickets=[];
     jQuery("#tickets-expanded .selector:checked").each(function(){
@@ -236,20 +247,52 @@
 
   setExportCreatedRange = function(){
   var startDate, endDate;
+
     if(jQuery('#created_date_range').is(':visible')){
+
         jQuery("#date_filter").val(<%=TicketConstants::CREATED_BY_KEYS_BY_TOKEN[:custom_filter]%>);
         var dateFormat = getDateFormat('mediumDate');
         var createdDateRange = jQuery('#created_date_range').val().split(' - ');
         startDate = (new Date(createdDateRange[0])).toString(dateFormat);
         endDate = (new Date(createdDateRange[1])).toString(dateFormat);
+
+        jQuery("#date_filter").trigger('change');
+        jQuery('#start_date').attr("value", startDate);
+        jQuery('#end_date').attr("value", endDate);
+        var dateTypeVarStart = new Date(jQuery('#start_date').val());
+        var setStart_date_Clone = jQuery.datepicker.formatDate('yy-mm-dd', dateTypeVarStart);
+        jQuery('#start_export_clone').val(setStart_date_Clone);
+        var dateTypeVarEnd = new Date(jQuery('#end_date').val());
+        var setend_date_Clone = jQuery.datepicker.formatDate('yy-mm-dd', dateTypeVarEnd);
+        jQuery('#end_export_clone').val(setend_date_Clone);
+
+
     }else{
-      jQuery("#date_filter").val(<%=TicketConstants::CREATED_BY_KEYS_BY_TOKEN[:thirt_days]%>);
-      startDate = "<%= formated_date(1.month.ago, Helpdesk::TicketsExportHelper::EXPORT_DATE_FORMAT)%>";
-      endDate = "<%= formated_date(Time.now, Helpdesk::TicketsExportHelper::EXPORT_DATE_FORMAT)%>";
+
+        jQuery("#date_filter").val(<%=TicketConstants::CREATED_BY_KEYS_BY_TOKEN[:thirt_days]%>);
+        startDate = "<%= formated_date(1.month.ago, Helpdesk::TicketsExportHelper::EXPORT_DATE_FORMAT)%>";
+        endDate = "<%= formated_date(Time.now, Helpdesk::TicketsExportHelper::EXPORT_DATE_FORMAT)%>";
+
+        jQuery("#date_filter").trigger('change');
+        jQuery('#start_date').attr("value", startDate);
+        jQuery('#end_date').attr("value", endDate);
+        var dateTypeVarStart = new Date(jQuery('#start_date').val());
+        var setStart_date_Clone = jQuery.datepicker.formatDate('yy-mm-dd', dateTypeVarStart);
+        jQuery('#start_export_clone').val(setStart_date_Clone);
+        var dateTypeVarEnd = new Date(jQuery('#end_date').val());
+        var setend_date_Clone = jQuery.datepicker.formatDate('yy-mm-dd', dateTypeVarEnd);
+        jQuery('#end_export_clone').val(setend_date_Clone);
     }
-    jQuery("#date_filter").trigger('change');
-    jQuery('#start_date').val(startDate);
-    jQuery('#end_date').val(endDate);
+
+    //logic check : startdate <= enddate
+            var startISO = jQuery("#start_export_clone").val();
+            var endISO = jQuery("#end_export_clone").val();
+              if(jQuery.datepicker.parseDate('yy-mm-dd', startISO) > jQuery.datepicker.parseDate('yy-mm-dd', endISO))
+              {
+                jQuery('#start_date_clone').datepicker( "setDate", endISO );
+                var datepickerEnd = jQuery('#end_date').val();
+                jQuery('#start_date').datepicker( "setDate", datepickerEnd );
+              }
   };
 
   cleanupParams = function (association) {
@@ -257,7 +300,7 @@
       jQuery('#ticket-list tr[data-association=' + value +'] input[type=checkbox]:checked').attr('checked', false);
       jQuery('#ticket-list tr').removeClass('active');
     })
-    if(action == 'link'){ 
+    if(action == 'link'){
       jQuery('#ticket-list tr[data-association="true"] input[type=checkbox]:checked').attr('checked', false);
     }
     jQuery("#tickets-expanded .selector").trigger('change');
@@ -266,13 +309,13 @@
   callFreshdialog = function(){
     var data = {
       targetId : '#confirm-action-popup',
-      title : "<%= t('confirm') %>",
+      title : "<%= t('warning') %>",
       width:  '500',
       destroyOnClose : true,
       submitLabel: submit_label
     }
     jQuery.freshdialog(data);
-    jQuery('.modal-body').html("<div>" + confirm_text + "</div>");
+    jQuery('#confirm-action-popup .modal-body').html("<div>" + confirm_text + "</div>");
   }
 
   jQuery('#export_tickets').click(function(){
@@ -326,30 +369,40 @@
     });
     return merged;
   }
-  triggerDefaultDialog = function(){
+  triggerDefaultDialog = function(event){
     if(action == 'merge'){
       var data = {
         targetId : '#merge_freshdialog',
         title : "<%=t('ticket.merge_title')%>",
         width:  '800',
-        templateFooter : false,
-        destroyOnClose : true  
+        templateFooter : false
       }
       jQuery.freshdialog(data);
       performMergeAction();
     }else if(action == 'link'){
       App.Tickets.link_tracker.show_link_tracker_popup(popup_target);
     }else if(action == 'delete'){
-      //eval(jQuery('#delete_tickets_btn').attr('onclick'));
       helpdesk_submit('/helpdesk/tickets/multiple', 'delete');
     }else if(action == 'spam'){
-      //eval(jQuery('#spam_tickets_btn').attr('onclick'));
       helpdesk_submit('/helpdesk/tickets/multiple/spam', 'put');
+    }else if(action == 'close'){
+      helpdesk_submit('/helpdesk/tickets/multiple/close_multiple', 'put' , [{name: 'disable_notification' , value: event.shiftKey}]);
+    }else if(action == 'scenario'){
+      var data = {
+        targetId : '#execute_scenario',
+        title : "<%=t('ticket.execute_scenario')%>",
+        templateFooter : false,
+        templateHeader : "<div class='modal-header'><span><h3 class='modal-heading-with-button'>"
+                          +"<%= t('ticket.execute_scenario') %></h3></span>"
+                          +"<a href='/helpdesk/scenario_automations/new' target='_blank' class='"+"pull-right modal-header-button'>"
+                          +"<%= t('ticket.create_new_scenario') %></a></div>"
+      }
+      jQuery.freshdialog(data);
+      performScenarioAction();
     }
   }
 
-  jQuery('body').off('click', '#invoke_merge_popup');
-  jQuery('body').on('click', '#invoke_merge_popup', function(e){
+  jQuery('body').on('click.ticket_list', '#invoke_merge_popup', function(e){
      association = <%= escape_javascript TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN.values.to_json %>;
     var associated = fetchAssociations(association);
     var selected = jQuery('#ticket-list tr.active').length;
@@ -360,11 +413,13 @@
       confirm_text = selected === associated ? I18n.t('ticket.association.cancel') : I18n.t('ticket.association.merge_tickets', { count: associated });
       submit_label = selected === associated ? "<%= t('ok') %>" : "<%= t('continue') %>"
       callFreshdialog();
+      if(selected === associated){
+        jQuery('#confirm-action-popup-cancel').hide();
+      }
     }
   });
 
-  jQuery('body').off('click', '.bulk_action_buttons .lnk_tkt_tracker_open_dropdown');
-  jQuery('body').on('click', '.bulk_action_buttons .lnk_tkt_tracker_open_dropdown', function(e){
+  jQuery('body').on('click.ticket_list', '.bulk_action_buttons .lnk_tkt_tracker_open_dropdown', function(e){
     association = <%= escape_javascript TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN.values.to_json %>;
     var associated = fetchAssociations(association) + fetchMergedTickets();
     var selected = jQuery('#ticket-list tr.active').length;
@@ -375,13 +430,15 @@
       confirm_text = selected === associated ? I18n.t('ticket.association.cancel') : I18n.t('ticket.association.link_tickets', { count: associated });
       submit_label = selected === associated ? "<%= t('ok') %>" : "<%= t('continue') %>"
       callFreshdialog();
+      if(selected === associated){
+        jQuery('#confirm-action-popup-cancel').hide();
+      }
     }else {
       App.Tickets.link_tracker.show_link_tracker_popup(popup_target);
     }
   });
 
-  jQuery('body').off('click', '#delete_tickets_btn');
-  jQuery('body').on('click', '#delete_tickets_btn', function(e){
+  jQuery('body').on('click.ticket_list', '#delete_tickets_btn', function(e){
     association = <%= escape_javascript TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN.values.to_json %>;
     var associated = fetchAssociations(association);
     action = "delete";
@@ -396,8 +453,7 @@
     }
   });
 
-  jQuery('body').off('click', '#spam_tickets_btn');
-  jQuery('body').on('click', '#spam_tickets_btn', function(e){
+  jQuery('body').on('click.ticket_list', '#spam_tickets_btn', function(e){
     association = <%= escape_javascript TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN.values.to_json %>;
     var associated = fetchAssociations(association);
     action = "spam";
@@ -412,19 +468,58 @@
     }
   });
 
-  jQuery('body').off("click", "#confirm-action-popup-cancel")
-  jQuery('body').on("click", "#confirm-action-popup-cancel", function(e){
-    jQuery('#confirm-action-popup').modal('hide');
+  jQuery('body').on('click.ticket_list', '#close_ticket_btn', function(e){
+    var parent = '<%= TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:assoc_parent]%>';
+    var associated = 0;
+    var selected = jQuery('#ticket-list tr.active').length;
+    action = 'close';
+    jQuery('#ticket-list tr.active').each(function(){
+      if (jQuery(this).data('association') == parent) {
+        associated++;
+      }
+    });
+    if(associated > 0){
+      e.preventDefault();
+      e.stopPropagation();
+      confirm_text = I18n.t('ticket.association.close_tickets', { count: associated });
+      submit_label = "<%= t('continue') %>";
+      callFreshdialog();
+    }else {
+      helpdesk_submit('/helpdesk/tickets/multiple/close_multiple', 'put' , [{name: 'disable_notification' , value: e.shiftKey}]);
+    }
   });
 
-  jQuery('body').off("click", "#confirm-action-popup-submit");
-  jQuery('body').on("click", "#confirm-action-popup-submit", function(e){
+  jQuery('body').on('click.ticket_list', '#scenario', function(e){
+    var associated = 0;
+    var parent = '<%= TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:assoc_parent]%>';
+    action = 'scenario';
+    jQuery('#ticket-list tr.active').each(function(){
+      if (jQuery(this).data('association') == parent) {
+        associated++;
+      }
+    });
+    if(associated > 0){
+      e.preventDefault();
+      e.stopPropagation();
+      confirm_text = I18n.t('ticket.association.scenario.assoc_parent');
+      submit_label = "<%= t('continue') %>"
+      callFreshdialog();
+      jQuery('#confirm-action-popup-cancel').hide();
+    }
+  });
+
+  jQuery('body').on("click.ticket_list", "#confirm-action-popup-cancel", function(e){
+    jQuery('#confirm-action-popup').modal('hide');
+    jQuery('#confirm-action-popup-content').parent().modal('hide');
+  });
+
+  jQuery('body').on("click.ticket_list", "#confirm-action-popup-submit", function(e){
     e.preventDefault();
     e.stopPropagation();
     jQuery('#confirm-action-popup').modal('hide');
     if (action == 'merge' || action == 'link'){ cleanupParams(association); }
     if(jQuery("#tickets-expanded .selector:checked").length !== 0){
-      triggerDefaultDialog();
+      triggerDefaultDialog(e);
     }
    });
 <%- end %>

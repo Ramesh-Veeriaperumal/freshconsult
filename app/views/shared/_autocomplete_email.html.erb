@@ -1,9 +1,17 @@
-<% if @item.not_editable? %>
+<% if !object_name.eql?("template_data") and @item.not_editable? %>
   <%= text_field object_name, :twitter_id, :value => (@item.requester_info), :disabled => true %>
   <%= hidden_field object_name, :requester_id, :value => (@item.requester_id) %>
 <% else %>
-  <% value = (params[:template_form] && params[:requester_email].present?) ? params[:requester_email] : @item.requester_info %>
-  <%= text_field object_name, :email, :value => value, :class => "required #{defined?(class_name) ? class_name : 'requester'}", "data-requester-check" => false, "data-current-user" => "", "data-initial-requester" => @item.requester_info, "data-initial-requesterid" => @item.requester_id, :placeholder => defined?(placeholder) ? placeholder : t('ticket.compose.to_address_placeholder') %>
+  <% if object_name.eql?("template_data")
+      requester_info = value = @item.template_data[:email]
+      requester_id   = @item.template_data[:requester_id]
+    else
+      value = (params[:template_form] && params[:requester_email].present?) ? params[:requester_email] : @item.requester_info
+      requester_info = @item.requester_info
+      requester_id   = @item.requester_id
+    end
+  %>
+  <%= text_field object_name, :email, :value => value, :class => "#{ !object_name.eql?("template_data") ? 'required' : '' } #{defined?(class_name) ? class_name : 'requester'}", "data-requester-check" => false, "data-current-user" => "", "data-initial-requester" => requester_info, "data-initial-requesterid" => requester_id, :placeholder => defined?(placeholder) ? placeholder : t('ticket.compose.to_address_placeholder') %>
 <% end %>
 <div id="<%=object_name%>_email_choices" class="autocomplete"></div>
 <div id="meta-req" data-obj = "<%= object_name %>" data-url="<%= url %>"></div>

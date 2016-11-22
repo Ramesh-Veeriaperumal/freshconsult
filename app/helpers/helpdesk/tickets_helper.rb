@@ -20,6 +20,7 @@ module Helpdesk::TicketsHelper
   include Cache::Memcache::Helpdesk::TicketTemplate #Methods for tkt templates count
   include Cache::FragmentCache::Base # Methods for fragment caching
   include Helpdesk::SpamAccountConstants
+
   def ticket_sidebar
     tabs = [["TicketProperties", t('ticket.properties').html_safe,         "ticket"],
             ["RelatedSolutions", t('ticket.suggest_solutions').html_safe,  "related_solutions", privilege?(:view_solutions)],
@@ -219,7 +220,7 @@ module Helpdesk::TicketsHelper
   def forward_template_draft(item, signature)
     {"draft_text" => bind_last_conv(item, signature, true, false)}
   end
-
+  
   def default_twitter_body_val (ticket)
     if (ticket.tweet && ticket.tweet.tweet_type == 'mention')
      return "@#{ticket.requester.twitter_id}"
@@ -374,8 +375,8 @@ module Helpdesk::TicketsHelper
     return {:data => encoded_data}.to_json.html_safe
   end
 
-  def latest_note_helper(ticket)    
-    latest_note_obj = ticket.notes.visible.exclude_source(['meta', 'tracker']).newest_first.first
+  def latest_note_helper(ticket)
+    latest_note_obj = ticket.notes.visible.exclude_source('meta').newest_first.first
     latest_note_hash = {}
     unless latest_note_obj.nil?
         action_msg = latest_note_obj.fwd_email? ? 'helpdesk.tickets.overlay_forward' : (latest_note_obj.note? ? 'helpdesk.tickets.overlay_note' : 'helpdesk.tickets.overlay_reply')
@@ -480,11 +481,11 @@ module Helpdesk::TicketsHelper
       contents <<  content_tag(:div, email_content.join(" ").html_safe, :class => "email-wrapper" )
     end
     if  current_account.launched?(:multifile_attachments)
-    contents << content_tag(:div) do 
+    contents << content_tag(:div) do
         render :partial => "helpdesk/tickets/ticket_widget/widget_attachment_form", :locals => { :attach_id => "ticket" , :nsc_param => "helpdesk_ticket" , :template => true}
     end
   else
-    contents << content_tag(:div) do 
+    contents << content_tag(:div) do
       render :partial => "/helpdesk/tickets/show/single_attachment_form", :locals => { :attach_id => "ticket" , :nsc_param => "helpdesk_ticket" , :template => true,:rowfluid => true}
     end
   end
@@ -568,7 +569,7 @@ module Helpdesk::TicketsHelper
   def unique_ticket_recipients(ticket)
     ticket_from_email = get_email_array(ticket.from_email)
     cc_email_hash = ticket.cc_email_hash.nil? ? Helpdesk::Ticket.default_cc_hash : ticket.cc_email_hash
-    
+
     bcc_emails = get_email_array(cc_email_hash[:bcc_emails])
     cc_emails = get_email_array(cc_email_hash[:cc_emails])
     fwd_emails = get_email_array(cc_email_hash[:fwd_emails])
@@ -589,27 +590,27 @@ module Helpdesk::TicketsHelper
 
   def ticket_association_box
     links = []
-    links << %(<span class="mr12"> 
-                  <b><a href="#">#{I18n.t('ticket.parent_child.add_child')} </a></b>
-                </span>) if current_account.features_included?(:parent_child_tickets)
+    links << %(<span class="mr12">
+                  <b><a href="#" data-placement = "bottomLeft" data-trigger="add_child" class="lnk_tkt_tracker_show_dropdown" id="add_child_tkt"  role="button" data-toggle="popover" data-dropdown="close" data-ticket-id="#{@ticket.display_id}">Add Child </a></b>
+                </span>) if Account.current.parent_child_tkts_enabled?
     links << %(<span class="ml12">
-                  <b><a href="#" data-placement = "bottomLeft" class="lnk_tkt_tracker_show_dropdown" id="lnk_tkt_tracker"  role="button" data-toggle="popover" data-dropdown="close" data-ticket-id="#{@ticket.display_id}">#{t('ticket.link_tracker.link_to_tracker')}</a></b>
+                  <b><a href="#" data-placement = "bottomLeft" data-trigger="link_tracker" class="lnk_tkt_tracker_show_dropdown" id="lnk_tkt_tracker"  role="button" data-toggle="popover" data-dropdown="close" data-ticket-id="#{@ticket.display_id}">#{t('ticket.link_tracker.link_to_tracker')}</a></b>
                 </span>) if current_account.link_tickets_enabled?
     links.join(links.size > 1 ? '<span class="separator">OR</span>' : '')
-    content_tag(:span, 
-                links.join(links.size > 1 ? '<span class="separator">OR</span>' : '').html_safe, 
-                :class => "text-center block")
+    content_tag(:span,
+                links.join(links.size > 1 ? '<span class="separator">OR</span>' : '').html_safe,
+                :class => "text-center link_ticket_text block p10")
   end
 
   def tracker_ticket_requester? dom_type
-    dom_type.eql?("requester") and (params[:display_ids].present? || @item.tracker_ticket?) and current_account.link_tickets_enabled? 
+    dom_type.eql?("requester") and (params[:display_ids].present? || @item.tracker_ticket?) and current_account.link_tickets_enabled?
   end
 
   def show_insert_into_reply?
     privilege?(:reply_ticket) && !(@ticket.twitter? || @ticket.facebook? || @ticket.allow_ecommerce_reply?) && @ticket.from_email.present?
   end
 
-  private 
+  private
 
     def ticket_cc_info cc_emails_hash
       CcViewHelper.new(nil, cc_emails_hash[:cc_emails], cc_emails_hash[:dropped_cc_emails]).cc_agent_inline_content.html_safe

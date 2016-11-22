@@ -15,6 +15,7 @@ begin
   #US Polls dircetly from the global queue - No region specific queues
   if S3_CONFIG[:region] == 'us-east-1'
     $sqs_twitter  = AWS::SQS.new.queues.named(SQS[:twitter_realtime_queue])
+    $sqs_gnip_2_0 = AWS::SQS.new.queues.named(SQS[:gnip_2_0_realtime_queue])
     
   #EUC polls from the region specifuc queue pushed from EU
   elsif S3_CONFIG[:region] == 'eu-central-1'
@@ -69,7 +70,8 @@ begin
     SQS[:auto_refresh_queue]    => AwsWrapper::SqsV2.queue_url(SQS[:auto_refresh_queue]),
     SQS[:auto_refresh_alb_queue]    => AwsWrapper::SqsV2.queue_url(SQS[:auto_refresh_alb_queue]),
     SQS[:agent_collision_queue] => AwsWrapper::SqsV2.queue_url(SQS[:agent_collision_queue]),
-    SQS[:agent_collision_alb_queue] => AwsWrapper::SqsV2.queue_url(SQS[:agent_collision_alb_queue])
+    SQS[:agent_collision_alb_queue] => AwsWrapper::SqsV2.queue_url(SQS[:agent_collision_alb_queue]),
+    SQS[:marketplace_app_queue]     => AwsWrapper::SqsV2.queue_url(SQS[:marketplace_app_queue])
   }
 
 rescue => e

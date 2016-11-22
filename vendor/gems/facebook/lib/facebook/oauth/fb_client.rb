@@ -6,6 +6,7 @@ module Facebook
   module Oauth
     class FbClient
       
+      include Facebook::Constants
       include Facebook::Oauth::Constants
       include Facebook::Exception::Handler
 
@@ -108,7 +109,7 @@ module Facebook
         user = sandbox do
           @fan_page = fan_page
           rest = Koala::Facebook::API.new(fan_page.access_token)
-          rest.get_object(profile_id).symbolize_keys
+          rest.get_object(profile_id,{:fields => PROFILE_NAME_FIELDS}).symbolize_keys
         end
         user ? "#{user[:first_name]} #{user[:last_name]}" : ""
       end

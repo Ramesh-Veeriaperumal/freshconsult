@@ -1,11 +1,11 @@
 
 <div class="tkt-sidebar" id="ticket_details_sidebar" data-domhelper-name="ticket-details-sidebar">
 	<%= render :partial => 'helpdesk/tickets/show/status', :locals => {:ticket => @ticket} unless @ticket.deleted or @ticket.spam %>
-	<% if @ticket.can_be_linked? && 
-		current_account.link_tickets_enabled? || feature?(:parent_child_tickets) %>
+	<% if @ticket.can_be_associated? &&
+		(current_account.link_tickets_enabled? || current_account.parent_child_tkts_enabled?) %>
 		<div id="ticket-association" data-remote-url="<%= ticket_association_helpdesk_ticket_path(@ticket)%>" rel="remote"></div>
 	<% end -%>
-	<%= render :partial => "helpdesk/tickets/show/requester" %> 
+	<%= render :partial => "helpdesk/tickets/show/requester" %>
 	<%= render :partial => "helpdesk/tickets/show/app_info" , :locals => {:ticket => @ticket} if @ticket.mobihelp? and @ticket.mobihelp_ticket_info %>
 	<% unless @ticket.deleted or @ticket.spam %>
 		<div class="widget" id='TicketProperties' data-domhelper-name='ticket-properties'>
@@ -33,8 +33,8 @@
 			<h3><%= t('to_do') %></h3>
 			<div class="content" rel="remote" data-remote-url="/helpdesk/tickets/<%= @ticket.id %>/component?component=todo"></div>
 		</div>
-		
-		<%= render :partial => "helpdesk/tickets/show/integrations" %> 
+
+		<%= render :partial => "helpdesk/tickets/show/integrations" %>
 
     <% if is_application_installed?(Integrations::Constants::APP_NAMES[:ilos]) %>
       <% ilos_app_config = get_app_config(Integrations::Constants::APP_NAMES[:ilos]) %>
@@ -51,7 +51,7 @@
             </div>
           </div>
         </div>
-      <% end %> 
-    <% end %> 
+      <% end %>
+    <% end %>
 	<% end %>
 </div>

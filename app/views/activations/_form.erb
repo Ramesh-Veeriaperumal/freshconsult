@@ -1,60 +1,61 @@
 <%= form_for @user, :url => activate_path(@user.perishable_token), :html => { :rel => "validate", :class => "form-portal" } do |form| %>
 	<%= error_messages_for :user %>
 	<fieldset>
-	  	<div class="control-group">
+	
+	  <div class="control-group">
 			<%= form.label :name, t('user.full_name'), :class => "control-label required" %>
 			<div class="controls">
 				<%= form.text_field :name, :class => "required special span6" %>
 			</div>
+			<div class="clearfix"></div>
 		</div>
+		
 		<div class="control-group">
 			<%= form.label :password, t('create_password'), :class => "control-label required" %>
 			<div class="controls">
 				<%= form.password_field :password, :class => "required special password span6 popover-enabled",
-						:data => {:content => password_policies_for_popover} %>
+						:data => {content: password_policies_for_popover, html: true} %>
 			</div>
+			<div class="clearfix"></div>
 		</div>
 		<div class="control-group">
 			<%= form.label :password_confirmation, t('retype_password'), :class => "control-label required" %>
 			<div class="controls">
 				<%= form.password_field :password_confirmation, :class => "required special password span6"  %>
 			</div>
+			<div class="clearfix"></div>
 		</div>
 		<div class="form-actions">
-			<button type="submit" class="btn btn-primary"> <%= t('activate_and_log_in') %> </button>
+			<button type="submit" class="btn btn-primary"> <%= t('activate_and_log_in_long') %> </button>
 	  	</div>	
 	</fieldset>
 <% end %>
 
-<script type="text/javascript">
-	jQuery(document).ready(function(ev){
-		setTimeout(function(){
-			jQuery("#user_password_confirmation").rules("add", {
-				equalTo: "#user_password",
-				messages: {
-					equalTo: "<%= t('profile.confirm_password_message') %>"
-				}
-			})
-		}, 100)
+<%= javascript_tag do %>
+jQuery(document).ready(function() { 
+	var mediaQcheck = window.matchMedia( "(max-device-width: 480px)" );
+	var $placement = (jQuery("html").attr("dir") == "rtl") ? 'left' :'right';
+  if(mediaQcheck.matches){
+    $placement = 'top';
+  }
 
-		jQuery(document).on("focus","input.popover-enabled",function(){
-		  var popover_message = jQuery(this).attr("data-content");
-		  if(popover_message){
-		    jQuery(this).popover({
-	  	  	html: true,
-	  	  	trigger: 'manual',
-	  	  	template: '<div class="popover"><div class="arrow"></div><div class="popover-inner"><div class="popover-content"><p></p></div></div></div>',
-	  	  	content:function(){
-                  return "<div class='password-wrapper'><h5 class='policy-title'><%= t("admin.security.password_policy_popover.password_must") %></h5>" 
-                  	+popover_message + "</div>"
-                }
-	  	  }).popover("show");
-		  }
-		});
-	
-		jQuery(".popover-enabled").blur(function(){
-	  		jQuery(this).popover("hide");
-		});
-	
-	})
-</script>
+  var popover_message = jQuery('#user_password').data('content');
+  if(popover_message){
+    jQuery("#user_password").popover({
+      html: true,
+      trigger: 'manual', 
+      placement: $placement,
+      reloadContent: false,
+      template: "<div class='arrow'></div><div class='inner'><div class='content'><p></p></div></div>",
+      content: function(){
+                return "<div class='password-wrapper'><h5 class='policy-title'><%= t("admin.security.password_policy_popover.password_should") %></h5>" +jQuery("#user_password").attr("data-content") + "</div>"
+              }
+    }).focus(function(){
+        jQuery(this).popover("show");
+    }).blur(function(){
+        jQuery(this).popover("hide");
+    }); 
+  }
+});
+ 	
+<% end %>

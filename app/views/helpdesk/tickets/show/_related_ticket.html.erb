@@ -15,7 +15,7 @@
           <% if related_ticket.outbound_email? %>
             <%= t("ticket.ticket_to", :username => requester(related_ticket)).html_safe %>
           <% else %>
-            <%= t("ticket.ticket_from", :username => requester(related_ticket)).html_safe %>          
+            <%= t("ticket.ticket_from", :username => requester(related_ticket)).html_safe %>
           <% end -%>
         </div>
         <div class="emphasize">
@@ -71,11 +71,11 @@
       <div class="btn-toolbar pull-right">
         <a id="cancel_unlink" href="#" class="btn"><%= t('account.cancel') %></a>
         <span class="btn-group dropdown">
-          <button id="confirm_unlink_ticket" value="<%= related_ticket.display_id %>" 
-            class="btn btn-primary" data-loading-text=<%= t("ticket.link_tracker.unlink_submitting") %> 
+          <button id="confirm_unlink_ticket" value="<%= related_ticket.display_id %>"
+            class="btn btn-primary" data-loading-text=<%= t("ticket.link_tracker.unlink_submitting") %>
             data-tracker-id="<%= @ticket.display_id %>" data-tracker="true">
             <%= t("ticket.link_tracker.unlink_submit") %>
-        </span>  
+        </span>
       </div>
     </div>
   </div>

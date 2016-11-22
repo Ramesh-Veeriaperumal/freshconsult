@@ -61,6 +61,7 @@ window.App.Tickets = window.App.Tickets || {};
 		},
 		onLeave: function() {
 			$(document).off('.ticket_list');
+			$('body').off('.ticket_list');
 			jQuery('body').off('.filterList');
 			App.Tickets.Merge_tickets.unBindEvent();
 		},

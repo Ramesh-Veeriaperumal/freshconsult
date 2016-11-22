@@ -1,0 +1,9 @@
+<!--  Header section -->
+<div rel="sticky" class="cb tickets-title">
+	<h3 class="lead pull-left"><%= t("ticket.submit_child_new_title") %></h3>
+	<div class="btn-toolbar pull-right">
+		<%= link_to t('cancel'), (@item.new_record? ? {:action => 'index'} : @item ), :class => "btn cancel-btn" %>
+		<a class="btn save_and_create_child" data-trigger="add_child" name="action_save" data-loading-text="<%= t('ticket.submit_loading')  %>"><%= "Save and New Child" %></a> 
+		<a class="btn btn-primary" id="newticket-submit" data-loading-text="<%= t('ticket.submit_loading')  %>"><%= t('save') %></a> 
+	</div> 
+</div>

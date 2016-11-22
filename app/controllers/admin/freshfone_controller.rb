@@ -1,5 +1,6 @@
 class Admin::FreshfoneController < Admin::AdminController
 	include Freshfone::SubscriptionsUtil
+	include Admin::Freshfone::RequestFeature
 	include Redis::RedisKeys
 	include Redis::IntegrationsRedis
 
@@ -8,7 +9,7 @@ class Admin::FreshfoneController < Admin::AdminController
 	before_filter :validate_freshfone_state, :only => [:search]
 	before_filter :validate_trial, :only => [:search]
 	before_filter :validate_params, :only => [:available_numbers]
-	after_filter  :add_request_to_redis,:only => [:request_freshfone_feature]
+	after_filter  :add_freshfone_request_to_redis,:only => [:request_freshfone_feature]
 
 	def index
 		redirect_to admin_freshfone_numbers_path and return if
@@ -16,20 +17,7 @@ class Admin::FreshfoneController < Admin::AdminController
 	end
 
 	def request_freshfone_feature
-		email_params = {
-			:subject => "Phone Request - #{current_account.name}",
-			:from => current_user.email,
-			:cc => current_account.admin_email,
-			:message => "Request to enable the phone channel in your Freshdesk account."
-		}
-		FreshfoneNotifier.send_later(
-				:deliver_freshfone_request_template,
-				current_account, current_user, email_params)
-		FreshfoneNotifier.send_later(
-				:deliver_freshfone_ops_notifier,
-				current_account,
-				message: "Phone Activation Requested From Trial For Account ::#{current_account.id}",
-				recipients: ["freshfone-ops@freshdesk.com","pulkit@freshdesk.com"]) if in_trial_states?
+		request_freshfone
 		render :json => { :status => :success }
 	end
 
@@ -117,13 +105,6 @@ class Admin::FreshfoneController < Admin::AdminController
 			@numbers = current_account.freshfone_numbers
 		end
 
-		def add_request_to_redis
-			set_key(activation_key, true, 1.week.seconds)
-		end
-
-		def activation_key
-			FRESHFONE_ACTIVATION_REQUEST % { :account_id => current_account.id }
-		end
 
 		def trial_render
 			return render :trial_index if

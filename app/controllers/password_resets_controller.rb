@@ -45,7 +45,7 @@ class PasswordResetsController < SupportController
   end
   
   def edit
-    set_portal_page :password_reset
+    render layout: 'activations'
   end
 
   def update
@@ -58,8 +58,7 @@ class PasswordResetsController < SupportController
       redirect_to root_url
     else
       load_password_policy
-      set_portal_page :password_reset
-      render :action => :edit
+      render layout: 'activations', :action => :edit
     end
   end
 

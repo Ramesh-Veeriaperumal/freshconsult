@@ -1,0 +1,105 @@
+//including the needed styles from app
+@import "settings/settings";
+@import "pattern/lib/forms";
+@import "pattern/lib/buttons";
+@import "pattern/lib/button-groups";
+@import "pattern/lib/popovers";
+
+
+body{
+  min-width: 100%;
+}
+
+.clearfix{
+  clear: both;
+}
+
+.activation-page {
+  width: 600px;
+  background: #fff;
+  margin: 75px auto;
+  box-shadow: 0px 0px 10px -4px #4d4d4d;
+  border-radius: 5px;
+}
+
+.banner {
+  background: #252525;
+  @include border-radius(5px 5px 0px 0px);
+  @include padding(30px 50px);
+  color: #fff;
+
+  .logo {
+    @include float(left);
+  }
+  .heading {
+    @include float(left);
+    font-size: 25px;
+    @include padding(8px 15px);
+  }
+}
+
+.activation-container {
+  @include padding(30px 60px);
+
+  .heading {
+    text-transform: uppercase;
+    color: #4B4B4B;
+  }
+  .lead {
+    line-height: 12px;
+    font-size: 15px;
+    margin-bottom: 30px;
+    font-weight:300;
+    color: #4E4E4E;
+  }
+  
+  .control-group {
+    margin: 15px 0px;
+
+    .control-label {
+      @include float(left);
+      width: 35%;
+    }
+    .controls{
+      @include float(left);
+      width: 65%;
+    }
+    .controls input, .controls select{
+      width: 100%;
+      font-size: 14px;
+      @include padding(6px 10px);
+    }
+  }
+
+  .form-actions {
+    background: #fff;
+    border: none;
+    text-align: center;
+    .btn-primary {
+      font-size: 14px;
+      background: #333333;
+      @include padding(8px 24px);
+      border-radius: 5px;
+    }
+  }
+}
+
+//password policy popover styles
+.popover .password-wrapper{
+
+    .policy-title {
+      font-weight: bold;
+      margin-bottom: 10px;
+      font-size:14px;
+    }
+
+    ul{
+        @include margin-left(5px);
+    }
+
+    li{
+    @include margin-left(10px);
+    list-style-type: disc;
+    line-height: 22px;
+  }
+}

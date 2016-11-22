@@ -27,6 +27,7 @@ module RabbitMq::Subscribers::Tickets::AutoRefresh
   def ticket_properties_changes_hash
     changes = { :custom_fields => {}}
     flexifields = Hash[filter_custom_fields.map{|entry| [entry.flexifield_name, entry.flexifield_alias]}]
+    schemaless_fields = Helpdesk::SchemaLessTicket::COLUMN_TO_ATTRIBUTE_MAPPING
     @model_changes.each do |key, value|
       if value[0].blank?
         #Not need for list, but for details page
@@ -37,6 +38,8 @@ module RabbitMq::Subscribers::Tickets::AutoRefresh
         elsif text_and_number_ff_fields.include?(key.to_s)
           changes[:custom_fields]["text_fields"] ||= []
           changes[:custom_fields]["text_fields"] << key.to_s
+        elsif schemaless_fields[key]
+          changes[ schemaless_fields[key] ] = value
         else
           changes[key.to_s] = value
         end

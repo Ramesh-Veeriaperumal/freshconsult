@@ -15,21 +15,23 @@ module Search
         @offset           = args[:offset]
         @searchable_types = args[:types]
         @es_params        = args[:es_params]
+        @locale           = args[:locale]
         @records          = []
       end
       
       def query_results
         begin
           es_results = SearchRequestHandler.new(@account_id,
-            Search::Utils.template_context(@search_context, @exact_match),
-            @searchable_types
+            Search::Utils.template_context(@search_context, @exact_match, @locale),
+            @searchable_types,
+            @locale
           ).fetch(@es_params)
 
           @records = Search::Utils.load_records(es_results, @es_models,
             {
               current_account_id: @account_id,
               page: @current_page,
-              from: @offset
+              es_offset: @offset
             }
           )
         rescue Exception => e

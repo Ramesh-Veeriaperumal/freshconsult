@@ -86,4 +86,5 @@ helpdesk:
     - email_controller_log_subscriber
     - thrift
     - sendgrid_webhook_config
+    - api_config_internal_tools
 

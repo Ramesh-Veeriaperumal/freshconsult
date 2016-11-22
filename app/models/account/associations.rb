@@ -5,6 +5,7 @@ class Account < ActiveRecord::Base
   has_many :notes, :class_name => 'Helpdesk::Note'
   has_many :note_bodies, :class_name => 'Helpdesk::NoteBody'
   has_many :external_notes, :class_name => 'Helpdesk::ExternalNote'
+  has_many :broadcast_messages, :class_name => 'Helpdesk::BroadcastMessage'
   has_many :activities, :class_name => 'Helpdesk::Activity'
   has_many :flexifields
   has_many :ticket_states, :class_name =>'Helpdesk::TicketState'
@@ -306,9 +307,18 @@ class Account < ActiveRecord::Base
   has_many :outgoing_email_domain_categories, :dependent => :destroy
   has_many :authorizations, :class_name => '::Authorization'
 
-  has_many :status_groups
-
   has_many :ticket_templates, :class_name => "Helpdesk::TicketTemplate"
+  has_many :prime_templates, 
+            :class_name => "Helpdesk::TicketTemplate", 
+            :conditions =>['association_type != ?', Helpdesk::TicketTemplate::ASSOCIATION_TYPES_KEYS_BY_TOKEN[:child]]
+  has_many :parent_templates,
+            :class_name => "Helpdesk::TicketTemplate", 
+            :conditions => {:association_type => Helpdesk::TicketTemplate::ASSOCIATION_TYPES_KEYS_BY_TOKEN[:parent]}
+  has_many :child_templates, 
+            :class_name => "Helpdesk::TicketTemplate", 
+            :conditions => {:association_type => Helpdesk::TicketTemplate::ASSOCIATION_TYPES_KEYS_BY_TOKEN[:child]}
+
+  has_many :status_groups
 
   has_many :account_webhook_key, dependent: :destroy
   

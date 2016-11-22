@@ -116,7 +116,7 @@ gem "newrelic_rpm","3.9.9.275"
 
 gem "faraday" , "0.9"
 gem 'faraday_middleware', '~> 0.10.0'
-gem "twitter", "~> 5.5.1"
+gem "twitter", "~> 5.16.0"
 gem "gnip-rule", "0.4.1"
 gem "curb", "~> 0.8.5"
 gem "sanitize", "2.0.3"
@@ -182,7 +182,7 @@ gem "premailer", "~> 1.8.0"
 # Email Related Gems
 gem 'html_to_plain_text', '1.0.5'
 gem "akismetor", :git => "git://github.com/freshdesk/akismetor.git"
-gem 'launchparty', "0.1.1", :git => 'git@github.com:freshdesk/launch-party.git', :branch => 'master'
+gem 'launchparty', :git => 'git@github.com:freshdesk/launch-party.git', :tag => 'v0.1.2'
 gem 'binarize', "0.1.1", :git => 'git@github.com:freshdesk/binarize.git', :branch => 'master'
 
 

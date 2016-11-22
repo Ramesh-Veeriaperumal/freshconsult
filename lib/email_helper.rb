@@ -93,4 +93,31 @@ module EmailHelper
     Rails.logger.info("#{log_msg}")
   end 
 
+  def make_header(ticket_id=nil, note_id=nil, account_id=nil,type)
+    headers = {
+        "X-FD-Account-Id" => account_id,
+        "X-FD-Type" => type
+      }
+    headers.merge!({"X-FD-Ticket-Id" => ticket_id}) if ticket_id
+    headers.merge!({"X-FD-Note-Id" => note_id}) if note_id
+    headers
+  end  
+
+  def replace_invalid_characters(t_format)
+    begin
+      params[t_format] = params[t_format].encode(Encoding::UTF_8, :undef => :replace, 
+                                                              :invalid => :replace, 
+                                                              :replace => '')
+    rescue Exception => e
+      Rails.logger.error "Error While encoding in process email  \n#{e.message}\n#{e.backtrace.join("\n\t")} #{params}"
+      NewRelic::Agent.notice_error(e,{:description => "Charset Encoding issue while replacing invalid characters with ===============> #{charset_encoding}"})
+    end
+  end
+  def configure_email_config email_config
+    Thread.current[:email_config] = email_config
+  end
+
+  def remove_email_config
+    Thread.current[:email_config] = nil
+  end
 end

@@ -16,7 +16,8 @@ module ContactConstants
   SCOPE_BASED_ON_ACTION = {
     'update'  => { deleted: false, blocked: false },
     'destroy' => { deleted: false, blocked: false },
-    'make_agent' => { deleted: false, blocked: false }
+    'make_agent' => { deleted: false, blocked: false },
+    'restore' => { deleted: true, blocked: false }
   }.freeze
 
   # Based on limitation specified in Helpdesk::Attachment ( def image? )
@@ -42,6 +43,8 @@ module ContactConstants
   MERGE_VALIDATIONS = [['emails', 5, 'emails'], ['twitter_id', 1, 'Twitter User'],
                        ['fb_profile_id', 1, 'Facebook User'], ['external_id', 1, 'Ecommerce User or Mobihelp User'],
                        ['company_names', 20, 'companies'], ['mobile', 1, 'mobile phone'], ['phone', 1, 'work phone']].freeze # [Attribute, limit, message] ["phone", 1, "Phone User"]
+  # Routes that doesn't accept any params
+  NO_PARAM_ROUTES = %w(restore).freeze
 
   ATTRIBUTES_TO_BE_STRIPPED = %w(address email job_title language name mobile phone time_zone tags twitter_id custom_fields other_emails).freeze
 

@@ -16,7 +16,6 @@ module Social::Twitter::TicketActions
     account  = Account.current
     
     ticket   = account.tickets.build(
-      :subject    =>  Helpdesk::HTMLSanitizer.plain(tkt_hash[:body]) ,
       :twitter_id =>  user.twitter_id,
       :product_id => options[:product_id] || twt_handle.product_id,
       :group_id   => options[:group_id] || ( twt_handle.product ? twt_handle.product.primary_email_config.group_id : nil),
@@ -27,11 +26,13 @@ module Social::Twitter::TicketActions
         :tweet_type         => twt_type.to_s,
         :twitter_handle_id  => twt_handle.id,
         :stream_id          => options[:stream_id]
-      },
-      :ticket_body_attributes => {
-        :description_html => tkt_hash[:body]
       }
     )
+    body_content = construct_item_body(account, ticket, twt, options)
+    ticket.subject = Helpdesk::HTMLSanitizer.plain(body_content)
+    ticket.ticket_body_attributes = {
+      :description_html => body_content
+    }
     ticket.requester = user
     ticket.build_archive_child(:archive_ticket_id => archived_ticket.id) if archived_ticket
     if ticket.save_ticket
@@ -47,11 +48,9 @@ module Social::Twitter::TicketActions
 
   def add_as_note(twt, twt_handle, twt_type, ticket, user, options={})
     note_hash = construct_params(twt, options)
+    account  = Account.current
 
     note = ticket.notes.build(
-      :note_body_attributes => {
-        :body_html => note_hash[:body]
-      },
       :incoming   => true,
       :source     => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:twitter],
       :account_id => twt_handle.account_id,
@@ -64,6 +63,10 @@ module Social::Twitter::TicketActions
         :stream_id          => options[:stream_id]
       }
     )
+
+    note.note_body_attributes = {
+      :body_html => construct_item_body(account, note, twt, options)
+    }
 
     if note.save_note
       Rails.logger.debug "This note has been added - #{note_hash[:tweet_id]}"
@@ -104,12 +107,24 @@ module Social::Twitter::TicketActions
     end
 
     def construct_params(twt, options)
-      tweet_body = options[:tweet] ? twt[:body] : twt.text
       hash = {
-        :body         => tweet_body.to_s.tokenize_emoji,
         :tweet_id     => options[:tweet] ? twt[:id].split(":").last.to_i : twt.id ,
         :posted_time  => options[:tweet] ? Time.at(Time.parse(twt[:postedTime]).to_i) : Time.at(twt.created_at).utc,
         :sender       => options[:tweet] ? @sender : @sender.screen_name
       }
+    end
+
+    def construct_item_body(account, item, twt, options)
+      tweet_body = options[:tweet] ? twt[:body] : twt.text
+      if twt.respond_to?("media?") && twt.media?
+        media_url_hash = construct_media_url_hash(account, item, twt, options[:oauth_credential])
+        if media_url_hash.present?
+          media_url_hash[:photo].each do |photo_url_hash_key, photo_url_hash_val|
+              img_element = INLINE_IMAGE_HTML_ELEMENT % photo_url_hash_val
+              tweet_body = tweet_body.gsub(photo_url_hash_key, img_element)
+          end
+        end
+      end
+      tweet_body.to_s.tokenize_emoji      
     end
 end

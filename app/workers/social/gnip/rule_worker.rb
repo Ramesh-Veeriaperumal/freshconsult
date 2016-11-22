@@ -10,7 +10,7 @@ class Social::Gnip::RuleWorker < BaseWorker
   def perform(args)
     powertrack_envs = args['env']
     rule            = args['rule'].symbolize_keys!
-    source          = SOURCE[:twitter]
+    source          = args['source'] || SOURCE[:twitter]
 
     powertrack_envs.each do |env|
       client = Gnip::RuleClient.new(source, env, rule)
@@ -34,7 +34,7 @@ class Social::Gnip::RuleWorker < BaseWorker
           if add_response[:response]
             update_db(env, RULE_ACTION[:add], add_response)
           else
-            requeue_gnip_rule(env, add_response)
+            requeue_gnip_rule(env, add_response, source)
           end
         end
       end

@@ -1,11 +1,11 @@
 module Integrations::Constants
   APP_NAMES = {
-    :capsule_crm => "capsule_crm", 
-    :freshbooks => "freshbooks", 
-    :harvest => "harvest", 
-    :google_contacts => "google_contacts", 
+    :capsule_crm => "capsule_crm",
+    :freshbooks => "freshbooks",
+    :harvest => "harvest",
+    :google_contacts => "google_contacts",
     :jira => "jira",
-    :sugarcrm => "sugarcrm", 
+    :sugarcrm => "sugarcrm",
     :workflow_max => "workflow_max",
     :salesforce => "salesforce",
     :logmein => "logmein",
@@ -38,8 +38,9 @@ module Integrations::Constants
     :twitter => "twitter",
     :facebook => "facebook",
     :freshsales => "freshsales",
-	:fullcontact => "fullcontact",
-    :cti => "cti"
+    :fullcontact => "fullcontact",
+    :cti => "cti",
+    :outlook_contacts => "outlook_contacts"
   }
 
   DISPLAY_IN_PAGES = { "ticket_show" => 2, "contact_show" => 1, "company_show" => 0 }
@@ -77,13 +78,17 @@ module Integrations::Constants
 
   NON_EDITABLE_APPS = ["mailchimp", "constantcontact", "nimble", "google_calendar", "shopify", "box", "onedrive"]
 
+  CONTACTS_SYNC_APPS = [APP_NAMES[:outlook_contacts]]
+
+  CONTACTS_SYNC_ACCOUNTS_LIMIT = 10
+
   PROVIDER_TO_APPNAME_MAP = {
     "github" => "github",
     "salesforce" => "salesforce",
     "magento" => "magento",
     "shopify" => "shopify",
     "slack" => "slack_v2",
-    "infusionsoft" => "infusionsoft", 
+    "infusionsoft" => "infusionsoft",
     "google_calendar" => "google_calendar",
     "google_login" => "",
     "google_marketplace_sso" => "",
@@ -95,7 +100,8 @@ module Integrations::Constants
     "box" => "box",
     "mailchimp" => "mailchimp",
     "constantcontact" => "constantcontact",
-    "surveymonkey" => "surveymonkey"
+    "surveymonkey" => "surveymonkey",
+    "outlook_contacts" => "outlook_contacts"
   }
 
 end

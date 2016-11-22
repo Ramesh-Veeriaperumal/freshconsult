@@ -53,18 +53,18 @@
         ['display_id', 'select-id', t("ticket.id_placeholder"), 'hide' ],
         ['requester', 'select-requester', t("ticket.requester_placeholder")],
         ['subject', 'select-subject', t("ticket.subject_placeholder"), 'hide']] %>
+      <div class= "searchidinfo">
       <% search_text.map{ |t|  %>
         <div class="searchticket <%= t[0] %> <%= t[3] %>">
-          <input type="text" id='<%= t[1] %>'  name='<%= t[1] %>' class="search_merge"  
-                                                placeholder='<%=t[2]%>' /><span class="searchicon"></span>
+          <input type="text" id='<%= t[1] %>'  name='<%= t[1] %>' class="search_merge" placeholder='<%=t[2]%>'/>
         </div>
       <% } %>
+      </div>
       <div id="display_id_results" class="merge_results hide"></div>
       <div id="requester_results" class="merge_results hide"></div>
       <div id="subject_results" class="merge_results hide"></div>
       <input type="hidden" value='<%= redirect_back %>' id="redirect"/>
     </div>
-
       <%= form_tag url_for(:controller => "merge_tickets", :action=>"merge"), :id=> "bulk_merge_tickets", 
        :remote => true  do -%>  
       <div class="divide"></div>
@@ -88,8 +88,11 @@
   primary_ticket.parent().prepend(primary_ticket);
   primary_ticket.addClass('cont-primary');
   primary_ticket.find('.primary-marker').attr('title','Primary ticket');
-  
+
+  App.Tickets.Merge_tickets.requesterFieldSearchbox();
+
   App.Tickets.Merge_tickets.enableContinue();
   App.Tickets.Merge_tickets.bindAutocompleter();
   App.Tickets.Merge_tickets.checkRequester();
-</script>
+
+</script> 

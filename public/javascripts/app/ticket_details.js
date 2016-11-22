@@ -793,6 +793,22 @@ var scrollToError = function(){
 
 	//End of Twitter Replybox JS
 
+	//For Facebook DM Replybox
+
+	function bindFacebookDMCount() {
+	  $('#send-fb-post-cnt-reply-body').NobleCount('#SendReplyCounter', { on_negative : "error", max_chars : 320, on_update: updateCount });
+		updateCount();
+	}
+
+	function updateCount() {
+	  var char_val = $("#SendReplyCounter").text();
+	  $('#send-fb-post-cnt-reply-body').data("reply-count", char_val);
+	}
+
+
+	// End of Facebook DM Replybox
+
+
 	//For Clearing Bcc, Cc email list and hiding those containers
 	$('body').on('click.ticket_details', '[rel=toggle_email_container]',function(ev) {
 		ev.preventDefault();
@@ -1353,29 +1369,33 @@ var scrollToError = function(){
 					submit.button('reset').removeClass('done');
 				}, 2000);
 
-				callback();
+				if(response.err_msg){
+					jQuery("#noticeajax").html(response.err_msg).show();
+    				closeableFlash('#noticeajax');
+        			jQuery(document).scrollTop(0);
+				}else{
+					callback();
 				
-				if (response.autoplay_link) {
-					pjaxify(response.autoplay_link);
-				}
-				else if(response.redirect || response.autoplay_link == "")
-				{
-					$('[rel=link_ticket_list]').click();
-				} else {
-					var statusChangeField = $('#send_and_set');
-					if(statusChangeField.length) {
-						if(statusChangeField.data('val') != '') {
-							refreshStatusBox();
-							if(statusChangeField.data('val') == TICKET_CONSTANTS.statuses.resolved || statusChangeField.data('val') == TICKET_CONSTANTS.statuses.closed) {
-								$('[rel=link_ticket_list]').click();
-							}
-							statusChangeField.data('val', '');
-						}
+					if (response.autoplay_link) {
+						pjaxify(response.autoplay_link);
 					}
-					afterTktPropertiesUpdate();
+					else if(response.redirect || response.autoplay_link == "")
+					{
+						$('[rel=link_ticket_list]').click();
+					} else {
+						var statusChangeField = $('#send_and_set');
+						if(statusChangeField.length) {
+							if(statusChangeField.data('val') != '') {
+								refreshStatusBox();
+								if(statusChangeField.data('val') == TICKET_CONSTANTS.statuses.resolved || statusChangeField.data('val') == TICKET_CONSTANTS.statuses.closed) {
+									$('[rel=link_ticket_list]').click();
+								}
+								statusChangeField.data('val', '');
+							}
+						}
+						afterTktPropertiesUpdate();
+					}
 				}
-
-
 
 			},
 			error: function(jqXHR, textStatus, errorThrown) {
@@ -1618,6 +1638,10 @@ var scrollToError = function(){
 	  	if ($('#cnt-reply').data('isTwitter')) {
 			getTweetTypeAndBind();
 	  	}
+	  	if($('#cnt-reply').data('is-facebook-realtime-dm') && $('#send-fb-post-cnt-reply-body').hasClass('facebook-realtime')) {
+	  		bindFacebookDMCount();
+	  	}
+
 		swapEmailNote('cnt-' + $(this).data('note-type'), this);
 	});
 

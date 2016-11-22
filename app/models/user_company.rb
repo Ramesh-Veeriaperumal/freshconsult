@@ -35,7 +35,7 @@ class UserCompany < ActiveRecord::Base
 
   def update_es_index
     return if $redis_others.sismember("DISABLE_ES_WRITES", Account.current.id) || Account.current.features_included?(:es_v2_writes)
-    AwsWrapper::SqsV2.send_message(SQS[:sqs_es_index_queue], {:op_type => "user_tickets",:user_id =>user_id, :account_id => Account.current.id}.to_json) if ES_ENABLED && !contractor?
+    AwsWrapper::SqsV2.send_message(SQS[:sqs_es_index_queue], {:op_type => "user_tickets",:user_id =>user_id, :account_id => Account.current.id}.to_json) if Account.current.esv1_enabled? && !contractor?
   end
 
   def contractor?

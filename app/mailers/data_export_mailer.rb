@@ -1,6 +1,7 @@
 class DataExportMailer < ActionMailer::Base
 	
   layout "email_font"
+  include EmailHelper
   
   def data_backup(options={})
     headers = {
@@ -13,6 +14,7 @@ class DataExportMailer < ActionMailer::Base
     }
     @url = options[:url]
     @account = Account.current
+    headers.merge!(make_header(nil, nil, @account.id, "Data Backup"))
     mail(headers) do | part|
       part.html { render "data_backup", :formats => [:html] }
     end.deliver
@@ -27,6 +29,8 @@ class DataExportMailer < ActionMailer::Base
       :sent_on   => Time.now,
       "Reply-to" => ""
     }
+
+    headers.merge!(make_header(nil, nil, options[:user].account_id, "Ticket Export"))
     @user = options[:user]
     @url  = options[:url]
     @account = @user.account
@@ -44,6 +48,8 @@ class DataExportMailer < ActionMailer::Base
       :sent_on  => Time.now,
       "Reply-to" => ""
     }
+
+    headers.merge!(make_header(nil, nil, options[:user].account_id, "No Tickets"))
     @user = options[:user]
     @account = @user.account
     mail(headers) do |part|
@@ -60,6 +66,8 @@ class DataExportMailer < ActionMailer::Base
       "Reply-to" => "",
       :sent_on   => Time.now
     }
+
+    headers.merge!(make_header(nil, nil, options[:user].account_id, "Customer Export"))
     @user = options[:user]
     @url = options[:url]
     @field = options[:type]
@@ -78,6 +86,8 @@ class DataExportMailer < ActionMailer::Base
       "Reply-to" => "",
       :sent_on   => Time.now
     }
+
+    headers.merge!(make_header(nil, nil, options[:user].account_id, "Reports Export"))
     @user      = options[:user]
     @export_url = options[:export_url]
     mail(headers) do |part|
@@ -93,6 +103,8 @@ class DataExportMailer < ActionMailer::Base
       :bcc     => AppConfig['reports_email'],
       :sent_on   => Time.now
     }
+
+    headers.merge!(make_header(nil, nil, options[:user].account_id, "Agent Export"))
     @user = options[:user]
     @url = options[:url]
     mail(headers) do |part|
@@ -111,6 +123,8 @@ class DataExportMailer < ActionMailer::Base
       :from                       => options[:from_email],
       :sent_on                    => Time.now
     }
+
+    headers.merge!(make_header(options[:ticket_id], nil, options[:account_id], "Broadcast Message"))
     @url = options[:url]
     @subject = options[:ticket_subject]
     @content = options[:content]

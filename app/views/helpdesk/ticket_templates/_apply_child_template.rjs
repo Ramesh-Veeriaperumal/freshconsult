@@ -1,0 +1,8 @@
+if @child_template.present?
+  page.replace_html "ticket-template-wrapper", :partial => '/helpdesk/ticket_templates/new_child'
+  page << "invokeRedactor('template_data_ticket_body_attributes_description_html', 'template');"
+  page << "jQuery('select').select2();"
+  page << "App.Parentchildtemplates.initializeChildModel();"
+  page << "jQuery('#helpdesk_ticket_template_name').addClass('new_child_name');"
+  page << "App.Parentchildtemplates.intializeUnsavedModel();"
+end

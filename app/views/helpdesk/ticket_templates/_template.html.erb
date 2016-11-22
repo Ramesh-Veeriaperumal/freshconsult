@@ -1,30 +1,38 @@
+<%  if template.general_template? || (check_for_parent_child_feature? and template.parent_template?)%>
 <tr id=<%= dom_id(template) %>>
-  <td class="template-checkbox">
+<% if template.parent_template?
+    characterCount = 105
+    parentStatus = true
+  else
+    characterCount = 111
+    parentStatus = false
+ end %>
+
+  <!--<td class="template-checkbox <%= 'template-checkbox-change' if ((template && template.description.length > 0) || template.parent_template?) %>">
     <input type="checkbox" name="ids[]" class="select-template" value= "<%=template.id%>">
-  </td>
+  </td>-->
   <td class="template-desc ticket-details">
-    <strong>
+    <h3 class="<%= 'template-desc-heading' if ((template && template.description.length > 0) || template.parent_template?) %>">
       <%= link_to(h(template.name), edit_helpdesk_ticket_template_path(template), :class => "item_info") %>
-    </strong><br/>
+    </h3>
+       <% if template.parent_template? %><span class="list-templates-parent-wrapper tooltip" data-original-title="<%=t('ticket_templates.parent') %>"> <i class="ficon-inherit-parent fsize-16 list-templates-parent" ></i> </span><% end %>
     <span class="muted">
-      <%= template.description.length > 75 ? h(template.description).slice(0,75)+"..." : h(template.description) %>
+      <%= template.description.length > characterCount ? h(template.description).slice(0,characterCount)+"..." : h(template.description) %>
     </span>
   </td>
   <td class="action-btn">
-    <div class="item_actions hide" align="right">
+    <div class="item_actions " align="right">
         <% if show_clone %>
-          <a class="tooltip" data-original-title="<%= t('clone') %>" href="<%= clone_helpdesk_ticket_template_path(template) %>">
-           <%= font_icon "clone", { :size => 20 } %>
-          </a>
+          <%= link_to "<i class='ficon-clone fsize-18'></i>".html_safe, clone_helpdesk_ticket_template_path(template), :class => "tooltip btn btn-mini",:data => { :original_title =>  t('clone')  } %>
         <% end %>
-        <a class="tooltip" data-original-title="<%= t('edit') %>" href="<%= edit_helpdesk_ticket_template_path(template) %>">
-         <%= font_icon "edit", { :size => 20 } %>
-        </a>
-
+        <%= link_to "<i class='ficon-edit fsize-18'></i>".html_safe, edit_helpdesk_ticket_template_path(template), :class => "tooltip btn btn-mini",:data => { :original_title =>  t('edit')  } %>
+        <!--<%= link_to "<i class='ficon-trash fsize-18 index-delete-template'></i>".html_safe, helpdesk_ticket_template_path(template), :class => "tooltip btn btn-mini",:data => { :original_title =>  t('delete'),:controls_modal => 'index-delete-template-modal' } %>-->
+        <span class="tooltip btn btn-mini index-delete-template" data-controls-modal="index-delete-template-modal" data-delete-url="<%=helpdesk_ticket_template_path(template) %>" data-original-title="<%=t('delete') %>" data-parent="<%= parentStatus %>"><i class='ficon-trash fsize-18'></i></span>
     </div>
-     <div class="item_actions" align="right">
+     <div class="item_actions hide" align="right">
         <%= link_to(t('clone'),clone_helpdesk_ticket_template_path(template), :class => "btn btn-mini") if show_clone%>
         <%= link_to(t('edit'), edit_helpdesk_ticket_template_path(template), :class => "btn btn-mini") %>
     </div>
   </td>
 </tr>
+<% end %>

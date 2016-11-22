@@ -1,10 +1,14 @@
 class SubscriptionNotifier < ActionMailer::Base
   include ActionView::Helpers::NumberHelper
+  include EmailHelper
 
   layout "email_font"
   
   def sub_error(options={})
-    setup_email("kiran@freshdesk.com", "Error in Subscription module for #{options[:custom_message]}")
+    account_id = -1
+
+    account_id = Account.find_by_full_domain(options[:full_domain]).id if(options[:full_domain] && Account.find_by_full_domain(options[:full_domain]))
+    setup_email("kiran@freshdesk.com", "Error in Subscription module for #{options[:custom_message]}", account_id, "Subscription Error")
     @message = options[:error_msg]
     @full_domain = options[:full_domain]
     mail(@headers) do |part|
@@ -13,7 +17,7 @@ class SubscriptionNotifier < ActionMailer::Base
   end
   
   def welcome(account)
-    setup_email(account.admin_email, "Welcome to #{AppConfig['app_name']}!","vijay@freshdesk.com")
+    setup_email(account.admin_email, "Welcome to #{AppConfig['app_name']}!","vijay@freshdesk.com", account.id, "Welcome")
     @account = account
     @host = account.host
     mail(@headers) do |part|
@@ -22,7 +26,7 @@ class SubscriptionNotifier < ActionMailer::Base
   end
   
   def trial_expiring(user, subscription, trial_days = nil)
-    setup_email(user,"Your Freshdesk trial expires in #{trial_days}")
+    setup_email(user,"Your Freshdesk trial expires in #{trial_days}", user.account_id, "Trial Expiring")
     setup_bcc("kiran@freshdesk.com")
     @user = user
     @subscription = subscription
@@ -34,7 +38,7 @@ class SubscriptionNotifier < ActionMailer::Base
   end
   
   def charge_receipt(subscription_payment)
-    setup_email(subscription_payment.subscription.invoice_emails, "Your #{AppConfig['app_name']} invoice")
+    setup_email(subscription_payment.subscription.invoice_emails, "Your #{AppConfig['app_name']} invoice", subscription_payment.account_id, "Charge Receipt")
     setup_bcc
     @subscription = subscription_payment.subscription
     @amount = subscription_payment.amount
@@ -45,7 +49,7 @@ class SubscriptionNotifier < ActionMailer::Base
   end
   
   def day_pass_receipt(quantity, subscription_payment)
-    setup_email(subscription_payment.subscription.invoice_emails, "Your #{AppConfig['app_name']} invoice")
+    setup_email(subscription_payment.subscription.invoice_emails, "Your #{AppConfig['app_name']} invoice", subscription_payment.account_id, "Day Pass Receipt")
     setup_bcc
     @units = quantity
     @subscription_payment = subscription_payment 
@@ -56,7 +60,7 @@ class SubscriptionNotifier < ActionMailer::Base
   end
   
   def misc_receipt(subscription_payment,description)
-    setup_email(subscription_payment.subscription.invoice_emails, "Your #{AppConfig['app_name']} invoice")
+    setup_email(subscription_payment.subscription.invoice_emails, "Your #{AppConfig['app_name']} invoice", subscription_payment.account_id, "Misc Receipt")
     setup_bcc
     @subscription = subscription_payment.subscription
     @subscription_payment = subscription_payment
@@ -67,7 +71,7 @@ class SubscriptionNotifier < ActionMailer::Base
   end
   
   def charge_failure(subscription)
-    setup_email(subscription.invoice_emails, "Your #{AppConfig['app_name']} renewal failed")
+    setup_email(subscription.invoice_emails, "Your #{AppConfig['app_name']} renewal failed", subscription.account_id, "Charge Failure")
     @bcc = AppConfig['from_email']
     @subscription = subscription
     mail(@headers) do |part|
@@ -76,7 +80,7 @@ class SubscriptionNotifier < ActionMailer::Base
   end
   
   def account_deleted(account, feedback)
-    setup_email(AppConfig['cs_email'], "#{account.full_domain} is deleted")
+    setup_email(AppConfig['cs_email'], "#{account.full_domain} is deleted", account.id, "Account Deleted")
     @account = account 
     @reason  = feedback
     mail(@headers) do |part|
@@ -91,6 +95,7 @@ class SubscriptionNotifier < ActionMailer::Base
       :subject => "Freshdesk :: Spam watcher",
       :sent_on => Time.now
     }
+    @headers.merge!(make_header(nil, nil, account.id, "Admin Spam Watcher"))
     @account = account 
     @deleted_users = deleted_users
     @spam_watcher_redis = spam_watcher_redis
@@ -106,6 +111,7 @@ class SubscriptionNotifier < ActionMailer::Base
       :subject     =>  "Freshdesk :: Spam watcher",
       :sent_on     =>  Time.now
     }
+    @headers.merge!(make_header(nil, nil, account.id, "Admin Spam Watcher Blocked"))
     @account = account
     mail(@headers) do |part|
       part.html { render "admin_spam_watcher_blocked", :formats => [:html] }
@@ -119,6 +125,7 @@ class SubscriptionNotifier < ActionMailer::Base
       :subject     =>  "Freshdesk :: Spam watcher",
       :sent_on     =>  Time.now
     }
+    @headers.merge!(make_header(nil, nil, account.id, "Admin Spam Watcher Blocked"))
     @account = account
     mail(@headers) do |part|
       part.html { render "admin_spam_watcher_blocked.html"}
@@ -126,7 +133,7 @@ class SubscriptionNotifier < ActionMailer::Base
   end
 
   def subscription_downgraded(subscription, old_subscription)
-    setup_email(AppConfig['cs_email'], "#{subscription.account.full_domain} downgraded")
+    setup_email(AppConfig['cs_email'], "#{subscription.account.full_domain} downgraded", subscription.account_id, "Subscription Downgraded")
     @subscription = subscription
     @old_subscription = old_subscription
     mail(@headers) do |part|
@@ -141,6 +148,7 @@ class SubscriptionNotifier < ActionMailer::Base
       :from       => 'admin@freshdesk.com',
       :sent_on    => Time.now
     }
+    headers.merge!(make_header(nil, nil, account.id, "Salesforce Failures"))
     @account = account
     @caller_details = caller_details
     mail(headers) do |part|
@@ -148,13 +156,15 @@ class SubscriptionNotifier < ActionMailer::Base
     end.deliver
   end
   private
-    def setup_email(to, subject, from = AppConfig['billing_email'])
+    def setup_email(to, subject, from = AppConfig['billing_email'], account_id, n_type)
       @headers = {
         :subject  => subject,
         :to       => to.respond_to?(:email) ? to.email : to,
         :from     => from.respond_to?(:email) ? from.email : from , 
         :sent_on  => Time.now
       }
+
+      @headers.merge!(make_header(nil, nil, account_id, n_type))
     end
 
     def setup_bcc(bcc)

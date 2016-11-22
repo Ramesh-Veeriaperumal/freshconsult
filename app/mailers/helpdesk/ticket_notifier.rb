@@ -4,6 +4,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
   require 'freemail'
 
   extend ParserUtil
+  include EmailHelper
   include Helpdesk::NotifierFormattingMethods
 
   include Redis::RedisKeys
@@ -46,6 +47,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
         params[:attachments] = ticket.all_attachments
         params[:cloud_files] = ticket.cloud_files
       end
+      params[:note_id] = comment.id unless (comment.nil?)
       deliver_email_notification(params) if ticket.requester_has_email?
     end
   end
@@ -70,16 +72,18 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
                 'helpdesk_name' => ticket.account.portal_name, 'comment' => comment).html_safe
       plain_version = a_plain_template.render('ticket' => ticket, 
                 'helpdesk_name' => ticket.account.portal_name, 'comment' => comment).html_safe
-      deliver_email_notification({ :ticket => ticket,
-             :notification_type => e_notification.notification_type,
-             :receips => receips,
-             :email_body_plain => plain_version,
-             :email_body_html => html_version,
-             :subject => a_s_template.render('ticket' => ticket, 'helpdesk_name' => ticket.account.portal_name).html_safe,
-             :survey_id => survey_id,
-             :disable_bcc_notification => e_notification.bcc_disabled?,
-             :private_comment => comment ? comment.private : false
-          }) unless receips.nil?
+      headers = { :ticket => ticket,
+       :notification_type => e_notification.notification_type,
+       :receips => receips,
+       :email_body_plain => plain_version,
+       :email_body_html => html_version,
+       :subject => a_s_template.render('ticket' => ticket, 'helpdesk_name' => ticket.account.portal_name).html_safe,
+       :survey_id => survey_id,
+       :disable_bcc_notification => e_notification.bcc_disabled?,
+       :private_comment => comment ? comment.private : false,
+      }
+      headers[:note_id] = comment.id unless comment.nil?
+      deliver_email_notification(headers) unless receips.nil?
   end
 
   def self.language_group_agent_notification(agents_list, e_notification, ticket, comment)
@@ -126,6 +130,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
          params[:attachments] = ticket.attachments
          params[:cloud_files] = ticket.cloud_files
       end
+      params[:note_id] = comment.id unless comment.nil?
       deliver_email_notification(params) unless to_emails.nil?
     end
   end
@@ -190,84 +195,85 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
   end
 
   def email_notification(params)
-    ActionMailer::Base.set_email_config params[:ticket].reply_email_config
-    
-    bcc_email = params[:disable_bcc_notification] ? "" : validate_emails(account_bcc_email(params[:ticket]),
-                                                                         params[:ticket])
-    receips = validate_emails(params[:receips], params[:ticket])
-    from_email = validate_emails(params[:ticket].friendly_reply_email, params[:ticket])
-    return if receips.empty? || from_email.empty?
-
-    private_tag = params[:private_comment] ? "private-" : ""
-
-    #Store message ID in Redis for new ticket notifications to improve threading
-    message_id = "#{Mail.random_tag}.#{::Socket.gethostname}@#{private_tag}notification.freshdesk.com"
-    
-    headers = email_headers(params[:ticket], message_id, true, private_tag.present?).merge({
-      :subject    =>  params[:subject],
-      :to         =>  receips,
-      :from       =>  from_email,
-      :bcc        =>  bcc_email,
-      "Reply-To"  =>  "#{from_email}",
-      "Account-Id" =>  params[:ticket].account_id,
-      "Ticket-Id"  =>  params[:ticket].display_id,
-      "Type"  =>  params[:notification_type]
-      })
-    
-    inline_attachments   = []
-    @ticket              = params[:ticket]
-    @body                = params[:email_body_plain]
-    @cloud_files           = params[:cloud_files]
-    
-
-    if params[:ticket].account.new_survey_enabled?
-      @survey_handle = CustomSurvey::SurveyHandle.create_handle_for_notification(params[:ticket], params[:notification_type], params[:survey_id])
-    else
-      @survey_handle = SurveyHandle.create_handle_for_notification(params[:ticket], params[:notification_type])
-    end
-
-    @surveymonkey_survey = Integrations::SurveyMonkey.survey_for_notification(
-                            params[:notification_type], params[:ticket]
-                          )
-    @body_html           = generate_body_html(params[:email_body_html])
-    @account             = params[:ticket].account
-
-    if attachments.present? && attachments.inline.present?
-      handle_inline_attachments(attachments, params[:email_body_html], params[:ticket].account)
-    end
-
-    params[:attachments].each do |a|
-      attachments[a.content_file_name] = {
-        :mime_type => a.content_content_type,
-        :content => File.read(a.content.to_file.path, :mode => "rb")
-      }
-    end if params[:attachments].present?
-    
-    if !params[:cc_mails].nil?
-       headers[:cc] = params[:cc_mails].join(", ")
-    end
+    begin
+      configure_email_config params[:ticket].reply_email_config
       
-     ##Setting the templates for mail usage###
-    message = mail(headers) do |part|
-      part.text { render "email_notification.text.plain" }
-      part.html { render "email_notification.text.html" }
-    end
-    
-    ##Envelope is set for mail cc case. 
-    #Only the people in envelope receive the mail and rest go in cc. 
-    #Facilitates reply-to all feature
-    if !params[:smtp_envelope_to].nil?
-      envelope_mail  = validate_emails(params[:smtp_envelope_to], params[:ticket])
-      if !envelope_mail.nil?
-        message.smtp_envelope_to=envelope_mail
+      bcc_email = params[:disable_bcc_notification] ? "" : validate_emails(account_bcc_email(params[:ticket]),
+                                                                           params[:ticket])
+      receips = validate_emails(params[:receips], params[:ticket])
+      from_email = validate_emails(params[:ticket].friendly_reply_email, params[:ticket])
+      return if receips.empty? || from_email.empty?
+
+      private_tag = params[:private_comment] ? "private-" : ""
+      note_id     = params[:note_id] ? params[:note_id] : nil
+
+      #Store message ID in Redis for new ticket notifications to improve threading
+      message_id = "#{Mail.random_tag}.#{::Socket.gethostname}@#{private_tag}notification.freshdesk.com"
+      
+      headers = email_headers(params[:ticket], message_id, true, private_tag.present?).merge({
+        :subject    =>  params[:subject],
+        :to         =>  receips,
+        :from       =>  from_email,
+        :bcc        =>  bcc_email,
+        "Reply-To"  =>  "#{from_email}"
+        })
+
+      headers.merge!(make_header(params[:ticket].display_id, note_id, params[:ticket].account_id, params[:notification_type]))
+      inline_attachments   = []
+      @ticket              = params[:ticket]
+      @body                = params[:email_body_plain]
+      @cloud_files           = params[:cloud_files]
+      
+
+      if params[:ticket].account.new_survey_enabled?
+        @survey_handle = CustomSurvey::SurveyHandle.create_handle_for_notification(params[:ticket], params[:notification_type], params[:survey_id])
+      else
+        @survey_handle = SurveyHandle.create_handle_for_notification(params[:ticket], params[:notification_type])
       end
-    end
-    
-    #End of cc change
-    
-    message.deliver  
-      
 
+      @surveymonkey_survey = Integrations::SurveyMonkey.survey_for_notification(
+                              params[:notification_type], params[:ticket]
+                            )
+      @body_html           = generate_body_html(params[:email_body_html])
+      @account             = params[:ticket].account
+
+      if attachments.present? && attachments.inline.present?
+        handle_inline_attachments(attachments, params[:email_body_html], params[:ticket].account)
+      end
+
+      params[:attachments].each do |a|
+        attachments[a.content_file_name] = {
+          :mime_type => a.content_content_type,
+          :content => File.read(a.content.to_file.path, :mode => "rb")
+        }
+      end if params[:attachments].present?
+      
+      if !params[:cc_mails].nil?
+         headers[:cc] = params[:cc_mails].join(", ")
+      end
+        
+       ##Setting the templates for mail usage###
+      message = mail(headers) do |part|
+        part.text { render "email_notification.text.plain" }
+        part.html { render "email_notification.text.html" }
+      end
+      
+      ##Envelope is set for mail cc case. 
+      #Only the people in envelope receive the mail and rest go in cc. 
+      #Facilitates reply-to all feature
+      if !params[:smtp_envelope_to].nil?
+        envelope_mail  = validate_emails(params[:smtp_envelope_to], params[:ticket])
+        if !envelope_mail.nil?
+          message.smtp_envelope_to=envelope_mail
+        end
+      end
+      
+      #End of cc change
+      
+      message.deliver  
+    ensure 
+      remove_email_config
+    end
 
     if params[:notification_type] == EmailNotification::NEW_TICKET and params[:ticket].source != Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email]
       set_others_redis_key(message_key(params[:ticket].account_id, message_id),
@@ -280,280 +286,313 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
   def reply(ticket, note , options={})
     check_spam_email(ticket, note)
     email_config = (note.account.email_configs.find_by_id(note.email_config_id) || ticket.reply_email_config)
-    ActionMailer::Base.set_email_config email_config
+    begin
+      configure_email_config email_config
+      to_emails = validate_emails(note.to_emails, note)
+      bcc_emails = validate_emails(note.bcc_emails, note)
+      from_email = validate_emails(note.from_email, note)
+      return if from_email.empty? || to_emails.empty?
 
-    to_emails = validate_emails(note.to_emails, note)
-    bcc_emails = validate_emails(note.bcc_emails, note)
-    from_email = validate_emails(note.from_email, note)
-    return if from_email.empty? || to_emails.empty?
+      options = {} unless options.is_a?(Hash) 
+      headers = email_headers(ticket, nil, false).merge({
+        :subject    =>  formatted_subject(ticket),
+        :to         =>  to_emails,
+        :bcc        =>  bcc_emails,
+        :from       =>  from_email,
+        "Reply-To"  =>  "#{from_email}"
+      })
 
-    options = {} unless options.is_a?(Hash) 
-    headers = email_headers(ticket, nil, false).merge({
-      :subject    =>  formatted_subject(ticket),
-      :to         =>  to_emails,
-      :bcc        =>  bcc_emails,
-      :from       =>  from_email,
-      "Reply-To"  =>  "#{from_email}",
-      "Account-Id" =>  ticket.account_id,
-      "Ticket-Id"  =>  ticket.display_id,
-      "Type"  =>  "Reply"
-    })
+      headers.merge!(make_header(ticket.display_id, note.id, ticket.account_id, "Reply"))
+      headers[:cc] = validate_emails(note.cc_emails, note) unless options[:include_cc].blank?
 
-    headers[:cc] = validate_emails(note.cc_emails, note) unless options[:include_cc].blank?
+      inline_attachments = []
 
-    inline_attachments = []
+      @body = note.full_text
+      @body_html = generate_body_html(note.full_text_html)
+      @note = note 
+      @cloud_files = note.cloud_files    
+      @include_quoted_text = options[:quoted_text]
+      @surveymonkey_survey =  Integrations::SurveyMonkey.survey(options[:include_surveymonkey_link], ticket, note.user)
+      @ticket = ticket
+      @account = note.account    
 
-    @body = note.full_text
-    @body_html = generate_body_html(note.full_text_html)
-    @note = note 
-    @cloud_files = note.cloud_files    
-    @include_quoted_text = options[:quoted_text]
-    @surveymonkey_survey =  Integrations::SurveyMonkey.survey(options[:include_surveymonkey_link], ticket, note.user)
-    @ticket = ticket
-    @account = note.account    
-
-    unless ticket.parent_ticket.present?
-      if ticket.account.new_survey_enabled?
-         @survey_handle = CustomSurvey::SurveyHandle.create_handle(ticket, note, options[:send_survey])
-      else
-         @survey_handle = SurveyHandle.create_handle(ticket, note, options[:send_survey])
+      unless ticket.parent_ticket.present?
+        if ticket.account.new_survey_enabled?
+           @survey_handle = CustomSurvey::SurveyHandle.create_handle(ticket, note, options[:send_survey])
+        else
+           @survey_handle = SurveyHandle.create_handle(ticket, note, options[:send_survey])
+        end
       end
-    end
 
-    if attachments.present? && attachments.inline.present?
-      handle_inline_attachments(attachments, note.full_text_html, note.account)
-    end
-    note.all_attachments.each do |a|
-      attachments[a.content_file_name] = {
-        :mime_type => a.content_content_type, 
-        :content => File.read(a.content.to_file.path, :mode => "rb")
-      }
-    end
+      if attachments.present? && attachments.inline.present?
+        handle_inline_attachments(attachments, note.full_text_html, note.account)
+      end
+      note.all_attachments.each do |a|
+        attachments[a.content_file_name] = {
+          :mime_type => a.content_content_type, 
+          :content => File.read(a.content.to_file.path, :mode => "rb")
+        }
+      end
 
-    mail(headers) do |part|
-      part.text { render "reply.text.plain" }
-      part.html { render "reply.text.html" }
-    end.deliver
+      mail(headers) do |part|
+        part.text { render "reply.text.plain" }
+        part.html { render "reply.text.html" }
+      end.deliver
+    ensure
+      remove_email_config
+    end
   end
   
   def forward(ticket, note, options={})
     check_spam_email(ticket, note)
     email_config = (note.account.email_configs.find_by_id(note.email_config_id) || ticket.reply_email_config)
-    ActionMailer::Base.set_email_config email_config
+    begin
+      remove_email_config
+      configure_email_config email_config
+      to_emails = validate_emails(note.to_emails - [note.account.kbase_email], note)
+      from_email = validate_emails(note.from_email, note)
+      return if from_email.empty? || to_emails.empty?
+      bcc_emails = validate_emails(note.bcc_emails, note)
+      cc_emails = validate_emails(note.cc_emails, note)
 
-    to_emails = validate_emails(note.to_emails - [note.account.kbase_email], note)
-    from_email = validate_emails(note.from_email, note)
-    return if from_email.empty? || to_emails.empty?
-    bcc_emails = validate_emails(note.bcc_emails, note)
-    cc_emails = validate_emails(note.cc_emails, note)
+      message_id = "#{Mail.random_tag}.#{::Socket.gethostname}@forward.freshdesk.com"
+      
+      headers = email_headers(ticket, message_id, false, true).merge({
+        :subject    =>  fwd_formatted_subject(ticket),
+        :to         =>  to_emails,
+        :cc         =>  cc_emails,
+        :bcc        =>  bcc_emails,
+        :from       =>  from_email,
+        "Reply-To"  =>  "#{from_email}"
+      })
 
-    message_id = "#{Mail.random_tag}.#{::Socket.gethostname}@forward.freshdesk.com"
-    
-    headers = email_headers(ticket, message_id, false, true).merge({
-      :subject    =>  fwd_formatted_subject(ticket),
-      :to         =>  to_emails,
-      :cc         =>  cc_emails,
-      :bcc        =>  bcc_emails,
-      :from       =>  from_email,
-      "Reply-To"  =>  "#{from_email}",
-      "Account-Id" =>  ticket.account_id,
-      "Ticket-Id"  =>  ticket.display_id,
-      "Type"  =>  "Forward"
-    })
-    inline_attachments = []
-    @ticket = ticket
-    @body = note.full_text
-    @cloud_files= note.cloud_files
-    @body_html = generate_body_html(note.full_text_html)
-    @account = note.account
+      headers.merge!(make_header(ticket.display_id, note.id, ticket.account_id, "Forward"))
+      inline_attachments = []
+      @ticket = ticket
+      @body = note.full_text
+      @cloud_files= note.cloud_files
+      @body_html = generate_body_html(note.full_text_html)
+      @account = note.account
 
-    if attachments.present? && attachments.inline.present?
-      handle_inline_attachments(attachments, note.full_text_html, note.account)
-    end
-    self.class.trace_execution_scoped(['Custom/Helpdesk::TicketNotifier/read_binary_attachment']) do
-      note.all_attachments.each do |a|
-        attachments[a.content_file_name] = {
-          :mime_type => a.content_content_type, 
-          :content => File.read(a.content.to_file.path, :mode => "rb")
-        }
+      if attachments.present? && attachments.inline.present?
+        handle_inline_attachments(attachments, note.full_text_html, note.account)
       end
+      self.class.trace_execution_scoped(['Custom/Helpdesk::TicketNotifier/read_binary_attachment']) do
+        note.all_attachments.each do |a|
+          attachments[a.content_file_name] = {
+            :mime_type => a.content_content_type, 
+            :content => File.read(a.content.to_file.path, :mode => "rb")
+          }
+        end
+      end
+      mail(headers) do |part|
+        part.text { render "forward.text.plain" }
+        part.html { render "forward.text.html" }
+      end.deliver
+    ensure
+      remove_email_config
     end
-    mail(headers) do |part|
-      part.text { render "forward.text.plain" }
-      part.html { render "forward.text.html" }
-    end.deliver
   end
 
   def reply_to_forward(ticket, note, options={})
     check_spam_email(ticket, note)
     email_config = (note.account.email_configs.find_by_id(note.email_config_id) || ticket.reply_email_config)
-    ActionMailer::Base.set_email_config email_config
+    begin
+      configure_email_config email_config
 
-    to_emails = validate_emails(note.to_emails, note)
-    from_email = validate_emails(note.from_email, note)
-    return if from_email.empty? || to_emails.empty?
-    bcc_emails = validate_emails(note.bcc_emails, note)
-    cc_emails = validate_emails(note.cc_emails, note)
+      to_emails = validate_emails(note.to_emails, note)
+      from_email = validate_emails(note.from_email, note)
+      return if from_email.empty? || to_emails.empty?
+      bcc_emails = validate_emails(note.bcc_emails, note)
+      cc_emails = validate_emails(note.cc_emails, note)
 
-    message_id = "#{Mail.random_tag}.#{::Socket.gethostname}@forward.freshdesk.com"
-    
-    headers = email_headers(ticket, nil, false).merge({
-      :subject    =>  formatted_subject(ticket),
-      :to         =>  to_emails,
-      :cc         =>  cc_emails,
-      :bcc        =>  bcc_emails,
-      :from       =>  from_email,
-      "Reply-To"  =>  "#{from_email}",
-      "Account-Id" =>  ticket.account_id,
-      "Ticket-Id"  =>  ticket.display_id,
-      "Type"  =>  "Reply to Forward"
-    })
+      message_id = "#{Mail.random_tag}.#{::Socket.gethostname}@forward.freshdesk.com"
+      
+      headers = email_headers(ticket, nil, false).merge({
+        :subject    =>  formatted_subject(ticket),
+        :to         =>  to_emails,
+        :cc         =>  cc_emails,
+        :bcc        =>  bcc_emails,
+        :from       =>  from_email,
+        "Reply-To"  =>  "#{from_email}"
+      })
 
-    inline_attachments = []
-    @ticket = ticket
-    @body = note.full_text
-    @cloud_files= note.cloud_files
-    @body_html = generate_body_html(note.full_text_html)
-    @account = note.account
+      headers.merge!(make_header(ticket.display_id, note.id, ticket.account_id, "Reply to Forward"))
+      inline_attachments = []
+      @ticket = ticket
+      @body = note.full_text
+      @cloud_files= note.cloud_files
+      @body_html = generate_body_html(note.full_text_html)
+      @account = note.account
 
-    if attachments.present? && attachments.inline.present?
-      handle_inline_attachments(attachments, note.full_text_html, note.account)
-    end
-    self.class.trace_execution_scoped(['Custom/Helpdesk::TicketNotifier/read_binary_attachment']) do
-      note.all_attachments.each do |a|
-        attachments[a.content_file_name] = {
-          :mime_type => a.content_content_type, 
-          :content => File.read(a.content.to_file.path, :mode => "rb")
-        }
+      if attachments.present? && attachments.inline.present?
+        handle_inline_attachments(attachments, note.full_text_html, note.account)
       end
+      self.class.trace_execution_scoped(['Custom/Helpdesk::TicketNotifier/read_binary_attachment']) do
+        note.all_attachments.each do |a|
+          attachments[a.content_file_name] = {
+            :mime_type => a.content_content_type, 
+            :content => File.read(a.content.to_file.path, :mode => "rb")
+          }
+        end
+      end
+      mail(headers) do |part|
+        part.text { render "reply_to_forward.text.plain" }
+        part.html { render "reply_to_forward.text.html" }
+      end.deliver
+    ensure
+      remove_email_config
     end
-    mail(headers) do |part|
-      part.text { render "reply_to_forward.text.plain" }
-      part.html { render "reply_to_forward.text.html" }
-    end.deliver
   end
   
   def email_to_requester(ticket, content, sub=nil)
-    ActionMailer::Base.set_email_config ticket.reply_email_config
-    header_message_id = construct_email_header_message_id(:automation)
-    headers   = email_headers(ticket, header_message_id).merge({
-      :subject    =>  (sub.blank? ? formatted_subject(ticket) : sub),
-      :to         =>  ticket.from_email,
-      :from       =>  ticket.friendly_reply_email,
-      :sent_on    =>  Time.now,
-      "Reply-To"  =>  "#{ticket.friendly_reply_email}",
-      "Account-Id" =>  ticket.account_id,
-      "Ticket-Id"  =>  ticket.display_id,
-      "Type"  =>  "Email to requestor"
-    })
+    begin
+      configure_email_config ticket.reply_email_config
+      header_message_id = construct_email_header_message_id(:automation)
+      headers   = email_headers(ticket, header_message_id).merge({
+        :subject    =>  (sub.blank? ? formatted_subject(ticket) : sub),
+        :to         =>  ticket.from_email,
+        :from       =>  ticket.friendly_reply_email,
+        :sent_on    =>  Time.now,
+        "Reply-To"  =>  "#{ticket.friendly_reply_email}"
+      })
 
-    inline_attachments = []
-    @body = Helpdesk::HTMLSanitizer.plain(content)
-    @body_html = generate_body_html(content)
-    @account = ticket.account
-    @ticket = ticket
+      headers.merge!(make_header(ticket.display_id, nil, ticket.account_id, "Email to Requestor"))
+      inline_attachments = []
+      @body = Helpdesk::HTMLSanitizer.plain(content)
+      @body_html = generate_body_html(content)
+      @account = ticket.account
+      @ticket = ticket
 
-    if attachments.present? && attachments.inline.present?
-      handle_inline_attachments(attachments, content, ticket.account)
+      if attachments.present? && attachments.inline.present?
+        handle_inline_attachments(attachments, content, ticket.account)
+      end
+
+      mail(headers) do |part|
+        part.text { render "email_to_requester.text.plain" }
+        part.html { render "email_to_requester.text.html" }
+      end.deliver
+    ensure
+        remove_email_config
     end
-
-    mail(headers) do |part|
-      part.text { render "email_to_requester.text.plain" }
-      part.html { render "email_to_requester.text.html" }
-    end.deliver
-
   end
   
   def internal_email(ticket, receips, content, sub=nil)
-    ActionMailer::Base.set_email_config ticket.reply_email_config
-    header_message_id = construct_email_header_message_id(:automation)
-    headers = email_headers(ticket, header_message_id).merge({
-      :subject    =>  (sub.blank? ? formatted_subject(ticket) : sub),
-      :to         =>  receips,
-      :from       =>  ticket.friendly_reply_email,
-      :sent_on    =>  Time.now,
-      "Reply-To"  =>  "#{ticket.friendly_reply_email}",
-      "Account-Id" =>  ticket.account_id,
-      "Ticket-Id"  =>  ticket.display_id,
-      "Type"  =>  "Internal email"
-    })
+    begin
+      configure_email_config ticket.reply_email_config
+      header_message_id = construct_email_header_message_id(:automation)
+      headers = email_headers(ticket, header_message_id).merge({
+        :subject    =>  (sub.blank? ? formatted_subject(ticket) : sub),
+        :to         =>  receips,
+        :from       =>  ticket.friendly_reply_email,
+        :sent_on    =>  Time.now,
+        "Reply-To"  =>  "#{ticket.friendly_reply_email}"
+      })
 
-    inline_attachments = []
-    @body = Helpdesk::HTMLSanitizer.plain(content)
-    @body_html = generate_body_html(content)
-    @account = ticket.account
-    @ticket = ticket
+      headers.merge!(make_header(ticket.display_id, nil, ticket.account_id, "Internal Email"))
+      inline_attachments = []
+      @body = Helpdesk::HTMLSanitizer.plain(content)
+      @body_html = generate_body_html(content)
+      @account = ticket.account
+      @ticket = ticket
 
-    if attachments.present? && attachments.inline.present?
-      handle_inline_attachments(attachments, content, ticket.account)
+      if attachments.present? && attachments.inline.present?
+        handle_inline_attachments(attachments, content, ticket.account)
+      end
+
+      mail(headers) do |part|
+        part.text { render "internal_email.text.plain" }
+        part.html { render "internal_email.text.html" }
+      end.deliver
+    ensure
+      remove_email_config
     end
-
-    mail(headers) do |part|
-      part.text { render "internal_email.text.plain" }
-      part.html { render "internal_email.text.html" }
-    end.deliver
-
   end
 
   def notify_outbound_email(ticket)
     check_outbound_count(ticket)
     check_spam_email(ticket)
-    ActionMailer::Base.set_email_config ticket.reply_email_config
+    begin
+      configure_email_config ticket.reply_email_config
 
-    from_email = if ticket.account.features?(:personalized_email_replies)
-      ticket.friendly_reply_email_personalize(ticket.responder_name)
-    else
-      ticket.friendly_reply_email
-    end
-
-    from_email = validate_emails(from_email, ticket)
-    to_email = validate_emails(ticket.from_email, ticket)
-    return if from_email.empty? || to_email.empty?
-    cc_emails = validate_emails(ticket.cc_email[:cc_emails], ticket)
-    bcc_emails = validate_emails(account_bcc_email(ticket), ticket)
-
-    #Store message ID in Redis for outbound email to improve threading
-    message_id = "#{Mail.random_tag}.#{::Socket.gethostname}@outbound-email.freshdesk.com"
-
-    headers = email_headers(ticket, message_id, false).merge({
-      :subject    =>  ticket.subject,
-      :to         =>  to_email,
-      :from       =>  from_email,
-      :cc         =>  cc_emails,
-      :bcc        =>  bcc_emails,
-      "Reply-To"  =>  from_email,
-      "Account-Id" =>  ticket.account_id,
-      "Ticket-Id"  =>  ticket.display_id,
-      "Type"  =>  "Outbound email"
-    })
-
-    inline_attachments   = []
-    @account = ticket.account
-    @ticket = ticket
-    @cloud_files= ticket.cloud_files
-    
-    if attachments.present? && attachments.inline.present?
-      handle_inline_attachments(attachments, ticket.description_html, ticket.account)
-    end
-
-    self.class.trace_execution_scoped(['Custom/Helpdesk::TicketNotifier/read_binary_attachment']) do
-      ticket.all_attachments.each do |a|
-        attachments[ a.content_file_name] = { 
-          :mime_type => a.content_content_type, 
-          :content => File.read(a.content.to_file.path, :mode => "rb")
-        }
+      from_email = if ticket.account.features?(:personalized_email_replies)
+        ticket.friendly_reply_email_personalize(ticket.responder_name)
+      else
+        ticket.friendly_reply_email
       end
-    end
+
+      from_email = validate_emails(from_email, ticket)
+      to_email = validate_emails(ticket.from_email, ticket)
+      return if from_email.empty? || to_email.empty?
+      cc_emails = validate_emails(ticket.cc_email[:cc_emails], ticket)
+      bcc_emails = validate_emails(account_bcc_email(ticket), ticket)
+
+      #Store message ID in Redis for outbound email to improve threading
+      message_id = "#{Mail.random_tag}.#{::Socket.gethostname}@outbound-email.freshdesk.com"
+
+      headers = email_headers(ticket, message_id, false).merge({
+        :subject    =>  ticket.subject,
+        :to         =>  to_email,
+        :from       =>  from_email,
+        :cc         =>  cc_emails,
+        :bcc        =>  bcc_emails,
+        "Reply-To"  =>  from_email
+      })
+
+      headers.merge!(make_header(ticket.display_id, nil, ticket.account_id, "Notify Outbound Email"))
+      inline_attachments   = []
+      @account = ticket.account
+      @ticket = ticket
+      @cloud_files= ticket.cloud_files
       
-    mail(headers) do |part|
-      part.text { render "notify_outbound_email.text.plain" }
-      part.html { render "notify_outbound_email.text.html" }
-    end.deliver
+      if attachments.present? && attachments.inline.present?
+        handle_inline_attachments(attachments, ticket.description_html, ticket.account)
+      end
+
+      self.class.trace_execution_scoped(['Custom/Helpdesk::TicketNotifier/read_binary_attachment']) do
+        ticket.all_attachments.each do |a|
+          attachments[ a.content_file_name] = { 
+            :mime_type => a.content_content_type, 
+            :content => File.read(a.content.to_file.path, :mode => "rb")
+          }
+        end
+      end
+        
+      mail(headers) do |part|
+        part.text { render "notify_outbound_email.text.plain" }
+        part.html { render "notify_outbound_email.text.html" }
+      end.deliver
+    ensure
+      remove_email_config
+    end
 
     set_others_redis_key(message_key(ticket.account_id, message_id),
                          "#{ticket.display_id}:#{message_id}",
                          86400*7) unless message_id.nil?
     update_ticket_header_info(ticket.id, message_id)
+  end
+
+  def notify_bulk_child_creation options = {}
+    headers = {
+      :subject                    => "sub for bulk tkt create",
+      :to                         => options[:user].email,
+      :from                       => options[:user].account.default_friendly_email,
+      :bcc                        => AppConfig['reports_email'],
+      :sent_on                    => Time.now,
+      :"Reply-to"                 => "#{options[:user].account.default_friendly_email}", 
+      :"Auto-Submitted"           => "auto-generated", 
+      :"X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
+    }
+
+    @user_name     = options[:user].name
+    @assoc_parent  = options[:parent_tkt]
+    @error_msg     = options[:error_msg]
+    @failed_items  = options[:failed_items]
+
+    mail(headers) do |part|
+      part.text { render "notify_bulk_child_creation.text.plain" }
+      part.html { render "notify_bulk_child_creation.text.html" }
+    end.deliver
   end
 
   private

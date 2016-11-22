@@ -90,9 +90,8 @@ default_fields.sort! {|x,y| field_order.index(x.first) <=> field_order.index(y.f
   }).trigger('change');
 <% end %>
 
-<% values = params[:template_form] ? @template.template_data[:tags] : @ticket.tags.collect{|tag| tag.name}.join(',')
-%>
-<%= render :partial => "/helpdesk/tickets/remote_tags" , :locals => {:values => values }%>
+<% values = params[:template_form] ? @template.template_data[:tags] : @ticket.tags.collect{|tag| tag.name}.join(',') %>
+<%= render :partial => "/helpdesk/tickets/remote_tags" , :locals => {:values => values,  :element_id => :helpdesk_ticket_tags_input, :element_name => "helpdesk[tags]" }%>
 
 <% unless privilege?(:edit_ticket_properties) %>
   <%= javascript_tag do %> 

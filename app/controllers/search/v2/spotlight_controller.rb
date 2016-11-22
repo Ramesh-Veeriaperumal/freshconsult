@@ -7,6 +7,7 @@ class Search::V2::SpotlightController < ApplicationController
   helper Search::SearchHelper
   
   before_filter :set_search_sort_cookie
+  before_filter :detect_multilingual_search, only: [:solutions]
 
   # Unscoped spotlight search
   #
@@ -39,7 +40,7 @@ class Search::V2::SpotlightController < ApplicationController
   # Forums scoped spotlight search
   #
   def forums
-    redirect_user unless privilege?(:view_forums)
+    redirect_user unless forums_visible?
 
     @search_context = :agent_spotlight_topic
     @klasses        = ['Topic']
@@ -63,7 +64,7 @@ class Search::V2::SpotlightController < ApplicationController
         model_names.concat(['Helpdesk::Ticket', 'Helpdesk::ArchiveTicket'])
 
         model_names.concat(['User', 'Company']) if privilege?(:view_contacts)
-        model_names.push('Topic')               if privilege?(:view_forums)
+        model_names.push('Topic')               if forums_visible?
         model_names.push('Solution::Article')   if privilege?(:view_solutions)
       end
     end
@@ -147,6 +148,10 @@ class Search::V2::SpotlightController < ApplicationController
         end
       end
     end
+
+    def forums_visible?
+      current_account.features_included?(:forums) && privilege?(:view_forums)
+    end
     
     def redirect_user
       redirect_to search_v2_spotlight_index_path
@@ -164,6 +169,14 @@ class Search::V2::SpotlightController < ApplicationController
       @result_json    = { :results => [], :current_page => @current_page }
     end
 
+		# Hack for getting language and hitting corresponding alias
+		# Probably will be moved to search/search_controller when dynamic solutions goes live
+		def detect_multilingual_search
+			if params[:language].present? && current_account.es_multilang_soln?
+				@es_locale = params[:language].presence
+			end
+		end
+
     def set_search_sort_cookie
       cookies[:search_sort] = @search_sort
     end
@@ -174,11 +187,11 @@ class Search::V2::SpotlightController < ApplicationController
     def esv2_agent_models
       @@esv2_agent_spotlight ||= {
         'company'       => { model: 'Company',            associations: [] }, 
-        'topic'         => { model: 'Topic',              associations: [{ forum: :forum_category }, :user ] }, 
-        'ticket'        => { model: 'Helpdesk::Ticket',   associations: [{ flexifield: :flexifield_def },{ requester: :avatar }, :ticket_states, :ticket_old_body, :ticket_status, :responder, :group ] }, 
+        'topic'         => { model: 'Topic',              associations: [ { forum: :forum_category }, :user ] }, 
+        'ticket'        => { model: 'Helpdesk::Ticket',   associations: [ { flexifield: :flexifield_def }, { requester: :avatar }, :ticket_states, :ticket_old_body, :ticket_status, :responder, :group, { :ticket_states => :tickets } ] },
         'archiveticket' => { model: 'Helpdesk::ArchiveTicket',     associations: [] }, 
-        'article'       => { model: 'Solution::Article',  associations: [ :user, :folder ] }, 
-        'user'          => { model: 'User',               associations: [ :avatar, :customer ] }
+        'article'       => { model: 'Solution::Article',  associations: [ :user, :article_body, :recent_author, { :solution_folder_meta => :en_folder } ] }, 
+        'user'          => { model: 'User',               associations: [ :avatar, :customer, :default_user_company, :companies ] }
       }
     end
 end

@@ -10,7 +10,8 @@ module UsersHelper
                         :role => 1,
                         :agent => 1,
                         :ticket_permission => 1,
-                        :role_ids => ["#{role_id}"] })
+                        :role_ids => ["#{role_id}"],
+                        :unique_external_id => options[:unique_external_id] })
   end
 
   def add_agent(account, options={})
@@ -28,7 +29,8 @@ module UsersHelper
                                     :user_role => options[:role],
                                     :delta => 1,
                                     :language => "en",
-                                    :role_ids => options[:role_ids])
+                                    :role_ids => options[:role_ids],
+                                    :unique_external_id => options[:unique_external_id])
     new_user.agent = new_agent
     new_user.privileges = options[:privileges] || account.roles.find_by_id(options[:role_ids].first).privileges
     v = new_user.save!
@@ -56,6 +58,7 @@ module UsersHelper
                                     :company_id => options[:customer_id] || nil,
                                     :language => "en",
                                     :tag_names => options[:tags])
+                                    :unique_external_id => options[:unique_external_id])
     new_user.custom_field = options[:custom_fields] if options.key?(:custom_fields)
     new_user.save
     new_user.reload

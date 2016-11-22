@@ -2247,10 +2247,21 @@ sv-SE:
     action_verb: uppdaterad
     email_response: epostsvar
     reply: svar
+    ecommerce: svara
     forwarded: vidarebefordrat
     tweet: tweet
     time_entry: tidspost
     note: anteckning
+    supervisor: "regel för Supervisor"
+    observer: "regel för Observer"
+    business: "regel för Dispatcher"
+    round_robin: "automatisk ärendetilldelning"
+    scenario: "Automatiska Scenarier"
+    none: Inga
+    subject: ämne
+    description: beskrivning
+    set: "Ställ in"
+    rule_executed: "Systemregel har utförts"
     tag:
       solutions: "Ny lösning"
       assigned_to_nobody: "Representant ej tilldelad"
@@ -2269,6 +2280,10 @@ sv-SE:
         new: "Loggad tid"
         timer_started: "Timern har startats"
         timer_stopped: "Timern har stoppats"
+        edit: "Tidrapporten har uppdaterats"
+        delete: "Tidrapporten har raderats"
+        billable: Fakturerbart
+        non_billable: "Ej fakturerbart"
       execute_scenario: "Scenariot utfört"
       ticket_merge: "Ärendet sammanslaget"
       ticket_split: Ärendedelning
@@ -2282,10 +2297,72 @@ sv-SE:
       group_change_none: "Representantgruppen ändrad"
       source_change: "Källa för ärende"
       due_date_updated: "Förfallodatum uppdaterat"
+      tag_change: "Tag uppdaterad"
+      add_watcher: "Watcher tillagd"
+      remove_watcher: "Watcher borttagen"
+      property_update: "Egenskaperna har uppdaterats"
+      spam: "Markerat som skräppost"
     solutions:
       new_solution:
         short: "{{user_path}} skapade en ny lösning"
         long: "{{user_path}} skapade en ny lösning {{notable_path}}"
+      new_article:
+        short: "{{user_path}} skapade en ny artikel"
+        long: "{{user_path}} skapade en ny artikel ”{{notable_path}}”"
+      new_article_translation:
+        short: "{{user_path}} skapade en ny översättning av en artikel på {{language_name}}"
+        long: "{{user_path}}  skapade en ny översättning av en artikel på {{language_name}} \"{{notable_path}}\""
+      published_article:
+        short: "{{user_path}} publicerade en artikel"
+        long: "{{user_path}} publicerade artikeln ”{{notable_path}}”"
+      published_article_translation:
+        short: "{{user_path}} publicerade en översättning av en artikel på {{language_name}}"
+        long: "{{user_path}} publicerade en översättning av en artikel på {{language_name}} \"{{notable_path}}\""
+      unpublished_article:
+        short: "{{user_path}} avpublicerade en artikel"
+        long: "{{user_path}} avpublicerade artikeln ”{{notable_path}}”"
+      unpublished_article_translation:
+        short: "{{user_path}} avpublicerade en översättning av en artikel på {{language_name}}"
+        long: "{{user_path}} avpublicerade en översättning av en artikel på {{language_name}} \"{{notable_path}}\""
+      delete_article:
+        short: "{{user_path}} har tagit bort en artikel"
+        long: "{{user_path}} har tagit bort artikeln ”{{notable_path}}”"
+      new_solution_category:
+        short: "{{user_path}} skapade en ny lösningskategori"
+        long: "{{user_path}} skapade en ny lösningskategori ”{{notable_path}}”"
+      new_solution_category_translation:
+        short: "{{user_path}} skapade en ny översättning av en lösningskategori på {{language_name}}"
+        long: "{{user_path}} skapade en ny översättning av en lösningskategori på {{language_name}} \"{{notable_path}}\""
+      delete_solution_category:
+        short: "{{user_path}} har tagit bort en lösningskategori"
+        long: "{{user_path}} har tagit bort lösningskategorin ”{{notable_path}}”"
+      new_folder:
+        short: "{{user_path}} skapade en ny mapp"
+        long: "{{user_path}} skapade den nya mappen ”{{notable_path}}”"
+      new_folder_translation:
+        short: "{{user_path}} skapade en ny översättning av en mapp på {{language_name}}"
+        long: "{{user_path}} skapade en ny översättning av en mapp på {{language_name}} \"{{notable_path}}\""
+      delete_folder:
+        short: "{{user_path}} har tagit bort en mapp"
+        long: "{{user_path}} har tagit bort mappen ”{{notable_path}}”"
+      new_draft:
+        short: "{{user_path}} skapade ett utkast för en artikel"
+        long: "{{user_path}} skapade ett utkast för artikeln ”{{notable_path}}”"
+      new_draft_translation:
+        short: "{{user_path}} skapade ett utkast för översättning av en artikel på {{language_name}}"
+        long: "{{user_path}} skapade ett utkast för översättning av en artikel på {{language_name}} \"{{notable_path}}\""
+      published_draft:
+        short: "{{user_path}} publicerade utkastet för en artikel"
+        long: "{{user_path}} publicerade utkastet för artikeln \"{{notable_path}}\""
+      published_draft_translation:
+        short: "{{user_path}} publicerade ett utkast för översättning av en artikel på {{language_name}}"
+        long: "{{user_path}} publicerade ett utkast för översättning av en artikel på {{language_name}} \"{{notable_path}}\""
+      delete_draft:
+        short: "{{user_path}} har tagit bort utkastet för en artikel"
+        long: "{{user_path}} har tagit bort utkastet för artikeln \"{{notable_path}}”"
+      delete_draft_translation:
+        short: "{{user_path}} har tagit bort utkastet för en artikelöversättning"
+        long: "{{user_path}} har tagit bort utkastet för en artikelöversättning på {{language_name}} \"{{notable_path}}\""
     forums:
       new_forum_category:
         short: "{{user_path}} skapade en ny forumkategori"
@@ -2306,16 +2383,16 @@ sv-SE:
         short: "{{user_path}}s inlägg har publicerats"
         long: "{{user_path}}s inlägg i '{{notable_path}}' har publicerats"
       delete_forum_category:
-        short: "{{user_path}} tog bort en forumkategori"
-        long: "{{user_path}} tog bort forumkategorin ”{{notable_path}}”"
+        short: "{{user_path}} har tagit bort en forumkategori"
+        long: "{{user_path}} har tagit bort forumkategorin ”{{notable_path}}”"
       delete_forum:
-        short: "{{user_path}} tog bort ett forum"
-        long: "{{user_path}} tog bort forumet ”{{notable_path}}” under ”{{category_name}}”"
+        short: "{{user_path}} har tagit bort ett forum"
+        long: "{{user_path}} har tagit bort forumet ”{{notable_path}}” under ”{{category_name}}”"
       delete_topic:
         short: "{{user_path}} tog bort ett ämne"
-        long: "{{user_path}} tog bort ämnet ”{{notable_path}}” i ”{{forum_name}}”"
+        long: "{{user_path}} har tagit bort ämnet ”{{notable_path}}” i ”{{forum_name}}”"
       delete_post:
-        short: "{{user_path}} tog bort ett inlägg"
+        short: "{{user_path}} har tagit bort ett inlägg"
         long: "{{user_path}} tog bort ett inlägg från ”{{notable_path}}”"
       topic_stamp_1:
         short: "{{user_path}} har markerat forumämnet som ”planerat”"
@@ -2359,12 +2436,15 @@ sv-SE:
         short: "{{user_path}} ändrade prioriteten till {{priority_name}}"
         long: "{{user_path}} ändrade prioriteten på ärendet {{notable_path}} till {{priority_name}}"
         without_user: "uppdaterade ärendets prioritet till <strong>{{priority_name}}</strong>"
+        new: "Prioritet som <strong>%{priority_name}</strong>"
       new_ticket:
         short: "{{user_path}} skickade in ärendet"
         long: "{{user_path}} skickade in ett nytt ärende {{notable_path}}"
+        new: "Skickade in ett nytt ärende"
       new_outbound:
         short: "{{user_path}} skapade ett ärende"
         long: "{{user_path}} skapade ett ärende {{notable_path}}"
+        new: "Skickat e-post och skapat ett nytt ärende"
       conversation:
         out_email:
           short: "{{user_path}} har skickat ett {{reply_path}}"
@@ -2381,27 +2461,51 @@ sv-SE:
         twitter:
           short: "{{user_path}} lade till ett {{twitter_path}}"
           long: "{{user_path}} lade till ett {{twitter_path}} till ärendet {{notable_path}}"
+        ecommerce:
+          short: "{{user_path}} har skickat en {{ecommerce_path}}"
+          long: "{{user_path}} har skickat en {{ecommerce_path}} till ärendet {{notable_path}}"
       timesheet:
         new:
           short: "{{user_path}} lade till ett {{timesheet_path}}"
           long: "{{user_path}} lade till ett {{timesheet_path}} till ärendet {{notable_path}}"
           without_user: "lade till ett {{timesheet_path}}"
+          new: "Lade till en tidspost"
         timer_started:
           short: "{{user_path}} startade timern {{timesheet_path}}"
           without_user: "startade timern {{timesheet_path}}"
           long: "{{user_path}} startade timern {{timesheet_path}} för ärendet {{notable_path}}"
+          new: "Startade timern på tidrapport"
         timer_stopped:
           short: "{{user_path}} stoppade timern {{timesheet_path}}"
           without_user: "stoppade timern {{timesheet_path}}"
           long: "{{user_path}} stoppade timern {{timesheet_path}} för ärendet {{notable_path}}"
+          new: "Stoppade timern på tidrapport"
+      timesheet_without_time:
+        new: "%{billable} timmar för %{user_path} den %{date}"
+      timesheet_with_time:
+        new: "%{time_spent} %{billable} timmar för %{user_path} den %{date}"
+      timesheet_timer_start:
+        new: "Startade timern på tidrapport med %{timesheet}"
+      timesheet_timer_stop:
+        new: "Stoppade timern på tidrapport för %{timesheet}"
+      timesheet_create:
+        new: "Skapade en tidrapport med %{timesheet}"
+      timesheet_edit:
+        new: "Redigerade en tidrapport <br> Tidrapport med %{old_timesheet} ändrad till tidrapport med %{new_timesheet}"
+      timesheet_delete:
+        new: "Raderade tidrapporten med %{timesheet}"
       assigned:
         short: "Tilldelad till {{responder_path}} av {{user_path}}"
         without_user: "tilldelad till <strong>{{responder_path}}</strong>"
         long: "{{user_path}} tilldelade ärendet {{notable_path}} till {{responder_path}}"
+        new: "Agent som %{responder_path}"
+      round_robin:
+        new: "Sätt Agent som <strong>%{responder_path}</strong> via round robin tilldelning"
       execute_scenario:
         short: "{{user_path}} verkställde scenariot ”{{scenario_name | h}}”"
         without_user: "verkställde scenariot <strong>{{scenario_name | h}}</strong>"
         long: "{{user_path}} verkställde scenariot ”{{scenario_name | h}}” {{notable_path}}"
+        new: "Utförde scenariot <strong>%{scenario_name}</strong>"
       ticket_merge:
         short: "{{user_path}} slog samman ärendet {{notable_path}} till {{merge_ticket_path}}"
         long: "{{user_path}} slog samman ärendet {{notable_path}} till {{merge_ticket_path}}"
@@ -2410,22 +2514,34 @@ sv-SE:
         short: "{{user_path}} har delat ärendet {{notable_path}} från {{split_ticket_path}}"
         long: "{{user_path}} har delat ärendet {{notable_path}} från {{split_ticket_path}}"
         without_user: "Delade ärendet från {{split_ticket_path}}"
+      note_split:
+        short: "{{user_path}} har delat ett svar från ärendet {{notable_path}} till {{split_ticket_path}}"
+        long: "{{user_path}} har delat ett svar från ärendet {{notable_path}} till {{split_ticket_path}}"
+        without_user: "dela ett svar som ett nytt ärende {{split_ticket_path}}"
       status_change:
         short: "{{user_path}} uppdaterade statusen till {{status_name}}"
         without_user: "uppdaterade statusen till <strong>{{status_name}}</strong>"
         long: "{{user_path}} uppdaterade statusen för ärendet {{notable_path}} till {{status_name}}"
+        new: "Status som <strong>%{status_name}</strong>"
       deleted:
         short: "{{user_path}} har tagit bort det här ärendet"
         without_user: "har tagit bort det här ärendet"
         long: "{{user_path}} har tagit bort det här ärendet {{notable_path}}"
+        new: "Tagit bort detta ärendet"
       restored:
         short: "{{user_path}} har återställt det här ärendet"
         without_user: "har återställt det här ärendet"
         long: "{{user_path}} har återställt ärendet {{notable_path}}"
+        new: "Återställde detta ärendet från papperskorgen"
+      spam:
+        new: "Markerade detta ärendet som skräppost"
+      unspam:
+        new: "Återställde detta ärendet från skräppost"
       product_change:
         short: "{{user_path}} uppdaterade produkten till {{product_name}}"
         without_user: "uppdaterade produkten till <strong>{{product_name}}</strong>"
         long: "{{user_path}} uppdaterade produkten {{notable_path}} till {{product_name}}"
+        new: "Produkt som <strong>%{product_name}</strong>"
       product_change_none:
         short: "{{user_path}} uppdaterade produkten till ”ingen”"
         without_user: "uppdaterade produkten till <strong>”Ingen”"
@@ -2434,10 +2550,12 @@ sv-SE:
         short: "{{user_path}} uppdaterade ärendetypen till {{ticket_type}}"
         without_user: "uppdaterade ärendetypen till <strong>{{ticket_type}}</strong>"
         long: "{{user_path}} uppdaterade ärendetypen {{notable_path}} till {{ticket_type}}"
+        new: "Typ som <strong>%{ticket_type}</strong>"
       group_change:
         short: "{{user_path}} uppdaterade gruppen till {{group_name}}"
         without_user: "uppdaterade gruppen till <strong>{{group_name}}</strong>"
         long: "{{user_path}} uppdaterade gruppen {{notable_path}} till {{group_name}}"
+        new: "Grupp som <strong>%{group_name}</strong>"
       group_change_none:
         short: "{{user_path}} uppdaterade gruppen till ”ingen”"
         without_user: "uppdaterade gruppen till <strong>”ingen”</strong>"
@@ -2446,10 +2564,48 @@ sv-SE:
         short: "{{user_path}} uppdaterade källan till {{source_name}}"
         without_user: "uppdaterade källan till <strong>{{source_name}}</strong>"
         long: "{{user_path}} uppdaterade källan för ärendet {{notable_path}} till {{source_name}}"
+        new: "Källa som <strong>%{source_name}</strong>"
       due_date_updated:
         short: "{{user_path}} uppdaterade förfallodatum till {{due_date_updated}}"
         without_user: "uppdaterade förfallodatum till <strong>{{due_date_updated}}</strong>"
         long: "{{user_path}} uppdaterade förfallodatum för {{notable_path}} till {{due_date_updated}}"
+        new: "förfallotid som <strong>%{due_date_updated}</strong>"
+      requester_change:
+        new: "Frågeställare som %{requester_name}"
+      ticket_edit:
+        new: "Redigerade <strong>%{fields}</strong>"
+      custom_field_change:
+        new: "%{field_name} som <strong>%{field_value}</strong>"
+      custom_text_field_change:
+        new: "Förändrade %{text_fields}"
+      added_watcher:
+        new: "Lade till bevakare %{watcher_list}"
+      removed_watcher:
+        new: "Tog bort bevakare %{watcher_list}"
+      added_tag:
+        new: "Lade till taggar <strong>%{tag_name}</strong>"
+      removed_tag:
+        new: "Tog bort taggar <strong>%{tag_name}</strong>"
+      add_cc:
+        new: "Lade till CC %{cc_list}"
+      add_note:
+        new: "Lade till anteckningar"
+      ticket_merge_source:
+        new: "Slog samman detta ärendet till %{target_ticket}"
+      ticket_merge_target:
+        new: "Slog samman %{source_ticket_list} med detta ärendet"
+      ticket_split_source:
+        new: "Dela ett svar för att skapa ett nytt ärende %{target_ticket}"
+      ticket_split_target:
+        new: "Skapade detta ärendet genom att dela ett svar från ärende %{source_ticket}"
+      ticket_import:
+        new: "Ärendet importerades %{imported_time}"
+      checkbox_checked:
+        new: "Valde %{checkbox_list}"
+      checkbox_unchecked:
+        new: "Valde bort %{checkbox_list}"
+      archive:
+        new: "Ärendet arkiverades"
   credit_card_info: Kreditkortsinformation
   zendesk_backup_info: "Välj den säkerhetskopierade filen som du hämtade från Zendesk"
   backup_error_msg: "Filen överskrider den föreskrivna gränsen på 50MB, <a href='#' id='import_request'>kontakta support</a> för att fortsätta min importen."
@@ -4304,7 +4460,16 @@ sv-SE:
       user_not_following: "Användaren följer inte ditt twitterkonto"
     activities: Aktiviteter
     activity_toggle: "Visa aktiviteter"
+    activity_toggle_v2: Aktiviteter
+    activity_toggle_tooltip: "Växla aktiviteter"
+    show_activities_tooltip: "Visa aktiviteter"
+    hide_activities_tooltip: "Dölj aktiviteter"
     activity_timestamp: "%{user_name} uppdaterad <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
+    user_activity_timestamp: "%{user_name} updated <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
+    deleted_rule: "deleted rule - %{rule_name}"
+    executed: " executed "
+    performed: " performed "
+    system_activity_timestamp: "<strong class='muted'>System</strong> %{system_rule} <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date}) "
     requestor_info: "Information om beställaren"
     view_twitter: "Visa på Twitter"
     view_facebook: "Visa på Facebook"
@@ -4875,7 +5040,7 @@ sv-SE:
         this_view: "den här vyn"
         all_tickets: "Alla ärenden"
         all: "Alla ärenden"
-        new_and_my_open: "Mina nya och Öppen ärenden"
+        new_and_my_open: "Mina nya och öppna ärenden"
         open: "Öppna ärenden"
         closed: "Stängda ärenden"
         deleted: Skräp

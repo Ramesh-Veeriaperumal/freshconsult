@@ -1,5 +1,6 @@
 <%= stylesheet_link_tag_with_rtl :'cdn/freshplugs' %>
 <%= stylesheet_link_tag_with_rtl :'cdn/marketplace' %>
+<% more_apps_params = { type: Marketplace::Constants::DEFAULT_EXTENSION_TYPES,sort_by: Marketplace::Constants::EXTENSION_SORT_TYPES }.to_query %>
 <% content_for :helpcard do %>
   <%= render :partial => "helpnote" %>
 <% end %>
@@ -17,7 +18,7 @@
     <div class="tab-actions">
       <% if feature?(:marketplace) %>
         <div class="button-bar browse-apps pull-right">
-          <a class="browse-btn btn btn-flat browse-apps-btn" href="" data-url="<%= admin_marketplace_extensions_path %>?type=<%= Marketplace::Constants::DEFAULT_EXTENSION_TYPES%>"><span class="ficon-cube-filled"></span> <%= t('marketplace.get_more_apps') %></a>
+          <a class="browse-btn btn btn-flat browse-apps-btn" href="" data-url="<%= admin_marketplace_extensions_path %>?<%= more_apps_params %>"><span class="ficon-cube-filled"></span> <%= t('marketplace.get_more_apps') %></a>
         </div>
       <% end %>
       <div class="button-bar create-new pull-right" style="display:none;">
@@ -41,7 +42,7 @@
     <div id="myTabContent" class="tab-content">
       <% if feature?(:marketplace) %>
         <%= render :partial => '/admin/marketplace/marketplace_apps', :locals => { 
-                   :installed_mkp_apps => @installed_mkp_apps } %>
+                   :installed_mkp_apps => @installed_mkp_apps, :more_apps_params => more_apps_params } %>
       <% else %>
        <%= render :partial => 'native_integrations', :locals => { :applications => @applications, 
                   :installed_applications => @installed_applications } %>
@@ -53,7 +54,12 @@
     <div id="toggle-confirm" style="display:none;">
     </div>
 
-  </div>
+    <ul class="tabs nav-tabs sleek-tab hide" id="appTab">
+      <li>
+        <a href="#app-dtl" class="app-dtl moreinfo-lnk show_btn hide" data-toggle="tab"></a>
+      </li>
+    </ul>
+  </div>    
 </div>
 
 <%= javascript_include_tag :'cdn/marketplace/fa_marketplace_browser' %>
@@ -62,7 +68,8 @@
                 appBrowserClose: ".appbrowser-close, .closable",
                 browseBtn: ".browse-btn, .moreinfo-lnk, .update",
                 activationSwitch: ".switch",
-                deleteBtn: ".delete-btn"
+                deleteBtn: ".delete-btn",
+                reauthorizeBtn: ".reauthorize-btn"
               }
     var customMessages  = {
                             delete_success: "<%= I18n.t('marketplace.delete_action.success') %>",
@@ -81,7 +88,13 @@
 
     jQuery(document).ready(function(){
       jQuery(jQuery('#myTab > li.active > a').attr('href')).addClass('active');
-      var selectedTab = jQuery('a[href="' + window.location.hash + '"]', jQuery("#myTab"));
+      var hash = window.location.hash,
+          app_id = window.location.hash.substring(1);
+      if (hash.match('^#[0-9]')) { 
+        jQuery('.app-dtl').attr('href',hash);
+        jQuery('.app-dtl').attr('data-url','/admin/marketplace/extensions/' + app_id + '?type=1,4,5');
+      };
+      var selectedTab = jQuery('a[href="' + hash + '"]', jQuery("#myTab,#appTab"));
       if(selectedTab.length > 0) 
         jQuery(selectedTab).click();
 
