@@ -54,7 +54,7 @@
   $ref: ./tickets/bulk_update.yaml
 /tickets/{id}/latest_note:
   $ref: ./tickets/latest_note.yaml
-/tickets/{id}/split_note/{note_id}:
+/tickets/{id}/split_note:
   $ref: ./tickets/split_note.yaml
 /tickets/{id}/draft:
   $ref: ./drafts/crud.yaml

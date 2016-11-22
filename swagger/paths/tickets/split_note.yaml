@@ -1,7 +1,7 @@
   put:
     tags: [ticket]
-    summary: Split Note **
-    description: Splitting the note of a ticket and creating a new ticket from that. A Ticket object will be returned on succesfull response.
+    summary: Split Note
+    description: Splitting the note of a ticket and creating a new ticket from that. A Ticket object will be returned on succesfull response. This can also be accessed via the route 'api/_/tickets/{id}/split_note/{note_id}'.
     parameters:
       - name: id
         in: path
@@ -9,7 +9,7 @@
         description: Display ID of ticket
         required: true
       - name: note_id
-        in: path
+        in: query
         type: integer
         required: true
     responses:

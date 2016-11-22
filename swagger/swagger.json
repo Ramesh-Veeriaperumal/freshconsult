@@ -947,13 +947,13 @@
         }
       }
     },
-    "/tickets/{id}/split_note/{note_id}": {
+    "/tickets/{id}/split_note": {
       "put": {
         "tags": [
           "ticket"
         ],
-        "summary": "Split Note **",
-        "description": "Splitting the note of a ticket and creating a new ticket from that. A Ticket object will be returned on succesfull response.",
+        "summary": "Split Note",
+        "description": "Splitting the note of a ticket and creating a new ticket from that. A Ticket object will be returned on succesfull response. This can also be accessed via the route 'api/_/tickets/{id}/split_note/{note_id}'.",
         "parameters": [
           {
             "name": "id",
@@ -964,7 +964,7 @@
           },
           {
             "name": "note_id",
-            "in": "path",
+            "in": "query",
             "type": "integer",
             "required": true
           }
@@ -1279,7 +1279,9 @@
                               "observer",
                               "dispatcher",
                               "supervisor",
-                              "scenario_automation"
+                              "scenario_automation",
+                              "api_webhook",
+                              "business"
                             ]
                           }
                         }
@@ -1298,6 +1300,10 @@
                         "name": {
                           "type": "string",
                           "description": "Eg: note, priority, status, responder_id and the custom_fields would start with custom_field."
+                        },
+                        "custom_field": {
+                          "type": "boolean",
+                          "description": "Whether the property is a custom field or not(default field)"
                         },
                         "value": {
                           "type": "string",

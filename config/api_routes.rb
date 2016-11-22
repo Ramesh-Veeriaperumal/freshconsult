@@ -184,6 +184,8 @@ Helpkit::Application.routes.draw do
         get :draft, to: 'ember/tickets/drafts#show_draft'
         delete :draft, to: 'ember/tickets/drafts#clear_draft'
         match '/split_note/:note_id' => 'ember/tickets#split_note', via: :put
+        # This alternate route is to handle limitation in ember route generation : api/_/tickets/:ticket_id/split_note?note_id=Number
+        match '/split_note' => 'ember/tickets#split_note', via: :put
       end
       # This alternate route is to handle limitation in ember route generation : api/_/tickets/:ticket_id/canned_responses?id=Number
       match '/canned_responses' => 'ember/tickets/canned_responses#show', via: :get
