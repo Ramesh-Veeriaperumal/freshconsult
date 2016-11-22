@@ -4,15 +4,19 @@ class Admin::CompanyFieldsController < Admin::AdminController
 
   include Cache::Memcache::CompanyField
   include Cache::Memcache::Account
+  include Helpdesk::CustomFields::CustomFieldMethods
 
   def update
     super
     clear_company_fields_cache
     clear_requester_widget_fields_from_cache
-    if @errors.empty?
-      redirect_to :action => :index
-    else
-      render :action => :index
+    response_data = index_scoper if @errors.blank?
+    invoke_respond_to(@errors.squish, response_data) do
+      if @errors.empty?
+        redirect_to :action => :index
+      else
+        render :action => :index
+      end
     end
   end
   
