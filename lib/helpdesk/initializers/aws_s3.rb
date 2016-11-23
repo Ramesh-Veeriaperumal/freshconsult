@@ -3,7 +3,6 @@ config = YAML::load(ERB.new(File.read("#{Rails.root}/config/s3.yml")).result)
 S3_CONFIG = (config[Rails.env] || config).symbolize_keys
 
 dev_params = (Rails.env.development? || Rails.env.test?) ? {
-                :use_ssl           => false,
                 :sqs_endpoint      => "localhost",
                 :sqs_port          => 4568
               } : {}
