@@ -65,14 +65,6 @@ module Helpdesk::Email::OutgoingCategory
     return false
   end
 
-  def account_created_recently?
-    if Account.current
-      account_time_limit = get_spam_check_time_limit
-      return Account.current.created_at > account_time_limit.days.ago
-    end
-    return false
-  end
-
 
   def get_mailgun_percentage
     if eval("$#{get_subscription}_mailgun_percentage").blank? || eval("$#{get_subscription}_last_time_checked").blank? || eval("$#{get_subscription}_last_time_checked") < 5.minutes.ago
