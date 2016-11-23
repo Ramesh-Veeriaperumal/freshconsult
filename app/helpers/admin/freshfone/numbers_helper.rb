@@ -6,7 +6,8 @@ module Admin::Freshfone::NumbersHelper
 	end
 
 	def number_type(number)
-		return if number.local?
+		return t('freshfone.admin.local') if number.local?
+		return t('freshfone.admin.mobile') if number.mobile?
 		t('freshfone.admin.toll_free')
 	end
 

@@ -1869,13 +1869,14 @@ App.Tickets.TicketDetail = {
 		this.inlineErrorMessage = msg;
 	},
 	onVisit: function (data) {
+		TICKET_DETAILS_DOMREADY();
+		
 		if($("#HelpdeskReply").data('containDraft')) {
 			swapEmailNote('cnt-reply', null);
 			TICKET_DETAILS_DATA['draft']['hasChanged'] = false;
 			jQuery(window).trigger('scroll');
 		}
 
-		TICKET_DETAILS_DOMREADY();
 		App.Tickets.Watcher.init();
 		App.Tickets.Merge_tickets.initialize();
 		App.TicketAttachmentPreview.init();

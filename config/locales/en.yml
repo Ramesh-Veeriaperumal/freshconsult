@@ -9407,6 +9407,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       search: "Search by digits or phrases"
       local: "Local"
       toll_free: "Toll-Free"
+      mobile: "Local (mobile)"
       number:
         simultaneous: "Call all agents"
         round_robin: "Call idle agent first"
