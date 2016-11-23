@@ -2,6 +2,7 @@ class CustomFieldsController < Admin::AdminController
 
   include Helpdesk::Ticketfields::ControllerMethods
   include Cache::FragmentCache::Base
+  include Helpdesk::CustomFields::CustomFieldMethods
 
   before_filter :check_ticket_field_count, :only => [ :update ]
   
@@ -43,8 +44,12 @@ class CustomFieldsController < Admin::AdminController
         end  
     end
     clear_fragment_caches
-    flash_message(err_str.to_s.html_safe)
-    redirect_to :action => :index
+    err_str = err_str.to_s.html_safe
+    flash_message(err_str)
+    response_data = current_portal.ticket_fields_including_nested_fields if err_str.blank?
+    invoke_respond_to(err_str, response_data.presence) do
+      redirect_to :action => :index
+    end
   end
 
   private

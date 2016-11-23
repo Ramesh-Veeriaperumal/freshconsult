@@ -5,7 +5,7 @@ module RabbitMq::Subscribers::ArchiveTickets::Activities
   PROPERTIES_TO_CONSIDER = [ :requester_id, :company_id ]
   
 
-  def mq_reports_archive_ticket_properties(action)
+  def mq_activities_archive_ticket_properties(action)
     to_rmq_json(activities_keys, action) 
   end
   
@@ -14,10 +14,10 @@ module RabbitMq::Subscribers::ArchiveTickets::Activities
   end
 
   def mq_activities_valid(action, model)
-    false and Account.current.features_included?(:activity_revamp) and valid_model?(model) and update_action?(action) and valid_changes.present?
+    false and Account.current.features_included?(:activity_revamp) and activity_valid_model?(model) and update_action?(action) and valid_changes.present?
   end
 
-  def valid_model?(model)
+  def activity_valid_model?(model)
     model == "archive_ticket"
   end
 

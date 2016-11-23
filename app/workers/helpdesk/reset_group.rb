@@ -9,11 +9,12 @@ class Helpdesk::ResetGroup < BaseWorker
       account   = Account.current
       group_id  = args[:group_id]
       reason    = args[:reason].symbolize_keys!
-
-      account.tickets.where(group_id: group_id).update_all_with_publish({ group_id: nil }, {})
+      options   = {:reason => reason, :manual_publish => true}
+      account.tickets.where(group_id: group_id).update_all_with_publish({ group_id: nil }, {}, options)
       if account.features?(:shared_ownership)
         internal_group_col              = Helpdesk::SchemaLessTicket.internal_group_column
         internal_agent_col              = Helpdesk::SchemaLessTicket.internal_agent_column
+        #  Changed reason hash for shared ownership
         reason[:delete_internal_group]  = reason.delete(:delete_group)
         options                         = {:reason => reason, :manual_publish => true}
         updates_hash                    = {internal_group_col => nil, internal_agent_col => nil}

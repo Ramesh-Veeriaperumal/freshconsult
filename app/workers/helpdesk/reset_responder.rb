@@ -10,6 +10,7 @@ class Helpdesk::ResetResponder < BaseWorker
       user_id   = args[:user_id]
       user      = account.all_users.find_by_id(user_id)
       reason    = args[:reason].symbolize_keys!
+      options   = {:reason => reason, :manual_publish => true}
       return if user.nil?
       ticket_ids = []
 
@@ -17,9 +18,10 @@ class Helpdesk::ResetResponder < BaseWorker
         ticket_ids.push(ticket.id) if ticket.group.present? && ticket.group.capping_enabled?
       end
 
-      account.tickets.where(responder_id: user.id).update_all_with_publish({ responder_id: nil }, {})
+      account.tickets.where(responder_id: user.id).update_all_with_publish({ responder_id: nil }, {}, options)
       if account.features?(:shared_ownership)
         internal_agent_col              = Helpdesk::SchemaLessTicket.internal_agent_column
+        #  Changed reason hash for shared ownership
         reason[:delete_internal_agent]  = reason.delete(:delete_agent)
         options                         = {:reason => reason, :manual_publish => true}
         updates_hash                    = {internal_agent_col => nil}

@@ -57,12 +57,20 @@
                             <%=t('support.tickets.ticket_survey.cancel') %></a>
       <% end %>
       <p><%= default_question_label %></p>
-      <div class="survey-buttons">
-        <% !JSON.parse(choices).blank? && JSON.parse(choices).each_with_index do |option, index|%>
-          <%= link_to "<span class=\"survey-rating #{CustomSurvey::Survey::CUSTOMER_RATINGS_STYLE[option["survey_question_choice"]["face_value"]]}\"></span><div class='survey-rating-label'>#{h(option["survey_question_choice"]["value"])}</div>".html_safe , support_portal_custom_survey_path(@ticket,option["survey_question_choice"]["face_value"]), :target => "_blank" %>       
-          <%end%>
-      </div>
-    </div>
-  </div>
+          <div class="survey-buttons">
+            <% !JSON.parse(choices).blank? && JSON.parse(choices).each_with_index do |option, index|%>
+            <% face_value = option["survey_question_choice"]["face_value"]
+            url_new_via_portal = support_portal_custom_survey_path(@ticket,face_value) %>
+            <div class="survey-options-wrapper"  data-url="<%= url_new_via_portal %>" data-face-value="<%= face_value %>" >
+             <a class="survey-options" target="_blank" href="#" id= <%="#{face_value}"%> >
+               <span class="survey-rating <%= CustomSurvey::Survey::CUSTOMER_RATINGS_STYLE[face_value] %>">
+               </span>
+               <span class='survey-rating-label'><%=h(option["survey_question_choice"]["value"])%></span>
+             </a>
+           </div>
+           <%end%>
+         </div>
+   </div>
+ </div>
 </section>
 <hr class="content-divider" />
