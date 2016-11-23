@@ -2,6 +2,7 @@
   acc = Account.current
   tracker_ticket = acc.link_tickets_enabled? && params[:display_ids].present?
   is_child_form  = acc.parent_child_tkts_enabled? && params[:ticket_id] && @assoc_parent_ticket
+  skip_frag_cache =  (tracker_ticket || is_child_form || params[:topic_id].present?)
   ticket_title = if tracker_ticket
     "new_tracker_title"
   elsif is_child_form
@@ -31,7 +32,7 @@
 <div id="ticket-fields-wrapper">
   <%= form_for @item, :html => {:multipart => true, :id => "NewTicket", :ignore => "" } do |f| %>
     <!-- fragment caching starts here -->
-    <% enable_fragment_cache(:agent_new_ticket, (tracker_ticket || is_child_form || params[:topic_id].present?)) do %>
+    <% enable_fragment_cache(:agent_new_ticket, skip_frag_cache) do %>
       <ul class="compose-new-ticket">
         <%= render :partial => "ticket_form", :object => f, :locals => { :is_edit => (@item.errors.any? ? true : false), :f => f } %>
       </ul>
@@ -56,7 +57,7 @@
   <script>
   // To load data from store to populate group/agent/product for the first time.
     jQuery(document).ready(function(){
-      if(location.pathname.indexOf('helpdesk/tickets/') == -1 && location.pathname.indexOf('/child/new') == -1){
+      if(<%= skip_frag_cache == false %>){
         PopulateData.fromStore("#helpdesk_ticket_group_id", 'group');
         PopulateData.fromStore("#helpdesk_ticket_responder_id", 'agent');
         //PopulateData.fromStore("#helpdesk_ticket_product_id", 'product');
