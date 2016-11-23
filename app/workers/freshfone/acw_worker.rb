@@ -34,6 +34,7 @@ module Freshfone
         end
       rescue => e
         Rails.logger.error "Error on acw worker for account #{params[:account_id]} for User #{agent}. \n#{e.message}\n#{e.backtrace.join("\n\t")}"
+        NewRelic::Agent.notice_error(e, {description: "Error on Acw Worker for account #{params[:account_id]} for User #{agent}. \n#{e.message}\n#{e.backtrace.join("\n\t")}"})
         notify_error(e, params, agent)
       ensure
         ::Account.reset_current_account

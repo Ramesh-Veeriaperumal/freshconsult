@@ -9273,6 +9273,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       network_error: "Check your Internet Connection"
       browser_alert: "Recent Changes in Chrome mandates a secure connection using SSL(https://) to make or receive calls"
       read_more: "<b>Read More</b>"
+      save_ticket_to_call: 'Save call to this ticket'
       agent_conference:
         connecting: "Connecting to"
         canceled: "Canceled"

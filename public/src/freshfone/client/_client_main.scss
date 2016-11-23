@@ -268,7 +268,9 @@
     }
     .recent-tickets{
     	border-bottom: 1px solid $ongoing-caller-context-bottom-border;
-
+      &:hover{
+        background-color: $dashboard-cells-background;
+      }
     }
     .recent-tickets-content{
     	.ticket-content{
@@ -302,6 +304,76 @@
       font-size: 14px;
       padding: 12px;
       border-bottom: 1px solid #ccc;
+    }
+    .ffone-add-ticket{
+      border-top: 1px solid $ongoing-caller-context-bottom-border;
+      .ff-add_ticket_animation{
+        height: 0px;
+        overflow: hidden;
+        box-sizing: border-box;
+        animation: 1s freshfone_add_to_ticket forwards;
+      }
+      .ticket_container_padding{
+        cursor: pointer;
+        height: 92%;
+        & > span {
+          padding-top: 9px;
+          display: inline-block;
+        }
+      }
+      .current-ticket-id{
+        border-left: 1px solid $ongoing-caller-context-bottom-border;
+        text-decoration: none;
+        height: 100%;
+        box-sizing:border-box;
+        font-weight: bold;
+        padding-left: 17px;
+        &:hover{
+          background-color: $dashboard-cells-background;
+        }
+      }
+      .added-ticket-details{
+        padding-left: 12px;
+        width: 82%;
+        height: 100%;
+        color: $ch-assigned-ticket;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        &:hover{
+          background-color: $dashboard-cells-background;
+        }
+        .ticket_id{
+          font-weight: bold;
+        }
+      }
+      .add_icon_padding{
+        position: relative;
+        top: 1px;
+        margin-left: 10px;
+      }
+      .save_ticket_text{
+        margin-left: 6px;
+      }
+      .unattach_ticket_icon{
+        padding: 18px 18px 18px 20px;
+        margin-left: -2px;
+        color: $ongoing-tabs-background;
+        cursor: pointer;
+        border-left: 1px solid $ongoing-caller-context-bottom-border;
+        &:hover{
+          background-color: $dashboard-cells-background;
+        }
+      }
+      .ticket_details_box{
+        height: 100%;
+        width: 81%;
+        box-sizing: border-box;
+        padding-right: 3px;
+        &:hover{
+          background-color: $dashboard-cells-background;
+        }
+      }
     }
 }
 	.popupbox-content {
@@ -388,4 +460,12 @@
    i{
     color: #e92c2c;
    }
+}
+@keyframes freshfone_add_to_ticket {
+  50% {
+    height: 0px;
+  }
+  100% {
+    height: 42px;
+  }
 }

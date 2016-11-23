@@ -130,9 +130,8 @@
 		>
 			<% if call.notable_present? %>
 				<% ticket = call.associated_ticket %>
-				<%= link_to "<span class='ficon-ticket fsize-14'></span>".html_safe, 
-										helpdesk_ticket_path(ticket),
-										:target => "_blank"
+				<%= pjax_link_to "<span class='ficon-ticket fsize-14'></span>".html_safe, 
+										helpdesk_ticket_path(ticket)
 										%>
 			<% else %>
 				<%= link_to "<span class='ficon-plus fsize-16'></span>".html_safe, "#",
