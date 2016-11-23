@@ -44,10 +44,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   before_save :update_dueby, :unless => :manual_sla?
 
+
   before_update :update_isescalated, :if => :check_due_by_change
   before_update :update_fr_escalated, :if => :check_frdue_by_change
 
-  after_create :refresh_display_id, :create_meta_note, :update_content_ids, :update_sentiment
+  after_create :refresh_display_id, :create_meta_note, :update_content_ids
   after_create :set_parent_child_assn, :if => :child_ticket?
   after_save :check_child_tkt_status, :if => :child_ticket?
 
@@ -67,8 +68,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
   after_commit :set_links, :on => :create, :if => :tracker_ticket?
   after_commit :add_links, :on => :update, :if => :linked_now?
   after_commit :remove_links, :on => :update, :if => :unlinked_now?
+  after_commit :save_sentiment, on: :create 
+  
+  # Callbacks will be executed in the order in which they have been included. 
 
-  # Callbacks will be executed in the order in which they have been included.
   # Included rabbitmq callbacks at the last
   include RabbitMq::Publisher
 
@@ -147,20 +150,16 @@ class Helpdesk::Ticket < ActiveRecord::Base
     schema_less_ticket.save
   end
 
-  def update_sentiment
-
-    if (self.account.customer_sentiment_enabled?)
-      if (User.current == nil) || (User.current.language==nil) || (User.current.language=="en")
-        if self.source == 3 || self.source == 7
-          self.sentiment = 0
-          self.save
-        else
-          user_id = User.current.id if User.current
-          Tickets::UpdateSentimentWorker.perform_async(
-                { :id => id }
-          )
-        end
-      end
+  def save_sentiment
+    if Account.current.customer_sentiment_enabled?
+     if User.current.nil? || User.current.language.nil? || User.current.language = "en"
+       if [SOURCE_KEYS_BY_TOKEN[:chat],SOURCE_KEYS_BY_TOKEN[:phone]].include?(self.source)
+         schema_less_ticket.sentiment = 0
+         schema_less_ticket.save
+       else
+          Tickets::UpdateSentimentWorker.perform_async( { :id => id } )
+       end
+     end
     end
   end
 

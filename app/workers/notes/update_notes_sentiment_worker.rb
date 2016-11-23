@@ -24,6 +24,7 @@ module Notes
 
         response = con.post do |req|
           req.url "/"+MlAppConfig["predict_url"]
+          req.headers['Authorization'] = MlAppConfig["auth_key"]
           req.headers['Content-Type'] = 'application/json'
           req.body = generate_predict_request_body
         end

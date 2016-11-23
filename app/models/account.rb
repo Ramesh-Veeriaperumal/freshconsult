@@ -151,8 +151,11 @@ class Account < ActiveRecord::Base
   end
 
   def customer_sentiment_enabled?
-    Rails.logger.info "customer_sentiment : #{launched?(:customer_sentiment)}"
     launched?(:customer_sentiment)
+  end
+
+  def customer_sentiment_ui_enabled?
+    launched?(:customer_sentiment_ui)
   end
 
   def freshfone_enabled?
