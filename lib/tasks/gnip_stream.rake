@@ -117,14 +117,7 @@ namespace :gnip_stream do
 
     queue.poll(:initial_timeout => false,
                :batch_size => 10, :attributes => attributes) do |sqs_msg|
-      tweet = sqs_msg.body
-      unless tweet.blank?
-        gnip_msg = Social::Gnip::TwitterFeed.new(tweet, queue)
-        unless gnip_msg.nil?
-          gnip_msg.process
-          log_timeline(gnip_msg, sqs_msg.sent_at) unless Rails.env.production?
-        end
-      end
+      process_tweet sqs_msg, queue
     end
   end
 
@@ -135,13 +128,25 @@ namespace :gnip_stream do
 
     queue.poll(:initial_timeout => false,
                :batch_size => 10, :attributes => attributes) do |sqs_msg|
-      tweet = sqs_msg.body
-      unless tweet.blank?
-        gnip_msg = Social::Gnip::TwitterFeed.new(tweet, queue)
-        unless gnip_msg.nil?
+      process_tweet sqs_msg, queue
+    end
+  end
+
+  def process_tweet sqs_msg, queue
+    tweet = sqs_msg.body
+    unless tweet.blank?
+      gnip_msg = Social::Gnip::TwitterFeed.new(tweet, queue)
+      unless gnip_msg.nil?
+        begin
           gnip_msg.process
-          log_timeline(gnip_msg, sqs_msg.sent_at) unless Rails.env.production?
+        rescue Exception => e
+          Rails.logger.debug "Exception in processing tweet"
+          Rails.logger.debug tweet.inspect
+          NewRelic::Agent.notice_error(e, 
+            { :custom_params => { :description => "JSON Parse error in gnip feed",
+                                  :tweet_obj => tweet }})
         end
+        log_timeline(gnip_msg, sqs_msg.sent_at) unless Rails.env.production?
       end
     end
   end

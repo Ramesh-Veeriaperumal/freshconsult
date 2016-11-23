@@ -48,7 +48,7 @@ class Account < ActiveRecord::Base
       :features => [ :collision, :layout_customization, :round_robin, :enterprise_reporting,
         :custom_ssl, :custom_roles, :multiple_business_hours, :facebook_page_tab, :chat_routing, :dynamic_sections,
         :helpdesk_restriction_toggle, :round_robin_load_balancing, :multiple_user_companies, 
-        :multiple_companies_toggle ],
+        :multiple_companies_toggle, :round_robin_on_update ],
       :inherits => [ :garden ]
     },
 
@@ -77,7 +77,7 @@ class Account < ActiveRecord::Base
       :features => [ :collision, :layout_customization, :round_robin, :enterprise_reporting,
         :custom_ssl, :custom_roles, :multiple_business_hours, :facebook_page_tab, :chat_routing,
         :helpdesk_restriction_toggle, :round_robin_load_balancing, :multiple_user_companies,
-        :multiple_companies_toggle ],
+        :multiple_companies_toggle, :round_robin_on_update ],
       :inherits => [ :garden_classic ]
     }
 
@@ -109,7 +109,7 @@ class Account < ActiveRecord::Base
     :disable_rr_toggle => false, :domain_restricted_access => false, :freshfone_conference => false, 
     :marketplace => true, :fa_developer => true,:archive_tickets => false, :compose_email => false,
     :limit_mobihelp_results => false, :ecommerce => false, :es_v2_writes => true, :shared_ownership => false,
-    :salesforce_sync => false, :round_robin_on_update => false, :freshfone_call_metrics => false, :cobrowsing => false,
+    :salesforce_sync => false, :freshfone_call_metrics => false, :cobrowsing => false,
     :threading_without_user_check => false, :freshfone_call_monitoring => false, :freshfone_caller_id_masking => false,
     :agent_conference => false, :freshfone_warm_transfer => false, :restricted_helpdesk => false, :enable_multilingual => false,
     :count_es_writes => false, :count_es_reads => false, :activity_revamp => true, :countv2_writes => false, :countv2_reads => false,
