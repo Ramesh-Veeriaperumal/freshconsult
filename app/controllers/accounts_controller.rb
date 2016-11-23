@@ -25,6 +25,7 @@ class AccountsController < ApplicationController
     :except => [:update,:cancel,:edit,:show,:delete_favicon,:delete_logo, :manage_languages, :update_languages]
   skip_before_filter :determine_pod, 
     :except => [:update,:cancel,:edit,:show,:delete_favicon,:delete_logo, :manage_languages, :update_languages]
+  skip_after_filter :set_last_active_time
 
   around_filter :select_latest_shard, :except => [:update,:cancel,:edit,:show,:delete_favicon,:delete_logo,:manage_languages,:update_languages]
 
