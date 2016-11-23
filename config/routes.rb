@@ -197,6 +197,7 @@ Helpkit::Application.routes.draw do
     match '/search/autocomplete/requesters',   to: 'search/v2/autocomplete#requesters',          via: :get
     match '/search/autocomplete/agents',       to: 'search/v2/autocomplete#agents',              via: :get
     match '/search/autocomplete/companies',    to: 'search/v2/autocomplete#companies',           via: :get
+    match '/search/autocomplete/company_users',    to: 'search/v2/autocomplete#company_users',           via: :get
     match '/search/autocomplete/tags',         to: 'search/v2/autocomplete#tags',                via: :get
     match '/search/merge_topic',               to: 'search/v2/merge_topics#search_topics',       via: :post
     match '/contact_merge/search',             to: 'search/v2/merge_contacts#index',             via: :get
@@ -1455,6 +1456,7 @@ Helpkit::Application.routes.draw do
           get :requesters
           get :companies
           get :tags
+          get :company_users
         end
       end
       resources :tickets, :only => :index
@@ -1518,7 +1520,6 @@ Helpkit::Application.routes.draw do
     match '/search_solutions/ticket/:ticket/' => 'solutions#search_solutions', :as => :ticket_search_solutions
   end
 
-  match '/search/tickets.:format', :controller => 'search/tickets', :action => 'index', :method => :post
   match '/search/tickets/filter/:search_field' => 'search/tickets#index'
   match '/search/ticket_associations/filter/:search_field' => 'search/ticket_associations#index'
   match '/search/ticket_associations/recent_trackers' => 'search/ticket_associations#index', via: :post

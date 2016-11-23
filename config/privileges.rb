@@ -14,7 +14,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"helpdesk/reminder"
     resource :"helpdesk/authorization"
     resource :"search/autocomplete", :only => [:requesters, :agents, :companies, :tags]
-    resource :"search/v2/autocomplete", :only => [:requesters, :agents, :companies, :tags]
+    resource :"search/v2/autocomplete", :only => [:requesters, :agents, :companies, :tags, :company_users]
     resource :"search/v2/mobile/autocomplete", :only => [:requesters, :agents, :companies, :tags, :autocomplete_requesters]
     resource :"helpdesk/ticket", :only => [:show, :new, :create, :compose_email, :show, :index, :user_tickets,
                                            :user_ticket, :search_tweets, :custom_search, :latest_ticket_count, :add_requester, :view_ticket,
