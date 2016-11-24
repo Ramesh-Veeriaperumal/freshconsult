@@ -48,6 +48,16 @@
 			</div>
 		<% end %>
 	  </div>	
+    <% if @slack_url %>
+    <div class="slack_auth_cont clearfix">
+      <h4 class="title"><%= t('integrations.slack_v3.slack_prof_label') %></h4>
+      <p>
+        <%= t('integrations.slack_v3.slack_connect_desc') %>
+      </p>
+      <a class="btn pull-right" href= <%= @slack_url %>><%= @authorized.present? ? t('integrations.slack_v3.slack_reauth_btn') : t('integrations.slack_v3.slack_auth_btn')%></a>
+    </div>
+  <% end %>
+
 	<% end %>
 <% end%>
 

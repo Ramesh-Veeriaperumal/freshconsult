@@ -34,11 +34,11 @@ module IntegrationServices::Services
 
     end
 
-    def receive_test token
+    def receive_auth_info
       begin
-        handle_success({ :test => auth_resource.test(token) })
+        handle_success({:auth_info => auth_resource.test(user_slack_token)})
       rescue => e
-        handle_error(e)
+        handle_error(e)  
       end
     end
 
@@ -50,9 +50,9 @@ module IntegrationServices::Services
       end
     end
 
-    def receive_post_message body_hash
+    def receive_post_message body_hash, dm=false
       begin
-        handle_success({:post_notice => chat_resource.post_message(body_hash)})
+        handle_success({:post_notice => chat_resource.post_message(body_hash,dm)})
       rescue => e
         handle_error(e)
       end
@@ -73,17 +73,58 @@ module IntegrationServices::Services
     def receive_slash_command
       user, user_cred = nil, nil
       if user_slack_token.present?
-        response = receive_test(user_slack_token)
+        response = receive_auth_info
         if response[:error].blank?
           user_details = get_user
           user = user_details[:user]
           user_cred = user_details[:user_cred]
         end
       else
-        user_cred = @installed_app.user_credentials.find_by_remote_user_id(slack_user_id)
-        user = user_cred.user if user_cred.present?
+        user, user_cred = check_user_exists
       end
       create_ticket(user, user_cred) if user.present? && user_cred.present?
+    end
+
+    def receive_slash_command_v3
+      user, user_cred = check_user_exists
+      requester =  requester_from_dm(user_cred) if user_cred.present?
+      create_ticket(user, user_cred, requester) if user.present? && user_cred.present?
+    end
+
+    def check_user_exists
+      user_cred = @installed_app.user_credentials.find_by_remote_user_id(slack_user_id)
+      user = user_cred.user if user_cred.present?
+      return user, user_cred
+    end
+
+    def requester_from_dm(user_cred)
+      dm_user = receive_im_user(user_cred.auth_info["oauth_token"], @payload[:act_hash][:channel_id])
+      return nil if dm_user[:error].present?
+      slack_user_email = get_users_list_hash[dm_user[:dm_user]][:user_email]
+      requester = Account.current.user_emails.user_for_email(slack_user_email) || create_fd_user(get_users_list_hash[dm_user[:dm_user]]) if slack_user_email.present?
+    end
+
+    def receive_im_user(token, channel_id)
+      begin 
+        handle_success({:dm_user => im_resource.list(token, channel_id)})
+      rescue => e
+        handle_error(e)
+      end  
+    end 
+
+    def receive_add_slack
+      remote_integ_map = get_remote_mapping
+      raise "The Slack team has been linked to another FreshDesk account"  if remote_integ_map.present?
+      remote_integ_map = Integrations::SlackRemoteUser.create!(:account_id => @installed_app.account_id, :remote_id => @installed_app.configs_team_id)
+    end    
+
+    def receive_remove_slack
+      remote_integ_map = get_remote_mapping
+      remote_integ_map.destroy unless remote_integ_map.nil?
+    end
+
+    def get_remote_mapping 
+      Integrations::SlackRemoteUser.where(:account_id => @installed_app.account_id , :remote_id => @installed_app.configs_team_id).first
     end
 
     private
@@ -120,8 +161,8 @@ module IntegrationServices::Services
         IntegrationServices::Services::Slack::Formatter::MessageFormatter.new(@payload)
       end
 
-      def ticket_processor conversation, users_list, user
-        IntegrationServices::Services::Slack::Processor::TicketProcessor.new(@payload, @installed_app, conversation, users_list, user)
+      def ticket_processor conversation, users_list, user, requester=nil
+        IntegrationServices::Services::Slack::Processor::TicketProcessor.new(@payload, @installed_app, conversation, users_list, user, requester)
       end
 
       def user_slack_token
@@ -194,17 +235,17 @@ module IntegrationServices::Services
           channel = receive_open(dm_user_id)
           if channel[:error].blank?
             channel_id = channel[:open]
-            post_to_channel(channel_id) if channel_id.present?
+            post_to_channel(channel_id,true) if channel_id.present?
           end
         end
       end
 
-      def post_to_channel channel_id
+      def post_to_channel channel_id, dm=false
         body_hash = {}
         body_hash["channel"] = channel_id
         body_hash["text"] = message_formatter.text
         body_hash["attachments"] = attachment_formatter.attachment
-        receive_post_message(body_hash)
+        receive_post_message(body_hash,dm)
       end
 
       def valid_push_to_channel?
@@ -225,35 +266,36 @@ module IntegrationServices::Services
       end
 
       def create_or_update_user_cred user, remote_user_id, params
-        user_credential = @installed_app.user_credentials.find_by_user_id(user.id)
+        user_credential = @installed_app.user_credentials.find_by_remote_user_id(remote_user_id)
         unless user_credential
           user_credential = @installed_app.user_credentials.build
-          user_credential.user_id = user.id
           user_credential.account_id = @installed_app.account_id
-          user_credential.remote_user_id = remote_user_id
         end
+        user_credential.user_id = user.id
+        user_credential.remote_user_id = remote_user_id
         user_credential.auth_info = params
         user_credential.save!
         user_credential
       end
 
-      def create_ticket user, user_cred
+
+      def create_ticket user, user_cred, requester=nil
         conversation = get_conversation(user, user_cred)
         users_hash = get_users_list_hash
         if conversation.present? && users_hash.present?
-          obj = ticket_processor(conversation, users_hash, user)
+          obj = ticket_processor(conversation, users_hash, user, requester)
           ticket_url = obj.create_ticket
           notify_slash_command_user(user_cred, ticket_url)
         end
       end
 
-      def create_fd_user
+      def create_fd_user(userhash = {})
         user = @installed_app.account.contacts.new
         user.active = true
         result = user.signup!(
           :user => {
-            :name => slack_user_name,
-            :email => slack_email
+            :name => userhash[:user_name] || slack_user_name,
+            :email => userhash[:user_email] || slack_email
           }
         )
         result.present? ? user : nil

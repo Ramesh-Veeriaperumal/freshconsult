@@ -58,7 +58,6 @@ class OmniauthCallbacksController < ApplicationController
     raise ActionController::RoutingError, "Not Found" if (origin.blank? and origin_required?) && params[:state].blank?
     origin = CGI.parse(origin) if origin.present?
     @app_name ||= Integrations::Constants::PROVIDER_TO_APPNAME_MAP["#{@provider}"] if @provider.present?
-
     assign_state_variables(origin) if params[:state].present?
     assign_default_variables(origin) if origin.present? && origin.has_key?('id')
   end
@@ -67,6 +66,7 @@ class OmniauthCallbacksController < ApplicationController
     @account_id = origin['id'][0].to_i
     @portal_id = origin['portal_id'][0].to_i if origin.has_key?('portal_id')
     @user_id = origin['user_id'][0].to_i if origin.has_key?('user_id')
+    @state_params = origin['state_params'][0] if origin.has_key?('state_params')
   end
 
   def assign_state_variables origin

@@ -782,8 +782,10 @@ Helpkit::Application.routes.draw do
       get :new
       post :install
       get :edit
+      get :add_slack_agent
       put :update
       post :create_ticket
+      post :tkt_create_v3
     end
 
     resources :applications, :only => [:index, :show] do
