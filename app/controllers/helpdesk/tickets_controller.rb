@@ -221,7 +221,7 @@ class Helpdesk::TicketsController < ApplicationController
           #Collect all ticket ids by looping @items
           ticket_ids =  @items.map(&:id)
           #note_senti = ActiveRecord::Base.connection.execute("select id,int_nc04 from helpdesk_schema_less_notes where account_id = #{Account.current.id} and id in (#{ticket_ids.join(',')}) ").collect{|i| i}.to_h
-          note_senti = ActiveRecord::Base.connection.execute("select notable_id,int_nc04 from helpdesk_notes inner join helpdesk_schema_less_notes ON helpdesk_notes.id=helpdesk_schema_less_notes.note_id where helpdesk_notes.account_id = #{Account.current.id} and helpdesk_notes.notable_id in (#{ticket_ids.join(',')}) order by helpdesk_notes.created_at").collect{|i| i}.to_h
+          note_senti = ActiveRecord::Base.connection.execute("select notable_id,int_nc04 from helpdesk_notes inner join helpdesk_schema_less_notes ON helpdesk_notes.id=helpdesk_schema_less_notes.note_id where helpdesk_notes.account_id = #{Account.current.id} and helpdesk_notes.notable_id in (#{ticket_ids.join(',')}) and helpdesk_schema_less_notes.int_nc04 IS not null order by helpdesk_notes.created_at;").collect{|i| i}.to_h
           @items.each do |ticket|
             #While colling check for customer survey
             if ticket.send(survey_association).nil? || ticket.send(survey_association).last.nil?
@@ -415,7 +415,7 @@ class Helpdesk::TicketsController < ApplicationController
       #Collect all ticket ids by looping @items
       ticket_ids =  @items.map(&:id)
       #note_senti = ActiveRecord::Base.connection.execute("select id,int_nc04 from helpdesk_schema_less_notes where account_id = #{Account.current.id} and id in (#{ticket_ids.join(',')}) ").collect{|i| i}.to_h
-      note_senti = ActiveRecord::Base.connection.execute("select notable_id,int_nc04 from helpdesk_notes inner join helpdesk_schema_less_notes ON helpdesk_notes.id=helpdesk_schema_less_notes.note_id where helpdesk_notes.account_id = #{Account.current.id} and helpdesk_notes.notable_id in (#{ticket_ids.join(',')}) order by helpdesk_notes.created_at").collect{|i| i}.to_h
+      note_senti = ActiveRecord::Base.connection.execute("select notable_id,int_nc04 from helpdesk_notes inner join helpdesk_schema_less_notes ON helpdesk_notes.id=helpdesk_schema_less_notes.note_id where helpdesk_notes.account_id = #{Account.current.id} and helpdesk_notes.notable_id in (#{ticket_ids.join(',')}) and helpdesk_schema_less_notes.int_nc04 IS not null order by helpdesk_notes.created_at;").collect{|i| i}.to_h
       @items.each do |ticket|
         #While colling check for customer survey
         if ticket.send(survey_association).nil? || ticket.send(survey_association).last.nil?
