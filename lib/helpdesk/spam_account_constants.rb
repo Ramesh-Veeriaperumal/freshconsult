@@ -31,4 +31,12 @@ module Helpdesk::SpamAccountConstants
       end
       return $spam_account_time_limit
     end
+
+    def account_created_recently?
+      if Account.current
+        account_time_limit = get_spam_check_time_limit
+        return Account.current.created_at > account_time_limit.days.ago
+      end
+      return false
+    end
 end

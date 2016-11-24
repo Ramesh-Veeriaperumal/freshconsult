@@ -64,6 +64,11 @@ class Middleware::Pod
             shard = fetch_remote_mapping(params['uid'])
           end
           determine_pod(shard)
+        when 'slack_v2'
+          params = env["rack.request.query_hash"].merge(env["rack.request.form_hash"] || {})
+          shard = nil
+          shard = fetch_remote_mapping(params['team_id']) if params.include?('team_id')
+          determine_pod(shard)
         when 'ebay_accounts', 'ebay_notifications'
           shard = nil
           params = env["rack.request.query_hash"].merge(env["action_dispatch.request.request_parameters"] || {})
@@ -99,6 +104,16 @@ class Middleware::Pod
       Rails.logger.error "Current POD #{PodConfig['CURRENT_POD']}"
       @redirect_url = "/pod_redirect/#{shard.pod_info}"
     end
+       
+  end
+  
+  def fetch_shard(url)
+    ShardMapping.lookup_with_domain(url.split("//").last)
+  end
+
+  def fetch_remote_mapping(uid)
+    remote_mapping = RemoteIntegrationsMapping.find_by_remote_id(uid)
+    ShardMapping.lookup_with_account_id(remote_mapping.account_id) if remote_mapping
   end
   
   def fetch_shard(url)

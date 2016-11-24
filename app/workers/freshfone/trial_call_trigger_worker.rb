@@ -21,6 +21,7 @@ module Freshfone
     rescue => e
       Rails.logger.error "Error Occurred in TrialTriggers Job For Account:: #{args[:account_id]} Call :: #{args[:call]}"
       Rails.logger.error "Exception Message :: #{e.message}\nException Stacktrace :: #{e.backtrace.join('\n\t')}"
+      NewRelic::Agent.notice_error(e, {description: "Error in Trial Call Trigger Worker for Account:: #{args[:account_id]} Call :: #{args[:call]}. \n#{e.message}\n#{e.backtrace.join("\n\t")}"})
     ensure
       ::Account.reset_current_account
     end

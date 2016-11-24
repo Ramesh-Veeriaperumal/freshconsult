@@ -6,7 +6,7 @@
 
 <% unless @twitter_handles.empty? %>
   <div class="floatr">
-    <%= link_to t('.new_account'), @auth_redirect_url , :class => "btn btn-primary mrt" %> 
+      <%= link_to t('.new_account'), @auth_redirect_url , :class => "btn btn-primary mrt #{@auth_redirect_url ? '': 'disabled'}" %> 
     <%= link_to t('.new_stream'), new_admin_social_twitter_stream_url , :class => "btn btn-primary" %> 
   </div>
   <h3 class="lead"><%=t('.title')%></h3><hr />

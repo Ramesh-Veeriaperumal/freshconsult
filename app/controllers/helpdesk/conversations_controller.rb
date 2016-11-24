@@ -360,15 +360,15 @@ class Helpdesk::ConversationsController < ApplicationController
       end
 
       def check_trial_customers_limit
-        if ((current_account.id > get_spam_account_id_threshold) && (current_account.subscription.trial?) && (!ismember?(SPAM_WHITELISTED_ACCOUNTS, current_account.id)))
-          if (Freemail.free?(current_account.admin_email) && max_to_cc_threshold_crossed?) 
+        if ((current_account.id > get_spam_account_id_threshold) && (!ismember?(SPAM_WHITELISTED_ACCOUNTS, current_account.id)))
+          if (Freemail.free?(current_account.admin_email) && max_to_cc_threshold_crossed?) && (current_account.subscription.trial?) 
             respond_to do |format|
               format.js { render :file => "helpdesk/notes/inline_error.rjs", :locals => { :msg => t(:'flash.general.recipient_limit_exceeded', :limit => get_trial_account_max_to_cc_threshold )} }
               format.html { redirect_to @parent }
               format.nmobile { render :json => { :server_response => false } }
               format.any(:json, :xml) { render request.format.to_sym => @item.errors, :status => 400 }
             end
-          elsif((current_account.email_configs.count == 1) && (current_account.email_configs[0].reply_email.end_with?(current_account.full_domain)) && max_to_cc_threshold_crossed?)
+          elsif((current_account.email_configs.count == 1) && (current_account.email_configs[0].reply_email.end_with?(current_account.full_domain)) && max_to_cc_threshold_crossed?) && account_created_recently?
             FreshdeskErrorsMailer.error_email(nil, {:domain_name => current_account.full_domain}, nil, {
               :subject => "Maximum thread to, cc, bcc threshold crossed for Account :#{current_account.id} ", 
               :recipients => ["mail-alerts@freshdesk.com", "noc@freshdesk.com"],

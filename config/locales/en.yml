@@ -7632,7 +7632,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
          access_private_channel: "Allow access to private channels"
          allow_dm_agent: "Allow DM to agent"
          allow_slash_command: "Allow Slash Command (<a href='https://support.freshdesk.com/support/solutions/articles/206103' target='_blank'> Convert Slack DM to Freshdesk ticket </a>)"
-         slash_command_token: "Slash Command Token"
+         slash_command_token: "Slash Command Token"   
       action_options:
         public: "Public"
         private: "Private"
@@ -7653,6 +7653,15 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       subject:
         chat: "Chat Conversation with"
         default_chat: "Chat Conversation of"
+    slack_v3:
+      slack_prof_label: "Connect to Slack"
+      slack_connect_desc: "Configure your account to create Slack tickets from Slack"
+      slack_auth_btn: "Authorize Slack"
+      slack_reauth_btn: "Re-Authorize Slack"
+      slack_token_success: "Token successfully updated."
+      slack_token_failure: "Error while updating the token." 
+      disable_slash_command: Admin has not enabled the slash command in Freshdesk." 
+      authorize_in_fd: "Please go to your Freshdesk account and Authorize your account.This Account doesnot have permission to create Ticket" 
     slack_settings:
       channels: "Channels to post"
       notify: "Notification for"
@@ -7662,6 +7671,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     slack_msg:
       wrong_channel: ERROR converting channel transcript into Ticket :Ticket can be created only in direct channel group
       deprecation_notice: "A new release of Freshdesk Slack app is now available. This version is now obsolete. Please follow this <a href='https://support.freshdesk.com/support/solutions/articles/206103' target='_blank'>solution article</a>  for detailed steps on how to migrate to the new implementation."
+      update_notice: "An update has been made to current slack Integration. Please follow this <a href='https://support.freshdesk.com/support/solutions/articles/206103' target='_blank'>solution article</a>  to know detailed steps about changes made"
       uninstall_old_slack: App is deprecated and updates are ceased. Install Slack V2 for more powerful features.
       invalid_api_key: ERROR :Invalid Freshdesk Api key
       notify_on_ticket_update: "Status updated for  "
@@ -9273,6 +9283,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       network_error: "Check your Internet Connection"
       browser_alert: "Recent Changes in Chrome mandates a secure connection using SSL(https://) to make or receive calls"
       read_more: "<b>Read More</b>"
+      save_ticket_to_call: 'Save call to this ticket'
       agent_conference:
         connecting: "Connecting to"
         canceled: "Canceled"
