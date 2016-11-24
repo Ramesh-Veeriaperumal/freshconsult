@@ -151,7 +151,7 @@ Helpkit::Application.routes.draw do
   ember_routes = proc do
     resources :ticket_fields, controller: 'ember/ticket_fields', only: [:index, :update]
     resources :bootstrap, controller: 'ember/bootstrap', only: :index
-    resources :tickets, controller: 'ember/tickets', only: [:index, :create] do
+    resources :tickets, controller: 'ember/tickets', only: [:index, :create, :show] do
       collection do
         put :bulk_delete, to: 'ember/tickets/delete_spam#bulk_delete'
         put :bulk_spam, to: 'ember/tickets/delete_spam#bulk_spam'

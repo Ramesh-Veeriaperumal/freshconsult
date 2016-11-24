@@ -535,6 +535,34 @@
       }
     },
     "/tickets": {
+      "get": {
+        "tags": [
+          "ticket"
+        ],
+        "description": "Listing all tickets with pagination & applied filter",
+        "summary": "List all",
+        "parameters": [
+          {
+            "name": "query_hash",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/ticket_index"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          }
+        }
+      },
       "post": {
         "tags": [
           "ticket"
@@ -567,6 +595,35 @@
       }
     },
     "/tickets/{id}": {
+      "get": {
+        "tags": [
+          "ticket"
+        ],
+        "summary": "Show Ticket",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "number",
+            "description": "Display ID of ticket",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/ticket_show"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Ticket not found"
+          }
+        }
+      },
       "delete": {
         "tags": [
           "ticket"
@@ -1327,6 +1384,36 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/tickets/{id}/conversations": {
+      "get": {
+        "tags": [
+          "ticket"
+        ],
+        "description": "Conversations",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "number",
+            "description": "Display ID of ticket",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "schema": {
+              "$ref": "#/definitions/conversations_show"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Ticket not found"
           }
         }
       }
@@ -2787,6 +2874,156 @@
         }
       ]
     },
+    "ticket_index": {
+      "type": "array",
+      "items": {
+        "allOf": [
+          {
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/definitions/extension_generic"
+              },
+              {
+                "properties": {
+                  "email_config_id": {
+                    "type": "integer"
+                  },
+                  "group_id": {
+                    "type": "integer"
+                  },
+                  "priority": {
+                    "type": "integer"
+                  },
+                  "requester_id": {
+                    "type": "integer"
+                  },
+                  "responder_id": {
+                    "type": "integer"
+                  },
+                  "source": {
+                    "type": "integer"
+                  },
+                  "company_id": {
+                    "type": "integer"
+                  },
+                  "status": {
+                    "type": "integer"
+                  },
+                  "subject": {
+                    "type": "string"
+                  },
+                  "product_id": {
+                    "type": "integer"
+                  },
+                  "type": {
+                    "type": "integer"
+                  },
+                  "due_by": {
+                    "type": "string"
+                  },
+                  "fr_due_by": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "integer"
+                  },
+                  "custom_fields": {
+                    "type": "object"
+                  },
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/definitions/extension_generic"
+              },
+              {
+                "properties": {
+                  "cc_emails": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "fwd_emails": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "reply_cc_emails": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "fr_escalated": {
+                    "type": "boolean"
+                  },
+                  "spam": {
+                    "type": "boolean"
+                  },
+                  "to_emails": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "is_escalated": {
+                    "type": "boolean"
+                  },
+                  "description_text": {
+                    "type": "string"
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "ticket_show": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/extended_ticket"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "freshfone_call": {
+              "$ref": "#/definitions/freshfone_call"
+            },
+            "meta": {
+              "type": "object",
+              "properties": {
+                "user_agent": {
+                  "type": "string"
+                },
+                "referrer": {
+                  "type": "string"
+                },
+                "created_by": {
+                  "type": "integer"
+                },
+                "time": {
+                  "type": "datetime"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
     "array_of_tickets": {
       "type": "array",
       "items": {
@@ -2834,6 +3071,22 @@
           }
         }
       ]
+    },
+    "freshfone_call": {
+      "type": "object",
+      "description": "freshfone call",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "duration": {
+          "type": "integer",
+          "description": "duration is in seconds"
+        },
+        "recording": {
+          "$ref": "#/definitions/attachment"
+        }
+      }
     },
     "meta": {
       "type": "object",
@@ -2972,6 +3225,48 @@
           }
         }
       ]
+    },
+    "conversations_show": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/definitions/note_create"
+          },
+          {
+            "properties": {
+              "source": {
+                "type": "number"
+              },
+              "to_emails": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "from_email": {
+                "type": "string"
+              },
+              "cc_emails": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "bcc_emails": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "freshfone_call": {
+                "$ref": "#/definitions/freshfone_call"
+              }
+            }
+          }
+        ]
+      }
     },
     "partial_success_response": {
       "title": "data",

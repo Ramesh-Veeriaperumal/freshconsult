@@ -34,6 +34,16 @@ class TicketDecorator < ApiDecorator
     end
   end
 
+  def freshfone_call
+    call = record.freshfone_call
+    return unless call.present? && call.recording_url.present? && call.recording_audio
+    {
+      id: call.id,
+      duration: call.call_duration,
+      recording: AttachmentDecorator.new(call.recording_audio).to_hash
+    }
+  end
+
   def stats
     if @sideload_options.include?('stats')
       ticket_states = record.ticket_states
@@ -59,6 +69,16 @@ class TicketDecorator < ApiDecorator
       company = record.company
       company ? { id: company.id, name: company.name } : {}
     end
+  end
+
+  def attachments_hash
+    attachments.map { |a| AttachmentDecorator.new(a).to_hash }
+  end
+
+  def meta
+    meta_info = record.notes.find_by_source(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["meta"]).body
+    meta_info = YAML::load(meta_info)
+    handle_timestamps(meta_info)
   end
   
   def to_hash
@@ -87,6 +107,7 @@ class TicketDecorator < ApiDecorator
       description: ticket_body.description_html,
       description_text: ticket_body.description,
       custom_fields: custom_fields,
+      tags: tag_names,
       created_at: created_at.try(:utc),
       updated_at: updated_at.try(:utc)
     }
@@ -97,4 +118,12 @@ class TicketDecorator < ApiDecorator
       name[0..(-Account.current.id.to_s.length - 2)]
     end
   end
+
+  private
+    def handle_timestamps(meta_info)
+      if meta_info.is_a?(Hash) && meta_info.keys.include?('time')
+        meta_info['time'] = Time.parse(meta_info['time']).utc.iso8601
+      end
+      meta_info
+    end
 end

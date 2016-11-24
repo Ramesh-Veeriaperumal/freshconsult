@@ -1,0 +1,18 @@
+
+get:
+  tags: [ticket]
+  description: Conversations
+  parameters:
+    - name: id
+      in: path
+      type: number
+      description: Display ID of ticket
+      required: true
+  responses:
+    200:
+      schema:
+        $ref: '#/definitions/conversations_show'
+    404:
+      description: Ticket not found
+    403:
+      description: Access denied

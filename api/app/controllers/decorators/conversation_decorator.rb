@@ -10,6 +10,10 @@ class ConversationDecorator < ApiDecorator
     @ticket = options[:ticket]
   end
 
+  def attachments_hash
+    attachments.map { |a| AttachmentDecorator.new(a).to_hash }
+  end
+
   def construct_json
     {
       body: body_html,
@@ -27,17 +31,23 @@ class ConversationDecorator < ApiDecorator
       bcc_emails: bcc_emails,
       created_at: created_at.try(:utc),
       updated_at: updated_at.try(:utc),
-      attachments: attachments.map do |att|
-        {
-          id: att.id,
-          content_type: att.content_content_type,
-          size: att.content_file_size,
-          name: att.content_file_name,
-          attachment_url: att.attachment_url_for_api,
-          created_at: att.created_at.try(:utc),
-          updated_at: att.updated_at.try(:utc)
-        }
-      end
+      attachments: attachments_hash
+    }
+  end
+
+  def to_hash
+    response_hash = construct_json
+    response_hash[:freshfone_call] = freshfone_call if freshfone_call.present?
+    response_hash
+  end
+
+  def freshfone_call
+    call = record.freshfone_call
+    return unless call.present? && call.recording_url.present? && call.recording_audio
+    {
+      id: call.id,
+      duration: call.call_duration,
+      recording: AttachmentDecorator.new(call.recording_audio).to_hash
     }
   end
 end

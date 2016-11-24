@@ -1,0 +1,10 @@
+  type: object
+  description: freshfone call
+  properties:
+    id:
+      type: integer
+    duration:
+      type: integer
+      description: duration is in seconds
+    recording:
+      $ref: '#/definitions/attachment'

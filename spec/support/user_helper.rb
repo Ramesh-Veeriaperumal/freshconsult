@@ -57,7 +57,7 @@ module UsersHelper
                                     :active => options.key?(:active) ? options[:active] : 1,
                                     :company_id => options[:customer_id] || nil,
                                     :language => "en",
-                                    :tag_names => options[:tags])
+                                    :tag_names => options[:tags],
                                     :unique_external_id => options[:unique_external_id])
     new_user.custom_field = options[:custom_fields] if options.key?(:custom_fields)
     new_user.save

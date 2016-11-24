@@ -1,0 +1,16 @@
+  
+  type: object
+  properties:
+    freshfone_call:
+      $ref: '#/definitions/freshfone_call'
+    meta:
+      type: object
+      properties:
+        user_agent:
+          type: string
+        referrer:
+          type: string
+        created_by:
+          type: integer
+        time:
+          type: datetime

@@ -29,9 +29,9 @@
   $ref: ./companies/crud.yaml
 
 /tickets:
-  $ref: ./tickets/crud.yaml
+  $ref: ./tickets/list_and_create.yaml
 /tickets/{id}:
-  $ref: ./tickets/delete.yaml
+  $ref: ./tickets/crud.yaml
 /tickets/{id}/restore:
   $ref: ./tickets/restore.yaml
 /tickets/{id}/spam:
@@ -72,7 +72,10 @@
 /tickets/{id}/activities:
   $ref: ./tickets/activities.yaml
 
+
 #Ticket Conversations
+/tickets/{id}/conversations:
+  $ref: ./tickets/conversations.yaml
 /tickets/{id}/notes:
   $ref: ./conversations/crud.yaml
 /tickets/{id}/reply:

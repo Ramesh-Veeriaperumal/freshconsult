@@ -98,6 +98,17 @@
     allOf:
       - $ref: '#/definitions/canned_response_folder'
       - $ref: ./resource/extension/canned_response_folder.yaml
+  
+  ticket_index:
+    type: array
+    items:
+      allOf:
+        - $ref: ./resource/extension/ticket/list.yaml
+        - $ref: ./resource/extension/ticket.yaml
+  ticket_show:
+    allOf:
+      - $ref: '#/definitions/extended_ticket'
+      - $ref: ./resource/extension/ticket/show.yaml
 
   array_of_tickets:
     type: array
@@ -122,6 +133,9 @@
   canned_response_folder_details:
     $ref: ./response/canned_response/folder_show.yaml
 
+  freshfone_call:
+    $ref: ./resource/freshfone_call.yaml
+
   # RESPONSE
   meta:
     $ref: './response/meta.yaml'
@@ -131,6 +145,10 @@
     $ref: './response/conversations/reply.yaml'
   note_forward:
     $ref: './response/conversations/forward.yaml'
+  conversations_show:
+    type: array
+    items:
+      $ref: './response/conversations/show.yaml'
   partial_success_response:
     $ref: ./response/bulk_partial_success.yaml
   make_agent_response:

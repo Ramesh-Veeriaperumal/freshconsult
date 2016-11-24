@@ -1,13 +1,12 @@
 Authority::Authorization::PrivilegeList.build do
   manage_tickets do
     resource :"ember/bootstrap"
-    resource :"ember/ticket", only: [:create, :index, :execute_scenario, :bulk_execute_scenario]
     resource :"ember/tickets/delete_spam", only: [:spam, :bulk_spam, :unspam, :bulk_unspam]
     resource :"ember/ticket/activity"
     resource :"ember/scenario_automation", only: [:index]
     resource :"ember/canned_response_folder", only: [:index, :show]
     resource :"ember/tickets/canned_response", only: [:show]
-    resource :"ember/ticket", only: [:index, :spam, :latest_note]
+    resource :"ember/ticket", only: [:index, :show, :create, :execute_scenario, :bulk_execute_scenario, :spam, :latest_note]
     resource :"ember/ticket_filter", only: [:index, :show, :create, :update, :destroy]
     resource :"ember/attachment", only: [:create]
     resource :"ember/conversation", only: [:create, :ticket_conversations]

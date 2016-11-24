@@ -28,7 +28,7 @@ namespace :seed_tickets do
 
   def seed_social_tickets(account_id, user_id, methods)
     Sharding.select_shard_of(account_id) do
-      Account.find(account_id).make_current
+      account = Account.find(account_id).make_current
       account.agents.find_by_user_id(user_id).user.make_current
       define_social_factories
       (methods || []).each do |meth|

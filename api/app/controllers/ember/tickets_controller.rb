@@ -5,7 +5,7 @@ module Ember
     include HelperConcern
     include SplitNoteHelper
 
-    INDEX_PRELOAD_OPTIONS = [:ticket_old_body, :schema_less_ticket, :flexifield, { requester: [:avatar, :flexifield, :default_user_company] }].freeze
+    INDEX_PRELOAD_OPTIONS = [:tags, :ticket_old_body, :schema_less_ticket, :flexifield, { requester: [:avatar, :flexifield, :default_user_company] }].freeze
     DEFAULT_TICKET_FILTER = :all_tickets.to_s.freeze
 
     before_filter :ticket_permission?, only: [:latest_note, :split_note]
@@ -253,6 +253,12 @@ module Ember
       def load_note
         @note = @item.notes.find_by_id(params[:note_id])
         log_and_render_404 unless @note
+      end
+
+      def validate_url_params
+        params.permit(*ApiTicketConstants::SHOW_FIELDS, *ApiConstants::DEFAULT_PARAMS)
+        @include_validation = TicketIncludeValidation.new(params)
+        render_errors @include_validation.errors, @include_validation.error_options unless @include_validation.valid?
       end
 
       wrap_parameters(*wrap_params)

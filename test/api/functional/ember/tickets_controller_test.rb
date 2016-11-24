@@ -48,6 +48,23 @@ module Ember
       params_hash
     end
 
+    def test_ticket_index
+      rand(10..20).times { |i| create_ticket }
+      remove_wrap_params
+      get :index, construct_params({ version: 'private' }, false)
+      assert_response 200
+      match_json(private_api_ticket_index_pattern)
+    end
+
+    def test_ticket_show_with_fone_call
+      ticket = new_ticket_from_call
+      remove_wrap_params
+      assert ticket.reload.freshfone_call.present?
+      get :show, construct_params({ version: 'private', id: ticket.display_id }, false)
+      assert_response 200
+      match_json(ticket_show_pattern(ticket))
+    end
+
     def test_create_with_incorrect_attachment_type
       attachment_ids = ['A', 'B', 'C']
       params_hash = ticket_params_hash.merge({attachment_ids: attachment_ids})

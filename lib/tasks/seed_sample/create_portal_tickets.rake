@@ -20,6 +20,7 @@ namespace :seed_sample do
     ticket = Account.current.tickets.build(portal_ticket_params[:ticket])
     ticket.meta_data = include_meta ? (valid_data ? valid_meta_info : invalid_meta_info) : empty_meta_info
     ticket.save_ticket
+    ticket
   end
 
   def portal_ticket_params

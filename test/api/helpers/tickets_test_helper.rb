@@ -1,5 +1,5 @@
 ['ticket_fields_test_helper.rb', 'conversations_test_helper.rb'].each { |file| require "#{Rails.root}/test/api/helpers/#{file}" }
-['ticket_helper.rb', 'company_helper.rb', 'group_helper.rb', 'note_helper.rb', 'email_configs_helper.rb', 'products_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
+['ticket_helper.rb', 'company_helper.rb', 'group_helper.rb', 'note_helper.rb', 'email_configs_helper.rb', 'products_helper.rb', 'freshfone_spec_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
 require "#{Rails.root}/spec/helpers/social_tickets_helper.rb"
 module TicketsTestHelper
   include GroupHelper
@@ -11,14 +11,15 @@ module TicketsTestHelper
   include TicketHelper
   include NoteHelper
   include SocialTicketsHelper
+  include FreshfoneSpecHelper
 
   # Patterns
   def deleted_ticket_pattern(expected_output = {}, ticket)
     ticket_pattern(expected_output, ticket).merge(deleted: (expected_output[:deleted] || ticket.deleted).to_s.to_bool)
   end
 
-  def index_ticket_pattern(ticket)
-    ticket_pattern(ticket).except(:attachments, :conversations, :tags)
+  def index_ticket_pattern(ticket, exclude = [])
+    ticket_pattern(ticket).except(*([:attachments, :conversations, :tags] - exclude))
   end
 
   def index_ticket_pattern_with_associations(ticket, requester = true, ticket_states = true)
@@ -92,9 +93,9 @@ module TicketsTestHelper
     description_html = format_ticket_html(ticket, expected_output[:description]) if expected_output[:description]
 
     {
-      cc_emails: expected_output[:cc_emails] || ticket.cc_email[:cc_emails],
-      fwd_emails: expected_output[:fwd_emails] || ticket.cc_email[:fwd_emails],
-      reply_cc_emails:  expected_output[:reply_cc_emails] || ticket.cc_email[:reply_cc],
+      cc_emails: expected_output[:cc_emails] || ticket.cc_email && ticket.cc_email[:cc_emails],
+      fwd_emails: expected_output[:fwd_emails] || ticket.cc_email && ticket.cc_email[:fwd_emails],
+      reply_cc_emails:  expected_output[:reply_cc_emails] || ticket.cc_email && ticket.cc_email[:reply_cc],
       description:  description_html || ticket.description_html,
       description_text:  ticket.description,
       id: expected_output[:display_id] || ticket.display_id,
@@ -293,4 +294,113 @@ module TicketsTestHelper
     assert new_ticket.attachments.map(&:id) == attachment_ids
     assert new_ticket.cloud_files.present?
   end
+
+  def private_api_ticket_index_pattern
+    pattern_array = Helpdesk::Ticket.last(ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page]).map do |ticket|
+      index_ticket_pattern(ticket, [:tags])
+    end
+  end
+
+  def ticket_show_pattern(ticket)
+    pattern = ticket_pattern(ticket)
+    pattern.merge!(freshfone_call: freshfone_call_pattern(ticket)) if freshfone_call_pattern(ticket).present?
+    pattern.merge!(meta: ticket_meta_pattern(ticket))
+    pattern
+  end
+
+  def freshfone_call_pattern(ticket)
+    call = ticket.freshfone_call
+    return unless call.present? && call.recording_url.present? && call.recording_audio
+    {
+      id: call.id,
+      duration: call.call_duration,
+      recording: attachment_pattern(call.recording_audio)
+    }
+  end
+
+  def attachment_pattern(record)
+    {
+      id: record.id,
+      name: record.content_file_name,
+      content_type: record.content_content_type,
+      size: record.content_file_size,
+      created_at: record.created_at.try(:utc),
+      updated_at: record.updated_at.try(:utc),
+      attachment_url: record.attachment_url_for_api
+    }
+  end
+
+  def ticket_meta_pattern(ticket)
+    meta_info = ticket.notes.find_by_source(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["meta"]).body
+    meta_info = YAML::load(meta_info)
+    handle_timestamps(meta_info)
+  end
+
+  def handle_timestamps(meta_info)
+    if meta_info.is_a?(Hash) && meta_info.keys.include?('time')
+      meta_info['time'] = Time.parse(meta_info['time']).utc.iso8601
+    end
+    meta_info
+  end
+
+  def new_fone_call
+    if @account.freshfone_account.present?
+      @credit = @account.freshfone_credit
+      @number ||= @account.freshfone_numbers.first
+    else
+      create_test_freshfone_account
+    end
+    @call = create_freshfone_call
+    create_audio_attachment
+  end
+
+  def create_audio_attachment
+    @file_url ||= "#{Rails.root}/spec/fixtures/files/callrecording.mp3"
+    @data = File.open(@file_url)
+
+    @call.update_attributes(recording_url: @file_url.gsub('.mp3', ''))
+    @call.update_status({ DialCallStatus: 'voicemail' })
+    # It's tough to parse audio and get actual duration. So setting a random value.
+    @call.call_duration = 25
+    
+    @call.build_recording_audio(content: @data).save
+  end
+
+  def new_ticket_from_call
+    new_fone_call
+    @ticket = create_ticket
+    associate_call_to_item(@ticket)
+
+    new_fone_call
+    note = create_normal_reply_for(@ticket)
+    associate_call_to_item(note)    
+    @ticket
+  end
+
+  def associate_call_to_item(obj)
+    @call.notable_id = obj.id
+    @call.notable_type = obj.class.name
+    @call.save
+  end
+
+  def conversations_pattern(ticket, limit = false)
+    notes_pattern = ticket.notes.visible.exclude_source('meta').order(:created_at).map do |n|
+      note_pattern_index(n)
+    end
+    limit ? notes_pattern.take(limit) : notes_pattern
+  end
+
+  def note_pattern_index(note)
+    index_note = {
+      from_email: note.from_email,
+      cc_emails:  note.cc_emails,
+      bcc_emails: note.bcc_emails,
+      source: note.source
+    }
+    single_note = note_pattern({}, note)
+    single_note.merge!(index_note)
+    single_note.merge!(freshfone_call: freshfone_call_pattern(note)) if freshfone_call_pattern(note)
+    single_note
+  end
+
 end

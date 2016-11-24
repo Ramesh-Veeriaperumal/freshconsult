@@ -1,0 +1,38 @@
+type: object
+allOf:
+  - $ref: '#/definitions/extension_generic'
+  - properties:
+      email_config_id:
+        type: integer
+      group_id:
+        type: integer
+      priority:
+        type: integer
+      requester_id:
+        type: integer
+      responder_id:
+        type: integer
+      source:
+        type: integer
+      company_id:
+        type: integer
+      status:
+        type: integer
+      subject:
+        type: string
+      product_id:
+        type: integer
+      type:
+        type: integer
+      due_by:
+        type: string
+      fr_due_by:
+        type: string
+      description:
+        type: integer
+      custom_fields:
+        type: object
+      tags:
+        type: array
+        items:
+          type: string

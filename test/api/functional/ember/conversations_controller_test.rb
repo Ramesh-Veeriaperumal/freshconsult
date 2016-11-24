@@ -3,6 +3,7 @@ module Ember
   class ConversationsControllerTest < ActionController::TestCase
     include ConversationsTestHelper
     include AttachmentsTestHelper
+    include TicketsTestHelper
 
     def wrap_cname(params)
       { conversation: params }
@@ -500,6 +501,16 @@ module Ember
       match_json(forward_note_pattern({}, latest_note))
       assert latest_note.attachments.count == 4
       assert latest_note.cloud_files.count == 1
+    end
+
+
+    def test_ticket_conversations_with_fone_call
+      ticket = new_ticket_from_call
+      remove_wrap_params
+      assert ticket.notes.all.map { |n| n.freshfone_call.present? || nil }.compact.present?
+      get :ticket_conversations, construct_params({ version: 'private', id: ticket.display_id }, false)
+      assert_response 200
+      match_json(conversations_pattern(ticket))
     end
   end
 end
