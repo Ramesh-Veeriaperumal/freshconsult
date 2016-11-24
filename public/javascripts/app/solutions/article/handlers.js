@@ -1,5 +1,5 @@
 /*jslint browser: true, devel: true */
-/*global  App, moment, highlight_code, Fjax, invokeRedactor */
+/*global  App, moment, highlight_code, Fjax, invokeRedactor, invokeEditor */
 
 window.App = window.App || {};
 (function ($) {
@@ -42,13 +42,18 @@ window.App = window.App || {};
     startEditing: function () {
       $('#sticky_redactor_toolbar').removeClass('hide');
       if ($('#solution-notification-bar .article-view-edit').is(':visible')) {
-        $('#sticky_redactor_toolbar').addClass('has-notification');
+        $('.sticky_editor_toolbar').addClass('has-notification');
       }
       $('#solution_article_title').focus();
       
       this.setFormValues();
 
-      invokeRedactor('solution_article_description', 'solution');
+      if($('#solution_article_description').data('newEditor')) {
+        invokeEditor('solution_article_description', 'solution');
+      } else {
+        invokeRedactor('solution_article_description', 'solution');
+      }
+
 
       this.toggleViews();
 
@@ -77,7 +82,13 @@ window.App = window.App || {};
 
     cancel_UI_toggle: function () {
       this.toggleViews();
-      $('#solution_article_description').destroyEditor();
+
+      if($('#solution_article_description').data('newEditor')) {
+        $('#solution_article_description').froalaEditor('destroy');
+      } else {
+        jQuery('#solution_article_description').destroyEditor()
+      }
+      
       $('#sticky_redactor_toolbar').addClass('hide');
       $('.article-view-edit:hidden').show();
       $(".autosave-notif:visible").hide();
@@ -89,7 +100,15 @@ window.App = window.App || {};
         return false;
       }
       if (App.namespace === "solution/articles/new" || App.namespace === "solution/articles/create") {
-        var flag =  $('#solution_article_description').data('redactor').isNotEmpty() || $('#solution_article_title').val().length > 0;
+        
+        var isEmpty, element = $("#solution_article_description");
+        if (element.data('redactor')) {
+          isEmpty = element.data('redactor').isNotEmpty();
+        } else if(element.data('froala.editor')){
+          isEmpty = !element.data('froala.editor').core.isEmpty();
+        }
+
+        var flag =  isEmpty || $('#solution_article_title').val().length > 0;
         if (flag) {
           return true;
         }

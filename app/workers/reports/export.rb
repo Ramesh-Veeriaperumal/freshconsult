@@ -5,6 +5,7 @@ class Reports::Export < BaseWorker
 
   def perform params
     begin
+      HelpdeskReports::Logger.log("export : account_id: #{Account.current.id}, agent_id: #{User.current.id}, agent_email: #{User.current.email}, report_type: #{params['report_type']}")
       old_report = [:timesheet_reports, :chat_summary, :phone_summary, :satisfaction_survey]
       class_name = old_report.include?(params['report_type'].to_sym) ? params['report_type'].camelcase : 'Report'
       Sharding.run_on_slave do

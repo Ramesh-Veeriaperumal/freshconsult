@@ -66,6 +66,15 @@ class ScenarioAutomation < VaRule
      }).to_json
   end
 
+  def to_count_es_json
+    as_json({
+    :root => false,
+    :tailored_json => true,
+    :only => [:account_id, :name, :rule_type, :active],
+    :methods => [:es_access_type, :es_group_accesses, :es_user_accesses],
+    }).to_json
+  end
+
   private
 
   def validate_name

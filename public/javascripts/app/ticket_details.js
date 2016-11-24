@@ -158,13 +158,16 @@ swapEmailNote = function(formid, link){
 		//For Facebook and Twitter Reply forms.
 		$element = $('#' + formid + ' textarea').get(0);
 		//changes done as part of linked tickets
-		if($(link).data('replytoHandle')){
-			if($element.value.indexOf($(link).data('replytoHandle')) == -1){
-				$element.value = $(link).data('replytoHandle')+$element.value;
-				$element.trigger('change');
+		if($(link).data('replytoHandle')) {
+			if($element.value.trim() !== $(link).data('replytoHandle')) {
+				if ($(link).data('replytoHandle').trim() == $(link).data('user').trim()) {
+					$(link).data('user', '');
+				}
+				$element.value = $(link).data('replytoHandle') + $(link).data('user');
+				$($element).trigger('keydown');
 			}
 		}
-		$element.value += $element.value.length ? " " : "";
+		//$element.value += $element.value.length ? " " : "";
 		setCaretToPos($element, $element.value.length);
 	} else {
 		//For all other reply forms using redactor.
@@ -589,6 +592,10 @@ var scrollToError = function(){
 
 		var _this = $(this);
 		var previous =  _this.data("previous");
+		//in case of deleted status, manually pass the condition for api trigger
+		if(previous !== "" && !previous){
+			previous = true;
+		}
 		_this.data("previous", _this.val());
 		var select_group = jQuery('#TicketProperties .default_internal_group select')[0];
 		var prev_val = ""
@@ -785,6 +792,22 @@ var scrollToError = function(){
 
 
 	//End of Twitter Replybox JS
+
+	//For Facebook DM Replybox
+
+	function bindFacebookDMCount() {
+	  $('#send-fb-post-cnt-reply-body').NobleCount('#SendReplyCounter', { on_negative : "error", max_chars : 320, on_update: updateCount });
+		updateCount();
+	}
+
+	function updateCount() {
+	  var char_val = $("#SendReplyCounter").text();
+	  $('#send-fb-post-cnt-reply-body').data("reply-count", char_val);
+	}
+
+
+	// End of Facebook DM Replybox
+
 
 	//For Clearing Bcc, Cc email list and hiding those containers
 	$('body').on('click.ticket_details', '[rel=toggle_email_container]',function(ev) {
@@ -1038,6 +1061,7 @@ var scrollToError = function(){
 						if(eligibleForReply(_form)){
 							handleIEReply(_form);
 							submitTicketProperties();
+							removeFormChangedFlag();
 							return true;
 						}
 						changeStatusTo(currentStatus);
@@ -1062,6 +1086,7 @@ var scrollToError = function(){
 				if($.browser.msie || $.browser.msedge) {
 					if(eligibleForReply(_form)){
 						handleIEReply(_form);
+						removeFormChangedFlag();
 						return true;
 					}
 					return false;
@@ -1083,8 +1108,7 @@ var scrollToError = function(){
 			_form.find('input[type=submit]').prop('disabled', false);
 		}
 
-		// Remove formChanged field in the form on any submit
-		$(".form-unsaved-changes-trigger").each(function(){$(this).data("formChanged",false)});
+		removeFormChangedFlag();
 	});
 
 
@@ -1345,29 +1369,33 @@ var scrollToError = function(){
 					submit.button('reset').removeClass('done');
 				}, 2000);
 
-				callback();
+				if(response.err_msg){
+					jQuery("#noticeajax").html(response.err_msg).show();
+    				closeableFlash('#noticeajax');
+        			jQuery(document).scrollTop(0);
+				}else{
+					callback();
 				
-				if (response.autoplay_link) {
-					pjaxify(response.autoplay_link);
-				}
-				else if(response.redirect || response.autoplay_link == "")
-				{
-					$('[rel=link_ticket_list]').click();
-				} else {
-					var statusChangeField = $('#send_and_set');
-					if(statusChangeField.length) {
-						if(statusChangeField.data('val') != '') {
-							refreshStatusBox();
-							if(statusChangeField.data('val') == TICKET_CONSTANTS.statuses.resolved || statusChangeField.data('val') == TICKET_CONSTANTS.statuses.closed) {
-								$('[rel=link_ticket_list]').click();
-							}
-							statusChangeField.data('val', '');
-						}
+					if (response.autoplay_link) {
+						pjaxify(response.autoplay_link);
 					}
-					afterTktPropertiesUpdate();
+					else if(response.redirect || response.autoplay_link == "")
+					{
+						$('[rel=link_ticket_list]').click();
+					} else {
+						var statusChangeField = $('#send_and_set');
+						if(statusChangeField.length) {
+							if(statusChangeField.data('val') != '') {
+								refreshStatusBox();
+								if(statusChangeField.data('val') == TICKET_CONSTANTS.statuses.resolved || statusChangeField.data('val') == TICKET_CONSTANTS.statuses.closed) {
+									$('[rel=link_ticket_list]').click();
+								}
+								statusChangeField.data('val', '');
+							}
+						}
+						afterTktPropertiesUpdate();
+					}
 				}
-
-
 
 			},
 			error: function(jqXHR, textStatus, errorThrown) {
@@ -1606,6 +1634,14 @@ var scrollToError = function(){
 				$('[id$=cnt-reply-body]').val(existingReplyMsg+'<br/>'+broadcastMsg).trigger('change');
 			}
 		}
+
+	  	if ($('#cnt-reply').data('isTwitter')) {
+			getTweetTypeAndBind();
+	  	}
+	  	if($('#cnt-reply').data('is-facebook-realtime-dm') && $('#send-fb-post-cnt-reply-body').hasClass('facebook-realtime')) {
+	  		bindFacebookDMCount();
+	  	}
+
 		swapEmailNote('cnt-' + $(this).data('note-type'), this);
 	});
 
@@ -1764,6 +1800,11 @@ var scrollToError = function(){
 		form.data("formChanged",true);
 	})
 
+	function removeFormChangedFlag(){
+		// Remove formChanged field in the form on any submit
+		$(".form-unsaved-changes-trigger").each(function(){$(this).data("formChanged",false)});
+	}
+
 	// Need to set this on global for Fjax.js
 	if(typeof customMessages=='undefined') customMessages = {};
 	customMessages.confirmNavigate = TICKET_DETAILS_DATA.confirm_navigation;
@@ -1838,6 +1879,7 @@ App.Tickets.TicketDetail = {
 		App.Tickets.Watcher.init();
 		App.Tickets.Merge_tickets.initialize();
 		App.TicketAttachmentPreview.init();
+		App.Tickets.NBA.init();
 
 		// Have tried in onLeave to off all the event binding. 
 		// But it cause errors in whole app, like modal, dropdown and some issues has occered.
@@ -1847,6 +1889,7 @@ App.Tickets.TicketDetail = {
 		App.Tickets.Merge_tickets.unBindEvent();
 		App.Tickets.Watcher.offEventBinding();
 		App.TicketAttachmentPreview.destroy();
+		App.Tickets.NBA.offEventBinding();
 	}
 };
 

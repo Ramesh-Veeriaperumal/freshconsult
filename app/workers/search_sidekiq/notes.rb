@@ -2,8 +2,10 @@ class SearchSidekiq::Notes < SearchSidekiq::BaseWorker
 
   class RestoreNotesIndex < SearchSidekiq::Notes
     def perform(args)
+      return unless Account.current.esv1_enabled?
+
       tickets = Account.current.tickets.find(args["ticket_id"])
-      tickets.notes.exclude_source(['meta', 'tracker']).each do |note|
+      tickets.notes.exclude_source('meta').each do |note|
         send_to_es(note)
       end
     end
@@ -11,6 +13,8 @@ class SearchSidekiq::Notes < SearchSidekiq::BaseWorker
 
   class DeleteNotesIndex < SearchSidekiq::Notes
     def perform(args)
+      return unless Account.current.esv1_enabled?
+
       account = Account.current
       query = Tire.search do |search|
         search.query do |query|

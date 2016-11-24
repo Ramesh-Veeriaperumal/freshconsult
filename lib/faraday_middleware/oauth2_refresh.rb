@@ -51,7 +51,7 @@ module FaradayMiddleware
     end
 
     def update_env(env, req_body, token)
-      env[:request_headers][AUTH_HEADER] = "OAuth #{token}"
+      env[:request_headers][AUTH_HEADER] = env[:request_headers][AUTH_HEADER].include?("OAuth") ? "OAuth #{token}" : "Bearer #{token}"
       env[:body] = req_body
       ENV_TO_CLEAR.each {|key| env.delete key }
       env

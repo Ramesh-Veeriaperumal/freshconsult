@@ -3,6 +3,9 @@ module Search
 
     class Tenant
       attr_accessor :id
+      
+      SUPPORTED_LOCALES = %w(ja-JP ko ru-RU zh-CN) 
+      SUPPORTED_TYPES   = %w(article) #=> To-do: Bad. See how it cannot be hardcoded.
 
       def initialize(tenant_id)
         @id = tenant_id.to_i
@@ -29,6 +32,24 @@ module Search
         Store::Cache.instance.fetch(Store::Cache::ALIAS % { tenant_id: id, type: type }) do
           Store::Data.instance.tenant_info(id)[type]
         end
+      end
+      
+      # Language specific alias - articles_p1s1v1_zh_cn, articles_p1s1v1_it
+      # To-do: See how to implement with language ID
+      #
+      def multilang_alias(type, locale)
+        # Safety catch to prevent dynamic index creation
+        # This way data is sent to the default index in case locale is not supported
+        return self.alias(type) unless multilang_available?(type, locale)
+
+        [self.alias(type), locale.underscore.downcase].join('_')
+      end
+      
+      # Hack for multilang solutions
+      # To-do: See how to implement with language ID
+      #
+      def multilang_available?(type, locale)
+        SUPPORTED_TYPES.include?(type) && SUPPORTED_LOCALES.include?(locale.to_s)
       end
       
       #_Note_: Will have a problem is alias is somehow removed at ES.
@@ -67,6 +88,13 @@ module Search
       def document_path(type, document_id)
         [cluster_path, self.alias(type), type, document_id].join('/')
       end
+      
+      # Accounts like Pinnacle sports have exclusive index for multilingual content
+      # Eg., for user 1: http://localhost:9200/users_p1s1v1_zh_cn/user/1
+      #
+      def multilang_document_path(type, document_id, locale)
+        [cluster_path, self.multilang_alias(type, locale), type, document_id].join('/')
+      end
 
       # The path to make a bulk call to for a type
       # Eg., for bulk users: http://localhost:9200/users_1/user/_bulk
@@ -76,11 +104,13 @@ module Search
 
       # The path to access aliases
       # Eg., for ticket & users: http://localhost:9200/users_1,tickets_1
-      def aliases_path(types=[])
+      def aliases_path(types=[], locale='')
         [
           cluster_path,
-          types.collect { |type| self.alias(type) }.compact.join(',')
-          ].join('/')
+          types.collect do |type| 
+            locale.present? ? self.multilang_alias(type, locale) : self.alias(type)
+          end.uniq.compact.join(',')
+        ].join('/')
       end
     end
 

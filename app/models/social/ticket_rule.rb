@@ -74,7 +74,7 @@ class Social::TicketRule < ActiveRecord::Base
       includes.each do |keyword|
         to_match = tokenize(keyword)
         #dot removed as it's the generic end of line character
-        feed     = "\s#{social_feed.gsub(".","")}\s"
+        feed     = "\s#{social_feed.gsub(WHITELISTED_SPECIAL_CHARS_REGEX," ")}\s"
         match_found = to_match.all?{|match| feed.downcase.include?(match.downcase)}
         return true if match_found
       end

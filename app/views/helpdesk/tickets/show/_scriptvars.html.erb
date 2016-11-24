@@ -8,7 +8,7 @@ TICKET_DETAILS_DATA = {
 	notes_pagination_url: "/helpdesk/tickets/<%= @ticket.display_id %>/notes?v=2&",
 	status_refresh_url	: "<%= status_helpdesk_ticket_path(@ticket)%>",
 	last_note_id		: <%= @ticket_notes.present? ? @ticket_notes.last.id : -1 %>,
-	activities_pagination_url: "/helpdesk/tickets/<%= @ticket.display_id %>/<%=Account.current.launched?(:activity_ui) ?  'activitiesv2/?' : 'activities/?'%>",
+	activities_pagination_url: "/helpdesk/tickets/<%= @ticket.display_id %>/<%= (!Account.current.launched?(:activity_ui_disable) and Account.current.features?(:activity_revamp)) ?  'activitiesv2/?' : 'activities/?'%>",
 	last_activity		: -1,
 	last_activity_batch  : -1,
 	loaded_activities	: 0,

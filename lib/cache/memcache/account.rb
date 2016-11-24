@@ -78,8 +78,10 @@ module Cache::Memcache::Account
   end
 
   def agents_details_from_cache
-    key = agents_details_memcache_key
-    MemcacheKeys.fetch(key) { self.users.where(:helpdesk_agent => true).select("id,name,email").all }
+    @agents_details_from_cache ||= begin
+      key = agents_details_memcache_key
+      MemcacheKeys.fetch(key) { self.users.where(:helpdesk_agent => true).select("id,name,email").all }
+    end
   end  
 
   def groups_from_cache
@@ -287,6 +289,13 @@ module Cache::Memcache::Account
     MemcacheKeys.fetch(key) { self.account_additional_settings }
   end
 
+  def account_status_groups_from_cache
+    @account_status_groups_from_cache ||= begin
+      key = ACCOUNT_STATUS_GROUPS % {:account_id => self.id}
+      MemcacheKeys.fetch(key) { self.status_groups.all }
+    end
+  end
+
   def clear_account_additional_settings_from_cache
     key = ACCOUNT_ADDITIONAL_SETTINGS % { :account_id => self.id }
     MemcacheKeys.delete_from_cache(key)
@@ -359,6 +368,11 @@ module Cache::Memcache::Account
 
   def clear_application_on_dip_from_cache
     key = ACCOUNT_INSTALLED_APPS_IN_COMPANY_PAGE % { :account_id => self.id }
+    MemcacheKeys.delete_from_cache(key)
+  end
+
+  def clear_account_status_groups_cache
+    key = ACCOUNT_STATUS_GROUPS % {:account_id => self.id}
     MemcacheKeys.delete_from_cache(key)
   end
 

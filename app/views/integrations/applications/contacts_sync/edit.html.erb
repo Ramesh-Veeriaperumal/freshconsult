@@ -1,0 +1,74 @@
+<% content_for :helpcard do %>
+  <div class="helpcard"><%=t("integrations.#{app_name}.helptext").html_safe%></div>
+<% end %>
+<h3 class="title"><%=t("integrations.#{app_name}.form.title").html_safe%></h3>
+
+<form class="edit_integrations_installed_application">
+  <ul class="ui-form">
+    <li class="inline-field">
+      <label class="caption">
+        <div class="logo application-logo-<%=app_name%>"></div>
+        <div class="logo info-data">
+          <%=t("integrations.#{app_name}.desc")%>
+        </div>
+      </label>
+      <div class="fields">
+        <ul class="app-form">
+          <li class="field">
+            <% if @installed_application.sync_accounts.blank? %>
+              <%= t("integrations.#{app_name}.form.account_not_configured").html_safe %>
+              <div class="center"><%= link_to(t("integrations.#{app_name}.edit_form.add_more"), oauth_url, :class => "uiButton special") %></div><br/>
+            <% else %>
+              <div class="google_accounts">
+                <table borer="0" width="100%">
+                  <tr class="headings">
+                    <th><%= t("integrations.#{app_name}.edit_form.account").html_safe %></th>
+                    <th><%= t("integrations.#{app_name}.edit_form.tag_label").html_safe %></th>
+                    <th><%= t("integrations.#{app_name}.edit_form.last_sync_time").html_safe %></th>
+                    <th></th>
+                  </tr>
+
+                  <% @installed_application.sync_accounts.each do |account| %>
+                    <tr class="main_rows">
+                      <td>
+                        <span><strong><%= account.name %></strong><br /><%= account.email %></span>
+                      </td>
+                      <td>
+                        <%= account.sync_tag.name if account.sync_tag.present? %>
+                      </td>
+                      <td>
+                        <% if account.last_sync_status == "in_progress" %>
+                          <%= t("integrations.#{app_name}.edit_form.syncing_in_progress").html_safe %>
+                        <% elsif account.last_sync_time.blank? %>
+                          <%= t("integrations.#{app_name}.edit_form.not_yet_synced").html_safe %>
+                        <% else %>
+                          <%= formated_date(account.last_sync_time) %>
+                        <% end %>
+                      </td>
+                      <td>
+                        <%= link_to(t("integrations.#{app_name}.edit_form.delete_account"), { :action => "destroy", :id => account.id },
+                            :confirm => "Are you sure?", :class => "button", :method => :delete) %>
+                      </td>
+                      <td>
+                        <%= link_to(t("integrations.#{app_name}.edit_form.edit_account"), { :action => "render_fields", :id => account.id }, :class => "button", :method => :post) %>
+                      </td>
+                    </tr>
+                  <% end %>
+                </table>
+                <% if @installed_application.sync_accounts.length < Integrations::Constants::CONTACTS_SYNC_ACCOUNTS_LIMIT %>
+                  <div class="buttons">
+                    <%= link_to(t("integrations.#{app_name}.edit_form.add_more").html_safe, oauth_url, :class => "uiButton special") %>
+                  </div>
+                <% end %>
+              </div>
+            <% end %>
+          </li>
+        </ul>
+      </div>
+    </li>
+  </ul>
+</form>
+
+<div class="button-container">
+  <%= link_to t('back'), {:controller => 'applications', :action => 'index'}, :class => "floatl uiButton" %>
+</div>

@@ -172,6 +172,58 @@ Helpkit::Application.routes.draw do
     end
   end
 
+  # Constraint based routing to V2 paths
+  #
+  constraints Search::V1Path::MobilePath.new do
+    match '/helpdesk/authorizations/autocomplete',            to: 'search/v2/mobile/autocomplete#autocomplete_requesters',        via: :get
+    match '/helpdesk/authorizations/company_autocomplete',    to: 'search/v2/mobile/autocomplete#companies',         via: :get
+    match '/helpdesk/autocomplete/requester',                 to: 'search/v2/mobile/autocomplete#requesters', via: :get
+    match '/helpdesk/autocomplete/agents',                    to: 'search/v2/mobile/autocomplete#agents',            via: :get
+    match '/helpdesk/autocomplete/companies',                 to: 'search/v2/mobile/autocomplete#companies',         via: :get
+    match '/search/autocomplete/tags',                        to: 'search/v2/mobile/autocomplete#tags',              via: :get
+    match '/search/home',                                     to: 'search/v2/mobile/suggest#index',           via: :get
+    match '/search/tickets/filter/:search_field',             to: 'search/v2/mobile/merge_tickets#index',     via: :post
+    match '/mobile/tickets/get_suggested_solutions/:ticket.:format',  to: 'search/v2/mobile/related_articles#index',  via: :get
+  end
+  #
+  constraints Search::V1Path::WebPath.new do
+    # Web paths
+    match '/search/home/suggest',              to: 'search/v2/suggest#index',                    via: :get
+    match '/search/all',                       to: 'search/v2/spotlight#all',                    via: :get
+    match '/search/tickets',                   to: 'search/v2/spotlight#tickets',                via: :get
+    match '/search/customers',                 to: 'search/v2/spotlight#customers',              via: :get
+    match '/search/forums',                    to: 'search/v2/spotlight#forums',                 via: :get
+    match '/search/solutions',                 to: 'search/v2/spotlight#solutions',              via: :get
+    match '/search/autocomplete/requesters',   to: 'search/v2/autocomplete#requesters',          via: :get
+    match '/search/autocomplete/agents',       to: 'search/v2/autocomplete#agents',              via: :get
+    match '/search/autocomplete/companies',    to: 'search/v2/autocomplete#companies',           via: :get
+    match '/search/autocomplete/company_users',    to: 'search/v2/autocomplete#company_users',           via: :get
+    match '/search/autocomplete/tags',         to: 'search/v2/autocomplete#tags',                via: :get
+    match '/search/merge_topic',               to: 'search/v2/merge_topics#search_topics',       via: :post
+    match '/contact_merge/search',             to: 'search/v2/merge_contacts#index',             via: :get
+
+    match '/search/related_solutions/ticket/:ticket', to: 'search/v2/solutions#related_solutions',  via: :get, constraints: { format: /(html|js)/ }
+    match '/search/search_solutions/ticket/:ticket',  to: 'search/v2/solutions#search_solutions',   via: :get, constraints: { format: /(html|js)/ }
+    match '/search/tickets/filter/:search_field',     to: 'search/v2/tickets#index',                via: :post
+    
+    # Linked ticket routes
+    match '/search/ticket_associations/filter/:search_field', to: 'search/v2/ticket_associations#index'
+    match '/search/ticket_associations/recent_trackers',      to: 'search/v2/ticket_associations#recent_trackers', via: :post
+
+    match '/support/search',                   to: 'support/search_v2/spotlight#all',               via: :get
+    match '/support/search/tickets',           to: 'support/search_v2/spotlight#tickets',           via: :get
+    match '/support/search/topics',            to: 'support/search_v2/spotlight#topics',            via: :get
+    match '/support/search/solutions',         to: 'support/search_v2/spotlight#solutions',         via: :get
+    match '/support/search/topics/suggest',    to: 'support/search_v2/spotlight#suggest_topic',     via: :get
+
+    match 'support/search/articles/:article_id/related_articles', to: 'support/search_v2/solutions#related_articles', via: :get
+    
+    # Freshfone paths
+    match '/freshfone/autocomplete/requester_search', to: 'search/v2/freshfone/autocomplete#contact_by_numbers',  via: :get
+    match '/freshfone/autocomplete/customer_phone_number', to: 'search/v2/freshfone/autocomplete#customer_by_phone',  via: :get
+    match '/freshfone/autocomplete/customer_contact', to: 'search/v2/freshfone/autocomplete#contact_by_numberfields',  via: :get
+  end
+  
   root :to => 'home#index'
 
   match '/visitor/load/:id.:format' => 'chats#load', :via => :get
@@ -180,7 +232,7 @@ Helpkit::Application.routes.draw do
   match '/packages/:package.:extension' => 'jammit#package', :as => :jammit, :constraints => { :extension => /.+/ }
   resources :authorizations
 
-  ["github","salesforce", "magento", "shopify", "slack", "infusionsoft", "google_calendar", "google_login", "google_marketplace_sso", "google_contacts", "google_gadget"].each do |provider|
+  ["github","salesforce", "magento", "shopify", "slack", "infusionsoft", "google_calendar", "google_login", "google_marketplace_sso", "google_contacts", "google_gadget","outlook_contacts"].each do |provider|
     match "/auth/#{provider}/callback" => 'omniauth_callbacks#complete', :provider => provider
   end
 
@@ -190,6 +242,7 @@ Helpkit::Application.routes.draw do
 
   resources :solutions_uploaded_images, :only => [:index, :create]  do
     collection do
+      post :delete_file
       post :create_file
     end
   end
@@ -364,6 +417,7 @@ Helpkit::Application.routes.draw do
   match '/logout' => 'user_sessions#destroy', :as => :logout
   match '/login' => 'user_sessions#new', :as => :login
   match '/login/sso' => 'user_sessions#sso_login', :as => :sso_login
+  match '/login/sso_v2' => 'user_sessions#jwt_sso_login', :as => :jwt_sso_login
   match '/login/saml' => 'user_sessions#saml_login', :as => :saml_login
   match '/login/normal' => 'user_sessions#new', :as => :login_normal
   match '/signup_complete/:token' => 'user_sessions#signup_complete', :as => :signup_complete
@@ -856,6 +910,16 @@ Helpkit::Application.routes.draw do
       get :uninstall
     end
 
+    namespace :outlook_contacts do
+      get :settings
+      get :edit
+      post :install
+      delete :destroy
+      put :update
+      post :render_fields
+      post :new
+    end
+
     namespace :marketplace do
       namespace :login do
         get :login
@@ -927,8 +991,8 @@ Helpkit::Application.routes.draw do
       post :update
     end
 
-    namespace :xero do 
-      get :authorize 
+    namespace :xero do
+      get :authorize
       post :update_params
       get :edit
       get :fetch
@@ -1039,6 +1103,7 @@ Helpkit::Application.routes.draw do
         post :update
         put :buy_now
         put :toggle_auto_recharge
+        get '/custom_filter', :action => :day_pass_history_filter
       end
     end
 
@@ -1108,6 +1173,14 @@ Helpkit::Application.routes.draw do
       end
     end
     match '/email_notifications/:type/:id/edit' => 'email_notifications#edit', :as => :edit_notification
+    resources :onboarding, only: [:index] do
+      collection do 
+        post :update_channel_configs
+        post :update_activation_email
+        post :resend_activation_email
+      end
+    end
+
     resources :getting_started do
       collection do
         put :rebrand
@@ -1332,8 +1405,11 @@ Helpkit::Application.routes.draw do
         scope ':extension_id/:version_id' do
           get :new_configs
           get :edit_configs
+          get :oauth_callback
+          get :edit_oauth_configs
         end
         scope ':extension_id' do
+          get :oauth_configs
           post :install
           put :reinstall
           delete :uninstall
@@ -1359,35 +1435,6 @@ Helpkit::Application.routes.draw do
 
   match '/ecommerce/ebay_notifications', :controller => 'admin/ecommerce/ebay_accounts', :action => 'notify', :method => :post
 
-  # Constraint based routing to V2 paths
-  #
-  constraints Search::V1Path.new do
-    match '/search/home/suggest',              to: 'search/v2/suggest#index',                    via: :get
-    match '/search/all',                       to: 'search/v2/spotlight#all',                    via: :get
-    match '/search/tickets',                   to: 'search/v2/spotlight#tickets',                via: :get
-    match '/search/customers',                 to: 'search/v2/spotlight#customers',              via: :get
-    match '/search/forums',                    to: 'search/v2/spotlight#forums',                 via: :get
-    match '/search/solutions',                 to: 'search/v2/spotlight#solutions',              via: :get
-    match '/search/autocomplete/requesters',   to: 'search/v2/autocomplete#requesters',          via: :get
-    match '/search/autocomplete/agents',       to: 'search/v2/autocomplete#agents',              via: :get
-    match '/search/autocomplete/companies',    to: 'search/v2/autocomplete#companies',           via: :get
-    match '/search/autocomplete/tags',         to: 'search/v2/autocomplete#tags',                via: :get
-    match '/search/merge_topic',               to: 'search/v2/merge_topics#search_topics',       via: :post
-    match '/contact_merge/search',             to: 'search/v2/merge_contacts#index',             via: :get
-
-    match '/search/related_solutions/ticket/:ticket', to: 'search/v2/solutions#related_solutions',  via: :get, constraints: { format: /(html|js)/ }
-    match '/search/search_solutions/ticket/:ticket',  to: 'search/v2/solutions#search_solutions',   via: :get, constraints: { format: /(html|js)/ }
-    match '/search/tickets/filter/:search_field',     to: 'search/v2/tickets#index',                via: :post
-
-    match '/support/search',                   to: 'support/search_v2/spotlight#all',               via: :get
-    match '/support/search/tickets',           to: 'support/search_v2/spotlight#tickets',           via: :get
-    match '/support/search/topics',            to: 'support/search_v2/spotlight#topics',            via: :get
-    match '/support/search/solutions',         to: 'support/search_v2/spotlight#solutions',         via: :get
-    match '/support/search/topics/suggest',    to: 'support/search_v2/spotlight#suggest_topic',     via: :get
-
-    match 'support/search/articles/:article_id/related_articles', to: 'support/search_v2/solutions#related_articles', via: :get
-  end
-
   namespace :search do
 
     # Search v2 agent controller routes
@@ -1409,6 +1456,7 @@ Helpkit::Application.routes.draw do
           get :requesters
           get :companies
           get :tags
+          get :company_users
         end
       end
       resources :tickets, :only => :index
@@ -1419,6 +1467,33 @@ Helpkit::Application.routes.draw do
         end
       end
       resources :merge_contacts, :only => :index
+      
+      # Paths for mobile search v2
+      namespace :mobile do
+        resources :suggest, only: :index
+        resources :merge_tickets, only: :index
+        resources :related_articles, only: :index
+        resources :autocomplete, only: [:agents, :requesters, :companies, :tags] do
+          collection do
+            get :agents
+            get :requesters
+            get :companies
+            get :tags
+          end
+        end
+      end
+
+      namespace :freshfone do
+        resources :autocomplete, only: [:contact_by_numbers, :customer_by_phone, :contact_by_numberfields] do
+          collection do
+            get :contact_by_numbers
+            get :customer_by_phone
+            get :contact_by_numberfields
+          end
+        end
+      end
+      
+      resources :ticket_associations, :only => [:index, :recent_trackers]
     end
 
     resources :home, :only => :index do
@@ -1445,7 +1520,6 @@ Helpkit::Application.routes.draw do
     match '/search_solutions/ticket/:ticket/' => 'solutions#search_solutions', :as => :ticket_search_solutions
   end
 
-  match '/search/tickets.:format', :controller => 'search/tickets', :action => 'index', :method => :post
   match '/search/tickets/filter/:search_field' => 'search/tickets#index'
   match '/search/ticket_associations/filter/:search_field' => 'search/ticket_associations#index'
   match '/search/ticket_associations/recent_trackers' => 'search/ticket_associations#index', via: :post
@@ -1494,7 +1568,7 @@ Helpkit::Application.routes.draw do
     end
   end
   get   'reports/:id'   => 'reports#show', constraints: { id: /[1-2]+/ }
-  match "/reports/:report_type",           :controller => 'reports/v2/tickets/reports', :action => 'index', :method => :get  
+  match "/reports/:report_type",           :controller => 'reports/v2/tickets/reports', :action => 'index', :method => :get
 
   namespace :reports do
 
@@ -1761,6 +1835,7 @@ Helpkit::Application.routes.draw do
         post :custom_search
         post :export_csv
         post :latest_ticket_count
+        post :sentiment_feedback
         match :add_requester
         get :filter_options
         get :filter_conditions
@@ -1778,6 +1853,8 @@ Helpkit::Application.routes.draw do
         get :search_templates
         get :accessible_templates
         post :apply_template
+        get :show_children
+        post :bulk_child_tkt_create
       end
 
       member do
@@ -1809,11 +1886,13 @@ Helpkit::Application.routes.draw do
         get :prevnext
         put :update_requester
         post :create # For Mobile apps backward compatibility.
+        get :associated_tickets
         put :link
         put :unlink
-        get :related_tickets
         get :ticket_association
       end
+
+      resources :child, :only => [:new], :controller => "tickets"
 
       resources :surveys do
         collection do
@@ -2064,20 +2143,28 @@ Helpkit::Application.routes.draw do
     match 'commons/status_groups'         => "commons#status_groups"
 
     resources :ticket_templates do
-      member do 
+      member do
         get :clone
-      end 
+        post :unlink_parent
+        post :add_existing_child
+      end
       collection do
+        get :all_children
+        get :search_children
+        get :verify_template_name
+        post :apply_existing_child
         delete :delete_multiple
       end
     end
-    match '/ticket_templates/tab/:current_tab' => 'ticket_templates#index'
-    
+    match '/ticket_templates/tab/:current_tab'    => 'ticket_templates#index',     :as => :my_ticket_templates
+    match '/parent_template/:p_id/child/new'      => 'ticket_templates#new_child', :as => :new_child_template
+    match '/parent_template/:p_id/child/:id/edit' => 'ticket_templates#edit_child',:as => :edit_child_template
+
     resources :scenario_automations do
-      member do 
+      member do
         get :clone
-      end 
-      collection do 
+      end
+      collection do
         get :search
         get :recent
       end
@@ -2331,6 +2418,7 @@ Helpkit::Application.routes.draw do
     end
   end
 
+  match '/helpdesk/tickets/:id/suggest/tickets' => 'helpdesk/tickets#suggest_tickets'
   match '/support/theme.:format' => 'theme/support#index'
   match '/support/theme_rtl.:format' => 'theme/support_rtl#index'
   match '/helpdesk/theme.:format' => 'theme/helpdesk#index'
@@ -2670,6 +2758,14 @@ Helpkit::Application.routes.draw do
     # end
   end
 
+  namespace :supreme do
+    resources :sql_console, :only => :none do
+      collection do
+        get :execute_query
+      end
+    end
+  end
+
   constraints(lambda {|req| FreshopsSubdomains.include?(req.subdomain) })  do
     namespace :fdadmin, :name_prefix => "fdadmin_", :path_prefix => nil do
 
@@ -2772,6 +2868,8 @@ Helpkit::Application.routes.draw do
           put :twilio_port_away
           put :activate_trial
           put :launch_feature
+          get :launched_feature_details
+          put :activate_onboarding
         end
       end
 
@@ -2798,6 +2896,8 @@ Helpkit::Application.routes.draw do
             get :deleted_freshfone_csv_by_account
             get :deleted_freshfone_csv
             get :all_freshfone_number_csv
+            get :purchased_numbers_csv
+            get :purchased_numbers_csv_by_account
           end
         end
 
@@ -2947,9 +3047,11 @@ Helpkit::Application.routes.draw do
       put  :toggle
       put  :update_site
       put  :trigger
+      get  :export
     end
   end
   match '/livechat/visitor/:type', :controller => 'chats', :action => 'visitor', :method => :get
+  match '/livechat/downloadexport/:token', :controller => 'chats', :action => 'download_export', :method => :get
   match '/livechat/*letter', :controller => 'chats', :action => 'index', :method => :get
 
   use_doorkeeper do

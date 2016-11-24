@@ -86,7 +86,7 @@ function handleSolutionDetail(sol_id, title){
   }
   jQuery.ajax({	type: 'POST',
     url: content_url,
-    success: function(data){ insertSolutionContent(data); }
+    dataType: "script"
   });
   return true;
 };

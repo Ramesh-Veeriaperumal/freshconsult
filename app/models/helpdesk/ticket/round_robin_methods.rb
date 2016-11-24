@@ -29,7 +29,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def assign_agent_via_round_robin
     return unless group.present?
     next_agent = if group.round_robin_capping_enabled?
-      group.next_agent_with_capping(self.display_id) if capping_ready?
+      if capping_ready?
+        self.round_robin_assignment = true
+        group.next_agent_with_capping(self.display_id)
+      end
     elsif group.round_robin_enabled?
       group.next_available_agent
     end
@@ -57,6 +60,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
       end
       return
     end
+    return if self.round_robin_assignment
     if ticket_changes.has_key?(:responder_id) && self.group_id.present? && 
        !self.round_robin_assignment && !ticket_changes.has_key?(:round_robin_assignment)
       old_group_id = ticket_changes[:responder_id][0].present? ? self.group_id : nil
@@ -64,7 +68,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
       balance_agent_capping({ :group_id => [old_group_id, new_group_id], 
                               :responder_id => [ticket_changes[:responder_id][0],
                                                 ticket_changes[:responder_id][1]]})
-      assign_agent_via_round_robin if !ticket_changes[:responder_id][1].present?
+      ticket_changes[:responder_id][1].present? ? self.group.lrem_from_rr_capping_queue(self.display_id) : 
+                                                  assign_agent_via_round_robin
       return
     end
     
@@ -83,6 +88,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def balance_agent_capping ticket_changes
+    return unless has_capping_status?
     ["decr", "incr"].each_with_index do |operation, index|
       g_id = ticket_changes[:group_id][index]
       u_id = ticket_changes[:responder_id][index]
@@ -193,6 +199,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     if group.present? && responder_id.present? && visible? && 
         group.round_robin_capping_enabled? && has_capping_status?
       change_agents_ticket_count(group, responder_id, "incr")
+      self.round_robin_assignment = true
     end
   end
 
@@ -209,6 +216,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
     #Don't trigger during an observer save, as we call RR explicitly in the worker
     return true if Thread.current[:observer_doer_id].present?
 
+    # Don't trigger if its already set via dispatcher
+    return true if round_robin_assignment
+
     #Trigger RR if the update is from supervisor 
     false    
   end
@@ -220,11 +230,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
     #skip if agent is assigned in the transaction
     if ticket_changes.has_key?(:responder_id)
       balance_agent_capping(ticket_changes)
+      self.round_robin_assignment = true
       return
     end
     #skip if the existing agent also belongs to the new group
     if agent_in_new_group?
       balance_agent_capping(ticket_changes.merge(:responder_id => [responder_id, responder_id]))
+      self.round_robin_assignment = true
       return
     end
     true
@@ -242,6 +254,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
       if responder_id.present?
         change_agents_ticket_count(old_group, responder_id, "decr")
       else
+        change_agents_ticket_count(old_group, 
+          @model_changes[:responder_id][0], "decr") if @model_changes.key?(:responder_id)
         old_group.lrem_from_rr_capping_queue(display_id)
       end
     end

@@ -20,15 +20,22 @@ class Tickets::UpdateCompanyId < BaseWorker
       condition = company_id ? "owner_id is null" : "owner_id is not null"
       condition = "owner_id = ?" if old_company_id
 
-      Account.current.send(tkts).where(["requester_id in (?) AND #{condition}", 
-                                          user_ids]).find_in_batches(:batch_size => TICKET_LIMIT) do |tickets|
-        Account.current.send(tkts).where("id in (?)", tickets.map(&:id)).update_all(:owner_id => company_id)
-        execute_on_db { send_updates_to_rmq(tickets, tickets[0].class.name) } if tkts == "archive_tickets"
-        execute_on_db { subscribers_manual_publish(tickets) } if tkts == "tickets"
+      execute_on_db {
+        Account.current.send(tkts).where(["requester_id in (?) AND #{condition}", 
+                                            user_ids]).find_in_batches(:batch_size => TICKET_LIMIT) do |tickets|
 
-        #=> Needing this to publish to search until another way found.
-        execute_on_db { tickets.map(&:sqs_manual_publish) }
-      end
+          #company id is explicitly updated to avoid reload for tickets.
+          ticket_ids = tickets.inject([]) { |tkt_ids, tkt| tkt.company_id = company_id; tkt_ids << tkt.id }
+          execute_on_db("run_on_master") { 
+            Account.current.send(tkts).where("id in (?)", ticket_ids).update_all(:owner_id => company_id)
+          }
+          send_updates_to_rmq(tickets, tickets[0].class.name) if tkts == "archive_tickets"
+          subscribers_manual_publish(tickets) if tkts == "tickets"
+
+          #=> Needing this to publish to search until another way found.
+          tickets.map(&:sqs_manual_publish)
+        end
+      }
     end
   end
 

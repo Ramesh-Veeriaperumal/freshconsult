@@ -1,5 +1,5 @@
 <% content_for :helpcard do %>
-  <%= render :partial => "helpnote_without_tour" %>
+  <%= render :partial => "templates_sidebar" %>
 <% end %>
 
 <div class='page-header-sticky' rel='sticky'>
@@ -20,8 +20,28 @@
       <% end %>
     </div>
   </div>
-</div>
+</div>  
 </br>
+<% if check_for_parent_child_feature? %>
+<div id="ticket-sub-toolbar template-sort-wrapper">
+  <div class="sort-bar toolbar">
+    <div class="fd-menu" id="SortMenu">
+      <ul>             
+        <li>
+            <%= link_to t('ticket_templates.order.recent_created'), helpdesk_ticket_templates_path(:recently_created => true),:class => "sort-template"  %>
+        </li>
+        <li>
+           <%= link_to t('ticket_templates.order.a_to_z'), helpdesk_ticket_templates_path,:class => "sort-template"  %>
+        </li>
+      </ul> 
+    </div>
+    <a class="drop-right nav-trigger tempate_sort" href="#" menuid="#SortMenu">
+      <% order_name = @order_by.eql?("name") ? "a_to_z" : "recent_created" %>
+      <%= t('ticket_templates.order.title')%>: <b><%= t("ticket_templates.order.#{order_name}")%></b>
+    </a>
+  </div>
+</div>
+<% end %>
 
   <div class="list-page ticket-template-list">
     <div class="response-list list-page-body">
@@ -33,48 +53,34 @@
           <% end %>
         </div>
       <%else%>
-        <%= remote_form_for :ticket_templates, :url => delete_multiple_helpdesk_ticket_templates_path,
-            :html => {:method => :delete} do |f|%>
-          <table class="table table-striped tkt-template-table">
-            <thead>
-              <tr>
-                <td>
-                  <input type="checkbox" id="select-all-template">
-                </td>
-                <td colspan="2">
-                  <%= f.submit t('delete') , :class => "btn", :id => "templates_delete", :disabled => "disabled",
-                    :confirm => t('ticket_templates.delete_templates') %>
-                </td>
-              </tr>
-            </thead>
-            <tbody>
-              <%= render :partial => "template", :collection => @all_items, :locals => {:show_clone => (templ_count < total_templ)} %>
-            </tbody>
-          </table>
-          <%= will_paginate @all_items, :renderer => BootstrapPaginationRenderer,
-                              :previous_label => "<b class='arrow-left'></b>",
-                              :next_label => "<b class='arrow-right'></b>",
-                              :class => "pagination pagination-centered" %>
-        <% end %>
+        <table class="table table-striped tkt-template-table">
+          <tbody>
+            <%= render :partial => "template", :collection => @all_items, :locals => {:show_clone => (templ_count < total_templ)} %>
+          </tbody>
+        </table>
+        <%= will_paginate @all_items, :renderer => BootstrapPaginationRenderer,
+                            :previous_label => "<b class='arrow-left'></b>",
+                            :next_label => "<b class='arrow-right'></b>",
+                            :class => "pagination pagination-centered" %>
       <%end%>
     </div>
   </div>
+<div class="modal hide fade" style="width:600px;margin-left: -300px" id="index-delete-template-modal" aria-hidden="true" role="dialog">
+  <div class="modal-header">
+    <button class="close" data-dismiss="modal"></button>
+    <h3><%= t('ticket_templates.edit_template.delete.delete_title') %></h3>
+  </div>
+  <div class="modal-body">
+  </div>
+  <div class="modal-footer">
+    <%= link_to(t('ticket_templates.edit_template.cancel'), '' ,:class => "btn",:data => { :dismiss => 'modal' } )%>
+    <%= link_to(t('ticket_templates.edit_template.confirm'), '' ,:class => "btn btn-primary index-delete-confirm",:method => 'delete' )%>  
+  </div>
+</div>
 
 <%= javascript_tag do %>
-
-  (function () {
-
-      jQuery.selectall('#select-all-template', '.select-template');
-      jQuery(".select-template, #select-all-template").on('change', checkSelectStatus);
-      jQuery(document).ready(checkSelectStatus);
-      function checkSelectStatus(){
-        var length  = jQuery(".select-template:checked").length;
-        if(length){
-            jQuery("#templates_delete").attr("disabled", false);
-        }else{
-            jQuery("#templates_delete").attr("disabled", true);
-        }
-      }
-
-  })();
+  var customMessages={
+    normalTemplateMsg : "<%= t('list_all_template.deleteMessage') %>",
+    parentTemplateMsg : "<%= t('list_all_template.parent_child_templates.deleteMessage').html_safe %>"
+  };
 <% end %>

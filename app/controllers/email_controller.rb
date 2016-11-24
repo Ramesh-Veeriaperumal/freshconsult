@@ -5,6 +5,7 @@ require 'charlock_holmes'
 class EmailController < ApplicationController
 
   include EnvelopeParser
+  include EmailHelper
 
   skip_filter :select_shard
   skip_before_filter :check_privilege
@@ -37,7 +38,7 @@ class EmailController < ApplicationController
 
   def determine_pod
     pod_infos = find_pods
-    unless email_for_current_pod?(pod_infos)
+    if pod_infos.present? && !email_for_current_pod?(pod_infos)
       Rails.logger.error "Email is not for the current POD."
       redirect_email(pod_infos.first) and return
     end
@@ -49,7 +50,7 @@ class EmailController < ApplicationController
       @to_emails.each do |to_email|
         shard = ShardMapping.fetch_by_domain(to_email[:domain])
         pod_info = shard.present? ? shard.pod_info : nil
-        pod_infos.push(pod_info)
+        pod_infos.push(pod_info) if pod_info.present?
     end
     return pod_infos
   end
@@ -119,6 +120,8 @@ class EmailController < ApplicationController
               }
               if mapping_encoding[charset_encoding.downcase]
                 params[t_format] = Iconv.new('utf-8//IGNORE', mapping_encoding[charset_encoding.downcase]).iconv(params[t_format])
+              elsif ((charsets[t_format.to_s].blank? || charsets[t_format.to_s].upcase == "UTF-8") && (!params[t_format].valid_encoding?))
+                  replace_invalid_characters t_format
               else
                 Rails.logger.error "Error While encoding in process email  \n#{e.message}\n#{e.backtrace.join("\n\t")} #{params}"
                 NewRelic::Agent.notice_error(e,{:description => "Charset Encoding issue with ===============> #{charset_encoding}"})

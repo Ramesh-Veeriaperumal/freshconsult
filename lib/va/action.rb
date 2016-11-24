@@ -85,6 +85,16 @@ class Va::Action
     record_action(act_on, group)
   end
 
+  def internal_group_id(act_on)
+    ig_id = value.to_i
+    begin
+      internal_group = act_on.account.groups.find(ig_id)
+    rescue ActiveRecord::RecordNotFound
+    end
+    act_on.internal_group = internal_group if internal_group || value.empty?
+    record_action(act_on, internal_group)
+  end
+
   def responder_id(act_on)
     r_id = value.to_i
     begin
@@ -93,6 +103,26 @@ class Va::Action
     end
     act_on.responder = responder if responder || value.empty?
     record_action(act_on, responder)
+  end
+
+  def internal_agent_id(act_on)
+    ia_id = value.to_i
+    begin
+      internal_agent = (ia_id == EVENT_PERFORMER) ? (act_on.agent_performed?(doer) ? doer : nil) : act_on.account.users.find(value.to_i)
+    rescue ActiveRecord::RecordNotFound
+    end
+    act_on.internal_agent = internal_agent if internal_agent || value.empty?
+    record_action(act_on, internal_agent)
+  end
+
+  def product_id(act_on)
+    pr_id = value.to_i
+    begin
+      product = act_on.account.products.find(pr_id)
+    rescue ActiveRecord::RecordNotFound
+    end
+    act_on.product = product if product || value.empty?
+    record_action(act_on, product)
   end
 
   def add_comment(act_on)
@@ -109,23 +139,25 @@ class Va::Action
   end
   
   def add_watcher(act_on)
-    watchers = Hash.new
-    watcher_value = value.kind_of?(Array) ? value : value.to_a
-    watcher_value.each do |watcher_id|
-      watcher = act_on.subscriptions.find_by_user_id(watcher_id)
-      unless watcher.present?
-        user = Account.current.users.find_by_id(watcher_id)
-        subscription = act_on.subscriptions.build(:user_id => watcher_id)
-        if user && act_on.agent_performed?(user) && subscription.save
-          watchers.merge!({subscription.user.id => subscription.user.name})
+    watchers = {}
+    watcher_ids = value.kind_of?(Array) ? value : value.to_a
+    watcher_ids.map!(&:to_i)
+    resultant_user_ids = act_on.subscriptions.where(user_id: watcher_ids).pluck(:user_id)
+    filtered_user_ids = watcher_ids - resultant_user_ids
+    if filtered_user_ids.length > 0 
+      Account.current.users.where(id: filtered_user_ids).each do |user|
+        subscription = act_on.account.ticket_subscriptions.build(:user_id => user.id)
+        subscription.ticket_id = act_on.id
+        if act_on.agent_performed?(user) && subscription.save
+          watchers.merge!({user.id => user.name})
           Helpdesk::WatcherNotifier.send_later(:deliver_notify_new_watcher, 
                                                 act_on, 
                                                 subscription, 
                                                 "automations rule")
         end
       end
+      record_action(act_on, watchers) if watchers.present?
     end
-    record_action(act_on, watchers) if watchers.present?
   end
 
   def add_tag(act_on)

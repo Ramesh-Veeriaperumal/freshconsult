@@ -102,7 +102,7 @@ module Helpdesk::TagsHelper
           :image => "article"
       }
     when "Archive"
-      if @archive_feature 
+      if current_account.features_included?(:archive_tickets)
         render :partial => 'tag_count', :locals => {
             :tag => tag,
             :count => mod_count,

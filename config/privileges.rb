@@ -14,15 +14,17 @@ Authority::Authorization::PrivilegeList.build do
     resource :"helpdesk/reminder"
     resource :"helpdesk/authorization"
     resource :"search/autocomplete", :only => [:requesters, :agents, :companies, :tags]
-    resource :"search/v2/autocomplete", :only => [:requesters, :agents, :companies, :tags]
+    resource :"search/v2/autocomplete", :only => [:requesters, :agents, :companies, :tags, :company_users]
+    resource :"search/v2/mobile/autocomplete", :only => [:requesters, :agents, :companies, :tags, :autocomplete_requesters]
     resource :"helpdesk/ticket", :only => [:show, :new, :create, :compose_email, :show, :index, :user_tickets,
                                            :user_ticket, :search_tweets, :custom_search, :latest_ticket_count, :add_requester, :view_ticket,
                                            :spam, :unspam, :execute_scenario, :pick_tickets,
                                            :get_ca_response_content, :merge_with_this_request, :print, :latest_note,
                                            :clear_draft, :save_draft, :prevnext, :component, :custom_search,
-                                           :quick_assign, :canned_reponse, :full_paginate, :custom_view_save, :apply_template, :accessible_templates, :search_templates,
+                                           :quick_assign, :canned_reponse, :full_paginate, :custom_view_save, :apply_template, :accessible_templates, :search_templates, :show_children,
                                            :filter_options, :filter_conditions, :activities, :status, :get_top_view, :recent_tickets, :old_tickets, :summary, :bulk_scenario,
-                                           :execute_bulk_scenario, :activitiesv2, :activities_all, :link, :unlink, :related_tickets, :ticket_association]
+                                           :execute_bulk_scenario, :activitiesv2, :activities_all, :link, :unlink, :ticket_association,
+                                           :bulk_child_tkt_create, :associated_tickets, :sentiment_feedback]
     resource :"helpdesk/subscription"
     resource :"helpdesk/tag_use"
     resource :"helpdesk/tag"
@@ -74,6 +76,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"freshfone/hold", :only => [ :add, :remove ]
     resource :"freshfone/call_history"
     resource :"freshfone/autocomplete"
+    resource :"search/v2/freshfone/autocomplete"
     resource :"freshfone/call_transfer", :only => [:initiate, :available_agents, :available_external_numbers]
     resource :"freshfone/device", :only => [:recorded_greeting]
     resource :"freshfone/queue", :only => [:bridge]
@@ -89,18 +92,22 @@ Authority::Authorization::PrivilegeList.build do
     resource :agent, :only => [:toggle_availability, :list]
     resource :"search/home", :only => [:index, :suggest, :recent_searches_tickets, :remove_recent_search]
     resource :"search/v2/suggest", :only => [:index]
+    resource :"search/v2/mobile/suggest", :only => [:index]
     resource :"search/solution", :only => [:related_solutions, :search_solutions]
     resource :"search/v2/solution", :only => [:related_solutions, :search_solutions]
+    resource :"search/v2/mobile/related_article", :only => [:index]
     resource :"search/ticket", :only => [:index]
     resource :"search/ticket_association", :only => [:index, :recent_trackers]
+    resource :"search/v2/ticket_association", :only => [:index, :recent_trackers]
     resource :"search/v2/ticket", :only => [:index]
+    resource :"search/v2/mobile/merge_ticket", :only => [:index]
     resource :"search/v2/spotlight", :only => [:all, :tickets]
-    resource :"chat", :only => [:create_ticket, :add_note, :agents, :enable, :index, :visitor, :get_groups, :update_site, :toggle, :trigger]
-    resource :"chat_widget", :only => [:update, :toggle, :enable] 
+    resource :"chat", :only => [:create_ticket, :add_note, :agents, :enable, :index, :visitor, :get_groups, :update_site, :toggle, :trigger, :export, :download_export]
+    resource :"chat_widget", :only => [:update, :toggle, :enable]
     resource :"helpdesk/survey"
     resource :"admin/data_export" , :only => [:download]
     resource :"notification/product_notification", :only => [:index]
-    resource :"helpdesk/common", :only => [:status_groups]
+    resource :"helpdesk/common", :only => [:fetch_company_by_name, :status_groups]
 
     # ticket_templates
     resource :"helpdesk/ticket_template"
@@ -109,8 +116,8 @@ Authority::Authorization::PrivilegeList.build do
     resource :"helpdesk/canned_responses/folder", :only => [:index, :show]
     resource :"helpdesk/canned_responses/response"
 
-    resource :"helpdesk/archive_ticket", :only => [:show, :index, :custom_search, :latest_note, 
-                                                    :full_paginate,  :activities, :component, :prevnext, :activitiesv2]                                                
+    resource :"helpdesk/archive_ticket", :only => [:show, :index, :custom_search, :latest_note,
+                                                    :full_paginate,  :activities, :component, :prevnext, :activitiesv2]
     resource :"helpdesk/archive_note", :only => [:index, :full_text]
 
     resource :"wf/filter", :only => [:index, :update_filter, :save_filter, :delete_filter]
@@ -122,15 +129,15 @@ Authority::Authorization::PrivilegeList.build do
 
     resource :"satisfaction_rating", :only => [:create, :survey_results]
 
-    # This privilege should only be used for API. This should have only read permission. 
+    # This privilege should only be used for API. This should have only read permission.
     # Agent who has access to ticket create will obviously know the custom field names.
     # So access to read the list of custom fields for an account through API should also be given at the same level of privilege as ticket create.
-    resource :api_ticket_field, :only => [:index] 
-	end
+    resource :api_ticket_field, :only => [:index]
+  end
 
   export_tickets do
     resource :"helpdesk/ticket", :only => [:configure_export, :export_csv]
-    resource :"helpdesk/archive_ticket", :only => [:configure_export, :export_csv]                                            
+    resource :"helpdesk/archive_ticket", :only => [:configure_export, :export_csv]
   end
 
   reply_ticket do
@@ -144,7 +151,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"helpdesk/note", :only => [:create]
     resource :"social/twitter",
       :only => [:create_fd_item, :reply, :retweet, :post_tweet, :favorite, :unfavorite, :followers, :follow, :unfollow]
-    
+
     # Used for API V2
     resource :"conversation", :only => [:reply]
   end
@@ -163,7 +170,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"helpdesk/ticket", :only => [:edit, :update, :update_ticket_properties, :assign_to_agent, :assign, :close,
                                            :close_multiple, :update_multiple_tickets, :change_due_by]
     resource :"helpdesk/bulk_ticket_action"
-    
+
     # Used for API V2
     resource :"ticket", :only => [:update, :assign]
   end
@@ -177,7 +184,7 @@ Authority::Authorization::PrivilegeList.build do
 
   edit_note do
     resource :"helpdesk/note", :only => [:edit, :update], :owned_by => { :scoper => :notes }
-    
+
     # Used for API V2
     resource :"conversation", only: [:update], :owned_by => { :scoper => :notes }
   end
@@ -192,7 +199,7 @@ Authority::Authorization::PrivilegeList.build do
   edit_time_entries do
     resource :"helpdesk/time_sheet", :only => [:edit, :update, :destroy], :owned_by =>
       { :scoper => :time_sheets }
-    
+
     # Used for API V2
     resource :"time_entry", :only => [:update, :destroy, :toggle_timer], :owned_by =>
       { :scoper => :time_sheets }
@@ -200,7 +207,7 @@ Authority::Authorization::PrivilegeList.build do
 
   delete_ticket do
     resource :"helpdesk/ticket", :only => [:destroy, :restore, :delete_forever, :delete_forever_spam,  :empty_trash, :empty_spam]
-    
+
     # Used for API V2
     resource :"ticket", :only => [:restore, :destroy]
   end
@@ -226,7 +233,7 @@ Authority::Authorization::PrivilegeList.build do
   publish_solution do
     resource :"solution/article", :only => [:new, :create, :edit, :update, :delete_tag, :reorder, :properties, :move_to, :move_back, :mark_as_outdated, :mark_as_uptodate]
     resource :"solution/tag_use"
-    resource :solutions_uploaded_image, :only => [:create, :create_file]
+    resource :solutions_uploaded_image, :only => [:create, :create_file, :index]
     resource :"solution/draft", :only => [:autosave, :publish, :attachments_delete, :destroy]
 
     # Used by V2 API
@@ -350,6 +357,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :company,  :only => [:new, :create, :edit, :update, :create_company, :update_company, :update_notes, :quick, :sla_policies]
     resource :"search/autocomplete", :only => [:companies]
     resource :"search/v2/autocomplete", :only => [:companies]
+    resource :"search/v2/mobile/autocomplete", :only => [:companies]
     resource :customers_import
     resource :contact_merge
     resource :"search/v2/merge_contact", :only => [:index]
@@ -364,7 +372,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"api_contact", :only => [:create, :update]
     resource :"api_company", :only => [:create, :update]
 
-    # This privilege should only be used for API. This should have only read permission. 
+    # This privilege should only be used for API. This should have only read permission.
     # Agent who has access to contact/company create will obviously know the custom field names.
     # So access to read the list of custom fields for an account through API should also be given at the same level of privilege as contact/company create.
     resource :api_contact_field, :only => [:index]
@@ -384,14 +392,14 @@ Authority::Authorization::PrivilegeList.build do
   end
 
 
-  export_customers do 
+  export_customers do
     resource :contact, :only =>  [:configure_export, :export_csv]
     resource :company,  :only => [:configure_export, :export_csv]
   end
 
   # ************** REPORTS **************************
 
-	view_reports do
+  view_reports do
       resource :report
       resource :"reports/agent_glance_report"
       resource :"reports/agents_analysi"
@@ -439,7 +447,7 @@ Authority::Authorization::PrivilegeList.build do
   manage_users do
     # NOTE: The agent show action is also allowed in view_contacts privilege
     resource :agent, :only => [:new, :create, :edit, :update, :index, :destroy, :show, :delete_avatar,
-                               :restore, :convert_to_user, :reset_password, :create_multiple_items, :convert_to_contact, 
+                               :restore, :convert_to_user, :reset_password, :create_multiple_items, :convert_to_contact,
                                :configure_export, :export_csv, :reset_score]
     resource :agent, :only => [:toggle_shortcuts], :owned_by => { :scoper => :agents }
     resource :contact, :only => [:make_agent, :make_occasional_agent]
@@ -541,18 +549,19 @@ Authority::Authorization::PrivilegeList.build do
     resource :"integrations/salesforce"
     resource :"integrations/freshsale"
     resource :"integrations/slack_v2", :only => [:oauth, :new, :install, :edit, :update]
+    resource :"integrations/outlook_contact", :only => [:install, :settings, :edit, :destroy, :update, :render_fields, :new]
     resource :"integrations/cti_admin"
     resource :"admin/integrations/freshplug"
     resource :"admin/marketplace/extension"
     resource :"admin/marketplace/installed_extension"
     resource :"doorkeeper/authorization"
-  	resource :"admin/ecommerce/account",:only => [:index]
+    resource :"admin/ecommerce/account",:only => [:index]
     resource :"admin/ecommerce/ebay_account"
     resource :"freshfone/dashboard", :only => [:index]
     resource :"integrations/marketplace_app"
 
     # Used by API V2
-    resource :api_ticket_field, :only => [:index] 
+    resource :api_ticket_field, :only => [:index]
     resource :api_contact_field, :only => [:index]
     resource :api_company_field , :only => [:index]
     resource :"api_business_hour", :only => [:index, :show]
@@ -576,6 +585,7 @@ Authority::Authorization::PrivilegeList.build do
     # new item day passes && getting started
     resource :"admin/day_pass"
     resource :"admin/freshfone/credit"
+    resource :"admin/onboarding"
     resource :"admin/getting_started"
     resource :"agent", :only => [:api_key]
   end

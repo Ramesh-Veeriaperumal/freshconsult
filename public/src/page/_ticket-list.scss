@@ -103,6 +103,16 @@
 	>.lead{
 		margin-bottom:10px;
 	}
+	.filter-loading{
+		position: absolute;
+		width: 100%;
+		height: 100%;
+		background: #fff;
+		z-index: 999;
+		.spinner{
+			top: 100px !important;
+		}
+	}
 	#view_manage_links {
 		visibility: hidden;
 		display: inline-block;
@@ -879,6 +889,17 @@
 		}
 	}
 
+}
+
+.parent_error_alert {
+	padding: 5px 35px 5px 14px;
+	margin: 0;
+	margin-bottom: 10px;
+	color: #9e0000;
+
+	.close {
+		top: 2px;
+	}
 }
 
 #ticket-toolbar [disabled] {

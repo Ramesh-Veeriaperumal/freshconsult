@@ -20,6 +20,26 @@ class Search::Utils
     portal_spotlight_topic:           'portalSpotlightTopic',
     portal_spotlight_topic_exact:     'portalSpotlightTopicExact',
     portal_related_articles:          'portalRelatedArticles',
+    ko_portal_spotlight_global:             'koreanPortalSpotlightGlobal',
+    ko_portal_spotlight_global_exact:       'koreanPortalSpotlightGlobalExact',
+    ko_portal_spotlight_solution:           'koreanPortalSpotlightSolution',
+    ko_portal_spotlight_solution_exact:     'koreanPortalSpotlightSolutionExact',
+    ko_portal_related_articles:             'koreanPortalRelatedArticles',
+    ru_ru_portal_spotlight_global:          'russianPortalSpotlightGlobal',
+    ru_ru_portal_spotlight_global_exact:    'russianPortalSpotlightGlobalExact',
+    ru_ru_portal_spotlight_solution:        'russianPortalSpotlightSolution',
+    ru_ru_portal_spotlight_solution_exact:  'russianPortalSpotlightSolutionExact',
+    ru_ru_portal_related_articles:          'russianPortalRelatedArticles',
+    ja_jp_portal_spotlight_global:          'japanesePortalSpotlightGlobal',
+    ja_jp_portal_spotlight_global_exact:    'japanesePortalSpotlightGlobalExact',
+    ja_jp_portal_spotlight_solution:        'japanesePortalSpotlightSolution',
+    ja_jp_portal_spotlight_solution_exact:  'japanesePortalSpotlightSolutionExact',
+    ja_jp_portal_related_articles:          'japanesePortalRelatedArticles',
+    zh_cn_portal_spotlight_global:          'chinesePortalSpotlightGlobal',
+    zh_cn_portal_spotlight_global_exact:    'chinesePortalSpotlightGlobalExact',
+    zh_cn_portal_spotlight_solution:        'chinesePortalSpotlightSolution',
+    zh_cn_portal_spotlight_solution_exact:  'chinesePortalSpotlightSolutionExact',
+    zh_cn_portal_related_articles:          'chinesePortalRelatedArticles',
     contact_merge:                    'contactMerge',
     contact_merge_exact:              'contactMergeExact',
     agent_autocomplete:               'agentAutocomplete',
@@ -39,6 +59,22 @@ class Search::Utils
     agent_spotlight_ticket_exact:     'agentSpotlightTicketExact',
     agent_spotlight_solution:         'agentSpotlightSolution',
     agent_spotlight_solution_exact:   'agentSpotlightSolutionExact',
+    ko_agent_spotlight_solution:            'koreanAgentSpotlightSolution',
+    ko_agent_spotlight_solution_exact:      'koreanAgentSpotlightSolutionExact',
+    ko_agent_insert_solution:               'koreanAgentInsertSolution',
+    ko_agent_insert_solution_exact:         'koreanAgentInsertSolution',
+    ru_ru_agent_spotlight_solution:         'russianAgentSpotlightSolution',
+    ru_ru_agent_spotlight_solution_exact:   'russianAgentSpotlightSolutionExact',
+    ru_ru_agent_insert_solution:            'russianAgentInsertSolution',
+    ru_ru_agent_insert_solution_exact:      'russianAgentInsertSolution',
+    ja_jp_agent_spotlight_solution:         'japaneseAgentSpotlightSolution',
+    ja_jp_agent_spotlight_solution_exact:   'japaneseAgentSpotlightSolutionExact',
+    ja_jp_agent_insert_solution:            'japaneseAgentInsertSolution',
+    ja_jp_agent_insert_solution_exact:      'japaneseAgentInsertSolution',
+    zh_cn_agent_spotlight_solution:         'chineseAgentSpotlightSolution',
+    zh_cn_agent_spotlight_solution_exact:   'chineseAgentSpotlightSolutionExact',
+    zh_cn_agent_insert_solution:            'chineseAgentInsertSolution',
+    zh_cn_agent_insert_solution_exact:      'chineseAgentInsertSolution',
     agent_spotlight_topic:            'agentSpotlightTopic',
     agent_spotlight_topic_exact:      'agentSpotlightTopicExact',
     agent_spotlight_customer:         'agentSpotlightCustomer',
@@ -48,7 +84,23 @@ class Search::Utils
     merge_subject_exact:              'mergeSubjectExact',
     merge_requester:                  'mergeRequester',
     merge_topic_search:               'mergeTopicSearch',
-    merge_topic_search_exact:         'mergeTopicSearchExact'
+    merge_topic_search_exact:         'mergeTopicSearchExact',
+    assoc_tickets_display_id:         'assocTicketsDisplayId',
+    assoc_tickets_subject:            'assocTicketsSubject',
+    assoc_tickets_requester:          'assocTicketsRequester',
+    assoc_recent_trackers:            'assocRecentTrackers',
+    mobile_suggest_tickets:           'mobileSuggestTickets',
+    mobile_suggest_customers:         'mobileSuggestCustomers',
+    mobile_suggest_solutions:         'mobileSuggestSolutions',
+    mobile_suggest_topics:            'mobileSuggestTopics',
+    mobile_suggest_global:            'mobileSuggestGlobal',
+    ff_contact_by_props:              'freshfoneContactSearch',
+    ff_contact_by_phone:              'freshfoneContactByNumbers',
+    ff_contact_by_caller:             'freshfoneContactByCaller',
+    ff_contact_by_numfields:          'freshfoneContactByNumberfields',
+    company_v2_search:                'companyApiSearch',
+    hstickets_dispid:                 'hsTicketsByDisplayId',
+    hstickets_subject:                'hsTicketsBySubject'
   }
 
   # _Note_: Parent ID to be used for routing.
@@ -115,8 +167,12 @@ class Search::Utils
 
   # Returns partial/exact match template
   #
-  def self.template_context(context, exact_match)
+  def self.template_context(context, exact_match, locale=nil)
     template_key = (exact_match ? "#{context}_exact" : context).to_sym
+    
+    lang_template_key = [locale.underscore, template_key].join('_').to_sym if locale.present?
+    template_key = lang_template_key if TEMPLATE_BY_CONTEXT.has_key?(lang_template_key)
+
     template_key = context unless TEMPLATE_BY_CONTEXT.has_key?(template_key) # To-do: Bad hack. Revisit.
     template_key
   end

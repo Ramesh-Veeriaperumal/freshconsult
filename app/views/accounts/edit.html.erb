@@ -121,6 +121,17 @@
 								<div class="help-block"><%=t('account.info4')%></div>
 					  		</div>
 						</div>
+						<% if current_account.subscription.non_sprout_plan? %>
+							<div class="control-group account-forum-toggle">
+								<%= f.label :account_forums, t('account.forums_toggle.title') , :class => "control-label" %>
+								<div class="controls">		    	
+		              <%= f.feature_check_box :forums, { :id => 'account_forum_enabled', :checked => current_account.features_included?(:forums) }, 1, 0 %>
+		              <div class="help-block"><%= t('account.forums_toggle.helpnote') %></div>
+		            </div>
+	            </div>
+            <% end %>
+
+
 						<div class="control-group">
 							<%= content_tag(:label, t('account.page_colors.title'), :class => "control-label" ) %>
 							<div class="controls">
@@ -266,7 +277,10 @@
 		}
 	})
 
-
+	<% if current_account.subscription.non_sprout_plan? %>
+    jQuery("#account_forum_enabled").itoggle();
+  <% end %>
+  
 	<% if @restricted_helpdesk_launched %>
 
 

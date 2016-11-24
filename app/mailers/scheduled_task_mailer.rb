@@ -1,8 +1,12 @@
 class ScheduledTaskMailer < ActionMailer::Base
   
+  include EmailHelper
   def expired_task task
     required_params task
     headers = mail_headers
+   
+    add_log_info 'expired_task'
+    headers = mail_headers(nil, task.account_id, "Expired Task")
 
     mail(headers) do |part|
       part.text { render "expired_task.plain" }
@@ -12,11 +16,13 @@ class ScheduledTaskMailer < ActionMailer::Base
   
   def notify_blocked_or_deleted task, options
     @to_emails = task.user.email
-    headers = mail_headers({subject: "[Important] Scheduled Report - Recipient Update Required"})
+    headers = mail_headers({subject: "[Important] Scheduled Report - Recipient Update Required"}, task.account_id, "Notify Blocked or Deleted")
 
     @task = task
     @user = task.user
     @options = options
+    
+    add_log_info 'notify_blocked_or_deleted'
 
     mail(headers) do |part|
       part.text { render "blocked_user_or_email.plain" }
@@ -26,12 +32,14 @@ class ScheduledTaskMailer < ActionMailer::Base
   
   def notify_downgraded_user task, options
     @to_emails = task.user.email
-    headers = mail_headers({subject: "[Important] Scheduled Report - Recipient Update Required"})
+    headers = mail_headers({subject: "[Important] Scheduled Report - Recipient Update Required"}, task.account_id, "Notify Downgraded User")
     
     @task = task
     @user = task.user
     @options = options
 
+    add_log_info 'notify_downgraded_user'
+    
     mail(headers) do |part|
       part.text { render "notify_downgraded_user.plain" }
       part.html { render "notify_downgraded_user.html" }
@@ -42,7 +50,7 @@ class ScheduledTaskMailer < ActionMailer::Base
     required_params task
 
     if @to_emails.present?
-      headers = mail_headers
+      headers = mail_headers(nil, task.account_id, "Email Scheduled Report")
       
       if options[:file_path].present?
         attachment_name = get_attachment_file_name(options[:file_path])
@@ -50,7 +58,9 @@ class ScheduledTaskMailer < ActionMailer::Base
       else
         @export_url = options[:export_url]
       end
-      
+
+      add_log_info 'email_scheduled_report'
+
       mail(headers) do |part|
         part.text { render "email_scheduled_report.plain" }
         part.html { render "email_scheduled_report.html" }
@@ -61,7 +71,9 @@ class ScheduledTaskMailer < ActionMailer::Base
   
   def report_no_data_email options, task
     required_params task
-    headers = mail_headers
+    headers = mail_headers(nil, task.account_id, "Report No Data Email")
+
+    add_log_info 'report_no_data_email'
 
     mail(headers) do |part|
       part.text { render "report_no_data_email.plain" }
@@ -78,9 +90,9 @@ class ScheduledTaskMailer < ActionMailer::Base
   
 private
 
-  def mail_headers options = {}
-    {
-      :subject     => options[:subject] || mail_subject,
+  def mail_headers(options = {}, account_id, n_type)
+    headers = {
+      :subject     => (!options.nil? && !options[:subject].nil?) ? options[:subject] : mail_subject,
       :to          => @to_emails,
       :from        => AppConfig['from_email'],
       "Reply-to"   => "",
@@ -88,6 +100,7 @@ private
       "Auto-Submitted" => "auto-generated",
       "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     }
+    headers.merge!(make_header(nil, nil, account_id, n_type))
   end
   
   def mail_subject
@@ -145,5 +158,8 @@ private
     file_name_arr.pop #removing secure random code
     file_name = file_name_arr.first.gsub(/_+/,"_").slice(0,235)
     "#{file_name}-#{file_name_arr[1..-1].join("-")}.#{format}"
+  end
+  def add_log_info action
+    HelpdeskReports::Logger.log("scheduled : triggering email : #{action} : account_id: #{@user.account.id}, agent_id: #{@user.id}, agent_email: #{@user.email}")
   end
 end

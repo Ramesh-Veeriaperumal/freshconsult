@@ -11,9 +11,8 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
+ActiveRecord::Schema.define(:version => 20161103085738) do
 
-ActiveRecord::Schema.define(:version => 20160921145313) do
-  
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
     t.integer  "account_id",           :limit => 8
@@ -57,9 +56,12 @@ ActiveRecord::Schema.define(:version => 20160921145313) do
     t.string   "google_domain"
     t.boolean  "ssl_enabled",                    :default => false
     t.boolean  "premium",                        :default => false
+    t.integer  "reputation",        :limit => 1, :default => 0
+    t.string   "plan_features"
   end
 
   add_index "accounts", ["full_domain"], :name => "index_accounts_on_full_domain", :unique => true
+  add_index "accounts", ["reputation"], :name => "index_accounts_on_reputation"
   add_index "accounts", ["time_zone"], :name => "index_accounts_on_time_zone"
 
   create_table "achieved_quests", :force => true do |t|
@@ -365,6 +367,17 @@ ActiveRecord::Schema.define(:version => 20160921145313) do
   end
 
   add_index "business_calendars", ["account_id"], :name => "index_business_calendars_on_account_id"
+
+  create_table "helpdesk_broadcast_messages", :force => true do |t|
+    t.integer  "account_id",         :limit => 8
+    t.integer  "tracker_display_id", :limit => 8
+    t.integer  "note_id",            :limit => 8
+    t.text     "body",               :limit => 16777215
+    t.text     "body_html",          :limit => 16777215
+    t.timestamps
+  end
+
+  add_index "helpdesk_broadcast_messages", ["account_id", "tracker_display_id"], :name => "index_broadcast_messages_on_account_id_tracker_display_id"
 
   create_table "ca_folders", :force => true do |t|
     t.string   "name"
@@ -1417,7 +1430,7 @@ ActiveRecord::Schema.define(:version => 20160921145313) do
     t.datetime "expires_on"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "twilio_client_version",   :limit => 10, :default => "1.2"
+    t.string   "twilio_client_version",   :limit => 10, :default => "1.3"
     t.boolean  "security_whitelist",                         :default => false
     t.text     "triggers"
     t.boolean  "caller_id_enabled",                     :default => false
@@ -3836,6 +3849,17 @@ ActiveRecord::Schema.define(:version => 20160921145313) do
   add_index "ticket_templates", ["account_id", "name"], :name => "index_ticket_templates_on_account_id_and_name", :length => {"account_id"=>nil, "name"=>20}
   add_index "ticket_templates", ["account_id", "association_type"], :name => "index_ticket_templates_on_account_id_and_association_type"
 
+  create_table "parent_child_templates", :force => true do |t|
+    t.integer "account_id",         :limit => 8
+    t.integer "parent_template_id", :limit => 8, :null => false
+    t.integer "child_template_id",  :limit => 8, :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "parent_child_templates", ["parent_template_id"], :name => "index_parent_child_templates_on_parent_template_id"
+  add_index "parent_child_templates", ["child_template_id"], :name => "index_parent_child_templates_on_child_template_id"
+
   create_table "ticket_topics", :force => true do |t|
     t.integer  "ticket_id",       :limit => 8
     t.integer  "topic_id",        :limit => 8
@@ -4015,6 +4039,7 @@ ActiveRecord::Schema.define(:version => 20160921145313) do
     t.string   "string_uc04"
     t.string   "string_uc05"
     t.string   "string_uc06"
+    t.string   "unique_external_id"
   end
 
   add_index "users", ["email", "account_id"], :name => "index_users_on_email_and_account_id", :unique => true
@@ -4025,6 +4050,7 @@ ActiveRecord::Schema.define(:version => 20160921145313) do
   add_index "users", ["account_id", "name"], :name => "index_users_on_account_id_and_name"
   add_index "users", ["account_id", "phone"], :name => "index_users_on_account_id_phone"
   add_index "users", ["account_id", "twitter_id"], :name => "index_users_on_account_id_twitter_id"
+  add_index "users", ["account_id", "unique_external_id"], :name => "index_users_on_account_id_and_unique_external_id", :unique => true
   add_index "users", ["customer_id", "account_id"], :name => "index_users_on_customer_id_and_account_id"
   add_index "users", ["perishable_token", "account_id"], :name => "index_users_on_perishable_token_and_account_id"
   add_index "users", ["persistence_token", "account_id"], :name => "index_users_on_persistence_token_and_account_id"
@@ -4101,5 +4127,49 @@ ActiveRecord::Schema.define(:version => 20160921145313) do
     t.integer "user_id",    :limit => 8
     t.integer "account_id", :limit => 8
   end
+
+  create_table "sync_accounts", :force => true do |t|
+    t.string   "name"
+    t.string   "email"
+    t.string   "oauth_token",              :limit => 1000
+    t.string   "refresh_token",            :limit => 1000
+    t.integer  "account_id",               :limit => 8
+    t.integer  "installed_application_id", :limit => 8
+    t.boolean  "active",                                   :default => true
+    t.string   "sync_group_id"
+    t.string   "sync_group_name",                          :default => "Freshdesk Contacts", :null => false
+    t.integer  "sync_tag_id",              :limit => 8
+    t.datetime "sync_start_time"
+    t.datetime "last_sync_time"
+    t.boolean  "overwrite_existing_user",                  :default => false
+    t.string   "last_sync_status"
+    t.text     "configs"
+    t.datetime "created_at",                                                                 :null => false
+    t.datetime "updated_at",                                                                 :null => false
+  end
+
+  add_index "sync_accounts", ["installed_application_id", "email"], :name => "index_sync_accounts_on_installed_application_id_email", :unique => true
+
+  create_table "sync_entity_mappings", :force => true do |t|
+    t.integer  "user_id",         :limit => 8
+    t.string   "entity_id"
+    t.integer  "sync_account_id", :limit => 8
+    t.integer  "account_id",      :limit => 8
+    t.text     "configs"
+    t.datetime "created_at",                   :null => false
+    t.datetime "updated_at",                   :null => false
+  end
+
+  add_index "sync_entity_mappings", ["sync_account_id", "account_id", "user_id", "entity_id"], :name => "index_on_sync_account_id_account_id_user_id_entity_id", :unique => true
+
+  create_table "account_webhook_keys", :force => true do |t|
+    t.integer "account_id", :limit => 8, :null => false
+    t.string  "webhook_key", :limit => 35
+    t.integer "vendor_id", :limit => 11
+    t.integer "status", :limit => 1
+  end
+
+  add_index "account_webhook_keys", ["account_id", "vendor_id"], :name => 'index_account_webhook_keys_on_account_id_and_vendor_id'
+  add_index "account_webhook_keys", "webhook_key", :unique => true
 
 end

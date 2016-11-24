@@ -11,7 +11,9 @@ var MarketplaceBrowser  = Class.create({
          						.on("click.nc_apps_evt", this.settingsLinks.appBrowserClose, this.onCloseBtnClick.bindAsEventListener(this))
          						.on("change.nc_apps_evt", this.settingsLinks.activationSwitch, this.activationSwitchOnOFF.bindAsEventListener(this))
                     .on("click.nc_apps_evt", this.settingsLinks.deleteBtn, this.onDeleteApp.bindAsEventListener(this))
+                    .on("click.nc_apps_evt", this.settingsLinks.reauthorizeBtn, this.onReauthorizeApp.bindAsEventListener(this))
                     .on("click.nc_apps_evt", ".delete-confirm", this.onConfirmDelete.bindAsEventListener(this))
+                    .on("click.nc_apps_evt", ".reauthorize-confirm", this.onReauthorizeConfirm.bindAsEventListener(this))
                     .on("click.nc_apps_evt", "#integrations-list .mkt-apps, #integrations-list .cla-plugs, #integrations-list .nat-apps", this.showActions.bindAsEventListener(this));
 
 		//for closing app browser upon clicking outside on body and other than the app browser box
@@ -119,6 +121,18 @@ var MarketplaceBrowser  = Class.create({
                             versionId: jQuery(e.currentTarget).attr("data-version-id")
                           };
   },
+
+	onReauthorizeApp: function(e){
+		e.preventDefault();
+		this.reauthorizePlug =  {
+                              url: jQuery(e.currentTarget).attr("data-url")
+                            };
+	},
+
+	onReauthorizeConfirm: function(e) {
+		window.location = this.reauthorizePlug.url;
+	},
+
   onConfirmDelete: function(e) {
     var that = this;
     var el = that.deletablePlug.element;

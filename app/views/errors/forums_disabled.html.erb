@@ -1,0 +1,7 @@
+<div class="no-helpdesk unsupported-message">
+  <p> <%= t('account.forums_toggle.forums_disabled')%> </p>
+   <%= link_to t('account.forums_toggle.go_back_message'), admin_home_index_path %>
+  <% if privilege?(:manage_account) %>
+        <%= t('or') %> <%= link_to t('account.forums_toggle.enable_forums'), edit_account_path %>
+  <% end %>
+</div>

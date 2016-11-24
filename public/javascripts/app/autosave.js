@@ -102,8 +102,7 @@ Along with the above options, few flags and counters are available which are lis
       $.each(this.opts.monitorChangesOf, function (key, value) {
         var $el = $(value);
         $el.data('previousSavedData', $el.val());
-
-        $(value).on("change.autosave redactor:sync.autosave keyup.autosave", function () {
+        $(value).on("change.autosave redactor:sync.autosave froalaEditor.contentChanged keyup.autosave", function () {
           if ($el.data('previousSavedData') !== $el.val()) {
             $this.contentChanged = true;
           }

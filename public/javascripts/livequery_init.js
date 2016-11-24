@@ -2,6 +2,16 @@
 'use strict';
 
 $(document).ready(function() {
+
+$(".alert").livequery(
+	function(ev) {
+  		var flash = $(this).not('[rel=permanent]');
+  		if(flash.get(0)) {
+         	try{ closeableFlash(flash); } catch(e){}
+      	}
+	}
+)
+
 //Added for social tweet links
 $(".autolink").livequery(function(ev){
   $(this).autoLink();
@@ -165,7 +175,7 @@ $("[rel=remote-load]").livequery(
 
 		$.ajax({
 			type: 'GET',
-			url: $(this).data("url"), 
+			url: $(this).data("url"),
 			dataType: 'html',
 			success: function(html){
 				$this.html(html);
@@ -185,27 +195,53 @@ $("[rel=remote-load]").livequery(
 // Uses the date format specified in the data attribute [date-format], else the default one 'yy-mm-dd'
 $("input.datepicker_popover").livequery(
 	function() {
-		var dateFormat = 'yy-mm-dd';
-		if($(this).data('date-format')) {
-			dateFormat = $(this).data('date-format');
-		}
+
+      var dateFormat = $(this).data('date-format') || 'yy-mm-dd';
+      var cloneId = createDatePickerClone(this);
+
+jQuery.validator.addClassRules("date", {
+				date: false
+				});
+
+
+
 		$(this).datepicker({
-			dateFormat: dateFormat,
-			 changeMonth: true,
-             changeYear: true,
+			// dateFormat: dateFormat,
+        dateFormat: getDateFormat('datepicker'),
+			changeMonth: true,
+            changeYear: true,
+        altField: cloneId,
+    		altFormat: 'yy-mm-dd',
 			beforeShow: function(){
 				Helpdesk.calenderSettings.insideCalendar = true;
 				Helpdesk.calenderSettings.closeCalendar = false;
 			},
 			onClose: function(){
 				Helpdesk.calenderSettings.closeCalendar = true;
-			}
+			},
+			showOn: "both",
+			buttonText: "<i class='ficon-date'></i>",
 		});
-		if($(this).data('showImage')) {
-			$(this).datepicker('option', 'showOn', "both" );
-			$(this).datepicker('option', 'buttonText', "<i class='ficon-date'></i>" );
 
-		}
+      if($(this).val() !== ""){
+          
+		      $(this).datepicker("setDate",new Date($(this).val()));
+      }
+
+
+
+
+// if((jQuery('#'+idForCloneElement).data('initial-val'))!="empty")
+// {
+// 	var getDateVal = (jQuery('#'+'clone_'+idForCloneElement).val());
+//   	var DateVal = new Date(getDateVal);
+//   	jQuery('#'+idForCloneElement).datepicker('setDate', DateVal);
+// }
+
+
+
+
+
 		// custom clear button
 		var clearButton =  jQuery(this).siblings('.dateClear');
 		if(clearButton.length === 0) {
@@ -226,11 +262,14 @@ $("input.datepicker_popover").livequery(
 		});
 		clearButton.on('click', function(e) {
 			 jQuery(this).siblings('input.date').val("");
-			 jQuery(this).hide(); 
+			 jQuery(this).hide();
+			 jQuery(cloneId).val("");
 		 });
 		// clear button ends
 	}
 );
+
+
 
 $('input.datetimepicker_popover').livequery(
 	function() {
@@ -285,7 +324,7 @@ $("input.select2").livequery(
 			return "  ";
 			}
 		}
-		
+
 		$(this).select2($.extend( defaults, $(this).data()));
 	},
 	function(){
@@ -298,9 +337,21 @@ $("div.request_mail").livequery(function(){ quote_text(this); });
 
 $("input.datepicker").livequery(
 	function(){
-		$(this).datepicker(
-			$.extend( {}, $(this).data() , { dateFormat: getDateFormat('datepicker'),changeMonth: true,changeYear: true }  )
-			)
+      var cloneId = createDatePickerClone(this);
+		$(this).datepicker($.extend( {}, $(this).data() ,
+                  {
+                      dateFormat: getDateFormat('datepicker'),
+                    changeMonth: true,
+                    changeYear: true,
+                    altField: cloneId,
+                    altFormat: "yy-mm-dd"
+                  }));
+      if($(this).val() !== ""){
+        
+		    $(this).datepicker("setDate",new Date($(this).val()));
+    }
+
+
 	}
 );
 
@@ -438,7 +489,7 @@ $('.btn-collapse').livequery(
 );
 
 	// Image enlarger - Ticket details
-	$("[rel='image-enlarge'] img").livequery(function () {			
+	$("[rel='image-enlarge'] img").livequery(function () {
     var img = $(this);
   	$("<img/>")
     .attr("src", img.attr("src"))
@@ -453,7 +504,7 @@ $('.btn-collapse').livequery(
 
       if(aspectRatio !== originalAspectRatio) {
         img.outerHeight(outerWidth/originalAspectRatio);
-        
+
         if(!img.parent('a').get(0)) {
 			  	img.wrap(function(){
 				    return "<a target='_blank' class='image-enlarge-link' href='" + this.src + "'/>";
@@ -466,46 +517,82 @@ $('.btn-collapse').livequery(
 
 	// Remote tags
 	// default value should be given in VALUE attribute
-	// 
+	//
 	$('[rel=remote-tag]').livequery(function() {
 		var hash_val = []
 		var _this = $(this);
-		_this.val().split(",").each(function(item, i){ hash_val.push({ id: item, text: item }); });
-		_this.select2({
+		var select_init_data = {
 			multiple: true,
+			minimumInputLength: 1,
 			maximumInputLength: 32,
 			data: hash_val,
 			quietMillis: 500,
-			ajax: { 
-        url: '/search/autocomplete/tags',
-        dataType: 'json',
-        data: function (term) {
-            return { q: term };
-        },
-        results: function (data) {
-          var results = [];
-          jQuery.each(data.results, function(i, item){
-          	var result = escapeHtml(item.value);
-            results.push({ id: result, text: result });
-          });
-          return { results: results }
-        }
+			ajax: {
+			        url: '/search/autocomplete/tags',
+			        dataType: 'json',
+			        data: function (term) {
+			            return { q: term };
+			        },
+			        results: function (data) {
+			          var results = [];
+			          jQuery.each(data.results, function(i, item){
+			          	var result = escapeHtml(item.value);
+			            results.push({ id: result, text: result });
+			          });
+			          return { results: results }
+			        }
 			},
 			initSelection : function (element, callback) {
 			  callback(hash_val);
 			},
-		    formatInputTooLong: function () { 
-      	return MAX_TAG_LENGTH_MSG; },
-		  createSearchChoice:function(term, data) { 
-		  	//Check if not already existing & then return
-        if ($(data).filter(function() { return this.text.localeCompare(term)===0; }).length===0)
-	        return { id: term, text: term };
-		    }
-				});
-		}, function(){
-			$(this).select2('destroy');
-		});
+			formatInputTooShort : function (input, min) {
+      				return I18n.t('validation.select2_minimum_limit', {char_count : min - input.length});
+      			},
+		    	formatInputTooLong: function () {
+      				return MAX_TAG_LENGTH_MSG;
+      			}
+		};
 
+		if(_this.data('allowCreate') != false){
+			select_init_data.createSearchChoice = function(term, data) {
+		  	//Check if not already existing & then return
+			        if ($(data).filter(function() { return this.text.localeCompare(term)===0; }).length===0)
+				        return { id: term, text: term };
+			};
+		}
+		_this.val().split(",").each(function(item, i){ hash_val.push({ id: item, text: item }); });
+		_this.select2(select_init_data);
+	}, function(){
+		$(this).select2('destroy');
+	});
 });
+
+    // Create a clone element for datepicker and return its id with a #
+    function createDatePickerClone(originalEl){
+        var $el = $(originalEl);
+
+        // Cloning date element to process in ISO format
+	      var $cloneEl = $el.clone().removeAttr('class data-date-format');
+
+        // Generating UUID based on timestamp, if there is no id value
+	      var originalId = $el.prop("id") || new Date().getTime().toString();
+
+        var cloneId = 'clone_' + originalId;
+
+        // Append and hide the cloned element
+  	    $cloneEl.attr('id', cloneId)
+            .insertAfter(originalEl)
+            .hide();
+
+        // Removing the name attribute so that it can not be submitted via form
+  	    $el.removeAttr('name');
+
+        // Setting initial value for datepicker initialization
+        var initialValue = $el.val() === "" ? 'empty' : $el.val();
+        $el.attr('data-initial-val',initialValue);
+
+        return  '#' + cloneId;
+        
+    }
 
 })(jQuery);

@@ -16,7 +16,7 @@ class Discussions::TopicsController < ApplicationController
 	before_filter :after_destroy_path, :only => :destroy
 	before_filter :verify_ticket_permission, :redirect_for_ticket , :only => [:new, :create]
 
-	before_filter { |c| c.requires_feature :forums }
+	before_filter { |c| c.requires_forums_feature }
 	before_filter { |c| c.check_portal_scope :open_forums }
 
 	before_filter :set_selected_tab

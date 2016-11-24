@@ -1,23 +1,7 @@
 <!-- Note: when any changes made to TICKET_FIELD_ELEMENTS PARTIAL in the future, 
       please update the memcache key version. key_name :: COMPOSE_EMAIL_FORM  -->
 <% 
-  default_field_order = [
-      "default_priority", "default_status",
-      "default_source", "default_ticket_type",
-      "default_group",
-      "default_agent",
-      "default_product",
-      "default_company"
-  ]
-  default_field_order = ["default_priority", "default_status",
-      "default_group", 
-      "default_agent", 
-      "default_internal_group",
-      "default_internal_agent",
-      "default_source", "default_ticket_type",
-      "default_product",
-      "default_company"
-      ] if Account.current.features?(:shared_ownership)
+  field_order = Helpdesk::TicketField.default_field_order
 
   default_fields = []
   custom_fields = []
@@ -52,7 +36,7 @@
     section_container += construct_new_section_fields(form_builder, :helpdesk_ticket, field, false, @ticket, !@ticket.new_record?) if field.has_section?
   end
 end
-default_fields.sort! {|x,y| default_field_order.index(x.first) <=> default_field_order.index(y.first) }
+default_fields.sort! {|x,y| field_order.index(x.first) <=> field_order.index(y.first) }
 %>
 <% default_fields.each do |field| %>
   <%= field.last %>
@@ -106,9 +90,8 @@ default_fields.sort! {|x,y| default_field_order.index(x.first) <=> default_field
   }).trigger('change');
 <% end %>
 
-<% values = params[:template_form] ? @template.template_data[:tags] : @ticket.tags.collect{|tag| tag.name}.join(',')
-%>
-<%= render :partial => "/helpdesk/tickets/remote_tags" , :locals => {:values => values }%>
+<% values = params[:template_form] ? @template.template_data[:tags] : @ticket.tags.collect{|tag| tag.name}.join(',') %>
+<%= render :partial => "/helpdesk/tickets/remote_tags" , :locals => {:values => values,  :element_id => :helpdesk_ticket_tags_input, :element_name => "helpdesk[tags]" }%>
 
 <% unless privilege?(:edit_ticket_properties) %>
   <%= javascript_tag do %> 

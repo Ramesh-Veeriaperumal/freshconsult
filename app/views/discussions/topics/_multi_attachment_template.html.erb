@@ -10,7 +10,9 @@
                     <span class="fname ellipsis">{{html Helpdesk.MultipleFileUpload.FilenameSplitter(content_file_name).fname}}</span><span class="ftype">.{{html Helpdesk.MultipleFileUpload.FilenameSplitter(content_file_name).type}}
                     </span></span>
                       <span class="file-size">(${Helpdesk.MultipleFileUpload.formatFileSize(content_file_size)})</span>
-                     <input type="hidden" name="post[ticket_attachments][][resource]" value="${id}" rel="original_attachment"/>
+                      {{if ticket_topic }}
+                        <input type="hidden" name="post[ticket_attachments][][resource]" value="${id}" rel="original_attachment"/>                   
+                      {{/if}}
               </div>
               </div>
             {{/each}}
@@ -20,7 +22,9 @@
                    <div class="existing-filelist existing-filelist-cloud " >
                     <div class="file pull-left mr10 mb10 tooltip" title="${cloud_file.filename}">
                    <i class="ficon-cross file-close" data-attach-id="${cloud_file.id}" data-cloud-file=true></i> <span class="file-name"><span class="fname ellipsis">{{html Helpdesk.MultipleFileUpload.FilenameSplitter(cloud_file.filename).fname}}</span><span class="ftype">.{{html Helpdesk.MultipleFileUpload.FilenameSplitter(cloud_file.filename).type}}</span></span> 
-                      <input type="hidden" name="post[cloud_file_attachments][][resource]" value='{{html Helpdesk.MultipleFileUpload.fileObjectConvertor(cloud_file)}}' />
+                      {{if ticket_topic }}
+                        <input type="hidden" name="post[cloud_file_attachments][][resource]" value="${id}" rel="original_attachment"/>                   
+                      {{/if}}
                   </div>
                   </div>
               {{/each}}

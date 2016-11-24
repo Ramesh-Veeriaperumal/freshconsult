@@ -1,8 +1,18 @@
-<%= link_to user_avatar(@ticket.requester, :thumb, 'preview_pic circle'), @ticket.requester, :class => 'avatar-wrap' %>
+<% if (Account.current.customer_sentiment_enabled? && current_user.language=="en") %>
+	<% survey_association = Account.current.new_survey_enabled? ? "custom_survey_results" : "survey_results" %>
+	<% unless @ticket.send(survey_association).nil? || @ticket.send(survey_association).last.nil? %>
+		<%= link_to user_avatar(@ticket.requester, :thumb, 'preview_pic circle'), @ticket.requester, :class => 'avatar-wrap' %>
+	<% else %>
+		<%= link_to senti_user_avatar(@ticket.requester, @ticket.sentiment, :thumb, 'preview_pic circle'), @ticket.requester, :class => 'avatar-wrap' %>
+	<% end %>
+<% else %>
+	<%= link_to user_avatar(@ticket.requester, :thumb, 'preview_pic circle'), @ticket.requester, :class => 'avatar-wrap' %>
+<% end %>
+
 <% fb_message = @ticket.is_fb_message? %>
 <% twitter_dm = @ticket.twitter? && @ticket.tweet.is_dm? %>
 <% fb_comment = @ticket.is_fb_comment? %>
-<div class="commentbox private-note <%= 'commentbox-social' if (fb_message || twitter_dm) %>">
+<div class="commentbox private-note <%= 'commentbox-social' if (fb_message || twitter_dm) %>" rel="customer_msg">
 	<% if fb_message %>
 		<%= content_tag(:span, "", :class => "ficon-facebook-lock commentbox-social-icon") %>
 	<% elsif twitter_dm %>
@@ -30,6 +40,14 @@
 				<%= t("ticket.deleted") %>
 			</span>
 			
+		<% end %>
+
+		<% if current_account.parent_child_tkts_enabled? %>
+			<% if @ticket.assoc_parent_ticket?%>
+				<span class="ficon-inherit-parent parent_child_icon"></span>
+			<% elsif @ticket.child_ticket?%>
+				<span class="ficon-child-icon parent_child_icon"></span>
+			<% end %>
 		<% end %>
 
 		<%

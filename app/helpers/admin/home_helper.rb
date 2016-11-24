@@ -77,7 +77,7 @@
       },
       :tags                            =>   {
         :url                           =>   "/helpdesk/tags",
-        :privilege                     =>   privilege?(:admin_tasks)
+        :privilege                     =>   privilege?(:manage_tags)
       },
       :dispatcher                      =>   {
         :url                           =>   "/admin/va_rules",
@@ -97,7 +97,7 @@
       },
       :ticket_template                 =>   {
         :url                           =>   "/helpdesk/ticket_templates",
-        :privilege                     =>   (feature?(:ticket_templates) || current_account.launched?(:helpdesk_ticket_templates)) && privilege?(:manage_ticket_templates)
+        :privilege                     =>   feature?(:ticket_templates) && privilege?(:manage_ticket_templates)
       },
       :"email-notifications"           =>   {
         :url                           =>   "/admin/email_notifications",

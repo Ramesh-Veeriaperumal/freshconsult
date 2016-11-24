@@ -15,24 +15,36 @@ module Search
       #
       def send_to_es(version, routing_id, parent_id, payload)
         path = @tenant.document_path(@type, @document_id)
+
+        send_request(path, version, routing_id, parent_id, payload)
+      end
+      
+      # Method majorly used for pinnacle sports for duplexing request
+      #
+      def send_to_multilang_es(version, routing_id, parent_id, payload, locale)
+        return unless @tenant.multilang_available?(@type, locale)
         
-        Utils::EsClient.new(:put,
-                            path,
-                            add_params(version, @tenant.id, parent_id),
-                            payload,
-                            Search::Utils::SEARCH_LOGGING[:response]).response
+        path = @tenant.multilang_document_path(@type, @document_id, locale)
+
+        send_request(path, version, routing_id, parent_id, payload)
       end
 
       # Delete individual records from ES
       #
       def remove_from_es
         path = @tenant.document_path(@type, @document_id)
-        
-        Utils::EsClient.new(:delete,
-                            path,
-                            { routing: @tenant.id },
-                            nil,
-                            Search::Utils::SEARCH_LOGGING[:response]).response
+
+        remove_request(path)
+      end
+      
+      # Method majorly used for pinnacle sports for duplexing request
+      #
+      def remove_from_multilang_es(locale)
+        return unless @tenant.multilang_available?(@type, locale)
+
+        path = @tenant.multilang_document_path(@type, @document_id, locale)
+
+        remove_request(path)
       end
 
       # Remove many records based on conditions
@@ -56,6 +68,22 @@ module Search
       end
 
       private
+      
+        def send_request(path, version, routing_id, parent_id, payload)
+          Utils::EsClient.new(:put,
+                              path,
+                              add_params(version, @tenant.id, parent_id),
+                              payload,
+                              Search::Utils::SEARCH_LOGGING[:response]).response
+        end
+        
+        def remove_request(path)
+          Utils::EsClient.new(:delete,
+                              path,
+                              { routing: @tenant.id },
+                              nil,
+                              Search::Utils::SEARCH_LOGGING[:response]).response
+        end
 
         # Pass external version to ES for OCC
         # Pass parent ID to ES for children

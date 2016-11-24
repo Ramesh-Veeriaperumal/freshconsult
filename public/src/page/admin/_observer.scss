@@ -122,6 +122,23 @@
 			 	width: 35px;
 			}
 		}
+
+		.ficon-notice-o {
+            font-weight: bold;
+            font-size: 21px;
+            position: absolute;
+            margin-top: 5px;
+            color: black;
+            margin-left: 8px;
+
+            &.ficon-rotate-180deg:before {
+                transform: rotate(180deg);
+                -webkit-transform: rotate(180deg);
+                -moz-transform: rotate(180deg);
+                -ms-transform: rotate(180deg);
+                -o-transform: rotate(180deg);
+            }
+        }
 	}	
 }
 

@@ -1,0 +1,22 @@
+<div id="freshappslist" class="applist latest clear">
+  <% for(var i=0; i < extensions.length; i++) { %>
+    <a href="#" class="fplugs-box" data-url="<%= extensions[i].url %>">
+      <figure class="figure-box">
+        <div class="app-fig-box">
+          <div class="app-img-box pull-left">
+            <img src="<%= extensions[i].cover_art['thumb'] %>" srcset="<%= extensions[i].cover_art['thumb'] %> 1x, <%= extensions[i].cover_art['thumb2x'] %> 2x" alt="<%- extensions[i].display_name %>" height="100">
+          </div>
+          <div class="app-name-box pull-left">
+            <p><%= extensions[i].display_name %></p>
+          </div>
+        </div>   
+        <figcaption class="caption slide-caption">
+          <%- extensions[i].description.substr(0, 100) %> 
+          <% if (extensions[i].description.length > 100) { %> 
+            ... <span class="view-more"><%= translate.get('view_more') %></span>
+          <% } %>
+        </figcaption> 
+      </figure>  
+    </a>
+  <% } %>
+</div>

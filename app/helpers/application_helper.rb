@@ -175,6 +175,9 @@ module ApplicationHelper
     if tab_name.eql?(:tickets)
       options.merge!({:"data-parallel-url" => "/helpdesk/tickets/filter_options", :"data-parallel-placeholder" => "#ticket-leftFilter"})
     end
+    if tab_name.eql?(:reports) && ( request.fullpath.include?("reports/custom_survey") || request.fullpath.include?("timesheet_reports") || request.fullpath.include?("phone/summary_reports") || request.fullpath.include?("freshchat/summary_reports"))
+       options.delete(:"data-pjax") 
+    end
     content_tag('li', link_to(strip_tags(title), url, options), :class => ( cls ? "active": "" ), :"data-tab-name" => tab_name )
   end
 
@@ -564,7 +567,15 @@ module ApplicationHelper
                       ['{{ticket.product_description}}', 'Product description', 'Product specific description in multiple product/brand environments.',         'ticket_product_description']
                     ]
     }
-    
+
+    #Shared ownership placeholders
+    if current_account.features?(:shared_ownership)
+      place_holders[:tickets] += 
+        [['{{ticket.internal_group.name}}',      'Internal Group name',       "",         'ticket_group_name'],
+        ['{{ticket.internal_agent.name}}',       'Internal Agent name',       "",         'ticket_agent_name'],
+        ['{{ticket.internal_agent.email}}',      'Internal Agent email',      "",         'ticket_agent_email']]
+    end
+
     # Custom Field Placeholders
     current_account.ticket_fields.custom_fields.each { |custom_field|
       nested_vals = []
@@ -598,7 +609,7 @@ module ApplicationHelper
     place_holders[:tickets] << ['{{ticket.surveymonkey_survey}}', 'Surveymonkey survey',
                       'Includes text/link to survey in Surveymonkey', 'ticket_suverymonkey_survey'
                       ] if Integrations::SurveyMonkey.placeholder_allowed?
-    
+
 
     # Ticket Public URL placeholder
     place_holders[:tickets] << ['{{ticket.public_url}}', 'Public Ticket URL' , 
@@ -694,6 +705,136 @@ module ApplicationHelper
     else
        ActionController::Base.helpers.content_tag( :div, (ActionController::Base.helpers.image_tag "/assets/misc/profile_blank_#{profile_size}.jpg", img_tag_options ), :class => profile_class, :size_type => profile_size )
     end
+  end
+
+  # Avatar helper for user profile image
+  # :medium and :small size of the original image will be saved as an attachment to the user
+  def senti_user_avatar(user, sentiment, profile_size = :thumb, profile_class = "preview_pic", options = {})
+    #Hack. prod issue. ticket: 55851. Until we find root cause. It was not rendering view at all.
+    #Remove once found the cause.
+    user = User.new if user.nil?
+    if user.avatar
+      img_url = avatar_cached_url(user, profile_size)
+      img_tag_options = {
+          :onerror => "imgerror(this)", 
+          :alt => user.name, 
+          :size_type => profile_size,
+          :data => {
+            :src => img_url,
+            :"src-retina" => img_url
+            },
+          :class => profile_size
+        }
+      senti_avatar_image_generator(img_tag_options, profile_size, profile_class, sentiment)
+    elsif is_user_social(user, profile_size).present?
+        img_tag_options = {
+          :onerror => "imgerror(this)", 
+          :alt => user.name, 
+          :size_type => profile_size,
+          :data => {
+            :src => is_user_social(user, profile_size),
+            :"src-retina" => is_user_social(user, profile_size)
+            },
+          :class => profile_size
+        }
+      senti_avatar_image_generator(img_tag_options, profile_size, profile_class, sentiment)
+    else
+        senti_avatar_generator(user.name, profile_size, profile_class, options, sentiment)
+    end
+  end
+
+  def senti_avatar_image_generator(img_tag_options, profile_size, profile_class, sentiment)
+      
+      content_tag(:div, :class => "#{profile_class} image-lazy-load", :size_type => profile_size ) do
+        image_tag("/assets/misc/profile_blank_#{profile_size}.jpg", img_tag_options)+
+        get_senti_i_tag(sentiment)
+      end
+  end
+
+  def senti_avatar_generator( username, profile_size = :thumb, profile_class, opt, sentiment )
+    
+    img_tag_options = { :onerror => "imgerror(this)", :alt => t('user.profile_picture'), :class => [profile_size, profile_class]}
+    username = username.lstrip
+    if username.present? && isalpha(username[0]).present?
+      content_tag( :div, :class => "#{profile_class} avatar-text text-center #{profile_size} bg-#{unique_code(username)}" ) do
+        content_tag(:p, username[0])+
+        get_senti_i_tag(sentiment)
+      end
+    else
+       content_tag( :div, :class => profile_class, :size_type => profile_size ) do
+        (image_tag "/assets/misc/profile_blank_#{profile_size}.jpg", img_tag_options )+
+        get_senti_i_tag(sentiment)
+      end
+    end
+  end
+
+  def get_senti_image_tag(sentiment)
+
+    senti_img_tag_options = { :onerror => "imgerror(this)", :alt => t('user.profile_picture'), :class => ['sentiment', sentiment, 'tooltip'], :title => get_senti_title(sentiment)}
+
+    if sentiment
+      return image_tag(senti_image_locator(sentiment), senti_img_tag_options)
+    else
+      return ""
+    end
+
+  end
+
+  def get_senti_i_tag(sentiment)
+    if sentiment
+      i_tag = content_tag( :i, :class => "sentiment tooltip #{sentiment} #{senti_class_locator(sentiment)}", :title => "#{get_senti_title(sentiment)}" ) do
+      end
+      return i_tag
+    else
+      return ""
+    end
+  end
+
+  def get_senti_title(sentiment)
+
+    if sentiment == -2
+      return "Angry"
+    elsif sentiment == -1
+      return "Sad"
+    elsif sentiment == 1
+      return "Happy"
+    elsif sentiment == 2
+      return "Very Happy"
+    else 
+      return "Neutral"   
+    end 
+  end
+
+  def senti_class_locator(sentiment)
+
+    if sentiment == -2
+      return "symbols-emo-angry-20"
+    elsif sentiment == -1
+      return "symbols-emo-sad-20"
+    elsif sentiment == 1
+      return "symbols-emo-happy-20"
+    elsif sentiment == 2
+      return "symbols-emo-veryHappy-20"
+    else 
+      return "symbols-emo-neutral-20"   
+    end  
+  end
+
+  # TODO: change it to get images from cdn
+  # TODO: Numbers - move to constants file 
+  def senti_image_locator(sentiment)
+
+    if sentiment == -2
+      return "http://imgh.us/emo-angry.svg"
+    elsif sentiment == -1
+      return "http://imgh.us/emo-sad.svg"
+    elsif sentiment == 1
+      return "http://imgh.us/emo-happy.svg"
+    elsif sentiment == 2
+      return "http://imgh.us/emo-veryhappy.svg"
+    else 
+      return "http://imgh.us/emo-neutral.svg"   
+    end  
   end
 
   def unique_code(username)
@@ -1016,7 +1157,7 @@ module ApplicationHelper
 
 def construct_new_ticket_element_for_google_gadget(form_builder,object_name, field, field_label, dom_type, required, field_value = "", field_name = "", in_portal = false , is_edit = false, pl_value_id=nil)
     dom_type = (field.field_type == "nested_field") ? "nested_field" : dom_type
-    element_class   = " #{ (required) ? 'required' : '' } #{ dom_type }"
+    element_class   = " #{ (required && !object_name.eql?(:template_data)) ? 'required' : '' } #{ dom_type }" 
     element_class  += " required_closure" if (field.required_for_closure && !field.required)
     element_class  += " section_field" if field.section_field?
     field_label    += '<span class="required_star">*</span>'.html_safe if required
@@ -1042,14 +1183,14 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
         unless is_edit or params[:format] == 'widget'
           show_cc = show_cc_field  field
         end
-            element = render(:partial => "/helpdesk/tickets/ticket_widget/requester", :formats => [:html], :locals => {:search_req => search_req , :placeholder => description, :show_cc => show_cc, :is_edit => is_edit})
+            element = render(:partial => "/helpdesk/tickets/ticket_widget/requester", :formats => [:html], :locals => {:search_req => search_req , :placeholder => description, :show_cc => show_cc, :is_edit => is_edit, :object_name => object_name})
             element+= hidden_field(object_name, :requester_id, :value => @item.requester_id)
       when "email" then
         element = label + text_field(object_name, field_name, :class => element_class, :value => field_value)
         element = add_cc_field_tag element ,field if (field.portal_cc_field? && !is_edit && controller_name.singularize != "feedback_widget") #dirty fix
         element += add_name_field if !is_edit and !current_user
       when "text", "number", "decimal" then
-        element = label + text_field(object_name, field_name, :class => element_class, :value => field_value)
+        element = label + text_field(object_name, field_name, :class => element_class, :value => "#{field_value}")
       when "paragraph" then
         element = label + text_area(object_name, field_name, :class => element_class, :value => field_value)
       when "dropdown" then
@@ -1125,11 +1266,12 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
         end
       when "requester" then
          search_req =   "#{add_requester_field}".html_safe #if (!is_edit)
-        unless is_edit or params[:format] == 'widget'
+        unless is_edit or params[:format] == 'widget' or @parent_id#(for child template)
           show_cc = show_cc_field  field
         end
-            element = render(:partial => "/helpdesk/tickets/ticket_widget/requester", :formats => [:html], :locals => {:search_req => search_req , :placeholder => description, :show_cc => show_cc, :is_edit => is_edit})
-            element+= hidden_field(object_name, :requester_id, :value => @item.requester_id)
+        element = render(:partial => "/helpdesk/tickets/ticket_widget/requester", :formats => [:html], :locals => {:search_req => search_req , :placeholder => description, :show_cc => show_cc, :is_edit => is_edit, :object_name => object_name})
+        value   = object_name.eql?("template_data") ? @item.template_data[:requester_id] : @item.requester_id
+        element+= hidden_field(object_name, :requester_id, :value => value)
       when "email" then
         element = label + text_field(object_name, field_name, :class => element_class, :value => field_value)
         element = add_cc_field_tag element ,field if (field.portal_cc_field? && !is_edit && controller_name.singularize != "feedback_widget") #dirty fix
@@ -1468,6 +1610,10 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
     _output.join("").html_safe
   end
 
+  def admin_account_verification_message
+    render partial: "shared/account_verification_message" unless current_account.verified?
+  end
+
   def get_logo
     unless @account.main_portal.logo.blank?
       return @account.main_portal.logo.content.url(:logo)
@@ -1486,7 +1632,7 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
   private
 
     def forums_visibility?
-      feature?(:forums) && allowed_in_portal?(:open_forums) && privilege?(:view_forums)
+      current_account.features_included?(:forums) && allowed_in_portal?(:open_forums) && privilege?(:view_forums)
     end
 
     def social_tab
@@ -1519,7 +1665,9 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
     end
 
     def inm_tour_button(text,topic_id)
-      link_to(text, '#', :rel => 'guided-inlinemanual', "data-topic-id" => topic_id, :class=> 'inm_tour_button')
+      if current_account.launched?(:onboarding_inlinemanual)
+        link_to(text, '#', :rel => 'guided-inlinemanual', "data-topic-id" => topic_id, :class=> 'inm_tour_button')
+      end
     end
 
   def check_fb_reauth_required
@@ -1562,7 +1710,7 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
   # This helper is for the partial expanded/_ticket.html.erb
   def requester(ticket)
     if privilege?(:view_contacts)
-      "<a class='user_name' href='/users/#{ticket.requester.id}' target='_blank' data-pjax='#body-container'>
+      "<a class='user_name' href='/users/#{ticket.requester.id}' target='_blank' data-pjax='#body-container' data-contact-id='#{ticket.requester.id}' data-contact-url='/contacts/#{ticket.requester.id}/hover_card' rel='contact-hover'>
           <span class='emphasize'>#{h(ticket.requester.display_name)}</span>
        </a>".html_safe
     else

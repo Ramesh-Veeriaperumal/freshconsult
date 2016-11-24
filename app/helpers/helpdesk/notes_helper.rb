@@ -12,7 +12,7 @@ end
 
 def note_lock_icon(note, ticket)
   icon_class = ""
-  if note.broadcast_note_to_tracker?
+  if note.broadcast_note?
     icon_class = "ficon-broadcast-tracker fsize-20 muted"
   elsif note.private_note?  || note.fwd_email? || note.reply_to_forward?
     icon_class = "comment-lock"

@@ -6,8 +6,23 @@ module FreshopsToolsWorkerMethods
   def dynamic_rubyscript_evaluation(args)
     # To fetch the code contained in the specific file from the specified bucket
     data = AwsWrapper::S3Object.read(args["path"],args["bucket_name"],{:content_type => "application/json"})
-    eval data # Evaluate the string directly
+    key_path = args["path"].split('.').first + "_log.txt" # Name the execution log file
+    code_id = args["path"].split('/').tap(&:pop).last
+    begin
+      output = capture(:stdout) do
+        eval data
+      end
+      AwsWrapper::S3Object.store(key_path,output,args["bucket_name"])
+      request_parameters = {:id => code_id ,:result => "Code Executed"}
+      response = Fdadmin::APICallsToInternalTools.make_api_request_to_internal_tools(:get,request_parameters,:api_path,API_CONFIG_TOOLS[:domain])
+    rescue Exception => e
+      output = e.to_s + e.backtrace.to_s
+      AwsWrapper::S3Object.store(key_path,output,args["bucket_name"])
+      request_parameters = {:id => code_id ,:result => "Execution Error"}
+      response = Fdadmin::APICallsToInternalTools.make_api_request_to_internal_tools(:get,request_parameters,:api_path,API_CONFIG_TOOLS[:domain])
+    end
   end
+
 
 # Based on the method name , shard name (received as parameters) will execute the corresponding operation
   def operation_on_shard(args) 

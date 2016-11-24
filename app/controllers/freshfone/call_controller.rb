@@ -6,7 +6,6 @@ class Freshfone::CallController < FreshfoneBaseController
 	include Freshfone::CallsRedisMethods
 	include Freshfone::TicketActions
 	include Freshfone::Call::EndCallActions
-	include Freshfone::Search
 	
 	include Freshfone::Search
 	before_filter :load_customer, :only => [:caller_data]

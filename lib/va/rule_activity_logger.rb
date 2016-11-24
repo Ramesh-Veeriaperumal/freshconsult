@@ -21,11 +21,11 @@ class Va::RuleActivityLogger
   
   ##Execution activities temporary storage hack starts here
   def self.initialize_activities
-    Thread.current[:scenario_action_log] = []
+    Thread.current[:scenario_action_log] = {}
   end
 
   def self.activities
-    Thread.current[:scenario_action_log]
+    Thread.current[:scenario_action_log].values if Thread.current[:scenario_action_log]
   end
   
   def self.clear_activities
@@ -52,8 +52,8 @@ class Va::RuleActivityLogger
 
     def add_activity(log_mesg)
       # Thread variable will be set only for scenario automation rules
-      Thread.current[:scenario_action_log] << log_mesg.html_safe if @is_automation
-    end  
+      Thread.current[:scenario_action_log].merge!(log_mesg) if @is_automation
+    end
 
     def activities_enabled?
       Account.current.features?(:activity_revamp) and @ticket.present? and @ticket.respond_to?(:system_changes)
@@ -78,27 +78,31 @@ class Va::RuleActivityLogger
       priority = TicketConstants.priority_list[value.to_i]
       add_system_changes({:priority => [nil, value.to_i]})
       params = {:priority => priority}
-      "#{fetch_activity_prefix('change')} #{I18n.t('automations.activity.priority', params)}"
+      {:priority => "#{fetch_activity_prefix('change')} #{I18n.t('automations.activity.priority', params)}".html_safe}
     end
 
     def status
       status = Helpdesk::TicketStatus.status_names_by_key(Account.current)[value.to_i]
       add_system_changes({:status => [nil, value.to_i]})
       params = {:status => status}
-      "#{fetch_activity_prefix('change')} #{I18n.t('automations.activity.status', params)}"
+      {:status => "#{fetch_activity_prefix('change')} #{I18n.t('automations.activity.status', params)}".html_safe}
     end
 
-    def product_id
-      product_name = (value.blank? ? I18n.t('automations.activity.none') : value)
-      add_system_changes({:product_id => (value.blank? ? [DONT_CARE, nil] : [nil, value])})
+    def product_id(product = nil)
+      if product.nil?
+        pr_id = value.to_i
+        product = Account.current.products.find(pr_id)
+      end
+      product_name = (value.blank? ? I18n.t('automations.activity.none') : product.name)
+      add_system_changes({:product_id => (value.blank? ? [DONT_CARE, nil] : [nil, product.name])})
       params = {:product_name => product_name }
-      "#{fetch_activity_prefix('set')} #{I18n.t('automations.activity.product', params)}"
+      {:product_id => "#{fetch_activity_prefix('set')} #{I18n.t('automations.activity.product', params)}".html_safe}
     end
 
     def ticket_type
       add_system_changes({:ticket_type => [nil, value]})
       params = {:ticket_type => value}
-      "#{fetch_activity_prefix('change')} #{I18n.t('automations.activity.ticket_type', params)}"
+      {:ticket_type => "#{fetch_activity_prefix('change')} #{I18n.t('automations.activity.ticket_type', params)}".html_safe}
     end
 
     def group_id(group = nil)
@@ -109,11 +113,28 @@ class Va::RuleActivityLogger
       if group.present? || value.blank?
         group_name = (value.blank? ? I18n.t('automations.activity.none') : group.name )
         add_system_changes({:group_id => (value.blank? ? [DONT_CARE, nil] : [nil, group.name])})
-        params = {:group_name => group_name}
-        "#{fetch_activity_prefix('set')} #{I18n.t('automations.activity.group_success', params)}"
+        params  = {:group_name => group_name}
+        msg_log = "#{fetch_activity_prefix('set')} #{I18n.t('automations.activity.group_success', params)}"
       else
-        I18n.t('automations.activity.group_failure')
+        msg_log = I18n.t('automations.activity.group_failure')
       end
+      {:group_id => msg_log.html_safe}
+    end
+
+    def internal_group_id(internal_group = nil)
+      if internal_group.nil?
+        ig_id = value.to_i
+        internal_group = Account.current.groups.find_by_id(ig_id)
+      end
+      if internal_group.present? || value.blank?
+        internal_group_name = (value.blank? ? I18n.t('automations.activity.none') : internal_group.name )
+        add_system_changes({:internal_group_id => (value.blank? ? [DONT_CARE, nil] : [nil, internal_group.name])})
+        params = {:internal_group_name => internal_group_name}
+        msg_log = "#{fetch_activity_prefix('set')} #{I18n.t('automations.activity.internal_group_success', params)}"
+      else
+        msg_log = I18n.t('automations.activity.internal_group_failure')
+      end
+      {:internal_group_id => msg_log.html_safe}
     end
 
     def responder_id(responder = nil)
@@ -121,26 +142,45 @@ class Va::RuleActivityLogger
         r_id = value.to_i
         responder = (r_id == EVENT_PERFORMER) ? (doer.agent? ? doer : nil) : Account.current.users.find_by_id(value.to_i)
       end
-      
+
       if responder || value.blank?
         responder_name = (value.blank? ? I18n.t('automations.activity.none') : responder.name )
         add_system_changes({:responder_id => (value.blank? ? ["*", nil] : [nil, responder.id])})
-        params = {:agent_name => responder_name}
-        "#{fetch_activity_prefix('set')} #{I18n.t('automations.activity.agent_success', params)}"
+        params  = {:agent_name => responder_name}
+        msg_log = "#{fetch_activity_prefix('set')} #{I18n.t('automations.activity.agent_success', params)}"
       else
-        I18n.t('automations.activity.agent_failure')
+        msg_log = I18n.t('automations.activity.agent_failure')
       end
+      {:responder_id => msg_log.html_safe}
+    end
+
+    def internal_agent_id(internal_agent = nil)
+      if internal_agent.nil?
+        ia_id = value.to_i
+        internal_agent = (ia_id == EVENT_PERFORMER) ? (doer.agent? ? doer : nil) : Account.current.users.find_by_id(value.to_i)
+      end
+
+      if internal_agent || value.blank?
+        internal_agent_name = (value.blank? ? I18n.t('automations.activity.none') : internal_agent.name )
+        add_system_changes({:internal_agent_id => (value.blank? ? ["*", nil] : [nil, internal_agent.id])})
+        params = {:internal_agent_name => internal_agent_name}
+        msg_log = "#{fetch_activity_prefix('set')} #{I18n.t('automations.activity.internal_agent_success', params)}"
+      else
+        msg_log = I18n.t('automations.activity.internal_agent_failure')
+      end
+      {:internal_agent_id => msg_log.html_safe}
     end
 
     def add_comment
       verb = fetch_activity_prefix('add')
       if "true".eql?(act_hash[:private])
         add_system_changes({:add_comment => [true]})
-        "#{verb} #{I18n.t('automations.activity.private_note')}"
+        msg_log = "#{verb} #{I18n.t('automations.activity.private_note')}"
       else
         add_system_changes({:add_comment => [false]})
-        "#{verb} #{I18n.t('automations.activity.note')}"
+        msg_log = "#{verb} #{I18n.t('automations.activity.note')}"
       end
+      {:add_comment => msg_log.html_safe}
     end
 
     def add_watcher(watchers = nil)
@@ -154,14 +194,14 @@ class Va::RuleActivityLogger
       end
       add_system_changes({:add_watcher => watchers.keys})
       params = {:watchers => watchers.values.to_sentence}
-      "#{fetch_activity_prefix('add')} #{I18n.t('automations.activity.add_watchers', params)}"
+      {:add_watcher => "#{fetch_activity_prefix('add')} #{I18n.t('automations.activity.add_watchers', params)}".html_safe}
     end
 
     def add_tag(tag_arr = nil)
       tag_array = value.split(',')
       add_system_changes({:add_tag => tag_arr}) if tag_arr.present?
       params = {:tags => tag_array.join(', ')}
-      "#{fetch_activity_prefix('assign')} #{I18n.t('automations.activity.add_tags', params)}"
+      {:add_tag => "#{fetch_activity_prefix('assign')} #{I18n.t('automations.activity.add_tags', params)}".html_safe}
     end
 
     def add_a_cc
@@ -171,53 +211,57 @@ class Va::RuleActivityLogger
 
     def send_email_to_requester
       add_system_changes({:email_to_requester => [@ticket.requester_id]}) if @ticket.present?
-      "#{fetch_activity_prefix('send')} #{I18n.t('automations.activity.email_to_requester')}"
+      {:send_email_to_requester => "#{fetch_activity_prefix('send')} #{I18n.t('automations.activity.email_to_requester')}".html_safe}
     end
 
     def send_email_to_group(group = nil)
       verb = fetch_activity_prefix('send')
-      if group.nil?        
-        "#{verb} #{I18n.t('automations.activity.bulk_email_to_group')}"
+      if group.nil?
+        msg_log = "#{verb} #{I18n.t('automations.activity.bulk_email_to_group')}"
       else
         params = {:group_name => group.name}
         add_system_changes({:email_to_group => [group.name]})
-        "#{verb} #{I18n.t('automations.activity.email_to_group', params)}"
+        msg_log = "#{verb} #{I18n.t('automations.activity.email_to_group', params)}"
       end
+      {:send_email_to_group => msg_log.html_safe}
     end
 
     def send_email_to_agent(agent = nil)
       verb = fetch_activity_prefix('send')
-      if agent.nil? 
-        "#{verb} #{I18n.t('automations.activity.bulk_email_to_agent')}"
+      if agent.nil?
+        msg_log = "#{verb} #{I18n.t('automations.activity.bulk_email_to_agent')}"
       else
         params = {:agent_name => agent.name}
         add_system_changes({:email_to_agent => [agent.id]})
-        "#{verb} #{I18n.t('automations.activity.email_to_agent', params)}"
+        msg_log = "#{verb} #{I18n.t('automations.activity.email_to_agent', params)}"
       end
+      {:send_email_to_agent => msg_log.html_safe}
     end
 
     def delete_ticket(ticket = nil)
-      if ticket.nil? 
-        I18n.t('automations.activity.bulk_delete_tickets')
+      if ticket.nil?
+        msg_log = I18n.t('automations.activity.bulk_delete_tickets')
       else
         add_system_changes({:deleted => [false, true]})
-        I18n.t('automations.activity.delete_ticket', {:ticket => ticket})
+        msg_log = I18n.t('automations.activity.delete_ticket', {:ticket => ticket})
       end
+      {:delete_ticket => msg_log.html_safe}
     end
 
     def mark_as_spam(ticket = nil)
-      if ticket.nil? 
-        I18n.t('automations.activity.bulk_mark_spam')
+      if ticket.nil?
+        msg_log = I18n.t('automations.activity.bulk_mark_spam')
       else
         add_system_changes({:spam => [false, true]})
-        I18n.t('automations.activity.mark_spam', {:ticket => ticket})
+        msg_log = I18n.t('automations.activity.mark_spam', {:ticket => ticket})
       end
+      {:mark_as_spam => msg_log.html_safe}
     end
 
     def custom_fields
       add_system_changes({"#{action_key}".to_sym => (value.blank? ? [DONT_CARE, nil] : [nil, value.to_s])})
       params = {:action => action_key.to_s.humanize().gsub(/ \d+$/,""), :value => value}
-      "#{fetch_activity_prefix('set')} #{I18n.t('automations.activity.custom_fields', params)}"
+      {:"#{action_key}" => "#{fetch_activity_prefix('set')} #{I18n.t('automations.activity.custom_fields', params)}".html_safe}
     end
 
     def set_nested_fields
@@ -229,7 +273,7 @@ class Va::RuleActivityLogger
         params  = {:action => field[:name].to_s.humanize().gsub(/ \d+$/,""), :value => field[:value]}
         message = "#{message}, #{I18n.t('automations.activity.custom_fields', params)}"
       end
-      message
+      {:set_nested_fields => message.html_safe}
     end
 
     def is_bulk_scenario?

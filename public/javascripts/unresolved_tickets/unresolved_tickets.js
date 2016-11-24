@@ -48,6 +48,26 @@ var UnresolvedTickets = (function () {
 				jQuery(this).removeClass('widelength').attr('placeholder', "Search");
 				jQuery(this).parent().removeClass('widelength');
 			});
+
+			//agent and group type filter events
+			if(shared_ownership_enabled){
+				jQuery('.agent_mode , .group_mode').on('click.unresolved', function(e){
+					e.preventDefault();
+					jQuery(this).closest(".fd-menu").css("display", "none");
+					if(this.className == "agent_mode"){
+						jQuery('.agent_text').text(jQuery(this).text());
+						jQuery('.agent_text').attr('value',this.getAttribute('mode'));
+						jQuery('.agent_mode .icon.ticksymbol').remove();
+						jQuery(this).prepend("<span class='icon ticksymbol'></span>");
+					}else{
+						jQuery('.group_text').text(jQuery(this).text());
+						jQuery('.group_text').attr('value',this.getAttribute('mode'));
+						jQuery('.group_mode .icon.ticksymbol').remove();
+						jQuery(this).prepend("<span class='icon ticksymbol'></span>");
+					}
+				});
+			}
+			
 		},
 		unbindEvents: function(){
 			jQuery("#supervisor-dashboard").off('.unresolved');
@@ -68,51 +88,96 @@ var UnresolvedTickets = (function () {
 			var _currentData = jQuery(evt.currentTarget).data(),
 				currentTab = jQuery("#unresolved-tab li.active").data('redirect'),
 				metricurl, filteredData = _FD.getFilterData(), filterData;
+			var agentType = jQuery('#responder-box .agent_text').attr('value') === 'responder_id' ? 'agent' : 'internal_agent';
+			var groupType = jQuery('#group-box .group_text').attr('value') === 'group_id' ? 'group' : 'internal_group';
+			//checking for group filter type
+			if(currentTab === 'group'){
+				currentTab = groupType;
+			}else {
+				currentTab = agentType;
+			}
 			if( _currentData.id === 'unassigned' ){
 				//Marking it as -1 as its per norm in custom ticket filter for unassigned.
 				metricurl = currentTab+"=-1"+"&status="+_currentData.status;
 			}else{
-				var agentQuery = (filteredData.agent.length ? "&agent="+Array.prototype.slice.call(filteredData.agent).join(',') : '');
-				var groupQuery = (filteredData.group.length ? "&group="+Array.prototype.slice.call(filteredData.group).join(',') : '');
+				var agentQuery = (filteredData.agent.length ? "&"+ agentType +"="+Array.prototype.slice.call(filteredData.agent).join(',') : '');
+				var groupQuery = (filteredData.group.length ? "&"+ groupType +"="+Array.prototype.slice.call(filteredData.group).join(',') : '');
 				// metricurl = ( agentQuery.length === 0 && groupQuery.length === 0 ) ? (currentTab+"="+_currentData.id+"&status="+_currentData.status) : ("status="+_currentData.status+agentQuery+groupQuery)
-				filterData = (currentTab === 'agent') ? groupQuery : agentQuery;
+				filterData = (currentTab === 'agent' || currentTab === 'internal_agent') ? groupQuery : agentQuery;
 				metricurl = "status="+_currentData.status+"&"+currentTab+"="+_currentData.id+filterData
 			}
 			window.open(CONST.ticketlist_url+metricurl, '_blank');
 		},
 		switchTab: function(e){
 			if(!jQuery(e.currentTarget).hasClass('active')){
-					jQuery("#unresolved-tab li").removeClass('active');
-					jQuery(e.currentTarget).addClass('active');
-					var tab_switch_param = jQuery("#unresolved-tab li.active").data('groupby');
-					jQuery(".no-data-section").hide();
-					_FD.triggerAjax(_FD.constructParams(), "in-loader");
+				jQuery("#unresolved-tab li").removeClass('active');
+				jQuery(e.currentTarget).addClass('active');
+				var tab_switch_param = jQuery("#unresolved-tab li.active").data('groupby');
+				jQuery(".no-data-section").hide();
+				_FD.triggerAjax(_FD.constructParams(), "in-loader");
 			}
 		},
 		resetfilterselect2: function(){
 			jQuery(".reset-select2").select2("val", "");
 		},
 		constructParams: function(){
+			var currentTab = jQuery("#unresolved-tab li.active").data('redirect');
+			if(currentTab == 'agent'){
+				jQuery("#unresolved-tab li.active").data('groupby', jQuery('.agent_text').attr('value'));
+				jQuery("#unresolved-tab li.active").attr('data-groupby', jQuery('.agent_text').attr('value'));
+			}else{
+				jQuery("#unresolved-tab li.active").data('groupby', jQuery('.group_text').attr('value'));
+				jQuery("#unresolved-tab li.active").attr('data-groupby', jQuery('.group_text').attr('value'));
+			}
 			var group_by =  jQuery("#unresolved-tab li.active").data('groupby'),
-				agent_key = jQuery("[data-filterkey='responder_id']").val() || [],
-				group_key = jQuery("[data-filterkey='group_id']").val() || [],
 				param = {"group_by":group_by};
-			if(agent_key.length > 0){
+			if(jQuery('.agent_text').attr('value') === 'responder_id'){
+				var agent_key = jQuery("[data-filterkey='responder_id']").val() || [];
 				param.responder_id = agent_key.join(',');
+			}else{
+				var internal_agent_key = jQuery("[data-filterkey='responder_id']").val() || [];
+				param.internal_agent_id = internal_agent_key.join(',');
 			}
-			if(group_key.length > 0){
+
+			if(jQuery('.group_text').attr('value') === 'group_id'){
+				var group_key = jQuery("[data-filterkey='group_id']").val() || [];
 				param.group_id = group_key.join(',');
+			}else{
+				var internal_group_key = jQuery("[data-filterkey='group_id']").val() || [];
+				param.internal_group_id = internal_group_key.join(',');
 			}
+
 			_FD.saveFilterData(param);
 			_FD.setFilterData(param);
 			return param;
 		},
+		checkEmptyParams: function(data){
+			var requestParams = {};
+			requestParams.group_by = data.group_by;
+			if(data.group_id && data.group_id !== ""){
+				requestParams.group_id = data.group_id;
+			}
+			if(data.internal_group_id && data.internal_group_id !== ""){
+				requestParams.internal_group_id = data.internal_group_id;
+			}
+			if(data.responder_id && data.responder_id != ""){
+				requestParams.responder_id = data.responder_id;
+			}
+
+			if(data.internal_agent_id && data.internal_agent_id != ""){
+				requestParams.internal_agent_id = data.internal_agent_id;
+			}
+
+			return requestParams;
+		},
 		triggerAjax: function(data, loaderType){
+			var request = _FD.checkEmptyParams(data);
+
 			jQuery.ajax({
 				url: CONST.unresolved_url,
 				type: 'GET',
 				dataType: 'JSON',
-				data: data,
+				data: request,
 				timeout: 60000,
 				beforeSend: function(){
 					_FD.destroyTable();
@@ -165,6 +230,42 @@ var UnresolvedTickets = (function () {
 			jQuery(".unresolved-tickets-wrapper").removeClass("visualhide");
 			jQuery("#"+loaderType).hide();
 		},
+		setFilterText: function(){
+			//remove existing select marks
+			jQuery("#agentSort .icon.ticksymbol").remove();
+			jQuery("#groupSort .icon.ticksymbol").remove();
+			//setting defeult values for filter type selection
+			jQuery('.agent_text').attr('value', 'responder_id');
+			jQuery('.agent_text').text(jQuery("#agentSort a[mode='responder_id']").text());
+			jQuery("#agentSort a[mode='responder_id']").prepend("<span class='icon ticksymbol'></span>");
+			jQuery('.group_text').attr('value', 'group_id');
+			jQuery('.group_text').text(jQuery("#groupSort a[mode='group_id']").text().trim());
+			jQuery("#groupSort a[mode='group_id']").prepend("<span class='icon ticksymbol'></span>");
+		},
+		handleFilterSelection: function(filter, textSelector, dropSelector){
+			if(shared_ownership_enabled){
+				var filterMapping = {
+					"responder_id" : "internal_agent_id",
+					"internal_agent_id" : "responder_id",
+					"group_id" : "internal_group_id",
+					"internal_group_id" : "group_id"
+				}
+				jQuery('.' + textSelector).attr('value', filter);
+				jQuery('.' + textSelector).text(jQuery("#"+ dropSelector +" a[mode='"+ filter +"']").text());
+				jQuery("#"+ dropSelector +" a[mode='"+ filterMapping[filter] +"'] .icon.ticksymbol").remove();
+				jQuery("#"+ dropSelector +" a[mode='"+ filter +"']").prepend("<span class='icon ticksymbol'></span>");
+			}
+		},
+		retainFilters: function(localStorage_obj){
+			if(localStorage_obj.group_by == 'internal_agent_id' || localStorage_obj.group_by == 'responder_id'){
+				jQuery("#unresolved-tab li[data-redirect = 'agent']").data('groupby', localStorage_obj.group_by);
+				jQuery("#unresolved-tab li[data-redirect = 'agent']").attr('data-groupby', localStorage_obj.group_by);
+			}else{
+				jQuery("#unresolved-tab li[data-redirect = 'group']").data('groupby', localStorage_obj.group_by);
+				jQuery("#unresolved-tab li[data-redirect = 'group']").attr('data-groupby', localStorage_obj.group_by);
+			}
+			jQuery("[data-groupby = '"+localStorage_obj.group_by+"']").addClass('active');
+		},
 		setFilterData: function(data){
 			var templateData;
 			var group_data = jQuery("[data-filterkey='group_id']").children("option:selected").map(function(){
@@ -173,13 +274,25 @@ var UnresolvedTickets = (function () {
 			var agent_data = jQuery("[data-filterkey='responder_id']").children("option:selected").map(function(){
 					return jQuery(this).text();
 			});
+			var agentfilterlabel = jQuery('.agent_text').text();
+			var groupfilterlabel = jQuery('.group_text').text();
 			
 			if(group_data.length <= 0 && agent_data.length <= 0){
-				templateData = {"agentfilter" : ["All"], "groupfilter" : ["All"]};
+				templateData = {
+					"agentfilter" : ["All"], 
+					"groupfilter" : ["All"],
+					"agentfilterlabel" : agentfilterlabel,
+					"groupfilterlabel" : groupfilterlabel
+				};
 			}else{	
 				var group_filter = ((group_data.length !== 0) ? group_data : ["All"]);
 				var agent_filter = ((agent_data.length !== 0) ? agent_data : ["All"]);
-				templateData = {"agentfilter" : agent_filter, "groupfilter" : group_filter};
+				templateData = {
+					"agentfilter" : agent_filter, 
+					"groupfilter" : group_filter,
+					"agentfilterlabel" : agentfilterlabel,
+					"groupfilterlabel" : groupfilterlabel
+				};
 			}
 			
 			var templatedata  = jQuery.tmpl(jQuery("#filter-data-template").template(), templateData);
@@ -390,23 +503,43 @@ var UnresolvedTickets = (function () {
 	};
 	return {
 		init: function(param){
+			if(shared_ownership_enabled){
+				_FD.setFilterText();
+			}
 			_FD.setFilterData(param);
 			_FD.saveFilterData(param);
 			_FD.triggerAjax(param);
 			_FD.events();
 		},
-		hasLocalData: function(){
+		hasLocalData: function(localStorage_obj){
 			_FD.events();
-			var localStorage_obj = JSON.parse(window.localStorage.getItem('unresolved-tickets-filters'));
+			//var localStorage_obj = JSON.parse(window.localStorage.getItem('unresolved-tickets-filters'));
 			jQuery("#unresolved-tab li").removeClass('active');
-			jQuery("[data-groupby = '"+localStorage_obj.group_by+"']").addClass('active');
+			if(shared_ownership_enabled){
+				_FD.setFilterText();	
+			}
+			_FD.retainFilters(localStorage_obj);
 
-			if(localStorage_obj.responder_id && localStorage_obj.responder_id.split(",").length !== 0){
-				jQuery("[data-filterkey = 'responder_id']").val(localStorage_obj.responder_id.split(",")).trigger('change');
+			if("responder_id" in localStorage_obj){
+				_FD.handleFilterSelection("responder_id", "agent_text", "agentSort");
+				if(localStorage_obj.responder_id.split(",").length !== 0)
+					jQuery("[data-filterkey = 'responder_id']").val(localStorage_obj.responder_id.split(",")).trigger('change');
+			}
+			if("internal_agent_id" in localStorage_obj){
+				_FD.handleFilterSelection("internal_agent_id", "agent_text", "agentSort");
+				if(localStorage_obj.internal_agent_id.split(",").length !== 0)
+					jQuery("[data-filterkey = 'responder_id']").val(localStorage_obj.internal_agent_id.split(",")).trigger('change');
 			}
 
-			if(localStorage_obj.group_id && localStorage_obj.group_id.split(",").length !== 0){
-				jQuery("[data-filterkey = 'group_id']").val(localStorage_obj.group_id.split(",")).trigger('change');
+			if("group_id" in localStorage_obj){
+				_FD.handleFilterSelection("group_id", "group_text", "groupSort");
+				if(localStorage_obj.group_id.split(",").length !== 0)
+					jQuery("[data-filterkey = 'group_id']").val(localStorage_obj.group_id.split(",")).trigger('change');
+			} 
+			if("internal_group_id" in localStorage_obj){
+				_FD.handleFilterSelection("internal_group_id", "group_text", "groupSort");
+				if(localStorage_obj.internal_group_id.split(",").length !== 0)
+					jQuery("[data-filterkey = 'group_id']").val(localStorage_obj.internal_group_id.split(",")).trigger('change');
 			}			
 			_FD.setFilterData(localStorage_obj);
 			_FD.triggerAjax(localStorage_obj);

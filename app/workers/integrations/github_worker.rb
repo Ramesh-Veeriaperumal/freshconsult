@@ -14,7 +14,7 @@ module Integrations
         return unless installed_app
         if(operation == "post_ticket_comments")
           ticket_obj = current_account.tickets.find(options[:local_integratable_id])
-          ticket_obj.notes.visible.exclude_source(['meta', 'tracker']).each do |note|
+          ticket_obj.notes.visible.exclude_source('meta').each do |note|
             options[:act_on_object] = note
             github_service = IntegrationServices::Services::GithubService.new(installed_app, options)
             github_service.receive(:sync_comment_to_github)

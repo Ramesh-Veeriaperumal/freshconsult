@@ -3,17 +3,34 @@
 <% modal ||= false %>
 
 <tr class="ticket-status-<%= ticket.status %> " data-ticket="<%= ticket.display_id %>" 
-	data-association="<%= ticket.association_type || ticket.parent_ticket.present? if current_account.link_tickets_enabled? %>">
+	data-association="<%= ticket.association_type || ticket.parent_ticket.present? if (current_account.link_tickets_enabled? || current_account.parent_child_tkts_enabled?) %>">
   <td class="priority-border priority-<%=ticket.priority_key%>"></td>
 
     <td class="check">
-    	<input class="selector mousetrap" id="ids_" name="ids[]" type="checkbox" value="<%=ticket.to_param%>">
+    	<input class="selector mousetrap" id="ids_" name="ids[]" type="checkbox" value="<%=ticket.to_param%>" data-ticket-status="<%= ticket.status %> ">
     </td>
 
   <% unless user_page %>
 		<td class="userpic">
 			<div class="hideForList">
-				<%= user_avatar(ticket.requester, :thumb, "preview_pic circle") %>
+				
+				<% if (Account.current.customer_sentiment_enabled? && current_user.language=="en") %>
+					<% survey_association = Account.current.new_survey_enabled? ? "custom_survey_results" : "survey_results" %>
+
+					<% unless ticket.send(survey_association).nil? || ticket.send(survey_association).last.nil? %>
+					    <%= user_avatar(ticket.requester, :thumb, 'preview_pic circle') %>
+					<% else %>
+					    <% if (ticket.notes.visible.customer_responses.last != nil) %>
+							<%= senti_user_avatar(ticket.requester, ticket.notes.visible.customer_responses.last.try("sentiment"), :thumb, 'preview_pic circle') %>
+						<% else %>
+							<%= senti_user_avatar(ticket.requester, ticket.sentiment, :thumb, 'preview_pic circle') %>
+						<% end %>
+					<% end %>
+
+				<% else %>
+				    <%= user_avatar(ticket.requester, :thumb, 'preview_pic circle') %>
+				<% end %>
+
 			</div>
 		</td>
 	<% end %>
@@ -43,7 +60,7 @@
 			<% unless ticket.requester.nil? %>
 				<div class="info-data hideForList">
 					<div class="information ellipsis">
-						<% if current_account.link_tickets_enabled? %>
+						<% if current_account.link_tickets_enabled? || current_account.parent_child_tkts_enabled?%>
 							<%= content_tag(:span, 
 									t("#{TicketConstants::TICKET_ASSOCIATION_TOKEN_BY_KEY[ticket.association_type]}"),
 									:class => "association_type") if ticket.association_type.present? %>

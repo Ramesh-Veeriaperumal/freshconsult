@@ -115,34 +115,67 @@ class Integrations::Hootsuite::HomeController < Integrations::Hootsuite::Hootsui
   end
 
   def filter_tickets
-    page_size = 10
-    Search::EsIndexDefinition.es_cluster(current_account.id)
-    items = Tire.search Search::EsIndexDefinition.searchable_aliases([Helpdesk::Ticket], current_account.id),{:load => {Helpdesk::Ticket => { :include => [{:requester => :avatar}, :ticket_states, :ticket_old_body, :ticket_status, :responder, :group]}},
-    :size => page_size,:without_archive => true} do |tire_search|
-      tire_search.query do |q|
-        q.filtered do |f|
-          if params[:active].present? and params[:clear].blank?
-            f.query { |q| q.match :subject, SearchUtil.es_filter_key(params[:search_text], false), :analyzer => "include_stop"} if params[:search_text].present? and params[:search_type]== "keyword"
-            f.filter :term, { :priority => params[:ticket_priority] } if params[:ticket_priority].present?
-            f.filter :term, { :display_id => params[:search_text].to_i } if params[:search_text].present? and params[:search_type]== "ticket"
-            if params[:ticket_status].present?
-              f.filter :term, { :status => params[:ticket_status] }
-            else
-              f.filter :bool, { :must_not => {:term => { :status => Helpdesk::Ticketfields::TicketStatus::CLOSED }}} 
+    if current_account.launched?(:es_v2_reads)
+      filter_tickets_v2
+    else
+      page_size = 30
+      Search::EsIndexDefinition.es_cluster(current_account.id)
+      items = Tire.search Search::EsIndexDefinition.searchable_aliases([Helpdesk::Ticket], current_account.id),{:load => {Helpdesk::Ticket => { :include => [{:requester => :avatar}, :ticket_states, :ticket_old_body, :ticket_status, :responder, :group]}},
+      :size => page_size,:without_archive => true} do |tire_search|
+        tire_search.query do |q|
+          q.filtered do |f|
+            if params[:active].present? and params[:clear].blank?
+              f.query { |q| q.match :subject, SearchUtil.es_filter_key(params[:search_text], false), :analyzer => "include_stop"} if params[:search_text].present? and params[:search_type]== "keyword"
+              f.filter :term, { :priority => params[:ticket_priority] } if params[:ticket_priority].present?
+              f.filter :term, { :display_id => params[:search_text].to_i } if params[:search_text].present? and params[:search_type]== "ticket"
+              if params[:ticket_status].present?
+                f.filter :term, { :status => params[:ticket_status] }
+              else
+                f.filter :bool, { :must_not => {:term => { :status => Helpdesk::Ticketfields::TicketStatus::CLOSED }}} 
+              end
             end
+            f.filter :term, { :deleted => false }
+            f.filter :term, { :spam => false }
+            f.filter :term, { :responder_id => current_user.id }
+            f.filter :bool, { :must_not => {:term => { :status => Helpdesk::Ticketfields::TicketStatus::CLOSED }}} if params[:active].blank? and params[:ticket_status].blank?
           end
-          f.filter :term, { :deleted => false }
-          f.filter :term, { :spam => false }
-          f.filter :term, { :responder_id => current_user.id }
-          f.filter :bool, { :must_not => {:term => { :status => Helpdesk::Ticketfields::TicketStatus::CLOSED }}} if params[:active].blank? and params[:ticket_status].blank?
         end
+        tire_search.sort { |t| t.by('created_at','desc') }
+        tire_search.from page_size * ((params[:page]||1).to_i-1)
       end
-      tire_search.sort { |t| t.by('created_at','desc') }
-      tire_search.from page_size * ((params[:page]||1).to_i-1)
+      @total_pages = items.results.total_pages
+      @tickets = items.results.results.compact
     end
-    @total_pages = items.results.total_pages
-    @tickets = items.results.results.compact
   end
+  
+  def filter_tickets_v2
+    @tickets = []
+    return unless params[:active].present?
+    page_size   = 30
+    page_offset = page_size * ((params[:page].presence || 1).to_i - 1)
+		@tickets = Search::V2::QueryHandler.new({
+			account_id:   current_account.id,
+			context:      (params[:search_type].eql?('ticket') ? :hstickets_dispid : :hstickets_subject),
+			exact_match:  false,
+			es_models:    { 'ticket' => { model: 'Helpdesk::Ticket', associations: [{:requester => :avatar}, :ticket_states, :ticket_old_body, :ticket_status, :responder, :group]}},
+			current_page: params[:page].to_i,
+			offset:       page_offset,
+			types:        ['ticket'],
+			es_params:    (Hash.new.tap do |es_params|
+				es_params[:search_term] = params[:search_text].presence
+				es_params[:account_id]  = current_account.id
+				es_params[:request_id]  = request.try(:uuid)
+        es_params[:size]        = page_size
+        es_params[:from]        = page_offset
+
+        es_params[:agent_id]        = current_user.id
+        es_params[:priority]        = params[:ticket_priority].presence
+        es_params[:include_status]  = params[:ticket_status].presence
+        es_params[:exclude_status]  = Helpdesk::Ticketfields::TicketStatus::CLOSED if params[:ticket_status].blank?
+			end)
+		}).query_results
+    @total_pages = @tickets.total_pages
+	end
 
   def update_params
     redis_filter = get_hootsuite_filter

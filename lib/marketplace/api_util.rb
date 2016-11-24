@@ -12,11 +12,21 @@ module Marketplace::ApiUtil
     end
   end
 
+  def generate_md5_digest(url, key)
+    digest = OpenSSL::HMAC.hexdigest(OpenSSL::Digest.new('MD5'), key, url)
+    "Freshdesk #{digest}"
+  end
+
   private
 
     def payload(api_endpoint, url_params, optional_params = {})
       payload_params = payload_params(url_params, optional_params)
       "#{MarketplaceConfig::API_URL}/#{api_endpoint}#{payload_params}"
+    end
+
+    def mkp_oauth_payload(api_endpoint, url_params, optional_params = {})
+      payload_params = payload_params(url_params, optional_params)
+      "#{MarketplaceConfig::MKP_OAUTH_URL}/#{api_endpoint}#{payload_params}"
     end
 
     def account_payload(api_endpoint, url_params, optional_params = {})
@@ -29,11 +39,6 @@ module Marketplace::ApiUtil
         url_params.map { |key| [key, params[key]] }.to_h.merge(optional_params)
       params_hash.reject!{ |k,v| v.nil? }
       params_hash.blank? ? '' : "?#{params_hash.to_query}"
-    end
-
-    def generate_md5_digest(url, key)
-      digest = OpenSSL::HMAC.hexdigest(OpenSSL::Digest.new('MD5'), key, url)
-      "Freshdesk #{digest}"
     end
 
     def construct_api_request(url, body, timeout)
@@ -67,6 +72,12 @@ module Marketplace::ApiUtil
       put_api = construct_api_request(url, params, timeout).put
       clear_installed_cache
       put_api
+    end
+
+    def patch_api(url, params = {}, timeout)
+      patch_api = construct_api_request(url, params, timeout).patch
+      clear_installed_cache
+      patch_api
     end
 
     def delete_api(url, timeout)

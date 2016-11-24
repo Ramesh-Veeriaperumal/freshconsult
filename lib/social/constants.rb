@@ -2,7 +2,8 @@ module Social::Constants
   
   SOURCE = {
       :twitter  => "Twitter",
-      :facebook => "Facebook"
+      :facebook => "Facebook",
+      :gnip_2_0 => "Gnip_2_0"
     }
 
   GNIP_RULE_STATES = [
@@ -128,4 +129,12 @@ module Social::Constants
   #Length+1 used in nobelcount.js for the manipulation of character count in UI
   TWITTER_URL_LENGTH = " " * 23
 
+  INLINE_IMAGE_HTML_ELEMENT = "<img src=\"%s\" class=\"inline-image\"/>"
+
+  TWITTER_MEDIA_PHOTO = "Twitter::Media::Photo"
+
+  TWITTER_MEDIA_ANIMATEDGIF = "Twitter::Media::AnimatedGif"
+
+  WHITELISTED_SPECIAL_CHARS_REGEX = /[,.():;=\-\<\>\/&!?%+"']/
+  
 end

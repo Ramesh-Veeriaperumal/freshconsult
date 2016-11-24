@@ -206,6 +206,7 @@
 				}
 			},
 			convertNewTicket: function(event){
+				
 				var requesterEmail = this.$newTicketElem.find('#requester_email').val();
 				var ticketTitle = this.$newTicketElem.find('#ticket_title').val();
 				var requesterName = this.$newTicketElem.find('#requester_name').val();
@@ -213,6 +214,15 @@
 					this.ticket.requesterEmail = requesterEmail;
 					this.ticket.requesterName = requesterName;
 					this.ticket.ticketSubject = ticketTitle;
+					this.ticket.meta = {
+						referrer: this.visitor.visited_page,
+						user_agent: this.visitor.browser_family + "/" + 
+																			this.visitor.browser_version + " (" + 
+																			this.visitor.host_os_family + " " + this.visitor.host_os_version + ")",
+						ip_address: this.visitor.ip_address,
+						location: this.visitor.location,
+						visitor_os: this.visitor.host_os_family + " " + this.visitor.host_os_version
+					};																							
 					$(event.target).val(CHAT_I18n.saving).attr('disabled','true');
 					this.getMessagesFromLivechat('ticket',this.createTicketHelpkit.bind(this));
 				}
@@ -313,7 +323,8 @@
 					"phone" : this.visitor.phone,
 					"subject" : this.ticket.ticketSubject, 
 					"widget_id" : chat.widget_id,
-					"content": tkt_desc
+					"content": tkt_desc,
+					"meta": this.ticket.meta
 				};
 
 				if(chat.agent_id){

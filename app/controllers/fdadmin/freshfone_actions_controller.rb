@@ -11,7 +11,9 @@ module Fdadmin
                                                         :new_freshfone_account,
                                                         :fetch_numbers,
                                                         :launch_feature,
-                                                        :activate_trial]
+                                                        :activate_trial,
+                                                        :launched_feature_details,
+                                                        :activate_onboarding]
     before_filter :validate_triggers, only: [:update_usage_triggers]
     before_filter :validate_timeout_and_queue,
                   :construct_timeout_and_queue_hash,
@@ -403,15 +405,23 @@ module Fdadmin
       end
     end
 
+    def activate_onboarding
+      @account.features.freshfone_onboarding.create
+      result = { account_id: @account.id, account_name: @account.name,
+        status: 'feature_added' }
+      render json: result
+    end
+
     def launch_feature
       result = {
         account_id: @account.id, account_name: @account.name,
         feature: params[:feature].to_s.titleize }
       if @account.launched?(params[:feature])
-        result[:status] = 'notice'
+        @account.rollback(params[:feature])
+        result[:status] = 'success'
       else
         @account.launch(params[:feature])
-        result[:status] = 'success'
+        result[:status] = 'feature_added'
       end
     rescue => e
       result[:status] = 'error'
@@ -425,6 +435,14 @@ module Fdadmin
           render json: result
         end
       end
+    end
+
+    def launched_feature_details
+      result = {}
+      params[:features].each do |feature|
+        result[feature.titleize] = @account.launched?(feature)
+      end
+      render json: result
     end
 
   private
@@ -562,6 +580,7 @@ module Fdadmin
 
     def add_freshfone_feature
       @account.features.freshfone.create
+      @account.features.freshfone_onboarding.destroy if @account.features?(:freshfone_onboarding)
       result = { account_id: @account.id, account_name: @account.name,
         status: 'feature_added' }
       return render json: result

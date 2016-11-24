@@ -496,19 +496,21 @@
 		deleteSecField: function (value) {
 			var field		= this.options.ui,
 				id			= field.data('id'),
-				sec_id		= $(field).parents(this.options.section_finder).data('section-id'),
-				field_dom	= $('ul.section-body li[data-id=' + id + ']');	
+				sectionId	= $(field).parents(this.options.section_finder).data('section-id');
 			if (value) { //single section
-				if (!$.isEmptyObject(this.section_data[sec_id].section_fields[id])) {
-					this.deleteSectionField(this.section_data[sec_id], id)
+				if (!$.isEmptyObject(this.section_data[sectionId].section_fields[id])) {
+					this.deleteSectionField(this.section_data[sectionId], id)
 					this.deleteSectionFieldDom($(field))
-					this.checkDeleteIcon(sec_id);
+					this.checkDeleteIcon(sectionId);
 				}
 			} else {
 				this.removeFromOtherSections(id, true);
 			}
+			var fieldDOM	= $('ul.section-body li:visible[data-id=' + id + ']');
 			//Deleting Field
-			if (field_dom.length == 1) this.options.builder_instance.deleteFormField(field_dom, id);
+			if (fieldDOM.length === 0 && value === true)  {
+				this.options.builder_instance.deleteFormField(fieldDOM, id);
+			}
 		},
 
 		sectionToForm: function (id) {

@@ -50,7 +50,7 @@ class Sanitize
         'source'     => ['src', 'type'],
         'audio'      => ['controls', 'width', 'height'],
         'video'      => ['src', 'width', 'height', 'crossorigin', 'poster', 'preload', 'autoplay', 'mediagroup', 'loop', 'muted', 'controls'],
-        'pre'        => ['rel','code-brush'],
+        'pre'        => ['rel','code-brush','data-code-brush'],
         'font'       => ['color']
       },
       :add_attributes => {

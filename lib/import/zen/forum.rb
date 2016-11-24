@@ -172,7 +172,10 @@ def save_solution_folder forum_prop
     folder_hash = forum_prop.to_hash.merge({
         :visibility => forum_prop.forum_visibility,
         :solution_category_meta_id => category_meta.id }).delete_if{|k, v| [:forum_type,:forum_visibility,:category_id].include? k }
-    folder_hash[:primary_folder] = { :name => "#{folder_hash[:name]} - #{folder_hash[:import_id]}" } if folder
+    folder_hash[:primary_folder] = { 
+      :name => "#{folder_hash[:name]} - #{folder_hash[:import_id]}",
+      :import_id => folder_hash[:import_id]
+    } if folder
     folder_meta = Solution::Builder.folder({ :solution_folder_meta => folder_hash })
     folder_meta.primary_folder
   else

@@ -1,0 +1,175 @@
+//child template
+
+.child-form{
+  .ticket-template-form{
+    .child-form-radio-wrapper{
+      background-color:#f2f2f2;
+      max-height:45px;
+      border-radius:3px;
+      padding: 10px;
+      @include margin(10px 0px 18px);
+      .child-form-radio-content{
+        @include left(19%);
+        position: relative;
+        label{
+          display:inline;
+        }
+        #s2id_child-existing-select{
+          display:inline-block;
+          width:210px;
+        }
+      }
+      .child-existing-select{
+        font-weight: 600;
+        display: inline-block;
+        position: relative;
+        @include right(-20%);
+        top:-1px;
+      }
+      &.templates-header-wrapper{
+        .template-wrapper{
+          padding:0;
+          @include margin-left(10px);
+          border:0;
+          #template-list-wrapper{
+            .template-options{
+                box-shadow: none;
+              }
+          }
+        }
+      }
+    }
+    .template-action{
+      @include padding(0px 0px 17px);
+      .btn{
+          @include margin(0 3px);
+          @include padding(0px 8px 1px);
+          font-size: 11px;
+          line-height: 14px;
+      }
+    }
+    .template-details{
+      li{
+        label{
+          padding-top:9px;
+        }
+      }
+    }
+    .compose-new-ticket{
+      li.field{
+        &:hover{
+            background-color: #f5f5f5;
+            box-shadow: 0px 0 1px #aaa;
+        }
+        .requester-email{
+          .autocomplete{
+            margin:0;
+          }
+          &:hover{
+            background:none;
+          }
+        }
+        &.nested_field{
+          .level_2:hover,.level_3:hover{
+            background: none;
+          }
+        }
+        .options-wrapper {
+            position: absolute;
+            display: none;
+            @include left(-52px);
+            //top: -1px;
+            margin-top: -10px;
+            @include padding(0 0 0 14px);
+            &.checkbox_option{
+              margin-top: -40px
+            }
+            .opt-inner-wrap {
+                background-color: #F5F5F5;
+                @incude border-right(0);
+                @include border-radius(5px 0 0 5px);
+                width: 46px;
+                height: 48px;
+                @inlude box-shadow (-1px 0 1px #aaa);
+                .options {
+                    font-size: 21px;
+                    padding: 11px;
+                    @include float(left );
+                    cursor: pointer;
+                }
+                &.dropdown_option{
+                  height:51px
+                }
+                &.default_tags_option{
+                  height:55px
+                }
+                &.main_field_option{
+                  height:51px;
+                }
+                &.email_requester_option{
+                  height:50px;
+                }
+            }
+        }
+      }
+    }
+    .ticket-form-title{
+      .inherit_parent_label{
+        @include margin ( 14px 0);
+        padding: 0;
+        line-height: 14px;
+      }
+    }
+  }
+}
+.parent-icon-wrapper{
+  border: 1px solid #969696;
+  border-radius: 50%;
+  height: 24px;
+  width: 24px;
+  display: inline-block;
+  background: #fff;
+}
+.parent-btn{
+  @include padding(0px 4px);
+  line-height: 27px;
+  text-shadow: none;
+  color: #969696;
+  position: relative;
+  @include left (-0.5px);
+}
+
+.inherit_parent-wrapper{
+  border: 1px solid #969696;
+  @include margin(5px);
+  border-radius: 50%;
+  height: 24px;
+  width: 24px;
+  display: inline-block;
+  @include float(right);
+}
+.inherit_parent{
+  @include margin(0);  
+  @include padding(7px 5px);
+  line-height: 14px;
+  cursor:pointer;
+  color:#969696;
+  position: relative;
+  @include left(0.5px);
+}
+.parent-change{
+  background-color:#2d83d9;
+  border-color: #fff;
+}
+.parent-disabled{
+  cursor: not-allowed;
+}
+.ficon-undo-inherit{
+  color:#fff;
+}
+#loading-box .reports-loading{
+  width: 250px;
+}
+.insert_placeholder{
+  @include margin-right(3px);
+}

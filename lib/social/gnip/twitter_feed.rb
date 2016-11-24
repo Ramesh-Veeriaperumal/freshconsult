@@ -44,8 +44,12 @@ class Social::Gnip::TwitterFeed
         end
       end
     rescue TypeError, JSON::ParserError => e
-      @tweet_obj = nil
       Rails.logger.debug "Error in parsing gnip feed json"
+      Rails.logger.debug tweet.inspect
+      NewRelic::Agent.notice_error(e, 
+        { :custom_params => { :description => "JSON Parse error in gnip feed",
+                              :tweet_obj => tweet }})
+      @tweet_obj = nil
     end
   end
 

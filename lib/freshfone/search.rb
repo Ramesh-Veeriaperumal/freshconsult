@@ -1,16 +1,38 @@
 module Freshfone::Search
 	def search_user_with_number(phone_number)
-		return if !ES_ENABLED || phone_number.blank?
+		return if phone_number.blank? || !Account.current.esv1_enabled?
 		get_es_search_results(phone_number, ['phone', 'mobile']).first
+	end
+	
+	def search_user_v2(phone_number)
+		return if phone_number.blank?
+
+		Search::V2::QueryHandler.new({
+			account_id:   current_account.id,
+			context:      :ff_contact_by_phone,
+			exact_match:  Search::Utils.exact_match?(phone_number),
+			es_models:    { 'user' => { model: 'User', associations: []}},
+			current_page: Search::Utils::DEFAULT_PAGE,
+			offset:       0,
+			types:        ['user'],
+			es_params:    ({ 
+				search_term: phone_number,
+				account_id: current_account.id,
+				request_id: Thread.current[:message_uuid].try(:first), #=> Msg ID is casted as array.
+				is_deleted: false,
+				phone_fields_str: custom_field_data_columns.join('\",\"'),
+				phone_fields_arr: custom_field_data_columns
+			})
+		}).query_results.first
 	end
 
 	def search_requester(requester_name, search_non_deleted)
-		return if !ES_ENABLED || requester_name.blank?
+		return if requester_name.blank? || !Account.current.esv1_enabled?
 		search_user_using_es(requester_name, ['name', 'email', 'phone', 'mobile'], 10, search_non_deleted)
 	end
 	
 	def search_contact(contact, size = 10, search_non_deleted)
-		return if !ES_ENABLED || contact.blank?
+		return if contact.blank? || !Account.current.esv1_enabled?
 		get_es_search_results(contact, ['name', 'phone', 'mobile', custom_field_data_columns].flatten, size, search_non_deleted)
 	end
 
@@ -22,9 +44,11 @@ module Freshfone::Search
 		custom_phone_fields.map(&:label)
 	end
 
+	# Using Account.current as current_account not available
+	# when accessing as module function
 	def custom_phone_fields
 		@custom_phone_fields ||= 
-			current_account.contact_form.contact_fields.select { |fd| 
+			Account.current.contact_form.contact_fields.select { |fd| 
 				fd.field_type == :custom_phone_number }
 	end
 
@@ -44,7 +68,7 @@ module Freshfone::Search
 	end
 
 	def search_customer_number(phone_number)
-		return if !ES_ENABLED || phone_number.blank?
+		return if phone_number.blank? || !Account.current.esv1_enabled?
 		Search::EsIndexDefinition.es_cluster(Account.current.id)
 		index_name = Search::EsIndexDefinition.searchable_aliases([Freshfone::Caller], Account.current.id)
 		Tire.search(index_name, {load: true}) do |search|
@@ -63,6 +87,8 @@ module Freshfone::Search
 		end
 		number_fileds
 	end
+	
+	module_function :custom_field_data_columns, :custom_field_column_names, :custom_phone_fields, :phone_number_fields
 
 	def search_customer
 	  customer = search_customer_with_id if customer_id.present?
@@ -83,7 +109,11 @@ module Freshfone::Search
 	#this method was returning first user based on Id for the number, so changed to have ordering based on name
 	def search_customer_with_number_using_es(phone_number)
 	  begin
-	    search_user_with_number(phone_number.gsub(/^\+/, ''))
+			if Account.current.launched?(:es_v2_reads)
+				search_user_v2(phone_number)
+			else
+				search_user_with_number(phone_number.gsub(/^\+/, ''))
+			end
 	  rescue Exception => e
 	    Rails.logger.error "Error with elasticsearch for Accout::#{current_account.id} \n#{e.message}\n#{e.backtrace.join("\n\t")}"
 	    get_customer_with_number(phone_number)

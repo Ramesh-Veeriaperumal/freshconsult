@@ -1,0 +1,23 @@
+<%
+  var trimTitle = function(title){
+    if(title && title.length > 70){
+      title =  title.substring(0,70) + "...";
+    }
+    return escapeHtml(title);
+  }
+%>
+
+<% if (data) { %>
+  <% if (data.all_children && data.all_children.length > 0) { %>
+  <% for (var i = 0; i < data.all_children.length; i++) { %>
+    <li class="tkt-tmpl" data-id="<%= data.all_children[i].id %>"><%= trimTitle(data.all_children[i].name) %></li>
+  <% } %>
+  <% } %>
+
+  <% if (data.event === 'search' && data.all_children.length === 0) { %>
+    <div class="no-template">No matching templates</div>
+  <% } else if (data.all_children.length === 0) { %>
+      <p class="no-template-link"> No child template has been created</p>
+  <% } %>
+
+<% } %>

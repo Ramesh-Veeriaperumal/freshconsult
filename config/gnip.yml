@@ -9,6 +9,13 @@ development:
     replay_rules_url: https://api.gnip.com:443/accounts/Freshdesk/publishers/twitter/replay/track/prod/rules.json
     stream_url: https://stream.gnip.com:443/accounts/Freshdesk/publishers/twitter/streams/track/dev.json
     replay_stream_url: https://stream.gnip.com:443/accounts/Freshdesk/publishers/twitter/replay/track/prod.json
+  
+  Gnip_2_0:
+    <<: *common
+    rules_url: https://gnip-api.twitter.com/rules/powertrack/accounts/Freshdesk/publishers/twitter/dev.json
+    replay_rules_url: https://api.gnip.com:443/accounts/Freshdesk/publishers/twitter/replay/track/prod/rules.json
+    stream_url: https://gnip-stream.twitter.com/stream/powertrack/accounts/Freshdesk/publishers/twitter/dev.json
+    replay_stream_url: https://gnip-stream.gnip.com/replay/powertrack/accounts/Freshdesk/publishers/twitter/prod.json
 
 
 staging:
@@ -19,6 +26,12 @@ staging:
     stream_url: https://stream.gnip.com:443/accounts/Freshdesk/publishers/twitter/streams/track/dev.json
     replay_stream_url: https://stream.gnip.com:443/accounts/Freshdesk/publishers/twitter/replay/track/prod.json
 
+  Gnip_2_0:
+    <<: *common
+    rules_url: https://gnip-api.twitter.com/rules/powertrack/accounts/Freshdesk/publishers/twitter/dev.json
+    replay_rules_url: https://api.gnip.com:443/accounts/Freshdesk/publishers/twitter/replay/track/prod/rules.json
+    stream_url: https://gnip-stream.twitter.com/stream/powertrack/accounts/Freshdesk/publishers/twitter/dev.json
+    replay_stream_url: https://gnip-stream.gnip.com/replay/powertrack/accounts/Freshdesk/publishers/twitter/prod.json
 
 production:
   Twitter:
@@ -28,6 +41,13 @@ production:
     stream_url: https://stream.gnip.com:443/accounts/Freshdesk/publishers/twitter/streams/track/prod.json
     replay_stream_url: https://stream.gnip.com:443/accounts/Freshdesk/publishers/twitter/replay/track/prod.json
 
+  Gnip_2_0:
+    <<: *common
+    rules_url: https://gnip-api.twitter.com/rules/powertrack/accounts/Freshdesk/publishers/twitter/prod.json
+    replay_rules_url: https://api.gnip.com:443/accounts/Freshdesk/publishers/twitter/replay/track/prod/rules.json
+    stream_url: https://gnip-stream.twitter.com/stream/powertrack/accounts/Freshdesk/publishers/twitter/prod.json
+    replay_stream_url: https://gnip-stream.gnip.com/replay/powertrack/accounts/Freshdesk/publishers/twitter/prod.json
+
 test:
   Twitter:
     <<: *common
@@ -35,3 +55,10 @@ test:
     replay_rules_url: https://api.gnip.com:443/accounts/Freshdesk/publishers/twitter/replay/track/prod/rules.json
     stream_url: https://stream.gnip.com:443/accounts/Freshdesk/publishers/twitter/streams/track/dev.json
     replay_stream_url: https://stream.gnip.com:443/accounts/Freshdesk/publishers/twitter/replay/track/prod.json
+
+  Gnip_2_0:
+    <<: *common
+    rules_url: https://gnip-api.twitter.com/rules/powertrack/accounts/Freshdesk/publishers/twitter/dev.json
+    replay_rules_url: https://api.gnip.com:443/accounts/Freshdesk/publishers/twitter/replay/track/prod/rules.json
+    stream_url: https://gnip-stream.twitter.com/stream/powertrack/accounts/Freshdesk/publishers/twitter/dev.json
+    replay_stream_url: https://gnip-stream.gnip.com/replay/powertrack/accounts/Freshdesk/publishers/twitter/prod.json

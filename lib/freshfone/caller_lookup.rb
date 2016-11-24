@@ -8,6 +8,9 @@ module Freshfone::CallerLookup
     :"86282452253" => 'UNAVAILABLE',
     :""            => 'UNKNOWN'
   }
+
+  UNAUTHORISED_NUMBERS_LIST = ['2024558888', '4086104900', '4153660260']
+  
   
   def remove_country_code(number)
     number.gsub(/^\+1|\D/, '') #removing phone numbers starting with +1 or non digits

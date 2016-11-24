@@ -48,10 +48,11 @@ var TemplateDockManager   = Class.create({
         minLength: 2,
         search: function( event, ui ){
           jQuery('.search-loader').show();
-          jQuery('.remove-query').hide();
+          jQuery('.remove-query, .search-apps').hide();
         },
         open: function( event, ui ){
-          jQuery('.search-loader').hide();
+          jQuery('.search-loader, .remove-query').hide();
+          jQuery('.search-apps').show();
         },
         select: function( event, ui ) {
           that.getAppInfo(ui.item.url, true); // params are 'url to be loaded on click', 'is this from search suggestion?' 
@@ -62,6 +63,7 @@ var TemplateDockManager   = Class.create({
           return false;
         }
       }).autocomplete( "instance" )._renderItem = function( ul, item ) {
+        jQuery('.search-loader').hide();
         jQuery('.remove-query').show();
         return jQuery( "<li class='fa-autocomplete'></li>" )
             .data( "autocomplete-item", item )
@@ -73,10 +75,11 @@ var TemplateDockManager   = Class.create({
     
   },
   bindTemplateEvents: function(){
-    jQuery(document).on("click.tmpl_events", ".browse-btn,.category,.back2list_btn, .index_btn, #appGalleryLogo" , this.loadApps.bindAsEventListener(this))
+    jQuery(document).on("click.tmpl_events", ".browse-btn, .category, .back2list_btn, .back2catg_btn, #appGalleryLogo, .view-all", this.loadApps.bindAsEventListener(this))
                     .on("click.tmpl_events", ".fplugs-box,.backbtn, .show_btn" , this.loadAppInfo.bindAsEventListener(this))
                     .on("click.tmpl_events", ".install-btn" , this.installApp.bindAsEventListener(this))
                     .on("click.tmpl_events", ".install-form-btn, .update" , this.updateApp.bindAsEventListener(this))
+                    .on("click.tmpl_events", "#oauth_link", this.installOAuthApp.bindAsEventListener(this))
                     .on("click.tmpl_events", ".nativeapp" , this.installNativeApp.bindAsEventListener(this))
                     .on("submit.tmpl_events", "form#extension-search-form" , this.onSearch.bindAsEventListener(this))
                     .on("click.tmpl_events", "[id^=carousel-selector-]" , this.carouselSelector.bindAsEventListener(this))
@@ -91,6 +94,8 @@ var TemplateDockManager   = Class.create({
   },
   resetQuery: function (e) {
     jQuery(".appsearch-box #query").val("");
+    jQuery(".search-apps").show();
+    jQuery(".search-loader, .remove-query").hide();
   },
   setupCarousel: function(){
     jQuery("#screenshotsCarousel").livequery(function(){
@@ -136,8 +141,8 @@ var TemplateDockManager   = Class.create({
     jQuery(this.extensionsWrapper).empty();
     jQuery(this.extensionsWrapper).append('<div class="sloading loading-block"></div>');
   },
-  installTrigger: function(){
-    jQuery(".install-btn").trigger("click");
+  installTrigger: function(trigger_element){
+    jQuery(trigger_element).trigger("click");
   },
   startProgress: function(){
     this.progressInterval = setInterval(function() {
@@ -161,11 +166,18 @@ var TemplateDockManager   = Class.create({
       type: "GET",
       beforeSend: function(){
         that.showLoader();
-        
       },
       success: function(jqXHR, exception){
+        jqXHR['category_specific'] = jQuery(el).hasClass('category') || jQuery(el).hasClass('view-all') ||
+                                     jQuery(el).hasClass('back2catg_btn');
         jQuery(that.extensionsWrapper).empty()
                                       .append(JST["marketplace/marketplace_list"](jqXHR));
+        if(jQuery(el).hasClass('view-all')) {
+          jQuery('a[href="#' + jQuery(el).attr('id') + '"]').click();
+        };
+        if(jQuery(el).is('#category_0') || jQuery(el).hasClass('view-all')) { 
+          jQuery('#category_0').css({'color':'#555','font-weight': 'bold'});
+        }
         that.isSearched = false;
         jQuery("#query").focus();
       },
@@ -233,7 +245,6 @@ var TemplateDockManager   = Class.create({
 
         if(!isSuggestion){
           if(jQuery(obj).hasClass("moreinfo-lnk")){
-            jQuery(".back2list_btn").css("display", "none");
             jQuery(".app-name").css("padding-left", "15px");
             jQuery(".dtl-box").removeClass("head-spacer");
           }
@@ -282,6 +293,42 @@ var TemplateDockManager   = Class.create({
     });
   },
 
+  isValidForm: function() {
+    var isFormValid = true;
+    jQuery(".installer-form input.fa-textip").each(function(index, value){
+      if (jQuery.trim(jQuery(value).val()).length == 0){
+        isFormValid = false;
+      }
+    });
+    return isFormValid;
+  },
+
+  displayFormFieldError: function() {
+    jQuery("#install-error").show().text(this.customMessages.field_blank);
+    jQuery(".install-form").css("height", "calc(100vh - 230px)");
+  },
+
+  installOAuthApp: function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    var that = this;
+    var parameters = "";
+    var elements = jQuery('.fa-elements');
+    if(this.isValidForm()) {
+      for( var i = 0; i < elements.length; i++ ){
+        if(elements[i].name && elements[i].value) {
+          parameters += parameters + '&' + elements[i].name + '=' + elements[i].value;
+        }
+      }
+      var url = jQuery('#oauth_link').attr('data-url');
+      window.location = url + parameters;
+    }
+    else {
+      this.displayFormFieldError();
+
+    }
+  },
+
   //install button in install config page
   installApp: function(e){
     e.preventDefault();
@@ -290,11 +337,7 @@ var TemplateDockManager   = Class.create({
     var el = jQuery(e.currentTarget);
   
     var isFormValid = true;
-    jQuery(".installer-form input.fa-textip").each(function(index, value){
-      if (jQuery.trim(jQuery(value).val()).length == 0){
-        isFormValid = false;
-      }
-    });
+    isFormValid = this.isValidForm(e);
 
     if(isFormValid ){
       jQuery.ajax({
@@ -343,8 +386,7 @@ var TemplateDockManager   = Class.create({
         }
       });
     }else{
-      jQuery("#install-error").show().text(that.customMessages.field_blank);
-      jQuery(".install-form").css("height", "calc(100vh - 230px)");
+      this.displayFormFieldError();
     }
   },
   installNativeApp: function(e){
@@ -382,7 +424,13 @@ var TemplateDockManager   = Class.create({
 
         if( !install_extension.configs.length ) { // no config
           jQuery(".install-form").hide();
-          setTimeout( that.installTrigger, 1000);
+          if(install_extension.install_btn['is_oauth_app']) {
+            trigger_element = '#oauth_link'
+          }
+          else {
+            trigger_element = '.install-btn'
+          }
+          setTimeout( that.installTrigger(trigger_element), 1000);
         }
 
         if(jQuery(el).hasClass("btn-settings")){
@@ -418,6 +466,7 @@ var TemplateDockManager   = Class.create({
         that.showLoader();
       },
       success: function(jqXHR, exception){
+        jqXHR['category_specific'] = false;
         jQuery(that.extensionsWrapper).empty()
                                       .append(JST["marketplace/marketplace_list"](jqXHR));
         that.isSearched = true;

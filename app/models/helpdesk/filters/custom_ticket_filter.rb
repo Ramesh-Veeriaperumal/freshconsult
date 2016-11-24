@@ -32,18 +32,18 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   end
 
   def shared_by_me_filter
-    status_groups = Account.current.status_groups
+    status_groups = Account.current.account_status_groups_from_cache
     shared_filter_condition(status_groups, "responder_id")
   end
 
   def shared_with_me_filter
-    status_groups = Account.current.status_groups.where(:group_id => User.current.group_ids)
-    shared_filter_condition(status_groups, TicketConstants::SHARED_AGENT_COLUMNS_ORDER[0])
+    status_groups = Account.current.account_status_groups_from_cache.select{|sg| User.current.group_ids.include?(sg.group_id)}
+    shared_filter_condition(status_groups, TicketConstants::INTERNAL_AGENT_ID)
   end
 
   def shared_filter_condition(status_groups, agent_type)
     sg_group_ids  = status_groups.map(&:group_id).uniq
-    sg_status_ids = status_groups.map(&:status_id)
+    sg_status_ids = status_groups.map(&:status_id).uniq
     status_ids    = Account.current.ticket_status_values_from_cache.select{|s| 
       sg_status_ids.include?(s.id)}.map(&:status_id)
 
@@ -53,7 +53,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
       Helpdesk::Filters::CustomTicketFilter.deleted_condition(false)
     ]
     conditions_array << { "condition" => "status", "operator" => "is_in", "value" => status_ids.join(',')} if status_ids.present?
-    conditions_array << { "condition" => TicketConstants::SHARED_GROUP_COLUMNS_ORDER[0], "operator" => "is_in", "value" => sg_group_ids.join(',')} if sg_group_ids.present?
+    conditions_array << { "condition" => TicketConstants::INTERNAL_GROUP_ID, "operator" => "is_in", "value" => sg_group_ids.join(',')} if sg_group_ids.present?
     conditions_array
   end
 
@@ -107,7 +107,25 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   def has_permission?(user)
     (accessible.all_agents?) or (accessible.only_me? and accessible.user_id == user.id) or (accessible.group_agents_visibility? and !user.agent_groups.find_by_group_id(accessible.group_id).nil?)
   end
-    
+
+  def update_condition key, replace_key
+    conditions = self.data[:data_hash]
+    updated = false
+
+    conditions.each do |condition|
+      next if key != condition["condition"]
+      updated = true
+      if replace_key.present?
+        condition["condition"] = replace_key
+      else
+        conditions.delete(condition)
+      end
+    end
+
+    self.query_hash = conditions if updated
+    updated
+  end
+
   def definition
      @definition ||= begin
       defs = {}
@@ -127,7 +145,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
         :operator => get_op_list(cont), :options => get_default_choices(:group_id) }
       end
 
-      #Custome fields
+      #Custom fields
       Account.current.custom_dropdown_fields_from_cache.each do |col|
         defs[get_id_from_field(col).to_sym] = {get_op_from_field(col).to_sym => get_container_from_field(col) ,:name => col.label, :container => get_container_from_field(col), :operator => get_op_from_field(col), :options => get_custom_choices(col) }
       end 
@@ -218,7 +236,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
       action_hash = params[:data_hash]
       action_hash = ActiveSupport::JSON.decode params[:data_hash] if !params[:data_hash].kind_of?(Array)
     end
-    
+
     #### Very bad condition need to change -- error prone
     if !params[:filter_name].eql?("spam") and !params[:filter_name].eql?("deleted")
       action_hash.push({ "condition" => "spam", "operator" => "is", "value" => false})
@@ -226,6 +244,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     end
 
     action_hash = default_filter(params[:filter_name], !!params[:export_fields], ["json", "xml","nmobile"].include?(params[:format])) if params[:data_hash].blank?
+    action_hash = remove_invalid_conditions(action_hash)
     self.query_hash = action_hash
 
     action_hash.each do |filter|
@@ -255,6 +274,14 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
 
   def add_tag_filter(params)
     add_condition("helpdesk_tags.id", :is_in, params[:tag_id]) unless params[:tag_id].blank?
+  end
+
+  def remove_invalid_conditions action_hash
+    unless Account.current.features?(:shared_ownership)
+      reject_conditions = TicketConstants::SHARED_AGENT_COLUMNS_ORDER + TicketConstants::SHARED_GROUP_COLUMNS_ORDER
+      action_hash.reject!{|condition_hash| reject_conditions.include?(condition_hash["condition"])}
+    end
+    action_hash
   end
 
   def ticket_select

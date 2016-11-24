@@ -222,17 +222,45 @@
 .tag-list{
   .list-page-body{
     margin-top:-10px;
-    table{
+    .add-new-tag{    
+      border-top: 1px solid #eee;
+      padding: 12px 12px 6px;
+      background-color: #fbfbfb;
+      position:relative;
+      .addhelpdesk_tag{
+        width:33%;
+        margin-bottom: 6px;
+        @include padding-left(25px);
+        @include margin-left(20px);
+        min-height: 20px;
+      }
+      .tag-duplicate-error{
+            color: #A90329;
+            @include margin-left(5px);
+      }
+      .rounded-add-icon{
+        background: #bfbfbf;
+        position: absolute;
+        top: 19px;
+        @include left(38px);
+        @include box-shadow(none);
+        cursor: default;
+      }
+    }
+    .tags-table{
       table-layout:fixed;
       td.name{
         width: 33%;
       }
+      td.record_highlight{
+        background-color: #FBFBFB;
+      }
       td{
         width:22%;
         height:35px;
-        @include padding-right(0);
+        padding:10px;
         .tag_text{
-          max-width:50%;
+          max-width:75%;
           top: 5px;
           position: relative;
         }

@@ -1,0 +1,63 @@
+<div class="channel-selector">
+  <%= form_tag update_channel_configs_admin_onboarding_index_path, method: :post, 
+  class: "channel-config-form" do %> 
+    <%= hidden_field_tag :account_channel_config, "" %>
+  <% end %>
+
+  <div data-channel="email" class="item active tooltip default" data-placement="above" title="<%= t('admin_onboarding.modal.channels_frame.default_channel') %>">
+    <div class="status-circle">
+      <i class="ficon-checkmark"></i>
+    </div>
+    <div class="ficon-wrapper">
+      <i class="channel-icon ficon-email-notifications"></i>
+    </div>
+    <div class="item-name">
+      <%= t('admin_onboarding.modal.channels_frame.email_channel') %>
+    </div>
+  </div>
+
+  <div data-channel="phone" class="item">
+    <div class="status-circle">
+      <i class="ficon-checkmark"></i>
+    </div>
+    <div class="ficon-wrapper">
+      <i class="channel-icon ficon-phone-channel"></i>
+    </div>
+    <div class="item-name">
+      <%= t('admin_onboarding.modal.channels_frame.phone_channel') %>
+    </div>
+  </div>
+  <div data-channel="chat"  class="item">
+    <div class="status-circle">
+      <i class="ficon-checkmark"></i>
+    </div>
+    <div class="ficon-wrapper">
+      <i class="channel-icon ficon-chat"></i>
+    </div>
+    <div class="item-name">
+      <%= t('admin_onboarding.modal.channels_frame.chat_channel') %>
+    </div>
+  </div>
+  <div data-channel="social" class="item">
+    <div class="status-circle">
+      <i class="ficon-checkmark"></i>
+    </div>
+    <div class="ficon-wrapper">
+      <i class="channel-icon ficon-all-streams"></i>
+    </div>
+    <div class="item-name">
+      <%= t('admin_onboarding.modal.channels_frame.social_channel') %>
+    </div>
+  </div>
+  <div data-channel="forums" class="item">
+    <div class="status-circle">
+      <i class="ficon-checkmark"></i>
+    </div>
+    <div class="ficon-wrapper">
+      <i class="channel-icon ficon-multi-product"></i>
+    </div>
+    <div class="item-name">
+      <%= t('admin_onboarding.modal.channels_frame.forums_channel') %>
+    </div>
+  </div>
+</div>

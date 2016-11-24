@@ -16,6 +16,16 @@
 				<%= post.body_html.html_safe %>
 			<% end %>
 		</div>
-		<%= attachment_container(post.attachments, true, "article", nil)  unless popup %>
+		<div class="attachment_wrapper mb20">
+			<ul class="attachment_list">
+			    <% post.attachments.each do |attached| %> 
+			    	<%= attachment_list(attached, true, "article",nil) unless popup %>
+			    <% end %>
+ 
+			    <% post.cloud_files.each do |cloud_file| %> 
+					<%= attachment_list(cloud_file, true, "cloud_file",nil) unless popup %>
+					<% end %>
+			</ul>
+		</div>
 	</div>
 </div>

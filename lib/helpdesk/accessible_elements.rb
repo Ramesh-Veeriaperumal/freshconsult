@@ -1,22 +1,24 @@
 module Helpdesk::AccessibleElements
 
   include HelpdeskAccessMethods
+  include Redis::RedisKeys
+  include Redis::OthersRedis
 
   ITEMS_TO_DISPLAY = 25
   RECENT_TEMPLATES = 10
 
   # Current User accessible_elements for both Ticket templates and Scenario automations.
 
-  def fetch_templates query, recent_ids = nil, size = 300, excluded_ids = nil
-    options = {:model_hash => templ_asstn, :query => query, :id_data => recent_ids, 
-      :excluded_ids => excluded_ids}
+  def fetch_templates query, assn_types, recent_ids = nil, size = 300, excluded_ids = nil
+    options = {:model_hash => templ_asstn, :query => query, :id_data => recent_ids,
+      :excluded_ids => excluded_ids, :assn_types => assn_types}
     visible_elmts = accessible_records(options, size)
     visible_elmts = template_hash(visible_elmts, recent_ids) if visible_elmts.present?
     visible_elmts
   end
 
   def accessible_scenrios
-    model_hash = {:model => "VARule", :table => "va_rules", :asstn => "scn_automations", 
+    model_hash = {:model => "VARule", :table => "va_rules", :asstn => "scn_automations",
       :name => "ScenarioAutomation"}
     visible_elmts = accessible_records({:model_hash => model_hash, :query => ''})
   end
@@ -33,10 +35,12 @@ module Helpdesk::AccessibleElements
   end
 
   def visible_records ops, enclose, sort, db_limit
-    if(Account.current.launched?(:countv2_template_read) && (ops[:model_hash][:name] == "Helpdesk::TicketTemplate"))
-      elements = accessible_from_esv2(ops[:model_hash][:name], enclose, default_visiblity, sort, nil, ops[:id_data], ops[:excluded_ids])
+    if read_from_countv2?(ops)
+      elements = accessible_from_esv2(ops[:model_hash][:name], enclose, default_visiblity, sort, nil,
+        ops[:id_data], ops[:excluded_ids], ops[:assn_types])
     else
-      elements = accessible_from_es(ops[:model_hash][:name].constantize, enclose, default_visiblity, sort, nil, ops[:id_data], ops[:excluded_ids])
+      elements = accessible_from_es(ops[:model_hash][:name].constantize, enclose, default_visiblity, sort, nil,
+        ops[:id_data], ops[:excluded_ids], ops[:assn_types])
     end
     elements = accessible_elements(current_account.send(ops[:model_hash][:asstn]),
       query_hash(ops[:model_hash][:model], ops[:model_hash][:table], ops[:query], [], db_limit)) if elements.nil?
@@ -51,7 +55,7 @@ module Helpdesk::AccessibleElements
   end
 
   def accessible_types element_ids, model
-    @access_types = current_account.accesses.select("accessible_id,access_type").where(:accessible_type => model, 
+    @access_types = current_account.accesses.select("accessible_id,access_type").where(:accessible_type => model,
       :accessible_id => element_ids).collect {|acc| [acc.accessible_id, acc.access_type]}.to_h
   end
 
@@ -66,11 +70,31 @@ module Helpdesk::AccessibleElements
       visible_elmts = recent_ids.map {|id| visible_elmts[id].first if visible_elmts[id]}
       visible_elmts.compact!
     end
-    visible_elmts.map { |t| {:name => t.name, :id => t.id, 
+    visible_elmts.map { |t| {:name => t.name, :id => t.id, :assoc_type => t.association_type,
         :type => (@access_types[t.id] == Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:users]) ? 'personal' : 'shared' }}
   end
 
   def search_query?
     params.present? && params[:search_string].present?
+  end
+
+  def read_from_countv2?(ops)
+    model_class_name = ops[:model_hash][:name]
+    (model_class_name == "Helpdesk::TicketTemplate") ||
+    (redis_key_exists?(COUNT_ESV2_READ_ENABLED) && ["ScenarioAutomation", "Admin::CannedResponses::Response"].include?(model_class_name))
+  end
+
+  def fetch_from_es(model_name, enclose, visibility, sort = nil, folder_id = nil, id_data = nil, excluded_ids = nil)
+    v2_read_enabled = redis_key_exists?(COUNT_ESV2_READ_ENABLED)
+    if v2_read_enabled
+      method_name = "accessible_from_esv2"
+    else
+      method_name = "accessible_from_es"
+      model_name = model_name.constantize
+    end
+    results = send(method_name, model_name, enclose, visibility, sort, folder_id, id_data, excluded_ids)
+    return results if (!v2_read_enabled || results.blank? || sort.blank?)
+    sort_element = Search::V2::Count::AccessibleMethods::MULTI_MATCH_STRING_SEARCH[model_name].first    
+    results.sort! { |a,b| a.try(sort_element).to_s.downcase <=> b.try(sort_element).to_s.downcase }
   end
 end

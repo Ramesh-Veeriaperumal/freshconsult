@@ -499,6 +499,15 @@ module ApiSolutions
       delete :destroy, construct_params(id: 9999)
       assert_response :missing
     end
+
+    # default index params test
+    def test_index_with_invalid_page_and_per_page
+      sample_folder = get_folder_meta
+      get :folder_articles, controller_params(id: sample_folder.id, page: 'aaa', per_page: 'aaa')
+      assert_response 400
+      match_json([bad_request_error_pattern('page', :datatype_mismatch, expected_data_type: 'Positive Integer'),
+      bad_request_error_pattern('per_page', :per_page_invalid, max_value: 100)])
+    end
   end
 end
 

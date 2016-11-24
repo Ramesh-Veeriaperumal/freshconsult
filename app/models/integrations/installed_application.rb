@@ -13,6 +13,7 @@ class Integrations::InstalledApplication < ActiveRecord::Base
   has_many :cti_calls, :class_name =>'Integrations::CtiCall', :dependent => :nullify
   has_many :cti_phones, :class_name =>'Integrations::CtiPhone', :dependent => :destroy
   has_many :va_rules, through: :app_business_rules
+  has_many :sync_accounts, :class_name => 'Integrations::SyncAccount', :dependent => :destroy
   attr_protected :application_id
   
   validate :check_existing_app, :on => :create

@@ -39,6 +39,18 @@
     );
   });
 
+
+  //clicked category links in app gallery - Number of visits to each category page
+  jQuery(document).on("click.km_track_evt", ".category", function(e){
+    App.Marketplace.Metrics.push_event(
+      "Clicked app category",
+      { "Domain Name": mktplace_domain,
+        "App Category selected" : e.target.innerText.trim()
+      }
+    );
+  });
+
+
   //clicked app box in app gallery - Number of visits to each app’s description page
   jQuery(document).on("viewed_app_description_page", function(e){
     var _viewedAppFrom;

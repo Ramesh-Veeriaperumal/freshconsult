@@ -5,6 +5,7 @@ class AccountsController < ApplicationController
   include Redis::TicketsRedis
   include Redis::DisplayIdRedis
   include MixpanelWrapper 
+  include Onboarding::OnboardingRedisMethods
   
   layout :choose_layout 
   
@@ -24,6 +25,7 @@ class AccountsController < ApplicationController
     :except => [:update,:cancel,:edit,:show,:delete_favicon,:delete_logo, :manage_languages, :update_languages]
   skip_before_filter :determine_pod, 
     :except => [:update,:cancel,:edit,:show,:delete_favicon,:delete_logo, :manage_languages, :update_languages]
+  skip_after_filter :set_last_active_time
 
   around_filter :select_latest_shard, :except => [:update,:cancel,:edit,:show,:delete_favicon,:delete_logo,:manage_languages,:update_languages]
 
@@ -37,6 +39,7 @@ class AccountsController < ApplicationController
   before_filter :build_signup_contact, :only => [:new_signup_free]
   before_filter :check_supported_languages, :only =>[:update], :if => :multi_language_available?
   before_filter :set_native_mobile, :only => [:new_signup_free]
+  before_filter :validate_feature_params, :only => [:update]
   before_filter :update_language_attributes, :only => [:update_languages]
   before_filter :validate_portal_language_inclusion, :only => [:update_languages]
   before_filter(:only => [:manage_languages]) { |c| c.requires_feature :multi_language }
@@ -68,6 +71,7 @@ class AccountsController < ApplicationController
    if @signup.save
     @signup.account.agents.first.user.reset_perishable_token! 
       add_account_info_to_dynamo
+      set_account_onboarding_pending
       add_to_crm
       respond_to do |format|
         format.html {
@@ -120,6 +124,9 @@ class AccountsController < ApplicationController
     @account.permissible_domains = params[:account][:permissible_domains]
     if @account.save
       enable_restricted_helpdesk(params[:enable_restricted_helpdesk])
+      @account.update_attributes!(params[:account].slice(:features))
+      #to prevent trusted ip middleware caching the association cache
+      @account.clear_association_cache
       flash[:notice] = t(:'flash.account.update.success')
       redirect_to redirect_url
     else
@@ -377,13 +384,11 @@ class AccountsController < ApplicationController
 
     def schedule_cleanup
       current_account.subscription.update_attributes(:state => "suspended")
-
-      Resque.enqueue_at(14.days.from_now, Workers::ClearAccountData, 
-                                    { :account_id => current_account.id })
+      AccountCleanup::DeleteAccount.perform_in(14.days.from_now, {:account_id => current_account.id})
     end
 
     def clear_account_data
-      Resque.enqueue(Workers::ClearAccountData, { :account_id => current_account.id })
+      AccountCleanup::DeleteAccount.perform_async({:account_id => current_account.id})
       ::MixpanelWrapper.send_to_mixpanel(self.class.name)
     end
 
@@ -450,4 +455,12 @@ class AccountsController < ApplicationController
     def multilingual_available?
       render :template => "/errors/non_covered_feature.html", :locals => {:feature => :multi_language} unless @account.launched?(:translate_solutions)
     end
+
+    def validate_feature_params
+      allowed_features = @account.subscription.non_sprout_plan? ? ["forums"] : []
+      if params[:account] && params[:account][:features]
+        params[:account][:features] = params[:account][:features].slice(*allowed_features)
+      end
+    end
+
 end

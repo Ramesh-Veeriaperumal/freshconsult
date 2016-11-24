@@ -3,20 +3,32 @@ require 'mail'
 class UserNotifier < ActionMailer::Base
 
   layout "email_font"
-
+  include EmailHelper
   def user_activation(user, params, reply_email_config)
-    ActionMailer::Base.set_email_config reply_email_config
-    send_the_mail(user, params[:subject], params[:email_body], params[:reply_email])
+    begin
+      configure_email_config reply_email_config
+      send_the_mail(user, params[:subject], params[:email_body], params[:reply_email], EmailNotification::USER_ACTIVATION)
+    ensure
+      remove_email_config
+    end
   end
 
   def email_activation(email_id, params, reply_email_config)
-    ActionMailer::Base.set_email_config reply_email_config
-    send_the_mail(email_id, params[:subject], params[:email_body], params[:reply_email])
+    begin
+      configure_email_config reply_email_config
+      send_the_mail(email_id, params[:subject], params[:email_body], params[:reply_email], "Email Activation")
+    ensure
+      remove_email_config
+    end
   end
 
-  def password_reset_instructions(user, params, reply_email_config)  
-    ActionMailer::Base.set_email_config reply_email_config  
-    send_the_mail(user, params[:subject], params[:email_body], params[:reply_email])
+  def password_reset_instructions(user, params, reply_email_config)
+    begin
+      configure_email_config reply_email_config  
+      send_the_mail(user, params[:subject], params[:email_body], params[:reply_email], EmailNotification::PASSWORD_RESET)
+    ensure
+      remove_email_config
+    end
   end
   
   def admin_activation(admin)
@@ -32,7 +44,8 @@ class UserNotifier < ActionMailer::Base
       :subject        => "Activate your #{AppConfig['app_name']} account",
       :sent_on        => Time.now
     }
-    @admin          = admin
+   headers.merge!(make_header(nil, nil, admin.account.id, "Admin Activation"))
+   @admin          = admin
     @activation_url = register_url( 
       :activation_code => admin.perishable_token, 
       :host => admin.account.host , 
@@ -56,6 +69,7 @@ class UserNotifier < ActionMailer::Base
       :sent_on    => Time.now
     }
 
+    headers.merge!(make_header(nil, nil, account.id, "Custom SSL Activation"))
     @admin_name   = "#{account.admin_first_name} #{account.admin_last_name}"
     @portal_url   = portal_url
     @elb_name     = elb_name
@@ -79,6 +93,7 @@ class UserNotifier < ActionMailer::Base
       :"X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     }
 
+    headers.merge!(make_header(nil, nil, options[:user].account.id, "Notify Customers Import"))
     @user = options[:user]
     @type = options[:type]
     @created = options[:created_count]
@@ -110,6 +125,7 @@ class UserNotifier < ActionMailer::Base
       :from          => AppConfig['from_email'],
       :sent_on       => Time.now
     }
+    headers.merge!(make_header(nil, nil, account.id, "Notify Facebook Reauth"))
     @facebook_url    = social_facebook_index_url(:host => account.host)
     @fb_page         = facebook_page
     @admin_name      = account.admin_first_name
@@ -131,6 +147,7 @@ class UserNotifier < ActionMailer::Base
       "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     }
     
+    headers.merge!(make_header(nil, nil, account.id, "Notify Webhook Failure"))
     @automation_type = triggering_rule[:type].to_s
     @automation_name = triggering_rule[:name].to_s
     @automation_link = triggering_rule[:path].to_s
@@ -154,6 +171,7 @@ class UserNotifier < ActionMailer::Base
       "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     }
 
+    headers.merge!(make_header(nil, nil, account.id, "Notify Webhook Drop"))
     mail(headers) do |part|
       part.text { render "webhook_drop.text.plain" }
       part.html { render "webhook_drop.text.html" }
@@ -167,6 +185,12 @@ class UserNotifier < ActionMailer::Base
       :from       => AppConfig['from_email'],
       :sent_on    => Time.now
     }
+
+    account_id = -1
+
+    account_id = Account.current.id if Account.current
+
+    headers.merge!(make_header(nil, nil, account_id, "Helpdesk Url Reminder"))
     @helpdesk_urls = helpdesk_urls
     mail(headers) do |part|
       part.html { render "helpdesk_url_reminder", :formats => [:html] }
@@ -181,6 +205,12 @@ class UserNotifier < ActionMailer::Base
       :sent_on    => Time.now,
       :body       => text
     }
+
+    account_id = -1
+
+    account_id = Account.current.id if Account.current
+
+    headers.merge!(make_header(nil, nil, account_id, "One Time Password"))
     mail(headers).deliver
   end
 
@@ -191,6 +221,12 @@ class UserNotifier < ActionMailer::Base
       :from       => AppConfig["billing_email"],
       :sent_on    => Time.now
     }
+
+    account_id = -1
+
+    account_id = Account.current.id if Account.current
+
+    headers.merge!(make_header(nil, nil, account_id, "Failure Transaction Notifier"))
     @content = content
     mail(headers) do |part|
       part.text { render "failure_transaction_notifier.text.plain" }
@@ -200,14 +236,18 @@ class UserNotifier < ActionMailer::Base
 
   private
 
-    def send_the_mail(user_or_email, subject, email_body, reply_email =nil)
-      mail(:to => user_or_email.email, 
+    def send_the_mail(user_or_email, subject, email_body, reply_email =nil, type)
+      headers = {
+        :to => user_or_email.email, 
         :from => reply_email || user_or_email.account.default_friendly_email,
         :subject => subject,
         :sent_on => Time.zone.now,
         :reply_to => "#{reply_email || user_or_email.account.default_friendly_email}",
         :"Auto-Submitted" => "auto-generated", 
-        :"X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply") do |part|
+        :"X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
+      }
+      headers.merge!(make_header(nil, nil, user_or_email.account.id, type))
+      mail(headers) do |part|
           part.text do
             @body = Helpdesk::HTMLSanitizer.plain(email_body)
             render("user_notification_mail.text.plain")

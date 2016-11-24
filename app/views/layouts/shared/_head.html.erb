@@ -23,7 +23,7 @@
 	<link rel="canonical shortcut icon" href="<%= fav_icon_url %>" />
 
 	<!-- TODO-RAILS3 Clean up the below module oriented items -->
-	 
+
 	<%= stylesheet_link_tag_with_rtl :'cdn/common' %>
 	<%= stylesheet_link_tag_with_rtl :'cdn/pattern', :media => "screen, print, projection"  %>
 	<%= stylesheet_link_tag_with_rtl :'cdn/plugins'  %>
@@ -32,6 +32,8 @@
 	<%= stylesheet_link_tag_with_rtl :'cdn/tour_my_app' %>
 
 	<%= stylesheet_link_tag_with_rtl :'cdn/freshfone_recording_playback' %>
+
+	<%= stylesheet_link_tag_with_rtl :'cdn/froala_editor' %>
 
 	<script type="text/javascript">
 	  /* TODO-RAILS3 need to cross check this area */
@@ -54,15 +56,15 @@
 
 	<%= javascript_include_tag :'cdn/defaults'  %>
 	<%= javascript_include_tag :'cdn/frameworks' %>
+	<%= javascript_include_tag :'cdn/froala_editor' %>
 	<%= javascript_include_tag :'cdn/workspace' %>
-	<%= javascript_include_tag :'cdn/syntaxhighlighter' %>
 	<%= javascript_include_tag :'cdn/pattern'  %>
 	<%= javascript_include_tag :'cdn/plugins/fileupload' %>
 	<%= javascript_include_tag :'cdn/livechat_helper' %>
 
 
 	<!-- The following is the remote CDN file managed by Freshapps Team. It is to exec freshapps one by one -->
-	<%= javascript_include_tag :"#{MarketplaceConfig::FRESHAPPS_JS_URL}/js/common-0.3.0.min.js" %>
+	<%= javascript_include_tag :"#{MarketplaceConfig::FRESHAPPS_JS_URL}/js/common-0.4.0.min.js" %>
 
 	<% if current_account.features?(:freshfone) ||
 	  (current_account.features?(:chat) && current_account.chat_setting && !(is_assumed_user?)) %>

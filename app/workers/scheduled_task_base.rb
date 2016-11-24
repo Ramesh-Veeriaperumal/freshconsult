@@ -19,6 +19,7 @@ class ScheduledTaskBase < BaseWorker
   def perform(options)
     begin
       logger.info "Received ScheduledTask with #{options.inspect} for execution."
+      HelpdeskReports::Logger.log("scheduled : account_id: #{options['account_id']}, task_id: #{options['task_id']}")
       initialize_task(options)
       #Account dependent tasks, Account independent tasks & rake invocations respectively
       if params[:account_id].present?

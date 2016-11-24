@@ -44,7 +44,7 @@
 }
 
 #tag-remove-confirm, #tag-dialog-confirm, #tag-delete-confirm {
-	p { padding: 10px;}
+	p { padding: 10px 0;}
 
 	.ui-icon {
       display: inline-block;
@@ -233,7 +233,7 @@
 	}
 	.name{
 			width: 40% !important;
-			padding-right: 0;
+			padding-right: 0 ;
 			a.tag_name{
 				display: inline-block;
 				text-overflow: ellipsis;

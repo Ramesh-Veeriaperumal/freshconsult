@@ -5,12 +5,14 @@ module Search
       class AccessibleMethods
         include Search::Filters::QueryHelper
         include Helpdesk::Accessible::ElasticSearchMethods
+        include HelperMethods
 
         attr_accessor :model_class, :options, :visibility
         ES_PAGINATION_SIZE = 10
 
         MULTI_MATCH_STRING_SEARCH = {
-          "Helpdesk::TicketTemplate" => ["name"]
+          "Helpdesk::TicketTemplate"          => ["name"],
+          "Admin::CannedResponses::Response"  => ["title"]
         }
 
         def initialize model_class, options = {}, visible_options = {}
@@ -19,10 +21,56 @@ module Search
           self.visibility  = visible_options.present? ? visible_options : default_visiblity
         end
 
+        def es_request(query_options={})
+          error_handle do
+            model_name = form_model_class_name model_class
+            deserialized_params = es_query(query_options)
+            response = Search::V2::Count::CountClient.new(:get,
+                              query_path(model_name),
+                              query_string,
+                              deserialized_params.to_json,
+                              Search::Utils::SEARCH_LOGGING[:request],
+                              nil
+                            ).response
+            parse_db_options(model_class)
+            Rails.logger.info "ES count-others response:: Account -> #{Account.current.id}, Took:: #{response["took"]}"
+            records(response)
+          end
+        end
+
+        def ca_folders_es_request(query_options={})
+          error_handle do
+            model_name = form_model_class_name model_class
+            deserialized_params = ca_folders_es_query(query_options)
+            response = Search::V2::Count::CountClient.new(:get,
+                              query_path(model_name),
+                              query_string,
+                              deserialized_params.to_json,
+                              Search::Utils::SEARCH_LOGGING[:request],
+                              nil
+                            ).response
+            parse_db_options(model_class)
+            Rails.logger.info "ES count-others response:: Account -> #{Account.current.id}, Took:: #{response["took"]}"
+            response
+          end
+        end
+
+        private
+
+        def ca_folders_es_query(query_options)
+          condition_block = default_condition_block
+          condition_block[:should].push(es_filter_query(es_user_groups, visibility))
+          condition_block[:must] << account_id_filter
+          bool_filter_block = bool_filter(condition_block)
+          query = filtered_query({}, bool_filter_block)
+          query.merge(ca_folder_agg_query)
+        end
+
         def es_query(query_options)
           folder_id     = query_options[:folder_id]
           id_data       = query_options[:id_data]
           excluded_ids  = query_options[:excluded_ids]
+          type_ids      = query_options[:type_ids]
           search_string = query_options[:query_params][:search_string]
 
           condition_block = default_condition_block
@@ -30,6 +78,7 @@ module Search
           condition_block[:must].push(folder_id_query(folder_id)) if folder_id
           condition_block[:must].push(id_data_query(id_data)) if id_data
           condition_block[:must_not].push(excluded_ids_query(excluded_ids)) if excluded_ids.present?
+          condition_block[:must].push(type_ids_query(type_ids)) if type_ids.present?
           condition_block[:must].push(account_id_filter)
 
           query = filtered_query({:must => partial_match_query(model_class, search_string)}, bool_filter(condition_block))
@@ -48,6 +97,10 @@ module Search
           ids_filter(ids)
         end
 
+        def type_ids_query type_ids
+          terms_filter("association_type", type_ids)
+        end
+
         def partial_match_query model_klass, search_term
           return [] if search_term.blank?
           fields = MULTI_MATCH_STRING_SEARCH[model_klass]
@@ -59,23 +112,6 @@ module Search
           [bool_filter(condition_block)]
         end
 
-        def es_request(query_options)
-          error_handle do
-            model_name = model_class.demodulize.downcase
-            deserialized_params = es_query(query_options)
-            response = Search::V2::Count::CountClient.new(:get, 
-                              query_path(model_name),
-                              query_string,                               
-                              deserialized_params.to_json,
-                              Search::Utils::SEARCH_LOGGING[:request],
-                              nil
-                            ).response
-            parse_db_options(model_class)
-            Rails.logger.info "ES count-others response:: Account -> #{Account.current.id}, Took:: #{response["took"]}"
-            records(response)
-          end
-        end
-
         def query_path model_name
           [host, index_alias(model_name), "_search"].join('/')
         end
@@ -84,21 +120,18 @@ module Search
           {routing: Account.current.id}
         end
 
-        def host
-          ::COUNT_V2_HOST
-        end
-
         def index_alias name
           "#{name}_alias"
         end
 
         def records(response)
           args    = {:current_account_id => Account.current.id}
-          model_name = model_class.demodulize.downcase
+          preload = options[:preload] || []
+          model_name = form_model_class_name model_class
           model_and_assoc = {
             model_name => {
               :model        => model_class,
-              :associations => options[:preload]
+              :associations => preload
             }
           }
           Search::Utils.load_records(response, model_and_assoc, args)
@@ -123,6 +156,21 @@ module Search
             NewRelic::Agent.notice_error(e)
             nil
           end
+        end
+
+        def ca_folder_agg_query
+          size = options[:size] || ES_PAGINATION_SIZE
+          {
+            "aggs" =>
+            {
+              "ca_folders" => {
+                "terms" => {
+                  "field"  => "folder_id",
+                  "size"   => size
+                }
+              }
+            }
+          }
         end
 
       end

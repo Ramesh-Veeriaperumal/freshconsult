@@ -7,6 +7,7 @@ class Search::V2::SolutionsController < ApplicationController
   helper Search::SearchHelper
 
   before_filter :load_ticket, :only => [:related_solutions, :search_solutions]
+  before_filter :detect_multilingual_search, only: [:related_solutions, :search_solutions]
     
   # Find solutions for ticket
   #
@@ -35,7 +36,7 @@ class Search::V2::SolutionsController < ApplicationController
         es_params[:sort_direction]      = @sort_direction
         es_params[:size]                = @size
         es_params[:from]                = @offset
-      end.merge(ES_V2_BOOST_VALUES[@search_context])
+      end
     end
 
     def search_and_assign
@@ -56,6 +57,14 @@ class Search::V2::SolutionsController < ApplicationController
     #
     def load_ticket
       @ticket = current_account.tickets.find_by_id(params[:ticket])
+    end
+
+		# Hack for getting language and hitting corresponding alias
+		# Probably will be moved to search/search_controller when dynamic solutions goes live
+    def detect_multilingual_search
+      if params[:language].present? && current_account.es_multilang_soln?
+        @es_locale = params[:language].presence
+      end
     end
   
     # ESType - [model, associations] mapping

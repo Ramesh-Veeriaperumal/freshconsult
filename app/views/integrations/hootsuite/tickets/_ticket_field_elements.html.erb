@@ -1,11 +1,5 @@
 <% 
-  default_field_order = [
-      "default_priority", "default_status", 
-      "default_source", "default_ticket_type", 
-      "default_group", 
-      "default_agent", 
-      "default_product"
-  ]
+  field_order = Helpdesk::TicketField.default_field_order
 
   default_fields = []
   default_ticket_type_field = ""
@@ -16,7 +10,7 @@
     field_label = t("ticket_fields.fields.#{field.name}")
     dom_type    = (field.field_type == "default_source") ? "dropdown" : field.dom_type
     field_value = nested_ticket_field_value(@ticket, field) if(field.field_type == "nested_field") and !@ticket.new_record?
-    field_html = construct_ticket_element(form_builder, :helpdesk_ticket, 
+    field_html = construct_new_ticket_element(form_builder, :helpdesk_ticket, 
                                           field, field_label, dom_type, 
                                           field.required, field_value, '', false, false)
     if(field.field_type == "default_ticket_type" && field.has_sections_feature?)
@@ -26,7 +20,7 @@
     end
   end
 end
-default_fields.sort! {|x,y| default_field_order.index(x.first) <=> default_field_order.index(y.first) }
+default_fields.sort! {|x,y| field_order.index(x.first) <=> field_order.index(y.first) }
 %>
 <% default_fields.each do |field| %>
   <%= field.last %>

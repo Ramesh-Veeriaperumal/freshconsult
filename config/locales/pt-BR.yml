@@ -1614,6 +1614,10 @@ pt-BR:
         feedbackwidget_use_https: "Usar https"
         feedbackwidget_mobile_view: "Habilitar exibição para dispositivo móvel"
         feedbackwidget_use_captcha: "Habilitar CAPTCHA"
+        feedbackwidget_submit_title: "Enviar Feedback"
+        feedbackwidget_form_submit_title: "Botão do Formulário"
+        feedbackwidget_title_maxlength: "Máximo 30 caracteres"
+        feedbackwidget_submit_title_maxlength: "Máximo 16 caracteres"
       embedded_widget:
         feedbackwidget_height_placeholder: 500
         feedbackwidget_form_customization: "Formulário personalizado"
@@ -1631,6 +1635,10 @@ pt-BR:
         feedbackwidget_search_area: "Pesquisar artigos"
         feedbackwidget_use_https: "Usar https"
         feedbackwidget_use_captcha: "Habilitar CAPTCHA"
+        feedbackwidget_submit_title: "Enviar Feedback"
+        feedbackwidget_form_submit_title: "Botão do Formulário"
+        feedbackwidget_title_maxlength: "Máximo 16 caracteres"
+        feedbackwidget_submit_title_maxlength: "Máximo 16 caracteres"       
     supervisor_rules:
       new_info_help: "Para <b>cada ticket</b> atualizado nos últimos 30 dias, execute todas as regras de correspondência."
       index:
@@ -5084,6 +5092,7 @@ pt-BR:
     note_saved: "Anotação salva"
     edit_note: "<b>Editar anotação</b>"
     thanks: "Obrigado por enviar seu feedback"
+    thanks_v1: "Obrigado pelo seu feedback"
     portal_created_on: "Criado por <span class='emphasize'>%{username}</span> em <span class='emphasize'>%{date}</span>"
     portal_created_on_same_user: "Criado em <span class='emphasize'>%{date}</span>"
     fb_portal_created_on: "Criado por <span class='emphasize'>%{username}</span> em <span class='emphasize'>%{date}</span>"
@@ -5276,6 +5285,9 @@ pt-BR:
     note_content: "Conteúdo da anotação"
     private_note_alert: "Para enviar uma resposta privada, use o comando de e-mail abaixo no corpo de sua mensagem."
     ticket_url: "URL do ticket"
+    submit_feedback: "Enviar Feedback"
+    search_text: "Pesquisar Artigos"
+    search_close_text: "Fechar Pesquisa"
     integrations:
       jira:
         tooltip: "Exibir o problema do JIRA associado"
@@ -7298,7 +7310,8 @@ pt-BR:
         feedback_widgets_search_results: "Resultados da pesquisa"
         feedback_widgets_search_our: "Pesquisar "
         feedback_widgets_knowledge_base: "Base de dados de conhecimento "
-        feedback_widgets_help_articles: "ou navegar pelos artigos da Ajuda"
+        feedback_widgets_help_articles: "ou navegue pelos artigos"
+        feedback_widgets_help_articles_v1: "ou navegue pelos artigos"
         show_all_results: "Mostrar todos os resultados"
         no_results: "Nenhum resultado para "
   reorder: Reordenar

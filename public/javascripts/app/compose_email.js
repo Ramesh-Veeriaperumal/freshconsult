@@ -37,8 +37,6 @@ var ComposeEmail = {
     //removing internal fileds in compose email for negating form validation
     //when these fields are set required in admin ticket fields
     jQuery('.default_internal_agent, .default_internal_group').remove();
-    jQuery('#helpdesk_ticket_source').val(10);
-    jQuery('#helpdesk_ticket_status').val(5);
     jQuery("#helpdesk_ticket_product_id").removeClass("required");
     jQuery("#helpdesk_ticket_responder_id").removeClass("required");
     jQuery("#helpdesk_ticket_product_id").removeClass("required_closure");
@@ -57,7 +55,9 @@ var ComposeEmail = {
 
     appendSignature: function(){
 		signature = jQuery("#signature").val();
-    	jQuery(".redactor_editor").html(signature);
+		if(signature != "") {
+			jQuery(".redactor_editor").html(signature);
+		}
     },
     
     bindEvents: function(){
@@ -135,15 +135,20 @@ var ComposeEmail = {
 			_form.submit();
 		});
 
-		jQuery('#ComposeTicket').on("submit.compose", function(){
-			var _form = jQuery(this);
+		jQuery('#ComposeTicket').on("submit.compose", function(ev){			
+			var _form = jQuery("#ComposeTicket");
 			if(_form.valid()) {
         jQuery("#compose-submit").text(  jQuery("#compose-submit").data('loading-text')).attr('disabled', true);
         jQuery("#compose-submit").next().attr('disabled', true);
         jQuery(".cancel-btn").attr('disabled', true);
 				// _form.find("button, a.btn").attr('disabled',true);
+			} else {
+				ev.preventDefault();
+				return false;
 			}
-		});
+
+			pjax_form_submit("#ComposeTicket", ev)
+		}.bind(this));
 
 	    this.$body.on('click.compose', '#compose-submit', function(ev){
 	    	var cc_email = jQuery('#compose-new-email');
@@ -156,7 +161,7 @@ var ComposeEmail = {
 	    	if(is_trial && !App.Tickets.LimitEmails.limitComposeEmail(jQuery('#compose-new-email'), '.cc-address', limit, msg)) {
 
 	    		if(!jQuery('.cc-address').is(':visible')) {
-	    			jQuery('.cc-address').show();
+	    			jQuery("[data-action='show-cc']").click();
 	    		}
 	          	return false
 	        }

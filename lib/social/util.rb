@@ -11,7 +11,7 @@ module Social::Util
         account = Account.current
         yield(account) if block_given?
       end
-    rescue ActiveRecord::RecordNotFound, ShardNotFound => e
+    rescue ActiveRecord::RecordNotFound, ShardNotFound, DomainNotReady => e
       Rails.logger.debug "#{e.inspect} -- #{account_id}"
       custom_params = {
         :account_id => account_id,
@@ -101,4 +101,48 @@ module Social::Util
     }
   end
 
+  def construct_media_url_hash(account, item, tweet, oauth_credential)
+    media_url_hash = {}
+    begin
+      media_array = tweet.media
+      photo_url_hash = {}
+      media_array.each do |media|
+        if(media.class.name == TWITTER_MEDIA_PHOTO || media.class.name == TWITTER_MEDIA_ANIMATEDGIF)
+          url = media.media_url_https.to_s
+          headers = SimpleOAuth::Header.new(:GET, url, {}, oauth_credential)
+          file_name = url[url.rindex('/')+1, url.length]
+          options = {
+            :file_content => open(url, "Authorization" => headers.to_s),
+            :filename => file_name,
+            :content_type => get_content_type(file_name),
+            :content_size => 1000
+          }
+
+          image_attachment = Helpdesk::Attachment.create_for_3rd_party(account,item, options, 1, 1)
+          if image_attachment.present? && image_attachment.content.present?
+            photo_url_hash[media.url.to_s] = image_attachment.content.url
+          end
+        end
+      end
+      media_url_hash[:photo] = photo_url_hash if photo_url_hash.present?
+    rescue => e
+      Rails.logger.error("Exception while attaching media content to ticket Exception: #{e.class} Exception Message: #{e.message}")
+    end
+    media_url_hash
+  end
+
+  def get_content_type(basename)
+    case basename
+    when /\.gif$/i
+      'image/gif'
+    when /\.jpe?g/i
+      'image/jpeg'
+    when /\.png$/i
+      'image/png'
+    when /\.tiff?/i
+      'image/tiff'
+    else
+      'application/octet-stream'
+    end
+  end
 end

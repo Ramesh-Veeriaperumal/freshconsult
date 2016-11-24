@@ -2,6 +2,8 @@ AppConfig = YAML.load_file(File.join(Rails.root, 'config', 'config.yml'))
 
 INTEGRATION_URL = URI.parse(AppConfig['integrations_url'][Rails.env]).host
 
+GLOBAL_INTEGRATION_URL = URI.parse(AppConfig['global_integration_url'][Rails.env]).host
+
 FreshopsSubdomains =  AppConfig['freshops_subdomain'].map { |k,v| v }.flatten
 
 NodeConfig = YAML.load_file(File.join(Rails.root, 'config', 'node_js.yml'))[Rails.env]
@@ -31,6 +33,8 @@ AutoIncrementId = YAML.load_file(File.join(Rails.root,'config','auto_increment_i
 HashedData = YAML.load_file(File.join(Rails.root,'config','hashed_data.yml'))[Rails.env]
 
 ThirdPartyAppConfig = YAML::load_file File.join(Rails.root, 'config', 'third_party_app_config.yml')
+
+MlAppConfig = YAML.load_file(File.join(Rails.root,'config','ml_app.yml'))[Rails.env]
 
 FdNodeConfig = YAML.load_file(File.join(Rails.root, 'config', 'fd_node_config.yml'))[Rails.env]
 

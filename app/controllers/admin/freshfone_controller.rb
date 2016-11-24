@@ -1,13 +1,15 @@
 class Admin::FreshfoneController < Admin::AdminController
 	include Freshfone::SubscriptionsUtil
+	include Admin::Freshfone::RequestFeature
 	include Redis::RedisKeys
 	include Redis::IntegrationsRedis
 
 	before_filter :load_numbers, :only => [:index, :search]
+	before_filter :trial_render, :only => [:index]
 	before_filter :validate_freshfone_state, :only => [:search]
 	before_filter :validate_trial, :only => [:search]
 	before_filter :validate_params, :only => [:available_numbers]
-	after_filter  :add_request_to_redis,:only => [:request_freshfone_feature]
+	after_filter  :add_freshfone_request_to_redis,:only => [:request_freshfone_feature]
 
 	def index
 		redirect_to admin_freshfone_numbers_path and return if
@@ -15,20 +17,7 @@ class Admin::FreshfoneController < Admin::AdminController
 	end
 
 	def request_freshfone_feature
-		email_params = {
-			:subject => "Phone Request - #{current_account.name}",
-			:from => current_user.email,
-			:cc => current_account.admin_email,
-			:message => "Request to enable the phone channel in your Freshdesk account."
-		}
-		FreshfoneNotifier.send_later(
-				:deliver_freshfone_request_template,
-				current_account, current_user, email_params)
-		FreshfoneNotifier.send_later(
-				:deliver_freshfone_ops_notifier,
-				current_account,
-				message: "Phone Activation Requested From Trial For Account ::#{current_account.id}",
-				recipients: ["freshfone-ops@freshdesk.com","pulkit@freshdesk.com"]) if in_trial_states?
+		request_freshfone
 		render :json => { :status => :success }
 	end
 
@@ -71,7 +60,8 @@ class Admin::FreshfoneController < Admin::AdminController
 	private
 
 		def validate_params
-			@freshfone_subscription = 'trial' if trial_numbers_empty?
+			@freshfone_subscription = 'trial' if onboarding_enabled? ||
+					trial_numbers_empty?
 			search_options = load_search_options
 			params[:type] = load_type(search_options)
 			params[:search_options] = search_options
@@ -93,28 +83,32 @@ class Admin::FreshfoneController < Admin::AdminController
 		end
 
 		def validate_freshfone_state
-			!in_trial_states? || requires_feature(:freshfone)
+			return if onboarding_enabled?
+			requires_feature(:freshfone)
 		end
 
 		def validate_trial
-			return redirect_to admin_freshfone_numbers_path unless number_search_allowed?
-			@freshfone_subscription = 'trial' if trial_subscription?
+			if trial_conditions?
+				@freshfone_subscription = 'trial'
+				return
+			elsif (trial? && !trial_number_purchase_allowed?) || trial_expired?
+				return redirect_to admin_freshfone_numbers_path
+			end
 		end
 
 		def trial_conditions?
-			!in_trial_states? || trial_numbers_empty? || trial_number_purchase_allowed?
+			onboarding_valid? ||
+				trial_numbers_empty? || trial_number_purchase_allowed?
 		end
 
 		def load_numbers
 			@numbers = current_account.freshfone_numbers
 		end
 
-		def add_request_to_redis
-			set_key(activation_key, true, 1.week.seconds)
-		end
 
-		def activation_key
-			FRESHFONE_ACTIVATION_REQUEST % { :account_id => current_account.id }
+		def trial_render
+			return render :trial_index if
+				onboarding_valid? || trial_numbers_empty?
 		end
 
 		def trial_number_purchase_allowed?
@@ -137,15 +131,7 @@ class Admin::FreshfoneController < Admin::AdminController
 			'local'
 		end
 
-		# added this extra trial? check to handle the case when
-    # error(like invalid address) occurs while the number purchase, for trial freshfone accounts so that we can go to search page again
-		def trial_subscription?
-			trial_conditions? && (!current_account.features?(:freshfone) || trial?) 
-		end
-
-		def number_search_allowed?
-			!current_account.features?(:freshfone) ||
-			(trial_number_purchase_allowed? && !trial_exhausted?) ||
-			current_account.freshfone_credit.present?
+		def onboarding_valid?
+			onboarding_enabled? && !in_trial_states?
 		end
 end

@@ -177,7 +177,7 @@ module Helpkit
 
       oauth_keys = Integrations::OauthHelper::get_oauth_keys
       oauth_keys.map { |oauth_provider, key_hash|
-        next if ['github', 'salesforce', 'shopify', 'slack', 'infusionsoft', 'google_oauth2', 'google_contacts', 'google_gadget_oauth2'].include?(oauth_provider)
+        next if ['github', 'salesforce', 'shopify', 'slack', 'infusionsoft', 'google_oauth2', 'google_contacts', 'google_gadget_oauth2', 'outlook_contacts'].include?(oauth_provider)
       if key_hash["options"].blank?
         provider oauth_provider, key_hash["consumer_token"], key_hash["consumer_secret"]
       else
@@ -229,7 +229,8 @@ end
 
 require 'active_record/connection_adapters/abstract_mysql_adapter'
 #Overridding datatype for primary key
-ActiveRecord::ConnectionAdapters::AbstractMysqlAdapter::NATIVE_DATABASE_TYPES[:primary_key] = "BIGINT UNSIGNED DEFAULT NULL auto_increment PRIMARY KEY"
+ActiveRecord::ConnectionAdapters::AbstractMysqlAdapter::NATIVE_DATABASE_TYPES[:primary_key] = "BIGINT UNSIGNED NOT NULL auto_increment PRIMARY KEY"
+
 
 # Captcha API Keys
 ENV['RECAPTCHA_PUBLIC_KEY']  = '6LfNCb8SAAAAACxs6HxOshDa4nso_gyk0sxKcwAI'

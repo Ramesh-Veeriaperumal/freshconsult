@@ -15,8 +15,10 @@ module Delayed
 
     before_save { self.run_at ||= self.class.db_time_now }
     MAX_ATTEMPTS = 25
+    MAX_PAYLOAD_SIZE = 32768 #32KB
     MAX_RUN_TIME = 4.hours
     JOB_QUEUES = ["Premium" , "Free", "Trial" , "Active"]
+    PUSH_QUEUE = ["Free", "Trial", "Premium", "Active"]
 
     # By default failed jobs are destroyed after too many attempts.
     # If you want to keep them around (perhaps to inspect the reason
@@ -98,6 +100,45 @@ module Delayed
       end
     end
 
+    def reschedule_without_lock(message, backtrace = [], time = nil, account_id=-1)
+      if self.attempts < MAX_ATTEMPTS
+        reschedule_timespan = (attempts ** 4) + 5
+        reschedule_timespan = 4.hours if (reschedule_timespan > 4.hours) 
+        time ||= Job.db_time_now + reschedule_timespan
+
+        self.attempts    += 1
+        self.run_at       = time
+        self.last_error   = message + "\n" + backtrace.join("\n")
+        save!
+      else
+        Rails.logger.info "* [JOB] PERMANENTLY removing #{self.name} because of #{attempts} consequetive failures. account_id:#{account_id} "
+        destroy_failed_jobs ? destroy : update_attribute(:failed_at, Delayed::Job.db_time_now)
+      end
+    end
+
+    def run_without_lock (account_id=-1)
+      max_run_time = MAX_RUN_TIME
+      begin
+        runtime =  Benchmark.realtime do
+          Timeout::timeout(max_run_time) do
+            invoke_job
+          end
+          destroy
+        end
+        # TODO: warn if runtime > max_run_time ?
+        Rails.logger.info "* [JOB] #{name} completed after %.4f. account_id:#{account_id} " % runtime
+        return true  # did work
+      rescue Timeout::Error => e
+        NewRelic::Agent.notice_error(e, {:description => "Maximum run time - #{max_run_time} reached for [JOB] #{self.id}"})
+        reschedule_without_lock e.message, e.backtrace, nil, account_id
+        log_exception(e, account_id)
+        raise e
+      rescue Exception => e
+        reschedule_without_lock e.message, e.backtrace, nil, account_id
+        log_exception(e, account_id)
+        raise e  # work failed
+      end
+    end
 
     # Try to run one job. Returns true/false (work done/work failed) or nil if job can't be locked.
     def run_with_lock(max_run_time, worker_name)
@@ -139,6 +180,10 @@ module Delayed
       unless object.respond_to?(:perform) || block_given?
         raise ArgumentError, 'Cannot enqueue items which do not respond to perform'
       end
+
+      unless object.to_yaml.size < MAX_PAYLOAD_SIZE
+        Rails.logger.debug "DEBUG ::: MaxPayloadSizeExceedError :: Payload size: #{object.to_yaml.size}"
+      end
     
       priority = args.first || 0
       run_at   = args[1]
@@ -168,10 +213,14 @@ module Delayed
       #Note: Right now if any smtp_mailbox for the current account is active ,it is added to
       #mailbox::Job queue. In Future we should check each individual smtp_mailbox based on the ticket and change the queue. 
       if smtp_mailboxes.any?{|smtp_mailbox| smtp_mailbox.enabled?}
-        Mailbox::Job.create(:payload_object => object, :priority => priority.to_i, :run_at => run_at, :pod_info => pod_info)
+        job = Object.const_get("Mailbox::Job").create(:payload_object => object, :priority => priority.to_i, :run_at => run_at, :pod_info => pod_info)
+        Object.const_get("DelayedJobs::MailboxJob").perform_async({:job_id => job.id, :account_id => account_id}) if job && job.id 
+        job
       else
-        Object.const_get("#{job_queue}::Job").create(:payload_object => object, :priority => priority.to_i, :run_at => run_at, :pod_info => pod_info)
-      end      
+        job = Object.const_get("#{job_queue}::Job").create(:payload_object => object, :priority => priority.to_i, :run_at => run_at, :pod_info => pod_info)
+        Object.const_get("DelayedJobs::#{job_queue}AccountJob").perform_async({:job_id => job.id, :account_id => account_id}) if job && job.id && PUSH_QUEUE.include?(job_queue)
+        job
+      end
     end
 
     # Find a few candidate jobs to run (in case some immediately get locked by others).
@@ -244,8 +293,8 @@ module Delayed
     end
 
     # This is a good hook if you need to report job processing errors in additional or different ways
-    def log_exception(error)
-      Rails.logger.error "* [JOB] #{name} failed with #{error.class.name}: #{error.message} - #{attempts} failed attempts"
+    def log_exception(error, account_id=-1)
+      Rails.logger.error "* [JOB] #{name} failed with #{error.class.name}: #{error.message} - #{attempts} failed attempts. account_id:#{account_id}"
       Rails.logger.error(error)
     end
 

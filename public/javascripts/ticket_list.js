@@ -61,6 +61,7 @@ window.App.Tickets = window.App.Tickets || {};
 		},
 		onLeave: function() {
 			$(document).off('.ticket_list');
+			$('body').off('.ticket_list');
 			jQuery('body').off('.filterList');
 			App.Tickets.Merge_tickets.unBindEvent();
 		},
@@ -80,7 +81,7 @@ bulkActionButtonsDisabled = function () {
 	}
 }
 ticksymbol = "<span class='icon ticksymbol'></span>";
-priority_ids = {1: "low", 2:"medium", 3:"high", 4:"urgent"}
+priority_ids = {1: "low", 2:"medium", 3:"high", 4:"urgent"};
 
 TicketListEvents = function() {
 
@@ -282,7 +283,7 @@ jQuery('body').append('<div id="agent_collision_container" class="hide"></div>')
           jQuery(this).parent().parent().addClass('active');
         } else {
           jQuery(this).parent().parent().removeClass('active');
-        }
+        }        
         var select_all_checkbox = jQuery("#helpdesk-select-all");
         var select_all_previous_state = select_all_checkbox.prop('checked');
         select_all_checkbox.prop('checked', jQuery('.tickets tbody tr .check :checkbox:checked').length == jQuery('.tickets tbody tr .check :checkbox').length);

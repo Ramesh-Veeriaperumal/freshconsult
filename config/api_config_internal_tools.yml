@@ -1,0 +1,20 @@
+defaults: &defaults
+  domain: "admin.freshdesk-dev.com:3001"
+  secret_key: "d41d8cd98f00b204e9800998ecf8427f"
+  api_username: "freshdesk"
+  api_path: "/api/code_console_api/code_execution_result"
+development:
+  <<: *defaults
+
+staging:
+  <<: *defaults
+  domain: "supreme.freshpo.com"
+  secret_key:
+
+production:
+  <<: *defaults
+  domain: "supreme.freshdesk.com"
+  secret_key:
+
+test:
+  <<: *defaults

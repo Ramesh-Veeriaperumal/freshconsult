@@ -14,6 +14,8 @@ class Helpdesk::SchemaLessNote < ActiveRecord::Base
 	alias_attribute :email_config_id, :long_nc01
 	alias_attribute :subject, :string_nc01
 	alias_attribute :note_properties, :text_nc02
+
+	alias_attribute :sentiment, :int_nc04
 	
 	serialize :to_emails
 	serialize :cc_emails

@@ -32,31 +32,31 @@ class Fdadmin::SpamWatchController < Fdadmin::DevopsMainController
 
 	def block_user
 		if params[:user_id]
-      render :json => {:status => "success"} if User.update_all_with_publish({:blocked => true, :blocked_at => Time.now}, {:id => params[:user_id]})
+      render :json => {:status => "success"} if User.where({:id => params[:user_id]}).update_all_with_publish({:blocked => true, :blocked_at => Time.now}, {})
     end
 	end
 
   def unblock_user
     if params[:user_id]
-      render :json => {:status => "success"} if User.update_all_with_publish({:blocked => false, :blocked_at => nil}, {:id => params[:user_id]})
+      render :json => {:status => "success"} if User.where({:id => params[:user_id]}).update_all_with_publish({:blocked => false, :blocked_at => nil}, {})
     end
   end
 
 	def hard_block
     if params[:user_id]
-      render :json => {:status => "success"} if User.update_all_with_publish({:blocked => true, :blocked_at => "2200-01-01 00:00:00"}, {:id => params[:user_id]})
+      render :json => {:status => "success"} if User.where({:id => params[:user_id]}).update_all_with_publish({:blocked => true, :blocked_at => "2200-01-01 00:00:00"}, {})
     end
   end
 
   def spam_user
     if params[:user_id]
-      render :json => {:status => "success"} if User.update_all_with_publish({:deleted => true, :deleted_at => Time.now}, {:id => params[:user_id]})
+      render :json => {:status => "success"} if User.where({:id => params[:user_id]}).update_all_with_publish({:deleted => true, :deleted_at => Time.now}, {})
     end
   end
 
   def unspam_user
     if params[:user_id]
-      render :json => {:status => "success"} if User.update_all_with_publish({:deleted => false, :deleted_at => nil}, {:id => params[:user_id]})
+      render :json => {:status => "success"} if User.where({:id => params[:user_id]}).update_all_with_publish({:deleted => false, :deleted_at => nil}, {})
     end
   end
 

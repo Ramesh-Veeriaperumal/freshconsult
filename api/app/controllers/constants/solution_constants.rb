@@ -19,4 +19,6 @@ module SolutionConstants
   TITLE_MIN_LENGTH = 3
 
   LOAD_OBJECT_EXCEPT = [:category_folders, :folder_articles].freeze
+
+  INDEX_FIELDS = %w(language).freeze  
 end

@@ -24,6 +24,7 @@ class Va::RuleHandler
 
   def event_matches? check_value, check_var
     return true if rule_hash[check_var]=="--"
+    return false if rule_hash[check_var].nil?
     @value_key = check_var
     return(is check_value)
   end
@@ -36,6 +37,7 @@ class Va::RuleHandler
   
   def evaluate_rule(evaluate_on_value)
     #return evaluate_on_value.send(:casecmp, value)
+    return false if condition.operator.nil?
     send(condition.operator, evaluate_on_value)
   end
   

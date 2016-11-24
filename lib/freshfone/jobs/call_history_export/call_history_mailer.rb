@@ -3,9 +3,10 @@ module Freshfone::Jobs
     class CallHistoryMailer < ActionMailer::Base
         
       layout "email_font"
-      
+      include EmailHelper
+
       def call_history_export(options={})
-        headers = get_headers options[:user].email
+        headers = get_headers(options[:user].email, options[:user])
         headers[:subject] = get_subject options
         initialize_variables options
         mail(headers) do | part|
@@ -15,8 +16,8 @@ module Freshfone::Jobs
       end
 
       private
-        def get_headers(email)
-          {
+        def get_headers(email, user)
+          headers = {
             :to                         => email,
             :from                       => AppConfig['from_email'],
             :bcc                        => "reports@freshdesk.com",
@@ -25,6 +26,8 @@ module Freshfone::Jobs
             "Auto-Submitted"            => "auto-generated", 
             "X-Auto-Response-Suppress"  => "DR, RN, OOF, AutoReply"
           }
+
+          headers.merge!(make_header(nil, nil, user.account_id, "Call history Export"))
         end
 
         def get_subject options

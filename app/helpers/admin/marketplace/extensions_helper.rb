@@ -8,8 +8,10 @@ module Admin::Marketplace::ExtensionsHelper
     elsif is_ni?
       install_integrations_marketplace_app_path(@extension['name'])
     else
+      is_oauth = is_oauth_app?
+      url_params = configs_url_params(@extension, @install_status, is_oauth)
       admin_marketplace_installed_extensions_new_configs_path(@extension['extension_id'],
-        @extension['version_id']) + '?' + configs_url_params(@extension, @install_status)
+        @extension['version_id']) + '?' + url_params
     end
   end
 
@@ -36,9 +38,10 @@ module Admin::Marketplace::ExtensionsHelper
   end
 
 
-  def install_btn(extension, install_status)
+  def install_btn(extension, install_status, is_oauth_app)
     @extension = extension
     @install_status = install_status
+    @is_oauth_app = is_oauth_app
     generate_install_btn
   end
 
@@ -90,12 +93,13 @@ module Admin::Marketplace::ExtensionsHelper
     @install_status['installed'] ? "disabled" : "nativeapp"
   end
 
-  def configs_url_params(extension, install_status)
-    {}.tap do |url_params| 
+  def configs_url_params(extension, install_status, is_oauth_app = false)
+    {}.tap do |url_params|
       url_params[:type] = params[:type]
       url_params[:category_id] = params[:category_id] if params[:category_id]
       url_params[:installation_type] = install_status['installed'] ? 'upgrade' : 'install'
       url_params[:display_name] = extension['display_name']
+      url_params[:is_oauth_app] = is_oauth_app if is_oauth_app
     end.to_query
   end
 
@@ -108,7 +112,7 @@ module Admin::Marketplace::ExtensionsHelper
   end
 
   def category_name(categories)
-    params[:category_id] ? categories.find {|x| x['id'] == params[:category_id].to_i}['name'] : t('marketplace.all_categories')
+    params[:category_id] ? categories.find {|x| x['id'] == params[:category_id].to_i}['name'] : t('marketplace.all_apps')
   end
 
   def search_placeholder
@@ -130,5 +134,16 @@ module Admin::Marketplace::ExtensionsHelper
 
   def third_party_developer?
     !is_external_app? && @extension['account'].downcase != Marketplace::Constants::DEVELOPED_BY_FRESHDESK
+  end
+
+  def app_gallery_params
+    {}.tap do |app_gallery_params| 
+      app_gallery_params[:type] = params[:type]
+      app_gallery_params[:sort_by] = Marketplace::Constants::EXTENSION_SORT_TYPES
+    end.to_query                                      
+  end
+
+  def is_oauth_app?
+    @extension['features'].include?('oauth')
   end
 end

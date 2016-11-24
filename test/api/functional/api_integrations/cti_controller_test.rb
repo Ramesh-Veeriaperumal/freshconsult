@@ -105,6 +105,49 @@ module ApiIntegrations
       cti_call.destroy
     end
 
+    def test_valid_requester_email_create
+      responder = add_test_agent(@account, role: Role.find_by_name('Agent').id)
+      requester = add_new_user(@account)
+      call_sid = "125439"
+      call_url = "http://abc.abc.com/125438"
+      call_info = {"custom_data" => "blah"}
+      post :create, construct_params({
+                                       :requester_email => requester.email,
+                                       :responder_id => responder.id,
+                                       :call_reference_id => call_sid,
+                                       :call_url => call_url,
+                                       :call_info => call_info,
+                                     }, false)
+      assert_response 200
+      cti_call = @account.cti_calls.where(:call_sid => call_sid).first
+      assert_equal(cti_call.responder, responder)
+      cti_call.destroy
+      responder.destroy
+      requester.destroy
+    end
+
+    def test_valid_requester_unique_external_id_create
+      responder = add_test_agent(@account, role: Role.find_by_name('Agent').id)
+      requester = add_new_user(@account, unique_external_id: '12314453')
+      call_sid = "125440"
+      call_url = "http://abc.abc.com/125438"
+      call_info = {"custom_data" => "blah"}
+      post :create, construct_params({
+                                       :requester_unique_external_id => requester.unique_external_id,
+                                       :responder_id => responder.id,
+                                       :call_reference_id => call_sid,
+                                       :call_url => call_url,
+                                       :call_info => call_info,
+                                     }, false)
+      assert_response 200
+      cti_call = @account.cti_calls.where(:call_sid => call_sid).first
+      assert_equal(cti_call.responder, responder)
+      cti_call.destroy
+      responder.destroy
+      requester.destroy
+    end
+
+
     def test_invalid_req_id_create
       responder = add_test_agent(@account, role: Role.find_by_name('Agent').id)
       call_sid = "125437"
@@ -131,6 +174,46 @@ module ApiIntegrations
       match_json(expected)
     end
 
+    def test_new_responder_email_create
+      responder = add_test_agent(@account, role: Role.find_by_name('Agent').id)
+      call_sid = "125438"
+      call_url = "http://abc.abc.com/125438"
+      call_info = {"custom_data" => "blah"}
+      post :create, construct_params({
+                                       :requester_email => "advv@adsads.com",
+                                       :responder_email => responder.email,
+                                       :call_reference_id => call_sid,
+                                       :call_url => call_url,
+                                       :call_info => call_info,
+                                     }, false)
+      assert_response 200
+      cti_call = @account.cti_calls.where(:call_sid => call_sid).first
+      assert_not_nil(cti_call.requester.id)
+      cti_call.requester.destroy
+      cti_call.destroy
+      responder.destroy
+    end
+
+    def test_new_requester_unique_external_id_create
+      responder = add_test_agent(@account, role: Role.find_by_name('Agent').id)
+      call_sid = "125438"
+      call_url = "http://abc.abc.com/125438"
+      call_info = {"custom_data" => "blah"}
+      post :create, construct_params({
+                                       :requester_unique_external_id => 'adag324',
+                                       :responder_id => responder.id,
+                                       :call_reference_id => call_sid,
+                                       :call_url => call_url,
+                                       :call_info => call_info,
+                                     }, false)
+      assert_response 200
+      cti_call = @account.cti_calls.where(:call_sid => call_sid).first
+      assert_not_nil(cti_call.requester.id)
+      cti_call.requester.destroy
+      cti_call.destroy
+      responder.destroy
+    end
+
     def test_with_no_requester_create
       responder = add_test_agent(@account, role: Role.find_by_name('Agent').id)
       call_sid = "125437"
@@ -148,7 +231,7 @@ module ApiIntegrations
         errors: [
           {
             field: "requester_id",
-            message: "Please fill at least 1 of requester_id, requester_phone fields",
+            message: "Please fill at least 1 of requester_id, requester_phone, requester_unique_external_id, requester_email fields",
             code: "missing_field"
           }
         ]
@@ -201,7 +284,7 @@ module ApiIntegrations
         errors: [
           {
             field: "responder_id",
-            message: "Please fill at least 1 of responder_id, responder_phone fields",
+            message: "Please fill at least 1 of responder_id, responder_phone, responder_unique_external_id, responder_email fields",
             code: "missing_field"
           }
         ]
@@ -224,12 +307,56 @@ module ApiIntegrations
                                        :call_url => call_url,
                                        :call_info => call_info,
                                      }, false)
+
       assert_response 200
       cti_call = @account.cti_calls.where(:call_sid => call_sid).first
       assert_equal(cti_call.responder, responder)
       cti_phone.destroy
       cti_call.destroy
     end
+
+    def test_valid_responder_email_create
+      responder = add_test_agent(@account, role: Role.find_by_name('Agent').id)
+      requester = add_new_user(@account)
+      call_sid = "125439"
+      call_url = "http://abc.abc.com/125438"
+      call_info = {"custom_data" => "blah"}
+      post :create, construct_params({
+                                       :requester_id => requester.id,
+                                       :responder_email => responder.email,
+                                       :call_reference_id => call_sid,
+                                       :call_url => call_url,
+                                       :call_info => call_info,
+                                     }, false)
+      assert_response 200
+      cti_call = @account.cti_calls.where(:call_sid => call_sid).first
+      assert_equal(cti_call.responder, responder)
+      cti_call.destroy
+      responder.destroy
+      requester.destroy
+    end
+
+    def test_valid_responder_unique_external_id_create
+      responder = add_test_agent(@account, role: Role.find_by_name('Agent').id, unique_external_id: "1412315143")
+      requester = add_new_user(@account)
+      call_sid = "125440"
+      call_url = "http://abc.abc.com/125438"
+      call_info = {"custom_data" => "blah"}
+      post :create, construct_params({
+                                       :requester_id => requester.id,
+                                       :responder_unique_external_id => "1412315143",
+                                       :call_reference_id => call_sid,
+                                       :call_url => call_url,
+                                       :call_info => call_info,
+                                     }, false)
+      assert_response 200
+      cti_call = @account.cti_calls.where(:call_sid => call_sid).first
+      assert_equal(cti_call.responder, responder)
+      cti_call.destroy
+      responder.destroy
+      requester.destroy
+    end
+
 
     def test_valid_responder_phone_no_agent_create
       responder = add_test_agent(@account, role: Role.find_by_name('Agent').id)
@@ -250,8 +377,8 @@ module ApiIntegrations
         description: "Validation failed",
         errors: [
           {
-            field: "responder_phone",
-            message: "There is no agent matching the given responder_phone",
+            field: "responder_id",
+            message: "There is no responder matching the give responder details",
             code: "invalid_value"
           }
         ]
@@ -280,8 +407,66 @@ module ApiIntegrations
         description: "Validation failed",
         errors: [
           {
-            field: "responder_phone",
-            message: "There is no agent matching the given responder_phone",
+            field: "responder_id",
+            message: "There is no responder matching the give responder details",
+            code: "invalid_value"
+          }
+        ]
+      }
+      match_json(expected)
+      responder.destroy
+      requester.destroy
+    end
+
+    def test_invalid_responder_email_create
+      responder = add_test_agent(@account, role: Role.find_by_name('Agent').id)
+      requester = add_new_user(@account)
+      call_sid = "125438"
+      call_url = "http://abc.abc.com/125438"
+      call_info = {"custom_data" => "blah"}
+      post :create, construct_params({
+                                       :requester_id => requester.id,
+                                       :responder_email => "abcabcabc@abcbacbc.com",
+                                       :call_reference_id => call_sid,
+                                       :call_url => call_url,
+                                       :call_info => call_info,
+                                     }, false)
+      assert_response 400
+      expected = {
+        description: "Validation failed",
+        errors: [
+          {
+            field: "responder_id",
+            message: "There is no responder matching the give responder details",
+            code: "invalid_value"
+          }
+        ]
+      }
+      match_json(expected)
+      responder.destroy
+      requester.destroy
+    end
+
+    def test_invalid_responder_unique_external_id_create
+      responder = add_test_agent(@account, role: Role.find_by_name('Agent').id)
+      requester = add_new_user(@account)
+      call_sid = "125438"
+      call_url = "http://abc.abc.com/125438"
+      call_info = {"custom_data" => "blah"}
+      post :create, construct_params({
+                                       :requester_id => requester.id,
+                                       :responder_unique_external_id => "141231514",
+                                       :call_reference_id => call_sid,
+                                       :call_url => call_url,
+                                       :call_info => call_info,
+                                     }, false)
+      assert_response 400
+      expected = {
+        description: "Validation failed",
+        errors: [
+          {
+            field: "responder_id",
+            message: "There is no responder matching the give responder details",
             code: "invalid_value"
           }
         ]
@@ -339,6 +524,7 @@ module ApiIntegrations
                                        :call_info => call_info,
                                        :ticket_id => ticket.display_id
                                      }, false)
+
       assert_response 200
       cti_call = @account.cti_calls.where(:call_sid => call_sid).first
       assert_equal(cti_call.options[:ticket_id], ticket.display_id)
@@ -394,8 +580,8 @@ module ApiIntegrations
             code: "invalid_value"
           },
           {
-            field: "responder_phone",
-            message: "There is no agent matching the given responder_phone",
+            field: "responder_id",
+            message: "There is no responder matching the give responder details",
             code: "invalid_value"
           },
           {

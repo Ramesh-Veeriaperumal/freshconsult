@@ -3,6 +3,8 @@ module Sqs
     
     include Sqs::Constants    
     include Social::Dynamo::UnprocessedFeed
+    include Facebook::RedisMethods
+    include Social::Util
   
     attr_accessor :raw_obj, :feed, :entry, :entry_changes, :page_id
 
@@ -27,11 +29,18 @@ module Sqs
       entry_changes.each do |entry_change|
         fb_feed = Facebook::Core::Feed.new(page_id, entry_change)
         next if fb_feed.realtime_feed["value"].blank?
-
+        @account_id = nil
         valid_account, valid_page = fb_feed.account_and_page_validity
         next unless valid_account
         if valid_page 
-          fb_feed.process_feed(raw_obj)
+          select_fb_shard_and_account(page_id) do |account|
+            @account_id = account.id
+          end
+          if page_rate_limit_reached?(@account_id,page_id)
+            requeue(JSON.parse(raw_obj),{:delay_seconds => 900})
+          else
+            fb_feed.process_feed(raw_obj)
+          end
         else
           #Insert feeds to the specifc Dynamo Tables if page need re-autorization
           insert_facebook_feed(page_id, (Time.now.utc.to_f*1000).to_i, @raw_obj) 
@@ -56,14 +65,16 @@ module Sqs
   
     #Requeue Realtime Facebook Feed to SQS in case of rate limit with exponential delay 
     def requeue(msg, options={})
-      msg["counter"] = msg["counter"].to_i + 1
-      return false if msg["counter"] > FB_REQUEUE_COUNTER  #removing from the queue after 15 mins
-      
-      options[:delay_seconds] = msg["counter"] * FB_DELAY_SECONDS
+      if options[:delay_seconds].nil?
+        msg["counter"] = msg["counter"].to_i + 1
+        return false if msg["counter"] > FB_REQUEUE_COUNTER  #removing from the queue after 15 mins
+        
+        options[:delay_seconds] = msg["counter"] * FB_DELAY_SECONDS
+      end
       if msg["entry"] && msg["entry"]["changes"].kind_of?(Array)
-        $sqs_facebook.send_message(msg.to_json, options)
+        Rails.logger.debug $sqs_facebook.send_message(msg.to_json, options)
       elsif msg["entry"] && msg["entry"]["messaging"].kind_of?(Array)
-        $sqs_facebook_messages.send_message(msg.to_json, options)
+        Rails.logger.debug $sqs_facebook_messages.send_message(msg.to_json, options)
       end
     end
     

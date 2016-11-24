@@ -27,7 +27,7 @@ module RabbitMq::Utils
     { 
       "object"                =>  model,
       "action"                =>  action,
-      "action_epoch"          =>  Time.zone.now.to_f,
+      "action_epoch"          =>  fetch_action_epoch,
       "uuid"                  =>  uuid,
       "actor"                 =>  User.current.try(:id).to_i,
       "account_id"            =>  Account.current.id,
@@ -35,6 +35,14 @@ module RabbitMq::Utils
       "#{model}_properties"   =>  {}, 
       "subscriber_properties" =>  {}        
     }
+  end
+
+  #to avoid race condition in epoch time.
+  def fetch_action_epoch
+    time_arr = [Time.zone.now.to_f]
+    time_arr.push(self.updated_at.to_f) if respond_to?(:updated_at)
+    time_arr.push((created_at.to_f + 0.001)) if respond_to?(:created_at)
+    time_arr.max
   end
 
   def publish_to_rabbitmq(exchange, model, action)
@@ -61,6 +69,7 @@ module RabbitMq::Utils
     if valid  
       message["#{model}_properties"].deep_merge!(send("mq_#{s}_#{model}_properties", action))
       message["subscriber_properties"].merge!({ s => send("mq_#{s}_subscriber_properties", action) })
+      send("mq_custom_#{s}_#{model}_method", message) if CUSTOM_METHODS[model] && CUSTOM_METHODS[model].include?(s)
     end
     valid
   end

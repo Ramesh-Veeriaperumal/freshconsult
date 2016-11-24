@@ -33,6 +33,14 @@ class RabbitmqWorker
       end
       puts "Searchv2 SQS Message id - #{sqs_msg_obj.try(:message_id)} :: ROUTING KEY -- #{rounting_key} :: Exchange - #{exchange_key}"
     end
+    
+    # Publish to Autorefresh and AgentCollision
+    #
+    if LAMBDA_ENABLED and lambda_feature
+      invoke_lambda(exchange_key, message, rounting_key)
+    else
+      push_directly_to_sqs(exchange_key, message, rounting_key)
+    end
 
     # Publish to Reports-v2
     #
@@ -47,26 +55,13 @@ class RabbitmqWorker
       sqs_msg_obj = sqs_v2_push(SQS[:activity_queue], message, nil)
       puts " SQS Activities Message id - #{sqs_msg_obj.message_id} :: ROUTING KEY -- #{rounting_key} :: Exchange - #{exchange_key}"
     end
-
-    # Publish to Autorefresh and AgentCollision
-    #
-    if LAMBDA_ENABLED and lambda_feature
-      invoke_lambda(exchange_key, message)
-    elsif agent_collision_routing_key?(exchange_key, rounting_key)
-      sqs_msg_obj = sqs_v2_push(SQS[:agent_collision_queue], message, nil)
-      puts " AgentCollision SQS Message id - #{sqs_msg_obj.message_id} :: ROUTING KEY -- #{rounting_key} :: Exchange - #{exchange_key}"                      
-      if autorefresh_routing_key?(exchange_key, rounting_key)
-        sqs_msg_obj = sqs_v2_push(SQS[:auto_refresh_queue], message, nil)
-        puts " Autorefresh SQS Message id - #{sqs_msg_obj.message_id} :: ROUTING KEY -- #{rounting_key} :: Exchange - #{exchange_key}"
-      end
-    end
     
     Rails.logger.info("Published RMQ message via Sidekiq")
   end
   
   protected
 
-    def invoke_lambda(exchange, message)
+    def invoke_lambda(exchange, message, routing_key)
       options = { function_name: $lambda_interchange[exchange], 
                   invocation_type: "Event",
                   payload: message }
@@ -82,10 +77,34 @@ class RabbitmqWorker
                                      :exchange    => exchange,
       }})
       Rails.logger.error("Lambda Sidekiq Publish Error: \n#{e.message}\n#{e.backtrace.join("\n")}")
-      # Re-raising the error to have retry
-      raise e  
+      push_directly_to_sqs(exchange, message, routing_key) 
     end 
 
+    def push_directly_to_sqs(exchange_key, message, routing_key)
+      if agent_collision_routing_key?(exchange_key, routing_key)
+        sqs_msg_obj = sqs_v2_push(SQS[:agent_collision_queue], message, nil)
+        print_log("AgentCollision", sqs_msg_obj, routing_key, exchange_key)
+        # Hack - Lambda only pushes to one sqs. Manually pushing to New ALB Queue - Temporary
+        sqs_msg_obj = sqs_v2_push(SQS[:agent_collision_alb_queue], message, nil)
+        print_log("AgentCollision ALB", sqs_msg_obj, routing_key, exchange_key)
+        if autorefresh_routing_key?(exchange_key, routing_key)
+          sqs_msg_obj = sqs_v2_push(SQS[:auto_refresh_queue], message, nil)
+          print_log("Autorefresh", sqs_msg_obj, routing_key, exchange_key)
+          sqs_msg_obj = sqs_v2_push(SQS[:auto_refresh_alb_queue], message, nil)
+          print_log("Autorefresh ALB", sqs_msg_obj, routing_key, exchange_key)
+        end
+      end
+      if marketplace_app_routing_key?(exchange_key, routing_key)
+        sqs_msg_obj = sqs_v2_push(SQS[:marketplace_app_queue], message, nil)
+        print_log("Marketplace App", sqs_msg_obj, routing_key, exchange_key)
+      end
+    rescue => e
+      NewRelic::Agent.notice_error(e, {
+                                   :custom_params => {
+                                     :description => "Autorefresh SQS Push Error",
+                                     :message     => message
+      }})
+    end
     # Publish to SQS using SDK-v2
     #
     def sqs_v2_push(queue_name, message, delay, opts={})
@@ -159,12 +178,21 @@ class RabbitmqWorker
       ((
         exchange.starts_with?("archive_notes") || exchange.starts_with?("articles") || 
         exchange.starts_with?("topics") || exchange.starts_with?("posts") || exchange.starts_with?("tags") || 
-        exchange.starts_with?("companies") || exchange.starts_with?("users") || exchange.starts_with?("tag_uses")
+        exchange.starts_with?("companies") || exchange.starts_with?("users") || exchange.starts_with?("tag_uses") || 
+        exchange.starts_with?("callers")
       ) && key[0] == "1")
     end
 
     def count_routing_key?(exchange, key)
       (exchange.starts_with?("tickets") && key[6] == "1")
+    end
+
+    def marketplace_app_routing_key?(exchange, key)
+      (exchange.starts_with?("tickets") && key[10] == "1")
+    end
+
+    def print_log(log, sqs_msg_obj, routing_key, exchange_key)
+      puts " #{log} SQS Message id - #{sqs_msg_obj.message_id} :: ROUTING KEY -- #{routing_key} :: Exchange - #{exchange_key}"
     end
 
 end

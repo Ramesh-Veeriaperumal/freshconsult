@@ -2,19 +2,14 @@ class SolutionsUploadedImagesController < ApplicationController
   
   include UploadedImagesControllerMethods
 
-  skip_before_filter :check_privilege, :only => [:index]
-
   def index
     @images = current_account.attachments.gallery_images
-    respond_to do |format|
-      format.html
-      format.js
-      format.json {
-        render :json => @images.map { |i| { :thumb => i.content.url(:medium),
-                                            :image => i.content.url,
-                                            :title => i.content_file_name } }   
-      }
-    end
+      # For Froala we need :thumb, :image, :title
+      render :json => @images.map { |i| { :thumb => i.content.url(:medium),
+                                          :url => i.content.url,
+                                          :image => i.content.url, # For froala
+                                          :title => i.content_file_name,
+                                          :attachment_id => i.id} }
   end
 
   private

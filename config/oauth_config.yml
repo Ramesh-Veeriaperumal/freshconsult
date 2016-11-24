@@ -79,6 +79,9 @@ development:
  infusionsoft:
    consumer_token:  pymmum7erkmq5vm4vsbqamut
    consumer_secret: DzWRNku2hu
+ outlook_contacts:
+   consumer_token: fc02555f-2d3b-47c4-a66f-7a45d15c2a1a
+   consumer_secret: vcx3eeApBi82xmpXE2CDjzt
 
 defaults: &defaults
  salesforce:
@@ -105,6 +108,9 @@ defaults: &defaults
  slack:
    consumer_token: "3575209657.3577497590"
    consumer_secret: 7193779dab625ec3e6764dd5df21309e
+ outlook_contacts:
+   consumer_token: fc02555f-2d3b-47c4-a66f-7a45d15c2a1a
+   consumer_secret: vcx3eeApBi82xmpXE2CDjzt
   
 test:
  <<: *defaults
@@ -169,6 +175,9 @@ staging:
  infusionsoft:
    consumer_token:  pymmum7erkmq5vm4vsbqamut
    consumer_secret: DzWRNku2hu
+ outlook_contacts:
+   consumer_token: 83ffd1da-0e5a-427f-9986-a8879b7a4aca
+   consumer_secret: bRhQjg9xynB92EEnmjEWxMX
 
 production:
  salesforce:
@@ -219,3 +228,6 @@ production:
  infusionsoft:
    consumer_token:  pymmum7erkmq5vm4vsbqamut
    consumer_secret: DzWRNku2hu
+ outlook_contacts:
+   consumer_token: 83ffd1da-0e5a-427f-9986-a8879b7a4aca
+   consumer_secret: bRhQjg9xynB92EEnmjEWxMX

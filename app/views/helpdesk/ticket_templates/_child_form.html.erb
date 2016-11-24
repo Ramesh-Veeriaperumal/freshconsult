@@ -1,0 +1,49 @@
+<%= f.error_messages %>
+<div class="ticket-template-form">
+	<% unless params[:action].eql?("edit_child") %>
+		<div class="controls child-form-radio-wrapper templates-header-wrapper">
+			<label class="radio inline child-form-radio-content">
+				<%= radio_button_tag(:child_template, t('ticket_templates.child_template.new'), true)%>
+				<%= t('ticket_templates.child_template.blank_template') %>
+			</label>
+			<label class="radio inline child-form-radio-content">
+				<div id="template-wrapper" class="template-wrapper pull-right">
+					<%= radio_button_tag(:child_template, t('ticket_templates.child_template.existing'), false,:data=> {:action =>"select-template"})%>
+					<span class="existing_template"><%= t('ticket_templates.child_template.existing_template') %></span>
+				    <div id="template-list-wrapper">
+				      <div class="template-options">
+				        <span class="arrow-top"></span>
+				        <div class="filter-wrapper hide">
+				          <input type="text" placeholder="Search templates" data-picklist-filter id="filter-template" autocomplete="off" autofocus="true" />
+				        </div>
+				        <div id="wrapper-template-list">
+				          <ul id="template-items" data-picklist>
+				            <li></li>
+				          </ul>
+				          <div id="template-loading" class="sloading hide"></div>
+				        </div>
+				      </div>
+				    </div>
+				    <div id="dynamic_values"></div>
+				</div>
+			</label>
+			<div class=" template-label child-existing-select hide"></div>
+		</div>
+	<% end %>
+	
+ 	<ul class="template-details">
+ 		<li>
+ 			<%= f.label :name, t('title') , :class => "required" %>
+			<%= f.text_field :name , :class => "text required", :placeholder => t('ticket_templates.name') , :data => { :template_id => @tkt_template.id,:template_name => @tkt_template.name}%>
+ 		</li>
+	</ul>
+	<%=	hidden_field_tag :'p_id' %>
+	<%=	f.hidden_field :'id',:id => 'id',:name => 'id' %>
+
+	<%= render :partial => "common_form", :object => f, :locals => { :is_edit =>is_edit, :f => f } %>
+</div>
+<div class="loading-template hide" id="loading-box">
+  <div class="sloading loading-left loading-small reports-loading">
+    <span class="loading-text"><%= t('ticket_templates.child_template.applying_template') %></span>
+  </div>
+</div>

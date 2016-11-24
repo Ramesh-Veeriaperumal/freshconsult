@@ -80,6 +80,11 @@
                   &:after{
                     @extend %cb;
                   }
+                  .cc-error-message {
+                    float: left;
+                    line-height: 1;
+                    margin: 10px 0 10px 20%;
+                  }
             }
             .hide-cc-label{
                  @include transition (all 200ms cubic-bezier(0.65, 0.05, 0.36, 1));
@@ -423,7 +428,7 @@
           }
       }
       .cc-error-message {
-        float: left;
+        @include float (left);
         line-height: 1;
         margin: 10px 0 10px 64px;
       }
@@ -571,7 +576,7 @@
   }
      .autocomplete{
           margin-top: 10px;
-    margin-left: -15px;
+          @include margin-left (-15px);
           ul{
             border: 1px solid rgba(82, 168, 236, 0.8);
             border-top: none;
@@ -636,24 +641,43 @@
   }
 }
 
-.ticket-template-list{
+.list-page.ticket-template-list{
   width: 100%;
-  table {
-    thead{
-      td{
-        background: #f6f6f6 !important;
+  .list-page-body{
+    table {
+      thead{
+        td{
+          background: #f6f6f6 !important;
+        }
       }
-    }
-    td.ticket-details{
-     /*width: 80%;*/
-    }
-    td.action-btn{
-      a{
-        /*margin-right: 15px;*/
-        i{
-          color: #575757;
-          &:hover{
-            color: #464646;
+      td.template-checkbox-change{
+        padding: 0px 12px 12px;
+      }
+      td.ticket-details{
+       width: 85%;
+       height: 50px;
+       @include padding(10px 12px);
+       h3{
+        font-weight: 600;
+        font-size: 14px;
+        font-weight: 400;
+        &.template-desc-heading{
+          margin-top: 7px;
+          margin-bottom: 5px;
+        }
+       }
+      }
+      td.action-btn{
+        a{
+          /*margin-right: 15px;*/
+          width: 18px;
+          height: 18px;
+          @include padding(2px 1px);
+          i{
+            color: #575757;
+            &:hover{
+              color: #464646;
+            }
           }
         }
       }
@@ -667,7 +691,7 @@
   }
   .availability-controls{
       width: 80%;
-      float: left;
+      @include float (left);
       .inline{
         @include padding-right ( 15px );
       }
@@ -678,8 +702,11 @@
   .ticket-form-title{
     border-top: 1px solid #efefef;
     margin-top: 20px;
-    h3{
-      @include margin ( 7px 0 10px );
+    .ticket-form-title-header{
+      @include margin-left(0);
+      h3{
+        @include margin ( 7px 0 10px );
+      }
     }
   }
   ul.compose-new-ticket{
@@ -730,7 +757,7 @@
     z-index: 101;
     opacity: 0.9;
     top: 0;
-    left: 0;
+    @inlude left (0);
     .loading-text{
       margin-top: 13%;
       color: #000;
@@ -787,12 +814,114 @@
 
 /* Ticket template styles */
 
+#child_select_template_wrapper {
+  .tree {
+      padding: 10px 10px;
+      margin: 0;
+
+      li:after {
+          display: none;
+      }
+      li:before {
+          display: none;
+      }
+
+      li {
+        .child {
+          width: 80%;
+          @include margin-left (0px);
+
+          .ficon-pencil {
+            @include left (-8px);
+            margin-top: 0px;
+          }
+        }
+      }
+
+      .parent-title-label {
+        padding-top: 15px;
+        display: inline-block;
+        @include padding-left (23px);
+      }
+
+      li.child-first-li {
+        padding-top: 15px;
+      }
+
+      .parent_title {
+          padding: 8px;
+          border: 1px solid #eeeeee;
+          background: #fafafa;
+          color: #666;
+          border-radius: 4px;
+
+          .label_tag {
+              font-style: italic;
+          }
+
+          .name {
+              font-style: initial;
+          }
+      }
+
+      .parent-li {
+        .child-title {
+          position: inherit;
+        }
+        ul {
+          .child-li {
+            .child {
+              padding: 0;
+              border: 1px solid #ccc;
+              background: #eee;
+              @include margin-left(10px);
+
+              label {
+                  color: #777;
+                  text-indent: 10px;
+                  padding: 7px;
+                  text-decoration: line-through;
+                  @include border-left (4px solid transparent);
+                  border-radius: 2px;  
+              }
+            }
+
+            .select_child {
+              @include float(left);
+              margin-top: 10px;
+            }
+
+            &.first-child {
+                padding-top: 5px;
+            }
+
+            &.active {
+              .child {
+                background: #fff;
+                
+                label {
+                    color: inherit;
+                    border-left-color: #4299f1;
+                    text-decoration: none;
+                }
+              }
+            }
+          }
+        }
+      }
+
+      .action-buttons {
+        display: none;
+      }
+  }
+}
+
 .templates-header-wrapper{
   .template-wrapper{
     @include padding(5px 5px 2px 15px);
-    margin-left: 20px;
+    @include margin-left (20px);
     position: relative;
-    border-left: 1px solid #ccc;
+    @include border-left (1px solid #ccc);
     .create-link{
       font-weight: bold;
       color: #1272de;
@@ -814,19 +943,19 @@
       border-bottom: 1px dashed #c1c1c1;
     }
     .no-template{
-      padding: 16px 0;
+      @inlude padding (16px 0);
       text-align: center;
       font-size: 14px;
       color: #aaa;
     }
     .no-template-link{
-      padding: 16px 0 0;
+      @include padding (16px 0 0);
       text-align: center;
       font-size: 14px;
       color: #aaa;
     }
     .sloading{
-      margin: 40px 0;
+      @include margin (40px 0);
       @include transition (all 1s);
       display: flex;
       justify-content: center;
@@ -845,7 +974,7 @@
     .template-options{
       display: none;
       @include transition (all 1s);
-      min-height: 90px;
+      //min-height: 90px;
       // max-height: 445px;
       position: absolute;
       width: 275px;
@@ -859,14 +988,14 @@
         content: '';
       }
       .arrow-top{
-          border-left: 9px solid transparent;
+          @include border-left (9px solid transparent);
           border-bottom: 9px solid #999;
-          border-right: 9px solid transparent;
+          @include border-right (9px solid transparent);
           height: 0;
           width: 0;
           position: absolute;
           top: -9px;
-          left: 32px;
+          @include left (32px);
       }
       .filter-wrapper{
           @include padding(10px 5px 0);
@@ -876,23 +1005,45 @@
           }
       }
       ul{
-        overflow: scroll;
+        overflow-y: auto;
+        -ms-overflow-style: none;
         max-height: 428px;
         li{
           @include padding(10px 15px);
           cursor: pointer;
+          min-height: 16px;
           &:first-child{
             padding-top:10px;
           }
           &.active{
             color: #fff;
             background: #999;
+
+            .template_title_label {
+              @include float(left);
+              width: 90%;
+            }
+
+            .parent_icon_indicator {
+              font-size: 20px;
+              @include float(right);
+              background-color: #fff;
+              color: #666;
+              padding: 7px 7px 5px 6px;
+              margin-top: -8px;
+              border-radius: 50%;
+              @include margin-right(-12px)
+            }
           }
           &:not(:last-child){
             border-bottom: 1px solid #eee;
           }
           &.recent-tmpl.last{
             border-bottom: none;
+          }
+
+          .template_title_label {
+            display: block;
           }
         }
       }
@@ -912,7 +1063,99 @@
   .template-checkbox{
     width: 5%;
   }
-  .ticket-details{
+  /*.ticket-details{
     width: 80%;
+  }*/
+}
+.parent_btn{
+    font-size: 10px;
+    background: #fff;
+    border: 1px solid #ccc;
+    @include padding(1.5px 6px);
+    border-radius: 2px;
+    @include margin-right(8px);
+}
+.edit-template-footer{
+  .btn{
+    @include margin(0 5px);
   }
+}
+.tempate_sort{
+  &.drop-right:after{
+    margin-top:7px;
+  }
+}
+.template_form:not(.clone_parent_form){
+  .page-header-sticky{
+    &.parent-header-sticky{
+      padding-bottom:35px;
+    }
+    &.is_stuck{
+      padding-bottom: 6px;
+    }
+  }
+  .template-msg{
+    @include margin(10px 0);
+    font-size:11px;
+  }
+  .compose-new-email .single_file.cloud{
+    padding-bottom: 0;
+  }
+}
+.list-templates-parent-wrapper{
+  border: 1px solid #969696;
+  border-radius: 50%;
+  height: 24px;
+  width: 24px;
+  display: inline-block;
+  position: relative;
+  top: -2px;
+  @include margin-right(8px);
+}
+.list-templates-parent{
+  position: relative;
+  top: 6px;
+  @include padding(0 5px);
+  color:#969696;
+}
+.delete-msg-ul{
+  margin-top:2px;
+  li{
+    list-style-type:none;
+    @include margin-left(30px);
+    @include padding(5px 0);
+    &:before{
+      content:'\00b7'; 
+      font-size:60px;
+      position: absolute;
+      @include left (29px);
+      margin-top: -4px;
+    }
+  }
+}
+.template_form{
+  .template_breadcrumb{
+    padding-bottom:0;
+    margin-bottom:0;
+  }
+}
+.parent-sidebar-title{
+  display: inline-block;
+}
+.sidepanel{
+  .list-templates-parent{
+    @include padding(0 4px);
+  }
+}
+.template-sticky{
+  &.parent-header-sticky{
+    padding-bottom:35px;
+  }
+  &.is_stuck{
+    padding-bottom: 6px;
+  }
+}
+.template-msg{
+  @include margin(10px 0);
+  font-size:11px;
 }

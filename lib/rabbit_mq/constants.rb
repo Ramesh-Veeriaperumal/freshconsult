@@ -40,6 +40,7 @@ module RabbitMq::Constants
     [  'time_sheet',          CRUD_KEYS_BY_TOKEN[:all],                 'time_sheet'      ],
     [  'tag',                 CRUD_KEYS_BY_TOKEN[:all],                 'tag'             ],
     [  'tag_use',             CRUD_KEYS_BY_TOKEN[:create_and_destroy],  'tag_use'         ],
+    [  'caller',              CRUD_KEYS_BY_TOKEN[:all],                 'caller'          ],
     [  'account',             CRUD_KEYS_BY_TOKEN[:destroy],             'account'         ],
     [  "cti_call",            CRUD_KEYS_BY_TOKEN[:create],                  "cti_call"   ]
   ]
@@ -58,6 +59,10 @@ module RabbitMq::Constants
     :group_assign    =>  "assign_group", 
     :agent_reply     =>  "agent_reply", 
     :customer_reply  =>  "customer_reply"
+  }
+
+  CUSTOM_METHODS = {
+    "ticket" => ["marketplace_app"]
   }
   
 
@@ -78,6 +83,7 @@ module RabbitMq::Constants
   RMQ_SEARCH_TAG_USE_KEY        = "1"
   RMQ_SEARCH_COMPANY_KEY        = "1"
   RMQ_SEARCH_USER_KEY           = "1"
+  RMQ_SEARCH_CALLER_KEY         = "1"
 
   # Manual publish keys - common for both activities and reports
   RMQ_GENERIC_TICKET_KEY      = "*.1.*.*.1.#"  # Position 0 -> auto_refresh, 2 -> reports 4 -> search 6-> es count 8-> activities
@@ -136,5 +142,9 @@ module RabbitMq::Constants
   
   MANUAL_PUBLISH_SUBCRIBERS   = ["reports", "activities", "count"]
   CTI_CALL_KEYS = ["id", "call_sid", "options", "account_id", "responder_id", "requester_id"]
+
+  MARKETPLACE_APP_TICKET_KEYS = ["id", "display_id", "subject", "account_id", "user_id", "responder_id", "group_id", "status",
+    "priority", "ticket_type", "source", "requester_id", "due_by", "created_at", "is_escalated", "fr_escalated", "company_id", "tag_names",
+    "product_id", "updated_at"]
 
 end

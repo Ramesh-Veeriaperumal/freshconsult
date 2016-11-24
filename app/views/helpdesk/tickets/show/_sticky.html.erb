@@ -14,7 +14,7 @@
 				</li>
 			</ul>
 		</div>
-		<% if Account.current.launched?(:activity_ui) %>
+		<% if !Account.current.launched?(:activity_ui_disable) and Account.current.features?(:activity_revamp)%>
 			<div id="activity_toggle" title='<%= t('ticket.show_activities_tooltip') %>'  data-show-title = '<%= t('ticket.show_activities_tooltip') %>' data-hide-title= '<%= t('ticket.hide_activities_tooltip') %>' data-keybinding="<%= shortcut('ticket_detail.show_activities_toggle') %>"
 				class="activity_toggle btn clearfix tooltip" data-toggle="button" data-placement = "below"
 				 data-highlight="true">
@@ -61,8 +61,8 @@
 						<% if privilege?(:reply_ticket)  && (@ticket.twitter? or @ticket.facebook? or @item.from_email.present? or @ticket.mobihelp? or @ticket.allow_ecommerce_reply?) %>
 							<a class="btn tooltip btn-collapse" title='<%= t('ticket.reply_to') %>' data-placement = "below" 
 					  		rel="note-button" data-note-type="reply" id="ReplyButton"  data-keybinding="<%= shortcut('ticket_detail.reply') %>" 
-					  		data-highlight="true" data-domhelper-name="reply-sticky-button"
-							  data-replyto-handle="<%= @ticket.twitter? ? default_twitter_body_val(@ticket) : "" %>" >
+					  		data-highlight="true" data-user='' data-domhelper-name="reply-sticky-button"
+							  data-replyto-handle="<%= @ticket.twitter? ? "#{default_twitter_body_val(@ticket)} " : "" %>" >
 					  		<span class="reply-inner"></span>
 				    		<%= t('ticket.reply_to')  %>
 				    	</a>
@@ -123,7 +123,7 @@
 					<div class="tooltip keytitle" title='<%="#{t('ticket.execute_scenario')}"%>' data-placement = "below" data-hotkey='<%="#{shortcut('ticket_detail.scenario')}"%>'>					
 					 <%= link_to( t('ticket.scenarios'), "/helpdesk/tickets/#{@ticket.id}/component?component=scenarios", 
 					  				:rel => 'freshdialog', "data-target" => "#execute_scenario", :class => 'btn btn-collapse', "data-keybinding" => shortcut('ticket_detail.scenario'), "data-highlight" => true, "data-template-footer" => "",
-					  				'data-template-header' => "<div class='modal-header'><span><h3 class='modal-heading-with-button'>" + t('ticket.execute_scenario') + "</h3></span><a href='/helpdesk/scenario_automations/new' target='_blank' class='pull-right modal-header-button'>" + t('ticket.create_new_scenario') + "</a></div>")
+					  				'data-template-header' => "<div class='modal-header'><span><h3 class='modal-heading-with-button'>" + t('ticket.execute_scenario') + "</h3></span><a href='/helpdesk/scenario_automations/new' target='_blank' class='pull-right modal-header-button'>" + t('ticket.create_new_scenario') + "</a></div>", "data-association" => @ticket.association_type, :id => "scenario")
 					  				 %> 
 					</div>
 				</li>
@@ -213,12 +213,12 @@
   		data = {
 	      targetId : '#confirm-action',
 	      title : title_submit,
-	      submitLabel: title_submit,
+	      submitLabel: target == "scenario" ? "Continue" : title_submit,
 	      width:  '500',
 	      destroyOnClose : true  
 	    }
     jQuery.freshdialog(data);
-    jQuery('.modal-body').html("<div id='modal-content' data-target='#"+ target +"'>"+ confirm_text +"</div>");
+    jQuery('#confirm-action .modal-body').html("<div id='modal-content' data-target='#"+ target +"'>"+ confirm_text +"</div>");
   }	
 
 
@@ -230,6 +230,20 @@
   		e.preventDefault();
 	    e.stopPropagation();
 	    callFreshdialog(jQuery(this).attr('id'));
+  	}
+  });
+
+  jQuery('body').off('click', '#scenario');
+  jQuery('body').on('click', '#scenario', function(e){
+    var parent = '<%= TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:assoc_parent]%>';
+    var submit = jQuery(this).data('submit');
+    if(!submit && parent == jQuery(this).data('association')){
+      e.preventDefault();
+      e.stopPropagation();
+      callFreshdialog("scenario");
+      jQuery('#confirm-action-cancel').hide();
+    }else{
+  		jQuery(this).data('submit', false);
   	}
   });
 
