@@ -100,14 +100,14 @@ namespace :search_v2 do
     end
   end
 
+  # bundle exec rake search_v2:index_data ACCOUNT_ID=1
   desc 'Index data in to ES V2 in development mode.'
   task index_data: :environment do
     if Rails.env.development?
-      Account.all.each do |account|
-        account.make_current
-        puts "Enabling search for account #{account.id}."
+        account_id=ENV['ACCOUNT_ID']
+        Account.find_by_id(account_id).make_current
+        puts "Enabling search for account #{account_id}."
         SearchV2::Manager::EnableSearch.new.perform
-      end
     else
       raise 'This task can only be run in development environment.'
     end  
