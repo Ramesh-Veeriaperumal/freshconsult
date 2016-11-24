@@ -120,6 +120,7 @@ class ApplicationController < ActionController::Base
       User.current = current_user
     rescue ActiveRecord::RecordNotFound
     rescue ActiveSupport::MessageVerifier::InvalidSignature
+      @destroy_session = true
       handle_unverified_request
     end    
   end
@@ -241,9 +242,11 @@ class ApplicationController < ActionController::Base
     def handle_unverified_request
       super
       Rails.logger.error "CSRF TOKEN NOT SET #{params.inspect}"
-      cookies.delete 'user_credentials'     
-      current_user_session.destroy unless current_user_session.nil? 
-      @current_user_session = @current_user = nil
+      if @destroy_session
+        cookies.delete 'user_credentials'     
+        current_user_session.destroy unless current_user_session.nil? 
+        @current_user_session = @current_user = nil
+      end
       portal_redirect_url = root_url
       if params[:portal_type] == "facebook"
         portal_redirect_url = portal_redirect_url + "support/home"
