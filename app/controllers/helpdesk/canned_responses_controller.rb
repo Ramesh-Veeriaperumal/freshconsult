@@ -63,6 +63,9 @@ class Helpdesk::CannedResponsesController < ApplicationController
       format.js {
         render :partial => '/helpdesk/tickets/components/ca_response_search.rjs'
       }
+      format.json {
+        render json: @ca_responses.map { |response| response.attributes.slice('id', 'title', 'content', 'content_html', 'folder_id') }
+      }
     end
   end
 
