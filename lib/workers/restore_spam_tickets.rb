@@ -5,7 +5,7 @@ class Workers::RestoreSpamTickets
 
   def self.perform(args)
     account = Account.current
-    users = account.users.with_conditions( ["id in (?) and deleted_at IS NOT NULL",args[:user_ids] ] )
+    users = account.users.where(:id => args[:user_ids] )
     users.each do |user|
       Helpdesk::Ticket.spam_created_in(user)
       .where(["helpdesk_tickets.account_id = ?",account.id])
