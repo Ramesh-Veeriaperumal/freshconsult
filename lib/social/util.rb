@@ -145,4 +145,8 @@ module Social::Util
       'application/octet-stream'
     end
   end
+
+  def tokenize(message)
+    message.to_s.tokenize_emoji.gsub(EMOJI_UNICODE_REGEX," ")
+  end
 end
