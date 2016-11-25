@@ -13,7 +13,7 @@ class Search::V2::Freshfone::AutocompleteController < ApplicationController
       self.search_results[:results].push(format_customer_results(@customer))
     else
       @klasses  = ['User']
-      @search_context = :ff_contact_by_props
+      @search_context = :requester_autocomplete
 
       search_by_context(:requester)
     end
@@ -30,7 +30,7 @@ class Search::V2::Freshfone::AutocompleteController < ApplicationController
       search_by_context(:caller)
     else
       @klasses  = ['User']
-      @search_context = :ff_contact_by_props
+      @search_context = :requester_autocomplete
       search_by_context(:requester)
     end
 
