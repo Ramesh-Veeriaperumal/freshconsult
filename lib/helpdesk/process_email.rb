@@ -480,18 +480,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
                                         message_id) if large_email
         end
 
-        # Insert header to schema_less_ticket_dynamo
-        begin
-          Timeout::timeout(0.5) do
-            dynamo_obj = Helpdesk::Email::SchemaLessTicketDynamo.new
-            dynamo_obj['account_id'] = Account.current.id
-            dynamo_obj['ticket_id'] = ticket.id
-            dynamo_obj['headers'] = params[:headers]
-            dynamo_obj.save
-          end
-        rescue Exception => e
-          NewRelic::Agent.notice_error(e) 
-        end
+      
+        
 
       rescue AWS::S3::Errors::InvalidURI => e
         # FreshdeskErrorsMailer.deliver_error_email(ticket,params,e)
