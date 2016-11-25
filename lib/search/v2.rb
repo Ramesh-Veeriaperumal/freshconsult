@@ -11,6 +11,8 @@ require 'search/v2/store/cache'
 require 'search/v2/utils/es_client'
 require 'search/v2/utils/es_logger'
 require 'search/v2/query_handler'
+require 'search/v2/parser/node.rb'
+require 'search/v2/parser/search_parser.rb'
 
 module Search
   module V2

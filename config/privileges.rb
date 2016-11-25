@@ -63,6 +63,10 @@ Authority::Authorization::PrivilegeList.build do
     resource :"integrations/service_proxy", :only => [:fetch]
     resource :"integrations/data_pipe"
 
+
+    # Used by API V2 Search
+    resource :"api_search", :only => [:tickets]
+
     #Freshfone
     resource :"freshfone", :only => [:dashboard_stats, :dial_check, :create_ticket, :create_note]
     resource :"freshfone/user"

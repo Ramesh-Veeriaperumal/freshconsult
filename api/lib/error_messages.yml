@@ -90,3 +90,4 @@ api_error_messages:
   language_not_allowed: "Language given in the request URL (%{code}) is not found. Allowed languages are %{list}"
   agent_roles_and_scope_error: 'You cannot edit your own roles & ticket scopes'
   action_restricted: "Cannot perform '%{action}' when %{reason}"
+  query_format_invalid: "Given query is invalid, expected format \"keyword1:value1 keyword2:value2 keyword3:'value with space'\""

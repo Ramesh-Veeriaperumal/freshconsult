@@ -124,6 +124,23 @@ class CustomFieldValidator < ActiveModel::EachValidator
       DateTimeValidator.new(date_options).validate(record)
     end
 
+    # Search methods, validates array of custom fields
+    def validate_custom_text_array(record, field_name)
+      values = record.send(field_name)
+      values.each do |value|
+        CustomLengthValidator.new(options.merge(attributes: field_name, maximum: ApiConstants::MAX_LENGTH_STRING)).validate_value(record, value.to_s)
+      end
+    end
+
+    def validate_custom_number_array(record, field_name)
+      values = record.send(field_name)
+      values.each do |value|
+        numericality_options = construct_options(ignore_string: :allow_string_param, only_integer: true, attributes: field_name, allow_nil: !@is_required, required: @is_required)
+        CustomNumericalityValidator.new(numericality_options).validate_value(record, value)
+      end
+    end
+
+
     def absence_validator_check(record, field_name, values)
       if section_field? && !section_parent_present?(record, values)
         parent = section_parent_list.keys.first
@@ -139,6 +156,7 @@ class CustomFieldValidator < ActiveModel::EachValidator
       @drop_down_choices = options[attribute][:drop_down_choices] || {}
       @required_based_on_status = options[attribute][:required_based_on_status]
       @required_attribute = options[attribute][:required_attribute]
+      @search_validation = options[attribute][:search_validation]
     end
 
     # http://www.blrice.net/blog/2013/11/07/rails-validator-classes-and-instance-vars/
@@ -225,7 +243,12 @@ class CustomFieldValidator < ActiveModel::EachValidator
     def method_name
       method = "validate_#{@current_field.field_type}"
       method += "_level_#{@current_field.level.to_i}" if nested_field?
+      method += "_array" if search_validation?
       method.freeze
+    end
+
+    def search_validation?
+      @search_validation == :true
     end
 
     def nested_field?
