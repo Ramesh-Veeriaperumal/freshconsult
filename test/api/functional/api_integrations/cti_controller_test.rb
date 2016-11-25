@@ -378,7 +378,7 @@ module ApiIntegrations
         errors: [
           {
             field: "responder_id",
-            message: "There is no responder matching the give responder details",
+            message: "There is no responder matching the given responder details",
             code: "invalid_value"
           }
         ]
@@ -408,7 +408,7 @@ module ApiIntegrations
         errors: [
           {
             field: "responder_id",
-            message: "There is no responder matching the give responder details",
+            message: "There is no responder matching the given responder details",
             code: "invalid_value"
           }
         ]
@@ -437,7 +437,7 @@ module ApiIntegrations
         errors: [
           {
             field: "responder_id",
-            message: "There is no responder matching the give responder details",
+            message: "There is no responder matching the given responder details",
             code: "invalid_value"
           }
         ]
@@ -466,7 +466,7 @@ module ApiIntegrations
         errors: [
           {
             field: "responder_id",
-            message: "There is no responder matching the give responder details",
+            message: "There is no responder matching the given responder details",
             code: "invalid_value"
           }
         ]
@@ -581,7 +581,7 @@ module ApiIntegrations
           },
           {
             field: "responder_id",
-            message: "There is no responder matching the give responder details",
+            message: "There is no responder matching the given responder details",
             code: "invalid_value"
           },
           {
