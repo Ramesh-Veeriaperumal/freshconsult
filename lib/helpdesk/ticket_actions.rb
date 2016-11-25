@@ -153,6 +153,8 @@ module Helpdesk::TicketActions
                                 :source =>@source_ticket.source,
                                 :ticket_type =>@source_ticket.ticket_type,                             
                                 :cc_email => {:fwd_emails=>[],
+                                              :tkt_cc => [],
+                                              :reply_cc => [],
                                               :cc_emails => @note.cc_emails || []} ,
                                 :ticket_body_attributes => { :description_html => @note.body_html}                            
                                 
