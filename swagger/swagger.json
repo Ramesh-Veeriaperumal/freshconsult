@@ -1426,6 +1426,12 @@
         "description": "Create a Note",
         "parameters": [
           {
+            "name": "id",
+            "type": "number",
+            "in": "path",
+            "description": "Display ID of ticket"
+          },
+          {
             "name": "data",
             "in": "body",
             "required": true,
@@ -1438,7 +1444,7 @@
           "200": {
             "description": "Success",
             "schema": {
-              "$ref": "#/definitions/note_create"
+              "$ref": "#/definitions/extended_note"
             }
           },
           "400": {
@@ -1458,6 +1464,12 @@
         "description": "Create a Reply",
         "parameters": [
           {
+            "name": "id",
+            "type": "number",
+            "in": "path",
+            "description": "Display ID of ticket"
+          },
+          {
             "name": "data",
             "in": "body",
             "required": true,
@@ -1470,7 +1482,7 @@
           "200": {
             "description": "Success",
             "schema": {
-              "$ref": "#/definitions/note_reply"
+              "$ref": "#/definitions/extended_note"
             }
           },
           "400": {
@@ -1490,6 +1502,12 @@
         "description": "Forward Ticket",
         "parameters": [
           {
+            "name": "id",
+            "type": "number",
+            "in": "path",
+            "description": "Display ID of ticket"
+          },
+          {
             "name": "data",
             "in": "body",
             "required": true,
@@ -1502,7 +1520,45 @@
           "200": {
             "description": "Success",
             "schema": {
-              "$ref": "#/definitions/note_forward"
+              "$ref": "#/definitions/extended_note"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          }
+        }
+      }
+    },
+    "/tickets/{id}/facebook_reply": {
+      "post": {
+        "tags": [
+          "conversation"
+        ],
+        "description": "Facebook Reply",
+        "parameters": [
+          {
+            "name": "id",
+            "type": "number",
+            "in": "path",
+            "description": "Display ID of ticket"
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/facebook_reply_input"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/extended_note"
             }
           },
           "400": {
@@ -2124,6 +2180,22 @@
         }
       ]
     },
+    "facebook_reply_input": {
+      "type": "object",
+      "properties": {
+        "agent_id": {
+          "type": "number",
+          "description": "User ID of agent replying to the ticket"
+        },
+        "note_id": {
+          "type": "number",
+          "description": "ID of note when replying to a comment"
+        },
+        "body": {
+          "type": "string"
+        }
+      }
+    },
     "ticket_input": {
       "type": "object",
       "allOf": [
@@ -2676,6 +2748,30 @@
         }
       }
     },
+    "fb_post": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/extension_generic"
+        },
+        {
+          "properties": {
+            "post_id": {
+              "type": "string"
+            },
+            "msg_type": {
+              "type": "string"
+            },
+            "post_type": {
+              "type": "string"
+            },
+            "can_comment?": {
+              "type": "boolean"
+            }
+          }
+        }
+      ]
+    },
     "extension_generic": {
       "type": "object",
       "properties": {
@@ -2763,6 +2859,51 @@
                 },
                 "ticket_id": {
                   "type": "id"
+                },
+                "user_id": {
+                  "type": "id"
+                },
+                "incoming": {
+                  "type": "boolean"
+                },
+                "private": {
+                  "type": "boolean"
+                },
+                "support_email": {
+                  "type": "string"
+                },
+                "from_email": {
+                  "type": "string"
+                },
+                "to_emails": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "cc_emails": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "bcc_emails": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "source": {
+                  "type": "number"
+                },
+                "attachments": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/attachment"
+                  }
+                },
+                "fb_post": {
+                  "$ref": "#/definitions/fb_post"
                 }
               }
             }
@@ -3097,169 +3238,16 @@
         }
       }
     },
-    "note_create": {
-      "type": "object",
-      "allOf": [
-        {
-          "$ref": "#/definitions/note"
-        },
-        {
-          "$ref": "#/definitions/extended_note"
-        },
-        {
-          "properties": {
-            "user_id": {
-              "type": "id"
-            },
-            "incoming": {
-              "type": "boolean"
-            },
-            "private": {
-              "type": "boolean"
-            },
-            "support_email": {
-              "type": "string"
-            },
-            "notified_to": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            },
-            "attachments": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/attachment"
-              }
-            }
-          }
-        }
-      ]
-    },
-    "note_reply": {
-      "type": "object",
-      "allOf": [
-        {
-          "$ref": "#/definitions/note"
-        },
-        {
-          "$ref": "#/definitions/extended_note"
-        },
-        {
-          "properties": {
-            "user_id": {
-              "type": "id"
-            },
-            "from_email": {
-              "type": "string"
-            },
-            "cc_emails": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            },
-            "bcc_emails": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            },
-            "replied_to": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            },
-            "attachments": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/attachment"
-              }
-            }
-          }
-        }
-      ]
-    },
-    "note_forward": {
-      "type": "object",
-      "allOf": [
-        {
-          "$ref": "#/definitions/note"
-        },
-        {
-          "$ref": "#/definitions/extended_note"
-        },
-        {
-          "properties": {
-            "agent_id": {
-              "type": "id"
-            },
-            "from_email": {
-              "type": "string"
-            },
-            "forwarded_to": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            },
-            "cc_emails": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            },
-            "bcc_emails": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            },
-            "attachments": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/attachment"
-              }
-            }
-          }
-        }
-      ]
-    },
     "conversations_show": {
       "type": "array",
       "items": {
         "type": "object",
         "allOf": [
           {
-            "$ref": "#/definitions/note_create"
+            "$ref": "#/definitions/extended_note"
           },
           {
             "properties": {
-              "source": {
-                "type": "number"
-              },
-              "to_emails": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                }
-              },
-              "from_email": {
-                "type": "string"
-              },
-              "cc_emails": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                }
-              },
-              "bcc_emails": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                }
-              },
               "freshfone_call": {
                 "$ref": "#/definitions/freshfone_call"
               }

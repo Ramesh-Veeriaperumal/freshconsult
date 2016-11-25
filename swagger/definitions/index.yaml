@@ -31,6 +31,8 @@
     $ref: ./request/conversations/reply.yaml
   note_forward_input:
     $ref: ./request/conversations/forward.yaml
+  facebook_reply_input:
+    $ref: ./request/conversations/facebook_reply.yaml
   ticket_input:
     $ref: ./request/tickets/ticket.yaml
   ticket_bulk_update_input:
@@ -70,6 +72,8 @@
     $ref: ./resource/canned_response.yaml
   canned_response_folder:
     $ref: ./resource/canned_response_folder.yaml
+  fb_post:
+    $ref: ./resource/fb_post.yaml
   extension_generic:
     $ref: ./resource/extension/generic.yaml
   extended_contact:
@@ -98,7 +102,6 @@
     allOf:
       - $ref: '#/definitions/canned_response_folder'
       - $ref: ./resource/extension/canned_response_folder.yaml
-  
   ticket_index:
     type: array
     items:
@@ -139,12 +142,6 @@
   # RESPONSE
   meta:
     $ref: './response/meta.yaml'
-  note_create:
-    $ref: './response/conversations/create.yaml'
-  note_reply:
-    $ref: './response/conversations/reply.yaml'
-  note_forward:
-    $ref: './response/conversations/forward.yaml'
   conversations_show:
     type: array
     items:

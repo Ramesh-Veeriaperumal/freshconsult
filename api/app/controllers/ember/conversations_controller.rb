@@ -2,9 +2,14 @@ module Ember
   class ConversationsController < ::ConversationsController
     include Concerns::ApplicationViewConcern
     include Concerns::TicketsViewConcern
-    before_filter :can_send_user?, :set_defaults, only: [:forward]
+    include Facebook::TicketActions::Util
+    include HelperConcern
+    decorate_views(decorate_objects: [:ticket_conversations], decorate_object: [:create, :update, :reply, :forward, :facebook_reply])
+
+    before_filter :can_send_user?, only: [:forward, :facebook_reply]
+    before_filter :set_defaults, only: [:forward]
     SINGULAR_RESPONSE_FOR = %w(reply forward).freeze
-    
+
     def ticket_conversations
       return if validate_filter_params(%w(order_type))
       order_type = params[:order_type]
@@ -12,7 +17,7 @@ module Ember
       ticket_conversations = @ticket.notes.visible.exclude_source('meta')
                                     .preload(:schema_less_note, :note_old_body, :attachments)
                                     .order(order_conditions)
-                                    
+
       # @items = paginate_items(ticket_conversations)
       load_objects(ticket_conversations)
       response.api_meta = { count: @items_count }
@@ -71,7 +76,30 @@ module Ember
       end
     end
 
+    def facebook_reply
+      @validation_klass = 'FbReplyValidation'
+      return unless validate_body_params(@ticket)
+      sanitize_params
+      build_object
+      assign_note_attributes
+      @delegator_klass = 'FbReplyDelegator'
+      return unless validate_delegator(@item, note_id: @note_id)
+      is_success = reply_to_fb_ticket(@delegator.note)
+      render_response(is_success)
+    end
+
     private
+
+      def reply_to_fb_ticket(note)
+        return unless @item.save_note
+        fb_page     = @ticket.fb_post.facebook_page
+        parent_post = note || @ticket
+        if @ticket.is_fb_message?
+          send_reply(fb_page, @ticket, @item, POST_TYPE[:message])
+        else
+          send_reply(fb_page, parent_post, @item, POST_TYPE[:comment])
+        end
+      end
 
       def assign_note_attributes
         if @item.user_id
@@ -90,9 +118,10 @@ module Ember
       def sanitize_params
         super
         # following fields must be handled separately, should not be passed to build_object method
-        assign_and_remove_params([:attachment_ids, :cloud_file_ids, :include_quoted_text, :include_original_attachments])
+        assign_and_remove_params([:note_id, :attachment_ids, :cloud_file_ids, :include_quoted_text, :include_original_attachments])
         @attachment_ids = @attachment_ids.map(&:to_i) if @attachment_ids
         @cloud_file_ids = @cloud_file_ids.map(&:to_i) if @cloud_file_ids
+        @note_id        = @note_id.to_i if @note_id # TODO-EMBER: To be added to constants during conflict resolution after committing conv_file_support
         @include_quoted_text = @include_quoted_text.to_bool if @include_quoted_text && @include_quoted_text.is_a?(String)
         @include_original_attachments = @include_original_attachments.to_bool if @include_original_attachments && @include_original_attachments.is_a?(String)
       end
@@ -159,7 +188,7 @@ module Ember
 
       def set_custom_errors(item = @item)
         fields_to_be_renamed = ConversationConstants::ERROR_FIELD_MAPPINGS
-        fields_to_be_renamed.merge!(ConversationConstants::FORWARD_FIELD_MAPPINGS) if forward?
+        fields_to_be_renamed.merge!(ConversationConstants::AGENT_USER_MAPPING) if agent_mapping_required?
         ErrorHelper.rename_error_fields(fields_to_be_renamed, item)
       end
 
@@ -167,13 +196,25 @@ module Ember
         @forward ||= current_action?('forward')
       end
 
+      def agent_mapping_required?
+        forward? || current_action?('facebook_reply')
+      end
+
       def set_defaults
         params[cname][:include_quoted_text] = true unless params[cname].key?(:include_quoted_text)
         params[cname][:include_original_attachments] = true unless params[cname].key?(:include_original_attachments)
       end
 
+      def constants_class
+        :ConversationConstants.to_s.freeze
+      end
+
+      def ember_redirect?
+        [:create, :reply, :forward, :facebook_reply].include?(action_name.to_sym)
+      end
+
       def render_201_with_location(template_name: "conversations/#{action_name}", location_url: 'conversation_url', item_id: @item.id)
-        return super(location_url: location_url) if forward?
+        return super(location_url: location_url) if ember_redirect?
         render template_name, location: send(location_url, item_id), status: 201
       end
 

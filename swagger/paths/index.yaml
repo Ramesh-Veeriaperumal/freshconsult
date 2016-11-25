@@ -82,6 +82,8 @@
   $ref: ./conversations/reply.yaml
 /tickets/{id}/forward:
   $ref: ./conversations/forward.yaml
+/tickets/{id}/facebook_reply:
+  $ref: ./conversations/facebook_reply.yaml
 
 /attachments:
   $ref: ./attachments/crud.yaml

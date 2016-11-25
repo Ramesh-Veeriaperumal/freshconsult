@@ -1,0 +1,10 @@
+type: object
+properties:
+  agent_id:
+    type: number
+    description: User ID of agent replying to the ticket
+  note_id:
+    type: number
+    description: ID of note when replying to a comment
+  body:
+    type: string

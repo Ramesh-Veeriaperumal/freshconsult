@@ -143,7 +143,9 @@ class ConversationsController < ApiApplicationController
     end
 
     def sanitize_params
-      prepare_array_fields "ConversationConstants::#{action_name.upcase}_ARRAY_FIELDS".constantize.map(&:to_sym)
+      fields = "#{action_name.upcase}_ARRAY_FIELDS"
+      array_fields = ConversationConstants.const_defined?(fields) ? ConversationConstants.const_get(fields) : []
+      prepare_array_fields array_fields.map(&:to_sym)
 
       # set source only for create/reply/forward action not for update action. Hence TYPE_FOR_ACTION is checked.
       params[cname][:source] = ConversationConstants::TYPE_FOR_ACTION[action_name] if ConversationConstants::TYPE_FOR_ACTION.keys.include?(action_name)

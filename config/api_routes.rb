@@ -186,6 +186,7 @@ Helpkit::Application.routes.draw do
         match '/split_note/:note_id' => 'ember/tickets#split_note', via: :put
         # This alternate route is to handle limitation in ember route generation : api/_/tickets/:ticket_id/split_note?note_id=Number
         match '/split_note' => 'ember/tickets#split_note', via: :put
+        post :facebook_reply, to: 'ember/conversations#facebook_reply'
       end
       # This alternate route is to handle limitation in ember route generation : api/_/tickets/:ticket_id/canned_responses?id=Number
       match '/canned_responses' => 'ember/tickets/canned_responses#show', via: :get

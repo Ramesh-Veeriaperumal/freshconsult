@@ -1,6 +1,6 @@
 post:
   tags: [conversation]
-  description: Create a Note
+  description: Facebook Reply
   parameters:
     - name: id
       type: number
@@ -10,9 +10,9 @@ post:
       in: body
       required: true
       schema:
-        $ref: '#/definitions/note_create_input'
+        $ref: '#/definitions/facebook_reply_input'
   responses:
-    200:
+    201:
       description: Success
       schema:
         $ref: '#/definitions/extended_note'

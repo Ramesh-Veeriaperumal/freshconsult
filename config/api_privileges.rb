@@ -15,7 +15,7 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   reply_ticket do
-    resource :"ember/conversation", only: [:reply]
+    resource :"ember/conversation", only: [:reply, :facebook_reply]
     resource :"ember/tickets/draft", only: [:save_draft, :show_draft, :clear_draft]
   end
 
