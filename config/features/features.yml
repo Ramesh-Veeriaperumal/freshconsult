@@ -16,6 +16,7 @@
       :custom_ticket_fields: 11
       :custom_company_fields: 12
       :custom_contact_fields: 13
-      :basic_social: 14
-      :occasional_agent: 15
-      :allow_auto_suggest_solutions: 16
+      :occasional_agent: 14
+      :allow_auto_suggest_solutions: 15
+      :basic_twitter: 16
+      :basic_facebook: 17
