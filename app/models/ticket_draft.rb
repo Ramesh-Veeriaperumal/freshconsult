@@ -58,7 +58,7 @@ class TicketDraft
     end
 
     def map_hash_to_attributes(draft_hash)
-      if draft_hash.any?
+      if draft_hash.present?
         @body = draft_hash['draft_data']
         @cc_emails = draft_hash['draft_cc'].split(';')
         @bcc_emails = draft_hash['draft_bcc'].split(';')

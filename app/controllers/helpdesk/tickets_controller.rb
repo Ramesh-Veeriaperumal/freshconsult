@@ -1152,7 +1152,6 @@ class Helpdesk::TicketsController < ApplicationController
             render nothing: true
           else
             @activities = @activities_data[:activity_list].reverse
-            byebug
             if params[:since_id].present? or params[:before_id].present?
               render :partial => "helpdesk/tickets/show/custom_activity.html.erb", :collection => @activities
             else

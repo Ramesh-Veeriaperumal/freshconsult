@@ -6,3 +6,33 @@ allOf:
         type: string
       ticket_id:
         type: id
+      user_id:
+        type: id
+      incoming:
+        type: boolean
+      private:
+        type: boolean
+      support_email:
+        type: string
+      from_email:
+        type: string
+      to_emails:
+        type: array
+        items:
+          type: string
+      cc_emails:
+        type: array
+        items:
+          type: string
+      bcc_emails:
+        type: array
+        items:
+          type: string
+      source:
+        type: number
+      attachments:
+        type: array
+        items:
+          $ref: '#/definitions/attachment'
+      fb_post:
+        $ref: '#/definitions/fb_post'

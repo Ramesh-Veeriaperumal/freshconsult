@@ -28,7 +28,8 @@ class BadRequestError < BaseError
     category_name: :category,
     folder_name: :folder,
     ticket_id: :ticket,
-    from_email: :"active email_config"
+    from_email: :"active email_config",
+    note_id: :note
   }
 
   def initialize(attribute, value, params_hash = {})

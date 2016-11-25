@@ -1,7 +1,7 @@
 class ConversationDecorator < ApiDecorator
   attr_accessor :ticket
 
-  delegate :body, :body_html, :id, :incoming, :private, :user_id, :support_email, :source, :attachments, :schema_less_note, to: :record
+  delegate :body, :body_html, :id, :incoming, :private, :user_id, :support_email, :source, :attachments, :schema_less_note, :fb_post, to: :record
 
   delegate :to_emails, :from_email, :cc_emails, :bcc_emails, to: :schema_less_note, allow_nil: true
 
@@ -31,7 +31,8 @@ class ConversationDecorator < ApiDecorator
       bcc_emails: bcc_emails,
       created_at: created_at.try(:utc),
       updated_at: updated_at.try(:utc),
-      attachments: attachments_hash
+      attachments: attachments_hash,
+      fb_post: fb_post.present? ? FacebookPostDecorator.new(fb_post).to_hash : nil
     }
   end
 

@@ -4,6 +4,7 @@ module Ember
     include ConversationsTestHelper
     include AttachmentsTestHelper
     include TicketsTestHelper
+    include SocialTestHelper
 
     def wrap_cname(params)
       { conversation: params }
@@ -140,8 +141,8 @@ module Ember
       params_hash = reply_note_params_hash.merge({attachment_ids: attachment_ids, user_id: @agent.id})
       post :reply, construct_params({version: 'private', id: ticket.display_id }, params_hash)
       assert_response 201
-      match_json(reply_note_pattern(params_hash, Helpdesk::Note.last))
-      match_json(reply_note_pattern({}, Helpdesk::Note.last))
+      match_json(note_pattern(params_hash, Helpdesk::Note.last))
+      match_json(note_pattern({}, Helpdesk::Note.last))
       assert Helpdesk::Note.last.attachments.size == attachment_ids.size
     end
 
@@ -156,8 +157,8 @@ module Ember
       post :reply, construct_params({version: 'private', id: ticket.display_id }, params_hash)
       DataTypeValidator.any_instance.unstub(:valid_type?)
       assert_response 201
-      match_json(reply_note_pattern(params_hash, Helpdesk::Note.last))
-      match_json(reply_note_pattern({}, Helpdesk::Note.last))
+      match_json(note_pattern(params_hash, Helpdesk::Note.last))
+      match_json(note_pattern({}, Helpdesk::Note.last))
       assert Helpdesk::Note.last.attachments.size == (attachments.size + 1)
     end
 
@@ -195,8 +196,8 @@ module Ember
       params_hash = forward_note_params_hash
       post :forward, construct_params({version: 'private', id: ticket.display_id }, params_hash)
       assert_response 201
-      match_json(forward_note_pattern(params_hash, Helpdesk::Note.last))
-      match_json(forward_note_pattern({}, Helpdesk::Note.last))
+      match_json(note_pattern(params_hash, Helpdesk::Note.last))
+      match_json(note_pattern({}, Helpdesk::Note.last))
     end
 
     def test_forward_with_user_id_valid
@@ -205,8 +206,8 @@ module Ember
       post :forward, construct_params({version: 'private', id: ticket.display_id }, params_hash)
       assert_response 201
       latest_note = Helpdesk::Note.last
-      match_json(forward_note_pattern(params_hash, latest_note))
-      match_json(forward_note_pattern({}, latest_note))
+      match_json(note_pattern(params_hash, latest_note))
+      match_json(note_pattern({}, latest_note))
     end
 
     def test_forward_with_user_id_invalid_privilege
@@ -272,8 +273,8 @@ module Ember
       assert_response 201
       note = Helpdesk::Note.last
       assert_equal email_config.id, note.email_config_id 
-      match_json(forward_note_pattern(params_hash, note))
-      match_json(forward_note_pattern({}, note))
+      match_json(note_pattern(params_hash, note))
+      match_json(note_pattern({}, note))
     end
 
     def test_forward_inactive_email_config
@@ -311,8 +312,8 @@ module Ember
       DataTypeValidator.any_instance.unstub(:valid_type?)
       assert_response 201
       response_params = params.except(:attachments)
-      match_json(forward_note_pattern(params, Helpdesk::Note.last))
-      match_json(forward_note_pattern({}, Helpdesk::Note.last))
+      match_json(note_pattern(params, Helpdesk::Note.last))
+      match_json(note_pattern({}, Helpdesk::Note.last))
       assert Helpdesk::Note.last.attachments.count == 2
     end
 
@@ -321,8 +322,8 @@ module Ember
       params = forward_note_params_hash
       post :forward, construct_params({version: 'private', id: t.display_id }, params)
       assert_response 201
-      match_json(forward_note_pattern(params, Helpdesk::Note.last))
-      match_json(forward_note_pattern({}, Helpdesk::Note.last))
+      match_json(note_pattern(params, Helpdesk::Note.last))
+      match_json(note_pattern({}, Helpdesk::Note.last))
       assert Helpdesk::Note.last.attachments.count == 1
     end
 
@@ -331,8 +332,8 @@ module Ember
       params = forward_note_params_hash
       post :forward, construct_params({version: 'private', id: t.display_id }, params)
       assert_response 201
-      match_json(forward_note_pattern(params, Helpdesk::Note.last))
-      match_json(forward_note_pattern({}, Helpdesk::Note.last))
+      match_json(note_pattern(params, Helpdesk::Note.last))
+      match_json(note_pattern({}, Helpdesk::Note.last))
       assert Helpdesk::Note.last.cloud_files.count == 1
     end
 
@@ -376,8 +377,8 @@ module Ember
       post :forward, construct_params({version: 'private', id: ticket.display_id }, params)
       assert_response 201
       latest_note = Helpdesk::Note.last
-      match_json(forward_note_pattern(params, latest_note))
-      match_json(forward_note_pattern({}, latest_note))
+      match_json(note_pattern(params, latest_note))
+      match_json(note_pattern({}, latest_note))
     end
 
     def test_forward_with_invalid_draft_attachment_ids
@@ -399,8 +400,8 @@ module Ember
       post :forward, construct_params({version: 'private', id: ticket.display_id }, params_hash)
       assert_response 201
       latest_note = Helpdesk::Note.last
-      match_json(forward_note_pattern(params_hash, latest_note))
-      match_json(forward_note_pattern({}, latest_note))
+      match_json(note_pattern(params_hash, latest_note))
+      match_json(note_pattern({}, latest_note))
       assert latest_note.attachments.size == attachment_ids.size
     end
 
@@ -410,8 +411,8 @@ module Ember
       post :forward, construct_params({version: 'private', id: t.display_id }, params)
       assert_response 201
       latest_note = Helpdesk::Note.last
-      match_json(forward_note_pattern(params, latest_note))
-      match_json(forward_note_pattern({}, latest_note))
+      match_json(note_pattern(params, latest_note))
+      match_json(note_pattern({}, latest_note))
       assert latest_note.attachments.count == 0
     end
 
@@ -422,8 +423,8 @@ module Ember
       post :forward, construct_params({version: 'private', id: t.display_id }, params)
       assert_response 201
       latest_note = Helpdesk::Note.last
-      match_json(forward_note_pattern(params, latest_note))
-      match_json(forward_note_pattern({}, latest_note))
+      match_json(note_pattern(params, latest_note))
+      match_json(note_pattern({}, latest_note))
       assert latest_note.attachments.count == 1
     end
 
@@ -450,8 +451,8 @@ module Ember
       DataTypeValidator.any_instance.unstub(:valid_type?)
       assert_response 201
       latest_note = Helpdesk::Note.last
-      match_json(forward_note_pattern(params_hash, latest_note))
-      match_json(forward_note_pattern({}, latest_note))
+      match_json(note_pattern(params_hash, latest_note))
+      match_json(note_pattern({}, latest_note))
       assert latest_note.attachments.size == (attachments.size + 1)
     end
 
@@ -478,8 +479,8 @@ module Ember
       post :forward, construct_params({version: 'private', id: t.display_id }, params)
       assert_response 201
       latest_note = Helpdesk::Note.last
-      match_json(forward_note_pattern(params, latest_note))
-      match_json(forward_note_pattern({}, latest_note))
+      match_json(note_pattern(params, latest_note))
+      match_json(note_pattern({}, latest_note))
       assert latest_note.cloud_files.count == 1
     end
 
@@ -497,12 +498,11 @@ module Ember
       DataTypeValidator.any_instance.unstub(:valid_type?)
       assert_response 201
       latest_note = Helpdesk::Note.last
-      match_json(forward_note_pattern(params, latest_note))
-      match_json(forward_note_pattern({}, latest_note))
+      match_json(note_pattern(params, latest_note))
+      match_json(note_pattern({}, latest_note))
       assert latest_note.attachments.count == 4
       assert latest_note.cloud_files.count == 1
     end
-
 
     def test_ticket_conversations_with_fone_call
       ticket = new_ticket_from_call
@@ -511,6 +511,110 @@ module Ember
       get :ticket_conversations, construct_params({ version: 'private', id: ticket.display_id }, false)
       assert_response 200
       match_json(conversations_pattern(ticket))
+    end
+
+    def test_facebook_reply_without_params
+      ticket = create_ticket_from_fb_post
+      post :facebook_reply, construct_params({version: 'private', id: ticket.display_id}, {})
+      assert_response 400
+      match_json([bad_request_error_pattern('body', :datatype_mismatch, code: :missing_field, expected_data_type: String)])
+    end
+
+    def test_facebook_reply_with_invalid_ticket
+      ticket = create_ticket
+      params_hash = { body: Faker::Lorem.paragraph }
+      post :facebook_reply, construct_params({version: 'private', id: ticket.display_id}, params_hash)
+      assert_response 400
+      match_json([bad_request_error_pattern('ticket_id', :not_a_facebook_ticket)])
+    end
+
+    def test_facebook_reply_with_invalid_note_id
+      ticket = create_ticket_from_fb_post
+      invalid_id = (Helpdesk::Note.last.try(:id) || 0) + 10
+      params_hash = { body: Faker::Lorem.paragraph, note_id: invalid_id}
+      post :facebook_reply, construct_params({version: 'private', id: ticket.display_id}, params_hash)
+      assert_response 400
+      match_json([bad_request_error_pattern('note_id', :absent_in_db, resource: :note, attribute: :note_id)])
+    end
+
+    def test_facebook_reply_to_fb_post_ticket
+      ticket = create_ticket_from_fb_post
+      put_comment_id = "#{(Time.now.ago(2.minutes).utc.to_f*100000).to_i}_#{(Time.now.ago(6.minutes).utc.to_f*100000).to_i}"
+      sample_put_comment = { "id" => put_comment_id }
+      Koala::Facebook::API.any_instance.stubs(:put_comment).returns(sample_put_comment)
+      params_hash = { body: Faker::Lorem.paragraph }
+      post :facebook_reply, construct_params({version: 'private', id: ticket.display_id}, params_hash)
+      Koala::Facebook::API.any_instance.unstub(:put_comment)
+      assert_response 201
+      latest_note = Helpdesk::Note.last
+      match_json(note_pattern(params_hash, latest_note))
+    end
+
+    def test_facebook_reply_to_fb_comment_note
+      ticket = create_ticket_from_fb_post(true)
+      put_comment_id = "#{(Time.now.ago(2.minutes).utc.to_f*100000).to_i}_#{(Time.now.ago(6.minutes).utc.to_f*100000).to_i}"
+      sample_put_comment = { "id" => put_comment_id }
+      fb_comment_note = ticket.notes.where(source: Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["facebook"]).first
+      Koala::Facebook::API.any_instance.stubs(:put_comment).returns(sample_put_comment)
+      params_hash = { body: Faker::Lorem.paragraph, note_id: fb_comment_note.id }
+      post :facebook_reply, construct_params({version: 'private', id: ticket.display_id}, params_hash)
+      Koala::Facebook::API.any_instance.unstub(:put_comment)
+      assert_response 201
+      latest_note = Helpdesk::Note.last
+      match_json(note_pattern(params_hash, latest_note))
+    end
+
+    def test_facebook_reply_to_fb_direct_message_ticket
+      ticket = create_ticket_from_fb_direct_message
+      sample_reply_dm = { "id" => Time.now.utc.to_i + 5 }
+      Koala::Facebook::API.any_instance.stubs(:put_object).returns(sample_reply_dm)
+      params_hash = { body: Faker::Lorem.paragraph }
+      post :facebook_reply, construct_params({version: 'private', id: ticket.display_id}, params_hash)
+      Koala::Facebook::API.any_instance.unstub(:put_object)
+      assert_response 201
+      latest_note = Helpdesk::Note.last
+      match_json(note_pattern(params_hash, latest_note))
+    end
+
+    def test_facebook_reply_to_non_fb_post_note
+      ticket = create_ticket_from_fb_direct_message
+      fb_dm_note = ticket.notes.where(source: Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["facebook"]).first
+      params_hash = { body: Faker::Lorem.paragraph, note_id: fb_dm_note.id }
+      post :facebook_reply, construct_params({version: 'private', id: ticket.display_id}, params_hash)
+      assert_response 400
+      match_json([bad_request_error_pattern('note_id', :unable_to_post_reply)])
+    end
+
+    def test_facebook_reply_to_non_commentable_note
+      ticket = create_ticket_from_fb_post(true, true)
+      fb_comment_note = ticket.notes.where(source: Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["facebook"]).last
+      params_hash = { body: Faker::Lorem.paragraph, note_id: fb_comment_note.id }
+      post :facebook_reply, construct_params({version: 'private', id: ticket.display_id}, params_hash)
+      assert_response 400
+      match_json([bad_request_error_pattern('note_id', :unable_to_post_reply)])
+    end
+
+    def test_facebook_reply_with_invalid_agent_id
+      user = add_new_user(account)
+      ticket = create_ticket_from_fb_direct_message
+      params_hash = { body: Faker::Lorem.paragraph, agent_id: user.id }
+      post :facebook_reply, construct_params({version: 'private', id: ticket.display_id}, params_hash)
+      assert_response 400
+      match_json([bad_request_error_pattern('agent_id', :absent_in_db, resource: :agent, attribute: :agent_id)])
+    end
+
+    def test_facebook_reply_with_valid_agent_id
+      user = add_test_agent(account, { role: account.roles.find_by_name("Agent").id })
+      ticket = create_ticket_from_fb_direct_message
+      sample_reply_dm = { "id" => Time.now.utc.to_i + 5 }
+      Koala::Facebook::API.any_instance.stubs(:put_object).returns(sample_reply_dm)
+      params_hash = { body: Faker::Lorem.paragraph, agent_id: user.id }
+      post :facebook_reply, construct_params({version: 'private', id: ticket.display_id}, params_hash)
+      Koala::Facebook::API.any_instance.unstub(:put_object)
+      assert_response 201
+      latest_note = Helpdesk::Note.last
+      match_json(note_pattern(params_hash, latest_note))
+      match_json(note_pattern({}, latest_note))
     end
   end
 end

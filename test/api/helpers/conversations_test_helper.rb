@@ -6,20 +6,30 @@ module ConversationsTestHelper
 
   def note_pattern(expected_output = {}, note)
     body_html = format_ticket_html(note, expected_output[:body]) if expected_output[:body]
-    {
+    response_pattern = {
       body: body_html || note.body_html,
       body_text: note.body,
       id: Fixnum,
       incoming: (expected_output[:incoming] || note.incoming).to_s.to_bool,
       private: (expected_output[:private] || note.private).to_s.to_bool,
-      user_id: expected_output[:user_id] || note.user_id,
+      source: (expected_output[:source] || note.source),
+      user_id: (expected_output[:user_id] || expected_output[:agent_id] || note.user_id),
       support_email: note.support_email,
+      from_email: (expected_output[:from_email] || note.from_email),
       ticket_id: expected_output[:ticket_id] || note.notable.display_id,
-      to_emails: expected_output[:notify_emails] || note.to_emails,
+      to_emails: expected_output[:notify_emails] || expected_output[:to_emails] || note.to_emails,
+      cc_emails: expected_output[:cc_emails] || note.cc_emails,
+      bcc_emails: expected_output[:bcc_emails] || note.bcc_emails,
       attachments: Array,
+      fb_post: nil,
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
     }
+    if note.fb_post.present?
+      fb_pattern = note.fb_post.post? ? fb_post_pattern({}, note.fb_post) : fb_dm_pattern({}, note.fb_post)
+      response_pattern.merge!(fb_post: fb_pattern)
+    end
+    response_pattern
   end
 
   def update_note_pattern(expected_output = {}, note)
@@ -36,42 +46,6 @@ module ConversationsTestHelper
     }
     single_note = note_pattern({}, note)
     single_note.merge(index_note)
-  end
-
-  def reply_note_pattern(expected_output = {}, note)
-    body_html = format_ticket_html(note, expected_output[:body]) if expected_output[:body]
-    {
-      body: body_html || note.body_html,
-      body_text: note.body,
-      id: Fixnum,
-      user_id: expected_output[:user_id] || note.user_id,
-      from_email: note.from_email,
-      cc_emails: expected_output[:cc_emails] || note.cc_emails,
-      bcc_emails: expected_output[:bcc_emails] || note.bcc_emails,
-      ticket_id: expected_output[:ticket_id] || note.notable.display_id,
-      to_emails: note.to_emails,
-      attachments: Array,
-      created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
-      updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
-    }
-  end
-
-  def forward_note_pattern(expected_output = {}, note)
-    body_html = format_ticket_html(note, expected_output[:body]) if expected_output[:body]
-    {
-      body: body_html || note.body_html,
-      body_text: note.body,
-      id: Fixnum,
-      agent_id: expected_output[:agent_id] || note.user_id,
-      from_email: note.from_email,
-      forwarded_to: expected_output[:to_emails] || note.to_emails,
-      cc_emails: expected_output[:cc_emails] || note.cc_emails,
-      bcc_emails: expected_output[:bcc_emails] || note.bcc_emails,
-      ticket_id: expected_output[:ticket_id] || note.notable_id,
-      attachments: Array,
-      created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
-      updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
-    }
   end
 
   def v1_note_payload

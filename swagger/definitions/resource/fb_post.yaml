@@ -1,0 +1,12 @@
+type: object
+allOf:
+  - $ref: '#/definitions/extension_generic'
+  - properties:
+      post_id:
+        type: string
+      msg_type:
+        type: string
+      post_type:
+        type: string
+      can_comment?:
+        type: boolean

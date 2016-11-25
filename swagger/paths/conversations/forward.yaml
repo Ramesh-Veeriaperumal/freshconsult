@@ -2,6 +2,10 @@ post:
   tags: [conversation]
   description: Forward Ticket
   parameters:
+    - name: id
+      type: number
+      in: path
+      description: Display ID of ticket
     - name: data
       in: body
       required: true
@@ -11,7 +15,7 @@ post:
     200:
       description: Success
       schema:
-        $ref: '#/definitions/note_forward'
+        $ref: '#/definitions/extended_note'
     400:
       description: Bad Request Error
       schema:

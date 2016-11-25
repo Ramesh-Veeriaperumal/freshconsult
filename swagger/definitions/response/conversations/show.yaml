@@ -1,22 +1,6 @@
 type: object
 allOf:
-  - $ref: '#/definitions/note_create'
+  - $ref: '#/definitions/extended_note'
   - properties:
-      source:
-        type: number
-      to_emails:
-        type: array
-        items:
-          type: string
-      from_email:
-        type: string
-      cc_emails:
-        type: array
-        items:
-          type: string
-      bcc_emails:
-        type: array
-        items:
-          type: string
       freshfone_call:
         $ref: '#/definitions/freshfone_call'
