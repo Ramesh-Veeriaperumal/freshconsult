@@ -149,6 +149,7 @@ defaults: &defaults
     - [templates_cleanup]
     - [bulk_child_tkt_creation]
     - [code_console_execution]
+    - [flush_portal_solution_cache]
 
 development:
   <<: *defaults

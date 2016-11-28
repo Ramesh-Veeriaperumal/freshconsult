@@ -32,4 +32,5 @@ $memcache = Dalli::Client.new(servers, options)
 custom_config = YAML::load_file(File.join(Rails.root, 'config', 'custom_dalli.yml'))[Rails.env].symbolize_keys!
 custom_servers = custom_config.delete(:servers)
 ActionController::Base.cache_store = :dalli_store, custom_servers, custom_config
-
+custom_options = { :namespace => custom_config[:namespace], :compress => custom_config[:compression], :socket_max_failures => custom_config[:socket_max_failures], :socket_timeout => custom_config[:socket_timeout] }
+$custom_memcache = Dalli::Client.new(custom_servers, custom_options)
