@@ -1603,6 +1603,32 @@
             "description": "Access denied"
           }
         }
+      },
+      "delete": {
+        "tags": [
+          "attachment"
+        ],
+        "summary": "Delete Attachment",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "number",
+            "description": "ID of attachment to be deleted",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Attachment not found"
+          }
+        }
       }
     },
     "/tickets/{id}/watch": {
@@ -3351,56 +3377,18 @@
     },
     "latest_note": {
       "type": "object",
-      "properties": {
-        "id": {
-          "type": "integer"
+      "allOf": [
+        {
+          "$ref": "#/definitions/extended_note"
         },
-        "from_email": {
-          "type": "string"
-        },
-        "cc_emails": {
-          "type": "array",
-          "items": {
-            "type": "string"
+        {
+          "properties": {
+            "user": {
+              "$ref": "#/definitions/extended_contact"
+            }
           }
-        },
-        "bcc_emails": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "body": {
-          "type": "string"
-        },
-        "body_text": {
-          "type": "string"
-        },
-        "ticket_id": {
-          "type": "integer"
-        },
-        "to_emails": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "attachments": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "user": {
-          "$ref": "#/definitions/extended_contact"
-        },
-        "created_at": {
-          "type": "string"
-        },
-        "updated_at": {
-          "type": "string"
         }
-      }
+      ]
     },
     "contact_activity": {
       "title": "data",

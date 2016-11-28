@@ -1,6 +1,8 @@
 require_relative '../../test_helper'
+['ticket_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
 class Ember::AttachmentsControllerTest < ActionController::TestCase
   include AttachmentsTestHelper
+  include TicketHelper
 
   def wrap_cname(params)
     { attachment: params }
@@ -69,5 +71,36 @@ class Ember::AttachmentsControllerTest < ActionController::TestCase
     match_json(attachment_pattern({}, latest_attachment))
     assert_equal latest_attachment.attachable_type, 'UserDraft'
     assert_equal latest_attachment.attachable_id, @agent.id
+  end
+
+  def test_destroy_attachment_without_ticket_privilege
+    ticket_id = create_ticket.id
+    attachment = create_attachment(attachable_type: 'Helpdesk::Ticket', attachable_id: ticket_id)
+    User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(false)
+    delete :destroy, controller_params(version: 'private', id: attachment.id)
+    User.any_instance.unstub(:privilege?)
+    assert_response 403
+  end
+
+  def test_destroy_attachment_without_ticket_permission
+    ticket_id = create_ticket.id
+    attachment = create_attachment(attachable_type: 'Helpdesk::Ticket', attachable_id: ticket_id)
+    User.any_instance.stubs(:has_ticket_permission?).returns(false)
+    delete :destroy, controller_params(version: 'private', id: attachment.id)
+    User.any_instance.unstub(:has_ticket_permission?)
+    assert_response 403
+  end
+
+  def test_destroy_user_draft_attachment
+    attachment = create_attachment(attachable_type: 'UserDraft', attachable_id: @agent.id)
+    delete :destroy, controller_params(version: 'private', id: attachment.id)
+    assert_response 204
+  end
+
+  def test_destroy_ticket_attachment
+    ticket_id = create_ticket.id
+    attachment = create_attachment(attachable_type: 'Helpdesk::Ticket', attachable_id: ticket_id)
+    delete :destroy, controller_params(version: 'private', id: attachment.id)
+    assert_response 204
   end
 end

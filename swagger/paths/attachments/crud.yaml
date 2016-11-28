@@ -18,3 +18,20 @@ post:
       description: Bad request error
       schema:
         $ref: '#/definitions/bad_request_error'
+
+delete:
+  tags: [attachment]
+  summary: Delete Attachment
+  parameters:
+    - name: id
+      in: path
+      type: number
+      description: ID of attachment to be deleted
+      required: true
+  responses:
+    204:
+      description: Success
+    404:
+      description: Attachment not found
+    403:
+      description: Access denied

@@ -231,7 +231,7 @@ Helpkit::Application.routes.draw do
     resources :ticket_filters, controller: 'ember/ticket_filters', only: [:index, :show, :create, :update, :destroy]
     resources :contact_fields, controller: 'ember/contact_fields', only: :index
     resources :scenario_automations, controller: 'ember/scenario_automations', only: :index
-    resources :attachments, controller: 'ember/attachments', only: [:create]
+    resources :attachments, controller: 'ember/attachments', only: [:create, :destroy]
     resources :canned_response_folders, controller: 'ember/canned_response_folders', only: [:index, :show]
   end
 

@@ -21,7 +21,6 @@ module ConversationsTestHelper
       cc_emails: expected_output[:cc_emails] || note.cc_emails,
       bcc_emails: expected_output[:bcc_emails] || note.bcc_emails,
       attachments: Array,
-      fb_post: nil,
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
     }

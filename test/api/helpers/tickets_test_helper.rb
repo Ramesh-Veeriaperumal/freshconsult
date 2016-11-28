@@ -130,7 +130,7 @@ module TicketsTestHelper
   end
 
   def latest_note_response_pattern(note)
-    pattern = reply_note_pattern({}, note).merge!({ user: Hash })
+    pattern = note_pattern({}, note).merge!({ user: Hash })
     pattern.except(:user_id)
   end
 
@@ -314,19 +314,7 @@ module TicketsTestHelper
     {
       id: call.id,
       duration: call.call_duration,
-      recording: attachment_pattern(call.recording_audio)
-    }
-  end
-
-  def attachment_pattern(record)
-    {
-      id: record.id,
-      name: record.content_file_name,
-      content_type: record.content_content_type,
-      size: record.content_file_size,
-      created_at: record.created_at.try(:utc),
-      updated_at: record.updated_at.try(:utc),
-      attachment_url: record.attachment_url_for_api
+      recording: attachment_pattern({}, call.recording_audio)
     }
   end
 

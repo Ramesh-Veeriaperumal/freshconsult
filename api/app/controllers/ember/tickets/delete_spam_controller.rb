@@ -87,6 +87,10 @@ module Ember
         def empty_spam_key
           EMPTY_SPAM_TICKETS % { account_id: current_account.id }
         end
+
+        def post_destroy_actions(item)
+          Search::RecentTickets.new(item.display_id).delete
+        end
     end
   end
 end

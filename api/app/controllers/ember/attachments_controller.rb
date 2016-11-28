@@ -2,8 +2,11 @@ module Ember
   class AttachmentsController < ApiApplicationController
     # TODO: Common file shared between Web and API to be moved separately
     include Helpdesk::MultiFileAttachment::Util
+    include DeleteSpamConcern
 
+    skip_before_filter :check_privilege, only: [:destroy]
     before_filter :can_send_user?, only: [:create]
+    before_filter :load_items, :check_destroy_permission, only: [:destroy]
 
     def create
       attachment_delegator = AttachmentDelegator.new(@item, user: @user, api_user: api_current_user)
@@ -22,6 +25,10 @@ module Ember
 
       def scoper
         current_account.attachments
+      end
+
+      def load_items
+        @items ||= Array.wrap(@item)
       end
 
       def validate_params
@@ -49,6 +56,10 @@ module Ember
         else
           render_custom_errors(@item)
         end
+      end
+
+      def post_destroy_actions(item)
+        unmark_for_cleanup(item.id) if item.attachable_type == AttachmentConstants::STANDALONE_ATTACHMENT_TYPE
       end
 
       # Since wrap params arguments are dynamic & needed for checking if the resource allows multipart, placing this at last.
