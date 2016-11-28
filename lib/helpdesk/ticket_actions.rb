@@ -289,7 +289,7 @@ module Helpdesk::TicketActions
         db_type = get_db_type(params)
         Sharding.send(db_type) do
           @ticket_filter.deserialize_from_params(params)
-          if current_account.count_es_enabled?
+          if current_account.count_es_enabled? and non_indexed_columns_query?
             total_entries = Search::Tickets::Docs.new(@ticket_filter.query_hash).count(Helpdesk::Ticket)
           else
             joins = @ticket_filter.get_joins(@ticket_filter.sql_conditions)
@@ -362,6 +362,13 @@ module Helpdesk::TicketActions
 
   def create_ticket_export_fields_list(list)
     set_tickets_redis_lpush(export_redis_key, list) if list.any?
+  end
+
+  def non_indexed_columns_query?
+    return false if params["data_hash"].blank?
+    query_hash = JSON.parse(params["data_hash"])
+    query_conditions = query_hash.map{|x| x["condition"]}
+    (query_conditions - TicketConstants::DB_INDEXED_QUERY_COLUMNS).count > 0
   end
 
   def export_redis_key

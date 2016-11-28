@@ -1967,7 +1967,7 @@ class Helpdesk::TicketsController < ApplicationController
 
   def fetch_tickets(tkt=nil)
     #_Note_: Fetching from ES based on feature and only for web
-    if es_tickets_enabled? and params[:html_format]
+    if es_tickets_enabled? and params[:html_format] and non_indexed_columns_query?
       tickets_from_es(params)
     else
       if Account.current.customer_sentiment_ui_enabled?

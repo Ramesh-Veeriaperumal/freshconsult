@@ -309,6 +309,8 @@ module TicketConstants
   CHILD_DEFAULT_FD_MAPPING = ["email", "requester_id", "subject", "status", "ticket_type", "group_id", "responder_id",
     "priority", "product_id", "description_html", "tags"]
 
+  DB_INDEXED_QUERY_COLUMNS = ["requester_id", "responder_id", "group_id", "created_at", "status"]
+
   def self.translate_priority_name(priority)
     I18n.t(PRIORITY_NAMES_BY_KEY[priority])
   end
