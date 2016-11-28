@@ -104,7 +104,6 @@ module Helpkit
 
     # Please check api_initializer.rb, for compatibility with the version 2 APIs, if any middleware related changes are being done.
     config.middleware.insert_before 0, "Middleware::CorsEnabler"
-    config.middleware.insert_before "ActionDispatch::Session::CookieStore","Rack::SSL"
     config.middleware.use "Middleware::GlobalRestriction"
     config.middleware.use "Middleware::ApiThrottler", :max =>  1000
     config.middleware.use "Middleware::TrustedIp"
@@ -219,7 +218,7 @@ module Helpkit
     # and looking at database.yml when running rake assets:precompile
     config.assets.initialize_on_precompile = false
 
-    config.middleware.insert_before "ActionDispatch::Session::CookieStore","Rack::SSL"
+    config.middleware.insert_before "ActionDispatch::Cookies","Rack::SSL"
     config.middleware.insert_before "Auth::Builder","Middleware::Pod"
 
     config.assets.handle_expiration = true
