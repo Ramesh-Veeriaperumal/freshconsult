@@ -4773,7 +4773,7 @@ $.fn.insertExternal = function(html)
 
 	RemoveCursorImage.prototype = {
 		init: function(){
-			if(Helpdesk.can_bind_first) {
+			if(typeof(Helpdesk) != "undefined" && Helpdesk.can_bind_first) {
 				jQuery(this.$form).bindFirst("submit", $.proxy(this.remove, this));
 			} else {
 				jQuery(this.$form).on("submit", $.proxy(this.remove, this));
