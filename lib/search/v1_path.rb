@@ -14,7 +14,6 @@ module Search
       def matches?(request)
         # Web paths
         if ((V1_WEB_PATHS.find { |path| request.path.starts_with?(path) }.present?))
-            byebug
             if PodConfig['CURRENT_POD'].eql?('podeuwest1')
               return false
             else
