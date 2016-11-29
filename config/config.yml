@@ -14,6 +14,30 @@ feedback_account:
     staging: https://support.freshdesk.com
     production: https://support.freshdesk.com
 
+attachment:
+    attachment_common: &attachment_common 
+        protocol: http
+        port: 
+    development: 
+        <<: *attachment_common
+        domain: 
+            poduseast: localhost.freshdesk-dev.com
+            podeuwest: localhost.freshdesk-dev.com
+            podeucentral: localhost.freshdesk-dev.com
+        port: ':3000'
+    staging:
+        <<: *attachment_common
+        domain: 
+            poduseast: attachment.freshpo.com
+            podeuwest: euattachment.freshpo.com
+            podeucentral: eucattachment.freshpo.com
+    production:
+        <<: *attachment_common
+        domain: 
+            poduseast: attachment.freshdesk.com
+            podeuwest: euattachment.freshdesk.com
+            podeucentral: eucattachment.freshdesk.com
+        protocol: https
 
 # Used in account creation (account.rb)
 base_domain: 

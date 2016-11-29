@@ -18,7 +18,6 @@ class Account < ActiveRecord::Base
   has_many_attachments
   
   serialize :sso_options, Hash
-  delegate :secret_keys, to: :account_additional_settings
 
   pod_filter "id"
   
@@ -220,6 +219,10 @@ class Account < ActiveRecord::Base
 
   def public_ticket_token
     self.secret_keys[:public_ticket_token]
+  end
+
+  def attachment_secret
+    self.secret_keys[:attachment_secret]
   end
 
   #Temporary feature check methods - using redis keys - ends here

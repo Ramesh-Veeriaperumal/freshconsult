@@ -63,11 +63,11 @@ module SubscriptionSystem
 
   private
     def retrieve_current_account
-      @current_portal = Portal.fetch_by_url request.host 
+      @current_portal = Portal.fetch_by_url request_host 
       @current_portal.make_current if @current_portal
       return @current_portal.account if @current_portal
       
-      account = Account.fetch_by_full_domain(request.host) || 
+      account = Account.fetch_by_full_domain(request_host) || 
                   (Rails.env.development? ? Account.first : nil)
       (raise ActiveRecord::RecordNotFound and return) unless account
       

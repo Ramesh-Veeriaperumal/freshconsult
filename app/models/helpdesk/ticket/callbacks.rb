@@ -677,7 +677,7 @@ private
     description_updated = false
     inline_attachments.each_with_index do |attach, index|
       content_id = header[:content_ids][attach.content_file_name+"#{index}"]
-      self.ticket_body.description_html = self.ticket_body.description_html.sub("cid:#{content_id}", attach.content.url) if content_id
+      self.ticket_body.description_html = self.ticket_body.description_html.sub("cid:#{content_id}", attach.inline_url) if content_id
     end
     # For rails 2.3.8 this was the only i found with which we can update an attribute without triggering any after or before callbacks
     #Helpdesk::Ticket.update_all("description_html= #{ActiveRecord::Base.connection.quote(description_html)}", ["id=? and account_id=?", id, account_id]) \

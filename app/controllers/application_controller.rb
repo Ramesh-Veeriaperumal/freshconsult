@@ -217,6 +217,10 @@ class ApplicationController < ActionController::Base
       response.headers["Expires"] = "Fri, 01 Jan 1990 00:00:00 GMT"
   end
 
+  def check_anonymous_user
+    access_denied unless logged_in?
+  end
+
   protected
     # Possible dead code
     def silence_logging
@@ -289,6 +293,10 @@ class ApplicationController < ActionController::Base
 
     def set_last_active_time
       current_user.agent.update_last_active if Account.current && current_user && current_user.agent? && !current_user.agent.nil?
+    end
+
+    def request_host
+      @request_host ||= request.host
     end
 
     def print_logs

@@ -228,6 +228,7 @@ Helpkit::Application.routes.draw do
 
   match '/visitor/load/:id.:format' => 'chats#load', :via => :get
   match '/images/helpdesk/attachments/:id(/:style(.:format))' => 'helpdesk/attachments#show', :via => :get
+  match '/inline/attachment' => 'helpdesk/inline_attachments#one_hop_url', :via => :get
   match '/javascripts/:action.:format' => 'javascripts#index'
   match '/packages/:package.:extension' => 'jammit#package', :as => :jammit, :constraints => { :extension => /.+/ }
   resources :authorizations

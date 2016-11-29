@@ -3919,10 +3919,7 @@ Redactor.prototype = {
 				if(json.isJSON())
 					data = $.parseJSON(json);
 				if(data.filelink != undefined){
-					// spliting file name
-					var temp = data.filelink.split('/');
-					var fileName = temp[temp.length-1].split('?')[0];
-					html = '<p><img src="' + data.filelink + '" class= "inline-image" data-id = "' + data.fileid + '" alt="'+ fileName +'"  title="'+ fileName +'"/></p>';
+					html = '<p><img src="' + data.filelink + '" class= "inline-image" data-id = "' + data.fileid + '" alt="image"  title="image"/></p>';
 					this.$editor.find("#uploading_images_"+data.uniquekey).replaceWith($(html))
 					this.syncCode();
 					if(this.$editor.find("img.image-loader").length == 0){
