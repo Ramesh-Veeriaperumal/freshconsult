@@ -860,7 +860,7 @@ private
   end
 
   def update_assoc_parent_tkt
-    is_inactive = [RESOLVED, CLOSED].include?(@assoc_parent_ticket.status)
+    is_inactive = ![RESOLVED, CLOSED].include?(status) and [RESOLVED, CLOSED].include?(@assoc_parent_ticket.status)
     if @assoc_parent_ticket.assoc_parent_ticket?
       @assoc_parent_ticket.add_associates([self.display_id])
       is_inactive ? @assoc_parent_ticket.update_attributes(:status => OPEN) : true

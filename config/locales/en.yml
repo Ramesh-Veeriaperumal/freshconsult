@@ -3505,8 +3505,8 @@ en:
     parent_child_templates:
       title: "Parent Child Templates"
       helptext:
-        info1: "Templates with one major Parent ticket and one (minimum) or more Child tickets(s) within the parent"
-        info2: "Child ticket(s) are set of sub task(s) for a Parent’s ticket problem to be solved. On closing each of child ticket Parent ticket would be able to get a closure."
+        info1: "The parent child template allows you to set up a pre-defined workflow by establishing a parent and child relationship between tickets. For every parent template, you would be able to associate up to 10 child templates."
+        info2: "For example, one could create the workflow of onboarding a new employee as a parent child template where the child templates are sub tasks of the onboarding process such as Issuing an ID card, Issuing a laptop, etc."
       deleteMessage: "If you proceed with delete, <ul class='delete-msg-ul'><li>The parent template configuration will be lost.</li><li> Any child template which is associated to only this particular parent template will be deleted.</li></ul> Are you sure you want to delete?"
   solution_category:
     all: All Categories
@@ -5492,6 +5492,7 @@ en:
       template_desc: "Select the parent template to apply the associated child templates"
       recently_used: "Recently Used"
       template: "Template"
+      notn_subject: "Error while creating child tickets"
     singular: Ticket
     due_by_time: Due by time
     delete_btn_title: Move this ticket to trash

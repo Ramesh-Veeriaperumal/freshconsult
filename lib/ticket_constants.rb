@@ -83,7 +83,6 @@ module TicketConstants
     [ :child,             'child',          [TICKET_ASSOCIATION_KEYS_BY_TOKEN[:child]]],
     [ :tracker,           'tracker',        [TICKET_ASSOCIATION_KEYS_BY_TOKEN[:tracker]]],
     [ :related,           'related',        [TICKET_ASSOCIATION_KEYS_BY_TOKEN[:related]]],
-    [ :both,              'both',           [TICKET_ASSOCIATION_KEYS_BY_TOKEN[:assoc_parent], TICKET_ASSOCIATION_KEYS_BY_TOKEN[:tracker]]],
     [ :no_association,    'no_association', [-1]]
   ]
 
@@ -365,8 +364,7 @@ module TicketConstants
       list << TICKET_ASSOCIATION_FILTER[3]
       list << TICKET_ASSOCIATION_FILTER[4]
     end
-    list << TICKET_ASSOCIATION_FILTER[5] if assoc_parent_child_feature && link_tickets_feature
-    list << TICKET_ASSOCIATION_FILTER[6]
+    list << TICKET_ASSOCIATION_FILTER[5]
     list
   end
 

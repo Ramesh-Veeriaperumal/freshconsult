@@ -29,6 +29,7 @@ class Ticket::ChildTicketWorker < BaseWorker
         :user         => @current_user,
         :parent_tkt   => @assoc_parent_ticket,
         :error_msg    => @msg_to_notify.uniq,
+        :child_count  => @params[:child_ids].count,
         :failed_items => @failed_items
       }
       Helpdesk::TicketNotifier.send_later(:deliver_notify_bulk_child_creation,

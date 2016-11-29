@@ -579,15 +579,16 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       :from                       => options[:user].account.default_friendly_email,
       :bcc                        => AppConfig['reports_email'],
       :sent_on                    => Time.now,
-      :"Reply-to"                 => "#{options[:user].account.default_friendly_email}", 
-      :"Auto-Submitted"           => "auto-generated", 
+      :"Reply-to"                 => "#{options[:user].account.default_friendly_email}",
+      :"Auto-Submitted"           => "auto-generated",
       :"X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     }
 
-    @user_name     = options[:user].name
-    @assoc_parent  = options[:parent_tkt]
-    @error_msg     = options[:error_msg]
-    @failed_items  = options[:failed_items]
+    @user_name         = options[:user].name
+    @assoc_parent      = options[:parent_tkt]
+    @error_msg         = options[:error_msg]
+    @failed_items      = options[:failed_items]
+    @total_child_count = options[:child_count]
 
     mail(headers) do |part|
       part.text { render "notify_bulk_child_creation.text.plain" }
