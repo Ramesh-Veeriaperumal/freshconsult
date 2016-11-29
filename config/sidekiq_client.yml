@@ -127,6 +127,7 @@ defaults: &defaults
     - [sendgrid_domain_updates]
     - [cti]
     - [sla_on_status_change]
+    - [sandbox_sync]
     - [update_sentiment]
     - [update_notes_sentiment]
     - [update_ticket_filter]
@@ -165,4 +166,3 @@ slave:
 
 test:
   <<: *defaults
-

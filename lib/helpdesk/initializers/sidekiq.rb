@@ -58,6 +58,7 @@ Sidekiq.configure_client do |config|
       "Reports::ScheduledReports",
       "Reports::Export",
       "LivechatWorker",
+      "Admin::ProvisionSandbox",
       "Tickets::LinkTickets",
       "BroadcastMessages::NotifyBroadcastMessages",
       "BroadcastMessages::NotifyAgent"
@@ -121,6 +122,7 @@ Sidekiq.configure_server do |config|
       "Tickets::Export::PremiumTicketsExport",
       "Reports::Export",
       "LivechatWorker",
+      "Admin::ProvisionSandbox",
       "Tickets::LinkTickets",
       "BroadcastMessages::NotifyBroadcastMessages",
       "BroadcastMessages::NotifyAgent"
@@ -175,6 +177,7 @@ Sidekiq.configure_server do |config|
       "Tickets::Export::PremiumTicketsExport",
       "Reports::Export",
       "LivechatWorker",
+      "Admin::ProvisionSandbox",
       "Tickets::LinkTickets",
       "BroadcastMessages::NotifyBroadcastMessages",
       "BroadcastMessages::NotifyAgent"

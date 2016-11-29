@@ -13,4 +13,8 @@ module Cache::Memcache::Helpdesk::TicketTemplate
   def template_key
     key = TKT_TEMPLATES_COUNT % {:account_id => Account.current.id}
   end
+
+  def clear_cache
+    clear_template_count_cache
+  end
 end

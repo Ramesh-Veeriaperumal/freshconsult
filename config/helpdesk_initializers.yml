@@ -88,4 +88,4 @@ helpdesk:
     - sendgrid_webhook_config
     - api_config_internal_tools
     - ehawk_config
-
+    - sandbox

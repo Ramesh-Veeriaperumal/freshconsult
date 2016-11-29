@@ -310,3 +310,5 @@ gem 'i18nema', :git => 'https://github.com/freshdesk/i18nema', :require => false
 
 # For debugging app in staging/production
 gem 'rbtrace', :require => false
+
+gem 'rugged'
