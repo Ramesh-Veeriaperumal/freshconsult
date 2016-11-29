@@ -75,13 +75,13 @@ class Helpdesk::Note < ActiveRecord::Base
   def update_sentiment 
     if Account.current.customer_sentiment_enabled?
       if User.current.nil? || User.current.language.nil? || User.current.language = "en"
-        is_agent_performed = notable.agent_performed?(User.current)
-        if !is_agent_performed && !self.private
+        is_agent_performed = notable.agent_performed?(self.user)
+        if !is_agent_performed && ![SOURCE_KEYS_BY_TOKEN["meta"]].include?(self.source)
           if [SOURCE_KEYS_BY_TOKEN["phone"]].include?(self.source)
             schema_less_note.sentiment = 0
             schema_less_note.save
           else
-            Notes::UpdateNotesSentimentWorker.perform_async({ :note_id => id, :ticket_id => notable.id})
+            ::Notes::UpdateNotesSentimentWorker.perform_async({ :note_id => id, :ticket_id => notable.id})
           end
         end
      end

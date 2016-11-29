@@ -157,7 +157,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
          schema_less_ticket.sentiment = 0
          schema_less_ticket.save
        else
-          Tickets::UpdateSentimentWorker.perform_async( { :id => id } )
+          ::Tickets::UpdateSentimentWorker.perform_async( { :id => id } )
        end
      end
     end

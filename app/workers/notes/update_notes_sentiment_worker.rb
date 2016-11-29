@@ -45,7 +45,7 @@ module Notes
 
                   :account_id =>@account.id.to_s,
                   :ticket_id => @ticket.id.to_s,
-                  :note_id => @note_id,
+                  :note_id => @note.id,
                   :text => @note.body,
                   :source => @ticket.source.to_s
                 }

@@ -188,6 +188,36 @@ class Helpdesk::TicketsController < ApplicationController
     end
   end
 
+  def populate_sentiment
+    if Account.current.customer_sentiment_ui_enabled?
+      survey_association = Account.current.new_survey_enabled? ? "custom_survey_results" : "survey_results"
+      sentiment_value = {}
+
+      ticket_ids =  @items.map(&:id)
+
+      sentiment_sql_array = ["select notable_id,int_nc04 from helpdesk_notes n inner join helpdesk_schema_less_notes sn
+                    on n.id=sn.note_id where n.account_id = %s and n.notable_id in (%s) 
+                    and sn.int_nc04 is not null 
+                    order by n.created_at;",
+                    Account.current.id, ticket_ids.join(',')]
+      
+      sentiment_sql = ActiveRecord::Base.send(:sanitize_sql_array, sentiment_sql_array)
+
+      note_senti = ActiveRecord::Base.connection.execute(sentiment_sql).collect{|i| i}.to_h
+
+      @items.each do |ticket|
+        if ticket.send(survey_association).nil? || ticket.send(survey_association).last.nil?
+          if note_senti[ticket.id].present?
+            sentiment_value[ticket.id] = note_senti[ticket.id]
+          else
+            sentiment_value[ticket.id] = ticket.sentiment
+          end
+        end
+      end
+      sentiment_value
+    end
+  end
+
   def index
     #For removing the cookie that maintains the latest custom_search response to be shown while hitting back button
     params[:html_format] = request.format.html?
@@ -213,25 +243,9 @@ class Helpdesk::TicketsController < ApplicationController
         @is_default_filter = (!is_num?(view_context.current_filter))
         
         #Changes for customer sentiment - Beta feature
-
         #@sentiments = {:ticket_id => sentiment_value}
-        if Account.current.customer_sentiment_ui_enabled?
-          survey_association = Account.current.new_survey_enabled? ? "custom_survey_results" : "survey_results"
-          @sentiments = {}
-          #Collect all ticket ids by looping @items
-          ticket_ids =  @items.map(&:id)
-          #note_senti = ActiveRecord::Base.connection.execute("select id,int_nc04 from helpdesk_schema_less_notes where account_id = #{Account.current.id} and id in (#{ticket_ids.join(',')}) ").collect{|i| i}.to_h
-          note_senti = ActiveRecord::Base.connection.execute("select notable_id,int_nc04 from helpdesk_notes inner join helpdesk_schema_less_notes ON helpdesk_notes.id=helpdesk_schema_less_notes.note_id where helpdesk_notes.account_id = #{Account.current.id} and helpdesk_notes.notable_id in (#{ticket_ids.join(',')}) and helpdesk_schema_less_notes.int_nc04 IS not null order by helpdesk_notes.created_at;").collect{|i| i}.to_h
-          @items.each do |ticket|
-            #While colling check for customer survey
-            if ticket.send(survey_association).nil? || ticket.send(survey_association).last.nil?
-              if note_senti[ticket.id].present?
-                @sentiments[ticket.id] = note_senti[ticket.id]
-              else
-                @sentiments[ticket.id] = ticket.sentiment
-              end
-            end
-          end
+        if Account.current.customer_sentiment_ui_enabled? && @items.size > 0
+          @sentiments = populate_sentiment
         end
         #End of changes for customer sentiment - Beta feature
 
@@ -407,25 +421,8 @@ class Helpdesk::TicketsController < ApplicationController
     @items = fetch_tickets
 
     #Changes for customer sentiment - Beta feature
-        
-    #@sentiments = {:ticket_id => sentiment_value}
-    if Account.current.customer_sentiment_ui_enabled?
-      survey_association = Account.current.new_survey_enabled? ? "custom_survey_results" : "survey_results"
-      @sentiments = {}
-      #Collect all ticket ids by looping @items
-      ticket_ids =  @items.map(&:id)
-      #note_senti = ActiveRecord::Base.connection.execute("select id,int_nc04 from helpdesk_schema_less_notes where account_id = #{Account.current.id} and id in (#{ticket_ids.join(',')}) ").collect{|i| i}.to_h
-      note_senti = ActiveRecord::Base.connection.execute("select notable_id,int_nc04 from helpdesk_notes inner join helpdesk_schema_less_notes ON helpdesk_notes.id=helpdesk_schema_less_notes.note_id where helpdesk_notes.account_id = #{Account.current.id} and helpdesk_notes.notable_id in (#{ticket_ids.join(',')}) and helpdesk_schema_less_notes.int_nc04 IS not null order by helpdesk_notes.created_at;").collect{|i| i}.to_h
-      @items.each do |ticket|
-        #While colling check for customer survey
-        if ticket.send(survey_association).nil? || ticket.send(survey_association).last.nil?
-          if note_senti[ticket.id].present?
-            @sentiments[ticket.id] = note_senti[ticket.id]
-          else
-            @sentiments[ticket.id] = ticket.sentiment
-          end
-        end
-      end
+    if Account.current.customer_sentiment_ui_enabled? && @items.size > 0
+      @sentiments = populate_sentiment
     end
     #End of changes for customer sentiment - Beta feature
 
