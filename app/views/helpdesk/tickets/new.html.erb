@@ -97,11 +97,17 @@ attachment_dom = ""
       temp.removeChild(temp.firstChild);
       return result;
   }
-  <% if @all_attachments.present? or @cloud_files.present? %>
+  <% if !current_account.launched?(:multifile_attachments)%> 
+    <% if @all_attachments.present? or @cloud_files.present? %>
 
-  var x = '<%= escape_javascript(attachment_dom) %>';
-  jQuery('#ticket-attachments').html(unescapeHtml(x));
-  jQuery("#prev-attachments").html("");
+      var x = '<%= escape_javascript(attachment_dom) %>';
+      jQuery('#ticket-attachments').html(unescapeHtml(x));
+      jQuery("#prev-attachments").html("");
 
+    <% end %>
+  <% else%>
+    <% if is_child_form %>
+      Helpdesk.MultipleFileUpload.renderExistingFiles(<%= @all_attachments.to_json.html_safe%>,<%=@cloud_files.to_json.html_safe %>,jQuery('.attachment-icon:visible').data('iconCount'));
+    <% end %>
   <% end %>
 <% end %>
