@@ -1,7 +1,7 @@
 type: object
 properties:
   id:
-    type: id
+    type: number
   created_at:
     type: string
     format: date-time

@@ -3,7 +3,7 @@ post:
   summary: Add watcher
   parameters:
     - name: id
-      type: id
+      type: number
       description: Display ID of ticket
       in: path
       required: true

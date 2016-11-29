@@ -5,7 +5,7 @@ properties:
   succeeded:
     type: array
     items:
-      type: id
+      type: number
   failed:
     type: array
     items:

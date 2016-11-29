@@ -33,6 +33,8 @@
     $ref: ./request/conversations/forward.yaml
   facebook_reply_input:
     $ref: ./request/conversations/facebook_reply.yaml
+  twitter_reply_input:
+    $ref: ./request/conversations/twitter_reply.yaml
   ticket_input:
     $ref: ./request/tickets/ticket.yaml
   ticket_bulk_update_input:
@@ -74,6 +76,8 @@
     $ref: ./resource/canned_response_folder.yaml
   fb_post:
     $ref: ./resource/fb_post.yaml
+  tweet_post:
+    $ref: ./resource/tweet_post.yaml
   extension_generic:
     $ref: ./resource/extension/generic.yaml
   extended_contact:
@@ -156,3 +160,5 @@
     $ref: './response/conversations/latest_note.yaml'
   contact_activity:
     $ref: './response/contacts/activity.yaml'
+  twitter_handle:
+    $ref: './resource/twitter_handle.yaml'

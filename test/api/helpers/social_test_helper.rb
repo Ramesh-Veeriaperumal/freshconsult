@@ -147,4 +147,14 @@ module SocialTestHelper
   def get_social_id
     (Time.now.utc.to_f*1000000).to_i
   end
+  
+
+  def tweet_pattern(expected_output = {}, tweet)
+    {
+      tweet_id: Fixnum,
+      tweet_type: expected_output[:tweet_type] || tweet.tweet_type,
+      twitter_handle_id: expected_output[:twitter_handle_id] || tweet.twitter_handle_id
+    }
+  end
+  
 end

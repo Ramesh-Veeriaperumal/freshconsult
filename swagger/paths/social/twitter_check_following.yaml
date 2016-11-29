@@ -1,0 +1,30 @@
+get:
+  tags: [social]
+  description: Check Following for an User
+  parameters:
+    - name: screen_name
+      in: path
+      required: true
+      example: "@potus"
+      type: number
+      description: Twitter ID of the user for whom following check is done
+  responses:
+    200:
+      description: Success
+      schema:
+        type: object
+        properties:
+          data:
+            type: object
+            properties:
+              following:
+                type: boolean
+    404:
+      description: Twitter Handle Not Found
+    424:
+      description: Unable to connect to Twitter
+      schema:
+        type: object
+        properties:
+          message:
+            type: string

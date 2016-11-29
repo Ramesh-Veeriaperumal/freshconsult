@@ -12,10 +12,11 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/conversation", only: [:create, :ticket_conversations]
     resource :"ember/subscription"
     resource :"ember/ticket_field", only: [:index]
+    resource :"ember/twitter_handles", only: [:index, :check_following]
   end
 
   reply_ticket do
-    resource :"ember/conversation", only: [:reply, :facebook_reply]
+    resource :"ember/conversation", only: [:reply, :facebook_reply, :tweet]
     resource :"ember/tickets/draft", only: [:save_draft, :show_draft, :clear_draft]
   end
 

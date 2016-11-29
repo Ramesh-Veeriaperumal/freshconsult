@@ -1,0 +1,1 @@
+JSON.generate(@items.map {|item| item.attributes.slice('id', 'twitter_user_id', 'screen_name', 'capture_dm_as_ticket', 'capture_mention_as_ticket', 'product_id')})

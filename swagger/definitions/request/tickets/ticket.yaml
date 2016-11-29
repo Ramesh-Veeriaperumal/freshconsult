@@ -15,7 +15,7 @@ allOf:
       attachment_ids:
         type: array
         items:
-          type: id
+          type: number
       cc_emails:
         type: array
         items:

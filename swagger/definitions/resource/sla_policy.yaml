@@ -12,15 +12,15 @@ properties:
       product_ids:
         type: array
         items:
-          type: id
+          type: number
       company_ids:
         type: array
         items:
-          type: id
+          type: number
       group_ids:
         type: array
         items:
-          type: id
+          type: number
       sources:
         type: array
         items:

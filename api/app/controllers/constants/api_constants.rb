@@ -64,4 +64,7 @@ module ApiConstants
                         ContactConstants::BULK_ACTION_METHODS +
                         SubscriptionConstants::BULK_ACTION_METHODS
   BULK_ACTION_ASYNC_METHODS = ApiTicketConstants::BULK_ACTION_ASYNC_METHODS
+  
+  TWITTER_REPLY_TYPES = %w(mention dm).freeze
+  TWEET_MAX_LENGTH = 140
 end.freeze

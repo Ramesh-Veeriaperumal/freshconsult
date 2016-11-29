@@ -1,32 +1,3 @@
-/contacts:
-  $ref: ./contacts/crud.yaml
-/contacts/{id}:
-  $ref: ./contacts/delete.yaml
-/contacts/{id}/restore:
-  $ref: ./contacts/restore.yaml
-/contacts/{id}/send_invite:
-  $ref: ./contacts/send_invite.yaml
-/contacts/{id}/update_password:
-  $ref: ./contacts/update_password.yaml
-/contacts/{id}/make_agent:
-  $ref: ./contacts/make_agent.yaml
-/contacts/{id}/whitelist:
-  $ref: ./contacts/whitelist.yaml
-/contacts/{id}/activities:
-  $ref: ./contacts/activities.yaml
-/contacts/bulk_delete:
-  $ref: ./contacts/bulk_delete.yaml
-/contacts/bulk_restore:
-  $ref: ./contacts/bulk_restore.yaml
-/contacts/bulk_send_invite:
-  $ref: ./contacts/bulk_send_invite.yaml
-/contacts/bulk_whitelist:
-  $ref: ./contacts/bulk_whitelist.yaml
-/contacts/merge:
-  $ref: ./contacts/merge.yaml
-
-/companies:
-  $ref: ./companies/crud.yaml
 
 /tickets:
   $ref: ./tickets/list_and_create.yaml
@@ -84,9 +55,42 @@
   $ref: ./conversations/forward.yaml
 /tickets/{id}/facebook_reply:
   $ref: ./conversations/facebook_reply.yaml
-
+/tickets/{id}/tweet:
+  $ref: ./conversations/twitter_reply.yaml
+  
 /attachments:
   $ref: ./attachments/crud.yaml
+
+
+/contacts:
+  $ref: ./contacts/crud.yaml
+/contacts/{id}:
+  $ref: ./contacts/delete.yaml
+/contacts/{id}/restore:
+  $ref: ./contacts/restore.yaml
+/contacts/{id}/send_invite:
+  $ref: ./contacts/send_invite.yaml
+/contacts/{id}/update_password:
+  $ref: ./contacts/update_password.yaml
+/contacts/{id}/make_agent:
+  $ref: ./contacts/make_agent.yaml
+/contacts/{id}/whitelist:
+  $ref: ./contacts/whitelist.yaml
+/contacts/{id}/activities:
+  $ref: ./contacts/activities.yaml
+/contacts/bulk_delete:
+  $ref: ./contacts/bulk_delete.yaml
+/contacts/bulk_restore:
+  $ref: ./contacts/bulk_restore.yaml
+/contacts/bulk_send_invite:
+  $ref: ./contacts/bulk_send_invite.yaml
+/contacts/bulk_whitelist:
+  $ref: ./contacts/bulk_whitelist.yaml
+/contacts/merge:
+  $ref: ./contacts/merge.yaml
+
+/companies:
+  $ref: ./companies/crud.yaml
 
 #Subscriptions
 /tickets/{id}/watch:
@@ -107,3 +111,10 @@
   $ref: ./canned_responses/folder_show.yaml
 /canned_responses/{id}:
   $ref: ./canned_responses/show.yaml
+
+
+#Social
+/twitter_handles:
+  $ref: ./social/twitter_handles.yaml
+/twitter_handles/{id}/check_following:
+  $ref: ./social/twitter_check_following.yaml

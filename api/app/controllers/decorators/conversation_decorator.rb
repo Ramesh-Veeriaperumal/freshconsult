@@ -31,24 +31,34 @@ class ConversationDecorator < ApiDecorator
       bcc_emails: bcc_emails,
       created_at: created_at.try(:utc),
       updated_at: updated_at.try(:utc),
-      attachments: attachments_hash,
-      fb_post: fb_post.present? ? FacebookPostDecorator.new(fb_post).to_hash : nil
+      attachments: attachments_hash
     }
   end
 
   def to_hash
-    response_hash = construct_json
-    response_hash[:freshfone_call] = freshfone_call if freshfone_call.present?
-    response_hash
+    [construct_json, freshfone_call, tweet_hash, facebook_hash].inject(&:merge)
+  end
+  
+  def facebook_hash
+    return {} unless fb_post.present? 
+    { fb_post: FacebookPostDecorator.new(fb_post).to_hash }
   end
 
   def freshfone_call
     call = record.freshfone_call
-    return unless call.present? && call.recording_url.present? && call.recording_audio
+    return {} unless call.present? && call.recording_url.present? && call.recording_audio
     {
       id: call.id,
       duration: call.call_duration,
       recording: AttachmentDecorator.new(call.recording_audio).to_hash
     }
   end
+
+  def tweet_hash
+    return {} unless record.tweet? && record.tweet
+    {
+      tweet: record.tweet.attributes.slice('tweet_id', 'tweet_type', 'twitter_handle_id')
+    }
+  end
+    
 end

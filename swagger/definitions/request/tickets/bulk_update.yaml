@@ -3,7 +3,7 @@ properties:
   ids:
     type: array
     items:
-      type: id
+      type: number
   properties:
     $ref: '#/definitions/ticket_update_input'
   reply:

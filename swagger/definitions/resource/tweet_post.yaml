@@ -1,0 +1,11 @@
+type: object
+properties:
+  tweet_id:
+    type: number
+  tweet_type:
+    type: string
+    enum:
+      - dm
+      - mention
+  twitter_handle_id:
+    type: number

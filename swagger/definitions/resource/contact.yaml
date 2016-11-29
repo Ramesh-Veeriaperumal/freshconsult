@@ -4,7 +4,7 @@ properties:
   address:
     type: string
   company_id:
-    type: id
+    type: number
   description:
     type: string
   email:

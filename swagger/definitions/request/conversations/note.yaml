@@ -3,7 +3,7 @@ allOf:
   - $ref: '#/definitions/note'
   - properties:
       user_id:
-        type: id
+        type: number
       attachments:
         type: array
         items:
@@ -12,7 +12,7 @@ allOf:
       attachment_ids:
         type: array
         items:
-          type: id
+          type: number
       incoming:
         type: boolean
       notify_emails:

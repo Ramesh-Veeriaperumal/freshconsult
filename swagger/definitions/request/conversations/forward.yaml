@@ -7,7 +7,7 @@ allOf:
       include_original_attachments:
         type: boolean
       agent_id:
-        type: id
+        type: number
       attachments:
         type: array
         items:
@@ -16,11 +16,11 @@ allOf:
       attachment_ids:
         type: array
         items:
-          type: id
+          type: number
       cloud_file_ids:
         type: array
         items:
-          type: id
+          type: number
       from_email:
         type: string
       to_emails:

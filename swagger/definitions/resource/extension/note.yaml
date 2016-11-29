@@ -5,9 +5,9 @@ allOf:
       body_text:
         type: string
       ticket_id:
-        type: id
+        type: number
       user_id:
-        type: id
+        type: number
       incoming:
         type: boolean
       private:
@@ -36,3 +36,5 @@ allOf:
           $ref: '#/definitions/attachment'
       fb_post:
         $ref: '#/definitions/fb_post'
+      tweet:
+        $ref: '#/definitions/tweet_post'

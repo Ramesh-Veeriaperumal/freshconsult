@@ -3,12 +3,16 @@ module Ember
     include Concerns::ApplicationViewConcern
     include Concerns::TicketsViewConcern
     include Facebook::TicketActions::Util
+    include Conversations::Twitter
     include HelperConcern
-    decorate_views(decorate_objects: [:ticket_conversations], decorate_object: [:create, :update, :reply, :forward, :facebook_reply])
+    decorate_views(
+      decorate_objects: [:ticket_conversations], 
+      decorate_object: [:create, :update, :reply, :forward, :facebook_reply, :tweet]
+    )
 
-    before_filter :can_send_user?, only: [:forward, :facebook_reply]
+    before_filter :can_send_user?, only: [:forward, :facebook_reply, :tweet]
     before_filter :set_defaults, only: [:forward]
-    SINGULAR_RESPONSE_FOR = %w(reply forward).freeze
+    SINGULAR_RESPONSE_FOR = %w(reply forward create tweet facebook).freeze
 
     def ticket_conversations
       return if validate_filter_params(%w(order_type))
@@ -17,7 +21,6 @@ module Ember
       ticket_conversations = @ticket.notes.visible.exclude_source('meta')
                                     .preload(:schema_less_note, :note_old_body, :attachments)
                                     .order(order_conditions)
-
       # @items = paginate_items(ticket_conversations)
       load_objects(ticket_conversations)
       response.api_meta = { count: @items_count }
@@ -88,6 +91,24 @@ module Ember
       render_response(is_success)
     end
 
+    def tweet
+      @validation_klass = 'TwitterReplyValidation'
+      return unless validate_body_params(@ticket)
+
+      sanitize_params
+      build_object
+      assign_note_attributes
+
+      @delegator_klass = 'TwitterReplyDelegator'
+      return unless validate_delegator(@item, twitter_handle_id: @twitter_handle_id)
+      
+      if @item.save_note
+        tweet_and_render
+      else
+        render_response(false)
+      end
+    end
+
     private
 
       def reply_to_fb_ticket(note)
@@ -99,6 +120,10 @@ module Ember
         else
           send_reply(fb_page, parent_post, @item, POST_TYPE[:comment])
         end
+      end
+
+      def constants_class
+        :ConversationConstants.to_s.freeze
       end
 
       def assign_note_attributes
@@ -118,7 +143,8 @@ module Ember
       def sanitize_params
         super
         # following fields must be handled separately, should not be passed to build_object method
-        assign_and_remove_params([:note_id, :attachment_ids, :cloud_file_ids, :include_quoted_text, :include_original_attachments])
+        assign_and_remove_params([:note_id, :attachment_ids, :cloud_file_ids, :include_quoted_text, :include_original_attachments, :tweet_type, :twitter_handle_id])
+
         @attachment_ids = @attachment_ids.map(&:to_i) if @attachment_ids
         @cloud_file_ids = @cloud_file_ids.map(&:to_i) if @cloud_file_ids
         @note_id        = @note_id.to_i if @note_id # TODO-EMBER: To be added to constants during conflict resolution after committing conv_file_support
@@ -216,6 +242,16 @@ module Ember
       def render_201_with_location(template_name: "conversations/#{action_name}", location_url: 'conversation_url', item_id: @item.id)
         return super(location_url: location_url) if ember_redirect?
         render template_name, location: send(location_url, item_id), status: 201
+      end
+
+      def tweet_and_render
+        error_msg, tweet = send("send_tweet_as_mention", @ticket, @item, @item.body)
+        if (error_msg)
+          @item.errors[:body] << :unable_to_connect_twitter
+          render_response(false)
+        else
+          render_201_with_location(template_name: 'ember/conversations/tweet')
+        end
       end
 
       wrap_parameters(*wrap_params)

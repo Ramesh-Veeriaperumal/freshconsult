@@ -176,6 +176,7 @@ Helpkit::Application.routes.draw do
         post :notes, to: 'ember/conversations#create'
         post :reply, to: 'ember/conversations#reply'
         post :forward, to: 'ember/conversations#forward'
+        post :tweet, to: 'ember/conversations#tweet'
         get :latest_note
         get :conversations, to: 'ember/conversations#ticket_conversations'
         get :time_entries, to: 'ember/time_entries#ticket_time_entries'
@@ -233,6 +234,12 @@ Helpkit::Application.routes.draw do
     resources :scenario_automations, controller: 'ember/scenario_automations', only: :index
     resources :attachments, controller: 'ember/attachments', only: [:create, :destroy]
     resources :canned_response_folders, controller: 'ember/canned_response_folders', only: [:index, :show]
+    
+    resources :twitter_handles, controller: 'ember/twitter_handles', only: [:index] do
+      member do
+        get :check_following
+      end
+    end    
   end
 
   match '/api/v2/_search/tickets' => 'tickets#search', :defaults => { format: 'json' }, :as => :tickets_search, via: :get

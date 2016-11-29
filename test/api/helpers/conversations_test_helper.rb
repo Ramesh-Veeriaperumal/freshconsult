@@ -28,6 +28,10 @@ module ConversationsTestHelper
       fb_pattern = note.fb_post.post? ? fb_post_pattern({}, note.fb_post) : fb_dm_pattern({}, note.fb_post)
       response_pattern.merge!(fb_post: fb_pattern)
     end
+    
+    if note.tweet? && note.tweet
+      response_pattern.merge!({tweet: tweet_pattern({}, note.tweet)})
+    end
     response_pattern
   end
 

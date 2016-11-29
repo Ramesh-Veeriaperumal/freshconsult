@@ -1,10 +1,16 @@
 require_relative '../../test_helper'
+require "#{Rails.root}/spec/support/social_tickets_creation_helper.rb"
+require "#{Rails.root}/spec/support/twitter_helper.rb"
+require "#{Rails.root}/spec/support/dynamo_helper.rb"
 module Ember
   class ConversationsControllerTest < ActionController::TestCase
     include ConversationsTestHelper
     include AttachmentsTestHelper
     include TicketsTestHelper
     include SocialTestHelper
+    include SocialTicketsCreationHelper
+    include TwitterHelper
+    include DynamoHelper
 
     def wrap_cname(params)
       { conversation: params }
@@ -615,6 +621,54 @@ module Ember
       latest_note = Helpdesk::Note.last
       match_json(note_pattern(params_hash, latest_note))
       match_json(note_pattern({}, latest_note))
+    end
+
+    def test_tweet_reply_without_params
+      ticket = create_twitter_ticket
+      post :tweet, construct_params({version: 'private', id: ticket.display_id}, {})
+      assert_response 400
+      match_json([
+        bad_request_error_pattern('body', :datatype_mismatch, code: :missing_field, expected_data_type: String),
+        bad_request_error_pattern('tweet_type', :datatype_mismatch, code: :missing_field, expected_data_type: String),
+        bad_request_error_pattern('twitter_handle_id', :datatype_mismatch, code: :missing_field, expected_data_type: 'Positive Integer')
+      ])
+    end
+
+    def test_tweet_reply_with_invalid_ticket
+      ticket = create_ticket
+      post :tweet, construct_params({version: 'private', id: ticket.display_id}, { 
+        body: Faker::Lorem.sentence[0..130], 
+        tweet_type: 'dm', 
+        twitter_handle_id: get_twitter_handle.id 
+      })
+      assert_response 400
+      match_json([bad_request_error_pattern('ticket_id', :not_a_twitter_ticket)])
+    end
+
+    def test_twitter_reply_to_tweet_ticket
+      ticket = create_twitter_ticket
+      twitter_object = sample_twitter_object
+      twitter_handle = get_twitter_handle
+
+      @account = Account.current
+      @default_stream = twitter_handle.default_stream
+      Twitter::REST::Client.any_instance.stubs(:update).returns(twitter_object)
+      unless GNIP_ENABLED
+        Social::DynamoHelper.stubs(:update).returns(dynamo_update_attributes(twitter_object[:id]))
+        Social::DynamoHelper.stubs(:get_item).returns(sample_dynamo_get_item_params)
+      end
+      
+      params_hash = {
+        body: Faker::Lorem.sentence[0..130],
+        tweet_type: 'mention',
+        twitter_handle_id: twitter_handle.id
+      }
+      post :tweet, construct_params({version: 'private', id: ticket.display_id}, params_hash)
+      assert_response 201
+      latest_note = Helpdesk::Note.last
+      match_json(note_pattern(params_hash, latest_note))
+      
+      Twitter::REST::Client.any_instance.unstub(:update)
     end
   end
 end

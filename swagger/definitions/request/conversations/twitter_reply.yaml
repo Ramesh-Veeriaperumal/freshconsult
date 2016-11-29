@@ -1,0 +1,17 @@
+type: object
+allOf:
+  - $ref: '#/definitions/note'
+  - properties:
+      tweet_type:
+        type: string
+        required: true
+        enum:
+          - dm
+          - mention
+        description: Whether to send this as Direct Message or as a Mention
+        default: mention
+      twitter_handle_id:
+        required: true
+        type: number
+        description: Twitter Handle ID (To be fetched in a seperate API)
+  

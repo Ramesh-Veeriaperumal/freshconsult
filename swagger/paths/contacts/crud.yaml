@@ -14,7 +14,7 @@ get:
       type: string
     - name: company_id
       in: query
-      type: id
+      type: number
     - name: state
       in: query
       type: string

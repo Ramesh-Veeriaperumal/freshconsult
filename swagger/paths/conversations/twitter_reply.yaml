@@ -1,0 +1,18 @@
+post:
+  tags: [conversation]
+  description: Reply/DM to a Twitter ticket
+  parameters:
+    - name: data
+      in: body
+      required: true
+      schema:
+        $ref: '#/definitions/twitter_reply_input'
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/extended_note'
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'

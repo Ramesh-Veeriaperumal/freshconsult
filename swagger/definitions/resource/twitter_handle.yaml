@@ -1,0 +1,23 @@
+type: object
+properties:
+  id:
+    type: number
+    description: "Twitter Handle's id in the account's context"
+  twitter_user:
+    type: number
+    description: User Id provided by Twitter
+  screen_name:
+    type: string
+    example: freshdesk
+    description: Twitter user handle or the screen name
+  product_id:
+    type: number
+  capture_dm_as_ticket:
+    type: boolean
+  capture_dm_as_ticket:
+    type: boolean
+  capture_mention_as_ticket:
+    type: boolean
+  created_at:
+    type: string
+    format: date-time

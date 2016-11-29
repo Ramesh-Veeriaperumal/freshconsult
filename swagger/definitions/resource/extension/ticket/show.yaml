@@ -13,4 +13,5 @@
         created_by:
           type: integer
         time:
-          type: datetime
+          type: string
+          format: datetime

@@ -1,0 +1,12 @@
+get:
+  tags: [social]
+  description: Twitter Handles
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/twitter_handle'
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
