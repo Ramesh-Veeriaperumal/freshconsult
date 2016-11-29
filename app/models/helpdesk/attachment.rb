@@ -44,7 +44,7 @@ class Helpdesk::Attachment < ActiveRecord::Base
     }
 
 
-    before_create :randomize_filename, :if => :inline_image?
+    before_save :randomize_filename, :if => :randomize?
     before_post_process :image?, :valid_image?
     before_create :set_content_type
     before_save :set_account_id
@@ -246,8 +246,20 @@ class Helpdesk::Attachment < ActiveRecord::Base
     # Inline image will have attachable type as one of these :
     # ArchiveNote::Inline, ArchiveTicket::Inline, Ticket::Inline, Note::Inline
     # Image Upload, Email Notification Image Upload, Forums Image Upload, Templates Image Upload, Tickets Image Upload
-    return false unless self.attachable_type
     self.attachable_type.include?("Inline") || self.attachable_type.include?("Image Upload")
+  end
+
+  def user_avatar?
+    self.attachable_type == "User"
+  end
+
+  def logo_or_favicon?
+    self.attachable_type == "Portal" && ["logo", "fav_icon"].include?(self.description)
+  end
+
+  def randomize?
+    return false unless self.attachable_type
+    inline_image? || user_avatar? || logo_or_favicon?
   end
 
   def randomize_filename
