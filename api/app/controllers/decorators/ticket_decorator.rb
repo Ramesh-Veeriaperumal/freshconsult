@@ -76,8 +76,9 @@ class TicketDecorator < ApiDecorator
   end
 
   def meta
-    meta_info = record.notes.find_by_source(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["meta"]).body
-    meta_info = YAML::load(meta_info)
+    meta_info = record.notes.find_by_source(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["meta"])
+    return {} unless meta_info
+    meta_info = YAML::load(meta_info.body)
     handle_timestamps(meta_info)
   end
   
