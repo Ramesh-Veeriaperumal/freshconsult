@@ -193,4 +193,21 @@ class ApiContactsFlowTest < ActionDispatch::IntegrationTest
       assert_response 400
     end
   end
+
+  def test_contacts_activities
+    skip_bullet do
+      contact = add_new_user(@account, deleted: false, active: true)
+      
+      user_tickets = sample_user_tickets(contact, 5)
+      get "api/_/contacts/#{contact.id}/activities", nil, @write_headers
+      assert_response 200
+      match_json({ data: user_activity_response(user_tickets), meta: { more_tickets: false }})
+
+      # meta info with more_tickets key will be true if more than 10 tickets
+      user_tickets = sample_user_tickets(contact, 11)
+      get "api/_/contacts/#{contact.id}/activities", nil, @write_headers
+      assert_response 200
+      match_json({ data: user_activity_response(user_tickets), meta: { more_tickets: true }})
+    end
+  end
 end

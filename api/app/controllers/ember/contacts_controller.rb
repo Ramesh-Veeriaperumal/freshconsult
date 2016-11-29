@@ -58,13 +58,16 @@ module Ember
     def activities
       @user_activities = case params[:type]
       when 'tickets'
-        ticket_activities
+        ticket_activities.take(10)
       when 'archived_tickets'
         archived_ticket_activities
       when 'forums'
         @item.recent_posts
       else
         combined_activities
+      end
+      if params[:type].blank? || (params[:type] == 'tickets')
+        response.api_meta = { more_tickets: (ticket_activities.count > 10) }
       end
     end
 
@@ -124,22 +127,19 @@ module Ember
       end
 
       def ticket_activities
-        @user_tickets = current_account.tickets.permissible(api_current_user).
-          requester_active(@item).visible.newest(11).find(:all,
-            include: [:ticket_states, :ticket_status, :responder, :requester])
-        @user_tickets.take(10)
+        @user_tickets ||= current_account.tickets.permissible(api_current_user).
+          requester_active(@item).visible.newest(11)
       end
 
       def archived_ticket_activities
         return [] unless current_account.features_included?(:archive_tickets)
-        @user_archived_tickets = current_account.archive_tickets.permissible(api_current_user).
-          requester_active(@item).newest(11).find(:all, include: [:responder, :requester])
-        @user_archived_tickets.take(10)
+        @user_archived_tickets ||= current_account.archive_tickets.permissible(api_current_user).
+          requester_active(@item).newest(10).take(10)
       end
 
       def combined_activities
-        user_activities = ticket_activities + (current_account.features?(:forums) ? @item.recent_posts : [])
-        user_activities.sort_by { |item| - item.created_at.to_i }.take(10)
+        user_activities = ticket_activities.take(10) + (current_account.features?(:forums) ? @item.recent_posts : [])
+        user_activities.sort_by { |item| - item.created_at.to_i }
       end
 
       def whitelist_item(item)

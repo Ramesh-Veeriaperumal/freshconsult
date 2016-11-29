@@ -1,9 +1,12 @@
-['company_helper.rb', 'contact_fields_helper.rb', 'group_helper.rb', 'agent_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
+['company_helper.rb', 'contact_fields_helper.rb', 'group_helper.rb', 'agent_helper.rb', 'forum_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
 module UsersTestHelper
   include CompanyHelper
   include GroupHelper
   include ContactFieldsHelper
   include AgentHelper
+  include ForumHelper
+  include TicketsTestHelper
+
   # Patterns
   def contact_pattern(expected_output = {}, ignore_extra_keys = true, contact)
     expected_custom_field = (expected_output[:custom_fields] && ignore_extra_keys) ? expected_output[:custom_fields].ignore_extra_keys! : expected_output[:custom_fields]
@@ -232,6 +235,75 @@ module UsersTestHelper
     users.first(ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page]).map do |contact|
       contact_pattern(contact)
     end
+  end
+
+  def sample_user_topics(contact, count = 2)
+    forum = create_test_forum(create_test_category)
+    count.times do 
+      create_test_topic(forum, contact)
+    end
+  end
+
+  def sample_user_tickets(contact, count = 2)
+    @account.make_current
+    count.times do
+      create_ticket(requester_id: contact.id)
+    end
+    @user_tickets = @account.tickets.permissible(@agent).requester_active(contact).visible.newest(11)
+    @user_tickets.take(10)
+  end
+
+  def sample_user_archived_tickets(contact, count = 1)
+    unless @account.features.archive_tickets?
+      @account.features.archive_tickets.create
+      @account.reload
+    end
+    count.times do
+      @account.make_current
+      temp_ticket = create_ticket(requester_id: contact.id)
+      Sidekiq::Testing.inline! do
+        Archive::BuildCreateTicket.perform_async({ account_id: @account.id, ticket_id: temp_ticket.id })
+      end
+    end
+    @account.archive_tickets.permissible(@agent).requester_active(contact).newest(10)
+  end
+
+  def user_combined_activities(contact)
+    sample_user_topics(contact, 5)
+    tickets = sample_user_tickets(contact, 5)
+    tickets + contact.recent_posts
+  end
+
+  def user_activity_response(objects, meta = false)
+    response_pattern = objects.map do |item|
+      {
+        type: item.class.name.gsub('Helpdesk::', ''),
+        created_at: item.created_at
+      }.merge(object_activity_pattern(item))
+    end
+    response_pattern
+  end
+
+  def object_activity_pattern(obj)
+    obj.class.name == 'Post' ? forum_activity_pattern(obj) : ticket_activity_pattern(obj)
+  end
+
+  def ticket_activity_pattern(obj)
+    {
+      id: obj.display_id,
+      subject: obj.subject,
+      status: obj.status,
+      agent_id: obj.responder.try(:id)
+    }
+  end
+
+  def forum_activity_pattern(obj)
+    {
+      id: obj.id,
+      topic_id: obj.topic.id,
+      topic_title: obj.topic.title,
+      replied: obj.original_post? ? false : true 
+    }
   end
 
 end

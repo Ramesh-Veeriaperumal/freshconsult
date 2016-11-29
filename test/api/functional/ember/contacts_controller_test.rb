@@ -432,5 +432,52 @@ module Ember
       put :update_password, construct_params({ version: 'private', id: contact.id }, { password: random_password })
       assert_response 204
     end
+
+    # tests for contact activities
+
+    # 1. contact with no activity
+    # 2. contact with forum activity
+    # 3. contact with ticket activity
+    # 4. contact with archived ticket activity
+    # 5. contact with combined activities
+
+    def test_contact_without_activity
+      contact = add_new_user(@account, deleted: false, active: true)
+      get :activities, construct_params({ version: 'private', id: contact.id }, nil)
+      assert_response 200
+      match_json([])
+    end
+
+    def test_contact_with_forum_activity
+      contact = add_new_user(@account, deleted: false, active: true)
+      sample_user_topics(contact)
+      get :activities, construct_params({ version: 'private', id: contact.id, type: 'forums' }, nil)
+      assert_response 200
+      match_json(user_activity_response(contact.recent_posts))
+    end
+
+    def test_contact_with_ticket_activity
+      contact = add_new_user(@account, deleted: false, active: true)
+      user_tickets = sample_user_tickets(contact)
+      get :activities, construct_params({ version: 'private', id: contact.id, type: 'tickets' }, nil)
+      assert_response 200
+      match_json(user_activity_response(user_tickets))
+    end
+
+    def test_contact_with_archived_ticket_activity
+      contact = add_new_user(@account, deleted: false, active: true)
+      user_archived_tickets = sample_user_archived_tickets(contact)
+      get :activities, construct_params({ version: 'private', id: contact.id, type: 'archived_tickets' }, nil)
+      assert_response 200
+      match_json(user_activity_response(user_archived_tickets))
+    end
+
+    def test_contact_with_combined_activity
+      contact = add_new_user(@account, deleted: false, active: true)
+      objects = user_combined_activities(contact)
+      get :activities, construct_params({ version: 'private', id: contact.id }, nil)
+      assert_response 200
+      match_json(user_activity_response(objects))
+    end
   end
 end
