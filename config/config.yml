@@ -31,6 +31,7 @@ attachment:
             poduseast: attachment.freshpo.com
             podeuwest: euattachment.freshpo.com
             podeucentral: eucattachment.freshpo.com
+        protocol: https
     production:
         <<: *attachment_common
         domain: 
