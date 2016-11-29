@@ -1,0 +1,1 @@
+JSON.generate(@item.attributes.slice('id', 'title', 'content', 'content_html', 'folder_id'))

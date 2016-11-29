@@ -1903,7 +1903,7 @@
     },
     "/canned_responses/{id}": {
       "get": {
-        "summary": "Show **",
+        "summary": "Show",
         "description": "Details of a canned response",
         "tags": [
           "canned response"
