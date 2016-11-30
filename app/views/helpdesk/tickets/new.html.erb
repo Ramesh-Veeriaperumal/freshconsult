@@ -74,7 +74,7 @@ attachment_dom = ""
     if @all_attachments.present?
       @all_attachments.each do |att|
         if att.attachable_type != "Account"
-          attachment_dom << send(:description_attachment, {:filename=>"#{escape_javascript(att.content_file_name)}",:value => "#{att.id}", :name => "template_data[attachments][][resource]"})
+          attachment_dom << send(:description_attachment, {:filename=>"#{escape_javascript(att.content_file_name)}",:value => "#{att.id}", :name => "helpdesk_ticket[attachments][][resource]"})
         else
           attachment_dom << send(:description_attachment, {:filename=>"#{escape_javascript(att.content_file_name)}", :value => "#{att.id}", :name => "shared_attachments[]"})
         end
