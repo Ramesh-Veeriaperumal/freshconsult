@@ -42,7 +42,7 @@
       <div class="control-group">
         <%= content_tag(:label, t('admin.products.portal.default_portal_language'), :class => "control-label") %>
         <div class="controls">
-          <% if portal.main_portal? && current_account.multilingual? %>
+          <% if portal.main_portal? && current_account.features_included?(:enable_multilingual) %>
             <div class="mt5">
               <%= current_account.language_object.name %>
             </div>
