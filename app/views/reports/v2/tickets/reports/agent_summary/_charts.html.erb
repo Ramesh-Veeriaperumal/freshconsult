@@ -28,11 +28,13 @@
                                  <%=t( 'helpdesk_reports.agent_summary.ticket_reasigned') %>
                             </span>
                         </th>
-                        <th>
-                            <span data-metric-title="RESPONSE_SLA">
-                                <%=t( 'helpdesk_reports.agent_summary.reports_sla') %>
-                            </span>
-                        </th>
+                        <% if current_account.sla_management_enabled? %>
+                            <th>
+                                <span data-metric-title="RESPONSE_SLA">
+                                    <%=t( 'helpdesk_reports.agent_summary.reports_sla') %>
+                                </span>
+                            </th>
+                        <% end %>
                         <th>
                             <span data-metric-title="RESOLUTION_SLA">
                                 <%=t( 'helpdesk_reports.agent_summary.res_sla') %>

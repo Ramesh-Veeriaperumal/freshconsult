@@ -19,6 +19,16 @@ class SAAS::SubscriptionActions
 
     drop_feature_data(drop_data_features)
     add_feature_data(add_data_features)
+    #for new pricing plan. we ll remove basic social and basic twitter if facebook or twitter feature isnt available after downgrade annd
+    #add back when they upgrade.
+    [:facebook, :twitter].each do |f|
+      feature_name = "basic_#{f}".to_sym
+      if account.features?(f)
+        account.add_feature(feature_name)
+      else
+        account.revoke_feature(feature_name)
+      end
+    end
   end
 
   def drop_feature_data(drop_data_features)

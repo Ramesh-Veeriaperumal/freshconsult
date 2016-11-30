@@ -7,8 +7,8 @@
       :traffic_cop: 2
       :custom_ticket_views: 3
       :supervisor: 4
-      :observer: 5
-      :sla: 6
+      :create_observer: 5
+      :sla_management: 6
       :email_commands: 7
       :assume_identity: 8
       :rebranding: 9

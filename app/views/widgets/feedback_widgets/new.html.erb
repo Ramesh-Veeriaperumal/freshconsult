@@ -13,7 +13,7 @@
 <div class="modal-header feedback-header modal-body-change">
   <div class="modal-header-bg">
     <%= content_tag(:h3, widget_option(:formTitle), :class => "ellipsis lead pull-left form-title", :title => widget_option(:formTitle)) %>
-    <% if widget_option(:searchArea) && feature?(:auto_suggest_solutions) && allowed_in_portal?(:open_solutions) %>
+    <% if widget_option(:searchArea) && feature?(:auto_suggest_solutions) && allowed_in_portal?(:open_solutions) && current_account.allow_auto_suggest_solutions_enabled? %>
     <span class="embedded-search">
     <%= content_tag(:h3, t('ticket.search_text'), :class => "ellipsis lead pull-left search-text active", :title => t('ticket.search_text')) %>
     <div class="embedded-hightlight"></div>
@@ -134,7 +134,7 @@
 <% end %>
 
 
-<% if widget_option(:searchArea) && feature?(:auto_suggest_solutions) && allowed_in_portal?(:open_solutions) %>
+<% if widget_option(:searchArea) && feature?(:auto_suggest_solutions) && allowed_in_portal?(:open_solutions)  && current_account.allow_auto_suggest_solutions_enabled? %>
   <% if(responsive != "no") %>
     <a class="mobile-search-icon" id="mobile-search-icon" href="#">
       <span id="mobile-counter"></span>

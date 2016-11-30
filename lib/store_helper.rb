@@ -13,6 +13,8 @@ module StoreHelper # Datas to be exposed to clientside
       res << {:id => product.id, :name => product.name}
     end
 
-    {:current_user => current_user, :agent => @agents_list, :group => @groups_list, :product => @products_list}.to_json
+    @features_list ||= current_account.features_list
+
+    {:current_user => current_user, :agent => @agents_list, :group => @groups_list, :product => @products_list, :features_list => @features_list}.to_json
   end
 end

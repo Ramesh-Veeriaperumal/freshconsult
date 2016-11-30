@@ -2,6 +2,8 @@ class Admin::CompanyFieldsController < Admin::AdminController
 
   inherits_custom_fields_controller
 
+  before_filter :remove_custom_company_fields, :if => :custom_company_fields_disabled?, :only => [:update]
+
   include Cache::Memcache::CompanyField
   include Cache::Memcache::Account
   include Helpdesk::CustomFields::CustomFieldMethods
@@ -21,6 +23,16 @@ class Admin::CompanyFieldsController < Admin::AdminController
   end
   
   private
+
+    def custom_company_fields_disabled?
+      !current_account.custom_company_fields_enabled?
+    end
+
+    def remove_custom_company_fields
+      @fields = JSON.parse params[:jsonData]
+      @fields.select! { |field| field["field_type"].include? "default" }
+      @params_modified = true
+    end
 
     def scoper_class
       CompanyField

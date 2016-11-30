@@ -14,7 +14,7 @@
       - :traffic_cop
       - :custom_ticket_views
       - :supervisor
-      - :observer
+      - :create_observer
       - :sla_management
       - :email_commands
       - :assume_identity

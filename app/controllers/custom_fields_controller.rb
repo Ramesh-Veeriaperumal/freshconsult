@@ -21,6 +21,7 @@ class CustomFieldsController < Admin::AdminController
     @field_data.each_with_index do |f_d, i|
       f_d.symbolize_keys!
 
+      next if f_d[:action] == "create" && !current_account.custom_ticket_fields_enabled?
       unless (action = f_d.delete(:action)).nil?
         # f_d.delete(:choices) unless("nested_field".eql?(f_d[:field_type]) || 
         #                             "custom_dropdown".eql?(f_d[:field_type]) || 
@@ -55,6 +56,10 @@ class CustomFieldsController < Admin::AdminController
   private
 
     def edit_field(field_details)
+      #Length(current: 4) has to be updated if any default status is added or deleted
+      if field_details[:field_type] == "default_status" && !current_account.custom_ticket_fields_enabled? && field_details[:choices].length > 4
+        field_details[:choices].reject!{ |choice| !choice["status_id"].present? }
+      end
       field_details.delete(:type)
       field_details.delete(:dom_type)
       custom_field = scoper.find(field_details.delete(:id))

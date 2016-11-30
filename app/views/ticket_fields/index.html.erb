@@ -12,6 +12,7 @@
     </div>
 
     <%#= render :partial => "/shared/custom_field_buttons", :locals => { :field_class => ContactField } %>
+    <% if current_account.custom_ticket_fields_enabled? %>
     <div class="field-picker">
       <div class='field-info-wrapper'>
         <%= content_tag(:h3, t("custom_fields.drag_and_drop_field"), :class => "title") %> 
@@ -27,6 +28,7 @@
         </ul> 
       </div>
     </div>
+    <% end %>
   </div>
   <%= form_for @ticket_fields, :url => { :action => "update" }, :html => { :method => :put, :id => "Updateform" } do |f| %>
     <div class="custom_form_outer">
@@ -50,6 +52,7 @@
     customFields = <%= @ticket_field_json.to_json.html_safe %>;
     customSection = <%= @section_data_json.to_json.html_safe %>;
     shared_ownership_enabled = <%= Account.current.features?(:shared_ownership).to_json.html_safe %>;
+    custom_ticket_fields_enabled = <%= current_account.custom_ticket_fields_enabled? %>
     sharedGroups = <%= @groups.to_json.html_safe %>;
 
     tf_lang = {

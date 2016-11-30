@@ -2,7 +2,7 @@
 module EmailCommands 
 
   def process_email_commands(ticket, user, email_config, email_param, note = nil)
-    return if ticket.agent_as_requester?(user.id)
+    return if ticket.agent_as_requester?(user.id) || ticket.account.email_commands_enabled?
 
     content = note.body || Helpdesk::HTMLSanitizer.plain(note.body_html) if note.present?
     content = email_param[:text] || Helpdesk::HTMLSanitizer.plain(email_param[:html]) if content.blank?

@@ -104,6 +104,13 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :check_ml_feature, :only => [:suggest_tickets]
   before_filter :load_parent_template, :only => [:show_children, :bulk_child_tkt_create]
   before_filter :load_associated_tickets, :only => [:associated_tickets]
+  before_filter :check_custom_view_feature, :only => [:custom_view_save]
+
+  def check_custom_view_feature
+    unless current_account.custom_ticket_views_enabled?
+      redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
+    end
+  end
 
   def suggest_tickets
     tickets = []
@@ -438,7 +445,7 @@ class Helpdesk::TicketsController < ApplicationController
 
     @subscription = current_user && @item.subscriptions.find(
       :first,
-      :conditions => {:user_id => current_user.id})
+      :conditions => {:user_id => current_user.id}) if current_account.add_watcher_enabled? 
 
     @page_title = "[##{@ticket.display_id}] #{@ticket.subject}"
 
@@ -1696,6 +1703,7 @@ class Helpdesk::TicketsController < ApplicationController
     def load_ticket_filter
       return if @cached_filter_data
       filter_name = CGI.escapeHTML(view_context.current_filter)
+      filter_name = current_account.sla_management_enabled? ? filter_name : fallback_filter_name(filter_name)
       if !is_num?(filter_name)
         load_default_filter(filter_name)
       else
@@ -1714,6 +1722,10 @@ class Helpdesk::TicketsController < ApplicationController
       @ticket_filter.accessible = current_account.user_accesses.new
       @ticket_filter.accessible.visibility = Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me]
       set_modes(@ticket_filter.query_hash)
+    end
+
+    def fallback_filter_name(filter_name)
+      ["overdue", "due_today"].include?(filter_name.to_s) ? "new_and_my_open" : filter_name
     end
 
     def set_modes(conditions)

@@ -1,5 +1,7 @@
 class Admin::EmailCommandsSettingsController < Admin::AdminController
 
+  before_filter { |c| c.requires_this_feature :email_commands }
+
   def index
     @email_commands_setting = current_account.account_additional_settings
 

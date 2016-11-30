@@ -2,6 +2,9 @@ class Admin::ContactFieldsController < Admin::AdminController
 
   inherits_custom_fields_controller
 
+  before_filter :remove_custom_contact_fields, :if => :custom_contact_fields_disabled?, :only => [:update]
+
+
   include Cache::Memcache::ContactField
   include Cache::Memcache::Account
   include Helpdesk::CustomFields::CustomFieldMethods
@@ -21,6 +24,16 @@ class Admin::ContactFieldsController < Admin::AdminController
   end
   
   private
+
+    def custom_contact_fields_disabled?
+      !current_account.custom_contact_fields_enabled?
+    end
+
+    def remove_custom_contact_fields
+      @fields = JSON.parse params[:jsonData]
+      @fields.select! { |field| field["field_type"].include? "default" }
+      @params_modified = true
+    end
 
     def scoper_class
       ContactField

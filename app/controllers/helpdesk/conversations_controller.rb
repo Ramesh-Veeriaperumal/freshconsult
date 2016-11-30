@@ -32,8 +32,8 @@ class Helpdesk::ConversationsController < ApplicationController
   before_filter :load_item, :only => [:full_text]
   before_filter :verify_permission, :only => [:reply, :forward, :reply_to_forward, :note, :twitter,
    :facebook, :mobihelp, :ecommerce, :traffic_cop, :full_text, :broadcast]
-  before_filter :traffic_cop_warning, :only => [:reply, :twitter, :facebook, :mobihelp, :ecommerce]
-  before_filter :check_for_public_notes, :only => [:note]
+  before_filter :traffic_cop_warning, :if => :traffic_cop_feature_enabled?, :only => [:reply, :twitter, :facebook, :mobihelp, :ecommerce]
+  before_filter :check_for_public_notes, :if => :traffic_cop_feature_enabled?, :only => [:note]
   before_filter :check_trial_customers_limit, :only => [:reply, :forward, :reply_to_forward]
   before_filter :validate_ecommerce_reply, :only => :ecommerce
   around_filter :run_on_slave, :only => [:update_activities, :has_unseen_notes, :traffic_cop_warning]
@@ -259,6 +259,10 @@ class Helpdesk::ConversationsController < ApplicationController
     end
     
     private
+
+      def traffic_cop_feature_enabled?
+        current_account.traffic_cop_enabled?
+      end
 
       def validate_facebook_dm_reply
         create_error(:facebook) if @item.notable.facebook_realtime_message? and @item.body.length > Facebook::Constants::REALTIME_MESSSAGING_CHARACTER_LIMIT

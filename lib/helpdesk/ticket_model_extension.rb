@@ -15,26 +15,31 @@ module Helpdesk::TicketModelExtension
       [ "export_data.fields.agent",                 "responder_name",          false,  :responder       , 13    ], 
       [ "export_data.fields.group",                 "group_name",              false,  :group           , 14    ], 
       [ "export_data.fields.created_time",          "created_at",              false,  nil              , 15    ], 
-      [ "export_data.fields.due_by_time",           "due_by",                  false,  nil              , 16    ], 
       [ "export_data.fields.resolved_time",         "resolved_at",             false,  nil              , 17    ], 
-      [ "export_data.fields.closed_time",           "closed_at",               false,  nil              , 18    ], 
+      [ "export_data.fields.closed_time",           "closed_at",               false,  nil              , 18    ],
       [ "export_data.fields.updated_time",          "updated_at",              false,  nil              , 19    ], 
-      [ "export_data.fields.initial_response_time", "first_response_time",     false,  nil              , 20    ], 
       [ "export_data.fields.time_tracked",          "time_tracked_hours",      false, :time_sheets      , 21    ], 
-      [ "export_data.fields.fr_time",               "first_res_time_bhrs",     false,  nil              , 22    ], 
-      [ "export_data.fields.resolution_time",       "resolution_time_bhrs",    false,  nil              , 23    ], 
       [ "export_data.fields.agent_interactions",    "outbound_count",          false,  nil              , 24    ], 
-      [ "export_data.fields.customer_interactions", "inbound_count",           false,  nil              , 25    ], 
-      [ "export_data.fields.resolution_status",     "resolution_status",       false,  nil              , 26    ], 
-      [ "export_data.fields.first_response_status", "first_response_status",   false,  nil              , 27    ], 
+      [ "export_data.fields.customer_interactions", "inbound_count",           false,  nil              , 25    ],
       [ "export_data.fields.tags",                  "ticket_tags",             false, :tags             , 28    ], 
       [ "export_data.fields.survey_result",         "ticket_survey_results",   false, :survey_results   , 29    ]
+   ]
+
+   FEATURES_BASED_FIELDS = [
+      [ "export_data.fields.due_by_time",           "due_by",                  false,  nil              , 16    ], 
+      [ "export_data.fields.initial_response_time", "first_response_time",     false,  nil              , 20    ], 
+      [ "export_data.fields.fr_time",               "first_res_time_bhrs",     false,  nil              , 22    ], 
+      [ "export_data.fields.resolution_time",       "resolution_time_bhrs",    false,  nil              , 23    ],
+      [ "export_data.fields.resolution_status",     "resolution_status",       false,  nil              , 26    ],
+      [ "export_data.fields.first_response_status", "first_response_status",   false,  nil              , 27    ]
+
    ]
 
    ASSOCIATION_BY_VALUE = Hash[*EXPORT_FIELDS.map { |i| [i[1], i[3]] }.flatten ]
 
   def default_export_fields_order
-    fields = Hash[*EXPORT_FIELDS.map { |i| [i[1], i[4]] }.flatten ]
+    #fields = Hash[*EXPORT_FIELDS.map { |i| [i[1], i[4]] }.flatten ]
+    fields = Hash[*self.exportable_fields.map { |i| [i[1], i[4]] }.flatten ]
     fields["description"]   = 3
     fields["product_name"]  = fields.keys.length+1
     fields
@@ -58,13 +63,17 @@ module Helpdesk::TicketModelExtension
   end
 
    def self.csv_headers
-      EXPORT_FIELDS.map do |i| 
+      self.exportable_fields.map do |i| 
          {:label => I18n.t(i[0]), :value => i[1], :selected => i[2] }
       end
    end
 
    def self.field_name(value)
       FIELD_NAME_MAPPING[value].blank? ? value : FIELD_NAME_MAPPING[value]
+   end
+
+   def self.exportable_fields
+    Account.current.sla_management_enabled? ? (EXPORT_FIELDS + FEATURES_BASED_FIELDS) : EXPORT_FIELDS
    end
 
    FIELD_NAME_MAPPING = {

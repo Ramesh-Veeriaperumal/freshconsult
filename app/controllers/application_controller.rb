@@ -305,5 +305,15 @@ class ApplicationController < ActionController::Base
       Rails.logger.error "Request CSRF key = #{request.headers['X-CSRF-Token']}"
       Rails.logger.error "protocol = #{request.protocol}"
     end
+
+  def non_covered_feature
+    redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
+  end
+
+  def non_covered_admin_feature
+    redirect_to admin_home_index_path
+  end
+
+
 end
 

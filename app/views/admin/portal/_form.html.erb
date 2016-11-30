@@ -93,70 +93,72 @@
       </div>
     </div>
 
-    <div class="fields">
-      <span class="seperator"></span>
-      <h4 class="heading caption lead rebranding-header"><%= t('admin.products.portal.portal_rebranding') %></h4>
-      <div class="control-group">
-        <label class="control-label"><%= t("admin.products.portal.logo_and_favicon") %></label>
-        <div class="controls">
-          <div class="row-fluid">
-            <div class="span6">
-              <%= render :partial => "/shared/logo_image", 
+    <% if current_account.rebranding_enabled? %>
+      <div class="fields">
+        <span class="seperator"></span>
+        <h4 class="heading caption lead rebranding-header"><%= t('admin.products.portal.portal_rebranding') %></h4>
+        <div class="control-group">
+          <label class="control-label"><%= t("admin.products.portal.logo_and_favicon") %></label>
+          <div class="controls">
+            <div class="row-fluid">
+              <div class="span6">
+                <%= render :partial => "/shared/logo_image", 
+                            :locals => { :item => portal, :field_name => "portal"} %>
+              </div>
+              <div class="span6">
+                <%= render :partial => "/shared/fav_image", 
                           :locals => { :item => portal, :field_name => "portal"} %>
+              </div>    
             </div>
-            <div class="span6">
-              <%= render :partial => "/shared/fav_image", 
-                        :locals => { :item => portal, :field_name => "portal"} %>
-            </div>    
           </div>
         </div>
-      </div>
-      <div class="control-group">
-        <div class="control-label"><%= t("linkback_overlabel") %></div>     
-        <div class="controls">
-          <input 
-              name="portal[preferences][logo_link]" id="link_back_text" 
-              value="<%=(portal[:preferences]||{}).fetch(:logo_link, '')%>" 
-              placeholder="http://<%= portal.main_portal ? current_account.host : portal.portal_url.presence %>"
-              class="text input-xlarge" />
-          <div class="info-data"> <%= t("linkback_info") %> </div>
+        <div class="control-group">
+          <div class="control-label"><%= t("linkback_overlabel") %></div>     
+          <div class="controls">
+            <input 
+                name="portal[preferences][logo_link]" id="link_back_text" 
+                value="<%=(portal[:preferences]||{}).fetch(:logo_link, '')%>" 
+                placeholder="http://<%= portal.main_portal ? current_account.host : portal.portal_url.presence %>"
+                class="text input-xlarge" />
+            <div class="info-data"> <%= t("linkback_info") %> </div>
+          </div>
         </div>
-      </div>
-      <div class="control-group">
-        <label class="control-label"><%= t("admin.products.portal.helpdesk_phone") %></label>
-        <div class="controls">
-          <input 
-              name="portal[preferences][contact_info]" id="contact_info_text"
-              placeholder="<%= t("admin.products.portal.contact_us") %> @ 888 888 888"
-              value="<%="#{portal_pref(portal, :contact_info)}" %>" class="text input-xlarge" />
+        <div class="control-group">
+          <label class="control-label"><%= t("admin.products.portal.helpdesk_phone") %></label>
+          <div class="controls">
+            <input 
+                name="portal[preferences][contact_info]" id="contact_info_text"
+                placeholder="<%= t("admin.products.portal.contact_us") %> @ 888 888 888"
+                value="<%="#{portal_pref(portal, :contact_info)}" %>" class="text input-xlarge" />
+          </div>
         </div>
-      </div>
 
-      <%= f.fields_for :preferences do |p| %>
-        <input type="hidden" name="portal[preferences][header_color]" 
-          value="<%= portal_pref(current_account.main_portal, :header_color) %>" />
-        <input type="hidden" name="portal[preferences][tab_color]"
-          value="<%= portal_pref(current_account.main_portal, :tab_color) %>" /> 
-        <input type="hidden" name="portal[preferences][bg_color]" 
-          value="<%= portal_pref(current_account.main_portal, :bg_color) %>" />
-      <% end %>
-      <div class="control-group">
-        <label class="control-label"><%=t('admin.products.portal.portal_customization')%></label>
-        <div class="controls">
-            <%= link_to portal.template.present? ? admin_portal_template_path(portal.id) : '', 
-              {:class => "btn customize-btn", :rel => "customize-portal"} do %>
-              <%= font_icon "arrow-right", :size => 15, :id => "customize-arrow" %>
-              <div class='customize'><%= portal.template.present? ? t('admin.products.portal.customize_portal') : t('admin.products.portal.save_and_customize').html_safe %></div>
-              <% if portal.template.present? %>
-              <div class="published-at">           
-                  <%= t("admin.products.portal.last_published")%> <%= distance_of_time_in_words_to_now(portal.template.updated_at) %> <%= t("admin.products.portal.ago") %>         
-              </div>
+        <%= f.fields_for :preferences do |p| %>
+          <input type="hidden" name="portal[preferences][header_color]" 
+            value="<%= portal_pref(current_account.main_portal, :header_color) %>" />
+          <input type="hidden" name="portal[preferences][tab_color]"
+            value="<%= portal_pref(current_account.main_portal, :tab_color) %>" /> 
+          <input type="hidden" name="portal[preferences][bg_color]" 
+            value="<%= portal_pref(current_account.main_portal, :bg_color) %>" />
+        <% end %>
+        <div class="control-group">
+          <label class="control-label"><%=t('admin.products.portal.portal_customization')%></label>
+          <div class="controls">
+              <%= link_to portal.template.present? ? admin_portal_template_path(portal.id) : '', 
+                {:class => "btn customize-btn", :rel => "customize-portal"} do %>
+                <%= font_icon "arrow-right", :size => 15, :id => "customize-arrow" %>
+                <div class='customize'><%= portal.template.present? ? t('admin.products.portal.customize_portal') : t('admin.products.portal.save_and_customize').html_safe %></div>
+                <% if portal.template.present? %>
+                <div class="published-at">           
+                    <%= t("admin.products.portal.last_published")%> <%= distance_of_time_in_words_to_now(portal.template.updated_at) %> <%= t("admin.products.portal.ago") %>         
+                </div>
+                <% end %>
               <% end %>
-            <% end %>
+          </div>
         </div>
+        <%= hidden_field_tag("product", @product.id) if portal.new_record? %>
       </div>
-      <%= hidden_field_tag("product", @product.id) if portal.new_record? %>
-    </div>
+    <% end %>
   </div>
 </div>
 
