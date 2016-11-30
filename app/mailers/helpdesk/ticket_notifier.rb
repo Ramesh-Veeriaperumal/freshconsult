@@ -292,7 +292,14 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       to_emails = validate_emails(note.to_emails, note)
       bcc_emails = validate_emails(note.bcc_emails, note)
       from_email = validate_emails(note.from_email, note)
-      return if from_email.empty? || to_emails.empty?
+      if from_email.empty? || to_emails.empty?
+        if from_email.empty?
+          Rails.logger.info "Reply Email Not Sent as there is no from_email. Note_id: #{note.id}, Ticket_id: #{ticket.id}"
+        else
+          Rails.logger.info "Reply Email Not Sent as there is no to_email. Note_id: #{note.id}, Ticket_id: #{ticket.id}"
+        end
+        return
+      end
 
       options = {} unless options.is_a?(Hash) 
       headers = email_headers(ticket, nil, false).merge({
