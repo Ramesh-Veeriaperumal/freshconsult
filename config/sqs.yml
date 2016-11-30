@@ -21,6 +21,11 @@ development:
   agent_collision_queue: agent_collision_new_dev
   agent_collision_alb_queue: agent_collision_alb_dev
   marketplace_app_queue: marketplace_app_dev
+  free_customer_email_queue: free_customer_email_queue_dev
+  active_customer_email_queue: active_customer_email_queue_dev
+  trial_customer_email_queue: trial_customer_email_queue_dev
+  default_email_queue: default_email_queue_dev
+  email_dead_letter_queue: failed_emails_queue_dev
 staging:
   twitter_realtime_queue: social_gnip_tweet_staging1
   gnip_2_0_realtime_queue: social_gnip_2_0_tweet_staging
@@ -42,6 +47,11 @@ staging:
   agent_collision_queue: agent_collision_new_staging
   agent_collision_alb_queue: agent_collision_alb_staging
   marketplace_app_queue: marketplace_app_staging
+  free_customer_email_queue: free_customer_email_queue_staging
+  active_customer_email_queue: active_customer_email_queue_staging
+  trial_customer_email_queue: trial_customer_email_queue_staging
+  default_email_queue: default_email_queue_staging
+  email_dead_letter_queue: failed_emails_queue_staging
 production:
   twitter_realtime_queue: social_gnip_tweet_production
   facebook_realtime_queue: social_fb_feed_production
@@ -63,6 +73,11 @@ production:
   agent_collision_queue: agent_collision_new_production
   agent_collision_alb_queue: agent_collision_alb_production
   marketplace_app_queue: marketplace_app_production
+  free_customer_email_queue: free_customer_email_queue_production
+  active_customer_email_queue: active_customer_email_queue_production
+  trial_customer_email_queue: trial_customer_email_queue_production
+  default_email_queue: default_email_queue_production
+  email_dead_letter_queue: failed_emails_queue_production
 test:
   twitter_realtime_queue: social_gnip_tweet_test
   gnip_2_0_realtime_queue: social_gnip_2_0_tweet_test
@@ -83,3 +98,8 @@ test:
   auto_refresh_queue: auto_refresh_new_test
   agent_collision_queue: agent_collision_new_test
   marketplace_app_queue: marketplace_app_test
+  free_customer_email_queue: free_customer_email_queue_test
+  active_customer_email_queue: active_customer_email_queue_test
+  trial_customer_email_queue: trial_customer_email_queue_test
+  default_email_queue: default_email_queue_test
+  email_dead_letter_queue: failed_emails_queue_test

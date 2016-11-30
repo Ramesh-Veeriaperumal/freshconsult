@@ -118,7 +118,9 @@ module Redis::RedisKeys
 	SOLUTION_HIT_TRACKER = "SOLUTION:HITS:%{account_id}:%{article_id}"
 	SOLUTION_META_HIT_TRACKER = "SOLUTION_META:HITS:%{account_id}:%{article_meta_id}"
 	TOPIC_HIT_TRACKER = "TOPIC:HITS:%{account_id}:%{topic_id}"
+	MESSAGE_PROCESS_STATE  = "MESSAGE_PROCESS_STATE:%{uid}"
 	PROCESS_EMAIL_PROGRESS = "PROCESS_EMAIL:%{account_id}:%{unique_key}"
+	PROCESSED_TICKET_DATA = "PROCESSED_TICKET_DATA:%{uid}"
 	
 	SELECT_ALL = "SELECT_ALL:%{account_id}"
 

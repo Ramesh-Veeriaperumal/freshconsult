@@ -152,6 +152,8 @@ defaults: &defaults
     - [code_console_execution]
     - [flush_portal_solution_cache]
     - [plan_change_workerv2]
+    - [learn_spam_message]
+    - [s3_retry_worker]
 
 development:
   <<: *defaults

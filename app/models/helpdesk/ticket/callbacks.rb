@@ -69,6 +69,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   after_commit :add_links, :on => :update, :if => :linked_now?
   after_commit :remove_links, :on => :update, :if => :unlinked_now?
   after_commit :save_sentiment, on: :create 
+  after_commit :update_spam_detection_service, :if => :model_changes?
   
   # Callbacks will be executed in the order in which they have been included. 
 
@@ -922,5 +923,15 @@ private
   def update_fr_escalated
     self.fr_escalated = false
     true
+  end
+
+  def update_spam_detection_service
+    if (Account.current.launched?(:spam_detection_service) && @model_changes.include?(:spam) &&
+     self.source.eql?(Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email]))
+      Rails.logger.info "Pushing to sidekiq to learn ticket"
+      type = @model_changes[:spam][1] ? :spam : :ham
+      SpamDetection::LearnTicketWorker.perform_async({ :ticket_id => self.id, 
+        :type => Helpdesk::Email::Constants::MESSAGE_TYPE_BY_NAME[type]})
+    end
   end
 end

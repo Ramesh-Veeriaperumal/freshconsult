@@ -7,6 +7,7 @@ class EmailControllerLogSubscriber < ActiveSupport::LogSubscriber
     if is_log_reduce_controller? payload[:controller]
       email_params = payload[:params]
       c_params = exclude_params(payload[:controller], payload[:params])
+      email_params = {} if payload[:controller] == "MimeController"
     else
       email_params = {}
       c_params = payload[:params]
@@ -37,12 +38,14 @@ class EmailControllerLogSubscriber < ActiveSupport::LogSubscriber
         params_copy["helpdesk_note"]["note_body_attributes"].delete("full_text_html")
       end
       f_params = params_copy.except("quoted_text_html")
+    when "MimeController"
+      f_params = controller_params.except("email")
     end
     f_params
   end
 
   def is_log_reduce_controller?(controller_name)
-    ["EmailController", "MailgunController", "Helpdesk::ConversationsController"].any? {|controller| (controller == controller_name)}
+    ["EmailController", "MailgunController", "Helpdesk::ConversationsController", "MimeController"].any? {|controller| (controller == controller_name)}
   end
 end
 

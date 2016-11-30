@@ -733,6 +733,7 @@ Helpkit::Application.routes.draw do
     end
   end
   resources :email, :only => [:new, :create]
+  resources :mime, :only => [:new, :create]
   resources :mailgun, :only => :create
   post '/mailgun/create', to: "mailgun#create"
   resources :password_resets, :except => [:index, :show, :destroy]

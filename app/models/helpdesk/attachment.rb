@@ -67,10 +67,10 @@ class Helpdesk::Attachment < ActiveRecord::Base
         content_size = attached[:content_size] 
         verify_attachment_size = false 
       else
-        file_content = attached.tempfile
-        original_filename = attached.original_filename
-        content_type = attached.content_type
-        content_size = attached.tempfile.size
+        file_content = (attached.is_a? StringIO) ? attached : attached.tempfile
+        original_filename = file_content.original_filename
+        content_type = file_content.content_type
+        content_size = file_content.size
         verify_attachment_size = true
       end
 

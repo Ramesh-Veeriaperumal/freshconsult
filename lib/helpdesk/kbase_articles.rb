@@ -3,7 +3,8 @@ class Helpdesk::KbaseArticles
 
   class << self
 
-    def create_article_from_email(article_params)  
+    def create_article_from_email(article_params)
+      article = nil  
       account = Account.find(article_params[:account])
       user = account.users.find(article_params[:user])
 
@@ -11,6 +12,7 @@ class Helpdesk::KbaseArticles
         article = add_knowledge_base_article(account, user, article_params[:title], article_params[:description])    
         create_article_attachments(article_params, article, account)
       end
+      return article
     end
 
     def from_support_email?(user, account)

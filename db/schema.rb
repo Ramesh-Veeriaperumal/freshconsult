@@ -4172,4 +4172,14 @@ ActiveRecord::Schema.define(:version => 20161103085738) do
   add_index "account_webhook_keys", ["account_id", "vendor_id"], :name => 'index_account_webhook_keys_on_account_id_and_vendor_id'
   add_index "account_webhook_keys", "webhook_key", :unique => true
 
+  create_table "email_hourly_updates", :force => true do |t|
+    t.string :received_host
+    t.string :hourly_path
+    t.datetime :locked_at
+    t.string :state
+    t.timestamps
+  end
+
+  add_index "email_hourly_updates", ["hourly_path"], :name => "index_email_hourly_updates_on_hourly_path", :unique => true
+
 end
