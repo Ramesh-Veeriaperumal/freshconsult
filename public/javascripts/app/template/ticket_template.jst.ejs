@@ -44,7 +44,7 @@
   <% if (data.all_acc_templates && data.all_acc_templates.length === 0 && data.recent_templates && data.recent_templates.length === 0) { %>
       <p class="no-template-link"><%= I18n.t('ticket_templates.no_templates_text')%></p>
       <% if (data.previlage && data.previlage === 'true' && data.istmplAvailable && data.istmplAvailable === 'true') { %>
-        <a class="create-template" data-pjax="#body-container" href="/helpdesk/ticket_templates/new"><%= I18n.t('ticket_templates.select_template')%></a>
+        <a class="create-template" data-pjax="#body-container" href="/helpdesk/ticket_templates/new"><%= I18n.t('ticket_templates.create_template')%></a>
       <% } %>
   <% } %>
 
