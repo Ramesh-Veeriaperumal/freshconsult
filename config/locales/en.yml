@@ -3391,6 +3391,8 @@ en:
       info2: "For example, you can create a template called 'Initiate Refund' by filling the body of the ticket and setting the priority 'medium'. So the next time you receive a phone call about a refund, you can create a medium priority ticket for your customer and initiate the refund request with a single click."
     new_template: "Add New"
     create_template: "Create Template"
+    no_match_text: "No matching templates"
+    no_templates_text: "No template has been created"
     edit: "edit"
     template_note: "Selecting a template will replace <br/>the form with new values."
     template_info: "Ticket templates help to pre-fill this <br/>form in a single click and are helpful for <br/>recurring issues and communications."
