@@ -11,19 +11,14 @@ class SearchParser
     expr: LPAREN expr RPAREN { result = val.join(' ') }
     |     expr OR expr { result = val.join(' ') }
     |     expr AND expr { result = val.join(' ') }
-    |     condition expr { result = val.join(' ') }
-    |     condition { }
-    condition:  PAIR {  }
+    |     PAIR { }
   end
 
 ---- inner
 require 'strscan'
 require 'json'
 
-attr_reader :result
-
 def parse(str)
-  @result = ""
   scanner = StringScanner.new str
   @tokens = []
   @input = {}
@@ -116,8 +111,8 @@ end
         condition = element.split(':')
         keyword = condition[0].strip.downcase
         value = (condition[1, condition.length].join(':')).strip
-        value = is_integer?(value) ? value.to_i : value
-        value = value =~ /\'(.*)\'/ ? value[1,value.length-1] : value
+        value = is_integer?(value) ? value.to_i : value  #update logic and add comments
+        value = value =~ /\'(.*)\'/ ? value[1,value.length-2] : value
         data = { keyword.to_sym => value }
         node = OperandNode.new(data)
         stack << node
@@ -156,10 +151,10 @@ end
 
 ---- footer
 
-# parser = SearchParser.new
-# str = ARGV.join(' ');
-# begin
-#   puts "#{parser.parse(str)}"
-# rescue ParseError => e
-#   puts e.message
-# end
+parser = SearchParser.new
+str = ARGV.join(' ');
+begin
+  puts "#{parser.parse(str)}"
+rescue ParseError => e
+  puts e.message
+end

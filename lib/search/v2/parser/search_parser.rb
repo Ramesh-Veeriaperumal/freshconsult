@@ -12,14 +12,11 @@ module Search
 require 'racc/parser.rb'
 class SearchParser < Racc::Parser
 
-module_eval(<<'...end search.y/module_eval...', 'search.y', 20)
+module_eval(<<'...end search.y/module_eval...', 'search.y', 18)
 require 'strscan'
 require 'json'
 
-attr_reader :result
-
 def parse(str)
-  @result = ""
   scanner = StringScanner.new str
   @tokens = []
   @input = {}
@@ -154,47 +151,43 @@ end
 ##### State transition tables begin ###
 
 racc_action_table = [
-     5,     4,     4,    10,     2,     2,     6,     7,     4,     6,
-     7,     2,    13,     4,     4,   nil,     2,     2,     6,     7,
-     6,     7,     6,     7 ]
+     4,     3,     3,     8,     2,     2,     5,     6,     5,     6,
+     3,    11,     3,     2,   nil,     2,     5,     6,     5,     6 ]
 
 racc_action_check = [
-     1,     3,     2,     5,     3,     2,     1,     1,     0,     8,
-     8,     0,     8,     7,     6,   nil,     7,     6,    12,    12,
-     9,     9,    11,    11 ]
+     1,     2,     0,     4,     2,     0,     1,     1,     7,     7,
+     6,     7,     5,     6,   nil,     5,    10,    10,     9,     9 ]
 
 racc_action_pointer = [
-     3,     0,    -3,    -4,   nil,     3,     9,     8,     3,    14,
-   nil,    16,    12,   nil ]
+    -3,     0,    -4,   nil,     3,     7,     5,     2,   nil,    12,
+    10,   nil ]
 
 racc_action_default = [
-    -7,    -7,    -7,    -5,    -6,    -7,    -7,    -7,    -7,    -4,
-    14,    -2,    -3,    -1 ]
+    -5,    -5,    -5,    -4,    -5,    -5,    -5,    -5,    12,    -2,
+    -3,    -1 ]
 
 racc_goto_table = [
-     1,   nil,     8,     9,   nil,   nil,    11,    12 ]
+     1,   nil,     7,   nil,   nil,     9,    10 ]
 
 racc_goto_check = [
-     1,   nil,     1,     1,   nil,   nil,     1,     1 ]
+     1,   nil,     1,   nil,   nil,     1,     1 ]
 
 racc_goto_pointer = [
-   nil,     0,   nil ]
+   nil,     0 ]
 
 racc_goto_default = [
-   nil,   nil,     3 ]
+   nil,   nil ]
 
 racc_reduce_table = [
   0, 0, :racc_error,
   3, 11, :_reduce_1,
   3, 11, :_reduce_2,
   3, 11, :_reduce_3,
-  2, 11, :_reduce_4,
-  1, 11, :_reduce_5,
-  1, 12, :_reduce_6 ]
+  1, 11, :_reduce_4 ]
 
-racc_reduce_n = 7
+racc_reduce_n = 5
 
-racc_shift_n = 14
+racc_shift_n = 12
 
 racc_token_table = {
   false => 0,
@@ -240,8 +233,7 @@ Racc_token_to_s_table = [
   "LPAREN",
   "RPAREN",
   "$start",
-  "expr",
-  "condition" ]
+  "expr" ]
 
 Racc_debug_parser = false
 
@@ -272,21 +264,7 @@ module_eval(<<'.,.,', 'search.y', 12)
 
 module_eval(<<'.,.,', 'search.y', 13)
   def _reduce_4(val, _values, result)
-     result = val.join(' ') 
-    result
-  end
-.,.,
-
-module_eval(<<'.,.,', 'search.y', 14)
-  def _reduce_5(val, _values, result)
      
-    result
-  end
-.,.,
-
-module_eval(<<'.,.,', 'search.y', 15)
-  def _reduce_6(val, _values, result)
-      
     result
   end
 .,.,

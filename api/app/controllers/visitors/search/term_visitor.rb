@@ -28,15 +28,16 @@ module Search
 		end
 
 		def visit_operand(node)
-			if ApiSearchConstants::PRE_FETCH[@resource] && ApiSearchConstants::PRE_FETCH[@resource].keys.include?(node.key)
-				search_term = { terms: { construct_key(node) => [node.value] } }
-				contact_ids = ids_from_esv2_response(query_es(search_term, :contacts))
-				value = contact_ids.any? ? contact_ids[0] : 0
-				node.data = { ApiSearchConstants::PRE_FETCH[node.key] => value }				
-			end
+			# Currently no such attribute is supported. If ticket search supports 'email' then uncomment the lines
+			# if ApiSearchConstants::PRE_FETCH[@resource] && ApiSearchConstants::PRE_FETCH[@resource].keys.include?(node.key)
+			# 	search_term = { terms: { construct_key(node) => [node.value] } }
+			# 	contact_ids = ids_from_esv2_response(query_es(search_term, :contacts))
+			# 	value = contact_ids.any? ? contact_ids[0] : 0
+			# 	node.data = { ApiSearchConstants::PRE_FETCH[@resource][node.key] => value }				
+			# end
 			{
 				terms: {
-					 construct_key(node) => [node.value] 
+					construct_key(node) => [node.value] 
 				}
 			}
 		end
