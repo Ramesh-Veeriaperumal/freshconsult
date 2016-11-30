@@ -588,7 +588,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
 
   def notify_bulk_child_creation options = {}
     headers = {
-      :subject                    => "sub for bulk tkt create",
+      :subject                    => I18n.t("ticket.parent_child.notn_subject"),
       :to                         => options[:user].email,
       :from                       => options[:user].account.default_friendly_email,
       :bcc                        => AppConfig['reports_email'],
