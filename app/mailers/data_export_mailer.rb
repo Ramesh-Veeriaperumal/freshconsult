@@ -114,23 +114,30 @@ class DataExportMailer < ActionMailer::Base
  
   def broadcast_message options={}
     message_id = "#{Mail.random_tag}.#{::Socket.gethostname}@private-notification.freshdesk.com"
-    headers = {
-      "Message-ID"                =>  "<#{message_id}>",
-      "Auto-Submitted"            =>  "auto-generated",
-      "X-Auto-Response-Suppress"  =>  "DR, RN, OOF, AutoReply",
-      :subject                    => options[:subject],
-      :to                         => options[:to_email],
-      :from                       => options[:from_email],
-      :sent_on                    => Time.now
-    }
+    ticket = Helpdesk::Ticket.find_by_id(options[:ticket_id])
+    begin
+      configure_email_config ticket.reply_email_config
+      headers = {
+        "Message-ID"                =>  "<#{message_id}>",
+        "Auto-Submitted"            =>  "auto-generated",
+        "X-Auto-Response-Suppress"  =>  "DR, RN, OOF, AutoReply",
+        :subject                    => options[:subject],
+        :to                         => options[:to_email],
+        :from                       => options[:from_email],
+        :sent_on                    => Time.now
+      }
 
-    headers.merge!(make_header(options[:ticket_id], nil, options[:account_id], "Broadcast Message"))
-    @url = options[:url]
-    @subject = options[:ticket_subject]
-    @content = options[:content]
-    mail(headers) do |part|
-      part.html { render "broadcast_message", :formats => [:html] }
-    end.deliver
+      headers.merge!(make_header(options[:ticket_id], nil, options[:account_id], "Broadcast Message"))
+      headers.merge!({"X-FD-Email-Category" => ticket.reply_email_config.category}) if ticket.reply_email_config.category.present?
+      @url = options[:url]
+      @subject = options[:ticket_subject]
+      @content = options[:content]
+      mail(headers) do |part|
+        part.html { render "broadcast_message", :formats => [:html] }
+      end.deliver
+    ensure
+      remove_email_config
+    end
   end
 
   private

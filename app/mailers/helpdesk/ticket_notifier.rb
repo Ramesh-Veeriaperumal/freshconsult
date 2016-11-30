@@ -219,6 +219,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
         })
 
       headers.merge!(make_header(params[:ticket].display_id, note_id, params[:ticket].account_id, params[:notification_type]))
+      headers.merge!({"X-FD-Email-Category" => params[:ticket].reply_email_config.category}) if params[:ticket].reply_email_config.category.present?
       inline_attachments   = []
       @ticket              = params[:ticket]
       @body                = params[:email_body_plain]
@@ -303,6 +304,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       })
 
       headers.merge!(make_header(ticket.display_id, note.id, ticket.account_id, "Reply"))
+      headers.merge!({"X-FD-Email-Category" => email_config.category}) if email_config.category.present?
       headers[:cc] = validate_emails(note.cc_emails, note) unless options[:include_cc].blank?
 
       inline_attachments = []
@@ -367,6 +369,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       })
 
       headers.merge!(make_header(ticket.display_id, note.id, ticket.account_id, "Forward"))
+      headers.merge!({"X-FD-Email-Category" => email_config.category}) if email_config.category.present?
       inline_attachments = []
       @ticket = ticket
       @body = note.full_text
@@ -418,6 +421,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       })
 
       headers.merge!(make_header(ticket.display_id, note.id, ticket.account_id, "Reply to Forward"))
+      headers.merge!({"X-FD-Email-Category" => email_config.category}) if email_config.category.present?
       inline_attachments = []
       @ticket = ticket
       @body = note.full_text
@@ -458,6 +462,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       })
 
       headers.merge!(make_header(ticket.display_id, nil, ticket.account_id, "Email to Requestor"))
+      headers.merge!({"X-FD-Email-Category" => ticket.reply_email_config.category}) if ticket.reply_email_config.category.present?
       inline_attachments = []
       @body = Helpdesk::HTMLSanitizer.plain(content)
       @body_html = generate_body_html(content)
@@ -490,6 +495,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       })
 
       headers.merge!(make_header(ticket.display_id, nil, ticket.account_id, "Internal Email"))
+      headers.merge!({"X-FD-Email-Category" => ticket.reply_email_config.category}) if ticket.reply_email_config.category.present?
       inline_attachments = []
       @body = Helpdesk::HTMLSanitizer.plain(content)
       @body_html = generate_body_html(content)
@@ -540,6 +546,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       })
 
       headers.merge!(make_header(ticket.display_id, nil, ticket.account_id, "Notify Outbound Email"))
+      headers.merge!({"X-FD-Email-Category" => ticket.reply_email_config.category}) if ticket.reply_email_config.category.present?
       inline_attachments   = []
       @account = ticket.account
       @ticket = ticket
