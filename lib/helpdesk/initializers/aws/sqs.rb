@@ -75,7 +75,7 @@ begin
     SQS[:active_customer_email_queue] => AwsWrapper::SqsV2.queue_url(SQS[:active_customer_email_queue]),
     SQS[:trial_customer_email_queue]  => AwsWrapper::SqsV2.queue_url(SQS[:trial_customer_email_queue]),
     SQS[:default_email_queue]         => AwsWrapper::SqsV2.queue_url(SQS[:default_email_queue]),
-    SQS[:email_dead_letter_queue]     => AwsWrapper::SqsV2.queue_url(SQS[:email_dead_letter_queue])
+    SQS[:email_dead_letter_queue]     => AwsWrapper::SqsV2.queue_url(SQS[:email_dead_letter_queue]),
     SQS[:agent_collision_queue] => AwsWrapper::SqsV2.queue_url(SQS[:agent_collision_queue]),
   }
 
