@@ -693,7 +693,7 @@ class ApiApplicationController < MetalApiController
     end
 
     def set_root_key
-      return unless params[:version] == 'private' || response.api_root_key.present?
+      return unless params[:version] == 'private' && response.api_root_key.blank?
       case action_name
       when *self.class::SINGULAR_RESPONSE_FOR
         response.api_root_key = api_root_key.singularize

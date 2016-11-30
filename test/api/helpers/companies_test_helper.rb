@@ -54,6 +54,16 @@ module CompaniesTestHelper
     }
   end
 
+  def company_activity_pattern(ticket)
+    {
+      id: ticket.display_id,
+      subject: ticket.subject,
+      status: ticket.status,
+      agent_id: ticket.responder_id,
+      created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
+    }
+  end
+
   # Helpers
   def company_payload
     { company: api_company_params }.to_json

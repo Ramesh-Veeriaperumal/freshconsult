@@ -6,7 +6,7 @@ module HelperConcern
   end
 
   def validate_url_params(item = nil)
-    validate_request(item, params)
+    validate_request(item, params, true)
   end
 
   def sanitize_body_params
@@ -23,8 +23,9 @@ module HelperConcern
 
   private
 
-    def validate_request(item, request_params)
-      request_params.permit(*fields_to_validate)
+    def validate_request(item, request_params, url_params = false)
+      default_fields = url_params ? fetch_default_params : []
+      request_params.permit(*fields_to_validate, *default_fields)
       @validator = validation_klass.new(request_params, item, string_request_params?)
       valid = @validator.valid?(action_name.to_sym)
       render_errors @validator.errors, @validator.error_options unless valid
@@ -47,6 +48,10 @@ module HelperConcern
       field_string = "#{action_name.upcase}_FIELDS"
       fields = constants_klass.const_defined?(field_string) ? constants_klass.const_get(field_string) : []
       bulk_action? ? (fields | ApiConstants::BULK_ACTION_FIELDS) : fields
+    end
+
+    def fetch_default_params
+      index? ? ApiConstants::DEFAULT_INDEX_FIELDS : ApiConstants::DEFAULT_PARAMS
     end
 
     def array_fields_to_sanitize

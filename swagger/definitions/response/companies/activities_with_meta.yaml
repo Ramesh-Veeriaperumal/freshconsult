@@ -1,0 +1,11 @@
+type: object
+properties:
+  activities:
+    $ref: '#/definitions/array_of_company_activities'
+  meta:
+    type: object
+    properties:
+      more_tickets:
+        type: boolean
+      more_archived_tickets:
+        type: boolean

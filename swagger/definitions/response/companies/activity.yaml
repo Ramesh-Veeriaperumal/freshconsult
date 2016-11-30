@@ -1,0 +1,14 @@
+type: object
+description: Company activities
+properties:
+  id:
+    type: number
+  subject:
+    type: string
+  status:
+    type: string
+  agent_id:
+    type: number
+  created_at:
+    type: string
+    format: date-time

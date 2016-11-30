@@ -8,6 +8,13 @@ module Ember
       response.api_meta = { count: @items_count }
     end
 
+    def activities
+      return unless validate_filter_params
+      @company_activities = (params[:type] == 'archived_tickets' ? archived_ticket_activities : ticket_activities).take(CompanyConstants::MAX_ACTIVITIES_COUNT)
+      response.api_root_key = :activities
+      response.api_meta = { "more_#{params[:type]}" => true } if @total_tickets.length > CompanyConstants::MAX_ACTIVITIES_COUNT
+    end
+
     private
 
       def validate_filter_params
@@ -25,10 +32,6 @@ module Ember
 
       def filter_conditions
         ['name like ?', "#{params[:letter]}%"]
-      end
-
-      def fields_to_validate
-        CompanyConstants::INDEX_FIELDS | ApiConstants::DEFAULT_INDEX_FIELDS
       end
 
       def constants_class
@@ -49,6 +52,15 @@ module Ember
         end
         return @default_policy ||= current_account.sla_policies.default if sla.empty?
         sla
+      end
+
+      def ticket_activities
+        @total_tickets = current_account.tickets.permissible(api_current_user).all_company_tickets(@item.id).visible.newest(CompanyConstants::MAX_ACTIVITIES_COUNT + 1).order('created_at DESC')
+      end
+
+      def archived_ticket_activities
+        return [] unless current_account.features_included?(:archive_tickets)
+        @total_tickets = current_account.archive_tickets.permissible(api_current_user).all_company_tickets(@item.id).newest(CompanyConstants::MAX_ACTIVITIES_COUNT + 1).order('created_at DESC')
       end
 
       def decorator_options_hash

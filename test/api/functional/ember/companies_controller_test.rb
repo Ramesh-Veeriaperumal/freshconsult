@@ -1,7 +1,22 @@
 require_relative '../../test_helper'
+['ticket_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
 class Ember::CompaniesControllerTest < ActionController::TestCase
   include CompaniesTestHelper
   include SlaPoliciesTestHelper
+  include TicketHelper
+
+  def setup
+    super
+    before_all
+  end
+
+  @@before_all_run = false
+
+  def before_all
+    return if @@before_all_run
+    @account.features.archive_tickets.create
+    @@before_all_run = true
+  end
 
   def wrap_cname(params)
     { company: params }
@@ -90,5 +105,64 @@ class Ember::CompaniesControllerTest < ActionController::TestCase
     assert_response 200
     response = parse_response @response.body
     assert_equal Account.current.companies.where('name like ?', "#{letter}%").count, response.size
+  end
+
+  def test_activities_with_invalid_type
+    company =  create_company
+    get :activities, controller_params(version: 'private', id: company.id, type: Faker::Lorem.word)
+    assert_response 400
+    match_json([bad_request_error_pattern('type', :not_included, list: 'tickets,archived_tickets')])
+  end
+
+  def test_activities_default
+    company =  create_company
+    contact = add_new_user(@account, customer_id: company.id)
+    ticket_ids = []
+    rand(5..10).times do
+      ticket_ids << create_ticket(requester_id: contact.id).id
+    end
+    get :activities, controller_params(version: 'private', id: company.id)
+    assert_response 200
+    pattern = []
+    Helpdesk::Ticket.where('display_id IN (?)', ticket_ids).order('created_at desc').each do |ticket|
+      pattern << company_activity_pattern(ticket)
+    end
+    match_json(pattern)
+  end
+
+  def test_activities_with_type
+    company =  create_company
+    contact = add_new_user(@account, customer_id: company.id)
+    ticket_ids = []
+    11.times do
+      ticket_ids << create_ticket(requester_id: contact.id).id
+    end
+    get :activities, controller_params(version: 'private', id: company.id, type: 'tickets')
+    assert_response 200
+    response = parse_response @response.body
+    assert_equal 10, response.size
+  end
+
+  def test_activities_with_archived_tickets
+    company =  create_company
+    contact = add_new_user(@account, customer_id: company.id)
+    ticket_ids = []
+    11.times do
+      ticket_ids << create_ticket(requester_id: contact.id).id
+    end
+    create_archive_tickets(ticket_ids)
+    get :activities, controller_params(version: 'private', id: company.id, type: 'archived_tickets')
+    assert_response 200
+    response = parse_response @response.body
+    assert_equal 10, response.size
+  end
+
+  def create_archive_tickets(ticket_ids)
+    ticket_ids.each do |ticket_id|
+      @account.make_current
+      Sidekiq::Testing.inline! do
+        Archive::BuildCreateTicket.perform_async({ account_id: @account.id, ticket_id: ticket_id })
+      end
+    end
   end
 end

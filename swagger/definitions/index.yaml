@@ -160,5 +160,11 @@
     $ref: './response/conversations/latest_note.yaml'
   contact_activity:
     $ref: './response/contacts/activity.yaml'
+  array_of_company_activities:
+    type: array
+    items:
+      $ref: './response/companies/activity.yaml'
+  company_activities_with_meta:
+    $ref: './response/companies/activities_with_meta.yaml'
   twitter_handle:
     $ref: './resource/twitter_handle.yaml'

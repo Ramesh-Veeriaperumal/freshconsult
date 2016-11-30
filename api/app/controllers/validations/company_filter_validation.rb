@@ -1,8 +1,9 @@
 class CompanyFilterValidation < FilterValidation
-  attr_accessor :include, :include_array, :letter
+  attr_accessor :include, :include_array, :letter, :type
 
-  validates :include, data_type: { rules: String }
-  validates :letter, custom_inclusion: { in: ApiConstants::ALPHABETS }
+  validates :include, data_type: { rules: String }, on: :index
+  validates :letter, custom_inclusion: { in: ApiConstants::ALPHABETS }, on: :index
+  validates :type, custom_inclusion: { in: CompanyConstants::ACTIVITY_TYPES }, on: :activities
 
   validate :validate_include, if: -> { errors[:include].blank? && include }
 

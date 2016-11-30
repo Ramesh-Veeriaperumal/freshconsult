@@ -1,0 +1,9 @@
+JSON.generate(@company_activities.map do |item|
+  { 
+    id: item.display_id,
+    subject: item.subject,
+    status: item.status,
+    agent_id: item.responder_id,
+    created_at: item.created_at.try(:utc)
+  }
+end)

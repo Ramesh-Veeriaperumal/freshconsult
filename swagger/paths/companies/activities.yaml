@@ -1,0 +1,21 @@
+get:
+  tags: [company]
+  summary: Recent Activities
+  description: Lists all recent tickets raised by company contacts
+  parameters:
+    - name: id
+      in: path
+      type: string
+    - name: type
+      in: query
+      type: string
+      enum: ['tickets', 'archived_tickets']
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/company_activities_with_meta'
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'

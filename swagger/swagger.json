@@ -9,6 +9,570 @@
     "application/json"
   ],
   "paths": {
+    "/contacts": {
+      "get": {
+        "tags": [
+          "contact"
+        ],
+        "summary": "List all",
+        "description": "Work in Progress",
+        "parameters": [
+          {
+            "name": "email",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "mobile",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "phone",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "company_id",
+            "in": "query",
+            "type": "number"
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "type": "string",
+            "enum": [
+              "blocked",
+              "deleted",
+              "unverified",
+              "verified"
+            ]
+          },
+          {
+            "name": "tag",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "letter",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "allOf": [
+                {
+                  "properties": {
+                    "contacts": {
+                      "$ref": "#/definitions/array_of_contacts"
+                    },
+                    "meta": {
+                      "$ref": "#/definitions/meta"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "contact"
+        ],
+        "description": "Create a contact",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/contact_input"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/extended_contact"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          }
+        }
+      }
+    },
+    "/contacts/{id}": {
+      "delete": {
+        "summary": "Delete Contact",
+        "tags": [
+          "contact"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "number",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        }
+      }
+    },
+    "/contacts/{id}/restore": {
+      "put": {
+        "summary": "Restore Contact",
+        "tags": [
+          "contact"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "number",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        }
+      }
+    },
+    "/contacts/{id}/send_invite": {
+      "put": {
+        "summary": "Send Invite",
+        "tags": [
+          "contact"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "number",
+            "required": true,
+            "description": "ID of contact"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "404": {
+            "description": "User not found"
+          }
+        }
+      }
+    },
+    "/contacts/{id}/update_password": {
+      "put": {
+        "tags": [
+          "contact"
+        ],
+        "summary": "Update Password",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "number"
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/update_password"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          }
+        }
+      }
+    },
+    "/contacts/{id}/make_agent": {
+      "put": {
+        "tags": [
+          "contact"
+        ],
+        "summary": "Make Agent",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "number",
+            "required": true
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/make_agent_response"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/make_agent_params"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "409": {
+            "description": "Inconsistent state"
+          }
+        }
+      }
+    },
+    "/contacts/{id}/whitelist": {
+      "put": {
+        "summary": "Whitelist",
+        "tags": [
+          "contact"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "number",
+            "required": true,
+            "description": "ID of contact"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "404": {
+            "description": "User not found"
+          }
+        }
+      }
+    },
+    "/contacts/{id}/activities": {
+      "get": {
+        "summary": "Activities",
+        "description": "Recent Activities of the User based on Tickets & Forums. You can filter activity by using params in url : 1. ?type=tickets for tickets, 2. ?type=forums for forums & 3. ?type=archived_tickets for archived tickets activities.",
+        "tags": [
+          "contact"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "number",
+            "required": true
+          }
+        ],
+        "examples": [
+          {
+            "id": 22
+          },
+          {
+            "id": 23
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/contact_activity"
+            }
+          },
+          "404": {
+            "description": "User not found"
+          }
+        }
+      }
+    },
+    "/contacts/bulk_delete": {
+      "put": {
+        "tags": [
+          "contact"
+        ],
+        "summary": "Bulk Delete",
+        "description": "Bulk delete contacts",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/bulk_action_input"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Accepted",
+            "schema": {
+              "$ref": "#/definitions/partial_success_response"
+            }
+          },
+          "204": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/contacts/bulk_restore": {
+      "put": {
+        "tags": [
+          "contact"
+        ],
+        "summary": "Bulk Restore",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/bulk_action_input"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Accepted",
+            "schema": {
+              "$ref": "#/definitions/partial_success_response"
+            }
+          },
+          "204": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/contacts/bulk_send_invite": {
+      "put": {
+        "summary": "Bulk Send Invite",
+        "tags": [
+          "contact"
+        ],
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/bulk_action_input"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Accepted",
+            "schema": {
+              "$ref": "#/definitions/partial_success_response"
+            }
+          }
+        }
+      }
+    },
+    "/contacts/bulk_whitelist": {
+      "put": {
+        "tags": [
+          "contact"
+        ],
+        "summary": "Bulk Whitelist",
+        "description": "Bulk whitelist contacts",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/bulk_action_input"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Accepted",
+            "schema": {
+              "$ref": "#/definitions/partial_success_response"
+            }
+          },
+          "204": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/contacts/merge": {
+      "post": {
+        "tags": [
+          "contact"
+        ],
+        "summary": "Merge",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/contact_merge_input"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "404": {
+            "description": "Contact not found"
+          }
+        }
+      }
+    },
+    "/companies": {
+      "get": {
+        "tags": [
+          "company"
+        ],
+        "summary": "List all",
+        "description": "Lists all companies with its associations",
+        "parameters": [
+          {
+            "name": "letter",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "include",
+            "in": "query",
+            "type": "string",
+            "description": "Comma-separated, possible values - contacts_count, sla_policies"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "allOf": [
+                {
+                  "properties": {
+                    "companies": {
+                      "$ref": "#/definitions/array_of_companies"
+                    },
+                    "meta": {
+                      "$ref": "#/definitions/meta"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          }
+        }
+      }
+    },
+    "/companies/{:id}/activities": {
+      "get": {
+        "tags": [
+          "company"
+        ],
+        "summary": "Recent Activities",
+        "description": "Lists all recent tickets raised by company contacts",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "string"
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "type": "string",
+            "enum": [
+              "tickets",
+              "archived_tickets"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/company_activities_with_meta"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          }
+        }
+      }
+    },
     "/tickets": {
       "get": {
         "tags": [
@@ -1138,531 +1702,6 @@
           },
           "404": {
             "description": "Attachment not found"
-          }
-        }
-      }
-    },
-    "/contacts": {
-      "get": {
-        "tags": [
-          "contact"
-        ],
-        "summary": "List all",
-        "description": "Work in Progress",
-        "parameters": [
-          {
-            "name": "email",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "mobile",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "phone",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "company_id",
-            "in": "query",
-            "type": "number"
-          },
-          {
-            "name": "state",
-            "in": "query",
-            "type": "string",
-            "enum": [
-              "blocked",
-              "deleted",
-              "unverified",
-              "verified"
-            ]
-          },
-          {
-            "name": "tag",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "letter",
-            "in": "query",
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "schema": {
-              "allOf": [
-                {
-                  "properties": {
-                    "contacts": {
-                      "$ref": "#/definitions/array_of_contacts"
-                    },
-                    "meta": {
-                      "$ref": "#/definitions/meta"
-                    }
-                  }
-                }
-              ]
-            }
-          },
-          "400": {
-            "description": "Bad Request Error",
-            "schema": {
-              "$ref": "#/definitions/bad_request_error"
-            }
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "contact"
-        ],
-        "description": "Create a contact",
-        "parameters": [
-          {
-            "name": "data",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/contact_input"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "schema": {
-              "$ref": "#/definitions/extended_contact"
-            }
-          },
-          "400": {
-            "description": "Bad Request Error",
-            "schema": {
-              "$ref": "#/definitions/bad_request_error"
-            }
-          }
-        }
-      }
-    },
-    "/contacts/{id}": {
-      "delete": {
-        "summary": "Delete Contact",
-        "tags": [
-          "contact"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "type": "number",
-            "required": true
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "Success"
-          },
-          "404": {
-            "description": "User not found"
-          }
-        }
-      }
-    },
-    "/contacts/{id}/restore": {
-      "put": {
-        "summary": "Restore Contact",
-        "tags": [
-          "contact"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "type": "number",
-            "required": true
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "Success"
-          },
-          "404": {
-            "description": "User not found"
-          }
-        }
-      }
-    },
-    "/contacts/{id}/send_invite": {
-      "put": {
-        "summary": "Send Invite",
-        "tags": [
-          "contact"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "type": "number",
-            "required": true,
-            "description": "ID of contact"
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "Success"
-          },
-          "400": {
-            "description": "Bad Request Error",
-            "schema": {
-              "$ref": "#/definitions/bad_request_error"
-            }
-          },
-          "404": {
-            "description": "User not found"
-          }
-        }
-      }
-    },
-    "/contacts/{id}/update_password": {
-      "put": {
-        "tags": [
-          "contact"
-        ],
-        "summary": "Update Password",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "number"
-          },
-          {
-            "name": "data",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/update_password"
-            }
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "Success"
-          },
-          "400": {
-            "description": "Bad Request Error",
-            "schema": {
-              "$ref": "#/definitions/bad_request_error"
-            }
-          }
-        }
-      }
-    },
-    "/contacts/{id}/make_agent": {
-      "put": {
-        "tags": [
-          "contact"
-        ],
-        "summary": "Make Agent",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "type": "number",
-            "required": true
-          },
-          {
-            "name": "data",
-            "in": "body",
-            "schema": {
-              "$ref": "#/definitions/make_agent_response"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "schema": {
-              "$ref": "#/definitions/make_agent_params"
-            }
-          },
-          "400": {
-            "description": "Bad Request Error",
-            "schema": {
-              "$ref": "#/definitions/bad_request_error"
-            }
-          },
-          "403": {
-            "description": "Access denied"
-          },
-          "409": {
-            "description": "Inconsistent state"
-          }
-        }
-      }
-    },
-    "/contacts/{id}/whitelist": {
-      "put": {
-        "summary": "Whitelist",
-        "tags": [
-          "contact"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "type": "number",
-            "required": true,
-            "description": "ID of contact"
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "Success"
-          },
-          "400": {
-            "description": "Bad Request Error",
-            "schema": {
-              "$ref": "#/definitions/bad_request_error"
-            }
-          },
-          "404": {
-            "description": "User not found"
-          }
-        }
-      }
-    },
-    "/contacts/{id}/activities": {
-      "get": {
-        "summary": "Activities",
-        "description": "Recent Activities of the User based on Tickets & Forums. You can filter activity by using params in url : 1. ?type=tickets for tickets, 2. ?type=forums for forums & 3. ?type=archived_tickets for archived tickets activities.",
-        "tags": [
-          "contact"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "type": "number",
-            "required": true
-          }
-        ],
-        "examples": [
-          {
-            "id": 22
-          },
-          {
-            "id": 23
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "schema": {
-              "$ref": "#/definitions/contact_activity"
-            }
-          },
-          "404": {
-            "description": "User not found"
-          }
-        }
-      }
-    },
-    "/contacts/bulk_delete": {
-      "put": {
-        "tags": [
-          "contact"
-        ],
-        "summary": "Bulk Delete",
-        "description": "Bulk delete contacts",
-        "parameters": [
-          {
-            "name": "data",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/bulk_action_input"
-            }
-          }
-        ],
-        "responses": {
-          "202": {
-            "description": "Accepted",
-            "schema": {
-              "$ref": "#/definitions/partial_success_response"
-            }
-          },
-          "204": {
-            "description": "Success"
-          }
-        }
-      }
-    },
-    "/contacts/bulk_restore": {
-      "put": {
-        "tags": [
-          "contact"
-        ],
-        "summary": "Bulk Restore",
-        "parameters": [
-          {
-            "name": "data",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/bulk_action_input"
-            }
-          }
-        ],
-        "responses": {
-          "202": {
-            "description": "Accepted",
-            "schema": {
-              "$ref": "#/definitions/partial_success_response"
-            }
-          },
-          "204": {
-            "description": "Success"
-          }
-        }
-      }
-    },
-    "/contacts/bulk_send_invite": {
-      "put": {
-        "summary": "Bulk Send Invite",
-        "tags": [
-          "contact"
-        ],
-        "parameters": [
-          {
-            "name": "data",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/bulk_action_input"
-            }
-          }
-        ],
-        "responses": {
-          "202": {
-            "description": "Accepted",
-            "schema": {
-              "$ref": "#/definitions/partial_success_response"
-            }
-          }
-        }
-      }
-    },
-    "/contacts/bulk_whitelist": {
-      "put": {
-        "tags": [
-          "contact"
-        ],
-        "summary": "Bulk Whitelist",
-        "description": "Bulk whitelist contacts",
-        "parameters": [
-          {
-            "name": "data",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/bulk_action_input"
-            }
-          }
-        ],
-        "responses": {
-          "202": {
-            "description": "Accepted",
-            "schema": {
-              "$ref": "#/definitions/partial_success_response"
-            }
-          },
-          "204": {
-            "description": "Success"
-          }
-        }
-      }
-    },
-    "/contacts/merge": {
-      "post": {
-        "tags": [
-          "contact"
-        ],
-        "summary": "Merge",
-        "parameters": [
-          {
-            "name": "data",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/contact_merge_input"
-            }
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "Success"
-          },
-          "400": {
-            "description": "Bad Request Error",
-            "schema": {
-              "$ref": "#/definitions/bad_request_error"
-            }
-          },
-          "404": {
-            "description": "Contact not found"
-          }
-        }
-      }
-    },
-    "/companies": {
-      "get": {
-        "tags": [
-          "company"
-        ],
-        "summary": "List all",
-        "description": "Lists all companies with its associations",
-        "parameters": [
-          {
-            "name": "letter",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "include",
-            "in": "query",
-            "type": "string",
-            "description": "Comma-separated, possible values - contacts_count, sla_policies"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "schema": {
-              "allOf": [
-                {
-                  "properties": {
-                    "companies": {
-                      "$ref": "#/definitions/array_of_companies"
-                    },
-                    "meta": {
-                      "$ref": "#/definitions/meta"
-                    }
-                  }
-                }
-              ]
-            }
-          },
-          "400": {
-            "description": "Bad Request Error",
-            "schema": {
-              "$ref": "#/definitions/bad_request_error"
-            }
           }
         }
       }
@@ -3599,6 +3638,50 @@
           "type": "object",
           "properties": {
             "more_tickets": {
+              "type": "boolean"
+            }
+          }
+        }
+      }
+    },
+    "array_of_company_activities": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "description": "Company activities",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "subject": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "agent_id": {
+            "type": "number"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      }
+    },
+    "company_activities_with_meta": {
+      "type": "object",
+      "properties": {
+        "activities": {
+          "$ref": "#/definitions/array_of_company_activities"
+        },
+        "meta": {
+          "type": "object",
+          "properties": {
+            "more_tickets": {
+              "type": "boolean"
+            },
+            "more_archived_tickets": {
               "type": "boolean"
             }
           }
