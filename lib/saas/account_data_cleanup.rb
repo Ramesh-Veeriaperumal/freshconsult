@@ -20,7 +20,7 @@ class SAAS::AccountDataCleanup
    end
   end
 
-  def handle_observer_data
+  def handle_create_observer_data
     account.all_observer_rules.destroy_all
     Fixtures::DefaultObserver.create_rule
   end

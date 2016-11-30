@@ -2,7 +2,7 @@ class SAAS::SubscriptionEventActions
 
   attr_accessor :account, :old_plan, :add_ons, :new_plan, :existing_add_ons
 
-  DROP_DATA_FEATURES_V2 = [:observer, :supervisor, :add_watcher, :custom_ticket_views, :custom_apps, :custom_ticket_fields, 
+  DROP_DATA_FEATURES_V2 = [:create_observer, :supervisor, :add_watcher, :custom_ticket_views, :custom_apps, :custom_ticket_fields, 
                             :custom_company_fields, :custom_contact_fields, :occasional_agent, :basic_twitter, :basic_facebook]
 
   ####################################################################################################################
@@ -14,7 +14,7 @@ class SAAS::SubscriptionEventActions
     @account     = account || Account.current
     @new_plan    = Account.current.subscription
     @old_plan    = old_plan
-    #set_existing_on_feature(add_ons)
+    #set_existing_addon_feature(add_ons)
   end
 
   def change_plan
@@ -74,7 +74,7 @@ class SAAS::SubscriptionEventActions
       @account_add_ons ||= account.addons.collect {|addon| addon.features}.flatten
     end
 
-    def set_existing_on_feature(addons)
+    def set_existing_addon_feature(addons)
       @existing_add_ons ||= addons.collect {|addon| addon.features}.flatten
     end
 
