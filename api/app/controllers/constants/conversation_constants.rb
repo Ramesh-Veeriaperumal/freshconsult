@@ -45,5 +45,5 @@ module ConversationConstants
   TICKET_LOAD_REQUIRED = [:create, :reply, :forward, :ticket_conversations, :facebook_reply, :tweet].freeze
   
   VALIDATION_CLASS = 'ConversationValidation'.freeze
-  DELEGATOR_CLASS = 'Conversation Delegator'.freeze
+  DELEGATOR_CLASS = 'ConversationDelegator'.freeze
 end.freeze

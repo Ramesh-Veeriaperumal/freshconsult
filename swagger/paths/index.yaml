@@ -1,3 +1,6 @@
+/bootstrap:
+  $ref: ./bootstrap.yaml
+
 /contacts:
   $ref: ./contacts/crud.yaml
 /contacts/{id}:

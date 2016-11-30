@@ -9,6 +9,7 @@ json.cache! CacheLib.key(@agent.user, params) do
     json.partial! 'shared/utc_date_format', item: @agent
     json.locale current_user.language
     json.time_zone @current_timezone
+    json.avatar @avatar_hash
   end
   json.account do
     json.extract! current_account, "full_domain", "helpdesk_name", "name", "time_zone"

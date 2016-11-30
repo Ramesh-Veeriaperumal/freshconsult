@@ -9,6 +9,22 @@
     "application/json"
   ],
   "paths": {
+    "/bootstrap": {
+      "get": {
+        "summary": "API Bootstrap",
+        "tags": [
+          "Bootstrap"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/bootstrap"
+            }
+          }
+        }
+      }
+    },
     "/contacts": {
       "get": {
         "tags": [
@@ -2052,6 +2068,246 @@
     },
     "custom_field": {
       "type": "object"
+    },
+    "bootstrap": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "agent": {
+              "type": "object",
+              "allOf": [
+                {
+                  "$ref": "#/definitions/extension_generic"
+                },
+                {
+                  "properties": {
+                    "active_since": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "available": {
+                      "type": "boolean"
+                    },
+                    "last_active_at": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "occasional": {
+                      "type": "boolean"
+                    },
+                    "points": {
+                      "type": "number"
+                    },
+                    "scoreboard_level_id": {
+                      "type": "number"
+                    },
+                    "signature": {
+                      "type": "string"
+                    },
+                    "signature_html": {
+                      "type": "string"
+                    },
+                    "ticket_permission": {
+                      "type": "number"
+                    },
+                    "user_id": {
+                      "type": "number"
+                    },
+                    "user": {
+                      "type": "object",
+                      "allOf": [
+                        {
+                          "$ref": "#/definitions/extension_generic"
+                        },
+                        {
+                          "properties": {
+                            "active": {
+                              "type": "boolean"
+                            },
+                            "address": {
+                              "type": "string"
+                            },
+                            "customer_id": {
+                              "type": "number"
+                            },
+                            "deleted": {
+                              "type": "boolean"
+                            },
+                            "description": {
+                              "type": "string"
+                            },
+                            "email": {
+                              "type": "string"
+                            },
+                            "external_id": {
+                              "type": "number"
+                            },
+                            "fb_profile_id": {
+                              "type": "number"
+                            },
+                            "helpdesk_agent": {
+                              "type": "boolean"
+                            },
+                            "job_title": {
+                              "type": "string"
+                            },
+                            "language": {
+                              "type": "string"
+                            },
+                            "mobile": {
+                              "type": "string"
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "phone": {
+                              "type": "string"
+                            },
+                            "time_zone": {
+                              "type": "string"
+                            },
+                            "twitter_id": {
+                              "type": "string"
+                            },
+                            "company_id": {
+                              "type": "number"
+                            }
+                          }
+                        }
+                      ]
+                    },
+                    "assumable_agents": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "number"
+                          },
+                          "name": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "next_level": {
+                      "type": "object"
+                    },
+                    "abilities": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "preferences": {
+                      "type": "object",
+                      "properties": {
+                        "shortcuts_enabled": {
+                          "type": "boolean"
+                        },
+                        "shortcuts_mapping": {
+                          "type": "array"
+                        },
+                        "notification_timestamp": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "show_onBoarding": {
+                          "type": "boolean"
+                        }
+                      }
+                    },
+                    "locale": {
+                      "type": "string"
+                    },
+                    "time_zone": {
+                      "type": "string"
+                    },
+                    "avatar": {
+                      "allOf": [
+                        {
+                          "$ref": "#/definitions/attachment"
+                        },
+                        {
+                          "properties": {
+                            "thumb_url": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              ]
+            },
+            "account": {
+              "type": "object",
+              "properties": {
+                "full_domain": {
+                  "type": "string"
+                },
+                "helpdesk_name": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "time_zone": {
+                  "type": "string"
+                },
+                "date_format": {
+                  "type": "object",
+                  "properties": {
+                    "moment_date_with_week": {
+                      "type": "string"
+                    },
+                    "datepicker": {
+                      "type": "string"
+                    },
+                    "datepicker_escaped": {
+                      "type": "string"
+                    },
+                    "datepicker_full_date": {
+                      "type": "string"
+                    },
+                    "mediumDate": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "subscription": {
+                  "type": "object",
+                  "properties": {
+                    "agent_limit": {
+                      "type": "number"
+                    },
+                    "state": {
+                      "type": "string"
+                    },
+                    "addons": {
+                      "type": "array"
+                    },
+                    "subscription_plan": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "meta": {
+          "type": "object",
+          "properties": {
+            "csrf_token": {
+              "type": "string"
+            }
+          }
+        }
+      }
     },
     "bulk_action_error": {
       "type": "object",

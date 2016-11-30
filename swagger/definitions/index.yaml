@@ -4,6 +4,9 @@
   custom_field:
     type: object
 
+  bootstrap:
+    $ref: ./response/bootstrap.yaml
+
   # ERROR
   bulk_action_error:
     $ref: ./error/bulk.yaml
