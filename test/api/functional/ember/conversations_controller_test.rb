@@ -511,12 +511,15 @@ module Ember
     end
 
     def test_ticket_conversations_with_fone_call
+      # while creating freshfone account during tests MixpanelWrapper was throwing error, so stubing that
+      MixpanelWrapper.stubs(:send_to_mixpanel).returns(true)
       ticket = new_ticket_from_call
       remove_wrap_params
       assert ticket.notes.all.map { |n| n.freshfone_call.present? || nil }.compact.present?
       get :ticket_conversations, construct_params({ version: 'private', id: ticket.display_id }, false)
       assert_response 200
       match_json(conversations_pattern(ticket))
+      MixpanelWrapper.unstub(:send_to_mixpanel)
     end
 
     def test_facebook_reply_without_params

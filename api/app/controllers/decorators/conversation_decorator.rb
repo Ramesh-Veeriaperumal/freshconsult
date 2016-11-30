@@ -48,9 +48,11 @@ class ConversationDecorator < ApiDecorator
     call = record.freshfone_call
     return {} unless call.present? && call.recording_url.present? && call.recording_audio
     {
-      id: call.id,
-      duration: call.call_duration,
-      recording: AttachmentDecorator.new(call.recording_audio).to_hash
+      freshfone_call: {
+        id: call.id,
+        duration: call.call_duration,
+        recording: AttachmentDecorator.new(call.recording_audio).to_hash
+      }
     }
   end
 
