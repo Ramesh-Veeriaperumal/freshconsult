@@ -104,8 +104,10 @@ class SendgridDomainUpdates < BaseWorker
           spam_score = 0
         end
       end
-      account.conversion_metric.spam_score = spam_score
-      account.conversion_metric.save
+      unless account.conversion_metric.nil?
+        account.conversion_metric.spam_score = spam_score
+        account.conversion_metric.save
+      end
     end
   end
 
