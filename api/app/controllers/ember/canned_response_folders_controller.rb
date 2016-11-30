@@ -16,7 +16,7 @@ module Ember
     end
 
     def self.decorator_name
-      CannedResponses::FolderDecorator
+      ::CannedResponses::FolderDecorator
     end
 
     private

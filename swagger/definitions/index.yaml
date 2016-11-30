@@ -114,6 +114,7 @@
     items:
       allOf:
         - $ref: ./resource/extension/ticket/list.yaml
+        - $ref: ./resource/extension/ticket/stats.yaml
         - $ref: ./resource/extension/ticket.yaml
   ticket_show:
     allOf:
