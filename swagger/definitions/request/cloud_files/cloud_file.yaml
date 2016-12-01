@@ -1,0 +1,8 @@
+type: object
+properties:
+  filename:
+    type: string
+  url:
+    type: string
+  application_id:
+    type: number

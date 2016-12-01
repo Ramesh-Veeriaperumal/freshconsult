@@ -18,4 +18,10 @@ module AttachmentsTestHelper
                                 :attachable_type => params[:attachable_type],
                                 :attachable_id => params[:attachable_id])
   end
+
+  def create_shared_attachment(item, params = {})
+    item.shared_attachments.build.build_attachment(content: params[:content] || fixture_file_upload('/files/attachment.txt', 'text/plain', :binary),
+                                                   account_id: @account.id)
+    item.save
+  end
 end

@@ -20,3 +20,7 @@ allOf:
         type: array
         items:
           type: string
+      cloud_files:
+        type: array
+        items:
+          $ref: '#/definitions/cloud_file_input'

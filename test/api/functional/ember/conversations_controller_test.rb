@@ -1,4 +1,5 @@
 require_relative '../../test_helper'
+['canned_responses_helper.rb', 'group_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
 require "#{Rails.root}/spec/support/social_tickets_creation_helper.rb"
 require "#{Rails.root}/spec/support/twitter_helper.rb"
 require "#{Rails.root}/spec/support/dynamo_helper.rb"
@@ -6,6 +7,8 @@ module Ember
   class ConversationsControllerTest < ActionController::TestCase
     include ConversationsTestHelper
     include AttachmentsTestHelper
+    include GroupHelper
+    include CannedResponsesHelper
     include TicketsTestHelper
     include SocialTestHelper
     include SocialTicketsCreationHelper
@@ -119,6 +122,33 @@ module Ember
       assert Helpdesk::Note.last.attachments.size == (attachments.size + 1)
     end
 
+    def test_create_with_cloud_files_upload
+      cloud_file_params = [{ filename: "image.jpg", url: "https://www.dropbox.com/image.jpg", application_id: 20 },
+                           { filename: "image.jpg", url: "https://www.dropbox.com/image.jpg", application_id: 20 }]
+      params = create_note_params_hash.merge(cloud_files: cloud_file_params)
+      post :create, construct_params({version: 'private', id: ticket.display_id }, params)
+      assert_response 201
+      latest_note = Helpdesk::Note.last
+      match_json(note_pattern(params, latest_note))
+      match_json(note_pattern({}, latest_note))
+      assert latest_note.cloud_files.count == 2
+    end
+
+    def test_create_with_shared_attachments
+      canned_response = create_response(
+          title: Faker::Lorem.sentence,
+          content_html: Faker::Lorem.paragraph,
+          visibility: Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents],
+          attachments: { resource: fixture_file_upload('files/attachment.txt', 'text/plain', :binary) })
+      params = create_note_params_hash.merge(attachment_ids: canned_response.shared_attachments.map(&:attachment_id))
+      post :create, construct_params({version: 'private', id: create_ticket.display_id }, params)
+      assert_response 201
+      latest_note = Helpdesk::Note.last
+      match_json(note_pattern(params, latest_note))
+      match_json(note_pattern({}, latest_note))
+      assert latest_note.attachments.count == 1
+    end
+
     def test_reply_with_invalid_attachment_ids
       attachment_ids = []
       attachment_ids << create_attachment(attachable_type: 'UserDraft', attachable_id: @agent.id).id
@@ -166,6 +196,33 @@ module Ember
       match_json(note_pattern(params_hash, Helpdesk::Note.last))
       match_json(note_pattern({}, Helpdesk::Note.last))
       assert Helpdesk::Note.last.attachments.size == (attachments.size + 1)
+    end
+
+    def test_reply_with_cloud_files_upload
+      cloud_file_params = [{ filename: "image.jpg", url: "https://www.dropbox.com/image.jpg", application_id: 20 },
+                           { filename: "image.jpg", url: "https://www.dropbox.com/image.jpg", application_id: 20 }]
+      params = reply_note_params_hash.merge(cloud_files: cloud_file_params)
+      post :reply, construct_params({version: 'private', id: ticket.display_id }, params)
+      assert_response 201
+      latest_note = Helpdesk::Note.last
+      match_json(note_pattern(params, latest_note))
+      match_json(note_pattern({}, latest_note))
+      assert latest_note.cloud_files.count == 2
+    end
+
+    def test_reply_with_shared_attachments
+      canned_response = create_response(
+          title: Faker::Lorem.sentence,
+          content_html: Faker::Lorem.paragraph,
+          visibility: Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents],
+          attachments: { resource: fixture_file_upload('files/attachment.txt', 'text/plain', :binary) })
+      params = reply_note_params_hash.merge(attachment_ids: canned_response.shared_attachments.map(&:attachment_id))
+      post :reply, construct_params({version: 'private', id: create_ticket.display_id }, params)
+      assert_response 201
+      latest_note = Helpdesk::Note.last
+      match_json(note_pattern(params, latest_note))
+      match_json(note_pattern({}, latest_note))
+      assert latest_note.attachments.count == 1
     end
 
     def test_forward_with_invalid_cc_emails_count
@@ -423,8 +480,7 @@ module Ember
     end
 
     def test_forward_with_ticket_attachment_ids
-      t = create_ticket(attachments: { resource: fixture_file_upload('files/attachment.txt', 'text/plain', :binary),
-                                       resource: fixture_file_upload('files/image33kb.jpg', 'image/jpg') })
+      t = create_ticket(attachments: { resource: fixture_file_upload('files/attachment.txt', 'text/plain', :binary) })
       params = forward_note_params_hash.merge(include_original_attachments: false, attachment_ids: [t.attachments.first.id])
       post :forward, construct_params({version: 'private', id: t.display_id }, params)
       assert_response 201
@@ -434,14 +490,17 @@ module Ember
       assert latest_note.attachments.count == 1
     end
 
-    def test_forward_with_original_attachments_and_invalid_attachment_ids
-      t = create_ticket(attachments: { resource: fixture_file_upload('files/attachment.txt', 'text/plain', :binary),
-                                       resource: fixture_file_upload('files/image33kb.jpg', 'image/jpg') })
-      invalid_ids = t.attachments.map(&:id)
-      params = forward_note_params_hash.merge(include_original_attachments: true, attachment_ids: invalid_ids)
+    def test_forward_dup_removal_of_attachments
+      t = create_ticket(attachments: { resource: fixture_file_upload('files/attachment.txt', 'text/plain', :binary) })
+      create_shared_attachment(t)
+      attachment_ids = t.all_attachments.map(&:id)
+      params = forward_note_params_hash.merge(include_original_attachments: true, attachment_ids: attachment_ids)
       post :forward, construct_params({version: 'private', id: t.display_id }, params)
-      assert_response 400
-      match_json([bad_request_error_pattern(:attachment_ids, :invalid_list, list: invalid_ids.join(', '))])
+      assert_response 201
+      latest_note = Helpdesk::Note.last
+      match_json(note_pattern(params, latest_note))
+      match_json(note_pattern({}, latest_note))
+      assert latest_note.attachments.count == 2
     end
 
     def test_forward_with_attachment_and_draft_attachment_ids
@@ -497,6 +556,7 @@ module Ember
       new_attachments = [file1, file2]
       t = create_ticket({ attachments: { resource: fixture_file_upload('files/attachment.txt', 'text/plain', :binary) },
                           cloud_files:  [Helpdesk::CloudFile.new({ filename: "image.jpg", url: "https://www.dropbox.com/image.jpg", application_id: 20 })] })
+      create_shared_attachment(t)
       params = forward_note_params_hash.merge(include_original_attachments: true, 
                 attachments: new_attachments, attachment_ids: [draft_attachment_id])
       DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
@@ -506,8 +566,58 @@ module Ember
       latest_note = Helpdesk::Note.last
       match_json(note_pattern(params, latest_note))
       match_json(note_pattern({}, latest_note))
-      assert latest_note.attachments.count == 4
+      assert latest_note.attachments.count == 5
       assert latest_note.cloud_files.count == 1
+    end
+
+    def test_forward_with_cloud_files_upload
+      t = create_ticket
+      cloud_file_params = [{ filename: "image.jpg", url: "https://www.dropbox.com/image.jpg", application_id: 20 },
+                           { filename: "image.jpg", url: "https://www.dropbox.com/image.jpg", application_id: 20 }]
+      params = forward_note_params_hash.merge(cloud_files: cloud_file_params)
+      post :forward, construct_params({version: 'private', id: t.display_id }, params)
+      assert_response 201
+      latest_note = Helpdesk::Note.last
+      match_json(note_pattern(params, latest_note))
+      match_json(note_pattern({}, latest_note))
+      assert latest_note.cloud_files.count == 2
+    end
+
+    def test_forward_with_invalid_cloud_files
+      t = create_ticket
+      cloud_file_params = [{ filename: "image.jpg", url: "https://www.dropbox.com/image.jpg", application_id: 10000 }]
+      params = forward_note_params_hash.merge(cloud_files: cloud_file_params)
+      post :forward, construct_params({version: 'private', id: t.display_id }, params)
+      assert_response 400
+      match_json([bad_request_error_pattern(:application_id, :invalid_list, list: '10000')])
+    end
+
+    def test_forward_with_existing_and_new_cloud_files
+      t = create_ticket({ cloud_files:  [Helpdesk::CloudFile.new({ filename: "image.jpg", url: "https://www.dropbox.com/image.jpg", application_id: 20 }),
+                                         Helpdesk::CloudFile.new({ filename: "image.jpg", url: "https://www.dropbox.com/image.jpg", application_id: 20 })] })
+      cloud_file_params = [{ filename: "image.jpg", url: "https://www.dropbox.com/image.jpg", application_id: 20 }]
+      params = forward_note_params_hash.merge(cloud_files: cloud_file_params)
+      post :forward, construct_params({version: 'private', id: t.display_id }, params)
+      assert_response 201
+      latest_note = Helpdesk::Note.last
+      match_json(note_pattern(params, latest_note))
+      match_json(note_pattern({}, latest_note))
+      assert latest_note.cloud_files.count == 3
+    end
+
+    def test_forward_with_shared_attachments
+      canned_response = create_response(
+          title: Faker::Lorem.sentence,
+          content_html: Faker::Lorem.paragraph,
+          visibility: Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents],
+          attachments: { resource: fixture_file_upload('files/attachment.txt', 'text/plain', :binary) })
+      params = forward_note_params_hash.merge(attachment_ids: canned_response.shared_attachments.map(&:attachment_id))
+      post :forward, construct_params({version: 'private', id: create_ticket.display_id }, params)
+      assert_response 201
+      latest_note = Helpdesk::Note.last
+      match_json(note_pattern(params, latest_note))
+      match_json(note_pattern({}, latest_note))
+      assert latest_note.attachments.count == 1
     end
 
     def test_ticket_conversations_with_fone_call

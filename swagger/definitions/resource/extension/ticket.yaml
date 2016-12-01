@@ -26,3 +26,7 @@ allOf:
         type: boolean
       description_text:
         type: string
+      cloud_files:
+        type: array
+        items:
+          $ref: '#/definitions/extended_cloud_file'

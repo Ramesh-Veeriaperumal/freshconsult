@@ -1,17 +1,13 @@
 class ConversationDecorator < ApiDecorator
   attr_accessor :ticket
 
-  delegate :body, :body_html, :id, :incoming, :private, :user_id, :support_email, :source, :attachments, :schema_less_note, :fb_post, to: :record
+  delegate :body, :body_html, :id, :incoming, :private, :user_id, :support_email, :source, :attachments, :cloud_files, :schema_less_note, :fb_post, to: :record
 
   delegate :to_emails, :from_email, :cc_emails, :bcc_emails, to: :schema_less_note, allow_nil: true
 
   def initialize(record, options)
     super(record)
     @ticket = options[:ticket]
-  end
-
-  def attachments_hash
-    attachments.map { |a| AttachmentDecorator.new(a).to_hash }
   end
 
   def construct_json
@@ -31,7 +27,8 @@ class ConversationDecorator < ApiDecorator
       bcc_emails: bcc_emails,
       created_at: created_at.try(:utc),
       updated_at: updated_at.try(:utc),
-      attachments: attachments_hash
+      attachments: attachments_hash,
+      cloud_files: cloud_files_hash
     }
   end
 
@@ -62,5 +59,12 @@ class ConversationDecorator < ApiDecorator
       tweet: record.tweet.attributes.slice('tweet_id', 'tweet_type', 'twitter_handle_id')
     }
   end
-    
+
+  def attachments_hash
+    attachments.map { |a| AttachmentDecorator.new(a).to_hash }
+  end
+
+  def cloud_files_hash
+    cloud_files.map { |cf| CloudFileDecorator.new(cf).to_hash }
+  end
 end

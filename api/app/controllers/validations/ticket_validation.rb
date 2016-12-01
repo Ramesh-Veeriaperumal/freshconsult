@@ -6,7 +6,7 @@ class TicketValidation < ApiValidation
   attr_accessor :id, :cc_emails, :description, :due_by, :email_config_id, :fr_due_by, :group, :priority, :email,
                 :phone, :twitter_id, :facebook_id, :requester_id, :name, :agent, :source, :status, :subject, :ticket_type,
                 :product, :tags, :custom_fields, :attachments, :request_params, :item, :statuses, :status_ids, :ticket_fields, :scenario_id,
-                :primary_id, :ticket_ids, :note_in_primary, :note_in_secondary, :convert_recepients_to_cc
+                :primary_id, :ticket_ids, :note_in_primary, :note_in_secondary, :convert_recepients_to_cc, :cloud_files
 
   alias_attribute :type, :ticket_type
   alias_attribute :product_id, :product
@@ -110,6 +110,11 @@ class TicketValidation < ApiValidation
   validates :convert_recepients_to_cc, custom_inclusion: { in: [true, false] }, on: :merge
   validates :note_in_primary, data_type: { rules: Hash }, hash: { validatable_fields_hash: proc { |x| x.merge_note_fields_validation } }, required: true, on: :merge
   validates :note_in_secondary, data_type: { rules: Hash }, hash: { validatable_fields_hash: proc { |x| x.merge_note_fields_validation } }, required: true, on: :merge
+
+  validates :cloud_files, data_type: { rules: Array, allow_nil: false }
+  validates :cloud_files, array: { data_type: { rules: Hash, allow_nil: false } }
+
+  validate :validate_cloud_files, if: -> { cloud_files.present? && errors[:cloud_files].blank? }
 
   def initialize(request_params, item, allow_string_param = false)
     @request_params = request_params
@@ -230,6 +235,15 @@ class TicketValidation < ApiValidation
       body: { data_type: { rules: String }, required: true },
       private: { custom_inclusion: { in: [true, false] }, required: true }
     }
+  end
+
+  def validate_cloud_files
+    cloud_file_hash_errors = []
+    cloud_files.each_with_index do |cloud_file, index|
+      cloud_file_validator = CloudFileValidation.new(cloud_file, nil)
+      cloud_file_hash_errors << cloud_file_validator.errors.full_messages unless cloud_file_validator.valid?
+    end
+    errors[:cloud_files] << :"is invalid" if cloud_file_hash_errors.present?
   end
 
 end

@@ -1,9 +1,12 @@
 require_relative '../../test_helper'
+['canned_responses_helper.rb', 'group_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
 module Ember
   class TicketsControllerTest < ActionController::TestCase
     include TicketsTestHelper
     include ScenarioAutomationsTestHelper
     include AttachmentsTestHelper
+    include GroupHelper
+    include CannedResponsesHelper
     include CannedResponsesTestHelper
 
     CUSTOM_FIELDS = %w(number checkbox decimal text paragraph dropdown country state city date)
@@ -130,8 +133,8 @@ module Ember
       params_hash = ticket_params_hash.merge({attachment_ids: attachment_ids})
       post :create, construct_params({version: 'private'}, params_hash)
       assert_response 201
-      match_json(ticket_pattern(params_hash, Helpdesk::Ticket.last))
-      match_json(ticket_pattern({}, Helpdesk::Ticket.last))
+      match_json(create_ticket_pattern(params_hash, Helpdesk::Ticket.last))
+      match_json(create_ticket_pattern({}, Helpdesk::Ticket.last))
       assert Helpdesk::Ticket.last.attachments.size == attachment_ids.size
     end
 
@@ -146,11 +149,71 @@ module Ember
       post :create, construct_params({version: 'private'}, params_hash)
       DataTypeValidator.any_instance.unstub(:valid_type?)
       assert_response 201
-      match_json(ticket_pattern(params_hash, Helpdesk::Ticket.last))
-      match_json(ticket_pattern({}, Helpdesk::Ticket.last))
+      match_json(create_ticket_pattern(params_hash, Helpdesk::Ticket.last))
+      match_json(create_ticket_pattern({}, Helpdesk::Ticket.last))
       assert Helpdesk::Ticket.last.attachments.size == (attachments.size + 1)
     end
 
+    def test_create_with_invalid_cloud_files
+      cloud_file_params = [{ filename: "image.jpg", url: "https://www.dropbox.com/image.jpg", application_id: 10000 }]
+      params = ticket_params_hash.merge(cloud_files: cloud_file_params)
+      post :create, construct_params({ version: 'private' }, params)
+      assert_response 400
+      match_json([bad_request_error_pattern(:application_id, :invalid_list, list: '10000')])
+    end
+
+    def test_create_with_cloud_files
+      cloud_file_params = [{ filename: "image.jpg", url: "https://www.dropbox.com/image.jpg", application_id: 20 },
+                           { filename: "image.jpg", url: "https://www.dropbox.com/image.jpg", application_id: 20 }]
+      params_hash = ticket_params_hash.merge({cloud_files: cloud_file_params})
+      post :create, construct_params({version: 'private'}, params_hash)
+      assert_response 201
+      match_json(create_ticket_pattern(params_hash, Helpdesk::Ticket.last))
+      match_json(create_ticket_pattern({}, Helpdesk::Ticket.last))
+      assert Helpdesk::Ticket.last.cloud_files.count == 2
+    end
+
+    def test_create_with_shared_attachments
+      canned_response = create_response(
+          title: Faker::Lorem.sentence,
+          content_html: Faker::Lorem.paragraph,
+          visibility: Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents],
+          attachments: { resource: fixture_file_upload('files/attachment.txt', 'text/plain', :binary) })
+      params_hash = ticket_params_hash.merge({attachment_ids: canned_response.shared_attachments.map(&:attachment_id)})
+      post :create, construct_params({version: 'private'}, params_hash)
+      assert_response 201
+      match_json(create_ticket_pattern(params_hash, Helpdesk::Ticket.last))
+      match_json(create_ticket_pattern({}, Helpdesk::Ticket.last))
+      assert Helpdesk::Ticket.last.attachments.count == 1
+    end
+
+    def test_create_with_all_attachments
+      #normal attachment
+      file = fixture_file_upload('/files/attachment.txt', 'text/plain', :binary)
+      # cloud file
+      cloud_file_params = [{ filename: "image.jpg", url: "https://www.dropbox.com/image.jpg", application_id: 20 }]
+      # shared attachment
+      canned_response = create_response(
+          title: Faker::Lorem.sentence,
+          content_html: Faker::Lorem.paragraph,
+          visibility: Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents],
+          attachments: { resource: fixture_file_upload('files/attachment.txt', 'text/plain', :binary) })
+      # draft attachment
+      draft_attachment = create_attachment(attachable_type: 'UserDraft', attachable_id: @agent.id)
+
+      attachment_ids = canned_response.shared_attachments.map(&:attachment_id) | [draft_attachment.id]
+      params_hash = ticket_params_hash.merge({attachment_ids: attachment_ids, attachments: [file], cloud_files: cloud_file_params})
+      DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
+      @request.env['CONTENT_TYPE'] = 'multipart/form-data' 
+      post :create, construct_params({version: 'private'}, params_hash)
+      DataTypeValidator.any_instance.unstub(:valid_type?)
+      assert_response 201
+      match_json(create_ticket_pattern(params_hash, Helpdesk::Ticket.last))
+      match_json(create_ticket_pattern({}, Helpdesk::Ticket.last))
+      assert Helpdesk::Ticket.last.attachments.count == 3
+      assert Helpdesk::Ticket.last.cloud_files.count == 1
+    end
+    
     def test_execute_scenario_without_params
       scenario_id = create_scn_automation_rule(scenario_automation_params).id
       ticket_id = create_ticket(ticket_params_hash).display_id

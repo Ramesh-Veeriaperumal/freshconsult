@@ -16,7 +16,9 @@ module CannedResponsesHelper
     if params[:attachments]
       test_response.shared_attachments.build.build_attachment(:content => params[:attachments][:resource],
                                                               :description => params[:attachments][:description],
-                                                              :account_id => test_response.account_id)
+                                                              :account_id => test_response.account_id,
+                                                              :attachable_type => 'Account',
+                                                              :attachable_id => test_response.account_id)
     end
     test_response.save(:validate => false)
     create_helpdesk_accessible(test_response,response_hash[:visibility])

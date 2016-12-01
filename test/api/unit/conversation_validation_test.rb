@@ -126,4 +126,18 @@ class ConversationValidationTest < ActionView::TestCase
     assert errors.include?('Attachments datatype_mismatch')
     Account.unstub(:current)
   end
+
+  def test_validate_cloud_files
+    controller_params = { 'body' => Faker::Lorem.paragraph, 'cloud_files' => Faker::Lorem.word }
+    conversation = ConversationValidation.new(controller_params, nil)
+    refute conversation.valid?(:reply)
+    errors = conversation.errors.full_messages
+    assert errors.include?('Cloud files datatype_mismatch')
+
+    controller_params = { 'body' => Faker::Lorem.paragraph, 'cloud_files' => [{'filename' => Faker::Lorem.word}] }
+    conversation = ConversationValidation.new(controller_params, nil)
+    refute conversation.valid?(:reply)
+    errors = conversation.errors.full_messages
+    assert errors.include?('Cloud files is invalid')
+  end
 end

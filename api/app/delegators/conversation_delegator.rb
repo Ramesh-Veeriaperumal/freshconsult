@@ -8,10 +8,12 @@ class ConversationDelegator < BaseDelegator
 
   validate :validate_agent_id, if: -> { fwd_email? && user_id.present? && attr_changed?('user_id')}
 
-  validate :validate_cloud_files, if: -> { @cloud_file_ids }
+  validate :validate_cloud_file_ids, if: -> { @cloud_file_ids }
+
+  validate :validate_application_id, if: -> { cloud_files.present? }
 
   def initialize(record, options = {})
-    options[:attachment_ids] = skip_parent_attachments(options) if options[:attachment_ids]
+    options[:attachment_ids] = skip_existing_attachments(options) if options[:attachment_ids]
     super(record, options)
     @cloud_file_ids = options[:cloud_file_ids]
     retrieve_cloud_files if @cloud_file_ids
@@ -39,7 +41,7 @@ class ConversationDelegator < BaseDelegator
     errors[:agent_id] << :"is invalid" unless user
   end
 
-  def validate_cloud_files
+  def validate_cloud_file_ids
     invalid_file_ids = @cloud_file_ids - @cloud_file_attachments.map(&:id)
     if invalid_file_ids.any?
       errors[:cloud_file_ids] << :invalid_list
@@ -47,11 +49,21 @@ class ConversationDelegator < BaseDelegator
     end
   end
 
+  def validate_application_id
+    application_ids = cloud_files.map(&:application_id)
+    applications = Integrations::Application.where('id IN (?)', application_ids)
+    invalid_ids = application_ids - applications.map(&:id)
+    if invalid_ids.any?
+      errors[:application_id] << :invalid_list
+      (self.error_options ||= {}).merge!({ application_id: { list: "#{invalid_ids.join(', ')}" } })
+    end
+  end
+
   private
 
-    def skip_parent_attachments(options)
-      return options[:attachment_ids] if options[:include_original_attachments]
-      options[:attachment_ids] - (options[:parent_attachments] || []).map(&:id)
+    # skip parent and shared attachments
+    def skip_existing_attachments(options)
+      options[:attachment_ids] - (options[:parent_attachments] || []).map(&:id) - (options[:shared_attachments] || []).map(&:id)
     end
 
     def retrieve_cloud_files

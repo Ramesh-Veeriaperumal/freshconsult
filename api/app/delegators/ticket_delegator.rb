@@ -27,9 +27,12 @@ class TicketDelegator < BaseDelegator
                             }, if: :property_update?
   validate :facebook_id_exists?, if: -> { !property_update? && facebook_id }
 
+  validate :validate_application_id, if: -> { cloud_files.present? }
+
   def initialize(record, options)
     @ticket_fields = options[:ticket_fields]
     check_params_set(options[:custom_fields]) if options[:custom_fields].is_a?(Hash)
+    options[:attachment_ids] = skip_existing_attachments(options) if options[:attachment_ids]
     super(record, options)
   end
 
@@ -85,7 +88,24 @@ class TicketDelegator < BaseDelegator
     end
   end
 
+  def validate_application_id
+    application_ids = cloud_files.map(&:application_id)
+    applications = Integrations::Application.where('id IN (?)', application_ids)
+    invalid_ids = application_ids - applications.map(&:id)
+    if invalid_ids.any?
+      errors[:application_id] << :invalid_list
+      (self.error_options ||= {}).merge!({ application_id: { list: "#{invalid_ids.join(', ')}" } })
+    end
+  end
+
   def property_update?
     [:update_properties].include?(validation_context)
   end
+
+  private
+
+    # skip shared attachments
+    def skip_existing_attachments(options)
+      options[:attachment_ids] - (options[:shared_attachments] || []).map(&:id)
+    end
 end

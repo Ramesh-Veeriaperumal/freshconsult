@@ -2,6 +2,8 @@ module AttachmentConstants
   # Controller constants
   CREATE_FIELDS = %w(user_id content).freeze
 
+  CLOUD_FILE_FIELDS = [cloud_files: [:url, :filename, :application_id]].freeze
+
   STANDALONE_ATTACHMENT_TYPE = 'UserDraft'.freeze
 
   # Wrap parameters args

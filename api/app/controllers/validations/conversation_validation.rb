@@ -3,7 +3,7 @@ class ConversationValidation < ApiValidation
 
   attr_accessor :body, :private, :user_id, :agent_id, :incoming, :notify_emails,
                 :attachments, :to_emails, :cc_emails, :bcc_emails, :item, :from_email,
-                :include_quoted_text, :include_original_attachments, :cloud_file_ids
+                :include_quoted_text, :include_original_attachments, :cloud_file_ids, :cloud_files
 
   validates :body, data_type: { rules: String, required: true }, if: -> { !forward? }
   validates :body, data_type: { rules: String }, on: :forward
@@ -21,9 +21,13 @@ class ConversationValidation < ApiValidation
     max: ApiConstants::ALLOWED_ATTACHMENT_SIZE,
     base_size: proc { |x| TicketsValidationHelper.attachment_size(x.item) }
   }
+  validates :cloud_files, data_type: { rules: Array, allow_nil: false }
+  validates :cloud_files, array: { data_type: { rules: Hash, allow_nil: false } }
   # TODO-EMBER : message to be altered
   validates :cloud_file_ids, custom_absence: { message: :included_original_attachments }, if: -> { include_original_attachments.to_s == 'true' }, on: :forward
   validates :cloud_file_ids, data_type: { rules: Array, allow_nil: false }, array: { custom_numericality: { only_integer: true, greater_than: 0, allow_nil: false, ignore_string: :allow_string_param } }
+
+  validate :validate_cloud_files, if: -> { cloud_files.present? && errors[:cloud_files].blank? }
 
   def initialize(request_params, item, allow_string_param = false)
     super(request_params, item, allow_string_param)
@@ -39,4 +43,12 @@ class ConversationValidation < ApiValidation
     [:forward].include?(validation_context)
   end
 
+  def validate_cloud_files
+    cloud_file_hash_errors = []
+    cloud_files.each_with_index do |cloud_file, index|
+      cloud_file_validator = CloudFileValidation.new(cloud_file, nil)
+      cloud_file_hash_errors << cloud_file_validator.errors.full_messages unless cloud_file_validator.valid?
+    end
+    errors[:cloud_files] << :"is invalid" if cloud_file_hash_errors.present?
+  end
 end

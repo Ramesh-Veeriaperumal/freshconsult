@@ -54,6 +54,8 @@
     $ref: ./request/drafts/draft.yaml
   execute_scenario_input:
     $ref: ./request/tickets/execute_scenario.yaml
+  cloud_file_input:
+    $ref: ./request/cloud_files/cloud_file.yaml
 
 
   # RESOURCE
@@ -111,6 +113,11 @@
     allOf:
       - $ref: '#/definitions/canned_response_folder'
       - $ref: ./resource/extension/canned_response_folder.yaml
+  extended_cloud_file:
+    allOf:
+      - $ref: '#/definitions/extension_generic'
+      - $ref: '#/definitions/cloud_file_input'
+      
   ticket_index:
     type: array
     items:

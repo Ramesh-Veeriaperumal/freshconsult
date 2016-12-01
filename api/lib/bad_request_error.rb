@@ -28,6 +28,8 @@ class BadRequestError < BaseError
     category_name: :category,
     folder_name: :folder,
     ticket_id: :ticket,
+    responder_phone: :agent,
+    application_id: :application,
     from_email: :"active email_config",
     note_id: :note
   }

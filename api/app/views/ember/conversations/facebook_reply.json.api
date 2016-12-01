@@ -1,1 +1,1 @@
-JSON.generate(@item.construct_json)
+JSON.generate(@item.to_hash)

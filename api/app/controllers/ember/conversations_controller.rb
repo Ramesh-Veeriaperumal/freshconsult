@@ -5,6 +5,7 @@ module Ember
     include Facebook::TicketActions::Util
     include Conversations::Twitter
     include HelperConcern
+    include AttachmentConcern
     decorate_views(
       decorate_objects: [:ticket_conversations], 
       decorate_object: [:create, :update, :reply, :forward, :facebook_reply, :tweet]
@@ -28,55 +29,27 @@ module Ember
 
     def create
       assign_note_attributes
-      conversation_delegator = ConversationDelegator.new(@item, attachment_ids: @attachment_ids)
-      if conversation_delegator.valid?
-        assign_conversation_attributes(conversation_delegator)
-        is_success = @item.save_note
-        render_response(is_success)
-      else
-        render_custom_errors(conversation_delegator, true)
-      end
+      delegator_hash = { attachment_ids: @attachment_ids, shared_attachments: shared_attachments }
+      return unless validate_delegator(@item, delegator_hash)
+      is_success = create_note
+      render_response(is_success)
     end
 
     def reply
       return unless validate_params
-      sanitize_params
-      build_object
-      kbase_email_included? params[cname] # kbase_email_included? present in Email module
-      assign_note_attributes
-      conversation_delegator = ConversationDelegator.new(@item, attachment_ids: @attachment_ids)
-      if conversation_delegator.valid?
-        assign_conversation_attributes(conversation_delegator)
-        is_success = @item.save_note
-        # publish solution is being set in kbase_email_included based on privilege and email params
-        if is_success
-          create_solution_article if @publish_solution
-          @ticket.draft.clear
-        end
-        render_response(is_success)
-      else
-        render_custom_errors(conversation_delegator, true)
-      end
+      sanitize_and_build
+      delegator_hash = { attachment_ids: @attachment_ids, shared_attachments: shared_attachments }
+      return unless validate_delegator(@item, delegator_hash)
+      save_note_and_respond
     end
 
     def forward
       return unless validate_params
-      sanitize_params
-      build_object
-      kbase_email_included? params[cname] # kbase_email_included? present in Email module
-      assign_note_attributes
-      delegator_hash = { attachment_ids: @attachment_ids, cloud_file_ids: @cloud_file_ids,
-                         parent_attachments: parent_attachments, include_original_attachments: @include_original_attachments }
-      conversation_delegator = ConversationDelegator.new(@item, delegator_hash)
-      if conversation_delegator.valid?
-        assign_conversation_attributes(conversation_delegator)
-        is_success = @item.save_note
-        # publish solution is being set in kbase_email_included based on privilege and email params
-        create_solution_article if is_success && @publish_solution
-        render_response(is_success)
-      else
-        render_custom_errors(conversation_delegator, true)
-      end
+      sanitize_and_build
+      delegator_hash = { parent_attachments: parent_attachments, shared_attachments: shared_attachments,
+                         attachment_ids: @attachment_ids, cloud_file_ids: @cloud_file_ids }
+      return unless validate_delegator(@item, delegator_hash)
+      save_note_and_respond
     end
 
     def facebook_reply
@@ -111,6 +84,23 @@ module Ember
 
     private
 
+      def save_note_and_respond
+        is_success = create_note
+        # publish solution is being set in kbase_email_included based on privilege and email params
+        if is_success
+          create_solution_article if @publish_solution
+          @ticket.draft.clear if reply?
+        end
+        render_response(is_success)
+      end
+
+      def sanitize_and_build
+        sanitize_params
+        build_object
+        kbase_email_included? params[cname] # kbase_email_included? present in Email module
+        assign_note_attributes
+      end
+
       def reply_to_fb_ticket(note)
         return unless @item.save_note
         fb_page     = @ticket.fb_post.facebook_page
@@ -136,75 +126,93 @@ module Ember
         @item.notable.account = current_account
         load_normal_attachments if forward?
         build_normal_attachments(@item, params[cname][:attachments])
+        build_shared_attachments(@item, shared_attachments)
+        build_cloud_files(@item, @cloud_files)
         @item.attachments = @item.attachments # assign attachments so that it will not be queried again in model callbacks
         @item.inline_attachments = @item.inline_attachments
       end
 
       def sanitize_params
-        super
-        # following fields must be handled separately, should not be passed to build_object method
-        assign_and_remove_params([:note_id, :attachment_ids, :cloud_file_ids, :include_quoted_text, :include_original_attachments, :tweet_type, :twitter_handle_id])
-
-        @attachment_ids = @attachment_ids.map(&:to_i) if @attachment_ids
-        @cloud_file_ids = @cloud_file_ids.map(&:to_i) if @cloud_file_ids
-        @note_id        = @note_id.to_i if @note_id # TODO-EMBER: To be added to constants during conflict resolution after committing conv_file_support
-        @include_quoted_text = @include_quoted_text.to_bool if @include_quoted_text && @include_quoted_text.is_a?(String)
-        @include_original_attachments = @include_original_attachments.to_bool if @include_original_attachments && @include_original_attachments.is_a?(String)
+        sanitize_body_params
+        # set source only for create/reply/forward action not for update action. Hence TYPE_FOR_ACTION is checked.
+        params[cname][:source] = ConversationConstants::TYPE_FOR_ACTION[action_name] if ConversationConstants::TYPE_FOR_ACTION.keys.include?(action_name)
+        # only note can have choices for private field. others will be set to false always.
+        params[cname][:private] = false unless params[cname][:source] == Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note']
+        # Set ticket id from already assigned ticket only for create/reply/forward action not for update action.
+        params[cname][:notable_id] = @ticket.id if @ticket
+        params[cname][:attachments] = params[cname][:attachments].map { |att| { resource: att } } if params[cname][:attachments]
+        modify_and_remove_params
+        process_saved_params
       end
 
-      def assign_and_remove_params(fields)
-        fields.each do |field|
-          instance_variable_set("@#{field}", params[cname].delete(field)) if params[cname].key?(field)
+      def modify_and_remove_params
+        ParamsHelper.assign_and_clean_params(ConversationConstants::PARAMS_MAPPINGS, params[cname])
+        ParamsHelper.save_and_remove_params(self, ConversationConstants::PARAMS_TO_SAVE_AND_REMOVE, params[cname])
+        params[cname][:note_body_attributes] = { body_html: params[cname][:body] } if params[cname][:body]
+        ParamsHelper.clean_params(ConversationConstants::PARAMS_TO_REMOVE, params[cname])
+      end
+
+      def process_saved_params
+        # following fields must be handled separately, should not be passed to build_object method
+        @attachment_ids = @attachment_ids.map(&:to_i) if @attachment_ids
+        @cloud_file_ids = @cloud_file_ids.map(&:to_i) if @cloud_file_ids
+        @note_id        = @note_id.to_i if @note_id
+        @include_quoted_text = @include_quoted_text.to_bool if @include_quoted_text.try(:is_a?, String)
+        @include_original_attachments = @include_original_attachments.to_bool if @include_original_attachments.try(:is_a?, String)
+      end
+
+      def create_note
+        # assign attributes post delegator validation
+        @item.email_config_id = @delegator.email_config_id
+        @item.attachments = @item.attachments + @delegator.draft_attachments if @delegator.draft_attachments
+        if forward?
+          @item.from_email ||= current_account.primary_email_config.reply_email
+          @item.note_body.full_text_html = (@item.note_body.body_html || '')
+          @item.note_body.full_text_html = @item.note_body.full_text_html + bind_last_conv(@ticket, signature, true) if @include_quoted_text
+          load_cloud_files
         end
+        @item.save_note
       end
 
       def load_normal_attachments
         attachments_array = params[cname][:attachments] || []
         (parent_attachments || []).each do |attach|
-          url = attach.authenticated_s3_get_url
-          io  = open(url)
-          if io
-            def io.original_filename
-              base_uri.path.split('/').last.gsub('%20', ' ')
-            end
-          end
-          attachments_array.push(resource: io)
+          attachments_array.push(resource: attach.to_io)
         end
         params[cname][:attachments] = attachments_array
       end
 
-      def build_cloud_files(delegator_item)
-        (parent_cloud_files(delegator_item) || []).each do |cloud_file|
-          @item.cloud_files.build(url: cloud_file.url, filename: cloud_file.filename, application_id: cloud_file.application_id)
-        end
+      def load_cloud_files
+        build_cloud_files(@item, parent_cloud_files || [])
       end
 
       def parent_attachments
+        # query direct and shared attachments of associated ticket
         @parent_attachments ||= begin
           if @include_original_attachments
-            @ticket.attachments
+            @ticket.all_attachments
           elsif @attachment_ids
-            @ticket.attachments.where(id: @attachment_ids)
+            @ticket.all_attachments.select { |x| @attachment_ids.include?(x.id) }
           end
         end
       end
 
-      def parent_cloud_files(delegator_item)
-        if @include_original_attachments
-          @ticket.cloud_files
-        elsif @cloud_file_ids
-          delegator_item.cloud_file_attachments
+      def shared_attachments
+        # shared attachments explicitly included in the note
+        @shared_attachments ||= begin
+          attachments_to_exclude = forward? ? (parent_attachments || []).map(&:id) : []
+          shared_attachment_ids = (@attachment_ids || []) - attachments_to_exclude
+          return [] unless shared_attachment_ids.any?
+          current_account.attachments.where('id IN (?) AND attachable_type IN (?)', shared_attachment_ids, ['Account', 'Admin::CannedResponses::Response'])
         end
       end
 
-      def assign_conversation_attributes(conversation_delegator)
-        @item.email_config_id = conversation_delegator.email_config_id
-        @item.attachments = @item.attachments + conversation_delegator.draft_attachments if conversation_delegator.draft_attachments
-        return unless forward?
-        @item.from_email ||= current_account.primary_email_config.reply_email
-        @item.note_body.full_text_html = (@item.note_body.body_html || '')
-        @item.note_body.full_text_html = @item.note_body.full_text_html + bind_last_conv(@ticket, signature, true) if @include_quoted_text
-        build_cloud_files(conversation_delegator)
+      def parent_cloud_files
+        if @include_original_attachments
+          @ticket.cloud_files
+        elsif @cloud_file_ids
+          @delegator.cloud_file_attachments
+        end
       end
 
       def signature

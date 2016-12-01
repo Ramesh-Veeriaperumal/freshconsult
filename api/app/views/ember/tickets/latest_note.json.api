@@ -1,4 +1,4 @@
-note_hash = ConversationDecorator.new(@note, {ticket: @note.notable}).construct_json
+note_hash = ConversationDecorator.new(@note, {ticket: @note.notable}).to_hash
 note_hash.merge!(user: @user.to_hash)
 
 JSON.generate(note_hash.except(:user_id))

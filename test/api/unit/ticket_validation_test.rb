@@ -241,4 +241,22 @@ class TicketValidationTest < ActionView::TestCase
     TicketsValidationHelper.unstub(:data_type_validatable_custom_fields)
     Account.unstub(:current)
   end
+
+  def test_validate_cloud_files
+    Account.stubs(:current).returns(Account.first)
+    controller_params = { 'requester_id' => 1, 'subject' => Faker::Lorem.paragraph,'description' => Faker::Lorem.paragraph, 
+                           ticket_fields: [], statuses: statuses, 'cloud_files' => Faker::Lorem.word }
+    tkt_validation = TicketValidation.new(controller_params, nil)
+    refute tkt_validation.valid?
+    errors = tkt_validation.errors.full_messages
+    assert errors.include?('Cloud files datatype_mismatch')
+
+    controller_params = { 'requester_id' => 1, 'subject' => Faker::Lorem.paragraph,'description' => Faker::Lorem.paragraph, 
+                           ticket_fields: [], statuses: statuses, 'cloud_files' => [{'filename' => Faker::Lorem.word}] }
+    tkt_validation = TicketValidation.new(controller_params, nil)
+    refute tkt_validation.valid?
+    errors = tkt_validation.errors.full_messages
+    assert errors.include?('Cloud files is invalid')
+    Account.unstub(:current)
+  end
 end

@@ -8,6 +8,12 @@ class ParamsHelper
       clean_params(params_hash.keys, controller_params)
     end
 
+    def save_and_remove_params(klass, params_to_remove, controller_params)
+      params_to_remove.each do |api_field|
+        klass.instance_variable_set("@#{api_field}", controller_params.delete(api_field)) if controller_params.key?(api_field)
+      end
+    end
+
     def clean_params(params_to_be_deleted, controller_params)
       # Delete the fields from params before calling build or save or update_attributes
       params_to_be_deleted.each do |field|

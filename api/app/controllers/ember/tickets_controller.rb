@@ -4,6 +4,7 @@ module Ember
     include TicketConcern
     include HelperConcern
     include SplitNoteHelper
+    include AttachmentConcern
 
     INDEX_PRELOAD_OPTIONS = [:tags, :ticket_old_body, :schema_less_ticket, :flexifield, { requester: [:avatar, :flexifield, :default_user_company] }].freeze
     DEFAULT_TICKET_FILTER = :all_tickets.to_s.freeze
@@ -19,19 +20,10 @@ module Ember
 
     def create
       assign_protected
-      ticket_delegator = TicketDelegator.new(@item, ticket_fields: @ticket_fields, custom_fields: params[cname][:custom_field], attachment_ids: @attachment_ids)
-      if !ticket_delegator.valid?(:create)
-        render_custom_errors(ticket_delegator, true)
-      else
-        @item.attachments = @item.attachments + ticket_delegator.draft_attachments if ticket_delegator.draft_attachments
-        if @item.save_ticket
-          @ticket = @item # Dirty hack. Should revisit.
-          render_201_with_location(item_id: @item.display_id)
-          notify_cc_people @cc_emails[:cc_emails] unless @cc_emails[:cc_emails].blank? || compose_email?
-        else
-          render_errors(@item.errors)
-        end
-      end
+      delegator_hash = { ticket_fields: @ticket_fields, custom_fields: params[cname][:custom_field],
+                         attachment_ids: @attachment_ids, shared_attachments: shared_attachments }
+      return unless validate_delegator(@item, delegator_hash)
+      save_ticket_and_respond
     end
 
     def bulk_update
@@ -147,12 +139,90 @@ module Ember
       end
 
       def sanitize_params
-        super
-        # attachment_ids must be handled separately, should not be passed to build_object method
-        if params[cname].key?(:attachment_ids)
-          @attachment_ids = params[cname][:attachment_ids].map(&:to_i)
-          params[cname].delete(:attachment_ids)
+        prepare_array_fields(ApiTicketConstants::ARRAY_FIELDS - ['tags']) # Tags not included as it requires more manipulation.
+
+        # Set manual due by to override sla worker triggerd updates.
+        params[cname][:manual_dueby] = true if params[cname][:due_by] || params[cname][:fr_due_by]
+
+        params[cname][:attachments] = params[cname][:attachments].map { |att| { resource: att } } if params[cname][:attachments]
+
+        process_custom_fields
+        prepare_tags # Sanitizing is required to avoid duplicate records, we are sanitizing here instead of validating in model to avoid extra query.
+        process_requester_params
+        modify_and_remove_params
+        process_saved_params
+      end
+
+      def modify_and_remove_params
+        # Assign cc_emails serialized hash & collect it in instance variables as it can't be built properly from params
+        cc_emails =  params[cname][:cc_emails]
+
+        # Using .dup as otherwise its stored in reference format(&id0001 & *id001).
+        @cc_emails = { cc_emails: cc_emails.dup, fwd_emails: [], reply_cc: cc_emails.dup, tkt_cc: cc_emails.dup } unless cc_emails.nil?
+
+        params[cname][:ticket_body_attributes] = { description_html: params[cname][:description] } if params[cname][:description]
+
+        params_to_be_deleted = ApiTicketConstants::PARAMS_TO_REMOVE.dup
+        [:due_by, :fr_due_by].each { |key| params_to_be_deleted << key if params[cname][key].nil? }
+        ParamsHelper.clean_params(params_to_be_deleted, params[cname])
+        ParamsHelper.assign_and_clean_params(ApiTicketConstants::PARAMS_MAPPINGS, params[cname])
+        ParamsHelper.save_and_remove_params(self, ApiTicketConstants::PARAMS_TO_SAVE_AND_REMOVE, params[cname])
+      end
+
+      def process_saved_params
+        # following fields must be handled separately, should not be passed to build_object method
+        @attachment_ids = @attachment_ids.map(&:to_i) if @attachment_ids
+      end
+
+      def process_custom_fields
+        if params[cname][:custom_fields]
+          checkbox_names = TicketsValidationHelper.custom_checkbox_names(@ticket_fields)
+          ParamsHelper.assign_checkbox_value(params[cname][:custom_fields], checkbox_names)
         end
+      end
+
+      def process_requester_params
+        # During update set requester_id to nil if it is not a part of params and if any of the contact detail is given in the params
+        if update? && !params[cname].key?(:requester_id) && (params[cname].keys & %w(email phone twitter_id facebook_id)).present?
+          params[cname][:requester_id] = nil
+        end
+      end
+
+      def assign_protected
+        @item.build_schema_less_ticket unless @item.schema_less_ticket
+        @item.account = current_account
+        @item.cc_email = @cc_emails unless @cc_emails.nil?
+        build_normal_attachments(@item, params[cname][:attachments])
+        build_shared_attachments(@item, shared_attachments)
+        build_cloud_files(@item, @cloud_files)
+        if create? # assign attachments so that it will not be queried again in model callbacks
+          @item.attachments = @item.attachments
+          @item.ticket_old_body = @item.ticket_old_body # This will prevent ticket_old_body query during save
+          @item.inline_attachments = @item.inline_attachments
+          @item.schema_less_ticket.product ||= current_portal.product unless params[cname].key?(:product_id)
+        end
+        assign_ticket_status
+      end
+
+      def shared_attachments
+        @shared_attachments ||= begin
+          current_account.attachments.where('id IN (?) AND attachable_type IN (?)', @attachment_ids, ['Account', 'Admin::CannedResponses::Response'])
+        end
+      end
+
+      def save_ticket_and_respond
+        if create_ticket
+          @ticket = @item # Dirty hack. Should revisit.
+          render_201_with_location(location_url: 'ticket_url', item_id: @item.display_id)
+          notify_cc_people @cc_emails[:cc_emails] unless @cc_emails[:cc_emails].blank? || compose_email?
+        else
+          render_errors(@item.errors)
+        end
+      end
+
+      def create_ticket
+        @item.attachments = @item.attachments + @delegator.draft_attachments if @delegator.draft_attachments
+        @item.save_ticket
       end
 
       def fetch_objects(items = scoper)
@@ -261,10 +331,6 @@ module Ember
 
       def constants_class
         :ApiTicketConstants.to_s.freeze
-      end
-
-      def render_201_with_location(template_name: "tickets/#{action_name}", location_url: 'ticket_url', item_id: @item.id)
-        render template_name, location: send(location_url, item_id), status: 201
       end
 
       def load_note

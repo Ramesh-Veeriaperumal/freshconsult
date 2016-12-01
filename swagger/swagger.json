@@ -2950,6 +2950,12 @@
               "items": {
                 "type": "string"
               }
+            },
+            "cloud_files": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/cloud_file_input"
+              }
             }
           }
         }
@@ -3129,6 +3135,20 @@
           "type": "number",
           "required": true,
           "description": "ID of scenario to be executed"
+        }
+      }
+    },
+    "cloud_file_input": {
+      "type": "object",
+      "properties": {
+        "filename": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        },
+        "application_id": {
+          "type": "number"
         }
       }
     },
@@ -3661,6 +3681,12 @@
                     "$ref": "#/definitions/attachment"
                   }
                 },
+                "cloud_files": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/extended_cloud_file"
+                  }
+                },
                 "fb_post": {
                   "$ref": "#/definitions/fb_post"
                 },
@@ -3721,6 +3747,12 @@
                 },
                 "description_text": {
                   "type": "string"
+                },
+                "cloud_files": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/extended_cloud_file"
+                  }
                 }
               }
             }
@@ -3774,6 +3806,16 @@
               "description": "count of canned responses inside the folder"
             }
           }
+        }
+      ]
+    },
+    "extended_cloud_file": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/extension_generic"
+        },
+        {
+          "$ref": "#/definitions/cloud_file_input"
         }
       ]
     },
@@ -3922,6 +3964,12 @@
                   },
                   "description_text": {
                     "type": "string"
+                  },
+                  "cloud_files": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/definitions/extended_cloud_file"
+                    }
                   }
                 }
               }

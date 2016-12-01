@@ -222,6 +222,16 @@ class Helpdesk::Attachment < ActiveRecord::Base
     }
   end
 
+  def to_io
+    io  = open(authenticated_s3_get_url)
+    if io
+      def io.original_filename
+        base_uri.path.split('/').last.gsub('%20', ' ')
+      end
+    end
+    io
+  end
+
   Paperclip.interpolates :filename do |attachment, style|
     attachment.instance.content_file_name
   end

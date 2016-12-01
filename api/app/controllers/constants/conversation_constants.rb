@@ -6,9 +6,9 @@ module ConversationConstants
   UPDATE_ARRAY_FIELDS = ['attachments'].freeze
   TWEET_ARRAY_FIELDS = [].freeze
 
-  REPLY_FIELDS = %w(body user_id from_email).freeze | REPLY_ARRAY_FIELDS
-  FORWARD_FIELDS = %w(body agent_id from_email include_quoted_text include_original_attachments).freeze | FORWARD_ARRAY_FIELDS
-  CREATE_FIELDS = %w(body private incoming user_id).freeze | CREATE_ARRAY_FIELDS
+  REPLY_FIELDS = %w(body user_id from_email).freeze | REPLY_ARRAY_FIELDS | AttachmentConstants::CLOUD_FILE_FIELDS
+  FORWARD_FIELDS = %w(body agent_id from_email include_quoted_text include_original_attachments).freeze | FORWARD_ARRAY_FIELDS | AttachmentConstants::CLOUD_FILE_FIELDS
+  CREATE_FIELDS = %w(body private incoming user_id).freeze | CREATE_ARRAY_FIELDS | AttachmentConstants::CLOUD_FILE_FIELDS
   TWEET_FIELDS = %w(body tweet_type twitter_handle_id).freeze
   UPDATE_FIELDS = %w(body).freeze | UPDATE_ARRAY_FIELDS
   FACEBOOK_REPLY_FIELDS = %w(body agent_id note_id).freeze
@@ -41,6 +41,8 @@ module ConversationConstants
   AGENT_USER_MAPPING = { user: :agent_id }
 
   PARAMS_MAPPINGS = { notify_emails: :to_emails, agent_id: :user_id }
+  PARAMS_TO_SAVE_AND_REMOVE = [:note_id, :cloud_files, :attachment_ids, :cloud_file_ids, :include_quoted_text, :include_original_attachments, :tweet_type, :twitter_handle_id].freeze
+  PARAMS_TO_REMOVE = [:body].freeze
 
   TICKET_LOAD_REQUIRED = [:create, :reply, :forward, :ticket_conversations, :facebook_reply, :tweet].freeze
   

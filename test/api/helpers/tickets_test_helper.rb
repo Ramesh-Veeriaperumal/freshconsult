@@ -124,6 +124,10 @@ module TicketsTestHelper
     }
   end
 
+  def create_ticket_pattern(expected_output = {}, ignore_extra_keys = true, ticket)
+    ticket_pattern(expected_output, ignore_extra_keys, ticket).merge(cloud_files: Array)
+  end
+
   def update_ticket_pattern(expected_output = {}, ignore_extra_keys = true, ticket)
     description = expected_output[:description] || ticket.description_html
     ticket_pattern(expected_output, ignore_extra_keys, ticket).merge(description: description)

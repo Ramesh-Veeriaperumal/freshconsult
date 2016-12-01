@@ -2,7 +2,7 @@ class TicketDecorator < ApiDecorator
   delegate :ticket_body, :custom_field_via_mapping, :cc_email, :email_config_id, :fr_escalated, :group_id, :priority,
            :requester_id,  :responder_id, :source, :spam, :status, :subject, :display_id, :ticket_type,
            :schema_less_ticket, :deleted, :due_by, :frDueBy, :isescalated, :description,
-           :description_html, :tag_names, :attachments, :company_id, to: :record
+           :description_html, :tag_names, :attachments, :company_id, :cloud_files, to: :record
 
   def initialize(record, options)
     super(record)
