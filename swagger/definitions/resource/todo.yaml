@@ -1,0 +1,12 @@
+type: object
+allOf:
+  - $ref: '#/definitions/extension_generic'
+  - properties:
+      body:
+        type: string
+      completed:
+        type: boolean
+      ticket_id:
+        type: id
+      user_id:
+        type: id

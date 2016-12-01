@@ -70,7 +70,7 @@ Helpkit::Application.routes.draw do
         get :me
       end
     end
-    
+
 
     resources :surveys, only: [:index] do
       collection do
@@ -147,7 +147,7 @@ Helpkit::Application.routes.draw do
     end
     resources :sla_policies, controller: 'api_sla_policies', only: [:index, :update]
   end
-  
+
   ember_routes = proc do
     resources :ticket_fields, controller: 'ember/ticket_fields', only: [:index, :update]
     resources :bootstrap, controller: 'ember/bootstrap', only: :index
@@ -210,6 +210,12 @@ Helpkit::Application.routes.draw do
       end
     end
 
+    resources :todos, controller: 'ember/todos', except: [:new, :edit] do
+      member do
+        put :toggle
+      end
+    end
+
     resources :contacts, controller: 'ember/contacts', except: [:new, :edit] do
       collection do
         put :bulk_delete
@@ -257,11 +263,11 @@ Helpkit::Application.routes.draw do
     end
     constraints ApiConstraints.new(version: 2), &api_routes # "/api/.." with Accept Header
     scope '', &api_routes
-    
+
     match '*route_not_found.:format', to: 'api_application#route_not_found'
     match '*route_not_found',         to: 'api_application#route_not_found'
   end
-  
+
   # Dev only routes
   match '/swagger/*path' => 'swagger#respond'
   match '/swagger' => 'swagger#respond'

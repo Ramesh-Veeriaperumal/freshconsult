@@ -1,0 +1,62 @@
+get:
+  summary: Todo Details
+  description: Details of a selected todo
+  tags: ['todos']
+  parameters:
+    - name: id
+      in: path
+      type: number
+      required: true
+      description: ID of todo
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/todo_details'
+    404:
+      description: Canned response not found
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+
+put:
+  tags: [todos]
+  description: Update a todos
+  parameters:
+    - name: id
+      in: path
+      type: number
+      required: true
+    - name: data
+      in: body
+      required: true
+      schema:
+        type: object
+        properties:
+          body:
+            type: string
+            required: true
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/todo_details'
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+
+delete:
+  summary: Delete todo
+  tags: [todos]
+  parameters:
+    - name: id
+      in: path
+      type: number
+      required: true
+  responses:
+    204:
+      description: Success
+    404:
+      description: User not found

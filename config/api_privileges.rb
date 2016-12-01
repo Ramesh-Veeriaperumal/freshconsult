@@ -13,6 +13,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/conversation", only: [:create, :ticket_conversations]
     resource :"ember/subscription"
     resource :"ember/ticket_field", only: [:index]
+    resource :"ember/todo"
     resource :"ember/twitter_handles", only: [:index, :check_following]
   end
 
@@ -24,7 +25,7 @@ Authority::Authorization::PrivilegeList.build do
   forward_ticket do
     resource :"ember/conversation", only: [:forward]
   end
- 
+
   merge_or_split_ticket do
     resource :"ember/tickets/merge", only: [:merge]
     resource :"ember/ticket", only: [:split_note]

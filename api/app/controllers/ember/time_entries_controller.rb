@@ -1,6 +1,6 @@
 module Ember
   class TimeEntriesController < ::TimeEntriesController
-    decorate_views(decorate_objects: [:ticket_time_entries])
+    decorate_views(decorate_objects: [:ticket_time_entries], decorate_object: [:toggle_timer])
 
     def ticket_time_entries
       return if validate_filter_params

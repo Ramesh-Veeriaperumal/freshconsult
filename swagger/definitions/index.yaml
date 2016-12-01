@@ -143,6 +143,12 @@
       $ref: '#/definitions/extended_canned_response_folder'
   canned_response_folder_details:
     $ref: ./response/canned_response/folder_show.yaml
+  array_of_todos:
+    type: array
+    items:
+      $ref: ./resource/todo.yaml
+  todo_details:
+    $ref: ./resource/todo.yaml
 
   freshfone_call:
     $ref: ./resource/freshfone_call.yaml

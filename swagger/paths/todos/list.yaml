@@ -1,0 +1,50 @@
+get:
+  tags: [todos]
+  summary: List all
+  description: Lists all todos
+  parameters:
+    - name: id
+      in: query
+      type: integer
+      description: Ticket Id to filter todo of a ticket
+  responses:
+    200:
+      description: Success
+      schema:
+        allOf:
+          - properties:
+              todos:
+                $ref: '#/definitions/array_of_todos'
+              meta:
+                $ref: '#/definitions/meta'
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+
+post:
+  tags: [todos]
+  description: Create a todos
+  parameters:
+    - name: data
+      in: body
+      required: true
+      schema:
+        type: object
+        properties:
+          body:
+            type: string
+            required: true
+            description: content of the todo
+          ticket_id:
+            type: id
+            description: Ticket id, if its associated with a ticket.
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/todo_details'
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
