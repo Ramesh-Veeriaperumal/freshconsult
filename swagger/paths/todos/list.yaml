@@ -3,10 +3,10 @@ get:
   summary: List all
   description: Lists all todos
   parameters:
-    - name: id
+    - name: ticket_id
       in: query
       type: integer
-      description: Ticket Id to filter todo of a ticket
+      description: Ticket ID to filter todo of a ticket
   responses:
     200:
       description: Success

@@ -1997,10 +1997,10 @@
         "description": "Lists all todos",
         "parameters": [
           {
-            "name": "id",
+            "name": "ticket_id",
             "in": "query",
             "type": "integer",
-            "description": "Ticket Id to filter todo of a ticket"
+            "description": "Ticket ID to filter todo of a ticket"
           }
         ],
         "responses": {
@@ -2496,6 +2496,7 @@
                 },
                 "subscription": {
                   "type": "object",
+                  "description": "Available only if he is an admin",
                   "properties": {
                     "agent_limit": {
                       "type": "number"
@@ -2508,6 +2509,17 @@
                     },
                     "subscription_plan": {
                       "type": "string"
+                    }
+                  }
+                },
+                "settings": {
+                  "type": "object",
+                  "properties": {
+                    "personalized_email_replies": {
+                      "type": "boolean"
+                    },
+                    "componse_email_enabled": {
+                      "type": "boolean"
                     }
                   }
                 }
