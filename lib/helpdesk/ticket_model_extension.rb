@@ -39,7 +39,8 @@ module Helpdesk::TicketModelExtension
 
   def default_export_fields_order
     #fields = Hash[*EXPORT_FIELDS.map { |i| [i[1], i[4]] }.flatten ]
-    fields = Hash[*self.exportable_fields.map { |i| [i[1], i[4]] }.flatten ]
+    exportable_fields = Account.current.sla_management_enabled? ? (EXPORT_FIELDS + FEATURES_BASED_FIELDS) : EXPORT_FIELDS
+    fields = Hash[*exportable_fields.map { |i| [i[1], i[4]] }.flatten ]
     fields["description"]   = 3
     fields["product_name"]  = fields.keys.length+1
     fields
