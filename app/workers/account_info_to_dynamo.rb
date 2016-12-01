@@ -10,6 +10,18 @@ class AccountInfoToDynamo < BaseWorker
     @account = Account.current
     add_account_info_to_dynamo @args[:email], @account.id, @account.created_at.getutc
     check_associated_account_count @args[:email]
+
+    restricted_domains = $redis_others.lrange("SIGNUP_RESTRICTED_DOMAINS", 0, -1)
+    domain = @args[:email].split("@").last
+    if restricted_domains.any?{|d| d.include?(domain)}
+      #@account.subscription.update_attributes(:state => "suspended", :next_renewal_at => Time.now - 10.days)
+      ShardMapping.find_by_account_id(@account.id).update_attributes(:status => 403)
+            
+      Rails.logger.info "Suspending account #{@account.id}"
+    else
+      Rails.logger.info "Not Suspending account #{@account.id}"    
+    end
+
   rescue Exception => e
     puts e.inspect, args.inspect
     NewRelic::Agent.notice_error(e, {:args => args})
