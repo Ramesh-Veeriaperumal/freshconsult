@@ -287,7 +287,7 @@ class Helpdesk::Attachment < ActiveRecord::Base
   end
 
   def randomize?
-    return false unless self.attachable_type
+    return false unless self.content_file_name_changed? && self.attachable_type
     inline_image? || user_avatar? || logo_or_favicon?
   end
 
