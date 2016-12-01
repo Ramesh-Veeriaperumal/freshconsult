@@ -31,16 +31,13 @@ module Helpdesk
 
 					envelope_params = ActiveSupport::JSON.decode(params[:envelope]).with_indifferent_access
 					envelope_params[:to] = Array.new.push(to_address)
-					domain = parse_email_with_domain(to_address)[:domain]
-					Sharding.select_shard_of(domain) do
-						params[:envelope] = envelope_params.to_json
-						metadata_attributes =  get_supporting_attributes
-						current_hour_email_path = primary_db.get_hourly_key_path(metadata_attributes[:received_host], metadata_attributes[:received_time])
-						register_hourly_email_path(metadata_attributes, current_hour_email_path)
-						key_path, unique_id = primary_db.save(email_content, metadata_attributes)
-						Rails.logger.info "Saved path : #{key_path} , Unique_id : #{unique_id} \n"
-						send_message(domain, key_path, unique_id) 
-					end
+					params[:envelope] = envelope_params.to_json
+					metadata_attributes =  get_supporting_attributes
+					current_hour_email_path = primary_db.get_hourly_key_path(metadata_attributes[:received_host], metadata_attributes[:received_time])
+					register_hourly_email_path(metadata_attributes, current_hour_email_path)
+					key_path, unique_id = primary_db.save(email_content, metadata_attributes)
+					Rails.logger.info "Saved path : #{key_path} , Unique_id : #{unique_id} \n"
+					send_message(to_address, key_path, unique_id) 
 
 				end
 
@@ -86,14 +83,17 @@ module Helpdesk
 				@@hourly_email_path = current_hour_email_path
 			end
 
-			def send_message(domain, key_path, unique_id)
+			def send_message(to_envelope, key_path, unique_id)
 				metadata_attributes = { :uid => unique_id, :email_path => key_path, 
 					:msg_uuid => Thread.current[:message_uuid].try(:first) }
-				account = Account.find_by_full_domain(domain)
-				queue_type = (account.present? && account.subscription.present? ? account.subscription.state : 'default')
-				sqs_queue = Helpdesk::EmailQueue::MailQueueFactory.get_queue_obj(QUEUETYPE[:sqs], EMAIL_QUEUE[queue_type])
-				sqs_queue.send_message(metadata_attributes.to_json)
-				Rails.logger.info "Email pushed into the queue: #{EMAIL_QUEUE[queue_type]}"
+				domain = parse_email_with_domain(to_envelope)[:domain]
+				Sharding.select_shard_of(domain) do
+					account = Account.find_by_full_domain(domain)
+					queue_type = (account.present? && account.subscription.present? ? account.subscription.state : 'default')
+					sqs_queue = Helpdesk::EmailQueue::MailQueueFactory.get_queue_obj(QUEUETYPE[:sqs], EMAIL_QUEUE[queue_type])
+					sqs_queue.send_message(metadata_attributes.to_json)
+					Rails.logger.info "Email pushed into the queue: #{EMAIL_QUEUE[queue_type]}"
+				end
 			rescue Exception => e
 				Rails.logger.info "Enqueue to SQS failed. #{e.message} - #{e.backtrace}"
 			end
