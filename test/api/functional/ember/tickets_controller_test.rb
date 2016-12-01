@@ -6,17 +6,31 @@ module Ember
     include AttachmentsTestHelper
     include CannedResponsesTestHelper
 
+    CUSTOM_FIELDS = %w(number checkbox decimal text paragraph dropdown country state city date)
+
     def setup
       super
+      Sidekiq::Worker.clear_all
       before_all
     end
 
     @@before_all_run = false
+
     def before_all
+      @account.sections.map(&:destroy)
       return if @@before_all_run
       @account.ticket_fields.custom_fields.each(&:destroy)
-      @@custom_field = create_custom_field(Faker::Lorem.word, 'text')
-      @@custom_field.update_attribute(:required_for_closure, true)
+      Helpdesk::TicketStatus.find(2).update_column(:stop_sla_timer, false)
+      @@ticket_fields = []
+      @@custom_field_names = []
+      @@ticket_fields << create_dependent_custom_field(%w(test_custom_country test_custom_state test_custom_city))
+      @@ticket_fields << create_custom_field_dropdown('test_custom_dropdown', ['Get Smart', 'Pursuit of Happiness', 'Armaggedon'])
+      @@choices_custom_field_names = @@ticket_fields.map(&:name)
+      CUSTOM_FIELDS.each do |custom_field|
+        next if %w(dropdown country state city).include?(custom_field)
+        @@ticket_fields << create_custom_field("test_custom_#{custom_field}", custom_field)
+        @@custom_field_names << @@ticket_fields.last.name
+      end
       @@before_all_run = true
     end
 
@@ -273,6 +287,8 @@ module Ember
     end
 
     def test_bulk_update_with_custom_fields
+      ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_text_#{@account.id}" }
+      ticket_field.update_attribute(:required_for_closure, true)
       ticket_ids = []
       rand(2..4).times do
         ticket_ids << create_ticket.id
@@ -281,21 +297,25 @@ module Ember
       params_hash = {ids: ticket_ids, properties: properties_hash}
       put :bulk_update, construct_params({ version: 'private' }, params_hash)
       failures = {}
-      ticket_ids.each {|id| failures[id] = { @@custom_field.label => [:datatype_mismatch, { code: :missing_field, expected_data_type: :String }]}}
+      ticket_ids.each {|id| failures[id] = { ticket_field.label => [:datatype_mismatch, { code: :missing_field, expected_data_type: :String }]}}
       match_json(partial_success_response_pattern([], failures))
       assert_response 202
+      ticket_field.update_attribute(:required_for_closure, false)
     end
 
     def test_bulk_update_success
+      ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_text_#{@account.id}" }
+      ticket_field.update_attribute(:required_for_closure, true)
       ticket_ids = []
       rand(2..4).times do
         ticket_ids << create_ticket.id
       end
-      properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by).merge(status: 5, custom_fields: {@@custom_field.label => 'Sample text'})
+      properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by).merge(status: 5, custom_fields: {ticket_field.label => 'Sample text'})
       params_hash = {ids: ticket_ids, properties: properties_hash}
       put :bulk_update, construct_params({ version: 'private' }, params_hash)
       match_json(partial_success_response_pattern(ticket_ids, {}))
       assert_response 202
+      ticket_field.update_attribute(:required_for_closure, false)
     end
 
     def test_bulk_update_async
@@ -437,5 +457,38 @@ module Ember
       verify_attachments_moving(attachment_ids)
     end
 
+    def test_update_properties_with_no_params
+      ticket = create_ticket
+      put :update_properties, construct_params({ version: 'private', id: ticket.display_id }, {})
+      assert_response 400
+      match_json([bad_request_error_pattern('request', :fill_a_mandatory_field, field_names: 'due_by, agent, group, status')])
+    end
+
+    def test_update_properties
+      ticket = create_ticket
+      dt = 10.days.from_now.utc.iso8601
+      agent = add_test_agent(@account, role: Role.find_by_name('Agent').id)
+      update_group = create_group_with_agents(@account, agent_list: [agent.id])
+      params_hash = { due_by: dt, responder_id: agent.id, status: 2, priority: 4, group_id: update_group.id }
+      put :update_properties, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      assert_response 204
+      ticket.reload
+      assert_equal dt, ticket.due_by.to_time.iso8601
+      assert_equal agent.id, ticket.responder_id
+      assert_equal 2, ticket.status
+      assert_equal 4, ticket.priority
+      assert_equal update_group.id, ticket.group_id
+    end
+
+    def test_update_properties_validation_for_closure_status
+      ticket = create_ticket
+      params_hash = { status: 4 }
+      ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_text_#{@account.id}" }
+      ticket_field.update_attribute(:required_for_closure, true)
+      put :update_properties, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      ticket_field.update_attribute(:required_for_closure, false)
+      assert_response 400
+      match_json([bad_request_error_pattern(ticket_field.label, :datatype_mismatch, expected_data_type: String)])
+    end
   end
 end

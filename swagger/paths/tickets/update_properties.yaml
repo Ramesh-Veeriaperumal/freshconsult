@@ -1,0 +1,20 @@
+put:
+  tags: [ticket]
+  description: Update Properties
+  parameters:
+    - name: id
+      in: path
+    - name: data
+      in: body
+      required: true
+      schema:
+        $ref: '#/definitions/ticket_update_properties_input'
+  responses:
+    204:
+      description: Success
+    403:
+      description: Access denied
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'

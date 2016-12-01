@@ -1,12 +1,12 @@
 module HelperConcern
   extend ActiveSupport::Concern
 
-  def validate_body_params(item = nil)
-    validate_request(item, params[cname])
+  def validate_body_params(item = nil, params_hash = nil)
+    validate_request(item, params[cname], params_hash)
   end
 
-  def validate_url_params(item = nil)
-    validate_request(item, params, true)
+  def validate_url_params(item = nil, params_hash = nil)
+    validate_request(item, params, params_hash, true)
   end
 
   def sanitize_body_params
@@ -17,18 +17,18 @@ module HelperConcern
   def validate_delegator(item = nil, options = {})
     @delegator = delegator_klass.new(item, options)
     return true if @delegator.valid?(action_name.to_sym)
-    render_errors(@delegator.errors, @delegator.error_options)
+    render_custom_errors(@delegator, true)
     false
   end
 
   private
 
-    def validate_request(item, request_params, url_params = false)
+    def validate_request(item, request_params, params_hash, url_params = false)
       default_fields = url_params ? fetch_default_params : []
       request_params.permit(*fields_to_validate, *default_fields)
-      @validator = validation_klass.new(request_params, item, string_request_params?)
+      @validator = validation_klass.new(params_hash || request_params, item, string_request_params?)
       valid = @validator.valid?(action_name.to_sym)
-      render_errors @validator.errors, @validator.error_options unless valid
+      render_custom_errors(@validator, true) unless valid
       valid
     end
 

@@ -46,6 +46,8 @@
     $ref: ./request/tickets/update.yaml
   ticket_merge_input:
     $ref: ./request/tickets/merge.yaml
+  ticket_update_properties_input:
+    $ref: ./request/tickets/update_properties.yaml
   add_watcher_input:
     $ref: ./request/subscriptions/add_watcher.yaml
   draft_create_input:

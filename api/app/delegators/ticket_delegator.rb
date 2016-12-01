@@ -3,7 +3,7 @@ class TicketDelegator < BaseDelegator
   attr_accessor :ticket_fields
   validate :group_presence, if: -> { group_id && attr_changed?('group_id') }
   validate :responder_presence, if: -> { responder_id && attr_changed?('responder_id') }
-  validate :email_config_presence,  if: -> {  email_config_id && outbound_email? }
+  validate :email_config_presence,  if: -> {  !property_update? && email_config_id && outbound_email? }
   validates :email_config, presence: true, if: -> { errors[:email_config_id].blank? && email_config_id && attr_changed?('email_config_id') }
   validate :product_presence, if: -> { product_id && attr_changed?('product_id', schema_less_ticket) }
   validate :user_blocked?, if: -> { requester_id && errors[:requester].blank? && attr_changed?('requester_id') }
@@ -16,8 +16,16 @@ class TicketDelegator < BaseDelegator
                                 required_attribute: :required,
                                 section_field_mapping: proc { |x| TicketsValidationHelper.section_field_parent_field_mapping }
                               }
-                            }
-  validate :facebook_id_exists?, if: -> { facebook_id }
+                            }, unless: :property_update?
+  validates :custom_field_via_mapping,  custom_field: { custom_field_via_mapping:
+                              {
+                                validatable_custom_fields: proc { |x| TicketsValidationHelper.custom_dropdown_fields(x) },
+                                drop_down_choices: proc { TicketsValidationHelper.custom_dropdown_field_choices },
+                                nested_field_choices: proc { TicketsValidationHelper.custom_nested_field_choices },
+                                required_based_on_status: proc { |x| x.required_based_on_status? }
+                              }
+                            }, if: :property_update?
+  validate :facebook_id_exists?, if: -> { !property_update? && facebook_id }
 
   def initialize(record, options)
     @ticket_fields = options[:ticket_fields]
@@ -75,5 +83,9 @@ class TicketDelegator < BaseDelegator
     unless Account.current.all_users.exists?(['fb_profile_id = ?', "#{facebook_id}"])
       errors[:facebook_id] << :invalid_facebook_id
     end
+  end
+
+  def property_update?
+    [:update_properties].include?(validation_context)
   end
 end

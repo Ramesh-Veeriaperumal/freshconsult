@@ -91,7 +91,24 @@ module Ember
       end
     end
 
+    def update_properties
+      return unless validate_update_property_params
+      sanitize_params
+      assign_ticket_status
+      @item.assign_attributes(validatable_delegator_attributes)
+      return unless validate_delegator(@item, ticket_fields: @ticket_fields)
+      @item.update_ticket_attributes(params[cname]) ? (head 204) : render_errors(@item.errors)
+    end
+
     private
+
+      def validate_update_property_params
+        @ticket_fields = Account.current.ticket_fields_from_cache
+        @name_mapping = TicketsValidationHelper.name_mapping(@ticket_fields)
+        params_hash = params[cname].merge(statuses: Helpdesk::TicketStatus.status_objects_from_cache(current_account), ticket_fields: @ticket_fields)
+        @validation_klass = 'TicketUpdatePropertyValidation'
+        validate_body_params(@item, params_hash)
+      end
 
       # code duplicated - validate_params method of API Tickets controller
       def process_request_params

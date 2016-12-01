@@ -1,0 +1,13 @@
+type: object
+properties:
+    due_by:
+      type: string
+      format: date-time
+    responder_id:
+      type: number
+    group_id:
+      type: number
+    status:
+      type: number
+    priority:
+      type: number

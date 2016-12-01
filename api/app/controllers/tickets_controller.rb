@@ -116,7 +116,7 @@ class TicketsController < ApiApplicationController
     end
 
     def set_custom_errors(item = @item)
-      ErrorHelper.rename_error_fields(ApiTicketConstants::FIELD_MAPPINGS.merge(@name_mapping), item)
+      ErrorHelper.rename_error_fields(ApiTicketConstants::FIELD_MAPPINGS.merge(@name_mapping || {}), item)
     end
 
     def load_objects
@@ -310,7 +310,7 @@ class TicketsController < ApiApplicationController
     end
 
     def error_options_mappings
-      @name_mapping.merge(ApiTicketConstants::FIELD_MAPPINGS)
+      (@name_mapping || {}).merge(ApiTicketConstants::FIELD_MAPPINGS)
     end
 
     def valid_content_type?

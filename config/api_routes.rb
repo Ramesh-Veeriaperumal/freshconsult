@@ -198,6 +198,7 @@ Helpkit::Application.routes.draw do
         post :watch, to: 'ember/subscriptions#watch'
         put :unwatch, to: 'ember/subscriptions#unwatch'
         get :watchers, to: 'ember/subscriptions#watchers'
+        put :update_properties, to: 'ember/tickets#update_properties'
       end
       # This alternate route is to handle limitation in ember route generation : api/_/tickets/:ticket_id/canned_responses?id=Number
       match '/canned_responses' => 'ember/tickets/canned_responses#show', via: :get

@@ -11,6 +11,7 @@ module ApiTicketConstants
   EXECUTE_SCENARIO_FIELDS = BULK_EXECUTE_SCENARIO_FIELDS = %w(scenario_id).freeze
   COMPOSE_EMAIL_FIELDS = (CREATE_FIELDS - %w(source product_id responder_id requester_id phone twitter_id facebook_id)).freeze
   SHOW_FIELDS = ['include'].freeze
+  UPDATE_PROPERTIES_FIELDS = %w(due_by responder_id group_id status priority).freeze
   ALLOWED_INCLUDE_PARAMS = %w(conversations requester company stats).freeze
   SIDE_LOADING = %w(requester stats).freeze
   INCLUDE_PRELOAD_MAPPING = { 'stats' => :ticket_states }.freeze

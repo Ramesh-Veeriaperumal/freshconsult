@@ -765,6 +765,42 @@
         }
       }
     },
+    "/tickets/{id}/update_properties": {
+      "put": {
+        "tags": [
+          "ticket"
+        ],
+        "description": "Update Properties",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path"
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ticket_update_properties_input"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
     "/tickets/{id}/activities": {
       "get": {
         "tags": [
@@ -3023,6 +3059,27 @@
         }
       }
     },
+    "ticket_update_properties_input": {
+      "type": "object",
+      "properties": {
+        "due_by": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "responder_id": {
+          "type": "number"
+        },
+        "group_id": {
+          "type": "number"
+        },
+        "status": {
+          "type": "number"
+        },
+        "priority": {
+          "type": "number"
+        }
+      }
+    },
     "add_watcher_input": {
       "type": "object",
       "properties": {
@@ -4122,6 +4179,175 @@
         },
         "updated_at": {
           "type": "string",
+          "format": "date-time"
+        },
+        "agent": {
+          "$ref": "#/definitions/agent"
+        }
+      }
+    },
+    "watchers": {
+      "title": "data",
+      "type": "object",
+      "properties": {
+        "watcher_ids": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        }
+      }
+    },
+    "latest_note": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/extended_note"
+        },
+        {
+          "properties": {
+            "user": {
+              "$ref": "#/definitions/extended_contact"
+            }
+          }
+        }
+      ]
+    },
+    "contact_activity": {
+      "title": "data",
+      "type": "object",
+      "properties": {
+        "data": {
+          "title": "data",
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "Post",
+                "Ticket"
+              ]
+            },
+            "id": {
+              "type": "integer"
+            },
+            "created_at": {
+              "type": "string"
+            },
+            "topic_id": {
+              "description": "Will be present for Forum Activity",
+              "type": "integer"
+            },
+            "topic_title": {
+              "description": "Will be present for Forum Activity",
+              "type": "string"
+            },
+            "replied": {
+              "description": "Will be present for Forum Activity",
+              "type": "boolean"
+            },
+            "status": {
+              "description": "Will be present for Ticket Activity",
+              "type": "integer"
+            },
+            "agent_id": {
+              "description": "Will be present for Ticket Activity",
+              "type": "integer"
+            },
+            "subject": {
+              "description": "Will be present for Ticket Activity",
+              "type": "string"
+            }
+          }
+        },
+        "meta": {
+          "title": "meta data",
+          "type": "object",
+          "properties": {
+            "more_tickets": {
+              "type": "boolean"
+            }
+          }
+        }
+      }
+    },
+    "array_of_company_activities": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "description": "Company activities",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "subject": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "agent_id": {
+            "type": "number"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      }
+    },
+    "company_activities_with_meta": {
+      "type": "object",
+      "properties": {
+        "activities": {
+          "$ref": "#/definitions/array_of_company_activities"
+        },
+        "meta": {
+          "type": "object",
+          "properties": {
+            "more_tickets": {
+              "type": "boolean"
+            },
+            "more_archived_tickets": {
+              "type": "boolean"
+            }
+          }
+        }
+      }
+    },
+    "twitter_handle": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "number",
+          "description": "Twitter Handle's id in the account's context"
+        },
+        "twitter_user": {
+          "type": "number",
+          "description": "User Id provided by Twitter"
+        },
+        "screen_name": {
+          "type": "string",
+          "example": "freshdesk",
+          "description": "Twitter user handle or the screen name"
+        },
+        "product_id": {
+          "type": "number"
+        },
+        "capture_dm_as_ticket": {
+          "type": "boolean"
+        },
+        "capture_mention_as_ticket": {
+          "type": "boolean"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    }
+  }
+}e": "string",
           "format": "date-time"
         },
         "agent": {
