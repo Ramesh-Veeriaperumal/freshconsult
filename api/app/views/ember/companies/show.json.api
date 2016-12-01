@@ -1,0 +1,4 @@
+response_hash = @item.to_hash
+response_hash.merge!(sla_policies: @item.sla_policies.map(&:to_hash))
+
+JSON.generate(response_hash)

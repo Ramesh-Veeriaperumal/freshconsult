@@ -90,8 +90,10 @@
   $ref: ./contacts/merge.yaml
 
 /companies:
+  $ref: ./companies/list.yaml
+/companies/{id}:
   $ref: ./companies/crud.yaml
-/companies/{:id}/activities:
+/companies/{id}/activities:
   $ref: ./companies/activities.yaml
 
 /attachments:

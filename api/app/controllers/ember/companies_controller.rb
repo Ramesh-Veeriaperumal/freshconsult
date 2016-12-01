@@ -4,7 +4,7 @@ module Ember
 
     def index
       super
-      load_sla_policies if sideload_options.include?('sla_policies')
+      @sideload_options = @validator.include_array || []
       response.api_meta = { count: @items_count }
     end
 
@@ -15,15 +15,16 @@ module Ember
       response.api_meta = { "more_#{params[:type]}" => true } if @total_tickets.length > CompanyConstants::MAX_ACTIVITIES_COUNT
     end
 
+    def show
+      super
+      load_sla_policy
+    end
+
     private
 
       def validate_filter_params
         @validation_klass = 'CompanyFilterValidation'
-        validate_url_params
-      end
-
-      def sideload_options
-        @sideload_options ||= @validator.include_array || []
+        validate_query_params
       end
 
       def load_objects
@@ -38,20 +39,12 @@ module Ember
         :CompanyConstants.to_s.freeze
       end
 
-      def load_sla_policies
-        @company_sla_hash = {}
-        @items.each do |item|
-          @company_sla_hash[item.id] = sla_policies(item)
+      def load_sla_policy
+        active_sla_policies = current_account.sla_policies.rule_based.active
+        sla = active_sla_policies.select do |policy|
+          policy.conditions[:company_id].present? && policy.conditions[:company_id].include?(@item.id)
         end
-      end
-
-      def sla_policies(company)
-        @sla_policies ||= current_account.sla_policies.rule_based.active
-        sla = @sla_policies.select do |policy|
-          policy.conditions[:company_id].present? && policy.conditions[:company_id].include?(company.id)
-        end
-        return @default_policy ||= current_account.sla_policies.default if sla.empty?
-        sla
+        @sla_policies = sla.empty? ? current_account.sla_policies.default : sla
       end
 
       def ticket_activities
@@ -64,7 +57,7 @@ module Ember
       end
 
       def decorator_options_hash
-        super.merge(sla: @company_sla_hash || {})
+        super.merge(sla: @sla_policies || {})
       end
   end
 end

@@ -19,7 +19,7 @@ class CompanyDecorator < ApiDecorator
   end
 
   def sla_policies
-    @sla_policies[record.id].map { |item| SlaPolicyDecorator.new(item) }
+    @sla_policies.map { |item| SlaPolicyDecorator.new(item) }
   end
 
   def to_hash

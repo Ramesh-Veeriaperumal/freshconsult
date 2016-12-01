@@ -19,17 +19,20 @@ module CompaniesTestHelper
     }
   end
 
+  def company_show_pattern(expected_output = {}, company)
+    response_pattern = company_pattern(expected_output, company)
+    sla_array = []
+    (expected_output[:sla_policies] || []).each do |sla_policy|
+      sla_array << sla_policy_pattern(sla_policy)
+    end
+    response_pattern.merge!(sla_policies: sla_array)
+    response_pattern
+  end
+
   def company_pattern_with_associations(expected_output = {}, company, include_options)
     response_pattern = company_pattern(expected_output, company)
     if include_options.include?('contacts_count')
       response_pattern.merge!(contacts_count: company.users.count)
-    end
-    if include_options.include?('sla_policies')
-      sla_array = []
-      (expected_output[:sla_policies] || []).each do |sla_policy|
-        sla_array << sla_policy_pattern(sla_policy)
-      end
-      response_pattern.merge!(sla_policies: sla_array)
     end
     response_pattern
   end

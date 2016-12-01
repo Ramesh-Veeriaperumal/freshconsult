@@ -13,7 +13,7 @@ class CompanyFilterValidationTest < ActionView::TestCase
   end
 
   def test_valid_filters
-    controller_params = { 'include' => 'contacts_count, sla_policies', 'letter' => 'A' }
+    controller_params = { 'include' => 'contacts_count', 'letter' => 'A' }
     company_validation = CompanyFilterValidation.new(controller_params)
     assert company_validation.valid?(:index)
   end

@@ -234,7 +234,7 @@ Helpkit::Application.routes.draw do
       end
     end
 
-    resources :companies, controller: 'ember/companies', only: [:index] do
+    resources :companies, controller: 'ember/companies', only: [:index, :show] do
       member do
         get :activities
       end

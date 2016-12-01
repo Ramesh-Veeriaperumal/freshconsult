@@ -141,7 +141,7 @@
   array_of_companies:
     type: array
     items:
-      $ref: '#/definitions/extended_company'
+      $ref: './response/companies/list.yaml'
   array_of_sla_policies:
     type: array
     items:

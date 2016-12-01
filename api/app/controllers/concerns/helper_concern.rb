@@ -5,7 +5,7 @@ module HelperConcern
     validate_request(item, params[cname], params_hash)
   end
 
-  def validate_url_params(item = nil, params_hash = nil)
+  def validate_query_params(item = nil, params_hash = nil)
     validate_request(item, params, params_hash, true)
   end
 

@@ -37,7 +37,7 @@ Authority::Authorization::PrivilegeList.build do
 
   view_contacts do
     resource :"ember/contact", only: [:index, :show]
-    resource :"ember/company", only: [:index, :activities]
+    resource :"ember/company", only: [:index, :show, :activities]
   end
 
   manage_contacts do

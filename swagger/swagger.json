@@ -1628,7 +1628,7 @@
             "name": "include",
             "in": "query",
             "type": "string",
-            "description": "Comma-separated, possible values - contacts_count, sla_policies"
+            "description": "Comma-separated, possible values - contacts_count"
           }
         ],
         "responses": {
@@ -1658,7 +1658,31 @@
         }
       }
     },
-    "/companies/{:id}/activities": {
+    "/companies/{id}": {
+      "get": {
+        "tags": [
+          "company"
+        ],
+        "summary": "View a company",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "number",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/extended_company"
+            }
+          }
+        }
+      }
+    },
+    "/companies/{id}/activities": {
       "get": {
         "tags": [
           "company"
@@ -3608,9 +3632,6 @@
             },
             {
               "properties": {
-                "contacts_count": {
-                  "type": "number"
-                },
                 "sla_policies": {
                   "$ref": "#/definitions/array_of_sla_policies"
                 }
@@ -4026,7 +4047,22 @@
     "array_of_companies": {
       "type": "array",
       "items": {
-        "$ref": "#/definitions/extended_company"
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/definitions/company"
+          },
+          {
+            "$ref": "#/definitions/extension_generic"
+          },
+          {
+            "properties": {
+              "contacts_count": {
+                "type": "number"
+              }
+            }
+          }
+        ]
       }
     },
     "array_of_sla_policies": {

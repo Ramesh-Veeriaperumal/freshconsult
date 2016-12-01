@@ -1,26 +1,13 @@
 get:
   tags: [company]
-  summary: List all
-  description: Lists all companies with its associations
+  summary: View a company
   parameters:
-    - name: letter
-      in: query
-      type: string
-    - name: include
-      in: query
-      type: string
-      description: Comma-separated, possible values - contacts_count, sla_policies
+    - name: id
+      in: path
+      type: number
+      required: true
   responses:
     200:
       description: Success
       schema:
-        allOf:
-          - properties:
-              companies:
-                $ref: '#/definitions/array_of_companies'
-              meta:
-                $ref: '#/definitions/meta'
-    400:
-      description: Bad Request Error
-      schema:
-        $ref: '#/definitions/bad_request_error'
+        $ref: '#/definitions/extended_company'

@@ -10,7 +10,7 @@ module CompanyConstants
   ACTIVITY_TYPES = %w(tickets archived_tickets).freeze
 
   FIELD_MAPPINGS = { :"company_domains.base" => :domains, :"company_domains.domain" => :domains }.freeze
-  SIDE_LOADING = %w(contacts_count sla_policies).freeze
+  SIDE_LOADING = %w(contacts_count).freeze
   ATTRIBUTES_TO_BE_STRIPPED = %w(name description note domains custom_fields).freeze
   MAX_ACTIVITIES_COUNT = 10
 
