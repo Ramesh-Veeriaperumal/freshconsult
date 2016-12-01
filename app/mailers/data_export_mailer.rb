@@ -114,7 +114,7 @@ class DataExportMailer < ActionMailer::Base
  
   def broadcast_message options={}
     message_id = "#{Mail.random_tag}.#{::Socket.gethostname}@private-notification.freshdesk.com"
-    ticket = Helpdesk::Ticket.find_by_id(options[:ticket_id])
+    ticket = Helpdesk::Ticket.find_by_display_id(options[:ticket_id])
     begin
       configure_email_config ticket.reply_email_config
       headers = {
