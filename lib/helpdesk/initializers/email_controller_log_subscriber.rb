@@ -7,7 +7,10 @@ class EmailControllerLogSubscriber < ActiveSupport::LogSubscriber
     if is_log_reduce_controller? payload[:controller]
       email_params = payload[:params]
       c_params = exclude_params(payload[:controller], payload[:params])
-      email_params = {} if payload[:controller] == "MimeController"
+      if payload[:controller] == "MimeController"
+        email_params = {}
+        c_params.merge!({ "message_id" => extract_message_id(payload[:params]["email"]) })
+      end
     else
       email_params = {}
       c_params = payload[:params]
@@ -46,6 +49,15 @@ class EmailControllerLogSubscriber < ActiveSupport::LogSubscriber
 
   def is_log_reduce_controller?(controller_name)
     ["EmailController", "MailgunController", "Helpdesk::ConversationsController", "MimeController"].any? {|controller| (controller == controller_name)}
+  end
+
+  def extract_message_id(headers)
+    message_id_regex = /<+([^>]+)/
+    if headers =~ /message-id: #{message_id_regex}/i
+      $1
+    elsif headers =~ /^x-ms-tnef-correlator: #{message_id_regex}/i
+      $1
+    end
   end
 end
 

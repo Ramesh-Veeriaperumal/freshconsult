@@ -1,6 +1,6 @@
 class CreateEmailHourlyUpdates < ActiveRecord::Migration
 
-  shard :all
+  shard :none
   
   def self.up
     create_table :email_hourly_updates do |t|
