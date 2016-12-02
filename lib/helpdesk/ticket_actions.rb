@@ -366,7 +366,7 @@ module Helpdesk::TicketActions
 
   def non_indexed_columns_query?
     return false if params["data_hash"].blank?
-    query_hash = JSON.parse(params["data_hash"])
+    query_hash = params["data_hash"].is_a?(String) ? JSON.parse(params["data_hash"]) : params["data_hash"]
     query_conditions = query_hash.map{|x| x["condition"]}
     (query_conditions - TicketConstants::DB_INDEXED_QUERY_COLUMNS).count > 0
   end
