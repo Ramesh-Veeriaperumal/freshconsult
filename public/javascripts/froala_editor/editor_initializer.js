@@ -20,11 +20,20 @@ function invokeEditor(element_id,type,attr) {
 			jQuery(element_id).froalaEditor({
 				pasteDeniedAttrs:['class', 'id', 'style'],
 				htmlRemoveTags: ['script', 'style', 'base'],
-				pluginsEnabled: ['fullscreen', 'paragraphFormat', 'paragraphStyle', 'fontSize', 'fontFamily', 'colors', 'align', 'lists', 'image', 'imageManager', 'video', 'table', 'link', 'codeView', 'lineBreaker', 'codeInsert','pasteHandler', 'codeBeautifier', 'commonEvents', 'pasteToggler'], //
+				pluginsEnabled: ['fullscreen', 'paragraphFormat', 'paragraphStyle', 'fontSize', 'fontFamily', 'colors', 'align', 'lists', 'quote', 'image', 'imageManager', 'video', 'table', 'link', 'codeView', 'lineBreaker', 'codeInsert','pasteHandler', 'codeBeautifier', 'commonEvents', 'pasteToggler'], //
 				toolbarButtons: ['paragraphFormat', 'fontFamily', 'fontSize', 'color', 'bold', 'italic', 'underline', 'strikethrough', 'paragraphStyle', '|',  'align', '|', 'formatOL', 'formatUL', 'outdent', 'indent', '|', 'insertLink', 'insertTable', 'insertImage', 'insertVideo',  'codeInsert', 'insertHR', '|', 'plainText', 'defaultFormatting', 'originalFormatting', '|', 'html', 'fullscreen'],
 				toolbarButtonsSM: null,
 				toolbarButtonsMD: null,
 				toolbarButtonsXS: null,
+				paragraphFormat: {
+			      N: 'Normal',
+			      H1: 'Heading 1',
+			      H2: 'Heading 2',
+			      H3: 'Heading 3',
+			      H4: 'Heading 4',
+			      BLOCKQUOTE: 'Quote',
+			      PRE: 'Code'
+			    },
 				fontFamily: {
 					"'Andale Mono', AndaleMono, monospace" : 'Andale Mono',
 					'Arial,Helvetica,sans-serif': 'Arial',
