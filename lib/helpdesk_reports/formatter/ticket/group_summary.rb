@@ -80,7 +80,7 @@ class HelpdeskReports::Formatter::Ticket::GroupSummary
       end
       @summary = formatted_summary
     end
-    @summary.sort_by{|a| a["agent_name"].downcase}
+    @summary.sort_by{|a| a["group_name"].downcase}
   end
 
 end
