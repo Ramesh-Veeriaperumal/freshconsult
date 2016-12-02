@@ -107,7 +107,7 @@ attachment_dom = ""
     <% end %>
   <% else%>
     <% if is_child_form %>
-      Helpdesk.MultipleFileUpload.renderExistingFiles(<%= @all_attachments.to_json.html_safe%>,<%=@cloud_files.to_json.html_safe %>,jQuery('.attachment-icon:visible').data('iconCount'));
+      Helpdesk.MultipleFileUpload.renderExistingFiles(<%= @all_attachments.to_json.html_safe%>,<%=@cloud_files.to_json.html_safe %>,jQuery('.attachment-icon:visible').data('iconCount'), true, 'helpdesk_ticket', true);
     <% end %>
   <% end %>
 <% end %>
