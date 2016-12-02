@@ -73,7 +73,14 @@ class HelpdeskReports::Formatter::Ticket::GroupSummary
         end
       end
     end
-    @summary.sort_by{|a| a["group_name"].downcase}
+    formatted_summary = []
+    unless Account.current.sla_management_enabled?
+      @summary.each do |s_hash|
+        formatted_summary << s_hash.except(*["RESPONSE_SLA", "RESOLUTION_SLA"])
+      end
+      @summary = formatted_summary
+    end
+    @summary.sort_by{|a| a["agent_name"].downcase}
   end
 
 end
