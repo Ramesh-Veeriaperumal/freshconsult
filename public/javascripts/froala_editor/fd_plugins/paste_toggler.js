@@ -175,7 +175,7 @@
         }
       })
 
-      editor.$oel.on('froalaEditor.commands.after', function (e, editor, cmd, param1, param2) {     
+      editor.$oel.on('froalaEditor.commands.before', function (e, editor, cmd, param1, param2) {     
         if (cmd != "originalFormatting" && cmd != "defaultFormatting" && cmd != "plainText") _clear();
       });
 
