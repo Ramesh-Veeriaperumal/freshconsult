@@ -135,6 +135,29 @@ ActiveRecord::Schema.define(:version => 20161103085738) do
 
   add_index "admin_data_imports", ["account_id", "created_at"], :name => "index_data_imports_on_account_id_and_created_at"
 
+  create_table "admin_sandbox_accounts", :force => true do |t|
+    t.integer  "account_id",         :limit => 8
+    t.integer  "sandbox_account_id", :limit => 8
+    t.integer  "status",                          :default => 0
+    t.string   "config"
+    t.string   "git_tag"
+    t.datetime "created_at",                                     :null => false
+    t.datetime "updated_at",                                     :null => false
+  end
+
+  add_index "admin_sandbox_accounts", ["account_id"], :name => "index_admin_sandbox_accounts_on_account_id"
+
+  create_table "admin_sandbox_jobs", :force => true do |t|
+    t.integer  "sandbox_account_id", :limit => 8
+    t.integer  "initiated_by",       :limit => 8
+    t.integer  "status",                          :null => false
+    t.integer  "account_id",         :limit => 8
+    t.datetime "created_at",                      :null => false
+    t.datetime "updated_at",                      :null => false
+  end
+
+  add_index "admin_sandbox_jobs", ["account_id"], :name => "index_admin_sandbox_jobs_on_account_id"
+
   create_table "admin_user_accesses", :force => true do |t|
     t.string   "accessible_type"
     t.integer  "accessible_id",   :limit => 8
