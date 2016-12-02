@@ -920,6 +920,7 @@ ActiveRecord::Schema.define(:version => 20161103085738) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "referrer_type"
+    t.integer  "spam_score"
   end
 
   add_index "conversion_metrics", ["account_id"], :name => "index_conversion_metrics_on_account_id"
