@@ -32,7 +32,7 @@ module RabbitMq::Subscribers::Search::SqsUtils
     model_message["#{model_name}_properties"].deep_merge!(model_object.send("mq_search_#{model_name}_properties", action))
     model_message["subscriber_properties"].merge!({ 'search' => model_object.mq_search_subscriber_properties(action) })
     
-    if Rails.env.development?
+    if (Rails.env.development? || Rails.env.test?)
       Ryuken::SearchPoller.new.perform(nil, model_message)
     else
       RabbitMq::Utils.manual_publish_to_xchg(

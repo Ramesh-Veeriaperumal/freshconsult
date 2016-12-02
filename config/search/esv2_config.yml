@@ -3,5 +3,5 @@ development:
   :queue_key: %{cluster}-etlqueue-dev
 
 test:
-  :esv2_host: 'localhost:9090'
+  :esv2_host: 'localhost:9200'
   :queue_key: %{cluster}-etlqueue-test

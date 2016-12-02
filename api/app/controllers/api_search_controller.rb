@@ -23,7 +23,9 @@ class ApiSearchController < ApiApplicationController
 
     sanitize_custom_fields(record, resource) if custom_fields(resource).any?
 
-    validation = "Search::#{resource.capitalize}Validation".constantize.new(record.merge({"#{resource}_fields".to_sym => allowed_fields(resource)}))
+    validation_params = record.merge({"#{resource}_fields".to_sym => allowed_fields(resource)})
+    validation_params.merge!(statuses: Helpdesk::TicketStatus.status_objects_from_cache(current_account)) if resource == 'ticket'
+    validation = "Search::#{resource.capitalize}Validation".constantize.new(validation_params)
     
     if validation.valid?
       search_terms = tree.accept(visitor(resource))

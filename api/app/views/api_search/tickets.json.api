@@ -32,6 +32,8 @@ JSON.generate(@items.map do |item|
       custom_fields[@name_mapping[key]] = value.respond_to?(:utc) ? value.utc : value
     end
     response_hash.merge!(custom_fields: custom_fields)
+  else
+    response_hash.merge!(custom_fields: {})
   end
   response_hash
 end)

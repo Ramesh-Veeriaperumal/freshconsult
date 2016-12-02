@@ -20,7 +20,7 @@ module SearchHelper
 
   # API Search helpers
   def ids_from_esv2_response(json)
-    result = ActionController::Parameters.new(JSON.parse json)
+    result = ActionController::Parameters.new(json)
     if result[:hits] && result[:hits][:hits] && result[:hits][:hits].any?
       result[:hits][:hits].map{|x| x["_id"].to_i}
     else
@@ -30,30 +30,6 @@ module SearchHelper
   end
 
   # Temp functions
-  def populate_es
-    all_tickets = current_account.tickets
-    all_tickets.each do |ticket|
-      url = "http://localhost:9200/ticket_index/ticket/#{ticket.id}"
-      site = RestClient::Resource.new(url)
-      begin
-        response = site.put(ticket.to_esv2_json, content_type: 'application/json')
-      rescue RestClient::Exception
-        puts "For ticket #{ticket.id} \nResponse Code: #{exception.response.code} \nResponse Body: #{exception.response.body} \n"
-      end
-    end
-
-    all_contacts = current_account.contacts
-    all_contacts.each do |contact|
-      url = "http://localhost:9200/contact_index/contact/#{contact.id}"
-      site = RestClient::Resource.new(url)
-      begin
-        response = site.put(contact.to_esv2_json, :content_type=>'application/json')
-      rescue RestClient::Exception
-        puts "For contact #{contact.id} \nResponse Code: #{exception.response.code} \nResponse Body: #{exception.response.body} \n"
-      end
-    end
-  end
-
   def query_es(terms, resource = :tickets)
     url = ""
     if resource == :tickets
@@ -63,11 +39,23 @@ module SearchHelper
     elsif resource == :companies
       url = "http://localhost:9200/companies_p1s1v1/_search"
     end
-    search_query = { _source: 'false', query: { bool: { filter: [ terms ] } } }
+    search_query = { _source: 'false', query: { bool: { filter: [ terms ] } }, size: 30 }
     begin
-      response = RestClient::Request.execute(method: :get, url: url, payload: search_query.to_json)
+      # response = RestClient::Request.execute(method: :get, url: url, payload: search_query.to_json)
+      response = Search::V2::Utils::EsClient.new(:get, 
+                            url, 
+                            { routing: current_account.id },
+                            search_query.to_json,
+                            Search::Utils::SEARCH_LOGGING[:request],
+                            UUIDTools::UUID.timestamp_create.hexdigest,
+                            current_account.id,
+                            'cluster1',
+                            nil
+                          ).response
     rescue RestClient::Exception => exception
       response = exception.response.body
+    rescue Exception => exception
+      response = exception.message
     end
     return response
   end
