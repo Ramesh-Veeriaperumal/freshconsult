@@ -15,7 +15,6 @@ begin
   #US Polls dircetly from the global queue - No region specific queues
   if S3_CONFIG[:region] == 'us-east-1'
     $sqs_twitter  = AWS::SQS.new.queues.named(SQS[:twitter_realtime_queue])
-    $sqs_gnip_2_0 = AWS::SQS.new.queues.named(SQS[:gnip_2_0_realtime_queue])
     
   #EUC polls from the region specifuc queue pushed from EU
   elsif S3_CONFIG[:region] == 'eu-central-1'

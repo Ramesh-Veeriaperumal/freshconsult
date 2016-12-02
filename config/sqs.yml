@@ -1,6 +1,5 @@
 development:
-  twitter_realtime_queue: social_gnip_tweet_dev
-  gnip_2_0_realtime_queue: social_gnip_2_0_tweet_dev
+  twitter_realtime_queue: social_gnip_2_0_tweet_dev
   facebook_realtime_queue: social_fb_feed_dev
   search_etl_queue: search_etl_queue_dev
   count_etl_queue: count_etl_queue_dev
@@ -27,8 +26,7 @@ development:
   default_email_queue: default_email_queue_dev
   email_dead_letter_queue: failed_emails_queue_dev
 staging:
-  twitter_realtime_queue: social_gnip_tweet_staging1
-  gnip_2_0_realtime_queue: social_gnip_2_0_tweet_staging
+  twitter_realtime_queue: social_gnip_2_0_tweet_staging
   facebook_realtime_queue: social_fb_feed_staging
   search_etl_queue: search_etl_queue_staging
   custom_mailbox_realtime_queue: custom_mailbox_staging
@@ -79,8 +77,7 @@ production:
   default_email_queue: default_email_queue_production
   email_dead_letter_queue: failed_emails_queue_production
 test:
-  twitter_realtime_queue: social_gnip_tweet_test
-  gnip_2_0_realtime_queue: social_gnip_2_0_tweet_test
+  twitter_realtime_queue: social_gnip_2_0_tweet_test
   facebook_realtime_queue: social_fb_feed_test
   search_etl_queue: search_etl_queue_test
   count_etl_queue: count_etl_queue_test
