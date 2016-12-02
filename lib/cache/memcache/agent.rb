@@ -6,7 +6,4 @@ module Cache::Memcache::Agent
     MemcacheKeys.memcache_delete(AVAILABLE_QUEST_LIST)
   end
 
-  def clear_cache
-  	clear_available_quests_cache!
-  end
 end
