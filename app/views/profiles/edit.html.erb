@@ -36,7 +36,7 @@
 		<% end %>
 	</div>
   <% end %>	
-	<% unless current_user.customer? %>
+  	<% if current_account.verified? && current_user.agent? %>
 	  <div class="sidepanel">
 		<%= content_tag( :h3, t("profile.api_key.title"), :class => "title" ) %>
 		<%= form_tag :action => :reset_api_key, :controller => 'profiles', :method => :put do |f| %>
