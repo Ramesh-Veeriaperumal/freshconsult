@@ -4,6 +4,7 @@ module Admin
     sidekiq_options :queue => :sandbox_sync, :retry => 0, :backtrace => true, :failures => :exhausted
 
     def perform(args)
+      args.symbolize_keys!
       job = Account.current.sandbox_jobs.find(args[:job_id])
     
       job.set_sandbox_to_maintainance_mode
