@@ -1,5 +1,5 @@
 class CreateAdminSandboxJobs < ActiveRecord::Migration
-  shard :none
+  shard :all
 
   def migrate(direction)
     self.send(direction)
