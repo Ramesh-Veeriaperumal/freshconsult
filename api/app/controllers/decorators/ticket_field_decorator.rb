@@ -148,7 +148,7 @@ class TicketFieldDecorator < ApiDecorator
       Account.current.ticket_types_from_cache.map do |type|
         {
           label: type.value,
-          value: type.value
+          value: type.id
         }
       end
     end
