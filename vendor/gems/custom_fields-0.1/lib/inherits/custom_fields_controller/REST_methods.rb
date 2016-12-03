@@ -16,8 +16,11 @@ module Inherits
 
       def update
         @fields_to_render = []
-        fields_posted     = JSON.parse params[:jsonData]
-
+        fields_posted = if @params_modified.present? and @params_modified
+               @fields
+        else
+              JSON.parse params[:jsonData]
+        end
         fields_posted.each_with_index do |field, i| # Hack - should consult Parsu
           field.symbolize_keys!
           unless field[:position] && (field[:position] == (i+1))
@@ -34,7 +37,10 @@ module Inherits
         end
       end
 
+      
+
       private
+        
         def fields_as_json fields
           fields.map do |field|
             field.as_json({:methods => [:dom_type, :admin_choices, :action]}).values.first

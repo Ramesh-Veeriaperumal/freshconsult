@@ -31,7 +31,9 @@
       <%= submit_tag t("save"), :class => "btn btn-primary save-custom-form", "data-commit" => t('saving') %>
     </div>
   </div>
-  <%= render :partial => "/shared/custom_field_buttons", :locals => { :field_class => field_class } %>
+  <% if (controller_name == "contact_fields" and current_account.custom_contact_fields_enabled?) || (controller_name == "company_fields" and current_account.custom_company_fields_enabled?) %>
+    <%= render :partial => "/shared/custom_field_buttons", :locals => { :field_class => field_class } %>
+  <% end %>
 </div>
 
 <%= javascript_tag do %>

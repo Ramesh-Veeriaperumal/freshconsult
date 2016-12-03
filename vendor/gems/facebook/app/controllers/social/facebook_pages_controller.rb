@@ -1,5 +1,5 @@
 class Social::FacebookPagesController < Admin::AdminController
-
+  
   before_filter { |c| c.requires_feature :facebook }
 
   #This Controller should be refactored

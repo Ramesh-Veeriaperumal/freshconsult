@@ -6,7 +6,7 @@ class Helpdesk::Note < ActiveRecord::Base
   before_create :create_broadcast_message, :if => :broadcast_note?
   before_save :load_schema_less_note, :update_category, :load_note_body, :ticket_cc_email_backup
 
-  after_create :update_content_ids, :update_parent, :add_activity, :update_sentiment
+  after_create :update_content_ids, :update_parent, :add_activity
   after_commit :fire_create_event, on: :create
   # Doing update note count before pushing to ticket_states queue
   # So that note count will be reflected if the rmq publish happens via ticket states queue
@@ -25,6 +25,8 @@ class Helpdesk::Note < ActiveRecord::Base
   after_commit :remove_es_document, on: :destroy, :if => :deleted_archive_note
 
   after_update ->(obj) { obj.notable.update_timestamp }, :if => :human_note_for_ticket?
+
+  after_commit :update_sentiment, on: :create
 
   # Callbacks will be executed in the order in which they have been included.
   # Included rabbitmq callbacks at the last
@@ -71,23 +73,18 @@ class Helpdesk::Note < ActiveRecord::Base
   end
 
   def update_sentiment 
-    user_id = User.current.id if User.current
-
-    if (account.customer_sentiment_enabled?) && (self.user.language=="en")
-
-      is_agent_performed = notable.agent_performed?(self.user)
-
-      if (not is_agent_performed) && (self.private != true)
-        if source == 9
-          self.sentiment = 0
-          self.save
-        else
-          Notes::UpdateNotesSentimentWorker.perform_async(
-                { :note_id => id,
-                  :ticket_id => notable.id}
-          )
+    if Account.current.customer_sentiment_enabled?
+      if User.current.nil? || User.current.language.nil? || User.current.language = "en"
+        is_agent_performed = notable.agent_performed?(self.user)
+        if !is_agent_performed && ![SOURCE_KEYS_BY_TOKEN["meta"]].include?(self.source)
+          if [SOURCE_KEYS_BY_TOKEN["phone"]].include?(self.source)
+            schema_less_note.sentiment = 0
+            schema_less_note.save
+          else
+            ::Notes::UpdateNotesSentimentWorker.perform_async({ :note_id => id, :ticket_id => notable.id})
+          end
         end
-      end
+     end
     end
   end
 
@@ -117,8 +114,8 @@ class Helpdesk::Note < ActiveRecord::Base
       
       inline_attachments.each_with_index do |attach, index| 
         content_id = header[:content_ids][attach.content_file_name+"#{index}"]
-        self.note_body.body_html = self.note_body.body_html.sub("cid:#{content_id}", attach.content.url) if content_id
-        self.note_body.full_text_html = self.note_body.full_text_html.sub("cid:#{content_id}", attach.content.url) if content_id
+        self.note_body.body_html = self.note_body.body_html.sub("cid:#{content_id}", attach.inline_url) if content_id
+        self.note_body.full_text_html = self.note_body.full_text_html.sub("cid:#{content_id}", attach.inline_url) if content_id
       end
       
       # note_body.update_attribute(:body_html,self.note_body.body_html)

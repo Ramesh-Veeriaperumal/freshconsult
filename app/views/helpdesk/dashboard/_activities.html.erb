@@ -20,7 +20,8 @@
   :container    => '.activityfeed',
   :currentPage  => 1,
   :pageIncrement => true,
-	:loadMoreAppendAfter => '#activity-feed',
+  :loadMoreAppendAfter => '#activity-feed',
+  :loadMoreHtml => "<a id='load-more' class='btn' data-loading-text='"+t('livechat.loading')+"'>"+ t('livechat.chat_loadmore') +"</a>",
   :complete     => '$this.$el.append(data);$this.loadMoreButton.button("reset");RealtimeDashboard.Widgets.Recent_activity.scrollTopOnLoadMore()'
    }) %>
 

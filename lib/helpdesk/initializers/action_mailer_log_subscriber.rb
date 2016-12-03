@@ -20,8 +20,8 @@ module ActionMailer
     end
 
     def extract_header(original_str)
-      original_str =~ /(.+?)(\r\n\r\n)/m ? $1 : ""
-      original_str.gsub!("\r\n", "\\r\\n")
+      header = original_str =~ /(.+?)(\r\n\r\n)/m ? $1 : ""
+      header.gsub!("\r\n", "\\r\\n")
     end
   end
 end

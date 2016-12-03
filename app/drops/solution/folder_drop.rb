@@ -4,6 +4,8 @@ class Solution::FolderDrop < BaseDrop
   
   self.liquid_attributes += [:name , :description , :visibility]
 
+  CACHE_METHODS = [:articles_count, :articles]
+
   def context=(current_context)    
     current_context['paginate_url'] = support_solutions_folder_path(source)
     
@@ -33,5 +35,20 @@ class Solution::FolderDrop < BaseDrop
   def articles
     @articles ||= @source.solution_article_meta.published.filter(@per_page, @page)
   end
-  
+
+  def articles_count_from_cache
+    @articles_count ||= @source.visible_articles_count
+  end
+
+  def articles_from_cache
+    @articles ||= @source.visible_articles
+  end
+
+  include Solution::PortalCacheMethods
+
+  protected
+
+  def additional_check_for_cache_fetch(meth)
+    source.instance_variable_defined?("@visible_#{meth}")
+  end
 end

@@ -7,6 +7,6 @@ class ArticleBodyObserver < ActiveRecord::Observer
 	end
 
 	def auto_create_hyperlink(article_body)
-		article_body.description = Rinku.auto_link(article_body.description, :urls, 'rel="noreferrer"')
+		article_body.description = FDRinku.auto_link(article_body.description, { :attr => 'rel="noreferrer"' })
 	end
 end 

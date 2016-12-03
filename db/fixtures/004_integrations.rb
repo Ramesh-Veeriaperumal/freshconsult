@@ -969,7 +969,9 @@ if Integrations::Application.count == 0
     s.listing_order = 39
     s.options = {:direct_install => true,
                  :auth_url => "/integrations/slack_v2/oauth",
-                 :edit_url => "/integrations/slack_v2/edit"
+                 :edit_url => "/integrations/slack_v2/edit",
+                 :after_create => {:method => "add_slack", :clazz => "IntegrationServices::Services::SlackService"},
+                 :after_destroy => {:method => "remove_slack", :clazz => "IntegrationServices::Services::SlackService"}
                 }
     s.application_type = "slack_v2"
   end

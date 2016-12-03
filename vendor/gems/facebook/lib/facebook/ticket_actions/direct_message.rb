@@ -37,7 +37,7 @@ module Facebook
           message.symbolize_keys!
           next if @account.facebook_posts.exists?(:post_id => message[:id])
           user = facebook_user(message[:from])
-          message[:message] = message[:message].to_s.tokenize_emoji
+          message[:message] = tokenize(message[:message])
           
           @note = ticket.notes.build(
             :note_body_attributes => {
@@ -79,7 +79,7 @@ module Facebook
 
         message.symbolize_keys!
         requester         = facebook_user(message[:from])
-        message[:message] = message[:message].to_s.tokenize_emoji
+        message[:message] = tokenize(message[:message])
 
         @ticket = @account.tickets.build(
           :subject      =>  truncate_subject(message[:message], 100),

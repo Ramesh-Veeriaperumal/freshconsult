@@ -11,6 +11,11 @@
 		var metric_data, td_class,tooltip_tmpl = "";
 		var current_data = data[i][agent_metrics[j]];
 		var enable_tooltip = false;
+		
+		if(consts.sla_metrics.indexOf(agent_metrics[j]) > -1 && !HelpdeskReports.locals.is_sla_management_enabled  ) {
+			return "";
+		}
+
 		if (consts.percentage_metrics.indexOf(agent_metrics[j]) > -1) {
 			metric_data = HelpdeskReports.CoreUtil.addsuffix(current_data);
 			td_class = (typeof current_data !== 'number') ? 'disable' : ( HelpdeskReports.locals.enable_ticket_list ? '' : 'disable'  );

@@ -6,6 +6,7 @@ module Admin
     def perform
       execute_on_db {
         account = Account.current
+        return unless account.supervisor_enabled?
         supervisor_rules = account.supervisor_rules
         return unless supervisor_rules.count > 0 
         start_time = Time.now.utc

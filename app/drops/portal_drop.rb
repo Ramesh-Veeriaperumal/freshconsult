@@ -10,6 +10,8 @@ class PortalDrop < BaseDrop
 
   include Redis::RedisKeys
   include Redis::PortalRedis
+
+  CACHE_METHODS = [:solution_categories, :folders, :articles_count]
   
   def initialize(source)
     super source
@@ -193,17 +195,25 @@ class PortalDrop < BaseDrop
 
   def folders
     @folders ||= (solution_categories.map { |c|
-                    c.solution_folder_meta.visible(portal_user) }.reject(&:blank?) || []).flatten
-  end
-
-  def recent_articles
-    @recent_articles ||= source.account.solution_article_meta.for_portal(source).published.newest(10)
+                      c.solution_folder_meta.visible(portal_user) }.reject(&:blank?) || []).flatten
   end
 
   # !MODEL-ENHANCEMENT Need to make published articles for a 
   # folder to be tracked inside the folder itself... similar to fourms
   def articles_count
     @articles_count ||= folders.map{ |f| f.solution_article_meta.published.count }.sum
+  end
+
+  def solution_categories_from_cache
+    @solution_categories ||= source.solution_categories_from_cache
+  end
+
+  def folders_from_cache
+    @folders ||= (solution_categories.map { |c| c.visible_folders }.reject(&:blank?) || []).flatten
+  end
+
+  def articles_count_from_cache
+    @articles_count ||= folders.map{ |f| f.visible_articles_count }.sum
   end
 
 	def most_viewed_articles
@@ -231,6 +241,10 @@ class PortalDrop < BaseDrop
 												.select{ |a| a.current_article.present? && a.current_article.published? }
 												.sort{|x,y| y.current_article.hits <=> x.current_article.hits }
 	end
+
+  def recent_articles
+    @recent_articles ||= source.account.solution_article_meta.for_portal(source).published.newest(10)
+  end
   
   def url_options
     @url_options ||= { :host => source.host }    
@@ -263,6 +277,8 @@ class PortalDrop < BaseDrop
   def personalized_articles?
     source.preferences[:personalized_articles]
   end
+
+  include Solution::PortalCacheMethods
 
   private
     def load_tabs

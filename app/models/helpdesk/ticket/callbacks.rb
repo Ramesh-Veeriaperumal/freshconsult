@@ -44,10 +44,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   before_save :update_dueby, :unless => :manual_sla?
 
+
   before_update :update_isescalated, :if => :check_due_by_change
   before_update :update_fr_escalated, :if => :check_frdue_by_change
 
-  after_create :refresh_display_id, :create_meta_note, :update_content_ids, :update_sentiment
+  after_create :refresh_display_id, :create_meta_note, :update_content_ids
   after_create :set_parent_child_assn, :if => :child_ticket?
   after_save :check_child_tkt_status, :if => :child_ticket?
 
@@ -67,8 +68,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
   after_commit :set_links, :on => :create, :if => :tracker_ticket?
   after_commit :add_links, :on => :update, :if => :linked_now?
   after_commit :remove_links, :on => :update, :if => :unlinked_now?
+  after_commit :save_sentiment, on: :create 
+  after_commit :update_spam_detection_service, :if => :model_changes?
+  
+  # Callbacks will be executed in the order in which they have been included. 
 
-  # Callbacks will be executed in the order in which they have been included.
   # Included rabbitmq callbacks at the last
   include RabbitMq::Publisher
 
@@ -147,20 +151,16 @@ class Helpdesk::Ticket < ActiveRecord::Base
     schema_less_ticket.save
   end
 
-  def update_sentiment
-
-    if (self.account.customer_sentiment_enabled?)
-      if (User.current == nil) || (User.current.language==nil) || (User.current.language=="en")
-        if self.source == 3 || self.source == 7
-          self.sentiment = 0
-          self.save
-        else
-          user_id = User.current.id if User.current
-          Tickets::UpdateSentimentWorker.perform_async(
-                { :id => id }
-          )
-        end
-      end
+  def save_sentiment
+    if Account.current.customer_sentiment_enabled?
+     if User.current.nil? || User.current.language.nil? || User.current.language = "en"
+       if [SOURCE_KEYS_BY_TOKEN[:chat],SOURCE_KEYS_BY_TOKEN[:phone]].include?(self.source)
+         schema_less_ticket.sentiment = 0
+         schema_less_ticket.save
+       else
+          ::Tickets::UpdateSentimentWorker.perform_async( { :id => id } )
+       end
+     end
     end
   end
 
@@ -678,7 +678,7 @@ private
     description_updated = false
     inline_attachments.each_with_index do |attach, index|
       content_id = header[:content_ids][attach.content_file_name+"#{index}"]
-      self.ticket_body.description_html = self.ticket_body.description_html.sub("cid:#{content_id}", attach.content.url) if content_id
+      self.ticket_body.description_html = self.ticket_body.description_html.sub("cid:#{content_id}", attach.inline_url) if content_id
     end
     # For rails 2.3.8 this was the only i found with which we can update an attribute without triggering any after or before callbacks
     #Helpdesk::Ticket.update_all("description_html= #{ActiveRecord::Base.connection.quote(description_html)}", ["id=? and account_id=?", id, account_id]) \
@@ -861,7 +861,7 @@ private
   end
 
   def update_assoc_parent_tkt
-    is_inactive = [RESOLVED, CLOSED].include?(@assoc_parent_ticket.status)
+    is_inactive = ![RESOLVED, CLOSED].include?(status) and [RESOLVED, CLOSED].include?(@assoc_parent_ticket.status)
     if @assoc_parent_ticket.assoc_parent_ticket?
       @assoc_parent_ticket.add_associates([self.display_id])
       is_inactive ? @assoc_parent_ticket.update_attributes(:status => OPEN) : true
@@ -923,5 +923,15 @@ private
   def update_fr_escalated
     self.fr_escalated = false
     true
+  end
+
+  def update_spam_detection_service
+    if (Account.current.launched?(:spam_detection_service) && @model_changes.include?(:spam) &&
+     self.source.eql?(Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email]))
+      Rails.logger.info "Pushing to sidekiq to learn ticket"
+      type = @model_changes[:spam][1] ? :spam : :ham
+      SpamDetection::LearnTicketWorker.perform_async({ :ticket_id => self.id, 
+        :type => Helpdesk::Email::Constants::MESSAGE_TYPE_BY_NAME[type]})
+    end
   end
 end

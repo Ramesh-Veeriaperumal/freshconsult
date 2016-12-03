@@ -4429,7 +4429,8 @@ cs:
         overdue: "Promeškané požadavky"
         due_today: "Požadavky které mají být vyřešené dnes"
         resolved: "Vyřešené požadavky"
-        my_overdue: "Moje promeškané požadavky"
+        unresolved: "Všechny nevyřešené požadavky"
+        my_overdue: "Moje zpožděné požadavky"
         tags: "Značky dle požadavku"
         my_due_today: "Moje požadavky, které mají být vyřešené dnes"
         my_all: "Všechny mé požadavky"
@@ -4437,6 +4438,7 @@ cs:
         select: "Vybrat zobrazení..."
         spam: Spam
         monitored_by: "Požadavky, které sleduji"
+        raised_by_me: "Mnou zadané požadavky"
         my_closed: "Mé uzavřené požadavky"
         my_open: "Mé otevřené požadavky"
         tickets_by: "Požadavky dle"

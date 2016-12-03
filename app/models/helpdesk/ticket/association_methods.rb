@@ -169,6 +169,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     def reset_assoc_parent
       remove_prime_associates("assoc_parent")
       nullify_assoc_type
+      remove_all_associates
     end
 
     def reset_related

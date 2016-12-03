@@ -2,6 +2,7 @@ class CustomFieldsController < Admin::AdminController
 
   include Helpdesk::Ticketfields::ControllerMethods
   include Cache::FragmentCache::Base
+  include Helpdesk::CustomFields::CustomFieldMethods
 
   before_filter :check_ticket_field_count, :only => [ :update ]
   
@@ -20,6 +21,7 @@ class CustomFieldsController < Admin::AdminController
     @field_data.each_with_index do |f_d, i|
       f_d.symbolize_keys!
 
+      next if f_d[:action] == "create" && !current_account.custom_ticket_fields_enabled?
       unless (action = f_d.delete(:action)).nil?
         # f_d.delete(:choices) unless("nested_field".eql?(f_d[:field_type]) || 
         #                             "custom_dropdown".eql?(f_d[:field_type]) || 
@@ -43,13 +45,21 @@ class CustomFieldsController < Admin::AdminController
         end  
     end
     clear_fragment_caches
-    flash_message(err_str.to_s.html_safe)
-    redirect_to :action => :index
+    err_str = err_str.to_s.html_safe
+    flash_message(err_str)
+    response_data = current_portal.ticket_fields_including_nested_fields if err_str.blank?
+    invoke_respond_to(err_str, response_data.presence) do
+      redirect_to :action => :index
+    end
   end
 
   private
 
     def edit_field(field_details)
+      #Length(current: 4) has to be updated if any default status is added or deleted
+      if field_details[:field_type] == "default_status" && !current_account.custom_ticket_fields_enabled? && field_details[:choices].length > 4
+        field_details[:choices].reject!{ |choice| !choice["status_id"].present? }
+      end
       field_details.delete(:type)
       field_details.delete(:dom_type)
       custom_field = scoper.find(field_details.delete(:id))

@@ -4,8 +4,7 @@ module Gnip
 
     SOURCE = {
       :twitter  => "Twitter",
-      :facebook => "Facebook",
-      :gnip_2_0 => "Gnip_2_0"
+      :facebook => "Facebook"
     }
 
     DELIMITER = {

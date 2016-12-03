@@ -115,7 +115,7 @@ module AutomationControllerMethods
       { :name => "add_a_cc", :value => t('add_a_cc'), :domtype => 'single_email',
         :condition => va_rules_controller? },
       { :name => "add_watcher", :value => t('dispatch.add_watcher'), :domtype => 'multiple_select',
-        :choices => watcher_agents, :unique_action => true },
+        :choices => watcher_agents, :unique_action => true, :condition => current_account.add_watcher_enabled? },
       { :name => "trigger_webhook", :value => t('trigger_webhook'), :domtype => 'webhook',
         :unique_action => true,
         :condition => (va_rules_controller? || observer_rules_controller?) },

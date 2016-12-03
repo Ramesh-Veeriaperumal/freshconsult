@@ -10,6 +10,9 @@ class Support::SearchController < SupportController
   before_filter :forums_allowed_in_portal?, :only => :topics
   before_filter :solutions_allowed_in_portal?, :only => :solutions
   before_filter :require_user_login, :only => :tickets
+  before_filter :only => [:solutions] do |c|
+    c.requires_this_feature :allow_auto_suggest_solutions
+  end
 
   def show
     search_portal(content_classes)

@@ -147,7 +147,6 @@ class RabbitmqWorker
       (
         ((exchange.starts_with?("tickets") && key[8] == "1") || 
             (exchange.starts_with?("notes") && key[6] == "1") ||
-            (exchange.starts_with?("archive_tickets") && key[4] == "1") ||
             ((exchange.starts_with?("accounts") || exchange.starts_with?("article") || 
               exchange.starts_with?("topic") || exchange.starts_with?("post")) && key[2] == "1") ||
             ((exchange.starts_with?("forum_category") || exchange.starts_with?("forum") || 

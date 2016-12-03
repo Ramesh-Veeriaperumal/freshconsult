@@ -120,6 +120,7 @@ class ApplicationController < ActionController::Base
       User.current = current_user
     rescue ActiveRecord::RecordNotFound
     rescue ActiveSupport::MessageVerifier::InvalidSignature
+      @destroy_session = true
       handle_unverified_request
     end    
   end
@@ -216,6 +217,10 @@ class ApplicationController < ActionController::Base
       response.headers["Expires"] = "Fri, 01 Jan 1990 00:00:00 GMT"
   end
 
+  def check_anonymous_user
+    access_denied unless logged_in?
+  end
+
   protected
     # Possible dead code
     def silence_logging
@@ -241,9 +246,11 @@ class ApplicationController < ActionController::Base
     def handle_unverified_request
       super
       Rails.logger.error "CSRF TOKEN NOT SET #{params.inspect}"
-      cookies.delete 'user_credentials'     
-      current_user_session.destroy unless current_user_session.nil? 
-      @current_user_session = @current_user = nil
+      if @destroy_session
+        cookies.delete 'user_credentials'     
+        current_user_session.destroy unless current_user_session.nil? 
+        @current_user_session = @current_user = nil
+      end
       portal_redirect_url = root_url
       if params[:portal_type] == "facebook"
         portal_redirect_url = portal_redirect_url + "support/home"
@@ -288,11 +295,25 @@ class ApplicationController < ActionController::Base
       current_user.agent.update_last_active if Account.current && current_user && current_user.agent? && !current_user.agent.nil?
     end
 
+    def request_host
+      @request_host ||= request.host
+    end
+
     def print_logs
       return unless Account.current && Account.current.launched?(:logout_logs)
       Rails.logger.error "Session CSRF key = #{session[:_csrf_token]}"
       Rails.logger.error "Request CSRF key = #{request.headers['X-CSRF-Token']}"
       Rails.logger.error "protocol = #{request.protocol}"
     end
+
+  def non_covered_feature
+    redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
+  end
+
+  def non_covered_admin_feature
+    redirect_to admin_home_index_path
+  end
+
+
 end
 

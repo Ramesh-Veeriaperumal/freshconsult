@@ -58,8 +58,13 @@ run "ln -nfs #{shared_path}/config/lambda.yml #{node[:rel_path]}/config/lambda.y
 run "ln -nfs #{shared_path}/config/redis_round_robin.yml #{node[:rel_path]}/config/redis_round_robin.yml"
 run "ln -nfs #{shared_path}/config/ml_app.yml #{node[:rel_path]}/config/ml_app.yml"
 run "ln -nfs #{shared_path}/config/sendgrid_webhook_api.yml #{node[:rel_path]}/config/sendgrid_webhook_api.yml"
+run "ln -nfs #{shared_path}/config/ehawk_api.yml #{node[:rel_path]}/config/ehawk_api.yml"
+run "ln -nfs #{shared_path}/config/sds.yml #{node[:rel_path]}/config/sds.yml"
+
 #supreme-code-console
 run "ln -nfs #{shared_path}/config/api_config_internal_tools.yml #{node[:rel_path]}/config/api_config_internal_tools.yml"
+run "ln -nfs #{shared_path}/config/sandbox.yml  #{node[:rel_path]}/config/sandbox.yml"
+
 #search V2
 run "ln -nfs #{shared_path}/config/search/boost_values.yml #{node[:rel_path]}/config/search/boost_values.yml"
 run "ln -nfs #{shared_path}/config/search/supported_types.yml #{node[:rel_path]}/config/search/supported_types.yml"

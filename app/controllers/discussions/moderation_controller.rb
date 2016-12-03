@@ -13,7 +13,7 @@ class Discussions::ModerationController < ApplicationController
 	before_filter :default_scope, :only => :index
 	before_filter :load_posts, :only => :index
 	before_filter :load_post, :only => [:approve, :mark_as_spam, :ban, :restore_contact]
-	before_filter { |c| c.requires_feature :forums }
+	before_filter { |c| c.requires_forums_feature }
 
 	REPORT = { :ham => true, :spam => false }
 

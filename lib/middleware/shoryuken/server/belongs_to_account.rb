@@ -10,16 +10,19 @@ module Middleware
         end
   
         def call(worker_instance, queue, sqs_msg, body)
-          if !@ignore.include?(worker_instance.class.name)
-            ::Account.reset_current_account
-            account_id = body['account_id']
-            Sharding.select_shard_of(account_id) do
-              account = ::Account.find(account_id)
-              account.make_current
-              time_spent = Benchmark.realtime { yield }
+          log_tags = (body['msg_uuid'] || sqs_msg.message_id.delete('-')) || []
+          Rails.logger.tagged(log_tags) do
+            if !@ignore.include?(worker_instance.class.name)
+              ::Account.reset_current_account
+              account_id = body['account_id']
+              Sharding.select_shard_of(account_id) do
+                account = ::Account.find(account_id)
+                account.make_current
+                time_spent = Benchmark.realtime { yield }
+              end
+            else
+              yield
             end
-          else
-            yield
           end
         rescue DomainNotReady => e
           puts "Just ignoring the DomainNotReady , #{e.inspect}"

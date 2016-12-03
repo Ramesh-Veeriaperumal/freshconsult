@@ -19,6 +19,7 @@ class Helpdesk::SubscriptionsController < ApplicationController
   end
 
   def create_watchers
+    return unless current_account.add_watcher_enabled?
     @ticket = @parent
     if current_account.agents.find_by_user_id(params[:user_id])
       subscription = @ticket.subscriptions.build(:user_id => params[:user_id])

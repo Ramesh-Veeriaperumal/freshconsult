@@ -44,5 +44,9 @@ module AwsWrapper
       AWS::S3::Bucket.new(bucket).objects.with_prefix(prefix)
     end
 
+    def self.copy_file(source_file_path, destination_file_path, bucket_name)
+      AWS::S3::Bucket.new(bucket_name).objects[destination_file_path].copy_from(source_file_path)
+    end
+
   end
 end

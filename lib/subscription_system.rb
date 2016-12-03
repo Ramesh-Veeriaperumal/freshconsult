@@ -8,6 +8,12 @@ module SubscriptionSystem
     base.send :helper_method, :current_account, :admin_subdomain?, :feature?,
         :allowed_in_portal?, :current_portal, :main_portal?
   end
+
+  def requires_forums_feature
+    return if feature?(:forums)
+    error_view = current_account.subscription.non_sprout_plan? ? "forums_disabled" : "non_covered_feature"
+    render is_native_mobile? ? { :json => { :requires_feature => false } } : { :template => "/errors/#{error_view}.html", :locals => {:feature => :forums} }
+  end
   
   def requires_feature(f)
 	return if feature?(f)
@@ -57,11 +63,11 @@ module SubscriptionSystem
 
   private
     def retrieve_current_account
-      @current_portal = Portal.fetch_by_url request.host 
+      @current_portal = Portal.fetch_by_url request_host 
       @current_portal.make_current if @current_portal
       return @current_portal.account if @current_portal
       
-      account = Account.fetch_by_full_domain(request.host) || 
+      account = Account.fetch_by_full_domain(request_host) || 
                   (Rails.env.development? ? Account.first : nil)
       (raise ActiveRecord::RecordNotFound and return) unless account
       

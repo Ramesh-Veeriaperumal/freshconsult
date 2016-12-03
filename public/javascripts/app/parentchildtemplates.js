@@ -570,6 +570,7 @@ window.App = window.App || {};
 						$("#noticeajax").html(data.msg).show();
 						closeableFlash('#noticeajax');
 						$(document).scrollTop(0);
+						self.disableBtnFields(false)
 					}
 				},
 				error:function(err){
@@ -606,16 +607,16 @@ window.App = window.App || {};
 				$filterWrapper.removeClass('hide');
 			}
 		},
-		disableBtnFields:function(){
-			$('.form_btn').attr('disabled',true);
-			$('.insert_placeholder').attr('disabled',true);
-			$('.inherit_parent').attr('disabled',true);
+		disableBtnFields:function(status){
+			$('.form_btn').attr('disabled',status);
+			$('.insert_placeholder').attr('disabled',status);
+			$('.inherit_parent').attr('disabled',status);
 		},
 		changeInheritParentID: function(){
 	    jQuery('#inherit-parent').val(customMessages.intialInheritParent)
 	  },
 	  formSubmit: function(srcElement){
-  		this.disableBtnFields();
+  		this.disableBtnFields(true);
     	if($(srcElement).hasClass('template_add_child') || $(srcElement).hasClass('add_child')){ //redirects to add child template page after saving by passing 'add_child' param
     		this.appendHiddenField($('#ticket_template'),'add_child','true','add_child');
     	}
@@ -942,7 +943,7 @@ window.App = window.App || {};
 	    $('body').on('click.template_form','.form_btn',function(e){
 	    	var srcElement = e.target || e.srcElement;
 				if(($(srcElement).prop("tagName")==='A')) {
-					this.disableBtnFields();
+					this.disableBtnFields(true);
 					return;
 				} // return if button is not submit action
 				e.preventDefault();

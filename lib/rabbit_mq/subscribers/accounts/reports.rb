@@ -9,12 +9,12 @@ module RabbitMq::Subscribers::Accounts::Reports
   end
 
   def mq_reports_valid(action, model)
-    valid_model?(model) && destroy_action?(action)
+    reports_valid_model?(model) && destroy_action?(action)
   end
   
   private
     
-    def valid_model?(model)
+    def reports_valid_model?(model)
       ["account"].include?(model)
     end
 end

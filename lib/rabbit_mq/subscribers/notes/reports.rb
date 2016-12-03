@@ -19,7 +19,7 @@ module RabbitMq::Subscribers::Notes::Reports
   end
 
   def mq_reports_valid(action, model)
-    valid_model?(model) && send("#{model}_valid?", action)
+    reports_valid_model?(model) && send("#{model}_valid?", action)
   end
 
   private
@@ -46,7 +46,7 @@ module RabbitMq::Subscribers::Notes::Reports
       note_info.merge!({"ticket" => ticket_info})
     end
     
-    def valid_model?(model)
+    def reports_valid_model?(model)
       VALID_MODELS.include?(model)
     end
     

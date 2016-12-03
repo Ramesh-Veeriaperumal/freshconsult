@@ -42,6 +42,11 @@ class Admin::Social::StreamsController < Admin::AdminController
     session[:request_token]  = request_token.token
     session[:request_secret] = request_token.secret
     request_token.authorize_url
+  rescue Exception => e
+    Rails.logger.error e
+    Rails.logger.error e.backtrace
+    NewRelic::Agent.notice_error(e)
+    nil
   end
   
   def update_dm_rule(social_account)

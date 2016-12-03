@@ -40,6 +40,7 @@ class User < ActiveRecord::Base
    
   has_many :email_notification_agents,  :dependent => :destroy
   
+  has_many :user_roles, :class_name => 'UserRole'
   has_and_belongs_to_many :roles,
     :join_table => "user_roles",
     :insert_sql => proc { |record|

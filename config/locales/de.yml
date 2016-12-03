@@ -48,7 +48,9 @@ de:
     unresolved: "Alle ungelösten"
   request_for_extension: "Request for extension."
   trial_extension_requested: "Your request has been received. We'll get back to you soon."
-  fb_realtime_enable: "Facebook real-time messaging is now live! Reauthorize your existing Facebook Pages to enable the feature for your account. Read more <a target='_blank' href='https://support.freshdesk.com/support/solutions/articles/221711'>here</a>"
+  fb_realtime_enable: |-
+      Facebook, Echtzeitnachrichten sind jetzt verfügbar! Bitte autorisiere deine existierenden
+      Facebook Seiten, um diese Funktion zu nutzen <a target='_blank' href='https://support.freshdesk.com/support/solutions/articles/221711'> hier </a>
   ticket_fields:
     fields:
       internal_agent: "Internal Agent"
@@ -2437,12 +2439,12 @@ de:
   ticket_templates:
     ticket_email_form: "Ticket/Email Form"
     title: Ticketvorlagen
-    select_template: "Eine Vorlage wählen"
+    select_template: "Wähle eine Vorlage aus"
     helptext:
       info1: "Mit Vorlagen können Sie neue Tickets und ausgehende E-Mails mit einem einzigen Klick vorbefüllen. So sparen Sie Zeit, weil Sie nicht immer wieder den gleichen Inhalt schreiben müssen, und können schnell Tickets erstellen oder ausgehende E-Mails versenden."
       info2: "Sie können beispielsweise eine Vorlage namens „Erstattung einleiten“ erstellen, indem Sie den Textkörper des Tickets ausfüllen und die Priorität auf „mittel“ setzen. Wenn Sie dann das nächste Mal einen Anruf wegen einer Erstattung bekommen, können Sie mit einem einzigen Klick ein Ticket mittlerer Priorität für Ihren Kunden erstellen und die Erstattungsanforderung einleiten."
     new_template: "Neu hinzufügen"
-    create_template: "Vorlage erstellen"
+    create_template: "Estelle eine Vorlage"
     template_note: "Die Wahl einer Vorlage ersetzt <br/>das Formular durch neue Werte."
     template_info: "Ticketvorlagen helfen dabei, dieses <br/>Formular mit einem einzigen Klick vorzubefüllen, und sind praktisch bei <br/>wiederkehrenden Problemen und Kommunikationen."
     new_title: "Neue Vorlage"
@@ -3870,7 +3872,7 @@ de:
     realtime_dashboard:
       view_more: "View more"
       across_helpdesk: "across helpdesk"
-      recent_activities: "Recent Helpdesk Activity"
+      recent_activities: "Kürzlich durchgeführte Aktivitäten"
       unresolved_tickets_by_ticket_type: "Unresolved Tickets by Type"
       unresolved_tickets_by_age: "Top 10 Unresolved Tickets by Age (Days)"
       top_customers_by_open_tickets: "Top 10 Customers by Unresolved Tickets ( >2 )"
@@ -3902,7 +3904,7 @@ de:
       ticket_summary: Ticket-Zusammenfassung
       filter_by: "Filtern nach"
       all_groups: "Alle Gruppen"
-      unresolved: "Nicht gelöst"
+      unresolved: Ungelöst
       open: Offen
       on_hold: Warteschleife
       due_today: "Heute fällig"
@@ -4425,7 +4427,7 @@ de:
       fb_profile_id: Facebook-Profil-ID
       agent: Agent
       group: Gruppe
-      created_time: Erstellungszeit
+      created_time: Erstellungsdatum
       due_by_time: Fällig
       resolved_time: Lösungszeit
       closed_time: Abschlusszeit
@@ -4461,7 +4463,7 @@ de:
     twenty_four: "Ab gestern"
     custom_filter: "Datum festlegen"
     no_fields_selected: "Bitte markieren Sie mindestens eines der untenstehenden Felder, um fortzufahren."
-    created_time: Erstellungszeit
+    created_time: Erstellungsdatum
     resolved_time: Lösungszeit
     closed_time: Abschlusszeit
     created_at: erstellt
@@ -5950,13 +5952,13 @@ de:
       avg_resolution_time: "Durchschnittliche Lösungsdauer"
       agent: Agent
     timesheet_reports:
-      title: Zeittabellenübersicht
+      title: "Zusammenfassung Arbeitszeiterfassungsbogen"
     phone_summary:
       title: Telefonübersicht
     chat_summary:
       title: Chatübersicht
     satisfaction_survey:
-      title: Zufriedenheitsumfrage
+      title: Zufriedenheitsbefragung
     export:
       export_report_pdf: "Als PDF exportieren"
       export_report_csv: "Als CSV exportieren"
@@ -9475,7 +9477,7 @@ de:
       fcr: Erstanruflösung
     timesheet_reports:
       index:
-        title: Zeittabellenbericht
+        title: "Zusammenfassung Arbeitszeiterfassungsbogen"
         select_customer: "Kunde auswählen"
         select_agent: "Bearbeiter auswählen"
         select_group: "Gruppe auswählen"
@@ -9713,8 +9715,8 @@ de:
   status_name_validate_presence_msg: " Statusname darf nicht leer sein"
   open_tickets: "Offene Tickets"
   resolved_tickets: "Gelöste Tickets"
-  waiting_on_customer: "Warten auf Kunden"
-  waiting_on_third_party: "Warten auf Dritten"
+  waiting_on_customer: "Warten auf Kundenantwort"
+  waiting_on_third_party: "Waten auf Antwort der Fachabteilung"
   bcc_email_updated_success_msg: "Bcc der E-Mail erfolgreich aktualisiert"
   bcc_email_updated_failure_msg: "Bcc der E-Mail konnte nicht aktualisiert werden"
   choose_free_plan: "Wählen Sie Ihren Gratis-%{plan}"

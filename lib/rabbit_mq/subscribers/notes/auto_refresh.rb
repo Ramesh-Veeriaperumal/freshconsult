@@ -15,7 +15,7 @@ module RabbitMq::Subscribers::Notes::AutoRefresh
   end
 
   def mq_auto_refresh_valid(action, model)
-    create_action?(action) ? (valid_model?(model) && Account.current.features?(:collision)) : false
+    create_action?(action) ? (auto_refresh_valid_model?(model) && Account.current.features?(:collision)) : false
   end
 
   private
@@ -24,7 +24,7 @@ module RabbitMq::Subscribers::Notes::AutoRefresh
     AUTO_REFRESH_NOTE_KEYS
   end
 
-  def valid_model?(model)
+  def auto_refresh_valid_model?(model)
     ["note"].include?(model) && notable_type == "Helpdesk::Ticket"
   end
 

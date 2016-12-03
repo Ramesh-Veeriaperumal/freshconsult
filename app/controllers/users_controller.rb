@@ -10,6 +10,7 @@ class UsersController < ApplicationController
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:revert_identity, :profile_image]
   before_filter :set_selected_tab
   skip_before_filter :load_object , :only => [ :show, :edit ]
+  before_filter(:only => [:assume_identity]) { |c| c.requires_this_feature :assume_identity }
   before_filter :assume_allowed?, :only => [:assume_identity]
   before_filter :load_items, :only => :block
 
