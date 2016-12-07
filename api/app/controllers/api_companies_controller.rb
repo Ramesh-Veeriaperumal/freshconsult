@@ -59,11 +59,11 @@ class ApiCompaniesController < ApiApplicationController
     end
 
     def set_custom_errors(item = @item)
-      ErrorHelper.rename_error_fields(CompanyConstants::FIELD_MAPPINGS.merge(@name_mapping), item)
+      ErrorHelper.rename_error_fields(CompanyConstants::FIELD_MAPPINGS.merge(@name_mapping || {}), item)
     end
 
     def error_options_mappings
-      @name_mapping
+      @name_mapping || {}
     end
 
     def decorator_options_hash

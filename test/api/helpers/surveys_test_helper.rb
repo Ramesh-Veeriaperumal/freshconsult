@@ -83,10 +83,10 @@ module SurveysTestHelper
     end
   end
 
-  def create_survey_result(ticket, rating, response_note = nil)
+  def create_survey_result(ticket, rating, response_note = nil, survey_id = nil)
     old_rating = CustomSurvey::Survey.old_rating rating.to_i
     result = @account.custom_survey_results.build(account_id: @account,
-                                                  survey_id: @account.survey.id,
+                                                  survey_id: survey_id || @account.survey.id,
                                                   surveyable_id: ticket.id,
                                                   surveyable_type: 'Helpdesk::Ticket',
                                                   customer_id: ticket.requester_id,

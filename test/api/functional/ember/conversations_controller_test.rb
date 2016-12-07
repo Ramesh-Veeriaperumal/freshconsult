@@ -1,8 +1,5 @@
 require_relative '../../test_helper'
-['canned_responses_helper.rb', 'group_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
-require "#{Rails.root}/spec/support/social_tickets_creation_helper.rb"
-require "#{Rails.root}/spec/support/twitter_helper.rb"
-require "#{Rails.root}/spec/support/dynamo_helper.rb"
+['canned_responses_helper.rb', 'group_helper.rb', 'social_tickets_creation_helper.rb', 'twitter_helper.rb', 'dynamo_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
 module Ember
   class ConversationsControllerTest < ActionController::TestCase
     include ConversationsTestHelper
@@ -14,6 +11,7 @@ module Ember
     include SocialTicketsCreationHelper
     include TwitterHelper
     include DynamoHelper
+    include SurveysTestHelper
 
     def wrap_cname(params)
       { conversation: params }
@@ -223,6 +221,41 @@ module Ember
       match_json(note_pattern(params, latest_note))
       match_json(note_pattern({}, latest_note))
       assert latest_note.attachments.count == 1
+    end
+    
+    def test_reply_with_inapplicable_survey_option
+      survey = Account.current.survey
+      survey.send_while = rand(1..3)
+      survey.save
+      t = create_ticket
+      params_hash = reply_note_params_hash.merge(send_survey: true)
+      post :reply, construct_params({version: 'private', id: t.display_id }, params_hash)
+      assert_response 400
+      match_json([bad_request_error_pattern(:send_survey, :should_be_blank)])
+    end
+
+    def test_reply_without_survey_link
+      survey = Account.current.survey
+      survey.send_while = 4
+      survey.save
+      t = create_ticket
+      params_hash = reply_note_params_hash.merge(send_survey: false)
+      post :reply, construct_params({version: 'private', id: t.display_id }, params_hash)
+      assert_response 201
+      match_json(note_pattern(params_hash, Helpdesk::Note.last))
+      match_json(note_pattern({}, Helpdesk::Note.last))
+    end
+
+    def test_reply_with_survey_link
+      survey = Account.current.survey
+      survey.send_while = 4
+      survey.save
+      t = create_ticket
+      params_hash = reply_note_params_hash.merge(send_survey: true)
+      post :reply, construct_params({version: 'private', id: t.display_id }, params_hash)
+      assert_response 201
+      match_json(note_pattern(params_hash, Helpdesk::Note.last))
+      match_json(note_pattern({}, Helpdesk::Note.last))
     end
 
     def test_forward_with_invalid_cc_emails_count
@@ -782,6 +815,20 @@ module Ember
       match_json(note_pattern(params_hash, latest_note))
       
       Twitter::REST::Client.any_instance.unstub(:update)
+    end
+
+    def test_ticket_conversations
+      t = create_ticket
+      create_private_note(t)
+      create_reply_note(t)
+      create_forward_note(t)
+      create_feedback_note(t)
+      create_fb_note(t)
+      create_twitter_note(t)
+      get :ticket_conversations, controller_params(version: 'private', id: t.display_id)
+      assert_response 200
+      response = parse_response @response.body
+      assert_equal 6, response.size
     end
   end
 end

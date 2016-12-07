@@ -3,4 +3,6 @@ allOf:
   - $ref: '#/definitions/extension_generic'
   - properties:
       sla_policies:
-        $ref: '#/definitions/array_of_sla_policies'
+        type: array
+        items:
+          $ref: '#/definitions/extended_sla_policy'

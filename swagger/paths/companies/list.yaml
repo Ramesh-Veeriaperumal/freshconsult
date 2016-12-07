@@ -17,7 +17,9 @@ get:
         allOf:
           - properties:
               companies:
-                $ref: '#/definitions/array_of_companies'
+                type: array
+                items:
+                  $ref: '#/definitions/company_with_associations'
               meta:
                 $ref: '#/definitions/meta'
     400:

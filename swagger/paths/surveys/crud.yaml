@@ -1,0 +1,19 @@
+get:
+  tags: [Survey]
+  summary: List all
+  parameters:
+    - name: state
+      in: query
+      type: string
+      enum: ['active']
+  responses:
+    200:
+      description: Success
+      schema:
+        type: array
+        items:
+          $ref: '#/definitions/extended_survey'
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'

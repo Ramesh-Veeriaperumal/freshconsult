@@ -7,7 +7,9 @@ get:
     200:
       description: Success
       schema:
-        $ref: '#/definitions/array_of_canned_response_folders'
+        type: array
+        items:
+          $ref: '#/definitions/extended_canned_response_folder'
     404:
       description: Canned response not found
     400:

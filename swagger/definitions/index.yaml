@@ -85,6 +85,14 @@
     $ref: ./resource/fb_post.yaml
   tweet_post:
     $ref: ./resource/tweet_post.yaml
+  survey_result:
+    $ref: ./resource/survey_result.yaml
+  freshfone_call:
+    $ref: ./resource/freshfone_call.yaml
+  survey_question:
+    $ref: ./resource/survey_question.yaml
+  survey:
+    $ref: ./resource/survey.yaml
   extension_generic:
     $ref: ./resource/extension/generic.yaml
   extended_contact:
@@ -117,6 +125,10 @@
     allOf:
       - $ref: '#/definitions/extension_generic'
       - $ref: '#/definitions/cloud_file_input'
+  extended_survey:
+    allOf:
+      - $ref: '#/definitions/extension_generic'
+      - $ref: '#/definitions/survey'
       
   ticket_index:
     type: array
@@ -130,37 +142,10 @@
       - $ref: '#/definitions/extended_ticket'
       - $ref: ./resource/extension/ticket/show.yaml
 
-  array_of_tickets:
-    type: array
-    items:
-      $ref: '#/definitions/extended_ticket'
-  array_of_contacts:
-    type: array
-    items:
-      $ref: '#/definitions/extended_contact'
-  array_of_companies:
-    type: array
-    items:
-      $ref: './response/companies/list.yaml'
-  array_of_sla_policies:
-    type: array
-    items:
-      $ref: '#/definitions/extended_sla_policy'
-  array_of_canned_response_folders:
-    type: array
-    items:
-      $ref: '#/definitions/extended_canned_response_folder'
   canned_response_folder_details:
     $ref: ./response/canned_response/folder_show.yaml
-  array_of_todos:
-    type: array
-    items:
-      $ref: ./resource/todo.yaml
   todo_details:
     $ref: ./resource/todo.yaml
-
-  freshfone_call:
-    $ref: ./resource/freshfone_call.yaml
 
   # RESPONSE
   meta:
@@ -168,7 +153,7 @@
   conversations_show:
     type: array
     items:
-      $ref: './response/conversations/show.yaml'
+      $ref: '#/definitions/extended_note'
   partial_success_response:
     $ref: ./response/bulk_partial_success.yaml
   make_agent_response:
@@ -177,12 +162,12 @@
     $ref: ./response/tickets/watchers.yaml
   latest_note:
     $ref: './response/conversations/latest_note.yaml'
+  company_with_associations:
+    $ref: './response/companies/list.yaml'
   contact_activity:
     $ref: './response/contacts/activity.yaml'
-  array_of_company_activities:
-    type: array
-    items:
-      $ref: './response/companies/activity.yaml'
+  company_activity:
+    $ref: './response/companies/activity.yaml'
   company_activities_with_meta:
     $ref: './response/companies/activities_with_meta.yaml'
   twitter_handle:

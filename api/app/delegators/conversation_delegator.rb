@@ -12,6 +12,8 @@ class ConversationDelegator < BaseDelegator
 
   validate :validate_application_id, if: -> { cloud_files.present? }
 
+  validate :validate_send_survey, unless: -> { send_survey.nil? }
+
   def initialize(record, options = {})
     options[:attachment_ids] = skip_existing_attachments(options) if options[:attachment_ids]
     super(record, options)
@@ -47,6 +49,11 @@ class ConversationDelegator < BaseDelegator
       errors[:cloud_file_ids] << :invalid_list
       (self.error_options ||= {}).merge!({ cloud_file_ids: { list: "#{invalid_file_ids.join(', ')}" } })
     end
+  end
+
+  def validate_send_survey
+    errors[:send_survey] << :should_be_blank unless Account.current.new_survey_enabled? && Account.current.survey.try(:can_send?, notable, Survey::SPECIFIC_EMAIL_RESPONSE)
+    self.send_survey = self.send_survey ? "1" : "0"
   end
 
   def validate_application_id

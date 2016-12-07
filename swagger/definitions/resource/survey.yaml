@@ -1,0 +1,8 @@
+type: object
+properties:
+  title:
+    type: string
+  questions:
+    type: array
+    items:
+      $ref: '#/definitions/survey_question'

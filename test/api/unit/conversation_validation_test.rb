@@ -99,7 +99,7 @@ class ConversationValidationTest < ActionView::TestCase
   end
 
   def test_boolean_errors
-    controller_params = { 'to_emails' => ['aaaaa@dddd.com'], 'body' => 'Text', 'private' => 'ABC', 'incoming' => 'f', 'include_quoted_text' => 'yes', 'include_original_attachments' => 'no' }
+    controller_params = { 'to_emails' => ['aaaaa@dddd.com'], 'body' => 'Text', 'private' => 'ABC', 'incoming' => 'f', 'include_quoted_text' => 'yes', 'include_original_attachments' => 'no', 'send_survey' => 'ABC' }
     conversation = ConversationValidation.new(controller_params, nil)
     refute conversation.valid?
     errors = conversation.errors.full_messages
@@ -107,8 +107,9 @@ class ConversationValidationTest < ActionView::TestCase
     assert errors.include?('Incoming datatype_mismatch')
     assert errors.include?('Include quoted text datatype_mismatch')
     assert errors.include?('Include original attachments datatype_mismatch')
+    assert errors.include?('Send survey datatype_mismatch')
 
-    controller_params = { 'to_emails' => ['aaaaa@dddd.com'], 'body' => 'Text', 'private' => false, 'incoming' => false, 'include_quoted_text' => true, 'include_original_attachments' => true }
+    controller_params = { 'to_emails' => ['aaaaa@dddd.com'], 'body' => 'Text', 'private' => false, 'incoming' => false, 'include_quoted_text' => true, 'include_original_attachments' => true, 'send_survey' => true }
     conversation = ConversationValidation.new(controller_params, nil)
     assert conversation.valid?
   end

@@ -25,15 +25,30 @@ module ConversationsTestHelper
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
     }
-    if note.fb_post.present?
+    if note.fb_note? && note.fb_post.present?
       fb_pattern = note.fb_post.post? ? fb_post_pattern({}, note.fb_post) : fb_dm_pattern({}, note.fb_post)
       response_pattern.merge!(fb_post: fb_pattern)
     end
     
     if note.tweet? && note.tweet
-      response_pattern.merge!({tweet: tweet_pattern({}, note.tweet)})
+      response_pattern.merge!(tweet: tweet_pattern({}, note.tweet))
     end
+
+    if note.feedback?
+      survey = note.custom_survey_remark.survey_result
+      response_pattern.merge!(survey_result: feedback_pattern(survey))
+    end
+
     response_pattern
+  end
+
+  def feedback_pattern(survey_result)
+    {
+      survey_id: survey_result.survey_id,
+      agent_id: survey_result.agent_id, 
+      group_id: survey_result.group_id, 
+      rating: survey_result.custom_ratings
+    }
   end
 
   def update_note_pattern(expected_output = {}, note)

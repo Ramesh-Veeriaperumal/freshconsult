@@ -20,7 +20,7 @@ module Ember
       order_type = params[:order_type]
       order_conditions = "created_at #{order_type}"
       ticket_conversations = @ticket.notes.visible.exclude_source('meta')
-                                    .preload(:schema_less_note, :note_old_body, :attachments)
+                                    .preload(conditional_preload_options)
                                     .order(order_conditions)
       # @items = paginate_items(ticket_conversations)
       load_objects(ticket_conversations)
@@ -83,6 +83,17 @@ module Ember
     end
 
     private
+
+      def conditional_preload_options
+        preload_options = [:schema_less_note, :note_old_body, :attachments, :freshfone_call, :cloud_files, :attachments_sharable,
+            custom_survey_remark: { survey_result: { survey: { survey_questions: {} }, survey_result_data: {} } }]
+        if @ticket.facebook?
+          preload_options << :fb_post
+        elsif @ticket.twitter?
+          preload_options << :tweet
+        end
+        preload_options
+      end
 
       def save_note_and_respond
         is_success = create_note

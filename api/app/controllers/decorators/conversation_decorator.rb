@@ -1,7 +1,7 @@
 class ConversationDecorator < ApiDecorator
   attr_accessor :ticket
 
-  delegate :body, :body_html, :id, :incoming, :private, :user_id, :support_email, :source, :attachments, :cloud_files, :schema_less_note, :fb_post, to: :record
+  delegate :body, :body_html, :id, :incoming, :private, :user_id, :support_email, :source, :attachments, :attachments_sharable, :schema_less_note, :cloud_files, to: :record
 
   delegate :to_emails, :from_email, :cc_emails, :bcc_emails, to: :schema_less_note, allow_nil: true
 
@@ -33,12 +33,14 @@ class ConversationDecorator < ApiDecorator
   end
 
   def to_hash
-    [construct_json, freshfone_call, tweet_hash, facebook_hash].inject(&:merge)
+    [construct_json, freshfone_call, tweet_hash, facebook_hash, feedback_hash].inject(&:merge)
   end
   
   def facebook_hash
-    return {} unless fb_post.present? 
-    { fb_post: FacebookPostDecorator.new(fb_post).to_hash }
+    return {} unless record.fb_note? && record.fb_post.present? 
+    { 
+      fb_post: FacebookPostDecorator.new(record.fb_post).to_hash
+    }
   end
 
   def freshfone_call
@@ -60,8 +62,21 @@ class ConversationDecorator < ApiDecorator
     }
   end
 
+  def feedback_hash
+    return {} unless Account.current.new_survey_enabled? && record.feedback?
+    survey_result = record.custom_survey_remark.survey_result
+    {
+      survey_result: {
+        survey_id: survey_result.survey_id,
+        agent_id: survey_result.agent_id,
+        group_id: survey_result.group_id,
+        rating: survey_result.custom_ratings
+      }
+    }
+  end
+
   def attachments_hash
-    attachments.map { |a| AttachmentDecorator.new(a).to_hash }
+    (attachments | attachments_sharable).map { |a| AttachmentDecorator.new(a).to_hash }
   end
 
   def cloud_files_hash

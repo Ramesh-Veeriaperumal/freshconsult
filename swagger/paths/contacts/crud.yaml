@@ -36,7 +36,9 @@ get:
         allOf:
           - properties:
               contacts:
-                $ref: '#/definitions/array_of_contacts'
+                type: array
+                items:
+                  $ref: '#/definitions/extended_contact'
               meta:
                 $ref: '#/definitions/meta'
     400:

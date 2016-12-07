@@ -14,7 +14,9 @@ get:
         allOf:
           - properties:
               todos:
-                $ref: '#/definitions/array_of_todos'
+                type: array
+                items:
+                  $ref: '#/definitions/todo_details'
               meta:
                 $ref: '#/definitions/meta'
     400:

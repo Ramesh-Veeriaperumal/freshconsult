@@ -1,7 +1,9 @@
 type: object
 properties:
   activities:
-    $ref: '#/definitions/array_of_company_activities'
+    type: array
+    items:
+      $ref: '#/definitions/company_activity'
   meta:
     type: object
     properties:

@@ -23,4 +23,6 @@ allOf:
         type: array
         items:
           type: string
+      send_survey:
+        type: boolean
   

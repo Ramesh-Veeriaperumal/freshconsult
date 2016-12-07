@@ -1,0 +1,8 @@
+type: object
+properties:
+  agent_id:
+    type: number
+  group_id:
+    type: number
+  ratings:
+    type: hash

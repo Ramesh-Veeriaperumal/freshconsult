@@ -6,7 +6,7 @@ module ConversationConstants
   UPDATE_ARRAY_FIELDS = ['attachments'].freeze
   TWEET_ARRAY_FIELDS = [].freeze
 
-  REPLY_FIELDS = %w(body user_id from_email).freeze | REPLY_ARRAY_FIELDS | AttachmentConstants::CLOUD_FILE_FIELDS
+  REPLY_FIELDS = %w(body user_id from_email send_survey).freeze | REPLY_ARRAY_FIELDS | AttachmentConstants::CLOUD_FILE_FIELDS
   FORWARD_FIELDS = %w(body agent_id from_email include_quoted_text include_original_attachments).freeze | FORWARD_ARRAY_FIELDS | AttachmentConstants::CLOUD_FILE_FIELDS
   CREATE_FIELDS = %w(body private incoming user_id).freeze | CREATE_ARRAY_FIELDS | AttachmentConstants::CLOUD_FILE_FIELDS
   TWEET_FIELDS = %w(body tweet_type twitter_handle_id).freeze

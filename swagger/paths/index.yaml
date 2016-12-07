@@ -132,3 +132,7 @@
   $ref: ./social/twitter_handles.yaml
 /twitter_handles/{id}/check_following:
   $ref: ./social/twitter_check_following.yaml
+
+#Surveys
+/surveys:
+  $ref: ./surveys/crud.yaml
