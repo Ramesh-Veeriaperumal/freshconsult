@@ -1,0 +1,11 @@
+defaults: &defaults
+  api_key: "z29t8hiSfK0vGEtB7aYEcebx811r4OBu"
+  url: "https://api.e-hawk.net/"
+development:
+  <<: *defaults
+staging:
+  <<: *defaults
+test:
+  <<: *defaults
+production:
+  <<: *defaults

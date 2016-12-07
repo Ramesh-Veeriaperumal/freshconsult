@@ -99,6 +99,9 @@ class FakeControllerTest < ActionController::TestCase
     t = Helpdesk::Ticket.new(email: Faker::Internet.email, :status => status.status_id, internal_group_id: group.id, internal_agent_id: @agent.id)
     t.save
 
+    # Temprory fix
+    Helpdesk::Ticket.any_instance.stubs(:internal_agent_id).returns(@agent.id).at_most_once
+
     Account.any_instance.stubs(:features?).with(:shared_ownership).returns(true)
     status.group_ids = [group.id]
     status.save
@@ -153,6 +156,9 @@ class FakeControllerTest < ActionController::TestCase
 
     t = Helpdesk::Ticket.new(email: Faker::Internet.email, :status => status.status_id, internal_group_id: group.id)
     t.save
+
+    # Temprory fix
+    Helpdesk::Ticket.any_instance.stubs(:internal_agent_id).returns(@agent.id).at_most_once
 
     Account.any_instance.stubs(:features?).with(:shared_ownership).returns(true)
     status.group_ids = [group.id]

@@ -39,7 +39,7 @@
     <div class="request-wrapper"> 
       <a href="javascript:void(0)" class="btn btn-primary" id="add_note_btn" 
         onclick="jQuery('#ReplyToTicketPublic').show();
-        jQuery(this).hide();invokeRedactor('portal_ticket_note_public');">Add note</a>        
+        jQuery(this).hide();invokeRedactor('portal_ticket_note_public');"><%= t('ticket.add_note') %></a>     
     </div>  
   <% end %>
   <br />
@@ -63,13 +63,13 @@
         </li>
         <li class="attachment-options"  id="attachment-options">
           <% unless local_assigns[:no_attachments] %>
-            <%= render :partial => "/helpdesk/shared/attachment_form", :locals => { :nsc_param => "helpdesk_note" } %>
+            <%= render :partial => "/helpdesk/shared/attachment_form", :locals => { :nsc_param => "helpdesk_note", :public_ticket => true } %>
           <% end %>
         </li>
         <li class="alignright">
           <%= f.submit t('add'), {:class => "uiButton"} %>
           <a href="javascript:void(0)" class="uiButton" onclick="jQuery('#requester_email').val('');
-            jQuery('#ReplyToTicketPublic').hide(); jQuery('#add_note_btn').show();"> Cancel </a>
+            jQuery('#ReplyToTicketPublic').hide(); jQuery('#add_note_btn').show();"> <%= t('cancel') %> </a>
         </li>
       </ul>
     <% end %>   

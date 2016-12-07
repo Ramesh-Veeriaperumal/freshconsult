@@ -123,7 +123,7 @@ class Freshfone::AutocompleteController < ApplicationController
 	end
 
 	def search_in_user(search_string, search_non_deleted=true)
-		requesters = search_requester("#{search_string}", search_non_deleted)
+		requesters = search_requester("#{search_string}", search_non_deleted, phone_fields_search = false)
 		format_requester_results(requesters)
 	end
 

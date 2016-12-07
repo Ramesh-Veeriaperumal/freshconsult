@@ -126,7 +126,7 @@ var INCOMING_RINGING_TYPES = ['incoming', 'transfer'];
         type: 'GET',
         dataType: "json",
         url: '/freshfone/call/inspect_call',
-        data: { "call_sid": this.incomingCall.call_sid },
+        data: { "call_sid": this.incomingCall.call_sid, "call": this.callId() },
         success: function (data) { 
           if(data.can_accept) {
             self.freshfoneNotification.setDirectionIncoming();

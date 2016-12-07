@@ -487,6 +487,12 @@ body .fr-overlay {
         
         li {
           font-size: 13px;
+
+          blockquote {
+            border-left: 0;
+            font-style: italic;
+            color: #666 !important;
+          }
         }
       }
     }

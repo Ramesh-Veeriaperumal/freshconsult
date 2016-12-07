@@ -134,6 +134,11 @@
     overflow-x:auto;
     margin-top: 15px;
     margin-bottom: 15px;
+
+    img {
+      max-width: 100%;
+    }
+
     @include portal-text-formatting();
     @include editor-text-formating();
   }

@@ -118,11 +118,13 @@ window.App.Tickets.link_tracker =  {
       params.recent_ids = recent_templates;
     }
     var $recent = jQuery('.recent_templates');
+    var $result_label_container = jQuery('.result_label_container');
+    var $dark_dashed = jQuery('.dark_dashed');
     var $all_templates = jQuery('.all_templates');
-    jQuery('.dark_dashed').show();
+    $dark_dashed.show();
     $recent.show();
-    jQuery('.result_label_container').show();
-    jQuery('.result_label_container').text("Recently Used");
+    $result_label_container.show();
+    $result_label_container.text("Recently Used");
 
     jQuery.ajax({
       url: "/helpdesk/tickets/accessible_templates",
@@ -138,8 +140,11 @@ window.App.Tickets.link_tracker =  {
 
         if(!data.recent_templates.length > 0){
           $recent.hide();
-          jQuery('.dark_dashed').hide();
-          jQuery('.result_label_container').hide();
+          $result_label_container.hide();
+        }
+
+        if(data.recent_templates.length === 0 || data.all_acc_templates.length === 0){
+          $dark_dashed.hide();
         }
       }
     });
@@ -369,6 +374,8 @@ jQuery(document).ready(function(){
   jQuery('body').on("click", '.link_tracker_box .lnk_tkt_tracker_show_dropdown', function(e) {
     e.preventDefault();
     e.stopPropagation();
+    jQuery('.recent_trackers_available').addClass('hide');
+    jQuery('.recent_tracker_notavailable').addClass('hide');
     var action = jQuery(this).data('trigger');
     if(action === 'link_tracker'){
       jQuery(add_popup_element).popover('hide');

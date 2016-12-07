@@ -12,7 +12,7 @@ class Account < ActiveRecord::Base
                           contact admin #{AppConfig['admin_subdomain']} girish shan vijay parsu kiran shihab
                           productdemo resources static static0 static1 static2 static3 static4 static5
                           static6 static7 static8 static9 static10 dev apps freshapps fone
-                          elb elb1 elb2 elb3 elb4 elb5 elb6 elb7 elb8 elb9 elb10 ) + FreshopsSubdomains
+                          elb elb1 elb2 elb3 elb4 elb5 elb6 elb7 elb8 elb9 elb10 attachment euattachment eucattachment) + FreshopsSubdomains
 
   PLANS_AND_FEATURES = {
     :basic => { :features => [ :twitter, :custom_domain, :multiple_emails ] },
@@ -94,9 +94,9 @@ class Account < ActiveRecord::Base
     :chat_enable => false, :saml_old_issuer => false, :spam_dynamo => true,
     :redis_display_id => false, :es_multilang_solutions => false,
     :sort_by_customer_response => false, :survey_links => true,
-    :saml_unspecified_nameid => false, :euc_hide_agent_metrics => false, 
+    :saml_unspecified_nameid => false, :euc_hide_agent_metrics => false,
     :single_session_per_user => false, :link_tickets => false, :parent_child_tickets => false,
-    :marketplace_app => false
+    :marketplace_app => false, :sandbox_account => false
   }
 
 
@@ -114,7 +114,7 @@ class Account < ActiveRecord::Base
     :agent_conference => false, :freshfone_warm_transfer => false, :restricted_helpdesk => false, :enable_multilingual => false,
     :count_es_writes => false, :count_es_reads => false, :activity_revamp => true, :countv2_writes => false, :countv2_reads => false,
     :helpdesk_restriction_toggle => false, :freshfone_acw => false, :ticket_templates => false, :cti => false, :all_notify_by_custom_server => false,
-    :freshfone_custom_forwarding => false, :freshfone_onboarding => false, :freshfone_gv_forward => false }
+    :freshfone_custom_forwarding => false, :freshfone_onboarding => false, :freshfone_gv_forward => false, :inline_images_with_one_hop => false }
 
   # This list below is for customer portal features list only to prevent from adding addition features
   ADMIN_CUSTOMER_PORTAL_FEATURES =  {:anonymous_tickets => true, :open_solutions => true, :auto_suggest_solutions => true, 

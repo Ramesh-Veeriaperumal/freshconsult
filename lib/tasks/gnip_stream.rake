@@ -121,17 +121,6 @@ namespace :gnip_stream do
     end
   end
 
-  task :poll_v2 => :environment do
-    #Should be the pod specific queue
-    queue = $sqs_gnip_2_0
-    attributes = Rails.env.production? ? [] : [:sent_at]
-
-    queue.poll(:initial_timeout => false,
-               :batch_size => 10, :attributes => attributes) do |sqs_msg|
-      process_tweet sqs_msg, queue
-    end
-  end
-
   def process_tweet sqs_msg, queue
     tweet = sqs_msg.body
     unless tweet.blank?

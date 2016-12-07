@@ -90,7 +90,7 @@
 					<% if is_assumed_user? %>
 						<span class="seperator"></span>
 						<%= link_to t('revert_identity_link_msg').html_safe, revert_identity_users_path, :class => "link" %>			
-					<% elsif privilege?(:manage_users) %>  			
+					<% elsif privilege?(:manage_users) && current_account.assume_identity_enabled? %>  			
 					<% unless current_account.hide_agent_metrics_feature? %>		
 						<div class="info switch_agent" id="switch_agent_container">
               <div id="agt_loading" class="link load_agent"><span><%= t("agent_loading_msg") %></span></div>

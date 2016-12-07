@@ -2,6 +2,7 @@ class AccountsController < ApplicationController
 
   include ModelControllerMethods
   include Redis::RedisKeys
+  include Redis::OthersRedis
   include Redis::TicketsRedis
   include Redis::DisplayIdRedis
   include MixpanelWrapper 
@@ -70,6 +71,7 @@ class AccountsController < ApplicationController
    
    if @signup.save
     @signup.account.agents.first.user.reset_perishable_token! 
+      save_account_sign_up_params(@signup.account.id, params[:signup])
       add_account_info_to_dynamo
       set_account_onboarding_pending
       add_to_crm
@@ -265,12 +267,20 @@ class AccountsController < ApplicationController
       begin  
         metrics =  JSON.parse(params[:session_json])
         metrics_obj = {}
+        account_obj = {}
 
         metrics_obj[:referrer] = metrics["current_session"]["referrer"]
         metrics_obj[:landing_url] = metrics["current_session"]["url"]
         metrics_obj[:first_referrer] = params[:first_referrer]
         metrics_obj[:first_landing_url] = params[:first_landing_url]
-        metrics_obj[:country] = metrics["location"]["countryName"] unless metrics["location"].blank?
+        unless metrics["location"].blank?
+          metrics_obj[:country] = metrics["location"]["countryName"] 
+          account_obj[:country_code] = metrics["location"]["countryCode"]
+          account_obj[:city] = metrics["location"]["cityName"]
+          account_obj[:source_ip] = metrics["location"]["ipAddress"]
+        else
+          account_obj[:source_ip] = request.remote_ip
+        end
         metrics_obj[:language] = metrics["locale"]["lang"]
         metrics_obj[:search_engine] = metrics["current_session"]["search"]["engine"]
         metrics_obj[:keywords] = metrics["current_session"]["search"]["query"]
@@ -283,19 +293,23 @@ class AccountsController < ApplicationController
         elsif  metrics["device"]["is_tablet"]
           metrics_obj[:device] = "T"
         else
-          metrics_obj[:device] = "C"  
+          metrics_obj[:device] = "C"
         end
 
-        metrics_obj[:browser] = metrics["browser"]["browser"]                 
+        metrics_obj[:browser] = metrics["browser"]["browser"]
         metrics_obj[:os] = metrics["browser"]["os"]
         metrics_obj[:offset] = metrics["time"]["tz_offset"]
         metrics_obj[:is_dst] = metrics["time"]["observes_dst"]
         metrics_obj[:session_json] = metrics
-        metrics_obj
+        account_obj[:email] = params[:user][:email]
+        account_obj[:first_name] = params[:user][:first_name]
+        account_obj[:last_name] = params[:user][:last_name]
+        account_obj[:phone] = params[:user][:phone]
+        return metrics_obj, account_obj
       rescue => e
         NewRelic::Agent.notice_error(e,{:custom_params => {:description => "Error occoured while building conversion metrics"}})
         Rails.logger.error("Error while building conversion metrics with session params: \n #{params[:session_json]} \n#{e.message}\n#{e.backtrace.join("\n")}")
-        nil
+        return nil, nil
       end
     end      
 
@@ -323,7 +337,9 @@ class AccountsController < ApplicationController
       
       params[:signup][:locale] = assign_language || http_accept_language.compatible_language_from(I18n.available_locales)
       params[:signup][:time_zone] = params[:utc_offset]
-      params[:signup][:metrics] = build_metrics
+      metrics_obj, account_obj = build_metrics
+      params[:signup][:metrics] = metrics_obj
+      params[:signup][:account_details] = account_obj
     end
 
     def assign_language
@@ -463,4 +479,8 @@ class AccountsController < ApplicationController
       end
     end
 
+    def save_account_sign_up_params account_id, args = {}
+      key = ACCOUNT_SIGN_UP_PARAMS % {:account_id => account_id}
+      set_others_redis_key(key,args.to_json)
+    end
 end

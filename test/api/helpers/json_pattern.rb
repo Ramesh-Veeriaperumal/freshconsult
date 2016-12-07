@@ -64,11 +64,11 @@ module JsonPattern
       html_doc.xpath('//del').each { |div|  div.name = 'span'; }
       html_doc.xpath('//p').each { |div|  div.name = 'div'; }
     end
-    Rinku.auto_link(html_doc.at_css('body').inner_html, :urls)
+    FDRinku.auto_link(html_doc.at_css('body').inner_html)
   end
 
   def format_html(ticket, body)
-    body_html = Rinku.auto_link(body) { |text| truncate(text, length: 100) }
+    body_html = FDRinku.auto_link(body, {:mode => :all}) { |text| truncate(text, length: 100) }
     textilized = RedCloth.new(body_html.gsub(/\n/, '<br />'), [:hard_breaks])
     textilized.hard_breaks = true if textilized.respond_to?('hard_breaks=')
     formatted = ticket.white_list(textilized.to_html)
@@ -77,7 +77,7 @@ module JsonPattern
       html_doc.xpath('//del').each { |div|  div.name = 'span'; }
       html_doc.xpath('//p').each { |div|  div.name = 'div'; }
     end
-    Rinku.auto_link(html_doc.at_css('body').inner_html, :urls)
+    FDRinku.auto_link(html_doc.at_css('body').inner_html)
   end
 end
 

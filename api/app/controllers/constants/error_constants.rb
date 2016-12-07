@@ -7,11 +7,13 @@ module ErrorConstants
     invalid_size: ['invalid_size'],
     incompatible_field: ['incompatible_field'],
     inaccessible_field: ['inaccessible_field'],
-    inaccessible_value: ['inaccessible_value']
+    inaccessible_value: ['inaccessible_value'],
+    access_denied: ['access_denied']
   }.freeze
 
   API_HTTP_ERROR_STATUS_BY_CODE = {
-    duplicate_value: 409
+    duplicate_value: 409,
+    access_denied: 403
   }.freeze
 
   # Reverse mapping, this will result in:

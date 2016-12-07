@@ -228,6 +228,7 @@ Helpkit::Application.routes.draw do
 
   match '/visitor/load/:id.:format' => 'chats#load', :via => :get
   match '/images/helpdesk/attachments/:id(/:style(.:format))' => 'helpdesk/attachments#show', :via => :get
+  match '/inline/attachment' => 'helpdesk/inline_attachments#one_hop_url', :via => :get
   match '/javascripts/:action.:format' => 'javascripts#index'
   match '/packages/:package.:extension' => 'jammit#package', :as => :jammit, :constraints => { :extension => /.+/ }
   resources :authorizations
@@ -549,9 +550,9 @@ Helpkit::Application.routes.draw do
         post :status
         post :in_call
         post :update_recording
-        post :save_call_notes
+        post :save_notable
         put :wrap_call
-        get :call_notes
+        get :load_notable
         post :save_call_quality_metrics
       end
     end
@@ -732,6 +733,7 @@ Helpkit::Application.routes.draw do
     end
   end
   resources :email, :only => [:new, :create]
+  resources :mime, :only => [:new, :create]
   resources :mailgun, :only => :create
   post '/mailgun/create', to: "mailgun#create"
   resources :password_resets, :except => [:index, :show, :destroy]
@@ -782,8 +784,10 @@ Helpkit::Application.routes.draw do
       get :new
       post :install
       get :edit
+      get :add_slack_agent
       put :update
       post :create_ticket
+      post :tkt_create_v3
     end
 
     resources :applications, :only => [:index, :show] do

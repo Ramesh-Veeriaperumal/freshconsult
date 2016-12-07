@@ -99,4 +99,17 @@ namespace :search_v2 do
       $dynamo_v2_client.delete_table(table_name: dynamo_table) rescue true
     end
   end
+
+  # bundle exec rake search_v2:index_data ACCOUNT_ID=1
+  desc 'Index data in to ES V2 in development mode.'
+  task index_data: :environment do
+    if Rails.env.development?
+        account_id=ENV['ACCOUNT_ID']
+        Account.find_by_id(account_id).make_current
+        puts "Enabling search for account #{account_id}."
+        SearchV2::Manager::EnableSearch.new.perform
+    else
+      raise 'This task can only be run in development environment.'
+    end  
+  end
 end

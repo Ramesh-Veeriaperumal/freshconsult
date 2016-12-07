@@ -152,10 +152,11 @@ namespace :scheduler do
         Account.send(automation[task_name][:account_method]).current_pod.send(premium_constant).each do |account|
           begin
             account.make_current
-            if name.eql?("Supervisor") 
-              class_constant.perform_async if account.supervisor_rules.count > 0
+            if name.eql?("supervisor")
+              class_constant.perform_async if account.supervisor_enabled? &&
+                                              account.supervisor_rules.count > 0
             else
-              class_constant.perform_async 
+              class_constant.perform_async if account.sla_management_enabled?
             end
             accounts_queued +=1
           rescue Exception => e

@@ -104,6 +104,13 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :check_ml_feature, :only => [:suggest_tickets]
   before_filter :load_parent_template, :only => [:show_children, :bulk_child_tkt_create]
   before_filter :load_associated_tickets, :only => [:associated_tickets]
+  before_filter :check_custom_view_feature, :only => [:custom_view_save]
+
+  def check_custom_view_feature
+    unless current_account.custom_ticket_views_enabled?
+      redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
+    end
+  end
 
   def suggest_tickets
     tickets = []
@@ -188,6 +195,36 @@ class Helpdesk::TicketsController < ApplicationController
     end
   end
 
+  def populate_sentiment
+    if Account.current.customer_sentiment_ui_enabled?
+      survey_association = Account.current.new_survey_enabled? ? "custom_survey_results" : "survey_results"
+      sentiment_value = {}
+
+      ticket_ids =  @items.map(&:id)
+
+      sentiment_sql_array = ["select notable_id,int_nc04 from helpdesk_notes n inner join helpdesk_schema_less_notes sn
+                    on n.id=sn.note_id where n.account_id = %s and n.notable_id in (%s) 
+                    and sn.int_nc04 is not null 
+                    order by n.created_at;",
+                    Account.current.id, ticket_ids.join(',')]
+      
+      sentiment_sql = ActiveRecord::Base.send(:sanitize_sql_array, sentiment_sql_array)
+
+      note_senti = ActiveRecord::Base.connection.execute(sentiment_sql).collect{|i| i}.to_h
+
+      @items.each do |ticket|
+        if ticket.send(survey_association).nil? || ticket.send(survey_association).last.nil?
+          if note_senti[ticket.id].present?
+            sentiment_value[ticket.id] = note_senti[ticket.id]
+          else
+            sentiment_value[ticket.id] = ticket.sentiment
+          end
+        end
+      end
+      sentiment_value
+    end
+  end
+
   def index
     #For removing the cookie that maintains the latest custom_search response to be shown while hitting back button
     params[:html_format] = request.format.html?
@@ -211,8 +248,14 @@ class Helpdesk::TicketsController < ApplicationController
         flash[:notice] = t(:'flash.tickets.empty_trash.delay_delete') if @current_view == "deleted" and key_exists?(empty_trash_key)
         flash[:notice] = t(:'flash.tickets.empty_spam.delay_delete') if @current_view == "spam" and key_exists?(empty_spam_key)
         @is_default_filter = (!is_num?(view_context.current_filter))
-
+        
+        #Changes for customer sentiment - Beta feature
         #@sentiments = {:ticket_id => sentiment_value}
+        if Account.current.customer_sentiment_ui_enabled? && @items.size > 0
+          @sentiments = populate_sentiment
+        end
+        #End of changes for customer sentiment - Beta feature
+
         # if request.headers['X-PJAX']
         #   render :layout => "maincontent"
         # end
@@ -383,6 +426,13 @@ class Helpdesk::TicketsController < ApplicationController
   def custom_search
     params[:html_format] = true
     @items = fetch_tickets
+
+    #Changes for customer sentiment - Beta feature
+    if Account.current.customer_sentiment_ui_enabled? && @items.size > 0
+      @sentiments = populate_sentiment
+    end
+    #End of changes for customer sentiment - Beta feature
+
     @current_view = view_context.current_filter
     render :partial => "custom_search"
   end
@@ -395,7 +445,7 @@ class Helpdesk::TicketsController < ApplicationController
 
     @subscription = current_user && @item.subscriptions.find(
       :first,
-      :conditions => {:user_id => current_user.id})
+      :conditions => {:user_id => current_user.id}) if current_account.add_watcher_enabled? 
 
     @page_title = "[##{@ticket.display_id}] #{@ticket.subject}"
 
@@ -815,6 +865,7 @@ class Helpdesk::TicketsController < ApplicationController
 
       response = con.post do |req|
         req.url "/"+MlAppConfig["feedback_url"]
+        req.headers['Authorization'] = MlAppConfig["auth_key"]
         req.headers['Content-Type'] = 'application/json'
         req.body = fb_params.to_json
       end
@@ -1652,6 +1703,7 @@ class Helpdesk::TicketsController < ApplicationController
     def load_ticket_filter
       return if @cached_filter_data
       filter_name = CGI.escapeHTML(view_context.current_filter)
+      filter_name = current_account.sla_management_enabled? ? filter_name : fallback_filter_name(filter_name)
       if !is_num?(filter_name)
         load_default_filter(filter_name)
       else
@@ -1670,6 +1722,10 @@ class Helpdesk::TicketsController < ApplicationController
       @ticket_filter.accessible = current_account.user_accesses.new
       @ticket_filter.accessible.visibility = Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me]
       set_modes(@ticket_filter.query_hash)
+    end
+
+    def fallback_filter_name(filter_name)
+      ["overdue", "due_today"].include?(filter_name.to_s) ? "new_and_my_open" : filter_name
     end
 
     def set_modes(conditions)
@@ -1920,10 +1976,15 @@ class Helpdesk::TicketsController < ApplicationController
 
   def fetch_tickets(tkt=nil)
     #_Note_: Fetching from ES based on feature and only for web
-    if es_tickets_enabled? and params[:html_format]
+    if es_tickets_enabled? and params[:html_format] and non_indexed_columns_query?
       tickets_from_es(params)
     else
-      current_account.tickets.preload({requester: [:avatar]}, :company, :schema_less_ticket).permissible(current_user).filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
+      if Account.current.customer_sentiment_ui_enabled?
+        survey_association = Account.current.new_survey_enabled? ? "custom_survey_results" : "survey_results"
+        current_account.tickets.preload({requester: [:avatar]}, :company, :schema_less_ticket, survey_association).permissible(current_user).filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
+      else
+        current_account.tickets.preload({requester: [:avatar]}, :company).permissible(current_user).filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
+      end 
     end
   end
 

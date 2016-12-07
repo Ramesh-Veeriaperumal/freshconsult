@@ -26,6 +26,7 @@ class Admin::CustomSurveysMailer < ActionMailer::Base
       }
 
       headers.merge!(make_header(nil, nil, Account.current.id, "Preview Email"))
+      headers.merge!({"X-FD-Email-Category" => email_config.category}) if email_config.category.present?
       mail(headers) do |part|
         part.text { render "preview_email.text.plain" }
         part.html { render "preview_email.text.html" }

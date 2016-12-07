@@ -16,6 +16,9 @@ development:
   note_body: notebody-dev
   archive_note_body: archive-notebody-dev
   bi_reports_list_bucket: bi-reports-ticket-list-dev
+  archive_email_storage_bucket: cdn.freshpo.com
+  primary_email_storage_bucket: cdn.freshpo.com
+  failed_email_storage_bucket: cdn.freshpo.com
 
 staging:
   <<: *common
@@ -26,6 +29,9 @@ staging:
   note_body: notebody-staging
   archive_note_body: archive-notebody-staging
   bi_reports_list_bucket: bi-reports-ticket-list-staging
+  archive_email_storage_bucket: archive-email-data-staging
+  primary_email_storage_bucket: primary-email-data-staging
+  failed_email_storage_bucket: archive-email-data-staging
 
 
 test:
@@ -37,7 +43,9 @@ test:
   note_body: notebody-test
   archive_note_body: archive-notebody-test
   bi_reports_list_bucket: bi-reports-ticket-list-test
-
+  archive_email_storage_bucket: fd-testbed
+  primary_email_storage_bucket: fd-testbed
+  failed_email_storage_bucket: fd-testbed
 
 production:
   access_key_id: dummy
@@ -51,3 +59,6 @@ production:
   note_body: notebody-production
   archive_note_body: archive-notebody-production
   bi_reports_list_bucket: bi-reports-ticket-list-production
+  archive_email_storage_bucket: cdn.freshdesk.com
+  primary_email_storage_bucket: cdn.freshdesk.com
+  failed_email_storage_bucket: cdn.freshdesk.com

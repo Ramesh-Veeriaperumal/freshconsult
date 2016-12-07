@@ -25,8 +25,9 @@ module Helpdesk::TicketFilterMethods
                       (selected_from_default.map { |i| { :id => i[0], :name => i[1], :default  =>  true} }.first)
     end
 
-    top_view_html = drop_down_views(top_views_array, selected_item, "leftViewMenu", (selected.blank? or params[:unsaved_view])).to_s +
-      controls_on_privilege(selected_item, (selected_item[:default]))
+    top_view_html = drop_down_views(top_views_array, selected_item, "leftViewMenu", (selected.blank? or params[:unsaved_view])).to_s 
+    top_view_html += controls_on_privilege(selected_item, (selected_item[:default])) if current_account.custom_ticket_views_enabled?
+    return top_view_html
   end
 
   # Adding a divider to separate Archive, Spam and Trash from other views

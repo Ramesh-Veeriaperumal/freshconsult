@@ -10,6 +10,14 @@ module Redis::OthersRedis
 	  end
 	end
 
+	def get_set_others_redis_key(key, value, expires = nil)
+		newrelic_begin_rescue do
+			value = $redis_others.perform_redis_op("getset", key, value) 
+			$redis_others.perform_redis_op("expire", key, expires) if expires
+			return value
+		end
+	end
+
 	def set_others_redis_with_expiry(key, value, options)
 		newrelic_begin_rescue { $redis_others.perform_redis_op("set", key, value, options) }
 	end

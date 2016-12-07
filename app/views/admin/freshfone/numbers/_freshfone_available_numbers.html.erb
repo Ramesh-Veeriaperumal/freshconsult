@@ -2,14 +2,19 @@
 	<% available_numbers.each do |number| %>
 		<div class="available_number">
 				
-			<div class="result_available_number">
+			<span class="result_available_number">
 				<%= number[:phone_number_formatted] %>
 				<% unless number[:region].blank? %>
 					<div class="phone_location">
 						<%= number[:region] %>, <%= number[:iso_country] %>
 					</div>
 				<% end %>
-			</div>
+			</span>
+			<% if number[:type] == :mobile %>
+				<span class="label number_type">
+					<%= number[:type] %>
+				</span>
+			<% end %>
 			<div class="buy_available_number">
 				<%# number_class = number_element_identifier(number[:phone_number]) %>
 				<%= form_tag({:action => 'purchase', :controller => "admin/freshfone/numbers"}, 
@@ -23,7 +28,7 @@
 					<%= hidden_field_tag("subscription", 'trial') if trial_search? %>
 					<%= link_to t('freshfone.admin.numbers.buy_button_text'), "#", :class => "purchase_number btn",
 																:'data-address-required' => number[:address_required],
-																:'data-rate' => number_to_currency(rate),
+																:'data-rate' => number_to_currency(number[:rate]),
 																"title" => t('freshfone.admin.numbers.purchase_phone_number', {:number => number[:phone_number]})
 											 %>
 				<% end %>

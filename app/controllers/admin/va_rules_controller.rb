@@ -377,4 +377,5 @@ class Admin::VaRulesController < Admin::AdminController
     def dropdown_domtype
       supervisor_rules_controller? ? "dropdown" : "multiple_select"
     end
+
 end

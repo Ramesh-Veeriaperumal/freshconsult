@@ -117,6 +117,11 @@
   .purchase_number{
     display: none;
   }
+  .number_type{
+    position: relative;
+    bottom: 2px;
+    margin: 0 10px 5px 10px;
+  }
   .available_number{
     border: 1px solid $fa-available-number-background;
     border-top: none;

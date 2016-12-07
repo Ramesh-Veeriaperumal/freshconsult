@@ -1,6 +1,7 @@
 class Account < ActiveRecord::Base
 
   before_create :set_default_values, :set_shard_mapping, :save_route_info
+  before_create :add_features_to_binary_column
   before_update :check_default_values, :update_users_time_zone, :backup_changes
   before_destroy :backup_changes, :make_shard_mapping_inactive
 
@@ -108,6 +109,19 @@ class Account < ActiveRecord::Base
         Rails.logger.info "Shard mapping exception caught"
         errors[:base] << "Domain is not available!"
         return false
+      end
+    end
+
+    def add_features_to_binary_column
+      begin
+        bitmap_value = 0
+        FEATURES_DATA[:plan_features][:feature_list].each do |key, value|
+          bitmap_value = self.set_feature(key)
+        end
+        self.plan_features = bitmap_value
+      rescue Exception => e
+        Rails.logger.info "Issue in bitmap calculation - account signup #{e.message}"
+        NewRelic::Agent.notice_error(e)
       end
     end
 

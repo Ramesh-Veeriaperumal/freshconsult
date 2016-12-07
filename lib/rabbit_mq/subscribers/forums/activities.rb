@@ -12,12 +12,12 @@ module RabbitMq::Subscribers::Forums::Activities
   end
 
   def mq_activities_valid(action, model)
-    false and Account.current.features?(:activity_revamp) and valid_model?(model)
+    false and Account.current.features?(:activity_revamp) and activity_valid_model?(model)
   end
 
   private
 
-  def valid_model?(model)
+  def activity_valid_model?(model)
     VALID_MODELS.include?(model)
   end
 

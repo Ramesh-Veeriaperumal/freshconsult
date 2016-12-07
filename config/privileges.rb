@@ -61,6 +61,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"integrations/hootsuite/ticket"
     resource :"integrations/sugarcrm", :only => [:renew_session_id, :check_session_id]
     resource :"integrations/service_proxy", :only => [:fetch]
+    resource :"integrations/slack_v2", :only => [:add_slack_agent]
     resource :"integrations/data_pipe"
 
     #Freshfone
@@ -72,7 +73,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"freshfone/conference_transfer", :only => [:initiate_transfer, :complete_transfer, :transfer_success, :cancel_transfer, :resume_transfer, :disconnect_agent]
     resource :"freshfone/agent_conference", :only => [:add_agent, :success, :cancel]
     resource :"freshfone/warm_transfer", :only => [:initiate, :unhold, :cancel, :resume]
-    resource :"freshfone/conference_call", :only => [:call_notes, :save_call_notes, :save_call_quality_metrics, :wrap_call]
+    resource :"freshfone/conference_call", :only => [:load_notable, :save_notable, :save_call_quality_metrics, :wrap_call]
     resource :"freshfone/hold", :only => [ :add, :remove ]
     resource :"freshfone/call_history"
     resource :"freshfone/autocomplete"

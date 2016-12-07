@@ -26,7 +26,7 @@ module RabbitMq::Subscribers::Tickets::Reports
   end
 
   def mq_reports_valid(action, model) 
-    valid = (valid_model?(model) && !archive && (create_action?(action) || non_archive_destroy?(action) || valid_changes.any?))
+    valid = (reports_valid_model?(model) && !archive && (create_action?(action) || non_archive_destroy?(action) || valid_changes.any?))
     Rails.logger.debug "#{Account.current.id} --- #{model} --- #{valid}"
     valid
   end
@@ -55,7 +55,7 @@ module RabbitMq::Subscribers::Tickets::Reports
     changes
   end
 
-  def valid_model?(model)
+  def reports_valid_model?(model)
     ["ticket"].include?(model)
   end
 

@@ -30,9 +30,9 @@ module Helpdesk::HTMLSanitizer
   def self.sanitize_post(html)
     if html
       begin
-        Sanitize.clean(Rinku.auto_link(html, :urls), Sanitize::Config::POST_WHITELIST) 
+        Sanitize.clean(FDRinku.auto_link(html), Sanitize::Config::POST_WHITELIST) 
       rescue Exception => e
-        Sanitize.clean(Rinku.auto_link(html, :urls), Sanitize::Config::HTML_RELAXED) 
+        Sanitize.clean(FDRinku.auto_link(html), Sanitize::Config::HTML_RELAXED) 
       end
     end
   end
