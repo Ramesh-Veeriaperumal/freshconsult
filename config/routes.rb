@@ -1889,6 +1889,7 @@ Helpkit::Application.routes.draw do
         get :component
         get :prevnext
         put :update_requester
+        get :refresh_requester_widget
         post :create # For Mobile apps backward compatibility.
         get :associated_tickets
         put :link

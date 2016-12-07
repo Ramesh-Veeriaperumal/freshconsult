@@ -420,6 +420,14 @@ refreshStatusBox = function() {
 	});
 }
 
+refreshRequesterWidget = function(){
+	$.ajax({
+		url: TICKET_DETAILS_DATA['refresh_requester_widget'],
+		success: function(response){
+		}
+	})
+}
+
 var scrollToError = function(){
 	var errorLabel = $("label[class='error'][style!='display: none;']");
 	var elem = errorLabel.parent().children().first();
@@ -1408,7 +1416,7 @@ var scrollToError = function(){
 		var postProcess = false,
 			tkt_form = $('#custom_ticket_form');
 		//Priority, Status, Group, Type, Product
-		var fields_to_check = ['priority', 'status', 'group_id', 'ticket_type', 'product', 'source'];
+		var fields_to_check = ['priority', 'status', 'group_id', 'ticket_type', 'product', 'source','company_id'];
 		for(i in fields_to_check) {
 			if (typeof(fields_to_check[i]) == 'string' && $('.ticket_details #helpdesk_ticket_' + fields_to_check[i]).data('updated')) {
 				postProcess = true;
@@ -1465,6 +1473,7 @@ var scrollToError = function(){
 					.attr('class','')
 					.addClass('source_' + $('.ticket_details #helpdesk_ticket_source').val());
 			refreshStatusBox();
+			refreshRequesterWidget();
 		}
 	}
 
@@ -1881,6 +1890,7 @@ App.Tickets.TicketDetail = {
 		App.Tickets.Merge_tickets.initialize();
 		App.TicketAttachmentPreview.init();
 		App.Tickets.NBA.init();
+		App.Tickets.TicketRequester.init();
 
 		// Have tried in onLeave to off all the event binding. 
 		// But it cause errors in whole app, like modal, dropdown and some issues has occered.

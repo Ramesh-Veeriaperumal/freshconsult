@@ -1,0 +1,15 @@
+page << "jQuery('#requester-widget-user-edit-dialog.modal').remove();"
+page << "jQuery('#requester-widget-user-edit-dialog form').resetForm();"
+page.replace_html 'requester-details-info', render(:partial => "contacts/requester_widget",
+                                            :locals => { :user => @ticket.requester,
+                                                         :show_recent_tickets => :dialog,
+                                                         :ticket => @ticket,
+                                                         :company => @company
+                                                        })
+page.replace_html 'requester-widget-edit-modal-container',
+                  render(:partial => "/contacts/requester_widget_contact_edit",
+                  :locals => {  :user => @ticket.requester,
+                                :ticket => @ticket,
+                                :company => @company
+                            })
+  

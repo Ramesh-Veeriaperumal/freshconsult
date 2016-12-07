@@ -149,11 +149,15 @@ class User < ActiveRecord::Base
   end
 
   def allow_password_update?
-    !deleted? and !spam? and !blocked? and !email.blank? and !agent?
+    valid_user? && email.present? && !agent?
   end
 
   def allow_password_reset?
-    !deleted? and !spam? and !blocked? and !email.blank?
+    valid_user? && email.present?
+  end
+
+  def valid_user?
+    !deleted? && !spam? && !blocked?
   end
 
   def is_user_social(profile_size)

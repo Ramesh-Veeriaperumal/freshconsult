@@ -5787,6 +5787,8 @@ en:
     info13: Contacts whose email addresses contain these domains will automatically be associated to this company
     info14: Contacts whose email addresses contain these domains will be whitelisted and automatically associated to this company
     info12: "eg: mycompany1.com, mycompany2.com"
+    add_company: "Add company information"
+    load_company: "Loading company details"
     errors:
       required_field: cannot be blank
       custom_text : is not valid
@@ -5794,6 +5796,7 @@ en:
       custom_phone_number : is not a valid phone number
       custom_url : is not a valid URL
       custom_date : is not a valid date
+    requester_not_associated: "This company is no longer associated to this requester"
   import_zendesk_summary_info: Zendesk data has been successfully imported.
   one: 1 Hour
   no_topics_text: No topics
@@ -10417,8 +10420,8 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     spam_error: "An internal error occured.  Please contact support."
   requester_widget_more: More
   requester_widget_less: Less
-  requester_widget_limit: You have selected 10 fields
-  requester_widget_notice: You can select upto 10 fields to show on the ticket details page
+  requester_widget_limit: You have selected %{max_limit} fields
+  requester_widget_notice: You can select upto %{max_limit} fields to show on the ticket details page
   customize_requester_widget: Customize Requester widget
   requester_widget_edit: Edit
   requester_widget_edit_req: Edit Requester
@@ -10430,6 +10433,14 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     helpcard:
       title: Customizing requester widget
       info: Choose the fields that you want displayed under the requester info section on the ticket page with the requester widget. This way your team can update requester details directly from the ticket page and keep track of the customer details while solving their ticket. <a href="https://support.freshdesk.com/support/solutions/articles/219948-customizing-requester-info-fields" target="_blank">Learn more</a>
+    company:
+      name: "Company Name"
+      delete_company: "Company information was deleted"
+      message: "Note: All tickets from this requester will be associated with this company"
+      new_company_message: "Note: A new company will be created and all tickets from this requester will be associated with this company"
+      validation:
+        invalid_name: "Invalid company name"
+        required_name: "Enter company name"
   requester_fields_updated: The requester widget has been updated.
   select_requester: "Please select requester"
   associate_n_companies: "Associate a contact with multiple companies?"

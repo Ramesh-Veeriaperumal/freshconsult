@@ -9,7 +9,7 @@ window.App = window.App || {};
     select2Disabled: "#requester-widget-config-container .disabled-message",
     addFieldIcon: "#requester-widget-config-container .rounded-add-icon",
     configForm : "#requester-widget-config-dialog form",
-    maxFields : 7,
+    maxFields : 12,
     deleted_list:[],
 
 

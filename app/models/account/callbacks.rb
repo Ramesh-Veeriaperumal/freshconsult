@@ -62,6 +62,7 @@ class Account < ActiveRecord::Base
     TEMPORARY_FEATURES.each { |key,value| features.send(key).create  if value}
     ADMIN_CUSTOMER_PORTAL_FEATURES.each { |key,value| features.send(key).create  if value}
     add_member_to_redis_set(SLAVE_QUERIES, self.id)
+    LAUNCHPARTY_FEATURES.select{|k,v| v}.each_key {|feature| self.launch(feature)}
     #self.launch(:disable_old_sso)
   end
 
