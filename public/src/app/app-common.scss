@@ -4510,8 +4510,8 @@ $adm-bdr:#F0F0F0;
 	.moderation-info{
 		@include border-left(1px solid #ddd);
 		@include padding-left(30px);
-		ul.moderation-alert{
-			list-style: disc;
+		.moderation-alert{
+			@include margin-left(-20px);
 		}
 		.ficon-warning{
 			@include margin-left(-20px);
