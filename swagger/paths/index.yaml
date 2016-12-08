@@ -55,8 +55,12 @@
   $ref: ./conversations/crud.yaml
 /tickets/{id}/reply:
   $ref: ./conversations/reply.yaml
+/tickets/{id}/reply_template:
+  $ref: ./conversations/reply_template.yaml
 /tickets/{id}/forward:
   $ref: ./conversations/forward.yaml
+/tickets/{id}/forward_template:
+  $ref: ./conversations/forward_template.yaml
 /tickets/{id}/facebook_reply:
   $ref: ./conversations/facebook_reply.yaml
 /tickets/{id}/tweet:

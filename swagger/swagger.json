@@ -1025,6 +1025,36 @@
         }
       }
     },
+    "/tickets/{id}/reply_template": {
+      "get": {
+        "tags": [
+          "conversation"
+        ],
+        "description": "Reply Template",
+        "parameters": [
+          {
+            "name": "id",
+            "type": "number",
+            "in": "path",
+            "description": "Ticket ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/conversation_template"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          }
+        }
+      }
+    },
     "/tickets/{id}/forward": {
       "post": {
         "tags": [
@@ -1052,6 +1082,36 @@
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/extended_note"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          }
+        }
+      }
+    },
+    "/tickets/{id}/forward_template": {
+      "get": {
+        "tags": [
+          "conversation"
+        ],
+        "description": "Forward Template",
+        "parameters": [
+          {
+            "name": "id",
+            "type": "number",
+            "in": "path",
+            "description": "Ticket ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/conversation_template"
             }
           },
           "400": {
@@ -2989,6 +3049,28 @@
           }
         }
       ]
+    },
+    "conversation_template": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "template": {
+              "type": "string",
+              "format": "HTML"
+            },
+            "quoted_text": {
+              "type": "string",
+              "format": "HTML"
+            },
+            "signature": {
+              "type": "string",
+              "format": "HTML"
+            }
+          }
+        }
+      }
     },
     "ticket_input": {
       "type": "object",

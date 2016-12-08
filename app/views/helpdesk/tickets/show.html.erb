@@ -80,7 +80,7 @@ try {
 		jQuery('#twitter_handle').change();
 	});
 	<% end %>
-	<% unless @draft.nil? %>
+	<% if @draft.present? %>
 		jQuery('#HelpdeskReply').data('containDraft', true)
 	<% end %>
 

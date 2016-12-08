@@ -18,12 +18,12 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   reply_ticket do
-    resource :"ember/conversation", only: [:reply, :facebook_reply, :tweet]
+    resource :"ember/conversation", only: [:reply, :facebook_reply, :tweet, :reply_template]
     resource :"ember/tickets/draft", only: [:save_draft, :show_draft, :clear_draft]
   end
 
   forward_ticket do
-    resource :"ember/conversation", only: [:forward]
+    resource :"ember/conversation", only: [:forward, :forward_template]
   end
 
   merge_or_split_ticket do

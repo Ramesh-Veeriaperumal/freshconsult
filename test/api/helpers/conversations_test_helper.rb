@@ -96,4 +96,12 @@ module ConversationsTestHelper
   def v2_forward_payload
     { body:  Faker::Lorem.paragraph, to_emails: [Faker::Internet.email, Faker::Internet.email], cc_emails: [Faker::Internet.email, Faker::Internet.email], bcc_emails: [Faker::Internet.email, Faker::Internet.email] }.to_json
   end
+  
+  def reply_template_pattern(expected_output)
+    {
+      template: expected_output[:template],
+      signature: expected_output[:signature],
+      quoted_text: expected_output[:quoted_text] || String
+    }
+  end
 end

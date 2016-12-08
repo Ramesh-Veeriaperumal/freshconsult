@@ -175,7 +175,9 @@ Helpkit::Application.routes.draw do
         put :execute_scenario
         post :notes, to: 'ember/conversations#create'
         post :reply, to: 'ember/conversations#reply'
+        get :reply_template, to: 'ember/conversations#reply_template'
         post :forward, to: 'ember/conversations#forward'
+        get :forward_template, to: 'ember/conversations#forward_template'
         post :tweet, to: 'ember/conversations#tweet'
         get :latest_note
         get :conversations, to: 'ember/conversations#ticket_conversations'

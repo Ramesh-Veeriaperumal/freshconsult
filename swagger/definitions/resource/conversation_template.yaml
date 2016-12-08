@@ -1,0 +1,15 @@
+type: object
+properties:
+  data:
+    type: object
+    properties:
+      template:
+        type: string
+        format: HTML
+      quoted_text:
+        type: string
+        format: HTML
+      signature:
+        type: string
+        format: HTML
+      

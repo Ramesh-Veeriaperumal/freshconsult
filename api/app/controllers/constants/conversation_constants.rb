@@ -20,7 +20,7 @@ module ConversationConstants
     'facebook_reply' => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['facebook'],
     'tweet'  => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['twitter']
   }.freeze
-  LOAD_OBJECT_EXCEPT = [:ticket_conversations, :reply, :forward, :facebook_reply, :tweet].freeze
+  LOAD_OBJECT_EXCEPT = [:ticket_conversations, :reply, :forward, :facebook_reply, :tweet, :reply_template, :forward_template].freeze
 
   ATTRIBUTES_TO_BE_STRIPPED = %w(notify_emails to_emails cc_emails bcc_emails).freeze
 
@@ -44,7 +44,7 @@ module ConversationConstants
   PARAMS_TO_SAVE_AND_REMOVE = [:note_id, :cloud_files, :attachment_ids, :cloud_file_ids, :include_quoted_text, :include_original_attachments, :tweet_type, :twitter_handle_id].freeze
   PARAMS_TO_REMOVE = [:body].freeze
 
-  TICKET_LOAD_REQUIRED = [:create, :reply, :forward, :ticket_conversations, :facebook_reply, :tweet].freeze
+  TICKET_LOAD_REQUIRED = [:create, :reply, :forward, :ticket_conversations, :facebook_reply, :tweet, :reply_template, :forward_template].freeze
   
   VALIDATION_CLASS = 'ConversationValidation'.freeze
   DELEGATOR_CLASS = 'ConversationDelegator'.freeze

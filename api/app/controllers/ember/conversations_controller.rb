@@ -82,6 +82,16 @@ module Ember
       end
     end
 
+    def reply_forward_template
+      @agent_signature = signature
+      @content = template_content
+      @quoted_text = quoted_text(@ticket, (action_name.to_sym == :forward_template))
+      render action: :template
+    end
+
+    alias reply_template reply_forward_template
+    alias forward_template reply_forward_template
+
     private
 
       def conditional_preload_options
@@ -121,10 +131,6 @@ module Ember
         else
           send_reply(fb_page, parent_post, @item, POST_TYPE[:comment])
         end
-      end
-
-      def constants_class
-        :ConversationConstants.to_s.freeze
       end
 
       def assign_note_attributes
@@ -227,8 +233,13 @@ module Ember
       end
 
       def signature
-        agent = (@user || api_current_user).agent
-        agent ? agent.signature_value : ''
+        (@user || api_current_user)
+          .try(:agent)
+          .try(:parsed_signature,
+            {
+              'ticket' => @ticket,
+              'helpdesk_name' => Account.current.portal_name
+            })
       end
 
       def set_custom_errors(item = @item)
@@ -264,13 +275,28 @@ module Ember
       end
 
       def tweet_and_render
-        error_msg, tweet = send("send_tweet_as_mention", @ticket, @item, @item.body)
-        if (error_msg)
+        error_msg, _tweet = send("send_tweet_as_#{@tweet_type}", @ticket, @item, @item.body)
+        if error_msg
           @item.errors[:body] << :unable_to_connect_twitter
           render_response(false)
         else
           render_201_with_location(template_name: 'ember/conversations/tweet')
         end
+      end
+
+      def template_content
+        parse_liquid(current_account.email_notifications
+          .find_by_notification_type("EmailNotification::DEFAULT_#{action_name.upcase}".constantize)
+          .try(:"get_#{action_name}", @ticket.requester).to_s
+          .gsub('{{ticket.satisfaction_survey}}', ''))
+      end
+
+      def parse_liquid(liquid_content)
+        Liquid::Template.parse(liquid_content).render(
+          {
+            'ticket' => @ticket,
+            'helpdesk_name' => Account.current.portal_name
+          })
       end
 
       wrap_parameters(*wrap_params)

@@ -1,0 +1,5 @@
+JSON.generate({ 
+  template: @content,
+  signature: @agent_signature,
+  quoted_text: @quoted_text
+})
