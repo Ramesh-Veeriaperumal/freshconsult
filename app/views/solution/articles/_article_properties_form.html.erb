@@ -11,7 +11,9 @@
 															 :value => @article.tags.collect{|tag| tag.name}.join(','), 
 															 :class => "span12 article-tags",
 															 :id => "tags_name",
+													 		 :rel => "remote-tag",
 															 "data-allow-create" => current_user.privilege?(:create_tags) %>
+
 					</div>
 				</div>
 			<%end%>
