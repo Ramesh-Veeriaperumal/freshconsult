@@ -4,6 +4,7 @@ class Freshfone::CallActions
   include Freshfone::FreshfoneUtil
   include Freshfone::Conference::Branches::RoundRobinHandler
   include Freshfone::Search
+  include Freshfone::CallsRedisMethods
 
 	attr_accessor :params, :current_account, :current_number, :agent, :outgoing
 	
@@ -112,10 +113,11 @@ class Freshfone::CallActions
 		current_call.direct_dial_number = performer
 		current_call.create_meta(:account => current_account,
 		:hunt_type => Freshfone::CallMeta::HUNT_TYPE[:number],
-		:meta_info => {:agent_info => performer}, 
 		:transfer_by_agent => transfer_by_agent,
 		:device_type => Freshfone::CallMeta::USER_AGENT_TYPE_HASH[:external_transfer],
 		:pinged_agents => [ { :number => performer, :device_type => :external} ])
+		set_agent_info(current_account.id, current_call.id,
+			performer) if current_call.meta.persisted?
 		# trigger_notification_validator(current_call.id)
 	end
 
@@ -125,7 +127,7 @@ class Freshfone::CallActions
   end
 
   def update_agent_leg_response(agent_id, response, call)
-  	call.meta.update_pinged_agents_with_response(agent_id, response) 
+    set_agent_response(call.account_id, call.id, agent_id, response)
   end
 
   def update_external_transfer_leg_response(number, response, call)
@@ -133,8 +135,9 @@ class Freshfone::CallActions
   end
 
   def update_secondary_leg_response(agent_id, number, response, call)
-    call.meta.update_pinged_agents_with_response(agent_id, response)
-    call.meta.update_external_transfer_call_response(number, response) if external_transfer?
+    set_agent_response(call.account_id, call.id, agent_id, response)
+    update_external_transfer_leg_response(number, response,
+      call) if external_transfer?
   end
 
   def cancel_browser_agents(call)
@@ -145,14 +148,15 @@ class Freshfone::CallActions
   def handle_failed_incoming_call(call, agent_id)
     call_meta = call.meta
     return if call_meta.blank?
-    call_meta.update_pinged_agents_with_response(agent_id, :failed)
-    telephony.redirect_call_to_voicemail call if call_meta.all_agents_missed?
+    set_agent_response(call.account_id, call.id, agent_id, :failed)
+    telephony.redirect_call_to_voicemail call if child_call_meta.all_agents_missed?
   end
 
   def handle_failed_direct_dial_call(call)
     call.meta ||= current_account.freshfone_calls.find(call.id).create_meta(
-      :meta_info => {:agent_info => call.direct_dial_number}, :device_type => Freshfone::CallMeta::USER_AGENT_TYPE_HASH[:direct_dial])
+      device_type: Freshfone::CallMeta::USER_AGENT_TYPE_HASH[:direct_dial])
     call.failed!
+    set_agent_info(current_account.id, call.id, call.direct_dial_number)
     telephony.redirect_call_to_voicemail call
   end
 
@@ -160,7 +164,7 @@ class Freshfone::CallActions
     child_call = call.children.last
     child_call_meta = child_call.meta
     return if child_call_meta.blank?
-    child_call_meta.update_pinged_agents_with_response(agent_id, :failed)
+    set_agent_response(call.account_id, call.id, agent_id, :failed)
     if child_call_meta.all_agents_missed?
       child_call.failed!
       notify_transfer_unanswered(call)
@@ -196,7 +200,7 @@ class Freshfone::CallActions
   def handle_failed_round_robin_call(call, agent_id)
     notifier = Freshfone::Notifier.new(params, current_account)
     call_meta = call.meta
-    call_meta.update_pinged_agents_with_response(agent_id.to_s, :failed)
+    set_agent_response(call.account_id, call.id, agent_id, :failed)
     params[:call] = call.id
     if failed_round_robin_agents_pending?
       notifier.initiate_round_robin(current_call, get_batch_agents_hash) if current_call.can_be_connected?
