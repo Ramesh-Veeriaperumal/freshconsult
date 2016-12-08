@@ -30,19 +30,6 @@ window.App.Tickets = window.App.Tickets || {};
 		          $(this).addClass('tooltip requester-capitalize');
 		        }
 		      });
-		      
-		      // $("#company_domains").select2({
-		      //   multiple: true,
-		      //   tags:[],
-		      //   tokenSeparators: [","," "],
-		      //   minimumResultsForSearch: -1,
-		      //   selectOnBlur: true,
-		      //   dropdownCssClass: "requester-widget-domain-names"
-		      // });
-
-		      // $doc.on('select2-removed',"#company_domains", function(e){
-		      //   $('#domain_name-error').remove();
-		      // });
 
 		      $(document).find('.required_star').remove();
 
@@ -145,7 +132,7 @@ window.App.Tickets = window.App.Tickets || {};
 	      $('.requester-widget-user-edit-dialog .controls label.error').not('.company-error-msg').remove();
 	    }
       else {
-          $('#requester-widget-user-edit-dialog-submit').attr('disabled', 'true');
+        $('#requester-widget-user-edit-dialog-submit').attr('disabled', 'true');
       }
 	  },
 	  companyFieldsExceptName : function() {
@@ -156,12 +143,12 @@ window.App.Tickets = window.App.Tickets || {};
 	    	old_value;
 	    this.companyFieldsExceptName().each(function(){
 	        if($(this).is(':checkbox')) {
-	            $(this).removeAttr("checked");
+	          $(this).removeAttr("checked");
           }
 	      else {
 	        old_value = $(this).val();
           if($(this).hasClass('date')) {
-              $(this).val("").datepicker().trigger('change');
+            $(this).val("").datepicker().trigger('change');
           }
           else {
           	$(this).val("").trigger('change');
@@ -243,107 +230,90 @@ window.App.Tickets = window.App.Tickets || {};
 	  bindPopupEvents: function(){
 	  	var $doc = $(document), 
 					_this = this;
-
 			
-				 /* requester widget contact edit bindevents start */
+			 /* requester widget contact edit bindevents start */
 
-				 $doc.on('change.requester', '#add-company' ,function(){
-				 	var $companyName = $('#company_name'),
-				 		$companySection = $('.company-field-section');
-				 	if($(this).is(':checked')){
-				 		$companySection.slideDown(400);
-				 		$(".requester-widget-user-fields").animate({
-					    scrollTop:  $companySection.offset().top
-					  },400,function(){
-					  	$companyName.focus();
-					  });
-				 		
-				 	}else{
-				 		$companySection.slideUp(400, function(){
-				 			_this.clearCompanyFieldValues();
-					 		$('.company-error-msg').remove();
-					 		$companyName.val('').blur();
-				 		});
-				 	}
-				 });
+			 $doc.on('change.requester', '#add-company' ,function(){
+			 	var $companyName = $('#company_name'),
+			 		$companySection = $('.company-field-section');
+			 	if($(this).is(':checked')){
+			 		$companySection.slideDown(200,function(){
+			 			$companyName.focus();
+			 		});	
+			 	}else{
+			 		$companySection.slideUp(200, function(){
+			 			_this.clearCompanyFieldValues();
+				 		$('.company-error-msg').remove();
+				 		$companyName.val('').blur();
+			 		});
+			 	}
+			 });
 
-				  
+			  $doc.on('focus.requester', '#company_name' ,function(){
+			    company_changed = false;
+			    _this.toggleRequesterEdit(false);
+			  });
 
-				  $doc.on('focus.requester', '#company_name' ,function(){
-				    company_changed = false;
-				    _this.toggleRequesterEdit(false);
-				  });
+			  $doc.on('input.requester', '#company_name' , function(e){
+			    company_changed = true;
+			  });
 
-				  $doc.on('input.requester', '#company_name' , function(e){
-				    company_changed = true;
-				  });
+			  $doc.on('blur.requester', '#company_name' , function(){
+			    if(company_changed){
+			      var company_name = $('#company_name').val();
+			      if(company_name.length > 0) {
+			        _this.fetchCompanyDetails(company_name);
+			          return;
+			      }
+			      else {
+			        _this.clearCompanyFieldValues();
+			        $('.company-error-msg').remove();
+			      }
+			    }
+			    _this.toggleRequesterEdit(true);
+			  });
 
-				  $doc.on('blur.requester', '#company_name' , function(){
-				    if(company_changed){
-				      var company_name = $('#company_name').val();
-				      if(company_name.length > 0) {
-				        _this.fetchCompanyDetails(company_name);
-				          return;
-				      }
-				      else {
-				        _this.clearCompanyFieldValues();
-				        $('.company-error-msg').remove();
-				      }
-				    }
-				    _this.toggleRequesterEdit(true);
-				  });
-
-				  $doc.on('change.requester', '#requester-widget-user-edit-dialog .controls input.date' , function(){
-				      if($(this).val() == "undefined" || $(this).val() == null || $(this).val() == "") {
-				          $(this).parent('.controls').children('span.dateClear').hide();
-              }
-				      else {
-				          $(this).parent('.controls').children('span.dateClear').show();
-              }
-				  });
-				 /* requester widget contact edit bindevents end */
-
-				 
-		  
+			  $doc.on('change.requester', '#requester-widget-user-edit-dialog .controls input.date' , function(){
+			      if($(this).val() == "undefined" || $(this).val() == null || $(this).val() == "") {
+			          $(this).parent('.controls').children('span.dateClear').hide();
+            }
+			      else {
+			          $(this).parent('.controls').children('span.dateClear').show();
+            }
+			  });
+			 /* requester widget contact edit bindevents end */
 	  },
 	  bindEvents: function(){
 			var $doc = $(document), 
 					_this = this;
 
+	  	/* requester info start */
+	  	$doc.on('click.requester','.requester_widget span.widget-more-toggle',function(){
+        var $ele = $(this);
+        if($ele.hasClass('condensed')){
+          $ele.parents('.requester_widget').find('div.widget-more-content').slideDown('fast','easeInQuad');
+          $ele.removeClass('condensed').text(TICKET_DETAILS_DATA['less_requester']);
+        } else {
+          $ele.addClass('condensed').parents('.requester_widget').find('div.widget-more-content').slideUp('fast','easeOutQuad');
+            $ele.text(TICKET_DETAILS_DATA['more_requester']);
+        }
+      });
 
-		  	/* requester info start */
-		  	$doc.on('click.requester','.requester_widget span.widget-more-toggle',function(){
-	        var $ele = $(this);
-	        if($ele.hasClass('condensed')){
-	          $ele.parents('.requester_widget').find('div.widget-more-content').slideDown('fast','easeInQuad');
-	          $ele.removeClass('condensed').text(TICKET_DETAILS_DATA['less_requester']);
-	        } else {
-	          $ele.addClass('condensed').parents('.requester_widget').find('div.widget-more-content').slideUp('fast','easeOutQuad');
-	            $ele.text(TICKET_DETAILS_DATA['more_requester']);
-	        }
-	      });
+	    $doc.on('click.requester','.requester_widget span.more-toggle',function(){
+	      var toggle = $(this).parent();
+	      if(toggle.hasClass('expanded')){
+	        toggle.find('.hidden-text').hide();
+	        toggle.removeClass('expanded');
+	      }else{
+	        toggle.addClass('expanded');
+	        toggle.find('.hidden-text').fadeIn("slow");
+	      }
+	    });
 
-	      
-
-		    $doc.on('click.requester','.requester_widget span.more-toggle',function(){
-		      var toggle = $(this).parent();
-		      if(toggle.hasClass('expanded')){
-		        toggle.find('.hidden-text').hide();
-		        toggle.removeClass('expanded');
-		      }else{
-		        toggle.addClass('expanded');
-		        toggle.find('.hidden-text').fadeIn("slow");
-		      }
-		    });
-
-		    $doc.on("show.requester", "#requester-widget-user-edit-dialog", function(e){
-		    	
-			    _this.initPopup();
-
-		    });
-		    /* requester info end */
-
-		
+	    $doc.on("show.requester", "#requester-widget-user-edit-dialog", function(e){
+		    _this.initPopup();
+	    });
+	    /* requester info end */
 		}
 	};
 
