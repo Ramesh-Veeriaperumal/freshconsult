@@ -118,6 +118,8 @@ window.App.Contacts.Contact_show = window.App.Contacts.Contact_show || {};
 			$(window).on('scroll.contact-view', this.toggleUsername);
 			$('.sp_paragraph')
 					.height($('.sp_paragraph')[0].scrollHeight);
+			this.tagList = $('#user_tag_names').select2('val');
+			$('#user_tag_names').select2('val', this.tagList);
 		},
 		makeAjaxCall: function() {
 			var data = $('.edit_user').serializeArray(),

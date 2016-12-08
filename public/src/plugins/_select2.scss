@@ -348,6 +348,7 @@ html[dir="rtl"] .select2-search input {
     overflow-x: hidden;
     overflow-y: auto;
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    @include word-hyphernate;
 }
 
 
@@ -496,6 +497,7 @@ disabled look for disabled choices in the results dropdown
 
 .select2-container-multi .select2-choices {
     min-height: 26px;
+    @include word-hyphernate;
 }
 
 .select2-container-multi.select2-container-active .select2-choices {

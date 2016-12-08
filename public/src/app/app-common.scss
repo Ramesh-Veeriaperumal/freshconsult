@@ -4719,3 +4719,12 @@ input.date {
 	}
 }
 
+/*-----------------New Tag Create differentiation in Select2-----------------------*/
+.new-tag-create{
+	border-top:1px solid #eee;
+	border-bottom: 1px solid #eee;
+	.tag_new_label{
+		color: #aaa;
+	}
+}
+

@@ -81,15 +81,9 @@ window.App.Contacts.Contact_form = window.App.Contacts.Contact_form || {};
     },
 
     bindCompanySelect2: function () {
-      var self = this,
-              select_init_data = {
-                tags: self.tags_options.split(","),
-                tokenSeparators: [',']
-              };
-      if(self.create_tag_privilege != true){
-        select_init_data['createSearchChoice'] = null;
-      }
-      $("input[name='user[tag_names]']").select2(select_init_data);
+      var self = this;
+      $("input[name='user[tag_names]']").data('allowCreate',self.create_tag_privilege);
+      $("input[name='user[tag_names]']").attr('rel','remote-tag');
     },
 
     bindHandlers: function () {

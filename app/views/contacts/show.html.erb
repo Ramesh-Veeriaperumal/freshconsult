@@ -1,14 +1,9 @@
-<% content_for :onload_script do %>  
-	var tags_options = "<%= escape_javascript(current_account.tags.most_used(25).collect{|tag| tag.name}.join(',').html_safe) %>";
-	jQuery("input[name='user[tag_names]']").select2({
-		<%= 'createSearchChoice: null,' if !current_user.privilege?(:create_tags) %>
-		tags: tags_options.split(","),
-		tokenSeparators: [',']
-	});
+<% content_for :onload_script do %>
 	tagsOptions = {
 		'add' : '<%= t("add_tags") %>',
 		'edit' : '<%= t("edit_tags") %>'
 	}
+	var MAX_TAG_LENGTH_MSG = "<%= I18n.t('helpdesk.tickets.show.max_tag_length_msg') %>";
 <% end %>
 
 <div class='page-header-sticky' rel='sticky' id='contactHeaderSticky'>
@@ -127,7 +122,7 @@
 					<%= f.text_area :description, :class=> "sp_paragraph",:cols => 0,:rows => 0, :placeholder => t("contacts.form_placeholder.description") %>
 					<%= f.hidden_field :id, :value => @user.id, :id => 'userid' %>
 					<div class='tags-wrapper clearfix hide'>
-						<%= f.text_field :tag_names, :class=> "clear-left-margin", :placeholder => t("contacts.form_placeholder.enter_tags")%>
+						<%= f.text_field :tag_names, :rel =>"remote-tag", 'data-allow-create' => current_user.privilege?(:create_tags), :placeholder => t("contacts.form_placeholder.enter_tags"), :class=> "clear-left-margin"%>
 					</div>
 					<div id='tag-list'>
 						<%= render :partial => "/helpdesk/tags/tag_list", :locals => {:tags => @user.tags, :add_tag => true} %>
