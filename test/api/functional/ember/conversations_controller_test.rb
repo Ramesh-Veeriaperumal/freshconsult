@@ -876,6 +876,7 @@ module Ember
 
       Agent.any_instance.stubs(:signature_value).returns('')
       EmailNotification.any_instance.stubs(:present?).returns(false)
+      EmailNotification.any_instance.stubs(:get_forward_template).returns('')
 
       get :forward_template, construct_params({ version: 'private', id: t.display_id }, false)
       assert_response 200
