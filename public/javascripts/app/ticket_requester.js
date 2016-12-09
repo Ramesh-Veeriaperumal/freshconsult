@@ -14,10 +14,7 @@ window.App.Tickets = window.App.Tickets || {};
     current_module: '',
     init: function(){
     	this.bindEvents();
-    	$("input[name='contact[tag_names]']").select2({
-	        tags: TICKET_DETAILS_DATA['tag_options'].split(","),
-	        tokenSeparators: [',']
-	      });
+    	$("input[name='contact[tag_names]']").data('allowCreate',TICKET_DETAILS_DATA['create_tag_privilege']).attr('rel','remote-tag');
     },
     initPopup: function(){
     	var _this = this;
@@ -32,7 +29,7 @@ window.App.Tickets = window.App.Tickets || {};
 		        }
 		      });
 
-		      $(document).find('.required_star').remove();
+		      $(document).find('#company_section .required_star').remove();
 
 		      $('#company_section input.compare-required,#company_section select.compare-required,#company_section textarea.compare-required,#company_name').not('.checkbox').data('compare','company_name')
 			    .closest('li')

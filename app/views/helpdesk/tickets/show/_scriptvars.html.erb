@@ -42,7 +42,8 @@ TICKET_DETAILS_DATA = {
 	companies_autocomplete_path: '<%= companies_search_autocomplete_index_path %>?q=',
 	new_company_message: '<%= t('requester_widget.company.new_company_message')%>',
 	company_message: '<%= t('requester_widget.company.message') %>',
-	companyname_required: '<%= t('requester_widget.company.validation.required_name') %>'
+	companyname_required: '<%= t('requester_widget.company.validation.required_name') %>',
+	create_tag_privilege : <%= current_user.privilege?(:create_tags) %>
 };
 </script>
 <textarea id="ticket_draft_default_reply" class="hide"><%= bind_last_conv(@ticket, @signature, false, false) %></textarea>
