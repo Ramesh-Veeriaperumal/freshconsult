@@ -18,19 +18,8 @@ module SearchHelper
     params[:search_conditions][key] = value unless value.blank?
   end
 
-  # API Search helpers
-  def ids_from_esv2_response(json)
-    result = ActionController::Parameters.new(json)
-    if result[:hits] && result[:hits][:hits] && result[:hits][:hits].any?
-      result[:hits][:hits].map{|x| x["_id"].to_i}
-    else
-      # In case of error return empty array
-      []
-    end
-  end
-
   # Temp functions
-  def query_es(terms, resource = :tickets)
+  def query_es(terms, resource = :tickets, page=1)
     url = ""
     if resource == :tickets
       url = "http://localhost:9200/tickets_p1s1v1/_search"
@@ -39,7 +28,7 @@ module SearchHelper
     elsif resource == :companies
       url = "http://localhost:9200/companies_p1s1v1/_search"
     end
-    search_query = { _source: 'false', query: { bool: { filter: [ terms ] } }, size: 30 }
+    search_query = { _source: 'false', query: { bool: { filter: [ terms ] } }, size: 30, from: ((page || 1) - 1)  * 30  }
     begin
       response = Search::V2::Utils::EsClient.new(:get, 
                             url, 
@@ -56,6 +45,6 @@ module SearchHelper
     rescue Exception => exception
       response = exception.message
     end
-    return response
+    return ActionController::Parameters.new(response)
   end
 end

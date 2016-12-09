@@ -8,8 +8,11 @@ module ApiSearchConstants
   COMPANY_FIELDS = %w( domain ).freeze
   ALLOWED_CUSTOM_FIELD_TYPES = %w( custom_text custom_number custom_checkbox ).freeze
 
-
   ES_KEYS = { email: :emails, company_id: :company_ids, domain: :domains }.freeze
+
+  TICKET_ASSOCIATIONS = { 'ticket' => { model: 'Helpdesk::Ticket', associations: [ { flexifield: :flexifield_def }, :ticket_old_body, :schema_less_ticket, :flexifield] } }
+  CONTACT_ASSOCIATIONS = { 'user' => { model: 'User', associations: [ :flexifield, :default_user_company ] } }
+  COMPANY_ASSOCIATIONS = { 'company' => { model: 'Company', associations: [ :flexifield, :company_domains ] } }
   
   # email is not supported in tickets search
   # PRE_FETCH = { ticket: { email: :requester_id } }.freeze

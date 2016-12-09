@@ -12,10 +12,11 @@ module ApiSearch
       validation = Search::TicketValidation.new(validation_params, ticket_custom_fields)
       
       if validation.valid?
-        search_terms = tree.accept(visitor)
-        ids = ids_from_esv2_response(query_es(search_terms, :tickets))
-        @items = ids.any? ? paginate_items(scoper.where(id: ids)) : []
         @name_mapping = custom_fields
+        search_terms = tree.accept(visitor)
+        page = params[:page] ? params[:page].to_i : 1
+        response = query_es(search_terms, :tickets, page)
+        @items = query_results(response, page, ApiSearchConstants::TICKET_ASSOCIATIONS)
       else
         render_custom_errors(validation, true)
       end
@@ -32,10 +33,6 @@ module ApiSearch
         Search::TermVisitor.new(column_names)
       end
 
-      def scoper
-        current_account.tickets.preload([:ticket_old_body, :schema_less_ticket, :flexifield])
-      end
-
       def ticket_custom_fields
         ticket_fields.select{|x| ApiSearchConstants::ALLOWED_CUSTOM_FIELD_TYPES.include? x.field_type }
       end
@@ -43,6 +40,5 @@ module ApiSearch
       def ticket_fields
         Account.current.ticket_fields_from_cache
       end
-
   end
 end

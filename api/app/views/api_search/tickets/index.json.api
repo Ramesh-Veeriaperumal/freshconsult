@@ -1,4 +1,4 @@
-JSON.generate(@items.map do |item|
+results = @items.map do |item|
   response_hash = {
     cc_emails: item.cc_email.try(:[], :cc_emails),
     fwd_emails: item.cc_email.try(:[], :fwd_emails),
@@ -36,4 +36,9 @@ JSON.generate(@items.map do |item|
     response_hash.merge!(custom_fields: {})
   end
   response_hash
-end)
+end
+
+JSON.generate({
+    results: results,
+    total: @items.total_entries
+})

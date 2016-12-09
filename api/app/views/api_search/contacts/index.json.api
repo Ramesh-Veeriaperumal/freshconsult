@@ -1,4 +1,4 @@
-JSON.generate(@items.map do |item|
+results = @items.map do |item|
   response_hash = {
     active: item.active,
     address: item.address,
@@ -27,4 +27,9 @@ JSON.generate(@items.map do |item|
   end
   response_hash.merge!(deleted: true) if item.deleted
   response_hash
-end)
+end
+
+JSON.generate({
+  results: results,
+  total: @items.total_entries
+})

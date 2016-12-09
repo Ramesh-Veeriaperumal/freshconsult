@@ -47,5 +47,22 @@ module ApiSearch
       def parser
         @parser ||= Search::V2::Parser::SearchParser.new
       end
+
+      def query_results(es_results, page, associations)
+        begin
+          @records = Search::Utils.load_records(es_results, associations,
+            {
+              current_account_id: current_account.id,
+              page: page,
+              es_offset: 30
+            }
+          )
+        rescue Exception => e
+          Rails.logger.error "Searchv2 exception - #{e.message} - #{e.backtrace.first}"
+          NewRelic::Agent.notice_error(e)
+          @records = []
+        end
+        @records
+      end
   end
 end
