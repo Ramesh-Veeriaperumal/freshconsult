@@ -27,7 +27,8 @@
       }
       else if(container == "single_select"){
         if(condition == "created_at") {
-          value =  jQuery('#created_at option:selected').val();
+          if(jQuery('#created_at option:selected').val() != "any_time")
+            value =  jQuery('#created_at option:selected').val();
         }
         else {
           if(jQuery(this).children('select').val() != "")
