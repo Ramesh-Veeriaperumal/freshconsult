@@ -23,11 +23,12 @@ window.App.Tickets = window.App.Tickets || {};
     	var _this = this;
     	this.bindPopupEvents();
 
-    	var $requiredEle = '<span class="required_star">*</span>';
+    	var $requiredEle = '<span class="required_star">*</span>',tooltipText;
 		      $(".requester-widget-user-fields .field-set label").each(function(){
-		        if($(this).text().length > 14){
-		          $(this).attr('title',$(this).text());
-		          $(this).addClass('tooltip requester-capitalize');
+		      	tooltipText = ($(this).text()).replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});;
+		        if(tooltipText.length > 14){
+		          $(this).attr('title',tooltipText);
+		          $(this).addClass('tooltip');
 		        }
 		      });
 
