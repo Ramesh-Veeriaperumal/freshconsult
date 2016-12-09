@@ -65,7 +65,7 @@ Authority::Authorization::PrivilegeList.build do
 
 
     # Used by API V2 Search
-    resource :"api_search", :only => [:tickets]
+    resource :"api_search/ticket", :only => [:index]
 
     #Freshfone
     resource :"freshfone", :only => [:dashboard_stats, :dial_check, :create_ticket, :create_note]
@@ -377,7 +377,8 @@ Authority::Authorization::PrivilegeList.build do
     resource :"api_company", :only => [:create, :update]
 
     # Used by API V2 Search
-    resource :"api_search", :only => [:contacts, :companies]
+    resource :"api_search/contact", :only => [:index]
+    resource :"api_search/company", :only => [:index]
 
     # This privilege should only be used for API. This should have only read permission. 
     # Agent who has access to contact/company create will obviously know the custom field names.

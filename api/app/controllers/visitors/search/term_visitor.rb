@@ -4,9 +4,10 @@ module Search
 
 		attr_accessor :column_names, :resource
 
-		def initialize(column_names, resource)
+		def initialize(column_names)
 			@column_names = column_names
-			@resource = resource
+			# Currently pre fetch is not required
+			# @resource = resource
 		end
 
 		def visit_operator(node)

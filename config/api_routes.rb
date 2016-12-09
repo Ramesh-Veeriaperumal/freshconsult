@@ -58,12 +58,10 @@ Helpkit::Application.routes.draw do
     end
     resources :groups, as: 'api_groups', controller: 'api_groups', except: [:new, :edit]
 
-    resources :search, controller: 'api_search' do
-      collection do
-        get :tickets
-        get :contacts
-        get :companies
-      end
+    namespace :api_search, path: 'search' do
+      resources :tickets, only: [:index]
+      resources :contacts, only: [:index]
+      resources :companies, only: [:index]
     end
 
     resources :contacts, as: 'api_contacts', controller: 'api_contacts', except: [:new, :edit] do

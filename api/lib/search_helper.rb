@@ -41,7 +41,6 @@ module SearchHelper
     end
     search_query = { _source: 'false', query: { bool: { filter: [ terms ] } }, size: 30 }
     begin
-      # response = RestClient::Request.execute(method: :get, url: url, payload: search_query.to_json)
       response = Search::V2::Utils::EsClient.new(:get, 
                             url, 
                             { routing: current_account.id },
