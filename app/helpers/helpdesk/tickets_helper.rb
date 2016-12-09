@@ -510,14 +510,6 @@ module Helpdesk::TicketsHelper
       latest_note_hash
   end
 
-  def agentcollision_socket_host
-    "#{request.protocol}#{NodeConfig["socket_host"]}"
-  end
-
-  def autorefresh_socket_host
-    "#{request.protocol}#{NodeConfig["socket_autorefresh_host"]}"
-  end
-
   def agentcollision_alb_socket_host
     "#{request.protocol}#{NodeConfig["socket_host_new"]}"
   end
