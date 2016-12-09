@@ -110,7 +110,7 @@ module Helpdesk::RequesterWidgetHelper
         html << "<div class='contact-append'>
           <span class='add-on field-label long_text'>
           <span class='label-name  #{ "tooltip" if (field.label.length > MAX_LABEL_LENGTH) }'
-            title='#{ field.label if (field.label.length > MAX_LABEL_LENGTH) }'>
+            title='#{ field.label.titleize if (field.label.length > MAX_LABEL_LENGTH) }'>
           #{field.label}</span></span><span class='label-colon'>:</span>
           <span class='field-value #{"can-make-calls" if phone_field?(field)}' #{phone_field_data_attributes(user, value) if phone_field?(field)}>#{value}</span>
         </div>"
