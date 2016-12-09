@@ -34,7 +34,7 @@ module Helpdesk::Email::OutgoingCategory
     state = nil
     if Account.current
       state = "premium" if Account.current.premium_email? 
-      state ||= Account.current.subscription.state 
+      state ||= Account.current.subscription.state if Account.current.subscription.present?
     end
     state = "default" if (state.nil?) or (!CATEGORY_SET.include?(state.to_sym))
     return state
