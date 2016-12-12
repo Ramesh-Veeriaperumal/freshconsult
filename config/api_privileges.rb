@@ -70,4 +70,7 @@ Authority::Authorization::PrivilegeList.build do
       { :scoper => :time_sheets }
   end
 
+  export_customers do
+    resource :"ember/contact", only: [:export_csv]
+  end
 end

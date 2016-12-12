@@ -12,6 +12,8 @@ module ContactConstants
   INDEX_FIELDS = %w(state email phone mobile company_id tag).freeze
   MERGE_ARRAY_FIELDS = ['target_ids'].freeze
   MERGE_FIELDS = %w(primary_id).freeze | MERGE_ARRAY_FIELDS
+  EXPORT_CSV_ARRAY_FIELDS = %w(default_fields custom_fields).freeze
+  EXPORT_CSV_FIELDS = EXPORT_CSV_ARRAY_FIELDS
 
   SCOPE_BASED_ON_ACTION = {
     'update'  => { deleted: false, blocked: false },
@@ -35,7 +37,7 @@ module ContactConstants
 
   BULK_ACTION_METHODS = [:bulk_delete, :bulk_restore, :bulk_send_invite, :bulk_whitelist].freeze
 
-  LOAD_OBJECT_EXCEPT = [:merge].freeze + BULK_ACTION_METHODS
+  LOAD_OBJECT_EXCEPT = [:merge, :export_csv].freeze + BULK_ACTION_METHODS
 
   # Max other email count excluding the primary email
   MAX_OTHER_EMAILS_COUNT = 4
@@ -65,4 +67,7 @@ module ContactConstants
   FIELD_MAPPINGS = { company_name: :company_id, default_user_company: :company_id, company: :company_id, :"primary_email.email" => :email, base: :email, attachment_ids: :avatar_id }.freeze
 
   NO_CONTENT_TYPE_REQUIRED = [:restore, :send_invite].freeze
+
+  VALIDATION_CLASS = 'ContactValidation'.freeze
+  DELEGATOR_CLASS = 'ContactDelegator'.freeze
 end.freeze

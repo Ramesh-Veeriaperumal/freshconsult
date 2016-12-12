@@ -3,6 +3,7 @@ module Ember
   class ContactsControllerTest < ActionController::TestCase
     include UsersTestHelper
     include AttachmentsTestHelper
+    include ContactFieldsHelper
 
     def setup
       super
@@ -478,6 +479,50 @@ module Ember
       get :activities, construct_params({ version: 'private', id: contact.id }, nil)
       assert_response 200
       match_json(user_activity_response(objects))
+    end
+
+    def test_export_csv_with_no_params
+      rand(2..10).times do
+        add_new_user(@account)
+      end
+      contact_form = @account.contact_form
+      post :export_csv, construct_params({version: 'private'}, {})
+      assert_response 400
+      match_json([bad_request_error_pattern(:request, :select_a_field)])
+    end
+
+    def test_export_csv_with_invalid_params
+      rand(2..10).times do
+        add_new_user(@account)
+      end
+      contact_form = @account.contact_form
+      params_hash = { default_fields: [Faker::Lorem.word], custom_fields: [Faker::Lorem.word] }
+      post :export_csv, construct_params({version: 'private'}, params_hash)
+      assert_response 400
+      match_json([bad_request_error_pattern(:default_fields, :not_included, list: (contact_form.default_fields.map(&:name)-["tag_names"]).join(',')),
+                  bad_request_error_pattern(:custom_fields, :not_included, list: (contact_form.custom_fields.map(&:name).collect { |x| x[3..-1] }).join(','))])
+    end
+
+    def test_export_csv
+      create_contact_field(cf_params(type: 'text', field_type: 'custom_text', label: 'Area', editable_in_signup: 'true'))
+      create_contact_field(cf_params(type: 'boolean', field_type: 'custom_checkbox', label: 'Metropolitian City', editable_in_signup: 'true'))
+      create_contact_field(cf_params(type: 'date', field_type: 'custom_date', label: 'Joining date', editable_in_signup: 'true'))
+
+      rand(2..10).times do
+        add_new_user(@account)
+      end
+      default_fields = @account.contact_form.default_fields
+      custom_fields = @account.contact_form.custom_fields
+      Export::ContactWorker.jobs.clear
+      params_hash = { default_fields: default_fields.map(&:name) - ["tag_names"], custom_fields: custom_fields.map(&:name).collect { |x| x[3..-1] } }
+      post :export_csv, construct_params({version: 'private'}, params_hash)
+      assert_response 204
+      sidekiq_jobs = Export::ContactWorker.jobs
+      assert_equal 1, sidekiq_jobs.size
+      csv_hash = (default_fields | custom_fields).collect{ |x| { x.label => x.name } }.inject(&:merge).except("Tags")
+      assert_equal csv_hash, sidekiq_jobs.first["args"][0]["csv_hash"]
+      assert_equal User.current.id, sidekiq_jobs.first["args"][0]["user"]
+      Export::ContactWorker.jobs.clear
     end
   end
 end

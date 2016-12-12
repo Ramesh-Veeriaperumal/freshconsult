@@ -1,23 +1,20 @@
 module Ember
   class ContactsController < ApiContactsController
     include DeleteSpamConcern
+    include HelperConcern
     decorate_views
 
     before_filter :can_change_password?, :validate_password_change, only: [:update_password]
 
     def create
       assign_protected
-      contact_delegator = ContactDelegator.new(@item, email_objects: @email_objects, custom_fields: params[cname][:custom_field], 
-                                                avatar_id: params[cname][:avatar_id])
-      if !contact_delegator.valid?
-        render_custom_errors(contact_delegator, true)
+      return unless validate_delegator(@item, email_objects: @email_objects, custom_fields: params[cname][:custom_field],
+                                              avatar_id: params[cname][:avatar_id])
+      build_user_emails_attributes if @email_objects.any?
+      if @item.create_contact!
+        render :show, location: api_contact_url(@item.id), status: 201
       else
-        build_user_emails_attributes if @email_objects.any?
-        if @item.create_contact!
-          render :show, location: api_contact_url(@item.id), status: 201
-        else
-          render_custom_errors
-        end
+        render_custom_errors
       end
     end
 
@@ -45,7 +42,6 @@ module Ember
     def update_password
       @item.password = params[cname][:password]
       @item.active = true
-      
       if @item.save
         @item.reset_perishable_token!
         head 204
@@ -57,15 +53,15 @@ module Ember
 
     def activities
       @user_activities = case params[:type]
-      when 'tickets'
-        ticket_activities.take(10)
-      when 'archived_tickets'
-        archived_ticket_activities
-      when 'forums'
-        @item.recent_posts
-      else
-        combined_activities
-      end
+                         when 'tickets'
+                           ticket_activities.take(10)
+                         when 'archived_tickets'
+                           archived_ticket_activities
+                         when 'forums'
+                           @item.recent_posts
+                         else
+                           combined_activities
+                         end
       if params[:type].blank? || (params[:type] == 'tickets')
         response.api_meta = { more_tickets: (ticket_activities.count > 10) }
       end
@@ -85,6 +81,13 @@ module Ember
       end
     end
 
+    def export_csv
+      @validation_klass = 'ExportCsvValidation'
+      return unless validate_body_params
+      Export::ContactWorker.perform_async(csv_hash: export_field_mappings, user: api_current_user.id, portal_url: portal_url)
+      head 204
+    end
+
     def self.wrap_params
       ContactConstants::EMBER_WRAP_PARAMS
     end
@@ -92,7 +95,7 @@ module Ember
     private
 
       def scoper
-        if !params[:tag].blank?
+        unless params[:tag].blank?
           tag = current_account.tags.find_by_name(params[:tag])
           return (tag || Helpdesk::Tag.new).contacts
         end
@@ -115,7 +118,7 @@ module Ember
       end
 
       def can_change_password?
-        render_errors({ :password => :"Not allowed to change." }) unless @item.allow_password_update?
+        render_errors(password: :"Not allowed to change.") unless @item.allow_password_update?
       end
 
       def validate_password_change
@@ -127,14 +130,14 @@ module Ember
       end
 
       def ticket_activities
-        @user_tickets ||= current_account.tickets.permissible(api_current_user).
-          requester_active(@item).visible.newest(11)
+        @user_tickets ||= current_account.tickets.permissible(api_current_user)
+                                         .requester_active(@item).visible.newest(11)
       end
 
       def archived_ticket_activities
         return [] unless current_account.features_included?(:archive_tickets)
-        @user_archived_tickets ||= current_account.archive_tickets.permissible(api_current_user).
-          requester_active(@item).newest(10).take(10)
+        @user_archived_tickets ||= current_account.archive_tickets.permissible(api_current_user)
+                                                  .requester_active(@item).newest(10).take(10)
       end
 
       def combined_activities
@@ -152,6 +155,24 @@ module Ember
         item.deleted = false
         item.blocked_at = nil
         item.save
+      end
+
+      def export_field_mappings
+        current_account.contact_form.fields.inject({}) do |a, e|
+          fields_to_export.include?(e.name) ? a.merge!(e.label => e.name) : a
+        end
+      end
+
+      def fields_to_export
+        @export_fields ||= [*params[cname][:default_fields], *(params[cname][:custom_fields] || []).collect { |field| "cf_#{field}" }]
+      end
+
+      def portal_url
+        main_portal? ? current_account.host : current_portal.portal_url
+      end
+
+      def constants_class
+        :ContactConstants.to_s.freeze
       end
 
       wrap_parameters(*wrap_params)

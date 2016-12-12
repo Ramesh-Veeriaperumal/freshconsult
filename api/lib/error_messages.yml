@@ -99,3 +99,4 @@ api_error_messages:
   contact_merge_validation: "Cannot add more than %{max_value} %{field}"
   unable_to_connect_twitter: "Unable to connect to Twitter servers"
   not_a_twitter_ticket: "Cannot tweet as reply to ticket NOT created from Twitter stream"
+  select_a_field: "Atleast one of the fields is required"
