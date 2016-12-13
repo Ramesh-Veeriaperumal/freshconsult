@@ -804,7 +804,7 @@ var scrollToError = function(){
 	//For Facebook DM Replybox
 
 	function bindFacebookDMCount() {
-	  $('#send-fb-post-cnt-reply-body').NobleCount('#SendReplyCounter', { on_negative : "error", max_chars : 320, on_update: updateCount });
+	  $('#send-fb-post-cnt-reply-body').NobleCount('#SendReplyCounter', { on_negative : "error", max_chars : 640, on_update: updateCount });
 		updateCount();
 	}
 
