@@ -66,6 +66,7 @@ en:
         other: "%{count} seconds"
   common_js_translations:
     new: new
+    remove_quoted_text: "Remove quoted text"
   validation:
     required: "This field is required."
     remote: "Please fix this field."

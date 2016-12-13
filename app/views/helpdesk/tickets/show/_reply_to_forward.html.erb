@@ -122,7 +122,9 @@
         <%= f.fields_for(:note_body, Helpdesk::NoteBody.new) do |ff| %>
             <%= ff.text_area :body_html, :class => "required", :id => "#{cntid}-body", 
                               :"data-domhelper-name" => "#{cntid}-body",
-                              :"data-quoted-textarea" => "##{cntid}-quoted", :"data-wrap-font-family" => true %>
+                              :"data-quoted-textarea" => "##{cntid}-quoted", 
+                              :"data-wrap-font-family" => true, 
+                              :"data-remove-quote" => true %>
             <%= ff.text_area :full_text_html, :id => "#{cntid}-body-fulltext", :value => "", :style => "display:none;" %>
             <%if  current_browser == "Internet Explorer" %>
                 <%= text_area_tag "quoted_text_html", h(bind_last_conv(conv_item, @signature, true)), { :id => "#{cntid}-quoted", :class => "hide" } %>

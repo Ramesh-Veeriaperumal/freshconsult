@@ -4029,9 +4029,16 @@ li {
         }
     }
     .wrap-marker {
-        @include padding-left(15px);
         padding-bottom: 10px;
         padding-top: 5px;
+        .wrap-quoted-remove{
+            @include padding(10px 10px 10px 15px);
+        }
+        .remove-quote{
+            position: relative;
+            top: 4px;
+            @include padding-left(8px);
+        }
     }
     .ticket-app-info {
         .table {
