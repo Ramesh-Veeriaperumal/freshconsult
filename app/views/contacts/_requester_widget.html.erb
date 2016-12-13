@@ -28,7 +28,7 @@
         <% end %>
       </div>
 
-      <%= construct_widget_fields(user, company).html_safe if privilege?(:manage_contacts) %>
+      <%= construct_widget_fields(user, company).html_safe if privilege?(:view_contacts) %>
 
       <div class="pull-right">
         <span class="recent-tickets">

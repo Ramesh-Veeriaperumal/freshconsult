@@ -78,7 +78,7 @@ class Helpdesk::Email::Process
 
     unless  user
       construct_html_param
-      self.user = create_new_user(common_email_data[:from], common_email_data[:email_config], params["body-plain"])
+      create_new_user(common_email_data[:from], common_email_data[:email_config], params["body-plain"])
     else
       if user.blocked?
         email_processing_log "Email Processing Failed: Blocked User!", to_email[:email]
