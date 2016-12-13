@@ -10,7 +10,7 @@
     if($(element).data('reply-count') >= 0){
       return true;
     }
-  }, "Oops! You have exceeded Facebook Messenger Platform's character limit. Please modify your response." );
+  }, "Oops! You have exceeded Messenger Platform's character limit. Please modify your response." );
   
   $.validator.addMethod("notEqual", function(value, element, param) {
     return ((this.optional(element) || value).strip().toLowerCase() != $(param).val().strip().toLowerCase());
