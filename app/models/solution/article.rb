@@ -316,13 +316,15 @@ class Solution::Article < ActiveRecord::Base
     end
     
     def check_for_spam_content
-      if self.account.subscription.trial? && self.status_changed? && self.status == Solution::Article::STATUS_KEYS_BY_TOKEN[:published]
+      if !self.account.launched?(:kbase_spam_whitelist) && self.account.subscription.trial? && self.status_changed? && self.status == Solution::Article::STATUS_KEYS_BY_TOKEN[:published]
         article_spam_regex = Regexp.new($redis_others.perform_redis_op("get", ARTICLE_SPAM_REGEX), "i")
         errors.add(:title, "Possible spam content") if (self.title =~ article_spam_regex).present?
         Rails.logger.debug ":::::: Suspicious article title in Account ##{self.account_id} with ehawk_reputation_score: #{self.account.ehawk_reputation_score} : #{self.title}"
+        mail_recipients = ["arvinth@freshdesk.com"]
+        mail_recipients = ["mail-alerts@freshdesk.com", "noc@freshdesk.com"] if Rails.env.production?
         FreshdeskErrorsMailer.error_email(nil, {:domain_name => self.account.full_domain}, nil, {
             :subject => "Detected suspicious spam account :#{self.account_id} ",
-            :recipients => ["mail-alerts@freshdesk.com", "noc@freshdesk.com"],
+            :recipients => mail_recipients,
             :additional_info => {:info => "Suspicious article title in Account ##{self.account_id} with ehawk_reputation_score: #{self.account.ehawk_reputation_score} : #{self.title}"}
           })
       end
