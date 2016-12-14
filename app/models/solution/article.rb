@@ -40,6 +40,7 @@ class Solution::Article < ActiveRecord::Base
   validates_uniqueness_of :language_id, :scope => [:account_id , :parent_id], :if => "!solution_article_meta.new_record?"
   validates_inclusion_of :status, :in => STATUS_KEYS_BY_TOKEN.values.min..STATUS_KEYS_BY_TOKEN.values.max
   validate :status_in_default_folder
+  validate :check_for_spam_content
   
   # Callbacks will be executed in the order in which they have been included. 
   # Included rabbitmq callbacks at the last
@@ -314,4 +315,16 @@ class Solution::Article < ActiveRecord::Base
       $spam_watcher.perform_redis_op("rpush", ResourceRateLimit::NOTIFY_KEYS, key)
     end
     
+    def check_for_spam_content
+      if self.account.subscription.trial? && self.status_changed? && self.status == Solution::Article::STATUS_KEYS_BY_TOKEN[:published]
+        article_spam_regex = Regexp.new($redis_others.perform_redis_op("get", ARTICLE_SPAM_REGEX), "i")
+        errors.add(:title, "Possible spam content") if (self.title =~ article_spam_regex).present?
+        Rails.logger.debug ":::::: Suspicious article title in Account ##{self.account_id} with ehawk_reputation_score: #{self.account.ehawk_reputation_score} : #{self.title}"
+        FreshdeskErrorsMailer.error_email(nil, {:domain_name => self.account.full_domain}, nil, {
+            :subject => "Detected suspicious spam account :#{self.account_id} ",
+            :recipients => ["mail-alerts@freshdesk.com", "noc@freshdesk.com"],
+            :additional_info => {:info => "Suspicious article title in Account ##{self.account_id} with ehawk_reputation_score: #{self.account.ehawk_reputation_score} : #{self.title}"}
+          })
+      end
+    end
 end

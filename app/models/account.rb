@@ -477,6 +477,23 @@ class Account < ActiveRecord::Base
       user_company.destroy unless user_company.default
     end
   end
+
+  def ehawk_reputation_score
+    begin
+      key = ACCOUNT_SIGN_UP_PARAMS % {:account_id => self.id}
+      signup_params_json = get_others_redis_key(key)
+      return 0 unless signup_params_json
+      signup_params = JSON.parse(get_others_redis_key(key))
+      signup_params["api_response"]["status"]
+    rescue Exception => e
+      Rails.logger.debug "Exception caught #{e}"
+      0
+    end
+  end
+
+  def ehawk_spam?
+    ehawk_reputation_score >= 4 
+  end
   
   protected
   
