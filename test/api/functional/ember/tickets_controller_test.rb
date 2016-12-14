@@ -46,7 +46,7 @@ module Ember
       subject = Faker::Lorem.words(10).join(' ')
       description = Faker::Lorem.paragraph
       email = Faker::Internet.email
-      tags = [Faker::Name.name, Faker::Name.name]
+      tags = [Faker::Lorem.word, Faker::Lorem.word]
       @create_group ||= create_group_with_agents(@account, agent_list: [@agent.id])
       params_hash = { email: email, cc_emails: cc_emails, description: description, subject: subject,
                       priority: 2, status: 2, type: 'Problem', responder_id: @agent.id, source: 1, tags: tags,
@@ -532,7 +532,8 @@ module Ember
       dt = 10.days.from_now.utc.iso8601
       agent = add_test_agent(@account, role: Role.find_by_name('Agent').id)
       update_group = create_group_with_agents(@account, agent_list: [agent.id])
-      params_hash = { due_by: dt, responder_id: agent.id, status: 2, priority: 4, group_id: update_group.id }
+      tags = [Faker::Lorem.word, Faker::Lorem.word]
+      params_hash = { due_by: dt, responder_id: agent.id, status: 2, priority: 4, group_id: update_group.id, tags: tags }
       put :update_properties, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       assert_response 204
       ticket.reload
@@ -540,6 +541,7 @@ module Ember
       assert_equal agent.id, ticket.responder_id
       assert_equal 2, ticket.status
       assert_equal 4, ticket.priority
+      assert_equal tags.count, ticket.tags.count
       assert_equal update_group.id, ticket.group_id
     end
 

@@ -3,7 +3,7 @@ class TicketUpdatePropertyValidation < ApiValidation
   MANDATORY_FIELD_STRING = MANDATORY_FIELD_ARRAY.join(', ').freeze
   CHECK_PARAMS_SET_FIELDS = %w(due_by).freeze
 
-  attr_accessor :due_by, :fr_due_by, :agent, :group, :status, :priority, :request_params, :status_ids, :statuses, :ticket_fields, :custom_fields
+  attr_accessor :due_by, :fr_due_by, :agent, :group, :status, :priority, :request_params, :status_ids, :statuses, :ticket_fields, :custom_fields, :tags
 
   alias_attribute :group_id, :group
   alias_attribute :responder_id, :agent
@@ -34,6 +34,10 @@ class TicketUpdatePropertyValidation < ApiValidation
                                 required_based_on_status: proc { |x| x.required_based_on_status? }
                               }
                             }, if: -> { errors.blank? && request_params.key?(:status) }
+
+  # Tags validations
+  validates :tags, data_type: { rules: Array }, array: { data_type: { rules: String, allow_nil: true }, custom_length: { maximum: ApiConstants::TAG_MAX_LENGTH_STRING } }
+  validates :tags, string_rejection: { excluded_chars: [','], allow_nil: true }
 
   def initialize(request_params, item, allow_string_param = false)
     @request_params = request_params

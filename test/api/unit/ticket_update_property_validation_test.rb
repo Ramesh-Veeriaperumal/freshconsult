@@ -89,6 +89,38 @@ class TicketUpdatePropertyValidationTest < ActionView::TestCase
     Account.unstub(:current)
   end
 
+
+  def test_tags_comma_invalid
+    Account.stubs(:current).returns(Account.first)
+    controller_params = { statuses: statuses, ticket_fields: [], tags: ['tag1,tag2'] }
+    item = Helpdesk::Ticket.new(requester_id: 1, status: 2, priority: 3, source: 10)
+    ticket_validation = TicketUpdatePropertyValidation.new(controller_params, item)
+    refute ticket_validation.valid?
+    errors = ticket_validation.errors.full_messages
+    assert errors.include?('Tags special_chars_present')
+    Account.unstub(:current)
+  end
+
+  def test_tags_comma_valid
+    Account.stubs(:current).returns(Account.first)
+    controller_params = { statuses: statuses, ticket_fields: [], tags: ['tag1','tag2'] }
+    item = Helpdesk::Ticket.new(requester_id: 1, status: 2, priority: 3, source: 10)
+    ticket_validation = TicketUpdatePropertyValidation.new(controller_params, item)
+    assert ticket_validation.valid?
+    Account.unstub(:current)
+  end
+
+  def test_tags_multiple_errors
+    Account.stubs(:current).returns(Account.first)
+    controller_params = { statuses: statuses, ticket_fields: [], tags: 'tag1,tag2' }
+    item = Helpdesk::Ticket.new(requester_id: 1, status: 2, priority: 3, source: 10)
+    ticket = TicketUpdatePropertyValidation.new(controller_params, item)
+    refute ticket.valid?(:create)
+    errors = ticket.errors.full_messages
+    assert errors.include?('Tags datatype_mismatch')
+    Account.unstub(:current)
+  end
+
   def test_custom_fields_validation
     Account.stubs(:current).returns(Account.first)
     custom_fields = CustomFieldValidatorTestHelper.required_closure_data_type_validatable_custom_fields.first(10)
@@ -140,7 +172,7 @@ class TicketUpdatePropertyValidationTest < ActionView::TestCase
 
   def test_validation_success
     Account.stubs(:current).returns(Account.first)
-    controller_params = { 'group_id' => 10, 'responder_id' => 10, status: 3, priority: 2, statuses: statuses, ticket_fields: []}
+    controller_params = { 'group_id' => 10, 'responder_id' => 10, status: 3, priority: 2, statuses: statuses, ticket_fields: [], tags: ["tag1", "tag2"]}
     item = Helpdesk::Ticket.new(requester_id: 1, status: 2, priority: 3, source: 10)
     ticket_validation = TicketUpdatePropertyValidation.new(controller_params, item)
     assert ticket_validation.valid?
