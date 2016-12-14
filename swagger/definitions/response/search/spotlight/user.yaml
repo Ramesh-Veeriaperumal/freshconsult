@@ -1,0 +1,14 @@
+type: object
+properties:
+  path:
+    type: string
+  avatar_url:
+    type: string
+  name:
+    type: string
+  email:
+    type: string
+  phone:
+    type: integer
+  company_name:
+    type: string

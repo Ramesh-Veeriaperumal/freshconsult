@@ -1,0 +1,26 @@
+type: object
+properties:
+  subject:
+    type: string
+  description:
+    type: string
+  created_at:
+    type: timestamp
+  ticket_priority:
+    type: string
+  ticket_group:
+    type: string
+  ticket_display_id:
+    type: string
+  ticket_path:
+    type: string
+  avatar_url:
+    type: string
+  ticket_info:
+    type: string
+  ticket_status:
+    type: string
+  responder_id:
+    type: integer
+  responder_name:
+    type: string

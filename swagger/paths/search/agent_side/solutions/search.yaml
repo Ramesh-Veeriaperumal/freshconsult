@@ -1,0 +1,19 @@
+get:
+  summary: Ticket Search Solutions
+  tags: [search]
+  parameters:
+    - name: id
+      in: path
+      type: number
+      description: Ticket ID ** Currently not working
+    - name: q
+      in: query
+      type: string
+      description: Search term
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/search_ticket_solutions'
+    403:
+      description: Access denied

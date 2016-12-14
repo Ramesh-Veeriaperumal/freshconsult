@@ -140,3 +140,36 @@
 #Surveys
 /surveys:
   $ref: ./surveys/crud.yaml
+# Search
+/search/home/suggest:
+  $ref: ./search/agent_side/suggest.yaml
+/search/all:
+  $ref: ./search/agent_side/spotlight/all.yaml
+/search/tickets:
+  $ref: ./search/agent_side/spotlight/tickets.yaml
+/search/users:
+  $ref: ./search/agent_side/spotlight/users.yaml
+/search/solutions:
+  $ref: ./search/agent_side/spotlight/solutions.yaml
+/search/forums:
+  $ref: ./search/agent_side/spotlight/topics.yaml
+/search/customers:
+  $ref: ./search/agent_side/spotlight/companies.yaml
+/search/autocomplete/requesters:
+  $ref: ./search/agent_side/autocomplete/requesters.yaml
+/search/autocomplete/agents:
+  $ref: ./search/agent_side/autocomplete/agents.yaml
+/search/autocomplete/tags:
+  $ref: ./search/agent_side/autocomplete/tags.yaml
+/search/autocomplete/companies:
+  $ref: ./search/agent_side/autocomplete/companies.yaml
+/search/related_solutions/ticket/${id}:
+  $ref: ./search/agent_side/solutions/related.yaml
+/search/search_solutions/ticket/${id}:
+  $ref: ./search/agent_side/solutions/search.yaml
+/search/tickets/filter/display_id:
+  $ref: ./search/agent_side/tickets/filter/id.yaml
+/search/tickets/filter/requester:
+  $ref: ./search/agent_side/tickets/filter/requester.yaml
+/search/tickets/filter/subject:
+  $ref: ./search/agent_side/tickets/filter/subject.yaml

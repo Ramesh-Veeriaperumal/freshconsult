@@ -1,0 +1,15 @@
+
+type: object
+properties:
+  results:
+    type: array
+    items:
+      allOf:
+      - $ref: '#/definitions/search_generic'
+      - $ref: '#/definitions/search_spotlight_article'
+      - $ref: '#/definitions/search_spotlight_ticket'
+      - $ref: '#/definitions/search_spotlight_user'
+      - $ref: '#/definitions/search_spotlight_company'
+      - $ref: '#/definitions/search_spotlight_topic'
+  current_page:
+    type: number

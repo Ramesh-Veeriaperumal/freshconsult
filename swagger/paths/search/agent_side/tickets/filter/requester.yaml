@@ -1,0 +1,15 @@
+get:
+  summary: Tickets Filtered by Requester
+  tags: [search]
+  parameters:
+    - name: term
+      in: query
+      type: string
+      example: Rachel(rachel@freshdesk.com)
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/search_filtered_tickets'
+    403:
+      description: Access denied

@@ -206,7 +206,7 @@ Helpkit::Application.routes.draw do
 
     match '/search/related_solutions/ticket/:ticket', to: 'search/v2/solutions#related_solutions',  via: :get, constraints: { format: /(html|js|json)/ }
     match '/search/search_solutions/ticket/:ticket',  to: 'search/v2/solutions#search_solutions',   via: :get, constraints: { format: /(html|js|json)/ }
-    match '/search/tickets/filter/:search_field',     to: 'search/v2/tickets#index',                via: :post
+    match '/search/tickets/filter/:search_field',     to: 'search/v2/tickets#index',                via: [:get, :post]
     
     # Linked ticket routes
     match '/search/ticket_associations/filter/:search_field', to: 'search/v2/ticket_associations#index'

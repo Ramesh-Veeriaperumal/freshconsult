@@ -1,0 +1,15 @@
+get:
+  summary: Tickets Filtered by ID
+  tags: [search]
+  parameters:
+    - name: term
+      in: query
+      type: number
+      description: Starting digits of the ticket id
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/search_filtered_tickets'
+    403:
+      description: Access denied

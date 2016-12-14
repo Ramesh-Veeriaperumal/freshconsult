@@ -1,0 +1,24 @@
+type: object
+properties:
+  title:
+    type: string
+  forum_name:
+    type: string
+  forum_path:
+    type: string
+  category_name:
+    type: string
+  user_name:
+    type: string
+  user_path:
+    type: string
+  locked:
+    type: boolean
+  info:
+    type: string
+  created_at:
+    type: datetime
+  description:
+    type: string
+  searchKey:
+    type: string

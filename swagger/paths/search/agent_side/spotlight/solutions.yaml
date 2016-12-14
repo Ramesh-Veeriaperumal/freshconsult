@@ -1,0 +1,37 @@
+
+get:
+  summary: Solution Search
+  tags: ['search']
+  parameters:
+    - name: q
+      in: query
+      type: string
+      description: search query
+    - name: page
+      in: query
+      type: number
+    - name: limit
+      in: query
+      type: number
+  responses:
+    200:
+      description: Success
+      schema:
+        type: object
+        properties:
+          results:
+            type: array
+            items:
+              allOf:
+              - $ref: '#/definitions/search_generic'
+              - $ref: '#/definitions/search_spotlight_article'
+              - type: object
+                properties:
+                  result_type:
+                    type: string
+                    example: 'solution_article'
+          current_page:
+            type: number
+
+    403:
+      description: Access denied

@@ -1,0 +1,23 @@
+
+get:
+  summary: Spotlight
+  description: Default search in Nav bar which lists all items results like contacts, articles, topics, tickets
+  tags: ['search']
+  parameters:
+    - name: q
+      in: query
+      type: string
+      description: search query
+    - name: page
+      in: query
+      type: number
+    - name: limit
+      in: query
+      type: number
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/search_spotlight_response'
+    403:
+      description: Access denied

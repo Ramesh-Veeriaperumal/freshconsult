@@ -174,3 +174,31 @@
     $ref: './response/companies/activities_with_meta.yaml'
   twitter_handle:
     $ref: './resource/twitter_handle.yaml'
+
+    # Search
+  search_generic:
+    $ref: './response/search/generic.yaml'
+  search_suggest:
+    $ref: './response/search/suggest.yaml'
+  search_spotlight_response:
+    $ref: './response/search/spotlight/all.yaml'
+  search_spotlight_article:
+    $ref: './response/search/spotlight/article.yaml'
+  search_spotlight_company:
+    $ref: './response/search/spotlight/company.yaml'
+  search_spotlight_ticket:
+    $ref: './response/search/spotlight/ticket.yaml'
+  search_spotlight_topic:
+    $ref: './response/search/spotlight/topic.yaml'
+  search_spotlight_user:
+    $ref: './response/search/spotlight/user.yaml'
+  search_autocomplete_response:
+    $ref: './response/search/autocomplete.yaml'
+  search_autocomplete_agents:
+    $ref: './response/search/autocomplete/agents.yaml'
+  search_autocomplete_requesters:
+    $ref: './response/search/autocomplete/requesters.yaml'
+  search_ticket_solutions:
+    $ref: './response/search/ticket_solutions.yaml'
+  search_filtered_tickets:
+    $ref: './response/search/filtered_tickets.yaml'

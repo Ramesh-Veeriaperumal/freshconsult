@@ -1,0 +1,15 @@
+get:
+  summary: Autocomplete Requesters
+  tags: [search]
+  parameters:
+    - name: q
+      in: query
+      type: string
+      description: search query
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/search_autocomplete_requesters'
+    403:
+      description: Access denied

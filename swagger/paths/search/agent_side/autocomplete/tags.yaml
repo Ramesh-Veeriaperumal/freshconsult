@@ -1,0 +1,21 @@
+get:
+  summary: Autocomplete Tags
+  tags: [search]
+  parameters:
+    - name: q
+      in: query
+      type: string
+      description: search query
+    - name: page
+      in: query
+      type: number
+    - name: limit
+      in: query
+      type: number
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/search_autocomplete_response'
+    403:
+      description: Access denied

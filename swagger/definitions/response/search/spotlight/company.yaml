@@ -1,0 +1,7 @@
+type: object
+properties:
+  path:
+    type: string
+  domains:
+    type: string
+    description: Comma seperated set of domains

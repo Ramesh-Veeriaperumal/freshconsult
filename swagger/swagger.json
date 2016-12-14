@@ -2442,6 +2442,661 @@
           }
         }
       }
+    },
+    "/search/home/suggest": {
+      "get": {
+        "summary": "Suggestion",
+        "description": "Home suggestion - default results dropdown in spotlight",
+        "tags": [
+          "search"
+        ],
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "type": "string",
+            "description": "search query"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "type": "number"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "type": "number"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/search_suggest"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
+    "/search/all": {
+      "get": {
+        "summary": "Spotlight",
+        "description": "Default search in Nav bar which lists all items results like contacts, articles, topics, tickets",
+        "tags": [
+          "search"
+        ],
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "type": "string",
+            "description": "search query"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "type": "number"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "type": "number"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/search_spotlight_response"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
+    "/search/tickets": {
+      "get": {
+        "summary": "Ticket Search",
+        "tags": [
+          "search"
+        ],
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "type": "string",
+            "description": "search query"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "type": "number"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "type": "number"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "results": {
+                  "type": "array",
+                  "items": {
+                    "allOf": [
+                      {
+                        "$ref": "#/definitions/search_generic"
+                      },
+                      {
+                        "$ref": "#/definitions/search_spotlight_ticket"
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "result_type": {
+                            "type": "string",
+                            "example": "helpdesk_ticket"
+                          }
+                        }
+                      }
+                    ]
+                  }
+                },
+                "current_page": {
+                  "type": "number"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
+    "/search/users": {
+      "get": {
+        "summary": "User Search",
+        "tags": [
+          "search"
+        ],
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "type": "string",
+            "description": "search query"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "type": "number"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "type": "number"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "results": {
+                  "type": "array",
+                  "items": {
+                    "allOf": [
+                      {
+                        "$ref": "#/definitions/search_generic"
+                      },
+                      {
+                        "$ref": "#/definitions/search_spotlight_user"
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "result_type": {
+                            "type": "string",
+                            "example": "user"
+                          }
+                        }
+                      }
+                    ]
+                  }
+                },
+                "current_page": {
+                  "type": "number"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
+    "/search/solutions": {
+      "get": {
+        "summary": "Solution Search",
+        "tags": [
+          "search"
+        ],
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "type": "string",
+            "description": "search query"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "type": "number"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "type": "number"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "results": {
+                  "type": "array",
+                  "items": {
+                    "allOf": [
+                      {
+                        "$ref": "#/definitions/search_generic"
+                      },
+                      {
+                        "$ref": "#/definitions/search_spotlight_article"
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "result_type": {
+                            "type": "string",
+                            "example": "solution_article"
+                          }
+                        }
+                      }
+                    ]
+                  }
+                },
+                "current_page": {
+                  "type": "number"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
+    "/search/forums": {
+      "get": {
+        "summary": "Topic Search",
+        "tags": [
+          "search"
+        ],
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "type": "string",
+            "description": "search query"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "type": "number"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "type": "number"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "results": {
+                  "type": "array",
+                  "items": {
+                    "allOf": [
+                      {
+                        "$ref": "#/definitions/search_generic"
+                      },
+                      {
+                        "$ref": "#/definitions/search_spotlight_topic"
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "result_type": {
+                            "type": "string",
+                            "example": "topic"
+                          }
+                        }
+                      }
+                    ]
+                  }
+                },
+                "current_page": {
+                  "type": "number"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
+    "/search/customers": {
+      "get": {
+        "summary": "Company Search",
+        "tags": [
+          "search"
+        ],
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "type": "string",
+            "description": "search query"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "type": "number"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "type": "number"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "results": {
+                  "type": "array",
+                  "items": {
+                    "allOf": [
+                      {
+                        "$ref": "#/definitions/search_generic"
+                      },
+                      {
+                        "$ref": "#/definitions/search_spotlight_company"
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "result_type": {
+                            "type": "string",
+                            "example": "customer"
+                          }
+                        }
+                      }
+                    ]
+                  }
+                },
+                "current_page": {
+                  "type": "number"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
+    "/search/autocomplete/requesters": {
+      "get": {
+        "summary": "Autocomplete Requesters",
+        "tags": [
+          "search"
+        ],
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "type": "string",
+            "description": "search query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/search_autocomplete_requesters"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
+    "/search/autocomplete/agents": {
+      "get": {
+        "summary": "Autocomplete Agents",
+        "tags": [
+          "search"
+        ],
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "type": "string",
+            "description": "search query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/search_autocomplete_agents"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
+    "/search/autocomplete/tags": {
+      "get": {
+        "summary": "Autocomplete Tags",
+        "tags": [
+          "search"
+        ],
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "type": "string",
+            "description": "search query"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "type": "number"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "type": "number"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/search_autocomplete_response"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
+    "/search/autocomplete/companies": {
+      "get": {
+        "summary": "Autocomplete Companies",
+        "tags": [
+          "search"
+        ],
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "type": "string",
+            "description": "search query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/search_autocomplete_response"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
+    "/search/related_solutions/ticket/${id}": {
+      "get": {
+        "summary": "Ticket Related Solutions",
+        "tags": [
+          "search"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "number",
+            "description": "Ticket ID ** Currently not working"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/search_ticket_solutions"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
+    "/search/search_solutions/ticket/${id}": {
+      "get": {
+        "summary": "Ticket Search Solutions",
+        "tags": [
+          "search"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "number",
+            "description": "Ticket ID ** Currently not working"
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "type": "string",
+            "description": "Search term"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/search_ticket_solutions"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
+    "/search/tickets/filter/display_id": {
+      "get": {
+        "summary": "Tickets Filtered by ID",
+        "tags": [
+          "search"
+        ],
+        "parameters": [
+          {
+            "name": "term",
+            "in": "query",
+            "type": "number",
+            "description": "Starting digits of the ticket id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/search_filtered_tickets"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
+    "/search/tickets/filter/requester": {
+      "get": {
+        "summary": "Tickets Filtered by Requester",
+        "tags": [
+          "search"
+        ],
+        "parameters": [
+          {
+            "name": "term",
+            "in": "query",
+            "type": "string",
+            "example": "Rachel(rachel@freshdesk.com)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/search_filtered_tickets"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
+    "/search/tickets/filter/subject": {
+      "get": {
+        "summary": "Tickets Filtered by Subject",
+        "tags": [
+          "search"
+        ],
+        "parameters": [
+          {
+            "name": "term",
+            "in": "query",
+            "type": "string",
+            "description": "Any term to search on the subject"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/search_filtered_tickets"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -4563,6 +5218,393 @@
         "created_at": {
           "type": "string",
           "format": "date-time"
+        }
+      }
+    },
+    "search_generic": {
+      "title": "data",
+      "type": "object",
+      "properties": {
+        "result_type": {
+          "type": "string",
+          "enum": [
+            "helpdesk_ticket",
+            "solution_article",
+            "user",
+            "customer",
+            "topic",
+            "helpdesk_note"
+          ]
+        },
+        "id": {
+          "type": "integer"
+        }
+      }
+    },
+    "search_suggest": {
+      "type": "object",
+      "properties": {
+        "results": {
+          "type": "array",
+          "items": {
+            "allOf": [
+              {
+                "$ref": "#/definitions/search_generic"
+              },
+              {
+                "properties": {
+                  "content": {
+                    "type": "string",
+                    "description": "Will contain HTML markup like &lt;span class='match'&gt;Language</span> assigning rule"
+                  },
+                  "path": {
+                    "type": "string"
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "current_page": {
+          "type": "number"
+        },
+        "term": {
+          "type": "string"
+        },
+        "more_results_text": {
+          "type": "string"
+        },
+        "no_results_text": {
+          "type": "string"
+        }
+      }
+    },
+    "search_spotlight_response": {
+      "type": "object",
+      "properties": {
+        "results": {
+          "type": "array",
+          "items": {
+            "allOf": [
+              {
+                "$ref": "#/definitions/search_generic"
+              },
+              {
+                "$ref": "#/definitions/search_spotlight_article"
+              },
+              {
+                "$ref": "#/definitions/search_spotlight_ticket"
+              },
+              {
+                "$ref": "#/definitions/search_spotlight_user"
+              },
+              {
+                "$ref": "#/definitions/search_spotlight_company"
+              },
+              {
+                "$ref": "#/definitions/search_spotlight_topic"
+              }
+            ]
+          }
+        },
+        "current_page": {
+          "type": "number"
+        }
+      }
+    },
+    "search_spotlight_article": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "folder_name": {
+          "type": "string"
+        },
+        "folder_path": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "user_name": {
+          "type": "string"
+        },
+        "user_path": {
+          "type": "string"
+        },
+        "info": {
+          "type": "string"
+        },
+        "views": {
+          "type": "string"
+        },
+        "up_votes": {
+          "type": "string"
+        },
+        "down_votes": {
+          "type": "integer"
+        }
+      }
+    },
+    "search_spotlight_company": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "domains": {
+          "type": "string",
+          "description": "Comma seperated set of domains"
+        }
+      }
+    },
+    "search_spotlight_ticket": {
+      "type": "object",
+      "properties": {
+        "subject": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "created_at": {
+          "type": "timestamp"
+        },
+        "ticket_priority": {
+          "type": "string"
+        },
+        "ticket_group": {
+          "type": "string"
+        },
+        "ticket_display_id": {
+          "type": "string"
+        },
+        "ticket_path": {
+          "type": "string"
+        },
+        "avatar_url": {
+          "type": "string"
+        },
+        "ticket_info": {
+          "type": "string"
+        },
+        "ticket_status": {
+          "type": "string"
+        },
+        "responder_id": {
+          "type": "integer"
+        },
+        "responder_name": {
+          "type": "string"
+        }
+      }
+    },
+    "search_spotlight_topic": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "forum_name": {
+          "type": "string"
+        },
+        "forum_path": {
+          "type": "string"
+        },
+        "category_name": {
+          "type": "string"
+        },
+        "user_name": {
+          "type": "string"
+        },
+        "user_path": {
+          "type": "string"
+        },
+        "locked": {
+          "type": "boolean"
+        },
+        "info": {
+          "type": "string"
+        },
+        "created_at": {
+          "type": "datetime"
+        },
+        "description": {
+          "type": "string"
+        },
+        "searchKey": {
+          "type": "string"
+        }
+      }
+    },
+    "search_spotlight_user": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "avatar_url": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "integer"
+        },
+        "company_name": {
+          "type": "string"
+        }
+      }
+    },
+    "search_autocomplete_response": {
+      "type": "object",
+      "properties": {
+        "results": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "number"
+              },
+              "value": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "search_autocomplete_agents": {
+      "type": "object",
+      "properties": {
+        "results": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "email"
+              },
+              "value": {
+                "type": "string"
+              },
+              "user_id": {
+                "type": "number"
+              }
+            }
+          }
+        }
+      }
+    },
+    "search_autocomplete_requesters": {
+      "type": "object",
+      "properties": {
+        "results": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "details": {
+                "type": "string",
+                "example": "Rachel &lt;rachel@freshdesk.com&gt;"
+              },
+              "value": {
+                "type": "string",
+                "description": "Name of the user"
+              },
+              "email": {
+                "type": "string",
+                "format": "email"
+              }
+            }
+          }
+        }
+      }
+    },
+    "search_ticket_solutions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "title": {
+            "type": "string"
+          },
+          "published": {
+            "type": "boolean"
+          },
+          "visible": {
+            "type": "boolean"
+          },
+          "url": {
+            "type": "string"
+          },
+          "insert_link": {
+            "type": "boolean"
+          },
+          "insert_content": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "search_filtered_tickets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "The Original ID of the Ticket (Donot use it) *****"
+          },
+          "display_id": {
+            "type": "number",
+            "description": "The actual Ticket ID that we use everywhere else"
+          },
+          "created_at": {
+            "type": "datetime"
+          },
+          "created_at_int": {
+            "type": "number",
+            "description": "Timestamp in Integer format"
+          },
+          "requester_id": {
+            "type": "number",
+            "description": "User Id of the Requester"
+          },
+          "searchKey": {
+            "type": "string"
+          },
+          "subject": {
+            "type": "string"
+          },
+          "ticket_info": {
+            "type": "string",
+            "description": "HTML formatted Information",
+            "example": "From: &lt;span class='muted'&gt;Rachel&lt;/span&gt;&lt;br /&gt; Created: &lt;span class='emphasize'&gt;about 4 years ago&lt;/span&gt;"
+          },
+          "ticket_path": {
+            "type": "string",
+            "description": "Ticket's Url path"
+          },
+          "ticket_status": {
+            "type": "string"
+          }
         }
       }
     }

@@ -1,0 +1,23 @@
+
+get:
+  summary: Suggestion
+  description: Home suggestion - default results dropdown in spotlight
+  tags: [search]
+  parameters:
+    - name: q
+      in: query
+      type: string
+      description: search query
+    - name: page
+      in: query
+      type: number
+    - name: limit
+      in: query
+      type: number
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/search_suggest'
+    403:
+      description: Access denied

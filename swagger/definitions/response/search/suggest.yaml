@@ -1,0 +1,22 @@
+
+type: object
+properties:
+  results:
+    type: array
+    items:
+      allOf:
+      - $ref: '#/definitions/search_generic'
+      - properties:
+          content:
+            type: string
+            description: "Will contain HTML markup like &lt;span class='match'&gt;Language</span> assigning rule"
+          path:
+            type: string
+  current_page:
+    type: number
+  term:
+    type: string
+  more_results_text:
+    type: string
+  no_results_text:
+    type: string

@@ -1,0 +1,15 @@
+get:
+  summary: Tickets Filtered by Subject
+  tags: [search]
+  parameters:
+    - name: term
+      in: query
+      type: string
+      description: Any term to search on the subject
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/search_filtered_tickets'
+    403:
+      description: Access denied

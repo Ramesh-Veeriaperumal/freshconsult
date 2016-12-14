@@ -1,0 +1,31 @@
+type: array
+items:
+  type: object
+  properties:
+    id:
+      type: number
+      description: The Original ID of the Ticket (Donot use it) *****
+    display_id:
+      type: number
+      description: The actual Ticket ID that we use everywhere else
+    created_at:
+      type: datetime
+    created_at_int:
+      type: number
+      description: Timestamp in Integer format
+    requester_id:
+      type: number
+      description: User Id of the Requester
+    searchKey:
+      type: string
+    subject:
+      type: string
+    ticket_info:
+      type: string
+      description: HTML formatted Information
+      example: "From: &lt;span class='muted'&gt;Rachel&lt;/span&gt;&lt;br /&gt; Created: &lt;span class='emphasize'&gt;about 4 years ago&lt;/span&gt;"
+    ticket_path:
+      type: string
+      description: Ticket's Url path
+    ticket_status:
+      type: string

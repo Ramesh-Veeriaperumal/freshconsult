@@ -1,0 +1,15 @@
+  title: data
+  type: object
+  properties:
+    result_type:
+      type: string
+      enum: [
+              "helpdesk_ticket",
+              "solution_article",
+              "user",
+              "customer",
+              "topic",
+              "helpdesk_note"
+            ]
+    id:
+      type: integer

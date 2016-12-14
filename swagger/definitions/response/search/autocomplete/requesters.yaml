@@ -1,0 +1,18 @@
+type: object
+properties:
+  results:
+    type: array
+    items:
+      type: object
+      properties:
+        id:
+          type: string
+        details:
+          type: string
+          example: Rachel &lt;rachel@freshdesk.com&gt;
+        value:
+          type: string
+          description: Name of the user
+        email:
+          type: string
+          format: email

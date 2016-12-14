@@ -1,0 +1,24 @@
+type: object
+properties:
+  title:
+    type: string
+  path:
+    type: string
+  folder_name:
+    type: string
+  folder_path:
+    type: string
+  description:
+    type: string
+  user_name:
+    type: string
+  user_path:
+    type: string
+  info:
+    type: string
+  views:
+    type: string
+  up_votes:
+    type: string
+  down_votes:
+    type: integer

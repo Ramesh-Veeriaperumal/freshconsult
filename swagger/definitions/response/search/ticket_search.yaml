@@ -1,0 +1,14 @@
+type: object
+properties:
+  results:
+    type: array
+    items:
+      type: object
+      properties:
+        id:
+          type: string
+          format: email
+        value:
+          type: string
+        user_id:
+          type: number

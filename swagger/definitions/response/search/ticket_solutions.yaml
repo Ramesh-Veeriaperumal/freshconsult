@@ -1,0 +1,19 @@
+type: array
+items:
+  type: object
+  properties:
+    id:
+      type: number
+    title:
+      type: string
+    published:
+      type: boolean
+    visible:
+      type: boolean
+    url:
+      type: string
+    insert_link:
+      type: boolean
+    insert_content:
+      type: boolean
+    
