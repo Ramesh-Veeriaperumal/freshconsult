@@ -4,7 +4,7 @@ namespace :reports do
 
   desc "Build a no activity entry in reports ETL for handling backlog tickets"
   task :build_no_activity => :environment do
-    Reports::BuildNoActivity.execute_task
+    Reports::BuildNoActivity.new.execute_task
   end
 
   ###### REPORT EXPORT SQS POLLER ######
