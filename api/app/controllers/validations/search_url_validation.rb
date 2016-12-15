@@ -1,4 +1,4 @@
-class SearchUrlValidation < FilterValidation
+class SearchUrlValidation < ApiValidation
   attr_accessor :query
 
   validates :query, data_type: { rules: String, required: true }, custom_length: { maximum: ApiSearchConstants::QUERY_SIZE }

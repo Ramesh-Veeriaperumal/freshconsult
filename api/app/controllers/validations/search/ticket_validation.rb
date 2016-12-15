@@ -15,7 +15,7 @@ module Search
 
 	  validates :custom_fields, custom_field: { custom_fields:
 	                          {
-	                            validatable_custom_fields: proc { @ticket_custom_fields },
+	                            validatable_custom_fields: proc { |x| x.ticket_custom_fields },
 	                            required_attribute: :required,
 	                            ignore_string: :allow_string_param,
 	                            search_validation: :true

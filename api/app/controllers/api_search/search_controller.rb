@@ -39,7 +39,7 @@ module ApiSearch
       end
 
       def validate_filter_params
-        params.permit(*ApiSearchConstants::FIELDS, *ApiConstants::DEFAULT_INDEX_FIELDS)
+        params.permit(*ApiSearchConstants::FIELDS, *ApiSearchConstants::DEFAULT_INDEX_FIELDS)
         @url_validation = SearchUrlValidation.new(params, parser)
         render_errors @url_validation.errors, @url_validation.error_options unless @url_validation.valid?
       end

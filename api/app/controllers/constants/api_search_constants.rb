@@ -2,8 +2,9 @@ module ApiSearchConstants
   FIELDS = ['query'].freeze
   QUERY_SIZE = 512
   STRING_WITHIN_QUOTES = /\"(.*)\"/
+  DEFAULT_INDEX_FIELDS = ApiConstants::DEFAULT_INDEX_FIELDS - %w( page per_page ).freeze
 
-  TICKET_FIELDS = %w( priority status group_id requester_id ).freeze
+  TICKET_FIELDS = %w( priority status group_id ).freeze
   CONTACT_FIELDS = %w( company_id twitter_id email mobile phone ).freeze
   COMPANY_FIELDS = %w( domain ).freeze
   ALLOWED_CUSTOM_FIELD_TYPES = %w( custom_text custom_number custom_checkbox ).freeze

@@ -140,6 +140,13 @@ class CustomFieldValidator < ActiveModel::EachValidator
       end
     end
 
+    def validate_custom_checkbox_array(record, field_name)
+      values = record.send(field_name)
+      values.each do |value|
+        boolean_options = construct_options(ignore_string: :allow_string_param, attributes: field_name, rules: 'Boolean', required: @is_required)
+        DataTypeValidator.new(boolean_options).validate_value(record, value)
+      end      
+    end
 
     def absence_validator_check(record, field_name, values)
       if section_field? && !section_parent_present?(record, values)
