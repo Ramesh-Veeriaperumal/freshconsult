@@ -163,7 +163,6 @@ Helpkit::Application.routes.draw do
         delete :empty_trash, to: 'ember/tickets/delete_spam#empty_trash'
         delete :empty_spam, to: 'ember/tickets/delete_spam#empty_spam'
         put :delete_forever, to: 'ember/tickets/delete_spam#delete_forever'
-        put :delete_forever_spam, to: 'ember/tickets/delete_spam#delete_forever_spam'
         put :bulk_watch, to: 'ember/subscriptions#bulk_watch'
         put :bulk_unwatch, to: 'ember/subscriptions#bulk_unwatch'
       end

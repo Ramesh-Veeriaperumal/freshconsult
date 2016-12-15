@@ -50,7 +50,7 @@ Authority::Authorization::PrivilegeList.build do
   end
 
 	delete_ticket do
-    resource :"ember/tickets/delete_spam", only: [:empty_trash, :empty_spam, :delete_forever, :delete_forever_spam, :destroy, :bulk_delete, :restore, :bulk_restore]
+    resource :"ember/tickets/delete_spam", only: [:empty_trash, :empty_spam, :delete_forever, :destroy, :bulk_delete, :restore, :bulk_restore]
 	end
 
   admin_tasks do

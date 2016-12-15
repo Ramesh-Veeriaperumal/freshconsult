@@ -40,8 +40,6 @@
   $ref: ./tickets/empty_trash.yaml
 /tickets/delete_forever:
   $ref: ./tickets/delete_forever.yaml
-/tickets/delete_forever_spam:
-  $ref: ./tickets/delete_forever_spam.yaml
 /tickets/{id}/update_properties:
   $ref: ./tickets/update_properties.yaml
 

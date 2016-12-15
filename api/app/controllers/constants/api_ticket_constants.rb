@@ -64,7 +64,7 @@ module ApiTicketConstants
   PERMISSION_REQUIRED = [:show, :update, :execute_scenario, :spam, :unspam, :restore, :destroy].freeze
 
   REQUIRE_PRELOAD = [:bulk_delete, :bulk_spam, :bulk_unspam, :bulk_restore].freeze
-  BULK_ACTION_ASYNC_METHODS = [:bulk_execute_scenario, :bulk_update, :delete_forever, :delete_forever_spam].freeze
+  BULK_ACTION_ASYNC_METHODS = [:bulk_execute_scenario, :bulk_update, :delete_forever].freeze
   BULK_ACTION_METHODS = [:bulk_delete, :bulk_spam, :bulk_restore, :bulk_unspam] + BULK_ACTION_ASYNC_METHODS
 
   LOAD_OBJECT_EXCEPT = (BULK_ACTION_METHODS + [:merge, :empty_trash, :empty_spam]).freeze
