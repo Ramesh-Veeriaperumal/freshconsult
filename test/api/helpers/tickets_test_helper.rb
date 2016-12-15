@@ -12,6 +12,7 @@ module TicketsTestHelper
   include NoteHelper
   include SocialTicketsHelper
   include FreshfoneSpecHelper
+  include ForumHelper
 
   # Patterns
   def deleted_ticket_pattern(expected_output = {}, ticket)
@@ -307,8 +308,10 @@ module TicketsTestHelper
 
   def ticket_show_pattern(ticket)
     pattern = ticket_pattern(ticket)
+    ticket_topic = ticket_topic_pattern(ticket)
     pattern.merge!(freshfone_call: freshfone_call_pattern(ticket)) if freshfone_call_pattern(ticket).present?
     pattern.merge!(meta: ticket_meta_pattern(ticket))
+    pattern.merge!(ticket_topic: ticket_topic) if ticket_topic.present?
     pattern
   end
 
@@ -326,6 +329,15 @@ module TicketsTestHelper
     meta_info = ticket.notes.find_by_source(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["meta"]).body
     meta_info = YAML::load(meta_info)
     handle_timestamps(meta_info)
+  end
+
+  def ticket_topic_pattern(ticket)
+    topic = ticket.topic
+    return unless topic.present?
+    {
+      id: topic.id,
+      title: topic.title
+    }
   end
 
   def handle_timestamps(meta_info)
@@ -367,6 +379,13 @@ module TicketsTestHelper
     note = create_normal_reply_for(@ticket)
     associate_call_to_item(note)    
     @ticket
+  end
+
+  def new_ticket_from_forum_topic
+    topic = create_test_topic(Forum.first)
+    ticket = create_ticket
+    ticket_topic = create_ticket_topic_mapping(topic, ticket)
+    ticket
   end
 
   def associate_call_to_item(obj)

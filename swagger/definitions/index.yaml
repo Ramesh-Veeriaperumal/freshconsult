@@ -91,6 +91,8 @@
     $ref: ./resource/survey_result.yaml
   freshfone_call:
     $ref: ./resource/freshfone_call.yaml
+  ticket_topic:
+    $ref: ./resource/ticket_topic.yaml
   survey_question:
     $ref: ./resource/survey_question.yaml
   survey:

@@ -1,6 +1,6 @@
 response_hash = @item.to_hash
 
-[:requester, :stats, :company, :conversations, :deleted, :freshfone_call].each do |attribute|
+[:requester, :stats, :company, :conversations, :deleted, :freshfone_call, :ticket_topic].each do |attribute|
   value = @item.send(attribute)
   response_hash.merge!(attribute => value) if value
 end

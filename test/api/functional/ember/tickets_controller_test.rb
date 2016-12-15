@@ -22,6 +22,8 @@ module Ember
     def before_all
       @account.sections.map(&:destroy)
       return if @@before_all_run
+      @account.features.freshfone.create
+      @account.features.forums.create
       @account.ticket_fields.custom_fields.each(&:destroy)
       Helpdesk::TicketStatus.find(2).update_column(:stop_sla_timer, false)
       @@ticket_fields = []
@@ -127,6 +129,14 @@ module Ember
       assert_response 200
       match_json(ticket_show_pattern(ticket))
       MixpanelWrapper.unstub(:send_to_mixpanel)
+    end
+
+    def test_ticket_show_with_ticket_topic
+      ticket = new_ticket_from_forum_topic
+      remove_wrap_params
+      get :show, construct_params({ version: 'private', id: ticket.display_id })
+      assert_response 200
+      match_json(ticket_show_pattern(ticket))
     end
 
     def test_create_with_incorrect_attachment_type

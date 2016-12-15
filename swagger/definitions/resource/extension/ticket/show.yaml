@@ -3,6 +3,8 @@
   properties:
     freshfone_call:
       $ref: '#/definitions/freshfone_call'
+    ticket_topic:
+      $ref: '#/definitions/ticket_topic'
     meta:
       type: object
       properties:

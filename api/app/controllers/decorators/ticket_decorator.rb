@@ -35,13 +35,15 @@ class TicketDecorator < ApiDecorator
   end
 
   def freshfone_call
-    call = record.freshfone_call
-    return unless call.present? && call.recording_url.present? && call.recording_audio
-    {
-      id: call.id,
-      duration: call.call_duration,
-      recording: AttachmentDecorator.new(call.recording_audio).to_hash
-    }
+    if freshfone_enabled?
+      call = record.freshfone_call
+      return unless call.present? && call.recording_url.present? && call.recording_audio
+      {
+        id: call.id,
+        duration: call.call_duration,
+        recording: AttachmentDecorator.new(call.recording_audio).to_hash
+      }
+    end
   end
 
   def stats
@@ -81,6 +83,12 @@ class TicketDecorator < ApiDecorator
     return {} unless meta_info
     meta_info = YAML::load(meta_info.body)
     handle_timestamps(meta_info)
+  end
+
+  def ticket_topic
+    return unless forums_enabled? && record.ticket_topic.present?
+    topic = record.topic
+    topic_hash(topic)
   end
   
   def to_hash
@@ -128,4 +136,20 @@ class TicketDecorator < ApiDecorator
       end
       meta_info
     end
+
+    def freshfone_enabled?
+      Account.current.features?(:freshfone)
+    end
+
+    def forums_enabled?
+      Account.current.features?(:forums)
+    end
+
+    def topic_hash(topic)
+      {
+        id: topic.id,
+        title: topic.title
+      }
+    end
+
 end

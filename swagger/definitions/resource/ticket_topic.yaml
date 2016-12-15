@@ -1,0 +1,8 @@
+  type: object
+  description: ticket topic
+  properties:
+    id:
+      type: integer
+    title:
+      type: string
+      description: title of the forum topic

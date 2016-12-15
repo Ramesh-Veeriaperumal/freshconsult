@@ -4387,6 +4387,19 @@
         }
       }
     },
+    "ticket_topic": {
+      "type": "object",
+      "description": "ticket topic",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "title": {
+          "type": "string",
+          "description": "title of the forum topic"
+        }
+      }
+    },
     "survey_question": {
       "type": "object",
       "properties": {
@@ -4871,6 +4884,9 @@
           "properties": {
             "freshfone_call": {
               "$ref": "#/definitions/freshfone_call"
+            },
+            "ticket_topic": {
+              "$ref": "#/definitions/ticket_topic"
             },
             "meta": {
               "type": "object",
