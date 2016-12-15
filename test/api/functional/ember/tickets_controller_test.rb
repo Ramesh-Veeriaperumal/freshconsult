@@ -65,10 +65,54 @@ module Ember
       params_hash
     end
 
-    def test_ticket_index
-      rand(10..20).times { |i| create_ticket }
-      remove_wrap_params
-      get :index, construct_params({ version: 'private' }, false)
+    def test_index_with_invalid_filter_id
+      get :index, controller_params(version: 'private', filter: @account.ticket_filters.last.id + 10)
+      assert_response 400
+      match_json([bad_request_error_pattern(:filter, :absent_in_db, resource: :ticket_filter, attribute: :filter)])
+    end
+
+    def test_index_with_invalid_filter_names
+      get :index, controller_params(version: 'private', filter: Faker::Lorem.word)
+      assert_response 400
+      valid_filters = ["spam", "deleted", "overdue", "pending", "open", "due_today", "new", "new_and_my_open", "all_tickets", "unresolved", "article_feedback", "my_article_feedback", "watching", "on_hold", "raised_by_me"]
+      match_json([bad_request_error_pattern(:filter, :not_included, list: valid_filters.join(', '))])
+    end
+
+    def test_index_with_invalid_query_hash
+      get :index, controller_params(version: 'private', query_hash: Faker::Lorem.word)
+      assert_response 400
+      match_json([bad_request_error_pattern(:query_hash, :datatype_mismatch, expected_data_type: 'Hash')])
+    end
+
+    def test_index_with_no_params
+      ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page].times { |i| create_ticket }
+      get :index, controller_params(version: 'private')
+      assert_response 200
+      match_json(private_api_ticket_index_pattern)
+    end
+
+    def test_index_with_filter_id
+      ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page].times { |i| create_ticket(priority: 4) }
+      ticket_filter = @account.ticket_filters.find_by_name('Urgent and High priority Tickets')
+      get :index, controller_params(version: 'private', filter: ticket_filter.id)
+      assert_response 200
+      match_json(private_api_ticket_index_pattern)
+    end
+
+    def test_index_with_filter_name
+      ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page].times { |i| create_ticket(requester_id: @agent.id) }
+      get :index, controller_params(version: 'private', filter: 'raised_by_me')
+      assert_response 200
+      match_json(private_api_ticket_index_pattern)
+    end
+
+    def test_index_with_query_hash
+      ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page].times { |i| create_ticket(priority: 2, requester_id: @agent.id) }
+      query_hash_params = {
+                            '0' => {'condition' => 'priority', 'operator' => 'is', 'value' => 2, 'type' => 'default'},
+                            '1' => {'condition' => 'requester_id', 'operator' => 'is_in', 'value' => [@agent.id], 'type' => 'default'}
+                          }
+      get :index, controller_params({ version: 'private', query_hash: query_hash_params }, false)
       assert_response 200
       match_json(private_api_ticket_index_pattern)
     end

@@ -6,6 +6,10 @@ get:
     - name: query_hash
       in: query
       type: string
+    - name: filter
+      in: query
+      type: string
+      enum: ["spam", "deleted", "overdue", "pending", "open", "due_today", "new", "new_and_my_open", "all_tickets", "unresolved", "article_feedback", "my_article_feedback", "watching", "on_hold", "raised_by_me"] 
   responses:
     200:
       description: Success

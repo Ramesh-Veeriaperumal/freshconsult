@@ -14,6 +14,7 @@ module TicketHelper
                                          :display_id => params[:display_id], 
                                          :requester_id =>  requester_id,
                                          :subject => subject,
+                                         :priority => params[:priority] || 1,
                                          :responder_id => params[:responder_id],
                                          :source => params[:source] || 2,
                                          :cc_email => Helpdesk::Ticket.default_cc_hash.merge(cc_emails: cc_emails, fwd_emails: fwd_emails),

@@ -13,6 +13,10 @@ module Ember
     before_filter :load_note, only: [:split_note]
 
     def index
+      sanitize_filter_params
+      @delegator_klass = 'TicketFilterDelegator'
+      return unless validate_delegator(nil, params)
+      assign_filter_params(@delegator)
       super
       response.api_meta = { count: @items_count }
       # TODO-EMBERAPI Optimize the way we fetch the count
@@ -257,7 +261,6 @@ module Ember
       end
 
       def decorate_objects
-        return if @error_ticket_filter.present?
         decorator, options = decorator_options
 
         if sideload_options.include?('requester')
@@ -266,7 +269,7 @@ module Ember
           end
         end
 
-        @items.map! { |item| decorator.new(item, options) }
+        @items.map! { |item| decorator.new(item, options) } if @items
       end
 
       def contact_name_mapping
@@ -277,48 +280,35 @@ module Ember
       end
 
       def tickets_filter
-        return if @error_ticket_filter.present?
         current_account.tickets.permissible(api_current_user).filter(params: params, filter: 'Helpdesk::Filters::CustomTicketFilter')
       end
 
       def validate_filter_params
-        # This is a temp filter validation.
-        # Basically overriding validation and fetching any filter available
-        # This is going to handle Default ticket filters and custom ticket filters.
-        # ?email=** or ?requester_id=*** are NOT going to be supported as of now.
-        # Has to be taken up post sprint while cleaning this up and writing a proper validator for this
-        params.permit(*ApiTicketConstants::INDEX_FIELDS, *ApiConstants::DEFAULT_INDEX_FIELDS, :query_hash, :order, :order_by)
-        params[:filter] ||= DEFAULT_TICKET_FILTER
-        if params[:filter].to_i.to_s == params[:filter] # Which means it is a string
-          @ticket_filter = current_account.ticket_filters.find_by_id(params[:filter])
-          if @ticket_filter.nil? || !@ticket_filter.has_permission?(api_current_user)
-            render_filter_errors
-          else
-            params.merge!(@ticket_filter.attributes['data'])
-          end
-        elsif params[:query_hash].present?
+        @constants_klass = 'TicketFilterConstants'
+        @validation_klass = 'TicketFilterValidation'
+        validate_query_params
+      end
+
+      def sanitize_filter_params
+        if params[:query_hash].present?
           params[:wf_model] = 'Helpdesk::Ticket'
           params[:data_hash] = QueryHash.new(params[:query_hash].values).to_system_format
-          params.delete(:filter)
-        elsif Helpdesk::Filters::CustomTicketFilter::DEFAULT_FILTERS.keys.include?(params[:filter])
-          @ticket_filter = current_account.ticket_filters.new(Helpdesk::Filters::CustomTicketFilter::MODEL_NAME).default_filter(params[:filter])
-          params['filter_name'] = params[:filter]
         else
-          render_filter_errors
+          params[:filter] ||= DEFAULT_TICKET_FILTER
         end
+        params[:filter] = 'monitored_by' if params[:filter] == 'watching'
         params[:wf_order] = params[:order_by]
         params[:wf_order_type] = params[:order]
       end
 
-      def order_clause
-        nil
+      def assign_filter_params(delegator)
+        return unless @delegator.ticket_filter
+        params_hash = @delegator.ticket_filter.respond_to?(:id) ? @delegator.ticket_filter.attributes['data'] : { 'filter_name' => params[:filter] }
+        params.merge!(params_hash)
       end
 
-      def render_filter_errors
-        # This is just force filter errors
-        # Always expected to render errors
-        @error_ticket_filter = ::TicketFilterValidation.new(params, nil, string_request_params?)
-        render_errors(@error_ticket_filter.errors, @error_ticket_filter.error_options) unless @error_ticket_filter.valid?
+      def order_clause
+        nil
       end
 
       def conditional_preload_options

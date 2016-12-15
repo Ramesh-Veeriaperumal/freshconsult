@@ -33,7 +33,7 @@ module HelperConcern
     end
 
     def constants_klass
-      @cklass_computed ||= constants_class.to_s.constantize
+      @cklass_computed ||= (@constants_klass || constants_class.to_s).constantize
     end
 
     def validation_klass
