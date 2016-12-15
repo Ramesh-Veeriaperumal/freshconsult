@@ -34,7 +34,7 @@
         <span class="recent-tickets">
           <% case show_recent_tickets %>
             <% when :dialog then %>
-              <% if ticket.is_a?(Helpdesk::ArchiveTicket) %>
+              <% if ticket.archive? %>
                 <%= link_to t('ticket.recent_tickets'),
                       "/helpdesk/archive_tickets/#{ticket.id}/component?component=requester_tickets",
                       :rel => 'freshdialog',
@@ -61,7 +61,7 @@
               <% end %>
           <% end %>
         </span>
-        <% if user.customer? && user.valid_user? && privilege?(:manage_contacts) %>
+        <% if user.customer? && user.valid_user? && privilege?(:manage_contacts) && !ticket.archive? %>
           <span class="dash-seperator"> - </span>
           <%= link_to t('requester_widget_edit'),
                         "#requester-widget-user-edit-dialog",
