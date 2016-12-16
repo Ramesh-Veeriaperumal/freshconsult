@@ -87,10 +87,10 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     return shardmapping.status unless shardmapping.ok?
     Sharding.select_shard_of(to_email[:domain]) do
     account = Account.find_by_full_domain(to_email[:domain])
-    email_spam_watcher_counter(account)
     if !account.nil? and account.active?
       # clip_large_html
       account.make_current
+      email_spam_watcher_counter(account)
       email_processing_log("Processing email for ", to_email[:email])
       verify
       TimeZone.set_time_zone
