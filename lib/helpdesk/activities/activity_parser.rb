@@ -340,6 +340,37 @@ module Helpdesk::Activities
       @activity[:misc] << render_string(str)
     end
 
+    # confirm all the text from vikram
+    def assoc_parent_tkt_link(value)
+      str = get_string_name("assoc_parent_tkt_link")
+      @activity[:misc] << render_string(str, { :child_ticket_path => build_ticket_url(value.first.to_i)})
+    end
+
+    def assoc_parent_tkt_unlink(value)
+      str = get_string_name("assoc_parent_tkt_unlink")
+      params = {
+        :child_tickets_count => pluralize(value.count,
+          I18n.t("ticket.parent_child.child_tkt_singular"),
+          I18n.t("ticket.parent_child.child_tkt_plural")),
+        :child_ticket_path => multiple_tickets_url(value)
+      }
+      @activity[:misc] << render_string(str, params)
+    end
+
+    def child_tkt_link(value)
+      str = get_string_name("child_tkt_link")
+      @activity[:misc] << render_string(str, { :assoc_prt_tkt_path => build_ticket_url(value.first.to_i)})
+    end
+
+    def child_tkt_unlink(value)
+      str = get_string_name("child_tkt_unlink")
+      @activity[:misc] << render_string(str, { :assoc_prt_tkt_path => build_ticket_url(value.first.to_i)})
+    end
+
+    def assoc_parent_tkt_open(value)
+      @activity[:misc] << "#{I18n.t("activities.reopen_ticket")}"
+    end
+
     def group_id(value)
       params = if value[1].blank?
         {:group_name => "#{render_string("activities.none")}"}

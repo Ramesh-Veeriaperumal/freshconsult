@@ -2744,6 +2744,7 @@ en:
     internal_agent: "Internal Agent"
     description: "description"
     set: "Set"
+    reopen_ticket: "Since a child ticket associated with this ticket is unresolved"
     tag:
       solutions: "New Solution"
       assigned_to_nobody: "Agent Unassigned"
@@ -3116,6 +3117,14 @@ en:
         new: "Unlinked %{all}%{related_tickets_count} from this tracker"
       tracker_reset:
         new: "Tracker converted to a ticket"
+      child_tkt_link:
+        new: "Linked this ticket with the parent %{assoc_prt_tkt_path}"
+      child_tkt_unlink:
+        new: "Unlinked this ticket from the parent %{assoc_prt_tkt_path}"
+      assoc_parent_tkt_link:
+        new: "Created 1 child ticket %{child_ticket_path}"
+      assoc_parent_tkt_unlink:
+        new: "Unlinked %{child_tickets_count} (%{child_ticket_path}) from this parent"
       email_to_requester:
         new: "Sent email to requester %{requester_name}"
       email_to_group:
@@ -5497,6 +5506,8 @@ en:
       template_desc: "Select the parent template to apply the associated child templates"
       recently_used: "Recently Used"
       template: "Template"
+      child_tkt_singular: "child ticket"
+      child_tkt_plural: "child tickets"
       notn_subject: "Error while creating child tickets"
     singular: Ticket
     due_by_time: Due by time
