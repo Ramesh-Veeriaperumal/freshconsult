@@ -3,11 +3,12 @@
     <div class="ticket_subject pull-left">
       <span class="sc-item-cursor priority-border shorcuts-info"></span>
       <h4 class="hyphernate break-word ellipsis">
-        <% if current_user.has_ticket_permission?(associated_ticket) %>
-            <a href="<%= helpdesk_ticket_url(associated_ticket) %>" class="ellipsis title_sub" data-pjax="#body-container">
-              <%= associated_ticket.subject %>
-            </a>
-        <% else %>
+        <% if (has_permission = current_user.has_ticket_permission?(associated_ticket)) || associated_ticket.agent_as_requester?(current_user.id) %>
+          <% tkt_url = has_permission ? helpdesk_ticket_url(associated_ticket) : support_ticket_url(associated_ticket) %>
+          <a href="<%= tkt_url %>" class="ellipsis title_sub" data-pjax="#body-container">
+            <%= associated_ticket.subject %>
+          </a>
+        <% else%>
           <%= associated_ticket.subject %>
         <% end -%>
         <span>&nbsp;#<%= associated_ticket.display_id %></span>
