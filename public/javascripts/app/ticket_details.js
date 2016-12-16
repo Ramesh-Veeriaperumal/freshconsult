@@ -1901,6 +1901,7 @@ App.Tickets.TicketDetail = {
 		App.Tickets.Watcher.offEventBinding();
 		App.TicketAttachmentPreview.destroy();
 		App.Tickets.NBA.offEventBinding();
+		App.Tickets.TicketRequester.unBindEvents();
 	}
 };
 

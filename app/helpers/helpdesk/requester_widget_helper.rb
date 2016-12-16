@@ -14,7 +14,7 @@ module Helpdesk::RequesterWidgetHelper
   CONTACT_WIDGET_MAX_DISPLAY_COUNT  = 5
   MAX_CHAR_LENGTH                   = 230
   PHONE_NUMBER_FIELDS               = [:default_phone, :default_mobile]
-  MAX_LABEL_LENGTH                  = 10
+  MAX_LABEL_LENGTH                  = 12
   FIELDS_INFO                       = { :contact => 
                                         { :form             => "contact_form",
                                           :disabled_fields  => ["email"],
@@ -108,9 +108,9 @@ module Helpdesk::RequesterWidgetHelper
         value = obj.send(field.name)
         value = format_field_value(field, value) || value
         html << "<div class='contact-append'>
-          <span class='add-on field-label long_text'>
+          <span class='add-on field-label  #{ "long_text" if (field.label.length > MAX_LABEL_LENGTH) }'>
           <span class='label-name  #{ "tooltip" if (field.label.length > MAX_LABEL_LENGTH) }'
-            title='#{ field.label.titleize if (field.label.length > MAX_LABEL_LENGTH) }'>
+            title='#{ field.label if (field.label.length > MAX_LABEL_LENGTH) }'>
           #{field.label}</span></span><span class='label-colon'>:</span>
           <span class='field-value #{"can-make-calls" if phone_field?(field)}' #{phone_field_data_attributes(user, value) if phone_field?(field)}>#{value}</span>
         </div>"

@@ -67,12 +67,6 @@ window.App.Tickets = window.App.Tickets || {};
 
 
     },
-    onVisit: function (data) {
-
-    },
-		onLeave: function (data) {
-        $(document).off(".requester");
-		},
 		bindErrorMessage : function(ele,message){ // bind company name message 
 			var companyErrorField = $('.company-error-msg');
 	    if(companyErrorField.length === 0){
@@ -312,7 +306,10 @@ window.App.Tickets = window.App.Tickets || {};
 		    _this.initPopup();
 	    });
 	    /* requester info end */
-		}
+		},
+    unBindEvents: function(){
+      $(document).off(".requester");
+    }
 	};
 
 	  // utility to flatten JSON data to enable easier DOM manipulation
