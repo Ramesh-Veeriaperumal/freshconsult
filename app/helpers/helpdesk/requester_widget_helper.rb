@@ -14,7 +14,7 @@ module Helpdesk::RequesterWidgetHelper
   CONTACT_WIDGET_MAX_DISPLAY_COUNT  = 5
   MAX_CHAR_LENGTH                   = 230
   PHONE_NUMBER_FIELDS               = [:default_phone, :default_mobile]
-  MAX_LABEL_LENGTH                  = 12
+  MAX_LABEL_LENGTH                  = 14
   FIELDS_INFO                       = { :contact => 
                                         { :form             => "contact_form",
                                           :disabled_fields  => ["email"],
