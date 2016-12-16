@@ -2,8 +2,10 @@
 <%=t('sla_policy.helpcard.info_1').html_safe%>
 <h3 class="title"><%=t('sla_policy.helpcard.sla_title_1')%></h3>
 <%=t('sla_policy.helpcard.sla_info_1').html_safe%>
-<h3 class="title"><%=t('sla_policy.helpcard.sla_title_2')%></h3>
-<%=t('sla_policy.helpcard.sla_info_2').html_safe%>
-<h3 class="title"><%=t('sla_policy.helpcard.sla_title_3')%></h3>
-<%=t('sla_policy.helpcard.sla_info_3').html_safe%>
+<% if current_account.sla_management_enabled? %>
+	<h3 class="title"><%=t('sla_policy.helpcard.sla_title_2')%></h3>
+	<%=t('sla_policy.helpcard.sla_info_2').html_safe%>
+	<h3 class="title"><%=t('sla_policy.helpcard.sla_title_3')%></h3>
+	<%=t('sla_policy.helpcard.sla_info_3').html_safe%>
+<% end %>
 <%= inm_tour_button(t('sla_policy.helpcard.tour'),13423 ) %>

@@ -2,10 +2,10 @@
 
 <% if @error_msg.present? %>
   <% @error_msg.each do |msg| %>
-    <%= t("ticket.parent_child.#{msg}", :tkt_url => link_to("ticket ##{@assoc_parent.display_id}", helpdesk_ticket_url(@assoc_parent, :host => @assoc_parent.account.host, :protocol=> @assoc_parent.url_protocol)), :total_child_count => TicketConstants::CHILD_TICKETS_PER_ASSOC_PARENT).html_safe %>
+    <%= t("ticket.parent_child.#{msg}", :tkt_url => link_to("ticket ##{@assoc_parent.display_id}", helpdesk_ticket_url(@assoc_parent, :host => @assoc_parent.account.host, :protocol=> @assoc_parent.url_protocol)), :total_child_count => @total_child_count).html_safe %>
   <%end%>
 <% elsif @failed_items.present? %>
-  <%= t('ticket.parent_child.failed_items', :tkt_url => link_to("ticket ##{@assoc_parent.display_id}", helpdesk_ticket_url(@assoc_parent, :host => @assoc_parent.account.host, :protocol=> @assoc_parent.url_protocol)), :total_child_count => TicketConstants::CHILD_TICKETS_PER_ASSOC_PARENT, :failed_count => @failed_items.count).html_safe %>
+  <%= t('ticket.parent_child.failed_items', :tkt_url => link_to("ticket ##{@assoc_parent.display_id}", helpdesk_ticket_url(@assoc_parent, :host => @assoc_parent.account.host, :protocol=> @assoc_parent.url_protocol)), :total_child_count => @total_child_count, :failed_count => @failed_items.count).html_safe %>
   <%= t(:'ticket.parent_child.failed_info1').html_safe %>
   <% @failed_items.to_enum.with_index(1) do |msg, i| %>
     <%= "#{i}. #{msg}".html_safe %>

@@ -1,0 +1,16 @@
+defaults: &defaults
+  global_enable: true
+  service_url: "http://localhost:8080"
+  timeout: 2.0
+
+development:
+  <<: *defaults
+
+test:
+  <<: *defaults
+
+staging:
+  <<: *defaults
+
+production:
+  <<: *defaults

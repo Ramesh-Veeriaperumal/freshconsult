@@ -127,6 +127,7 @@ defaults: &defaults
     - [sendgrid_domain_updates]
     - [cti]
     - [sla_on_status_change]
+    - [sandbox_sync]
     - [update_sentiment]
     - [update_notes_sentiment]
     - [update_ticket_filter]
@@ -149,6 +150,10 @@ defaults: &defaults
     - [templates_cleanup]
     - [bulk_child_tkt_creation]
     - [code_console_execution]
+    - [flush_portal_solution_cache]
+    - [plan_change_workerv2]
+    - [learn_spam_message]
+    - [s3_retry_worker]
 
 development:
   <<: *defaults
@@ -164,4 +169,3 @@ slave:
 
 test:
   <<: *defaults
-

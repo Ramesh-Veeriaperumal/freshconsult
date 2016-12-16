@@ -11,6 +11,10 @@
 		var metric_data, td_class,tooltip_tmpl = "";
 		var current_data = data[i][group_metrics[j]];
 		var enable_tooltip = false;
+		
+		if(consts.sla_metrics.indexOf(group_metrics[j]) > -1 && !HelpdeskReports.locals.is_sla_management_enabled  ) {
+			return "";
+		}
 
 		if (consts.percentage_metrics.indexOf(group_metrics[j]) > -1) {
 			metric_data = HelpdeskReports.CoreUtil.addsuffix(current_data);

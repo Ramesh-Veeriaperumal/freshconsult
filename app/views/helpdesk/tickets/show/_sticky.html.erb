@@ -43,6 +43,7 @@
 						<span class="arrow-top"></span>
 					</div>
 					<% unless params[:format]=='widget' %>
+					<% if Account.current.add_watcher_enabled? %>
 					<div id="watcher_toggle" class="btn monitor_div tooltip" data-placement = "below"
 						title='<%= "#{t('helpdesk.tickets.add_watcher.toggle_watch')}" %>' 
 						data-hotkey='<%="#{shortcut('ticket_detail.toggle_watcher')}" %>'
@@ -51,6 +52,7 @@
 							<%= render :partial => "/helpdesk/subscriptions/monitor" %>
 						</span>
 					</div>
+					<% end %>
 					<% end %>
 				</li>
 				<% end %>

@@ -11,4 +11,8 @@ module Cache::Memcache::User
 		MemcacheKeys.delete_from_cache(ACCOUNT_AGENT_NAMES % { :account_id => self.account_id })
 	end
 
+	def clear_cache
+		clear_agent_list_cache
+		clear_agent_name_cache
+	end
 end

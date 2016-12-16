@@ -2,6 +2,7 @@
   acc = Account.current
   tracker_ticket = acc.link_tickets_enabled? && params[:display_ids].present?
   is_child_form  = acc.parent_child_tkts_enabled? && params[:ticket_id] && @assoc_parent_ticket
+  skip_frag_cache =  (tracker_ticket || is_child_form || params[:topic_id].present?)
   ticket_title = if tracker_ticket
     "new_tracker_title"
   elsif is_child_form
@@ -31,7 +32,7 @@
 <div id="ticket-fields-wrapper">
   <%= form_for @item, :html => {:multipart => true, :id => "NewTicket", :ignore => "" } do |f| %>
     <!-- fragment caching starts here -->
-    <% enable_fragment_cache(:agent_new_ticket, (tracker_ticket || is_child_form || params[:topic_id].present?)) do %>
+    <% enable_fragment_cache(:agent_new_ticket, skip_frag_cache) do %>
       <ul class="compose-new-ticket">
         <%= render :partial => "ticket_form", :object => f, :locals => { :is_edit => (@item.errors.any? ? true : false), :f => f } %>
       </ul>
@@ -56,7 +57,7 @@
   <script>
   // To load data from store to populate group/agent/product for the first time.
     jQuery(document).ready(function(){
-      if(location.pathname.indexOf('helpdesk/tickets/') == -1 && location.pathname.indexOf('/child/new') == -1){
+      if(<%= skip_frag_cache == false %>){
         PopulateData.fromStore("#helpdesk_ticket_group_id", 'group');
         PopulateData.fromStore("#helpdesk_ticket_responder_id", 'agent');
         //PopulateData.fromStore("#helpdesk_ticket_product_id", 'product');
@@ -73,7 +74,7 @@ attachment_dom = ""
     if @all_attachments.present?
       @all_attachments.each do |att|
         if att.attachable_type != "Account"
-          attachment_dom << send(:description_attachment, {:filename=>"#{escape_javascript(att.content_file_name)}",:value => "#{att.id}", :name => "template_data[attachments][][resource]"})
+          attachment_dom << send(:description_attachment, {:filename=>"#{escape_javascript(att.content_file_name)}",:value => "#{att.id}", :name => "helpdesk_ticket[attachments][][resource]"})
         else
           attachment_dom << send(:description_attachment, {:filename=>"#{escape_javascript(att.content_file_name)}", :value => "#{att.id}", :name => "shared_attachments[]"})
         end
@@ -96,11 +97,17 @@ attachment_dom = ""
       temp.removeChild(temp.firstChild);
       return result;
   }
-  <% if @all_attachments.present? or @cloud_files.present? %>
+  <% if !current_account.launched?(:multifile_attachments)%> 
+    <% if @all_attachments.present? or @cloud_files.present? %>
 
-  var x = '<%= escape_javascript(attachment_dom) %>';
-  jQuery('#ticket-attachments').html(unescapeHtml(x));
-  jQuery("#prev-attachments").html("");
+      var x = '<%= escape_javascript(attachment_dom) %>';
+      jQuery('#ticket-attachments').html(unescapeHtml(x));
+      jQuery("#prev-attachments").html("");
 
+    <% end %>
+  <% else%>
+    <% if is_child_form %>
+      Helpdesk.MultipleFileUpload.renderExistingFiles(<%= @all_attachments.to_json.html_safe%>,<%=@cloud_files.to_json.html_safe %>,jQuery('.attachment-icon:visible').data('iconCount'), true, 'helpdesk_ticket', true);
+    <% end %>
   <% end %>
 <% end %>

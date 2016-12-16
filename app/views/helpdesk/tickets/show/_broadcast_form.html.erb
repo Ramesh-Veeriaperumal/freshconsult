@@ -2,6 +2,7 @@
   <%= form_for note, :url => broadcast_helpdesk_ticket_conversations_path(@ticket), :html => {
                       :multipart => true,  
                       :id => "HelpdeskNotes",
+                      :class => "form-unsaved-changes-trigger",
                       :rel => 'note_form', 
                       "data-panel" => cntid,
                       "data-domhelper-name" => "cnt-note",

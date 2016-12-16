@@ -139,6 +139,7 @@ class Va::Action
   end
   
   def add_watcher(act_on)
+    return unless Account.current.add_watcher_enabled?
     watchers = {}
     watcher_ids = value.kind_of?(Array) ? value : value.to_a
     watcher_ids.map!(&:to_i)

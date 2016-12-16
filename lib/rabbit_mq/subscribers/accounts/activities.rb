@@ -9,11 +9,11 @@ module RabbitMq::Subscribers::Accounts::Activities
   end
 
   def mq_activities_valid(action, model)
-    act_valid_model?(model) and destroy_action?(action)
+    activity_valid_model?(model) and destroy_action?(action)
   end
   private
   
-  def act_valid_model?(model)
+  def activity_valid_model?(model)
     ["account"].include?(model)
   end
 

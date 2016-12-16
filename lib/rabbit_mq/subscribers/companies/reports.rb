@@ -14,7 +14,7 @@ module RabbitMq::Subscribers::Companies::Reports
   def mq_reports_valid(action, model)
     false
     # currently commenting out the code
-    # valid_model?(model) && (create_action?(action) || destroy_action?(action) || @model_changes.keys.select {|key|  valid_key?(key) }.any?)
+    # reports_valid_model?(model) && (create_action?(action) || destroy_action?(action) || @model_changes.keys.select {|key|  valid_key?(key) }.any?)
   end
   
   private
@@ -23,7 +23,7 @@ module RabbitMq::Subscribers::Companies::Reports
       PROPERTIES_TO_CONSIDER.include?(key) || non_text_ff_fields.include?(key)
     end
     
-    def valid_model?(model)
+    def reports_valid_model?(model)
       ["company"].include?(model)
     end
   

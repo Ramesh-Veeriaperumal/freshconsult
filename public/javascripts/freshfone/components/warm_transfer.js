@@ -137,7 +137,7 @@ var FreshfoneWarmTransfer;
       this.$transferInfo.removeClass("transferring_state");
       this.$ongoingWidget.toggleClass("tools-disabled", false)
                          .addClass("warm_transfer_call");
-      this.$freshfoneContextContainer.find('.add_call_note').hide();
+      this.$freshfoneContextContainer.find('#freshfone_add_notes').hide();
     },
     bindClickEvents: function() {
        var self = this;
@@ -204,7 +204,7 @@ var FreshfoneWarmTransfer;
       this.$transferInfo.addClass("resume_state");
     },
     joinCustomer: function() {
-      this.$freshfoneContextContainer.find('.add_call_note').hide();
+      this.$freshfoneContextContainer.find('#freshfone_add_notes').hide();
     },
     notAvailable: function(status, sid) {
       this.removeTransferringState();
@@ -232,7 +232,7 @@ var FreshfoneWarmTransfer;
       this.freshfone_call.setCallId(call_id);
       this.callCompleted('completed');
       this.$ongoingWidget.removeClass("warm_transfer_call");
-      this.$freshfoneContextContainer.find('.add_call_note').show();
+      this.$freshfoneContextContainer.find('#freshfone_add_notes').show();
       this.handleHold(sid, 'unhold');
     },
     handleHold: function(sid, status) {
@@ -288,24 +288,20 @@ var FreshfoneWarmTransfer;
     showReceiverWidget: function() {
       this.$freshfoneTransferContainer.show();
       this.$ongoingWidget.addClass("warm_transfer_call");
-      this.$freshfoneContextContainer.find('.add_call_note').hide();
+      this.$freshfoneContextContainer.find('#freshfone_add_notes').hide();
     },
     parentCallCompleted: function(sid, call_id) {
       var self = this;
-      this.getNotes();
       this.freshfone_call.setIsWarmTransfer(null);
       this.freshfone_call.setCallId(call_id);
       this.freshfone_call.registerCall(sid);
       this.setReceiverStatus();
       this.$ongoingWidget.removeClass("warm_transfer_call");
-      this.$freshfoneContextContainer.find('.add_call_note').show();
+      this.$freshfoneContextContainer.find('#freshfone_add_notes').show();
       setTimeout(function() {
         self.$freshfoneTransferContainer.slideUp({duration: 500, easing: "easeInOutQuart"});
       }, 2000);
-    },
-    getNotes: function() {
-      var number = freshfone.newNotifications ? this.freshfone_call.tConn.message.number : this.freshfone_call.tConn.parameters.From ;
-      this.freshfone_call.getSavedCallNotes(number);
+      freshfonewidget.showAddTicketContext();
     },
     setReceiverStatus: function() {
       this.$transferInfo.find('.transfer-status div').hide();

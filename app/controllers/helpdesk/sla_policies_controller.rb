@@ -10,6 +10,7 @@ class Helpdesk::SlaPoliciesController < Admin::AdminController
   before_filter :load_sla_policy, :only => [ :update, :destroy, :activate ]
   before_filter :load_item, :validate_params, :only => [:company_sla]
   before_filter :initialize_escalation_level_details, :only => [:edit]
+  before_filter :validate_sla_params , :only => [:update, :create] 
    
   def index
     @sla_policies = scoper
@@ -113,6 +114,11 @@ class Helpdesk::SlaPoliciesController < Admin::AdminController
   end
   
   protected
+
+    def validate_sla_params
+      return unless params[nscname].present?
+      params[nscname].except!(:escalations) unless current_account.sla_management_enabled?
+    end
 
     def scoper
       current_account.sla_policies

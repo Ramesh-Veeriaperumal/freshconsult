@@ -350,7 +350,8 @@ module SupportHelper
 		form_value.merge!({:category_val => URI.unescape(params[:helpdesk_ticket][:custom_field][field.name] || "") })
 	end
 
-	def ticket_field_container form_builder,object_name, field, field_value = "", pl_value_id=nil
+	def ticket_field_container form_builder,object_name, field, field_value = "", pl_value_id=nil, html_opts_hash = {}
+		html_opts_hash[:pre_fill_flag] ||= true 
 		case field.dom_type
 			when "checkbox" then
 				required = (field[:required_in_portal] && field[:editable_in_portal])
@@ -360,10 +361,11 @@ module SupportHelper
 						</label>
 					</div> ).html_safe
 			else
+				html_opts_hash = {:pl_value_id => pl_value_id}
+				html_opts_hash.delete(:pre_fill_flag) if field.dom_type != "requester"
 				%( #{ ticket_label object_name, field }
 		   			<div class="controls #{"nested_field" if field.dom_type=="nested_field"} #{"support-date-field" if field.dom_type=="date"} #{"company_div" if field.field_type == "default_company" && @ticket.new_record?}">
-		   				#{ ticket_form_element form_builder, :helpdesk_ticket, field, field_value,
-		   																						 { :pl_value_id => pl_value_id } }
+		   				#{ ticket_form_element form_builder, :helpdesk_ticket, field, field_value,html_opts_hash}
 		   			</div> ).html_safe
 		end
 	end
@@ -380,14 +382,14 @@ module SupportHelper
 	end
 
 	def ticket_form_element form_builder, object_name, field, field_value = "", html_opts = {}
-			pl_value_id = html_opts.delete(:pl_value_id)
+	    pl_value_id = html_opts.delete(:pl_value_id)
+
 	    dom_type = (field.field_type == "nested_field") ? "nested_field" : (field['dom_type'] || field.dom_type)
 	    required = (field.required_in_portal && field.editable_in_portal)
 	    element_class   = " #{required ? 'required' : '' } #{ dom_type }"
 	    element_class  += " section_field" if field.section_field?
 	    field_name      = (field_name.blank?) ? field.field_name : field_name
 	    object_name     = "#{object_name.to_s}#{ ( !field.is_default_field? ) ? '[custom_field]' : '' }"
-
 	    case dom_type
 	      when "requester" then
 	      	@company_cc_in_portal = field.company_cc_in_portal?

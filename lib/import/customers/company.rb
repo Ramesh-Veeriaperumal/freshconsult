@@ -6,7 +6,7 @@ class Import::Customers::Company < Import::Customers::Base
 
 	def default_validations
 		item_param = @params_hash[:"#{@type}"]
-		item_param[:name].blank? ? return : load_item(item_param)	
+		item_param[:name].blank? ? return : load_item	
 	end
 
 	def create_imported_company
@@ -16,8 +16,13 @@ class Import::Customers::Company < Import::Customers::Base
 
 	private
 
-	def load_item item_param
-		company_name = item_param[:name].to_s.strip
-		@item = current_account.companies.find_by_name(company_name)
+	def load_item 
+		decode_params
+		@item = current_account.companies.find_by_name(@params_hash[:company][:name])
+	end
+
+	def decode_params
+		@params_hash[:company][:name].to_s.strip!
+		@params_hash[:company][:name].gsub!(/&amp;/, "&")
 	end
 end

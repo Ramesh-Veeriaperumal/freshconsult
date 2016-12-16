@@ -48,26 +48,28 @@
 					end 
 				%>
 
-        <% hide_escalation = readonly ? "display:none" : "" %>
-        <li class="row-fluid mb20" style= <%=hide_escalation%> >
-          <label class="control-label span2">
-            <b><%=t('group.escalation_rule')%></b>
-          </label>
-          <div class="span10">
-            <ul class="unstyled group-ticket-assign">
-              <li class="row-fluid">
-                <span class="span6 group-text-align"><%=t('group.info4')%> :</span>
-                <%= f.select :assign_time , Group::ASSIGNTIME_OPTIONS,{}, { :class => 'select2 span3', 
-                             :disabled => readonly } %>
-              </li>
-              <li class="row-fluid">
-                <span class="span6 group-text-align"> &nbsp; &nbsp;<%=t('group.send_escalation_to')%> </span> 
-                <input type="hidden" id="escalate_to" name="group[escalate_to]" class="span3"
-                       data-placeholder = "<%= t("group.select_an_agent") %>" <%if readonly%> disabled <%end%> />
-              </li>
-            </ul>
-          </div>
-        </li>
+        <% if current_account.sla_management_enabled? %>
+          <% hide_escalation = readonly ? "display:none" : "" %>
+          <li class="row-fluid mb20" style= <%=hide_escalation%> >
+            <label class="control-label span2">
+              <b><%=t('group.escalation_rule')%></b>
+            </label>
+            <div class="span10">
+              <ul class="unstyled group-ticket-assign">
+                <li class="row-fluid">
+                  <span class="span6 group-text-align"><%=t('group.info4')%> :</span>
+                  <%= f.select :assign_time , Group::ASSIGNTIME_OPTIONS,{}, { :class => 'select2 span3', 
+                               :disabled => readonly } %>
+                </li>
+                <li class="row-fluid">
+                  <span class="span6 group-text-align"> &nbsp; &nbsp;<%=t('group.send_escalation_to')%> </span> 
+                  <input type="hidden" id="escalate_to" name="group[escalate_to]" class="span3"
+                         data-placeholder = "<%= t("group.select_an_agent") %>" <%if readonly%> disabled <%end%> />
+                </li>
+              </ul>
+            </div>
+          </li>
+        <% end %>
 
         <br />
         <% if feature?(:round_robin) %>

@@ -17,6 +17,22 @@ function log() {
   }
 }
 
+ function getSurvey(url_new_via_portal, face_value) {
+    $j.ajax({
+      type: 'GET',
+      url: url_new_via_portal,
+      async: false,
+      success: function(data){
+        if(data.url_new_via_handle == ""){
+          location.reload();
+          $j("#" + face_value).removeAttr("href");
+        } else {
+          $j("#" + face_value).attr('href', data.url_new_via_handle);
+        }
+      }
+    });
+  }
+  
 // Image error issues
 function imgerror(source){
     if (source.width <= 50) {
@@ -149,6 +165,12 @@ jQuery(document).ready(function(){
     setTimeout(function() {
       widgetPopup.popover('hide');
     }, 200);
+  });
+
+  jQuery(document).on("click", ".survey-options-wrapper", function(e){    
+    var url = jQuery(this).data('url');
+    var faceValue = jQuery(this).data("face-value");
+    getSurvey(url,faceValue);
   });
 
 });

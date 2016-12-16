@@ -62,7 +62,7 @@
 	</div>
 	<span class="seperator"></span> 
 	<div class="alignright modal-footer">
-		<% if (obj.field_type == 'custom_dropdown' || obj.field_type == 'default_status' || obj.field_type == 'default_ticket_type') { %>
+		<% if (obj.field_type == 'custom_dropdown' || (obj.field_type == 'default_status' && custom_ticket_fields_enabled ) || obj.field_type == 'default_ticket_type') { %>
 			<a class="add-choice" id="addchoice" href="#"> 
 				<span class='ficon-plus'></span> 
 				<%= translate.get('addNewChoice') %> 

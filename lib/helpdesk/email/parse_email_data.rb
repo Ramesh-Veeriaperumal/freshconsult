@@ -2,7 +2,7 @@ module Helpdesk::Email::ParseEmailData
 	include ParserUtil
 	include Helpdesk::Permission::Ticket
 	include AccountConstants
-
+	MAXIMUM_CONTENT_LIMIT = 300.kilobytes
 	attr_accessor :reply_to_email, :recipients
 
 	def email_metadata
@@ -120,7 +120,12 @@ module Helpdesk::Email::ParseEmailData
 	end
 
 	def body_html_with_formatting(body,email_cmds_regex)
-	  body_html = auto_link(body) { |text| truncate(text, :length => 100) }
+	  # Process auto_link if the content is less than 300 KB, otherwise leave as text.
+      if body.size < MAXIMUM_CONTENT_LIMIT
+        body_html = auto_link(body) { |text| truncate(text, :length => 100) }
+      else
+        body_html = sanitize(body)
+      end
 	  line_break_body = body_html.gsub(/(\n|\r)/, '<br />')
 	  white_list(line_break_body)
 	end

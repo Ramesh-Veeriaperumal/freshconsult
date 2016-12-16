@@ -16,7 +16,9 @@
 .quality_feedback_modal_body{
 	.modal-body {
   		max-height: 510px;
-  		padding: 10px 20px 22px;
+  		padding: 10px 20px 20px;
+  		border-radius: 7px;
+  		margin-bottom:0;
   }
 }
 
@@ -890,6 +892,40 @@
 	.end_call_cancel {
 		margin-top:10px;
 	}
+	.end_call_added_ticket{
+		margin-top: 10px;
+		.added_ticket_details{
+			width: calc(100% - 96px);
+			height: 19px;
+			border: $ongoing-context-border;
+			padding: 9px;
+			border-radius: 5px;
+			margin-right: 10px;
+			.added_ticket_subject{
+				white-space: nowrap;
+				text-overflow: ellipsis;
+				overflow: hidden;
+				width: 82%;
+				.ticket_id{
+					font-weight: bold;
+				}
+    	}
+    	.unattach_added_ticket{
+    		padding: 10px 17px 9px 14px;
+    		margin-top: -26px;
+    		cursor: pointer;
+    		border-left: 1px solid $ms-active-type-background;
+    		margin-right: -9px;
+    		&:hover{
+          background-color: $dashboard-cells-background;
+        }
+    	}
+		}
+		.set-ticket-btn{
+			margin-top: -38px;
+			padding: 7px 19px 0px 14px;
+		}
+	}
 	.btn-notes {
 		color: $ec-btn-text;
 		font-size: 12px;
@@ -901,6 +937,13 @@
 		font-size: 9px;
 		@include border-radius(3px);
 		margin-top: 2px;
+	}
+	.add_ticket_margin{
+		position: relative;
+		top: 7px;
+	}
+	.ticket_id_color{
+		color: $ch-assigned-ticket;
 	}
 }
 .contact_hover{

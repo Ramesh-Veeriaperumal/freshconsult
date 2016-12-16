@@ -390,7 +390,7 @@ module ChatHelper
                 }
     request_params = { :options    => { :widget => true }, :attributes => attributes }
     response = livechat_request("create_site", request_params, 'sites', 'POST')
-    if response && response[:status] === 201
+    if response && (response[:status] == 200 || response[:status] == 201)
       result = JSON.parse(response[:text])['data']
       current_account.chat_setting.update_attributes({ :active => true, :enabled => true, :site_id => result['site']['site_id']})
       current_account.main_chat_widget.update_attributes({ :widget_id => result['widget']['widget_id']})

@@ -194,8 +194,10 @@
             var $el = $('#watcher_toggle'),
                 watching = $el.data('watching'),
                 ticket_id = TICKET_DETAILS_DATA.displayId,
-                cur_user = DataStore.get('current_user').currentData.user.id;
-
+                cur_user = DataStore.get('current_user').currentData.user.id,
+                watcher_allowed_flag = DataStore.get('features_list').currentData.indexOf("add_watcher");
+            if(watcher_allowed_flag != -1)
+            {
             if (watching) {
                 $('.unwatch').trigger('click');
             } else {
@@ -204,6 +206,7 @@
             }
 
             _highlightElement($el.data('watching', !watching));
+            }
         },
         ticketProperties = function () {
             $('#TicketPropertiesFields select:first').select2('open');
@@ -285,6 +288,13 @@
             }
         },
 
+        ticket_show_pickup = function (ev, key) {
+            var user = DataStore.get('current_user').currentData.user.id;
+            jQuery('#helpdesk_ticket_responder_id').val(user).trigger('change')
+
+            $("#helpdesk_ticket_submit").trigger('click');
+        },
+
         KB = {
             global        : {
                 help                : shortcutHelp,
@@ -311,7 +321,8 @@
                 close               : closeTicket,
                 silent_close        : closeTicket,
                 expand              : expand,
-                select_watcher      : selectWatcher              
+                select_watcher      : selectWatcher,
+                pickup              : ticket_show_pickup           
             },
             social_stream   : {
                 open_stream         : socialOpenStream,

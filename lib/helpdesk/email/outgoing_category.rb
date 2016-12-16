@@ -34,7 +34,7 @@ module Helpdesk::Email::OutgoingCategory
     state = nil
     if Account.current
       state = "premium" if Account.current.premium_email? 
-      state ||= Account.current.subscription.state 
+      state ||= Account.current.subscription.state if Account.current.subscription.present?
     end
     state = "default" if (state.nil?) or (!CATEGORY_SET.include?(state.to_sym))
     return state
@@ -61,14 +61,6 @@ module Helpdesk::Email::OutgoingCategory
   def account_whitelisted?
     if Account.current
       return ismember?(SPAM_WHITELISTED_ACCOUNTS, Account.current.id)
-    end
-    return false
-  end
-
-  def account_created_recently?
-    if Account.current
-      account_time_limit = get_spam_check_time_limit
-      return Account.current.created_at > account_time_limit.days.ago
     end
     return false
   end

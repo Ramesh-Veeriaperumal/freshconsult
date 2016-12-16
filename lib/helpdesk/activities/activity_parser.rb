@@ -255,6 +255,15 @@ module Helpdesk::Activities
       @activity[:set] << render_string(str, params)
     end
 
+    def delete_agent(value)
+      str  = get_string_name("delete_agent")
+      user = get_user(value[0].to_i)
+      return if user.blank?
+      @activity[:misc] << render_string(str, 
+        { :property => "#{render_string("activities.agent")}",
+          :responder_path => "#{build_url(user.name, user_path(user))}"})
+    end
+
     def internal_agent_id(value)
       params = if value[1].blank?
         {:responder_path => "#{render_string("activities.none")}"}
@@ -265,6 +274,15 @@ module Helpdesk::Activities
       end
       str = get_string_name("internal_agent")
       @activity[:set] << render_string(str, params)      
+    end
+
+    def delete_internal_agent(value)
+      str  = get_string_name("delete_agent")
+      user = get_user(value[0].to_i)
+      return if user.blank?
+      params = {:property => "#{render_string("activities.internal_agent")}",
+                :responder_path => "#{build_url(user.name, user_path(user))}"}
+      @activity[:misc] << render_string(str, params)
     end
 
     def requester_id(value)
@@ -332,6 +350,16 @@ module Helpdesk::Activities
       @activity[:set] << render_string(str, params)
     end
 
+    def delete_group(value)
+      str  = get_string_name("property_delete")
+      deleted_property_value = escapeHTML("#{value[0]}")
+      property_value = "#{render_string("activities.none")}"
+      @activity[:set] << render_string(str,
+            {:property => "#{render_string("activities.group")}", 
+              :deleted_property_value => escapeHTML("#{deleted_property_value}"),       
+              :property_value => escapeHTML("#{property_value}")})
+    end
+
     def internal_group_id(value)
       params = if value[1].blank?
         {:group_name => "#{render_string("activities.none")}"}
@@ -340,6 +368,13 @@ module Helpdesk::Activities
       end
       str = get_string_name("internal_group")
       @activity[:set] << render_string(str, params)
+    end
+
+    def delete_internal_group(value)
+      str    = get_string_name("internal_agent_group_none")
+      params = {:property => "#{render_string("activities.group")}",
+                :deleted_value => escapeHTML("#{value[0]}")}
+      @activity[:misc] << render_string(str, params)
     end
 
     def due_by(value)
@@ -628,48 +663,35 @@ module Helpdesk::Activities
     end
 
     def remove_group(value)
-      str = get_string_name("remove_group")
+      str    = get_string_name("remove_group")
       params = {:group_name => escapeHTML("#{value[0]}"), :status_name => escapeHTML("#{value[1]}")}
       @activity[:misc] << render_string(str, params)
     end
 
     def remove_agent(value)
-      str = get_string_name("remove_agent")
+      str  = get_string_name("remove_agent")
       user = get_user(value[0].to_i)
       return if user.blank?
       params = {:responder_path => "#{build_url(user.name, user_path(user))}", :group_name => escapeHTML("#{value[1]}")}
       @activity[:misc] << render_string(str, params)
     end
 
-    def delete_internal_group(value)
-      str = get_string_name("delete_internal_group")
-      params = {:group_name => escapeHTML("#{value[0]}")}
-      @activity[:misc] << render_string(str, params)
-    end
-
-    def delete_internal_agent(value)
-      str = get_string_name("delete_internal_agent")
-      user = get_user(value[0].to_i)
-      return if user.blank?
-      params = {:responder_path => "#{build_url(user.name, user_path(user))}"}
-      @activity[:misc] << render_string(str, params)
-    end
-
     def remove_status(value)
-      str = get_string_name("delete_status")
-      params = {:status_name => escapeHTML("#{value[0]}")}
+      str    = get_string_name("internal_agent_group_none")
+      params = {:property => "#{render_string("activities.status")}", 
+                :deleted_value => escapeHTML("#{value[0]}")}      
       @activity[:misc] << render_string(str, params)
     end
 
     # custom checkboxes
     def checked(value)
-      str = get_string_name("checkbox_checked")
+      str    = get_string_name("checkbox_checked")
       params = {:checkbox_list => escapeHTML("#{value.join(', ')}")}
       @activity[:misc] << render_string(str, params)
     end
 
     def unchecked(value)
-      str = get_string_name("checkbox_unchecked")
+      str    = get_string_name("checkbox_unchecked")
       params = {:checkbox_list => escapeHTML("#{value.join(', ')}")}
       @activity[:misc] << render_string(str, params)
     end

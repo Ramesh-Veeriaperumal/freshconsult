@@ -85,7 +85,6 @@ module TicketsFilter
   DEFAULT_PORTAL_SORT_ORDER = :desc
 
   SORT_FIELDS = [
-    [ :due_by     , "tickets_filter.sort_fields.due_by"        ],
     [ :created_at , "tickets_filter.sort_fields.date_created"  ],
     [ :updated_at , "tickets_filter.sort_fields.last_modified" ],
     [ :priority   , "tickets_filter.sort_fields.priority"      ],
@@ -110,6 +109,9 @@ module TicketsFilter
       sort_fields << [ :requester_responded_at, "tickets_filter.sort_fields.requester_responded_at"]
       sort_fields << [ :agent_responded_at, "tickets_filter.sort_fields.agent_responded_at"]
     end
+
+    sort_fields.insert(0, [ :due_by, "tickets_filter.sort_fields.due_by"]) if Account.current && Account.current.sla_management_enabled?
+    
     sort_fields.map { |i| [I18n.t(i[1]), i[0]] }
   end
 

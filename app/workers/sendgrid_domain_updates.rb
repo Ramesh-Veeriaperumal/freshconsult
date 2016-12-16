@@ -5,6 +5,7 @@ class SendgridDomainUpdates < BaseWorker
   include ParserUtil
   include Redis::RedisKeys
   include Redis::OthersRedis
+  include Redis::PortalRedis
 
   require 'freemail'
 
@@ -73,16 +74,40 @@ class SendgridDomainUpdates < BaseWorker
       spam_email_exact_match_regex = spam_email_exact_regex_value.present? ? Regexp.compile(spam_email_exact_regex_value, true) : SPAM_EMAIL_EXACT_REGEX
       spam_email_apprx_match_regex = spam_email_apprx_regex_value.present? ? Regexp.compile(spam_email_apprx_regex_value, true) : SPAM_EMAIL_APPRX_REGEX
 
-      if mxrecord.blank? 
+      if mxrecord.blank?
+        spam_score = 5 
         blacklist_spam_account(account, true, "Outgoing will be blocked for Account ID: #{account.id} , Reason: Invalid Admin contact address")
       elsif ismember?(BLACKLISTED_SPAM_DOMAINS,admin_email_domain)
+        spam_score = 5
         blacklist_spam_account(account, true, "Outgoing will be blocked for Account ID: #{account.id} , Reason: Blacklisted admin email domain") 
       elsif Freemail.disposable?(account.admin_email)
+        spam_score = 5
         blacklist_spam_account(account, true, "Outgoing will be blocked for Account ID: #{account.id} , Reason: Disposable admin email address")
       elsif ((account.helpdesk_name =~ spam_email_exact_match_regex || account.full_domain =~ spam_email_exact_match_regex) && Freemail.free?(account.admin_email))
+        spam_score = 5
         blacklist_spam_account(account, true, "Outgoing will be blocked for Account ID: #{account.id} , Reason: Account name contains exact suspicious words")
-      elsif((account.helpdesk_name =~ spam_email_apprx_match_regex || account.full_domain =~ spam_email_apprx_match_regex) && Freemail.free?(account.admin_email)) 
-        blacklist_spam_account(account, false, "Reason: Account name looks suspicious")
+      else
+        signup_params = get_account_signup_params(Account.current.id)
+        signup_params["api_response"] = EhawkEmailVerifier.new().scan(signup_params) if (signup_params["account_details"].present? && signup_params["metrics"].present?)
+        save_account_sign_up_params(Account.current.id, signup_params)
+        if signup_params["api_response"] && signup_params["api_response"]["status"] == 5
+          spam_score = 5
+          blacklist_spam_account(account, true, "Outgoing will be blocked for Account ID: #{account.id} , Reason: #{signup_params["api_response"]["reason"]}")
+        elsif((account.helpdesk_name =~ spam_email_apprx_match_regex || account.full_domain =~ spam_email_apprx_match_regex) && Freemail.free?(account.admin_email)) 
+          spam_score = 4 
+          blacklist_spam_account(account, false, "Reason: Account name looks suspicious for Account ID: #{account.id}")
+        elsif signup_params["api_response"] && signup_params["api_response"]["status"] == 4
+          spam_score = 4
+          blacklist_spam_account(account, false, "Account credetials looks suspicious for Account ID: #{account.id} , Reason: #{signup_params["api_response"]["reason"]}")
+        elsif signup_params["api_response"] && signup_params["api_response"]["status"]
+          spam_score = signup_params["api_response"]["status"] 
+        else 
+          spam_score = 0
+        end
+      end
+      unless account.conversion_metric.nil?
+        account.conversion_metric.spam_score = spam_score
+        account.conversion_metric.save
       end
     end
   end
@@ -126,6 +151,30 @@ class SendgridDomainUpdates < BaseWorker
 
   def generate_callback_key
     SecureRandom.hex(15)
+  end
+
+  def get_account_signup_params account_id
+    key = ACCOUNT_SIGN_UP_PARAMS % {:account_id => account_id}
+    json_response = get_others_redis_key(key)
+    if json_response.present?
+      parsed_response = JSON.parse(json_response)
+    else
+      parsed_response = {}
+    end
+    parsed_response
+  end
+
+  def save_account_sign_up_params account_id, args = {}
+    key = ACCOUNT_SIGN_UP_PARAMS % {:account_id => account_id}
+    set_others_redis_key(key,args.to_json)
+    increment_portal_cache_version
+  end
+
+  def increment_portal_cache_version
+    return if get_portal_redis_key(PORTAL_CACHE_ENABLED) === "false"
+    Rails.logger.debug "::::::::::Sweeping from portal"
+    key = PORTAL_CACHE_VERSION % { :account_id => Account.current.id }
+    increment_portal_redis_version key
   end
 
 end

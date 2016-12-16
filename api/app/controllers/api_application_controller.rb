@@ -644,4 +644,8 @@ class ApiApplicationController < MetalApiController
         yield
       end
     end
+
+    def request_host
+      @request_host ||= request.host
+    end
 end

@@ -7,7 +7,7 @@ class Admin::EmailNotificationsController < Admin::AdminController
   before_filter :validate_params, :only => :edit
   
   def index
-    e_notifications = current_account.email_notifications 
+    e_notifications = scoper
 
     @agent_notifications = e_notifications.select { |n| n.visible_to_agent? }
     
@@ -52,7 +52,6 @@ class Admin::EmailNotificationsController < Admin::AdminController
   end
 
   def edit  
-    @email_notification = current_account.email_notifications.find(params[:id])
     notification_type = @email_notification.notification_type
     @supported_languages = current_account.account_additional_settings.supported_languages
     @default_language = current_account.language 
@@ -81,8 +80,12 @@ class Admin::EmailNotificationsController < Admin::AdminController
 
   private
 
+  def scoper
+    current_account.sla_management_enabled? ? current_account.email_notifications : current_account.email_notifications.non_sla_notifications
+  end
+
   def load_item
-    @email_notification = current_account.email_notifications.find_by_id(params[:id])
+    @email_notification = scoper.find_by_id(params[:id])
     redirect_to admin_email_notifications_path, :flash => { :notice => t('email_notifications.page_not_found') } if @email_notification.nil?
   end
 

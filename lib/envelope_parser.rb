@@ -39,4 +39,19 @@ module EnvelopeParser
     	(ActiveSupport::JSON.decode envelope)['to']
     end
 
+    def get_domain_from_envelope(envelope)
+      envelope_to = get_to_address_from_envelope(envelope).first
+      parse_email_with_domain(envelope_to)[:domain]
+    end
+
+    def get_user_from_email(email_text)
+      email = parse_email_text(email_text.strip)[:email]
+      if(email && (email =~ EMAIL_REGEX))
+        email = $1
+      elsif(email_text =~ EMAIL_REGEX) 
+        email = $1  
+      end
+      email
+    end
+
 end

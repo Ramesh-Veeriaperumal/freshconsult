@@ -269,7 +269,7 @@
 
       jQuery("#HelpdeskReply").find('.cc-error-message').remove();
 
-      if(!jQuery('#include_bcc').is(':checked')) {
+      if(!jQuery('#include_bcc').is(':checked') && jQuery('#include_bcc').is(':visible')) {
           jQuery('[name="helpdesk_note[bcc_emails][]"]').val('');
           isDirty = false;
       }

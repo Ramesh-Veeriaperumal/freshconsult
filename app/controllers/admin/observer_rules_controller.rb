@@ -1,6 +1,7 @@
 class Admin::ObserverRulesController < Admin::SupervisorRulesController
 
   NESTED_EVENTS_SEPERATION = ['nested_rules', 'from_nested_rules', 'to_nested_rules']
+  before_filter { |c| c.requires_admin_feature :create_observer }
 	protected
 
     def scoper

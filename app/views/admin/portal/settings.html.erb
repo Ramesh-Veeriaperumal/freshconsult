@@ -63,12 +63,14 @@
 				<%= f.feature_check_box :captcha, { :id => 'captcha' } %>
 				<%= label_for(t('.captcha'), 'captcha')%>
 			</div>
+			<% if current_account.allow_auto_suggest_solutions_enabled? %>
 			<hr/>
-			<div class="checkbox">
-				<%= f.feature_check_box :auto_suggest_solutions, {:id => "auto_suggest_solutions"} %>
-				<%= label_for(t('.auto_suggest_solutions'), 'auto_suggest_solutions')%>
-				<%= content_tag( :div, t('.auto_suggest_solutions_help'), :class => "muted" ) %>
-			</div>
+				<div class="checkbox">
+					<%= f.feature_check_box :auto_suggest_solutions, {:id => "auto_suggest_solutions"} %>
+					<%= label_for(t('.auto_suggest_solutions'), 'auto_suggest_solutions')%>
+					<%= content_tag( :div, t('.auto_suggest_solutions_help'), :class => "muted" ) %>
+				</div>
+			<% end %>
 		</div>
 	</div>
 

@@ -135,6 +135,29 @@ ActiveRecord::Schema.define(:version => 20161103085738) do
 
   add_index "admin_data_imports", ["account_id", "created_at"], :name => "index_data_imports_on_account_id_and_created_at"
 
+  create_table "admin_sandbox_accounts", :force => true do |t|
+    t.integer  "account_id",         :limit => 8
+    t.integer  "sandbox_account_id", :limit => 8
+    t.integer  "status",                          :default => 0
+    t.string   "config"
+    t.string   "git_tag"
+    t.datetime "created_at",                                     :null => false
+    t.datetime "updated_at",                                     :null => false
+  end
+
+  add_index "admin_sandbox_accounts", ["account_id"], :name => "index_admin_sandbox_accounts_on_account_id"
+
+  create_table "admin_sandbox_jobs", :force => true do |t|
+    t.integer  "sandbox_account_id", :limit => 8
+    t.integer  "initiated_by",       :limit => 8
+    t.integer  "status",                          :null => false
+    t.integer  "account_id",         :limit => 8
+    t.datetime "created_at",                      :null => false
+    t.datetime "updated_at",                      :null => false
+  end
+
+  add_index "admin_sandbox_jobs", ["account_id"], :name => "index_admin_sandbox_jobs_on_account_id"
+
   create_table "admin_user_accesses", :force => true do |t|
     t.string   "accessible_type"
     t.integer  "accessible_id",   :limit => 8
@@ -897,6 +920,7 @@ ActiveRecord::Schema.define(:version => 20161103085738) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "referrer_type"
+    t.integer  "spam_score"
   end
 
   add_index "conversion_metrics", ["account_id"], :name => "index_conversion_metrics_on_account_id"
@@ -4171,5 +4195,15 @@ ActiveRecord::Schema.define(:version => 20161103085738) do
 
   add_index "account_webhook_keys", ["account_id", "vendor_id"], :name => 'index_account_webhook_keys_on_account_id_and_vendor_id'
   add_index "account_webhook_keys", "webhook_key", :unique => true
+
+  create_table "email_hourly_updates", :force => true do |t|
+    t.string :received_host
+    t.string :hourly_path
+    t.datetime :locked_at
+    t.string :state
+    t.timestamps
+  end
+
+  add_index "email_hourly_updates", ["hourly_path"], :name => "index_email_hourly_updates_on_hourly_path", :unique => true
 
 end

@@ -9,6 +9,7 @@ class PostMailer < ActionMailer::Base
   def monitor_email(emailcoll, post, user, portal, sender, host)
     begin
       configure_mailbox(user, portal)
+      email_config = Thread.current[:email_config]
       headers        = {
         :to      => emailcoll,
         :from    => sender,
@@ -17,6 +18,7 @@ class PostMailer < ActionMailer::Base
       }
 
       headers.merge!(make_header(nil, nil, post.account_id, "Monitor Email"))
+      headers.merge!({"X-FD-Email-Category" => email_config.category}) if email_config.category.present?
       inline_attachments = []
       @post = post
       @user = user

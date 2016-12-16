@@ -13,17 +13,17 @@ class Account < ActiveRecord::Base
   include ErrorHandle
   include AccountConstants
   include Onboarding::OnboardingRedisMethods
+  include FreshdeskFeatures::Feature
 
   has_many_attachments
   
   serialize :sso_options, Hash
-  delegate :secret_keys, to: :account_additional_settings
 
   pod_filter "id"
   
   is_a_launch_target
   
-  concerned_with :associations, :constants, :validations, :callbacks, :solution_associations, :multilingual
+  concerned_with :associations, :constants, :features, :validations, :callbacks, :solution_associations, :multilingual
 
   include CustomerDeprecationMethods
   
@@ -91,10 +91,6 @@ class Account < ActiveRecord::Base
     tz = "Kyiv" if tz.eql?("Kyev")
     tz
   end
-
-  def hide_agent_metrics_feature?
-    features?(:euc_hide_agent_metrics)
-  end
   
   def survey
     @survey ||= begin
@@ -105,32 +101,7 @@ class Account < ActiveRecord::Base
       end
     end
   end
-
-  def any_survey_feature_enabled?
-    survey_enabled? || default_survey_enabled? || custom_survey_enabled?
-  end
-
-  def any_survey_feature_enabled_and_active?
-    new_survey_enabled? ? active_custom_survey_from_cache.present? :
-      features?(:surveys, :survey_links)
-  end
-
-  def survey_enabled?
-    features?(:surveys)
-  end
-
-  def new_survey_enabled?
-    default_survey_enabled? || custom_survey_enabled?
-  end
-
-  def default_survey_enabled?
-    features?(:default_survey) && !custom_survey_enabled?
-  end
-
-  def count_es_enabled?
-    (launched?(:es_count_reads) || launched?(:list_page_new_cluster)) && features?(:countv2_reads)
-  end
-      
+  
   # Feature check to prevent data from being sent to v1 conditionally
   # V1 is allowed in EU alone for now
   def esv1_enabled?
@@ -144,88 +115,24 @@ class Account < ActiveRecord::Base
   def permissible_domains=(list)
     self.helpdesk_permissible_domains_attributes = CustomNestedAttributes.new(list, self).helpdesk_permissible_domains_attributes if list.present?
   end
-  
-  def custom_survey_enabled?
-    features?(:custom_survey)
-  end
 
-  def customer_sentiment_enabled?
-    Rails.logger.info "customer_sentiment : #{launched?(:customer_sentiment)}"
-    launched?(:customer_sentiment)
-  end
-
-  def freshfone_enabled?
-    features?(:freshfone) and freshfone_account.present?
-  end
-
-  def freshchat_enabled?
-    features?(:chat) and !chat_setting.site_id.blank?
-  end
-
-  def freshchat_routing_enabled?
-    freshchat_enabled? and features?(:chat_routing)
-  end
-
-  def suggest_tickets_enabled?
-    launched?(:suggest_tickets)
-  end
-
-  def supervisor_feature_launched?
-    features?(:freshfone_call_monitoring) || features?(:agent_conference)
-  end
-  #Temporary feature check methods - using redis keys - starts here
-  def compose_email_enabled?
-    !features?(:compose_email) || ismember?(COMPOSE_EMAIL_ENABLED, self.id)
-  end
-
-  def helpdesk_restriction_enabled?
-     features?(:helpdesk_restriction_toggle) || launched?(:restricted_helpdesk)
-  end
-
-  def dashboard_disabled?
-    ismember?(DASHBOARD_DISABLED, self.id)
-  end
-
-  def dashboardv2_enabled?
-   launched?(:admin_dashboard) || launched?(:supervisor_dashboard) || launched?(:agent_dashboard)
-  end
-
-  def restricted_compose_enabled?
-    ismember?(RESTRICTED_COMPOSE, self.id)
-  end
-  
   def slave_queries?
     ismember?(SLAVE_QUERIES, self.id)
-  end
-
-  def tag_based_article_search_enabled?
-    ismember?(TAG_BASED_ARTICLE_SEARCH, self.id)
-  end
-
-  def classic_reports_enabled?
-    ismember?(CLASSIC_REPORTS_ENABLED, self.id)
-  end
-
-  def old_reports_enabled?
-    ismember?(OLD_REPORTS_ENABLED, self.id)
-  end
-
-  def plugs_enabled_in_new_ticket?
-    ismember?(PLUGS_IN_NEW_TICKET,self.id)
   end
 
   def public_ticket_token
     self.secret_keys[:public_ticket_token]
   end
 
+  def attachment_secret
+    self.secret_keys[:attachment_secret]
+  end
+
   #Temporary feature check methods - using redis keys - ends here
+
 
   def round_robin_capping_enabled?
     features?(:round_robin_load_balancing)
-  end
-
-  def gnip_2_0_enabled?
-    launched?(:gnip_2_0)
   end
 
   def validate_required_ticket_fields?
@@ -262,16 +169,7 @@ class Account < ActiveRecord::Base
 
     default_in_op_fields.stringify_keys!
   end
-
-  def restricted_helpdesk?
-    features?(:restricted_helpdesk) && helpdesk_restriction_enabled?
-  end
-
-  def link_tickets_enabled?
-    launched?(:link_tickets) 
-    # feature?(:link_tickets)
-  end
-
+  
   def parent_child_tkts_enabled?
     @pc ||= launched?(:parent_child_tickets)
   end
@@ -498,13 +396,6 @@ class Account < ActiveRecord::Base
     !subscription.card_number.nil?
   end
 
-  def pass_through_enabled?
-    pass_through_enabled
-  end
-  def select_all_enabled?
-    launched?(:select_all)
-  end
-
   #Totally removed 
   def google_account?
     !google_domain.blank?
@@ -587,6 +478,23 @@ class Account < ActiveRecord::Base
     end
   end
 
+  def ehawk_reputation_score
+    begin
+      key = ACCOUNT_SIGN_UP_PARAMS % {:account_id => self.id}
+      signup_params_json = get_others_redis_key(key)
+      return 0 unless signup_params_json
+      signup_params = JSON.parse(get_others_redis_key(key))
+      signup_params["api_response"]["status"]
+    rescue Exception => e
+      Rails.logger.debug "Exception caught #{e}"
+      0
+    end
+  end
+
+  def ehawk_spam?
+    ehawk_reputation_score >= 4 
+  end
+  
   protected
   
     def external_url_is_valid?(url) 

@@ -1,0 +1,49 @@
+:subscription_plans:
+  :sprout:
+    :name: Sprout
+    :features:
+      - :basic_twitter
+      - :basic_facebook
+    :inherits: []
+    :exclude: []
+  :blossom:
+    :name: Blossom
+    :features: 
+      - :split_tickets
+      - :add_watcher
+      - :traffic_cop
+      - :custom_ticket_views
+      - :supervisor
+      - :create_observer
+      - :sla_management
+      - :email_commands
+      - :assume_identity
+      - :rebranding
+      - :custom_apps
+      - :custom_ticket_fields
+      - :custom_company_fields
+      - :custom_contact_fields
+      - :occasional_agent
+      - :allow_auto_suggest_solutions
+    :inherits: 
+      - :sprout
+    :exclude: []
+  :garden:
+    :name: Garden
+    :features: []
+    :inherits: 
+      - :blossom
+    :exclude: []
+  :estate:
+    :name: Estate
+    :features: []
+    :inherits: 
+      - :garden
+    :exclude: []
+  :forest:
+    :name: Forest
+    :features: []
+    :inherits: 
+      - :estate
+    :exclude: []
+:selectable_features: []

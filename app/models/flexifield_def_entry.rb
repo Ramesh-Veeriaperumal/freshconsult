@@ -20,8 +20,8 @@ class FlexifieldDefEntry < ActiveRecord::Base
   before_create :set_account_id
 
   #https://github.com/rails/rails/issues/988#issuecomment-31621550
-  after_commit ->(obj) { obj.clear_cache }, on: :create
-  after_commit ->(obj) { obj.clear_cache }, on: :destroy
+  after_commit ->(obj) { obj.clear_flexifield_def_entry_cache }, on: :create
+  after_commit ->(obj) { obj.clear_flexifield_def_entry_cache }, on: :destroy
   
   ViewColumn = Struct.new(:object,:content) do
     def viewname

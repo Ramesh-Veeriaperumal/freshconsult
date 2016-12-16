@@ -8,6 +8,7 @@ class BroadcastMessages::NotifyAgent < BaseWorker
     @ticket = Account.current.tickets.find_by_display_id(args[:ticket_display_id])
     @broadcast_message = Account.current.broadcast_messages.find_by_id(args[:broadcast_id])
     return unless @tracker_ticket && @ticket && @broadcast_message
+    @recipients = args[:recipients]
     send_notification
   rescue Exception => e
     NewRelic::Agent.notice_error(e, {
@@ -29,7 +30,7 @@ class BroadcastMessages::NotifyAgent < BaseWorker
        :host => @ticket.portal_host,
        :protocol=> @ticket.url_protocol)
       DataExportMailer.deliver_broadcast_message({
-        :to_email => recipients, 
+        :to_email => @recipients, 
         :subject => I18n.t("ticket.link_tracker.notifier_subject", :ticket_details => tkt_details),
         :from_email => @tracker_ticket.reply_email,
         :url => url,
@@ -38,12 +39,6 @@ class BroadcastMessages::NotifyAgent < BaseWorker
         :ticket_id => @ticket.display_id,
         :account_id => @ticket.account_id 
       })
-    end
-
-    def recipients
-      watchers = @ticket.subscriptions.collect {|sub| sub.user if sub.user_id != User.current.try(:id) }
-      watchers << @ticket.responder if @ticket.responder_id != User.current.try(:id)
-      watchers.compact.collect {|w| w.email}.uniq.join(',')
     end
 
 end

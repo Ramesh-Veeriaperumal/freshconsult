@@ -90,9 +90,15 @@ class Helpdesk::DashboardController < ApplicationController
 
   def tickets_summary
     unresolved_hash = {}
+    default_trends = ["overdue", "due_today", "on_hold", "open", "unresolved", "new"]
     begin
-      trends_count_hash = ticket_trends_count(["overdue", "due_today", "on_hold", "open", "unresolved", "new"]) unless current_account.dashboard_disabled?
-      unresolved_hash = {:ticket_trend => trends_count_hash}
+      if current_account.dashboard_disabled?
+        unresolved_hash = {:ticket_trend => {}}
+      else
+        default_trends.delete_if {|x| ["overdue", "due_today"].include?(x)} unless current_account.sla_management_enabled?
+        trends_count_hash = ticket_trends_count(default_trends)
+        unresolved_hash = {:ticket_trend => trends_count_hash}
+      end
     rescue Exception => ex
       NewRelic::Agent.notice_error(ex)
       Rails.logger.info "Exception in Fetching tickets from DB for Dashboard, #{ex.message}, #{ex.backtrace}"

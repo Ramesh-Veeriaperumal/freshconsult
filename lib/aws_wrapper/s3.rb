@@ -22,6 +22,26 @@ module AwsWrapper
     def self.fetch_obj(bucket_name, key)
       Aws::S3::Resource.new(client: $s3_client).bucket(bucket_name).object(key)
     end
+
+    def self.read_only_metadata(bucket_name, key)
+      $s3_client.head_object(bucket: bucket_name, key: key)
+    end
+
+    def self.read_with_metadata(bucket_name, key)
+      $s3_client.get_object(bucket: bucket_name, key: key)
+    end
+
+    def self.write_with_metadata(bucket_name, key, content, options = {})
+      data = {
+        body: content,
+      }
+      data.merge!(options)
+      fetch_obj(bucket_name, key).put(data)
+    end
+
+    def self.move_object(source_bucket, source_key, target_bucket, target_key, options)
+      fetch_obj(source_bucket, source_key).move_to({bucket: target_bucket, key: target_key} , options)
+    end
     
     # `fetch_all` - Boolean - Specifies whether to get all the objects in the bucket or
     #                         only 1000 (By default it lists the 1000 objects in the bucket)

@@ -161,7 +161,7 @@ module Search::TicketSearch
       return products_list.concat(products.collect { |au| [au.id, CGI.escapeHTML(au.name)] })
     end
 
-    if criteria_key == :due_by
+    if criteria_key == :due_by and Account.current.sla_management_enabled?
       return TicketConstants.due_by_list
     end
 

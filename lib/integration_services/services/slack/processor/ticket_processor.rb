@@ -3,28 +3,22 @@ module IntegrationServices::Services::Slack::Processor
 
     SLACK_BOT = "USLACKBOT"
 
-    def initialize(payload, installed_app, conversation, users_list, user)
+    def initialize(payload, installed_app, conversation, users_list, user, requester)
       @payload = payload
       @installed_app = installed_app
       @conversation = conversation
       @users_list = users_list
-      @user = user
+      @user = user.make_current
+      @requester = requester
     end
 
     def create_ticket
       subject = ticket_subject
       body = ticket_body
-      ticket = @installed_app.account.tickets.build(
-        :email    => @user.email,
-        :priority => TicketConstants::PRIORITY_KEYS_BY_NAME["low"],
-        :status   => Helpdesk::Ticketfields::TicketStatus::OPEN, 
-        :subject => subject,
-        :ticket_body_attributes => {
-          :description => body["description"],
-          :description_html => "<div>#{body['description_html']}</div>"
-        })
-        ticket.save_ticket!
-        ticket_url(ticket)
+      ticket = build_ticket(subject, body)
+      ticket = add_tags(ticket)
+      ticket.save_ticket!
+      ticket_url(ticket)
     end
 
     private
@@ -64,6 +58,39 @@ module IntegrationServices::Services::Slack::Processor
         return {"description" => description, "description_html" => description_html}
       end
 
+      def build_ticket(subject, body)
+        @installed_app.account.tickets.build(
+          :requester_id    => requester_id,
+          :responder_id => responder_id,
+          :priority => TicketConstants::PRIORITY_KEYS_BY_NAME["low"],
+          :status   => Helpdesk::Ticketfields::TicketStatus::OPEN, 
+          :subject => subject,
+          :ticket_body_attributes => {
+            :description => body["description"],
+            :description_html => "<div>#{body['description_html']}</div>"
+        })
+      end
+
+      def requester_id
+        @requester.present? ? @requester.id : @user.id
+      end
+
+      def responder_id
+        @requester.present? ? @user.id : nil
+      end
+
+      def add_tags(ticket)
+        tag_names = ["slack_ticket"]
+        tag_names.each do |tag_string|
+          tag = Account.current.tags.find_by_name(tag_string) || Account.current.tags.new(:name => tag_string)
+          begin
+            ticket.tags << tag
+          rescue ActiveRecord::RecordInvalid => e
+          end
+        end
+        ticket
+      end
+
       # Verify if this required.
       def message_formatting(text)
         text.gsub!("&","")
@@ -91,5 +118,4 @@ module IntegrationServices::Services::Slack::Processor
       end
 
   end
-
 end

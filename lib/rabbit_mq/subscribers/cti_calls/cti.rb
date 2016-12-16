@@ -12,12 +12,12 @@ module RabbitMq::Subscribers::CtiCalls::Cti
   end
 
   def mq_cti_valid(action, model)
-    (valid_model?(model) && cti_allowed?)
+    (cti_valid_model?(model) && cti_allowed?)
   end
 
   private
 
-  def valid_model?(model)
+  def cti_valid_model?(model)
     ["cti_call"].include?(model)
   end
 

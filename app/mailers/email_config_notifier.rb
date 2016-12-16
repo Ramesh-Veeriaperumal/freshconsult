@@ -14,6 +14,7 @@ class EmailConfigNotifier < ActionMailer::Base
       "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     }
     headers.merge!(make_header(nil, nil, email_config.account_id, "Email Config Activation Instructions"))
+    headers.merge!({"X-FD-Email-Category" => email_config.category}) if email_config.category.present?
     @activation_url = admin_register_email_url(email_config.activator_token, 
                         :host => email_config.account.host, :protocol => email_config.account.url_protocol)
     @email_config   = email_config
@@ -34,6 +35,7 @@ class EmailConfigNotifier < ActionMailer::Base
       "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     }
     headers.merge!(make_header(nil, nil, email_config.account_id, "Freshdesk Test Email"))
+    headers.merge!({"X-FD-Email-Category" => email_config.category}) if email_config.category.present?
     @email_config = email_config
     mail(headers) do |part|
       part.html { render "test_email" }

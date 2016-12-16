@@ -45,7 +45,8 @@ class Freshfone::Number < ActiveRecord::Base
 
 	TYPE = [
 		[:local, 'local', 1],
-		[:toll_free, 'toll_free', 2]
+		[:toll_free, 'toll_free', 2],
+		[:mobile, 'mobile', 3]
 	]
 	TYPE_HASH = Hash[*TYPE.map { |i| [i[0], i[2]] }.flatten]
 	TYPE_STR_HASH = Hash[*TYPE.map { |i| [i[1].to_s, i[2]] }.flatten]

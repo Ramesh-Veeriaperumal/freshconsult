@@ -728,7 +728,7 @@
       > input, > textarea{
           width: 80%;
           @include box-sizing ( border-box );
-          @include float (left);
+          /*@include float (left);*/
           @include padding ( 6px 5px );
           margin-bottom: 12px;
       }

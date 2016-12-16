@@ -16,4 +16,10 @@ module Cache::Memcache::VARule
     key = ACCOUNT_INSTALLED_APP_BUSINESS_RULES % { :account_id => self.account_id }
     MemcacheKeys.delete_from_cache key
   end
+
+  def clear_cache
+    clear_observer_rules_cache
+    clear_api_webhook_rules_from_cache
+    clear_installed_app_business_rules_from_cache
+  end
 end

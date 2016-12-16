@@ -61,6 +61,16 @@ class Fdadmin::FreshopsPodController < Fdadmin::DevopsMainController
     quickbooks_account.save
   end
 
+  def create_slack_user
+    slack_account = Integrations::SlackRemoteUser.find_by_account_id(params[:slack_remote_user][:account_id])
+    if slack_account 
+      slack_account.remote_id = params[:slack_remote_user][:remote_id]
+    else
+      slack_account = Integrations::SlackRemoteUser.new(params[:slack_remote_user])
+    end
+    slack_account.save
+  end
+
   def create_global_ebay_integration
    Ecommerce::EbayRemoteUser.new(params[:ebay_remote_user]).save
   end

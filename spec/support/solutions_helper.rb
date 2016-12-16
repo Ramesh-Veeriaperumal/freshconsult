@@ -132,6 +132,63 @@ module SolutionsHelper
     end
   end
 
+  def portal_cache_test_setup
+    @account = Account.current
+    @portal  = @account.main_portal
+    @new_agent = add_test_agent(@account,  {:role => @account.roles.first.id})
+    @companies = []
+    @visibility_keys = Solution::FolderMeta::VISIBILITY_KEYS_BY_TOKEN
+    @categories = []
+    for i in (1..2) do 
+      @companies << create_company
+    end
+    enable_multilingual
+    @account.account_additional_settings.additional_settings[:portal_languages] = 
+        @account.supported_languages[0..-2]
+    @account.account_additional_settings.save
+    @account.reload
+    Language.reset_current
+    @lang_ver = @account.portal_languages_objects.first
+    @new_agent.make_current
+    for i in (1..4) do 
+      params = create_solution_category_alone(solution_default_params(:category).merge({
+              :lang_codes => [@lang_ver.to_key] + [:primary]
+             }))
+      cat = Solution::Builder.category(params)
+      @categories << cat
+      for i in (1..4) do 
+        folder_params = create_solution_folder_alone(solution_default_params(:folder).merge({
+          :category_id => cat.id,
+          :lang_codes => [@lang_ver.to_key] + [:primary],
+          :visibility => (i == 4 ? @visibility_keys[:company_users] : 
+            @visibility_keys.values.sample)
+         }))
+        folder = Solution::Builder.folder(folder_params)
+        folder.customer_ids = @companies.map(&:id) if folder.has_company_visiblity?
+        for i in (1..2) do 
+          params = create_solution_article_alone(solution_default_params(:article, :title, {
+          :title => " Article #{i+1} #{(Time.now.to_f * 1000).to_i} on #{Faker::Name.name}",
+          :description => "#{Faker::Lorem.sentence(3)}"
+          }).merge({
+            :folder_id => folder.id,
+            :art_type => 1,
+            :status => 2,
+            :user_id => @new_agent.id,
+            :lang_codes => [@lang_ver.to_key] + [:primary]
+          }))
+          article = Solution::Builder.article(params.deep_symbolize_keys)
+        end 
+      end
+    end
+    User.reset_current_user
+    solution_cache_version_key = Redis::RedisKeys::SOLUTIONS_PORTAL_CACHE_VERSION % { :account_id => Account.current.id }
+    obsolete_version = $redis_portal.perform_redis_op("get", solution_cache_version_key)
+    Sidekiq::Testing.inline! do
+      Solution::FlushPortalCache.perform_async(:obsolete_version => obsolete_version)
+    end
+    after_incr = $redis_portal.perform_redis_op("get", solution_cache_version_key)
+  end
+
   def rand_portal_ids
     ((rand(2..5)).times.collect do
       (@portals || []).map(&:id).sample

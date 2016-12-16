@@ -898,7 +898,25 @@ span.beta {
 		}
 	}
 }
-
+//-------------------------------------------------------------------------------------------
+//                                  slack
+//-------------------------------------------------------------------------------------------
+.slack_auth_cont{
+  border: 1px solid #d1d1d1;
+  border-width: 1px 0;
+  margin: 0 1px;
+  padding: 20px 15px;
+  h4.title{
+    font-size: 16px;
+    font-weight: 400;
+    padding-bottom: 0;
+  }
+  p{
+    color: #aaa;
+    font-size: 13px;
+    padding-top: 10px;
+  }
+}
 
 // --------------------------------------------------------------------------------------------------
 //												Xero
@@ -1448,10 +1466,10 @@ span.beta {
 //------------------------------------------------------------------------------------------------------
 
 #field-mapping-tab{
-  	.field-mapping{
-  		position: relative;
-  		margin-top: 20px;
-  	}
+	.field-mapping{
+		position: relative;
+		margin-top: 20px;
+	}
  
   .field-disable{
 	  width: 100%;
@@ -1504,41 +1522,41 @@ span.beta {
 	  border: 1px solid #d2d2d2;
 	  border-radius: 2px;
 	  .contact-tabel-head{
-	  	background-color: #f3f3f3;
-	 	 border-bottom: 1px solid #d2d2d2;
-	  	color: #333;
-	  	padding-left: 60px;
+		  background-color: #f3f3f3;
+		 	border-bottom: 1px solid #d2d2d2;
+		  color: #333;
+		  padding-left: 60px;
 	  }
 	  .contact-tabel-data{
-		display: inline-block;
-		vertical-align: middle;
-		margin-top: 10px;
-		margin-bottom: 10px;
+			display: inline-block;
+			vertical-align: middle;
+			margin-top: 10px;
+			margin-bottom: 10px;
 	  }
 	  .field-1, .field-3{
-	 	width: 44%;
-	 	font-weight: 500;
+		 	width: 44%;
+		 	font-weight: 500;
 	  }
 	  .field-3{
 	  	padding-left: 6%;
 	  }
   }
-  	.nav-flat{
+  .nav-flat{
 	  a{
 	  	font-size: 15px;
 	  }
-    }
+  }
  }
- sf-title-wrapper, .switch-right{
+sf-title-wrapper, .switch-right{
  	position: absolute;
  	padding-top: 15px;
  	padding-left: 625px;
- }
+}
 
-  #inline-ul{
+#inline-ul{
     display: inline-block;
-  }
+}
 
-  #no-display{
+#no-display{
   	display: none;
-  }
+}
