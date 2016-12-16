@@ -86,7 +86,10 @@ module Freshfone
 
     def notify_warm_transfer_busy(status)
       return if completed_or_no_warm_transfer?(status)
-      create_child_call.update_call(DialCallStatus: status)
+      child_call = create_child_call
+      set_agent_response(child_call.account_id, child_call.id,
+                         child_call.user_id, status)
+      child_call.update_call(DialCallStatus: status)
       notifier.notify_warm_transfer_status(current_call, 'warm_transfer_status',
           status) && update_warm_transfer_leg if ['no-answer','busy'].include?(status)
       warm_transfer_call_leg.update_details(
