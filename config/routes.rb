@@ -2815,6 +2815,7 @@ Helpkit::Application.routes.draw do
           get :portal
           get :features
           get :email_config
+          get :latest_solution_articles
           put :add_day_passes
           put :change_api_limit
           put :change_v2_api_limit
