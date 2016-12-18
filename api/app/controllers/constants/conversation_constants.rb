@@ -27,4 +27,7 @@ module ConversationConstants
     update: [:json, :multipart_form],
     reply: [:json, :multipart_form]
   }.freeze
+
+  CARRIAGE_RETURN = "\r"
+
 end.freeze

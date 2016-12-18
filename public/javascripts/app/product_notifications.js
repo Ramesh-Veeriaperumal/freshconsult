@@ -25,7 +25,9 @@ window.App = window.App || {};
                    {country : "UK", phone : "+44 800 808-5790"},
                    {country : "Australia", phone : "+61 894 687-228"}], 
 
-        initialize: function () {
+
+        initialize: function (options) {
+            this.options = options;
             this.bindDocumentClick();
             this.bindNotification();
             this.bindSearchField();
@@ -87,15 +89,18 @@ window.App = window.App || {};
         },
         addNotificationClass: function (timeStamp) {
             if(timeStamp != "") {
-                var lastUpdatedDate = $($("#content-notify").children()[0]).data("timeStamp");
+                var lastUpdatedDate = $("#content-notify div:first-child").data("timeStamp");
                 if(lastUpdatedDate > timeStamp) {
-                	jQuery("#notifiication-icon").addClass("notification_present");
-                  jQuery('#notifiication-icon').click();
+                    jQuery("#notifiication-icon").addClass("notification_present");
+                    this.triggerNotificationIconClick();
                 } 
             } else {
-            		jQuery("#notifiication-icon").addClass("notification_present");
-                jQuery('#notifiication-icon').click();
+                jQuery("#notifiication-icon").addClass("notification_present");
+                this.triggerNotificationIconClick();
             }
+        },
+        triggerNotificationIconClick: function(){
+            if(!this.options.onBoardingPending) {$('#notifiication-icon').trigger("click");}
         },
         addHref: function (ev, link) {
             $(ev.currentTarget).attr("href", this.url + link);

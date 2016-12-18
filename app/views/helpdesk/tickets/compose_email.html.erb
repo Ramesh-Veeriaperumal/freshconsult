@@ -47,7 +47,7 @@
             data-is-trial="<%= do_spam_check? && free_admin_email_account? %>"
             data-limit="<%= get_trial_account_max_to_cc_threshold %>"
             data-msg="<%= t(:'flash.general.recipient_limit_exceeded', :limit =>get_trial_account_max_to_cc_threshold ) %>">
-      <label class="inline-label" for="cc-email-address"><%= t('helpdesk.cc') %>: </label>
+      <label class="inline-label" for="cc-email-address"><%= t('helpdesk.shared.cc_label') %>: </label>
           <%= render :partial => "helpdesk/tickets/ticket_widget/new_email_cc" %>
           <span class="hide-cc" data-action="hide-cc"><%= t('helpdesk.shared.hide_cc') %></span>
     </div>

@@ -1135,6 +1135,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
     @va_rules_after_save_actions ||= []
   end
 
+  def archive?
+    false
+  end
+
   private
     def sphinx_data_changed?
       description_html_changed? || requester_id_changed? || responder_id_changed? || group_id_changed? || deleted_changed?

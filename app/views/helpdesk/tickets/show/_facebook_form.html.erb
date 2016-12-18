@@ -28,7 +28,7 @@
       </li>       
       <li class="inline-field field clearField continous message">
         <%= f.fields_for :note_body, Helpdesk::NoteBody.new do |ff| %>
-        <%= ff.text_area :body, { :class => "required facebook auto-height #{@ticket.facebook_realtime_message? ? 'facebook-realtime' : '' }", :id => "#{id}-#{cntid}-body", :rows => "6", "data-domhelper-name" => "content-body", "data-reply-count" => "320" } %>
+        <%= ff.text_area :body, { :class => "required facebook auto-height #{@ticket.facebook_realtime_message? ? 'facebook-realtime' : '' }", :id => "#{id}-#{cntid}-body", :rows => "6", "data-domhelper-name" => "content-body", "data-reply-count" => Facebook::Constants::REALTIME_MESSSAGING_CHARACTER_LIMIT } %>
         <% end %>
       </li>
     </ul>

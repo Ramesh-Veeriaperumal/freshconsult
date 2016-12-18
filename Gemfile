@@ -266,6 +266,9 @@ group :test do
   gem "minitest", "4.7.5"
   gem 'json_expressions' # Used by API
   gem "timecop" # Used by API
+  gem 'yard-cucumber', :require => false
+  gem 'cucumber-rails', :require => false
+  gem 'cucumber_statistics'
 end
 
 #ruby 2.2.3 expects tesst-unit to be available by default.

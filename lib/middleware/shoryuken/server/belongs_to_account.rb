@@ -10,7 +10,14 @@ module Middleware
         end
   
         def call(worker_instance, queue, sqs_msg, body)
-          log_tags = (body['msg_uuid'] || sqs_msg.message_id.delete('-')) || []
+          begin
+            log_tags = []
+            log_tags = (body.try(:[], 'msg_uuid') || [])
+            log_tags = sqs_msg.message_id.delete('-') if (log_tags.blank? && sqs_msg.present? && sqs_msg.message_id.present?)
+          rescue Exception => e
+            log_tags = []
+          end
+
           Rails.logger.tagged(log_tags) do
             if !@ignore.include?(worker_instance.class.name)
               ::Account.reset_current_account

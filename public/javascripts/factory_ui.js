@@ -34,7 +34,7 @@ window.FactoryUI = {
 				.addClass(className)
 				.val(value);
 	},
-	multiple_text:function(_placeholder, _name, _value, _className){
+	multiple_text:function(_placeholder, _name, _value, _className, _privilege){
 		var className	= _className || "",
 			placeholder = _placeholder || "",
 			name		= _name || "",
@@ -44,6 +44,9 @@ window.FactoryUI = {
 				.prop({ "name": name, "placeholder":placeholder })
 				.addClass(className)
 				.val(value);
+		if(_privilege != undefined){
+			text_field.attr('rel','remote-tag').data('allowCreate',_privilege);
+		}
 		return text_field;
 	},
 	multiple_text_with_id:function(choices, _placeholder, _name, _value, _className){

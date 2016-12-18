@@ -47,15 +47,22 @@ class Freshfone::Caller < ActiveRecord::Base
   end
 
   def location
-    city_name || full_state_name || coded_country.name
+    city_name || state_name || coded_country.name
   end
 
   def city_name
     city if city.present?
   end
 
+  def state_name
+    return if state.blank?
+    return state if country != 'US'
+    full_state_name
+  end
+
   def full_state_name
-    coded_country.subregions.coded(state).name if state.present?
+    coded_state = coded_country.subregions.coded(state)
+    coded_state.name if coded_state.present?
   end
 
   def coded_country

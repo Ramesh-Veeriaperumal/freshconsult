@@ -24,6 +24,6 @@ module ApiWebhooks::Constants
 
   PERFORMER_ANYONE = '3'
 
-  WHITELISTED_DOMAIN = ['zapier.com', 'www.timecamp.com', 'app.hotline.io', 'app.konotor.com']
+  WHITELISTED_DOMAIN = ['zapier.com', 'www.timecamp.com', 'app.hotline.io', 'app.konotor.com', 'hooks.zapier.com']
 
 end

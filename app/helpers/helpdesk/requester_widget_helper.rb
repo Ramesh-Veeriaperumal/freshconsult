@@ -5,14 +5,27 @@ module Helpdesk::RequesterWidgetHelper
   include DateHelper
   include MemcacheKeys
 
-  COMPANY_FIELDS_DEFAULT_TYPES = [1]
-  CONTACT_FIELDS_DEFAULT_TYPES = [1,2]
-  CONTACT_FIELDS_EXCLUDE_TYPES = [7,8]
-  WIDGET_FIELDS_MAX_COUNT = 7
-  CONTACT_WIDGET_MAX_DISPLAY_COUNT = 5
-  MAX_CHAR_LENGTH = 230
-  PHONE_NUMBER_FIELDS = [4,5]
-  MAX_LABEL_LENGTH = 10
+  COMPANY_FIELDS_DEFAULT_TYPES      = [:default_name]
+  CONTACT_FIELDS_DEFAULT_TYPES      = [:default_name, :default_job_title]
+  CONTACT_FIELDS_EXCLUDE_TYPES      = [:default_company_name, :default_client_manager]
+  COMPANY_FIELDS_EXCLUDE_TYPES      = [:default_domains]
+  WIDGET_FIELDS_MAX_COUNT           = 12
+  DEFAULT_FIELDS_COUNT              = 3
+  CONTACT_WIDGET_MAX_DISPLAY_COUNT  = 5
+  MAX_CHAR_LENGTH                   = 230
+  PHONE_NUMBER_FIELDS               = [:default_phone, :default_mobile]
+  MAX_LABEL_LENGTH                  = 14
+  FIELDS_INFO                       = { :contact => 
+                                        { :form             => "contact_form",
+                                          :disabled_fields  => ["email"],
+                                          :loading_icon     => false
+                                        }, 
+                                        :company => 
+                                          { :form             => "company_form",
+                                            :disabled_fields  => ["name"],
+                                            :loading_icon     => false
+                                          }
+                                        }
 
   def requester_widget_fields
     key = REQUESTER_WIDGET_FIELDS % { :account_id => current_account.id }
@@ -30,29 +43,29 @@ module Helpdesk::RequesterWidgetHelper
   end
 
   def default_requester_widget_fields
-    widget_fields = default_customer_fields | default_company_fields
+    widget_fields = default_contact_fields | default_company_fields
   end
 
-  def default_customer_fields
-    customer_fields =  current_account.contact_form.contact_fields.select { |field|
-      CONTACT_FIELDS_DEFAULT_TYPES.include?(field["field_type"])
+  def default_contact_fields
+    contact_fields =  current_account.contact_form.contact_fields.select { |field|
+      default_widget_field?(field)
     }
   end
 
-  def company_field_of_contact_form
-    current_account.contact_form.contact_fields.select { |field|
+  def contact_form_company_field
+    current_account.contact_form.contact_fields.find { |field|
       field["name"] == "company_name"
     }
   end
 
   def default_company_fields
     company_fields =  current_account.company_form.company_fields.select { |field|
-      COMPANY_FIELDS_DEFAULT_TYPES.include?(field["field_type"])
+      default_widget_field?(field)
     }
   end
 
-  def requester_widget_customer_fields
-    default_customer_fields | custom_customer_fields
+  def requester_widget_contact_fields
+    default_contact_fields | custom_contact_fields
   end
 
   def requester_widget_company_fields
@@ -61,22 +74,19 @@ module Helpdesk::RequesterWidgetHelper
 
   def requester_widget_addable_contact_fields
     ignore_fields = CONTACT_FIELDS_EXCLUDE_TYPES + CONTACT_FIELDS_DEFAULT_TYPES
-    current_account.contact_form.contact_fields.select { |field|
-      !ignore_fields.include?(field["field_type"])
-    } - requester_widget_custom_fields
+    current_account.contact_form.contact_fields.reject {|field| ignore_fields.include?(field.field_type)} - requester_widget_custom_fields
   end
 
   def requester_widget_addable_company_fields
-    current_account.company_form.company_fields.select { |field|
-      !COMPANY_FIELDS_DEFAULT_TYPES.include?(field["field_type"])
-    } - requester_widget_custom_fields
+    ignore_fields = COMPANY_FIELDS_EXCLUDE_TYPES + COMPANY_FIELDS_DEFAULT_TYPES
+    current_account.company_form.company_fields.reject {|field| ignore_fields.include?(field.field_type)} - requester_widget_custom_fields
   end
 
-  def get_user_default_fields_count user
+  def get_user_default_fields_count user, company
     count = 0
     requester_widget_default_fields.each do |field|
-      obj = field.is_a?(ContactField) ? user : user.company
-      if obj && obj.send(field.name).present?
+      obj = field.is_a?(ContactField) ? user : company
+      if field_value(field, obj).present?
         count=count+1
       end
     end
@@ -84,25 +94,25 @@ module Helpdesk::RequesterWidgetHelper
   end
 
   def phone_field_data_attributes user, value
-    return "data-contact-id='#{user.id}' data-phone-number='#{value}'"
+    "data-contact-id='#{user.id}' data-phone-number='#{value}'"
   end
 
-  def construct_widget_fields user
+  def construct_widget_fields user, company
     html = ""
-    count = get_user_default_fields_count user
+    count = get_user_default_fields_count(user, company)
     requester_widget_custom_fields.each do |field|
-      obj = field.is_a?(ContactField) ? user : user.company
-      if obj && obj.respond_to?(field.name) && obj.send(field.name).present?
+      obj = field.is_a?(ContactField) ? user : company
+      if field_value(field, obj).present?
         html << "<div class='widget-more-content hide'>" if count == CONTACT_WIDGET_MAX_DISPLAY_COUNT
         count=count+1
         value = obj.send(field.name)
         value = format_field_value(field, value) || value
         html << "<div class='contact-append'>
-          <span class='add-on field-label'>
+          <span class='add-on field-label  #{ "long_text" if (field.label.length > MAX_LABEL_LENGTH) }'>
           <span class='label-name  #{ "tooltip" if (field.label.length > MAX_LABEL_LENGTH) }'
             title='#{ field.label if (field.label.length > MAX_LABEL_LENGTH) }'>
-          #{field.label}</span>:</span>
-          <span class='field-value #{"can-make-calls" if PHONE_NUMBER_FIELDS.include?(field["field_type"]) && field.is_a?(ContactField)}' #{phone_field_data_attributes(user, value) if PHONE_NUMBER_FIELDS.include?(field["field_type"]) && field.is_a?(ContactField)}>#{value}</span>
+          #{field.label}</span></span><span class='label-colon'>:</span>
+          <span class='field-value #{"can-make-calls" if phone_field?(field)}' #{phone_field_data_attributes(user, value) if phone_field?(field)}>#{value}</span>
         </div>"
       end
     end
@@ -115,65 +125,72 @@ module Helpdesk::RequesterWidgetHelper
     html
   end
 
-  def construct_requester_widget_field form_builder, requester, field
-    args = {}
-    field_value = field.default_value
+  def construct_requester_widget_field form_builder, object, field
+    obj_name    = object_name field
+    class_name  = FIELDS_INFO[obj_name][:form].clone
+    class_name = 'field_maxlength '+ class_name if field.name == "address"
+    enabled     = FIELDS_INFO[obj_name][:disabled_fields].exclude?(field.name)
+    required    = enabled ? field.required_for_agent : false
+    value       = field_value(field, object)
     placeholder = field.dom_placeholder
-    disabled = false
-    if field.class == ContactField
-      field_value = (field_value = requester.send(field.name)).blank? ? field.default_value : field_value
-      obj = :contact
-      required = field.required_for_agent
-      class_name = "contact_form"
-      disabled = ["email"].exclude?(field.name)
-    else
-      field_value = (field_value = requester.company.send(field.name)).blank? ?
-        field.default_value : field_value if requester.company.present?
-      obj = :company
-      # to be enabled if company name edit is enabled
-      #required = field.name == "name" ? company_field_of_contact_form[0].required_for_agent : field.required_for_agent
-      required = field.required_for_agent # to be removed if company name edit is enabled
-      class_name = "company_form"
-      disabled = true
-      if field.name == "name"
-        disabled = false # to be removed if company name edit is enabled
-        required = false # to be removed if company name edit is enabled
+    args        = { :include_loading_symbol => FIELDS_INFO[obj_name][:loading_icon]}
+
+    if obj_name == :company
+      if required
+        class_name = 'compare-required '+ class_name 
+        required = false
+      end
+      if field.name == "name" && value.blank?
+        required = contact_form_company_field.required_for_agent
+        enabled = true
         args[:autocomplete] = true
         placeholder = I18n.t('requester_widget.search_company')
+        class_name = 'company-required '+ class_name
       end
-      args[:include_loading_symbol] = true
     end
-
-    CustomFields::View::DomElement.new(form_builder, obj, class_name, field, field.label,
-      field.dom_type, required, disabled, field_value, placeholder,
-      field.bottom_note, args).construct
+    CustomFields::View::DomElement.new(form_builder, obj_name, class_name, field, field.label,
+      field.dom_type, required, enabled, value, placeholder, field.bottom_note, args).construct
   end
 
   private
 
-    def custom_requester_widget_fields
-      widget_fields = custom_customer_fields | custom_company_fields
-      widget_fields.sort_by { |field| field["field_options"]["widget_position"] }
+    def field_value(field, object)
+      value = (object.present? && object.send(field.name).present?) ? object.send(field.name) : field.default_value
     end
 
-    def custom_customer_fields
-      customer_fields = current_account.contact_form.contact_fields.select { |field|
-        field["field_options"].present? && field["field_options"].key?("widget_position")
+    def object_name field
+      field.is_a?(ContactField) ? :contact : :company
+    end
+
+    def phone_field? field
+      PHONE_NUMBER_FIELDS.include?(field.field_type)
+    end
+
+    def default_widget_field? field
+      (field.is_a?(ContactField) ? CONTACT_FIELDS_DEFAULT_TYPES : COMPANY_FIELDS_DEFAULT_TYPES).include?(field.field_type)
+    end
+
+    def custom_requester_widget_fields
+      widget_fields = custom_contact_fields | custom_company_fields
+      widget_fields.sort_by { |field| field.field_options["widget_position"] }
+    end
+
+    def custom_contact_fields
+      contact_fields = current_account.contact_form.contact_fields.select { |field|
+        field.field_options.present? && field.field_options.key?("widget_position")
       }
-      customer_fields.sort_by { |field| field["field_options"]["widget_position"] }
+      contact_fields.sort_by { |field| field.field_options["widget_position"] }
     end
 
     def custom_company_fields
       company_fields = current_account.company_form.company_fields.select { |field|
-        field["field_options"].present? && field["field_options"].key?("widget_position")
+        field.field_options.present? && field.field_options.key?("widget_position")
       }
-      company_fields.sort_by { |field| field["field_options"]["widget_position"] }
+      company_fields.sort_by { |field| field.field_options["widget_position"] }
     end
 
     def truncate_widget_field_value value
-      "#{value[0..MAX_CHAR_LENGTH]}
-      <span class='hidden-text hide'>#{value[MAX_CHAR_LENGTH..-1]}</span>
-      <span class='more-toggle'><i id='ficon-ellipsis' class='ficon-ellipsis'></i></span>"
+      "#{value[0..MAX_CHAR_LENGTH-1]}<span class='hidden-text hide'>#{value[MAX_CHAR_LENGTH..-1]}</span><span class='more-toggle'><i id='ficon-ellipsis' class='ficon-ellipsis'></i></span>"
     end
 
     def format_field_value field, value

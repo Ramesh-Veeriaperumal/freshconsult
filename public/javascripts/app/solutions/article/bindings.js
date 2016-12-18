@@ -25,7 +25,6 @@ window.App = window.App || {};
       $('body').on('modal_loaded.articles', function () {
         $this.articleTags = $('#tags_name').val();
         $this.articleTags = $this.articleTags !== "" ? $this.articleTags.split(",") : "";
-        $this.setTagSelector();
         $this.articleProperties();
         $this.checkTranslations();
         
@@ -273,57 +272,6 @@ window.App = window.App || {};
         }
         window.pjaxify(path);
       });
-    },
-
-    setTagSelector: function () {
-      var $this = this,
-		previouslyselectedTags = [],
-                  select_init_data = {
-                    multiple: true,
-                    maximumInputLength: 32,
-                    data: previouslyselectedTags,
-                    minimumInputLength: 1,
-                    quietMillis: 500,
-                    tags: true,
-                    tokenSeparators: [','],
-                    ajax: {
-                      url: '/search/autocomplete/tags',
-                      dataType: 'json',
-                      data: function (term) {
-                        return { q: term };
-                      },
-                      results: function (data) {
-                        var results = [];
-                        $.each(data.results, function (i, item) {
-                          var result = escapeHtml(item.value);
-                          results.push({ id: result, text: result });
-                          window.results = results;
-                        });
-                        return { results: results };
-
-                      }
-                    },
-                    initSelection : function (element, callback) {
-                      callback(previouslyselectedTags);
-                    },
-                    formatInputTooLong: function () {
-                      return $this.STRINGS.maxInput;
-                    },
-                    formatInputTooShort: function (input, min) { 
-                      return I18n.t('validation.select2_minimum_limit', {char_count : min - input.length}); 
-                    }
-                 };
-
-      if($('.article-tags').data('allowCreate') != false){
-            select_init_data.createSearchChoice = function (term, data) {
-                  if ($(data).filter(function () { return this.text.localeCompare(term) === 0; }).length === 0) {
-                    return { id: term, text: term };
-                  }
-            };
-      }
-
-      $('.article-tags').val().split(',').each(function (item, i) { previouslyselectedTags.push({ id: item, text: item }); });
-      $('.article-tags').select2(select_init_data);
     },
 
     bindForShowMaster: function () {

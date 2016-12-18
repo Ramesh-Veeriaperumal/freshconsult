@@ -57,6 +57,12 @@
     text-transform: capitalize;
   	a{ color:#999; }
     a:hover{ color:#336699; }
+    .requester-notice{
+      color:#CF2925;
+      position: relative;
+      top: 1px;
+      @include padding-right(4px)
+    }
   }
   .infoblock{
     @include padding-left(35px);

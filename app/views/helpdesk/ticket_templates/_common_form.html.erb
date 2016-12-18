@@ -1,7 +1,7 @@
 <div class='ticket-form-title clearfix'>
 	<span class="span6 ticket-form-title-header">
 	<h3 class="lead"><%= t('ticket_templates.form_title')%></h3></span>
-	<% if ["new_child", "edit_child"].include? params[:action] %>
+	<% if ["new_child", "apply_existing_child" , "edit_child"].include? params[:action] %>
 		<span class="inherit_parent-wrapper">
 			<i class="ficon-inherit-parent fsize-16 pull-right tooltip inherit_parent" data-inherit-all='false' twipsy-content-set='true'  data-original-title='<%= t('ticket_templates.child_template.inherit_parent') %>'></i>
 		</span>

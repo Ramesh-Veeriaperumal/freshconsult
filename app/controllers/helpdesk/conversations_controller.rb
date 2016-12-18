@@ -265,6 +265,7 @@ class Helpdesk::ConversationsController < ApplicationController
       end
 
       def validate_facebook_dm_reply
+        @item.body.delete!(ConversationConstants::CARRIAGE_RETURN)
         create_error(:facebook) if @item.notable.facebook_realtime_message? and @item.body.length > Facebook::Constants::REALTIME_MESSSAGING_CHARACTER_LIMIT
       end
       

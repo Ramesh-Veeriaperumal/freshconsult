@@ -2,7 +2,7 @@
 <% show_recent_tickets ||= :filter %>
 <% link_target = local_assigns.has_key?(:new_tab) ? "_blank" : "_self"  %>
 <% strange_number = strange_number?(user.available_number) if user.available_number.present? %>
-<div class="contact_hover requester_widget">
+<div class="contact_hover requester_widget clearfix" id="requester_contact_info">
   <%= user_avatar(user, :thumb, 'preview_pic small') %>
   <div class="infoblock muted">
     <%= content_tag :div, link_to(h(user.display_name), user, :target => link_target,
@@ -16,25 +16,25 @@
       </div>
     <% else %>
       <div class="user_design">
-        <% unless user.job_title.blank? %>
+        <% if user.job_title.present? %>
             <div class="break-word user-job-title" title="<%= h user.job_title %>">
                 <%= h user.job_title %>
               </div>
         <% end %>
         <%= render :partial => "helpdesk/tickets/components/company_info",
-                   :locals => { :company => user.company } %>
+                   :locals => { :company => company, :requester_widget => true } %>
         <% if feature?(:gamification) and feature?(:gamification_enable) and user.agent? %>
-          <%= content_tag :div, h(user.agent.level.name) unless user.agent.level.blank? %>
+          <%= content_tag :div, h(user.agent.level.name) if user.agent.level.present? %>
         <% end %>
       </div>
 
-      <%= construct_widget_fields(user).html_safe if privilege?(:manage_contacts) %>
+      <%= construct_widget_fields(user, company).html_safe if privilege?(:view_contacts) %>
 
       <div class="pull-right">
         <span class="recent-tickets">
           <% case show_recent_tickets %>
             <% when :dialog then %>
-              <% if ticket.is_a?(Helpdesk::ArchiveTicket) %>
+              <% if ticket.archive? %>
                 <%= link_to t('ticket.recent_tickets'),
                       "/helpdesk/archive_tickets/#{ticket.id}/component?component=requester_tickets",
                       :rel => 'freshdialog',
@@ -61,7 +61,7 @@
               <% end %>
           <% end %>
         </span>
-        <% unless user.agent? || !privilege?(:manage_contacts) || user.deleted || user.blocked %>
+        <% if user.customer? && user.valid_user? && privilege?(:manage_contacts) && !ticket.archive? %>
           <span class="dash-seperator"> - </span>
           <%= link_to t('requester_widget_edit'),
                         "#requester-widget-user-edit-dialog",
@@ -77,64 +77,3 @@
     <% end %>
   </div>
 </div>
-
-<%= javascript_tag do %>
-jQuery(document).ready(function()
-{
-  var tags_options = "<%= escape_javascript(current_account.tags.most_used(25).collect{|tag| tag.name}.join(',').html_safe) %>";
-  jQuery('.requester_widget span.widget-more-toggle').click(function(){
-    if(jQuery(this).hasClass('condensed')){
-      jQuery(this).parents('.requester_widget').find('div.widget-more-content').slideDown('fast','easeInQuad');
-      jQuery(this).removeClass('condensed');
-      jQuery(this).text('<%= t("requester_widget_less")%>');
-    } else {
-      jQuery(this).addClass('condensed');
-      jQuery(this).parents('.requester_widget').find('div.widget-more-content').slideUp('fast','easeOutQuad');
-      jQuery(this).text('<%= t("requester_widget_more")%>')
-    }
-  });
-
-  jQuery("input[name='contact[tag_names]']").select2({
-    tags: tags_options.split(","),
-    tokenSeparators: [',']
-  });
-
-  jQuery('.requester_widget span.more-toggle').click(function(){
-    var toggle = this;
-    if(jQuery(toggle).parent().hasClass('expanded')){
-      jQuery(toggle).parent().find('.hidden-text').hide();
-      jQuery(toggle).parent().removeClass('expanded');
-    }else{
-      jQuery(toggle).parent().addClass('expanded');
-      jQuery(toggle).parent().find('.hidden-text').slideDown('fast','linear');
-    }
-  });
-
-  jQuery(document).bind("show", "#requester-widget-user-edit-dialog", function(e){
-    jQuery(".requester-widget-user-fields .field-set label").each(function(){
-      if(jQuery(this).text().length > 11){
-        jQuery(this).attr('title',jQuery(this).text());
-        jQuery(this).addClass('tooltip');
-      }
-    });
-    jQuery("#company_domains").select2({
-      multiple: true,
-      tags:[],
-      tokenSeparators: [","," "],
-      minimumResultsForSearch: -1,
-      selectOnBlur: true,
-      dropdownCssClass: "requester-widget-domain-names"
-    });
-
-    jQuery(document).bind('select2-removed',"#company_domains", function(e){
-      jQuery('#domain_name-error').remove();
-    });
-
-
-  });
-
-
-
-});
-<% end %>
-

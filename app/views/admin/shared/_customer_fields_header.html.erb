@@ -10,8 +10,7 @@
     </div>
     <div class="pull-right">
 
-      <!-- disabling the requester widget temporarily -->
-      <% if current_account.features?(:cti) %>
+      <% if current_account.launched?(:requester_widget) || current_account.features?(:cti) %>
       <span>
         <%= link_to t('customize_requester_widget'), 
                       "/admin/requester_widget/get_widget",
