@@ -118,7 +118,7 @@ module Helpdesk::RequesterWidgetHelper
     end
 
     if count > CONTACT_WIDGET_MAX_DISPLAY_COUNT
-      html << "</div><div class='pull-left'>
+      html << "</div><div class='clearfix'><div class='pull-left'>
         <span class='widget-more-toggle condensed'>#{t("requester_widget_more")}</span>
       </div>"
     end
