@@ -1,0 +1,1 @@
+JSON.generate(@items.map{|i| i.attributes.slice('id', 'title', 'content', 'content_html', 'folder_id') })

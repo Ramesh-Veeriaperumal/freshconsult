@@ -33,8 +33,6 @@ module Ember
       @ca_response_3 = create_canned_response(@ca_folder_all.id, Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:group_agents])
     end
 
-    # Only 1 action : show
-
     # tests for show
     # 1. show the response visible to all
     # 2. should show personal responses
@@ -73,6 +71,74 @@ module Ember
     def test_show_invalid_folder_id
       get :show, construct_params({ version: 'private' }, false).merge(id: 0)
       assert_response 404
+    end
+    
+    
+    # tests for Index
+    # 1. 404 when there are no ids
+    # 2. 404 when the ids are invalid
+    # 3. Show for single id
+    # 4. Show for mulitple id all valid ones
+    # 5. Show empty array for all invalid ones
+    # 6. Combine 2 valid ids and and 2 invalid ids
+    
+    def test_index_404_when_no_ids
+      get :index, controller_params( version: 'private' )
+      assert_response 404
+    end
+    
+    def test_index_404_for_invalid_ids
+      get :index, controller_params(version: 'private', ids: 'a,b,c')
+      assert_response 404
+    end
+
+    def test_index_for_one_ca
+      get :index, controller_params(version: 'private' , ids: @ca_response_1.id)
+      assert_response 200
+      match_json([ca_response_show_pattern(@ca_response_1.id)])
+    end
+
+    def test_index_for_multiple_ca
+      get :index, controller_params(version: 'private' , ids: [@ca_response_1,@ca_response_2,@ca_response_3].map(&:id).join(', '))
+      assert_response 200
+      pattern = []
+      [@ca_response_1,@ca_response_2,@ca_response_3].each do |ca|
+        pattern << ca_response_show_pattern(ca.id)
+      end
+      match_json(pattern)
+    end
+    
+
+    def test_index_for_multiple_ca
+      get :index, controller_params(version: 'private' , ids: [@ca_response_1,@ca_response_2].map(&:id).join(', '))
+      assert_response 200
+      pattern = []
+      [@ca_response_1,@ca_response_2].each do |ca|
+        pattern << ca_response_show_pattern(ca.id)
+      end
+      match_json(pattern)
+    end
+
+    def test_index_for_multiple_ca_with_inaccessible_ids
+      get :index, controller_params(version: 'private' , ids: [@ca_response_1,@ca_response_2, @ca_response_3].map(&:id).join(', '))
+      assert_response 200
+      pattern = []
+      [@ca_response_1,@ca_response_2].each do |ca|
+        pattern << ca_response_show_pattern(ca.id)
+      end
+      match_json(pattern)
+      # @ca_response_3 will not be present here.
+    end
+
+    def test_index_for_multiple_ca_with_invalid_ids
+      get :index, controller_params(version: 'private' , ids: [@ca_response_1,@ca_response_2, @ca_response_3].map(&:id).join(', ') << ',a,b,c')
+      assert_response 200
+      pattern = []
+      [@ca_response_1,@ca_response_2].each do |ca|
+        pattern << ca_response_show_pattern(ca.id)
+      end
+      match_json(pattern)
+      # @ca_response_3 will not be present here.
     end
 
   end
