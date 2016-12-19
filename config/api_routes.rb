@@ -247,7 +247,7 @@ Helpkit::Application.routes.draw do
     resources :scenario_automations, controller: 'ember/scenario_automations', only: :index
     resources :attachments, controller: 'ember/attachments', only: [:create, :destroy]
     resources :canned_response_folders, controller: 'ember/canned_response_folders', only: [:index, :show]
-    resources :canned_responses, controller: 'ember/canned_responses', only: [:show]
+    resources :canned_responses, controller: 'ember/canned_responses', only: [:show, :index]
     
     resources :twitter_handles, controller: 'ember/twitter_handles', only: [:index] do
       member do
