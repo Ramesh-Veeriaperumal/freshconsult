@@ -2480,7 +2480,7 @@ Helpkit::Application.routes.draw do
         get :suggest_topic
       end
       match '/topics/suggest', :action => 'suggest_topic'
-      match '/articles/:article_id/related_articles', :action => 'related_articles'
+      match '/articles/:article_id/related_articles', :action => 'related_articles', via: :get
     end
 
     resources :discussions, :only => [:index, :show] do
