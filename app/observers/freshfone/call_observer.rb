@@ -244,10 +244,11 @@ class Freshfone::CallObserver < ActiveRecord::Observer
     end
 
     def update_pinged_agent_response_and_info(call)
+      call_meta = call.meta
+      return if call_meta.blank?
       pinged_meta = get_and_clear_redis_meta(call)
       agent_response = pinged_meta.first
       agent_info = pinged_meta.second['agent_info']
-      call_meta = call.meta
       call_meta.pinged_agents.each do |agent|
         redis_response = agent_response[agent[:id].to_s]
         agent[:response] = Freshfone::CallMeta::PINGED_AGENT_RESPONSE_HASH[
