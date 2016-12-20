@@ -1943,6 +1943,7 @@ en:
         title: New Product
         saving: Saving...
       portal:
+        invalid_linkback_url: Please enter a valid linkback url.
         select_forum_category: Select a forum category...
         portal_rebranding: Portal rebranding
         cname_configure_info: Before using this field please ensure that you have created a CNAME DNS record in your DNS Zone file to point <strong>help.<b id="domain_info_name">yourcompany</b>.com</strong> to %{full_domain}. Your Webmaster or Server administrator should be able to help you set this up correctly
