@@ -521,10 +521,12 @@ $('.btn-collapse').livequery(
 	$('[rel=remote-tag]').livequery(function() {
 		var hash_val = []
 		var _this = $(this);
+		_this.val().split(",").each(function(item, i){ hash_val.push({ id: item, text: item }); });
 		var select_init_data = {
 			multiple: true,
 			minimumInputLength: 1,
 			maximumInputLength: 32,
+			tokenSeparators: [','],
 			data: hash_val,
 			quietMillis: 500,
 			ajax: {
@@ -543,13 +545,29 @@ $('.btn-collapse').livequery(
 			        }
 			},
 			initSelection : function (element, callback) {
-			  callback(hash_val);
+			  var data = [];
+			  element.val().split(',').each(function(item){item = item.trim(); if(item != '')data.push({id: item, text: item})});
+			  callback(data);
 			},
 			formatInputTooShort : function (input, min) {
       				return I18n.t('validation.select2_minimum_limit', {char_count : min - input.length});
       			},
-		    	formatInputTooLong: function () {
-      				return MAX_TAG_LENGTH_MSG;
+		    	formatInputTooLong: function () { 
+      				return MAX_TAG_LENGTH_MSG; 
+      			},
+      			formatResult: function(result, container, query, escapeMarkup) {
+		            var markup=[], resultmarkup;
+		            window.Select2.util.markMatch(result.text, query.term, markup, escapeMarkup);
+		            resultmarkup = markup.join("");
+		            if(result.flag){
+      				resultmarkup = "<i class='tag_new_label pr5'>"+I18n.t('common_js_translations.new')+"</i>"+resultmarkup;
+			   }
+			   return resultmarkup;
+		        },
+      			formatResultCssClass: function(item){
+      				if(item.flag){
+      					return 'new-tag-create';
+      				}
       			}
 		};
 
@@ -557,10 +575,9 @@ $('.btn-collapse').livequery(
 			select_init_data.createSearchChoice = function(term, data) {
 		  	//Check if not already existing & then return
 			        if ($(data).filter(function() { return this.text.localeCompare(term)===0; }).length===0)
-				        return { id: term, text: term };
+				        return { id: term, text: term, flag:true };
 			};
 		}
-		_this.val().split(",").each(function(item, i){ hash_val.push({ id: item, text: item }); });
 		_this.select2(select_init_data);
 	}, function(){
 		$(this).select2('destroy');

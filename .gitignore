@@ -17,6 +17,8 @@
 # Ignore all api docs
 doc/api
 doc/app
+doc/core
+.yardoc
 db/*.sqlite3
 *.swp
 *
@@ -61,3 +63,4 @@ test/api/query_reports
 reports.csv
 reports.html
 reports.json
+features/cucumber_statistics

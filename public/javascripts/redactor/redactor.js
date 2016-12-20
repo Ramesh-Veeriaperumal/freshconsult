@@ -4799,26 +4799,47 @@ $.fn.insertExternal = function(html)
 	// Options and variables	
 	function Quotedtext(redactor, options) {
 		this.opts = $.extend({		
-			class_name: "q-marker",
+			quote_class: "q-marker",
+			remove_quote_class: "remove-quote",
+			hover_container_class: "wrap-quoted-remove",
 			template: "<div class='wrap-marker'></div>",
-			tooltip_text: "Show quoted text"
+			tooltip_text: I18n.t('show_quoted_text'),
+			tooltip_remove_quote: I18n.t('common_js_translations.remove_quoted_text')
 		}, options);
  
 		this.$redactor 			= redactor;
 		this.$redactor.$quoted 	= this;
 		this.$quoted_area 		= $(this.$redactor.$el.data("quotedTextarea"));
-		this.$marker 			= $("<span class='"+this.opts.class_name+" tooltip' title='"+this.opts.tooltip_text+"' />")
-		this.$template 			= $(this.opts.template).append(this.$marker);
+		this.$remove_quote_marker = $("<span class='ficon-cross fsize-15 tooltip hide "+this.opts.remove_quote_class+"' title='"+this.opts.tooltip_remove_quote+"' />")
+		this.$quote_marker 			= $("<span class='"+this.opts.quote_class+" tooltip' title='"+this.opts.tooltip_text+"' />")
+		this.$template 			= $(this.opts.template);
+		this.$hover_container = $("<span class='"+this.opts.hover_container_class+"'></span>").append(this.$quote_marker)
 		this.$form 				= this.$redactor.$el.get(0).form;
-		this.$draft_added       = false;
+		this.$quote_added       = false;
+		this.$remove_tooltip_flag = false;
+		this.$remove_quote_option = this.$redactor.$el.data("removeQuote");
 	}
  
 	Quotedtext.prototype = {
 		init: function(){
+			if(this.$remove_quote_option){
+				$(this.$redactor.$box).delegate("."+this.opts.remove_quote_class, "click.quotedtext", $.proxy(this.removeQuotedText, this));
+				this.$hover_container.append(this.$remove_quote_marker);
+				$(this.$redactor.$box).delegate("."+this.opts.hover_container_class, "mouseenter.quotedtext mouseleave.quotedtext", $.proxy(this.toggleRemoveOption, this));
+			}
+			this.$template.append(this.$hover_container);
 			this.$template.insertAfter(this.$redactor.$editor);
 			this.checkQuotedText();
-			jQuery(this.$form).on("submit.quotedtext", $.proxy(this.syncQuotedText, this))
-			jQuery(this.$redactor.$box).delegate("."+this.opts.class_name, "click.quotedtext", $.proxy(this.insertQuotedText, this));
+			$(this.$form).on("submit.quotedtext", $.proxy(this.syncQuotedText, this));
+			$(this.$redactor.$box).delegate("."+this.opts.quote_class, "click.quotedtext", $.proxy(this.insertQuotedText, this));
+		},
+		toggleRemoveOption: function(){
+			this.$remove_quote_marker.toggle();
+		},
+		removeQuotedText: function(){
+			$(".twipsy").remove();
+			this.$remove_tooltip_flag = true;
+			this.$template.remove();
 		},
 		insertQuotedText: function(){
 			if("content" in document.createElement("template")){
@@ -4832,12 +4853,12 @@ $.fn.insertExternal = function(html)
 			this.$redactor.syncCode();
 			this.checkQuotedText();
 		},
-		checkQuotedText: function(){			
-			this.$draft_added = this.$redactor.$editor.find(".freshdesk_quote").get(0) ? true : false
-			this.$template.toggle(!this.$draft_added);
+		checkQuotedText: function(){
+			this.$quote_added = this.$redactor.$editor.find(".freshdesk_quote").get(0) ? true : false
+			this.$template.toggle(!this.$quote_added);
 		},
 		syncQuotedText: function(){
-			if(!this.$draft_added){
+			if(!this.$quote_added && !this.$remove_tooltip_flag){
 				var quoted_clone;
 				if("content" in document.createElement("template")){
 					var quoted_clone = document.importNode(this.$quoted_area[0].content, true);
@@ -4851,13 +4872,17 @@ $.fn.insertExternal = function(html)
 			}
 		},
 		reset: function(){
-			this.$draft_added = false;
+			this.$remove_quote_option = false;
+			this.$quote_added = false;
+			this.$remove_tooltip_flag = false;
 		},
 		destroy: function(){
-			this.$draft_added = false;
+			this.$remove_quote_option = false;
+			this.$quote_added = false;
+			this.$remove_tooltip_flag = false;
 			this.$template.remove();
-			jQuery(this.$form).off(".quotedtext");
-			jQuery(this.$redactor.$box).off(".quotedtext");
+			$(this.$form).off(".quotedtext");
+			$(this.$redactor.$box).off(".quotedtext");
 		}
 	};
  

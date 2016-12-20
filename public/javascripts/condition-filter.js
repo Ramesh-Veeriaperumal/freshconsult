@@ -285,16 +285,31 @@ rules_filter = function(_name, filter_data, parentDom, options){
       				rule['evaluate_on'] = rule['evaluate_on'] || 'ticket';                  				
       			}
 			},
+		format_tag_data: function(){
+			var add_tag_rules = setting.init_feed.filter(function(rule){
+				return rule.name == "add_tag"
+			});
+
+			if(add_tag_rules.length > 1){
+				var tag_list = []
+				setting.init_feed = setting.init_feed.filter(function(rule){
+					return rule.name != "add_tag"
+				});
+				add_tag_rules.each(function(rule){
+					tag_list.push(rule.value);
+				});
+				setting.init_feed.push({name : "add_tag", value: tag_list.join(',')});
+			}
+		},
 		// Used to Edit pre-population
 		feed_data:
 
-         function(dataFeed){	
+         function(dataFeed){
             dataFeed.each(function(rule){            	
              try{
                   var r_dom	= domUtil.getContainer(name);
                   var inner	= jQuery("<div class = 'dependent' />");
                   var data_id = rule.name + itemManager.get();
-
                   if(rule.operator){	
                   	try{
                   		if(setting.is_requester) {
@@ -311,7 +326,6 @@ rules_filter = function(_name, filter_data, parentDom, options){
                   if(rule.name == "set_nested_fields"){
                   	rule.name = rule.category_name;
                   }
-
                   if(name == "event"){
 	                  switch (hg_data.get(rule.name).type)
 	                  {
@@ -376,7 +390,7 @@ rules_filter = function(_name, filter_data, parentDom, options){
                   postProcessCondition(hg_data.get(rule.name), data_id);
              }catch(e){}
             });
-			this.dom_size = dataFeed.length+1;
+	this.dom_size = dataFeed.length+1;
     },
 
     	refresh_item: 
@@ -507,8 +521,10 @@ rules_filter = function(_name, filter_data, parentDom, options){
 
 				domUtil.add_to_hash(filter_data);
 
-				if(setting.init_feed.length)
+				if(setting.init_feed.length){
+					domUtil.format_tag_data();
 					domUtil.feed_data(setting.init_feed);
+				}
 				else
 					domUtil.add_dom();	
 					
@@ -574,7 +590,6 @@ rules_filter = function(_name, filter_data, parentDom, options){
 									$this = jQuery(this);
 							//shared ownership changes
 							jQuery($this).parent().children('.ficon-notice-o').remove();
-
 							if(this.value !== -1){
 								var hg_item = hg_data.get(this.value);
 								var data_id = hg_item.name + itemManager.get();

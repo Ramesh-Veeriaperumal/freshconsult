@@ -1,15 +1,8 @@
-if @requester_errors
-  if @company_name_required_error || @company_association_exists
-    error_message  = "<label id=\"company_name-error\" class=\"error\" for=\"company_name\">#{@company_name_required_error? t('requester_widget.company_required') : t('requester_widget.company_association_exists')}.</label>"
-    page << "jQuery('#company_name-error').remove();"
-    page << "jQuery('#company_name').removeClass('error').addClass('error');"
-    page << "jQuery('#company_name').after('#{error_message}');"
-  elsif @existing_company.present?
-    error_message  = "<label id=\"domain_name-error\" class=\"error\" for=\"domain_name\">#{t('companies.info1')}. #{link_to t('companies.view_company') , company_path(@existing_company) , target: '_blank'}</label>"
-    page << "jQuery('#domain_name-error').remove();"
-    page << "jQuery('#company_domains').parent('.controls').children('.select2-container').removeClass('error').addClass('error');"
-    page << "jQuery('#company_domains').after('#{error_message}');"
-  end
+if @existing_company.present?
+  error_message  = "<label id=\"domain_name-error\" class=\"error\" for=\"domain_name\">#{t('companies.info1')}. #{link_to t('companies.view_company') , company_path(@existing_company) , target: '_blank'}</label>"
+  page << "jQuery('#domain_name-error').remove();"
+  page << "jQuery('#company_domains').parent('.controls').children('.select2-container').removeClass('error').addClass('error');"
+  page << "jQuery('#company_domains').after('#{error_message}');"
   page << "jQuery('#requester-widget-user-edit-dialog-submit').removeClass('disabled')";
   page << "jQuery('#requester-widget-user-edit-dialog-submit').removeAttr('disabled');";
   page << "jQuery('#requester-widget-user-edit-dialog-submit').text('Save')";
@@ -20,12 +13,14 @@ else
   page.replace_html 'requester-details-info', render(:partial => "contacts/requester_widget",
                                               :locals => { :user => @ticket.requester,
                                                            :show_recent_tickets => :dialog,
-                                                           :ticket => @ticket
+                                                           :ticket => @ticket,
+                                                           :company => @company
                                                           })
   page.replace_html 'requester-widget-edit-modal-container',
                     render(:partial => "/contacts/requester_widget_contact_edit",
                     :locals => {  :user => @ticket.requester,
-                                  :ticket => @ticket
+                                  :ticket => @ticket,
+                                  :company => @company
                               })
   show_ajax_flash page
 end

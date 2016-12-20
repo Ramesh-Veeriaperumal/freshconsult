@@ -1889,6 +1889,7 @@ Helpkit::Application.routes.draw do
         get :component
         get :prevnext
         put :update_requester
+        get :refresh_requester_widget
         post :create # For Mobile apps backward compatibility.
         get :associated_tickets
         put :link
@@ -2480,7 +2481,7 @@ Helpkit::Application.routes.draw do
         get :suggest_topic
       end
       match '/topics/suggest', :action => 'suggest_topic'
-      match '/articles/:article_id/related_articles', :action => 'related_articles'
+      match '/articles/:article_id/related_articles', :action => 'related_articles', via: :get
     end
 
     resources :discussions, :only => [:index, :show] do

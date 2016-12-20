@@ -25,22 +25,26 @@ def self.contact_fields_data
       :visible_in_portal  => true,
       :editable_in_portal => false,
       :editable_in_signup => true,
-      :required_in_portal => false },  # default validations are present in User model(phone || twitter_id || email)
+      :required_in_portal => false,
+      :field_options      => {"widget_position" => 1} },  # default validations are present in User model(phone || twitter_id || email)
 
     { :name               => "phone", 
       :label              => "Work Phone", 
       :visible_in_portal  => true,
-      :editable_in_portal => true },
+      :editable_in_portal => true,
+      :field_options      => {"widget_position" => 2} },
 
     { :name               => "mobile", 
       :label              => "Mobile Phone", 
       :visible_in_portal  => true, 
-      :editable_in_portal => true },
+      :editable_in_portal => true,
+      :field_options      => {"widget_position" => 3} },
       
     { :name               => "twitter_id", 
       :label              => "Twitter", 
       :visible_in_portal  => true, 
-      :editable_in_portal => true },
+      :editable_in_portal => true,
+      :field_options      => {"widget_position" => 4} },
       
     { :name               => "company_name", 
       :label              => "Company", 
@@ -86,7 +90,8 @@ ContactField.seed_many(:account_id, :name,
       :visible_in_portal  => f[:visible_in_portal]  || false,
       :editable_in_portal => f[:editable_in_portal] || false,
       :editable_in_signup => f[:editable_in_signup] || false,
-      :required_in_portal => f[:required_in_portal] || false
+      :required_in_portal => f[:required_in_portal] || false,
+      :field_options      => f[:field_options]
     }
   end
 )

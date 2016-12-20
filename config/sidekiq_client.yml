@@ -154,6 +154,7 @@ defaults: &defaults
     - [plan_change_workerv2]
     - [learn_spam_message]
     - [s3_retry_worker]
+    - [reopen_tickets]
 
 development:
   <<: *defaults

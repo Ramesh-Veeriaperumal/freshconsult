@@ -9,43 +9,53 @@ class Support::SearchV2::SpotlightController < SupportController
   # Unscoped customer-side spotlight search
   #
   def all
-    @klasses        = esv2_klasses
-    @current_filter = :all
-    @search_context = :portal_spotlight_global
-    search(esv2_portal_models)
+    unless current_user || forums_enabled? || allowed_in_portal?(:open_solutions)
+      require_user_login and return
+    else
+      @klasses        = esv2_klasses
+      @current_filter = :all
+      @search_context = :portal_spotlight_global
+      search(esv2_portal_models)
+    end
   end
 
   # Tickets scoped customer-side spotlight search
   #
   def tickets
-    require_user_login unless current_user
-
-    @klasses        = ['Helpdesk::Ticket', 'Helpdesk::ArchiveTicket']
-    @current_filter = :tickets
-    @search_context = :portal_spotlight_ticket
-    search(esv2_portal_models)
+    unless current_user
+      require_user_login and return
+    else
+      @klasses        = ['Helpdesk::Ticket', 'Helpdesk::ArchiveTicket']
+      @current_filter = :tickets
+      @search_context = :portal_spotlight_ticket
+      search(esv2_portal_models)
+    end
   end
 
   # Forums scoped customer-side spotlight search
   #
-  def topics
-    require_user_login unless forums_enabled?
-
-    @klasses        = ['Topic']
-    @current_filter = :topics
-    @search_context = :portal_spotlight_topic
-    search(esv2_portal_models)
+  def  topics
+    unless forums_enabled?
+      require_user_login and return
+    else
+      @klasses        = ['Topic']
+      @current_filter = :topics
+      @search_context = :portal_spotlight_topic
+      search(esv2_portal_models)
+    end
   end
 
   # Solutions scoped customer-side spotlight search
   #
   def solutions
-    require_user_login unless allowed_in_portal?(:open_solutions)
-
-    @klasses        = ['Solution::Article']
-    @current_filter = :solutions
-    @search_context = :portal_spotlight_solution
-    search(esv2_portal_models)
+    unless allowed_in_portal?(:open_solutions)
+      require_user_login and return
+    else
+      @klasses        = ['Solution::Article']
+      @current_filter = :solutions
+      @search_context = :portal_spotlight_solution
+      search(esv2_portal_models)
+    end
   end
 
   def suggest_topic

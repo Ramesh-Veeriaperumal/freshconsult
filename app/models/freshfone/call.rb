@@ -787,19 +787,14 @@ class Freshfone::Call < ActiveRecord::Base
       begin
         recording_sid = File.basename(self.recording_url)
         recording = account.freshfone_account.twilio_subaccount.recordings.get(recording_sid)
-        recording.delete if recording.present?
+        recording_present = recording.duration.present?
+        recording.delete
       rescue Exception => e
-        date = (Time.now.utc.ago 7.days)
-        if self.updated_at >= date.beginning_of_day
-          FreshfoneNotifier.call_recording_deletion_failure(
-            :account_id => account.id,
-            :call_id => self.id,
-            :exception => e,
-            :recording_url => recording_url,
-            :user_id => user_id,
-            :updated_at => updated_at)
-        end
         Rails.logger.debug "Error deleting the recording from twilio for call id :#{self.id}, account id: #{account.id}, recording_sid: #{recording_sid}, User Id: #{user_id}.\n Message: #{e.message}"
+        FreshfoneNotifier.call_recording_deletion_failure(
+          account_id: account.id, call_id: self.id, exception: e,
+          recording_url: recording_url, user_id: user_id,
+          updated_at: updated_at) if recording_present
       end
     end
 

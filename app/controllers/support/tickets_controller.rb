@@ -103,11 +103,11 @@ class Support::TicketsController < SupportController
     cc_params = fetch_valid_emails(params[:helpdesk_ticket][:cc_email][:reply_cc])
     if cc_params.length <= TicketConstants::MAX_EMAIL_COUNT
       if current_user.customer?
-        parsed_emails   = permissible_user_emails(cc_params)
-        cc_params       = parsed_emails[:valid_emails].is_a?(Array) ? parsed_emails[:valid_emails] : parsed_emails[:valid_emails].split(",")
+        new_emails      = separate_new_emails_from_reply_cc(cc_params)
+        parsed_emails   = permissible_user_emails(new_emails)
         dropped_emails  = parsed_emails[:dropped_emails]
       end
-      @ticket.cc_email[:reply_cc] = cc_params.delete_if {|x| !valid_email?(x)}
+      @ticket.cc_email[:reply_cc] = (cc_params - dropped_emails.to_s.split(",")).delete_if {|x| !valid_email?(x)}
       update_ticket_cc @ticket.cc_email
       @ticket.trigger_cc_changes(@old_cc_hash)
       @ticket.save
@@ -234,6 +234,11 @@ class Support::TicketsController < SupportController
 
     def public_request?
       current_user.nil?
+    end
+
+    def separate_new_emails_from_reply_cc cc_emails
+      reply_cc = fetch_valid_emails @ticket.cc_email[:reply_cc]
+      cc_emails - reply_cc
     end
 
     def check_ticket_permission

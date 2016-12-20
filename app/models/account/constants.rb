@@ -128,16 +128,23 @@ class Account < ActiveRecord::Base
   #Features that need to connect to the FDnode server
   FD_NODE_FEATURES = ['cti']
 
-  # List of Launchparty features available in code
-  LAUNCHPARTY_FEATURES = [:activity_ui_disable, :admin_dashboard, :agent_conference, :agent_dashboard, :agent_new_ticket_cache, :api_search_beta,
-                          :autopilot_headsup, :autoplay, :delayed_dispatchr_feature,
-                          :enable_old_sso, :es_count_reads, :es_count_writes, :es_down, :es_tickets, :es_v2_reads, :fb_msg_realtime,
-                          :force_index_tickets, :freshfone_call_tracker, :freshfone_new_notifications, :gamification_perf,
-                          :gamification_quest_perf, :lambda_exchange, :meta_read, :most_viewed_articles,
-                          :multifile_attachments, :new_footer_feedback_box, :new_leaderboard, :periodic_login_feature, :shared_ownership,
-                          :supervisor_dashboard, :support_new_ticket_cache, :ticket_list_page_filters_cache, :translate_solutions,
-                          :sidekiq_dispatchr_feature, :list_page_new_cluster, :freshfone_onboarding, :disable_old_sso,
-                          :round_robin_capping, :cache_new_tkt_comps_forms, :restricted_helpdesk, :solutions_meta_read,
-                          :freshfone_caller_id_masking, :bi_reports, :es_v1_enabled, :synchronous_apps, :parent_child_tickets, :link_tickets]
+  # List of Launchparty features available in code. Set it to true if it has to be enabled when signing up a new account
+  LAUNCHPARTY_FEATURES = {
+    :activity_ui_disable => false, :admin_dashboard => false, :agent_conference => false, :agent_dashboard => false,
+    :agent_new_ticket_cache => false, :api_search_beta => false, :autopilot_headsup => false, :autoplay => false,
+    :bi_reports => false, :cache_new_tkt_comps_forms => false, :delayed_dispatchr_feature => false,
+    :disable_old_sso => false, :enable_old_sso => false, :es_count_reads => false, :es_count_writes => false,
+    :es_down => false, :es_tickets => false, :es_v1_enabled => false, :es_v2_reads => false, :fb_msg_realtime => false,
+    :force_index_tickets => false, :freshfone_call_tracker => false, :freshfone_caller_id_masking => false,
+    :freshfone_new_notifications => false, :freshfone_onboarding => false, :gamification_perf => false,
+    :gamification_quest_perf => false, :lambda_exchange => false, :link_tickets => false,
+    :list_page_new_cluster => false, :meta_read => false, :most_viewed_articles => false,
+    :multifile_attachments => false, :new_footer_feedback_box => false, :new_leaderboard => false,
+    :parent_child_tickets => false, :periodic_login_feature => false, :requester_widget => true,
+    :restricted_helpdesk => false, :round_robin_capping => false, :shared_ownership => false,
+    :sidekiq_dispatchr_feature => false, :solutions_meta_read => false, :supervisor_dashboard => false,
+    :support_new_ticket_cache => false, :synchronous_apps => false, :ticket_list_page_filters_cache => false,
+    :translate_solutions => false
+  }
 
 end

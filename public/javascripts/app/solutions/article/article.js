@@ -50,7 +50,6 @@ window.App = window.App || {};
       this.bindPropertiesToggle();
       this.formatSeoMeta();
       this.seoCharCounter();
-      this.setTagSelector();
       this.unsavedContentNotif();
       this.formValidate();
       this.toggleShowMaster();

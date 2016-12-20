@@ -51,7 +51,7 @@
     <% unless select_all%>
       <div class="field-item">
         <label for="helpdesk_ticket_tags_label" rel="inputcheckbox"><input class="update-check-for-fields" id="helpdesk_ticket_tags_label" name="helpdesk_ticket_tags_label" type="checkbox" value=""><%= t('ticket_fields.fields.tags') %></label>
-        <input type="text" id="helpdesk_tags" name="helpdesk[tags]" rel="inputtextbox" />
+        <input type="text" id="helpdesk_tags" name="helpdesk[tags]" rel="remote-tag" data-allow-create = <%= current_user.privilege?(:create_tags)%> />
       </div>
     <% end %>
   </div>
@@ -113,6 +113,7 @@
   var parentChildFeatureEnabled = <%= current_account.parent_child_tkts_enabled? %>;
   var groupToStatusText = "<%= I18n.t('internal_group_actions') %>";
   var agentToGroupText = "<%= I18n.t('internal_agent_actions') %>";
+  var MAX_TAG_LENGTH_MSG = "<%= I18n.t('helpdesk.tickets.show.max_tag_length_msg') %>";
   var enableDropDowns = false;
   var sharedOwnershipEnabled = <%= current_account.features?(:shared_ownership) %>;
 
@@ -171,8 +172,8 @@
     jQuery('#clear-search').trigger('click');
 });
 
-  jQuery("[rel=inputselectbox],[rel=inputtextbox]").off('change');
- jQuery("[rel=inputselectbox],[rel=inputtextbox]").on('change',  function(ev){
+  jQuery("[rel=inputselectbox],[rel=inputtextbox],#helpdesk_tags").off('change');
+ jQuery("[rel=inputselectbox],[rel=inputtextbox],#helpdesk_tags").on('change',  function(ev){
     if(jQuery(this).attr('id')=="helpdesk_ticket_group_id" && jQuery("#helpdesk_ticket_group_id").val() != "-1")
     {
       if(jQuery('#helpdesk_ticket_responder_id_label').is(':checked'))
@@ -258,12 +259,6 @@
 
   jQuery("#replymultiple").on("submit",function(e){
     submitBulkUpdate();
-  });
-
-  jQuery("#helpdesk_tags").select2({
-    <%= 'createSearchChoice: null,' if !current_user.privilege?(:create_tags) %>
-    tags: "<%= escape_javascript(current_account.tags.most_used(25).collect{|tag| tag.name}.join(',').html_safe) %>".split(","),
-    tokenSeparators: [',']
   });
 
   // Need to make the code generic to handle the custom dropdown fields sections.
