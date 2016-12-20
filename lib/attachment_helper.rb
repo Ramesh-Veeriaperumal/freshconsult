@@ -17,10 +17,14 @@
     end
   end
 
-  def attachment_list(attached, show_delete, page, item_id, custom_delete_link = nil)
+  def attachment_list(attached, show_delete, page, item_id, custom_delete_link = nil, add_to_reply = false)
+    add_to_reply = add_to_reply && current_account.launched?(:multifile_attachments)
     unless attached.new_record?
       output = ""
-      output << %(<li class="attachment list_element" id="#{ dom_id(attached) }" rel="original_attachment">)
+      output << %(<li class="#{add_to_reply ? 'addToRply' : ' attachment list_element '}" id="#{ dom_id(attached) }" rel="original_attachment" >)
+      if add_to_reply
+        output << %(<div class="attachment list_element" id="#{ dom_id(attached) }" data-added=false data-multifile=#{add_to_reply}> )
+      end
       output << %(<div>)
 
       if show_delete
@@ -58,6 +62,10 @@
 
       output << %(</div>)
       output << %(</div>)
+      if(add_to_reply)
+         output << %(</div>)
+         output << %(<div class="add-attachment-to-conv tooltip" data-original-title="#{I18n.t('multifile_attachments.attach')}" data-location="attachment" data-cloud="#{(page == 'cloud_file')? true:false}" data-attach-id = "#{attached.id.to_s}"><span class="ficon ficon-add-attachment"></span></div>)
+      end
       output << %(</li>)
       output.html_safe
     end

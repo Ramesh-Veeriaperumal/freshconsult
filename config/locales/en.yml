@@ -10516,6 +10516,8 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     try_again: "Go to Ticket and try again"
     actions_alert: "File attachment in progress. Do you want to leave this page?"
     reminder: "You have unsaved content in this page. Do you want to leave this page?"
+    attach: "Add to response"
+    attached: "Added to response"
   ml:
     similat_tickets_found: Similar Tickets found
     no_suggestions: Oops! No suggestions.

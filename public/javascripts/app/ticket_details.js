@@ -153,7 +153,9 @@ swapEmailNote = function(formid, link){
 
 
 	activeForm = $('#'+formid).removeClass('hide').show();
-	$.scrollTo('#'+formid, {offset: 100});
+	if(!Helpdesk.MultipleFileUpload.addToRply.replyTrigger) {
+		$.scrollTo('#'+formid, {offset: 100});
+	}
 	if (activeForm.data('type') == 'textarea') {
 		//For Facebook and Twitter Reply forms.
 		$element = $('#' + formid + ' textarea').get(0);
