@@ -96,7 +96,7 @@ class Account < ActiveRecord::Base
     :sort_by_customer_response => false, :survey_links => true,
     :saml_unspecified_nameid => false, :euc_hide_agent_metrics => false,
     :single_session_per_user => false, :link_tickets => false, :parent_child_tickets => false,
-    :marketplace_app => false, :sandbox_account => false
+    :marketplace_app => false, :sandbox_account => false, :collaboration => false
   }
 
 

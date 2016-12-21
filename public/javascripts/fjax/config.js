@@ -48,7 +48,7 @@ window.Fjax = window.Fjax || {};
 			"/users": 'contacts',
 			"/companies": 'companies',
 
-			"/helpdesk/tickets/archived/": "archiveticketdetails",			
+			"/helpdesk/tickets/archived/": "archiveticketdetails",
 			"/helpdesk/tickets": 'tickets',
 			"/helpdesk/ticket_templates": 'parentchildtemplates',
 			"/helpdesk/parent_template": 'parentchildtemplates',

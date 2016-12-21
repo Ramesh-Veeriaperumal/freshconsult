@@ -429,7 +429,7 @@ class Helpdesk::TicketsController < ApplicationController
 
   def custom_search
     params[:html_format] = true
-    @items = fetch_tickets
+    @items = collab_filter_enabled? ? fetch_collab_tickets : fetch_tickets
 
     #Changes for customer sentiment - Beta feature
     if Account.current.customer_sentiment_ui_enabled? && @items.size > 0
@@ -439,6 +439,15 @@ class Helpdesk::TicketsController < ApplicationController
 
     @current_view = view_context.current_filter
     render :partial => "custom_search"
+  end
+
+  # Generating custom data hash
+  # Since this is the only filter when data_hash will update for every pagination request
+  def fetch_collab_tickets
+    convo_id_arr = Collaboration::Ticket.fetch_tickets
+    params["data_hash"] = Helpdesk::Filters::CustomTicketFilter.collab_filter_condition(convo_id_arr).to_json
+    
+    current_account.tickets.preload({requester: [:avatar]}, :company).permissible(current_user).filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
   end
 
   def show

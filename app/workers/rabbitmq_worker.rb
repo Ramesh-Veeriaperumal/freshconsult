@@ -34,7 +34,7 @@ class RabbitmqWorker
       puts "Searchv2 SQS Message id - #{sqs_msg_obj.try(:message_id)} :: ROUTING KEY -- #{rounting_key} :: Exchange - #{exchange_key}"
     end
     
-    # Publish to Autorefresh and AgentCollision
+    # Publish to Autorefresh, AgentCollision, Collaboration (User and ticket) 
     #
     if LAMBDA_ENABLED and lambda_feature
       invoke_lambda(exchange_key, message, rounting_key)
@@ -93,6 +93,8 @@ class RabbitmqWorker
         sqs_msg_obj = sqs_v2_push(SQS[:marketplace_app_queue], message, nil)
         print_log("Marketplace App", sqs_msg_obj, routing_key, exchange_key)
       end
+
+      publish_for_collab(exchange_key, message, routing_key)
     rescue => e
       NewRelic::Agent.notice_error(e, {
                                    :custom_params => {
@@ -128,6 +130,14 @@ class RabbitmqWorker
       }})
       # Re-raising the error to have retry
       raise e        
+    end
+
+    def collaboration_ticket_routing_key?(exchange, key)
+      (exchange.starts_with?("tickets") && key[12] == "1")
+    end
+
+    def collaboration_user_routing_key?(exchange, key)
+      (exchange.starts_with?("user") && key[2] == "1")
     end
     
     def autorefresh_routing_key?(exchange, key)
@@ -189,4 +199,16 @@ class RabbitmqWorker
       puts " #{log} SQS Message id - #{sqs_msg_obj.message_id} :: ROUTING KEY -- #{routing_key} :: Exchange - #{exchange_key}"
     end
 
+    def publish_for_collab(exchange_key, message, routing_key)
+      if collaboration_ticket_routing_key?(exchange_key, routing_key)
+        puts "pushing ticket in SQS for collab"
+        sqs_msg_obj = sqs_v2_push(SQS[:collab_ticket_update_queue], message, nil)
+        puts "Collaboration SQS Message id - #{sqs_msg_obj.message_id} :: ROUTING KEY -- #{routing_key} :: Exchange - #{exchange_key}"
+      end
+      if collaboration_user_routing_key?(exchange_key, routing_key)
+        puts "pushing user in SQS for collab"
+        sqs_msg_obj = sqs_v2_push(SQS[:collab_agent_update_queue], message, nil)
+        puts "Collaboration SQS Message id - #{sqs_msg_obj.message_id} :: ROUTING KEY -- #{routing_key} :: Exchange - #{exchange_key}"
+      end
+    end
 end

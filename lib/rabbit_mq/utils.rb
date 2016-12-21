@@ -32,8 +32,8 @@ module RabbitMq::Utils
       "actor"                 =>  User.current.try(:id).to_i,
       "account_id"            =>  Account.current.id,
       "shard"                 =>  shard_info,
-      "#{model}_properties"   =>  {}, 
-      "subscriber_properties" =>  {}        
+      "#{model}_properties"   =>  {},
+      "subscriber_properties" =>  {}
     }
   end
 
@@ -66,7 +66,7 @@ module RabbitMq::Utils
 
   def construct_message_for_subscriber(s, message, model, action)
     valid = send("mq_#{s}_valid", action, model)
-    if valid  
+    if valid
       message["#{model}_properties"].deep_merge!(send("mq_#{s}_#{model}_properties", action))
       message["subscriber_properties"].merge!({ s => send("mq_#{s}_subscriber_properties", action) })
       send("mq_custom_#{s}_#{model}_method", message) if CUSTOM_METHODS[model] && CUSTOM_METHODS[model].include?(s)

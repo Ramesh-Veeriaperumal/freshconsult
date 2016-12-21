@@ -3,7 +3,8 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   include Search::TicketSearch
   include Helpdesk::Ticketfields::TicketStatus
   include Cache::Memcache::Helpdesk::Filters::CustomTicketFilter
-  
+  include Collaboration::TicketFilter
+
   attr_accessor :query_hash
   
   MODEL_NAME = "Helpdesk::Ticket"
@@ -29,6 +30,16 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     [{ "condition" => "requester_id", "operator" => "is_in", "value" => [User.current.id]},
      { "condition" => "spam", "operator" => "is", "value" => false},
      { "condition" => "deleted", "operator" => "is", "value" => false}]
+  end
+
+  def self.collab_filter_condition(display_ids)
+    [{ "condition" => "helpdesk_tickets.display_id", "operator" => "is_in", "value" => display_ids.join(",")},
+      spam_condition(false), deleted_condition(false)]
+  end
+  
+  # This filter function fetches data from collaboration/tickets.rb; that fetches data from collab microservice
+  def collab_filter
+    Helpdesk::Filters::CustomTicketFilter.collab_filter_condition(Collaboration::Ticket.fetch_tickets(@per_page, @page))
   end
 
   def shared_by_me_filter
@@ -161,6 +172,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
       defs["helpdesk_subscriptions.user_id".to_sym] = ({:operator => :is_in,:is_in => :dropdown, :options => [], :name => "helpdesk_subscriptions.user_id", :container => :dropdown})
       defs["article_tickets.article_id".to_sym] = ({:operator => :is,:is => :numeric, :options => [], :name => "article_tickets.article_id", :container => :numeric})
       defs["solution_articles.user_id".to_sym] = ({:operator => :is,:is => :numeric, :options => [], :name => "solution_articles.user_id", :container => :numeric})
+      defs[:"helpdesk_tickets.display_id"] = ({:operator => :is_in, :is_in => :dropdown, :options => [], :name => "helpdesk_tickets.display_id", :container => :dropdown})
       defs[:spam] = ({:operator => :is,:is => :boolean, :options => [], :name => :spam, :container => :boolean})
       defs[:deleted] = ({:operator => :is,:is => :boolean, :options => [], :name => :deleted, :container => :boolean})
       defs[:"helpdesk_schema_less_tickets.#{Helpdesk::SchemaLessTicket.trashed_column}"] = ({:operator => :is,:is => :boolean, :options => [], :name => :trashed, :container => :boolean})
@@ -183,6 +195,8 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
       on_hold_filter
     elsif "raised_by_me".eql?filter_name
       raised_by_me_filter
+    elsif collab_filter_enabled_for?(filter_name)
+      collab_filter
     elsif (from_api && "all_tickets".eql?(filter_name))
      api_all_tickets_filter
     elsif("shared_by_me" == filter_name and Account.current.features?(:shared_ownership))

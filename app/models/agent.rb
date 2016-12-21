@@ -21,7 +21,7 @@ class Agent < ActiveRecord::Base
   after_commit :nullify_tickets, :agent_destroy_cleanup, on: :destroy
   
   after_commit  ->(obj) { obj.update_agent_to_livechat } , on: :create
-  after_commit  ->(obj) { obj.update_agent_to_livechat } , on: :update
+  after_commit  ->(obj) { obj.update_agent_to_livechat } , on: :update  
   validates_presence_of :user_id
   validate :validate_signature
   # validate :only_primary_email, :on => [:create, :update] moved to user.rb

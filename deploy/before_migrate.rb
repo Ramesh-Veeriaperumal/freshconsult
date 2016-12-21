@@ -35,6 +35,7 @@ run "ln -nfs #{shared_path}/config/custom_dalli.yml #{node[:rel_path]}/config/cu
 run "ln -nfs #{shared_path}/config/statsd.yml #{node[:rel_path]}/config/statsd.yml"
 run "ln -nfs #{shared_path}/config/redis_display_id.yml #{node[:rel_path]}/config/redis_display_id.yml"
 run "ln -nfs #{shared_path}/config/chat.yml #{node[:rel_path]}/config/chat.yml"
+run "ln -nfs #{shared_path}/config/collab.yml #{node[:rel_path]}/config/collab.yml"
 run "ln -nfs #{shared_path}/config/email.yml #{node[:rel_path]}/config/email.yml"
 run "ln -nfs #{shared_path}/config/pod_info.yml #{node[:rel_path]}/config/pod_info.yml"
 run "ln -nfs #{shared_path}/config/infra_layer.yml #{node[:rel_path]}/config/infra_layer.yml"

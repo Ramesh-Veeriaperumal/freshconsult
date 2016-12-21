@@ -5978,6 +5978,8 @@ en:
   export_to_CSV: Export to CSV
   back_to_reports: "&larr; Back to reports"
   helpdesk:
+    collab: Collaboration
+    start_collab: Start Collaboration
     add_requester: Add Requester
     surveys:
       invalid_rating: Rating value "%{rating}" is invalid. Please rate with the correct rating value.
@@ -6458,6 +6460,7 @@ en:
         my_article_feedback: My Articles Feedback
         archived: Archive
         invalid_requester: Invalid requester
+        ongoing_collab: Ongoing collaborations
       note:
         posted_on: "%{user_name} on %{note_date}"
         created_on:
@@ -6599,6 +6602,7 @@ en:
       agent_responded_at: Agent Response
       asc: Ascending
       desc: Descending
+      recently_active: "Recently Active"
     search_views: Jump to view
     no_match_view: No matching views found
   click_to_change_sort_order: Click to change sort order
@@ -10531,3 +10535,27 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     hide: Hide
     suggestion_text: What can we improve? (Optional).
     help: What's this?
+  collaboration:
+    notifications: "Notifications"
+    no_notifications: "No new notifications"
+    discussion: "Discussion"
+    discuss: "Discuss"
+    collaborators: "Collaborators"
+    view_all_collaborations: "View all collaborations"
+    view_discussion: "View Discussion"
+    type_message: "Type message"
+    added_to: "You have been added as collaborator on ticket %{ticket_id}"
+    invited_notification: "%{user_name} wants to collaborate with you on ticket %{ticket_id}"
+    first_mention: "%{who} has mentioned you in 1 message in ticket %{ticket_id}"
+    nth_mention: "%{who} has mentioned you in %{how_many} messages in ticket %{ticket_id}"
+    nth_mention_multi_users: "%{who_all} have mentioned you in %{how_many} messages in ticket %{ticket_id}"
+    send_msg_placeholder: "Type '%{newline_key}' to add a new line. '%{send_key}' to send..."
+    collab_max_out_info: "A ticket cannot have more than %{max_collaborators} collaborators. Please contact %{contact_person} to @mention people who are not in the list below."
+    collab_motto: "Collaborate with your team in context, fast."
+    chat_and_more_slogan: "'@' mention someone to invite them, highlight and discuss."
+    error:
+      network_err: "Could not connect to internet!"
+      size_exceeded: "Your file exceeded the maximium upload limit of %{max_size}. Please try again with a smaller file."
+      wrong_file_format: "Unsupported file format!"
+      unexpected: "Something went wrong!"
+      highlight_missing: "Highlight missing"

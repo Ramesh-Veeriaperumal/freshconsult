@@ -91,6 +91,10 @@ class Account < ActiveRecord::Base
     tz = "Kyiv" if tz.eql?("Kyev")
     tz
   end
+
+  def collab_feature_enabled?
+    @collab_feature_enabled ||= features?(:collaboration)
+  end
   
   def survey
     @survey ||= begin

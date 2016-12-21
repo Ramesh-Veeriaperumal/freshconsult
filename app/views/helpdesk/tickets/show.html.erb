@@ -1,4 +1,4 @@
- 
+
 <%= stylesheet_link_tag_with_rtl :'cdn/tkt_details_print', :media => "print"  %>
 <%= render :partial => "helpdesk/tickets/show/scriptvars" %>
 <!-- if multi file enabled -->
@@ -20,7 +20,7 @@
 				<%= render :partial => "helpdesk/tickets/show/sidebar" %>
 			<% end %>
 			<!--content Left-->
-			<div class="leftcontent">
+			<div class="leftcontent" data-ticket-id="<%= @ticket.id =%>">
 				<div class="conversation_thread" id="original_request">
 					<div class="conversation">
 						<% if @ticket.outbound_email? %>
@@ -49,7 +49,24 @@
 							<%= render :partial => "helpdesk/tickets/show/broadcast_message" %> 
 						</div>
 					</div>
-				<% end -%>
+				<% end %>
+
+				<% if current_account.collab_feature_enabled? %>
+					<div id="collab-option-dd" class="collab-option-dd hide">
+						<span class="collab-logo">
+							<img class="logo-image" alt="Logo" data-type="logo" onerror="default_image_error(this)" src="/assets/collab/collab-logo.svg">
+			            </span>
+						<span class="collab-discuss-text" id="collab-discuss-text"><%=t('collaboration.discuss')%></span>
+					</div>
+					<div id="show-discussion-dd" class="show-discussion-dd hide">
+						<span class="bridge-span"></span>
+						<div>
+							<span id="annotator-image" class="annotator-image"></span>
+							<span id="view-discussion-text" class="view-discussion-text"><%=t('collaboration.view_discussion')%></span>
+						</div>
+					</div>
+				<% end %>
+
 				<%= render :partial => "helpdesk/tickets/show/new_conversation" %> 
 			</div>
 		</div>
@@ -60,29 +77,35 @@
 <% if current_account.features?(:collision) %>
 	<%= render :partial => "helpdesk/tickets/freshdesk_socket", :locals => {:ticket => @ticket } if current_account.agents_details_from_cache.count > 1%>
 <% end %>
+<% content_for :dialogs do %>
+	<% if current_account.collab_feature_enabled? %>
+		<%= render :partial => "helpdesk/tickets/collaboration" %>
+	<% end %>
+<% end %>
+
 
 <script type="text/javascript">
 	Fjax.Assets.plugin('360player');
-jQuery(document).ready(function(){
-	jQuery('div.attach-error').parents('.commentbox').find('.seperator').addClass('overlapping');
-	jQuery(".search_field_item input").keypress(function(event) { return event.keyCode != 13; });
-});
-try {
-	freshfonePlayerSettings();
-} catch(e) {console.log("freshfonePlayerSettings not loaded");}
-!function(){
-	"use strict";
-	Fjax.bodyClass = 'ticket_details';
-	Fjax.current_page = 'ticket_detail';
-
-	<% if @ticket.twitter? %>
 	jQuery(document).ready(function(){
-		jQuery('#twitter_handle').change();
+		jQuery('div.attach-error').parents('.commentbox').find('.seperator').addClass('overlapping');
+		jQuery(".search_field_item input").keypress(function(event) { return event.keyCode != 13; });
 	});
-	<% end %>
-	<% unless @draft.nil? %>
-		jQuery('#HelpdeskReply').data('containDraft', true)
-	<% end %>
+	try {
+		freshfonePlayerSettings();
+	} catch(e) {console.log("freshfonePlayerSettings not loaded");}
+	!function(){
+		"use strict";
+		Fjax.bodyClass = 'ticket_details';
+		Fjax.current_page = 'ticket_detail';
+
+		<% if @ticket.twitter? %>
+		jQuery(document).ready(function(){
+			 jQuery('#twitter_handle').change();
+		});
+		<% end %>
+		<% unless @draft.nil? %>
+			jQuery('#HelpdeskReply').data('containDraft', true)
+		<% end %>
 
 		jQuery('#revert_details_view #switch').on('click.ticket_details',function(ev) {
 			ev.preventDefault();;

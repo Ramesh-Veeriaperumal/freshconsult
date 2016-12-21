@@ -62,6 +62,10 @@
 	<%= javascript_include_tag :'cdn/plugins/fileupload' %>
 	<%= javascript_include_tag :'cdn/livechat_helper' %>
 
+	<% if current_account.collab_feature_enabled? %>
+		<%= stylesheet_link_tag_with_rtl :'cdn/collaboration_header' %>
+		<%= javascript_include_tag :'cdn/collaboration' %>
+	<% end %>
 
 	<!-- The following is the remote CDN file managed by Freshapps Team. It is to exec freshapps one by one -->
 	<%= javascript_include_tag :"#{MarketplaceConfig::FRESHAPPS_JS_URL}/js/common-0.4.0.min.js" %>
