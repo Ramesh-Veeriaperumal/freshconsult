@@ -27,6 +27,7 @@ class Solution::CheckContentForSpam < BaseWorker
     set_others_redis_key(signup_params_key,signup_params.to_json)
     @account.conversion_metric.update_attribute(:spam_score, spam_score) if @account.conversion_metric
     increment_portal_cache_version
+    Rails.logger.info ":::::: Kbase spam content encountered - increased spam reputation for account ##{@account.id} :::::::"
   end
 
   def signup_params_key
