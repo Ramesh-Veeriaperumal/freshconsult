@@ -318,7 +318,7 @@ class Solution::Article < ActiveRecord::Base
     def check_for_spam_content
       if !self.account.launched?(:kbase_spam_whitelist) && self.account.subscription.trial? && self.status_changed? && self.status == Solution::Article::STATUS_KEYS_BY_TOKEN[:published]
         article_spam_regex = Regexp.new($redis_others.perform_redis_op("get", ARTICLE_SPAM_REGEX), "i")
-        if (self.title =~ article_spam_regex).present?
+        if (self.title =~ article_spam_regex).present? || check_seo_data_for_spam(article_spam_regex)
           errors.add(:title, "Possible spam content")
           Rails.logger.debug ":::::: Suspicious article title in Account ##{self.account_id} with ehawk_reputation_score: #{self.account.ehawk_reputation_score} : #{self.title}"
           mail_recipients = ["arvinth@freshdesk.com"]
@@ -330,5 +330,12 @@ class Solution::Article < ActiveRecord::Base
             })
         end
       end
+    end
+
+    def check_seo_data_for_spam(article_spam_regex)
+      self.seo_data.each do |seo_key, value|
+        return true if (value =~ article_spam_regex).present?
+      end
+      return false
     end
 end

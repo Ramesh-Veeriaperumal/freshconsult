@@ -20,6 +20,10 @@ class ArticleObserver < ActiveRecord::Observer
     set_default_status(article)
   end
 
+  def after_create(article)
+  	enqueue_article_for_kbase_check(article)
+  end
+
 private
 
 		def set_un_html_content(article)
@@ -51,4 +55,11 @@ private
       end
 			article.draft.populate_defaults
     end
+
+    def enqueue_article_for_kbase_check(article)
+			if !article.account.launched?(:kbase_spam_whitelist) && article.account.created_at >= (Time.zone.now - 60.days)
+				Solution::CheckContentForSpam.perform_async({:article_id => article.id})
+			end
+    end
 end
+

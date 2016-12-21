@@ -155,6 +155,7 @@ defaults: &defaults
     - [learn_spam_message]
     - [s3_retry_worker]
     - [reopen_tickets]
+    - [kbase_content_spam_checker]
 
 development:
   <<: *defaults
