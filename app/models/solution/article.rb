@@ -322,7 +322,7 @@ class Solution::Article < ActiveRecord::Base
           errors.add(:title, "Possible spam content")
           Rails.logger.debug ":::::: Suspicious article title in Account ##{self.account_id} with ehawk_reputation_score: #{self.account.ehawk_reputation_score} : #{self.title}"
           mail_recipients = ["arvinth@freshdesk.com"]
-          mail_recipients = ["mail-alerts@freshdesk.com", "noc@freshdesk.com"] if Rails.env.production?
+          mail_recipients = ["mail-alerts@freshdesk.com"] if Rails.env.production?
           FreshdeskErrorsMailer.error_email(nil, {:domain_name => self.account.full_domain}, nil, {
               :subject => "Detected suspicious solution spam account :#{self.account_id} ",
               :recipients => mail_recipients,
