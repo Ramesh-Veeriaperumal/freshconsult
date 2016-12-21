@@ -95,7 +95,7 @@ class UserSession < Authlogic::Session::Base
   def log_login_info
     return unless self.record.present?
     request = controller.request
-    Rails.logger.info("::New-login-info:: Account id : #{self.record.account_id}, User id : #{self.record.id}, Ip : #{request.env['CLIENT_IP']}, Domain : #{request.env['HTTP_HOST']}, Controller : #{request.parameters[:controller]}, Action : #{request.parameters[:action]}, Timestamp : #{Time.now}, Browser : #{request.env['HTTP_USER_AGENT']}")
+    Rails.logger.info("::New-login-info:: Account id : #{self.record.account_id}, User id : #{self.record.id}, Ip : #{request.env['CLIENT_IP']}, Domain : #{request.env['HTTP_HOST']}, Controller : #{request.parameters[:controller]}, Action : #{request.parameters[:action]}, Timestamp : #{Time.now}, Browser : #{UserAgent.parse(request.env['HTTP_USER_AGENT']).browser}")
   end
 
   def single_session_per_user?
