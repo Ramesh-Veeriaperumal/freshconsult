@@ -27,12 +27,15 @@
            };
          },
          results: function(data, params) {
-           return data.results.map(function(item){
-              return {
-                id: item.user_id,
-                text: (item.value + " <" + item.id + ">")
-              };
-           });
+          var results = data.results.map(function(item){
+                          return {
+                            id: item.user_id,
+                            text: (item.value + " <" + item.id + ">")
+                          };
+                       });
+           return {
+            results : results
+           }  
          },
          cache: true
        },
