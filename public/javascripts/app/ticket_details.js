@@ -1475,7 +1475,8 @@ var scrollToError = function(){
 					.attr('class','')
 					.addClass('source_' + $('.ticket_details #helpdesk_ticket_source').val());
 			refreshStatusBox();
-			refreshRequesterWidget();
+			if(TICKET_DETAILS_DATA['requester_widget_enabled'] && TICKET_DETAILS_DATA['user_valid'])
+				refreshRequesterWidget();
 		}
 	}
 

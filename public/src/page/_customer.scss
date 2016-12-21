@@ -850,6 +850,9 @@ ul.user_list{
 		cursor: pointer;
 		font-weight: bold;
 		color: #ffffff;
+		&.new_company_remove{
+			@include margin-right(2px);
+		}
 	}
 
 	.uc_text{

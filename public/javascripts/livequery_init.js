@@ -546,7 +546,7 @@ $('.btn-collapse').livequery(
 			},
 			initSelection : function (element, callback) {
 			  var data = [];
-			  element.val().split(',').each(function(item){if(item.trim()!='')data.push({id: item, text: item})});
+			  element.val().split(',').each(function(item){item = item.trim(); if(item != '')data.push({id: item, text: item})});
 			  callback(data);
 			},
 			formatInputTooShort : function (input, min) {

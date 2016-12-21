@@ -43,7 +43,9 @@ TICKET_DETAILS_DATA = {
 	new_company_message: '<%= t('requester_widget.company.new_company_message')%>',
 	company_message: '<%= t('requester_widget.company.message') %>',
 	companyname_required: '<%= t('requester_widget.company.validation.required_name') %>',
-	create_tag_privilege : <%= current_user.privilege?(:create_tags) %>
+	create_tag_privilege : <%= current_user.privilege?(:create_tags) %>,
+	requester_widget_enabled: <%= current_account.launched?(:requester_widget) %>,
+	user_valid: <%= @ticket.requester.customer? && @ticket.requester.valid_user? %>
 };
 </script>
 <textarea id="ticket_draft_default_reply" class="hide"><%= bind_last_conv(@ticket, @signature, false, false) %></textarea>
