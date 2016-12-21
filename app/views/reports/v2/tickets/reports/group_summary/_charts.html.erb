@@ -28,16 +28,18 @@
                                  <%=t( 'helpdesk_reports.agent_summary.ticket_reasigned') %>
                             </span>
                         </th>
-                        <th>
-                            <span data-metric-title="RESPONSE_SLA">
-                                <%=t( 'helpdesk_reports.agent_summary.reports_sla') %>
-                            </span>
-                        </th>
+                        <% if current_account.sla_management_enabled? %>
+                            <th>
+                                <span data-metric-title="RESPONSE_SLA">
+                                    <%=t( 'helpdesk_reports.agent_summary.reports_sla') %>
+                                </span>
+                            </th>
                         <th>
                             <span data-metric-title="RESOLUTION_SLA">
                                 <%=t( 'helpdesk_reports.agent_summary.res_sla') %>
                             </span>
                         </th>
+                        <% end %>
                         <th>
                             <span data-metric-title="FCR_TICKETS">
                                 <%=t( 'helpdesk_reports.agent_summary.fcr') %>
@@ -79,6 +81,7 @@
     jQuery(document).ready(function() {
         var err = <%= @filter_err ? @filter_err.to_json.html_safe : false %> ;
         var locals = HelpdeskReports.locals;
+        locals.is_sla_management_enabled = <%= current_account.sla_management_enabled? %>;
         locals.chart_hash = <%= @data.to_json.html_safe %> ;
         var last_dump_time = <%= @last_dump_time ? t('helpdesk_reports.last_updated',{last_dump_time: @last_dump_time}).to_json.html_safe : false %>
         

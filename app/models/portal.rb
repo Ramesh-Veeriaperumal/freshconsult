@@ -202,7 +202,7 @@ class Portal < ActiveRecord::Base
 
     ### MULTILINGUAL SOLUTIONS - META READ HACK!! - shouldn't be necessary after we let users decide the language
     def update_solutions_language
-      Community::HandleLanguageChange.perform_async unless account.multilingual?
+      Community::HandleLanguageChange.perform_async unless account.features_included?(:enable_multilingual)
     end
 
     def main_portal_language_changes?
@@ -234,6 +234,8 @@ class Portal < ActiveRecord::Base
           errors.add(:base, "Please enter a valid hex color value.") unless value =~ HEX_COLOR_REGEX
         elsif key == 'contact_info'
           preferences[key] = RailsFullSanitizer.sanitize(value)
+        elsif key == 'logo_link' && preferences[key].present?
+          errors.add(:base, I18n.t('admin.products.portal.invalid_linkback_url')) unless value =~ AccountConstants::VALID_URL_REGEX
         end
       end
     end

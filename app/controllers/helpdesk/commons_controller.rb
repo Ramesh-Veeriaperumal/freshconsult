@@ -48,7 +48,7 @@ class Helpdesk::CommonsController < ApplicationController
   end
   
   def fetch_company_by_name
-    company = current_account.companies.find_by_name(params["name"])
+    company = current_account.companies.find_by_name(params["name"]) if params["name"]
     respond_to do |format|
       if company
         format.json { render :json => company.to_json }

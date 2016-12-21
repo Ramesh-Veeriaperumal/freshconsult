@@ -7,6 +7,9 @@ class Search::V2::SpotlightController < ApplicationController
   helper Search::SearchHelper
   
   before_filter :set_search_sort_cookie
+  before_filter :only => [:solutions] do |c|
+    c.requires_this_feature :allow_auto_suggest_solutions
+  end
   before_filter :detect_multilingual_search, only: [:solutions]
 
   # Unscoped spotlight search

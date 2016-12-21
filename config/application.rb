@@ -220,7 +220,7 @@ module Helpkit
     # and looking at database.yml when running rake assets:precompile
     config.assets.initialize_on_precompile = false
 
-    config.middleware.insert_before "ActionDispatch::Session::CookieStore","Rack::SSL"
+    config.middleware.insert_before "ActionDispatch::Cookies","Rack::SSL"
     config.middleware.insert_before "Auth::Builder","Middleware::Pod"
 
     config.assets.handle_expiration = true

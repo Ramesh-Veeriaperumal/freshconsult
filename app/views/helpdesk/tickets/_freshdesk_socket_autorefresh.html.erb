@@ -1,12 +1,7 @@
 <script type="text/javascript">
   var autoRefreshData    = <%= socket_auth_params("autorefresh") %>;
-  <% if current_account.launched?(:auto_refresh_alb) %>
-    var autorefresh_server = "<%= autorefresh_alb_socket_host  %>";
-    var socket_client = helpkitio
-  <% else %>
-    var autorefresh_server = "<%= autorefresh_socket_host %>";
-    var socket_client = agentio
-  <% end %>
+  var autorefresh_server = "<%= autorefresh_alb_socket_host  %>";
+  var socket_client = helpkitio
   jQuery(document).ready(function() {
       autoRefreshData["user_permission"] = "<%= current_user.agent.ticket_permission %>";
       autoRefreshData["groups"] = <%= escape_javascript(current_user.agent_groups.pluck(:group_id).to_json) %>;

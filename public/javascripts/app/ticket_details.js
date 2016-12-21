@@ -153,7 +153,9 @@ swapEmailNote = function(formid, link){
 
 
 	activeForm = $('#'+formid).removeClass('hide').show();
-	$.scrollTo('#'+formid, {offset: 100});
+	if(!Helpdesk.MultipleFileUpload.addToRply.replyTrigger) {
+		$.scrollTo('#'+formid, {offset: 100});
+	}
 	if (activeForm.data('type') == 'textarea') {
 		//For Facebook and Twitter Reply forms.
 		$element = $('#' + formid + ' textarea').get(0);
@@ -418,6 +420,14 @@ refreshStatusBox = function() {
 			$('#due-by-element-parent').show('highlight',3000);
 		}
 	});
+}
+
+refreshRequesterWidget = function(){
+	$.ajax({
+		url: TICKET_DETAILS_DATA['refresh_requester_widget'],
+		success: function(response){
+		}
+	})
 }
 
 var scrollToError = function(){
@@ -796,7 +806,7 @@ var scrollToError = function(){
 	//For Facebook DM Replybox
 
 	function bindFacebookDMCount() {
-	  $('#send-fb-post-cnt-reply-body').NobleCount('#SendReplyCounter', { on_negative : "error", max_chars : 320, on_update: updateCount });
+	  $('#send-fb-post-cnt-reply-body').NobleCount('#SendReplyCounter', { on_negative : "error", max_chars : 640, on_update: updateCount });
 		updateCount();
 	}
 
@@ -1408,7 +1418,7 @@ var scrollToError = function(){
 		var postProcess = false,
 			tkt_form = $('#custom_ticket_form');
 		//Priority, Status, Group, Type, Product
-		var fields_to_check = ['priority', 'status', 'group_id', 'ticket_type', 'product', 'source'];
+		var fields_to_check = ['priority', 'status', 'group_id', 'ticket_type', 'product', 'source','company_id'];
 		for(i in fields_to_check) {
 			if (typeof(fields_to_check[i]) == 'string' && $('.ticket_details #helpdesk_ticket_' + fields_to_check[i]).data('updated')) {
 				postProcess = true;
@@ -1465,6 +1475,7 @@ var scrollToError = function(){
 					.attr('class','')
 					.addClass('source_' + $('.ticket_details #helpdesk_ticket_source').val());
 			refreshStatusBox();
+			refreshRequesterWidget();
 		}
 	}
 
@@ -1881,6 +1892,7 @@ App.Tickets.TicketDetail = {
 		App.Tickets.Merge_tickets.initialize();
 		App.TicketAttachmentPreview.init();
 		App.Tickets.NBA.init();
+		App.Tickets.TicketRequester.init();
 
 		// Have tried in onLeave to off all the event binding. 
 		// But it cause errors in whole app, like modal, dropdown and some issues has occered.
@@ -1891,6 +1903,7 @@ App.Tickets.TicketDetail = {
 		App.Tickets.Watcher.offEventBinding();
 		App.TicketAttachmentPreview.destroy();
 		App.Tickets.NBA.offEventBinding();
+		App.Tickets.TicketRequester.unBindEvents();
 	}
 };
 

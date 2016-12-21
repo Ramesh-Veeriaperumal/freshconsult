@@ -1,5 +1,6 @@
 class Admin::SupervisorRulesController < Admin::VaRulesController
   
+  before_filter { |c| c.requires_admin_feature :supervisor }
   protected
   
     def scoper

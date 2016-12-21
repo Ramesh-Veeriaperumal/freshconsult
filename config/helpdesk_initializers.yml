@@ -6,6 +6,7 @@ helpdesk:
     - authlogic_patch
     - helpdesk
     - api_initializer
+    - random_s3_char
     - jbuilder_cache_store
     - action_mailer_callbacks
     - action_mailer_no_tmail
@@ -85,7 +86,8 @@ helpdesk:
     - action_mailer_log_subscriber
     - email_controller_log_subscriber
     - thrift
+    - fd_spam_filter
     - sendgrid_webhook_config
     - api_config_internal_tools
     - ehawk_config
-
+    - sandbox

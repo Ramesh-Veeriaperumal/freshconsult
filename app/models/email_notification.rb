@@ -4,7 +4,6 @@ class EmailNotification < ActiveRecord::Base
   belongs_to_account
   attr_protected  :account_id
   before_create :set_default_version
-  include AccountOverrider
 
   xss_sanitize  :only => [:requester_template, :agent_template, :requester_subject_template, :agent_subject_template], :decode_calm_sanitizer => [:requester_template, :agent_template, :requester_subject_template, :agent_subject_template]
 
@@ -115,6 +114,7 @@ class EmailNotification < ActiveRecord::Base
 
   scope :response_sla_reminder, :conditions => { :notification_type => RESPONSE_SLA_REMINDER } 
   scope :resolution_sla_reminder, :conditions => { :notification_type => RESOLUTION_SLA_REMINDER }
+  scope :non_sla_notifications, :conditions => ["notification_type not in (?)", [TICKET_UNATTENDED_IN_GROUP,FIRST_RESPONSE_SLA_VIOLATION,RESOLUTION_TIME_SLA_VIOLATION,RESPONSE_SLA_REMINDER,RESOLUTION_SLA_REMINDER]]
 
   def token
     TOKEN_BY_KEY[self.notification_type]

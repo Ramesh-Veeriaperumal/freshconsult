@@ -63,6 +63,10 @@ module Cache::Memcache::Account
     end
   end
 
+  def clear_ticket_types_from_cache
+    MemcacheKeys.delete_from_cache(ticket_types_memcache_key)
+  end
+
   def agents_from_cache
     @agents_from_cache ||= begin
       key = agents_memcache_key

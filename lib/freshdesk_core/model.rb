@@ -226,6 +226,7 @@ module FreshdeskCore::Model
     remove_whitelist_users(account.id)
     remove_remote_integration_mappings(account.id)
     remove_round_robin_redis_info(account)
+    remove_from_spam_detection_service(account)
 
     delete_data_from_tables(account.id)
     account.destroy
@@ -347,4 +348,12 @@ module FreshdeskCore::Model
       ActiveRecord::Base.connection.execute(delete_query)
     end
 
+    def remove_from_spam_detection_service(account)
+      if account.launched?(:spam_detection_service)
+        result = FdSpamDetectionService::Service.new(account.id).delete_tenant
+        Rails.logger.info "Response for deleting tenant in SDS: #{result}"
+        account.rollback(:spam_detection_service)
+      end
+    end
+    
 end

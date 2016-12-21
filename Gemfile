@@ -230,6 +230,7 @@ gem "will_filter", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/will_f
 gem "rack-openid", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/rack-openid"
 gem "open_id_authentication", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/open_id_authentication"
 gem "ebayr", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/ebayr"
+gem 'fd_spam_detection_service', :path => "#{File.expand_path(__FILE__)}/../vendor/gems/fd_spam_detection_service"
 
 
 group :development, :test do
@@ -265,6 +266,9 @@ group :test do
   gem "minitest", "4.7.5"
   gem 'json_expressions' # Used by API
   gem "timecop" # Used by API
+  gem 'yard-cucumber', :require => false
+  gem 'cucumber-rails', :require => false
+  gem 'cucumber_statistics'
 end
 
 #ruby 2.2.3 expects tesst-unit to be available by default.
@@ -310,3 +314,5 @@ gem 'i18nema', :git => 'https://github.com/freshdesk/i18nema', :require => false
 
 # For debugging app in staging/production
 gem 'rbtrace', :require => false
+
+gem 'rugged'

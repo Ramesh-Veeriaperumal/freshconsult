@@ -98,7 +98,7 @@
     jQuery(document).ready(function(){
       populateRequestForm();
       jQuery('#meta_referrer').val(document.referrer.escapeHTML());
-      <% if feature?(:auto_suggest_solutions) && allowed_in_portal?(:open_solutions) %>
+      <% if feature?(:auto_suggest_solutions) && allowed_in_portal?(:open_solutions) && current_account.allow_auto_suggest_solutions_enabled? %>
         callbackToSolutionSearch = function(string){
           jQuery.ajax({ url: "/<%= Language.current.code %>/support/search/solutions?max_matches=5&term="+string, 
             dataType: 'json',

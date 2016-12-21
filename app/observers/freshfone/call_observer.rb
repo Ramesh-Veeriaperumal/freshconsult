@@ -33,7 +33,7 @@ class Freshfone::CallObserver < ActiveRecord::Observer
       if call.call_ended?
         resolve_acw(call) if call.agent.present? && account.features?(:freshfone_acw)
         trigger_cost_job(call)
-        remove_value_from_set(pinged_agents_key(call.id, account), call.call_sid)
+        update_pinged_agent_response_and_info(call)
       end
     end
   end
@@ -117,7 +117,7 @@ class Freshfone::CallObserver < ActiveRecord::Observer
     end
 
     def update_pinged_agent_status(call)
-      call.meta.update_pinged_agents_with_response(call.user_id, :accepted)
+      set_agent_response(call.account_id, call.id, call.user_id, :accepted)
     end
 
     def add_cost_job(freshfone_call)
@@ -239,8 +239,22 @@ class Freshfone::CallObserver < ActiveRecord::Observer
     end
 
     def build_outgoing_browser_meta(call)
-      call.build_meta(
-        meta_info: {agent_info: call.params[:device_info]},
+      call.create_meta(account_id: call.account_id,
         device_type: Freshfone::CallMeta::USER_AGENT_TYPE_HASH[:browser])
+    end
+
+    def update_pinged_agent_response_and_info(call)
+      call_meta = call.meta
+      return if call_meta.blank?
+      pinged_meta = get_and_clear_redis_meta(call)
+      agent_response = pinged_meta.first
+      agent_info = pinged_meta.second['agent_info']
+      call_meta.pinged_agents.each do |agent|
+        redis_response = agent_response[agent[:id].to_s]
+        agent[:response] = Freshfone::CallMeta::PINGED_AGENT_RESPONSE_HASH[
+          redis_response.to_sym] if redis_response.present?
+      end
+      call_meta.meta_info = { agent_info: agent_info } if agent_info.present?
+      call_meta.save!
     end
 end

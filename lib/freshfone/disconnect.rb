@@ -23,7 +23,7 @@ module Freshfone::Disconnect
   private
 
     def perform_agent_cleanup
-      update_secondary_leg_response
+      update_secondary_leg_response unless warm_transfer_target_agent?
       reset_outgoing_count
     end
 

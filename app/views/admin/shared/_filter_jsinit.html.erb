@@ -4,6 +4,7 @@
   <%= javascript_tag do %>
     var groupToStatusText = "<%= I18n.t('admin.observer_rules.filter_jsinit.internal_group_actions') %>";
     var agentToGroupText = "<%= I18n.t('admin.observer_rules.filter_jsinit.internal_agent_actions') %>";
+    var MAX_TAG_LENGTH_MSG = "<%= I18n.t('helpdesk.tickets.show.max_tag_length_msg') %>";
     // Condition Parsing 
     // This template contains the dom population information 
     var conditional_dom = function(filter, id, compName, initFeed, val, classname, _dataAttr){
@@ -27,6 +28,10 @@
         break;
         case 'autocomplete_multiple':
           c_dom = FactoryUI.multiple_text("<%= I18n.t('enter_values') %>", value, initFeed[value], ' filter-multi-select required');
+          jQuery(c_dom).prop("id", id);
+        break;
+        case 'autocomplete_tags':
+          c_dom = FactoryUI.multiple_text("<%= I18n.t('enter_values') %>", value, initFeed[value], 'expanded_select filter-multi-select required', <%=current_user.privilege?(:create_tags)%>);
           jQuery(c_dom).prop("id", id);
         break;
         case 'autocomplete_multiple_with_id':
@@ -362,7 +367,7 @@
             });
           });
           classNames = 'select2'
-          if (compName == 'filter') classNames+=' required filter-multi-select';
+          classNames+= (compName == 'filter') ? ' required filter-multi-select' : ' expanded_select';
           c_dom = FactoryUI.dropdown(choices, 'value', classNames );
           jQuery(c_dom).attr('placeholder',(compName == 'filter') ? '<%= I18n.t('select_values') %>' : '<%= I18n.t('select_watchers') %>')
           jQuery(c_dom).prop({'multiple':'multiple'}).val(initFeed["value"]);

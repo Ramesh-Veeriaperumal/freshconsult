@@ -26,6 +26,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   before_save :reset_internal_group_agent
 
+  before_save :reset_assoc_parent_tkt_status, :if => :assoc_parent_ticket?
+
   before_save  :update_ticket_related_changes, :update_company_id, :set_sla_policy
 
   before_save :check_and_reset_company_id, :if => :company_id_changed?
@@ -37,8 +39,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
   before_update :round_robin_on_ticket_update, :unless => :skip_rr_on_update?
 
   before_update :reset_assoc_tkts, :if => :remove_associations?
-
-  before_update :reset_assoc_parent_tkt_status, :if => :assoc_parent_ticket?
 
   after_update :start_recording_timestamps, :unless => :model_changes?
 
@@ -69,6 +69,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   after_commit :add_links, :on => :update, :if => :linked_now?
   after_commit :remove_links, :on => :update, :if => :unlinked_now?
   after_commit :save_sentiment, on: :create 
+  after_commit :update_spam_detection_service, :if => :model_changes?
   
   # Callbacks will be executed in the order in which they have been included. 
 
@@ -157,7 +158,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
          schema_less_ticket.sentiment = 0
          schema_less_ticket.save
        else
-          Tickets::UpdateSentimentWorker.perform_async( { :id => id } )
+          ::Tickets::UpdateSentimentWorker.perform_async( { :id => id } )
        end
      end
     end
@@ -473,7 +474,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def add_links
     Rails.logger.debug "Linking Related tickets [#{self.id}] to tracker_ticket #{@tracker_ticket.display_id}"
     @tracker_ticket.add_associates([self.display_id])
-    create_tracker_activity(:tracker_link)
+    create_assoc_tkt_activity(:tracker_link, @tracker_ticket, self.display_id)
     self.associates = [ @tracker_ticket.display_id ]
   end
 
@@ -481,7 +482,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     Rails.logger.debug "Uninking Related tickets [#{self.id}] from tracker_ticket #{@tracker_ticket.display_id}"
     self.remove_all_associates
     @tracker_ticket.remove_associates([self.display_id])
-    create_tracker_activity(:tracker_unlink)
+    create_assoc_tkt_activity(:tracker_unlink, @tracker_ticket, self.display_id)
   end
 
   # Parent Child ticket validations...
@@ -505,7 +506,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   #reset associated parent tkt status if any of the child is not resolved/closed
   def reset_assoc_parent_tkt_status
     if status_changed_now? and self.validate_assoc_parent_tkt_status
-      self.status = @model_changes[:status][0]
+      self.status = self.changes[:status][0]
       # scenario automation
       action_log = Thread.current[:scenario_action_log]
       Thread.current[:scenario_action_log][:status] = I18n.t('ticket.unresolved_child') if action_log.present? and action_log[:status].present?
@@ -518,10 +519,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def check_child_tkt_status
     if status_changed? and ![RESOLVED, CLOSED].include?(status)
-      assoc_parent_ticket = @assoc_parent_ticket ? @assoc_parent_ticket : self.associated_prime_ticket("child")
-      if [RESOLVED, CLOSED].include?(assoc_parent_ticket.status)
-        assoc_parent_ticket.update_attributes(:status => OPEN)
-      end
+      @assoc_parent_ticket = self.associated_prime_ticket("child") if @assoc_parent_ticket.nil?
+      reopen_tickets @assoc_parent_ticket if [RESOLVED, CLOSED].include?(@assoc_parent_ticket.status)
     end
   end
 
@@ -677,7 +676,7 @@ private
     description_updated = false
     inline_attachments.each_with_index do |attach, index|
       content_id = header[:content_ids][attach.content_file_name+"#{index}"]
-      self.ticket_body.description_html = self.ticket_body.description_html.sub("cid:#{content_id}", attach.content.url) if content_id
+      self.ticket_body.description_html = self.ticket_body.description_html.sub("cid:#{content_id}", attach.inline_url) if content_id
     end
     # For rails 2.3.8 this was the only i found with which we can update an attribute without triggering any after or before callbacks
     #Helpdesk::Ticket.update_all("description_html= #{ActiveRecord::Base.connection.quote(description_html)}", ["id=? and account_id=?", id, account_id]) \
@@ -780,7 +779,8 @@ private
   end
 
   def previous_state_was_resolved_or_closed?
-    [RESOLVED,CLOSED].include?(@model_changes[:status][0])
+    tkt_status = @model_changes ? @model_changes[:status][0] : self.changes[:status][0]
+    [RESOLVED,CLOSED].include?(tkt_status)
   end
 
   def previous_state_was_sla_stop_state?
@@ -860,23 +860,19 @@ private
   end
 
   def update_assoc_parent_tkt
-    is_inactive = [RESOLVED, CLOSED].include?(@assoc_parent_ticket.status)
     if @assoc_parent_ticket.assoc_parent_ticket?
       @assoc_parent_ticket.add_associates([self.display_id])
-      is_inactive ? @assoc_parent_ticket.update_attributes(:status => OPEN) : true
+      create_assoc_tkt_activity(:assoc_parent_tkt_link, @assoc_parent_ticket, self.display_id)
+      true
     else
-      set_tkt_assn_type(@assoc_parent_ticket, :assoc_parent, is_inactive)
+      set_tkt_assn_type(@assoc_parent_ticket, :assoc_parent)
     end
   end
 
-  def set_tkt_assn_type item, value, set_status_open = false
+  def set_tkt_assn_type item, value
     item.associates = [self.display_id]
     update_hash = { :association_type => TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[value] }
-    if value == :related
-      update_hash.merge!(:associates_rdb => self.display_id)
-    elsif value == :assoc_parent and set_status_open
-      update_hash.merge!(:status => OPEN)
-    end
+    update_hash.merge!(:associates_rdb => self.display_id) if value == :related
     item.update_attributes(update_hash)
   end
 
@@ -893,10 +889,10 @@ private
       (spam_changed? && @model_changes[:spam][0] == false)
   end
 
-  def create_tracker_activity(action, tracker = @tracker_ticket)
+  def create_assoc_tkt_activity(action, ticket, id) # => tracker/assoc_parent tkt
     if Account.current.features?(:activity_revamp)
-      tracker.misc_changes = {action => [self.display_id]}
-      tracker.manual_publish_to_rmq("update", RabbitMq::Constants::RMQ_ACTIVITIES_TICKET_KEY)
+      ticket.misc_changes = {action => [id]}
+      ticket.manual_publish_to_rmq("update", RabbitMq::Constants::RMQ_ACTIVITIES_TICKET_KEY)
     end
   end
 
@@ -922,5 +918,21 @@ private
   def update_fr_escalated
     self.fr_escalated = false
     true
+  end
+
+  def update_spam_detection_service
+    if (Account.current.launched?(:spam_detection_service) && @model_changes.include?(:spam) &&
+     self.source.eql?(Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email]))
+      Rails.logger.info "Pushing to sidekiq to learn ticket"
+      type = @model_changes[:spam][1] ? :spam : :ham
+      SpamDetection::LearnTicketWorker.perform_async({ :ticket_id => self.id, 
+        :type => Helpdesk::Email::Constants::MESSAGE_TYPE_BY_NAME[type]})
+    end
+  end
+
+  # Associated parent ticket will be reopened, when any of its children is in unresolved status.
+  # Reason for moving it to BJ is for activites(to generate as a system activity)
+  def reopen_tickets item
+    ::Tickets::ReopenTickets.perform_async({:ticket_ids=>[item.display_id]})
   end
 end

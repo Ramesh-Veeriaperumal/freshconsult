@@ -75,13 +75,13 @@ class Helpdesk::Note < ActiveRecord::Base
   def update_sentiment 
     if Account.current.customer_sentiment_enabled?
       if User.current.nil? || User.current.language.nil? || User.current.language = "en"
-        is_agent_performed = notable.agent_performed?(User.current)
-        if !is_agent_performed && !self.private
+        is_agent_performed = notable.agent_performed?(self.user)
+        if !is_agent_performed && ![SOURCE_KEYS_BY_TOKEN["meta"]].include?(self.source)
           if [SOURCE_KEYS_BY_TOKEN["phone"]].include?(self.source)
             schema_less_note.sentiment = 0
             schema_less_note.save
           else
-            Notes::UpdateNotesSentimentWorker.perform_async({ :note_id => id, :ticket_id => notable.id})
+            ::Notes::UpdateNotesSentimentWorker.perform_async({ :note_id => id, :ticket_id => notable.id})
           end
         end
      end
@@ -114,8 +114,8 @@ class Helpdesk::Note < ActiveRecord::Base
       
       inline_attachments.each_with_index do |attach, index| 
         content_id = header[:content_ids][attach.content_file_name+"#{index}"]
-        self.note_body.body_html = self.note_body.body_html.sub("cid:#{content_id}", attach.content.url) if content_id
-        self.note_body.full_text_html = self.note_body.full_text_html.sub("cid:#{content_id}", attach.content.url) if content_id
+        self.note_body.body_html = self.note_body.body_html.sub("cid:#{content_id}", attach.inline_url) if content_id
+        self.note_body.full_text_html = self.note_body.full_text_html.sub("cid:#{content_id}", attach.inline_url) if content_id
       end
       
       # note_body.update_attribute(:body_html,self.note_body.body_html)

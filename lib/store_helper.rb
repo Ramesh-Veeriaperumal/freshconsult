@@ -1,7 +1,8 @@
 module StoreHelper # Datas to be exposed to clientside
   
   def get_store_data
-    @agents_list ||= current_account.agents_details_from_cache.inject([]) do |res,agent|
+    @agents_list ||= current_account.agents_details_from_cache
+    @agents_list.inject([]) do |res,agent|
       res << {:id => agent.id, :name => agent.name, :is_account_admin => agent.email == current_account.admin_email}
     end
 
@@ -13,6 +14,8 @@ module StoreHelper # Datas to be exposed to clientside
       res << {:id => product.id, :name => product.name}
     end
 
-    {:current_user => current_user, :agent => @agents_list, :group => @groups_list, :product => @products_list}.to_json
+    @features_list ||= current_account.features_list
+
+    {:current_user => current_user, :agent => @agents_list, :group => @groups_list, :product => @products_list, :features_list => @features_list, :agents_count => @agents_list.count}.to_json
   end
 end

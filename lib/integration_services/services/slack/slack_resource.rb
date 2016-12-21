@@ -31,6 +31,10 @@ module IntegrationServices::Services
         @slack_token ||= @service.configs["oauth_token"]
       end
 
+      def bot_token
+        @bot_token ||= @service.configs["bot_token"]
+      end
+
     end
   end
 end

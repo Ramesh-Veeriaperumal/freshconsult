@@ -16,7 +16,8 @@ window.App = window.App || {};
     },
 
     onLeave: function (data) {
-      $('body').off('.archive_ticket_details') 
+      $('body').off('.archive_ticket_details');
+      App.Tickets.TicketRequester.unBindEvents();
     },
 
     init: function () {
@@ -29,6 +30,7 @@ window.App = window.App || {};
       this.quoteText();
       this.toggleQuotedText();
       this.updateLocalRecentTickets();
+      App.Tickets.TicketRequester.init();
     },
     paginationScroll : function(){
       var element = $("[data-activity-id ='"+TICKET_DETAILS_DATA['last_activity_batch']+"']");

@@ -61,7 +61,12 @@
 			this.instance = $(this.element).data('customfield');
 			this.options.currentData = this.instance.getProperties();
 			$( this.element ).addClass("active");
-			$(this.options.dialogContainer).html(JST['custom-form/template/formfield_props']({obj:this.options.currentData, picklistIds: picklistIds, shared_groups: sharedGroups, shared_ownership_enabled: shared_ownership_enabled}));
+			$(this.options.dialogContainer).html(JST['custom-form/template/formfield_props']({
+				obj: this.options.currentData, 
+				picklistIds: picklistIds, 
+				shared_groups: sharedGroups, 
+				shared_ownership_enabled: shared_ownership_enabled, 
+				custom_ticket_fields_enabled: custom_ticket_fields_enabled }));
 
 			this.options.validateOptions = $.extend(true, {}, this.options.validateOptions, $(this.element).data('customfield')['getValidationRules']())
 			$(this.options.customPropertiesDiv).validate(this.options.validateOptions);

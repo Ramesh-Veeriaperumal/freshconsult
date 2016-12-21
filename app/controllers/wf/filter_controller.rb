@@ -25,6 +25,13 @@ class Wf::FilterController < ApplicationController
   include AccessibleControllerMethods
 
   before_filter :chk_usr_permission, :only => [:delete_filter,:update_filter]
+  before_filter :check_custom_view_feature, :only => [:save_filter,:delete_filter,:update_filter]
+
+  def check_custom_view_feature
+    unless current_account.custom_ticket_views_enabled?
+      render js: "window.location='#{send(Helpdesk::ACCESS_DENIED_ROUTE)}'"
+    end
+  end
   
   def index
     @edit_filters = []

@@ -1,6 +1,7 @@
 <%= f.error_messages %>
 <% conditions = @sla_policy.conditions || {} %>
 <% esc_conditions = @sla_policy.escalations || {} %>
+<% sla_enabled = current_account.sla_management_enabled? %>
 
 <div class="dont-validate form-horizontal">
   	<div class="control-group">
@@ -24,7 +25,9 @@
 		</div>
 		<div class="alert alignleft">
 			<%= t('sla_policy.sla_rule_info1').html_safe %> <br>
-			<%= t('sla_policy.sla_rule_info2').html_safe %>
+			<% if sla_enabled %>
+				<%= t('sla_policy.sla_rule_info2').html_safe %> 
+			<% end %>
 		</div>
 	</div>
 	<div>	 	 		
@@ -36,7 +39,9 @@
 				<% if feature?(:business_hours) %>
 					<th><%= t('sla_policy.op_hrs').html_safe %></th>
 				<% end %>
+				<% if sla_enabled %>
 					<th><%= t('sla_policy.escalation_email').html_safe %></th>
+				<% end %>
 	  		</tr>
 	 		<% 
 				sla_size = @sla_policy.sla_details.size
@@ -64,16 +69,19 @@
 						</td>
 						<% if feature?(:business_hours) %> <td><%= sla.select :override_bhrs, 
 							Helpdesk::SlaDetail::SLA_TIME_OPTIONS, {}, {:class =>'select2'} %></td> <% end %>
-						<td>
-							<%= sla.check_box :escalation_enabled, {:rel => "sla_checkbox"}, 1 , 0 %>
-						</td>
+						<% if sla_enabled %>
+							<td>
+								<%= sla.check_box :escalation_enabled, {:rel => "sla_checkbox"}, 1 , 0 %>
+							</td>
+						<% end %>
 					</tr>
 		  		<% end %>
 			<% end %>
 		</table>
 	</div>
 </div>
-<ul class="ui-form dont-validate">
+
+<ul class="<% if sla_enabled %> ui-form <% end %> dont-validate">
 	<% unless @sla_policy.is_default %>
 	<li>
 		<%= f.label :conditions, "#{t('sla_policy.applicable_to').html_safe}:" , :class => "large" %>
@@ -133,8 +141,10 @@
 	</li>
 	<% end %>
 
-	<%= render  :partial => 'sla_reminder', :locals => {:f => f ,:esc_conditions => esc_conditions}%>
-	<%= render  :partial => 'sla_escalation', :locals => {:f => f ,:esc_conditions => esc_conditions}%>
+	<% if sla_enabled %>
+		<%= render  :partial => 'sla_reminder', :locals => {:f => f ,:esc_conditions => esc_conditions}%>
+		<%= render  :partial => 'sla_escalation', :locals => {:f => f ,:esc_conditions => esc_conditions}%>
+	<% end %>
 	
 </ul>
 <div class="button-container">

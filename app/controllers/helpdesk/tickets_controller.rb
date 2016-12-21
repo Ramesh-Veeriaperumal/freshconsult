@@ -66,8 +66,11 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :load_ticket,
     :only => [:edit, :update, :execute_scenario, :close, :change_due_by, :print, :clear_draft, :save_draft,
               :draft_key, :get_ticket_agents, :quick_assign, :prevnext, :status, :update_ticket_properties,
-              :activities, :activitiesv2, :activities_all, :unlink, :associated_tickets, :ticket_association, :suggest_tickets]
-  before_filter :load_ticket_with_notes, :only => [:show]
+              :activities, :activitiesv2, :activities_all, :unlink, :associated_tickets, :ticket_association,
+              :suggest_tickets, :update_requester, :refresh_requester_widget]
+
+  before_filter :load_ticket_with_notes, :only => :show
+  before_filter :load_ticket_contact_data, :only => [:show, :update_requester, :refresh_requester_widget]
 
   before_filter :check_outbound_permission, :only => [:edit, :update]
 
@@ -104,6 +107,14 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :check_ml_feature, :only => [:suggest_tickets]
   before_filter :load_parent_template, :only => [:show_children, :bulk_child_tkt_create]
   before_filter :load_associated_tickets, :only => [:associated_tickets]
+  before_filter :requester_widget_filter_params, :only => [:update_requester]
+  before_filter :check_custom_view_feature, :only => [:custom_view_save]
+
+  def check_custom_view_feature
+    unless current_account.custom_ticket_views_enabled?
+      redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
+    end
+  end
 
   def suggest_tickets
     tickets = []
@@ -188,6 +199,36 @@ class Helpdesk::TicketsController < ApplicationController
     end
   end
 
+  def populate_sentiment
+    if Account.current.customer_sentiment_ui_enabled?
+      survey_association = Account.current.new_survey_enabled? ? "custom_survey_results" : "survey_results"
+      sentiment_value = {}
+
+      ticket_ids =  @items.map(&:id)
+
+      sentiment_sql_array = ["select notable_id,int_nc04 from helpdesk_notes n inner join helpdesk_schema_less_notes sn
+                    on n.id=sn.note_id where n.account_id = %s and n.notable_id in (%s) 
+                    and sn.int_nc04 is not null 
+                    order by n.created_at;",
+                    Account.current.id, ticket_ids.join(',')]
+      
+      sentiment_sql = ActiveRecord::Base.send(:sanitize_sql_array, sentiment_sql_array)
+
+      note_senti = ActiveRecord::Base.connection.execute(sentiment_sql).collect{|i| i}.to_h
+
+      @items.each do |ticket|
+        if ticket.send(survey_association).nil? || ticket.send(survey_association).last.nil?
+          if note_senti[ticket.id].present?
+            sentiment_value[ticket.id] = note_senti[ticket.id]
+          else
+            sentiment_value[ticket.id] = ticket.sentiment
+          end
+        end
+      end
+      sentiment_value
+    end
+  end
+
   def index
     #For removing the cookie that maintains the latest custom_search response to be shown while hitting back button
     params[:html_format] = request.format.html?
@@ -213,25 +254,9 @@ class Helpdesk::TicketsController < ApplicationController
         @is_default_filter = (!is_num?(view_context.current_filter))
         
         #Changes for customer sentiment - Beta feature
-
         #@sentiments = {:ticket_id => sentiment_value}
-        if Account.current.customer_sentiment_ui_enabled?
-          survey_association = Account.current.new_survey_enabled? ? "custom_survey_results" : "survey_results"
-          @sentiments = {}
-          #Collect all ticket ids by looping @items
-          ticket_ids =  @items.map(&:id)
-          #note_senti = ActiveRecord::Base.connection.execute("select id,int_nc04 from helpdesk_schema_less_notes where account_id = #{Account.current.id} and id in (#{ticket_ids.join(',')}) ").collect{|i| i}.to_h
-          note_senti = ActiveRecord::Base.connection.execute("select notable_id,int_nc04 from helpdesk_notes inner join helpdesk_schema_less_notes ON helpdesk_notes.id=helpdesk_schema_less_notes.note_id where helpdesk_notes.account_id = #{Account.current.id} and helpdesk_notes.notable_id in (#{ticket_ids.join(',')}) order by helpdesk_notes.created_at").collect{|i| i}.to_h
-          @items.each do |ticket|
-            #While colling check for customer survey
-            if ticket.send(survey_association).nil? || ticket.send(survey_association).last.nil?
-              if note_senti[ticket.id].present?
-                @sentiments[ticket.id] = note_senti[ticket.id]
-              else
-                @sentiments[ticket.id] = ticket.sentiment
-              end
-            end
-          end
+        if Account.current.customer_sentiment_ui_enabled? && @items.size > 0
+          @sentiments = populate_sentiment
         end
         #End of changes for customer sentiment - Beta feature
 
@@ -407,25 +432,8 @@ class Helpdesk::TicketsController < ApplicationController
     @items = fetch_tickets
 
     #Changes for customer sentiment - Beta feature
-        
-    #@sentiments = {:ticket_id => sentiment_value}
-    if Account.current.customer_sentiment_ui_enabled?
-      survey_association = Account.current.new_survey_enabled? ? "custom_survey_results" : "survey_results"
-      @sentiments = {}
-      #Collect all ticket ids by looping @items
-      ticket_ids =  @items.map(&:id)
-      #note_senti = ActiveRecord::Base.connection.execute("select id,int_nc04 from helpdesk_schema_less_notes where account_id = #{Account.current.id} and id in (#{ticket_ids.join(',')}) ").collect{|i| i}.to_h
-      note_senti = ActiveRecord::Base.connection.execute("select notable_id,int_nc04 from helpdesk_notes inner join helpdesk_schema_less_notes ON helpdesk_notes.id=helpdesk_schema_less_notes.note_id where helpdesk_notes.account_id = #{Account.current.id} and helpdesk_notes.notable_id in (#{ticket_ids.join(',')}) order by helpdesk_notes.created_at").collect{|i| i}.to_h
-      @items.each do |ticket|
-        #While colling check for customer survey
-        if ticket.send(survey_association).nil? || ticket.send(survey_association).last.nil?
-          if note_senti[ticket.id].present?
-            @sentiments[ticket.id] = note_senti[ticket.id]
-          else
-            @sentiments[ticket.id] = ticket.sentiment
-          end
-        end
-      end
+    if Account.current.customer_sentiment_ui_enabled? && @items.size > 0
+      @sentiments = populate_sentiment
     end
     #End of changes for customer sentiment - Beta feature
 
@@ -441,7 +449,7 @@ class Helpdesk::TicketsController < ApplicationController
 
     @subscription = current_user && @item.subscriptions.find(
       :first,
-      :conditions => {:user_id => current_user.id})
+      :conditions => {:user_id => current_user.id}) if current_account.add_watcher_enabled? 
 
     @page_title = "[##{@ticket.display_id}] #{@ticket.subject}"
 
@@ -591,69 +599,51 @@ class Helpdesk::TicketsController < ApplicationController
     end
   end
 
-  def update_requester
-    @ticket = load_by_param(params[:id])
-    @requester_errors = false
-    @company_name_required_error = false
-
-    requester = current_account.users.find_by_id(params["requester_widget"]["contact_id"])
-
-    if requester.present? && requester.customer?
-      requester.validatable_custom_fields = { :fields => current_account.contact_form.custom_contact_fields,
-                                          :error_label => :label }
-      if params["company"].present? && requester.company.present?
-        @company = current_account.companies.find(requester.company_id)
-        @company.validatable_custom_fields = { :fields => current_account.company_form.custom_company_fields,
-                                               :error_label => :label }
-        check_domain_exists unless @company.update_attributes(params["company"])
-        flash[:notice] = activerecord_error_list(@company.errors) unless @existing_company.present?
-      end
-
-      if (@company.blank? || @company.errors.blank?)
-        flash[:notice] = requester.update_attributes(params["contact"]) ?
-          t(:'flash.general.update.success', :human_name => t('requester_widget_human_name')) :
-          activerecord_error_list(requester.errors)
-      else
-        @requester_errors = true
-      end
-
+  def refresh_requester_widget
+    respond_to do |format|
+      format.js { render :partial => "helpdesk/tickets/refresh_requester_widget" }
     end
+  end
 
-    # if company name editing is allowed, enable the following block and remove the block above
+  def update_requester
+    @requester = current_account.users.find_by_id(params[:requester_widget][:contact_id])
+    return unless @requester.try(:customer?)
 
-    # if requester.present? && requester.customer?
-    #   requester.validatable_custom_fields = { :fields => current_account.contact_form.custom_contact_fields,
-    #                                       :error_label => :label }
-    #   params[:contact][:customer_id] = ""
+    company_save_success = true
+    company_attributes = params[:company]
+    company_name = company_attributes[:name] if company_attributes.present? && company_attributes[:name].present?
+    @company ||= current_account.companies.find_by_name(company_name) || current_account.companies.new if company_name && !@company_deleted
 
-    #   if company_details_present?
-    #     if params["company"]["name"].present?
-    #       @company = current_account.companies.find_by_name(params["company"]["name"])
-    #       if @company
-    #         @company.assign_attributes(params["company"])
-    #       else
-    #         @company = current_account.companies.new(params["company"])
-    #       end
-    #       @company.validatable_custom_fields = { :fields => current_account.company_form.custom_company_fields,
-    #                                              :error_label => :label }
-    #       check_domain_exists unless @company.save
-    #       flash[:notice] = activerecord_error_list(@company.errors) unless @existing_company.present?
-    #       params[:contact][:customer_id] = @company.id
-    #     else
-    #       @company_name_required_error = true
-    #     end
-    #   end
-    #   if (@company.blank? || @company.errors.blank?) && !@company_name_required_error
-    #     if requester.update_attributes(params["contact"])
-    #       flash[:notice] = t(:'flash.general.update.success', :human_name => t('requester_widget_human_name'))
-    #     else
-    #       check_company_association_exists(requester.errors)
-    #       flash[:notice] = activerecord_error_list(requester.errors) unless @company_association_exists
-    #     end
-    #   else
-    #     @requester_errors = true
-    #   end
-    # end
+    if @company && company_attributes
+        @company.assign_attributes(company_attributes)
+        set_company_validatable_custom_fields
+        company_save_success = @company.save
+        check_domain_exists
+        @filtered_contact_params[:customer_id] = @company.id if company_save_success && @requester.company.blank?
+        flash[:notice] = (@company.errors) if !company_save_success && @existing_company.blank?
+    end
+    if company_save_success
+      set_contact_validatable_custom_fields
+      requester_success = @requester.update_attributes(@filtered_contact_params) 
+      ticket_success = (@ticket.company.blank? && @company.present? && requester_success ? @ticket.update_attributes(:owner_id => @company.id) : true)
+      flash_message = if !requester_success
+          activerecord_error_list(@requester.errors)
+        elsif !ticket_success
+          activerecord_error_list(@ticket.errors)
+        else
+          t(:'flash.general.update.success', :human_name => t('requester_widget_human_name'))
+        end
+        
+      flash[:notice] = flash_message
+    end
+    @ticket.reload
+    load_ticket_contact_data
+  end
+
+  def requester_widget_filter_params
+    field_names = current_account.contact_form.default_contact_fields.map(&:name).delete_if{|n| n == "email"}
+    field_names << :custom_field
+    @filtered_contact_params = params[:contact].try(:slice, *field_names) || {}
   end
 
   def assign
@@ -1699,6 +1689,7 @@ class Helpdesk::TicketsController < ApplicationController
     def load_ticket_filter
       return if @cached_filter_data
       filter_name = CGI.escapeHTML(view_context.current_filter)
+      filter_name = current_account.sla_management_enabled? ? filter_name : fallback_filter_name(filter_name)
       if !is_num?(filter_name)
         load_default_filter(filter_name)
       else
@@ -1717,6 +1708,10 @@ class Helpdesk::TicketsController < ApplicationController
       @ticket_filter.accessible = current_account.user_accesses.new
       @ticket_filter.accessible.visibility = Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me]
       set_modes(@ticket_filter.query_hash)
+    end
+
+    def fallback_filter_name(filter_name)
+      ["overdue", "due_today"].include?(filter_name.to_s) ? "new_and_my_open" : filter_name
     end
 
     def set_modes(conditions)
@@ -1967,7 +1962,7 @@ class Helpdesk::TicketsController < ApplicationController
 
   def fetch_tickets(tkt=nil)
     #_Note_: Fetching from ES based on feature and only for web
-    if es_tickets_enabled? and params[:html_format]
+    if es_tickets_enabled? and params[:html_format] and non_indexed_columns_query?
       tickets_from_es(params)
     else
       if Account.current.customer_sentiment_ui_enabled?
@@ -2046,31 +2041,20 @@ class Helpdesk::TicketsController < ApplicationController
     @items.first.tracker_ticket? ? t('ticket.link_tracker.tracker_delete_message') : t('ticket.link_tracker.related_delete_message')
   end
 
-  def check_domain_exists
-      if @company.errors[:"company_domains.domain"].include?("has already been taken")
-        @company.company_domains.each do |cd|
-          @existing_company ||= current_account.company_domains.find_by_domain(cd.domain).try(:company) if cd.new_record?
-        end
-      end
+  def set_contact_validatable_custom_fields
+    @requester.validatable_custom_fields = { :fields => current_account.contact_form.custom_contact_fields,
+                                        :error_label => :label }
   end
 
-  def check_company_association_exists errors
-    if errors[:"default_user_company.company_id"].include?("has already been taken")
-      @company_association_exists = true
-      @requester_errors = true
-    end
+  def set_company_validatable_custom_fields
+    @company.validatable_custom_fields = { :fields => current_account.company_form.custom_company_fields,
+                                        :error_label => :label }
   end
 
-  def flat_hash(hash_to_convert,tmp=[],new_hash={})
-    return new_hash.update({ tmp=>hash_to_convert }) unless hash_to_convert.is_a? Hash
-    hash_to_convert.each { |k,v| flat_hash(v,tmp+[k],new_hash) }
-    new_hash
-  end
-
-
-  def company_details_present?
-    company_hash = flat_hash(params["company"])
-    company_hash.values.any?{|v| !v.nil? && v.length > 0 && v != "false"}
+  def load_ticket_contact_data
+    @company = @ticket.company
+    @company_deleted = @ticket.owner_id.present? && @company.blank?
+    @unassociated_company = @company.blank? ? false : @ticket.requester.companies.exclude?(@company)
   end
 
   def load_tkt_and_templates

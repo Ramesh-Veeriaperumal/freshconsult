@@ -54,6 +54,7 @@
 </div>
 
 <script type="text/javascript">
+	var MAX_TAG_LENGTH_MSG = "<%= I18n.t('helpdesk.tickets.show.max_tag_length_msg') %>";
 	jQuery('body').one('assetLoaded.fjax', function() {
 		App.Solutions.NavMenu.setActiveFolderAs(<%= @article.folder_id %>);
 		App.Solutions.Article.STRINGS = {

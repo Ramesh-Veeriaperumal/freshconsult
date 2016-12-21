@@ -454,6 +454,12 @@
   });
 
   jQuery("#FilterOptions").change(function(){
+
+    //close link popup
+    if(jQuery('.popover.partialLeft').is(':visible')){
+      jQuery(popup_target).popover('toggle');
+    }
+
     <%
     # Select all should be persisted on pagination
     # but not when filter get changed, which is handled in change event of

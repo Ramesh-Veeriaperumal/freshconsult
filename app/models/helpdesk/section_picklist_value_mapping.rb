@@ -4,8 +4,8 @@ class Helpdesk::SectionPicklistValueMapping < ActiveRecord::Base
   attr_protected  :account_id
   
   belongs_to_account
-  belongs_to :section
-  belongs_to :picklist_value
+  belongs_to :section, :class_name => "Helpdesk::Section"
+  belongs_to :picklist_value, :class_name => "Helpdesk::PicklistValue"
 
   validates_uniqueness_of :picklist_value_id, :scope => :account_id
 end

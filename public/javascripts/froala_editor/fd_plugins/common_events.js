@@ -34,6 +34,24 @@
 
       });
 
+      editor.$oel.on('froalaEditor.commands.before', function (e, editor, cmd, param1, param2) {
+
+        // For insert Quore triggered from the paragraph format list
+        if (cmd == "paragraphFormat" && param1 == "BLOCKQUOTE") {
+          e.preventDefault();
+          var $block = jQuery(editor.selection.blocks());
+
+          if ($block.get(0).tagName == "BLOCKQUOTE" || $block.parent().get(0).tagName == "BLOCKQUOTE") {
+            editor.$oel.froalaEditor('quote.apply', 'decrease');
+          } else {
+            editor.$oel.froalaEditor('quote.apply', 'increase');
+          }
+
+          return false;
+        } 
+
+      });
+
       var form = editor.$oel.get(0).form;
       $(form).on('submit', function () {
         var textarea = jQuery(this).find('#solution_article_description'),

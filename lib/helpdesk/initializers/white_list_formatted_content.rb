@@ -48,7 +48,7 @@ ActiveRecord::Base.class_eval do
       list = self.class.send(:class_variable_get,'@@unhtmlable_attributes')
       list.each do |body| 
         if send "#{body}_html_changed?"
-          self.send(:write_attribute , "#{body}_html", Rinku.auto_link(self.send(:read_attribute , "#{body}_html"), :urls, 'rel="noreferrer"'))
+          self.send(:write_attribute , "#{body}_html", FDRinku.auto_link(self.send(:read_attribute , "#{body}_html"), { :attr => 'rel="noreferrer"' }))
           self.send(:write_attribute , body, Helpdesk::HTMLSanitizer.plain(send(:read_attribute , "#{body}_html"))) 
         end  
       end   

@@ -5,6 +5,7 @@ class SendgridDomainUpdates < BaseWorker
   include ParserUtil
   include Redis::RedisKeys
   include Redis::OthersRedis
+  include Redis::PortalRedis
 
   require 'freemail'
 
@@ -104,8 +105,10 @@ class SendgridDomainUpdates < BaseWorker
           spam_score = 0
         end
       end
-      account.conversion_metric.spam_score = spam_score
-      account.conversion_metric.save
+      unless account.conversion_metric.nil?
+        account.conversion_metric.spam_score = spam_score
+        account.conversion_metric.save
+      end
     end
   end
 
@@ -164,6 +167,14 @@ class SendgridDomainUpdates < BaseWorker
   def save_account_sign_up_params account_id, args = {}
     key = ACCOUNT_SIGN_UP_PARAMS % {:account_id => account_id}
     set_others_redis_key(key,args.to_json)
+    increment_portal_cache_version
+  end
+
+  def increment_portal_cache_version
+    return if get_portal_redis_key(PORTAL_CACHE_ENABLED) === "false"
+    Rails.logger.debug "::::::::::Sweeping from portal"
+    key = PORTAL_CACHE_VERSION % { :account_id => Account.current.id }
+    increment_portal_redis_version key
   end
 
 end

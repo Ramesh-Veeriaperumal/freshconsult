@@ -72,10 +72,10 @@ module Freshfone::CallsRedisMethods
     FRESHFONE_AUTORECHARGE_TIRGGER % {:account_id => account_id}
   end
 
-  def auto_recharge_throttle_limit_reached?(account_id)
-    is_exist = get_key(autorecharge_key(account_id))
-    Rails.logger.info "Auto-Recharge attempt with in 30 mins for account #{account_id}" unless is_exist.blank?
-    return is_exist.blank?
+  def autorecharge_inprogress?(account_id)
+    return if get_key(autorecharge_key(account_id)).blank?
+    Rails.logger.info "Auto-Recharge attempt with in 30 mins for account #{account_id}"
+    true
   end
 
   #Conference actions
@@ -125,5 +125,60 @@ module Freshfone::CallsRedisMethods
   def call_quality_metrics_key(dial_call_sid)
     @call_quality_metrics_key ||= FRESHFONE_CALL_QUALITY_METRICS % {
       account_id: @current_account.id, dial_call_sid: dial_call_sid }
+  end
+
+  def agent_response_key(account_id, call_id)
+    FRESHFONE_PINGED_RESPONSE % { account_id: account_id, call_id: call_id }
+  end
+
+  def agent_info_key(account_id, call_id)
+    FRESHFONE_AGENT_INFO % { account_id: account_id, call_id: call_id }
+  end
+
+  def set_agent_response(account_id, call_id, agent_id, response)
+    key = agent_response_key(account_id, call_id)
+    $redis_integrations.perform_redis_op('hset', key, agent_id.to_s, response)
+  end
+
+  def set_all_agents_response(account_id, call_id, agent_responses)
+    key = agent_response_key(account_id, call_id)
+    $redis_integrations.perform_redis_op('hmset', key , agent_responses)
+  end
+
+  def get_response_meta(account_id, call_id)
+    key = agent_response_key(account_id, call_id)
+    $redis_integrations.perform_redis_op('hgetall', key)
+  end
+
+  def get_agent_response(account_id, call_id, user_id)
+    key = agent_response_key(account_id, call_id)
+    $redis_integrations.perform_redis_op('hget', key, user_id)
+  end
+
+  def set_agent_info(account_id, call_id, agent_info)
+    key = agent_info_key(account_id, call_id)
+    $redis_integrations.perform_redis_op('hset', key, 'agent_info', agent_info)
+  end
+
+  def get_agent_info(account_id, call_id)
+    key = agent_info_key(account_id, call_id)
+    $redis_integrations.perform_redis_op('hgetall', key)
+  end
+
+  def get_and_clear_redis_meta(call)
+    $redis_integrations.pipelined do
+      get_redis_meta(call.account_id, call.id)
+      remove_value_from_set(pinged_agents_key(call.id,
+        call.account), call.call_sid)
+    end
+  end
+
+  def get_redis_meta(account_id, call_id)
+    $redis_integrations.multi do
+      get_response_meta(account_id, call_id)
+      get_agent_info(account_id, call_id)
+      remove_key(agent_response_key(account_id, call_id))
+      remove_key(agent_info_key(account_id, call_id))
+    end
   end
 end

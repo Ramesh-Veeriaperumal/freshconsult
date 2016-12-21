@@ -82,16 +82,11 @@ class RabbitmqWorker
 
     def push_directly_to_sqs(exchange_key, message, routing_key)
       if agent_collision_routing_key?(exchange_key, routing_key)
-        sqs_msg_obj = sqs_v2_push(SQS[:agent_collision_queue], message, nil)
-        print_log("AgentCollision", sqs_msg_obj, routing_key, exchange_key)
-        # Hack - Lambda only pushes to one sqs. Manually pushing to New ALB Queue - Temporary
         sqs_msg_obj = sqs_v2_push(SQS[:agent_collision_alb_queue], message, nil)
-        print_log("AgentCollision ALB", sqs_msg_obj, routing_key, exchange_key)
+        print_log("AgentCollision", sqs_msg_obj, routing_key, exchange_key)
         if autorefresh_routing_key?(exchange_key, routing_key)
-          sqs_msg_obj = sqs_v2_push(SQS[:auto_refresh_queue], message, nil)
-          print_log("Autorefresh", sqs_msg_obj, routing_key, exchange_key)
           sqs_msg_obj = sqs_v2_push(SQS[:auto_refresh_alb_queue], message, nil)
-          print_log("Autorefresh ALB", sqs_msg_obj, routing_key, exchange_key)
+          print_log("Autorefresh", sqs_msg_obj, routing_key, exchange_key)
         end
       end
       if marketplace_app_routing_key?(exchange_key, routing_key)

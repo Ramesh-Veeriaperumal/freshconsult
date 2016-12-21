@@ -122,7 +122,7 @@ class Helpdesk::NotesController < ApplicationController
   end
 
   def agents_autocomplete
-    @ticket = current_account.tickets.find_by_display_id(params[:ticket_id])
+    @ticket = current_account.tickets.includes(:responder).find_by_display_id(params[:ticket_id])
     respond_to do |format|
       format.html { render :layout => false }
     end

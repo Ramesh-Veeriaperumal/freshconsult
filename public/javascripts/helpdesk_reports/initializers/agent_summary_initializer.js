@@ -41,7 +41,7 @@ HelpdeskReports.ChartsInitializer.AgentSummary = (function () {
 			jQuery(".metric-average-header").html(averageData);
 		},
 		initDataTable : function(row_count) {
-				 var oTable = jQuery("#agent-summary").DataTable({
+				var config = {
 					"dom" : 'frtlSp',
                     "bSortCellsTop": true,
                     "bAutoWidth": false,
@@ -56,8 +56,6 @@ HelpdeskReports.ChartsInitializer.AgentSummary = (function () {
                         { "sWidth": "120px" ,"orderSequence": [ "desc" , "asc" ]},
                         { "sWidth": "120px" ,"orderSequence": [ "desc" , "asc" ]},
                         { "sWidth": "120px" ,"orderSequence": [ "desc" , "asc" ]},
-                        { "sWidth": "130px" ,"orderSequence": [ "desc" , "asc" ]},
-                        { "sWidth": "130px" ,"orderSequence": [ "desc" , "asc" ]},
                         { "sWidth": "130px" ,"orderSequence": [ "desc" , "asc" ]},
                         { "sWidth": "100px" ,"orderSequence": [ "desc" , "asc" ]},
                         { "sWidth": "100px" ,"orderSequence": [ "desc" , "asc" ]},
@@ -83,7 +81,18 @@ HelpdeskReports.ChartsInitializer.AgentSummary = (function () {
 					        	jQuery('.dataTables_paginate').show();
 					        }
 					  }
-                });
+                };
+
+                if(HelpdeskReports.locals.is_sla_management_enabled) {
+                	//Add two columns to config
+                	var columns = [ { "sWidth": "130px" ,"orderSequence": [ "desc1" , "asc" ]},
+                   					{ "sWidth": "130px" ,"orderSequence": [ "desc2" , "asc" ]}];
+
+                	config['aoColumns'].splice(4,0,columns[0]);
+                	config['aoColumns'].splice(5,0,columns[1]);
+                }
+
+				var oTable = jQuery("#agent-summary").DataTable(config);
  				if (jQuery.browser.safari) { 
  					setTimeout(function(){
  					 oTable.columns.adjust().draw(); 

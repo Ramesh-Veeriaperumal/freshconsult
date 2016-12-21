@@ -6,11 +6,12 @@ Helpdesk = Helpdesk || {};
         onload_status: false,
         upload_status: [],
         reminder: true,
+        maxFileSize:15000000,
         init: function(count) {
             var _this = this;
             // hidden input element
             var element = $("#fileupload-form-" + count);
-            var maxFileSize = 15000000;
+            var maxFileSize = _this.maxFileSize;
             element.fileupload({
                 type: "POST",
                 autoUpload: true,
@@ -118,7 +119,7 @@ Helpdesk = Helpdesk || {};
                     // creating random id
                     if (total_file_size >= maxFileSize) {
                         _this.upload_status.pop();
-                        var value = { name: data.files[0].name, size: data.files[0].size };
+                        var value = { fileId: data.files[0].id,name: data.files[0].name, size: data.files[0].size };
                         $("#attachment-template").tmpl({
                             render_type: "error",
                             type: "",
@@ -247,7 +248,11 @@ Helpdesk = Helpdesk || {};
                     }
                 });
                 $(".multiple-filelist").html("");
-                e.stopImmediatePropagation();
+                // revert all
+                if(App.namespace == "helpdesk/tickets/show") {
+                    _this.addToRply.revertAll();
+                    e.stopImmediatePropagation();
+                }   
             });
 
             form.on("submit", function(event) {
@@ -524,6 +529,12 @@ Helpdesk = Helpdesk || {};
                 $(this).children('i').removeClass('ficon-cross').addClass('ficon-notice');
             });
             $("body").on("click", ".error-file .file-close", function() {
+                // add to rply extended
+                if(App.namespace == "helpdesk/tickets/show") {
+                    var attachId = $(this).parent().data('attachId');
+                    _this.addToRply.revert(attachId);
+                }
+                // end
                 $(this).parent().remove();
                 $(".twipsy").hide();
                 $('.tooltip-arrow').parent().hide();
@@ -571,6 +582,12 @@ Helpdesk = Helpdesk || {};
                             }
                         });
                     } else {
+                        // reverting add to reply
+                        if(App.namespace == "helpdesk/tickets/show") {
+                            var attachId = $(this).data('attachId');
+                            _this.addToRply.revert(attachId);
+                        }
+                        // end
                         var deleteUrl = window.location.origin + "/helpdesk/attachments/" + element_this.data('attachId') + "/delete_attachment";
                         if (App.namespace == "solution/articles/show") {
                             deleteUrl = window.location.origin + "" + App.Solutions.Article.data.draftDiscardUrl.replace('/delete', "") + "/attachment/" + element_this.data('attachId') + "/delete";
@@ -770,7 +787,7 @@ Helpdesk = Helpdesk || {};
             return attachments;
         },
         // render existing files
-        renderExistingFiles: function(attachments, cloudfile, count, template, nscname, softdelete, ticket_topic) {
+        renderExistingFiles: function(attachments, cloudfile, count, template, nscname, softdelete, ticket_topic,extra_class) {
            
             // for changing ticket templates nsc param
             if (typeof template == "undefined") {
@@ -782,6 +799,10 @@ Helpdesk = Helpdesk || {};
             // softdelete
             if (softdelete == "undefined") {
                 softdelete = false;
+            }
+            // extra class
+            if(extra_class == "undefined") {
+                extra_class = "";
             }
             // attachment limit remove
             if ((attachments.length !== 0) || (cloudfile.length !== 0)) {
@@ -795,6 +816,7 @@ Helpdesk = Helpdesk || {};
                 nscname: nscname,
                 softdelete: softdelete,
                 ticket_topic: ticket_topic,
+                extra_class:extra_class,
             }).appendTo(".existing-file-list[data-count='" + count + "']");
             // cloud files
             $("#attachment-template").tmpl({
@@ -805,6 +827,7 @@ Helpdesk = Helpdesk || {};
                 nscname: nscname,
                 softdelete: softdelete,
                 ticket_topic: ticket_topic,
+                extra_class:extra_class,
             }).appendTo(".existing-file-list[data-count='" + count + "']");
         },
         //on  note attachment delete
@@ -845,7 +868,206 @@ Helpdesk = Helpdesk || {};
                 $(container).children('h5').children('strong').text('');
             }
         },
-    };
+        sizeManager: function(size,sessionId) {
+            var totalSize = this.maxFileSize;
+            // newly added files
+            var existingNewSize = $("input[data-input-id='" + sessionId + "']").data('totalSize');
+            // rendered existing files
+            var existingOldSize = 0;
+            var existingFiles = $(".existing-file-list:visible").children('.existing-filelist');
+            existingFiles.each(function(key,data){
+                existingOldSize = existingOldSize + Number($(data).data('fileSize'));
+            });
+            var existingSize = Number(existingNewSize) + Number(existingOldSize);
+            var newSize = Number(existingSize)+Number(size);
+            if(newSize > totalSize) {
+                return false;
+            } else {
+                return true;
+            }
+        },
+        addToRply: {
+            replyTrigger: false,
+            parent: "",
+            init: function() {
+                // initiating variables
+                this.parent = Helpdesk.MultipleFileUpload;
+                // 
+                var $body = $("body");
+                $body.on("click",".add-attachment-to-conv",function(e){
+                    Helpdesk.MultipleFileUpload.addToRply.renderAttachments($(this));
+                    e.preventDefault();
+                    e.stopImmediatePropagation();
+                });
+                // event for inline images template rendering
+                $body.on("mouseover",".helpdesk_note .inline-image,#ticket_original_request .inline-image",function() {
+                    Helpdesk.MultipleFileUpload.addToRply.renderInlineAttachmentsTemplate($(this));
+                });
+                // event for inline images 
+                $body.on("click",".inline-add-to-rply",function(e){
+                    e.preventDefault();
+                    Helpdesk.MultipleFileUpload.addToRply.renderInlineAttachments($(this));
+                });
+               
+            },
+            renderInlinePopover: function(ele) {
+              var $el = $(ele);
+              if($el.data('added') == false) {
+                var visibleRedactor = $(".redactor_editor:visible");
+                // opening reply box
+                if(visibleRedactor.length == 0) {
+                    visibleRedactor = this.openReply("inline");
+                }
+                    var imgUrl = $el.siblings('a[download="Inline Image"]').attr('href');
+                    var noteId = "#"+$el.data('noteId');
+                    var $template = $(noteId + ' img.inline-image[src="'+imgUrl+'"]').siblings('.inline-add-to-rply');
+                    if($template.length == 0) {
+                        $(noteId + ' img.inline-image[src="'+imgUrl+'"]').mouseover();
+                        $template = $(noteId + ' img.inline-image[src="'+imgUrl+'"]').siblings('.inline-add-to-rply');
+                    }
+                    $template[0].click();
+                    $el.children('span.ficon').addClass('ficon-checkmark-thick').removeClass('ficon-add-attachment');
+                    $(".twipsy").remove();
+                    $el.attr('data-original-title',this.parent.message.attached);
+                    var indx = $el.data('index');
+                    App.TicketAttachmentPreview.attachments[indx].added = true;
+              }
+            },
+            openReply: function(type) {
+              this.replyTrigger = true;
+              $('a[data-note-type="reply"]').trigger('click');
+              this.replyTrigger = false;
+              if(type == "inline") {
+                  return $(".redactor_editor:visible");
+              } else {
+                  return $(".attachment-icon:visible").data('iconCount');
+              }
+
+            },
+            revert : function(attachId) {
+                var $addToRplyEl = $(".add-attachment-to-conv[data-attach-id='"+ attachId +"']");
+                $addToRplyEl.attr('data-original-title',this.parent.message.attach);
+                $addToRplyEl.siblings('.list_element').data('added',false);
+                $addToRplyEl.children('.ficon').removeClass("ficon-checkmark-thick").addClass("ficon-add-attachment");
+            },
+            revertAll: function() {
+                var $attachmentItems = $(".add-attachment-to-conv,.inline-add-to-rply");
+                $attachmentItems.children('.ficon').removeClass('ficon-checkmark-thick').addClass("ficon-add-attachment")
+                $attachmentItems.attr('data-original-title',this.parent.message.attach);
+                $(".inline-add-to-rply").data('added',false);
+                $('.list_element').data('added',false);
+                $(".twipsy").remove();
+                $(".existing-filelist.addedViaRply").remove();
+            },
+            renderAttachments: function($this) {
+             // if inline image popover 
+                if($this.data('fileType') == "inline") {
+                    this.renderInlinePopover($this);
+                    return true;
+                }
+                var _this = this;
+                var $twipsy = $(".twipsy");
+                var attachId = $this.data('attachId');
+                var location = $this.data('location');
+                var added;
+                if(location == "popover") {
+                    added = $this.data('added') || false;
+                } else {
+                   added = $this.siblings('.list_element').data('added') || false;
+                }
+                if(!added) {
+                    var attachSessionId = $(".attachment-icon:visible").data('iconCount') || this.openReply("attachment");
+                    $.ajax({
+                     url:"/helpdesk/attachments/"+attachId+".json",
+                     type:"GET",
+                     success: function(data) {
+                        var attachObjects = [];
+                        attachObjects.push(data);
+
+                        // changing icon on the locations 
+                        $this.children('.ficon').removeClass('ficon-add').addClass('ficon-checkmark-thick');
+                        $twipsy.hide();
+                        $this.attr('data-original-title',_this.parent.message.attached);
+                        // adding added data attribute
+                        if(location == "popover") {
+                            var $changeEl = $("div.add-attachment-to-conv[data-attach-id='"+attachId+"']");
+                            $twipsy.hide();
+                            $changeEl.attr('data-original-title',_this.parent.message.attached).children('.ficon').removeClass('ficon-add').addClass('ficon-checkmark-thick');
+                            $changeEl.siblings('.list_element').data('added',true);
+                            $this.data('added',true);
+                            var indx = $this.data('index');
+                            App.TicketAttachmentPreview.attachments[indx].added = true;
+
+                        } else {
+                            $this.siblings('.list_element').data('added',true);
+                        }
+                        // cloud file
+                        if($this.data('cloud')) {
+                            _this.parent.renderExistingFiles([],attachObjects,attachSessionId,"","",true,"","addedViaRply");
+                        } else {
+                            // calculating size
+                            if(_this.parent.sizeManager(data.content_file_size,attachSessionId)) {
+                                _this.parent.renderExistingFiles(attachObjects,[],attachSessionId,"","",true,"","addedViaRply");
+                            } else {
+                                // rendering as error file
+                                 $("#attachment-template").tmpl({
+                                    render_type: "error",
+                                    files: {fileId:data.id,name:data.content_file_name,size:data.content_file_size},
+                                 }).appendTo(".multiple-filelist-" + attachSessionId);
+                                var offset = $(".attachment-icon:visible").offset();
+                                $("body").animate({
+                                    scrollTop:offset.top
+                                });
+                            }
+                        }
+                    },
+                    error: function() {
+                        console.log("failed");
+                    }
+                 });
+                }
+            },
+            renderInlineAttachmentsTemplate: function($this) {
+                if($this.width() > 100 || $this.height() > 100) {
+                     var parentDetected = $this.data('parent');
+                    var parentEle = $this.parent();
+                    if(!parentEle.data('templateAdded')) {
+                         if(!parentDetected) {
+                            parentEle.addClass('inline-add-to-rply-parent');
+                            // adding template to inline image
+                            var $template = $("<div class='inline-add-to-rply tooltip' data-original-title='"+this.parent.message.attach+"' ><span class='ficon ficon-add-attachment'></span></div>");
+                            parentEle.prepend($template);
+                            parentEle.data('templateAdded',true);
+                            // adding events to parent
+                            $(this).data('parent',true);
+                        }
+                    }
+                }
+            },
+            renderInlineAttachments: function($this) {
+                 // changing added text
+                 if(!$this.data('added')) {
+                    var visibleRedactor = $(".redactor_editor:visible");
+                 // open reply
+                 if(visibleRedactor.length == 0 ) {
+                    visibleRedactor = this.parent.addToRply.openReply("inline");
+                 }
+                 var inlineImage = $this.siblings('img');
+                 $(".twipsy").hide();
+                 $this.data('added',true)
+                    .html("<span class='ficon ficon-checkmark-thick'></span>")
+                    .attr('data-original-title',this.parent.message.attached);
+                     inlineImage = inlineImage.clone();
+                     var $newInline = $('<div></div>');
+                     $newInline.append(inlineImage);
+                     var inlinehtml = $newInline.wrap('<div/>').parent().html();
+                     var redactor =  visibleRedactor.siblings('textarea').data('redactor');
+                     redactor.focusOnCursor();
+                     redactor.insertHtml(inlinehtml);
+                 }
+            }
+        }
+    };  
 
 }(jQuery));
 
