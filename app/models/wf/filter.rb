@@ -44,6 +44,11 @@ class Wf::Filter < ActiveRecord::Base
     :class_name => 'Admin::UserAccess',
     :as => 'accessible',
     :dependent => :destroy
+    
+  has_one :admin_user_accessible, 
+    :class_name => 'Admin::UserAccess',
+    :as => 'accessible',
+    :dependent => :destroy    
 
   has_one :helpdesk_accessible,
     :class_name => "Helpdesk::Access",

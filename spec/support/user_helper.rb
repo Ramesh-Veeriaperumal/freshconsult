@@ -64,6 +64,21 @@ module UsersHelper
     new_user.reload
   end
 
+  def add_new_contractor(account, options={})
+    new_user = FactoryGirl.build(:user, :account => account,
+                                    :name => options[:name] || Faker::Name.name,
+                                    :email => options[:email] || Faker::Internet.email,
+                                    :time_zone => "Chennai",
+                                    :delta => 1,
+                                    :deleted => options[:deleted] || 0,
+                                    :blocked => options[:blocked] || 0,
+                                    :language => "en")
+    new_user.save
+    new_user.company_ids = options[:company_ids]
+    new_user.save
+    new_user.reload
+  end
+
   def add_user_with_multiple_emails(account, number)
     new_user = add_new_user(@account)
     new_user.helpdesk_agent = 0;

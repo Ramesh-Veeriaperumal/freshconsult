@@ -4510,8 +4510,8 @@ $adm-bdr:#F0F0F0;
 	.moderation-info{
 		@include border-left(1px solid #ddd);
 		@include padding-left(30px);
-		ul.moderation-alert{
-			list-style: disc;
+		.moderation-alert{
+			@include margin-left(-20px);
 		}
 		.ficon-warning{
 			@include margin-left(-20px);
@@ -4716,6 +4716,15 @@ input.date {
 	    right: 9px;
 	    padding: 5px;    
 	    cursor: pointer;
+	}
+}
+
+/*-----------------New Tag Create differentiation in Select2-----------------------*/
+.new-tag-create{
+	border-top:1px solid #eee;
+	border-bottom: 1px solid #eee;
+	.tag_new_label{
+		color: #aaa;
 	}
 }
 

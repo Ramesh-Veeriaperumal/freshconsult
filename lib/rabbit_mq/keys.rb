@@ -4,7 +4,7 @@ module RabbitMq::Keys
   TICKET_SUBSCRIBERS           =  ["auto_refresh", "reports", "search", "count", "activities", "marketplace_app"]
   NOTE_SUBSCRIBERS             =  ["auto_refresh", "reports", "search", "activities"]
   ACCOUNT_SUBSCRIBERS          =  ["reports", "activities"]
-  ARCHIVE_TICKET_SUBSCRIBERS   =  ["reports", "search", "activities"]
+  ARCHIVE_TICKET_SUBSCRIBERS   =  ["reports", "search"]
   ARCHIVE_NOTE_SUBSCRIBERS     =  ["search"]
   ARTICLE_SUBSCRIBERS          =  ["search", "activities"]
   TOPIC_SUBSCRIBERS            =  ["search", "activities"]

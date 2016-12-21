@@ -95,5 +95,5 @@
 </script>
 
 <script>
-	App.ProductNotification.initialize();
+	App.ProductNotification.initialize({onBoardingPending: <%= current_account.onboarding_pending? %>});
 </script>

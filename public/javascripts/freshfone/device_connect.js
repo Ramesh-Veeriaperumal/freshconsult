@@ -73,7 +73,9 @@ var TwilioConnect;
     acceptAck : function(conn){ 
       var dontUpdateCallCount = this.previewMode() || this.recordingMode();
       var number = freshfone.newNotifications ? conn.message.number : conn.parameters.From ;
-      freshfonecalls.getSavedCallNotes(number);
+      if(!freshfonewidget.isAgentConferenceCall()){
+        freshfonecalls.getSavedCallNotesAndTicket(number);
+      }
       freshfoneuser.publishLiveCall(dontUpdateCallCount);
       freshfonecalls.onCallStopSound();
     },

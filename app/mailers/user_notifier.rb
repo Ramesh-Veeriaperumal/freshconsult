@@ -82,39 +82,48 @@ class UserNotifier < ActionMailer::Base
   end
 
   def notify_customers_import(options={})
-    headers = {
-      :subject                    => "#{options[:type].capitalize} Import for #{options[:user].account.full_domain}",
-      :to                         => options[:user].email,
-      :from                       => options[:user].account.default_friendly_email,
-      :bcc                        => AppConfig['reports_email'],
-      :sent_on                    => Time.now,
-      :"Reply-to"                 => "#{options[:user].account.default_friendly_email}", 
-      :"Auto-Submitted"           => "auto-generated", 
-      :"X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
-    }
-
-    headers.merge!(make_header(nil, nil, options[:user].account.id, "Notify Customers Import"))
-    @user = options[:user]
-    @type = options[:type]
-    @created = options[:created_count]
-    @updated = options[:updated_count]
-    @failed = options[:failed_count]
-    @attachment = options[:file_name]
-    @import_success = options[:import_success]
-    @corrupted = options[:corrupted]
-    @wrong_csv = options[:wrong_csv]
-
-    unless options[:file_path].nil?
-      attachments[options[:file_name]] = {
-        :mime_type => "text/csv",
-        :content => File.read(options[:file_path], :mode => "rb")
+    begin
+      # sending this email via account's primary email config so that if the customer wants this emails 
+      # to be sent via custom mail server, simply switching the primary email config will do
+      email_config = options[:user].account.primary_email_config
+      configure_email_config email_config
+      headers = {
+        :subject                    => "#{options[:type].capitalize} Import for #{options[:user].account.full_domain}",
+        :to                         => options[:user].email,
+        :from                       => options[:user].account.default_friendly_email,
+        :bcc                        => AppConfig['reports_email'],
+        :sent_on                    => Time.now,
+        :"Reply-to"                 => "#{options[:user].account.default_friendly_email}", 
+        :"Auto-Submitted"           => "auto-generated", 
+        :"X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
       }
-    end
 
-    mail(headers) do |part|
-      part.text { render "notify_customers_import.text.plain" }
-      part.html { render "notify_customers_import.text.html" }
-    end.deliver
+      headers.merge!(make_header(nil, nil, options[:user].account.id, "Notify Customers Import"))
+      headers.merge!({"X-FD-Email-Category" => email_config.category}) if email_config.category.present?
+      @user = options[:user]
+      @type = options[:type]
+      @created = options[:created_count]
+      @updated = options[:updated_count]
+      @failed = options[:failed_count]
+      @attachment = options[:file_name]
+      @import_success = options[:import_success]
+      @corrupted = options[:corrupted]
+      @wrong_csv = options[:wrong_csv]
+
+      unless options[:file_path].nil?
+        attachments[options[:file_name]] = {
+          :mime_type => "text/csv",
+          :content => File.read(options[:file_path], :mode => "rb")
+        }
+      end
+
+      mail(headers) do |part|
+        part.text { render "notify_customers_import.text.plain" }
+        part.html { render "notify_customers_import.text.html" }
+      end.deliver
+    ensure
+      remove_email_config
+    end
   end
 
   def notify_facebook_reauth(facebook_page)
@@ -215,7 +224,7 @@ class UserNotifier < ActionMailer::Base
   end
 
   def failure_transaction_notifier(email_id, content = "")
-      headers = {
+    headers = {
       :subject    => "Payment failed for auto recharge of day passes",
       :to         => email_id,
       :from       => AppConfig["billing_email"],
@@ -237,6 +246,7 @@ class UserNotifier < ActionMailer::Base
   private
 
     def send_the_mail(user_or_email, subject, email_body, reply_email =nil, type)
+      email_config = Thread.current[:email_config]
       headers = {
         :to => user_or_email.email, 
         :from => reply_email || user_or_email.account.default_friendly_email,
@@ -247,6 +257,7 @@ class UserNotifier < ActionMailer::Base
         :"X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
       }
       headers.merge!(make_header(nil, nil, user_or_email.account.id, type))
+      headers.merge!({"X-FD-Email-Category" => email_config.category}) if email_config.category.present?
       mail(headers) do |part|
           part.text do
             @body = Helpdesk::HTMLSanitizer.plain(email_body)

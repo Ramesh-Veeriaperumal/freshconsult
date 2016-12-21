@@ -10,6 +10,7 @@ class TopicMailer < ActionMailer::Base
   def monitor_email(emailcoll, topic, user, portal, sender, host)
     begin
       configure_mailbox(user, portal)
+      email_config = Thread.current[:email_config]
       headers = {
         :to        => emailcoll,
         :from      => sender,
@@ -24,6 +25,7 @@ class TopicMailer < ActionMailer::Base
       @account = topic.account
 
       headers.merge!(make_header(nil, nil, topic.account_id, "TopicMailer Monitor Email"))
+      headers.merge!({"X-FD-Email-Category" => email_config.category}) if email_config.category.present?
       if attachments.present? && attachments.inline.present?
         handle_inline_attachments(attachments, topic.posts.first.body_html, topic.account)
       end
@@ -46,6 +48,7 @@ class TopicMailer < ActionMailer::Base
   def stamp_change_email(emailcoll, topic, user, current_stamp, forum_type, portal, sender, host)
     begin
       configure_mailbox(user, portal)
+      email_config = Thread.current[:email_config]
       headers = {
         :to => emailcoll,
         :from => sender,
@@ -54,6 +57,7 @@ class TopicMailer < ActionMailer::Base
       }
       
       headers.merge!(make_header(nil, nil, topic.account_id, "Stamp Change Email"))
+      headers.merge!({"X-FD-Email-Category" => email_config.category}) if email_config.category.present?
       inline_attachments =[]
       @topic = topic
       @user = user
@@ -81,6 +85,7 @@ class TopicMailer < ActionMailer::Base
   def topic_merge_email(monitor, target_topic, source_topic, sender, host)
     begin
       configure_mailbox(monitor.user, monitor.get_portal)
+      email_config = Thread.current[:email_config]
       headers = {
         :to => monitor.user.email,
         :from => sender,
@@ -89,6 +94,7 @@ class TopicMailer < ActionMailer::Base
       }
 
       headers.merge!(make_header(nil, nil, source_topic.account_id, "Topic merge Email"))
+      headers.merge!({"X-FD-Email-Category" => email_config.category}) if email_config.category.present?
       @source_topic = source_topic
       @target_topic = target_topic
       @user = monitor.user

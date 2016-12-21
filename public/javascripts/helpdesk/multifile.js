@@ -170,36 +170,37 @@ Helpdesk.Multifile = {
     },    
 
     resetAll: function(form) {
-
-        var inputs = jQuery(form).find("input[fileList]");
-        jQuery(form).data('totalAttachmentSize',0);
-        if (inputs.length >= 1) {
-            jQuery("#"+inputs.first().attr('fileList')).children().not('[rel=original_attachment]').remove();
-            jQuery("#"+inputs.first().attr('fileList')).children().show();
-            inputs.prop('disabled', false);
-            jQuery("#"+inputs.first().attr('fileContainer')+ ' .a-count').text(jQuery("#"+inputs.first().attr('fileList')).children().length);
-            inputs.not(".original_input").remove();
-        }
-
+      var inputs = jQuery(form).find("input[fileList]");
+      jQuery(form).data('totalAttachmentSize',0);
+      if (inputs.length >= 1) {
+        jQuery("#"+inputs.first().attr('fileList')).children().not('[rel=original_attachment]').remove();
+        jQuery("#"+inputs.first().attr('fileList')).children().show();
+        inputs.prop('disabled', false);
+        jQuery("#"+inputs.first().attr('fileContainer')+ ' .a-count').text(jQuery("#"+inputs.first().attr('fileList')).children().length);
+        inputs.not(".original_input").remove();
+      }
     },
     remove_file_size_alert: function(element){
         var _form = jQuery(element).parents('form');
         jQuery('#file_size_alert_' + _form.data('cntId')).hide();
+    },
+    initInput: function(){
+      jQuery("input[fileList]").livequery(function(){ 
+      var type=jQuery("#attachment-type").attr('data-multifile-enable');
+           if(type=="false" || type == undefined)
+           {
+                  var $input_file = jQuery(this)
+                  Helpdesk.Multifile.load()
+                  Helpdesk.Multifile.addEventHandler(this)
+                  jQuery(this.form).off("reset.Multifile")
+                  jQuery(this.form).on("reset.Multifile", function(){
+                      Helpdesk.Multifile.resetAll(this)
+                  })
+           }
+      });
     }
 };
 
 jQuery("document").ready(function(){
-    jQuery("input[fileList]").livequery(function(){ 
-    var type=jQuery("#attachment-type").attr('data-multifile-enable');
-         if(type=="false" || type == undefined)
-         {
-                var $input_file = jQuery(this)
-                Helpdesk.Multifile.load()
-                Helpdesk.Multifile.addEventHandler(this)
-                jQuery(this.form).off("reset.Multifile")
-                jQuery(this.form).on("reset.Multifile", function(){
-                    Helpdesk.Multifile.resetAll(this)
-                })
-         }
-    });
+    Helpdesk.Multifile.initInput();
 });

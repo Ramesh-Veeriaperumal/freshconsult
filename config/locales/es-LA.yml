@@ -2806,7 +2806,7 @@ es-LA:
         short: "{{user_path}} cambió la prioridad a {{priority_name}}."
         long: "{{user_path}} cambió la prioridad del ticket de {{notable_path}} a {{priority_name}}."
         without_user: "actualizó la prioridad del ticket a <strong>{{priority_name}}</strong>"
-        new: prioridad
+        new: "Prioridad <strong>%{priority_name}</strong>"
       new_ticket:
         short: "{{user_path}} envió el ticket."
         long: "{{user_path}} envió un nuevo ticket {{notable_path}}."
@@ -2851,31 +2851,31 @@ es-LA:
           long: "{{user_path}} detuvo el temporizador en el {{timesheet_path}} para el ticket {{notable_path}}."
           new: "cronómetro detenido en hoja de tiempos"
       timesheet_without_time:
-        new: "horas por en"
+        new: "%{billable} horas por%{user_path} en %{date}"
       timesheet_with_time:
-        new: "horas por en"
+        new: "%{time_spent} %{billable} horas por %{user_path} en %{date}"
       timesheet_timer_start:
-        new: "cronómetro iniciado en hoja de tiempos con"
+        new: "cronómetro iniciado en hoja de tiempos con %{timesheet}"
       timesheet_timer_stop:
-        new: "cronómetro detenido en hoja de tiempos para"
+        new: "cronómetro detenido en hoja de tiempos para %{timesheet}"
       timesheet_create:
-        new: "creada hoja de tiempos con"
+        new: "Creada hoja de tiempos con %{timesheet}"
       timesheet_edit:
-        new: "hoja de tiempos editada con modificada"
+        new: "Plantilla de tiempo editada <br> Plantilla con %{old_timesheet} modificada a plantilla con % {new_timesheet}\n"
       timesheet_delete:
-        new: "hoja de tiempos eliminada con"
+        new: "Hoja de tiempos eliminada con %{timesheet}"
       assigned:
         short: "Asignado a {{responder_path}} por {{user_path}}."
         without_user: "asignado a <strong>{{responder_path}}</strong>"
         long: "{{user_path}} asignó el ticket {{notable_path}} a {{responder_path}}."
-        new: "agente como"
+        new: "Agente como %{responder_path}"
       round_robin:
-        new: "configurar agente como con asignación de round robin"
+        new: "Configurar agente como <strong>%{responder_path}</strong> con asignación de round robin"
       execute_scenario:
         short: "{{user_path}} ejecutó el escenario '{{scenario_name | h}}."
         without_user: "ejecutó el escenario <strong>{{scenario_name | h}}</strong>"
         long: "{{user_path}} ejecutó el escenario '{{scenario_name | h}}' el {{notable_path}}."
-        new: "escenario ejecutado"
+        new: "Escenario ejecutado <strong>%{scenario_name}</strong>"
       ticket_merge:
         short: "{{user_path}} combinó el ticket {{notable_path}} con {{merge_ticket_path}}. "
         long: "{{user_path}} combinó el ticket {{notable_path}} con {{merge_ticket_path}}."
@@ -2892,7 +2892,7 @@ es-LA:
         short: "{{user_path}} actualizó el estado a {{status_name}}."
         without_user: "actualizó el estado a <strong>{{status_name}}</strong>"
         long: "{{user_path}} actualizó el estado del ticket de {{notable_path}} a {{status_name}}."
-        new: "estatus como"
+        new: "Estatus como <strong>%{status_name}</strong>"
       deleted:
         short: "{{user_path}} eliminó este ticket."
         without_user: "eliminó el ticket"
@@ -2911,7 +2911,7 @@ es-LA:
         short: "{{user_path}} actualizó el producto a {{product_name}}."
         without_user: "actualizó el producto a <strong>{{product_name}}</strong>"
         long: "{{user_path}} actualizó el producto de {{notable_path}} a {{product_name}}."
-        new: "producto como"
+        new: "Producto como <strong>%{product_name}</strong>"
       product_change_none:
         short: "{{user_path}} actualizó el producto a \"Ninguno\"."
         without_user: "actualizó el producto a <strong>&quot;Ninguno&quot;"
@@ -2920,12 +2920,12 @@ es-LA:
         short: "{{user_path}} actualizó el tipo de ticket a {{ticket_type}}."
         without_user: "actualizó el tipo de ticket a <strong>{{ticket_type}}</strong>"
         long: "{{user_path}} actualizó el tipo de ticket de {{notable_path}} a {{ticket_type}}."
-        new: "ingresar como"
+        new: "Ingresar como <strong>%{ticket_type}</strong>"
       group_change:
         short: "{{user_path}} actualizó el grupo a {{group_name}}."
         without_user: "actualizó el grupo a <strong>{{group_name}}</strong>"
         long: "{{user_path}} actualizó el grupo de {{notable_path}} a {{group_name}}."
-        new: "grupo como"
+        new: "Grupo como <strong>%{group_name}</strong>"
       group_change_none:
         short: "{{user_path}} actualizó el grupo a \"Ninguno\"."
         without_user: "actualizó el grupo a <strong>&quot;Ninguno&quot;</strong>"
@@ -2934,46 +2934,46 @@ es-LA:
         short: "{{user_path}} actualizó el origen a {{source_name}}."
         without_user: "actualizó el origen a <strong>{{source_name}}</strong>"
         long: "{{user_path}} actualizó el origen del ticket de {{notable_path}} a {{source_name}}."
-        new: "fuente como"
+        new: "Fuente como <strong>%{source_name}</strong>"
       due_date_updated:
         short: "{{user_path}} actualizó la fecha de vencimiento a {{due_date_updated}}."
         without_user: "actualizó la fecha de vencimiento a <strong>{{due_date_updated}}</strong>."
         long: "{{user_path}} actualizó la fecha de vencimiento de {{notable_path}} a {{due_date_updated}}."
-        new: "debido a tiempo como"
+        new: "debido a tiempo como <strong>%{due_date_updated}</strong>"
       requester_change:
-        new: "solicitante como"
+        new: "Solicitante como %{requester_name}"
       ticket_edit:
-        new: editado
+        new: "Editado <strong>%{fields}</strong>"
       custom_field_change:
-        new: como
+        new: "%{field_name} como <strong>%{field_value}</strong>"
       custom_text_field_change:
-        new: modificado
+        new: "Modificado %{text_fields}"
       added_watcher:
-        new: "observadores agregados"
+        new: "Observadores agregados %{watcher_list}"
       removed_watcher:
-        new: "observador excluido"
+        new: "Observador excluido %{watcher_list}"
       added_tag:
-        new: "etiquetas agregadas"
+        new: "Etiquetas agregadas <strong>%{tag_name}</strong>"
       removed_tag:
-        new: "etiquetas removidas"
+        new: "Etiquetas removidas <strong>%{tag_name}</strong>"
       add_cc:
-        new: "cc agregado"
+        new: "Cc agregado %{cc_list}"
       add_note:
         new: "notas agregadas"
       ticket_merge_source:
-        new: "ticket incluido en"
+        new: "Ticket incluido en %{target_ticket}"
       ticket_merge_target:
-        new: "incluido en este ticket"
+        new: "Incluido %{source_ticket_list} en este ticket"
       ticket_split_source:
-        new: "dividir respuesta para crear nuevo ticket"
+        new: "Dividir respuesta para crear nuevo ticket %{target_ticket}"
       ticket_split_target:
-        new: "ticket creado por respuesta dividida desde"
+        new: "Ticket creado por respuesta dividida desde %{source_ticket}"
       ticket_import:
-        new: "ticket importado en"
+        new: "Ticket importado en %{imported_time}"
       checkbox_checked:
-        new: seleccionado
+        new: "Seleccionado %{checkbox_list}"
       checkbox_unchecked:
-        new: deseleccionado
+        new: "Deseleccionado %{checkbox_list}"
       archive:
         new: "tickets archivado"
   credit_card_info: "Información de tarjeta de crédito"

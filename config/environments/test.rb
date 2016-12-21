@@ -1,6 +1,5 @@
 Helpkit::Application.configure do
   # Settings specified here will take precedence over those in config/application.rb
-
   # The test environment is used exclusively to run your application's
   # test suite. You never need to work with it otherwise. Remember that
   # your test database is "scratch space" for the test suite and is wiped
@@ -45,11 +44,15 @@ Helpkit::Application.configure do
 
   # Print deprecation notices to the stderr
   config.active_support.deprecation = :stderr
+
+  #disable Api Throttler
+  config.middleware.delete 'Middleware::ApiThrottler'
+
   config.after_initialize do
     Bullet.enable         = true
     Bullet.bullet_logger  = true
     Bullet.rails_logger   = true
-    Bullet.raise          = true # raise an error if n+1 query occurs
+    Bullet.raise          = false # raise an error if n+1 query occurs
     Bullet.unused_eager_loading_enable = false
     # Other options can be found here: https://github.com/flyerhzm/bullet#configuration
   end

@@ -87,14 +87,20 @@ window.App = window.App || {};
 					}
 				}
 			});
-			if(customMessages.existing && this.localStorageProcess('get',customMessages.existing,'')){
+			if(customMessages.existing && this.sessionStorageProcess('get',customMessages.existing,'')){
 				$("#child_template_existing").prop('checked','checked');
 				$('#helpdesk_ticket_template_name').attr('disabled',true)
 				this.childExistingChange(true,$('#helpdesk_ticket_template_name').val());
 				if($('.attachmentTrigger').is(':visible'))
-					$('.attachmentTrigger').hide()
-				if($('.attachment').length>0 && window.location.pathname.indexOf('new')!=-1)
-					$('.attachment').addClass('hide');
+					$('.attachmentTrigger').hide();
+				if($('.add_attachment').is(':visible'))
+					$('.add_attachment').hide();
+				$('.attachments-wrap').removeClass('hide');
+				$('.attachment').each(function(index,ele){
+					$(ele).find('.delete').addClass('hide');
+					$('<span>'+ $(ele).find('.ellipsis a').text() +'</span>').insertAfter($(ele).find('.ellipsis a'));
+					$(ele).find('.ellipsis a').addClass('hide')
+				})
 			}
 		},
 		initializeEditModel : function(modalName){ //intialize edit modal
@@ -336,7 +342,7 @@ window.App = window.App || {};
 		},
 		openTemplate: function(status){ // open template
 			this.clearData();
-			this.localStorageProcess('add',customMessages.existing, true);
+			this.sessionStorageProcess('add',customMessages.existing, true);
 			$("#filter-template").val("").focus();
 	    $("#template-wrapper").addClass('active');
 	    this.loadAllChildTemplate('initload');
@@ -403,8 +409,8 @@ window.App = window.App || {};
 		editResetAllFields: function(){
 			var self=this,fieldDetails,keyArray=[],eleClassFlag;
 			$('.template-ticket-fields li.field label').each(function(index,ele){
-				eleClassFlag=typeof jQuery(ele).attr('class') !== typeof undefined ;
-				if(!jQuery(ele).hasClass('select2-offscreen') && eleClassFlag && jQuery(ele).attr('class') !== false || jQuery(ele).attr('for') === 'template_data_tags'){
+				eleClassFlag=typeof jQuery(ele).prop('class') !== typeof undefined ;
+				if(!jQuery(ele).hasClass('select2-offscreen') && eleClassFlag && jQuery(ele).prop('class') !== false || jQuery(ele).prop('for') === 'template_data_tags'){
 					fieldDetails=self.setFieldNames(ele,'reset-all');
 					if(fieldDetails && fieldDetails.fieldName) { 
 						keyArray=fieldDetails.fieldName.replace(/[\[\]/\s/']+/g,',')
@@ -421,12 +427,18 @@ window.App = window.App || {};
 			if(status){
 				$('.redactor_toolbar').addClass('disabled');
 				$('.attachmentTrigger').hide();
-				$('.attachments-wrap').addClass('hide');
-				Helpdesk.Multifile.resetAll(jQuery('#ticket_template'));
+				$('.add_attachment').hide();
+				if(!(this.sessionStorageProcess('get',customMessages.existing,''))){
+					$('.attachments-wrap').addClass('hide');
+				}
+				Helpdesk.Multifile.resetAll($('#ticket_template'));
 			}else{
 				$('.redactor_toolbar').removeClass('disabled');
 				$('.attachmentTrigger').show();
-				$('.attachments-wrap').removeClass('hide');
+				$('.add_attachment').show();
+				if(!(this.sessionStorageProcess('get',customMessages.existing,''))){
+					$('.attachments-wrap').removeClass('hide');
+				}
 			}
 		},
 		setFieldNames: function(ele,source){
@@ -500,12 +512,12 @@ window.App = window.App || {};
 			// form.find('input[name='+name+']').val(value)
 		},
 		clearData: function(){ // clear fields
-			var $ticketTemplate = jQuery('#ticket_template'),$attachment=jQuery('.attachmentTrigger');
+			var $ticketTemplate = $('#ticket_template'),$attachment= ($('.attachmentTrigger').length > 0  ? $('.attachmentTrigger') : $('.add_attachment'));
 			$ticketTemplate.find("input[type=text], textarea").not('#helpdesk_ticket_template_name').val("");
 			$ticketTemplate.find("select").val()
-			jQuery('.redactor_editor').html('');
-			jQuery('input:checkbox').removeAttr('checked');
-			jQuery('#template_data_tags').val('').trigger('change');
+			$('.redactor_editor').html('');
+			$('input:checkbox').removeAttr('checked');
+			$('#template_data_tags').val('').trigger('change');
 			$ticketTemplate.find('select').select2('val','').trigger('change');
 			$ticketTemplate.find('.dateClear').trigger('click')
 			Helpdesk.Multifile.resetAll($ticketTemplate);
@@ -563,7 +575,7 @@ window.App = window.App || {};
 				data:params,
 				success: function(data){
 					if(data && data.success && data.url ){
-						self.localStorageProcess('remove',customMessages.existing,'');
+						self.sessionStorageProcess('remove',customMessages.existing,'');
 						window.location.href = data.url;
 					}
 					else if(data.msg){
@@ -578,13 +590,13 @@ window.App = window.App || {};
 				}
 			});
 		},
-		localStorageProcess: function(status,variable,value){ // local storage add/edit/get action
+		sessionStorageProcess: function(status,variable,value){ // local storage add/edit/get action
 		 	if(status === 'add'){
-		 		localStorage.setItem(customMessages.existing, true);
+		 		sessionStorage.setItem(customMessages.existing, true);
 		 	}else if(status === 'remove'){
-		 		localStorage.removeItem(customMessages.existing)
+		 		sessionStorage.removeItem(customMessages.existing)
 		 	}else if(status === 'get'){
-		 		return localStorage.getItem(variable);
+		 		return sessionStorage.getItem(variable);
 		 	}
 		},
 		showLoader: function(){ // show loader while apply child template is loading
@@ -613,7 +625,7 @@ window.App = window.App || {};
 			$('.inherit_parent').attr('disabled',status);
 		},
 		changeInheritParentID: function(){
-	    jQuery('#inherit-parent').val(customMessages.intialInheritParent)
+	    $('#inherit-parent').val(customMessages.intialInheritParent)
 	  },
 	  formSubmit: function(srcElement){
   		this.disableBtnFields(true);
@@ -751,11 +763,13 @@ window.App = window.App || {};
 					$("#filter-template").val("");
 					$('#id').val('');
 					$('.child-existing-select').addClass('hide').val('')
-					this.localStorageProcess('remove',customMessages.existing,'');
+					this.sessionStorageProcess('remove',customMessages.existing,'');
 					this.childExistingChange(status,'');
 					$('#helpdesk_ticket_template_name').val('').attr('disabled',status);
 					if($("#template-wrapper").is(':visible'))
 						$("#template-wrapper").removeClass('active');
+					$('.attachments-wrap').addClass('hide')
+					$('.attachment_list li').remove();
 				}else{
 					this.openTemplate(true);
 				}

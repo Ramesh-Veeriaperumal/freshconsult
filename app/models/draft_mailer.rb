@@ -11,8 +11,8 @@ class DraftMailer < ActionMailer::Base
   end
 
   def discard_email(draft, article, current_author, current_user, portal)
-    mail_config = portal.primary_email_config || current_user.account.primary_email_config
     begin
+      mail_config = portal.primary_email_config || current_user.account.primary_email_config
       configure_email_config mail_config
 
       headers = {
@@ -23,6 +23,9 @@ class DraftMailer < ActionMailer::Base
       }
 
       headers.merge!(make_header(nil, nil, current_user.account_id, "Discard Email"))
+
+      headers.merge!({"X-FD-Email-Category" => mail_config.category}) if mail_config.category.present?
+
       @draft = draft
       @article = article
       @current_author = current_author

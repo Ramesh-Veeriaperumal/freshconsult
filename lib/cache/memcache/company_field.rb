@@ -8,9 +8,13 @@ module Cache::Memcache::CompanyField
   end
 
   def clear_company_fields_cache
-    key = COMPANY_FORM_FIELDS % {:account_id => current_account.id, 
-                                  :company_form_id => current_account.company_form.id}
+    key = COMPANY_FORM_FIELDS % {:account_id => Account.current.id, 
+                                  :company_form_id => Account.current.company_form.id}
     MemcacheKeys.delete_from_cache key
+  end
+
+  def clear_cache
+    clear_company_fields_cache
   end
   
 end

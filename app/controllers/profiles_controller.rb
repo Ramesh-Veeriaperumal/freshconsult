@@ -5,7 +5,7 @@ class ProfilesController < ApplicationController
    before_filter :require_user 
    before_filter :load_profile, :only => [:edit, :change_password]
    before_filter :set_profile, :filter_params, :only => [:update]
-   before_filter :load_password_policy, :only => :edit
+   before_filter :load_password_policy, :check_apps ,:only => :edit
    skip_before_filter :check_privilege, :except => [:edit, :update, :reset_api_key]
 
   def edit       
@@ -111,6 +111,15 @@ private
       redirect_to edit_support_profile_path 
     else
       redirect_to edit_profile_path # redirect_to used to fix breadcrums issue in Freshservice
+    end
+  end
+
+  def check_apps
+    @installed_app = current_account.installed_applications.with_name(Integrations::Constants::APP_NAMES[:slack_v2]).first
+    if @installed_app and @installed_app.configs_allow_slash_command
+      @authorized = Integrations::UserCredential.where(:account_id => current_account.id, :installed_application_id => @installed_app.id,:user_id => current_user.id).first
+      redirect_url =  "#{AppConfig['integrations_url'][Rails.env]}/auth/slack?origin=id%3D#{current_account.id}%26portal_id%3D#{current_portal.id}%26user_id%3D#{current_user.id}%26state_params%3Dagent&team=#{@installed_app.configs_team_id}"
+      @slack_url =  redirect_url
     end
   end
 

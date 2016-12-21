@@ -224,7 +224,7 @@ fr:
   no_twitter_handle: "Veuillez configurer au moins un compte Twitter"
   reset_my_password: "Réinitialiser mon mot de passe"
   assign: Attribuer
-  signup: </b>S'inscrire<b>
+  signup: <b>S'inscrire</b>
   signup_title: "Inscrivez-vous sur %{current_portal}"
   signup_up_with_us: S'inscrire
   signup_help_information: "Une fois inscrit(e), vous pourrez accéder à l'ensemble de notre portail d'assistance en libre-service. Vous pourrez aussi signaler des problèmes à l'assistance et suivre leur statut."

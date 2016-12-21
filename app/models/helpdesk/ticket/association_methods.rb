@@ -156,6 +156,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   private
 
+    def table_name
+      return @table_name if @table_name
+      settings = self.account.account_additional_settings_from_cache.additional_settings
+      @table_name = (settings.present? and settings[:tkt_dynamo_shard].present?) ?
+                                "#{TABLE_NAME}_#{settings[:tkt_dynamo_shard]}" : DEFAULT_TABLE_NAME
+    end
+
     def reset_tracker
       remove_prime_associates("tracker")
       if Account.current.features?(:activity_revamp) and (self.related_tickets_count > 0)
@@ -166,26 +173,19 @@ class Helpdesk::Ticket < ActiveRecord::Base
       delete_broadcast_notes
     end
 
+    def reset_related
+      remove_subsidiary_associates("related")
+    end
+
     def reset_assoc_parent
       remove_prime_associates("assoc_parent")
       nullify_assoc_type
-    end
-
-    def reset_related
-      remove_subsidiary_associates("related")
-      create_tracker_activity(:tracker_unlink, @prime_tkt)
-    end
-
-    def table_name
-      return @table_name if @table_name
-      settings = self.account.account_additional_settings_from_cache.additional_settings
-      @table_name = (settings.present? and settings[:tkt_dynamo_shard].present?) ?
-                                "#{TABLE_NAME}_#{settings[:tkt_dynamo_shard]}" : DEFAULT_TABLE_NAME
+      remove_all_associates
     end
 
     def reset_child
-      remove_subsidiary_associates("child")
-      nullify_assoc_type(@prime_tkt) unless @prime_tkt.associates.present?
+      @assoc_parent_ticket = self.associated_prime_ticket("child") #for activities
+      remove_subsidiary_associates("child", @assoc_parent_ticket)
     end
 
     def remove_prime_associates type
@@ -195,11 +195,22 @@ class Helpdesk::Ticket < ActiveRecord::Base
       end
     end
 
-    def remove_subsidiary_associates type
-      @prime_tkt = self.associated_prime_ticket(type)
-      @prime_tkt.remove_associates([self.display_id]) if @prime_tkt.present?
+    def remove_subsidiary_associates type, prime_tkt = nil
+      @prime_tkt = prime_tkt ? prime_tkt : self.associated_prime_ticket(type)
       nullify_assoc_type
       remove_all_associates
+      prime_tkt_activity type if @prime_tkt.present?
+    end
+
+    def prime_tkt_activity type
+      case type
+      when "child"
+        @prime_tkt.associates.count > 1 ? (@create_activity = :assoc_parent_tkt_unlink) : nullify_assoc_type(@prime_tkt)
+      when "related"
+        @create_activity = :tracker_unlink
+      end
+      create_assoc_tkt_activity(@create_activity, @prime_tkt, self.display_id) if @create_activity.present?
+      @prime_tkt.remove_associates([self.display_id])
     end
 
     def nullify_assoc_type item = self

@@ -2,8 +2,7 @@ module Social::Constants
   
   SOURCE = {
       :twitter  => "Twitter",
-      :facebook => "Facebook",
-      :gnip_2_0 => "Gnip_2_0"
+      :facebook => "Facebook"
     }
 
   GNIP_RULE_STATES = [
@@ -136,5 +135,7 @@ module Social::Constants
   TWITTER_MEDIA_ANIMATEDGIF = "Twitter::Media::AnimatedGif"
 
   WHITELISTED_SPECIAL_CHARS_REGEX = /[,.():;=\-\<\>\/&!?%+"']/
-  
+
+  EMOJI_UNICODE_REGEX         = /[\u{1F600}-\u{1F64F}|\u2600-\u26FF|\u{1F300}-\u{1F5FF}|\u{1F900}-\u{1F9FF}|\u{1F680}-\u{1F6FF}|\u2700-\u27BF]/i
+
 end

@@ -58,6 +58,7 @@ DE:
   beta: false
   address_required: true
   local: 1.0
+  mobile: 5.0
 DK:
   name: Denmark
   beta: false
@@ -93,6 +94,7 @@ FR:
   address_required: false
   national: 1.0
   local: 1.0
+  mobile: 3.0
 GB:
   name: United Kingdom
   beta: false
@@ -111,6 +113,11 @@ HK:
   address_required: false
   national: 8.0
   local: 8.0
+ID:
+  name: Indonesia
+  beta: false
+  address_required: true
+  mobile: 3.0
 IE:
   name: Ireland
   beta: false
@@ -122,6 +129,7 @@ IL:
   beta: false
   address_required: false
   local: 5.0
+  mobile: 10.0
 IT:
   name: Italy
   beta: false

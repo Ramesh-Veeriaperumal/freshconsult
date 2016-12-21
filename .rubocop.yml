@@ -1,7 +1,7 @@
 inherit_from: .rubocop_todo.yml
 
 Rails:
-    Enabled: true
+  Enabled: true
 AllCops:
   Include:
     - '**/*.api'

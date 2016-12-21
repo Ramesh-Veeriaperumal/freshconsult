@@ -6,7 +6,7 @@ module UploadedImagesControllerMethods
 
   def create
     @image = current_account.attachments.build({
-      :description      => "public",
+      :description      => !public_upload? && one_hop? ? "private" : "public",
       :content          => params[:image][:uploaded_data],
       :attachable_type  => "#{cname} Upload"
     })
@@ -29,7 +29,7 @@ module UploadedImagesControllerMethods
     data_f.original_filename = "blob" + CGI.escapeHTML(params["_uniquekey"]) + "." + splited_dataURI[:extension]
    
     @image = current_account.attachments.build({
-      :description      => "public",
+      :description      => !public_upload? && one_hop? ? "private" : "public",
       :content          => data_f,
       :attachable_type  => "#{cname} Upload"
     })
@@ -53,13 +53,9 @@ module UploadedImagesControllerMethods
       end
     end
 
-    def check_anonymous_user
-      access_denied unless logged_in?
-    end
-
     def success_response
       # :link For Froala
-      { :link => @image.content.url, :filelink => @image.content.url, :fileid => @image.id, :uniquekey => CGI.escapeHTML(params["_uniquekey"]) }
+      { :link => @image.inline_url, :filelink => @image.inline_url, :fileid => @image.id, :uniquekey => CGI.escapeHTML(params["_uniquekey"]) }
     end
 
     def error_response
@@ -74,6 +70,14 @@ module UploadedImagesControllerMethods
       else
         true
       end
+    end
+
+    def one_hop?
+      current_account.features_included?(:inline_images_with_one_hop)
+    end
+
+    def public_upload?
+      cname == "Image" || cname == "Forums Image"
     end
 
 end

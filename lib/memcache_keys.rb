@@ -36,7 +36,7 @@ module MemcacheKeys
 
   PORTAL_BY_URL = "v2/PORTAL_BY_URL:%{portal_url}"
 
-  ACCOUNT_BY_FULL_DOMAIN = "v3/ACCOUNT_BY_FULL_DOMAIN:%{full_domain}"
+  ACCOUNT_BY_FULL_DOMAIN = "v4/ACCOUNT_BY_FULL_DOMAIN:%{full_domain}"
 
   ACCOUNT_MAIN_PORTAL = "v3/ACCOUNT_MAIN_PORTAL:%{account_id}"
 
@@ -121,7 +121,7 @@ module MemcacheKeys
 
   POD_SHARD_ACCOUNT_MAPPING = "v2/POD_SHARD_ACCOUNT_MAPPING:%{pod_info}:%{shard_name}"
 
-  ACCOUNT_ADDITIONAL_SETTINGS = "v2/ACCOUNT_ADDITIONAL_SETTINGS:%{account_id}"
+  ACCOUNT_ADDITIONAL_SETTINGS = "v3/ACCOUNT_ADDITIONAL_SETTINGS:%{account_id}"
 
   INSTALLED_FRESHPLUGS = "v2/FA:%{page}:PLUGS:%{account_id}"
 
@@ -163,22 +163,7 @@ module MemcacheKeys
 
   class << self
 
-    def newrelic_begin_rescue(&block)
-      begin
-        block.call
-      rescue Dalli::UnmarshalError => e
-        x = ["undefined class/module CompanyField","undefined class/module ContactFieldChoice",
-            "undefined class/module CustomSurvey::SurveyQuestion"]
-        if x.any? {|word| e.message.include?(word)}
-           Rails.logger.debug "#{Account.current}  #{e.message}"
-        end
-       NewRelic::Agent.notice_error(e)
-      return
-      rescue Exception => e
-        NewRelic::Agent.notice_error(e)
-      return
-      end
-    end
+    include MemcacheReadWriteMethods
 
     def agent_type(user) #pass user as argument
       user.can_view_all_tickets? ? "UNRESTRICTED" :  "RESTRICTED"
@@ -193,37 +178,11 @@ module MemcacheKeys
     end
 
     def memcache_delete(key, account=Account.current, user=User.current)
-      newrelic_begin_rescue { $memcache.delete(memcache_view_key(key, account, user)) }
+      newrelic_begin_rescue { memcache_client.delete(memcache_view_key(key, account, user)) } 
     end
 
-    def get_from_cache(key, raw=false)
-      newrelic_begin_rescue { $memcache.get(key, raw) }
-    end
-
-    def cache(key,value,expiry=0, raw=false)
-      newrelic_begin_rescue { $memcache.set(key, value, expiry, raw) }
-    end
-
-    def delete_from_cache(key)
-      newrelic_begin_rescue { $memcache.delete(key) }
-    end
-
-    def set_null(value)
-      value.nil? ? NullObject.instance : value
-    end
-
-    def unset_null(value)
-      value.is_a?(NullObject) ? nil : value
-    end
-
-    def fetch(key, expiry=0,&block)
-      key = ActiveSupport::Cache.expand_cache_key(key) if key.is_a?(Array)
-      cache_data = get_from_cache(key)
-      if cache_data.nil?
-        Rails.logger.debug "Cache hit missed :::::: #{key}"
-        cache(key, (cache_data = set_null(block.call)), expiry)
-      end
-      unset_null(cache_data)
+    def memcache_client
+      $memcache
     end
   end
 end

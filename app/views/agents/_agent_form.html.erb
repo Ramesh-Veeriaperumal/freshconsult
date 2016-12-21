@@ -35,6 +35,7 @@
    	</div>
    	<div class="span9">
    		<ul class="unstyled form-horizontal">
+      <% if current_account.occasional_agent_enabled? %>
         <li class="control-group">
 				  <%= label(:agent, :signature_html, t('agent.type'), :class => "control-label") %>
 				  <div class="controls">
@@ -48,16 +49,17 @@
                 &nbsp;
 						  </span>
 					  </div>
-					  <div class="radio inline">
-						  <%= radio_button 'agent', 'occasional', 'true', :checked => agents_exceeded?(@agent) %> 
-						  <strong><%= t('agent.occasional') %></strong><br />
-						  <%= I18n.t('agent.day_passes_available', :count => available_passes) %>
-              &nbsp;
-					  </div>
+  					  <div class="radio inline">
+  						  <%= radio_button 'agent', 'occasional', 'true', :checked => agents_exceeded?(@agent) %> 
+  						  <strong><%= t('agent.occasional') %></strong><br />
+  						  <%= I18n.t('agent.day_passes_available', :count => available_passes) %>
+                &nbsp;
+  					  </div>
 				  </div>
 			  </li>
-        <%= hidden_field(:user, :helpdesk_agent, :id=> "helpdesk_agent", :value => true ) %>
         <li class="seperator"></li>
+        <% end %>
+        <%= hidden_field(:user, :helpdesk_agent, :id=> "helpdesk_agent", :value => true ) %>
      			<li class="row-fluid">
      				<h5 class="lead">
      					 <%= t('agent_info_title') %>

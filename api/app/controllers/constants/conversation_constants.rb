@@ -48,4 +48,5 @@ module ConversationConstants
   
   VALIDATION_CLASS = 'ConversationValidation'.freeze
   DELEGATOR_CLASS = 'ConversationDelegator'.freeze
+  CARRIAGE_RETURN = "\r"
 end.freeze

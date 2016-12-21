@@ -3,6 +3,7 @@ class Admin::Marketplace::ExtensionsController <  Admin::AdminController
   include Marketplace::ApiUtil
   
   before_filter :categories, :only => [:index, :search]
+  before_filter(:only => [:custom_apps]) { |c| c.requires_this_feature :custom_apps }
 
   rescue_from Exception, :with => :mkp_exception
 

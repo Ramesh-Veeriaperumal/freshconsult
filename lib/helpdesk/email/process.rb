@@ -38,7 +38,11 @@ class Helpdesk::Email::Process
     end
     return shardmapping.status  unless shardmapping.ok?
     Sharding.select_shard_of(to_email[:domain]) do 
-      accept_email if get_active_account
+      if get_active_account
+        accept_email
+      else
+        email_processing_log "Email Processing Failed: No active Account found!", to_email[:email]
+      end
     end
   end
 
@@ -69,17 +73,27 @@ class Helpdesk::Email::Process
       return
     end
     check_tnef_message_id
-    construct_html_param
-    self.user = get_user(common_email_data[:from], common_email_data[:email_config], params["body-plain"]) #In parse_email_data
 
-    if ((user.nil? && !account.restricted_helpdesk?) or (user && user.blocked?))
-      if (user.nil? && !account.restricted_helpdesk?)
-        email_processing_log "Email Processing Failed: Blank User!", to_email[:email]
-      else
+    self.user = existing_user(common_email_data[:from])
+
+    unless  user
+      construct_html_param
+      create_new_user(common_email_data[:from], common_email_data[:email_config], params["body-plain"])
+    else
+      if user.blocked?
         email_processing_log "Email Processing Failed: Blocked User!", to_email[:email]
+        return
       end
+      construct_html_param
+    end
+
+    if (user.nil? && !account.restricted_helpdesk?)
+      email_processing_log "Email Processing Failed: Blank User!", to_email[:email]
       return
     end
+
+    set_current_user(user)
+
     self.common_email_data[:cc] = permissible_ccs(user, self.common_email_data[:cc], account)
 
     get_necessary_details
@@ -206,5 +220,7 @@ class Helpdesk::Email::Process
   def stripped_html_blank?
     Helpdesk::HTMLSanitizer.plain(params["stripped-html"]).blank? && !params["stripped-text"].blank?
   end 
-
+  def set_current_user(user)
+    user.make_current if user.present?
+  end
 end

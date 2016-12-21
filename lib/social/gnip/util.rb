@@ -47,7 +47,7 @@ module Social::Gnip::Util
     end
   end
 
-  def requeue_gnip_rule(env, response, source)
+  def requeue_gnip_rule(env, response)
     rule_value = response[:rule_value]
     rule_tag   = response[:rule_tag]
 
@@ -61,8 +61,7 @@ module Social::Gnip::Util
           :value => rule_value,
           :tag   => gnip_tag
         },
-        :action => RULE_ACTION[:add],
-        :source => source
+        :action => RULE_ACTION[:add]
       }
       Social::Gnip::RuleWorker.perform_at(5.minutes.from_now, args)
     end

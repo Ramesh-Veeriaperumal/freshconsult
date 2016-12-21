@@ -200,6 +200,7 @@ Helpkit::Application.routes.draw do
     match '/search/autocomplete/requesters',   to: 'search/v2/autocomplete#requesters',          via: :get
     match '/search/autocomplete/agents',       to: 'search/v2/autocomplete#agents',              via: :get
     match '/search/autocomplete/companies',    to: 'search/v2/autocomplete#companies',           via: :get
+    match '/search/autocomplete/company_users',    to: 'search/v2/autocomplete#company_users',           via: :get
     match '/search/autocomplete/tags',         to: 'search/v2/autocomplete#tags',                via: :get
     match '/search/merge_topic',               to: 'search/v2/merge_topics#search_topics',       via: :post
     match '/contact_merge/search',             to: 'search/v2/merge_contacts#index',             via: :get
@@ -230,6 +231,7 @@ Helpkit::Application.routes.draw do
 
   match '/visitor/load/:id.:format' => 'chats#load', :via => :get
   match '/images/helpdesk/attachments/:id(/:style(.:format))' => 'helpdesk/attachments#show', :via => :get
+  match '/inline/attachment' => 'helpdesk/inline_attachments#one_hop_url', :via => :get
   match '/javascripts/:action.:format' => 'javascripts#index'
   match '/packages/:package.:extension' => 'jammit#package', :as => :jammit, :constraints => { :extension => /.+/ }
   resources :authorizations
@@ -551,9 +553,9 @@ Helpkit::Application.routes.draw do
         post :status
         post :in_call
         post :update_recording
-        post :save_call_notes
+        post :save_notable
         put :wrap_call
-        get :call_notes
+        get :load_notable
         post :save_call_quality_metrics
       end
     end
@@ -734,6 +736,7 @@ Helpkit::Application.routes.draw do
     end
   end
   resources :email, :only => [:new, :create]
+  resources :mime, :only => [:new, :create]
   resources :mailgun, :only => :create
   post '/mailgun/create', to: "mailgun#create"
   resources :password_resets, :except => [:index, :show, :destroy]
@@ -784,8 +787,10 @@ Helpkit::Application.routes.draw do
       get :new
       post :install
       get :edit
+      get :add_slack_agent
       put :update
       post :create_ticket
+      post :tkt_create_v3
     end
 
     resources :applications, :only => [:index, :show] do
@@ -1458,6 +1463,7 @@ Helpkit::Application.routes.draw do
           get :requesters
           get :companies
           get :tags
+          get :company_users
         end
       end
       resources :tickets, :only => :index
@@ -1521,7 +1527,6 @@ Helpkit::Application.routes.draw do
     match '/search_solutions/ticket/:ticket/' => 'solutions#search_solutions', :as => :ticket_search_solutions
   end
 
-  match '/search/tickets.:format', :controller => 'search/tickets', :action => 'index', :method => :post
   match '/search/tickets/filter/:search_field' => 'search/tickets#index'
   match '/search/ticket_associations/filter/:search_field' => 'search/ticket_associations#index'
   match '/search/ticket_associations/recent_trackers' => 'search/ticket_associations#index', via: :post
@@ -1887,6 +1892,7 @@ Helpkit::Application.routes.draw do
         get :component
         get :prevnext
         put :update_requester
+        get :refresh_requester_widget
         post :create # For Mobile apps backward compatibility.
         get :associated_tickets
         put :link
@@ -2479,7 +2485,7 @@ Helpkit::Application.routes.draw do
         get :suggest_topic
       end
       match '/topics/suggest', :action => 'suggest_topic'
-      match '/articles/:article_id/related_articles', :action => 'related_articles'
+      match '/articles/:article_id/related_articles', :action => 'related_articles', via: :get
     end
 
     resources :discussions, :only => [:index, :show] do
@@ -2813,6 +2819,7 @@ Helpkit::Application.routes.draw do
           get :portal
           get :features
           get :email_config
+          get :latest_solution_articles
           put :add_day_passes
           put :change_api_limit
           put :change_v2_api_limit

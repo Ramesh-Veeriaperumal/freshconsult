@@ -64,6 +64,9 @@ en:
       x_seconds:
         one: "1 second"
         other: "%{count} seconds"
+  common_js_translations:
+    new: new
+    remove_quoted_text: "Remove quoted text"
   validation:
     required: "This field is required."
     remote: "Please fix this field."
@@ -504,6 +507,7 @@ en:
         loading_feedback: Loading Feedback
         load_questions: View More
         comments: Comments
+        survey_on_open_ticket: Could not submit survey rating as ticket is not resolved.
     login:
       form:
         email: Email
@@ -2735,8 +2739,12 @@ en:
     none: "None"
     subject: "subject"
     status: "Status"
+    group: "Group"
+    agent: "Agent"
+    internal_agent: "Internal Agent"
     description: "description"
     set: "Set"
+    reopen_ticket: "Since a child ticket associated with this ticket is unresolved"
     tag:
       solutions: "New Solution"
       assigned_to_nobody: "Agent Unassigned"
@@ -3087,16 +3095,14 @@ en:
         new: "Internal Group as <strong>%{group_name}</strong>"
       internal_agent:
         new: "Internal Agent as %{responder_path}"
+      internal_agent_group_none:
+        new: "Set Internal Agent as None, Internal Group as None as the %{property} <strong>%{deleted_value}</strong> was deleted"
+      delete_agent:
+        new: "Set %{property} as None as the agent %{responder_path} was deleted"
       remove_group:
         new: "Set Internal Agent as None, Internal Group as None as the mapping was removed between group <strong>%{group_name}</strong> and status <strong>%{status_name}</strong>"
       remove_agent:
         new: "Set Internal Agent as None as the agent %{responder_path} was removed from group <strong>%{group_name}</strong>"
-      delete_internal_group:
-        new: "Set Internal Agent as None, Internal Group as None as the group <strong>%{group_name}</strong> was deleted"
-      delete_internal_agent:
-        new: "Set Internal Agent as None as the agent %{responder_path} was deleted"
-      delete_status:
-        new: "Set Internal Agent as None, Internal Group as None as the status <strong>%{status_name}</strong> was deleted"
       automation_execution:
         new: " after automation rule execution"
       rel_tkt_link:
@@ -3111,6 +3117,14 @@ en:
         new: "Unlinked %{all}%{related_tickets_count} from this tracker"
       tracker_reset:
         new: "Tracker converted to a ticket"
+      child_tkt_link:
+        new: "Linked this ticket with the parent %{assoc_prt_tkt_path}"
+      child_tkt_unlink:
+        new: "Unlinked this ticket from the parent %{assoc_prt_tkt_path}"
+      assoc_parent_tkt_link:
+        new: "Created 1 child ticket %{child_ticket_path}"
+      assoc_parent_tkt_unlink:
+        new: "Unlinked %{child_tickets_count} (%{child_ticket_path}) from this parent"
       email_to_requester:
         new: "Sent email to requester %{requester_name}"
       email_to_group:
@@ -3389,6 +3403,8 @@ en:
       info2: "For example, you can create a template called 'Initiate Refund' by filling the body of the ticket and setting the priority 'medium'. So the next time you receive a phone call about a refund, you can create a medium priority ticket for your customer and initiate the refund request with a single click."
     new_template: "Add New"
     create_template: "Create Template"
+    no_match_text: "No matching templates"
+    no_templates_text: "No template has been created"
     edit: "edit"
     template_note: "Selecting a template will replace <br/>the form with new values."
     template_info: "Ticket templates help to pre-fill this <br/>form in a single click and are helpful for <br/>recurring issues and communications."
@@ -3503,8 +3519,8 @@ en:
     parent_child_templates:
       title: "Parent Child Templates"
       helptext:
-        info1: "Templates with one major Parent ticket and one (minimum) or more Child tickets(s) within the parent"
-        info2: "Child ticket(s) are set of sub task(s) for a Parent’s ticket problem to be solved. On closing each of child ticket Parent ticket would be able to get a closure."
+        info1: "The parent child template allows you to set up a pre-defined workflow by establishing a parent and child relationship between tickets. For every parent template, you would be able to associate up to 10 child templates."
+        info2: "For example, one could create the workflow of onboarding a new employee as a parent child template where the child templates are sub tasks of the onboarding process such as Issuing an ID card, Issuing a laptop, etc."
       deleteMessage: "If you proceed with delete, <ul class='delete-msg-ul'><li>The parent template configuration will be lost.</li><li> Any child template which is associated to only this particular parent template will be deleted.</li></ul> Are you sure you want to delete?"
   solution_category:
     all: All Categories
@@ -5490,6 +5506,9 @@ en:
       template_desc: "Select the parent template to apply the associated child templates"
       recently_used: "Recently Used"
       template: "Template"
+      child_tkt_singular: "child ticket"
+      child_tkt_plural: "child tickets"
+      notn_subject: "Error while creating child tickets"
     singular: Ticket
     due_by_time: Due by time
     delete_btn_title: Move this ticket to trash
@@ -5782,6 +5801,8 @@ en:
     info13: Contacts whose email addresses contain these domains will automatically be associated to this company
     info14: Contacts whose email addresses contain these domains will be whitelisted and automatically associated to this company
     info12: "eg: mycompany1.com, mycompany2.com"
+    add_company: "Add company information"
+    load_company: "Loading company details"
     errors:
       required_field: cannot be blank
       custom_text : is not valid
@@ -5789,6 +5810,7 @@ en:
       custom_phone_number : is not a valid phone number
       custom_url : is not a valid URL
       custom_date : is not a valid date
+    requester_not_associated: "This company is no longer associated to this requester"
   import_zendesk_summary_info: Zendesk data has been successfully imported.
   one: 1 Hour
   no_topics_text: No topics
@@ -7630,7 +7652,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
          access_private_channel: "Allow access to private channels"
          allow_dm_agent: "Allow DM to agent"
          allow_slash_command: "Allow Slash Command (<a href='https://support.freshdesk.com/support/solutions/articles/206103' target='_blank'> Convert Slack DM to Freshdesk ticket </a>)"
-         slash_command_token: "Slash Command Token"
+         slash_command_token: "Slash Command Token"   
       action_options:
         public: "Public"
         private: "Private"
@@ -7651,6 +7673,15 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       subject:
         chat: "Chat Conversation with"
         default_chat: "Chat Conversation of"
+    slack_v3:
+      slack_prof_label: "Connect to Slack"
+      slack_connect_desc: "Configure your account to create Slack tickets from Slack"
+      slack_auth_btn: "Authorize Slack"
+      slack_reauth_btn: "Re-Authorize Slack"
+      slack_token_success: "Token successfully updated."
+      slack_token_failure: "Error while updating the token." 
+      disable_slash_command: Admin has not enabled the slash command in Freshdesk." 
+      authorize_in_fd: "Please go to your Freshdesk account and Authorize your account.This Account doesnot have permission to create Ticket" 
     slack_settings:
       channels: "Channels to post"
       notify: "Notification for"
@@ -7660,6 +7691,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     slack_msg:
       wrong_channel: ERROR converting channel transcript into Ticket :Ticket can be created only in direct channel group
       deprecation_notice: "A new release of Freshdesk Slack app is now available. This version is now obsolete. Please follow this <a href='https://support.freshdesk.com/support/solutions/articles/206103' target='_blank'>solution article</a>  for detailed steps on how to migrate to the new implementation."
+      update_notice: "An update has been made to current slack Integration. Please follow this <a href='https://support.freshdesk.com/support/solutions/articles/206103' target='_blank'>solution article</a>  to know detailed steps about changes made"
       uninstall_old_slack: App is deprecated and updates are ceased. Install Slack V2 for more powerful features.
       invalid_api_key: ERROR :Invalid Freshdesk Api key
       notify_on_ticket_update: "Status updated for  "
@@ -9271,6 +9303,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       network_error: "Check your Internet Connection"
       browser_alert: "Recent Changes in Chrome mandates a secure connection using SSL(https://) to make or receive calls"
       read_more: "<b>Read More</b>"
+      save_ticket_to_call: 'Save call to this ticket'
       agent_conference:
         connecting: "Connecting to"
         canceled: "Canceled"
@@ -9408,6 +9441,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       search: "Search by digits or phrases"
       local: "Local"
       toll_free: "Toll-Free"
+      mobile: "Local (mobile)"
       number:
         simultaneous: "Call all agents"
         round_robin: "Call idle agent first"
@@ -10400,8 +10434,8 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     spam_error: "An internal error occured.  Please contact support."
   requester_widget_more: More
   requester_widget_less: Less
-  requester_widget_limit: You have selected 10 fields
-  requester_widget_notice: You can select upto 10 fields to show on the ticket details page
+  requester_widget_limit: You have selected %{max_limit} fields
+  requester_widget_notice: You can select upto %{max_limit} fields to show on the ticket details page
   customize_requester_widget: Customize Requester widget
   requester_widget_edit: Edit
   requester_widget_edit_req: Edit Requester
@@ -10413,6 +10447,14 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     helpcard:
       title: Customizing requester widget
       info: Choose the fields that you want displayed under the requester info section on the ticket page with the requester widget. This way your team can update requester details directly from the ticket page and keep track of the customer details while solving their ticket. <a href="https://support.freshdesk.com/support/solutions/articles/219948-customizing-requester-info-fields" target="_blank">Learn more</a>
+    company:
+      name: "Company Name"
+      delete_company: "Company information was deleted"
+      message: "Note: All tickets from this requester will be associated with this company"
+      new_company_message: "Note: A new company will be created and all tickets from this requester will be associated with this company"
+      validation:
+        invalid_name: "Invalid company name"
+        required_name: "Enter company name"
   requester_fields_updated: The requester widget has been updated.
   select_requester: "Please select requester"
   associate_n_companies: "Associate a contact with multiple companies?"

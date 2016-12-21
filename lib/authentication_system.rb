@@ -24,6 +24,7 @@ module AuthenticationSystem
     def is_allowed_to_assume?(user)
       return false if 
         is_assumed_user? or !current_user.can_assume?(user) 
+      return false unless current_account.assume_identity_enabled?
       privilege?(:manage_users)
     end
 

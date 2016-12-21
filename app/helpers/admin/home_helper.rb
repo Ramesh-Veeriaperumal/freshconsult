@@ -89,7 +89,7 @@
       },
       :observer                        =>   {
         :url                           =>   "/admin/observer_rules",
-        :privilege                     =>   privilege?(:manage_dispatch_rules)
+        :privilege                     =>   privilege?(:manage_dispatch_rules) && current_account.create_observer_enabled?
       },
       :scenario                        =>   {
         :url                           =>   "/helpdesk/scenario_automations",
@@ -117,7 +117,7 @@
       },
       :"email_commands_setting"        =>   {
         :url                           =>   "/admin/email_commands_settings",
-        :privilege                     =>   privilege?(:manage_email_settings)
+        :privilege                     =>   privilege?(:manage_email_settings) && current_account.email_commands_enabled?
       },
       :integrations                            =>   {
         :url                           =>   "/integrations/applications",
@@ -141,7 +141,7 @@
       },
       :day_pass                        =>   {
         :url                           =>   "/admin/day_passes",
-        :privilege                     =>   privilege?(:manage_account)
+        :privilege                     =>   privilege?(:manage_account) && current_account.occasional_agent_enabled?
       },
       :multiple_mailboxes              =>   {
         :privilege                     =>   feature?(:multiple_emails)
@@ -204,7 +204,7 @@
       :"helpdesk-productivity"  =>    ["dispatcher", "supervisor", "observer", "scenario", "ticket_template", "email-notifications", "canned-response",
                                           "survey-settings", "gamification-settings", "email_commands_setting", "integrations", "apps"],
       :"account-settings"       =>    ["account", "billing", "import", "day_pass"]
-    }
+    }.freeze
 
   ######### keywords Constant ########
 
@@ -353,7 +353,7 @@ HTML
 
   def build_admin_prefpane
     admin_html =
-      ADMIN_GROUP.map do |group_title, items|
+      build_admin_group.map do |group_title, items|
 
         url = admin_link(items)
         next if url.blank?
@@ -441,6 +441,19 @@ HTML
       :url        => url,
       :privilege  => fb_feature
     }
+  end
+
+  def build_admin_group
+    #building admin group for generating the view based on enabled features
+    curr_admin_group = ADMIN_GROUP.deep_dup
+    curr_admin_group.map do |group, items|
+      dup_items = items.reject do |item| 
+        feature_enabled = "#{item}_enabled?".to_sym
+        current_account.respond_to?(feature_enabled) && !current_account.send(feature_enabled)
+      end
+      curr_admin_group[group] = dup_items
+    end
+    curr_admin_group
   end
 
 end

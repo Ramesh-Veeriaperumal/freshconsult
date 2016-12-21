@@ -46,6 +46,13 @@ class Search::V2::AutocompleteController < ApplicationController
     end
   end
 
+  # Temporary
+  #
+  def company_users
+    self.search_results[:results] = []
+    handle_rendering
+  end
+
   def tags
     @klasses        = ['Helpdesk::Tag']
     @search_context = :tag_autocomplete

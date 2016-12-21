@@ -31,7 +31,8 @@ class Helpdesk::Email::HandleTicket
   def remove_unwanted_email_ids
     #Using a delete_if could have been better. But that would change the actual cc array in process.rb. Deep duplication required
     self.email[:cc] = email[:cc].reject{ |cc_hash| kbase_email?(cc_hash) }
-    self.email[:to_emails] = email[:to_emails].reject{ |cc_hash| kbase_email?(cc_hash) or requester_email?(cc_hash) }
+    # self.email[:to_emails] = email[:to_emails].reject{ |cc_hash| kbase_email?(cc_hash) or requester_email?(cc_hash) }
+    self.email[:to_emails] = email[:to_emails].reject{ |cc_hash| kbase_email?(cc_hash) }
   end
 
   def kbase_email?(email)

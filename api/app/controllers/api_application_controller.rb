@@ -709,4 +709,7 @@ class ApiApplicationController < MetalApiController
         defined?(self.class::ROOT_KEY) ? self.class::ROOT_KEY.to_s : controller_name.gsub('api_', '')
     end
   
+    def request_host
+      @request_host ||= request.host
+    end
 end

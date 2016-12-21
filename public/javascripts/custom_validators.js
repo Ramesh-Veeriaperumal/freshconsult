@@ -10,7 +10,7 @@
     if($(element).data('reply-count') >= 0){
       return true;
     }
-  }, "Oops! You have exceeded Facebook Messenger Platform's character limit. Please modify your response." );
+  }, "Oops! You have exceeded Messenger Platform's character limit. Please modify your response." );
   
   $.validator.addMethod("notEqual", function(value, element, param) {
     return ((this.optional(element) || value).strip().toLowerCase() != $(param).val().strip().toLowerCase());
@@ -465,5 +465,30 @@ $.validator.addMethod("valid_custom_headers", function(value, element) {
   return value.split('\n').filter(Boolean).every(function(elem) {return elem.includes(":")});
 }, $.validator.format("Please type custom header in the format -  header : value"));
 $.validator.addClassRules("valid_custom_headers", { valid_custom_headers: true });
+
+// requester company field validation
+$.validator.addMethod("compare_required",function(value, element){
+  var $companyField=jQuery("#company_name"),
+    status =true;
+  if($companyField && $companyField.length>0){  // text company field exist
+    if($companyField.val()){   //company field value exist
+      status = value ? true : false 
+    }else{
+      if(!value)
+        status = true
+    }
+  }
+  else{ // label company field exist
+    status = value ? true : false
+  }
+  return status
+},$.validator.messages.required);
+$.validator.addClassRules("compare-required", { compare_required: true });
+
+// requester company name field validation
+$.validator.addMethod("company_required",function(value, element){
+  return ($('#add-company').is(':checked') && value) ? true : false;
+},$.validator.messages.required);
+$.validator.addClassRules("company-required", { company_required: true });
 
 })(jQuery);

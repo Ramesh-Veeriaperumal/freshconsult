@@ -62,7 +62,7 @@ module Admin::FreshfoneHelper
 	end
 
 	def filter_trial_local(country_list)
-		country_list.select { |_k, v| v['local'] <= number_credit.to_f }
+		country_list.select { |_k, v| filter_trial_credit(v) }
 	end
 
 	def filter_trial_toll_free(selections, toll_free_countries)
@@ -84,6 +84,11 @@ module Admin::FreshfoneHelper
 	def buy_text_helper
 		return t('freshfone.admin.trial.numbers.search.buy_button') if trial_search?
 		t('freshfone.admin.numbers.buy_button_text')
+	end
+
+	def filter_trial_credit(number_info)
+		(number_info.key?('local') && number_info['local'] <= number_credit.to_f) ||
+			(number_info.key?('mobile') && number_info['mobile'] <= number_credit.to_f)
 	end
 
  # TODO-RAILS3 need to check why they have this...

@@ -32,8 +32,8 @@ class Helpdesk::ConversationsController < ApplicationController
   before_filter :load_item, :only => [:full_text]
   before_filter :verify_permission, :only => [:reply, :forward, :reply_to_forward, :note, :twitter,
    :facebook, :mobihelp, :ecommerce, :traffic_cop, :full_text, :broadcast]
-  before_filter :traffic_cop_warning, :only => [:reply, :twitter, :facebook, :mobihelp, :ecommerce]
-  before_filter :check_for_public_notes, :only => [:note]
+  before_filter :traffic_cop_warning, :if => :traffic_cop_feature_enabled?, :only => [:reply, :twitter, :facebook, :mobihelp, :ecommerce]
+  before_filter :check_for_public_notes, :if => :traffic_cop_feature_enabled?, :only => [:note]
   before_filter :check_trial_customers_limit, :only => [:reply, :forward, :reply_to_forward]
   before_filter :validate_ecommerce_reply, :only => :ecommerce
   around_filter :run_on_slave, :only => [:update_activities, :has_unseen_notes, :traffic_cop_warning]
@@ -260,7 +260,12 @@ class Helpdesk::ConversationsController < ApplicationController
     
     private
 
+      def traffic_cop_feature_enabled?
+        current_account.traffic_cop_enabled?
+      end
+
       def validate_facebook_dm_reply
+        @item.body.delete!(ConversationConstants::CARRIAGE_RETURN)
         create_error(:facebook) if @item.notable.facebook_realtime_message? and @item.body.length > Facebook::Constants::REALTIME_MESSSAGING_CHARACTER_LIMIT
       end
       
@@ -360,15 +365,15 @@ class Helpdesk::ConversationsController < ApplicationController
       end
 
       def check_trial_customers_limit
-        if ((current_account.id > get_spam_account_id_threshold) && (current_account.subscription.trial?) && (!ismember?(SPAM_WHITELISTED_ACCOUNTS, current_account.id)))
-          if (Freemail.free?(current_account.admin_email) && max_to_cc_threshold_crossed?) 
+        if ((current_account.id > get_spam_account_id_threshold) && (!ismember?(SPAM_WHITELISTED_ACCOUNTS, current_account.id)))
+          if (current_account.subscription.trial?) && Freemail.free?(current_account.admin_email) && max_to_cc_threshold_crossed?
             respond_to do |format|
               format.js { render :file => "helpdesk/notes/inline_error.rjs", :locals => { :msg => t(:'flash.general.recipient_limit_exceeded', :limit => get_trial_account_max_to_cc_threshold )} }
               format.html { redirect_to @parent }
               format.nmobile { render :json => { :server_response => false } }
               format.any(:json, :xml) { render request.format.to_sym => @item.errors, :status => 400 }
             end
-          elsif((current_account.email_configs.count == 1) && (current_account.email_configs[0].reply_email.end_with?(current_account.full_domain)) && max_to_cc_threshold_crossed?)
+          elsif(account_created_recently? && (current_account.email_configs.count == 1) && (current_account.email_configs[0].reply_email.end_with?(current_account.full_domain)) && max_to_cc_threshold_crossed?)
             FreshdeskErrorsMailer.error_email(nil, {:domain_name => current_account.full_domain}, nil, {
               :subject => "Maximum thread to, cc, bcc threshold crossed for Account :#{current_account.id} ", 
               :recipients => ["mail-alerts@freshdesk.com", "noc@freshdesk.com"],

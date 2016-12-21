@@ -213,4 +213,7 @@ category-19:
     test:
       <<: *defaults
     staging:
-      <<: *defaults            
+      <<: *defaults
+      
+processing_timeout: 600
+retry_count: 20

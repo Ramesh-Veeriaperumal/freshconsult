@@ -60,6 +60,8 @@ class TicketsControllerTest < ActionController::TestCase
       @@ticket_fields << create_custom_field("test_custom_#{custom_field}", custom_field)
       @@custom_field_names << @@ticket_fields.last.name
     end
+    @account.launch :add_watcher
+    @account.save
     @@before_all_run = true
   end
 
@@ -2412,6 +2414,14 @@ class TicketsControllerTest < ActionController::TestCase
     assert_response 200
     response = parse_response @response.body
     assert_equal 1, response.count
+  end
+
+  def test_index_with_monitored_by_with_add_watcher_disabled
+    @account.rollback :add_watcher
+    get :index, controller_params(filter: 'watching')
+    assert_response 403
+  ensure
+    @account.launch :add_watcher
   end
 
   def test_index_with_new_and_my_open

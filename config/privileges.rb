@@ -16,7 +16,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"helpdesk/reminder"
     resource :"helpdesk/authorization"
     resource :"search/autocomplete", :only => [:requesters, :agents, :companies, :tags]
-    resource :"search/v2/autocomplete", :only => [:requesters, :agents, :companies, :tags]
+    resource :"search/v2/autocomplete", :only => [:requesters, :agents, :companies, :tags, :company_users]
     resource :"search/v2/mobile/autocomplete", :only => [:requesters, :agents, :companies, :tags, :autocomplete_requesters]
     resource :"helpdesk/ticket", :only => [:show, :new, :create, :compose_email, :show, :index, :user_tickets,
                                            :user_ticket, :search_tweets, :custom_search, :latest_ticket_count, :add_requester, :view_ticket,
@@ -26,7 +26,7 @@ Authority::Authorization::PrivilegeList.build do
                                            :quick_assign, :canned_reponse, :full_paginate, :custom_view_save, :apply_template, :accessible_templates, :search_templates, :show_children,
                                            :filter_options, :filter_conditions, :activities, :status, :get_top_view, :recent_tickets, :old_tickets, :summary, :bulk_scenario,
                                            :execute_bulk_scenario, :activitiesv2, :activities_all, :link, :unlink, :ticket_association,
-                                           :bulk_child_tkt_create, :associated_tickets, :sentiment_feedback]
+                                           :bulk_child_tkt_create, :associated_tickets, :sentiment_feedback, :refresh_requester_widget]
     resource :"helpdesk/subscription"
     resource :"helpdesk/tag_use"
     resource :"helpdesk/tag"
@@ -63,6 +63,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"integrations/hootsuite/ticket"
     resource :"integrations/sugarcrm", :only => [:renew_session_id, :check_session_id]
     resource :"integrations/service_proxy", :only => [:fetch]
+    resource :"integrations/slack_v2", :only => [:add_slack_agent]
     resource :"integrations/data_pipe"
 
     #Freshfone
@@ -74,7 +75,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"freshfone/conference_transfer", :only => [:initiate_transfer, :complete_transfer, :transfer_success, :cancel_transfer, :resume_transfer, :disconnect_agent]
     resource :"freshfone/agent_conference", :only => [:add_agent, :success, :cancel]
     resource :"freshfone/warm_transfer", :only => [:initiate, :unhold, :cancel, :resume]
-    resource :"freshfone/conference_call", :only => [:call_notes, :save_call_notes, :save_call_quality_metrics, :wrap_call]
+    resource :"freshfone/conference_call", :only => [:load_notable, :save_notable, :save_call_quality_metrics, :wrap_call]
     resource :"freshfone/hold", :only => [ :add, :remove ]
     resource :"freshfone/call_history"
     resource :"freshfone/autocomplete"

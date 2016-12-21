@@ -466,6 +466,10 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
 
   ## Methods related to agent as a requester ends here ##
 
+  def archive?
+    true
+  end
+
   def as_json(options = {}, deep=true)#TODO-RAILS3
     return super(options) unless options[:tailored_json].blank?
 

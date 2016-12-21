@@ -17,6 +17,8 @@
 # Ignore all api docs
 doc/api
 doc/app
+doc/core
+.yardoc
 db/*.sqlite3
 *.swp
 *
@@ -65,3 +67,4 @@ swagger/node_modules/**/*
 reports.csv
 reports.html
 reports.json
+features/cucumber_statistics

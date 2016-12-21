@@ -19,8 +19,8 @@ module Helpdesk::Utils::ManageCcEmails
         # and note is from requester or agent or from anyone in ticket Cc, 
         # then append to reply_cc
         if(ticket.requester_id == note.user_id || note.user.agent? || 
-          ticket_cc_hash[:tkt_cc].include?(note.user.email))
-          ticket_cc_hash[:reply_cc] = ticket_cc_hash[:reply_cc].map!{ 
+          (ticket_cc_hash[:tkt_cc] || []).include?(note.user.email))
+          ticket_cc_hash[:reply_cc] = (ticket_cc_hash[:reply_cc] || []).map!{ 
             |cc| parse_email(cc)[:email]}.compact
           filtered_cc_emails = filtered_cc_emails.reject {|cc| 
             ticket_cc_hash[:reply_cc].include?(cc)}

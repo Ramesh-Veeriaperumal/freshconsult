@@ -15,7 +15,7 @@ module RabbitMq::Subscribers::ArchiveTickets::Reports
   end
 
   def mq_reports_valid(action, model) 
-    valid_model?(model) && update_action?(action)
+    reports_valid_model?(model) && update_action?(action)
   end
 
   private
@@ -24,7 +24,7 @@ module RabbitMq::Subscribers::ArchiveTickets::Reports
     REPORTS_ARCHIVE_TICKET_KEYS + [{"custom_fields" => non_text_custom_field.keys}]
   end
   
-  def valid_model?(model)
+  def reports_valid_model?(model)
     ["archive_ticket"].include?(model)
   end
 end

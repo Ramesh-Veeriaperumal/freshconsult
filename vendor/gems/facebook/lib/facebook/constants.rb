@@ -63,7 +63,7 @@ module Facebook
 
     FB_MESSAGE_PREFIX           = "m_"
 
-    REALTIME_MESSSAGING_CHARACTER_LIMIT = 320
+    REALTIME_MESSSAGING_CHARACTER_LIMIT = 640
     
   end
 end

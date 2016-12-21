@@ -13,6 +13,7 @@ class Solution::ArticleMeta < ActiveRecord::Base
 	include Solution::LanguageAssociations
 	include Solution::ApiDelegator
 	include Solution::UrlSterilize
+	include Solution::MarshalDumpMethods
 
 	attr_accessible :position, :art_type, :solution_folder_meta_id
 
@@ -55,7 +56,10 @@ class Solution::ArticleMeta < ActiveRecord::Base
 	HITS_CACHE_THRESHOLD = 100
 
 	AGGREGATED_COLUMNS = [:hits, :thumbs_up, :thumbs_down]
-	
+
+	PORTAL_CACHEABLE_ATTRIBUTES = ["id", "account_id", "current_child_id", "title", "solution_folder_meta_id", 
+		"status", "modified_at", "created_at", "art_type", "current_child_thumbs_up", "current_child_thumbs_down"]
+
 	before_save :set_default_art_type
 	after_commit ->(obj) { obj.send(:clear_cache) }, on: :destroy
 	after_commit ->(obj) { obj.send(:clear_cache) }, on: :create
@@ -179,5 +183,9 @@ class Solution::ArticleMeta < ActiveRecord::Base
 
 	def update_search_index
 		solution_articles.map(&:update_es_index) if previous_changes.keys.include?("solution_folder_meta_id")
+	end
+
+	def custom_portal_cache_attributes
+		{}
 	end
 end

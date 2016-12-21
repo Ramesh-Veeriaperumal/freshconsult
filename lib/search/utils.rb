@@ -94,7 +94,6 @@ class Search::Utils
     mobile_suggest_solutions:         'mobileSuggestSolutions',
     mobile_suggest_topics:            'mobileSuggestTopics',
     mobile_suggest_global:            'mobileSuggestGlobal',
-    ff_contact_by_props:              'freshfoneContactSearch',
     ff_contact_by_phone:              'freshfoneContactByNumbers',
     ff_contact_by_caller:             'freshfoneContactByCaller',
     ff_contact_by_numfields:          'freshfoneContactByNumberfields',

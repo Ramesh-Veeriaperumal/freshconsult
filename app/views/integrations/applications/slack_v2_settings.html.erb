@@ -1,3 +1,4 @@
+<% flash[:error] = t('integrations.slack_msg.update_notice').html_safe  unless @installed_app.configs[:inputs]["team_id"].present?%>
 <% content_for :helpcard do -%>
   <div class="helpcard">
       <%=t("integrations.slack_v2.helptext").html_safe%>
@@ -29,11 +30,11 @@
                       <div id="public_channel_list">
                         <ul>
                           <% public_channels = @fields['public_channels'] %>
-                          <%selected_fields = default_fields.collect{|label| public_channels[label]} %>
+                          <% selected_fields = default_fields.collect{|id| public_channels[id]} %>
 
-                          <%unless @installed_app.configs_public_labels.blank? %>
-                            <%selected_fields.push(@installed_app.configs_public_labels.split(",").collect!{ |label| next if  default_fields.include?(label); 
-                              public_channels[label]
+                          <%unless @installed_app.configs_public_channels.blank? %>
+                            <%selected_fields.push(@installed_app.configs_public_channels.split(",").collect!{ |id| next if  default_fields.include?(id); 
+                                id
                               })%>
                           <%end%>
                         </ul>
@@ -42,14 +43,16 @@
                       <%data =selected_fields.join(",").html_safe%>
                       <% # order the fields in such a way so that default fields come at the top
                         public_channels_list = [] #should be a list of lists. [ [label, field] [label, field] ]
-                        default_fields.each { |label| public_channels_list.push([label, public_channels[label]]) } 
-                        @fields['public_channels'].each{|label, field|
-                          public_channels_list.push([label, field]) if not default_fields.include?(label);
+                        default_fields.each { |id| public_channels_list.push([id, public_channels[id]]) } 
+                        @fields['public_channels'].each{|id, field|
+                          public_channels_list.push([field, id]) if not default_fields.include?(id);
                         }
                       %>
-                      <%=hidden_field_tag "configs[public_labels]" %>
+                      <%= hidden_field_tag "configs[public_labels]" %>
+                       <%= hidden_field_tag 'configs[team_id]', @installed_app.configs[:inputs]["team_id"], :readonly => true %>
                       <%= select_tag "configs[public_channels]", 
                               options_for_select(public_channels_list,data.split(",")), { :multiple => true, :class => "select2-fields int-select","data-placeholder required" => " ", "data-max-selection-size" => "20", :rel => "select-choice", "data-disable-field" => "Telephone"} %> <!-- space in placeholder to add an empty option -->
+                              
                     </span>
                   </div>
                 </div>
@@ -63,10 +66,10 @@
                     <div id="private_channel_list">
                           <ul>
                             <% private_channels = @fields['private_channels'] %>
-                            <%selected_private_channels = default_fields.collect{|label| private_channels[label]} # use a copy to not change default fields %>
-                          <%unless @installed_app.configs_private_labels.blank? %>
-                          <%selected_private_channels.push(@installed_app.configs_private_labels.split(",").collect!{ |label| next if default_fields.include?(label);
-                           private_channels[label]
+                            <%selected_private_channels = default_fields.collect{|id| private_channels[id]} # use a copy to not change default fields %>
+                          <%unless @installed_app.configs_private_channels.blank? %>
+                          <%selected_private_channels.push(@installed_app.configs_private_channels.split(",").collect!{ |id| next if default_fields.include?(id);
+                             id
                            })%>
                           <%end%>
                           </ul>
@@ -75,8 +78,8 @@
                     <% # order the fields in such a way so that default fields come at the top
                       private_channels_list = []
                       default_fields.each { |label| private_channels_list.push([label, private_channels[label]]) }
-                      @fields['private_channels'].each{|label, field|
-                        private_channels_list.push([label, field]) if not default_fields.include?(label); 
+                      @fields['private_channels'].each{|id, field|
+                        private_channels_list.push([field, id]) if not default_fields.include?(id); 
                       }
                       %>
                     <%=hidden_field_tag "configs[private_labels]" %>
@@ -91,21 +94,26 @@
               <%= check_box(:configs, 'allow_dm', :checked => @installed_app.configs[:inputs]["allow_dm"].present? ) %>
               <label for="configs_allow_dm" class="inline-block"> <%=t("integrations.slack_v2.form.allow_dm_agent")%> </label>
               <br/>
-              <input 
-                <%if @installed_app.configs[:inputs]["slash_command_token"].present? %>
-                  checked = "checked"
-                <%end%>
-              id="allow_slash_command" type="checkbox">
-              <label  class="inline-block"> <%=t("integrations.slack_v2.form.allow_slash_command").html_safe%> </label>
+              <% if @installed_app.configs[:inputs]["team_id"].present? %>
+                  <%= check_box(:configs, 'allow_slash_command', :checked => @installed_app.configs[:inputs]["allow_slash_command"].present?) %>
+                  <label  class="inline-block"> <%=t("integrations.slack_v2.form.allow_slash_command").html_safe%> </label>
+              <% else %>
+                <input                  
+                  <%if @installed_app.configs[:inputs]["slash_command_token"].present? %>
+                    checked = "checked"
+                  <%end%>
+                id="allow_slash_command" type="checkbox">
 
-              <div class="slash_command_token <%if @installed_app.configs[:inputs]["slash_command_token"].blank? %> hide <% end %> ml20 mt5">
-                <label class="span3" for="configs_slash_command_token"> <%=t('integrations.slack_v2.form.slash_command_token')%> <span class="required_star">*</span> </label><input aria-required="true" class="span3" id="configs_slash_command_token" name="configs[slash_command_token]"
-                <%if defined?(@installed_app.configs[:inputs]["slash_command_token"]) %>
-                  value = "<%= @installed_app.configs[:inputs]["slash_command_token"] %>"
-                <%end%>
-                type="text">
-                
-              </div>
+                <label  class="inline-block"> <%=t("integrations.slack_v2.form.allow_slash_command").html_safe%> </label>
+
+                <div class="slash_command_token <%if @installed_app.configs[:inputs]["slash_command_token"].blank? %> hide <% end %> ml20 mt5">
+                  <label class="span3" for="configs_slash_command_token"> <%=t('integrations.slack_v2.form.slash_command_token')%> <span class="required_star">*</span> </label><input aria-required="true" class="span3" id="configs_slash_command_token" name="configs[slash_command_token]"
+                  <%if defined?(@installed_app.configs[:inputs]["slash_command_token"]) %>
+                    value = "<%= @installed_app.configs[:inputs]["slash_command_token"] %>"
+                  <%end%>
+                  type="text">  
+                </div>
+              <% end %>
             </div>
 
           </ul>

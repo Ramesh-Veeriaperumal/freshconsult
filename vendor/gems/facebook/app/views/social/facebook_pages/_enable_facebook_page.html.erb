@@ -22,10 +22,11 @@
     	    	</div>
               </td>
               <td class="fb_page_info">
-              	<%= check_box( "enable", "pages", { 
+                <%= check_box( "enable", "pages", { 
                                 :multiple => true, :checked => true, 
                                 :id => "enable_page_#{fb_page[:page_id]}" 
                                 }, fb_page.to_json , nil) if fb_page[:page_id]%>
+              	
                 <label for="enable_page_<%=fb_page[:page_id] %>">
                   <b><%= fb_page[:page_name] %></b>
                 </label>

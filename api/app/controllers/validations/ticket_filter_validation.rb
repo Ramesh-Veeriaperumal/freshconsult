@@ -8,6 +8,8 @@ class TicketFilterValidation < FilterValidation
   validate :verify_company, if: -> { errors[:company_id].blank? && company_id }
   validates :email, data_type: { rules: String }
   validates :filter, custom_inclusion: { in: ApiTicketConstants::FILTER }, if: -> { !private_API? }
+  # Unless add_watcher feature is enabled, a user cannot be allowed to get tickets that he/she is "watching"
+  validate :watcher_filter, if: -> { filter }
   validates :updated_since, date_time: true
   validates :order_by, custom_inclusion: { in: ApiTicketConstants::ORDER_BY }
   validates :order_type, custom_inclusion: { in: ApiTicketConstants::ORDER_TYPE }
@@ -103,6 +105,13 @@ class TicketFilterValidation < FilterValidation
     end
     if query_hash_errors.present?
       errors[:query_hash] << :"invalid_query_conditions"
+    end
+  end
+
+  def watcher_filter
+    if @filter == 'watching' && !Account.current.add_watcher_enabled?
+      errors[:filter] << :require_feature
+      error_options.merge!(filter: { feature: 'Add Watcher', code: :access_denied })
     end
   end
 
