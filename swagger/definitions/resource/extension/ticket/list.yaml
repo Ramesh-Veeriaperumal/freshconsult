@@ -36,3 +36,5 @@ allOf:
         type: array
         items:
           type: string
+      survey_result:
+        $ref: '#/definitions/survey_result'

@@ -3,6 +3,8 @@
   properties:
     freshfone_call:
       $ref: '#/definitions/freshfone_call'
+    survey_result:
+      $ref: '#/definitions/survey_result'
     ticket_topic:
       $ref: '#/definitions/ticket_topic'
     meta:

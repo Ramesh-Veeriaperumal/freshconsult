@@ -16,7 +16,7 @@ module Ember
       sanitize_filter_params
       @delegator_klass = 'TicketFilterDelegator'
       return unless validate_delegator(nil, params)
-      assign_filter_params(@delegator)
+      assign_filter_params
       super
       response.api_meta = { count: @items_count }
       # TODO-EMBERAPI Optimize the way we fetch the count
@@ -301,7 +301,7 @@ module Ember
         params[:wf_order_type] = params[:order]
       end
 
-      def assign_filter_params(delegator)
+      def assign_filter_params
         return unless @delegator.ticket_filter
         params_hash = @delegator.ticket_filter.respond_to?(:id) ? @delegator.ticket_filter.attributes['data'] : { 'filter_name' => params[:filter] }
         params.merge!(params_hash)

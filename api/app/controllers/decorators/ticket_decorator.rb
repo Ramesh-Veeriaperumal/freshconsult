@@ -7,8 +7,7 @@ class TicketDecorator < ApiDecorator
   def initialize(record, options)
     super(record)
     @name_mapping = options[:name_mapping]
-    @sideload_options = options[:sideload_options]
-    
+    @sideload_options = options[:sideload_options]  
   end
 
   def utc_format(value)
@@ -85,6 +84,19 @@ class TicketDecorator < ApiDecorator
     handle_timestamps(meta_info)
   end
 
+  def feedback_hash
+    return {} unless @sideload_options.include?('survey') && record.custom_survey_results.present?
+    survey_result = record.custom_survey_results.last
+    {
+      survey_result: {
+        survey_id: survey_result.survey_id,
+        agent_id: survey_result.agent_id,
+        group_id: survey_result.group_id,
+        rating: survey_result.custom_ratings
+      }
+    }
+  end
+
   def ticket_topic
     return unless forums_enabled? && record.ticket_topic.present?
     topic = record.topic
@@ -121,6 +133,7 @@ class TicketDecorator < ApiDecorator
       created_at: created_at.try(:utc),
       updated_at: updated_at.try(:utc)
     }
+    [hash, feedback_hash].inject(&:merge)
   end
 
   class << self

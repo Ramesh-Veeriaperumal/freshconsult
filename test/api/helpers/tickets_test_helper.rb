@@ -87,6 +87,15 @@ module TicketsTestHelper
     }
   end
 
+  def feedback_pattern(survey_result)
+    {
+      survey_id: survey_result.survey_id,
+      agent_id: survey_result.agent_id, 
+      group_id: survey_result.group_id, 
+      rating: survey_result.custom_ratings
+    }
+  end
+
   def ticket_pattern(expected_output = {}, ignore_extra_keys = true, ticket)
     expected_custom_field = (expected_output[:custom_fields] && ignore_extra_keys) ? expected_output[:custom_fields].ignore_extra_keys! : expected_output[:custom_fields]
     custom_field = ticket.custom_field.map { |k, v| [TicketDecorator.display_name(k), v.respond_to?(:utc) ? v.utc.iso8601 : v] }.to_h
@@ -300,17 +309,20 @@ module TicketsTestHelper
     assert new_ticket.cloud_files.present?
   end
 
-  def private_api_ticket_index_pattern
+  def private_api_ticket_index_pattern(survey_results = {})
     pattern_array = Helpdesk::Ticket.last(ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page]).map do |ticket|
-      index_ticket_pattern(ticket, [:tags])
+      pattern = index_ticket_pattern(ticket, [:tags])
+      pattern.merge!(survey_result: feedback_pattern(survey_results[ticket.id])) if survey_results[ticket.id]
+      pattern
     end
   end
 
-  def ticket_show_pattern(ticket)
+  def ticket_show_pattern(ticket, survey_result = nil)
     pattern = ticket_pattern(ticket)
     ticket_topic = ticket_topic_pattern(ticket)
     pattern.merge!(freshfone_call: freshfone_call_pattern(ticket)) if freshfone_call_pattern(ticket).present?
     pattern.merge!(meta: ticket_meta_pattern(ticket))
+    pattern.merge!(survey_result: feedback_pattern(survey_result)) if survey_result
     pattern.merge!(ticket_topic: ticket_topic) if ticket_topic.present?
     pattern
   end

@@ -1,5 +1,7 @@
 type: object
 properties:
+  survey_id:
+    type: number
   agent_id:
     type: number
   group_id:

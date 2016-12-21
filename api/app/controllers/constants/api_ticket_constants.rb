@@ -13,8 +13,8 @@ module ApiTicketConstants
   COMPOSE_EMAIL_FIELDS = (CREATE_FIELDS - %w(source product_id responder_id requester_id phone twitter_id facebook_id)).freeze
   SHOW_FIELDS = ['include'].freeze
   UPDATE_PROPERTIES_FIELDS = %w(due_by responder_id group_id status priority tags).freeze
-  ALLOWED_INCLUDE_PARAMS = %w(conversations requester company stats).freeze
-  SIDE_LOADING = %w(requester stats).freeze
+  ALLOWED_INCLUDE_PARAMS = %w(conversations requester company stats survey).freeze
+  SIDE_LOADING = %w(requester stats survey).freeze
   INCLUDE_PRELOAD_MAPPING = { 'stats' => :ticket_states }.freeze
   BULK_DELETE_PRELOAD_OPTIONS = [:tags, :schema_less_ticket].freeze
   ORDER_TYPE = TicketsFilter::SORT_ORDER_FIELDS.map(&:first).map(&:to_s).freeze

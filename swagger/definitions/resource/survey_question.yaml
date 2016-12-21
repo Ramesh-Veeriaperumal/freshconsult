@@ -7,4 +7,9 @@ properties:
   accepted_ratings:
     type: array
     items:
-      type: number
+      type: object
+      properties:
+        label:
+          type: string
+        value:
+          type: string

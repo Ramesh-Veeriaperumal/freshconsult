@@ -254,6 +254,7 @@ Helpkit::Application.routes.draw do
         get :check_following
       end
     end
+    resources :surveys, controller: 'ember/surveys', only: [:index]
   end
 
   match '/api/v2/_search/tickets' => 'tickets#search', :defaults => { format: 'json' }, :as => :tickets_search, via: :get

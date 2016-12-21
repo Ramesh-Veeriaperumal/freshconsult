@@ -39,7 +39,7 @@ class SurveysController < ApiApplicationController
     @custom_survey ||= current_account.new_survey_enabled?
   end
 
-  def decorator_options
-    super({ custom_survey: @custom_survey })
+  def decorator_options(options = {})
+    super({ custom_survey: @custom_survey }.merge(options))
   end
 end

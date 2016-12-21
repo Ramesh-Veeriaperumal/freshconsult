@@ -24,16 +24,16 @@ module SurveysTestHelper
     survey_result
   end
 
-  def index_survey_pattern(surveys)
+  def index_survey_pattern(surveys, show_rating_labels = false)
     pattern = []
     surveys.each do |survey|
       active_survey = active_classic_survey_rating(survey)
       if Account.current.new_survey_enabled?
         survey_questions = survey.survey_questions.map do |q|
           if q.default
-            survey = { id: 'default_question', label: q.label, accepted_ratings: q.face_values, default: true }
+            survey = { id: 'default_question', label: q.label, accepted_ratings: ratings(q, show_rating_labels), default: true }
           else
-            survey = { id: "question_#{q.id}", label: q.label, accepted_ratings: q.face_values }
+            survey = { id: "question_#{q.id}", label: q.label, accepted_ratings: ratings(q, show_rating_labels) }
           end
           survey
         end
@@ -42,6 +42,10 @@ module SurveysTestHelper
       pattern << active_survey
     end
     pattern
+  end
+
+  def ratings(question, show_labels = false)
+    show_labels ? question.choices.map {|x| {label: x[:value], value: x[:face_value]}} : question.face_values
   end
 
   def active_classic_survey_rating(survey)

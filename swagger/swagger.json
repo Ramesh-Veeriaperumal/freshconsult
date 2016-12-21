@@ -59,6 +59,17 @@
               "on_hold",
               "raised_by_me"
             ]
+          },
+          {
+            "name": "include",
+            "in": "query",
+            "type": "string",
+            "description": "Comma-separated values",
+            "enum": [
+              "requester",
+              "stats",
+              "survey"
+            ]
           }
         ],
         "responses": {
@@ -120,6 +131,19 @@
             "type": "number",
             "description": "Display ID of ticket",
             "required": true
+          },
+          {
+            "name": "include",
+            "in": "query",
+            "type": "string",
+            "description": "Comma-separated values",
+            "enum": [
+              "conversations",
+              "requester",
+              "company",
+              "stats",
+              "survey"
+            ]
           }
         ],
         "responses": {
@@ -4360,6 +4384,9 @@
     "survey_result": {
       "type": "object",
       "properties": {
+        "survey_id": {
+          "type": "number"
+        },
         "agent_id": {
           "type": "number"
         },
@@ -4412,7 +4439,15 @@
         "accepted_ratings": {
           "type": "array",
           "items": {
-            "type": "number"
+            "type": "object",
+            "properties": {
+              "label": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              }
+            }
           }
         }
       }
@@ -4777,6 +4812,9 @@
                     "items": {
                       "type": "string"
                     }
+                  },
+                  "survey_result": {
+                    "$ref": "#/definitions/survey_result"
                   }
                 }
               }
@@ -4884,6 +4922,9 @@
           "properties": {
             "freshfone_call": {
               "$ref": "#/definitions/freshfone_call"
+            },
+            "survey_result": {
+              "$ref": "#/definitions/survey_result"
             },
             "ticket_topic": {
               "$ref": "#/definitions/ticket_topic"

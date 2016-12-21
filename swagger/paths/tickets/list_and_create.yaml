@@ -10,6 +10,11 @@ get:
       in: query
       type: string
       enum: ["spam", "deleted", "overdue", "pending", "open", "due_today", "new", "new_and_my_open", "all_tickets", "unresolved", "article_feedback", "my_article_feedback", "watching", "on_hold", "raised_by_me"] 
+    - name: include
+      in: query
+      type: string
+      description: Comma-separated values
+      enum: ["requester", "stats", "survey"]
   responses:
     200:
       description: Success

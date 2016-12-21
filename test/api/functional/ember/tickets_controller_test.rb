@@ -8,6 +8,7 @@ module Ember
     include GroupHelper
     include CannedResponsesHelper
     include CannedResponsesTestHelper
+    include SurveysTestHelper
 
     CUSTOM_FIELDS = %w(number checkbox decimal text paragraph dropdown country state city date)
 
@@ -83,7 +84,7 @@ module Ember
     def test_index_with_invalid_query_hash
       get :index, controller_params(version: 'private', query_hash: Faker::Lorem.word)
       assert_response 400
-      match_json([bad_request_error_pattern(:query_hash, :datatype_mismatch, expected_data_type: 'Hash')])
+      match_json([bad_request_error_pattern(:query_hash, :datatype_mismatch, expected_data_type: 'key/value pair', given_data_type: String, prepend_msg: :input_received)])
     end
 
     def test_index_with_no_params
@@ -117,6 +118,52 @@ module Ember
       get :index, controller_params({ version: 'private', query_hash: query_hash_params }, false)
       assert_response 200
       match_json(private_api_ticket_index_pattern)
+    end
+
+    def test_index_with_survey_result
+      ticket = create_ticket
+      result = []
+      3.times do
+        result << create_survey_result(ticket, 3)
+      end
+      get :index, controller_params(version: 'private', include: 'survey')
+      assert_response 200
+      match_json(private_api_ticket_index_pattern(ticket.id => result.last))
+    end
+
+    def test_index_without_survey_enabled
+      ticket = create_ticket
+      Account.any_instance.stubs(:features?).with(:default_survey).returns(false)
+      Account.any_instance.stubs(:features?).with(:custom_survey).returns(false)
+      get :index, controller_params(version: 'private', include: 'survey')
+      assert_response 400
+      match_json([bad_request_error_pattern('include', :require_feature, feature: 'Custom survey')])
+      Account.any_instance.unstub(:features?)
+    end
+
+    def test_show_with_survey_result
+      ticket = create_ticket
+      result = []
+      3.times do
+        result << create_survey_result(ticket, 3)
+      end
+      get :show, controller_params(version: 'private', id: ticket.display_id, include: 'survey')
+      assert_response 200
+      match_json(ticket_show_pattern(ticket, result.last))
+    end
+
+    def test_show_without_survey_enabled
+      ticket = create_ticket
+      result = []
+      3.times do
+        result << create_survey_result(ticket, 3)
+      end
+      Account.any_instance.stubs(:features?).with(:default_survey).returns(false)
+      Account.any_instance.stubs(:features?).with(:custom_survey).returns(false)
+      get :show, controller_params(version: 'private', id: ticket.display_id, include: 'survey')
+      assert_response 400
+      match_json([bad_request_error_pattern('include', :require_feature, feature: 'Custom survey')])
+      Account.any_instance.unstub(:features?)
     end
 
     def test_ticket_show_with_fone_call

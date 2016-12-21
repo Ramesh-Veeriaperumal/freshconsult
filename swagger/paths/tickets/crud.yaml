@@ -8,6 +8,11 @@
         type: number
         description: Display ID of ticket
         required: true
+      - name: include
+        in: query
+        type: string
+        description: Comma-separated values
+        enum: ["conversations", "requester", "company", "stats", "survey"]
     responses:
       200:
         description: Success

@@ -101,3 +101,4 @@ api_error_messages:
   not_a_twitter_ticket: "Cannot tweet as reply to ticket NOT created from Twitter stream"
   only_query_hash_or_filter: "Cannot set both query hash and filter"
   select_a_field: "Atleast one of the fields is required"
+  feature_not_enabled: "%{feature} feature not enabled"
