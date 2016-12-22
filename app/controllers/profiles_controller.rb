@@ -6,6 +6,8 @@ class ProfilesController < ApplicationController
    before_filter :load_profile, :only => [:edit, :change_password]
    before_filter :set_profile, :filter_params, :only => [:update]
    before_filter :load_password_policy, :check_apps ,:only => :edit
+   before_filter :set_native_mobile, :only => [:update]
+
    skip_before_filter :check_privilege, :except => [:edit, :update, :reset_api_key]
 
   def edit       
@@ -99,9 +101,11 @@ private
           @user.update_attributes(params[:user])        
           format.html { redirect_to(edit_profile_url, :notice => 'Your profile has been updated successfully.') }
           format.xml  { head :ok }
+          format.nmobile {render :json => { :success => true }}
       else
         format.html { redirect_to(edit_profile_url, flash: { error: activerecord_error_list(@profile.errors) }) }
         format.xml  { render :xml => @profile.errors, :status => :unprocessable_entity }
+        format.nmobile {render :json => { :success => false }}
       end    
     end    
   end
