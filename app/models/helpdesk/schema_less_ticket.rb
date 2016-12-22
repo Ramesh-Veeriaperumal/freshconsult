@@ -68,7 +68,6 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
 	alias_attribute :dirty_attributes, :text_tc03
 	alias_attribute :internal_group_id, :long_tc03
 	alias_attribute :internal_agent_id, :long_tc04
-	alias_attribute :sentiment, :int_tc03
 	alias_attribute :association_type, :int_tc03
 	alias_attribute :associates_rdb, :long_tc05
 	alias_attribute :skill_id, :long_tc06
