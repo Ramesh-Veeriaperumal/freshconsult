@@ -1,4 +1,4 @@
 <% content_for :helpcard do %>
   <%= render :partial => "helpnote" %>
 <% end %>
-<%= render :partial => "form", :locals => { :title => t('group.new') } %>
+<%= render :partial => "form", :locals => { :title => t('group.new'), :page_type => "new" } %>

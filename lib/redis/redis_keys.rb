@@ -200,6 +200,14 @@ module Redis::RedisKeys
 
   RR_CAPPING_TICKETS_DEFAULT_SORTED_SET = "RR_CAPPING_TICKETS_DEFAULT_SORTED_SET:%{account_id}:%{group_id}"
 
+  #skill based round robin keys
+  SKILL_BASED_TICKETS_SORTED_SET = "SKILL_BASED_TICKETS_SORTED_SET:%{account_id}:%{group_id}:%{skill_id}"
+  SKILL_BASED_TICKETS_LOCK_KEY = "SKILL_BASED_TICKETS_LOCK_KEY:%{account_id}:%{ticket_id}"
+
+  SKILL_BASED_USERS_SORTED_SET = "SKILL_BASED_USERS_SORTED_SET:%{account_id}:%{group_id}:%{skill_id}"
+  SKILL_BASED_USERS_LOCK_KEY = "SKILL_BASED_USERS_LOCK_KEY:%{account_id}:%{group_id}:%{user_id}"
+  #skill based round robin keys - end
+  
   OUTGOING_COUNT_PER_HALF_HOUR = "OUTGOING_COUNT_PER_HALF_HOUR:%{account_id}"
   SPAM_ACCOUNT_ID_THRESHOLD = "SPAM_ACCOUNT_ID_THRESHOLD"
   SPAM_OUTGOING_EMAILS_THRESHOLD = "SPAM_OUTGOING_EMAILS_THRESHOLD"

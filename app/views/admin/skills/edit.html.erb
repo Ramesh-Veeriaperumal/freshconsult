@@ -1,0 +1,9 @@
+<% content_for :helpcard do %>
+	<%= render :partial => "helpnote_without_tour" %>
+<% end %>
+
+<h3 class="lead"><%=t('.edit')%></h3> 
+<%= form_for @skill, :url => admin_skill_path, :html => { :method => :put , :id => "EditSkill" } do |f| %>
+	<%= render :partial => "/admin/skills/rule_form", :locals => { :f => f } %>
+<% end %>
+<%= render :partial => 'popup' %>

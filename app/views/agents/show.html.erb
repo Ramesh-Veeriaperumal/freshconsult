@@ -58,6 +58,7 @@
 	<%end%>
 <%- end %> 
 <div class="contact-box clearfix">
+<% p privilege?(:manage_users), 'is_allowed_to_assume', is_allowed_to_assume?(@agent.user), !current_account.hide_agent_metrics_feature? %>
 	  <% if privilege?(:manage_users) %>
 		<div class="action_buttons hide">	
       <%= link_to t('assume_identity_button'), assume_identity_user_path(@agent.user) if is_allowed_to_assume?(@agent.user) and !current_account.hide_agent_metrics_feature?  %>

@@ -1,13 +1,13 @@
 {
   "checksum": {
-    "previous": "d338b1737b7536fd15eaf4a42e47ce9d1fac60df5cb3cd3df9ec058797901199",
-    "current": "d338b1737b7536fd15eaf4a42e47ce9d1fac60df5cb3cd3df9ec058797901199"
+    "previous": "eb6731f5992794c4a28656249cbbdabc633eebbfa2c44951d32efe1390656e7f",
+    "current": "eb6731f5992794c4a28656249cbbdabc633eebbfa2c44951d32efe1390656e7f"
   },
   "fonts": [
-    "public/assets/glyphs_d338b1737b7536fd15eaf4a42e47ce9d.ttf",
-    "public/assets/glyphs_d338b1737b7536fd15eaf4a42e47ce9d.svg",
-    "public/assets/glyphs_d338b1737b7536fd15eaf4a42e47ce9d.woff",
-    "public/assets/glyphs_d338b1737b7536fd15eaf4a42e47ce9d.eot"
+    "public/assets/glyphs_eb6731f5992794c4a28656249cbbdabc.ttf",
+    "public/assets/glyphs_eb6731f5992794c4a28656249cbbdabc.svg",
+    "public/assets/glyphs_eb6731f5992794c4a28656249cbbdabc.woff",
+    "public/assets/glyphs_eb6731f5992794c4a28656249cbbdabc.eot"
   ],
   "glyphs": {
     "abandoned-call": {
@@ -299,7 +299,7 @@
       "source": "public/glyphs/vectors/checkmark-thick.svg"
     },
     "child-icon": {
-      "codepoint": 62050,
+      "codepoint": 62051,
       "source": "public/glyphs/vectors/child-icon.svg"
     },
     "chrome": {
@@ -787,7 +787,7 @@
       "source": "public/glyphs/vectors/info.svg"
     },
     "inherit-parent": {
-      "codepoint": 62051,
+      "codepoint": 62052,
       "source": "public/glyphs/vectors/inherit-parent.svg"
     },
     "integrations": {
@@ -1158,6 +1158,10 @@
       "codepoint": 61840,
       "source": "public/glyphs/vectors/sidebar-list.svg"
     },
+    "skills": {
+      "codepoint": 62050,
+      "source": "public/glyphs/vectors/skills.svg"
+    },
     "sla": {
       "codepoint": 61841,
       "source": "public/glyphs/vectors/sla.svg"
@@ -1315,7 +1319,7 @@
       "source": "public/glyphs/vectors/underline.svg"
     },
     "undo-inherit": {
-      "codepoint": 62052,
+      "codepoint": 62054,
       "source": "public/glyphs/vectors/undo-inherit.svg"
     },
     "unlink": {

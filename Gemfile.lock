@@ -304,6 +304,12 @@ PATH
       rails (~> 3.2.18)
 
 PATH
+  remote: vendor/gems/fd_spam_detection_service
+  specs:
+    fd_spam_detection_service (0.0.1)
+      httparty (= 0.10.0)
+
+PATH
   remote: vendor/gems/freshdesk_authority-0.1
   specs:
     freshdesk_authority (0.1)
@@ -420,7 +426,7 @@ PATH
 
 GEM
   remote: https://rubygems.org/
-  remote: https://a55d1643:d20410bb@gems.contribsys.com/
+  remote: https://690a8c5e:5d9334f0@gems.contribsys.com/
   specs:
     CFPropertyList (2.3.2)
     POpen4 (0.1.4)
@@ -442,6 +448,7 @@ GEM
       rack-cache (~> 1.2)
       rack-test (~> 0.6.1)
       sprockets (~> 2.2.1)
+    active_record_query_trace (1.5.4)
     active_record_shards (3.2.1)
       activerecord (>= 3.2.16, < 4.2)
       activesupport (>= 3.2.16, < 4.2)
@@ -500,6 +507,10 @@ GEM
       jmespath (~> 1.0)
     aws-sdk-resources (2.4.2)
       aws-sdk-core (= 2.4.2)
+    axiom-types (0.1.1)
+      descendants_tracker (~> 0.0.4)
+      ice_nine (~> 0.11.0)
+      thread_safe (~> 0.3, >= 0.3.1)
     beefcake (0.3.7)
     better_errors (1.1.0)
       coderay (>= 1.0.0)
@@ -518,6 +529,13 @@ GEM
       amq-protocol (>= 1.9.2)
     byebug (9.0.5)
     callsite (0.0.11)
+    capybara (2.11.0)
+      addressable
+      mime-types (>= 1.16)
+      nokogiri (>= 1.3.3)
+      rack (>= 1.0.0)
+      rack-test (>= 0.5.4)
+      xpath (~> 2.0)
     celluloid (0.16.0)
       timers (~> 4.0.0)
     chargebee (1.5.9)
@@ -532,6 +550,8 @@ GEM
     cocaine (0.5.8)
       climate_control (>= 0.0.3, < 1.0)
     coderay (1.1.1)
+    coercible (1.0.0)
+      descendants_tracker (~> 0.0.1)
     compass (1.0.3)
       chunky_png (~> 1.2)
       compass-core (~> 1.0.2)
@@ -551,18 +571,42 @@ GEM
     connection_pool (2.2.0)
     css_parser (1.4.5)
       addressable
+    cucumber (2.4.0)
+      builder (>= 2.1.2)
+      cucumber-core (~> 1.5.0)
+      cucumber-wire (~> 0.0.1)
+      diff-lcs (>= 1.1.3)
+      gherkin (~> 4.0)
+      multi_json (>= 1.7.5, < 2.0)
+      multi_test (>= 0.1.2)
+    cucumber-core (1.5.0)
+      gherkin (~> 4.0)
+    cucumber-rails (1.4.5)
+      capybara (>= 1.1.2, < 3)
+      cucumber (>= 1.3.8, < 4)
+      mime-types (>= 1.16, < 4)
+      nokogiri (~> 1.5)
+      railties (>= 3, < 5.1)
+    cucumber-wire (0.0.1)
+    cucumber_statistics (2.3.0)
+      cucumber (>= 2.1.0)
+      haml
+      tilt
+      virtus
     curb (0.8.8)
     database_cleaner (1.5.3)
     debug_inspector (0.0.2)
     descendants_tracker (0.0.4)
       thread_safe (~> 0.3, >= 0.3.1)
     diff-lcs (1.2.5)
+    domain_name (0.5.20161021)
+      unf (>= 0.0.5, < 1.0.0)
     doorkeeper (2.2.1)
       railties (>= 3.2)
     dynamic_form (1.1.4)
     ejs (1.1.1)
     encryptor (1.1.3)
-    equalizer (0.0.11)
+    equalizer (0.0.10)
     erubis (2.7.0)
     ethon (0.9.0)
       ffi (>= 1.3.0)
@@ -732,11 +776,17 @@ GEM
     gemoji (2.1.0)
     gemoji-parser (1.3.1)
       gemoji (>= 2.1.0)
+    gherkin (4.0.0)
     git-version-bump (0.15.1)
     global_phone (1.0.1)
     gnip-rule (0.4.1)
       json (~> 1.8)
       rest-client (~> 1.6.7)
+    gon (6.1.0)
+      actionpack (>= 3.0)
+      json
+      multi_json
+      request_store (>= 1.0)
     google-api-client (0.7.1)
       addressable (>= 2.3.2)
       autoparse (>= 0.3.3)
@@ -750,6 +800,8 @@ GEM
       uuidtools (>= 2.1.0)
     gyoku (1.3.1)
       builder (>= 2.1.2)
+    haml (4.0.7)
+      tilt
     hashie (3.4.4)
     hashr (0.0.22)
     hike (1.2.3)
@@ -757,8 +809,14 @@ GEM
     html_to_plain_text (1.0.5)
       nokogiri (>= 1.4.0)
     htmlentities (4.3.4)
-    http (0.5.1)
-      http_parser.rb
+    http (1.0.4)
+      addressable (~> 2.3)
+      http-cookie (~> 1.0)
+      http-form_data (~> 1.0.1)
+      http_parser.rb (~> 0.6.0)
+    http-cookie (1.0.3)
+      domain_name (~> 0.5)
+    http-form_data (1.0.1)
     http_accept_language (2.0.5)
     http_parser.rb (0.6.0)
     httparty (0.10.0)
@@ -771,6 +829,7 @@ GEM
     i18n (0.6.11)
     i18n-js (3.0.0.rc11)
       i18n (~> 0.6)
+    ice_nine (0.11.2)
     iconv (1.0.4)
     inflecto (0.0.2)
     innertube (1.0.2)
@@ -843,10 +902,12 @@ GEM
     mono_logger (1.1.0)
     msgpack (1.0.0)
     multi_json (1.12.1)
+    multi_test (0.1.2)
     multi_xml (0.5.5)
     multipart-post (2.0.0)
     mysql2 (0.3.21)
     namae (0.8.4)
+    naught (1.1.0)
     newrelic_rpm (3.9.9.275)
     nokogiri (1.5.11)
     nori (2.6.0)
@@ -1047,6 +1108,7 @@ GEM
     rubyzip (0.9.4)
     rufus-scheduler (2.0.24)
       tzinfo (>= 0.3.22)
+    rugged (0.24.0)
     sanitize (2.0.3)
       nokogiri (>= 1.4.4, < 1.6)
     sass (3.4.22)
@@ -1084,7 +1146,7 @@ GEM
       faraday (~> 0.9)
       jwt (~> 1.5)
       multi_json (~> 1.10)
-    simple_oauth (0.2.0)
+    simple_oauth (0.3.1)
     simplecov (0.7.1)
       multi_json (~> 1.0)
       simplecov-html (~> 0.7.1)
@@ -1145,17 +1207,17 @@ GEM
     turbo-sprockets-rails3 (0.3.14)
       railties (> 3.2.8, < 4.0.0)
       sprockets (>= 2.2.0)
-    twitter (5.5.1)
+    twitter (5.16.0)
       addressable (~> 2.3)
       buftok (~> 0.2.0)
-      descendants_tracker (~> 0.0.3)
-      equalizer (~> 0.0.9)
-      faraday (>= 0.8, < 0.10)
-      http (~> 0.5.0)
+      equalizer (= 0.0.10)
+      faraday (~> 0.9.0)
+      http (~> 1.0)
       http_parser.rb (~> 0.6.0)
       json (~> 1.8)
       memoizable (~> 0.4.0)
-      simple_oauth (~> 0.2.0)
+      naught (~> 1.0)
+      simple_oauth (~> 0.3.0)
     typhoeus (1.1.0)
       ethon (>= 0.9.0)
     tzinfo (0.3.51)
@@ -1173,11 +1235,23 @@ GEM
     uuidtools (2.1.5)
     vegas (0.1.11)
       rack (>= 1.0.0)
+    virtus (1.0.5)
+      axiom-types (~> 0.1)
+      coercible (~> 1.0)
+      descendants_tracker (~> 0.0, >= 0.0.3)
+      equalizer (~> 0.0, >= 0.0.9)
     webrick (1.3.1)
     wicked_pdf (0.9.10)
       rails
     will_paginate (3.0.6)
     xml-simple (1.1.4)
+    xpath (2.0.0)
+      nokogiri (~> 1.3)
+    yard (0.9.5)
+    yard-cucumber (3.1.0)
+      cucumber (~> 2)
+      gherkin (~> 4.0)
+      yard (~> 0.8, >= 0.8.1)
 
 PLATFORMS
   ruby
@@ -1186,6 +1260,7 @@ DEPENDENCIES
   RedCloth (= 4.2.9)
   ZenTest (= 4.4.1)
   active_presenter!
+  active_record_query_trace
   active_record_shards (~> 3.2.0)
   activemerchant!
   acts_as_list (= 0.1.4)
@@ -1216,6 +1291,8 @@ DEPENDENCIES
   compass-blueprint (= 1.0.0)
   compass-rails (= 2.0.0)
   country_select!
+  cucumber-rails
+  cucumber_statistics
   curb (~> 0.8.5)
   custom_fields!
   dalli!
@@ -1237,6 +1314,7 @@ DEPENDENCIES
   faraday (= 0.9)
   faraday_middleware (~> 0.10.0)
   fd_rate_limiter!
+  fd_spam_detection_service!
   features!
   fontcustom (= 1.3.3)
   forgery (= 0.5.0)
@@ -1249,6 +1327,7 @@ DEPENDENCIES
   global_phone
   gnip!
   gnip-rule (= 0.4.1)
+  gon (= 6.1.0)
   google-api-client (~> 0.7.0)
   has_flexiblefields!
   has_no_table!
@@ -1347,6 +1426,7 @@ DEPENDENCIES
   ruby-saml (= 0.8.1)
   rubytree
   rubyzip (= 0.9.4)
+  rugged
   sanitize (= 2.0.3)
   sass-rails (= 3.2.6)
   sax-machine (~> 0.1.0)
@@ -1379,7 +1459,7 @@ DEPENDENCIES
   tire!
   turbo-sprockets-rails3 (= 0.3.14)
   twilio-ruby!
-  twitter (~> 5.5.1)
+  twitter (~> 5.16.0)
   typhoeus
   tzinfo (~> 0.3.29)
   uglifier (~> 2.1.2)
@@ -1394,7 +1474,8 @@ DEPENDENCIES
   xeroizer!
   xml-simple (= 1.1.4)
   xss!
+  yard-cucumber
   yui-compressor!
 
 BUNDLED WITH
-   1.11.2
+   1.13.6

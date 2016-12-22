@@ -102,8 +102,12 @@ class User < ActiveRecord::Base
   has_one :full_time_agent, :class_name => 'Agent', :foreign_key => "user_id", :conditions => { 
       :occasional => false  } #no direct use, need this in account model for pass through.
   
-  has_many :agent_groups , :class_name =>'AgentGroup', :foreign_key => "user_id" , :dependent => :destroy
-  has_many :groups, :through => :agent_groups
+  has_many :agent_groups , :class_name =>'AgentGroup', :foreign_key => "user_id"
+  has_many :groups, :through => :agent_groups, :dependent => :destroy #https://github.com/rails/rails/issues/7618#issuecomment-11682784
+
+  has_many :user_skills, :order => :rank, :class_name => 'UserSkill' , :foreign_key => "user_id"
+  has_many :skills, :through => :user_skills, :source => :skill, :order => :'user_skills.rank', :dependent => :destroy
+  accepts_nested_attributes_for :user_skills, :allow_destroy => true
 
   has_many :achieved_quests, :dependent => :delete_all
 

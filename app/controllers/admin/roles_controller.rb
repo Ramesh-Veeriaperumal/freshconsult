@@ -75,7 +75,7 @@ class Admin::RolesController < Admin::AdminController
 
   def users_list
     users = []
-    role_users = params[:id] ? scoper.find_by_id(params[:id]).try(:users) : current_account.technicians
+    role_users = params[:id] ? scoper.find_by_id(params[:id]).try(:users).order(:name) : current_account.technicians.order(:name)
     if role_users
       role_users.each do |user|
         users << {:user_id => user.id, :role_ids => user.role_ids}

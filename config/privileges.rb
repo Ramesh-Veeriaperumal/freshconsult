@@ -461,7 +461,7 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   manage_availability do
-    resource :group, :only => [:index, :show, :edit, :update, :toggle_roundrobin]
+    resource :group, :only => [:index, :show, :edit, :update, :toggle_roundrobin, :user_skill_exists]
     resource :"helpdesk/dashboard",:only => [:agent_status]
   end
 
@@ -507,6 +507,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/contact_field"
     resource :"admin/company_field"
     resource :"admin/role"
+    resource :"admin/skill"
     resource :"admin/product"
     resource :"admin/portal"
     resource :"admin/security"
@@ -589,6 +590,10 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/onboarding"
     resource :"admin/getting_started"
     resource :"agent", :only => [:api_key]
+  end
+
+  assign_agent do
+    resource :"admin/user_skill"
   end
 
   client_manager do

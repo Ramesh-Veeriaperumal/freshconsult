@@ -14,6 +14,7 @@ class User < ActiveRecord::Base
   include Search::ElasticSearchIndex
   include Cache::Memcache::User
   include Redis::RedisKeys
+  include Redis::RoundRobinRedis
   include Redis::OthersRedis
   include Authority::FreshdeskRails::ModelHelpers
   include ApiWebhooks::Methods
@@ -30,6 +31,7 @@ class User < ActiveRecord::Base
   validates_uniqueness_of :unique_external_id, :scope => :account_id, :allow_nil => true, :allow_blank => true
 
   xss_sanitize  :only => [:name,:email,:language, :job_title, :twitter_id, :address, :description, :fb_profile_id], :plain_sanitizer => [:name,:email,:language, :job_title, :twitter_id, :address, :description, :fb_profile_id]
+  scope :trimmed, :select => [:'users.id', :'users.name']
   scope :contacts, :conditions => { :helpdesk_agent => false }
   scope :technicians, :conditions => { :helpdesk_agent => true }
   scope :visible, :conditions => { :deleted => false }
@@ -126,7 +128,7 @@ class User < ActiveRecord::Base
     account.features?(:multiple_user_companies)
   end
 
-  attr_accessor :import, :highlight_name, :highlight_job_title, :created_from_email,
+  attr_accessor :import, :highlight_name, :highlight_job_title, :created_from_email, :sbrr_fresh_user,
                 :primary_email_attributes, :tags_updated, :keep_user_active, :role_ids_changed # (This role_ids_changed used to forcefully call user callbacks only when role_ids are there.
   # As role_ids are not part of user_model(it is an association_reader), agent.update_attributes won't trigger user callbacks since user doesn't have any change.
   # Hence user.send(:attribute_will_change!, :role_ids_changed) is being called in api_agents_controller.)
@@ -136,7 +138,7 @@ class User < ActiveRecord::Base
                   :description, :time_zone, :customer_id, :avatar_attributes, :company_id,
                   :company_name, :tag_names, :import_id, :deleted, :fb_profile_id, :language,
                   :address, :client_manager, :helpdesk_agent, :role_ids, :parent_id, :string_uc04,
-                  :contractor, :unique_external_id
+                  :contractor, :skill_ids, :user_skills_attributes, :unique_external_id
 
   def time_zone
     tz = self.read_attribute(:time_zone)
@@ -945,6 +947,18 @@ class User < ActiveRecord::Base
 
   def accessible_roundrobin_groups
     self.accessible_groups.round_robin_groups
+  end
+
+  def no_of_assigned_tickets group
+    key = SKILL_BASED_USERS_LOCK_KEY % {:account_id => Account.current.id, :group_id => group.id,
+                                        :user_id => self.id}
+    assigned_tickets_count = get_round_robin_redis(key).to_i
+    SBRR.log "User #{self.id} Accessed assigned_tickets_count : #{assigned_tickets_count}" 
+    assigned_tickets_count
+  end
+
+  def match_sbrr_conditions?(_ticket)
+    _ticket.match_sbrr_conditions?(self)
   end
 
   def assign_company comp_name

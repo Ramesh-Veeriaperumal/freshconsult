@@ -1,0 +1,164 @@
+// Custom styles for Skills feature related parts
+#filter_by_group {
+    font-weight: 600;
+    min-width: 32px;
+    display: inline-block;
+}
+
+.va_rule_no_skills {
+    min-height: 130px;
+    .muted {
+        font-size: medium;
+    }
+}
+
+.nav.skills {
+    margin-left: -20px;
+    padding-left: 20px;
+    margin-right: -20px;
+    padding-right: 20px;
+}
+
+.align_center {
+    text-align: center;
+}
+
+.emptyContainerAlign {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.addAgentHiddenInput .select2-choices {
+    height: auto!important;
+    padding: 5px 5px 0 27px!important;
+    border: 0px!important;
+    cursor: text!important;
+    background-image: none!important;
+    background-image: none!important;
+    border-radius: 3px!important;
+}
+
+.select2-container-multi .select2-choices {
+    background-color: rgba(0, 0, 0, 0)!important;
+}
+
+.tdSkill {
+    padding-left: 20px!important;
+    width: 33%!important;
+}
+
+.tdSkill2_anchor {
+    margin-left: 33%;
+}
+
+.user_skill_dropdown.dropdown-menu {
+    top: inherit!important;
+    right: 20px!important;
+    min-width: 135px!important;
+    left: auto!important;
+    display: none;
+    margin-top: 5px;
+}
+
+#group_selector_block {
+    float: right;
+}
+
+#group_selector {
+    cursor: pointer;
+}
+
+//custom styles for groups form    
+#toggle_method {
+    margin-left: 70px;
+    border-left: 1px solid #e6e6e6;
+    padding-left: 15px;
+}
+
+#toggle_availability_container {
+    margin: 15px 0 0 70px;
+}
+
+.groups-form.inline-box {
+    float: left;
+}
+
+.group_form .select2-container.capping-limit {
+    width: 100px;
+}
+
+#alert_content.modal {
+    width: 440px!important;
+    margin-left: -245px!important;
+    margin-top: -105px!important;
+}
+
+#alert_content-content.modal-body {
+    border-bottom: none!important;
+    margin-bottom: 0px!important;
+}
+
+.group_form lead-desc.only_round {
+    margin-bottom: 0px;
+}
+
+.group_form .ficon-help-icon:before {
+    font-size: 15px;
+}
+
+.group_form .ficon-unverified:before {
+    color: #c10808;
+    font-size: 15px;
+}
+
+.group_form label[for="group_capping_enabled_2"] {
+    padding: 0 0 2px 0!important;
+}
+
+.group_form .helpNoteAnchor {
+    cursor: pointer;
+}
+
+.group_form h5.title.lead.small-lead {
+    font-size: 16px!important;
+    line-height: 20px!important;
+    font-weight: 400!important;
+    margin-top: -6px!important;
+}
+
+.drag_move_icon {
+    float: left;
+    bottom: 0;
+    top: 0;
+    line-height: 37px;
+    padding: 5px;
+}
+
+.selectableitems {
+    cursor: move;
+}
+
+.load_based.limit,.skill_based.limit {
+    margin: 0px 0 20px;
+}
+
+.placeholderForSortable {
+    background-color: #ececec;
+}
+
+.agentSkillList {
+    color: #999;
+    line-height: 16px;
+    font-size: 13px;
+}
+
+.form-horizontal .controls.skill-form {
+    margin-left: 160px!important;
+}
+
+.user_skill_dropdown .ficon-tick{
+    margin-top: -18px!important;
+    float: left;
+    margin-left: 8px;
+}

@@ -18,3 +18,12 @@
 //= require app/admin/roles/templates/user.jst.ejs
 //= require app/admin/roles/manage_agents.js
 //= require app/admin/roles/admin_roles.js
+
+//= require app/admin/skills/skills.js
+//= require app/admin/skills/agentskills.js
+//= require app/admin/skills/skills_new.js
+//= require app/admin/skills/skills_edit.js
+//= require app/admin/skills/skills_index.js
+//= require app/admin/skills/templates/add_user.jst.ejs
+//= require app/admin/skills/agentskills_index.js
+//= require app/admin/skills/templates/add_skill.jst.ejs

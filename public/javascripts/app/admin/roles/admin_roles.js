@@ -195,6 +195,10 @@ var Select2Handler = Select2Handler || (function(){
 				_addAgent(_id[0]);
 			}
 			_enableButton();
+		var HEIGHT_OF_EACH_ROW = 52;
+		var addedSkillCount = jQuery('.agent-list-wrapper').children().length;
+        var scrollDownHeightforModal = addedSkillCount * HEIGHT_OF_EACH_ROW;
+        jQuery('.agent-list-wrapper').animate({ scrollTop: scrollDownHeightforModal }, 800);
 		});
 
 		jQuery(document).on('click', '[data-action="remove-agent"]', function(){
@@ -237,10 +241,15 @@ var Select2Handler = Select2Handler || (function(){
 	function _updateRolesCount(count, action){
 		if(!action){
 			jQuery('#roles-count').html(count);
+		var updatedCount = jQuery("#manage-agents .agent-list-wrapper").children('.roles-agent-list').length;
+		var agentListWrapperHeight = (updatedCount * 52) + "px";
+		jQuery('.agent-list-wrapper').height(agentListWrapperHeight);
 		}else{
 			var savedCount = parseInt(jQuery('#roles-count').text());
 			var updatedCount = (action === 'added') ? (savedCount + 1) : (savedCount - 1);
 			jQuery('#roles-count').html(updatedCount);
+		var agentListWrapperHeight = (updatedCount * 52) + "px";
+		jQuery('.agent-list-wrapper').height(agentListWrapperHeight);
 		}
 	}
 
@@ -267,7 +276,7 @@ var Select2Handler = Select2Handler || (function(){
 		var list = JST["app/admin/roles/templates/user"]({
 			data: obj
 		});
-		jQuery("#manage-agents .agent-list-wrapper").prepend(list);
+		jQuery("#manage-agents .agent-list-wrapper").append(list);
 	}
 
 	function _isModifiedNow(id, action){

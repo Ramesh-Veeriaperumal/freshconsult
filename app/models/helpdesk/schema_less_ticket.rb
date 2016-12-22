@@ -44,6 +44,7 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
   belongs_to :internal_group, :class_name => "Group", :foreign_key => "long_tc03"
   belongs_to :internal_agent, :class_name => "User", :conditions => {:helpdesk_agent => true},
     :foreign_key => "long_tc04"
+  belongs_to :skill, :class_name => 'Admin::Skill', :foreign_key => 'long_tc06'
 
 
 	belongs_to_account
@@ -67,13 +68,14 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
 	alias_attribute :dirty_attributes, :text_tc03
 	alias_attribute :internal_group_id, :long_tc03
 	alias_attribute :internal_agent_id, :long_tc04
+	alias_attribute :sentiment, :int_tc03
 	alias_attribute :association_type, :int_tc03
 	alias_attribute :associates_rdb, :long_tc05
+	alias_attribute :skill_id, :long_tc06
 	alias_attribute :spam_score, :string_tc04
 	alias_attribute :sds_spam, :int_tc04
 
 	alias_attribute :sentiment, :int_tc04
-
 
 	# Attributes used in Freshservice
 	alias_attribute :department_id, :long_tc10
@@ -109,6 +111,10 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
 
   def self.internal_agent_column
     :long_tc04
+  end
+
+  def self.skill_id_column
+  	:long_tc06
   end
 
 	def self.find_by_access_token(token)
@@ -196,5 +202,22 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
 	  NOTE_COUNT_METRICS.each { |metric| self.reports_hash["#{metric}_count"] = recalculated_count[metric] }
 	  self.reports_hash["recalculated_count"] = true
 	end
+
+  def schema_less_ticket_was _changes = nil
+    schema_less_ticket_was = account.schema_less_tickets.new #dup creates problems
+    attributes.each do |_attribute, value| #to work around protected attributes
+      schema_less_ticket_was.send("#{_attribute}=", value)
+    end
+    _changes ||= begin
+      temp_changes = changes #calling changes builds a hash everytime
+      temp_changes.present? ? temp_changes : previous_changes
+    end
+    _changes.each do |_attribute, change|
+      if schema_less_ticket_was.respond_to? _attribute
+        schema_less_ticket_was.send("#{_attribute}=", change.first) 
+      end
+    end
+    schema_less_ticket_was
+  end
 
 end

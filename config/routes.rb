@@ -365,6 +365,9 @@ Helpkit::Application.routes.draw do
       get  :index
       get  :enable_roundrobin_v2
     end
+    member do
+      get :user_skill_exists
+    end
   end
 
   resources :user_emails do
@@ -1119,6 +1122,19 @@ Helpkit::Application.routes.draw do
          put :update
       end
     end
+
+    resources :skills do
+      member do
+        get :users
+      end
+      collection do
+        put :reorder
+      end
+    end
+    
+    match '/agent_skills/' => 'user_skills#index', :via => :get
+    match '/agent_skills/:user_id' => 'user_skills#show', :via => :get
+    match '/agent_skills/:user_id' => 'user_skills#update', :via => :put
 
     resources :va_rules do
       collection do
