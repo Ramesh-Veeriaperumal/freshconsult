@@ -18,16 +18,16 @@ class Solution::CheckContentForSpam < BaseWorker
   def check_description_for_spam article_id
     article = @account.solution_articles.find(article_id)
     article_spam_regex = Regexp.new($redis_others.perform_redis_op("get", ARTICLE_SPAM_REGEX), "i")
-    increase_ehawk_spam_score_for_account(4) if (article.description =~ article_spam_regex).present?
+    increase_ehawk_spam_score_for_account(4, article_id) if (article.description =~ article_spam_regex).present?
   end
    
-  def increase_ehawk_spam_score_for_account(spam_score)
+  def increase_ehawk_spam_score_for_account(spam_score, article_id)
     signup_params = get_signup_params
     signup_params["api_response"]["status"] = spam_score if signup_params
     set_others_redis_key(signup_params_key,signup_params.to_json)
     @account.conversion_metric.update_attribute(:spam_score, spam_score) if @account.conversion_metric
     increment_portal_cache_version
-    Rails.logger.info ":::::: Kbase spam content encountered - increased spam reputation for account ##{@account.id} :::::::"
+    Rails.logger.info ":::::: Kbase spam content encountered - increased spam reputation for article ##{article_id} in account ##{@account.id}  :::::::"
   end
 
   def signup_params_key
