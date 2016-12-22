@@ -70,9 +70,14 @@ window.App = window.App || {};
     }
 
     ,attachmentClicked: function(event){
+      // checking multifile enabled
+      var multifileEnabled = $(".tkt-wrapper.ticket_show").data('multifile');
       this.getAllAttachments(event);
-      this.currentPosition = $(event.target).parents(".attachment").index();
-
+      if(multifileEnabled) {
+        this.currentPosition = $(event.target).parents('li.addToRply').data('index');
+      } else {
+        this.currentPosition = $(event.target).parents(".attachment").index();
+      }
       // Show the current file popup only for supported files.
       if(this.supportedFiles.indexOf(this.attachments[this.currentPosition].filetype)>-1){
         this.showCurrentFile();

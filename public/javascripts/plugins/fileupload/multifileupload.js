@@ -1003,7 +1003,7 @@ Helpdesk = Helpdesk || {};
                         }
                         // cloud file
                         if($this.data('cloud')) {
-                            _this.parent.renderExistingFiles([],attachObjects,attachSessionId,"","",true,"","addedViaRply");
+                            _this.parent.renderExistingFiles([],constructCloudFile,attachSessionId,"","",true,"","addedViaRply");
                         } else {
                             // calculating size
                             if(_this.parent.sizeManager(data.content_file_size,attachSessionId)) {

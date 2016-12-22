@@ -3,12 +3,14 @@
 <div class="attachments-wrap clearfix" data-domhelper-name="attachments-wrap" data-attachment-noteId=<%= note.id %> data-attachments='<%= note.all_attachments.to_json %>' data-cloudFile='<%= note.cloud_files.to_json.html_safe %>' >
 	<h5 id="note_attachments_title_<%= note.id %>"><strong><%= pluralize(note.all_attachments.size + note.cloud_files.size, t('attachment'), t('attachments'))%></strong></h5>
 	<ul class="attachment_list">
-	    <% note.all_attachments.each do |attached| %> 
-	    	<%= attachment_list(attached, privilege?(:edit_note, note), "ticket", note.id, nil, true) %>
+		<% ticket = @ticket|| @parent %>
+		<% add_to_reply = !(ticket.facebook? || ticket.twitter? || ticket.mobihelp?) %>
+	    <% note.all_attachments.each_with_index do |attached,i| %> 
+	    	<%= attachment_list(attached, privilege?(:edit_note, note), "ticket", note.id, nil, add_to_reply, i) %>
 	    <%end%>
 
 	    <% note.cloud_files.each do |cloud_file| %> 
-			<%= attachment_list(cloud_file, privilege?(:edit_note, note), "cloud_file",nil, nil, true) %>
+			<%= attachment_list(cloud_file, privilege?(:edit_note, note), "cloud_file",nil, nil) %>
 		<%end%>
 	</ul>
 </div>

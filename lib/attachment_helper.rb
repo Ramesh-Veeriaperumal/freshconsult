@@ -17,11 +17,11 @@
     end
   end
 
-  def attachment_list(attached, show_delete, page, item_id, custom_delete_link = nil, add_to_reply = false)
-    add_to_reply = add_to_reply && current_account.launched?(:multifile_attachments)
+  def attachment_list(attached, show_delete, page, item_id, custom_delete_link = nil, add_to_reply = false, index = nil)
+    add_to_reply = add_to_reply && current_account.launched?(:multifile_attachments) && 
     unless attached.new_record?
       output = ""
-      output << %(<li class="#{add_to_reply ? 'addToRply' : ' attachment list_element '}" id="#{ dom_id(attached) }" rel="original_attachment" >)
+      output << %(<li class="#{add_to_reply ? 'addToRply' : ' attachment list_element '}" id="#{ dom_id(attached) }" rel="original_attachment" data-index="#{index}">)
       if add_to_reply
         output << %(<div class="attachment list_element" id="#{ dom_id(attached) }" data-added=false data-multifile=#{add_to_reply}> )
       end
@@ -46,6 +46,7 @@
       output << %(<div class="attach_content">)
 
       if(page == "cloud_file")
+        # disable add to reply for cloud file
         filename = attached.filename || URI.unescape(attached.url.split('/')[-1])
         tooltip = filename.size > 15 ? "tooltip" : ""
         output << link_to( h(filename.truncate(15)), attached.url , :target => "_blank",
