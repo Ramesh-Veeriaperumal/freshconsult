@@ -356,6 +356,10 @@ window.App.Admin.AgentSkills = window.App.Admin.AgentSkills || {};
     allSkillsObj: {},
 
     onLeave: function() {
+          //flushing modal & select2 so that modal works after user
+          //goes to some page and visits back without reloading assets
+          $('body').select2('destroy');
+          $('#manage-agents').modal('destroy');
       $(document).off(".agentskills");
     },
 

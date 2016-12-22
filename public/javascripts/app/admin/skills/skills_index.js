@@ -80,12 +80,14 @@ window.App.Admin.Skills = window.App.Admin.Skills || {};
 
 
       $doc.on('click.skills', 'a.item_info', function() {
+      if(!($(this).hasClass("disabled"))){
         $(this).addClass("disabled").css('color','#06c');
         _this.skillidofCurrent = {};
         var data = Browser.stringify($(this).data());
         localStorage.setItem('currentSelection', data);
         _this.skillidofCurrent[0] = $(this).data('skillid');
         _this.getExistingList(_this.skillidofCurrent[0]);
+      }
       });
 
       // on-modal-hidden event listener
@@ -118,7 +120,8 @@ window.App.Admin.Skills = window.App.Admin.Skills || {};
 
       // submit-modal event listener
       $doc.on('click.skills', '[data-action="submitmodal"]', function() {
-
+        var skillid = JSON.parse(localStorage.getItem('currentSelection')).skillid;
+        $('[data-skillid='+ skillid +']').removeClass("disabled");
         _this.clone_selected_agents = _this.selected_agents;
         _this.UpdateAgentCount();
         _this.printCountInMarkup(_this.skillidofCurrent[0]);
@@ -145,6 +148,11 @@ window.App.Admin.Skills = window.App.Admin.Skills || {};
 
 
       $doc.on('change', '.addAgentHiddenInput', function() {
+
+        var HEIGHT_OF_EACH_ROW = 52;
+        var addedSkillCount = $('.agent-list-wrapper').children().length;
+        var scrollDownHeightforModal = addedSkillCount * HEIGHT_OF_EACH_ROW;
+        $('.agent-list-wrapper').animate({ scrollTop: scrollDownHeightforModal }, 800);
 
         var obj = $('input.addAgentHiddenInput').select2('data');
         _this._handleIdAddRemove(($('.addAgentHiddenInput').select2('val').last()), 'add', obj);
@@ -268,8 +276,6 @@ window.App.Admin.Skills = window.App.Admin.Skills || {};
       $('.modal-body').css("max-height", "none");
       var agentListWrapperHeight = (updatedCount * 52) + "px";
       $('.agent-list-wrapper').height(agentListWrapperHeight);
-      $('.agent-list-wrapper').animate({ scrollTop: $('.agent-list-wrapper').height() }, 800);
-
       _this.checkifNoAgents();
 
     },
@@ -323,6 +329,10 @@ window.App.Admin.Skills = window.App.Admin.Skills || {};
     },
 
     onLeave: function() {
+          //flushing modal & select2 so that modal works after user
+          //goes to some page and visits back without reloading assets
+          $('body').select2('destroy');
+          $('#manage-agents').modal('destroy');
       $(document).off('.skills');
     }
   };
