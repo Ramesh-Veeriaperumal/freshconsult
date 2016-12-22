@@ -3,6 +3,9 @@ module Ember
 
     before_filter :canned_response_permission?, only: [:show]
     before_filter :filter_ids, only: :index
+    
+    MAX_IDS_COUNT = 10
+    
     private
 
       def validate_filter_params
@@ -19,7 +22,7 @@ module Ember
       end
       
       def filter_ids
-        @ids = params[:ids].to_s.split(',').map(&:to_i).reject(&:zero?)
+        @ids = params[:ids].to_s.split(',').map(&:to_i).reject(&:zero?).first(MAX_IDS_COUNT)
         log_and_render_404 if @ids.blank?
       end
 

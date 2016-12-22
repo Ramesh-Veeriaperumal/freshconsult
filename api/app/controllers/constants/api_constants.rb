@@ -67,4 +67,5 @@ module ApiConstants
   
   TWITTER_REPLY_TYPES = %w(mention dm).freeze
   TWEET_MAX_LENGTH = 140
+  TWITTER_DM_MAX_LENGTH = 10000
 end.freeze

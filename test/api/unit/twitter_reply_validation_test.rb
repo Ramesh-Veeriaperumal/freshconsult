@@ -22,6 +22,14 @@ class TwitterReplyValidationTest < ActionView::TestCase
       }, item)
     assert validation.valid?
     
+    item = Helpdesk::Ticket.new
+    validation = TwitterReplyValidation.new({
+        body: Faker::Lorem.characters(rand(1..10000)),
+        twitter_handle_id: 1,
+        tweet_type: 'dm'
+      }, item)
+    assert validation.valid?
+    
     validation = TwitterReplyValidation.new({
         body: Faker::Lorem.characters(rand(141..240)),
         twitter_handle_id: 1,

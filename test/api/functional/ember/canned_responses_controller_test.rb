@@ -81,6 +81,7 @@ module Ember
     # 4. Show for mulitple id all valid ones
     # 5. Show empty array for all invalid ones
     # 6. Combine 2 valid ids and and 2 invalid ids
+    # 7. Combine 5 valid ids , continued by an invalid then and and 5 more valid ids. Result would have only 9 responses
     
     def test_index_404_when_no_ids
       get :index, controller_params( version: 'private' )
@@ -139,6 +140,20 @@ module Ember
       end
       match_json(pattern)
       # @ca_response_3 will not be present here.
+    end
+    
+    def test_index_for_limit_in_ids
+      ca_responses = 15.times.collect { create_canned_response(@ca_folder_all.id) }
+      
+      ids_passed = ca_responses.first(10).collect(&:id)
+      ids_passed.insert(3, @ca_response_3.id)
+      get :index, controller_params(version: 'private' , ids: ids_passed.join(','))
+      assert_response 200
+      pattern = []
+      ca_responses.first(9).each do |ca|
+        pattern << ca_response_show_pattern(ca.id)
+      end
+      match_json(pattern)
     end
 
   end
