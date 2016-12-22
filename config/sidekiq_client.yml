@@ -161,6 +161,7 @@ defaults: &defaults
     - [s3_retry_worker]
     - [reopen_tickets]
     - [kbase_content_spam_checker]
+    - [detect_user_language]
 
 development:
   <<: *defaults
