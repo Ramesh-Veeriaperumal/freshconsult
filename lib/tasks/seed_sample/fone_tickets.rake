@@ -1,6 +1,6 @@
 namespace :seed_sample do
 
-  require 'faker'
+
   require "#{Rails.root}/spec/support/freshfone_spec_helper.rb"
   include FreshfoneSpecHelper
 

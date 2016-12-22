@@ -1,5 +1,5 @@
 namespace :seed_tickets do
-  require 'faker'
+  require 'faker' if Rails.env.development?
   require "#{Rails.root}/spec/helpers/social_tickets_helper.rb"
   include SocialTicketsHelper
 
