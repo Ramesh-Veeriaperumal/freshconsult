@@ -24,6 +24,7 @@ class Freshfone::CallObserver < ActiveRecord::Observer
   def after_update(call)
     account = call.account
     call.update_metrics if account.features? :freshfone_call_metrics
+    trigger_disconnect_job(call) if disconnected?(call)
     if call.call_status_changed?
       publish_new_call_status(call)
       
@@ -256,5 +257,16 @@ class Freshfone::CallObserver < ActiveRecord::Observer
       end
       call_meta.meta_info = { agent_info: agent_info } if agent_info.present?
       call_meta.save!
+    end
+
+    def disconnected?(call)
+      call.dial_call_sid_changed? &&
+        Freshfone::Call::COMPLETED_CALL_STATUS.include?(call.call_status)
+    end
+
+    def trigger_disconnect_job(call)
+      disconnect_params = { call_id: call.id, enqueued_time: Time.now }
+      jid = Freshfone::CallTerminateWorker.perform_async(disconnect_params)
+      Rails.logger.info "Freshfone Call Terminate Worker: Job-id: #{jid}, Account ID: #{call.account_id}, Worker Params: #{disconnect_params.inspect}"
     end
 end
