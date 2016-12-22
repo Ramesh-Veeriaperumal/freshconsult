@@ -974,6 +974,12 @@ var scrollToError = function(){
 			_form.resetForm();
 			_form.trigger('reset');
 			_form.find('select.select2').trigger('change'); //Resetting select2
+			$('#selectAgentsOptions').select2('data',[]);
+			var default_agent_present = $('.email_container.add_select2_custom').data('default-agent');
+			var default_agent_option = $('.email_container.add_select2_custom').data('default-agent-disp');
+			if ( default_agent_present){
+				$('#selectAgentsOptions').val(default_agent_present).trigger('change');
+			}
 
 			//Removing the Dropbox attachments
 			_form.find('.dropbox_div input[filelist]:not(.original_input)').remove();
@@ -1288,6 +1294,12 @@ var scrollToError = function(){
 
 					_form.resetForm();
 					_form.trigger('reset');
+					$('#selectAgentsOptions').select2('data',[]);
+					var default_agent_present = $('.email_container.add_select2_custom').data('default-agent');
+					var default_agent_option = $('.email_container.add_select2_custom').data('default-agent-disp');
+					if ( default_agent_present){
+						$('#selectAgentsOptions').val(default_agent_present).trigger('change');
+					}
 					_form.find('select.select2').trigger('change'); //For resetting the values in Select2.
 
 					if (_form.attr('rel') == 'forward_form')  {
