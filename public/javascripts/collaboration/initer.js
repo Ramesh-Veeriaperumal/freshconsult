@@ -6,5 +6,5 @@ if(!!App && !!App.CollaborationModel) {
     App.CollaborationModel.activateBellListeners();
   }   
 } else {
-  console.warn("Could not start collaboration. Unknown Error."); // Don't init collab
+  console.warn("Could not start collaboration. CollaborationModel script was not loaded."); // Don't init collab
 }   

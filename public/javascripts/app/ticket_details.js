@@ -1933,8 +1933,11 @@ App.Tickets.TicketDetail = {
 		if(typeof App.CollaborationUi !== "undefined") {
 			App.CollaborationUi.askInitUi();
 		} else {
-			jQuery("#collab-btn").addClass("hide");
-            console.warn("Could not start collaboration. Unknown Error.");
+			var collab_btn = jQuery("#collab-btn");
+			if(collab_btn.length) {
+				collab_btn.addClass("hide");
+            	console.info("Did not start collaboration. CollaborationUi script was not loaded.");
+			}
 		}
 	},
 	onLeave: function() {

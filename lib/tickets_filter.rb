@@ -92,7 +92,7 @@ module TicketsFilter
   ]
 
   COLLAB_SORT_FIELDS = [
-    [:recently_active , "tickets_filter.sort_fields.recently_active"]
+    [ :created_at , "tickets_filter.sort_fields.date_created" ]
   ]
 
   def self.collab_sort_field

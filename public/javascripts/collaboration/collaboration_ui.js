@@ -1532,6 +1532,10 @@ App.CollaborationUi = (function ($) {
         },
         onReconnecthandler: function(response) {
             Collab.networkDisconnected = false;
+            var config = $("#collab-ui-data").attr("data-ui-payload");
+            if(config) {
+                App.CollaborationUi.initUi(Collab.parseJson(config));
+            }
             _COLLAB_PVT.disableCollabUiIfNeeded();
         },
         activateBellListeners: function() {

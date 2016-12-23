@@ -101,7 +101,7 @@ App.CollaborationModel = (function ($) {
         },
         onErrorHandler: function(response) {
             App.CollaborationUi.hideDiscussBtn(response);
-            console.warn("Could not start collaboration. Unknown Error.");
+            console.warn("Could not start collaboration api. Unknown Error.");
         },
         onMemberAdd: function(response){
                 var body = App.CollaborationUi.parseJson(response.body);
