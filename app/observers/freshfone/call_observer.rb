@@ -24,7 +24,6 @@ class Freshfone::CallObserver < ActiveRecord::Observer
   def after_update(call)
     account = call.account
     call.update_metrics if account.features? :freshfone_call_metrics
-    trigger_disconnect_job(call) if disconnected?(call)
     if call.call_status_changed?
       publish_new_call_status(call)
       
