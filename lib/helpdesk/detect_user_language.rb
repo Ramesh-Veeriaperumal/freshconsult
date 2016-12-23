@@ -45,7 +45,7 @@ class Helpdesk::DetectUserLanguage
     user.save
   end
 
-  def log_result(result, email, time, lang=nil)
+  def self.log_result(result, email, time, lang=nil)
     Rails.logger.debug "Language detection #{result} #{email} #{time} #{lang}"
   end
 end
