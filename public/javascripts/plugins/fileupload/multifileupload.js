@@ -694,9 +694,18 @@ Helpdesk = Helpdesk || {};
                 var noteId = $(this).attr('noteid');
                 $("#helpdesk_note_" + noteId + " .existing-file-list").html("");
                 $("#note_attachments_container_" + noteId).show();
+                Helpdesk.MultipleFileUpload.addToRply.revertAll();
             });
             // on update
-            $("body").on("click", '.editNoteUpdateButton', function() {
+            $("body").on("click", '.editNoteUpdateButton', function(e) {
+                // extending for add to reply feature
+                var form = $(e.currentTarget).closest('form');
+                var addedElements = form.find('.existing-filelist.addedViaRply');
+                $.each(addedElements,function(key,ele){
+                    var input = ele.children[0].childNodes[7];
+                    jQuery(input).addClass('addToRplyNoteInput');
+                    form.append(input);
+                });
                 if (_this.upload_status.length == 0) {
                     var noteId = $(this).attr('noteid');
                     $("#helpdesk_note_" + noteId + " .existing-file-list").html("");

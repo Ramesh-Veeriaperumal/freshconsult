@@ -81,7 +81,7 @@
     <div class="attachments-wrap clearfix">
       <h5 id="ticket_attachments_title_<%= @ticket.id %>"><strong><%= pluralize(@ticket.all_attachments.size + @ticket.cloud_files.size, t('attachment'), t('attachments'))%></strong></h5>
       <ul class="attachment_list">
-          <% @ticket.all_attachments.each do |attached,i| %> 
+          <% @ticket.all_attachments.each_with_index do |attached,i| %> 
             <%= attachment_list(attached, privilege?(:edit_ticket_properties), "ticket",@ticket.id, nil, true,i) %>
           <% end %>
 

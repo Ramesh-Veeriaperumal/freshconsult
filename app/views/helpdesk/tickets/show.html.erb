@@ -137,7 +137,7 @@ jQuery('body').one('assetLoaded.fjax', function() {
 	<% end %>
 });
 <% if current_account.launched?(:multifile_attachments) %>
-	<% add_to_reply = !(@ticket.facebook? || @ticket.twitter? || @ticket.mobihelp?) %>
+	<% add_to_reply = !(@ticket.facebook? || @ticket.twitter? || @ticket.freshfone_call.present?) %>
 	<% if add_to_reply %>
 		 Helpdesk.MultipleFileUpload.addToRply.init();
     <% end %>
