@@ -54,18 +54,16 @@ module Freshfone::Call::CallCallbacks
       device_type = params[:direct_dial_number].blank? ? Freshfone::CallMeta::USER_AGENT_TYPE_HASH[:available_on_phone] :
         Freshfone::CallMeta::USER_AGENT_TYPE_HASH[:direct_dial]
       Freshfone::CallMeta.create( :account_id => current_account.id, :call_id => current_call.id,
+                :meta_info => { :agent_info =>params[:To]}, 
                 :transfer_by_agent => transfering_agent_id(current_call),
                 :device_type => device_type) if current_call.meta.blank?
-      set_agent_info(current_account.id, current_call.id,
-        params[:To]) if current_call.meta.persisted?
     end
 
     def transfer_call_meta_info
       Freshfone::CallMeta.create( :account_id => current_account.id, :call_id => current_call.id,
+                :meta_info => {:agent_info => params[:To]}, 
                 :transfer_by_agent => transfering_agent_id(current_call),
                 :device_type => Freshfone::CallMeta::USER_AGENT_TYPE_HASH[:external_transfer]) if current_call.meta.blank?
-      set_agent_info(current_account.id, current_call.id,
-        params[:To]) if current_call.meta.persisted?
     end
 
 end
