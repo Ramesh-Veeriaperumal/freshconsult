@@ -11,6 +11,7 @@ window.App.Tickets = window.App.Tickets || {};
         removedCards: 0,
         isFirstRes: true,
         sas_ids: "Ticket Id's = ",
+        desc_list: {},
 
 
         init: function(e) {
@@ -37,6 +38,7 @@ window.App.Tickets = window.App.Tickets || {};
             $(document).on("click.nba", "#nba-prv", this.addPrevButton.bind(this));
             $(document).on("click.nba",".btn-close",this.removeCards.bind(this));
             $(document).on("click.nba",".sas-cards ul li",this.launchTicketPage.bind(this));
+            $(document).on("mouseenter.nba",".sas-cards ul li",this.detailOnHover.bind(this));
             $(document).on("hover.nba",".sas-ctd",this.toggleHoverOverCards.bind(this));
             $(document).on("nba_loaded",this.fillSpanText.bind(this));
             $(document).on("click.nba",".ficon-like",this.thumbsUp.bind(this));
@@ -48,6 +50,7 @@ window.App.Tickets = window.App.Tickets || {};
         offEventBinding: function() {
             $(document).off("click.nba");
             $(document).off("hover.nba");
+            $(document).off("mouseenter.nba");
             $(document).off("nba_loaded");
             //$(document).off("sidebar_loaded");
         },
@@ -118,6 +121,39 @@ window.App.Tickets = window.App.Tickets || {};
               {
                 $('.prv').fadeToggle();
               }
+            },
+
+            detailOnHover: function(event){
+                ticket_id = $(event.currentTarget).attr("data-id");
+
+                $(event.currentTarget).qtip({
+                    id: ticket_id,
+                    position: {
+                        my: 'top left',
+                        at: 'bottom  left',
+                        viewport: jQuery(window)
+                    },
+                    style : {
+                        classes: 'ui-tooltip-rounded',
+                        tip: {
+                            mimic: 'center'
+                        }
+                    },
+                    content: {
+                        text: "<div>"+this.desc_list[ticket_id]+"</div>"
+                    },
+                    show: {
+                        event: false,
+                        ready: true,
+                        delay: 500,
+                        effect: function(offset) {
+                            jQuery(this).show("fade", 200); // "this" refers to the tooltip
+                        }
+                    }
+                });
+
+                this.pushEventToKM("NBA_BETA_Hover",this.userProperties(0,"",ticket_id));
+
             },
 
         //Function to expand the NBA widget
@@ -322,12 +358,14 @@ window.App.Tickets = window.App.Tickets || {};
             $(".sas-cards").html("")
             maxHeight = 0;
             list = "<ul>"
+            description_collection = {}
+
             $.each(response, function(index, value) {
-                if((value["helpdesk_ticket"]["subject"]).length > 25){
-                    value["helpdesk_ticket"]["subject"] = value["helpdesk_ticket"]["subject"].substring(0, 25)+"..."
+                if((value["helpdesk_ticket"]["subject"]).length > 80){
+                    value["helpdesk_ticket"]["subject"] = value["helpdesk_ticket"]["subject"].substring(0, 80)+"..."
                 }
-                 if((value["helpdesk_ticket"]["description"]).length > 150){
-                    value["helpdesk_ticket"]["description"] = value["helpdesk_ticket"]["description"].substring(0, 150)+"..."
+                 if((value["helpdesk_ticket"]["description"]).length > 600){
+                    value["helpdesk_ticket"]["description"] = value["helpdesk_ticket"]["description"].substring(0, 600)+"..."
                 }
                
                 tempateVariables = {
@@ -336,11 +374,12 @@ window.App.Tickets = window.App.Tickets || {};
                         requestor_name: value["helpdesk_ticket"]["requester_name"],
                         subject: value["helpdesk_ticket"]["subject"],
                         updated_at: value["helpdesk_ticket"]["updated_at"],
-                        status_name: value["helpdesk_ticket"]["status_name"],
-                        description: value["helpdesk_ticket"]["description"]
+                        status_name: value["helpdesk_ticket"]["status_name"]
                     },
+                    description_collection[value["helpdesk_ticket"]["display_id"]] = value["helpdesk_ticket"]["description"]
                     list += JST["tickets/templates/suggest-ticket-cards"](tempateVariables);
             })
+            this.desc_list = description_collection
             list += JST["tickets/templates/suggest-ticket-cards-navigation"]();
             count_text = (((this.widget_pos - 1) * this.cardCount) + 1) + "-" + ((this.widget_pos * this.cardCount < this.similar_tickets.length) ? this.widget_pos * this.cardCount : this.similar_tickets.length) + " of " + this.similar_tickets.length;
             $(".sas-cards").append(list)
