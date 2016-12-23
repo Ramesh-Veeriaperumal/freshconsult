@@ -248,6 +248,7 @@ class Freshfone::CallObserver < ActiveRecord::Observer
       call_meta = call.meta
       return if call_meta.blank?
       pinged_meta = get_and_clear_redis_meta(call)
+      Rails.logger.info "Meta Data :: Account :: #{call.account_id}  :: Call :: #{call.id} :: #{pinged_meta.inspect}"
       agent_response = pinged_meta.first
       agent_info = pinged_meta.second['agent_info']
       call_meta.pinged_agents.each do |agent|

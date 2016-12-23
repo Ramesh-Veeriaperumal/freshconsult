@@ -158,6 +158,7 @@ module Freshfone::CallsRedisMethods
   def set_agent_info(account_id, call_id, agent_info)
     key = agent_info_key(account_id, call_id)
     $redis_integrations.perform_redis_op('hset', key, 'agent_info', agent_info)
+    Rails.logger.info "Agent-info::#{agent_info} saved in redis for Account::#{account_id} Call::#{call_id}"
   end
 
   def get_agent_info(account_id, call_id)
