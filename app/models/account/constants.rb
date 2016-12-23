@@ -145,7 +145,7 @@ class Account < ActiveRecord::Base
     :restricted_helpdesk => false, :round_robin_capping => false, :shared_ownership => false,
     :sidekiq_dispatchr_feature => false, :solutions_meta_read => false, :supervisor_dashboard => false,
     :support_new_ticket_cache => false, :synchronous_apps => false, :ticket_list_page_filters_cache => false,
-    :translate_solutions => false
+    :translate_solutions => false, :spam_detection_service => false
   }
 
 end

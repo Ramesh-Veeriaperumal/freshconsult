@@ -72,7 +72,7 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
 	alias_attribute :associates_rdb, :long_tc05
 	alias_attribute :skill_id, :long_tc06
 	alias_attribute :spam_score, :string_tc04
-	alias_attribute :sds_spam, :int_tc04
+	alias_attribute :sds_spam, :int_tc05
 
 	alias_attribute :sentiment, :int_tc04
 
