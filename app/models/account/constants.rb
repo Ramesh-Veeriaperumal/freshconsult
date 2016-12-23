@@ -19,7 +19,7 @@ class Account < ActiveRecord::Base
     
     :pro => {
       :features => [ :gamification, :scenario_automations, :customer_slas, :business_hours, :forums, 
-        :surveys, :scoreboard, :facebook, :timesheets, :css_customization, :advanced_reporting ],
+        :surveys, :scoreboard, :facebook, :timesheets, :css_customization, :advanced_reporting, :sitemap ],
       :inherits => [ :basic ]
     },
     
@@ -34,7 +34,8 @@ class Account < ActiveRecord::Base
     
     :blossom => {
       :features => [ :gamification, :auto_refresh, :twitter, :facebook, :forums, :surveys , :scoreboard, :timesheets, 
-        :custom_domain, :multiple_emails, :advanced_reporting, :default_survey ],
+        :custom_domain, :multiple_emails, :advanced_reporting, :default_survey, :sitemap ],
+
       :inherits => [ :sprout ]
     },
     
@@ -63,7 +64,7 @@ class Account < ActiveRecord::Base
     
     :blossom_classic => {
       :features => [ :gamification, :auto_refresh, :twitter, :facebook, :forums, :surveys, 
-        :scoreboard, :timesheets, :advanced_reporting ],
+        :scoreboard, :timesheets, :advanced_reporting, :sitemap ],
       :inherits => [ :sprout_classic ]
     },
     

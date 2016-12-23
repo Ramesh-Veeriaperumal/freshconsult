@@ -226,6 +226,8 @@ Helpkit::Application.routes.draw do
   
   root :to => 'home#index'
 
+  match "/support/sitemap" => "support#sitemap", :format => "xml", :as => :sitemap, :via => :get
+
   match '/visitor/load/:id.:format' => 'chats#load', :via => :get
   match '/images/helpdesk/attachments/:id(/:style(.:format))' => 'helpdesk/attachments#show', :via => :get
   match '/inline/attachment' => 'helpdesk/inline_attachments#one_hop_url', :via => :get

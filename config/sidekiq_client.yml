@@ -125,6 +125,8 @@ defaults: &defaults
     - [clear_moderation_records]
     - [empty_moderation_trash]
     - [sendgrid_domain_updates]
+    - [generate_sitemap]
+    - [clear_sitemap]
     - [cti]
     - [sla_on_status_change]
     - [sandbox_sync]

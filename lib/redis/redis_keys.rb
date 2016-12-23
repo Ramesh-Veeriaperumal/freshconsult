@@ -126,6 +126,8 @@ module Redis::RedisKeys
 	
 	SELECT_ALL = "SELECT_ALL:%{account_id}"
 
+	SITEMAP_OUTDATED = "SITEMAP_OUTDATED:%{account_id}"
+
 	SOLUTION_DRAFTS_SCOPE = "SOLUTION:DRAFTS:%{account_id}:%{user_id}"
 	ARTICLE_FEEDBACK_FILTER = "ARTICLE_FEEDBACK_FILTER:%{account_id}:%{user_id}:%{session_id}"
 	#These are redis set keys used for temporary feature checks.
