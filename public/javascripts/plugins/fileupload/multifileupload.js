@@ -961,8 +961,8 @@ Helpdesk = Helpdesk || {};
             },
             revertAll: function() {
                 var $attachmentItems = $(".add-attachment-to-conv,.inline-add-to-rply");
-                $attachmentItems.children('.ficon').removeClass('ficon-checkmark-thick').addClass("ficon-add-attachment")
-                $attachmentItems.attr('data-original-title',this.parent.message.attach);
+                $attachmentItems.children('.ficon').removeClass('ficon-checkmark-thick').addClass("ficon-add-attachment");
+                $attachmentItems.attr('data-original-title',Helpdesk.MultipleFileUpload.message.attach);
                 $(".inline-add-to-rply").data('added',false);
                 $('.list_element').data('added',false);
                 $(".twipsy").remove();
