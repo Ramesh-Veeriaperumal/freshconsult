@@ -7,7 +7,6 @@ class Freshfone::Initiator::AgentCallLeg
   include Freshfone::Conference::Branches::RoundRobinHandler
   include Freshfone::SimultaneousCallHandler
   include Redis::OthersRedis
-  include Freshfone::CallsRedisMethods
 
   attr_accessor :params, :current_account, :current_number, :current_call, :current_user,
                 :available_agents, :busy_agents, :freshfone_users, :routing_type
