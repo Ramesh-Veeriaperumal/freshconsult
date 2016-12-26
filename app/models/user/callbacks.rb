@@ -94,8 +94,12 @@ class User < ActiveRecord::Base
 
   def set_password
     secure_string = SecureRandom.base64(User::PASSWORD_LENGTH)
+    @password_policy = self.agent? ? account.agent_password_policy : account.contact_password_policy
+    simple_password = @password_policy.nil? || @password_policy.new_record?
+    secure_string = simple_password ? SecureRandom.base64(User::PASSWORD_LENGTH): @password_policy.generate_password
     self.password = secure_string
     self.password_confirmation = secure_string
+    self.validate_password_format
   end
 
   def set_default_company

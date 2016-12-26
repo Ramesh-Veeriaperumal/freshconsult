@@ -2,7 +2,7 @@ module ContactConstants
   ARRAY_FIELDS = ['tags', 'other_emails']
   HASH_FIELDS = ['custom_fields']
   COMPLEX_FIELDS = ARRAY_FIELDS | HASH_FIELDS
-  CONTACT_FIELDS = %w(address avatar view_all_tickets company_id description email job_title language mobile name other_emails phone time_zone twitter_id).freeze | ARRAY_FIELDS | HASH_FIELDS
+  CONTACT_FIELDS = %w(active address avatar view_all_tickets company_id description email job_title language mobile name other_emails phone time_zone twitter_id).freeze | ARRAY_FIELDS | HASH_FIELDS
 
   MAKE_AGENT_FIELDS = %w(occasional group_ids role_ids ticket_scope signature).freeze
   STATES = %w( verified unverified deleted blocked ).freeze

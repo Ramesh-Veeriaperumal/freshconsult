@@ -374,6 +374,7 @@ class User < ActiveRecord::Base
 
   def update_attributes(params) # Overriding to normalize params at one place
     normalize_params(params) # hack to facilitate contact_fields & deprecate customer
+    self.active = params["active"] if params["active"]
     if [:tag_names, :tags].any?{|attr| # checking old key for API & prevents resetting tags if its not intended
      params.include?(attr)} && params[:tags].is_a?(String)
       tags = params.delete(:tags)
@@ -462,8 +463,9 @@ class User < ActiveRecord::Base
   end
 
   # Used by API V2
-  def create_contact!
+  def create_contact!(status)
     self.avatar = self.avatar
+    self.active = status if status
     return false unless save_without_session_maintenance
     if (!self.deleted and !self.email.blank?)
       portal = nil
