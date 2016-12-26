@@ -567,7 +567,7 @@
           "200": {
             "description": "Success",
             "schema": {
-              "$ref": "#/definitions/extended_ticket"
+              "$ref": "#/definitions/ticket_show"
             }
           },
           "403": {
@@ -4922,6 +4922,12 @@
           "properties": {
             "freshfone_call": {
               "$ref": "#/definitions/freshfone_call"
+            },
+            "fb_post": {
+              "$ref": "#/definitions/fb_post"
+            },
+            "tweet": {
+              "$ref": "#/definitions/tweet_post"
             },
             "survey_result": {
               "$ref": "#/definitions/survey_result"

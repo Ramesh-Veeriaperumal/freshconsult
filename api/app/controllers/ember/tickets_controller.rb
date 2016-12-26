@@ -83,7 +83,7 @@ module Ember
       else
         options = { name_mapping: (@name_mapping || get_name_mapping), sideload_options: [] }
         @item = TicketDecorator.new(@new_ticket, options)
-        render '/tickets/show'
+        render 'ember/tickets/show'
       end
     end
 

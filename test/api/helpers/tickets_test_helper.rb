@@ -286,7 +286,7 @@ module TicketsTestHelper
   def verify_split_note_activity(ticket, note)
     ticket_id = ActiveSupport::JSON.decode(response.body)['id']
     new_ticket = @account.tickets.find_by_display_id(ticket_id)
-    match_json(ticket_pattern({}, new_ticket))
+    match_json(ticket_show_pattern(new_ticket))
     refute ticket.notes.find_by_id(note.id).present?
   end
 
@@ -321,6 +321,11 @@ module TicketsTestHelper
     pattern = ticket_pattern(ticket)
     ticket_topic = ticket_topic_pattern(ticket)
     pattern.merge!(freshfone_call: freshfone_call_pattern(ticket)) if freshfone_call_pattern(ticket).present?
+    if Account.current.features?(:facebook) && ticket.facebook?
+      fb_pattern = ticket.fb_post.post? ? fb_post_pattern({}, ticket.fb_post) : fb_dm_pattern({}, ticket.fb_post)
+      pattern.merge!(fb_post: fb_pattern)
+    end
+    pattern.merge!(tweet: tweet_pattern({}, ticket.tweet)) if Account.current.features?(:twitter) && ticket.twitter?
     pattern.merge!(meta: ticket_meta_pattern(ticket))
     pattern.merge!(survey_result: feedback_pattern(survey_result)) if survey_result
     pattern.merge!(ticket_topic: ticket_topic) if ticket_topic.present?

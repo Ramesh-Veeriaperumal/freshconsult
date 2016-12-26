@@ -16,7 +16,7 @@
       200:
         description: Success
         schema:
-          $ref: '#/definitions/extended_ticket'
+          $ref: '#/definitions/ticket_show'
       404:
         description: Ticket not found
       403:

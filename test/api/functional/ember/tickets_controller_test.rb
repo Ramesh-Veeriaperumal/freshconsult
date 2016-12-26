@@ -1,5 +1,5 @@
 require_relative '../../test_helper'
-['canned_responses_helper.rb', 'group_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
+['canned_responses_helper.rb', 'group_helper.rb', 'social_tickets_creation_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
 module Ember
   class TicketsControllerTest < ActionController::TestCase
     include TicketsTestHelper
@@ -8,6 +8,8 @@ module Ember
     include GroupHelper
     include CannedResponsesHelper
     include CannedResponsesTestHelper
+    include SocialTestHelper
+    include SocialTicketsCreationHelper
     include SurveysTestHelper
 
     CUSTOM_FIELDS = %w(number checkbox decimal text paragraph dropdown country state city date)
@@ -655,6 +657,48 @@ module Ember
       ticket_field.update_attribute(:required_for_closure, false)
       assert_response 400
       match_json([bad_request_error_pattern(ticket_field.label, :datatype_mismatch, expected_data_type: String)])
+    end
+
+    def test_show_with_facebook_post
+      Account.stubs(:current).returns(Account.first)
+      ticket = create_ticket_from_fb_post
+      get :show, controller_params(version: 'private', id: ticket.display_id)
+      assert_response 200
+      match_json(ticket_show_pattern(ticket))
+      Account.unstub(:current)
+    end
+
+    def test_show_with_tweet
+      Account.stubs(:current).returns(Account.first)
+      ticket = create_twitter_ticket
+      get :show, controller_params(version: 'private', id: ticket.display_id)
+      assert_response 200
+      match_json(ticket_show_pattern(ticket))
+      Account.unstub(:current)
+    end
+
+    def test_show_with_facebook_feature_disabled
+      Account.stubs(:current).returns(Account.first)
+      ticket = create_ticket_from_fb_post
+      Account.any_instance.stubs(:features?).with(:facebook).returns(false)
+      Account.any_instance.stubs(:features?).with(:twitter).returns(true)
+      get :show, controller_params(version: 'private', id: ticket.display_id)
+      assert_response 200
+      match_json(ticket_show_pattern(ticket))
+      Account.any_instance.unstub(:features?)
+      Account.unstub(:current)
+    end
+
+    def test_show_with_twitter_feature_disabled
+      Account.stubs(:current).returns(Account.first)
+      ticket = create_twitter_ticket
+      Account.any_instance.stubs(:features?).with(:twitter).returns(false)
+      Account.any_instance.stubs(:features?).with(:facebook).returns(true)
+      get :show, controller_params(version: 'private', id: ticket.display_id)
+      assert_response 200
+      match_json(ticket_show_pattern(ticket))
+      Account.any_instance.unstub(:features?)
+      Account.unstub(:current)
     end
   end
 end

@@ -59,6 +59,16 @@ class TicketDecorator < ApiDecorator
     end
   end
 
+  def fb_post
+    return unless Account.current.features?(:facebook) && record.facebook?
+    FacebookPostDecorator.new(record.fb_post).to_hash
+  end
+
+  def tweet
+    return unless Account.current.features?(:twitter) && record.twitter?
+    record.tweet.attributes.slice('tweet_id', 'tweet_type', 'twitter_handle_id')
+  end
+
   def conversations
     if @sideload_options.include?('conversations')
       ticket_conversations = record.notes.visible.exclude_source('meta').preload(:schema_less_note, :note_old_body, :attachments).order(:created_at).limit(ConversationConstants::MAX_INCLUDE)
