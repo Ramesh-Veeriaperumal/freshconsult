@@ -16,4 +16,8 @@ module Redis::PortalRedis
 		$redis_portal.perform_redis_op("INCR", key)
 	end
 
+	def portal_redis_key_exists?(key)
+		newrelic_begin_rescue { $redis_portal.exists(key) }
+	end
+
 end

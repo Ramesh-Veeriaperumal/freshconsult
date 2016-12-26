@@ -1,0 +1,76 @@
+<% content_for :sidebar do -%>&nbsp;<%- end %>
+<%= render :partial => "admin/shared/filter_jsinit", :locals => { :filter_type => "va_rule", :placeholders => {} } %>
+<%= f.error_messages :object_name => 'rule' %>
+<div class="form-horizontal">
+	<input type="hidden" name="id"   value="" />
+	<input type="hidden" name="type" value="SkillandAgents" />
+	<div class="control-group">
+		<%= f.label :name, (t('.new')+"<span class='required_star'>*</span>").html_safe, :class => "control-label" %>
+		<div class="controls skill-form">
+			<%= f.text_field :name, :class => "required text", placeholder: t('.info1') %>
+		</div>
+	</div>
+	<div class="control-group">
+		<%= f.label :description, t('.description').html_safe, :class => "control-label" %>
+		<div class="controls skill-form">
+			<%= f.text_area :description, :class => "smallpara", placeholder: t('.info2')%>
+		</div>
+	</div>
+
+	<div class="control-group">
+		<%= f.label :description, t('.agents'), :class => "control-label" %>
+		<div class="controls skill-form">
+					
+        			<div class="" style="margin-top: 5px;">
+						<% label = (@skill.users.count == 0 ? t('admin.skills.index.add_label') : t('admin.skills.index.manage_label')) %>
+						
+						<a class="popup" data-isaccadmin="<%= @current_user.privilege?(:manage_account) %> "data-agentcount="<%= @skill.users.count %>" data-skillid="<%= @skill.id %>" href="javascript:void(0)" data-title="<%= @skill.name %>">
+					        <span data-changecount="<%= @skill.id %>" style="cursor: text;color: #555;">
+						    <% if @skill.users.count == 0 %>
+						        <%= t('admin.skills.index.no_agent_label') %></span> - <span data-addManage><b><%= label %></b></span>
+		  			        <% else %>
+								<%= pluralize(@skill.users.count, t('admin.skills.index.agent_label'), t('admin.skills.index.agents_label')) %> </span> - <span =""><b><%= label %></b></span>
+		          			<% end %>
+						</a>
+       				</div>
+		</div>
+	</div>
+
+	<ul class="ui-form observer no-background">
+		<li>
+			<h3 class="lead">
+				<%=t('dispatch.conditions')%>
+				<label class="muted"><%=t('.info3')%></label>
+			</h3>
+
+			<div class="choicelist">
+				<%= f.radio_button  :match_type, 'any', :class => "radio" %> <%= f.label :match_type_any, t('.match_any').html_safe, :class => "radiolabel" %>
+				<%= f.radio_button  :match_type, 'all', :class => "radio" %> <%= f.label :match_type_all, t('.match_all').html_safe, :class => "radiolabel" %>
+			</div>			
+			
+			<div class="conditionset" id="filterDOM">
+			<div id="RuleList" class="rule_list"></div>
+			<fieldset class="addchoice">
+				<i class="rounded-add-icon pull-left"></i>	
+		        <p><%=t('dispatch.add_condition')%></p>
+		    </fieldset>			
+			</div>
+		</li>
+	</ul>
+
+			
+		<input id="user_ids" name="user_ids" type="hidden">
+
+	<div id="webhook_usecase" class="hide">
+		<%= render :partial=> 'admin/shared/advanced_webhook_usecase' %>
+	</div>
+	<div class="button-container itil-hide">
+		<input type="hidden" name="save_json" id="savejson" value="" />
+		<%= link_to t('cancel'), {:action => 'index'}, :class => "btn" %>
+		<input type="submit" class="btn btn-primary" id="skills_submit" value="<%=t('save')%>" />
+	</div>
+</div>
+	<% content_for :pagefixed do %>
+	<%= render :partial => "/shared/placeholder_help", :locals => { :placeholders => {} }  %>
+<% end %>
+

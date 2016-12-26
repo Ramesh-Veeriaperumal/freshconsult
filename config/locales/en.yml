@@ -333,6 +333,7 @@ en:
       status: Status
       group: Group
       agent: Agent
+      skill: Skill
       internal_group: Internal Group
       internal_agent: Internal Agent
       priority: Priority
@@ -688,6 +689,71 @@ en:
       my_topics: "My Topics"
       csat_survey: "Customer Satisfaction Survey"
   admin:
+    skills:
+      human_name:
+        skill
+      index:
+        save_label: Save
+        cancel_label: Cancel
+        add_label: Add
+        manage_label: Manage
+        no_agent_label: No Agent
+        agent_label: Agent
+        agents_label: Agents
+        description: Description
+        info_help: Create skills for ticket issues and associate it to agents who can handle them. The first matching skill will be applied to the ticket.
+        nav_skill_list_text: Skill List
+        nav_agent_skill_text: Agents' Skill
+        confirm_delete_message: Are you sure you want to delete this skill?
+        skill_create: Create
+        add_agents: Add agents
+        skills: Skills
+        agent_skills: Agents' Skills
+        agents: Agents
+        edit: Edit Skill
+        create_new: Create New
+        new_skill_info: You haven’t created a skill yet!
+        no_agents_info: No agents have been added to this group!
+        not_in_any_groups_info: You can manage agents' skills only if you are part of a group. Please contact your helpdesk administrator.
+        no_groups_present_info: You can modify ticket assignment settings only if you are part of a group.<br>Please contact your helpdesk administrator.
+        no_scenario_automation_info: You haven’t created any scenario automations.
+        no_skill_info_1: No skill have been created.
+        no_skill_info_2: Please contact your helpdesk administrator.
+        new: New Skill
+      new:
+        new: New Skill
+      edit:
+        edit: Edit Skill  
+      rule_form:
+        new: Skill Name
+        info1: "example: Handling VIP customers"
+        info2: "example: \"Assign tickets from VIP customers to agents Susan, Bob or Zoey\""
+        info3: Associate this skill to tickets that match
+        match_all: <b>ALL</b> of the below
+        match_any: <b>ANY</b> of the below
+      helpcard:
+        title1: Understanding Skills
+        title2: Creating Skills
+        info1: "Skills allow you to easily match tickets to the right agents. You can associate distinct skills to each agent and create rules to make sure that only tickets matching those skills are assigned to them."
+        info2: "Each skill should be assigned to a set of agents as well as mapped to tickets matching certain conditions.<br><br>You can assign skills to agents based on their expertise or abilities. For example, if you support multiple languages, you can create a skill named 'Fluent in Spanish' for agents who handle Spanish tickets. To map skills to tickets, you can use conditions based on ticket properties like type, source, product, or customer properties like requester name, email, company. So, tickets that use Spanish as the request language can be mapped to the skill 'Fluent in Spanish'.<br><br>If the skill mapped to a ticket matches an agent's skill, the ticket will be assigned to the agent."
+        learn_more_skill_based_info: Learn more about skill based assignment
+        title3: Skill to Ticket Mapping
+        info3: "Skill rules are used to identify which skill should be associated with a ticket, based on ticket or customer properties. For each ticket assigned to a group, the first matching skill rule in the Skill List will be executed. Admins can reorder the list of skills to have the most important rules on top."
+    user_skills:
+      update:
+        update_success: "Skills were successfully updated to the agents."
+        update_error: "There were errors in saving skills of %{unsaved_user_count} users. Please reassign the skills and try saving again."
+      index:
+        sbrr_disabled_admin: Skill based assignment has not been turned on for this group -
+        turn_on: Turn On
+        any: Any
+        groups: Group
+        more: more
+        manage_skills: Manage Skills
+        add_skills: Add Skills
+        create_skills: Create Skills
+        admin_info_help: Add skills to agents in the decreasing order of their preference
+        supervisor_info_help: Arrange skills of agents in the decreasing order of their preference
     help_image_alt:
       helpdesk_arcarde: "Helpdesk Arcade"
       import_csv_file_pattern: "Import CSV file pattern"
@@ -1943,6 +2009,7 @@ en:
         title: New Product
         saving: Saving...
       portal:
+        invalid_linkback_url: Please enter a valid linkback url.
         select_forum_category: Select a forum category...
         portal_rebranding: Portal rebranding
         cname_configure_info: Before using this field please ensure that you have created a CNAME DNS record in your DNS Zone file to point <strong>help.<b id="domain_info_name">yourcompany</b>.com</strong> to %{full_domain}. Your Webmaster or Server administrator should be able to help you set this up correctly
@@ -2659,17 +2726,17 @@ en:
         success: The %{human_name} has been activated.
       destroy:
         failure: The %{human_name} could not be deleted
-        success: The %{human_name} has been deleted.
+        success: The %{human_name} has been deleted
       restore:
         failure: The %{human_name} could not be restored
       create:
         failure: Unable to save %{human_name}
-        success: The %{human_name} has been created.
+        success: The %{human_name} has been created
         tracker_success: "The tracker has been created and the related tickets are linked to it"
         compose_email_success: Your email has been sent and a new ticket has been created.
       update:
-        success: The %{human_name} has been updated.
-        failure: The %{human_name} could not be updated.
+        success: The %{human_name} has been updated
+        failure: The %{human_name} could not be updated
       password_expired: "Your password has expired. Kindly login to update your old password."
     post:
       deleted: "Post of %{title} was deleted."
@@ -3401,7 +3468,7 @@ en:
     helptext:
       info1: "Templates allow you to pre-fill new tickets and outgoing emails with a single click. You can save time spent on typing out the same content again and again, and quickly create tickets or send outbound emails."
       info2: "For example, you can create a template called 'Initiate Refund' by filling the body of the ticket and setting the priority 'medium'. So the next time you receive a phone call about a refund, you can create a medium priority ticket for your customer and initiate the refund request with a single click."
-    new_template: "Add New"
+    new_template: "New Template"
     create_template: "Create Template"
     no_match_text: "No matching templates"
     no_templates_text: "No template has been created"
@@ -3414,7 +3481,7 @@ en:
     description: "example: To initiate a refund for all cancellation requests"
     name: "example: Initiate Refund"
     apply_template: "Apply Template"
-    no_templates: "You don't have any templates "
+    no_templates: "You haven’t created any templates."
     create_new: "Create New"
     shared: Shared
     personal: Personal
@@ -3581,6 +3648,7 @@ en:
     description: Description
     info2: All Subscription related tickets will be assigned to Susan
     new_rule: New Rule
+    new_scenario: New Scenario
     event_note: When <b>Any</b> of these events occur
     condition_note: With the following conditions
     action_note: Perform these actions
@@ -3800,6 +3868,8 @@ en:
         user_emails: Please enter at least one contact detail
         max_user_emails: A contact cannot have more than 5 emails
         max_user_companies: A contact cannot have more than 20 companies
+        max_skills_per_account: Cannot create more than %{max_limit} skills
+        max_skills_per_user: Cannot have more than %{max_limit} skills per agent
         edit_broadcast_note: "Broadcast message can't be edited"
       full_messages:
         format: "%{attribute} %{message}"
@@ -3900,6 +3970,16 @@ en:
     tickets_completed: "%{count} tickets completed"
     ratio_tickets_completed: "%{count} / %{total} tickets completed"
   group:
+    no_group_info: You haven’t created any groups.
+    sbrr:
+      manage_skills: Manage Skills
+      create_skills: Create Skills
+      no_skill_in_group_by_admin: "Associate skills with agents in this group for faster ticket resolution. If no skills have<br> been associated, tickets will be distributed based on load balanced assignment."
+      no_skill_in_group_by_supervisor: "Contact your helpdesk Admin to associate skills with agents in this group"
+      no_skill_in_account_by_admin: "Create skills for resolving tickets assigned to this group"
+      no_skill_in_account_by_supervisor: "Contact your helpdesk Admin to create and associate skills with agents in this group"
+    alert_content: "You're being redirected to Skills page. All the changes you've made to this group will be automatically saved if you choose to proceed."
+    alert_content_2: "Would you like to continue?"
     new: New Group
     name: Group Name
     description: Group description
@@ -3908,7 +3988,7 @@ en:
     business_calendar: Business Hours
     ticket_assignment: Automatic ticket assignment
     auto_assignment_description: Tickets coming into this group will be automatically assigned to available agents based on the assignment method you select
-    only_round_robin_description: Tickets coming into this group will be automatically assigned to available agents based on <strong>Round-robin method</strong>
+    only_round_robin_description: Tickets coming into this group will be automatically assigned to available agents based on <strong>Round robin method</strong>
     escalation_rule: Escalation Rule
     send_escalation_to: "....then send escalation email to :"
     info1: Agents
@@ -3927,11 +4007,11 @@ en:
     please_confirm: Please confirm...
     rr_v2_confimation_message: This action cannot be undone. Are you sure you want to proceed?
     tour: Help me create a new agent group
-    helptext: You can organize your agents into specific Groups like “Support” and “Sales”. This lets you easily assign tickets, create specific canned responses, manage workflows and generate group-level reports. Note that an agent can be a member of multiple groups as well.
-    automatic_assignment: <b>To each group</b><br/>Once you’ve created your agent groups, you can use set up rules in dispatch’r to route tickets to each group. <a href="https://support.freshdesk.com/support/solutions/articles/77157" target="_blank">Learn more</a><br/><br/><b>To agents within each group</b><br/>You can automatically assign tickets to online agents through two methods - <br/> 1. Round-robin ticket assignment, i.e. circular assignment of tickets <br/> 2. Load balanced ticket assignment, i.e. setting a maximum limit on number of tickets an agent can receive <br/> <a href="https://support.freshdesk.com/support/solutions/articles/196581" target="_blank">Click here to read more</a>
-    automatic_assignment_header: Automatic Ticket Assignment
+    helptext: You can organize your agents into specific Groups like “Support” and “Sales”. This lets you easily assign tickets, create specific canned responses, manage workflows and generate group-level reports. Note that an agent can be a member of multiple groups.
+    automatic_assignment: <b>To each group</b><br/>Once you’ve created your groups, you can set up rules in dispatch’r to automatically route tickets to each group. <a href="https://support.freshdesk.com/support/solutions/articles/77157" target="_blank">Learn more</a><br/><br/><b> To agents within each group</b><br/>You can also auto-assign tickets to online agents within a group by three methods:<br>1. Round robin - Assign tickets to agents in a circular fashion<br>2. Load balanced - Set a limit on the number of tickets that are assigned to each agent<br>3. Skill based  - Assign tickets to agents based on their expertise <br/> <a href="https://support.freshdesk.com/support/solutions/articles/196581" target="_blank">Read more</a>
+    automatic_assignment_header: Auto-ticket Assignment
     working_hours_header: Business Hours
-    working_hours: You can assign each of these groups with different business hours which is simply your working hours. For example, you can group agents by shifts and assign different business hours to each group, or create separate groups for different locations your agents work from.
+    working_hours: You can associate different business hours to each of these groups based on their working hours. You can group agents by shifts and assign different business hours to each group, or create separate groups for each location that your agents work from.
     select_agents: Select Agents
     select_an_agent: Select Agent
     select_business_calendar: Select Business Hours
@@ -3944,7 +4024,12 @@ en:
     toggle_availability_note: "Note: Agents belonging to multiple groups will be able to change their availability only if they have permission to control their availability in all of the groups they belong to."
     round_robin_capping: "Load balanced ticket assignment"
     round_robin_capping_info: Limit the number of tickets an agent can handle simultaneously
-    round_robin_defalut: Round-robin ticket assignment
+    round_robin_skill_based: "Skill based ticket assignment"
+    round_robin_skill_based_info: Assign ticket to agents who can handle them the best
+    round_robin_skill_based_tooltip: When there are two agents with the same skill, tickets will be assigned to the agent handling less number of tickets.
+    manage_skills: Manage Skills
+    create_skills: Create Skills
+    round_robin_defalut: Round robin ticket assignment
     round_robin_default_info: Assign tickets to agents in a circular fashion
     round_robin_desc: "Once turned ON, tickets assigned to this group will be distributed among agents in round robin fashion. If you wish to manually assign tickets or dispatch them using the Dispatch'r or Supervisor automations, you can turn this OFF. "
     capping_ticket: "ticket"
@@ -5977,6 +6062,8 @@ en:
   export_to_CSV: Export to CSV
   back_to_reports: "&larr; Back to reports"
   helpdesk:
+    collab: Collaboration
+    start_collab: Start Collaboration
     add_requester: Add Requester
     surveys:
       invalid_rating: Rating value "%{rating}" is invalid. Please rate with the correct rating value.
@@ -6457,6 +6544,7 @@ en:
         my_article_feedback: My Articles Feedback
         archived: Archive
         invalid_requester: Invalid requester
+        ongoing_collab: Ongoing collaborations
       note:
         posted_on: "%{user_name} on %{note_date}"
         created_on:
@@ -6598,6 +6686,7 @@ en:
       agent_responded_at: Agent Response
       asc: Ascending
       desc: Descending
+      recently_active: "Recently Active"
     search_views: Jump to view
     no_match_view: No matching views found
   click_to_change_sort_order: Click to change sort order
@@ -8373,7 +8462,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     delete_multiple: "The selected canned responses were deleted!!"
     no_delete: "Default folder cannot be deleted!!"
     create_new: "Create New"
-    no_response_admin: "No responses in this folder <a href=%{link} id='new_resp'>Create New</a>"
+    no_response_admin: "You haven’t created any canned responses. <a href=%{link} id='new_resp'>Create New</a>"
     select_folder: "Select Folder"
     select_group: "Select Group"
     visibility_change: "You are about to move {{num_responses}} canned responses from your <b> Personal Folder</b>. Before moving, please change the canned response availability."
@@ -10446,7 +10535,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     company_association_exists: Company has already been taken
     helpcard:
       title: Customizing requester widget
-      info: Choose the fields that you want displayed under the requester info section on the ticket page with the requester widget. This way your team can update requester details directly from the ticket page and keep track of the customer details while solving their ticket. <a href="https://support.freshdesk.com/support/solutions/articles/219948-customizing-requester-info-fields" target="_blank">Learn more</a>
+      info: Choose the fields that you want displayed under the requester info section on the ticket page with the requester widget. This way your team can update requester details directly from the ticket page and keep track of the customer details while solving their ticket. <a href="https://support.freshdesk.com/support/solutions/articles/37586-driving-additional-context-with-requestor-info" target="_blank">Learn more</a>
     company:
       name: "Company Name"
       delete_company: "Company information was deleted"
@@ -10516,6 +10605,8 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     try_again: "Go to Ticket and try again"
     actions_alert: "File attachment in progress. Do you want to leave this page?"
     reminder: "You have unsaved content in this page. Do you want to leave this page?"
+    attach: "Add to response"
+    attached: "Added to response"
   ml:
     similat_tickets_found: Similar Tickets found
     no_suggestions: Oops! No suggestions.
@@ -10528,3 +10619,27 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     hide: Hide
     suggestion_text: What can we improve? (Optional).
     help: What's this?
+  collaboration:
+    notifications: "Notifications"
+    no_notifications: "No new notifications"
+    discussion: "Discussion"
+    discuss: "Discuss"
+    collaborators: "Collaborators"
+    view_all_collaborations: "View all collaborations"
+    view_discussion: "View Discussion"
+    type_message: "Type message"
+    added_to: "You have been added as collaborator on ticket %{ticket_id}"
+    invited_notification: "%{user_name} wants to collaborate with you on ticket %{ticket_id}"
+    first_mention: "%{who} has mentioned you in 1 message in ticket %{ticket_id}"
+    nth_mention: "%{who} has mentioned you in %{how_many} messages in ticket %{ticket_id}"
+    nth_mention_multi_users: "%{who_all} have mentioned you in %{how_many} messages in ticket %{ticket_id}"
+    send_msg_placeholder: "Type '%{newline_key}' to add a new line. '%{send_key}' to send..."
+    collab_max_out_info: "A ticket cannot have more than %{max_collaborators} collaborators. Please contact %{contact_person} to @mention people who are not in the list below."
+    collab_motto: "Collaborate with your team in context, fast."
+    chat_and_more_slogan: "'@' mention someone to invite them, highlight and discuss."
+    error:
+      network_err: "Could not connect to internet!"
+      size_exceeded: "Your file exceeded the maximium upload limit of %{max_size}. Please try again with a smaller file."
+      wrong_file_format: "Unsupported file format!"
+      unexpected: "Something went wrong!"
+      highlight_missing: "Highlight missing"

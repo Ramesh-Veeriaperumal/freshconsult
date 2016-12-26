@@ -18,6 +18,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
   include Helpdesk::Permission::Ticket
   include Helpdesk::ProcessAgentForwardedEmail
   include Cache::Memcache::AccountWebhookKeyCache
+  include Redis::RedisKeys
+  include Redis::OthersRedis
 
   class UserCreationError < StandardError
   end
@@ -799,9 +801,18 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         end
         if params[:text]
           text = text_for_detection
-          args = [user, text]  #user_email changed
-          #Delayed::Job.enqueue(Delayed::PerformableMethod.new(Helpdesk::DetectUserLanguage, :set_user_language!, args), nil, 1.minutes.from_now) if language.nil? and signup_status
-          Resque::enqueue_at(1.minute.from_now, Workers::DetectUserLanguage, {:user_id => user.id, :text => text, :account_id => Account.current.id}) if language.nil? and signup_status
+          if language.nil? and signup_status
+            if redis_key_exists?(DETECT_USER_LANGUAGE_SIDEKIQ_ENABLED)
+              Users::DetectLanguage.perform_async({:user_id => user.id, 
+                                                   :text => text })
+            else
+              Resque::enqueue_at(1.minute.from_now, 
+                                 Workers::DetectUserLanguage, 
+                                 {:user_id => user.id, 
+                                  :text => text, 
+                                  :account_id => Account.current.id})
+            end
+          end
         end
       end
       user

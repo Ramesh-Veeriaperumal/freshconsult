@@ -4,7 +4,7 @@
        {{if (type=="attachment") }}
            {{each files}}
            <!-- updating forward file size -->
-                    <div class="existing-filelist"  data-file-size="${content_file_size}">
+                    <div class="existing-filelist ${extra_class}"  data-file-size="${content_file_size}">
                 <div class="file pull-left mr10 mb10 tooltip" title="{{html Helpdesk.MultipleFileUpload.FilenameSplitter(content_file_name).fname}}.{{html Helpdesk.MultipleFileUpload.FilenameSplitter(content_file_name).type}}">
                     <i class="ficon-cross file-close" data-attach-id="${id}" data-cloud-file=false data-softdelete=${softdelete}></i> <span class="file-name">
                     <span class="fname ellipsis">{{html Helpdesk.MultipleFileUpload.FilenameSplitter(content_file_name).fname}}</span><span class="ftype">.{{html Helpdesk.MultipleFileUpload.FilenameSplitter(content_file_name).type}}
@@ -21,7 +21,7 @@
         {{/if}}
           {{if (type=="cloud") }}
               {{each files}}
-                   <div class="existing-filelist existing-filelist-cloud" >
+                   <div class="existing-filelist existing-filelist-cloud ${extra_class}" >
                     <div class="file pull-left mr10 mb10 tooltip" title="${cloud_file.filename}">
                    <i class="ficon-cross file-close" data-attach-id="${cloud_file.id}" data-cloud-file=true data-softdelete=${softdelete}></i> <span class="file-name"><span class="fname ellipsis">{{html Helpdesk.MultipleFileUpload.FilenameSplitter(cloud_file.filename).fname}}</span><span class="ftype">.{{html Helpdesk.MultipleFileUpload.FilenameSplitter(cloud_file.filename).type}}</span></span> 
                    {{if (typeof sol_cloud === "undefined") }}
@@ -60,7 +60,7 @@
          {{/if}}
   {{/if}}
   {{if (render_type=="error")}}
-     <div class="file-upload pull-left mr10 mb10 tooltip error error-file" title="Attachment failed - file > 15 MB">
+     <div class="file-upload pull-left mr10 mb10 tooltip error error-file" title="Attachment failed - file > 15 MB" data-attach-id="${files.fileId}">
    <i class="ficon-notice file-close"></i> <span class="file-name"><span class="fname ellipsis">{{html Helpdesk.MultipleFileUpload.FilenameSplitter(files.name).fname}}</span><span class="ftype">.{{html Helpdesk.MultipleFileUpload.FilenameSplitter(files.name).type}}</span></span>
    <span class="file-size">({{html Helpdesk.MultipleFileUpload.formatFileSize(files.size)}})</span>
    </div>

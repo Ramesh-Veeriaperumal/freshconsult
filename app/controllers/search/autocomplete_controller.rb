@@ -12,7 +12,8 @@ class Search::AutocompleteController < ApplicationController
         agents[:results].push(*[{
           :id => document.email, 
           :value => document.name, 
-          :user_id => document.id }
+          :user_id => document.id,
+          :profile_img => document.avatar.nil? ? false : document.avatar.expiring_url(:thumb, 300) }
         ])
       end
     rescue

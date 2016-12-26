@@ -1,0 +1,71 @@
+<div id="collab-sidebar" class="collab-sidebar hide">
+    <div id="title-row" class="title-row">
+        <div class="collab-logo">
+            <img class="logo-image" alt="Logo" data-type="logo" onerror="default_image_error(this)" src="/assets/collab/collab-logo.svg">
+        </div>
+        <div class="title-tabs clearfix">
+            <div id="discussion-tab-btn" class="tab active"><%=t('collaboration.discussion')%></div>
+            <div id="collaborators-tab-btn" class="tab disabled"><%=t('collaboration.collaborators')%> 
+                (<span class="count" id="collaborators-count"></span>)
+            </div>
+        </div>
+        <%= font_icon "cross", { :size => 18 , :class => "collab-close-icon", :id => "collab-close-icon"} %>
+    </div>
+    <div id="collab-chat-section" class="collab-chat-section active">
+        <div id="empty-chat-content" class="empty-chat-content">
+            <div class="collab-logo">
+                <img class="logo-image" alt="Logo" data-type="logo" onerror="default_image_error(this)" src="/assets/collab/collab-logo.svg">
+            </div>
+            <div>
+                <div class="collab-motto"><%=t('collaboration.collab_motto')%></div>
+                <span class="collab-slogan"><%=t('collaboration.chat_and_more_slogan')%></span>
+            </div>
+        </div>
+        <div class="collab-scroll-box-cover">
+            <div id="scroll-box" class="scroll-box"></div>
+        </div>
+        <form id="send-collab-message-form" class="send-collab-message-form" autocomplete="off">
+            <div id="collab-error-popup" class="collab-error-popup">
+                <span class="collab-error-icon-wrapper">
+                    <%= font_icon "warning", { :size => 24 , :class => "ficon collab-error-icon"} %>
+                </span>
+                <p class="collab-error-text" id="collab-error-text"></p>
+            </div>
+            <div id ="collab-attachment-section" class="collab-attachment-section">
+                <div class="collab-attached-image-section">
+                    <span class="collab-attachment-image" id="collab-attachment-image"></span>
+                    <b class="collab-attachment-name ellipsis" id="collab-attachment-name"></b>
+                    <span class="collab-attachment-name-separator">&#8211;</span> <p class="collab-attachment-size ellipsis" id="collab-attachment-size"></p>
+                </div>
+                <span id="collab-attachment-cancel-icon" class="collab-button collab-attachment-cancel-icon"> <%= font_icon "cross", { :size => 20 , :class => "ficon"} %> </span>
+                <span id="collab-send-attachment-button" class="collab-button collab-send-attachment-button"> <%= font_icon "tick", { :size => 20 , :class => "ficon"} %> </span>
+            </div>
+
+            <div id="annotation" class="annotation">
+                <span class="text"></span>
+                <span class="close" id="cancel-annotation"> <%= font_icon "cross", { :size => 20 , :class => "ficon"} %> </span> 
+            </div>
+
+            <div class="collab-editor-container">
+                <textarea id="send-message-box" class="send-message-box" placeholder="<%=t('collaboration.send_msg_placeholder', :newline_key => 'Shift+Enter', :send_key => 'Enter')%>"></textarea>
+            </div>
+            <div class="collab-action-btns">
+                <span class="collab-attachment-btn collab-action-btn">
+                    <input id="collab-attachment-input" class="collab-attachment-input" name="file" type="file" accept="image/*">
+                    <%= font_icon "attachment", { :size => 14 , :class => "collab-attachment-icon", :id => "collab-attachment-icon"} %>
+                </span>
+            </div>
+        </form>
+    </div>
+    <div id="collaborators-list" class="collaborators-list">
+        <div id="collaborators-list-items" class="collaborators-list-items">
+        </div>
+    </div>
+
+    <div class="collab-hovercard-cover" id="collab-hovercard-cover">
+        <span class="hovercard-extension"></span>
+        <div id="hovercard" class="hovercard"></div>
+    </div>
+</div>
+
+<input type="hidden" id="collab-ui-data" data-ui-payload='{"currentConversationId": "<%= @ticket.display_id %>", "currentConversationName": "<%= @ticket.display_id %>", "isClosed": <%= @ticket.status == 5 || @ticket.spam == true || @ticket.deleted == true %>, "containerSelector": ".tkt-wrapper.ticket_show", "ownedBy": "<%= @ticket.responder_id %>", "convoToken": "<%= Collaboration::Ticket.convo_token(@ticket.display_id) %>" }'>

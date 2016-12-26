@@ -41,6 +41,7 @@ gem 'charlock_holmes', "0.7.3"
 
 
 group :development, :test do
+  gem 'active_record_query_trace'
   gem 'rails-dev-boost', :git => 'git://github.com/thedarkone/rails-dev-boost.git'
   gem 'better_errors', '~> 1.1.0'
   # Commenting out for ruby ~> 2.1.0 upgrade
@@ -315,4 +316,6 @@ gem 'i18nema', :git => 'https://github.com/freshdesk/i18nema', :require => false
 # For debugging app in staging/production
 gem 'rbtrace', :require => false
 
+# For Passing Data to JavaScript
+gem 'gon', '6.1.0'
 gem 'rugged'

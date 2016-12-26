@@ -153,7 +153,9 @@ swapEmailNote = function(formid, link){
 
 
 	activeForm = $('#'+formid).removeClass('hide').show();
-	$.scrollTo('#'+formid, {offset: 100});
+	if(!Helpdesk.MultipleFileUpload.addToRply.replyTrigger) {
+		$.scrollTo('#'+formid, {offset: 100});
+	}
 	if (activeForm.data('type') == 'textarea') {
 		//For Facebook and Twitter Reply forms.
 		$element = $('#' + formid + ' textarea').get(0);
@@ -366,36 +368,55 @@ var updateShowMore = function() {
 	return show_more;
 }
 
-var updatePagination = function() {
+var fetchMoreAndRender = function(ev, cb) {
+	ev.preventDefault();
 
 	var showing_notes = $('#all_notes').length > 0;
+	$('#show_more').addClass('loading');
+	
+	var href;
+	if (showing_notes)
+		href = TICKET_DETAILS_DATA['notes_pagination_url'] + 'before_id=' + TICKET_DETAILS_DATA['first_note_id'];
+	else
+		href = TICKET_DETAILS_DATA['activities_pagination_url'] + 'before_id=' + TICKET_DETAILS_DATA['first_activity'] + '&limit=' +  TICKET_DETAILS_DATA['pagination_limit'];
 
+	$.get(href, function(response) {
+		if(response.trim()!=''){
+			TICKET_DETAILS_DATA['first_activity'] = null;
+			TICKET_DETAILS_DATA['first_note_id'] = null;
+		}
+		TICKET_DETAILS_DATA['last_activity_batch'] = null;
+		$('#show_more').removeClass('loading').addClass('hide');
+		$('[rel=activity_container]').prepend(response);
+		updateShowMore();
+		trigger_event("ticket_show_more",{})
+
+		try {
+			freshfonePlayerSettings();
+		} catch (e) { 
+			console.log("freshfonePlayerSettings not loaded");
+		}
+
+		try {
+			// retries remaining annotations after more notes are loaded
+			if(!!App && !!App.CollaborationModel && !!App.CollaborationModel.restoreAnnotations) {
+				App.CollaborationModel.restoreAnnotations();
+			}
+		}
+		catch(e) {
+			console.log("No way to restore Collaboration's annotations.");
+		}
+
+		if(typeof cb === "function") {cb(response);}
+	});
+}
+
+window.App.fetchMoreAndRender = fetchMoreAndRender;
+
+var updatePagination = function() {
 	//Unbinding the previous handler:
 	$('#show_more').off('click.ticket_details');
-	$('#show_more').on('click.ticket_details',function(ev) {
-		ev.preventDefault();
-		$('#show_more').addClass('loading');
-		var href;
-		if (showing_notes)
-			href = TICKET_DETAILS_DATA['notes_pagination_url'] + 'before_id=' + TICKET_DETAILS_DATA['first_note_id'];
-		else
-			href = TICKET_DETAILS_DATA['activities_pagination_url'] + 'before_id=' + TICKET_DETAILS_DATA['first_activity'] + '&limit=' +  TICKET_DETAILS_DATA['pagination_limit'];
-
-		$.get(href, function(response) {
-			if(response.trim()!=''){
-				TICKET_DETAILS_DATA['first_activity'] = null;
-				TICKET_DETAILS_DATA['first_note_id'] = null;
-			}
-			TICKET_DETAILS_DATA['last_activity_batch'] = null;
-			$('#show_more').removeClass('loading').addClass('hide');
-			$('[rel=activity_container]').prepend(response);
-			updateShowMore();
-			trigger_event("ticket_show_more",{})
-			try {
-			freshfonePlayerSettings();
-		} catch (e) { console.log("freshfonePlayerSettings not loaded");}
-		});
-	});
+	$('#show_more').on('click.ticket_details', fetchMoreAndRender);
 }
 
 $('body').on('click.ticket_details','#checkfreshfoneaudio',function(ev){
@@ -953,6 +974,12 @@ var scrollToError = function(){
 			_form.resetForm();
 			_form.trigger('reset');
 			_form.find('select.select2').trigger('change'); //Resetting select2
+			$('#selectAgentsOptions').select2('data',[]);
+			var default_agent_present = $('.email_container.add_select2_custom').data('default-agent');
+			var default_agent_option = $('.email_container.add_select2_custom').data('default-agent-disp');
+			if ( default_agent_present){
+				$('#selectAgentsOptions').val(default_agent_present).trigger('change');
+			}
 
 			//Removing the Dropbox attachments
 			_form.find('.dropbox_div input[filelist]:not(.original_input)').remove();
@@ -1267,6 +1294,12 @@ var scrollToError = function(){
 
 					_form.resetForm();
 					_form.trigger('reset');
+					$('#selectAgentsOptions').select2('data',[]);
+					var default_agent_present = $('.email_container.add_select2_custom').data('default-agent');
+					var default_agent_option = $('.email_container.add_select2_custom').data('default-agent-disp');
+					if ( default_agent_present){
+						$('#selectAgentsOptions').val(default_agent_present).trigger('change');
+					}
 					_form.find('select.select2').trigger('change'); //For resetting the values in Select2.
 
 					if (_form.attr('rel') == 'forward_form')  {
@@ -1473,7 +1506,7 @@ var scrollToError = function(){
 					.attr('class','')
 					.addClass('source_' + $('.ticket_details #helpdesk_ticket_source').val());
 			refreshStatusBox();
-			if(TICKET_DETAILS_DATA['requester_widget_enabled'])
+			if(TICKET_DETAILS_DATA['requester_widget_enabled'] && TICKET_DETAILS_DATA['user_valid'])
 				refreshRequesterWidget();
 		}
 	}
@@ -1896,12 +1929,27 @@ App.Tickets.TicketDetail = {
 		// Have tried in onLeave to off all the event binding. 
 		// But it cause errors in whole app, like modal, dropdown and some issues has occered.
 		Fjax.afterNextPage = TICKET_DETAILS_CLEANUP;
+
+		if(typeof App.CollaborationUi !== "undefined") {
+			App.CollaborationUi.askInitUi();
+		} else {
+			var collab_btn = jQuery("#collab-btn");
+			if(collab_btn.length) {
+				collab_btn.addClass("hide");
+            	console.info("Did not start collaboration. CollaborationUi script was not loaded.");
+			}
+		}
 	},
 	onLeave: function() {
 		App.Tickets.Merge_tickets.unBindEvent();
 		App.Tickets.Watcher.offEventBinding();
 		App.TicketAttachmentPreview.destroy();
 		App.Tickets.NBA.offEventBinding();
+		
+		if(!!App.CollaborationUi && typeof App.CollaborationUi.unbindEvents === "function") {
+			App.CollaborationUi.unbindEvents();
+		}
+		
 		App.Tickets.TicketRequester.unBindEvents();
 	}
 };

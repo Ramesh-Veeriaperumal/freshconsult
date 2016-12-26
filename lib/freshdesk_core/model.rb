@@ -3,6 +3,7 @@ module FreshdeskCore::Model
   include Redis::RedisKeys
   include Redis::OthersRedis
   include Cache::Memcache::WhitelistUser
+  include Redis::PortalRedis
 
   HELPKIT_TABLES =  [   "account_additional_settings",
                         "account_configurations",
@@ -226,8 +227,8 @@ module FreshdeskCore::Model
     remove_whitelist_users(account.id)
     remove_remote_integration_mappings(account.id)
     remove_round_robin_redis_info(account)
+    delete_sitemap(account)
     remove_from_spam_detection_service(account)
-
     delete_data_from_tables(account.id)
     account.destroy
   end
@@ -312,6 +313,22 @@ module FreshdeskCore::Model
 
     def remove_remote_integration_mappings(account_id)
       RemoteIntegrationsMapping.where(account_id: account_id).delete_all
+    end
+
+
+    def delete_sitemap(account)
+      key = SITEMAP_OUTDATED % { :account_id => account.id }
+      remove_portal_redis_key(key)
+      
+      account.portals.each do |portal|
+          portal.clear_sitemap_cache
+      end
+
+      path = "sitemap/#{account.id}/"
+      objects = AwsWrapper::S3Object.find_with_prefix(S3_CONFIG[:bucket],path)
+      objects.each do |object| 
+        object.delete
+      end
     end
 
     def remove_round_robin_redis_info(account)

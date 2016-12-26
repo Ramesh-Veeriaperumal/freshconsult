@@ -331,7 +331,7 @@ window.App.Tickets.Merge_tickets = window.App.Tickets.Merge_tickets || {};
                   detail_info = item.details;
                 }
                 if(detail_info.length > 25) {
-                  detail_info = split_info[1].substring(0,26)+ "...";
+                  detail_info = detail_info.substring(0,26)+ "...";
                 }
               }
               searchterm = item.value + '(' + detail_info + ')';

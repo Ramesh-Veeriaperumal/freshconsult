@@ -149,7 +149,7 @@ class Admin::PortalController < Admin::AdminController
     end
 
     def filter_params
-      if params[:portal][:preferences].present? && current_account.rebranding_enabled?
+      if params[:portal][:preferences].present? && !current_account.rebranding_enabled?
         params[:portal].except!(:preferences)
       end
     end

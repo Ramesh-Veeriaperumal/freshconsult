@@ -25,7 +25,7 @@ class Mobihelp::DevicesController < MobihelpController
       dvc_assoc = save_device_association(@user, @device_uuid)
     end
 
-    generate_resp_with_config(@user)
+    generate_resp_with_config(dvc_assoc)
   end
 
   private
@@ -44,6 +44,6 @@ class Mobihelp::DevicesController < MobihelpController
     end
 
     def validate_user
-      render_json(generate_mh_err_resp(MOBIHELP_STATUS_CODE_BY_NAME[:MHC_USER_DELETED], MOBIHELP_STATUS_MESSAGE_BY_NAME[:MHC_USER_DELETED])) if @user.deleted? or @user.blocked?
+      render_json(generate_mh_err_resp(MOBIHELP_STATUS_CODE_BY_NAME[:MHC_USER_DELETED], MOBIHELP_STATUS_MESSAGE_BY_NAME[:MHC_USER_DELETED])) if @user.deleted? or @user.blocked? or @user.agent?
     end
 end

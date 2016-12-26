@@ -48,15 +48,15 @@ window.Fjax = window.Fjax || {};
 			"/users": 'contacts',
 			"/companies": 'companies',
 
-			"/helpdesk/tickets/archived/": "archiveticketdetails",			
+			"/helpdesk/tickets/archived/": "archiveticketdetails",
 			"/helpdesk/tickets": 'tickets',
 			"/helpdesk/ticket_templates": 'parentchildtemplates',
 			"/helpdesk/parent_template": 'parentchildtemplates',
 			"/helpdesk/dashboard/agent_status": 'freshfoneagents',
 			"/helpdesk/tickets/compose_email": 'tickets',
 			"/helpdesk/dashboard/unresolved_tickets": 'unresolvedtickets',
-
-			"/helpdesk" : 'realtime_dashboard'
+			"/helpdesk" : 'realtime_dashboard' ,
+	        "/groups" : 'groups'
 		},
 		LOADING_WAIT: 60
 	};

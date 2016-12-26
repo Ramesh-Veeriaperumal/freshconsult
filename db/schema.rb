@@ -2875,6 +2875,19 @@ ActiveRecord::Schema.define(:version => 20161103085738) do
     t.string  "region",     :default => 'us-east-1',  :null => false
   end
 
+  create_table "skills", :force => true do |t|
+    t.string   "name"
+    t.text     "description"
+    t.string   "match_type"
+    t.text     "filter_data"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "account_id",  :limit => 8
+    t.integer  "position"
+  end
+
+  add_index "skills", ["account_id", "position"], :name => "account_id_and_position"
+
   create_table "sla_details", :force => true do |t|
     t.string   "name"
     t.integer  "priority",           :limit => 8
@@ -4012,6 +4025,18 @@ ActiveRecord::Schema.define(:version => 20161103085738) do
 
   add_index "user_roles", ["role_id"], :name => "index_user_roles_on_role_id"
   add_index "user_roles", ["user_id"], :name => "index_user_roles_on_user_id"
+
+  create_table "user_skills", :force => true do |t|
+    t.integer  "user_id",    :limit => 8
+    t.integer  "skill_id",   :limit => 8
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "account_id", :limit => 8
+    t.integer  "rank"
+  end
+
+  add_index "user_skills", ["account_id", "user_id", "skill_id"], :name => "account_id_and_user_id_and_skill_id"
+  add_index "user_skills", ["skill_id", "user_id"], :name => "skill_id_and_user_id"
 
   create_table "users", :id => false, :force => true do |t|
     t.integer  "id",                  :limit => 8,                    :null => false

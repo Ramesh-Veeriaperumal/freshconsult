@@ -1,0 +1,19 @@
+<% if (skillLen !== 0) { %>
+
+    <% for (i = 0; i < skillLen; i++) { %>
+
+    <div class="roles-agent-list" data-skillid="<%= data[i].skill_id %>"  data-rowid="<%= data[i].row_id %>" data-rank="<%= data[i].rank %>" data-name = "<%= data[i].text %>">
+               
+
+                <i class="ficon-rearrange drag_move_icon"></i>
+                <div class="agent-delete-icon pull-left">
+                        <i class="rounded-minus-icon" data-action="remove-agent"></i>
+                </div>
+
+                <div class="agent-details pull-left">
+    <h5 style="font-weight: 500;margin-left: 4px;"> <%= data[i].text %> </h5 style="    margin-left: 4px;margin-left: 4px;">
+                </div>
+            </div>
+    <% } %>
+
+<% } %>

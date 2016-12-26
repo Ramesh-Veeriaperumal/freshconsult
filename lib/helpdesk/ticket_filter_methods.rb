@@ -2,6 +2,7 @@
 module Helpdesk::TicketFilterMethods
 
   include TicketsFilter
+  include Collaboration::TicketFilter
 
   ORDER = {
     :defaults => [:save_as, :cancel],
@@ -250,6 +251,10 @@ module Helpdesk::TicketFilterMethods
     # return @cached_filter_data[:wf_order_type].to_sym if @cached_filter_data && !@cached_filter_data[:wf_order_type].blank?
     cookies[:wf_order_type] = (params[:wf_order_type] ? params[:wf_order_type] : ( (!cookies[:wf_order_type].blank?) ? cookies[:wf_order_type] : DEFAULT_SORT_ORDER )).to_sym
   end
+
+  def collab_filter_enabled?
+    collab_filter_enabled_for?(filter)
+  end  
 
   def current_agent_mode
     return DEFAULT_AGENT_MODE unless current_account.features?(:shared_ownership)

@@ -79,6 +79,11 @@
         :url                           =>   "/helpdesk/tags",
         :privilege                     =>   privilege?(:manage_tags)
       },
+      :skills                          =>   {
+        :url                           =>   privilege?(:admin_tasks) ? "/admin/skills" : "/admin/agent_skills",
+        :privilege                     =>   current_account.skill_based_round_robin_enabled? && 
+                                              (privilege?(:admin_tasks) || privilege?(:assign_agent))
+      },
       :dispatcher                      =>   {
         :url                           =>   "/admin/va_rules",
         :privilege                     =>   privilege?(:manage_dispatch_rules)
@@ -199,7 +204,7 @@
 
     ADMIN_GROUP = {
       :"support-channels"       =>    ["email", "portals", "livechat", "phone-channel", "twitter", "facebook-setting", "feedback", "mobihelp", "ecommerce"],
-      :"general-settings"       =>    ["helpdesk-settings", "ticket-fields", "customer-fields", "agent", "group", "role", "security", "sla",
+      :"general-settings"       =>    ["helpdesk-settings", "ticket-fields", "customer-fields", "agent", "group", "skills", "role", "security", "sla",
                                           "business-hours", "multi-product", "tags"],
       :"helpdesk-productivity"  =>    ["dispatcher", "supervisor", "observer", "scenario", "ticket_template", "email-notifications", "canned-response",
                                           "survey-settings", "gamification-settings", "email_commands_setting", "integrations", "apps"],
