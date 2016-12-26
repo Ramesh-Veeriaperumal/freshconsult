@@ -75,7 +75,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
     def right_time_to_enqueue_sbrr_job?
       Account.current.skill_based_round_robin_enabled? && 
-        disable_observer_rule.nil? && observer_will_not_be_enqueued? &&
+        disable_observer_rule.nil? && observer_will_not_be_enqueued? && !skip_sbrr &&
           Thread.current[:observer_doer_id].nil? &&
             Thread.current[:skip_round_robin].nil? && 
               Thread.current[:skill_based_round_robin_thread].nil? &&
