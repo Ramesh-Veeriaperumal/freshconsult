@@ -358,8 +358,9 @@ module TicketsTestHelper
   end
 
   def handle_timestamps(meta_info)
-    if meta_info.is_a?(Hash) && meta_info.keys.include?('time')
-      meta_info['time'] = Time.parse(meta_info['time']).utc.iso8601
+    if meta_info.is_a?(Hash)
+      meta_info['time'] = Time.parse(meta_info['time']).utc.iso8601 if meta_info.key?('time')
+      meta_info = meta_info.map { |key, val| { name: key, value: val } }
     end
     meta_info
   end

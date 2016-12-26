@@ -12,14 +12,11 @@
     ticket_topic:
       $ref: '#/definitions/ticket_topic'
     meta:
-      type: object
-      properties:
-        user_agent:
-          type: string
-        referrer:
-          type: string
-        created_by:
-          type: integer
-        time:
-          type: string
-          format: datetime
+      type: array
+      items:
+        type: object
+        properties:
+          name:
+            type: string
+          value:
+            type: string
