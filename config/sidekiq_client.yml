@@ -125,6 +125,8 @@ defaults: &defaults
     - [clear_moderation_records]
     - [empty_moderation_trash]
     - [sendgrid_domain_updates]
+    - [generate_sitemap]
+    - [clear_sitemap]
     - [cti]
     - [sla_on_status_change]
     - [sandbox_sync]
@@ -146,6 +148,11 @@ defaults: &defaults
     - [contacts_sync_trial]
     - [remove_secondary_companies]
     - [mailbox_jobs]
+    - [sbrr_assignment]
+    - [sbrr_user_toggle]
+    - [sbrr_group_toggle]
+    - [sbrr_config_user_skill]
+    - [sbrr_config_agent_group]
     - [delete_account]
     - [templates_cleanup]
     - [bulk_child_tkt_creation]
@@ -156,6 +163,7 @@ defaults: &defaults
     - [s3_retry_worker]
     - [reopen_tickets]
     - [kbase_content_spam_checker]
+    - [detect_user_language]
 
 development:
   <<: *defaults

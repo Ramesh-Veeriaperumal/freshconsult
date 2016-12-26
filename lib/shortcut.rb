@@ -64,7 +64,8 @@ class Shortcut
 			:go_to_next			=> ['j', 'down'],
 			:go_to_previous		=> ['k', 'up'],
 			:scenario			=> "s",
-			:pickup 			=> "@"
+			:pickup 			=> "@",
+			:collaboration		=> "c"
 		},
 		:social_stream 			=> {
 			:search				=> "s",

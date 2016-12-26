@@ -226,6 +226,8 @@ Helpkit::Application.routes.draw do
   
   root :to => 'home#index'
 
+  match "/support/sitemap" => "support#sitemap", :format => "xml", :as => :sitemap, :via => :get
+
   match '/visitor/load/:id.:format' => 'chats#load', :via => :get
   match '/images/helpdesk/attachments/:id(/:style(.:format))' => 'helpdesk/attachments#show', :via => :get
   match '/inline/attachment' => 'helpdesk/inline_attachments#one_hop_url', :via => :get
@@ -364,6 +366,9 @@ Helpkit::Application.routes.draw do
     collection do
       get  :index
       get  :enable_roundrobin_v2
+    end
+    member do
+      get :user_skill_exists
     end
   end
 
@@ -1119,6 +1124,19 @@ Helpkit::Application.routes.draw do
          put :update
       end
     end
+
+    resources :skills do
+      member do
+        get :users
+      end
+      collection do
+        put :reorder
+      end
+    end
+    
+    match '/agent_skills/' => 'user_skills#index', :via => :get
+    match '/agent_skills/:user_id' => 'user_skills#show', :via => :get
+    match '/agent_skills/:user_id' => 'user_skills#update', :via => :put
 
     resources :va_rules do
       collection do

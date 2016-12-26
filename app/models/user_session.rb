@@ -13,8 +13,9 @@ class UserSession < Authlogic::Session::Base
   after_validation :set_missing_node_session
   validate :account_lockdown_warning, :unless => :api_request?
 
-  before_create  :reset_persistence_token, :delete_assume_user_keys, :if => :web_session?
-  before_destroy :reset_persistence_token, :if => :web_session?
+  before_create :reset_persistence_token, :delete_assume_user_keys, :if => :single_session_per_user?
+  before_create :log_login_info, :if => :web_session
+  before_destroy :reset_persistence_token, :if => :single_session_per_user?
 
   generalize_credentials_error_messages true
   consecutive_failed_logins_limit 10
@@ -91,7 +92,13 @@ class UserSession < Authlogic::Session::Base
     controller.session.delete :original_user if controller.session.has_key?(:original_user)
   end
 
-  def web_session?
+  def log_login_info
+    return unless self.record.present?
+    request = controller.request
+    Rails.logger.info("::New-login-info:: Account id : #{self.record.account_id}, User id : #{self.record.id}, Ip : #{request.env['CLIENT_IP']}, Domain : #{request.env['HTTP_HOST']}, Controller : #{request.parameters[:controller]}, Action : #{request.parameters[:action]}, Timestamp : #{Time.now}, Browser : #{UserAgent.parse(request.env['HTTP_USER_AGENT']).browser}")
+  end
+
+  def single_session_per_user?
     self.web_session and Account.current and Account.current.features_included?(:single_session_per_user)
   end
 

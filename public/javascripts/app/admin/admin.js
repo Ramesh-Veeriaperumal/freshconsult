@@ -44,7 +44,18 @@ window.App = window.App || {};
 				break;
 			case 'admin/email_notifications/index':
 				this.current_module = 'AdminFontSettings'
-				break
+				  break;
+      case 'admin/skills/index':
+      case 'admin/skills/new':
+      case 'admin/skills/edit':
+          this.current_module = 'Skills';
+          break;
+      case 'admin/user_skills/index':
+          this.current_module = 'AgentSkills';
+          break;
+      default:
+          // Need to handle for other namespaces
+          break;
 			}
 		},
 

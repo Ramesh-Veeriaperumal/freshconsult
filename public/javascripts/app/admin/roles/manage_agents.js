@@ -23,12 +23,14 @@ var ManageAgents = ManageAgents || (function($){
 			var data = $(this).data();
 			$("#roleid").val(data.roleid);
 			_showModal(data.roleid, data.title, data.agentcount, data.isaccadmin);
+			$('.select2-input').focus();
+			jQuery('.modal-body').css("max-height", "none");
 		});
 	}
 
 	function _showModal(id, name, agentcount, isaccadmin){
 
-		// initial set of loading here
+		// initial set of loading here 
 		_appendContent(name, agentcount, _initmodal);
 		_resetPopup();
 		var $agentSelectBox = jQuery('#manage-agents-content .add-agent-box, #manage-agents-content .button-container');
@@ -116,6 +118,7 @@ var ManageAgents = ManageAgents || (function($){
 			if(!data.is_account_admin && (data.id !== DataStore.get('current_user').currentData.user.id)){
 				options.push(jQuery('<option>').text(data.name).val(data.id));
 			}
+			
 		});
 		jQuery('#manage-agents [data-action="add-agent"]').select2('destroy').html("").html(options).select2();
 	}
@@ -137,14 +140,15 @@ var ManageAgents = ManageAgents || (function($){
 	function _constructObject(data, cb){
 		var len = data.length;
 		var rolesObj = {};
+		var users_temp = [];
 		while(len--) {
 			if(data[len].user_id){
 				rolesObj[data[len].user_id] =  data[len].role_ids;
+				users_temp.push(data[len].user_id + '');
 			}
 		}
-		var users = Object.keys(rolesObj);
+		var users = users_temp.reverse();
 		var select2data = cb(users);
-
 		SubmitHandler.data = {
 			user: users,
 			roles: rolesObj,

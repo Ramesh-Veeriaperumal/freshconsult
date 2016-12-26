@@ -11,7 +11,7 @@ class ApiContactsController < ApiApplicationController
       render_custom_errors(contact_delegator, true)
     else
       build_user_emails_attributes if @email_objects.any?
-      if @item.create_contact!
+      if @item.create_contact!(params["active"])
         render_201_with_location(item_id: @item.id)
       else
         render_custom_errors

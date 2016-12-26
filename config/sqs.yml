@@ -15,6 +15,8 @@ development:
   cti_screen_pop: cti_screen_pop_dev
   fb_message_realtime_queue: social_fb_messenger_dev
   freshfone_call_notifier_queue: freshfone_call_notifier_development
+  collab_agent_update_queue: collab_dev
+  collab_ticket_update_queue: collab_dev
   auto_refresh_queue: auto_refresh_new_dev
   auto_refresh_alb_queue: auto_refresh_alb_dev
   agent_collision_queue: agent_collision_new_dev
@@ -40,6 +42,8 @@ staging:
   cti_call_queue: cti_call_staging
   fb_message_realtime_queue: social_fb_messenger_staging
   freshfone_call_notifier_queue: freshfone_call_notifier_staging
+  collab_agent_update_queue: collab_agent_update_staging
+  collab_ticket_update_queue: collab_ticket_update_staging
   auto_refresh_queue: auto_refresh_new_staging
   auto_refresh_alb_queue: auto_refresh_alb_staging
   agent_collision_queue: agent_collision_new_staging

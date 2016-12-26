@@ -1,0 +1,5 @@
+<li class="collab-noti collab-notification-list-item <%= !!notification.is_read ? 'noti-read' : 'noti-unread' %> <%= !!notification.invite ? 'noti-invite' : '' %> ">
+	<a data-noti-ids="<%= notification.notificationIds || notification.nid %>" data-convo-cid="<%= notification.body.co_id %>" data-user-ids="<%= notification.userIds %>" data-mentioned-msgs-count="<%= notification.mentionedMsgsCount %>" data-mentionedby-names="<%= notification.mentionedByNames %>" data-msg-id="<%= notification.mid %>" class="collab-notification-link" data-href="/helpdesk/tickets/<%= notification.body.co_id %>?collab=true&msg=<%= notification.mid %>" title='<%= notification.notiText %>'>
+		<%= notification.notiHtml %>
+	</a>
+</li>

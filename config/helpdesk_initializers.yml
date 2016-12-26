@@ -27,6 +27,7 @@ helpdesk:
     - aws_forums
     - belongs_to_account
     - chat_config
+    - collab
     - compass
     - concerns
     - count_fix

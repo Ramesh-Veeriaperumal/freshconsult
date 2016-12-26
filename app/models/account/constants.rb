@@ -19,7 +19,7 @@ class Account < ActiveRecord::Base
     
     :pro => {
       :features => [ :gamification, :scenario_automations, :customer_slas, :business_hours, :forums, 
-        :surveys, :scoreboard, :facebook, :timesheets, :css_customization, :advanced_reporting ],
+        :surveys, :scoreboard, :facebook, :timesheets, :css_customization, :advanced_reporting, :sitemap ],
       :inherits => [ :basic ]
     },
     
@@ -34,7 +34,8 @@ class Account < ActiveRecord::Base
     
     :blossom => {
       :features => [ :gamification, :auto_refresh, :twitter, :facebook, :forums, :surveys , :scoreboard, :timesheets, 
-        :custom_domain, :multiple_emails, :advanced_reporting, :default_survey ],
+        :custom_domain, :multiple_emails, :advanced_reporting, :default_survey, :sitemap ],
+
       :inherits => [ :sprout ]
     },
     
@@ -63,7 +64,7 @@ class Account < ActiveRecord::Base
     
     :blossom_classic => {
       :features => [ :gamification, :auto_refresh, :twitter, :facebook, :forums, :surveys, 
-        :scoreboard, :timesheets, :advanced_reporting ],
+        :scoreboard, :timesheets, :advanced_reporting, :sitemap ],
       :inherits => [ :sprout_classic ]
     },
     
@@ -96,7 +97,7 @@ class Account < ActiveRecord::Base
     :sort_by_customer_response => false, :survey_links => true,
     :saml_unspecified_nameid => false, :euc_hide_agent_metrics => false,
     :single_session_per_user => false, :link_tickets => false, :parent_child_tickets => false,
-    :marketplace_app => false, :sandbox_account => false
+    :marketplace_app => false, :sandbox_account => false, :collaboration => false
   }
 
 
@@ -114,7 +115,7 @@ class Account < ActiveRecord::Base
     :agent_conference => false, :freshfone_warm_transfer => false, :restricted_helpdesk => false, :enable_multilingual => false,
     :count_es_writes => false, :count_es_reads => false, :activity_revamp => true, :countv2_writes => false, :countv2_reads => false,
     :helpdesk_restriction_toggle => false, :freshfone_acw => false, :ticket_templates => false, :cti => false, :all_notify_by_custom_server => false,
-    :freshfone_custom_forwarding => false, :freshfone_onboarding => false, :freshfone_gv_forward => false, :inline_images_with_one_hop => false }
+    :freshfone_custom_forwarding => false, :freshfone_onboarding => false, :freshfone_gv_forward => false, :inline_images_with_one_hop => false, :skill_based_round_robin => false }
 
   # This list below is for customer portal features list only to prevent from adding addition features
   ADMIN_CUSTOMER_PORTAL_FEATURES =  {:anonymous_tickets => true, :open_solutions => true, :auto_suggest_solutions => true, 
@@ -144,7 +145,7 @@ class Account < ActiveRecord::Base
     :restricted_helpdesk => false, :round_robin_capping => false, :shared_ownership => false,
     :sidekiq_dispatchr_feature => false, :solutions_meta_read => false, :supervisor_dashboard => false,
     :support_new_ticket_cache => false, :synchronous_apps => false, :ticket_list_page_filters_cache => false,
-    :translate_solutions => false
+    :translate_solutions => false, :spam_detection_service => false
   }
 
 end

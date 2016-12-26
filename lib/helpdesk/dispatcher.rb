@@ -31,6 +31,7 @@
         execute_rules unless @is_webhook
         @ticket.autoreply
         round_robin unless @ticket.spam? || @ticket.deleted?
+        @ticket.sbrr_fresh_ticket = true
         @ticket.save
         @ticket.va_rules_after_save_actions.each do |action|
           klass = action[:klass].constantize

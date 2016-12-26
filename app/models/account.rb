@@ -91,6 +91,10 @@ class Account < ActiveRecord::Base
     tz = "Kyiv" if tz.eql?("Kyev")
     tz
   end
+
+  def collab_feature_enabled?
+    @collab_feature_enabled ||= features?(:collaboration)
+  end
   
   def survey
     @survey ||= begin
@@ -133,6 +137,10 @@ class Account < ActiveRecord::Base
 
   def round_robin_capping_enabled?
     features?(:round_robin_load_balancing)
+  end
+
+  def skill_based_round_robin_enabled?
+    features?(:skill_based_round_robin)
   end
 
   def validate_required_ticket_fields?

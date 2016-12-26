@@ -25,9 +25,31 @@
 			<%= link_to_function("Switch to mobile version",
 								"jQuery.cookie('classic_view','false',{path:'/'});location.href='/';",
 								:class => 'mobile_switchBtn') if mobile_agent? && allowed_domain? %>
-		</div>	
+		</div>
 		<div class="header-wrapper">
-			<% if current_user then %>  
+			<% if current_account.collab_feature_enabled? %>
+				<div id="collab-bell" class="collab-bell">
+					<a id="bell-icon-link" class="bell-icon-link product-notification-link tooltip" data-placement="below">
+						<%= font_icon "bell", { :size => 30, :class => 'bell-icon' } %>
+						<span id="noti-count" class="noti-count hide"></span>
+					</a>
+					<ul id="collab-notification-dd" class="collab-notification-dd hide">
+						<li class="collab-notification-dd-head collab-notification-list-item"> <a class="collab-notification-link light-text"> <%= t('collaboration.notifications') %> </a></li>
+						<li class="info collab-notification-list-item"> <a class="collab-notification-link light-text"> <%= t('collaboration.no_notifications') %> </a></li>
+						<li class="list-container">
+							<ul id="collab-notification-list" class="collab-notification-list">
+							</ul>
+						</li>
+						<li class="collab-notification-dd-foot collab-notification-list-item">
+							<a href="/helpdesk/tickets/filter/ongoing_collab" class="collab-notification-link"> 
+								<%= t('collaboration.view_all_collaborations') %> 
+								<span id="notifiaction-total-collab"></span>
+							</a>
+						</li>
+					</ul>
+				</div>	
+			<% end %>
+			<% if current_user then %>
 			  	<div class="header-link-wrapper">
 			  		<% if current_account.freshfone_active? %>
 							<a href="#" id="freshfone-presence-toggle" class="tooltip 
@@ -212,6 +234,10 @@
 	</div>
 </div>
 
+<% if current_account.collab_feature_enabled? %>
+	<input type="hidden" id="collab-model-data" data-model-payload='{"clientId": "<%= Collaboration::Ticket.client_id_helpkit %>", "clientAccountId": "<%=current_account.id%>", "initAuthToken": "<%= Collaboration::Ticket.collab_token %>", "userId": "<%= current_user.id %>", "userName": "<%= current_user %>", "userEmail": "<%= current_user.email %>", "collab_url": <%= CollabConfig['collab_url'].to_json.html_safe %>, "rts_url": <%= CollabConfig['rts_url'].to_json.html_safe %>}'>
+<% end %>
+
 <%  if logged_in? and current_user.agent?  %>
   <script type="text/javascript">   	
     jQuery(document).ready(function() {
@@ -222,6 +248,10 @@
 		createDataStore(raw_store_data);
     Helpdesk.settings = <%= email_template_settings.html_safe %>;
   </script>
+
+    <% if current_account.collab_feature_enabled? %>
+		<%= javascript_include_tag :'cdn/collaboration_initer' %>
+	<% end %>
 <% end %> 
 
 <script>

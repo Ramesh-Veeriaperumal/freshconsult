@@ -119,7 +119,7 @@
                 name="portal[preferences][logo_link]" id="link_back_text" 
                 value="<%=(portal[:preferences]||{}).fetch(:logo_link, '')%>" 
                 placeholder="http://<%= portal.main_portal ? current_account.host : portal.portal_url.presence %>"
-                class="text input-xlarge" />
+                class="text input-xlarge linkback_url_valid" />
             <div class="info-data"> <%= t("linkback_info") %> </div>
           </div>
         </div>

@@ -114,6 +114,28 @@ class PasswordPolicy < ActiveRecord::Base
 		UPDATE_PASSWORD_EXPIRY % { :account_id => self.account.id, :user_type => self.user_type }
 	end
 
+	def generate_password
+	  base_password = SecureRandom.base64(User::PASSWORD_LENGTH)
+	  self.policies.collect do |policy|
+	  	configs = self.configs
+	  	case policy
+	  	when :minimum_characters
+	  		length = configs["minimum_characters"].to_i - base_password.length
+	  		base_password += SecureRandom.base64(length) if length > 0
+	  	when :atleast_an_alphabet_and_number
+		  	charset = Array('A'..'Z') + Array('a'..'z')
+		  	base_password += charset.sample
+	  		base_password += rand(0...9).to_s
+	  	when :have_mixed_case
+	  		base_password += Array('A'..'Z').sample
+	  		base_password += Array('a'..'z').sample
+	  	when :have_special_character
+	  		base_password += ['!','$','@','%'].sample
+	  	end
+	  end
+	  return base_password.split("").shuffle.join
+	end
+
 	private
 		def validate_configs
 			input_policies = self.policies.map(&:to_sym)
