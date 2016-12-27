@@ -18,12 +18,17 @@ class Solution::CheckContentForSpam < BaseWorker
   def check_description_for_spam article_id
     article = @account.solution_articles.find(article_id)
     article_spam_regex = Regexp.new($redis_others.perform_redis_op("get", ARTICLE_SPAM_REGEX), "i")
-    increase_ehawk_spam_score_for_account(4, article_id) if (article.description =~ article_spam_regex).present?
+    desc_un_html_lines = article.desc_un_html.split("\n")
+    spam_content = false
+    desc_un_html_lines.each do |desc_line|
+      spam_content = true and break if (desc_line =~ article_spam_regex).present?
+    end
+    increase_ehawk_spam_score_for_account(4, article_id) if spam_content
   end
    
   def increase_ehawk_spam_score_for_account(spam_score, article_id)
-    signup_params = get_signup_params
-    signup_params["api_response"]["status"] = spam_score if signup_params
+    signup_params = (get_signup_params || {}).merge({"api_response" => {}})
+    signup_params["api_response"]["status"] = spam_score
     set_others_redis_key(signup_params_key,signup_params.to_json)
     @account.conversion_metric.update_attribute(:spam_score, spam_score) if @account.conversion_metric
     increment_portal_cache_version

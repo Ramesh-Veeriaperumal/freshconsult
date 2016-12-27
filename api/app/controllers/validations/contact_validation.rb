@@ -12,10 +12,10 @@ class ContactValidation < ApiValidation
   }.freeze
 
   MANDATORY_FIELD_ARRAY = [:email, :mobile, :phone, :twitter_id].freeze
-  CHECK_PARAMS_SET_FIELDS = (MANDATORY_FIELD_ARRAY.map(&:to_s) + %w(time_zone language custom_fields)).freeze
+  CHECK_PARAMS_SET_FIELDS = (MANDATORY_FIELD_ARRAY.map(&:to_s) + %w(time_zone language custom_fields active)).freeze
   MANDATORY_FIELD_STRING = MANDATORY_FIELD_ARRAY.join(', ').freeze
 
-  attr_accessor :avatar, :view_all_tickets, :custom_fields, :company_name, :email, :fb_profile_id, :job_title,
+  attr_accessor :active, :avatar, :view_all_tickets, :custom_fields, :company_name, :email, :fb_profile_id, :job_title,
                 :language, :mobile, :name, :other_emails, :phone, :tags, :time_zone, :twitter_id, :address, :description
 
   alias_attribute :company_id, :company_name
@@ -34,6 +34,8 @@ class ContactValidation < ApiValidation
   validates :name, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }
   validates :view_all_tickets, data_type: { rules: 'Boolean',  ignore_string: :allow_string_param }
   validates :tags, data_type: { rules: Array, allow_nil: false }, array: { data_type: { rules: String }, custom_length: { maximum: ApiConstants::TAG_MAX_LENGTH_STRING } }, string_rejection: { excluded_chars: [','], allow_nil: true }
+
+  validates :active, data_type: { rules: 'Boolean',  ignore_string: :allow_string_param }, custom_inclusion: { in: ['true', true], message: :cannot_deactivate }, if: -> { @active_set }
 
   validate :contact_detail_missing, if: :email_mandatory?, on: :create
 

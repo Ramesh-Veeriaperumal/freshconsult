@@ -1283,11 +1283,14 @@ App.CollaborationUi = (function ($) {
             */ 
             Collab.fetchCount = 0;
             Collab.loadConversation(function() {
-                Collab.enableMentions();
+                if(!Collab.mentionsEnabled) {
+                    Collab.enableMentions();
+                }
             });
             Collab.expandCollabOnLoad = config.expandCollabOnLoad;
             Collab.scrollToMsgId = config.scrollToMsgId;
 
+            _COLLAB_PVT.unbindEvents();
 	        _COLLAB_PVT.events();
             console.log("Started collaboration.");
 	    },
@@ -1487,6 +1490,7 @@ App.CollaborationUi = (function ($) {
             };
             var lm = new lightMention(options);
             lm.bindMention();
+            Collab.mentionsEnabled = true;
         },
 
         parseJson: function (data) {
