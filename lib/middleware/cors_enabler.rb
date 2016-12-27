@@ -1,6 +1,8 @@
 require 'rack/cors'
 
 class Middleware::CorsEnabler < Rack::Cors
+  include Redis::RedisKeys
+  include Redis::OthersRedis
 
   CORS_RESOURCE_CONFIG = {
     :headers => :any,
@@ -29,9 +31,14 @@ class Middleware::CorsEnabler < Rack::Cors
       @status, @headers, @response = @app.call(env)
     else 
       path_regex = api_request?(env) ? env["PATH_INFO"] : RESOURCE_PATH_REGEX
+
+      cors_resource_config_clone = CORS_RESOURCE_CONFIG.dup
+      if new_api_request?(env)  
+        cors_resource_config_clone[:credentials] = false if redis_key_exists?(CROSS_DOMAIN_API_GET_DISABLED)
+      end
       allow do 
         origins '*'
-        resource path_regex, CORS_RESOURCE_CONFIG
+        resource path_regex, cors_resource_config_clone
       end
       @status, @headers, @response = super(env)
     end
@@ -41,6 +48,10 @@ class Middleware::CorsEnabler < Rack::Cors
   # this is to allow api request with the format being sent in query string
   # Allow V2 api requests also.
   def api_request?(env)
-    env['PATH_INFO'].starts_with?('/api/') || env["ORIGINAL_FULLPATH"] =~ RESOURCE_PATH_REGEX 
+     new_api_request?(env) || env["ORIGINAL_FULLPATH"] =~ RESOURCE_PATH_REGEX 
+  end
+
+  def new_api_request?(env)
+    env['PATH_INFO'].starts_with?('/api/')
   end
 end

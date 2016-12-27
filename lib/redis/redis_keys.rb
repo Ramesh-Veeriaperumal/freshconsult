@@ -290,6 +290,8 @@ module Redis::RedisKeys
   AUTOMATION_TICKET_PARAMS = "AUTOMATION_TICKET_PARAMS:%{account_id}:%{ticket_id}"
   ARTICLE_SPAM_REGEX = "ARTICLE_SPAM_REGEX"
 
+  CROSS_DOMAIN_API_GET_DISABLED = "CROSS_DOMAIN_API_GET_DISABLED" 
+
 	def newrelic_begin_rescue
 		begin
 		  yield
