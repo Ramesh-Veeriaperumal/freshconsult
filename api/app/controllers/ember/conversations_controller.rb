@@ -14,7 +14,7 @@ module Ember
 
     before_filter :can_send_user?, only: [:forward, :facebook_reply, :tweet]
     before_filter :set_defaults, only: [:forward]
-    SINGULAR_RESPONSE_FOR = %w(reply forward create tweet facebook).freeze
+    SINGULAR_RESPONSE_FOR = %w(reply forward create update tweet facebook_reply).freeze
 
     def ticket_conversations
       return if validate_filter_params(%w(order_type))
