@@ -1,7 +1,6 @@
 class Helpdesk::Ticket < ActiveRecord::Base
 
   def enqueue_skill_based_round_robin
-    Rails.logger.debug "Inspecting SBRR job enqueue source for ticket #{display_id} \n #{caller.join("\n")}"
     SBRR::Assignment.perform_async(:model_changes => model_changes, 
       :ticket_id => display_id, :attributes => { :sbrr_fresh_ticket => sbrr_fresh_ticket,
       :sbrr_ticket_dequeued => sbrr_ticket_dequeued, 
