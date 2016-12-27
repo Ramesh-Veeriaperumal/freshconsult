@@ -30,6 +30,8 @@
     $ref: ./request/contacts/update_password.yaml
   note_create_input:
     $ref: ./request/conversations/note.yaml
+  note_update_input:
+    $ref: ./request/conversations/update.yaml
   note_reply_input:
     $ref: ./request/conversations/reply.yaml
   note_forward_input:

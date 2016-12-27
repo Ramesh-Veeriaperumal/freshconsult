@@ -6,6 +6,7 @@ module Ember
     include Conversations::Twitter
     include HelperConcern
     include AttachmentConcern
+    include Utils::Sanitizer
     decorate_views(
       decorate_objects: [:ticket_conversations], 
       decorate_object: [:create, :update, :reply, :forward, :facebook_reply, :tweet]
@@ -31,7 +32,7 @@ module Ember
       assign_note_attributes
       delegator_hash = { attachment_ids: @attachment_ids, shared_attachments: shared_attachments }
       return unless validate_delegator(@item, delegator_hash)
-      is_success = create_note
+      is_success = save_note
       render_response(is_success)
     end
 
@@ -50,6 +51,15 @@ module Ember
                          attachment_ids: @attachment_ids, cloud_file_ids: @cloud_file_ids }
       return unless validate_delegator(@item, delegator_hash)
       save_note_and_respond
+    end
+
+    def update
+      sanitize_body_text
+      assign_note_attributes
+      @item.assign_attributes(params[cname])
+      delegator_hash = { attachment_ids: @attachment_ids, shared_attachments: shared_attachments }
+      return unless validate_delegator(@item, delegator_hash)
+      render_custom_errors(@item) unless save_note
     end
 
     def facebook_reply
@@ -94,6 +104,11 @@ module Ember
 
     private
 
+      def sanitize_body_text
+        @item.assign_element_html(params[cname][:note_body_attributes], 'body') if params[cname][:note_body_attributes]
+        sanitize_body_hash(params[cname],:note_body_attributes,"body","full_text") if params[cname]
+      end
+
       def conditional_preload_options
         preload_options = [:schema_less_note, :note_old_body, :attachments, :freshfone_call, :cloud_files, :attachments_sharable,
             custom_survey_remark: { survey_result: { survey: { survey_questions: {} }, survey_result_data: {} } }]
@@ -106,7 +121,7 @@ module Ember
       end
 
       def save_note_and_respond
-        is_success = create_note
+        is_success = save_note
         # publish solution is being set in kbase_email_included based on privilege and email params
         if is_success
           create_solution_article if @publish_solution
@@ -154,7 +169,7 @@ module Ember
         # set source only for create/reply/forward action not for update action. Hence TYPE_FOR_ACTION is checked.
         params[cname][:source] = ConversationConstants::TYPE_FOR_ACTION[action_name] if ConversationConstants::TYPE_FOR_ACTION.keys.include?(action_name)
         # only note can have choices for private field. others will be set to false always.
-        params[cname][:private] = false unless params[cname][:source] == Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note']
+        params[cname][:private] = false unless update? || params[cname][:source] == Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note']
         # Set ticket id from already assigned ticket only for create/reply/forward action not for update action.
         params[cname][:notable_id] = @ticket.id if @ticket
         params[cname][:attachments] = params[cname][:attachments].map { |att| { resource: att } } if params[cname][:attachments]
@@ -178,7 +193,7 @@ module Ember
         @include_original_attachments = @include_original_attachments.to_bool if @include_original_attachments.try(:is_a?, String)
       end
 
-      def create_note
+      def save_note
         # assign attributes post delegator validation
         @item.email_config_id = @delegator.email_config_id
         @item.attachments = @item.attachments + @delegator.draft_attachments if @delegator.draft_attachments

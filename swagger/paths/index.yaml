@@ -64,6 +64,9 @@
 /tickets/{id}/tweet:
   $ref: ./conversations/twitter_reply.yaml
 
+/conversations/{id}:
+  $ref: ./conversations/crud.yaml
+
 /contacts:
   $ref: ./contacts/crud.yaml
 /contacts/{id}:

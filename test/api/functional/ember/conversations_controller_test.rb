@@ -63,6 +63,12 @@ module Ember
       params_hash
     end
 
+    def update_note_params_hash
+      body = Faker::Lorem.paragraph
+      params_hash = { body: body }
+      params_hash
+    end
+
     def test_create_with_incorrect_attachment_type
       attachment_ids = ['A', 'B', 'C']
       params_hash = create_note_params_hash.merge({attachment_ids: attachment_ids})
@@ -880,6 +886,62 @@ module Ember
       assert_response 200
       response = parse_response @response.body
       assert_equal 6, response.size
+    end
+
+    def test_update_without_ticket_access
+      User.any_instance.stubs(:has_ticket_permission?).returns(false)
+      t = create_ticket
+      note = create_private_note(t)
+      put :update, construct_params({ version: 'private', id: note.id }, update_note_params_hash)
+      assert_response 403
+      match_json(request_error_pattern(:access_denied))
+      User.any_instance.unstub(:has_ticket_permission?)
+    end
+
+    def test_update_success
+      t = create_ticket
+      note = create_private_note(t)
+      params_hash = update_note_params_hash
+      put :update, construct_params({ version: 'private', id: note.id }, params_hash)
+      assert_response 200
+      note = Helpdesk::Note.find(note.id)
+      match_json(update_note_pattern(params_hash, note))
+      match_json(update_note_pattern({}, note))
+    end
+
+    def test_update_with_attachments
+      file = fixture_file_upload('/files/attachment.txt', 'plain/text', :binary)
+      attachment_id = create_attachment(attachable_type: 'UserDraft', attachable_id: @agent.id).id
+      canned_response = create_response(
+          title: Faker::Lorem.sentence,
+          content_html: Faker::Lorem.paragraph,
+          visibility: Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents],
+          attachments: { resource: fixture_file_upload('files/attachment.txt', 'text/plain', :binary) })
+      params_hash = update_note_params_hash.merge('attachments' => [file], 
+          'attachment_ids' => [attachment_id] | canned_response.shared_attachments.map(&:attachment_id))
+      t = create_ticket
+      note = create_private_note(t)
+      DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
+      put :update, construct_params({ version: 'private', id: note.id }, params_hash)
+      DataTypeValidator.any_instance.unstub(:valid_type?)
+      assert_response 200
+      note = Helpdesk::Note.find(note.id)
+      match_json(update_note_pattern(params_hash, note))
+      match_json(update_note_pattern({}, note))
+      assert_equal 3, note.attachments.count
+    end
+
+    def test_update_with_cloud_files
+      cloud_file_params = [{ filename: 'image.jpg', url: 'https://www.dropbox.com/image.jpg', application_id: 20 }]
+      params_hash = update_note_params_hash.merge(cloud_files: cloud_file_params)
+      t = create_ticket
+      note = create_private_note(t)
+      put :update, construct_params({ version: 'private', id: note.id }, params_hash)
+      assert_response 200
+      note = Helpdesk::Note.find(note.id)
+      match_json(update_note_pattern(params_hash, note))
+      match_json(update_note_pattern({}, note))
+      assert_equal 1, note.cloud_files.count
     end
     
     def test_agent_reply_template_with_empty_signature

@@ -151,7 +151,7 @@ class ConversationsController < ApiApplicationController
       params[cname][:source] = ConversationConstants::TYPE_FOR_ACTION[action_name] if ConversationConstants::TYPE_FOR_ACTION.keys.include?(action_name)
 
       # only note can have choices for private field. others will be set to false always.
-      params[cname][:private] = false unless params[cname][:source] == Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note']
+      params[cname][:private] = false unless update? || params[cname][:source] == Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note']
 
       # Set ticket id from already assigned ticket only for create/reply/forward action not for update action.
       params[cname][:notable_id] = @ticket.id if @ticket

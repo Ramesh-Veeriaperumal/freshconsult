@@ -1,0 +1,17 @@
+type: object
+allOf:
+  - $ref: '#/definitions/note'
+  - properties:
+      attachments:
+        type: array
+        items:
+          type: string
+          format: byte
+      attachment_ids:
+        type: array
+        items:
+          type: number
+      cloud_files:
+        type: array
+        items:
+          $ref: '#/definitions/cloud_file_input'

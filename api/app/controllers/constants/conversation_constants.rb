@@ -3,14 +3,14 @@ module ConversationConstants
   CREATE_ARRAY_FIELDS = ['notify_emails', 'attachments', 'attachment_ids'].freeze
   REPLY_ARRAY_FIELDS = %w(cc_emails bcc_emails attachments attachment_ids).freeze
   FORWARD_ARRAY_FIELDS = %w(to_emails cc_emails bcc_emails attachments attachment_ids cloud_file_ids).freeze
-  UPDATE_ARRAY_FIELDS = ['attachments'].freeze
+  UPDATE_ARRAY_FIELDS = %w(attachments attachment_ids).freeze
   TWEET_ARRAY_FIELDS = [].freeze
 
   REPLY_FIELDS = %w(body user_id from_email send_survey).freeze | REPLY_ARRAY_FIELDS | AttachmentConstants::CLOUD_FILE_FIELDS
   FORWARD_FIELDS = %w(body agent_id from_email include_quoted_text include_original_attachments).freeze | FORWARD_ARRAY_FIELDS | AttachmentConstants::CLOUD_FILE_FIELDS
   CREATE_FIELDS = %w(body private incoming user_id).freeze | CREATE_ARRAY_FIELDS | AttachmentConstants::CLOUD_FILE_FIELDS
   TWEET_FIELDS = %w(body tweet_type twitter_handle_id).freeze
-  UPDATE_FIELDS = %w(body).freeze | UPDATE_ARRAY_FIELDS
+  UPDATE_FIELDS = %w(body).freeze | UPDATE_ARRAY_FIELDS | AttachmentConstants::CLOUD_FILE_FIELDS
   FACEBOOK_REPLY_FIELDS = %w(body agent_id note_id).freeze
   MAX_INCLUDE = 10
   TYPE_FOR_ACTION = {

@@ -31,6 +31,10 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/ticket", only: [:split_note]
   end
 
+  edit_note do
+    resource :"ember/conversation", only: [:update], :owned_by => { :scoper => :notes }
+  end
+
   delete_contact do
     resource :"ember/contact", only: [:bulk_delete, :destroy, :bulk_restore, :restore, :whitelist, :bulk_whitelist]
   end

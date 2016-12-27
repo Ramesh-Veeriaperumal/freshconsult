@@ -20,3 +20,30 @@ post:
       description: Bad Request Error
       schema:
         $ref: '#/definitions/bad_request_error'
+    403:
+      description: Access denied
+
+put:
+  tags: [conversation]
+  description: Update a Note
+  parameters:
+    - name: id
+      type: number
+      in: path
+      description: ID of note to be updated
+    - name: data
+      in: body
+      required: true
+      schema:
+        $ref: '#/definitions/note_update_input'
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/extended_note'
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+    403:
+      description: Access denied
