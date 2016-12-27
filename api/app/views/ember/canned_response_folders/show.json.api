@@ -1,5 +1,5 @@
 JSON.generate({
   id: @item.id,
   name: @item.name,
-  responses: @ca_responses.map { |item| item.attributes.slice('id', 'title') }
+  canned_responses: @ca_responses.map { |item| item.attributes.slice('id', 'title') }
 })

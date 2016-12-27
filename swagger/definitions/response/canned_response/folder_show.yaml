@@ -2,7 +2,7 @@ type: object
 allOf:
   - $ref: '#/definitions/canned_response_folder'
   - properties:
-      responses:
+      canned_responses:
         type: array
         items:
           $ref: '#/definitions/canned_response'

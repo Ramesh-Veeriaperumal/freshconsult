@@ -5114,7 +5114,7 @@
         },
         {
           "properties": {
-            "responses": {
+            "canned_responses": {
               "type": "array",
               "items": {
                 "$ref": "#/definitions/canned_response"
