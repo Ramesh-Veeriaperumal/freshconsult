@@ -177,10 +177,6 @@ module Redis::RedisKeys
   PERSISTENT_RECENT_SEARCHES = "PERSISTENT_RECENT_SEARCHES:%{account_id}:%{user_id}"
   PERSISTENT_RECENT_TICKETS = "PERSISTENT_RECENT_TICKETS:%{account_id}:%{user_id}"
 
-  #update tickets sla - move from delayed job to sidekiq starts
-  SLA_ON_STATUS_CHANGE = "SLA_ON_STATUS_CHANGE"
-  #update tickets sla - move from delayed job to sidekiq ends
-
 	# List of languages used by agents in an account
   AGENT_LANGUAGE_LIST 	 = "AGENT_LANGUAGE_LIST:%{account_id}"
   # List of languges used by customers in an account
