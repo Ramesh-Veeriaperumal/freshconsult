@@ -18,12 +18,12 @@ module Helpdesk::RequesterWidgetHelper
   FIELDS_INFO                       = { :contact => 
                                         { :form             => "contact_form",
                                           :disabled_fields  => ["email"],
-                                          :loading_icon     => false
+                                          :loading_icon     => []
                                         }, 
                                         :company => 
                                           { :form             => "company_form",
                                             :disabled_fields  => ["name"],
-                                            :loading_icon     => false
+                                            :loading_icon     => ["name"]
                                           }
                                         }
 
@@ -144,7 +144,7 @@ module Helpdesk::RequesterWidgetHelper
     required    = enabled ? field.required_for_agent : false
     value       = field_value(field, object)
     placeholder = field.dom_placeholder
-    args        = { :include_loading_symbol => FIELDS_INFO[obj_name][:loading_icon]}
+    args        = { :include_loading_symbol => FIELDS_INFO[obj_name][:loading_icon].include?(field.name)}
 
     if obj_name == :company
       if required

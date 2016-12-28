@@ -24,7 +24,7 @@
 <% elsif company.present? %>
   <div class="break-word user-company-name" title="<%= h company.name %>">
     <% if requester_widget && @unassociated_company %>
-      <span class="ficon-notice fsize-16 requester-notice tooltip" data-original-title="<%=t('company.requester_not_associated') %>" ></span>
+      <span class="ficon-notice-o fsize-16 requester-notice tooltip" data-original-title="<%=t('company.requester_not_associated') %>" ></span>
     <% end %>
     <%= link_to(h(company.name), company, :'data-pjax' => "#body-container")  %>
   </div>

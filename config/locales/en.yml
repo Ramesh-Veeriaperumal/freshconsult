@@ -5726,7 +5726,7 @@ en:
     executed: " executed "
     performed: " performed "
     system_activity_timestamp: "<strong class='muted'>System</strong> %{system_rule} <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date}) "
-    requestor_info: Requestor Info
+    requestor_info: Requester Info
     view_twitter: View on Twitter
     view_facebook: View on Facebook
     via: via

@@ -76,17 +76,17 @@ window.App.Tickets = window.App.Tickets || {};
 	    }
 	      ele.after(companyErrorField);
 	  },
-	  toggleLoadingSymbol : function(show) {
-	  	var $ele = $('.loading-company-fields');
-     if(show){
-     	$ele.removeClass('hide')
-     }else{
-     	$ele.addClass('hide')
-     }
+	  toggleLoadingSymbol : function(show,for_elt) {
+	  	var elements = (for_elt == "") ? $(".requester-widget-user-edit-dialog [id$='_loading']").not("#company_name_loading,#company_domains_loading") : $(".requester-widget-user-edit-dialog [id='" + for_elt + "_loading']");
+      elements.toggleClass('sloading loading-small');
+
+    	this.companyFieldsExceptName().each(function(){
+    		jQuery(this).prop('disabled',show);
+    	});
 	  },
 	  lookup : function(searchString, callback) {
 	  	var _this = App.Tickets.TicketRequester;
-	    _this.toggleLoadingSymbol(true);
+	    _this.toggleLoadingSymbol(true, 'company_name');
 	    new Ajax.Request(TICKET_DETAILS_DATA['companies_autocomplete_path'] + encodeURIComponent(searchString),
 	    {
 	      method:'GET',
@@ -103,7 +103,7 @@ window.App.Tickets = window.App.Tickets || {};
           $companyName.data("partialCompanyList", _partial_list.concat(response.responseJSON.results));
 
           callback(choices);
-          _this.toggleLoadingSymbol(false);
+          _this.toggleLoadingSymbol(false, 'company_name');
           if(response.responseJSON.results.length === 0){
               _this.bindErrorMessage($('#company_name'),TICKET_DETAILS_DATA['new_company_message']);
           }else{
@@ -159,7 +159,7 @@ window.App.Tickets = window.App.Tickets || {};
 	  },
 	  fetchCompanyDetails : function(company_name) {
 	  	var _this = this;
-	    this.toggleLoadingSymbol(true);
+	    this.toggleLoadingSymbol(true,"");
 	    new Ajax.Request('/helpdesk/commons/fetch_company_by_name?name=' + encodeURIComponent(company_name),
 	      {
 	          method: 'GET',
@@ -205,7 +205,7 @@ window.App.Tickets = window.App.Tickets || {};
 	                _this.clearCompanyFieldValues();  
 	              }
 	              _this.toggleRequesterEdit(true);
-	              _this.toggleLoadingSymbol(false);
+	              _this.toggleLoadingSymbol(false,"");
 	            }
 	          }
 	      });
@@ -219,16 +219,11 @@ window.App.Tickets = window.App.Tickets || {};
 	      }, 800);
 	    });
 	  },
-	  bindPopupEvents: function(){
-	  	var $doc = $(document), 
-					_this = this;
-			
-			 /* requester widget contact edit bindevents start */
-
-			 $doc.on('change.requester', '#add-company' ,function(){
-			 	var $companyName = $('#company_name'),
-			 		$companySection = $('.company-field-section');
-			 	if($(this).is(':checked')){
+	  openCompanySection : function(){
+	  	var $companyName = $('#company_name'),
+			 		$companySection = $('.company-field-section'),
+			 		_this = this;
+			 	if($('#add-company').is(':checked')){
 			 		$companySection.slideDown(200,function(){
 			 			$companyName.focus();
 			 		});	
@@ -239,18 +234,32 @@ window.App.Tickets = window.App.Tickets || {};
 				 		$companyName.val('').blur();
 			 		});
 			 	}
+	  },
+	  bindPopupEvents: function(){
+	  	var $doc = $(document), 
+					_this = this;
+			
+			 /* requester widget contact edit bindevents start */
+
+			 $doc.on('change.popuprequester', '#add-company' ,function(){
+			 	_this.openCompanySection();
 			 });
 
-			  $doc.on('focus.requester', '#company_name' ,function(){
+			 $doc.on('click.popuprequester','.add-company-title',function(){
+			 	var $addCompany = $('#add-company');
+			 	$addCompany.prop('checked',!($addCompany.is(':checked'))).trigger('change');
+			 });
+
+			  $doc.on('focus.popuprequester', '#company_name' ,function(){
 			    company_changed = false;
 			    _this.toggleRequesterEdit(false);
 			  });
 
-			  $doc.on('input.requester', '#company_name' , function(e){
-			    company_changed = true;
+			  $doc.on('input.popuprequester', '#company_name' , function(e){
+			   	company_changed = true;
 			  });
 
-			  $doc.on('blur.requester', '#company_name' , function(){
+			  $doc.on('blur.popuprequester', '#company_name' , function(){
 			    if(company_changed){
 			      var company_name = $('#company_name').val();
 			      if(company_name.length > 0) {
@@ -265,7 +274,7 @@ window.App.Tickets = window.App.Tickets || {};
 			    _this.toggleRequesterEdit(true);
 			  });
 
-			  $doc.on('change.requester', '#requester-widget-user-edit-dialog .controls input.date' , function(){
+			  $doc.on('change.popuprequester', '#requester-widget-user-edit-dialog .controls input.date' , function(){
 			      if($(this).val() == "undefined" || $(this).val() == null || $(this).val() == "") {
 			          $(this).parent('.controls').children('span.dateClear').hide();
             }
@@ -303,12 +312,21 @@ window.App.Tickets = window.App.Tickets || {};
 	    });
 
 	    $doc.on("show.requester", "#requester-widget-user-edit-dialog", function(e){
+	    	_this.unBindPopupEvents();
 		    _this.initPopup();
+	    });
+
+	    $doc.on("hidden.requester", "#requester-widget-user-edit-dialog", function(e){
+		    _this.unBindPopupEvents();
 	    });
 	    /* requester info end */
 		},
     unBindEvents: function(){
+    	this.unBindPopUpEvents();
       $(document).off(".requester");
+    },
+    unBindPopupEvents: function(){
+    	$(document).off(".popuprequester")
     }
 	};
 
