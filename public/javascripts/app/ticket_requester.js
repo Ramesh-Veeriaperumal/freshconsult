@@ -322,8 +322,7 @@ window.App.Tickets = window.App.Tickets || {};
 	    /* requester info end */
 		},
     unBindEvents: function(){
-    	this.unBindPopUpEvents();
-      $(document).off(".requester");
+    	$(document).off(".popuprequester.requester");
     },
     unBindPopupEvents: function(){
     	$(document).off(".popuprequester")
