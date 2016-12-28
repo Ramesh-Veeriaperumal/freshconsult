@@ -42,6 +42,7 @@ class EhawkEmailVerifier
     check_email_status
     check_ip_status
     check_geolocation_status
+    remove_trailing_comma
   end
 
   def construct_params
@@ -94,7 +95,7 @@ class EhawkEmailVerifier
 
   def check_activity_status
     activity_status = risk_status @api_response["activity_score"]
-    @api_response["reason"] << @api_response["activity_details"] 
+    @api_response["reason"] << @api_response["activity_details"] + "," if @api_response["activity_details"].present
     if repeated_emails >= 5
       @api_response["status"] = 5 if (@api_response["status"] == 4 && activity_status == 4)
       activity_status += 1 if activity_status <= 3 
@@ -104,7 +105,7 @@ class EhawkEmailVerifier
 
   def check_community_status
     community_status = risk_status @api_response["community_score"]
-    @api_response["reason"] << @api_response["community_details"]
+    @api_response["reason"] << @api_response["community_details"] + "," if @api_response["community_details"].present?
     if @api_response["community_details"] =~ EHAWK_SPAM_COMMUNITY_REGEX 
       @api_response["status"] = 5 if (@api_response["status"] == 4 && community_status == 4)
       community_status += 1 if community_status <= 3 
@@ -114,7 +115,7 @@ class EhawkEmailVerifier
 
   def check_email_status
     email_status = risk_status @api_response["email_score"]
-    @api_response["reason"] << @api_response["email_details"] 
+    @api_response["reason"] << @api_response["email_details"] + "," if @api_response["email_details"].present?
     if @api_response["email_details"] =~ EHAWK_SPAM_EMAIL_REGEX
       @api_response["status"] = 5 if (@api_response["status"] == 4 && email_status == 4)
       email_status += 1  if email_status <= 3 
@@ -124,7 +125,7 @@ class EhawkEmailVerifier
 
   def check_ip_status
     ip_status = risk_status @api_response["ip_score"]
-    @api_response["reason"] << @api_response["ip_details"] 
+    @api_response["reason"] << @api_response["ip_details"] + "," if @api_response["ip_details"].present?
     if @api_response["ip_details"] =~ EHAWK_IP_BLACKLISTED_REGEX 
       @api_response["status"] = 5 if (@api_response["status"] == 4 && ip_status == 4)
       ip_status += 1  if ip_status <= 4 
@@ -175,6 +176,10 @@ class EhawkEmailVerifier
     else
       repeats = 0
     end
+  end
+
+  def remove_trailing_comma
+    @api_response["reason"] = @api_response["reason"][0..(@api_response["reason"].size)-2]
   end
   
 end
