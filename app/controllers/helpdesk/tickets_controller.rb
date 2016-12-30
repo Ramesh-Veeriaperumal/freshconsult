@@ -628,7 +628,7 @@ class Helpdesk::TicketsController < ApplicationController
         set_company_validatable_custom_fields
         company_save_success = @company.save
         check_domain_exists
-        @filtered_contact_params[:customer_id] = @company.id if company_save_success && @requester.company.blank?
+        @filtered_contact_params[:customer_id] = @company.id if company_save_success && @requester.company.blank? && !@unassociated_company
         flash[:notice] = (@company.errors) if !company_save_success && @existing_company.blank?
     end
     if company_save_success
