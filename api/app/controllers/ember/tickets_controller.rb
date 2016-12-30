@@ -263,7 +263,7 @@ module Ember
       def decorate_objects
         decorator, options = decorator_options
 
-        if sideload_options.include?('requester')
+        if sideload_options.include?('requester') && @items.present?
           @requesters = @items.collect(&:requester).uniq.each_with_object({}) do |contact, hash|
             hash[contact.id] = ContactDecorator.new(contact, name_mapping: contact_name_mapping)
           end
@@ -313,10 +313,6 @@ module Ember
 
       def conditional_preload_options
         INDEX_PRELOAD_OPTIONS
-      end
-
-      def sideload_options
-        ApiTicketConstants::SIDE_LOADING & (params[:include] || '').split(',').map!(&:strip)
       end
 
       def constants_class

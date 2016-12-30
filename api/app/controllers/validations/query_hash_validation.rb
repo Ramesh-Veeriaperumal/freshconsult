@@ -4,7 +4,7 @@ class QueryHashValidation < FilterValidation
 
   validates :condition, required: true, data_type: { rules: String }
   validates :operator, required: true, data_type: { rules: String }, custom_inclusion: { in: CustomFilterConstants::OPERATORS }
-  validates :type, required: true, data_type: { rules: String }, custom_inclusion: { in: CustomFilterConstants::QUERY_TYPE_OPTIONS }
+  validates :type, data_type: { rules: String }, custom_inclusion: { in: CustomFilterConstants::QUERY_TYPE_OPTIONS }
   validates :value, required: true
 
   validates :value, data_type: { rules: Array }, if: -> { CustomFilterConstants::ARRAY_VALUED_OPERATORS.include?(operator) }

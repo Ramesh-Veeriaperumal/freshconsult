@@ -34,7 +34,7 @@ class QueryHashValidationTest < ActionView::TestCase
 
   def test_missing_attributes
     stub_account
-    [:condition, :operator, :type, :value].each do |attribute|
+    [:condition, :operator, :value].each do |attribute|
       query_validation = QueryHashValidation.new(sample_query_params.except(attribute))
       refute query_validation.valid?
     end
