@@ -22,5 +22,6 @@ json.account do
   json.settings do
     json.personalized_email_replies current_account.features.personalized_email_replies?
     json.componse_email_enabled current_account.compose_email_enabled?
+    json.include_survey_manually @survey_in_specific_emails
   end
 end

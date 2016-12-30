@@ -3477,6 +3477,9 @@
                     },
                     "componse_email_enabled": {
                       "type": "boolean"
+                    },
+                    "include_survey_manually": {
+                      "type": "boolean"
                     }
                   }
                 }

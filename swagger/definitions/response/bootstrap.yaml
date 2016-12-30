@@ -149,6 +149,8 @@ properties:
                 type: boolean
               componse_email_enabled:
                 type: boolean
+              include_survey_manually:
+                type: boolean
   meta:
     type: object
     properties:
