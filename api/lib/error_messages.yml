@@ -101,4 +101,6 @@ api_error_messages:
   not_a_twitter_ticket: "Cannot tweet as reply to ticket NOT created from Twitter stream"
   only_query_hash_or_filter: "Cannot set both query hash and filter"
   select_a_field: "Atleast one of the fields is required"
-  feature_not_enabled: "%{feature} feature not enabled"
+  cannot_set_user_id: "Cannot set user_id when content type is inline"
+  incorrect_image_dimensions: "Image dimensions are larger than expected"
+  invalid_image_file: "Invalid file type(%{current_extension}). Please upload a jpg or png or gif file"

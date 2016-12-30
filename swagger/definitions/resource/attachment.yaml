@@ -10,3 +10,5 @@ allOf:
         type: string
       attachment_url:
         type: string
+      inline_url:
+        type: string

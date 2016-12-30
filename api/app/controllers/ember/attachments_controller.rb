@@ -3,18 +3,17 @@ module Ember
     # TODO: Common file shared between Web and API to be moved separately
     include Helpdesk::MultiFileAttachment::Util
     include DeleteSpamConcern
+    include HelperConcern
+
+    decorate_views
 
     skip_before_filter :check_privilege, only: [:destroy]
     before_filter :can_send_user?, only: [:create]
     before_filter :load_items, :check_destroy_permission, only: [:destroy]
 
     def create
-      attachment_delegator = AttachmentDelegator.new(@item, user: @user, api_user: api_current_user)
-      if attachment_delegator.valid?
-        create_attachment
-      else
-        render_custom_errors(attachment_delegator, true)
-      end
+      return unless validate_delegator(@item, user: @user, api_user: api_current_user)
+      create_attachment
     end
 
     def self.wrap_params
@@ -32,17 +31,27 @@ module Ember
       end
 
       def validate_params
-        params[cname].permit(*AttachmentConstants::CREATE_FIELDS)
-        @attachment_validation = AttachmentValidation.new(params[cname], @item, string_request_params?)
-        valid = @attachment_validation.valid?
-        render_errors @attachment_validation.errors, @attachment_validation.error_options unless valid
-        valid
+        validate_body_params(@item)
       end
 
       def sanitize_params
-        params[cname][:attachable_type] = AttachmentConstants::STANDALONE_ATTACHMENT_TYPE
-        params[cname][:user_id] ||= api_current_user.id
-        ParamsHelper.assign_and_clean_params(AttachmentConstants::FIELD_MAPPINGS, params[cname])
+        if params[cname][:inline] && params[cname][:inline].to_s == 'true'
+          params[cname][:attachable_type] = "#{AttachmentConstants::INLINE_ATTACHABLE_NAMES_BY_KEY[params[cname][:inline_type].to_i]} Upload"
+          params[cname][:description] = !public_upload? && one_hop? ? 'private' : 'public'
+        else
+          params[cname][:attachable_type] = AttachmentConstants::STANDALONE_ATTACHMENT_TYPE
+          params[cname][:user_id] ||= api_current_user.id
+        end
+        ParamsHelper.assign_and_clean_params(AttachmentConstants::PARAMS_MAPPINGS, params[cname])
+        ParamsHelper.clean_params(AttachmentConstants::PARAMS_TO_REMOVE, params[cname])
+      end
+
+      def public_upload?
+        [:forum, :solution].include?( AttachmentConstants::INLINE_ATTACHABLE_TOKEN_BY_KEY[params[cname][:inline_type].to_i])
+      end
+
+      def one_hop?
+        current_account.features_included?(:inline_images_with_one_hop)
       end
 
       def valid_content_type?
@@ -52,7 +61,7 @@ module Ember
 
       def create_attachment
         if @item.save
-          mark_for_cleanup(@item.id)
+          mark_for_cleanup(@item.id) if @item.attachable_type == AttachmentConstants::STANDALONE_ATTACHMENT_TYPE
         else
           render_custom_errors(@item)
         end
@@ -60,6 +69,10 @@ module Ember
 
       def post_destroy_actions(item)
         unmark_for_cleanup(item.id) if item.attachable_type == AttachmentConstants::STANDALONE_ATTACHMENT_TYPE
+      end
+
+      def constants_class
+        :AttachmentConstants.to_s.freeze
       end
 
       # Since wrap params arguments are dynamic & needed for checking if the resource allows multipart, placing this at last.

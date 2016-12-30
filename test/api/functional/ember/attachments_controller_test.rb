@@ -22,6 +22,11 @@ class Ember::AttachmentsControllerTest < ActionController::TestCase
     params_hash = { user_id: @agent.id, content: file }
   end
 
+  def inline_attachment_params_hash
+    file = fixture_file_upload('files/image33kb.jpg', 'image/jpg')
+    params_hash = { content: file, inline: true, inline_type: 1 }
+  end
+
   def test_create_with_no_params
     post :create, construct_params({version: 'private'}, {})
     match_json([bad_request_error_pattern('content', :missing_field)])
@@ -71,6 +76,44 @@ class Ember::AttachmentsControllerTest < ActionController::TestCase
     match_json(attachment_pattern({}, latest_attachment))
     assert_equal latest_attachment.attachable_type, 'UserDraft'
     assert_equal latest_attachment.attachable_id, @agent.id
+  end
+
+  def test_create_inline_image_with_invalid_type
+    DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
+    post :create, construct_params({version: 'private'}, inline_attachment_params_hash.merge(inline_type: 100))
+    assert_response 400
+    match_json([bad_request_error_pattern(:inline_type, :not_included, list: '1,2,3,4,5')])
+    DataTypeValidator.any_instance.unstub(:valid_type?)
+  end
+
+  def test_create_inline_image_with_invalid_file_extension
+    DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
+    file = fixture_file_upload('/files/attachment.txt', 'plain/text', :binary)
+    post :create, construct_params({version: 'private'}, inline_attachment_params_hash.merge(content: file))
+    assert_response 400
+    match_json([bad_request_error_pattern(:content, :invalid_image_file, current_extension: '.txt')])
+    DataTypeValidator.any_instance.unstub(:valid_type?)
+  end
+
+  def test_create_inline_image_with_invalid_image
+    DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
+    post :create, construct_params({version: 'private'}, inline_attachment_params_hash)
+    assert_response 400
+    match_json([bad_request_error_pattern(:content, :incorrect_image_dimensions)])
+    DataTypeValidator.any_instance.unstub(:valid_type?)
+  end
+
+  def test_create_inline_image
+    DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
+    Helpdesk::Attachment.any_instance.stubs(:valid_image?).returns(true)
+    post :create, construct_params({version: 'private'}, inline_attachment_params_hash)
+    assert_response 200
+    latest_attachment = Helpdesk::Attachment.last
+    match_json(attachment_pattern({}, latest_attachment))
+    assert_equal latest_attachment.attachable_type, 'Tickets Image Upload'
+    assert latest_attachment.inline_url.present?
+    Helpdesk::Attachment.any_instance.unstub(:valid_image?)
+    DataTypeValidator.any_instance.unstub(:valid_type?)
   end
 
   def test_destroy_attachment_without_ticket_privilege

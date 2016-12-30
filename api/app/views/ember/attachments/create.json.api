@@ -1,9 +1,1 @@
-JSON.generate(
-  id: @item.id,
-  content_type: @item.content_content_type,
-  size: @item.content_file_size,
-  name: @item.content_file_name,
-  attachment_url: @item.attachment_url_for_api,
-  created_at: @item.created_at.try(:utc),
-  updated_at: @item.updated_at.try(:utc)
-)
+JSON.generate(@item.to_hash)

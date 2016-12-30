@@ -5,5 +5,11 @@ properties:
   content:
     type: string
     format: byte
+  inline:
+    type: boolean
+  inline_type:
+    type: string
+    enum: [1, 2, 3, 4, 5]
+    description: 1 - Ticket, 2 - Forum, 3 - Solution, 4 - Email notification, 5 - Template
 required:
-  - body
+  - content
