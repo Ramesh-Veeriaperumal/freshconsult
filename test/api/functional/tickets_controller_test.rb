@@ -2416,14 +2416,6 @@ class TicketsControllerTest < ActionController::TestCase
     assert_equal 1, response.count
   end
 
-  def test_index_with_monitored_by_with_add_watcher_disabled
-    @account.rollback :add_watcher
-    get :index, controller_params(filter: 'watching')
-    assert_response 403
-  ensure
-    @account.launch :add_watcher
-  end
-
   def test_index_with_new_and_my_open
     Helpdesk::Ticket.update_all(status: 3)
     Helpdesk::Ticket.first.update_attributes(status: 2, responder_id: @agent.id,
