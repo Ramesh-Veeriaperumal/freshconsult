@@ -110,6 +110,7 @@ class TicketsControllerTest < ActionController::TestCase
   def test_search_with_feature_enabled
     warn "Elastic Search is not enabled. It might cause this test \"test_search_with_feature_enabled\" to fail." unless ES_ENABLED
     @account.launch :es_count_writes
+    @account.launch :list_page_new_cluster
     params = ticket_params_hash.except(:description).merge(custom_field: {})
     CUSTOM_FIELDS.each do |custom_field|
       params[:custom_field]["test_custom_#{custom_field}_#{@account.id}"] = CUSTOM_FIELDS_VALUES[custom_field]
@@ -129,6 +130,7 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_search_with_feature_enabled_and_invalid_params
     @account.launch :es_count_writes
+    @account.launch :list_page_new_cluster
     params = ticket_params_hash.except(:description).merge(custom_field: {})
     CUSTOM_FIELDS.each do |custom_field|
       params[:custom_field]["test_custom_#{custom_field}_#{@account.id}"] = CUSTOM_FIELDS_VALUES[custom_field]
@@ -141,6 +143,7 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_search_with_feature_enabled_and_invalid_value
     @account.launch :es_count_writes
+    @account.launch :list_page_new_cluster
     params = ticket_params_hash.except(:description).merge(custom_field: {})
     CUSTOM_FIELDS.each do |custom_field|
       params[:custom_field]["test_custom_#{custom_field}_#{@account.id}"] = CUSTOM_FIELDS_VALUES[custom_field]
