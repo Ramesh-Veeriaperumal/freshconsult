@@ -38,3 +38,6 @@
 //= require i18n
 //= require i18n/translations
 //= require formdata.populate.js
+//= require app/integrations/salesforce_v2/opportunity_create_form
+//= require app/integrations/salesforce_v2/object_search_results
+//= require app/integrations/salesforce_v2/object_search_results_na

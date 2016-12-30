@@ -285,6 +285,9 @@ class User < ActiveRecord::Base
         },
         mobile: {
           conditions: { mobile: contact_filter.mobile }
+        },
+        _updated_since: {
+          conditions: ['updated_at >= ?', contact_filter.try(:_updated_since).try(:to_time).try(:utc)]
         }
       }
     end

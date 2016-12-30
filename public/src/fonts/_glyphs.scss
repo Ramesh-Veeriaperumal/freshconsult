@@ -4,11 +4,11 @@
 
 @font-face {
   font-family: "glyphs";
-  src: font-url("glyphs_eb6731f5992794c4a28656249cbbdabc.eot");
-  src: font-url("glyphs_eb6731f5992794c4a28656249cbbdabc.eot?#iefix") format("embedded-opentype"),
-       font-url("glyphs_eb6731f5992794c4a28656249cbbdabc.woff") format("woff"),
-       font-url("glyphs_eb6731f5992794c4a28656249cbbdabc.ttf") format("truetype"),
-       font-url("glyphs_eb6731f5992794c4a28656249cbbdabc.svg#glyphs") format("svg");
+  src: font-url("glyphs_b913aa0f3070780ae53a792d685d21af.eot");
+  src: font-url("glyphs_b913aa0f3070780ae53a792d685d21af.eot?#iefix") format("embedded-opentype"),
+       font-url("glyphs_b913aa0f3070780ae53a792d685d21af.woff") format("woff"),
+       font-url("glyphs_b913aa0f3070780ae53a792d685d21af.ttf") format("truetype"),
+       font-url("glyphs_b913aa0f3070780ae53a792d685d21af.svg#glyphs") format("svg");
   font-weight: normal;
   font-style: normal;
 }
@@ -16,7 +16,7 @@
 @media screen and (-webkit-min-device-pixel-ratio:0) {
   @font-face {
     font-family: "glyphs";
-    src: font-url("glyphs_eb6731f5992794c4a28656249cbbdabc.svg#glyphs") format("svg");
+    src: font-url("glyphs_b913aa0f3070780ae53a792d685d21af.svg#glyphs") format("svg");
   }
 }
 
@@ -69,6 +69,7 @@
 .ficon-book:before,
 .ficon-book-dark:before,
 .ficon-book-hollow:before,
+.ficon-both-direction:before,
 .ficon-broadcast-tracker:before,
 .ficon-building:before,
 .ficon-bulb:before,
@@ -223,6 +224,7 @@
 .ficon-italic:before,
 .ficon-keyicon:before,
 .ficon-left-arrow-thick:before,
+.ficon-left-direction:before,
 .ficon-like:before,
 .ficon-link:before,
 .ficon-link-copy:before,
@@ -299,6 +301,7 @@
 .ficon-reports-sorting-desc:before,
 .ficon-restore:before,
 .ficon-retweet:before,
+.ficon-right-direction:before,
 .ficon-role:before,
 .ficon-safari:before,
 .ficon-save:before,
@@ -425,6 +428,7 @@
 .ficon-book:before { content: "\f112"; }
 .ficon-book-dark:before { content: "\f22e"; }
 .ficon-book-hollow:before { content: "\f1da"; }
+.ficon-both-direction:before { content: "\f267"; }
 .ficon-broadcast-tracker:before { content: "\f235"; }
 .ficon-building:before { content: "\f226"; }
 .ficon-bulb:before { content: "\f113"; }
@@ -579,6 +583,7 @@
 .ficon-italic:before { content: "\f24e"; }
 .ficon-keyicon:before { content: "\f265"; }
 .ficon-left-arrow-thick:before { content: "\f1d6"; }
+.ficon-left-direction:before { content: "\f268"; }
 .ficon-like:before { content: "\f15e"; }
 .ficon-link:before { content: "\f15f"; }
 .ficon-link-copy:before { content: "\f24f"; }
@@ -655,6 +660,7 @@
 .ficon-reports-sorting-desc:before { content: "\f1e4"; }
 .ficon-restore:before { content: "\f227"; }
 .ficon-retweet:before { content: "\f187"; }
+.ficon-right-direction:before { content: "\f269"; }
 .ficon-role:before { content: "\f188"; }
 .ficon-safari:before { content: "\f189"; }
 .ficon-save:before { content: "\f18a"; }

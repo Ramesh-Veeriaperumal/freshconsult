@@ -9,7 +9,7 @@ module ContactConstants
 
   VALIDATABLE_DELEGATOR_ATTRIBUTES = %w( company_id custom_field ).freeze
 
-  INDEX_FIELDS = %w( state email phone mobile company_id ).freeze
+  INDEX_FIELDS = %w( state email phone mobile company_id _updated_since ).freeze
 
   SCOPE_BASED_ON_ACTION = {
     'update'  => { deleted: false, blocked: false },
