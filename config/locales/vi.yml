@@ -3987,7 +3987,7 @@ vi:
     new_support_ticket: "ticket hỗ trợ mới"
     submit_new_ticket: "...hoặc gửi một ticket mới"
     login: "Đăng nhập"
-    login_portal: "Đăng nhập vào hệ thống hổ trợ."
+    login_portal: "Đăng nhập vào hệ thống hỗ trợ"
     login_details: "Xin vui lòng nhập vào thông tin đăng nhập bạn đã dùng khi đăng ký với khu vực hổ trợ."
     login_options: "...hoặc đăng nhập với"
     reset_password: "Hãy cung cấp địa chỉ email của bạn, và chúng tôi sẽ gửi cho bạn một email hướng dẫn thiếp lập lại mật khẩu."
@@ -4112,7 +4112,7 @@ vi:
     add: "Thêm Giải Pháp"
     info10: "Cá nhân (Chỉ Chuyên viên thấy được)"
     add_new_solution: "Thêm giải pháp"
-    title: "Các giải pháp"
+    title: "Giải pháp"
     title_singular: "Giải Pháp"
     info2: "Các giải pháp có thể được <b> công </b> hoặc <b> tin </b>. Giải pháp nào có thể nhìn thấy trong các dịch vụ Portal tự và cũng xuất hiện trong kết quả tìm kiếm"
     info3: "Các giải pháp tư nhân là giải pháp đại lý chỉ được sử dụng để chia sẻ kiến thức nội bộ"
@@ -4238,7 +4238,7 @@ vi:
       customers: "Các khách hàng"
       admin: Admin
       checkstatus: "Kiểm tra trạng thái ticket của bạn"
-      solutions: "Các giải pháp"
+      solutions: "Giải pháp"
       forums: Forum
       tickets: Tickets
       home: Home
