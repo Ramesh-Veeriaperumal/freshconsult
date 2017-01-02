@@ -284,6 +284,7 @@ CapsuleWidget = {
             ssl_enabled: resource.options.ssl_enabled,
             method: 'post',
             enable_resource_cache: resource.options.enable_resource_cache,
+            accept_type: 'application/xml',
             content_type: 'application/xml',
             rest_url: 'api/person',
             entity_name: 'person'
@@ -331,6 +332,7 @@ CapsuleWidget = {
             ssl_enabled: resource.options.ssl_enabled,
             method: 'post',
             enable_resource_cache: resource.options.enable_resource_cache,
+            accept_type: 'application/xml',
             content_type: 'application/xml',
             rest_url: 'api/party/' + escape(theForm.contactId.value) + '/history',
             entity_name: 'historyItem',
