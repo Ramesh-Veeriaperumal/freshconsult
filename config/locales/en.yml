@@ -4179,7 +4179,7 @@ en:
     helpdesk_software: Help Desk Software
     by_freshdesk: by Freshdesk
     submit_feedback: Submit Feedback
-    footer_feedback_subject_placeholder: Tell us how we can make Freshdesk better
+    footer_feedback_subject_placeholder: If Freshdesk could launch anything in 2017, what would it be?
     footer_feedback_thanks: Thank you for your feedback!
     errors:
       feedback_subject_required: Cannot be blank.
