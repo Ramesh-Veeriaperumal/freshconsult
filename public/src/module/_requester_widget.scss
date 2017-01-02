@@ -219,6 +219,9 @@
       @include float(left);
       white-space: nowrap;
       text-overflow: ellipsis;
+      &.tooltip{
+        line-height: 13px;
+      }
     }
   }
 
@@ -231,7 +234,6 @@
       margin: 0px;
       color: #505050;
       font-size: 13px;
-      line-height: 18px;
       &.expanded{
         width:100%;
         .more-toggle{
@@ -262,6 +264,7 @@
 
   .edit-requester-link{
     font-weight: bold;
+    @include padding(10px);
   }
 
   .dash-seperator{
@@ -352,12 +355,13 @@
     }
 
     .progress-block {
-      position: relative;
+      position: absolute;
       width: 12%;
-      top: -21px;
+      top: 14px;
       float: right;
       display: inline-block;
       z-index: 1;
+      right: 0;
     }
 
     input[type="text"].number, input[type="text"].decimal {
@@ -540,6 +544,7 @@
             text-transform: capitalize;
             font-weight: 600;
             color: #000;
+            cursor: pointer;
           }
         }
         #add-company{

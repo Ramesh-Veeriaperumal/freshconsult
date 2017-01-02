@@ -1,13 +1,13 @@
 {
   "checksum": {
-    "previous": "eb6731f5992794c4a28656249cbbdabc633eebbfa2c44951d32efe1390656e7f",
-    "current": "eb6731f5992794c4a28656249cbbdabc633eebbfa2c44951d32efe1390656e7f"
+    "previous": "b913aa0f3070780ae53a792d685d21afe433128cb293b22b158b215cf5c54f59",
+    "current": "b913aa0f3070780ae53a792d685d21afe433128cb293b22b158b215cf5c54f59"
   },
   "fonts": [
-    "public/assets/glyphs_eb6731f5992794c4a28656249cbbdabc.ttf",
-    "public/assets/glyphs_eb6731f5992794c4a28656249cbbdabc.svg",
-    "public/assets/glyphs_eb6731f5992794c4a28656249cbbdabc.woff",
-    "public/assets/glyphs_eb6731f5992794c4a28656249cbbdabc.eot"
+    "public/assets/glyphs_b913aa0f3070780ae53a792d685d21af.ttf",
+    "public/assets/glyphs_b913aa0f3070780ae53a792d685d21af.svg",
+    "public/assets/glyphs_b913aa0f3070780ae53a792d685d21af.woff",
+    "public/assets/glyphs_b913aa0f3070780ae53a792d685d21af.eot"
   ],
   "glyphs": {
     "abandoned-call": {
@@ -193,6 +193,10 @@
     "book-hollow": {
       "codepoint": 61914,
       "source": "public/glyphs/vectors/book-hollow.svg"
+    },
+    "both-direction": {
+      "codepoint": 62055,
+      "source": "public/glyphs/vectors/both-direction.svg"
     },
     "broadcast-tracker": {
       "codepoint": 62005,
@@ -810,6 +814,10 @@
       "codepoint": 61910,
       "source": "public/glyphs/vectors/left-arrow-thick.svg"
     },
+    "left-direction": {
+      "codepoint": 62056,
+      "source": "public/glyphs/vectors/left-direction.svg"
+    },
     "like": {
       "codepoint": 61790,
       "source": "public/glyphs/vectors/like.svg"
@@ -1113,6 +1121,10 @@
     "retweet": {
       "codepoint": 61831,
       "source": "public/glyphs/vectors/retweet.svg"
+    },
+    "right-direction": {
+      "codepoint": 62057,
+      "source": "public/glyphs/vectors/right-direction.svg"
     },
     "role": {
       "codepoint": 61832,

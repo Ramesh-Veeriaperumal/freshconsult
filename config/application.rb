@@ -104,7 +104,7 @@ module Helpkit
 
     # Please check api_initializer.rb, for compatibility with the version 2 APIs, if any middleware related changes are being done.
     config.middleware.insert_before 0, "Middleware::CorsEnabler"
-    config.middleware.insert_before 0, "Middleware::SecurityResponseHeader"
+    #config.middleware.insert_before 0, "Middleware::SecurityResponseHeader"
     config.middleware.insert_before "ActionDispatch::Session::CookieStore","Rack::SSL"
     config.middleware.use "Middleware::GlobalRestriction"
     config.middleware.use "Middleware::ApiThrottler", :max =>  1000
@@ -178,7 +178,7 @@ module Helpkit
 
       oauth_keys = Integrations::OauthHelper::get_oauth_keys
       oauth_keys.map { |oauth_provider, key_hash|
-        next if ['github', 'salesforce', 'shopify', 'slack', 'infusionsoft', 'google_oauth2', 'google_contacts', 'google_gadget_oauth2', 'outlook_contacts'].include?(oauth_provider)
+        next if ['github', 'salesforce', 'shopify', 'slack', 'infusionsoft', 'google_oauth2', 'google_contacts', 'google_gadget_oauth2', 'outlook_contacts', 'salesforce_v2'].include?(oauth_provider)
       if key_hash["options"].blank?
         provider oauth_provider, key_hash["consumer_token"], key_hash["consumer_secret"]
       else

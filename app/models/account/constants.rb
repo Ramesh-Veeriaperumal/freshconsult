@@ -34,8 +34,7 @@ class Account < ActiveRecord::Base
     
     :blossom => {
       :features => [ :gamification, :auto_refresh, :twitter, :facebook, :forums, :surveys , :scoreboard, :timesheets, 
-        :custom_domain, :multiple_emails, :advanced_reporting, :default_survey, :sitemap ],
-
+        :custom_domain, :multiple_emails, :advanced_reporting, :default_survey, :sitemap, :requester_widget],
       :inherits => [ :sprout ]
     },
     
@@ -115,7 +114,8 @@ class Account < ActiveRecord::Base
     :agent_conference => false, :freshfone_warm_transfer => false, :restricted_helpdesk => false, :enable_multilingual => false,
     :count_es_writes => false, :count_es_reads => false, :activity_revamp => true, :countv2_writes => false, :countv2_reads => false,
     :helpdesk_restriction_toggle => false, :freshfone_acw => false, :ticket_templates => false, :cti => false, :all_notify_by_custom_server => false,
-    :freshfone_custom_forwarding => false, :freshfone_onboarding => false, :freshfone_gv_forward => false, :inline_images_with_one_hop => false, :skill_based_round_robin => false }
+    :freshfone_custom_forwarding => false, :freshfone_onboarding => false, :freshfone_gv_forward => false, :inline_images_with_one_hop => false, :skill_based_round_robin => false,
+    :salesforce_v2 => false}
 
   # This list below is for customer portal features list only to prevent from adding addition features
   ADMIN_CUSTOMER_PORTAL_FEATURES =  {:anonymous_tickets => true, :open_solutions => true, :auto_suggest_solutions => true, 
@@ -141,11 +141,11 @@ class Account < ActiveRecord::Base
     :gamification_quest_perf => false, :lambda_exchange => false, :link_tickets => false,
     :list_page_new_cluster => false, :meta_read => false, :most_viewed_articles => false,
     :multifile_attachments => false, :new_footer_feedback_box => false, :new_leaderboard => false,
-    :parent_child_tickets => false, :periodic_login_feature => false, :requester_widget => true,
-    :restricted_helpdesk => false, :round_robin_capping => false, :shared_ownership => false,
-    :sidekiq_dispatchr_feature => false, :solutions_meta_read => false, :supervisor_dashboard => false,
-    :support_new_ticket_cache => false, :synchronous_apps => false, :ticket_list_page_filters_cache => false,
-    :translate_solutions => false, :spam_detection_service => false
+    :parent_child_tickets => false, :periodic_login_feature => false, :restricted_helpdesk => false,
+    :round_robin_capping => false, :shared_ownership => false, :sidekiq_dispatchr_feature => false,
+    :solutions_meta_read => false, :supervisor_dashboard => false, :support_new_ticket_cache => false,
+    :synchronous_apps => false, :ticket_list_page_filters_cache => false, :translate_solutions => false,
+    :spam_detection_service => false, :skip_hidden_tkt_identifier => false
   }
 
 end

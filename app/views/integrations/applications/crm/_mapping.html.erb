@@ -1,0 +1,119 @@
+<div class="sf-title-wrapper switch-right" >
+  <label for="enable_sync"> <%= @element_config["element_name"].capitalize%> Sync </label> 
+  <input type="checkbox" rel="toggle" name="enable_sync" id="enable_sync" data-checked-label="ON" data-unchecked-label="OFF" <% if @element_config['enable_sync'] == "on" %> checked=checked <% end %> onChange=change();>
+</div>
+<div class="field-mapping">
+  <div id="field-wrap"></div>
+    <!-- To Know Which End is the source of truth, Either CRM or Freshdesk, Source of Truth Can overwrite Account ID's on the Slave
+          End and also can write when there is collision.-->
+    <div class="row-fluid pad-bottom" id="master-setting-list">
+      <div class="closable-widget triangle-down"></div>
+      <div class="radio-btn-title setting-description"> <%=t("integrations.cloud_elements.form.source_of_truth")%> </div>
+      <div class="master-block-container pad-left">
+        <div class="radio-btn blocks">
+          <input type="radio" class="master-radio-btn" id="master_type_1" name="master_type" value="FD">  
+          <label for="master_type_1"> Freshdesk </label>   
+        </div>
+        &nbsp; &nbsp;
+        <div class="radio-btn blocks">
+          <input type="radio" checked=checked class="master-radio-btn" id="master_type_2" name="master_type"  value="CRM"> 
+          <label for="master_type_2"> <%= @element_config['element_name'].capitalize  %></label> 
+        </div>
+      </div>
+    </div>
+    <!-- Settings to know which way the sync is active -->
+    <div class="row-fluid pad-bottom" id="sync-setting-list">
+      <div class="closable-widget triangle-down"></div>
+      <div class="radio-btn-title setting-description"><%=t("integrations.cloud_elements.form.sync_settings")%> </div>
+      <div class="radio-btn-wrapper pl18 ml5 span6">
+        <div class="radio-btn-title pad"><%=t("integrations.cloud_elements.form.sync_info")%> </div>
+        <div class="radio-btn">
+          <input type="radio" checked=checked class="sync-radio-btn" id="crm_sync_type_1" name="crm_sync_type" value="CRM_to_FD">  
+          <a class="sync-icon"><%= font_icon "left-direction", { :size => 12 } %></a>
+          <label for="crm_sync_type_1"><%=t("integrations.#{@element_config["element"]}.form.crm_to_freshdesk")%> </label>   
+        </div>
+
+        <div class="radio-btn">
+          <input type="radio" class="sync-radio-btn" id="crm_sync_type_2" name="crm_sync_type"  value="FD_to_CRM"> 
+          <a class="sync-icon"><%= font_icon "right-direction", { :size => 12 } %></a> 
+          <label for="crm_sync_type_2"><%=t("integrations.#{@element_config["element"]}.form.freshdesk_to_crm")%></label> 
+        </div>
+
+        <div class="radio-btn">
+          <input type="radio" class="sync-radio-btn" id="crm_sync_type_3" name="crm_sync_type"  value="FD_AND_CRM"> 
+          <a class="sync-icon"><%= font_icon "both-direction", { :size => 12 } %></a> 
+          <label for="crm_sync_type_3"><%=t("integrations.#{@element_config["element"]}.form.two_way")%></label> 
+        </div>
+        <div class="master-block-container">
+          <div class="radio-btn-title blocks"> <%=t("integrations.cloud_elements.form.sync_frequency")%> &nbsp;</div>
+          <div class="blocks">
+            <select id="sync-frequency" name="sync_frequency">
+              <option value="instant"><%=t("integrations.cloud_elements.form.instant")%></option>
+              <option value="hourly"><%=t("integrations.cloud_elements.form.hourly")%></option>
+              <option value="daily"><%=t("integrations.cloud_elements.form.daily")%></option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  
+  <div class="row-fluid pad-bottom" id="rule-list">
+    <div class="closable-widget triangle-down"></div>
+    <div class="radio-btn-title setting-description"><%=t("integrations.cloud_elements.form.field_mapping")%> </div>
+    <div id="to-close">
+      <ul class="nav nav-flat pad-left">
+        <li class="active">
+          <a href="#contact-mapping-tab" id="contact-mapping-btn"data-toggle="tab">Contact</a>
+        </li>
+        <li>
+          <a href="#company-mapping-tab" id="company-mapping-btn" data-toggle="tab">Company</a>
+        </li>        
+      </ul>
+
+      <div class="tab-content">
+        <div class="tab-pane active" id="contact-mapping-tab">
+          <div class="contact-wrapper">
+            <div class="contact-tabel-head">
+              <div class="contact-tabel-data field-1"> <span class="field-1-text"> Freshdesk Fields </span> </div>
+              <div class="contact-tabel-data field-2"> 
+                <a class="center-icon"><%= font_icon "both-direction", { :size => 20 } %></a>
+              </div>
+              <div class="contact-tabel-data field-3"> <span> <%= @element_config["element"].capitalize%> Contact Fields </span> </div>
+            </div>
+            <div rel="construct_contact_rules" id="construct_contact_rule" class="rules_wrapper" data-render-template = '.construct_contact' ></div>
+          </div>
+        </div>
+        <div class="tab-pane" id="company-mapping-tab">
+          <div class="contact-wrapper">
+            <div class="contact-tabel-head">
+              <div class="contact-tabel-data field-1"> <span class="field-1-text"> Freshdesk Fields </span> </div>
+              <div class="contact-tabel-data field-2">
+                <a class="center-icon"><%= font_icon "both-direction", { :size => 20 } %></a>
+              </div>
+              <div class="contact-tabel-data field-3"> <span> <%= @element_config["element"].capitalize%> Account Fields </span> </div>
+            </div>
+            <div rel="construct_company_rules" id="construct_company_rule" class="rules_wrapper" data-render-template = '.construct_company' ></div>
+          </div>
+        </div>    
+      </div>
+    </div>
+  </div>
+</div>
+
+<script class="construct_company" type="text/html" data-default-value = '<%= existing_companies.to_json.html_safe %>'>
+    <% fd_company = @element_config["fd_company"] %>
+    <%= select_tag('inputs[companies][][fd_field]', options_for_select(fd_company.collect{ |k,v| [v,k,{'data-field-type' => @element_config['fd_company_types'][v]} ]}), 
+            { :class => "" , :rel => "dropdown", "data-refer-key" => 'fd_field', 'data-header-label' => ''}) %>
+    <% sf_company = @element_config["account_fields"] %>
+    <%= select_tag('inputs[companies][][sf_field]', options_for_select(sf_company.collect{ |k,v| [v,k,{'data-field-type' => @element_config["account_fields_types"][v]} ]}),  
+            { :class => "" , :rel => "dropdown", "data-refer-key" => 'sf_field', 'data-header-label' => ''}) %>
+</script>
+<script class="construct_contact" type="text/html" data-default-value='<%= existing_contacts.to_json.html_safe %>'>
+  <% fd_contact = @element_config["fd_contact"] %>
+  <%= select_tag('inputs[contacts][][fd_field]', options_for_select(fd_contact.collect{ |k,v| [v,k,{'data-field-type' => @element_config['fd_contact_types'][v]} ]}), 
+          { :class => "" , :rel => "dropdown", "data-refer-key" => 'fd_field', 'data-header-label' => ''}) %>
+  <% sf_contact = @element_config["contact_fields"] %>
+  <%= select_tag('inputs[contacts][][sf_field]', options_for_select(sf_contact.collect{ |k,v| [v,k,{'data-field-type' => @element_config['contact_fields_types'][v]} ]}), 
+            { :class => "" , :rel => "dropdown", "data-refer-key" => 'sf_field', 'data-header-label' => ''}) %>
+</script> 

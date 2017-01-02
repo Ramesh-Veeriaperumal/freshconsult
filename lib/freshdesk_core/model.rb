@@ -220,6 +220,7 @@ module FreshdeskCore::Model
     delete_social_redis_keys(account)
     delete_facebook_subscription(account)
     delete_jira_webhooks(account)
+    delete_cloud_element_instances(account)
     clear_attachments(account)
     remove_mobile_registrations(account.id)
     remove_addon_mapping(account)
@@ -285,6 +286,39 @@ module FreshdeskCore::Model
           :app_id => app.id
       }
         Resque.enqueue(Workers::Integrations::JiraAccountUpdates, args)
+      end
+    end
+
+    def cloud_elements_apps_enabled?(account)
+      cloud_app_names = Integrations::CloudElements::Constant::APP_NAMES
+      apps_query = ["applications.name=?"] * cloud_app_names.size
+      apps_query = apps_query.join(" OR ")
+      cloud_apps_id = Integrations::Application.where(apps_query, *cloud_app_names).map{|app| app}
+      installed_apps_query = ["installed_applications.application_id = ?"] * cloud_apps_id.size
+      installed_apps_query = installed_apps_query.join(" OR ")
+      Integrations::InstalledApplication.where(installed_apps_query, *cloud_apps_id)
+    end
+
+    def delete_cloud_element_instances(account)
+      if(installed_apps = cloud_elements_apps_enabled?(account))
+        installed_apps.each do |installed_app|  
+          app_name = installed_app.application.name
+          formula_details = {
+            :freshdesk => { :id => installed_app.configs_helpdesk_to_crm_formula_instance, :template_id => Integrations::HELPDESK_TO_CRM_FORMULA_ID[app_name]}, 
+            :hubs => {:id => installed_app.configs_crm_to_helpdesk_formula_instance, :template_id => Integrations::CRM_TO_HELPDESK_FORMULA_ID[app_name]}
+          }
+
+          formula_details.keys.each do |key|
+            metadata = {:formula_template_id => formula_details[key][:template_id], :id => formula_details[key][:id]}
+            options = {:metadata => metadata, :app_id => installed_app.application_id, :object => Integrations::CloudElements::Constant::NOTATIONS[:formula]}
+            Integrations::CloudElementsDeleteWorker.new.perform(options)  
+          end
+
+          [installed_app.configs_element_instance_id, installed_app.configs_fd_instance_id].each do |element_id|
+            options = {:metadata => {:id => element_id}, :app_id => installed_app.application_id, :object => Integrations::CloudElements::Constant::NOTATIONS[:element]}
+            Integrations::CloudElementsDeleteWorker.new.perform(options)     
+          end 
+        end
       end
     end
 

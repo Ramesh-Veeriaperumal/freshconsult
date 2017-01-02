@@ -121,6 +121,12 @@ DATE_TIME_PARSE = [ :created_at, :due_by, :resolved_at, :updated_at, :first_resp
     ((data.blank? || (data.is_a? Integer)) ? data : (data.to_s.gsub(/^[@=+-]*/, "")))
   end
 
+  def handle_operators(name)
+    return if name.blank?
+    return "'" + name if name.match(/^[@=+-]/).present?
+    name
+  end
+
   def unescape_html(data)
     ((data.blank? || (data.is_a? Integer)) ? data : (CGI::unescapeHTML(data.to_s)))
   end

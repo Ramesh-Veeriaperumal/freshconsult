@@ -1,0 +1,36 @@
+<% if @size == Integrations::CloudElements::Constant::LOG_PAGE_SIZE %>
+<%= t('integrations.cloud_elements.mail.page_full', {:size => @size}).html_safe %>
+<% elsif @size > 0  %>
+<%= t('integrations.cloud_elements.mail.page_not_full', {:size => @size}).html_safe %>
+<% else%>
+<%= t('integrations.cloud_elements.mail.no_event') %>
+<% end %>
+<br/>
+<% if @size > 0 %>
+<% success_records = @size - @failure_reasons.size %>
+<%= t('integrations.cloud_elements.mail.success', {:success_records => success_records, :size => @size}).html_safe %>
+<br/>
+<%= t('integrations.cloud_elements.mail.failure', {:failure_records => @failure_reasons.size, :size => @size}).html_safe %>
+<br/><br/>
+<% end%>
+<%unless @failure_reasons.size == 0%>
+  <table style="border-collapse: collapse; border: 1px solid black;">
+    <tr>
+      <th style="border: 1px solid black;">#</th>
+      <th style="border: 1px solid black;">Execution Id</th>
+      <th style="border: 1px solid black;">Reason</th>
+    </tr>
+    <%@failure_reasons.keys.each_with_index do  |key, index| %>
+    <tr>
+      <td style="border: 1px solid black;"><%=index%></td>
+      <td style="border: 1px solid black;"><%=key%></td>
+      <% desc = @failure_reasons[key].present? ? @failure_reasons[key] : t('integrations.cloud_elements.mail.no_data_found').html_safe%>
+      <td style="border: 1px solid black;"><%=desc%></td>
+    </tr>
+    <%end%>
+  </table>
+<% end%>
+<br/>
+Regards,
+<br/>
+Freshdesk Support.

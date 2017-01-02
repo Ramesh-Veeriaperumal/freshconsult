@@ -481,6 +481,6 @@ class AccountsController < ApplicationController
 
     def save_account_sign_up_params account_id, args = {}
       key = ACCOUNT_SIGN_UP_PARAMS % {:account_id => account_id}
-      set_others_redis_key(key,args.to_json)
+      set_others_redis_key(key,args.to_json,1296000)
     end
 end

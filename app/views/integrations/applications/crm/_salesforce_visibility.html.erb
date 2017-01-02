@@ -1,0 +1,194 @@
+<%if @element_config["objects"].include? "opportunity"%>
+<div class="sf-opportunity-fields sf-settings-widget">
+  <% opportunity_view = false %>
+  <% agent_settings = false %> 
+  <%unless @installed_app.blank? %>
+    <% installed_opp_view = @installed_app.configs_opportunity_view %>
+    <% opportunity_view = installed_opp_view.to_bool if installed_opp_view.present? %>
+    <% installed_agent_settings = @installed_app.configs_agent_settings %>
+    <% agent_settings = installed_agent_settings.to_bool if installed_agent_settings.present? %>
+  <%end%>
+  <div id="opportunity-info" data-child="opportunity-settings">
+    <%=content_tag(:h3, t("integrations.#{@element_config["element"]}.form.opportunity"), :class => 'opportunity-header') %>
+    <%= check_box(:opportunity_view, "value", :checked => opportunity_view) %>
+    <% hide =  opportunity_view ? "" : "hide" %>
+    <% disabled = !opportunity_view %>
+  </div>
+  <div id='sfopportunities' class="opportunity-settings mt5 <%=hide%>">
+    <span>
+      <div id="opportunitieslist">
+        <ul>
+          <%opportunity_default_fields = default_fields["opportunity"]%> 
+          <%selected_fields = opportunity_default_fields.collect{|x| x} %>
+          <%unless @installed_app.blank? %>
+            <%selected_fields.push(@installed_app.configs_opportunity_fields.split(",").collect!{ |x| next if  opportunity_default_fields.include?(x);
+               x
+              }) if @installed_app.configs_opportunity_fields.present? %>
+          <%end%>
+        </ul>
+      </div>
+      <!--select_tag input for selected fields is considering it as string if we directly pass the array object. Hence this workaround to convert it at runtime -->
+      <%data = selected_fields.join(",").html_safe%>
+      <% opportunity_fields = @element_config['opportunity_fields'] %>
+      <% # order the fields in such a way so that default fields come at the top
+        opportunity_fields_list = []
+        opportunity_default_fields.each { |field| opportunity_fields_list.push([opportunity_fields[field],field]) } 
+        @element_config['opportunity_fields'].keys.collect{|field|
+          opportunity_fields_list.push([opportunity_fields[field],field]) if not opportunity_default_fields.include?(field); 
+        }
+      %>
+      <%=hidden_field_tag :opportunity_labels %>
+      <%= select_tag :opportunities, 
+              options_for_select(opportunity_fields_list,data.split(",")), { :multiple => true, :class => "select2-fields salesforce-int-select","data-placeholder" => " "} %> <!-- space in placeholder to add an empty option -->
+    </span>
+  </div>
+  <div class="opportunity-settings mt8 <%= hide %>" id="agent_settings">
+    <%= check_box(:agent_settings, "value", :checked => agent_settings, :disabled => disabled) %>
+    <%= content_tag(:span, t("integrations.#{@element_config["element"]}.form.opportunity_settings"), :class => 'checkbox_label') %>
+  </div>
+</div>
+<%end%>
+<% if @element_config['objects'].include? "contract"%>
+<div class="sf-contract-fields sf-settings-widget"> 
+  <% contract_view = false %>
+  <% agent_settings = false %> 
+  <%unless @installed_app.blank? %>
+    <% installed_contract_view = @installed_app.configs_contract_view %>
+    <% contract_view = installed_contract_view.to_bool if installed_contract_view.present? %>
+  <%end%>
+  <div id="contract-info" data-child="contract-settings">
+    <%=content_tag(:h3, t("integrations.#{@element_config["element"]}.form.contract"), :class => 'contract-header') %>
+    <%= check_box(:contract_view, "value", :checked => contract_view) %>
+    <% hide =  contract_view ? "" : "hide" %>
+    <% disabled = !contract_view %>
+  </div>
+  <div id='sfcontracts' class="contract-settings mt5 <%=hide%>">
+    <span>
+      <div id="contractslist">
+        <ul>
+          <%selected_fields = default_fields['contract'].collect{|x| x} %>
+          <%unless @installed_app.blank? %> 
+            <%config_contract_fields = @installed_app.configs[:inputs]['contract_fields'] ? @installed_app.configs[:inputs]['contract_fields'] : ""%>
+            <%selected_fields.push(config_contract_fields.split(",").collect!{ |x| next if  default_fields['contract'].include?(x);
+               x
+              })%>
+          <%end%>
+        </ul>
+      </div>
+      <!--select_tag input for selected fields is considering it as string if we directly pass the array object. Hence this workaround to convert it at runtime -->
+      <%data =selected_fields.join(",").html_safe%>
+      <% contract_fields = @element_config['contract_fields'] %>
+      <% # order the fields in such a way so that default fields come at the top
+        contract_fields_list = []
+        default_fields['contract'].each { |field| contract_fields_list.push([contract_fields[field],field]) } 
+        @element_config['contract_fields'].keys.collect{|field|
+          contract_fields_list.push([contract_fields[field],field]) if not default_fields['contract'].include?(field); 
+        }
+      %>
+      <%=hidden_field_tag :contract_labels %>
+      <%= select_tag :contracts, 
+              options_for_select(contract_fields_list,data.split(",")), { :multiple => true, :class => "select2-fields salesforce-int-select","data-placeholder" => " "} %> <!-- space in placeholder to add an empty option -->
+    </span>
+  </div>
+</div>
+<%end%>
+<% if @element_config['objects'].include? "order"%>
+<div class="sf-order-fields sf-settings-widget"> 
+  <% order_view = false %>
+  <% agent_settings = false %> 
+  <%unless @installed_app.blank? %>
+    <% installed_order_view = @installed_app.configs_order_view %>
+    <% order_view = installed_order_view.to_bool if installed_order_view.present? %>
+  <%end%>
+  <div id="order-info" data-child="order-settings">
+    <%=content_tag(:h3, t("integrations.#{@element_config["element"]}.form.order"), :class => 'order-header') %>
+    <%= check_box(:order_view, "value", :checked => order_view) %>
+    <% hide =  order_view ? "" : "hide" %>
+    <% disabled = !order_view %>
+  </div>
+  <div id='sforders' class="order-settings mt5 <%=hide%>">
+    <span>
+      <div id="orderslist">
+        <ul>
+          <%selected_fields = default_fields['order'].collect{|x| x} %>
+          <%unless @installed_app.blank? %> 
+            <%config_order_fields = @installed_app.configs[:inputs]['order_fields'] ? @installed_app.configs[:inputs]['order_fields'] : ""%>
+            <%selected_fields.push(config_order_fields.split(",").collect!{ |x| next if  default_fields['order'].include?(x);
+               x
+              })%>
+          <%end%>
+        </ul>
+      </div>
+      <!--select_tag input for selected fields is considering it as string if we directly pass the array object. Hence this workaround to convert it at runtime -->
+      <%data =selected_fields.join(",").html_safe%>
+      <% order_fields = @element_config['order_fields'] %>
+      <% # order the fields in such a way so that default fields come at the top
+        order_fields_list = []
+        default_fields['order'].each { |field| order_fields_list.push([order_fields[field],field]) } 
+        @element_config['order_fields'].keys.collect{|field|
+          order_fields_list.push([order_fields[field],field]) if not default_fields['order'].include?(field); 
+        }
+      %>
+      <%=hidden_field_tag :order_labels %>
+      <%= select_tag :orders, 
+              options_for_select(order_fields_list,data.split(",")), { :multiple => true, :class => "select2-fields salesforce-int-select","data-placeholder" => " "} %> <!-- space in placeholder to add an empty option -->
+    </span>
+  </div>
+</div>
+<%end%>
+<script type="text/javascript">
+  <%if @element_config["objects"].include? "opportunity"%>
+    jQuery("#opportunity_view_value").itoggle({buttonClass:"toggle-button toggle_opportunity_on_click"});
+    jQuery("#opportunities").select2({maximumSelectionSize: 10,removeOptionOnBackspace:false})
+    //setting Name, Stage and Close Date as default opportunity fields(can't be removed.)
+    jQuery("#sfopportunities ul .select2-search-choice div").each(function(index,element){
+      value = jQuery(element).text();
+      if(value =="Name" || value == "Stage" || value == "Close Date"){
+        jQuery(element).next("a").remove();
+      }
+    });
+
+    jQuery('body').on('click', '.toggle_opportunity_on_click', function() {
+      var div = jQuery(this).parent().data('child');
+      var input = jQuery('#agent_settings.' + div).find('input');
+      input.attr('disabled', !input.attr('disabled'));
+      jQuery('.' + div).slideToggle();
+    });
+  <%end%>
+
+  <%if @element_config["objects"].include? "contract"%>
+    jQuery("#contract_view_value").itoggle({buttonClass:"toggle-button toggle_contract_on_click"});
+    jQuery("#contracts").select2({maximumSelectionSize: 10,removeOptionOnBackspace:false})
+    //setting "Contract Start Date", "Contract Term", "Status" as default contract fields(can't be removed.)
+    jQuery("#sfcontracts ul .select2-search-choice div").each(function(index,element){
+      value = jQuery(element).text();
+      if(value =="Contract Start Date" || value == "Contract Term" || value == "Status" || value == "Contract Number"){
+        jQuery(element).next("a").remove();
+      }
+    });
+
+    jQuery('body').on('click', '.toggle_contract_on_click', function() {
+      var div = jQuery(this).parent().data('child');
+      jQuery('.' + div).slideToggle();
+    });
+
+  <%end%>
+
+  <%if @element_config["objects"].include? "order"%>
+    jQuery("#order_view_value").itoggle({buttonClass:"toggle-button toggle_order_on_click"});
+    jQuery("#orders").select2({maximumSelectionSize: 10,removeOptionOnBackspace:false})
+    //setting "Order Start Date", "Status" as default order fields(can't be removed.)
+    jQuery("#sforders ul .select2-search-choice div").each(function(index,element){
+      value = jQuery(element).text();
+      if(value =="Order Start Date" || value == "Order Number" || value == "Order Amount"){
+        jQuery(element).next("a").remove();
+      }
+    });
+
+    jQuery('body').on('click', '.toggle_order_on_click', function() {
+      var div = jQuery(this).parent().data('child');
+      jQuery('.' + div).slideToggle();
+    });
+  <%end%>
+
+</script>

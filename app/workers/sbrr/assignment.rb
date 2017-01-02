@@ -7,7 +7,7 @@ module SBRR
                     :failures => :exhausted
 
     def perform args
-      Thread.current[:sbrr_log] = []
+      Thread.current[:sbrr_log] = [self.jid]
       Thread.current[:skill_based_round_robin_thread] = true
       @args = args.symbolize_keys
       
@@ -16,7 +16,7 @@ module SBRR
       save_ticket
     ensure
       Thread.current[:skill_based_round_robin_thread] = nil
-      SBRR.logger.debug "\nSBRR Assignment : Ticket => #{@args[:ticket_id]} #{@args.inspect} #{Thread.current[:sbrr_log].join}"
+      SBRR.logger.debug "#{Thread.current[:sbrr_log]} SBRR Assignment : Ticket => #{@args[:ticket_id]} #{@args.inspect} #{Thread.current[:sbrr_log].join}"
       Thread.current[:sbrr_log] = nil
     end
 

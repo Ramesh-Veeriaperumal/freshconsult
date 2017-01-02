@@ -1,0 +1,270 @@
+<% content_for :helpcard do -%>
+  <div class="helpcard">
+      <%=t("integrations.#{@element_config["element"]}.helptext").html_safe%>
+  </div>
+<%- end %>
+	<h3 class="lead"><%=t("integrations.#{@element_config["element"]}.form.#{@element_config["element"]}_settings")%></h3>
+  <%= form_tag("/integrations/sync/crm/update", :method => "post")  do %>
+  <%= hidden_field_tag  'state', params[:state] %>
+
+  <ul class="nav nav-pills">
+    <li class="active">
+      <a href="#field-visibility-tab" id="field-visibility-btn" data-toggle="tab"><%=t("integrations.cloud_elements.form.field_visibility")%></a>
+    </li>
+    <li>
+      <a href="#field-mapping-tab" id="field-mapping-btn" data-toggle="tab"><%=t("integrations.cloud_elements.form.field_mapping")%></a>
+    </li>
+  </ul>
+
+  <div class="well">
+    <div class="tab-content row-fluid">
+      <label class="caption span3">
+        <div class="logo application-logo-<%=@element_config["element"]%>"></div>
+        <div class="logo info-data">
+          <%=t("integrations.#{@element_config["element"]}.desc")%>
+        </div>
+      </label>
+
+          <div class="tab-pane span9" id="field-mapping-tab">
+
+            <% 
+               existing_companies = @element_config['existing_companies']
+               existing_contacts = @element_config['existing_contacts']
+            %>
+            <%= render :partial => "/integrations/applications/crm/mapping",
+                       :locals => { :existing_companies => existing_companies, :existing_contacts => existing_contacts } %>   
+          </div>
+          <div class="tab-pane active span9" id="field-visibility-tab">
+             <%= render :partial => "/integrations/applications/crm/visibility",
+                       :locals => { :default_fields => @element_config['default_fields'] }%>
+          </div>
+          
+    </div>
+  </div>
+  <div id="no-display" class="alert notice error">Please resolve the errors in the form before proceeding!!</div>
+
+<div class="button-container">
+  <%= link_to t('back'), {:controller => '/integrations/applications', :action => 'index'}, :class => "btn" %>
+  <%= submit_tag t('update'), :class => "btn btn-primary", :id => "cloud-submit" %>
+</div>
+
+<%end%>
+
+<script type="text/javascript">
+  var change;
+  (function($){
+    $("#cloud-submit").on('click', function(ev){
+      if(validateFields()){
+        pushLabelValues("contacts", "contact_labels");
+        pushLabelValues("accounts", "account_labels");
+        <%if @element_config["objects"].include? "lead"%>
+          pushLabelValues("leads", "lead_labels");
+        <% end %>
+        <%if @element_config["objects"].include? "opportunity"%>
+          pushLabelValues("opportunities", "opportunity_labels");
+        <%end%>
+        <%if @element_config["objects"].include? "contract"%>
+          pushLabelValues("contracts", "contract_labels");
+        <%end%>
+        <%if @element_config["objects"].include? "order"%>
+          pushLabelValues("orders", "order_labels");
+        <%end%>
+        return true; 
+      }else{
+        $("#no-display").slideDown(function() {
+          setTimeout(function() {
+            $("#no-display").slideUp();
+          }, 3000);
+        });
+
+        return false;
+      }
+    });
+    
+    function pushLabelValues(value, label){
+      var values= [];
+      $("#" + value + " :selected").each(function(){
+          values.push($(this).text()); 
+      });
+      $('#'+ label).val(values);
+    }
+
+    $("#ticket_sync_option_value").itoggle();
+    var default_labels = <%= raw @element_config["default_labels"].to_json %>;
+
+    var contact_default =  default_labels["contact"];
+    $("#contacts").select2({maximumSelectionSize: 10,removeOptionOnBackspace:false});
+    //setting the Name as default field(can't be removed.)
+    $("#sfcontacts ul .select2-search-choice div").each(function(index,element){
+      var value = $(element).text();
+      if(contact_default.indexOf(value) != -1){ //"Full Name"
+        $(element).next("a").remove();
+      }
+    });
+
+    var account_default = default_labels["account"];
+    $("#accounts").select2({maximumSelectionSize: 10,removeOptionOnBackspace:false});
+    //setting the Name as default field(can't be removed.)
+    $("#sfaccounts ul .select2-search-choice div").each(function(index,element){
+      var value = $(element).text();
+      if(account_default.indexOf(value) != -1){ //"Account Name"
+        $(element).next("a").remove();
+      }
+    });
+
+    <%if @element_config["objects"].include? "lead"%>
+      var lead_default = default_labels["lead"];
+      $("#leads").select2({maximumSelectionSize: 10,removeOptionOnBackspace:false});
+      //setting the Name as default field(can't be removed.)
+      $("#sfleads ul .select2-search-choice div").each(function(index,element){
+        var value = $(element).text();
+        if(lead_default.indexOf(value) != -1){ //"Full Name"
+          $(element).next("a").remove();
+        }
+      });
+    <%end%>
+
+  // This event will turn the plus select icon to grey on reaching the maximum selection size
+    $(".select2-fields").on('change',function(){
+      var _this = $(this);
+      var list_elements = _this.prev(".select2-container-multi").children().children();
+      var list_size = list_elements.length - 1;
+      if(list_size == 10){
+        _this.addClass('salesforce-disable-select');
+      }
+      else{
+        if(_this.hasClass('salesforce-disable-select')){
+          _this.removeClass('salesforce-disable-select');
+        }
+      }
+    });
+
+    $(document).ready(function(){
+      if(!$('#enable_sync').is(':checked')){
+        change();
+      }
+      $('#enable_sync').prop('checked', "<%= @element_config['enable_sync'] %>");
+    });
+
+    change = function(){ 
+      $('#field-wrap').toggleClass('field-disable'); 
+    }
+
+    $(document).on('click','.sync-radio-btn', function(){
+      var clone_element = $(this).siblings('.sync-icon').children().clone();
+      $('.center-icon').html(clone_element);
+      var sync_type = $('input[name=crm_sync_type]:checked').val();
+      var master_type = $('input:radio[name=master_type]');
+      var icon_html = $('input[name=crm_sync_type]:checked').siblings('.sync-icon').children();
+      master_type.filter('[value=FD]').prop('disabled', false);
+      master_type.filter('[value=CRM]').prop('disabled', false);
+      if(sync_type === "FD_AND_CRM"){
+        master_type.filter('[value=CRM]').prop('checked', true);
+      }else{
+        if(sync_type === "FD_to_CRM"){
+          master_type.filter('[value=FD]').prop('checked', true);
+          master_type.filter('[value=CRM]').prop('disabled', true);
+        }else{
+          master_type.filter('[value=CRM]').prop('checked', true);
+          master_type.filter('[value=FD]').prop('disabled', true);
+        }
+      }
+    });
+
+    /*
+        content for field mapping starts here.
+    */
+    var fdTypeValidator= <%= raw @element_config['fd_validator'].to_json%>;
+    var crmTypeValidator= <%= raw @element_config['element_validator'].to_json%>;
+    var maximumSelectionSizeContact = 25;
+    var customModule = "sync";
+
+    $(function(){
+      $('[rel="construct_contact_rules"]').constructRules({fdTypeValidator, crmTypeValidator, maximumSelectionSizeContact, customModule});
+      $('[rel="construct_company_rules"]').constructRules({fdTypeValidator, crmTypeValidator, maximumSelectionSizeContact, customModule});
+    });
+
+    $('#company-mapping-btn, #contact-mapping-btn').on('click', function(){
+      return validateFields();
+    });
+
+    $('#field-visibility-btn').on("click", function(e){
+      if(!validateFields()){
+        $("#no-display").slideDown(function() {
+          setTimeout(function() {
+            $("#no-display").slideUp();
+          }, 3000);
+        });
+        return false;
+      }
+    });
+
+    function validateFields(){
+      var valid = true;
+      checkErrors('construct_contact_rule');
+      checkErrors('construct_company_rule');
+      function checkErrors(rule){
+        $('#'+ rule +' .rules_list_wrapper .list').not('.overlay').find('.error').remove();
+        $('#'+ rule +' .rules_list_wrapper .list').not('.overlay').each(function(index, list){
+          var _this = $(this);
+          var FDContactSelected = _this.find('.dropdown_1 .select2-chosen').text();
+          var SFContactSelected = _this.find('.dropdown_2 .select2-chosen').text();
+          if(FDContactSelected.toLowerCase() == "select" || FDContactSelected.toLowerCase() == "no matching data..."){
+            _this.find('[data-refer-key=fd_field]').after("<p class='error'>Field is required. </p>");
+            valid = false;
+            return false;
+          } 
+          if(SFContactSelected.toLowerCase() == "select" || SFContactSelected.toLowerCase() == "no matching data..." ){
+            _this.find('[data-refer-key=sf_field]').after("<p class='error'>Field is required. </p>");
+            valid = false;
+            return false;
+          }
+        });
+      }
+      return valid;
+    }
+    $(document).ready(function(){
+      greyDefault('construct_contact_rule', 4);
+      greyDefault('construct_company_rule', 1);
+      function greyDefault(rule, slice){
+        $('#'+ rule + ' .rules_list_wrapper .list').slice(0,slice).each(function(){
+          var _this = $(this);
+          _this.find('.list-icon').remove();
+          _this.find('.select2-choice').addClass('disabled');
+          _this.addClass('overlay');
+          _this.find(".select2-arrow").remove();
+        });
+      }
+      $('input[name="crm_sync_type"][value="' + "<%= @element_config['crm_sync_type'] %>" + '"]').attr('checked', true);
+      $('input[name="master_type"][value="' + "<%= @element_config['master_type'] %>" + '"]').attr('checked', true);
+      var crm_sync_type = $('input[name=crm_sync_type]:checked');
+      var crm_sync_type_val = crm_sync_type.val();
+      var icon_html = crm_sync_type.siblings('.sync-icon').children().clone();
+      $('.center-icon').html(icon_html);
+      var master_type = $('input:radio[name=master_type]');
+      if(crm_sync_type_val === "FD_to_CRM"){
+        master_type.filter('[value=CRM]').prop('disabled', true);
+      }
+      if(crm_sync_type_val === "CRM_to_FD"){
+        master_type.filter('[value=FD]').prop('disabled', true);
+      }
+      // Select2 Dropdown for the Sync Frequency..
+      $("#sync-frequency").select2({ 
+        minimumResultsForSearch: -1
+      });
+      $("#sync-frequency").select2("val", "<%= @element_config['sync_frequency']%>");
+      $('.contact-tabel-data.field-1').css('width', '39%');
+      $(document).on('click','.setting-description', function(){
+        var _this = $(this);
+        if(_this.nextAll().not('.radio-btn-title').first().css('display') == 'block'){
+          _this.nextAll().not('.radio-btn-title').first().css('display', 'none');
+        }else{
+          _this.nextAll().not('.radio-btn-title').first().css('display', 'block');
+        }
+        _this.prev().toggleClass('triangle-down');
+        _this.prev().toggleClass('triangle-left');
+      });
+    });
+  })(jQuery);
+
+</script>
