@@ -40,6 +40,7 @@ module ApiConstants
 
   ALLOWED_DOMAIN = AppConfig['base_domain'][Rails.env]
   MAX_LENGTH_STRING = 255
+  MAX_ITEMS_FOR_BULK_ACTION = 50
 
   TAG_MAX_LENGTH_STRING = 32
   CACHE_VERSION = { v2: 'V2', v3: 'V3' }.freeze

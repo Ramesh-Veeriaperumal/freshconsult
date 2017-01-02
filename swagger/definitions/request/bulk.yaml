@@ -4,6 +4,7 @@
   properties:
     ids:
       type: array
+      maxItems: 50
       items:
         type: number
         minimum: 1

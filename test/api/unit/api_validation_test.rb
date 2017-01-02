@@ -27,6 +27,12 @@ class ApiValidationTest < ActionView::TestCase
     refute api_validation.valid?(BULK_ACTIONS.sample)
     assert api_validation.errors.full_messages.include?('Ids array_datatype_mismatch')
     assert_equal({ ids: { expected_data_type: :'Positive Integer' } }, api_validation.error_options)
+
+    controller_params = { version: 'private', ids: (1..100).to_a }
+    api_validation = ApiValidation.new(controller_params)
+    refute api_validation.valid?(BULK_ACTIONS.sample)
+    assert api_validation.errors.full_messages.include?('Ids too_long')
+    assert_equal({ ids: { max_count: 50, current_count: 100, element_type: :values, min_count: 0 } }, api_validation.error_options)
   end
 
   def test_bulk_action_with_valid_params
