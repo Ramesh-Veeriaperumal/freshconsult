@@ -131,6 +131,11 @@ module Ember
       # @ca_response_3 will not be present here.
     end
 
+    def test_index_with_just_inaccessible_ids
+      get :index, controller_params(version: 'private' , ids: [@ca_response_3].map(&:id).join(', '))
+      assert_response 404
+    end
+
     def test_index_for_multiple_ca_with_invalid_ids
       get :index, controller_params(version: 'private' , ids: [@ca_response_1,@ca_response_2, @ca_response_3].map(&:id).join(', ') << ',a,b,c')
       assert_response 200

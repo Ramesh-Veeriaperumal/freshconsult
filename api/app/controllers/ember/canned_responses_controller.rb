@@ -19,6 +19,7 @@ module Ember
         # Instead of using validation to give 4xx response for bad ids,
         # we are going to tolerate and send response for the good ones alone.
         # Because the primary use case for this is Recently used Canned Responses
+        log_and_render_404 if @items.blank?
       end
       
       def filter_ids

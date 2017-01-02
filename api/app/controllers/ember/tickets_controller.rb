@@ -287,6 +287,7 @@ module Ember
         @constants_klass = 'TicketFilterConstants'
         @validation_klass = 'TicketFilterValidation'
         validate_query_params
+        @ticket_filter = @validator
       end
 
       def sanitize_filter_params
