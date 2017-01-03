@@ -3,6 +3,8 @@ defaults: &defaults
   secret_key: "d41d8cd98f00b204e9800998ecf8427f"
   api_username: "freshdesk"
   api_path: "/api/code_console_api/code_execution_result"
+  code_console_file_path: "supreme/code_console/code_results/code_snippet_log_"
+
 development:
   <<: *defaults
 
