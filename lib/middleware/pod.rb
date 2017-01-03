@@ -5,32 +5,35 @@ class Middleware::Pod
   end
 
   def call(env)
-
-    @host = env["HTTP_HOST"]
     @fullpath = env["PATH_INFO"]
-    @original_fullpath = env["ORIGINAL_FULLPATH"]
+    unless bypass_pod_check?
+      @host = env["HTTP_HOST"]
+      
+      @original_fullpath = env["ORIGINAL_FULLPATH"]
 
-    @redirect_url = nil
+      @redirect_url = nil
 
-    if integrations_url?(@host)
-      # check and redirect
+      if integrations_url?(@host)
+        # check and redirect
 
-      Rails.logger.info "Request fullpath: #{@fullpath}"
-      # Rails.logger.info "Request ENV: #{env.inspect}"
-      determine_login(env)
+        Rails.logger.info "Request fullpath: #{@fullpath}"
+        # Rails.logger.info "Request ENV: #{env.inspect}"
+        determine_login(env)
+      end
+
+      if redirect?
+        Rails.logger.error "Redirecting to the correct POD. Redirect URL is #{@redirect_url}"
+        response = Rack::Response.new
+        response.redirect(@redirect_url)
+        response.headers["X-Accel-Redirect"] = @redirect_url
+        response.headers["X-Accel-Buffering"] = "off"
+        response.finish
+      else
+        @status, @headers, @response = @app.call(env)
+        return @status,@headers,@response
+      end
     end
-
-    if redirect?
-      Rails.logger.error "Redirecting to the correct POD. Redirect URL is #{@redirect_url}"
-
-      response = Rack::Response.new
-      response.redirect(@redirect_url)
-      response.headers["X-Accel-Redirect"] = @redirect_url
-      response.headers["X-Accel-Buffering"] = "off"
-      response.finish
-    else
-      @status, @headers, @response = @app.call(env)
-    end
+    @status, @headers, @response = @app.call(env)
   end
 
   # TODOLOGIN: Need to introduce remote_id type here
@@ -131,6 +134,10 @@ class Middleware::Pod
 
   def integrations_url?(host)
     host == ::INTEGRATION_URL
+  end
+
+  def bypass_pod_check?
+    SKIP_MIDDLEWARES["skipped_routes"].include?(@fullpath)
   end
 
 end

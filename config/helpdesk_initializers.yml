@@ -89,6 +89,7 @@ helpdesk:
     - thrift
     - fd_spam_filter
     - sendgrid_webhook_config
+    - skip_all_middlewares
     - api_config_internal_tools
     - ehawk_config
     - sandbox
