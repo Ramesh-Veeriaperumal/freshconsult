@@ -114,7 +114,7 @@ gem "riddle", "1.2.2"
 gem "braintree","2.10.0"
 gem "lockfile","1.4.3"
 
-gem "newrelic_rpm","3.9.9.275"
+gem "newrelic_rpm","~> 3.17.2.327"
 
 gem "faraday" , "0.9"
 gem 'faraday_middleware', '~> 0.10.0'
@@ -185,7 +185,7 @@ gem "premailer", "~> 1.8.0"
 gem 'html_to_plain_text', '1.0.5'
 gem "akismetor", :git => "git://github.com/freshdesk/akismetor.git"
 gem 'freshdesk_features', :git => 'git@github.com:freshdesk/freshdesk-features.git', :branch => "freshdesk", :require => true
-gem 'launchparty', :git => 'git@github.com:freshdesk/launch-party.git', :tag => 'v0.1.2'
+gem 'launchparty', :git => 'git@github.com:freshdesk/launch-party.git', :tag => 'v0.1.3'
 gem 'binarize', "0.1.1", :git => 'git@github.com:freshdesk/binarize.git', :branch => 'master'
 
 
