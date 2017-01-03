@@ -63,6 +63,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"integrations/service_proxy", :only => [:fetch]
     resource :"integrations/slack_v2", :only => [:add_slack_agent]
     resource :"integrations/data_pipe"
+    resource :"integrations/cloud_elements/crm", :only => [:fetch]
 
     #Freshfone
     resource :"freshfone", :only => [:dashboard_stats, :dial_check, :create_ticket, :create_note]
@@ -561,6 +562,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/ecommerce/ebay_account"
     resource :"freshfone/dashboard", :only => [:index]
     resource :"integrations/marketplace_app"
+    resource :"integrations/cloud_elements/crm", :only => [:instances, :edit, :update, :settings, :create]
 
     # Used by API V2
     resource :api_ticket_field, :only => [:index]

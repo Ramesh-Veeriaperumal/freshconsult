@@ -83,6 +83,9 @@ development:
  outlook_contacts:
    consumer_token: fc02555f-2d3b-47c4-a66f-7a45d15c2a1a
    consumer_secret: vcx3eeApBi82xmpXE2CDjzt
+ salesforce_v2:
+   consumer_token:  3MVG9y6x0357HledW5ceTn9ZT16SJfkv9A5rd60nQVZoY4em5Pnpfx5ghPc.Y8KfMefmzdKWgYNXc9jLYBnlz
+   consumer_secret: 6487752873062448676
 
 defaults: &defaults
  salesforce:
@@ -113,7 +116,10 @@ defaults: &defaults
  outlook_contacts:
    consumer_token: fc02555f-2d3b-47c4-a66f-7a45d15c2a1a
    consumer_secret: vcx3eeApBi82xmpXE2CDjzt
-  
+ salesforce_v2:
+   consumer_token:  3MVG9y6x0357HledW5ceTn9ZT16SJfkv9A5rd60nQVZoY4em5Pnpfx5ghPc.Y8KfMefmzdKWgYNXc9jLYBnlz
+   consumer_secret: 6487752873062448676
+
 test:
  <<: *defaults
 
@@ -181,6 +187,9 @@ staging:
  outlook_contacts:
    consumer_token: 83ffd1da-0e5a-427f-9986-a8879b7a4aca
    consumer_secret: bRhQjg9xynB92EEnmjEWxMX
+ salesforce_v2:
+   consumer_token:  3MVG9y6x0357HledW5ceTn9ZT1.KSsISjCgRJHBn4GG_r_Meq9Zzoc7Xvo_j3UfYqWRenDdf9Tg==
+   consumer_secret: 5689067073667055939
 
 production:
  salesforce:
@@ -235,3 +244,6 @@ production:
  outlook_contacts:
    consumer_token: 83ffd1da-0e5a-427f-9986-a8879b7a4aca
    consumer_secret: bRhQjg9xynB92EEnmjEWxMX
+ salesforce_v2:
+   consumer_token:  3MVG9y6x0357HledW5ceTn9ZT13z3OsaOTdri1OzXuBmoGIB8Bh8G52UfZAWSuUIKX4PuaiRtQMOOpvzRUDYH
+   consumer_secret: 5910100902142393254

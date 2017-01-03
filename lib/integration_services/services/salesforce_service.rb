@@ -234,12 +234,18 @@ module IntegrationServices::Services
         sf_account_id, acc_name_for_sync = sync_account sf_con_det, fd_comp_name
       else
         sf_account_id = create_sf_account fd_comp_name
-        con_name_for_sync = fd_contact["LastName"] = fd_user.name
+        con_name_for_sync = fd_user.name
+        fd_contact.merge!(contact_name_split con_name_for_sync)
         fd_contact["AccountId"] = sf_account_id
-        sf_con_det = create_sf_contact fd_contact
-        sf_con_id = sf_con_det["id"]
+        sf_con_det = create_sf_contact fd_contact, fd_user
+        sf_con_id = sf_con_det["Id"]
       end
       [sf_account_id, sf_con_id, acc_name_for_sync, con_name_for_sync]
+    end
+
+    def contact_name_split full_name
+      split_names = full_name.split(" ")
+      (split_names.size > 1) ? {"LastName" => split_names.last, "FirstName" => split_names[0..-2].join(" ")} : {"LastName" => full_name}
     end
 
     def contact_weightage_check records, fd_contact
@@ -278,7 +284,7 @@ module IntegrationServices::Services
     def populate_custom_fields ticket
       co_custom_fields = {}
       fd_custom_fields = Account.current.ticket_fields.custom_fields
-      fd_custom_fields = fd_custom_fields.reject{|x| (x.nested_field? || x.section_field?) }
+      fd_custom_fields = fd_custom_fields.reject{|x| (x.section_field?) }
       formatted_fields = sf_custom_fields(fd_custom_fields)
       return co_custom_fields if fd_custom_fields.blank?
       formatted_fields.each do |custom_field|

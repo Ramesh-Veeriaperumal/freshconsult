@@ -1,6 +1,7 @@
 module AutomationControllerMethods
 
   include Integrations::IntegrationHelper
+  include Spam::SpamAction
 
   def index
     @va_rules = all_scoper
@@ -225,4 +226,13 @@ module AutomationControllerMethods
   def escape_html_entities_in_json
     ActiveSupport::JSON::Encoding.escape_html_entities_in_json = true
   end
+
+  def validate_email_template
+    action_data = (ActiveSupport::JSON.decode params[:action_data])
+    action_data.each do |action|
+      validate_template_content(action['email_subject'], action['email_body'], 
+        EmailNotificationConstants::EMAIL_TO_REQUESTOR) if action['name'] == 'send_email_to_requester'
+    end
+  end
+  
 end

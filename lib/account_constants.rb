@@ -65,8 +65,9 @@ module AccountConstants
   SPAM_EMAIL_EXACT_REGEX = /bank|paypal|finance|erection|free|apple|amazon/i
   SPAM_EMAIL_APPRX_REGEX = /b[a]+[n]+[kc]+|p[auo]+[y]+[p]+[auo]+l|finance|erection|free|a[p]+le|[a]+[m]+[a]+[z]+[aoe]+n/i
 
-  EHAWK_SPAM_EMAIL_REGEX = /disposable|MX record bad/i
-  EHAWK_SPAM_COMMUNITY_REGEX = /spam IP|repeat signup IP|repeat signup email/i
-  EHAWK_IP_BLACKLISTED_REGEX = /spam blacklist|blacklist/i
+  EHAWK_SPAM_EMAIL_REGEX = /disposable|MX record bad|undeliverable|Suspect|Spam DNSBL/i
+  EHAWK_SPAM_COMMUNITY_REGEX = /spam IP|repeat signup IP|repeat signup email|Scam IP|Spam Email/i
+  EHAWK_IP_BLACKLISTED_REGEX = /spam blacklist|blacklist|Proxy - Anonymous|Hosting Service|Bots|Drone|Worm|Proxy - Suspect/i
+  EHAWK_SPAM_GEOLOCATION_REGEX = /IP Distance Velocity 500/i
   
 end

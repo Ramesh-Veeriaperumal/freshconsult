@@ -4,6 +4,7 @@ from_email: support@freshdesk.com
 cs_email: customersuccess@freshdesk.com
 billing_email: billing@freshdesk.com
 reports_email: reports@freshdesk.com
+integrations_email: integration@freshdesk.com
 free_plan_agts: 1
 app_website: http://www.freshdesk.com
 support_url: https://support.freshdesk.com
