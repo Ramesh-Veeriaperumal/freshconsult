@@ -3,7 +3,7 @@ module Ember
     include HelperConcern
     include TicketConcern
     decorate_views(decorate_object: [:toggle])
-    SINGULAR_RESPONSE_FOR = %w(toggle).freeze
+    SINGULAR_RESPONSE_FOR = %w(create update toggle).freeze
 
     def index
       @items = params[:ticket_id] ? scoper.preload(:ticket) : paginate_items(scoper.preload(:ticket))
