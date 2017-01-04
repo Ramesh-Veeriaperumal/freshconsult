@@ -1,6 +1,6 @@
 class Account < ActiveRecord::Base
 
-  before_create :set_default_values, :set_shard_mapping, :save_route_info
+  before_create :downcase_full_domain,:set_default_values, :set_shard_mapping, :save_route_info
   before_create :add_features_to_binary_column
   before_update :check_default_values, :update_users_time_zone, :backup_changes
   before_destroy :backup_changes, :make_shard_mapping_inactive
@@ -28,6 +28,10 @@ class Account < ActiveRecord::Base
   # Included rabbitmq callbacks at the last
   include RabbitMq::Publisher 
   
+  def downcase_full_domain
+    self.full_domain.downcase!
+  end
+
   def check_default_values
     dis_max_id = get_max_display_id
     if self.ticket_display_id.blank? or (self.ticket_display_id < dis_max_id)
