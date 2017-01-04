@@ -39,4 +39,8 @@ module CompaniesHelper
     field.bottom_note
   end
   
+  def company_count
+    count = current_account.companies.size
+    "<span class='company-list-count' data-company-count='#{count}'></span>".html_safe
+  end
 end
