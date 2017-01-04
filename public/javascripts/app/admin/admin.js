@@ -53,6 +53,9 @@ window.App = window.App || {};
       case 'admin/user_skills/index':
           this.current_module = 'AgentSkills';
           break;
+			case 'admin/dkim_configurations/index':
+					this.current_module = 'dkimConfigurations';
+					break;
       default:
           // Need to handle for other namespaces
           break;

@@ -318,4 +318,8 @@ gem 'rbtrace', :require => false
 
 # For Passing Data to JavaScript
 gem 'gon', '6.1.0'
+
+# dkim to check dns records
+gem 'dnsruby'
+
 gem 'rugged'

@@ -291,6 +291,8 @@ module Redis::RedisKeys
   ARTICLE_SPAM_REGEX = "ARTICLE_SPAM_REGEX"
 
   CROSS_DOMAIN_API_GET_DISABLED = "CROSS_DOMAIN_API_GET_DISABLED" 
+  DKIM_CATEGORY_KEY = "DKIM_CATEGORY_CHANGER"
+  DKIM_VERIFICATION_KEY = "DKIM_VERIFICATION:%{account_id}:%{email_domain_id}"
 
 	def newrelic_begin_rescue
 		begin

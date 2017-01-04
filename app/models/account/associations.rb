@@ -299,6 +299,8 @@ class Account < ActiveRecord::Base
   has_many :section_fields, :class_name => 'Helpdesk::SectionField', :dependent => :destroy
 
   has_many :subscription_invoices
+  has_many :dkim_category_change_activities
+
   has_many :user_companies
   has_many :cti_calls, :class_name => 'Integrations::CtiCall'
   has_many :cti_phones, :class_name => 'Integrations::CtiPhone'

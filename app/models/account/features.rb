@@ -128,5 +128,9 @@ class Account < ActiveRecord::Base
   def hide_agent_metrics_feature?
     features?(:euc_hide_agent_metrics)
   end
+  
+  def dkim_enabled?
+    launched?(:dkim)
+  end
 
 end

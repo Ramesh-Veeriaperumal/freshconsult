@@ -5327,6 +5327,32 @@ en:
     using_custom_mailbox: "Using custom mail server"
     enable_compose: "Allow agents to initiate conversation with customers?"
     enable_compose_info: "If yes, agents will be able to send outbound emails to new or existing customers that will be converted into outbound tickets."
+    dkim:
+      name: DKIM
+      title: DKIM Settings
+      help: How to configure DKIM settings?
+      help_note: DKIM helps you digitally sign email from your help desk with your eamil domain name(s). This helps build you brand identity in all communications with your customers.
+      description: Please update the following DNS settings in your Internet Service Provider's website. Once you have copied all the settings for each domain, you can click the Verify button to validate that the settings are active
+      config: Configure
+      configuring: Configuring...
+      verify: Verify
+      verified: Verified
+      verification_sent: Verification Sent
+      unverified: Unverified
+      last_verified: Last Verified
+      remove: Remove
+      type: Type
+      host_value: Host Value
+      host_value_help: Host name for the TXT record
+      data: Data
+      data_help: Value to be assigned to the DNS record
+      status: Status
+      cname: CNAME
+      config_fail: Cannot configure DKIM settings. Please try again later.
+      remove_success: DKIM configuration removed successfully.
+      remove_fail: DKIM configuration could not be removed. Please try again later.
+      verify_fail: DNS settings can take upto 48 hours to propagate
+      new_dkim: You haven't created a support email with a custom domain yet!
   step2: Step 2
   import_users_contacts: Users &rarr; Contacts
   linkback_info: You can choose to Linkback to your own website when the customer clicks on the header logo

@@ -1,3 +1,4 @@
+//= require plugins/clipboard.js
 //= require app/admin/admin.js
 //= require app/admin/portal.js
 //= require app/admin/portal_settings.js
@@ -27,3 +28,4 @@
 //= require app/admin/skills/templates/add_user.jst.ejs
 //= require app/admin/skills/agentskills_index.js
 //= require app/admin/skills/templates/add_skill.jst.ejs
+//= require app/admin/dkim_configurations

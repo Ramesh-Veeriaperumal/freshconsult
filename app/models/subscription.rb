@@ -1,4 +1,6 @@
 class Subscription < ActiveRecord::Base
+  include Redis::RedisKeys
+  include Redis::OthersRedis
   
   self.primary_key = :id
   SUBSCRIPTION_TYPES = ["active", "trial", "free", "suspended"]
@@ -50,7 +52,7 @@ class Subscription < ActiveRecord::Base
 
   after_update :add_to_crm
   after_update :update_reseller_subscription
-  after_commit :update_social_subscription, :add_free_freshfone_credit, :update_crm, on: :update
+  after_commit :update_social_subscription, :add_free_freshfone_credit, :update_crm, :dkim_category_change, on: :update
   after_commit :clear_account_susbcription_cache
   attr_accessor :creditcard, :address, :billing_cycle
   attr_reader :response
@@ -493,6 +495,12 @@ class Subscription < ActiveRecord::Base
       end
     end
 
+    def dkim_category_change
+      if subscription_state_changed?
+        set_others_redis_lpush(DKIM_CATEGORY_KEY, self.account_id)
+      end
+    end
+
     def update_reseller_subscription
       if state_changed? or (active? and amount_changed?) or subscription_currency_id_changed? or next_renewal_at_changed?
         Subscription::UpdatePartnersSubscription.perform_async({ :account_id => account_id, 
@@ -521,6 +529,10 @@ class Subscription < ActiveRecord::Base
         return true if self.send(field) != @old_subscription.send(field)
       end
       return nil
+    end
+
+    def subscription_state_changed?
+      @old_subscription.state.eql?(TRIAL) and self.state.eql?(ACTIVE)
     end
 
  end

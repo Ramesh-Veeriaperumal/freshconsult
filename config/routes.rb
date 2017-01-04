@@ -1125,6 +1125,14 @@ Helpkit::Application.routes.draw do
       end
     end
 
+    resources :dkim_configurations, path: 'email_configs/dkim' do
+      member do 
+        post :create
+        get :verify_email_domain
+        post :remove_dkim_config
+      end
+    end
+
     resources :widget_config, :only => :index
     resources :chat_widgets do
       collection do

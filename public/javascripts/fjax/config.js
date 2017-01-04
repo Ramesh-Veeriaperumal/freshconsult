@@ -35,6 +35,8 @@ window.Fjax = window.Fjax || {};
 			"/solution": 'solutions',
 
 			"/admin": 'admin',
+			"admin/dkim_configurations": "dkimConfigurations",
+
 			"/account/update_languages": 'admin',
 
 			"/search": 'search',
