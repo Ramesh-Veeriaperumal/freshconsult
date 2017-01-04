@@ -261,9 +261,9 @@ module Ember
       end
 
       def decorate_objects
+        return if @errors || @error
         decorator, options = decorator_options
-
-        if sideload_options.include?('requester') && @items.present?
+        if (sideload_options || []).include?('requester') && @items.present?
           @requesters = @items.collect(&:requester).uniq.each_with_object({}) do |contact, hash|
             hash[contact.id] = ContactDecorator.new(contact, name_mapping: contact_name_mapping)
           end
