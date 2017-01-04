@@ -28,6 +28,8 @@ module ActionMailerCallbacks
       mail.header["X-FD-Ticket-Id"] = nil if ticket_id_field.present?
       mail.header["X-FD-Type"] = nil if (mail_type_field.present? && mail_type_field.value.present?)
       mail.header["X-FD-Note-Id"] = nil if note_id_field.present?
+      from_email = mail.header[:from].value.first if (!mail.header[:from].nil? && !mail.header[:from].value.nil?)
+      from_email = from_email[/.*<([^>]*)/, 1] # fetching the from email inside < >.
       email_config = Thread.current[:email_config]
       if (email_config && email_config.smtp_mailbox)
         smtp_mailbox = email_config.smtp_mailbox
@@ -49,7 +51,7 @@ module ActionMailerCallbacks
         category_id = email_config.category
         self.smtp_settings = read_smtp_settings(category_id)
         mail.delivery_method(:smtp, read_smtp_settings(category_id))
-        set_custom_headers(mail, category_id, account_id, ticket_id, mail_type,note_id)
+        set_custom_headers(mail, category_id, account_id, ticket_id, mail_type, note_id, from_email)
       else
         mailgun_traffic = get_mailgun_percentage
         if mailgun_traffic > 0 && Random::DEFAULT.rand(100) < mailgun_traffic
@@ -57,7 +59,7 @@ module ActionMailerCallbacks
         else
           category_id = reset_smtp_settings(mail)
         end
-        set_custom_headers(mail, category_id, account_id, ticket_id, mail_type,note_id)
+        set_custom_headers(mail, category_id, account_id, ticket_id, mail_type, note_id, from_email)
       end
       @email_confg = nil
     end
@@ -76,14 +78,14 @@ module ActionMailerCallbacks
       return category_id
     end
 
-    def set_custom_headers(mail, category_id, account_id, ticket_id, mail_type, note_id)
+    def set_custom_headers(mail, category_id, account_id, ticket_id, mail_type, note_id, from_email)
       if category_id.to_i > 10
         Rails.logger.debug "Sending email via mailgun"
-        message_id = encrypt_custom_variables(account_id, ticket_id, note_id, mail_type)
+        message_id = encrypt_custom_variables(account_id, ticket_id, note_id, mail_type, from_email)
         mail.header['X-Mailgun-Variables'] = "{\"message_id\": \"#{message_id}\"}"
       else
         Rails.logger.debug "Sending email via sendgrid"
-        mail.header['X-SMTPAPI'] = "{\"unique_args\":{\"account_id\": #{account_id},\"ticket_id\":#{ticket_id},\"note_id\": #{note_id},\"type\":\"#{mail_type}\"}}"
+        mail.header['X-SMTPAPI'] = get_unique_args(from_email, account_id, ticket_id, note_id, mail_type)
       end
     end   
         
@@ -99,17 +101,20 @@ module ActionMailerCallbacks
       mail.header["X-FD-Email-Category"].to_s.to_i if mail.present? and mail.header["X-FD-Email-Category"].present?
     end
 
-    def encrypt_custom_variables(account_id, ticket_id, note_id, type)
+    def encrypt_custom_variables(account_id, ticket_id, note_id, type, from_email)
       type = (is_num?(type)) ? type : get_notification_type_id(type)
       account_id = (account_id == -1) ? 0 : account_id
       ticket_id = (ticket_id == -1) ? 0 : ticket_id
       note_id = (note_id == -1) ? 0 : note_id
-
-      "#{account_id}.#{ticket_id}.#{note_id}.#{type}@freshdesk.com"
+      from_email[from_email.rindex("@")] = "="
+      "#{account_id}.#{ticket_id}.#{note_id}.#{type}+#{from_email}@freshdesk.com"
     end
 
     def decrypt_to_custom_variables(text)
       custom_string = text.gsub(/@freshdesk.com/, "")
+      from_email = custom_string[custom_string.index("+") + 1, custom_string.length] #getting the very first '+'.
+      from_email[from_email.rindex("=")] = "@" # replacing back the = with @. here very last '=' is considered, as no domain name can contain = in it.
+      custom_string = custom_string[0, custom_string.index("+")]
       custom_variables = custom_string.split(".")
       type = get_notification_type_text(custom_variables[3])
 
@@ -117,7 +122,8 @@ module ActionMailerCallbacks
         :account_id =>  (custom_variables[0] == "0") ? -1 : custom_variables[0],
         :ticket_id => (custom_variables[1] == "0") ? -1 : custom_variables[1],
         :note_id => (custom_variables[2] == "0") ? -1 : custom_variables[2],
-        :type => type.nil? ?  custom_variables[3] : type
+        :email_type => type.nil? ?  custom_variables[3] : type,
+        :from_email => from_email
       }
     end
 
@@ -133,6 +139,13 @@ module ActionMailerCallbacks
       !!Integer(str)
       rescue ArgumentError, TypeError
        false
+    end
+
+    def get_unique_args(from_email, account_id = -1, ticket_id = -1, note_id = -1, mail_type = "")
+      note_id_str = note_id != -1 ? "\"note_id\": #{note_id}," : ""
+      "{\"unique_args\":{\"account_id\": #{account_id},\"ticket_id\":#{ticket_id}," \
+        "#{note_id_str}" \
+        "\"email_type\":\"#{mail_type}\",\"from_email\":\"#{from_email}\"}}"
     end
   end
 end
