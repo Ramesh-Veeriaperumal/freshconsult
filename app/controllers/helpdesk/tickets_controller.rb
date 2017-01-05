@@ -208,7 +208,7 @@ class Helpdesk::TicketsController < ApplicationController
 
       sentiment_sql_array = ["select notable_id,int_nc04 from helpdesk_notes n inner join helpdesk_schema_less_notes sn
                     on n.id=sn.note_id and n.account_id=sn.account_id 
-                    where n.account_id = %s and n.notable_type = %s and n.notable_id in (%s) and sn.int_nc04 is not null 
+                    where n.account_id = %s and n.notable_type = '%s' and n.notable_id in (%s) and sn.int_nc04 is not null 
                     order by n.created_at;",
                     Account.current.id, 'Helpdesk::Ticket', ticket_ids.join(',')]
       
