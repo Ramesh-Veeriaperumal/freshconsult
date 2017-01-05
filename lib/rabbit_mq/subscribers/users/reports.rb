@@ -4,7 +4,7 @@ module RabbitMq::Subscribers::Users::Reports
   PROPERTIES_TO_CONSIDER = ["name", "email" ]
   
   def mq_reports_user_properties(action)
-    to_rmq_json
+    to_rmq_json(report_keys, action)
   end
 
   def mq_reports_subscriber_properties(action)
@@ -27,4 +27,7 @@ module RabbitMq::Subscribers::Users::Reports
       ["user"].include?(model)
     end
 
+    def report_keys
+      REPORTS_USER_KEYS
+    end
 end

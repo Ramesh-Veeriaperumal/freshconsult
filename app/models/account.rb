@@ -91,6 +91,10 @@ class Account < ActiveRecord::Base
     tz = "Kyiv" if tz.eql?("Kyev")
     tz
   end
+
+  def collab_feature_enabled?
+    @collab_feature_enabled ||= features?(:collaboration)
+  end
   
   def survey
     @survey ||= begin
@@ -135,6 +139,10 @@ class Account < ActiveRecord::Base
     features?(:round_robin_load_balancing)
   end
 
+  def skill_based_round_robin_enabled?
+    features?(:skill_based_round_robin)
+  end
+
   def validate_required_ticket_fields?
     ismember?(VALIDATE_REQUIRED_TICKET_FIELDS, self.id)
   end
@@ -170,6 +178,10 @@ class Account < ActiveRecord::Base
     default_in_op_fields.stringify_keys!
   end
   
+  def tags_filter_reporting_enabled?
+    features?(:tags_filter_reporting)
+  end
+
   def parent_child_tkts_enabled?
     @pc ||= launched?(:parent_child_tickets)
   end
@@ -479,15 +491,19 @@ class Account < ActiveRecord::Base
   end
 
   def ehawk_reputation_score
-    begin
-      key = ACCOUNT_SIGN_UP_PARAMS % {:account_id => self.id}
-      signup_params_json = get_others_redis_key(key)
-      return 0 unless signup_params_json
-      signup_params = JSON.parse(get_others_redis_key(key))
-      signup_params["api_response"]["status"]
-    rescue Exception => e
-      Rails.logger.debug "Exception caught #{e}"
-      0
+    if self.conversion_metric
+      self.conversion_metric.spam_score
+    else
+      begin
+        key = ACCOUNT_SIGN_UP_PARAMS % {:account_id => self.id}
+        signup_params_json = get_others_redis_key(key)
+        return 0 unless signup_params_json
+        signup_params = JSON.parse(signup_params_json)
+        signup_params["api_response"]["status"]   
+      rescue Exception => e
+        Rails.logger.debug "Exception caught #{e}"
+        0
+      end
     end
   end
 

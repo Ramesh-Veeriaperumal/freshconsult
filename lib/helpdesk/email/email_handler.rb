@@ -49,8 +49,8 @@ module Helpdesk
 				metadata_attributes = {
 					:received_time => "#{Time.now.utc}",
 					:received_host => "#{Socket.gethostname}",
-					:envelope => params[:envelope],
-					:from => params[:from]
+					:envelope => params[:envelope]
+					# :from => params[:from]
 				}
 
 				return metadata_attributes

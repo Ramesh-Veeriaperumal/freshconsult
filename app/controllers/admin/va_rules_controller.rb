@@ -8,6 +8,7 @@ class Admin::VaRulesController < Admin::AdminController
   before_filter :set_filter_data, :only => [ :create, :update ]
   before_filter :hide_password_in_webhook, :only => [:edit]
   before_filter :parse_action_data, :only => [:create, :update]
+  before_filter :validate_email_template, :only => [:create, :update]
   # TODO-RAILS3 password moved to application.rb but need to check action_data
   # filter_parameter_logging :action_data, :password
   

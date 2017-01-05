@@ -55,11 +55,9 @@ Helpkit::Application.routes.draw do
   # This is a legacy wild controller route that's not recommended for RESTful applications.
   # Note: This route will make all actions in every controller accessible via GET requests.
   # match ':controller(/:action(/:id))(.:format)'
-
-
+  match '/health_checkup' => 'health_checkup#app_health_check',via: :get
 
   constraints(lambda {|req| req.subdomain == AppConfig['admin_subdomain'] }) do
-
     # root :to => 'subscription_admin/subscriptions#index'
 
     # match '/plans' => 'subscription_admin/subscription_plans#index', :as => :plans
@@ -71,7 +69,7 @@ Helpkit::Application.routes.draw do
     # match '/resque/failed/requeue_all' => 'subscription_admin/resque/failed#requeue_all', :as => :failed_requeue_all
     # match '/resque/failed/:id' => 'subscription_admin/resque/failed#destroy', :as => :failed_destroy
     # match '/resque/failed/:id/requeue' => 'subscription_admin/resque/failed#requeue', :as => :failed_requeue
-
+    
     namespace :resque do
       resources :failed, :controller => '/subscription_admin/resque/failed' do
       end
@@ -226,6 +224,8 @@ Helpkit::Application.routes.draw do
   
   root :to => 'home#index'
 
+  match "/support/sitemap" => "support#sitemap", :format => "xml", :as => :sitemap, :via => :get
+
   match '/visitor/load/:id.:format' => 'chats#load', :via => :get
   match '/images/helpdesk/attachments/:id(/:style(.:format))' => 'helpdesk/attachments#show', :via => :get
   match '/inline/attachment' => 'helpdesk/inline_attachments#one_hop_url', :via => :get
@@ -233,7 +233,7 @@ Helpkit::Application.routes.draw do
   match '/packages/:package.:extension' => 'jammit#package', :as => :jammit, :constraints => { :extension => /.+/ }
   resources :authorizations
 
-  ["github","salesforce", "magento", "shopify", "slack", "infusionsoft", "google_calendar", "google_login", "google_marketplace_sso", "google_contacts", "google_gadget","outlook_contacts"].each do |provider|
+  ["github","salesforce", "magento", "shopify", "slack", "infusionsoft", "google_calendar", "google_login", "google_marketplace_sso", "google_contacts", "google_gadget", "outlook_contacts", "salesforce_v2"].each do |provider|
     match "/auth/#{provider}/callback" => 'omniauth_callbacks#complete', :provider => provider
   end
 
@@ -364,6 +364,9 @@ Helpkit::Application.routes.draw do
     collection do
       get  :index
       get  :enable_roundrobin_v2
+    end
+    member do
+      get :user_skill_exists
     end
   end
 
@@ -768,6 +771,17 @@ Helpkit::Application.routes.draw do
         post :install
     end
 
+    namespace :cloud_elements, :path => "sync" do
+      namespace :crm do
+        get :settings
+        post :create
+        get :instances
+        get :edit
+        post :update
+        post :fetch
+      end
+    end
+
     resources :remote_configurations
 
     namespace :github do
@@ -1111,6 +1125,14 @@ Helpkit::Application.routes.draw do
       end
     end
 
+    resources :dkim_configurations, path: 'email_configs/dkim' do
+      member do 
+        post :create
+        get :verify_email_domain
+        post :remove_dkim_config
+      end
+    end
+
     resources :widget_config, :only => :index
     resources :chat_widgets do
       collection do
@@ -1119,6 +1141,19 @@ Helpkit::Application.routes.draw do
          put :update
       end
     end
+
+    resources :skills do
+      member do
+        get :users
+      end
+      collection do
+        put :reorder
+      end
+    end
+    
+    match '/agent_skills/' => 'user_skills#index', :via => :get
+    match '/agent_skills/:user_id' => 'user_skills#show', :via => :get
+    match '/agent_skills/:user_id' => 'user_skills#update', :via => :put
 
     resources :va_rules do
       collection do

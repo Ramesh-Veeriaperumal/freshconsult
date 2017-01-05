@@ -31,6 +31,8 @@ COLUMN_SERIES = {
     'Unresolved': "UNRESOLVED_TICKETS"
 }
 
+TICKET_VOLUME_COLUMN_SERIES = ["RECEIVED_TICKETS", "RESOLVED_TICKETS", "UNRESOLVED_TICKETS"]
+
 MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 
 I18N_QTR_NAMES = I18n.t('helpdesk_reports.abbr_qtr') 
@@ -409,10 +411,10 @@ function columnChart(opts) {
                     events: {
                         click: function () {
                             trigger_event("timetrend_point_click.helpdesk_reports", {
-                                sub_metric: COLUMN_SERIES[this.series.name],
+                                sub_metric: TICKET_VOLUME_COLUMN_SERIES[this.series.index],
                                 value : (this.y).toFixed(0),
-                                date: helpdeskReports.prototype.ticketListTrendLabel(this.category),
-
+                                date: this.category,
+                                localisedDate: helpdeskReports.prototype.ticketListTrendLabel(this.category)
                             });
                         }
                     }

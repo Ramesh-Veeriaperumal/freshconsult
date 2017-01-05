@@ -158,11 +158,11 @@ module Freshfone::Jobs
           return Proc.new { |t_call, count|
             data_hash = {
               "Call ID" => t_call.id.blank? ? "-" : count || (t_call.id - (@first_call_id - 1)),
-              "Customer Name" => t_call.customer.blank? ? "-" : t_call.customer_name,
+              "Customer Name" => t_call.customer.blank? ? "-" : handle_operators(t_call.customer_name),
               "Customer Number" => t_call.caller_number,
               "Customer Country" => t_call.caller_country.blank? ? "-" : t_call.caller_country,
               "Direction" => call_direction_class(t_call),
-              "Agent Name" => agent_name_class(t_call),
+              "Agent Name" => handle_operators(agent_name_class(t_call)),
               "Helpdesk Number" => t_call.freshfone_number.blank? ? "-" : t_call.freshfone_number.number,
               "Call Status" => call_status_class(t_call),
               "Transfer Count" => count.blank? ? t_call.children_count : count_of_children(t_call),

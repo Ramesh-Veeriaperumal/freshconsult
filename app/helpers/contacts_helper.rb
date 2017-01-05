@@ -112,4 +112,8 @@ HTML
     end
   end
 
+  def contact_count
+    count = current_account.all_users.send("contacts").size
+    "<span class='company-list-count' data-company-count='#{count}'></span>".html_safe
+  end
 end

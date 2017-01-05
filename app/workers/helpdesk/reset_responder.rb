@@ -15,7 +15,7 @@ class Helpdesk::ResetResponder < BaseWorker
       ticket_ids = []
 
       account.tickets.preload(:group).assigned_to(user).find_each do |ticket|
-        ticket_ids.push(ticket.id) if ticket.group.present? && ticket.group.capping_enabled?
+        ticket_ids.push(ticket.id) if ticket.group.present? && (ticket.group.capping_enabled? || ticket.group.skill_based_round_robin_enabled?)
       end
 
       account.tickets.where(responder_id: user.id).update_all_with_publish({ responder_id: nil }, {}, options)
@@ -30,8 +30,13 @@ class Helpdesk::ResetResponder < BaseWorker
           updates_hash, {}, options)
       end
 
-      account.tickets.where("id in (?)", ticket_ids).find_each do |ticket|
-        ticket.assign_tickets_to_agents
+      account.tickets.where("id in (?)", ticket_ids).preload(:group).find_each do |ticket|
+        if ticket.group.skill_based_round_robin_enabled?
+          ticket.sbrr_fresh_ticket = true
+          ticket.enqueue_skill_based_round_robin
+        else
+          ticket.assign_tickets_to_agents
+        end
       end
 
       return unless account.features_included?(:archive_tickets)

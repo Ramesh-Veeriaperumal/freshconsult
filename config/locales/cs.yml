@@ -3590,6 +3590,7 @@ cs:
   last_renewed_on: "Naposledy obnoveno"
   update_and_log_in: "Aktualizovat a přihlásit"
   activate_and_log_in: "Aktivovat a přihlásit"
+  activate_and_log_in_long: "Aktivovat a Přihlásit se"
   password: Heslo
   enter_payment: "Přistoupit k platbě"
   downgrade_confirm: "<span class=\"label label-important\">Důležité</span>   &nbsp;&nbsp;    Přecházíte z licence <b>%{from}</b> na <b>%{to}</b>. Uvědomte si, prosím, že všechna data a nastavení nacházející se pouze u licence %{from} budou nevratně ztracena!<br /><br /> Přehled licencí a jejich vlastností viz <a target=\"_blank\" href=\"http://freshdesk.com/pricing\">Licence a účtování</a>. <br /> Stále si nejste jisti?<a href = \"mailto:support@freshdesk.com\" >Zeptejte se nás, pomůžeme vám</a>"
@@ -4012,6 +4013,8 @@ cs:
   no_topics_text: "Žádná témata"
   send_email_to_group: "Zaslat email všem ve skupině"
   activate_account: "Aktivujte svůj účet"
+  activations:
+    activate_freshdesk_account: "Aktivujte svůj Freshdesk účet"
   enter_message: "Zde vložte Vaši zprávu"
   not_selected: Nezvolen
   enter_billing_for_free: "Prosím, zadejte údaje z Vaší platební karty ještě předtím, než si zvolíte způsob úhrady"
@@ -4116,8 +4119,8 @@ cs:
   portal_customizer_title: "Upravte svůj veřejný zákaznický portál"
   your_trial_account: "Váš zkušební účet"
   reply_comment: "Přidat komentář"
-  create_password: "Create a Password"
-  retype_password: "Retype Password"
+  create_password: "Vytvořit heslo"
+  retype_password: "Aktivovat a Přihlásit se"
   feedbackwidget_defaulttitle: "Pomoc &amp; Podpora"
   two: "2 hodiny"
   set_status_as: "Nastavit stav jako"

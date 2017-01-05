@@ -113,6 +113,9 @@ class Account < ActiveRecord::Base
   has_many :google_contacts, :class_name => 'GoogleContact'
   has_many :mobihelp_devices, :class_name => 'Mobihelp::Device'
 
+  has_many :skills, :order => "position", :class_name => 'Admin::Skill'
+  has_many :user_skills
+
   #Scoping restriction for other models starts here
   has_many :account_va_rules, :class_name => 'VaRule'
 
@@ -296,6 +299,8 @@ class Account < ActiveRecord::Base
   has_many :section_fields, :class_name => 'Helpdesk::SectionField', :dependent => :destroy
 
   has_many :subscription_invoices
+  has_many :dkim_category_change_activities
+
   has_many :user_companies
   has_many :cti_calls, :class_name => 'Integrations::CtiCall'
   has_many :cti_phones, :class_name => 'Integrations::CtiPhone'

@@ -5,7 +5,7 @@ class AgentDestroyCleanup < BaseWorker
 
   sidekiq_options :queue => :agent_destroy_cleanup, :retry => 0, :backtrace => true, :failures => :exhausted
 
-  USER_ASSOCIATED_MODELS = [:report_filters]
+  USER_ASSOCIATED_MODELS = [:report_filters, :user_skills]
   
   attr_accessor :args
 

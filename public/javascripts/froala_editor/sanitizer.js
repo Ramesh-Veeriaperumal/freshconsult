@@ -22,6 +22,9 @@ window.Sanitizer = window.Sanitizer || {};
   	},
 
    	onPasteFromWord: function (html) {
+      // Replace whitespace character with space
+      html = html.replace(/[\n]/gi, ' ');
+
       // Remove comments
       html = html.replace(/<!--[\s\S]*?-->/gi, '');
 

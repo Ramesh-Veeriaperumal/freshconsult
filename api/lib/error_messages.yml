@@ -47,6 +47,7 @@ api_error_messages:
   company_id_required: "Company ID is required for a contact to view all tickets"
   inconsistent_state: "Email should be associated to the contact before converting it to an agent"
   upload_jpg_or_png_file: "Invalid file type(%{current_extension}). Please upload a jpg or png file"
+  cannot_deactivate: "Active field can only be set to true"
   cant_add_primary_email: "Cannot add %{email} to other_emails since it is the primary email"
   invalid_encoding: "Url query string received is %{invalid_query_string}. It should be properly encoded."
   missing_field: "Mandatory attribute missing"

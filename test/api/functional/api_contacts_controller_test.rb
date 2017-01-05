@@ -378,6 +378,44 @@ class ApiContactsControllerTest < ActionController::TestCase
     assert_response 201
   end
 
+  def test_create_user_active
+    post :create, construct_params({},  name: Faker::Lorem.characters(15),
+                                        email: Faker::Internet.email,
+                                        active: true)
+    assert_response 201
+  end
+
+  def test_create_user_active_string
+    post :create, construct_params({},  name: Faker::Lorem.characters(15),
+                                        email: Faker::Internet.email,
+                                        active: "mystring")
+    assert_response 400
+  end
+
+  def test_create_user_active_false
+    post :create, construct_params({},  name: Faker::Lorem.characters(15),
+                                        email: Faker::Internet.email,
+                                        active: false)
+    match_json([bad_request_error_pattern('active', "Active field can only be set to true")])
+    assert_response 400
+  end
+
+  def test_create_deleted_user_activate
+    post :create, construct_params({},  name: Faker::Lorem.characters(15),
+                                        email: Faker::Internet.email,
+                                        deleted: true,
+                                        active: true)
+    assert_response 400
+  end
+
+  def test_create_blocked_user_activate
+    post :create, construct_params({},  name: Faker::Lorem.characters(15),
+                                        email: Faker::Internet.email,
+                                        blocked: true,
+                                        active: true)
+    assert_response 400
+  end
+
   # Update user
   def test_update_user_with_blank_name
     params_hash  = { name: '' }
@@ -573,6 +611,59 @@ class ApiContactsControllerTest < ActionController::TestCase
     assert sample_user.reload.email == email
     assert sample_user.reload.name == 'sample_user'
   end
+
+  def test_update_user_active
+    sample_user = get_user
+    email = Faker::Internet.email
+    params_hash = { name: 'New Name', email: email }
+    sample_user.update_attributes(params_hash)
+    sample_user.active = false
+    sample_user.save
+    put :update, construct_params({ id: sample_user.id }, active: true)
+    assert_response 200
+    assert sample_user.reload.active == true
+  end
+
+  def test_update_user_active_false
+    sample_user = get_user
+    email = Faker::Internet.email
+    params_hash = { name: 'New Name', email: email }
+    sample_user.update_attributes(params_hash)
+    
+    put :update, construct_params({ id: sample_user.id }, active: false)
+    match_json([bad_request_error_pattern('active', "Active field can only be set to true")])
+    assert_response 400
+  end
+
+  def test_update_user_active_string
+    sample_user = get_user
+    email = Faker::Internet.email
+    params_hash = { name: 'New Name', email: email }
+    sample_user.update_attributes(params_hash)
+    
+    put :update, construct_params({ id: sample_user.id }, active: "mystring")
+    assert_response 400
+  end
+
+  def test_update_deleted_user_active
+    sample_user = get_user
+    email = Faker::Internet.email
+    params_hash = { name: 'New Name', email: email, deleted: 1 }
+    sample_user.update_attributes(params_hash)
+    put :update, construct_params({ id: sample_user.id }, active: true)
+    assert_response 405
+  end
+
+  def test_update_blocked_user_active
+    sample_user = get_user
+    email = Faker::Internet.email
+    params_hash = { name: 'New Name', email: email}
+    sample_user.update_attributes(params_hash)
+    sample_user.update_column(:blocked, true)
+    put :update, construct_params({ id: sample_user.id }, active: true)
+    assert_response 405
+  end
+
 
   # Delete user
   def test_delete_contact
@@ -788,6 +879,18 @@ class ApiContactsControllerTest < ActionController::TestCase
     match_json(pattern.ordered!)
   end
 
+  def test_contact_filter_updated_at
+    @account.all_contacts.update_all(updated_at: nil)
+    @account.all_contacts.first.update_column(:updated_at, '2016-10-11T12:47:25z')
+    get :index, controller_params(_updated_since: '2016-10-11T12:47:25z')
+    assert_response 200
+    response = parse_response @response.body
+    assert_equal 1, response.size
+    users = @account.all_contacts.order('users.name').select { |x|  x.updated_at == '2016-10-11T12:47:25z' }
+    pattern = users.map { |user| index_contact_pattern(user) }
+    match_json(pattern.ordered!)
+  end
+
   def test_contact_combined_filter
     email = Faker::Internet.email
     comp = get_company
@@ -814,6 +917,21 @@ class ApiContactsControllerTest < ActionController::TestCase
     get :index, controller_params(company_id: 'a')
     assert_response 400
     match_json [bad_request_error_pattern('company_id', :datatype_mismatch, expected_data_type: 'Positive Integer')]
+  end
+
+  def test_contact_filter_invalid_updated_at
+    @account.all_contacts.update_all(updated_at: nil)
+    @account.all_contacts.first.update_column(:updated_at, 'Invalid String')
+    get :index, controller_params(_updated_since: 'Invalid String')
+    assert_response 400
+    match_json [bad_request_error_pattern('_updated_since', :invalid_date, accepted: 'combined date and time ISO8601')]
+  end
+
+  def test_contact_filter_invalid_nil_updated_at
+    @account.all_contacts.update_all(updated_at: nil)
+    get :index, controller_params(_updated_since: nil)
+    assert_response 400
+    match_json [bad_request_error_pattern('_updated_since', :invalid_date, accepted: 'combined date and time ISO8601')]
   end
 
   def test_contact_blocked_in_future_should_not_be_listed_in_the_index

@@ -18,12 +18,12 @@ module Helpdesk::RequesterWidgetHelper
   FIELDS_INFO                       = { :contact => 
                                         { :form             => "contact_form",
                                           :disabled_fields  => ["email"],
-                                          :loading_icon     => false
+                                          :loading_icon     => []
                                         }, 
                                         :company => 
                                           { :form             => "company_form",
                                             :disabled_fields  => ["name"],
-                                            :loading_icon     => false
+                                            :loading_icon     => ["name"]
                                           }
                                         }
 
@@ -93,6 +93,17 @@ module Helpdesk::RequesterWidgetHelper
     count
   end
 
+  def get_user_custom_fields_count user, company
+    count = 0
+    requester_widget_custom_fields.each do |field|
+      obj = field.is_a?(ContactField) ? user : company
+      if field_value(field, obj).present?
+        count=count+1
+      end
+    end
+    count
+  end
+
   def phone_field_data_attributes user, value
     "data-contact-id='#{user.id}' data-phone-number='#{value}'"
   end
@@ -116,9 +127,9 @@ module Helpdesk::RequesterWidgetHelper
         </div>"
       end
     end
-
+    
     if count > CONTACT_WIDGET_MAX_DISPLAY_COUNT
-      html << "</div><div class='pull-left'>
+      html << "</div><div class='clearfix'><div class='pull-left'>
         <span class='widget-more-toggle condensed'>#{t("requester_widget_more")}</span>
       </div>"
     end
@@ -133,7 +144,7 @@ module Helpdesk::RequesterWidgetHelper
     required    = enabled ? field.required_for_agent : false
     value       = field_value(field, object)
     placeholder = field.dom_placeholder
-    args        = { :include_loading_symbol => FIELDS_INFO[obj_name][:loading_icon]}
+    args        = { :include_loading_symbol => FIELDS_INFO[obj_name][:loading_icon].include?(field.name)}
 
     if obj_name == :company
       if required

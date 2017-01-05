@@ -13,8 +13,10 @@ class EmailConfigObserver < ActiveRecord::Observer
     email_config.set_activator_token
   end
 
-  def after_save(email_config)
-    deliver_email_activation email_config
+  def after_commit(email_config)
+    unless email_config.send(:transaction_include_action?,:destroy)
+      deliver_email_activation email_config
+    end
   end
 
   def before_update(email_config)
@@ -40,7 +42,7 @@ class EmailConfigObserver < ActiveRecord::Observer
   end
 
   def deliver_email_activation(email_config)
-    if ( !email_config.active?) && (email_config.changed.include?("reply_email") || email_config.changed.include?("activator_token") )
+    if ( !email_config.active?) && (email_config.previous_changes.key?("reply_email") || email_config.previous_changes.key?("activator_token") )
       EmailConfigNotifier.send_later(:deliver_activation_instructions, email_config)
     end
   end
