@@ -16,8 +16,6 @@ gem 'strong_parameters', "0.2.3" # Used for API params validation
 
 gem "mysql2", "~> 0.3.0"
 
-gem "connection_pool"
-gem "clamav-client", "3.1.0", require: "clamav/client"
 gem "rate-limiting", :git =>"git://github.com/freshdesk/rate-limiting.git"
 gem 'fd_rate_limiter', :git => 'git@github.com:freshdesk/fd_rate_limiter.git', :branch => 'dynamic_rules'
 gem "white_list", :git =>"git://github.com/neubloc/white_list.git"

@@ -93,4 +93,3 @@ helpdesk:
     - api_config_internal_tools
     - ehawk_config
     - sandbox
-    - clamav_config

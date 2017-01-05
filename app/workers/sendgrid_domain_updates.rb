@@ -78,38 +78,45 @@ class SendgridDomainUpdates < BaseWorker
       if mxrecord.blank?
         spam_score = 5 
         reason = "Outgoing will be blocked for Account ID: #{account.id} , Reason: Invalid Admin contact address"
+        #blacklist_spam_account(account, true, "Outgoing will be blocked for Account ID: #{account.id} , Reason: Invalid Admin contact address")
       elsif ismember?(BLACKLISTED_SPAM_DOMAINS,admin_email_domain)
         spam_score = 5
         reason = "Outgoing will be blocked for Account ID: #{account.id} , Reason: Blacklisted admin email domain"
+        #blacklist_spam_account(account, true, "Outgoing will be blocked for Account ID: #{account.id} , Reason: Blacklisted admin email domain") 
       elsif Freemail.disposable?(account.admin_email)
         spam_score = 5
         reason = "Outgoing will be blocked for Account ID: #{account.id} , Reason: Disposable admin email address"
+        #blacklist_spam_account(account, true, "Outgoing will be blocked for Account ID: #{account.id} , Reason: Disposable admin email address")
       elsif ((account.helpdesk_name =~ spam_email_exact_match_regex || account.full_domain =~ spam_email_exact_match_regex) && Freemail.free?(account.admin_email))
         spam_score = 5
         reason = "Outgoing will be blocked for Account ID: #{account.id} , Reason: Account name contains exact suspicious words"
+        #blacklist_spam_account(account, true, "Outgoing will be blocked for Account ID: #{account.id} , Reason: Account name contains exact suspicious words")
       else
         signup_params = get_account_signup_params(Account.current.id)
         if (signup_params["account_details"].present? && signup_params["metrics"].present?)
-          begin
-            signup_params["api_response"] = Email::AntiSpam.scan(signup_params,Account.current.id) 
-            signup_params["api_response"]["status"] = -1 if (signup_params["api_response"].present? && !signup_params["api_response"]["status"].present?)
-            save_account_sign_up_params(Account.current.id, signup_params)
-            Rails.logger.info "Response by Ehawk Email Verifier account - #{account.id} ::: email - #{signup_params["account_details"]["email"]} ::: ip - #{signup_params["account_details"]["source_ip"]} ::: status - #{signup_params["api_response"]["status"]} ::: reason - #{signup_params["api_response"]["reason"]} "
+           begin
+           signup_params["api_response"] = EhawkEmailVerifier.new().scan(signup_params)
+           signup_params["api_response"]["status"] = -1 if (signup_params["api_response"].present? && !signup_params["api_response"]["status"].present?)
+           save_account_sign_up_params(Account.current.id, signup_params)
+           Rails.logger.info "Response by Ehawk Email Verifier account - #{account.id} ::: email - #{signup_params["account_details"]["email"]} ::: ip - #{signup_params["account_details"]["source_ip"]} ::: status - #{signup_params["api_response"]["status"]} ::: reason - #{signup_params["api_response"]["reason"]} "
           rescue => e
-            Rails.logger.error "Error while processing Ehawk Emai lVerifier \n#{e.message}\n#{e.backtrace.join("\n\t")}"
+             Rails.logger.error "Error while doing in Ehawk EmailVerifier \n#{e.message}\n#{e.backtrace.join("\n\t")}"
           end
         end
         if signup_params["api_response"] && signup_params["api_response"]["status"] == 5
           spam_score = 5
           reason = "Outgoing will be blocked for Account ID: #{account.id} , Reason: #{signup_params["api_response"]["reason"]}"
+          #blacklist_spam_account(account, true, "Outgoing will be blocked for Account ID: #{account.id} , Reason: #{signup_params["api_response"]["reason"]}")
         elsif((account.helpdesk_name =~ spam_email_apprx_match_regex || account.full_domain =~ spam_email_apprx_match_regex) && Freemail.free?(account.admin_email)) 
           spam_score = 4 
           stop_sending = false
           reason = "Reason: Account name looks suspicious for Account ID: #{account.id}"
+          #blacklist_spam_account(account, false, "Reason: Account name looks suspicious for Account ID: #{account.id}")
         elsif signup_params["api_response"] && signup_params["api_response"]["status"] == 4
           spam_score = 4
           stop_sending = false
           reason = "Account credetials looks suspicious for Account ID: #{account.id} , Reason: #{signup_params["api_response"]["reason"]}"
+          #blacklist_spam_account(account, false, "Account credetials looks suspicious for Account ID: #{account.id} , Reason: #{signup_params["api_response"]["reason"]}")
         elsif signup_params["api_response"] && signup_params["api_response"]["status"]
           spam_score = signup_params["api_response"]["status"] 
         else 
@@ -196,7 +203,7 @@ class SendgridDomainUpdates < BaseWorker
 
   def save_account_sign_up_params account_id, args = {}
     key = ACCOUNT_SIGN_UP_PARAMS % {:account_id => account_id}
-    set_others_redis_key(key,args.to_json,1296000)
+    set_others_redis_key(key,args.to_json)
     increment_portal_cache_version
   end
 

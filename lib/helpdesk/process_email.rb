@@ -844,42 +844,26 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
             if content_id
               content_id_hash[att.content_file_name+"#{inline_count}"] = content_ids["attachment#{i+1}"]
               inline_count+=1
-              inline_attachments.push att unless virus_attachment?(params["attachment#{i+1}"], account)
+              inline_attachments.push att
             else
-              attachments.push att unless  virus_attachment?(params["attachment#{i+1}"], account)
+              attachments.push att
             end
           end
         rescue HelpdeskExceptions::AttachmentLimitException => ex
           Rails.logger.error("ERROR ::: #{ex.message}")
-          message = attachment_exceeded_message(HelpdeskAttachable::MAX_ATTACHMENT_SIZE)
-          add_notification_text item, message
+          add_notification_text item
           break
         rescue Exception => e
           Rails.logger.error("Error while adding item attachments for ::: #{e.message}")
           break
         end
       end
-      if @total_virus_attachment
-        message = virus_attachment_message(@total_virus_attachment)
-        add_notification_text item, message
-      end
       item.header_info = {:content_ids => content_id_hash} unless content_id_hash.blank?
       return attachments, inline_attachments
     end
 
-    def virus_attachment? attachment, account
-      if account.subscription.trial?
-        result = Email::AntiVirus.scan(io: File.open(attachment.tempfile)) 
-        if result && result[0] == "virus"
-          @total_virus_attachment = 0 unless @total_virus_attachment
-          @total_virus_attachment += 1  
-          return true
-        end
-      end
-      return false
-    end
-
-    def add_notification_text item, message
+    def add_notification_text item
+      message = attachment_exceeded_message(HelpdeskAttachable::MAX_ATTACHMENT_SIZE)
       notification_text = "\n" << message
       notification_text_html = Helpdesk::HTMLSanitizer.clean(content_tag(:div, message, :class => "attach-error"))
       if item.is_a?(Helpdesk::Ticket)
