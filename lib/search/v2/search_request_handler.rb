@@ -7,7 +7,7 @@ module Search
 
       def initialize(tenant_id, search_context, types=[], locale='')
         @tenant         = Tenant.fetch(tenant_id)
-        @template_name  = Search::Utils::TEMPLATE_BY_CONTEXT[search_context]
+        @template_name  = get_template_id(search_context)
         @types          = types
         @locale         = locale
       end
@@ -30,6 +30,14 @@ module Search
       end
 
       private
+
+        def get_template_id(template_key)
+          if(Account.current.launched?(:es_v2_splqueries) && Search::Utils::SPECIAL_TEMPLATES.has_key?(template_key))
+            Search::Utils::SPECIAL_TEMPLATES[template_key]
+          else
+            Search::Utils::TEMPLATE_BY_CONTEXT[template_key]
+          end
+        end
 
         # The path to direct search requests
         # Eg: http://localhost:9200/ticket_v1,user_v1/_search
