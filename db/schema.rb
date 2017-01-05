@@ -2313,14 +2313,14 @@ ActiveRecord::Schema.define(:version => 20161103085738) do
     t.datetime "ts_datetime2"
     t.datetime "ts_datetime3"
     t.datetime "ts_datetime4"
-    t.datetime "resolution_time_updated_at",
+    t.datetime "resolution_time_updated_at"
     t.integer  "ts_int1"
     t.integer  "ts_int2"
     t.integer  "ts_int3"
   end
 
-  add_index "helpdesk_ticket_states", ["id", "requester_responded_at"], "index_id_and_requester_responded_at"
-  add_index "helpdesk_ticket_states", ["id", "agent_responded_at"], "index_id_and_agent_responded_at"
+  add_index "helpdesk_ticket_states", ["id", "requester_responded_at"], :name => "index_id_and_requester_responded_at"
+  add_index "helpdesk_ticket_states", ["id", "agent_responded_at"],  :name => "index_id_and_agent_responded_at"
   add_index "helpdesk_ticket_states", ["account_id", "ticket_id"], :name => "index_helpdesk_ticket_states_on_account_and_ticket", :unique => true
   execute "ALTER TABLE helpdesk_ticket_states ADD PRIMARY KEY (id,account_id)"
 

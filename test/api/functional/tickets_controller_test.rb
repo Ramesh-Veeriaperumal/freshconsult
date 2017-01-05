@@ -74,6 +74,41 @@ class TicketsControllerTest < ActionController::TestCase
     user
   end
 
+  def get_user_with_multiple_companies
+    user_company = @account.user_companies.group(:user_id).having(
+      'count(user_id) > 1 '
+    ).last
+    if user_company.present?
+      user_company.user
+    else
+      new_user = add_new_user(@account)
+      new_user.user_companies.create(:company_id => get_company.id, :default => true)
+      other_company = create_company
+      new_user.user_companies.create(:company_id => other_company.id)
+      new_user.reload
+    end
+  end
+
+  def get_user_with_default_company
+    user_company = @account.user_companies.group(:user_id).having('count(*) = 1 ').last
+    if user_company.present?
+      user_company.user
+    else
+      new_user = add_new_user(@account)
+      new_user.user_companies.create(:company_id => get_company.id, :default => true)
+      new_user.reload
+    end
+  end
+
+  def get_company
+    company = Company.first
+    return company if company
+    company = Company.create(name: Faker::Name.name, account_id: @account.id)
+    company.save
+    company
+  end
+
+
   def fetch_email_config
     EmailConfig.first || create_email_config
   end
@@ -2565,15 +2600,27 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_index_with_filter_and_company
     Helpdesk::Ticket.update_all(status: 3)
-    get :index, controller_params(filter: 'new_and_my_open', company_id: "#{Company.first.id}")
+    user = get_user_with_default_company
+    user_id = user.id
+    company_id = user.company.id
+    Helpdesk::Ticket.where(deleted: 0, spam: 0).update_all(
+      requester_id: nil, owner_id: nil
+    )
+
+    get :index, controller_params(filter: 'new_and_my_open', company_id: "#{company_id}")
     assert_response 200
     response = parse_response @response.body
     assert_equal 0, response.count
 
-    user_id = Company.first.users.map(&:id).first
     tkt = Helpdesk::Ticket.first
-    tkt.update_attributes(status: 2, requester_id: user_id, responder_id: nil)
-    get :index, controller_params(filter: 'new_and_my_open', company_id: "#{Company.first.id}")
+    tkt.update_attributes(
+      status: 2, requester_id: user_id,
+      owner_id: company_id, responder_id: nil
+    )
+    get :index, controller_params(
+      filter: 'new_and_my_open',
+      company_id: "#{company_id}"
+    )
     assert_response 200
     response = parse_response @response.body
     assert_equal 1, response.count
@@ -2601,7 +2648,9 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_index_with_requester_filter_company
     remove_wrap_params
-    company = Company.first
+    user = get_user_with_default_company
+    user_id = user.id
+    company = user.company
     new_company = create_company
     add_new_user(@account, customer_id: new_company.id)
     Helpdesk::Ticket.where(deleted: 0, spam: 0).update_all(requester_id: new_company.users.map(&:id).first)
@@ -2611,7 +2660,6 @@ class TicketsControllerTest < ActionController::TestCase
     response = parse_response @response.body
     assert_equal 0, response.size
 
-    user_id = company.users.map(&:id).first
     Helpdesk::Ticket.where(deleted: 0, spam: 0).first.update_attributes(requester_id: user_id,
                                                                         status: 2, responder_id: nil)
     get :index, controller_params(company_id: company.id,
@@ -2657,9 +2705,12 @@ class TicketsControllerTest < ActionController::TestCase
     get :index, controller_params(include: 'requester')
     assert_response 200
     response = parse_response @response.body
-    tkts =  Helpdesk::Ticket.where(deleted: 0, spam: 0).created_in(Helpdesk::Ticket.created_in_last_month)
+    tkts =  Helpdesk::Ticket.where(deleted: 0, spam: 0)
+                            .created_in(Helpdesk::Ticket.created_in_last_month)
     assert_equal tkts.count, response.size
-    pattern = tkts.map { |tkt| index_ticket_pattern_with_associations(tkt, true, false) }
+    pattern = tkts.map do |tkt|
+      index_ticket_pattern_with_associations(tkt, true, false, false)
+    end
     match_json(pattern)
   end
 
@@ -2667,16 +2718,35 @@ class TicketsControllerTest < ActionController::TestCase
     get :index, controller_params(include: 'stats')
     assert_response 200
     response = parse_response @response.body
-    tkts =  Helpdesk::Ticket.where(deleted: 0, spam: 0).created_in(Helpdesk::Ticket.created_in_last_month)
+    tkts =  Helpdesk::Ticket.where(deleted: 0, spam: 0)
+                            .created_in(Helpdesk::Ticket.created_in_last_month)
     assert_equal tkts.count, response.size
-    pattern = tkts.map { |tkt| index_ticket_pattern_with_associations(tkt, false, true) }
+    pattern = tkts.map do |tkt|
+      index_ticket_pattern_with_associations(tkt, false, true, false)
+    end
+    match_json(pattern)
+  end
+
+  def test_index_with_company_side_load
+    get :index, controller_params(include: 'company')
+    assert_response 200
+    response = parse_response @response.body
+    tkts =  Helpdesk::Ticket.where(['deleted = 0 AND spam = 0 AND owner_id IS NOT NULL'])
+                            .created_in(Helpdesk::Ticket.created_in_last_month)
+    assert_equal tkts.count, response.size
+    pattern = tkts.map do |tkt|
+      index_ticket_pattern_with_associations(tkt, false, false, true)
+    end
     match_json(pattern)
   end
 
   def test_index_with_empty_include
     get :index, controller_params(include: '')
     assert_response 400
-    match_json([bad_request_error_pattern('include', :not_included, list: 'requester, stats')])
+    match_json([bad_request_error_pattern(
+      'include', :not_included,
+      list: 'requester, stats, company')]
+    )
   end
 
   def test_index_with_wrong_type_include
@@ -2688,7 +2758,10 @@ class TicketsControllerTest < ActionController::TestCase
   def test_index_with_invalid_param_value
     get :index, controller_params(include: 'test')
     assert_response 400
-    match_json([bad_request_error_pattern('include', :not_included, list: 'requester, stats')])
+    match_json([bad_request_error_pattern(
+      'include', :not_included,
+      list: 'requester, stats, company')]
+    )
   end
 
   def test_show_with_conversations_exceeding_limit
@@ -3430,5 +3503,259 @@ class TicketsControllerTest < ActionController::TestCase
     @account.ticket_fields.custom_fields.each do |x|
       x.update_attributes(field_options: nil) if %w(number date dropdown paragraph).any? { |b| x.name.include?(b) }
     end
+  end
+
+  # Multiple Companies Feature
+
+  def test_create_without_company_id
+    sample_requester = get_user_with_default_company
+    params = {
+      requester_id: sample_requester.id,
+      status: 2, priority: 2,
+      subject: Faker::Name.name, description: Faker::Lorem.paragraph
+    }
+    post :create, construct_params({}, params)
+    t = Helpdesk::Ticket.last
+    match_json(ticket_pattern(params, t))
+    match_json(ticket_pattern({}, t))
+    assert_equal t.owner_id, sample_requester.company_id
+    assert_response 201
+  end
+
+  def test_create_with_company_id
+    Account.any_instance.stubs(:multiple_user_companies_enabled?).returns(true)
+    company = get_company
+    sample_requester = requester
+    sample_requester.company_id = company.id
+    sample_requester.save!
+    params = {
+      requester_id: sample_requester.id,
+      company_id: company.id, status: 2,
+      priority: 2, subject: Faker::Name.name,
+      description: Faker::Lorem.paragraph
+    }
+    post :create, construct_params({}, params)
+    t = Helpdesk::Ticket.last
+    match_json(ticket_pattern(params, t))
+    match_json(ticket_pattern({}, t))
+    assert_equal t.owner_id, company.id
+    assert_response 201
+  ensure
+    Account.any_instance.unstub(:multiple_user_companies_enabled?)
+  end
+
+  def test_create_with_other_company_id_of_requester
+    Account.any_instance.stubs(:multiple_user_companies_enabled?).returns(true)
+    sample_requester = get_user_with_multiple_companies
+    company_id = (sample_requester.company_ids - [sample_requester.company_id]).sample
+    params = {
+      requester_id: sample_requester.id,
+      company_id: company_id, status: 2,
+      priority: 2, subject: Faker::Name.name,
+      description: Faker::Lorem.paragraph
+    }
+    post :create, construct_params({}, params)
+    t = Helpdesk::Ticket.last
+    match_json(ticket_pattern(params, t))
+    match_json(ticket_pattern({}, t))
+    assert_equal t.owner_id, company_id
+    assert_response 201
+  ensure
+    Account.any_instance.unstub(:multiple_user_companies_enabled?)
+  end
+
+  def test_create_with_unavailable_company_id
+    Account.any_instance.stubs(:multiple_user_companies_enabled?).returns(true)
+    company_id = 15_000
+    params = {
+      requester_id: requester.id, company_id: company_id,
+      status: 2, priority: 2, subject: Faker::Name.name,
+      description: Faker::Lorem.paragraph
+    }
+    post :create, construct_params({}, params)
+    assert_response 400
+    match_json([bad_request_error_pattern(
+      'company_id', :invalid_company_id, company_id: 15_000, attribute: :company_id)]
+    )
+  ensure
+    Account.any_instance.unstub(:multiple_user_companies_enabled?)
+  end
+
+  def test_create_with_string_company_id
+    Account.any_instance.stubs(:multiple_user_companies_enabled?).returns(true)
+    company_id = "str"
+    params = { requester_id: requester.id, company_id: company_id,
+      status: 2, priority: 2, subject: Faker::Name.name,
+      description: Faker::Lorem.paragraph
+    }
+    post :create, construct_params({}, params)
+    assert_response 400
+    match_json([bad_request_error_pattern(
+      'company_id', :datatype_mismatch, code: :missing_field,
+      expected_data_type: 'Positive Integer', prepend_msg: :input_received,
+      given_data_type: 'String')]
+    )
+  ensure
+    Account.any_instance.unstub(:multiple_user_companies_enabled?)
+  end
+
+  def test_create_with_boolean_company_id
+    Account.any_instance.stubs(:multiple_user_companies_enabled?).returns(true)
+    company_id = true
+    params = {
+      requester_id: requester.id, company_id: company_id,
+      status: 2, priority: 2, subject: Faker::Name.name,
+      description: Faker::Lorem.paragraph
+    }
+    post :create, construct_params({}, params)
+    assert_response 400
+    match_json([bad_request_error_pattern(
+      'company_id', :datatype_mismatch, code: :missing_field,
+      expected_data_type: 'Positive Integer', prepend_msg: :input_received,
+      given_data_type: 'Boolean')]
+    )
+  ensure
+    Account.any_instance.unstub(:multiple_user_companies_enabled?)
+  end
+
+  def test_create_with_negative_company_id
+    Account.any_instance.stubs(:multiple_user_companies_enabled?).returns(true)
+    company_id = -100
+    params = {
+      requester_id: requester.id, company_id: company_id,
+      status: 2, priority: 2, subject: Faker::Name.name,
+      description: Faker::Lorem.paragraph
+    }
+    post :create, construct_params({}, params)
+    assert_response 400
+    match_json([bad_request_error_pattern(
+      'company_id', :datatype_mismatch, code: :missing_field,
+      expected_data_type: 'Positive Integer')]
+    )
+  ensure
+    Account.any_instance.unstub(:multiple_user_companies_enabled?)
+  end
+
+  def test_create_with_company_id_without_multiple_user_companies_feature
+    Account.any_instance.stubs(:multiple_user_companies_enabled?).returns(false)
+    company = get_company
+    sample_requester = requester
+    sample_requester.company_id = company.id
+    sample_requester.save!
+    params = {
+      requester_id: sample_requester.id, company_id: company.id,
+      status: 2, priority: 2, subject: Faker::Name.name,
+      description: Faker::Lorem.paragraph
+    }
+    post :create, construct_params({}, params)
+    assert_response 400
+    match_json([bad_request_error_pattern(
+      'company_id', :require_feature_for_attribute, {
+        code: :inaccessible_field,
+        feature: :multiple_user_companies,
+        attribute: "company_id" })]
+    )
+  ensure
+    Account.any_instance.unstub(:multiple_user_companies_enabled?)
+  end
+
+  def test_update_with_company_id
+    Account.any_instance.stubs(:multiple_user_companies_enabled?).returns(true)
+    t = ticket
+    sample_requester = get_user_with_multiple_companies
+    t.update_attributes(:requester => sample_requester)
+    company_id = sample_requester.user_companies.where(:default => false).first.company.id
+    params = { company_id: company_id }
+    put :update, construct_params({ id: t.display_id }, params)
+    t.reload
+    assert t.owner_id == company_id
+    match_json(update_ticket_pattern(params, t))
+    match_json(update_ticket_pattern({}, t))
+    assert_response 200
+  ensure
+    Account.any_instance.unstub(:multiple_user_companies_enabled?)
+  end
+
+  def test_update_with_unavailable_company_id
+    Account.any_instance.stubs(:multiple_user_companies_enabled?).returns(true)
+    t = ticket
+    company_id = 90_000
+    params = { company_id: company_id }
+    put :update, construct_params({ id: t.display_id }, params)
+    assert t.owner_id != company_id
+    assert_response 400
+    match_json([bad_request_error_pattern(
+      'company_id', :invalid_company_id, company_id: 90_000,
+      attribute: :company_id)]
+    )
+  ensure
+    Account.any_instance.unstub(:multiple_user_companies_enabled?)
+  end
+
+  def test_update_with_string_company_id
+    Account.any_instance.stubs(:multiple_user_companies_enabled?).returns(true)
+    t = ticket
+    company_id = "str"
+    params = { company_id: company_id }
+    put :update, construct_params({ id: t.display_id }, params)
+    assert t.owner_id != company_id
+    assert_response 400
+    match_json([bad_request_error_pattern(
+      'company_id', :datatype_mismatch,
+      code: :missing_field, expected_data_type: 'Positive Integer',
+      prepend_msg: :input_received, given_data_type: String)]
+    )
+  ensure
+    Account.any_instance.unstub(:multiple_user_companies_enabled?)
+  end
+
+  def test_update_with_boolean_company_id
+    Account.any_instance.stubs(:multiple_user_companies_enabled?).returns(true)
+    t = ticket
+    company_id = false
+    params = { company_id: company_id }
+    put :update, construct_params({ id: t.display_id }, params)
+    assert t.owner_id != company_id
+    assert_response 400
+    match_json([bad_request_error_pattern(
+      'company_id', :datatype_mismatch, code: :missing_field,
+      expected_data_type: 'Positive Integer', prepend_msg: :input_received,
+      given_data_type: 'Boolean')]
+    )
+  ensure
+    Account.any_instance.unstub(:multiple_user_companies_enabled?)
+  end
+
+  def test_update_with_negative_company_id
+    Account.any_instance.stubs(:multiple_user_companies_enabled?).returns(true)
+    t = ticket
+    company_id = -109
+    params = { company_id: company_id }
+    put :update, construct_params({ id: t.display_id }, params)
+    assert t.owner_id != company_id
+    assert_response 400
+    match_json([bad_request_error_pattern(
+      'company_id', :datatype_mismatch,
+      code: :missing_field, expected_data_type: 'Positive Integer')]
+    )
+  ensure
+    Account.any_instance.unstub(:multiple_user_companies_enabled?)
+  end
+
+  def test_update_with_company_id_without_multiple_user_companies_feature
+    Account.any_instance.stubs(:multiple_user_companies_enabled?).returns(false)
+    t = ticket
+    company_id = 1
+    params = { company_id: company_id }
+    put :update, construct_params({ id: t.display_id }, params)
+    assert_response 400
+    match_json([bad_request_error_pattern(
+      'company_id', :require_feature_for_attribute, {
+        code: :inaccessible_field, feature: :multiple_user_companies,
+        attribute: "company_id"
+      })]
+    )
+  ensure
+    Account.any_instance.unstub(:multiple_user_companies_enabled?)
   end
 end

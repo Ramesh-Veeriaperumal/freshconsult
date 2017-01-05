@@ -1,3 +1,5 @@
+require_relative 'pipe_privileges'
+
 Authority::Authorization::PrivilegeList.build do
 
   # *************** TICKETS **********************

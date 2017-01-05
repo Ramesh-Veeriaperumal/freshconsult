@@ -4120,7 +4120,7 @@ cs:
   your_trial_account: "Váš zkušební účet"
   reply_comment: "Přidat komentář"
   create_password: "Vytvořit heslo"
-  retype_password: "Aktivovat a Přihlásit se"
+  retype_password: "Zadejte heslo znovu"
   feedbackwidget_defaulttitle: "Pomoc &amp; Podpora"
   two: "2 hodiny"
   set_status_as: "Nastavit stav jako"

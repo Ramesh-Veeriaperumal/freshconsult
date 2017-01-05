@@ -19,12 +19,14 @@ module DecoratorConcern
 
     def decorator_name
       # name is a class variable, will be computed only once when class is loaded.
-      @name ||= "#{name.gsub('Controller', '').gsub('Api', '').singularize}Decorator".constantize
+      @name ||= "#{name.gsub('Controller', '').gsub('Pipe::', '').gsub('Api', '').singularize}Decorator".constantize
     end
   end
 
   def decorator_method
-    @decorator_method ||= self.class.decorator_method_mapping[action_name.to_sym]
+    @decorator_method ||= 
+        (self.class.decorator_method_mapping || 
+          self.class.superclass.decorator_method_mapping)[action_name.to_sym]
   end
 
   def render_with_before_render_action(*options, &block)

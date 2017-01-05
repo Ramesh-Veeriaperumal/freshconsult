@@ -30,8 +30,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   before_save  :update_ticket_related_changes, :update_company_id, :set_sla_policy
 
-  before_save :check_and_reset_company_id, :if => :company_id_changed?
-
   before_update :update_sender_email
 
   before_update :stop_recording_timestamps, :unless => :model_changes?
@@ -124,7 +122,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     ticket_states.created_at          = ticket_states.created_at || created_at
     ticket_states.account_id          = account_id
     ticket_states.assigned_at         = ticket_states.first_assigned_at = time_zone_now if responder_id
-    ticket_states.pending_since       = Time.zone.now if (status == PENDING)
+    ticket_states.pending_since       ||= Time.zone.now if (status == PENDING)
 
     ticket_states.set_resolved_at_state(created_at) if ((status == RESOLVED) and ticket_states.resolved_at.nil?)
     ticket_states.resolved_at ||= ticket_states.set_closed_at_state(created_at) if (status == CLOSED)
@@ -629,11 +627,6 @@ private
     self.owner_id = self.requester.company_id if @model_changes.key?(:requester_id) &&
                                                  (self.owner_id.nil? ||
                                                   self.requester.company_ids.length < 2)
-  end
-
-  def check_and_reset_company_id
-    self.owner_id = owner_id_was if self.owner_id.present? &&
-                                    !requester.company_ids.include?(self.owner_id)
   end
 
   def populate_requester
