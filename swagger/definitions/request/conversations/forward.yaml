@@ -2,6 +2,8 @@ type: object
 allOf:
   - $ref: '#/definitions/note'
   - properties:
+      full_text:
+        type: string
       include_quoted_text:
         type: boolean
       include_original_attachments:

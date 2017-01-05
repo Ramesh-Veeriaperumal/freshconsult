@@ -153,6 +153,15 @@ module Ember
       assert latest_note.attachments.count == 1
     end
 
+    def test_reply_with_full_text
+      params_hash = reply_note_params_hash.merge(full_text: Faker::Lorem.paragraph(10))
+      post :reply, construct_params({version: 'private', id: ticket.display_id }, params_hash)
+      assert_response 201
+      latest_note = Helpdesk::Note.last
+      match_json(note_pattern(params_hash, latest_note))
+      match_json(note_pattern({}, latest_note))
+    end
+
     def test_reply_with_invalid_attachment_ids
       attachment_ids = []
       attachment_ids << create_attachment(attachable_type: 'UserDraft', attachable_id: @agent.id).id
@@ -476,6 +485,15 @@ module Ember
 
     def test_forward_without_quoted_text
       params = forward_note_params_hash.merge(include_quoted_text: false)
+      post :forward, construct_params({version: 'private', id: ticket.display_id }, params)
+      assert_response 201
+      latest_note = Helpdesk::Note.last
+      match_json(note_pattern(params, latest_note))
+      match_json(note_pattern({}, latest_note))
+    end
+
+    def test_forward_with_full_text
+      params = forward_note_params_hash.merge(full_text: Faker::Lorem.paragraph(10))
       post :forward, construct_params({version: 'private', id: ticket.display_id }, params)
       assert_response 201
       latest_note = Helpdesk::Note.last

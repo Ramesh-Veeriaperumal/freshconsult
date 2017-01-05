@@ -3747,6 +3747,9 @@
         },
         {
           "properties": {
+            "full_text": {
+              "type": "string"
+            },
             "user_id": {
               "type": "number"
             },
@@ -3793,6 +3796,9 @@
         },
         {
           "properties": {
+            "full_text": {
+              "type": "string"
+            },
             "include_quoted_text": {
               "type": "boolean"
             },

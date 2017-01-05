@@ -181,6 +181,7 @@ module Ember
         ParamsHelper.assign_and_clean_params(ConversationConstants::PARAMS_MAPPINGS, params[cname])
         ParamsHelper.save_and_remove_params(self, ConversationConstants::PARAMS_TO_SAVE_AND_REMOVE, params[cname])
         params[cname][:note_body_attributes] = { body_html: params[cname][:body] } if params[cname][:body]
+        params[cname][:note_body_attributes][:full_text_html] = params[cname][:full_text] if params[cname][:full_text]
         ParamsHelper.clean_params(ConversationConstants::PARAMS_TO_REMOVE, params[cname])
       end
 
@@ -199,7 +200,7 @@ module Ember
         @item.attachments = @item.attachments + @delegator.draft_attachments if @delegator.draft_attachments
         if forward?
           @item.from_email ||= current_account.primary_email_config.reply_email
-          @item.note_body.full_text_html = (@item.note_body.body_html || '')
+          @item.note_body.full_text_html ||= (@item.note_body.body_html || '')
           @item.note_body.full_text_html = @item.note_body.full_text_html + bind_last_conv(@ticket, signature, true) if @include_quoted_text
           load_cloud_files
         end
@@ -272,7 +273,7 @@ module Ember
       end
 
       def set_defaults
-        params[cname][:include_quoted_text] = true unless params[cname].key?(:include_quoted_text)
+        params[cname][:include_quoted_text] = true unless params[cname].key?(:include_quoted_text) || params[cname].key?(:full_text)
         params[cname][:include_original_attachments] = true unless params[cname].key?(:include_original_attachments)
       end
 

@@ -96,6 +96,23 @@ class ConversationValidationTest < ActionView::TestCase
     controller_params = { 'to_emails' => ['aaaaa@bbbb.com'], 'include_quoted_text' => true }
     conversation = ConversationValidation.new(controller_params, nil)
     assert conversation.valid?(:forward)
+
+    controller_params = { 'to_emails' => ['aaaaa@bbbb.com'], 'include_quoted_text' => true, 'full_text' => 'Text' }
+    conversation = ConversationValidation.new(controller_params, nil)
+    refute conversation.valid?(:forward)
+    errors = conversation.errors.full_messages
+    assert errors.include?('Body missing_field')
+    assert errors.include?('Include quoted text cannot_be_set')
+
+    controller_params = { 'to_emails' => ['aaaaa@bbbb.com'], 'body' => 'Text', 'full_text' => 'Text' }
+    conversation = ConversationValidation.new(controller_params, nil)
+    refute conversation.valid?(:forward)
+    errors = conversation.errors.full_messages
+    assert errors.include?('Full text shorter_full_text')
+
+    controller_params = { 'to_emails' => ['aaaaa@bbbb.com'], 'body' => 'Text', 'full_text' => 'Sample Text' }
+    conversation = ConversationValidation.new(controller_params, nil)
+    assert conversation.valid?(:forward)
   end
 
   def test_boolean_errors
