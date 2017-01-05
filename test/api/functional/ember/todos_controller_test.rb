@@ -4,6 +4,10 @@ module Ember
     include TicketsTestHelper
     include TodosTestHelper
 
+    def wrap_cname(params)
+      { todo: params }
+    end
+
     def setup
       super
       @private_api = true
@@ -78,6 +82,30 @@ module Ember
       assert_response 404
     end
 
+    def test_update_with_incorrect_params
+      ticket = create_ticket
+      reminder = get_new_reminder('Ticket todo for show', ticket.id)
+      put :update, construct_params(@api_params.merge(id: reminder.id), body: Faker::Lorem.sentence, completed: 'ABC')
+      assert_response 400
+      match_json([bad_request_error_pattern('completed', :datatype_mismatch, expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: String)])
+    end
+
+    def test_update_todo
+      ticket = create_ticket
+      reminder = get_new_reminder('Ticket todo for show', ticket.id)
+      put :update, construct_params(@api_params.merge(id: reminder.id), body: Faker::Lorem.sentence, completed: true)
+      assert_response 200
+      reminder.reload
+      match_json(todo_pattern(reminder))
+      assert reminder.deleted
+
+      put :update, construct_params(@api_params.merge(id: reminder.id), completed: false)
+      assert_response 200
+      reminder.reload
+      match_json(todo_pattern(reminder))
+      assert !reminder.deleted
+    end
+
     def test_show
       ticket = create_ticket
       reminder = get_new_reminder('Ticket todo for show', ticket.id)
@@ -142,28 +170,6 @@ module Ember
 
     def test_delete_nonexist_todo
       delete :destroy, construct_params(@api_params, false).merge(id: scoper.last.id + 10)
-      assert_response 404
-    end
-
-    def test_toggle
-      reminder = get_new_reminder('test toggle', nil)
-      reminder.update_column(:deleted, false)
-      # test toggle from false to true
-      put :toggle, construct_params(@api_params, false).merge(id: reminder.id)
-      assert_response 200
-      reminder.reload
-      assert reminder.deleted == true
-      match_json(todo_pattern(reminder))
-      # test toggle from true to false
-      put :toggle, construct_params(@api_params, false).merge(id: reminder.id)
-      assert_response 200
-      reminder.reload
-      assert reminder.deleted == false
-      match_json(todo_pattern(reminder))
-    end
-
-    def test_toggle_nonexist_todo
-      put :toggle, construct_params(@api_params, false).merge(id: scoper.last.id + 10)
       assert_response 404
     end
 

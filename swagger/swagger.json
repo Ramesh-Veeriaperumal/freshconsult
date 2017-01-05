@@ -2300,7 +2300,7 @@
         "tags": [
           "todos"
         ],
-        "description": "Create a todos",
+        "description": "Create a todo",
         "parameters": [
           {
             "name": "data",
@@ -2376,7 +2376,7 @@
         "tags": [
           "todos"
         ],
-        "description": "Update a todos",
+        "description": "Update a todo",
         "parameters": [
           {
             "name": "id",
@@ -2392,8 +2392,10 @@
               "type": "object",
               "properties": {
                 "body": {
-                  "type": "string",
-                  "required": true
+                  "type": "string"
+                },
+                "completed": {
+                  "type": "boolean"
                 }
               }
             }
@@ -2433,40 +2435,6 @@
           },
           "404": {
             "description": "User not found"
-          }
-        }
-      }
-    },
-    "/todos/{id}/toggle": {
-      "put": {
-        "summary": "Toggle todos",
-        "tags": [
-          "todos"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "type": "number",
-            "required": true,
-            "description": "ID of todo"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "schema": {
-              "$ref": "#/definitions/todo_details"
-            }
-          },
-          "400": {
-            "description": "Bad Request Error",
-            "schema": {
-              "$ref": "#/definitions/bad_request_error"
-            }
-          },
-          "404": {
-            "description": "Todo not found"
           }
         }
       }

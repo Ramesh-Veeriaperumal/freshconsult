@@ -26,7 +26,7 @@ get:
 
 post:
   tags: [todos]
-  description: Create a todos
+  description: Create a todo
   parameters:
     - name: data
       in: body

@@ -214,11 +214,7 @@ Helpkit::Application.routes.draw do
 
     resources :conversations, controller: 'ember/conversations', only: [:update]
 
-    resources :todos, controller: 'ember/todos', except: [:new, :edit] do
-      member do
-        put :toggle
-      end
-    end
+    resources :todos, controller: 'ember/todos', except: [:new, :edit]
 
     resources :contacts, controller: 'ember/contacts', except: [:new, :edit] do
       collection do

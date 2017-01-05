@@ -22,7 +22,7 @@ get:
 
 put:
   tags: [todos]
-  description: Update a todos
+  description: Update a todo
   parameters:
     - name: id
       in: path
@@ -36,7 +36,8 @@ put:
         properties:
           body:
             type: string
-            required: true
+          completed:
+            type: boolean
   responses:
     200:
       description: Success

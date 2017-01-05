@@ -129,8 +129,6 @@
   $ref: ./todos/list.yaml
 /todos/{id}:
   $ref: ./todos/crud.yaml
-/todos/{id}/toggle:
-  $ref: ./todos/toggle.yaml
 
 #Social
 /twitter_handles:

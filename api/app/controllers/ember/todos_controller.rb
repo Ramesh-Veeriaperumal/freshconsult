@@ -2,8 +2,8 @@ module Ember
   class TodosController < ApiApplicationController
     include HelperConcern
     include TicketConcern
-    decorate_views(decorate_object: [:toggle])
-    SINGULAR_RESPONSE_FOR = %w(create update toggle).freeze
+    decorate_views
+    SINGULAR_RESPONSE_FOR = %w(create update).freeze
 
     def index
       @items = params[:ticket_id] ? scoper.preload(:ticket) : paginate_items(scoper.preload(:ticket))
@@ -23,6 +23,7 @@ module Ember
 
     def update
       return unless validate_body_params
+      sanitize_update_params
       if @item.update_attributes(params[cname])
         render '/ember/todos/show'
       else
@@ -38,22 +39,16 @@ module Ember
       end
     end
 
-    def toggle
-      return unless params
-      @item.toggle(:deleted)
-      if @item.save
-        render '/ember/todos/show'
-      else
-        render_custom_errors
-      end
-    end
-
     private
 
       def validate_filter_params
         params.permit(*fields_to_validate)
         @filter = TodoValidation.new(params, nil, true)
         render_errors(@filter.errors, @filter.error_options) unless @filter.valid?
+      end
+
+      def sanitize_update_params
+        ParamsHelper.assign_and_clean_params(TodoConstants::PARAMS_MAPPINGS, params[cname])
       end
 
       def check_privilege
