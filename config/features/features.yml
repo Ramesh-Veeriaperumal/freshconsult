@@ -20,3 +20,14 @@
       :allow_auto_suggest_solutions: 15
       :basic_twitter: 16
       :basic_facebook: 17
+      :gamification: 18
+      :auto_refresh: 19
+      :advanced_twitter: 20
+      :advanced_facebook: 21
+      :surveys: 22
+      :scoreboard: 23
+      :timesheets: 24
+      :custom_domain: 25
+      :multiple_emails: 26
+      :advanced_reporting: 27
+      :default_survey: 28

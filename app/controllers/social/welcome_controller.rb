@@ -2,7 +2,7 @@ class Social::WelcomeController < ApplicationController
   
   include Social::Twitter::Constants
   
-  before_filter { |c| c.requires_feature :twitter }
+  before_filter { access_denied unless current_account.basic_twitter_enabled? }
   skip_before_filter :check_account_state
   before_filter :check_account_state
   before_filter :can_view_welcome_page?, :only => [:index]
@@ -102,7 +102,7 @@ class Social::WelcomeController < ApplicationController
   end
   
   def can_view_social?
-    feature?(:twitter) && privilege?(:manage_tickets)
+    has_feature?(:basic_twitter) && privilege?(:manage_tickets)
   end  
   
   def social_enabled?

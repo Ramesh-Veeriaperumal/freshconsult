@@ -1,10 +1,11 @@
 class Signup < ActivePresenter::Base
   include Helpdesk::Roles
   include Redis::RedisKeys
+  include Redis::OthersRedis
 
   presents :account, :user
   
-  attr_accessor :contact_first_name, :contact_last_name
+  attr_accessor :contact_first_name, :contact_last_name, :new_plan_test
   before_validation :build_primary_email, :build_portal, :build_roles, :build_admin,
     :build_subscription, :build_account_configuration, :set_time_zone, :build_password_policy
   
@@ -67,9 +68,14 @@ class Signup < ActivePresenter::Base
       user.language = account.main_portal.language
     end
     
-    def build_subscription
-      account.plan = 
-        SubscriptionPlan.find_by_name(SubscriptionPlan::SUBSCRIPTION_PLANS[:estate])
+    def build_subscription      
+      #new_plan_test is a variable which we set when we signup via script to test new plan before enabling redis key for flip.
+      #will remove this check a week later this feature goes live.
+      account.plan = if redis_key_exists?(NEW_SIGNUP_ENABLED) || new_plan_test
+        SubscriptionPlan.find_by_name(SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_jan_17])
+      else
+          SubscriptionPlan.find_by_name(SubscriptionPlan::SUBSCRIPTION_PLANS[:estate])
+      end
     end
     
     def build_account_configuration

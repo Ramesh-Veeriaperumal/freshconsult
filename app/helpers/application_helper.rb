@@ -1632,7 +1632,7 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
     end
     
     def can_view_social?
-      feature?(:twitter) && privilege?(:manage_tickets)
+      current_account.has_feature?(:basic_twitter) && privilege?(:manage_tickets)
     end
 
     def social_enabled?

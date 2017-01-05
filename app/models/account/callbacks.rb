@@ -61,7 +61,7 @@ class Account < ActiveRecord::Base
   end
 
   def populate_features
-    add_features_of subscription.subscription_plan.name.downcase.to_sym
+    add_features_of self.plan_name
     SELECTABLE_FEATURES.each { |key,value| features.send(key).create  if value}
     TEMPORARY_FEATURES.each { |key,value| features.send(key).create  if value}
     ADMIN_CUSTOMER_PORTAL_FEATURES.each { |key,value| features.send(key).create  if value}
@@ -120,7 +120,14 @@ class Account < ActiveRecord::Base
     def add_features_to_binary_column
       begin
         bitmap_value = 0
-        FEATURES_DATA[:plan_features][:feature_list].each do |key, value|
+        #This || condition is to handle special case during deployment
+        #until new signup is enabled, we need to have older list.
+        plan_features_list =  if PLANS[:subscription_plans][self.plan_name].nil?
+                                FEATURES_DATA[:plan_features][:feature_list]
+                              else
+                                PLANS[:subscription_plans][self.plan_name][:features]
+                              end
+        plan_features_list.each do |key, value|
           bitmap_value = self.set_feature(key)
         end
         self.plan_features = bitmap_value

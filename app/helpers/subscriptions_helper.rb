@@ -6,8 +6,53 @@ module SubscriptionsHelper
     "blossom" => [ "everything_in_sprout", "multiple_mailboxes", "custom_domain", "social_support", "satisfaction_survey", "forums", "gamification" ],
     "garden" => [ "everything_in_blossom", "chat", "multiple_languages", "multiple_products", "multiple_timezones", "css_customization" ],
     "estate" => [ "everything_in_garden", "agent_collision", "custom_roles", "custom_ssl", "enterprise_reports", "portal_customization" ],
-    "forest" => [ "everything_in_estate", "custom_mailbox", "ip_restriction" ]
+    "forest" => [ "everything_in_estate", "custom_mailbox", "ip_restriction" ],
+
+    "sprout jan 17" => [ "email_ticketing", "feedback_widget" ,"knowledge_base", "automations", "phone_integration", "mobile_apps", "integrations" ],
+    "blossom jan 17" => [ "everything_in_sprout", "multiple_mailboxes", "time_event_automation", "sla_reminders", "custom_domain", "satisfaction_survey",
+      "helpdesk_report", "custom_ticket_fields_and_views", "dkim_dmarc", "gamification", "occasional_agents", "social_keyword" ],
+    "garden jan 17" => [ "everything_in_blossom", "m_k_base", "dynamic_email_alert", "chat", "forums", "linked_tickets", "parent_child", "scheduled_reports",
+       "ticket_templates", "custom_surveys"],
+    "estate jan 17" => [ "everything_in_garden", "multiple_products", "multiple_sla", "portal_customization", "custom_roles", "agent_collision", "auto_ticket_assignment", "shared_ownership",
+       "role_dashboard", "enterprise_reports", "custom_ssl", "advanced_dkim"],
+    "forest jan 17" => [ "everything_in_estate", "ip_whitelisting", "custom_mailbox", "advanced_phone_integration", "machine_learning", "custom_data_center" ]
   }
+
+  PLANS_FEATURES_LOSS = {
+    "blossom" => ["time_event_automation_desc", "sla_reminders" , "shared_ticket_views_desc", "custom_fields_desc", "custom_ticket_views_desc", "cname_dkim_desc", "multiple_mailbox_desc"],
+    "garden" => ["multiple_sla_business_desc", "forums_desc"],
+    "estate" => ["multiple_products_desc", "portal_customization_desc", "custom_roles_desc", "custom_ssl_desc", "enterprise_reports_desc"],
+    "forest" => ["whitelisted_ip_desc", "custom_mailbox_desc", "advanced_phone_desc"],
+
+    "blossom jan 17" => ["time_event_automation_desc", "sla_reminders" , "shared_ticket_views_desc", "custom_fields_desc", "custom_ticket_views_desc", "cname_dkim_desc", "multiple_mailbox_desc", "adv_social_desc"],
+    "garden jan 17" => ["multilingual_kbase_desc", "live_chat_desc", "forums_desc", "linked_paren_child_desc", "scheduled_reports_desc", "custom_survey_desc", "ticket_templates"],
+    "estate jan 17" => ["multiple_products_desc", "multiple_sla_business_desc", "portal_customization_desc", "custom_roles_desc", "custom_ssl_desc", "enterprise_reports_desc"],
+    "forest jan 17" => ["whitelisted_ip_desc", "custom_mailbox_desc", "advanced_phone_desc"]
+  }
+
+  PLAN_RANKING = {
+    "sprout" => 1,
+    "blossom" => 2,
+    "garden" => 3,
+    "estate" => 4,
+    "forest" => 5,
+
+    "sprout jan 17" => 1,
+    "blossom jan 17" => 2,
+    "garden jan 17" => 3,
+    "estate jan 17" => 4,
+    "forest jan 17" => 5
+  }
+
+  EQUAL_PLAN_HASH = {
+    "sprout jan 17" => {:type_flag => 0, :features => ["time_event_automation_desc", "sla_reminders" , "shared_ticket_views_desc", "custom_fields_desc", "custom_ticket_views_desc", "cname_dkim_desc", "multiple_mailbox_desc"]},
+    "blossom jan 17" => {:type_flag => 0, :features => ["forums_desc"]},
+    "garden jan 17" => {:type_flag => 0, :features => ["multiple_products_desc", "multiple_sla_business_desc"]},
+    "estate jan 17" => {:type_flag => 2, :features => []},
+    "forest jan 17" => {:type_flag => 2, :features => []}
+  }
+
+  NEW_SPROUT = "Sprout Jan 17"
 
   def get_payment_string(period,amount)
     amount = format_amount(amount, current_account.currency_name)
@@ -16,7 +61,7 @@ module SubscriptionsHelper
     end
     return  t('amount_billed_per_month',{:amount => amount,:period => SubscriptionPlan::BILLING_CYCLE_NAMES_BY_KEY[period]}).html_safe
   end
- 
+
   def get_amount_string(period,amount)
     if period == SubscriptionPlan::BILLING_CYCLE_KEYS_BY_TOKEN[:annual]
       return t('amount_for_annual', :amount => amount ).html_safe 
@@ -31,9 +76,9 @@ module SubscriptionsHelper
                         ["IE 9", "ie9"],
                         ["IE 10", "ie10"],
                         ["(gt IE 10)|!(IE)", "", true]]
-    
+
     date_format = (AccountConstants::DATEFORMATS[current_account.account_additional_settings.date_format] if current_account.account_additional_settings) || :non_us
-    
+
     html_conditions.map { |h|
       %(
         <!--[if #{h[0]}]>#{h[2] ? '<!-->' : ''}<html class="no-js #{h[1]}" lang="#{
@@ -113,10 +158,10 @@ module SubscriptionsHelper
 
   def plan_button(plan, button_label, button_classes, free_plan_flag, add_freshdialog, title = "", data_submit_label = "", data_close_label = "", data_classes = "", data_submit_loading = t('please_wait'))
     output = []
-    output << %(<button data-plan="#{ plan.name }" 
+    output << %(<button data-plan="#{ plan.name.parameterize.underscore }" 
                   data-plan-id="#{ plan.id }" 
                   class="#{button_classes}" 
-                  id="#{ plan.name }_button" 
+                  id="#{ plan.name.parameterize.underscore }_button" 
                   data-current-plan="false"
                   data-free-plan="#{ free_plan_flag }" )
     if add_freshdialog
@@ -134,6 +179,26 @@ module SubscriptionsHelper
 
   def freshfone_allowed?
     feature?(:freshfone) && !freshfone_trial_states?
+  end
+
+  def previous_plan?(plan)
+    SubscriptionPlan.previous_plans.include?(plan)
+  end
+
+  def eligible_for_special_pricing?
+    current_account.created_at > Subscription::ELIGIBLE_LIMIT
+  end
+
+  def new_sprout?(plan_name)
+    plan_name == NEW_SPROUT
+  end
+
+  def get_current_plans(is_old_plan)
+    if is_old_plan
+      SubscriptionPlan.previous_plans.pluck(:name)
+    else
+      SubscriptionPlan.current.pluck(:name)
+    end
   end
 
  end

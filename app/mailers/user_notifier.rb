@@ -297,6 +297,21 @@ class UserNotifier < ActionMailer::Base
       part.html { render "failure_transaction_notifier.text.html" }
     end.deliver
   end
+  
+  def notify_special_pricing(account)
+    headers = {
+      :from       => AppConfig['from_email'],
+      :to         => "ramkumar@freshdesk.com",
+      :subject    => "Special pricing request",
+      :sent_on    => Time.now
+    }
+    @account = account
+    
+    mail(headers) do |part|
+      part.text { render "notify_special_pricing.text.plain" }
+      part.html { render "notify_special_pricing.text.html" }
+    end.deliver
+  end
 
   private
 

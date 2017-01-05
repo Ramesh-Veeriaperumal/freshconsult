@@ -19,7 +19,7 @@
       },
       :"twitter"                       =>   {
         :url                           =>   "/admin/social/streams",
-        :privilege                     =>   feature?(:twitter) && privilege?(:admin_tasks)
+        :privilege                     =>   current_account.basic_twitter_enabled? && privilege?(:admin_tasks)
       },
       :"facebook-setting"              =>   facebook_settings,
       
@@ -440,7 +440,7 @@ HTML
   private
   
   def facebook_settings
-    fb_feature = current_account.features?(:facebook) && privilege?(:admin_tasks)
+    fb_feature = current_account.basic_facebook_enabled? && privilege?(:admin_tasks)
     url = (fb_feature && current_account.features?(:social_revamp)) ? "/admin/social/facebook_streams" : "/social/facebook"
     {
       :url        => url,

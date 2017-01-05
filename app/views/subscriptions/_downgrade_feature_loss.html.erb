@@ -1,0 +1,49 @@
+<%
+	new_plan_rank = SubscriptionsHelper::PLAN_RANKING["#{new_plan}"]
+	current_plan_rank = SubscriptionsHelper::PLAN_RANKING["#{current_plan}"]
+	is_old_plan = previous_plan?(current_account.subscription.subscription_plan)
+	plan_name_list = get_current_plans(is_old_plan)
+	equal_plan_rank = (new_plan_rank == current_plan_rank) && (new_plan != current_plan)
+	new_plan_name = new_plan.split(' ').first.capitalize
+%>
+<div class="plan-confirm-message-new">
+	<div class="plan-confirm-message-info">
+		<div class="downgrade-message-info">
+			<%= equal_plan_rank || is_old_plan ? t('downgrade_confirm_v3', :new_plan => new_plan_name).html_safe
+													: downgrade_msg.html_safe %>
+		</div>
+		<% if equal_plan_rank %>
+			<%
+				plan_slide_details = SubscriptionsHelper::EQUAL_PLAN_HASH["#{new_plan}"]
+				message_type_downgrade = (plan_slide_details[:type_flag] == 0)
+			%>
+			<% if plan_slide_details[:type_flag].present? %>
+				<% if plan_slide_details[:type_flag] < 2 %>
+					<div class="downgrade-feature-list">
+						<div class="downgrade-warning <%= 'upgrade-warning'if plan_slide_details[:type_flag] == 1%>">
+							<%= message_type_downgrade ? t('downgrade_loss_message').html_safe : t('upgrade_plan_message', :current_plan => message_type_downgrade ? current_plan_name : new_plan_name).html_safe %>
+						</div>
+
+						<% plan_slide_details[:features].each do |feature_name| %>
+							<span class= "<%= message_type_downgrade ? 'ficon-cross lost-feature' : 'ficon-plus new-feature'%>"><%= t("features.#{feature_name}").html_safe %></span>
+						<% end %>
+					</div>
+				<% end %>
+			<% end %>
+		<% else %>
+			<div class="downgrade-feature-list">
+				<div class="downgrade-warning"><%= t('downgrade_loss_message').html_safe %></div>
+				<% (new_plan_rank+1..current_plan_rank).each do |rank|%>
+					<%
+						plan_name = plan_name_list[rank-1]
+					%>
+					<% SubscriptionsHelper::PLANS_FEATURES_LOSS["#{plan_name.downcase}"].each do |feature_name| %>
+						<span class= "ficon-cross lost-feature"><%= t("features.#{feature_name}").html_safe %></span>
+					<% end %>
+				<% end %>
+			</div>
+		<% end %>
+	</div>
+	<%= t(equal_plan_rank ? 'equal_plan_doubt' : 'inequal_plan_doubt') %>
+	<%= t('downgrade_contact_us').html_safe %>
+</div>

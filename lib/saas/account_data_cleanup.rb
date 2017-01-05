@@ -1,6 +1,10 @@
 class SAAS::AccountDataCleanup
 
   include Marketplace::ApiMethods
+  include Cache::Memcache::ContactField
+  include Cache::Memcache::CompanyField
+  include MemcacheKeys
+
   attr_accessor :account, :features_to_drop
 
 
@@ -30,7 +34,9 @@ class SAAS::AccountDataCleanup
   end 
 
   def handle_add_watcher_data
-    account.ticket_subscriptions.destroy_all
+    account.ticket_subscriptions.find_each do |ts|
+      ts.destroy
+    end
   end
 
   def handle_basic_twitter_data
@@ -71,18 +77,34 @@ class SAAS::AccountDataCleanup
 
   def handle_custom_ticket_fields_data
     account.ticket_fields.where(default:false).destroy_all
+    #custom ticket fields and custom status are tied up with same feature name. so handle deletion together!
+    handle_custom_status_data
   end
 
   def handle_custom_contact_fields_data
-    account.contact_form.custom_contact_fields.destroy_all
+    account.contact_form.custom_contact_fields.each do |c_f|
+      c_f.destroy
+    end
+    clear_contact_fields_cache
   end
 
   def handle_custom_company_fields_data
-    account.company_form.custom_company_fields.destroy_all
+    account.company_form.custom_company_fields.each do |c_f|
+      c_f.destroy
+    end
+    clear_company_fields_cache
   end
 
   def handle_custom_ticket_views_data
     account.ticket_filters.destroy_all
+  end
+
+  def handle_rebranding_data
+    main_portal = account.main_portal
+    main_portal.preferences = default_portal_preferences
+    main_portal.save
+    key = ACCOUNT_MAIN_PORTAL % { :account_id => account.id }
+    MemcacheKeys.delete_from_cache key
   end
 
   def handle_custom_apps_data
@@ -131,6 +153,17 @@ class SAAS::AccountDataCleanup
       NewRelic::Agent.notice_error(e)
       raise e
     end
+  end
+
+  def default_portal_preferences
+    HashWithIndifferentAccess.new(
+        {
+          :bg_color => "#efefef",
+          :header_color => "#252525",
+          :tab_color => "#006063",
+          :personalized_articles => true
+        }
+      )
   end
 
 end

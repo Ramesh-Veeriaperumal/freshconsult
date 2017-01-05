@@ -93,6 +93,7 @@ module Redis::RedisKeys
 
 	CUSTOM_SSL = "CUSTOM_SSL:%{account_id}"
 	SUBSCRIPTIONS_BILLING = "SUBSCRIPTIONS_BILLING:%{account_id}"
+	SUBSCRIPTIONS_PRICING_REQUEST = "SPECIAL_PRICING:%{account_id}:%{user_id}"
 	SEARCH_KEY = "SEARCH_KEY:%{account_id}:%{klass_name}:%{id}"
 	ZENDESK_IMPORT_STATUS = "ZENDESK_IMPORT_STATUS:%{account_id}"
 	ZENDESK_IMPORT_CUSTOM_DROP_DOWN = "ZENDESK_IMPORT_CUSTOM_DROP_DOWN_%{account_id}"
@@ -236,6 +237,8 @@ module Redis::RedisKeys
 
 
   INTERNAL_TOOLS_IP = "INTERNAL_TOOLS_IP"
+
+  NEW_SIGNUP_ENABLED = "NEW_SIGNUP_ENABLED"
 
   #Following are the dead keys. Need to remove them from code and any references
   GROUP_AGENT_TICKET_ASSIGNMENT = "GROUP_AGENT_TICKET_ASSIGNMENT:%{account_id}:%{group_id}"

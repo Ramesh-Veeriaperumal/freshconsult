@@ -2,6 +2,8 @@ require 'httparty'
 class SubscriptionsController < ApplicationController
   include RestrictControllerAction
   include Subscription::Currencies::Constants
+  include Redis::RedisKeys
+  include Redis::OthersRedis
 
   skip_before_filter :check_account_state
 
@@ -37,7 +39,7 @@ class SubscriptionsController < ApplicationController
   def calculate_plan_amount
     # render plan pricing with selected currency
     scoper.set_billing_params(params[:currency])
-    render :partial => "select_plans",
+    render :partial => current_account.new_pricing_launched? ? "select_new_plans" : "select_plans",
       :locals => { :plans => @plans, :subscription => scoper, :show_all => true }
   end
 
@@ -55,9 +57,10 @@ class SubscriptionsController < ApplicationController
 
   def convert_subscription_to_free
     scoper.state = FREE if scoper.card_number.blank?
+    scoper.convert_to_free if new_sprout?
     if activate_subscription
       update_features
-      flash[:notice] = t('plan_is_selected', :plan => scoper.subscription_plan.name )
+      flash[:notice] = t('plan_is_selected', :plan => scoper.subscription_plan.display_name )
     else
       flash[:notice] = t('error_in_plan')
     end
@@ -112,6 +115,14 @@ class SubscriptionsController < ApplicationController
       render :json => {:success => true }
     end
   end
+  
+  def request_special_pricing
+    if !scoper.special_pricing_requested? and current_account.created_at > Subscription::ELIGIBLE_LIMIT
+      UserNotifier.notify_special_pricing(current_account)
+      set_others_redis_key(special_pricing_key, Time.zone.now, 86400 * 60)
+    end
+    render :json => 200
+  end
 
 
 
@@ -129,12 +140,12 @@ class SubscriptionsController < ApplicationController
     end
 
     def load_objects
-      plans = SubscriptionPlan.current
+      plans = (current_account.new_pricing_launched? ? SubscriptionPlan.current : SubscriptionPlan.previous_plans)
       plans << scoper.subscription_plan if scoper.subscription_plan.classic?
 
       @subscription = scoper
       @addons = scoper.addons
-      @plans = plans
+      @plans = plans.uniq
       @currency = scoper.currency_name
     end
 
@@ -143,7 +154,11 @@ class SubscriptionsController < ApplicationController
     end
 
     def load_subscription_plan
-      @subscription_plan = SubscriptionPlan.find_by_id(params[:plan_id])
+      if current_account.new_pricing_launched?
+        @subscription_plan = SubscriptionPlan.current.find_by_id(params[:plan_id]) if params[:plan_id].present?
+      else
+        @subscription_plan = SubscriptionPlan.previous_plans.find_by_id(params[:plan_id]) if params[:plan_id].present?
+      end
       @subscription_plan ||= scoper.subscription_plan
     end
 
@@ -159,7 +174,7 @@ class SubscriptionsController < ApplicationController
 
     #building objects
     def build_subscription
-      scoper.billing_cycle = params[:billing_cycle].to_i
+      scoper.billing_cycle = (params[:billing_cycle].present? ? params[:billing_cycle].to_i : 1)
       scoper.plan = @subscription_plan
       scoper.agent_limit = params[:agent_limit]
       scoper.free_agents = @subscription_plan.free_agents
@@ -251,7 +266,7 @@ class SubscriptionsController < ApplicationController
     end
 
     def perform_next_billing_action
-      if free_plan?
+      if free_plan? or new_sprout?
         convert_subscription_to_free
       elsif scoper.trial? && params["plan_switch"]
         flash[:notice] = t('plan_info_update')
@@ -287,6 +302,10 @@ class SubscriptionsController < ApplicationController
     def free_plan?
       scoper.agent_limit.to_i <= scoper.free_agents and scoper.sprout?
     end
+    
+    def new_sprout?
+      scoper.new_sprout?
+    end
 
     def card_needed_for_payment?
       !scoper.active? or scoper.card_number.blank?
@@ -303,6 +322,7 @@ class SubscriptionsController < ApplicationController
       #Check for addon changes also if customers are allowed to choose the addons.
       return if scoper.subscription_plan_id == @cached_subscription.subscription_plan_id
       SAAS::SubscriptionActions.new.change_plan(scoper.account, @cached_subscription, @cached_addons)
+      SAAS::SubscriptionEventActions.new(scoper.account, @cached_subscription, @cached_addons).change_plan if current_account.new_pricing_launched?
     end
 
     #Events
@@ -332,9 +352,8 @@ class SubscriptionsController < ApplicationController
 
     #switch_currency
     def switch_currency?
-      # only trial & suspended(trial-expired) subscriptions can switch currency.
-      !current_account.has_credit_card? or scoper.trial? or scoper.suspended? or
-      !(@currency == params[:currency])
+      !current_account.has_credit_card? and scoper.subscription_payments.count.zero? and
+      (scoper.trial? or scoper.suspended?) and !(@currency == params[:currency])
     end
 
     def switch_currency
@@ -371,5 +390,9 @@ class SubscriptionsController < ApplicationController
         flash[:error] = t("subscription.error.invalid_currency")
         redirect_to subscription_url
       end
+    end
+    
+    def special_pricing_key
+      SUBSCRIPTIONS_PRICING_REQUEST % {:account_id => current_account.id, :user_id => User.current.id}
     end
 end
