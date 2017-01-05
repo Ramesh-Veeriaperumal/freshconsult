@@ -10548,7 +10548,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       new_form:
         go_to_portal: "Authorize &amp; Go to %{portal_name} Portal"
         decline: Decline
-        authorize_text1: Authorize
+        authorize_text3: "Agree to <a target='_blank' href='http://developers.freshdesk.com/docs/terms-of-use/'>Developer Terms of Use </a> and authorize "
         authorize_text2: to use your account?
         authorize_success: You have allowed this request
         authorize_failure: You are not allowed to access this page
