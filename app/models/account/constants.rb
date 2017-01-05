@@ -94,6 +94,7 @@ class Account < ActiveRecord::Base
     :chat_enable => false, :saml_old_issuer => false, :spam_dynamo => true,
     :redis_display_id => false, :es_multilang_solutions => false,
     :sort_by_customer_response => false, :survey_links => true,
+    :tags_filter_reporting => false,
     :saml_unspecified_nameid => false, :euc_hide_agent_metrics => false,
     :single_session_per_user => false, :link_tickets => false, :parent_child_tickets => false,
     :marketplace_app => false, :sandbox_account => false, :collaboration => false

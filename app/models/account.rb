@@ -178,6 +178,10 @@ class Account < ActiveRecord::Base
     default_in_op_fields.stringify_keys!
   end
   
+  def tags_filter_reporting_enabled?
+    features?(:tags_filter_reporting)
+  end
+
   def parent_child_tkts_enabled?
     @pc ||= launched?(:parent_child_tickets)
   end

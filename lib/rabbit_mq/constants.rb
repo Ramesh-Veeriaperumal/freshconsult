@@ -69,6 +69,8 @@ module RabbitMq::Constants
   # Manual publish keys - only for reports
   RMQ_REPORTS_TICKET_KEY         = "*.1.#"
   RMQ_REPORTS_NOTE_KEY           = "*.1.#"
+  RMQ_REPORTS_TAG_KEY            = "1"
+  RMQ_REPORTS_TAG_USE_KEY        = "1"
   RMQ_REPORTS_ARCHIVE_TICKET_KEY = "1"
   
   # SEARCH KEYS #

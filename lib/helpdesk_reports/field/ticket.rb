@@ -143,6 +143,8 @@ module HelpdeskReports::Field::Ticket
       Account.current.products.collect {|p| [p.id, p.name]}
     when :company_id
       Account.current.companies_from_cache.collect { |au| [au.id, au.name] }
+    when :tags
+      Account.current.tags_from_cache.collect { |au| [au.id, CGI.escapeHTML(au.name)] }
     else
       []
     end

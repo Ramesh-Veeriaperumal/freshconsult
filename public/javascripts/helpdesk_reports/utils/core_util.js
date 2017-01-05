@@ -394,6 +394,20 @@ HelpdeskReports.CoreUtil = {
                 _this.actions.toggleReportTypeMenu();    
             }
         });
+
+        jQuery('#reports_wrapper').on('click.helpdesk_reports', '[data-action="pop-tag-menu"]', function (event) {
+            event.stopImmediatePropagation();
+            _this.actions.toggleTagMenu();
+        });
+
+        jQuery('#reports_wrapper').on('click.helpdesk_reports', '.tags-menu li', function (event) {
+            var operator = jQuery(this).data('operator');
+            jQuery("div[condition='tag_id']").attr('operator',operator);
+            jQuery(".tag-selection-block .select-title").html(jQuery(this).text());
+            _this.actions.toggleTagMenu();
+            trigger_event("filter_changed",{});
+        });
+
         jQuery('#reports_wrapper').on('click.helpdesk_reports', function () {
             _this.actions.hideReportTypeMenu();
         });
@@ -402,6 +416,7 @@ HelpdeskReports.CoreUtil = {
             _this.actions.openFilterMenu();
         });
         jQuery('#reports_wrapper').on('click.helpdesk_reports', '[data-action="close-filter-menu"]', function () {
+            _this.actions.hideTagMenu();
             _this.actions.closeFilterMenu();
         });
         jQuery(document).on('click.helpdesk_reports', '[data-action="hide-ticket-list"]', function () {
@@ -560,8 +575,22 @@ HelpdeskReports.CoreUtil = {
                 } 
             }
         },
+        toggleTagMenu: function () {
+            var menu = jQuery('.tags-menu');
+            if (!menu.is(':visible')) {
+                menu.removeClass('hide');
+            } else {
+                menu.addClass('hide');
+            }
+        },
         hideReportTypeMenu: function () {
             var menu = jQuery('#reports_type_menu');
+            if (menu.is(':visible')) {
+                menu.addClass('hide');
+            }
+        },
+        hideTagMenu: function () {
+            var menu = jQuery('.tags-menu');
             if (menu.is(':visible')) {
                 menu.addClass('hide');
             }

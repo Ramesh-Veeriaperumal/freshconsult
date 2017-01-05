@@ -56,7 +56,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   # Tested similar association in 4.2.6 and working fine
   # https://github.com/rails/rails/issues/14365 
   has_many :tags, :class_name => 'Helpdesk::Tag', :through => :tag_uses, 
-    :after_remove => :remove_tag_activity , :after_add => :add_tag_activity
+    :after_remove => :remove_tag_activity , :after_add => :add_tag_activity, :dependent => :destroy
 
   has_many :ticket_issues, :class_name => 'Helpdesk::TicketIssue', :dependent => :destroy
 
