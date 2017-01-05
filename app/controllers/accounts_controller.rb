@@ -262,49 +262,53 @@ class AccountsController < ApplicationController
     end
     
     def build_metrics
-      return if params[:session_json].blank?
-      
+      # return if params[:session_json].blank?
+      metrics_obj = {}
+      account_obj = {}
       begin  
-        metrics =  JSON.parse(params[:session_json])
-        metrics_obj = {}
-        account_obj = {}
-
-        metrics_obj[:referrer] = metrics["current_session"]["referrer"]
-        metrics_obj[:landing_url] = metrics["current_session"]["url"]
-        metrics_obj[:first_referrer] = params[:first_referrer]
-        metrics_obj[:first_landing_url] = params[:first_landing_url]
-        unless metrics["location"].blank?
-          metrics_obj[:country] = metrics["location"]["countryName"] 
-          account_obj[:country_code] = metrics["location"]["countryCode"]
-          account_obj[:city] = metrics["location"]["cityName"]
-          account_obj[:source_ip] = metrics["location"]["ipAddress"]
-        else
-          account_obj[:source_ip] = request.remote_ip
-        end
-        metrics_obj[:language] = metrics["locale"]["lang"]
-        metrics_obj[:search_engine] = metrics["current_session"]["search"]["engine"]
-        metrics_obj[:keywords] = metrics["current_session"]["search"]["query"]
+        account_obj[:first_referrer] = metrics_obj[:first_referrer] = params[:first_referrer]
+        account_obj[:first_landing_url] = metrics_obj[:first_landing_url] = params[:first_landing_url]
         metrics_obj[:visits] = params[:pre_visits]
-
-        if metrics["device"]["is_mobile"]
-          metrics_obj[:device] = "M"
-        elsif  metrics["device"]["is_phone"]
-          metrics_obj[:device] = "P"
-        elsif  metrics["device"]["is_tablet"]
-          metrics_obj[:device] = "T"
+        if params[:user]
+          account_obj[:email] = params[:user][:email]
+          account_obj[:first_name] = params[:user][:first_name]
+          account_obj[:last_name] = params[:user][:last_name]
+          account_obj[:phone] = params[:user][:phone]
         else
-          metrics_obj[:device] = "C"
+          Rails.logger.info "User Information is not been provided while creating an account"
         end
+        if params[:session_json].present? 
+          metrics =  JSON.parse(params[:session_json])
+          metrics_obj[:referrer] = metrics["current_session"]["referrer"]
+          metrics_obj[:landing_url] = metrics["current_session"]["url"]
+          if metrics["location"].present?
+            metrics_obj[:country] = metrics["location"]["countryName"] 
+            account_obj[:country_code] = metrics["location"]["countryCode"]
+            account_obj[:city] = metrics["location"]["cityName"]
+            account_obj[:source_ip] = metrics["location"]["ipAddress"]
+          end
+          metrics_obj[:language] = metrics["locale"]["lang"]
+          if metrics["current_session"]["search"].present?
+            metrics_obj[:search_engine] = metrics["current_session"]["search"]["engine"]
+            metrics_obj[:keywords] = metrics["current_session"]["search"]["query"]
+          end
+          if metrics["device"]["is_mobile"]
+            metrics_obj[:device] = "M"
+          elsif  metrics["device"]["is_phone"]
+            metrics_obj[:device] = "P"
+          elsif  metrics["device"]["is_tablet"]
+            metrics_obj[:device] = "T"
+          else
+            metrics_obj[:device] = "C"
+          end
 
-        metrics_obj[:browser] = metrics["browser"]["browser"]
-        metrics_obj[:os] = metrics["browser"]["os"]
-        metrics_obj[:offset] = metrics["time"]["tz_offset"]
-        metrics_obj[:is_dst] = metrics["time"]["observes_dst"]
-        metrics_obj[:session_json] = metrics
-        account_obj[:email] = params[:user][:email]
-        account_obj[:first_name] = params[:user][:first_name]
-        account_obj[:last_name] = params[:user][:last_name]
-        account_obj[:phone] = params[:user][:phone]
+          metrics_obj[:browser] = metrics["browser"]["browser"]
+          metrics_obj[:os] = metrics["browser"]["os"]
+          metrics_obj[:offset] = metrics["time"]["tz_offset"]
+          metrics_obj[:is_dst] = metrics["time"]["observes_dst"]
+          metrics_obj[:session_json] = metrics
+        end
+        account_obj[:source_ip] = (request.remote_ip || request.env["HTTP_X_FORWARDED_FOR"] || request.host_with_port || request.env["SERVER_ADDR"]) unless account_obj[:source_ip].present?
         return metrics_obj, account_obj
       rescue => e
         NewRelic::Agent.notice_error(e,{:custom_params => {:description => "Error occoured while building conversion metrics"}})
