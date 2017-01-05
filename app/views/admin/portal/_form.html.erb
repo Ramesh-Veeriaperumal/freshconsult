@@ -28,7 +28,7 @@
             </div>
           <% else %>
     	      <%= f.text_field :portal_url, 
-              :class => " input-xlarge portal_url url_without_protocol #{'required' unless portal.main_portal}", 
+              :class => " input-xlarge portal_url url_without_protocol domain_name_validator #{'required' unless portal.main_portal}", 
               :id => "PortalUrl", 
               :placeholder => "Eg. help.yourcompany.com",
               :"data-domain" => Helpdesk::HOST[Rails.env.to_sym] %>
