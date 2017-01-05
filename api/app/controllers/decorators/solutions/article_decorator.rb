@@ -1,5 +1,6 @@
 class Solutions::ArticleDecorator < ApiDecorator
-  delegate :title, :description, :desc_un_html, :user_id, :status, :seo_data, :parent, :parent_id, :draft, to: :record
+  delegate :title, :description, :desc_un_html, :user_id, :status, :seo_data,
+           :parent, :parent_id, :draft, :attachments, to: :record
 
   def tags
     record.tags.map(&:name)

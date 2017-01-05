@@ -57,6 +57,24 @@ module ApiSolutions
       @article.user_id = @account.agents.first.id
       @article.save
 
+      temp_article_meta = Solution::ArticleMeta.new
+      temp_article_meta.art_type = 1
+      temp_article_meta.solution_folder_meta_id = @folder_meta.id
+      temp_article_meta.solution_category_meta = @folder_meta.solution_category_meta
+      temp_article_meta.account_id = @account.id
+      temp_article_meta.published = false
+      temp_article_meta.save
+
+      temp_article = Solution::Article.new
+      temp_article.title = "Sample article without draft"
+      temp_article.description = "<b>Test</b>"
+      temp_article.status = 2
+      temp_article.language_id = @account.language_object.id
+      temp_article.parent_id = temp_article_meta.id
+      temp_article.account_id = @account.id
+      temp_article.user_id = @account.agents.first.id
+      temp_article.save
+
       @draft = Solution::Draft.new
       @draft.account = @account
       @draft.article = @article
@@ -72,23 +90,16 @@ module ApiSolutions
       @draft_body.save
     end
 
-
-    def create_company
-      company = Company.create(name: Faker::Name.name, account_id: @account.id)
-      company.save
-      company
-    end
-
-    def get_company
-      company ||= create_company
-    end
-
     def wrap_cname(params)
       { article: params }
     end
 
     def get_article
       @account.solution_category_meta.where(is_default: false).collect{ |x| x.solution_folder_meta }.flatten.map{ |x| x unless x.is_default}.collect{ |x| x.solution_article_meta }.flatten.collect{ |x| x.children }.flatten.first
+    end
+
+    def get_article_without_draft
+      @account.solution_category_meta.where(is_default: false).collect{ |x| x.solution_folder_meta }.flatten.map{ |x| x unless x.is_default}.collect{ |x| x.solution_article_meta }.flatten.collect{ |x| x.children }.flatten.select{ |x| !x.draft.present? }.first
     end
 
     def get_article_with_draft
@@ -361,6 +372,19 @@ module ApiSolutions
       assert sample_article.reload.parent.reload.user_id == @agent.id
     end
 
+    def test_update_and_publish_without_draft
+      sample_article = get_article_without_draft
+      paragraph = Faker::Lorem.paragraph
+      params_hash  = { title: 'new title', description: paragraph, status: 2, type: 2, agent_id: @agent.id }
+      put :update, construct_params({ id: sample_article.parent_id }, params_hash)
+      assert_response 200
+      match_json(solution_article_pattern(sample_article.reload))
+      assert sample_article.reload.title == 'new title'
+      assert sample_article.reload.status == 2
+      assert sample_article.reload.parent.reload.art_type == 2
+      assert sample_article.reload.parent.reload.user_id == @agent.id
+    end
+
     def test_update_draft_with_unavailable_agent_id
       sample_article = get_article_with_draft
       paragraph = Faker::Lorem.paragraph
@@ -388,7 +412,7 @@ module ApiSolutions
       assert_response :missing
     end
 
-    def test_update_unavailalbe_article_with_language
+    def test_update_unavailable_article_with_language
       paragraph = Faker::Lorem.paragraph
       params_hash  = { title: 'new title', description: paragraph, status: 2, type: 2 }
       put :update, construct_params({ id: 9999, language: @account.supported_languages.last }, params_hash)
@@ -508,6 +532,196 @@ module ApiSolutions
       match_json([bad_request_error_pattern('page', :datatype_mismatch, expected_data_type: 'Positive Integer'),
       bad_request_error_pattern('per_page', :per_page_invalid, max_value: 100)])
     end
+
+    def test_create_with_attachment
+      file = fixture_file_upload('/files/attachment.txt', 'plain/text', :binary)
+      file2 = fixture_file_upload('files/image33kb.jpg', 'image/jpg')
+      DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
+      @request.env['CONTENT_TYPE'] = 'multipart/form-data'
+      folder_meta = get_folder_meta
+      title = Faker::Name.name
+      paragraph = Faker::Lorem.paragraph
+      post :create, construct_params({ id: folder_meta.id }, {title: title, description: paragraph, status: 1, type: 2, attachments: [file, file2]})
+      DataTypeValidator.any_instance.unstub(:valid_type?)
+      assert_response 201
+      result = parse_response(@response.body)
+      assert_equal "http://#{@request.host}/api/v2/solutions/articles/#{result['id']}", response.headers['Location']
+      assert Solution::Article.last.attachments.count == 2
+    end
+
+    def test_create_with_invalid_attachment_array
+      folder_meta = get_folder_meta
+      title = Faker::Name.name
+      paragraph = Faker::Lorem.paragraph
+      controller_params = {title: title, description: paragraph, status: 1, type: 2}
+      params = controller_params.merge('attachments' => [1, 2])
+      post :create, construct_params({ id: folder_meta.id }, params)
+      assert_response 400
+      match_json([bad_request_error_pattern('attachments', :array_datatype_mismatch, expected_data_type: 'valid file format')])
+    end
+
+    def test_create_with_invalid_attachment_type
+      folder_meta = get_folder_meta
+      title = Faker::Name.name
+      paragraph = Faker::Lorem.paragraph
+      controller_params = {title: title, description: paragraph, status: 1, type: 2}
+      params = controller_params.merge('attachments' => 'test')
+      post :create, construct_params({ id: folder_meta.id }, params)
+      assert_response 400
+      match_json([bad_request_error_pattern('attachments', :datatype_mismatch, expected_data_type: Array, given_data_type: String, prepend_msg: :input_received)])
+    end
+
+    def test_create_with_invalid_empty_attachment
+      folder_meta = get_folder_meta
+      title = Faker::Name.name
+      paragraph = Faker::Lorem.paragraph
+      controller_params = {title: title, description: paragraph, status: 1, type: 2}
+      params = controller_params.merge('attachments' => [])
+      post :create, construct_params({ id: folder_meta.id }, params)
+      assert_response 201
+    end
+
+    def test_create_with_invalid_attachment_size
+      Rack::Test::UploadedFile.any_instance.stubs(:size).returns(20_000_000)
+      file = fixture_file_upload('/files/attachment.txt', 'plain/text', :binary)
+      folder_meta = get_folder_meta
+      title = Faker::Name.name
+      paragraph = Faker::Lorem.paragraph
+      controller_params = {title: title, description: paragraph, status: 1, type: 2}
+      params = controller_params.merge('attachments' => [file])
+      DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
+      post :create, construct_params({ id: folder_meta.id }, params)
+      DataTypeValidator.any_instance.unstub(:valid_type?)
+      assert_response 400
+      match_json([bad_request_error_pattern('attachments', :invalid_size, max_size: '15 MB', current_size: '19.1 MB')])
+    end
+
+    def test_update_with_attachment
+      file = fixture_file_upload('/files/attachment.txt', 'plain/text', :binary)
+      file2 = fixture_file_upload('files/image33kb.jpg', 'image/jpg')
+      sample_article = get_article
+      paragraph = Faker::Lorem.paragraph
+      params_hash  = { title: 'new title', description: paragraph, status: 2, type: 2, agent_id: @agent.id }
+      params = params_hash.merge('attachments' => [file, file2])
+      DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
+      put :update, construct_params({ id: sample_article.parent_id }, params)
+      DataTypeValidator.any_instance.unstub(:valid_type?)
+      response_params = params.except(:tags, :attachments)
+      match_json(solution_article_pattern(sample_article.reload))
+      assert_response 200
+      assert sample_article.attachments.count == 2
+    end
+
+    def test_update_with_invalid_attachment_size
+      file = fixture_file_upload('/files/attachment.txt', 'plain/text', :binary)
+      sample_article = get_article
+      paragraph = Faker::Lorem.paragraph
+      params_hash  = { title: 'new title', description: paragraph, status: 2, type: 2, agent_id: @agent.id }
+      params = params_hash.merge('attachments' => [file])
+      DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
+      attachments = [mock('attachment')]
+      attachments.stubs(:sum).returns(20_000_000)
+      Solution::Article.any_instance.stubs(:attachments).returns(attachments)
+      put :update, construct_params({ id: sample_article.parent_id }, params)
+      DataTypeValidator.any_instance.unstub(:valid_type?)
+      assert_response 400
+      match_json([bad_request_error_pattern('attachments', :invalid_size, max_size: '15 MB', current_size: '19.1 MB')])
+    end
+
+    def test_update_with_invalid_attachment_params_format
+      sample_article = get_article
+      paragraph = Faker::Lorem.paragraph
+      params_hash  = { title: 'new title', description: paragraph, status: 2, type: 2, agent_id: @agent.id }
+      params = params_hash.merge('attachments' => [1, 2])
+      put :update, construct_params({ id: sample_article.parent_id }, params)
+      assert_response 400
+      match_json([bad_request_error_pattern('attachments', :array_datatype_mismatch, expected_data_type: 'valid file format')])
+    end
+
+    def test_update_article_in_draft_status_with_no_draft
+      sample_article = get_article_without_draft
+      paragraph = Faker::Lorem.paragraph
+      article_title = sample_article.title
+      article_description = sample_article.description
+      title = 'Test Draft Title'
+      params_hash  = {
+        title: title, description: paragraph,
+        status: 1, agent_id: @agent.id
+      }
+      put :update, construct_params({ id: sample_article.parent_id }, params_hash)
+      assert_response 200
+      draft = sample_article.reload.draft
+      assert draft.present?
+      match_json(solution_article_draft_pattern(sample_article, draft))
+      assert draft.title == title
+      assert draft.description == paragraph
+      assert sample_article.parent.reload.user_id == @agent.id
+
+      assert sample_article.title == article_title
+      assert sample_article.description == article_description
+    end
+
+    def test_update_article_in_published_status_with_no_draft
+      sample_article = get_article_without_draft
+      paragraph = Faker::Lorem.paragraph
+      title = 'Test Article Title'
+      params_hash  = {
+        title: title, description: paragraph,
+        status: 2, agent_id: @agent.id
+      }
+      put :update, construct_params({ id: sample_article.parent_id }, params_hash)
+      assert_response 200
+      sample_article.reload
+      match_json(solution_article_pattern(sample_article))
+      draft = sample_article.draft
+      refute draft.present?
+      assert sample_article.title == title
+      assert sample_article.description == paragraph
+      assert sample_article.parent.reload.user_id == @agent.id
+    end
+
+    def test_update_article_in_draft_status_with_draft
+      sample_article = get_article_with_draft
+      paragraph = Faker::Lorem.paragraph
+      article_title = sample_article.title
+      article_description = sample_article.description
+      title = 'Test Draft Title'
+      params_hash  = {
+        title: title, description: paragraph,
+        status: 1, agent_id: @agent.id
+      }
+      put :update, construct_params({ id: sample_article.parent_id }, params_hash)
+      assert_response 200
+      draft = sample_article.reload.draft
+      assert draft.present?
+      match_json(solution_article_draft_pattern(sample_article, draft))
+      assert draft.title == title
+      assert draft.description == paragraph
+      assert sample_article.parent.reload.user_id == @agent.id
+
+      assert sample_article.title == article_title
+      assert sample_article.description == article_description
+    end
+
+    def test_update_article_in_published_status_with_draft
+      sample_article = get_article_without_draft
+      paragraph = Faker::Lorem.paragraph
+      title = 'Test Article Title'
+      params_hash  = {
+        title: title, description: paragraph,
+        status: 2, agent_id: @agent.id
+      }
+      put :update, construct_params({ id: sample_article.parent_id }, params_hash)
+      assert_response 200
+      sample_article.reload
+      match_json(solution_article_pattern(sample_article))
+      draft = sample_article.draft
+      refute draft.present?
+      assert sample_article.title == title
+      assert sample_article.description == paragraph
+      assert sample_article.parent.reload.user_id == @agent.id
+    end
+
   end
 end
 
