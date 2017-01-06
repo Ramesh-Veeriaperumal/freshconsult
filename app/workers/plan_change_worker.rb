@@ -227,7 +227,7 @@ class PlanChangeWorker
   end
 
   def add_parent_child_tickets_toggle_data(account)
-    update_ticket_dynamo_shard
+    update_ticket_dynamo_shard(account)
   end
 
   def add_parent_child_tickets_data(account)
