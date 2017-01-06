@@ -40,7 +40,8 @@ class Account < ActiveRecord::Base
     
     :garden => {
       :features => [ :multi_product, :customer_slas, :multi_timezone , :multi_language, 
-        :css_customization, :advanced_reporting, :multiple_business_hours, :dynamic_content, :chat, :ticket_templates, :custom_survey ],
+        :css_customization, :advanced_reporting, :multiple_business_hours, :dynamic_content, :chat, 
+        :ticket_templates, :custom_survey, :link_tickets_toggle, :parent_child_tickets_toggle ],
       :inherits => [ :blossom ]
     },
 
@@ -69,7 +70,8 @@ class Account < ActiveRecord::Base
     
     :garden_classic => {
       :features => [ :multi_product, :customer_slas, :multi_timezone , :multi_language, 
-        :css_customization, :advanced_reporting, :dynamic_content, :ticket_templates ],
+        :css_customization, :advanced_reporting, :dynamic_content, :ticket_templates,
+        :link_tickets_toggle, :parent_child_tickets_toggle ],
       :inherits => [ :blossom_classic ]
     },
 
@@ -92,7 +94,8 @@ class Account < ActiveRecord::Base
     },
     
     :garden_jan_17 => {
-      :features => [ :forums, :multi_language, :css_customization, :advanced_reporting, :dynamic_content, :chat, :ticket_templates, :custom_survey ],
+      :features => [ :forums, :multi_language, :css_customization, :advanced_reporting, :dynamic_content, :chat, :ticket_templates, :custom_survey,
+        :link_tickets_toggle, :parent_child_tickets_toggle ],
       :inherits => [ :blossom_jan_17 ]
     },
 
@@ -106,11 +109,14 @@ class Account < ActiveRecord::Base
     },
 
     :forest_jan_17 => {
-      :features => [ :mailbox, :whitelisted_ips ],
+      :features => [ :mailbox, :whitelisted_ips, :shared_ownership_toggle ],
       :inherits => [ :estate_jan_17 ]
     }
 
   }
+
+  ADVANCED_FEATURES = [:link_tickets, :parent_child_tickets, :shared_ownership]
+  ADVANCED_FEATURES_TOGGLE = ADVANCED_FEATURES.map(&->(f){"#{f}_toggle".to_sym})
 
   # Features added temporarily to avoid release for all the customers at one shot
   # Default feature when creating account has been made true :surveys & ::survey_links $^&WE^%$E
@@ -125,9 +131,9 @@ class Account < ActiveRecord::Base
     :sort_by_customer_response => false, :survey_links => true,
     :tags_filter_reporting => false,
     :saml_unspecified_nameid => false, :euc_hide_agent_metrics => false,
-    :single_session_per_user => false, :link_tickets => false, :parent_child_tickets => false,
-    :marketplace_app => false, :sandbox_account => false, :collaboration => false
-  }
+    :single_session_per_user => false, :marketplace_app => false, :sandbox_account => false, 
+    :collaboration => false
+}
 
 
   # NOTE ::: Before adding any new features, please have a look at the TEMPORARY_FEATURES
@@ -138,7 +144,7 @@ class Account < ActiveRecord::Base
     :resource_rate_limit => false, :disable_agent_forward => false, :call_quality_metrics => false,
     :disable_rr_toggle => false, :domain_restricted_access => false, :freshfone_conference => false, 
     :marketplace => true, :fa_developer => true,:archive_tickets => false, :compose_email => false,
-    :limit_mobihelp_results => false, :ecommerce => false, :es_v2_writes => true, :shared_ownership => false,
+    :limit_mobihelp_results => false, :ecommerce => false, :es_v2_writes => true,
     :salesforce_sync => false, :freshfone_call_metrics => false, :cobrowsing => false,
     :threading_without_user_check => false, :freshfone_call_monitoring => false, :freshfone_caller_id_masking => false,
     :agent_conference => false, :freshfone_warm_transfer => false, :restricted_helpdesk => false, :enable_multilingual => false,
@@ -171,11 +177,11 @@ class Account < ActiveRecord::Base
     :gamification_quest_perf => false, :lambda_exchange => false, :link_tickets => false,
     :list_page_new_cluster => false, :meta_read => false, :most_viewed_articles => false,
     :multifile_attachments => false, :new_footer_feedback_box => false, :new_leaderboard => false,
-    :parent_child_tickets => false, :periodic_login_feature => false, :restricted_helpdesk => false,
-    :round_robin_capping => false, :shared_ownership => false, :sidekiq_dispatchr_feature => false,
-    :solutions_meta_read => false, :supervisor_dashboard => false, :support_new_ticket_cache => false,
-    :synchronous_apps => false, :ticket_list_page_filters_cache => false, :translate_solutions => false,
-    :spam_detection_service => false, :skip_hidden_tkt_identifier => false
+    :parent_child_tickets => false, :periodic_login_feature => false, :restricted_helpdesk => false, 
+    :round_robin_capping => false, :sidekiq_dispatchr_feature => false, :solutions_meta_read => false, 
+    :supervisor_dashboard => false, :support_new_ticket_cache => false, :synchronous_apps => false, 
+    :ticket_list_page_filters_cache => false, :translate_solutions => false, :spam_detection_service => false,
+    :skip_hidden_tkt_identifier => false
   }
 
 end

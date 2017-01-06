@@ -1,8 +1,8 @@
 class Account < ActiveRecord::Base
 
-  LP_FEATURES   = [:link_tickets, :select_all, :round_robin_capping, :suggest_tickets, :customer_sentiment_ui]
-  DB_FEATURES   = [:custom_survey, :requester_widget]
-  BOTH_FEATURES = [:shared_ownership]
+  LP_FEATURES   = [:select_all, :round_robin_capping, :suggest_tickets, :customer_sentiment_ui]
+  DB_FEATURES   = [:custom_survey, :requester_widget].concat(ADVANCED_FEATURES).concat(ADVANCED_FEATURES_TOGGLE)
+  BOTH_FEATURES = []
   BITMAP_FEATURES = [:split_tickets, :add_watcher, :traffic_cop, :custom_ticket_views, :supervisor, :create_observer, :sla_management, 
     :email_commands, :assume_identity, :rebranding, :custom_apps, :custom_ticket_fields, :custom_company_fields, 
     :custom_contact_fields, :occasional_agent, :allow_auto_suggest_solutions, :basic_twitter, :basic_facebook] 
@@ -147,6 +147,18 @@ class Account < ActiveRecord::Base
 
   def on_new_plan?
     @on_new_plan ||= [:sprout_jan_17,:blossom_jan_17,:garden_jan_17,:estate_jan_17,:forest_jan_17].include?(plan_name)
+  end
+
+  def link_tickets_enabled?
+    launched?(:link_tickets) || features?(:link_tickets)
+  end
+  
+  def parent_child_tkts_enabled?
+    @pc ||= (launched?(:parent_child_tickets) || parent_child_tickets_enabled?)
+  end
+
+  def tkt_templates_enabled?
+    @templates ||= (features?(:ticket_templates) || parent_child_tkts_enabled?)
   end
 
 end

@@ -595,6 +595,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/onboarding"
     resource :"admin/getting_started"
     resource :"agent", :only => [:api_key]
+    resource :"admin/advanced_feature", :only => [:index, :toggle]
   end
 
   assign_agent do

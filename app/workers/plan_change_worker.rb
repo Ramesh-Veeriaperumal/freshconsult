@@ -1,5 +1,6 @@
 class PlanChangeWorker
   include Sidekiq::Worker
+  include Cache::FragmentCache::Base
 
   sidekiq_options :queue => :plan_change, :retry => 0, :backtrace => true, :failures => :exhausted
 
@@ -54,6 +55,19 @@ class PlanChangeWorker
 
   def add_round_robin_data(account)
     Role.add_manage_availability_privilege account
+  end
+
+  def add_shared_ownership_data(account)
+    account.toggle_shared_ownership true
+  end
+
+  def drop_shared_ownership_data(account)
+    account.toggle_shared_ownership false
+  end
+
+  def drop_shared_ownership_toggle_data(account)
+    account.features.shared_ownership.destroy
+    drop_shared_ownership_data(account)
   end
 
   def drop_multi_product_data(account)
@@ -139,7 +153,8 @@ class PlanChangeWorker
   end
 
   def drop_ticket_templates_data(account)
-    account.ticket_templates.destroy_all
+    account.ticket_templates.where(:association_type =>
+      Helpdesk::TicketTemplate::ASSOCIATION_TYPES_KEYS_BY_TOKEN[:general]).destroy_all
   end
 
   def drop_custom_survey_data(account)
@@ -190,6 +205,57 @@ class PlanChangeWorker
     account.groups.capping_enabled_groups.find_each do |group|
       group.capping_limit = 0
       group.save
+    end
+  end
+
+  def add_link_tickets_toggle_data(account)
+    update_ticket_dynamo_shard
+  end
+
+  def add_link_tickets_data(account)
+    clear_fragment_caches
+  end
+
+  def drop_link_tickets_toggle_data(account)
+    account.features.link_tickets.destroy
+    drop_link_tickets_data(account)
+  end
+
+  def drop_link_tickets_data(account)
+    ::Tickets::ResetAssociations.perform_async({:link_feature_disable => true})
+    clear_fragment_caches
+  end
+
+  def add_parent_child_tickets_toggle_data(account)
+    update_ticket_dynamo_shard
+  end
+
+  def add_parent_child_tickets_data(account)
+    clear_fragment_caches
+  end
+
+  def drop_parent_child_tickets_toggle_data(account)
+    account.features.parent_child_tickets.destroy
+    drop_parent_child_tickets_data(account)
+  end
+
+  def drop_parent_child_tickets_data(account)
+    ::Tickets::ResetAssociations.perform_async({:parent_child_feature_disable => true})
+    clear_fragment_caches
+    obj = account.features?(:ticket_templates) ? "parent" : "prime"
+    account.send("#{obj}_templates").destroy_all
+  end
+
+  def update_ticket_dynamo_shard
+    acct_additional_settings = account.account_additional_settings
+    if acct_additional_settings && acct_additional_settings.additional_settings.present?
+      acct_additional_settings.additional_settings[:tkt_dynamo_shard] = Helpdesk::Ticket::TICKET_DYNAMO_NEXT_SHARD
+      acct_additional_settings.save
+    else
+      additional_settings = {
+        :tkt_dynamo_shard => Helpdesk::Ticket::TICKET_DYNAMO_NEXT_SHARD
+      }
+      account.account_additional_settings.update_attributes(:additional_settings => additional_settings)
     end
   end
 

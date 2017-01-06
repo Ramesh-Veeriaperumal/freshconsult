@@ -2242,6 +2242,7 @@ en:
         mobihelp: Mobihelp
         customer-portal: Customer Portal
         portals: Portals
+        advanced_features: Advanced Features
       keywords:
         forum_moderation: "Forum Moderation"
         configure_support_email: "Configure support email"
@@ -2349,6 +2350,28 @@ en:
       helpdesk: Helpdesk
       events: Events
       survey: Survey
+    advanced_features:
+      feature_added: The feature was successfully added to your helpdesk.
+      feature_removed: The feature was successfully removed from your helpdesk.
+      not_allowed: You are not allowed to enable this feature!
+      index:
+        title: Advanced Features
+        desc: You can enable advanced features in Freshdesk to improve overall helpdesk productivity.
+        no_feature: There are no advanced features available
+        info: View list of Advanced Features
+      feature:
+        link_tickets:
+          title: Linked Tickets
+          description: 'Installing the "Linked Tickets" app will let you link related tickets(<=200) to a tracker ticket and manage tickets.'
+          confirm: 'Disabling "Link Tickets feature" will remove all the links between the tickets which cannot be restored. Do you want to continue?'
+        parent_child_tickets:
+          title: Parent Child Tickets
+          description: 'Installing the "Parent Child Tickets" app will let create child tickets and manage tickets.'
+          confirm: 'Disabling "Parent Child Tickets" will remove all the relationship between the tickets which cannot be restored. Do you want to continue?'
+        shared_ownership:
+          title: Shared Ownership
+          description: 'Installing the "Shared Ownership" app will let assign internal groups and agents for a ticket.'
+          confirm: 'Disabling "Shared Ownership" will remove all the data related to internal groups and agents of the ticket. Do you want to continue?'
   ends_with: Ends with
   last_name: Last Name
   forum:

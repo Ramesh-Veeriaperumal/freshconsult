@@ -3,7 +3,7 @@
 	<div class="ticket-title-text pull-left">
 		<h3 class="lead"> <%= t('ticket.compose.send_email') %></h3>
 	</div>
-	<% if Account.current.features?(:ticket_templates) %>
+	<% if Account.current.tkt_templates_enabled? %>
 			<div id="template-wrapper" class="template-wrapper pull-left">
 				<%= render :partial => "ticket_template", :locals => {:form => "compose_email"} %>
 			</div>

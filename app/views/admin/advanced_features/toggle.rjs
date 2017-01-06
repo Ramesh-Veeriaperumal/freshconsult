@@ -1,0 +1,7 @@
+show_ajax_flash page
+current_account.reload
+page.replace params[:feature_name], 
+  :partial => '/admin/advanced_features/feature', 
+  :locals => { :feature => params[:feature_name] }
+page << "jQuery('##{params[:feature_name]}').addClass('inline-flash');"
+page << "setTimeout(function(){jQuery('##{params[:feature_name]}').removeClass('inline-flash')},1000)"
