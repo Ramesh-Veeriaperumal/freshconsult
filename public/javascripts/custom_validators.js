@@ -123,7 +123,7 @@
   
    //domain name validator
   $.validator.addMethod("domain_name_validator", function(value, element) {
-      return ((/^[a-zA-Z0-9][a-zA-Z0-9-]{1,61}[a-zA-Z0-9](?:\.[a-zA-Z]{2,})+$/).test(value))
+    return (value != "") ? ((/^[a-zA-Z0-9][a-zA-Z0-9-]{1,61}[a-zA-Z0-9](?:\.[a-zA-Z]{2,})+$/).test(value)) : true;
   }, "Please enter a valid domain name");
   $.validator.addClassRules({
       domain_name_validator : { domain_name_validator : true }
