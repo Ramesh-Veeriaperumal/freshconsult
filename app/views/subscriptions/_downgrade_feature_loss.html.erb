@@ -5,6 +5,7 @@
 	plan_name_list = get_current_plans(is_old_plan)
 	equal_plan_rank = (new_plan_rank == current_plan_rank) && (new_plan != current_plan)
 	new_plan_name = new_plan.split(' ').first.capitalize
+	more_flag = false
 %>
 <div class="plan-confirm-message-new">
 	<div class="plan-confirm-message-info">
@@ -35,11 +36,15 @@
 				<div class="downgrade-warning"><%= t('downgrade_loss_message').html_safe %></div>
 				<% (new_plan_rank+1..current_plan_rank).each do |rank|%>
 					<%
+						more_flag = true
 						plan_name = plan_name_list[rank-1]
 					%>
 					<% SubscriptionsHelper::PLANS_FEATURES_LOSS["#{plan_name.downcase}"].each do |feature_name| %>
 						<span class= "ficon-cross lost-feature"><%= t("features.#{feature_name}").html_safe %></span>
 					<% end %>
+				<% end %>
+				<% if more_flag %>
+					<span class= "ficon-cross lost-feature"><i><%= t("and_more_plan_downgrade").html_safe %></i></span>
 				<% end %>
 			</div>
 		<% end %>

@@ -8,25 +8,25 @@ module SubscriptionsHelper
     "estate" => [ "everything_in_garden", "agent_collision", "custom_roles", "custom_ssl", "enterprise_reports", "portal_customization" ],
     "forest" => [ "everything_in_estate", "custom_mailbox", "ip_restriction" ],
 
-    "sprout jan 17" => [ "email_ticketing", "feedback_widget" ,"knowledge_base", "automations", "phone_integration", "mobile_apps", "integrations" ],
+    "sprout jan 17" => [ "email_ticketing", "ticket_dispatch_automation" ,"knowledge_base", "app_gallery", "basic_phone" ],
     "blossom jan 17" => [ "everything_in_sprout", "multiple_mailboxes", "time_event_automation", "sla_reminders", "custom_domain", "satisfaction_survey",
-      "helpdesk_report", "custom_ticket_fields_and_views", "dkim_dmarc", "gamification", "occasional_agents", "social_keyword" ],
-    "garden jan 17" => [ "everything_in_blossom", "m_k_base", "dynamic_email_alert", "chat", "forums", "linked_tickets", "parent_child", "scheduled_reports",
+      "helpdesk_report", "custom_ticket_fields_and_views"],
+    "garden jan 17" => [ "everything_in_blossom", "m_k_base", "dynamic_email_alert", "chat", "forums", "scheduled_reports",
        "ticket_templates", "custom_surveys"],
-    "estate jan 17" => [ "everything_in_garden", "multiple_products", "multiple_sla", "portal_customization", "custom_roles", "agent_collision", "auto_ticket_assignment", "shared_ownership",
-       "role_dashboard", "enterprise_reports", "custom_ssl", "advanced_dkim"],
-    "forest jan 17" => [ "everything_in_estate", "ip_whitelisting", "custom_mailbox", "advanced_phone_integration", "machine_learning", "custom_data_center" ]
+    "estate jan 17" => [ "everything_in_garden", "multiple_products", "multiple_sla", "portal_customization", "custom_roles", "agent_collision", "auto_ticket_assignment",
+       "role_dashboard", "enterprise_reports"],
+    "forest jan 17" => [ "everything_in_estate", "ip_whitelisting", "custom_mailbox", "advanced_phone_integration",  "custom_data_center" ]
   }
 
   PLANS_FEATURES_LOSS = {
-    "blossom" => ["time_event_automation_desc", "sla_reminders" , "shared_ticket_views_desc", "custom_fields_desc", "custom_ticket_views_desc", "cname_dkim_desc", "multiple_mailbox_desc"],
+    "blossom" => ["time_event_automation_desc", "sla_reminders" , "custom_fields_desc", "multiple_mailbox_desc"],
     "garden" => ["multiple_sla_business_desc", "forums_desc"],
-    "estate" => ["multiple_products_desc", "portal_customization_desc", "custom_roles_desc", "custom_ssl_desc", "enterprise_reports_desc"],
+    "estate" => ["multiple_products_desc", "portal_customization_desc", "custom_ssl_desc", "enterprise_reports_desc"],
     "forest" => ["whitelisted_ip_desc", "custom_mailbox_desc", "advanced_phone_desc"],
 
-    "blossom jan 17" => ["time_event_automation_desc", "sla_reminders" , "shared_ticket_views_desc", "custom_fields_desc", "custom_ticket_views_desc", "cname_dkim_desc", "multiple_mailbox_desc", "adv_social_desc"],
-    "garden jan 17" => ["multilingual_kbase_desc", "live_chat_desc", "forums_desc", "linked_paren_child_desc", "scheduled_reports_desc", "custom_survey_desc", "ticket_templates"],
-    "estate jan 17" => ["multiple_products_desc", "multiple_sla_business_desc", "portal_customization_desc", "custom_roles_desc", "custom_ssl_desc", "enterprise_reports_desc"],
+    "blossom jan 17" => ["time_event_automation_desc", "sla_reminders", "custom_fields_desc", "multiple_mailbox_desc", "adv_social_desc"],
+    "garden jan 17" => ["multilingual_kbase_desc", "live_chat_desc", "forums_desc", "custom_survey_desc", "ticket_templates"],
+    "estate jan 17" => ["multiple_products_desc", "multiple_sla_business_desc", "portal_customization_desc", "custom_ssl_desc", "enterprise_reports_desc"],
     "forest jan 17" => ["whitelisted_ip_desc", "custom_mailbox_desc", "advanced_phone_desc"]
   }
 
