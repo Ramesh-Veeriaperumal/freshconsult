@@ -102,7 +102,7 @@ class Social::WelcomeController < ApplicationController
   end
   
   def can_view_social?
-    has_feature?(:basic_twitter) && privilege?(:manage_tickets)
+    current_account.has_feature?(:basic_twitter) && privilege?(:manage_tickets)
   end  
   
   def social_enabled?
