@@ -77,6 +77,9 @@ class SAAS::AccountDataCleanup
 
   def handle_custom_ticket_fields_data
     account.ticket_fields.where(default:false).destroy_all
+    #deleting requester widget cache
+    key = REQUESTER_WIDGET_FIELDS % { :account_id => account.id }
+    MemcacheKeys.delete_from_cache key
     #custom ticket fields and custom status are tied up with same feature name. so handle deletion together!
     handle_custom_status_data
   end
