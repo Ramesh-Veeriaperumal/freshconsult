@@ -82,10 +82,11 @@ module Freshfone::FreshfoneUtil
       return
     end
     call_meta = Freshfone::CallMeta.new( :account_id => current_account.id, :call_id => call.id,
-              :transfer_by_agent => transfering_agent_id(call),
-              :meta_info => { :agent_info => user_agent })
+              :transfer_by_agent => transfering_agent_id(call))
     call_meta.device_type = is_native_mobile? ? mobile_device(user_agent) : Freshfone::CallMeta::USER_AGENT_TYPE_HASH[:browser]
     call_meta.save
+    set_agent_info(current_account.id, call.id,
+      user_agent) if call_meta.persisted?
   end
 
   def update_conf_meta
@@ -94,9 +95,10 @@ module Freshfone::FreshfoneUtil
     current_call.meta = Freshfone::CallMeta.new( :account_id => current_account.id, :call_id => current_call.id) if current_call.meta.blank?
     call_meta = current_call.meta
     call_meta.transfer_by_agent = transfering_agent_id(current_call) if call_meta.transfer_by_agent.blank?
-    call_meta.meta_info = {:agent_info => user_agent} if call_meta.meta_info.blank?
     call_meta.device_type = (is_native_mobile? ? mobile_device(user_agent) : Freshfone::CallMeta::USER_AGENT_TYPE_HASH[:browser]) if call_meta.device_type.blank?
     call_meta.save
+    set_agent_info(current_account.id, current_call.id,
+      user_agent) if call_meta.persisted?
   end
 
   def mobile_device(user_agent)
@@ -240,7 +242,10 @@ module Freshfone::FreshfoneUtil
   def update_call_meta_for_forward_calls(call = current_call)
     return if (/client/.match(params[:To]))
     device_type = call.direct_dial_number.present? ? Freshfone::CallMeta::USER_AGENT_TYPE_HASH[:direct_dial] : Freshfone::CallMeta::USER_AGENT_TYPE_HASH[:available_on_phone]
-    call.meta.update_device_meta(device_type, params[:To])
+    call_meta = call.meta
+    call_meta.device_type = device_type
+    call_meta.save!
+    set_agent_info(current_account.id, call.id, params[:To])
   end
 
   def register_outgoing_device
