@@ -266,9 +266,8 @@ class AccountsController < ApplicationController
       metrics_obj = {}
       account_obj = {}
       begin  
-        account_obj[:first_referrer] = metrics_obj[:first_referrer] = params[:first_referrer]
-        account_obj[:first_landing_url] = metrics_obj[:first_landing_url] = params[:first_landing_url]
-        metrics_obj[:visits] = params[:pre_visits]
+        account_obj[:first_referrer] = params[:first_referrer] if params[:first_referrer].present? 
+        account_obj[:first_landing_url] = params[:first_landing_url] if params[:first_landing_url].present?
         if params[:user]
           account_obj[:email] = params[:user][:email]
           account_obj[:first_name] = params[:user][:first_name]
@@ -279,6 +278,9 @@ class AccountsController < ApplicationController
         end
         if params[:session_json].present? 
           metrics =  JSON.parse(params[:session_json])
+          metrics_obj[:first_referrer] = params[:first_referrer]
+          metrics_obj[:first_landing_url] = params[:first_landing_url]
+          metrics_obj[:visits] = params[:pre_visits]
           metrics_obj[:referrer] = metrics["current_session"]["referrer"]
           metrics_obj[:landing_url] = metrics["current_session"]["url"]
           if metrics["location"].present?
@@ -308,6 +310,7 @@ class AccountsController < ApplicationController
           metrics_obj[:is_dst] = metrics["time"]["observes_dst"]
           metrics_obj[:session_json] = metrics
         else
+          metrics_obj = nil
           Rails.logger.info "Error while building conversion metrics. Session json is not been provided while creating an account with email #{account_obj[:email]}"
         end
         account_obj[:source_ip] = (request.remote_ip || request.env["HTTP_X_FORWARDED_FOR"] || request.host_with_port || request.env["SERVER_ADDR"]) unless account_obj[:source_ip].present?

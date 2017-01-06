@@ -154,28 +154,28 @@ module Email::Antispam
 
     def check_activity_status
       activity_status = risk_status @api_response["activity_score"]
-      @api_response["reason"] << @api_response["activity_details"] + "," if @api_response["activity_details"].present? 
-      activity_status += 1 if ((@api_response["status"] == activity_status) && (repeated_emails >= 3)) && activity_status < 5 
+      @api_response["reason"] << " activity_details : #{@api_response["activity_details"]} ," if @api_response["activity_details"].present? 
+      activity_status += 1 if ((@api_response["status"] == activity_status) || (repeated_emails >= 3)) && activity_status < 5  
       @api_response["status"] = [activity_status, @api_response["status"]].max
     end
 
     def check_community_status
       community_status = risk_status @api_response["community_score"]
-      @api_response["reason"] << @api_response["community_details"] + "," if @api_response["community_details"].present? 
+      @api_response["reason"] << " community_details : #{@api_response["community_details"]} ," if @api_response["community_details"].present? 
       community_status += 1 if ((@api_response["status"] == community_status) || (@api_response["community_details"] =~ spam_community_regex)) && community_status < 5 
       @api_response["status"] = [community_status, @api_response["status"]].max
     end
 
     def check_email_status
     	email_status = risk_status @api_response["email_score"]
-    	@api_response["reason"] << @api_response["email_details"] + "," if @api_response["email_details"].present?
+    	@api_response["reason"] << " email_details : #{@api_response["email_details"]} ," if @api_response["email_details"].present?
     	email_status += 1 if ((@api_response["status"] == email_status) || (@api_response["email_details"] =~ spam_email_regex)) && email_status < 5
     	@api_response["status"] = [email_status, @api_response["status"]].max
     end
 
     def check_ip_status
       ip_status = risk_status @api_response["ip_score"]
-    	@api_response["reason"] << @api_response["ip_details"] + "," if @api_response["ip_details"].present?
+    	@api_response["reason"] << " ip_details : #{@api_response["ip_details"]} ," if @api_response["ip_details"].present?
     	ip_status += 1   if ((@api_response["status"] == ip_status) || (@api_response["ip_details"] =~ spam_ip_regex)) && ip_status < 5
     	@api_response["status"] = [ip_status, @api_response["status"]].max
     end
@@ -184,7 +184,7 @@ module Email::Antispam
       location_regex = spam_country_regex
       if location_regex && ((@api_response["country"] =~ location_regex) || (@api_response["city"] =~ location_regex))
         geolocation_status = risk_status @api_response["total_score"]
-        @api_response["reason"] << @api_response["geolocation_details"] + "," if @api_response["geolocation_details"].present?
+        @api_response["reason"] << " geolocation_details : #{@api_response["geolocation_details"]} ," if @api_response["geolocation_details"].present?
         geolocation_status += 1 if ((@api_response["status"] == geolocation_status) || high_ip_distance_velocity? || (@api_response["geolocation_details"] =~ spam_geolocation_regex)) && geolocation_status < 5
         @api_response["status"] = [geolocation_status, @api_response["status"]].max
       end
