@@ -28,6 +28,7 @@ module ApiSearch
     end
 
     def ticket_params_hash
+      special_chars = ['!', '#', '$', '%', '&', '(', ')', '*', '+', ',', '-', '.', '/', ':', ';', '<', '=', '>', '?', '@', '[', '\\', ']', '^', '_', '`', '{', '|', '}', '~']
       cc_emails = [Faker::Internet.email, Faker::Internet.email]
       subject = Faker::Lorem.words(10).join(' ')
       description = Faker::Lorem.paragraph
@@ -35,7 +36,7 @@ module ApiSearch
       tags = [Faker::Name.name, Faker::Name.name]
       priority = rand(4) + 1
       status = ticket_statuses[rand(ticket_statuses.size)]
-      custom_fields = { test_custom_number_1: rand(5) + 1, test_custom_checkbox_1: rand(5) % 2 ? true : false, test_custom_text_1: Faker::Lorem.words(1) }
+      custom_fields = { test_custom_number_1: rand(5) + 1, test_custom_checkbox_1: rand(5) % 2 ? true : false, test_custom_text_1: Faker::Lorem.word + " " + special_chars.shuffle[0..8].join }
       group = create_group_with_agents(@account, agent_list: [@agent.id])
       params_hash = { email: email, cc_emails: cc_emails, description: description, subject: subject,
                       priority: priority, status: status, type: 'Problem', responder_id: @agent.id, source: 1, tags: tags,
@@ -87,7 +88,7 @@ module ApiSearch
     end
 
     def test_tickets_custom_fields
-      tickets = @account.tickets.select{|x| x.custom_field["test_custom_number"] == 1 || x.custom_field["test_custom_checkbox"] == false || x.priority == 2 }
+      tickets = @account.tickets.select{|x| x.custom_field["test_custom_number_1"] == 1 || x.custom_field["test_custom_checkbox_1"] == false || x.priority == 2 }
       get :index, controller_params(query: '"test_custom_number:1 OR test_custom_checkbox:false OR priority:2"')
       assert_response 200
       response = parse_response @response.body
@@ -119,6 +120,22 @@ module ApiSearch
       response = parse_response @response.body
       pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
       match_json({results: pattern, total: tickets.size})
+    end
+
+    def test_tickets_custom_text_special_characters
+      tickets = @account.tickets.last(2)
+      text1 = tickets.first.custom_field["test_custom_text_1"]
+      text2 = tickets.last.custom_field["test_custom_text_1"]
+      get :index, controller_params(query: "\"test_custom_text:'#{text1}' or test_custom_text:'#{text2}'\"")
+      assert_response 200
+      response = parse_response @response.body
+      pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
+      match_json({results: pattern, total: tickets.size})
+    end
+
+    def test_tickets_custom_text_invalid_special_characters
+      get :index, controller_params(query: "\"test_custom_text:'aaa\'a' or test_custom_text:'aaa\"aa'\"")
+      assert_response 400
     end
 
     def test_tickets_status

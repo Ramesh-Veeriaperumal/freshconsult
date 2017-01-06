@@ -34,7 +34,7 @@ end
 def make_tokens(scanner)
   keyword_x = "([a-zA-Z][a-zA-Z0-9_]*)[\s]*"
   seperator_x = ":"
-  value_x = "[\s]*([a-zA-Z0-9_\@]+|'[a-zA-Z0-9_\.\@\s\:]+')"
+  value_x = "[\s]*([a-zA-Z0-9_\@]+|'[^']+')"
   regex_string = /(#{keyword_x}#{seperator_x}#{value_x})+[\s]*/
   until scanner.empty?
     scanner.skip(/(\t|\r|\n|\s)+/) # Skip white spaces
