@@ -209,7 +209,7 @@ class PlanChangeWorker
   end
 
   def add_link_tickets_toggle_data(account)
-    update_ticket_dynamo_shard
+    update_ticket_dynamo_shard(account)
   end
 
   def add_link_tickets_data(account)
@@ -246,7 +246,7 @@ class PlanChangeWorker
     account.send("#{obj}_templates").destroy_all
   end
 
-  def update_ticket_dynamo_shard
+  def update_ticket_dynamo_shard(account)
     acct_additional_settings = account.account_additional_settings
     if acct_additional_settings && acct_additional_settings.additional_settings.present?
       acct_additional_settings.additional_settings[:tkt_dynamo_shard] = Helpdesk::Ticket::TICKET_DYNAMO_NEXT_SHARD
