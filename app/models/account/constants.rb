@@ -87,7 +87,7 @@ class Account < ActiveRecord::Base
     
     :blossom_jan_17 => {
       :features => [ :gamification, :auto_refresh, :twitter, :facebook, :surveys , :scoreboard, :timesheets, 
-        :custom_domain, :multiple_emails, :advanced_reporting, :default_survey ],
+        :custom_domain, :multiple_emails, :advanced_reporting, :default_survey, :requester_widget ],
       :inherits => [ :sprout_jan_17 ]
     },
     
