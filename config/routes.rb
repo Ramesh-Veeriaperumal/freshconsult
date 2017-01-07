@@ -55,11 +55,9 @@ Helpkit::Application.routes.draw do
   # This is a legacy wild controller route that's not recommended for RESTful applications.
   # Note: This route will make all actions in every controller accessible via GET requests.
   # match ':controller(/:action(/:id))(.:format)'
-
-
+  match '/health_checkup' => 'health_checkup#app_health_check',via: :get
 
   constraints(lambda {|req| req.subdomain == AppConfig['admin_subdomain'] }) do
-
     # root :to => 'subscription_admin/subscriptions#index'
 
     # match '/plans' => 'subscription_admin/subscription_plans#index', :as => :plans
@@ -71,7 +69,7 @@ Helpkit::Application.routes.draw do
     # match '/resque/failed/requeue_all' => 'subscription_admin/resque/failed#requeue_all', :as => :failed_requeue_all
     # match '/resque/failed/:id' => 'subscription_admin/resque/failed#destroy', :as => :failed_destroy
     # match '/resque/failed/:id/requeue' => 'subscription_admin/resque/failed#requeue', :as => :failed_requeue
-
+    
     namespace :resque do
       resources :failed, :controller => '/subscription_admin/resque/failed' do
       end
@@ -1127,7 +1125,20 @@ Helpkit::Application.routes.draw do
       end
     end
 
+    resources :dkim_configurations, path: 'email_configs/dkim' do
+      member do 
+        post :create
+        get :verify_email_domain
+        post :remove_dkim_config
+      end
+    end
+
     resources :widget_config, :only => :index
+    resources :advanced_features, :only => [:index] do
+      collection do
+        put :toggle
+      end
+    end
     resources :chat_widgets do
       collection do
          post :enable
@@ -1793,6 +1804,7 @@ Helpkit::Application.routes.draw do
       put :convert_subscription_to_free
       post :calculate_plan_amount
       post :request_trial_extension
+      post :request_special_pricing
     end
   end
 

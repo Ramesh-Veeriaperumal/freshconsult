@@ -273,7 +273,12 @@ class User < ActiveRecord::Base
           conditions: { deleted: false, blocked: false }
         },
         company_id: {
-          conditions: { customer_id: contact_filter.company_id }
+          joins: :user_companies,
+          conditions: {
+            user_companies:  {
+              company_id: contact_filter.company_id
+            }
+          }
         },
         email: {
           joins: :user_emails,
@@ -679,7 +684,7 @@ class User < ActiveRecord::Base
   end
 
   def group_ticket?(ticket)
-    group_member?(ticket.group_id) or 
+    group_member?(ticket.group_id) or
         (Account.current.features?(:shared_ownership) ? group_member?(ticket.internal_group_id) : false)
   end
 
@@ -696,7 +701,7 @@ class User < ActiveRecord::Base
   end
 
   def has_ticket_permission? ticket
-    (can_view_all_tickets?) or (ticket_agent?(ticket)) or (group_ticket_permission && (group_ticket?(ticket))) 
+    (can_view_all_tickets?) or (ticket_agent?(ticket)) or (group_ticket_permission && (group_ticket?(ticket)))
   end
 
   # For a customer we need to check if he is the requester of the ticket
@@ -969,7 +974,7 @@ class User < ActiveRecord::Base
   def assign_company comp_name
     if has_multiple_companies_feature?
       comp = account.companies.find_or_create_by_name(comp_name)
-      self.user_companies.build(:company_id => comp.id) if 
+      self.user_companies.build(:company_id => comp.id) if
         self.user_companies.find_by_company_id(comp.id).blank?
     else
       self.company_name = comp_name

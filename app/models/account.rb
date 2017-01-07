@@ -14,6 +14,7 @@ class Account < ActiveRecord::Base
   include AccountConstants
   include Onboarding::OnboardingRedisMethods
   include FreshdeskFeatures::Feature
+  include Helpdesk::SharedOwnershipMigrationMethods
 
   has_many_attachments
   
@@ -71,7 +72,7 @@ class Account < ActiveRecord::Base
     PLANS_AND_FEATURES.each_pair do |k, v|
       feature k, :requires => ( v[:inherits] || [] )
       v[:features].each { |f_n| feature f_n, :requires => [] } unless v[:features].nil?
-      (SELECTABLE_FEATURES.keys + TEMPORARY_FEATURES.keys + 
+      (SELECTABLE_FEATURES.keys + TEMPORARY_FEATURES.keys + ADVANCED_FEATURES +
         ADMIN_CUSTOMER_PORTAL_FEATURES.keys).each { |f_n| feature f_n }
     end
   end
@@ -134,6 +135,9 @@ class Account < ActiveRecord::Base
 
   #Temporary feature check methods - using redis keys - ends here
 
+  def multiple_user_companies_enabled?
+    features?(:multiple_user_companies)
+  end
 
   def round_robin_capping_enabled?
     features?(:round_robin_load_balancing)
@@ -176,10 +180,6 @@ class Account < ActiveRecord::Base
     default_in_op_fields[:company].flatten!
 
     default_in_op_fields.stringify_keys!
-  end
-  
-  def parent_child_tkts_enabled?
-    @pc ||= launched?(:parent_child_tickets)
   end
 
   class << self # class methods
@@ -356,7 +356,6 @@ class Account < ActiveRecord::Base
     unless p_features.nil?
       p_features[:inherits].each { |p_n| add_features_of(p_n) } unless p_features[:inherits].nil?
 
-      features.send(s_plan).create
       p_features[:features].each { |f_n| features.send(f_n).create } unless p_features[:features].nil?
     end
   end
@@ -366,7 +365,6 @@ class Account < ActiveRecord::Base
     unless p_features.nil?
       p_features[:inherits].each { |p_n| remove_features_of(p_n) } unless p_features[:inherits].nil?
       
-      features.send(s_plan).destroy
       p_features[:features].each { |f_n| features.send(f_n).destroy } unless p_features[:features].nil?
     end
   end
@@ -484,6 +482,23 @@ class Account < ActiveRecord::Base
     user_companies.find_each do |user_company|
       user_company.destroy unless user_company.default
     end
+  end
+
+  def add_new_facebook_page?
+    self.features?(:facebook) || (self.basic_facebook_enabled? &&
+      self.facebook_pages.count == 0)
+  end
+  
+  def advanced_twitter?
+    features? :twitter
+  end
+
+  def add_twitter_handle?
+    basic_twitter_enabled? and (advanced_twitter? or twitter_handles.count == 0)
+  end
+
+  def add_custom_twitter_stream?
+    advanced_twitter?
   end
 
   def ehawk_reputation_score

@@ -120,6 +120,15 @@
       url_without_protocol : { url_without_protocol : true }
   });
 
+  
+   //domain name validator
+  $.validator.addMethod("domain_name_validator", function(value, element) {
+    return (value != "") ? ((/^[a-zA-Z0-9][a-zA-Z0-9-]{1,61}[a-zA-Z0-9](?:\.[a-zA-Z]{2,})+$/).test(value)) : true;
+  }, "Please enter a valid domain name");
+  $.validator.addClassRules({
+      domain_name_validator : { domain_name_validator : true }
+  });
+
   //validating linkback url to avoid xss content
   $.validator.addMethod("linkback_url_valid", function(value, element) {
       value = trim(value)

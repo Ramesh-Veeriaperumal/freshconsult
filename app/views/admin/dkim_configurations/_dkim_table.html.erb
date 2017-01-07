@@ -1,0 +1,59 @@
+<div id="dkim-<%= domain_category.id %>">
+  <% if domain_category.status == OutgoingEmailDomainCategory::STATUS['active']%>
+    <div class="dkim-verify-dtn">
+      <span class="last-verified"> <%= t('email_configs.dkim.last_verified') %> : <%= formated_date(domain_category.last_verified_at) %>
+      </span>
+      <%= link_to t('email_configs.dkim.remove'), remove_dkim_config_admin_dkim_configuration_path(domain_category.id), :class => "btn-white ml5", :id =>"remove-dkim", method: :post, :data => {:confirm => 'Are you sure?'}%>
+      <span class="btn-white btn-verified ml5"/> <%= t('email_configs.dkim.verified')%> </span>
+    </div>
+  <% else %>
+    <div class="dkim-verify-dtn "> 
+      <button data-url="<%= verify_email_domain_admin_dkim_configuration_path(domain_category.id) %>" class="btn-white verify-dkim" data-alt-text="<%= t('email_configs.dkim.verification_sent') %> "/> <%= t('email_configs.dkim.verify') %> </button>
+    </div>
+  <% end %>
+
+  <table class="dkim-table clipboard">
+    <thead >
+        <tr>
+          <td>  <%= t('email_configs.dkim.type')%> </td>
+          <td>  <%= t('email_configs.dkim.host_value')%>
+            <span class="inline-block tooltip" title="<%= t('email_configs.dkim.host_value_help')%>" ><i class="ficon-help fsize-18 ml3"></i></span>
+          </td>
+          <td> <%= t('email_configs.dkim.data')%>  
+            <span class="inline-block tooltip" title="<%= t('email_configs.dkim.data_help')%>"><i class="ficon-help fsize-18 ml3"></i></span>
+          </td>
+          <td class="text-center"> <%= t('email_configs.dkim.status')%> </td>
+        </tr>
+    </thead>
+    <tbody>
+      <% fetch_customer_settings(domain_category).each do |record|%>
+        <tr >  
+          <td> <%= t('email_configs.dkim.cname')%> </td>
+          <td>
+            <div class="input-append">
+              <input type="text" class="clip-data" value="<%= record.host_name.try(:chomp, '.') %>" readonly>
+              <button type="button" class="btn tooltip copy-clip" title="Copy to Clipboard">
+                <i class="ficon-clone fsize-18"></i>
+              </button>
+            </div>
+          </td>
+          <td>
+            <div class="input-append">
+              <input type="text" class="clip-data" value="<%=record.fd_cname.try(:chomp, '.')%>" readonly>
+              <button type="button" class="btn  tooltip copy-clip" title="Copy to Clipboard">
+                <i class="ficon-clone fsize-18"></i>
+              </button>
+            </div>
+          </td>
+          <td class="text-center"> 
+            <% if record.status %>
+                <i class="ficon-checkmark-round-o fsize-20"></i>
+            <% else %>
+                <i class="ficon-unverified fsize-15"></i> 
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

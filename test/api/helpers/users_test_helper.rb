@@ -25,7 +25,8 @@ module UsersTestHelper
     result = {
       active: expected_output[:active] || contact.active,
       address: expected_output[:address] || contact.address,
-      company_id: expected_output[:company_id] || contact.company_id,
+      company_id: expected_output[:company_id] || get_company_id(contact),
+      view_all_tickets: expected_output[:view_all_tickets] || get_client_manager(contact),
       description: expected_output[:description] || contact.description,
       email: expected_output[:email] || contact.email,
       id: Fixnum,
@@ -44,7 +45,14 @@ module UsersTestHelper
 
     }
 
-    result.merge!(other_emails: expected_output[:other_emails] || contact.user_emails.where(primary_role: false).map(&:email))
+    result.merge!(
+      other_emails: expected_output[:other_emails] ||
+      contact.user_emails.where(primary_role: false).map(&:email)
+    )
+    result.merge!(
+      other_companies: expected_output[:other_companies] ||
+      get_other_companies(contact)
+    )
     result.merge!(deleted: true) if contact.deleted
     result
   end
@@ -84,7 +92,10 @@ module UsersTestHelper
   end
 
   def index_contact_pattern(contact)
-    keys = [:avatar, :tags, :other_emails, :deleted]
+    keys = [
+      :avatar, :tags, :other_emails, :deleted,
+      :other_companies, :view_all_tickets
+    ]
     keys -= [:deleted] if contact.deleted
     contact_pattern(contact).except(*keys)
   end
@@ -141,5 +152,30 @@ module UsersTestHelper
     params.merge!(options) if options.any?
     u = UserEmail.new(params)
     u.save
+  end
+
+  def get_other_companies(contact)
+    other_companies = []
+    contact.user_companies.where(default: false).each do |company|
+      other_companies << {
+        company_id: company.company_id,
+        view_all_tickets: company.client_manager
+      }
+    end
+    other_companies
+  end
+
+  def get_client_manager(contact)
+    default_company = get_default_company(contact)
+    default_company ? default_company.client_manager : nil
+  end
+
+  def get_company_id(contact)
+    default_company = get_default_company(contact)
+    default_company ? default_company.company_id : nil
+  end
+
+  def get_default_company(contact)
+    contact.user_companies.find_by_default(true)
   end
 end

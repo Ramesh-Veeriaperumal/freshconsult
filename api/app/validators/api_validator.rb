@@ -47,7 +47,8 @@ class ApiValidator < ActiveModel::EachValidator
     end
 
     def attribute_defined?
-      record.instance_variable_defined?("@#{attribute}")
+      @value != ApiConstants::VALUE_NOT_DEFINED &&
+                  record.instance_variable_defined?("@#{attribute}")
     end
 
     def skip_validation?(validator_options = options)
@@ -68,7 +69,7 @@ class ApiValidator < ActiveModel::EachValidator
     end
 
     def allow_unset?
-      !record.instance_variable_defined?("@#{attribute}")
+      !attribute_defined?
     end
 
     def call_block(block)
@@ -76,7 +77,7 @@ class ApiValidator < ActiveModel::EachValidator
     end
 
     def record_array_field_error
-      record.errors[attribute] << (options[:message] || ARRAY_MESSAGE_MAP[message] || message)
+      record.errors[attribute] << (options[:message] || child_message || message)
       record.error_options[attribute] = custom_error_options.merge!(base_error_options)
     end
 
@@ -98,7 +99,7 @@ class ApiValidator < ActiveModel::EachValidator
       error_options = (options[:message_options] ? options[:message_options].dup : {})
       code = options[:code] || error_code
       error_options.merge!(code: code) if code
-      nested_field = nested_field_name
+      nested_field = child_field_name
       error_options.merge!(nested_field: nested_field) if nested_field
       error_options
     end
@@ -109,6 +110,14 @@ class ApiValidator < ActiveModel::EachValidator
 
     def custom_error_options
       {}
+    end
+
+    def child_field_name
+      options[:nested_field]
+    end
+
+    def child_message
+      ARRAY_MESSAGE_MAP[message] unless child_field_name
     end
 
     def error_code

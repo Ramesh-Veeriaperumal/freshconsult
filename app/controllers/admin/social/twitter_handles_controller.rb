@@ -14,7 +14,7 @@ class Admin::Social::TwitterHandlesController < ApplicationController
     returned_value = sandbox(0) {
       twitter_handle = @wrapper.auth(session[:request_token], session[:request_secret], params[:oauth_verifier])
       handle = scoper.find_by_twitter_user_id(twitter_handle[:twitter_user_id])
-      unless handle.nil?
+      if handle.present?
         handle.attributes = {
           :access_token    => twitter_handle.access_token,
           :access_secret   => twitter_handle.access_secret,
@@ -25,11 +25,13 @@ class Admin::Social::TwitterHandlesController < ApplicationController
         }
         handle.save
         redirect_to edit_admin_social_twitter_stream_url(handle.default_stream)
-      else
+      elsif current_account.add_twitter_handle?
         twitter_handle.save
         portal_name = twitter_handle.product ? twitter_handle.product.name : current_account.portal_name
         flash[:notice] = t('twitter.success_signin', :twitter_screen_name => twitter_handle.screen_name, :helpdesk => portal_name)
         redirect_to edit_admin_social_twitter_stream_url(twitter_handle.default_stream)
+      else
+        redirect_to admin_social_streams_url
       end
     }
     session_cleanup

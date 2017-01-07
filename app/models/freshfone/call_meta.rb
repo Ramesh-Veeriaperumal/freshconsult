@@ -1,4 +1,5 @@
 class Freshfone::CallMeta < ActiveRecord::Base
+  include Freshfone::CallsRedisMethods
   self.table_name =  :freshfone_calls_meta
   self.primary_key = :id
 
@@ -81,13 +82,6 @@ class Freshfone::CallMeta < ActiveRecord::Base
       device_type == v
     end
   end
-  
-  def update_pinged_agents_with_response(user_id, response)
-    pinged_agents.each do |agent|
-      agent.merge!(response: PINGED_AGENT_RESPONSE_HASH[response.to_sym]) if agent[:id] == user_id.to_i && agent[:response].blank?
-    end
-    save!
-  end
 
   def update_agent_call_sids(user_id, call_sid)
     pinged_agents.each do |agent|
@@ -97,9 +91,10 @@ class Freshfone::CallMeta < ActiveRecord::Base
   end
 
   def all_agents_missed?
-    pinged_agents.find do |agent| 
-      MISSED_RESPONSE_HASH.values.exclude? agent[:response]
-    end.blank?
+    agents_response = get_response_meta(account_id, call_id)
+    missed_response_statuses = MISSED_RESPONSE_HASH.keys.map { |k| k.to_s}
+    agents_response.length ==  pinged_agents.length &&
+      (agents_response.values - missed_response_statuses).blank?
   end
 
   def update_mobile_agent_call(user_id, call_sid) # Spreadheet L 27
@@ -140,25 +135,9 @@ class Freshfone::CallMeta < ActiveRecord::Base
     end
   end
 
-  def agent_response_present?(user_id)
-    pinged_agents.each do |agent|
-      return agent[:response].present? if agent[:id] == user_id.to_i
-    end
-    false
-  end
-
   def missed_response_present?(user_id)
-    pinged_agents.each do |agent|
-      return MISSED_RESPONSE_HASH.values.include?(agent[:response]) if
-        agent[:id] == user_id.to_i
-    end
-    false
-  end
-
-  def update_device_meta(device_type, meta_info)
-    self.device_type = device_type
-    self.meta_info[:agent_info] = meta_info
-    save
+    agent_response = get_agent_response(account_id, call_id, user_id)
+    MISSED_RESPONSE_HASH.values.include?(agent_response)
   end
 
   def any_agent_accepted?
@@ -172,12 +151,24 @@ class Freshfone::CallMeta < ActiveRecord::Base
     save! if meta_info[:quality_feedback].present?
   end
 
+  def cancel_all_agents
+    cancel_ringing_agents([:browser, :mobile])
+  end
+
   def cancel_browser_agents
-    pinged_agents.each do |agent|
-      agent[:response] = PINGED_AGENT_RESPONSE_HASH[:canceled] if
-        browser_agent?(agent) && agent[:response].blank?
+    cancel_ringing_agents([:browser])
+  end
+
+  def cancel_ringing_agents(device)
+    agents_response = []
+    redis_response = get_response_meta(account_id, call_id)
+    missed_agents = pinged_agents.select { |agent|
+      missed_agent?(agent, redis_response[agent[:id].to_s], device) }
+    missed_agents.each do |agent|
+      agents_response.push(agent[:id], :canceled)
     end
-    save!
+    set_all_agents_response(account_id, call_id,
+      agents_response) if agents_response.present?
   end
 
   def agent_pinged_and_no_response?(user_id)
@@ -211,8 +202,8 @@ class Freshfone::CallMeta < ActiveRecord::Base
 
   private
 
-    def browser_agent?(agent)
-      agent[:device_type] == :browser
+    def on_device?(agent, device)
+      device.include?(agent[:device_type])
     end
 
     def build_feedback_params(params)
@@ -223,4 +214,8 @@ class Freshfone::CallMeta < ActiveRecord::Base
       result
     end
 
+    def missed_agent?(agent, agent_response, device)
+      on_device?(agent, device) && agent[:id] != freshfone_call.user_id &&
+        agent_response.blank?
+    end
 end

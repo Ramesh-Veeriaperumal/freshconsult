@@ -2,7 +2,7 @@
 	<h4 class="title"><%= h(ticket.status_name.html_safe) %></h4>
 	<p>
 		<% 
-		changed_time = ticket.status_updated_at
+		changed_time = ticket.status_updated_at || ticket.ticket_states.closed_at
 		Rails.logger.info "::::::::#{changed_time}"
 		%>
 		<%= t('since').html_safe %> <abbr data-livestamp="<%= changed_time.to_i %>"><%= distance_of_time_in_words(Time.now(), changed_time) %></abbr>

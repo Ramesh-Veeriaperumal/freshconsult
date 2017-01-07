@@ -33,31 +33,37 @@ class Search::V2::SpotlightController < ApplicationController
   # Customers scoped spotlight search
   #
   def customers
-    redirect_user unless privilege?(:view_contacts)
-
-    @search_context = :agent_spotlight_customer
-    @klasses        = ['User', 'company']
-    search(esv2_agent_models)
+    if privilege?(:view_contacts)
+      @search_context = :agent_spotlight_customer
+      @klasses        = ['User', 'company']
+      search(esv2_agent_models)
+    else
+      redirect_user
+    end
   end
 
   # Forums scoped spotlight search
   #
   def forums
-    redirect_user unless forums_visible?
-
-    @search_context = :agent_spotlight_topic
-    @klasses        = ['Topic']
-    search(esv2_agent_models)
+    if forums_visible?
+      @search_context = :agent_spotlight_topic
+      @klasses        = ['Topic']
+      search(esv2_agent_models)
+    else
+      redirect_user
+    end
   end
 
   # Solutions scoped spotlight search
   #
   def solutions
-    redirect_user unless privilege?(:view_solutions)
-
-    @search_context = :agent_spotlight_solution
-    @klasses        = ['Solution::Article']
-    search(esv2_agent_models)
+    if privilege?(:view_solutions)
+      @search_context = :agent_spotlight_solution
+      @klasses        = ['Solution::Article']
+      search(esv2_agent_models)
+    else
+      redirect_user
+    end
   end
 
   private
@@ -157,7 +163,7 @@ class Search::V2::SpotlightController < ApplicationController
     end
     
     def redirect_user
-      redirect_to search_v2_spotlight_index_path
+      redirect_to all_search_v2_spotlight_index_path
     end
 
     ######################

@@ -44,7 +44,10 @@ window.App = window.App || {};
 				break;
 			case 'admin/email_notifications/index':
 				this.current_module = 'AdminFontSettings'
-				  break;
+				break;
+			case 'admin/advanced_features/index':
+				this.current_module = 'AdvancedFeatures'
+				break;
       case 'admin/skills/index':
       case 'admin/skills/new':
       case 'admin/skills/edit':
@@ -53,6 +56,9 @@ window.App = window.App || {};
       case 'admin/user_skills/index':
           this.current_module = 'AgentSkills';
           break;
+			case 'admin/dkim_configurations/index':
+					this.current_module = 'dkimConfigurations';
+					break;
       default:
           // Need to handle for other namespaces
           break;

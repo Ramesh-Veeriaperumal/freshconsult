@@ -46,4 +46,17 @@ class BadRequestErrorTest < ActionView::TestCase
       assert_equal 'attribute', test.field
     end
   end
+
+  def test_nested_field_error
+    test = BadRequestError.new(
+      'attribute', :missing_field, {
+        nested_field: 'nested_field'
+      }
+    )
+    assert_equal 'missing_field', test.code.to_s
+    assert_equal 400, test.http_code
+    assert_equal 'attribute', test.field
+    assert_equal 'nested_field', test.nested_field
+  end
+
 end

@@ -14,6 +14,9 @@ module ConversationConstants
   }.freeze
   LOAD_OBJECT_EXCEPT = [:ticket_conversations, :reply].freeze
 
+  PIPE_REPLY_FIELDS  = REPLY_FIELDS | %w( created_at updated_at )
+  PIPE_CREATE_FIELDS = CREATE_FIELDS | %w( created_at updated_at )
+   
   ATTRIBUTES_TO_BE_STRIPPED = %w(notify_emails cc_emails bcc_emails).freeze
 
   # Denotes the email fields in notes.
@@ -27,7 +30,5 @@ module ConversationConstants
     update: [:json, :multipart_form],
     reply: [:json, :multipart_form]
   }.freeze
-
-  CARRIAGE_RETURN = "\r"
 
 end.freeze

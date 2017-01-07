@@ -142,6 +142,8 @@ defaults: &defaults
     - [premium_account_jobs]
     - [trial_account_jobs]
     - [delayed_jobs]
+    - [dkim_verifier]
+    - [dkim_general]
     - [contacts_sync]
     - [contacts_sync_free]
     - [contacts_sync_paid]

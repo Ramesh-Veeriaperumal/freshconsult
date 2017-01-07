@@ -14,6 +14,12 @@ app:
         salesforce_v2:  "4345"
       fd_formula_template_id:
         salesforce_v2: "4346"
+    test:
+      auth_header: "User y31G0E60L6Zs/nZx7x0MJtRKCyhsJACUaAaDYU67S78=,Organization 3abb0215cd97f5f346f29a860e1e5982"
+      crm_formula_template_id:
+        salesforce_v2:  "4345"
+      fd_formula_template_id:
+        salesforce_v2: "4346"
     staging:
       auth_header: "User HEr6MX+mVz+zMwfSRIydYpKVqSbI4F+LWhodHhj0IQk=,Organization e18df23b39be015812b0ae60911dccbd"
       crm_formula_template_id:

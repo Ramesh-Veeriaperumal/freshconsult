@@ -19,7 +19,7 @@
       },
       :"twitter"                       =>   {
         :url                           =>   "/admin/social/streams",
-        :privilege                     =>   feature?(:twitter) && privilege?(:admin_tasks)
+        :privilege                     =>   current_account.basic_twitter_enabled? && privilege?(:admin_tasks)
       },
       :"facebook-setting"              =>   facebook_settings,
       
@@ -102,7 +102,7 @@
       },
       :ticket_template                 =>   {
         :url                           =>   "/helpdesk/ticket_templates",
-        :privilege                     =>   feature?(:ticket_templates) && privilege?(:manage_ticket_templates)
+        :privilege                     =>    current_account.tkt_templates_enabled? && privilege?(:manage_ticket_templates)
       },
       :"email-notifications"           =>   {
         :url                           =>   "/admin/email_notifications",
@@ -131,6 +131,10 @@
       :apps                            =>   {
         :url                           =>   "/integrations/applications",
         :privilege                     =>   privilege?(:admin_tasks) && current_account.features?(:marketplace)
+      },
+      :advanced_features               =>   {
+        :url                           =>   "/admin/advanced_features",
+        :privilege                     =>   privilege?(:manage_account) && current_account.any_features_included?(*Account::ADVANCED_FEATURES_TOGGLE)
       },
       :account                         =>   {
         :url                           =>   "/account",
@@ -207,7 +211,7 @@
       :"general-settings"       =>    ["helpdesk-settings", "ticket-fields", "customer-fields", "agent", "group", "skills", "role", "security", "sla",
                                           "business-hours", "multi-product", "tags"],
       :"helpdesk-productivity"  =>    ["dispatcher", "supervisor", "observer", "scenario", "ticket_template", "email-notifications", "canned-response",
-                                          "survey-settings", "gamification-settings", "email_commands_setting", "integrations", "apps"],
+                                          "survey-settings", "gamification-settings", "email_commands_setting", "integrations", "apps", "advanced_features"],
       :"account-settings"       =>    ["account", "billing", "import", "day_pass"]
     }.freeze
 
@@ -440,7 +444,7 @@ HTML
   private
   
   def facebook_settings
-    fb_feature = current_account.features?(:facebook) && privilege?(:admin_tasks)
+    fb_feature = current_account.basic_facebook_enabled? && privilege?(:admin_tasks)
     url = (fb_feature && current_account.features?(:social_revamp)) ? "/admin/social/facebook_streams" : "/social/facebook"
     {
       :url        => url,

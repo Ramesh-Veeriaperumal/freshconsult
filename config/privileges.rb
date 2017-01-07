@@ -1,3 +1,5 @@
+require_relative 'pipe_privileges'
+
 Authority::Authorization::PrivilegeList.build do
 
   # *************** TICKETS **********************
@@ -588,10 +590,12 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/zen_import"
     # new item day passes && getting started
     resource :"admin/day_pass"
+    resource :"admin/dkim_configuration"
     resource :"admin/freshfone/credit"
     resource :"admin/onboarding"
     resource :"admin/getting_started"
     resource :"agent", :only => [:api_key]
+    resource :"admin/advanced_feature", :only => [:index, :toggle]
   end
 
   assign_agent do

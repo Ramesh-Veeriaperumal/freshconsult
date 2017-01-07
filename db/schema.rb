@@ -12,7 +12,6 @@
 # It's strongly recommended to check this file into your version control system.
 
 ActiveRecord::Schema.define(:version => 20161103085738) do
-
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
     t.integer  "account_id",           :limit => 8
@@ -2314,14 +2313,14 @@ ActiveRecord::Schema.define(:version => 20161103085738) do
     t.datetime "ts_datetime2"
     t.datetime "ts_datetime3"
     t.datetime "ts_datetime4"
-    t.datetime "resolution_time_updated_at",
+    t.datetime "resolution_time_updated_at"
     t.integer  "ts_int1"
     t.integer  "ts_int2"
     t.integer  "ts_int3"
   end
 
-  add_index "helpdesk_ticket_states", ["id", "requester_responded_at"], "index_id_and_requester_responded_at"
-  add_index "helpdesk_ticket_states", ["id", "agent_responded_at"], "index_id_and_agent_responded_at"
+  add_index "helpdesk_ticket_states", ["id", "requester_responded_at"], :name => "index_id_and_requester_responded_at"
+  add_index "helpdesk_ticket_states", ["id", "agent_responded_at"],  :name => "index_id_and_agent_responded_at"
   add_index "helpdesk_ticket_states", ["account_id", "ticket_id"], :name => "index_helpdesk_ticket_states_on_account_and_ticket", :unique => true
   execute "ALTER TABLE helpdesk_ticket_states ADD PRIMARY KEY (id,account_id)"
 
@@ -4267,5 +4266,34 @@ ActiveRecord::Schema.define(:version => 20161103085738) do
   end
 
   add_index "email_hourly_updates", ["hourly_path"], :name => "index_email_hourly_updates_on_hourly_path", :unique => true
+  
+  create_table "dkim_records" do |t|
+    t.integer  :sg_id
+    t.integer  :sg_user_id
+    t.integer  :sg_category_id
+    t.string   :record_type
+    t.string   :sg_type
+    t.string   :host_name
+    t.text     :host_value
+    t.string   :fd_cname
+    t.boolean  :customer_record, :default => false
+    t.boolean  :status, :default => false
+    t.column   :outgoing_email_domain_category_id, "bigint unsigned", :null => false 
+    t.column   :account_id, "bigint unsigned", :null => false 
+    t.timestamps
+  end
 
+  add_index "dkim_records", [:outgoing_email_domain_category_id, :status], 
+            :name => 'index_dkim_records_on_email_domain_status'
+            
+  create_table "dkim_category_change_activities" do |t|
+    t.column   :account_id, "bigint unsigned", :null => false 
+    t.column   :outgoing_email_domain_category_id, "bigint unsigned", :null => false 
+    t.text     :details
+    t.datetime :changed_on
+    t.timestamps
+  end           
+  
+  add_index :dkim_category_change_activities, [:account_id, :outgoing_email_domain_category_id, :changed_on], 
+            :name => 'index_dkim_activities_on_account_email_domain_changed_on'         
 end

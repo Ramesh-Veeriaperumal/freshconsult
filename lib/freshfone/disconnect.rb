@@ -23,7 +23,8 @@ module Freshfone::Disconnect
   private
 
     def perform_agent_cleanup
-      update_secondary_leg_response
+      update_secondary_leg_response if !warm_transfer_target_agent? &&
+        no_response_present?
       reset_outgoing_count
     end
 
@@ -87,7 +88,8 @@ module Freshfone::Disconnect
       !current_call.transferred_leg? &&
         current_number.round_robin? &&
         current_call.meta.simple_or_group_hunt? &&
-        !current_call.meta.all_agents_missed?
+        !current_call.meta.all_agents_missed? &&
+        no_response_present?
     end
 
     def canceled_call?
@@ -145,5 +147,10 @@ module Freshfone::Disconnect
 
     def completed_param?
       params[:CallStatus] == 'completed'
+    end
+
+    def no_response_present?
+      current_call.meta.agent_pinged_and_no_response?(
+        (params[:agent_id] || params[:agent]).to_i)
     end
 end

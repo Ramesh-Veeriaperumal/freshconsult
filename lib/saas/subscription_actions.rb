@@ -4,9 +4,10 @@ class SAAS::SubscriptionActions
     :facebook, :twitter, :custom_domain, :multiple_emails, :css_customization, 
     :custom_roles, :dynamic_content, :mailbox, :dynamic_sections, :custom_survey, 
     :round_robin, :multi_language, :helpdesk_restriction_toggle, :ticket_templates, 
-    :multiple_companies_toggle, :round_robin_load_balancing ]
+    :multiple_companies_toggle, :round_robin_load_balancing, :link_tickets_toggle,
+    :parent_child_tickets_toggle, :shared_ownership_toggle ]
 
-  ADD_DATA_FEATURES   = [:round_robin]
+  ADD_DATA_FEATURES   = [:round_robin, :link_tickets_toggle, :parent_child_tickets_toggle]
 
   DROP  = "drop"
   ADD   = "add"

@@ -233,7 +233,9 @@ development:
   # textmate: true
   autostart:
     blacklisted_executables: 'irb,rspec,spec'
-
+  # To ignore the specific URI in reporting to newrelic.
+  rules:
+    ignore_url_regexes: ["health_checkup"]
 test:
   <<: *default_settings
   # It almost never makes sense to turn on the agent when running
@@ -242,6 +244,8 @@ test:
 
   autostart:
     blacklisted_executables: 'irb,rspec,spec'
+  rules:
+    ignore_url_regexes: ["health_checkup"]
 
 # Turn on the agent in production for 24x7 monitoring.  NewRelic
 # testing shows an average performance impact of < 5 ms per
@@ -250,6 +254,8 @@ test:
 production:
   <<: *default_settings
   monitor_mode: true
+  rules:
+    ignore_url_regexes: ["health_checkup"]
 
 # Many applications have a staging environment which behaves
 # identically to production.  Support for that environment is provided
@@ -258,3 +264,5 @@ staging:
   <<: *default_settings
   monitor_mode: true
   app_name: <%= ENV["NEW_RELIC_APP_NAME"] %> (Staging)
+  rules:
+    ignore_url_regexes: ["health_checkup"]

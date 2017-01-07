@@ -9,7 +9,9 @@ module JsonPattern
   end
 
   def bad_request_error_pattern_with_nested_field(field, nested_field, value, params_hash = {})
-    bad_request_error_pattern(nested_field, value, params_hash).merge(nested_field: "#{field}.#{nested_field}")
+    bad_request_error_pattern(field, value, params_hash).merge(
+      nested_field: "#{field}.#{nested_field}"
+    )
   end
 
   def retrieve_message(value)

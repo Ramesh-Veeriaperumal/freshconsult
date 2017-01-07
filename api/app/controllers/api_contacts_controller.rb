@@ -6,11 +6,18 @@ class ApiContactsController < ApiApplicationController
 
   def create
     assign_protected
-    contact_delegator = ContactDelegator.new(@item, email_objects: @email_objects, custom_fields: params[cname][:custom_field])
+    delegator_params = {
+      other_emails: @email_objects[:old_email_objects],
+      primary_email: @email_objects[:primary_email],
+      custom_fields: params[cname][:custom_field],
+      default_company: @company_id
+    }
+    contact_delegator = ContactDelegator.new(@item, delegator_params)
     if !contact_delegator.valid?
       render_custom_errors(contact_delegator, true)
     else
       build_user_emails_attributes if @email_objects.any?
+      build_other_companies if @all_companies
       if @item.create_contact!(params["active"])
         render_201_with_location(item_id: @item.id)
       else
@@ -24,13 +31,24 @@ class ApiContactsController < ApiApplicationController
     custom_fields = params[cname][:custom_field] # Assigning it here as it would be deleted in the next statement while assigning.
     # Assign attributes required as the contact delegator needs it.
     @item.assign_attributes(validatable_delegator_attributes)
-    contact_delegator = ContactDelegator.new(@item, email_objects: @email_objects, custom_fields: custom_fields)
+    delegator_params = {
+      other_emails: @email_objects[:old_email_objects],
+      primary_email: @email_objects[:primary_email],
+      custom_fields: custom_fields,
+      default_company: @company_id
+    }
+    contact_delegator = ContactDelegator.new(@item, delegator_params)
     unless contact_delegator.valid?
       render_custom_errors(contact_delegator, true)
       return
     end
     build_user_emails_attributes if @email_objects.any?
-    render_custom_errors unless @item.update_attributes(params[cname])
+    build_other_companies if @all_companies
+    unless @item.update_attributes(params[cname])
+      render_custom_errors
+    else
+      @item.reload
+    end
   end
 
   def destroy
@@ -48,11 +66,11 @@ class ApiContactsController < ApiApplicationController
   end
 
   def restore
-    if @item.deleted && @item.parent_id != 0    
-      head 404    
-    else    
-      @item.update_attribute(:deleted, false)   
-      head 204    
+    if @item.deleted && @item.parent_id != 0
+      head 404
+    else
+      @item.update_attribute(:deleted, false)
+      head 204
     end
   end
 
@@ -167,9 +185,26 @@ class ApiContactsController < ApiApplicationController
       @email_objects = {}
       construct_all_emails(params_hash) if params_hash.key?(:other_emails)
 
-      ParamsHelper.assign_checkbox_value(params_hash[:custom_fields], current_account.contact_form.custom_checkbox_fields.map(&:name)) if params_hash[:custom_fields]
+      @company_id = params[cname][:company_id]
 
-      ParamsHelper.assign_and_clean_params({ custom_fields: :custom_field, view_all_tickets: :client_manager }, params_hash)
+      construct_all_companies if params_hash.key?(:other_companies)
+
+      ParamsHelper.assign_checkbox_value(
+        params_hash[:custom_fields],
+        current_account.contact_form.custom_checkbox_fields.map(&:name)
+      ) if params_hash[:custom_fields]
+
+      ParamsHelper.assign_and_clean_params({
+        custom_fields: :custom_field,
+        view_all_tickets: :client_manager
+      }, params_hash)
+    end
+
+    def construct_all_companies
+      @all_companies = params[cname].delete(:other_companies)
+      @all_companies.try(:uniq!)
+      @company_given = params[cname].key?(:company_id)
+      @company_id = params[cname].delete(:company_id) unless create?
     end
 
     def construct_all_emails(params_hash)
@@ -213,7 +248,20 @@ class ApiContactsController < ApiApplicationController
     end
 
     def set_custom_errors(item = @item)
-      ErrorHelper.rename_error_fields(ContactConstants::FIELD_MAPPINGS.merge(@name_mapping), item)
+      if @item
+        bad_customer_ids = @item.user_companies.select do |x|
+          x.errors.present?
+        end.map(&:company_id)
+        @item.errors[:other_companies] << :invalid_list if bad_customer_ids.present?
+        @error_options = {
+          remove: :"user_companies.company",
+          other_companies: { list: "#{bad_customer_ids.join(', ')}" }
+        }
+      end
+      ErrorHelper.rename_error_fields(
+        ContactConstants::FIELD_MAPPINGS.merge(@name_mapping), item
+      )
+      @error_options
     end
 
     def error_options_mappings
@@ -255,6 +303,72 @@ class ApiContactsController < ApiApplicationController
       @item.user_emails_attributes = Hash[(0...email_attributes.size).zip email_attributes]
     end
 
+    def build_other_companies
+      prepare_all_companies
+      company_attributes = []
+      to_be_added = @all_companies.keys - current_companies.map(&:company_id)
+      to_be_added.each do |company_id|
+        company_attributes << {
+          'company_id' => company_id,
+          'client_manager' => @all_companies[company_id].fetch(:view_all_tickets, false),
+          'default' => !!@all_companies[company_id][:default]
+        }
+      end
+      if update?
+        to_be_destroyed = current_companies.select do |x|
+          @all_companies.keys.exclude? x.company_id
+        end
+        to_be_destroyed.each do |user_company|
+          company_attributes << { 'id' => user_company.id, '_destroy' => 1 }
+        end
+
+        to_be_updated = current_companies.select { |x| to_be_destroyed.exclude?(x) }
+        to_be_updated.each do |user_company|
+          company_attributes << {
+            'id' => user_company.id,
+            'company_id' => user_company.company_id,
+            'client_manager' => @all_companies[user_company.company_id].fetch(
+              :view_all_tickets, false
+            ),
+            'default' => !!@all_companies[user_company.company_id][:default]
+          }
+        end
+      end
+
+      @item.user_companies_attributes = Hash[(0...company_attributes.size).zip company_attributes]
+    end
+
+    def prepare_all_companies
+      default_company = primary_company
+      @all_companies = @all_companies ? all_companies_hash : {}
+      @all_companies.merge!(default_company) if default_company
+    end
+
+    def primary_company
+      if @company_id
+        {
+          @company_id => {
+            view_all_tickets: !!params[cname][:client_manager],
+            default: true
+          }
+        }
+      elsif @item && !@company_given && (uc = current_companies.find_by_default(true))
+        {
+          uc.company_id => {
+            view_all_tickets: params[cname].fetch(:client_manager, uc.client_manager),
+            default: true
+          }
+        }
+      end
+    end
+
+    def all_companies_hash
+      @all_companies.map { |x| [x[:company_id], x.except(:company_id)] }.to_h
+    end
+
+    def current_companies
+      @current_companies ||= @item.user_companies
+    end
     # Since wrap params arguments are dynamic & needed for checking if the resource allows multipart, placing this at last.
     wrap_parameters(*wrap_params)
 end
