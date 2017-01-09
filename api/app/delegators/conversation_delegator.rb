@@ -7,7 +7,7 @@ class ConversationDelegator < BaseDelegator
   validate :validate_from_email, if: -> { email_conversation? && from_email.present? && attr_changed?('from_email', schema_less_note)}
 
   def validate_agent_emails
-    invalid_emails = to_emails - Account.current.agents_from_cache.map { |x| x.user.email }
+    invalid_emails = to_emails - Account.current.agents_details_from_cache.map { |x| x.email }
     unless invalid_emails.empty?
       errors[:notify_emails] << :invalid_agent_emails
       (self.error_options ||= {}).merge!(notify_emails: { invalid_emails: "#{invalid_emails.join(', ')}" })
