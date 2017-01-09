@@ -1,5 +1,6 @@
 module Dkim::Constants
   DNS_CONFIG = YAML.load_file(File.join(Rails.root, 'config', 'pod_dns_config.yml'))
+  SENDGRID_CONFIG = (YAML::load_file(File.join(Rails.root, 'config', 'sendgrid_webhook_api.yml')))[Rails.env]
 
   VALID_RESPONSE_CODE = [201, 400]
 
@@ -28,8 +29,8 @@ module Dkim::Constants
     :delete_domain => {:url => 'https://api.sendgrid.com/v3/whitelabel/domains/', :request => 'delete'},
     :validate_domain => {:url => 'https://api.sendgrid.com/v3/whitelabel/domains/%{id}/validate', :request => 'post'}
   }
-
-  SENDGRID_CREDENTIALS = {"Authorization" => "Bearer  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",
+  
+  SENDGRID_CREDENTIALS = {"Authorization" => "Bearer  #{SENDGRID_CONFIG['sendgrid']['dkim_key']}",
                            "Content-Type" => 'application/json'}
 
 
