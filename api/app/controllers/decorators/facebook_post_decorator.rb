@@ -13,6 +13,7 @@ class FacebookPostDecorator < ApiDecorator
       created_at: record.created_at.try(:utc),
       updated_at: record.updated_at.try(:utc)
     }
+    fb_post_hash.merge!(page_name: record.facebook_page.page_name) if ['Helpdesk::Ticket'].include?(record.postable_type)
     fb_post_hash.merge!(post_type: post_attributes[:post_type], can_comment?: record.can_comment?) if record.post?
     fb_post_hash
   end

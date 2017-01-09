@@ -1,13 +1,15 @@
 module SocialTestHelper
 
   def fb_dm_pattern(expected_output = {}, fb_post)
-    {
+    ret_hash = {
       id: Fixnum,
       post_id: expected_output[:post_id] || fb_post.post_id,
       msg_type: expected_output[:msg_type] || fb_post.msg_type,
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
     }
+    ret_hash.merge!(page_name: fb_post.facebook_page.page_name) if ['Helpdesk::Ticket'].include?(fb_post.postable_type)
+    ret_hash
   end
   
   def fb_post_pattern(expected_output = {}, fb_post)
