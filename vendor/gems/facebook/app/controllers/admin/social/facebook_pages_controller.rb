@@ -1,6 +1,6 @@
 class Admin::Social::FacebookPagesController < Admin::AdminController
 
-  before_filter { |c| c.requires_feature :facebook }
+  before_filter { access_denied unless current_account.basic_facebook_enabled? }
   
   before_filter :load_item, :only => [:destroy]
 
@@ -31,6 +31,7 @@ class Admin::Social::FacebookPagesController < Admin::AdminController
         page_params = fb_page.except(:fetch_since, :message_since)
         page.update_attributes(page_params)
       else
+        break unless current_account.add_new_facebook_page?
         page = scoper.new(fb_page)
         page.save 
       end

@@ -3,76 +3,103 @@
     <%= t('account_created', :total_time => distance_of_time_in_words(current_account.created_at, Time.now.to_s), :date => formated_date(current_account.created_at, {:format => :short_day_with_week, :include_year => true}) ) %>
   </label>
 </div>
-<div class="well-active">
+<div class="well-active <%= current_account.new_pricing_launched? ? 'well-active-new': '' %>">
   <div class="current-plan" >
-    <h1 class="plan-title">
+    <h1 class="plan-title <%= 'classic' if @subscription.classic?%>">
       <%= t('plan') %> :
       <strong>
-        <% if @subscription.classic? %>
-          <%= " #{ @subscription.subscription_plan.name.split(" Classic").first }" %>
-          <%= content_tag(:span, "Classic", :class => "label") %>
-        <% else %>
+        <% if current_account.new_pricing_launched? %>
+          <%= " #{ @subscription.subscription_plan.display_name }" %>
+          <%if previous_plan?(@subscription.subscription_plan)%>
+            <%= content_tag(:span, "2016", :class => "label") %>
+          <%elsif @subscription.classic?%>
+            <%= content_tag(:span, t('classic_label'), :class => "label") %>
+          <%end%>
+        <%elsif previous_plan?(@subscription.subscription_plan) and !current_account.new_pricing_launched?%>
           <%= " #{ @subscription.subscription_plan.name }" %>
+        <%elsif @subscription.classic?%>
+          <%= " #{ @subscription.subscription_plan.name.split(" Classic").first }" %>
+          <%= content_tag(:span, t('classic_label'), :class => "label") %>
+        <% else %>
+          <%= " #{ @subscription.subscription_plan.display_name }" %>
         <% end %>
       </strong>
-    </h1>  
+    </h1>
   </div>
-  
-  <% plan = @subscription.subscription_plan %>
+
+  <%
+    plan = @subscription.subscription_plan
+    is_new_sprout = new_sprout?(plan.name)
+  %>
 
   <div class="subscribed-plan-details current-plan-info">
-    <div id="info_1" class="subscription-info-divider">
+    <div id="info_1" class="subscription-info-divider <%= is_new_sprout ? 'free-divider' : ''%>">
       <ul>
         <li>
-          <%= t('agent_seats',:no_of_agents => @subscription.agent_limit) %> 
+          <%= is_new_sprout ? t('free_plan') : t('agent_seats',:no_of_agents => @subscription.agent_limit) %>
         </li>
         <li>
-          <%= t('subscribed_billing', :billing_cycle => SubscriptionPlan::BILLING_CYCLE_NAMES_BY_KEY[@subscription.renewal_period]) %>
-          <br />
-          <a href="#" data-plan="<%= plan.name %>" 
-                      data-plan-id = "<%= plan.id %>" 
-                      class="plan-button edit-plan" 
-                      id='<%= "#{ plan.name }_button" %>' 
-                      data-current-plan=true>
-            <%= t('edit_plan') %>
-          </a>
+          <% if is_new_sprout %>
+            <%= t('free_plan_agents_v2') %>
+          <% else %>
+            <%= t('subscribed_billing', :billing_cycle => SubscriptionPlan::BILLING_CYCLE_NAMES_BY_KEY[@subscription.renewal_period]) %>
+            <br />
+            <a href="#" data-plan="<%= plan.name %>"
+                        data-plan-id = "<%= plan.id %>"
+                        class="plan-button edit-plan"
+                        id='<%= "#{ plan.display_name }_button" %>'
+                        data-current-plan=true>
+              <%= t('edit_plan') %>
+            </a>
+          <% end %>
+          <%if !@offline_subscription and @invoice and is_new_sprout%>
+              <div class ="mt10 muted">
+                <%= t("view_invoices") %>
+                <%=link_to "Latest", "","rel" => "freshdialog", "data-target" => "#invoice-modal-0", "data-template-footer" => ""%> |
+                <%= link_to "All", subscription_invoices_path %>
+              </div>
+          <%end%>
         </li>
       </ul>
     </div>
-    <div class="billing-info-divider">
-      <% subscription_end = @subscription.next_renewal_at - Time.now %>
-      <ul>
-        <li class="price"> <%= format_amount(@subscription.amount, @currency) %> </li>
-        <% if subscription_end > 0 %>
-          <li class="muted"> <%= t('next_renewal', :renewal_period => distance_of_time_in_words(@subscription.next_renewal_at, Time.now.to_s) ) %> </li>
-        <% else %>
-          <li class="muted"> <%= t('suspended_since', :days => distance_of_time_in_words(@subscription.next_renewal_at, Time.now.to_s) ) %> </li>
-        <% end %>
-        <li class="muted"> <%= formated_date(@subscription.next_renewal_at, {:format => :short_day_with_week, :include_year => true}) %> </li>
-        <%if !@offline_subscription and @invoice%>
-          <li class ="mt10">
-            View Invoices 
-            <%=link_to "Latest", "","rel" => "freshdialog", "data-target" => "#invoice-modal-0", "data-template-footer" => ""%> |
-            <%= link_to "All", subscription_invoices_path %>
-          </li>
-        <%end%>
-      </ul>
-    </div>
-
+    <% if !is_new_sprout %>
+      <div class="billing-info-divider">
+        <% subscription_end = @subscription.next_renewal_at - Time.now %>
+        <ul>
+          <li class="price"> <%= format_amount(@subscription.amount, @currency) %> </li>
+          <% if subscription_end > 0 %>
+            <li class="muted"> <%= t('next_renewal', :renewal_period => distance_of_time_in_words(@subscription.next_renewal_at, Time.now.to_s) ) %> </li>
+          <% else %>
+            <li class="muted"> <%= t('suspended_since', :days => distance_of_time_in_words(@subscription.next_renewal_at, Time.now.to_s) ) %> </li>
+          <% end %>
+          <li class="muted"> <%= formated_date(@subscription.next_renewal_at, {:format => :short_day_with_week, :include_year => true}) %> </li>
+          <%if !@offline_subscription and @invoice%>
+            <li class ="mt10">
+              <%= t("view_invoices") %>
+              <%=link_to "Latest", "","rel" => "freshdialog", "data-target" => "#invoice-modal-0", "data-template-footer" => ""%> |
+              <%= link_to "All", subscription_invoices_path %>
+            </li>
+          <%end%>
+        </ul>
+      </div>
+    <% end %>
     <%if !@offline_subscription and @invoice%>
-    <%= render :partial => "/subscription_invoices/invoice_modal", 
+    <%= render :partial => "/subscription_invoices/invoice_modal",
        :locals => { :invoice => @invoice, :index => 0} %>
   <%end%>
 </div>
+<%= render :partial => "/subscriptions/payment_info" if current_account.new_pricing_launched? and @subscription.card_number.present?%>
 </div>
 
 <%= render :partial => "/subscriptions/freshfone_subscription" %>
 
 <% unless @offline_subscription %>
 <div class="plan-section-title">
-  <div class="choose-plan-title"><a class="plan-expand" href="#"> <%= t('choose_different_plan') %> </a></div>
-  <%= content_tag(:h5, t('downgrade_plan'), :class => "lead-note pb15") %>
-  <div class="choose-plan-drop" style="display:none;" ><%= render :partial => "/subscriptions/select_plans", :locals => {:plans => @plans, :subscription => @subscription, :show_all => false } %></div>
+  <div class="choose-plan-title">
+    <a class="plan-expand" href="#"> <%= t('choose_different_plan') %> </a>
+  </div>
+  <%= content_tag(:h5, t('downgrade_plan_v2'), :class => "lead-note pb15") %>
+  <div class="choose-plan-drop" style="display:none;" ><%= render :partial => current_account.new_pricing_launched? ? "/subscriptions/select_new_plans" : "/subscriptions/select_plans", :locals => {:plans => @plans, :subscription => @subscription, :show_all => false } %></div>
 </div>
 <% end %>
 
@@ -87,4 +114,3 @@
     });
   })(jQuery);
 </script>
-    

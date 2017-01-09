@@ -37,7 +37,7 @@ class Helpdesk::EmailParser::ProcessedAttachment
       		lines = /begin \d\d\d (.*)\r\nend/m.match(part.raw_source)[1].split /[\r\n]+/
       		encoded = lines[1..-2].join("\n")
       		attachment = Helpdesk::EmailParser::MailAttachment.new(encoded.unpack("u")[0])
-      	elsif(part.content_transfer_encoding.upcase == "QUOTED-PRINTABLE")
+      	elsif(part.content_transfer_encoding && part.content_transfer_encoding.upcase == "QUOTED-PRINTABLE")
       		attachment = Helpdesk::EmailParser::MailAttachment.new(part.body.raw_source.unpack("M")[0])
     	else
       		attachment = Helpdesk::EmailParser::MailAttachment.new(part.decoded)

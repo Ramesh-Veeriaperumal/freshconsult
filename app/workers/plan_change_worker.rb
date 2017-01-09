@@ -64,11 +64,22 @@ class PlanChangeWorker
   end
 
   def drop_facebook_data(account)
-    account.facebook_pages.destroy_all
+    fb_count = 0
+    account.facebook_pages.order("created_at asc").find_each do |fb|
+      next if fb_count < 1
+      fb.destroy
+      fb_count+=1
+    end
+
   end
 
   def drop_twitter_data(account)
-    account.twitter_handles.destroy_all
+    twitter_count = 0
+    account.twitter_handles.order("created_at asc").find_each do |twitter|
+      next if twitter_count < 1
+      twitter.destroy
+      twitter_count+=1
+    end
   end
 
   def drop_custom_domain_data(account)

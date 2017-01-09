@@ -33,6 +33,9 @@ class SlaNotifier < ActionMailer::Base
   end
 
   def trigger_escalation(ticket, agent, n_type, params)
+    # Setting the headers to nil in order to allow the replacement of header attributes. 
+    # This avoids duplication of attributes while called multiple times in loop.
+    mail.header = nil
     @ticket = ticket
     begin
       configure_email_config ticket.reply_email_config if ticket.account.features?(:all_notify_by_custom_server)

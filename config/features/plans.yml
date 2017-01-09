@@ -1,12 +1,12 @@
 :subscription_plans:
-  :sprout:
+  :sprout_jan_17:
     :name: Sprout
     :features:
       - :basic_twitter
       - :basic_facebook
     :inherits: []
     :exclude: []
-  :blossom:
+  :blossom_jan_17:
     :name: Blossom
     :features: 
       - :split_tickets
@@ -25,25 +25,36 @@
       - :custom_contact_fields
       - :occasional_agent
       - :allow_auto_suggest_solutions
+      - :gamification
+      - :auto_refresh
+      - :advanced_twitter
+      - :advanced_facebook
+      - :surveys
+      - :scoreboard
+      - :timesheets
+      - :custom_domain
+      - :multiple_emails
+      - :advanced_reporting
+      - :default_survey
     :inherits: 
-      - :sprout
+      - :sprout_jan_17
     :exclude: []
-  :garden:
+  :garden_jan_17:
     :name: Garden
     :features: []
     :inherits: 
-      - :blossom
+      - :blossom_jan_17
     :exclude: []
-  :estate:
+  :estate_jan_17:
     :name: Estate
     :features: []
     :inherits: 
-      - :garden
+      - :garden_jan_17
     :exclude: []
-  :forest:
+  :forest_jan_17:
     :name: Forest
     :features: []
     :inherits: 
-      - :estate
+      - :estate_jan_17
     :exclude: []
 :selectable_features: []

@@ -71,7 +71,8 @@ module HelpdeskReports::Constants::Ticket
     [ :status,           "Status",              :dropdown],
     [ :historic_status,  "Historic Status",     :dropdown],
     [ :product_id,       "Product",             :dropdown],
-    [ :company_id,       "Customer",            :dropdown]
+    [ :company_id,       "Customer",            :dropdown],
+    [ :tag_id,           "Tags",                :dropdown]
   ]
 
   DEFAULT_COLUMNS_ORDER         = DEFAULT_COLUMNS.map { |i| i[0] }    

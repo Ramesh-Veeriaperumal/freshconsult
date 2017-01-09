@@ -197,6 +197,9 @@
             &:first-child{
                 width:2%;
             }
+            .fb_page_list_radio{
+              @include margin(-1px 3px 0px 0px);
+            }
         }
 
         td.fb_page_info{

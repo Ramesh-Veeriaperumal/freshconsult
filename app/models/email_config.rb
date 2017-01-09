@@ -2,6 +2,7 @@ class EmailConfig < ActiveRecord::Base
   self.primary_key = :id
 
   belongs_to_account
+  belongs_to :outgoing_email_domain_category
   include AccountConstants
   include Redis::RedisKeys
   include Redis::OthersRedis
@@ -29,6 +30,11 @@ class EmailConfig < ActiveRecord::Base
   xss_sanitize  :only => [:to_email,:reply_email], :html_sanitize => [:name,:to_email,:reply_email]
 
   before_save :assign_category
+  
+  after_commit ->(obj) { obj.create_email_domain }, on: :create
+  after_commit ->(obj) { obj.create_email_domain }, on: :update
+
+  TRUSTED_PERIOD = 30
 
   def active?
     active
@@ -68,6 +74,15 @@ class EmailConfig < ActiveRecord::Base
     old_config = EmailConfig.find id
     set_activator_token unless old_config.reply_email == reply_email
   end
+  
+  def create_email_domain
+    domain_name = self.reply_email.split("@").last
+    return if domain_name.downcase.include?(AppConfig["base_domain"][Rails.env])
+    if domain_name and email_domain_categories.where(:email_domain => domain_name).count.zero?
+      email_domain_categories.new(:email_domain => domain_name,
+          :enabled => true, :status => OutgoingEmailDomainCategory::STATUS['disabled']).save
+    end
+  end
 
   protected
     def blacklisted_domain?
@@ -85,8 +100,13 @@ class EmailConfig < ActiveRecord::Base
     def assign_category
       domain_name = self.reply_email.split("@").last
       if domain_name
-        self.category = account.outgoing_email_domain_categories.active.where('email_domain = ?', "#{domain_name.strip}").first.try(:category)
+        email_domain = email_domain_categories.where('email_domain = ?', "#{domain_name.strip}").first
+        self.category = email_domain.try(:category)
+        self.outgoing_email_domain_category_id = email_domain.try(:id)
         Rails.logger.debug "Email config - #{reply_email} is set with category - #{category}"
       end
+    end
+    def email_domain_categories
+      account.outgoing_email_domain_categories
     end
 end

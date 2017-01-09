@@ -1,13 +1,13 @@
 module Helpdesk::TagMethods
 
   def update_tags(tag_list, remove_tags, item)
-    new_tag_list= tag_list.split(",").map { |tag| tag.strip.downcase}
-    old_tag_list = item.tags.map{|tag| tag.name.strip.downcase }
+    new_tag_list= tag_list.split(",").map { |tag| tag.strip }
+    old_tag_list = item.tags.map{|tag| tag.name.strip }
 
-    add_ticket_tags( new_tag_list.select {|tag| !old_tag_list.include?(tag) },item)
+    add_ticket_tags( new_tag_list.select {|tag| !old_tag_list.any? { |old| old.casecmp(tag) == 0 } },item)
     #Choosing the ones that are not in the old list.
     
-    remove_ticket_tags(old_tag_list.select {|tag| !new_tag_list.include?(tag) },item) unless !remove_tags
+    remove_ticket_tags(old_tag_list.select {|tag| !new_tag_list.any? { |new_tag| new_tag.casecmp(tag) == 0 } },item) unless !remove_tags
     #Choosing the ones that are in the old list and not in the new ones.
 
     update_ticket_in_es(item) if (tag_list.present? and Account.current.launched?(:es_count_writes))

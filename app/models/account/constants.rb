@@ -79,6 +79,35 @@ class Account < ActiveRecord::Base
         :helpdesk_restriction_toggle, :round_robin_load_balancing, :multiple_user_companies,
         :multiple_companies_toggle, :round_robin_on_update ],
       :inherits => [ :garden_classic ]
+    },
+
+    :sprout_jan_17 => {
+      :features => [ :scenario_automations, :business_hours ]
+    },
+    
+    :blossom_jan_17 => {
+      :features => [ :gamification, :auto_refresh, :twitter, :facebook, :surveys , :scoreboard, :timesheets, 
+        :custom_domain, :multiple_emails, :advanced_reporting, :default_survey, :requester_widget ],
+      :inherits => [ :sprout_jan_17 ]
+    },
+    
+    :garden_jan_17 => {
+      :features => [ :forums, :multi_language, :css_customization, :advanced_reporting, :dynamic_content, :chat, :ticket_templates, :custom_survey ],
+      :inherits => [ :blossom_jan_17 ]
+    },
+
+    :estate_jan_17 => {
+      :features => [ :multi_product, :customer_slas, :multi_timezone , 
+        :collision, :layout_customization, :round_robin, :enterprise_reporting,
+        :custom_ssl, :custom_roles, :multiple_business_hours, :facebook_page_tab, :chat_routing, :dynamic_sections,
+        :helpdesk_restriction_toggle, :round_robin_load_balancing, :multiple_user_companies, 
+        :multiple_companies_toggle, :round_robin_on_update ],
+      :inherits => [ :garden_jan_17 ]
+    },
+
+    :forest_jan_17 => {
+      :features => [ :mailbox, :whitelisted_ips ],
+      :inherits => [ :estate_jan_17 ]
     }
 
   }
@@ -94,6 +123,7 @@ class Account < ActiveRecord::Base
     :chat_enable => false, :saml_old_issuer => false, :spam_dynamo => true,
     :redis_display_id => false, :es_multilang_solutions => false,
     :sort_by_customer_response => false, :survey_links => true,
+    :tags_filter_reporting => false,
     :saml_unspecified_nameid => false, :euc_hide_agent_metrics => false,
     :single_session_per_user => false, :link_tickets => false, :parent_child_tickets => false,
     :marketplace_app => false, :sandbox_account => false, :collaboration => false

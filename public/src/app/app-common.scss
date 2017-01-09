@@ -1999,9 +1999,12 @@ a.submit_link:hover{
 		@include padding(0 5px 0 0);
 	}
 	a{
-		font-size: 14px;
 		color: #0c74d7;
 		font-weight: 500;
+	}
+
+	.config-btn {
+		@include border-right(1px solid #ccc);
 	}
   .email-help{
     font-size: 1.1em;

@@ -7736,7 +7736,7 @@ pl:
     confirm: "Czy na pewno chcesz skasować skrótowiec czatu?"
     no_code: "Brak skrótowców."
     alert:
-      code_mandatory: "Oba pola są obowiązkowe. Skrótowce mogą mieć do 10 znaków i nie mogą zawierać żadnych znaków specjalnych z wyjątkiem „-\"'."
+      code_mandatory: "Oba pola są obowiązkowe. Skrótowce mogą mieć do 10 znaków i nie mogą zawierać żadnych znaków specjalnych z wyjątkiem „-'."
       code_duplicate: "Ten skrótowiec już istnieje."
   new_label: NOWY
   api:

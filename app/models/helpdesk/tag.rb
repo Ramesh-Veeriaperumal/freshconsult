@@ -136,6 +136,13 @@ class Helpdesk::Tag < ActiveRecord::Base
     tag_list.compact
   end
 
+  def to_rmq_json
+    {
+      "id"         => id,
+      "account_id" => account_id
+    }
+  end
+
   def to_indexed_json
     as_json({
             :root => "helpdesk/tag",

@@ -128,5 +128,28 @@ class Account < ActiveRecord::Base
   def hide_agent_metrics_feature?
     features?(:euc_hide_agent_metrics)
   end
+  
+  def dkim_enabled?
+    launched?(:dkim)
+  end
 
+  def new_pricing_launched?
+    on_new_plan? || redis_key_exists?(NEW_SIGNUP_ENABLED)
+  end
+
+  def advance_facebook_enabled?
+    features?(:facebook)
+  end
+
+  def advanced_twitter?
+    features? :twitter
+  end
+
+  def on_new_plan?
+    @on_new_plan ||= [:sprout_jan_17,:blossom_jan_17,:garden_jan_17,:estate_jan_17,:forest_jan_17].include?(plan_name)
+  end
+
+  def tags_filter_reporting_enabled?    
+    features?(:tags_filter_reporting)   
+  end
 end

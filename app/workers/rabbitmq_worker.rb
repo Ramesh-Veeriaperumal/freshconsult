@@ -163,7 +163,8 @@ class RabbitmqWorker
 
     def reports_routing_key?(exchange, key)
       ((exchange.starts_with?("tickets") || exchange.starts_with?("notes")) && key[2] == "1") || 
-        ((exchange.starts_with?("archive_tickets") || exchange.starts_with?("accounts")) && key[0] == "1")
+        ((exchange.starts_with?("archive_tickets") || exchange.starts_with?("accounts")) && key[0] == "1") ||
+          (exchange.starts_with?("tag_uses") && key[2] == "1") || (exchange.starts_with?("tags") && key[2] == "1")
     end
 
     def cti_routing_key?(exchange)

@@ -19,6 +19,17 @@ if draft
     description: draft.description,
     description_text: @item.un_html(draft.description),
     status: draft.status,
+    attachments: draft.attachments.map do |a|
+      {
+        id: a.id,
+        content_type: a.content_content_type,
+        size: a.content_file_size,
+        name: a.content_file_name,
+        attachment_url: a.attachment_url_for_api,
+        created_at: a.created_at.try(:utc),
+        updated_at: a.updated_at.try(:utc)
+      }
+    end,
     created_at: draft.created_at,
     updated_at: draft.updated_at
   })
@@ -28,6 +39,17 @@ else
     description: @item.description,
     description_text: @item.desc_un_html,
     status: @item.status,
+    attachments: @item.attachments.map do |a|
+      {
+        id: a.id,
+        content_type: a.content_content_type,
+        size: a.content_file_size,
+        name: a.content_file_name,
+        attachment_url: a.attachment_url_for_api,
+        created_at: a.created_at.try(:utc),
+        updated_at: a.updated_at.try(:utc)
+      }
+    end,
     created_at: @item.created_at,
     updated_at: @item.updated_at
   })

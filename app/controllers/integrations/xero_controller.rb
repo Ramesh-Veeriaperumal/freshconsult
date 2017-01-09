@@ -7,8 +7,10 @@
   before_filter :authorize_client, :except => [:authorize, :install, :authdone, :update_params]
     
   def authorize
+    token = "#{Account.current.id}_#{SecureRandom.hex(10)}"
+    $redis_others.perform_redis_op("setex", token, 3.minutes, "#{request.protocol+request.host_with_port}")
     request_token = @xero_client.request_token(:oauth_callback => 
-      "#{AppConfig['integrations_url'][Rails.env]}#{integrations_xero_install_path}?redirect_url=#{request.protocol+request.host_with_port}")    
+      "#{AppConfig['integrations_url'][Rails.env]}#{integrations_xero_install_path}?token=#{token}")    
     session[:xero_request_token]  = request_token.token
     session[:xero_request_secret] = request_token.secret  
     redirect_to request_token.authorize_url
@@ -18,7 +20,9 @@
   end
 
   def install 
-    redirect_url ="#{params[:redirect_url]}#{integrations_xero_authdone_path}?oauth_verifier=#{params[:oauth_verifier]}"
+    token = "#{params[:token]}"
+    host_url = $redis_others.perform_redis_op("get", token)
+    redirect_url ="#{host_url}#{integrations_xero_authdone_path}?oauth_verifier=#{params[:oauth_verifier]}"
     redirect_to redirect_url
   end
 

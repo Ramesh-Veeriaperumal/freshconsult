@@ -1,0 +1,24 @@
+<li class="dkim-list" id = "dkim-list-<%=domain_category.id%>">
+  <div>
+    <a href="#" class="list-toggle <% unless dkim_configured?(domain_category) %> disable <% end %>">
+      <i class="cart-icon ficon-caret-right"> </i>
+      <strong class="cart-text inline-block ml5"><%= domain_category.email_domain %></strong>
+    </a>
+    <div class="pull-right text-right verification-status">
+      <% unless dkim_configured?(domain_category) %>
+        <button data-url="<%= admin_dkim_configuration_path(domain_category.id) %>" class="btn btn-mini config-dkim"  data-alt-text="<%= t('email_configs.dkim.configuring') %> "/> <%= t('email_configs.dkim.config') %> </button>
+      <% else %>
+        <% if domain_category.status == OutgoingEmailDomainCategory::STATUS['active'] %>
+          <span class="muted"> <%= t('email_configs.dkim.verified')%> </span>
+        <% else %>
+          <span class="alert-text"><%= t('email_configs.dkim.unverified')%>  </span>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+  <% if dkim_configured?(domain_category) %>
+    <div class="hide dkim-table-wraper">
+      <%= render "dkim_table", :domain_category => domain_category %>
+    </div>
+  <%end%>
+</li>
