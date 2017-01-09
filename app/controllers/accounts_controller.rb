@@ -80,7 +80,8 @@ class AccountsController < ApplicationController
           render :json => { :success => true,
                             :url => signup_complete_url(:token => @signup.account.agents.first.user.perishable_token, :host => @signup.account.full_domain),
                             :account_id => @signup.account.id  },
-                            :callback => params[:callback]
+                            :callback => params[:callback],
+                            :content_type=> 'application/javascript'
         }
         format.nmobile {
 
