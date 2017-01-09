@@ -161,4 +161,8 @@ class Account < ActiveRecord::Base
     @templates ||= (features?(:ticket_templates) || parent_child_tkts_enabled?)
   end
 
+  def tags_filter_reporting_enabled?    
+    features?(:tags_filter_reporting)   
+  end
+
 end
