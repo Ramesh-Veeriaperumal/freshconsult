@@ -5466,6 +5466,7 @@ en:
     user_blocked: "This user has blocked your page. You will not be able to send them any messages."
     not_authorized: You were not authorized by Facebook
     realtime: "<b>Realtime stream feed fetching app is stopped</b> due to some changes on this Facebook account <a href='%{realtime_url}' > Re-authorize and Enable </a> "
+    user_creation_failed: "Error while creating user in Freshdesk. Please retry after sometime or contact support@freshdesk.com"
   logo: Logo
   ok: Ok
   back: Back
@@ -10593,6 +10594,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       freshdesk_dot_com: ".freshdesk.com"
       submit: Submit
     signup_google_error:
+      token_mismatch_error: "Token mismatch error. Please contact support@freshdesk.com."
       error_message: "<center><p class='big-text aligncenter'>Sorry! You do not have enough permission to access this page.<br> Please contact your Account administrator or </p></center><center><a href='http://freshdesk.com/signup'>Signup from Freshdesk Home page </a></center>"
     thank_you:
       refresh_your_account: "All right! Let’s refresh your helpdesk."
