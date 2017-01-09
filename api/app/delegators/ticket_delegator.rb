@@ -46,7 +46,7 @@ class TicketDelegator < BaseDelegator
   end
 
   def responder_presence #
-    responder = Account.current.agents_from_cache.detect { |x| x.user_id == responder_id }.try(:user)
+    responder = Account.current.agents_details_from_cache.detect { |x| x.id == responder_id }
     if responder.nil?
       errors[:responder] << :"can't be blank"
     else
