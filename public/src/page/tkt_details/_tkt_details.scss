@@ -4657,5 +4657,10 @@ li {
   font-size: 10px;
   text-transform: uppercase;
   margin-bottom: 5px;
+  a{
+    text-transform: initial;
+    font-size: 11px;
+    padding-left: 3px;
+    }
 }
 /* ********************** END OF STYLE FOR CUSTOMER SENTIMENT ********************** */
