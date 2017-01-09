@@ -10,9 +10,9 @@ class Middleware::SecurityResponseHeader
   headers["X-XSS-Protection"] = "1; mode=block"
   headers["X-Content-Type-Options"]  = "nosniff"
 
-  if request.host.end_with?("freshdesk.com")
-    headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
-  end
+  # if request.host.end_with?("freshdesk.com")
+  #   headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+  # end
    
    if req_path.include? 'login'
         headers["Content-Security-Policy"] = "frame-ancestors 'none'"
