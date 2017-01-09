@@ -1134,11 +1134,6 @@ Helpkit::Application.routes.draw do
     end
 
     resources :widget_config, :only => :index
-    resources :advanced_features, :only => [:index] do
-      collection do
-        put :toggle
-      end
-    end
     resources :chat_widgets do
       collection do
          post :enable

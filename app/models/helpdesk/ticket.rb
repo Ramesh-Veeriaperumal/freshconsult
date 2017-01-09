@@ -241,14 +241,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
           :select => "helpdesk_tickets.*",
           :joins => :schema_less_ticket,
           :conditions => ["`helpdesk_schema_less_tickets`.#{Helpdesk::SchemaLessTicket.association_type_column} is null"]
-
-  scope :associated_tickets, lambda {|association_type| {
-          :select => "helpdesk_tickets.*",
-          :joins => :schema_less_ticket,
-          :conditions => ["`helpdesk_schema_less_tickets`.#{Helpdesk::SchemaLessTicket.association_type_column} = ?", 
-                              TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[association_type]]
-          }}
-
   scope :unassigned, :conditions => ["helpdesk_tickets.responder_id is NULL"]
   scope :sla_on_tickets, lambda { |status_ids|
     { :conditions => ["status IN (?)", status_ids] }
