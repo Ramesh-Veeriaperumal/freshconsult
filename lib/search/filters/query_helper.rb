@@ -92,16 +92,18 @@ module Search::Filters::QueryHelper
 
         # Hack for any agent filter has unassigned and has value for any group filter
         # Need to do (Agent = Unassigned & Group = X) OR (I.Agent = Unassigned  & I.Group = X)
-        any_group_condition = wf_conditions.select { |cond|  cond["condition"] == "any_group_id" }
+        any_group_condition = wf_conditions.select { |cond| cond["condition"] == "any_group_id" }
+        any_agent_condition = wf_conditions.select { |cond| cond["condition"] == "any_agent_id" }
         any_group_values = (any_group_condition.first)["value"].to_s.split(",") unless any_group_condition.empty?
 
         if cond_field.eql?('any_agent_id') and field_values.include?('-1') and !any_group_condition.empty?
           field_values.delete('-1')
           es_wrapper.push(handle_field_ext("unassigned_any_agent", field_values, any_group_values))
           next if field_values.empty?
+        else
+          next if cond_field.eql?('any_group_id') and !any_agent_condition.empty?
+          es_wrapper.push(handle_field(cond_field, field_values)) if cond_field.present?
         end
-
-        es_wrapper.push(handle_field(cond_field, field_values)) if cond_field.present?
       end
     end
 
