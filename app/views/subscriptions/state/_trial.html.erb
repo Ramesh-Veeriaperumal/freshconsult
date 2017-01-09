@@ -29,9 +29,8 @@
     </div>
   <% end %>
   <p>
-    <% if current_account.new_pricing_launched? && eligible_for_special_pricing?%>
+    <% if current_account.new_pricing_launched?%>
       <%= t('choose_plan_trial_v2').html_safe %>
-      <span id="special_pricing_text"><%= current_account.subscription.special_pricing_requested? ? t('choose_plan_contact_us_v2').html_safe : t('choose_plan_contact_us_v1').html_safe%></span>
     <% else %>
       <%= t('choose_plan_trial').html_safe %>
     <% end %>
@@ -64,19 +63,5 @@
     jQuery("#ChangePlan").addClass("sloading");
     var currency = this.value;
     render_currency_partial(currency);
-  });
-
-  jQuery('#special_pricing').on('click', function(){
-    jQuery.ajax({
-      url: "<%= request_special_pricing_subscription_path %>",
-      method: "POST",
-      success: function(response){
-        jQuery('#special_pricing_text').text('<%= t('choose_plan_contact_us_v2') %>');
-        jQuery('#noticeajax').text("<%=  t('choose_plan_contact_us_v2')%>");
-        jQuery('#noticeajax').show();
-        closeableFlash('#noticeajax');
-      }
-    });
-    return false;
   });
 </script>
