@@ -1,7 +1,7 @@
 class ConversationDecorator < ApiDecorator
   attr_accessor :ticket
 
-  delegate :body, :body_html, :id, :incoming, :private, :user_id, :support_email, :source, :attachments, :attachments_sharable, :schema_less_note, :cloud_files, to: :record
+  delegate :body, :body_html, :id, :incoming, :private, :deleted, :user_id, :support_email, :source, :attachments, :attachments_sharable, :schema_less_note, :cloud_files, to: :record
 
   delegate :to_emails, :from_email, :cc_emails, :bcc_emails, to: :schema_less_note, allow_nil: true
 
@@ -15,6 +15,7 @@ class ConversationDecorator < ApiDecorator
       body: body_html,
       body_text: body,
       id: id,
+      deleted: deleted,
       incoming: incoming,
       private: private,
       user_id: user_id,
@@ -35,10 +36,10 @@ class ConversationDecorator < ApiDecorator
   def to_hash
     [construct_json, freshfone_call, tweet_hash, facebook_hash, feedback_hash].inject(&:merge)
   end
-  
+
   def facebook_hash
-    return {} unless record.fb_note? && record.fb_post.present? 
-    { 
+    return {} unless record.fb_note? && record.fb_post.present?
+    {
       fb_post: FacebookPostDecorator.new(record.fb_post).to_hash
     }
   end

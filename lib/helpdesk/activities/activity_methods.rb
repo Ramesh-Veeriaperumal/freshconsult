@@ -11,8 +11,7 @@ module Helpdesk::Activities
       }
       return res_hash if !(ACTIVITIES_ENABLED and Account.current.features?(:activity_revamp))
       begin
-        response = fetch_activities(params, ticket, type, archive)
-
+        response = fetch_activities(params, ticket, archive)
         # for querying
         query_hash = response.members.present? ? JSON.parse(response.members).symbolize_keys : {}
         data_hash  = parse_query_hash(query_hash, ticket, archive)
@@ -51,7 +50,7 @@ module Helpdesk::Activities
       end
     end
     
-    def fetch_activities(params, ticket, type, archive = false)
+    def fetch_activities(params, ticket, archive = false)
       $thrift_transport.open()
       client    = ::HelpdeskActivities::TicketActivities::Client.new($thrift_protocol)
       act_param = ::HelpdeskActivities::TicketDetail.new
@@ -120,7 +119,7 @@ module Helpdesk::Activities
         parent =  user.parent_id
         parent_id << parent if !user_ids.include?(parent) and !parent.zero?
       end
-      users += Account.current.users.where(:id => parent_id).to_a
+      users += Account.current.users.where(:id => parent_id).to_a unless parent_id.blank?
       users.collect{|user| [user.id, user]}.to_h
     end
 

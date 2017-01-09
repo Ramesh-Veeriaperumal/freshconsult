@@ -10,6 +10,7 @@ module ConversationsTestHelper
       body: body_html || note.body_html,
       body_text: note.body,
       id: Fixnum,
+      deleted: (expected_output[:deleted] || note.deleted).to_s.to_bool,
       incoming: (expected_output[:incoming] || note.incoming).to_s.to_bool,
       private: (expected_output[:private] || note.private).to_s.to_bool,
       source: (expected_output[:source] || note.source),
@@ -27,16 +28,16 @@ module ConversationsTestHelper
     }
     if note.fb_note? && note.fb_post.present?
       fb_pattern = note.fb_post.post? ? fb_post_pattern({}, note.fb_post) : fb_dm_pattern({}, note.fb_post)
-      response_pattern.merge!(fb_post: fb_pattern)
+      response_pattern[:fb_post] = fb_pattern
     end
-    
+
     if note.tweet? && note.tweet
-      response_pattern.merge!(tweet: tweet_pattern({}, note.tweet))
+      response_pattern[:tweet] = tweet_pattern({}, note.tweet)
     end
 
     if note.feedback?
       survey = note.custom_survey_remark.survey_result
-      response_pattern.merge!(survey_result: feedback_pattern(survey))
+      response_pattern[:survey_result] = feedback_pattern(survey)
     end
 
     response_pattern
@@ -45,8 +46,8 @@ module ConversationsTestHelper
   def feedback_pattern(survey_result)
     {
       survey_id: survey_result.survey_id,
-      agent_id: survey_result.agent_id, 
-      group_id: survey_result.group_id, 
+      agent_id: survey_result.agent_id,
+      group_id: survey_result.group_id,
       rating: survey_result.custom_ratings
     }
   end
@@ -82,7 +83,7 @@ module ConversationsTestHelper
   end
 
   def v1_reply_payload
-    { helpdesk_note: { body: Faker::Lorem.paragraph, source: 0, private: false,  cc_emails: [Faker::Internet.email, Faker::Internet.email], bcc_emails: [Faker::Internet.email, Faker::Internet.email] } }.to_json
+    { helpdesk_note: { body: Faker::Lorem.paragraph, source: 0, private: false, cc_emails: [Faker::Internet.email, Faker::Internet.email], bcc_emails: [Faker::Internet.email, Faker::Internet.email] } }.to_json
   end
 
   def v2_reply_payload
@@ -96,7 +97,7 @@ module ConversationsTestHelper
   def v2_forward_payload
     { body:  Faker::Lorem.paragraph, to_emails: [Faker::Internet.email, Faker::Internet.email], cc_emails: [Faker::Internet.email, Faker::Internet.email], bcc_emails: [Faker::Internet.email, Faker::Internet.email] }.to_json
   end
-  
+
   def reply_template_pattern(expected_output)
     {
       template: expected_output[:template],
