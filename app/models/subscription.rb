@@ -513,7 +513,7 @@ class Subscription < ActiveRecord::Base
     end
 
     def dkim_category_change
-      if subscription_state_changed?
+      if self.account.dkim_enabled? and subscription_state_changed?
         set_others_redis_lpush(DKIM_CATEGORY_KEY, self.account_id)
       end
     end
