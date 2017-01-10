@@ -6,7 +6,9 @@ module Dkim::Methods
   def handle_dns_action(action, record_type, record_name, record_value)
     Rails.logger.debug("Handle Dns Action ::: action - #{action}, record_type - #{record_type},
       record_name - #{record_name}, record_value - #{record_value}")
-    route53 = AWS::Route53::Client.new
+    route53 = AWS::Route53::Client.new(:access_key_id => PodConfig["access_key_id"],
+  		:secret_access_key => PodConfig["secret_access_key"],
+  		:region => PodConfig["region"])
     route53.change_resource_record_sets({
         :hosted_zone_id => DNS_CONFIG["hosted_zone"],
         :change_batch => {:changes => [build_record_attributes(action, record_type, record_name, record_value)]}
