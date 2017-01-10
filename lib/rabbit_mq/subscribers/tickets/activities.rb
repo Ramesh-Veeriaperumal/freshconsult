@@ -84,7 +84,7 @@ module RabbitMq::Subscribers::Tickets::Activities
   end
 
   def mq_activities_ticket_valid(action, model)
-    Account.current.features?(:activity_revamp) and valid_model?(model) and ticket_valid?(action)
+    Account.current.features?(:activity_revamp) and activity_valid_model?(model) and ticket_valid?(action)
   end
 
   private
@@ -134,18 +134,21 @@ module RabbitMq::Subscribers::Tickets::Activities
   def activity_int_tc03(value)
     v = value.compact
     case v[0]
-    when 1
-    when 2
-    when 3
+    when 1 # assoc parent tkt
+      value[0].nil? ? {:assoc_parent_tkt_link => self.associates} : {:assoc_parent_tkt_unlink => self.associates}
+    when 2 # child tkt
+      assoc_prt_tkt_id = @assoc_parent_ticket ? [@assoc_parent_ticket.display_id] : self.associates
+      value[0].nil? ? {:child_tkt_link => assoc_prt_tkt_id} : {:child_tkt_unlink => assoc_prt_tkt_id}
+    when 3 # tracker tkt
       value[0].nil? ? {:tracker_link => [@related_ticket.display_id]} : {:tracker_reset => []}
       # for tracker tickets. doing manual push
-    when 4
+    when 4 # related tkt
       tracker = tracker_ticket_id ? [ tracker_ticket_id.to_i ] : self.associates
       value[0].nil? ? {:rel_tkt_link => tracker } : {:rel_tkt_unlink => tracker }
     end
   end
 
-  def valid_model?(model)
+  def activity_valid_model?(model)
     model == "ticket"
   end
     

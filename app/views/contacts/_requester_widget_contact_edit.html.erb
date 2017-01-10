@@ -1,5 +1,10 @@
+<% label = if @company.blank? and !@company_deleted 
+  t('company.add_company')
+else 
+  t('user.company')
+end %>
 <div id="requester-widget-user-edit-dialog" class="requester-widget-user-edit-dialog" style="display:none;">
-  <%= form_for :requester_widget , :remote => true, url: "/helpdesk/tickets/#{ticket.display_id}/update_requester", method: 'put' do |f| %>
+  <%= form_for :requester_widget , :remote => true, :rel=>"validate", url: "/helpdesk/tickets/#{ticket.display_id}/update_requester", method: 'put' do |f| %>
     <%= f.hidden_field :contact_id  , :value => user.id %>
     <div class="requester-widget-user-fields">
       <div id="contact_section">
@@ -10,232 +15,51 @@
             <div class="separator"></div>
           </li>
         </ul>
-        <% requester_widget_customer_fields.each do |field| %>
+        <% requester_widget_contact_fields.each do |field| %>
           <ul class="field-set">
             <%= construct_requester_widget_field f, user, field %>
           </ul>
         <%end%>
       </div>
-      <% unless user.company.blank? %>
-        <div id="company_section">
-          <ul class="field-set group">
-            <li class="icon-wrapper"><span class="ficon-company"></span></li>
-            <li class="section-title">
-              <div class="title-text"><%= t('user.company') %></div>
-              <div class="separator"></div>
+
+      <div id="company_section">
+        <ul class="field-set group">
+          <li>
+             <div class="company-title-wrapper <%='new-company-title' if @company.blank? and !@company_deleted %>">
+                <span class="company-title">
+                  <% if @company.blank?  and !@company_deleted %>
+                    <input class="checkbox" type="checkbox" id="add-company"></input>
+                  <% else %>
+                    <span class="ficon-company"></span>
+                  <% end %>
+                  <span class="company-title-text <%= 'add-company-title' if @company.blank? and !@company_deleted  %>">
+                    <%= label %>
+                  </span>
+                </span>
+            </div>
+          </li>
+        </ul>
+        <% if @company_deleted %>
+          <ul class="field-set deleted-company">
+            <li class="center">
+              <div class="disabled-field"><%= t('requester_widget.company.delete_company')%></div>
             </li>
           </ul>
-          
-          <% requester_widget_company_fields.each do |field| %>
-            <ul class="field-set">
-              <%= construct_requester_widget_field f, user, field %>
-            </ul>
-          <% end %>
-        </div>
-      <% end %>
-    </div>
-    <%end%>
+        <% else %>
+          <div class="company-field-section">
+            <% requester_widget_company_fields.each do |field| %>
+              <ul class="field-set">
+                <%= construct_requester_widget_field f, company, field %>
+              </ul>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
 </div>
-
-<script type="text/javascript" charset="utf-8">
-
-  function lookup(searchString, callback) {
-    toggle_loading_symbol(true, 'company_name');
-    new Ajax.Request('<%= companies_search_autocomplete_index_path %>?q='+encodeURIComponent(searchString),
-    {
-      method:'GET',
-      onSuccess:  function(response) {
-                    var choices = $A();
-                    response.responseJSON.results
-                      .each(function(item){
-                        choices.push(item.value);
-                      });
-
-                    _partial_list = jQuery("#company_name").data("partialCompanyList") || [];
-
-                    jQuery("#company_name")
-                      .data("partialCompanyList",
-                          _partial_list.concat(response.responseJSON.results));
-
-                    callback(choices);
-                    toggle_loading_symbol(false, 'company_name');
-                  }
-    });
-
-  }
-
-  var cachedBackend = new Autocompleter.Cache(lookup, {choices: 20});
-  var cachedLookup = cachedBackend.lookup.bind(cachedBackend);
-
-  if(jQuery('#company_name').length) {
-    new Autocompleter.Json("company_name", "company_name_choices", cachedLookup, {
-      afterUpdateElement: function(element, choice){
-        _partial_list = jQuery("#company_name").data("partialCompanyList");
-        company_name_changed();
-        element.blur();
-      }
-    });
-  }
-
-  var company_changed = false;
-  jQuery('#company_name').focus(function(){
-    company_changed = false;
-  });
-  jQuery('#company_name').on('input', function(e){
-    company_name_changed();
-  });
-
-  function company_name_changed() {
-    company_changed = true;
-    toggle_requester_edit(false);
-  }
-
-  jQuery('#company_name').blur(function(){
-    if(company_changed){
-      company_name = jQuery('#company_name').val();
-      if(company_name.length > 0) {
-        fetch_company_details(company_name);
-      }
-      else {
-        clear_company_field_values();
-        toggle_requester_edit(true);
-      }
-    }
-  });
-
-  function toggle_loading_symbol(show, for_elt) {
-    elements = (for_elt == "") ? jQuery(".requester-widget-user-edit-dialog [id$='_loading']").not("#company_name_loading") : jQuery(".requester-widget-user-edit-dialog [id='" + for_elt + "_loading']");
-    if(show) {
-      elements.each(function(){
-        if(!jQuery(this).hasClass('sloading loading-small'))
-          jQuery(this).addClass('sloading loading-small');
-      });
-    } else {
-      elements.each(function(){
-          jQuery(this).removeClass('sloading loading-small');
-      });
-    }
-  }
-
-  function toggle_requester_edit(enable){
-    if(enable) {
-      jQuery('#requester-widget-user-edit-dialog-submit').removeAttr('disabled');
-      jQuery('.requester-widget-user-edit-dialog .controls label.error').remove();
-    }
-    else
-      jQuery('#requester-widget-user-edit-dialog-submit').attr('disabled', 'true');
-  }
-
-  jQuery('#requester-widget-user-edit-dialog .controls input.date').on('change', function(){
-    if(jQuery(this).val() == "undefined" || jQuery(this).val() == null || jQuery(this).val() == "")
-      jQuery(this).parent('.controls').children('span.dateClear').hide();
-    else
-      jQuery(this).parent('.controls').children('span.dateClear').show();
-  });
-
-  function company_fields_except_name() {
-    return jQuery('.requester-widget-user-edit-dialog :input[id^="company"]').not('#company_name');
-  }
-
-  function clear_company_field_values(){
-    modified_fields = []
-    company_fields_except_name().each(function(){
-      if(jQuery(this).is(':checkbox'))
-        jQuery(this).removeAttr("checked");
-      else {
-        old_value = jQuery(this).val();
-        if(jQuery(this).hasClass('date'))
-          jQuery(this).val("").datepicker().trigger('change');
-        else
-          jQuery(this).val("").trigger('change');
-        if(old_value != "") {
-          if(this.id == "company_domains")
-            modified_fields.push(jQuery(this).parent('.controls').children(".select2-container").children(".select2-choices")[0]);
-          else if(jQuery(this).hasClass('select2'))
-            modified_fields.push(jQuery(this).parent('.controls').children(".select2-container")[0]);
-          else
-            modified_fields.push(this);
-        }
-      }
-    });
-    highlight_modified_fields(modified_fields);
-  }
-
-  function fetch_company_details(company_name) {
-    toggle_loading_symbol(true, "");
-    new Ajax.Request('/helpdesk/commons/fetch_company_by_name?name=' + encodeURIComponent(company_name),
-      {
-          method: 'GET',
-          onSuccess: function(response) {
-            if(company_name == jQuery('#company_name').val()) { // to prevent DOM change between consecutive blur events
-              company_JSON = response.responseJSON.company;
-              if(company_JSON) {
-                company_details = JSON.flatten(company_JSON);
-                modified_fields = [];
-                company_fields_except_name().each(function(){
-                  item_id = this.id
-                  item_name = item_id.substring(item_id.indexOf('_')+1, item_id.length);
-                  if(jQuery(this).is(':checkbox'))
-                    company_details[item_name] ? jQuery(this).attr("checked", "checked") : jQuery(this).removeAttr("checked");
-                  else {
-                    old_value = jQuery(this).val();
-                    if(jQuery(this).hasClass('date'))
-                      company_details[item_name] ? jQuery(this).datepicker('setDate', new Date(company_details[item_name])).trigger('change') : jQuery(this).val("").datepicker().trigger('change');
-                    else
-                      jQuery(this).val(company_details[item_name]).trigger('change'); // change event triggered to invoke select2 for fields like company_domains
-                    if(old_value != jQuery(this).val()) {
-                      if(this.id == "company_domains")
-                        modified_fields.push(jQuery(this).parent('.controls').children(".select2-container").children(".select2-choices")[0]);
-                      else if(jQuery(this).hasClass('select2'))
-                        modified_fields.push(jQuery(this).parent('.controls').children(".select2-container")[0]);
-                      else
-                        modified_fields.push(this);
-                    }
-                  }
-                });
-                highlight_modified_fields(modified_fields);
-              } else {
-                clear_company_field_values();
-              }
-              toggle_requester_edit(true);
-              toggle_loading_symbol(false, "");
-            }
-          }
-      });
-  }
-
-  function highlight_modified_fields(fields) {
-    jQuery(fields).stop().animate({
-      backgroundColor: "#FFFBCC"
-      }, 200, function(){
-      jQuery(fields).stop().animate({
-        backgroundColor: "#fff"
-      }, 800);
-    });
-  }
-
-  // utility to flatten JSON data to enable easier DOM manipulation
-  JSON.flatten = function(data) {
-    var result = {};
-    function recurse (cur, prop) {
-      if (Object(cur) !== cur) {
-        result[prop] = cur;
-      } else if (Array.isArray(cur)) {
-        for(var i=0, l=cur.length; i<l; i++)
-          recurse(cur[i], prop + "[" + i + "]");
-        if (l == 0)
-          result[prop] = [];
-      } else {
-        var isEmpty = true;
-        for (var p in cur) {
-          isEmpty = false;
-          recurse(cur[p], prop ? prop+"_"+p : p);
-        }
-        if (isEmpty && prop)
-          result[prop] = {};
-      }
-    }
-    recurse(data, "");
-    return result;
-  }
+<script type="text/javascript">
+  <% if @company.blank? and !@company_deleted %>
+    jQuery('.company-field-section').hide();
+  <% end %>
 </script>

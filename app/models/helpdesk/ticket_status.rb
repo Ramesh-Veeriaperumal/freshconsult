@@ -4,8 +4,6 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
   self.primary_key = :id
   include Helpdesk::Ticketfields::TicketStatus
   include Cache::Memcache::Helpdesk::TicketStatus
-  include Redis::RedisKeys
-  include Redis::OthersRedis
   
   self.table_name =  "helpdesk_ticket_statuses"
 
@@ -168,17 +166,9 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
 
   def update_tickets_sla_on_status_change_or_delete
     if deleted_changed?
-      if redis_key_exists?(SLA_ON_STATUS_CHANGE)
-        SlaOnStatusChange.perform_async({:status_id => self.id, :status_changed => false})
-      else
-        send_later(:update_tickets_sla)
-      end
+      SlaOnStatusChange.perform_async({:status_id => self.id, :status_changed => false})
     elsif stop_sla_timer_changed?
-      if redis_key_exists?(SLA_ON_STATUS_CHANGE)
-        SlaOnStatusChange.perform_async({:status_id => self.id, :status_changed => true})
-      else
-        send_later(:update_tickets_properties)  
-      end
+      SlaOnStatusChange.perform_async({:status_id => self.id, :status_changed => true})
     end
   end
   

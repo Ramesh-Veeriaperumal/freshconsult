@@ -96,7 +96,7 @@ module Concerns::ApplicationConcern
   end
 
   def fetch_shard
-    env['SHARD'] ||= ShardMapping.lookup_with_domain(request.host)
+    env['SHARD'] ||= ShardMapping.lookup_with_domain(request_host)
   end
 
 end

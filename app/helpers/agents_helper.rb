@@ -66,7 +66,10 @@ module AgentsHelper
   def agent_list_tabs
     state = params.fetch(:state, "active")
     
-    [:active, :occasional, :deleted].map do |tab|  
+    available_states = [:active, :deleted]
+    available_states.insert(1, :occasional) if current_account.occasional_agent_enabled?
+
+    available_states.map do |tab|
       content_tag(:li, :class => "#{(state == tab.to_s) ? 'active' : '' }") do
         link_to((t("agent_list.tab.#{tab}") + agent_count_dom(tab)).html_safe,
           "/agents/filter/#{tab}") 

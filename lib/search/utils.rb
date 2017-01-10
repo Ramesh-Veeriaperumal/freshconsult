@@ -8,6 +8,30 @@ class Search::Utils
   DEFAULT_PAGE          = 1
   DEFAULT_OFFSET        = 0
 
+  # Normal templates do not work for pubsupport/souq
+  #
+  SPECIAL_TEMPLATES = {
+    portal_spotlight_global:        'portalSpotlightGlobalSpecial',
+    portal_spotlight_global_exact:  'portalSpotlightGlobalExactSpecial',
+    portal_spotlight_ticket:        'portalSpotlightTicketSpecial',
+    portal_spotlight_ticket_exact:  'portalSpotlightTicketExactSpecial',
+    agent_spotlight_global:         'agentSpotlightGlobalSpecial',
+    agent_spotlight_global_exact:   'agentSpotlightGlobalExactSpecial',
+    agent_spotlight_suggest:        'agentSpotlightSuggestSpecial',
+    agent_spotlight_suggest_exact:  'agentSpotlightSuggestExactSpecial',
+    agent_spotlight_ticket:         'agentSpotlightTicketSpecial',
+    agent_spotlight_ticket_exact:   'agentSpotlightTicketExactSpecial',
+    merge_display_id:               'mergeDisplayIdSpecial',
+    merge_subject:                  'mergeSubjectSpecial',
+    merge_subject_exact:            'mergeSubjectExactSpecial',
+    assoc_tickets_display_id:       'assocTicketsDisplayIdSpecial',
+    assoc_tickets_subject:          'assocTicketsSubjectSpecial',
+    mobile_suggest_tickets:         'mobileSuggestTicketsSpecial',
+    mobile_suggest_global:          'mobileSuggestGlobalSpecial',
+    hstickets_dispid:               'hsTicketsByDisplayIdSpecial',
+    hstickets_subject:              'hsTicketsBySubjectSpecial'
+  }
+
   # _Note_: Query Template name to use in ES.
   #
   TEMPLATE_BY_CONTEXT   = {
@@ -94,7 +118,6 @@ class Search::Utils
     mobile_suggest_solutions:         'mobileSuggestSolutions',
     mobile_suggest_topics:            'mobileSuggestTopics',
     mobile_suggest_global:            'mobileSuggestGlobal',
-    ff_contact_by_props:              'freshfoneContactSearch',
     ff_contact_by_phone:              'freshfoneContactByNumbers',
     ff_contact_by_caller:             'freshfoneContactByCaller',
     ff_contact_by_numfields:          'freshfoneContactByNumberfields',

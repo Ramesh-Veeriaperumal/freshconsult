@@ -26,9 +26,9 @@ module Freshfone::Search
 		}).query_results.first
 	end
 
-	def search_requester(requester_name, search_non_deleted)
+	def search_requester(requester_name, search_non_deleted, phone_fields_search = true)
 		return if requester_name.blank? || !Account.current.esv1_enabled?
-		search_user_using_es(requester_name, ['name', 'email', 'phone', 'mobile'], 10, search_non_deleted)
+		search_user_using_es(requester_name, ['name', 'email', 'phone', 'mobile'], 10, search_non_deleted, phone_fields_search)
 	end
 	
 	def search_contact(contact, size = 10, search_non_deleted)
@@ -52,14 +52,14 @@ module Freshfone::Search
 				fd.field_type == :custom_phone_number }
 	end
 
-	def search_user_using_es(search_string, fields, size, search_non_deleted=true)
+	def search_user_using_es(search_string, fields, size, search_non_deleted=true, phone_fields_search = true)
 		Search::EsIndexDefinition.es_cluster(Account.current.id)
 		index_name = Search::EsIndexDefinition.searchable_aliases([User], Account.current.id)
 		Tire.search(index_name, { :load => { User => { :include => [:avatar] } }, :size => size }) do |search|
 			search.query do |q|
 				q.filtered do |f|
 					f.query { match fields, search_string, :type => :phrase_prefix }
-					f.filter :bool, :should => phone_number_fields
+					f.filter :bool, :should => phone_number_fields if phone_fields_search
 					f.filter :term, { :deleted => false } if search_non_deleted
 				end
 			end

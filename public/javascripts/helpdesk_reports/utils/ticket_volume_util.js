@@ -27,7 +27,7 @@ HelpdeskReports.ReportUtil.TicketVolume = (function () {
                 else {
                     title = I18n.t('adv_reports.tickets_unresolved');
                 }
-                var value = data.date + " : " + data.value;
+                var value = data.localisedDate + " : " + data.value;
                 _FD.core.actions.showTicketList(title,value);
         },
         actions: {

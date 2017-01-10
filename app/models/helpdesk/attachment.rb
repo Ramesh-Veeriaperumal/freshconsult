@@ -44,7 +44,7 @@ class Helpdesk::Attachment < ActiveRecord::Base
     }
 
 
-    before_create :randomize_filename, :if => :inline_image?
+    before_save :randomize_filename, :if => :randomize?
     before_post_process :image?, :valid_image?
     before_create :set_content_type
     before_save :set_account_id
@@ -57,7 +57,7 @@ class Helpdesk::Attachment < ActiveRecord::Base
       "data/helpdesk/attachments/#{Rails.env}/#{att_id}/original/#{content_file_name}"
     end
 
-    def create_for_3rd_party account, item, attached, i, content_id, mailgun=false
+    def create_for_3rd_party account, item, attached, i, content_id, mailgun=false, social=false
       limit = mailgun ? HelpdeskAttachable::MAILGUN_MAX_ATTACHMENT_SIZE : 
                         HelpdeskAttachable::MAX_ATTACHMENT_SIZE
       if attached.is_a?(Hash)
@@ -67,10 +67,10 @@ class Helpdesk::Attachment < ActiveRecord::Base
         content_size = attached[:content_size] 
         verify_attachment_size = false 
       else
-        file_content = attached.tempfile
+        file_content = (attached.is_a? StringIO) ? attached : attached.tempfile
         original_filename = attached.original_filename
         content_type = attached.content_type
-        content_size = attached.tempfile.size
+        content_size = file_content.size
         verify_attachment_size = true
       end
 
@@ -86,7 +86,7 @@ class Helpdesk::Attachment < ActiveRecord::Base
         if content_id
           model = item.is_a?(Helpdesk::Ticket) ? "Ticket" : "Note"
           attributes.merge!({:description => "content_id", :attachable_type => "#{model}::Inline"})
-          write_options.merge!({:acl => "public-read"})
+          write_options.merge!({ :acl => attachment_permissions(social) })
         end
 
         att = account.attachments.new(attributes)
@@ -99,6 +99,14 @@ class Helpdesk::Attachment < ActiveRecord::Base
           att
         end
       end
+    end
+
+    def decode_token token, account = Account.current
+      JWT.decode(token, account.attachment_secret).first.with_indifferent_access
+    end
+
+    def attachment_permissions social
+      !social && Account.current.features_included?(:inline_images_with_one_hop) ? "private" : "public-read"
     end
   end
 
@@ -222,6 +230,23 @@ class Helpdesk::Attachment < ActiveRecord::Base
     }
   end
 
+  def inline_url
+    if !public_image? && Account.current.features_included?(:inline_images_with_one_hop)
+      config_env = AppConfig[:attachment][Rails.env]
+      "#{config_env[:protocol]}://#{config_env[:domain][PodConfig['CURRENT_POD']]}#{config_env[:port]}#{inline_url_path}"
+    else
+      self.content.url
+    end
+  end
+
+  def inline_url_path
+    "/inline/attachment?token=#{self.encoded_token}"
+  end
+
+  def encoded_token
+    JWT.encode({ :id => self.id, :domain => Account.current.full_domain }, Account.current.attachment_secret)
+  end
+
   Paperclip.interpolates :filename do |attachment, style|
     attachment.instance.content_file_name
   end
@@ -242,12 +267,28 @@ class Helpdesk::Attachment < ActiveRecord::Base
     end
   end
 
+  def public_image?
+    self.attachable_type == "Image Upload" || self.attachable_type == "Forums Image Upload"
+  end
+
   def inline_image?
     # Inline image will have attachable type as one of these :
     # ArchiveNote::Inline, ArchiveTicket::Inline, Ticket::Inline, Note::Inline
     # Image Upload, Email Notification Image Upload, Forums Image Upload, Templates Image Upload, Tickets Image Upload
-    return false unless self.attachable_type
     self.attachable_type.include?("Inline") || self.attachable_type.include?("Image Upload")
+  end
+
+  def user_avatar?
+    self.attachable_type == "User"
+  end
+
+  def logo_or_favicon?
+    self.attachable_type == "Portal" && ["logo", "fav_icon"].include?(self.description)
+  end
+
+  def randomize?
+    return false unless self.content_file_name_changed? && self.attachable_type
+    inline_image? || user_avatar? || logo_or_favicon?
   end
 
   def randomize_filename

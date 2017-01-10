@@ -7,6 +7,7 @@ class Helpdesk::ScenarioAutomationsController < ApplicationController
   before_filter :load_config, :only => [:new, :edit, :clone]
   before_filter :set_type,    :only => :new
   before_filter :check_automation_feature
+  before_filter :validate_email_template, :only => [:create, :update]
 
   def create
     @item.action_data = params[:action_data].blank? ? [] : (ActiveSupport::JSON.decode params[:action_data])

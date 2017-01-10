@@ -1,0 +1,60 @@
+:subscription_plans:
+  :sprout_jan_17:
+    :name: Sprout
+    :features:
+      - :basic_twitter
+      - :basic_facebook
+    :inherits: []
+    :exclude: []
+  :blossom_jan_17:
+    :name: Blossom
+    :features: 
+      - :split_tickets
+      - :add_watcher
+      - :traffic_cop
+      - :custom_ticket_views
+      - :supervisor
+      - :create_observer
+      - :sla_management
+      - :email_commands
+      - :assume_identity
+      - :rebranding
+      - :custom_apps
+      - :custom_ticket_fields
+      - :custom_company_fields
+      - :custom_contact_fields
+      - :occasional_agent
+      - :allow_auto_suggest_solutions
+      - :gamification
+      - :auto_refresh
+      - :advanced_twitter
+      - :advanced_facebook
+      - :surveys
+      - :scoreboard
+      - :timesheets
+      - :custom_domain
+      - :multiple_emails
+      - :advanced_reporting
+      - :default_survey
+    :inherits: 
+      - :sprout_jan_17
+    :exclude: []
+  :garden_jan_17:
+    :name: Garden
+    :features: []
+    :inherits: 
+      - :blossom_jan_17
+    :exclude: []
+  :estate_jan_17:
+    :name: Estate
+    :features: []
+    :inherits: 
+      - :garden_jan_17
+    :exclude: []
+  :forest_jan_17:
+    :name: Forest
+    :features: []
+    :inherits: 
+      - :estate_jan_17
+    :exclude: []
+:selectable_features: []

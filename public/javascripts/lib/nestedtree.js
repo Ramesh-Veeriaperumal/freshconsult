@@ -102,7 +102,8 @@ var NestedField = Class.create({
   setSecondPresent: function(){ this.second_level = true; },  
   getCategory: function(){
       _categories = [];
-      this.tree.each(function(o){  _categories.push("<option value='"+o.value.id+"'>"+o.key+"</option>") });         
+      // this.tree.each(function(o){  _categories.push("<option value='"+o.value.id.replace(/,/g, '&#44;')+"'>"+o.key.replace(/,/g, '&#44;')+"</option>") });         
+    this.tree.each(function(o){  _categories.push("<option value='"+o.value.id+"'>"+o.key+"</option>"); });
       return _categories.join();
   },
   getCategoryEscaped: function(){

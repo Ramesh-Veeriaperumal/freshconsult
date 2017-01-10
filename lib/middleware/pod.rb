@@ -5,32 +5,35 @@ class Middleware::Pod
   end
 
   def call(env)
-
-    @host = env["HTTP_HOST"]
     @fullpath = env["PATH_INFO"]
-    @original_fullpath = env["ORIGINAL_FULLPATH"]
+    unless bypass_pod_check?
+      @host = env["HTTP_HOST"]
+      
+      @original_fullpath = env["ORIGINAL_FULLPATH"]
 
-    @redirect_url = nil
+      @redirect_url = nil
 
-    if integrations_url?(@host)
-      # check and redirect
+      if integrations_url?(@host)
+        # check and redirect
 
-      Rails.logger.info "Request fullpath: #{@fullpath}"
-      # Rails.logger.info "Request ENV: #{env.inspect}"
-      determine_login(env)
+        Rails.logger.info "Request fullpath: #{@fullpath}"
+        # Rails.logger.info "Request ENV: #{env.inspect}"
+        determine_login(env)
+      end
+
+      if redirect?
+        Rails.logger.error "Redirecting to the correct POD. Redirect URL is #{@redirect_url}"
+        response = Rack::Response.new
+        response.redirect(@redirect_url)
+        response.headers["X-Accel-Redirect"] = @redirect_url
+        response.headers["X-Accel-Buffering"] = "off"
+        response.finish
+      else
+        @status, @headers, @response = @app.call(env)
+        return @status,@headers,@response
+      end
     end
-
-    if redirect?
-      Rails.logger.error "Redirecting to the correct POD. Redirect URL is #{@redirect_url}"
-
-      response = Rack::Response.new
-      response.redirect(@redirect_url)
-      response.headers["X-Accel-Redirect"] = @redirect_url
-      response.headers["X-Accel-Buffering"] = "off"
-      response.finish
-    else
-      @status, @headers, @response = @app.call(env)
-    end
+    @status, @headers, @response = @app.call(env)
   end
 
   # TODOLOGIN: Need to introduce remote_id type here
@@ -63,6 +66,11 @@ class Middleware::Pod
           elsif params.include?('uid')
             shard = fetch_remote_mapping(params['uid'])
           end
+          determine_pod(shard)
+        when 'slack_v2'
+          params = env["rack.request.query_hash"].merge(env["rack.request.form_hash"] || {})
+          shard = nil
+          shard = fetch_remote_mapping(params['team_id']) if params.include?('team_id')
           determine_pod(shard)
         when 'ebay_accounts', 'ebay_notifications'
           shard = nil
@@ -99,6 +107,16 @@ class Middleware::Pod
       Rails.logger.error "Current POD #{PodConfig['CURRENT_POD']}"
       @redirect_url = "/pod_redirect/#{shard.pod_info}"
     end
+       
+  end
+  
+  def fetch_shard(url)
+    ShardMapping.lookup_with_domain(url.split("//").last)
+  end
+
+  def fetch_remote_mapping(uid)
+    remote_mapping = RemoteIntegrationsMapping.find_by_remote_id(uid)
+    ShardMapping.lookup_with_account_id(remote_mapping.account_id) if remote_mapping
   end
   
   def fetch_shard(url)
@@ -116,6 +134,10 @@ class Middleware::Pod
 
   def integrations_url?(host)
     host == ::INTEGRATION_URL
+  end
+
+  def bypass_pod_check?
+    SKIP_MIDDLEWARES["skipped_routes"].include?(@fullpath)
   end
 
 end

@@ -12,5 +12,20 @@ module Integrations
         service_obj.receive(event)
       end
     end
+
+    def cloud_ticket_execute(data, configs)
+      service_name = configs.delete(:service)
+      return if data.spam_or_deleted?  
+      event = configs.delete(:event)
+      service_class = IntegrationServices::Services::CloudElementsService.get_service_class(service_name)
+      if service_class.present?
+        installed_application = Account.current.installed_applications.with_name(service_name).first
+        return unless installed_application.present? && installed_application.configs_ticket_sync_option.to_s.to_bool
+        token = {:element_token => installed_application.configs_element_token}
+        service_obj = service_class.new installed_application, { :data_object => data }, token
+        service_obj.receive(event)
+      end
+    end
+    
   end
 end

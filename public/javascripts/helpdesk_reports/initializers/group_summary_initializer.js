@@ -58,8 +58,6 @@ HelpdeskReports.ChartsInitializer.GroupSummary = (function () {
                         { "sWidth": "120px" ,"orderSequence": [ "desc" , "asc" ]},
                         { "sWidth": "120px" ,"orderSequence": [ "desc" , "asc" ]},
                         { "sWidth": "130px" ,"orderSequence": [ "desc" , "asc" ]},
-                        { "sWidth": "130px" ,"orderSequence": [ "desc" , "asc" ]},
-                        { "sWidth": "130px" ,"orderSequence": [ "desc" , "asc" ]},
                         { "sWidth": "100px" ,"orderSequence": [ "desc" , "asc" ]},
                         { "sWidth": "100px" ,"orderSequence": [ "desc" , "asc" ]},
                         { "sWidth": "80px"  ,"orderSequence": [ "desc" , "asc" ]},
@@ -86,6 +84,12 @@ HelpdeskReports.ChartsInitializer.GroupSummary = (function () {
                             }
                       }
                 };
+                if(HelpdeskReports.locals.is_sla_management_enabled) {
+                    var columns = [ { "sWidth": "130px" ,"orderSequence": [ "desc" , "asc" ]},
+                                    { "sWidth": "130px" ,"orderSequence": [ "desc" , "asc" ]}]
+                    config['aoColumns'].splice(4,0,columns[0]);
+                    config['aoColumns'].splice(5,0,columns[1]);
+                }
                 var oTable = jQuery("#group-summary").DataTable(config);
                 if (jQuery.browser.safari) { 
                     setTimeout(function(){

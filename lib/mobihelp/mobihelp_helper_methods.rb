@@ -2,7 +2,7 @@
 require 'base64'
 
 module Mobihelp::MobihelpHelperMethods
-  
+
   include Cache::Memcache::Mobihelp::App
 
   MOBIHELP_STATUS = [
@@ -16,6 +16,10 @@ module Mobihelp::MobihelpHelperMethods
   MOBIHELP_STATUS_CODE_BY_NAME = Hash[*MOBIHELP_STATUS.map{ |s| [s[0], s[1]] }.flatten]
   MOBIHELP_STATUS_MESSAGE_BY_NAME = Hash[*MOBIHELP_STATUS.map{ |s| [s[0], s[2]] }.flatten]
 
+  MOBIHELP_UUID_REGEX = /[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}/
+
+
+
   private
 
     def validate_credentials
@@ -23,7 +27,7 @@ module Mobihelp::MobihelpHelperMethods
       unless  authKeyEncoded.nil?
         authKey = Base64.decode64(authKeyEncoded)
         app_key = authKey.split(":")[0]
-        app_secret = authKey.split(":")[1] 
+        app_secret = authKey.split(":")[1]
         if app_key.blank? or app_secret.blank?
           render_json(generate_mh_err_resp(MOBIHELP_STATUS_CODE_BY_NAME[:MHC_INVALID_APPCREDS], MOBIHELP_STATUS_MESSAGE_BY_NAME[:MHC_INVALID_APPCREDS]))
           return
@@ -51,9 +55,9 @@ module Mobihelp::MobihelpHelperMethods
       })
     end
 
-    def generate_resp_with_config(user)
+    def generate_resp_with_config(dvc)
       message = { :config =>  generate_mobile_config }
-      message[:api_key]  = user.single_access_token unless user.nil?
+      message[:api_key]  = dvc.device_uuid unless dvc.nil?
       add_status_to_message(message, MOBIHELP_STATUS_CODE_BY_NAME[:MHC_SUCCESS], MOBIHELP_STATUS_MESSAGE_BY_NAME[:MHC_SUCCESS])
     end
 
@@ -93,8 +97,18 @@ module Mobihelp::MobihelpHelperMethods
 
     def mobihelp_user_login
       unless current_user # override validated user check for mobihelp tickets
-        User.current = @current_user = User.find_by_single_access_token(params['k']) #ignore active / check
+        key = params['k']
+        if uuid? key
+          device = Mobihelp::Device.find_by_device_uuid(key)
+          User.current = @current_user = User.find_by_id(device.user_id)
+        else
+          User.current = @current_user = User.find_by_single_access_token(key) #ignore active / check
+        end
       end
+    end
+
+    def uuid?(key)
+        key =~ (MOBIHELP_UUID_REGEX)
     end
 
     def valid_user?
@@ -108,5 +122,5 @@ module Mobihelp::MobihelpHelperMethods
         }
       end
     end
-    
+
 end

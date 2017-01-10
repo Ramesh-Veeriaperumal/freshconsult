@@ -1,6 +1,8 @@
 class Social::FacebookPagesController < Admin::AdminController
 
-  before_filter { |c| c.requires_feature :facebook }
+  helper Admin::Social::UIHelper
+  
+  before_filter { access_denied unless current_account.basic_facebook_enabled? }
 
   #This Controller should be refactored
   before_filter :social_revamp_enabled?
@@ -50,6 +52,7 @@ class Social::FacebookPagesController < Admin::AdminController
           page_params = fb_page.tap { |fb| fb.delete(:fetch_since) }
           page.update_attributes(page_params)
         else
+          break unless current_account.add_new_facebook_page?
           page = scoper.new(fb_page)
           page.save 
         end

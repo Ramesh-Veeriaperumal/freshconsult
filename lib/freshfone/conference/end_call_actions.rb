@@ -65,7 +65,7 @@ module Freshfone::Conference::EndCallActions
     end
 
     def disconnect_ringing
-      return telephony.disconnect_call(current_call.dial_call_sid) if single_leg_outgoing? && current_call.dial_call_sid.present? # customer call end
+      return telephony.disconnect_call(current_call.dial_call_sid) if single_leg_outgoing? # customer call end
       cancel_ringing_agents
     end
 
@@ -94,7 +94,8 @@ module Freshfone::Conference::EndCallActions
 
     def still_ringing?
       (current_call.ringing? && new_notifications?) ||
-        (current_call.incoming? && current_call.noanswer?) || single_leg_outgoing?
+        (current_call.incoming? && current_call.noanswer?) ||
+          (single_leg_outgoing? && current_call.dial_call_sid.present?)
     end
 
     def outgoing_transfer_missed?(call)

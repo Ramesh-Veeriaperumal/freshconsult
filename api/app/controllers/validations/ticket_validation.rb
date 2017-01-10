@@ -1,11 +1,17 @@
 class TicketValidation < ApiValidation
   MANDATORY_FIELD_ARRAY = [:requester_id, :phone, :email, :twitter_id, :facebook_id].freeze
   MANDATORY_FIELD_STRING = MANDATORY_FIELD_ARRAY.join(', ').freeze
-  CHECK_PARAMS_SET_FIELDS = (MANDATORY_FIELD_ARRAY.map(&:to_s) + %w(fr_due_by due_by subject description custom_fields)).freeze
+  CHECK_PARAMS_SET_FIELDS = ( MANDATORY_FIELD_ARRAY.map(&:to_s) +
+                              %w(fr_due_by due_by subject description
+                              custom_fields company_id)
+                            ).freeze
 
-  attr_accessor :id, :cc_emails, :description, :due_by, :email_config_id, :fr_due_by, :group, :priority, :email,
-                :phone, :twitter_id, :facebook_id, :requester_id, :name, :agent, :source, :status, :subject, :ticket_type,
-                :product, :tags, :custom_fields, :attachments, :request_params, :item, :statuses, :status_ids, :ticket_fields
+  attr_accessor :id, :cc_emails, :description, :due_by, :email_config_id,
+                :fr_due_by, :group, :priority, :email, :phone, :twitter_id,
+                :facebook_id, :requester_id, :name, :agent, :source, :status,
+                :subject, :ticket_type, :product, :tags, :custom_fields,
+                :attachments, :request_params, :item, :statuses, :status_ids,
+                :ticket_fields, :company_id
 
   alias_attribute :type, :ticket_type
   alias_attribute :product_id, :product
@@ -32,6 +38,23 @@ class TicketValidation < ApiValidation
   validates :source, custom_inclusion: { in: ApiTicketConstants::SOURCES, ignore_string: :allow_string_param, detect_type: true, allow_nil: true }, on: :create
   validates :requester_id, :email_config_id, custom_numericality: { only_integer: true, greater_than: 0, allow_nil: true, ignore_string: :allow_string_param, greater_than: 0  }
 
+  validates :company_id, custom_absence: {
+    message: :require_feature_for_attribute,
+    code: :inaccessible_field,
+    message_options: {
+      attribute: 'company_id',
+      feature: :multiple_user_companies
+    }
+  }, unless: -> { Account.current.multiple_user_companies_enabled? }
+
+  validates :company_id, custom_numericality: {
+    only_integer: true,
+    greater_than: 0,
+    allow_nil: true,
+    ignore_string: :allow_string_param,
+    greater_than: 0
+  }
+
   validate :requester_detail_missing, if: -> { create_or_update? && requester_id_mandatory? }
   # validates :requester_id, required: { allow_nil: false, message: :fill_a_mandatory_field, message_options: { field_names: 'requester_id, phone, email, twitter_id, facebook_id' } }, if: :requester_id_mandatory? # No
   validates :name, required: { allow_nil: false, message: :phone_mandatory }, if: :name_required?  # No
@@ -57,7 +80,7 @@ class TicketValidation < ApiValidation
   validates :attachments, data_type: { rules: Array, allow_nil: true }, array: { data_type: { rules: ApiConstants::UPLOADED_FILE_TYPE, allow_nil: false } }
   validates :attachments, file_size:  {
     max: ApiConstants::ALLOWED_ATTACHMENT_SIZE,
-    base_size: proc { |x| TicketsValidationHelper.attachment_size(x.item) } }
+    base_size: proc { |x| ValidationHelper.attachment_size(x.item) } }
 
   # Email related validations
   validates :email, data_type: { rules: String, allow_nil: true }

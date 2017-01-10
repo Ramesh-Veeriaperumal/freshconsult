@@ -152,6 +152,14 @@ class Quest < ActiveRecord::Base
     filter_data
   end
 
+  def self.game_types
+    if Account.current.features?(:forums)
+      GAME_TYPES
+    else
+      GAME_TYPES.reject {|type| type[0] == :forum}
+    end
+  end
+
   private
 
 

@@ -16,6 +16,8 @@ gem 'strong_parameters', "0.2.3" # Used for API params validation
 
 gem "mysql2", "~> 0.3.0"
 
+gem "connection_pool"
+gem "clamav-client", "3.1.0", require: "clamav/client"
 gem "rate-limiting", :git =>"git://github.com/freshdesk/rate-limiting.git"
 gem 'fd_rate_limiter', :git => 'git@github.com:freshdesk/fd_rate_limiter.git', :branch => 'dynamic_rules'
 gem "white_list", :git =>"git://github.com/neubloc/white_list.git"
@@ -39,7 +41,9 @@ gem 'iconv', '~> 1.0.4'
 gem 'thrift', '~> 0.9.2.0'
 gem 'charlock_holmes', "0.7.3"
 
+
 group :development, :test do
+  gem 'active_record_query_trace'
   gem 'rails-dev-boost', :git => 'git://github.com/thedarkone/rails-dev-boost.git'
   gem 'better_errors', '~> 1.1.0'
   # Commenting out for ruby ~> 2.1.0 upgrade
@@ -112,7 +116,7 @@ gem "riddle", "1.2.2"
 gem "braintree","2.10.0"
 gem "lockfile","1.4.3"
 
-gem "newrelic_rpm","3.9.9.275"
+gem "newrelic_rpm","~> 3.17.2.327"
 
 gem "faraday" , "0.9"
 gem 'faraday_middleware', '~> 0.10.0'
@@ -182,7 +186,8 @@ gem "premailer", "~> 1.8.0"
 # Email Related Gems
 gem 'html_to_plain_text', '1.0.5'
 gem "akismetor", :git => "git://github.com/freshdesk/akismetor.git"
-gem 'launchparty', :git => 'git@github.com:freshdesk/launch-party.git', :tag => 'v0.1.2'
+gem 'freshdesk_features', :git => 'git@github.com:freshdesk/freshdesk-features.git', :branch => "freshdesk", :require => true
+gem 'launchparty', :git => 'git@github.com:freshdesk/launch-party.git', :tag => 'v0.1.3'
 gem 'binarize', "0.1.1", :git => 'git@github.com:freshdesk/binarize.git', :branch => 'master'
 
 
@@ -228,6 +233,7 @@ gem "will_filter", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/will_f
 gem "rack-openid", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/rack-openid"
 gem "open_id_authentication", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/open_id_authentication"
 gem "ebayr", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/ebayr"
+gem 'fd_spam_detection_service', :path => "#{File.expand_path(__FILE__)}/../vendor/gems/fd_spam_detection_service"
 
 
 group :development, :test do
@@ -263,6 +269,9 @@ group :test do
   gem "minitest", "4.7.5"
   gem 'json_expressions' # Used by API
   gem "timecop" # Used by API
+  gem 'yard-cucumber', :require => false
+  gem 'cucumber-rails', :require => false
+  gem 'cucumber_statistics'
 end
 
 #ruby 2.2.3 expects tesst-unit to be available by default.
@@ -308,3 +317,11 @@ gem 'i18nema', :git => 'https://github.com/freshdesk/i18nema', :require => false
 
 # For debugging app in staging/production
 gem 'rbtrace', :require => false
+
+# For Passing Data to JavaScript
+gem 'gon', '6.1.0'
+
+# dkim to check dns records
+gem 'dnsruby'
+
+gem 'rugged'

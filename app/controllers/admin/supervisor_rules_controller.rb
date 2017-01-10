@@ -1,5 +1,6 @@
 class Admin::SupervisorRulesController < Admin::VaRulesController
   
+  before_filter :check_supervisor_feature
   protected
   
     def scoper
@@ -16,6 +17,10 @@ class Admin::SupervisorRulesController < Admin::VaRulesController
 
     def get_event_performer
       []
+    end
+
+    def check_supervisor_feature
+      non_covered_admin_feature unless current_account.has_feature?(:supervisor)
     end
 
 end

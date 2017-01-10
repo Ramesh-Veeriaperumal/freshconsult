@@ -1,6 +1,6 @@
 <div class="flexcontainer">
 <%_.each(choice,function(item){%>
-		<textarea class="survey-card border-<%=item.className%> <%if(!surveyLimit){%> expand-card <% } %>"maxlength="<%=SurveyConstants.limit.scale%>" name="<%=name%>" <%if(item.position){%>data-position="<%=item.position%>"<%}%>  data-face-value="<%=item.id%>"><%=(item.value || item.text)%></textarea>
+		<textarea class="survey-card border-<%=item.className%> <%if(!surveyLimit){%> expand-card <% } %>"maxlength="<%=SurveyConstants.limit.scale%>" name="<%=name%>" <%if(item.position){%>data-position="<%=item.position%>"<%}%>  data-face-value="<%=item.id%>" placeholder = "<%-(item.value || item.text)%>"><%=(item.value || item.text)%></textarea>
 <%})%>
 
 <% if(surveyLimit){

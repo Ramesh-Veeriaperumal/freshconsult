@@ -9,6 +9,7 @@ class Solution::CategoryMeta < ActiveRecord::Base
 	include Solution::LanguageAssociations
 	include Solution::Constants
 	include Solution::ApiDelegator
+	include Solution::MarshalDumpMethods
 
 	attr_accessible :position, :portal_ids, :portal_solution_categories_attributes
 	
@@ -66,6 +67,7 @@ class Solution::CategoryMeta < ActiveRecord::Base
 
 	COMMON_ATTRIBUTES = ["position", "is_default", "created_at"]
 	CACHEABLE_ATTRIBUTES = ["id","name","account_id","position","is_default"]
+	PORTAL_CACHEABLE_ATTRIBUTES = ["id", "account_id", "current_child_id", "name", "description"]
 
 	before_create :set_default_portal
 	before_save :validate_is_default
@@ -85,6 +87,15 @@ class Solution::CategoryMeta < ActiveRecord::Base
 	
 	def to_liquid
 		@solution_category_drop ||= (Solution::CategoryDrop.new self)
+	end
+
+	def visible_folders_count
+		@visible_folders_count ||= solution_folder_meta.visible(User.current).count
+	end
+
+	def visible_folders
+		@visible_folders ||= ((visible_folders_count > 0) ? 
+				solution_folder_meta.visible(User.current).all : [])
 	end
 
 	private
@@ -116,4 +127,11 @@ class Solution::CategoryMeta < ActiveRecord::Base
       self.is_default = default_category.id == id
     end
   end
+
+	def custom_portal_cache_attributes
+		{
+			:visible_folders_count => visible_folders_count,
+			:visible_folders => visible_folders
+		}
+	end
 end

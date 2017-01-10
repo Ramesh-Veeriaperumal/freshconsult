@@ -125,6 +125,6 @@ module Social::Twitter::TicketActions
           end
         end
       end
-      tweet_body.to_s.tokenize_emoji      
+      tokenize(tweet_body)
     end
 end

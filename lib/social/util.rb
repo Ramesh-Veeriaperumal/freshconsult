@@ -42,6 +42,7 @@ module Social::Util
   end
   
   def validate_tweet(tweet, twitter_id, is_reply = true)
+    tweet.gsub!(NEW_LINE_WITH_CARRIAGE_RETURN, NEW_LINE_CHARACTER)
     twt_text = (is_reply and !tweet.include?(twitter_id)) ? "#{twitter_id} #{tweet}" : tweet
     tweet_length = twt_text.gsub(URL_REGEX, TWITTER_URL_LENGTH).length; 
     length = twitter_id.nil? ? Social::Tweet::DM_LENGTH : Social::Tweet::TWEET_LENGTH
@@ -118,7 +119,7 @@ module Social::Util
             :content_size => 1000
           }
 
-          image_attachment = Helpdesk::Attachment.create_for_3rd_party(account,item, options, 1, 1)
+          image_attachment = Helpdesk::Attachment.create_for_3rd_party(account,item, options, 1, 1, false, true)
           if image_attachment.present? && image_attachment.content.present?
             photo_url_hash[media.url.to_s] = image_attachment.content.url
           end
@@ -144,5 +145,9 @@ module Social::Util
     else
       'application/octet-stream'
     end
+  end
+
+  def tokenize(message)
+    message.to_s.tokenize_emoji.gsub(EMOJI_UNICODE_REGEX," ")
   end
 end

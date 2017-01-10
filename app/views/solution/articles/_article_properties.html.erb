@@ -6,7 +6,8 @@
 				<%= tag.text_field :name, 
 													 :class => "article-tags span12",
 													 :value => @article.tags.collect{|tag| tag.name}.join(','),
-													 "data-allow-create" => current_user.privilege?(:create_tags) 
+													 "data-allow-create" => current_user.privilege?(:create_tags) ,
+													 :rel => "remote-tag"
 													  %>
 			<% end %>
 		</div>

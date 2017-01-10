@@ -9,7 +9,9 @@ module JsonPattern
   end
 
   def bad_request_error_pattern_with_nested_field(field, nested_field, value, params_hash = {})
-    bad_request_error_pattern(nested_field, value, params_hash).merge(nested_field: "#{field}.#{nested_field}")
+    bad_request_error_pattern(field, value, params_hash).merge(
+      nested_field: "#{field}.#{nested_field}"
+    )
   end
 
   def retrieve_message(value)
@@ -64,11 +66,11 @@ module JsonPattern
       html_doc.xpath('//del').each { |div|  div.name = 'span'; }
       html_doc.xpath('//p').each { |div|  div.name = 'div'; }
     end
-    Rinku.auto_link(html_doc.at_css('body').inner_html, :urls)
+    FDRinku.auto_link(html_doc.at_css('body').inner_html)
   end
 
   def format_html(ticket, body)
-    body_html = Rinku.auto_link(body) { |text| truncate(text, length: 100) }
+    body_html = FDRinku.auto_link(body, {:mode => :all}) { |text| truncate(text, length: 100) }
     textilized = RedCloth.new(body_html.gsub(/\n/, '<br />'), [:hard_breaks])
     textilized.hard_breaks = true if textilized.respond_to?('hard_breaks=')
     formatted = ticket.white_list(textilized.to_html)
@@ -77,7 +79,7 @@ module JsonPattern
       html_doc.xpath('//del').each { |div|  div.name = 'span'; }
       html_doc.xpath('//p').each { |div|  div.name = 'div'; }
     end
-    Rinku.auto_link(html_doc.at_css('body').inner_html, :urls)
+    FDRinku.auto_link(html_doc.at_css('body').inner_html)
   end
 end
 

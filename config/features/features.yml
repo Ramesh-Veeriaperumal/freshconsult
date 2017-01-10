@@ -1,0 +1,34 @@
+:features:
+  :plan_features:
+    :type: string
+    :feature_list:
+      :split_tickets: 0
+      :add_watcher: 1
+      :traffic_cop: 2
+      :custom_ticket_views: 3
+      :supervisor: 4
+      :create_observer: 5
+      :sla_management: 6
+      :email_commands: 7
+      :assume_identity: 8
+      :rebranding: 9
+      :custom_apps: 10
+      :custom_ticket_fields: 11
+      :custom_company_fields: 12
+      :custom_contact_fields: 13
+      :occasional_agent: 14
+      :allow_auto_suggest_solutions: 15
+      :basic_twitter: 16
+      :basic_facebook: 17
+      :gamification: 18
+      :auto_refresh: 19
+      :advanced_twitter: 20
+      :advanced_facebook: 21
+      :surveys: 22
+      :scoreboard: 23
+      :timesheets: 24
+      :custom_domain: 25
+      :multiple_emails: 26
+      :advanced_reporting: 27
+      :default_survey: 28
+      :gamification_enable: 29

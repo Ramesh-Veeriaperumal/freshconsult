@@ -27,7 +27,7 @@ module CloudFilesHelper
 		(attachments || []).each do |attach|
 			model.attachments.build(:content => attach[:resource], :description => attach[:description], :account_id => model.account_id)
 		end
-		unless pre_built_attachments.nil? && pre_built_attachments.blank?
+		unless pre_built_attachments.blank?
 			attachments_to_associate = pre_built_attachments.split(",")
 			build_draft_attachments(model, attachments_to_associate.collect{|x| x.to_i})
 			attachments_to_associate.each {|attach_id| unmark_for_cleanup(attach_id)}

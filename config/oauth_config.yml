@@ -76,12 +76,16 @@ development:
  slack:
    consumer_token: "3575209657.3577497590"
    consumer_secret: 7193779dab625ec3e6764dd5df21309e
+   slash_command_token: v38nfGRW4zN7Oe5DgeKdUCL7
  infusionsoft:
    consumer_token:  pymmum7erkmq5vm4vsbqamut
    consumer_secret: DzWRNku2hu
  outlook_contacts:
    consumer_token: fc02555f-2d3b-47c4-a66f-7a45d15c2a1a
    consumer_secret: vcx3eeApBi82xmpXE2CDjzt
+ salesforce_v2:
+   consumer_token:  3MVG9y6x0357HledW5ceTn9ZT16SJfkv9A5rd60nQVZoY4em5Pnpfx5ghPc.Y8KfMefmzdKWgYNXc9jLYBnlz
+   consumer_secret: 6487752873062448676
 
 defaults: &defaults
  salesforce:
@@ -108,10 +112,14 @@ defaults: &defaults
  slack:
    consumer_token: "3575209657.3577497590"
    consumer_secret: 7193779dab625ec3e6764dd5df21309e
+   slash_command_token: v38nfGRW4zN7Oe5DgeKdUCL7
  outlook_contacts:
    consumer_token: fc02555f-2d3b-47c4-a66f-7a45d15c2a1a
    consumer_secret: vcx3eeApBi82xmpXE2CDjzt
-  
+ salesforce_v2:
+   consumer_token:  3MVG9y6x0357HledW5ceTn9ZT16SJfkv9A5rd60nQVZoY4em5Pnpfx5ghPc.Y8KfMefmzdKWgYNXc9jLYBnlz
+   consumer_secret: 6487752873062448676
+
 test:
  <<: *defaults
 
@@ -172,12 +180,16 @@ staging:
  slack:
    consumer_token: "3575209657.3577656254"
    consumer_secret: 40e3176389a2255436efedfdd5f9d76a
+   slash_command_token: ORUuUjH7ru6vOEfZ0eezHVA2
  infusionsoft:
    consumer_token:  pymmum7erkmq5vm4vsbqamut
    consumer_secret: DzWRNku2hu
  outlook_contacts:
    consumer_token: 83ffd1da-0e5a-427f-9986-a8879b7a4aca
    consumer_secret: bRhQjg9xynB92EEnmjEWxMX
+ salesforce_v2:
+   consumer_token:  3MVG9y6x0357HledW5ceTn9ZT1.KSsISjCgRJHBn4GG_r_Meq9Zzoc7Xvo_j3UfYqWRenDdf9Tg==
+   consumer_secret: 5689067073667055939
 
 production:
  salesforce:
@@ -225,9 +237,13 @@ production:
  slack:
    consumer_token: "3575209657.3866308321"
    consumer_secret: 19210e220ec23853881fdbbaa9aa0a5b
+   slash_command_token: v38nfGRW4zN7Oe5DgeKdUCL7
  infusionsoft:
    consumer_token:  pymmum7erkmq5vm4vsbqamut
    consumer_secret: DzWRNku2hu
  outlook_contacts:
    consumer_token: 83ffd1da-0e5a-427f-9986-a8879b7a4aca
    consumer_secret: bRhQjg9xynB92EEnmjEWxMX
+ salesforce_v2:
+   consumer_token:  3MVG9y6x0357HledW5ceTn9ZT13z3OsaOTdri1OzXuBmoGIB8Bh8G52UfZAWSuUIKX4PuaiRtQMOOpvzRUDYH
+   consumer_secret: 5910100902142393254

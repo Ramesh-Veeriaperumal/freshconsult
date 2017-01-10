@@ -164,7 +164,7 @@
                   type="button" value="Delete" />
             <% end %>
           <% elsif @current_view != "spam" %>
-            <% if privilege?(:export_tickets) %>
+            <% if privilege?(:export_tickets) && !collab_filter_enabled? %>
               <a href="/helpdesk/tickets/configure_export" data-target="#export"  rel="freshdialog"
                   class="padding6" title='<%= t("ticket.export_tickets") %>' data-submit-label="<%= t('export') %>"
                   data-submit-loading="<%= t('ticket.exporting')%>..." data-width="650px" id='export_tickets'

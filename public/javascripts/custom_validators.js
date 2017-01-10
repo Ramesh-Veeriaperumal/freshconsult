@@ -10,7 +10,7 @@
     if($(element).data('reply-count') >= 0){
       return true;
     }
-  }, "Oops! You have exceeded Facebook Messenger Platform's character limit. Please modify your response." );
+  }, "Oops! You have exceeded Messenger Platform's character limit. Please modify your response." );
   
   $.validator.addMethod("notEqual", function(value, element, param) {
     return ((this.optional(element) || value).strip().toLowerCase() != $(param).val().strip().toLowerCase());
@@ -118,6 +118,24 @@
   }, "Please enter a valid URL");
   $.validator.addClassRules({
       url_without_protocol : { url_without_protocol : true }
+  });
+
+  
+   //domain name validator
+  $.validator.addMethod("domain_name_validator", function(value, element) {
+    return (value != "") ? ((/^[a-zA-Z0-9][a-zA-Z0-9-]{1,61}[a-zA-Z0-9](?:\.[a-zA-Z]{2,})+$/).test(value)) : true;
+  }, "Please enter a valid domain name");
+  $.validator.addClassRules({
+      domain_name_validator : { domain_name_validator : true }
+  });
+
+  //validating linkback url to avoid xss content
+  $.validator.addMethod("linkback_url_valid", function(value, element) {
+      value = trim(value)
+      return this.optional(element) || /^(?:(?:https?|ftp):\/\/)(?:\S+(?::\S*)?@)?(?:(?!10(?:\.\d{1,3}){3})(?!127(?:\.\d{1,3}){3})(?!169\.254(?:\.\d{1,3}){2})(?!192\.168(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]+-?)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]+-?)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})))(?::\d{2,5})?(?:\/[^\s]*)?$/i.test(value); 
+    }, "Please enter a valid linkback URL");
+  $.validator.addClassRules({
+      linkback_url_valid : { linkback_url_valid : true }
   });
 
   function requesterValidate(value, element) {
@@ -465,5 +483,30 @@ $.validator.addMethod("valid_custom_headers", function(value, element) {
   return value.split('\n').filter(Boolean).every(function(elem) {return elem.includes(":")});
 }, $.validator.format("Please type custom header in the format -  header : value"));
 $.validator.addClassRules("valid_custom_headers", { valid_custom_headers: true });
+
+// requester company field validation
+$.validator.addMethod("compare_required",function(value, element){
+  var $companyField=jQuery("#company_name"),
+    status =true;
+  if($companyField && $companyField.length>0){  // text company field exist
+    if($companyField.val()){   //company field value exist
+      status = value ? true : false 
+    }else{
+      if(!value)
+        status = true
+    }
+  }
+  else{ // label company field exist
+    status = value ? true : false
+  }
+  return status
+},$.validator.messages.required);
+$.validator.addClassRules("compare-required", { compare_required: true });
+
+// requester company name field validation
+$.validator.addMethod("company_required",function(value, element){
+  return ($('#add-company').is(':checked') && value) ? true : false;
+},$.validator.messages.required);
+$.validator.addClassRules("company-required", { company_required: true });
 
 })(jQuery);

@@ -2,10 +2,11 @@ class Admin::Social::StreamsController < Admin::AdminController
 
   include Social::Twitter::Constants
   
-  before_filter { |c| c.requires_feature :twitter }
   before_filter :twitter_wrapper, :only => [:index, :authorize_url]
 
   def index
+    @add_new_handle    = current_account.add_twitter_handle?
+    @add_new_stream    = current_account.add_custom_twitter_stream?
     @auth_redirect_url = twitter_authorize_url
     @twitter_handles   = current_account.twitter_handles
     @twitter_streams   = current_account.all_twitter_streams
@@ -42,6 +43,11 @@ class Admin::Social::StreamsController < Admin::AdminController
     session[:request_token]  = request_token.token
     session[:request_secret] = request_token.secret
     request_token.authorize_url
+  rescue Exception => e
+    Rails.logger.error e
+    Rails.logger.error e.backtrace
+    NewRelic::Agent.notice_error(e)
+    nil
   end
   
   def update_dm_rule(social_account)

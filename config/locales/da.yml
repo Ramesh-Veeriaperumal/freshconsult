@@ -10,7 +10,7 @@ da:
           ticket_details: "Billet beskrivelse"
           hi: Hej
         add_button: Tilføj
-        me: Jeg
+        me: Mig
         you: Du
         cancel: Annullerer
         add_agent: "Skriv agentens navn"
@@ -267,6 +267,9 @@ da:
         title: "Svar til %{user}"
       history:
         recent_item: "Nylige Emner"
+    realtime_dashboard:
+      unresolve_tickets: "Uløste supportsager"
+      recent_activities: "Nylig aktivitet"
     dashboard:
       index:
         todo_title: "At gøre"
@@ -380,7 +383,9 @@ da:
     requester: Spørgere
     created_at: Oprettet
     mygroups: "Mine grupper"
+    unassigned: "Ikke tildelt"
     products: Produkter
+    none: Ingen
   proceed_now: |-
 
 
@@ -400,7 +405,7 @@ da:
   signup_help_information: "Når du tilmelder dig, vil du have fuld adgang til vores løsninger og ofte stillede spørgsmålDu kan også stille spørgsmål og finde svar i brugergruppe, eller oprette en supportsag, og spore sagernes status."
   trial_expired_on: "Vigtigt! Din prøveperiode er udløbet!"
   tickets_filter:
-    title: "Filtrer biletter"
+    title: "Filtrer billetter \n"
     unsaved_view: "Se unavngivne"
     requester_placeholder: "Navn eller email"
     raised_by: "Billetter oprettet af"
@@ -486,7 +491,7 @@ da:
     export_to_csv: "Eksporter til CSV"
     export: Eksporter
     thirt_days: "Seneste 30 dage"
-    seven_days: "Seneste 7 dage"
+    seven_days: "De sidste 7 dage"
     twenty_four: "i går"
     custom_filter: "Indsæt dato"
     no_fields_selected: "Tjek venligst mindst én af nedenstående felter for at fortsætte."
@@ -1579,7 +1584,7 @@ da:
     scoreboard_title_nav: Førertavle
     scoreboard_group_title: "Gruppe Førertavle"
     scoreboard_agent_title: "Agent Førertavle"
-    select_time_period: "Vælg Tidsperiode"
+    select_time_period: "Vælg en tidsperiode"
     generate_button: Generer
     pie_chart_title_prefix: "Billetter efter"
     timeline_chart_title: "Billetter Modtaget mod Løste"
@@ -1600,7 +1605,7 @@ da:
     date_ranges:
       today: "I dag"
       yesterday: "I går"
-      last_7_days: "Seneste 7 dage"
+      last_7_days: "De sidste 7 dage"
       last_30_days: "Seneste 30 dage"
       last_90_days: "Sidste 90 dage"
       custom: Datointerval
@@ -1724,14 +1729,14 @@ da:
   use_reply_option: "Brug venligst Svar-knappen til at sende en e-mail til rekvirenten"
   index_tooltip_loading_msg: Loader...
   being_processed: "Under behandling"
-  awaiting_your_reply: "Afventer dit Svar"
-  this_ticket_has_been_resolved: "Denne billet er blevet løst"
+  awaiting_your_reply: "Venter på svar fra dig"
+  this_ticket_has_been_resolved: "Denne supportsag er blevet løst"
   this_ticket_has_been_closed: "Denne supportsag er blevet lukket"
   status_name_validate_presence_msg: " Status navn må ikke være tomt"
   open_tickets: "Åbne supportsager"
   resolved_tickets: "Løste supportsager"
-  waiting_on_customer: "Venter på Kunde"
-  waiting_on_third_party: "Venter på Tredjepart"
+  waiting_on_customer: "Afventer kunde"
+  waiting_on_third_party: "Afventer tredjepart"
   bcc_email_updated_success_msg: "Succesfuld opdateret Bcc e-mail"
   bcc_email_updated_failure_msg: "Kunne ikke opdatere Bcc e-mail"
   choose_free_plan: "Vælg din Gratis %{plan}"
@@ -1797,6 +1802,7 @@ da:
       pages_help_message: "Her kan du tilpasse \"body\" området på enkelte sider."
       header_layout_title: Sidehoved
       footer_layout_title: Sidefod
+  any_time: "Når som helst"
   five_minutes: "Indenfor 5 minutter"
   fifteen_minutes: "Indenfor 15 minutter"
   thirty_minutes: "Indenfor 30 minutter"
@@ -1810,6 +1816,8 @@ da:
   thirty_days: "Denne måned"
   two_months: "Sidste 2 måneder"
   six_months: "Sidste 6 måneder"
+  last_seven_days: "De sidste 7 dage"
+  set_date: "Vælg en tidsperiode"
   Source: Kilde
   Subject: Emne
   Requester: "Søg efter en spørger"
@@ -1846,6 +1854,8 @@ da:
   plans_and_pricing: "Planer og priser"
   number_of_attachments: " vedhæftninger"
   activation_link: "Succesfuld registreret aktiveringslink er blevet sendt til %{email}"
+  helpdesk_reports:
+    time_period: "Vælg en tidsperiode"
   adv_reports:
     at_a_glance: "Et hurtigt blik"
     select_an_option: "Vælg en mulighed"
@@ -2091,6 +2101,7 @@ da:
         invalid_time_entry: "Fejl i tidsangivelse"
       success: "Du er nu logget ind"
       failed: "Log ind mislykkedes"
+      credentials_incorrect: "Kodeordet og den e-mail du skrev matcher ikke"
     email_notifications:
       update:
         success: "E-mail notifikationer blev opdateret."
@@ -2158,7 +2169,7 @@ da:
       all_time: Altid
       today: "I dag"
       yesterday: "I går"
-      this_week: "Denne uge"
+      this_week: "De sidste 7 dage"
       this_month: "Denne måned"
       month: "Sidste %{month} måneder"
       convert: Konverter
@@ -2259,8 +2270,10 @@ da:
   from_email: "Fra E-mail"
   activities:
     action_verb: opdateret
+    none: Ingen
     tag:
       solutions: "Ny løsning"
+      assigned_to_nobody: "Agent Unassigned"
       priority_change: "%{value}"
       conversation:
         note: "Ny note"
@@ -2432,7 +2445,7 @@ da:
     saving: Gemmer...
     begin_chat: "Start samtale"
     fetching: "Vent venligst"
-    last_7_days: "Sidste 7 dage"
+    last_7_days: "De sidste 7 dage"
     last_30_days: "Sidste 30 dage"
     last_90_days: "Sidste 90 dage"
     date_range: "Dato område"
@@ -2444,6 +2457,8 @@ da:
     logged_in_users: "Kun for brugere, der er logget ind"
     portal_desc: "Støt dine kunder i realtid via din Freshdesk portal, bortset fra at chatte med dem på din hjemmeside."
     loading_new_archives: "Indlæser nye arkiver ..."
+  freshchat:
+    last_7_days: "De sidste 7 dage"
   credit_card_info: "Kredikort information"
   zendesk_backup_info: "Vælg Zendesk backup filen downloaded fra zendesk"
   your_email_address: "Din e-mailadresse"
@@ -2545,6 +2560,8 @@ da:
   posted_by: "Skrevet af"
   already_overdue: "Forsinket med %{time_words}"
   automations:
+    activity:
+      none: Ingen
     new: "Nyt Scenarie"
     title: "Scenarie  Automationer"
     available_placeholders: Pladsholdere
@@ -3057,7 +3074,7 @@ da:
   import: Importer
   contains: Indeholder
   import_solution_article_info: "Bemærk: Vi vil ikke gemme forumkommentarerne"
-  register: Registrerer
+  register: Registrer
   by: af
   portal:
     cookie:
@@ -3069,12 +3086,14 @@ da:
     solutions_home: Løsninger
     attach_file: "Vedhæft en <b>fil</b>"
     new_support_ticket: "Ny support sag"
+    submit_new_ticket: "...eller tilføj en ny supportsag"
     login: Login
     login_portal: "Login i support portalen"
     login_details: "Brug de login oplysninger, du fik, da du registrerede dig"
     login_options: "... eller login med"
     reset_password: "Giv os din e-mailadresse, så sender vi instruktioner til at nulstille din adgangskode med det samme."
     signup: Tilmeld
+    user_signup_portal: "Registrer dig og få en "
     search:
       filters:
         all: Alle
@@ -3137,7 +3156,9 @@ da:
       submit_export: Eksporter
       export_ticket_data: "Eksporter sag til CSV"
       export_to_csv: "Eksporter til CSV"
+      mark_closed: "Marker supportsag som lukket"
       details: "Sags detajler"
+      add_people_title: "Tilføj personer til samtalen"
       reopen_reply: Besvar
       related_articles: "Relaterede artikler..."
   feedbackwidget_form_title: "Widget formular titel"
@@ -3748,3 +3769,9 @@ da:
   total: Total
   export_to_CSV: "Eksporter til CSV"
   back_to_reports: "&larr; Tilbage til rapporter"
+  unresolved_tickets:
+    title: "Uløste supportsager"
+  admin:
+    portal:
+      settings:
+        simple_none: Ingen

@@ -1,4 +1,4 @@
-AppConfig = YAML.load_file(File.join(Rails.root, 'config', 'config.yml'))
+AppConfig = YAML.load_file(File.join(Rails.root, 'config', 'config.yml')).with_indifferent_access
 
 INTEGRATION_URL = URI.parse(AppConfig['integrations_url'][Rails.env]).host
 

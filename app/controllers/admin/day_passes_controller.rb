@@ -4,6 +4,7 @@ class Admin::DayPassesController < ApplicationController
   before_filter :load_config
   before_filter :load_purchases, :only => [:index]
   before_filter :check_params, :only => [:day_pass_history_filter]
+  before_filter { |c| c.requires_this_feature :occasional_agent }
   
   
   def index

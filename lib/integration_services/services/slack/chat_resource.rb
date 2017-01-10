@@ -2,8 +2,8 @@ module IntegrationServices::Services
   module Slack
     class ChatResource < SlackResource
 
-      def post_message body_hash
-        token = body_hash.delete("token") || slack_token
+      def post_message body_hash, dm=false
+        token = bot_token.present? && dm ? bot_token : (body_hash.delete("token") || slack_token)
         url = "#{server_url}/chat.postMessage"
         
         body = {

@@ -41,8 +41,10 @@ Sidekiq.configure_client do |config|
       "DelayedJobs::TrialAccountJob",
       "DelayedJobs::PremiumAccountJob",
       "DelayedJobs::DelayedAccountJob",
-      "DelayedJobs::MailboxJob"
-
+      "DkimRecordVerificationWorker",
+      "DkimSwitchCategoryWorker",
+      "DelayedJobs::MailboxJob",
+      "Email::S3RetryWorker"
     ]
     chain.add Middleware::Sidekiq::Client::SetCurrentUser, :required_classes => [
       "Tickets::BulkScenario",
@@ -58,6 +60,7 @@ Sidekiq.configure_client do |config|
       "Reports::ScheduledReports",
       "Reports::Export",
       "LivechatWorker",
+      "Admin::ProvisionSandbox",
       "Tickets::LinkTickets",
       "BroadcastMessages::NotifyBroadcastMessages",
       "BroadcastMessages::NotifyAgent"
@@ -106,7 +109,10 @@ Sidekiq.configure_server do |config|
       "DelayedJobs::TrialAccountJob",
       "DelayedJobs::PremiumAccountJob",
       "DelayedJobs::DelayedAccountJob",
-      "DelayedJobs::MailboxJob"
+      "DkimRecordVerificationWorker",
+      "DkimSwitchCategoryWorker",
+      "DelayedJobs::MailboxJob",
+      "Email::S3RetryWorker"
     ]
     chain.add Middleware::Sidekiq::Server::SetCurrentUser, :required_classes => [
       "Tickets::BulkScenario",
@@ -121,6 +127,7 @@ Sidekiq.configure_server do |config|
       "Tickets::Export::PremiumTicketsExport",
       "Reports::Export",
       "LivechatWorker",
+      "Admin::ProvisionSandbox",
       "Tickets::LinkTickets",
       "BroadcastMessages::NotifyBroadcastMessages",
       "BroadcastMessages::NotifyAgent"
@@ -160,7 +167,10 @@ Sidekiq.configure_server do |config|
       "DelayedJobs::TrialAccountJob",
       "DelayedJobs::PremiumAccountJob",
       "DelayedJobs::DelayedAccountJob",
-      "DelayedJobs::MailboxJob"
+      "DkimRecordVerificationWorker",
+      "DkimSwitchCategoryWorker",
+      "DelayedJobs::MailboxJob",
+      "Email::S3RetryWorker"
     ]
     chain.add Middleware::Sidekiq::Client::SetCurrentUser, :required_classes => [
       "Tickets::BulkScenario",
@@ -175,6 +185,7 @@ Sidekiq.configure_server do |config|
       "Tickets::Export::PremiumTicketsExport",
       "Reports::Export",
       "LivechatWorker",
+      "Admin::ProvisionSandbox",
       "Tickets::LinkTickets",
       "BroadcastMessages::NotifyBroadcastMessages",
       "BroadcastMessages::NotifyAgent"

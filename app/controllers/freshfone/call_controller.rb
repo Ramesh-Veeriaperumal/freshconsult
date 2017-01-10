@@ -215,15 +215,7 @@ class Freshfone::CallController < FreshfoneBaseController
  end
 
  def new_notifications_warm_transfer_call
-  freshfone_call.supervisor_controls.warm_transfer_initiated_calls.last if freshfone_call.present?
- end
-
- def freshfone_call
-  call = current_account.freshfone_calls.where(call_sid: params[:call_sid]).first
-  return if call.blank?
-  child_call = call.children.last
-  return child_call if child_call.present? && child_call.ongoing?
-  call 
+  current_call.supervisor_controls.warm_transfer_initiated_calls.last if current_call.present?
  end
 
  def build_avatar(user)

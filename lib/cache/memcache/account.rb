@@ -63,6 +63,10 @@ module Cache::Memcache::Account
     end
   end
 
+  def clear_ticket_types_from_cache
+    MemcacheKeys.delete_from_cache(ticket_types_memcache_key)
+  end
+
   def agents_from_cache
     @agents_from_cache ||= begin
       key = agents_memcache_key
@@ -185,6 +189,24 @@ module Cache::Memcache::Account
     key = ACCOUNT_SECTION_FIELDS_WITH_FIELD_VALUE_MAPPING % { account_id: self.id }
     MemcacheKeys.fetch(key) do
       section_fields_with_field_values_mapping.all
+    end
+  end
+
+  def skills_trimmed_version_from_cache
+    @skills_trimmed_version_from_cache ||= begin
+      key = ACCOUNT_SKILLS_TRIMMED % { :account_id => self.id }
+      MemcacheKeys.fetch(key) do
+        skills.trimmed.find(:all)
+      end
+    end
+  end
+
+  def skills_from_cache
+    @skills_from_cache ||= begin
+      key = ACCOUNT_SKILLS % { :account_id => self.id }
+      MemcacheKeys.fetch(key) do
+        skills.find(:all)
+      end
     end
   end
 

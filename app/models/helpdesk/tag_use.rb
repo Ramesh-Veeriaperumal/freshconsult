@@ -27,6 +27,17 @@ class Helpdesk::TagUse < ActiveRecord::Base
         }
 
   private
+
+    def to_rmq_json
+      {
+        "id"            => id,
+        "tag_id"        => tag_id,
+        "taggable_id"   => taggable_id,
+        "account_id"    => account_id,
+        "taggable_type" => taggable_type
+      }
+    end
+
   	def set_account_id
     	self.account_id = tags.account_id
     end

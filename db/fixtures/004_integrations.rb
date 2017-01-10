@@ -969,7 +969,9 @@ if Integrations::Application.count == 0
     s.listing_order = 39
     s.options = {:direct_install => true,
                  :auth_url => "/integrations/slack_v2/oauth",
-                 :edit_url => "/integrations/slack_v2/edit"
+                 :edit_url => "/integrations/slack_v2/edit",
+                 :after_create => {:method => "add_slack", :clazz => "IntegrationServices::Services::SlackService"},
+                 :after_destroy => {:method => "remove_slack", :clazz => "IntegrationServices::Services::SlackService"}
                 }
     s.application_type = "slack_v2"
   end
@@ -1000,8 +1002,6 @@ if Integrations::Application.count == 0
                 }
     s.application_type = "freshsales"
   end
-
-  
 
   fullcontact = Integrations::Application.seed(:name) do |s|
     s.name = "fullcontact"
@@ -1048,6 +1048,23 @@ if Integrations::Application.count == 0
                   :edit_url => "/integrations/outlook_contacts/edit"
                 }
     s.application_type = "outlook_contacts"
+  end
+
+  #Populate Salesforce CRM Sync app
+  salesforce_v2_app = Integrations::Application.seed(:name) do |s|
+    s.name = "salesforce_v2"
+    s.display_name = "integrations.salesforce_v2.label"
+    s.description = "integrations.salesforce_v2.desc" 
+    s.account_id = Integrations::Constants::SYSTEM_ACCOUNT_ID
+    s.listing_order = 45
+    s.options = {
+      :direct_install => true,
+      :install => {:require_feature => {:feature_name => :salesforce_v2}},
+      :edit => {:require_feature => {:feature_name => :salesforce_v2}},
+      :oauth_url => "/auth/salesforce_v2?origin=id%3D{{account_id}}", 
+      :edit_url => "/integrations/sync/crm/edit?state=salesforce_v2&method=put",
+      :after_commit_on_destroy => { :clazz => "IntegrationServices::Services::CloudElementsService", :method => "uninstall" }}
+    s.application_type = "salesforce_v2"
   end
 
 end

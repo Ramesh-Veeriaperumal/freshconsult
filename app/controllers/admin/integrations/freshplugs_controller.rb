@@ -2,6 +2,7 @@ class Admin::Integrations::FreshplugsController < Admin::AdminController
 
   before_filter :load_application, :only => [:edit, :update, :destroy, :enable, :disable]
   before_filter :app_details, :only => :destroy
+  before_filter {|c| requires_this_feature :custom_apps}
 
   def new
     @application = Integrations::Application.example_app

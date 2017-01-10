@@ -6,8 +6,12 @@
 
 <% unless @twitter_handles.empty? %>
   <div class="floatr">
-    <%= link_to t('.new_account'), @auth_redirect_url , :class => "btn btn-primary mrt" %> 
-    <%= link_to t('.new_stream'), new_admin_social_twitter_stream_url , :class => "btn btn-primary" %> 
+    <% if @add_new_handle %>
+      <%= link_to t('.new_account'), @auth_redirect_url , :class => "btn btn-primary mrt" %> 
+    <% end %>
+    <% if @add_new_stream %>
+      <%= link_to t('.new_stream'), new_admin_social_twitter_stream_url , :class => "btn btn-primary" %> 
+    <% end %>
   </div>
   <h3 class="lead"><%=t('.title')%></h3><hr />
   <% unless @twitter_streams.empty? %>

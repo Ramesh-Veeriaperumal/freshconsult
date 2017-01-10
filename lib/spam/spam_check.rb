@@ -17,8 +17,15 @@ module Spam
     def check_spam_content(content, options)
       content = CGI.unescapeHTML(content)
       result  = SpamResult::NO_SPAM
+      return result if account_whitelisted?
       urls    = parse_urls(content)
       result  = check_urls(urls) unless is_spam?(result)
+      spam_index = content =~ /Content-Type\s?:\s?application\/xml|Content-Type\s?:\s?text\/html/i unless is_spam?(result)
+
+      if spam_index && !is_spam?(result)
+        result = SpamResult::SPAM_CONTENT
+      end
+
       # result  = is_spam_content(
       #             content,  
       #             options[:user_id], 
@@ -29,6 +36,7 @@ module Spam
       options.merge!({:account_id => Account.current.id, :spam_result => result, :content => content})
       Rails.logger.debug "Spam check result is #{result} for params #{options}"
       notify_spam(result, options)
+      check_and_disable_notification(result, options)
       return result
     end
 
@@ -63,6 +71,23 @@ module Spam
       #    href
       #  end
       #end.compact.uniq
+    end
+
+    def account_whitelisted?
+      acc_id = Account.current.id
+      !get_others_redis_key(notification_whitelisted_key(acc_id)).nil? || !$spam_watcher.get("#{acc_id}-").nil?
+    end
+
+    def notification_whitelisted_key(account)
+      SPAM_NOTIFICATION_WHITELISTED_DOMAINS_EXPIRY % {:account_id => account}
+    end
+
+    def check_and_disable_notification(result, params)
+      if (7.days.ago.to_i < Account.current.created_at.to_i) && (result == SpamResult::SPAM_URL_DOMAIN || result == SpamResult::SPAM_CONTENT)
+        Account.current.subscription.update_attributes(:state => "suspended")
+        ShardMapping.find_by_account_id(Account.current.id).update_attributes(:status => 403)
+        notify_account_block(result, params)
+      end
     end
 
     def check_urls(urls)
@@ -193,5 +218,15 @@ module Spam
         {:subject => "Exception in ticket notifications", :recipients => ["email-team@freshdesk.com"]}
       )
     end
+
+    def notify_account_block(params, e)
+      Object.const_get(:FreshdeskErrorsMailer).error_email(
+        nil,
+        params,
+        e,
+        {:subject => "Account blocked:: #{Account.current.id} due to spam notification"}
+      )
+    end
   end
 end
+

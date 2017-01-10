@@ -13,7 +13,7 @@
 <div class="modal-header feedback-header modal-body-change">
   <div class="modal-header-bg">
     <%= content_tag(:h3, widget_option(:formTitle), :class => "ellipsis lead pull-left form-title", :title => widget_option(:formTitle)) %>
-    <% if widget_option(:searchArea) && feature?(:auto_suggest_solutions) && allowed_in_portal?(:open_solutions) %>
+    <% if widget_option(:searchArea) && feature?(:auto_suggest_solutions) && allowed_in_portal?(:open_solutions) && current_account.allow_auto_suggest_solutions_enabled? %>
     <span class="embedded-search">
     <%= content_tag(:h3, t('ticket.search_text'), :class => "ellipsis lead pull-left search-text active", :title => t('ticket.search_text')) %>
     <div class="embedded-hightlight"></div>
@@ -134,7 +134,7 @@
 <% end %>
 
 
-<% if widget_option(:searchArea) && feature?(:auto_suggest_solutions) && allowed_in_portal?(:open_solutions) %>
+<% if widget_option(:searchArea) && feature?(:auto_suggest_solutions) && allowed_in_portal?(:open_solutions)  && current_account.allow_auto_suggest_solutions_enabled? %>
   <% if(responsive != "no") %>
     <a class="mobile-search-icon" id="mobile-search-icon" href="#">
       <span id="mobile-counter"></span>
@@ -479,8 +479,6 @@
       disabled_custom_options = <%= disable_options[:custom_field].keys.to_json.html_safe%>
     <% end %>
   <% end %>
-   // auto focus
-   jQuery("#helpdesk_ticket_email").focus();
   for(var i = 0; i < disabled_options.length; i++)
 		{
 			var key = disabled_options[i];
@@ -517,6 +515,10 @@
 			jQuery(".suggest-search").addClass("embedded-search-input");
       jQuery('.embedded-hightlight').css({'width':(jQuery('.form-title').width()+'px')})
 		}
+    // popup auto focus
+    if(embeddedWidget === "popup"){
+      jQuery("#helpdesk_ticket_email").focus();
+    }
 
     jQuery('#helpdesk_ticket_ticket_type')
       .on("change", function(e){

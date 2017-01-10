@@ -1,0 +1,36 @@
+<% content_for :helpcard do %>
+  <%= render :partial => "helpnote" %>
+<% end %>
+<div class="list-page">
+  <div class="list-page-header">
+    <div class="row-fluid">
+        <h3 class="lead span8"><a href="/admin/email_configs" > <%= t('email_configs.title')%> </a > / <%=t('email_configs.dkim.title')%></h3>
+        <a href="" class="pull-right pt5"> <%= t('email_configs.dkim.help') %> </a>
+    </div>
+  </div>
+  <p class="muted">
+    <%= t('email_configs.dkim.description') %>
+  </p>
+  <div class="list-page-body">
+    <%if @domain_categories.present?%>
+      <ul class="dkim-list-wrapper">
+        <% @domain_categories.each do |domain_category|%>
+          <%= render "dkim_domains", :domain_category => domain_category %>
+        <% end %>
+      </ul>
+      <div class="toolbar">
+         <%=will_paginate @domain_categories,
+            :params => {:controller => "dkim_configurations", :action => "index"},
+            :renderer => BootstrapPaginationRenderer,
+            :previous_label => "<b class='arrow-left'></b>",
+            :next_label => "<b class='arrow-right'></b>",
+            :class => "pagination pagination-centered"%>
+      </div>
+    <%else%>
+      <div class="new-email-domain muted"> 
+        <span><%= t('email_configs.dkim.new_dkim') %> - </span>
+        <a href="/admin/email_configs/new">Create </a></div>
+        </div>
+      </div>
+    <%end%>
+</div>

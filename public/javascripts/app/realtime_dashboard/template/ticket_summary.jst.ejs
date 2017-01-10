@@ -10,6 +10,7 @@
 	</a>
 </li>
 
+<% if(renderData.overdue != undefined) {%>
 <li>
 	<a href="/helpdesk/tickets/filter/overdue" 
 		data-parallel-url="/helpdesk/tickets/filter_options?filter_name=overdue" 
@@ -22,7 +23,9 @@
 		</div>
 	</a>
 </li>
+<% } %>
 
+<% if(renderData.due_today != undefined) {%>
 <li>
 	<a href="/helpdesk/tickets/filter/due_today" class="summery-filter clearfix" 
 		data-parallel-url="/helpdesk/tickets/filter_options?filter_name=due_today" 
@@ -35,6 +38,7 @@
 		</div>
 	</a>
 </li>
+<% } %>
 
 <li>
 	<a href="/helpdesk/tickets/filter/open" 

@@ -99,7 +99,9 @@ class Group < ActiveRecord::Base
   end
 
   def round_robin_queue
-    if round_robin_capping_enabled?
+    if skill_based_round_robin_enabled?
+      []
+    elsif round_robin_capping_enabled?
       res = zrange_round_robin_redis(round_robin_capping_key, 0, -1)
       res.present? ? res.reverse : []
     else

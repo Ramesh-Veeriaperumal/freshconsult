@@ -8,7 +8,7 @@ window.Normalize = window.Normalize || {};
 
   Normalize = {
 
-    removeStyleAttr : ["margin-top", "margin-right", "word-spacing", "float", "outline", "font-style",  "vertical-align", "line-height", "text-rendering", "font-variant", "letter-spacing", "orphans", "text-transform", "white-space",  "widows", "-webkit-text-stroke-width", "display", "position", "overflow",  "text-overflow", "text-decoration",  "font-variant-ligatures", "font-variant-caps"],
+    removeStyleAttr : ["margin-top", "margin-right", "word-spacing", "float", "outline", "font-style",  "vertical-align", "text-rendering", "font-variant", "letter-spacing", "orphans", "text-transform", "white-space",  "widows", "-webkit-text-stroke-width", "display", "position", "overflow",  "text-overflow", "text-decoration",  "font-variant-ligatures", "font-variant-caps"],
 
   	tagProperties: {
       'TABLE': 'border-collapse:collapse; border:1px solid #afafaf;'

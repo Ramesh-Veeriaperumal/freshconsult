@@ -34,11 +34,11 @@ module MemcacheKeys
 
   ACCOUNT_STATUS_GROUPS = "v1/ACCOUNT_STATUS_GROUPS:%{account_id}"
 
-  PORTAL_BY_URL = "v2/PORTAL_BY_URL:%{portal_url}"
+  PORTAL_BY_URL = "v3/PORTAL_BY_URL:%{portal_url}"
 
-  ACCOUNT_BY_FULL_DOMAIN = "v3/ACCOUNT_BY_FULL_DOMAIN:%{full_domain}"
+  ACCOUNT_BY_FULL_DOMAIN = "v5/ACCOUNT_BY_FULL_DOMAIN:%{full_domain}"
 
-  ACCOUNT_MAIN_PORTAL = "v3/ACCOUNT_MAIN_PORTAL:%{account_id}"
+  ACCOUNT_MAIN_PORTAL = "v4/ACCOUNT_MAIN_PORTAL:%{account_id}"
 
   ACCOUNT_CUSTOM_DROPDOWN_FIELDS = "v2/ACCOUNT_CUSTOM_DROPDOWN_FIELDS:%{account_id}"
 
@@ -54,6 +54,10 @@ module MemcacheKeys
 
   ACCOUNT_OBSERVER_RULES = "v1/ACCOUNT_OBSERVER_RULES:%{account_id}"
 
+  ACCOUNT_SKILLS = "v1/ACCOUNT_SKILLS:%{account_id}"
+
+  ACCOUNT_SKILLS_TRIMMED = "v1/ACCOUNT_SKILLS_TRIMMED:%{account_id}"
+  
   ACCOUNT_TWITTER_HANDLES = "v2/ACCOUNT_TWITTER_HANDLES:%{account_id}"
 
   FORUM_CATEGORIES = "v1/FORUM_CATEGORIES:%{account_id}"
@@ -83,9 +87,9 @@ module MemcacheKeys
 
   FEATURES_LIST = "v4/FEATURES_LIST:%{account_id}"
 
-  SHARD_BY_DOMAIN = "v4/SHARD_BY_DOMAIN:%{domain}"
+  SHARD_BY_DOMAIN = "v5/SHARD_BY_DOMAIN:%{domain}"
 
-  SHARD_BY_ACCOUNT_ID = "v4/SHARD_BY_ACCOUNT_ID:%{account_id}"
+  SHARD_BY_ACCOUNT_ID = "v5/SHARD_BY_ACCOUNT_ID:%{account_id}"
 
   DEFAULT_BUSINESS_CALENDAR = "v1/DEFAULT_BUSINESS_CALENDAR:%{account_id}"
 
@@ -119,9 +123,9 @@ module MemcacheKeys
 
   PRODUCT_NOTIFICATION = "v3/%{language}/PRODUCT_NOTIFICATION"
 
-  POD_SHARD_ACCOUNT_MAPPING = "v2/POD_SHARD_ACCOUNT_MAPPING:%{pod_info}:%{shard_name}"
+  POD_SHARD_ACCOUNT_MAPPING = "v3/POD_SHARD_ACCOUNT_MAPPING:%{pod_info}:%{shard_name}"
 
-  ACCOUNT_ADDITIONAL_SETTINGS = "v2/ACCOUNT_ADDITIONAL_SETTINGS:%{account_id}"
+  ACCOUNT_ADDITIONAL_SETTINGS = "v3/ACCOUNT_ADDITIONAL_SETTINGS:%{account_id}"
 
   INSTALLED_FRESHPLUGS = "v2/FA:%{page}:PLUGS:%{account_id}"
 
@@ -159,26 +163,13 @@ module MemcacheKeys
 
   ACCOUNT_WEBHOOK_KEY = "ACCOUNT_WEBHOOK_KEY:%{account_id}:%{vendor_id}"
 
+  SITEMAP_KEY = "SITEMAP:%{account_id}:%{portal_id}"
+
   MOST_VIEWED_ARTICLES = "MOST_VIEWED_ARTICLES:%{account_id}:%{language_id}:%{cache_version}"
 
   class << self
 
-    def newrelic_begin_rescue(&block)
-      begin
-        block.call
-      rescue Dalli::UnmarshalError => e
-        x = ["undefined class/module CompanyField","undefined class/module ContactFieldChoice",
-            "undefined class/module CustomSurvey::SurveyQuestion"]
-        if x.any? {|word| e.message.include?(word)}
-           Rails.logger.debug "#{Account.current}  #{e.message}"
-        end
-       NewRelic::Agent.notice_error(e)
-      return
-      rescue Exception => e
-        NewRelic::Agent.notice_error(e)
-      return
-      end
-    end
+    include MemcacheReadWriteMethods
 
     def agent_type(user) #pass user as argument
       user.can_view_all_tickets? ? "UNRESTRICTED" :  "RESTRICTED"
@@ -193,37 +184,11 @@ module MemcacheKeys
     end
 
     def memcache_delete(key, account=Account.current, user=User.current)
-      newrelic_begin_rescue { $memcache.delete(memcache_view_key(key, account, user)) }
+      newrelic_begin_rescue { memcache_client.delete(memcache_view_key(key, account, user)) } 
     end
 
-    def get_from_cache(key, raw=false)
-      newrelic_begin_rescue { $memcache.get(key, raw) }
-    end
-
-    def cache(key,value,expiry=0, raw=false)
-      newrelic_begin_rescue { $memcache.set(key, value, expiry, raw) }
-    end
-
-    def delete_from_cache(key)
-      newrelic_begin_rescue { $memcache.delete(key) }
-    end
-
-    def set_null(value)
-      value.nil? ? NullObject.instance : value
-    end
-
-    def unset_null(value)
-      value.is_a?(NullObject) ? nil : value
-    end
-
-    def fetch(key, expiry=0,&block)
-      key = ActiveSupport::Cache.expand_cache_key(key) if key.is_a?(Array)
-      cache_data = get_from_cache(key)
-      if cache_data.nil?
-        Rails.logger.debug "Cache hit missed :::::: #{key}"
-        cache(key, (cache_data = set_null(block.call)), expiry)
-      end
-      unset_null(cache_data)
+    def memcache_client
+      $memcache
     end
   end
 end

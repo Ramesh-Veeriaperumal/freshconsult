@@ -1,3 +1,4 @@
+@import "../common-popover";
 @import "../../fonts/glyphs-variables";
 
 // Requester Info Tabs in Ticket Details page
@@ -28,6 +29,14 @@ li {
     content: "";
     display: table;
 }
+
+.ticket_show .commentbox {
+     [rel=image-enlarge] {
+         .hide {
+             display: block;
+         }
+     }
+ }
 
 .ticket_show .clearfix:after {
     @include clear(both);
@@ -531,7 +540,7 @@ li {
         /*@include padding-left(100%);*/
         cursor: pointer;
         overflow: hidden;
-        z-index: 10;
+        z-index: 5;
     }
 }
 
@@ -955,18 +964,20 @@ li {
             @include opacity(0);
             top: -20px;
             cursor: pointer;
-            z-index: 10;
+            z-index: 5;
         }
     }
     .info-data {
         position: relative;
         top: 6px;
     }
+    .no-top {
+       top: 0px;
+    }
     .add_attachment {
         cursor: pointer;
         height: 22px;
         color: #1272de;
-        width: 220px;
         overflow: hidden;
         text-overflow: ellipsis;
         @include micro-position(14px);
@@ -1374,6 +1385,9 @@ li {
                 cursor: pointer;
             }
         }
+        .MsoListParagraph {
+            text-indent: 18.0pt !important;
+        }
     }
     .activity:hover {
         .commentbox {
@@ -1457,7 +1471,7 @@ li {
             height: 185px;
         }
     }
-    .tweet-counter {
+    .tweet-counter, .dm-reply-counter{
         position: static;
         color: #888;
     }
@@ -1592,6 +1606,10 @@ li {
                 margin-top: 5px;
                 position: relative;
                 z-index: 2;
+            }
+            p.cc-error-message {
+                float: left;
+                margin: 10px 0 0 44px;
             }
             .email_container {
                 width: 100%;
@@ -1846,6 +1864,20 @@ li {
             border: solid 1px #999;
         }
     }
+    #cnt-broadcast{
+         .ui-form .inline-field.clearField{
+             border-top: none;
+             border-radius: inherit;
+             margin-top: -1px;
+         }
+         .ficon-broadcast-tracker{
+             border-bottom: none;
+             font-size: 17px;
+             padding-right: 5px;
+             position: relative;
+             top: 1px;   
+        }
+     }
     .request_panel .ui-form .request_form_options {
         position: relative;
         @include float(right);
@@ -2717,7 +2749,7 @@ li {
                 width: 100%;
                 display: block;
                 @include clear(both);
-                height: 19px;
+                height: auto;
                 font-size: 13px;
                 padding: 5px 0;
                 font-weight: 500;
@@ -3997,9 +4029,16 @@ li {
         }
     }
     .wrap-marker {
-        @include padding-left(15px);
         padding-bottom: 10px;
         padding-top: 5px;
+        .wrap-quoted-remove{
+            @include padding(10px 10px 10px 15px);
+        }
+        .remove-quote{
+            position: relative;
+            top: 4px;
+            @include padding-left(8px);
+        }
     }
     .ticket-app-info {
         .table {
@@ -4374,7 +4413,7 @@ li {
       padding: 15px;
       display: inline-block;
       width: 160px;
-      min-height: 173px;
+      min-height: 130px;
       vertical-align: top;
       cursor: pointer;
       position: relative;
@@ -4618,5 +4657,10 @@ li {
   font-size: 10px;
   text-transform: uppercase;
   margin-bottom: 5px;
+  a{
+    text-transform: initial;
+    font-size: 11px;
+    padding-left: 3px;
+    }
 }
 /* ********************** END OF STYLE FOR CUSTOMER SENTIMENT ********************** */

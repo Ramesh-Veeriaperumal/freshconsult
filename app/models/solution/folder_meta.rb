@@ -6,9 +6,10 @@ class Solution::FolderMeta < ActiveRecord::Base
 
 	BINARIZE_COLUMNS = [:available]
 	
-  include Solution::Constants
+    include Solution::Constants
 	include Solution::LanguageAssociations
 	include Solution::ApiDelegator
+	include Solution::MarshalDumpMethods
 	
   attr_accessible :visibility, :position, :solution_category_meta_id
 
@@ -66,6 +67,8 @@ class Solution::FolderMeta < ActiveRecord::Base
 
 	COMMON_ATTRIBUTES = ["visibility", "position", "is_default", "created_at"]
 	CACHEABLE_ATTRIBUTES  = ["is_default","name","id","article_count"]
+	PORTAL_CACHEABLE_ATTRIBUTES = ["id", "account_id", "current_child_id", "name", "description",
+	 "visibility", "solution_category_meta_id"]
 
 	before_update :clear_customer_folders, :backup_folder_changes
 	after_commit :update_search_index, on: :update, :if => :update_es?
@@ -139,6 +142,14 @@ class Solution::FolderMeta < ActiveRecord::Base
       return true if ((self.visibility == VISIBILITY_KEYS_BY_TOKEN[:company_users]) && company_cdn)
 	end
 
+	def visible_articles_count
+		@visible_articles_count ||= published_article_meta.count
+	end
+
+	def visible_articles
+		@visible_articles ||= ((visible_articles_count > 0) ? published_article_meta.all : [])
+	end
+
 	private
 
 	def clear_cache
@@ -180,6 +191,15 @@ class Solution::FolderMeta < ActiveRecord::Base
 			:order => "`solution_folder_meta`.position",
 			:conditions => visibility_condition(user)
 		}
+	}
+
+	scope :public_folders, lambda {|category_ids|
+	    {
+	      :conditions => {
+	        :solution_category_meta_id => category_ids,
+	        :visibility => VISIBILITY_KEYS_BY_TOKEN[:anyone]
+	      }
+	    }
 	}
 
 	def self.visibility_condition(user)
@@ -229,5 +249,12 @@ class Solution::FolderMeta < ActiveRecord::Base
 		return true if transaction_include_action?(:destroy)
 		(previous_changes.except(*(BINARIZE_COLUMNS + [:updated_at])).present? || 
 			(primary_folder && primary_folder.previous_changes.present?))
+	end
+
+	def custom_portal_cache_attributes
+		{
+			:visible_articles_count => visible_articles_count,
+			:visible_articles => visible_articles
+		}
 	end
 end

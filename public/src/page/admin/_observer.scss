@@ -40,6 +40,9 @@
 	#filterDOM, #actionDOM{
 		.select2-container{width:150px;}
 		.dependent .select2-container{ @include margin-left(3px); }
+		.expanded_select{
+			width: 298px;
+		}
 	}
 
 	#filterDOM {

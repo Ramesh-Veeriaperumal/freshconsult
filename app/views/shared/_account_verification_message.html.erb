@@ -1,4 +1,4 @@
-<% if current_user.privilege?(:admin_tasks) %>
+<% if current_user && current_user.privilege?(:admin_tasks) %>
   <div class="alert-admin-account-verification alert-solid">
     <%= t('admin_onboarding.account_verification_message.check_inbox_message', admin_email: current_user.email).html_safe %>
     <%= t('admin_onboarding.account_verification_message.helpnote1') %>

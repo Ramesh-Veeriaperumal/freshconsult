@@ -24,6 +24,7 @@ class Account < ActiveRecord::Base
   has_one  :main_portal, :class_name => 'Portal', :conditions => { :main_portal => true}
   has_one :account_additional_settings, :class_name => 'AccountAdditionalSettings'
   delegate :supported_languages, :to => :account_additional_settings
+  delegate :secret_keys, to: :account_additional_settings
   has_one  :whitelisted_ip
   has_one :contact_password_policy, :class_name => 'PasswordPolicy',
     :conditions => {:user_type => PasswordPolicy::USER_TYPE[:contact]}, :dependent => :destroy
@@ -49,9 +50,8 @@ class Account < ActiveRecord::Base
   has_many :features
   has_many :flexi_field_defs, :class_name => 'FlexifieldDef'
   has_one  :ticket_field_def,  :class_name => 'FlexifieldDef', 
-    :conditions => Proc.new { 
-      "name = 'Ticket_#{self.id}'"
-    }
+      :conditions => {:module => "Ticket"}
+      
   has_one  :contact_form
   has_one  :company_form
   has_many :flexifield_def_entries
@@ -112,6 +112,9 @@ class Account < ActiveRecord::Base
   has_one  :default_sla ,  :class_name => 'Helpdesk::SlaPolicy' , :conditions => { :is_default => true }
   has_many :google_contacts, :class_name => 'GoogleContact'
   has_many :mobihelp_devices, :class_name => 'Mobihelp::Device'
+
+  has_many :skills, :order => "position", :class_name => 'Admin::Skill'
+  has_many :user_skills
 
   #Scoping restriction for other models starts here
   has_many :account_va_rules, :class_name => 'VaRule'
@@ -296,6 +299,8 @@ class Account < ActiveRecord::Base
   has_many :section_fields, :class_name => 'Helpdesk::SectionField', :dependent => :destroy
 
   has_many :subscription_invoices
+  has_many :dkim_category_change_activities
+
   has_many :user_companies
   has_many :cti_calls, :class_name => 'Integrations::CtiCall'
   has_many :cti_phones, :class_name => 'Integrations::CtiPhone'
@@ -321,6 +326,9 @@ class Account < ActiveRecord::Base
   has_many :status_groups
 
   has_many :account_webhook_key, dependent: :destroy
+  
+  has_many :sandboxes,       :class_name => 'Admin::Sandbox::Account'
+  has_many :sandbox_jobs,    :class_name => 'Admin::Sandbox::Job'
   
   has_many :ticket_subscriptions, :class_name => 'Helpdesk::Subscription'
 end

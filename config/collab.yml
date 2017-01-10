@@ -1,0 +1,18 @@
+defaults: &defaults
+    collab_url: "http://localhost:8888"
+    rts_url: "http://localhost:8000"
+    secret_key: "VnY56Bf7_-8FuX8m6i20y5VuziheYcSD8wBKvm_1cxV7B-MWi9Pv4c8y2lLymsKrEX230381a_5BFvtFRrtsHg=="
+
+development:
+  <<: *defaults
+
+slave:
+  <<: *defaults
+
+test:
+  <<: *defaults
+
+staging:
+    collab_url: "https://api.fdcollab.io"
+    rts_url: "https://pubsub.rtschannel.io/"
+    secret_key: "VnY56Bf7_-8FuX8m6i20y5VuziheYcSD8wBKvm_1cxV7B-MWi9Pv4c8y2lLymsKrEX230381a_5BFvtFRrtsHg=="

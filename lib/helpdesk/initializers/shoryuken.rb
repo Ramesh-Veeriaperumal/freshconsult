@@ -14,7 +14,9 @@ if SH_ENABLED
   Shoryuken.configure_server do |config|
     config.server_middleware do |chain|
       chain.add Middleware::Shoryuken::Server::BelongsToAccount, :ignore => [
-        "Ryuken::FacebookRealtime"
+        "Ryuken::FacebookRealtime",
+        "Email::MailFetchWorker",
+        "Email::EmailDeadLetterWorker"
       ]
     end
   end

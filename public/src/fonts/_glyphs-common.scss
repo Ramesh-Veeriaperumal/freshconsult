@@ -299,10 +299,12 @@ i.#{$font-class-name}twitter{
 .rounded-add-icon{
 	background: green;
 	@extend .#{$font-class}plus;
+	font-size: 14px;
 }
 .rounded-minus-icon{
 	background: #990000;
 	@extend .#{$font-class}minus;
+	font-size: 11px;
 }
 .rounded-add-icon, .rounded-minus-icon{
 	display: inline-block;
@@ -310,7 +312,6 @@ i.#{$font-class-name}twitter{
 	border-radius: 100%;
 	@include padding(0 4px 0 4px);
 	color: #fff;
-	font-size: 14px;
 	@include box-shadow(inset 1px -1px 0px rgba(0,0,0,0.2));
 	&.disabled{
 		background: #999;

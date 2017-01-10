@@ -11,4 +11,4 @@
 fallbacks: :en
 translations:
   - file: 'public/javascripts/cdn/i18n/%{locale}.js'
-    only: ['*.adv_reports.*', '*.helpdesk_reports.*', '*.reports.freshfone.*', '*.helpdesk.time_sheets.*', '*.admin.roles.*', '*.helpdesk.realtime_dashboard.*', '*.reports.survey_reports.*', '*.validation.*', '*.ticket.association.*']
+    only: ['*.adv_reports.*', '*.helpdesk_reports.*', '*.reports.freshfone.*', '*.helpdesk.time_sheets.*', '*.admin.roles.*', '*.helpdesk.realtime_dashboard.*', '*.reports.survey_reports.*', '*.validation.*', '*.ticket.association.*', '*.group.sbrr.*', '*.ticket_templates.*', '*.common_js_translations.*', '*.show_quoted_text', '*.collaboration.*']

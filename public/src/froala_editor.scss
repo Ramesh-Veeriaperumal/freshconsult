@@ -1,0 +1,20 @@
+// Base settings for app
+@import "settings/settings";
+
+@import "froala_editor/froala_editor";
+@import "froala_editor/codemirror/codemirror.min";
+@import "froala_editor/codemirror/util-dialog";
+@import "froala_editor/codemirror/for_admin_portal";
+@import "froala_editor/plugins/char_counter";
+@import "froala_editor/plugins/code_view";
+@import "froala_editor/plugins/colors";
+@import "froala_editor/plugins/draggable";
+@import "froala_editor/plugins/file";
+@import "froala_editor/plugins/fullscreen";
+@import "froala_editor/plugins/image_manager";
+@import "froala_editor/plugins/image";
+@import "froala_editor/plugins/line_breaker";
+@import "froala_editor/plugins/quick_insert";
+@import "froala_editor/plugins/table";
+@import "froala_editor/plugins/video";
+@import "froala_editor/fd_themes";

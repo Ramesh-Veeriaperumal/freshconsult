@@ -117,7 +117,8 @@ src_dir:
 # spec_dir: spec/javascripts
 #
 spec_dir:
-    - 'spec/javascripts/survey/reports'
+    # - 'spec/javascripts/survey/reports'
+    - 'spec/javascripts/groups'
 # spec_helper
 #
 # Ruby file that Jasmine server will require before starting.

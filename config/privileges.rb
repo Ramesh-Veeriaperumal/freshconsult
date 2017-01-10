@@ -1,3 +1,5 @@
+require_relative 'pipe_privileges'
+
 Authority::Authorization::PrivilegeList.build do
 
   # *************** TICKETS **********************
@@ -24,7 +26,7 @@ Authority::Authorization::PrivilegeList.build do
                                            :quick_assign, :canned_reponse, :full_paginate, :custom_view_save, :apply_template, :accessible_templates, :search_templates, :show_children,
                                            :filter_options, :filter_conditions, :activities, :status, :get_top_view, :recent_tickets, :old_tickets, :summary, :bulk_scenario,
                                            :execute_bulk_scenario, :activitiesv2, :activities_all, :link, :unlink, :ticket_association,
-                                           :bulk_child_tkt_create, :associated_tickets, :sentiment_feedback]
+                                           :bulk_child_tkt_create, :associated_tickets, :sentiment_feedback, :refresh_requester_widget]
     resource :"helpdesk/subscription"
     resource :"helpdesk/tag_use"
     resource :"helpdesk/tag"
@@ -61,7 +63,9 @@ Authority::Authorization::PrivilegeList.build do
     resource :"integrations/hootsuite/ticket"
     resource :"integrations/sugarcrm", :only => [:renew_session_id, :check_session_id]
     resource :"integrations/service_proxy", :only => [:fetch]
+    resource :"integrations/slack_v2", :only => [:add_slack_agent]
     resource :"integrations/data_pipe"
+    resource :"integrations/cloud_elements/crm", :only => [:fetch]
 
 
     # Used by API V2 Search
@@ -76,7 +80,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"freshfone/conference_transfer", :only => [:initiate_transfer, :complete_transfer, :transfer_success, :cancel_transfer, :resume_transfer, :disconnect_agent]
     resource :"freshfone/agent_conference", :only => [:add_agent, :success, :cancel]
     resource :"freshfone/warm_transfer", :only => [:initiate, :unhold, :cancel, :resume]
-    resource :"freshfone/conference_call", :only => [:call_notes, :save_call_notes, :save_call_quality_metrics, :wrap_call]
+    resource :"freshfone/conference_call", :only => [:load_notable, :save_notable, :save_call_quality_metrics, :wrap_call]
     resource :"freshfone/hold", :only => [ :add, :remove ]
     resource :"freshfone/call_history"
     resource :"freshfone/autocomplete"
@@ -468,7 +472,7 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   manage_availability do
-    resource :group, :only => [:index, :show, :edit, :update, :toggle_roundrobin]
+    resource :group, :only => [:index, :show, :edit, :update, :toggle_roundrobin, :user_skill_exists]
     resource :"helpdesk/dashboard",:only => [:agent_status]
   end
 
@@ -514,6 +518,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/contact_field"
     resource :"admin/company_field"
     resource :"admin/role"
+    resource :"admin/skill"
     resource :"admin/product"
     resource :"admin/portal"
     resource :"admin/security"
@@ -567,6 +572,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/ecommerce/ebay_account"
     resource :"freshfone/dashboard", :only => [:index]
     resource :"integrations/marketplace_app"
+    resource :"integrations/cloud_elements/crm", :only => [:instances, :edit, :update, :settings, :create]
 
     # Used by API V2
     resource :api_ticket_field, :only => [:index]
@@ -592,10 +598,15 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/zen_import"
     # new item day passes && getting started
     resource :"admin/day_pass"
+    resource :"admin/dkim_configuration"
     resource :"admin/freshfone/credit"
     resource :"admin/onboarding"
     resource :"admin/getting_started"
     resource :"agent", :only => [:api_key]
+  end
+
+  assign_agent do
+    resource :"admin/user_skill"
   end
 
   client_manager do

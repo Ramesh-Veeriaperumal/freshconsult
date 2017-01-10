@@ -4,6 +4,7 @@ from_email: support@freshdesk.com
 cs_email: customersuccess@freshdesk.com
 billing_email: billing@freshdesk.com
 reports_email: reports@freshdesk.com
+integrations_email: integration@freshdesk.com
 free_plan_agts: 1
 app_website: http://www.freshdesk.com
 support_url: https://support.freshdesk.com
@@ -14,6 +15,31 @@ feedback_account:
     staging: https://support.freshdesk.com
     production: https://support.freshdesk.com
 
+attachment:
+    attachment_common: &attachment_common 
+        protocol: http
+        port: 
+    development: 
+        <<: *attachment_common
+        domain: 
+            poduseast: localhost.freshdesk-dev.com
+            podeuwest: localhost.freshdesk-dev.com
+            podeucentral: localhost.freshdesk-dev.com
+        port: ':3000'
+    staging:
+        <<: *attachment_common
+        domain: 
+            poduseast: attachment.freshpo.com
+            podeuwest: euattachment.freshpo.com
+            podeucentral: eucattachment.freshpo.com
+        protocol: https
+    production:
+        <<: *attachment_common
+        domain: 
+            poduseast: attachment.freshdesk.com
+            podeuwest: euattachment.freshdesk.com
+            podeucentral: eucattachment.freshdesk.com
+        protocol: https
 
 # Used in account creation (account.rb)
 base_domain: 

@@ -1,101 +1,106 @@
 <% readonly = !global_access? %>
 
-<h3 class="lead"><%=title%></h3> <br/>
-	<%= form_for(@group, :html => {:id => "group_form"}) do |f| %>
-	  <%= f.error_messages %>
-	   <div class="row-fluid group-management">
-		 	<ul class="unstylGroup::d">
-		 		<li class="row-fluid">
-		 			<%= f.label :name, "<b> #{t('group.name')} </b>".html_safe , :class => "control-label span2" %>
-					  <div class="span10">
-						 <%= f.text_field :name , :class => "text required span12", :placeholder => t('group.name'), :disabled => readonly %>
-					  </div>
-		 		</li>
-		 		<li class="row-fluid">
-		 			 <%= f.label :description, "<b> #{t('description')} </b>".html_safe, :class => "control-label span2" %>
-					  <div class="span10">
-						 <%= f.text_area :description , :class => "text required smallpara span12", :placeholder => t('group.description').html_safe, :disabled => readonly %>
-					  </div>
-		 		</li>
-		 		<% if feature?(:multiple_business_hours) %>
-		 		<li class="row-fluid margin-bottom">
-		 			 <%= f.label :business_calendar, "<b> #{t('group.business_calendar')} </b>".html_safe, :class => "control-label span2" %>
-					  <div class="span10">
-					  	<input type="hidden" id="business_calendar" name="group[business_calendar]" class="span5"
-            					data-placeholder = "<%= t("group.select_business_calendar") %>" <%if readonly%> disabled <%end%> />
-					  </div>
-		 		</li>
-		 		<% end %>
-		 		<li class="row-fluid margin-bottom">
-		 			<label class="control-label span2">
-		 				<b><%=t('group.info1').html_safe%> (<span id="agents_count"><%= @group.agents.count %></span>)</b>
-		 			</label>
-		 			<div class="span10">
-		 				<input type="hidden" id="agent_list" name="group[agent_list]" class="span12"
-		 				data-placeholder = "<%= t("helpdesk.tickets.add_watcher.add_agent") %>" <%if readonly%> disabled <%end%> />
-		 			</div>
-				</li>
-
-	 			 <% 
-					account_id =  @group.account_id
-					if account_id.nil?
-						account_id = current_account.id
-					end
-					 @exclude_list = @group.excluded_agents(current_account) %>
-				<%  
-					if(@exclude_list.nil? ||@exclude_list.size == 0)
-						showagent = "display:none"
-					end 
-				%>
-
-        <% hide_escalation = readonly ? "display:none" : "" %>
-        <li class="row-fluid mb20" style= <%=hide_escalation%> >
+<span class="group_form">
+<h3 class="lead"><%=title%></h3>
+<br/>
+  <%= form_for(@group, :html => {:id => "group_form"}) do |f| %>
+    <%= f.error_messages %>
+     <div class="row-fluid group-management">
+      <ul class="unstylGroup::d">
+        <li class="row-fluid">
+          <%= f.label :name, "<b> #{(t('group.name')+"<span class='required_star'>*</span>")} </b>".html_safe , :class => "control-label span2" %>
+            <div class="span10">
+             <%= f.text_field :name , :class => "text required span12", :placeholder => t('group.name'), :disabled => readonly %>
+            </div>
+        </li>
+        <li class="row-fluid">
+           <%= f.label :description, "<b> #{t('description')} </b>".html_safe, :class => "control-label span2" %>
+            <div class="span10">
+             <%= f.text_area :description , :class => "text smallpara span12", :placeholder => t('group.description').html_safe, :disabled => readonly %>
+            </div>
+        </li>
+        <% if feature?(:multiple_business_hours) %>
+        <li class="row-fluid margin-bottom">
+           <%= f.label :business_calendar, "<b> #{t('group.business_calendar')} </b>".html_safe, :class => "control-label span2" %>
+            <div class="span10">
+            
+      <%= f.select_tag('group[business_calendar]', options_from_collection_for_select(current_account.business_calendar, :id, :name ,@group.business_calendar && @group.business_calendar.id), { :prompt => t('group.select_business_calendar'), :class => 'span5 select2 input-xlarge'   })  %>
+            </div>
+        </li>
+        <% end %>
+        <li class="row-fluid margin-bottom">
           <label class="control-label span2">
-            <b><%=t('group.escalation_rule')%></b>
+            <b><%=t('group.info1').html_safe%> (<span id="agents_count"><%= @group.agents.count %></span>)</b>
           </label>
           <div class="span10">
-            <ul class="unstyled group-ticket-assign">
-              <li class="row-fluid">
-                <span class="span6 group-text-align"><%=t('group.info4')%> :</span>
-                <%= f.select :assign_time , Group::ASSIGNTIME_OPTIONS,{}, { :class => 'select2 span3', 
-                             :disabled => readonly } %>
-              </li>
-              <li class="row-fluid">
-                <span class="span6 group-text-align"> &nbsp; &nbsp;<%=t('group.send_escalation_to')%> </span> 
-                <input type="hidden" id="escalate_to" name="group[escalate_to]" class="span3"
-                       data-placeholder = "<%= t("group.select_an_agent") %>" <%if readonly%> disabled <%end%> />
-              </li>
-            </ul>
+            <input type="hidden" id="agent_list" name="group[agent_list]" class="span12" data-placeholder = "<%= t("helpdesk.tickets.add_watcher.add_agent") %>" <%if readonly%> disabled style="background-color: #eee;" <%end%> />
           </div>
         </li>
 
-        <br />
+         <%
+          account_id =  @group.account_id
+          if account_id.nil?
+            account_id = current_account.id
+          end
+           @exclude_list = @group.excluded_agents(current_account) %>
+        <%
+          if(@exclude_list.nil? ||@exclude_list.size == 0)
+            showagent = "display:none"
+          end
+        %>
+
+
+       <% if current_account.sla_management_enabled? %>
+                <% hide_escalation = readonly ? "display:none" : "" %>
+                <li class="row-fluid mb20" style= <%=hide_escalation%> >
+                  <label class="control-label span2">
+                    <b><%=t('group.escalation_rule')%></b>
+                  </label>
+                  <div class="span10">
+                    <ul class="unstyled group-ticket-assign">
+                      <li class="row-fluid">
+                        <span class="span6 group-text-align"><%=t('group.info4')%> :</span>
+                        <%= f.select :assign_time , Group::ASSIGNTIME_OPTIONS,{}, { :class => 'select2 span3',
+                                     :disabled => readonly } %>
+                      </li>
+                      <li class="row-fluid">
+                        <span class="span6 group-text-align"> &nbsp; &nbsp;<%=t('group.send_escalation_to')%> </span>
+                        <input type="hidden" id="escalate_to" name="group[escalate_to]" class="span3"
+                               data-placeholder = "<%= t("group.select_an_agent") %>" <%if readonly%> disabled <%end%> />
+                      </li>
+                    </ul>
+                  </div>
+                </li>
+      <% end %>
+
+      </ul>
+
         <% if feature?(:round_robin) %>
           <span class ="seperator"></span>
           <div class="row-fluid mt20">
-            <div class="span1">
-              <%= f.check_box :ticket_assign_type, :value => '1', :checked => @group.ticket_assign_type == Group::     TICKET_ASSIGN_TYPE[:round_robin],:rel => "toggle"  %>
+            <div class="span1 ticketAssignmentCheck">
+              <%= f.check_box :ticket_assign_type, :value => '', :checked => @group.ticket_assign_type == Group::     TICKET_ASSIGN_TYPE[:round_robin],:rel => "toggle"  %>
             </div>
             <div class="span11">
-              <h5 class="lead small-lead"><%= t('group.ticket_assignment') %></h5>   
+              <h5 class="lead title small-lead"><%= t('group.ticket_assignment') %></h5>
               <p class="muted lead-desc" rel="process_desc"> <%= t('group.auto_assignment_description') %></p>
-              <p class="muted lead-desc ui-helper-hidden only_round" rel="only_round"> <%= t('group.only_round_robin_description').html_safe %></p>
-            </div>
+            <p class="muted lead-desc ui-helper-hidden only_round" rel="only_round"> <%= t('group.only_round_robin_description').html_safe %></p>
+          </div>
           </div>
           <!-- Different types of schedule-->
           <div class="row-fluid ui-helper-hidden" id="toggle_method">
               <!-- Default -->
               <div class="row-fluid">
-                <div class="inline-box">
-                  <%= f.radio_button :capping_enabled, 
+                <div class="inline-box groups-form">
+                  <%= f.radio_button :capping_enabled,
                                   '0'
                                    %>
                 </div>
-                <div class="inline-box ml8">
+                <div class="inline-box groups-form ml8">
                   <label for="group_capping_enabled_0">
                       <h5 class="mini-lead floatl mb2 mr7">
                         <%= t('group.round_robin_defalut') %>
-                      </h5>                    
+                      </h5>
                   </label>
                   <p class="muted lead-desc clear">
                     <%=t('group.round_robin_default_info').html_safe%>
@@ -105,12 +110,12 @@
               <% if current_account.round_robin_capping_enabled? %>
                 <!-- Cap -->
                 <div class="row-fluid">
-                  <div class="inline-box">
-                    <%= f.radio_button :capping_enabled, 
+                  <div class="inline-box groups-form">
+                    <%= f.radio_button :capping_enabled,
                                        '1'
                                      %>
                   </div>
-                  <div class="inline-box ml8 custom-select2">
+                  <div class="inline-box groups-form ml8 custom-select2">
                     <label for="group_capping_enabled_1">
                       <h5 class="mini-lead floatl mb2 mr7">
                          <%= t('group.round_robin_capping') %>
@@ -119,13 +124,57 @@
                     <p class="muted lead-desc clear">
                       <%=t('group.round_robin_capping_info').html_safe%>
                     </p>
-                    <p class="limit ui-helper-hidden">
-                      Maximum 
+                    <p class="limit load_based ui-helper-hidden">
+                      Maximum
                       <%= f.select :capping_limit, Group::CAPPING_LIMIT_OPTIONS,
                                                   { :selected => @group.capping_limit || 5 },
-                                                  { :class => "select2 capping-limit #{'hide' unless @group.capping_enabled?}",
-                                                    :id => "capping_count" } %>
+                                                  { :class => "select2 select_load capping-limit #{'hide' unless @group.capping_enabled?}",
+                                                    :id => "capping_count_load" } %>
                                                     per agent
+                      </p>
+                  </div>
+                </div>
+                <% end %>
+                <% if current_account.skill_based_round_robin_enabled? %>
+                <!-- Skill based -->
+                <div class="row-fluid">
+                  <div class="inline-box groups-form">
+                    <%= f.radio_button :capping_enabled,
+                                       '2'
+                                     %>
+                  </div>
+                  <div class="inline-box groups-form ml8 custom-select2">
+                    <label for="group_capping_enabled_2">
+                      <h5 class="mini-lead floatl mb2 mr7">
+                           <%= t('group.round_robin_skill_based') %>
+                      </h5>
+
+</label>
+
+
+<span id="linkContainer" class="help_note_skills"><span class="placeholderForRules"></span></span>
+
+<input type="hidden" id="setFlagforRedirect" value="false" name="redirect_to_skills">
+
+
+
+
+
+
+                    <p class="muted lead-desc clear">
+                      <%=t('group.round_robin_skill_based_info').html_safe%>
+                    </p>
+                    <p class="limit skill_based ui-helper-hidden">
+                      Maximum
+                      <%= f.select :capping_limit, Group::CAPPING_LIMIT_OPTIONS,
+                                                  { :selected => @group.capping_limit || 5 },
+                                                  { :class => "select2 select_skill capping-limit #{'hide' unless @group.capping_enabled?}",
+                                                    :id => "capping_count_skill" } %>
+                                                    per agent
+
+                 <br>
+                <span class="muted"> <%=t('group.round_robin_skill_based_tooltip').html_safe%><br></span>
+
                       </p>
                   </div>
                 </div>
@@ -133,25 +182,25 @@
           </div>
           <div class="row-fluid ui-helper-hidden" id="toggle_availability_container">
               <div class="span12">
-                 <div class="inline-box">
+                 <div class="inline-box groups-form">
                     <%= f.check_box :toggle_availability, :value => '1', :checked => @group.new_record? ? true : @group.toggle_availability?
-                     %>  
+                     %>
                  </div>
-                  <div class="inline-box ml8">
+                  <div class="inline-box groups-form ml8">
                       <label for="group_toggle_availability">
-                        <h5 class="lead small-lead"><%= t('group.toggle_availability_for_rr') %></h5>
+                        <h5 class="lead small-lead toggle_title"><%= t('group.toggle_availability_for_rr') %></h5>
                       </label>
-                      <div class="toggle_enabled">    
-                        <p class="muted lead-desc"> 
+                      <div class="toggle_enabled">
+                        <p class="muted lead-desc">
                           <%=t('group.toggle_availability_message').html_safe%>
-                        </p> 
-                      </div>                    
+                        </p>
+                      </div>
                   </div>
               </div>
             </div>
         <% end %>
         <br />
-      </ul>
+
      </div>
      <br />
     <div class="button-container">
@@ -162,183 +211,25 @@
 
     </div>
   <% end %>
-<script type="text/javascript">
 
-jQuery(document).ready(function() {
+<a class="vertical-alignment left-border "
+    id="popupTrigger"
+    href="#alert_content"
+    rel="freshdialog"
+    data-backdrop="static"
+    data-show-close="true"
+    id="save-report"
+    data-destroy-on-close="false"
+    data-title="Wait up!"
+    data-submit-label="Proceed"
+    data-close-label="Cancel"
+    >
+  </a>
 
-    /* Ticket Assignment related code */
+  <div id="alert_content" class="hide"><%= t('group.alert_content').html_safe %><br><br>
 
-    //Initial populating
-    auto_assign_ticket = <%=@group.ticket_assign_type == Group::TICKET_ASSIGN_TYPE[:round_robin]%>,
-    toggle_state = <%=@group.toggle_availability %>;
+<strong><%= t('group.alert_content_2').html_safe %></strong></div>
+</span>
 
-    if (auto_assign_ticket) {
-      jQuery("#toggle_availability_container,#toggle_method").show();
-    }
 
-    var capping_enabled = <%= @group.capping_enabled? %>;
-    var is_capping_feature_enabled = <%= current_account.round_robin_capping_enabled? %>;
 
-    if(is_capping_feature_enabled) {
-      if(capping_enabled) {
-        jQuery("#group_capping_enabled_1").prop('checked',true);
-        jQuery(".limit").removeClass('ui-helper-hidden');
-      } else {
-        jQuery("#group_capping_enabled_0").prop('checked',true);
-      }
-    } else {
-      //Default
-      jQuery("#group_capping_enabled_0").prop('checked',true);
-      jQuery("[rel=only_round]").removeClass('ui-helper-hidden');
-      jQuery("[rel=process_desc]").addClass('ui-helper-hidden');
-      jQuery("#toggle_method").hide();
-    }
-
-    //Listeners
-    jQuery("#group_ticket_assign_type").on('change', function(event){
-      if(is_capping_feature_enabled) {
-          jQuery("#toggle_availability_container,#toggle_method")["slideToggle"](300,"easeInCubic");
-      }else{
-          jQuery("#toggle_availability_container")["slideToggle"](300,"easeInCubic");
-      }
-      
-    });
-
-    jQuery("[name='group[capping_enabled]']").on('click', function(){
-      if(this.value == '1'){
-        jQuery("#capping_count").val("<%= @group.capping_limit==0 ? 5 : @group.capping_limit %>").change();
-           jQuery(".limit").removeClass('ui-helper-hidden');
-      } else {
-         jQuery(".limit").addClass('ui-helper-hidden');
-      }
-    }).trigger("change");
-
-    /* end of ticket assignment related code */
-<%
-all_agents = []
-all_agents_list = @group.all_agents_list(current_account)
-if all_agents_list
-  all_agents_list.each do |req|
-    all_agents << "{id: '#{req.user_id}',
-                  value: '#{escape_javascript(req.user.name)}',
-                  text: '#{escape_javascript(req.user.name)}'}"
-  end
-end
-
-selected_agents = []
-agents = @group.agents.order("name")
-if agents
-	 agents.each do |req|
-    selected_agents << "{id: '#{req.id}',
-                  value: '#{escape_javascript(req.name)}',
-                  text: '#{escape_javascript(req.name)}'}"
-  end
-end 
-%>
-
-jQuery('#agent_list').select2({
-	multiple: true,
-	data: [<%=all_agents.join(",").html_safe%>],
-	initSelection : function (element, callback) {
-      callback( [<%=selected_agents.join(",").html_safe%>] );
-    }
-	
-});
-jQuery("#agent_list").select2("val",[]);
-
-jQuery("#agent_list").on("change", function() {
-	var agent_count = 0;
-	agent_list = jQuery("#agent_list").val();
-	if (agent_list != '')  agent_count = agent_list.split(",").length;
-	jQuery("#agents_count").text(agent_count);
-});
-
-<%
-	technicians = []
-	technicians[0]="{id: '',value: '"+t('none')+"',text: '"+t('none')+"' }"
-	account_id =  @group.account_id
-	if account_id.nil?
-		account_id = current_account.id
-	end
-	technician_list = Agent.technician_list(account_id)
-	if technician_list
-		technician_list.each do |req|
-			technicians << "{id: '#{req.id}',
-                  value: '#{escape_javascript(req.name)}',
-                  text: '#{escape_javascript(req.name)}'}"
-		end
-	end
-
-	escalate_to_agent = []
-	if @group.escalate
-		escalate_to_agent << "{id: '#{@group.escalate.id}',
-                  value: '#{escape_javascript(@group.escalate.name)}',
-                  text: '#{escape_javascript(@group.escalate.name)}'}"
-    end
-%>
-jQuery('#escalate_to').select2({
-	multiple: false,
-	data: [<%=technicians.join(",").html_safe%>],
-	initSelection : function (element, callback) {
-        var data = {id: "<%=@group.escalate_to%>", text: "<%=@group.escalate && @group.escalate.name%>"};
-        callback(data);
-    }
-});
-
-jQuery("#escalate_to").select2("val",'<%=@group.escalate_to%>');
-
-<%  if feature?(:multiple_business_hours) %>
-<%
-	calendar = []
-	current_account.business_calendar.each do |bc|
-		calendar << "{id: '#{bc.id}',
-                  value: '#{escape_javascript(bc.name)}',
-                  text: '#{escape_javascript(bc.name)}'}"
-	end
-
-	selected_bc = []
-	if @group.business_calendar
-		selected_bc << "{id: '#{@group.business_calendar.id}',
-                  value: '#{escape_javascript(@group.business_calendar.name)}',
-                  text: '#{escape_javascript(@group.business_calendar.name)}'}"
-    end
-
-%>
-
-jQuery('#business_calendar').select2({
-	multiple: false,
-	minimumResultsForSearch: 1000, //Keep high search value to shut off search box. Couldnt find a better way.
-	data: [<%=calendar.join(",").html_safe%>],
-	initSelection : function (element, callback) {
-		var data = {id: "<%=@group.business_calendar && @group.business_calendar.id%>", text: "<%=@group.business_calendar && @group.business_calendar.name%>"};
-        callback(data);
-    }
-});
-
-jQuery("#business_calendar").select2("val","<%=@group.business_calendar && @group.business_calendar.id%>");
-
-<% end %>
-
-});
-
-</script>
-<style>
-    #toggle_method {
-        margin-left: 70px;
-        border-left: 1px solid #e6e6e6;
-        padding-left: 15px;
-    }
-    #toggle_availability_container{
-        margin: 15px 0 0 70px;
-    }
-    .inline-box{
-      float : left;
-    }
-    .lead-desc.only_round {
-      margin-bottom: 0px;
-    } 
-
-    .select2-container.capping-limit {
-        width: 100px;
-    }
-</style>

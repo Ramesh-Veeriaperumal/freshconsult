@@ -153,6 +153,8 @@ module Helpdesk::TicketActions
                                 :source =>@source_ticket.source,
                                 :ticket_type =>@source_ticket.ticket_type,                             
                                 :cc_email => {:fwd_emails=>[],
+                                              :tkt_cc => [],
+                                              :reply_cc => [],
                                               :cc_emails => @note.cc_emails || []} ,
                                 :ticket_body_attributes => { :description_html => @note.body_html}                            
                                 
@@ -279,32 +281,38 @@ module Helpdesk::TicketActions
   end
 
   def full_paginate
-    unless current_account.features_included?(:no_list_view_count_query)
+
+    if collab_filter_enabled?
       total_entries = params[:total_entries]
-      if(total_entries.blank? || total_entries.to_i == 0)
-        load_cached_ticket_filters
-        load_ticket_filter
-        db_type = get_db_type(params)
-        Sharding.send(db_type) do
-          @ticket_filter.deserialize_from_params(params)
-          if current_account.count_es_enabled?
-            total_entries = Search::Tickets::Docs.new(@ticket_filter.query_hash).count(Helpdesk::Ticket)
-          else
-            joins = @ticket_filter.get_joins(@ticket_filter.sql_conditions)
-            joins[0].concat(@ticket_filter.states_join) if @ticket_filter.sql_conditions[0].include?("helpdesk_ticket_states")
-            options = { :joins => joins, :conditions => @ticket_filter.sql_conditions}
-            if @ticket_filter.sql_conditions[0].include?("helpdesk_tags.name")
-              options[:distinct] = true 
-              options[:select] = :id
+      @ticket_count = Collaboration::Ticket.fetch_count
+    else
+      unless current_account.features_included?(:no_list_view_count_query)
+        total_entries = params[:total_entries]
+        if(total_entries.blank? || total_entries.to_i == 0)
+          load_cached_ticket_filters
+          load_ticket_filter
+          db_type = get_db_type(params)
+          Sharding.send(db_type) do
+            @ticket_filter.deserialize_from_params(params)
+            if current_account.count_es_enabled? and non_indexed_columns_query?
+              total_entries = Search::Tickets::Docs.new(@ticket_filter.query_hash).count(Helpdesk::Ticket)
+            else
+              joins = @ticket_filter.get_joins(@ticket_filter.sql_conditions)
+              joins[0].concat(@ticket_filter.states_join) if @ticket_filter.sql_conditions[0].include?("helpdesk_ticket_states")
+              options = { :joins => joins, :conditions => @ticket_filter.sql_conditions}
+              if @ticket_filter.sql_conditions[0].include?("helpdesk_tags.name")
+                options[:distinct] = true 
+                options[:select] = :id
+              end
+              total_entries = current_account.tickets.permissible(current_user).count(options)
             end
-            total_entries = current_account.tickets.permissible(current_user).count(options)
           end
         end
+        @ticket_count = total_entries.to_i
+      else
+        load_cached_ticket_filters
+        render 'no_paginate' 
       end
-      @ticket_count = total_entries.to_i
-    else
-      load_cached_ticket_filters
-      render 'no_paginate' 
     end
   end
 
@@ -360,6 +368,13 @@ module Helpdesk::TicketActions
 
   def create_ticket_export_fields_list(list)
     set_tickets_redis_lpush(export_redis_key, list) if list.any?
+  end
+
+  def non_indexed_columns_query?
+    return false if params["data_hash"].blank?
+    query_hash = params["data_hash"].is_a?(String) ? JSON.parse(params["data_hash"]) : params["data_hash"]
+    query_conditions = query_hash.map{|x| x["condition"]}
+    (query_conditions - TicketConstants::DB_INDEXED_QUERY_COLUMNS).count > 0
   end
 
   def export_redis_key

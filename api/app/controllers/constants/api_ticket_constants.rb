@@ -4,24 +4,30 @@ module ApiTicketConstants
   HASH_FIELDS = ['custom_fields'].freeze
   COMPLEX_FIELDS = ARRAY_FIELDS | HASH_FIELDS
   CREATE_FIELDS = %w(description due_by email_config_id fr_due_by group_id priority
-                     email phone twitter_id facebook_id requester_id name responder_id source status subject type product_id
+                     email phone twitter_id facebook_id requester_id name
+                     responder_id source status subject type product_id company_id
                   ).freeze | ARRAY_FIELDS | HASH_FIELDS
   UPDATE_FIELDS = %w(description due_by email_config_id fr_due_by group_id priority
-                     email phone twitter_id facebook_id requester_id name responder_id source status subject type product_id
+                     email phone twitter_id facebook_id requester_id name
+                     responder_id source status subject type product_id company_id
                   ).freeze | (ARRAY_FIELDS - ['cc_emails']) | HASH_FIELDS
   COMPOSE_EMAIL_FIELDS = (CREATE_FIELDS - %w(source product_id responder_id requester_id phone twitter_id facebook_id)).freeze
   SHOW_FIELDS = ['include']
   ALLOWED_INCLUDE_PARAMS = %w(conversations requester company stats)
-  SIDE_LOADING = ['requester', 'stats']
+  SIDE_LOADING = ['requester', 'stats', 'company']
   INCLUDE_PRELOAD_MAPPING = { 'stats' => :ticket_states }
   ORDER_TYPE = TicketsFilter::SORT_ORDER_FIELDS.map(&:first).map(&:to_s).freeze
-  ORDER_BY = TicketsFilter::SORT_FIELDS.map(&:first).map(&:to_s) - ['priority']
+  ORDER_BY = TicketsFilter.sort_fields_options.map(&:last).map(&:to_s) - ['priority']
   DEFAULT_ORDER_BY = TicketsFilter::DEFAULT_SORT
   DEFAULT_ORDER_TYPE = TicketsFilter::DEFAULT_SORT_ORDER
-  VALIDATABLE_DELEGATOR_ATTRIBUTES = %w(group_id responder_id product_id email_config_id custom_field requester_id status facebook_id ticket_type).freeze
+  VALIDATABLE_DELEGATOR_ATTRIBUTES = %w(group_id responder_id product_id
+                                        email_config_id custom_field requester_id
+                                        status facebook_id ticket_type company_id).freeze
   PRIORITIES = TicketConstants::PRIORITY_TOKEN_BY_KEY.keys.freeze
   SOURCES = TicketConstants::SOURCE_KEYS_BY_TOKEN.slice(:email, :portal, :phone, :chat, :mobihelp, :feedback_widget).values.freeze
 
+  PIPE_CREATE_FIELDS = CREATE_FIELDS | %w( pending_since created_at updated_at )
+  
   SCOPE_BASED_ON_ACTION = {
     'update'  => { deleted: false, spam: false },
     'restore' => { deleted: true, spam: false },
@@ -40,6 +46,7 @@ module ApiTicketConstants
 
   CLOSED = Helpdesk::Ticketfields::TicketStatus::CLOSED
   RESOLVED = Helpdesk::Ticketfields::TicketStatus::RESOLVED
+  PENDING = Helpdesk::Ticketfields::TicketStatus::PENDING
 
   # Routes that doesn't accept any params
   NO_PARAM_ROUTES = %w(restore).freeze

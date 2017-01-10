@@ -18,6 +18,7 @@ class TicketDelegator < BaseDelegator
                               }
                             }
   validate :facebook_id_exists?, if: -> { facebook_id }
+  validate :company_presence, if: -> { company_id }
 
   def initialize(record, options)
     @ticket_fields = options[:ticket_fields]
@@ -45,7 +46,7 @@ class TicketDelegator < BaseDelegator
   end
 
   def responder_presence #
-    responder = Account.current.agents_from_cache.detect { |x| x.user_id == responder_id }.try(:user)
+    responder = Account.current.agents_details_from_cache.detect { |x| x.id == responder_id }
     if responder.nil?
       errors[:responder] << :"can't be blank"
     else
@@ -60,6 +61,14 @@ class TicketDelegator < BaseDelegator
     elsif !User.current.can_view_all_tickets? && Account.current.restricted_compose_enabled? && (User.current.group_ticket_permission || User.current.assigned_ticket_permission)
       accessible_email_config = email_config.group_id.nil? || User.current.agent_groups.exists?(group_id: email_config.group_id)
       errors[:email_config_id] << :inaccessible_value unless accessible_email_config
+    end
+  end
+
+  def company_presence
+    company = Account.current.companies_from_cache.detect { |x| company_id == x.id }
+    if company.nil?
+      errors[:company_id] << :invalid_company_id
+      @error_options[:company_id] = { company_id: company_id }
     end
   end
 

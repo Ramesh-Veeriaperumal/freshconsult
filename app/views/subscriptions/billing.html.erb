@@ -14,7 +14,7 @@
 		<h4 class="sub-lead">
 				Selected Plan : 
 				<%= t('current_plan_details', 
-						:plan_name => @subscription.subscription_plan.name, 
+						:plan_name => @subscription.subscription_plan.display_name, 
 						:agent_limit => @subscription.agent_limit).html_safe %>
 		</h4>
 		<div class="lead-info">

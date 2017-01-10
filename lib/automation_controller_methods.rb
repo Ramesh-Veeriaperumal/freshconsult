@@ -1,6 +1,7 @@
 module AutomationControllerMethods
 
   include Integrations::IntegrationHelper
+  include Spam::SpamAction
 
   def index
     @va_rules = all_scoper
@@ -111,11 +112,12 @@ module AutomationControllerMethods
       { :name => -1, :value => "-----------------------" },
       { :name => "add_comment", :value => t('add_note'), :domtype => 'comment',
         :condition => automations_controller? },
-      { :name => "add_tag", :value => t('add_tags'), :domtype => 'text' },
+      { :name => "add_tag", :value => t('add_tags'), :domtype => "autocomplete_tags", 
+          :data_url => tags_search_autocomplete_index_path, :unique_action => true },
       { :name => "add_a_cc", :value => t('add_a_cc'), :domtype => 'single_email',
         :condition => va_rules_controller? },
       { :name => "add_watcher", :value => t('dispatch.add_watcher'), :domtype => 'multiple_select',
-        :choices => watcher_agents, :unique_action => true },
+        :choices => watcher_agents, :unique_action => true, :condition => current_account.add_watcher_enabled? },
       { :name => "trigger_webhook", :value => t('trigger_webhook'), :domtype => 'webhook',
         :unique_action => true,
         :condition => (va_rules_controller? || observer_rules_controller?) },
@@ -224,4 +226,13 @@ module AutomationControllerMethods
   def escape_html_entities_in_json
     ActiveSupport::JSON::Encoding.escape_html_entities_in_json = true
   end
+
+  def validate_email_template
+    action_data = (ActiveSupport::JSON.decode params[:action_data])
+    action_data.each do |action|
+      validate_template_content(action['email_subject'], action['email_body'], 
+        EmailNotificationConstants::EMAIL_TO_REQUESTOR) if action['name'] == 'send_email_to_requester'
+    end
+  end
+  
 end

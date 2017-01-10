@@ -15,7 +15,6 @@ begin
   #US Polls dircetly from the global queue - No region specific queues
   if S3_CONFIG[:region] == 'us-east-1'
     $sqs_twitter  = AWS::SQS.new.queues.named(SQS[:twitter_realtime_queue])
-    $sqs_gnip_2_0 = AWS::SQS.new.queues.named(SQS[:gnip_2_0_realtime_queue])
     
   #EUC polls from the region specifuc queue pushed from EU
   elsif S3_CONFIG[:region] == 'eu-central-1'
@@ -61,17 +60,24 @@ begin
   # Add loop if more queues
   #
   SQS_V2_QUEUE_URLS = {
-    SQS[:search_etl_queue]      => AwsWrapper::SqsV2.queue_url(SQS[:search_etl_queue]),
-    SQS[:count_etl_queue]       => AwsWrapper::SqsV2.queue_url(SQS[:count_etl_queue]),
-    SQS[:reports_etl_msg_queue] => AwsWrapper::SqsV2.queue_url(SQS[:reports_etl_msg_queue]),
-    SQS[:activity_queue]        => AwsWrapper::SqsV2.queue_url(SQS[:activity_queue]),
-    SQS[:sqs_es_index_queue]    => AwsWrapper::SqsV2.queue_url(SQS[:sqs_es_index_queue]),
-    SQS[:cti_screen_pop]        => AwsWrapper::SqsV2.queue_url(SQS[:cti_screen_pop]),
-    SQS[:auto_refresh_queue]    => AwsWrapper::SqsV2.queue_url(SQS[:auto_refresh_queue]),
+    SQS[:search_etl_queue]            => AwsWrapper::SqsV2.queue_url(SQS[:search_etl_queue]),
+    SQS[:count_etl_queue]             => AwsWrapper::SqsV2.queue_url(SQS[:count_etl_queue]),
+    SQS[:reports_etl_msg_queue]       => AwsWrapper::SqsV2.queue_url(SQS[:reports_etl_msg_queue]),
+    SQS[:activity_queue]              => AwsWrapper::SqsV2.queue_url(SQS[:activity_queue]),
+    SQS[:sqs_es_index_queue]          => AwsWrapper::SqsV2.queue_url(SQS[:sqs_es_index_queue]),
+    SQS[:cti_screen_pop]              => AwsWrapper::SqsV2.queue_url(SQS[:cti_screen_pop]),
+    SQS[:auto_refresh_queue]          => AwsWrapper::SqsV2.queue_url(SQS[:auto_refresh_queue]),
     SQS[:auto_refresh_alb_queue]    => AwsWrapper::SqsV2.queue_url(SQS[:auto_refresh_alb_queue]),
-    SQS[:agent_collision_queue] => AwsWrapper::SqsV2.queue_url(SQS[:agent_collision_queue]),
     SQS[:agent_collision_alb_queue] => AwsWrapper::SqsV2.queue_url(SQS[:agent_collision_alb_queue]),
-    SQS[:marketplace_app_queue]     => AwsWrapper::SqsV2.queue_url(SQS[:marketplace_app_queue])
+    SQS[:marketplace_app_queue]     => AwsWrapper::SqsV2.queue_url(SQS[:marketplace_app_queue]),
+    SQS[:free_customer_email_queue]   => AwsWrapper::SqsV2.queue_url(SQS[:free_customer_email_queue]),
+    SQS[:active_customer_email_queue] => AwsWrapper::SqsV2.queue_url(SQS[:active_customer_email_queue]),
+    SQS[:trial_customer_email_queue]  => AwsWrapper::SqsV2.queue_url(SQS[:trial_customer_email_queue]),
+    SQS[:default_email_queue]         => AwsWrapper::SqsV2.queue_url(SQS[:default_email_queue]),
+    SQS[:email_dead_letter_queue]     => AwsWrapper::SqsV2.queue_url(SQS[:email_dead_letter_queue]),
+    SQS[:agent_collision_queue] => AwsWrapper::SqsV2.queue_url(SQS[:agent_collision_queue]),
+    SQS[:collab_agent_update_queue] => AwsWrapper::SqsV2.queue_url(SQS[:collab_agent_update_queue]),
+    SQS[:collab_ticket_update_queue] => AwsWrapper::SqsV2.queue_url(SQS[:collab_ticket_update_queue])
   }
 
 rescue => e

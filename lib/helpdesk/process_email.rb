@@ -7,6 +7,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
   include AccountConstants
   include EmailHelper
   include Helpdesk::ProcessByMessageId
+  include Helpdesk::Email::Constants 
   include Helpdesk::DetectDuplicateEmail
   include ActionView::Helpers::TagHelper
   include ActionView::Helpers::TextHelper
@@ -17,6 +18,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
   include Helpdesk::Permission::Ticket
   include Helpdesk::ProcessAgentForwardedEmail
   include Cache::Memcache::AccountWebhookKeyCache
+  include Redis::RedisKeys
+  include Redis::OthersRedis
 
   class UserCreationError < StandardError
   end
@@ -26,8 +29,54 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
 
   attr_accessor :reply_to_email, :additional_emails,:archived_ticket, :start_time, :actual_archive_ticket
 
+  def email_spam_watcher_counter(account)
+    spam_watcher_options = {
+          :key => "sw_solution_articles", 
+          :threshold => 50,
+          :sec_expire => 7200,
+    }
+    key  = spam_watcher_options[:key]
+    threshold = spam_watcher_options[:threshold]
+    sec_expire = spam_watcher_options[:sec_expire]
+    begin
+      Timeout::timeout(SpamConstants::SPAM_TIMEOUT) {
+        user_id = ""
+        account_id = account.id
+        max_count = "#{threshold}".to_i
+        final_key = key + ":" + account_id.to_s + ":" + user_id.to_s
+        # this case is added for the sake of skipping imports
+        return true if ((Time.now.to_i - account.created_at.to_i) > 1.day)
+        return true if $spam_watcher.perform_redis_op("get", account_id.to_s + "-" + user_id.to_s)
+        count = $spam_watcher.perform_redis_op("rpush", final_key, Time.now.to_i)
+        sec_expire = "#{sec_expire}".to_i 
+        $spam_watcher.perform_redis_op("expire", final_key, sec_expire+1.minute)
+        puts "here"
+        if count >= max_count
+          puts "inside here"
+          head = $spam_watcher.perform_redis_op("lpop", final_key).to_i
+          time_diff = Time.now.to_i - head
+          puts "*"*100
+          puts "#{time_diff}"
+          puts "#{sec_expire}"
+          puts "*"*100
+          if time_diff <= sec_expire
+            # ban_expiry = sec_expire - time_diff
+            puts "outside here"
+            $spam_watcher.perform_redis_op("rpush", SpamConstants::SPAM_WATCHER_BAN_KEY,final_key)
+          end
+        end
+      }
+    rescue Exception => e
+      puts e
+      Rails.logger.error e.backtrace
+      NewRelic::Agent.notice_error(e,{:description => "error occured in updating spam_watcher_counter"})
+    end
+  end
+
+
   def perform(parsed_to_email = Hash.new, skip_encoding = false)
     # from_email = parse_from_email
+    result = {}
     encode_stuffs unless skip_encoding
     email_processing_log("Email received: Message-Id #{message_id}")
     self.start_time = Time.now.utc
@@ -35,7 +84,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     shardmapping = ShardMapping.fetch_by_domain(to_email[:domain])
     unless shardmapping.present?
       email_processing_log("Email Processing Failed: No Shard Mapping found!")
-      return
+      return processed_email_data(PROCESSED_EMAIL_STATUS[:shard_mapping_failed])
     end
     return shardmapping.status unless shardmapping.ok?
     Sharding.select_shard_of(to_email[:domain]) do
@@ -43,20 +92,21 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     if !account.nil? and account.active?
       # clip_large_html
       account.make_current
+      email_spam_watcher_counter(account)
       email_processing_log("Processing email for ", to_email[:email])
       verify
       TimeZone.set_time_zone
       from_email = parse_from_email(account)
       if from_email.nil?
         email_processing_log("Email Processing Failed: No From Email found!", to_email[:email])
-        return
+        return processed_email_data(PROCESSED_EMAIL_STATUS[:invalid_from_email], account.id)
       end
       if account.features?(:domain_restricted_access)
         domain = (/@(.+)/).match(from_email[:email]).to_a[1]
         wl_domain  = account.account_additional_settings_from_cache.additional_settings[:whitelisted_domain]
         unless Array.wrap(wl_domain).include?(domain)
           email_processing_log "Email Processing Failed: Not a White listed Domain!", to_email[:email]
-          return
+          return processed_email_data(PROCESSED_EMAIL_STATUS[:restricted_domain_access], account.id)
         end
       end
       kbase_email = account.kbase_email
@@ -65,16 +115,16 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         email_config = account.email_configs.find_by_to_email(to_email[:email])
         if email_config && (from_email[:email].to_s.downcase == email_config.reply_email.to_s.downcase)
           email_processing_log "Email Processing Failed: From-email and reply-email are same!", to_email[:email]
-          return
+          return processed_email_data(PROCESSED_EMAIL_STATUS[:self_email], account.id)
         end
-        return if duplicate_email?(from_email[:email], 
-                                   to_email[:email], 
-                                   params[:subject], 
-                                   message_id)
+        if duplicate_email?(from_email[:email], to_email[:email], params[:subject], message_id)
+          return processed_email_data(PROCESSED_EMAIL_STATUS[:duplicate], account.id)
+        end
         if (from_email[:email] =~ EMAIL_VALIDATOR).nil?
           error_msg = "Invalid email address found in requester details - #{from_email[:email]} for account - #{account.id}"
           Rails.logger.debug error_msg
-          return
+          NewRelic::Agent.notice_error(Exception.new(error_msg))
+          return processed_email_data(PROCESSED_EMAIL_STATUS[:invalid_from_email], account.id)
         end
         user = existing_user(account, from_email)
 
@@ -84,13 +134,13 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         else
           if user.blocked?
             email_processing_log "Email Processing Failed: User is blocked!", to_email[:email]
-            return
+            return processed_email_data(PROCESSED_EMAIL_STATUS[:user_blocked], account.id)
           end
           text_part
         end
         if (user.blank? && !account.restricted_helpdesk?)
           email_processing_log "Email Processing Failed: Blank User!", to_email[:email]
-          return
+          return processed_email_data(PROCESSED_EMAIL_STATUS[:blank_user], account.id)
         end
         set_current_user(user)        
 
@@ -102,13 +152,13 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
            params[:html] = body_html_with_formatting(params[:text],email_cmds_regex) 
           end
         end
-          
-        add_to_or_create_ticket(account, from_email, to_email, user, email_config)
+
+        result = add_to_or_create_ticket(account, from_email, to_email, user, email_config)
       end
-      
+
       begin
         if kbase_email_present?(kbase_email)
-          create_article(account, from_email, to_email)
+          result = create_article(account, from_email, to_email)
         end
       rescue Exception => e
         NewRelic::Agent.notice_error(e)
@@ -116,8 +166,20 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       Account.reset_current_account
     else
       email_processing_log "Email Processing Failed: No active Account found!"
+      Rails.logger.info "Email Processing Failed: No active Account found!"
+      if account.nil?
+        Rails.logger.info "Email Processing Failed: Account is nil"
+        return processed_email_data(PROCESSED_EMAIL_STATUS[:invalid_account])
+      elsif !account.active?
+        Rails.logger.info "Email Processing Failed: Account is not active"
+        return processed_email_data(PROCESSED_EMAIL_STATUS[:inactive_account], account.id)
+      else
+        Rails.logger.info "Email Processing Failed: Invalid Account"
+        return processed_email_data(PROCESSED_EMAIL_STATUS[:invalid_account])
+      end   
     end
     end
+    result
   end
 
   # ITIL Related Methods starts here
@@ -143,20 +205,20 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     end
     if user.blank?
       email_processing_log "Email Processing Failed: Blank User!", to_email[:email]
-      return
+      return processed_email_data(PROCESSED_EMAIL_STATUS[:blank_user], account.id)
     end
     params[:cc] = permissible_ccs(user, params[:cc], account)
     if ticket
       if(from_email[:email].to_s.downcase == ticket.reply_email.to_s.downcase) #Premature handling for email looping..
         email_processing_log "Email Processing Failed: From-email and reply-email email are same!", to_email[:email]
-        return
+        return processed_email_data(PROCESSED_EMAIL_STATUS[:self_email], account.id)
       end
       primary_ticket = check_primary(ticket,account)
       if primary_ticket 
         return create_ticket(account, from_email, to_email, user, email_config) if primary_ticket.is_a?(Helpdesk::ArchiveTicket)
         ticket = primary_ticket
       end
-      add_email_to_ticket(ticket, from_email, to_email, user)
+      return add_email_to_ticket(ticket, from_email, to_email, user)
     else
       if archive_ticket
         self.archived_ticket = archive_ticket
@@ -171,7 +233,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
           return add_email_to_ticket(linked_ticket, from_email, to_email, user)
         end
       end
-      create_ticket(account, from_email, to_email, user, email_config)
+      return create_ticket(account, from_email, to_email, user, email_config)
     end
   end
 
@@ -203,7 +265,12 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       
     article_params[:attachments] = attachments
     
-    Helpdesk::KbaseArticles.create_article_from_email(article_params)
+    article = Helpdesk::KbaseArticles.create_article_from_email(article_params)
+    if article.present?
+      return processed_email_data(PROCESSED_EMAIL_STATUS[:success], account.id, article) 
+    else
+      return processed_email_data(PROCESSED_EMAIL_STATUS[:failed_article], account.id)
+    end
   end
 
   private
@@ -447,6 +514,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         NewRelic::Agent.notice_error(e)
       end
       message_key = zendesk_email || message_id
+      ticket = update_spam_data(ticket)
 
       # Creating attachments without attachable info
       # Hitting S3 outside create-ticket transaction
@@ -462,10 +530,12 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       begin
         self.class.trace_execution_scoped(['Custom/Sendgrid/tickets']) do
           (ticket.header_info ||= {}).merge!(:message_ids => [message_key]) unless message_key.nil?
-          return if large_email && duplicate_email?(from_email[:email], 
+          if large_email && duplicate_email?(from_email[:email], 
                                                     to_email[:email], 
                                                     params[:subject], 
                                                     message_id)
+            return processed_email_data(PROCESSED_EMAIL_STATUS[:duplicate], account.id)
+          end
           if account.features_included?(:archive_tickets) && archived_ticket
             ticket.build_archive_child(:archive_ticket_id => archived_ticket.id) 
             # tags = archived_ticket.tags
@@ -480,18 +550,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
                                         message_id) if large_email
         end
 
-        # Insert header to schema_less_ticket_dynamo
-        begin
-          Timeout::timeout(0.5) do
-            dynamo_obj = Helpdesk::Email::SchemaLessTicketDynamo.new
-            dynamo_obj['account_id'] = Account.current.id
-            dynamo_obj['ticket_id'] = ticket.id
-            dynamo_obj['headers'] = params[:headers]
-            dynamo_obj.save
-          end
-        rescue Exception => e
-          NewRelic::Agent.notice_error(e) 
-        end
+      
+        
 
       rescue AWS::S3::Errors::InvalidURI => e
         # FreshdeskErrorsMailer.deliver_error_email(ticket,params,e)
@@ -502,6 +562,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         NewRelic::Agent.notice_error(e)
       end
       store_ticket_threading_info(account, message_key, ticket)
+      # ticket
+      return processed_email_data(PROCESSED_EMAIL_STATUS[:success], account.id, ticket)
     end
 
     def store_ticket_threading_info(account, message_id, ticket)
@@ -667,10 +729,12 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       self.class.trace_execution_scoped(['Custom/Sendgrid/notes']) do
         # ticket.save
         note.notable = ticket
-        return if large_email && duplicate_email?(from_email[:email], 
-                                                  to_email[:email],
+        if large_email && duplicate_email?(from_email[:email], 
+                                                  parse_to_emails.first, 
                                                   params[:subject], 
                                                   message_id)
+          return processed_email_data(PROCESSED_EMAIL_STATUS[:duplicate], ticket.account_id)
+        end
         note.save_note
         email_processing_log "Email Processing Successful: Email Successfully created as Note!!", to_email[:email]
         cleanup_attachments note
@@ -679,6 +743,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
                                       params[:subject], 
                                       message_id) if large_email
       end
+      # note
+      return processed_email_data(PROCESSED_EMAIL_STATUS[:success], note.account_id, note)
     end
     
     def rsvp_to_fwd?(ticket, from_email, user)
@@ -735,9 +801,18 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         end
         if params[:text]
           text = text_for_detection
-          args = [user, text]  #user_email changed
-          #Delayed::Job.enqueue(Delayed::PerformableMethod.new(Helpdesk::DetectUserLanguage, :set_user_language!, args), nil, 1.minutes.from_now) if language.nil? and signup_status
-          Resque::enqueue_at(1.minute.from_now, Workers::DetectUserLanguage, {:user_id => user.id, :text => text, :account_id => Account.current.id}) if language.nil? and signup_status
+          if language.nil? and signup_status
+            if redis_key_exists?(DETECT_USER_LANGUAGE_SIDEKIQ_ENABLED)
+              Users::DetectLanguage.perform_async({:user_id => user.id, 
+                                                   :text => text })
+            else
+              Resque::enqueue_at(1.minute.from_now, 
+                                 Workers::DetectUserLanguage, 
+                                 {:user_id => user.id, 
+                                  :text => text, 
+                                  :account_id => Account.current.id})
+            end
+          end
         end
       end
       user
@@ -769,26 +844,42 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
             if content_id
               content_id_hash[att.content_file_name+"#{inline_count}"] = content_ids["attachment#{i+1}"]
               inline_count+=1
-              inline_attachments.push att
+              inline_attachments.push att unless virus_attachment?(params["attachment#{i+1}"], account)
             else
-              attachments.push att
+              attachments.push att unless  virus_attachment?(params["attachment#{i+1}"], account)
             end
           end
         rescue HelpdeskExceptions::AttachmentLimitException => ex
           Rails.logger.error("ERROR ::: #{ex.message}")
-          add_notification_text item
+          message = attachment_exceeded_message(HelpdeskAttachable::MAX_ATTACHMENT_SIZE)
+          add_notification_text item, message
           break
         rescue Exception => e
           Rails.logger.error("Error while adding item attachments for ::: #{e.message}")
           break
         end
       end
+      if @total_virus_attachment
+        message = virus_attachment_message(@total_virus_attachment)
+        add_notification_text item, message
+      end
       item.header_info = {:content_ids => content_id_hash} unless content_id_hash.blank?
       return attachments, inline_attachments
     end
 
-    def add_notification_text item
-      message = attachment_exceeded_message(HelpdeskAttachable::MAX_ATTACHMENT_SIZE)
+    def virus_attachment? attachment, account
+      if account.subscription.trial?
+        result = Email::AntiVirus.scan(io: File.open(attachment.tempfile)) 
+        if result && result[0] == "virus"
+          @total_virus_attachment = 0 unless @total_virus_attachment
+          @total_virus_attachment += 1  
+          return true
+        end
+      end
+      return false
+    end
+
+    def add_notification_text item, message
       notification_text = "\n" << message
       notification_text_html = Helpdesk::HTMLSanitizer.clean(content_tag(:div, message, :class => "attach-error"))
       if item.is_a?(Helpdesk::Ticket)
@@ -820,7 +911,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         Regexp.new(Regexp.escape(address) + "\s+wrote:", Regexp::IGNORECASE),
         Regexp.new("\\n.*.\d.*." + Regexp.escape(address) ),
         Regexp.new("<div>\n<br>On.*?wrote:"), #iphone
-        Regexp.new("On.*?wrote:"),
+        Regexp.new("On((?!On).)*wrote:"),
         Regexp.new("-+original\s+message-+\s*", Regexp::IGNORECASE),
         Regexp.new("from:\s*", Regexp::IGNORECASE)
       ]
@@ -1003,6 +1094,34 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     end
     # Returning true by default.
     return true
+  end  
+
+  def update_spam_data(ticket)
+    if params[:spam_info].present?
+      begin
+        ticket.sds_spam = params[:spam_info]['spam']
+        ticket.spam_score = params[:spam_info]['score']
+        Rails.logger.info "Spam rules triggered for ticket #{ticket.id}: #{params[:spam_info]['rules']}"
+      rescue => e
+        puts e.message
+      end
+    end
+    ticket
+  end
+
+  def processed_email_data(processed_status, account_id = -1, model = nil)
+    data = { :account_id => account_id, :processed_status => processed_status }
+    if processed_status == PROCESSED_EMAIL_STATUS[:success] && model.present?
+      if model.class.name.include?("Ticket")
+        data.merge!(:ticket_id => model.id, :type => PROCESSED_EMAIL_TYPE[:ticket], :note_id => "-1", :article_id => "-1") # check with nil values
+      elsif model.class.name.include?("Note")
+        data.merge!(:ticket_id => model.notable_id, :note_id => model.id, :type => PROCESSED_EMAIL_TYPE[:note], :article_id => "-1")
+      elsif model.class.name.include?("Article")
+        data.merge!(:article_id => model.id, :type => PROCESSED_EMAIL_TYPE[:article], :ticket_id => "-1", :note_id => "-1")
+      end
+    end
+    data.merge!(:message_id => message_id) if (account_id == -1)
+    data.with_indifferent_access      
   end
  
   alias_method :parse_cc_email, :parse_cc_email_new

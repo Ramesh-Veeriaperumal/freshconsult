@@ -377,3 +377,79 @@ html[dir="rtl"] .av-next .ficon-arrow-right:before {
 .av-message-text {
 	margin: 20px 0;
 }
+/*over writing for add to reply feature*/ 
+.addToRply {
+	position: relative;
+	display: inline-block;
+	overflow: hidden;
+	margin-right: 10px;
+
+	.attachment.list_element{
+		margin:5px 0;
+	}
+
+	.add-attachment-to-conv {
+		background: rgba(255,255,255,0.4);
+		border: 0px #e8e8e8 solid;
+		@include border-radius(4px);
+		padding: 0;
+        position: absolute;
+        top: 5px;
+        @include right(0px);
+        min-height: 42px;
+	    box-sizing: border-box;
+	    display: block;
+	    @include right(0);
+	    width:0;
+	    -moz-transition: all 0.1s; 
+	    -webkit-transition: all 0.1s; 
+    	transition: all 0.1s;
+	    span.ficon {
+			color: #999;
+			line-height: 40px;
+			font-size: 20px;
+	    }
+	}
+}
+
+.addToRply:hover {
+	.add-attachment-to-conv {
+		padding:0 10px;
+		width:auto;
+		border-width: 1px;
+	   }
+	}
+.inline-add-to-rply-parent {
+ position:relative;
+ display:inline-block;
+	 .inline-add-to-rply {
+	 	display: none;
+	 }
+ &:hover{
+ 	.inline-add-to-rply {
+ 		display: inline-block;
+ 	}
+ }
+}
+.inline-add-to-rply {
+	background: white;
+	padding: 7px 12px;
+	position: absolute;
+	border-radius: 50%;   
+	box-shadow: 0px 0px 7px rgba(0,0,0,0.8);
+	top: 10px;
+	@include left(10px);
+	cursor:pointer;
+	color: black;
+	text-decoration: none;
+	border-radius: 50%;
+	span.ficon-add-attachment,span.ficon-checkmark-thick {
+		font-size: 20px;
+	}
+
+}
+.popover-addToReply-icon {
+	font-size: 1.2em;
+}
+
+

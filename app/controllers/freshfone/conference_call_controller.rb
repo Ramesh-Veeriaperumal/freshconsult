@@ -10,6 +10,7 @@ class Freshfone::ConferenceCallController < FreshfoneBaseController
   include Freshfone::AcwUtil
   
   before_filter :select_current_call, :only => [:status]
+  before_filter :update_cancel_response, only: :status
   before_filter :complete_browser_leg, only: [:status], if: :agent_leg?
   before_filter :complete_supervisor_leg, :only => [:status], :if => :supervisor_leg?
   before_filter :check_conference_feature, :only => [:status]
@@ -25,6 +26,8 @@ class Freshfone::ConferenceCallController < FreshfoneBaseController
   before_filter :set_abandon_state, :only => [:status]
   before_filter :call_quality_monitoring_enabled?, :only => [:save_call_quality_metrics]
   before_filter :handle_simultaneous_answer, only: :wrap_call, if: :acw_without_new_notifications?
+  before_filter :handle_invalid_details_save, only: :save_notable, unless: :valid_call_and_ticket?
+  before_filter :validate_call_details_request, only: :load_notable
 
   def status
     begin
@@ -45,23 +48,21 @@ class Freshfone::ConferenceCallController < FreshfoneBaseController
         :wait_url => incoming_agent_wait_url })
   end
 
-  def call_notes
-    call = ongoing_call
-    if call.present? && call.ancestry.present?
-      @call_sid ||= select_notes_sid(call)
-      notes = CGI.unescapeHTML get_key(call_notes_key).to_s      
-      remove_key(call_notes_key) unless notes.nil? 
-      render :json => {:call_notes => notes}
-    else
-      render :json => {:call_notes => nil}
-    end
+  def load_notable
+    @call_id ||= get_call_id
+    ticket_note = get_key(call_notable_key).to_s
+    return render json: {call_notable: false } if ticket_note.blank?
+    remove_key(call_notable_key)
+    render json: {call_notable: JSON.parse(ticket_note) }
   end
 
-  def save_call_notes
-    @call_sid ||= params[:call_sid]
-    render :json => { 
-      :notes_saved => set_key(call_notes_key, CGI.escapeHTML(params[:call_notes]) , 600)
-    }
+  def save_notable
+    @call_id ||= params[:call_id]
+    ticket_note = set_key(call_notable_key,
+                          { notes: params[:call_notes],
+                            ticket: params[:ticket_details] }.to_json,
+                          600) if params[:call_notes].present? || params[:ticket_details].present?
+    render json: { data_set: ticket_note}
   end
 
   def save_call_quality_metrics
@@ -107,11 +108,6 @@ class Freshfone::ConferenceCallController < FreshfoneBaseController
       return if caller.blank?
       call = current_account.freshfone_calls.first( :conditions => {:caller_number_id => caller.id}, 
                 :order => "freshfone_calls.id DESC")
-    end
-
-    def select_notes_sid(call)
-      return call.parent.call_sid if call.meta.warm_transfer_meta?
-      call.call_sid
     end
 
     def validate_dial_call_status
@@ -247,14 +243,6 @@ class Freshfone::ConferenceCallController < FreshfoneBaseController
       render :xml => comment_twiml("Blocked Number") and return if current_call.present? && current_call.incoming? && current_call.blocked?
     end
 
-    def call_notes_key
-      @call_notes_key ||= FRESHFONE_CALL_NOTE % { :account_id => @current_account.id, :call_sid => @call_sid }
-    end
-
-    def call_quality_metrics_key(dial_call_sid)
-      @call_quality_metrics_key ||= FRESHFONE_CALL_QUALITY_METRICS % { :account_id => @current_account.id, :dial_call_sid => dial_call_sid }
-    end
-
     def set_outgoing_status
       if params[:call].present? && params[:CallStatus].present?
         params[:DialCallStatus] = params[:CallStatus] 
@@ -324,5 +312,39 @@ class Freshfone::ConferenceCallController < FreshfoneBaseController
     #call, that agent will be stuck in busy state. reset presence on closing end-call form
     def simultaneous_canceled_transfer?
       current_call.ancestry.present? && current_call.canceled?
+    end
+
+    def handle_invalid_details_save
+      render json: { data_saved: false }
+    end
+
+    def valid_call_and_ticket?
+      current_account.freshfone_calls.where(id: params[:call_id]).present? &&
+        ( params[:ticket_details].blank? ||
+          current_account.tickets.visible.permissible(current_user).where(
+            display_id: params[:ticket_details][:id]).present? )
+    end
+
+    def validate_call_details_request
+      @call = ongoing_call
+      return if @call.present? && (@call.ancestry.present? ||
+        ongoing_supervisor_call.present?)
+      render json: { data_available: false}
+    end
+
+    def ongoing_supervisor_call
+      @suppervisor_call ||= @call.supervisor_controls.connecting_or_inprogress_calls.last
+    end
+
+    def get_call_id
+      return @call.id if ongoing_supervisor_call.present?
+      @call.parent.id
+    end
+
+    def update_cancel_response
+      call_meta = current_call.meta
+      return unless current_call.ringing? && call_meta.present? &&
+        (current_call.incoming? || current_call.transferred_leg?)
+      call_meta.cancel_all_agents
     end
 end

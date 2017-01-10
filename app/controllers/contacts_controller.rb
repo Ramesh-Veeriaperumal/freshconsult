@@ -9,6 +9,7 @@ class ContactsController < ApplicationController
    before_filter :clean_params, :only => [:update, :update_contact, :update_description_and_tags]
    before_filter :check_demo_site, :only => [:destroy,:update,:update_contact, :update_description_and_tags, :create, :create_contact]
    before_filter :set_selected_tab
+   before_filter(:only => [:make_occasional_agent]) { |c| c.requires_this_feature :occasional_agent }
    before_filter :load_item, :only => [:edit, :update, :update_contact, :update_description_and_tags, :make_agent,:make_occasional_agent, 
                                         :change_password, :update_password]
    before_filter :can_change_password?, :only => [:change_password, :update_password]

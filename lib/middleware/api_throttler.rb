@@ -7,7 +7,7 @@ class Middleware::ApiThrottler < Rack::Throttle::Hourly
   include MemcacheKeys
   
   SKIPPED_SUBDOMAINS = ["admin", "billing", "partner","signup", "email","login", "emailparser", "mailboxparser","freshops"] + FreshopsSubdomains
-  SKIPPED_PATHS      = ["/reports/v2","/suggest/tickets"]
+  SKIPPED_PATHS      = ["/reports/v2","/suggest/tickets", "/sentiment_feedback"]
   API_FORMATS        = ['.xml', '.json', 'format=json', 'format=xml']
   THROTTLED_TYPES    = ["application/json", "application/x-javascript", "text/javascript",
                       "text/x-javascript", "text/x-json", "application/xml", "text/xml"]
@@ -48,7 +48,7 @@ class Middleware::ApiThrottler < Rack::Throttle::Hourly
     @mobile_user_agent = env["HTTP_USER_AGENT"]
     @sub_domain = @host.split(".")[0]
     @path_info = env["PATH_INFO"]
-    if SKIPPED_SUBDOMAINS.include?(@sub_domain)
+    if SKIPPED_SUBDOMAINS.include?(@sub_domain) || SKIP_MIDDLEWARES["skipped_routes"].include?(@path_info)
       @status, @headers, @response = @app.call(env)
       return [@status, @headers, @response]
     end

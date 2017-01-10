@@ -15,4 +15,7 @@ module Cache::Memcache::Survey
     previous_changes[:active] == [1, 0]
   end
 
+  def clear_cache
+    clear_custom_survey_cache
+  end
 end

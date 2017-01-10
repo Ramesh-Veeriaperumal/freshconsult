@@ -34,6 +34,17 @@
 
 		<div class="ticket-actions" data-domhelper-name="ticket-actions">
 			<ul class="collapse-content" data-domhelper-name="ticket-action-options">
+				<% if feature?(:collaboration) %>
+					<li class="ticket-btns">
+						<div id="collab-btn" class="collab-btn btn tooltip" data-placement = "below"
+							title='<%= "#{t('helpdesk.start_collab')}" %>' 
+							data-hotkey='<%="#{shortcut('ticket_detail.collaboration')}" %>'>
+							<span class="collab-logo">
+								<img class="logo-image" alt="Logo" data-type="logo" onerror="default_image_error(this)" src="/assets/collab/collab-logo.svg">
+							</span>
+						</div>
+					</li>
+				<% end %>
 				<% unless @ticket.deleted or @ticket.spam %>
 				<li class="ticket-btns">
 					<div class="watchers_tooltip hide" id="new_watcher_page"
@@ -43,6 +54,7 @@
 						<span class="arrow-top"></span>
 					</div>
 					<% unless params[:format]=='widget' %>
+					<% if Account.current.add_watcher_enabled? %>
 					<div id="watcher_toggle" class="btn monitor_div tooltip" data-placement = "below"
 						title='<%= "#{t('helpdesk.tickets.add_watcher.toggle_watch')}" %>' 
 						data-hotkey='<%="#{shortcut('ticket_detail.toggle_watcher')}" %>'
@@ -51,6 +63,7 @@
 							<%= render :partial => "/helpdesk/subscriptions/monitor" %>
 						</span>
 					</div>
+					<% end %>
 					<% end %>
 				</li>
 				<% end %>

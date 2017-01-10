@@ -18,6 +18,8 @@ module TicketConstants
    
   # DATE_RANGE_CSV = 31
 
+  SKIPPED_TICKET_WAS_ATTRIBUTES = [ :description_html ] #desc_html skipped just to avoid Deprecation Warning
+
   ### Bump the version of "TICKETS_LIST_PAGE_FILTERS" key in fragment_cache/keys.rb when SOURCES are modified.
   SOURCES = [
     [ :email,            'email',            1 ],
@@ -83,7 +85,6 @@ module TicketConstants
     [ :child,             'child',          [TICKET_ASSOCIATION_KEYS_BY_TOKEN[:child]]],
     [ :tracker,           'tracker',        [TICKET_ASSOCIATION_KEYS_BY_TOKEN[:tracker]]],
     [ :related,           'related',        [TICKET_ASSOCIATION_KEYS_BY_TOKEN[:related]]],
-    [ :both,              'both',           [TICKET_ASSOCIATION_KEYS_BY_TOKEN[:assoc_parent], TICKET_ASSOCIATION_KEYS_BY_TOKEN[:tracker]]],
     [ :no_association,    'no_association', [-1]]
   ]
 
@@ -309,6 +310,8 @@ module TicketConstants
   CHILD_DEFAULT_FD_MAPPING = ["email", "requester_id", "subject", "status", "ticket_type", "group_id", "responder_id",
     "priority", "product_id", "description_html", "tags"]
 
+  DB_INDEXED_QUERY_COLUMNS = ["requester_id", "responder_id", "group_id", "created_at", "status"]
+
   def self.translate_priority_name(priority)
     I18n.t(PRIORITY_NAMES_BY_KEY[priority])
   end
@@ -363,8 +366,7 @@ module TicketConstants
       list << TICKET_ASSOCIATION_FILTER[3]
       list << TICKET_ASSOCIATION_FILTER[4]
     end
-    list << TICKET_ASSOCIATION_FILTER[5] if assoc_parent_child_feature && link_tickets_feature
-    list << TICKET_ASSOCIATION_FILTER[6]
+    list << TICKET_ASSOCIATION_FILTER[5]
     list
   end
 

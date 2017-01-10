@@ -3,6 +3,7 @@ module FreshdeskCore::Model
   include Redis::RedisKeys
   include Redis::OthersRedis
   include Cache::Memcache::WhitelistUser
+  include Redis::PortalRedis
 
   HELPKIT_TABLES =  [   "account_additional_settings",
                         "account_configurations",
@@ -219,6 +220,7 @@ module FreshdeskCore::Model
     delete_social_redis_keys(account)
     delete_facebook_subscription(account)
     delete_jira_webhooks(account)
+    delete_cloud_element_instances(account)
     clear_attachments(account)
     remove_mobile_registrations(account.id)
     remove_addon_mapping(account)
@@ -226,7 +228,8 @@ module FreshdeskCore::Model
     remove_whitelist_users(account.id)
     remove_remote_integration_mappings(account.id)
     remove_round_robin_redis_info(account)
-
+    delete_sitemap(account)
+    remove_from_spam_detection_service(account)
     delete_data_from_tables(account.id)
     account.destroy
   end
@@ -286,6 +289,39 @@ module FreshdeskCore::Model
       end
     end
 
+    def cloud_elements_apps_enabled?(account)
+      cloud_app_names = Integrations::CloudElements::Constant::APP_NAMES
+      apps_query = ["applications.name=?"] * cloud_app_names.size
+      apps_query = apps_query.join(" OR ")
+      cloud_apps_id = Integrations::Application.where(apps_query, *cloud_app_names).map{|app| app}
+      installed_apps_query = ["installed_applications.application_id = ?"] * cloud_apps_id.size
+      installed_apps_query = installed_apps_query.join(" OR ")
+      Integrations::InstalledApplication.where(installed_apps_query, *cloud_apps_id)
+    end
+
+    def delete_cloud_element_instances(account)
+      if(installed_apps = cloud_elements_apps_enabled?(account))
+        installed_apps.each do |installed_app|  
+          app_name = installed_app.application.name
+          formula_details = {
+            :freshdesk => { :id => installed_app.configs_helpdesk_to_crm_formula_instance, :template_id => Integrations::HELPDESK_TO_CRM_FORMULA_ID[app_name]}, 
+            :hubs => {:id => installed_app.configs_crm_to_helpdesk_formula_instance, :template_id => Integrations::CRM_TO_HELPDESK_FORMULA_ID[app_name]}
+          }
+
+          formula_details.keys.each do |key|
+            metadata = {:formula_template_id => formula_details[key][:template_id], :id => formula_details[key][:id]}
+            options = {:metadata => metadata, :app_id => installed_app.application_id, :object => Integrations::CloudElements::Constant::NOTATIONS[:formula]}
+            Integrations::CloudElementsDeleteWorker.new.perform(options)  
+          end
+
+          [installed_app.configs_element_instance_id, installed_app.configs_fd_instance_id].each do |element_id|
+            options = {:metadata => {:id => element_id}, :app_id => installed_app.application_id, :object => Integrations::CloudElements::Constant::NOTATIONS[:element]}
+            Integrations::CloudElementsDeleteWorker.new.perform(options)     
+          end 
+        end
+      end
+    end
+
     def clear_attachments(account)
       delete_files(account)
       delete_info_from_table(account.id)
@@ -311,6 +347,22 @@ module FreshdeskCore::Model
 
     def remove_remote_integration_mappings(account_id)
       RemoteIntegrationsMapping.where(account_id: account_id).delete_all
+    end
+
+
+    def delete_sitemap(account)
+      key = SITEMAP_OUTDATED % { :account_id => account.id }
+      remove_portal_redis_key(key)
+      
+      account.portals.each do |portal|
+          portal.clear_sitemap_cache
+      end
+
+      path = "sitemap/#{account.id}/"
+      objects = AwsWrapper::S3Object.find_with_prefix(S3_CONFIG[:bucket],path)
+      objects.each do |object| 
+        object.delete
+      end
     end
 
     def remove_round_robin_redis_info(account)
@@ -347,4 +399,12 @@ module FreshdeskCore::Model
       ActiveRecord::Base.connection.execute(delete_query)
     end
 
+    def remove_from_spam_detection_service(account)
+      if account.launched?(:spam_detection_service)
+        result = FdSpamDetectionService::Service.new(account.id).delete_tenant
+        Rails.logger.info "Response for deleting tenant in SDS: #{result}"
+        account.rollback(:spam_detection_service)
+      end
+    end
+    
 end

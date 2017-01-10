@@ -9,11 +9,15 @@ class BroadcastMessages::NotifyBroadcastMessages < BaseWorker
     return unless related_tickets.present?
 
     related_tickets.each do |rt|
-      params = {
-        ticket_display_id: rt.display_id,
-        tracker_display_id: tracker.display_id,
-        broadcast_id: args[:broadcast_id] }
-      BroadcastMessages::NotifyAgent.perform_async(params)
+      to_emails = recipients(rt)
+      if to_emails.present?
+        params = {
+          ticket_display_id: rt.display_id,
+          tracker_display_id: tracker.display_id,
+          broadcast_id: args[:broadcast_id],
+          recipients: to_emails }
+        BroadcastMessages::NotifyAgent.perform_async(params)
+      end
     end
   rescue Exception => e
     NewRelic::Agent.notice_error(e, {
@@ -23,6 +27,13 @@ class BroadcastMessages::NotifyBroadcastMessages < BaseWorker
         :broadcast_id => args[:broadcast_id]
       }
     })
+  end
+
+
+  def recipients(ticket)
+    watchers = ticket.subscriptions.collect {|sub| sub.user if sub.user_id != User.current.try(:id) }
+    watchers << ticket.responder if ticket.responder_id != User.current.try(:id)
+    watchers.compact.collect {|w| w.email}.uniq.join(',')
   end
 
 end

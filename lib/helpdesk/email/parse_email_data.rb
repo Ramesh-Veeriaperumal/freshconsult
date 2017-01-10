@@ -2,7 +2,10 @@ module Helpdesk::Email::ParseEmailData
 	include ParserUtil
 	include Helpdesk::Permission::Ticket
 	include AccountConstants
+  include Redis::RedisKeys
+  include Redis::OthersRedis
 
+	MAXIMUM_CONTENT_LIMIT = 300.kilobytes
 	attr_accessor :reply_to_email, :recipients
 
 	def email_metadata
@@ -120,7 +123,12 @@ module Helpdesk::Email::ParseEmailData
 	end
 
 	def body_html_with_formatting(body,email_cmds_regex)
-	  body_html = auto_link(body) { |text| truncate(text, :length => 100) }
+	  # Process auto_link if the content is less than 300 KB, otherwise leave as text.
+      if body.size < MAXIMUM_CONTENT_LIMIT
+        body_html = auto_link(body) { |text| truncate(text, :length => 100) }
+      else
+        body_html = sanitize(body)
+      end
 	  line_break_body = body_html.gsub(/(\n|\r)/, '<br />')
 	  white_list(line_break_body)
 	end
@@ -170,12 +178,21 @@ module Helpdesk::Email::ParseEmailData
 		(account.features?(:dynamic_content)) ? nil : account.language
 	end
 
-	def detect_user_language signup_status, email_body
-		text = text_for_detection(email_body)
-		args = [user, text]
-		Resque::enqueue_at(1.minute.from_now, Workers::DetectUserLanguage, {:user_id => user.id, :text => text, :account_id => Account.current.id}) if user.language.nil? and signup_status
-		#Delayed::Job.enqueue(Delayed::PerformableMethod.new(Helpdesk::DetectUserLanguage, :set_user_language!, args), nil, 1.minutes.from_now) if user.language.nil? and signup_status
-	end
+  def detect_user_language signup_status, email_body
+    text = text_for_detection(email_body)
+    if user.language.nil? and signup_status
+      if redis_key_exists?(DETECT_USER_LANGUAGE_SIDEKIQ_ENABLED)
+        Users::DetectLanguage.perform_async({:user_id => user.id, 
+                                             :text => text })
+      else
+        Resque::enqueue_at(1.minute.from_now, 
+                           Workers::DetectUserLanguage, 
+                           {:user_id => user.id, 
+                            :text => text, 
+                            :account_id => Account.current.id})
+      end
+    end
+  end
 
 	def text_for_detection email_body
 	  text = email_body[0..200]

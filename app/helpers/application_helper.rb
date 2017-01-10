@@ -790,6 +790,7 @@ module ApplicationHelper
     end
   end
 
+  #TODO: Convert following functions to Constants
   def get_senti_title(sentiment)
 
     if sentiment == -2
@@ -817,23 +818,6 @@ module ApplicationHelper
       return "symbols-emo-veryHappy-20"
     else 
       return "symbols-emo-neutral-20"   
-    end  
-  end
-
-  # TODO: change it to get images from cdn
-  # TODO: Numbers - move to constants file 
-  def senti_image_locator(sentiment)
-
-    if sentiment == -2
-      return "http://imgh.us/emo-angry.svg"
-    elsif sentiment == -1
-      return "http://imgh.us/emo-sad.svg"
-    elsif sentiment == 1
-      return "http://imgh.us/emo-happy.svg"
-    elsif sentiment == 2
-      return "http://imgh.us/emo-veryhappy.svg"
-    else 
-      return "http://imgh.us/emo-neutral.svg"   
     end  
   end
 
@@ -1648,7 +1632,7 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
     end
     
     def can_view_social?
-      feature?(:twitter) && privilege?(:manage_tickets)
+      current_account.has_feature?(:basic_twitter) && privilege?(:manage_tickets)
     end
 
     def social_enabled?

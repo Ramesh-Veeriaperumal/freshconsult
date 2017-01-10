@@ -1,6 +1,7 @@
 class Account < ActiveRecord::Base
 
-  before_create :set_default_values, :set_shard_mapping, :save_route_info
+  before_create :downcase_full_domain,:set_default_values, :set_shard_mapping, :save_route_info
+  before_create :add_features_to_binary_column
   before_update :check_default_values, :update_users_time_zone, :backup_changes
   before_destroy :backup_changes, :make_shard_mapping_inactive
 
@@ -27,6 +28,10 @@ class Account < ActiveRecord::Base
   # Included rabbitmq callbacks at the last
   include RabbitMq::Publisher 
   
+  def downcase_full_domain
+    self.full_domain.downcase!
+  end
+
   def check_default_values
     dis_max_id = get_max_display_id
     if self.ticket_display_id.blank? or (self.ticket_display_id < dis_max_id)
@@ -56,11 +61,12 @@ class Account < ActiveRecord::Base
   end
 
   def populate_features
-    add_features_of subscription.subscription_plan.name.downcase.to_sym
+    add_features_of self.plan_name
     SELECTABLE_FEATURES.each { |key,value| features.send(key).create  if value}
     TEMPORARY_FEATURES.each { |key,value| features.send(key).create  if value}
     ADMIN_CUSTOMER_PORTAL_FEATURES.each { |key,value| features.send(key).create  if value}
     add_member_to_redis_set(SLAVE_QUERIES, self.id)
+    LAUNCHPARTY_FEATURES.select{|k,v| v}.each_key {|feature| self.launch(feature)}
     #self.launch(:disable_old_sso)
   end
 
@@ -108,6 +114,26 @@ class Account < ActiveRecord::Base
         Rails.logger.info "Shard mapping exception caught"
         errors[:base] << "Domain is not available!"
         return false
+      end
+    end
+
+    def add_features_to_binary_column
+      begin
+        bitmap_value = 0
+        #This || condition is to handle special case during deployment
+        #until new signup is enabled, we need to have older list.
+        plan_features_list =  if PLANS[:subscription_plans][self.plan_name].nil?
+                                FEATURES_DATA[:plan_features][:feature_list]
+                              else
+                                PLANS[:subscription_plans][self.plan_name][:features]
+                              end
+        plan_features_list.each do |key, value|
+          bitmap_value = self.set_feature(key)
+        end
+        self.plan_features = bitmap_value
+      rescue Exception => e
+        Rails.logger.info "Issue in bitmap calculation - account signup #{e.message}"
+        NewRelic::Agent.notice_error(e)
       end
     end
 

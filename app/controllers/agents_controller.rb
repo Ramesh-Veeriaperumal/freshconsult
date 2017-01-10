@@ -24,6 +24,8 @@ class AgentsController < ApplicationController
   before_filter :check_agent_limit_on_update, :validate_params, :can_edit_roles_and_permissions, :only => [:update]
   before_filter :set_selected_tab
   before_filter :set_native_mobile, :only => :show
+  before_filter :filter_params, :only => [:create, :update]
+  before_filter :check_occasional_agent_params, :only => [:index]
   
   def load_object
     @agent = scoper.find(params[:id])
@@ -80,7 +82,7 @@ class AgentsController < ApplicationController
     end    
   end
 
-  def edit    
+  def edit   
     #@agent.signature_html ||= @agent.signature_value
       respond_to do |format|
       format.html # edit.html.erb
@@ -89,14 +91,13 @@ class AgentsController < ApplicationController
   end
 
   def toggle_availability
-    if params[:admin] || current_user.agent.allow_availability_toggle?
+    if params[:admin] || current_user.toggle_availability?
       @agent = current_account.agents.find_by_user_id(params[:id])
       @agent.toggle(:available)
       @agent.active_since = Time.now.utc
       @agent.save
       Rails.logger.debug "Round Robin ==> Account ID:: #{current_account.id}, Agent:: #{@agent.user.email}, Value:: #{params[:value]}, Time:: #{Time.zone.now} "
       Rails.logger.debug "Supervisor Round Robin ==> Account ID:: #{current_account.id}, Agent:: #{@agent.user.email}, Value:: #{params[:value]}, Time:: #{Time.zone.now} " if params[:admin] and current_user.roles.supervisor.present?
-
     end
     respond_to do |format|
       format.html { render :nothing => true}
@@ -167,7 +168,7 @@ class AgentsController < ApplicationController
   end
   
   def update
-    @agent.occasional = params[:agent][:occasional]
+    @agent.occasional = params[:agent][:occasional] || false
     #check_agent_limit
     @agent.scoreboard_level_id = params[:agent][:scoreboard_level_id] if gamification_feature?(current_account)
     @user = current_account.all_users.find(@agent.user_id)
@@ -333,7 +334,7 @@ class AgentsController < ApplicationController
   end
 
   def check_agent_limit_on_update
-    if current_account.reached_agent_limit? && @agent.occasional? && params[:agent] 
+    if current_account.reached_agent_limit? && @agent.occasional? && current_account.occasional_agent_enabled? && params[:agent]
       params[:agent][:occasional] = true 
     end
   end
@@ -430,16 +431,19 @@ private
   end
  
   def filter_params
-    params[:agent].except!(:user_id, :available, :active_since) # should we expose "available" ?
-    params[:user].except!(:helpdesk_agent, :deleted, :active)
-    validate_phone_field_params @agent.user
+    if params[:action].eql?('update')
+      params[:agent].except!(:user_id, :available, :active_since) # should we expose "available" ?
+      params[:user].except!(:helpdesk_agent, :deleted, :active)
+      validate_phone_field_params @agent.user
+    end
+    # remove params[:agent][:occasional] if occasional_agent feature is not enabled
+    params[:agent].except!(:occasional) unless current_account.occasional_agent_enabled?
   end
 
   def validate_params
     validate_scoreboard_level
     validate_ticket_permission
     format_api_params
-    filter_params
     validate_roles
     validate_groups
   end
@@ -461,6 +465,10 @@ private
 
   def valid_export_params?
     params[:export_fields].values.all? { |param| Agent::EXPORT_FIELD_VALUES.include? param }
+  end
+
+  def check_occasional_agent_params
+    redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) if params[:state].to_s == "occasional" and !current_account.occasional_agent_enabled?
   end
 
 end

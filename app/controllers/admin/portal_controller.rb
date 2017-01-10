@@ -146,5 +146,4 @@ class Admin::PortalController < Admin::AdminController
       flash[:notice] = t(:"flash.portal.not_found.#{obj}")
       redirect_to admin_portal_index_path
     end
-
 end

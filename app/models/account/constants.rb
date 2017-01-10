@@ -12,14 +12,14 @@ class Account < ActiveRecord::Base
                           contact admin #{AppConfig['admin_subdomain']} girish shan vijay parsu kiran shihab
                           productdemo resources static static0 static1 static2 static3 static4 static5
                           static6 static7 static8 static9 static10 dev apps freshapps fone
-                          elb elb1 elb2 elb3 elb4 elb5 elb6 elb7 elb8 elb9 elb10 ) + FreshopsSubdomains
+                          elb elb1 elb2 elb3 elb4 elb5 elb6 elb7 elb8 elb9 elb10 attachment euattachment eucattachment) + FreshopsSubdomains
 
   PLANS_AND_FEATURES = {
     :basic => { :features => [ :twitter, :custom_domain, :multiple_emails ] },
     
     :pro => {
       :features => [ :gamification, :scenario_automations, :customer_slas, :business_hours, :forums, 
-        :surveys, :scoreboard, :facebook, :timesheets, :css_customization, :advanced_reporting ],
+        :surveys, :scoreboard, :facebook, :timesheets, :css_customization, :advanced_reporting, :sitemap ],
       :inherits => [ :basic ]
     },
     
@@ -34,7 +34,7 @@ class Account < ActiveRecord::Base
     
     :blossom => {
       :features => [ :gamification, :auto_refresh, :twitter, :facebook, :forums, :surveys , :scoreboard, :timesheets, 
-        :custom_domain, :multiple_emails, :advanced_reporting, :default_survey ],
+        :custom_domain, :multiple_emails, :advanced_reporting, :default_survey, :sitemap, :requester_widget],
       :inherits => [ :sprout ]
     },
     
@@ -63,7 +63,7 @@ class Account < ActiveRecord::Base
     
     :blossom_classic => {
       :features => [ :gamification, :auto_refresh, :twitter, :facebook, :forums, :surveys, 
-        :scoreboard, :timesheets, :advanced_reporting ],
+        :scoreboard, :timesheets, :advanced_reporting, :sitemap ],
       :inherits => [ :sprout_classic ]
     },
     
@@ -79,6 +79,35 @@ class Account < ActiveRecord::Base
         :helpdesk_restriction_toggle, :round_robin_load_balancing, :multiple_user_companies,
         :multiple_companies_toggle, :round_robin_on_update ],
       :inherits => [ :garden_classic ]
+    },
+
+    :sprout_jan_17 => {
+      :features => [ :scenario_automations, :business_hours ]
+    },
+    
+    :blossom_jan_17 => {
+      :features => [ :gamification, :auto_refresh, :twitter, :facebook, :surveys , :scoreboard, :timesheets, 
+        :custom_domain, :multiple_emails, :advanced_reporting, :default_survey, :requester_widget ],
+      :inherits => [ :sprout_jan_17 ]
+    },
+    
+    :garden_jan_17 => {
+      :features => [ :forums, :multi_language, :css_customization, :advanced_reporting, :dynamic_content, :chat, :ticket_templates, :custom_survey ],
+      :inherits => [ :blossom_jan_17 ]
+    },
+
+    :estate_jan_17 => {
+      :features => [ :multi_product, :customer_slas, :multi_timezone , 
+        :collision, :layout_customization, :round_robin, :enterprise_reporting,
+        :custom_ssl, :custom_roles, :multiple_business_hours, :facebook_page_tab, :chat_routing, :dynamic_sections,
+        :helpdesk_restriction_toggle, :round_robin_load_balancing, :multiple_user_companies, 
+        :multiple_companies_toggle, :round_robin_on_update ],
+      :inherits => [ :garden_jan_17 ]
+    },
+
+    :forest_jan_17 => {
+      :features => [ :mailbox, :whitelisted_ips ],
+      :inherits => [ :estate_jan_17 ]
     }
 
   }
@@ -94,9 +123,10 @@ class Account < ActiveRecord::Base
     :chat_enable => false, :saml_old_issuer => false, :spam_dynamo => true,
     :redis_display_id => false, :es_multilang_solutions => false,
     :sort_by_customer_response => false, :survey_links => true,
-    :saml_unspecified_nameid => false, :euc_hide_agent_metrics => false, 
+    :tags_filter_reporting => false,
+    :saml_unspecified_nameid => false, :euc_hide_agent_metrics => false,
     :single_session_per_user => false, :link_tickets => false, :parent_child_tickets => false,
-    :marketplace_app => false
+    :marketplace_app => false, :sandbox_account => false, :collaboration => false
   }
 
 
@@ -114,7 +144,8 @@ class Account < ActiveRecord::Base
     :agent_conference => false, :freshfone_warm_transfer => false, :restricted_helpdesk => false, :enable_multilingual => false,
     :count_es_writes => false, :count_es_reads => false, :activity_revamp => true, :countv2_writes => false, :countv2_reads => false,
     :helpdesk_restriction_toggle => false, :freshfone_acw => false, :ticket_templates => false, :cti => false, :all_notify_by_custom_server => false,
-    :freshfone_custom_forwarding => false, :freshfone_onboarding => false, :freshfone_gv_forward => false }
+    :freshfone_custom_forwarding => false, :freshfone_onboarding => false, :freshfone_gv_forward => false, :inline_images_with_one_hop => false, :skill_based_round_robin => false,
+    :salesforce_v2 => false}
 
   # This list below is for customer portal features list only to prevent from adding addition features
   ADMIN_CUSTOMER_PORTAL_FEATURES =  {:anonymous_tickets => true, :open_solutions => true, :auto_suggest_solutions => true, 
@@ -128,16 +159,23 @@ class Account < ActiveRecord::Base
   #Features that need to connect to the FDnode server
   FD_NODE_FEATURES = ['cti']
 
-  # List of Launchparty features available in code
-  LAUNCHPARTY_FEATURES = [:activity_ui_disable, :admin_dashboard, :agent_conference, :agent_dashboard, :agent_new_ticket_cache, :api_search_beta,
-                          :autopilot_headsup, :autoplay, :delayed_dispatchr_feature,
-                          :enable_old_sso, :es_count_reads, :es_count_writes, :es_down, :es_tickets, :es_v2_reads, :fb_msg_realtime,
-                          :force_index_tickets, :freshfone_call_tracker, :freshfone_new_notifications, :gamification_perf,
-                          :gamification_quest_perf, :lambda_exchange, :meta_read, :most_viewed_articles,
-                          :multifile_attachments, :new_footer_feedback_box, :new_leaderboard, :periodic_login_feature, :shared_ownership,
-                          :supervisor_dashboard, :support_new_ticket_cache, :ticket_list_page_filters_cache, :translate_solutions,
-                          :sidekiq_dispatchr_feature, :list_page_new_cluster, :freshfone_onboarding, :disable_old_sso,
-                          :round_robin_capping, :cache_new_tkt_comps_forms, :restricted_helpdesk, :solutions_meta_read,
-                          :freshfone_caller_id_masking, :bi_reports, :es_v1_enabled, :synchronous_apps, :parent_child_tickets, :link_tickets]
+  # List of Launchparty features available in code. Set it to true if it has to be enabled when signing up a new account
+  LAUNCHPARTY_FEATURES = {
+    :activity_ui_disable => false, :admin_dashboard => false, :agent_conference => false, :agent_dashboard => false,
+    :agent_new_ticket_cache => false, :api_search_beta => false, :autopilot_headsup => false, :autoplay => false,
+    :bi_reports => false, :cache_new_tkt_comps_forms => false, :delayed_dispatchr_feature => false,
+    :disable_old_sso => false, :enable_old_sso => false, :es_count_reads => false, :es_count_writes => false,
+    :es_down => false, :es_tickets => false, :es_v1_enabled => false, :es_v2_reads => false, :fb_msg_realtime => false,
+    :force_index_tickets => false, :freshfone_call_tracker => false, :freshfone_caller_id_masking => false,
+    :freshfone_new_notifications => false, :freshfone_onboarding => false, :gamification_perf => false,
+    :gamification_quest_perf => false, :lambda_exchange => false, :link_tickets => false,
+    :list_page_new_cluster => false, :meta_read => false, :most_viewed_articles => false,
+    :multifile_attachments => false, :new_footer_feedback_box => false, :new_leaderboard => false,
+    :parent_child_tickets => false, :periodic_login_feature => false, :restricted_helpdesk => false,
+    :round_robin_capping => false, :shared_ownership => false, :sidekiq_dispatchr_feature => false,
+    :solutions_meta_read => false, :supervisor_dashboard => false, :support_new_ticket_cache => false,
+    :synchronous_apps => false, :ticket_list_page_filters_cache => false, :translate_solutions => false,
+    :spam_detection_service => false, :skip_hidden_tkt_identifier => false
+  }
 
 end

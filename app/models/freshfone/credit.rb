@@ -39,6 +39,7 @@ class Freshfone::Credit < ActiveRecord::Base
       FreshfoneNotifier.recharge_success(account, selected_credit, available_credit)
     else
      	FreshfoneNotifier.recharge_failure(account, selected_credit, available_credit)
+      suspend_freshfone_account if zero_balance?
     end
     response
 	end
@@ -116,6 +117,12 @@ class Freshfone::Credit < ActiveRecord::Base
     freshfone_account = account.freshfone_account
     return freshfone_account.subscription.call_duration(current_call.call_type) if freshfone_account.trial?
     account.freshfone_credit.call_time_limit
+  end
+
+  def suspend_freshfone_account
+    account.freshfone_account.suspend_with_expiry = true
+    account.freshfone_account.suspend
+    FreshfoneNotifier.suspended_account(account)
   end
 
 	private

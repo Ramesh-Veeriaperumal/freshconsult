@@ -9,7 +9,7 @@ class Integrations::ApplicationsController < Admin::AdminController
     if feature?(:marketplace)
       installed_extensions = installed_mkp_apps(:integrations_list)
       @installed_mkp_apps = installed_extensions[:installed_mkp_apps]
-      @installed_custom_apps = installed_extensions[:installed_custom_apps]
+      @installed_custom_apps = installed_extensions[:installed_custom_apps] if current_account.custom_apps_enabled?
     else
       @applications = Integrations::Application.available_apps(current_account)
       @installed_applications = get_installed_apps

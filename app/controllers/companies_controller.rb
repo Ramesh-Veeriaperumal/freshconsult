@@ -170,11 +170,4 @@ class CompaniesController < ApplicationController
       return companies_url
     end
 
-    def check_domain_exists
-      if @company.errors[:"company_domains.domain"].include?("has already been taken")
-        @company.company_domains.each do |cd|
-          @existing_company ||= current_account.company_domains.find_by_domain(cd.domain).try(:company) if cd.new_record?
-        end
-      end
-    end
 end

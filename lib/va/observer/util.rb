@@ -42,10 +42,14 @@ module Va::Observer::Util
 			observer_changes.merge! ticket_event observer_changes
 			doer_id = (self.class == Helpdesk::Ticket) ? User.current.id : self.send(FETCH_DOER_ID[self.class.name])
 			evaluate_on_id = self.send FETCH_EVALUATE_ON_ID[self.class.name]
-			Tickets::ObserverWorker.perform_async({
+			args = {
 				:doer_id => doer_id,
 				:ticket_id => evaluate_on_id,
-				:current_events => observer_changes })
+				:current_events => observer_changes,
+				:enqueued_class => self.class.name
+			}
+			args[:model_changes] = @model_changes if self.class == Helpdesk::Ticket
+			Tickets::ObserverWorker.perform_async(args)
 		end
 
 		def ticket_event current_events
