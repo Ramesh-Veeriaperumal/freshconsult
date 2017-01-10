@@ -1,5 +1,5 @@
 <%= javascript_include_tag :'cdn/plans_and_billing' %>
-<% if !@subscription.trial? and @subscription.card_number.present? %>
+<% if !@subscription.trial? and @subscription.card_number.present? and !current_account.new_pricing_launched?%>
 	<%= content_for :sidebar do -%>
   		<div class="sidepanel">    
     		<%= render :partial => "/subscriptions/payment_info" %>  

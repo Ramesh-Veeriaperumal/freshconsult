@@ -29,15 +29,9 @@ class Freshfone::CreditObserver < ActiveRecord::Observer
       freshfone_account = account.freshfone_account
       if freshfone_account.suspended? || freshfone_account.expired?
         restore_freshfone_account_state(freshfone_credit, account)
-      elsif freshfone_credit.zero_balance?
-        suspend_freshfone_account(account)
-        FreshfoneNotifier.suspended_account(account)
+      elsif freshfone_credit.zero_balance? && !autorecharge_inprogress?(account.id)
+        freshfone_credit.suspend_freshfone_account
       end
-    end
-
-    def suspend_freshfone_account(account)
-      account.freshfone_account.suspend_with_expiry = true
-      account.freshfone_account.suspend
     end
 
     def update_freshfone_widget(freshfone_credit, account)
@@ -60,7 +54,7 @@ class Freshfone::CreditObserver < ActiveRecord::Observer
 
     def auto_recharge_threshold_reached?(freshfone_credit)
       freshfone_credit.auto_recharge? and
-        freshfone_credit.auto_recharge_threshold_reached? and auto_recharge_throttle_limit_reached?(freshfone_credit.account_id)
+        freshfone_credit.auto_recharge_threshold_reached? and !autorecharge_inprogress?(freshfone_credit.account_id)
     end
 
     def trigger_auto_recharge(freshfone_credit)

@@ -6,11 +6,11 @@
   /* To break the unicode character in production. have to fix this bug */
   .dumm-class {cursor: default;}
 
-  .fr-box {    
+  .fr-box {
     margin-top: 15px;
 
     &.fr-basic.fr-top .fr-wrapper {
-      box-shadow: none; 
+      box-shadow: none;
     }
 
     &.fr-fullscreen {
@@ -18,7 +18,7 @@
       padding: 0 20px;
       background: #fff;
     }
-    
+
     .fr-view {
       pre {
         background-color: #f0f0f0;
@@ -257,13 +257,13 @@ body .fr-overlay {
     -webkit-box-shadow: 0 30px 140px -30px #000, white 0 0 1px inset;
     box-shadow: 0 30px 140px -30px #000, white 0 0 1px inset;
     @include background-clip(padding-box);
-    overflow: initial;  
+    overflow: initial;
 
     .fr-modal-title {
-      background: transparent; 
+      background: transparent;
       box-shadow: none;
       border-bottom: 1px solid #eee;
-      overflow: inherit; 
+      overflow: inherit;
 
       .fr-modal-title-line i.fr-modal-close {
         font-family: glyphs;
@@ -306,7 +306,7 @@ body .fr-overlay {
         }
 
         img {
-          height: auto; 
+          height: auto;
           width: auto;
           position: absolute;
           top: 0;
@@ -373,13 +373,13 @@ body .fr-overlay {
 
     .text_area_label {
       margin: 3px 0 0 0;
-      float: left;
+      @include float('left');
       font-size: 12px;
     }
 
     label {
       margin: 6px 0 0 0;
-      float: left;
+      @include float('left');
     }
 
     .code_note {
@@ -393,7 +393,7 @@ body .fr-overlay {
     padding: 15px 15px 0;
 
     .btns_box {
-      float: right;
+      @include float('right');
       border-radius: 5px;
     }
   }
@@ -430,7 +430,7 @@ body .fr-overlay {
         text-align: center;
         width: 30px;
 
-        &.fr-active, 
+        &.fr-active,
         &.active {
           color: #29aeb3;
         }
@@ -482,17 +482,11 @@ body .fr-overlay {
       }
 
       &.fr-btn + .fr-dropdown-menu .fr-dropdown-wrapper .fr-dropdown-content ul.fr-dropdown-list {
-        // To fix the horizontal scroll issue in dropdown due to font-size changed for li(below content) 
+        // To fix the horizontal scroll issue in dropdown due to font-size changed for li(below content)
         padding-right: 1px;
-        
+
         li {
           font-size: 13px;
-
-          blockquote {
-            border-left: 0;
-            font-style: italic;
-            color: #666 !important;
-          }
         }
       }
     }
@@ -526,7 +520,7 @@ body .fr-overlay {
       top: 157px;
     }
   }
-  
+
   .is_stuck #sticky_redactor_toolbar{
     .redactor_toolbar, .fr-toolbar {
       top: 52px;
@@ -590,7 +584,7 @@ body .fr-overlay {
       top: 157px;
     }
   }
-  
+
   .is_stuck {
     #sticky_redactor_toolbar {
       .redactor_toolbar, .fr-toolbar {

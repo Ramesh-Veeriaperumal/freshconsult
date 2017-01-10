@@ -1,23 +1,23 @@
 module FreshopsToolsWorkerMethods
 
     SHARD_OPS ={:add => "add_to_shard" , :remove => "remove_from_shard"} 
-
 # Accepts the key(file name ) and bucket name as arguments and executes the code in that file
   def dynamic_rubyscript_evaluation(args)
     # To fetch the code contained in the specific file from the specified bucket
-    data = AwsWrapper::S3Object.read(args["path"],args["bucket_name"],{:content_type => "application/json"})
-    key_path = args["path"].split('.').first + "_log.txt" # Name the execution log file
-    code_id = args["path"].split('/').tap(&:pop).last
+    s3 = Aws::S3::Client.new(region: 'us-east-1',access_key_id: S3_CONFIG[:access_key_id],secret_access_key: S3_CONFIG[:secret_access_key])
+    data = s3.get_object(key: args["path"],bucket: args["bucket_name"]).body.read
+    code_id = args["path"].split('_').last.split('.').first
+    key_path = API_CONFIG_TOOLS[:code_console_file_path] + code_id +".txt" # Name the execution log file
     begin
       output = capture(:stdout) do
         eval data
       end
-      AwsWrapper::S3Object.store(key_path,output,args["bucket_name"])
+      s3.put_object(key: key_path,bucket: args["bucket_name"],body: output)
       request_parameters = {:id => code_id ,:result => "Code Executed"}
       response = Fdadmin::APICallsToInternalTools.make_api_request_to_internal_tools(:get,request_parameters,:api_path,API_CONFIG_TOOLS[:domain])
     rescue Exception => e
       output = e.to_s + e.backtrace.to_s
-      AwsWrapper::S3Object.store(key_path,output,args["bucket_name"])
+      s3.put_object(key: key_path,bucket: args["bucket_name"],body: output)
       request_parameters = {:id => code_id ,:result => "Execution Error"}
       response = Fdadmin::APICallsToInternalTools.make_api_request_to_internal_tools(:get,request_parameters,:api_path,API_CONFIG_TOOLS[:domain])
     end

@@ -28,6 +28,11 @@
     <div class="span4 av-toolbar-col ellipsis"><%= filename %></div>
     <ul class="span8 av-toolbar-col inline">
       <li class="av-tool-download">
+       <% if(multifile) { %>
+          <a href="#" class="tooltip add-attachment-to-conv" data-file-type="<%= filetype %>" data-location="popover" data-original-title="<%= (added)? Helpdesk.MultipleFileUpload.message.attached:Helpdesk.MultipleFileUpload.message.attach %>" data-attach-id="<%= fileid %>" data-note-id="<%= noteid %>"  data-added="<%= (added) %>" data-index="<%= index %>">
+            <span class="popover-addToReply-icon ficon <%= (added)? "ficon-checkmark-thick":" ficon-add-attachment" %>" ></span>
+          </a> | 
+        <% } %>
         <a href="<%= filelink %>" download="<%= filename %>">
           <i class="ficon-download"></i>
           <%= TICKET_DETAILS_DATA.download %>

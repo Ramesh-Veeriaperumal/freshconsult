@@ -4308,7 +4308,7 @@ de:
         unassigned: "Nicht zugewiesen"
         pending: Ausstehend
         on_hold: Warteschleife
-        unresolved: "Nicht gelöst"
+        unresolved: Ungelöst
     rebranding:
       name:
         info: "Dies ist der Name des Helpdesk, der im Header und in E-Mail-Benachrichtigungen angezeigt wird."
@@ -5602,7 +5602,7 @@ de:
       current_status: "Current Status"
       current_status_lower: "current status"
       historic_status_lower: "historic status"
-      unresolved: Unresolved
+      unresolved: Ungelöst
       all_resolved: "All Resolved Tickets"
       new_received: "Received Tickets"
       new_resolved: "New Resolved Tickets"
@@ -7575,7 +7575,7 @@ de:
     answered: Beantwortet
     unanswered: "Nicht beantwortet"
     solved: Gelöst
-    unsolved: "Nicht gelöst"
+    unsolved: Ungelöst
   payment_info: Zahlungsinformationen
   billing_address: Rechnungsadresse
   support:
@@ -8232,7 +8232,7 @@ de:
       unanswered: "Nicht beantwortet"
     problems:
       solved: Gelöst
-      unsolved: "Nicht gelöst"
+      unsolved: Ungelöst
     name: Themenname
     new: "Neues Thema veröffentlichen"
     edit: "Thema bearbeiten"
@@ -8268,7 +8268,7 @@ de:
     filter_6: Beantwortet
     filter_7: "Nicht beantwortet"
     filter_8: Gelöst
-    filter_9: "Nicht gelöst"
+    filter_9: Ungelöst
     filter_-: "Nicht gestempelt"
     select_stamps: "Stempel auswählen"
     add_topic: "Thema hinzufügen"

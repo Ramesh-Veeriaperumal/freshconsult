@@ -16,7 +16,8 @@ class Helpdesk::NotesController < ApplicationController
   before_filter :build_note_body_attributes, :build_note, :only => [:create]
   before_filter :verify_permission, :only => [:create, :index, :edit, :update, :destroy, :public_conversation]
 
-  before_filter :fetch_item_attachments, :validate_fwd_to_email, :check_for_kbase_email, :set_default_source, :only =>[:create]
+  before_filter :validate_fwd_to_email, :check_for_kbase_email, :set_default_source, :only =>[:create]
+  before_filter :fetch_item_attachments, :only =>[:create, :update]
   before_filter :set_mobile, :prepare_mobile_note, :only => [:create]
   before_filter :set_native_mobile, :only=>[:index , :destroy , :restore]
   before_filter :update_note_properties, :only=>[:update]
@@ -122,7 +123,7 @@ class Helpdesk::NotesController < ApplicationController
   end
 
   def agents_autocomplete
-    @ticket = current_account.tickets.find_by_display_id(params[:ticket_id])
+    @ticket = current_account.tickets.includes(:responder).find_by_display_id(params[:ticket_id])
     respond_to do |format|
       format.html { render :layout => false }
     end

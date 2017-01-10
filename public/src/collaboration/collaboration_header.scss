@@ -1,0 +1,172 @@
+@import "../settings/settings";
+
+$notification_head_bg_color: #ebebeb;
+$notification_border_color: #dddddd;
+$link_color: #0066cc;
+$notification_item_bg_color: white;
+
+.collab-notification-dd {
+    min-width: 340px;
+    top: 44px;
+    padding: 40px 0;
+    position: absolute;
+    background-color: $notification_head_bg_color;
+    z-index: 11;
+    @include border-radius( 3px );
+    @include box-shadow(0 0 10px);
+    @include text-align (left);
+    @include right(-50px);
+    
+    &:before {
+        content: "";
+        position: absolute;
+        border: 8px solid transparent;
+        border-bottom: 8px solid $notification_head_bg_color;
+        top: -15px;
+        @include right(56px);
+    }
+
+    .list-container {
+        height: initial;
+        border: initial;
+        height: auto;
+        border: auto;
+    }
+}
+
+.collab-notification-list-item {
+    border-bottom: 1px solid $notification_border_color;
+    cursor: pointer;
+    height: 40px;
+
+    &.collab-notification-dd-foot,
+    &.collab-notification-dd-head {
+        font-size: 16px;
+        /*@include padding(10px 20px);*/
+        position: absolute;
+        width: 100%;
+        box-sizing: border-box;
+        top: 0;
+        color: #333333;
+
+    }
+
+    &.collab-notification-dd-foot {
+        top: initial;
+        top: auto;
+        bottom: 0;
+        line-height: initial;
+        line-height: auto;
+        text-align: center;
+        font-size: 12px;
+        background-color: $notification_item_bg_color;
+        border-bottom-left-radius: 3px;
+        border-bottom-right-radius: 3px;
+
+        .collab-notification-link {
+            color: $link_color;
+            @include padding(13px 0);
+        }
+    }
+
+    &.noti-read {
+        background-color: white;
+    }
+
+    &.noti-unread {
+        background-color: #fefef1;
+    }
+
+    .collab-notification-link {
+        @include padding(12px 20px);
+        display: block;
+        color: #333;
+        overflow: hidden;
+        height: 1em;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        height: 40px;
+        box-sizing: border-box;
+
+        &.light-text {
+            opacity: .7;
+        }
+
+        .collab-noti-uname {
+            max-width: 240px;
+            text-overflow: ellipsis;
+            display: inline-block;
+            overflow: hidden;
+            vertical-align: text-bottom;
+        }
+    }
+
+    &.info {
+        text-align: center;
+        background-color: $notification_item_bg_color;
+    }
+}
+
+
+.collab-notification-list {
+    max-height: 308px;
+    overflow: auto;
+}
+
+.bell-icon {
+    border: 2px solid;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: inline-block;
+    font-size: 20px;
+    text-align: center;
+    line-height: 20px;
+}
+
+.bell-icon-link {
+    &:hover .bell-icon {
+        color: #fff;   
+    }
+
+    .bell-icon {
+        color: rgba(255, 255, 255, .4);
+    }
+} 
+.noti-count {
+    position: absolute;
+    color: white;
+    background: #f3863a;
+    top: 2px;
+    width: 8px;
+    height: 8px;
+    font-weight: bold;
+    font-size: 12px;
+    @include text-align(center);
+    @include border-radius(4px);
+    @include left(18px);
+}
+.collab-bell {
+    position: relative;
+    display: inline-block;
+    @include float(left);
+    @include margin(6px 15px);
+
+    .bell-icon-link {
+        display: inline-block;
+    }
+}
+
+.notification-card {
+    position:fixed;
+    bottom:10px;
+    background:black;
+    color:white;
+    font-weight: bold;
+    z-index: 1;
+    min-width: 240px;
+    @include padding(10px);
+    @include box-shadow(0 0 10px grey);
+    @include left(20px);
+    @include border-radius(4px);
+}

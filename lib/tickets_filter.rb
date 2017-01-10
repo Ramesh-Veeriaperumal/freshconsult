@@ -91,6 +91,15 @@ module TicketsFilter
     [ :status     , "tickets_filter.sort_fields.status"        ]
   ]
 
+  COLLAB_SORT_FIELDS = [
+    [ :created_at , "tickets_filter.sort_fields.date_created" ]
+  ]
+
+  def self.collab_sort_field
+    sort_fields = COLLAB_SORT_FIELDS.clone
+    sort_fields.map { |i| [I18n.t(i[1]), i[0]] }  
+  end
+
   AGENT_SORT_FIELDS = [
     [ :responder_id , "filter_options.responder_id" , FILTER_MODES[:primary]],
     [ "helpdesk_schema_less_tickets.long_tc04" , "filter_options.internal_agent" , FILTER_MODES[:internal]],
@@ -143,6 +152,10 @@ module TicketsFilter
   SHARED_OWNERSHIP_DEFAULT_VISIBLE_FILTERS = %w( new_and_my_open shared_by_me shared_with_me unresolved all_tickets raised_by_me monitored_by spam deleted )
   DEFAULT_VISIBLE_FILTERS_WITH_ARCHIVE = %w( new_and_my_open unresolved all_tickets raised_by_me monitored_by archived spam deleted )
   SHARED_OWNERSHIP_DEFAULT_VISIBLE_FILTERS_WITH_ARCHIVE = %w( new_and_my_open shared_by_me shared_with_me unresolved all_tickets raised_by_me monitored_by archived spam deleted )
+  DEFAULT_VISIBLE_FILTERS_WITH_COLLABORATION = %w( ongoing_collab new_and_my_open unresolved all_tickets raised_by_me monitored_by spam deleted )
+  SHARED_OWNERSHIP_DEFAULT_VISIBLE_FILTERS_WITH_COLLABORATION = %w( ongoing_collab new_and_my_open shared_by_me shared_with_me unresolved all_tickets raised_by_me monitored_by spam deleted )
+  DEFAULT_VISIBLE_FILTERS_WITH_ARCHIVE_AND_COLLABORATION = %w( ongoing_collab new_and_my_open unresolved all_tickets raised_by_me monitored_by archived spam deleted )
+  SHARED_OWNERSHIP_DEFAULT_VISIBLE_FILTERS_WITH_ARCHIVE_AND_COLLABORATION = %w( ongoing_collab new_and_my_open shared_by_me shared_with_me unresolved all_tickets raised_by_me monitored_by archived spam deleted )
 
   def self.mobile_sort_fields_options
     sort_fields = self.sort_fields_options
@@ -162,10 +175,15 @@ module TicketsFilter
   end
 
   def self.default_views
+    @shared_ownership_on = Account.current.features?(:shared_ownership)
+    @collaboration_on = Account.current.features?(:collaboration)
+
     filters = if Account.current && Account.current.features_included?(:archive_tickets)
-      Account.current.features?(:shared_ownership) ? SHARED_OWNERSHIP_DEFAULT_VISIBLE_FILTERS_WITH_ARCHIVE : DEFAULT_VISIBLE_FILTERS_WITH_ARCHIVE
+      @collaboration_on ? (@shared_ownership_on ? SHARED_OWNERSHIP_DEFAULT_VISIBLE_FILTERS_WITH_ARCHIVE_AND_COLLABORATION : DEFAULT_VISIBLE_FILTERS_WITH_ARCHIVE_AND_COLLABORATION) : ( @shared_ownership_on ? SHARED_OWNERSHIP_DEFAULT_VISIBLE_FILTERS_WITH_ARCHIVE : DEFAULT_VISIBLE_FILTERS_WITH_ARCHIVE)
+    elsif @collaboration_on
+      @shared_ownership_on ? SHARED_OWNERSHIP_DEFAULT_VISIBLE_FILTERS_WITH_COLLABORATION : DEFAULT_VISIBLE_FILTERS_WITH_COLLABORATION
     else
-      Account.current.features?(:shared_ownership) ? SHARED_OWNERSHIP_DEFAULT_VISIBLE_FILTERS : DEFAULT_VISIBLE_FILTERS
+      @shared_ownership_on ? SHARED_OWNERSHIP_DEFAULT_VISIBLE_FILTERS : DEFAULT_VISIBLE_FILTERS
     end
     filters.map { |i| {
         :id       =>  i, 

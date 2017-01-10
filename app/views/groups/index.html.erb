@@ -25,23 +25,35 @@
     <h3 class="lead span6"><%=t('group.title')%></h3>
     <span class="span6"><%= link_to(t('group.new'), new_group_path, :class => "btn btn-primary pull-right ") if admin_user %></span>
   </div>
-  <div class="list-page-body"> 
-      <table class="table table-striped">
-        <% @groups.each do |group| %>
-        <tr>
-          <td>
-            <%= link_to(h(group.name) + " (#{group.agents.count})", edit_group_path(group), :class => "item_info") %>
-            <div class="muted"><%=h(group.description)%></div>
-          </td>
 
-          <td class="text-right">
-            <%= link_to(t('edit'), edit_group_path(group), :class => "btn btn-mini") if admin_user %>
-            <%= link_to("<i class='icon-trash'></i>".html_safe, group, :confirm => "#{t('group.info5')}", :method => :delete, :class => "btn btn-mini") if admin_user%>
-          </td>
-        </tr>
+    <% if (@groups.length == 0) %>
+        <% if (@is_admin) %>
+           <div style="margin-top: -10px;" class="list-page-body va_rule-index va_rule_no_skills align_center" id="va_rules_list">
+            <div class="text-new-skills muted">    <%= t('group.no_group_info').html_safe %>  <%= (link_to t('ticket_templates.create_new'), "/groups/new") %></div></div>
+        <% else %>
+            <div style="margin-top: -10px;" class="list-page-body va_rule-index va_rule_no_skills align_center" id="va_rules_list">
+            <div class="text-new-skills muted">    <%= t('admin.skills.index.no_groups_present_info').html_safe %> </div></div>
         <% end %>
-      </table>
-  </div>
+
+    <% else %>
+    <div class="list-page-body"> 
+        <table class="table table-striped">
+          <% @groups.each do |group| %>
+          <tr>
+            <td>
+              <%= link_to(h(group.name) + " (#{group.agents.count})", edit_group_path(group), :class => "item_info") %>
+              <div class="muted"><%=h(group.description)%></div>
+            </td>
+
+            <td class="text-right">
+              <%= link_to(t('edit'), edit_group_path(group), :class => "btn btn-mini") if admin_user %>
+              <%= link_to("<i class='icon-trash'></i>".html_safe, group, :confirm => "#{t('group.info5')}", :method => :delete, :class => "btn btn-mini") if admin_user%>
+            </td>
+          </tr>
+          <% end %>
+        </table>
+    </div>    
+    <% end %>
 </div>
 <br/><br/>
 

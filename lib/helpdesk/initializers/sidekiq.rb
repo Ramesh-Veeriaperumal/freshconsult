@@ -41,6 +41,8 @@ Sidekiq.configure_client do |config|
       "DelayedJobs::TrialAccountJob",
       "DelayedJobs::PremiumAccountJob",
       "DelayedJobs::DelayedAccountJob",
+      "DkimRecordVerificationWorker",
+      "DkimSwitchCategoryWorker",
       "DelayedJobs::MailboxJob",
       "Email::S3RetryWorker"
     ]
@@ -107,6 +109,8 @@ Sidekiq.configure_server do |config|
       "DelayedJobs::TrialAccountJob",
       "DelayedJobs::PremiumAccountJob",
       "DelayedJobs::DelayedAccountJob",
+      "DkimRecordVerificationWorker",
+      "DkimSwitchCategoryWorker",
       "DelayedJobs::MailboxJob",
       "Email::S3RetryWorker"
     ]
@@ -163,6 +167,8 @@ Sidekiq.configure_server do |config|
       "DelayedJobs::TrialAccountJob",
       "DelayedJobs::PremiumAccountJob",
       "DelayedJobs::DelayedAccountJob",
+      "DkimRecordVerificationWorker",
+      "DkimSwitchCategoryWorker",
       "DelayedJobs::MailboxJob",
       "Email::S3RetryWorker"
     ]

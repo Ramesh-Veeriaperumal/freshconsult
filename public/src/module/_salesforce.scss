@@ -17,8 +17,10 @@
 }
 
 .salesforce-wrapper{
-  @include float(right);
-  width: 75%;
+  &:not(.cloud-elements){
+    @include float(right);
+    width: 75%;
+  }
   .select2-choices{
     background:none;
     @include border-radius(5px);
@@ -147,6 +149,14 @@
   display: inline-block;
 }
 
+.contract-header {
+  display: inline-block;
+}
+
+.order-header {
+  display: inline-block;
+}
+
 .salesforce-new-block {
   .select2-choices{
     padding: 0px;
@@ -164,7 +174,7 @@
 // ------------------------------------------------------------------------------------------------------------
 //                        Salesforce 
 // ------------------------------------------------------------------------------------------------------------
-.salesforce_contacts_widget_bg, .freshsales_contacts_widget_bg{
+.salesforce_contacts_widget_bg, .freshsales_contacts_widget_bg, .salesforce_v2_contacts_widget_bg{
   ul{
     list-style:disc inside;
     @include margin-left(1px);
@@ -246,6 +256,9 @@
 }
 
 .salesforce-opportunity-tooltip{
+  &.active{
+    color:#060606;
+  }
   display: inline-block;
   text-overflow: ellipsis;
   overflow: hidden;

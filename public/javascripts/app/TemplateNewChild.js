@@ -16,7 +16,7 @@ window.App = window.App || {};
 		bindEvents: function(data){
 			$(window).on('beforeunload' , function () {
 				if(customMessages && customMessages.existing){
-					App.Parentchildtemplates.localStorageProcess('remove',customMessages.existing,'');
+					App.Parentchildtemplates.sessionStorageProcess('remove',customMessages.existing,'');
 				}
 			});	
 		}

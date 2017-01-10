@@ -192,6 +192,24 @@ module Cache::Memcache::Account
     end
   end
 
+  def skills_trimmed_version_from_cache
+    @skills_trimmed_version_from_cache ||= begin
+      key = ACCOUNT_SKILLS_TRIMMED % { :account_id => self.id }
+      MemcacheKeys.fetch(key) do
+        skills.trimmed.find(:all)
+      end
+    end
+  end
+
+  def skills_from_cache
+    @skills_from_cache ||= begin
+      key = ACCOUNT_SKILLS % { :account_id => self.id }
+      MemcacheKeys.fetch(key) do
+        skills.find(:all)
+      end
+    end
+  end
+
   def observer_rules_from_cache
     key = ACCOUNT_OBSERVER_RULES % { :account_id => self.id }
     MemcacheKeys.fetch(key) do

@@ -103,6 +103,8 @@ class MimeController < Fdadmin::MetalApiController
         head 200, content_type: "text/html"
       end
     end
+  rescue => e
+    Rails.logger.info "Error in check_user_status: #{e.message} - #{e.backtrace}"
   end
 
   def check_email_size

@@ -1,7 +1,7 @@
 class Account < ActiveRecord::Base
 
   LP_FEATURES   = [:link_tickets, :select_all, :round_robin_capping, :suggest_tickets, :customer_sentiment_ui]
-  DB_FEATURES   = [:custom_survey]
+  DB_FEATURES   = [:custom_survey, :requester_widget]
   BOTH_FEATURES = [:shared_ownership]
   BITMAP_FEATURES = [:split_tickets, :add_watcher, :traffic_cop, :custom_ticket_views, :supervisor, :create_observer, :sla_management, 
     :email_commands, :assume_identity, :rebranding, :custom_apps, :custom_ticket_fields, :custom_company_fields, 
@@ -128,5 +128,28 @@ class Account < ActiveRecord::Base
   def hide_agent_metrics_feature?
     features?(:euc_hide_agent_metrics)
   end
+  
+  def dkim_enabled?
+    launched?(:dkim)
+  end
 
+  def new_pricing_launched?
+    on_new_plan? || redis_key_exists?(NEW_SIGNUP_ENABLED)
+  end
+
+  def advance_facebook_enabled?
+    features?(:facebook)
+  end
+
+  def advanced_twitter?
+    features? :twitter
+  end
+
+  def on_new_plan?
+    @on_new_plan ||= [:sprout_jan_17,:blossom_jan_17,:garden_jan_17,:estate_jan_17,:forest_jan_17].include?(plan_name)
+  end
+
+  def tags_filter_reporting_enabled?    
+    features?(:tags_filter_reporting)   
+  end
 end

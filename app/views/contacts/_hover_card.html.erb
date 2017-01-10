@@ -18,7 +18,7 @@
               </div>
           <% end %>
         <%= render :partial => "helpdesk/tickets/components/company_info", 
-                   :locals => { :company => defined?(ticket) ? ticket.company : user.company } %>
+                   :locals => { :company => defined?(company) ? company : user.company } %>
         <% if feature?(:gamification) and feature?(:gamification_enable) and user.agent? %>
           <%= content_tag :div, h(user.agent.level.name) unless user.agent.level.blank? %>
         <% end %>
@@ -37,19 +37,18 @@
            <%= strange_number.present? ? strange_number_strikethrough(user.available_number, "hover-contact-box") : can_make_calls(user.available_number, user, "hover-contact-box",nil,true)%>
         </div>
       <% end %>
-      <% unless user.email.present? and user.phone.present? and user.mobile.present? %>
-        <% unless user.twitter_id.blank? %>
-          <div class="contact-append">
-            <span class="add-on"><span class="ficon-twitter fsize-16"></span></span>
-            <%= link_to h(user.twitter_id), "https://twitter.com/"+user.twitter_id, :target => "_blank"%>
-          </div>
-        <% end %>
-        <% unless user.fb_profile_id.blank? %>
-          <div class="contact-append">
-            <span class="add-on"><span class="ficon-facebook-setting fsize-16"></span></span>
-            <%= link_to h(user.name), "https://facebook.com/"+user.fb_profile_id, :target => "_blank"%>
-          </div>
-        <% end %>
+
+      <% unless user.twitter_id.blank? %>
+        <div class="contact-append">
+          <span class="add-on"><span class="ficon-twitter fsize-16"></span></span>
+          <%= link_to h(user.twitter_id), "https://twitter.com/"+user.twitter_id, :target => "_blank"%>
+        </div>
+      <% end %>
+      <% unless user.fb_profile_id.blank? %>
+        <div class="contact-append">
+          <span class="add-on"><span class="ficon-facebook-setting fsize-16"></span></span>
+          <%= link_to h(user.name), "https://facebook.com/"+user.fb_profile_id, :target => "_blank"%>
+        </div>
       <% end %>
 
     <% unless user.agent? %>

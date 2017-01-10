@@ -1,0 +1,1411 @@
+@import "../settings/settings";
+
+$space_for_title_row: 75px;
+
+$font_size_xbig: 24px;
+$font_size_heading: 16px;
+$font_size_primary: 13px;
+$font_size_sec: 11px;
+$font_size_thumb: 16px;
+$font_size_thumb_large: 18px;
+
+$link_color: #1272de;
+$link_hover_color: #0645AD;
+
+$icon_color: #666;
+$icon_hover_color: #444;
+
+$annotation_bg_color: #fee4c8;
+$annotation_border_color: #ebc397;
+
+$error_bg_color: #ffeeee;
+$error_text_color: #ff3a3a;
+
+$border_color: #ddd;
+$border_color_hover: #bbb;
+$received_msg_border_color: #c1c1c1;
+
+$std_border_radius: 3px;
+
+$text_color: #252525;
+$secondary_text_color: #979797;
+$mention_name_color: #696969;
+
+$active_tab_base: #888888;
+$tab_base_hover: #bfbfbf;
+
+$chat_bg: #f7f7f7;
+$input_text_color: #4a4a4a;
+$box_shadow: 0 2px 6px 0 rgba(0,0,0,.2);
+$msg_bg_color: #e6e6e6;
+$ol_color: #88ca60;
+$selected_item_color: #fefef0;
+$motto_color: #979797;
+
+$attachment_bg_color: #f8f9fb;
+$disabled_bg_color: #f8f9fb;
+$disabled_border_color: #e0e0e0;
+
+.collab-logo {
+    .logo-image {
+        max-width: 100%;
+    }
+}
+
+.collab-sidebar {
+    position: fixed;
+    top: 0;
+    height: 100vh;
+    background-color: transparent;
+    z-index: 1051;
+    box-shadow: $box_shadow;
+    width: 400px;
+    -webkit-transition-duration: 1s;
+    -moz-transition-duration: 1s;
+    -o-transition-duration: 1s;
+    transition-duration: 1s;
+    @include right(-420px);
+
+    img {
+        max-width: 100%;
+    }
+
+    .preview_pic {
+        &.thumb,
+        .thumb {
+            border: 1px solid $border_color;
+            box-sizing: border-box; 
+        }
+
+    }
+
+    .valign-helper {
+        display: inline-block;
+        height: 100%;
+        vertical-align: middle;
+    }
+
+    .tag-handle {
+        color: $link_color;
+        cursor: pointer;
+        
+        &:hover  {
+            color: $link_hover_color;
+        }
+    }
+
+    &.closed-conversation {
+        .send-collab-message-form {
+            border-color: $disabled_border_color;
+        }
+
+        .collab-action-btns {
+            background-color: $disabled_bg_color;
+            cursor: not-allowed;
+        }
+
+        .collab-action-btn {
+            display: none!important;
+        }
+    }
+
+    &.expand {
+        -webkit-transition-duration: .8s;
+        -moz-transition-duration: .8s;
+        -o-transition-duration: .8s;
+        transition-duration: .8s;
+        @include right(0px);
+
+        .title-row {
+            display: block;
+        }
+
+        .collaborators-list {
+
+            .avatar-cover {
+                @include float(left);
+
+                .agent-delete-icon: {
+                    display: none;
+                }
+                .agent-details: {
+                    display: none;   
+                }
+
+            }
+        }
+    }
+
+    .msg {
+        font-size: $font_size_primary;
+        white-space: pre-line;
+        position: relative;
+        word-wrap: break-word;
+        display: inline-block;
+        width: 100%;
+        box-sizing: border-box;
+
+        .emoji {
+            width: 16px;
+            height: 16px;
+            vertical-align: text-bottom;
+
+            &.jumbo {
+                width: 40px;
+                height: 40px;
+            }
+        }
+
+    }
+
+    .annotation-text {
+        background-color: $annotation_bg_color;
+        border: 1px solid $annotation_border_color;
+        color: $text_color;
+        line-height: 18px;
+        box-shadow: 1px 1px 0 lightgrey;
+        @include border-radius(1px);
+        @include padding(1px 4px);
+        margin-bottom: 5px;
+        cursor: pointer;
+        text-overflow: ellipsis;
+        height: 18px;
+        font-size: $font_size_sec;
+        overflow: hidden;
+        white-space: nowrap;
+
+        &.invalid-annotation {
+            background-color: $msg_bg_color;
+            border-color: $received_msg_border_color;
+            cursor: not-allowed;
+        }
+    }
+
+    .msg-cover {
+        background-color: $msg_bg_color;
+        position: relative;
+        border: 1px solid $border_color;
+        display: inline-block;
+        max-width: 260px;
+        @include text-align(left);
+        @include padding(10px);
+        @include border-radius($std_border_radius);
+
+        &:before {
+            border: solid transparent;
+            content: " ";
+            height: 0;
+            width: 0;
+            position: absolute;
+            top: 10px;
+            @include right(100%);
+            @include border-right-color($border_color);
+            @include border-width(7px);
+        }
+
+        &:after {
+            border: solid transparent;
+            content: " ";
+            height: 0;
+            width: 0;
+            position: absolute;
+            top: 11px;
+            @include border-width(6px);
+            @include right(100%);
+            @include border-right-color($msg_bg_color);
+        }
+
+        .name {
+            font-family: sans-serif;
+            display: block;
+            position: absolute;
+            bottom: 10px;
+            font-size: $font_size_sec;
+            opacity: .6;
+        }
+    }
+
+    .sent-box {
+        color: $text_color;
+        @include box-sizing( border-box );
+
+        .avatar-cover {
+            position: absolute;
+            @include right(0);
+        }
+        .preview_pic {
+            display: none;
+            @include margin(0);
+        }
+        .msg-cover {
+            background-color: white;
+            @include margin-left(0);
+
+            &:before {
+                @include left(100%);
+                @include border-left-color($border_color);
+                @include border-right-color(transparent);
+            }
+
+            &:after {
+                @include right(-11px);
+                @include border-left-color(white);
+                @include border-right-color(transparent);
+            }
+        }
+    }
+
+    .avatar {
+        border: 0;
+        width: 40px;
+        height: 40px;
+    }
+
+    .scroll-box {
+        height: 100%;
+        overflow: auto;
+        @include padding(10px 16px);
+        @include box-sizing(border-box);
+    }
+
+    .title-row {
+        background-color: $chat_bg;
+        border-bottom: 1px solid $border_color;
+        height: 75px;
+        box-sizing: border-box;
+
+        .collab-logo {
+            .logo-image {
+                width: 30px;
+                height: 30px;
+                max-width: 30px;
+                @include margin(8px 10px);
+            }
+        }
+        .tab {
+            font-size: $font_size_heading;
+            @include padding(0 10px);
+            cursor: pointer;
+            @include float(left);
+            padding-bottom: 0;
+
+            &.active {
+                &:after {
+                    content: " ";
+                    display: block;
+                    width: 100%;
+                    background-color: $active_tab_base;
+                    height: 4px;
+                    margin-top: 4px;
+                }
+            }
+
+            &.disabled {
+                color: grey;
+                pointer-events: none;
+            }
+
+            &:not(.active):not(.disabled) {
+                color: $link_color;
+                &:hover {
+                    color: $link_hover_color;
+                    &:after {
+                        content: " ";
+                        display: block;
+                        width: 100%;
+                        background-color: $tab_base_hover;
+                        height: 4px;
+                        margin-top: 4px;
+                    };
+                };
+            };
+        }
+        .collab-close-icon {
+            position: absolute;
+            @include right(10px);
+            top: 6px;
+            font-size: 22px;
+            color: $icon_color;
+            cursor: pointer;
+            opacity: .6;
+
+            &:hover {
+                color: $icon_hover_color;
+            }
+        }
+    }
+
+    .co-user-online {
+        position: relative;
+        display: block;
+
+        &:after {
+            content: " ";
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: $ol_color;
+            border: 1px solid white;
+            top: 0px;
+            @include left( 30px );
+            @include border-radius(50%);
+        }
+    }
+
+    .timestamp-cover {
+        font-size: $font_size_sec;
+        margin-top: 16px;
+        text-align: right;
+    }
+}
+
+.collab-btn {
+    box-sizing: border-box;
+}
+
+.collab-hovercard-cover {
+    height: 70px;
+    background-color: white;
+    width: 200px;
+    left: -196px;
+    position: absolute;
+    box-shadow: $box_shadow;
+    border: 1px solid $border_color;
+    @include border-radius($std_border_radius);
+    display: none;
+
+    &:after,
+    &:before {
+        content: " ";
+        border: solid transparent;
+        position: absolute;
+        border-width: 7px;
+        border-left-color: $border_color;
+        top: 28px;
+        @include right (-14px);
+    }
+
+    &:after{
+        border-left-color: white;
+        @include right (-13px);
+    }
+
+    .hovercard-extension {
+        position: absolute;
+        right: -40px;
+        height: 70px;
+        width: 40px;
+    }
+
+    .collaborators-list-item {
+        border: 0;
+        height: 70px;
+        width: 200px;
+        cursor: pointer;
+        @include padding-left(70px);
+
+        .co-user-online {
+            position: absolute;
+            left: 14px;
+        }
+
+        .nametag,
+        .job-profile {
+            line-height: 13px;
+            height: 13px;
+            margin-bottom: 4px;
+            @include padding-right(50px);
+            font-size: $font_size_sec;
+        }
+
+        .nametag {
+            font-weight: 400;
+            font-size: $font_size_primary;
+            
+            .name {
+                max-width: 125px;
+            }
+        
+            .tag-handle {
+                top: 46px;
+                left: 70px;
+                font-size: $font_size_sec;
+            }
+
+            .prepend-separator{
+                padding: 0;
+                position: absolute;
+                
+                &:before {
+                    display: none;
+                }
+            }
+
+            &.one-line {
+                margin-top: 8px;
+                line-height: 16px;
+                
+                .tag-handle {
+                    position: static;
+                    display: block;
+                }
+            }
+        }
+
+        .preview_pic {
+            position: absolute;
+            @include left(10px);
+            margin: 0;
+            width: 50px;
+            height: 50px;
+            line-height: 46px;
+            box-sizing: border-box;
+            font-size: $font_size_xbig;
+
+            .thumb {
+                width: 48px;
+                height: 48px;
+            }
+
+        }
+    }
+}
+
+.collab-chat-section {
+    position: absolute;
+    bottom: 0px;
+    display: none;
+    top: $space_for_title_row;
+    width: 100%;
+    @include box-sizing( border-box );
+    background-color: $chat_bg;
+    @include right(0);
+
+    &.active {
+        display: block;
+    }
+
+    &.empty-chat-view {
+        .empty-chat-content {
+            display: block;
+        }
+    }
+
+    &.annotated {
+        .collab-scroll-box-cover {
+            height: calc(100vh - 249px);
+        }
+        .send-collab-message-form {
+            .annotation {
+                display: block;
+            }
+        }
+    }
+
+    &.collab-error-shown {
+        .collab-scroll-box-cover {
+            height: calc(100vh - 265px);
+        }
+
+        &.annotated {
+            .collab-scroll-box-cover {
+                height: calc(100vh - 311px);
+            }
+        }
+
+        .send-collab-message-form {
+            .collab-error-popup {
+                display: block;
+            }
+        }
+    }
+
+    &.collab-file-attached {
+        .collab-scroll-box-cover {
+            height: calc(100vh - 274px);
+        }
+        .send-collab-message-form {
+            .collab-attachment-section {
+                display: block;
+            }
+        }
+
+        &.annotated {
+            .collab-scroll-box-cover {
+                height: calc(100vh - 311px);
+            }
+        }
+
+        .collab-attachment-icon {
+            opacity: .5!important;
+        }
+        .collab-attachment-btn {
+            cursor: not-allowed;
+        }
+        .collab-attachment-btn:after {
+            display: block;
+            width: 25px;
+            height: 25px;
+            background: transparent;
+            content: " ";
+            position: absolute;
+            top: 0;
+            z-index: 2;
+            cursor: not-allowed;
+        }
+    }
+}
+
+.collab-message-box {
+    @include text-align(left);
+    min-height: 40px;
+    position: relative;
+    width: 100%;
+    word-break: break-word;
+    background-color: transparent;
+    box-shadow: 0 0 0 16px transparent;
+    margin-top: 10px;
+    @include float(right);
+    @include text-align(right);
+
+    .avatar-cover {
+        cursor: pointer;
+    }
+
+    .avatar-text {
+        cursor: pointer;
+    }
+
+    &.received-box {
+        @include text-align(left);
+
+        .thumb {
+            border-color: $received_msg_border_color;
+            width: 35px;
+            height: 35px;
+            line-height: 35px;
+        }
+
+        .msg-cover {
+            border-color: $received_msg_border_color;
+
+            &:before {
+                border-right-color: $received_msg_border_color
+            }
+        }
+
+        .collab-attachment-msg {
+            border-color: $received_msg_border_color;
+
+            .collab-dl-link {
+                border-left-color: $received_msg_border_color;
+            }
+        }
+    }
+}
+
+.collab-attached-image-section {
+    .collab-attachment-image {
+        height: 40px;
+        width: 40px;
+        margin: 10px;
+        text-align: center;
+        background-color: $border_color;
+        @include border-radius($std_border_radius);
+        overflow: hidden;
+    }
+
+    &.collab-download-disabled {
+        opacity: .8;
+        cursor: not-allowed;
+
+        .collab-attachment-details {
+            opacity: .6;
+        }
+    }
+}
+
+.msg.collab-attachment-msg {
+    white-space: normal;
+    @include border-radius($std_border_radius);
+    background-color: $attachment_bg_color;
+    border: 1px solid $border_color;
+    padding: 5px;
+
+    .collab-attachment-image {
+        position: absolute;
+        margin: 0;
+        box-sizing: border-box;
+
+        .image {
+            vertical-align: middle;
+            max-height: 40px;
+            max-width: 40px;
+            border: 2px solid $border_color;
+            box-sizing: border-box;
+        }
+    }
+
+    .collab-attachment-details {
+        box-sizing: border-box;
+        @include padding-left(48px);
+        @include padding-right(56px);
+        height: 40px;
+        min-width: 230px;
+        line-height: 20px;
+        color: $text_color;
+    }
+    .collab-dl-link {
+        width: 60px;
+        position: absolute;
+        right: 0;
+        top: 0px;
+        border-left: solid 1px $border_color;
+        @include padding(14px 17px);
+        box-sizing: border-box;
+        height: 100%;
+        opacity: .6;
+        cursor: pointer;
+
+    }
+    &:hover {
+        .collab-dl-link {
+            opacity: 1;
+        }
+
+        .collab-attached-image-section {
+            &.collab-download-disabled {
+                .collab-dl-link {
+                    opacity: .6;
+                    cursor: not-allowed;
+                }
+            }
+        }
+    }
+}
+
+.collab-attachment-section {
+    background-color: $attachment_bg_color;
+    border-top-right-radius: $std_border_radius;
+    border-top-left-radius: $std_border_radius;
+    border-bottom: 1px solid $border_color;
+    display: none;
+    position: relative;
+
+    &.sent {
+        opacity: .6;
+        
+        &:after {
+            content: " ";
+            width: 100%;
+            display: block;
+            position: absolute;
+            background: transparent;
+            top: 0px;
+            bottom: 0;
+        }
+    }
+
+    .collab-attached-image-section {
+        display: inline-block;
+
+        .collab-attachment-image {
+            display: inline-block;
+            float: left;
+
+            .image {
+                vertical-align: middle;
+                max-height: 40px;
+                max-width: 40px;
+            }
+        }
+
+        .collab-attachment-name,
+        .collab-attachment-size {
+            line-height: 16px;
+        }
+
+        .collab-attachment-size {
+            margin: 0;
+            max-width: 90px;
+            font-size: $font_size_sec;
+        }
+
+        .collab-attachment-size,
+        .collab-attachment-name-separator {
+            display: inline-block;
+            vertical-align: middle;
+            margin-top: 2px;
+        }
+        
+        .collab-attachment-name {
+            line-height: 60px;
+            max-width: 140px;
+            display: inline-block;
+            vertical-align: middle;
+        }
+    }
+
+    .collab-send-attachment-button,
+    .collab-attachment-cancel-icon {
+        float: right;
+        height: 30px;
+        width: 30px;
+        background-color: white;
+        line-height: 30px;
+        text-align: center;
+        margin: 15px 10px 15px 0;;
+        @include border-radius(50%);
+        border: solid 1px $border_color;
+        box-sizing: border-box;
+        color: $icon_color;
+
+        &:hover {
+            background-color: white;
+            color: $icon_hover_color;
+            border-color: $border_color_hover;
+            cursor: pointer;
+        };
+    }
+}
+
+.collab-editor-container {
+    position: relative;
+}
+
+.send-collab-message-form {
+    z-index: 3;
+    position: relative;
+    background-color: white;
+    border: 1px solid $border_color;
+    @include border-radius($std_border_radius);
+    @include margin (10px);
+
+    .annotation {
+        background-color: $annotation_bg_color;
+        border: 1px solid $annotation_border_color;
+        color: $text_color;
+        display: none;
+        width: calc(100% + 2px);
+        margin-bottom: 0px;
+        margin-top: -5px;
+        margin-left: -1px;
+        border-top-left-radius: $std_border_radius;
+        border-top-right-radius: $std_border_radius;
+        @include padding(10px);
+        @include box-sizing( border-box );
+        position: relative;
+
+        .close {
+            position: absolute;
+            font-size: 24px;
+            font-weight: bold;
+            color: $icon_color;
+            top: 0px;
+            cursor: pointer;
+            width: 30px;
+            height: 30px;
+            background-color: white;
+            text-align: center;
+            line-height: 28px;
+            @include border-radius(50%);
+            border: solid 1px $border_color;
+            @include margin(5px 0);
+            @include right (8px);
+
+            &:hover {
+                color: $icon_hover_color;
+            }
+        }
+
+        .text {
+            text-overflow: ellipsis;
+            width: 300px;
+            overflow: hidden;
+            display: block;
+            white-space: nowrap;
+            line-height: 22px;
+        }
+    }
+
+    .send-message-box {
+        border: 0;
+        resize: none;
+        box-shadow: none;
+        width: 100%;
+        height: 80px;
+        @include padding (10px);
+        @include box-sizing( border-box );
+        @include margin (0);
+
+        &.disabled-box {
+            background-color: $disabled_bg_color;
+            cursor: not-allowed;
+        }
+    }
+
+    .collab-action-btns {
+        border-top: solid 1px $border_color;
+        @include padding(5px 10px);
+        height: 36px;
+        box-sizing: border-box;
+
+        .collab-attachment-btn {
+            overflow: hidden;
+            display: inline-block;
+            position: relative;
+
+            .collab-attachment-input {
+                height: 25px;
+                margin: 0;
+                opacity: 0;
+                z-index: 1;
+                cursor: pointer;
+                position: absolute;
+                @include left(-100px);
+            }
+            .collab-attachment-icon {
+                background-color: $msg_bg_color;
+                width: 25px;
+                height: 25px;
+                display: inline-block;
+                line-height: 25px;
+                text-align: center;
+                @include border-radius(50%);
+                opacity: .5;
+                cursor: pointer;
+            }
+            &:hover {
+                .collab-attachment-icon {
+                    opacity: 1;
+                }
+            }
+        }
+    }
+}
+
+
+.collab-error-popup {
+    background-color: $error_bg_color;
+    border-top-left-radius: 2px;
+    border-top-right-radius: 2px;
+    @include padding(10px);
+    height: 52px;
+    box-sizing: border-box;
+    display: none;
+
+    .collab-error-icon-wrapper {
+        position: absolute;
+        top: 15px;
+    }
+
+    .collab-error-icon {
+        color: $text_color;
+    }
+
+    .collab-error-text {
+        font-size: $font_size_primary;
+        color: $error_text_color;
+        @include padding-left(34px);
+        box-sizing: border-box;
+        @include margin(0);
+        vertical-align: -50%;
+        display: inline-block;
+    }
+}
+
+.collab-scroll-box-cover {
+    height: calc(100vh - 213px);
+    @include box-sizing( border-box );    
+}
+
+.collaborators-list {
+    position: absolute;
+    bottom: 0px;
+    display: none;
+    top: $space_for_title_row;
+    width: 100%;
+    @include box-sizing( border-box );
+    background-color: $chat_bg;
+    height: calc(100vh - 75px);
+    overflow: auto;
+    @include right(0);
+
+    &.active {
+        display: block;
+    }
+
+    .arrow {
+        display: none;
+    }
+
+    .avatar-cover {
+        width: 100%;
+    }
+    .job-profile {
+        font-size: 11px;
+    }
+}
+
+.collab-msg-info {
+    padding: 2px;
+    @include padding-left(50px);
+    padding-top: 4px;
+    font-size: $font_size_sec;
+    color: $secondary_text_color;
+    box-sizing: border-box;
+
+    &.invalid-ann-info-show {
+        .collab-ann-info {
+            display: inline-block;
+        }
+    }
+
+    .collab-ann-info {
+        color: $error_text_color;
+        display: none;
+        @include padding-right(12px);
+        position: relative;
+
+        &:after {
+            content: " ";
+            display: block;
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background-color: $border_color_hover;
+            @include border-radius(50%);
+            right: 2px;
+            top: 6px;
+        }
+    }
+
+    .name {
+        position: relative;
+        display: inline-block;
+        @include padding-right(12px);
+
+        &:after {
+            content: " ";
+            display: block;
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background-color: $border_color_hover;
+            @include border-radius(50%);
+            right: 2px;
+            top: 6px;
+        }
+    }
+}
+
+.collaborators-list-item {
+    @include float(left);
+    width: 100%;
+    position: relative;
+    @include box-sizing( border-box );
+    @include padding(10px);
+    border-bottom: 1px solid $border_color;
+
+    .preview_pic .thumb,
+    .preview_pic {
+        width: 40px;
+        height: 40px;
+        line-height: 40px;
+    }
+
+    .nametag,
+    .job-profile {
+        line-height: 16px;
+        height: 16px;
+    }
+
+    .nametag {
+        display: inline-block;
+        margin-top: 4px;
+        font-size: $font_size_primary;
+
+        &.one-line {
+            margin-top: 10px;
+            line-height: 20px;
+
+            .tag-handle {
+                &:before {
+                    top: 8px;
+                }
+            }
+        }
+
+        .line-item {
+            display: inline-block;
+            max-width: 180px;
+            vertical-align: middle;
+        }
+
+        .tag-handle {
+            font-weight: 600;
+            display: inline-block;
+            position: relative;
+            font-family: sans-serif;
+            max-width: 125px;
+        }
+
+        .prepend-separator {
+            @include padding-left(14px);
+            &:before {
+                content: " ";
+                display: block;
+                width: 4px;
+                height: 4px;
+                background-color: $border_color_hover;
+                position: absolute;
+                top: 5px;
+                @include left (4px);
+                @include border-radius(50%);
+            }
+        }
+    }
+
+    &.self {
+        .self-signifier {
+            opacity: .2;
+            cursor: initial;
+            cursor: auto;
+            position: absolute;
+            right: 10px;
+            font-size: $font_size_thumb;
+            line-height: 40px;
+            top: 10px;
+            font-weight: bold;
+        }
+    }
+}
+
+.collab-mention-picker {
+    @include padding(0);
+    position: absolute;
+    max-height: initial;
+    max-height: auto;
+    border: solid 1px $border_color;
+    margin-left: -1px;
+    box-shadow: $box_shadow;
+    background-color: white;
+    min-width: 200px;
+
+    a {
+        @include padding(0);
+    }
+    .selected,
+    .active {
+        .collaborators-list-item {
+            background-color: $selected_item_color;
+            color: $text_color;
+        }
+    }
+
+
+    .collaborators-list-item {
+        color: $text_color;
+        @include padding(7px 10px);
+
+        .nametag {
+            @include margin(0);
+
+            .tag-handle {
+                &:before {
+                    top: 5px;
+                }
+            }
+
+            &.one-line {
+                line-height: 30px;
+                height: 30px;
+                vertical-align: middle;
+
+                .tag-handle {
+                    &:before {
+                        top: 13px;
+                    }
+                }
+            }
+        }
+
+        .job-profile {
+            font-size: 11px;
+        }
+        .nametag,
+        .job-profile {
+            line-height: 14px;
+            height: 14px;
+        }
+
+        .preview_pic,
+        .thumb {
+            width: 30px;
+            height: 30px;
+            line-height: 30px;
+            font-size: $font_size_thumb;
+        }
+
+        .prepend-separator {
+            &:before {
+                top: 6px;
+            }
+        }
+    }
+    
+    .info {
+        @include padding(10px);
+        max-width: 300px;
+        border-bottom: 2px solid $border_color;
+        display: none;
+    }
+
+    &.max-out {
+        .info {
+            display: block;
+        }
+    }
+
+    .co-user-online {
+        &:after {
+            width: 8px;
+            height: 8px;
+            @include left( 21px );
+        }
+    }
+}
+
+.empty-chat-content {
+    text-align: center;
+    padding: 100px 40px;
+    box-sizing: border-box;
+    position: absolute;
+    display: none;
+
+    .collab-logo {
+        margin-bottom: 40px;
+
+        .logo-image {
+            width: 85px;
+        }
+    }
+
+    .collab-motto {
+        height: 48px;
+        font-size: $font_size_thumb_large;
+        font-weight: bold;
+        font-style: normal;
+        font-stretch: normal;
+        text-align: center;
+        color: $motto_color;
+        margin: 10px 20px;
+        line-height: 1;
+    }
+
+    .collab-slogan {
+        width: 342px;
+        height: 15px;
+        font-size: $font_size_sec;
+        font-weight: normal;
+        font-style: normal;
+        font-stretch: normal;
+        color: $motto_color;
+    }
+}
+
+.collab-ann-blink {
+  animation: ann-blinker 4s linear 1;
+}
+
+@keyframes ann-blinker {  
+    0% {
+        background-color: transparent;
+        box-shadow: 0 -4px 0 7px transparent;
+    }
+    50% {
+        background-color: $annotation_bg_color;
+        box-shadow: 0 -4px 0 7px $annotation_bg_color;
+    }
+    100% {
+        background-color: transparent;
+        box-shadow: 0 -4px 0 7px transparent;
+    }
+}
+
+.collab-highlight-blink {
+    animation: hl-blinker 0.6s ease-in-out 2;
+}
+
+@keyframes hl-blinker {
+    0% {
+        background-color: #fee4c8;
+    }
+    50% {
+        background-color: transparent;
+    }
+    100% {
+        background-color: #fee4c8;
+    }
+}
+
+/*
+    On Helpkit's page:
+*/
+.ticket-actions .btn.collab-btn {
+    padding: 0 6px;
+    line-height: 1;
+
+    .collab-logo {
+        display: inline-block;
+        height: 18px;
+        padding: 4px 0 2px;
+        .logo-image {
+            width: 18px;
+            max-width: 18px;
+            height: 18px;
+        }
+    }
+}
+
+.collab-option-dd {
+    .collab-logo {
+            margin-top: 1px;
+    }
+}
+
+.show-discussion-dd,
+.collab-option-dd {
+    border: 1px solid $border_color;
+    position: absolute;
+    top: 0;
+    @include left( 46px );
+    display: none;
+    cursor: pointer;
+    margin-top: 8px;
+    @include padding(2px);
+    @include border-radius(3px);
+    background-color: white;
+    box-shadow: $box_shadow;
+    font-size: $font_size_primary;
+    font-weight: 500;
+    box-sizing: border-box;
+    text-align: center;
+    width: 80px;
+    z-index: 1;
+
+    .view-discussion-text {
+        display: inline-block;
+        line-height: 20px;
+        vertical-align: middle;
+        margin-top: 2px;
+        margin-right: 1px;
+        font-weight: initial;
+        font-weight: auto;
+    }
+
+    .collab-discuss-text {
+        margin-top: 1px;
+        display: inline-block;
+        vertical-align: middle;
+        margin-right: -1px;
+        font-weight: initial;
+        font-weight: auto;
+    }
+
+    .collab-logo {
+        width: 18px;
+        height: 18px;
+        display: inline-block;
+        vertical-align: middle;
+
+        .logo-image {
+            width: 18px;
+            height: 18px;
+        }
+    }
+
+    &:after,
+    &:before {
+        content: " ";
+        border: solid transparent;
+        position: absolute;
+        border-width: 7px;
+        border-bottom-color: $border_color;
+        top: -15px;
+        @include left (33px);
+    }
+
+    &:after {
+        border-bottom-color: white;
+        top: -14px;
+    }
+
+    .annotator-image {
+        display: inline-block;
+        vertical-align: middle;
+        margin-right: 2px;
+        position: relative;
+        margin-right: 0px;
+
+        .preview_pic {
+            @include margin-right(6px); 
+            margin-bottom: 1px;
+        }
+
+        &:after {
+            content: " ";
+            display: block;
+            position: absolute;
+            width: 2px;
+            height: 19px;
+            background-color: $border_color;
+            right: 0;
+            top: 2px;
+        };
+    }
+}
+
+.collab-mention-name {
+    font-weight: 500;
+    color: $mention_name_color;
+
+    &.collab-my-mention-name {
+        color: $text_color;
+    }
+}
+
+.show-discussion-dd {
+    width: 139px;
+    
+    .bridge-span {
+        background-color: transparent;
+        height: 24px;
+        position: absolute;
+        width: calc(100% + 40px);
+        @include left (-40px);
+        @include box-sizing( border-box );
+        top: -15px;
+    }
+
+    &:before,
+    &:after {
+        @include left (63px);
+    }
+}
+
+.noti-unread {
+    position: relative;
+
+    &:before {
+        content: " ";
+        background-color: $border_color_hover;
+        width: 7px;
+        height: 7px;
+        display: block;
+        position: absolute;
+        border-radius: 50%;
+        top: 18px;
+        left: 6px;
+    }
+}

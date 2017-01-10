@@ -9,9 +9,7 @@ class Workers::ClearAccountData
 		def perform(args)
 			account = Account.current
 			deleted_customer = DeletedCustomers.find_by_account_id(account.id)
-
 			update_status(deleted_customer, STATUS[:in_progress])
-
 			begin
 				perform_destroy(account)
 			rescue Exception => error

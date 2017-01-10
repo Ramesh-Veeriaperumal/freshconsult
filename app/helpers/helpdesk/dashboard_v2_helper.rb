@@ -37,11 +37,8 @@ module Helpdesk::DashboardV2Helper
   end
 
 
-  def dashboardv2_available?  
-    dashboardv2_plans = [ SubscriptionPlan::SUBSCRIPTION_PLANS[:garden], SubscriptionPlan::SUBSCRIPTION_PLANS[:estate],
-                        SubscriptionPlan::SUBSCRIPTION_PLANS[:forest], SubscriptionPlan::SUBSCRIPTION_PLANS[:garden_classic],
-                        SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_classic]]
-    dashboardv2_plans.include?(current_account.subscription.subscription_plan.name) rescue false
+  def dashboardv2_available? 
+    (current_account.launched?(:admin_dashboard) || current_account.launched?(:agent_dashboard) || current_account.launched?(:supervisor_dashboard)) && current_account.features?(:countv2_reads)
   end
 
 end

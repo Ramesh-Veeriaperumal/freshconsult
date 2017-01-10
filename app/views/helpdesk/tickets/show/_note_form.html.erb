@@ -22,7 +22,7 @@
         <label class="notify mailaddr-label from" for="helpdesk_note_to_emails">
           <%= t("ticket.note_form.notify_agents") %>:
         </label>
-        <div class="email_container add_select2_custom">
+        <div class="email_container add_select2_custom" data-default-agent="<%= "#{@ticket.responder.email}" if @ticket.responder and @ticket.responder_id != current_user.id %>" data-default-agent-disp="<%= "#{@ticket.responder.name} <#{@ticket.responder.email}>" if @ticket.responder and @ticket.responder_id != current_user.id %>" >
           <script type="text/javascript">
               function addNoteAgents(){
                 if(!jQuery('.add_select2_custom').data('agent_loaded')){

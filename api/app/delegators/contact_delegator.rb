@@ -1,7 +1,6 @@
 class ContactDelegator < BaseDelegator
   include ActiveRecord::Validations
 
-  validates_associated :default_user_company, if: -> { company_id }
   validates :custom_field, custom_field: { custom_field: {
     validatable_custom_fields: proc { Account.current.contact_form.custom_drop_down_fields },
     drop_down_choices: proc { Account.current.contact_form.custom_dropdown_field_choices },
@@ -10,10 +9,12 @@ class ContactDelegator < BaseDelegator
   }
 
   validate :user_emails_validation, if: -> { @other_emails }
+  validate :default_company_presence, if: -> { @default_company }
 
   def initialize(record, options = {})
-    @other_emails = options[:email_objects][:old_email_objects]
-    @primary_email = options[:email_objects][:primary_email]
+    @other_emails = options[:other_emails]
+    @primary_email = options[:primary_email]
+    @default_company = options[:default_company]
     @user_id = record.id
     check_params_set(options[:custom_fields]) if options[:custom_fields].is_a?(Hash)
     super(record)
@@ -35,4 +36,11 @@ class ContactDelegator < BaseDelegator
   def unassociated_emails
     @emails ||= @other_emails.select { |x| id != x.user_id }.map(&:email)
   end
+
+  def default_company_presence
+    unless Account.current.companies_from_cache.detect { |x| x.id == @default_company}
+      errors[:company_id] << :"can't be blank"
+    end
+  end
+
 end

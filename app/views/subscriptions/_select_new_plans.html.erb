@@ -1,0 +1,215 @@
+<% current_plan_id = current_account.subscription.subscription_plan_id %>
+<% current_plan_name = current_account.subscription.subscription_plan.name.downcase%>
+<% current_plan_ranking = SubscriptionsHelper::PLAN_RANKING["#{current_plan_name}"] %>
+<% has_credit_card = current_account.has_credit_card? %>
+<div id="ChangePlan">
+  <div class="plans">
+    <table>
+      <tr>
+        <% plans.each do |plan| %>
+          <%
+            plan_name = plan.name.downcase.split(' ').first
+            plan_name_id = plan.name.parameterize.underscore
+            plan_ranking = SubscriptionsHelper::PLAN_RANKING["#{plan.name.downcase}"]
+            downgrade_plan_check =  plan_ranking > current_plan_ranking
+            is_new_sprout = new_sprout?(plan.name)
+            equal_plan_check = (plan_ranking == current_plan_ranking) && (current_plan_name != plan.name.downcase)
+          %>
+          <% unless plan_name == "free"  %>
+            <% unless plan.id == subscription.subscription_plan_id and !subscription.trial? and !show_all %>
+              <td class="pricelist <%= plan.id == current_plan_id ? 'active' : ''%>"
+                  id = "plan-<%= plan_name_id %>" width='<%="#{(100/(plans.size.to_f)).to_i}%"%>'>
+                  <div class="plan-details">
+                    <div class="plan-title">
+                      <% bool_beta_plan = (plan_name == "premium" && @discount  && @discount.name.downcase == "beta users special") %>
+                      <%= content_tag(:h2, plan.display_name, :class => "lead") %>
+                      <div class="plan-brief"></div>
+                      <% if(bool_beta_plan) %>
+                        <%= content_tag(:h3, "<span class='discount-strikethrough'>$29 </span> $19 " +  content_tag(:span, t('plan_amount'), :class => "info-data")) %>
+                      <% else %>
+                        <% if plan_name.include?("sprout") %>
+                          <%= content_tag(:h3, "Free", :class => "plan-cost") %>
+                          <%= content_tag(:div, t('free_plan_agents_v2').html_safe, :class => "info-data") %>
+                        <% else %>
+                          <%= content_tag(:h3, fetch_plan_amount(plan), :class => "plan-cost") %>
+                          <%= content_tag(:div, t('plan_amount'), :class => "info-data") %>
+                        <% end %>
+                      <% end %>
+                      <%= content_tag(:div, (plan_name == "premium") ? t("special_beta_offer") : "&nbsp;".html_safe, :class => "discount-info-text" ) if(@discount && @discount.name.downcase == "beta users special")  %>
+                    </div>
+                    <p class="plan-details">
+                      <% unless SubscriptionsHelper::PLANS_FEATURES["#{plan.name.downcase}"].nil? %>
+                        <% SubscriptionsHelper::PLANS_FEATURES["#{plan.name.downcase}"].each do |feature_name| %>
+                          <%= t("features.#{feature_name}").html_safe %>
+                          <br>
+                        <% end %>
+                      <% end %>
+                    </p>
+                  </div>
+                  <% subscribe_direct_flag =  (current_account.full_time_agents.count) <= plan.free_agents %>
+                  <% if is_new_sprout %>
+
+                    <%= plan_button(plan, t('choose_plan'), "btn btn-flat", subscribe_direct_flag, true, equal_plan_check ? t('change_equal_plan_title', :to_plan => plan.display_name): t(subscription.trial? ? 'change_plan_title' : 'downgrade_plan_title'),
+                        t('activate_free_plan', :name => plan.display_name), t('cancel') ) %>
+
+                    <div id="confirm-message-<%= plan.id %>" class="plan-confirm-message hide">
+                      <%= render :partial => "submit_plan",
+                            :locals => {
+                              :agent_limit => "", :plan => plan , :currency => @subscription.currency_name ,
+                              :plan_switch => !@subscription.trial?, :submit_flag => false, :downgrade_message_flag => true ,
+                              :downgrade_msg => t(subscription.trial? ? 'sprout_free_plan_v2' : 'downgrade_confirm_v2', :current_plan => current_account.subscription.subscription_plan.display_name,
+                                  :new_plan => plan.display_name)
+                            }
+                      %>
+                    </div>
+                  <% else %>
+                    <% if subscribe_direct_flag %>
+                      <!-- By default it will be hidden. Will be shown once Choose plan button is clicked. Showing part Handled in js -->
+                      <!-- activate-options class has css display:none -->
+                      <div class="activate-options">
+                        <hr class="billing-divider" />
+                        <h5 class="lead">
+                          <%= "#{plan.free_agents} Agents Free" %>
+                        </h5>
+                        <div class="add-more">
+                          <a href="javascript:;" data-plan="<%= plan_name_id %>" data-plan-id = "<%= plan.id %>" class="plan-button1" id='<%= "#{ plan_name_id }_button" %>' data-current-plan=false><%= t("add_more_free", :free_agents => plan.free_agents) %></a>
+                        </div>
+                        <hr class="billing-divider" />
+                        <h5 class="billing-total-cost lead">
+                          <%= "#{t('total_price')} : <strong>#{format_amount(0, @subscription.currency_name)}</strong>".html_safe %>
+                        </h5>
+                        <% unless has_credit_card %>
+                          <div class="currency-note"><span class="arrow-up"></span>
+                            <%= t('subscription.free_plan_currency_note') %> <%= @subscription.currency_name %>
+                          </div>
+                        <% end %>
+                        <div class="billing-actions">
+                          <% downgrade_confirm = ((plan_ranking < current_plan_ranking) or current_account.subscription.classic? ) ? true : false %>
+                          <% if downgrade_confirm %>
+
+                            <%= plan_button(plan, t('activate_free_plan'), "btn btn-flat", subscribe_direct_flag, true, t('change_plan_title'), t('confirm'), t('cancel') ) %>
+
+                            <div id="confirm-message-<%= plan.id %>" class="plan-confirm-message hide">
+                              <%= render :partial => "submit_plan",
+                                    :locals => {
+                                      :agent_limit => plan.free_agents , :plan => plan ,
+                                      :currency => @subscription.currency_name , :plan_switch => false,
+                                      :submit_flag => false, :downgrade_message_flag => true ,
+                                      :downgrade_msg => I18n.t('sprout_free_plan_v2', :current_plan =>current_account.subscription.subscription_plan.display_name, :new_plan => plan.display_name)
+                                    }
+                              %>
+                            </div>
+                          <% else %>
+                            <%= render :partial => "submit_plan",
+                                  :locals => {
+                                    :agent_limit => plan.free_agents , :plan => plan ,
+                                    :currency => @subscription.currency_name , :plan_switch => false,
+                                    :submit_flag => true, :downgrade_message_flag => false
+                                  }
+                            %>
+                          <% end %>
+                        </div>
+                      </div>
+                    <% end %>
+                    <% if subscription.trial? %>
+                      <% if current_plan_id == plan.id || (plan_name == "sprout" && subscribe_direct_flag) %>
+                        <%= plan_button(plan, plan_name == "sprout" ? t('choose_plan') : t('change_my_plan'), "trial-plan-change btn btn-flat", subscribe_direct_flag, false) %>
+                      <% elsif plan_name == "sprout" %>
+                        <%= plan_button(plan, t('choose_plan'), "downgrade-plan-button btn btn-flat", subscribe_direct_flag, true,
+                          t('change_plan_title'), t('confirm'), t('cancel'), "downgrade-modal" ) %>
+
+                        <div id="confirm-message-<%= plan.id %>" class="plan-confirm-message hide">
+                          <%= render :partial => "downgrade_feature_loss",
+                                :locals => {
+                                  :downgrade_msg => t('downgrade_to_sprout_v2', :current_plan => current_account.subscription.subscription_plan.display_name, :new_plan => plan.display_name ).html_safe,
+                                  :current_plan_name => current_account.subscription.subscription_plan.display_name.upcase,
+                                  :current_plan => current_plan_name,
+                                  :new_plan => plan.name.downcase
+                                }
+                          %>
+                        </div>
+                      <% elsif downgrade_plan_check %>
+                        <%= render :partial => "submit_plan",
+                              :locals => {
+                                :agent_limit => "", :plan => plan , :currency => @subscription.currency_name ,
+                                :plan_switch => true, :submit_flag => true, :downgrade_message_flag => false
+                              }
+                        %>
+                      <% else %>
+                        <%= plan_button(plan, t('choose_plan'), "btn btn-flat", subscribe_direct_flag, true, equal_plan_check ? t('change_equal_plan_title', :to_plan => plan.display_name) : t('change_plan_title'),
+                            t(equal_plan_check ? 'trial_plan_name_v2' : 'trial_plan_name', :name => plan.display_name), t('cancel') ) %>
+
+                        <div id="confirm-message-<%= plan.id %>" class="plan-confirm-message hide">
+                          <%= render :partial => "submit_plan",
+                                :locals => {
+                                  :agent_limit => "", :plan => plan , :currency => @subscription.currency_name ,
+                                  :plan_switch => true, :submit_flag => false, :downgrade_message_flag => true ,
+                                  :downgrade_msg => t('downgrade_confirm_v2', :current_plan => current_account.subscription.subscription_plan.display_name,
+                                      :new_plan => plan.display_name)
+                                }
+                          %>
+                        </div>
+                      <% end %>
+                    <% elsif subscription.active? %>
+                      <% if downgrade_plan_check || subscribe_direct_flag %>
+                        <%= plan_button(plan, t('choose_plan'), "plan-button btn btn-flat", subscribe_direct_flag, false) %>
+                      <% else %>
+                        <%= plan_button(plan, t('choose_plan'), "downgrade-plan-button btn btn-flat", subscribe_direct_flag, true,
+                          equal_plan_check ? t('change_equal_plan_title', :to_plan => plan.display_name) : t('downgrade_plan_title'), t('proceed_billing_info'), t('cancel'), "downgrade-modal" ) %>
+
+                        <div id="confirm-message-<%= plan.id %>" class="plan-confirm-message hide">
+                          <%= render :partial => "downgrade_feature_loss",
+                                :locals => {
+                                  :downgrade_msg => t('downgrade_confirm_v2', :current_plan => current_account.subscription.subscription_plan.display_name, :new_plan => plan.display_name ).html_safe,
+                                  :current_plan_name => current_account.subscription.subscription_plan.display_name.upcase,
+                                  :current_plan => current_plan_name,
+                                  :new_plan => plan.name.downcase
+                                }
+                          %>
+                        </div>
+                      <% end %>
+                    <% elsif subscription.suspended? %>
+                      <% if (plan_ranking >= current_plan_ranking || subscribe_direct_flag) && !equal_plan_check%>
+                        <%= plan_button(plan, t('choose_plan'), "suspended-plan-button btn btn-flat", subscribe_direct_flag, false) %>
+                      <% else %>
+                        <%= plan_button(plan, t('choose_plan'), "downgrade-plan-button btn btn-flat", subscribe_direct_flag, true,
+                          equal_plan_check ? t('change_equal_plan_title', :to_plan => plan.display_name) : t('downgrade_plan_title'), t('proceed_billing_info'), t('cancel'), "downgrade-modal" ) %>
+
+                        <div id="confirm-message-<%= plan.id %>" class="plan-confirm-message hide">
+                          <%= render :partial => "downgrade_feature_loss",
+                                :locals => {
+                                  :downgrade_msg => t('downgrade_confirm_v2', :current_plan => current_account.subscription.subscription_plan.display_name, :new_plan => plan.display_name ).html_safe,
+                                  :current_plan_name => current_account.subscription.subscription_plan.display_name.upcase,
+                                  :current_plan => current_plan_name,
+                                  :new_plan => plan.name.downcase
+                                }
+                          %>
+                        </div>
+                      <% end %>
+                    <% end %>
+                    <div id="billing-<%= plan_name_id %>"></div>
+                  <% end %>
+              </td>
+            <% end %>
+          <% else %>
+            <% @free_plan_id = plan.id %>
+          <% end %>
+      <%end%>
+      </tr>
+    </table>
+
+  </div>
+</div>
+
+<div id="billing-template" class="billing hide" >
+  <%= render :partial => "calculate_amount", :locals => { :amount => 0, :discount => nil } %>
+</div>
+
+<script type="text/javascript">
+
+  if(App.SelectPlan != undefined){ App.SelectPlan.destroy() }
+
+   App.SelectPlan.initialize("<%= @subscription.currency_name %>",<%= @subscription.renewal_period %>,
+    "<%= current_account.subscription.subscription_plan.id %>");
+
+</script>

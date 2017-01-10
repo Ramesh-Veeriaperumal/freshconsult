@@ -9,11 +9,16 @@ class HashValidator < ApiValidator
 
   def validate_hash
     valid_options = options.except(*record.class.send(:_validates_default_keys))
-    valid_options = call_block(delimeter)
+    # the delimiter could be a proc (eg: SatisfactionRatingValidation) in
+    # some cases. So the proc has to be invoked for those cases.
+    valid_options = call_block(delimeter) if delimeter and delimeter.is_a? Proc
     valid_options.keys.each do |nested_field|
       validations = valid_options[nested_field]
       validations.each do |key, args|
-        validator_options = { attributes: nested_field, nested_field: "#{attribute}.#{nested_field}" }
+        validator_options = {
+          attributes: attribute.to_sym,
+          nested_field: nested_field
+        }
         validator_options.merge!(args) if args.is_a?(Hash)
         custom_validator = ValidationHelper.custom_validator_class_mapping[key]
         if custom_validator
@@ -21,7 +26,13 @@ class HashValidator < ApiValidator
           element_value = value.fetch(nested_field, ApiConstants::VALUE_NOT_DEFINED)
           validator.validate_value(record, element_value)
         else
-          fail DefaultValidatorNotImplementedError, 'API Validators are developed to provide enhanced error messages and custom_codes to the users for clear understanding. Validations that are possible in default validators can be achieved using the API Validators, as a result API Validators wont support the default ones. Please extend if you have such requirement.'
+          raise DefaultValidatorNotImplementedError,
+                  "API Validators are developed to provide enhanced error
+                  messages and custom_codes to the users for clear understanding.
+                  Validations that are possible in default validators
+                  can be achieved using the API Validators, as a result
+                  API Validators wont support the default ones.
+                  Please extend if you have such requirement."
         end
       end
     end

@@ -4029,9 +4029,16 @@ li {
         }
     }
     .wrap-marker {
-        @include padding-left(15px);
         padding-bottom: 10px;
         padding-top: 5px;
+        .wrap-quoted-remove{
+            @include padding(10px 10px 10px 15px);
+        }
+        .remove-quote{
+            position: relative;
+            top: 4px;
+            @include padding-left(8px);
+        }
     }
     .ticket-app-info {
         .table {
@@ -4406,7 +4413,7 @@ li {
       padding: 15px;
       display: inline-block;
       width: 160px;
-      min-height: 173px;
+      min-height: 130px;
       vertical-align: top;
       cursor: pointer;
       position: relative;
@@ -4650,5 +4657,10 @@ li {
   font-size: 10px;
   text-transform: uppercase;
   margin-bottom: 5px;
+  a{
+    text-transform: initial;
+    font-size: 11px;
+    padding-left: 3px;
+    }
 }
 /* ********************** END OF STYLE FOR CUSTOMER SENTIMENT ********************** */

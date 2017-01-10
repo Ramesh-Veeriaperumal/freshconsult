@@ -266,6 +266,9 @@
             $("#watcher_toggle a").trigger('click');
             $("#addwatcher .select2-search-field input").focus();
         },
+        toggleCollab = function() {
+           $("#collab-btn") .trigger("click");
+        },
         getConversationId = function(){
             return $('.conversation_thread form:visible').attr('id');
         },
@@ -322,7 +325,8 @@
                 silent_close        : closeTicket,
                 expand              : expand,
                 select_watcher      : selectWatcher,
-                pickup              : ticket_show_pickup           
+                pickup              : ticket_show_pickup,
+                collaboration       : toggleCollab
             },
             social_stream   : {
                 open_stream         : socialOpenStream,

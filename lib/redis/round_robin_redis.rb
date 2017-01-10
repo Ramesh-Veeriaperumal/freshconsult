@@ -12,8 +12,8 @@ module Redis::RoundRobinRedis
     $redis_round_robin.perform_redis_op("exists", key)
   end
 
-  def del_round_robin_redis key
-    $redis_round_robin.perform_redis_op("del", key)
+  def del_round_robin_redis *key
+    $redis_round_robin.perform_redis_op("del", *key)
   end
 
   def incr_round_robin_redis key
@@ -80,4 +80,5 @@ module Redis::RoundRobinRedis
   def exec_round_robin_redis
     $redis_round_robin.perform_redis_op("exec")
   end
+
 end

@@ -390,7 +390,7 @@ module Fdadmin
     def activate_trial
       result = { account_id: @account.id, account_name: @account.name }
       freshfone_account = @account.freshfone_account
-      result[:status] = freshfone_account.activate
+      result[:status] = freshfone_account.present? ? freshfone_account.activate : 'notice'
     rescue => e
       result[:status] = 'error'
       Rails.logger.error "Error while activating trial for the Phone of

@@ -18,6 +18,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
   include Helpdesk::Permission::Ticket
   include Helpdesk::ProcessAgentForwardedEmail
   include Cache::Memcache::AccountWebhookKeyCache
+  include Redis::RedisKeys
+  include Redis::OthersRedis
 
   class UserCreationError < StandardError
   end
@@ -799,9 +801,18 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         end
         if params[:text]
           text = text_for_detection
-          args = [user, text]  #user_email changed
-          #Delayed::Job.enqueue(Delayed::PerformableMethod.new(Helpdesk::DetectUserLanguage, :set_user_language!, args), nil, 1.minutes.from_now) if language.nil? and signup_status
-          Resque::enqueue_at(1.minute.from_now, Workers::DetectUserLanguage, {:user_id => user.id, :text => text, :account_id => Account.current.id}) if language.nil? and signup_status
+          if language.nil? and signup_status
+            if redis_key_exists?(DETECT_USER_LANGUAGE_SIDEKIQ_ENABLED)
+              Users::DetectLanguage.perform_async({:user_id => user.id, 
+                                                   :text => text })
+            else
+              Resque::enqueue_at(1.minute.from_now, 
+                                 Workers::DetectUserLanguage, 
+                                 {:user_id => user.id, 
+                                  :text => text, 
+                                  :account_id => Account.current.id})
+            end
+          end
         end
       end
       user
@@ -833,26 +844,42 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
             if content_id
               content_id_hash[att.content_file_name+"#{inline_count}"] = content_ids["attachment#{i+1}"]
               inline_count+=1
-              inline_attachments.push att
+              inline_attachments.push att unless virus_attachment?(params["attachment#{i+1}"], account)
             else
-              attachments.push att
+              attachments.push att unless  virus_attachment?(params["attachment#{i+1}"], account)
             end
           end
         rescue HelpdeskExceptions::AttachmentLimitException => ex
           Rails.logger.error("ERROR ::: #{ex.message}")
-          add_notification_text item
+          message = attachment_exceeded_message(HelpdeskAttachable::MAX_ATTACHMENT_SIZE)
+          add_notification_text item, message
           break
         rescue Exception => e
           Rails.logger.error("Error while adding item attachments for ::: #{e.message}")
           break
         end
       end
+      if @total_virus_attachment
+        message = virus_attachment_message(@total_virus_attachment)
+        add_notification_text item, message
+      end
       item.header_info = {:content_ids => content_id_hash} unless content_id_hash.blank?
       return attachments, inline_attachments
     end
 
-    def add_notification_text item
-      message = attachment_exceeded_message(HelpdeskAttachable::MAX_ATTACHMENT_SIZE)
+    def virus_attachment? attachment, account
+      if account.subscription.trial?
+        result = Email::AntiVirus.scan(io: File.open(attachment.tempfile)) 
+        if result && result[0] == "virus"
+          @total_virus_attachment = 0 unless @total_virus_attachment
+          @total_virus_attachment += 1  
+          return true
+        end
+      end
+      return false
+    end
+
+    def add_notification_text item, message
       notification_text = "\n" << message
       notification_text_html = Helpdesk::HTMLSanitizer.clean(content_tag(:div, message, :class => "attach-error"))
       if item.is_a?(Helpdesk::Ticket)
@@ -884,7 +911,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         Regexp.new(Regexp.escape(address) + "\s+wrote:", Regexp::IGNORECASE),
         Regexp.new("\\n.*.\d.*." + Regexp.escape(address) ),
         Regexp.new("<div>\n<br>On.*?wrote:"), #iphone
-        Regexp.new("On.*?wrote:"),
+        Regexp.new("On((?!On).)*wrote:"),
         Regexp.new("-+original\s+message-+\s*", Regexp::IGNORECASE),
         Regexp.new("from:\s*", Regexp::IGNORECASE)
       ]

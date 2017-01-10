@@ -275,6 +275,7 @@ class Billing::BillingController < ApplicationController
 
     def update_features
       SAAS::SubscriptionActions.new.change_plan(@account, @old_subscription, @existing_addons)
+      SAAS::SubscriptionEventActions.new(@account, @old_subscription, @existing_addons).change_plan if @account.new_pricing_launched?
     end
 
     def update_features?            

@@ -7,65 +7,82 @@ namespace :email_events do
     include Redis::OthersRedis
     include Redis::RedisKeys
 
-    loop do
-      track_mailgun_events(args['domain'])
-      sleep(1.hours)
+    1.step do |i|
+      initial_start = ((i == 1) ? true : false)
+      track_mailgun_events(args['domain'], initial_start)
+      sleep(30)
     end
   end
 
 end
 
-def track_mailgun_events(domain)
-  last_synced_key = MAILGUN_EVENT_LAST_SYNC % {:domain => domain }
-  last_synced_time = get_others_redis_key(last_synced_key)
-  last_sync = last_synced_time ? last_synced_time : update_last_sync_time(domain)
-  end_time = (last_sync.to_datetime + 1.hours).to_datetime.strftime("%a, %d %b %Y %H:%M:%S %z")
+def track_mailgun_events(domain, initial_start)
+  key = MAILGUN_EVENT_LAST_SYNC % {:domain => domain }
+  stored_value = get_others_redis_key(key)
 
-  event_url = "@api.mailgun.net/v3/#{domain}/events"
-  response = JSON.parse(fetch_api(event_url, last_sync, end_time))
+  last_synced_url, last_synced_time = fetch_last_synced_data(stored_value, initial_start)
+  url = "@api.mailgun.net/v3/#{domain}/events"
+
+  event_url = last_synced_url ? last_synced_url : url
+  response = JSON.parse(fetch_api(event_url, last_synced_time))
 
   while response["items"].present? do
-    log_events(response["items"])
+    process_items(response["items"])
     event_url = response["paging"]["next"].gsub("https://", "@")
-    response = JSON.parse(fetch_api(event_url))
+    set_others_redis_key(key, "#{event_url}:#{response['items'].last['timestamp']}", nil)
+    response = JSON.parse(fetch_api(event_url, false))
   end
-  update_last_sync_time(last_synced_key, end_time)
 end
 
-def update_last_sync_time(last_synced_key, time=nil)
-  last_synced_time = time ? time : (DateTime.now - 1.hours).to_datetime.strftime("%a, %d %b %Y %H:%M:%S %z")
-  set_others_redis_key(last_synced_key, last_synced_time)
-  last_synced_time
+def fetch_last_synced_data(stored_value, initial_start)
+  if stored_value.present?
+    time = Time.at(stored_value.split(':').last.to_i)
+    last_synced_time = (initial_start || (Time.now - time > 15.minutes)) ? time : nil
+    last_synced_url = stored_value.split(':').first if (Time.now - time < 15.minutes)
+  else
+    last_synced_time = (DateTime.now - 1.hour)
+  end
+  return last_synced_url, last_synced_time
 end
 
-def fetch_api(event_url, last_sync = nil, end_time = nil)
-  if (last_sync and end_time)
+def fetch_api(event_url, last_sync)
+  if last_sync
     response = RestClient.get("https://api:#{MAILGUN_API_KEY}"\
-      "#{event_url}", :params => { :'begin' => last_sync, :'end' => end_time, :'ascending' => 'yes', :'limit' => 10, :'pretty' => 'yes'})
+    "#{event_url}", :params => { :'begin' => last_sync.to_datetime.strftime("%a, %d %b %Y %H:%M:%S %z"), 
+      :'ascending' => 'yes', :'limit' => 100, :'pretty' => 'yes'})
   else
     response = RestClient.get("https://api:#{MAILGUN_API_KEY}"\
       "#{event_url}")
   end
-  mailgun_events_logger.info "Response code: #{response.code}"
+  mailgun_events_logger.info "Response code: #{response.code}" unless response.code == 200
   response
+rescue Exception => e
+  mailgun_events_logger.info "Exception while fetching events from mailgun. #{e.message} - #{e.backtrace}"
+  "{}"
 end
 
-def log_events(events)
-  events.each do |event_obj|
-    if (defined? (ActionMailer::Base.decrypt_to_custom_variables(event_obj["user-variables"]["message_id"])))
-      custom_variables = ActionMailer::Base.decrypt_to_custom_variables(event_obj["user-variables"]["message_id"])
-    else 
-      custom_variables = get_custom_data(event_obj["user-variables"]["message_id"])
+def process_items(items)
+  items.each do |event|
+    if (event["user-variables"].present? && event["user-variables"]["message_id"].present? && event["user-variables"]["message_id"].is_a?(Array))
+      custom_messages = event["user-variables"]["message_id"]
+      custom_messages.each do |msg|
+        log_events(event, msg)
+      end 
+    else
+      custom_message = event["user-variables"].present? ? event["user-variables"]["message_id"] : nil
+      log_events(event, custom_message)
     end
-    mailgun_events_logger.info "Event type: #{event_obj["event"]}\nMessage-Id: #{event_obj["message"]["headers"]["message-id"]}\nSubject: #{event_obj["message"]["headers"]["subject"]}\nRecipient : #{event_obj["recipient"]}\nCustom variables: #{custom_variables.inspect}\nTimestamp: #{event_obj["timestamp"]}\nFrom: #{event_obj["message"]["headers"]["from"]}\n"
   end
+end
+
+def log_events(event_obj, msg)
+  custom_variables = ActionMailer::Base.decrypt_to_custom_variables(msg) if msg.present?
+  mailgun_events_logger.info "Event type: #{event_obj["event"]}\nMessage-Id: "\
+         "#{event_obj["message"]["headers"]["message-id"]}\nSubject: #{event_obj["message"]["headers"]["subject"]}\n"\
+          "Recipient : #{event_obj["recipient"]}\nCustom variables: #{custom_variables.inspect}\n"\
+           "Timestamp: #{event_obj["timestamp"]}\nFrom: #{event_obj["message"]["headers"]["from"]}\n"
 end
 
 def mailgun_events_logger
   @mailgun_events_logger ||= CustomLogger.new("#{Rails.root}/log/mailgun_events.log")
-end
-
-def get_custom_data(str)
-  custom_data = data.split('.')
-  {:account_id => custom_data[0], :ticket_id => custom_data[1], :note_id => custom_data[2], :type => custom_data[3]}
 end

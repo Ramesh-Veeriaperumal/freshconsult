@@ -11,6 +11,8 @@ class Group < ActiveRecord::Base
   include AccountOverrider
   include RoundRobinCapping::Methods
 
+  TICKET_ASSIGN_TYPE = {:default => 0, :round_robin => 1, :skill_based => 2} #move other constants after merge - hari
+
   concerned_with :round_robin_methods
   
   before_save :reset_toggle_availability, :create_model_changes
@@ -18,13 +20,14 @@ class Group < ActiveRecord::Base
 
   after_commit :round_robin_actions, :clear_cache
   after_commit :nullify_tickets, :destroy_group_in_liveChat, on: :destroy
+  after_commit :sync_sbrr_queues
 
   validates_presence_of :name
   validates_uniqueness_of :name, :scope => :account_id
 
-  has_many :agent_groups , :class_name => "AgentGroup", :foreign_key => "group_id", :dependent => :destroy
-
-  has_many :agents, :through => :agent_groups, :source => :user , :conditions => ["users.deleted=?", false]
+  has_many :agent_groups , :class_name => "AgentGroup", :foreign_key => "group_id"
+  has_many :agents, :through => :agent_groups, :source => :user, :order => :name,
+            :conditions => ["users.deleted=?", false], :dependent => :destroy
 
   has_many :tickets, :class_name => 'Helpdesk::Ticket'
   has_many :email_configs, :dependent => :nullify
@@ -68,9 +71,12 @@ class Group < ActiveRecord::Base
     }
   liquid_methods :name
 
-  scope :round_robin_groups, :conditions => { :ticket_assign_type => true}, :order => :name
-  
-  scope :capping_enabled_groups, :conditions => ["capping_limit > 0"], :order => :name
+  scope :trimmed, :select => [:'groups.id', :'groups.name']
+  scope :disallowing_toggle_availability, :conditions => { :toggle_availability => false }
+  scope :round_robin_groups, :conditions => 'ticket_assign_type > 0', :order => :name
+  scope :capping_enabled_groups, :conditions => ["ticket_assign_type = 1 and capping_limit > 0"], :order => :name
+  scope :skill_based_round_robin_enabled, :order => :name,
+        :conditions => ["ticket_assign_type = #{Group::TICKET_ASSIGN_TYPE[:skill_based]}"]
 
   API_OPTIONS = {
     :except  => [:account_id,:email_on_assign,:import_id],
@@ -96,18 +102,17 @@ class Group < ActiveRecord::Base
     [ :threeday,I18n.t("group.assigntime.threeday"),  259200 ],
   ]
 
-  TICKET_ASSIGN_TYPE = {:default => 0, :round_robin => 1}
-
   TICKET_ASSIGN_OPTIONS = [
                             ['group_ticket_options.default',         '0'], 
-                            ['group_ticket_options.round_robin',     '1']
+                            ['group_ticket_options.round_robin',     '1'],
+                            ['group_ticket_options.skill_based',     '2']
                           ]
 
   ASSIGNTIME_OPTIONS = ASSIGNTIME.map { |i| [i[1], i[2]] }
   ASSIGNTIME_NAMES_BY_KEY = Hash[*ASSIGNTIME.map { |i| [i[2], i[1]] }.flatten]
   ASSIGNTIME_KEYS_BY_TOKEN = Hash[*ASSIGNTIME.map { |i| [i[0], i[2]] }.flatten]
-
-  CAPPING_LIMIT_OPTIONS = (2..100).map { |i| 
+  MAX_CAPPING_LIMIT = 100
+  CAPPING_LIMIT_OPTIONS = (2..MAX_CAPPING_LIMIT).map { |i| 
     ["#{i} #{I18n.t("group.capping_tickets")}", i] 
     }.insert(0, ["1 #{I18n.t("group.capping_ticket")}", 1])
   
@@ -181,7 +186,75 @@ class Group < ActiveRecord::Base
     {:id => id, :user_id => user_id, :_destroy => id.present?}
   end
 
+  def skill_based_round_robin_enabled?
+    ticket_assign_type == TICKET_ASSIGN_TYPE[:skill_based]
+  end
+
+  def available_agents #fires 2 queries everytime
+    user_ids = agent_groups.available_agents.map(&:user_id)
+    account.users.find_all_by_id(user_ids)
+  end
+
+  def ticket_queues
+    @ticket_queues ||= SBRR::QueueAggregator::Ticket.new(nil, {:group => self}).relevant_queues
+  end
+
+  def has_agent? agent
+    agents.exists?('users.id' => agent.id)
+  end
+
   private
+
+    def sync_sbrr_queues
+      if account.skill_based_round_robin_enabled?
+        if transaction_include_action?(:destroy)
+          destroy_sbrr_queues if skill_based_round_robin_enabled?
+          return
+        end
+        return if transaction_include_action?(:create) && !skill_based_round_robin_enabled?
+
+        if skill_based_round_robin_toggled? 
+          skill_based_round_robin_enabled? ?
+            SBRR::Toggle::Group.perform_async(:group_id => self.id) : destroy_sbrr_queues
+        elsif capping_limit_changed?
+          SBRR::Toggle::Group.perform_async(:group_id => self.id, 
+            :capping_limit_change => capping_limit_change)
+        end
+      end
+    end
+
+    def destroy_sbrr_queues #no group object in worker, just key deletion, one redis call
+      keys = []
+      
+      [ticket_queues, user_queues].each do |queues|
+        keys << queues.map do |queue|
+          model_ids = queue.all
+          lock_keys = model_ids.map{|model_id| queue.lock_key(model_id)}
+          [queue.key, lock_keys]
+        end
+      end
+      keys.flatten!
+
+      del_round_robin_redis keys
+    end
+
+    def user_queues
+      @user_queues ||= SBRR::QueueAggregator::User.new(nil, {:group => self}).relevant_queues
+    end
+
+    def capping_limit_change
+      return false if !capping_limit_changed?
+      ((capping_limit_changes[1] - capping_limit_changes[0]) > 0) ? :increased : :decreased
+    end
+
+    def capping_limit_changed?
+      @model_changes.key?(:capping_limit)
+    end
+
+    def capping_limit_changes
+      @model_changes[:capping_limit]
+    end
+
     def create_model_changes
       @model_changes = self.changes.to_hash
       @model_changes.symbolize_keys!
@@ -202,4 +275,12 @@ class Group < ActiveRecord::Base
     def nullify_tickets
       Helpdesk::ResetGroup.perform_async({:group_id => self.id, :reason => {:delete_group => [self.name]}})
     end
+
+    def skill_based_round_robin_toggled?
+      @model_changes.key?(:ticket_assign_type) && 
+        @model_changes[:ticket_assign_type].any? do |_ticket_assign_type| 
+          _ticket_assign_type == TICKET_ASSIGN_TYPE[:skill_based]
+        end
+    end
+
 end

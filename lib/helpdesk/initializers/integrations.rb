@@ -24,4 +24,8 @@ module Integrations
 	ICONTACT_APP_ID = icontact_key_hash["app_id"]
 	#========================================================
   PROXY_SERVER = hash["proxy_server"] || {}
+  cloud_elements_hash = hash["app"]["cloud_elements"][Rails.env]
+  CLOUD_ELEMENTS_AUTH_HEADER = cloud_elements_hash["auth_header"]
+  CRM_TO_HELPDESK_FORMULA_ID = cloud_elements_hash["crm_formula_template_id"]
+  HELPDESK_TO_CRM_FORMULA_ID = cloud_elements_hash["fd_formula_template_id"]
 end

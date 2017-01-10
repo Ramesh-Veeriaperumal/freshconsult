@@ -8,6 +8,8 @@ class Admin::VaRulesController < Admin::AdminController
   before_filter :set_filter_data, :only => [ :create, :update ]
   before_filter :hide_password_in_webhook, :only => [:edit]
   before_filter :parse_action_data, :only => [:create, :update]
+  before_filter :validate_email_template, :only => [:create, :update]
+  before_filter :validate_active_param, :only => [:activate_deactivate]
   # TODO-RAILS3 password moved to application.rb but need to check action_data
   # filter_parameter_logging :action_data, :password
   
@@ -16,12 +18,20 @@ class Admin::VaRulesController < Admin::AdminController
 
   def activate_deactivate
     @va_rule = all_scoper.find(params[:id])
-    @va_rule.update_attributes({:active => params[:va_rule][:active]})
+    @va_rule.assign_attributes({:active => params[:va_rule][:active]})
+    @va_rule.save! if @va_rule.changed?
     type = params[:va_rule][:active] == "true" ? 'activation' : 'deactivation'
 
-    flash[:highlight] = dom_id(@va_rule)
-    flash[:notice] = t("flash.general.#{type}.success", :human_name => human_name)
-    redirect_to :action => 'index'
+    respond_to do |format|
+      format.html do
+        flash[:highlight] = dom_id(@va_rule)
+        flash[:notice] = t("flash.general.#{type}.success", :human_name => human_name)
+        redirect_to :action => 'index'
+      end
+      format.json do
+        render :json => { success: true }
+      end
+    end
   end
 
   def toggle_cascade
@@ -62,6 +72,17 @@ class Admin::VaRulesController < Admin::AdminController
               edit_data
               render :action => params[:action] == 'update' ? 'edit' : 'new'
             end
+          end
+        end
+      end
+    end
+
+    def validate_active_param
+      va_rule_active = params[:va_rule][:active]
+      unless ["true", "false"].include? va_rule_active
+        respond_to do |format|
+          format.json do
+            render :json => { success: false }
           end
         end
       end

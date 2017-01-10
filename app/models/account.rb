@@ -91,6 +91,10 @@ class Account < ActiveRecord::Base
     tz = "Kyiv" if tz.eql?("Kyev")
     tz
   end
+
+  def collab_feature_enabled?
+    @collab_feature_enabled ||= features?(:collaboration)
+  end
   
   def survey
     @survey ||= begin
@@ -130,9 +134,16 @@ class Account < ActiveRecord::Base
 
   #Temporary feature check methods - using redis keys - ends here
 
+  def multiple_user_companies_enabled?
+    features?(:multiple_user_companies)
+  end
 
   def round_robin_capping_enabled?
     features?(:round_robin_load_balancing)
+  end
+  
+  def skill_based_round_robin_enabled?
+    features?(:skill_based_round_robin)
   end
 
   def validate_required_ticket_fields?
@@ -169,7 +180,7 @@ class Account < ActiveRecord::Base
 
     default_in_op_fields.stringify_keys!
   end
-  
+
   def parent_child_tkts_enabled?
     @pc ||= launched?(:parent_child_tickets)
   end
@@ -348,7 +359,6 @@ class Account < ActiveRecord::Base
     unless p_features.nil?
       p_features[:inherits].each { |p_n| add_features_of(p_n) } unless p_features[:inherits].nil?
 
-      features.send(s_plan).create
       p_features[:features].each { |f_n| features.send(f_n).create } unless p_features[:features].nil?
     end
   end
@@ -358,7 +368,6 @@ class Account < ActiveRecord::Base
     unless p_features.nil?
       p_features[:inherits].each { |p_n| remove_features_of(p_n) } unless p_features[:inherits].nil?
       
-      features.send(s_plan).destroy
       p_features[:features].each { |f_n| features.send(f_n).destroy } unless p_features[:features].nil?
     end
   end
@@ -478,16 +487,37 @@ class Account < ActiveRecord::Base
     end
   end
 
+  def add_new_facebook_page?
+    self.features?(:facebook) || (self.basic_facebook_enabled? &&
+      self.facebook_pages.count == 0)
+  end
+  
+  def advanced_twitter?
+    features? :twitter
+  end
+
+  def add_twitter_handle?
+    basic_twitter_enabled? and (advanced_twitter? or twitter_handles.count == 0)
+  end
+
+  def add_custom_twitter_stream?
+    advanced_twitter?
+  end
+
   def ehawk_reputation_score
-    begin
-      key = ACCOUNT_SIGN_UP_PARAMS % {:account_id => self.id}
-      signup_params_json = get_others_redis_key(key)
-      return 0 unless signup_params_json
-      signup_params = JSON.parse(get_others_redis_key(key))
-      signup_params["api_response"]["status"]
-    rescue Exception => e
-      Rails.logger.debug "Exception caught #{e}"
-      0
+    if self.conversion_metric
+      self.conversion_metric.spam_score
+    else
+      begin
+        key = ACCOUNT_SIGN_UP_PARAMS % {:account_id => self.id}
+        signup_params_json = get_others_redis_key(key)
+        return 0 unless signup_params_json
+        signup_params = JSON.parse(signup_params_json)
+        signup_params["api_response"]["status"]   
+      rescue Exception => e
+        Rails.logger.debug "Exception caught #{e}"
+        0
+      end
     end
   end
 

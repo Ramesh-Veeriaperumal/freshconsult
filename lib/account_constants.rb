@@ -52,6 +52,8 @@ module AccountConstants
 
   MAINTENANCE_STATUS = 503
 
+  VALID_URL_REGEX = /\A(?:(?:https?|ftp):\/\/)(?:\S+(?::\S*)?@)?(?:(?!10(?:\.\d{1,3}){3})(?!127(?:\.\d{1,3}){3})(?!169\.254(?:\.\d{1,3}){2})(?!192\.168(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]+-?)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]+-?)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})))(?::\d{2,5})?(?:\/[^\s]*)?\z/i
+
   # Used by API too. 
   EMAIL_VALIDATOR = /(\A[-A-Z0-9.'’_&%=~+]+@(?:[A-Z0-9\-]+\.)+(?:[A-Z]{2,15})\z)/i
   EMAIL_REGEX = /(\b[-a-zA-Z0-9.'’_&%=~+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,15}\b)/
@@ -63,8 +65,9 @@ module AccountConstants
   SPAM_EMAIL_EXACT_REGEX = /bank|paypal|finance|erection|free|apple|amazon/i
   SPAM_EMAIL_APPRX_REGEX = /b[a]+[n]+[kc]+|p[auo]+[y]+[p]+[auo]+l|finance|erection|free|a[p]+le|[a]+[m]+[a]+[z]+[aoe]+n/i
 
-  EHAWK_SPAM_EMAIL_REGEX = /disposable|MX record bad/i
-  EHAWK_SPAM_COMMUNITY_REGEX = /spam IP|repeat signup IP|repeat signup email/i
-  EHAWK_IP_BLACKLISTED_REGEX = /spam blacklist|blacklist/i
+  EHAWK_SPAM_EMAIL_REGEX = /disposable|MX record bad|undeliverable|Suspect|Spam DNSBL|Temporary/i
+  EHAWK_SPAM_COMMUNITY_REGEX = /spam IP|repeat signup IP|repeat signup email|Scam IP|Spam Email/i
+  EHAWK_IP_BLACKLISTED_REGEX = /spam blacklist|blacklist|Proxy - Anonymous|Hosting Service|Bots|Drone|Worm|Proxy - Suspect/i
+  EHAWK_SPAM_GEOLOCATION_REGEX = /IP Distance Velocity 500/i
   
 end

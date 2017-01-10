@@ -17,11 +17,12 @@ class Agent < ActiveRecord::Base
   before_update :create_model_changes
   before_create :mark_unavailable
   after_commit :enqueue_round_robin_process, on: :update
+  after_commit :sync_skill_based_queues, on: :update
 
   after_commit :nullify_tickets, :agent_destroy_cleanup, on: :destroy
   
   after_commit  ->(obj) { obj.update_agent_to_livechat } , on: :create
-  after_commit  ->(obj) { obj.update_agent_to_livechat } , on: :update
+  after_commit  ->(obj) { obj.update_agent_to_livechat } , on: :update  
   validates_presence_of :user_id
   validate :validate_signature
   # validate :only_primary_email, :on => [:create, :update] moved to user.rb
@@ -91,17 +92,8 @@ class Agent < ActiveRecord::Base
     end.compact
   end
 
-  def allow_availability_toggle?
-    !self.groups.empty? && self.groups.where(:toggle_availability => false, :ticket_assign_type => Group::TICKET_ASSIGN_TYPE[:round_robin]).count('1') == 0
-  end
-
-  def in_round_robin?
-    self.agent_groups.count(:conditions => ['ticket_assign_type = ?',
-                                             Group::TICKET_ASSIGN_TYPE[:round_robin]], :joins => :group) > 0
-  end
-
   def toggle_availability?
-    return false if(!account.features?(:round_robin) || !in_round_robin?)
+    return false unless account.features?(:round_robin)
     allow_availability_toggle? ? true : false
   end
 
@@ -156,6 +148,12 @@ class Agent < ActiveRecord::Base
     Resque.enqueue(Helpdesk::ToggleAgentFromGroups,
                    { :account_id => account.id,
                      :user_id => self.user_id })
+  end
+
+  def sync_skill_based_queues
+    if account.skill_based_round_robin_enabled? && @model_changes.key?(:available)
+      SBRR::Toggle::User.perform_async(:user_id => user_id)
+    end
   end
 
   def nullify_tickets
@@ -235,6 +233,11 @@ class Agent < ActiveRecord::Base
   end
 
   private
+
+  def allow_availability_toggle?
+    self.groups.round_robin_groups.exists? &&
+      self.groups.round_robin_groups.disallowing_toggle_availability.count('1') == 0
+  end
 
   def reset_to_beginner_level
     beginner = Account.current.scoreboard_levels.least_points.first

@@ -4,6 +4,7 @@ class Support::Solutions::ArticlesController < SupportController
   include Solution::Feedback
   include Solution::ArticlesVotingMethods
   include Solution::PathHelper
+  include Helpdesk::Permission::Ticket
 
   before_filter :load_and_check_permission, :except => [:index]
   
@@ -23,6 +24,7 @@ class Support::Solutions::ArticlesController < SupportController
 
   before_filter :verify_authenticity_token, :only => [:thumbs_up, :thumbs_down], :unless => :public_request?
   
+  before_filter :check_permissibility, :only => :create_ticket
   before_filter :generate_ticket_params, :only => :create_ticket
   after_filter :add_watcher, :add_to_article_ticket, :only => :create_ticket, :if => :no_error
 
@@ -63,6 +65,15 @@ class Support::Solutions::ArticlesController < SupportController
   end
 
   private
+
+    def check_permissibility
+      if(params[:helpdesk_ticket].present? && params[:helpdesk_ticket][:email].present?)
+        unless can_create_ticket? params[:helpdesk_ticket][:email]
+          render(:text => I18n.t('solution.articles.article_not_useful'))
+          return false
+        end
+      end
+    end
 
     def load_and_check_permission
       @solution_item = @article = current_account.solution_article_meta.find_by_id(params[:id])
@@ -181,7 +192,7 @@ class Support::Solutions::ArticlesController < SupportController
     end
     
     def no_error
-      !@ticket.errors.any?
+      @ticket.present? && !@ticket.errors.any?
     end
 
     def cleanup_params_for_title

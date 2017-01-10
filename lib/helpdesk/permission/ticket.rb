@@ -30,11 +30,9 @@ module Helpdesk::Permission
     end
 
     def fetch_permissible_cc(user, cc_emails, account = Account.current)
-      return cc_emails, [] unless account.restricted_helpdesk?
-      if user.blank? || user.customer?
-        emails = permissible_user_emails(cc_emails)
-        return emails[:valid_emails], emails[:dropped_emails].split(",")
-      end
+      return cc_emails, [] if (!account.restricted_helpdesk? || (user.present? && user.agent?))
+      emails = permissible_user_emails(cc_emails)
+      [emails[:valid_emails], emails[:dropped_emails].split(",")]
     end
 
   end

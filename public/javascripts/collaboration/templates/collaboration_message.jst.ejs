@@ -1,0 +1,34 @@
+<div class="collab-message-box <%= msg_render_type %>-box" id="collab-<%= msg_id %>">
+	<div class="avatar-cover" data-sender-id="<%= sender_id %>"> <%= avatar_html %> </div>
+	<div class="msg-cover">
+		<% if (!!annotation_body) { %>
+			<div class="annotation-text <%= is_annotation_invalid ? 'invalid-annotation': '' %>" title="<%= annotation_body %>">&quot; <%= annotation_body %> &quot;</div>
+		<% } %>
+		<% if (!!is_attachment) { %>
+			<div class="msg collab-attachment-msg"> 
+				<a class="collab-attached-image-section" download href="<%= msg_body.dl %>">
+                    <div class="collab-attachment-image">
+                    	<img class="image" src="<%= msg_body.pl %>" data-fetch-retry-count=""  data-fid="<%= msg_body.fid %>" onerror="App.CollaborationUi.collabImgError(event)"><span class="valign-helper"></span>
+                    </div>
+                    <div class="collab-attachment-details" title="<%= msg_body.fn %>">
+	                    <div class="collab-attachment-name ellipsis"> <%= msg_body.fn.substr(0, 12) + ".." + msg_body.fn.substr(msg_body.fn.lastIndexOf(".")) %> </div>
+	                    <div class="collab-attachment-size"><%= msg_body.fs %></div>
+                    </div>
+                    <div class="collab-dl-link">
+                    	<img class="collab-dl-image" src="/assets/collab/collab-download.svg">
+                    </div>
+                </a>
+			</div>
+		<% } else { %>
+			<span class="msg"> <%= msg_body %> </span>
+		<% } %>
+	</div>
+
+	<div class="collab-msg-info <%= is_annotation_invalid ? 'invalid-ann-info-show': '' %>">
+		<span class="collab-ann-info"> <%= invalid_annotation_text %> </span>
+		<% if (!!sender_name) { %>
+			<span class="name"> <%= sender_name %> </span>
+		<% } %>
+		<span class="timestamp-cover"> <%= time_stamp_text %> </span>
+	</div>
+</div>

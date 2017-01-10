@@ -1,11 +1,14 @@
   <%= javascript_include_tag :'cdn/requester_widget_config_modal' %>
+  <% add_fields_limit = Helpdesk::RequesterWidgetHelper::WIDGET_FIELDS_MAX_COUNT
+  max_limit = add_fields_limit + Helpdesk::RequesterWidgetHelper::DEFAULT_FIELDS_COUNT
+  %>
 <div id="requester-widget-config-dialog">
 
   <%= form_tag('/admin/requester_widget/update_widget', method: "put") do %>
      <%= hidden_field_tag :requester_widget_config, "" %>
      <%= hidden_field_tag :deleted_widget_config, "" %>
   <% end %>
-  <div class="widget-config-subtitle"> <%= t('requester_widget_notice') %></div>
+  <div class="widget-config-subtitle"> <%= t('requester_widget_notice', :max_limit => max_limit) %></div>
 
   <div id="requester-widget-config-container">
 
@@ -38,11 +41,11 @@
     </div>
     <div class="widget-field-add">
 
-      <div class="disabled-message <%= 'hide' if requester_widget_custom_fields.count < Helpdesk::RequesterWidgetHelper::WIDGET_FIELDS_MAX_COUNT %>">
-        <%= t('requester_widget_limit') %>
+      <div class="disabled-message <%= 'hide' if requester_widget_custom_fields.count < add_fields_limit %>">
+        <%= t('requester_widget_limit', :max_limit => max_limit) %>
       </div>
 
-      <div class="select2-wrapper hidden-mode <%= 'hide' if requester_widget_custom_fields.count >= Helpdesk::RequesterWidgetHelper::WIDGET_FIELDS_MAX_COUNT %>">
+      <div class="select2-wrapper hidden-mode <%= 'hide' if requester_widget_custom_fields.count >= add_fields_limit %>">
       <select class="requester-widget-field-choices js-states form-control" multiple="" tabindex="-1" aria-hidden="true">
         <optgroup class="contact" label="Contact Fields">
           <% requester_widget_addable_contact_fields.each do |field| %>

@@ -1,0 +1,32 @@
+<% if (userLen !== 0) { %>
+
+    <% for (i = 0; i < userLen; i++) { %>
+
+    <div class="roles-agent-list" id = "<%= data[i].id %>" data-name = "<%= data[i].text %>">
+               
+
+                <div class="agent-delete-icon pull-left">
+                        <i class="rounded-minus-icon" data-action="remove-agent"></i>
+                </div>
+
+
+                <div class="agent-image pull-left">
+     			 <% if (data[i].profile_img === false) { %>
+
+                         <div class="preview_pic circle avatar-text text-center thumb bg-<%= Math.abs(uniqueCodeGenerator(data[i].text)) %>"> <%= DataStore.get('agent').findById(data[i].id).name[0] %></div>
+                    <% } else { %>
+                        <div class="preview_pic circle">
+                         <img alt="" class="thumb" onerror="imgerror(this)" src=" <%= data[i].profile_img %>" />
+                        </div>
+                    <% } %>
+
+                </div>
+
+
+                <div class="agent-details pull-left">
+                    <a target="_blank" href="/users/<%= data[i].id %>"> <%= data[i].text %> </a>
+                </div>
+            </div>
+    <% } %>
+
+<% } %>

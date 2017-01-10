@@ -1,0 +1,14 @@
+defaults: &defaults
+  tcp_host: "172.16.20.158"
+  tcp_port: "3310"
+  connection_pool_size: 5
+development:
+  tcp_host: "127.0.0.1"
+  tcp_port: "3310"
+  connection_pool_size: 5
+staging: 
+  <<: *defaults
+test:
+  <<: *defaults
+production:
+  <<: *defaults

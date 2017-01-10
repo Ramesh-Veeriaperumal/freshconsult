@@ -5,7 +5,7 @@
 	<h3 class="s-title"><%= t('admin.quests.quest_form.quest_type') %></h3>
 	<div class="form-section">		
 		<div class="row">
-			<% Quest::GAME_TYPES.each do |game_type| %>
+			<% Quest.game_types.each do |game_type| %>
 			<label class="s-label radio-label span2">
 				<%= f.radio_button :category, game_type[3], :class => "quest_types" %>
 				<%= t(".#{game_type[0]}").html_safe %>

@@ -30,10 +30,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   SCHEMA_LESS_ATTRIBUTES = ["product_id","to_emails","product", "skip_notification",
                             "header_info", "st_survey_rating", "survey_rating_updated_at", "trashed",
-                            "access_token", "escalation_level", "sla_policy_id", "sla_policy", "manual_dueby", "sender_email", "parent_ticket",
-                            "reports_hash","sla_response_reminded","sla_resolution_reminded", "dirty_attributes",
-                            "internal_group_id", "internal_group", "internal_agent_id", "internal_agent","association_type", "associates_rdb", "sentiment", 
-                            "spam_score", "sds_spam"]
+                            "access_token", "escalation_level", "sla_policy_id", "sla_policy", "manual_dueby", "sender_email", 
+                            "parent_ticket", "reports_hash","sla_response_reminded","sla_resolution_reminded", "dirty_attributes",
+                            "internal_group_id", "internal_group", "internal_agent_id", "internal_agent","association_type", 
+                            "associates_rdb", "sentiment", "spam_score", "sds_spam", "skill", "skill_id"]
 
   TICKET_STATE_ATTRIBUTES = ["opened_at", "pending_since", "resolved_at", "closed_at", "first_assigned_at", "assigned_at",
                              "first_response_time", "requester_responded_at", "agent_responded_at", "group_escalated",
@@ -45,11 +45,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   serialize :cc_email
 
-
-
   concerned_with :associations, :validations, :callbacks, :riak, :s3, :mysql,
                  :attributes, :rabbitmq, :permissions, :esv2_methods, :count_es_methods,
-                 :round_robin_methods, :association_methods
+                 :round_robin_methods, :association_methods, :skill_based_round_robin
 
   text_datastore_callbacks :class => "ticket"
   spam_watcher_callbacks :user_column => "requester_id"
@@ -60,7 +58,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
     :requester_name, :meta_data, :disable_observer, :highlight_subject, :highlight_description,
     :phone , :facebook_id, :send_and_set, :archive, :required_fields, :disable_observer_rule,
     :disable_activities, :tags_updated, :system_changes, :activity_type, :misc_changes,
-    :round_robin_assignment, :related_ticket_ids, :tracker_ticket_id, :unique_external_id, :assoc_parent_tkt_id
+    :round_robin_assignment, :related_ticket_ids, :tracker_ticket_id, :unique_external_id, :assoc_parent_tkt_id,
+    :sbrr_ticket_dequeued, :sbrr_user_score_incremented, :sbrr_fresh_ticket, :skip_sbrr, :model_changes
   # Added :system_changes, :activity_type, :misc_changes for activity_revamp -
   # - will be clearing these after activity publish.
   
@@ -324,7 +323,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   end
 
-  def to_param
+  def model_changes
+    @model_changes ||= {}
+  end
+
+  def to_param 
     display_id ? display_id.to_s : nil
   end
 
@@ -1133,6 +1136,14 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def va_rules_after_save_actions
     @va_rules_after_save_actions ||= []
+  end
+
+  def skill_id_column
+    Helpdesk::SchemaLessTicket.skill_id_column
+  end
+
+  def archive?
+    false
   end
 
   private

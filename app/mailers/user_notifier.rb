@@ -81,6 +81,61 @@ class UserNotifier < ActionMailer::Base
     end.deliver
   end
 
+  def notify_dkim_activation(account, dkim_details = {})
+    Time.zone = account.time_zone
+    @admin_name = "#{account.admin_first_name} #{account.admin_last_name}"
+    headers = {
+      :subject         => "DKIM signatures activation email",
+      :to              => account.admin_email,
+      :from            => AppConfig['from_email'],
+      :sent_on         => Time.now,
+      "Reply-to"       => "",
+      "Auto-Submitted" => "auto-generated",
+      "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
+    }
+    @dkim_details = dkim_details
+    mail(headers) do |part|
+      part.text { render "notify_dkim_activation.text.plain.erb" }
+      part.html { render "notify_dkim_activation.text.html.erb" }
+    end.deliver
+  end
+
+  def notify_dkim_failure(account, dkim_details = {})
+    Time.zone = account.time_zone
+    @admin_name = "#{account.admin_first_name} #{account.admin_last_name}"
+    headers = {
+      :subject         => "DKIM signatures activation email",
+      :to              => account.admin_email,
+      :from            => AppConfig['from_email'],
+      :sent_on         => Time.now,
+      "Reply-to"       => "",
+      "Auto-Submitted" => "auto-generated",
+      "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
+    }
+    @dkim_details = dkim_details
+    mail(headers) do |part|
+      part.text { render "notify_dkim_failure.text.plain.erb" }
+      part.html { render "notify_dkim_failure.text.html.erb" }
+    end.deliver
+  end
+  
+  def notify_dev_dkim_failure(args)
+    headers = {
+      :subject    => "Dkim Failure Notification",
+      :to         => "ramkumar@freshdesk.com",
+      :from       => AppConfig['from_email'],
+      :sent_on    => Time.now,
+      "Reply-to"       => "",
+      "Auto-Submitted" => "auto-generated",
+      "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
+    }
+    @details = args
+    mail(headers) do |part|
+      part.text { render "notify_dev_dkim_failure.text.plain.erb" }
+      part.html { render "notify_dev_dkim_failure.text.html.erb" }
+    end.deliver
+  end
+
   def notify_customers_import(options={})
     begin
       # sending this email via account's primary email config so that if the customer wants this emails 
