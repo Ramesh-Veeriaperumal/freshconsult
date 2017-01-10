@@ -25,12 +25,12 @@ class SAAS::SubscriptionEventActions
         account.reset_feature(feature) unless plan_features.include?(feature) || account_add_ons.include?(feature)
       end
       account.save
-      remove_chat_feature
+      #remove_chat_feature
       plan_features.each do |feature|
         account.set_feature(feature)
       end
       account.save
-      disable_chat_routing unless account.has_feature?(:chat_routing)
+      #disable_chat_routing unless account.has_feature?(:chat_routing)
     end
 
     if add_ons_changed?
