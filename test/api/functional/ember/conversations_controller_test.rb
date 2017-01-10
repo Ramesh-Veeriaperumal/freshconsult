@@ -1078,5 +1078,15 @@ module Ember
       EmailNotification.any_instance.unstub(:get_forward_template)
       
     end
+
+    def test_full_text
+      note = create_note(user_id: @agent.id, ticket_id: ticket.id, source: 2)
+      note.note_body.full_text_html = note.note_body.body_html + "<div>quoted_text test</div>"
+      note.save_note
+      note.reload
+      get :full_text, construct_params({ version: 'private', id: note.id}, false)
+      match_json(full_text_pattern(note))
+      assert_response 200
+    end
   end
 end

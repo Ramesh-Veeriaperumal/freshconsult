@@ -66,6 +66,9 @@
 
 /conversations/{id}:
   $ref: ./conversations/crud.yaml
+/conversations/{id}/full_text:
+  $ref: ./conversations/full_text.yaml
+
 
 /contacts:
   $ref: ./contacts/crud.yaml

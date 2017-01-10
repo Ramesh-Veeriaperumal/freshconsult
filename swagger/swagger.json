@@ -1328,6 +1328,42 @@
         }
       }
     },
+    "/conversations/{id}/full_text": {
+      "get": {
+        "tags": [
+          "conversation"
+        ],
+        "description": "Full Text",
+        "parameters": [
+          {
+            "name": "id",
+            "type": "number",
+            "in": "path",
+            "description": "ID of note"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/full_text"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Conversation not found"
+          }
+        }
+      }
+    },
     "/contacts": {
       "get": {
         "tags": [
@@ -3885,6 +3921,18 @@
         }
       }
     },
+    "full_text": {
+      "type": "object",
+      "properties": {
+        "text": {
+          "type": "string"
+        },
+        "html": {
+          "type": "string",
+          "format": "HTML"
+        }
+      }
+    },
     "ticket_input": {
       "type": "object",
       "allOf": [
@@ -4740,6 +4788,9 @@
                 },
                 "source": {
                   "type": "number"
+                },
+                "has_quoted_text": {
+                  "type": "boolean"
                 },
                 "attachments": {
                   "type": "array",

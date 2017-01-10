@@ -1,7 +1,7 @@
 class ConversationDecorator < ApiDecorator
   attr_accessor :ticket
 
-  delegate :body, :body_html, :id, :incoming, :private, :deleted, :user_id, :support_email, :source, :attachments, :attachments_sharable, :schema_less_note, :cloud_files, to: :record
+  delegate :body, :body_html, :full_text_html, :id, :incoming, :private, :deleted, :user_id, :support_email, :source, :attachments, :attachments_sharable, :schema_less_note, :cloud_files, to: :record
 
   delegate :to_emails, :from_email, :cc_emails, :bcc_emails, to: :schema_less_note, allow_nil: true
 
@@ -29,7 +29,8 @@ class ConversationDecorator < ApiDecorator
       created_at: created_at.try(:utc),
       updated_at: updated_at.try(:utc),
       attachments: attachments_hash,
-      cloud_files: cloud_files_hash
+      cloud_files: cloud_files_hash,
+      has_quoted_text: has_quoted_text?
     }
   end
 
@@ -83,4 +84,9 @@ class ConversationDecorator < ApiDecorator
   def cloud_files_hash
     cloud_files.map { |cf| CloudFileDecorator.new(cf).to_hash }
   end
+
+  def has_quoted_text?
+    full_text_html.length > body_html.length
+  end
+
 end

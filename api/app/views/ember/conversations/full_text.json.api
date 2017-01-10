@@ -1,0 +1,4 @@
+JSON.generate(
+  text: @item.full_text,
+  html: @item.full_text_html
+)

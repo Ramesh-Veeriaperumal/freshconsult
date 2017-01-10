@@ -30,6 +30,8 @@ allOf:
           type: string
       source:
         type: number
+      has_quoted_text:
+        type: boolean
       attachments:
         type: array
         items:

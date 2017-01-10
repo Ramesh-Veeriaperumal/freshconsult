@@ -1,0 +1,7 @@
+type: object
+properties:
+  text:
+    type: string
+  html:
+    type: string
+    format: HTML

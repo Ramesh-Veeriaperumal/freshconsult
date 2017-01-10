@@ -42,6 +42,8 @@
     $ref: ./request/conversations/twitter_reply.yaml
   conversation_template:
     $ref: ./resource/conversation_template.yaml
+  full_text:
+    $ref: ./resource/full_text.yaml
   ticket_input:
     $ref: ./request/tickets/ticket.yaml
   ticket_bulk_update_input:

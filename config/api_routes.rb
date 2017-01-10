@@ -212,7 +212,11 @@ Helpkit::Application.routes.draw do
       end
     end
 
-    resources :conversations, controller: 'ember/conversations', only: [:update]
+    resources :conversations, controller: 'ember/conversations', only: [:update] do
+      member do
+        get :full_text
+      end
+    end
 
     resources :todos, controller: 'ember/todos', except: [:new, :edit]
 

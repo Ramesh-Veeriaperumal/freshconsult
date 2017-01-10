@@ -23,6 +23,7 @@ module ConversationsTestHelper
       bcc_emails: expected_output[:bcc_emails] || note.bcc_emails,
       attachments: Array,
       cloud_files: Array,
+      has_quoted_text: (note.full_text_html.length > note.body_html.length),
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
     }
@@ -103,6 +104,14 @@ module ConversationsTestHelper
       template: expected_output[:template],
       signature: expected_output[:signature],
       quoted_text: expected_output[:quoted_text] || String
+    }
+  end
+
+
+  def full_text_pattern(note)
+    {
+      text: note.note_body.full_text,
+      html: note.note_body.full_text_html
     }
   end
 end
