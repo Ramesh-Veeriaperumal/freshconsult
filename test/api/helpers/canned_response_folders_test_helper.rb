@@ -1,5 +1,4 @@
 module CannedResponseFoldersTestHelper
-
   def canned_response_sample_params(folder_id = nil, visibility = nil)
     {
       title: Faker::Lorem.sentence,
@@ -39,7 +38,7 @@ module CannedResponseFoldersTestHelper
   end
 
   def single_ca_response_pattern(ca_response)
-    ca_response.attributes.slice('id', 'title')    
+    ca_response.attributes.slice('id', 'title')
   end
 
   def fetch_ca_folders_from_db
@@ -76,4 +75,12 @@ module CannedResponseFoldersTestHelper
     }
   end
 
+  def ca_response_show_pattern_with_association(ca_response_id = nil)
+    ca_pattern = ca_response_show_pattern(ca_response_id)
+    ca_pattern.merge!(evaluated_response: evaluate_response_new_ticket(ca_pattern[:content_html]))
+  end
+
+  def evaluate_response_new_ticket(content_html)
+    Liquid::Template.parse(content_html).render(ticket: nil)
+  end
 end

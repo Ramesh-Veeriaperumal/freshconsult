@@ -1,1 +1,6 @@
-JSON.generate(@item.attributes.slice('id', 'title', 'content', 'content_html', 'folder_id'))
+response_hash = @item.to_hash
+
+evaluated_response = @item.evaluated_response
+response_hash.merge!(evaluated_response) if evaluated_response
+
+JSON.generate(response_hash)

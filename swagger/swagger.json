@@ -2380,6 +2380,12 @@
             "type": "number",
             "required": true,
             "description": "ID of canned response"
+          },
+          {
+            "name": "include",
+            "in": "query",
+            "type": "string",
+            "description": "Comma-separated values, possible values - evaluated_response"
           }
         ],
         "responses": {
@@ -4682,6 +4688,10 @@
         },
         "content_html": {
           "type": "string"
+        },
+        "evaluated_response": {
+          "type": "string",
+          "description": "Has to be sideloaded with ?include=evaluated_response"
         }
       }
     },

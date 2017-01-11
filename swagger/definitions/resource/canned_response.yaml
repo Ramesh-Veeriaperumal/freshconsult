@@ -9,3 +9,6 @@ properties:
     type: string
   content_html:
     type: string
+  evaluated_response:
+    type: string
+    description: Has to be sideloaded with ?include=evaluated_response
