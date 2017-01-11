@@ -1,0 +1,42 @@
+
+  get:
+    tags: ['ticket filter']
+    summary: Show Ticket Filter
+    parameters:
+      - name: id
+        in: path
+        type: string
+        required: true
+    responses:
+      200:
+        description: Success
+        schema:
+          $ref: '#/definitions/ticket_filter'
+
+  put:
+    tags: ['ticket filter']
+    summary: Update Ticket Filter
+    parameters:
+      - name: data
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/ticket_filter_input'
+    responses:
+      200:
+        description: Success
+        schema:
+          $ref: '#/definitions/ticket_filter'
+  
+  delete:
+    tags: ['ticket filter']
+    summary: Delete Ticket Filter
+    parameters:
+      - name: id
+        in: path
+        type: string
+        required: true
+    responses:
+      204:
+        description: Success
+

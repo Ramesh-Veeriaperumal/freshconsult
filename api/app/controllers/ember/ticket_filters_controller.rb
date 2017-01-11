@@ -62,7 +62,7 @@ module Ember
         if is_num?(params[:id])
           @item = scoper.find_by_id(params[:id])
         else
-          @item = default_filters.select { |filter| filter[:id] == params[:id] }.first
+          @item = (default_visible_filters | default_hidden_filters).select { |filter| filter[:id] == params[:id] }.first
         end
         log_and_render_404 unless @item
       end
@@ -98,10 +98,10 @@ module Ember
       end
 
       def append_default_filters
-        @items |= default_filters
+        @items |= default_visible_filters | default_hidden_filters
       end
 
-      def default_filters
+      def default_visible_filters
         TicketsFilter.default_views.collect do |filter|
           if filter[:id].eql?('raised_by_me')
             filter.merge(query_hash: Helpdesk::Filters::CustomTicketFilter.new.raised_by_me_filter)
@@ -112,6 +112,22 @@ module Ember
             filter.merge(query_hash: Helpdesk::Filters::CustomTicketFilter::DEFAULT_FILTERS[filter[:id]])
           end
         end
+      end
+
+      def default_hidden_filters
+        hidden_filter_names.collect do |filter|
+          {
+            id: filter, 
+            name: I18n.t("helpdesk.tickets.views.#{filter}"), 
+            default: true,
+            hidden: true,
+            query_hash: filter.eql?('on_hold') ? Helpdesk::Filters::CustomTicketFilter.new.on_hold_filter : Helpdesk::Filters::CustomTicketFilter::DEFAULT_FILTERS[filter]
+          }
+        end
+      end
+
+      def hidden_filter_names
+        TicketFilterConstants::HIDDEN_FILTERS - (current_account.sla_management_enabled? ? [] : ['overdue', 'due_today'])
       end
 
       def has_permission?

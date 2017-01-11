@@ -107,7 +107,13 @@
 /attachments:
   $ref: ./attachments/crud.yaml
 
-#Subscriptions
+# Ticket Filters
+/ticket_filters:
+  $ref: ./ticket_filters/list_and_create.yaml
+/ticket_filters/{id}:
+  $ref: ./ticket_filters/crud.yaml
+
+# Subscriptions
 /tickets/{id}/watch:
   $ref: ./subscriptions/watch.yaml
 /tickets/{id}/unwatch:

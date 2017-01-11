@@ -1,0 +1,20 @@
+type: object
+properties:
+  id:
+    type: string
+  name:
+    type: string
+  default:
+    type: boolean
+  hidden:
+    type: boolean
+  query_hash:
+    type: array
+    items:
+      $ref: '#/definitions/query_hash'
+  order:
+    type: string
+  order_type:
+    type: string
+  per_page:
+    type: number

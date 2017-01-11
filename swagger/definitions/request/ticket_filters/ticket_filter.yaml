@@ -1,0 +1,21 @@
+type: object
+properties:
+  name:
+    type: string
+  order:
+    type: string
+  order_type:
+    type: string
+  per_page:
+    type: number
+  query_hash:
+    type: array
+    items:
+      $ref: '#/definitions/query_hash'
+  visibility:
+    type: object
+    properties:
+      visibility:
+        type: string
+      group_id:
+        type: number

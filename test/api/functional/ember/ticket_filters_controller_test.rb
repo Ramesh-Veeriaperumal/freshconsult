@@ -45,8 +45,15 @@ module Ember
       match_custom_json(response.body, ticket_filter_show_pattern(@filter1))
     end
 
-    def test_show_with_default_filter
+    def test_show_with_default_visible_filter
       default_filter_id = TicketsFilter.default_views.map { |a| a[:id] }.sample
+      get :show, construct_params({ version: 'private' }, false).merge(id: default_filter_id)
+      assert_response 200
+      match_custom_json(response.body, default_filter_pattern(default_filter_id))
+    end
+
+    def test_show_with_default_hidden_filter
+      default_filter_id = hidden_filter_names.sample
       get :show, construct_params({ version: 'private' }, false).merge(id: default_filter_id)
       assert_response 200
       match_custom_json(response.body, default_filter_pattern(default_filter_id))
@@ -65,7 +72,8 @@ module Ember
       filter_params[:visibility][:visibility] = Admin::UserAccess::VISIBILITY_NAMES_BY_KEY.keys.max + 1 # invalid visibility
       post :create, construct_params({ version: 'private' },  filter_params)
       assert_response 400
-      match_custom_json(response.body, invalid_values_error)
+      match_json([bad_request_error_pattern('order', :not_included, list: ApiTicketConstants::ORDER_BY.join(',')),
+                  bad_request_error_pattern('visibility_id', :not_included, list: Admin::UserAccess::VISIBILITY_NAMES_BY_KEY.keys.join(','))])
     end
 
     def test_create_with_valid_params
@@ -91,7 +99,8 @@ module Ember
       filter_params[:visibility][:visibility] = Admin::UserAccess::VISIBILITY_NAMES_BY_KEY.keys.max + 1 # invalid visibility
       put :update, construct_params({ version: 'private', id: @filter1.id },  filter_params)
       assert_response 400
-      match_custom_json(response.body, invalid_values_error)
+      match_json([bad_request_error_pattern('order', :not_included, list: ApiTicketConstants::ORDER_BY.join(',')),
+                  bad_request_error_pattern('visibility_id', :not_included, list: Admin::UserAccess::VISIBILITY_NAMES_BY_KEY.keys.join(','))])
     end
 
     def test_update_default_filter

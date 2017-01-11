@@ -2019,6 +2019,116 @@
         }
       }
     },
+    "/ticket_filters": {
+      "post": {
+        "tags": [
+          "ticket filter"
+        ],
+        "summary": "Create Ticket Filter",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ticket_filter_input"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/ticket_filter"
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "ticket filter"
+        ],
+        "summary": "List all Ticket Filters",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ticket_filter"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ticket_filters/{id}": {
+      "get": {
+        "tags": [
+          "ticket filter"
+        ],
+        "summary": "Show Ticket Filter",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/ticket_filter"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "ticket filter"
+        ],
+        "summary": "Update Ticket Filter",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ticket_filter_input"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/ticket_filter"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "ticket filter"
+        ],
+        "summary": "Delete Ticket Filter",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          }
+        }
+      }
+    },
     "/tickets/{id}/watch": {
       "post": {
         "tags": [
@@ -4175,6 +4285,57 @@
         }
       }
     },
+    "query_hash": {
+      "type": "object",
+      "properties": {
+        "condition": {
+          "type": "string"
+        },
+        "operator": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        }
+      }
+    },
+    "ticket_filter_input": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "order": {
+          "type": "string"
+        },
+        "order_type": {
+          "type": "string"
+        },
+        "per_page": {
+          "type": "number"
+        },
+        "query_hash": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/query_hash"
+          }
+        },
+        "visibility": {
+          "type": "object",
+          "properties": {
+            "visibility": {
+              "type": "string"
+            },
+            "group_id": {
+              "type": "number"
+            }
+          }
+        }
+      }
+    },
     "contact": {
       "type": "object",
       "properties": {
@@ -4561,6 +4722,38 @@
           }
         }
       ]
+    },
+    "ticket_filter": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "default": {
+          "type": "boolean"
+        },
+        "hidden": {
+          "type": "boolean"
+        },
+        "query_hash": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/query_hash"
+          }
+        },
+        "order": {
+          "type": "string"
+        },
+        "order_type": {
+          "type": "string"
+        },
+        "per_page": {
+          "type": "number"
+        }
+      }
     },
     "tweet_post": {
       "type": "object",

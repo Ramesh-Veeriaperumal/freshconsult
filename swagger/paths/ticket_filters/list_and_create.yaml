@@ -1,0 +1,25 @@
+post:
+  tags: ['ticket filter']
+  summary: Create Ticket Filter
+  parameters:
+    - name: data
+      in: body
+      required: true
+      schema:
+        $ref: '#/definitions/ticket_filter_input'
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/ticket_filter'
+
+get:
+  tags: ['ticket filter']
+  summary: List all Ticket Filters
+  responses:
+    200:
+      description: Success
+      schema:
+        type: array
+        items:
+          $ref: '#/definitions/ticket_filter'
