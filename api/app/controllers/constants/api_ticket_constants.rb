@@ -17,7 +17,7 @@ module ApiTicketConstants
   SIDE_LOADING = ['requester', 'stats', 'company']
   INCLUDE_PRELOAD_MAPPING = { 'stats' => :ticket_states }
   ORDER_TYPE = TicketsFilter::SORT_ORDER_FIELDS.map(&:first).map(&:to_s).freeze
-  ORDER_BY = TicketsFilter.sort_fields_options.map(&:last).map(&:to_s) - ['priority']
+  ORDER_BY = TicketsFilter.sort_fields_options.map(&:last).map(&:to_s) - ['priority', 'requester_responded_at', 'agent_responded_at']
   DEFAULT_ORDER_BY = TicketsFilter::DEFAULT_SORT
   DEFAULT_ORDER_TYPE = TicketsFilter::DEFAULT_SORT_ORDER
   VALIDATABLE_DELEGATOR_ATTRIBUTES = %w(group_id responder_id product_id
