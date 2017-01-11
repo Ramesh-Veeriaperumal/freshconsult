@@ -26,6 +26,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
 
   MESSAGE_LIMIT = 10.megabytes
   MAXIMUM_CONTENT_LIMIT = 300.kilobytes
+  VIRUS_CHECK_ENABLED = false
 
   attr_accessor :reply_to_email, :additional_emails,:archived_ticket, :start_time, :actual_archive_ticket
 
@@ -868,13 +869,18 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     end
 
     def virus_attachment? attachment, account
-      if account.subscription.trial?
-        result = Email::AntiVirus.scan(io: File.open(attachment.tempfile)) 
-        if result && result[0] == "virus"
-          @total_virus_attachment = 0 unless @total_virus_attachment
-          @total_virus_attachment += 1  
-          return true
-        end
+      if VIRUS_CHECK_ENABLED && account.subscription.trial?
+        begin
+          file_attachment = (attached.is_a? StringIO) ? attached : File.open(attached.tempfile)
+          result = Email::AntiVirus.scan(io: file_attachment) 
+          if result && result[0] == "virus"
+            @total_virus_attachment = 0 unless @total_virus_attachment
+            @total_virus_attachment += 1  
+            return true
+          end
+        rescue => e
+         Rails.logger.info "Error While checking attachment for virus in account #{account.id}"
+        end 
       end
       return false
     end
