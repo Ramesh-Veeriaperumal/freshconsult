@@ -166,8 +166,8 @@ class Admin::FreshfoneController < Admin::AdminController
 			{
 				phone_number_formatted: num.friendly_name,
 				phone_number: num.phone_number, 
-				region: Admin::FreshfoneHelper.city_name(num.iso_country, num.region), 
-				iso_country: num.iso_country,
+				region: Admin::FreshfoneHelper.city_name(params[:country], num.region), 
+				iso_country: params[:country],
 				address_required: address_required?(num.address_requirements),
 				type: type,
 				rate: number_rate(type.to_s)
