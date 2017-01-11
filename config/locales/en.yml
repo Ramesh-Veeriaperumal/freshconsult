@@ -7182,6 +7182,8 @@ en:
     coming_soon: Coming Soon
     install: Install
     update: Update
+    installation : Installation
+    overview: Overview
     instructions : Instructions
     description: description
     visit_site_to_install: Visit site to install
@@ -7209,7 +7211,7 @@ en:
     view_all: View all
     view_more: View more
     empty_custom_apps_msg_html: "No custom apps have been published. To get started, please visit our <a href='%{dev_url}' target='_blank'> developer site.</a>"
-    no_search_results: We couldn't find what you are looking for. Why don't you try again with a different keyword?
+    no_search_results: We couldn't find what you are looking for.Why don't you try again with a different keyword?
     no_apps_in_category: No Apps available in this category
     related_categories: "Apps from Related Categories:"
     similar_apps: "Similar Apps:"
@@ -7225,6 +7227,14 @@ en:
     no_configs: "This app does not require any configs."
     search: "Search for apps"
     search_language_warning: "Search available in English only"
+    buy_app: Buy App
+    app_price: %{price} / %{addon_type} / month
+    no_payment_info: We do not have your payment details on file. Please update them to proceed further. <br>
+    update_payment_info: Update payment info
+    payment_trial_info: This is a paid app with a %{trial_period} day trial period. Once the trial period is over, you will be charged %{price} / %{addon_type} / month. Press Ok to install the app. <br>  %{payment_ok_btn}
+    payment_ok: You will be charged %{price} / %{addon_type} / month for this app as per your billing plan. Press Ok to install the app. <br>  %{payment_ok_btn}
+    agent: agent
+    account: account
     delete_action:
       success: "App deleted successfully."
       error: "Error while deleting the App."
@@ -7234,6 +7244,8 @@ en:
       auth_error: "Error while authorizing the app"
     update_action:
       success: "App updated successfully."
+    tooltip:
+      suspended: Not Available
     help_and_support: "Help and Support"
     developed_by: "Published By "
     time_ago: "ago"

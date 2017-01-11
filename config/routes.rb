@@ -1442,6 +1442,9 @@ Helpkit::Application.routes.draw do
           get :search
           get :auto_suggest
           get '/:extension_id', :action => :show, :as => 'show'
+          scope '/:extension_id' do
+            get :payment_info
+          end
         end
       end
 

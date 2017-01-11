@@ -57,11 +57,10 @@ namespace :marketplace_sync do
             # Install ni in marketplace
             extension_details = latest_details_response.body
             install_params = { :extension_id => extension_details['extension_id'],
-                               :configs => installed_app.configs, 
                                :type => Marketplace::Constants::EXTENSION_TYPE[:ni],
                                :enabled => Marketplace::Constants::EXTENSION_STATUS[:enabled],
                              }
-            install_extension_response = install_extension(install_params)
+            install_extension_response = install_extension(install_params(installed_app.configs))
             if error_status?(install_extension_response)
               puts "Error in installing ni : #{application.name}"
               return

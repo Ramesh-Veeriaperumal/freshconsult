@@ -31,7 +31,8 @@
                           no_connection: "<%= I18n.t('marketplace.no_connection') %>",
                           installing: "<%= I18n.t('marketplace.installing') %>",
                           api_error : "<%= I18n.t('marketplace.api_error') %>",
-                          field_blank: "<%= I18n.t('marketplace.field_blank') %>"
+                          field_blank: "<%= I18n.t('marketplace.field_blank') %>",
+                          suspended_plan_info: "<%= I18n.t('suspended_plan_info') %>"
                         }
   var templateDockManager = new TemplateDockManager(extensionsWrapper, customMessages, tabName);
 
@@ -68,6 +69,8 @@
     latest_apps                : "<%= t('marketplace.latest_apps') %>",
     popular                    : "<%= t('marketplace.popular') %>",
     latest                     : "<%= t('marketplace.latest') %>",
+    overview                   : "<%= t('marketplace.overview') %>",
+    installation               : "<%= t('marketplace.installation') %>",
     description                : "<%= t('marketplace.description') %>",
     instructions               : "<%= t('marketplace.instructions') %>",
     marketplace_all_apps       : "<%= t('marketplace.all_apps') %>",

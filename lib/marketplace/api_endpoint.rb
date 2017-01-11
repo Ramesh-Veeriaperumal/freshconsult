@@ -11,6 +11,7 @@ module Marketplace::ApiEndpoint
     [:extension_details,        "product/%{product_id}/extensions/%{extension_id}.json", []],
     [:extension_configs,        "product/%{product_id}/extensions/%{version_id}/configurations.json", []],
     [:ni_latest_details,        "product/%{product_id}/extensions/latest/%{app_name}.json", []],
+    [:version_details,          "product/%{product_id}/versions/%{version_id}.json", []],
 
     # Account API's
     [:install_status,           "product/%{product_id}/account/%{account_id}/extensions/%{extension_id}/status.json", []],
@@ -18,6 +19,7 @@ module Marketplace::ApiEndpoint
     [:install_extension,        "product/%{product_id}/account/%{account_id}/extensions/%{extension_id}.json", []],
     [:update_extension,         "product/%{product_id}/account/%{account_id}/extensions/%{extension_id}.json", []],
     [:uninstall_extension,      "product/%{product_id}/account/%{account_id}/extensions/%{extension_id}.json", []],
+    [:installed_extension_details, "product/%{product_id}/account/%{account_id}/extensions/%{extension_id}.json", []],
     [:installed_extensions,     "product/%{product_id}/account/%{account_id}/extensions.json", [:type]],
 
     # Marketplace OAuth

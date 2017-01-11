@@ -88,6 +88,16 @@
     );
   });
 
+  //clicked buy app button in app gallery description page
+  jQuery(document).on("click.km_track_evt", ".buy-app", function(e){
+    App.Marketplace.Metrics.push_event(
+      "Clicked Buy App Button in Description page", 
+      { "Domain Name": mktplace_domain, 
+        "App Name": templateDockManager.appName
+      }
+    );
+  });
+
   jQuery(document).on("km_install_config_page_loaded", function(e){
     App.Marketplace.Metrics.push_event(
       "Viewed Installation Config Page", 
