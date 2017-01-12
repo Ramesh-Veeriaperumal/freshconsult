@@ -233,7 +233,7 @@ Helpkit::Application.routes.draw do
   match '/packages/:package.:extension' => 'jammit#package', :as => :jammit, :constraints => { :extension => /.+/ }
   resources :authorizations
 
-  ["github","salesforce", "magento", "shopify", "slack", "infusionsoft", "google_calendar", "google_login", "google_marketplace_sso", "google_contacts", "google_gadget", "outlook_contacts", "salesforce_v2"].each do |provider|
+  ["github","salesforce", "magento", "shopify", "slack", "infusionsoft", "google_calendar", "google_login", "google_marketplace_sso", "google_contacts", "google_gadget", "outlook_contacts", "salesforce_v2", "facebook"].each do |provider|
     match "/auth/#{provider}/callback" => 'omniauth_callbacks#complete', :provider => provider
   end
 
@@ -1134,11 +1134,6 @@ Helpkit::Application.routes.draw do
     end
 
     resources :widget_config, :only => :index
-    resources :advanced_features, :only => [:index] do
-      collection do
-        put :toggle
-      end
-    end
     resources :chat_widgets do
       collection do
          post :enable
@@ -1807,7 +1802,6 @@ Helpkit::Application.routes.draw do
       put :convert_subscription_to_free
       post :calculate_plan_amount
       post :request_trial_extension
-      post :request_special_pricing
     end
   end
 

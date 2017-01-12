@@ -103,7 +103,8 @@ module Integrations::Constants
     "constantcontact" => "constantcontact",
     "surveymonkey" => "surveymonkey",
     "outlook_contacts" => "outlook_contacts",
-    "salesforce_v2" => "salesforce_v2"
+    "salesforce_v2" => "salesforce_v2",
+    "facebook" => ""
   }
 
 end

@@ -41,9 +41,9 @@ module Helpdesk
         parsed_header_content.sub!(/^(\*?(?:To:|Pour:|Para:|Zu:|Aan:)\*?)/, "To:")
 
         parsed_header_content.split("\n").each do |line| 
-          if (!cc_text.empty? or line.start_with?("Cc")) 
+          if (line.start_with?("Cc")) 
             cc_text << line 
-          elsif (!to_text.empty? or line.start_with?("To"))
+          elsif (line.start_with?("To"))
             to_text << line 
           end
         end

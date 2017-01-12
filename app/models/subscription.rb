@@ -23,7 +23,6 @@ class Subscription < ActiveRecord::Base
   ACTIVE = "active"
   TRIAL = "trial"
   FREE = "free"
-  ELIGIBLE_LIMIT = Date.parse("01-12-2016")
   
   belongs_to :account
   belongs_to :subscription_plan
@@ -388,10 +387,6 @@ class Subscription < ActiveRecord::Base
     non_sprout_plan? && !new_blossom?
   end
   
-  def special_pricing_requested?
-    redis_key_exists?(special_pricing_key)
-  end
-  
   protected
   
     def set_renewal_at
@@ -513,7 +508,7 @@ class Subscription < ActiveRecord::Base
     end
 
     def dkim_category_change
-      if subscription_state_changed?
+      if self.account.dkim_enabled? and subscription_state_changed?
         set_others_redis_lpush(DKIM_CATEGORY_KEY, self.account_id)
       end
     end
@@ -546,10 +541,6 @@ class Subscription < ActiveRecord::Base
         return true if self.send(field) != @old_subscription.send(field)
       end
       return nil
-    end
-    
-    def special_pricing_key
-      SUBSCRIPTIONS_PRICING_REQUEST % {:account_id => account.id, :user_id => User.current.id}
     end
 
     def subscription_state_changed?

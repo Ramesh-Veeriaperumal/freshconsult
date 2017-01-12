@@ -95,7 +95,6 @@ module Redis::RedisKeys
 
 	CUSTOM_SSL = "CUSTOM_SSL:%{account_id}"
 	SUBSCRIPTIONS_BILLING = "SUBSCRIPTIONS_BILLING:%{account_id}"
-	SUBSCRIPTIONS_PRICING_REQUEST = "SPECIAL_PRICING:%{account_id}:%{user_id}"
 	SEARCH_KEY = "SEARCH_KEY:%{account_id}:%{klass_name}:%{id}"
 	ZENDESK_IMPORT_STATUS = "ZENDESK_IMPORT_STATUS:%{account_id}"
 	ZENDESK_IMPORT_CUSTOM_DROP_DOWN = "ZENDESK_IMPORT_CUSTOM_DROP_DOWN_%{account_id}"

@@ -25,7 +25,11 @@ class SAAS::AccountDataCleanup
   end
 
   def handle_create_observer_data
-    account.all_observer_rules.destroy_all
+    account.all_observer_rules.find_each do |rule|
+      rule.destroy
+    end
+    Rails.logger.info "Deleting all observer rules and creating fixtures again #{account.id}"
+    account.reload
     Fixtures::DefaultObserver.create_rule
   end
 

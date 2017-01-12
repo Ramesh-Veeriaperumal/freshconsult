@@ -47,31 +47,69 @@ private
 
 	def get_from_address
 		mail[:from].to_s
+	rescue Exception => e
+		begin
+			Rails.logger.info "Exception while fetching from address from parsed email object - #{e.message} - #{e.backtrace}"
+			mail.from.to_s
+		rescue Exception => e
+			replace_invalid_characters
+			@encoded_header[:from].to_s
+		end
 	end
 
 	def get_to_address
 		mail.to.blank? ? mail.header['Delivered-To'].to_s : ((mail.to.kind_of? String) ? mail.to : mail.to.join(','))
+	rescue Exception => e
+		Rails.logger.info "Exception while fetching to address from parsed email object - #{e.message} - #{e.backtrace}"
+		replace_invalid_characters
+		@encoded_header.to.blank? ? @encoded_header.header['Delivered-To'].to_s : 
+		((@encoded_header.to.kind_of? String) ? @encoded_header.to : @encoded_header.to.join(','))
 	end
 
 	def get_cc_address
 		mail[:cc].to_s
+	rescue Exception => e
+		begin 
+			Rails.logger.info "Exception while fetching cc address from parsed email object - #{e.message} - #{e.backtrace}"
+			mail.cc.to_s
+		rescue Exception => e
+			replace_invalid_characters
+			@encoded_header[:cc].to_s
+		end
 	end
 
 	def get_decoded_subject
 		subject_field = nil
+		begin
    	 	mail.header.fields.each {|f| subject_field = f if f.name == "Subject"}
-    	encoded_subject = subject_field ? subject_field.value : ""
+   	rescue Exception => e
+   		Rails.logger.info "Exception while fetching subject from parsed email object - #{e.message} - #{e.backtrace}"
+   		replace_invalid_characters
+   		@encoded_header.header.fields.each {|f| subject_field = f if f.name == "Subject"}
+   	end
+   		encoded_subject = subject_field ? subject_field.value : ""
     	subject = encoded_subject.index("=?") ? Mail::Encodings.unquote_and_convert_to(encoded_subject, 'UTF-8') : mail.subject
+	  	subject.to_s
 	end
 
 	def get_header
 		mail.header
+	rescue Exception => e
+		Rails.logger.info "Exception while fetching header from parsed email object - #{e.message} - #{e.backtrace}"
+		replace_invalid_characters
+		@encoded_header.header
 	end
 
 	def get_header_data
 		mail.header.to_s
+	rescue Exception => e
+		begin
+  		mail.header.raw_source
   	rescue Exception => e
-    	mail.header.raw_source
+  		Rails.logger.info "Exception while fetching header from parsed email object - #{e.message} - #{e.backtrace}"
+  		replace_invalid_characters
+			@encoded_header.header.to_s
+  	end
 	end
 
 	def get_message_id
@@ -165,6 +203,15 @@ private
     	mail.body_encoding = "7bit"
     	mail.body.decoded
   	end
+
+	def replace_invalid_characters
+		if @encoded_header.blank?
+			Rails.logger.info "Encoding invalid characters while parsing email"
+			email_text = mail.header.raw_source.encode(Encoding::UTF_8, :undef => :replace,
+				 :invalid => :replace, :replace => '')
+			@encoded_header = Mail.new(email_text)
+		end
+	end
 	
 end
 

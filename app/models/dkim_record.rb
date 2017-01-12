@@ -2,7 +2,7 @@ class DkimRecord < ActiveRecord::Base
 
   belongs_to :outgoing_email_domain_category
 
-  attr_accessible :sg_id, :sg_user_id, :sg_type, :record_type, :host_name, :host_value, :status, :account_id, :customer_record
+  attr_accessible :sg_id, :sg_user_id, :sg_category_id, :sg_type, :record_type, :host_name, :host_value, :status, :account_id, :customer_record
 
   CUSTOM_RECORDS = ['dkim', 'subdomain_spf', 'mail_server']
 

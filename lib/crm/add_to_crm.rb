@@ -42,8 +42,6 @@ class CRM::AddToCRM
 
     def self.perform(account_id)
       ThirdCRM.new.mark_as_deleted_customer
-    ensure
-      CRM::FreshsalesUtility.new({ account: Account.current }).account_cancellation if (Rails.env.production? or Rails.env.staging?)
     end
   end
 
