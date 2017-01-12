@@ -5500,6 +5500,7 @@ en:
   ticket:
     errors:
       required_field: cannot be blank.
+      request_dropped: Some error occured and your email was not sent. Please try again.
     spam: "SPAM"
     deleted: "TRASH"
     archived: "Archived"
