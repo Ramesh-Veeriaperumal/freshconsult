@@ -575,7 +575,7 @@ $('.btn-collapse').livequery(
 			select_init_data.createSearchChoice = function(term, data) {
 		  	//Check if not already existing & then return
 			        if ($(data).filter(function() { return this.text.localeCompare(term)===0; }).length===0)
-				        return { id: term, text: term, flag:true };
+				        return { id: term.toLowerCase(), text: term, flag:true };
 			};
 		}
 		_this.select2(select_init_data);
