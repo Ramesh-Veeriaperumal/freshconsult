@@ -14,7 +14,6 @@ class Account < ActiveRecord::Base
   include AccountConstants
   include Onboarding::OnboardingRedisMethods
   include FreshdeskFeatures::Feature
-  include Helpdesk::SharedOwnershipMigrationMethods
 
   has_many_attachments
   
@@ -72,7 +71,7 @@ class Account < ActiveRecord::Base
     PLANS_AND_FEATURES.each_pair do |k, v|
       feature k, :requires => ( v[:inherits] || [] )
       v[:features].each { |f_n| feature f_n, :requires => [] } unless v[:features].nil?
-      (SELECTABLE_FEATURES.keys + TEMPORARY_FEATURES.keys + ADVANCED_FEATURES +
+      (SELECTABLE_FEATURES.keys + TEMPORARY_FEATURES.keys + 
         ADMIN_CUSTOMER_PORTAL_FEATURES.keys).each { |f_n| feature f_n }
     end
   end
@@ -142,7 +141,7 @@ class Account < ActiveRecord::Base
   def round_robin_capping_enabled?
     features?(:round_robin_load_balancing)
   end
-
+  
   def skill_based_round_robin_enabled?
     features?(:skill_based_round_robin)
   end
@@ -180,6 +179,10 @@ class Account < ActiveRecord::Base
     default_in_op_fields[:company].flatten!
 
     default_in_op_fields.stringify_keys!
+  end
+
+  def parent_child_tkts_enabled?
+    @pc ||= launched?(:parent_child_tickets)
   end
 
   class << self # class methods

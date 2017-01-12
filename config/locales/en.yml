@@ -2242,7 +2242,6 @@ en:
         mobihelp: Mobihelp
         customer-portal: Customer Portal
         portals: Portals
-        advanced_features: Advanced Features
       keywords:
         forum_moderation: "Forum Moderation"
         configure_support_email: "Configure support email"
@@ -2350,28 +2349,6 @@ en:
       helpdesk: Helpdesk
       events: Events
       survey: Survey
-    advanced_features:
-      feature_added: The feature was successfully added to your helpdesk.
-      feature_removed: The feature was successfully removed from your helpdesk.
-      not_allowed: You are not allowed to enable this feature!
-      index:
-        title: Advanced Features
-        desc: You can enable advanced features in Freshdesk to improve overall helpdesk productivity.
-        no_feature: There are no advanced features available
-        info: View list of Advanced Features
-      feature:
-        link_tickets:
-          title: Linked Tickets
-          description: 'Installing the "Linked Tickets" app will let you link related tickets(<=200) to a tracker ticket and manage tickets.'
-          confirm: 'Disabling "Link Tickets feature" will remove all the links between the tickets which cannot be restored. Do you want to continue?'
-        parent_child_tickets:
-          title: Parent Child Tickets
-          description: 'Installing the "Parent Child Tickets" app will let create child tickets and manage tickets.'
-          confirm: 'Disabling "Parent Child Tickets" will remove all the relationship between the tickets which cannot be restored. Do you want to continue?'
-        shared_ownership:
-          title: Shared Ownership
-          description: 'Installing the "Shared Ownership" app will let assign internal groups and agents for a ticket.'
-          confirm: 'Disabling "Shared Ownership" will remove all the data related to internal groups and agents of the ticket. Do you want to continue?'
   ends_with: Ends with
   last_name: Last Name
   forum:
@@ -5466,6 +5443,7 @@ en:
     user_blocked: "This user has blocked your page. You will not be able to send them any messages."
     not_authorized: You were not authorized by Facebook
     realtime: "<b>Realtime stream feed fetching app is stopped</b> due to some changes on this Facebook account <a href='%{realtime_url}' > Re-authorize and Enable </a> "
+    user_creation_failed: "Error while creating user in Freshdesk. Please retry after sometime or contact support@freshdesk.com"
   logo: Logo
   ok: Ok
   back: Back
@@ -6029,9 +6007,6 @@ en:
   will_expire_in: will expire in
   choose_plan_trial: "Your account will get deactivated after the trial period. <br /> To continue using Freshdesk, please choose a plan."
   choose_plan_trial_v2: "Your account will be deactivated after the trial period. To continue using Freshdesk, please choose a plan below. <br />"
-  choose_plan_contact_us_v1: "We have revised Freshdesk's pricing. <a href='#' id='special_pricing'>Contact us to know more and get a quote!</a>"
-  choose_plan_contact_us_v2: "We have received your request for special pricing and our team will reach out to you shortly."
-  special_pricing_ack: "Thank you for your interest in Freshdesk. Our sales personnel will be in touch shortly regarding your request."
   trial_expired: "Your trial has expired and the account is deactivated. Please contact support@freshdesk.com to update your subscription."
   asked_on: Asked on
   this_ticket_has_been_deleted: This ticket has been deleted
@@ -10606,6 +10581,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       freshdesk_dot_com: ".freshdesk.com"
       submit: Submit
     signup_google_error:
+      token_mismatch_error: "Token mismatch error. Please contact support@freshdesk.com."
       error_message: "<center><p class='big-text aligncenter'>Sorry! You do not have enough permission to access this page.<br> Please contact your Account administrator or </p></center><center><a href='http://freshdesk.com/signup'>Signup from Freshdesk Home page </a></center>"
     thank_you:
       refresh_your_account: "All right! Let’s refresh your helpdesk."

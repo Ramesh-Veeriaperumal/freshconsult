@@ -215,5 +215,81 @@ category-19:
     staging:
       <<: *defaults
       
+category-30:
+    defaults: &defaults
+      address: smtp.sendgrid.net
+      port: 587
+      domain: freshpo.com
+      authentication: :plain
+      user_name: default-user
+      password: 8n!Y59MQa$jH
+    development:
+      <<: *defaults
+    test:
+      <<: *defaults
+    staging:
+      <<: *defaults
+      
+category-31:
+    defaults: &defaults
+      address: smtp.sendgrid.net
+      port: 587
+      domain: freshpo.com
+      authentication: :plain
+      user_name: default-user
+      password: 8n!Y59MQa$jH
+    development:
+      <<: *defaults
+    test:
+      <<: *defaults
+    staging:
+      <<: *defaults
+            
+            
+category-32:
+    defaults: &defaults
+      address: smtp.sendgrid.net
+      port: 587
+      domain: freshpo.com
+      authentication: :plain
+      user_name: default-user
+      password: 8n!Y59MQa$jH
+    development:
+      <<: *defaults
+    test:
+      <<: *defaults
+    staging:
+      <<: *defaults
+      
+category-33:
+    defaults: &defaults
+      address: smtp.sendgrid.net
+      port: 587
+      domain: freshpo.com
+      authentication: :plain
+      user_name: default-user
+      password: 8n!Y59MQa$jH
+    development:
+      <<: *defaults
+    test:
+      <<: *defaults
+    staging:
+      <<: *defaults
+      
+category-34:
+    defaults: &defaults
+      address: smtp.sendgrid.net
+      port: 587
+      domain: freshpo.com
+      authentication: :plain
+      user_name: default-user
+      password: 8n!Y59MQa$jH
+    development:
+      <<: *defaults
+    test:
+      <<: *defaults
+    staging:
+      <<: *defaults  
+      
 processing_timeout: 600
 retry_count: 20

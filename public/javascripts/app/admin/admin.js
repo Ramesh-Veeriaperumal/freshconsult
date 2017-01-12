@@ -44,10 +44,7 @@ window.App = window.App || {};
 				break;
 			case 'admin/email_notifications/index':
 				this.current_module = 'AdminFontSettings'
-				break;
-			case 'admin/advanced_features/index':
-				this.current_module = 'AdvancedFeatures'
-				break;
+				  break;
       case 'admin/skills/index':
       case 'admin/skills/new':
       case 'admin/skills/edit':

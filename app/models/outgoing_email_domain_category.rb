@@ -14,12 +14,11 @@ class OutgoingEmailDomainCategory < ActiveRecord::Base
   has_many :dkim_category_change_activities
 
   SMTP_CATEGORIES = {
-    'trial' => 1,
-    'active' => 2,
-    'premium' => 3,
-    'free' => 4,
-    'default' => 5,
-    'spam_check_user' => 9
+    'trial' => 30,
+    'active' => 31,
+    'premium' => 32,
+    'free' => 33,
+    'default' => 34
   }
 
   STATUS = {

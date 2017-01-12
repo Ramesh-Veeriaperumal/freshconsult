@@ -80,7 +80,8 @@ class AccountsController < ApplicationController
           render :json => { :success => true,
                             :url => signup_complete_url(:token => @signup.account.agents.first.user.perishable_token, :host => @signup.account.full_domain),
                             :account_id => @signup.account.id  },
-                            :callback => params[:callback]
+                            :callback => params[:callback],
+                            :content_type=> 'application/javascript'
         }
         format.nmobile {
 
@@ -369,8 +370,10 @@ class AccountsController < ApplicationController
 
     def add_to_crm
       if (Rails.env.production? or Rails.env.staging?)
-        Resque.enqueue_at(3.minute.from_now, Marketo::AddLead, { :account_id => @signup.account.id, 
-          :signup_id => params[:signup_id], :fs_cookie => params[:fs_cookie] })
+        Resque.enqueue_at(3.minute.from_now, Marketo::AddLead, { :account_id => @signup.account.id,
+          :signup_id => params[:signup_id]})
+        Resque.enqueue_at(3.minute.from_now, CRM::Freshsales::Signup, { account_id: @signup.account.id,
+         fs_cookie: params[:fs_cookie] })
       end
       
     end  
@@ -391,7 +394,10 @@ class AccountsController < ApplicationController
     end
 
     def update_crm
-      Resque.enqueue(CRM::AddToCRM::DeletedCustomer, { :account_id => current_account.id })
+      if Rails.env.production?
+        Resque.enqueue(CRM::AddToCRM::DeletedCustomer, { :account_id => current_account.id })
+        Resque.enqueue(CRM::Freshsales::DeletedCustomer, { :account_id => current_account.id })
+      end
     end      
 
     def deliver_mail(feedback)

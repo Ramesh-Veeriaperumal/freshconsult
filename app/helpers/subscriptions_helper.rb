@@ -184,11 +184,7 @@ module SubscriptionsHelper
   def previous_plan?(plan)
     SubscriptionPlan.previous_plans.include?(plan)
   end
-
-  def eligible_for_special_pricing?
-    current_account.created_at > Subscription::ELIGIBLE_LIMIT
-  end
-
+  
   def new_sprout?(plan_name)
     plan_name == NEW_SPROUT
   end

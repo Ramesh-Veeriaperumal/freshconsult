@@ -23,13 +23,17 @@ module ActionMailerCallbacks
       account_id = account_id.present? ? account_id : -1
       ticket_id = ticket_id.present? ? ticket_id : -1
       note_id = note_id_field.present? ? note_id : -1
-
       mail.header["X-FD-Account-Id"] = nil if account_id_field.present?
       mail.header["X-FD-Ticket-Id"] = nil if ticket_id_field.present?
       mail.header["X-FD-Type"] = nil if (mail_type_field.present? && mail_type_field.value.present?)
       mail.header["X-FD-Note-Id"] = nil if note_id_field.present?
-      from_email = mail.header[:from].value.first if (!mail.header[:from].nil? && !mail.header[:from].value.nil?)
-      from_email = from_email[/.*<([^>]*)/, 1] # fetching the from email inside < >.
+      if (!mail.header[:from].nil? && !mail.header[:from].value.nil?)
+        from_email = mail.header[:from].value
+        from_email = from_email.kind_of?(Array) ? from_email.first : from_email
+        from_email = from_email[/.*<([^>]*)/, 1] # fetching the from email inside < >.
+      else
+        from_email = ""
+      end 
       email_config = Thread.current[:email_config]
       if (email_config && email_config.smtp_mailbox)
         smtp_mailbox = email_config.smtp_mailbox

@@ -115,16 +115,6 @@ class SubscriptionsController < ApplicationController
       render :json => {:success => true }
     end
   end
-  
-  def request_special_pricing
-    if !scoper.special_pricing_requested? and current_account.created_at > Subscription::ELIGIBLE_LIMIT
-      UserNotifier.notify_special_pricing(current_account)
-      set_others_redis_key(special_pricing_key, Time.zone.now, 86400 * 60)
-    end
-    render :json => 200
-  end
-
-
 
   private
     def admin_selected_tab
@@ -390,9 +380,5 @@ class SubscriptionsController < ApplicationController
         flash[:error] = t("subscription.error.invalid_currency")
         redirect_to subscription_url
       end
-    end
-    
-    def special_pricing_key
-      SUBSCRIPTIONS_PRICING_REQUEST % {:account_id => current_account.id, :user_id => User.current.id}
     end
 end
