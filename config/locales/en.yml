@@ -3319,6 +3319,43 @@ en:
         portal_languages:
           title: "<b>Visible/Hidden on Portal</b><br />"
           info1: "When your knowledge base articles are translated to other languages and are ready to go live, you can make that language visible to your customers by clicking on the toggle button (Hidden on Portal/Visible on Portal)<br /><br />"
+    setup: 
+      sales_manager_intro: "Hi %{user_name}! I'm %{sales_manager_name}, your account manager, and I'm happy to help with your evaluation of Freshdesk. Please feel free to reach out if you have any questions."
+      write_to_us: Write to us
+      request_demo: Request Demo
+      requesting_demo: "<b>Requesting Demo...</b>"
+      requested_demo: "<i class='ficon-checkmark-thick muted mr7'></i>Demo request received"
+      choose_plan: Choose your plan
+      helpdesk_setup_incomplete: Setup your account
+      helpdesk_setup_complete:  Check out what’s under the hood
+      configuration_status: "<b>%{in_setup_keys_length}</b> of <b>%{total_setup_keys_length}</b> completed." 
+      feedback_success: We’ve got your message. You’ll hear back from us soon.
+      setup_progress_0: Hurray!
+      setup_progress_1: Let’s go!
+      setup_progress_misc: Keep going!
+      setup_progress_penultimate: Almost there!
+      new_account_title: Sign up for Freshdesk 
+      new_account_description: Start your free 30-day trial of Freshdesk by signing up from the website.
+      account_admin_email_title: Activate your account
+      account_admin_email_description: Check your inbox for our activation email and verify your Freshdesk account.
+      agents_title: Invite your team
+      agents_description: Add your team to your account and have them explore Freshdesk with you.
+      support_email_title: Configure your support email
+      support_email_description: Bring your customer messages into Freshdesk by adding your support email.
+      freshfone_number_title: Purchase a phone number
+      freshfone_number_description: Buy a phone number and start accepting calls from your customers.
+      twitter_title: Add your Twitter account
+      twitter_description: Look out for mentions and important keywords related to you on Twitter.
+      automation_title: Set up an automation rule
+      automation_description: Automate repetitive tasks and help your team be more productive every day.
+      data_import_title: Import your contacts
+      data_import_description: Upload your existing contacts to Freshdesk to get full context about customers.
+      custom_app_title: Install an app from the gallery
+      custom_app_description: Extend your capabilities by integrating your favorite apps with Freshdesk.
+      request_for_extension: Request for an extension
+      trial_will_expire: Your trial will expire in <b id='trial-days'>%{trial_days}</b> days.
+      trial_expired: "Your trial has expired."
+      trial_extension_requested: Trial extension requested
   success_msg : Account settings updated successfully!
   failure_msg : Failed to update Account Settings!
   account_configuration:

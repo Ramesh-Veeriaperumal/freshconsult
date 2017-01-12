@@ -130,4 +130,8 @@ module Marketplace::ApiUtil
       end
       cache_data
     end
+
+    def mark_custom_app_setup
+      Account.current.mark_custom_app_setup_and_save unless Account.current.custom_app_setup?
+    end
 end

@@ -1,0 +1,37 @@
+<div class="setup-details-wrapper">
+	<div class="progress-container">
+		<div class="progress-percentage pull-left">
+			<div class="progress-percentage-wrap">
+				<b><%= configuration_percentage_complete %>%</b>
+			</div>
+		</div>
+		<%= render :partial => "helpdesk/realtime_dashboard/account_setup/progress_bar_container", :locals => {:show_percentage => false} %>
+	</div>
+	<div class="setup-details-container clearfix">
+		<ul id="setup-details" class="row-fluid">
+			<% current_account.current_setup_keys.each do |setup_key| %>
+				<% current_key_setup = current_account.send("#{setup_key}_setup?") %>
+				<li>
+
+					<div class="setup-info-wrapper clearfix">
+						<div class="setup-icon-container pull-left">
+							<div class="setup-icon-wrap center pull-left <%= current_key_setup ? 'complete' : '' %>">
+								<i class="setup-icon <%= current_key_setup ? 'ficon-checkmark-thick complete' : icon_for_setup_key(setup_key) %>"></i>
+							</div>
+						</div>
+						<%= link_to path_for_setup_key(setup_key), link_html_options(setup_key) do %>
+							<div class="setup-info pull-left <%= current_key_setup ? 'complete' : '' %>">
+								<div class="text-wrapper">
+									<div class="row-fluid setup-title">
+										<%= t("accounts.setup.#{setup_key}_title") %>
+									</div>
+									<div class="row-fluid muted setup-desc"><%= t("accounts.setup.#{setup_key}_description") %></div>
+								</div>
+							</div>
+						<% end %>
+					</div>
+				</li>
+			<% end %>
+		</ul>
+	</div>
+</div>

@@ -1,0 +1,87 @@
+<div class="setup-widget-wrapper clearfix">
+	<div class="inner-wrapper row-fluid clearfix">
+		<div class="setup-cols pull-left">
+			<div class="info-container clearfix" rel="remote" data-remote-url="/helpdesk/sales_manager" id="sales-manager-info">
+			</div>
+			<div class="links-container feedback-links-container">
+				<a id="write-to-us" class="feedback-links"><b><%= t('accounts.setup.write_to_us') %></b></a>
+				<a id="request-demo" class="feedback-links" data-loading-text=" " data-complete-text="<%= t('accounts.setup.requested_demo')%>"><b><%= t('accounts.setup.request_demo') %></b></a>
+				<% if current_user %>
+					<%= form_for :feedback,  
+						:url=> "#{AppConfig['feedback_account'][Rails.env]}/widgets/feedback_widget/jsonp_create?widgetType=popup",
+						:remote => true,
+						:method => :post, 
+						:html => { :id => "setup-widget-feedback"} do |f| %>
+						<%= text_area_tag 'helpdesk_ticket_body_faux', nil, :placeholder => t('header.help_center') %>
+						<%= hidden_field_tag "helpdesk_ticket[ticket_body_attributes][description_html]" %>
+						<%= hidden_field_tag "helpdesk_ticket[subject]", value="Message from " + current_user.name + " (" + current_user.email + ")" %>
+						<%= hidden_field_tag "meta[user_agent]", request.env["HTTP_USER_AGENT"] %>
+						<%= hidden_field_tag "meta[referrer]", h(request.url) %>
+						<%= hidden_field_tag "helpdesk_ticket[source]", TicketConstants::SOURCE_KEYS_BY_TOKEN[:feedback_widget] %>
+						<%= hidden_field_tag "helpdesk_ticket[email]", current_user.email %>
+						<div class="buttons-container pull-right">
+							<a class="btn" id="cancel-feedback"><%= t('cancel') %></a>
+							<%= f.submit t("send_feedback"), :id => "submit-feedback", :class => "btn btn-primary", 
+							"data-loading-text" => t("multifile_attachments.sending")  %>
+						</div>
+					<% end %>								
+					<div id="setup-widget-feedback-thanks" class="hide">
+						<h4 class="muted"><%= t('accounts.setup.feedback_success') %></h4>
+					</div>
+				<% end %>
+
+			</div>
+		</div>
+		<div class="setup-cols pull-left">
+			<div class="info-container clearfix">
+				<%= render :partial => "helpdesk/realtime_dashboard/account_setup/progress_bar_container", 
+				:locals => {:show_percentage => true} %>
+			</div>
+			<div class="links-container">
+				<% if in_setup_keys_length == total_setup_keys_length %>
+					<a class="arrow-border" data-pjax="#body-container" href="/admin/home">
+						<b><%= t("accounts.setup.helpdesk_setup_complete") %></b>
+					</a>
+				<% else %>
+					<a class="arrow-border" id="helpdesk_setup">
+						<b><%= t("accounts.setup.helpdesk_setup_incomplete") %></b>
+					</a>
+				<% end %>
+			</div>
+		</div>
+		<div class="setup-cols pull-left">
+			<div class="info-container">
+				<div class="current-plan-details row-fluid">
+					<span class="muted">
+						<%= t("current_plan") %> : 
+					</span>
+					<b> <%= current_account.subscription.subscription_plan.name %></b>
+				</div>
+				<% trial_days = current_account.subscription.trial_days %>
+				<span class="expiry-details <%= 'critical' if trial_days <= 4 %>">
+					<span class="pull-left">
+						<% if trial_days > 0 %>
+							<%= t("accounts.setup.trial_will_expire", :trial_days => trial_days).html_safe %>
+						<% else %>
+							<%= t("accounts.setup.trial_expired") %>
+						<% end %>
+					</span>
+					<% if trial_days <= 4 && current_user.privilege?(:manage_account) && 
+						!current_account.account_additional_settings.is_trial_extension_requested? %>
+							<a id="setup-request-trial-extension" class="pull-left" data-loading-text=" " data-complete-text="<%= t('accounts.setup.trial_extension_requested') %>">
+								<b><%= t('accounts.setup.request_for_extension') %></b>
+							</a>
+					<% end %>
+				</span> 
+			</div>
+			<div class="links-container">
+				<a class="arrow-border <%= 'disabled' unless current_user.privilege?(:manage_account) %>" href=<%= subscription_path %> data-pjax="#body-container">
+					<b><%= t('accounts.setup.choose_plan') %></b>
+				</a>
+			</div>
+		</div>
+	</div>
+	<% content_for :dialogs do %>
+		<%= render :partial => "helpdesk/realtime_dashboard/account_setup/setup_details_wrapper" %> 
+	<% end %>
+</div>

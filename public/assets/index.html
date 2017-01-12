@@ -118,11 +118,11 @@
 
       @font-face {
   font-family: "glyphs";
-  src: url("../../assets/glyphs_c06c2d002d87eba5240594f76a06f29d.eot");
-  src: url("../../assets/glyphs_c06c2d002d87eba5240594f76a06f29d.eot?#iefix") format("embedded-opentype"),
-       url("../../assets/glyphs_c06c2d002d87eba5240594f76a06f29d.woff") format("woff"),
-       url("../../assets/glyphs_c06c2d002d87eba5240594f76a06f29d.ttf") format("truetype"),
-       url("../../assets/glyphs_c06c2d002d87eba5240594f76a06f29d.svg#glyphs") format("svg");
+  src: url("../../assets/glyphs_ebdb24a6ad0bd3262ccf82363a4697b6.eot");
+  src: url("../../assets/glyphs_ebdb24a6ad0bd3262ccf82363a4697b6.eot?#iefix") format("embedded-opentype"),
+       url("../../assets/glyphs_ebdb24a6ad0bd3262ccf82363a4697b6.woff") format("woff"),
+       url("../../assets/glyphs_ebdb24a6ad0bd3262ccf82363a4697b6.ttf") format("truetype"),
+       url("../../assets/glyphs_ebdb24a6ad0bd3262ccf82363a4697b6.svg#glyphs") format("svg");
   font-weight: normal;
   font-style: normal;
 }
@@ -130,7 +130,7 @@
 @media screen and (-webkit-min-device-pixel-ratio:0) {
   @font-face {
     font-family: "glyphs";
-    src: url("../../assets/glyphs_c06c2d002d87eba5240594f76a06f29d.svg#glyphs") format("svg");
+    src: url("../../assets/glyphs_ebdb24a6ad0bd3262ccf82363a4697b6.svg#glyphs") format("svg");
   }
 }
 
@@ -141,6 +141,7 @@
 .ficon-account:before,
 .ficon-add-attachment:before,
 .ficon-add-call:before,
+.ficon-add-people:before,
 .ficon-agent:before,
 .ficon-agent-fchat-off:before,
 .ficon-agent-fchat-on:before,
@@ -222,6 +223,7 @@
 .ficon-compose-email:before,
 .ficon-compress:before,
 .ficon-connect-chat:before,
+.ficon-contacts:before,
 .ficon-conversation:before,
 .ficon-cross:before,
 .ficon-cross-filled:before,
@@ -311,6 +313,7 @@
 .ficon-freshfone:before,
 .ficon-gamification-settings:before,
 .ficon-gear:before,
+.ficon-gear-line:before,
 .ficon-glance:before,
 .ficon-googleplus:before,
 .ficon-group:before,
@@ -400,6 +403,7 @@
 .ficon-portal-source:before,
 .ficon-portals:before,
 .ficon-post-edit:before,
+.ficon-power:before,
 .ficon-preserve-format:before,
 .ficon-pushpin:before,
 .ficon-puzzle:before,
@@ -439,6 +443,7 @@
 .ficon-star-o:before,
 .ficon-strikethrough:before,
 .ficon-supervisor:before,
+.ficon-support-email:before,
 .ficon-survey-happy:before,
 .ficon-survey-neutral:before,
 .ficon-survey-sad:before,
@@ -500,6 +505,7 @@
 .ficon-account:before { content: "\f100"; }
 .ficon-add-attachment:before { content: "\f26a"; }
 .ficon-add-call:before { content: "\f21f"; }
+.ficon-add-people:before { content: "\f26b"; }
 .ficon-agent:before { content: "\f101"; }
 .ficon-agent-fchat-off:before { content: "\f1b0"; }
 .ficon-agent-fchat-on:before { content: "\f1b1"; }
@@ -581,6 +587,7 @@
 .ficon-compose-email:before { content: "\f1c8"; }
 .ficon-compress:before { content: "\f241"; }
 .ficon-connect-chat:before { content: "\f236"; }
+.ficon-contacts:before { content: "\f26c"; }
 .ficon-conversation:before { content: "\f128"; }
 .ficon-cross:before { content: "\f129"; }
 .ficon-cross-filled:before { content: "\f220"; }
@@ -670,6 +677,7 @@
 .ficon-freshfone:before { content: "\f1c0"; }
 .ficon-gamification-settings:before { content: "\f152"; }
 .ficon-gear:before { content: "\f153"; }
+.ficon-gear-line:before { content: "\f26d"; }
 .ficon-glance:before { content: "\f21c"; }
 .ficon-googleplus:before { content: "\f154"; }
 .ficon-group:before { content: "\f155"; }
@@ -759,6 +767,7 @@
 .ficon-portal-source:before { content: "\f1f9"; }
 .ficon-portals:before { content: "\f1cf"; }
 .ficon-post-edit:before { content: "\f17f"; }
+.ficon-power:before { content: "\f26e"; }
 .ficon-preserve-format:before { content: "\f256"; }
 .ficon-pushpin:before { content: "\f180"; }
 .ficon-puzzle:before { content: "\f1d7"; }
@@ -798,6 +807,7 @@
 .ficon-star-o:before { content: "\f194"; }
 .ficon-strikethrough:before { content: "\f259"; }
 .ficon-supervisor:before { content: "\f195"; }
+.ficon-support-email:before { content: "\f26f"; }
 .ficon-survey-happy:before { content: "\f1b8"; }
 .ficon-survey-neutral:before { content: "\f1b9"; }
 .ficon-survey-sad:before { content: "\f1ba"; }
@@ -855,7 +865,7 @@
 
   <body class="characters-off">
     <header>
-      <h1>Font Icons (345)</h1>
+      <h1>Font Icons (350)</h1>
       <p>We can use font icon classes or use helper method as follows <code>&lt;%= font_icon "icon-name", :size => 18 %&gt;</code>, which generates the Markup</p>
     </header>
     <div id="page" class="container">
@@ -894,6 +904,15 @@
         </div>
         <div class="usage">
           <span>add-call</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-add-people" class="ficon-add-people"></i></span>
+        </div>
+        <div class="usage">
+          <span>add-people</span>
         </div>
       </div>
       
@@ -1623,6 +1642,15 @@
         </div>
         <div class="usage">
           <span>connect-chat</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-contacts" class="ficon-contacts"></i></span>
+        </div>
+        <div class="usage">
+          <span>contacts</span>
         </div>
       </div>
       
@@ -2429,6 +2457,15 @@
       
       <div class="glyph">
         <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-gear-line" class="ficon-gear-line"></i></span>
+        </div>
+        <div class="usage">
+          <span>gear-line</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
           <span class="step size-24"><span class="letters">Pp</span><i id="ficon-glance" class="ficon-glance"></i></span>
         </div>
         <div class="usage">
@@ -3230,6 +3267,15 @@
       
       <div class="glyph">
         <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-power" class="ficon-power"></i></span>
+        </div>
+        <div class="usage">
+          <span>power</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
           <span class="step size-24"><span class="letters">Pp</span><i id="ficon-preserve-format" class="ficon-preserve-format"></i></span>
         </div>
         <div class="usage">
@@ -3576,6 +3622,15 @@
         </div>
         <div class="usage">
           <span>supervisor</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-support-email" class="ficon-support-email"></i></span>
+        </div>
+        <div class="usage">
+          <span>support-email</span>
         </div>
       </div>
       

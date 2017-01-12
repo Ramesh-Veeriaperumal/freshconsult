@@ -201,9 +201,12 @@ module Marketplace::ApiMethods
                   :account_id => Account.current.id,
                   :extension_id => post_params[:extension_id]},
           Marketplace::ApiEndpoint::ENDPOINT_PARAMS[:install_extension] )
-        post_api(api_payload, post_params, MarketplaceConfig::ACC_API_TIMEOUT)
+        install_request_obj = post_api(api_payload, post_params, MarketplaceConfig::ACC_API_TIMEOUT)
       rescue *FRESH_REQUEST_EXP => e
         exception_logger("Exception type #{e.class},URL: #{api_payload} #{e.message}\n#{e.backtrace}")
+      else
+        mark_custom_app_setup if (install_request_obj.status == 200)
+        install_request_obj
       end
     end
 
