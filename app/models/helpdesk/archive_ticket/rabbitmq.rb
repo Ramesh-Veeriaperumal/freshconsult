@@ -13,6 +13,11 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
     manual_publish_to_xchg(uuid, "archive_ticket", subscriber_manual_publish("archive_ticket", action, options, uuid), key)
   end
 
+  def delayed_manual_publish_to_rmq(action,key, options = {})
+    uuid = generate_uuid
+    manual_publish_to_xchg(uuid, "archive_ticket", subscriber_manual_publish("archive_ticket", action, options, uuid), key, true)
+  end
+
   def to_rmq_json(keys, action)
     @rmq_archive_ticket_details ||= [archive_ticket_identifiers, archive_ticket_basic_properties, archive_ticket_schemaless_hash, 
                                 archive_ticket_custom_field_hash, archive_ticket_states_hash].reduce(&:merge)
