@@ -1,12 +1,14 @@
 
   type: object
   properties:
-    available_since:
-      type: string
     available:
       type: boolean
     occasional:
       type: boolean
+    id:
+      type: number
+    ticket_scope:
+      type: string
     signature:
       type: string
     group_ids:
@@ -17,10 +19,29 @@
       type: array
       items:
         type: number
-    id:
-      type: number
-    ticket_scope:
+    available_since:
       type: string
+    contact:
+      type: object
+      properties:
+        active:
+          type: boolean
+        email:
+          type: string
+        job_title:
+          type: string
+        language:
+          type: string
+        mobile:
+          type: string
+        name:
+          type: string
+        phone:
+          type: string
+        time_zone:
+          type: string
+        avatar:
+          $ref: '#/definitions/avatar'
     created_at:
       type: string
       format: date-time

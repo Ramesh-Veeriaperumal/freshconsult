@@ -14,7 +14,7 @@ class ContactDecorator < ApiDecorator
   def custom_fields
     # @name_mapping will be nil for READ requests
     custom_fields_hash = {}
-    record.custom_field.each { |k, v| custom_fields_hash[@name_mapping[k]] = v }
+    record.custom_field.each { |k, v| custom_fields_hash[@name_mapping[k]] = v } if @name_mapping.present?
     custom_fields_hash
   end
 

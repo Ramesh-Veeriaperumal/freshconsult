@@ -257,6 +257,11 @@ Helpkit::Application.routes.draw do
       end
     end
     resources :surveys, controller: 'ember/surveys', only: [:index]
+    resources :agents, controller: 'ember/agents', only: [:index, :show] do
+      collection do
+        get :me
+      end
+    end
   end
 
   match '/api/v2/_search/tickets' => 'tickets#search', :defaults => { format: 'json' }, :as => :tickets_search, via: :get

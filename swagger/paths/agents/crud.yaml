@@ -1,0 +1,17 @@
+get:
+  tags: [agent]
+  summary: Show an agent
+  parameters:
+    - name: id
+      in: path
+      type: number
+      required: true
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/agent'
+    404:
+      description: Resource not found
+    403:
+      description: Access denied

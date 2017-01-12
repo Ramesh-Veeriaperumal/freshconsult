@@ -2404,6 +2404,85 @@
         }
       }
     },
+    "/agents": {
+      "get": {
+        "tags": [
+          "agent"
+        ],
+        "summary": "List all agents",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/agent"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/agents/{id}": {
+      "get": {
+        "tags": [
+          "agent"
+        ],
+        "summary": "Show an agent",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "number",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/agent"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Resource not found"
+          }
+        }
+      }
+    },
+    "/agents/me": {
+      "get": {
+        "tags": [
+          "agent"
+        ],
+        "summary": "Show me",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "number",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/agent"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Resource not found"
+          }
+        }
+      }
+    },
     "/todos": {
       "get": {
         "tags": [
@@ -4562,14 +4641,17 @@
     "agent": {
       "type": "object",
       "properties": {
-        "available_since": {
-          "type": "string"
-        },
         "available": {
           "type": "boolean"
         },
         "occasional": {
           "type": "boolean"
+        },
+        "id": {
+          "type": "number"
+        },
+        "ticket_scope": {
+          "type": "string"
         },
         "signature": {
           "type": "string"
@@ -4586,11 +4668,40 @@
             "type": "number"
           }
         },
-        "id": {
-          "type": "number"
-        },
-        "ticket_scope": {
+        "available_since": {
           "type": "string"
+        },
+        "contact": {
+          "type": "object",
+          "properties": {
+            "active": {
+              "type": "boolean"
+            },
+            "email": {
+              "type": "string"
+            },
+            "job_title": {
+              "type": "string"
+            },
+            "language": {
+              "type": "string"
+            },
+            "mobile": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            },
+            "phone": {
+              "type": "string"
+            },
+            "time_zone": {
+              "type": "string"
+            },
+            "avatar": {
+              "$ref": "#/definitions/avatar"
+            }
+          }
         },
         "created_at": {
           "type": "string",

@@ -133,6 +133,14 @@
 /canned_responses/{id}:
   $ref: ./canned_responses/show.yaml
 
+# Agents
+/agents:
+  $ref: ./agents/list.yaml
+/agents/{id}:
+  $ref: ./agents/crud.yaml
+/agents/me:
+  $ref: ./agents/me.yaml
+
 # Todo
 /todos:
   $ref: ./todos/list.yaml

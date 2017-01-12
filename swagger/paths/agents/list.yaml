@@ -1,0 +1,10 @@
+get:
+  tags: [agent]
+  summary: List all agents
+  responses:
+    200:
+      description: Success
+      schema:
+        type: array
+        items:
+          $ref: '#/definitions/agent'
