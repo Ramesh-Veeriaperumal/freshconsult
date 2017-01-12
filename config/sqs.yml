@@ -70,6 +70,8 @@ production:
   cti_call_queue: cti_call_production
   fb_message_realtime_queue: social_fb_messenger_prod
   freshfone_call_notifier_queue: freshfone_call_notifier_production
+  collab_agent_update_queue: collab_agent_update_production
+  collab_ticket_update_queue: collab_ticket_update_production
   auto_refresh_queue: auto_refresh_new_production
   auto_refresh_alb_queue: auto_refresh_alb_production
   agent_collision_queue: agent_collision_new_production
@@ -96,6 +98,8 @@ test:
   cti_call_queue: cti_call_test
   fb_message_realtime_queue: social_fb_messenger_dev
   freshfone_call_notifier_queue: freshfone_call_notifier_test
+  collab_agent_update_queue: collab_agent_update_test
+  collab_ticket_update_queue: collab_ticket_update_test
   auto_refresh_queue: auto_refresh_new_test
   agent_collision_queue: agent_collision_new_test
   marketplace_app_queue: marketplace_app_test
