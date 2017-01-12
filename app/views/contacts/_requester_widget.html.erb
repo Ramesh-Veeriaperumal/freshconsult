@@ -29,10 +29,11 @@
         <% end %>
       </div>
 
-      <%= construct_widget_fields(user, company).html_safe if privilege?(:view_contacts) %>
+      <%= construct_widget_fields(user, company).html_safe %>
       <% if requester_field_count < Helpdesk::RequesterWidgetHelper::CONTACT_WIDGET_MAX_DISPLAY_COUNT %>
-      <div class="clearfix">
+        <div class="clearfix">
       <% end %>
+
       <div class="pull-right">
         <span class="recent-tickets">
           <% case show_recent_tickets %>
