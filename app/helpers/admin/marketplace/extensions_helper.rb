@@ -94,6 +94,11 @@ module Admin::Marketplace::ExtensionsHelper
           }, 700);
         </script>
         )
+    elsif @extension['name'] == Integrations::Constants::APP_NAMES[:slack_v2]
+      _btn << %(<form id="nativeapp-form" action="#{install_url}" method="post"> </form>)
+      _btn << %(
+        <a href="javascript:;" onclick="parentNode.submit();" class="install-app #{ni_install_btn_class}"><img alt="Add to Slack" src="https://platform.slack-edge.com/img/add_to_slack.png" style="padding-top: 10px;padding-left: 10px;width: 139px; height: 40px;"></a>
+      )
     else
       _btn << link_to(install_btn_text, install_url, :method => :post,
               :class => "btn btn-default btn-primary install-app #{ni_install_btn_class}").html_safe
