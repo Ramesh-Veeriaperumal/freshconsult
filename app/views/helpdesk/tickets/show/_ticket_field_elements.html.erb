@@ -57,7 +57,7 @@ default_fields.sort! {|x,y| field_order.index(x.first) <=> field_order.index(y.f
   jQuery("#helpdesk_ticket_email").blur(function(){
     var ticket_email = jQuery("#helpdesk_ticket_email").val();
 
-    jQuery.ajax({ url: "<%= helpdesk_commons_user_companies_path %>,
+    jQuery.ajax({ url: "<%= helpdesk_commons_user_companies_path %>",
       type: 'POST',
       datatype: 'json',
       data: {email: ticket_email},
