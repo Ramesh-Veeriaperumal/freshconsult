@@ -1790,6 +1790,7 @@ Helpkit::Application.routes.draw do
   resource :accounts do
     collection do
       get :new_signup_free
+      post :new_signup_free
     end
   end
 

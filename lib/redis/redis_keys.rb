@@ -306,6 +306,8 @@ module Redis::RedisKeys
   DKIM_CATEGORY_KEY = "DKIM_CATEGORY_CHANGER"
   DKIM_VERIFICATION_KEY = "DKIM_VERIFICATION:%{account_id}:%{email_domain_id}"
 
+  WHITELISTED_DOMAINS_KEY = "WHITELISTED_DOMAINS_KEY"
+
 	def newrelic_begin_rescue
 		begin
 		  yield
