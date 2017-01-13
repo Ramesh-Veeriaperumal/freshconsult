@@ -586,13 +586,6 @@ $disabled_border_color: #e0e0e0;
             line-height: 35px;
         }
 
-        .thumb_img {
-            position: absolute;
-            left: 0;
-            border: 0;
-            height: 33px;
-        }
-
         .msg-cover {
             border-color: $received_msg_border_color;
 
@@ -1021,13 +1014,6 @@ $disabled_border_color: #e0e0e0;
         line-height: 40px;
     }
 
-    .preview_pic .thumb {
-        position: absolute;
-        height: 38px;
-        left: 0;
-        border: 0;
-    }
-
     .nametag,
     .job-profile {
         line-height: 16px;
@@ -1365,12 +1351,6 @@ $disabled_border_color: #e0e0e0;
         .preview_pic {
             @include margin-right(6px); 
             margin-bottom: 1px;
-        }
-
-        .thumb_img {
-            position: absolute;
-            left: 0;
-            border: 0;
         }
 
         &:after {

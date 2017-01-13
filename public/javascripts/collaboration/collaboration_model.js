@@ -198,7 +198,6 @@ App.CollaborationModel = (function ($) {
         notificationsMap: {},
         unreadNotiCount: 0,
         invalidAnnotationMessages: [],
-        profileImages: {},
 
         isOnline: function(userId) {
             var is_online = false;

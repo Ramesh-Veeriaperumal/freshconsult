@@ -19,7 +19,6 @@ App.CollaborationUi = (function ($) {
         MSG_TYPE_SERVER_MREMOVE: "3", // Msg from Server, denotes removal of member
         MSG_TYPE_CLIENT_ATTACHMENT: "4",
         DEFAULT_PRESENCE_IVAL: 60 * 1000 * 1, // 1 minute
-        RETRY_DELAY_FOR_PENDING_DP_REQ: 1000 * 5, // 5sec
         AVATAR_TEMPLATE: "collaboration/templates/avatar",
         COLLABORATORS_LIST_ITEM_TEMPLATE: "collaboration/templates/collaborators_list_item",
         COLLABORATION_MESSAGE_TEMPLATE: "collaboration/templates/collaboration_message",
@@ -525,6 +524,7 @@ App.CollaborationUi = (function ($) {
 	    getAvatarHtml: function(userId, class_list) {
 	    	var usersMap = App.CollaborationModel.usersMap;
             var avatarHtml = JST[CONST.AVATAR_TEMPLATE]({data: {
+                    profileImage: (typeof ProfileImage !== "undefined" && !!ProfileImage.imageById(Number(userId))) ? ProfileImage.imageById(Number(userId)).profile_img : false,
                     name: usersMap[userId] ? usersMap[userId].name : CONST.DUMMY_USER.name,
                     id: userId,
                     class_list: class_list
@@ -991,6 +991,9 @@ App.CollaborationUi = (function ($) {
             var isSelf = String(userId) === selfUserName;
 
             return {
+                profileImage: (typeof ProfileImage !== "undefined" && !!ProfileImage.imageById(Number(userId))) ?
+                    ProfileImage.imageById(Number(userId)).profile_img : 
+                    false, 
                 name: modelUserData ? (isSelf ? "Me (" + modelUserData.name + ")" : modelUserData.name) : "",
                 email: modelUserData && modelUserData.email ? modelUserData.email : "",
                 username: modelUserData && modelUserData.email ? modelUserData.email.substring(0, modelUserData.email.indexOf("@")) : "",
@@ -1151,12 +1154,6 @@ App.CollaborationUi = (function ($) {
 
         getUserInfo: function(uid, cb) {
             App.CollaborationModel.getUserInfo(uid, cb);
-        },
-
-        updateDpCharToImage: function(elem, image_path) {
-            elem.removeClassName("hide");
-            elem.setAttribute("src", image_path);
-            App.CollaborationModel.profileImages[elem.getAttribute("data-user-id")] = {"path": image_path};
         }
     };
 
@@ -1549,41 +1546,6 @@ App.CollaborationUi = (function ($) {
         },
         activateBellListeners: function() {
             _COLLAB_PVT.bellEvents();
-        },
-        dpLoadErr: function(elem) {
-            var uid = elem.getAttribute("data-user-id");
-
-            function pullProfileImage() {
-                // FETCH CASE
-                App.CollaborationModel.profileImages[uid] = {"fetching": true};
-                $.get("/users/" + uid + "/profile_image_path", function(response) {
-                    if(!!response.path){
-                        _COLLAB_PVT.updateDpCharToImage(elem, response.path);
-                    }
-                    App.CollaborationModel.profileImages[uid].fetching = false;
-                });
-            }
-
-            if(uid) {
-                var profile_image_obj = App.CollaborationModel.profileImages[uid];
-                if(profile_image_obj) {
-                    // FETCHING CASE
-                    if(profile_image_obj.fetching) {
-                        setTimeout(function() {
-                            Collab.dpLoadErr(elem);
-                        }, CONST.RETRY_DELAY_FOR_PENDING_DP_REQ);
-                    } else if(profile_image_obj.path) {
-                        // CACHEC CASE
-                        _COLLAB_PVT.updateDpCharToImage(elem, profile_image_obj.path);
-                    } else {
-                        pullProfileImage();
-                    }
-                } else {
-                    pullProfileImage();
-                }
-            } else {
-                console.log("Something went wrong in setting DP image; uid not found in -data- attr;");
-            }
         }
     };
     return Collab;
