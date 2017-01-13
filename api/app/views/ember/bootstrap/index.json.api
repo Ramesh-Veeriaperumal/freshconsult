@@ -1,0 +1,37 @@
+agent_info = AgentDecorator.new(@agent).to_hash.merge({
+  last_active_at:       @agent.last_active_at.try(:utc),
+  points:               @agent.points,
+  scoreboard_level_id:  @agent.scoreboard_level_id,
+  assumable_agents:     @agent.assumable_agents.map(&:id),
+  next_level:           @agent.next_level,
+  abilities:            @agent.user.abilities,
+  preferences:          @agent.preferences
+})
+
+account_info = {}
+[:full_domain, :helpdesk_name, :name, :time_zone].each do |attribute|
+  account_info[attribute] = current_account.send(attribute)
+end
+account_info[:date_format] = @data_date_format
+account_info[:features] = (current_account.features.map(&:to_sym) + current_account.features_list).uniq
+account_info[:launched] = LaunchParty.new.launched_for(current_account)
+
+if current_user.privilege?(:manage_users) || current_user.privilege?(:manage_account)
+  subscription_info = {}
+  [:agent_limit, :state, :addons].each do |attribute|
+    subscription_info[attribute] = current_account.subscription.send(attribute)
+  end
+  subscription_info[:subscription_plan] = current_account.subscription.subscription_plan.name
+  account_info[:subscription] = subscription_info
+end
+
+account_info[:settings] = {
+  personalized_email_replies: current_account.features.personalized_email_replies?,
+  componse_email_enabled: current_account.compose_email_enabled?,
+  include_survey_manually: @survey_in_specific_emails
+}
+
+JSON.generate({
+  agent: agent_info,
+  account: account_info
+})

@@ -3448,26 +3448,15 @@
           "type": "object",
           "properties": {
             "agent": {
-              "type": "object",
               "allOf": [
                 {
-                  "$ref": "#/definitions/extension_generic"
+                  "$ref": "#/definitions/agent"
                 },
                 {
                   "properties": {
-                    "active_since": {
-                      "type": "string",
-                      "format": "date-time"
-                    },
-                    "available": {
-                      "type": "boolean"
-                    },
                     "last_active_at": {
                       "type": "string",
                       "format": "date-time"
-                    },
-                    "occasional": {
-                      "type": "boolean"
                     },
                     "points": {
                       "type": "number"
@@ -3475,93 +3464,10 @@
                     "scoreboard_level_id": {
                       "type": "number"
                     },
-                    "signature": {
-                      "type": "string"
-                    },
-                    "signature_html": {
-                      "type": "string"
-                    },
-                    "ticket_permission": {
-                      "type": "number"
-                    },
-                    "user_id": {
-                      "type": "number"
-                    },
-                    "user": {
-                      "type": "object",
-                      "allOf": [
-                        {
-                          "$ref": "#/definitions/extension_generic"
-                        },
-                        {
-                          "properties": {
-                            "active": {
-                              "type": "boolean"
-                            },
-                            "address": {
-                              "type": "string"
-                            },
-                            "customer_id": {
-                              "type": "number"
-                            },
-                            "deleted": {
-                              "type": "boolean"
-                            },
-                            "description": {
-                              "type": "string"
-                            },
-                            "email": {
-                              "type": "string"
-                            },
-                            "external_id": {
-                              "type": "number"
-                            },
-                            "fb_profile_id": {
-                              "type": "number"
-                            },
-                            "helpdesk_agent": {
-                              "type": "boolean"
-                            },
-                            "job_title": {
-                              "type": "string"
-                            },
-                            "language": {
-                              "type": "string"
-                            },
-                            "mobile": {
-                              "type": "string"
-                            },
-                            "name": {
-                              "type": "string"
-                            },
-                            "phone": {
-                              "type": "string"
-                            },
-                            "time_zone": {
-                              "type": "string"
-                            },
-                            "twitter_id": {
-                              "type": "string"
-                            },
-                            "company_id": {
-                              "type": "number"
-                            }
-                          }
-                        }
-                      ]
-                    },
                     "assumable_agents": {
                       "type": "array",
                       "items": {
-                        "type": "object",
-                        "properties": {
-                          "id": {
-                            "type": "number"
-                          },
-                          "name": {
-                            "type": "string"
-                          }
-                        }
+                        "type": "number"
                       }
                     },
                     "next_level": {
@@ -3590,26 +3496,6 @@
                           "type": "boolean"
                         }
                       }
-                    },
-                    "locale": {
-                      "type": "string"
-                    },
-                    "time_zone": {
-                      "type": "string"
-                    },
-                    "avatar": {
-                      "allOf": [
-                        {
-                          "$ref": "#/definitions/attachment"
-                        },
-                        {
-                          "properties": {
-                            "thumb_url": {
-                              "type": "string"
-                            }
-                          }
-                        }
-                      ]
                     }
                   }
                 }
@@ -3648,6 +3534,18 @@
                     "mediumDate": {
                       "type": "string"
                     }
+                  }
+                },
+                "features": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "launched": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
                   }
                 },
                 "subscription": {
