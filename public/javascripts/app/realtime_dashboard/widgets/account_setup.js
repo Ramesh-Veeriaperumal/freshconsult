@@ -9,7 +9,6 @@ RealtimeDashboard.Widgets = RealtimeDashboard.Widgets || {};
 			this.feedback = {
 				form: $('#setup-widget-feedback'),
 				type: "normalFeedback",
-				typedDescription: '<div><%= typedDescription %></div><br/><br/>',
 				accountInfo: '<p><b>Account Id:</b> <%= accountId %></p>' +
 							'<p><b>Account URL:</b> <%= accountUrl %></p>' +
 							'<p><b>Admin:</b> <%= isAdmin %></p>',
@@ -33,7 +32,6 @@ RealtimeDashboard.Widgets = RealtimeDashboard.Widgets || {};
 				$this.toggleWriteToUsForm(true);
 			});
 			$body.on('keyup.setupWidget', "#setup-widget-feedback #helpdesk_ticket_body_faux", function(e) { 
-				console.log("here");
 				$("#submit-feedback").removeClass("disabled"); 
 				$body.off('keyup.setupWidget', "#setup-widget-feedback #helpdesk_ticket_body_faux");
 			})
@@ -102,7 +100,7 @@ RealtimeDashboard.Widgets = RealtimeDashboard.Widgets || {};
 									accountUrl: window.current_account_full_domain,
 									  isAdmin: window.is_current_user_admin});
 					$this[feedbackType+"BeforeSubmit"]();
-					feedbackUtils.descriptionElement.val($this[feedbackType+"Description"] + accountInfo);
+					feedbackUtils.descriptionElement.val($this[feedbackType+"Description"]() + accountInfo);
 					feedbackUtils.form.ajaxSubmit({
 						crossDomain: true,
 						dataType: 'jsonp',
@@ -139,13 +137,11 @@ RealtimeDashboard.Widgets = RealtimeDashboard.Widgets || {};
 			}
 		},
 		normalFeedbackErrorHandler: function(err){
-			console.log(err);
 			this.feedback.submitElement.button("reset");
 			this.feedback.fauxDescriptionElement.attr("disabled", false);
 		},
 		normalFeedbackDescription: function(){
-			_.template(this.feedback.typedDescription,
-				         { typedDescription: this.feedback.fauxDescriptionElement.val() });
+			return '<div>' + this.feedback.fauxDescriptionElement.val() +'</div><br/><br/>'
 		},
 		requestDemo: function(elem){
 			elem.button('loading');
@@ -166,7 +162,7 @@ RealtimeDashboard.Widgets = RealtimeDashboard.Widgets || {};
 		demoRequestErrorHandler: function(){
 			$('#request-demo').button("reset");
 		},
-		demoRequestDescription: "",
+		demoRequestDescription:function() { return "" },
 		setupProgressBar: function(){
 			var progressBar = $('.progress-bar');
 			progressBar.attr("style", "width:" + progressBar.attr("aria-valuenow") + "%");

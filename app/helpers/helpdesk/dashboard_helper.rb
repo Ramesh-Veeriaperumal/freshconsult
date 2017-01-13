@@ -32,7 +32,7 @@ module Helpdesk::DashboardHelper
     "automation" => {:icon => "gear-line", :path => "/admin/va_rules"},
     "data_import" => {:icon => "contacts", :path => "/imports/contact"},
     "custom_app" => {:icon => "cube", :path => "/integrations/applications"},
-    "freshfone_number" => {:icon => "ff-line-phone", :path => "/admin/phone/search" }
+    "freshfone_number" => {:icon => "ff-line-phone", :path => "/admin/phone/numbers" }
   }
 
   def widget_list snapshot
