@@ -1434,6 +1434,7 @@ App.CollaborationUi = (function ($) {
                 renderMsg(msg_body);
             } else if(msg.m_type === CONST.MSG_TYPE_CLIENT_ATTACHMENT) {
                 var msg_body = Collab.parseJson(msg.body);
+                msg_body.pl = msg_body.pl || " ";
                 msg.created_at = msg.created_at || App.CollaborationModel.getCurrentUTCTimeStamp();
                 renderMsg(msg_body, {"attachment": true});
             }
