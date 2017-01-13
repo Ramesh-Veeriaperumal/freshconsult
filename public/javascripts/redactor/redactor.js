@@ -115,7 +115,8 @@ var RLANG = {
 	codeEditor:'Code Snippet',
 	codeEditor_html:'Enter code snippet and select language',
 	label_lang: 'Language : ',
-	show_quoted_text: 'Show Quoted text'
+	show_quoted_text: 'Show Quoted text',
+	inline_supported_images_label:'Supported image formats are JPG,PNG,GIF and TIFF'
 };
 
 var DEFAULT_LANG = jQuery.extend({}, RLANG);
@@ -325,17 +326,23 @@ var Redactor = function(element, options)
 							'<span class="file-upload-text">Select a file to upload</span>'+
 						'</div>' +
 						'<input type="file" id="redactor_file" name="image[uploaded_data]" accept="image/*" />' +
-					'</div>'+
+					'</div>'+ 
 				'</div>' +
 				'<div id="redactor_tab2" class="redactor_tab" style="display: none;">' +
 					'<div id="redactor_image_box"></div>' +
+					'<div class="custom-file-upload">' +
+						'<div class="file-upload">' +
+							'<span class="file-upload-text">Select a file to upload</span>'+
+						'</div>' +
+						'<input type="file" id="redactor_file" name="image[uploaded_data]" accept="image/*" />' +
+					'</div>'+ 
 				'</div>' +
 			'</form>' +
 			'<div id="redactor_tab3" class="redactor_tab" style="display: none;">' +
-				'<label for="redactor_file_link">' + RLANG.image_web_link + '</label>' +
-				'<input name="redactor_file_link" id="redactor_file_link" class="redactor_input"  />' +
+				'<input name="redactor_file_link" id="redactor_file_link" class="redactor_input" placeholder="' + RLANG.image_web_link + '"  />' +
 			'</div>' +
 			'<div id="redactor_modal_footer">' +
+				'<span class="muted">' + RLANG.inline_supported_images_label + '</span>' +
 				'<span class="redactor_btns_box">' +
 					'<input type="button" class="btn" name="' + RLANG.cancel + '" id="redactor_btn_modal_close" value="' + RLANG.cancel + '" />' +
 					'<input type="button" class="btn btn-primary" name="upload" id="redactor_upload_btn" value="' + RLANG.insert + '" />' +
@@ -2040,6 +2047,7 @@ Redactor.prototype = {
 			html = this.onPasteFromWord(html);
 			html = this.onPasteFromExcel(html);
 			html = this.sanitizeContent(html);
+			html = InlineImagesValidator.cleanSvg(html);
 			html = this.normalizeContent(html).html();
 			this.execCommand('inserthtml', html);
 	    } else {
@@ -3196,7 +3204,6 @@ Redactor.prototype = {
 	
 	
 	submitCleanup: function(){
-		// debugger;
 		var $form = this.$editor.closest('form');
 		$($form).on("submit", $.proxy(function(){
 			
@@ -3833,11 +3840,10 @@ Redactor.prototype = {
 				// dragupload
 				if (this.opts.uploadCrossDomain === false && this.isMobile() === false)
 				{
-					
 					if ($('#redactor_file').length !== 0)
 					{
 						$('#redactor_file').dragupload(
-						{
+						{  
 							url: this.opts.imageUpload,
 							//uploadFields: this.opts.uploadFields,
 							uploadFields: { "_uniquekey" : $.proxy(function(){ return this.uniqueKey }, this) },
@@ -3847,7 +3853,6 @@ Redactor.prototype = {
 						});
 					}
 				}
-
 				// ajax upload
 				this.uploadInit('redactor_file', { auto: true, url: this.opts.imageUpload, success: $.proxy(this.imageUploadCallback, this)  });
 			}
@@ -3933,7 +3938,9 @@ Redactor.prototype = {
 				}
 				else {
 					try{
-						alert((JSON.parse(json))['error'] || RLANG.invalid_image_file);
+						if(data.alert !== false) {
+							alert((JSON.parse(json))['error'] || RLANG.invalid_image_file);
+						}
 					}catch(ev){
 						alert(RLANG.invalid_image_file)
 					}
@@ -3948,11 +3955,13 @@ Redactor.prototype = {
 				}
 			}
 			else
-			{
+			{ 
 				html = json;
 				this.modalClose();
 				this.restoreSelection();
-				this.execCommand('inserthtml', html);
+				if(InlineImagesValidator.link(html)) {
+					this.execCommand('inserthtml', html);
+				}
 			}
 	
 			// upload image callback
@@ -4402,9 +4411,13 @@ Redactor.prototype = {
 		if (this.uploadOptions.auto)
 		{
 			$(this.uploadOptions.input).change($.proxy(function()
-			{
-				this.element.submit(function(e) { return false; });
-				this.uploadSubmit();
+			{   
+				var file = $(this.uploadOptions.input).get(0).files[0];
+				if(InlineImagesValidator.fileValidator(file)) {
+					this.element.submit(function(e) { return false; });
+					this.uploadSubmit();
+				}
+							
 			}, this));
 
 		}
@@ -4931,12 +4944,11 @@ $.fn.insertExternal = function(html)
 			if (!$.browser.msie) 
 			{	
 				this.droparea = $('<div class="redactor_droparea"></div>');
-				this.dropareabox = $('<div class="redactor_dropareabox">' + this.opts.text + '</div>');
-				
+				this.dropareabox = $('<div class="redactor_dropareabox"><span class="drop-text">' + this.opts.text + '</span></div>');
 				this.droparea.append(this.dropareabox);
-				
 				this.$el.parent().after(this.droparea);
-
+				var customFileUpload = this.$el.parent().remove();
+				this.dropareabox.children('.drop-text').before(customFileUpload);
 				// drag over
 				this.dropareabox.bind('dragover', $.proxy(function() { return this.ondrag(); }, this));
 				
@@ -4977,10 +4989,13 @@ $.fn.insertExternal = function(html)
 						
 							}, this));
 						}	
-						
+						// checking valid file
+						if(!InlineImagesValidator.fileValidator(file)) {
+							this.opts.error('{"invalidFile": true,"alert":false}');
+							return true;
+						}
 						// append file data
 						fd.append('image[uploaded_data]', file);
-						
 						$.ajax({
 							dataType: 'html',
 							url: this.opts.url,
@@ -5173,7 +5188,9 @@ $.fn.insertExternal = function(html)
 				self.currentevent.preventDefault();
 
 				$.each(file_list, function(index, file){
-					self.loadImageFileAsURL(file);
+					if(InlineImagesValidator.fileValidator(file)) {
+						self.loadImageFileAsURL(file);
+					}
 				})
 			}
 		},
@@ -5231,7 +5248,29 @@ $.fn.insertExternal = function(html)
 	}
 
 })(window.jQuery);
-
+ 
+// checking  valid inline images
+(function($){
+	function inlineImageValidator() {
+		this.validType =  ["image/jpeg","image/png","image/tiff","image/tiff",'image/gif'];
+		this.validExtensions = ["jpeg","jpg","png","tif","tiff",'giff'];
+	}
+	inlineImageValidator.prototype = {
+		// inline file upload validator & drag and drop
+		fileValidator: function(file) {
+			return ( this.validType.indexOf(file.type) < 0 ) ? false : true;
+		},
+	// clean svg on copy paste
+		cleanSvg: function(html) {
+			return html.replace(/<img(.*?)src="(.*?).svg(.*?)">/g,"");
+		},
+		// insert link validator
+		link: function(link) {
+			return ( link.toLowerCase().indexOf('.svg') > -1 ) ? false : true; 
+		}
+	};
+	InlineImagesValidator = new inlineImageValidator();
+})(window.jQuery);
 
 /* jQuery plugin textselect
  * version: 0.9

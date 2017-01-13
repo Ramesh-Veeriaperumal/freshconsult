@@ -1,5 +1,8 @@
 module UploadedImagesControllerMethods
 
+  WHITELISTED_INLINE_IMAGE_FORMAT = ["jpeg","jpg","png","tif","tiff",'giff']
+  INVERTED_MIME_TYPES = Rack::Mime::MIME_TYPES.invert
+
   def self.included(base)
     base.send :before_filter, :check_anonymous_user, :only => [:create]
   end
@@ -13,7 +16,8 @@ module UploadedImagesControllerMethods
 
     respond_to do |format|
       format.html do
-        render :json => (check_image? && @image.save) ? success_response : error_response
+        type = params[:image][:uploaded_data].content_type
+        render :json => (whitelisted_image?(type) && check_image? && @image.save) ? success_response : error_response
       end
     end
   end
@@ -36,7 +40,8 @@ module UploadedImagesControllerMethods
 
     respond_to do |format|
       format.json do
-        render :json => (@image.save) ? success_response : error_response
+        type = data_f.content_type
+        render :json => (whitelisted_image?(type) && @image.save) ? success_response : error_response
       end
     end
   end
@@ -78,6 +83,11 @@ module UploadedImagesControllerMethods
 
     def public_upload?
       cname == "Image" || cname == "Forums Image"
+    end
+
+    def whitelisted_image?(content_type)
+      ext = INVERTED_MIME_TYPES[content_type].gsub('.', '')
+      WHITELISTED_INLINE_IMAGE_FORMAT.include?(ext)
     end
 
 end
