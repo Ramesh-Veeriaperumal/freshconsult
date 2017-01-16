@@ -195,7 +195,7 @@ class Helpdesk::ConversationsController < ApplicationController
     def check_for_from_email
       if @item.from_email.present? and !current_account.support_emails.include? parse_email_text(@item.from_email)[:email]
         flash[:notice] = I18n.t('ticket.errors.request_dropped')
-        logger.debug "From email in request doesn't match with supported emails for the account"
+        logger.debug "From email in request doesn't match with supported emails for the account #{current_account.id} for ticket #{@item.notable.id} with display_id #{@item.notable.display_id}, had the from email #{@item.from_email}"
         @scroll_to_top = true
         create_error 
       end
