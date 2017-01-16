@@ -129,3 +129,11 @@
 	</script>
 <% end %>
 
+<!-- For Iris Notifications -->
+<% if current_account.launched?(:user_notifications) %>
+	<script type="text/javascript" src="<%= IrisNotificationsConfig['socketioUrl'] %>"></script>
+	<script type="text/javascript" src="<%= IrisNotificationsConfig['rtsUrl'] %>"></script>
+	<script type="text/javascript" src="<%= IrisNotificationsConfig['irisUrl'] %>"></script>
+	<%= javascript_include_tag :'cdn/user_notifications' %>
+<% end %>
+
