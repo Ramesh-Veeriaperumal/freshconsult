@@ -230,7 +230,7 @@
   private
 
   def get_xero_client
-    @xero_client = Xeroizer::PartnerApplication.new(Integrations::XERO_CONSUMER_KEY, Integrations::XERO_CONSUMER_SECRET,Integrations::XERO_PATH_TO_PRIVATE_KEY, Integrations::XERO_PATH_TO_SSL_CLIENT_CERT, Integrations::XERO_PATH_TO_SSL_CLIENT_KEY, :default_headers => {"User-Agent" => "Freshdesk"})
+    @xero_client = Xeroizer::PartnerApplication.new(Integrations::XERO_CONSUMER_KEY, Integrations::XERO_CONSUMER_SECRET,Integrations::XERO_PATH_TO_PRIVATE_KEY, :default_headers => {"User-Agent" => "Freshdesk"})
   end
 
   def authorize_client
