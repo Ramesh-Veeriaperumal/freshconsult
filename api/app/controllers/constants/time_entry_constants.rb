@@ -5,4 +5,5 @@ module TimeEntryConstants
   LOAD_OBJECT_EXCEPT = [:ticket_time_entries].freeze
 
   ATTRIBUTES_TO_BE_STRIPPED = %w(note time_spent).freeze
+  NO_CONTENT_TYPE_REQUIRED = [:toggle_timer].freeze
 end.freeze

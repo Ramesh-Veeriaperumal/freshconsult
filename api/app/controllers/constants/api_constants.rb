@@ -36,7 +36,8 @@ module ApiConstants
 
   NO_CONTENT_TYPE_REQUIRED = ApiTicketConstants::NO_CONTENT_TYPE_REQUIRED +
                              ContactConstants::NO_CONTENT_TYPE_REQUIRED +
-                             SubscriptionConstants::NO_CONTENT_TYPE_REQUIRED
+                             SubscriptionConstants::NO_CONTENT_TYPE_REQUIRED +
+                             TimeEntryConstants::NO_CONTENT_TYPE_REQUIRED
 
   ALLOWED_DOMAIN = AppConfig['base_domain'][Rails.env]
   MAX_LENGTH_STRING = 255
