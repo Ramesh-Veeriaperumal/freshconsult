@@ -456,6 +456,24 @@
     margin-top: 10px;
     @include padding(9px 20px 9px 20px);
   }
+  .buy-app{
+    width: calc(100% - 42px);
+    margin-top: 10px;
+    @include padding(0px 20px 0px 20px);
+    box-shadow: inset 0 2px 1px 0 rgba(255, 255, 255, 0.5);
+  }
+  .buy-app-btn{
+    margin: 4px 0 0 3px;
+    font-size: 16px;
+  }
+  .app-price{
+    color: #C0C0C0;
+    font-size: 12px;
+    font-weight: 500;
+    margin-bottom: 0px;
+    padding-top: 2px;
+    padding-bottom: 3px;
+  }
   .app-info{
     li{
       @include padding(0px 0 9px);
@@ -480,7 +498,7 @@
     .dev{
       text-align: center;
       padding-bottom: 4px;
-      padding-top: 35px;
+      padding-top: 15px;
     }
     .help{
       font-size: 12px;
@@ -1134,4 +1152,42 @@
 
 .display_policy {
   margin-top: 10px;
+}
+
+.buy-and-install {
+  position: relative;
+  display: inline;
+}
+
+.install-button {
+  padding-bottom: 5px;
+}
+
+.overlay {
+  width: 210px;
+  position: absolute;
+  z-index: 1;
+  background-color: white;
+  overflow-y: hidden;
+  transition: 0.1s;
+  box-shadow: 0 0 1px 0 rgba(0, 0, 0, 0.5);
+  border: solid 1px rgba(150, 150, 150, 0.5);
+  border-radius: 3px;
+  margin-top: 10px;
+}
+
+.overlay-content {
+  padding: 15px;
+  text-align: center;
+  font-size: 12px;
+  color: #343434;
+}
+
+.payment-btn {
+  margin-top: 5px;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 500;
+  text-align: center;
+  box-shadow: inset 0 2px 1px 0 rgba(255, 255, 255, 0.5);
 }
