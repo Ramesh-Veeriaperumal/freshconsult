@@ -104,7 +104,7 @@ module Helpkit
 
     # Please check api_initializer.rb, for compatibility with the version 2 APIs, if any middleware related changes are being done.
     config.middleware.insert_before 0, "Middleware::CorsEnabler"
-    config.middleware.insert_before 0, "Middleware::SecurityResponseHeader"
+    #config.middleware.insert_before 0, "Middleware::SecurityResponseHeader"
     config.middleware.insert_before "ActionDispatch::Session::CookieStore","Rack::SSL"
     config.middleware.use "Middleware::GlobalRestriction"
     config.middleware.use "Middleware::ApiThrottler", :max =>  1000
