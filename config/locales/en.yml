@@ -10635,6 +10635,8 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     search_articles: "Search Article"
     contact_us: "Contact Us"
     whats_new: "What's New"
+    user_notifications_header: "Notifications"
+    load_more: "Load More"
   trial_plan_downgrade: "Important: You are currently downgrading from %{plan_from} plan to %{plan_to} plan"
   discounted_sum: "After Discount"
   selecting_plan: "Selecting..."
