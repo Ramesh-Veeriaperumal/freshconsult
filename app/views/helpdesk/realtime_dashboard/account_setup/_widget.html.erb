@@ -55,7 +55,7 @@
 					<span class="muted">
 						<%= t("current_plan") %> : 
 					</span>
-					<b> <%= current_account.subscription.subscription_plan.name %></b>
+					<b> <%= current_account.subscription.subscription_plan.display_name %></b>
 				</div>
 				<% trial_days = current_account.subscription.trial_days %>
 				<span class="expiry-details <%= 'critical' if trial_days <= 4 %>">
