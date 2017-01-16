@@ -1,6 +1,6 @@
 module UploadedImagesControllerMethods
 
-  WHITELISTED_INLINE_IMAGE_FORMAT = ["jpeg","jpg","png","tif","tiff",'giff']
+  WHITELISTED_INLINE_IMAGE_FORMAT = ["jpeg","jpg","png","tif","tiff",'gif']
   INVERTED_MIME_TYPES = Rack::Mime::MIME_TYPES.invert
 
   def self.included(base)
