@@ -19,6 +19,7 @@ RealtimeDashboard.Widgets = RealtimeDashboard.Widgets || {};
 			};
 			this.bindEvents();
 			this.invokeFeedbackFormValidator();
+			if(document.readyState == "complete") {this.setupProgressBar();} //setup progress bar if there are no pending ajax requests
 			if(this.setupDetailsWasActive){this.showSetupDetails();}
 			$('#sales-manager-info').trigger('afterShow');
 		},
@@ -40,7 +41,7 @@ RealtimeDashboard.Widgets = RealtimeDashboard.Widgets || {};
 			$body.on('click.setupWidget', '#helpdesk_setup', function(e) {$this.showSetupDetails()});
 			$body.on('click.setupWidget', '#setup-request-trial-extension:not(".disabled")', function(e) { $this.requestTrialExtension($(this))});
 			$doc.on('keyup.setupWidget', function(e) { if (e.keyCode == 27) { $this.closeSetupDetails();}});
-			$('body').on('click.setupWidget', function(e) {
+			$body.on('click.setupWidget', function(e) {
 				var setupLinkId = "helpdesk_setup";
 				var eventTarget = $(e.target);
 				if(eventTarget.attr('id') != setupLinkId && eventTarget.parent().attr('id') != setupLinkId &&
@@ -48,11 +49,11 @@ RealtimeDashboard.Widgets = RealtimeDashboard.Widgets || {};
 					$this.closeSetupDetails();
 				}
 			});
-			$(document).on('mousemove.setupWidget', '.setup-details-wrapper', function(event) {
+			$doc.on('mousemove.setupWidget', '.setup-details-wrapper', function(event) {
 				event.preventDefault();
 				$('body').addClass('preventscroll');
 			});
-			jQuery(document).on('mouseleave.setupWidget', '.setup-details-wrapper', function(event) {
+			$doc.on('mouseleave.setupWidget', '.setup-details-wrapper', function(event) {
 				event.preventDefault();
 				$('body').removeClass('preventscroll');
 			});
