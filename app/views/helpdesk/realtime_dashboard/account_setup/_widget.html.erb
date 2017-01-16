@@ -12,8 +12,8 @@
 						:remote => true,
 						:method => :post, 
 						:html => { :id => "setup-widget-feedback"} do |f| %>
-						<%= text_area_tag 'helpdesk_ticket_body_faux', nil, :placeholder => t('header.help_center') %>
-						<%= hidden_field_tag "helpdesk_ticket[ticket_body_attributes][description_html]" %>
+						<%= text_area_tag 'helpdesk_ticket_body_faux', nil, :placeholder => t('header.help_center'), :id => "setup_widget_feedback_ticket_body_faux"%>
+						<%= hidden_field_tag "helpdesk_ticket[ticket_body_attributes][description_html]", "", {:id => "setup_widget_feedback_description_html"} %>
 						<%= hidden_field_tag "helpdesk_ticket[subject]", value="Message from " + current_user.name + " (" + current_user.email + ")" %>
 						<%= hidden_field_tag "meta[user_agent]", request.env["HTTP_USER_AGENT"] %>
 						<%= hidden_field_tag "meta[referrer]", h(request.url) %>

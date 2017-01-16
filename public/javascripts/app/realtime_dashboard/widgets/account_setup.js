@@ -13,8 +13,8 @@ RealtimeDashboard.Widgets = RealtimeDashboard.Widgets || {};
 							'<p><b>Account URL:</b> <%= accountUrl %></p>' +
 							'<p><b>Admin:</b> <%= isAdmin %></p>',
 				subject: $("#setup-widget-feedback #helpdesk_ticket_subject"),
-				fauxDescriptionElement: $("#setup-widget-feedback #helpdesk_ticket_body_faux"),
-				descriptionElement: $("#setup-widget-feedback #helpdesk_ticket_ticket_body_attributes_description_html"),
+				fauxDescriptionElement: $("#setup-widget-feedback #setup_widget_feedback_ticket_body_faux"),
+				descriptionElement: $("#setup-widget-feedback #setup_widget_feedback_description_html"),
 				submitElement: $("#setup-widget-feedback #submit-feedback")
 			};
 			this.bindEvents();
@@ -32,9 +32,9 @@ RealtimeDashboard.Widgets = RealtimeDashboard.Widgets || {};
 				$this.feedback.type = "normalFeedback";
 				$this.toggleWriteToUsForm(true);
 			});
-			$body.on('keyup.setupWidget', "#setup-widget-feedback #helpdesk_ticket_body_faux", function(e) { 
+			$body.on('keyup.setupWidget', "#setup-widget-feedback #setup_widget_feedback_ticket_body_faux", function(e) { 
 				$("#submit-feedback").removeClass("disabled"); 
-				$body.off('keyup.setupWidget', "#setup-widget-feedback #helpdesk_ticket_body_faux");
+				$body.off('keyup.setupWidget', "#setup-widget-feedback #setup_widget_feedback_ticket_body_faux");
 			})
 			$body.on('click.setupWidget', '#cancel-feedback', function(e) {$this.toggleWriteToUsForm(false)});
 			$body.on('click.setupWidget', '#request-demo:not(".disabled")', function(e) {$this.requestDemo($(this))});
@@ -66,7 +66,7 @@ RealtimeDashboard.Widgets = RealtimeDashboard.Widgets || {};
 			$writeToUs.parents(".setup-cols").children().toggleClass('expanded', toggleState);
 			$("#setup-widget-feedback").toggle(toggleState);
 			$("#request-demo:not('.complete')").toggleClass("disabled", toggleState);
-			var feedbackTextArea = $("#setup-widget-feedback #helpdesk_ticket_body_faux");
+			var feedbackTextArea = $("#setup-widget-feedback #setup_widget_feedback_ticket_body_faux");
 			var submitFeedbackToggleState = (feedbackTextArea.is(":visible") && feedbackTextArea.val().length == 0)
 			$("#submit-feedback").toggleClass("disabled", submitFeedbackToggleState);
 		},
