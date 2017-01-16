@@ -466,7 +466,11 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
         if order_parts.size > 1
           "#{order_parts.first.camelcase.constantize.table_name}.#{order_parts.last} #{order_type}"
         else
-          "#{model_class_name.constantize.table_name}.#{order_parts.first} #{order_type}"
+          if ['priority','status'].include?(order_parts.first)
+            "#{model_class_name.constantize.table_name}.#{order_parts.first} #{order_type}, helpdesk_tickets.created_at asc"
+          else
+            "#{model_class_name.constantize.table_name}.#{order_parts.first} #{order_type}"
+          end
         end
       end
     end

@@ -169,6 +169,8 @@ defaults: &defaults
     - [cloud_elements_delete]
     - [salesforce_integrated_resource_migrate]
     - [cloud_elements_logger_email]
+    - [populate_account_setup]
+    - [manual_publish]
 
 development:
   <<: *defaults

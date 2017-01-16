@@ -30,7 +30,7 @@ module Freshfone::Conference::EndCallActions
     call = external_transfer_call? ? current_call : current_call.descendants.last
     call = call.parent if outgoing_transfer_missed?(call) # if child call is missed or busy, then the params are for the parent call in outgoing.
     call.update_call(params)
-    call.outgoing? ? call.parent.disconnect_agent : call.disconnect_agent
+    disconnect_parent_call?(call) ? call.parent.disconnect_agent : call.disconnect_agent
     empty_twiml
   end
 
@@ -51,7 +51,7 @@ module Freshfone::Conference::EndCallActions
     end
 
     def single_leg_outgoing?
-      current_call.present? && current_call.outgoing? && current_call.is_root? && current_call.descendants.blank?
+      current_call.present? && current_call.outgoing_root_call? && current_call.descendants.blank?
     end
 
     def outgoing_leg?
@@ -99,7 +99,7 @@ module Freshfone::Conference::EndCallActions
     end
 
     def outgoing_transfer_missed?(call)
-      current_call.outgoing? && call.missed_or_busy? && (call == current_call.descendants.last)
+      current_call.outgoing? && transfer_missed?(call)
     end
 
     def add_preview_cost_job
@@ -130,4 +130,15 @@ module Freshfone::Conference::EndCallActions
       @agent_call_leg
     end
 
+    def transfer_missed?(call)
+      call.missed_or_busy? && (call == current_call.descendants.last)
+    end
+
+    def disconnect_parent_call?(call)
+      call.outgoing? && !child_missed?(call)
+    end
+
+    def child_missed?(call)
+      call.has_children? && transfer_missed?(call.children.last)
+    end
   end

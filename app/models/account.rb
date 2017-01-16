@@ -35,6 +35,8 @@ class Account < ActiveRecord::Base
                   :primary_email_config_attributes, :main_portal_attributes
 
   attr_accessor :user, :plan, :plan_start, :creditcard, :address, :affiliate
+
+  include Account::Setup
   
   scope :active_accounts,
               :conditions => [" subscriptions.state != 'suspended' "], 

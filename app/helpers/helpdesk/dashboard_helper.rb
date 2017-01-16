@@ -23,6 +23,18 @@ module Helpdesk::DashboardHelper
         { :name => DEFAULT_DASHBOARDS_LABELS[:admin] , :param => 'admin'}
       ]
 
+  SETUP_KEY_UTILS = {
+    "new_account" => {},
+    "account_admin_email" => {:icon => "power"},
+    "agents" => {:icon => "add-people", :path => "/agents"},
+    "support_email" => {:icon => "support-email", :path => "/admin/email_configs"},
+    "twitter" => {:icon => "twitter-o", :path => "/admin/social/streams"},
+    "automation" => {:icon => "gear-line", :path => "/admin/va_rules"},
+    "data_import" => {:icon => "contacts", :path => "/imports/contact"},
+    "custom_app" => {:icon => "cube", :path => "/integrations/applications"},
+    "freshfone_number" => {:icon => "ff-line-phone", :path => "/admin/phone/numbers" }
+  }
+
   def widget_list snapshot
     dashboard_widget = dashboard_widget_list snapshot
     widget_object = Dashboard::Grid.new
@@ -235,6 +247,45 @@ module Helpdesk::DashboardHelper
   # Helper to determine whether to show Group Drop Down
   def show_groups_selection? type
     (type == 'supervisor') and current_user.privilege?(:view_reports)
+  end
+
+  def in_setup_keys
+    current_account.current_in_setup
+  end
+
+  def in_setup_keys_length
+    current_account.current_in_setup.length
+  end
+
+  def total_setup_keys_length
+    current_account.current_setup_keys.length
+  end
+
+  def configuration_percentage_complete
+    @configuration_percentage_complete ||= ((in_setup_keys_length.to_f/total_setup_keys_length.to_f)*100).round
+  end
+
+  def setup_progress_text
+    keys_mod = (in_setup_keys_length%total_setup_keys_length)
+    if keys_mod > 1
+      text_selector = ((total_setup_keys_length - keys_mod) == 1) ? "setup_progress_penultimate" : "setup_progress_misc"
+    else
+      text_selector = "setup_progress_#{keys_mod}"
+    end
+    t("accounts.setup.#{text_selector}")
+  end
+
+  def icon_for_setup_key setup_key
+    "ficon-#{SETUP_KEY_UTILS[setup_key][:icon]}"
+  end
+
+  def path_for_setup_key setup_key
+    path = SETUP_KEY_UTILS[setup_key][:path]
+    (in_setup_keys.include?(setup_key) || path.blank?) ? "#" : path + "?ref=accountSetup"
+  end
+
+  def link_html_options(setup_key)
+    (path_for_setup_key(setup_key) == "#") ? { :class=> "setup-info-link disabled"} : {"data-pjax"=>"#body-container", :class => "setup-info-link"}
   end
 end
 

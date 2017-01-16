@@ -200,6 +200,10 @@ class Freshfone::CallMeta < ActiveRecord::Base
                       freshfone_call.user_id != freshfone_call.parent.user_id
   end
 
+  def forward?
+    direct_dial? || external_transfer? || available_on_phone?
+  end
+
   private
 
     def on_device?(agent, device)

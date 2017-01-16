@@ -39,3 +39,5 @@ MlAppConfig = YAML.load_file(File.join(Rails.root,'config','ml_app.yml'))[Rails.
 FdNodeConfig = YAML.load_file(File.join(Rails.root, 'config', 'fd_node_config.yml'))[Rails.env]
 
 ArchiveNoteConfig = YAML::load_file(File.join(Rails.root, 'config', 'archive_note.yml'))[Rails.env]
+
+IrisNotificationsConfig = YAML::load_file(File.join(Rails.root, 'config', 'iris_notifications.yml'))[Rails.env]

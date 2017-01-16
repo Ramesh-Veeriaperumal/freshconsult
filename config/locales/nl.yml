@@ -7665,8 +7665,8 @@ nl:
   index_tooltip_loading_msg: Laden...
   being_processed: "Wordt verwerkt"
   awaiting_your_reply: "In afwachting van uw antwoord"
-  this_ticket_has_been_resolved: "Dit ticket is opgelost."
-  this_ticket_has_been_closed: "Dit ticket is gesloten."
+  this_ticket_has_been_resolved: "Deze ticket is opgelost."
+  this_ticket_has_been_closed: "Deze ticket is gesloten."
   status_name_validate_presence_msg: " De statusnaam kan niet leeg zijn."
   open_tickets: "Openstaande tickets"
   resolved_tickets: "Opgeloste tickets"

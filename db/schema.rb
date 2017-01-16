@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20161103085738) do
+ActiveRecord::Schema.define(:version => 20170116094611) do
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
     t.integer  "account_id",           :limit => 8
@@ -3425,6 +3425,7 @@ ActiveRecord::Schema.define(:version => 20161103085738) do
     t.decimal  "day_pass_amount", :precision => 10, :scale => 2
     t.boolean  "classic",                                        :default => false
     t.text     "price"
+    t.string  "display_name"
   end
 
   create_table "subscriptions", :force => true do |t|
@@ -4271,7 +4272,7 @@ ActiveRecord::Schema.define(:version => 20161103085738) do
 
   add_index "email_hourly_updates", ["hourly_path"], :name => "index_email_hourly_updates_on_hourly_path", :unique => true
   
-  create_table "dkim_records" do |t|
+  create_table "dkim_records", :force => true do |t|
     t.integer  :sg_id
     t.integer  :sg_user_id
     t.integer  :sg_category_id
@@ -4290,7 +4291,7 @@ ActiveRecord::Schema.define(:version => 20161103085738) do
   add_index "dkim_records", [:outgoing_email_domain_category_id, :status], 
             :name => 'index_dkim_records_on_email_domain_status'
             
-  create_table "dkim_category_change_activities" do |t|
+  create_table "dkim_category_change_activities", :force => true do |t|
     t.column   :account_id, "bigint unsigned", :null => false 
     t.column   :outgoing_email_domain_category_id, "bigint unsigned", :null => false 
     t.text     :details

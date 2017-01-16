@@ -36,7 +36,7 @@ var TemplateDockManager   = Class.create({
                   )
                 }else{
                   jQuery('.search-loader, .ui-autocomplete').hide();
-                  jQuery('.remove-query').show();
+                  jQuery('.remove-query, .search-apps').show();
                 }
               },
               error: function(jqXHR, exception) {
@@ -47,6 +47,7 @@ var TemplateDockManager   = Class.create({
         },
         minLength: 2,
         search: function( event, ui ){
+          jQuery('.search-apps').hide();
           jQuery('.search-loader').show();
           jQuery('.remove-query, .search-apps').hide();
         },
@@ -87,7 +88,9 @@ var TemplateDockManager   = Class.create({
                     .on("click.tmpl_events", ".remove-query", this.resetQuery.bindAsEventListener(this))
                     .on("click.tmpl_events", ".carousel-dot", this.carouselDotNav.bindAsEventListener(this))
                     .on("click.tmpl_events", ".carousel", this.carouselScroll.bindAsEventListener(this))
-                    .on("click.tmpl_events", ".toggle_policy" , this.togglePolicyInfo.bindAsEventListener(this));
+                    .on("click.tmpl_events", ".toggle_policy" , this.togglePolicyInfo.bindAsEventListener(this))
+                    .on("click.tmpl_events", ".buy-app" , this.buyApp.bindAsEventListener(this))
+                    .on("click.tmpl_events", ".update-payment-info" , this.updatePaymentInfo.bindAsEventListener(this));
   },
   togglePolicyInfo: function() {
     jQuery('.display_policy').toggle();
@@ -389,6 +392,39 @@ var TemplateDockManager   = Class.create({
       this.displayFormFieldError();
     }
   },
+  buyApp: function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    var that = this;
+    var el = jQuery(e.currentTarget);
+
+    jQuery.ajax({
+      url: jQuery(el).attr("data-url"),
+      type: 'get',
+      data: {install_url: jQuery(el).attr("data-install-url")},
+      dataType: 'json',
+      
+      success: function(extension){
+        if ( extension.account_suspended ) {
+          that.showErrorMsg(that.customMessages.suspended_plan_info);
+        }
+        else {
+          jQuery(".overlay-content").html(extension.message);
+          jQuery(".overlay").show();
+          jQuery(document).trigger({
+            app_name: that.appName,
+            time: new Date()
+          });
+        }
+      },
+      error: function(jqXHR, exception) {
+        that.showErrorMsg(that.customMessages.no_connection);
+      }
+    });
+  },
+  updatePaymentInfo: function(e) {
+    jQuery('.overlay').attr('style', 'display: hide');
+  },
   installNativeApp: function(e){
     jQuery("#nativeapp-form").submit();
     jQuery(".nativeapp").attr('disabled', 'disabled');
@@ -402,47 +438,54 @@ var TemplateDockManager   = Class.create({
     jQuery.ajax({
       url: jQuery(el).attr("data-url"),
       type: jQuery(el).attr("data-method"),
+      dataType: 'json',
       beforeSend: function(){
         that.showLoader();
       },
       success: function(install_extension){
-        jQuery(that.extensionsWrapper).empty()
-                                      .append(JST["marketplace/marketplace_install"](install_extension));
-
-        that.appName = install_extension.display_name;
-
-        if(jQuery(el).attr("data-developedby") != undefined){
-          that.developedBy = jQuery(el).attr("data-developedby");
+        if ( install_extension.account_suspended ) {
+          that.showErrorMsg(that.customMessages.suspended_plan_info);
         }
+        else {
+          jQuery(that.extensionsWrapper).empty()
+                                        .append(JST["marketplace/marketplace_install"](install_extension));
 
-        jQuery(document).trigger({
-            type: "km_install_config_page_loaded",
-            app_name: that.appName,
-            developed_by: that.developedBy,
-            time: new Date()
-        });
+          that.appName = install_extension.display_name;
 
-        if( !install_extension.configs.length ) { // no config
-          jQuery(".install-form").hide();
-          if(install_extension.install_btn['is_oauth_app']) {
-            trigger_element = '#oauth_link'
+          if(jQuery(el).attr("data-developedby") != undefined){
+            that.developedBy = jQuery(el).attr("data-developedby");
           }
-          else {
-            trigger_element = '.install-btn'
+
+          jQuery(document).trigger({
+              type: "km_install_config_page_loaded",
+              app_name: that.appName,
+              developed_by: that.developedBy,
+              time: new Date()
+          });
+
+
+          if( !install_extension.configs.length ) { // no config
+            jQuery(".install-form").hide();
+            if(install_extension.install_btn['is_oauth_app']) {
+              trigger_element = '#oauth_link'
+            }
+            else {
+              trigger_element = '.install-btn'
+            }
+            setTimeout( that.installTrigger(trigger_element), 1000);
           }
-          setTimeout( that.installTrigger(trigger_element), 1000);
-        }
 
-        if(jQuery(el).hasClass("btn-settings")){
-          jQuery("#fa-nav").css("display", "none");
-          jQuery(".fa-hmeta").removeClass("head-spacer");
+          if(jQuery(el).hasClass("btn-settings")){
+            jQuery("#fa-nav").css("display", "none");
+            jQuery(".fa-hmeta").removeClass("head-spacer");
 
-          jQuery(".button-container .show_btn").addClass("closable");
-        }
-        else{
-         jQuery("#fa-nav").css("display", "inline-block");
-         jQuery(".fa-hmeta").addClass("head-spacer");
-         jQuery(".button-container .show_btn").removeClass("closable");
+            jQuery(".button-container .show_btn").addClass("closable");
+          }
+          else{
+           jQuery("#fa-nav").css("display", "inline-block");
+           jQuery(".fa-hmeta").addClass("head-spacer");
+           jQuery(".button-container .show_btn").removeClass("closable");
+          }
         }
 
       },

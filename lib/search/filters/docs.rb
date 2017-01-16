@@ -59,9 +59,13 @@ class Search::Filters::Docs
     total_entries   = parsed_response['hits']['total']
     
     joins           = [:ticket_states] if ["requester_responded_at", "agent_responded_at"].include?(options[:order_entity].to_s)
-    
+    order_clause    = if ["priority", "status"].include?(options[:order_entity])
+                        "#{options[:order_entity]} #{options[:order_sort]}, helpdesk_tickets.created_at asc"
+                      else
+                        "#{options[:order_entity]} #{options[:order_sort]}"
+                      end
     records         = model_class.constantize.joins(joins).where(account_id: Account.current.id, id: record_ids)
-                                              .order("#{options[:order_entity]} #{options[:order_sort]}")
+                                              .order(order_clause)
                                               .preload([:schema_less_ticket, :ticket_states, :ticket_status, :responder,:requester, flexifield: { flexifield_def: :flexifield_def_entries }])
     
     # Search::Filters::Docs::Results - Wrapper for pagination

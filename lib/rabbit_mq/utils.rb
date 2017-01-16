@@ -93,14 +93,21 @@ module RabbitMq::Utils
   end
 
   #made this as a function, incase later we want to compress the data before sending
-  def send_message(uuid, exchange, message, key)
+  def send_message(uuid, exchange, message, key, manual_publish = false)
     Rails.logger.debug "ROUTING KEY - #{key}"
     return unless key.include?("1")
     HelpkitFeedsLogger.log(Account.current.id, uuid, exchange, message, key)
-    job_id = RabbitmqWorker.perform_async( exchange.pluralize, #remove pluralize after taking all to lambda
+    job_id = if manual_publish
+      ManualPublishWorker.perform_async( exchange.pluralize, #remove pluralize after taking all to lambda
                                            message, 
                                            key, 
                                            Account.current.launched?(:lambda_exchange))
+    else
+      RabbitmqWorker.perform_async( exchange.pluralize, #remove pluralize after taking all to lambda
+                                           message, 
+                                           key, 
+                                           Account.current.launched?(:lambda_exchange))
+    end
     Rails.logger.debug "Sidekiq Job Id #{job_id} " 
   rescue => e
     NewRelic::Agent.notice_error(e,{:custom_params => {:description => "RabbitMq Publish Error",
@@ -148,5 +155,5 @@ module RabbitMq::Utils
   end
 
   # Need this to invoke without AR objects
-  module_function :generate_uuid, :manual_publish_to_xchg, :handle_sidekiq_fail, :subscriber_basic_message
+  module_function :generate_uuid, :manual_publish_to_xchg, :handle_sidekiq_fail, :subscriber_basic_message, :sns_notification
 end

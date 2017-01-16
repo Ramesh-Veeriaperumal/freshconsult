@@ -16,7 +16,8 @@ class Helpdesk::Email::HandleTicket
   attr_accessor :note, :email, :user, :account, :ticket, :archive_ticket, :original_sender
 
   BODY_ATTR = ["body", "body_html", "full_text", "full_text_html", "description", "description_html"]
-
+  VIRUS_CHECK_ENABLED = false
+  
   def initialize email, user, account, ticket=nil
     self.email = email 
     self.original_sender = email[:from][:email]
@@ -151,16 +152,21 @@ class Helpdesk::Email::HandleTicket
     return attachments, inline_attachments
 	end
   
-    def virus_attachment? attachment, account
-    if account.subscription.trial?
-      result = Email::AntiVirus.scan(io: File.open(attachment.tempfile))
-      if result && result[0] == "virus"
-        @total_virus_attachment = 0 unless @total_virus_attachment
-        @total_virus_attachment += 1  
-        return true
+  def virus_attachment? attachment, account
+    if VIRUS_CHECK_ENABLED && account.subscription.trial?
+        begin
+          file_attachment = (attached.is_a? StringIO) ? attached : File.open(attached.tempfile)
+          result = Email::AntiVirus.scan(io: file_attachment) 
+          if result && result[0] == "virus"
+            @total_virus_attachment = 0 unless @total_virus_attachment
+            @total_virus_attachment += 1  
+            return true
+          end
+        rescue => e
+         Rails.logger.info "Error While checking attachment for virus in account #{account.id}"
+        end 
       end
-    end
-    return false
+      return false
   end
 
   # Content-id for inline attachments

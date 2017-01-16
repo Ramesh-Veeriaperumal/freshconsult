@@ -245,7 +245,7 @@ class Freshfone::CallObserver < ActiveRecord::Observer
     end
 
     def disconnected?(call)
-      call.dial_call_sid_changed? &&
+      call.outgoing_root_call? && call.dial_call_sid_changed? &&
         Freshfone::Call::COMPLETED_CALL_STATUS.include?(call.call_status)
     end
 

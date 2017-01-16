@@ -41,6 +41,7 @@
     }
 
     lightMention.prototype.bindMention = function() {
+        console.log("LM bind called.");
         var self = this;
         var el = document.querySelector(self.editor);
         if(!!el) {

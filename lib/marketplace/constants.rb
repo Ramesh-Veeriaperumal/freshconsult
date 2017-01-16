@@ -1,11 +1,13 @@
 module Marketplace::Constants
 
   PRODUCT_ID = 1
+  PRODUCT_NAME = 'freshdesk'
   DEV_PORTAL_NAME = 'Freshdesk Marketplace'
   ADMIN_PORTAL_NAME = 'Marketplace Admin Portal'
   PLG_FILENAME = 'build/index.html'
   DEVELOPED_BY_FRESHDESK = 'freshdesk'
   EXTENSION_SORT_TYPES = ['latest','popular']
+  ADDON_ID_PREFIX = 'marketplaceapp_'
   
   EXTENSION_TYPES = [ 
     [:plug,               1],    
@@ -58,4 +60,12 @@ module Marketplace::Constants
   ]
 
   MKP_ROUTE = Hash[*MKP_ROUTES.map { |i| [i[0], i[1]] }.flatten]
+
+  ADDON_TYPES_ARRAY = [
+    [:agent, 1],
+    [:account, 2]
+  ]
+
+  ADDON_TYPES = Hash[*ADDON_TYPES_ARRAY.map { |i| [i[0], i[1]] }.flatten]
+
 end

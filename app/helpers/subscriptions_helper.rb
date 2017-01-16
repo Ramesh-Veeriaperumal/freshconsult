@@ -31,6 +31,17 @@ module SubscriptionsHelper
   }
 
   PLAN_RANKING = {
+    "free" => 0,
+    
+    "basic" => 0,
+    "pro" => 0,
+    "premium" => 0,
+    
+    "sprout classic" => 0,
+    "blossom classic" => 0,
+    "garden classic" => 0,
+    "estate classic" => 0,
+    
     "sprout" => 1,
     "blossom" => 2,
     "garden" => 3,

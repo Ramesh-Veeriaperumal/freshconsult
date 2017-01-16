@@ -4,6 +4,7 @@ AU:
   beta: false
   address_required: true
   local: 3.0
+  toll_free: 15.0
 AT:
   name: Austria
   beta: false

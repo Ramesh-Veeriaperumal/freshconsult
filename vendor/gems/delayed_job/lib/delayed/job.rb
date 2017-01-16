@@ -210,17 +210,27 @@ module Delayed
         job_queue = "Delayed" if ( !JOB_QUEUES.include?(job_queue) || Rails.env.development? || Rails.env.test? )
       end
 
+      job_params = { :payload_object => object, 
+                     :priority => priority.to_i, 
+                     :run_at => run_at, 
+                     :pod_info => pod_info 
+                   }
+
+      perform_type = run_at.present? ? ["perform_at", run_at] : ["perform_async"]
+
       #Note: Right now if any smtp_mailbox for the current account is active ,it is added to
       #mailbox::Job queue. In Future we should check each individual smtp_mailbox based on the ticket and change the queue. 
       if smtp_mailboxes.any?{|smtp_mailbox| smtp_mailbox.enabled?}
-        job = Object.const_get("Mailbox::Job").create(:payload_object => object, :priority => priority.to_i, :run_at => run_at, :pod_info => pod_info)
-        Object.const_get("DelayedJobs::MailboxJob").perform_async({:job_id => job.id, :account_id => account_id}) if job && job.id 
-        job
+        job = Mailbox::Job.create(job_params)
+        DelayedJobs::MailboxJob.send(*perform_type, 
+          {:job_id => job.id, :account_id => account_id}) if job && job.id
       else
-        job = Object.const_get("#{job_queue}::Job").create(:payload_object => object, :priority => priority.to_i, :run_at => run_at, :pod_info => pod_info)
-        Object.const_get("DelayedJobs::#{job_queue}AccountJob").perform_async({:job_id => job.id, :account_id => account_id}) if job && job.id && PUSH_QUEUE.include?(job_queue)
-        job
+        job = Object.const_get("#{job_queue}::Job").create(job_params)
+        Object.const_get("DelayedJobs::#{job_queue}AccountJob").send(*perform_type, 
+          {:job_id => job.id, 
+           :account_id => account_id}) if job && job.id && PUSH_QUEUE.include?(job_queue)
       end
+      job
     end
 
     # Find a few candidate jobs to run (in case some immediately get locked by others).

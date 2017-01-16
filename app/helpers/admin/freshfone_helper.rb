@@ -13,7 +13,8 @@ module Admin::FreshfoneHelper
 		[
 			["Canada", "CA"],
 			["United Kingdom", "GB"],
-			["United States", "US"]
+			["United States", "US"],
+			["Australia", "AU"]
 		]
 	end
 

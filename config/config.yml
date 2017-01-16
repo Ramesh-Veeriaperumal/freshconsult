@@ -12,7 +12,7 @@ privacy_policy: https://freshdesk.com/privacy
 latest_shard: "shard_7"
 feedback_account:
     development: http://localhost.freshdesk-dev.com:3000
-    staging: https://support.freshdesk.com
+    staging: https://feedback1.freshpo.com
     production: https://support.freshdesk.com
 
 attachment:
