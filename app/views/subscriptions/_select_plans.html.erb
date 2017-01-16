@@ -1,6 +1,9 @@
-<% current_plan_id = current_account.subscription.subscription_plan_id %>
-<% current_plan_ranking = SubscriptionsHelper::PLAN_RANKING["#{current_account.subscription.subscription_plan.name.downcase}"] %>
-<% has_credit_card = current_account.has_credit_card? %>
+<% 
+  current_plan_id = current_account.subscription.subscription_plan_id
+  current_plan_name = current_account.subscription.subscription_plan.name.downcase
+  current_plan_ranking = SubscriptionsHelper::PLAN_RANKING[current_plan_name] || 0 # default rank as zero
+  has_credit_card = current_account.has_credit_card? 
+%>
 <div id="ChangePlan">
   <div class="plans">
     <table>
@@ -8,7 +11,7 @@
         <%plans.each do |plan| %>
           <% 
             plan_name = plan.name.downcase 
-            plan_ranking = SubscriptionsHelper::PLAN_RANKING["#{plan_name}"]
+            plan_ranking = SubscriptionsHelper::PLAN_RANKING["#{plan_name}"] || 0 # default rank as zero
             downgrade_plan_check =  plan_ranking > current_plan_ranking
           %>
           <% unless plan_name == "free"  %>
