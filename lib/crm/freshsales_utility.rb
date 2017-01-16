@@ -29,6 +29,8 @@ class CRM::FreshsalesUtility
 
   DEFAULT_ACCOUNT_MANAGER = { display_name:   "Bobby",
                               email:          "eval@freshdesk.com" }
+                              
+  SUCCESS_CODES = (200...300).to_a                            
 
   def initialize(data)
     @account = data[:account]
@@ -60,7 +62,7 @@ class CRM::FreshsalesUtility
       end
     end
 
-    if status.eql?(200) && data[:fs_cookie].present?
+    if success_status?(status) && data[:fs_cookie].present?
       visitor_info = { cookie: data[:fs_cookie], product_id: @deal_product_id }
       config = { rest_url: "/leads/#{response[:lead][:id]}/associate_to_visitor", method: 'post', body: visitor_info }
       request_freshsales(config)
@@ -78,7 +80,7 @@ class CRM::FreshsalesUtility
         deal_account = result[:sales_accounts].find{ |acc| acc[:id] == result[:deals].first[:sales_account_id] }
         contact_info = admin_basic_info.merge({ sales_account_id: deal_account[:id] })
         status, response = fs_create('contact', contact_info)
-        associate_deals_to_contact(result[:deals], response[:contact][:id]) if status.eql?(200)
+        associate_deals_to_contact(result[:deals], response[:contact][:id]) if success_status?(status)
       end
     else
       leads = search_leads_by_account_and_product(@account.id, @deal_product_id, 'owner')[:leads]
@@ -228,7 +230,7 @@ class CRM::FreshsalesUtility
     def contact_and_owner(sales_account_id)
       params = {}
       status, account_result = fs_get('sales_account', sales_account_id, 'owner,contacts')
-      if status.eql?(200)
+      if success_status?(status)
         account_contact = account_result[:contacts].find{ |cont| cont[:email] == @account.admin_email }
         owner_id = account_contact.try(:[], :owner_id) || account_result[:sales_account][:owner_id]
         params.merge!({ contact_id: account_contact.try(:[], :id), owner_id: owner_id })
@@ -343,20 +345,20 @@ class CRM::FreshsalesUtility
 
       config = { rest_url: "/sessions", method: 'get' }
       user_status, user_response = request_freshsales(config)
-      lead_info[:owner_id] = user_response[:user][:id] if user_status.eql?(200)
+      lead_info[:owner_id] = user_response[:user][:id] if success_status?(user_status)
 
       status, response = fs_create('lead', lead_info)
       convert_lead_and_close_deal(response[:lead], { deal_type: options[:deal_type],
                                                      amount: options[:amount],
-                                                     customer_status: options[:customer_status] }) if status.eql?(200)
+                                                     customer_status: options[:customer_status] }) if success_status?(status)
     end
 
     def convert_lead_and_close_deal(lead, options)
       convert_status, convert_response = convert_lead(lead, options)
-      return unless convert_status.eql?(200)
+      return unless success_status?(convert_status)
 
       status, response = fs_get('contact', convert_response[:contact][:id], 'deals')
-      if status.eql?(200)
+      if success_status?(status)
         deals = deals_by_account_and_product(response[:deals], @account.id, @deal_product_id)
         open_deal = recent_open_deal(deals, response[:deal_stages])
         mark_deal_as_closed_won(open_deal, { deal_type: options[:deal_type], customer_status: options[:customer_status] })
@@ -372,7 +374,7 @@ class CRM::FreshsalesUtility
       config = { rest_url: "/leads/#{lead[:id]}/convert", method: 'post', body: { 'lead' => data } }
       status,response = request_freshsales(config)
       fs_update('contact', response[:contact][:id], { custom_field: 
-                              { cf_customer_status: options[:customer_status] } }) if status.eql?(200)
+                              { cf_customer_status: options[:customer_status] } }) if success_status?(status)
       [status, response]
     end
 
@@ -505,7 +507,7 @@ class CRM::FreshsalesUtility
       }
       response = proxy.fetch_using_req_params(params, request_params)
       raise "Error occured while requesting Freshsales status:: #{response[:status]} 
-                                          account:: #{Account.current.id}" unless response[:status].eql?(200)
+                                          account:: #{Account.current.id}" unless success_status?(response[:status])
 
       response_content = symbolize_response(JSON.parse(response[:text]))      
       [response[:status], response_content]
@@ -530,6 +532,10 @@ class CRM::FreshsalesUtility
       else
         obj
       end
+    end
+    
+    def success_status?(status)
+      status.in?(SUCCESS_CODES)
     end
 
 end
