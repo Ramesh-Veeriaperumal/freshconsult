@@ -66,7 +66,7 @@
         type: 'POST',
         data: {email : ticket_email},
         datatype: 'json',
-        url: "<%= helpdesk_commons_user_companies_path %>",
+        url: "<%= helpdesk_commons_user_companies_path %>,
         success: function(data){
           if(data != false){
             jQuery('#helpdesk_ticket_company_id').empty();
