@@ -274,6 +274,10 @@ $rtl: false !default;
   }
 }
 
+@mixin translateX($x) {
+  @if $rtl { @include transform(translateX($x * -1)); }
+  @else    { @include transform(translateX($x)) }
+}
 
 
 

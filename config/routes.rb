@@ -714,6 +714,7 @@ Helpkit::Application.routes.draw do
       put :block
       get :assume_identity
       get :profile_image
+      get :profile_image_path
     end
   end
 
@@ -1437,6 +1438,9 @@ Helpkit::Application.routes.draw do
           get :search
           get :auto_suggest
           get '/:extension_id', :action => :show, :as => 'show'
+          scope '/:extension_id' do
+            get :payment_info
+          end
         end
       end
 
@@ -1786,6 +1790,7 @@ Helpkit::Application.routes.draw do
   resource :accounts do
     collection do
       get :new_signup_free
+      post :new_signup_free
     end
   end
 
@@ -2178,7 +2183,7 @@ Helpkit::Application.routes.draw do
     end
 
     match 'commons/group_agents/(:id)'    => "commons#group_agents"
-    match 'commons/user_companies'        => "commons#user_companies"
+    match 'commons/user_companies'        => "commons#user_companies", via: :post
     match "commons/fetch_company_by_name" => "commons#fetch_company_by_name"
     match 'commons/status_groups'         => "commons#status_groups"
 
@@ -2629,7 +2634,7 @@ Helpkit::Application.routes.draw do
 
     resources :tickets do
       collection do
-        get :check_email
+        post :check_email
         get :configure_export
         get :filter
         post :export_csv
@@ -2757,6 +2762,13 @@ Helpkit::Application.routes.draw do
 
   namespace :notification do
     resources :product_notification, :only => :index
+    resources :user_notification, :only => :index do
+      collection do
+        get :token
+      end
+    end            
+    
+    
   end
 
   resources :rabbit_mq, :only => [:index]

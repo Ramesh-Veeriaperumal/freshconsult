@@ -1,13 +1,13 @@
 {
   "checksum": {
-    "previous": "c06c2d002d87eba5240594f76a06f29d99e4662bd07dbfbd8504cd13ab3c6c14",
-    "current": "c06c2d002d87eba5240594f76a06f29d99e4662bd07dbfbd8504cd13ab3c6c14"
+    "previous": "ebdb24a6ad0bd3262ccf82363a4697b68c0ceb772880e72cdb9bb9e78183cf84",
+    "current": "ebdb24a6ad0bd3262ccf82363a4697b68c0ceb772880e72cdb9bb9e78183cf84"
   },
   "fonts": [
-    "public/assets/glyphs_c06c2d002d87eba5240594f76a06f29d.ttf",
-    "public/assets/glyphs_c06c2d002d87eba5240594f76a06f29d.svg",
-    "public/assets/glyphs_c06c2d002d87eba5240594f76a06f29d.woff",
-    "public/assets/glyphs_c06c2d002d87eba5240594f76a06f29d.eot"
+    "public/assets/glyphs_ebdb24a6ad0bd3262ccf82363a4697b6.ttf",
+    "public/assets/glyphs_ebdb24a6ad0bd3262ccf82363a4697b6.svg",
+    "public/assets/glyphs_ebdb24a6ad0bd3262ccf82363a4697b6.woff",
+    "public/assets/glyphs_ebdb24a6ad0bd3262ccf82363a4697b6.eot"
   ],
   "glyphs": {
     "abandoned-call": {
@@ -25,6 +25,10 @@
     "add-call": {
       "codepoint": 61983,
       "source": "public/glyphs/vectors/add-call.svg"
+    },
+    "add-people": {
+      "codepoint": 62059,
+      "source": "public/glyphs/vectors/add-people.svg"
     },
     "agent": {
       "codepoint": 61697,
@@ -349,6 +353,10 @@
     "connect-chat": {
       "codepoint": 62006,
       "source": "public/glyphs/vectors/connect-chat.svg"
+    },
+    "contacts": {
+      "codepoint": 62060,
+      "source": "public/glyphs/vectors/contacts.svg"
     },
     "conversation": {
       "codepoint": 61736,
@@ -706,6 +714,10 @@
       "codepoint": 61779,
       "source": "public/glyphs/vectors/gear.svg"
     },
+    "gear-line": {
+      "codepoint": 62061,
+      "source": "public/glyphs/vectors/gear-line.svg"
+    },
     "glance": {
       "codepoint": 61980,
       "source": "public/glyphs/vectors/glance.svg"
@@ -1062,6 +1074,10 @@
       "codepoint": 61823,
       "source": "public/glyphs/vectors/post-edit.svg"
     },
+    "power": {
+      "codepoint": 62062,
+      "source": "public/glyphs/vectors/power.svg"
+    },
     "preserve-format": {
       "codepoint": 62038,
       "source": "public/glyphs/vectors/preserve-format.svg"
@@ -1217,6 +1233,10 @@
     "supervisor": {
       "codepoint": 61845,
       "source": "public/glyphs/vectors/supervisor.svg"
+    },
+    "support-email": {
+      "codepoint": 62063,
+      "source": "public/glyphs/vectors/support-email.svg"
     },
     "survey-happy": {
       "codepoint": 61880,

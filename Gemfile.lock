@@ -177,8 +177,8 @@ GIT
 
 GIT
   remote: git@github.com:freshdesk/binarize.git
-  revision: 1a7933b0853c33d8b6ba877493822fe2db34421c
-  branch: master
+  revision: 025888cc314cd9ffa47a4ed14829940095bcb39b
+  branch: not_a_model_column
   specs:
     binarize (0.1.1)
       activerecord (>= 3)
@@ -235,7 +235,7 @@ GIT
 
 GIT
   remote: git@github.com:freshdesk/xeroizer.git
-  revision: 576818be639084010bcba03f0e7ec523a79e1211
+  revision: db93979351dc8047d6aeeeab63d697f8c4517f7b
   specs:
     xeroizer (2.15.9)
       activesupport

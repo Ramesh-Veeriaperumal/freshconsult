@@ -62,6 +62,7 @@ run "ln -nfs #{shared_path}/config/sendgrid_webhook_api.yml #{node[:rel_path]}/c
 run "ln -nfs #{shared_path}/config/ehawk_api.yml #{node[:rel_path]}/config/ehawk_api.yml"
 run "ln -nfs #{shared_path}/config/sds.yml #{node[:rel_path]}/config/sds.yml"
 run "ln -nfs #{shared_path}/config/clamav.yml #{node[:rel_path]}/config/clamav.yml"
+run "ln -nfs #{shared_path}/config/iris_notifications.yml #{node[:rel_path]}/config/iris_notifications.yml"
 
 #supreme-code-console
 run "ln -nfs #{shared_path}/config/api_config_internal_tools.yml #{node[:rel_path]}/config/api_config_internal_tools.yml"

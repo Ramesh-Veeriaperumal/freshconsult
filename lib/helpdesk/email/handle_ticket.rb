@@ -17,7 +17,7 @@ class Helpdesk::Email::HandleTicket
 
   BODY_ATTR = ["body", "body_html", "full_text", "full_text_html", "description", "description_html"]
   VIRUS_CHECK_ENABLED = false
-  
+
   def initialize email, user, account, ticket=nil
     self.email = email 
     self.original_sender = email[:from][:email]
@@ -129,9 +129,9 @@ class Helpdesk::Email::HandleTicket
           if content_id
             content_id_hash[att.content_file_name+"#{inline_count}"] = cid(i)
             inline_count+=1
-            inline_attachments.push att unless virus_attachment?(params["attachment#{i+1}"], account)
+            inline_attachments.push att
           else
-            attachments.push att unless virus_attachment?(params["attachment#{i+1}"], account)
+            attachments.push att
           end
         end
       rescue HelpdeskExceptions::AttachmentLimitException => ex

@@ -1,0 +1,17 @@
+<div class="progress-bar-container pull-left">
+	<% unless show_percentage %>
+		<span class="pull-left" id="setup-text"><%= setup_progress_text %></span>	
+	<% end %>
+	<div class="progress pull-left">
+	  <div class="progress-bar hide" role="progressbar" aria-valuenow="<%= configuration_percentage_complete %>" aria-valuemin="0" aria-valuemax="100" ></div>
+	</div>
+	<span class="pull-left <%= 'muted' unless show_percentage %>">
+		<% if configuration_percentage_complete != 100 %>
+			<%= t("accounts.setup.configuration_status", 
+				:in_setup_keys_length => in_setup_keys_length, 
+				:total_setup_keys_length => total_setup_keys_length).html_safe %>
+		<% end %>
+		<%= setup_progress_text if show_percentage %>
+	</span>
+	<% if show_percentage %><span class="pull-right"><b><%=configuration_percentage_complete %>%</b></span><% end %>
+</div>

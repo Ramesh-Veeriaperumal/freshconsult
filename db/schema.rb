@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20170111153617) do
+ActiveRecord::Schema.define(:version => 20170116094611) do
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
     t.integer  "account_id",           :limit => 8
@@ -3425,6 +3425,7 @@ ActiveRecord::Schema.define(:version => 20170111153617) do
     t.decimal  "day_pass_amount", :precision => 10, :scale => 2
     t.boolean  "classic",                                        :default => false
     t.text     "price"
+    t.string  "display_name"
   end
 
   create_table "subscriptions", :force => true do |t|

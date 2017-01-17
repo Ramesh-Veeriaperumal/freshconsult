@@ -80,8 +80,8 @@ module Marketplace::ApiUtil
       patch_api
     end
 
-    def delete_api(url, timeout)
-      delete_api = construct_api_request(url, {}, timeout).delete
+    def delete_api(url, params = {}, timeout)
+      delete_api = construct_api_request(url, params, timeout).delete
       clear_installed_cache
       delete_api
     end
@@ -103,7 +103,7 @@ module Marketplace::ApiUtil
     end
 
     def error_status?(data)
-      data.nil? || data.status.between?(500,599)
+      data.nil? || data.status.between?(400,599)
     end
 
     def exception_logger(message)
@@ -129,5 +129,9 @@ module Marketplace::ApiUtil
         MemcacheKeys.cache(key, cache_data = api_response, expiry) if api_response && [200,201].include?(api_response.status)
       end
       cache_data
+    end
+
+    def mark_custom_app_setup
+      Account.current.mark_custom_app_setup_and_save unless Account.current.custom_app_setup?
     end
 end

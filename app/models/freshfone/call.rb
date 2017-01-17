@@ -663,6 +663,12 @@ class Freshfone::Call < ActiveRecord::Base
     COMPLETED_CALL_STATUS.include?(call_status) &&
       COMPLETED_CALL_STATUS.exclude?(call_status_was)
   end
+
+  def source_number
+    return fetch_caller_id if meta.forward?
+    return number if outgoing?
+    caller_number
+  end
   
   private
     def called_agent(params)
@@ -832,5 +838,10 @@ class Freshfone::Call < ActiveRecord::Base
         Freshfone::RealtimeNotifier.perform_async(
           { :call_id => child.id },child.id, nil,'cancel_other_agents') 
       end
+    end
+
+    def fetch_caller_id
+      return caller_number if account.freshfone_account.caller_id_enabled?
+      number
     end
 end

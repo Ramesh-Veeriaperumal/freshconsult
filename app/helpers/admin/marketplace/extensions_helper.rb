@@ -1,6 +1,8 @@
 module Admin::Marketplace::ExtensionsHelper
 
   include Admin::Marketplace::CommonHelper
+  include SubscriptionsHelper
+  include Marketplace::HelperMethods
 
   def install_url
     if is_external_app?
@@ -42,9 +44,19 @@ module Admin::Marketplace::ExtensionsHelper
     @extension = extension
     @install_status = install_status
     @is_oauth_app = is_oauth_app
-    generate_install_btn
+    paid_app? && !@install_status['installed'] ? generate_buy_app_btn : generate_install_btn
   end
 
+  def generate_buy_app_btn
+    _btn = ""
+    _btn << %(<a class="btn btn-default btn-primary buy-app" 
+              data-url="#{payment_info_admin_marketplace_extensions_path(@extension['extension_id'])}" 
+              data-install-url="#{install_url}" >
+              <p class="buy-app-btn"> #{t('marketplace.buy_app')} </p>
+              <p class="app-price"> #{t('marketplace.app_price', :price => format_amount(addon_details['price'], addon_details['currency_code']), :addon_type => addon_type)} </p>
+              </a>)
+    _btn
+  end
 
   def generate_install_btn
     _btn = ""
@@ -54,8 +66,8 @@ module Admin::Marketplace::ExtensionsHelper
     elsif !@install_status['installed'] && is_ni?
       _btn = ni_install_btn
     else
-       _btn << %(<a class="btn btn-default btn-primary install-app #{install_btn_class}" 
-                 data-url="#{install_url}"> #{install_btn_text} </a>)
+      _btn << link_to(install_btn_text, '#', 'data-url' => install_url,
+              :class => "btn btn-default btn-primary install-app #{install_btn_class}")
     end
     _btn.html_safe
   end
@@ -82,9 +94,14 @@ module Admin::Marketplace::ExtensionsHelper
           }, 700);
         </script>
         )
-    else
+    elsif @extension['name'] == Integrations::Constants::APP_NAMES[:slack_v2]
       _btn << %(<form id="nativeapp-form" action="#{install_url}" method="post"> </form>)
-      _btn << %(<a class="btn btn-default btn-primary install-app #{ni_install_btn_class}"> #{install_btn_text} </a>)
+      _btn << %(
+        <a href="javascript:;" onclick="parentNode.submit();" class="install-app #{ni_install_btn_class}"><img alt="Add to Slack" src="https://platform.slack-edge.com/img/add_to_slack.png" style="padding-top: 10px;padding-left: 10px;width: 139px; height: 40px;"></a>
+      )
+    else
+      _btn << link_to(install_btn_text, install_url, :method => :post,
+              :class => "btn btn-default btn-primary install-app #{ni_install_btn_class}").html_safe
     end
     _btn
   end
@@ -118,18 +135,6 @@ module Admin::Marketplace::ExtensionsHelper
   def search_placeholder
     (User.current && User.current.language != I18n.default_locale.to_s) ? 
       t('marketplace.search_language_warning') : t('marketplace.search')
-  end
-
-  def is_ni?
-    @extension['type'] == Marketplace::Constants::EXTENSION_TYPE[:ni]
-  end
-
-  def is_external_app?
-    @extension['type'] == Marketplace::Constants::EXTENSION_TYPE[:external_app]
-  end
-
-  def custom_app?
-    @extension['app_type'] == Marketplace::Constants::APP_TYPE[:custom]
   end
 
   def third_party_developer?

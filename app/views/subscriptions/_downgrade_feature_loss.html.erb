@@ -1,6 +1,6 @@
 <%
-	new_plan_rank = SubscriptionsHelper::PLAN_RANKING["#{new_plan}"]
-	current_plan_rank = SubscriptionsHelper::PLAN_RANKING["#{current_plan}"]
+	new_plan_rank = SubscriptionsHelper::PLAN_RANKING["#{new_plan}"] || 0
+	current_plan_rank = SubscriptionsHelper::PLAN_RANKING["#{current_plan}"] || 0
 	is_old_plan = previous_plan?(current_account.subscription.subscription_plan)
 	plan_name_list = get_current_plans(is_old_plan)
 	equal_plan_rank = (new_plan_rank == current_plan_rank) && (new_plan != current_plan)

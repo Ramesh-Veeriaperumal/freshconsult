@@ -34,11 +34,6 @@ module Freshfone
       end
     end
 
-    def disconnect?(call)
-      call.present? && call.dial_call_sid.present? &&
-        Freshfone::Call::COMPLETED_CALL_STATUS.include?(call.call_status)
-    end
-
     def notify_error(exception)
       return if current_account.blank?
       Rails.logger.info "Call Terminate Worker account additional settings :

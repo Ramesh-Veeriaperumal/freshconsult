@@ -10,9 +10,10 @@ class Freshfone::PulseRate
 	delegate :country, :to => :freshfone_number, :prefix => true, :allow_nil => true
 	
 	COUNTRY_CALL_TYPES = {
-		'US' => :usca_tollfree,
-		'CA' => :usca_tollfree,
+		'US' => :us_tollfree,
+		'CA' => :ca_tollfree,
 		'GB' => :uk_tollfree,
+		'AU' => :au_tollfree,
 		'default' => :standard
 	}
 	
@@ -118,12 +119,37 @@ class Freshfone::PulseRate
 			max_length = FRESHFONE_CHARGES[country][:max_digits]
 			max_length.times do |index|
 				shortened_number = formatted_number[0..(max_length - index - 1)]
-				FRESHFONE_CHARGES[country][:numbers].each_pair do |number_array, cost_type|
+				FRESHFONE_CHARGES[country][:numbers].each_pair do |number_array, source_prefix|
 					number_array = number_array.split(',')
 					if number_array.include? shortened_number
-						return self.credit = cost_type[call_type].to_f
+						return self.credit = calculate_pulse_rate(source_prefix,
+							call_type).round(3)
 					end
 				end
+			end
+		end
+
+		def calculate_pulse_rate(source_prefix, call_type)
+			multiplier = cost_multiplier(call_type)
+			offset = cost_offset(call_type)
+			source_prefix.each_pair do |prefix, cost|
+				return (cost + offset) * multiplier if caller_prefix_match?(prefix)
+			end
+			(source_prefix['DEFAULT'] + offset) * multiplier
+		end
+
+		def cost_multiplier(call_type)
+			FRESHFONE_CHARGES['COST_CONSTANTS'][:multipliers][call_type]
+		end
+
+		def cost_offset(call_type)
+			FRESHFONE_CHARGES['COST_CONSTANTS'][:offset][call_type]
+		end
+
+		def caller_prefix_match?(key)
+			source_number = ignore_format(call.source_number)
+			key.split(',').any? do |prefix|
+				source_number.starts_with?(prefix)
 			end
 		end
 end

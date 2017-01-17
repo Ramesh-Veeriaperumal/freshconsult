@@ -1,0 +1,19 @@
+defaults: &defaults
+  shared_secret: "iris&arke"
+  service_name: "freshdesk"
+  socketioUrl: https://s3.amazonaws.com/iris-static-files/socket.io-1.0.js
+  rtsUrl: https://s3.amazonaws.com/iris-static-files/rts-1.0.js
+  irisUrl: https://s3.amazonaws.com/iris-static-files/iris-staging-1.0.js
+
+development:
+  <<: *defaults
+
+test:
+  <<: *defaults
+
+staging:
+  <<: *defaults
+
+production:
+  <<: *defaults
+  irisUrl: https://s3.amazonaws.com/iris-static-files/iris-1.0.js

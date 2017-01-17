@@ -342,6 +342,7 @@ class Freshfone::ConferenceCallController < FreshfoneBaseController
     end
 
     def update_cancel_response
+      return if current_call.blank?
       call_meta = current_call.meta
       return unless current_call.ringing? && call_meta.present? &&
         (current_call.incoming? || current_call.transferred_leg?)

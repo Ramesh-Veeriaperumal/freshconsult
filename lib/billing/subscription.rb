@@ -1,5 +1,7 @@
 class Billing::Subscription < Billing::ChargebeeWrapper
 
+  include Marketplace::ApiMethods
+
   CUSTOMER_INFO   = { :first_name => :admin_first_name, :last_name => :admin_last_name, 
                        :company => :name }
 
@@ -200,6 +202,7 @@ class Billing::Subscription < Billing::ChargebeeWrapper
 
     def merge_addon_data(data, subscription, addons)
       addon_list = addons.inject([]) { |a, addon| a << addon_billing_params(subscription, addon) }
+      addon_list = addon_list + marketplace_addons(subscription)
       data.merge!(:addons => addon_list)
     end
 
@@ -227,6 +230,24 @@ class Billing::Subscription < Billing::ChargebeeWrapper
     def can_be_redeemed?(coupon)
       coupon["max_redemptions"].to_i.eql?(0) or 
         coupon["max_redemptions"].to_i > coupon["redemptions"].to_i
+    end
+
+    def mkp_extension_id(addon_id)
+      addon_id.slice(/(?<=[a-z]_)\d+(?=_|$)/).to_i
+    end
+
+    def marketplace_addons(subscription)
+      all_addons = retrieve_subscription(subscription.account_id).subscription.addons
+      marketplace_addons = []
+      if all_addons
+        marketplace_addon_ids = all_addons.select { |addon| addon.id.include?(Marketplace::Constants::ADDON_ID_PREFIX) }.map(&:id)
+        marketplace_addon_ids.each do |addon_id|
+          ext = extension_details(mkp_extension_id(addon_id)).body
+          marketplace_addons << { :id => addon_id,
+          :quantity => ext["addon"]["addon_type"] == Marketplace::Constants::ADDON_TYPES[:agent] ? subscription.agent_limit : 1 }
+        end
+      end
+      marketplace_addons
     end
     
 end

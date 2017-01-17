@@ -73,9 +73,9 @@ class Widgets::FeedbackWidgetsController < SupportController
     end
 
     if params[:callback]
-      render :json => widget_response.to_json, :callback => params['callback']
+      render :json => widget_response.to_json, :callback => params['callback'], :content_type => 'application/javascript'
     else
-      render :json => widget_response.to_json
+      render :json => widget_response.to_json, :content_type => 'application/javascript'
     end
   end
 

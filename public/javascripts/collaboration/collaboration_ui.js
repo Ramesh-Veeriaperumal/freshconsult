@@ -524,8 +524,7 @@ App.CollaborationUi = (function ($) {
 	    getAvatarHtml: function(userId, class_list) {
 	    	var usersMap = App.CollaborationModel.usersMap;
             var avatarHtml = JST[CONST.AVATAR_TEMPLATE]({data: {
-                profileImage: (typeof ProfileImage !== "undefined" && !!ProfileImage.imageById(Number(userId))) ? 
-                    ProfileImage.imageById(Number(userId)).profile_img : false,
+                    profileImage: (typeof ProfileImage !== "undefined" && !!ProfileImage.imageById(Number(userId))) ? ProfileImage.imageById(Number(userId)).profile_img : false,
                     name: usersMap[userId] ? usersMap[userId].name : CONST.DUMMY_USER.name,
                     id: userId,
                     class_list: class_list
@@ -992,7 +991,7 @@ App.CollaborationUi = (function ($) {
             var isSelf = String(userId) === selfUserName;
 
             return {
-                profileImage: (typeof ProfileImage !== "undefined" && !!ProfileImage.imageById(Number(userId))) ? 
+                profileImage: (typeof ProfileImage !== "undefined" && !!ProfileImage.imageById(Number(userId))) ?
                     ProfileImage.imageById(Number(userId)).profile_img : 
                     false, 
                 name: modelUserData ? (isSelf ? "Me (" + modelUserData.name + ")" : modelUserData.name) : "",
@@ -1283,9 +1282,10 @@ App.CollaborationUi = (function ($) {
             */ 
             Collab.fetchCount = 0;
             Collab.loadConversation(function() {
-                if(!Collab.mentionsEnabled) {
+                if(!Collab.initingPostReconnect) {
                     Collab.enableMentions();
                 }
+                Collab.initingPostReconnect = false;
             });
             Collab.expandCollabOnLoad = config.expandCollabOnLoad;
             Collab.scrollToMsgId = config.scrollToMsgId;
@@ -1431,6 +1431,7 @@ App.CollaborationUi = (function ($) {
                 renderMsg(msg_body);
             } else if(msg.m_type === CONST.MSG_TYPE_CLIENT_ATTACHMENT) {
                 var msg_body = Collab.parseJson(msg.body);
+                msg_body.pl = msg_body.pl || " ";
                 msg.created_at = msg.created_at || App.CollaborationModel.getCurrentUTCTimeStamp();
                 renderMsg(msg_body, {"attachment": true});
             }
@@ -1450,6 +1451,7 @@ App.CollaborationUi = (function ($) {
 
 
         // TODO (mayank): must be called on every ticket_detail load
+        // should be called only once per ticket;
         enableMentions: function() {
             var usersToMention = [];
             var collabModel = App.CollaborationModel;
@@ -1490,7 +1492,6 @@ App.CollaborationUi = (function ($) {
             };
             var lm = new lightMention(options);
             lm.bindMention();
-            Collab.mentionsEnabled = true;
         },
 
         parseJson: function (data) {
@@ -1538,6 +1539,7 @@ App.CollaborationUi = (function ($) {
             Collab.networkDisconnected = false;
             var config = $("#collab-ui-data").attr("data-ui-payload");
             if(config) {
+                Collab.initingPostReconnect = true;
                 App.CollaborationUi.initUi(Collab.parseJson(config));
             }
             _COLLAB_PVT.disableCollabUiIfNeeded();

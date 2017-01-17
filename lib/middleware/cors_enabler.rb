@@ -15,6 +15,9 @@ class Middleware::CorsEnabler < Rack::Cors
 
   RESOURCE_PATH_REGEX = /\/.+(\.json|xml|\?(format=json|xml)|(.+)format=json|xml(.+))/
 
+  
+  WHITELISTED_ORIGIN = YAML::load_file(File.join(Rails.root,'config','whitelisted_signup_domain.yml'))
+
   def initialize(app, options = {})
     super(app, options)
     @app = app
@@ -30,17 +33,24 @@ class Middleware::CorsEnabler < Rack::Cors
     unless(env['HTTP_ORIGIN'])
       @status, @headers, @response = @app.call(env)
     else 
-      path_regex = api_request?(env) ? env["PATH_INFO"] : RESOURCE_PATH_REGEX
+      if env["PATH_INFO"].eql?('/accounts/new_signup_free') && ( WHITELISTED_ORIGIN.include?(env["HTTP_ORIGIN"]) || check_whitelisted_domains_from_redis(env) )
+          allow do
+            origins "*"
+            resource '/accounts/new_signup_free',:headers => :any, :methods => [:get, :post]
+          end 
+      else
+        path_regex = api_request?(env) ? env["PATH_INFO"] : RESOURCE_PATH_REGEX
 
-      cors_resource_config_clone = CORS_RESOURCE_CONFIG.dup
-      if new_api_request?(env)  
-        cors_resource_config_clone[:credentials] = false if redis_key_exists?(CROSS_DOMAIN_API_GET_DISABLED)
+        cors_resource_config_clone = CORS_RESOURCE_CONFIG.dup
+        if new_api_request?(env)  
+         cors_resource_config_clone[:credentials] = false if redis_key_exists?(CROSS_DOMAIN_API_GET_DISABLED)
+        end
+        allow do 
+         origins '*'
+         resource path_regex, cors_resource_config_clone
+        end
       end
-      allow do 
-        origins '*'
-        resource path_regex, cors_resource_config_clone
-      end
-      @status, @headers, @response = super(env)
+       @status, @headers, @response = super(env)
     end
     [@status, @headers, @response]
   end
@@ -53,5 +63,11 @@ class Middleware::CorsEnabler < Rack::Cors
 
   def new_api_request?(env)
     env['PATH_INFO'].starts_with?('/api/')
+  end
+
+  def check_whitelisted_domains_from_redis(env)
+    @whitelisted_domain=get_all_members_in_a_redis_set(WHITELISTED_DOMAINS_KEY)
+    return @whitelisted_domain.include?(env["HTTP_ORIGIN"]) if @whitelisted_domain.present?      
+    false
   end
 end
