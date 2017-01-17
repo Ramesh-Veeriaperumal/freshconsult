@@ -15,6 +15,8 @@
     session[:xero_request_secret] = request_token.secret  
     redirect_to request_token.authorize_url
     rescue Exception => e 
+      Rails.logger.error "Xero Exception #{e}"
+      NewRelic::Agent.notice_error(e,{:description => "Xero Exception"})
       flash[:notice] = t(:'flash.application.install.error') 
       redirect_to integrations_applications_path
   end
