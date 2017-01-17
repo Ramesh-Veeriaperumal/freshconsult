@@ -536,11 +536,7 @@
     jQuery("#helpdesk_ticket_email").focusout(function(){
       var ticket_email = jQuery("#helpdesk_ticket_email").val();
       
-      jQuery.ajax({ 
-        type: 'POST',
-        datatype: 'json',
-        data: { email: ticket_email}, 
-        url: "<%= helpdesk_commons_user_companies_path %>",
+      jQuery.ajax({ url: "<%= helpdesk_commons_user_companies_path %>?email="+ticket_email,
         success: function(data){
         	if(data != false){
 	          jQuery('#helpdesk_ticket_company_id').empty();
