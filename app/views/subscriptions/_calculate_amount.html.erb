@@ -14,8 +14,12 @@
 		<dt> <%= t('agents') %> </dt>
 		<dd>
 			<%
-			agent_limit = (@cached_subscription.new_sprout? ? current_account.full_time_agents.count : @subscription.agent_limit)
-			%>
+        agent_limit = if @cached_subscription.new_sprout? and @subscription.free_agents == @subscription.agent_limit
+          current_account.full_time_agents.count
+        else
+          @subscription.agent_limit
+        end
+      %>
 		  <input type="text" size="4" value="<%= agent_limit || current_account.full_time_agents.count %>" 
 		  			 name="agent_limit" id="agents-text-box" class="text input-agent-count" autocomplete="off" />
 		</dd>
