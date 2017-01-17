@@ -31,7 +31,7 @@ module Helpdesk::DashboardHelper
     "twitter" => {:icon => "twitter-o", :path => "/admin/social/streams"},
     "automation" => {:icon => "gear-line", :path => "/admin/va_rules"},
     "data_import" => {:icon => "contacts", :path => "/imports/contact"},
-    "custom_app" => {:icon => "cube", :path => "/integrations/applications"},
+    "custom_app" => {:icon => "cube", :path => "/integrations/applications", :no_pjax => true},
     "freshfone_number" => {:icon => "ff-line-phone", :path => "/admin/phone/numbers" }
   }
 
@@ -285,7 +285,8 @@ module Helpdesk::DashboardHelper
   end
 
   def link_html_options(setup_key)
-    (path_for_setup_key(setup_key) == "#") ? { :class=> "setup-info-link disabled"} : {"data-pjax"=>"#body-container", :class => "setup-info-link"}
+    link_html_options = SETUP_KEY_UTILS[setup_key][:no_pjax] ? { "target" => "_blank" } : {"data-pjax"=>"#body-container"}
+    (path_for_setup_key(setup_key) == "#") ? { :class=> "setup-info-link disabled"} : link_html_options.merge(:class => "setup-info-link")
   end
 end
 

@@ -75,7 +75,7 @@
 				</span> 
 			</div>
 			<div class="links-container">
-				<a class="arrow-border <%= 'disabled' unless current_user.privilege?(:manage_account) %>" href=<%= subscription_path %> data-pjax="#body-container">
+				<a class="arrow-border <%= 'disabled' unless current_user.privilege?(:manage_account) %>" href=<%= subscription_path %> target="_blank">
 					<b><%= t('accounts.setup.choose_plan') %></b>
 				</a>
 			</div>
