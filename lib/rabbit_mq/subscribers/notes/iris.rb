@@ -2,9 +2,6 @@ module RabbitMq::Subscribers::Notes::Iris
   
   include RabbitMq::Constants
   
-  VALID_MODELS      = ["note", "schema_less_note"]
-  RESP_TIME_COLUMNS = ["int_nc02", "int_nc03" ]
-  
   def mq_iris_note_properties(action)
     iris_model_properties(action, self)
   end
@@ -19,7 +16,7 @@ module RabbitMq::Subscribers::Notes::Iris
   end
 
   def mq_iris_valid(action, model)
-    iris_valid_model?(model) && send("#{model}_valid?", action)
+    iris_valid_model?(model) and iris_note_valid?(action)
   end
 
   private
@@ -47,11 +44,11 @@ module RabbitMq::Subscribers::Notes::Iris
     end
     
     def iris_valid_model?(model)
-      VALID_MODELS.include?(model)
+      model == "note"
     end
-    
-    def iris_schema_less_note_model?
-      self.is_a?(Helpdesk::SchemaLessNote)
+
+    def iris_note_valid?(action)
+      (create_action?(action) or destroy_action?(action)) and human_note_for_ticket?
     end
     
     def iris_action_in_bhrs?(note) 
