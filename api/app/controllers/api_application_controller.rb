@@ -111,6 +111,10 @@ class ApiApplicationController < MetalApiController
     end
   end
 
+  def cname_params
+    params[cname]
+  end
+
   protected
 
     def requires_feature(*f) # Should be from cache. Need to revisit.

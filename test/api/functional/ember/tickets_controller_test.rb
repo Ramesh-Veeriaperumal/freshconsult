@@ -358,143 +358,6 @@ module Ember
       assert_response 204
     end
 
-    def test_bulk_execute_scenario_with_invalid_ticket_ids
-      scenario_id = create_scn_automation_rule(scenario_automation_params).id
-      ticket_ids = []
-      rand(2..10).times do
-        ticket_ids << create_ticket(ticket_params_hash).display_id
-      end
-      invalid_ids = [ticket_ids.last + 20, ticket_ids.last + 30]
-      id_list = [*ticket_ids, *invalid_ids]
-      put :bulk_execute_scenario, construct_params({ version: 'private' }, { scenario_id: scenario_id, ids: id_list })
-      failures = {}
-      invalid_ids.each { |id| failures[id] = { :id => :"is invalid" } }
-      match_json(partial_success_response_pattern(ticket_ids, failures))
-      assert_response 202
-    end
-
-    def test_bulk_execute_scenario_without_scenario_id
-      scenario_id = create_scn_automation_rule(scenario_automation_params).id
-      ticket_ids = []
-      rand(2..10).times do
-        ticket_ids << create_ticket(ticket_params_hash).display_id
-      end
-      put :bulk_execute_scenario, construct_params({ version: 'private' }, { ids: ticket_ids })
-      assert_response 400
-      match_json([bad_request_error_pattern('scenario_id', :missing_field)])
-    end
-
-    def test_bulk_execute_scenario_with_invalid_scenario_id
-      scenario_id = create_scn_automation_rule(scenario_automation_params).id
-      ticket_ids = []
-      rand(2..10).times do
-        ticket_ids << create_ticket(ticket_params_hash).display_id
-      end
-      put :bulk_execute_scenario, construct_params({ version: 'private' }, { scenario_id: scenario_id + 10, ids: ticket_ids })
-      assert_response 400
-      match_json([bad_request_error_pattern('scenario_id', :absent_in_db, resource: :scenario, attribute: :scenario_id)])
-    end
-
-    def test_bulk_execute_scenario_with_valid_ids
-      scenario_id = create_scn_automation_rule(scenario_automation_params).id
-      ticket_ids = []
-      rand(2..10).times do
-        ticket_ids << create_ticket(ticket_params_hash).display_id
-      end
-      put :bulk_execute_scenario, construct_params({ version: 'private' }, { scenario_id: scenario_id, ids: ticket_ids })
-      assert_response 202
-    end
-
-    def test_bulk_update_with_no_params
-      put :bulk_update, construct_params({ version: 'private' }, {})
-      match_json([bad_request_error_pattern('ids', :missing_field),
-                  bad_request_error_pattern('properties', :missing_field)])
-      assert_response 400
-    end
-
-    def test_bulk_update_with_incorrect_values
-      ticket_ids = []
-      rand(2..4).times do
-        ticket_ids << create_ticket.id
-      end
-      statuses = Helpdesk::TicketStatus.status_objects_from_cache(@account).map(&:status_id)
-      incorrect_values = { priority: 90, status: statuses.last + 1, type: 'jksadjxyz' }
-      params_hash = {ids: ticket_ids, properties: update_ticket_params_hash.merge(incorrect_values) }
-      put :bulk_update, construct_params({ version: 'private' }, params_hash)
-      match_json([bad_request_error_pattern('priority', :not_included, list: '1,2,3,4'),
-                bad_request_error_pattern('status', :not_included, list: statuses.join(',')),
-                bad_request_error_pattern('type', :not_included, list: 'Question,Incident,Problem,Feature Request')])
-      assert_response 400
-    end
-
-    def test_bulk_update_with_invalid_params
-      ticket_ids = []
-      rand(2..4).times do
-        ticket_ids << create_ticket.id
-      end
-      params_hash = {ids: ticket_ids, properties: update_ticket_params_hash.merge(responder_id: User.last.id + 10) }
-      put :bulk_update, construct_params({ version: 'private' }, params_hash)
-      match_json([bad_request_error_pattern('responder_id', :absent_in_db, resource: :agent, attribute: :responder_id)])
-      assert_response 400
-    end
-
-    def test_bulk_update_with_invalid_ids
-      ticket_ids = []
-      rand(2..4).times do
-        ticket_ids << create_ticket.id
-      end
-      invalid_ids = [ticket_ids.last + 10, ticket_ids.last + 20]
-      params_hash = {ids: [*ticket_ids, *invalid_ids], properties: update_ticket_params_hash }
-      put :bulk_update, construct_params({ version: 'private' }, params_hash)
-      failures = {}
-      invalid_ids.each { |id| failures[id] = { :id => :"is invalid" } }
-      match_json(partial_success_response_pattern(ticket_ids, failures))
-      assert_response 202
-    end
-
-    def test_bulk_update_with_custom_fields
-      ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_text_#{@account.id}" }
-      ticket_field.update_attribute(:required_for_closure, true)
-      ticket_ids = []
-      rand(2..4).times do
-        ticket_ids << create_ticket.id
-      end
-      properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by).merge(status: 5)
-      params_hash = {ids: ticket_ids, properties: properties_hash}
-      put :bulk_update, construct_params({ version: 'private' }, params_hash)
-      failures = {}
-      ticket_ids.each {|id| failures[id] = { ticket_field.label => [:datatype_mismatch, { code: :missing_field, expected_data_type: :String }]}}
-      match_json(partial_success_response_pattern([], failures))
-      assert_response 202
-      ticket_field.update_attribute(:required_for_closure, false)
-    end
-
-    def test_bulk_update_success
-      ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_text_#{@account.id}" }
-      ticket_field.update_attribute(:required_for_closure, true)
-      ticket_ids = []
-      rand(2..4).times do
-        ticket_ids << create_ticket.id
-      end
-      properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by).merge(status: 5, custom_fields: {ticket_field.label => 'Sample text'})
-      params_hash = {ids: ticket_ids, properties: properties_hash}
-      put :bulk_update, construct_params({ version: 'private' }, params_hash)
-      match_json(partial_success_response_pattern(ticket_ids, {}))
-      assert_response 202
-      ticket_field.update_attribute(:required_for_closure, false)
-    end
-
-    def test_bulk_update_async
-      ticket_ids = []
-      10.times do
-        ticket_ids << create_ticket.id
-      end
-      params_hash = {ids: ticket_ids, properties: update_ticket_params_hash}
-      put :bulk_update, construct_params({ version: 'private' }, params_hash)
-      match_json(partial_success_response_pattern(ticket_ids, {}))
-      assert_response 202
-    end
-
     # tests for latest note
     # 1. invalid ticket id
     # 2. ticket with no permission
@@ -657,6 +520,40 @@ module Ember
       ticket_field.update_attribute(:required_for_closure, false)
       assert_response 400
       match_json([bad_request_error_pattern(ticket_field.label, :datatype_mismatch, expected_data_type: String)])
+    end
+
+    def test_update_properties_closure_of_parent_ticket_failure
+      parent_ticket = create_ticket
+      child_ticket = create_ticket
+      Helpdesk::Ticket.any_instance.stubs(:child_ticket?).returns(true)
+      Helpdesk::Ticket.any_instance.stubs(:associates).returns([child_ticket.display_id])
+      Helpdesk::Ticket.any_instance.stubs(:association_type).returns(TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:assoc_parent])
+      params_hash = { status: 4 }
+      put :update_properties, construct_params({ version: 'private', id: parent_ticket.display_id }, params_hash)
+      assert_response 400
+      match_json([bad_request_error_pattern('status', :unresolved_child)])
+    end
+
+    def test_update_properties_closure_of_parent_ticket_success
+      parent_ticket = create_ticket
+      child_ticket = create_ticket(status: 4)
+      Helpdesk::Ticket.any_instance.stubs(:child_ticket?).returns(true)
+      Helpdesk::Ticket.any_instance.stubs(:associates).returns([child_ticket.display_id])
+      Helpdesk::Ticket.any_instance.stubs(:association_type).returns(TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:assoc_parent])
+      params_hash = { status: 4 }
+      put :update_properties, construct_params({ version: 'private', id: parent_ticket.display_id }, params_hash)
+      assert_response 204
+      parent_ticket.reload
+      assert_equal 4, parent_ticket.status
+    end
+
+    def test_update_properties_closure_status_without_notification
+      ticket = create_ticket
+      params_hash = { status: 5, skip_close_notification: true }
+      put :update_properties, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      assert_response 204
+      ticket.reload
+      assert_equal 5, ticket.status
     end
 
     def test_show_with_facebook_post

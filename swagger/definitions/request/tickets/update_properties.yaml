@@ -15,3 +15,5 @@ properties:
       type: array
       items:
         type: string
+    skip_close_notification:
+      type: boolean

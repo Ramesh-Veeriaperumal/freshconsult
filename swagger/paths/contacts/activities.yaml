@@ -4,7 +4,7 @@
     description: "Recent Activities of the User based on Tickets & Forums. You can filter activity by using params in url : 
     1. ?type=tickets for tickets, 
     2. ?type=forums for forums & 
-    3. ?type=archived_tickets for archived tickets 
+    3. ?type=archived_tickets for archived tickets
     activities."
     tags: [contact]
     parameters:

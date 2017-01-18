@@ -4085,17 +4085,25 @@
         },
         "reply": {
           "type": "object",
-          "description": "** pending implementation",
           "properties": {
             "body": {
               "type": "string",
               "description": "reply content"
             },
+            "from_email": {
+              "type": "string"
+            },
             "attachment_ids": {
               "type": "array",
-              "description": "attachment ids",
+              "description": "Draft attachment/Shared attachment IDs",
               "items": {
-                "type": "integer"
+                "type": "number"
+              }
+            },
+            "cloud_files": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/cloud_file_input"
               }
             }
           }
@@ -4124,6 +4132,9 @@
             },
             "twitter_id": {
               "type": "string"
+            },
+            "skip_close_notification": {
+              "type": "boolean"
             }
           }
         }
@@ -4199,6 +4210,9 @@
           "items": {
             "type": "string"
           }
+        },
+        "skip_close_notification": {
+          "type": "boolean"
         }
       }
     },

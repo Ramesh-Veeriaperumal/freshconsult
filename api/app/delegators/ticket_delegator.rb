@@ -12,22 +12,24 @@ class TicketDelegator < BaseDelegator
                                 validatable_custom_fields: proc { |x| TicketsValidationHelper.custom_dropdown_fields(x) },
                                 drop_down_choices: proc { TicketsValidationHelper.custom_dropdown_field_choices },
                                 nested_field_choices: proc { TicketsValidationHelper.custom_nested_field_choices },
-                                required_based_on_status: proc { |x| x.required_based_on_status? },
+                                required_based_on_status: proc { |x| x.closure_status? },
                                 required_attribute: :required,
                                 section_field_mapping: proc { |x| TicketsValidationHelper.section_field_parent_field_mapping }
                               }
-                            }, unless: :property_update?
+                            }, unless: -> { property_update? || bulk_update? }
   validates :custom_field_via_mapping,  custom_field: { custom_field_via_mapping:
                               {
                                 validatable_custom_fields: proc { |x| TicketsValidationHelper.custom_dropdown_fields(x) },
                                 drop_down_choices: proc { TicketsValidationHelper.custom_dropdown_field_choices },
                                 nested_field_choices: proc { TicketsValidationHelper.custom_nested_field_choices },
-                                required_based_on_status: proc { |x| x.required_based_on_status? }
+                                required_based_on_status: proc { |x| x.closure_status? }
                               }
                             }, if: :property_update?
   validate :facebook_id_exists?, if: -> { !property_update? && facebook_id }
 
   validate :validate_application_id, if: -> { cloud_files.present? }
+
+  validate :validate_closure, if: -> { status && attr_changed?('status') && !bulk_update? }
 
   def initialize(record, options)
     @ticket_fields = options[:ticket_fields]
@@ -78,7 +80,7 @@ class TicketDelegator < BaseDelegator
     errors[:requester_id] << :user_blocked if requester && requester.blocked?
   end
 
-  def required_based_on_status?
+  def closure_status?
     [ApiTicketConstants::CLOSED, ApiTicketConstants::RESOLVED].include?(status.to_i)
   end
 
@@ -98,11 +100,20 @@ class TicketDelegator < BaseDelegator
     end
   end
 
-  def property_update?
-    [:update_properties].include?(validation_context)
+  def validate_closure
+    return unless closure_status?
+    errors[:status] << :unresolved_child if self.assoc_parent_ticket? && self.validate_assoc_parent_tkt_status
   end
 
   private
+
+     def property_update?
+      [:update_properties].include?(validation_context)
+    end
+
+    def bulk_update?
+      [:bulk_update].include?(validation_context)
+    end
 
     # skip shared attachments
     def skip_existing_attachments(options)

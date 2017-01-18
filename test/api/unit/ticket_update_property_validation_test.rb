@@ -170,6 +170,42 @@ class TicketUpdatePropertyValidationTest < ActionView::TestCase
     Account.unstub(:current)
   end
 
+  def test_parent_ticket_closure_validation
+    Account.stubs(:current).returns(Account.first)
+    item = Helpdesk::Ticket.new(requester_id: 1, status: 2, priority: 3, source: 10)
+    Helpdesk::Ticket.any_instance.stubs(:assoc_parent_ticket?).returns(true)
+    Helpdesk::Ticket.any_instance.stubs(:validate_assoc_parent_tkt_status).returns(true)
+    controller_params = { status: 4, statuses: statuses, ticket_fields: [] }
+    ticket_validation = TicketUpdatePropertyValidation.new(controller_params, item)
+    refute ticket_validation.valid?
+    errors = ticket_validation.errors.full_messages
+    assert errors.include?('Status unresolved_child')
+    Helpdesk::Ticket.any_instance.unstub(:assoc_parent_ticket?)
+    Helpdesk::Ticket.any_instance.unstub(:validate_assoc_parent_tkt_status)
+
+    Helpdesk::Ticket.any_instance.stubs(:assoc_parent_ticket?).returns(false)
+    controller_params = { status: 4, statuses: statuses, ticket_fields: [] }
+    ticket_validation = TicketUpdatePropertyValidation.new(controller_params, item)
+    assert ticket_validation.valid?
+    Helpdesk::Ticket.any_instance.unstub(:assoc_parent_ticket?)
+    Account.unstub(:current)
+  end
+
+  def test_skip_notification_validation
+    Account.stubs(:current).returns(Account.first)
+    item = Helpdesk::Ticket.new(requester_id: 1, status: 2, priority: 3, source: 10)
+    controller_params = { status: 3, statuses: statuses, ticket_fields: [], 'skip_close_notification' => true }
+    ticket_validation = TicketUpdatePropertyValidation.new(controller_params, item)
+    refute ticket_validation.valid?
+    errors = ticket_validation.errors.full_messages
+    assert errors.include?('Skip close notification cannot_set_skip_notification')
+
+    controller_params = { status: 5, statuses: statuses, ticket_fields: [], 'skip_close_notification' => true }
+    ticket_validation = TicketUpdatePropertyValidation.new(controller_params, item)
+    assert ticket_validation.valid?
+    Account.unstub(:current)
+  end
+
   def test_validation_success
     Account.stubs(:current).returns(Account.first)
     controller_params = { 'group_id' => 10, 'responder_id' => 10, status: 3, priority: 2, statuses: statuses, ticket_fields: [], tags: ["tag1", "tag2"]}

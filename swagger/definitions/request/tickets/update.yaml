@@ -12,3 +12,5 @@ allOf:
         type: string
       twitter_id:
         type: string
+      skip_close_notification:
+        type: boolean

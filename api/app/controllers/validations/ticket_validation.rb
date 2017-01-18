@@ -1,19 +1,18 @@
 class TicketValidation < ApiValidation
   MANDATORY_FIELD_ARRAY = [:requester_id, :phone, :email, :twitter_id, :facebook_id].freeze
   MANDATORY_FIELD_STRING = MANDATORY_FIELD_ARRAY.join(', ').freeze
-  CHECK_PARAMS_SET_FIELDS = (MANDATORY_FIELD_ARRAY.map(&:to_s) + %w(fr_due_by due_by subject description custom_fields)).freeze
+  CHECK_PARAMS_SET_FIELDS = (MANDATORY_FIELD_ARRAY.map(&:to_s) + %w(fr_due_by due_by subject description custom_fields skip_close_notification)).freeze
 
   attr_accessor :id, :cc_emails, :description, :due_by, :email_config_id, :fr_due_by, :group, :priority, :email,
                 :phone, :twitter_id, :facebook_id, :requester_id, :name, :agent, :source, :status, :subject, :ticket_type,
                 :product, :tags, :custom_fields, :attachments, :request_params, :item, :statuses, :status_ids, :ticket_fields, :scenario_id,
-                :primary_id, :ticket_ids, :note_in_primary, :note_in_secondary, :convert_recepients_to_cc, :cloud_files
+                :primary_id, :ticket_ids, :note_in_primary, :note_in_secondary, :convert_recepients_to_cc, :cloud_files, :skip_close_notification
 
   alias_attribute :type, :ticket_type
   alias_attribute :product_id, :product
   alias_attribute :group_id, :group
   alias_attribute :responder_id, :agent
 
-  before_validation :skip_base_validations
   # Default fields validation
   validates :subject, custom_absence: { message: :outbound_email_field_restriction }, if: :source_as_outbound_email?, on: :update
   validates :description, custom_absence: { message: :outbound_email_field_restriction }, if: :source_as_outbound_email?, on: :update
@@ -85,7 +84,7 @@ class TicketValidation < ApiValidation
   validates :custom_fields, custom_field: { custom_fields:
                               {
                                 validatable_custom_fields: proc { |x| TicketsValidationHelper.custom_non_dropdown_fields(x) },
-                                required_based_on_status: proc { |x| x.required_based_on_status? },
+                                required_based_on_status: proc { |x| x.closure_status? },
                                 required_attribute: :required,
                                 ignore_string: :allow_string_param,
                                 section_field_mapping: proc { |x| TicketsValidationHelper.section_field_parent_field_mapping }
@@ -115,6 +114,9 @@ class TicketValidation < ApiValidation
   validates :cloud_files, array: { data_type: { rules: Hash, allow_nil: false } }
 
   validate :validate_cloud_files, if: -> { cloud_files.present? && errors[:cloud_files].blank? }
+
+  validates :skip_close_notification, custom_absence: { allow_nil: false, message: :cannot_set_skip_notification }, unless: -> { request_params.key?(:status) && closure_status? }
+  validates :skip_close_notification, data_type: { rules: 'Boolean', ignore_string: :allow_string_param }, if: -> { errors[:skip_close_notification].blank? }
 
   def initialize(request_params, item, allow_string_param = false)
     @request_params = request_params
@@ -159,7 +161,7 @@ class TicketValidation < ApiValidation
     end
   end
 
-  def required_based_on_status?
+  def closure_status?
     status.respond_to?(:to_i) && [ApiTicketConstants::CLOSED, ApiTicketConstants::RESOLVED].include?(status.to_i)
   end
 
@@ -181,8 +183,7 @@ class TicketValidation < ApiValidation
   end
 
   def required_default_fields
-    closure_status = required_based_on_status?
-    ticket_fields.select { |x| x.default && (x.required || (x.required_for_closure && closure_status)) }
+    ticket_fields.select { |x| x.default && (x.required || (x.required_for_closure && closure_status?)) }
   end
 
   def sources
@@ -222,10 +223,6 @@ class TicketValidation < ApiValidation
     [:update, :bulk_update].include?(validation_context)
   end
 
-  def skip_base_validations
-    self.skip_bulk_validations = true if is_bulk_update?
-  end
-
   def execute_scenario?
     [:execute_scenario, :bulk_execute_scenario].include?(validation_context)
   end
@@ -245,5 +242,4 @@ class TicketValidation < ApiValidation
     end
     errors[:cloud_files] << :"is invalid" if cloud_file_hash_errors.present?
   end
-
 end

@@ -56,16 +56,6 @@ class Helpdesk::BulkReplyTickets
     end
 
     def load_new_attachments
-      (fetch_attachment_records || []).map do |attachment_obj|
-        io  = open attachment_obj.authenticated_s3_get_url
-        if io
-          def io.original_filename; base_uri.path.split('/').last.gsub("%20"," "); end
-        end
-        io
-      end
-    end
-
-    def fetch_attachment_records
       Helpdesk::Attachment.find_all_by_id_and_account_id(params[:helpdesk_note]["attachments"], params[:account_id])
     end
 
@@ -116,12 +106,15 @@ class Helpdesk::BulkReplyTickets
     def build_attachments note
       build_new_attachments(note)
       build_cloud_file_attachments(note)
-      build_shared_attachments(note)
+      # Shared attachments will be removed moving forward
+      # build_shared_attachments(note)
+      # Used by Private API
+      build_cloud_files_from_params(note) if params[:cloud_files]
     end
 
     def build_new_attachments note
-      (attachments[:new] || []).each do |att|
-        note.attachments.build(:content => att , :account_id => note.account_id)
+      [*attachments[:new], *attachments[:shared]].each do |att|
+        note.attachments.build(:content => att.to_io , :account_id => note.account_id)
       end
     end 
 
@@ -129,6 +122,10 @@ class Helpdesk::BulkReplyTickets
       (attachments[:shared] || []).each do |a|
         note.shared_attachments.build(:account_id => note.account_id,:attachment=> a )
       end
+    end
+
+    def build_cloud_files_from_params note
+      note.cloud_files.build(params[:cloud_files])
     end
 
     def build_cloud_file_attachments note

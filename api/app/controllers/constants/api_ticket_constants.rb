@@ -8,11 +8,12 @@ module ApiTicketConstants
                      email phone twitter_id facebook_id requester_id name responder_id source status subject type product_id).freeze | ARRAY_FIELDS | HASH_FIELDS | AttachmentConstants::CLOUD_FILE_FIELDS
   UPDATE_FIELDS = %w(description due_by email_config_id fr_due_by group_id priority
                      email phone twitter_id facebook_id requester_id name responder_id source status subject type product_id).freeze | (ARRAY_FIELDS - ['cc_emails']) | HASH_FIELDS
-  BULK_UPDATE_FIELDS = UPDATE_FIELDS - ['attachments'].freeze
+  BULK_REPLY_FIELDS = [reply: ([:body, :from_email, :attachment_ids] | AttachmentConstants::CLOUD_FILE_FIELDS)].freeze
+  BULK_UPDATE_FIELDS = ((UPDATE_FIELDS - ['attachments']) | %w(skip_close_notification)).freeze
   EXECUTE_SCENARIO_FIELDS = BULK_EXECUTE_SCENARIO_FIELDS = %w(scenario_id).freeze
   COMPOSE_EMAIL_FIELDS = (CREATE_FIELDS - %w(source product_id responder_id requester_id phone twitter_id facebook_id)).freeze
   SHOW_FIELDS = ['include'].freeze
-  UPDATE_PROPERTIES_FIELDS = %w(due_by responder_id group_id status priority tags).freeze
+  UPDATE_PROPERTIES_FIELDS = %w(due_by responder_id group_id status priority tags  skip_close_notification).freeze
   ALLOWED_INCLUDE_PARAMS = %w(conversations requester company stats survey).freeze
   SIDE_LOADING = %w(requester stats survey).freeze
   INCLUDE_PRELOAD_MAPPING = { 'stats' => :ticket_states }.freeze
@@ -50,6 +51,7 @@ module ApiTicketConstants
   # Wrap parameters args
   WRAP_PARAMS = [:ticket, exclude: [], format: [:json, :multipart_form]].freeze
   MERGE_WRAP_PARAMS = [:merge, exclude: [], format: [:json]].freeze
+  BULK_WRAP_PARAMS = [:bulk_action, exclude: [], format: [:json]].freeze
 
   ALLOWED_CONTENT_TYPE_FOR_ACTION = {
     create: [:json, :multipart_form],
@@ -87,5 +89,5 @@ module ApiTicketConstants
 
   PARAMS_TO_REMOVE = [:cc_emails, :description].freeze
   PARAMS_MAPPINGS = { custom_fields: :custom_field, fr_due_by: :frDueBy, type: :ticket_type }.freeze
-  PARAMS_TO_SAVE_AND_REMOVE = [:status, :cloud_files, :attachment_ids].freeze
+  PARAMS_TO_SAVE_AND_REMOVE = [:status, :cloud_files, :attachment_ids, :skip_close_notification].freeze
 end.freeze

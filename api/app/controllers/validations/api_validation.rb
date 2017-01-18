@@ -1,13 +1,12 @@
 class ApiValidation
   include ActiveModel::Validations
   include ActiveModel::Validations::Callbacks
-  attr_accessor :error_options, :allow_string_param, :ids, :properties, :attachment_ids, :skip_bulk_validations, :skip_hash_params_set
+  attr_accessor :error_options, :allow_string_param, :ids, :attachment_ids, :skip_bulk_validations, :skip_hash_params_set
 
   before_validation :trim_attributes
   validates :ids, required: true, data_type: { rules: Array, allow_nil: false }, 
             array: { custom_numericality: { only_integer: true, greater_than: 0, allow_nil: false, ignore_string: :allow_string_param} },
             custom_length: { maximum: ApiConstants::MAX_ITEMS_FOR_BULK_ACTION, message_options: { element_type: :values } }, if: :is_bulk_action?, unless: :skip_bulk_validations
-  validates :properties, required: true, data_type: { rules: Hash, allow_nil: false }, if: :is_bulk_update?, unless: :skip_bulk_validations
   validates :attachment_ids, data_type: { rules: Array, allow_nil: false }, array: { custom_numericality: { only_integer: true, greater_than: 0, allow_nil: false, ignore_string: :allow_string_param} }
 
   FORMATTED_TYPES = [ActiveSupport::TimeWithZone]
@@ -88,9 +87,4 @@ class ApiValidation
   def is_bulk_action?
     ApiConstants::BULK_ACTION_METHODS.include?(validation_context)
   end
-
-  def is_bulk_update?
-    [:bulk_update].include?(validation_context)
-  end
-
 end

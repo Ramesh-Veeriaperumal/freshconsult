@@ -1,9 +1,10 @@
 class TicketUpdatePropertyValidation < ApiValidation
   MANDATORY_FIELD_ARRAY = [:due_by, :agent, :group, :status].freeze
   MANDATORY_FIELD_STRING = MANDATORY_FIELD_ARRAY.join(', ').freeze
-  CHECK_PARAMS_SET_FIELDS = %w(due_by).freeze
+  CHECK_PARAMS_SET_FIELDS = %w(due_by skip_close_notification).freeze
 
-  attr_accessor :due_by, :fr_due_by, :agent, :group, :status, :priority, :request_params, :status_ids, :statuses, :ticket_fields, :custom_fields, :tags
+  attr_accessor :due_by, :fr_due_by, :agent, :group, :status, :priority, :item, :request_params, :status_ids, :statuses, :ticket_fields, 
+                :custom_fields, :tags, :skip_close_notification
 
   alias_attribute :group_id, :group
   alias_attribute :responder_id, :agent
@@ -31,13 +32,18 @@ class TicketUpdatePropertyValidation < ApiValidation
   validates :custom_fields, custom_field: { custom_fields:
                               {
                                 validatable_custom_fields: proc { |x| TicketsValidationHelper.custom_non_dropdown_fields(x) },
-                                required_based_on_status: proc { |x| x.required_based_on_status? }
+                                required_based_on_status: proc { |x| x.closure_status? }
                               }
                             }, if: -> { errors.blank? && request_params.key?(:status) }
 
   # Tags validations
   validates :tags, data_type: { rules: Array }, array: { data_type: { rules: String, allow_nil: true }, custom_length: { maximum: ApiConstants::TAG_MAX_LENGTH_STRING } }
   validates :tags, string_rejection: { excluded_chars: [','], allow_nil: true }
+
+  validates :skip_close_notification, custom_absence: { allow_nil: false, message: :cannot_set_skip_notification }, unless: -> { request_params.key?(:status) && closure_status? }
+  validates :skip_close_notification, data_type: { rules: 'Boolean', ignore_string: :allow_string_param }, if: -> { errors[:skip_close_notification].blank? }
+
+  validate :validate_closure, if: -> { item && request_params.key?(:status) }
 
   def initialize(request_params, item, allow_string_param = false)
     @request_params = request_params
@@ -61,7 +67,7 @@ class TicketUpdatePropertyValidation < ApiValidation
     end
   end
 
-  def required_based_on_status?
+  def closure_status?
     status.respond_to?(:to_i) && [ApiTicketConstants::CLOSED, ApiTicketConstants::RESOLVED].include?(status.to_i)
   end
 
@@ -75,8 +81,7 @@ class TicketUpdatePropertyValidation < ApiValidation
   end
 
   def required_default_fields
-    closure_status = required_based_on_status?
-    ticket_fields.select { |x| x.default && (x.required || (x.required_for_closure && closure_status)) }
+    ticket_fields.select { |x| x.default && (x.required || (x.required_for_closure && closure_status?)) }
   end
 
   def default_field_validations
@@ -94,5 +99,10 @@ class TicketUpdatePropertyValidation < ApiValidation
       errors[:request] << :fill_a_mandatory_field
       error_options.merge!(request: { field_names: MANDATORY_FIELD_STRING })
     end
+  end
+
+  def validate_closure
+    return unless closure_status?
+    errors[:status] << :unresolved_child if item.assoc_parent_ticket? && item.validate_assoc_parent_tkt_status
   end
 end
