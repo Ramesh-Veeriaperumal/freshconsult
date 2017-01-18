@@ -8,6 +8,7 @@ module Ember
 
     INDEX_PRELOAD_OPTIONS = [:tags, :ticket_old_body, :schema_less_ticket, :flexifield, { requester: [:avatar, :flexifield, :default_user_company] }].freeze
     DEFAULT_TICKET_FILTER = :all_tickets.to_s.freeze
+    SINGULAR_RESPONSE_FOR = %w(show create update split_note).freeze
 
     before_filter :ticket_permission?, only: [:latest_note, :split_note]
     before_filter :load_note, only: [:split_note]
