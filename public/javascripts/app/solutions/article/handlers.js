@@ -78,7 +78,7 @@ window.App = window.App || {};
     setFormValues: function () {
       var html = this.data.description;
       $('#solution_article_title').val(this.data.title);
-      $('#solution_article_description').text(html.replace(/<p>\s*?<\/p>/g,''));
+      $('#solution_article_description').text(html.replace(/<p>\s*?<\/p>/g,'').replace(/<div>\s*?<\/div>/g,''));
     },
 
     cancel_UI_toggle: function () {
