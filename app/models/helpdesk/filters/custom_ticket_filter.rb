@@ -100,6 +100,10 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
 
   USER_COLUMNS = ["responder_id", "helpdesk_subscriptions.user_id", "helpdesk_schema_less_tickets.long_tc04"]
   GROUP_COLUMNS = ["group_id", "helpdesk_schema_less_tickets.long_tc03"]
+  SCHEMA_LESS_COLUMNS = ["helpdesk_schema_less_tickets.boolean_tc02", "helpdesk_schema_less_tickets.product_id", 
+      "helpdesk_schema_less_tickets.#{Helpdesk::SchemaLessTicket.association_type_column}",
+      "helpdesk_schema_less_tickets.#{Helpdesk::SchemaLessTicket.internal_group_column}",
+      "helpdesk_schema_less_tickets.#{Helpdesk::SchemaLessTicket.internal_agent_column}"]
 
   after_create :create_accesible
   after_update :save_accessible
@@ -398,7 +402,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     all_joins[0].concat(monitor_ships_join) if all_conditions[0].include?("helpdesk_subscriptions.user_id")
     all_joins[0].concat(tags_join) if all_conditions[0].include?("helpdesk_tags.name")
     all_joins[0].concat(statues_join) if all_conditions[0].include?("helpdesk_ticket_statuses")
-    all_joins[0].concat(schema_less_join) if schema_less_join_condition(all_conditions)
+    all_joins[0].concat(schema_less_join) if join_schema_less?(all_conditions)
     all_joins[0].concat(article_tickets_join) if self.name == "article_feedback"
     all_joins[0].concat(articles_join) if self.name == "my_article_feedback"
     all_joins[0].concat(states_join) if sort_by_response?
@@ -478,8 +482,8 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
 
   private
 
-  def schema_less_join_condition all_conditions
-    (all_conditions[0].include?("helpdesk_schema_less_tickets.boolean_tc02") or all_conditions[0].include?("helpdesk_schema_less_tickets.product_id") or all_conditions[0].include?("helpdesk_schema_less_tickets.#{Helpdesk::SchemaLessTicket.association_type_column}")) and !Account.current.features?(:shared_ownership)
+  def join_schema_less? all_conditions
+    SCHEMA_LESS_COLUMNS.any?{|col| all_conditions[0].include?(col)} && (!Account.current.features?(:shared_ownership) || User.current.all_tickets_permission?)
   end
 
   def handle_special_values(condition, user_types = USER_COLUMNS, group_types = GROUP_COLUMNS)

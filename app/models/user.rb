@@ -679,6 +679,14 @@ class User < ActiveRecord::Base
     self.privilege?(:manage_tickets) && agent.group_ticket_permission
   end
 
+  def assigned_ticket_permission
+    self.privilege?(:manage_tickets) && agent.assigned_ticket_permission
+  end
+
+  alias :all_tickets_permission?      :can_view_all_tickets?
+  alias :group_tickets_permission?    :group_ticket_permission
+  alias :assigned_tickets_permission? :assigned_ticket_permission
+
   def associated_group_ids
     agent_groups.pluck(:group_id).insert(0,0)
   end
@@ -692,10 +700,7 @@ class User < ActiveRecord::Base
     group_id && associated_group_ids.include?(group_id)
   end
 
-  def assigned_ticket_permission
-    self.privilege?(:manage_tickets) && agent.assigned_ticket_permission
-  end
-
+  
   def ticket_agent?(ticket)
     ticket.responder_id == self.id || (Account.current.features?(:shared_ownership) ? ticket.internal_agent_id == self.id : false)
   end
