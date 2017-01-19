@@ -32,8 +32,9 @@ class Middleware::Pod
         @status, @headers, @response = @app.call(env)
         return @status,@headers,@response
       end
+    else
+      @status, @headers, @response = @app.call(env)
     end
-    @status, @headers, @response = @app.call(env)
   end
 
   # TODOLOGIN: Need to introduce remote_id type here
