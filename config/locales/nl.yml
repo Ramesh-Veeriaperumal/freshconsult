@@ -5466,7 +5466,7 @@ nl:
   choose_plan_contact_us_v1: "De prijzen van Freshdesk zijn herzien. <a href='#' id='special_pricing'>Neem contact met ons op voor meer informatie en voor een offerte.</a>"
   choose_plan_contact_us_v2: "We hebben uw aanvraag voor een speciale prijs ontvangen. Een van onze teamleden neemt binnenkort contact met u op."
   special_pricing_ack: "Bedankt voor uw interesse in Freshdesk. Een van onze verkoopmedewerkers neemt binnenkort contact met u op over uw aanvraag."
- trial_expired: "Uw proefabonnement is verlopen en uw account is gedeactiveerd. Als u uw abonnement wilt bijwerken, neemt u contact op via support@freshdesk.com."
+  trial_expired: "Uw proefabonnement is verlopen en uw account is gedeactiveerd. Als u uw abonnement wilt bijwerken, neemt u contact op via support@freshdesk.com."
   asked_on: "Gevraagd op"
   this_ticket_has_been_deleted: "Dit ticket is verwijderd."
   state: Provincie
