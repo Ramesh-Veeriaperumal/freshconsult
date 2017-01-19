@@ -172,10 +172,11 @@ class RabbitmqWorker
     end
 
     def iris_routing_key?(exchange, key)
-      ((exchange.starts_with?("tickets") && key[14] == "1") || 
-      	(exchange.starts_with?("notes") && key[8] == "1")) || 
-        ((exchange.starts_with?("archive_tickets") && key[4] == "1") || 
-        (exchange.starts_with?("accounts") && key[4] == "1"))
+      (exchange.starts_with?("tickets") && key[14] == "1") || 
+      	(exchange.starts_with?("notes") && key[8] == "1") || 
+        (exchange.starts_with?("archive_tickets") && key[4] == "1") || 
+        (exchange.starts_with?("accounts") && key[4] == "1") ||
+        (exchange.starts_with?("users") && key[4] == "1")
     end
 
     def cti_routing_key?(exchange)
