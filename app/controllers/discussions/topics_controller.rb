@@ -7,6 +7,7 @@ class Discussions::TopicsController < ApplicationController
 
 	rescue_from ActiveRecord::RecordNotFound, :with => :RecordNotFoundHandler
 
+  before_filter :check_account_activation, :only => :create
 	skip_before_filter :check_privilege, :verify_authenticity_token, :only => [ :show, :reply ]
 	before_filter :require_user, :only => :reply
 	before_filter :find_topic, :except => [:index, :create, :new, :destroy_multiple]

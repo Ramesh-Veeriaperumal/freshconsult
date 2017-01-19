@@ -4566,9 +4566,11 @@ en:
       modified_on: "Modified on:"
       related_articles: "Related Articles"
       created_by: "Created by:"
+      activation_warning: "It looks like your account hasn't been verified yet. Please activate it in order to publish an article (you can save your drafts till then)."
     folder:
       filler_text: "Watch this space for articles regarding %{folder_name}"
     topic:
+      activation_warning: "It looks like your account hasn't been verified yet.  Please activate it in order to post a forum topic."
       follow: Follow
       following: Following
       topic_title: Topic title
