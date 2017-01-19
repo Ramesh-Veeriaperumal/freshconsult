@@ -465,6 +465,7 @@ zh-TW:
   choose_plan: 選擇方案
   select_plan: 選擇方案
   change_plan_title: 你確定要更改方案？
+  change_equal_plan_title: "你確定要移至新的 %{to_plan} 方案？"
   downgrade_plan_title: 你確定要降級？
   activate_free_plan: 啟用免費方案
   create: 創建
@@ -2360,6 +2361,7 @@ zh-TW:
   back_plans_billing: 返回“方案與帳單”
   choose_different_plan: 選擇不同的方案
   downgrade_plan: 注意：如果降級方案，你可能會失去現有的一些功能
+  downgrade_plan_v2: 注意：如果降級方案，你可能會失去一些功能！
   f_request: 功能要求
   save_and_create: 儲存且創建另一個
   save_and_new: 儲存並<strong>新建</strong>
@@ -4065,6 +4067,7 @@ zh-TW:
   attach_files: 附加檔案
   plan_amount: 每個客服/每個月
   free_plan_agents: "為%{free_agents}客服"
+  free_plan_agents_v2: 無限制的客服服務
   current_plan_details: "%{plan_name}"
   free_plan_details: "%{plan_name}方案有%{agent_limit}客服"
   add_more_free: "添加更多%{free_agents}客服？"
@@ -4116,6 +4119,54 @@ zh-TW:
     everything_in_estate: 在Estate方案裡的一切
     custom_mailbox: 自訂的郵件伺服器
     ip_restriction: 安全IP限制
+    ticket_dispatch_automation: 工單分派自動化
+    app_gallery: 存取應用程式庫
+    basic_phone: 基本電話和社交管道
+    time_event_automation: 根據時間/事件自動化
+    custom_ticket_fields_and_views: 自訂工單欄位/檢視
+    dkim_dmarc: DKIM/DMARC
+    helpdesk_report: 幫助台深入報表
+    occasional_agents: 兼職的客服
+    social_keyword: 社交的關鍵字監控
+    m_k_base: 多國語言知識庫
+    dynamic_email_alert: 動態電子郵件通知
+    linked_tickets: 連結的工單
+    parent_child: 家長小孩工單
+    scheduled_reports: 排程的報告
+    ticket_templates: 工單範本
+    custom_surveys: 自訂滿意度問卷調查
+    multiple_sla: "多個 SLA 和時區"
+    auto_ticket_assignment: 自動工單分派
+    shared_ownership: 共用的擁有權
+    role_dashboard: 角色式狀態列
+    advanced_dkim: "無限制的 DKIM/DMARC"
+    ip_whitelisting: "IP 白名單"
+    advanced_phone_integration: 進階電話整合
+    machine_learning: 機器學習
+    custom_data_center: 資料中心位置
+    whitelisted_ip_desc: "白名單 IP 位址"
+    custom_mailbox_desc: 自訂電子郵件伺服器
+    advanced_phone_desc: 進階電話功能
+    multiple_products_desc: 多個產品入口網站/知識庫
+    multiple_sla_business_desc: "多個 SLA、時區和工作時間"
+    forums_desc: 社群論壇討論
+    portal_customization_desc: 客戶入口網站自訂
+    custom_roles_desc: 自訂的客服角色
+    custom_ssl_desc: "自訂的 SSL 憑證"
+    enterprise_reports_desc: 企業報告
+    time_event_automation_desc: "時間和事件式的自動化規則 (主管、觀察者)"
+    sla_reminders: "SLA 提醒和升級"
+    shared_ticket_views_desc: 自訂和共用工單檢視
+    custom_fields_desc: 自訂工單和聯絡欄位
+    custom_ticket_views_desc: 自訂工單檢視
+    cname_dkim_desc: "CNAME 和 DKIM 設定"
+    multiple_mailbox_desc: 來自多個郵箱的電子郵件
+    adv_social_desc: 進階社交功能
+    multilingual_kbase_desc: 多個知識庫文章
+    live_chat_desc: 即時聊天設定和文字記錄
+    linked_paren_child_desc: 連結的工單、家長小孩工單工作流程
+    scheduled_reports_desc: 排程的報告
+    custom_survey_desc: 自訂的客戶滿意度問卷調查
   zendesk_account: Zendesk帳戶詳細資料
   zendesk_import_files: 選擇什麼來匯入？
   file_url: 完整的XML匯出URL位址
@@ -4317,9 +4368,20 @@ zh-TW:
   password: 密碼
   enter_payment: 進行付款
   downgrade_confirm: "<span class=\"label label-important\">重點提示</span>&nbsp;&nbsp;您正從<b>%{from}</b>方案降級到<b>%{to}</b>方案。請注意，在此%{from}方案的所有資料和配置關聯到可用的功能都將永久的遺失。<br /><br />查看方案與功能的完整列表，請瀏覽<a target=\"_blank\" href=\"http://freshdesk.com/pricing\">方案和價格</a>。<br />仍不能確定？<a href = \"mailto:support@freshdesk.com\" >讓我們來協助您做決定</a>"
+  downgrade_confirm_v2: "您將從 <b>%{current_plan}</b> 方案降級至 <b>%{new_plan}</b> 方案。"
+  downgrade_confirm_v3: "您將您目前的方案移到新的 <b>%{new_plan}</b> 方案。"
   sprout_free_plan: "<span class=\"label label-important\">重點提示</span>&nbsp;&nbsp;您選擇結束試用和啟動<b>%{new_plan}</b>方案-將有3名永久免費客服。請注意，由於從<b>%{current_plan}</b>降級到<b>%{new_plan}</b>方案，在%{current_plan}方案的所有資料和配置關聯到可用的功能都將永久的遺失。<br /><br />查看方案與功能的完整列表，請瀏覽<a target=\"_blank\" href=\"http://freshdesk.com/pricing\">方案和價格</a>。<br />仍不能確定？<a href = \"mailto:support@freshdesk.com\" >讓我們來協助您做決定</a>"
+  sprout_free_plan_v2: "您已選擇結束 <b>%{current_plan}</b> 試用並啟用 <b>%{new_plan}</b> 方案 - 永遠免費提供無限制的客服服務。"
   downgrade_to_sprout: "<span class=\"label label-important\">重點提示</span>&nbsp;&nbsp;您選擇結束試用和啟動<b>%{new_plan}</b>方案。請注意，由於從<b>%{current_plan}</b>降級到<b>%{new_plan}</b>方案，在%{current_plan}方案的所有資料和配置關聯到可用的功能都將永久的遺失。<br /><br />查看方案與功能的完整列表，請瀏覽<a target=\"_blank\" href=\"http://freshdesk.com/pricing\">方案和價格</a>。<br />仍不能確定？<a href = \"mailto:support@freshdesk.com\" >讓我們來協助您做決定</a>"
+  downgrade_to_sprout_v2: "您已選擇結束 <b>%{current_plan}</b> 試用並啟用 <b>%{new_plan}</b> 方案。"
+  downgrade_loss_message: "<span class=\"label label-important\">重要提示</span> 您將永久失去下列功能上的資料和設定："
+  upgrade_plan_message: "<span class=\"label label-important\">重要提示</span><b>請查看 %{current_plan} 中的額外功能</b>"
+  downgrade_contact_us: "請查看我們的<a target=\"_blank\" href=\"https://freshdesk.com/helpdesk-features\">完整功能比較</a>. <br />還是下不了決定嗎？<a href = \"mailto:support@freshdesk.com\" >我們可以幫助您！</a>"
+  and_more_plan_downgrade: 新增更多...
+  inequal_plan_doubt: 不清楚哪個方案適合您嗎？
+  equal_plan_doubt: 不清楚怎麼做轉換嗎？
   trial_plan_name: "降級試用方案到%{name}"
+  trial_plan_name_v2: "將試用更改為 %{name}"
   errors_in_payment: 您的付款遇到的錯誤：
   email_configs:
     delete_confirm: 您確定要刪除這個配置？
@@ -4816,7 +4878,11 @@ zh-TW:
   not_selected: 沒被選取的
   enter_billing_for_free: 在您選擇付款方案前，請輸入信用卡詳細資料
   will_expire_in: 將到期在
-  choose_plan_trial: "您的帳戶將在試用期結束後失效。 <br />要繼續使用Freshdesk，請在下面選擇一個方案。"
+  choose_plan_trial: "您的帳戶將在試用期結束後失效。 <br />要繼續使用 Freshdesk，請選擇一個方案。"
+  choose_plan_trial_v2: "您的帳戶將在試用期結束後失效。要繼續使用 Freshservice，請在下面選擇一個方案。<br />"
+  choose_plan_contact_us_v1: "我們已經修改 Freshdesk 的價格。<a href='#' id='special_pricing'>請與我們聯絡以取得詳細資料和報價！</a>"
+  choose_plan_contact_us_v2: 我們已經收到您的特殊價格要求，我們團隊將很快與您聯絡。
+  special_pricing_ack: "感謝您對 Freshdesk 的愛護，我們的銷售人員將很快就您的要求與您聯絡。"
   trial_expired: 您的試用已到期，該帳戶已被停用。請聯繫support@freshdesk.com更新您的訂閱。
   asked_on: 被問及對
   this_ticket_has_been_deleted: 此工單已被刪除
@@ -5653,6 +5719,8 @@ zh-TW:
       enable_facebook_page:
         select_all: 全選
         associate: 選擇您想要關聯到幫助台的Facebook頁面。
+        associate_page: "選擇您想要關聯到幫助台的Facebook 頁面。"
+        associate_pages: "選擇您想要關聯到幫助台的Facebook 頁面。"
         no_page_info: "糟糕！...看起來您沒有任何Facebook頁面<a href=\"https://www.facebook.com/pages/create.php\" target='_blank'>創建一個且開始支援服務！...</a>\n"
       engage_info:
         title: 添加您的Facebook頁面
@@ -6869,6 +6937,7 @@ zh-TW:
   select_free_plan: 選擇您的免費方案
   change_details_anytime: 訂閱的細節或方案可以隨時被改變。
   enter_payment_details_to_add: 輸入付款訊息，以增加更多的客服或升級當前的方案
+  enter_payment_details_to_add_v2: 輸入付款資料以升級您目前的方案
   payment_failed: "我們無法處理您的信用卡付款。如果問題仍然存在，請發信給我們 support@freshdesk.com。"
   error_in_update: 我們無法更新您的訂閱。如果問題仍然存在，請發信給我們support@freshdesk.com。
   plan_is_selected: "您的帳戶現在已生效為%{plan}方案"
@@ -7568,7 +7637,7 @@ zh-TW:
       no_credit_card_text: 輸入付款資料以購買電話信用額度
       recharge_now_text: 重填您一次性付款的餘額
       auto_recharge_amt: 自動充值金額
-      see_detailed_pricing: 見詳細價格
+      see_detailed_pricing: 檢視詳細價格
       followup: 電話額度總值
       followup_text: 電話額度總值
     dialpad:
@@ -8599,7 +8668,10 @@ zh-TW:
   selecting_plan: 選擇...
   proceed_billing_info: 是的，進行結帳。
   buy_plan: 購買此方案
+  classic_label: 經典
   agent_seats: "%{no_of_agents}客服"
+  free_plan: 免費方案
+  view_invoices: 查看發票：
   subscribed_billing: "%{billing_cycle}計費"
   next_renewal: "下次更新在%{renewal_period} "
   suspended_since: "自%{days}開始暫停"

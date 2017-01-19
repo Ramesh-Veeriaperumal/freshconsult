@@ -400,7 +400,8 @@ zh-CN:
   basic_details: 自动回复模板管理、分派规则、默认SLA策略、知识库、自助服务门户、域名映射、社区服务支持。
   choose_plan: 选择版本
   select_plan: 选择版本
-  change_plan_title: 确定更改计划吗？
+  change_plan_title: 确定要更改版本吗？
+  change_equal_plan_title: "确定要移至新的 %{to_plan} 版本吗？"
   downgrade_plan_title: 确定降级吗？
   activate_free_plan: 激活免费计划
   create: 创建
@@ -1991,6 +1992,7 @@ zh-CN:
   back_plans_billing: "返回到版本 &amp;amp; 价格"
   choose_different_plan: 选择一个不同的版本
   downgrade_plan: 提示：若降级版本，可能会无法使用某些功能。
+  downgrade_plan_v2: 注意：如果您将本降级，可能会丢失一些功能。
   f_request: 功能请求
   save_and_create: 保存并继续创建
   save_and_new: 保存和<strong>新建<strong>
@@ -3314,6 +3316,7 @@ zh-CN:
   attach_files: 添加附件
   plan_amount: 每客服/月
   free_plan_agents: "%{free_agents}客服"
+  free_plan_agents_v2: 无限客服
   current_plan_details: "%{plan_name}"
   free_plan_details: "%{plan_name}版本%{agent_limit}客服"
   add_more_free: "需要添加超过%{free_agents}客服？"
@@ -3365,6 +3368,54 @@ zh-CN:
     everything_in_estate: Estate中的一切
     custom_mailbox: 自定义邮件服务器
     ip_restriction: 安全IP限制
+    ticket_dispatch_automation: 工单调度自动化
+    app_gallery: 访问应用库
+    basic_phone: 基本电话和社交渠道
+    time_event_automation: 基于时间/事件的自动化
+    custom_ticket_fields_and_views: 自定义工单字段/视图
+    dkim_dmarc: DKIM/DMARC
+    helpdesk_report: "Helpdesk 深入报告"
+    occasional_agents: 临时客服
+    social_keyword: 社交关键字监控
+    m_k_base: 多语言知识库
+    dynamic_email_alert: 动态电子邮件通知
+    linked_tickets: 链接的工单
+    parent_child: 父子工单
+    scheduled_reports: 计划的报表
+    ticket_templates: 工单模板
+    custom_surveys: 自定义满意度调查
+    multiple_sla: "多个 SLA 和时区"
+    auto_ticket_assignment: 自动指派工单
+    shared_ownership: 共享的所有权
+    role_dashboard: 基于角色的操控板
+    advanced_dkim: "无限 DKIM/DMARC"
+    ip_whitelisting: "IP 白名单"
+    advanced_phone_integration: 高级电话集成
+    machine_learning: 机器学习
+    custom_data_center: 数据中心位置
+    whitelisted_ip_desc: "列入白名单的 IP 地址"
+    custom_mailbox_desc: 自定义电子邮件服务器
+    advanced_phone_desc: 高级电话功能
+    multiple_products_desc: 多个产品门户网站/知识库
+    multiple_sla_business_desc: "多个 SLA、时区和工作时间"
+    forums_desc: 社区论坛讨论
+    portal_customization_desc: 客户门户自定义
+    custom_roles_desc: 自定义的客服角色
+    custom_ssl_desc: "自定义 SSL 证书"
+    enterprise_reports_desc: 企业报告
+    time_event_automation_desc: 基于时间和事件的自动化规则（监管器和探测器）
+    sla_reminders: "SLA 提醒与呈报"
+    shared_ticket_views_desc: 自定义和共享的工单视图
+    custom_fields_desc: 自定义工单和联系人字段
+    custom_ticket_views_desc: 自定义工单视图
+    cname_dkim_desc: "CNAME 和 DKIM 配置"
+    multiple_mailbox_desc: 来自多个邮箱的电子邮件
+    adv_social_desc: 高级社交功能
+    multilingual_kbase_desc: 多语言知识库的文章
+    live_chat_desc: 即时聊天配置和聊天记录
+    linked_paren_child_desc: 链接的工单，父子工单工作流
+    scheduled_reports_desc: 计划的报告
+    custom_survey_desc: 自定义的满意度调查
   zendesk_account: Zendesk账号信息
   zendesk_import_files: 选择导入的内容
   file_url: 完整XML导出URL
@@ -3542,9 +3593,20 @@ zh-CN:
   password: 密码
   enter_payment: 进行付款
   downgrade_confirm: "<span class=\"label label-important\">重要提示</span>  您的正在降级账号从<b>%{from}</b>版本到<b>%{to}</b>版本。请注意：%{from}版本中所有相关的数据和配置将永久丢失。<br /><br />查看所有版本及功能，请参阅<a target=\"_blank\" href=\"http://freshdesk.com/pricing\">版本与价格</a>。<br />仍然拿不定主意？<a href = \"mailto:support@freshdesk.com\" >让我们帮助您</a>"
+  downgrade_confirm_v2: "您正在从 <b>%{current_plan}</b> 版本降级到 <b>%{new_plan}</b> 版本。"
+  downgrade_confirm_v3: "您正在从当前版本移至新的 <b>%{new_plan}</b> 版本。"
   sprout_free_plan: "<span class=\"label label-important\">重要</span>&nbsp;&nbsp;您已选择结束试用并免费永久激活<b>%{new_plan}</b>计划 - 3个客服。请注意，由于从<b>%{current_plan}</b>降级到<b>%{new_plan}</b>计划，与%{current_plan}计划中功能相关的所有数据和配置将永久丢失。<br /><br />要查看计划和功能的完整列表，请访问<a target=\"_blank\" href=\"http://freshdesk.com/pricing\">计划和定价</a>。<br />仍不确定？<a href = \"mailto:support@freshdesk.com\" >让我们帮您做决定</a>"
+  sprout_free_plan_v2: "您已选择结束试用 <b>%{current_plan}</b> 并激活 <b>%{new_plan}</b> 版本 - 无限客服且永久免费。"
   downgrade_to_sprout: "<span class=\"label label-important\">重要</span>&nbsp;&nbsp;您已选择结束试用并免费永久激活<b>%{new_plan}</b>计划。请注意，由于从<b>%{current_plan}</b>降级到<b>%{new_plan}</b>计划，与%{current_plan}计划中功能相关的所有数据和配置将永久丢失。<br /><br />要查看计划和功能的完整列表，请访问<a target=\"_blank\" href=\"http://freshdesk.com/pricing\">计划和定价</a>。<br />Still not sure? <a href = \"mailto:support@freshdesk.com\" >让我们帮您做决定</a>"
-  trial_plan_name: "将试用版降级为%{name}"
+  downgrade_to_sprout_v2: "您已选择结束试用 <b>%{current_plan}</b> 并激活 <b>%{new_plan}</b> 版本。"
+  downgrade_loss_message: "<span class=\"label label-important\">重要</span>您将永久丢失以下功能的数据和配置："
+  upgrade_plan_message: "<span class=\"label label-important\">重要</span><b>请检查 %{current_plan} 中的额外功能</b>"
+  downgrade_contact_us: "请参阅我们<a target=\"_blank\" href=\"https://freshdesk.com/helpdesk-features\">完整的功能比较</a>。<br />仍不确定？<a href = \"mailto:support@freshdesk.com\" >我们可以帮您决定！</a>"
+  and_more_plan_downgrade: 还有更多...
+  inequal_plan_doubt: 不确定哪个版本适合您？
+  equal_plan_doubt: 不知道怎样切换版本？
+  trial_plan_name: "将试用版降级为 %{name}"
+  trial_plan_name_v2: "将试用版更改为 %{name}"
   errors_in_payment: 付款时出错：
   email_configs:
     delete_confirm: 确定删除此配置吗？
@@ -3965,7 +4027,11 @@ zh-CN:
   not_selected: 未选定
   enter_billing_for_free: 在选择付费版本前，请首先输入信用卡信息
   will_expire_in: 将到期在
-  choose_plan_trial: "届时您的帐号会失效。<br />若想继续使用Freshdesk，请从下面选择一个版本。"
+  choose_plan_trial: "您的帐户将在试用期结束后停用。<br />若想继续使用 Freshdesk，请选择一个版本。"
+  choose_plan_trial_v2: "您的帐户将在试用期结束后停用。若想继续使用 Freshdesk，请从下面选择一个版本。<br />"
+  choose_plan_contact_us_v1: "我们已经修改了 Freshdesk 的定价。<a href='#' id='special_pricing'>请联系我们了解更多信息并获取报价！</a>"
+  choose_plan_contact_us_v2: 我们已经收到您的特殊定价要求，我们的团队很快就会与您联系。
+  special_pricing_ack: "感谢您关注 Freshdesk。针对您的要求，我们的销售人员很快就会与您联系。"
   trial_expired: 您的试用期已结束，账号已休眠。请联系support@freshdesk.com升级账号。
   asked_on: 询问于
   this_ticket_has_been_deleted: 此工单已删除
@@ -4708,6 +4774,8 @@ zh-CN:
         reauth_required: 已请求重新授权
       enable_facebook_page:
         associate: 选择要关联到帮助台的Facebook页面
+        associate_page: "选择要关联到 Helpdesk 的 Facebook 页面。"
+        associate_pages: "选择要关联到 Helpdesk 的 Facebook 页面"
         no_page_info: "糟糕！...看起来您没有任何Facebook页面。<a href=\"https://www.facebook.com/pages/create.php\" target='_blank'>开始创建一个！...</a>"
       engage_info:
         title: 添加Facebook页面
@@ -5587,6 +5655,7 @@ zh-CN:
   select_free_plan: 选择免费版
   change_details_anytime: 可随时更改订购信息或版本。
   enter_payment_details_to_add: 输入付款信息以添加更多客服或升级当前版本
+  enter_payment_details_to_add_v2: 输入付款信息以升级您当前的版本。
   payment_failed: 我们无法处理您的信用卡付款。若问题仍然存在，请联系我们support@freshdesk.com。
   error_in_update: " 我们无法更新您的订购。若问题仍然存在，请联系我们support@freshdesk.com。"
   plan_is_selected: "您当前账号版本为%{plan}"
@@ -6000,8 +6069,9 @@ zh-CN:
       auto_recharge_text: 当余额低于$5时，我们将从您的信用卡中扣除费用，以对您的账号完成充值。
       current_balance: 您的当前余额
       purchase: 购买Freshfone点数
+      purchase_text: 购买手机点数
       setup_auto_recharge: 设置自动充值
-      no_credit_card: 输入付款信息以购买Freshfone点数
+      no_credit_card_text: "Enter payment information to purchase phone credits"
       recharge_now_text: 一次性充值满账号
       auto_recharge_amt: 自动充值金额
       see_detailed_pricing: 查看详细定价
@@ -6942,9 +7012,12 @@ zh-CN:
   selecting_plan: 选择...
   proceed_billing_info: 是。进行计费
   buy_plan: 购买此计划
-  agent_seats: "%{no_of_agents}客服席位"
+  classic_label: 经典
+  agent_seats: "%{no_of_agents} 个客服席位"
+  free_plan: 免费版本
+  view_invoices: 查看发票：
   subscribed_billing: "%{billing_cycle}计费"
-  next_renewal: "下次在%{renewal_period}后续订"
+  next_renewal: "下一次续订在 %{renewal_period} 后开始"
   suspended_since: "从%{days}后挂起"
   plan: 计划
   edit_plan: 编辑计划
