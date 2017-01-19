@@ -5211,6 +5211,7 @@ en:
     notification_template: Templates
     cc_notifications: CC Notifications
     title: Email Notifications
+    account_not_activated: It looks like your account hasn't been verified yet. Please activate it in order to enable email notifications.
     singular_title: Notification
     index_outdated: Some translations are outdated
     show_default: Show original content
@@ -5543,6 +5544,7 @@ en:
       cc: CC
       to: "To:"
       compose_choose_email: Select a from address
+      outbound_email_not_activated: It looks like your account hasn't been verified yet. Please activate it in order to send an outbound email.
       compose_email_info: "The email will be sent to the customer and will be logged as a ticket without triggering any notifications."
     switch_view:
       new_view: "Try the <strong>New Ticket View</strong>"

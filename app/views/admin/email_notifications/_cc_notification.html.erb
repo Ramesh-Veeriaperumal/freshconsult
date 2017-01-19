@@ -1,6 +1,6 @@
 <tr>
 	<td class='email-tip'>
-		<input rel="toggle" type="checkbox" id="email" name="timer" data-checked-label="ON" data-unchecked-label="OFF" <%= (cc_notification.requester_notification) ? "checked" : "" %> data-type="email_notification[requester_notification]" data-url=<%=admin_email_notification_path(cc_notification.id) %>  >
+		<input rel="toggle" type="checkbox" id="email" name="timer" data-checked-label="ON" data-unchecked-label="OFF" <%= (cc_notification.requester_notification) ? "checked" : "" %> data-type="email_notification[requester_notification]" data-url=<%=admin_email_notification_path(cc_notification.id) %>  <%=!current_account.verified? ? "disabled" : "" %> >
 	</td>
 	<td>
 		<span class="vertical-alignment event-name">

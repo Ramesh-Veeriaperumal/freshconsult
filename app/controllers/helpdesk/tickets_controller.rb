@@ -107,6 +107,7 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :check_ml_feature, :only => [:suggest_tickets]
   before_filter :load_parent_template, :only => [:show_children, :bulk_child_tkt_create]
   before_filter :load_associated_tickets, :only => [:associated_tickets]
+  before_filter :outbound_email_allowed? , :only => [:create]
   before_filter :requester_widget_filter_params, :only => [:update_requester]
   before_filter :check_custom_view_feature, :only => [:custom_view_save]
 
@@ -1455,6 +1456,11 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   private
+
+    def outbound_email_allowed?
+      return unless params[:helpdesk_ticket].present?
+      access_denied if (!current_account.verified? && params[:helpdesk_ticket][:source].to_i == Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:outbound_email])
+    end
 
     def set_trashed_column
       sql_array = ["update helpdesk_schema_less_tickets st inner join helpdesk_tickets t on

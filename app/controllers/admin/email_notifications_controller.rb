@@ -5,7 +5,8 @@ class Admin::EmailNotificationsController < Admin::AdminController
   before_filter :load_item, :except => :index
   before_filter :validate_liquid, :detect_spam_action, :only => :update
   before_filter :validate_params, :only => :edit
-  
+  before_filter :email_notifications_allowed? , :only => [:update]
+
   def index
     e_notifications = scoper
 
@@ -80,6 +81,10 @@ class Admin::EmailNotificationsController < Admin::AdminController
 
   private
 
+  def email_notifications_allowed?
+    check_account_activation
+  end
+  
   def scoper
     current_account.sla_management_enabled? ? current_account.email_notifications : current_account.email_notifications.non_sla_notifications
   end
