@@ -426,6 +426,7 @@ PATH
 
 GEM
   remote: https://rubygems.org/
+  remote: http://gems.datadoghq.com/trace/
   remote: https://690a8c5e:5d9334f0@gems.contribsys.com/
   specs:
     CFPropertyList (2.3.2)
@@ -595,6 +596,8 @@ GEM
       virtus
     curb (0.8.8)
     database_cleaner (1.5.3)
+    ddtrace (0.3.1)
+      msgpack
     debug_inspector (0.0.2)
     descendants_tracker (0.0.4)
       thread_safe (~> 0.3, >= 0.3.1)
@@ -1297,6 +1300,7 @@ DEPENDENCIES
   custom_fields!
   dalli!
   database_cleaner
+  ddtrace (= 0.3.1)!
   deadlock_retry!
   delayed_job!
   dev_notification!
