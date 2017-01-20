@@ -214,10 +214,7 @@ var TicketForm = {
 
 			if(($requester_val != ticket_email) && validajax){
 				jQuery.ajax({
-					type: 'POST',
-					data: {email: ticket_email},
-					datatype: 'json',
-					url: $companyurl,
+					url: $companyurl+"?email="+ticket_email,
 					success: function(data){
 						if(data != false){
 							jQuery('#helpdesk_ticket_company_id').empty();
@@ -232,7 +229,7 @@ var TicketForm = {
 							jQuery('.default_company').slideUp();
 							jQuery('#helpdesk_ticket_company_id').attr("disabled", true);
 						}
-					}	
+					}
 				});
 			}
 			else if($requester_val != ticket_email){

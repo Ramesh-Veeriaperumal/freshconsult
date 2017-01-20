@@ -22,7 +22,7 @@ class Helpdesk::ConversationsController < ApplicationController
   include Helpdesk::SpamAccountConstants
   
   before_filter :build_note_body_attributes, :build_conversation, :except => [:full_text, :traffic_cop]
-  before_filter :check_for_from_email, :only => [:reply, :forward, :reply_to_forward]
+  # before_filter :check_for_from_email, :only => [:reply, :forward, :reply_to_forward]
   before_filter :validate_tkt_type, :only => :broadcast
   before_filter :validate_fwd_to_email, :only => [:forward, :reply_to_forward]
   before_filter :check_for_kbase_email, :only => [:reply, :forward]

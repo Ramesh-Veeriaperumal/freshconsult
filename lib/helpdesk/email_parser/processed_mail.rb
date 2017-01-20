@@ -7,6 +7,7 @@ class Helpdesk::EmailParser::ProcessedMail
 	include Helpdesk::EmailParser::EmailParseError
 
 	attr_accessor :raw_eml, :mail, :from, :to, :cc , :subject, :text, :html, :header, :header_string, :attachments, :message_id, :references, :in_reply_to, :date
+	SUBJECT_PATTERN = /(=\?.*?=\?=)/
 
 	def initialize(raw_eml)
 		self.raw_eml = raw_eml
@@ -82,14 +83,29 @@ private
 		subject_field = nil
 		begin
    	 	mail.header.fields.each {|f| subject_field = f if f.name == "Subject"}
-   	rescue Exception => e
-   		Rails.logger.info "Exception while fetching subject from parsed email object - #{e.message} - #{e.backtrace}"
-   		replace_invalid_characters
-   		@encoded_header.header.fields.each {|f| subject_field = f if f.name == "Subject"}
-   	end
+   		rescue Exception => e
+   			Rails.logger.info "Exception while fetching subject from parsed email object - #{e.message} - #{e.backtrace}"
+   			replace_invalid_characters
+   			@encoded_header.header.fields.each {|f| subject_field = f if f.name == "Subject"}
+   		end
+
    		encoded_subject = subject_field ? subject_field.value : ""
-    	subject = encoded_subject.index("=?") ? Mail::Encodings.unquote_and_convert_to(encoded_subject, 'UTF-8') : mail.subject
+    	subject = ""
+    	if encoded_subject.index("=?")
+    		val =""
+    		es_split = encoded_subject.split(SUBJECT_PATTERN)
+    		es_split.each do |line|
+    			es = line.index("=?") ? Mail::Encodings.unquote_and_convert_to(line, 'UTF-8') :line
+    			val = val+es
+    		end 
+    		subject = val
+    	else
+    		subject = mail.subject
+    	end
 	  	subject.to_s
+	  	rescue Exception => e
+	  		Rails.logger.info "Exception while converting subject #{e.message} - #{e.backtrace}"
+	  		mail.subject
 	end
 
 	def get_header

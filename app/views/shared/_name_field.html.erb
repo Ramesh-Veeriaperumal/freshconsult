@@ -2,6 +2,7 @@
   <label for="name"><%= t('user.name') %></label>
     <input class="text" id="name" name="helpdesk_ticket[name]" size="30" type="text" />
 </div>
+
 <% unless current_user%>
   <%= javascript_tag do %>
     jQuery("#helpdesk_ticket_email").focusout(function(){
@@ -10,10 +11,7 @@
 
       if(valid_email.test(ticket_email)) {  
         jQuery("#helpdesk_ticket_email").addClass("sloading loading-small loading-right");
-        jQuery.ajax({ url: "<%= check_email_support_tickets_path %>",
-          type: 'POST',
-          datatype: 'json',
-          data:{v:ticket_email},
+        jQuery.ajax({ url: "<%= check_email_support_tickets_path %>?v="+encodeURIComponent(ticket_email),
           success: function(data){
             jQuery("#helpdesk_ticket_email").removeClass("sloading loading-small loading-right");
             if(data.user_exists){
@@ -26,4 +24,4 @@
       } 
     });
   <% end %>
-<% end %> 
+<% end %>
