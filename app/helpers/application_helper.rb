@@ -1391,7 +1391,7 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
 
   def construct_new_section_fields(f, object_name, field, is_edit, item, required)
     section_container = ""
-    field.picklist_values.includes(:section).each do |picklist|
+    field.picklist_values_with_sections.each do |picklist|
       next if picklist.section.blank?
       section_elements = ""
       picklist.section_ticket_fields.each do |section_tkt_field|
