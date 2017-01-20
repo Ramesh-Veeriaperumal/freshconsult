@@ -150,7 +150,7 @@ window.xhrPool = [];
             },1000);
       });
 
-    $('body').on('mouseenter', "a[rel=contact-hover],[rel=hover-popover]", function(ev) {
+    $('body').on('mouseenter', "a[rel=contact-hover],[rel=hover-popover],i[rel=sentiment-hover]", function(ev) {
         ev.preventDefault();
         var element = $(this);
         // Introducing a slight delay so that the popover does not show up
@@ -163,7 +163,7 @@ window.xhrPool = [];
         }, 500);
         element.data('timeoutDelayShow', timeoutDelayShow);
 
-      }).on('mouseleave', "a[rel=contact-hover],[rel=hover-popover]", function(ev) {
+      }).on('mouseleave', "a[rel=contact-hover],[rel=hover-popover],i[rel=sentiment-hover]", function(ev) {
           clearTimeout($(this).data('timeoutDelayShow'));
           hidePopoverTimer = setTimeout(function() {
             if(widgetPopup) widgetPopup.popover('hide');

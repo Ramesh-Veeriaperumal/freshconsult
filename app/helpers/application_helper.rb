@@ -725,7 +725,7 @@ module ApplicationHelper
             },
           :class => profile_size
         }
-      senti_avatar_image_generator(img_tag_options, profile_size, profile_class, sentiment)
+      senti_avatar_image_generator(img_tag_options, profile_size, profile_class, sentiment, options)
     elsif is_user_social(user, profile_size).present?
         img_tag_options = {
           :onerror => "imgerror(this)", 
@@ -737,17 +737,17 @@ module ApplicationHelper
             },
           :class => profile_size
         }
-      senti_avatar_image_generator(img_tag_options, profile_size, profile_class, sentiment)
+      senti_avatar_image_generator(img_tag_options, profile_size, profile_class, sentiment, options)
     else
         senti_avatar_generator(user.name, profile_size, profile_class, options, sentiment)
     end
   end
 
-  def senti_avatar_image_generator(img_tag_options, profile_size, profile_class, sentiment)
+  def senti_avatar_image_generator(img_tag_options, profile_size, profile_class, sentiment, options)
       
       content_tag(:div, :class => "#{profile_class} image-lazy-load", :size_type => profile_size ) do
         image_tag("/assets/misc/profile_blank_#{profile_size}.jpg", img_tag_options)+
-        get_senti_i_tag(sentiment)
+        get_senti_i_tag(sentiment, options)
       end
   end
 
@@ -758,12 +758,12 @@ module ApplicationHelper
     if username.present? && isalpha(username[0]).present?
       content_tag( :div, :class => "#{profile_class} avatar-text text-center #{profile_size} bg-#{unique_code(username)}" ) do
         content_tag(:p, username[0])+
-        get_senti_i_tag(sentiment)
+        get_senti_i_tag(sentiment, opt)
       end
     else
        content_tag( :div, :class => profile_class, :size_type => profile_size ) do
         (image_tag "/assets/misc/profile_blank_#{profile_size}.jpg", img_tag_options )+
-        get_senti_i_tag(sentiment)
+        get_senti_i_tag(sentiment, opt)
       end
     end
   end
@@ -771,7 +771,6 @@ module ApplicationHelper
   def get_senti_image_tag(sentiment)
 
     senti_img_tag_options = { :onerror => "imgerror(this)", :alt => t('user.profile_picture'), :class => ['sentiment', sentiment, 'tooltip'], :title => get_senti_title(sentiment)}
-
     if sentiment
       return image_tag(senti_image_locator(sentiment), senti_img_tag_options)
     else
@@ -780,9 +779,14 @@ module ApplicationHelper
 
   end
 
-  def get_senti_i_tag(sentiment)
+  def get_senti_i_tag(sentiment, opt)
     if sentiment
-      i_tag = content_tag( :i, :class => "sentiment tooltip #{sentiment} #{senti_class_locator(sentiment)}", :title => "#{get_senti_title(sentiment)}" ) do
+      if opt.include?(:senti_hover)
+        i_tag = content_tag( :i, :rel=> "sentiment-hover", :class => "sentiment #{sentiment} #{senti_class_locator(sentiment)}", :title => "#{get_senti_title(sentiment)}" ) do
+        end
+      else
+        i_tag = content_tag( :i, :class => "sentiment tooltip #{sentiment} #{senti_class_locator(sentiment)}", :title => "#{get_senti_title(sentiment)}" ) do
+        end
       end
       return i_tag
     else
