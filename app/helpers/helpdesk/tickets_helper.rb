@@ -305,32 +305,13 @@ module Helpdesk::TicketsHelper
   end
 
   def user_details_template(item)
-    if (item.is_a? Helpdesk::Ticket)
-      if item.source == Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:outbound_email]
-        user = { "name" => item.reply_name, "email" => item.reply_email }
-      else
-        user = item.requester 
-      end
-    else
-      user = get_user_for_note item
-    end
+    user = (item.is_a? Helpdesk::Ticket) ? item.requester :
+            ((item.user.customer?) ? item.user :
+              { "name" => item.notable.reply_name, "email" => item.notable.reply_email })
+
     %( #{h(user['name'])} &lt;#{h(user['email'])}&gt; )
   end
 
-  def user_details_for_note item
-    sup_emails = item.account.support_emails.map(&:downcase)
-    prev_note_sender = parse_email item.from_email
-    if sup_emails.include?(prev_note_sender[:email].downcase)
-      user = { "name" => prev_note_sender[:name], "email" => prev_note_sender[:email] }
-    elsif item.user.customer?
-      user = item.user
-    else
-      user = { "name" => item.notable.reply_name, "email" => item.notable.reply_email }
-    end
-    user
-  end
-
-      
   def extract_quote_from_note(note)
     unless note.full_text_html.blank?
       doc = Nokogiri::HTML(note.full_text_html)
