@@ -212,9 +212,9 @@ module Helpdesk::RequesterWidgetHelper
       when :custom_dropdown
         CGI.unescapeHTML(value)
       when :custom_url
-        "<a href='#{value}'>#{value}</a>".html_safe
+        "<a href='#{value}' target='blank'>#{value}</a>".html_safe
       when :default_twitter_id
-        "<a href='#{TWITTER_LINK}#{value}'>#{value}</a>".html_safe
+        "<a href='#{TWITTER_LINK}#{value}' target='blank'>#{value}</a>".html_safe
       else
         value
       end
