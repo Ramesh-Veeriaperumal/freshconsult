@@ -94,10 +94,6 @@ class Account < ActiveRecord::Base
     tz
   end
 
-  def collab_feature_enabled?
-    @collab_feature_enabled ||= features?(:collaboration)
-  end
-  
   def survey
     @survey ||= begin
       if new_survey_enabled?

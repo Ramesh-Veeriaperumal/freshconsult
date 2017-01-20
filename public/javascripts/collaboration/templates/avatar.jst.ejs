@@ -1,10 +1,4 @@
-<% if (data.profileImage === false) { %>
-	<div class="<%= data.class_list %> preview_pic circle avatar-text text-center thumb bg-<%= Math.abs(uniqueCodeGenerator( data.name )) %>" > 
-		<%= data.name[0] %> 
-	</div>
-<% } else { %>
-	<div class="preview_pic circle <%= data.class_list %>">
-		<img alt="<%= data.name %>" class="thumb <%= data.class_list %>" onerror="imgerror(this)" src="<%= data.profileImage %>" >
-	</div>
-
-<% } %>
+<div class="<%= data.class_list %> preview_pic circle avatar-text text-center thumb bg-<%= Math.abs(uniqueCodeGenerator( data.name )) %>" > 
+	<%= data.name[0] %> 
+	<img alt="<%= data.name %>" class="hide thumb_img thumb <%= data.class_list %>" onerror="App.CollaborationUi.dpLoadErr(this)" src=" " data-user-id="<%= data.id %>">
+</div>

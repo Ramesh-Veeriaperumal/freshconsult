@@ -14,7 +14,7 @@
     <% end %>
   </div>
   
-  <% if collab_filter_enabled? %>
+  <% if collab_filter_enabled_for?(filter) %>
     <div class="fd-menu" id="SortMenu" style="display:none; margin-left:-5px; margin-top:18px;">
       <ul>             
          <% current_sort_name = "" %>
@@ -69,7 +69,7 @@
       </ul>   
     </div>
   <% end %>
-  <a class="drop-right nav-trigger <%= collab_filter_enabled? ? 'disabled' : ''%>" href="#" menuid="#SortMenu">
+  <a class="drop-right nav-trigger <%= collab_filter_enabled_for?(filter) ? 'disabled' : ''%>" href="#" menuid="#SortMenu">
     <%= t('ticket.sort_by') %> <b><%= current_sort_name %></b>
   </a>
 </div>

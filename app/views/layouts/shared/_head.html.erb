@@ -62,7 +62,7 @@
 	<%= javascript_include_tag :'cdn/plugins/fileupload' %>
 	<%= javascript_include_tag :'cdn/livechat_helper' %>
 
-	<% if current_account.collab_feature_enabled? %>
+	<% if current_account.collaboration_enabled? %>
 		<%= stylesheet_link_tag_with_rtl :'cdn/collaboration_header' %>
 		<%= javascript_include_tag :'cdn/collaboration' %>
 	<% end %>

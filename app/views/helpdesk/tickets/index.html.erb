@@ -38,7 +38,7 @@
 <% end %>
 
 <% content_for :layoutType do -%>ticket_list<%- end %>
-  <div id="leftcol" class="ticket-leftcol" style="display:<%=(['deleted', 'spam', 'monitored_by'].include?(@current_view)) || collab_filter_enabled? ? 'none' : 'block' %>">
+  <div id="leftcol" class="ticket-leftcol" style="display:<%=(['deleted', 'spam', 'monitored_by'].include?(@current_view)) || collab_filter_enabled_for?(filter) ? 'none' : 'block' %>">
     <%if request.headers['X-PJAX'] %>
       <div id="ticket-leftFilter" class="leftFilter">
       </div>
@@ -48,7 +48,7 @@
       </div>
     <%end%>
   </div>
-  <div id="rightCol" class="contentCol <%="hasRightCol" unless (['deleted', 'spam', 'monitored_by'].include?(@current_view)) || collab_filter_enabled? %>">
+  <div id="rightCol" class="contentCol <%="hasRightCol" unless (['deleted', 'spam', 'monitored_by'].include?(@current_view)) || collab_filter_enabled_for?(filter) %>">
     <%= render :partial => "helpdesk/shared/ticket_view", :locals => { :items => @items, :current_view => @current_view } , :inline => true %>
   </div>
 
