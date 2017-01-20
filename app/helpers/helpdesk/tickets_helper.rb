@@ -312,7 +312,7 @@ module Helpdesk::TicketsHelper
         user = item.requester 
       end
     else
-      ((item.user.customer?) ? item.user : { "name" => item.notable.reply_name, "email" => item.notable.reply_email })
+      user = ((item.user.customer?) ? item.user : { "name" => item.notable.reply_name, "email" => item.notable.reply_email })
     end
 
     %( #{h(user['name'])} &lt;#{h(user['email'])}&gt; )
