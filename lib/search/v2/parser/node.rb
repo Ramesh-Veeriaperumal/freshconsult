@@ -37,6 +37,7 @@ module Search
 				end
 			end
 
+			# Node which holds the operators AND, OR ...
 			class OperatorNode < Node
 				def type
 					:operator
@@ -47,6 +48,7 @@ module Search
 				end
 			end
 
+			# Node holds the conditions given by the user eg: priority = 2, checked = false
 			class OperandNode < Node
 				def type
 					:operand

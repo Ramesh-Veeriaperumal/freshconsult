@@ -5,7 +5,7 @@ module ApiSearch
       tree = parser.expression_tree
       record = record_from_expression_tree(tree)
 
-      sanitize_custom_fields(record, ApiSearchConstants::TICKET_FIELDS) if custom_fields.any?
+      record = sanitize_custom_fields(record, ApiSearchConstants::TICKET_FIELDS) if custom_fields.any?
 
       validation_params = record.merge({ticket_fields: ticket_fields })
       validation_params.merge!(statuses: Helpdesk::TicketStatus.status_objects_from_cache(current_account))
@@ -14,22 +14,21 @@ module ApiSearch
       if validation.valid?
         @name_mapping = custom_fields
         search_terms = tree.accept(visitor)
-        page = params[:page] ? params[:page].to_i : 1
-        response = query_es(search_terms, :tickets, page)
-        @items = query_results(response, page, ApiSearchConstants::TICKET_ASSOCIATIONS)
+        page = params[:page] ? params[:page].to_i : ApiSearchConstants::DEFAULT_PAGE
+        @items = query_results(search_terms, page, ApiSearchConstants::TICKET_ASSOCIATIONS, 'ticket')
       else
         render_custom_errors(validation, true)
       end
     end
 
     private
-
+    
       def custom_fields
-        @custom_fields ||= ticket_custom_fields.each_with_object({}) { |ticket_field, hash| hash[ticket_field.name] = TicketDecorator.display_name(ticket_field.name) }
+        @custom_fields ||= Account.current.ticket_field_def.ff_alias_column_mapping.each_with_object({}) {|(key,value), hash| hash[key] = TicketDecorator.display_name(key) if value=~ ApiSearchConstants::TICKET_FIELDS_REGEX }
       end
 
       def visitor
-        column_names = ticket_custom_fields.each_with_object({}) { |ticket_field, hash| hash[TicketDecorator.display_name(ticket_field.name).to_sym] = ticket_field.column_name }
+        column_names = Account.current.ticket_field_def.ff_alias_column_mapping.each_with_object({}) {|(key,value), hash| hash[TicketDecorator.display_name(key).to_sym] = value if value=~ ApiSearchConstants::TICKET_FIELDS_REGEX }
         Search::TermVisitor.new(column_names)
       end
 

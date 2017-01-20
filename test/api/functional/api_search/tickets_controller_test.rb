@@ -67,7 +67,7 @@ module ApiSearch
       assert_response 400
     end
 
-    def test_tickets_invalid_priority_status_group_and_requester
+    def test_tickets_invalid_priority_status_group_and_group
       get :index, controller_params(query: '"priority:111 OR status:1111 OR group_id:1111"')
       assert_response 400
       match_json([bad_request_error_pattern('priority', :not_included, list: '1,2,3,4'),
@@ -83,9 +83,14 @@ module ApiSearch
     def test_tickets_with_page_and_per_page
       get :index, controller_params(query: '"priority:111 OR status:1111 OR group_id:1111"', page:2, per_page:20)
       assert_response 400
-      match_json([bad_request_error_pattern('per_page', :invalid_field),
-                  bad_request_error_pattern('page', :invalid_field)])
+      match_json([bad_request_error_pattern('per_page', :invalid_field)])
     end
+
+    def test_tickets_with_invalid_page
+      get :index, controller_params(query: '"priority:111 OR status:1111 OR group_id:1111"', page:11)
+      assert_response 400
+      match_json([bad_request_error_pattern('page', :per_page_invalid, max_value: 10)])
+    end    
 
     def test_tickets_custom_fields
       tickets = @account.tickets.select{|x| x.custom_field["test_custom_number_1"] == 1 || x.custom_field["test_custom_checkbox_1"] == false || x.priority == 2 }

@@ -123,7 +123,8 @@ class Search::Utils
     ff_contact_by_numfields:          'freshfoneContactByNumberfields',
     company_v2_search:                'companyApiSearch',
     hstickets_dispid:                 'hsTicketsByDisplayId',
-    hstickets_subject:                'hsTicketsBySubject'
+    hstickets_subject:                'hsTicketsBySubject',
+    es_query_execute:                 'esQueryExecute'
   }
 
   # _Note_: Parent ID to be used for routing.

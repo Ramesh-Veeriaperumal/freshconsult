@@ -37,7 +37,7 @@ module ApiSearch
       params_hash
     end
 
-    def test_tickets_invalid_query_format
+    def test_contacts_invalid_query_format
       get :index, controller_params(query: "company_id:1 OR company_id:2")
       assert_response 400
       match_json([bad_request_error_pattern('query', :query_format_invalid)])

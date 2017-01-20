@@ -5,7 +5,7 @@ module ApiSearch
       tree = parser.expression_tree
       record = record_from_expression_tree(tree)
 
-      sanitize_custom_fields(record, ApiSearchConstants::COMPANY_FIELDS) if custom_fields.any?
+      record = sanitize_custom_fields(record, ApiSearchConstants::COMPANY_FIELDS) if custom_fields.any?
 
       validation_params = record.merge({company_fields: company_fields })
 
@@ -14,9 +14,8 @@ module ApiSearch
       if validation.valid?
         @name_mapping = custom_fields
         search_terms = tree.accept(visitor)
-        page = params[:page] ? params[:page].to_i : 1
-        response = query_es(search_terms, :companies)
-        @items = query_results(response, page, ApiSearchConstants::COMPANY_ASSOCIATIONS)
+        page = params[:page] ? params[:page].to_i : ApiSearchConstants::DEFAULT_PAGE
+        @items = query_results(search_terms, page, ApiSearchConstants::COMPANY_ASSOCIATIONS, 'company')
       else
         render_custom_errors(validation, true)
       end

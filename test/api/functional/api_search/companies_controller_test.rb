@@ -39,7 +39,7 @@ module ApiSearch
       get :index, controller_params(query: '"domain:\'aaa.aa\' OR sample_checkbox:false OR sample_number:2"')
       assert_response 200
       response = parse_response @response.body
-      assert companies.size, response["results"].size
+      assert_equal companies.size, response["results"].size
     end
   end
 end

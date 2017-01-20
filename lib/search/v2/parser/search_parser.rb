@@ -1,4 +1,3 @@
-require_relative './node.rb'
 module Search
   module V2
     module Parser
