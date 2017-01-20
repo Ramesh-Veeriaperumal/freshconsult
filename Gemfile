@@ -2,7 +2,7 @@
 Encoding.default_external = Encoding::UTF_8
 source 'https://rubygems.org'
 
-gem 'ddtrace', '0.3.1', :source => 'http://gems.datadoghq.com/trace/'
+gem 'ddtrace', '0.3.1', :source => 'http://gems.datadoghq.com/trace/', :group => [:staging]
 gem "rake", "~> 10.4.0"
 gem "rails","3.2.22.3"
 
