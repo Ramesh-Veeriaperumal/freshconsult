@@ -87,9 +87,9 @@ class UsersController < ApplicationController
 
   def profile_image_path
     load_object
-    render :json => { :path => @user.avatar.to_s }
+    render :json => {:path => @user.avatar.nil? ? "" : @user.avatar.expiring_url(:thumb, 300).to_s}
   end
-  
+
   def delete_avatar
     load_object
     @user.avatar.destroy

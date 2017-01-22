@@ -51,7 +51,7 @@
 					</div>
 				<% end %>
 
-				<% if current_account.collab_feature_enabled? %>
+				<% if current_account.collaboration_enabled? %>
 					<div id="collab-option-dd" class="collab-option-dd hide">
 						<span class="collab-logo">
 							<img class="logo-image" alt="Logo" data-type="logo" onerror="default_image_error(this)" src="/assets/collab/collab-logo.svg">
@@ -78,7 +78,7 @@
 	<%= render :partial => "helpdesk/tickets/freshdesk_socket", :locals => {:ticket => @ticket } if current_account.agents_details_from_cache.count > 1%>
 <% end %>
 <% content_for :dialogs do %>
-	<% if current_account.collab_feature_enabled? %>
+	<% if current_account.collaboration_enabled? %>
 		<%= render :partial => "helpdesk/tickets/collaboration" %>
 	<% end %>
 <% end %>

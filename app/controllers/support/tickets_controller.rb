@@ -14,7 +14,7 @@ class Support::TicketsController < SupportController
   before_filter :clean_params, :only => [:update]
 
   skip_before_filter :verify_authenticity_token
-  before_filter :verify_authenticity_token, :unless => :public_request?, :except => :check_email
+  before_filter :verify_authenticity_token, :unless => :public_request?
   
   before_filter :require_user, :only => [:show, :index, :filter, :close, :update, :add_people]
   before_filter :load_item, :only => [:show, :update, :close, :add_people]

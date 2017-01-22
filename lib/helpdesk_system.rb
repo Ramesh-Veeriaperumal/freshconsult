@@ -24,6 +24,10 @@ module HelpdeskSystem
     end
  end 
 
+ def check_account_activation 
+      access_denied unless current_account.verified? 
+ end
+
  def password_expired?
   current_user_session && current_user_session.stale_record && current_user_session.stale_record.password_expired
  end

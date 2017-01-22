@@ -60,6 +60,11 @@ class Helpdesk::TicketField < ActiveRecord::Base
   has_many :dynamic_section_fields, :class_name => 'Helpdesk::SectionField', 
                                     :foreign_key => :parent_ticket_field_id
 
+  has_many :picklist_values_with_sections, :as => :pickable,
+                             :class_name => 'Helpdesk::PicklistValue',
+                             :include => {:section => {:section_fields => :ticket_field}}, 
+                             :order => "position"
+
 
   validates_associated :ticket_statuses, :if => :status_field?
   accepts_nested_attributes_for :ticket_statuses, :allow_destroy => true

@@ -23,6 +23,7 @@ class Account < ActiveRecord::Base
   after_commit :enable_searchv2, :enable_count_es, on: :create
   after_commit :disable_searchv2, :disable_count_es, on: :destroy
   after_commit :update_sendgrid, on: :create
+  after_commit :activate_email_notification , on: :update , :if => :account_verification_changed? 
 
   # Callbacks will be executed in the order in which they have been included. 
   # Included rabbitmq callbacks at the last
@@ -83,6 +84,14 @@ class Account < ActiveRecord::Base
     def backup_changes
       @old_object = Account.find(id)
       @all_changes = self.changes.clone
+    end
+
+    def account_verification_changed?
+      @all_changes.key?("reputation") && self.verified?
+    end
+
+    def activate_email_notification
+      ActivationWorker.perform_async
     end
 
   private

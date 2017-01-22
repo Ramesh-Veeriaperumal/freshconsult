@@ -32,3 +32,34 @@
       :advanced_reporting: 27
       :default_survey: 28
       :gamification_enable: 29
+      :multi_product: 30
+      :multiple_business_hours: 31
+      :multi_timezone: 32
+      :customer_slas: 33
+      :layout_customization: 34
+      :forums: 35
+      :css_customization: 36
+      :sitemap: 37
+      :multi_language: 38
+      :enterprise_reporting: 39
+      :dynamic_content: 40
+      :requester_widget: 41
+      :chat: 42
+      :ticket_templates: 43
+      :custom_survey: 44
+      :collision: 45
+      :round_robin: 46
+      :custom_ssl: 47
+      :custom_roles: 48
+      :facebook_page_tab: 49
+      :chat_routing: 50
+      :dynamic_sections: 51
+      :helpdesk_restriction_toggle: 52
+      :round_robin_load_balancing: 53
+      :multiple_user_companies: 54
+      :multiple_companies_toggle: 55
+      :round_robin_on_update: 56
+      :mailbox: 57
+      :whitelisted_ips: 58
+      :branding: 59
+      :toggle_branding: 60

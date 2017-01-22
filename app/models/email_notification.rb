@@ -120,6 +120,10 @@ class EmailNotification < ActiveRecord::Base
     TOKEN_BY_KEY[self.notification_type]
   end
 
+  def visible_only_to_agent?
+    [ VISIBILITY[:AGENT_ONLY] ].include? VISIBILITY_BY_KEY[self.notification_type]
+  end
+
   def visible_to_agent?
     [ VISIBILITY[:AGENT_AND_REQUESTER], VISIBILITY[:AGENT_ONLY] ].include? VISIBILITY_BY_KEY[self.notification_type]
   end

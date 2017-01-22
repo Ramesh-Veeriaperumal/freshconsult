@@ -3521,7 +3521,7 @@
 
   // Extend defaults.
   $.extend($.FE.DEFAULTS, {
-    htmlAllowedEmptyTags: ['textarea', 'a', 'iframe', 'object', 'video', 'style', 'script', '.fa', '.fr-emoticon'],
+    htmlAllowedEmptyTags: ['textarea', 'a', 'iframe', 'object', 'video', 'style', 'script', '.fa', '.fr-emoticon', 'span'],
     htmlDoNotWrapTags: ['script', 'style'],
     htmlSimpleAmpersand: false
   });

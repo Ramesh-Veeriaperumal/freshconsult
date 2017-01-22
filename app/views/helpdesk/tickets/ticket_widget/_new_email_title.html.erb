@@ -12,9 +12,9 @@
 		<%= link_to t('cancel'), (@item.new_record? ? {:action => 'index'} : @item ), :class => "btn cancel-btn" , :"data-parallel-placeholder"=>"#ticket-leftFilter", :"data-parallel-url"=>"/helpdesk/tickets/filter_options", :"data-pjax"=>"#body-container" %>
 		<% if @outbound_limit_crossed.blank? || @outbound_limit_crossed == false %>
 			<span class="btn-group dropdown">
-				<button class="btn btn-primary" id="compose-submit" data-loading-text="Sending...">
+				<button class="btn btn-primary <%=(!current_account.verified?) ? 'disabled' : '' %> " id="compose-submit" data-loading-text="Sending..." >
 					<%= t('ticket.compose.send') %>
-					<button class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+					<button class="btn btn-primary dropdown-toggle <%=(!current_account.verified?) ? 'disabled' : '' %> " data-toggle="dropdown" >
 						<span class="caret"></span>
 					</button>
 				</button>

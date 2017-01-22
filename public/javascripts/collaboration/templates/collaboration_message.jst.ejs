@@ -11,7 +11,7 @@
                     	<img class="image" src="<%= msg_body.pl %>" data-fetch-retry-count=""  data-fid="<%= msg_body.fid %>" onerror="App.CollaborationUi.collabImgError(event)"><span class="valign-helper"></span>
                     </div>
                     <div class="collab-attachment-details" title="<%= msg_body.fn %>">
-	                    <div class="collab-attachment-name ellipsis"> <%= msg_body.fn.substr(0, 12) + ".." + msg_body.fn.substr(msg_body.fn.lastIndexOf(".")) %> </div>
+	                    <div class="collab-attachment-name ellipsis"> <%= App.CollaborationUi.getFileDisplayName(msg_body.fn) %> </div>
 	                    <div class="collab-attachment-size"><%= msg_body.fs %></div>
                     </div>
                     <div class="collab-dl-link">
