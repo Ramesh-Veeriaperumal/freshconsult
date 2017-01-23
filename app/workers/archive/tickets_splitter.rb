@@ -2,7 +2,7 @@
 # split all the tickets
 module Archive
   class TicketsSplitter < BaseWorker
-    sidekiq_options :queue => :archive_ticket_splitter, :retry => 0, :backtrace => true, :failures => :exhausted
+    sidekiq_options :queue => ::ArchiveSikdekiqConfig["archive_ticket_splitter"], :retry => 0, :backtrace => true, :failures => :exhausted
 
     def perform(args)
       begin
