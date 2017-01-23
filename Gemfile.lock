@@ -246,14 +246,6 @@ GIT
       tzinfo
 
 GIT
-  remote: https://github.com/DataDog/dd-trace-rb
-  revision: 6e8039dceff31409134d7acf6b318570444eb3f4
-  ref: palazzem/disabling-rails-cache
-  specs:
-    ddtrace (0.3.1)
-      msgpack
-
-GIT
   remote: https://github.com/freshdesk/i18nema
   revision: 544682bac9976794950ebc5dd15ad21810950a81
   specs:
@@ -1305,7 +1297,6 @@ DEPENDENCIES
   custom_fields!
   dalli!
   database_cleaner
-  ddtrace!
   deadlock_retry!
   delayed_job!
   dev_notification!
