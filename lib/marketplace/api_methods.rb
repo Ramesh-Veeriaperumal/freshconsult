@@ -160,6 +160,23 @@ module Marketplace::ApiMethods
       end
     end
 
+    def iframe_settings
+      begin
+        key = MemcacheKeys::IFRAME_SETTINGS % { :version_id => params[:version_id] }
+        api_payload = payload(
+                            Marketplace::ApiEndpoint::ENDPOINT_URL[:iframe_settings] %
+                                  { :product_id => PRODUCT_ID,
+                                    :version_id => params[:version_id] },
+                            Marketplace::ApiEndpoint::ENDPOINT_PARAMS[:iframe_settings] 
+                          )
+        mkp_memcache_fetch(key, MarketplaceConfig::CACHE_INVALIDATION_TIME) do
+          get_api(api_payload, MarketplaceConfig::GLOBAL_API_TIMEOUT)
+        end
+      rescue *FRESH_REQUEST_EXP => e
+        exception_logger("Exception type #{e.class},URL: #{api_payload} #{e.message}\n#{e.backtrace}")
+      end
+    end
+
     # Account API's
     def install_status
       begin

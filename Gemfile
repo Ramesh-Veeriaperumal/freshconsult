@@ -197,6 +197,7 @@ gem "add_pod_support", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/ad
 gem "custom_fields", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/custom_fields-0.1"
 
 gem "jwt", "1.5.4"
+gem "jose", "1.1.2"
 
 group :production, :test, :staging do
   gem "tire", :git => "git@github.com:freshdesk/retire.git"

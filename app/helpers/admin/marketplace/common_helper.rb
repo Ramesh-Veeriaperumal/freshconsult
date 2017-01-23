@@ -1,4 +1,6 @@
 module Admin::Marketplace::CommonHelper
+
+  include Integrations::ApplicationsHelper
   
   def index_url_params
     {}.tap do |url_params| 

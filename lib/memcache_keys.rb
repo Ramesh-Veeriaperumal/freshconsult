@@ -143,6 +143,8 @@ module MemcacheKeys
 
   CONFIGURATION_DETAILS = "v1/FA:CONFIGURATIONS:%{version_id}:%{locale_id}"
 
+  IFRAME_SETTINGS = "v1/FA:IFRAME_SETTINGS:%{version_id}"
+
   INSTALLED_CTI_APP = "v1/INSTALLED_CTI_APP:%{account_id}"
 
   ECOMMERCE_REAUTH_CHECK = "v1/ECOMMERCE_REAUTH_CHECK:%{account_id}"

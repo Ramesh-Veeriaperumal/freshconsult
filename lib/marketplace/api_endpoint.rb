@@ -12,7 +12,8 @@ module Marketplace::ApiEndpoint
     [:extension_configs,        "product/%{product_id}/extensions/%{version_id}/configurations.json", []],
     [:ni_latest_details,        "product/%{product_id}/extensions/latest/%{app_name}.json", []],
     [:version_details,          "product/%{product_id}/versions/%{version_id}.json", []],
-
+    [:iframe_settings,          "product/%{product_id}/extensions/%{version_id}/iframe_setting.json", []],
+    
     # Account API's
     [:install_status,           "product/%{product_id}/account/%{account_id}/extensions/%{extension_id}/status.json", []],
     [:account_configs,          "product/%{product_id}/account/%{account_id}/extensions/%{version_id}/configurations.json", []],
