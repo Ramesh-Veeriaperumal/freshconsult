@@ -52,6 +52,10 @@ module Redis::RoundRobinRedis
     $redis_round_robin.perform_redis_op("lrem", key, count, value)
   end
 
+  def lrange_round_robin_redis key, start_index, end_index
+    $redis_round_robin.perform_redis_op("lrange", start_index, end_index)
+  end
+
   def zadd_round_robin_redis key, score, value
     $redis_round_robin.perform_redis_op("zadd", key, score, value)
   end
