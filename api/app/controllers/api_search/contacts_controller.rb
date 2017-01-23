@@ -15,7 +15,7 @@ module ApiSearch
         @name_mapping = custom_fields
         search_terms = tree.accept(visitor)
         page = params[:page] ? params[:page].to_i : ApiSearchConstants::DEFAULT_PAGE
-        @items = query_results(search_terms, page, ApiSearchConstants::CONTACT_ASSOCIATIONS, 'user')
+        @items = query_results(search_terms, page, ApiSearchConstants::CONTACT_ASSOCIATIONS, ['user'])
       else
         render_custom_errors(validation, true)
       end

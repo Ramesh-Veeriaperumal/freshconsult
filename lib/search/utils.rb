@@ -124,7 +124,7 @@ class Search::Utils
     company_v2_search:                'companyApiSearch',
     hstickets_dispid:                 'hsTicketsByDisplayId',
     hstickets_subject:                'hsTicketsBySubject',
-    es_query_execute:                 'esQueryExecute'
+    search_query_api:                 'searchQueryApi'
   }
 
   # _Note_: Parent ID to be used for routing.

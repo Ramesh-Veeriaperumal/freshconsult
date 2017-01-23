@@ -62,12 +62,12 @@ module ApiSearch
         begin
           @records = Search::V2::QueryHandler.new({
             account_id:   current_account.id,
-            context:      :es_query_execute,
+            context:      :search_query_api,
             exact_match:  false,
             es_models:    associations,
             current_page: page,
             offset:       ApiSearchConstants::DEFAULT_PER_PAGE,
-            types:        [type],
+            types:        type,
             es_params:    { search_terms: search_terms.to_json, offset: (page - 1) * ApiSearchConstants::DEFAULT_PER_PAGE, size: ApiSearchConstants::DEFAULT_PER_PAGE }
           }).query_results
         rescue Exception => e
