@@ -184,7 +184,7 @@
     }
 
 	// endpoints
-    Annotation.prototype.getSelectionInfo = function(annotatorId) {
+    Annotation.prototype.getSelectionInfo = function(s_id) {
         var self = this;
         var selection = getSelection();
         var noteElem, focusNodeElem;
@@ -229,7 +229,7 @@
             selectionMeta.textContent = window.getSelection().toString().trim();
             selectionMeta.htmlContent = getSelectionHTML();
             selectionMeta.messageId = new Date().getTime();
-            selectionMeta.annotatorId = annotatorId;
+            selectionMeta.s_id = s_id;
         }
 
         selectionInfo = {
@@ -334,7 +334,7 @@
                 
                 wrap.setAttribute("style", WRAPPER_ELEM_STYLE);
                 wrap.setAttribute("data-message-id", self.selectionInfo.selectionMeta.messageId);
-                wrap.setAttribute("data-annotator-id", self.selectionInfo.selectionMeta.annotatorId);
+                wrap.setAttribute("data-annotator-id", self.selectionInfo.selectionMeta.s_id);
                 wrap.setAttribute("id", "annotation-" + self.selectionInfo.selectionMeta.messageId);
                 wrap.classList.add("annotation");
                 if(self.selectionInfo.tempAnnotation) {
@@ -398,12 +398,12 @@
 
         if(!hidden_note) {
             restoreSelection(container, annSelection);
-            var sel = self.getSelectionInfo(annSelection.annotatorId);
+            var sel = self.getSelectionInfo(annSelection.s_id);
             // content match check
             if(sel.isAnnotableSelection && !!sel.selectionMeta && getTextContent(sel.selectionMeta.htmlContent) === getTextContent(annSelection.htmlContent)) {
                 self.selectionInfo.tempAnnotation = false,
                 self.selectionInfo.selectionMeta.messageId = annSelection.messageId;
-                self.selectionInfo.selectionMeta.annotatorId = annSelection.s_id;
+                self.selectionInfo.selectionMeta.s_id = annSelection.s_id;
                 self.markAnnotation();
                 success = true;
             }

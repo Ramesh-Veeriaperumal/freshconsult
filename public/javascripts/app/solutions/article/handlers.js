@@ -38,6 +38,18 @@ window.App = window.App || {};
 		toggleViews: function () {
 			$('.article-edit, .article-view, .breadcrumb-btns, .edit-container, #show_master_article').toggleClass('hide');
 		},
+
+    setToolBarPosition: function() {
+      if($('.article-edit').is(':visible')) {
+        var offset = jQuery('.article-edit-form .editor-body').position().top;
+
+        if($('#sticky_redactor_toolbar .fr-toolbar').is(':visible')){
+          $('#sticky_redactor_toolbar .fr-toolbar').css("top", offset);
+        }else{
+          $('#sticky_redactor_toolbar .redactor_toolbar').css("top", offset);
+        }
+      }
+    },
     
     startEditing: function () {
       $('#sticky_redactor_toolbar').removeClass('hide');
@@ -56,6 +68,7 @@ window.App = window.App || {};
 
 
       this.toggleViews();
+      this.setToolBarPosition();
 
       //initilaizing autosave
       if (this.autoSave) {
@@ -78,7 +91,7 @@ window.App = window.App || {};
     setFormValues: function () {
       var html = this.data.description;
       $('#solution_article_title').val(this.data.title);
-      $('#solution_article_description').text(html.replace(/<p>\s*?<\/p>/g,''));
+      $('#solution_article_description').text(html.replace(/<p>\s*?<\/p>/g,'').replace(/<div>\s*?<\/div>/g,''));
     },
 
     cancel_UI_toggle: function () {

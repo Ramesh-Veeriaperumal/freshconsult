@@ -236,18 +236,23 @@ class Billing::Subscription < Billing::ChargebeeWrapper
       addon_id.slice(/(?<=[a-z]_)\d+(?=_|$)/).to_i
     end
 
-    def marketplace_addons(subscription)
-      all_addons = retrieve_subscription(subscription.account_id).subscription.addons
-      marketplace_addons = []
-      if all_addons
-        marketplace_addon_ids = all_addons.select { |addon| addon.id.include?(Marketplace::Constants::ADDON_ID_PREFIX) }.map(&:id)
-        marketplace_addon_ids.each do |addon_id|
-          ext = extension_details(mkp_extension_id(addon_id)).body
-          marketplace_addons << { :id => addon_id,
-          :quantity => ext["addon"]["addon_type"] == Marketplace::Constants::ADDON_TYPES[:agent] ? subscription.agent_limit : 1 }
+    def marketplace_addons(subscription)  
+      marketplace_addons = []    
+      begin
+        all_addons = retrieve_subscription(subscription.account_id).subscription.addons
+        if all_addons
+          marketplace_addon_ids = all_addons.select { |addon| addon.id.include?(Marketplace::Constants::ADDON_ID_PREFIX) }.map(&:id)
+          marketplace_addon_ids.each do |addon_id|
+            ext = extension_details(mkp_extension_id(addon_id)).body
+            marketplace_addons << { :id => addon_id,
+            :quantity => ext["addon"]["addon_type"] == Marketplace::Constants::ADDON_TYPES[:agent] ? subscription.agent_limit : 1 }
+          end
         end
+      rescue
+        Rails.logger.info "No Subscription in Chargebee"
+      ensure
+        return marketplace_addons
       end
-      marketplace_addons
     end
     
 end

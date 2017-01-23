@@ -30,6 +30,9 @@
       <%= hidden_field_tag :state, @pre_auth.state %>
       <%= hidden_field_tag :response_type, @pre_auth.response_type %>
       <%= hidden_field_tag :scope, @pre_auth.scope %>
+      <div class="pull-right hide">
+        <%= submit_tag t('.go_to_portal' , :portal_name => portal_name ).html_safe, :id=>'allow', :class => "btn btn-primary hide" %>
+      </div>
     <% end %>
   </li>
   <% if hide_page %>

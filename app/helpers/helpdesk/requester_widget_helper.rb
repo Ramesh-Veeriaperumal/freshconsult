@@ -15,6 +15,7 @@ module Helpdesk::RequesterWidgetHelper
   MAX_CHAR_LENGTH                   = 230
   PHONE_NUMBER_FIELDS               = [:default_phone, :default_mobile]
   MAX_LABEL_LENGTH                  = 14
+  TWITTER_LINK                      = "https://twitter.com/"
   FIELDS_INFO                       = { :contact => 
                                         { :form             => "contact_form",
                                           :disabled_fields  => ["email"],
@@ -205,11 +206,17 @@ module Helpdesk::RequesterWidgetHelper
     end
 
     def format_field_value field, value
-      case field.field_type
+      value = case field.field_type
       when :default_language
-        value = I18n.name_for_locale(value)
+        I18n.name_for_locale(value)
       when :custom_dropdown
-        value = CGI.unescapeHTML(value)
+        CGI.unescapeHTML(value)
+      when :custom_url
+        link_to(value,value, :title => value, :target => "_blank")
+      when :default_twitter_id
+        link_to(value,"#{TWITTER_LINK}#{value}", :title => value, :target => "_blank")
+      else
+        value
       end
 
       case field.dom_type

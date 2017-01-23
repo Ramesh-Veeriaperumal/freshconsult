@@ -8,6 +8,8 @@ class Solution::ArticlesController < ApplicationController
   include Solution::FlashHelper
   include Solution::ControllerMethods
   
+
+  before_filter :check_account_activation, :if => :publish?, :only => [:create, :update]
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => :show
   before_filter :portal_check, :only => :show
   

@@ -135,7 +135,7 @@
             jQuery("#cm-fs-actions .btn").attr("disabled", true)
 
             $btn.button("loading")
-            if( typeof CodeMirror !== 'undefined' ){
+            if( typeof CodeMirror !== 'undefined' && jQuery('#custom_css').get(0) != undefined && jQuery('#layout').get(0) != undefined){
               jQuery($btn.data("codeRefresh")).codemirror('save');
             }
 

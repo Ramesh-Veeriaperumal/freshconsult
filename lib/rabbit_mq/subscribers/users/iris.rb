@@ -1,5 +1,5 @@
 module RabbitMq::Subscribers::Users::Iris
-
+  include RabbitMq::Constants
 
   PROPERTIES_TO_CONSIDER = [:name, :job_title, :email, :phone, :mobile, :customer_id, 
                             :twitter_id, :address, :time_zone, :language, :tag_names, 
@@ -7,11 +7,11 @@ module RabbitMq::Subscribers::Users::Iris
                             :whitelisted, :fb_profile_id, :user_role]
 
   def mq_iris_user_properties(action)
-    to_rmq_json
+    to_rmq_json(iris_keys, action)
   end
   
   def mq_iris_user_email_properties(action)
-    self.user.to_rmq_json
+    to_rmq_json(iris_keys, action)
   end
 
   def mq_iris_subscriber_properties(action)
@@ -48,6 +48,10 @@ module RabbitMq::Subscribers::Users::Iris
 
     def iris_user_email_changes
       self.previous_changes.dup.select{|k,v| ["email"].include?(k)}
+    end
+
+    def iris_keys
+      IRIS_USER_KEYS
     end
 
 end

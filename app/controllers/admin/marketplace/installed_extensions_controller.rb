@@ -2,6 +2,7 @@ class Admin::Marketplace::InstalledExtensionsController <  Admin::AdminControlle
   include Marketplace::ApiMethods
   include Marketplace::ApiUtil
   include Marketplace::HelperMethods
+  include Marketplace::InstExtControllerMethods
 
   before_filter :verify_oauth_callback , :only => [:oauth_callback]
   before_filter :extension, :only => [:install, :reinstall, :uninstall, :oauth_callback]
@@ -27,6 +28,18 @@ class Admin::Marketplace::InstalledExtensionsController <  Admin::AdminControlle
 
     @configs = account_configurations(extn_configs.body, acc_config.body)
     render 'admin/marketplace/installed_extensions/configs', :status => extn_configs.status
+  end
+
+  def iframe_configs
+    iframe_details = iframe_settings
+    render_error_response and return if error_status?(iframe_details)
+    iframe_url = iframe_details.body["url"]
+    render_error_response(:bad_request) and return if iframe_url.blank?
+    iframe_params = get_iframe_params(iframe_details.body)
+    encrypted_iframe_params = iframe_token(iframe_details.body, iframe_params)
+    return unless encrypted_iframe_params
+    @iframe_url = Liquid::Template.parse(iframe_url).render({"encryptedParams" => encrypted_iframe_params})
+    render 'admin/marketplace/installed_extensions/iframe_configs', :status => iframe_details.status
   end
 
   def install

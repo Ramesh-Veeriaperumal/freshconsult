@@ -4566,9 +4566,11 @@ en:
       modified_on: "Modified on:"
       related_articles: "Related Articles"
       created_by: "Created by:"
+      activation_warning: "It looks like your account hasn't been verified yet. Please activate it in order to publish an article (you can save your drafts till then)."
     folder:
       filler_text: "Watch this space for articles regarding %{folder_name}"
     topic:
+      activation_warning: "It looks like your account hasn't been verified yet.  Please activate it in order to post a forum topic."
       follow: Follow
       following: Following
       topic_title: Topic title
@@ -5211,6 +5213,7 @@ en:
     notification_template: Templates
     cc_notifications: CC Notifications
     title: Email Notifications
+    account_not_activated: It looks like your account hasn't been verified yet. Please activate it in order to enable email notifications.
     singular_title: Notification
     index_outdated: Some translations are outdated
     show_default: Show original content
@@ -5543,6 +5546,7 @@ en:
       cc: CC
       to: "To:"
       compose_choose_email: Select a from address
+      outbound_email_not_activated: It looks like your account hasn't been verified yet. Please activate it in order to send an outbound email.
       compose_email_info: "The email will be sent to the customer and will be logged as a ticket without triggering any notifications."
     switch_view:
       new_view: "Try the <strong>New Ticket View</strong>"
@@ -7647,9 +7651,9 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
         opportunity: "Opportunity Fields"
         opportunity_settings: "Agents can create/link or unlink opportunities from the ticket"
     salesforce_v2:
-      label: "Salesforce V2"
+      label: "Salesforce Plus"
       desc: "You can sync Contact and Account information between Salesforce crm and Freshdesk."
-      helptext: "<h4>Salesforce V2</h4><p><br/>You can enable one way sync between your Salesforce CRM and freshdesk. From your helpdesk dashboard, you will be able to create, delete or update CRM contact/account fields. A maximum of 10 account fields can be synced, amongst which, 4 contact fields will be selected by default (Name, Email, Mobile and Phone). On the other hand, for account fields, only the name will be selected by default.</p><p>Hence, the customer can additionally select 6 contact fields and 9 account fields in their CRM-Helpdesk integration.</p><p>To enable this integration, drop a mail request to us and we’ll do it for you.</p><p>You need to create the following custom fields in your Freshdesk account to enable this integration.<br/>a.SFCONTACTID in admin/contact_fields.<br/>b.SFACCOUNTID in admin/company_fields.</p><p>In addition to the above fields, you will also have to create these custom fields in your Salesforce CRM.<br/>a.FDCONTACTID in contact custom fields.<br/>b.FDACCOUNTID in account custom fields.</p>"
+      helptext: "<h4>Salesforce Plus</h4><p><br/>For Salesforce Sync configuration setting instructions and guidelines, refer <a href='https://support.freshdesk.com/solution/articles/224042-the-salesforce-app-for-v2' target='_blank'>The Salesforce Plus App</a> article. </p>"
       add_fields:
         remove: "Remove"
       form:

@@ -8,7 +8,6 @@ var TemplateDockManager   = Class.create({
     this.appName;
     this.developedBy;
 
-
     this.bindTemplateEvents();
     this.setupCarousel();
 
@@ -81,6 +80,7 @@ var TemplateDockManager   = Class.create({
                     .on("click.tmpl_events", ".install-btn" , this.installApp.bindAsEventListener(this))
                     .on("click.tmpl_events", ".install-form-btn, .update" , this.updateApp.bindAsEventListener(this))
                     .on("click.tmpl_events", "#oauth_link", this.installOAuthApp.bindAsEventListener(this))
+                    .on("click.tmpl_events", ".install-iframe-settings, .update-iframe-settings" , this.updateIframeApp.bindAsEventListener(this))
                     .on("click.tmpl_events", ".nativeapp" , this.installNativeApp.bindAsEventListener(this))
                     .on("submit.tmpl_events", "form#extension-search-form" , this.onSearch.bindAsEventListener(this))
                     .on("click.tmpl_events", "[id^=carousel-selector-]" , this.carouselSelector.bindAsEventListener(this))
@@ -487,13 +487,56 @@ var TemplateDockManager   = Class.create({
            jQuery(".button-container .show_btn").removeClass("closable");
           }
         }
-
       },
       error: function(jqXHR, exception) {
         that.showErrorMsg(that.customMessages.no_connection);
       }
     });
     
+  },
+
+
+  updateIframeApp: function(e){
+    e.preventDefault();
+    e.stopPropagation();
+    var that = this;
+    var el = jQuery(e.currentTarget);
+    
+    jQuery.ajax({
+      url: jQuery(el).attr("data-url"),
+      type: jQuery(el).attr("data-method"),
+      beforeSend: function(){
+        that.showLoader();
+      },
+      success: function(install_extension){
+        jQuery(that.extensionsWrapper).empty()
+                                      .append(JST["marketplace/marketplace_iframe_settings"](install_extension));
+
+        that.appName = install_extension.display_name;
+
+        if(jQuery(el).attr("data-developedby") != undefined){
+          that.developedBy = jQuery(el).attr("data-developedby");
+        }
+
+        jQuery(document).trigger({
+            type: "km_install_config_page_loaded",
+            app_name: that.appName,
+            developed_by: that.developedBy,
+            time: new Date()
+        });
+
+        if(install_extension.iframe_url){
+          var iframeHelper = new MarketplaceIframeHelper();
+          iframeHelper.createSandboxedIframe(install_extension.iframe_url);
+        }
+        else{
+          that.showErrorMsg(that.customMessages.no_connection);
+        }
+      },
+      error: function(jqXHR, exception) {
+        that.showErrorMsg(that.customMessages.no_connection);
+      }
+    });
   },
 
   onSearch: function(e){

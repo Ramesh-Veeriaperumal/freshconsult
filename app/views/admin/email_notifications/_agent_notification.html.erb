@@ -1,6 +1,7 @@
 <tr>
-	<td <%= "class='tooltip email-tip' title='#{t('email_notifications.disabled_toggle')}'".html_safe if  !(agent_notification.can_turn_off_for_agent?)  %>>
-		<% if !(agent_notification.can_turn_off_for_agent?) %>	
+	 <td class = "tooltip email-tip"
+	 <%= "title='#{t('email_notifications.disabled_toggle')}'".html_safe if  !(agent_notification.can_turn_off_for_agent?) && current_account.verified? %>>
+		<% unless (agent_notification.can_turn_off_for_agent?) && (current_account.verified?)%>	
 			<input rel="toggle" type="checkbox" id="em" name="timer" data-checked-label="ON" data-unchecked-label="OFF" <%= (agent_notification.agent_notification) ? "checked" : "" %> disabled >
 		<%else%>
 			<input rel="toggle" type="checkbox" id="em" name="timer" data-checked-label="ON" data-unchecked-label="OFF" <%= (agent_notification.agent_notification) ? "checked" : "" %> data-type="email_notification[agent_notification]" data-url=<%=admin_email_notification_path(agent_notification.id) %> >

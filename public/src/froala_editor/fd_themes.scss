@@ -523,14 +523,16 @@ body .fr-overlay {
 
   .is_stuck #sticky_redactor_toolbar{
     .redactor_toolbar, .fr-toolbar {
-      top: 52px;
+      top: 52px !important;
       background: #fff;
       box-shadow: 0 5px 5px -6px #333;
     }
-    &.has-notification .redactor_toolbar,
+    
+   &.has-notification .redactor_toolbar,
     &.has-notification .fr-toolbar  {
-      top: 88px;
+      top: 52px;
     }
+    
   }
 
   .article-edit{

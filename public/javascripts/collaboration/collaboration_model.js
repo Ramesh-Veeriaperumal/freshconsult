@@ -51,12 +51,8 @@ App.CollaborationModel = (function ($) {
                 }
             }
 
-            // HK module
-            if(typeof ProfileImage !== "undefined") {
-                ProfileImage.fetch(uiIniter);
-            } else {
-                uiIniter();
-            }
+            // Removed store_profile_image dependency from here
+            uiIniter();
         },
         disconnected: function(response) {
             App.CollaborationUi.onDisconnectHandler(response);
@@ -198,6 +194,7 @@ App.CollaborationModel = (function ($) {
         notificationsMap: {},
         unreadNotiCount: 0,
         invalidAnnotationMessages: [],
+        profileImages: {},
 
         isOnline: function(userId) {
             var is_online = false;

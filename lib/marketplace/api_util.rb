@@ -98,8 +98,8 @@ module Marketplace::ApiUtil
       render_error_response
     end
 
-    def render_error_response
-     render :nothing => true, :status => 503
+    def render_error_response(status_code = 503)
+     render :nothing => true, :status => status_code
     end
 
     def error_status?(data)
