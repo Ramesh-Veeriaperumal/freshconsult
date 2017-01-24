@@ -11,7 +11,7 @@ module RabbitMq::Subscribers::Users::Iris
   end
   
   def mq_iris_user_email_properties(action)
-    to_rmq_json(iris_keys, action)
+    self.user.to_rmq_json(iris_keys, action)
   end
 
   def mq_iris_subscriber_properties(action)
