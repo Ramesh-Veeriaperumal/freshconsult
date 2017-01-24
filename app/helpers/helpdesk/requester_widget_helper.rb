@@ -212,9 +212,9 @@ module Helpdesk::RequesterWidgetHelper
       when :custom_dropdown
         CGI.unescapeHTML(value)
       when :custom_url
-        link_to(value,value, :title => value, :target => "_blank")
+        link_to(value,value, :title => value, :target => "_blank", :rel => 'noreferrer')
       when :default_twitter_id
-        link_to(value,"#{TWITTER_LINK}#{value}", :title => value, :target => "_blank")
+        link_to(value,"#{TWITTER_LINK}#{value}", :title => value, :target => "_blank", :rel => 'noreferrer')
       else
         value
       end
