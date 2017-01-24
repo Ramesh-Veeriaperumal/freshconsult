@@ -124,6 +124,11 @@ module TicketsFilter
     sort_fields.map { |i| [I18n.t(i[1]), i[0]] }
   end
 
+  def self.api_sort_fields_options
+    sort_fields_api = SORT_FIELDS.clone
+    sort_fields_api.insert(0, [ :due_by, "tickets_filter.sort_fields.due_by"]) if Account.current && Account.current.sla_management_enabled?
+  end
+
   def self.shared_agent_sort_fields_options
     sort_fields = AGENT_SORT_FIELDS.clone
     sort_fields.map { |i| [I18n.t(i[1]), i[0], i[2]] }
@@ -152,10 +157,10 @@ module TicketsFilter
   SHARED_OWNERSHIP_DEFAULT_VISIBLE_FILTERS = %w( new_and_my_open shared_by_me shared_with_me unresolved all_tickets raised_by_me monitored_by spam deleted )
   DEFAULT_VISIBLE_FILTERS_WITH_ARCHIVE = %w( new_and_my_open unresolved all_tickets raised_by_me monitored_by archived spam deleted )
   SHARED_OWNERSHIP_DEFAULT_VISIBLE_FILTERS_WITH_ARCHIVE = %w( new_and_my_open shared_by_me shared_with_me unresolved all_tickets raised_by_me monitored_by archived spam deleted )
-  DEFAULT_VISIBLE_FILTERS_WITH_COLLABORATION = %w( new_and_my_open ongoing_collab unresolved all_tickets raised_by_me monitored_by spam deleted )
-  SHARED_OWNERSHIP_DEFAULT_VISIBLE_FILTERS_WITH_COLLABORATION = %w( new_and_my_open ongoing_collab shared_by_me shared_with_me unresolved all_tickets raised_by_me monitored_by spam deleted )
-  DEFAULT_VISIBLE_FILTERS_WITH_ARCHIVE_AND_COLLABORATION = %w( new_and_my_open ongoing_collab unresolved all_tickets raised_by_me monitored_by archived spam deleted )
-  SHARED_OWNERSHIP_DEFAULT_VISIBLE_FILTERS_WITH_ARCHIVE_AND_COLLABORATION = %w( new_and_my_open ongoing_collab shared_by_me shared_with_me unresolved all_tickets raised_by_me monitored_by archived spam deleted )
+  DEFAULT_VISIBLE_FILTERS_WITH_COLLABORATION = %w( ongoing_collab new_and_my_open unresolved all_tickets raised_by_me monitored_by spam deleted )
+  SHARED_OWNERSHIP_DEFAULT_VISIBLE_FILTERS_WITH_COLLABORATION = %w( ongoing_collab new_and_my_open shared_by_me shared_with_me unresolved all_tickets raised_by_me monitored_by spam deleted )
+  DEFAULT_VISIBLE_FILTERS_WITH_ARCHIVE_AND_COLLABORATION = %w( ongoing_collab new_and_my_open unresolved all_tickets raised_by_me monitored_by archived spam deleted )
+  SHARED_OWNERSHIP_DEFAULT_VISIBLE_FILTERS_WITH_ARCHIVE_AND_COLLABORATION = %w( ongoing_collab new_and_my_open shared_by_me shared_with_me unresolved all_tickets raised_by_me monitored_by archived spam deleted )
 
   def self.mobile_sort_fields_options
     sort_fields = self.sort_fields_options
