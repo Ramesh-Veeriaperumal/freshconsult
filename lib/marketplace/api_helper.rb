@@ -33,7 +33,7 @@ module Marketplace::ApiHelper
                                         .merge({:installation_details => installed_mkp_app})
         if extension_details['app_type'] == Marketplace::Constants::APP_TYPE[:custom]
           installed_custom_apps << installed_extension_details
-        elsif extension_details['app_type'] == Marketplace::Constants::APP_TYPE[:regular]
+        else
           installed_mkp_apps << installed_extension_details
         end
       end
