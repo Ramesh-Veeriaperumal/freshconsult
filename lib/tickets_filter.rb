@@ -127,6 +127,7 @@ module TicketsFilter
   def self.api_sort_fields_options
     sort_fields_api = SORT_FIELDS.clone
     sort_fields_api.insert(0, [ :due_by, "tickets_filter.sort_fields.due_by"]) if Account.current && Account.current.sla_management_enabled?
+    sort_fields_api
   end
 
   def self.shared_agent_sort_fields_options
