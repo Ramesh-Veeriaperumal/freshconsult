@@ -1132,7 +1132,7 @@ HelpdeskReports.CoreUtil = {
 
         var config = {
                 earliestDate: Date.parse('01/01/2010'),
-                latestDate: Date.parse(date.end_date_with_no_lag),
+                latestDate: Date.parse(date.endDate),
                 presetRanges: presetRanges,
                 presets: {
                     dateRange: I18n.t('helpdesk_reports.date_range')
