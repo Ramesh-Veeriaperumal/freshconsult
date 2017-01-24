@@ -34,7 +34,7 @@ gem "rack-cache", "~> 1.2"
 gem "statsd-ruby", :git => 'git://github.com/sumakumardey/statsd-ruby', :branch =>'custom_stats', :require => 'statsd'
 
 gem 'sneaky-save', :git => 'git://github.com/partyearth/sneaky-save.git'
-gem 'fresh_request', :git => 'git@github.com:freshdesk/fresh_request.git', :branch => 'v20'
+gem 'fresh_request', :git => 'git@github.com:freshdesk/fresh_request.git', :branch => 'v10'
 
 #for ruby ~> 2.1.0 upgrade
 gem 'iconv', '~> 1.0.4'
@@ -131,7 +131,7 @@ gem "sax-machine", "~> 0.1.0"
 
 gem "insensitive_hash", "0.2.3"
 
-gem "redis","3.3.1"
+gem "redis","3.0.7"
 gem "resque","~> 1.24.0"
 gem "resque-status", "0.4.1"
 gem 'resque-scheduler', "2.2.0", :require => 'resque_scheduler'
