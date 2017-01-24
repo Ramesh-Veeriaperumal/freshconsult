@@ -252,13 +252,13 @@ window.App.Contacts.Contact_form = window.App.Contacts.Contact_form || {};
     },
 
     manageNewEmail: function () {
-      if( this.emailWithNoErrors() && $('#emails_con li').not('.destroyed').length<5){
+      if( this.emailWithNoErrors() && $('#emails_con li').not('.destroyed').length<this.max_user_emails){
           $('#add_new_mail').removeClass('disabled')
         }else{
           $('#add_new_mail').addClass('disabled')
         }
 
-        if($('#emails_con li').not('.destroyed').length >= 5){
+        if($('#emails_con li').not('.destroyed').length >= this.max_user_emails){
           $('.ue_add_email').hide();
         }else{
           $('.ue_add_email').show();

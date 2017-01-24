@@ -41,7 +41,7 @@ class User < ActiveRecord::Base
 
   USER_FILTER_TYPES = ["verified","unverified","all","deleted","blocked"]
 
-  MAX_USER_EMAILS = 5
+  MAX_USER_EMAILS = 10
   PASSWORD_LENGTH = 4
   MAX_USER_COMPANIES = 20
 
