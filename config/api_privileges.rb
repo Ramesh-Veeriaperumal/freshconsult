@@ -65,7 +65,7 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   edit_ticket_properties do
-    resource :"ember/ticket", only: [:update_properties]
+    resource :"ember/ticket", only: [:update, :update_properties]
     resource :"ember/tickets/bulk_action", only: [:bulk_update]
   end
 

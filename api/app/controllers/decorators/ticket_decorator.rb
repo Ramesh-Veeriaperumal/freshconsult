@@ -7,7 +7,7 @@ class TicketDecorator < ApiDecorator
   def initialize(record, options)
     super(record)
     @name_mapping = options[:name_mapping]
-    @sideload_options = options[:sideload_options]  
+    @sideload_options = options[:sideload_options] || []
   end
 
   def utc_format(value)
@@ -85,6 +85,10 @@ class TicketDecorator < ApiDecorator
 
   def attachments_hash
     attachments.map { |a| AttachmentDecorator.new(a).to_hash }
+  end
+
+  def cloud_files_hash
+    cloud_files.map { |cf| CloudFileDecorator.new(cf).to_hash }
   end
 
   def meta

@@ -186,6 +186,42 @@
             "description": "Ticket not found"
           }
         }
+      },
+      "put": {
+        "tags": [
+          "ticket"
+        ],
+        "description": "Update a ticket",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ticket_input"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/ticket_show"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Ticket not found"
+          }
+        }
       }
     },
     "/tickets/{id}/restore": {

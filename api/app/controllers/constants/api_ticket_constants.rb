@@ -7,7 +7,7 @@ module ApiTicketConstants
   CREATE_FIELDS = %w(description due_by email_config_id fr_due_by group_id priority
                      email phone twitter_id facebook_id requester_id name responder_id source status subject type product_id).freeze | ARRAY_FIELDS | HASH_FIELDS | AttachmentConstants::CLOUD_FILE_FIELDS
   UPDATE_FIELDS = %w(description due_by email_config_id fr_due_by group_id priority
-                     email phone twitter_id facebook_id requester_id name responder_id source status subject type product_id).freeze | (ARRAY_FIELDS - ['cc_emails']) | HASH_FIELDS
+                     email phone twitter_id facebook_id requester_id name responder_id source status subject type product_id).freeze | (ARRAY_FIELDS - ['cc_emails']) | HASH_FIELDS | AttachmentConstants::CLOUD_FILE_FIELDS
   BULK_REPLY_FIELDS = [reply: ([:body, :from_email, :attachment_ids] | AttachmentConstants::CLOUD_FILE_FIELDS)].freeze
   BULK_UPDATE_FIELDS = ((UPDATE_FIELDS - ['attachments']) | %w(skip_close_notification)).freeze
   EXECUTE_SCENARIO_FIELDS = BULK_EXECUTE_SCENARIO_FIELDS = %w(scenario_id).freeze
