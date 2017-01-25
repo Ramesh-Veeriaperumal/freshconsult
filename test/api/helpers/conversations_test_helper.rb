@@ -25,7 +25,9 @@ module ConversationsTestHelper
       cloud_files: Array,
       has_quoted_text: (note.full_text_html.length > note.body_html.length),
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
-      updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
+      updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
+      last_edited_at: note.last_modified_timestamp.try(:utc),
+      last_edited_by: note.last_modified_user_id.try(:to_i)
     }
     if note.fb_note? && note.fb_post.present?
       fb_pattern = note.fb_post.post? ? fb_post_pattern({}, note.fb_post) : fb_dm_pattern({}, note.fb_post)
