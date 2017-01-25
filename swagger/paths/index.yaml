@@ -65,7 +65,7 @@
   $ref: ./conversations/twitter_reply.yaml
 
 /conversations/{id}:
-  $ref: ./conversations/crud.yaml
+  $ref: ./conversations/update.yaml
 /conversations/{id}/full_text:
   $ref: ./conversations/full_text.yaml
 

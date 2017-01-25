@@ -1,16 +1,16 @@
-post:
+put:
   tags: [conversation]
-  description: Create a Note
+  description: Update a Note
   parameters:
     - name: id
       type: number
       in: path
-      description: Display ID of ticket
+      description: ID of note to be updated
     - name: data
       in: body
       required: true
       schema:
-        $ref: '#/definitions/note_create_input'
+        $ref: '#/definitions/note_update_input'
   responses:
     200:
       description: Success
