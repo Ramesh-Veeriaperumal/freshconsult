@@ -31,7 +31,8 @@
               :class => " input-xlarge portal_url url_without_protocol domain_name_validator #{'required' unless portal.main_portal}", 
               :id => "PortalUrl", 
               :placeholder => "Eg. help.yourcompany.com",
-              :"data-domain" => Helpdesk::HOST[Rails.env.to_sym] %>
+              :"data-domain" => Helpdesk::HOST[Rails.env.to_sym],
+              :data => {:source => 'portal'} %>
     	      <span class="portal_url_if_long">
               <%= content_tag(:div, t('admin.products.portal.cname_configure_info', 
                               :full_domain => current_account.full_domain).html_safe, :class => "info-data") %>

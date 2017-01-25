@@ -41,3 +41,5 @@ FdNodeConfig = YAML.load_file(File.join(Rails.root, 'config', 'fd_node_config.ym
 ArchiveNoteConfig = YAML::load_file(File.join(Rails.root, 'config', 'archive_note.yml'))[Rails.env]
 
 IrisNotificationsConfig = YAML::load_file(File.join(Rails.root, 'config', 'iris_notifications.yml'))[Rails.env]
+
+ArchiveSikdekiqConfig = YAML::load_file(File.join(Rails.root, 'config', 'archive_queue.yml'))[Rails.env]

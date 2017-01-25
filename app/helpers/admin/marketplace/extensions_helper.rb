@@ -9,8 +9,16 @@ module Admin::Marketplace::ExtensionsHelper
       @extension['options']['redirect_url']
     elsif is_ni?
       install_integrations_marketplace_app_path(@extension['name'])
+    elsif is_iframe_app?(@extension)
+      if !@install_status["installed"]
+        admin_marketplace_installed_extensions_iframe_configs_path(@extension['extension_id'],
+          @extension['version_id']) + '?' + configs_url_params(@extension, @install_status)
+      else
+        params_hash = { version_id: @extension['version_id'] }
+        "#{admin_marketplace_installed_extensions_reinstall_path(@extension['extension_id'])}?#{params_hash.to_query}"
+      end
     else
-      is_oauth = is_oauth_app?
+      is_oauth = is_oauth_app?(@extension)
       url_params = configs_url_params(@extension, @install_status, is_oauth)
       admin_marketplace_installed_extensions_new_configs_path(@extension['extension_id'],
         @extension['version_id']) + '?' + url_params
@@ -34,6 +42,12 @@ module Admin::Marketplace::ExtensionsHelper
   def install_btn_class
     if @install_status['installed'] && @install_status['installed_version'] == @extension['version_id']
       "disabled"
+    elsif is_iframe_app?(@extension)
+      if @install_status["installed"] && @install_status['installed_version'] != @extension['version_id']
+        "install-btn"
+      else
+        "install-iframe-settings"
+      end
     else
       "install-form-btn"
     end
@@ -65,6 +79,9 @@ module Admin::Marketplace::ExtensionsHelper
                 target='_blank' rel="noreferrer"> #{install_btn_text} </a>)
     elsif !@install_status['installed'] && is_ni?
       _btn = ni_install_btn
+    elsif is_iframe_app?(@extension) && @install_status["installed"]
+      _btn << %(<a class="btn btn-default btn-primary install-app #{install_btn_class}" 
+                data-method="put" data-url="#{install_url}"> #{install_btn_text} </a>)
     else
       _btn << link_to(install_btn_text, '#', 'data-url' => install_url,
               :class => "btn btn-default btn-primary install-app #{install_btn_class}")
@@ -146,9 +163,5 @@ module Admin::Marketplace::ExtensionsHelper
       app_gallery_params[:type] = params[:type]
       app_gallery_params[:sort_by] = Marketplace::Constants::EXTENSION_SORT_TYPES
     end.to_query                                      
-  end
-
-  def is_oauth_app?
-    @extension['features'].include?('oauth')
   end
 end

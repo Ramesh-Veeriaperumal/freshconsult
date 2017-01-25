@@ -1,6 +1,6 @@
 module Archive
   class BuildCreateTicket < BaseWorker
-    sidekiq_options :queue => :archive_build_create_ticket, :retry => 0, :backtrace => true, :failures => :exhausted
+    sidekiq_options :queue => ::ArchiveSikdekiqConfig["archive_build_create_ticket"], :retry => 0, :backtrace => true, :failures => :exhausted
 
     def perform(args)
       begin

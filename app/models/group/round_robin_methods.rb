@@ -72,6 +72,8 @@ class Group < ActiveRecord::Base
     watch_round_robin_redis(agent_key)
     old_score = get_round_robin_redis(agent_key).to_i
 
+    Rails.logger.debug "RR pick_next_agent : #{user_id} #{old_score} #{self.capping_limit}"
+
     [user_id, old_score] if old_score < self.capping_limit
   end
 
@@ -223,6 +225,19 @@ class Group < ActiveRecord::Base
     lrem_round_robin_redis(round_robin_tickets_key, ticket_id)
   end
 
+  # Method for logging
+  def list_capping_range
+    arr = []
+    zrange_round_robin_redis(round_robin_capping_key, 0, -1, true).each do |val|
+      arr.push([val[0], get_round_robin_redis(round_robin_agent_capping_key(val[0]))])
+    end
+    arr
+  end
+
+  # Method for logging
+  def list_unassigned_tickets_in_group
+    lrange_round_robin_redis(round_robin_tickets_key, 0, -1)
+  end
   
   private
     def sorted_set_ticket_score
