@@ -33,6 +33,20 @@ module Ember
       save_ticket_and_respond
     end
 
+    def update
+      assign_protected
+      delegator_hash = { ticket_fields: @ticket_fields, custom_fields: cname_params[:custom_field],
+                         attachment_ids: @attachment_ids, shared_attachments: shared_attachments }
+      assign_attributes_for_update
+      return unless validate_delegator(@item, delegator_hash)
+      @item.attachments = @item.attachments + @delegator.draft_attachments if @delegator.draft_attachments
+      if @item.update_ticket_attributes(cname_params)
+        render 'ember/tickets/show'
+      else
+        render_errors(@item.errors)
+      end
+    end
+
     def execute_scenario
       return unless validate_body_params
       @delegator_klass = 'ScenarioDelegator'
@@ -106,6 +120,11 @@ module Ember
         @item.ticket_old_body = @item.ticket_old_body # This will prevent ticket_old_body query during save
         @item.inline_attachments = @item.inline_attachments
         @item.schema_less_ticket.product ||= current_portal.product unless cname_params.key?(:product_id)
+      end
+
+      def assign_attributes_for_update
+        @item.assign_attributes(validatable_delegator_attributes)
+        @item.assign_description_html(cname_params[:ticket_body_attributes]) if cname_params[:ticket_body_attributes]
       end
 
       def shared_attachments
