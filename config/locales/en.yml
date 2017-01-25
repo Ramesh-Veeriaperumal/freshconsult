@@ -4618,6 +4618,8 @@ en:
       people:
         one: "1 person "
         other: "%{count} people "
+      one: "vote"
+      other: "votes"
     topic_vote:
       announce:
         one: "likes this"

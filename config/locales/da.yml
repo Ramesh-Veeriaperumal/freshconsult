@@ -2590,7 +2590,7 @@ da:
       view_all: "Se alle"
       start_topic: "Start et emne"
       customer_support: Kundeservice
-      new_ticket: "Ny support sag"
+      new_ticket: "Ny supportsager"
       ticket_text: "<strong>Brug for hjælp til at komme i kontakt med os?</strong><p>Opret en kundesag, og vi vender tilbage hurtigst muligt.</p>"
       solution_text: "<strong>Leder du efter et svar? Her finder du det</strong><p>I vores vidensbase har vi samlet en stor del spørgsmål og svar, på de fleste spørgsmål. </p>"
       browse_topics: "Gennemse emner"
@@ -3296,7 +3296,7 @@ da:
     edit_profile: "Rediger profil"
     assumed_text: "Du har visning som"
     help_center: "Hvad kan vi hjælpe med i dag?"
-    new_support_ticket: "Ny support sag"
+    new_support_ticket: "Ny supportsager"
     check_ticket_status: "Tjek support sags status"
     toggle_shortcuts: Genvejstaster
     shortcuts_info: "klik <span class='color-orange'>?</span> for at se <a id='shortcuts_info' href='#'>Tastetur genveje</a>"

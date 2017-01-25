@@ -4378,9 +4378,11 @@ he:
       insert_ca_resp_tip: "הוסף תגובה מוכנה זו"
     split_ticket: פצל
     flag_spam: "סמן ספאם בדגל"
+    spam_header: ספאם
     delete_forever: "מחק לתמיד"
     empty_trash: "פח הזבל ריק"
     assign_to_agent: "הקצה לסוכן"
+    assign_to: הקצה
     select_to_agent: "בחר סוכן"
     export: יצא
     exporting: מייצא
@@ -5056,6 +5058,8 @@ he:
         title: "תגובות מוכנות"
     ca_response:
       delete_confirm: "האם אתה בטוח שברצונך למחוק תגובה מוכנה זו?"
+    realtime_dashboard:
+      unresolve_tickets: "כרטיסים שלא נפתרו"
   import_ticket_group: כרטיסים
   tickets_filter:
     title: "סנן כרטיסים"
