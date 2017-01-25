@@ -223,9 +223,11 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     @match                = :and
     @key                  = params[:wf_key]         || self.id.to_s
     self.model_class_name = params[:wf_model]       if params[:wf_model]
-    
     @per_page             = params[:wf_per_page]    || default_per_page
-    @page                 = params[:page]           || 1
+
+    #if parameter page is not given(nil) or if its value is 0(string comparision), redirect to page 1 otherwise set it as it was given
+    @page                 = (params[:page].nil? || (params[:page] == "0")) ? 1 : params[:page]
+
     @order_type           = TicketsFilter::SORT_ORDER_FIELDS.map{|x| x[0].to_s }.include?(params[:wf_order_type]) ? params[:wf_order_type] : default_order_type
     @order                = TicketsFilter.sort_fields_options.map{|x| x[1].to_s }.include?(params[:wf_order]) ? params[:wf_order] : default_order
     @without_pagination   = params[:without_pagination]         if params[:without_pagination]
