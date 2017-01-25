@@ -120,6 +120,7 @@ class AccountsController < ApplicationController
     @account.account_additional_settings[:supported_languages] = params[:account][:account_additional_settings_attributes][:supported_languages] if @account.features?(:multi_language) && !@account.launched?(:translate_solutions)
     @account.account_additional_settings[:date_format] = params[:account][:account_additional_settings_attributes][:date_format] 
     @account.time_zone = params[:account][:time_zone]
+    @account.helpdesk_name = params[:account][:helpdesk_name]
     @account.ticket_display_id = params[:account][:ticket_display_id]
     params[:account][:main_portal_attributes][:updated_at] = Time.now
     params[:account][:main_portal_attributes].delete(:language) if @account.features?(:enable_multilingual)
