@@ -13,6 +13,10 @@ get:
       in: query
       type: string
       description: Comma-separated values, possible values - evaluated_response
+    - name: ticket_id
+      in: query
+      type: string
+      description: ID of the ticket for which the canned response should be evaluated
   responses:
     200:
       description: Success

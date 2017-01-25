@@ -190,9 +190,6 @@ Helpkit::Application.routes.draw do
         match '/split_note' => 'ember/tickets#split_note', via: :put
         post :facebook_reply, to: 'ember/conversations#facebook_reply'
       end
-      # This alternate route is to handle limitation in ember route generation : api/_/tickets/:ticket_id/canned_responses?id=Number
-      match '/canned_responses' => 'ember/tickets/canned_responses#show', via: :get
-      resources :canned_responses, controller: 'ember/tickets/canned_responses', only: [:show]
       resources :activities, controller: 'ember/tickets/activities', only: [:index]
 
       member do
@@ -201,9 +198,6 @@ Helpkit::Application.routes.draw do
         get :watchers, to: 'ember/subscriptions#watchers'
         put :update_properties, to: 'ember/tickets#update_properties'
       end
-      # This alternate route is to handle limitation in ember route generation : api/_/tickets/:ticket_id/canned_responses?id=Number
-      match '/canned_responses' => 'ember/tickets/canned_responses#show', via: :get
-      resources :canned_responses, controller: 'ember/tickets/canned_responses', only: [:show]
     end
 
     resources :time_entries, controller: 'ember/time_entries', except: [:new, :edit, :create] do

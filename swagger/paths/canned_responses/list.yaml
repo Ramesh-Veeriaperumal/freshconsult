@@ -1,0 +1,16 @@
+get:
+  summary: List all
+  description: Lists all Canned Responses
+  tags: ['canned response']
+  responses:
+    200:
+      description: Success
+      schema:
+      schema:
+        type: array
+        items:
+          $ref: '#/definitions/canned_response'
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'

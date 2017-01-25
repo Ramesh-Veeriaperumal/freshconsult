@@ -2324,6 +2324,32 @@
         }
       }
     },
+    "/canned_responses/": {
+      "get": {
+        "summary": "List all",
+        "description": "Lists all Canned Responses",
+        "tags": [
+          "canned response"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/canned_response"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          }
+        }
+      }
+    },
     "/canned_responses/{id}": {
       "get": {
         "summary": "Show",
@@ -2344,6 +2370,12 @@
             "in": "query",
             "type": "string",
             "description": "Comma-separated values, possible values - evaluated_response"
+          },
+          {
+            "name": "ticket_id",
+            "in": "query",
+            "type": "string",
+            "description": "ID of the ticket for which the canned response should be evaluated"
           }
         ],
         "responses": {
@@ -4670,9 +4702,12 @@
         "content_html": {
           "type": "string"
         },
-        "evaluated_response": {
-          "type": "string",
-          "description": "Has to be sideloaded with ?include=evaluated_response"
+        "attachments": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "byte"
+          }
         }
       }
     },
@@ -5099,6 +5134,10 @@
           "properties": {
             "folder_id": {
               "type": "integer"
+            },
+            "evaluated_response": {
+              "type": "string",
+              "description": "Has to be sideloaded with ?include=evaluated_response"
             }
           }
         }

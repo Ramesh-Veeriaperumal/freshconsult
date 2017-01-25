@@ -130,6 +130,8 @@
   $ref: ./canned_responses/folder_list.yaml
 /canned_response_folders/{id}:
   $ref: ./canned_responses/folder_show.yaml
+/canned_responses/:
+  $ref: ./canned_responses/list.yaml
 /canned_responses/{id}:
   $ref: ./canned_responses/show.yaml
 

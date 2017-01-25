@@ -6,9 +6,12 @@ module Ember
   class CannedResponsesControllerTest < ActionController::TestCase
     include GroupHelper
     include CannedResponsesHelper
+    include CannedResponsesTestHelper
     include CannedResponseFoldersTestHelper
     include HelpdeskAccessMethods
     include AgentHelper
+    include TicketHelper
+    include AttachmentsTestHelper
 
     def setup
       super
@@ -16,7 +19,9 @@ module Ember
     end
 
     def before_all
+      file = fixture_file_upload('files/attachment.txt', 'text/plain', :binary)
       @account = Account.first.make_current
+      @sample_ticket = create_ticket
       @agent = @account.agents.first.user
 
       @ca_folder_all = create_cr_folder(name: Faker::Name.name)
@@ -31,6 +36,16 @@ module Ember
       # responses based on groups
       # @test_group = create_group(@account)
       @ca_response_3 = create_canned_response(@ca_folder_all.id, Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:group_agents])
+
+      @ca_response_4 = create_response(
+        title: Faker::Lorem.sentence,
+        content_html: 'Hi {{ticket.requester.name}}, Faker::Lorem.paragraph Regards, {{ticket.agent.name}}',
+        visibility: Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents],
+        attachments: {
+          resource: file,
+          description: ''
+        }
+      )
     end
 
     # tests for show
@@ -73,6 +88,79 @@ module Ember
       assert_response 404
     end
 
+    def test_show_with_invalid_ticket_id_and_response
+      get :show, controller_params(version: 'private', id: 10_000, ticket_id: 10_000, include: 'evaluated_response')
+      assert_response 404
+    end
+
+    def test_show_with_invalid_ticket_id
+      get :show, controller_params(version: 'private', id: @ca_response_1.id, ticket_id: 10_000, include: 'evaluated_response')
+      assert_response 404
+    end
+
+    def test_show_with_invalid_response_id
+      get :show, controller_params(version: 'private', id: 0, ticket_id: @sample_ticket.display_id, include: 'evaluated_response')
+      assert_response 404
+    end
+
+    def test_show_with_unauthorized_ticket_id
+      user_stub_ticket_permission
+      get :show, controller_params(version: 'private', id: @ca_response_4.id, ticket_id: @sample_ticket.display_id, include: 'evaluated_response')
+      user_unstub_ticket_permission
+      assert_response 403
+      match_json(request_error_pattern(:access_denied))
+    end
+
+    def test_show_with_unauthorized_response_id
+      Admin::CannedResponses::Response.any_instance.stubs(:visible_to_me?).returns(false)
+      get :show, controller_params(version: 'private', id: @ca_response_1.id, ticket_id: @sample_ticket.display_id, include: 'evaluated_response')
+      Admin::CannedResponses::Response.any_instance.unstub(:visible_to_me?)
+      assert_response 403
+      match_json(request_error_pattern(:access_denied))
+    end
+
+    def test_show_with_evaluated_response
+      login_as(@agent)
+      get :show, controller_params(version: 'private', id: @ca_response_2.id, ticket_id: @sample_ticket.display_id, include: 'evaluated_response')
+      assert_response 200
+      match_json(ca_response_show_pattern_evaluated_content(@ca_response_2.id, @sample_ticket))
+    end
+
+    def test_show_with_evaluated_response_new_ticket
+      login_as(@agent)
+      get :show, controller_params(version: 'private', id: @ca_response_2.id, include: 'evaluated_response')
+      assert_response 200
+      match_json(ca_response_show_pattern_new_ticket(@ca_response_2.id))
+    end
+
+    def test_show_with_attachments
+      login_as(@agent)
+      get :show, controller_params(version: 'private', id: @ca_response_4.id, ticket_id: @sample_ticket.display_id, include: 'evaluated_response')
+      assert_response 200
+      match_json(ca_response_show_pattern_evaluated_content(@ca_response_4.id, @sample_ticket, @ca_response_4.attachments_sharable))
+    end
+
+    def test_show_with_empty_include
+      login_as(@agent)
+      get :show, controller_params(version: 'private', id: @ca_response_2.id, ticket_id: @sample_ticket.display_id, include: '')
+      assert_response 400
+      match_json([bad_request_error_pattern('include', :not_included, list: CannedResponseConstants::ALLOWED_INCLUDE_PARAMS)])
+    end
+
+    def test_show_with_wrong_type_include
+      login_as(@agent)
+      get :show, controller_params(version: 'private', id: @ca_response_2.id, ticket_id: @sample_ticket.display_id, include: ['test'])
+      assert_response 400
+      match_json([bad_request_error_pattern('include', :datatype_mismatch, expected_data_type: 'String', prepend_msg: :input_received, given_data_type: 'Array')])
+    end
+
+    def test_show_with_invalid_params
+      login_as(@agent)
+      get :show, controller_params(version: 'private', id: @ca_response_2.id, ticket_id: @sample_ticket.display_id, includ: 'test')
+      assert_response 400
+      match_json([bad_request_error_pattern('includ', :invalid_field)])
+    end
+
     # tests for Index
     # 1. 404 when there are no ids
     # 2. 404 when the ids are invalid
@@ -99,16 +187,7 @@ module Ember
     end
 
     def test_index_for_multiple_ca
-      get :index, controller_params(version: 'private', ids: [@ca_response_1, @ca_response_2, @ca_response_3].map(&:id).join(', '))
-      assert_response 200
-      pattern = []
-      [@ca_response_1, @ca_response_2, @ca_response_3].each do |ca|
-        pattern << ca_response_show_pattern(ca.id)
-      end
-      match_json(pattern)
-    end
-
-    def test_index_for_multiple_ca
+      login_as(@agent)
       get :index, controller_params(version: 'private', ids: [@ca_response_1, @ca_response_2].map(&:id).join(', '))
       assert_response 200
       pattern = []
@@ -157,34 +236,6 @@ module Ember
         pattern << ca_response_show_pattern(ca.id)
       end
       match_json(pattern)
-    end
-
-    def test_show_with_evaluated_response
-      login_as(@agent)
-      get :show, controller_params(version: 'private', id: @ca_response_2.id, include: 'evaluated_response')
-      assert_response 200
-      match_json(ca_response_show_pattern_with_association(@ca_response_2.id))
-    end
-
-    def test_show_with_empty_include
-      login_as(@agent)
-      get :show, controller_params(version: 'private', id: @ca_response_2.id, include: '')
-      assert_response 400
-      match_json([bad_request_error_pattern('include', :not_included, list: CannedResponseConstants::ALLOWED_INCLUDE_PARAMS)])
-    end
-
-    def test_show_with_wrong_type_include
-      login_as(@agent)
-      get :show, controller_params(version: 'private', id: @ca_response_2.id, include: ['test'])
-      assert_response 400
-      match_json([bad_request_error_pattern('include', :datatype_mismatch, expected_data_type: 'String', prepend_msg: :input_received, given_data_type: 'Array')])
-    end
-
-    def test_show_with_invalid_params
-      login_as(@agent)
-      get :show, controller_params(version: 'private', id: @ca_response_2.id, includ: 'test')
-      assert_response 400
-      match_json([bad_request_error_pattern('includ', :invalid_field)])
     end
   end
 end
