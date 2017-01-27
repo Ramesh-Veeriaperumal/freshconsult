@@ -4618,6 +4618,7 @@ en:
       people:
         one: "1 person "
         other: "%{count} people "
+    vote_label:
       one: "vote"
       other: "votes"
     topic_vote:

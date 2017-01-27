@@ -352,7 +352,7 @@ HTML
 	end
 
 	def topic_votes topic
-	  "#{topic.votes} #{I18n.t('portal.vote', :count => topic.votes)}"
+	  "#{topic.votes} #{I18n.t('portal.vote_label', :count => topic.votes)}"
 	end
 
 	def post_sort_options topic, sort_by
