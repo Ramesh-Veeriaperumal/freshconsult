@@ -1,6 +1,10 @@
 <% content_for :layoutType do %>community forms<% end %>
 <div class="row-fluid hamburger">
 	<%= sidebar_toggle("mt4") %>
+  <% unless current_account.verified? %>
+      <div class="account-verify-alert account-not-verified forum-activation-alert"><%= t('portal.topic.activation_warning') %></div>
+  <% end %>
+
 	<h3 id="new_topic" class="lead"><%= t('topic.new') %></h3>
 </div>
 <%= error_messages_for :post %>
@@ -12,7 +16,7 @@
 	<div class="button-container">
     <% cancel_url = @topic_ticket ? helpdesk_ticket_path(@topic_ticket) : discussions_path %>
 		<%= pjax_link_to t('cancel'), cancel_url , :class => "btn" %>
-		<%= submit_tag t('topic.post'), :class => "btn btn-primary" %>
+	    <%= submit_tag t('topic.post'), :class => "btn btn-primary", :disabled => !current_account.verified? %> 
 	</div>
 <% end -%>
 <%= javascript_tag "$('topic_title').focus();" %>

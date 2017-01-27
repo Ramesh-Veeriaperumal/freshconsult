@@ -66,7 +66,11 @@ class VaRule < ActiveRecord::Base
   end
 
   def conditions
-    @conditions ||= filter_array.collect{ |f| Va::Condition.new(f.symbolize_keys, account) }
+    @conditions ||= filter_array.collect { |f|
+                                           f.symbolize_keys!
+                                           Va::Condition.new(f, account) unless 
+                                           invalid_condition(f)
+                                         }.compact
   end
 
   def actions
@@ -108,9 +112,12 @@ class VaRule < ActiveRecord::Base
     Rails.logger.debug "INSIDE matches WITH conditions : #{conditions.inspect}, actions #{actions}"
     s_match = match_type.to_sym   
     to_ret = false
+    return to_ret if s_match == :all && @invalid_condition
     conditions.each do |c|
       current_evaluate_on = custom_eval(evaluate_on, c.evaluate_on_type)
-      to_ret = !current_evaluate_on.nil? ? c.matches(current_evaluate_on, actions) : negation_operator?(c.operator)
+      to_ret = !current_evaluate_on.nil? ? 
+               c.matches(current_evaluate_on, actions) :
+               negation_operator?(c.operator)
       return true if to_ret && (s_match == :any)
       return false if !to_ret && (s_match == :all) #by Shan temp
     end
@@ -160,6 +167,8 @@ class VaRule < ActiveRecord::Base
   def filter_query
     query_strings = []
     params = []
+    return query_strings if match_type == "all" &&
+                            (conditions.empty? || @invalid_condition)
     c_operator = (match_type.to_sym == :any ) ? ' or ' : ' and '
     
     conditions.each do |c|
@@ -317,6 +326,14 @@ class VaRule < ActiveRecord::Base
     
     def has_actions?
       errors.add(:base,I18n.t("errors.actions_empty")) if(action_data.blank?)
+    end
+
+    def invalid_condition condition_data
+      res = condition_data[:name].nil? ||
+            condition_data[:operator].nil? ||
+            condition_data[:value].nil?
+      @invalid_condition = res if res
+      res
     end
 
     def encrypt data

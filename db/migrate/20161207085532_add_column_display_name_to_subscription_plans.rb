@@ -1,4 +1,6 @@
 class AddColumnDisplayNameToSubscriptionPlans < ActiveRecord::Migration
+  shard :none
+  
   def self.up
     Lhm.change_table :subscription_plans, :atomic_switch => true do |m|
       m.add_column :display_name, "varchar(255) DEFAULT NULL"

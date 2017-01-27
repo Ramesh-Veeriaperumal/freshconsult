@@ -159,6 +159,7 @@ defaults: &defaults
     - [templates_cleanup]
     - [bulk_child_tkt_creation]
     - [code_console_execution]
+    - [activation_worker]
     - [flush_portal_solution_cache]
     - [plan_change_workerv2]
     - [learn_spam_message]
@@ -169,6 +170,8 @@ defaults: &defaults
     - [cloud_elements_delete]
     - [salesforce_integrated_resource_migrate]
     - [cloud_elements_logger_email]
+    - [populate_account_setup]
+    - [manual_publish]
 
 development:
   <<: *defaults

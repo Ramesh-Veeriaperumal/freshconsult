@@ -54,7 +54,6 @@ class Integrations::Marketplace::SignupController < ApplicationController
 
   def create_account
     @signup = Signup.new(params[:signup])
-
     if @signup.save
       @signup.user.reset_perishable_token!
       @signup.user.deliver_admin_activation
@@ -62,6 +61,7 @@ class Integrations::Marketplace::SignupController < ApplicationController
       add_to_crm
       update_remote_integrations_mapping(@app_name, @remote_id, @account, @signup.user)
       set_redis_and_redirect(@app_name, @account, @remote_id, @email, @operation)
+      mark_new_account_setup
     else
       @account = @signup.account
       @user = @signup.user
@@ -192,4 +192,7 @@ class Integrations::Marketplace::SignupController < ApplicationController
     @user = @account.users.new(:email => params[:user][:email], :name => params[:user][:name])
   end
 
+  def mark_new_account_setup
+    @signup.account.mark_new_account_setup_and_save
+  end
 end

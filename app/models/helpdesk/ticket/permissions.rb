@@ -6,10 +6,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   class << self
 
-    def agent_ticket_permission user
-      Agent::PERMISSION_TOKENS_BY_KEY[user.agent.ticket_permission]
-    end
-
     def responder_id_with_table
       "#{Helpdesk::Ticket.table_name}.responder_id"
     end
@@ -29,22 +25,21 @@ class Helpdesk::Ticket < ActiveRecord::Base
     def permissible_query_hash(user)
       if user.agent?
         query_hash = {:conditions => permissible_condition(user)}
-        query_hash[:joins] = permissible_join
+        query_hash[:joins] = permissible_join(user)
         query_hash
       end
     end
 
-    def permissible_join
-      :schema_less_ticket if Account.current.features?(:shared_ownership)
+    def permissible_join(user)
+      " INNER JOIN helpdesk_schema_less_tickets on helpdesk_tickets.account_id = helpdesk_schema_less_tickets.account_id AND helpdesk_tickets.id = helpdesk_schema_less_tickets.ticket_id " if !user.all_tickets_permission? && Account.current.features?(:shared_ownership)
     end
 
     def permissible_condition user
-      case agent_ticket_permission(user)
-      when :assigned_tickets
+      if user.assigned_tickets_permission?
         agent_condition user
-      when :group_tickets
+      elsif user.group_tickets_permission?
         group_condition user
-      when :all_tickets
+      elsif user.all_tickets_permission?
         []
       end
     end
@@ -73,7 +68,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
       query_hash[:conditions][0] += " AND display_id IN (?)"
       query_hash[:conditions] << ids
 
-      query_hash[:joins] = permissible_join
+      query_hash[:joins] = permissible_join(user)
       query_hash
     end
 
@@ -84,7 +79,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
       query_hash[:conditions][0] += " AND display_id IN (?)"
       query_hash[:conditions] << ids
 
-      query_hash[:joins] = permissible_join
+      query_hash[:joins] = permissible_join(user)
       query_hash
     end
 

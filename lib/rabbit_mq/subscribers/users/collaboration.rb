@@ -10,7 +10,7 @@ module RabbitMq::Subscribers::Users::Collaboration
   end
 
   def mq_collaboration_valid(action, model)
-    Account.current.collab_feature_enabled? &&
+    Account.current.collaboration_enabled? &&
       valid_collab_model?(model) && 
       valid_collab_agent? &&
       update_action?(action)

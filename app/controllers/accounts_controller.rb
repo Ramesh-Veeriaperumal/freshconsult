@@ -68,13 +68,13 @@ class AccountsController < ApplicationController
    
   def new_signup_free
    @signup = Signup.new(params[:signup])
-   
    if @signup.save
     @signup.account.agents.first.user.reset_perishable_token! 
       save_account_sign_up_params(@signup.account.id, params[:signup])
       add_account_info_to_dynamo
       set_account_onboarding_pending
       add_to_crm
+      mark_new_account_setup
       respond_to do |format|
         format.html {
           render :json => { :success => true,
@@ -497,5 +497,9 @@ class AccountsController < ApplicationController
     def save_account_sign_up_params account_id, args = {}
       key = ACCOUNT_SIGN_UP_PARAMS % {:account_id => account_id}
       set_others_redis_key(key,args.to_json,1296000)
+    end
+
+    def mark_new_account_setup
+      @signup.account.mark_new_account_setup_and_save
     end
 end

@@ -1,7 +1,7 @@
 class Account < ActiveRecord::Base
 
   LP_FEATURES   = [:link_tickets, :select_all, :round_robin_capping, :suggest_tickets, :customer_sentiment_ui]
-  DB_FEATURES   = [:custom_survey, :requester_widget]
+  DB_FEATURES   = [:custom_survey, :requester_widget, :collaboration]
   BOTH_FEATURES = [:shared_ownership]
   BITMAP_FEATURES = [:split_tickets, :add_watcher, :traffic_cop, :custom_ticket_views, :supervisor, :create_observer, :sla_management, 
     :email_commands, :assume_identity, :rebranding, :custom_apps, :custom_ticket_fields, :custom_company_fields, 

@@ -714,6 +714,7 @@ Helpkit::Application.routes.draw do
       put :block
       get :assume_identity
       get :profile_image
+      get :profile_image_path
     end
   end
 
@@ -1437,6 +1438,9 @@ Helpkit::Application.routes.draw do
           get :search
           get :auto_suggest
           get '/:extension_id', :action => :show, :as => 'show'
+          scope '/:extension_id' do
+            get :payment_info
+          end
         end
       end
 
@@ -1446,6 +1450,7 @@ Helpkit::Application.routes.draw do
           get :edit_configs
           get :oauth_callback
           get :edit_oauth_configs
+          get :iframe_configs
         end
         scope ':extension_id' do
           get :oauth_configs
@@ -1786,6 +1791,7 @@ Helpkit::Application.routes.draw do
   resource :accounts do
     collection do
       get :new_signup_free
+      post :new_signup_free
     end
   end
 
@@ -2757,6 +2763,13 @@ Helpkit::Application.routes.draw do
 
   namespace :notification do
     resources :product_notification, :only => :index
+    resources :user_notification, :only => :index do
+      collection do
+        get :token
+      end
+    end            
+    
+    
   end
 
   resources :rabbit_mq, :only => [:index]

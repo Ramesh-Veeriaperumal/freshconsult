@@ -26,7 +26,7 @@ class UpdateAllPublisher
           record.misc_changes = options[:reason]
           key = RabbitMq::Constants::RMQ_GENERIC_TICKET_KEY
         end
-        record.manual_publish_to_rmq("update", key, {:manual_publish => true}) if options[:manual_publish]
+        record.delayed_manual_publish_to_rmq("update", key, {:manual_publish => true}) if options[:manual_publish]
         # Add other subscribers here if needed like reports, etc.
       end
     end

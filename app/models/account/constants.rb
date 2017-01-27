@@ -87,7 +87,7 @@ class Account < ActiveRecord::Base
     
     :blossom_jan_17 => {
       :features => [ :gamification, :auto_refresh, :twitter, :facebook, :surveys , :scoreboard, :timesheets, 
-        :custom_domain, :multiple_emails, :advanced_reporting, :default_survey, :requester_widget ],
+        :custom_domain, :multiple_emails, :advanced_reporting, :default_survey, :requester_widget, :sitemap ],
       :inherits => [ :sprout_jan_17 ]
     },
     
@@ -101,7 +101,7 @@ class Account < ActiveRecord::Base
         :collision, :layout_customization, :round_robin, :enterprise_reporting,
         :custom_ssl, :custom_roles, :multiple_business_hours, :facebook_page_tab, :chat_routing, :dynamic_sections,
         :helpdesk_restriction_toggle, :round_robin_load_balancing, :multiple_user_companies, 
-        :multiple_companies_toggle, :round_robin_on_update ],
+        :multiple_companies_toggle, :round_robin_on_update, :shared_ownership_toggle ],
       :inherits => [ :garden_jan_17 ]
     },
 

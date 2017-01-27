@@ -139,7 +139,11 @@ module MemcacheKeys
 
   EXTENSION_DETAILS = "v2/FA:EXTENSION:%{extension_id}:%{locale_id}"
 
+  VERSION_DETAILS = "v1/FA:VERSION:%{version_id}"
+
   CONFIGURATION_DETAILS = "v1/FA:CONFIGURATIONS:%{version_id}:%{locale_id}"
+
+  IFRAME_SETTINGS = "v1/FA:IFRAME_SETTINGS:%{version_id}"
 
   INSTALLED_CTI_APP = "v1/INSTALLED_CTI_APP:%{account_id}"
 

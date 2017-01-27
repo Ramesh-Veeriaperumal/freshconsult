@@ -13,12 +13,18 @@
   <div class="intro"><%=t('application.desc')%></div>
 <% end %>
 
+<% active_account = current_account.active? %>
+
 <div id="integrations-list">
   <div>
     <div class="tab-actions">
       <% if feature?(:marketplace) %>
-        <div class="button-bar browse-apps pull-right">
-          <a class="browse-btn btn btn-flat browse-apps-btn" href="" data-url="<%= admin_marketplace_extensions_path %>?<%= more_apps_params %>"><span class="ficon-cube-filled"></span> <%= t('marketplace.get_more_apps') %></a>
+        <div class="button-bar browse-apps pull-right <%= active_account ? '' : 'tooltip' %>" 
+          <% unless active_account %> data-placement=below title="<%=t('marketplace.tooltip.suspended')%>" <% end %> >
+          <a class="browse-btn btn btn-flat browse-apps-btn <%= active_account ? '' : 'disabled' %> " 
+             href="" data-url="<%= admin_marketplace_extensions_path %>?<%= more_apps_params %>">
+             <span class="ficon-cube-filled"></span> <%= t('marketplace.get_more_apps') %>
+          </a>
         </div>
       <% end %>
       <% if current_account.custom_apps_enabled? %>
@@ -72,7 +78,7 @@
 <script type="text/javascript">
     var settingsLinks = { appBrowser: ".app-browser",
                 appBrowserClose: ".appbrowser-close, .closable",
-                browseBtn: ".browse-btn, .moreinfo-lnk, .update",
+                browseBtn: ".browse-btn, .moreinfo-lnk, .update, .update-iframe-settings",
                 activationSwitch: ".switch",
                 deleteBtn: ".delete-btn",
                 reauthorizeBtn: ".reauthorize-btn"

@@ -10,7 +10,7 @@ module RabbitMq::Subscribers::Tickets::Collaboration
   end
 
   def mq_collaboration_valid(action, model)
-    Account.current.collab_feature_enabled? &&
+    Account.current.collaboration_enabled? &&
     valid_collab_model?(model) && 
       (update_action?(action) || 
       ([:status, :responder_id].any? {|k| @model_changes.key?(k)}))

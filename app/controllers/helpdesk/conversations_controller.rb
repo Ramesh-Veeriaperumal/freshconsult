@@ -22,6 +22,7 @@ class Helpdesk::ConversationsController < ApplicationController
   include Helpdesk::SpamAccountConstants
   
   before_filter :build_note_body_attributes, :build_conversation, :except => [:full_text, :traffic_cop]
+  # before_filter :check_for_from_email, :only => [:reply, :forward, :reply_to_forward]
   before_filter :validate_tkt_type, :only => :broadcast
   before_filter :validate_fwd_to_email, :only => [:forward, :reply_to_forward]
   before_filter :check_for_kbase_email, :only => [:reply, :forward]
@@ -189,6 +190,15 @@ class Helpdesk::ConversationsController < ApplicationController
       @item.notable = @parent
       set_item_user
       @item
+    end
+
+    def check_for_from_email
+      if @item.from_email.present? and !current_account.support_emails.include? parse_email_text(@item.from_email)[:email]
+        flash[:notice] = I18n.t('ticket.errors.request_dropped')
+        logger.debug "From email in request doesn't match with supported emails for the account #{current_account.id} for ticket #{@item.notable.id} with display_id #{@item.notable.display_id}, had the from email #{@item.from_email}"
+        @scroll_to_top = true
+        create_error 
+      end
     end
 
     def validate_tkt_type

@@ -138,9 +138,13 @@ module RabbitMq::Constants
     "internal_agent_first_assign_in_bhrs", "last_resolved_at"
   ]
 
+  IRIS_TICKET_KEYS = REPORTS_TICKET_KEYS
+  IRIS_ARCHIVE_TICKET_KEYS = REPORTS_TICKET_KEYS
+  
   REPORTS_ARCHIVE_TICKET_KEYS = REPORTS_TICKET_KEYS
   AUTO_REFRESH_NOTE_KEYS      = ["kind", "private"]
   REPORTS_NOTE_KEYS           = ["id", "source", "user_id", "agent", "category", "private", "incoming", "deleted", "account_id", "created_at", "archive", "actor_type"]
+  IRIS_NOTE_KEYS = REPORTS_NOTE_KEYS
   
   MANUAL_PUBLISH_SUBCRIBERS   = ["reports", "activities", "count"]
   CTI_CALL_KEYS = ["id", "call_sid", "options", "account_id", "responder_id", "requester_id"]
@@ -152,4 +156,6 @@ module RabbitMq::Constants
   COLLABORATION_USER_KEYS = ["id", "account_id", "name", "job_title", "email", "mobile", "phone", "created_at", "deleted", "helpdesk_agent"]
   REPORTS_USER_KEYS = ["id", "account_id"]
   COLLABORATION_TICKET_KEYS = ["id", "responder_id", "status", "visible", "account_id", "display_id"]
+
+  IRIS_USER_KEYS = REPORTS_USER_KEYS
 end

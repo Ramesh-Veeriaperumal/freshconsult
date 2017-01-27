@@ -27,6 +27,7 @@ module Helpdesk::TicketFilterMethods
     end
 
     top_view_html = drop_down_views(top_views_array, selected_item, "leftViewMenu", (selected.blank? or params[:unsaved_view])).to_s 
+
     top_view_html += controls_on_privilege(selected_item, (selected_item[:default])) if current_account.custom_ticket_views_enabled?
     return top_view_html
   end
@@ -128,7 +129,6 @@ module Helpdesk::TicketFilterMethods
     order_of(view, default).each do |link_method|
       control_links << send("#{link_method}_link", view)
     end
-
     (content_tag :div, control_links.html_safe, :id => "view_manage_links").html_safe
   end
 
@@ -251,10 +251,6 @@ module Helpdesk::TicketFilterMethods
     # return @cached_filter_data[:wf_order_type].to_sym if @cached_filter_data && !@cached_filter_data[:wf_order_type].blank?
     cookies[:wf_order_type] = (params[:wf_order_type] ? params[:wf_order_type] : ( (!cookies[:wf_order_type].blank?) ? cookies[:wf_order_type] : DEFAULT_SORT_ORDER )).to_sym
   end
-
-  def collab_filter_enabled?
-    collab_filter_enabled_for?(filter)
-  end  
 
   def current_agent_mode
     return DEFAULT_AGENT_MODE unless current_account.features?(:shared_ownership)

@@ -27,7 +27,7 @@
 								:class => 'mobile_switchBtn') if mobile_agent? && allowed_domain? %>
 		</div>
 		<div class="header-wrapper">
-			<% if current_account.collab_feature_enabled? %>
+			<% if current_account.collaboration_enabled? %>
 				<div id="collab-bell" class="collab-bell">
 					<a id="bell-icon-link" class="bell-icon-link product-notification-link tooltip" data-placement="below">
 						<%= font_icon "bell", { :size => 30, :class => 'bell-icon' } %>
@@ -143,6 +143,11 @@
 				  </div>
 			  <% end %>    
 				<% if current_user.agent? %>
+					<% if current_account.launched?(:user_notifications) %>
+						<div id="user_notify_header" class="header-notification-wrapper" rel="remote-load" 
+								data-url="/notification/user_notification">
+						</div>
+					<% end %>
           <% unless Rails.env.development? %>
 					<div id="product_notify_header" class="header-notification-wrapper" rel="remote-load" 
 			    		data-url="/notification/product_notification">
@@ -234,8 +239,8 @@
 	</div>
 </div>
 
-<% if current_account.collab_feature_enabled? and current_user %>
-	<input type="hidden" id="collab-model-data" data-model-payload='{"clientId": "<%= Collaboration::Ticket.client_id_helpkit %>", "clientAccountId": "<%=current_account.id%>", "initAuthToken": "<%= Collaboration::Ticket.collab_token %>", "userId": "<%= current_user.id %>", "userName": "<%= current_user %>", "userEmail": "<%= current_user.email %>", "collab_url": <%= CollabConfig['collab_url'].to_json.html_safe %>, "rts_url": <%= CollabConfig['rts_url'].to_json.html_safe %>}'>
+<% if current_account.collaboration_enabled? and current_user %>
+	<input type="hidden" id="collab-model-data" data-model-payload='{"clientId": "<%= Collaboration::Ticket::HK_CLIENT_ID %>", "clientAccountId": "<%=current_account.id%>", "initAuthToken": "<%= Collaboration::Ticket.collab_token %>", "userId": "<%= current_user.id %>", "userName": "<%= current_user %>", "userEmail": "<%= current_user.email %>", "collab_url": <%= CollabConfig['collab_url'].to_json.html_safe %>, "rts_url": <%= CollabConfig['rts_url'].to_json.html_safe %>}'>
 <% end %>
 
 <%  if logged_in? and current_user.agent?  %>
@@ -249,7 +254,7 @@
     Helpdesk.settings = <%= email_template_settings.html_safe %>;
   </script>
 
-    <% if current_account.collab_feature_enabled? %>
+    <% if current_account.collaboration_enabled? %>
 		<%= javascript_include_tag :'cdn/collaboration_initer' %>
 	<% end %>
 <% end %> 

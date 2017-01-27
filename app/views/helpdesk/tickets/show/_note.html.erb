@@ -43,7 +43,7 @@ end
 				<% unless notable_object.send(survey_association).nil? || notable_object.send(survey_association).last.nil? %>
 				    <div class="avatar-wrap" name="note<%= note.id %>" id="note<%= note.id %>"><%= user_avatar(note.user, :thumb, 'preview_pic circle') %></div>
 				<% else %>
-				    <div class="avatar-wrap" name="note<%= note.id %>" id="note<%= note.id %>"><%= senti_user_avatar(note.user, note.sentiment, :thumb, 'preview_pic circle') %></div>
+				    <div class="avatar-wrap" name="note<%= note.id %>" id="note<%= note.id %>"><%= senti_user_avatar(note.user, note.sentiment, :thumb, 'preview_pic circle', {:senti_hover=>'true'}) %></div>
 				<% end %>
 
 			<% else %>

@@ -1,15 +1,26 @@
 def self.plan_list(all_addons, estate_addons, garden_addons, blossom_addons)
 	[
     { :name => 'Sprout', :amount => 15, :free_agents => 3, :day_pass_amount => 1.00, 
-    	:addons => all_addons, :price => plan_price[:sprout] },
+    	:addons => all_addons, :price => plan_price[:sprout], :classic => true, :display_name => "Sprout" },
     { :name => 'Blossom', :amount => 19, :free_agents => 0, :day_pass_amount => 2.00,
-    	:addons => blossom_addons, :price => plan_price[:blossom] },
+    	:addons => blossom_addons, :price => plan_price[:blossom], :classic => true, :display_name => "Blossom" },
     { :name => 'Garden', :amount => 29, :free_agents => 0, :day_pass_amount => 2.00,
-    	:addons => garden_addons, :price => plan_price[:garden] },
+    	:addons => garden_addons, :price => plan_price[:garden], :classic => true, :display_name => "Garden" },
     { :name => 'Estate', :amount => 49, :free_agents => 0, :day_pass_amount => 3.00, 
-    	:addons => estate_addons, :price => plan_price[:estate] },
+    	:addons => estate_addons, :price => plan_price[:estate], :classic => true, :display_name => "Estate" },
     { :name => 'Forest', :amount => 79, :free_agents => 0, :day_pass_amount => 3.00, 
-    	:price => plan_price[:forest] }   
+    	:price => plan_price[:forest], :classic => true, :display_name => "Forest" },
+			
+		{ :name => "Sprout Jan 17", :amount => 0, :free_agents => 50000, :day_pass_amount => 0.00, 
+    	:price => plan_price[:sprout_jan_17], :classic => false, :display_name => "Sprout"},
+		{ :name => "Blossom Jan 17", :amount => 25, :free_agents => 0, :day_pass_amount => 2.00, 
+	    :price => plan_price[:blossom_jan_17], :classic => false, :display_name => "Blossom"},
+		{ :name => "Garden Jan 17", :amount => 44, :free_agents => 0, :day_pass_amount => 3.00, 
+	    :price => plan_price[:garden_jan_17], :classic => false, :display_name => "Garden"},
+		{ :name => "Estate Jan 17", :amount => 59, :free_agents => 0, :day_pass_amount => 4.00, 
+	    :price => plan_price[:estate_jan_17], :classic => false, :display_name => "Estate"},
+		{ :name => "Forest Jan 17", :amount => 99, :free_agents => 0, :day_pass_amount => 5.00, 
+	    :price => plan_price[:forest_jan_17], :classic => false, :display_name => "Forest"},	      	      	      
 	]
 end
 
@@ -44,6 +55,36 @@ def self.plan_price
 			"INR" => 4999.0,
 			"USD" => 79.0,
 			"ZAR" => 889.0
+		},
+		:sprout_jan_17 => {
+			"EUR" => 0.0,
+			"INR" => 0.0,
+			"USD" => 0.0,
+			"ZAR" => 0.0
+		},
+		:blossom_jan_17 => {
+			"EUR" => 24.0,
+			"INR" => 1599.0,
+			"USD" => 25.0,
+			"ZAR" => 339.0
+		},
+		:garden_jan_17 => {
+			"EUR" => 42.0,
+			"INR" => 2699.0,
+			"USD" => 44.0,
+			"ZAR" => 599.0
+		},
+		:estate_jan_17 => {
+			"EUR" => 58.0,
+			"INR" => 3699.0,
+			"USD" => 59.0,
+			"ZAR" => 809.0
+		},
+		:forest_jan_17 => {
+			"EUR" => 96.0,
+			"INR" => 6299.0,
+			"USD" => 99.0,
+			"ZAR" => 1379.0
 		}
 	}
 end

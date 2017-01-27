@@ -19,6 +19,7 @@ App.CollaborationUi = (function ($) {
         MSG_TYPE_SERVER_MREMOVE: "3", // Msg from Server, denotes removal of member
         MSG_TYPE_CLIENT_ATTACHMENT: "4",
         DEFAULT_PRESENCE_IVAL: 60 * 1000 * 1, // 1 minute
+        RETRY_DELAY_FOR_PENDING_DP_REQ: 1000 * 5, // 5sec
         AVATAR_TEMPLATE: "collaboration/templates/avatar",
         COLLABORATORS_LIST_ITEM_TEMPLATE: "collaboration/templates/collaborators_list_item",
         COLLABORATION_MESSAGE_TEMPLATE: "collaboration/templates/collaboration_message",
@@ -172,6 +173,10 @@ App.CollaborationUi = (function ($) {
                 Collab.loadConversation(function() {
                     _COLLAB_PVT.cancelTempAnnotationIfAny();
                     App.CollaborationModel.restoreAnnotations(response.annotation.selectionMeta);
+                    if(response.annotation.tempAnnotation) {
+                        var ann = jQuery("[data-message-id=" + response.annotation.selectionMeta.messageId+"]");
+                        ann.addClass("collab-temp-annotation");
+                    }
                     prepareDataMarkAnnotation();
                     _COLLAB_PVT.toggleCollabExpand(true);
                 });
@@ -323,7 +328,7 @@ App.CollaborationUi = (function ($) {
                             $("#collab-chat-section").addClass("collab-file-attached");
                             _COLLAB_PVT.scrollToBottom();
                             $("#collab-attachment-input").replaceWith($("#collab-attachment-input").clone());
-                            $("#collab-attachment-name").text(response.fn.substr(0, 12) + ".." + response.fn.substr(response.fn.lastIndexOf(".")));
+                            $("#collab-attachment-name").text(Collab.getFileDisplayName(response.fn));
                             $("#collab-attachment-name").attr("title", response.fn);
                             $("#collab-attachment-image").prepend("<img class='image' src='"+ response.pl +"'><span class='valign-helper'></span>");
                             $("#collab-attachment-size").text(response.fs);
@@ -524,8 +529,6 @@ App.CollaborationUi = (function ($) {
 	    getAvatarHtml: function(userId, class_list) {
 	    	var usersMap = App.CollaborationModel.usersMap;
             var avatarHtml = JST[CONST.AVATAR_TEMPLATE]({data: {
-                profileImage: (typeof ProfileImage !== "undefined" && !!ProfileImage.imageById(Number(userId))) ? 
-                    ProfileImage.imageById(Number(userId)).profile_img : false,
                     name: usersMap[userId] ? usersMap[userId].name : CONST.DUMMY_USER.name,
                     id: userId,
                     class_list: class_list
@@ -576,8 +579,8 @@ App.CollaborationUi = (function ($) {
         showAnnotationOption: function(containerEl) {
             _COLLAB_PVT.hideAnnotationOption();
 
-            var annotatorId = App.CollaborationModel.currentUser.uid;
-            var selectionInfo = App.CollaborationModel.getSelectionInfo(annotatorId);
+            var s_id = App.CollaborationModel.currentUser.uid;
+            var selectionInfo = App.CollaborationModel.getSelectionInfo(s_id);
             if(!selectionInfo.isAnnotableSelection) {
                 return;
             }
@@ -992,9 +995,6 @@ App.CollaborationUi = (function ($) {
             var isSelf = String(userId) === selfUserName;
 
             return {
-                profileImage: (typeof ProfileImage !== "undefined" && !!ProfileImage.imageById(Number(userId))) ? 
-                    ProfileImage.imageById(Number(userId)).profile_img : 
-                    false, 
                 name: modelUserData ? (isSelf ? "Me (" + modelUserData.name + ")" : modelUserData.name) : "",
                 email: modelUserData && modelUserData.email ? modelUserData.email : "",
                 username: modelUserData && modelUserData.email ? modelUserData.email.substring(0, modelUserData.email.indexOf("@")) : "",
@@ -1155,6 +1155,12 @@ App.CollaborationUi = (function ($) {
 
         getUserInfo: function(uid, cb) {
             App.CollaborationModel.getUserInfo(uid, cb);
+        },
+
+        updateDpCharToImage: function(elem, image_path) {
+            elem.removeClassName("hide");
+            elem.setAttribute("src", image_path);
+            App.CollaborationModel.profileImages[elem.getAttribute("data-user-id")] = {"path": image_path};
         }
     };
 
@@ -1283,9 +1289,10 @@ App.CollaborationUi = (function ($) {
             */ 
             Collab.fetchCount = 0;
             Collab.loadConversation(function() {
-                if(!Collab.mentionsEnabled) {
+                if(!Collab.initingPostReconnect) {
                     Collab.enableMentions();
                 }
+                Collab.initingPostReconnect = false;
             });
             Collab.expandCollabOnLoad = config.expandCollabOnLoad;
             Collab.scrollToMsgId = config.scrollToMsgId;
@@ -1431,6 +1438,7 @@ App.CollaborationUi = (function ($) {
                 renderMsg(msg_body);
             } else if(msg.m_type === CONST.MSG_TYPE_CLIENT_ATTACHMENT) {
                 var msg_body = Collab.parseJson(msg.body);
+                msg_body.pl = msg_body.pl || " ";
                 msg.created_at = msg.created_at || App.CollaborationModel.getCurrentUTCTimeStamp();
                 renderMsg(msg_body, {"attachment": true});
             }
@@ -1450,6 +1458,7 @@ App.CollaborationUi = (function ($) {
 
 
         // TODO (mayank): must be called on every ticket_detail load
+        // should be called only once per ticket;
         enableMentions: function() {
             var usersToMention = [];
             var collabModel = App.CollaborationModel;
@@ -1490,7 +1499,6 @@ App.CollaborationUi = (function ($) {
             };
             var lm = new lightMention(options);
             lm.bindMention();
-            Collab.mentionsEnabled = true;
         },
 
         parseJson: function (data) {
@@ -1538,12 +1546,76 @@ App.CollaborationUi = (function ($) {
             Collab.networkDisconnected = false;
             var config = $("#collab-ui-data").attr("data-ui-payload");
             if(config) {
+                Collab.initingPostReconnect = true;
                 App.CollaborationUi.initUi(Collab.parseJson(config));
             }
             _COLLAB_PVT.disableCollabUiIfNeeded();
         },
         activateBellListeners: function() {
             _COLLAB_PVT.bellEvents();
+        },
+        getFileDisplayName: function(file_name) {
+            var display_name = file_name;
+            var allowed_fn_length = 18;
+            var ext_start_idx = file_name.lastIndexOf(".");
+            var extn = file_name.substr(ext_start_idx);
+
+            if(file_name.length > allowed_fn_length) {
+                var  slice_on = allowed_fn_length - extn.length - 2;
+                display_name = file_name.substr(0, slice_on) + ".." + extn;
+            }
+            return display_name;
+        },
+        dpLoadErr: function(elem) {
+            var uid = elem.getAttribute("data-user-id");
+
+            function pullProfileImage() {
+                // FETCH CASE
+                App.CollaborationModel.profileImages[uid] = {"fetching": true};
+                $.get("/users/" + uid + "/profile_image_path", function(response) {
+                    if(!!response.path){
+                        $("<img/>")
+                            .on('load', function() { 
+                                _COLLAB_PVT.updateDpCharToImage(elem, response.path); 
+                            })
+                            .on('error', function() { 
+                                delete App.CollaborationModel.profileImages[uid]; 
+                                Collab.dpLoadErr(elem);
+                            })
+                            .attr("src", response.path);
+                    }
+                    App.CollaborationModel.profileImages[uid].fetching = false;
+                });
+            }
+
+            if(uid) {
+                var profile_image_obj = App.CollaborationModel.profileImages[uid];
+                if(profile_image_obj) {
+                    // FETCHING CASE
+                    if(profile_image_obj.fetching) {
+                        setTimeout(function() {
+                            Collab.dpLoadErr(elem);
+                        }, CONST.RETRY_DELAY_FOR_PENDING_DP_REQ);
+                    } else if(profile_image_obj.path) {
+                        // CACHEC CASE
+                        $("<img/>")
+                            .on('load', function() { 
+                                _COLLAB_PVT.updateDpCharToImage(elem, profile_image_obj.path);
+                            })
+                            .on('error', function() { 
+                                delete App.CollaborationModel.profileImages[uid]; 
+                                Collab.dpLoadErr(elem);
+                            })
+                            .attr("src", profile_image_obj.path);
+                    } else {
+                        pullProfileImage();
+                    }
+                } else {
+                    pullProfileImage();
+                }
+            } else {
+                console.log("Something went wrong in setting DP image; uid not found in -data- attr;");
+            }
         }
     };
     return Collab;

@@ -1,4 +1,6 @@
 class AddingNewSubscriptionPlans < ActiveRecord::Migration
+  shard :none
+  
   def self.up
     SubscriptionPlan.create(:name => "Sprout Jan 17", :amount => 0.0, :renewal_period => 1,
       :trial_period => 1, :free_agents => 0, :day_pass_amount => 0, :classic => false, :price => {"EUR" => 0,

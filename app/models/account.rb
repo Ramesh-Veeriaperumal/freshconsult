@@ -35,6 +35,8 @@ class Account < ActiveRecord::Base
                   :primary_email_config_attributes, :main_portal_attributes
 
   attr_accessor :user, :plan, :plan_start, :creditcard, :address, :affiliate
+
+  include Account::Setup
   
   scope :active_accounts,
               :conditions => [" subscriptions.state != 'suspended' "], 
@@ -92,10 +94,6 @@ class Account < ActiveRecord::Base
     tz
   end
 
-  def collab_feature_enabled?
-    @collab_feature_enabled ||= features?(:collaboration)
-  end
-  
   def survey
     @survey ||= begin
       if new_survey_enabled?
@@ -107,9 +105,8 @@ class Account < ActiveRecord::Base
   end
   
   # Feature check to prevent data from being sent to v1 conditionally
-  # V1 is allowed in EU alone for now
   def esv1_enabled?
-    PodConfig['CURRENT_POD'].eql?('podeuwest1') || (ES_ENABLED && launched?(:es_v1_enabled))
+    (ES_ENABLED && launched?(:es_v1_enabled))
   end
 
   def permissible_domains

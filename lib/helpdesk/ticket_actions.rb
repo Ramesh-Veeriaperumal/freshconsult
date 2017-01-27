@@ -282,7 +282,7 @@ module Helpdesk::TicketActions
 
   def full_paginate
 
-    if collab_filter_enabled?
+    if collab_filter_enabled_for?(filter)
       total_entries = params[:total_entries]
       @ticket_count = Collaboration::Ticket.fetch_count
     else

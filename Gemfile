@@ -188,7 +188,7 @@ gem 'html_to_plain_text', '1.0.5'
 gem "akismetor", :git => "git://github.com/freshdesk/akismetor.git"
 gem 'freshdesk_features', :git => 'git@github.com:freshdesk/freshdesk-features.git', :branch => "freshdesk", :require => true
 gem 'launchparty', :git => 'git@github.com:freshdesk/launch-party.git', :tag => 'v0.1.3'
-gem 'binarize', "0.1.1", :git => 'git@github.com:freshdesk/binarize.git', :branch => 'master'
+gem 'binarize', "0.1.1", :git => 'git@github.com:freshdesk/binarize.git', :branch => 'not_a_model_column'
 
 
 gem "bunny", "1.7.0"
@@ -197,6 +197,7 @@ gem "add_pod_support", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/ad
 gem "custom_fields", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/custom_fields-0.1"
 
 gem "jwt", "1.5.4"
+gem "jose", "1.1.2"
 
 group :production, :test, :staging do
   gem "tire", :git => "git@github.com:freshdesk/retire.git"

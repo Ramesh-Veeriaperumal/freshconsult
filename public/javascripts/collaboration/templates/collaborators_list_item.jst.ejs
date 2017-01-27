@@ -1,17 +1,16 @@
 <div class="collaborators-list-item <%= data.is_deleted ? 'deleted' : '' %> <%= data.is_self ? 'self' : '' %>" id="collaborator-icon-<%=data.id%><%= !!data.id_post_fix ? '-' + data.id_post_fix : '' %>" data-mention-text="@<%= !!data.email ? data.email.split('@')[0] : data.mention_text %>">
-	<% if (!data.profileImage && !!data.id) { %>
+	<% if (!!data.id) { %>
 		<div class="preview_pic circle avatar-text text-center thumb bg-<%= Math.abs(uniqueCodeGenerator( data.name )) %>" > 
 			<% if (data.is_self) { %>
 				<%= data.name[4] %> 
 			<% } else { %>
 				<%= data.name[0] %> 
 			<% } %>
+			<img alt="<%= data.name %>" data-user-id="<%= data.id %>" class="thumb hide" onerror="App.CollaborationUi.dpLoadErr(this)" src=" ">
 		</div>
 	<% } else { %>
 		<div class="preview_pic circle">
-			<img alt="<%= data.name %>" class="thumb" onerror="imgerror(this)" src="<%= data.profileImage %>" >
 		</div>
-
 	<% } %>
 
 	<% if (data.is_online || data.is_self) { %>
@@ -33,4 +32,3 @@
 		<div class="job-profile ellipsis" title="<%= data.job_title %>"><%= data.job_title %></div>
 	<% } %>
 </div>
-

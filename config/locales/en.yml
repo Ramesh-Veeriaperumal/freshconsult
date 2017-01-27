@@ -3319,6 +3319,43 @@ en:
         portal_languages:
           title: "<b>Visible/Hidden on Portal</b><br />"
           info1: "When your knowledge base articles are translated to other languages and are ready to go live, you can make that language visible to your customers by clicking on the toggle button (Hidden on Portal/Visible on Portal)<br /><br />"
+    setup: 
+      sales_manager_intro: "Hi %{user_name}! I'm %{sales_manager_name}, your account manager, and I'm happy to help with your evaluation of Freshdesk. Please feel free to reach out if you have any questions."
+      write_to_us: Write to us
+      request_demo: Request Demo
+      requesting_demo: "<b>Requesting Demo...</b>"
+      requested_demo: "<i class='ficon-checkmark-thick muted mr7'></i>Demo request received"
+      choose_plan: Choose your plan
+      helpdesk_setup_incomplete: Setup your account
+      helpdesk_setup_complete:  Check out what’s under the hood
+      configuration_status: "<b>%{in_setup_keys_length}</b> of <b>%{total_setup_keys_length}</b> completed." 
+      feedback_success: We’ve got your message. You’ll hear back from us soon.
+      setup_progress_0: Hurray!
+      setup_progress_1: Let’s go!
+      setup_progress_misc: Keep going!
+      setup_progress_penultimate: Almost there!
+      new_account_title: Sign up for Freshdesk 
+      new_account_description: Start your free 30-day trial of Freshdesk by signing up from the website.
+      account_admin_email_title: Activate your account
+      account_admin_email_description: Check your inbox for our activation email and verify your Freshdesk account.
+      agents_title: Invite your team
+      agents_description: Add your team to your account and have them explore Freshdesk with you.
+      support_email_title: Configure your support email
+      support_email_description: Bring your customer messages into Freshdesk by adding your support email.
+      freshfone_number_title: Purchase a phone number
+      freshfone_number_description: Buy a phone number and start accepting calls from your customers.
+      twitter_title: Add your Twitter account
+      twitter_description: Look out for mentions and important keywords related to you on Twitter.
+      automation_title: Set up an automation rule
+      automation_description: Automate repetitive tasks and help your team be more productive every day.
+      data_import_title: Import your contacts
+      data_import_description: Upload your existing contacts to Freshdesk to get full context about customers.
+      custom_app_title: Install an app from the gallery
+      custom_app_description: Extend your capabilities by integrating your favorite apps with Freshdesk.
+      request_for_extension: Request for an extension
+      trial_will_expire: Your trial will expire in <b id='trial-days'>%{trial_days}</b> days.
+      trial_expired: "Your trial has expired."
+      trial_extension_requested: Trial extension requested
   success_msg : Account settings updated successfully!
   failure_msg : Failed to update Account Settings!
   account_configuration:
@@ -4529,9 +4566,11 @@ en:
       modified_on: "Modified on:"
       related_articles: "Related Articles"
       created_by: "Created by:"
+      activation_warning: "It looks like your account hasn't been verified yet. Please activate it in order to publish an article (you can save your drafts till then)."
     folder:
       filler_text: "Watch this space for articles regarding %{folder_name}"
     topic:
+      activation_warning: "It looks like your account hasn't been verified yet.  Please activate it in order to post a forum topic."
       follow: Follow
       following: Following
       topic_title: Topic title
@@ -5174,6 +5213,7 @@ en:
     notification_template: Templates
     cc_notifications: CC Notifications
     title: Email Notifications
+    account_not_activated: It looks like your account hasn't been verified yet. Please activate it in order to enable email notifications.
     singular_title: Notification
     index_outdated: Some translations are outdated
     show_default: Show original content
@@ -5478,6 +5518,7 @@ en:
   ticket:
     errors:
       required_field: cannot be blank.
+      request_dropped: Some error occurred and your email was not sent. Please try again.
     spam: "SPAM"
     deleted: "TRASH"
     archived: "Archived"
@@ -5505,6 +5546,7 @@ en:
       cc: CC
       to: "To:"
       compose_choose_email: Select a from address
+      outbound_email_not_activated: It looks like your account hasn't been verified yet. Please activate it in order to send an outbound email.
       compose_email_info: "The email will be sent to the customer and will be logged as a ticket without triggering any notifications."
     switch_view:
       new_view: "Try the <strong>New Ticket View</strong>"
@@ -7157,6 +7199,8 @@ en:
     coming_soon: Coming Soon
     install: Install
     update: Update
+    installation : Installation
+    overview: Overview
     instructions : Instructions
     description: description
     visit_site_to_install: Visit site to install
@@ -7184,7 +7228,7 @@ en:
     view_all: View all
     view_more: View more
     empty_custom_apps_msg_html: "No custom apps have been published. To get started, please visit our <a href='%{dev_url}' target='_blank'> developer site.</a>"
-    no_search_results: We couldn't find what you are looking for. Why don't you try again with a different keyword?
+    no_search_results: We couldn't find what you are looking for.Why don't you try again with a different keyword?
     no_apps_in_category: No Apps available in this category
     related_categories: "Apps from Related Categories:"
     similar_apps: "Similar Apps:"
@@ -7200,6 +7244,14 @@ en:
     no_configs: "This app does not require any configs."
     search: "Search for apps"
     search_language_warning: "Search available in English only"
+    buy_app: Buy App
+    app_price: %{price} / %{addon_type} / month
+    no_payment_info: We do not have your payment details on file. Please update them to proceed further. <br>
+    update_payment_info: Update payment info
+    payment_trial_info: This is a paid app with a %{trial_period} day trial period. Once the trial period is over, you will be charged %{price} / %{addon_type} / month. Press Ok to install the app. <br>  %{payment_ok_btn}
+    payment_ok: You will be charged %{price} / %{addon_type} / month for this app as per your billing plan. Press Ok to install the app. <br>  %{payment_ok_btn}
+    agent: agent
+    account: account
     delete_action:
       success: "App deleted successfully."
       error: "Error while deleting the App."
@@ -7209,6 +7261,8 @@ en:
       auth_error: "Error while authorizing the app"
     update_action:
       success: "App updated successfully."
+    tooltip:
+      suspended: Not Available
     help_and_support: "Help and Support"
     developed_by: "Published By "
     time_ago: "ago"
@@ -7597,9 +7651,9 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
         opportunity: "Opportunity Fields"
         opportunity_settings: "Agents can create/link or unlink opportunities from the ticket"
     salesforce_v2:
-      label: "Salesforce V2"
+      label: "Salesforce Plus"
       desc: "You can sync Contact and Account information between Salesforce crm and Freshdesk."
-      helptext: "<h4>Salesforce V2</h4><p><br/>You can enable one way sync between your Salesforce CRM and freshdesk. From your helpdesk dashboard, you will be able to create, delete or update CRM contact/account fields. A maximum of 10 account fields can be synced, amongst which, 4 contact fields will be selected by default (Name, Email, Mobile and Phone). On the other hand, for account fields, only the name will be selected by default.</p><p>Hence, the customer can additionally select 6 contact fields and 9 account fields in their CRM-Helpdesk integration.</p><p>To enable this integration, drop a mail request to us and we’ll do it for you.</p><p>You need to create the following custom fields in your Freshdesk account to enable this integration.<br/>a.SFCONTACTID in admin/contact_fields.<br/>b.SFACCOUNTID in admin/company_fields.</p><p>In addition to the above fields, you will also have to create these custom fields in your Salesforce CRM.<br/>a.FDCONTACTID in contact custom fields.<br/>b.FDACCOUNTID in account custom fields.</p>"
+      helptext: "<h4>Salesforce Plus</h4><p><br/>For Salesforce Sync configuration setting instructions and guidelines, refer <a href='https://support.freshdesk.com/solution/articles/224042-the-salesforce-app-for-v2' target='_blank'>The Salesforce Plus App</a> article. </p>"
       add_fields:
         remove: "Remove"
       form:
@@ -10585,6 +10639,8 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     search_articles: "Search Article"
     contact_us: "Contact Us"
     whats_new: "What's New"
+    user_notifications_header: "Notifications"
+    load_more: "Load More"
   trial_plan_downgrade: "Important: You are currently downgrading from %{plan_from} plan to %{plan_to} plan"
   discounted_sum: "After Discount"
   selecting_plan: "Selecting..."
