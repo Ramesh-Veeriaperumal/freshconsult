@@ -1153,7 +1153,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
     def send_agent_assigned_notification?(internal_notification = false)
       doer_id = Thread.current[:observer_doer_id]
-      agent_changed, agent = internal_notification ? [internal_agent_id_changed?, internal_agent] :
+      agent_changed, agent = internal_notification ? [@model_changes.key?(Helpdesk::SchemaLessTicket.internal_agent_column), internal_agent] :
           [@model_changes.key?(:responder_id), responder]
 
       agent_changed && agent && agent.id != doer_id && agent != User.current
