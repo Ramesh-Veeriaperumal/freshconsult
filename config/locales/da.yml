@@ -402,7 +402,7 @@ da:
   signup_title: "Opret dig hos %{current_portal}"
   signup_up_with_us: "Opret dig hos os"
   import_ticket_group: "Supportsager & Gruppe"
-  signup_help_information: "Når du tilmelder dig, vil du have fuld adgang til vores løsninger og ofte stillede spørgsmålDu kan også stille spørgsmål og finde svar i brugergruppe, eller oprette en supportsag, og spore sagernes status."
+  signup_help_information: "Når du tilmelder dig, vil du have fuld adgang til vores løsninger og ofte stillede spørgsmålDu kan også stille spørgsmål og finde svar i brugergruppe, eller oprette en supportsager, og spore sagernes status."
   trial_expired_on: "Vigtigt! Din prøveperiode er udløbet!"
   tickets_filter:
     title: "Filtrer billetter \n"
