@@ -10,7 +10,7 @@ class TicketFilterValidation < FilterValidation
   # Unless add_watcher feature is enabled, a user cannot be allowed to get tickets that he/she is "watching"
   validate :watcher_filter, if: -> { filter }
   validates :updated_since, date_time: true
-  validates :order_by, custom_inclusion: { in: ApiTicketConstants::ORDER_BY }
+  validates :order_by, custom_inclusion: { in: proc { |x| x.sort_field_options } }
   validates :order_type, custom_inclusion: { in: ApiTicketConstants::ORDER_TYPE }
   validates :status, array: { custom_inclusion: { in: proc { |x| x.account_statuses }, ignore_string: :allow_string_param, detect_type: true } }
   validate :verify_cf_data_type, if: -> { cf.present? }
@@ -77,4 +77,9 @@ class TicketFilterValidation < FilterValidation
       error_options.merge!(filter: { feature: 'Add Watcher', code: :access_denied })
     end
   end
+
+  def sort_field_options
+    TicketsFilter::api_sort_fields_options.map(&:first).map(&:to_s) - ['priority']
+  end
+
 end
