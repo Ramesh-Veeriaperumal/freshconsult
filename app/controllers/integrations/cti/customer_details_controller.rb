@@ -5,11 +5,15 @@ class Integrations::Cti::CustomerDetailsController < ApplicationController
   
   def fetch
     mobile_number = params[:user][:mobile]
-    mobile_number = mobile_number[-10..-1] || mobile_number
     user = get_user_with_mobile_or_phone(mobile_number)
+    mobile_without_code = mobile_number[-10..-1] || mobile_number
+    if user.nil? && mobile_without_code != mobile_number
+      mobile_number = mobile_without_code
+      user = get_user_with_mobile_or_phone(mobile_number)
+    end
     href = ""
     if user.blank?
-      user_hash = {:mobile => mobile_number,:avatar => view_context.user_avatar(user, :thumb, "preview_pic circle", {:width => "30px", :height => "30px" })}
+      user_hash = {:mobile => params[:user][:mobile],:avatar => view_context.user_avatar(user, :thumb, "preview_pic circle", {:width => "30px", :height => "30px" })}
     else
       avatar = view_context.user_avatar(user, :thumb, "preview_pic circle", {:width => "30px", :height => "30px" })
       user_tickets = current_account.tickets.permissible(user).requester_active(user).newest(2)
