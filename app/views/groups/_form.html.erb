@@ -29,10 +29,10 @@
         </li>
         <% end %>
         <li class="row-fluid">
-      <%= f.label :agents, "<b> #{t('agents')} </b>".html_safe, :class =>'control-label span2' %>
+      <%= f.label :agents, "<strong> #{t('agents')} </strong>".html_safe, :class =>'control-label span2' %>
         <div class="span10">
           <% label = (@group.agents.count == 0 ? t('admin.roles.add_label') : t('admin.roles.manage_label')) %>
-          <p style="margin-bottom: 5px"></p>
+          <p class="mb5"></p>
           <a class="popup"  data-agentcount="<%= @group.agents.count %>" data-roleid="<%= @group.id %>" href="javascript:void(0)" data-title="<%= @group.name %>">
          <span data-changecount="<%= @group.id %>" >
           <% if @group.agents.count == 0 %>

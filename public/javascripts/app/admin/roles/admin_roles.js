@@ -155,13 +155,7 @@ var SubmitHandler = SubmitHandler || (function(){
 
 	// ajax submit call for groups page
    function ajaxGroupSubmit(data, id, label){
-       var  len = SubmitHandler.data.user.length;
-       var agents_list = "";
-       for(var i=0;i<len;i++)
-       {
-       	    agents_list = (agents_list == "") ? agents_list +  SubmitHandler.data.user[i] : agents_list + "," + SubmitHandler.data.user[i] ;
-       }
-
+       agents_list = SubmitHandler.data.user.join(',');
        var groups={
        	agent_list: agents_list
        };

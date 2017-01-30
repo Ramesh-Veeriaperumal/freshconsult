@@ -32,7 +32,6 @@ var ManageAgents = ManageAgents || (function($){
 
 		// initial set of loading here 
 		var agent_url = jQuery("#group_agents_list_url").val() || jQuery("#edit_group_agents_list_url").val();
-		console.log(agent_url);
 		_appendContent(name, agentcount, _initmodal);
 		_resetPopup();
 		var $agentSelectBox = jQuery('#manage-agents-content .add-agent-box, #manage-agents-content .button-container');
@@ -65,7 +64,6 @@ var ManageAgents = ManageAgents || (function($){
 					});
 
 					_populateSelect2(constructedData.select2data);
-					console.log(agent_url);
 					agent_url ? jQuery("#manage-agents .agent-list-wrapper").html(agentGroupData) : jQuery("#manage-agents .agent-list-wrapper").html(agentData);
 					jQuery("#manage-agents .agent-list-wrapper").removeClass('sloading');
 					Select2Handler.updateCount( constructedData.user.length );
