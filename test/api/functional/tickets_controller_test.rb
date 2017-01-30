@@ -2403,6 +2403,26 @@ class TicketsControllerTest < ActionController::TestCase
     pattern = [bad_request_error_pattern('order_type', :not_included, list: 'asc,desc')]
     pattern << bad_request_error_pattern('order_by', :not_included, list: 'due_by,created_at,updated_at,status')
     match_json(pattern)
+
+    Account.any_instance.stubs(:sla_management_enabled?).returns(false)
+    get :index, controller_params(order_type: 'test', order_by: 'priority')
+    assert_response 400
+    pattern = [bad_request_error_pattern('order_type', :not_included, list: 'asc,desc')]
+    pattern << bad_request_error_pattern('order_by', :not_included, list: 'created_at,updated_at,status')
+    match_json(pattern)
+  ensure
+    Account.any_instance.unstub(:sla_management_enabled?)
+  end
+
+  def test_index_sort_by_due_by_with_sla_disabled
+    Account.any_instance.stubs(:sla_management_enabled?).returns(false)
+    get :index, controller_params(order_type: 'test', order_by: 'due_by')
+    assert_response 400
+    pattern = [bad_request_error_pattern('order_type', :not_included, list: 'asc,desc')]
+    pattern << bad_request_error_pattern('order_by', :not_included, list: 'created_at,updated_at,status')
+    match_json(pattern)
+  ensure
+    Account.any_instance.unstub(:sla_management_enabled?)
   end
 
   def test_index_with_extra_params

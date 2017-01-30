@@ -121,11 +121,17 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         if duplicate_email?(from_email[:email], to_email[:email], params[:subject], message_id)
           return processed_email_data(PROCESSED_EMAIL_STATUS[:duplicate], account.id)
         end
+
         if (from_email[:email] =~ EMAIL_VALIDATOR).nil?
-          error_msg = "Invalid email address found in requester details - #{from_email[:email]} for account - #{account.id}"
-          Rails.logger.debug error_msg
-          NewRelic::Agent.notice_error(Exception.new(error_msg))
-          return processed_email_data(PROCESSED_EMAIL_STATUS[:invalid_from_email], account.id)
+          envelope_from_email = parse_email JSON.parse(params[:envelope])["from"]
+          if (envelope_from_email[:email] =~ EMAIL_VALIDATOR).nil?
+            error_msg = "Invalid email address found in requester details - #{from_email[:email]} for account - #{account.id}"
+            Rails.logger.debug error_msg
+            NewRelic::Agent.notice_error(Exception.new(error_msg))
+            return processed_email_data(PROCESSED_EMAIL_STATUS[:invalid_from_email], account.id)
+          else
+            from_email = envelope_from_email
+          end
         end
         user = existing_user(account, from_email)
 

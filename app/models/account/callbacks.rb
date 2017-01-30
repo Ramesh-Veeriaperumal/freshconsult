@@ -12,6 +12,8 @@ class Account < ActiveRecord::Base
   after_update :update_freshfone_voice_url, :if => :freshfone_enabled?
   after_update :update_livechat_url_time_zone, :if => :freshchat_enabled?
 
+  before_save :sync_name_helpdesk_name
+  
   after_destroy :remove_global_shard_mapping, :remove_from_slave_queries
   after_destroy :remove_shard_mapping, :destroy_route_info
 
@@ -95,6 +97,11 @@ class Account < ActiveRecord::Base
     end
 
   private
+
+    def sync_name_helpdesk_name
+      self.name = self.helpdesk_name if helpdesk_name_changed?
+      self.helpdesk_name = self.name if name_changed?
+    end
 
     def add_to_billing
       Billing::AddSubscriptionToChargebee.perform_async

@@ -57,7 +57,7 @@
 						<div class="control-group">
 							<%= portal.label :name, t('account.helpdesk_name_plain'), :class => "control-label" %>
 							<div class="controls">				    
-								<%= portal.text_field :name, :class => "text required auto", :size => "50" %>
+								<%= f.text_field :helpdesk_name, :value => @account.helpdesk_name, :class => "text required auto", :size => "50" %>
 								<span class="help-block">
 									<%= t(:'helpdesk.rebranding.name.info') %>
 								</span>

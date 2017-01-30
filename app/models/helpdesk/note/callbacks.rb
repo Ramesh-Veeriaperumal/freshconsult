@@ -205,8 +205,7 @@ class Helpdesk::Note < ActiveRecord::Base
         if reply_to_forward?
           Helpdesk::TicketNotifier.send_later(:deliver_reply_to_forward, notable, self)
         else
-          e_notification = account.email_notifications.find_by_notification_type(EmailNotification::COMMENTED_BY_AGENT)  
-          Helpdesk::TicketNotifier.send_later(:notify_comment, self) if e_notification.agent_notification?
+          Helpdesk::TicketNotifier.send_later(:notify_comment, self)
         end
       end
     end

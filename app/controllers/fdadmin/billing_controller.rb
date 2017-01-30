@@ -76,7 +76,7 @@ class Fdadmin::BillingController < Fdadmin::DevopsMainController
   end
 
   def select_shard(&block)
-    Sharding.select_shard_of(params[:content][:customer][:id]) do 
+    Sharding.admin_select_shard_of(params[:content][:customer][:id]) do 
         yield 
     end
   end
