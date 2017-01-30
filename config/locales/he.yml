@@ -4378,9 +4378,11 @@ he:
       insert_ca_resp_tip: "הוסף תגובה מוכנה זו"
     split_ticket: פצל
     flag_spam: "סמן ספאם בדגל"
+    spam_header: ספאם
     delete_forever: "מחק לתמיד"
     empty_trash: "פח הזבל ריק"
     assign_to_agent: "הקצה לסוכן"
+    assign_to: הקצה
     select_to_agent: "בחר סוכן"
     export: יצא
     exporting: מייצא
@@ -4938,6 +4940,7 @@ he:
         overdue: "כרטיסים אשר זמנם תם"
         due_today: "כרטיסים אשר מועד סיומם הוא היום"
         resolved: "כרטיס סגור לאחר פתירת הבעיה"
+        unresolved: "הכל כרטיסים שלא נפתרו"
         my_overdue: "הכרטיסים שלי אשר זמנם תם"
         tags: "תגיות לפי כרטיס"
         my_due_today: "הכרטיסים שלי אשר מועד סיומם הוא היום"
@@ -5056,6 +5059,8 @@ he:
         title: "תגובות מוכנות"
     ca_response:
       delete_confirm: "האם אתה בטוח שברצונך למחוק תגובה מוכנה זו?"
+    realtime_dashboard:
+      unresolve_tickets: "כרטיסים שלא נפתרו"
   import_ticket_group: כרטיסים
   tickets_filter:
     title: "סנן כרטיסים"
@@ -7742,3 +7747,5 @@ he:
   new_label: חדש
   api:
     record_not_found: "המשאב לא נמצא."
+  unresolved_tickets:
+    title: "כרטיסים שלא נפתרו"

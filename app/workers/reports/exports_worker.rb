@@ -136,5 +136,9 @@ module Reports
       generate_ticket_data(tickets, headers, tickets_data, (type != 'non_archive'))
     end
 
+    def user_download_url(file_name, export_type)
+      "#{Account.current.full_url}/reports/v2/download_file/#{export_type}/#{DateTime.now.utc.strftime('%d-%m-%Y')}/#{file_name}"
+    end
+
 	end
 end

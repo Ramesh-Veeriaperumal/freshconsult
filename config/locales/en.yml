@@ -4301,6 +4301,7 @@ en:
     convert_fulltime: Full-Time Agent
     convert_occasional: Occasional Agent
     send_activation: Send activation email
+    more: more
     export_csv: Export to CSV
     import_google: Import from Google
     import_google_no: "No"
@@ -4617,6 +4618,9 @@ en:
       people:
         one: "1 person "
         other: "%{count} people "
+    vote_label:
+      one: "vote"
+      other: "votes"
     topic_vote:
       announce:
         one: "likes this"
