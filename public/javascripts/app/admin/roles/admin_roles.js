@@ -71,8 +71,17 @@ var SubmitHandler = SubmitHandler || (function(){
 		}
 
 		var callFunction = [ajaxSubmit, formSubmit];
+		// call diff function depending on the call coming from roles or groups page
+		var callGroupFunction = [ajaxGroupSubmit,formSubmit];
+		if(jQuery("#group_agents_update_list_url").val() || jQuery("#edit_group_update_agents_url").val()|| jQuery("#new_group_update_agents_url").val()){
+              callGroupFunction[cb](submitObj.changes, roleid, label);
+		}
+		else
+		{
+
 		callFunction[cb](submitObj.changes, roleid, label);
 	}
+}
 
 	return submitObj; // Public exposed functions
 
@@ -144,10 +153,51 @@ var SubmitHandler = SubmitHandler || (function(){
 		});
 	}
 
+	// ajax submit call for groups page
+   function ajaxGroupSubmit(data, id, label){
+       var  len = SubmitHandler.data.user.length;
+       var agents_list = "";
+       for(var i=0;i<len;i++)
+       {
+       	    agents_list = (agents_list == "") ? agents_list +  SubmitHandler.data.user[i] : agents_list + "," + SubmitHandler.data.user[i] ;
+       }
+
+       var groups={
+       	agent_list: agents_list
+       };
+
+   	   jQuery.ajax({
+              url : "/groups/" + id,
+              type: "post",
+              dataType: 'json',
+              data: {"_method": "put", group: groups}
+   	   }).success(function(result){
+   	            if(result.status){
+				var updatedCount = jQuery("#manage-agents .agent-list-wrapper").children('.roles-agent-list').length;
+				jQuery("#manage-agents").modal('hide');
+				SubmitHandler.resetChanges();
+				window['LabelHandler'][label](id, updatedCount);
+              }
+		}).error(function(err){
+			console.log(err);
+		});
+   }
+
+
 	function formSubmit(data){
+		// if call comes from new or edit groups page
+		if(jQuery("#new_group_update_agents_url").val() || jQuery("#edit_group_update_agents_url").val())
+		{   
+			jQuery("#modify_agent_list").val('').val(uniqueArray(SubmitHandler.data.user));
+			
+		}
+		else
+		{
+
 		jQuery("#add_user_ids").val('').val(uniqueArray(data.added_agent));
 		jQuery("#delete_user_ids").val('').val(uniqueArray(data.removed_agent));
 	}
+}
 
 })();
 

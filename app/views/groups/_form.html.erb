@@ -28,14 +28,23 @@
             </div>
         </li>
         <% end %>
-        <li class="row-fluid margin-bottom">
-          <label class="control-label span2">
-            <b><%=t('group.info1').html_safe%> (<span id="agents_count"><%= @group.agents.count %></span>)</b>
-          </label>
-          <div class="span10">
-            <input type="hidden" id="agent_list" name="group[agent_list]" class="span12" data-placeholder = "<%= t("helpdesk.tickets.add_watcher.add_agent") %>" <%if readonly%> disabled style="background-color: #eee;" <%end%> />
-          </div>
-        </li>
+        <li class="row-fluid">
+      <%= f.label :agents, "<b> #{t('agents')} </b>".html_safe, :class =>'control-label span2' %>
+        <div class="span10">
+          <% label = (@group.agents.count == 0 ? t('admin.roles.add_label') : t('admin.roles.manage_label')) %>
+          <p style="margin-bottom: 5px"></p>
+          <a class="popup"  data-agentcount="<%= @group.agents.count %>" data-roleid="<%= @group.id %>" href="javascript:void(0)" data-title="<%= @group.name %>">
+         <span data-changecount="<%= @group.id %>" >
+          <% if @group.agents.count == 0 %>
+            <%= t('admin.roles.no_agent_label') %></span> 
+            - <span class="label-info-text"><%= label %></span>
+          <% else %>
+           <%= pluralize(@group.agents.count, t('admin.roles.agent_label'), t('admin.roles.agents_label')) %> </span> 
+            - <span class="label-info-text"><%= label %></span>
+          <% end %>
+          </a>
+        </div>
+      </li>
 
          <%
           account_id =  @group.account_id
@@ -210,6 +219,10 @@
       <%= f.submit t('save'), :class => "btn btn-primary", "data-loading-text" => t('saving') %>
 
     </div>
+
+     <input type="hidden" id="modify_agent_list" value="" name="group[agent_list]">
+    <input type="hidden" value="<%= @group.id %>" id="roleid">
+
   <% end %>
 
 <a class="vertical-alignment left-border "
