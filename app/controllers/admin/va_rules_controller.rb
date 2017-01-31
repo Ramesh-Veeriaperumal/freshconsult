@@ -204,7 +204,7 @@ class Admin::VaRulesController < Admin::AdminController
         { :name => "priority", :value => t('ticket.priority'), :domtype => dropdown_domtype, 
           :choices => TicketConstants.priority_list.sort, :operatortype => "choicelist" },
         { :name => "ticket_type", :value => t('ticket.type'), :domtype => dropdown_domtype, 
-          :choices => current_account.ticket_type_values.collect { |c| [ c.value, c.value ] }, 
+          :choices => ticket_type_values_with_none, 
           :operatortype => "choicelist" },
         { :name => "status", :value => t('ticket.status'), :domtype => dropdown_domtype, 
           :choices => Helpdesk::TicketStatus.status_names(current_account), :operatortype => "choicelist"},
