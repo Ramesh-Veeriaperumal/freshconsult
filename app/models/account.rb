@@ -337,6 +337,11 @@ class Account < ActiveRecord::Base
     to_ret.empty? ? [ "support@#{full_domain}" ] : to_ret #to_email case will come, when none of the emails are active.. 
   end
 
+  def support_emails_in_downcase
+    to_ret = email_configs.collect(&:reply_email_in_downcase)
+    to_ret.empty? ? [ "support@#{full_domain}" ] : to_ret 
+  end
+
   def portal_name #by Shan temp.
     main_portal.name
   end
