@@ -1385,6 +1385,10 @@ cs:
         info1: "<b>Umožnění Jednotného přihlášení (SSO)</b><br>Pokud vaši uživatelé mají již u vás oprávnění k přihlášení (např. přes Active Directory), můžete jim povolit přihlášení na portál podpory s těmi samými oprávněními s využitím SSO. <a href=\"https://support.freshdesk.com/support/solutions/articles/31166-single-sign-on-remote-authentication-in-freshdesk\">Zde si o tom můžete přečíst více</a>."
         info2: "<b>Povolení SSL zabezpečení</b><br>Pokud pro portál podpory nepoužíváte uživatelskou doménu, nabízí vám Freshdesk implicitní certifikát \"wildcard SSL\" vedený na doméně FRESHDESK.COM. <b>Tato možnost (SSL) je dostupná pouze pro licenci Estate.</b> O tento certifikát lze zažádat <a href=\"https://support.freshdesk.com/support/tickets/new\">zde</a>."
         trusted_ip: "<b>Omezení přístupu dle IP adresy</b><br>K vašemu portálu podpory je možné omezit přístup pouze pro IP adresy z vaší firmy či organizace. Lze zadat neomezený počet rozsahů IP adres které dostanou přístup, stejně jako můžete definovat zda budete řídit přístup pouze pro zákazníky nebo jen pro své zástupce. <a href=\"https://support.freshdesk.com/support/solutions/articles/195168\">Zjistit podrobnosti</a>"
+      password_policy_popover:
+        password_should: "Vaše heslo by mělo"
+        minimum_characters: "obsahovat minimálně %{count} znaků"
+        cannot_contain_user_name: "Nesmí obsahovat uživatelské jméno"
     products:
       helpnote:
         tour: "Pomozte mi spustit systém více produktů"
@@ -7106,3 +7110,5 @@ cs:
     alert:
       code_mandatory: "Both fields are required. Shorthands can be upto 10 characters and cannot contain any special characters except '-'."
       code_duplicate: "This shorthand is already in use."
+  password_policy:
+    username: "Heslo nesmí obsahovat uživatelské jméno"
