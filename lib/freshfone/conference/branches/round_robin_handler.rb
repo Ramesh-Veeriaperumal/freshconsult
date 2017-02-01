@@ -3,7 +3,7 @@ module Freshfone::Conference::Branches::RoundRobinHandler
   include Freshfone::Call::Branches::Bridge
   
   def handle_round_robin_calls
-    update_last_pinged_agent
+    update_last_pinged_agent if current_call.user_id.blank?
     if round_robin_agents_pending?
       initiate_round_robin
     else
