@@ -5,10 +5,11 @@ module Ember
     include Facebook::TicketActions::Util
     include Conversations::Twitter
     include HelperConcern
+    include ConversationConcern
     include AttachmentConcern
     include Utils::Sanitizer
     decorate_views(
-      decorate_objects: [:ticket_conversations], 
+      decorate_objects: [:ticket_conversations],
       decorate_object: [:create, :update, :reply, :forward, :facebook_reply, :tweet]
     )
 
@@ -56,7 +57,7 @@ module Ember
     def update
       sanitize_body_text
       assign_note_attributes
-      @item.assign_attributes(params[cname])
+      @item.assign_attributes(cname_params)
       delegator_hash = { attachment_ids: @attachment_ids, shared_attachments: shared_attachments }
       return unless validate_delegator(@item, delegator_hash)
       render_custom_errors(@item) unless save_note
@@ -84,7 +85,7 @@ module Ember
 
       @delegator_klass = 'TwitterReplyDelegator'
       return unless validate_delegator(@item, twitter_handle_id: @twitter_handle_id)
-      
+
       if @item.save_note
         tweet_and_render
       else
@@ -105,13 +106,13 @@ module Ember
     private
 
       def sanitize_body_text
-        @item.assign_element_html(params[cname][:note_body_attributes], 'body') if params[cname][:note_body_attributes]
-        sanitize_body_hash(params[cname],:note_body_attributes,"body","full_text") if params[cname]
+        @item.assign_element_html(cname_params[:note_body_attributes], 'body') if cname_params[:note_body_attributes]
+        sanitize_body_hash(cname_params, :note_body_attributes, 'body', 'full_text') if cname_params
       end
 
       def conditional_preload_options
         preload_options = [:schema_less_note, :note_old_body, :attachments, :freshfone_call, :cloud_files, :attachments_sharable,
-            custom_survey_remark: { survey_result: { survey: { survey_questions: {} }, survey_result_data: {} } }]
+                           custom_survey_remark: { survey_result: { survey: { survey_questions: {} }, survey_result_data: {} } }]
         if @ticket.facebook?
           preload_options << :fb_post
         elsif @ticket.twitter?
@@ -133,7 +134,7 @@ module Ember
       def sanitize_and_build
         sanitize_params
         build_object
-        kbase_email_included? params[cname] # kbase_email_included? present in Email module
+        kbase_email_included? cname_params # kbase_email_included? present in Email module
         assign_note_attributes
       end
 
@@ -157,7 +158,7 @@ module Ember
         @item.notable = @ticket # assign notable instead of id as the object is already loaded.
         @item.notable.account = current_account
         load_normal_attachments if forward?
-        build_normal_attachments(@item, params[cname][:attachments])
+        build_normal_attachments(@item, cname_params[:attachments])
         build_shared_attachments(@item, shared_attachments)
         build_cloud_files(@item, @cloud_files)
         @item.attachments = @item.attachments # assign attachments so that it will not be queried again in model callbacks
@@ -165,54 +166,30 @@ module Ember
       end
 
       def sanitize_params
-        sanitize_body_params
-        # set source only for create/reply/forward action not for update action. Hence TYPE_FOR_ACTION is checked.
-        params[cname][:source] = ConversationConstants::TYPE_FOR_ACTION[action_name] if ConversationConstants::TYPE_FOR_ACTION.keys.include?(action_name)
-        # only note can have choices for private field. others will be set to false always.
-        params[cname][:private] = false unless update? || params[cname][:source] == Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note']
-        # Set ticket id from already assigned ticket only for create/reply/forward action not for update action.
-        params[cname][:notable_id] = @ticket.id if @ticket
-        params[cname][:attachments] = params[cname][:attachments].map { |att| { resource: att } } if params[cname][:attachments]
-        modify_and_remove_params
-        process_saved_params
-      end
-
-      def modify_and_remove_params
-        ParamsHelper.assign_and_clean_params(ConversationConstants::PARAMS_MAPPINGS, params[cname])
-        ParamsHelper.save_and_remove_params(self, ConversationConstants::PARAMS_TO_SAVE_AND_REMOVE, params[cname])
-        params[cname][:note_body_attributes] = { body_html: params[cname][:body] } if params[cname][:body]
-        params[cname][:note_body_attributes][:full_text_html] = params[cname][:full_text] if params[cname][:full_text]
-        ParamsHelper.clean_params(ConversationConstants::PARAMS_TO_REMOVE, params[cname])
-      end
-
-      def process_saved_params
-        # following fields must be handled separately, should not be passed to build_object method
-        @attachment_ids = @attachment_ids.map(&:to_i) if @attachment_ids
-        @cloud_file_ids = @cloud_file_ids.map(&:to_i) if @cloud_file_ids
-        @note_id        = @note_id.to_i if @note_id
-        @include_quoted_text = @include_quoted_text.to_bool if @include_quoted_text.try(:is_a?, String)
-        @include_original_attachments = @include_original_attachments.to_bool if @include_original_attachments.try(:is_a?, String)
+        sanitize_note_params
       end
 
       def save_note
         # assign attributes post delegator validation
         @item.email_config_id = @delegator.email_config_id
         @item.attachments = @item.attachments + @delegator.draft_attachments if @delegator.draft_attachments
-        if forward?
-          @item.from_email ||= current_account.primary_email_config.reply_email
-          @item.note_body.full_text_html ||= (@item.note_body.body_html || '')
-          @item.note_body.full_text_html = @item.note_body.full_text_html + bind_last_conv(@ticket, signature, true) if @include_quoted_text
-          load_cloud_files
-        end
+        assign_attributes_for_forward if forward?
         @item.save_note
       end
 
+      def assign_attributes_for_forward
+        @item.from_email ||= current_account.primary_email_config.reply_email
+        @item.note_body.full_text_html ||= (@item.note_body.body_html || '')
+        @item.note_body.full_text_html = @item.note_body.full_text_html + bind_last_conv(@ticket, signature, true) if @include_quoted_text
+        load_cloud_files
+      end
+
       def load_normal_attachments
-        attachments_array = params[cname][:attachments] || []
+        attachments_array = cname_params[:attachments] || []
         (parent_attachments || []).each do |attach|
           attachments_array.push(resource: attach.to_io)
         end
-        params[cname][:attachments] = attachments_array
+        cname_params[:attachments] = attachments_array
       end
 
       def load_cloud_files
@@ -251,11 +228,7 @@ module Ember
       def signature
         (@user || api_current_user)
           .try(:agent)
-          .try(:parsed_signature,
-            {
-              'ticket' => @ticket,
-              'helpdesk_name' => Account.current.portal_name
-            })
+          .try(:parsed_signature, 'ticket' => @ticket, 'helpdesk_name' => Account.current.portal_name)
       end
 
       def set_custom_errors(item = @item)
@@ -273,8 +246,8 @@ module Ember
       end
 
       def set_defaults
-        params[cname][:include_quoted_text] = true unless params[cname].key?(:include_quoted_text) || params[cname].key?(:full_text)
-        params[cname][:include_original_attachments] = true unless params[cname].key?(:include_original_attachments)
+        cname_params[:include_quoted_text] = true unless cname_params.key?(:include_quoted_text) || cname_params.key?(:full_text)
+        cname_params[:include_original_attachments] = true unless cname_params.key?(:include_original_attachments)
       end
 
       def constants_class
@@ -309,10 +282,9 @@ module Ember
 
       def parse_liquid(liquid_content)
         Liquid::Template.parse(liquid_content).render(
-          {
-            'ticket' => @ticket,
-            'helpdesk_name' => Account.current.portal_name
-          })
+          'ticket' => @ticket,
+          'helpdesk_name' => Account.current.portal_name
+        )
       end
 
       wrap_parameters(*wrap_params)

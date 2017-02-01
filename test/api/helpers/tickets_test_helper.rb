@@ -338,7 +338,7 @@ module TicketsTestHelper
     {
       id: call.id,
       duration: call.call_duration,
-      recording: attachment_pattern({}, call.recording_audio)
+      recording: attachment_pattern(call.recording_audio)
     }
   end
 
