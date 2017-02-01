@@ -13,7 +13,9 @@ module Helpdesk::Email::OutgoingCategory
     [:premium,    3],
     [:free,       4],
     [:default,    5],
-    [:spam,       9]  
+    [:spam,       9],
+    [:paid_email_notification, 20],
+    [:free_email_notification, 21]
   ]
 
 #for default we still use sendgrid for outgoing- due to DKIM
