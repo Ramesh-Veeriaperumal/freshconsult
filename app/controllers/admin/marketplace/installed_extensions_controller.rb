@@ -148,7 +148,7 @@ class Admin::Marketplace::InstalledExtensionsController <  Admin::AdminControlle
         :enabled => Marketplace::Constants::EXTENSION_STATUS[:enabled],
         :type => @extension['type'],
         :options => @extension['page_options'],
-        :events => extn_details['events']
+        :events => @extension['events']
       }.merge(paid_app_params)
     end
 
