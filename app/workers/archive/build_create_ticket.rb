@@ -6,6 +6,7 @@ module Archive
       begin
         @account = Account.current
         @ticket = @account.tickets.find(args["ticket_id"])
+        return if @ticket && !@ticket.closed?
         @ticket.reset_associations if @ticket.association_type
         archive_ticket = @account.archive_tickets.find_by_ticket_id_and_progress(args["ticket_id"],true)
         archvie_core_base = Archive::Core::Base.new
