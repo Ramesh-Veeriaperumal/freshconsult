@@ -4560,7 +4560,7 @@ en:
     no_articles_info_1: "Sorry, we haven’t published any articles in this section. "
     no_articles_info_2: "Please check again later. "
     no_forums_info_1: "No forum topic yet"
-    no_forums_info_2: "Why don't you start a %{start_topic_link}?"
+    no_forums_info_2: "Why don't you %{start_topic_link}?"
     article:
       see_all_articles: "See all %{count} articles"
       more_articles: "More articles in <span class='folder-name'> %{article_name} </span>"
