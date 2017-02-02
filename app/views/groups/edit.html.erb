@@ -2,3 +2,10 @@
   <%= render :partial => "helpnote" %>
 <% end %>
 <%= render :partial => "form", :locals => { :title => t('group.edit'), :page_type => "edit" } %>
+<div id="edit-info" class="hide" data-isdefault="false"></div>
+<%= render :partial => 'popup' %>
+<input type="hidden" value="/groups/users_list" id="edit_group_agents_list_url">
+<input type="hidden" value="/groups/update_group" id="edit_group_update_agents_url">
+
+
+<%=  javascript_include_tag :'cdn/app/group_enhancement' %>

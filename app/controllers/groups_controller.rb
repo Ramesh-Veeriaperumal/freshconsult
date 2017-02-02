@@ -9,7 +9,7 @@ class GroupsController < Admin::AdminController
   before_filter :set_capping_limit, :filter_params, :build_attributes, :only => [:create, :update]
 
   def index
-    @groups = current_user.accessible_groups.order(:name)
+    @groups = scoper.order(:name)
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml => @groups.to_xml(:except=>:account_id) }
@@ -85,7 +85,7 @@ class GroupsController < Admin::AdminController
           head :ok
         end
         format.json do
-          head :ok
+          (request.xhr?) ? (render :json => {:status => true}) : (head :ok)
         end
       else
         format.html { render :action => "edit" }
@@ -120,6 +120,19 @@ class GroupsController < Admin::AdminController
     render :json => {:user_skill_exists => @user_skill_exists}
   end
 
+  def users_list
+    users = []
+    group_users = scoper.find_by_id(params[:id]).try(:agents) if params[:id]
+    if group_users
+      group_users = group_users.order(:name)
+      group_users.each do |user|
+        users << {:user_id => user.id, :group_ids => user.group_ids}
+      end
+    end
+    render json: users
+  end
+
+
   protected
 
   def cname # Possible dead code
@@ -128,6 +141,10 @@ class GroupsController < Admin::AdminController
 
   def nscname
     @nscname ||= controller_path.gsub('/', '_').singularize
+  end
+
+  def scoper
+    current_user.accessible_groups
   end
 
   private
