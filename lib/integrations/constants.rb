@@ -45,6 +45,13 @@ module Integrations::Constants
 
   DISPLAY_IN_PAGES = { "ticket_show" => 2, "contact_show" => 1, "company_show" => 0 }
 
+  APPS_DISPLAY_MAPPING = {
+    APP_NAMES[:jira] => [DISPLAY_IN_PAGES["ticket_show"]],
+    APP_NAMES[:zohocrm] => [DISPLAY_IN_PAGES["ticket_show"],DISPLAY_IN_PAGES["contact_show"]],
+    APP_NAMES[:mailchimp] => [DISPLAY_IN_PAGES["contact_show"]],
+    APP_NAMES[:salesforce] => [DISPLAY_IN_PAGES["ticket_show"],DISPLAY_IN_PAGES["contact_show"]]
+  }
+
   CRM_APPS= [:sugarcrm, :salesforce, :batchbook, :highrise, :nimble, :zohocrm, :capsule_crm, :dynamicscrm, :quickbooks, :freshbooks, :infusionsoft, :freshsales]
 
   APP_CATEGORY_ID_TO_NAME = {

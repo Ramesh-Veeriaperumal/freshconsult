@@ -80,6 +80,7 @@ Helpkit::Application.routes.draw do
 
     resources :roles, controller: 'api_roles', only: [:index, :show]
 
+    
     resources :roles, controller: 'api_roles', only: [:index, :show]
 
     namespace :settings do
@@ -219,6 +220,9 @@ Helpkit::Application.routes.draw do
     end
 
     resources :todos, controller: 'ember/todos', except: [:new, :edit]
+    resources :installed_applications, controller: 'ember/installed_applications', only: [:index, :show]
+    resources :integrated_resources, controller: 'ember/integrated_resources', only: [:index, :show]
+
 
     resources :contacts, controller: 'ember/contacts', except: [:new, :edit] do
       collection do

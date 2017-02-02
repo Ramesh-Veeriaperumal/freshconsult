@@ -16,6 +16,8 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/ticket_field", only: [:index]
     resource :"ember/todo"
     resource :"ember/twitter_handles", only: [:index, :check_following]
+    resource :"ember/installed_application"
+    resource :"ember/integrated_resource"
   end
 
   reply_ticket do

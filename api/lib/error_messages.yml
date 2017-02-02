@@ -108,3 +108,6 @@ api_error_messages:
   incorrect_image_dimensions: "Image dimensions are larger than expected"
   invalid_image_file: "Invalid file type(%{current_extension}). Please upload a jpg or png or gif file"
   shorter_full_text: "Content of full text should be greater than that of body"
+  installed_application_id_required: "Installed application id required"
+  ticket_id_required: "Ticket id required"
+
