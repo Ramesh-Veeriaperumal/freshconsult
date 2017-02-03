@@ -582,7 +582,14 @@ Helpkit.TimesheetUtil = {
         params.data_hash.date = {}
         params.data_hash.date.date_range = jQuery("#date_range").val();
         params.data_hash.date.presetRange = false;
-        params.data_hash.report_filters = Helpkit.locals.query_hash;
+        if(Helpkit.locals.query_hash != undefined) {
+            params.data_hash.report_filters = Helpkit.locals.query_hash;
+        } else {
+            params.data_hash.report_filters = [
+              { "condition":"group_by","value":"customer_name"}
+            ]
+        }
+        
         params.data_hash.select_hash = Helpkit.locals.select_hash;
         if(savedReportUtil.last_applied_saved_report_index != -1){
           params.filter_name = Helpkit.report_filter_data[parseInt(savedReportUtil.last_applied_saved_report_index)].report_filter.filter_name;
