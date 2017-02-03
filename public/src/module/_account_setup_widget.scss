@@ -144,10 +144,10 @@ div.setup-widget-wrapper{
 	position: fixed;
 	top: 0;
 	@include right(0);
-	width: 405px;
+	max-height: 100%;
+	width: 415px;
 	z-index: 16;
 	@include background(#fff);
-	max-height: 100%;
 	overflow-y: scroll;
 	@include box-shadow (0 0 5px 0 #aaa);
 	@include transition(transform .3s);
@@ -193,7 +193,6 @@ div.setup-widget-wrapper{
 		ul#setup-details{
 			height:100%;
 			@include margin-left(37px);
-			padding-bottom: 50px;
 			li{
 				height: auto;
 				width:auto;

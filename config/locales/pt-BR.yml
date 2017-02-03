@@ -10175,7 +10175,7 @@ pt-BR:
   admin_onboarding:
     account_verification_message:
       non_admin_message: "Sua conta ainda não foi ativada. Entre em contato com o administrador."
-      check_inbox_message: "Verifique sua caixa de entrada em <span class = 'email-wrapper'>% {admin_email} </ span> para o email de ativação."
+      check_inbox_message: "Verifique sua caixa de entrada em <span class = 'email-wrapper'> %{admin_email} </span> para o email de ativação."
       helpnote1: "Não pode ver isto?"
       helpnote_or: "ou"
       resend_message : "Reenviar Ativação"
