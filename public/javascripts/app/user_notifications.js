@@ -173,8 +173,7 @@ window.App = window.App || {};
         },
         getGroupedNotifications: function(){
             var collapsed = {};
-            var unread_notifications = [];
-
+            
             for (var i = 0; i < this.notifications.length; i++) {
                 var n = this.notifications[i];
                 n.extra = JSON.parse(n.extra);
@@ -184,10 +183,7 @@ window.App = window.App || {};
                 cObj.nArray.push(n);
 
                 // For unread notifications
-                if(!n.read_at) {
-                    cObj.unreadIds.push(n.id);
-                    unread_notifications.push(n);
-                }
+                if(!n.read_at)  cObj.unreadIds.push(n.id);
                 
                 // For multiple actors
                 if(cObj.actor_ids.indexOf(n.extra.actor_id)==-1) {
@@ -199,10 +195,6 @@ window.App = window.App || {};
                 if(!n.seen_at) this.setSeenIndicator(false);
             }
 
-            var last_unread_notification = unread_notifications.sort(function(a, b) {
-                return new Date(a.created_at) - new Date(b.created_at);
-            })[0];
-
             for(var key in collapsed){
                 var created_at = new Date("1970-01-01");
                 var unread = false;
@@ -211,6 +203,13 @@ window.App = window.App || {};
                 var ngroup = collapsed[key].nArray;
                 var actors = collapsed[key].actor_names;
                 var last = ngroup[0];
+                
+                var unread_notifications = ngroup.filter(function(n) {return !(n.read_at)});
+                if(unread_notifications.length) {
+                    last = unread_notifications.sort(function(a, b) {
+                        return new Date(a.created_at) - new Date(b.created_at)
+                    })[0];
+                }
 
                 if(actors.length == 1){
                     actor_text = actors[0];
@@ -234,7 +233,7 @@ window.App = window.App || {};
                     created_at: new Date(last.created_at),
                     notification_type: last.notification_type.replace(/_/g,' '),
                     unreadIds: collapsed[key].unreadIds.join(','),
-                    action_url: last_unread_notification ? last_unread_notification.extra.action_url : last.extra.action_url,
+                    action_url: last.extra.action_url,
                     actor_text: actor_text,
                     actor_id: last.extra.actor_id
                 });
