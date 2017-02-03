@@ -7,7 +7,7 @@ module HelpdeskAttachable
     include ActionView::Helpers::NumberHelper
 
     # MAX_ATTACHMENT_SIZE = 1024
-    MAX_ATTACHMENT_SIZE         = 20.megabyte
+    MAX_ATTACHMENT_SIZE         = 15.megabyte
     MAILGUN_MAX_ATTACHMENT_SIZE = 20.megabyte
 
     def self.included(base) 
