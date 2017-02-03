@@ -94,6 +94,7 @@ private
     	if encoded_subject.index("=?")
     		val =""
     		es_split = encoded_subject.split(SUBJECT_PATTERN)
+    		es_split = es_split.reject { |str| str.blank? }
     		es_split.each do |line|
     			es = line.index("=?") ? Mail::Encodings.unquote_and_convert_to(line, 'UTF-8') :line
     			val = val+es
@@ -137,7 +138,14 @@ private
 	end
 
 	def get_in_reply_to
-		build_message_id(mail.in_reply_to)
+		if mail.in_reply_to.present?
+			in_rep_to = mail.in_reply_to
+			if in_rep_to.is_a?(String)
+				return build_message_id(in_rep_to)
+			elsif in_rep_to.is_a?(Array)
+	        	return in_rep_to.map {|reply_to| build_message_id(reply_to) }.join(",")
+			end
+		end
 	end
 
 	def get_references

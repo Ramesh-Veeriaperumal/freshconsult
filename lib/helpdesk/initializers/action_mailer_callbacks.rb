@@ -90,7 +90,7 @@ module ActionMailerCallbacks
     end
 
     def set_custom_headers(mail, category_id, account_id, ticket_id, mail_type, note_id, from_email)
-      if category_id.to_i > 10 && category_id.to_i < 20
+      if Helpdesk::Email::OutgoingCategory::MAILGUN_PROVIDERS.include?(category_id.to_i)
         Rails.logger.debug "Sending email via mailgun"
         message_id = encrypt_custom_variables(account_id, ticket_id, note_id, mail_type, from_email)
         mail.header['X-Mailgun-Variables'] = "{\"message_id\": \"#{message_id}\"}"
@@ -160,10 +160,12 @@ module ActionMailerCallbacks
     end
 
     def get_notification_category_id(type)
+      category_id = get_category_header(mail)
+      return category_id if category_id.present?
       notification_type = is_num?(type) ? type : get_notification_type_id(type)
       if EmailNotification::CUSTOM_CATEGORY_ID_ENABLED_NOTIFICATIONS.include?(notification_type.to_i)
-        account = Account.current
-        key = (account && account.subscription.present? && account.subscription.active?) ? 'paid' : 'free' 
+        state = get_subscription
+        key = (state == "active" || state == "premium") ? 'paid' : 'free'
         return Helpdesk::Email::OutgoingCategory::CATEGORY_BY_TYPE["#{key}_email_notification".to_sym]
       end
     end
