@@ -4110,7 +4110,7 @@ he:
   downgrade_to_sprout: "<span class=\"label label-important\">חשוב</span>&nbsp;&nbsp;בחרת לסיים את גרסת הניסיון ולבצע אקטיבציה של התוכנית <b>%{new_plan}</b>. שים לב שעקב שדרוג לאחור מתוכנית <b>%{current_plan}</b> לתוכנית <b>%{new_plan}</b>, כל הנתונים והתצורות המשויכים לתכונות שזמינות בתוכנית  %{current_plan} יאבדו לצמיתות.<br /><br /> כדי לראות רשימה מלאה של תוכניות ותכונות, בקר בדף <a target=\"_blank\" href=\"http://freshdesk.com/pricing\">תוכניות ומחירים</a>. <br />עדיין מתלבט? <a href = \"mailto:support@freshdesk.com\" >אפשר לנו לעזור לך להחליט</a>"
   downgrade_to_sprout_v2: "בחרת לסיים את גרסת הניסיון של <b>%{current_plan}</b> ולהפעיל את התוכנית <b>%{new_plan}</b>."
   downgrade_loss_message: "<span class=\"label label-important\">חשוב</span> תאבד נתונים ותצורות בתכונות הבאות לצמיתות:"
-  upgrade_plan_message: "<span class=\"label label-important\">חשוב</span> בדוק את התכונות הנוספות בתוכנית %{current_plan} </b>"
+  upgrade_plan_message: "<span class=\"label label-important\">חשוב</span> בדוק את התכונות הנוספות בתוכנית <b>%{current_plan} </b>"
   downgrade_contact_us: "בחן את <a target=\"_blank\" href=\"https://freshdesk.com/helpdesk-features\">השוואת התכונות המלאה</a> שלנו. <br />עדיין לא בטוח? <a href = \"mailto:support@freshdesk.com\" >נוכל לעזור לך להחליט!</a>"
   and_more_plan_downgrade: "ועוד..."
   inequal_plan_doubt: "לא בטוח איזו תוכנית מתאימה לך?"
