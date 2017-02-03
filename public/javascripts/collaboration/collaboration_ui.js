@@ -1316,12 +1316,10 @@ App.CollaborationUi = (function ($) {
 	    createConversation: function(cn, members, cb) {
 	    	var collabModel = App.CollaborationModel;
 	    	var currentConversation = collabModel.currentConversation;
-            cn = cn || currentConversation.co_id;
-            collabModel.currentConversation.name = cn;
             members = members || [];
 
             var conversationObj = {
-                "co_id": cn,
+                "co_id": currentConversation.co_id || cn,
                 "members": members,
                 "owned_by": currentConversation["owned_by"]
             }
