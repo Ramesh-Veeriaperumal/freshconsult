@@ -15,6 +15,9 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/ticket_field", only: [:index]
     resource :"ember/todo"
     resource :"ember/twitter_handles", only: [:index, :check_following]
+
+    # Search
+    resource :"ember/search/ticket", only: [:results]
   end
 
   reply_ticket do
@@ -42,6 +45,8 @@ Authority::Authorization::PrivilegeList.build do
   view_contacts do
     resource :"ember/contact", only: [:index, :show]
     resource :"ember/company", only: [:index, :show, :activities]
+
+    resource :"ember/search/customer", only: [:results]
   end
 
   manage_contacts do
@@ -79,5 +84,13 @@ Authority::Authorization::PrivilegeList.build do
 
   export_customers do
     resource :"ember/contact", only: [:export_csv]
+  end
+
+  view_forums do
+    resource :"ember/search/topic", only: [:results]
+  end
+
+  view_solutions do
+    resource :"ember/search/solution", only: [:results]
   end
 end

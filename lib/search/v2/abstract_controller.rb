@@ -30,7 +30,13 @@ module Search::V2::AbstractController
       # Method that makes call to ES and loads AR results
       #
       def search(es_models)
-        @result_set = Search::V2::QueryHandler.new({
+        @result_set = esv2_query_results(es_models)
+        yield(@result_set) if block_given?
+        process_results
+      end
+
+      def esv2_query_results(es_models)
+        Search::V2::QueryHandler.new({
           account_id:   current_account.id,
           context:      @search_context,
           exact_match:  @exact_match,
@@ -41,9 +47,6 @@ module Search::V2::AbstractController
           es_params:    construct_es_params,
           locale:       @es_locale
         }).query_results
-        
-        yield(@result_set) if block_given?
-        process_results
       end
 
       # Types corresponding to the model classes
@@ -110,7 +113,7 @@ module Search::V2::AbstractController
         @exact_match    = true if Search::Utils.exact_match?(@search_key)
         @es_search_term = Search::Utils.extract_term(@search_key, @exact_match)
 
-        limit           = (params[:max_matches] || params[:limit]).to_i
+        limit           = (params[:max_matches] || params[:limit] || params[:per_page]).to_i
         @size           = (limit.zero? or (limit > Search::Utils::MAX_PER_PAGE)) ? Search::Utils::MAX_PER_PAGE : limit
         @current_page   = (params[:page].to_i.zero? ? Search::Utils::DEFAULT_PAGE : params[:page].to_i)
         @offset         = @size * (@current_page - 1)

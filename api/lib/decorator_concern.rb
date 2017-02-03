@@ -18,7 +18,7 @@ module DecoratorConcern
     end
 
     def decorator_name
-      @name ||= "#{name.gsub('Controller', '').gsub('Ember::', '').gsub('Api', '').singularize}Decorator".constantize
+      @name ||= "#{name.gsub('Controller', '').gsub('Ember::Search::', '').gsub('Ember::', '').gsub('Api', '').singularize}Decorator".constantize
     end
   end
 

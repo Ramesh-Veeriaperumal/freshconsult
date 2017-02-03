@@ -256,6 +256,12 @@ Helpkit::Application.routes.draw do
         get :me
       end
     end
+
+    # Search routes
+    post '/search/tickets/',      to: 'ember/search/tickets#results'
+    post '/search/customers/',    to: 'ember/search/customers#results'
+    post '/search/topics/',       to: 'ember/search/topics#results'
+    post '/search/solutions/',    to: 'ember/search/solutions#results'
   end
 
   match '/api/v2/_search/tickets' => 'tickets#search', :defaults => { format: 'json' }, :as => :tickets_search, via: :get
