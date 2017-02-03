@@ -714,7 +714,7 @@ Helpkit::Application.routes.draw do
       put :block
       get :assume_identity
       get :profile_image
-      get :profile_image_path
+      get :profile_image_no_blank
     end
   end
 

@@ -49,6 +49,14 @@
       border-top-left-radius: 3px;
       border-top-right-radius: 3px;
       font-weight: bold;
+
+      .user-notification-actions {
+        @include float(right);
+
+        a {
+          @include float(right);
+        }
+      }
     }
 
     .notifications-list {
@@ -66,6 +74,16 @@
         display: block;
         color: black;
 
+        .preview_pic{
+          position: relative;
+
+          img {
+            position: absolute;
+            @include left(0px);
+            top: 0;
+          }
+        }
+
         .notification-inner {
           @include margin-left(50px);
 
@@ -79,6 +97,7 @@
 
           .notification-content{
             color: black;
+            text-transform: capitalize;
           }
 
           .notification-time {
