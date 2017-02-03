@@ -3,7 +3,9 @@ module Account::Setup::ObserverUtils
 	private
 
 	def mark_current_flag(object)
-		account_object(object).send("mark_#{current_flag(object)}_setup_and_save")
+		current_flag = current_flag(object)
+		Rails.logger.debug "::::::: Trial widget update : #{current_flag.humanize} set up :::::::" if account_object(object).subscription.trial?
+		account_object(object).send("mark_#{current_flag}_setup_and_save")
 	end
 	
 	def current_flag(object)
