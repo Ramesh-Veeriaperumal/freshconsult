@@ -4,7 +4,7 @@
 window.App = window.App || {};
 (function ($) {
     "use strict";
-    
+
     App.UserNotification = {
         numResultsToFetch: 50,
         notifications: [],
@@ -74,6 +74,14 @@ window.App = window.App || {};
                     self.groupedNotifications.push(notification);
                     self.renderOneNotification(notification);
                     self.setSeenIndicator(false);
+
+                    if(data.notification_type === "discussion") {
+                        var collab_event = new CustomEvent('collabNoti', { 'detail': {
+                            "ticket_id": data.extra.ticket_id,
+                            "noti_id": data.id
+                        }});
+                        document.dispatchEvent(collab_event);
+                    }
                 }
               })
             }
@@ -123,20 +131,23 @@ window.App = window.App || {};
                 self.seenAll();
             })
         },
+        markNotificationRead: function(elem) {
+            var self = this;
+            if(!elem.hasClass('read')){
+                var unreadIds = elem.data('unreadIds');
+                unreadIds = (typeof unreadIds == "number") ? [unreadIds+""] : unreadIds.split(",");
+                self.iris.readNotification(unreadIds, function(err,result){
+                    elem.addClass("read");
+                }); 
+            }
+        },
         bindNotificationClick: function(){
             var self = this;
             $(document).on('click.usernotification', '#user-notifications-popover .notifications-list a', function(ev){
                 ev.preventDefault();
                 ev.stopPropagation();
                 var elem = $(this);
-                if(!elem.hasClass('read')){
-                    var unreadIds = elem.data('unreadIds');
-                    unreadIds = (typeof unreadIds == "number") ? [unreadIds+""] : unreadIds.split(",");
-                    self.iris.readNotification(unreadIds, function(err,result){
-                        elem.addClass("read");
-                    }); 
-                }
-                
+                self.markNotificationRead(elem);
                 pjaxify(elem.attr("href"));
             })
         },
@@ -162,6 +173,7 @@ window.App = window.App || {};
         },
         getGroupedNotifications: function(){
             var collapsed = {};
+            var unread_notifications = [];
 
             for (var i = 0; i < this.notifications.length; i++) {
                 var n = this.notifications[i];
@@ -172,8 +184,11 @@ window.App = window.App || {};
                 cObj.nArray.push(n);
 
                 // For unread notifications
-                if(!n.read_at) cObj.unreadIds.push(n.id);
-
+                if(!n.read_at) {
+                    cObj.unreadIds.push(n.id);
+                    unread_notifications.push(n);
+                }
+                
                 // For multiple actors
                 if(cObj.actor_ids.indexOf(n.extra.actor_id)==-1) {
                     cObj.actor_names.push(n.actor);
@@ -183,6 +198,10 @@ window.App = window.App || {};
                 // Set the seen indicator
                 if(!n.seen_at) this.setSeenIndicator(false);
             }
+
+            var last_unread_notification = unread_notifications.sort(function(a, b) {
+                return new Date(a.created_at) - new Date(b.created_at);
+            })[0];
 
             for(var key in collapsed){
                 var created_at = new Date("1970-01-01");
@@ -215,7 +234,7 @@ window.App = window.App || {};
                     created_at: new Date(last.created_at),
                     notification_type: last.notification_type.replace(/_/g,' '),
                     unreadIds: collapsed[key].unreadIds.join(','),
-                    action_url: last.extra.action_url,
+                    action_url: last_unread_notification ? last_unread_notification.extra.action_url : last.extra.action_url,
                     actor_text: actor_text,
                     actor_id: last.extra.actor_id
                 });

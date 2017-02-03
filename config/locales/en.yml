@@ -6692,7 +6692,7 @@ en:
         my_article_feedback: My Articles Feedback
         archived: Archive
         invalid_requester: Invalid requester
-        ongoing_collab: Ongoing collaborations
+        ongoing_collab: My Open Discussions
       note:
         posted_on: "%{user_name} on %{note_date}"
         created_on:
@@ -10853,6 +10853,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     collaborators: "Collaborators"
     view_all_collaborations: "View all collaborations"
     view_discussion: "View Discussion"
+    open_discussions: "My Open Discussions"
     type_message: "Type message"
     added_to: "You have been added as collaborator on ticket %{ticket_id}"
     invited_notification: "%{user_name} wants to collaborate with you on ticket %{ticket_id}"

@@ -53,7 +53,10 @@ App.CollaborationUi = (function ($) {
                     _COLLAB_PVT.updateNotiCount();
                     window.open(event.currentTarget.getAttribute("data-href"), "_self");
                 });
-            });            
+            });
+            jQuery(document).on("collabNoti", function(event){
+                App.CollaborationModel.markNotiReadForCollabOpen(event.detail);
+            });
         },
         events: function(){
             var $collabBtn = $("#sticky_header");
@@ -145,7 +148,7 @@ App.CollaborationUi = (function ($) {
                 if(!$(event.target).parents(".leftcontent .conversation:not(.activity)").length) {
                     _COLLAB_PVT.hideAnnotationOption();
                 }
-            })
+            });
         },
 
         showCollaboratorsListView: function() {
@@ -937,27 +940,23 @@ App.CollaborationUi = (function ($) {
 
         showDiscussionDD: function(event) {
             if(!$(event.currentTarget).hasClass("collab-temp-annotation")) {
-                var selectionRectsForVp = event.currentTarget.getBoundingClientRect();
-                var lineHeightBuffer = selectionRectsForVp.bottom - selectionRectsForVp.top;
                 var $showDiscussionDD = $("#show-discussion-dd");
                 var dropDownWidth = $showDiscussionDD.width();
-                if(!!selectionRectsForVp) {
-                    var leftcontentRects = $("#Pagearea .leftcontent")[0].getBoundingClientRect();
-                    var dropDownPos = {
-                        left: selectionRectsForVp.left - leftcontentRects.left + selectionRectsForVp.width/2 - dropDownWidth/2,
-                        top: selectionRectsForVp.top - leftcontentRects.top + lineHeightBuffer
-                    };
-                    $showDiscussionDD.attr('data-message-id', event.currentTarget.getAttribute('data-message-id'));
+                var leftcontentRects = $("#Pagearea .leftcontent")[0].getBoundingClientRect();
+                var dropDownPos = {
+                    left: event.clientX - leftcontentRects.left - dropDownWidth/2,
+                    top: event.clientY - leftcontentRects.top
+                };
+                $showDiscussionDD.attr('data-message-id', event.currentTarget.getAttribute('data-message-id'));
 
-                    var $annotatorImage = $("#annotator-image");
-                    $annotatorImage.html(_COLLAB_PVT.getAvatarHtml(event.currentTarget.getAttribute('data-annotator-id'), "small"));
+                var $annotatorImage = $("#annotator-image");
+                $annotatorImage.html(_COLLAB_PVT.getAvatarHtml(event.currentTarget.getAttribute('data-annotator-id'), "small"));
 
-                    $showDiscussionDD.css({
-                        left: dropDownPos.left,
-                        top: dropDownPos.top,
-                        display: "block"
-                    });
-                }
+                $showDiscussionDD.css({
+                    left: dropDownPos.left,
+                    top: dropDownPos.top,
+                    display: "block"
+                });   
             }
         },
 
@@ -1155,12 +1154,6 @@ App.CollaborationUi = (function ($) {
 
         getUserInfo: function(uid, cb) {
             App.CollaborationModel.getUserInfo(uid, cb);
-        },
-
-        updateDpCharToImage: function(elem, image_path) {
-            elem.removeClassName("hide");
-            elem.setAttribute("src", image_path);
-            App.CollaborationModel.profileImages[elem.getAttribute("data-user-id")] = {"path": image_path};
         }
     };
 
@@ -1259,7 +1252,7 @@ App.CollaborationUi = (function ($) {
             // on connection init if config is pending; initUi will be called onModelInited
             config = config || Collab.parseJson($("#collab-ui-data").attr("data-ui-payload"));
             config.expandCollabOnLoad = !!Collab.getUrlParameter("collab");
-            config.scrollToMsgId = Collab.getUrlParameter("msg");
+            config.scrollToMsgId = Collab.getUrlParameter("message");
 
             if(!!App.CollaborationModel.initedWithData) {
                 Collab.initUi(config);
@@ -1566,56 +1559,8 @@ App.CollaborationUi = (function ($) {
             }
             return display_name;
         },
-        dpLoadErr: function(elem) {
-            var uid = elem.getAttribute("data-user-id");
-
-            function pullProfileImage() {
-                // FETCH CASE
-                App.CollaborationModel.profileImages[uid] = {"fetching": true};
-                $.get("/users/" + uid + "/profile_image_path", function(response) {
-                    if(!!response.path){
-                        $("<img/>")
-                            .on('load', function() { 
-                                _COLLAB_PVT.updateDpCharToImage(elem, response.path); 
-                            })
-                            .on('error', function() { 
-                                delete App.CollaborationModel.profileImages[uid]; 
-                                Collab.dpLoadErr(elem);
-                            })
-                            .attr("src", response.path);
-                    }
-                    App.CollaborationModel.profileImages[uid].fetching = false;
-                });
-            }
-
-            if(uid) {
-                var profile_image_obj = App.CollaborationModel.profileImages[uid];
-                if(profile_image_obj) {
-                    // FETCHING CASE
-                    if(profile_image_obj.fetching) {
-                        setTimeout(function() {
-                            Collab.dpLoadErr(elem);
-                        }, CONST.RETRY_DELAY_FOR_PENDING_DP_REQ);
-                    } else if(profile_image_obj.path) {
-                        // CACHEC CASE
-                        $("<img/>")
-                            .on('load', function() { 
-                                _COLLAB_PVT.updateDpCharToImage(elem, profile_image_obj.path);
-                            })
-                            .on('error', function() { 
-                                delete App.CollaborationModel.profileImages[uid]; 
-                                Collab.dpLoadErr(elem);
-                            })
-                            .attr("src", profile_image_obj.path);
-                    } else {
-                        pullProfileImage();
-                    }
-                } else {
-                    pullProfileImage();
-                }
-            } else {
-                console.log("Something went wrong in setting DP image; uid not found in -data- attr;");
-            }
+        dpLoadComplete: function(elem) {
+            $(elem).removeClass("hide");
         }
     };
     return Collab;
