@@ -10845,6 +10845,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     hide: Hide
     suggestion_text: What can we improve? (Optional).
     help: What's this?
+    feed_back_survery: Help us with some feedback?
   collaboration:
     notifications: "Notifications"
     no_notifications: "No new notifications"
