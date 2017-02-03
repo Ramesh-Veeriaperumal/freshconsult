@@ -1,2 +1,49 @@
 $rtl: true;
 @import "../../page/reports.scss";
+
+div.dataTables_wrapper {
+	direction: rtl;
+}
+
+.reports-main .reports-header {
+	.reports-menu{
+		left : auto !important;
+		right : 135px !important;
+	}
+	.generate-pdf-button{
+		float : left !important;
+	}
+	.reports-filter{
+		margin-right : 0px;	
+		.edit-filter{
+			left : auto !important;
+			right : 15px !important;
+		}
+	}
+}
+
+.filter-form .filter-field{
+ 		i{
+ 			right : auto !important;
+ 			left : 10px !important;
+ 		}
+ }
+
+ .dataTables_paginate{
+ 	float : left !important;
+ 	margin-right : auto !important;
+ 	margin-left : -65px !important;
+ }
+
+.report-filters-container {
+	.metric-header h3 .close {
+			float: left !important;
+	}
+}
+
+.time-sheet-summary .grid_table {
+  td,th {
+  		text-align : right !important;
+  }
+}
+

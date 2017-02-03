@@ -6231,6 +6231,10 @@ en:
       hours: Hours
       agent: Agent
       note: Note
+      billalblenonbillable: Billable/Non-Billable
+      date: Date
+      createdAt: "Created at"
+      requester_name: "Requester Name"
       billable_entry: Mark as a billable entry
       billing_type: Billing Type
       billable: Billable
@@ -6240,6 +6244,8 @@ en:
       group_by: Group By
       priority: Priority
       status: Status
+      no_entry: No Time Entries
+      max_columns: Cannot add more than 10 columns
       report:
         no_timeentry: "No data available"
         total: Total
@@ -7934,7 +7940,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
          access_private_channel: "Allow access to private channels"
          allow_dm_agent: "Allow DM to agent"
          allow_slash_command: "Allow Slash Command (<a href='https://support.freshdesk.com/support/solutions/articles/206103' target='_blank'> Convert Slack DM to Freshdesk ticket </a>)"
-         slash_command_token: "Slash Command Token"
+         slash_command_token: "Slash Command Token"   
       action_options:
         public: "Public"
         private: "Private"
@@ -8300,6 +8306,8 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
         billable_vs_non_billable: "Billable vs Non-billable"
         filter_by_title: "Filtered by"
         time_period: "Time Period"
+        pick_columns: Pick columns
+        column_limit_exceed: Cannot add more than 10 columns
       summary_report:
         back_to_reports: "Back to Reports"
         show_report: "Show report"
@@ -8336,6 +8344,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
           select_group: Select Group
           select_billable: Select Billable/Non-Billable
           select_priority: "Select Priority"
+          select: "Select"
           select_product: Select Product
           select_type: Select Type
           view_between: View report between

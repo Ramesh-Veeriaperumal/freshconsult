@@ -1,0 +1,24 @@
+/* 
+*  
+*  @css : Jquery Fixed Header Custom css
+*  @Datatable_version_supported : 1.10.9
+*/
+
+@import "../settings/settings";
+
+.left_wrapper {
+	position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 10;
+    background: #fff;
+
+    .dataTable td,.dataTable th{
+    	border-right : 1px solid #e5e4e4;
+    }
+}
+
+html[dir="rtl"] .left_wrapper{
+	right : 0;
+	left : auto;
+}
