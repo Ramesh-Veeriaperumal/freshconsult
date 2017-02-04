@@ -57,11 +57,18 @@ module ActionMailerCallbacks
         mail.delivery_method(:smtp, read_smtp_settings(category_id))
         set_custom_headers(mail, category_id, account_id, ticket_id, mail_type, note_id, from_email)
       else
-        mailgun_traffic = get_mailgun_percentage
-        if mailgun_traffic > 0 && Random::DEFAULT.rand(100) < mailgun_traffic
-          category_id = reset_smtp_settings(mail, true)
+        category_id = get_notification_category_id(mail_type)
+        if category_id.blank?
+          mailgun_traffic = get_mailgun_percentage
+          if mailgun_traffic > 0 && Random::DEFAULT.rand(100) < mailgun_traffic
+            category_id = reset_smtp_settings(mail, true)
+          else
+            category_id = reset_smtp_settings(mail)
+          end
         else
-          category_id = reset_smtp_settings(mail)
+          Rails.logger.debug "Fetched category : #{category_id} while email delivery"
+          self.smtp_settings = read_smtp_settings(category_id)
+          mail.delivery_method(:smtp, read_smtp_settings(category_id))
         end
         set_custom_headers(mail, category_id, account_id, ticket_id, mail_type, note_id, from_email)
       end
@@ -83,7 +90,7 @@ module ActionMailerCallbacks
     end
 
     def set_custom_headers(mail, category_id, account_id, ticket_id, mail_type, note_id, from_email)
-      if category_id.to_i > 10
+      if Helpdesk::Email::OutgoingCategory::MAILGUN_PROVIDERS.include?(category_id.to_i)
         Rails.logger.debug "Sending email via mailgun"
         message_id = encrypt_custom_variables(account_id, ticket_id, note_id, mail_type, from_email)
         mail.header['X-Mailgun-Variables'] = "{\"message_id\": \"#{message_id}\"}"
@@ -150,6 +157,17 @@ module ActionMailerCallbacks
       "{\"unique_args\":{\"account_id\": #{account_id},\"ticket_id\":#{ticket_id}," \
         "#{note_id_str}" \
         "\"email_type\":\"#{mail_type}\",\"from_email\":\"#{from_email}\"}}"
+    end
+
+    def get_notification_category_id(type)
+      category_id = get_category_header(mail)
+      return category_id if category_id.present?
+      notification_type = is_num?(type) ? type : get_notification_type_id(type)
+      if EmailNotification::CUSTOM_CATEGORY_ID_ENABLED_NOTIFICATIONS.include?(notification_type.to_i)
+        state = get_subscription
+        key = (state == "active" || state == "premium") ? 'paid' : 'free'
+        return Helpdesk::Email::OutgoingCategory::CATEGORY_BY_TYPE["#{key}_email_notification".to_sym]
+      end
     end
   end
 end

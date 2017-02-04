@@ -13,7 +13,9 @@ module Helpdesk::Email::OutgoingCategory
     [:premium,    3],
     [:free,       4],
     [:default,    5],
-    [:spam,       9]  
+    [:spam,       9],
+    [:paid_email_notification, 20],
+    [:free_email_notification, 21]
   ]
 
 #for default we still use sendgrid for outgoing- due to DKIM
@@ -29,6 +31,8 @@ module Helpdesk::Email::OutgoingCategory
   CATEGORY_BY_TYPE = Hash[*CATEGORIES.flatten]
   MAILGUN_CATEGORY_BY_TYPE = Hash[*MAILGUN_CATEGORIES.flatten]
   CATEGORY_SET = CATEGORIES.map{|a| a[0]}
+  MAILGUN_PROVIDERS = MAILGUN_CATEGORY_BY_TYPE.values
+
   
   def get_subscription
     state = nil

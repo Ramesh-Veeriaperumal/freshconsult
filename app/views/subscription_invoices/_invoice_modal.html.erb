@@ -40,17 +40,17 @@
     </div>
     <table class = "table invoice-table">
       <tr class = "invoice-modal-config">
-        <th> <%=t("description")%></th>
+        <th class="text-left"> <%=t("description")%></th>
         <th> <%=t("subscription.quantity")%></th>
         <th> <%=t("subscription.unit_price")%></th>
-        <th class="text-right"><%=t("amount")%></th>
+        <th><%=t("amount")%></th>
       </tr>
       <%invoice.details[:line_items].each do |line_item|%>
         <tr>
-          <td><%=line_item[:description]%></td>
+          <td  class="text-left"><%=line_item[:description]%></td>
           <td><%=line_item[:quantity]%></td>
           <td><%=line_item[:unit_price]%></td>
-          <td class="text-right"><%=currency_symbol%> <%=line_item[:amount]%></td>
+          <td><%=currency_symbol%> <%=line_item[:amount]%></td>
         </tr>
       <%end%>
       <tr>
@@ -75,17 +75,17 @@
     </div>
     <table class = "table invoice-table">
       <tr class = "invoice-modal-config">
-        <th> <%=t("subscription.date")%></th>
+        <th class="text-left"> <%=t("subscription.date")%></th>
         <th> <%=t("subscription.type")%></th>
         <th> <%=t("subscription.status")%></th>
-        <th class="text-right"><%=t("amount")%></th>
+        <th><%=t("amount")%></th>
       </tr>
       <%invoice.details[:transaction_details].each do |txn_item|%>
         <tr>
-          <td><%=txn_item[:transaction_date].strftime("%d %b, %Y %H:%M %Z")%></td>
+          <td class="text-left"><%=txn_item[:transaction_date].strftime("%d %b, %Y %H:%M %Z")%></td>
           <td><%=txn_item[:transaction_type].capitalize%></td>
           <td><%=txn_item[:transaction_status].capitalize%></td>
-          <td class="text-right"><%=currency_symbol%> <%=txn_item[:transaction_amount]%></td>
+          <td><%=currency_symbol%> <%=txn_item[:transaction_amount]%></td>
         </tr>
       <%end%>
     </table>

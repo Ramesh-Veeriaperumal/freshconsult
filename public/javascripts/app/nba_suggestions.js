@@ -44,7 +44,7 @@ window.App.Tickets = window.App.Tickets || {};
             $(document).on("click.nba",".ficon-like",this.thumbsUp.bind(this));
             $(document).on("click.nba",".ficon-dislike",this.thumbsDown.bind(this));
             $(document).on("click.nba","#fdbk-button",this.submitFeedBack.bind(this));
-            $(document).on("click.nba","#help",this.showHelp.bind(this));
+            $(document).on("click.nba","#sas_survey",this.showSurvey.bind(this));
         },
 
         offEventBinding: function() {
@@ -64,10 +64,8 @@ window.App.Tickets = window.App.Tickets || {};
             this.pushEventToKM("NBA_BETA_FeedBack_No_Text",this.userProperties(0,$("#sas-fdbk-txt").val(),0));
         },
 
-        showHelp: function(event){
-            inline_manual_player.activateTopic("22248"); 
-            event.stopPropagation();
-            event.preventDefault();
+        showSurvey: function(event){
+            this.pushEventToKM("NBA_Feedback_Clicked",this.userProperties(0,"",0));
         },
 
         thumbsUp: function(event){

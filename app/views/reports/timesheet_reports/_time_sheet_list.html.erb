@@ -19,7 +19,7 @@
           <%= render :partial => "reports/shared/save_report_controls.html.erb"%>
         <% end %>
         <!-- PDF link -->
-        <% if current_user.privilege?(:export_reports) %> 
+        <% if current_user.privilege?(:export_reports) %>
           <button class="generate-pdf-button" id="export_pdf" name="button" onclick="this.blur();">
             <%= t('helpdesk_reports.export.email_report_pdf')%>
           </button>
@@ -28,7 +28,7 @@
       <div class="reports-filter span12" id="report-filter-details">
         <% unless generate_pdf_action? %>
           <div class="span1 edit-filter report-filter-slide-btn">
-                        <a class="btn btn-primary" href="#report-filter-edit" data-parent="#report-page" id="sliding"><%=t('helpdesk_reports.edit_filter')%></a>
+                        <a class="btn btn-primary" id="metric-edit" data-action="open-filter-menu"><%=t('helpdesk_reports.edit_filter')%></a>
           </div>
         <% end %>
         <div class="filter-type span11">
@@ -61,220 +61,88 @@
           </div>
         </div>
       <% else %>
-      <div class="row-fluid control-group">
-        <div class="vertical-alignment">
-          <strong><%=t('helpdesk.time_sheets.group_by')%>: </strong>
-        </div>
-        <div class="vertical-alignment">
-          <%= select_tag :group_by_field , options_for_select(Helpdesk::TimeSheet.group_by_options,grp_data),
-                  { :multiple => false, :class => "select2 filter_item", "data-width" => "150"}%>
-        </div>
-        <% if current_user.privilege?(:export_reports) %>
-          <span class="pull-right time-sheet-top-margin">
-              <a href="javascript:void(0);" onclick='jQuery("#generate-pdf").trigger("click");' 'id'='export_as_csv'><%=t('export_to_CSV')%></a>
-          </span>
+        <!-- Groupby and Export options -->
+        <% if @time_sheets.size > 0 %>
+            <div class="row-fluid control-group">
+                <div class="vertical-alignment">
+                  <strong><%=t('helpdesk.time_sheets.group_by')%>: </strong>
+                </div>
+                <div class="vertical-alignment">
+                  <%= select_tag :group_by_field , options_for_select(Helpdesk::TimeSheet.group_by_options,grp_data),
+                          { :multiple => false, :class => "select2 filter_item", "data-width" => "150"}%>
+                </div>
+
+                <span class="pull-right column-options mt10 mb10">
+                    <% if current_user.privilege?(:export_reports) %>
+                      <a href="javascript:void(0);" id='export_as_csv'><%=t('export')%></a> <span class="seperatr"> | </span>
+                    <% end %>
+                    <a href="javascript:void(0)" data-action="show-column-selection"><%=t('reports.time_sheets.pick_columns')%> <i class="ficon-caret-down fsize-16 pick_arrow"></i></a>
+                    <div class="picker hide">
+                        <div class="lists" rel="column_items"></div>
+                        <div class="footer">
+                            <span class="message hide pull-left"> <%=t('helpdesk.time_sheets.max_columns')%></span>
+                            <button data-action="submit-column-selection" class="pull-right btn btn-cancel">Generate</button>
+                        </div>
+                    </div>
+                </span>
+
+            </div>
         <% end %>
-      </div>
+
       <% end %>
-        <div class="grid report row-fluid"> 
+      <% if @time_sheets.size > 0 %>
+        <div class="grid_table report row-fluid">
             <table id="timesheet_table" width="100%">
-              <tr>
+              <thead class="title">
               <%colspan = @headers.length-1%>
+              <% master_header_hash = @master_column_header_hash %>
                 <% @headers.each do |header|
-                  concat content_tag :th, h(Helpdesk::TimeSheet.report_list[header]), :class => header
+                  concat content_tag :th, h(master_header_hash[header]), :class => header
                  end %>
-              </tr>
-              
-            <% if @time_sheets.size > 0 %>
+              </thead>
               <%= render :partial => "reports/timesheet_reports/time_sheet.html.erb", :object => @time_sheets ,:locals=>{:colspan=>colspan,:group_by=>grp_data,:times_spent => @group_count, :group_header => nil, :group_names => @group_names, :load_time => @load_time } %>
-              <%else%>
-                <tr>
-                  <td colspan="<%=(colspan+1)%>">           
-                  <div class="list-noinfo"><%=t('helpdesk.time_sheets.report.no_timeentry')%></div>
-                  </td>         
-                </tr>
-            <%end%>
            </table>
-           <table id="timesheet_total" width="100%" class="hide">
-            <tr>
-              <th colspan="<%=colspan%>" class="align-right">&nbsp;<%=t('helpdesk.time_sheets.report.total')%></th>
-              <th class="hours"><div id="totaltime"><%= get_time_in_hours(@group_count.values.sum.round(2) * 3600) %></div></th>
-            </tr>
-           </table>
-           <div id="timesheet_table_loading">
-              <a id="load-more" rel="load-more" href="javascript:void(0)" data-loading-text="Loading...">Load more...</a>
-           </div>
+           <%else%>
+                <div class="list-noinfo"><%=t('helpdesk.time_sheets.no_entry')%></div>
+           <%end%>
         </div>
         <!--end time_sheet_list-->
       </div>
     </div>
-  </div>
     <% unless generate_pdf_action? %>
-      <div class="report-left-filter" id="report-filter-edit">
-        <div class="left-filter">    
-          <%= render :partial => "reports/timesheet_reports/filter_options.html.erb"%>
-        </div>
-      </div>      
+          <%= render :partial => "reports/timesheet_reports/filters_revamped.html.erb"%>
     <% end %>
-  
+  </div>
+
+
    <%= javascript_tag do%>
-      var scroll_position = 20;
-      var load_time = "<%= @load_time %>";
-      var latest_timesheet_id = "<%= @latest_timesheet_id %>";
-      var current_group = "<%= @current_group %>";
-      var previous_group_id = "<%= @time_sheets.keys.last %>";
-      var previous_entry_id = <%= @time_sheets.values.flatten.last ? @time_sheets.values.flatten.last.id : 0 %>;
-      var group_count = <%= @group_count.to_json.html_safe %>;
-      var group_names = <%= @group_names.to_json.html_safe %>;
-      var total_row_count = <%= @row_count %>;
-      var row_count = 2000;
-      var totaltime = <%= @group_count.values.sum %>;
-      var current_params = {current_params: <%= @current_params.to_json.html_safe %>};
-      var triggered = false;
-      if(total_row_count == 0){
-        jQuery('#timesheet_table_loading').remove();
-      }
-      else if(total_row_count <= 2000){
-        jQuery('#timesheet_table_loading').remove();
-        jQuery('#timesheet_total').removeClass('hide');
-      }
-    jQuery(document).ready(function(){
 
-       jQuery('[rel=load-more]').on('click',function(){
-              jQuery(this).html('Loading...');
-              loadMore();
-       });
+      Helpkit.locals = Helpkit.locals || {};
+      Helpkit.locals.pagination = {};
 
-        function loadMore(){
-          if(triggered)
-            return;
-          var load_params = {scroll_position: scroll_position, current_group: current_group, group_count: group_count, group_names: group_names, totaltime: totaltime, previous_group_id: previous_group_id, group_by: jQuery('#group_by_field').val(), previous_entry_id: previous_entry_id, latest_timesheet_id: latest_timesheet_id, load_time: load_time};
-          triggered = true;
-          jQuery.ajax({
-              url: '<%=time_entries_list_timesheet_reports_url%>',
-              contentType: 'application/json',
-              type: "POST",
-              data: Browser.stringify(jQuery.extend(current_params, load_params)),
-              success: function(data){
-                jQuery('[rel=load-more]').html('Load more...');
-                row_count += 100;
-                scroll_position += 1;
-                if(row_count < total_row_count) {
-                  
-                } else {
-                  jQuery('#timesheet_table_loading').remove();
-                  jQuery('#timesheet_total').removeClass('hide');
-                }
-                triggered = false;
-              }
-          });
-        }
+      Helpkit.locals.pagination['endpoint'] = '<%=time_entries_list_reports_timesheet_url%>';
+      Helpkit.locals.pagination['scroll_position'] = 1;
+      Helpkit.locals.pagination['load_time'] = "<%= @load_time %>";
+      Helpkit.locals.pagination['latest_timesheet_id'] = "<%= @latest_timesheet_id %>";
+      Helpkit.locals.pagination['current_group'] = "<%= @current_group %>";
+      Helpkit.locals.pagination['previous_group_id'] = "<%= @time_sheets.keys.last %>";
+      Helpkit.locals.pagination['previous_entry_id'] = <%= @time_sheets.values.flatten.last ? @time_sheets.values.flatten.last.id : 0 %>;
+      Helpkit.locals.pagination['group_count'] = <%= @group_count.to_json.html_safe %>;
+      Helpkit.locals.pagination['group_names'] = <%= @group_names.to_json.html_safe %>;
+      Helpkit.locals.pagination['total_row_count'] = <%= @row_count %>;
+      Helpkit.locals.pagination['row_count'] = 90;
+      //Helpkit.locals.pagination['totaltime'] = <%= @group_count.values.sum %>;
+      Helpkit.locals['current_params'] = {current_params: <%= @current_params.to_json.html_safe %>};
+      Helpkit.locals.headers = <%= @headers.to_json.html_safe %>;
+      Helpkit.locals.colspan = <%= colspan %> - 1;
 
+      Helpkit.TimesheetInitializer.init();
+      jQuery(document).ready(function(){
+        jQuery('#loading-box').hide();
         if(jQuery("#report-filter-edit").css('visibility') == 'visible'){
           jQuery('#sliding').slide();
           jQuery('#loading-box').hide();
         }
-      jQuery('#group_by_field').change(function(){
-          jQuery('#group_by').val(jQuery('#group_by_field').val());
-          jQuery("#submit").trigger("click");
       });
-      
-      jQuery("#cancel").on('click',function(){
-          jQuery('#sliding').click();
-      });
+   <% end %>
 
-      //add the link which fire event on close button.
-      jQuery("#filter-close-icon").on('click',function(){
-          jQuery("#cancel").click();
-      });
-    
-      jQuery("#submit").click(function(ev){
-        jQuery("#loading-box").show(); 
-        jQuery("#time_sheet_report").css('opacity','0.2'); 
-        jQuery("#loading-box").css('background','transparent'); 
-        jQuery(".reports-loading").css('margin-top','330px');
-        setFilterText();
-
-        jQuery.ajax({
-            url: '/timesheet_reports/report_filter',
-            type: "POST",
-            data: jQuery('#report_filters').serializeArray(),
-            success: function(data){ 
-                jQuery("#loading-box").hide(); 
-                jQuery("#time_sheet_report").css('opacity','1'); 
-                jQuery("#time_sheet_report").removeClass('slide-shadow');
-                //Markup replaced on submit so copy and re insert
-                var save_menu = jQuery('#reports_type_menu').html();
-                var title_block = jQuery('#report-title').html();
-                var filter_block = jQuery("#filter_text_others").html();
-
-                jQuery("#time_sheet_report").html(data);
-                jQuery('#reports_type_menu').html(save_menu);
-                jQuery('#report-title').html(title_block);
-                jQuery("#filter_text_others").html(filter_block);
-                trigger_event("report_refreshed",{});
-
-                var hours_tracked = jQuery('h1.total_time_metric').html().trim();
-                var billabe_hours = jQuery('h1.billable_time').html().trim();
-                var non_billable_hours = jQuery('h1.nonbillable_time').html().trim();
-                var size = calculateBestFontSize(hours_tracked);
-                adjustFontSize('h1.total_time_metric',size);
-                adjustFontSize('h1.billable_time',size);
-                adjustFontSize('h1.nonbillable_time',size);
-              }
-        });
-
-      });
-
-    jQuery(".proxy-generate-pdf").click(function(ev){
-      jQuery("#report_filters").attr("action","<%= generate_pdf_timesheet_reports_url%>" );
-      jQuery("#report_filters").attr("target", "_blank");
-      jQuery("#generate_pdf_submit").trigger("click");
-      jQuery("#report_filters").attr("action", "<%= export_csv_timesheet_reports_url %>");
-      jQuery("#report_filters").removeAttr("target");
-    });
-    
-      jQuery("#export_as_csv").on('click',function(){
-          jQuery("#generate-pdf").trigger("click");
-      });
-    
-    });
-
-    jQuery("#export_pdf").on('click.helpdesk_reports',function(){
-      getFilterTextPDF();
-      params = getPdfParams();
-      jQuery.ajax({
-          url: '<%=export_pdf_timesheet_reports_url%>',
-          contentType: 'application/json',
-          type: "POST",
-          data: Browser.stringify(params),
-          success: function(data){ 
-               var msg = "<%= t('adv_reports.report_export_success') %>";
-               var text = "<span id='email-reports-msg'>"+msg+"</span>";
-               showResponseMessage(text);     
-            }
-      });
-    }); 
-
-
-    jQuery('#report-page').on('click.helpdesk_reports', '[data-action="pop-report-type-menu"]', function (event) {
-              event.stopImmediatePropagation();
-             var menu = jQuery('#reports_type_menu');
-             var hash = Helpkit.report_filter_data;
-            if(hash.length == 0 || ( hash.length == 1 && Helpkit.commonSavedReportUtil.default_report_is_scheduled)){
-
-            }else{
-                if (!menu.is(':visible')) {
-                    menu.removeClass('hide');
-                } else {
-                    menu.addClass('hide');
-                }
-            }
-        });
-    jQuery('#report-page').on('click.helpdesk_reports', function () {
-        var menu = jQuery('#reports_type_menu');
-        if (menu.is(':visible')) {
-            menu.addClass('hide');
-        }
-	});
-   <% end %>  

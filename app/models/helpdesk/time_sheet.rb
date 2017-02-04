@@ -15,14 +15,14 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
   belongs_to_account
 
   # if any validation is introduced, update_running_timer in api/time_entries_controller should also be changed accordingly.
-  before_validation :set_default_values 
+  before_validation :set_default_values
 
   after_create :create_new_activity
   after_update :update_timer_activity , :if => :timer_running_changed?
   before_save :update_observer_events
   after_commit :filter_observer_events, :if => :user_present?
 
-  has_many :integrated_resources, 
+  has_many :integrated_resources,
     :class_name => 'Integrations::IntegratedResource',
     :as => 'local_integratable'
 
@@ -35,17 +35,17 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
   ## If there are any conditions changed here in any one of scopes, relevant conditions should be changed in self.filter_conditions(filter_options=FILTER_OPTIONS) also.
 
   scope :created_at_inside, lambda { |start, stop|
-    { :conditions => 
-      [" helpdesk_time_sheets.executed_at >= ? and helpdesk_time_sheets.executed_at <= ?", 
-        start, stop] 
+    { :conditions =>
+      [" helpdesk_time_sheets.executed_at >= ? and helpdesk_time_sheets.executed_at <= ?",
+        start, stop]
     }
   }
   scope :hour_billable , lambda {|hr_billable| {:conditions =>{:billable => hr_billable} } }
-        
+
   scope :by_agent , lambda { |created_by|
     { :conditions => {:user_id => created_by } } unless created_by.blank?
   }
-  
+
   scope :by_group , lambda  { |group|
       { :conditions => { :helpdesk_tickets => { :group_id => group } } } unless group.blank?
   }
@@ -55,7 +55,7 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
       :conditions => {:helpdesk_tickets => {:owner_id => company_ids}}
     } unless company_ids.blank?
   }
-      
+
   scope :for_contacts, lambda{|contact_email|
       {
         :joins => [ "INNER JOIN `users` ON `helpdesk_tickets`.requester_id = `users`.id"],
@@ -71,8 +71,8 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
   }
 
   scope :for_products, lambda { |products|
-    { 
-      :joins => [ "INNER JOIN helpdesk_schema_less_tickets on helpdesk_schema_less_tickets.ticket_id = helpdesk_tickets.id"],
+    {
+      :joins => [ "INNER JOIN helpdesk_schema_less_tickets on helpdesk_schema_less_tickets.ticket_id = helpdesk_tickets.id and helpdesk_schema_less_tickets.account_id = helpdesk_tickets.account_id "],
       :conditions => {:helpdesk_schema_less_tickets=>{:product_id=>products}}
      } unless products.blank?
   }
@@ -89,7 +89,7 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
       :conditions => {:archive_tickets => {:owner_id => company_ids}}
     } unless company_ids.blank?
   }
-      
+
   scope :archive_for_contacts, lambda{|contact_email|
       {
         :joins => [ "INNER JOIN `users` ON `archive_tickets`.requester_id = `users`.id"],
@@ -98,7 +98,7 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
   }
 
   scope :archive_for_products, lambda { |products|
-    { 
+    {
       :conditions => { :archive_tickets => { :product_id => products } }
     } unless products.blank?
   }
@@ -109,31 +109,30 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
   FILTER_OPTIONS = { :group_id => [], :company_id => [], :user_id => [], :billable => true, :executed_after => 0 }
 
   def self.billable_options
-    { I18n.t('helpdesk.time_sheets.billable') => true, 
+    { I18n.t('helpdesk.time_sheets.billable') => true,
       I18n.t('helpdesk.time_sheets.non_billable') => false}
   end
 
   def self.group_by_options
-    [ [I18n.t('helpdesk.time_sheets.customer') , :customer_name], 
+    [ [I18n.t('helpdesk.time_sheets.customer') , :customer_name],
       ([I18n.t('helpdesk.time_sheets.agent') , :agent_name] unless Account.current.hide_agent_metrics_feature?),
       [I18n.t('helpdesk.time_sheets.group') , :group_name],
-      ([I18n.t('helpdesk.time_sheets.product') , :product_name] if Account.current.products.any?), 
-      [I18n.t('helpdesk.time_sheets.ticket') , :workable], 
+      ([I18n.t('helpdesk.time_sheets.product') , :product_name] if Account.current.products.any?),
+      [I18n.t('helpdesk.time_sheets.ticket') , :workable],
       [I18n.t('helpdesk.time_sheets.executed_at') , :group_by_day_criteria] ].compact
-  end                                                                                                                                               
+  end
 
   def self.report_list
     { :ticket => I18n.t('helpdesk.time_sheets.ticket'),
-      :customer_name => I18n.t('helpdesk.time_sheets.customer'), 
-      :agent_name =>  I18n.t('helpdesk.time_sheets.agent'), 
+      :customer_name => I18n.t('helpdesk.time_sheets.customer'),
+      :agent_name =>  I18n.t('helpdesk.time_sheets.agent'),
       :priority_name => I18n.t('helpdesk.time_sheets.priority'),
       :status_name => I18n.t('helpdesk.time_sheets.status'),
-      :note =>  I18n.t('helpdesk.time_sheets.note'),
-      :group_by_day_criteria =>I18n.t('helpdesk.time_sheets.executed_at'), 
+      :group_by_day_criteria =>I18n.t('helpdesk.time_sheets.executed_at'),
       :hours => I18n.t('helpdesk.time_sheets.hours') ,
-      :product_name => I18n.t('helpdesk.time_sheets.product'), 
-      :group_name => I18n.t('helpdesk.time_sheets.group') }    
-  end                    
+      :product_name => I18n.t('helpdesk.time_sheets.product'),
+      :group_name => I18n.t('helpdesk.time_sheets.group') }
+  end
 
   # Used by API v2
   def self.filter(filter_options=FILTER_OPTIONS, user=User.current)
@@ -164,7 +163,7 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
       agent_id: {
         conditions: {user_id: filter_options[:agent_id]}
       },
-      
+
       company_id: {
         conditions: { helpdesk_tickets:  { owner_id: filter_options[:company_id] } }
       }
@@ -193,7 +192,7 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
     query_hash
   end
 
-  def hours 
+  def hours
     seconds = time_spent.to_f
     sprintf( "%0.02f", seconds/3600)
   end
@@ -202,7 +201,7 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
     billable ? I18n.t('helpdesk.time_sheets.billable') : I18n.t('helpdesk.time_sheets.non_billable')
   end
 
-  def hhmm 
+  def hhmm
     seconds = time_spent
     hh = (seconds/3600).to_i
     mm = ((seconds % 3600) / 60).to_i
@@ -217,19 +216,19 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
       to_time = Time.zone.now
       from_time = from_time.to_time if from_time.respond_to?(:to_time)
       to_time = to_time.to_time if to_time.respond_to?(:to_time)
-      total_time += ((to_time - from_time).abs).round 
-    end  
+      total_time += ((to_time - from_time).abs).round
+    end
     total_time
   end
 
   def agent_name
     user.name
   end
-  
+
   def ticket_display
     "#{workable.display_id} - #{workable.subject}"
   end
-  
+
   def customer_name
     workable.company ? workable.company.name : workable.requester.name
   end
@@ -245,7 +244,7 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
   def group_by_day_criteria
     executed_at.to_date.to_s(:db)
   end
-  
+
   def stop_timer
      self.timer_running=false
      self.time_spent = calculate_time_spent
@@ -273,12 +272,12 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
     options[:indent] ||= 2
     xml = options[:builder] ||= ::Builder::XmlMarkup.new(:indent => options[:indent])
     xml.instruct! unless options[:skip_instruct]
-    super(:builder => xml, :skip_instruct => true, :dasherize=>false, :except => 
+    super(:builder => xml, :skip_instruct => true, :dasherize=>false, :except =>
       [:account_id,:workable_id,:time_spent],:root=>:time_entry) do |xml|
       xml.tag!(:ticket_id,workable.display_id)
       xml.tag!(:agent_name,agent_name)
       xml.tag!(:time_spent,sprintf( "%0.02f", self.time_spent.to_f/3600)) # converting to hours as in UI
-      xml.tag!(:agent_email,user.email) 
+      xml.tag!(:agent_email,user.email)
       xml.tag!(:customer_name,self.customer_name)
       xml.tag!(:contact_email,workable.requester.email)
     end
@@ -295,32 +294,32 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
 
   def update_timer_activity
       if timer_running
-         workable.create_activity(User.current, 
-          "activities.#{workable_name}.timesheet.timer_started.long", 
-          { 'eval_args' => { 'timesheet_path' => [ 
-                                'timesheet_path', 
+         workable.create_activity(User.current,
+          "activities.#{workable_name}.timesheet.timer_started.long",
+          { 'eval_args' => { 'timesheet_path' => [
+                                'timesheet_path',
                                 { 'ticket_id' => workable.display_id, 'timesheet_id' => id }
                               ]
                           }
           },
           "activities.#{workable_name}.timesheet.timer_started.short")
-        
+
       else
-        workable.create_activity(User.current, 
-          "activities.#{workable_name}.timesheet.timer_stopped.long", 
+        workable.create_activity(User.current,
+          "activities.#{workable_name}.timesheet.timer_stopped.long",
           {'eval_args' => {'timesheet_path' => [
-                                'timesheet_path', 
+                                'timesheet_path',
                                 {'ticket_id' => workable.display_id, 'timesheet_id' => id }
                               ]
                           }
           },
           "activities.#{workable_name}.timesheet.timer_stopped.short")
-      end 
+      end
   end
-  
+
   def create_new_activity
-      workable.create_activity(User.current, "activities.#{workable_name}.timesheet.new.long", 
-          {'eval_args' => {'timesheet_path' => ['timesheet_path', 
+      workable.create_activity(User.current, "activities.#{workable_name}.timesheet.new.long",
+          {'eval_args' => {'timesheet_path' => ['timesheet_path',
                                 {'ticket_id' => workable.display_id, 'timesheet_id' => id}]}},
                                 "activities.#{workable_name}.timesheet.new.short")
   end
@@ -329,21 +328,21 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
     self.executed_at ||= self.created_at
   end
 
-  # VA - Observer Rule 
+  # VA - Observer Rule
 
   def update_observer_events
     return unless workable.instance_of? Helpdesk::Ticket
-    unless time_spent_change.nil?      
+    unless time_spent_change.nil?
       from, to = time_spent_change
       if from == nil
         unless to == 0
-          @model_changes = {:time_sheet_action => :added} 
+          @model_changes = {:time_sheet_action => :added}
         end
       elsif from == 0
         @model_changes = {:time_sheet_action => :added}
       else
         @model_changes = {:time_sheet_action => :updated}
-      end 
+      end
     end
   end
 

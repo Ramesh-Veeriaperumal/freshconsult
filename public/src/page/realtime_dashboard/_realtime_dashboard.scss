@@ -729,6 +729,10 @@ html[dir="rtl"] .ficon-arrow-right:before{
   content: "\f109" !important;
 }
 
+html[dir="rtl"] .ficon-arrow-left:before{
+  content: "\f10b" !important;
+}
+
 /* Widgets Revamp */
 
 .list_widgets {

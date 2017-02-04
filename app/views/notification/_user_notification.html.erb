@@ -1,5 +1,13 @@
 <div class="hide" id="user-notifications-popover" >
-  <header><%= t('notification.user_notifications_header') %></header>
+  <header>
+    <%= t('user_notifications.header') %>
+    <div class="user-notification-actions">
+      <a href="javascript:;" class="user-notifications-read-all">Read All</a>
+      <% if current_account.collaboration_enabled? %>
+        <a href="/helpdesk/tickets/filter/ongoing_collab">My Open Discussions</a>
+      <% end %>
+    </div>
+  </header>
   <div class="notifications-list"></div>
   <a id="load-more-notifications"><%= t('notification.load_more') %></a>
 </div>  

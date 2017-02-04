@@ -3,6 +3,6 @@ scroll_position = <%= @ajax_params[:scroll_position] %>;
 current_group = "<%= @current_group %>";
 group_count = JSON.parse('<%= @group_count.to_json.html_safe %>');
 row_count = <%= @ajax_params[:row_count] %>;
-totaltime = <%= @group_count.values.sum %>;
+totaltime = <%= @total_time %>;
 current_params = {current_params: JSON.parse('<%= @current_params.to_json.html_safe %>')};
-jQuery("#timesheet_table").append("<%= j render :partial => 'reports/timesheet_reports/time_sheet.html.erb', :object => @time_sheets ,:locals=>{:colspan=>@colspan,:group_by=>@current_group,:times_spent => @group_count, :totaltime => @group_count.values.sum, :group_header => @ajax_params[:group_header], group_by: @ajax_params[:group_by], group_names: JSON.parse(@group_names), load_time: @load_time } %>");
+jQuery("#timesheet_table").append("<%= j render :partial => 'reports/timesheet_reports/time_sheet.html.erb', :object => @time_sheets ,:locals=>{:colspan=>@colspan,:group_by=>@current_group,:times_spent => @group_count, :totaltime => @group_count.values.sum, :group_header => @ajax_params[:group_header], group_by: @ajax_params[:group_by], group_names: @group_names, load_time: @load_time } %>");

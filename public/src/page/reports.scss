@@ -27,7 +27,6 @@ $Customer_hover_color:#866aa0;
 
 .reports_page .pagearea{
 	border:none;
-	@include text-shadow(white 1px 1px 0);
 	.contentCol {
 		background: none;
 		border:none;
@@ -159,7 +158,15 @@ $Customer_hover_color:#866aa0;
 		top : 7px;
 	}
 }
+.report-filters-container{
+	top : -50px !important;
+	left : -20px !important;
+}
 .time-sheet-summary{
+	
+	width : 100% !important;
+	float : none !important;
+
 	.report-summary .report-summary-wrapper{
 		.report-summary-data, .report-summary-header, .report-summary-footer{
 			ul li{
@@ -176,33 +183,39 @@ $Customer_hover_color:#866aa0;
 		border-radius: 8px;
 	}
 	.billable-block{
-			background-color: #7ebf00
-		}
+		background-color: #7ebf00
+	}
 	.non-billable-block{
-			background-color: #bbb;
-		}
+		background-color: #bbb;
+	}
 	.filter-type ul{
 		display: inline;
 	}
 
-	.grid{
-		border : 1px solid #e2e2e2;
+	.grid_table{
 		overflow: hidden;
 		border-radius: 8px;
-	}
-	.grid table tr:first-child th{
-		background: #f0f0f0;
-		border-left : 1px solid #e2e2e2;
-		&:first-child{
-			border-left : 0px;
+		
+		td,th {
+			text-align : left;
+			word-wrap: normal;
+		}
+		
+		.dataTables_paginate {
+		    margin-top: 15px;
+		}
+
+		.dataTables_wrapper{
+			border-right : 1px solid #e2e2e2;
+			width : 94%;
+		}
+
+		table tr:first-child th{
+			background: #f0f0f0;
+			border-left : 1px solid #e2e2e2;
 		}
 	}
-	.report table tr.odd td{
-		border-left : 1px solid #e2e2e2;
-		&:first-child{
-			border-left : 0px;
-		}
-	}
+	
 	.report table tr.even td{
 		background: #fff;
 	}
@@ -212,6 +225,7 @@ $Customer_hover_color:#866aa0;
 	}
 	.hours{
 		vertical-align: middle;
+		text-align : right;
 	}
 }
 
@@ -288,9 +302,56 @@ $Customer_hover_color:#866aa0;
 	}
 }
 
-.time-sheet-top-margin{
-	margin-top: 10px;
+.column-options {
+	position : relative;
+	i {
+		color : #e2e2e2;
+	}
+	.picker {
+		position : absolute;
+		z-index : 10;
+		background : #fff;
+		border: 1px solid #cbcbcb;
+	    border-radius: 5px;
+	    box-shadow: 1px 1px 10px #ebebeb;
+	    top: 25px;
+    	right: -2px;
+		
+		.lists{
+			width : 200px;
+			height : 200px;
+			overflow-y : scroll;
+			padding : 8px;
+			li {
+			    margin: 8px;
+			    list-style-type: none;
+			    display : flex;
+			    label {
+			    	margin : 0 4px;
+			    	cursor : pointer;
+			    }
+			    cursor : auto;
+			}
+		}
+		.footer{
+			height : auto;
+			padding : 8px;
+			border-top : 1px solid #e2e2e2;
+			
+			.message {
+				font-size : 12px;
+				width : 54%;
+			}
+
+			&::after{
+				display : block;
+				content : '';
+				clear : both;
+			}
+		} 
+	}
 }
+
 .sidepanel h4.title {
 	padding: 5px 0;
 	margin:0;
@@ -792,7 +853,7 @@ $Customer_hover_color:#866aa0;
 		border-bottom-color:#009900;
 		}
 		&.report-arrow-red{
-			border-bottom-color:#990000;
+			border-bottom-color:#e22a24;
 		}
 	}
 	&.report-arrow-down{
@@ -803,7 +864,7 @@ $Customer_hover_color:#866aa0;
 		border-top-color:#009900;
 		}
 		&.report-arrow-red{
-			border-top-color:#990000;
+			border-top-color:#e22a24;
 		}
 	}
 }
@@ -1225,4 +1286,8 @@ p.visibility {
   .message {
   		margin-left: 180px;
   }
+}
+
+.twipsy {
+	opacity : 1 !important;
 }

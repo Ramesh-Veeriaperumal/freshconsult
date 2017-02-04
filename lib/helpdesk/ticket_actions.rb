@@ -8,6 +8,7 @@ module Helpdesk::TicketActions
   include CloudFilesHelper
   include Facebook::Constants
   include Redis::RedisKeys
+  include Redis::OthersRedis
 
   def create_the_ticket(need_captcha = nil, skip_notifications = nil)
 
@@ -30,7 +31,7 @@ module Helpdesk::TicketActions
     
     return false unless @ticket.save_ticket
 
-    notify_cc_people cc_emails unless cc_emails.blank? 
+    notify_cc_people cc_emails unless cc_emails.blank?
     @ticket
     
   end
@@ -45,7 +46,9 @@ module Helpdesk::TicketActions
   end
 
   def notify_cc_people cc_emails
-    Helpdesk::TicketNotifier.send_later(:send_cc_email, @ticket , nil, {:cc_emails => cc_emails})
+    unless get_others_redis_key("NOTIFY_CC_ADDED_VIA_DISPATCHER").present?
+      Helpdesk::TicketNotifier.send_later(:send_cc_email, @ticket , nil, {:cc_emails => cc_emails})
+    end
   end
 
   def set_default_values

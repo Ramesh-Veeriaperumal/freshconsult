@@ -13,5 +13,5 @@
 		<% end %>
 		<%= setup_progress_text if show_percentage %>
 	</span>
-	<% if show_percentage %><span class="pull-right"><b><%=configuration_percentage_complete %>%</b></span><% end %>
+	<% if show_percentage %><span class="pull-right"><b><span id="configurationSetupPercentage" data-percentage="<%=configuration_percentage_complete %>">0</span>%</b></span><% end %>
 </div>

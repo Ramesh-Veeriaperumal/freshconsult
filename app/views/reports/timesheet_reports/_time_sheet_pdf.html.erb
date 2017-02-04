@@ -9,12 +9,12 @@
       <%gt = t("none") if gt.match(/^No +/) %>
     <%end%>
     <% gt = timesheet_formatted_date(Time.zone.parse("'#{group_title}'"),{:format => :short_day_with_week, :include_year => true}) if group_by.include?(:group_by_day_criteria) %>
-    <td colspan="<%=colspan%>"><strong><%= gt %></strong></td> 
-    <td class="hours"><strong class="group_time"><%= get_time_in_hours(times_spent[group_title].round(2) * 3600) %></strong></td>
-  </tr> 
+    <td colspan="<%=colspan%>"><strong><%= gt %></strong></td>
+    <td class="hours"><strong class="group_time"><%= times_spent[group_by.include?(:group_by_day_criteria) ? group_title.beginning_of_day : group_title] %></strong></td>
+  </tr>
   <%row_count += time_entrys.size %>
   <%time_entrys = time_entrys.take(row_max_limit-(row_count-time_entrys.size)) if (row_count > row_max_limit) %>
-  <%time_entrys.each do |time_entry| %> 
+  <%time_entrys.each do |time_entry| %>
     <tr class="odd">
       <%= construct_timesheet_entry_row(headers, time_entry, load_time, true) %>
     </tr>
@@ -24,6 +24,6 @@
 <% unless exceeds_row_limit %>
   <tr>
     <th colspan="<%=colspan%>" class="align-right"> <%=t('helpdesk.time_sheets.report.total')%></th>
-    <th class="hours"><div id="totaltime"><%= get_time_in_hours(totaltime.round(2) * 3600) %></div></th>
+    <th class="hours"><div id="totaltime"><%= totaltime %></div></th>
   </tr>
 <% end %>

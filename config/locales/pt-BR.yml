@@ -1855,6 +1855,7 @@ pt-BR:
         have_special_character: "Ter um caractere especial"
       password_policy_popover:
         password_must: "A senha deve"
+        password_should: Sua Senha deve
         minimum_characters: "Conter no mínimo %{count} caracteres"
         cannot_contain_user_name: "Não conter o nome de usuário"
         cannot_be_same_as_past_passwords: "Ser diferente de suas senhas anteriores"
@@ -4925,6 +4926,7 @@ pt-BR:
   last_renewed_on: "Renovado pela última vez em"
   update_and_log_in: "Atualizar e fazer login"
   activate_and_log_in: "Ativar e fazer login"
+  activate_and_log_in_long: "Ativar e fazer Login"
   password: Senha
   enter_payment: "Continuar com o pagamento"
   downgrade_confirm: "<span class=\"label label-important\">Importante</span>  Você está fazendo downgrade do plano <b>%{from}</b> para o plano <b>%{to}</b> . Observe que todos os dados e configurações associados aos recursos disponíveis no plano %{from} serão perdidos permanentemente.<br /><br /> Para ver a lista completa dos planos e recursos, visite <a target=\"_blank\" href=\"http://freshdesk.com/pricing\">Planos e preços</a>. <br />Ainda não tem certeza? <a href = \"mailto:support@freshdesk.com\" >Deixe-nos ajudar você a decidir</a>"
@@ -5463,6 +5465,10 @@ pt-BR:
   no_topics_text: "Nenhum tópico"
   send_email_to_group: "Enviar e-mail para o grupo"
   activate_account: "Ativar sua conta"
+  activations:
+    activate_freshdesk_account: Ative sua conta Freshdesk
+    helpnote1: Conte-nos um pouco mais sobre você e ajude-nos a melhorar sua experiência.
+    helpnote2: Faça login usando %{email}
   enter_message: "Digite sua mensagem aqui"
   not_selected: "Não selecionado"
   enter_billing_for_free: "Digite os dados do cartão de crédito antes de escolher o plano pago"
@@ -5500,6 +5506,12 @@ pt-BR:
     name: "Nome da conta"
     cancel: Cancelar
     customize_portal: "Personalização do helpdesk"
+    forums_toggle:
+        title: "Fóruns"
+        forums_disabled: "Fóruns foram desativados para esta conta."
+        enable_forums: "Ativar fóruns para sua conta"
+        go_back_message: "Voltar para seu helpdesk"
+        helpnote: "Desativar isso vai desabilitar os fóruns em todos os seus portais de produtos para todos os usuários"
     page_colors:
       title: "Cores do helpdesk"
       background: Fundo
@@ -10160,3 +10172,47 @@ pt-BR:
   add_new_company: "Adicionar empresa"
   more_companies: "mais %{count}"
   n_companies: "%{count} empresas"
+  admin_onboarding:
+    account_verification_message:
+      non_admin_message: "Sua conta ainda não foi ativada. Entre em contato com o administrador."
+      check_inbox_message: "Verifique sua caixa de entrada em <span class = 'email-wrapper'> %{admin_email} </span> para o email de ativação."
+      helpnote1: "Não pode ver isto?"
+      helpnote_or: "ou"
+      resend_message : "Reenviar Ativação"
+      change_email: "alterar seu email"
+      modal_title: Se incriveu usando email errado??
+      modal_helpnote1: "Insira abaixo o email correto para receber o link de ativação."
+      modal_invalid_email_error: "Digite um endereço de e-mail válido."
+      modal_user_exists_error: "E-mail já associado a um agente."
+      modal_send_button : Enviar ativação
+      modal_sending_button : Enviando Ativação
+      cancel_button : Cancelar
+    modal:
+      welcome_frame:
+        title: Bem-Vindo ao Freshdesk
+        message: "Meu nome é Girish, sou o CEO da Freshdesk e queria pessoalmente lhe dar as boas vindas e dizer que nossa equipe está aqui para ajudar caso você precise de alguma coisa."
+        message2: "Durante o seu teste, você verá como é fácil usar o Freshdesk para conversar com seus clientes. Vamos começar com o básico."
+        forward_link: Selecionar canais de suporte
+      channels_frame:
+        title: Como você fala com seus clientes hoje?
+        message: "Além do e-mail, o Freshdesk permite que você de preste suporte aos seus clientes por telefone, chat, redes sociais e muito mais. Clique nos canais que você gostaria de ativar em sua conta."
+        message2: Não se preocupe, você pode adicionar ou remover canais mais tarde também.
+        forward_link: Convide a sua equipe
+        default_channel: Adicionado por padrão
+        email_channel: E-mail
+        phone_channel: Telefone
+        chat_channel: Live Chat
+        social_channel: Redes Sociais
+        forums_channel: Fóruns
+      agents_frame:
+        title: Com quem você vai trabalhar?
+        message: Adicione seus colegas de equipe à sua conta e explorem o Freshdesk juntos
+        forward_link:  Assita uma Visão Geral
+        emails_placeholder: "bruce@just.ly, diana@just.ly, clark@just.ly"
+        emails_invalid: Um ou mais e-mails são inválidos.
+        emails_exceeded: Você pode convidar mais de %{limit} dos agentes em Administrador > Analistas
+        send_invite:  Enviar convite
+      overview_frame:
+        title: Introdução ao Freshdesk
+        message: Antes de começar, aqui tem uma visão geral em vídeo de 2 minutos do seu helpdesk.
+        forward_link: Vamos começar

@@ -505,8 +505,9 @@ ja-JP:
   basic_details: メール返信管理、Dispatch'rルール、デフォルトSLAポリシー、ナレッジベース、セルフサービスポータル、ドメインマッピング、コミュニティサポート
   choose_plan: プランを選択する
   select_plan: プランを選択
-  change_plan_title: プランを変更してよろしいですか？
-  downgrade_plan_title: ダウングレードしてよろしいですか？
+  change_plan_title: 本当にプランを変更しますか？
+  change_equal_plan_title: "本当に %{to_plan} プランに移行しますか？"
+  downgrade_plan_title: 本当にダウングレードしますか？
   activate_free_plan: 無料プランを有効にする
   create: 作成
   feedbackwidget_custom_image_info: カスタムイメージを使用する場合、カラーやテキストに関する設定は適用されません。
@@ -855,6 +856,7 @@ ja-JP:
         enable_facebook_page:
           select_all: すべて選択
           associate_page: ヘルプデスクと関連付けたいFacebookページを選択します。
+          associate_pages: ヘルプデスクと関連付けたいFacebookページを選択します。
     company_fields:
       fields:
         name: 氏名
@@ -2577,6 +2579,7 @@ ja-JP:
   back_plans_billing: プラン＆請求に戻る
   choose_different_plan: 別のプランを選択
   downgrade_plan: 注：プランをダウングレードすると、現在ご利用中の機能のいくつかを失う可能性があります
+  downgrade_plan_v2: "注: ダウングレードすると一部の機能を失う可能性があります。"
   f_request: リクエストをフィーチャーする
   save_and_create: 保存してもう一つ作成する
   save_and_new: 保存して<strong>新規</strong>
@@ -4601,6 +4604,7 @@ ja-JP:
   attach_files: ファイルを添付する
   plan_amount: エージェント/月毎
   free_plan_agents: "エージェント%{free_agents}人用"
+  free_plan_agents_v2: エージェント無制限
   current_plan_details: "%{agent_limit}エージェント付きの%{plan_name}プラン"
   free_plan_details: "エージェント%{agent_limit}人で%{plan_name}プラン"
   add_more_free: "%{free_agents}人を超過するエージェントを追加しますか？"
@@ -4652,6 +4656,54 @@ ja-JP:
     everything_in_estate: "Estate プランの内容全て"
     custom_mailbox: "カスタム メールサーバー"
     ip_restriction: "保護されたIP 制限"
+    ticket_dispatch_automation: チケット発想の自動化
+    app_gallery: アプリギャラリーへのアクセス
+    basic_phone: 基本的な電話チャンネルとソーシャルチャンネル
+    time_event_automation: 時間/イベントベースの自動化
+    custom_ticket_fields_and_views: カスタムチケットフィールド/ビュー
+    dkim_dmarc: DKIM/DMARC
+    helpdesk_report: ヘルプデスク全体像レポート
+    occasional_agents: 不定期エージェント
+    social_keyword: ソーシャルでのキーワード監視
+    m_k_base: 多言語ナレッジベース
+    dynamic_email_alert: 動的メール通知
+    linked_tickets: リンクされたチケット
+    parent_child: 階層的チケットシステム
+    scheduled_reports: スケジュールされたレポート
+    ticket_templates: チケットテンプレート
+    custom_surveys: カスタム満足度アンケート
+    multiple_sla: 複数のSLAとタイムゾーン
+    auto_ticket_assignment: チケット自動割り当て
+    shared_ownership: 共有オーナーシップ
+    role_dashboard: ロールベースのダッシュボード
+    advanced_dkim: 無制限DKIM/DMARC
+    ip_whitelisting: IPホワイトリスト
+    advanced_phone_integration: 高度な電話統合
+    machine_learning: 機械学習
+    custom_data_center: データセンターの場所
+    whitelisted_ip_desc: ホワイトリスト済みIPアドレス
+    custom_mailbox_desc: "カスタム メールサーバー"
+    advanced_phone_desc: 高度な電話機能
+    multiple_products_desc: 複数のプロダクトポータル/ナレッジベース
+    multiple_sla_business_desc: 複数のSLA、タイムゾーン、業務時間
+    forums_desc: コミュニティフォーラムのディスカッション
+    portal_customization_desc: カスタマーポータルのカスタマイズ
+    custom_roles_desc: エージェントの役割のカスタマイズ
+    custom_ssl_desc: カスタムSSL証明書
+    enterprise_reports_desc: 企業レポート
+    time_event_automation_desc: "時間・イベントベースの自動化ルール (スーパーバイザー、オブザーバー)"
+    sla_reminders: SLAリマインダーとエスカレーション
+    shared_ticket_views_desc: カスタムおよび共有チケットビュー
+    custom_fields_desc: カスタムチケットと連絡先フィールド
+    custom_ticket_views_desc: カスタムチケットビュー
+    cname_dkim_desc: CNAMEとDKIMの設定
+    multiple_mailbox_desc: 複数メールボックスからのメール
+    adv_social_desc: 高度なソーシャル機能
+    multilingual_kbase_desc: 多言語ナレッジベース記事
+    live_chat_desc: ライブチャットの設定とトランスクリプト
+    linked_paren_child_desc: リンクされたチケット、階層的チケットワークフロー
+    scheduled_reports_desc: スケジュールされたレポーティング
+    custom_survey_desc: カスタマイズされた満足度アンケート
   zendesk_account: Zendeskアカウント詳細
   zendesk_import_files: 何をインポートするか選択？
   file_url: フルXMLエクスポートURL
@@ -4864,9 +4916,20 @@ ja-JP:
   password: パスワード
   enter_payment: お支払いに進む
   downgrade_confirm: "<span class=\"label label-important\">重要</span>&nbsp;&nbsp;あなたは現在<b>%{from}</b>プランから<b>%{to}</b>プランへダウングレードしようとしています。%{from}プランでご利用可能な機能に関連するデータとコンフィギュレーションはすべて永遠に失われてしまうことにご留意ください。<br /><br />プランと機能すべての一覧は<a target=\"_blank\" href=\"http://freshdesk.com/pricing\">プラン＆料金</a>からご覧ください。<br />まだ悩んでいらっしゃいますか？<a href = \"mailto:support@freshdesk.com\" >こちら</a>からご相談ください"
+  downgrade_confirm_v2: "<b>%{current_plan}</b>プランから<b>%{new_plan}</b>プランにダウングレードしようとしています。"
+  downgrade_confirm_v3: "現在のプランから<b>%{new_plan}</b>に移行しようとしています。"
   sprout_free_plan: "<span class=\"label label-important\">重要</span>&nbsp;&nbsp;あなたはトライアルを終了し、永久にエージェント3 人が無料の<b>%{new_plan}</b> プランを有効にすることを選択しました。<b>%{current_plan}</b>  から<b>%{new_plan}</b> プランへのダウングレードにより、%{current_plan} プランに関連した全てのデータと設定は永久に失われてしまうことにご留意ください。<br /><br />プラン機能全ての一覧は、<a target=\"_blank\" href=\"http://freshdesk.com/pricing\">プラン＆料金</a> からご覧ください。<br />まだ悩んでいらっしゃいますか？<a href = \"mailto:support@freshdesk.com\" >こちら</a>からご相談ください。"
+  sprout_free_plan_v2: "<b>%{current_plan}</b>トライアルを終了してエージェント無制限、無料、無期限の<b>%{new_plan}</b>プランをアクティベートすることを選択しました。"
   downgrade_to_sprout: "<span class=\"label label-important\">重要</span>&nbsp;&nbsp;あなたはトライアルを終了し、<b>%{new_plan}</b> プランを有効にすることを選択しました。<b>%{current_plan}</b>  から<b>%{new_plan}</b> プランへのダウングレードにより、%{current_plan} プランに関連した全てのデータと設定は永久に失われてしまうことにご留意ください。<br /><br />プラン機能全ての一覧は、<a target=\"_blank\" href=\"http://freshdesk.com/pricing\">プラン＆料金</a> からご覧ください。<br />まだ悩んでいらっしゃいますか？<a href = \"mailto:support@freshdesk.com\" >こちら</a>からご相談ください。"
-  trial_plan_name: "トライアルを%{name} へダウングレード"
+  downgrade_to_sprout_v2: "<b>%{current_plan}</b>トライアルを終了して<b>%{new_plan}</b>プランをアクティベートすることを選択しました。"
+  downgrade_loss_message: "<span class=\"label label-important\">重要</span> 以下の機能のデータと設定は永久に失われます:"
+  upgrade_plan_message: "<span class=\"label label-important\">重要</span> <b>%{current_plan}の追加機能をご確認ください</b>"
+  downgrade_contact_us: "弊社の<a target=\"_blank\" href=\"https://freshdesk.com/helpdesk-features\">完全な機能比較</a>をご覧ください。<br />ご質問は<a href = \"mailto:support@freshdesk.com\" >弊社にお問い合わせください</a>"
+  and_more_plan_downgrade: さらに詳しく...
+  inequal_plan_doubt: "どのプランが最適か決められませんか？ "
+  equal_plan_doubt: "乗り換えに踏み切れませんか？ "
+  trial_plan_name: "トライアルを%{name}へダウングレード"
+  trial_plan_name_v2: "トライアルを%{name}に変更"
   errors_in_payment: お支払い中に発生したエラー：
   email_configs:
     delete_confirm: このコンフィギュレーションを削除してよろしいですか？
@@ -5388,7 +5451,11 @@ ja-JP:
   not_selected: 選択されていません
   enter_billing_for_free: 有料プランを選択する前に、クレジットカードに関する情報を入力してください
   will_expire_in: 〜は期限切れになります
-  choose_plan_trial: "あなたのアカウントはトライアル期間後に停止されます。<br />Freshdeskのご利用を継続するには、下からプランを選択してください。"
+  choose_plan_trial: "あなたのアカウントはトライアル期間後に停止されます。<br />Freshdeskの利用を継続するにはプランを選択してください。"
+  choose_plan_trial_v2: "あなたのアカウントはトライアル期間後に停止されます。Freshdeskの利用を継続するには以下からプランを選択してください。<br />"
+  choose_plan_contact_us_v1: "Freshdeskの料金を変更しました。<a href='#' id='special_pricing'>詳細や見積もりについては弊社にお問い合わせください</a>"
+  choose_plan_contact_us_v2: 特別料金のリクエストを受け付けました。弊社のチームがすぐにご連絡します。
+  special_pricing_ack: Freshdeskに関心をお寄せいただいたありがとうございます。リクエストに関して弊社の販売員がすぐにご連絡します。
   trial_expired: トライアル有効期限が切れ、アカウントが停止されました。サブスクリプションを更新するにはsupport@freshdesk.comまでご連絡ください。
   asked_on: 質問済み
   this_ticket_has_been_deleted: このチケットは削除されました
@@ -6269,6 +6336,8 @@ ja-JP:
       enable_facebook_page:
         select_all: すべて選択
         associate: ヘルプデスクと関連づけたいFacebookページを選択してください。
+        associate_page: ヘルプデスクと関連付けたいFacebookページを選択します。
+        associate_pages: ヘルプデスクと関連付けたいFacebookページを選択します。
         no_page_info: "Facebookアカウントがないようです！ <a href=\"https://www.facebook.com/pages/create.php\" target='_blank'>アカウントを作成してサポートを始めてみましょう！</a>"
       engage_info:
         title: Facebookページを追加する
@@ -7670,7 +7739,8 @@ ja-JP:
   not_eligible_for_sprout_plan: Sproutプラン選択の対象ではありません
   select_free_plan: 無料プランを選択する
   change_details_anytime: 申込み内容の詳細やプランはいつでも変更できます
-  enter_payment_details_to_add: エージェントを追加したりプランをアップグレードするには、お支払い情報を入力してください
+  enter_payment_details_to_add: エージェントを追加するかプランをアップグレードするには、お支払い情報を入力してください
+  enter_payment_details_to_add_v2: 現在のプランをアップグレードするにはお支払い情報を入力してください
   payment_failed: あなたのクレジットカードによるお支払いを処理することができません。問題が解決しない場合は、support@freshdesk.comまでお問い合わせください。
   error_in_update: あなたのサブスクリプションを更新することができません。問題が解決しない場合は、support@freshdesk.comまでお問い合わせください。
   plan_is_selected: "%{plan}プランの無料アカウントが有効になりました"
@@ -8493,7 +8563,7 @@ ja-JP:
       no_credit_card_text: 電話クレジット購入のためのお支払情報を入力
       recharge_now_text: 一時払いで残高を補充
       auto_recharge_amt: 自動再課金額
-      see_detailed_pricing: デフォルト料金を見る
+      see_detailed_pricing: 料金の詳細を見る
       followup: 電話クレジットに相当
       followup_text: 電話クレジットに相当
     dialpad:
@@ -9980,7 +10050,10 @@ ja-JP:
   selecting_plan: 選択しています...
   proceed_billing_info: はい、支払いへ進みます
   buy_plan: このプランを購入
-  agent_seats: "エージェント%{no_of_agents} 人のシート"
+  classic_label: Classic
+  agent_seats: "エージェントシート数: %{no_of_agents}"
+  free_plan: 無料プラン
+  view_invoices: "請求書を表示: "
   subscribed_billing: "%{billing_cycle} のご利用明細"
   next_renewal: "次の更新は%{renewal_period}後です"
   suspended_since: "%{days}から停止"
