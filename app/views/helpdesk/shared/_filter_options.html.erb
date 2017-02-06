@@ -1,6 +1,16 @@
+<% unless current_account.launched?(:load_ticket_filter)%>
 <div id="all-views-tmpl" class="hide">
     <%= render :partial => "filters", :locals =>{ :selected => @current_view, :custom_filters => @filters_options } %>
 </div>
+
+<%= javascript_tag do%>
+  jQuery(document).ready(function(){
+    jQuery('#all-views').html(jQuery('#all-views-tmpl').html());
+    jQuery('#all-views-tmpl').html('');
+  })
+<% end %>
+
+<% end %>
 <script type="text/javascript">
   function getFilterData(){
     query_hash = $A();
@@ -47,6 +57,7 @@
         if(condition == "created_at" && value == "set_date"){
           value = jQuery("#created_date_range").val();
         }
+
         query_hash.push(query_params(this,value,container));
       }
     });
@@ -230,6 +241,7 @@
   var query_hash  = $A();
   var unassigned = "";
   jQuery(document).ready(function(){
+
     var selectedGroupTextId = jQuery(".group_text").attr("value");
     if(selectedGroupTextId && selectedGroupTextId.indexOf(".") > -1){
       var splitId = selectedGroupTextId.split(".");
@@ -437,8 +449,6 @@
       jQuery('#empty_trash').hide();
     }
 
-    jQuery('#all-views').html($J('#all-views-tmpl').html());
-    jQuery('#all-views-tmpl').html('');
     <% if Account.current.launched?(:ticket_list_page_filters_cache) %>
       var fieldMap = <%= raw(TicketConstants::DASHBOARD_FILTER_MAPPING.to_json) %>;
       PopulateData.I18n_text.me = '<%= t("helpdesk.tickets.add_watcher.me") %>'

@@ -80,11 +80,19 @@ class Helpdesk::EmailParser::ProcessedPart
 	def fetch_text_from_part
 		self.text_charset = valid_charset(part) #workaround - to handle case with no proper encoding information
 		self.text = encode_data(part.body.decoded, text_charset)
+	rescue => e
+		email_parsing_log "Error in fetch_text_from_part , message: #{e.message} - #{e.backtrace}"
+		self.text_charset = valid_charset(part) #workaround - to handle case with no proper encoding information
+		self.text = encode_data(part.body.raw_source, text_charset)
 	end
 
 	def fetch_html_from_part
 		self.text_charset = valid_charset(part) #workaround - to handle case with no proper encoding information
 		self.html = encode_data(part.body.decoded, text_charset)
+	rescue => e
+		email_parsing_log "Error in fetch_html_from_part , message: #{e.message} - #{e.backtrace}"
+		self.text_charset = valid_charset(part) #workaround - to handle case with no proper encoding information
+		self.html = encode_data(part.body.raw_source, text_charset)
 	end
 
 	def fetch_attachment_from_part

@@ -15,7 +15,9 @@ module RabbitMq::Subscribers::Users::Iris
   end
 
   def mq_iris_subscriber_properties(action)
-    {}
+    { 
+      :model_changes => iris_user_changes(action)
+    }
   end
 
   def mq_iris_valid(action, model)

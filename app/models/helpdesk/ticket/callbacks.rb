@@ -310,6 +310,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
     NewRelic::Agent.notice_error(e)
    end
     save #Should move this to unless block.. by Shan
+
+    if @ticket.cc_email_hash.present? && @ticket.cc_email_hash[:cc_emails].present? && get_others_redis_key("NOTIFY_CC_ADDED_VIA_DISPATCHER").present? 
+        Helpdesk::TicketNotifier.send_later(:send_cc_email, @ticket, nil, {:cc_emails => @ticket.cc_email_hash[:cc_emails].to_a })
+    end
+
     self.va_rules_after_save_actions.each do |action|
       klass = action[:klass].constantize
       klass.send(action[:method], action[:args])

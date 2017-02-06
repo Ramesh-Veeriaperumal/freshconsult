@@ -51,6 +51,10 @@ module AutomationControllerMethods
     @va_rule.name = "%s #{@va_rule.name}" % t('dispatch.copy_of')
   end
 
+  def ticket_type_values_with_none
+    [['', t('none')]]+current_account.ticket_types_from_cache.collect { |c| [ c.value, c.value ] }
+  end
+
   protected
 
   def reorder_scoper
@@ -104,7 +108,7 @@ module AutomationControllerMethods
       { :name => "priority", :value => t('set_priority_as'), :domtype => "dropdown",
         :choices => TicketConstants.priority_list.sort, :unique_action => true },
       { :name => "ticket_type", :value => t('set_type_as'), :domtype => "dropdown",
-        :choices => current_account.ticket_type_values.collect { |c| [ c.value, c.value ] },
+        :choices => ticket_type_values_with_none,
         :unique_action => true },
       { :name => "status", :value => t('set_status_as'), :domtype => "dropdown",
         :choices => Helpdesk::TicketStatus.status_names(current_account),

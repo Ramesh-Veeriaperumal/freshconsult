@@ -192,8 +192,8 @@ GIT
 
 GIT
   remote: git@github.com:freshdesk/fresh_request.git
-  revision: 351b324e221d07f744e0b22e34c0fb3a4ccfb775
-  branch: v10
+  revision: 7c521607a3fda8b2976ad5b5b8684ea2b32c635b
+  branch: v20
   specs:
     fresh_request (0.0.1)
       faraday (~> 0.9.0)
@@ -201,7 +201,7 @@ GIT
       hashie
       multi_json
       patron
-      redis (= 3.0.7)
+      redis (= 3.3.1)
 
 GIT
   remote: git@github.com:freshdesk/freshdesk-features.git
@@ -543,6 +543,7 @@ GEM
       rest-client (~> 1.4)
     charlock_holmes (0.7.3)
     chunky_png (1.3.6)
+    clamav-client (3.1.0)
     climate_control (0.0.3)
       activesupport (>= 3.0)
     clockwork (0.4.1)
@@ -568,6 +569,7 @@ GEM
       sass (>= 3.2, < 3.5)
     compass-rails (2.0.0)
       compass (>= 0.12.2)
+    concurrent-ruby (1.0.4)
     connection_pool (2.2.0)
     css_parser (1.4.5)
       addressable
@@ -599,6 +601,7 @@ GEM
     descendants_tracker (0.0.4)
       thread_safe (~> 0.3, >= 0.3.1)
     diff-lcs (1.2.5)
+    dnsruby (1.60.0)
     domain_name (0.5.20161129)
       unf (>= 0.0.5, < 1.0.0)
     doorkeeper (2.2.1)
@@ -1033,7 +1036,7 @@ GEM
       trollop
     rdoc (3.12.2)
       json (~> 1.4)
-    redis (3.0.7)
+    redis (3.3.1)
     redis-namespace (1.5.2)
       redis (~> 3.0, >= 3.0.4)
     ref (2.0.0)
@@ -1291,9 +1294,11 @@ DEPENDENCIES
   carmen!
   chargebee (~> 1.5.1)
   charlock_holmes (= 0.7.3)
+  clamav-client (= 3.1.0)
   clockwork (= 0.4.1)
   compass-blueprint (= 1.0.0)
   compass-rails (= 2.0.0)
+  connection_pool
   country_select!
   cucumber-rails
   cucumber_statistics
@@ -1304,6 +1309,7 @@ DEPENDENCIES
   deadlock_retry!
   delayed_job!
   dev_notification!
+  dnsruby
   doorkeeper (= 2.2.1)
   dynamic_form
   dynamics_crm!
@@ -1410,7 +1416,7 @@ DEPENDENCIES
   rate-limiting!
   rbtrace
   recaptcha!
-  redis (= 3.0.7)
+  redis (= 3.3.1)
   request_store (~> 1.0)
   resque (~> 1.24.0)
   resque-scheduler (= 2.2.0)

@@ -20,7 +20,7 @@ window.App = window.App || {};
 		},
 
 		onVisit: function(data) {
-			var report = window.location.pathname.split('/reports/v2/').last();
+			var report = window.location.pathname.split('/').last();
 			if(this.URL_MAPPING[report] && HelpdeskReports.locals && HelpdeskReports.locals.report_field_hash) {
 				HelpdeskReports.CoreUtil.bindEvents();
 				HelpdeskReports.ReportUtil[this.URL_MAPPING[report]].init();

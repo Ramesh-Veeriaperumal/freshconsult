@@ -42,9 +42,7 @@ class Middleware::CorsEnabler < Rack::Cors
         path_regex = api_request?(env) ? env["PATH_INFO"] : RESOURCE_PATH_REGEX
 
         cors_resource_config_clone = CORS_RESOURCE_CONFIG.dup
-        if new_api_request?(env)  
-         cors_resource_config_clone[:credentials] = false if redis_key_exists?(CROSS_DOMAIN_API_GET_DISABLED)
-        end
+        cors_resource_config_clone[:credentials] = false if redis_key_exists?(CROSS_DOMAIN_API_GET_DISABLED)
         allow do 
          origins '*'
          resource path_regex, cors_resource_config_clone

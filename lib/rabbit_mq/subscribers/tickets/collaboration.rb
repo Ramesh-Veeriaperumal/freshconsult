@@ -13,7 +13,7 @@ module RabbitMq::Subscribers::Tickets::Collaboration
     Account.current.collaboration_enabled? &&
     valid_collab_model?(model) && 
       (update_action?(action) || 
-      ([:status, :responder_id].any? {|k| @model_changes.key?(k)}))
+      ([:status, :responder_id, :subject].any? {|k| @model_changes.key?(k)}))
   end
 
   private

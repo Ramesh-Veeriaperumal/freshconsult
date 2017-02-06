@@ -28,6 +28,9 @@
 						<% plan_slide_details[:features].each do |feature_name| %>
 							<span class= "<%= message_type_downgrade ? 'ficon-cross lost-feature' : 'ficon-plus new-feature'%>"><%= t("features.#{feature_name}").html_safe %></span>
 						<% end %>
+						<% if new_sprout?(new_plan.titleize) %>
+							<span class= "<%= message_type_downgrade ? 'ficon-cross lost-feature' : 'ficon-plus new-feature'%>"><i><%= t("and_more_plan_downgrade").html_safe %></i></span>
+						<% end %>
 					</div>
 				<% end %>
 			<% end %>

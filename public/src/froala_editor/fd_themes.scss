@@ -487,6 +487,12 @@ body .fr-overlay {
 
         li {
           font-size: 13px;
+
+          blockquote {
+            border-left: 0;
+            font-style: italic;
+            color: #666 !important;
+          }
         }
       }
     }
@@ -558,6 +564,7 @@ body .fr-overlay {
       .fr-box{
         border: 0;
         .fr-element {
+          color: #333;
           min-height: 200px;
           padding: 10px 0 0;
           @include portal-text-formatting();

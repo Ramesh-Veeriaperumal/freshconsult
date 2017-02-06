@@ -16,7 +16,12 @@ module Helpdesk::EmailParser::MailProcessingUtil
   end
 
 	def encode_data(mail_data, detected_encoding="UTF-8")
-  	mail_data.force_encoding(detected_encoding).encode("UTF-8")
+  	res = mail_data.force_encoding(detected_encoding).encode("UTF-8")
+    if !res.valid_encoding?
+      email_parsing_log "Detected invalid encoding characters!!"
+      res = handle_undefined_characters(mail_data, detected_encoding)
+    end
+    return res
     rescue Exception => e
       #proper info required
   	 email_parsing_log "Encoding error : #{e.class}, #{e.message}, #{e.backtrace}"

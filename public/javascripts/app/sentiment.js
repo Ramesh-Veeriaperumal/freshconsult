@@ -50,7 +50,7 @@ window.App = window.App || {};
 				m = jQuery('.cmi-plugin .'+last_note_sentiment);
 				m.closest('li').addClass('selected');
 
-				jQuery('.cmi-fdbk').html("Not "+sentiment_title+"? Click to change.");
+				jQuery('.cmi-fdbk span').html("Not "+sentiment_title+"? Click to change.");
 				
 			},
 			change_sentiment : function(evt){
@@ -75,7 +75,7 @@ window.App = window.App || {};
 				var m = jQuery('.cmi-plugin .'+changed_senti);
 				m.closest('li').addClass('selected');
 
-				jQuery('.cmi-fdbk').html("Successfully changed!");
+				jQuery('.cmi-fdbk span').html("Successfully changed!");
 
 				this.post_feedback(changed_senti);
 
@@ -237,6 +237,14 @@ window.App = window.App || {};
 				  self.feedback.insert_markup();
 				});
 			});
+
+			jQuery(document).on('click.sentiment','#cmi_survey_fdbk',function(){
+				self.pushEventToKM("Sentiment_Feedback_Clicked",self.userProperties());
+			});
+
+			jQuery('body').on('click.sentiment','#cmi_survey_hover',function(){
+				self.pushEventToKM("Sentiment_Feedback_Clicked",self.userProperties());
+			});
 		},
 		/*
 		* pjax navigate away
@@ -244,8 +252,61 @@ window.App = window.App || {};
 		flushEvents : function(){
 			jQuery(".sentiment").off();
 		},
+
+		userProperties: function(){
+            return {
+                         'account_id': current_account_id,
+                         'fields':current_account_id+'$$',
+                    }
+        },
+
+        pushEventToKM: function(eventName,prop){
+            this.push_event(eventName,prop);
+
+        },
+
+		push_event: function (event,property) {
+            if(typeof (_kmq) !== undefined ){
+                this.recordIdentity();
+                _kmq.push(['record',event,property]);   
+            }
+            
+        },
+
+        getIdentity: function(){
+            return current_account_id;
+        },
+
+        recordIdentity: function(){
+            if(typeof (_kmq) !== undefined ){
+                _kmq.push(['identify', this.getIdentity()]);
+            }
+        },
+
+		kissMetricTrackingCode: function(api_key){
+                var _kmq = _kmq || [];
+                var _kmk = _kmk || api_key;
+                function _kms(u){
+                  setTimeout(function(){
+                    var d = document, f = d.getElementsByTagName('script')[0],
+                    s = d.createElement('script');
+                    s.type = 'text/javascript'; s.async = true;
+                    s.onload = function() {
+                        trigger_event("script_loaded",{});
+                    };
+                    s.src = u;
+                    f.parentNode.insertBefore(s, f);
+                  }, 1);
+                }
+                _kms('//i.kissmetrics.com/i.js');
+                _kms('//scripts.kissmetrics.com/' + _kmk + '.2.js');
+                
+
+        },
+
 		init : function() {
 			this.bindEvents();
+			this.kissMetricTrackingCode(sentiment.key);
 			console.log('in inits')
 		}
 	};

@@ -4383,6 +4383,9 @@ li {
       font-weight: 400;
       font-size: 12px;
       margin:0 10px;
+      i {
+        color:#06c;;
+        }
     }
   }
   .sas-ctd {
@@ -4650,6 +4653,7 @@ li {
   font-size: 13px;
   color: #555;
   line-height: 30px;
+  a{float:right;}
 }
 
 .cmi-plugin h3 {
@@ -4661,6 +4665,13 @@ li {
     text-transform: initial;
     font-size: 11px;
     padding-left: 3px;
+
+    i{
+        color:#06c;
+    }
+
     }
 }
+
+.senti_hover a.help i{color:#06c;}
 /* ********************** END OF STYLE FOR CUSTOMER SENTIMENT ********************** */

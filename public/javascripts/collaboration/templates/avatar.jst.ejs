@@ -1,4 +1,6 @@
 <div class="<%= data.class_list %> preview_pic circle avatar-text text-center thumb bg-<%= Math.abs(uniqueCodeGenerator( data.name )) %>" > 
-	<%= data.name[0] %> 
-	<img alt="<%= data.name %>" class="hide thumb_img thumb <%= data.class_list %>" onerror="App.CollaborationUi.dpLoadErr(this)" src=" " data-user-id="<%= data.id %>">
+	<%= data.name[0] %>
+	<% if (!!data.id) { %> 
+		<img alt="<%= data.name %>" class="thumb_img thumb hide <%= data.class_list %>" src="/users/<%= data.id %>/profile_image_no_blank" data-user-id="<%= data.id %>" onload="App.CollaborationUi.dpLoadComplete(this)">
+	<% }%>
 </div>

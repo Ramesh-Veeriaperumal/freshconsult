@@ -235,6 +235,45 @@ curl -XPUT "172.16.210.126:9101/es_filters_count" -d'
         },
         "resolution_time_by_bhrs": {
           "type" : "float"
+        },
+        "parent_ticket_id": {
+          "type": "long"
+        },
+         "sl_product_id": {
+          "type": "long"
+        },
+        "sl_sla_policy_id": {
+          "type": "long"
+        },
+        "sl_merge_parent_ticket": {
+          "type": "long"
+        },
+        "sl_skill_id": {
+          "type": "long"
+        },
+        "st_survey_rating": {
+          "type": "long"
+        },
+        "internal_group_id": {
+          "type": "long"
+        },
+         "internal_agent_id": {
+          "type": "long"
+        },
+        "association_type": {
+          "type": "long"
+        },
+        "associates_rdb": {
+          "type": "long"
+        },
+        "sla_state": {
+          "type": "long"
+        },
+        "sl_manual_dueby": {
+          "type": "long"
+        },
+        "sl_escalation_level": {
+          "type": "long"
         }
       }
     }
