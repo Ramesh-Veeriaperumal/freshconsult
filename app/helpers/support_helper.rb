@@ -361,7 +361,7 @@ module SupportHelper
 						</label>
 					</div> ).html_safe
 			else
-				html_opts_hash = {:pl_value_id => pl_value_id}
+				html_opts_hash[:pl_value_id] = pl_value_id
 				html_opts_hash.delete(:pre_fill_flag) if field.dom_type != "requester"
 				%( #{ ticket_label object_name, field }
 		   			<div class="controls #{"nested_field" if field.dom_type=="nested_field"} #{"support-date-field" if field.dom_type=="date"} #{"company_div" if field.field_type == "default_company" && @ticket.new_record?}">

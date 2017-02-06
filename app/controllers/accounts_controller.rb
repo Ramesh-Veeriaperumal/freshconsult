@@ -68,19 +68,20 @@ class AccountsController < ApplicationController
    
   def new_signup_free
    @signup = Signup.new(params[:signup])
-   
    if @signup.save
     @signup.account.agents.first.user.reset_perishable_token! 
       save_account_sign_up_params(@signup.account.id, params[:signup])
       add_account_info_to_dynamo
       set_account_onboarding_pending
       add_to_crm
+      mark_new_account_setup
       respond_to do |format|
         format.html {
           render :json => { :success => true,
                             :url => signup_complete_url(:token => @signup.account.agents.first.user.perishable_token, :host => @signup.account.full_domain),
                             :account_id => @signup.account.id  },
-                            :callback => params[:callback]
+                            :callback => params[:callback],
+                            :content_type=> 'application/javascript'
         }
         format.nmobile {
 
@@ -262,49 +263,58 @@ class AccountsController < ApplicationController
     end
     
     def build_metrics
-      return if params[:session_json].blank?
-      
+      # return if params[:session_json].blank?
+      metrics_obj = {}
+      account_obj = {}
       begin  
-        metrics =  JSON.parse(params[:session_json])
-        metrics_obj = {}
-        account_obj = {}
-
-        metrics_obj[:referrer] = metrics["current_session"]["referrer"]
-        metrics_obj[:landing_url] = metrics["current_session"]["url"]
-        metrics_obj[:first_referrer] = params[:first_referrer]
-        metrics_obj[:first_landing_url] = params[:first_landing_url]
-        unless metrics["location"].blank?
-          metrics_obj[:country] = metrics["location"]["countryName"] 
-          account_obj[:country_code] = metrics["location"]["countryCode"]
-          account_obj[:city] = metrics["location"]["cityName"]
-          account_obj[:source_ip] = metrics["location"]["ipAddress"]
+        account_obj[:first_referrer] = params[:first_referrer] if params[:first_referrer].present? 
+        account_obj[:first_landing_url] = params[:first_landing_url] if params[:first_landing_url].present?
+        if params[:user]
+          account_obj[:email] = params[:user][:email]
+          account_obj[:first_name] = params[:user][:first_name]
+          account_obj[:last_name] = params[:user][:last_name]
+          account_obj[:phone] = params[:user][:phone]
         else
-          account_obj[:source_ip] = request.remote_ip
+          Rails.logger.info "Error while building conversion metrics. User Information is not been provided while creating an account"
         end
-        metrics_obj[:language] = metrics["locale"]["lang"]
-        metrics_obj[:search_engine] = metrics["current_session"]["search"]["engine"]
-        metrics_obj[:keywords] = metrics["current_session"]["search"]["query"]
-        metrics_obj[:visits] = params[:pre_visits]
+        if params[:session_json].present? 
+          metrics =  JSON.parse(params[:session_json])
+          metrics_obj[:first_referrer] = params[:first_referrer]
+          metrics_obj[:first_landing_url] = params[:first_landing_url]
+          metrics_obj[:visits] = params[:pre_visits]
+          metrics_obj[:referrer] = metrics["current_session"]["referrer"]
+          metrics_obj[:landing_url] = metrics["current_session"]["url"]
+          if metrics["location"].present?
+            metrics_obj[:country] = metrics["location"]["countryName"] 
+            account_obj[:country_code] = metrics["location"]["countryCode"]
+            account_obj[:city] = metrics["location"]["cityName"]
+            account_obj[:source_ip] = metrics["location"]["ipAddress"]
+          end
+          metrics_obj[:language] = metrics["locale"]["lang"]
+          if metrics["current_session"]["search"].present?
+            metrics_obj[:search_engine] = metrics["current_session"]["search"]["engine"]
+            metrics_obj[:keywords] = metrics["current_session"]["search"]["query"]
+          end
+          if metrics["device"]["is_mobile"]
+            metrics_obj[:device] = "M"
+          elsif  metrics["device"]["is_phone"]
+            metrics_obj[:device] = "P"
+          elsif  metrics["device"]["is_tablet"]
+            metrics_obj[:device] = "T"
+          else
+            metrics_obj[:device] = "C"
+          end
 
-        if metrics["device"]["is_mobile"]
-          metrics_obj[:device] = "M"
-        elsif  metrics["device"]["is_phone"]
-          metrics_obj[:device] = "P"
-        elsif  metrics["device"]["is_tablet"]
-          metrics_obj[:device] = "T"
+          metrics_obj[:browser] = metrics["browser"]["browser"]
+          metrics_obj[:os] = metrics["browser"]["os"]
+          metrics_obj[:offset] = metrics["time"]["tz_offset"]
+          metrics_obj[:is_dst] = metrics["time"]["observes_dst"]
+          metrics_obj[:session_json] = metrics
         else
-          metrics_obj[:device] = "C"
+          metrics_obj = nil
+          Rails.logger.info "Error while building conversion metrics. Session json is not been provided while creating an account with email #{account_obj[:email]}"
         end
-
-        metrics_obj[:browser] = metrics["browser"]["browser"]
-        metrics_obj[:os] = metrics["browser"]["os"]
-        metrics_obj[:offset] = metrics["time"]["tz_offset"]
-        metrics_obj[:is_dst] = metrics["time"]["observes_dst"]
-        metrics_obj[:session_json] = metrics
-        account_obj[:email] = params[:user][:email]
-        account_obj[:first_name] = params[:user][:first_name]
-        account_obj[:last_name] = params[:user][:last_name]
-        account_obj[:phone] = params[:user][:phone]
+        account_obj[:source_ip] = (request.remote_ip || request.env["HTTP_X_FORWARDED_FOR"] || request.host_with_port || request.env["SERVER_ADDR"]) unless account_obj[:source_ip].present?
         return metrics_obj, account_obj
       rescue => e
         NewRelic::Agent.notice_error(e,{:custom_params => {:description => "Error occoured while building conversion metrics"}})
@@ -360,8 +370,10 @@ class AccountsController < ApplicationController
 
     def add_to_crm
       if (Rails.env.production? or Rails.env.staging?)
-        Resque.enqueue_at(3.minute.from_now, Marketo::AddLead, { :account_id => @signup.account.id, 
-          :signup_id => params[:signup_id], :fs_cookie => params[:fs_cookie] })
+        Resque.enqueue_at(3.minute.from_now, Marketo::AddLead, { :account_id => @signup.account.id,
+          :signup_id => params[:signup_id]})
+        Resque.enqueue_at(3.minute.from_now, CRM::Freshsales::Signup, { account_id: @signup.account.id,
+         fs_cookie: params[:fs_cookie] })
       end
       
     end  
@@ -382,7 +394,10 @@ class AccountsController < ApplicationController
     end
 
     def update_crm
-      Resque.enqueue(CRM::AddToCRM::DeletedCustomer, { :account_id => current_account.id })
+      if Rails.env.production?
+        Resque.enqueue(CRM::AddToCRM::DeletedCustomer, { :account_id => current_account.id })
+        Resque.enqueue(CRM::Freshsales::DeletedCustomer, { :account_id => current_account.id })
+      end
     end      
 
     def deliver_mail(feedback)
@@ -481,6 +496,10 @@ class AccountsController < ApplicationController
 
     def save_account_sign_up_params account_id, args = {}
       key = ACCOUNT_SIGN_UP_PARAMS % {:account_id => account_id}
-      set_others_redis_key(key,args.to_json)
+      set_others_redis_key(key,args.to_json,1296000)
+    end
+
+    def mark_new_account_setup
+      @signup.account.mark_new_account_setup_and_save
     end
 end

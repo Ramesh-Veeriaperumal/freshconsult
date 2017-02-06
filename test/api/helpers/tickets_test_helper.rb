@@ -23,8 +23,11 @@ module TicketsTestHelper
     ticket_pattern(ticket).except(*([:attachments, :conversations, :tags] - exclude))
   end
 
-  def index_ticket_pattern_with_associations(ticket, requester = true, ticket_states = true)
-    ticket_pattern_with_association(ticket, false, false, requester, false, ticket_states).except(:attachments, :conversations, :tags)
+  def index_ticket_pattern_with_associations(ticket, requester = true, ticket_states = true, company = true)
+    ticket_pattern_with_association(
+      ticket, false, false, requester,
+      company, ticket_states
+    ).except(:attachments, :conversations, :tags)
   end
 
   def index_deleted_ticket_pattern(ticket)

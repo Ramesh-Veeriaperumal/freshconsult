@@ -5,7 +5,9 @@
 <% end %>
 <div class="index-page-content" id="realtime-dashboard-content">
     <%= render :partial => "/helpdesk/realtime_dashboard/summary" %>
-    <%= render :partial => "/helpdesk/realtime_dashboard/trial_account" %>
+    <% if current_account.subscription.trial? && current_user.privilege?(:admin_tasks) %>
+        <%= render :partial => "/helpdesk/realtime_dashboard/account_setup/widget" %>
+    <% end %>
 
     <div class="widget-wrapper-bg clearfix">
         <div class="row-fluid widget-wrapper">

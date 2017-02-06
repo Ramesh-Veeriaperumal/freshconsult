@@ -1,0 +1,14 @@
+defaults: &defaults
+  skipped_routes: ["/health_checkup"]
+
+development:
+  <<: *defaults
+
+staging:
+  <<: *defaults
+
+production:
+  <<: *defaults
+
+test:
+  <<: *defaults

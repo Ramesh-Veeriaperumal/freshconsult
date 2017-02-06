@@ -18,7 +18,8 @@ module DecoratorConcern
     end
 
     def decorator_name
-      @name ||= "#{name.gsub('Controller', '').gsub('Ember::', '').gsub('Api', '').singularize}Decorator".constantize
+      # name is a class variable, will be computed only once when class is loaded.
+      @name ||= "#{name.gsub('Controller', '').gsub('Ember::', '').gsub('Pipe::', '').gsub('Api', '').singularize}Decorator".constantize
     end
   end
 

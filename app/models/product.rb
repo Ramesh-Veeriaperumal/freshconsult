@@ -6,7 +6,7 @@ class Product < ActiveRecord::Base
 
   before_destroy :remove_primary_email_config_role
   validates_uniqueness_of :name , :case_sensitive => false, :scope => :account_id
-  xss_sanitize :only => [:name, :description], :html_sanitize => [:name, :description]
+  xss_sanitize :only => [:name, :description], :plain_sanitize => [:name, :description]
 
   after_create :create_chat_widget
 
@@ -25,6 +25,8 @@ class Product < ActiveRecord::Base
   has_many   :twitter_handles      , :class_name => 'Social::TwitterHandle', :dependent => :nullify
   has_many   :facebook_pages       , :class_name => 'Social::FacebookPage' , :dependent => :nullify
   has_many   :ecommerce_accounts   , :class_name => 'Ecommerce::Account', :dependent => :nullify
+
+  scope :trimmed, :select => [:'products.id', :'products.name']
 
   attr_protected :account_id
   

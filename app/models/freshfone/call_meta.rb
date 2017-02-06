@@ -151,15 +151,24 @@ class Freshfone::CallMeta < ActiveRecord::Base
     save! if meta_info[:quality_feedback].present?
   end
 
+  def cancel_all_agents
+    cancel_ringing_agents([:browser, :mobile])
+  end
+
   def cancel_browser_agents
+    cancel_ringing_agents([:browser])
+  end
+
+  def cancel_ringing_agents(device)
     agents_response = []
     redis_response = get_response_meta(account_id, call_id)
     missed_agents = pinged_agents.select { |agent|
-      missed_agent?(agent, redis_response[agent[:id].to_s]) }
+      missed_agent?(agent, redis_response[agent[:id].to_s], device) }
     missed_agents.each do |agent|
       agents_response.push(agent[:id], :canceled)
     end
-    set_all_agents_response(account_id, call_id, agents_response)
+    set_all_agents_response(account_id, call_id,
+      agents_response) if agents_response.present?
   end
 
   def agent_pinged_and_no_response?(user_id)
@@ -191,10 +200,14 @@ class Freshfone::CallMeta < ActiveRecord::Base
                       freshfone_call.user_id != freshfone_call.parent.user_id
   end
 
+  def forward?
+    direct_dial? || external_transfer? || available_on_phone?
+  end
+
   private
 
-    def browser_agent?(agent)
-      agent[:device_type] == :browser
+    def on_device?(agent, device)
+      device.include?(agent[:device_type])
     end
 
     def build_feedback_params(params)
@@ -205,8 +218,8 @@ class Freshfone::CallMeta < ActiveRecord::Base
       result
     end
 
-    def missed_agent?(agent, agent_response)
-      browser_agent?(agent) && agent[:id] != freshfone_call.user_id &&
+    def missed_agent?(agent, agent_response, device)
+      on_device?(agent, device) && agent[:id] != freshfone_call.user_id &&
         agent_response.blank?
     end
 end

@@ -58,7 +58,7 @@ module ContactsCompaniesHelper
     head = content_tag(:p, CGI.unescapeHTML(field.label), :class => 'field-label break-word')
     case field.dom_type
       when :url
-        value = content_tag(:a, field_value, :href => field_value, :target => '_blank', :class => 'field-value ellipsis')
+        value = content_tag(:a, field_value, :href => field_value, :target => '_blank', :class => 'field-value ellipsis', :rel => 'noreferrer')
       when :phone_number
         value = strange_number?(field_value) ? content_tag(:p,field_value, :class => 'field_value strikethrough') : content_tag(:p, field_value, :class => 'field-value can-make-calls break-word', :'data-phone-number' => field_value,
           :'data-contact-id' => @user.present? ? @user.id : nil,

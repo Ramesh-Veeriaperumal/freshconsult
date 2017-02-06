@@ -5,7 +5,7 @@ class SupportController < ApplicationController
   before_filter :portal_context
   before_filter :strip_url_locale
   before_filter :set_language
-  before_filter :redirect_to_locale
+  before_filter :redirect_to_locale, :except => [:sitemap]
   around_filter :run_on_slave , :only => [:index,:show],
     :if => proc {|controller| 
       path = controller.controller_path
@@ -43,6 +43,17 @@ class SupportController < ApplicationController
                           :label => t('portal.preview.view_on_helpdesk'),
                           :icon => "preview" } if privilege?(priv)
     @agent_actions
+  end
+
+  def sitemap
+    respond_to do |format|
+      format.xml  do 
+        xml_text = current_portal.fetch_sitemap
+        render :xml => xml_text and return unless xml_text.nil? 
+        render_404
+      end
+      format.any { render_404 }
+    end
   end
 
   protected

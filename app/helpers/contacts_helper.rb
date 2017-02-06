@@ -4,6 +4,8 @@ module ContactsHelper
   include UserEmailsHelper
   include Marketplace::ApiHelper
 
+  MIN_USER_EMAIL = 5
+
   def contact_fields
     @contact_fields ||= @user.helpdesk_agent? ? 
       current_account.contact_form.default_contact_fields : 
@@ -70,8 +72,11 @@ module ContactsHelper
 
   def render_user_email_field field
     output = []
+    count = 0
+    email_count = @user.user_emails.length
     output << %(<ul class="user-email-bullet">)
     @user.user_emails.each do |mail|
+      count+=1
       output2 = <<HTML
       <p class="primary_email_text">#{h(mail.email)}</p>
 HTML
@@ -86,6 +91,9 @@ HTML
       output << content_tag(:p, "#{h(mail.email)}", :class => (mail.verified ? "" : "helper")) if !mail.primary_role
       output << output3 if !mail.verified and !mail.primary_role
       output << %(</li>)
+      output << %(<a class="expand-link"> #{email_count - count} #{t('contacts.more')} </a>
+                <div class="expanded-email hide">) if count == MIN_USER_EMAIL && count != email_count
+      output << %(</div>) if count > MIN_USER_EMAIL && count == email_count
     end
     output << %(</ul>)
     head = content_tag(:p, field.label, :class => 'field-label break-word')
@@ -112,4 +120,8 @@ HTML
     end
   end
 
+  def contact_count
+    count = current_account.all_users.send("contacts").size
+    "<span class='company-list-count' data-company-count='#{count}'></span>".html_safe
+  end
 end

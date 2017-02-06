@@ -121,6 +121,7 @@ RealtimeDashboard.CoreUtil = RealtimeDashboard.CoreUtil || {};
 	            jQuery('#graph_space').show();
 	            jQuery(".graph_details").empty().removeClass('incoming-trend');//.addClass('sloading loading-small');
 	            jQuery(".list_items").hide();
+	            jQuery('.setup-details-wrapper').removeClass("active");
 	            jQuery('#dashboard_details_wrapper').addClass('active').removeClass('hide').attr('chart_name',chart_id);
 	        	
 	        	if(!showPager){
@@ -207,6 +208,7 @@ RealtimeDashboard.CoreUtil = RealtimeDashboard.CoreUtil || {};
 		initWidgets : function() {
 			var Widgets = RealtimeDashboard.Widgets;
 			Widgets.Recent_activity.init();
+			Widgets.AccountSetup.init();
 		},
 		makeAjaxRequest: function (args) {
 	        args.url = args.url;
@@ -236,6 +238,7 @@ RealtimeDashboard.CoreUtil = RealtimeDashboard.CoreUtil || {};
 			clearInterval(this.interval);
 			$("#unresolved_tickets").remove();
 			this.Utils.destroy();
+			RealtimeDashboard.Widgets.AccountSetup.destroy();
 		},
 		refresh : {
 			storeLastUpdatedTime : function() {

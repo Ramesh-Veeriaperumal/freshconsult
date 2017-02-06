@@ -180,12 +180,10 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
     conditions = []
     spam_condition = "#{ticket_table}.spam = 0"
 
-    if user.agent? 
-      if !user.agent.all_ticket_permission
-        conditions = Helpdesk::Ticket.permissible_condition(user)
-        ticket_join_table = "INNER JOIN #{schema_less_ticket_table} ON #{ticket_table}.id = #{schema_less_ticket_table}.ticket_id AND #{ticket_table}.account_id = #{schema_less_ticket_table}.account_id" if Account.current.features?(:shared_ownership)
-      end
-    else
+    if !user.all_tickets_permission?
+      conditions = Helpdesk::Ticket.permissible_condition(user)
+      ticket_join_table = "INNER JOIN #{schema_less_ticket_table} ON #{ticket_table}.id = #{schema_less_ticket_table}.ticket_id AND #{ticket_table}.account_id = #{schema_less_ticket_table}.account_id" if Account.current.features?(:shared_ownership)
+    elsif user.customer?
       conditions = ["#{ticket_table}.requester_id = ?", user.id ]
     end
 

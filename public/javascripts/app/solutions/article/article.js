@@ -25,6 +25,14 @@ window.App = window.App || {};
           invokeRedactor('solution_article_description', 'solution');
         }
 
+        var offset = jQuery('.article-edit-form .editor-body').position().top;
+
+        if($('#sticky_redactor_toolbar .fr-toolbar').is(':visible')){
+          $('#sticky_redactor_toolbar .fr-toolbar').css("top", offset);
+        }else{
+          $('#sticky_redactor_toolbar .redactor_toolbar').css("top", offset);
+        }
+
         this.eventsForNewPage();
       } else {
         this.eventsForShowPage();

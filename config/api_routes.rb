@@ -258,6 +258,15 @@ Helpkit::Application.routes.draw do
     end
   end
 
+  pipe_routes = proc do 
+    resources :tickets, controller: 'pipe/tickets', only: [:create] do
+      member do
+        post :reply, to: 'pipe/conversations#reply'
+        post :notes, to: 'pipe/conversations#create'
+      end
+    end
+  end
+
   match '/api/v2/_search/tickets' => 'tickets#search', :defaults => { format: 'json' }, :as => :tickets_search, via: :get
 
   scope '/api', defaults: { version: 'v2', format: 'json' }, constraints: { format: /(json|$^)/ } do
@@ -266,9 +275,12 @@ Helpkit::Application.routes.draw do
       scope '', &ember_routes # "/api/v2/.."
       scope '', &api_routes # "/api/v2/.."
     end
+    scope '/pipe', defaults: { version: 'private', format: 'json' }, constraints: { format: /(json|$^)/ } do
+      scope '', &pipe_routes # "/api/v2/.."
+      scope '', &api_routes # "/api/v2/.."
+    end
     constraints ApiConstraints.new(version: 2), &api_routes # "/api/.." with Accept Header
     scope '', &api_routes
-
     match '*route_not_found.:format', to: 'api_application#route_not_found'
     match '*route_not_found',         to: 'api_application#route_not_found'
   end

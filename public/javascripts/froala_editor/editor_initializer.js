@@ -77,6 +77,7 @@ function invokeEditor(element_id,type,attr) {
 				},
 				imageManagerLoadURL: '/solutions_uploaded_images',
 				imageManagerLoadMethod: 'GET',
+				imageDefaultWidth: 0,
 				sanitizeType: "solution"
 			})
 

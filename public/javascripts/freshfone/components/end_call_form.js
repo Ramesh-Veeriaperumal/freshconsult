@@ -407,7 +407,8 @@ var FreshfoneEndCall;
 					'CallSid': self.callSid,
 					'rating': self.callRating,
 					'issue' : self.$feedbackSelect.val(),
-					'comment': self.$commentInput.val()
+					'comment': self.$commentInput.val(),
+					'id': self.freshfonecalls.callId
 				}
       });
     },

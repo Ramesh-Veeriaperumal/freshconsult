@@ -16,6 +16,11 @@
 
 <div class="list-page email-notification">
 	<div class="list-page-header"> 
+	 <% unless current_account.verified? %>
+	  <div id ="errorExplanation" class ="errorExplanation">
+      <%= t('email_notifications.account_not_activated') %>
+      </div>
+      <% end %>
 		<h3 class="lead"><%= t('email_notifications.title')%></h3>
 		<%= render :partial => "fontsettings" %>
 	</div>

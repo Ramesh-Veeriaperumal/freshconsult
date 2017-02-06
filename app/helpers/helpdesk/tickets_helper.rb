@@ -220,7 +220,7 @@ module Helpdesk::TicketsHelper
   def forward_template_draft(item, signature)
     {"draft_text" => bind_last_conv(item, signature, true, false)}
   end
-  
+
   def default_twitter_body_val (ticket)
     if (ticket.tweet && ticket.tweet.tweet_type == 'mention')
      return "@#{ticket.requester.twitter_id}"

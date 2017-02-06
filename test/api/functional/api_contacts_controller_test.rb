@@ -2,6 +2,26 @@ require_relative '../test_helper'
 class ApiContactsControllerTest < ActionController::TestCase
   include UsersTestHelper
 
+  def setup
+    super
+    initial_setup
+  end
+
+  @@initial_setup_run = false
+
+  def initial_setup
+    return if @@initial_setup_run
+    @account.features.multiple_user_companies.create
+    @account.reload
+
+    20.times do
+      @account.companies.build(name: Faker::Name.name)
+    end
+    @account.save
+
+    @@initial_setup_run = true
+  end
+
   def wrap_cname(params)
     { api_contact: params }
   end
@@ -16,6 +36,36 @@ class ApiContactsControllerTest < ActionController::TestCase
 
   def get_user_with_other_emails
     @account.user_emails.group(:user_id).having('count(user_id) > 1').first.user
+  end
+
+  def get_user_with_single_email
+    @account.user_emails.group(:user_id).having('count(user_id) = 1').last.user
+  end
+
+  def get_user_with_multiple_companies
+    user_company = @account.user_companies.group(:user_id).having('count(user_id) > 1 ').first
+    if user_company.present?
+      user_company.user
+    else
+      new_user = add_new_user(@account)
+      company_ids = Company.all.map(&:id)
+      new_user.user_companies.create(:company_id => company_ids.first, :default => true)
+      new_user.user_companies.create(:company_id => company_ids.second)
+      new_user.save!
+      new_user.reload
+    end
+  end
+
+  def get_user_with_default_company
+    user_company = @account.user_companies.group(:user_id).having('count(*) = 1 ').first
+    if user_company.present?
+      user_company.user
+    else
+      new_user = add_new_user(@account)
+      new_user.user_companies.create(:company_id => get_company.id, :default => true)
+      new_user.save!
+      new_user.reload
+    end
   end
 
   def get_company
@@ -116,7 +166,7 @@ class ApiContactsControllerTest < ActionController::TestCase
                                         email: Faker::Internet.email,
                                         view_all_tickets: true,
                                         company_id: comp.id)
-    assert User.last.client_manager == true
+    assert User.last.user_companies.select{|x| x.company_id == comp.id}.first.client_manager == true
     assert_response 201
     match_json(deleted_contact_pattern(User.last))
   end
@@ -378,6 +428,44 @@ class ApiContactsControllerTest < ActionController::TestCase
     assert_response 201
   end
 
+  def test_create_user_active
+    post :create, construct_params({},  name: Faker::Lorem.characters(15),
+                                        email: Faker::Internet.email,
+                                        active: true)
+    assert_response 201
+  end
+
+  def test_create_user_active_string
+    post :create, construct_params({},  name: Faker::Lorem.characters(15),
+                                        email: Faker::Internet.email,
+                                        active: "mystring")
+    assert_response 400
+  end
+
+  def test_create_user_active_false
+    post :create, construct_params({},  name: Faker::Lorem.characters(15),
+                                        email: Faker::Internet.email,
+                                        active: false)
+    match_json([bad_request_error_pattern('active', "Active field can only be set to true")])
+    assert_response 400
+  end
+
+  def test_create_deleted_user_activate
+    post :create, construct_params({},  name: Faker::Lorem.characters(15),
+                                        email: Faker::Internet.email,
+                                        deleted: true,
+                                        active: true)
+    assert_response 400
+  end
+
+  def test_create_blocked_user_activate
+    post :create, construct_params({},  name: Faker::Lorem.characters(15),
+                                        email: Faker::Internet.email,
+                                        blocked: true,
+                                        active: true)
+    assert_response 400
+  end
+
   # Update user
   def test_update_user_with_blank_name
     params_hash  = { name: '' }
@@ -434,13 +522,26 @@ class ApiContactsControllerTest < ActionController::TestCase
     params_hash = { company_id: comp.id, view_all_tickets: true }
     put :update, construct_params({ id: sample_user.id }, params_hash)
     assert_response 200
-    assert sample_user.reload.client_manager == true
+    assert sample_user.reload.user_companies.select{|x| x.default }.first.client_manager == true
     assert sample_user.reload.company_id == comp.id
     match_json(deleted_contact_pattern(sample_user.reload))
   end
 
+  def test_update_client_manager_with_negative_company_id
+    sample_user = get_user
+    params_hash = { company_id: -1 }
+    put :update, construct_params({ id: sample_user.id }, params_hash)
+    assert_response 400
+    match_json([bad_request_error_pattern(
+      'company_id', :datatype_mismatch,
+      code: :invalid_value, expected_data_type: 'Positive Integer' )]
+    )
+  end
+
   def test_update_client_manager_with_invalid_company_id
     sample_user = get_user
+    sample_user.user_companies.each { |ua| ua.destroy }
+    sample_user.reload
     comp = get_company
     params_hash = { company_id: comp.id, view_all_tickets: true, phone: '1234567890' }
     sample_user.update_attributes(params_hash)
@@ -449,7 +550,7 @@ class ApiContactsControllerTest < ActionController::TestCase
     put :update, construct_params({ id: sample_user.id }, params_hash)
     assert_response 200
     match_json(deleted_contact_pattern(params_hash, sample_user.reload))
-    assert sample_user.reload.company_id.nil?
+    assert sample_user.reload.company_id == nil
     assert sample_user.reload.client_manager == false
   end
 
@@ -573,6 +674,59 @@ class ApiContactsControllerTest < ActionController::TestCase
     assert sample_user.reload.email == email
     assert sample_user.reload.name == 'sample_user'
   end
+
+  def test_update_user_active
+    sample_user = get_user
+    email = Faker::Internet.email
+    params_hash = { name: 'New Name', email: email }
+    sample_user.update_attributes(params_hash)
+    sample_user.active = false
+    sample_user.save
+    put :update, construct_params({ id: sample_user.id }, active: true)
+    assert_response 200
+    assert sample_user.reload.active == true
+  end
+
+  def test_update_user_active_false
+    sample_user = get_user
+    email = Faker::Internet.email
+    params_hash = { name: 'New Name', email: email }
+    sample_user.update_attributes(params_hash)
+    
+    put :update, construct_params({ id: sample_user.id }, active: false)
+    match_json([bad_request_error_pattern('active', "Active field can only be set to true")])
+    assert_response 400
+  end
+
+  def test_update_user_active_string
+    sample_user = get_user
+    email = Faker::Internet.email
+    params_hash = { name: 'New Name', email: email }
+    sample_user.update_attributes(params_hash)
+    
+    put :update, construct_params({ id: sample_user.id }, active: "mystring")
+    assert_response 400
+  end
+
+  def test_update_deleted_user_active
+    sample_user = get_user
+    email = Faker::Internet.email
+    params_hash = { name: 'New Name', email: email, deleted: 1 }
+    sample_user.update_attributes(params_hash)
+    put :update, construct_params({ id: sample_user.id }, active: true)
+    assert_response 405
+  end
+
+  def test_update_blocked_user_active
+    sample_user = get_user
+    email = Faker::Internet.email
+    params_hash = { name: 'New Name', email: email}
+    sample_user.update_attributes(params_hash)
+    sample_user.update_column(:blocked, true)
+    put :update, construct_params({ id: sample_user.id }, active: true)
+    assert_response 405
+  end
+
 
   # Delete user
   def test_delete_contact
@@ -776,9 +930,10 @@ class ApiContactsControllerTest < ActionController::TestCase
 
   def test_contact_filter_company_id
     comp = get_company
-    @account.all_contacts.update_all(customer_id: nil)
-    @account.all_contacts.update_all(deleted: false)
-    @account.all_contacts.first.update_column(:customer_id, comp.id)
+    @account.all_contacts.find_each do |contact|
+      contact.update_attributes({:customer_id => nil, :deleted => false})
+    end
+    @account.all_contacts.first.update_attribute(:company_id, comp.id)
     get :index, controller_params(company_id: "#{comp.id}")
     assert_response 200
     response = parse_response @response.body
@@ -788,11 +943,25 @@ class ApiContactsControllerTest < ActionController::TestCase
     match_json(pattern.ordered!)
   end
 
+  def test_contact_filter_updated_at
+    @account.all_contacts.update_all(updated_at: nil)
+    @account.all_contacts.first.update_column(:updated_at, '2016-10-11T12:47:25z')
+    get :index, controller_params(_updated_since: '2016-10-11T12:47:25z')
+    assert_response 200
+    response = parse_response @response.body
+    assert_equal 1, response.size
+    users = @account.all_contacts.order('users.name').select { |x|  x.updated_at == '2016-10-11T12:47:25z' }
+    pattern = users.map { |user| index_contact_pattern(user) }
+    match_json(pattern.ordered!)
+  end
+
   def test_contact_combined_filter
     email = Faker::Internet.email
     comp = get_company
-    @account.all_contacts.update_all(customer_id: nil)
-    @account.all_contacts.first.update_column(:customer_id, comp.id)
+    @account.all_contacts.find_each do |contact|
+      contact.update_attributes({:customer_id => nil})
+    end
+    @account.all_contacts.first.update_attribute(:company_id, comp.id)
     @account.all_contacts.first.user_emails.create(email: email)
     @account.all_contacts.last.update_column(:customer_id, comp.id)
     get :index, controller_params(company_id: "#{comp.id}", email: email)
@@ -814,6 +983,21 @@ class ApiContactsControllerTest < ActionController::TestCase
     get :index, controller_params(company_id: 'a')
     assert_response 400
     match_json [bad_request_error_pattern('company_id', :datatype_mismatch, expected_data_type: 'Positive Integer')]
+  end
+
+  def test_contact_filter_invalid_updated_at
+    @account.all_contacts.update_all(updated_at: nil)
+    @account.all_contacts.first.update_column(:updated_at, 'Invalid String')
+    get :index, controller_params(_updated_since: 'Invalid String')
+    assert_response 400
+    match_json [bad_request_error_pattern('_updated_since', :invalid_date, accepted: 'combined date and time ISO8601')]
+  end
+
+  def test_contact_filter_invalid_nil_updated_at
+    @account.all_contacts.update_all(updated_at: nil)
+    get :index, controller_params(_updated_since: nil)
+    assert_response 400
+    match_json [bad_request_error_pattern('_updated_since', :invalid_date, accepted: 'combined date and time ISO8601')]
   end
 
   def test_contact_blocked_in_future_should_not_be_listed_in_the_index
@@ -1148,18 +1332,48 @@ class ApiContactsControllerTest < ActionController::TestCase
     post :create, construct_params({},  name: Faker::Name.name)
     assert_response 400
 
-    match_json([bad_request_error_pattern('email', :datatype_mismatch, code: :missing_field, expected_data_type: String),
-                bad_request_error_pattern('job_title', :datatype_mismatch, code: :missing_field, expected_data_type: String),
-                bad_request_error_pattern('mobile', :datatype_mismatch, code: :missing_field, expected_data_type: String),
-                bad_request_error_pattern('address', :datatype_mismatch, code: :missing_field, expected_data_type: String),
-                bad_request_error_pattern('description', :datatype_mismatch, code: :missing_field, expected_data_type: String),
-                bad_request_error_pattern('twitter_id', :datatype_mismatch, code: :missing_field, expected_data_type: String),
-                bad_request_error_pattern('phone', :datatype_mismatch, code: :missing_field, expected_data_type: String),
-                bad_request_error_pattern('company_id', :missing_field),
-                bad_request_error_pattern('language', :not_included,
-                                          list: I18n.available_locales.map(&:to_s).join(','), code: :missing_field),
-                bad_request_error_pattern('time_zone', :not_included,
-                                          list: ActiveSupport::TimeZone.all.map(&:name).join(','), code: :missing_field)])
+    match_json([bad_request_error_pattern(
+                  'email', :datatype_mismatch, code: :missing_field,
+                  expected_data_type: String
+                ),
+                bad_request_error_pattern(
+                  'job_title', :datatype_mismatch, code: :missing_field,
+                  expected_data_type: String
+                ),
+                bad_request_error_pattern(
+                  'mobile', :datatype_mismatch, code: :missing_field,
+                  expected_data_type: String
+                ),
+                bad_request_error_pattern(
+                  'address', :datatype_mismatch, code: :missing_field,
+                  expected_data_type: String
+                ),
+                bad_request_error_pattern(
+                  'description', :datatype_mismatch, code: :missing_field,
+                  expected_data_type: String
+                ),
+                bad_request_error_pattern(
+                  'twitter_id', :datatype_mismatch, code: :missing_field,
+                  expected_data_type: String
+                ),
+                bad_request_error_pattern(
+                  'phone', :datatype_mismatch, code: :missing_field,
+                  expected_data_type: String
+                ),
+                bad_request_error_pattern(
+                  'company_id', :datatype_mismatch, code: :missing_field,
+                  expected_data_type: 'Positive Integer'
+                ),
+                bad_request_error_pattern(
+                  'language', :not_included,
+                    list: I18n.available_locales.map(&:to_s).join(','),
+                    code: :missing_field
+                  ),
+                bad_request_error_pattern(
+                  'time_zone', :not_included,
+                  list: ActiveSupport::TimeZone.all.map(&:name).join(','),
+                  code: :missing_field)]
+                )
   ensure
     default_non_required_fiels.map { |x| x.toggle!(:required_for_agent) }
   end
@@ -1204,8 +1418,17 @@ class ApiContactsControllerTest < ActionController::TestCase
                                                            address: nil
                                  )
     assert_response 400
-    match_json([bad_request_error_pattern('email', :datatype_mismatch, code: :missing_field, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null'),
-                bad_request_error_pattern('job_title', :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null'),
+    match_json([bad_request_error_pattern(
+                  'email', :datatype_mismatch, code: :missing_field,
+                  expected_data_type: String,
+                  prepend_msg: :input_received,
+                  given_data_type: 'Null'
+                ),
+                bad_request_error_pattern(
+                  'job_title', :datatype_mismatch, expected_data_type: String,
+                  prepend_msg: :input_received,
+                  given_data_type: 'Null'
+                ),
                 bad_request_error_pattern('mobile', :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null'),
                 bad_request_error_pattern('address', :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null'),
                 bad_request_error_pattern('description', :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null'),
@@ -1213,7 +1436,12 @@ class ApiContactsControllerTest < ActionController::TestCase
                 bad_request_error_pattern('twitter_id', :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null'),
                 bad_request_error_pattern('phone', :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null'),
                 bad_request_error_pattern('tags', :datatype_mismatch, expected_data_type: Array, prepend_msg: :input_received, given_data_type: 'Null'),
-                bad_request_error_pattern('company_id', :blank),
+                bad_request_error_pattern(
+                  'company_id', :datatype_mismatch,
+                  expected_data_type: 'Positive Integer',
+                  prepend_msg: :input_received,
+                  given_data_type: 'Null'
+                ),
                 bad_request_error_pattern('language', :not_included,
                                           list: I18n.available_locales.map(&:to_s).join(',')),
                 bad_request_error_pattern('time_zone', :not_included, list: ActiveSupport::TimeZone.all.map(&:name).join(','))])
@@ -1287,7 +1515,7 @@ class ApiContactsControllerTest < ActionController::TestCase
     match_json([bad_request_error_pattern('email', :fill_a_mandatory_field, field_names: 'email, mobile, phone, twitter_id')])
   end
 
-  def test_create_contact_with_emails_associated_with_other_users_in_other_emails
+  def test_update_contact_with_emails_associated_with_other_users_in_other_emails
     sample_user = get_user_with_email
     email = User.last.email
     put :update, construct_params({ id: sample_user.id }, other_emails: [email])
@@ -1402,7 +1630,10 @@ class ApiContactsControllerTest < ActionController::TestCase
     email = sample_user.email
     put :update, construct_params({ id: sample_user.id }, other_emails: [email])
     assert_response 400
-    match_json([bad_request_error_pattern('other_emails', :cant_add_primary_email, email: "#{email}")])
+    match_json([bad_request_error_pattern(
+                  'other_emails', :cant_add_primary_resource_to_others,
+                  resource: "#{email}", attribute: 'other_emails',
+                  status: 'primary email')])
   end
 
   # Create/Update contact with email, passing an array to the email attribute
@@ -1496,7 +1727,7 @@ class ApiContactsControllerTest < ActionController::TestCase
     email = sample_user.email
     email_array = sample_user.user_emails.map(&:email) - [email]
 
-    sample_contact = get_user
+    sample_contact = get_user_with_single_email
     put :update, construct_params({ id: sample_contact.id }, email: email, other_emails: email_array)
     match_json([bad_request_error_pattern('email', :'Email has already been taken'),
                 bad_request_error_pattern('other_emails', :email_already_taken, invalid_emails: email_array.sort.join(', '))])
@@ -1581,6 +1812,485 @@ class ApiContactsControllerTest < ActionController::TestCase
     assert response['email'] == email
   end
 
+  # Other Companies test
+
+  def test_create_contact_with_other_companies
+    company_ids = Company.first(2).map(&:id)
+    post :create, construct_params({},  name: Faker::Lorem.characters(10),
+                                        email: Faker::Internet.email,
+                                        company_id: company_ids[0],
+                                        view_all_tickets: true,
+                                        other_companies: [
+                                            {
+                                              company_id: company_ids[1],
+                                              view_all_tickets: true
+                                            }
+                                          ])
+    assert_response 201
+    match_json(deleted_contact_pattern(User.last))
+    assert User.last.user_companies.find_by_default(true).company_id == company_ids[0]
+    assert User.last.user_companies.find_by_default(true).client_manager == true
+    assert User.last.user_companies.find_by_default(false).company_id == company_ids[1]
+    assert User.last.user_companies.find_by_default(false).client_manager == true
+  end
+
+  def test_update_contact_with_other_companies
+    sample_user = get_user_with_default_company
+    company_id = (Company.all.map(&:id) - [sample_user.company_id]).sample
+    other_companies = [{company_id: company_id, view_all_tickets: false}]
+    put :update, construct_params({ id: sample_user.id }, other_companies: other_companies)
+    sample_user.reload
+    assert sample_user.user_companies.find_by_default(false).company_id == company_id
+    assert sample_user.user_companies.find_by_default(false).client_manager == false
+  end
+
+  def test_update_delete_other_companies
+    sample_user = get_user_with_multiple_companies
+    put :update, construct_params({ id: sample_user.id }, other_companies: [])
+    sample_user.reload
+    assert sample_user.companies.count == 1
+  end
+
+  def test_create_with_other_companies_max_count_validation
+    other_companies = []
+    20.times do
+      other_companies << { company_id: Company.last.id, view_all_tickets: true }
+    end
+    params_hash = {
+      name: Faker::Lorem.characters(10), email: Faker::Internet.email,
+      company_id: Company.last.id,
+      view_all_tickets: true, other_companies: other_companies
+    }
+    post :create, construct_params({},  params_hash)
+    assert_response 400
+    match_json([bad_request_error_pattern(
+      'other_companies', :too_long, element_type: :elements,
+      max_count: "#{ContactConstants::MAX_OTHER_COMPANIES_COUNT}", current_count: 20)]
+    )
+  end
+
+  def test_create_with_other_companies_with_duplication
+    company_ids = Company.first(2).map(&:id)
+    other_companies = []
+    2.times do
+      other_companies << { company_id: company_ids[1], view_all_tickets: true }
+    end
+    params_hash = {
+      name: Faker::Lorem.characters(10), email: Faker::Internet.email,
+      company_id: company_ids[0],
+      view_all_tickets: true, other_companies: other_companies
+    }
+    post :create, construct_params({},  params_hash)
+    assert_response 400
+    match_json([bad_request_error_pattern('other_companies', :duplicate_companies )])
+  end
+
+  def test_create_with_other_companies_with_nil
+    other_companies = [nil]
+    params_hash = {
+      name: Faker::Lorem.characters(10), email: Faker::Internet.email,
+      company_id: Company.last.id,
+      view_all_tickets: true, other_companies: other_companies
+    }
+    post :create, construct_params({},  params_hash)
+    assert_response 400
+    match_json([bad_request_error_pattern(
+      'other_companies', :array_datatype_mismatch,
+      expected_data_type: 'key/value pair')]
+    )
+  end
+
+  def test_create_with_other_companies_without_company_id
+    other_companies = [{view_all_tickets: true}]
+    params_hash = {
+      name: Faker::Lorem.characters(10), email: Faker::Internet.email,
+      company_id: Company.last.id,
+      view_all_tickets: true, other_companies: other_companies
+    }
+    post :create, construct_params({},  params_hash)
+    assert_response 400
+    match_json([bad_request_error_pattern_with_nested_field(
+      'other_companies', 'company_id', :datatype_mismatch,
+      code: :missing_field, expected_data_type: 'Positive Integer')]
+    )
+  end
+
+  def test_create_with_other_companies_without_any_keys
+    other_companies = [{}]
+    params_hash = {
+      name: Faker::Lorem.characters(10), email: Faker::Internet.email,
+      company_id: Company.last.id,
+      view_all_tickets: true, other_companies: other_companies
+    }
+    post :create, construct_params({},  params_hash)
+    assert_response 400
+    match_json([bad_request_error_pattern_with_nested_field(
+      'other_companies', 'company_id', :datatype_mismatch,
+      code: :missing_field, expected_data_type: 'Positive Integer')]
+    )
+  end
+
+  # Modify test
+  def test_create_with_other_companies_with_invalid_key
+    other_companies = [{id: Company.first.id}]
+    params_hash = {
+      name: Faker::Lorem.characters(10), email: Faker::Internet.email,
+      company_id: Company.last.id,
+      view_all_tickets: true, other_companies: other_companies
+    }
+    post :create, construct_params({},  params_hash)
+    assert_response 400
+    match_json([bad_request_error_pattern('id', :invalid_field )])
+  end
+
+  def test_create_with_other_companies_with_unavailable_companies
+    other_companies = [{company_id: 1000}]
+    params_hash = {
+      name: Faker::Lorem.characters(10), email: Faker::Internet.email,
+      company_id: Company.last.id,
+      view_all_tickets: true, other_companies: other_companies
+    }
+    post :create, construct_params({},  params_hash)
+    assert_response 400
+    match_json([bad_request_error_pattern('other_companies', :invalid_list, list: [1000])])
+  end
+
+  def test_create_with_other_companies_without_default_company
+    other_companies = [{company_id: Company.last.id}]
+    params_hash = {
+      name: Faker::Lorem.characters(10),
+      email: Faker::Internet.email,
+      other_companies: other_companies
+    }
+    post :create, construct_params({},  params_hash)
+    assert_response 400
+    match_json([bad_request_error_pattern(
+      'company_id',  :conditional_not_blank, child: 'other_companies')]
+    )
+  end
+
+  def test_update_contact_with_company_and_other_companies
+    sample_user = get_user_with_default_company
+    sample_user.update_attributes({:deleted => false, :blocked => false})
+    company_ids = Company.first(2).map(&:id)
+    other_companies = [{company_id: company_ids[1], view_all_tickets: false}]
+    put :update, construct_params({ id: sample_user.id },
+      company_id: company_ids[0], view_all_tickets: true,
+      other_companies: other_companies
+    )
+    assert_response 200
+    sample_user.reload
+    assert sample_user.user_companies.find_by_default(true).company_id == company_ids[0]
+    assert sample_user.user_companies.find_by_default(true).client_manager == true
+    assert sample_user.user_companies.find_by_default(false).company_id == company_ids[1]
+    assert sample_user.user_companies.find_by_default(false).client_manager == false
+  end
+
+  def test_update_contact_with_other_companies_without_default_company
+    sample_user = get_user
+    sample_user.companies = []
+    sample_user.save
+    other_companies = [{company_id: Company.first.id, view_all_tickets: false}]
+    put :update, construct_params({ id: sample_user.id },
+      other_companies: other_companies
+    )
+    assert_response 400
+    match_json([bad_request_error_pattern(
+      'company_id',  :conditional_not_blank, child: 'other_companies')]
+    )
+  end
+
+  def test_update_contact_with_default_and_other_companies_with_new_set
+    sample_user = get_user_with_multiple_companies
+    sample_user.update_attributes({:deleted => false, :blocked => false})
+    company_ids = Company.first(2).map(&:id)
+    other_companies = [{company_id: company_ids[1], view_all_tickets: true}]
+    put :update, construct_params({ id: sample_user.id },
+      company_id: company_ids[0], view_all_tickets: true,
+      other_companies: other_companies
+    )
+    assert_response 200
+    assert sample_user.user_companies.find_by_default(true).company_id == company_ids[0]
+    assert sample_user.user_companies.find_by_default(true).client_manager == true
+    assert sample_user.user_companies.find_by_default(false).company_id == company_ids[1]
+    assert sample_user.user_companies.find_by_default(false).client_manager == true
+  end
+
+  def test_update_contact_with_new_other_companies
+    sample_user = get_user_with_default_company
+    company_ids = Company.first(2).map(&:id) - sample_user.company_ids
+    put :update, construct_params({ id: sample_user.id },
+      other_companies: [{company_id: company_ids[0], view_all_tickets: false}]
+    )
+    assert_response 200
+    assert sample_user.user_companies.find_by_default(false).company_id == company_ids[0]
+    assert sample_user.user_companies.find_by_default(false).client_manager == false
+  end
+
+  # Existing { a, [b,c] }     Update { b, [c] }       Result  { b, [c] }
+  def test_update_contact_with_new_default_company_from_other_companies_case_1
+    sample_user = get_user_with_default_company
+    company_ids = Company.all.map(&:id) - sample_user.company_ids
+    sample_user.user_companies.build(company_id: company_ids.first, client_manager: true)
+    sample_user.user_companies.build(company_id: company_ids.last, client_manager: true)
+    sample_user.save
+    params_hash = { company_id: company_ids.first, other_companies: [{ company_id: company_ids.last, view_all_tickets: true }]}
+    put :update, construct_params({id: sample_user.id}, params_hash)
+    sample_user.reload
+    assert_response 200
+    assert sample_user.user_companies.find_by_default(true).company_id == company_ids.first
+    assert sample_user.user_companies.find_by_default(true).client_manager == false
+    assert sample_user.user_companies.find_by_default(false).company_id == company_ids.last
+    assert sample_user.user_companies.find_by_default(false).client_manager == true
+  end
+
+  # Existing { a, [b] }       Update { b, [] }        Result  { b, [] }
+  def test_update_contact_with_new_default_company_from_other_companies_case_2
+    sample_user = get_user_with_default_company
+    company_ids = Company.all.map(&:id) - sample_user.company_ids
+    sample_user.user_companies.build(company_id: company_ids.first, client_manager: true)
+    sample_user.save
+    params_hash = { company_id: company_ids.first, other_companies: [] }
+    put :update, construct_params({id: sample_user.id}, params_hash)
+    sample_user.reload
+    assert_response 200
+    assert sample_user.user_companies.find_by_default(true).company_id == company_ids.first
+    assert sample_user.user_companies.find_by_default(true).client_manager == false
+    assert sample_user.user_companies.where(default: false).count == 0
+  end
+
+  def test_update_contact_with_other_companies_having_default_company_as_an_element
+    sample_user = get_user_with_multiple_companies
+    sample_user.update_attributes({:deleted => false, :blocked => false})
+    default_company = sample_user.company.id
+    other_companies = [{company_id: default_company, view_all_tickets: true}]
+    put :update, construct_params({ id: sample_user.id }, other_companies: other_companies)
+    assert_response 400
+    match_json([bad_request_error_pattern(
+      'other_companies', :cant_add_primary_resource_to_others,
+      resource: default_company, attribute: 'other_companies',
+      status: 'default company' )]
+    )
+  end
+
+  def test_update_contact_with_other_companies_without_multiple_user_companies_feature
+    allowed_features = Account.first.features.where(
+      ' type not in (?) ',['MultipleUserCompaniesFeature']
+      )
+    Account.any_instance.stubs(:features).returns(allowed_features)
+    sample_user = get_user_with_default_company
+    other_companies = [{company_id: Company.last.id, view_all_tickets: true}]
+    put :update, construct_params({ id: sample_user.id },
+      company_id: Company.first.id, view_all_tickets: true,
+      other_companies: other_companies
+    )
+    assert_response 400
+    match_json([bad_request_error_pattern(
+      'other_companies', :require_feature_for_attribute, {
+        code: :inaccessible_field,
+        feature: :multiple_user_companies,
+        attribute: "other_companies" })]
+    )
+  ensure
+    Account.any_instance.unstub(:features)
+  end
+
+  def test_create_contact_with_other_companies_without_multiple_user_companies_feature
+    allowed_features = Account.first.features.where(
+      ' type not in (?) ',['MultipleUserCompaniesFeature']
+    )
+    Account.any_instance.stubs(:features).returns(allowed_features)
+    post :create, construct_params({},  name: Faker::Lorem.characters(10),
+                                        email: Faker::Internet.email,
+                                        company_id: Company.first.id,
+                                        view_all_tickets: true,
+                                        other_companies: [{
+                                          company_id: Company.last.id,
+                                          view_all_tickets: true}]
+                                        )
+    assert_response 400
+    match_json([bad_request_error_pattern(
+      'other_companies', :require_feature_for_attribute, {
+        code: :inaccessible_field, feature: :multiple_user_companies,
+        attribute: "other_companies" })]
+    )
+  ensure
+    Account.any_instance.unstub(:features)
+  end
+
+  def test_create_contact_with_other_companies_invalid_company_id
+    company_ids = Company.first(2).map(&:id)
+    post :create, construct_params({},  name: Faker::Lorem.characters(10),
+                                        email: Faker::Internet.email,
+                                        company_id: company_ids[0],
+                                        view_all_tickets: true,
+                                        other_companies: [
+                                            {
+                                              company_id: "aaaa",
+                                              view_all_tickets: true
+                                            }
+                                          ])
+    assert_response 400
+    match_json([bad_request_error_pattern_with_nested_field(
+      'other_companies', 'company_id', :datatype_mismatch,
+      expected_data_type: 'Positive Integer' )]
+    )
+  end
+
+  def test_create_contact_with_other_companies_company_id_nil
+    company_ids = Company.first(2).map(&:id)
+    post :create, construct_params({},  name: Faker::Lorem.characters(10),
+                                        email: Faker::Internet.email,
+                                        company_id: company_ids[0],
+                                        view_all_tickets: true,
+                                        other_companies: [
+                                            {company_id: nil, view_all_tickets: true}
+                                          ])
+    assert_response 400
+    match_json([bad_request_error_pattern_with_nested_field(
+      'other_companies', 'company_id', :datatype_mismatch,
+      expected_data_type: 'Positive Integer' )]
+    )
+  end
+
+  def test_create_contact_with_other_companies_invalid_view_all_tickets
+    company_ids = Company.first(2).map(&:id)
+    post :create, construct_params({},  name: Faker::Lorem.characters(10),
+                                        email: Faker::Internet.email,
+                                        company_id: company_ids[0],
+                                        view_all_tickets: true,
+                                        other_companies: [
+                                            {company_id: 1, view_all_tickets: "true"}
+                                          ])
+    assert_response 400
+    match_json([bad_request_error_pattern_with_nested_field(
+      'other_companies', 'view_all_tickets', :datatype_mismatch,
+      expected_data_type: 'Boolean' )]
+    )
+  end
+
+  def test_create_contact_with_company_id_string
+    company_ids = Company.first(2).map(&:id)
+    post :create, construct_params({},  name: Faker::Lorem.characters(10),
+                                        email: Faker::Internet.email,
+                                        company_id: company_ids[0],
+                                        view_all_tickets: true,
+                                        other_companies: [
+                                            { company_id: "2", view_all_tickets: true }
+                                          ])
+    assert_response 400
+    match_json([bad_request_error_pattern_with_nested_field(
+      'other_companies', 'company_id', :datatype_mismatch,
+      expected_data_type: 'Positive Integer' )]
+    )
+  end
+
+
+  def test_create_contact_with_company_id_boolean
+    company_ids = Company.first(2).map(&:id)
+    post :create, construct_params({},  name: Faker::Lorem.characters(10),
+                                        email: Faker::Internet.email,
+                                        company_id: company_ids[0],
+                                        view_all_tickets: true,
+                                        other_companies: [
+                                            { company_id: true,
+                                              view_all_tickets: true
+                                            }
+                                          ])
+    assert_response 400
+    match_json([bad_request_error_pattern_with_nested_field(
+      'other_companies', 'company_id', :datatype_mismatch,
+      expected_data_type: 'Positive Integer' )]
+    )
+  end
+
+  def test_create_contact_with_company_id_and_client_manager_string
+    company_ids = Company.first(2).map(&:id)
+    post :create, construct_params({},  name: Faker::Lorem.characters(10),
+                                        email: Faker::Internet.email,
+                                        company_id: company_ids[0],
+                                        view_all_tickets: true,
+                                        other_companies: [
+                                            { company_id: "2", view_all_tickets: "2" }
+                                          ])
+    assert_response 400
+    match_json([bad_request_error_pattern_with_nested_field(
+      'other_companies', 'company_id', :datatype_mismatch,
+      expected_data_type: 'Positive Integer' )]
+    )
+  end
+
+  def test_create_contact_with_company_id_nil
+    company_ids = Company.first(2).map(&:id)
+    post :create, construct_params({},  name: Faker::Lorem.characters(10),
+                                        email: Faker::Internet.email,
+                                        company_id: company_ids[0],
+                                        view_all_tickets: true,
+                                        other_companies: [
+                                            { company_id: nil }
+                                          ])
+    assert_response 400
+    match_json([bad_request_error_pattern_with_nested_field(
+      'other_companies', 'company_id', :datatype_mismatch,
+      expected_data_type: 'Positive Integer' )]
+    )
+  end
+
+  def test_create_contact_with_client_manager_nil
+    company_ids = Company.first(2).map(&:id)
+    post :create, construct_params({},  name: Faker::Lorem.characters(10),
+                                        email: Faker::Internet.email,
+                                        company_id: company_ids[0],
+                                        view_all_tickets: true,
+                                        other_companies: [
+                                            {
+                                              company_id: company_ids[1],
+                                              view_all_tickets: nil
+                                            }
+                                          ])
+    assert_response 400
+    match_json([bad_request_error_pattern_with_nested_field(
+      'other_companies', 'view_all_tickets',
+      :datatype_mismatch, expected_data_type: 'Boolean' )]
+    )
+  end
+
+  def test_create_contact_with_client_manager_integer
+    company_ids = Company.first(2).map(&:id)
+    post :create, construct_params({},  name: Faker::Lorem.characters(10),
+                                        email: Faker::Internet.email,
+                                        company_id: company_ids[0],
+                                        view_all_tickets: true,
+                                        other_companies: [
+                                            { company_id: company_ids[1],
+                                              view_all_tickets: nil
+                                            }
+                                          ])
+    assert_response 400
+    match_json([bad_request_error_pattern_with_nested_field(
+      'other_companies', 'view_all_tickets',
+      :datatype_mismatch, expected_data_type: 'Boolean' )]
+    )
+  end
+
+  def test_create_contact_with_client_manager_string
+    company_ids = Company.first(2).map(&:id)
+    post :create, construct_params({},  name: Faker::Lorem.characters(10),
+                                        email: Faker::Internet.email,
+                                        company_id: company_ids[0],
+                                        view_all_tickets: true,
+                                        other_companies: [
+                                            { company_id: company_ids[1],
+                                              view_all_tickets: nil
+                                            }
+                                          ])
+    assert_response 400
+    match_json([bad_request_error_pattern_with_nested_field(
+      'other_companies', 'view_all_tickets',
+      :datatype_mismatch, expected_data_type: 'Boolean' )]
+    )
+  end
+
   def test_restore_extra_params
     sample_user = get_user
     sample_user.update_column(:deleted, true)
@@ -1620,5 +2330,4 @@ class ApiContactsControllerTest < ActionController::TestCase
     assert_response 404
     sample_user.parent_id = nil
   end
-
 end

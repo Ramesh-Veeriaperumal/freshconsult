@@ -210,7 +210,7 @@ module Portal::Helpers::DiscussionsHelper
 	end
 
 	def link_to_start_topic portal, *args
-		return if portal.forums.reject { |f| f.forum_type == 4 }.empty?
+		return if (!Account.current.verified? || portal.forums.reject { |f| f.forum_type == 4 }.empty?)
 		link_opts = link_args_to_options(args)
 		label = link_opts.delete(:label) || I18n.t('portal.topic.start_new_topic')
 		content_tag :a, label, { :href => portal['new_topic_url'], :title => h(label) }.merge(link_opts)
@@ -352,7 +352,7 @@ HTML
 	end
 
 	def topic_votes topic
-	  pluralize topic.votes, "vote"
+	  "#{topic.votes} #{I18n.t('portal.vote_label', :count => topic.votes)}"
 	end
 
 	def post_sort_options topic, sort_by

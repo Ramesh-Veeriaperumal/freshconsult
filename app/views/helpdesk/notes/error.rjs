@@ -5,3 +5,6 @@ if note_type == :facebook || note_type == :twitter
 end
 show_ajax_flash(page)
 page << "setTimeout(function(){swapEmailNote('cnt-#{note_type}', #{button})}, 500);" if note_type
+if @scroll_to_top
+    page <<"jQuery.scrollTo('#noticeajax');"
+end

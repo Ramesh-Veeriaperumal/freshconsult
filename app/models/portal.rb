@@ -234,6 +234,8 @@ class Portal < ActiveRecord::Base
           errors.add(:base, "Please enter a valid hex color value.") unless value =~ HEX_COLOR_REGEX
         elsif key == 'contact_info'
           preferences[key] = RailsFullSanitizer.sanitize(value)
+        elsif key == 'logo_link' && preferences[key].present?
+          errors.add(:base, I18n.t('admin.products.portal.invalid_linkback_url')) unless value =~ AccountConstants::VALID_URL_REGEX
         end
       end
     end

@@ -120,6 +120,25 @@ $("[rel=contact-hover]").livequery(
 	}
 );
 
+jQuery("[rel=sentiment-hover]").livequery(
+	function(){
+		jQuery(this).popover({
+			delayOut: 400,
+			trigger: 'manual',
+			offset: 5,
+			html: true,
+			reloadContent: false,
+			template: '<div class="dbl_left arrow"></div><div class="senti_hover hover_card inner"><div class="content"><div></div></div></div>',
+			content: function(){
+				return "<strong>"+$(this).data('original-title')+": System predicted sentiment</strong><p>Not Visible to customer</p><a href='https://support.freshdesk.com/support/solutions/articles/224040'>Know more</a>"
+			}
+		});
+	},
+	function(){
+		jQuery(this).popover('destroy');
+	}
+);
+
 
 $("a[rel=hover-popover-below-left]").livequery(
 	function(){
@@ -575,7 +594,8 @@ $('.btn-collapse').livequery(
 			select_init_data.createSearchChoice = function(term, data) {
 		  	//Check if not already existing & then return
 			        if ($(data).filter(function() { return this.text.localeCompare(term)===0; }).length===0)
-				        return { id: term, text: term, flag:true };
+			        		var item = term.toLowerCase().trim();
+				        return { id: item, text: item, flag:true };
 			};
 		}
 		_this.select2(select_init_data);

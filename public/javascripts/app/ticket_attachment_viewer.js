@@ -70,9 +70,14 @@ window.App = window.App || {};
     }
 
     ,attachmentClicked: function(event){
+      // checking multifile enabled
+      var multifileEnabled = $(".tkt-wrapper.ticket_show").data('multifile');
       this.getAllAttachments(event);
-      this.currentPosition = $(event.target).parents(".attachment").index();
-
+      if(multifileEnabled) {
+        this.currentPosition = $(event.target).parents('li.addToRply').data('index');
+      } else {
+        this.currentPosition = $(event.target).parents(".attachment").index();
+      }
       // Show the current file popup only for supported files.
       if(this.supportedFiles.indexOf(this.attachments[this.currentPosition].filetype)>-1){
         this.showCurrentFile();
@@ -109,14 +114,18 @@ window.App = window.App || {};
       this.removePopup();
 
       var currentFile = this.attachments[this.currentPosition];
-
       if(currentFile){
         this.showPopup({
           filelink: currentFile.filelink,
           filename: currentFile.filename,
           currentPos: this.currentPosition,
           length: this.attachments.length,
-          filetype: currentFile.filetype
+          filetype: currentFile.filetype,
+          fileid: currentFile.fileid,
+          added: currentFile.added,
+          multifile: currentFile.multifile,
+          index: currentFile.index,
+          noteid:currentFile.noteid
         });
       }
     }
@@ -145,13 +154,21 @@ window.App = window.App || {};
       // Iterate through all the attachments in the 
       // conversation and create the attachment objects array.
       var attachmentElements = $(event.target).parents(".attachment_list").find('.attachment');
+      var indexCount = 0;
       attachmentElements.each(function(i,el){
         var $el = $(el);
         self.attachments.push({
           filename: $el.find(".attach_content a").data("original-title") || $el.find(".attach_content a").attr('title')
           ,filelink: $el.find(".attach_content a").attr("href")
-          ,filetype: $el.find(".attachment-type .file-type").text().toLowerCase()
+          ,filetype: $el.find(".attachment-type .file-type").text().toLowerCase(),
+          // extended for add to reply feature
+          fileid: $el.attr('id').split("_")[2],
+          added: $el.data('added') || false,
+          multifile: $el.data('multifile') || false,
+          index: indexCount,
+          note:0,
         })
+        indexCount++;
       })
     }
 
@@ -161,15 +178,26 @@ window.App = window.App || {};
 
       // Add the inline images
       var inlineImages = $(event.target).parents(".commentbox").find('img');
+      var noteid = $(event.target).parents(".commentbox").parent().attr('id');
+      if(!noteid) {
+        noteid = $(event.target).parents(".commentbox").parent().parent().attr('id');
+      }
+      var indexCount = 0;
       inlineImages.each(function(i,el){
         var $el = $(el);
         if(!$el.parents(".redactor_box").length){
           self.attachments.push({
             filename: "Inline Image"
           , filelink: $el.attr('src')
-          , filetype: "inline"
+          , filetype: "inline",
+          // extended for add to reply feature
+          multifile: $(".tkt-wrapper.ticket_show").data('multifile') || false,
+          added: $el.siblings('.inline-add-to-rply').data('added') || false,
+          index: indexCount,
+          noteid:noteid
           })
         }
+        indexCount++;
       });
     }
 

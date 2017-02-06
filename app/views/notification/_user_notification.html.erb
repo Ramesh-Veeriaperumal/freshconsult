@@ -1,0 +1,14 @@
+<div class="hide" id="user-notifications-popover" >
+  <header><%= t('notification.user_notifications_header') %></header>
+  <div class="notifications-list"></div>
+  <a id="load-more-notifications"><%= t('notification.load_more') %></a>
+</div>  
+
+<a href="javascript:;" id="user-notification-icon" class="user-notification-link tooltip">
+  <%= font_icon "bell", { :size => 30 } %>
+  <div class="user-notification-seen-state"></div>
+</a>
+
+<script>
+  App.UserNotification.initialize();
+</script>

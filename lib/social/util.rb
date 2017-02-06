@@ -42,6 +42,7 @@ module Social::Util
   end
   
   def validate_tweet(tweet, twitter_id, is_reply = true)
+    tweet.gsub!(NEW_LINE_WITH_CARRIAGE_RETURN, NEW_LINE_CHARACTER)
     twt_text = (is_reply and !tweet.include?(twitter_id)) ? "#{twitter_id} #{tweet}" : tweet
     tweet_length = twt_text.gsub(URL_REGEX, TWITTER_URL_LENGTH).length; 
     length = twitter_id.nil? ? Social::Tweet::DM_LENGTH : Social::Tweet::TWEET_LENGTH

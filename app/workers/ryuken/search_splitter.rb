@@ -12,7 +12,11 @@ class Ryuken::SearchSplitter
   def perform(sqs_msg, args)
     begin
       cluster = Search::V2::Tenant.new(Account.current.id).home_cluster
-      Ryuken::SearchPoller.perform_async(args.to_json, queue: ES_V2_QUEUE_KEY % { cluster: cluster })
+      if args["#{args['object']}_properties"]['archive'].presence
+        Ryuken::SearchPoller.perform_async(args.to_json, queue: ES_V2_QUEUE_KEY % { cluster: (cluster + '-archive') })
+      else
+        Ryuken::SearchPoller.perform_async(args.to_json, queue: ES_V2_QUEUE_KEY % { cluster: cluster })
+      end
       sqs_msg.delete
     rescue Exception => e
       Rails.logger.error "Searchv2 exception - #{e.message} - #{e.backtrace.first}"

@@ -4413,7 +4413,7 @@ li {
       padding: 15px;
       display: inline-block;
       width: 160px;
-      min-height: 173px;
+      min-height: 130px;
       vertical-align: top;
       cursor: pointer;
       position: relative;
@@ -4657,5 +4657,10 @@ li {
   font-size: 10px;
   text-transform: uppercase;
   margin-bottom: 5px;
+  a{
+    text-transform: initial;
+    font-size: 11px;
+    padding-left: 3px;
+    }
 }
 /* ********************** END OF STYLE FOR CUSTOMER SENTIMENT ********************** */

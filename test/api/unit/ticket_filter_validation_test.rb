@@ -49,12 +49,19 @@ class TicketFilterValidationTest < ActionView::TestCase
     assert error.include?('Company datatype_mismatch')
     assert error.include?('Order by not_included')
     assert error.include?('Order type not_included')
-    assert_equal({ company_id: { expected_data_type: :'Positive Integer', prepend_msg: :input_received, given_data_type: 'Null'  },
-                   email: { expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null'  },
-                   filter: { list: 'new_and_my_open,watching,spam,deleted' },
-                   updated_since: { accepted: :'combined date and time ISO8601' },
-                   order_by: { list: 'due_by,created_at,updated_at,status' },
-                   order_type: { list: 'asc,desc' } }, ticket_filter.error_options)
+    assert_equal({
+      company_id: {
+        expected_data_type: :'Positive Integer', prepend_msg: :input_received,
+        given_data_type: 'Null', code: :datatype_mismatch
+      },
+      email: {
+        expected_data_type: String, prepend_msg: :input_received,
+        given_data_type: 'Null'
+      },
+      filter: { list: 'new_and_my_open,watching,spam,deleted' },
+      updated_since: { accepted: :'combined date and time ISO8601' },
+      order_by: { list: 'due_by,created_at,updated_at,status' },
+      order_type: { list: 'asc,desc' } }, ticket_filter.error_options)
   end
 
   def test_valid_case_for_private_API

@@ -1,0 +1,78 @@
+<% content_for :helpcard do %>
+  <%= render :partial => "helpnote" %>
+<% end %>
+<div id="cust-list" class="list-page">
+  <div class="list-page-header" >
+    <div class="row-fluid">
+    <div class="span6">
+        <h3 class="lead"><%=t('.skills')%></h3></div>
+    <div class="span6 pull-right pagination-right header_buttons align-right">
+        <%= link_to t('reorder'),'#', :id => "va_rules_reorder_button", :class => "btn" if(@skills.size > 1) %>
+            <%= (link_to t('.new'), new_admin_skill_path, :class => "btn btn-primary") %>
+    </div>
+    </div>
+
+  
+  <ul class="nav nav-tabs skills">
+        <li class="active"><a href="#"><%= t('.nav_skill_list_text') %></a></li>
+        <% if(@skills.size >= 1) %>
+            <li><a href=<%= admin_agent_skills_path%> ><%= t('.nav_agent_skill_text') %></a></li>
+        <% end %>
+  </ul>  
+  
+</div> 
+    <span class="muted vertical-alignment"><%= t('.info_help').html_safe %></span><br/><br/>
+<div>
+    <%= render :partial => "/shared/reorder_list", :locals => { 
+      :items => @skills,  
+      :action_url => reorder_admin_skills_path, 
+      :title => :name, :container_id => "va_rules_sort", 
+      :reorder_id => "va_rules_reorder_button", :list_id => "va_rules_list"} %>
+</div>
+
+    
+
+            <% if(@skills.size > 0) %>
+            <%-# this applies when ANY skills are present -%>
+
+                      <div class="list-page-body va_rule-index" style="margin-top: -10px;" id="va_rules_list">
+                        <table class="table table-striped"> 
+                          <% (@skills).each do |skill| %>
+                            <tr id=<%= dom_id(skill) %>>
+                              
+                              <td class = "tdSkill">
+                                
+                                  <%= link_to(h(skill.name), edit_admin_skill_path(skill), :class => "item_info") %>
+                               <br/>
+                              </td>
+                              
+                              <td class = "tdSkill">
+                              <% if((skill.users.count) > 1) %>
+                                      <%= link_to(h(skill.users.count) + " Agents", "javascript:void(0)", :class => "item_info tdSkill2_anchor", :data => { :skillid => (skill.id), :agentcount => (skill.users.count), :title => (skill.name) }) %>
+                                      </td>
+                              <% else %>
+                                    <%= link_to(h(skill.users.count) + " Agent", "javascript:void(0)", :class => "item_info tdSkill2_anchor", :data => { :skillid => (skill.id), :agentcount => (skill.users.count), :title => (skill.name) }) %>
+                                    </td>
+                              <% end %>
+                              <td class = "tdSkill">
+                                <div class="item_actions" align="right">
+                                    <%= link_to(t('edit'), edit_admin_skill_path(skill), :class => "btn btn-mini") %>
+                                    <%= link_to "<i class='icon-trash'></i>".html_safe, admin_skill_path(skill), :confirm => t('.confirm_delete_message').html_safe, :method => :delete, :class => "btn btn-mini" %>
+                                </div>
+                              </td>
+                            </tr>
+                          <% end %>
+                        </table>  
+                      </div>
+            <% else %>
+            <%-# this applies when NO skills are present -%>
+                      <div class="list-page-body emptyContainerAlign va_rule-index va_rule_no_skills align_center" id="va_rules_list">
+                      <div class="text-new-skills muted">    <%= t('.new_skill_info') %> 
+                         <%= (link_to t('.skill_create'), new_admin_skill_path) %>  </div>
+                      </div>
+
+            <% end %>
+
+</div>
+
+<%= render :partial => 'popup' %>

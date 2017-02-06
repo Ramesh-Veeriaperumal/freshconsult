@@ -1,0 +1,56 @@
+<% if (pageType == "edit") { %>
+
+    <% if (is_admin == true) {  %>
+
+        <% if (account_skills_present == false) { %>
+
+                - <a class="helpNoteAnchor" data-path-to="/admin/skills/"><%=I18n.t('group.sbrr.create_skills') %></a>
+                  <i class="tooltip ficon-help-icon" twipsy-content-set="true" data-original-title=" <%= I18n.t('group.sbrr.no_skill_in_account_by_admin') %>"></i>
+
+        <% } else if (any_skill_in_current_agents == false) { %>
+
+                - <a class="helpNoteAnchor" data-path-to="/admin/agent_skills"><%=I18n.t('group.sbrr.manage_skills') %></a>
+                <i class="tooltip ficon-unverified" data-html="true" twipsy-content-set="true" data-original-title=" <%= I18n.t('group.sbrr.no_skill_in_group_by_admin') %>"></i>
+
+        <% } else { %>
+
+                - <a class="helpNoteAnchor" data-path-to="/admin/agent_skills"><%=I18n.t('group.sbrr.manage_skills') %></a>
+
+        <% } %>
+
+    <% } else { %>
+
+        <% if (account_skills_present == false) { %>
+
+                <i class="tooltip ficon-help-icon" twipsy-content-set="true" data-original-title=" <%= I18n.t('group.sbrr.no_skill_in_account_by_supervisor') %>"></i>
+
+        <% } else if (any_skill_in_current_agents == false) { %>
+
+                <i class="tooltip ficon-unverified" twipsy-content-set="true" data-original-title=" <%= I18n.t('group.sbrr.no_skill_in_group_by_supervisor') %>"></i>
+
+        <% } else { %>
+
+                - <a class="helpNoteAnchor" data-path-to="/admin/agent_skills"><%=I18n.t('group.sbrr.manage_skills') %></a>
+
+        <% } %>
+
+    <% } %>
+
+<% } else if (pageType == "new") { %>
+
+    <% if (is_admin == true) {  %>
+
+        <% if (account_skills_present == false) { %>
+
+                 - <a class="helpNoteAnchor" data-path-to="/admin/skills/"><%=I18n.t('group.sbrr.create_skills') %></a>
+          <i class="tooltip ficon-help-icon" twipsy-content-set="true" data-original-title=" <%= I18n.t('group.sbrr.no_skill_in_account_by_admin') %>"></i>
+
+        <% } else { %>
+
+                - <a class="helpNoteAnchor" data-path-to="/admin/agent_skills"><%=I18n.t('group.sbrr.manage_skills') %></a>
+
+        <% } %>
+
+    <% } %>
+
+<% } %>

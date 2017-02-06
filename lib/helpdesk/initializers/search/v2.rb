@@ -9,3 +9,7 @@ ES_V2_QUEUE_KEY       = ES_V2_CONFIG[:queue_key]
 ES_V2_POLLER_QUEUES   = YAML::load_file(File.join(Rails.root, 'config/search/etl_queue.yml')).collect {
                           |queue_key| ES_V2_QUEUE_KEY % { cluster: queue_key }
                         }
+
+ES_V2_ARCHIVE_POLLER_QUEUES = ['cluster1-archive','cluster2-archive','cluster3-archive'].map {
+                                |queue_key| ES_V2_QUEUE_KEY % { cluster: queue_key }
+                              }

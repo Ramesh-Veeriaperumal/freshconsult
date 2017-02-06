@@ -12,6 +12,7 @@ jQuery('body').on('assetLoaded.fjax', function() {
     mark_default_company : "<%= t('contacts.mark_default_company') %>",
     client_manager : "<%= t('contacts.client_manager') %>",
     is_company_required: <%= company_field_required %>,
+    max_user_emails: <%= User::MAX_USER_EMAILS %>,
     selected_companies : <%= @selected_companies.present? ? @selected_companies.map(&:name).to_json.html_safe : '[]'.html_safe %>
   });
 });

@@ -3,7 +3,8 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   include Search::TicketSearch
   include Helpdesk::Ticketfields::TicketStatus
   include Cache::Memcache::Helpdesk::Filters::CustomTicketFilter
-  
+  include Collaboration::TicketFilter
+
   attr_accessor :query_hash
   
   MODEL_NAME = "Helpdesk::Ticket"
@@ -31,6 +32,16 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     [{ "condition" => "requester_id", "operator" => "is_in", "value" => [User.current.id]},
      { "condition" => "spam", "operator" => "is", "value" => false},
      { "condition" => "deleted", "operator" => "is", "value" => false}]
+  end
+
+  def self.collab_filter_condition(display_ids)
+    [{ "condition" => "helpdesk_tickets.display_id", "operator" => "is_in", "value" => display_ids.join(",")},
+      spam_condition(false), deleted_condition(false)]
+  end
+  
+  # This filter function fetches data from collaboration/tickets.rb; that fetches data from collab microservice
+  def collab_filter
+    Helpdesk::Filters::CustomTicketFilter.collab_filter_condition(Collaboration::Ticket.fetch_tickets(@per_page, @page))
   end
 
   def shared_by_me_filter
@@ -91,6 +102,10 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
 
   USER_COLUMNS = ["responder_id", "helpdesk_subscriptions.user_id", "helpdesk_schema_less_tickets.long_tc04"]
   GROUP_COLUMNS = ["group_id", "helpdesk_schema_less_tickets.long_tc03"]
+  SCHEMA_LESS_COLUMNS = ["helpdesk_schema_less_tickets.boolean_tc02", "helpdesk_schema_less_tickets.product_id", 
+      "helpdesk_schema_less_tickets.#{Helpdesk::SchemaLessTicket.association_type_column}",
+      "helpdesk_schema_less_tickets.#{Helpdesk::SchemaLessTicket.internal_group_column}",
+      "helpdesk_schema_less_tickets.#{Helpdesk::SchemaLessTicket.internal_agent_column}"]
 
   after_create :create_accesible
   after_update :save_accessible
@@ -163,6 +178,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
       defs["helpdesk_subscriptions.user_id".to_sym] = ({:operator => :is_in,:is_in => :dropdown, :options => [], :name => "helpdesk_subscriptions.user_id", :container => :dropdown})
       defs["article_tickets.article_id".to_sym] = ({:operator => :is,:is => :numeric, :options => [], :name => "article_tickets.article_id", :container => :numeric})
       defs["solution_articles.user_id".to_sym] = ({:operator => :is,:is => :numeric, :options => [], :name => "solution_articles.user_id", :container => :numeric})
+      defs[:"helpdesk_tickets.display_id"] = ({:operator => :is_in, :is_in => :dropdown, :options => [], :name => "helpdesk_tickets.display_id", :container => :dropdown})
       defs[:spam] = ({:operator => :is,:is => :boolean, :options => [], :name => :spam, :container => :boolean})
       defs[:deleted] = ({:operator => :is,:is => :boolean, :options => [], :name => :deleted, :container => :boolean})
       defs[:"helpdesk_schema_less_tickets.#{Helpdesk::SchemaLessTicket.trashed_column}"] = ({:operator => :is,:is => :boolean, :options => [], :name => :trashed, :container => :boolean})
@@ -185,6 +201,8 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
       on_hold_filter
     elsif "raised_by_me".eql?filter_name
       raised_by_me_filter
+    elsif collab_filter_enabled_for?(filter_name)
+      collab_filter
     elsif (from_api && "all_tickets".eql?(filter_name))
      api_all_tickets_filter
     elsif("shared_by_me" == filter_name and Account.current.features?(:shared_ownership))
@@ -207,9 +225,11 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     @match                = :and
     @key                  = params[:wf_key]         || self.id.to_s
     self.model_class_name = params[:wf_model]       if params[:wf_model]
-    
     @per_page             = params[:wf_per_page]    || default_per_page
-    @page                 = params[:page]           || 1
+
+    #if parameter page is not given(nil) or if its value is 0(string comparision), redirect to page 1 otherwise set it as it was given
+    @page                 = (params[:page].nil? || (params[:page] == "0")) ? 1 : params[:page]
+
     @order_type           = TicketsFilter::SORT_ORDER_FIELDS.map{|x| x[0].to_s }.include?(params[:wf_order_type]) ? params[:wf_order_type] : default_order_type
     @order                = TicketsFilter.sort_fields_options.map{|x| x[1].to_s }.include?(params[:wf_order]) ? params[:wf_order] : default_order
     @without_pagination   = params[:without_pagination]         if params[:without_pagination]
@@ -386,7 +406,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     all_joins[0].concat(monitor_ships_join) if all_conditions[0].include?("helpdesk_subscriptions.user_id")
     all_joins[0].concat(tags_join) if all_conditions[0].include?("helpdesk_tags.name")
     all_joins[0].concat(statues_join) if all_conditions[0].include?("helpdesk_ticket_statuses")
-    all_joins[0].concat(schema_less_join) if schema_less_join_condition(all_conditions)
+    all_joins[0].concat(schema_less_join) if join_schema_less?(all_conditions)
     all_joins[0].concat(article_tickets_join) if self.name == "article_feedback"
     all_joins[0].concat(articles_join) if self.name == "my_article_feedback"
     all_joins[0].concat(states_join) if sort_by_response?
@@ -454,7 +474,11 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
         if order_parts.size > 1
           "#{order_parts.first.camelcase.constantize.table_name}.#{order_parts.last} #{order_type}"
         else
-          "#{model_class_name.constantize.table_name}.#{order_parts.first} #{order_type}"
+          if ['priority','status'].include?(order_parts.first)
+            "#{model_class_name.constantize.table_name}.#{order_parts.first} #{order_type}, helpdesk_tickets.created_at asc"
+          else
+            "#{model_class_name.constantize.table_name}.#{order_parts.first} #{order_type}"
+          end
         end
       end
     end
@@ -462,8 +486,8 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
 
   private
 
-  def schema_less_join_condition all_conditions
-    (all_conditions[0].include?("helpdesk_schema_less_tickets.boolean_tc02") or all_conditions[0].include?("helpdesk_schema_less_tickets.product_id") or all_conditions[0].include?("helpdesk_schema_less_tickets.#{Helpdesk::SchemaLessTicket.association_type_column}")) and !Account.current.features?(:shared_ownership)
+  def join_schema_less? all_conditions
+    SCHEMA_LESS_COLUMNS.any?{|col| all_conditions[0].include?(col)} && (!Account.current.features?(:shared_ownership) || User.current.all_tickets_permission?)
   end
 
   def handle_special_values(condition, user_types = USER_COLUMNS, group_types = GROUP_COLUMNS)

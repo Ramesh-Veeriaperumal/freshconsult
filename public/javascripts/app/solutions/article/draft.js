@@ -97,6 +97,11 @@ window.App = window.App || {};
 							$(el).prop('disabled', !$flag);
 						});
 						$('.confirm-delete').attr('disabled', !$flag);
+
+						//disable article publish btn if account not verified
+						if($('.account-not-verified').is(':visible')){
+							$('[data-target-btn="#article-publish-btn"]').prop('disabled', true);
+						}
 					},
 					disableViewOnPortal: function (flag) {
 						$('.portal-preview-icon a, .portal-preview-icon a i').toggleClass('disabled', flag);
@@ -127,6 +132,12 @@ window.App = window.App || {};
 							this.toggleButtons(success);
 							$('.sticky_editor_toolbar').addClass('has-notification');
 							this.disableViewOnPortal(deleted);
+							var offset = jQuery('.article-edit-form .editor-body').position().top;
+							if($('#sticky_redactor_toolbar .fr-toolbar').is(':visible')){
+								$('#sticky_redactor_toolbar .fr-toolbar').css("top", offset);
+							}else{
+								$('#sticky_redactor_toolbar .redactor_toolbar').css("top", offset);
+							}
 						}
 					}
 				};

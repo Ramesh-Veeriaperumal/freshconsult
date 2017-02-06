@@ -12,7 +12,7 @@
       <%= hidden_field_tag :response_type, @pre_auth.response_type %>
       <%= hidden_field_tag :scope, @pre_auth.scope %>
       <div class="agreement-title">
-        <h3 class="lead"><%= t('.authorize_text1').html_safe %> <%= link_to "#{portal_name} #{t('.portal')}", MarketplaceConfig::DEV_URL %> <%= t('.authorize_text2').html_safe %></h3>
+        <h3 class="lead"><%= t('.authorize_text3').html_safe %> <%= link_to "#{portal_name} #{t('.portal')}", MarketplaceConfig::DEV_URL, :target=>"_blank" %> <%= t('.authorize_text2').html_safe %></h3>
       </div> 
       <div class="agreement-btns">
         <%= link_to t('.decline'), MarketplaceConfig::DEV_URL, :class => "btn" %>
@@ -23,11 +23,6 @@
 <% end %>
 
 <ul class="unstyled form-horizontal agreement-txt clear">
-<% unless hide_page %>
-  <li class="control-group">
-    <%= render :partial => "terms_and_conditions" %>
-  </li>
-<% end %>
   <li class="control-group">
     <%= form_tag oauth_authorization_path, method: :post do %>
       <%= hidden_field_tag :client_id, @pre_auth.client.uid %>
@@ -35,9 +30,8 @@
       <%= hidden_field_tag :state, @pre_auth.state %>
       <%= hidden_field_tag :response_type, @pre_auth.response_type %>
       <%= hidden_field_tag :scope, @pre_auth.scope %>
-      <div class="pull-right">
-        <%= link_to t('.decline'), MarketplaceConfig::DEV_URL, :class => "btn #{hideClass}" %>
-        <%= submit_tag t('.go_to_portal' , :portal_name => portal_name ).html_safe, :id=>'allow', :class => "btn btn-primary #{hideClass}" %>
+      <div class="pull-right hide">
+        <%= submit_tag t('.go_to_portal' , :portal_name => portal_name ).html_safe, :id=>'allow', :class => "btn btn-primary hide" %>
       </div>
     <% end %>
   </li>

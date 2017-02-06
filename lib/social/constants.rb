@@ -138,4 +138,8 @@ module Social::Constants
 
   EMOJI_UNICODE_REGEX         = /[\u{1F600}-\u{1F64F}|\u2600-\u26FF|\u{1F300}-\u{1F5FF}|\u{1F900}-\u{1F9FF}|\u{1F680}-\u{1F6FF}|\u2700-\u27BF]/i
 
+  NEW_LINE_WITH_CARRIAGE_RETURN = /\r\n/
+ 
+  NEW_LINE_CHARACTER = "\n"
+
 end

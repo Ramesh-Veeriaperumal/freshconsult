@@ -20,7 +20,7 @@ module Helpdesk
 
 				# Check other possible ways to do this
 				# Create temp eml file for the email
-				email_content = StringIO.new(params[:email])
+				#email_content = StringIO.new(params[:email])
 				
 				# do s3 activities
 				primary_db = Helpdesk::DBStore::MailDBStoreFactory.getDBStoreObject(DBTYPE[:primary])
@@ -28,7 +28,7 @@ module Helpdesk
 				envelope_to_array = get_to_address_from_envelope(params[:envelope])
 
 				envelope_to_array.each_with_index do |to_address, i|
-
+					email_content = StringIO.new(params[:email])
 					envelope_params = ActiveSupport::JSON.decode(params[:envelope]).with_indifferent_access
 					envelope_params[:to] = Array.new.push(to_address)
 					params[:envelope] = envelope_params.to_json
@@ -49,8 +49,8 @@ module Helpdesk
 				metadata_attributes = {
 					:received_time => "#{Time.now.utc}",
 					:received_host => "#{Socket.gethostname}",
-					:envelope => params[:envelope],
-					:from => params[:from]
+					:envelope => params[:envelope]
+					# :from => params[:from]
 				}
 
 				return metadata_attributes

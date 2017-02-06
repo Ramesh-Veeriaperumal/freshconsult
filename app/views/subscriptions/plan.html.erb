@@ -20,7 +20,7 @@
 <% end %>
 
 <h3 class="title"><%= @page_title = t('change_plan') %></h3>
-<%= render :partial => "select_plans", :locals => { :plans => @plans, :subscription => @subscription, :show_all => true } %>
+<%= render :partial => current_account.new_pricing_launched? ? "select_new_plans" : "select_plans", :locals => { :plans => @plans, :subscription => @subscription, :show_all => true } %>
 
 <div class="button-container">
 	<%= link_to( t('back_plans_billing').html_safe, subscription_url, :class => "uiButton floatl" ) %>

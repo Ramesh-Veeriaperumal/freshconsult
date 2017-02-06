@@ -51,6 +51,6 @@ class Admin::GamificationController < Admin::AdminController
     end
 
     def all_scoper
-      current_account.all_quests
+      current_account.features?(:forums) ? current_account.all_quests :  current_account.all_quests.where("category != ?",Gamification::Quests::Constants::GAME_TYPE_KEYS_BY_TOKEN[:forum])
     end
 end

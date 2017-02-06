@@ -2,7 +2,6 @@ class Admin::PortalController < Admin::AdminController
 
   before_filter :set_moderators_list, :only => :update_settings
   before_filter :filter_feature_list, :only => :update_settings
-  before_filter :filter_params, :only => [:create, :update]
   before_filter :fetch_portal, :only => [:edit, :update, :destroy, :delete_logo, :delete_favicon]
   before_filter :fetch_product, :check_portal, :only => [:enable, :create]
   before_filter :load_other_objects, :only => [:edit, :enable, :update]
@@ -147,11 +146,4 @@ class Admin::PortalController < Admin::AdminController
       flash[:notice] = t(:"flash.portal.not_found.#{obj}")
       redirect_to admin_portal_index_path
     end
-
-    def filter_params
-      if params[:portal][:preferences].present? && !current_account.rebranding_enabled?
-        params[:portal].except!(:preferences)
-      end
-    end
-
 end

@@ -74,42 +74,72 @@ class SendgridDomainUpdates < BaseWorker
       spam_email_exact_match_regex = spam_email_exact_regex_value.present? ? Regexp.compile(spam_email_exact_regex_value, true) : SPAM_EMAIL_EXACT_REGEX
       spam_email_apprx_match_regex = spam_email_apprx_regex_value.present? ? Regexp.compile(spam_email_apprx_regex_value, true) : SPAM_EMAIL_APPRX_REGEX
 
+      stop_sending = true
       if mxrecord.blank?
         spam_score = 5 
-        blacklist_spam_account(account, true, "Outgoing will be blocked for Account ID: #{account.id} , Reason: Invalid Admin contact address")
+        reason = "Outgoing will be blocked for Account ID: #{account.id} , Reason: Invalid Admin contact address"
       elsif ismember?(BLACKLISTED_SPAM_DOMAINS,admin_email_domain)
         spam_score = 5
-        blacklist_spam_account(account, true, "Outgoing will be blocked for Account ID: #{account.id} , Reason: Blacklisted admin email domain") 
+        reason = "Outgoing will be blocked for Account ID: #{account.id} , Reason: Blacklisted admin email domain"
       elsif Freemail.disposable?(account.admin_email)
         spam_score = 5
-        blacklist_spam_account(account, true, "Outgoing will be blocked for Account ID: #{account.id} , Reason: Disposable admin email address")
+        reason = "Outgoing will be blocked for Account ID: #{account.id} , Reason: Disposable admin email address"
       elsif ((account.helpdesk_name =~ spam_email_exact_match_regex || account.full_domain =~ spam_email_exact_match_regex) && Freemail.free?(account.admin_email))
         spam_score = 5
-        blacklist_spam_account(account, true, "Outgoing will be blocked for Account ID: #{account.id} , Reason: Account name contains exact suspicious words")
+        reason = "Outgoing will be blocked for Account ID: #{account.id} , Reason: Account name contains exact suspicious words"
       else
         signup_params = get_account_signup_params(Account.current.id)
-        signup_params["api_response"] = EhawkEmailVerifier.new().scan(signup_params) if (signup_params["account_details"].present? && signup_params["metrics"].present?)
-        save_account_sign_up_params(Account.current.id, signup_params)
+        if (signup_params["account_details"].present? && signup_params["metrics"].present?)
+          begin
+            signup_params["api_response"] = Email::AntiSpam.scan(signup_params,Account.current.id) 
+            signup_params["api_response"]["status"] = -1 if (signup_params["api_response"].present? && !signup_params["api_response"]["status"].present?)
+            save_account_sign_up_params(Account.current.id, signup_params)
+            Rails.logger.info "Response by Ehawk Email Verifier account - #{account.id} ::: email - #{signup_params["account_details"]["email"]} ::: ip - #{signup_params["account_details"]["source_ip"]} ::: status - #{signup_params["api_response"]["status"]} ::: reason - #{signup_params["api_response"]["reason"]} "
+          rescue => e
+            Rails.logger.error "Error while processing Ehawk Emai lVerifier \n#{e.message}\n#{e.backtrace.join("\n\t")}"
+          end
+        end
         if signup_params["api_response"] && signup_params["api_response"]["status"] == 5
           spam_score = 5
-          blacklist_spam_account(account, true, "Outgoing will be blocked for Account ID: #{account.id} , Reason: #{signup_params["api_response"]["reason"]}")
+          reason = "Outgoing will be blocked for Account ID: #{account.id} , Reason: #{signup_params["api_response"]["reason"]}"
         elsif((account.helpdesk_name =~ spam_email_apprx_match_regex || account.full_domain =~ spam_email_apprx_match_regex) && Freemail.free?(account.admin_email)) 
           spam_score = 4 
-          blacklist_spam_account(account, false, "Reason: Account name looks suspicious for Account ID: #{account.id}")
+          stop_sending = false
+          reason = "Reason: Account name looks suspicious for Account ID: #{account.id}"
         elsif signup_params["api_response"] && signup_params["api_response"]["status"] == 4
           spam_score = 4
-          blacklist_spam_account(account, false, "Account credetials looks suspicious for Account ID: #{account.id} , Reason: #{signup_params["api_response"]["reason"]}")
+          stop_sending = false
+          reason = "Account credetials looks suspicious for Account ID: #{account.id} , Reason: #{signup_params["api_response"]["reason"]}"
         elsif signup_params["api_response"] && signup_params["api_response"]["status"]
           spam_score = signup_params["api_response"]["status"] 
         else 
           spam_score = 0
         end
       end
+
       unless account.conversion_metric.nil?
         account.conversion_metric.spam_score = spam_score
         account.conversion_metric.save
       end
+
+      if (account.full_domain =~ /support/i && (spam_score >= 4  || Freemail.free_or_disposable?(account.admin_email)))
+        sleep(5)
+        Account.current.subscription.update_attributes(:state => "suspended")
+        ShardMapping.find_by_account_id(Account.current.id).update_attributes(:status => 403)
+        notify_blocked_spam_account_detection(account, "Reason: Domain url contains support and signup using free or spam email domains")
+      elsif spam_score >= 4
+        blacklist_spam_account(account, stop_sending, reason)
+      end
     end
+  end
+
+
+  def notify_blocked_spam_account_detection(account, additional_info)
+    FreshdeskErrorsMailer.error_email(nil, {:domain_name => account.full_domain}, nil, {
+            :subject => "Blocked suspicious spam account :#{account.id} ",
+            :recipients => ["mail-alerts@freshdesk.com", "noc@freshdesk.com"],
+            :additional_info => {:info => additional_info}
+          })
   end
 
   def blacklist_spam_account(account, is_spam_email_account, additional_info )
@@ -166,7 +196,7 @@ class SendgridDomainUpdates < BaseWorker
 
   def save_account_sign_up_params account_id, args = {}
     key = ACCOUNT_SIGN_UP_PARAMS % {:account_id => account_id}
-    set_others_redis_key(key,args.to_json)
+    set_others_redis_key(key,args.to_json,1296000)
     increment_portal_cache_version
   end
 
