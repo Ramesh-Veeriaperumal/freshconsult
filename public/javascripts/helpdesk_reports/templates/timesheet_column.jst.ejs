@@ -3,6 +3,7 @@
     		<li data-action='select-column'>
     		<input type="checkbox" id="<%= data[i].id %>" name="<%= data[i].name %>"
     		<%= data[i].default ? 'checked' : "" %>
+    		data-custom-column ="<%= data[i].is_custom %>"
     		/><label for="<%= data[i].id %>"><%= data[i].name %></label> </li>
     	<% } %>
 <% } %>

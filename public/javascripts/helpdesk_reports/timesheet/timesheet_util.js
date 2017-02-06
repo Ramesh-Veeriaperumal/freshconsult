@@ -557,13 +557,14 @@ Helpkit.TimesheetUtil = {
         $document.on('click.helpdesk_reports','[data-action=select-column]',function(){
              var no_of_selections = jQuery("[data-action=select-column] input:checked").length;
              if(no_of_selections <= _this.MAX_COLUMN_LIMIT ) {
-                jQuery('.picker .message').addClass("hide");
+                jQuery('.picker .limit-error').addClass("hide");
                 //jQuery('[data-action=submit-column-selection]').removeClass('disabled');
              } else {
-                jQuery('.picker .message').removeClass("hide");
+                jQuery('.picker .limit-error').removeClass("hide");
                 //jQuery('[data-action=submit-column-selection]').addClass('disabled');
                 return false;
              }
+             _this.toggleArchiveMessage();
         });
 
         _this.onInitialLoad();
@@ -573,6 +574,31 @@ Helpkit.TimesheetUtil = {
         _this.actions.customFieldHash();
         _this.actions.generateReportFiltersMenu();
         //_this.actions.scrollTop();
+    },
+    toggleArchiveMessage : function() {
+        //Check if custom column is selected
+        if(Helpkit.locals.archive_enabled) {
+            var is_custom_column_selected = jQuery("[data-action=select-column] input:checked[data-custom-column=true]").length > 0 ? true : false;
+            if(is_custom_column_selected) {
+                jQuery('.picker .limit-error').addClass('hide');
+                jQuery('.picker .archive-error').removeClass('hide');
+            } else {
+                jQuery('.picker .archive-error').addClass('hide');
+            }
+
+            var active_filters = jQuery("#active-report-filters .filter-field");
+            var is_custom_filter_used =  false;
+            jQuery.each(active_filters,function(i,el){
+                if(jQuery.inArray(jQuery(el).attr('condition') , Helpkit.locals.custom_filter) != -1){
+                    is_custom_filter_used = true;
+                }
+            });
+            if(is_custom_filter_used) {
+                jQuery('#filter_validation_errors .error-msg').text('Filtering by custom fields will exclude archive tickets');
+            } else {
+                jQuery('#filter_validation_errors .error-msg').text('');
+            }  
+        }
     },
     getPdfParams :function() {
         var remove = [];
@@ -672,6 +698,9 @@ Helpkit.TimesheetUtil = {
             jQuery(query).attr('checked','checked');
         });
 
+        //Add Divider
+        jQuery('[data-custom-column="true"]:first').parent().addClass('divider');
+        self.toggleArchiveMessage();
     },
     actions : {
         closeFilterMenu: function () {
@@ -714,6 +743,7 @@ Helpkit.TimesheetUtil = {
             var _this = this;
             var field = jQuery(active).closest("[data-type='filter-field']");
             _this.removeReportField(field.attr('condition'), field.attr('data-label'));
+            Helpkit.TimesheetUtil.toggleArchiveMessage();
         },
         disableKeyPress: function (ev) {
             ev.preventDefault();
@@ -786,6 +816,7 @@ Helpkit.TimesheetUtil = {
                 }
                 _this.removeFieldFromMenu(field);
             }
+            Helpkit.TimesheetUtil.toggleArchiveMessage();
             _this.hideFilterMenu();
             _this.toggleMoreButton();
         },
@@ -1027,6 +1058,7 @@ var savedReportUtil = (function() {
                       //Full markup is replaced on every generate
                       //populate the filters from report filter data
                       _this.addFiltersToMenu(false);
+                      Helpkit.TimesheetUtil.toggleArchiveMessage();
                   }
                   var result = Helpkit.ScheduleUtil.isScheduled(
                               _this.last_applied_saved_report_index,
