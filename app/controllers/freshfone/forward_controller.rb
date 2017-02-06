@@ -21,7 +21,7 @@ class Freshfone::ForwardController < FreshfoneBaseController
   before_filter :transfer_ignored, :only => [:transfer_complete], :if => :check_transfer_ignored?
   before_filter :set_child_call_status, :only => [:transfer_initiate]
   before_filter :check_child_call_status, :only => [:transfer_complete]
-  after_filter  :cancel_browser_agents, only: [:initiate], if: :new_notifications?
+  after_filter  :cancel_browser_agents, only: [:initiate, :process_custom], if: :new_notification_accepted_call?
 
   include Freshfone::Call::BranchDispatcher
 
@@ -328,5 +328,10 @@ class Freshfone::ForwardController < FreshfoneBaseController
     def handle_already_accepted_call
       Rails.logger.info "Handle Simultaneous Answer For Account Id :: #{current_account.id}, Call Id :: #{@transferred_call.id}, CallSid :: #{params[:CallSid]}, AgentId :: #{params[:agent_id]}"
       render xml: telephony.incoming_answered(@transferred_call.agent)
+    end
+
+    def new_notification_accepted_call?
+      new_notifications? && (params[:action] == 'initiate' ||
+                             custom_forward_accept?)
     end
 end

@@ -23,8 +23,11 @@ module TicketsTestHelper
     ticket_pattern(ticket).except(*([:attachments, :conversations, :tags] - exclude))
   end
 
-  def index_ticket_pattern_with_associations(ticket, requester = true, ticket_states = true)
-    ticket_pattern_with_association(ticket, false, false, requester, false, ticket_states).except(:attachments, :conversations, :tags)
+  def index_ticket_pattern_with_associations(ticket, requester = true, ticket_states = true, company = true)
+    ticket_pattern_with_association(
+      ticket, false, false, requester,
+      company, ticket_states
+    ).except(:attachments, :conversations, :tags)
   end
 
   def index_deleted_ticket_pattern(ticket)
@@ -140,7 +143,7 @@ module TicketsTestHelper
 
   def update_ticket_pattern(expected_output = {}, ignore_extra_keys = true, ticket)
     description = expected_output[:description] || ticket.description_html
-    ticket_pattern(expected_output, ignore_extra_keys, ticket).merge(description: description)
+    ticket_pattern(expected_output, ignore_extra_keys, ticket).merge(description: description, cloud_files: Array)
   end
 
   def latest_note_response_pattern(note)
@@ -318,7 +321,7 @@ module TicketsTestHelper
   end
 
   def ticket_show_pattern(ticket, survey_result = nil)
-    pattern = ticket_pattern(ticket)
+    pattern = ticket_pattern(ticket).merge(cloud_files: Array)
     ticket_topic = ticket_topic_pattern(ticket)
     pattern.merge!(freshfone_call: freshfone_call_pattern(ticket)) if freshfone_call_pattern(ticket).present?
     if Account.current.features?(:facebook) && ticket.facebook?
@@ -338,7 +341,7 @@ module TicketsTestHelper
     {
       id: call.id,
       duration: call.call_duration,
-      recording: attachment_pattern({}, call.recording_audio)
+      recording: attachment_pattern(call.recording_audio)
     }
   end
 

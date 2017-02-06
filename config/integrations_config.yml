@@ -7,6 +7,31 @@ app:
   onedrive:
     client_id: "0000000044164F31"
     client_secret: "0aJhfYIgkDDPb-cE57TehreBwVlRKQd4"
+  cloud_elements:
+    development:
+      auth_header: "User y31G0E60L6Zs/nZx7x0MJtRKCyhsJACUaAaDYU67S78=,Organization 3abb0215cd97f5f346f29a860e1e5982"
+      crm_formula_template_id:
+        salesforce_v2:  "4345"
+      fd_formula_template_id:
+        salesforce_v2: "4346"
+    test:
+      auth_header: "User y31G0E60L6Zs/nZx7x0MJtRKCyhsJACUaAaDYU67S78=,Organization 3abb0215cd97f5f346f29a860e1e5982"
+      crm_formula_template_id:
+        salesforce_v2:  "4345"
+      fd_formula_template_id:
+        salesforce_v2: "4346"
+    staging:
+      auth_header: "User HEr6MX+mVz+zMwfSRIydYpKVqSbI4F+LWhodHhj0IQk=,Organization e18df23b39be015812b0ae60911dccbd"
+      crm_formula_template_id:
+        salesforce_v2:  "5349"
+      fd_formula_template_id:
+        salesforce_v2: "5350"
+    production:
+      auth_header: "User 7ehqmCMXILFwqZN5z0PD0oZBFzK1paw3CMnfXF3Dtmc=,Organization 508a53340eac87879ff8e65ddfd39da0"
+      crm_formula_template_id:
+        salesforce_v2:  "3119"
+      fd_formula_template_id:
+        salesforce_v2: "3129"
 marketplace_landing_paths:
   github: "/integrations/github/oauth_install"
   quickbooks: "/integrations/marketplace/quickbooks_sso/landing"

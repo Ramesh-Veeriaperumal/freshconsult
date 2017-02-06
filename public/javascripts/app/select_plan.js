@@ -86,10 +86,10 @@ window.App = window.App || {};
       var $this = $(button),
       to_plan = $this.data('planId'),
       to_plan_name = $this.data('plan');
-
-      if(to_plan == this.subscribed_plan_id || to_plan_name == "Sprout"){
-        if($('.pricelist.active .trial-plan-change').hasClass('hide'))
+      if(to_plan == this.subscribed_plan_id || to_plan_name.indexOf("sprout") != -1){
+        if($('.pricelist.active .trial-plan-change').hasClass('hide')) {
           $('.pricelist.active .trial-plan-change').removeClass('hide').show();
+        }
         $('.pricelist.active').removeClass('active');
         $this.addClass('hide').hide();
         this.choosePlan($this);
@@ -108,8 +108,12 @@ window.App = window.App || {};
       has_free_agents = btn.data("freePlan");
 
       this.current_active_plan_flag = btn.data("currentPlan");
-      if(this.selected_plan != null) this.selected_plan.removeClass('active');
-
+      if(this.selected_plan != null) {
+        this.selected_plan.removeClass('active');
+      }
+      else {
+        $('.pricelist.active').removeClass('active'); 
+      }
       this.current_plan_id = btn.data("planId");
 
       if(!has_free_agents ){
@@ -157,9 +161,13 @@ window.App = window.App || {};
           if($this.current_active_plan_flag) {
             $("#billing-template .billing-cancel").show();
             $("#billing-template .billing-submit").val("Update Plan");
+            $("#billing-template .billing-submit").addClass('btn-primary');
+            $("#billing-template .billing-submit").removeClass('btn-flat');
           } 
           else {
             $("#billing-template .billing-cancel").hide();
+            $("#billing-template .billing-submit").addClass('btn-flat');
+            $("#billing-template .billing-submit").removeClass('btn-primary');
           }
         }
       );

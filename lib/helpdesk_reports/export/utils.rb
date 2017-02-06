@@ -83,7 +83,7 @@ module HelpdeskReports::Export::Utils
     if export_id
       path = s3_export_path(export_id, file_name)
     else
-      path = "data/helpdesk/#{export_type}/#{Rails.env}/#{User.current.id}/#{@today}/#{file_name}"
+      path = "data/helpdesk/#{export_type}/#{Rails.env}/#{User.current.id}/#{@today || DateTime.now.utc.strftime('%d-%m-%Y')}/#{file_name}"
     end
     file = File.open(file_path)
     write_options = { :content_type => file.content_type,:acl => "public-read" }

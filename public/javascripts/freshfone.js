@@ -75,6 +75,7 @@
         $tollfreeSearchResults.hide();
         options = options || default_toll_free_options;
         var search_options = populate_request_body(options);
+        $('#toll_free_prefix_search').toggle(!isAustraliaSelected());
 
         if (search_freshfone) {
             search_freshfone.abort();
@@ -93,6 +94,10 @@
                 $tollfreeSearchResults.html(data);
             }
         });
+    }
+
+    function isAustraliaSelected() {
+        return $('#toll_free_supported_countries').val() == 'AU';
     }
 
 

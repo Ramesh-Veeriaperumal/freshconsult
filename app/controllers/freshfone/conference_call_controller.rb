@@ -10,6 +10,7 @@ class Freshfone::ConferenceCallController < FreshfoneBaseController
   include Freshfone::AcwUtil
   
   before_filter :select_current_call, :only => [:status]
+  before_filter :update_cancel_response, only: :status
   before_filter :complete_browser_leg, only: [:status], if: :agent_leg?
   before_filter :complete_supervisor_leg, :only => [:status], :if => :supervisor_leg?
   before_filter :check_conference_feature, :only => [:status]
@@ -338,5 +339,13 @@ class Freshfone::ConferenceCallController < FreshfoneBaseController
     def get_call_id
       return @call.id if ongoing_supervisor_call.present?
       @call.parent.id
+    end
+
+    def update_cancel_response
+      return if current_call.blank?
+      call_meta = current_call.meta
+      return unless current_call.ringing? && call_meta.present? &&
+        (current_call.incoming? || current_call.transferred_leg?)
+      call_meta.cancel_all_agents
     end
 end

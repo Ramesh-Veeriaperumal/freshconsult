@@ -71,7 +71,7 @@ class Helpdesk::Activity < ActiveRecord::Base
     ticket_model = Helpdesk::Ticket.model_name
     ticket_join_table = ticket_table
 
-    if user.agent? and !user.agent.all_ticket_permission
+    if user.agent? and !user.all_tickets_permission?
       query_hash[:conditions] = Helpdesk::Ticket.permissible_condition(user)
       query_hash[:conditions][0] += " OR (#{activity_table}.notable_type != ?)"
       query_hash[:conditions] << ticket_model

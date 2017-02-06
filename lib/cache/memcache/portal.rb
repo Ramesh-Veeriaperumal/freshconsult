@@ -34,6 +34,20 @@ module Cache::Memcache::Portal
     MemcacheKeys.fetch(key) { ::Portal::Template.where(portal_id: self.id).first }
   end
 
+  def fetch_sitemap
+    key = SITEMAP_KEY % { :account_id => self.account_id, :portal_id => self.id } 
+    file = "sitemap/#{self.account_id}/#{self.id}.xml"
+    self.clear_sitemap_cache if MemcacheKeys.get_from_cache(key).is_a?(NullObject)
+    MemcacheKeys.fetch(key) { 
+      AwsWrapper::S3Object.read(file,S3_CONFIG[:bucket]) if AwsWrapper::S3Object.find(file,S3_CONFIG[:bucket]).exists?
+    }
+  end
+
+  def clear_sitemap_cache
+    key = SITEMAP_KEY % { :account_id => self.account_id, :portal_id => self.id }
+    MemcacheKeys.delete_from_cache key
+  end
+
   def solution_categories_from_cache
     CustomMemcacheKeys.fetch(current_solution_cache_key, 0, "SOLUTION PORTAL CACHE FETCH for account ##{Account.current.id}") do
       Solution::CategoryMeta.joins(

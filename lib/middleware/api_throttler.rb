@@ -48,7 +48,7 @@ class Middleware::ApiThrottler < Rack::Throttle::Hourly
     @mobile_user_agent = env["HTTP_USER_AGENT"]
     @sub_domain = @host.split(".")[0]
     @path_info = env["PATH_INFO"]
-    if SKIPPED_SUBDOMAINS.include?(@sub_domain)
+    if SKIPPED_SUBDOMAINS.include?(@sub_domain) || SKIP_MIDDLEWARES["skipped_routes"].include?(@path_info)
       @status, @headers, @response = @app.call(env)
       return [@status, @headers, @response]
     end

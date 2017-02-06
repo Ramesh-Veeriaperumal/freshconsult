@@ -1,8 +1,9 @@
 class Admin::Social::FacebookStreamsController < Admin::Social::StreamsController
   
   include Facebook::Constants
+  helper Admin::Social::UIHelper
   
-  before_filter { |c| c.requires_feature :facebook }
+  before_filter { access_denied unless current_account.basic_facebook_enabled? }
 
   before_filter :social_revamp_enabled?
   before_filter :fb_client,         :only => [:index, :edit]

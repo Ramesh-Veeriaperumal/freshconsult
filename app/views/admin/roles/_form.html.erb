@@ -4,19 +4,19 @@
 	<div>
 		<ul class="clearfix unstyled">
  			<li class="row-fluid">
- 				<%= role_form.label :name, t('name'), :class =>'control-label span2' %>
+ 				<%= role_form.label :name, ("<b>"+t('name')+"<span class='required_star'>*</span></b>").html_safe, :class =>'control-label span2' %>
 				<div class="span10">
-					<%= role_form.text_field :name , :class => "text required span10", :placeholder => t('admin.roles.role_name')%>
+					<%= role_form.text_field :name , :class => "text required", :placeholder => t('admin.roles.role_name')%>
 				</div>
 			</li>
 			<li class="row-fluid">
-				<%= role_form.label :description, t('description'), :class =>'control-label span2' %>
+				<%= role_form.label :description, ("<b>"+t('description')+"</b>").html_safe, :class =>'control-label span2' %>
 				<div class="span10">
-					<%= role_form.text_area :description , :class => "text span10", :cols => "40", :rows => "5", 						:placeholder => t('admin.roles.role_description')%>
+					<%= role_form.text_area :description , :class => "text", :cols => "40", :rows => "5", 						:placeholder => t('admin.roles.role_description')%>
 				</div>
 			</li>
       <li class="row-fluid">
-        <%= role_form.label :agents, t('agents'), :class =>'control-label span2' %>
+        <%= role_form.label :agents, ("<b>"+t('agents')+"</b>").html_safe, :class =>'control-label span2' %>
         <div class="span10">
 					<% label = (@role.users.count == 0 ? t('admin.roles.add_label') : t('admin.roles.manage_label')) %>
 					<a class="popup" data-isaccadmin="<%= @role.privilege?(:manage_account) %>" data-agentcount="<%= @role.users.count %>" data-roleid="<%= @role.id %>" href="javascript:void(0)" data-title="<%= @role.name %>">
@@ -29,7 +29,6 @@
 					</a>
         </div>
       </li>
-		</ul>
 		<div>
 			<p class="lead-title lead">
 				<span><%= t('admin.roles.permissions')%></span>

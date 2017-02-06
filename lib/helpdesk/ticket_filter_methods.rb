@@ -2,6 +2,7 @@
 module Helpdesk::TicketFilterMethods
 
   include TicketsFilter
+  include Collaboration::TicketFilter
 
   ORDER = {
     :defaults => [:save_as, :cancel],
@@ -26,6 +27,7 @@ module Helpdesk::TicketFilterMethods
     end
 
     top_view_html = drop_down_views(top_views_array, selected_item, "leftViewMenu", (selected.blank? or params[:unsaved_view])).to_s 
+
     top_view_html += controls_on_privilege(selected_item, (selected_item[:default])) if current_account.custom_ticket_views_enabled?
     return top_view_html
   end
@@ -127,7 +129,6 @@ module Helpdesk::TicketFilterMethods
     order_of(view, default).each do |link_method|
       control_links << send("#{link_method}_link", view)
     end
-
     (content_tag :div, control_links.html_safe, :id => "view_manage_links").html_safe
   end
 

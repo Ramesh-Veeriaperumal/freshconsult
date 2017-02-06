@@ -31,7 +31,7 @@ module BootstrapTestHelper
       launched: Array,
       settings: {
         personalized_email_replies: wildcard_matcher,
-        componse_email_enabled: wildcard_matcher,
+        compose_email_enabled: wildcard_matcher,
         include_survey_manually: wildcard_matcher
       }
     }

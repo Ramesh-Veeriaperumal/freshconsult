@@ -53,6 +53,19 @@ class CRM::Freshsales
     end
   end
 
+  class DeletedCustomer < FdAccount
+    @queue = QUEUE
+
+    def self.handle_data_sync(freshsales, args)
+      begin
+        freshsales.account_cancellation
+      rescue => e
+        NewRelic::Agent.notice_error(e, { description: "Error occured while pushing DeletedCustomer Info to Freshsales 
+          AccountID::#{Account.current.id}" })
+      end
+    end
+  end
+
   class TrackSubscription < FdAccount
     @queue = QUEUE
 

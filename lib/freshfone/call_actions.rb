@@ -149,7 +149,7 @@ class Freshfone::CallActions
     call_meta = call.meta
     return if call_meta.blank?
     set_agent_response(call.account_id, call.id, agent_id, :failed)
-    telephony.redirect_call_to_voicemail call if child_call_meta.all_agents_missed?
+    telephony.redirect_call_to_voicemail call if call_meta.all_agents_missed?
   end
 
   def handle_failed_direct_dial_call(call)

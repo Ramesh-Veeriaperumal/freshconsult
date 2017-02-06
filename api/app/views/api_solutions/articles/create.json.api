@@ -14,6 +14,17 @@ JSON.generate({
 	hits: parent.hits,
 	tags: @item.tags,
 	seo_data: @item.seo_data,
-	created_at: @item.created_at,
-	updated_at: @item.updated_at
+	created_at: @item.created_at.try(:utc),
+	updated_at: @item.updated_at.try(:utc),
+  attachments: @item.attachments.map do |a|
+    {
+      id: a.id,
+      content_type: a.content_content_type,
+      size: a.content_file_size,
+      name: a.content_file_name,
+      attachment_url: a.attachment_url_for_api,
+      created_at: a.created_at.try(:utc),
+      updated_at: a.updated_at.try(:utc)
+    }
+  end
 })

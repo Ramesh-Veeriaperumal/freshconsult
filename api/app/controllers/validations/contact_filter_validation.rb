@@ -1,5 +1,5 @@
 class ContactFilterValidation < FilterValidation
-  attr_accessor :state, :phone, :mobile, :email, :company_id, :conditions, :tag
+  attr_accessor :state, :phone, :mobile, :email, :company_id, :conditions, :tag, :_updated_since
 
   validates :state, custom_inclusion: { in: ContactConstants::STATES }
   validates :email, data_type: { rules: String }
@@ -9,6 +9,7 @@ class ContactFilterValidation < FilterValidation
   validate :check_company, if: -> { company_id && errors[:company_id].blank? }
   validates :phone, :mobile, data_type: { rules: String }
   validates :tag, data_type: { rules: String }, custom_length: { maximum: ApiConstants::TAG_MAX_LENGTH_STRING }
+  validates :_updated_since, date_time: true
 
   def initialize(request_params, item = nil, allow_string_param = true)
     @conditions = (request_params.keys & ContactConstants::INDEX_FIELDS)

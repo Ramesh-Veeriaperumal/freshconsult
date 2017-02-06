@@ -2,6 +2,8 @@ class Admin::Social::TwitterStreamsController < Admin::Social::StreamsController
 
   include Social::Twitter::Constants
 
+  before_filter { access_denied unless current_account.basic_twitter_enabled? }
+  before_filter :add_stream_allowed?, :only => [:new, :create]
   before_filter :load_item, :only => [:edit, :update, :destroy]
   before_filter :load_ticket_rules, :only => [:edit]
   before_filter :validate_params, :only => [:create, :update]
@@ -203,6 +205,11 @@ class Admin::Social::TwitterStreamsController < Admin::Social::StreamsController
   
   
   private
+
+  def add_stream_allowed?
+    redirect_to admin_social_streams_url unless current_account.add_custom_twitter_stream?
+  end
+  
   def rule_product_id
     if @twitter_stream.custom_stream? 
       product_id = params[:social_twitter_stream][:product_id] unless params[:social_twitter_stream].blank? 

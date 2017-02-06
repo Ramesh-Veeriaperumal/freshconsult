@@ -3,6 +3,10 @@
 	<h4 class="title"><%= h(ticket.status_name.html_safe) %></h4>
 	<p id="edit-dueby-time-parent">
 		<%= render :partial => "/helpdesk/tickets/show/due_by", :formats => [:html], :object => ticket.due_by %>
+					
+					<% if current_account.skill_based_round_robin_enabled? && ticket.skill.present? %>
+						<br><span><%=t('.ticket_fields.skill') %>: </span><span><strong><%= ticket.skill.name %></strong></span>
+					<% end %>
 	</p>
 <% else %>
 	<% if ticket.ticket_status.deleted? %>
@@ -20,9 +24,15 @@
 		Rails.logger.info "::::::::#{changed_time}"
 		%>
 		<%= t('since').html_safe %> <abbr data-livestamp="<%= changed_time.to_i %>"><%= distance_of_time_in_words(Time.now(), changed_time) %></abbr>
-		<br />from <%= formated_date(changed_time) %>
+		<br>from <%= formated_date(changed_time) %>
+				
+				<% if current_account.skill_based_round_robin_enabled? && ticket.skill.present? %>
+						<br><span>Skill: </span><span><strong><%= ticket.skill.name %></strong></span>
+				<% end %>
 	</p>
 <% end %>
+
+
 </div>
 <%= javascript_tag do %>
 jQuery('.ticket_details .status_info').html("<%= escape_javascript(render :partial => '/helpdesk/tickets/show/sticky_status', :formats => [:html]) %>");

@@ -24,8 +24,6 @@ class AuthorizationsController < ApplicationController
       twitter_id = @omniauth['info']['nickname']
       @current_user = current_account.all_users.find_by_twitter_id(twitter_id)  if current_account.present?
       create_for_sso(@omniauth)
-    elsif @omniauth['provider'] == APP_NAMES[:facebook]
-      create_for_facebook(params)
     elsif OAUTH2_PROVIDERS.include?(@omniauth['provider'])
       create_for_oauth2(@omniauth['provider'], params)
     elsif EMAIL_MARKETING_PROVIDERS.include?(@omniauth['provider'])
@@ -135,33 +133,6 @@ class AuthorizationsController < ApplicationController
     redirect_url = get_redirect_url(app,provider)
      
     redirect_to redirect_url
-  end
-
-  def create_for_facebook(params)
-    state = "/facebook" if params[:state]
-    user_account = Account.find @account_id
-    user_account.make_current
-    fb_email = @omniauth['info']['email']
-    unless user_account.blank?
-      @current_user = user_account.user_emails.user_for_email(fb_email) unless fb_email.blank?
-      @auth = Authorization.find_from_hash(@omniauth,user_account.id)
-      fb_profile_id = @omniauth['info']['nickname']
-      @current_user = user_account.all_users.find_by_fb_profile_id(fb_profile_id) if @current_user.blank? and !fb_profile_id.blank?
-      return handle_fb_redirect(user_account, @portal_id) if !@current_user && !has_login_permission?(fb_email, user_account)
-      if create_for_sso(@omniauth, user_account)
-        curr_time = ((DateTime.now.to_f * 1000).to_i).to_s
-        random_hash = Digest::MD5.hexdigest(curr_time)
-        key_options = { :account_id => user_account.id, :user_id => @current_user.id, :provider => @omniauth['provider']}
-        key_spec = Redis::KeySpec.new(Redis::RedisKeys::SSO_AUTH_REDIRECT_OAUTH, key_options)
-        Redis::KeyValueStore.new(key_spec, curr_time, {:group => :integration, :expire => 300}).set_key
-        port = (Rails.env.development? ? ":#{request.port}" : '')
-        fb_url = (params[:state] ? "#{user_account.url_protocol}://#{user_account.full_domain}#{port}" : portal_url(user_account))
-        fb_url = "https://#{user_account.full_domain}" if is_native_mobile? #always use https for requests from mobile app.
-        redirect_to fb_url + "#{state}/sso/login?provider=facebook&uid=#{@omniauth['uid']}&s=#{random_hash}"
-      end
-    end
-    rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotSaved => e
-      redirect_to portal_url(user_account)
   end
 
   def create_session

@@ -16,6 +16,7 @@ class Helpdesk::Email::HandleTicket
   attr_accessor :note, :email, :user, :account, :ticket, :archive_ticket, :original_sender
 
   BODY_ATTR = ["body", "body_html", "full_text", "full_text_html", "description", "description_html"]
+  VIRUS_CHECK_ENABLED = false
 
   def initialize email, user, account, ticket=nil
     self.email = email 
@@ -135,24 +136,45 @@ class Helpdesk::Email::HandleTicket
         end
       rescue HelpdeskExceptions::AttachmentLimitException => ex
         Rails.logger.error("ERROR ::: #{ex.message}")
-        add_notification_text item
+        message = attachment_exceeded_message(HelpdeskAttachable::MAILGUN_MAX_ATTACHMENT_SIZE)
+        add_notification_text item, message
         break
       rescue Exception => e
         Rails.logger.error("Error while adding item attachments for ::: #{e.message}")
         break
       end
     end
+    if @total_virus_attachment
+      message = virus_attachment_message(@total_virus_attachment)
+      add_notification_text item, message
+    end
     item.header_info = {:content_ids => content_id_hash} unless content_id_hash.blank?
     return attachments, inline_attachments
 	end
+  
+  def virus_attachment? attachment, account
+    if VIRUS_CHECK_ENABLED && account.subscription.trial?
+        begin
+          file_attachment = (attached.is_a? StringIO) ? attached : File.open(attached.tempfile)
+          result = Email::AntiVirus.scan(io: file_attachment) 
+          if result && result[0] == "virus"
+            @total_virus_attachment = 0 unless @total_virus_attachment
+            @total_virus_attachment += 1  
+            return true
+          end
+        rescue => e
+         Rails.logger.info "Error While checking attachment for virus in account #{account.id}"
+        end 
+      end
+      return false
+  end
 
   # Content-id for inline attachments
   def cid(i)
     email[:content_ids]["attachment-#{i+1}"]
   end
 
-  def add_notification_text item
-    message = attachment_exceeded_message(HelpdeskAttachable::MAILGUN_MAX_ATTACHMENT_SIZE)
+  def add_notification_text item, message
     notification_text = "\n" << message
     notification_text_html = Helpdesk::HTMLSanitizer.clean(content_tag(:div, message, :class => "attach-error"))
     if item.is_a?(Helpdesk::Ticket)

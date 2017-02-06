@@ -36,6 +36,10 @@ module HelpdeskReports::Helper::PlanConstraints
     @hide_agent_metrics ||= Account.current.hide_agent_metrics_feature?
   end
 
+  def show_tags_filtering?
+    @show_tags ||= Account.current.tags_filter_reporting_enabled?
+  end
+
   def exclude_filters(report_type)  
     excluded_filters  = []
     excluded_filters |= ReportsAppConfig::REPORT_CONSTRAINTS[:global_exclude_filters][report_type] || []
@@ -43,6 +47,7 @@ module HelpdeskReports::Helper::PlanConstraints
     plan_filters      = plan_excludes[plan_group] if plan_excludes
     excluded_filters |= plan_filters || [] 
     excluded_filters += [:agent_id] if hide_agent_reporting?
+    excluded_filters += [:tag_id] unless show_tags_filtering?
     excluded_filters
   end
 

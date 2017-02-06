@@ -12,6 +12,10 @@ module CannedResponseFoldersTestHelper
     create_response(canned_response_sample_params(folder_id, visibility))
   end
 
+  def create_canned_response_with_attachment(folder_id, visibility = nil, attachments = [])
+    create_response(canned_response_sample_params(folder_id, visibility).merge(attachments: attachments))
+  end
+
   def ca_responses_pattern(folder)
     {
       id: folder.id,
@@ -62,25 +66,5 @@ module CannedResponseFoldersTestHelper
     @ca_responses = accessible_elements(@account.canned_responses, query_hash('Admin::CannedResponses::Response', 'admin_canned_responses', *options))
     @ca_responses.blank? ? @ca_responses : @ca_responses.compact!
     @ca_responses
-  end
-
-  def ca_response_show_pattern(ca_response_id = nil)
-    ca_response = @account.canned_responses.find(ca_response_id)
-    {
-      id: ca_response.id,
-      title: ca_response.title,
-      content: ca_response.content,
-      content_html: ca_response.content_html,
-      folder_id: ca_response.folder_id
-    }
-  end
-
-  def ca_response_show_pattern_with_association(ca_response_id = nil)
-    ca_pattern = ca_response_show_pattern(ca_response_id)
-    ca_pattern.merge!(evaluated_response: evaluate_response_new_ticket(ca_pattern[:content_html]))
-  end
-
-  def evaluate_response_new_ticket(content_html)
-    Liquid::Template.parse(content_html).render(ticket: nil)
   end
 end

@@ -22,6 +22,9 @@ module ConversationConstants
   }.freeze
   LOAD_OBJECT_EXCEPT = [:ticket_conversations, :reply, :forward, :facebook_reply, :tweet, :reply_template, :forward_template].freeze
 
+  PIPE_REPLY_FIELDS  = REPLY_FIELDS | %w( created_at updated_at )
+  PIPE_CREATE_FIELDS = CREATE_FIELDS | %w( created_at updated_at )
+   
   ATTRIBUTES_TO_BE_STRIPPED = %w(notify_emails to_emails cc_emails bcc_emails).freeze
 
   # Denotes the email fields in notes.

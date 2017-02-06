@@ -36,6 +36,20 @@ class SearchV2::IndexOperations::PostArchiveProcess < SearchV2::IndexOperations
         note_uuid, 'note', note_message, RabbitMq::Constants::RMQ_SEARCH_NOTE_KEY
       )
     end
+
+    # Publish archive ticket
+    archiveticket_uuid     = RabbitMq::Utils.generate_uuid
+    archiveticket_message  = generate_message(
+      'archiveticket',
+      'create',
+      archiveticket_uuid,
+      args[:account_id],
+      args[:archive_ticket_id],
+      'Helpdesk::ArchiveTicket'
+    )
+    RabbitMq::Utils.manual_publish_to_xchg(
+      archiveticket_uuid, 'archive_ticket', archiveticket_message, RabbitMq::Constants::RMQ_SEARCH_ARCHIVE_TICKET_KEY
+    )
     
     # Publish as archive notes
     # Have to do this as archive notes are note a separate entity in DB
@@ -69,6 +83,7 @@ class SearchV2::IndexOperations::PostArchiveProcess < SearchV2::IndexOperations
         properties['klass_name']          = klass_name
         properties['type']                = model
         properties['action']              = action
+        properties['archive']             = true
         if parent_id
           properties['routing_id']        = account_id
           properties['parent_id']         = parent_id

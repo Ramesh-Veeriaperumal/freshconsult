@@ -6,7 +6,7 @@ class Solution::FolderMeta < ActiveRecord::Base
 
 	BINARIZE_COLUMNS = [:available]
 	
-  include Solution::Constants
+    include Solution::Constants
 	include Solution::LanguageAssociations
 	include Solution::ApiDelegator
 	include Solution::MarshalDumpMethods
@@ -191,6 +191,15 @@ class Solution::FolderMeta < ActiveRecord::Base
 			:order => "`solution_folder_meta`.position",
 			:conditions => visibility_condition(user)
 		}
+	}
+
+	scope :public_folders, lambda {|category_ids|
+	    {
+	      :conditions => {
+	        :solution_category_meta_id => category_ids,
+	        :visibility => VISIBILITY_KEYS_BY_TOKEN[:anyone]
+	      }
+	    }
 	}
 
 	def self.visibility_condition(user)

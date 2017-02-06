@@ -15,19 +15,21 @@ class Helpdesk::Ticket < ActiveRecord::Base
     if req
       ticket.spam = true if req.deleted?
       if req.blocked?
-        Rails.logger.debug "User blocked! No more tickets allowed for this user" 
+        Rails.logger.debug "User blocked! No more tickets allowed for this user"
         ticket.errors.add(:base,"User blocked! No more tickets allowed for this user")
       end
     end
   end
 
   validate on: :create do |ticket|
-    if (ticket.cc_email && ticket.cc_email[:cc_emails] && 
+    if (ticket.cc_email && ticket.cc_email[:cc_emails] &&
       ticket.cc_email[:cc_emails].count >= TicketConstants::MAX_EMAIL_COUNT)
-      Rails.logger.debug "You have exceeded the limit of #{TicketConstants::MAX_EMAIL_COUNT} cc emails for this ticket" 
+      Rails.logger.debug "You have exceeded the limit of #{TicketConstants::MAX_EMAIL_COUNT} cc emails for this ticket"
       ticket.errors.add(:base,"You have exceeded the limit of #{TicketConstants::MAX_EMAIL_COUNT} cc emails for this ticket")
     end
   end
+
+  validate :requester_company_id_validation, :if => :company_id_changed?
 
   def due_by_validation
     self.errors.add(:base,t('helpdesk.tickets.show.due_date.earlier_date_and_time')) if due_by_changed? and (due_by < created_at_date)
@@ -48,24 +50,34 @@ class Helpdesk::Ticket < ActiveRecord::Base
     fields.each do |field|
       field_value = send(field.field_name)
       if field_value_blank?(field_value)
-        add_required_field_error(field, error_label) 
-        next 
+        add_required_field_error(field, error_label)
+        next
       end
-      
+
       if field.nested_field?
         parent_picklist = find_picklist(field.picklist_values, field_value)
         next if parent_picklist.nil?
-        
+
         field.nested_ticket_fields.each do |child_field|
           child_field_value = send(child_field.field_name)
-          if field_value_blank?(child_field_value) 
+          if field_value_blank?(child_field_value)
             add_required_field_error(child_field, error_label) if parent_picklist.sub_picklist_values.any?
             break
           end
-          parent_picklist = find_picklist(parent_picklist.sub_picklist_values, child_field_value) 
+          parent_picklist = find_picklist(parent_picklist.sub_picklist_values, child_field_value)
           break if parent_picklist.nil?
         end
       end
+    end
+  end
+
+  # For API
+  def requester_company_id_validation
+    if self.owner_id.present? && !requester.company_ids.include?(self.owner_id)
+      self.errors.add(
+        :company_id,
+        "The requester does not belong to the specified company"
+      )
     end
   end
 

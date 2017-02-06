@@ -82,7 +82,7 @@ class AgentsController < ApplicationController
     end    
   end
 
-  def edit    
+  def edit   
     #@agent.signature_html ||= @agent.signature_value
       respond_to do |format|
       format.html # edit.html.erb
@@ -91,14 +91,13 @@ class AgentsController < ApplicationController
   end
 
   def toggle_availability
-    if params[:admin] || current_user.agent.allow_availability_toggle?
+    if params[:admin] || current_user.toggle_availability?
       @agent = current_account.agents.find_by_user_id(params[:id])
       @agent.toggle(:available)
       @agent.active_since = Time.now.utc
       @agent.save
       Rails.logger.debug "Round Robin ==> Account ID:: #{current_account.id}, Agent:: #{@agent.user.email}, Value:: #{params[:value]}, Time:: #{Time.zone.now} "
       Rails.logger.debug "Supervisor Round Robin ==> Account ID:: #{current_account.id}, Agent:: #{@agent.user.email}, Value:: #{params[:value]}, Time:: #{Time.zone.now} " if params[:admin] and current_user.roles.supervisor.present?
-
     end
     respond_to do |format|
       format.html { render :nothing => true}

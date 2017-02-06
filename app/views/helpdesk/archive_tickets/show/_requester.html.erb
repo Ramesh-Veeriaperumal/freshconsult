@@ -14,7 +14,7 @@
 
   <div id="contact_info_default" class='requester_tab'>
     <div class="requester-details">
-    <% partial_path = current_account.launched?(:requester_widget) && user.customer? ? "contacts/requester_widget" : "contacts/hover_card" %>
+    <% partial_path = current_account.requester_widget_enabled? && user.customer? ? "contacts/requester_widget" : "contacts/hover_card" %>
       <%= render :partial => partial_path, :locals => { 
           :user => user, 
           :show_recent_tickets => :dialog,
@@ -26,18 +26,18 @@
   </div>
 </div> 
 
-<% if current_account.launched?(:requester_widget) %>
-<div id="requester-widget-edit-modal-container">
-  <% if user.customer? && user.valid_user? && privilege?(:manage_contacts) %>
-    <%= render :partial => "/contacts/requester_widget_contact_edit" , :locals => { :user => user, :ticket => @ticket, :company => @company }  %>
-</div>
+<% if current_account.requester_widget_enabled? %>
+  <div id="requester-widget-edit-modal-container">
+    <% if user.customer? && user.valid_user? && privilege?(:manage_contacts) %>
+      <%= render :partial => "/contacts/requester_widget_contact_edit" , :locals => { :user => user, :ticket => @ticket, :company => @company }  %>
+    <% end %>
+  </div>
 <% end %>
 
 <script>
   jQuery(document).ready(function(){
     if (jQuery('.requester-info-sprite').length < 2) {
       jQuery('.requester-info-sprite').parents('.tkt-tabs').hide();
-<% end %>
     }
   })
 </script>

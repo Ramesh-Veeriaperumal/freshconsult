@@ -152,7 +152,7 @@ Helpkit::Application.routes.draw do
   ember_routes = proc do
     resources :ticket_fields, controller: 'ember/ticket_fields', only: [:index, :update]
     resources :bootstrap, controller: 'ember/bootstrap', only: :index
-    resources :tickets, controller: 'ember/tickets', only: [:index, :create, :show] do
+    resources :tickets, controller: 'ember/tickets', only: [:index, :create, :update, :show] do
       collection do
         put :bulk_delete, to: 'ember/tickets/delete_spam#bulk_delete'
         put :bulk_spam, to: 'ember/tickets/delete_spam#bulk_spam'
@@ -191,9 +191,6 @@ Helpkit::Application.routes.draw do
         match '/split_note' => 'ember/tickets#split_note', via: :put
         post :facebook_reply, to: 'ember/conversations#facebook_reply'
       end
-      # This alternate route is to handle limitation in ember route generation : api/_/tickets/:ticket_id/canned_responses?id=Number
-      match '/canned_responses' => 'ember/tickets/canned_responses#show', via: :get
-      resources :canned_responses, controller: 'ember/tickets/canned_responses', only: [:show]
       resources :activities, controller: 'ember/tickets/activities', only: [:index]
 
       member do
@@ -202,9 +199,6 @@ Helpkit::Application.routes.draw do
         get :watchers, to: 'ember/subscriptions#watchers'
         put :update_properties, to: 'ember/tickets#update_properties'
       end
-      # This alternate route is to handle limitation in ember route generation : api/_/tickets/:ticket_id/canned_responses?id=Number
-      match '/canned_responses' => 'ember/tickets/canned_responses#show', via: :get
-      resources :canned_responses, controller: 'ember/tickets/canned_responses', only: [:show]
     end
 
     resources :time_entries, controller: 'ember/time_entries', except: [:new, :edit, :create] do
@@ -268,6 +262,15 @@ Helpkit::Application.routes.draw do
     end
   end
 
+  pipe_routes = proc do 
+    resources :tickets, controller: 'pipe/tickets', only: [:create] do
+      member do
+        post :reply, to: 'pipe/conversations#reply'
+        post :notes, to: 'pipe/conversations#create'
+      end
+    end
+  end
+
   match '/api/v2/_search/tickets' => 'tickets#search', :defaults => { format: 'json' }, :as => :tickets_search, via: :get
 
   scope '/api', defaults: { version: 'v2', format: 'json' }, constraints: { format: /(json|$^)/ } do
@@ -276,9 +279,12 @@ Helpkit::Application.routes.draw do
       scope '', &ember_routes # "/api/v2/.."
       scope '', &api_routes # "/api/v2/.."
     end
+    scope '/pipe', defaults: { version: 'private', format: 'json' }, constraints: { format: /(json|$^)/ } do
+      scope '', &pipe_routes # "/api/v2/.."
+      scope '', &api_routes # "/api/v2/.."
+    end
     constraints ApiConstraints.new(version: 2), &api_routes # "/api/.." with Accept Header
     scope '', &api_routes
-
     match '*route_not_found.:format', to: 'api_application#route_not_found'
     match '*route_not_found',         to: 'api_application#route_not_found'
   end

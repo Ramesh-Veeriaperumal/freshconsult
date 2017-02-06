@@ -4,3 +4,6 @@ allOf:
   - properties:
       folder_id:
         type: integer
+      evaluated_response:
+        type: string
+        description: Has to be sideloaded with ?include=evaluated_response

@@ -36,5 +36,7 @@ class Agent < ActiveRecord::Base
   ]
 
   EXPORT_FIELD_VALUES = EXPORT_FIELDS.map { |field| field[:value] }
+
+  AGENTS_THRESHOLD_FOR_AUTOCOMPLETE_ES = 25
   
 end

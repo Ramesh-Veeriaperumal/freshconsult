@@ -1,3 +1,8 @@
+<% unless current_account.verified? %>
+     <div id ="errorExplanation" class ="errorExplanation">
+      <%= t('ticket.compose.outbound_email_not_activated') %>
+     </div>
+<% end %>
 <% content_for :sidebar do -%>
   <%= render :partial => "helpdesk/tickets/ticket_widget/sidebar",:locals =>{:from_page =>'new_outbound_email_page_side_bar'}%>
 <%- end %>

@@ -24,4 +24,8 @@ def note_lock_icon(note, ticket)
   content_tag(:span, "", :class => icon_class).html_safe
 end
 
+def load_agent_text responder
+  responder && (responder.id != current_user.id) ? "#{responder.name} <#{responder.email}>" : nil
+end
+
 end

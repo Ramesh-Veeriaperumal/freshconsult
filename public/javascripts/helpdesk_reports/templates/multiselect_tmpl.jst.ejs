@@ -10,6 +10,21 @@
 	<% } else { %>
 		<input type="hidden" id="<%=condition%>" style="width:100%" class="input-xlarge filter_item" />
 	<% } %>
+	<% if(condition == "tag_id") {%>
+		<span class="tag-selection-block hide" data-action="pop-tag-menu" >
+			<span class="select-title">
+				contains any
+			</span>
+		</span>
+		<span class="tag-dropdown-arrow hide"></span>
+		<div class="tags-menu hide">
+				<ul>
+					<li class="active" data-operator="any">contains <span class="bold">any</span></li>
+					<li data-operator="and">contains <span class="bold">all</span></li>
+					<li data-operator="is_not_in">contains <span class="bold">none</span></li>
+				</ul>
+		</div>
+	<% } %>
 	<% if(HelpdeskReports.CoreUtil.default_available_filter.indexOf(condition) < 0){ %>
 		<i class="ficon-cross fsize-14 " size="14" data-action="remove-field"></i>
 	<% } %>

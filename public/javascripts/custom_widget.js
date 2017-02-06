@@ -1088,6 +1088,353 @@ Freshdesk.CRMWidget = Class.create(Freshdesk.Widget, {
 		'</div>'
 });
 
+(function($){
+  Freshdesk.CRMCloudWidget = Class.create(Freshdesk.Widget, {
+    initialize:function($super, widgetOptions, integratable_impl) {
+		if(widgetOptions.domain) {
+			if(widgetOptions.reqEmail == ""){
+				$super(widgetOptions);
+				this.alert_failure('Email not available for this requester. A valid Email is required to fetch the contact from '+this.options.app_name);
+			} else {
+				this.fieldsHash = integratable_impl.fieldsHash;
+				this.labelsHash = integratable_impl.labelsHash;
+				widgetOptions.integratable_impl = integratable_impl;
+				var cnt_req = integratable_impl.get_contact_request();
+				this.searchCount = cnt_req.length;
+				this.searchResultsCount = 0;
+				if(cnt_req) {
+					if(cnt_req.length == undefined) cnt_req = [cnt_req]
+					for(var i=0;i<cnt_req.length;i++) {
+						cnt_req[i].on_success = this.handleContactSuccess.bind(this);
+						if (widgetOptions.auth_type != 'OAuth' && integratable_impl.processFailure){
+							cnt_req[i].on_failure = this.handleFailure.bind(this);              
+						}
+					}
+					this.contacts = [];
+					widgetOptions.init_requests = cnt_req;
+				}
+				$super(widgetOptions); // This will call the initialize method of Freshdesk.Widget.
+			}
+		} else {
+			$super(widgetOptions);
+			this.alert_failure('Domain name not configured. Try reinstalling '+this.options.app_name);
+		}
+    },
+    handleFailure:function(response) {
+		this.options.integratable_impl.processFailure(response, this);
+    },
+    handleContactSuccess:function(response){
+		var resJson = response.responseJSON;
+		if(resJson == null){
+			resJson = JSON.parse(response.responseText);      
+		}
+		if(this.contacts = this.contacts.concat(this.parse_contact(resJson, response))) {
+			this.handleRender(this.contacts,this);
+		}
+    },
+    handleRender:function(contacts,crmWidget){
+		// handle the response from the requests.
+		if ( !this.allResponsesReceived() ){
+			return;       
+		}
+		if(this.options.app_name == "salesforce_v2"){
+			this.options.integratable_impl.loadIntegratedRemoteResource(); // only for salesforce_v2        
+		}
+		if(contacts.length > 0) {
+			if(contacts.length == 1) {
+				this.processSingleResult(contacts[0],crmWidget);
+			}
+			else{
+				this.renderSearchResults(crmWidget);
+			}
+		} 
+		else {
+			this.processEmptyResults(crmWidget);
+		}
+		$("#"+crmWidget.options.widget_name).removeClass('loading-fb');
+    },
+    processSingleResult:function(contact,crmWidget){
+		if(this.options.app_name = "salesforce_v2"){
+			this.options.integratable_impl.processSingleResult(contact,crmWidget,this); // only for Account
+		}else{
+			this.renderContactWidget(contact,crmWidget);
+		}
+    },
+    processEmptyResults:function(crmWidget){
+		var customer_emails = this.options.reqEmails.split(",");
+		if(customer_emails.length > 1){
+			this.renderEmailSearchEmptyResults(crmWidget);
+		}
+		else{
+			crmWidget.renderContactNa();
+		}
+    },
+    parse_contact: function(resJson){
+		var contacts =[];
+		if(resJson.records){
+			resJson=resJson.records;      
+		}
+		var _this = this;
+		resJson.each(function(contact) {
+			var cLink = this.salesforceV2Bundle.domain +"/"+contact.Id;
+			var sfcontact ={};
+			sfcontact['Id'] = contact.Id;
+			sfcontact['url'] = cLink;//This sets the url to salesforce on name
+			sfcontact['type'] = contact.attributes.type;
+			//fieldsHash should be inside the initialize of the crm File in the format {"Contact": "Name,Title,Phone,...", "Account": "Name,..",...}
+			var objectFields = _this.fieldsHash[contact.attributes.type];
+			if(objectFields!=undefined){
+				objectFields = objectFields.split(",");
+				for (var i=0;i<objectFields.length;i++){
+					if(objectFields[i]=="Address"){
+						sfcontact[objectFields[i]]=_this.getAddress(contact.MailingStreet,contact.MailingState,contact.MailingCity,contact.MailingCountry);
+					}
+					else{
+						sfcontact[objectFields[i]] = escapeHtml(_this.eliminateNullValues(contact[objectFields[i]]));
+					}
+				}
+			}
+			contacts.push(sfcontact);
+		});
+		return contacts;
+    },
+    getTemplate:function(eval_params,crmWidget){
+		var resourceTemplate = "";
+		var fields;
+		var labels;
+		fields = this.fieldsHash[eval_params.type];
+		//labels should be declared inside the initialize() of CRM file in the format, {"Contact": this.contactInfo, "Account": this.accountInfo, ..}
+		//this.contactInfo is key value pair of the Contact key with Label(mapFieldLabels).
+		labels = this.labelsHash[eval_params.type];
+		resourceTemplate = this.resourceSectionTemplate(fields,labels,eval_params);
+		return resourceTemplate;
+    },
+    resourceSectionTemplate:function(fields,labels,eval_params){
+    // Labels should be a hash
+		var contactTemplate ="";
+		for(var i=0;i<fields.length;i++){
+			var value = eval_params[fields[i]];
+			value = value || "N/A"; 
+			contact_template += _.template(this.CONTACT_TEMPLATE, {value: value, field: fields[i], label: labels[fields[i]]});
+		}
+		return contactTemplate;
+    },
+    eliminateNullValues:function(input){
+		return input || "NA";
+    },
+    getAddress:function(street, state, city, country){
+		var address="";
+		street = (street) ? (street + ", ")  : "";
+		state = (state) ? (state + ", ")  : "";
+		city = (city) ? (city)  : "";
+		country = (country) ? (city + ", " + country)  : city;
+		address = street + state + country;
+		address = (address == "") ? null : address
+		return escapeHtml(address || "NA");
+    },
+    allResponsesReceived:function(){
+		return (this.searchCount <= ++this.searchResultsCount );
+    },
+    renderEmailSearchEmptyResults:function(crmWidget){
+		var _this=this;
+		crmWidget.options.application_html = function(){ return _.template(_this.EMAIL_SEARCH_RESULTS_NA,{current_email:_this.options.reqEmail});} 
+		crmWidget.display();
+		_this.showMultipleEmailResults();
+    },
+    showMultipleEmailResults:function(){
+		var customer_emails = this.options.reqEmails.split(",");
+		var email_dropdown_opts = "";
+		var selected_opt;
+		var active_class;
+		for(var i = 0; i < customer_emails.length; i++) {
+			selected_opt = "";
+			active_class = "";
+			if(this.options.reqEmail == customer_emails[i]){
+				selected_opt += '<span class="icon ticksymbol"></span>'
+				active_class = " active";
+			}
+			email_dropdown_opts += '<a href="#" class="cust-email-v2'+active_class+'" data-email="'+customer_emails[i]+'">'+selected_opt+customer_emails[i]+'</a>';
+		}
+		$("#leftViewMenuV2.fd-menu").html(email_dropdown_opts);
+		$('#email-dropdown-div-v2').show();
+		this.bindEmailChangeEvent();
+    },
+    bindEmailChangeEvent:function(){
+		var obj = this;
+		//This will re-instantiate the crm object for every user email
+		$(".fd-menu .cust-email-v2").on('click',function(ev){
+			ev.preventDefault();
+			if(obj.options.app_name == "salesforce_v2"){
+				obj.options.integratable_impl.resetOpportunityDialog();         
+			}
+			$("#"+ obj.options.widget_name +" .content").html("");
+			var email = $(this).data('email');
+			var newSalesforceBundle = obj.options.integratable_impl.resetSalesforceBundle(obj.options.integratable_impl.salesforceV2Bundle); //resetSalesforceBundle is CRM specific.
+			newSalesforceBundle.reqEmail = email;
+			new SalesforceV2Widget(newSalesforceBundle);
+		});
+    },
+    renderSearchResults:function(crmWidget){
+		var crmResults="";
+		for(var i=0; i<crmWidget.contacts.length; i++){
+			crmResults += '<li><a class="multiple-contacts salesforce-tooltip" title="'+crmWidget.contacts[i].Name+'" href="#" data-contact="' + i + '">'+crmWidget.contacts[i].Name+'</a><span class="contact-search-result-type pull-right">'+crmWidget.contacts[i].type+'</span></li>';
+		}
+		var results_number = {resLength: crmWidget.contacts.length, requester: crmWidget.options.reqEmail, resultsData: crmResults};
+		this.renderSearchResultsWidget(results_number,crmWidget);
+		var obj = this;
+		var crm_resource = undefined;
+		$('#' + crmWidget.options.widget_name).off('click','.multiple-contacts').on('click','.multiple-contacts', (function(ev){
+			ev.preventDefault();
+			crm_resource = crmWidget.contacts[$(this).data('contact')];
+			if(obj.options.handleCRMResource){
+				obj.options.integratable_impl.handleCRMResource(crm_resource,crmWidget, obj);
+			}else{
+				obj.handleCRMResource(crm_resource,crmWidget)
+			}
+		}));
+    },
+    handleCRMResource:function(crm_resource,crmWidget){
+		this.renderContactWidget(crm_resource,crmWidget);
+    },
+    renderSearchResultsWidget:function(results_number,crmWidget){
+		var _this=this;
+		var customer_emails = crmWidget.options.reqEmails.split(",");
+		results_number.widget_name = crmWidget.options.widget_name; //crmWidget.options.salesforce_widget_name;
+		results_number.current_email = crmWidget.options.reqEmail;
+		var resultsTemplate = "";
+		resultsTemplate = customer_emails.length > 1 ? _this.CONTACT_SEARCH_RESULTS_MULTIPLE_EMAILS : _this.CONTACT_SEARCH_RESULTS;
+		crmWidget.options.application_html = function(){ return _.template(resultsTemplate, results_number); } 
+		crmWidget.display();
+		if(customer_emails.length > 1){
+			_this.showMultipleEmailResults();
+		}
+    },
+    renderContactWidget:function(eval_params,crmWidget){
+		//this.options is salesforceV2Bundle
+		var _this = this;
+		var customer_emails = crmWidget.options.reqEmails.split(",");
+		eval_params.count = crmWidget.contacts.length;
+		eval_params.app_name = crmWidget.options.app_name;
+		eval_params.widget_name = crmWidget.options.widget_name; //crmWidget.options.salesforce_widget_name;
+		eval_params.type = eval_params.type?eval_params.type:"" ; 
+		eval_params.department = eval_params.department?eval_params.department:null;
+		eval_params.url = eval_params.url?eval_params.url:"#";
+		eval_params.address_type_span = eval_params.address_type_span || " ";
+		eval_params.current_email = crmWidget.options.reqEmail;
+		var contact_fields_template="";
+		if(this.options.getTemplate){
+			contact_fields_template = this.options.integratable_impl.getTemplate(eval_params,crmWidget);
+		}
+		else{
+			contact_fields_template = this.getTemplate(eval_params,crmWidget);
+		}
+		var contact_template = (customer_emails.length > 1 && eval_params.count == 1)  ? _this.VIEW_CONTACT_MULTIPLE_EMAILS : _this.VIEW_CONTACT;
+		crmWidget.options.application_html = function(){ return _.template(contact_template, eval_params)+""+contact_fields_template; } 
+		this.removeError();
+		this.removeLoadingIcon();
+		crmWidget.display();
+		this.bindParagraphReadMoreEvents();
+		if(customer_emails.length > 1 && eval_params.count == 1){
+			_this.showMultipleEmailResults();
+		}
+		var obj = this;
+		$('#' + crmWidget.options.widget_name).on('click','#search-back', (function(ev){
+		ev.preventDefault();
+		if(crmWidget.options.app_name == "salesforce_v2")
+			obj.options.integratable_impl.resetOpportunityDialog();
+			obj.renderSearchResults(crmWidget);
+		}));
+		if(eval_params.type == "Account" && crmWidget.options.app_name == "salesforce_v2"){
+			this.options.integratable_impl.handleOpportunitesSection(eval_params,crmWidget,obj);
+			this.options.integratable_impl.handleContractsSection(eval_params,crmWidget,obj);
+			this.options.integratable_impl.handleOrdersSection(eval_params,crmWidget,obj);
+		}
+    },
+    showError:function(message){
+		freshdeskWidget.alert_failure("The following error is reported:"+" "+message);
+    },
+    removeError:function(){
+		$("#" + this.options.widget_name + " .error").html("").addClass('hide');
+    },
+    removeLoadingIcon:function(){
+		$("#" + this.options.widget_name).removeClass('sloading loading-small');
+    },
+    bindParagraphReadMoreEvents:function(){
+        var i = 1;
+        $(".para-less").each(function(){
+			var _this = $(this);
+			if(_this.actual('height') > 48){ // This event uses jquery.actual.min.js plugin to find the height of hidden element
+			_this.addClass('para-min-lines');
+			_this.attr('tabIndex',i);
+			_this.next(".toggle-para").addClass('active-para').removeClass('hide');
+			i++;
+			}
+        });
+        $('.toggle-para.active-para p').click(function(){
+			var _this = $(this);
+			_this.parent().toggleClass('q-para-span');
+			_this.parent().prev(".para-less").toggleClass('para-min-lines para-max-lines');
+			_this.toggleClass('q-marker-more q-marker-less');
+			_this.parent().prev(".para-less").focus();
+        });
+    },
+    renderContactNa:function(){
+		var _this=this;
+		_this.options.url = _this.options.url || "#";
+		this.options.application_html = function(){ return _.template(_this.CONTACT_NA, _this.options);} 
+		this.display();
+    },
+    VIEW_CONTACT:
+		'<div class="title salesforce_v2_contacts_widget_bg">' +
+			'<div class="row-fluid">' +
+				'<div id="contact-name" class="span8">'+
+				'<a id="search-back" href="#"><div class="search-back <%=(count>1 ? "": "hide")%>"> <i class="arrow-left"></i> </div></a>'+
+				'<a title="<%=Name%>" target="_blank" href="<%=url%>" class="sales-title salesforce-tooltip"><%=Name%></a></div>' +
+				'<div class="span4 pt3"><span class="contact-search-result-type pull-right"><%=(type || "")%></span></div>'+
+			'</div>' + 
+		'</div>',
+    VIEW_CONTACT_MULTIPLE_EMAILS:
+		'<div class="title salesforce_v2_contacts_widget_bg">' +
+			'<div id="email-dropdown-div-v2" class="view_filters mb10 hide"><div class="link_item"><a href class="drop-right nav-trigger" id="active_filter" menuid="#leftViewMenuV2"><%=current_email%></a></div><div class="fd-menu" id="leftViewMenuV2" style="display: none; visibility: visible;"></div></div>'+
+			'<div class="single-result row-fluid">' +
+				'<div id="contact-name" class="span8">'+
+				'<a id="search-back" href="#"><div class="search-back <%=(count>1 ? "": "hide")%>"> <i class="arrow-left"></i> </div></a>'+
+				'<a title="<%=Name%>" target="_blank" href="<%=url%>" class="sales-title salesforce-tooltip"><%=Name%></a></div>' +
+				'<div class="span4 pt3"><span class="contact-search-result-type pull-right"><%=(type || "")%></span></div>'+
+			'</div>' + 
+		'</div>',
+    EMAIL_SEARCH_RESULTS_NA:
+		'<div class="title salesforce_v2_contacts_widget_bg">' +
+			'<div id="email-dropdown-div-v2" class="view_filters hide"><div class="link_item"><a href class="drop-right nav-trigger" id="active_filter" menuid="#leftViewMenuV2"><%=current_email%></a></div><div class="fd-menu" id="leftViewMenuV2" style="display: none; visibility: visible;"></div></div>'+
+			'<div id="search-results" class="mt20">'+
+			'<span id="contact-na">No results found for <%=current_email%></span>'+
+			'</div>'+
+		'</div>',
+    CONTACT_SEARCH_RESULTS_MULTIPLE_EMAILS:
+		'<div class="title salesforce_v2_contacts_widget_bg">' +
+			'<div id="email-dropdown-div-v2" class="view_filters hide"><div class="link_item"><span class="pull-right"><%=resLength%> Results</span><a href class="drop-right nav-trigger" id="active_filter" menuid="#leftViewMenuV2"><%=current_email%></a></div><div class="fd-menu" id="leftViewMenuV2" style="display: none; visibility: visible;"></div></div>'+
+			'<div id="search-results"><ul id="contacts-search-results"><%=resultsData%></ul></div>'+
+		'</div>',
+    CONTACT_SEARCH_RESULTS:
+		'<div class="title salesforce_v2_contacts_widget_bg">' +
+			'<div id="number-returned"><b> <%=resLength%> results for <%=requester%> </b></div>'+
+			'<div id="search-results"><ul id="contacts-search-results"><%=resultsData%></ul></div>'+
+		'</div>',
+    CONTACT_NA:
+		'<div class="title contact-na <%=widget_name%>_bg">' +
+			'<div class="name"  id="contact-na">Cannot find <%=reqName%> in <%=app_name%></div>'+
+		'</div>',
+    CONTACT_TEMPLATE: 
+		'<div class="salesforce-widget">' +
+			'<div class="clearfix">' +
+				'<span class="ellipsis"><span class="tooltip" title="<%=label%>"><%=label%>:</span></span>' +
+				'<label class="para-less" id="contact-<%=field%>"><%=value%></label>' +
+				'<span class="toggle-para q-para-span hide"><p class="q-marker-more"></p></span>'+
+			'</div>' +
+		'</div>'
+  });
+}(window.jQuery));
+
 var UIUtil = {
 
 	constructDropDown:function(data, type, dropDownBoxId, entityName, entityId, dispNames, filterBy, searchTerm, keepOldEntries,searchAttr) {

@@ -26,7 +26,8 @@ class Search::V2::AutocompleteController < ApplicationController
         self.search_results[:results].push(*[{
           id: result.email,
           value: result.name,
-          user_id: result.id
+          user_id: result.id,
+          profile_img: result.avatar.nil? ? false : result.avatar.expiring_url(:thumb, 300)
         }])
       end
     end

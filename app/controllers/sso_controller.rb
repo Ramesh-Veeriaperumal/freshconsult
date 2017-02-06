@@ -4,7 +4,7 @@ class SsoController < ApplicationController
   include Redis::OthersRedis
 
   skip_before_filter :check_privilege, :verify_authenticity_token
-  before_filter :check_csrf_token, :only => [:portal_google_sso]
+  before_filter :check_csrf_token, :only => [:portal_google_sso, :login]
   before_filter :set_current_user, :only =>[:portal_google_sso, :marketplace_google_sso]
   skip_after_filter :set_last_active_time
   before_filter :form_authenticity_token, :only => :mobile_app_google_login, :if => :is_native_mobile?
@@ -47,7 +47,9 @@ class SsoController < ApplicationController
   end
 
   def facebook
-    redirect_to "#{AppConfig['integrations_url'][Rails.env]}/auth/facebook?origin=id%3D#{current_account.id}%26portal_id%3D#{current_portal.id}&state=#{params[:portal_type]}"
+    session["_csrf_token"] ||= SecureRandom.base64(32)
+    token = Base64.encode64(session["_csrf_token"])
+    redirect_to "#{AppConfig['integrations_url'][Rails.env]}/auth/facebook?origin=id%3D#{current_account.id}%26portal_id%3D#{current_portal.id}%26portal_type%3D#{params[:portal_type]}%26token=#{token}"
   end
 
   def portal_google_sso
@@ -74,7 +76,7 @@ class SsoController < ApplicationController
     def check_csrf_token
       decoded_token = Base64.decode64(params["at"])
       unless session["_csrf_token"] == decoded_token
-        flash[:notice] = t('google_signup.signup_google_error.error_message')
+        flash[:notice] = t('google_signup.signup_google_error.token_mismatch_error')
         redirect_to current_account.url_protocol+"://"+portal_url 
       end
     end

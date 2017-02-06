@@ -1,6 +1,6 @@
 module Archive
   class ModifyTicketAssociation < BaseWorker
-    sidekiq_options :queue => :archive_modify_ticket_association, :retry => 0, :backtrace => true, :failures => :exhausted
+    sidekiq_options :queue => ::ArchiveSikdekiqConfig["archive_modify_ticket_association"], :retry => 0, :backtrace => true, :failures => :exhausted
 
     def perform(args)
       begin

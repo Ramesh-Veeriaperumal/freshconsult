@@ -8,6 +8,7 @@ class Reports::Freshfone::SummaryReportsController < ApplicationController
   include Redis::RedisKeys
   include Redis::OthersRedis
   include HelpdeskReports::Helper::ScheduledReports
+  include ExportCsvUtil
 
   before_filter :access_denied, :unless => :freshfone_reports?
   before_filter :set_report_type, :set_selected_tab
@@ -93,7 +94,7 @@ class Reports::Freshfone::SummaryReportsController < ApplicationController
         csv << headers
         headers.shift #agent_name field removed to make a common method call send
         @calls.each do |call_list|
-          csv_data = [call_list.agent_name]
+          csv_data = [handle_operators(call_list.agent_name)]
           headers.each do |val|
             csv_data << column_data(val, [call_list])
           end

@@ -8,7 +8,7 @@ post:
       schema:
         $ref: '#/definitions/twitter_reply_input'
   responses:
-    200:
+    201:
       description: Success
       schema:
         $ref: '#/definitions/extended_note'

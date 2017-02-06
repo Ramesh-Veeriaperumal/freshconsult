@@ -1,4 +1,4 @@
-class Middleware::GlobalRestriction
+ class Middleware::GlobalRestriction
 
   include Cache::Memcache::GlobalBlacklistIp
 
@@ -7,14 +7,16 @@ class Middleware::GlobalRestriction
   end
 
   def call(env)
-    ip = blacklisted_ips.ip_list
-    req = Rack::Request.new(env)
-    req_path = req.path_info
-    env['CLIENT_IP'] = req.ip()
-    if ip && ip.include?(env['CLIENT_IP'])
-  		@status, @headers, @response = set_response(req_path)
-      Rails.logger.error "Request from blacklisted ip. IP: #{env['CLIENT_IP']}"
-      return [@status, @headers, @response]
+    unless bypass_global_restriction?(env)
+      ip = blacklisted_ips.ip_list
+      req = Rack::Request.new(env)
+      req_path = req.path_info
+      env['CLIENT_IP'] = req.ip()
+      if ip && ip.include?(env['CLIENT_IP'])
+    		@status, @headers, @response = set_response(req_path)
+        Rails.logger.error "Request from blacklisted ip. IP: #{env['CLIENT_IP']}"
+        return [@status, @headers, @response]
+      end
     end
   	@status, @headers, @response = @app.call(env)
   end
@@ -27,4 +29,8 @@ class Middleware::GlobalRestriction
     end
   end
 
-end
+  def bypass_global_restriction?(env)
+    SKIP_MIDDLEWARES["skipped_routes"].include?(env['PATH_INFO'])
+  end
+
+ end

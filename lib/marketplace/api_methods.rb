@@ -94,6 +94,25 @@ module Marketplace::ApiMethods
       end
     end
 
+    def version_details(version_id = params[:version_id])
+      begin
+        key = MemcacheKeys::VERSION_DETAILS % { :version_id => version_id }
+        api_payload = payload(
+                            Marketplace::ApiEndpoint::ENDPOINT_URL[:version_details]  % 
+                            { 
+                              :product_id => PRODUCT_ID,
+                              :version_id => version_id 
+                            },
+                            Marketplace::ApiEndpoint::ENDPOINT_PARAMS[:version_details] 
+                          )
+        mkp_memcache_fetch(key, MarketplaceConfig::CACHE_INVALIDATION_TIME) do
+          get_api(api_payload, MarketplaceConfig::GLOBAL_API_TIMEOUT)
+        end
+      rescue *FRESH_REQUEST_EXP => e
+        exception_logger("Exception type #{e.class},URL: #{api_payload} #{e.message}\n#{e.backtrace}")
+      end
+    end
+
     def all_categories
       begin
         api_payload = payload(
@@ -141,6 +160,23 @@ module Marketplace::ApiMethods
       end
     end
 
+    def iframe_settings
+      begin
+        key = MemcacheKeys::IFRAME_SETTINGS % { :version_id => params[:version_id] }
+        api_payload = payload(
+                            Marketplace::ApiEndpoint::ENDPOINT_URL[:iframe_settings] %
+                                  { :product_id => PRODUCT_ID,
+                                    :version_id => params[:version_id] },
+                            Marketplace::ApiEndpoint::ENDPOINT_PARAMS[:iframe_settings] 
+                          )
+        mkp_memcache_fetch(key, MarketplaceConfig::CACHE_INVALIDATION_TIME) do
+          get_api(api_payload, MarketplaceConfig::GLOBAL_API_TIMEOUT)
+        end
+      rescue *FRESH_REQUEST_EXP => e
+        exception_logger("Exception type #{e.class},URL: #{api_payload} #{e.message}\n#{e.backtrace}")
+      end
+    end
+
     # Account API's
     def install_status
       begin
@@ -182,9 +218,12 @@ module Marketplace::ApiMethods
                   :account_id => Account.current.id,
                   :extension_id => post_params[:extension_id]},
           Marketplace::ApiEndpoint::ENDPOINT_PARAMS[:install_extension] )
-        post_api(api_payload, post_params, MarketplaceConfig::ACC_API_TIMEOUT)
+        install_request_obj = post_api(api_payload, post_params, MarketplaceConfig::ACC_API_TIMEOUT)
       rescue *FRESH_REQUEST_EXP => e
         exception_logger("Exception type #{e.class},URL: #{api_payload} #{e.message}\n#{e.backtrace}")
+      else
+        mark_custom_app_setup if (install_request_obj.status == 200)
+        install_request_obj
       end
     end
 
@@ -210,7 +249,7 @@ module Marketplace::ApiMethods
                   :account_id => Account.current.id,
                   :extension_id => delete_params[:extension_id]},
           Marketplace::ApiEndpoint::ENDPOINT_PARAMS[:uninstall_extension] )
-        delete_api(api_payload, MarketplaceConfig::ACC_API_TIMEOUT)
+        delete_api(api_payload, delete_params, MarketplaceConfig::ACC_API_TIMEOUT)
       rescue *FRESH_REQUEST_EXP => e
         exception_logger("Exception type #{e.class},URL: #{api_payload} #{e.message}\n#{e.backtrace}")
       end
@@ -224,6 +263,20 @@ module Marketplace::ApiMethods
                   :account_id => Account.current.id},
           Marketplace::ApiEndpoint::ENDPOINT_PARAMS[:installed_extensions],
           optional_params )
+        get_api(api_payload, MarketplaceConfig::ACC_API_TIMEOUT)
+      rescue *FRESH_REQUEST_EXP => e
+        exception_logger("Exception type #{e.class},URL: #{api_payload} #{e.message}\n#{e.backtrace}")
+      end
+    end
+
+    def installed_extension_details(extension_id = params[:extension_id])
+      begin
+        api_payload = account_payload(
+          Marketplace::ApiEndpoint::ENDPOINT_URL[:installed_extension_details] %
+                { :product_id => PRODUCT_ID,
+                  :account_id => Account.current.id,
+                  :extension_id => extension_id },
+          Marketplace::ApiEndpoint::ENDPOINT_PARAMS[:installed_extension_details] )
         get_api(api_payload, MarketplaceConfig::ACC_API_TIMEOUT)
       rescue *FRESH_REQUEST_EXP => e
         exception_logger("Exception type #{e.class},URL: #{api_payload} #{e.message}\n#{e.backtrace}")

@@ -24,6 +24,7 @@ class Freshfone::CallObserver < ActiveRecord::Observer
   def after_update(call)
     account = call.account
     call.update_metrics if account.features? :freshfone_call_metrics
+    trigger_disconnect_job(call) if disconnected?(call)
     if call.call_status_changed?
       publish_new_call_status(call)
       
@@ -243,10 +244,22 @@ class Freshfone::CallObserver < ActiveRecord::Observer
         device_type: Freshfone::CallMeta::USER_AGENT_TYPE_HASH[:browser])
     end
 
+    def disconnected?(call)
+      call.outgoing_root_call? && call.dial_call_sid_changed? &&
+        Freshfone::Call::COMPLETED_CALL_STATUS.include?(call.call_status)
+    end
+
+    def trigger_disconnect_job(call)
+      disconnect_params = { call_id: call.id, enqueued_time: Time.now }
+      jid = Freshfone::CallTerminateWorker.perform_async(disconnect_params)
+      Rails.logger.info "Freshfone Call Terminate Worker: Job-id: #{jid}, Account ID: #{call.account_id}, Worker Params: #{disconnect_params.inspect}"
+    end
+
     def update_pinged_agent_response_and_info(call)
       call_meta = call.meta
       return if call_meta.blank?
       pinged_meta = get_and_clear_redis_meta(call)
+      Rails.logger.info "Meta Data :: Account :: #{call.account_id}  :: Call :: #{call.id} :: #{pinged_meta.inspect}"
       agent_response = pinged_meta.first
       agent_info = pinged_meta.second['agent_info']
       call_meta.pinged_agents.each do |agent|

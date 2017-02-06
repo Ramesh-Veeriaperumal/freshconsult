@@ -121,7 +121,7 @@
 								<div class="help-block"><%=t('account.info4')%></div>
 					  		</div>
 						</div>
-						<% if current_account.subscription.non_sprout_plan? %>
+						<% if current_account.subscription.forum_available_plan? %>
 							<div class="control-group account-forum-toggle">
 								<%= f.label :account_forums, t('account.forums_toggle.title') , :class => "control-label" %>
 								<div class="controls">		    	
@@ -131,37 +131,38 @@
 	            </div>
             <% end %>
 
-
-						<div class="control-group">
-							<%= content_tag(:label, t('account.page_colors.title'), :class => "control-label" ) %>
-							<div class="controls">
-								<div class="row-fluid">
-								<%= portal.fields_for :preferences do |p| %>
-									<div class="span3">
-										<%= p.label :header_color, t('account.page_colors.header') %>
-										<div class="color">
-											<%= f.color_picker :class => "color_field required" , :id => "HeaderColor" , :name =>"account[main_portal_attributes][preferences][header_color]" , :value => "#{portal_pref(@account.main_portal, :header_color)}" , :maxlength => "7" %>
+            <% if current_account.rebranding_enabled? %>
+							<div class="control-group">
+								<%= content_tag(:label, t('account.page_colors.title'), :class => "control-label" ) %>
+								<div class="controls">
+									<div class="row-fluid">
+									<%= portal.fields_for :preferences do |p| %>
+										<div class="span3">
+											<%= p.label :header_color, t('account.page_colors.header') %>
+											<div class="color">
+												<%= f.color_picker :class => "color_field required" , :id => "HeaderColor" , :name =>"account[main_portal_attributes][preferences][header_color]" , :value => "#{portal_pref(@account.main_portal, :header_color)}" , :maxlength => "7" %>
+											</div>
 										</div>
-									</div>
-									<div class="span3">
-										<%= p.label :header_color_tab, t('account.page_colors.tab_color') %>
-										<div class="color">
-											<%= f.color_picker :class => "color_field required" , :id => "TabColor" , :name =>"account[main_portal_attributes][preferences][tab_color]" , :value => "#{portal_pref(@account.main_portal, :tab_color)}" , :maxlength => "7" %>
+										<div class="span3">
+											<%= p.label :header_color_tab, t('account.page_colors.tab_color') %>
+											<div class="color">
+												<%= f.color_picker :class => "color_field required" , :id => "TabColor" , :name =>"account[main_portal_attributes][preferences][tab_color]" , :value => "#{portal_pref(@account.main_portal, :tab_color)}" , :maxlength => "7" %>
+											</div>	
+										</div>
+										<div class="span3 omega">
+											<%= p.label :bg_color, t('account.page_colors.background') %>
+											<div class="color"> 
+												<%= f.color_picker :class => "color_field required" , :id => "BackgroundColor" , :name =>"account[main_portal_attributes][preferences][bg_color]" , :value => "#{portal_pref(@account.main_portal, :bg_color)}" , :maxlength => "7" %>
+											</div>
 										</div>	
+							  		<% end %>
+							  		</div>
+									<div class="reset-color">
+										<a href="javascript:void(0)" id="ResetColors"><%=t('account.info3')%> </a>
 									</div>
-									<div class="span3 omega">
-										<%= p.label :bg_color, t('account.page_colors.background') %>
-										<div class="color"> 
-											<%= f.color_picker :class => "color_field required" , :id => "BackgroundColor" , :name =>"account[main_portal_attributes][preferences][bg_color]" , :value => "#{portal_pref(@account.main_portal, :bg_color)}" , :maxlength => "7" %>
-										</div>
-									</div>	
-						  		<% end %>
-						  		</div>
-								<div class="reset-color">
-									<a href="javascript:void(0)" id="ResetColors"><%=t('account.info3')%> </a>
-								</div>
-							</div>	
-						</div>
+								</div>	
+							</div>
+						<% end %>
 						<div class="control-group">
 							<label class="control-label"><%= t("admin.products.portal.portal_settings") %></label>
 							<div class="controls">

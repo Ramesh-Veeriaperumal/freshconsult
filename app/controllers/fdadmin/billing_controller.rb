@@ -76,7 +76,7 @@ class Fdadmin::BillingController < Fdadmin::DevopsMainController
   end
 
   def select_shard(&block)
-    Sharding.select_shard_of(params[:content][:customer][:id]) do 
+    Sharding.admin_select_shard_of(params[:content][:customer][:id]) do 
         yield 
     end
   end
@@ -272,6 +272,7 @@ class Fdadmin::BillingController < Fdadmin::DevopsMainController
 
     def update_features
       SAAS::SubscriptionActions.new.change_plan(@account, @old_subscription, @existing_addons)
+      SAAS::SubscriptionEventActions.new(@account, @old_subscription, @existing_addons).change_plan if @account.new_pricing_launched?
     end
 
     def update_features?            

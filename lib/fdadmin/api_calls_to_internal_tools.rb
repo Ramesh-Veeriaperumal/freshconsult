@@ -1,5 +1,7 @@
 module Fdadmin::APICallsToInternalTools
 
+  Response = Struct.new(:code)
+
   def self.make_api_request_to_internal_tools(request_type,url_params,path_key,domain=nil)
     domain = @domain if @domain
     options = Hash.new
@@ -22,11 +24,8 @@ module Fdadmin::APICallsToInternalTools
     rescue Exception => e
       response = Response.new(503)
       Rails.logger.debug "Exception in performing API call: #{e}"
+      NewRelic::Agent.notice_error(e,{:custom_params => {:description => "Error while performing api call to supreme : #{request_url}"}},:trace_only)
     end
-    # if response.code == 200
-    #   create_activity(request,response) if UPDATE_ACTIONS.include?(action_name.to_s) && response["status"] == "success"
-    #   # record_exception if response.body.include?("status") && response["status"] == "error"
-    # end
     return response
   end
 

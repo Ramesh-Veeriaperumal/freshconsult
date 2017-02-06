@@ -13,6 +13,14 @@ class Helpdesk::Note < ActiveRecord::Base
     manual_publish_to_xchg(uuid, "note", subscriber_manual_publish("note", action, options, uuid), key)
   end
 
+  def delayed_manual_publish_to_rmq(action, key, options = {})
+    # Manual publish for note model
+    # Currently handled for reports and activities subscribers
+    # Need to Append RMQ_GENERIC_NOTE_KEY to enable for new subscribers
+    uuid = generate_uuid
+    manual_publish_to_xchg(uuid, "note", subscriber_manual_publish("note", action, options, uuid), key, true)
+  end
+
   def to_rmq_json(keys, action)
     return note_identifiers if destroy_action?(action)
     @rmq_note_details ||= [note_identifiers, note_basic_properties].reduce(&:merge)

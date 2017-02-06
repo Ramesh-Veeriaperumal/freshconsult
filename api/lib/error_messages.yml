@@ -47,6 +47,7 @@ api_error_messages:
   company_id_required: "Company ID is required for a contact to view all tickets"
   inconsistent_state: "Email should be associated to the contact before converting it to an agent"
   upload_jpg_or_png_file: "Invalid file type(%{current_extension}). Please upload a jpg or png file"
+  cannot_deactivate: "Active field can only be set to true"
   cant_add_primary_email: "Cannot add %{email} to other_emails since it is the primary email"
   invalid_encoding: "Url query string received is %{invalid_query_string}. It should be properly encoded."
   missing_field: "Mandatory attribute missing"
@@ -106,8 +107,11 @@ api_error_messages:
   cannot_set_skip_notification: 'Cannot be set unless status is changed to closed'
   cannot_set_user_id: "Cannot set user_id when content type is inline"
   incorrect_image_dimensions: "Image dimensions are larger than expected"
-  invalid_image_file: "Invalid file type(%{current_extension}). Please upload a jpg or png or gif file"
+  invalid_image_file: "Invalid file type(%{current_extension}). Please upload a jpg or png or gif or svg file"
   shorter_full_text: "Content of full text should be greater than that of body"
+  cannot_set_pending_since: "It cannot be set, when created_at and updated_at are not set or status is not pending"
+  duplicate_companies: "One or more duplicate company_ids found"
+  cant_add_primary_resource_to_others: "Cannot add %{resource} to %{attribute} since it is %{status}"
+  invalid_company_id: "There is no record matching the id %{company_id}"
   installed_application_id_required: "Installed application id required"
   ticket_id_required: "Ticket id required"
-

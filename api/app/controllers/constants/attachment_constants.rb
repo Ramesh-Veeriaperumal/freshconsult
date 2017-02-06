@@ -18,7 +18,7 @@ module AttachmentConstants
   INLINE_ATTACHABLE_TOKEN_BY_KEY = Hash[*INLINE_ATTACHABLE_TYPES.map { |i| [i[2], i[0]] }.flatten]
 
   # Only xxx.jpg and xxx.png are allowed to upload
-  INLINE_IMAGE_EXT = %w(.jpg .jpeg .jpe .png .gif).freeze
+  INLINE_IMAGE_EXT = %w(.jpg .jpeg .jpe .png .gif .svg).freeze
 
   # Wrap parameters args
   WRAP_PARAMS = [:attachment, exclude: [], format: [:json, :multipart_form]].freeze

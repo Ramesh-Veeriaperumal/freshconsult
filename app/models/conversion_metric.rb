@@ -56,7 +56,7 @@ class ConversionMetric < ActiveRecord::Base
     
   def update_referrer_type(*url)
       url = self[:first_referrer] if url.blank?
-      self[:referrer_type] = get_referrer_type(url,true)
+      self[:referrer_type] = get_referrer_type(url,true) if url.present?
   end
   
   def get_referrer_code(type)      

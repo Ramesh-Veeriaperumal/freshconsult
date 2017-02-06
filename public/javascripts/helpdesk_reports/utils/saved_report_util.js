@@ -450,10 +450,17 @@ HelpdeskReports.SavedReportUtil = (function() {
 								}
 							});        
 
+							if(jQuery.inArray(condition,_FD.core.default_available_filter) == -1){
+								if(jQuery.isArray(filter_row.value)){
+	                   				_FD.core.constructReportField(condition,values);
+	                   			}else{
+	                   				_FD.core.constructReportField(condition,values.toString());
+	                   			}
+							}
+
 							jQuery('#' + condition).select2('destroy');
 	                    	jQuery('#' + condition).select2(_FD.core.getRemoteFilterConfig(condition,true,saved_source));
 	                    	jQuery("#" + condition).select2('val', values);
-
                  		}
 
                 	 } else {
@@ -491,7 +498,11 @@ HelpdeskReports.SavedReportUtil = (function() {
 						}
 	                   	
 	                 }
-                 
+	                 //Set the tag dropdown
+                 	 if(condition == "tag_id") {
+                 	 	jQuery("div[condition='tag_id']").attr('operator',filter_row.operator);
+            			jQuery(".tag-selection-block .select-title").html(jQuery(".tags-menu li[data-operator=" + filter_row.operator + "]").text());
+                 	 }
 	              });
 	            }
 	            is_scheduled_op = false;

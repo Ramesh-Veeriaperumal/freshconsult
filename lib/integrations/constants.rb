@@ -40,7 +40,8 @@ module Integrations::Constants
     :freshsales => "freshsales",
     :fullcontact => "fullcontact",
     :cti => "cti",
-    :outlook_contacts => "outlook_contacts"
+    :outlook_contacts => "outlook_contacts",
+    :salesforce_v2 => "salesforce_v2"
   }
 
   DISPLAY_IN_PAGES = { "ticket_show" => 2, "contact_show" => 1, "company_show" => 0 }
@@ -52,7 +53,7 @@ module Integrations::Constants
     APP_NAMES[:salesforce] => [DISPLAY_IN_PAGES["ticket_show"],DISPLAY_IN_PAGES["contact_show"]]
   }
 
-  CRM_APPS= [:sugarcrm, :salesforce, :batchbook, :highrise, :nimble, :zohocrm, :capsule_crm, :dynamicscrm, :quickbooks, :freshbooks, :infusionsoft, :freshsales]
+  CRM_APPS= [:sugarcrm, :salesforce, :batchbook, :highrise, :nimble, :zohocrm, :capsule_crm, :dynamicscrm, :quickbooks, :freshbooks, :infusionsoft, :freshsales, :salesforce_v2]
 
   APP_CATEGORY_ID_TO_NAME = {
     10 => :custom,
@@ -108,7 +109,9 @@ module Integrations::Constants
     "mailchimp" => "mailchimp",
     "constantcontact" => "constantcontact",
     "surveymonkey" => "surveymonkey",
-    "outlook_contacts" => "outlook_contacts"
+    "outlook_contacts" => "outlook_contacts",
+    "salesforce_v2" => "salesforce_v2",
+    "facebook" => ""
   }
 
 end

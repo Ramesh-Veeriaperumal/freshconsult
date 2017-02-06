@@ -25,12 +25,7 @@
               "data-toggle" => toggle_path, :rel => "toggle", :class=>"switch", :name => "onoffswitch", :id => "indplug_#{installation_details['extension_id']}" %>
               </div>
               <% if !is_ni_integration && extension_details['version_id'] != installation_details['version_id'] %>
-                <% update_params = { "type" => "#{Marketplace::Constants::EXTENSION_TYPE[:plug]}", "installation_type" => "update", "display_name" => "#{ERB::Util.url_encode(extension_details['display_name'])}" } %>
-                <% if (extension_details['features'].present? && extension_details['features'].include?('oauth')) %>
-                    <% update_params["is_oauth_app"] = true %>
-                <% end %>
-                <%= link_to t('update'), "#",
-                    "data-url"=> "#{admin_marketplace_installed_extensions_new_configs_path(extension_details['extension_id'],extension_details['version_id'])}?#{update_params.to_query}", :class => "btn btn-mini btn-settings update", "data-developedby"=> extension_details['account'] %>
+                  <%= generate_mkp_update_button(extension_details) %>
               <% end %>
               <% if installation_details['configs'] %>
                 <% if is_ni_integration %>
@@ -38,22 +33,16 @@
                     <%= link_to "<span class='#{font_class('settings1', 16)}'></span>".html_safe, edit_integrations_marketplace_app_path(ERB::Util.url_encode(extension_details['name'])), :class => "btn btn-mini btn-settings tooltip", "data-placement" => "below", "data-original-title" => t('application.tooltip.settings') %>
                   <% end %>
                 <% else %>
-                  <%
-                    enable_settings = true
-                    if (extension_details['features'].present? && extension_details['features'].include?('oauth'))
-                      if installation_details['configs'].except("access_token", "refresh_token").blank?
-                        enable_settings = false 
-                      end
-                    end
-                  %>
-                  <% if enable_settings %>
-                    <%= link_to "<span class='#{font_class('settings1', 16)}'></span>".html_safe, "",
-                    "data-url"=> "#{admin_marketplace_installed_extensions_edit_configs_path(installation_details['extension_id'], installation_details['version_id'])}?type=#{Marketplace::Constants::EXTENSION_TYPE[:plug]}&installation_type=settings&display_name=#{ERB::Util.url_encode(extension_details['display_name'])}",
-                    :class => "btn btn-mini btn-settings update tooltip", "data-placement" => "below", "data-original-title" => t('application.tooltip.settings'), "data-developedby"=> extension_details['account'] %>
-                  <% end %>
+                <% edit_button = generate_mkp_edit_button(extension_details, installation_details)%>
+                <%= edit_button if edit_button.present?%>
                 <% end %>
+              <!-- To be decided for iframe apps with no configs-->
+              <% elsif is_iframe_app?(extension_details)%>
+                <% edit_params = { "type" => "#{Marketplace::Constants::EXTENSION_TYPE[:plug]}", "installation_type" => "settings", "display_name" => "#{ERB::Util.url_encode(extension_details['display_name'])}" } %>
+                <%= link_to "<span class='#{font_class('settings1', 16)}'></span>".html_safe, "", 
+                "data-url"=> "#{admin_marketplace_installed_extensions_iframe_configs_path(installation_details['extension_id'], installation_details['version_id'])}?#{edit_params.to_query}",:class => "btn btn-mini btn-settings update-iframe-settings tooltip", "data-placement" => "below", "data-original-title" => t('application.tooltip.settings'), "data-developedby"=> extension_details['account'] %>
               <% end %>
-              <% if extension_details["features"].present? && extension_details["features"].include?('oauth') %>
+              <% if is_oauth_app?(extension_details)%>
                 <% reauthorize_url = send("admin_marketplace_installed_extensions_edit_oauth_configs_path", extension_details['extension_id'], extension_details['version_id']) + "?installed_extn_id=" + installation_details['installed_extension_id'].to_s %>
                 <a href="#toggle-confirm" rel="freshdialog" class="btn btn-mini tooltip reauthorize-btn" title="<%= t('marketplace.reauthorize') %>" data-placement="below" data-original-title="<%= t('integrations.uninstall') %>" data-width="600" data-close-on-submit="true" data-show-close="true" data-destroy-on-close="true"  data-url="<%= reauthorize_url %>" data-confirm-content="<%= t('marketplace.reauthorize_oauth_app')%>" data-close-label="<%= t('marketplace.cancel') %>" data-submit-label="<%= t('marketplace.reauthorize') %>" data-submit-class="btn btn-primary reauthorize-confirm" >
                   <span class="<%= font_class('keyicon', 16) %>"></span>

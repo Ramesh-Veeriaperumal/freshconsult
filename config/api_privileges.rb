@@ -6,7 +6,6 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/scenario_automation", only: [:index]
     resource :"ember/canned_response_folder", only: [:index, :show]
     resource :"ember/canned_response", only: [:show, :index]
-    resource :"ember/tickets/canned_response", only: [:show]
     resource :"ember/ticket", only: [:index, :show, :create, :execute_scenario, :spam, :latest_note]
     resource :"ember/tickets/bulk_action", only: [:bulk_execute_scenario]
     resource :"ember/ticket_filter", only: [:index, :show, :create, :update, :destroy]
@@ -67,7 +66,7 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   edit_ticket_properties do
-    resource :"ember/ticket", only: [:update_properties]
+    resource :"ember/ticket", only: [:update, :update_properties]
     resource :"ember/tickets/bulk_action", only: [:bulk_update]
   end
 

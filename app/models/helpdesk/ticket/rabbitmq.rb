@@ -13,6 +13,14 @@ class Helpdesk::Ticket < ActiveRecord::Base
     manual_publish_to_xchg(uuid, "ticket", subscriber_manual_publish("ticket", action, options, uuid), key)
   end
 
+  def delayed_manual_publish_to_rmq(action, key, options = {})
+    # Manual publish for ticket model
+    # Currently handled for reports and activities subscribers
+    # Need to Append RMQ_GENERIC_TICKET_KEY to enable for new subscribers
+    uuid = generate_uuid
+    manual_publish_to_xchg(uuid, "ticket", subscriber_manual_publish("ticket", action, options, uuid), key, true)
+  end
+
   def to_rmq_json(keys, action)
     return ticket_identifiers if destroy_action?(action)
     @rmq_ticket_details ||= [ticket_identifiers, ticket_basic_properties, ticket_schemaless_hash, 

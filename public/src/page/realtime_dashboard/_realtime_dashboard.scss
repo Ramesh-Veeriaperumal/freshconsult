@@ -848,9 +848,9 @@ svg {
   overflow-y: scroll;
   @include box-shadow (0 0 5px 0 #aaa);
   @include transition(transform .3s);
-  @include transform(translateX(600px));
+  @include translateX(600px);
   &.active{
-    @include transform(translateX(0));
+    @include translateX(0);
   }
   
   .sloading{
@@ -989,7 +989,7 @@ svg {
         .symbol{
             width: 8px;
             height: 8px;
-            margin-right: 10px;
+            @include margin-right(10px);
             margin-top: 3px;
         }
         .thinSymbol{

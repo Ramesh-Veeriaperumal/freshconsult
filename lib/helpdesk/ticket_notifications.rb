@@ -28,7 +28,7 @@ module Helpdesk::TicketNotifications
   def notify_on_update
     return if spam? || deleted?
     if Account.current.features?(:shared_ownership)
-      notify_by_email(EmailNotification::TICKET_ASSIGNED_TO_GROUP, true) if internal_group_id_changed? && internal_group
+      notify_by_email(EmailNotification::TICKET_ASSIGNED_TO_GROUP, true) if @model_changes.key?(Helpdesk::SchemaLessTicket.internal_group_column) && internal_group
       notify_by_email(EmailNotification::TICKET_ASSIGNED_TO_AGENT, true) if send_agent_assigned_notification?(true)
     end
     notify_by_email(EmailNotification::TICKET_ASSIGNED_TO_GROUP) if (@model_changes.key?(:group_id) && group)

@@ -84,14 +84,14 @@ module Concerns
       end
 
       def user_details_template(item)
-        user = begin
-          if item.is_a? Helpdesk::Ticket
-            item.requester
-          elsif item.user.customer?
-            item.user
+        if (item.is_a? Helpdesk::Ticket)
+          if item.source == Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:outbound_email]
+            user = { "name" => item.reply_name, "email" => item.reply_email }
           else
-            { 'name' => item.notable.reply_name, 'email' => item.notable.reply_email }
+            user = item.requester 
           end
+        else
+          user = ((item.user.customer?) ? item.user : { "name" => item.notable.reply_name, "email" => item.notable.reply_email })
         end
 
         %( #{h(user['name'])} &lt;#{h(user['email'])}&gt; )

@@ -186,6 +186,42 @@
             "description": "Ticket not found"
           }
         }
+      },
+      "put": {
+        "tags": [
+          "ticket"
+        ],
+        "description": "Update a ticket",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ticket_input"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/ticket_show"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Ticket not found"
+          }
+        }
       }
     },
     "/tickets/{id}/restore": {
@@ -1001,45 +1037,6 @@
             "description": "Access denied"
           }
         }
-      },
-      "put": {
-        "tags": [
-          "conversation"
-        ],
-        "description": "Update a Note",
-        "parameters": [
-          {
-            "name": "id",
-            "type": "number",
-            "in": "path",
-            "description": "ID of note to be updated"
-          },
-          {
-            "name": "data",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/note_update_input"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "schema": {
-              "$ref": "#/definitions/extended_note"
-            }
-          },
-          "400": {
-            "description": "Bad Request Error",
-            "schema": {
-              "$ref": "#/definitions/bad_request_error"
-            }
-          },
-          "403": {
-            "description": "Access denied"
-          }
-        }
       }
     },
     "/tickets/{id}/reply": {
@@ -1233,7 +1230,7 @@
           }
         ],
         "responses": {
-          "200": {
+          "201": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/extended_note"
@@ -1249,45 +1246,6 @@
       }
     },
     "/conversations/{id}": {
-      "post": {
-        "tags": [
-          "conversation"
-        ],
-        "description": "Create a Note",
-        "parameters": [
-          {
-            "name": "id",
-            "type": "number",
-            "in": "path",
-            "description": "Display ID of ticket"
-          },
-          {
-            "name": "data",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/note_create_input"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "schema": {
-              "$ref": "#/definitions/extended_note"
-            }
-          },
-          "400": {
-            "description": "Bad Request Error",
-            "schema": {
-              "$ref": "#/definitions/bad_request_error"
-            }
-          },
-          "403": {
-            "description": "Access denied"
-          }
-        }
-      },
       "put": {
         "tags": [
           "conversation"
@@ -2366,6 +2324,32 @@
         }
       }
     },
+    "/canned_responses/": {
+      "get": {
+        "summary": "List all",
+        "description": "Lists all Canned Responses",
+        "tags": [
+          "canned response"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/canned_response"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          }
+        }
+      }
+    },
     "/canned_responses/{id}": {
       "get": {
         "summary": "Show",
@@ -2386,6 +2370,12 @@
             "in": "query",
             "type": "string",
             "description": "Comma-separated values, possible values - evaluated_response"
+          },
+          {
+            "name": "ticket_id",
+            "in": "query",
+            "type": "string",
+            "description": "ID of the ticket for which the canned response should be evaluated"
           }
         ],
         "responses": {
@@ -4712,9 +4702,12 @@
         "content_html": {
           "type": "string"
         },
-        "evaluated_response": {
-          "type": "string",
-          "description": "Has to be sideloaded with ?include=evaluated_response"
+        "attachments": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "byte"
+          }
         }
       }
     },
@@ -5018,6 +5011,13 @@
                 "has_quoted_text": {
                   "type": "boolean"
                 },
+                "last_edited_at": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "last_edited_by": {
+                  "type": "number"
+                },
                 "attachments": {
                   "type": "array",
                   "items": {
@@ -5134,6 +5134,10 @@
           "properties": {
             "folder_id": {
               "type": "integer"
+            },
+            "evaluated_response": {
+              "type": "string",
+              "description": "Has to be sideloaded with ?include=evaluated_response"
             }
           }
         }

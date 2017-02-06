@@ -1,0 +1,115 @@
+.list-page-body {
+  
+  .new-email-domain {
+    padding: 50px;
+    text-align: center;
+  }
+
+  .dkim-list-wrapper {
+    background-color: #fbfbfb;
+      .dkim-list{
+        padding: 15px;
+        border-bottom: 1px solid #eee;
+
+        &:last-child {
+          border: none;
+        }
+
+        &.active {
+          background-color: #fff;
+
+          .dkim-table-wraper {
+            display: block;
+          }
+
+          .ficon-caret-right::before {
+            content: "\f118";
+          }
+        }
+
+        .cart-icon {
+          vertical-align: middle;
+        font-size: 18px;
+          color: #7f7f7f;
+        }
+
+        .disable {
+          .cart-icon { color: #ccc; }
+          .cart-text { color: #888; }
+        }
+
+        .dkim-table-wraper {
+          display: none;
+          position: relative;
+          margin: 0 -15px;
+
+          .dkim-verify-dtn {
+            position: absolute;
+            @include right(12px);
+            top: -40px;
+          @include text-align(right);
+          }
+        }
+
+        .dkim-table {
+          border-bottom: 0;
+          width: 95%;
+          margin-top: 25px;
+          margin-left: 25px;
+
+          .ficon-checkmark-round-o {
+            color: #76C38C;
+          }
+
+          .ficon-unverified, .ficon-cross-round {
+            color: #BB2126;
+          }
+        }
+
+        .btn-white {
+          color: #333;
+        padding: 5px 12px;
+          background-color: #fff;
+          border: 1px solid #DFDFDF;
+          border-radius: 3px;
+          font-weight: 500;
+        }
+
+        .btn-verified {
+        border-color: #EBEBEB;
+          color: #D1D1D1;
+        }
+
+        .last-verified {
+          color: #aaa;
+          font-size: 12px;
+        }
+
+        input.clip-data[readonly] {
+        background-color: #fff;
+          border: 1px dashed #ababab;
+          box-shadow: none;
+          margin: 0;
+          padding: 8px 5px;
+        }
+
+        .input-append {
+          position: relative;
+          input {
+            border-radius: 3px;
+          }
+          .btn {
+            position: absolute;
+          @include right(-8px);
+          padding: 7px;
+          z-index: 2;
+          display: none;
+          background: #eee;
+          &.show {
+            display: inline-block;
+          }
+          }
+        }
+      }
+  }
+}

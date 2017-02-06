@@ -14,6 +14,7 @@ class User < ActiveRecord::Base
   include Search::ElasticSearchIndex
   include Cache::Memcache::User
   include Redis::RedisKeys
+  include Redis::RoundRobinRedis
   include Redis::OthersRedis
   include Authority::FreshdeskRails::ModelHelpers
   include ApiWebhooks::Methods
@@ -30,6 +31,7 @@ class User < ActiveRecord::Base
   validates_uniqueness_of :unique_external_id, :scope => :account_id, :allow_nil => true, :allow_blank => true
 
   xss_sanitize  :only => [:name,:email,:language, :job_title, :twitter_id, :address, :description, :fb_profile_id], :plain_sanitizer => [:name,:email,:language, :job_title, :twitter_id, :address, :description, :fb_profile_id]
+  scope :trimmed, :select => [:'users.id', :'users.name']
   scope :contacts, :conditions => { :helpdesk_agent => false }
   scope :technicians, :conditions => { :helpdesk_agent => true }
   scope :visible, :conditions => { :deleted => false }
@@ -126,7 +128,7 @@ class User < ActiveRecord::Base
     account.features?(:multiple_user_companies)
   end
 
-  attr_accessor :import, :highlight_name, :highlight_job_title, :created_from_email,
+  attr_accessor :import, :highlight_name, :highlight_job_title, :created_from_email, :sbrr_fresh_user,
                 :primary_email_attributes, :tags_updated, :keep_user_active, :role_ids_changed # (This role_ids_changed used to forcefully call user callbacks only when role_ids are there.
   # As role_ids are not part of user_model(it is an association_reader), agent.update_attributes won't trigger user callbacks since user doesn't have any change.
   # Hence user.send(:attribute_will_change!, :role_ids_changed) is being called in api_agents_controller.)
@@ -136,7 +138,7 @@ class User < ActiveRecord::Base
                   :description, :time_zone, :customer_id, :avatar_attributes, :company_id,
                   :company_name, :tag_names, :import_id, :deleted, :fb_profile_id, :language,
                   :address, :client_manager, :helpdesk_agent, :role_ids, :parent_id, :string_uc04,
-                  :contractor, :unique_external_id
+                  :contractor, :skill_ids, :user_skills_attributes, :unique_external_id
 
   def time_zone
     tz = self.read_attribute(:time_zone)
@@ -271,7 +273,12 @@ class User < ActiveRecord::Base
           conditions: { deleted: false, blocked: false }
         },
         company_id: {
-          conditions: { customer_id: contact_filter.company_id }
+          joins: :user_companies,
+          conditions: {
+            user_companies:  {
+              company_id: contact_filter.company_id
+            }
+          }
         },
         email: {
           joins: :user_emails,
@@ -283,6 +290,9 @@ class User < ActiveRecord::Base
         },
         mobile: {
           conditions: { mobile: contact_filter.mobile }
+        },
+        _updated_since: {
+          conditions: ['updated_at >= ?', contact_filter.try(:_updated_since).try(:to_time).try(:utc)]
         }
       }
     end
@@ -372,6 +382,7 @@ class User < ActiveRecord::Base
 
   def update_attributes(params) # Overriding to normalize params at one place
     normalize_params(params) # hack to facilitate contact_fields & deprecate customer
+    self.active = params["active"] if params["active"]
     if [:tag_names, :tags].any?{|attr| # checking old key for API & prevents resetting tags if its not intended
      params.include?(attr)} && params[:tags].is_a?(String)
       tags = params.delete(:tags)
@@ -460,8 +471,9 @@ class User < ActiveRecord::Base
   end
 
   # Used by API V2
-  def create_contact!
+  def create_contact!(status)
     self.avatar = self.avatar
+    self.active = status if status
     return false unless save_without_session_maintenance
     if (!self.deleted and !self.email.blank?)
       portal = nil
@@ -667,12 +679,20 @@ class User < ActiveRecord::Base
     self.privilege?(:manage_tickets) && agent.group_ticket_permission
   end
 
+  def assigned_ticket_permission
+    self.privilege?(:manage_tickets) && agent.assigned_ticket_permission
+  end
+
+  alias :all_tickets_permission?      :can_view_all_tickets?
+  alias :group_tickets_permission?    :group_ticket_permission
+  alias :assigned_tickets_permission? :assigned_ticket_permission
+
   def associated_group_ids
     agent_groups.pluck(:group_id).insert(0,0)
   end
 
   def group_ticket?(ticket)
-    group_member?(ticket.group_id) or 
+    group_member?(ticket.group_id) or
         (Account.current.features?(:shared_ownership) ? group_member?(ticket.internal_group_id) : false)
   end
 
@@ -680,16 +700,13 @@ class User < ActiveRecord::Base
     group_id && associated_group_ids.include?(group_id)
   end
 
-  def assigned_ticket_permission
-    self.privilege?(:manage_tickets) && agent.assigned_ticket_permission
-  end
-
+  
   def ticket_agent?(ticket)
     ticket.responder_id == self.id || (Account.current.features?(:shared_ownership) ? ticket.internal_agent_id == self.id : false)
   end
 
   def has_ticket_permission? ticket
-    (can_view_all_tickets?) or (ticket_agent?(ticket)) or (group_ticket_permission && (group_ticket?(ticket))) 
+    (can_view_all_tickets?) or (ticket_agent?(ticket)) or (group_ticket_permission && (group_ticket?(ticket)))
   end
 
   # For a customer we need to check if he is the requester of the ticket
@@ -947,10 +964,22 @@ class User < ActiveRecord::Base
     self.accessible_groups.round_robin_groups
   end
 
+  def no_of_assigned_tickets group
+    key = SKILL_BASED_USERS_LOCK_KEY % {:account_id => Account.current.id, :group_id => group.id,
+                                        :user_id => self.id}
+    assigned_tickets_count = get_round_robin_redis(key).to_i
+    SBRR.log "User #{self.id} Accessed assigned_tickets_count : #{assigned_tickets_count}" 
+    assigned_tickets_count
+  end
+
+  def match_sbrr_conditions?(_ticket)
+    _ticket.match_sbrr_conditions?(self)
+  end
+
   def assign_company comp_name
     if has_multiple_companies_feature?
       comp = account.companies.find_or_create_by_name(comp_name)
-      self.user_companies.build(:company_id => comp.id) if 
+      self.user_companies.build(:company_id => comp.id) if
         self.user_companies.find_by_company_id(comp.id).blank?
     else
       self.company_name = comp_name

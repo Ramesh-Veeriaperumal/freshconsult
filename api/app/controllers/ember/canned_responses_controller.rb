@@ -1,9 +1,10 @@
 module Ember
   class CannedResponsesController < ApiApplicationController
     include HelperConcern
+    include TicketConcern
     decorate_views
 
-    before_filter :canned_response_permission?, only: [:show]
+    before_filter :canned_response_permission?, :load_ticket, :ticket_permission?, only: [:show]
     before_filter :filter_ids, only: :index
 
     MAX_IDS_COUNT = 10
@@ -15,7 +16,7 @@ module Ember
       end
 
       def validate_url_params
-        @validation_klass = 'CannedResponseIncludeValidation'
+        @validation_klass = 'CannedResponseFilterValidation'
         validate_query_params
       end
 
@@ -25,7 +26,10 @@ module Ember
 
       def decorator_options
         options = {}
-        options[:sideload_options] = sideload_options.to_a if show?
+        if show?
+          options[:sideload_options] = (sideload_options || [])
+          options[:ticket] = @ticket
+        end
         super(options)
       end
 
@@ -50,6 +54,13 @@ module Ember
 
       def scoper
         current_account.canned_responses.preload(helpdesk_accessible: [:group_accesses, :user_accesses])
+      end
+
+      def load_ticket
+        if params[:ticket_id]
+          @ticket = current_account.tickets.find_by_display_id(params[:ticket_id])
+          log_and_render_404 unless @ticket.present?
+        end
       end
 
       def canned_response_permission?

@@ -1,0 +1,21 @@
+defaults: &defaults
+  archive_ticket_splitter: archive_ticket_splitter
+  archive_build_create_ticket: archive_build_create_ticket
+  archive_modify_ticket_association: archive_modify_ticket_association
+  archive_delete_ticket: archive_delete_ticket
+  archive_delete_ticket_dependencies: archive_delete_ticket_dependencies
+
+development:
+  <<: *defaults
+
+slave:
+  <<: *defaults
+
+test:
+  <<: *defaults
+
+staging:
+  <<: *defaults
+
+production:
+  <<: *defaults

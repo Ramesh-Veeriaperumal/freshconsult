@@ -4,6 +4,7 @@ class Tickets::BulkTicketActions < BaseWorker
   include Helpdesk::ToggleEmailNotification
 
   def perform(params)
+    SBRR.logger.debug "BulkTicketActions #{params["ids"].inspect}"
     @account = Account.current
     items    = Helpdesk::Ticket.find_all_by_param(params["ids"])
     disable_notification(@account) if params["disable_notification"].present? && params["disable_notification"].to_bool

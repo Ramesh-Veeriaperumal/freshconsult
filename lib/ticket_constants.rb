@@ -18,6 +18,8 @@ module TicketConstants
    
   # DATE_RANGE_CSV = 31
 
+  SKIPPED_TICKET_WAS_ATTRIBUTES = [ :description_html ] #desc_html skipped just to avoid Deprecation Warning
+
   ### Bump the version of "TICKETS_LIST_PAGE_FILTERS" key in fragment_cache/keys.rb when SOURCES are modified.
   SOURCES = [
     [ :email,            'email',            1 ],

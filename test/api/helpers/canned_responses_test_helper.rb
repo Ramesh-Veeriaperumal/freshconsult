@@ -1,34 +1,26 @@
 module CannedResponsesTestHelper
-  def canned_responses_evaluated_pattern(strict, attachments = [], content = nil)
-    if strict
-      {
-        content: content,
-        attachments: canned_response_attachment_pattern(strict, attachments)
-      }
-    else
-      {
-        content: String,
-        attachments: canned_response_attachment_pattern(strict, attachments)
-      }
-    end
+  def ca_response_show_pattern(ca_response_id = nil, attachments = [])
+    ca_response = @account.canned_responses.find(ca_response_id)
+    {
+      id: ca_response.id,
+      title: ca_response.title,
+      content: ca_response.content,
+      content_html: ca_response.content_html,
+      folder_id: ca_response.folder_id,
+      attachments: attachments.map do |attachment|
+        attachment_pattern(attachment)
+      end
+    }
   end
 
-  def canned_response_attachment_pattern(strict, attachments)
-    att = []
-    attachments.each do |attachment|
-      if strict
-        att << {
-          id: attachment.id,
-          name: attachment.content_file_name
-        }
-      else
-        att << {
-          id: Fixnum,
-          name: String
-        }
-      end
-    end
-    att
+  def ca_response_show_pattern_evaluated_content(ca_response_id = nil, ticket = nil, attachments = [])
+    ca_pattern = ca_response_show_pattern(ca_response_id, attachments)
+    ca_pattern.merge!(evaluated_response: evaluate_response(ca_pattern[:content_html], ticket))
+  end
+
+  def ca_response_show_pattern_new_ticket(ca_response_id = nil, attachments = [])
+    ca_pattern = ca_response_show_pattern(ca_response_id, attachments)
+    ca_pattern.merge!(evaluated_response: evaluate_response_new_ticket(ca_pattern[:content_html]))
   end
 
   def user_stub_ticket_permission
@@ -43,7 +35,11 @@ module CannedResponsesTestHelper
     User.any_instance.unstub(:assigned_ticket_permission)
   end
 
-  def evaluate_response(ca_response, ticket)
-    Liquid::Template.parse(ca_response.content_html).render({ ticket: ticket, helpdesk_name: ticket.account.portal_name }.stringify_keys)
+  def evaluate_response(content_html, ticket)
+    Liquid::Template.parse(content_html).render({ ticket: ticket, helpdesk_name: ticket.account.portal_name }.stringify_keys)
+  end
+
+  def evaluate_response_new_ticket(content_html)
+    Liquid::Template.parse(content_html).render(ticket: nil)
   end
 end

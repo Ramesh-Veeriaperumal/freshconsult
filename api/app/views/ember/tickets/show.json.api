@@ -5,6 +5,7 @@ response_hash = @item.to_hash
   response_hash.merge!(attribute => value) if value
 end
 response_hash.merge!(attachments: @item.attachments_hash)
+response_hash.merge!(cloud_files: @item.cloud_files_hash)
 response_hash.merge!(meta: @item.meta)
 
 JSON.generate(response_hash)

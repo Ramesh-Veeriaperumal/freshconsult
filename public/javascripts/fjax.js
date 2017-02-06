@@ -17,19 +17,19 @@ window.Fjax = {
     callBeforeSend: function(evnt,xhr,settings,options) {
       var form = $('.form-unsaved-changes-trigger');
       var formChanged = false;
-      form.each(function(){ 
+      form.each(function(){
         formChanged = $(this).data('formChanged') ? true : formChanged;
       })
       if(formChanged) {
         var conf = confirm(customMessages.confirmNavigate);
         if(!conf) {
-          xhr.abort();  
+          xhr.abort();
           return false;
         }
       }
       this._SocketCleanUp();
       this._deleteDetachedDOM();
-      
+
       $.xhrPool_Abort();
 
     	if(this._triggerUnload() === false) return false;
@@ -51,7 +51,7 @@ window.Fjax = {
     },
 
     callBeforeReplace: function(evnt,xhr,settings) {
-      
+
       this._beforeSendExtras(evnt, settings);
 
       $(settings.target).data('twipsy','');
@@ -190,12 +190,12 @@ window.Fjax = {
         $('.reply_agent_collision').off("click.agent_collsion");
       }
     },
-    _deleteDetachedDOM: function() {       
-       delete $("#TicketProperties select.dropdown, #TicketProperties select.dropdown_blank, #TicketProperties select.nested_field").prevObject;   
-       delete $('body.ticket_details [rel=tagger]').prevObject;    
-       delete $('[data-hotkey]').prevObject;   
-       delete $("a.page-btn.next_page.btn.tooltip").prevObject;    
-       delete $("#body-container").prevObject;   
+    _deleteDetachedDOM: function() {
+       delete $("#TicketProperties select.dropdown, #TicketProperties select.dropdown_blank, #TicketProperties select.nested_field").prevObject;
+       delete $('body.ticket_details [rel=tagger]').prevObject;
+       delete $('[data-hotkey]').prevObject;
+       delete $("a.page-btn.next_page.btn.tooltip").prevObject;
+       delete $("#body-container").prevObject;
      },
     _disconnectNode: function() {
       try {
@@ -207,12 +207,15 @@ window.Fjax = {
       }
     },
     success : function()
-    { 
+    {
       this.pjax_traversal_count = this.pjax_traversal_count + 1;
       window.history.state.body_class = $('body').attr('class');
       window.history.replaceState(window.history.state,'for_pjax');
 
-      if (this.pjaxLimitExceeded()) {
+			var nameSpacesAllowed = !( App.namespace == "helpdesk/tickets/new"
+		 													|| App.namespace == "helpdesk/tickets/compose_email");
+
+      if (this.pjaxLimitExceeded() && nameSpacesAllowed) {
         jQuery.pjax.disable();
         jQuery(document).off("click.pjax", "a[data-pjax]");
       }
@@ -232,7 +235,7 @@ window.Fjax = {
       } else {
         options = data;
       }
-			
+
       if(options.parallelUrl !== undefined)
       {
         jQuery.get(options.parallelUrl, function(data){
@@ -255,7 +258,7 @@ if (!$.browser.msie && !$.browser.msedge) {
       timeout: -1,
       push : true,
       maxCacheLength: 0,
-      replace: false 
+      replace: false
     }).bind('pjax:beforeSend',function(evnt,xhr,settings,options){
       // BeforeSend
       return Fjax.callBeforeSend(evnt,xhr,settings,options);

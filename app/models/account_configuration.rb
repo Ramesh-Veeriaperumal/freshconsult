@@ -10,7 +10,6 @@ class AccountConfiguration < ActiveRecord::Base
 
   after_update :update_crm, :update_billing, :update_reseller_subscription
 
-
   def admin_first_name
   	contact_info[:first_name]
   end
