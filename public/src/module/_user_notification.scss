@@ -98,7 +98,10 @@
 
           .notification-content{
             color: black;
-            text-transform: capitalize;
+          }
+
+          .notification-content:first-letter {
+            text-transform: uppercase;
           }
 
           .notification-time {

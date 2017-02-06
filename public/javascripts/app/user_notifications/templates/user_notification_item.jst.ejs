@@ -1,7 +1,7 @@
 <% if(!unreadIds.length){ %> 
 <a class="read" data-unread-ids='<%= unreadIds %>' href="<%= action_url %>">
 <% }else{ %>
-<a data-unread-ids="<%= unreadIds %>" href="<%= action_url %>">
+<a class="unread" data-unread-ids="<%= unreadIds %>" href="<%= action_url %>">
 <% } %>
     <div class="preview_pic circle avatar-text text-center thumb bg-<%= Math.abs(uniqueCodeGenerator(actor_text)) %>" > 
       <span><%= actor_text[0] %></span>
