@@ -30,4 +30,6 @@ class Discussions::TopicDecorator < ApiDecorator
 	    hits: hits
 	  }
   end
+
+  alias_method :to_search_hash, :to_hash
 end

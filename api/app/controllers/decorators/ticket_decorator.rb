@@ -1,6 +1,6 @@
 class TicketDecorator < ApiDecorator
   delegate :ticket_body, :custom_field_via_mapping, :cc_email, :email_config_id, :fr_escalated, :group_id, :priority,
-           :requester_id,  :responder_id, :source, :spam, :status, :subject, :display_id, :ticket_type,
+           :requester_id, :responder, :responder_id, :source, :spam, :status, :subject, :display_id, :ticket_type,
            :schema_less_ticket, :deleted, :due_by, :frDueBy, :isescalated, :description,
            :description_html, :tag_names, :attachments, :company_id, :cloud_files, to: :record
 
@@ -21,15 +21,20 @@ class TicketDecorator < ApiDecorator
   end
 
   def requester
-    if @sideload_options.include?('requester')
+    if @sideload_options.include?('requester') || @sideload_options.include?('falcon')
       requester = record.requester
-      {
+      req_hash = {
         id: requester.id,
         name: requester.name,
         email: requester.email,
         mobile: requester.mobile,
         phone: requester.phone
       }
+      if @sideload_options.include?('falcon')
+        avatar_hash = requester.avatar ? AttachmentDecorator.new(requester.avatar).to_hash.merge(thumb_url: requester.avatar.attachment_url_for_api(true, :thumb)) : nil
+        req_hash.merge!({avatar: avatar_hash})
+      end
+      return req_hash
     end
   end
 
@@ -77,7 +82,7 @@ class TicketDecorator < ApiDecorator
   end
 
   def company
-    if @sideload_options.include?('company')
+    if @sideload_options.include?('company') || @sideload_options.include?('falcon')
       company = record.company
       company ? { id: company.id, name: company.name } : {}
     end
@@ -148,6 +153,21 @@ class TicketDecorator < ApiDecorator
       updated_at: updated_at.try(:utc)
     }
     [hash, feedback_hash].inject(&:merge)
+  end
+
+  def to_search_hash
+    company_name = company.key?(:name) ? company[:name] : nil
+    responder_name = responder.name if responder
+    {
+      id: display_id,
+      description: description,
+      requester_name: requester[:name],
+      requester_avatar: requester[:avatar],
+      company_name: company_name,
+      tags: tag_names,
+      responder_name: responder_name,
+      created_at: created_at.try(:utc),
+    }
   end
 
   class << self

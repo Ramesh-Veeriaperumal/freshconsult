@@ -43,8 +43,9 @@ module Ember
 
       private
 
-        def decorator_options
-          super({ name_mapping: Account.current.ticket_field_def.ff_alias_column_mapping.each_with_object({}) { |(ff_alias, column), hash| hash[ff_alias] = TicketDecorator.display_name(ff_alias) } })
+        def decorate_objects
+          options = { sideload_options: ['falcon'], name_mapping: Account.current.ticket_field_def.ff_alias_column_mapping.each_with_object({}) { |(ff_alias, column), hash| hash[ff_alias] = TicketDecorator.display_name(ff_alias) } }
+          @items.map! { |item| item.is_a?(Helpdesk::ArchiveTicket) ? TicketDecorator.new(item, options) : TicketDecorator.new(item, options) }
         end
 
         def construct_es_params

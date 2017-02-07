@@ -1,5 +1,5 @@
 class ContactDecorator < ApiDecorator
-  delegate :id, :active, :address, :company_id, :deleted, :description, :customer_id, :email, :job_title, :language,
+  delegate :id, :active, :address, :company_name, :company_id, :deleted, :description, :customer_id, :email, :job_title, :language,
            :mobile, :name, :phone, :time_zone, :twitter_id, :client_manager, :avatar, to: :record
 
   def initialize(record, options)
@@ -30,6 +30,17 @@ class ContactDecorator < ApiDecorator
 
   def to_hash
     User.current.privilege?(:view_contacts) ? to_full_hash : to_restricted_hash
+  end
+
+  def to_search_hash
+    {
+      id: id,
+      name: name,
+      email: email,
+      phone: phone,
+      company_name: company_name,
+      avatar: avatar_hash
+    }
   end
 
   private

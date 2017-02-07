@@ -34,4 +34,6 @@ class CompanyDecorator < ApiDecorator
       custom_fields: custom_fields
     }
   end
+
+  alias_method :to_search_hash, :to_hash
 end
