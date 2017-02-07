@@ -501,15 +501,15 @@ module Reports::TimesheetReport
     validate_chosen_custom_fields(@time_sheet_columns.select { |column| column.start_with?('ffs')})
     report_filter_request_params.each do |filter|
       if params[:version].present?
-        if filter["label"].present?
-          label = filter["condition"]+"_label"
-          @filter_conditions[filter["condition"]] = filter["value"].split(',')
-          @filter_conditions["#{label}"] = filter["label"]
+        if filter[:label].present?
+          label = filter[:condition]+"_label"
+          @filter_conditions[filter[:condition]] = filter[:value].split(',')
+          @filter_conditions["#{label}"] = filter[:label]
         else
-          @filter_conditions[filter["condition"]] = filter["value"].split(',')
+          @filter_conditions[filter[:condition]] = filter[:value].split(',')
         end
       else
-        @filter_conditions[filter["name"]] = filter["value"].split(',')
+        @filter_conditions[filter[:name]] = filter[:value].split(',')
       end
     end
     @filter_conditions = @filter_conditions.with_indifferent_access
