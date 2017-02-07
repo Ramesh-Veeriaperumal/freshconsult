@@ -2882,6 +2882,7 @@ Helpkit::Application.routes.draw do
           get :check_contact_import
           put :reset_login_count
           post :contact_import_destroy
+          post :select_all_feature
         end
       end
 
