@@ -33,11 +33,11 @@
     def execute
         Time.use_zone(@account.time_zone) {
         execute_rules unless @is_webhook
-        @ticket.autoreply
         round_robin unless @ticket.spam? || @ticket.deleted?
         @ticket.sbrr_fresh_ticket = true
         @ticket.save
         notify_cc_recipients
+        @ticket.autoreply
         @ticket.va_rules_after_save_actions.each do |action|
           klass = action[:klass].constantize
           klass.send(action[:method], action[:args])
