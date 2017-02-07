@@ -846,7 +846,7 @@ Helpkit.TimesheetUtil = {
             }
             jQuery("#" + field_hash.condition + ".filter_item").select2(config);
             if (val.length) {
-                jQuery("#" + field_hash.condition).select2('val', val.split(','));
+                jQuery("#" + field_hash.condition + ".filter_item").select2('val', val.split(','));
             }
         },
         nestedFieldInitValues: function (val) {
