@@ -57,7 +57,7 @@ module ActionMailerCallbacks
         mail.delivery_method(:smtp, read_smtp_settings(category_id))
         set_custom_headers(mail, category_id, account_id, ticket_id, mail_type, note_id, from_email)
       else
-        category_id = get_notification_category_id(mail_type)
+        category_id = get_notification_category_id(mail_type) || check_spam_category(mail, mail_type)
         if category_id.blank?
           mailgun_traffic = get_mailgun_percentage
           if mailgun_traffic > 0 && Random::DEFAULT.rand(100) < mailgun_traffic
@@ -159,6 +159,7 @@ module ActionMailerCallbacks
         "\"email_type\":\"#{mail_type}\",\"from_email\":\"#{from_email}\"}}"
     end
 
+
     def get_notification_category_id(type)
       category_id = get_category_header(mail)
       return category_id if category_id.present?
@@ -168,6 +169,16 @@ module ActionMailerCallbacks
         key = (state == "active" || state == "premium") ? 'paid' : 'free'
         return Helpdesk::Email::OutgoingCategory::CATEGORY_BY_TYPE["#{key}_email_notification".to_sym]
       end
+    end
+
+    def check_spam_category(mail, type)
+      category = nil
+      notification_type = is_num?(type) ? type : get_notification_type_id(type) 
+      if account_created_recently? && SPAM_FILTERED_NOTIFICATIONS.include?(notification_type)
+        response = FdSpamDetectionService::Service.new(Helpdesk::EMAIL[:outgoing_spam_account], mail.to_s).check_spam
+        category = Helpdesk::Email::OutgoingCategory::CATEGORY_BY_TYPE[:spam] if response.spam?
+      end
+      return category
     end
   end
 end

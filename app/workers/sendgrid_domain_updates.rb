@@ -144,7 +144,7 @@ class SendgridDomainUpdates < BaseWorker
 
   def blacklist_spam_account(account, is_spam_email_account, additional_info )
     add_member_to_redis_set(SPAM_EMAIL_ACCOUNTS, account.id) if is_spam_email_account
-    add_member_to_redis_set(BLACKLISTED_SPAM_ACCOUNTS, account.id)
+    account.launch(:spam_blacklist_feature)
     notify_spam_account_detection(account, additional_info)
   end
 
