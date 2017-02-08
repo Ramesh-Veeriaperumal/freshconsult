@@ -132,7 +132,7 @@ module SsoUtil
         cookies["fd_mobile_email"] = { :value => @current_user.email, :http_only => true } 
       end
       remove_old_filters  if @current_user.agent?
-      flash[:notice] = t(:'flash.login.success')
+      # flash[:notice] = t(:'flash.login.success')
       if grant_day_pass(true)
         unless relay_state_url.blank?
           redirect_to relay_state_url
