@@ -3,6 +3,7 @@ class AgentGroup < ActiveRecord::Base
  
   include Cache::Memcache::Helpdesk::Filters::CustomTicketFilter
   include RoundRobinCapping::Methods
+  include MemcacheKeys
 
   belongs_to_account
   belongs_to :user
@@ -16,6 +17,7 @@ class AgentGroup < ActiveRecord::Base
 
   after_commit ->(obj) { obj.clear_cache_agent_group; obj.remove_from_chatgroup_channel }, on: :destroy
   after_commit ->(obj) { obj.clear_cache_agent_group; obj.add_to_chatgroup_channel }, on: :create
+  after_commit :clear_agent_groups_cache
   after_commit :add_to_group_capping, on: :create, :if => :capping_enabled?
   after_commit :remove_from_group_capping, on: :destroy, :if => :capping_enabled?
   after_commit :sync_skill_based_user_queues
@@ -53,6 +55,10 @@ class AgentGroup < ActiveRecord::Base
                                   :siteId => account.chat_setting.site_id,
                                   :agent_id => user_id, :group_id => group_id,
                                   :type => 'add'}) if Account.current.freshchat_routing_enabled?
+  end
+
+  def clear_agent_groups_cache
+    MemcacheKeys.memcache_delete(ACCOUNT_AGENT_GROUPS % { account_id: Account.current.id })
   end
 
   private

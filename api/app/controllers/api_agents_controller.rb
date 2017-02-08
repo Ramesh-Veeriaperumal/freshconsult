@@ -55,8 +55,14 @@ class ApiAgentsController < ApiApplicationController
     end
 
     def load_objects
-      # Preloading user as 'includes' introduces an additional outer join to users table while inner join with user already exists
-      super agents_filter(scoper).preload(:user).order(:name)
+      super(
+        if User.current.privilege?(:manage_users)
+          # Preloading user as 'includes' introduces an additional outer join to users table while inner join with user already exists
+          agents_filter(scoper).preload(:user).order(:name)
+        else
+          scoper
+        end
+      )
     end
 
     def assign_protected

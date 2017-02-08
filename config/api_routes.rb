@@ -150,6 +150,8 @@ Helpkit::Application.routes.draw do
 
   ember_routes = proc do
     resources :ticket_fields, controller: 'ember/ticket_fields', only: [:index, :update]
+    resources :groups, controller: 'ember/groups', only: [:index, :show]
+    resources :email_configs, controller: 'ember/email_configs', only: [:index, :show]
     resources :bootstrap, controller: 'ember/bootstrap', only: :index
     resources :tickets, controller: 'ember/tickets', only: [:index, :create, :update, :show] do
       collection do
