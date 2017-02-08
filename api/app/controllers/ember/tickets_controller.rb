@@ -177,7 +177,8 @@ module Ember
       end
 
       def tickets_filter
-        current_account.tickets.permissible(api_current_user).filter(params: params, filter: 'Helpdesk::Filters::CustomTicketFilter')
+        filtered_tickets = current_account.tickets.permissible(api_current_user).filter(params: params.except(:ids), filter: 'Helpdesk::Filters::CustomTicketFilter')
+        params[:ids].present? ? filtered_tickets.where(display_id: params[:ids]) : filtered_tickets
       end
 
       def validate_filter_params

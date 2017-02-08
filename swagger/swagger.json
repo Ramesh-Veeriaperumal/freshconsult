@@ -70,6 +70,12 @@
               "stats",
               "survey"
             ]
+          },
+          {
+            "name": "ids",
+            "in": "query",
+            "type": "string",
+            "description": "Comma-separated values"
           }
         ],
         "responses": {

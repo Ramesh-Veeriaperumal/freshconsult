@@ -15,6 +15,10 @@ get:
       type: string
       description: Comma-separated values
       enum: ["requester", "stats", "survey"]
+    - name: ids
+      in: query
+      type: string
+      description: Comma-separated values
   responses:
     200:
       description: Success

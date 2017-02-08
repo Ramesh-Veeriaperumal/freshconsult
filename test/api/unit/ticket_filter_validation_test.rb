@@ -111,4 +111,15 @@ class TicketFilterValidationTest < ActionView::TestCase
     errors = ticket_filter.errors.full_messages
     assert errors.include?('Filter only_query_hash_or_filter')
   end
+
+  def test_filtering_based_on_ids
+    Account.stubs(:current).returns(Account.new)
+    ticket_filter = TicketFilterValidation.new(ids: 'Invalid_id', version: 'private')
+    refute ticket_filter.valid?
+    errors = ticket_filter.errors.full_messages
+    assert errors.include?('Ids array_datatype_mismatch')
+
+    ticket_filter = TicketFilterValidation.new(ids: '10,20,30,40,50', version: 'private')
+    assert ticket_filter.valid?
+  end
 end

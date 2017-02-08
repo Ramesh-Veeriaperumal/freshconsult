@@ -123,6 +123,14 @@ module Ember
       match_json(private_api_ticket_index_pattern)
     end
 
+    def test_index_with_ids
+      ticket_ids = []
+      ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page].times { |i| ticket_ids << create_ticket(priority: 2, requester_id: @agent.id).id }
+      get :index, controller_params({ version: 'private', ids: ticket_ids.join(',') }, false)
+      assert_response 200
+      match_json(private_api_ticket_index_pattern)
+    end
+
     def test_index_with_survey_result
       ticket = create_ticket
       result = []
