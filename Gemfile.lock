@@ -874,8 +874,6 @@ GEM
       rb-inotify (>= 0.9)
       rb-kqueue (>= 0.2)
     lockfile (1.4.3)
-    macaddr (1.7.1)
-      systemu (~> 2.6.2)
     mail (2.5.4)
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
@@ -1106,9 +1104,8 @@ GEM
     ruby-openid-apps-discovery (1.2.0)
       ruby-openid (>= 2.1.7)
     ruby-progressbar (1.8.1)
-    ruby-saml (0.8.1)
-      nokogiri (>= 1.5.0)
-      uuid (~> 2.3)
+    ruby-saml (1.4.2)
+      nokogiri (>= 1.5.10)
     rubytree (0.9.7)
       json (~> 1.8)
       structured_warnings (~> 0.2)
@@ -1192,7 +1189,6 @@ GEM
     syck (1.0.5)
     sys-uname (1.0.2)
       ffi (>= 1.0.0)
-    systemu (2.6.5)
     test-unit (3.1.7)
       power_assert
     test-unit-minitest (0.9.1)
@@ -1237,8 +1233,6 @@ GEM
     unicode-display_width (1.1.0)
     uniform_notifier (1.10.0)
     useragent (0.16.7)
-    uuid (2.3.8)
-      macaddr (~> 1.0)
     uuidtools (2.1.5)
     vegas (0.1.11)
       rack (>= 1.0.0)
@@ -1434,7 +1428,7 @@ DEPENDENCIES
   rubocop-checkstyle_formatter
   ruby-openid!
   ruby-openid-apps-discovery (= 1.2.0)
-  ruby-saml (= 0.8.1)
+  ruby-saml (= 1.4.2)
   rubytree
   rubyzip (= 0.9.4)
   rugged
