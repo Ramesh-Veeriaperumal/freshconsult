@@ -6246,6 +6246,8 @@ en:
       status: Status
       no_entry: No Time Entries
       max_columns: Cannot add more than 10 columns
+      archive_tickets_column_error: Archive tickets will be excluded
+      archive_tickets_custom_fields_error: Filtering by custom fields will exclude archive tickets
       report:
         no_timeentry: "No data available"
         total: Total

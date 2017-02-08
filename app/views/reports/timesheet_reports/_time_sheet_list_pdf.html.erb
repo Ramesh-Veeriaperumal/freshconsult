@@ -62,7 +62,7 @@
           <% if time_sheets.size > 0 %>
             <% row_max_limit = params[:scheduled_report] ? HelpdeskReports::Constants::Export::FILE_ROW_LIMITS[:schedule][:pdf] : HelpdeskReports::Constants::Export::FILE_ROW_LIMITS[:export][:pdf] %>
             <% exceeds_row_limit = (time_sheets.values.flatten.size > row_max_limit) ? true : false %>
-            <%= render :partial => "reports/timesheet_reports/time_sheet_pdf.html.erb", :object => time_sheets ,:locals=>{:colspan=>colspan,:group_by=>grp_data, :headers => headers, :account_id => params[:account_id], :time_sheet => time_sheets, :row_max_limit => row_max_limit, :exceeds_row_limit => exceeds_row_limit, :times_spent => group_count, :totaltime => group_count.values.sum, :group_names => group_names, :load_time => load_time} %>
+            <%= render :partial => "reports/timesheet_reports/time_sheet_pdf.html.erb", :object => time_sheets ,:locals=>{:colspan=>colspan,:group_by=>grp_data, :headers => headers, :account_id => params[:account_id], :time_sheet => time_sheets, :row_max_limit => row_max_limit, :exceeds_row_limit => exceeds_row_limit, :times_spent => group_count, :totaltime => total_time, :group_names => group_names, :load_time => load_time} %>
           <%else%>
             <tr style="text-align:center">
               <td colspan="<%=(colspan+1)%>">

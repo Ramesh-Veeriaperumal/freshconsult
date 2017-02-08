@@ -53,6 +53,7 @@
 	full_domain = '<%= current_account.full_domain %>';
 	day_names = <%=t('date.day_names').to_json.html_safe%>;
 	Helpkit.locals.custom_fields_feature_enabled = <%= custom_filters_enabled? %>;
+	Helpkit.locals.archive_enabled = <%= current_account.features_included?(:archive_tickets) %>;
 	Helpkit.locals.export_pdf_url = '<%=export_pdf_reports_timesheet_url%>';
 	jQuery(document).ready(function(){
 		Helpkit.TimesheetUtil.init();

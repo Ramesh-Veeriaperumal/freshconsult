@@ -242,7 +242,7 @@ window.App = window.App || {};
 				self.pushEventToKM("Sentiment_Feedback_Clicked",self.userProperties());
 			});
 
-			jQuery(document).on('click.sentiment','#cmi_survey_hover',function(){
+			jQuery('body').on('click.sentiment','#cmi_survey_hover',function(){
 				self.pushEventToKM("Sentiment_Feedback_Clicked",self.userProperties());
 			});
 		},

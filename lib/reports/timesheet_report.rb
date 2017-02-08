@@ -184,8 +184,8 @@ module Reports::TimesheetReport
     row_limit ||= @pdf_export ? BATCH_LIMIT_FOR_EXPORT : TIMESHEET_ROWS_LIMIT
     entries = scoper(@start_date, @end_date).where("helpdesk_time_sheets.id <= #{@latest_timesheet_id}").select("helpdesk_time_sheets.*, #{construct_custom_column_select_statement}  #{group_to_column_map(group_by_caluse, false)}").reorder("#{ALIAS_GROUP_NAME[group_by_caluse]}, id asc").find(:all, :limit => row_limit, :offset => offset,:conditions => (select_conditions || {}),
                                                                                                                                                                                                                                                                                                     :include => [:user, :workable => [{:schema_less_ticket => :product}, :group, :ticket_status, :requester, :company]])
-    if (archive_enabled? && entries.size < row_limit)
-      entries << archive_scoper(@start_date, @end_date).where("helpdesk_time_sheets.id <= #{@latest_timesheet_id}").select("helpdesk_time_sheets.*,  #{construct_custom_column_select_statement}  #{group_to_column_map(group_by_caluse, true)}").reorder("#{ALIAS_GROUP_NAME[group_by_caluse]}, id asc").find(:all, :limit => row_limit, :offset => offset,:conditions => (archive_select_conditions || {}),                                                                                                                                                                                                                                                                 :include => [:user, :workable => [:product, :group, :ticket_status, :requester, :company]])
+    if (archive_enabled? && entries.size < row_limit )
+      entries << archive_scoper(@start_date, @end_date).where("helpdesk_time_sheets.id <= #{@latest_timesheet_id}").select("helpdesk_time_sheets.*,  #{group_to_column_map(group_by_caluse, true)}").reorder("#{ALIAS_GROUP_NAME[group_by_caluse]}, id asc").find(:all, :limit => row_limit, :offset => offset,:conditions => (archive_select_conditions || {}),                                                                                                                                                                                                                                                                 :include => [:user, :workable => [:product, :group, :ticket_status, :requester, :company]])
     end
     entries.flatten
   end
@@ -252,7 +252,7 @@ module Reports::TimesheetReport
     return if @filter_err.present?
     @load_time = Time.now.utc
     @time_sheets = csv_filter(@start_date,@end_date)
-    if Account.current.features_included?(:archive_tickets)
+    if archive_enabled?
       @archive_time_sheets = csv_archive_filter(@start_date,@end_date)
       # @time_sheets = shift_merge_sorted_arrays(@time_sheets,@archive_time_sheets)
       @time_sheets += @archive_time_sheets
@@ -261,13 +261,7 @@ module Reports::TimesheetReport
   #************************** Archive methods start here *****************************#
 
   def archive_scoper(start_date,end_date)
-    scope = Account.current.archive_time_sheets.archive_for_companies(@customer_id).by_agent(@user_id).archive_by_group(@group_id).created_at_inside(start_date,end_date).hour_billable(@billable).archive_for_products(@products_id)
-    if @flexi_conditions.present?
-      scope = scope.joins('INNER JOIN flexifields ON flexifields.flexifield_set_id = archive_tickets.id and flexifields.account_id = archive_tickets.account_id').where(:flexifields => @flexi_conditions) #if !@flexi_conditions.blank?
-    elsif @request_custom_fields_columns.any?
-      scope = scope.joins('INNER JOIN flexifields ON flexifields.flexifield_set_id = archive_tickets.id and flexifields.account_id = archive_tickets.account_id')
-    end
-    scope
+    Account.current.archive_time_sheets.archive_for_companies(@customer_id).by_agent(@user_id).archive_by_group(@group_id).created_at_inside(start_date,end_date).hour_billable(@billable).archive_for_products(@products_id)
   end
 
   def archive_filter_with_groupby(start_date,end_date)
@@ -298,20 +292,20 @@ module Reports::TimesheetReport
     report_columns_arr = []
     Helpdesk::TimeSheet.report_list.each do |key , value|
       if key == :product_name
-        report_columns_arr.push({name:value, id: key, default: true})  if Account.current.products.any?
+        report_columns_arr.push({name:value, id: key, default: true, is_custom: false})  if Account.current.products.any?
       elsif key== [:agent_name]
-        report_columns_arr.push({name:value, id: key, default: true})  if Account.current.hide_agent_metrics_feature?
+        report_columns_arr.push({name:value, id: key, default: true , is_custom: false})  if Account.current.hide_agent_metrics_feature?
       else
-        report_columns_arr.push({name:value,id: key, default: true})
+        report_columns_arr.push({name:value,id: key, default: true, is_custom: false})
       end
     end
 
     #phase1 - adding only custom dropdown and nested fields.
     OPTIONAL_COLUMN_CONFIG.each do |key,value|
-      report_columns_arr.push({name:value, id:key, default: false})
+      report_columns_arr.push({name:value, id:key, default: false, is_custom: false})
     end
     Account.current.flexifield_def_entries.includes(:ticket_field).drop_down_fields.each do | flexifieldDefEntry|
-      report_columns_arr.push({name: flexifieldDefEntry.ticket_field.label_in_portal, id:flexifieldDefEntry.flexifield_name, default: false})
+      report_columns_arr.push({name: flexifieldDefEntry.ticket_field.label_in_portal, id:flexifieldDefEntry.flexifield_name, default: false, is_custom: true})
     end
     @report_columns = report_columns_arr
   end
@@ -507,15 +501,15 @@ module Reports::TimesheetReport
     validate_chosen_custom_fields(@time_sheet_columns.select { |column| column.start_with?('ffs')})
     report_filter_request_params.each do |filter|
       if params[:version].present?
-        if filter["label"].present?
-          label = filter["condition"]+"_label"
-          @filter_conditions[filter["condition"]] = filter["value"].split(',')
-          @filter_conditions["#{label}"] = filter["label"]
+        if filter[:label].present?
+          label = filter[:condition]+"_label"
+          @filter_conditions[filter[:condition]] = filter[:value].split(',')
+          @filter_conditions["#{label}"] = filter[:label]
         else
-          @filter_conditions[filter["condition"]] = filter["value"].split(',')
+          @filter_conditions[filter[:condition]] = filter[:value].split(',')
         end
       else
-        @filter_conditions[filter["name"]] = filter["value"].split(',')
+        @filter_conditions[filter[:name]] = filter[:value].split(',')
       end
     end
     @filter_conditions = @filter_conditions.with_indifferent_access
@@ -702,8 +696,9 @@ module Reports::TimesheetReport
     @current_params = params[:current_params]
   end
 
+  #archive tickets will be included only if custom columns / custom filters aren't applied
   def archive_enabled?
-    @archive_enabled ||= Account.current.features_included?(:archive_tickets)
+    @archive_enabled ||= Account.current.features_included?(:archive_tickets) && @flexi_conditions.empty? && @request_custom_fields_columns.empty?
   end
 
   def get_time_in_hours(seconds)

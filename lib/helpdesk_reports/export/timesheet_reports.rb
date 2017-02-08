@@ -22,6 +22,9 @@ class HelpdeskReports::Export::TimesheetReports < HelpdeskReports::Export::Repor
       params.delete(:customers_filter)
     end
     # params.each { |key,value| params[key] = value.to_s.split(",") if ARRAY_METRICS.include?(key.to_sym) && value }
+
+    params[:report_filters].each { |f_h| f_h.symbolize_keys! }
+
     build_master_column_header_hash
     build_item
     time_sheet_list_pdf
