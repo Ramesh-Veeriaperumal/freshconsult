@@ -44,13 +44,14 @@ module Integrations::Constants
     :salesforce_v2 => "salesforce_v2"
   }
 
-  DISPLAY_IN_PAGES = { "ticket_show" => 2, "contact_show" => 1, "company_show" => 0 }
+  DISPLAY_IN_PAGES = { "ticket_show" => 2, "contact_show" => 1, "company_show" => 0, "time_sheet_show" => 3 }
 
   APPS_DISPLAY_MAPPING = {
     APP_NAMES[:jira] => [DISPLAY_IN_PAGES["ticket_show"]],
     APP_NAMES[:zohocrm] => [DISPLAY_IN_PAGES["ticket_show"],DISPLAY_IN_PAGES["contact_show"]],
     APP_NAMES[:mailchimp] => [DISPLAY_IN_PAGES["contact_show"]],
-    APP_NAMES[:salesforce] => [DISPLAY_IN_PAGES["ticket_show"],DISPLAY_IN_PAGES["contact_show"]]
+    APP_NAMES[:salesforce_v2] => [DISPLAY_IN_PAGES["ticket_show"],DISPLAY_IN_PAGES["contact_show"]],
+    APP_NAMES[:harvest] => [DISPLAY_IN_PAGES["time_sheet_show"]]
   }
 
   CRM_APPS= [:sugarcrm, :salesforce, :batchbook, :highrise, :nimble, :zohocrm, :capsule_crm, :dynamicscrm, :quickbooks, :freshbooks, :infusionsoft, :freshsales, :salesforce_v2]

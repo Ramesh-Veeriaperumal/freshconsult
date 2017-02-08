@@ -7,7 +7,7 @@ class HttpRequestProxyController < ApplicationController
   skip_before_filter :check_privilege
   before_filter :authenticated_agent_check 
   before_filter :populate_server_password
-  before_filter :verify_domain
+  before_filter :verify_domain 
   before_filter :populate_additional_headers
 
   DOMAIN_WHITELIST = "INTEGRATION_WHITELISTED_DOMAINS"
@@ -82,7 +82,7 @@ class HttpRequestProxyController < ApplicationController
     end
 
     def verify_domain
-      return if @domain_verified
+      return if @domain_verified || Rails.env.development?
       begin
         parsed_url = URI.parse(params[:domain])
         parsed_url = URI.parse("#{request.protocol}#{params[:domain]}") if parsed_url.scheme.nil?
