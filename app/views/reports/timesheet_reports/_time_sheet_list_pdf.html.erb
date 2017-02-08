@@ -14,13 +14,16 @@
           </span>
         </span>
       </div>
-      <div class="reports-filter span12" id="report-filter-details">    
+      <div class="reports-filter span12" id="report-filter-details">
         <div class="filter-type span11">
           <ul>
             <li><%=t('reports.time_sheets.filter_by_title')%>:</li>
             <li><%=t('reports.time_sheets.time_period')%> : <strong><%= report_date%></strong></li>
-              <% select_hash.each do |filter_option| %>
-                <li> <%= filter_option['label'] %> : <strong> <%= filter_option['text'] %> </strong></li>
+              <% select_hash.each do |filter_option|
+                  filter_key = filter_option['name'] || filter_option['label']
+                  filter_value = filter_option['value'] || filter_option['text']
+                %>
+                <li> <%= filter_key %> : <strong> <%=  filter_value %> </strong></li>
               <% end %>
           </ul>
         </div>
@@ -30,9 +33,11 @@
       <div>
         <h3 class="header-lead"><span><%=t('adv_reports.summary')%> </span></h3>
         <div class="row-fluid report-summary-wrapper">
-          <%=render :partial =>"reports/timesheet_reports/time_sheets_metric.html.erb", :locals => {:metric_data_var => metric_data, :activity_data_hash_var => activity_data_hash } %>
+          <%=render :partial =>"reports/timesheet_reports/time_sheets_metric_pdf.html.erb", :locals => {:metric_data_var => metric_data, :activity_data_hash_var => activity_data_hash } %>
+
         </div>
       </div>
+
       <% grp_data = [params[:group_by] ? params[:group_by].to_sym : Helpdesk::TimeSheet.group_by_options.first[1]]%>
       <div class="row-fluid control-group">
         <div class="vertical-alignment">
@@ -40,29 +45,31 @@
         </div>
         <div class="vertical-alignment">
           <%= Helpdesk::TimeSheet.group_by_options.select { |ele| ele[0] if ele[1] == params[:group_by].to_sym}[0][0] %>
+
         </div>
       </div>
-      <div class="grid-pdf report-pdf row-fluid grid-pdf-column-border report-pdf-column-border"> 
+      <div class="grid-pdf report-pdf row-fluid grid-pdf-column-border report-pdf-column-border">
         <table class = "table-print-pdf" width="100%">
           <thead>
             <tr style="text-align:left">
               <%colspan = headers.length-1%>
+                <% master_header_hash = master_column_header_hash %>
               <% headers.each do |header| %>
-                <% concat content_tag :th, h(Helpdesk::TimeSheet.report_list[header]), :class => header %>
+                <% concat content_tag :th, h(master_header_hash[header]), :class => header %>
               <% end %>
             </tr>
           </thead>
           <% if time_sheets.size > 0 %>
             <% row_max_limit = params[:scheduled_report] ? HelpdeskReports::Constants::Export::FILE_ROW_LIMITS[:schedule][:pdf] : HelpdeskReports::Constants::Export::FILE_ROW_LIMITS[:export][:pdf] %>
             <% exceeds_row_limit = (time_sheets.values.flatten.size > row_max_limit) ? true : false %>
-            <%= render :partial => "reports/timesheet_reports/time_sheet_pdf.html.erb", :object => time_sheets ,:locals=>{:colspan=>colspan,:group_by=>grp_data, :headers => headers, :account_id => params[:account_id], :time_sheet => time_sheets, :row_max_limit => row_max_limit, :exceeds_row_limit => exceeds_row_limit, :times_spent => group_count, :totaltime => group_count.values.sum, :group_names => group_names, :load_time => load_time} %>
+            <%= render :partial => "reports/timesheet_reports/time_sheet_pdf.html.erb", :object => time_sheets ,:locals=>{:colspan=>colspan,:group_by=>grp_data, :headers => headers, :account_id => params[:account_id], :time_sheet => time_sheets, :row_max_limit => row_max_limit, :exceeds_row_limit => exceeds_row_limit, :times_spent => group_count, :totaltime => total_time, :group_names => group_names, :load_time => load_time} %>
           <%else%>
             <tr style="text-align:center">
-              <td colspan="<%=(colspan+1)%>">           
+              <td colspan="<%=(colspan+1)%>">
                 <div class="list-noinfo"><%=t('helpdesk.time_sheets.report.no_timeentry')%></div>
-              </td>         
+              </td>
             </tr>
-          <%end%>   
+          <%end%>
         </table>
       </div>
       <!--end time_sheet_list-->

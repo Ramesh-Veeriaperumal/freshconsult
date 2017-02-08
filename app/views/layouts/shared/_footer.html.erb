@@ -129,11 +129,19 @@
 	</script>
 <% end %>
 
-<!-- For Iris Notifications -->
-<% if current_account.launched?(:user_notifications) %>
+<!-- For Iris Notifications and Collaboration -->
+<% if current_account.launched?(:user_notifications) || current_account.collaboration_enabled? %>
 	<script type="text/javascript" src="<%= IrisNotificationsConfig['socketioUrl'] %>"></script>
 	<script type="text/javascript" src="<%= IrisNotificationsConfig['rtsUrl'] %>"></script>
+<% end %>
+
+<!-- For Iris Notifications -->
+<% if current_account.launched?(:user_notifications) %>
 	<script type="text/javascript" src="<%= IrisNotificationsConfig['irisUrl'] %>"></script>
 	<%= javascript_include_tag :'cdn/user_notifications' %>
 <% end %>
 
+<!-- For Collaboration -->
+<% if current_account.collaboration_enabled? %>
+	<%= javascript_include_tag :'cdn/collaboration' %>
+<% end %>

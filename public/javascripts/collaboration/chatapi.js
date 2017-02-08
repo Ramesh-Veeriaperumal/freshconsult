@@ -380,6 +380,7 @@
 
         var conversationObj = {
             "members": convo.members,
+            "co_name": convo.name,
             "co_id": convo.co_id,
             "owned_by": convo.owned_by
         };
@@ -432,6 +433,7 @@
             "rts_aid" : self.rtsAccountId,
             "c_aid" : self.clientId, 
             "s_id": self.userId,
+            "cid": self.clientAccountId,
             "metadata": stringify(msg.metadata),
             "m_type": msg.m_type,
             "al": msg.attachment_link
@@ -684,7 +686,7 @@
         collabHttpAjax({
             method: "POST",
             url: CONVERSATION_OWNER_SET_ROUTE,
-            data: {"co_id": convo.co_id, "uid": uid},
+            data: {"co_id": convo.co_id, "uid": uid, "co_name": convo.name},
             success: function(response){
                 if(typeof response === "string"){response = JSON.parse(response);};
                 if(typeof cb === "function"){cb(response);}

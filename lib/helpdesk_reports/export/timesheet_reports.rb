@@ -11,11 +11,21 @@ class HelpdeskReports::Export::TimesheetReports < HelpdeskReports::Export::Repor
   end
 
   def build_export
-    params[:group_by] = params[:group_by_field]
-    params.delete(:group_by_field)
-    params[:customers] = params[:customers_filter]
-    params.delete(:customers_filter)
-    params.each { |key,value| params[key] = value.to_s.split(",") if ARRAY_METRICS.include?(key.to_sym) && value }
+    params[:columns] = params[:data_hash][:columns] if (params[:data_hash].present?)
+
+    if(params[:group_by_field].present?)
+      params[:group_by] = params[:group_by_field]
+      params.delete(:group_by_field)
+    end
+    if(params[:customers_filter].present?)
+      params[:customers] = params[:customers_filter]
+      params.delete(:customers_filter)
+    end
+    # params.each { |key,value| params[key] = value.to_s.split(",") if ARRAY_METRICS.include?(key.to_sym) && value }
+
+    params[:report_filters].each { |f_h| f_h.symbolize_keys! }
+
+    build_master_column_header_hash
     build_item
     time_sheet_list_pdf
 
@@ -37,10 +47,12 @@ class HelpdeskReports::Export::TimesheetReports < HelpdeskReports::Export::Repor
       :headers => @headers,
       :group_count => @group_count,
       :group_names => @group_names,
-      :load_time => @load_time
+      :load_time => @load_time,
+      :master_column_header_hash => @master_column_header_hash,
+      :total_time => @total_time
     }
   end
-  
+
   def no_data? data_hash
     has_data = false
     data_hash.values.each { |hash| has_data ||= (hash.values.uniq != [0.0]) }

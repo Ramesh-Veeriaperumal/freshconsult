@@ -7,7 +7,7 @@ class UsersController < ApplicationController
   # include ActionView::Helpers::AssetTagHelper
   # include ActionView::AssetPaths
 
-  skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:revert_identity, :profile_image, :profile_image_path]
+  skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:revert_identity, :profile_image, :profile_image_no_blank]
   before_filter :set_selected_tab
   skip_before_filter :load_object , :only => [ :show, :edit ]
   before_filter(:only => [:assume_identity]) { |c| c.requires_this_feature :assume_identity }
@@ -85,9 +85,9 @@ class UsersController < ApplicationController
       @user.avatar.expiring_url(:thumb, 300))
   end
 
-  def profile_image_path
+  def profile_image_no_blank
     load_object
-    render :json => {:path => @user.avatar.nil? ? "" : @user.avatar.expiring_url(:thumb, 300).to_s}
+    redirect_to (@user.avatar.nil? ? "" : @user.avatar.expiring_url(:thumb, 300))
   end
 
   def delete_avatar

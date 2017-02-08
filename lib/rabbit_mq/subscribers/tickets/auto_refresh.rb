@@ -32,18 +32,17 @@ module RabbitMq::Subscribers::Tickets::AutoRefresh
       if value[0].blank?
         #Not need for list, but for details page
         changes["changed_from_nil"] = true
+      end 
+      if flexifields[key.to_s]
+        changes[:custom_fields][flexifields[key.to_s]] = value
+      elsif text_and_number_ff_fields.include?(key.to_s)
+        changes[:custom_fields]["text_fields"] ||= []
+        changes[:custom_fields]["text_fields"] << key.to_s
+      elsif schemaless_fields[key]
+        changes[ schemaless_fields[key] ] = value
       else
-        if flexifields[key.to_s]
-          changes[:custom_fields][flexifields[key.to_s]] = value
-        elsif text_and_number_ff_fields.include?(key.to_s)
-          changes[:custom_fields]["text_fields"] ||= []
-          changes[:custom_fields]["text_fields"] << key.to_s
-        elsif schemaless_fields[key]
-          changes[ schemaless_fields[key] ] = value
-        else
-          changes[key.to_s] = value
-        end
-      end
+        changes[key.to_s] = value
+      end 
     end
     changes
   end

@@ -13,7 +13,7 @@ window.App.Contacts.Contacts_merge = window.App.Contacts.Contacts_merge || {};
     Phone_num: "",
     Mobile: 0,
     Mobile_num: "",
-    Limits: {"twitter" : 2, "facebook" : 2, "emails" : 6, "mobile phone" : 2, "work phone" : 2},
+    Limits: {"twitter" : 2, "facebook" : 2, "emails" : 11, "mobile phone" : 2, "work phone" : 2},
     
     contactsSearch: new Template(
         '<li class="#{d}"><div class="contactelement" data-id="#{id}" data-name="#{name}" data-email="#{email}" '+

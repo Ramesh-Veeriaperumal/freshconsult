@@ -22,3 +22,13 @@ Mail::Message.class_eval do
       self.body   = body_part
     end
 end
+
+Mail::Part.class_eval do
+          
+    def inline?
+      header[:content_disposition].disposition_type == 'inline' if header[:content_disposition].respond_to?(:disposition_type)
+    end
+    
+end
+
+Mail::Encodings.register("UTF-8",Mail::Encodings::EightBit)

@@ -27,7 +27,7 @@
 								:class => 'mobile_switchBtn') if mobile_agent? && allowed_domain? %>
 		</div>
 		<div class="header-wrapper">
-			<% if current_account.collaboration_enabled? %>
+			<% if false %>
 				<div id="collab-bell" class="collab-bell">
 					<a id="bell-icon-link" class="bell-icon-link product-notification-link tooltip" data-placement="below">
 						<%= font_icon "bell", { :size => 30, :class => 'bell-icon' } %>
@@ -253,10 +253,6 @@
 		createDataStore(raw_store_data);
     Helpdesk.settings = <%= email_template_settings.html_safe %>;
   </script>
-
-    <% if current_account.collaboration_enabled? %>
-		<%= javascript_include_tag :'cdn/collaboration_initer' %>
-	<% end %>
 <% end %> 
 
 <script>

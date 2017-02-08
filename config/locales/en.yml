@@ -4560,7 +4560,7 @@ en:
     no_articles_info_1: "Sorry, we haven’t published any articles in this section. "
     no_articles_info_2: "Please check again later. "
     no_forums_info_1: "No forum topic yet"
-    no_forums_info_2: "Why don't you start a %{start_topic_link}?"
+    no_forums_info_2: "Why don't you %{start_topic_link}?"
     article:
       see_all_articles: "See all %{count} articles"
       more_articles: "More articles in <span class='folder-name'> %{article_name} </span>"
@@ -6231,6 +6231,10 @@ en:
       hours: Hours
       agent: Agent
       note: Note
+      billalblenonbillable: Billable/Non-Billable
+      date: Date
+      createdAt: "Created at"
+      requester_name: "Requester Name"
       billable_entry: Mark as a billable entry
       billing_type: Billing Type
       billable: Billable
@@ -6240,6 +6244,10 @@ en:
       group_by: Group By
       priority: Priority
       status: Status
+      no_entry: No Time Entries
+      max_columns: Cannot add more than 10 columns
+      archive_tickets_column_error: Archive tickets will be excluded
+      archive_tickets_custom_fields_error: Filtering by custom fields will exclude archive tickets
       report:
         no_timeentry: "No data available"
         total: Total
@@ -6686,7 +6694,7 @@ en:
         my_article_feedback: My Articles Feedback
         archived: Archive
         invalid_requester: Invalid requester
-        ongoing_collab: Ongoing collaborations
+        ongoing_collab: My Open Discussions
       note:
         posted_on: "%{user_name} on %{note_date}"
         created_on:
@@ -7934,7 +7942,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
          access_private_channel: "Allow access to private channels"
          allow_dm_agent: "Allow DM to agent"
          allow_slash_command: "Allow Slash Command (<a href='https://support.freshdesk.com/support/solutions/articles/206103' target='_blank'> Convert Slack DM to Freshdesk ticket </a>)"
-         slash_command_token: "Slash Command Token"
+         slash_command_token: "Slash Command Token"   
       action_options:
         public: "Public"
         private: "Private"
@@ -8300,6 +8308,8 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
         billable_vs_non_billable: "Billable vs Non-billable"
         filter_by_title: "Filtered by"
         time_period: "Time Period"
+        pick_columns: Pick columns
+        column_limit_exceed: Cannot add more than 10 columns
       summary_report:
         back_to_reports: "Back to Reports"
         show_report: "Show report"
@@ -8336,6 +8346,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
           select_group: Select Group
           select_billable: Select Billable/Non-Billable
           select_priority: "Select Priority"
+          select: "Select"
           select_product: Select Product
           select_type: Select Type
           view_between: View report between
@@ -10645,6 +10656,23 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     whats_new: "What's New"
     user_notifications_header: "Notifications"
     load_more: "Load More"
+  user_notifications:
+    header: "Notifications"
+    actor_text_2: "%{actor_name_1} and %{actor_name_2}"
+    actor_text_multi: "%{actor_name_1} and %{more_actors_count} more"
+    private_note_created: "sent you a private note on ticket %{object}"
+    private_note_created_multi: "sent you %{count} private notes on ticket %{object}"
+    public_note_created: "added a note on ticket %{object}"
+    public_note_created_multi: "added %{count} notes on ticket %{object}"
+    customer_responded: "responded to ticket %{object}"
+    customer_responded_multi: "responded to ticket %{object}"
+    ticket_status_update: "updated the ticket status of %{object} to %{current_status}"
+    ticket_status_update_multi: "updated the ticket status of %{object} to %{current_status}"
+    ticket_assigned: "assigned the ticket %{object} to you."
+    collab_added_to: "You have been added as a collaborator on ticket %{object}"
+    collab_invited_notification: "wants to collaborate with you on ticket %{object}"
+    collab_first_mention: "mentioned you in a message on ticket %{object}"
+    collab_first_mention_multi: "mentioned you in {{count}} messages on ticket %{object}"
   trial_plan_downgrade: "Important: You are currently downgrading from %{plan_from} plan to %{plan_to} plan"
   discounted_sum: "After Discount"
   selecting_plan: "Selecting..."
@@ -10819,6 +10847,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     hide: Hide
     suggestion_text: What can we improve? (Optional).
     help: What's this?
+    feed_back_survery: Help us with some feedback?
   collaboration:
     notifications: "Notifications"
     no_notifications: "No new notifications"
@@ -10827,6 +10856,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     collaborators: "Collaborators"
     view_all_collaborations: "View all collaborations"
     view_discussion: "View Discussion"
+    open_discussions: "My Open Discussions"
     type_message: "Type message"
     added_to: "You have been added as collaborator on ticket %{ticket_id}"
     invited_notification: "%{user_name} wants to collaborate with you on ticket %{ticket_id}"

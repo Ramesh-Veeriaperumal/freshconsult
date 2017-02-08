@@ -1,5 +1,5 @@
 module Reports::TimesheetReportsHelper
-	
+
 	include Reports::GlanceReportsHelper
 
 	def generate_pdf_action?
@@ -18,7 +18,7 @@ module Reports::TimesheetReportsHelper
     unless options[:include_year]
       time_format = time_format.gsub(/,\s.\b[%Yy]\b/, "") if (date_time.year == Time.now.year)
     end
-    
+
     unless options[:include_weekday]
       time_format = time_format.gsub(/\A(%a|A),\s/, "")
     end
@@ -31,6 +31,10 @@ module Reports::TimesheetReportsHelper
       content = timesheet_formatted_date(time_entry.executed_at, {:format => :short_day_with_week, :include_year => true}) if item.eql?(:group_by_day_criteria)
       if(item.eql?(:hours))
         content ||= (time_entry.time_spent || 0) + (time_entry.timer_running ? (load_time - time_entry.start_time) : 0)
+      elsif(item.eql?(:requester_name) || item.eql?(:ticket_type))
+        content ||= time_entry.workable.send(item)
+      elsif(item.eql?(:ticket))
+        content ||= time_entry.workable.send(:subject)
       else
         content ||= time_entry.send(item)
       end

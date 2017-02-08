@@ -155,7 +155,8 @@ module RabbitMq::Constants
 
   COLLABORATION_USER_KEYS = ["id", "account_id", "name", "job_title", "email", "mobile", "phone", "created_at", "deleted", "helpdesk_agent"]
   REPORTS_USER_KEYS = ["id", "account_id"]
-  COLLABORATION_TICKET_KEYS = ["id", "responder_id", "status", "visible", "account_id", "display_id"]
-
+  
+  COLLABORATION_TICKET_KEYS = ["id", "responder_id", "status", "subject", "visible", "account_id", "display_id"]
+  
   IRIS_USER_KEYS = REPORTS_USER_KEYS
 end

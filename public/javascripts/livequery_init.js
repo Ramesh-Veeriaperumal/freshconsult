@@ -130,7 +130,12 @@ jQuery("[rel=sentiment-hover]").livequery(
 			reloadContent: false,
 			template: '<div class="dbl_left arrow"></div><div class="senti_hover hover_card inner"><div class="content"><div></div></div></div>',
 			content: function(){
-				return "<strong>"+$(this).data('original-title')+": System predicted sentiment</strong><p>Not Visible to customer</p><a href='https://support.freshdesk.com/support/solutions/articles/224040'>Know more</a>"
+				return "<strong>"+$(this).data('original-title')+": System predicted sentiment</strong>"
+				+"<a class='help tooltip' id='help' href='https://support.freshdesk.com/support/solutions/articles/224040' target='_blank' data-placement='above' data-original-title=\"What's this?\">"
+				+"	<i class='ficon-help fsize-14' size='14'></i>"
+				+"</a>"
+				+"<p>Not Visible to customer</p>"
+				+"<div><a id='cmi_survey_hover' target='_blank' href='https://freshdesk.typeform.com/to/TUwfYz'>Help us with some feedback?</a></div>"
 			}
 		});
 	},

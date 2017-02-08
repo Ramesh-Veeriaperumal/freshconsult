@@ -9,7 +9,7 @@
             <%= t('helpdesk_reports.reports_in_action')%>
           </a>
         <% else %>
-          <a href="#report-demo" rel="freshdialog" id="demo_link" data-backdrop="static"  data-width="680" data-template-footer="false" data-title=""><%= t('helpdesk_reports.reports_in_action')%>  
+          <a href="#report-demo" rel="freshdialog" id="demo_link" data-backdrop="static"  data-width="680" data-template-footer="false" data-title=""><%= t('helpdesk_reports.reports_in_action')%></a>  
         <% end %>
       </div>
       <div class="clear"></div>
@@ -21,7 +21,7 @@
            <ul class="report_icon">
               <% if feature?(:advanced_reporting) %>
                 <li>
-                     <a href="/reports/v2/glance" data-pjax="#body-container" >
+                     <a href="/reports/glance" data-pjax="#body-container" >
                         <div class="img-outer"><i class="fsize-36 ficon-glance"></i></div>
                         <div class="report-icon-text"><%= t('helpdesk_reports.glance.index_title').html_safe %></div>
                      </a>
@@ -29,7 +29,7 @@
               <% end %>
               <% if feature?(:enterprise_reporting) %>
                   <li>
-                     <a href="/reports/v2/ticket_volume" data-pjax="#body-container">
+                     <a href="/reports/ticket_volume" data-pjax="#body-container">
                         <div class="img-outer"><i class="fsize-36 ficon-ticket_volume"></i></div>
                         <div class="report-icon-text"><%= t('helpdesk_reports.ticket_volume.title') %></div>
                      </a>
@@ -59,21 +59,21 @@
            <ul class="report_icon">
             <%unless Account.current.hide_agent_metrics_feature? %>
               <li>
-               <a href="/reports/v2/agent_summary" data-pjax="#body-container">
+               <a href="/reports/agent_summary" data-pjax="#body-container">
                   <div class="img-outer"><i class="fsize-36 ficon-agent_summary"></i></div>
                   <div class="report-icon-text"><%= t('helpdesk_reports.agent_summary.title')%></div>
                </a>
               </li>
             <% end %>
             <li>
-               <a href="/reports/v2/group_summary" data-pjax="#body-container">
+               <a href="/reports/group_summary" data-pjax="#body-container">
                   <div class="img-outer"><i class="fsize-36 ficon-group_summary"></i></div>
                   <div class="report-icon-text"><%= t('helpdesk_reports.group_summary.title') %></div>
                </a>
             </li>
              <%if feature?(:enterprise_reporting) %>
                 <li>
-                   <a href="/reports/v2/performance_distribution" data-pjax="#body-container">
+                   <a href="/reports/performance_distribution" data-pjax="#body-container">
                       <div class="img-outer"><i class="fsize-36 ficon-performance_distribution"></i></div>
                       <div class="report-icon-text"><%= t('helpdesk_reports.performance_distribution.title') %></div>
                    </a>
@@ -81,7 +81,7 @@
               <% end %>
               <% if feature?(:timesheets) && privilege?(:view_time_entries) %>
                 <li>
-                  <a href="<%= timesheet_reports_url %>">
+                  <a href="<%= reports_timesheet_url %>">
                         <div class="img-outer"><i class="fsize-36 ficon-time_sheet"></i></div>
                         <div class="report-icon-text"><%= t('helpdesk_reports.timesheet_reports.title') %></div>
                    </a>
@@ -95,7 +95,7 @@
              <ul class="report_icon">
                <% if feature?(:enterprise_reporting) %>
                   <li>
-                     <a href="/reports/v2/customer_report" data-pjax="#body-container">
+                     <a href="/reports/customer_report" data-pjax="#body-container">
                         <div class="img-outer"><i class="fsize-36 ficon-customer_report"></i></div>
                         <div class="report-icon-text"><%= t('helpdesk_reports.customer_report.title') %></div>
                      </a>
