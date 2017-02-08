@@ -79,7 +79,6 @@ module SsoUtil
     settings.idp_slo_target_url = acc.sso_logout_url unless acc.sso_logout_url.blank?
     settings.name_identifier_format = SAML_NAME_ID_FORMAT
     settings.name_identifier_format = SAML_NAME_ID_UNSPECIFIED if current_account.features?(:saml_unspecified_nameid)
-    settings.issuer = nil
     settings
   end
 
@@ -158,6 +157,7 @@ module SsoUtil
 
     response = OneLogin::RubySaml::Response.new(saml_xml, :allowed_clock_drift => SSO_CLOCK_DRIFT)
     response.settings = get_saml_settings(acc)
+    response.settings.issuer = nil
     valid_response = response.is_valid?
 
     if valid_response
