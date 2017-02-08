@@ -38,3 +38,5 @@ allOf:
           type: string
       survey_result:
         $ref: '#/definitions/survey_result'
+      requester:
+        type: object

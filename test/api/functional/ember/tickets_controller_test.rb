@@ -11,6 +11,7 @@ module Ember
     include SocialTestHelper
     include SocialTicketsCreationHelper
     include SurveysTestHelper
+    include PrivilegesHelper
 
     CUSTOM_FIELDS = %w(number checkbox decimal text paragraph dropdown country state city date)
 
@@ -135,12 +136,39 @@ module Ember
 
     def test_index_without_survey_enabled
       ticket = create_ticket
-      Account.any_instance.stubs(:features?).with(:default_survey).returns(false)
-      Account.any_instance.stubs(:features?).with(:custom_survey).returns(false)
+      default_survey = Account.current.features?(:default_survey)
+      custom_survey = Account.current.features?(:custom_survey)
+      Account.current.features.default_survey.destroy if default_survey
+      Account.current.features.custom_survey.destroy if custom_survey
+      Account.current.reload
       get :index, controller_params(version: 'private', include: 'survey')
       assert_response 400
       match_json([bad_request_error_pattern('include', :require_feature, feature: 'Custom survey')])
-      Account.any_instance.unstub(:features?)
+      Account.current.features.default_survey.create if default_survey
+      Account.current.features.custom_survey.create if custom_survey
+    end
+
+    def test_index_with_full_requester_info
+      ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page].times { |i| create_ticket }
+      get :index, controller_params(version: 'private', include: 'requester')
+      assert_response 200
+      match_json(private_api_ticket_index_pattern({}, true))
+    end
+
+    def test_index_with_restricted_requester_info
+      ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page].times { |i| create_ticket }
+      remove_privilege(User.current, :view_contacts)
+      get :index, controller_params(version: 'private', include: 'requester')
+      assert_response 200
+      match_json(private_api_ticket_index_pattern({}, true))
+      add_privilege(User.current, :view_contacts)
+    end
+
+    def test_index_with_agent_as_requester
+      ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page].times { |i| create_ticket(requester_id: add_test_agent(@account, role: Role.find_by_name('Agent').id).id) }
+      get :index, controller_params(version: 'private', include: 'requester')
+      assert_response 200
+      match_json(private_api_ticket_index_pattern)
     end
 
     def test_show_with_survey_result
@@ -155,17 +183,23 @@ module Ember
     end
 
     def test_show_without_survey_enabled
+      MixpanelWrapper.stubs(:send_to_mixpanel).returns(true)
       ticket = create_ticket
       result = []
       3.times do
         result << create_survey_result(ticket, 3)
       end
-      Account.any_instance.stubs(:features?).with(:default_survey).returns(false)
-      Account.any_instance.stubs(:features?).with(:custom_survey).returns(false)
+      default_survey = Account.current.features?(:default_survey)
+      custom_survey = Account.current.features?(:custom_survey)
+      Account.current.features.default_survey.destroy if default_survey
+      Account.current.features.custom_survey.destroy if custom_survey
+      Account.current.reload
       get :show, controller_params(version: 'private', id: ticket.display_id, include: 'survey')
       assert_response 400
       match_json([bad_request_error_pattern('include', :require_feature, feature: 'Custom survey')])
-      Account.any_instance.unstub(:features?)
+      Account.current.features.default_survey.create if default_survey
+      Account.current.features.custom_survey.create if custom_survey
+      MixpanelWrapper.unstub(:send_to_mixpanel)
     end
 
     def test_ticket_show_with_fone_call
@@ -577,25 +611,52 @@ module Ember
     def test_show_with_facebook_feature_disabled
       Account.stubs(:current).returns(Account.first)
       ticket = create_ticket_from_fb_post
-      Account.any_instance.stubs(:features?).with(:facebook).returns(false)
-      Account.any_instance.stubs(:features?).with(:twitter).returns(true)
+      MixpanelWrapper.stubs(:send_to_mixpanel).returns(true)
+      fb_enabled = Account.current.features?(:facebook)
+      Account.current.features.facebook.destroy if fb_enabled
       get :show, controller_params(version: 'private', id: ticket.display_id)
       assert_response 200
       match_json(ticket_show_pattern(ticket))
-      Account.any_instance.unstub(:features?)
+      Account.current.features.facebook.create if fb_enabled
+      MixpanelWrapper.unstub(:send_to_mixpanel)
       Account.unstub(:current)
     end
 
     def test_show_with_twitter_feature_disabled
       Account.stubs(:current).returns(Account.first)
       ticket = create_twitter_ticket
-      Account.any_instance.stubs(:features?).with(:twitter).returns(false)
-      Account.any_instance.stubs(:features?).with(:facebook).returns(true)
+      twitter_enabled = Account.current.features?(:twitter)
+      MixpanelWrapper.stubs(:send_to_mixpanel).returns(true)
+      Account.current.features.twitter.destroy if twitter_enabled
       get :show, controller_params(version: 'private', id: ticket.display_id)
       assert_response 200
       match_json(ticket_show_pattern(ticket))
-      Account.any_instance.unstub(:features?)
+      Account.current.features.twitter.create if twitter_enabled
+      MixpanelWrapper.unstub(:send_to_mixpanel)
       Account.unstub(:current)
+    end
+
+    def test_show_with_full_requester_info
+      t = create_ticket
+      get :show, controller_params(version: 'private', id: t.display_id, include: 'requester')
+      assert_response 200
+      match_json(ticket_show_pattern(ticket, nil, true))
+    end
+
+    def test_show_with_restricted_requester_info
+      t = create_ticket
+      remove_privilege(User.current, :view_contacts)
+      get :show, controller_params(version: 'private', id: t.display_id, include: 'requester')
+      assert_response 200
+      match_json(ticket_show_pattern(ticket, nil, true))
+      add_privilege(User.current, :view_contacts)
+    end
+
+    def test_show_with_agent_as_requester
+      t = create_ticket(requester_id: add_test_agent(@account, role: Role.find_by_name('Agent').id).id)
+      get :show, controller_params(version: 'private', id: t.display_id, include: 'requester')
+      assert_response 200
+      match_json(ticket_show_pattern(ticket))
     end
 
     def test_update_with_attachment_ids

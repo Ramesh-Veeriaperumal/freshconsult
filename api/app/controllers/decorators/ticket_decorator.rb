@@ -7,6 +7,8 @@ class TicketDecorator < ApiDecorator
   def initialize(record, options)
     super(record)
     @name_mapping = options[:name_mapping]
+    @contact_name_mapping = options[:contact_name_mapping]
+    @company_name_mapping = options[:company_name_mapping]
     @sideload_options = options[:sideload_options] || []
   end
 
@@ -21,16 +23,9 @@ class TicketDecorator < ApiDecorator
   end
 
   def requester
-    if @sideload_options.include?('requester')
-      requester = record.requester
-      {
-        id: requester.id,
-        name: requester.name,
-        email: requester.email,
-        mobile: requester.mobile,
-        phone: requester.phone
-      }
-    end
+    return unless @sideload_options.include?('requester') && record.requester.customer?
+    contact_decorator = ContactDecorator.new(record.requester, name_mapping: @contact_name_mapping, company_name_mapping: @company_name_mapping)
+    User.current.privilege?(:view_contacts) ? contact_decorator.full_requester_hash : contact_decorator.restricted_requester_hash
   end
 
   def freshfone_call
