@@ -111,6 +111,7 @@ module ActivityConstants
   API_WEBHOOK_RULE            = 13
 
   RULE_LIST = { 
+                -1 => "round_robin",
                 1  => "business",
                 2  => "scenario",
                 3  => "supervisor",
