@@ -211,6 +211,7 @@ Helpkit::Application.routes.draw do
     resources :conversations, controller: 'ember/conversations', only: [:update] do
       member do
         get :full_text
+        get :forward_template, to: 'ember/conversations#note_forward_template'
       end
     end
 

@@ -68,6 +68,8 @@
   $ref: ./conversations/update.yaml
 /conversations/{id}/full_text:
   $ref: ./conversations/full_text.yaml
+/conversations/{id}/forward_template:
+  $ref: ./conversations/note_forward_template.yaml
 
 
 /contacts:

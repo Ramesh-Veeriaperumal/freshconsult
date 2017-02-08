@@ -1079,6 +1079,31 @@ module Ember
       
     end
 
+    def test_note_forward_template_with_empty_signature
+      note = create_note(user_id: @agent.id, ticket_id: ticket.id, source: 2)
+      notification_template = "<div>{{ticket.id}}</div>"
+      Agent.any_instance.stubs(:signature_value).returns('')
+      EmailNotification.any_instance.stubs(:get_forward_template).returns(notification_template)
+      get :note_forward_template, controller_params(version: 'private', id: note.id)
+      assert_response 200
+      match_json(reply_template_pattern(template: "<div>#{ticket.display_id}</div>", signature: ''))
+      Agent.any_instance.unstub(:signature_value)
+      EmailNotification.any_instance.unstub(:get_forward_template)
+    end
+
+    def test_note_forward_template_with_signature
+      note = create_note(user_id: @agent.id, ticket_id: ticket.id, source: 2)
+      notification_template = "<div>{{ticket.id}}</div>"
+      agent_signature = "<div><p>Thanks</p><p>{{ticket.subject}}</p></div>"
+      Agent.any_instance.stubs(:signature_value).returns(agent_signature)
+      EmailNotification.any_instance.stubs(:get_forward_template).returns(notification_template)
+      get :note_forward_template, controller_params(version: 'private', id: note.id)
+      assert_response 200
+      match_json(reply_template_pattern(template: "<div>#{ticket.display_id}</div>", signature: "<div><p>Thanks</p><p>#{ticket.subject}</p></div>"))
+      Agent.any_instance.unstub(:signature_value)
+      EmailNotification.any_instance.unstub(:get_forward_template)
+    end
+
     def test_full_text
       note = create_note(user_id: @agent.id, ticket_id: ticket.id, source: 2)
       note.note_body.full_text_html = note.note_body.body_html + "<div>quoted_text test</div>"

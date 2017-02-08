@@ -1249,6 +1249,36 @@
         }
       }
     },
+    "/conversations/{id}/forward_template": {
+      "get": {
+        "tags": [
+          "conversation"
+        ],
+        "description": "Note Forward Template",
+        "parameters": [
+          {
+            "name": "id",
+            "type": "number",
+            "in": "path",
+            "description": "Note ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/conversation_template"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          }
+        }
+      }
+    },
     "/contacts": {
       "get": {
         "tags": [
