@@ -10,5 +10,4 @@ allOf:
         type: string
       can_comment?:
         type: boolean
-      page_name:
-        type: string
+

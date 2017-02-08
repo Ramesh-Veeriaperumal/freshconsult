@@ -93,6 +93,8 @@
     $ref: ./resource/canned_response_folder.yaml
   fb_post:
     $ref: ./resource/fb_post.yaml
+  fb_page:
+    $ref: ./resource/fb_page.yaml
   ticket_filter:
     $ref: ./resource/ticket_filter.yaml
   tweet_post:

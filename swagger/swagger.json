@@ -4693,13 +4693,39 @@
             },
             "can_comment?": {
               "type": "boolean"
-            },
-            "page_name": {
-              "type": "string"
             }
           }
         }
       ]
+    },
+    "fb_page": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "number"
+        },
+        "profile_id": {
+          "type": "number"
+        },
+        "page_id": {
+          "type": "number"
+        },
+        "page_name": {
+          "type": "string"
+        },
+        "page_image_url": {
+          "type": "string"
+        },
+        "page_link": {
+          "type": "string"
+        },
+        "enable_page": {
+          "type": "boolean"
+        },
+        "product_id": {
+          "type": "number"
+        }
+      }
     },
     "ticket_filter": {
       "type": "object",
@@ -5311,7 +5337,18 @@
               "$ref": "#/definitions/freshfone_call"
             },
             "fb_post": {
-              "$ref": "#/definitions/fb_post"
+              "allOf": [
+                {
+                  "$ref": "#/definitions/fb_post"
+                },
+                {
+                  "properties": {
+                    "fb_page": {
+                      "$ref": "#/definitions/fb_page"
+                    }
+                  }
+                }
+              ]
             },
             "tweet": {
               "$ref": "#/definitions/tweet_post"
