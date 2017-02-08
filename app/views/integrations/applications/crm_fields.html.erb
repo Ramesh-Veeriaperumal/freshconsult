@@ -61,6 +61,10 @@
           pushLabelValues("leads", "lead_labels");
         <% end %>
         <%if @element_config["objects"].include? "opportunity"%>
+          var opportunity_stage_choices =<%= raw @element_config["opportunity_stage_choices"].to_json %>;
+          var opportunity_stage_choices_ids =<%= raw @element_config["opportunity_stage_choices_ids"].to_json %>;
+          $('#opportunity_stage_choices').val(opportunity_stage_choices);
+          $('#opportunity_stage_choices_ids').val(opportunity_stage_choices_ids);
           pushLabelValues("opportunities", "opportunity_labels");
         <%end%>
         <%if @element_config["objects"].include? "contract"%>
@@ -91,7 +95,6 @@
 
     $("#ticket_sync_option_value").itoggle();
     var default_labels = <%= raw @element_config["default_labels"].to_json %>;
-
     var contact_default =  default_labels["contact"];
     $("#contacts").select2({maximumSelectionSize: 10,removeOptionOnBackspace:false});
     //setting the Name as default field(can't be removed.)

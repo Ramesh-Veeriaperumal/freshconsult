@@ -1067,4 +1067,21 @@ if Integrations::Application.count == 0
     s.application_type = "salesforce_v2"
   end
 
+  #Populate Dynamics CRM Sync app
+  dynamics_v2_app = Integrations::Application.seed(:name) do |s|
+    s.name = "dynamics_v2"
+    s.display_name = "integrations.dynamics_v2.label"
+    s.description = "integrations.dynamics_v2.desc" 
+    s.account_id = Integrations::Constants::SYSTEM_ACCOUNT_ID
+    s.listing_order = 46
+    s.options = {
+      :direct_install => true,
+      :install => {:require_feature => {:notice => 'integrations.dynamics_v2.no_feature', :feature_name => :dynamics_v2}},
+      :edit => {:require_feature => {:notice => 'integrations.dynamics_v2.no_feature', :feature_name => :dynamics_v2}},
+      :auth_url => "/integrations/sync/crm/settings?state=dynamics_v2", 
+      :edit_url => "/integrations/sync/crm/edit?state=dynamics_v2&method=put",
+      :after_commit_on_destroy => { :clazz => "IntegrationServices::Services::CloudElementsService", :method => "uninstall" }}
+    s.application_type = "dynamics_v2"
+  end
+
 end

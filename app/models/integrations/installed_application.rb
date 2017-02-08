@@ -161,7 +161,7 @@ class Integrations::InstalledApplication < ActiveRecord::Base
       return if self.application.blank?
       as = self.application.options[action]
       unless as.blank?
-        if ["github","slack_v2","salesforce_v2"].include? self.application.name
+        if ["github","slack_v2","salesforce_v2","dynamics_v2"].include? self.application.name
           execute_service(as.delete(:clazz), as.delete(:method), self, as)
         else
           execute(as[:clazz], as[:method], self)

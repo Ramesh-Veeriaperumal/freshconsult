@@ -962,11 +962,9 @@ Freshdesk.CRMWidget = Class.create(Freshdesk.Widget, {
 			this.alert_failure('Domain name not configured. Try reinstalling '+this.options.app_name);
 		}
 	},
-
 	handleFailure:function(response) {
 		this.options.integratable_impl.processFailure(response, this);
 	},
-
 	handleContactSuccess:function(response){
 		resJson = response.responseJSON;
 		if(resJson == null)
@@ -1089,302 +1087,1066 @@ Freshdesk.CRMWidget = Class.create(Freshdesk.Widget, {
 });
 
 (function($){
-  Freshdesk.CRMCloudWidget = Class.create(Freshdesk.Widget, {
-    initialize:function($super, widgetOptions, integratable_impl) {
-		if(widgetOptions.domain) {
-			if(widgetOptions.reqEmail == ""){
-				$super(widgetOptions);
-				this.alert_failure('Email not available for this requester. A valid Email is required to fetch the contact from '+this.options.app_name);
-			} else {
-				this.fieldsHash = integratable_impl.fieldsHash;
-				this.labelsHash = integratable_impl.labelsHash;
-				widgetOptions.integratable_impl = integratable_impl;
-				var cnt_req = integratable_impl.get_contact_request();
-				this.searchCount = cnt_req.length;
-				this.searchResultsCount = 0;
-				if(cnt_req) {
-					if(cnt_req.length == undefined) cnt_req = [cnt_req]
-					for(var i=0;i<cnt_req.length;i++) {
-						cnt_req[i].on_success = this.handleContactSuccess.bind(this);
-						if (widgetOptions.auth_type != 'OAuth' && integratable_impl.processFailure){
-							cnt_req[i].on_failure = this.handleFailure.bind(this);              
+	Freshdesk.CRMCloudWidget = Class.create(Freshdesk.Widget,{
+		initialize:function($super, widgetOptions, integratable_impl) { //widgetOptions is the Bundle(salesforceV2Bundle) and integratable_impl refers "this" of the CRM js.
+			//app_name will be sent by individual js.
+			//SFDC and Dynamics have the common objects. So, writing the same logic for both.
+			if(widgetOptions.domain) {
+				if(widgetOptions.reqEmail == ""){
+					$super(widgetOptions);
+					this.alert_failure('Email not available for this requester. A valid Email is required to fetch the contact from '+this.options.app_name);
+				}else{
+					this.fieldsHash = integratable_impl.fieldsHash;
+					this.labelsHash = integratable_impl.labelsHash;
+					widgetOptions.integratable_impl = integratable_impl;
+					var cnt_req = this.get_contact_request(widgetOptions, integratable_impl);
+					this.searchCount = cnt_req.length;
+					this.searchResultsCount = 0;
+					if(cnt_req){
+						if(cnt_req.length == undefined) cnt_req = [cnt_req]
+						for(var i=0;i<cnt_req.length;i++){
+							cnt_req[i].on_success = this.handleContactSuccess.bind(this);
+							if (widgetOptions.auth_type != 'OAuth' && integratable_impl.processFailure){
+								cnt_req[i].on_failure = this.handleFailure.bind(this);              
+							}
 						}
+						this.contacts = [];
+						widgetOptions.init_requests = cnt_req;
 					}
-					this.contacts = [];
-					widgetOptions.init_requests = cnt_req;
+					$super(widgetOptions); // This will call the initialize method of Freshdesk.Widget.
 				}
-				$super(widgetOptions); // This will call the initialize method of Freshdesk.Widget.
+			}else{
+				$super(widgetOptions);
+				this.alert_failure('Domain name not configured. Try reinstalling '+this.options.app_name);
 			}
-		} else {
-			$super(widgetOptions);
-			this.alert_failure('Domain name not configured. Try reinstalling '+this.options.app_name);
-		}
-    },
-    handleFailure:function(response) {
-		this.options.integratable_impl.processFailure(response, this);
-    },
-    handleContactSuccess:function(response){
-		var resJson = response.responseJSON;
-		if(resJson == null){
-			resJson = JSON.parse(response.responseText);      
-		}
-		if(this.contacts = this.contacts.concat(this.parse_contact(resJson, response))) {
-			this.handleRender(this.contacts,this);
-		}
-    },
-    handleRender:function(contacts,crmWidget){
-		// handle the response from the requests.
-		if ( !this.allResponsesReceived() ){
-			return;       
-		}
-		if(this.options.app_name == "salesforce_v2"){
-			this.options.integratable_impl.loadIntegratedRemoteResource(); // only for salesforce_v2        
-		}
-		if(contacts.length > 0) {
-			if(contacts.length == 1) {
-				this.processSingleResult(contacts[0],crmWidget);
+		},
+		get_contact_request: function(crmBundle, integratable_impl){
+			crm_bundle = this.getBundle(crmBundle, integratable_impl); //crm_bundle is this.salesforceV2Bundle. crmBundle is salesforceV2Bundle
+			var requestUrls = [];
+			var custEmail = crm_bundle.reqEmail;
+			requestUrls.push({type:"contact", value:custEmail});
+			requestUrls.push({type:"lead", value:custEmail});
+			var custCompany = crm_bundle.reqCompany;
+			var ticket_company = crmBundle.ticket_company;
+			if(crm_bundle.accountFields && crm_bundle.accountFields.length > 0){
+				if(ticket_company && ticket_company.length > 0){ // fetch account by ticket filed company
+					requestUrls.push({type:"account", value:{company:ticket_company}});
+				}
+				else if(custCompany  && custCompany.length > 0){
+					custCompany = custCompany.trim(); 
+					requestUrls.push({type:"account", value:{company:custCompany}});
+				}
+				else{
+					requestUrls.push({type:"account", value:{email:custEmail}});
+				}
+			}
+			for(var i=0;i<requestUrls.length;i++){
+				requestUrls[i] = {  
+					event:"fetch_user_selected_fields", 
+					source_url:"/integrations/sync/crm/fetch",
+					app_name: crmBundle.app_name,
+					payload: JSON.stringify(requestUrls[i]) 
+				}
+			}
+			return requestUrls;
+		},
+		getBundle: function(this_bundle, integratable_impl){
+			var bundle;
+			switch(this_bundle.app_name){
+				case "salesforce_v2":
+					bundle = integratable_impl.salesforceV2Bundle;
+					break;
+				case "dynamics_v2":
+					bundle = integratable_impl.dynamicsV2Bundle;
+					break;
+				default:
+					console.log("CRM not found error!");
+			}
+			return bundle;
+		},
+		handleFailure:function(response) {
+			var message = "Problem occured while fetching the Entity";
+			this.processFailure(response, message);
+		},
+		handleContactSuccess:function(response){
+			var resJson = response.responseJSON;
+			if(resJson == null){
+				resJson = JSON.parse(response.responseText);      
+			}
+			if(this.contacts = this.contacts.concat(this.parse_contact(resJson, response))) {
+				this.handleRender(this.contacts);
+			}
+		},
+		handleRender:function(contacts){
+			var _this= this;
+			// handle the response from the requests.
+			if ( !this.allResponsesReceived() ){
+				return;       
+			}
+			this.loadIntegratedRemoteResource();
+			if(contacts.length > 0) {
+				if(contacts.length == 1) {
+					this.processSingleResult(contacts[0]);
+				}
+				else{
+					this.renderSearchResults();
+				}
+			} 
+			else {
+				this.processEmptyResults();
+			}
+			$("#"+_this.options.widget_name).removeClass('loading-fb');
+		},
+		processSingleResult:function(contact){
+			if(contact.type == "Account"){ 
+			//This will render single account and it also triggers related opportunities, contracts, orders
+				this.account_related_calls_received = 0;
+				if(this.options.opportunityView == "1"){
+					this.account_related_calls_received++;
+					this.getRelatedOpportunities(contact); 
+				}
+				if(this.options.contractView == "1"){
+					this.account_related_calls_received++;
+					this.getRelatedContracts(contact);
+				}
+				if(this.options.orderView == "1"){
+					this.account_related_calls_received++;
+					this.getRelatedOrders(contact);
+				}
+				if(this.account_related_calls_received == 0){
+					this.renderContactWidget(contact);
+				}
 			}
 			else{
-				this.renderSearchResults(crmWidget);
+				this.renderContactWidget(contact);
 			}
-		} 
-		else {
-			this.processEmptyResults(crmWidget);
-		}
-		$("#"+crmWidget.options.widget_name).removeClass('loading-fb');
-    },
-    processSingleResult:function(contact,crmWidget){
-		if(this.options.app_name = "salesforce_v2"){
-			this.options.integratable_impl.processSingleResult(contact,crmWidget,this); // only for Account
-		}else{
-			this.renderContactWidget(contact,crmWidget);
-		}
-    },
-    processEmptyResults:function(crmWidget){
-		var customer_emails = this.options.reqEmails.split(",");
-		if(customer_emails.length > 1){
-			this.renderEmailSearchEmptyResults(crmWidget);
-		}
-		else{
-			crmWidget.renderContactNa();
-		}
-    },
-    parse_contact: function(resJson){
-		var contacts =[];
-		if(resJson.records){
-			resJson=resJson.records;      
-		}
-		var _this = this;
-		resJson.each(function(contact) {
-			var cLink = this.salesforceV2Bundle.domain +"/"+contact.Id;
-			var sfcontact ={};
-			sfcontact['Id'] = contact.Id;
-			sfcontact['url'] = cLink;//This sets the url to salesforce on name
-			sfcontact['type'] = contact.attributes.type;
-			//fieldsHash should be inside the initialize of the crm File in the format {"Contact": "Name,Title,Phone,...", "Account": "Name,..",...}
-			var objectFields = _this.fieldsHash[contact.attributes.type];
-			if(objectFields!=undefined){
-				objectFields = objectFields.split(",");
-				for (var i=0;i<objectFields.length;i++){
-					if(objectFields[i]=="Address"){
-						sfcontact[objectFields[i]]=_this.getAddress(contact.MailingStreet,contact.MailingState,contact.MailingCity,contact.MailingCountry);
-					}
-					else{
-						sfcontact[objectFields[i]] = escapeHtml(_this.eliminateNullValues(contact[objectFields[i]]));
+		},
+		processEmptyResults:function(){
+			var _this = this;
+			var customer_emails = this.options.reqEmails.split(",");
+			if(customer_emails.length > 1){
+				this.renderEmailSearchEmptyResults();
+			}
+			else{
+				_this.renderContactNa();
+			}
+		},
+		parse_contact: function(resJson){
+			var contacts =[];
+			if(resJson.records){
+				resJson=resJson.records;      
+			}
+			var _this = this;
+			resJson.each(function(contact) {
+				var cLink = _this.getCRMLink(contact.Id, contact.attributes.type);
+				// var cLink = this.salesforceV2Bundle.domain +"/"+contact.Id;
+				var sfcontact ={};
+				sfcontact['Id'] = contact.Id;
+				sfcontact['url'] = cLink;//This sets the url to salesforce on name
+				sfcontact['type'] = contact.attributes.type;
+				//fieldsHash should be inside the initialize of the crm File in the format {"Contact": "Name,Title,Phone,...", "Account": "Name,..",...}
+				var objectFields = _this.options.integratable_impl.fieldsHash[contact.attributes.type];
+				if(objectFields!=undefined){
+					objectFields = objectFields.split(",");
+					for (var i=0;i<objectFields.length;i++){
+						//Handle address for dynamics as well.
+						if(objectFields[i]=="Address"){
+							sfcontact[objectFields[i]]=_this.getAddress(contact.MailingStreet,contact.MailingState,contact.MailingCity,contact.MailingCountry);
+						}
+						else{
+							sfcontact[objectFields[i]] = escapeHtml(_this.eliminateNullValues(contact[objectFields[i]]));
+						}
 					}
 				}
+				contacts.push(sfcontact);
+			});
+			return contacts;
+		},
+		loadIntegratedRemoteResource:function(){
+			var _this = this;
+			freshdeskWidget.request({
+				event:"integrated_resource", 
+				source_url:"/integrations/sync/crm/fetch",
+				app_name: this.options.app_name,
+				payload: JSON.stringify({ ticket_id:this.options.ticket_id }),
+				on_success: function(response){
+					response = response.responseJSON;
+					if(!_.isEmpty(response)){
+						_this.options.remote_integratable_id = response.remote_integratable_id;
+					}
+					else{
+						_this.options.remote_integratable_id = "";
+					}
+				},
+				on_failure: function(response){} 
+			});
+		},
+		eliminateNullValues:function(input){
+			return input || "NA";
+		},
+		getAddress:function(street, state, city, country){
+			var address="";
+			street = (street) ? (street + ", ")  : "";
+			state = (state) ? (state + ", ")  : "";
+			city = (city) ? (city)  : "";
+			country = (country) ? (city + ", " + country)  : city;
+			address = street + state + country;
+			address = (address == "") ? null : address
+			return escapeHtml(address || "NA");
+		},
+		allResponsesReceived:function(){
+			return (this.searchCount <= ++this.searchResultsCount );
+		},
+		renderEmailSearchEmptyResults:function(){
+			var _this=this;
+			_this.options.application_html = function(){ return _.template(_this.EMAIL_SEARCH_RESULTS_NA,{current_email:_this.options.reqEmail, app_name: _this.options.app_name});} 
+			_this.display();
+			_this.showMultipleEmailResults();
+		},
+		showMultipleEmailResults:function(){
+			var customer_emails = this.options.reqEmails.split(",");
+			var email_dropdown_opts = "";
+			var selected_opt;
+			var active_class;
+			for(var i = 0; i < customer_emails.length; i++) {
+				selected_opt = "";
+				active_class = "";
+				if(this.options.reqEmail == customer_emails[i]){
+					selected_opt += '<span class="icon ticksymbol"></span>'
+					active_class = " active";
+				}
+				email_dropdown_opts += '<a href="#" class="cust-email-v2'+active_class+'" data-email="'+customer_emails[i]+'">'+selected_opt+customer_emails[i]+'</a>';
 			}
-			contacts.push(sfcontact);
-		});
-		return contacts;
-    },
-    getTemplate:function(eval_params,crmWidget){
-		var resourceTemplate = "";
-		var fields;
-		var labels;
-		fields = this.fieldsHash[eval_params.type];
-		//labels should be declared inside the initialize() of CRM file in the format, {"Contact": this.contactInfo, "Account": this.accountInfo, ..}
-		//this.contactInfo is key value pair of the Contact key with Label(mapFieldLabels).
-		labels = this.labelsHash[eval_params.type];
-		resourceTemplate = this.resourceSectionTemplate(fields,labels,eval_params);
-		return resourceTemplate;
-    },
-    resourceSectionTemplate:function(fields,labels,eval_params){
-    // Labels should be a hash
-		var contactTemplate ="";
-		for(var i=0;i<fields.length;i++){
-			var value = eval_params[fields[i]];
-			value = value || "N/A"; 
-			contact_template += _.template(this.CONTACT_TEMPLATE, {value: value, field: fields[i], label: labels[fields[i]]});
-		}
-		return contactTemplate;
-    },
-    eliminateNullValues:function(input){
-		return input || "NA";
-    },
-    getAddress:function(street, state, city, country){
-		var address="";
-		street = (street) ? (street + ", ")  : "";
-		state = (state) ? (state + ", ")  : "";
-		city = (city) ? (city)  : "";
-		country = (country) ? (city + ", " + country)  : city;
-		address = street + state + country;
-		address = (address == "") ? null : address
-		return escapeHtml(address || "NA");
-    },
-    allResponsesReceived:function(){
-		return (this.searchCount <= ++this.searchResultsCount );
-    },
-    renderEmailSearchEmptyResults:function(crmWidget){
-		var _this=this;
-		crmWidget.options.application_html = function(){ return _.template(_this.EMAIL_SEARCH_RESULTS_NA,{current_email:_this.options.reqEmail});} 
-		crmWidget.display();
-		_this.showMultipleEmailResults();
-    },
-    showMultipleEmailResults:function(){
-		var customer_emails = this.options.reqEmails.split(",");
-		var email_dropdown_opts = "";
-		var selected_opt;
-		var active_class;
-		for(var i = 0; i < customer_emails.length; i++) {
-			selected_opt = "";
-			active_class = "";
-			if(this.options.reqEmail == customer_emails[i]){
-				selected_opt += '<span class="icon ticksymbol"></span>'
-				active_class = " active";
+			$("#leftViewMenu"+ this.options.app_name +".fd-menu").html(email_dropdown_opts);
+			$('#email-dropdown-div-' + this.options.app_name).show();
+			this.bindEmailChangeEvent();
+		},
+		bindEmailChangeEvent:function(){
+			var _this = this;
+			//This will re-instantiate the crm object for every user email
+			$(".fd-menu .cust-email-v2").on('click',function(ev){
+				ev.preventDefault();
+				// if(_this.options.app_name == "salesforce_v2"){
+					_this.resetOpportunityDialog();         
+				// }
+				$("#"+ _this.options.widget_name +" .content").html("");
+				var email = $(this).data('email');
+				_this.options.integratable_impl.resetBundle(_this.options, email);
+			});
+		},
+		renderSearchResults:function(){
+			//for Contact, Account and Leads only.
+			var crmResults="";
+			var _this =this;
+			for(var i=0; i<_this.contacts.length; i++){
+				//Handle Name seperately
+				var _contacts = _this.contacts[i];
+				var name = _this.options.nameKeyFields[_contacts.type];
+				crmResults += '<li><a class="multiple-contacts salesforce-tooltip" title="'+ _contacts[name] +'" href="#" data-contact="' + i + '">'+ _contacts[name] +'</a><span class="contact-search-result-type pull-right">'+_contacts.type+'</span></li>';
 			}
-			email_dropdown_opts += '<a href="#" class="cust-email-v2'+active_class+'" data-email="'+customer_emails[i]+'">'+selected_opt+customer_emails[i]+'</a>';
-		}
-		$("#leftViewMenuV2.fd-menu").html(email_dropdown_opts);
-		$('#email-dropdown-div-v2').show();
-		this.bindEmailChangeEvent();
-    },
-    bindEmailChangeEvent:function(){
-		var obj = this;
-		//This will re-instantiate the crm object for every user email
-		$(".fd-menu .cust-email-v2").on('click',function(ev){
-			ev.preventDefault();
-			if(obj.options.app_name == "salesforce_v2"){
-				obj.options.integratable_impl.resetOpportunityDialog();         
+			var results_number = {resLength: _this.contacts.length, requester: _this.options.reqEmail, resultsData: crmResults, app_name: _this.options.app_name};
+			this.renderSearchResultsWidget(results_number);
+			var _this = this;
+			var crm_resource = undefined;
+			$('#' + _this.options.widget_name).off('click','.multiple-contacts').on('click','.multiple-contacts', (function(ev){
+				ev.preventDefault();
+				crm_resource = _this.contacts[$(this).data('contact')];
+				_this.handleCRMResource(crm_resource)
+			}));
+		},
+		handleCRMResource:function(sf_resource){
+			if(sf_resource.type == "Account"){ // This will handle opportunites if the opportunity_view is enabled
+				if(!(this.options.opportunityView == "1" || this.options.contractView == "1" || this.options.orderView == "1")){
+					this.renderContactWidget(sf_resource);                    
+				}
+				// Increment a counter Based on the number of request we are waiting.
+				// Decrement the counter Inside the respective LoadObject: functions
+				// If the Counter value is Zero Do the rendering. 
+				this.account_related_calls_received = 0;
+				if(this.options.opportunityView == "1"){
+					var opportunity_records = this.options.opportunityHash[sf_resource.Id];        
+						if(opportunity_records == undefined){
+							this.account_related_calls_received++;
+							this.getRelatedOpportunities(sf_resource);
+						}
+				}
+				if(this.options.contractView == "1"){
+					var contract_records = this.options.contractHash[sf_resource.Id];      
+					if(contract_records == undefined){
+						this.account_related_calls_received++;
+						this.getRelatedContracts(sf_resource);
+					}
+				}
+				if(this.options.orderView == "1"){
+					var order_records = this.options.orderHash[sf_resource.Id];
+					if(order_records == undefined){
+						this.account_related_calls_received++;
+						this.getRelatedOrders(sf_resource);
+					}
+				}
+				if(this.account_related_calls_received == 0){
+					this.renderContactWidget(sf_resource);                    
+				}
 			}
-			$("#"+ obj.options.widget_name +" .content").html("");
-			var email = $(this).data('email');
-			var newSalesforceBundle = obj.options.integratable_impl.resetSalesforceBundle(obj.options.integratable_impl.salesforceV2Bundle); //resetSalesforceBundle is CRM specific.
-			newSalesforceBundle.reqEmail = email;
-			new SalesforceV2Widget(newSalesforceBundle);
-		});
-    },
-    renderSearchResults:function(crmWidget){
-		var crmResults="";
-		for(var i=0; i<crmWidget.contacts.length; i++){
-			crmResults += '<li><a class="multiple-contacts salesforce-tooltip" title="'+crmWidget.contacts[i].Name+'" href="#" data-contact="' + i + '">'+crmWidget.contacts[i].Name+'</a><span class="contact-search-result-type pull-right">'+crmWidget.contacts[i].type+'</span></li>';
-		}
-		var results_number = {resLength: crmWidget.contacts.length, requester: crmWidget.options.reqEmail, resultsData: crmResults};
-		this.renderSearchResultsWidget(results_number,crmWidget);
-		var obj = this;
-		var crm_resource = undefined;
-		$('#' + crmWidget.options.widget_name).off('click','.multiple-contacts').on('click','.multiple-contacts', (function(ev){
-			ev.preventDefault();
-			crm_resource = crmWidget.contacts[$(this).data('contact')];
-			if(obj.options.handleCRMResource){
-				obj.options.integratable_impl.handleCRMResource(crm_resource,crmWidget, obj);
+			else{
+				this.renderContactWidget(sf_resource);
+			}
+		},
+		renderSearchResultsWidget:function(results_number){
+			var _this=this;
+			var customer_emails = _this.options.reqEmails.split(",");
+			results_number.widget_name = _this.options.widget_name; //_this.options.salesforce_widget_name;
+			results_number.current_email = _this.options.reqEmail;
+			var resultsTemplate = "";
+			resultsTemplate = customer_emails.length > 1 ? _this.CONTACT_SEARCH_RESULTS_MULTIPLE_EMAILS : _this.CONTACT_SEARCH_RESULTS;
+			_this.options.application_html = function(){ return _.template(resultsTemplate, results_number); } 
+			_this.display();
+			if(customer_emails.length > 1){
+				_this.showMultipleEmailResults();
+			}
+		},
+		renderContactWidget:function(eval_params){
+			var _this = this;
+			var customer_emails = _this.options.reqEmails.split(",");
+			var name_field = _this.options.nameKeyFields[eval_params.type];
+			eval_params.Name = eval_params[name_field];
+			eval_params.count = _this.contacts.length;
+			eval_params.app_name = _this.options.app_name;
+			eval_params.widget_name = _this.options.widget_name;
+			eval_params.type = eval_params.type?eval_params.type:"" ; 
+			eval_params.department = eval_params.department?eval_params.department:null;
+			eval_params.url = this.getCRMLink(eval_params.Id, eval_params.type);
+			// Handle address differerently for Dynamics and SFDC.
+			eval_params.address_type_span = eval_params.address_type_span || " ";
+			eval_params.current_email = _this.options.reqEmail;
+			var contact_fields_template="";
+			contact_fields_template = this.getTemplate(eval_params);
+			var contact_template = (customer_emails.length > 1 && eval_params.count == 1)  ? _this.VIEW_CONTACT_MULTIPLE_EMAILS : _this.VIEW_CONTACT;
+			_this.options.application_html = function(){ return _.template(contact_template, eval_params)+""+contact_fields_template; } 
+			this.removeError();
+			this.removeLoadingIcon();
+			_this.display();
+			this.bindParagraphReadMoreEvents();
+			if(customer_emails.length > 1 && eval_params.count == 1){
+				_this.showMultipleEmailResults();
+			}
+			var _this = this;
+			$('#' + _this.options.widget_name).on('click','#search-back', (function(ev){
+				ev.preventDefault();
+				_this.resetOpportunityDialog();
+				_this.renderSearchResults();
+			}));
+			if(eval_params.type == "Account"){
+				_this.handleOpportunitesSection(eval_params);
+				_this.handleContractsSection(eval_params);
+				_this.handleOrdersSection(eval_params);
+			}
+		},
+		handleOpportunitesSection:function(eval_params){
+			var _this = this;
+			var opportunity_records = crm_bundle.opportunityHash[eval_params.Id];
+			var create_opportunity_element = "#create_new_opp_" + _this.options.app_name;
+			if($(create_opportunity_element).length){
+				$(".salesforce_v2_contacts_widget_bg").on('click',create_opportunity_element,(function(ev){
+						ev.preventDefault();
+						_this.bindOpportunitySubmitEvents(eval_params);
+				}));
+			}
+			if(opportunity_records && opportunity_records.length){
+				_this.bindAccountObjectEvents("opportunities");
+				_this.bindOpportunityLinkEvents(eval_params);
+			}
+		},
+		handleContractsSection:function(eval_params){
+			var _this = this;
+			var contract_records = crm_bundle.contractHash[eval_params.Id];
+			if(contract_records && contract_records.length){
+				_this.bindAccountObjectEvents("contracts");
+			}
+		},
+		handleOrdersSection:function(eval_params){
+			var _this = this;
+			var order_records = crm_bundle.orderHash[eval_params.Id];
+			if(order_records && order_records.length){
+				_this.bindAccountObjectEvents("orders");
+			}
+		},
+		getRelatedOpportunities:function(eval_params,linkFlag){
+			var _this = this;
+			this.showLoadingIcon(_this.options.widget_name);
+			freshdeskWidget.request({
+				event:"fetch_user_selected_fields", 
+				source_url:"/integrations/sync/crm/fetch",
+				app_name:_this.options.app_name,
+				payload: JSON.stringify({ type:"opportunity", value:{ account_id:eval_params.Id }, ticket_id:_this.options.ticket_id }),
+				on_success: function(response){
+						response = response.responseJSON;
+						_this.loadOpportunities(response,eval_params,linkFlag);
+				},
+				on_failure: function(response){
+						var message = "Problem occured while fetching opportunties";
+						_this.processFailure(eval_params,message);
+				} 
+			});
+		},
+		loadOpportunities:function(response,eval_params,linkFlag){
+			var opp_records = response.records;
+			var error;
+			var _this = this;
+			if(opp_records.length > 0){
+				var opp_fields = crm_bundle.opportunityFields.split(",");
+				for(i=0;i<opp_records.length;i++){
+					for(j=0;j<opp_fields.length;j++){
+						var value = opp_records[i][opp_fields[j]];
+						if(typeof value == "boolean"){
+							continue;
+						}
+						if(opp_fields[j] == "attributes.salesstage" && value !== null && value !== undefined){
+							// To display the salesstage for the dynamics.
+							var stage_options = _this.options.opportunity_stage;
+							for(k=0;k<stage_options.length;k++){
+								if(stage_options[k][1] === value.toString()){
+									opp_records[i][opp_fields[j]] = stage_options[k][0];
+									break;
+								}
+							}
+							continue;
+						}
+						opp_records[i][opp_fields[j]] = escapeHtml(_this.eliminateNullValues(value));
+						if(opp_records[i][opp_fields[j]] !== "NA" && ["CloseDate", "attributes.estimatedclosedate"].indexOf(opp_fields[j]) !== -1){
+							//Converting close date to user readable format
+							opp_records[i][opp_fields[j]] = _this.convertDate(opp_records[i][opp_fields[j]])
+						}
+					}
+				}
+				_this.options.opportunityHash[eval_params.Id] = opp_records;
+			}
+			else{
+				_this.options.opportunityHash[eval_params.Id] = [];
+			}
+			if(eval_params.error){ // This will show error in the opportunities section
+				error = eval_params.error;
+				eval_params.error = undefined;
+				_this.processFailure(eval_params,error);
 			}else{
-				obj.handleCRMResource(crm_resource,crmWidget)
+				if(--_this.account_related_calls_received == 0){
+					_this.renderContactWidget(eval_params);
+				}
 			}
-		}));
-    },
-    handleCRMResource:function(crm_resource,crmWidget){
-		this.renderContactWidget(crm_resource,crmWidget);
-    },
-    renderSearchResultsWidget:function(results_number,crmWidget){
-		var _this=this;
-		var customer_emails = crmWidget.options.reqEmails.split(",");
-		results_number.widget_name = crmWidget.options.widget_name; //crmWidget.options.salesforce_widget_name;
-		results_number.current_email = crmWidget.options.reqEmail;
-		var resultsTemplate = "";
-		resultsTemplate = customer_emails.length > 1 ? _this.CONTACT_SEARCH_RESULTS_MULTIPLE_EMAILS : _this.CONTACT_SEARCH_RESULTS;
-		crmWidget.options.application_html = function(){ return _.template(resultsTemplate, results_number); } 
-		crmWidget.display();
-		if(customer_emails.length > 1){
-			_this.showMultipleEmailResults();
-		}
-    },
-    renderContactWidget:function(eval_params,crmWidget){
-		//this.options is salesforceV2Bundle
-		var _this = this;
-		var customer_emails = crmWidget.options.reqEmails.split(",");
-		eval_params.count = crmWidget.contacts.length;
-		eval_params.app_name = crmWidget.options.app_name;
-		eval_params.widget_name = crmWidget.options.widget_name; //crmWidget.options.salesforce_widget_name;
-		eval_params.type = eval_params.type?eval_params.type:"" ; 
-		eval_params.department = eval_params.department?eval_params.department:null;
-		eval_params.url = eval_params.url?eval_params.url:"#";
-		eval_params.address_type_span = eval_params.address_type_span || " ";
-		eval_params.current_email = crmWidget.options.reqEmail;
-		var contact_fields_template="";
-		if(this.options.getTemplate){
-			contact_fields_template = this.options.integratable_impl.getTemplate(eval_params,crmWidget);
-		}
-		else{
-			contact_fields_template = this.getTemplate(eval_params,crmWidget);
-		}
-		var contact_template = (customer_emails.length > 1 && eval_params.count == 1)  ? _this.VIEW_CONTACT_MULTIPLE_EMAILS : _this.VIEW_CONTACT;
-		crmWidget.options.application_html = function(){ return _.template(contact_template, eval_params)+""+contact_fields_template; } 
-		this.removeError();
-		this.removeLoadingIcon();
-		crmWidget.display();
-		this.bindParagraphReadMoreEvents();
-		if(customer_emails.length > 1 && eval_params.count == 1){
-			_this.showMultipleEmailResults();
-		}
-		var obj = this;
-		$('#' + crmWidget.options.widget_name).on('click','#search-back', (function(ev){
-		ev.preventDefault();
-		if(crmWidget.options.app_name == "salesforce_v2")
-			obj.options.integratable_impl.resetOpportunityDialog();
-			obj.renderSearchResults(crmWidget);
-		}));
-		if(eval_params.type == "Account" && crmWidget.options.app_name == "salesforce_v2"){
-			this.options.integratable_impl.handleOpportunitesSection(eval_params,crmWidget,obj);
-			this.options.integratable_impl.handleContractsSection(eval_params,crmWidget,obj);
-			this.options.integratable_impl.handleOrdersSection(eval_params,crmWidget,obj);
-		}
-    },
-    showError:function(message){
-		freshdeskWidget.alert_failure("The following error is reported:"+" "+message);
-    },
-    removeError:function(){
-		$("#" + this.options.widget_name + " .error").html("").addClass('hide');
-    },
-    removeLoadingIcon:function(){
-		$("#" + this.options.widget_name).removeClass('sloading loading-small');
-    },
-    bindParagraphReadMoreEvents:function(){
-        var i = 1;
-        $(".para-less").each(function(){
+		},
+		getRelatedContracts:function(eval_params){
+			var _this = this;
+			this.showLoadingIcon(_this.options.widget_name);
+			freshdeskWidget.request({
+				event:"fetch_user_selected_fields", 
+				source_url:"/integrations/sync/crm/fetch",
+				app_name:_this.options.app_name,
+				payload: JSON.stringify({ type:"contract", value:{ account_id:eval_params.Id } }),
+				on_success: function(response){
+					response = response.responseJSON;
+					_this.loadContracts(response,eval_params);
+				},
+				on_failure: function(response){
+					var message = "Problem occured while fetching contracts";
+					_this.processFailure(eval_params,message);
+				} 
+			});
+		},
+		loadContracts:function(response,eval_params){
+			var _this = this;
+			var contract_records = response.records;
+			var error;
+			if(contract_records.length > 0){
+				var contract_fields = crm_bundle.contractFields.split(",");
+				for(i=0;i<contract_records.length;i++){
+					for(j=0;j<contract_fields.length;j++){
+						if(typeof contract_records[i][contract_fields[j]] == "boolean"){
+							continue;
+						}
+						contract_records[i][contract_fields[j]] = escapeHtml(_this.eliminateNullValues(contract_records[i][contract_fields[j]]));
+						if(contract_records[i][contract_fields[j]] !== "NA" && ["StartDate", "attributes.activeon", "attributes.expireson"].indexOf(contract_fields[j]) !== -1 ){ //Converting start date to user readable format
+							contract_records[i][contract_fields[j]] = _this.convertDate(contract_records[i][contract_fields[j]]);
+						}
+					}
+				}
+				_this.options.contractHash[eval_params.Id] = contract_records;
+			}
+			else{
+				_this.options.contractHash[eval_params.Id] = [];
+			}
+			if(eval_params.error){ // This will show error in the contract section
+				error = eval_params.error;
+				eval_params.error = undefined;
+				_this.processFailure(eval_params,error);
+			}else{
+				if(--_this.account_related_calls_received == 0){
+					_this.renderContactWidget(eval_params);
+				}
+			}
+		},
+		getRelatedOrders:function(eval_params){
+			var _this =this;
+			this.showLoadingIcon(_this.options.widget_name);
+			freshdeskWidget.request({
+				event:"fetch_user_selected_fields", 
+				source_url:"/integrations/sync/crm/fetch",
+				app_name:_this.options.app_name,
+				payload: JSON.stringify({ type:"order", value:{ account_id:eval_params.Id } }),
+				on_success: function(response){
+					response = response.responseJSON;
+					_this.loadOrders(response,eval_params);
+				},
+				on_failure: function(response){
+					var message = "Problem occured while fetching orders";
+					_this.processFailure(eval_params,message);
+				} 
+			});
+		},
+		loadOrders:function(response,eval_params){
+			var order_records = response.records;
+			var error=undefined;
+			var _this = this;
+			if(order_records.length > 0){
+				var order_fields = crm_bundle.orderFields.split(",");
+				for(i=0;i<order_records.length;i++){
+					for(j=0;j<order_fields.length;j++){
+						if(typeof order_records[i][order_fields[j]] == "boolean"){
+							continue;
+						}
+						order_records[i][order_fields[j]] = escapeHtml(_this.eliminateNullValues(order_records[i][order_fields[j]]));
+						if( order_records[i][order_fields[j]] !== "NA" && ["EffectiveDate", "attributes.createdon"].indexOf(order_fields[j]) !== -1){ //Converting start date to user readable format
+							order_records[i][order_fields[j]] = _this.convertDate(order_records[i][order_fields[j]]);
+						}
+					}
+				}
+				_this.options.orderHash[eval_params.Id] = order_records;
+			}
+			else{
+				_this.options.orderHash[eval_params.Id] = [];
+			}
+			if(eval_params.error){ // This will show error in the order section
+				error = eval_params.error;
+				eval_params.error = undefined;
+				_this.processFailure(eval_params,error);
+			}
+			else{
+				if(--_this.account_related_calls_received == 0){
+					_this.renderContactWidget(eval_params);                    
+				}
+			}
+		},
+		bindOpportunitySubmitEvents:function(eval_params){
+			var _this = this;
+			var account_id = eval_params.Id;
+			this.clearOpportunityFormErrors();
+			$("#opportunity-submit-"+ _this.options.app_name + "-" + account_id).off('click').on('click',function(ev){
+				ev.preventDefault();
+				$(this).attr("disabled","disabled").val("Creating...");
+				_this.createOpportunity(eval_params);
+			});
+			$("#opportunity-cancel-"+ _this.options.app_name + "-" + account_id).off('click').on('click',function(ev){
+				ev.preventDefault();
+				$("#create_sf_opportunity_"+ _this.options.app_name + "_"+account_id).modal("hide");
+				_this.resetOpportunityForm(account_id);
+			});
+			$("#create_sf_opportunity_"+ _this.options.app_name + "_" + account_id + " .close").on('click',function(ev){
+				ev.preventDefault();
+				_this.resetOpportunityForm(account_id);
+			});
+		},
+		createOpportunity:function(eval_params){
+			var _this = this;
+			if(this.validateInput()){
+				$("#opportunity-validation-errors-"+ _this.options.app_name).hide();
+				var date = new Date($("#opportunity_close_date_" + _this.options.app_name).val());
+				var stage_name = $("#opportunity_stage_"+ _this.options.app_name ).val();
+				var name = $("#opportunity_name_"+ _this.options.app_name ).val();
+				var amount = $("#opportunity_amount_"+ _this.options.app_name ).val();
+				//build seperate opportunity params for Salesforce and dynamics.
+				// var opportunity_params = { ticket_id:this.options.ticket_id, AccountId:eval_params.Id,Name:name, CloseDate:date, StageName:stage_name, Amount:amount,type:"opportunity"};
+				var opportunity_params = _this.getOpportunitiesParams(eval_params ,name, date, stage_name, amount);
+				freshdeskWidget.request({
+					event:"create_opportunity", 
+					source_url:"/integrations/sync/crm/fetch",
+					app_name:_this.options.app_name,
+					payload: JSON.stringify(opportunity_params),
+					on_success:function(response){
+						response = response.responseJSON;
+						_this.processOpportunityPostCreate(response,eval_params);
+					},
+					on_failure:function(response){
+						var message = response.responseJSON.message || response.responseJSON;
+						$("#opportunity-submit-"+ _this.options.app_name + "-" + eval_params.Id).removeAttr('disabled').val("Create");
+						$(".salesforce-opportunity-custom-errors-v2").show().html("<span>Opportunity creation failed."+" "+message+"</span>");
+					} 
+				});
+			}
+			else{
+				$(".salesforce-opportunity-custom-errors-v2").hide();
+				$("#opportunity-submit-"+ _this.options.app_name + "-" + eval_params.Id).removeAttr('disabled').val("Create");
+			}
+		},
+		getOpportunitiesParams: function(eval_params ,name, date, stage_name, amount){
+			var _this = this, opportunityParams = {};
+			switch(_this.options.app_name){
+				case "salesforce_v2":
+					date = date.toString("yyyy-MM-dd");
+					opportunityParams = { ticket_id:_this.options.ticket_id, type:"opportunity", AccountId:eval_params.Id, Name:name, CloseDate:date, StageName:stage_name, Amount:amount};
+				break;
+				case "dynamics_v2":
+					date = date.getTime();
+					//add stageName once resolved.
+					opportunityParams = { ticket_id:_this.options.ticket_id,  type:"opportunity", attributes: {customerid:eval_params.Id, name:name, estimatedclosedate:date, estimatedvalue:amount, salesstage:stage_name}, 'fetchMetaInfo':true};
+				break;
+				default:
+			}
+			return opportunityParams;
+		},
+		bindAccountObjectEvents: function(object){ //opportunities, contracts, orders.
+			$(".multiple-" + object).click(function(ev){
+				ev.preventDefault();
+				var _this = $(this);
+				if(_this.parent().next(".opportunity_details").css('display') != 'none'){
+					if(object === "opportunities"){
+						$(".opportunity_link").hide();
+						$(".opp-flag").show();
+					}
+					_this.toggleClass('active');
+					_this.parent().next(".opportunity_details").hide();
+				}else{
+					$(".opportunity_link").hide();
+					if(object === "opportunities"){
+						_this.siblings(".opp-flag").hide();
+						_this.next(".opportunity_link").show();
+					}else{
+						$(".opp-flag").show();
+					}
+					$(".salesforce-opportunity-tooltip").each(function(){
+						var _self = $(this);
+						if(_self !== _this){
+							_self.removeClass('active');
+						}
+					});
+					$(".opportunity_details").hide();
+					_this.toggleClass("active");
+					_this.parent().next(".opportunity_details").show();
+				}
+			});
+		},
+		bindOpportunityLinkEvents:function(eval_params){
+			var _this = this;
+			$(".Link").off('click').on('click',function(ev){
+				ev.preventDefault();
+				var opportunity_id = $(this).attr('id');
+				_this.linkOpportunity(opportunity_id,eval_params);
+			});
+			$(".Unlink").off('click').on('click',function(ev){
+				ev.preventDefault();
+				var opportunity_id = $(this).attr('id');
+				_this.unlinkOpportunity(opportunity_id,eval_params);
+			});
+		},
+		processOpportunityPostCreate:function(response,eval_params){
+			$("#create_sf_opportunity_"+ this.options.app_name + "_"+eval_params.Id).modal("hide");
+			this.resetOpportunityForm(eval_params.Id);
+			this.linkOpportunity(response.Id,eval_params);
+		},
+		removeOtherAccountOpportunities:function(eval_params){
+			for(key in crm_bundle.opportunityHash){
+				if (key != eval_params.Id){
+					crm_bundle.opportunityHash[key] = undefined;
+				}
+			}
+		},
+		linkOpportunity:function(opportunity_id,eval_params){
+			var _this = this;
+			this.resetOpportunityDialog();
+			// when two apps are installed two widgets will be loading.
+			this.showLoadingIcon(_this.options.widget_name);
+			freshdeskWidget.request({
+				event:"link_opportunity", 
+				source_url:"/integrations/sync/crm/fetch",
+				app_name:_this.options.app_name,
+				payload: JSON.stringify({ ticket_id:_this.options.ticket_id, remote_id:opportunity_id }),
+				on_success: function(response){
+					response = response.responseJSON;
+					_this.handleOpportunityLink(response,eval_params,opportunity_id,true);
+				},
+				on_failure: function(response){
+					var message = response.responseJSON.message || response.responseJSON;
+					_this.processFailure(eval_params,message);
+				} 
+			});
+		},
+		handleOpportunityLink:function(response,eval_params,opportunity_id,linkStatus){
+			if(response.error){
+				eval_params.error = response.error;
+				this.options.remote_integratable_id = response.remote_id;
+				this.removeOtherAccountOpportunities(eval_params);
+				this.account_related_calls_received = 1;
+				this.getRelatedOpportunities(eval_params);
+				if(this.options.contractView == "1"){
+					this.account_related_calls_received++;
+					this.getRelatedContracts(eval_params); 
+				}
+				if(this.options.orderView == "1"){
+					this.account_related_calls_received++;
+					this.getRelatedOrders(eval_params);
+				}
+			}
+			else{
+				this.options.remote_integratable_id = linkStatus ? opportunity_id : "";
+				this.resetOtherAccountOpportunities(eval_params,linkStatus);
+				this.account_related_calls_received = 1;
+				this.getRelatedOpportunities(eval_params,linkStatus);
+				if(this.options.contractView == "1"){
+					this.account_related_calls_received++;
+					this.getRelatedContracts(eval_params);
+				}
+				if(this.options.orderView == "1"){
+					this.account_related_calls_received++;        
+					this.getRelatedOrders(eval_params);
+				}
+			}
+		},
+		resetOtherAccountOpportunities:function(eval_params,link_status){
+			var records = undefined;
+			for(key in crm_bundle.opportunityHash){
+				records = crm_bundle.opportunityHash[key];
+				if (key != eval_params.Id && records.length){
+					for(i=0;i<records.length;i++){
+						records[i]["link_status"] = link_status;
+					}
+					crm_bundle.opportunityHash[key] = records;
+				}
+			}
+		},
+		unlinkOpportunity:function(opportunity_id,eval_params){
+			var _this = this;
+			this.showLoadingIcon(_this.options.widget_name);
+			freshdeskWidget.request({
+				event:"unlink_opportunity", 
+				source_url:"/integrations/sync/crm/fetch",
+				app_name:_this.options.app_name,
+				payload: JSON.stringify({ ticket_id:_this.options.ticket_id, remote_id:opportunity_id }),
+				on_success: function(response){
+					response = response.responseJSON;
+					_this.handleOpportunityLink(response,eval_params,opportunity_id,false);
+				},
+				on_failure: function(response){
+					var message = response.responseJSON.message || response.responseJSON;
+					_this.processFailure(eval_params,message);
+				} 
+			});
+		},
+		validateInput:function(){
+			var _this= this;
+			var datecheck = new Date($("#opportunity_close_date_" + this.options.app_name).val().trim());
+			$(".salesforce-opportunity-custom-errors-v2").hide();
+			if(!$("#opportunity_name_"+ _this.options.app_name).val().trim()){
+				this.showValidationErrors("Please enter a name");
+				return false;
+			}
+			if(!$("#opportunity_stage_"+ _this.options.app_name).val().trim()){
+				this.showValidationErrors("Please select an opportunity stage");
+				return false;
+			}
+			if(!$("#opportunity_close_date_" + this.options.app_name).val().trim() || datecheck.toString() == "Invalid Date"){
+				this.showValidationErrors("Enter value for close date");
+				return false;
+			}	
+			var opp_amount = $("#opportunity_amount_"+ _this.options.app_name);
+			if(opp_amount.val().trim() && isNaN(opp_amount.val())){
+				this.showValidationErrors("Please enter valid amount");
+				return false;
+			}
+			return true;
+		},
+		resetOpportunityForm:function(account_id){
+			var _this = this;
+			this.clearOpportunityFormErrors();
+			$("#opportunity-submit-" + this.options.app_name + "-" + account_id).removeAttr('disabled').val("Create");
+			$("#opportunity_stage_" + this.options.app_name ).select2("val",crm_bundle.opportunity_stage[0][1]);
+			$("#salesforce-opportunity-form-" + this.options.app_name)[0].reset();
+		},
+		resetOpportunityDialog:function(){
+			var create_opportunity_element = "#create_new_opp_" + this.options.app_name;
+			if($(create_opportunity_element).data("freshdialog")){
+				$("#"+ $(create_opportunity_element).data("freshdialog").$dialogid).remove();
+			}
+		},
+		clearOpportunityFormErrors:function(){
+			$("#opportunity-validation-errors-"+ this.options.app_name).hide();
+			$(".salesforce-opportunity-custom-errors-v2").hide();
+		},
+		showValidationErrors:function(msg){
+			var sf_val_error = $("#opportunity-validation-errors-"+ this.options.app_name);
+			sf_val_error.text(msg);
+			sf_val_error.show();
+		},
+		showLoadingIcon:function(widget_name){
+			$("#"+widget_name+" .content").html("");
+			$("#"+widget_name).addClass('sloading loading-small');
+		},
+		processFailure:function(eval_params,msg){
+			this.renderContactWidget(eval_params);
+			this.showError(msg);
+		},
+		showError:function(message){
+			freshdeskWidget.alert_failure("The following error is reported:"+" "+message);
+		},
+		removeError:function(){
+			$("#" + this.options.widget_name + " .error").html("").addClass('hide');
+		},
+		removeLoadingIcon:function(){
+			$("#" + this.options.widget_name).removeClass('sloading loading-small');
+		},
+		bindParagraphReadMoreEvents:function(){
+			var i = 1;
+			$(".para-less").each(function(){
 			var _this = $(this);
-			if(_this.actual('height') > 48){ // This event uses jquery.actual.min.js plugin to find the height of hidden element
-			_this.addClass('para-min-lines');
-			_this.attr('tabIndex',i);
-			_this.next(".toggle-para").addClass('active-para').removeClass('hide');
-			i++;
-			}
-        });
-        $('.toggle-para.active-para p').click(function(){
+				if(_this.actual('height') > 48){ // This event uses jquery.actual.min.js plugin to find the height of hidden element
+					_this.addClass('para-min-lines');
+					_this.attr('tabIndex',i);
+					_this.next(".toggle-para").addClass('active-para').removeClass('hide');
+					i++;
+				}
+			});
+			$('.toggle-para.active-para p').click(function(){
 			var _this = $(this);
 			_this.parent().toggleClass('q-para-span');
 			_this.parent().prev(".para-less").toggleClass('para-min-lines para-max-lines');
 			_this.toggleClass('q-marker-more q-marker-less');
 			_this.parent().prev(".para-less").focus();
-        });
-    },
-    renderContactNa:function(){
-		var _this=this;
-		_this.options.url = _this.options.url || "#";
-		this.options.application_html = function(){ return _.template(_this.CONTACT_NA, _this.options);} 
-		this.display();
-    },
-    VIEW_CONTACT:
+				});
+		},
+		renderContactNa:function(){
+			var _this=this;
+			_this.options.url = _this.options.url || "#";
+			this.options.application_html = function(){ return _.template(_this.CONTACT_NA, _this.options);} 
+			this.display();
+		},
+		//======================================== ALL TEMPLATES ========================================================================
+		getTemplate:function(eval_params){
+			var resourceTemplate = "";
+			var fields;
+			var labels;
+			var _this =this;
+			switch(eval_params.type){
+				case "Lead":
+					fields = _this.options.leadFields.split(",");
+					labels = _this.options.integratable_impl.leadInfo;
+					resourceTemplate = _this.resourceSectionTemplate(fields,labels,eval_params);
+				break;
+				case "Account":
+					fields = _this.options.accountFields.split(",");
+					labels = _this.options.integratable_impl.accountInfo;
+					var accountsTemplate = _this.resourceSectionTemplate(fields,labels,eval_params);
+					var opportunity_records = _this.options.opportunityHash[eval_params.Id];
+					var contract_records = _this.options.contractHash[eval_params.Id];
+					var order_records = _this.options.orderHash[eval_params.Id];
+					resourceTemplate = accountsTemplate;
+					if(opportunity_records && _this.options.opportunityView == "1"){
+						if(opportunity_records.length){
+							resourceTemplate += _this.getOpportunitiesTemplate(opportunity_records,eval_params);
+						}
+						else{
+							resourceTemplate += _this.getEmptyOpportunitiesTemplate(eval_params);
+						}
+					}
+					if(contract_records && _this.options.contractView == "1"){
+						if(contract_records.length){
+							resourceTemplate += _this.getContractsTemplate(contract_records,eval_params);
+						}
+						else{
+							resourceTemplate += _this.getEmptyContractsTemplate(eval_params);
+						}
+					}
+					if(order_records && _this.options.orderView == "1"){
+						if(order_records.length){
+							resourceTemplate += _this.getOrdersTemplate(order_records,eval_params);
+						}
+						else{
+							resourceTemplate += _this.getEmptyOrdersTemplate(eval_params);
+						}
+					}
+				break;
+				case "Contact":
+					labels = _this.options.integratable_impl.contactInfo;
+					fields = _this.options.contactFields.split(",");
+					resourceTemplate = _this.resourceSectionTemplate(fields,labels,eval_params);
+				break;
+				default:
+			}
+			return resourceTemplate;
+		},
+		resourceSectionTemplate:function(fields,labels,eval_params){
+			var _this = this;
+			var contactTemplate ="";
+			var keyEntities = ["Account", "Contact", "Lead"];
+			var accountEntities = ["Opportunity", "Order", "Contract"];
+			for(var i=0;i<fields.length;i++){
+				var value = eval_params[fields[i]];
+				//Contact, Account, Lead Headers should be continue;
+				if(this.options.headerFields.indexOf(fields[i]) !== -1 && keyEntities.indexOf(eval_params.type) !== -1 ){ 
+					/* Salesforce_v2
+						Name field of Contact, Account and Leads for Salesforce will be the headers.
+						Name field of Opportunity will also be the header. But we will be appending the link with the Name field in the body section.
+						For Contract and Order ContractNumber and OrderNumber will be the headers. So, it will be added to the body.
+					*/
+					/*  Dynamics_v2
+						fullname and name should be continued. name should not be continued for Order and Opportunity. 
+					*/
+					continue;
+				}
+				// Placing external link in the header field of opportunity, contract and orders
+				if(this.options.headerFields.indexOf(fields[i]) !== -1 && accountEntities.indexOf(eval_params.type) !== -1){
+					var external_link = _this.getCRMLink(eval_params.Id, eval_params.type)
+					contactTemplate += _.template(this.ACCOUNT_ENTITY_TEMPLATE, {external_link: external_link, value: value, label: labels[fields[i]], field: fields[i]});
+					continue;
+				}
+				value = (typeof value === "boolean")? (value) : (value|| "N/A");
+				contactTemplate += _.template(this.COMMON_CONTACT_TEMPLATE, {value: value, label: labels[fields[i]], field: fields[i]});
+			}
+			if(eval_params.type == "Opportunity" ||eval_params.type == "Contract" || eval_params.type == "Order"){ // list of user selected fields, hidden at first
+				contactTemplate = _.template('<div class="opportunity_details mt5 ml12 hide"><%=contactTemplate%></div>',{contactTemplate:contactTemplate});
+			}
+			return contactTemplate;
+		},
+		getOpportunitiesTemplate:function(opportunity_records,eval_params){
+			var opportunities_template = "";
+			for(var i=0;i<opportunity_records.length;i++){
+				opportunities_template += this.getOpportunityDetailsTemplate(opportunity_records[i]);
+			}
+			var opportunity = this.getOpportunityCreateTemplate(eval_params);
+			opportunities_template = _.template(this.OPPORTUNITY_SEARCH_RESULTS,{resultsData:opportunities_template,opportunityCreateLink:opportunity.create_template,opportunityForm:opportunity.form_template});
+			return opportunities_template;
+		},
+		getOpportunityDetailsTemplate:function(opportunity_record){
+			// for each opp record
+			var opportunity_template = "";
+			var opportunity_list_item = "";
+			// To link a opportunity with a ticket not needed for contracts and orders
+			var opportunity_link_template = "<span class='hide opportunity_link pull-right'><a href='#' class='#{opportunity_status}' id='#{opportunity_id}'>#{opportunity_status}</a></span>";
+			var link_status = (opportunity_record["link_status"] == undefined) ? "" : opportunity_record["link_status"];
+			var unlink_status = (opportunity_record["unlink_status"] == undefined) ? "" : opportunity_record["unlink_status"];
+			opportunity_link_template = (this.options.agentSettings == "1") ? opportunity_link_template : "";
+			if(link_status && unlink_status){
+				// Deleted flag will be shown for linked deleted opportunities
+				//Will be different for dynamics
+				//In dynamics Deleted opportunity will be returned a 500 code so we have to handle it seperately.
+				if(opportunity_record["IsDeleted"]){ 
+					opportunity_link_template += "<div class='opp-flag pull-right'>Deleted</div>";
+				}
+				else{
+					opportunity_link_template += "<div class='opp-flag pull-right'>Linked</div>";
+				}
+				opportunity_list_item += opportunity_link_template.interpolate({opportunity_id:opportunity_record.Id,opportunity_status:"Unlink"});
+			}
+			else if(link_status === false){
+				opportunity_list_item += opportunity_link_template.interpolate({opportunity_id:opportunity_record.Id,opportunity_status:"Link"});
+			}
+			opportunity_record["type"] = opportunity_record.type || "Opportunity";
+			var header = this.options.nameKeyFields[opportunity_record.type];
+			var name = opportunity_record[header];
+			opportunity_template += '<li><a class="multiple-opportunities salesforce-opportunity-tooltip" title="'+opportunity_record.Name+'" href="#">'+ name +'</a>'+opportunity_list_item+'</li>';
+			opportunity_template += this.resourceSectionTemplate(crm_bundle.opportunityFields.split(","), this.options.integratable_impl.opportunityInfo, opportunity_record);
+			return opportunity_template;
+		},
+		getOpportunityCreateTemplate:function(eval_params){
+			var opportunity_create_template = "";
+			var opportunity_form = "";
+			var result = undefined;
+			var _this = this;
+			if(!this.options.remote_integratable_id && this.options.ticket_id){
+				if(this.options.agentSettings == "1"){
+					opportunity_create_template += '<div class="opportunity_create pull-right"><span class="contact-search-result-type"><a id="create_new_opp_' + this.options.app_name +'" href="#" rel="freshdialog" data-target="#create_sf_opportunity_'+ this.options.app_name +'_'+eval_params.Id+'" data-title="Create Opportunity" data-width="500" data-keyboard="false" data-template-footer="">Create New</a></span></div>';
+					var stage_options = this.options.opportunity_stage;
+					var stage_dropdown_options = "";
+					for(i=0;i<stage_options.length;i++){
+						stage_dropdown_options += '<option id="'+i+'" value="'+stage_options[i][1]+'">'+stage_options[i][0]+'</option>';
+					}
+					opportunity_form += JST["app/integrations/salesforce_v2/opportunity_create_form"]({
+						stage_options:stage_dropdown_options,
+						account_id:eval_params.Id,
+						app_name:_this.options.app_name
+					});
+				}
+			}
+			result = {create_template:opportunity_create_template,form_template:opportunity_form};
+			return result;
+		},
+		getEmptyOpportunitiesTemplate:function(eval_params){
+			var opportunity = this.getOpportunityCreateTemplate(eval_params);
+			var opportunities_template = _.template(this.OPPORTUNITY_SEARCH_RESULTS_NA,{opportunityCreateLink:opportunity.create_template,opportunityForm:opportunity.form_template});
+			return opportunities_template;
+		},
+		getContractsTemplate:function(contract_records,eval_params){
+			var contracts_template = "";
+			for(var i=0;i<contract_records.length;i++){
+				contracts_template += this.getContractDetailsTemplate(contract_records[i]);
+			}
+			contracts_template = JST["app/integrations/salesforce_v2/object_search_results"]({resultsData:contracts_template, object_name: "Contracts", object_field: "contracts"});
+			return contracts_template;
+		},
+		getContractDetailsTemplate:function(contract_record){
+			var contract_template = "";
+			var contract_list_item = "";
+			contract_record["type"] = contract_record.type || "Contract";
+			var header = this.options.nameKeyFields[contract_record.type];
+			var name = contract_record[header];
+			contract_template += '<li><a class="multiple-contracts salesforce-opportunity-tooltip" title="'+ name +'" href="#">'+ name +'</a>'+contract_list_item+'</li>';
+			contract_template += this.resourceSectionTemplate(this.options.contractFields.split(","),this.options.integratable_impl.contractInfo,contract_record);
+			return contract_template;
+		},
+		getOrdersTemplate:function(order_records,eval_params){
+			var orders_template = "";
+			for(var i=0;i<order_records.length;i++){
+				orders_template += this.getOrderDetailsTemplate(order_records[i]);
+			}
+			orders_template = JST["app/integrations/salesforce_v2/object_search_results"]({resultsData:orders_template, object_name: "Orders", object_field: "orders"});
+			return orders_template;
+		},
+		getOrderDetailsTemplate:function(order_record){
+			var order_template = "";
+			var order_list_item = "";
+			order_record["type"] = order_record.type || "Order";
+			var header = this.options.nameKeyFields[order_record.type];
+			var name = order_record[header];
+			order_template += '<li><a class="multiple-orders salesforce-opportunity-tooltip" title="'+ name +'" href="#">'+ name +'</a>'+order_list_item+'</li>';
+			order_template += this.resourceSectionTemplate(this.options.orderFields.split(","),this.options.integratable_impl.orderInfo,order_record);
+			return order_template;
+		},
+		getEmptyOrdersTemplate:function(eval_params){
+			var orders_template = JST["app/integrations/salesforce_v2/object_search_results_na"]({object_name: "Orders", object_field: "orders"});
+			return orders_template;
+		},
+		getEmptyContractsTemplate:function(eval_params){
+			var contracts_template = JST["app/integrations/salesforce_v2/object_search_results_na"]({object_name: "Contracts", object_field: "contracts"});
+			return contracts_template;
+		},
+		//======================================== ALL HELPERS ========================================================================
+		getCRMLink:function(Id, type){
+			var link;
+			switch(this.options.app_name){
+				case "salesforce_v2":
+					link = this.options.domain+"/"+Id;
+					break;
+				case "dynamics_v2":
+					link = this.options.domain + "/main.aspx?etn=" + this.options.objects[type] + "&pagetype=entityrecord&id=%7B" + Id + "%7D"
+					break;
+			}
+			return link;
+		},
+		convertDate: function(date){
+			if(!isNaN(date)){
+				date = parseInt(date);
+			}
+			var newDate = new Date(date);
+			return newDate.toString("dd MMM, yyyy");
+			// return (("0" + newDate.getDate()).slice(-2) + " " +("0" + newDate.getMonth()).slice(-2) + ", " + newDate.getFullYear());
+		},
+		VIEW_CONTACT:
 		'<div class="title salesforce_v2_contacts_widget_bg">' +
 			'<div class="row-fluid">' +
 				'<div id="contact-name" class="span8">'+
@@ -1393,9 +2155,9 @@ Freshdesk.CRMWidget = Class.create(Freshdesk.Widget, {
 				'<div class="span4 pt3"><span class="contact-search-result-type pull-right"><%=(type || "")%></span></div>'+
 			'</div>' + 
 		'</div>',
-    VIEW_CONTACT_MULTIPLE_EMAILS:
+		VIEW_CONTACT_MULTIPLE_EMAILS:
 		'<div class="title salesforce_v2_contacts_widget_bg">' +
-			'<div id="email-dropdown-div-v2" class="view_filters mb10 hide"><div class="link_item"><a href class="drop-right nav-trigger" id="active_filter" menuid="#leftViewMenuV2"><%=current_email%></a></div><div class="fd-menu" id="leftViewMenuV2" style="display: none; visibility: visible;"></div></div>'+
+			'<div id="email-dropdown-div-<%=app_name%>" class="view_filters mb10 hide"><div class="link_item"><a href class="drop-right nav-trigger" id="active_filter" menuid="#leftViewMenu<%=app_name%>"><%=current_email%></a></div><div class="fd-menu" id="leftViewMenu<%=app_name%>" style="display: none; visibility: visible;"></div></div>'+
 			'<div class="single-result row-fluid">' +
 				'<div id="contact-name" class="span8">'+
 				'<a id="search-back" href="#"><div class="search-back <%=(count>1 ? "": "hide")%>"> <i class="arrow-left"></i> </div></a>'+
@@ -1403,36 +2165,67 @@ Freshdesk.CRMWidget = Class.create(Freshdesk.Widget, {
 				'<div class="span4 pt3"><span class="contact-search-result-type pull-right"><%=(type || "")%></span></div>'+
 			'</div>' + 
 		'</div>',
-    EMAIL_SEARCH_RESULTS_NA:
+		EMAIL_SEARCH_RESULTS_NA:
 		'<div class="title salesforce_v2_contacts_widget_bg">' +
-			'<div id="email-dropdown-div-v2" class="view_filters hide"><div class="link_item"><a href class="drop-right nav-trigger" id="active_filter" menuid="#leftViewMenuV2"><%=current_email%></a></div><div class="fd-menu" id="leftViewMenuV2" style="display: none; visibility: visible;"></div></div>'+
+			'<div id="email-dropdown-div-<%=app_name%>" class="view_filters hide"><div class="link_item"><a href class="drop-right nav-trigger" id="active_filter" menuid="#leftViewMenu<%=app_name%>"><%=current_email%></a></div><div class="fd-menu" id="leftViewMenu<%=app_name%>" style="display: none; visibility: visible;"></div></div>'+
 			'<div id="search-results" class="mt20">'+
 			'<span id="contact-na">No results found for <%=current_email%></span>'+
 			'</div>'+
 		'</div>',
-    CONTACT_SEARCH_RESULTS_MULTIPLE_EMAILS:
+		CONTACT_SEARCH_RESULTS_MULTIPLE_EMAILS:
 		'<div class="title salesforce_v2_contacts_widget_bg">' +
-			'<div id="email-dropdown-div-v2" class="view_filters hide"><div class="link_item"><span class="pull-right"><%=resLength%> Results</span><a href class="drop-right nav-trigger" id="active_filter" menuid="#leftViewMenuV2"><%=current_email%></a></div><div class="fd-menu" id="leftViewMenuV2" style="display: none; visibility: visible;"></div></div>'+
+			'<div id="email-dropdown-div-<%=app_name%>" class="view_filters hide"><div class="link_item"><span class="pull-right"><%=resLength%> Results</span><a href class="drop-right nav-trigger" id="active_filter" menuid="#leftViewMenu<%=app_name%>"><%=current_email%></a></div><div class="fd-menu" id="leftViewMenu<%=app_name%>" style="display: none; visibility: visible;"></div></div>'+
 			'<div id="search-results"><ul id="contacts-search-results"><%=resultsData%></ul></div>'+
 		'</div>',
-    CONTACT_SEARCH_RESULTS:
+		CONTACT_SEARCH_RESULTS:
 		'<div class="title salesforce_v2_contacts_widget_bg">' +
 			'<div id="number-returned"><b> <%=resLength%> results for <%=requester%> </b></div>'+
 			'<div id="search-results"><ul id="contacts-search-results"><%=resultsData%></ul></div>'+
 		'</div>',
-    CONTACT_NA:
+		CONTACT_NA:
 		'<div class="title contact-na <%=widget_name%>_bg">' +
 			'<div class="name"  id="contact-na">Cannot find <%=reqName%> in <%=app_name%></div>'+
 		'</div>',
-    CONTACT_TEMPLATE: 
+		CONTACT_TEMPLATE: 
 		'<div class="salesforce-widget">' +
 			'<div class="clearfix">' +
 				'<span class="ellipsis"><span class="tooltip" title="<%=label%>"><%=label%>:</span></span>' +
 				'<label class="para-less" id="contact-<%=field%>"><%=value%></label>' +
 				'<span class="toggle-para q-para-span hide"><p class="q-marker-more"></p></span>'+
 			'</div>' +
-		'</div>'
-  });
+		'</div>',
+		OPPORTUNITY_SEARCH_RESULTS:
+			'<div class="bottom_div mt10 mb10"></div>'+
+			'<div class="title salesforce_v2_contacts_widget_bg">' +
+				'<div id="opportunities"><b>Opportunities</b></div>'+
+				'<%=opportunityCreateLink%>'+
+				'<div id="search-results"><ul id="contacts-search-results"><%=resultsData%></ul></div>'+
+				'<%=opportunityForm%>'+
+			'</div>',
+		OPPORTUNITY_SEARCH_RESULTS_NA:
+			'<div class="bottom_div mt10 mb10"></div>'+
+			'<div class="title contact-na salesforce_v2_contacts_widget_bg">' +
+				'<div id="opportunities"><b>Opportunities</b></div>'+
+				'<%=opportunityCreateLink%>'+
+				'<div class="name"  id="contact-na">No opportunities found for this account</div>'+
+				'<%=opportunityForm%>'+
+			'</div>',
+		ACCOUNT_ENTITY_TEMPLATE: 
+				'<div class="salesforce-widget">' +
+					'<div class="clearfix">' +
+						'<span class="ellipsis"><span class="tooltip" title="<%=label%>"><%=label%>:</span></span>' +
+						'<label id="contact-<%=field%>"><a target="_blank" href="<%=external_link%>"><%=value%></a></label>' +
+					'</div>' +
+				'</div>',
+		COMMON_CONTACT_TEMPLATE:
+			'<div class="salesforce-widget">' +
+						'<div class="clearfix">' +
+							'<span class="ellipsis"><span class="tooltip" title="<%=label%>"><%=label%>:</span></span>' +
+							'<label class="para-less" id="contact-<%=field%>"><%=value%></label>' +
+							'<span class="toggle-para q-para-span hide"><p class="q-marker-more"></p></span>'+
+						'</div>'+
+			'</div>'
+	});
 }(window.jQuery));
 
 var UIUtil = {
