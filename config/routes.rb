@@ -576,6 +576,7 @@ Helpkit::Application.routes.draw do
       collection do
         post :quit_voicemail
         post :initiate
+        post :transcribe
       end
     end
 

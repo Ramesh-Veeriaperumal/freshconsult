@@ -6,5 +6,5 @@ class CustomSurvey::SurveyResultData < ActiveRecord::Base
   attr_protected :account_id, :survey_id, :survey_result_id
   stores_custom_field_data  :parent_id => :survey_result_id, :parent_class => 'CustomSurvey::SurveyResult', 
                             :form_id => :survey_id, :form_class => 'CustomSurvey::Survey', 
-                            :custom_form_cache_method => :custom_form
+                            :custom_form_cache_method => :custom_form, :touch_parent_on_update => false
 end

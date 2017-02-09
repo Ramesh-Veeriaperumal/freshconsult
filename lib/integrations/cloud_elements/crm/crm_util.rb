@@ -3,6 +3,24 @@ module Integrations::CloudElements::Crm::CrmUtil
   include Integrations::CloudElements::Constant
 
   def salesforce_v2_metadata_fields
+    config_hash = set_config_hash
+    config_hash['ticket_sync_option'] = params["ticket_sync_option"]["value"]
+    handle_salesforce_ticket_sync if ticket_sync_option? || @installed_app.configs_ticket_sync_option
+    config_hash
+  rescue => e
+    Rails.logger.debug "Problem in salesforce_v2_metadata_fields Error - #{e.message}"
+    NewRelic::Agent.notice_error(e,{:custom_params => {:description => "Problem in salesforce_v2_metadata_fields: #{e.message}", :account_id => current_account.id}})
+    config_hash
+  end
+
+  def dynamics_v2_metadata_fields
+    config_hash = set_config_hash
+  rescue => e
+    Rails.logger.debug "Problem in Dynamics_v2_metadata_fields Error - #{e.message}"
+    NewRelic::Agent.notice_error(e,{:custom_params => {:description => "Problem in dynamics_v2_metadata_fields: #{e.message}", :account_id => current_account.id}})
+  end
+
+  def set_config_hash
     config_hash = Hash.new
     config_hash['lead_fields'] = params[:leads].join(",")
     config_hash['lead_labels'] = params['lead_labels']
@@ -23,18 +41,21 @@ module Integrations::CloudElements::Crm::CrmUtil
       @installed_app.configs[:inputs] = @installed_app.configs[:inputs].except(*order_configs)
     end
     config_hash = get_opportunity_params config_hash
-    config_hash['ticket_sync_option'] = params["ticket_sync_option"]["value"]
-    handle_salesforce_ticket_sync if ticket_sync_option? || @installed_app.configs_ticket_sync_option
-    config_hash
-  rescue => e
-    Rails.logger.debug "Problem in salesforce_v2_metadata_fields Error - #{e.message}"
-    NewRelic::Agent.notice_error(e,{:custom_params => {:description => "Problem in salesforce_v2_metadata_fields: #{e.message}", :account_id => current_account.id}})
-    config_hash
   end
 
   def handle_salesforce_ticket_sync
     va_rules = @installed_app.va_rules
     if ticket_sync_option? && va_rules.blank?
+      #disable the salesforce v1 va_rules if they are installing salesforce v2. If old installed app is present and va_rules is also present
+      old_app_id = Integrations::Application.find_by_name("salesforce")
+      old_installed_app = Integrations::InstalledApplication.find_by_application_id(old_app_id)
+      if old_installed_app.present? && old_installed_app.va_rules.present?
+        old_installed_app.va_rules.each do |v_r|
+          v_r.update_attribute(:active,false) 
+        end
+        old_installed_app.configs_salesforce_sync_option = "0"
+        old_installed_app.save!
+      end
       ticket_obj = IntegrationServices::Services::SalesforceV2Service.new @installed_app, {}, @metadata
       ticket_obj.receive(:ticket_sync_install)
     elsif va_rules.present?
@@ -80,13 +101,29 @@ module Integrations::CloudElements::Crm::CrmUtil
     constant_file['objects'].each do |key, obj|
       metadata = @metadata.merge({ :element_token => element_token, :object => obj})
       element_metadata = service_obj({:object => key}, metadata).receive(:object_metadata)
-      hash = map_fields( element_metadata )
+      hash = (key != "opportunity") ? map_fields(element_metadata) : map_opportunity_fields(element_metadata, constant_file['opportunity_keys'])
       @element_config["#{key}_fields"] = hash['fields_hash']
       @element_config["#{key}_fields_types"] = hash['data_type_hash']
     end
     @element_config['additional_fields'] = constant_file['additional_fields']
     @element_config['element_name'] = constant_file['element_name']
     delete_crm_custom_fields
+  end
+
+  def map_opportunity_fields metadata, opportunity_keys
+    fields_hash = {}
+    data_type_hash = {}
+    metadata['fields'].each do |field|
+      label = field['vendorDisplayName'] || field['vendorPath']
+      fields_hash[field['vendorPath']] = label
+      data_type_hash[label] = field['vendorNativeType']
+      if(field['vendorPath'] == opportunity_keys['stage'])
+        choices = field[opportunity_keys['choices']]
+        @element_config["opportunity_stage_choices"] = choices.collect{|choice| choice[opportunity_keys["value"]]} # for dynamics this should be Names and
+        @element_config["opportunity_stage_choices_ids"] = choices.collect{|choice| choice[opportunity_keys["id"]]} # This should be the code.
+      end
+    end
+    {'fields_hash' => fields_hash, 'data_type_hash' => data_type_hash }
   end
 
   def fd_metadata_fields
@@ -103,7 +140,7 @@ module Integrations::CloudElements::Crm::CrmUtil
 
   def render_settings
     # template = ( MAPPING_ELEMENTS.include? element.to_sym) ? "integrations/applications/crm_sync" : "integrations/applications/crm_fields"
-    template = false ? "integrations/applications/crm_sync" : "integrations/applications/crm_fields"
+    template = "integrations/applications/crm_fields"
     render :template => template
   end
 
@@ -121,12 +158,9 @@ module Integrations::CloudElements::Crm::CrmUtil
     config_hash['crm_sync_type'] = "FD_AND_CRM"
     config_hash['companies'] = get_selected_field_arrays(element_config['existing_companies'])
     config_hash['contacts'] = get_selected_field_arrays(element_config['existing_contacts'])
-    configs_inputs = @installed_app.configs[:inputs]
-    if configs_inputs.blank?
-      element_config['objects'].each do |object|
-        config_hash["#{object}_fields"] = element_config['default_fields'][object].join(",")
-        config_hash["#{object}_labels"] = element_config['default_labels'][object].join(",")
-      end
+    element_config['objects'].each do |object|
+      config_hash["#{object}_fields"] = element_config['default_fields'][object].join(",")
+      config_hash["#{object}_labels"] = element_config['default_labels'][object].join(",")
     end
     config_hash
   end
@@ -162,7 +196,7 @@ module Integrations::CloudElements::Crm::CrmUtil
       instance_transformation( fd_trans_payload(sync_hash["contact_synced"],'','contacts', sync_hash["contact_fields"] ), contact_metadata )
       instance_transformation( fd_trans_payload(sync_hash["account_synced"],'customer','accounts', sync_hash["account_fields"]), account_metadata )
     end
-    sync_type_changed, element_active = sync_type_changed? type #inside util
+    sync_type_changed, element_active = sync_type_changed? type
     if sync_frequency_change || sync_type_changed 
       element_configs = get_element_configs(instance_id)
       if sync_frequency_change && element_configs.present?
@@ -253,6 +287,8 @@ module Integrations::CloudElements::Crm::CrmUtil
     case element
     when "salesforce_v2"
       Hash[account_response.collect{|account| [account["Id"], account["Name"]]}]
+    when "dynamics_v2"
+      Hash[account_response.collect{|account| [account["attributes"]["accountid"], account["attributes"]["name"]]}]
     end
   end
 
@@ -260,7 +296,7 @@ module Integrations::CloudElements::Crm::CrmUtil
     file = get_crm_constants
     file['delete_fields'].each do |key,value|
       #read an array and delete all the keys that matches the array.
-      value.each{|v| @element_config[key].delete(v)}
+      value.each{|v| @element_config[key].delete(v) if @element_config[key][v].present?} 
     end
   end
 
@@ -268,6 +304,7 @@ module Integrations::CloudElements::Crm::CrmUtil
     fields_hash = {}
     data_type_hash = {}
     metadata['fields'].each do |field|
+      #logic specific for dynamics opportunities
       label = field['vendorDisplayName'] || field['vendorPath']
       fields_hash[field['vendorPath']] = label
       data_type_hash[label] = field['vendorNativeType']
@@ -416,18 +453,11 @@ module Integrations::CloudElements::Crm::CrmUtil
     "Integrations::CloudElements::Crm::Constant::#{element.upcase}".constantize
   end
 
-  def build_setting_configs method
+  def build_setting_configs
     constant_file = get_crm_constants
     @settings = Hash.new
     @settings["keys"] = constant_file["keys"]
     @settings["app_name"] = element
-    if method.eql? "create"
-      hash = {}
-      constant_file["keys"].each do |field|
-        hash[field] = params["#{field}_label"]
-      end
-      hash
-    end
   end
 
   def get_opportunity_params(config_hash)
@@ -436,21 +466,14 @@ module Integrations::CloudElements::Crm::CrmUtil
       config_hash['opportunity_fields'] = params[:opportunities].join(",") unless params[:opportunities].nil?
       config_hash['opportunity_labels'] = params[:opportunity_labels]
       config_hash['agent_settings'] = params[:agent_settings][:value]
-      if config_hash['agent_settings'].to_bool
-        metadata = @metadata.merge({ :object => 'Opportunity', :field => 'StageName', :element_token => @installed_app.configs[:inputs]['element_token'] })
-        resp = service_obj({}, metadata).receive(:opportunity_field_properties)['pickListValues']
-        stage_name_picklist_values = []
-        resp.each do |value|
-          stage_name_picklist_values.push([value, value])
-        end
-        config_hash["opportunity_stage_choices"] = stage_name_picklist_values
-      else
-        @installed_app.configs[:inputs].delete("opportunity_stage_choices")
-      end
+      config_hash["opportunity_stage_choices"] = params[:opportunity_stage_choices_ids].split(",").zip(params[:opportunity_stage_choices].split(","))
     else
       opportunity_configs = [ "opportunity_fields", "opportunity_labels", "agent_settings", "opportunity_stage_choices" ]
       @installed_app.configs[:inputs] = @installed_app.configs[:inputs].except(*opportunity_configs)
     end
+    config_hash
+  rescue => e
+    NewRelic.Agent.notice_error(e,{:custom_params => {:description => "Problem in Fetching the opportunity params: #{e.message}", :account_id => current_account.id}})
     config_hash
   end
 
