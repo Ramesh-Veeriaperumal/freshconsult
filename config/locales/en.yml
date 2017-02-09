@@ -7262,7 +7262,7 @@ en:
     no_payment_info: We do not have your payment details on file. Please update them to proceed further. <br>
     update_payment_info: Update payment info
     payment_trial_info: This is a paid app with a %{trial_period} day trial period. Once the trial period is over, you will be charged %{price} / %{addon_type} / month. Press Ok to install the app. <br>  %{payment_ok_btn}
-    payment_ok: You will be charged %{price} / %{addon_type} / month for this app as per your billing plan. Press Ok to install the app. <br>  %{payment_ok_btn}
+    payment_ok: You will be charged %{price} / %{addon_type} / month for this app. This will add up to <b>%{estimate}</b> for your plan period. Press Ok to install the app. <br>  %{payment_ok_btn}
     agent: agent
     account: account
     delete_action:

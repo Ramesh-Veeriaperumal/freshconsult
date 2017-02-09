@@ -8,6 +8,7 @@ module Marketplace::Constants
   DEVELOPED_BY_FRESHDESK = 'freshdesk'
   EXTENSION_SORT_TYPES = ['latest','popular']
   ADDON_ID_PREFIX = 'marketplaceapp_'
+  ACCOUNT_ADDON_APP_UNITS = 1
   
   EXTENSION_TYPES = [ 
     [:plug,               1],    

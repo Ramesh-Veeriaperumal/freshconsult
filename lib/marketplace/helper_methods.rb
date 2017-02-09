@@ -50,11 +50,20 @@ module Marketplace::HelperMethods
    per_agent_plan? ? t('marketplace.agent') : t('marketplace.account')
   end
 
+  def app_units_count
+    if per_agent_plan?
+      return Account.current.subscription.new_sprout? ? 
+             Account.current.full_time_agents.count : Account.current.subscription.agent_limit
+    else
+      return Marketplace::Constants::ACCOUNT_ADDON_APP_UNITS
+    end
+  end
+
   def account_params
     {
       :product =>  Marketplace::Constants::PRODUCT_NAME,
       :currency_code => Account.current.currency_name,
-      :agent_count => per_agent_plan? ? Account.current.subscription.agent_limit : 1,
+      :agent_count => app_units_count,
       :renewal_period => Account.current.subscription.renewal_period
     }
   end
