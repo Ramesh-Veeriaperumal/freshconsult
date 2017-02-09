@@ -2187,7 +2187,7 @@ Helpkit::Application.routes.draw do
     end
 
     match 'commons/group_agents/(:id)'    => "commons#group_agents"
-    match 'commons/user_companies'        => "commons#user_companies"
+    match 'commons/user_companies'        => "commons#user_companies", via: :post
     match "commons/fetch_company_by_name" => "commons#fetch_company_by_name"
     match 'commons/status_groups'         => "commons#status_groups"
 
@@ -2638,7 +2638,7 @@ Helpkit::Application.routes.draw do
 
     resources :tickets do
       collection do
-        get :check_email
+        post :check_email
         get :configure_export
         get :filter
         post :export_csv

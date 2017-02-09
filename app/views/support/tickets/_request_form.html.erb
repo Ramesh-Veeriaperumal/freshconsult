@@ -177,7 +177,11 @@
     jQuery("#helpdesk_ticket_email").focusout(function(){
       var ticket_email = jQuery("#helpdesk_ticket_email").val();
       if(<%= current_user.present? && current_user.contractor? %>){
-        jQuery.ajax({ url: "<%= helpdesk_commons_user_companies_path %>?email="+ticket_email,
+        jQuery.ajax({ 
+          type: 'POST',
+          data: {email : ticket_email}, 
+          datatype: 'json',
+          url: "<%= helpdesk_commons_user_companies_path %>",
           success: function(data){
             if(data != false){
               jQuery('#helpdesk_ticket_company_id').empty();
