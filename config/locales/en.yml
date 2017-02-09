@@ -9724,6 +9724,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       ticket_desc_with_out_name: "Conversation with %{customer_number} (%{location}) and <b>%{agent}</b> (%{agent_number})<br/ >"
       voicemail_ticket_desc_with_out_name: "Voicemail from  %{customer_number}  (%{location}) to %{freshfone_number}"
       voicemail_ticket_desc_with_name: "Voicemail from with <b>%{customer_name}</b> (%{customer_number}, %{location}) to %{freshfone_number}"
+      transcribed_note_desc: "<b>Transcribed Voicemail Text for the above Call from %{customer_name}</b><br/><br/>"
       agent_detail: "and <b>%{agent}</b> (%{agent_number})<br/ >"
       dial_a_number_with_name: "Conversation with <b>%{customer_name}</b> (%{customer_number}, %{location}) . Call connected from IVR Direct dial"
       dial_a_number_with_out_name: "Conversation with %{customer_number} (%{location}). Call connected from IVR to number: %{direct_dial_number}"
