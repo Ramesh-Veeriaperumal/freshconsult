@@ -97,7 +97,6 @@ module ActionMailerCallbacks
       else
         Rails.logger.debug "Sending email via sendgrid"
         mail.header['X-SMTPAPI'] = get_unique_args(from_email, account_id, ticket_id, note_id, mail_type, category_id)
-        byebug
       end
     end   
         
