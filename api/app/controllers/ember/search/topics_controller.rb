@@ -9,7 +9,7 @@ module Ember
 
         if params[:context] == 'spotlight'
           @search_context = :agent_spotlight_topic
-          @search_sort = params[:search_sort] if params[:category_id].present?
+          @search_sort = params[:search_sort] if params[:search_sort].present?
         elsif params[:context] == 'merge'
           @search_context = :merge_topic_search
           @search_sort    = 'created_at'

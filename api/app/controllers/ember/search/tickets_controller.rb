@@ -1,5 +1,3 @@
-# Have to handle archived tickets too
-
 module Ember
   module Search
     class TicketsController < SpotlightController
@@ -9,7 +7,12 @@ module Ember
         @recent_tracker = params[:context] == 'recent_tracker'
 
         if params[:context] == 'spotlight'
-          @search_context = :agent_spotlight_ticket
+          if filter_params?
+            @filter_params = params[:filter_params]
+            @search_context = :filteredTicketSearch
+          else
+            @search_context = :agent_spotlight_ticket
+          end
           @klasses = ['Helpdesk::Ticket', 'Helpdesk::ArchiveTicket']
         elsif (params[:context] == 'merge' || @tracker) && params[:field]
           @search_field = params[:field]
@@ -59,6 +62,11 @@ module Ember
               ] #=> will be consumed for recent trackers only
             end
 
+            if filter_params?
+              transformed_values = ::Search::KeywordSearch::Transform.new(@filter_params).transform
+              es_params.merge!(transformed_values)
+            end
+
             if current_user.restricted?
               es_params[:restricted_responder_id] = current_user.id.to_i
               es_params[:restricted_group_id] = current_user.agent_groups.map(&:group_id) if current_user.group_ticket_permission
@@ -72,6 +80,10 @@ module Ember
             es_params[:size]  = @size
             es_params[:from]  = @offset
           end
+        end
+
+        def filter_params?
+          params[:filter_params].present?
         end
     end
   end
