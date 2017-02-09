@@ -253,7 +253,7 @@ class Billing::Subscription < Billing::ChargebeeWrapper
           marketplace_addon_ids.each do |addon_id|
             ext = extension_details(mkp_extension_id(addon_id)).body
             marketplace_addons << { :id => addon_id,
-            :quantity => mkp_app_units_count(ext["addon"]["addon_type"], subscription)
+            :quantity => mkp_app_units_count(ext["addon"]["addon_type"], subscription) }
           end
         end
       rescue
