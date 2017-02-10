@@ -474,6 +474,7 @@ Helpkit.TimesheetUtil = {
 
         jQuery(document).on("presetRangesSelected", function(event,data) {
             Helpkit.presetRangesSelected = data.status;
+            Helpkit.presetRangesPeriod = data.period;
             is_preset_selected = data.status;
         });
 
