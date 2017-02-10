@@ -17,6 +17,8 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/twitter_handles", only: [:index, :check_following]
     resource :"ember/installed_application"
     resource :"ember/integrated_resource"
+    resource :"ember/integrated_user"
+
   end
 
   reply_ticket do
