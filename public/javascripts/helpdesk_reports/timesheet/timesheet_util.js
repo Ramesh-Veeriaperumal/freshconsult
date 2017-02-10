@@ -156,8 +156,7 @@ Helpkit.TimesheetUtil = {
                 hash.label = label;
                 locals.query_hash.push(hash);
                 //local_hash is filters stored in localStorage for populating on load.
-                var local_hash = _this.getLocalHash(condition, container, operator, value,searchData);
-                //local_hash.label = label;
+                var local_hash = _this.getLocalHash(condition, container, operator, value,searchData,label);
                 if(!jQuery.isEmptyObject(local_hash)){
                    locals.local_hash.push(local_hash);
                 }
@@ -331,7 +330,7 @@ Helpkit.TimesheetUtil = {
             };
         return config;
     },
-    getLocalHash: function (condition, container, operator, value,searchData) {
+    getLocalHash: function (condition, container, operator, value,searchData,label) {
         var locals =  Helpkit.locals;
         var hash = {};
         if (container === 'nested_field' && locals.custom_field_hash.hasOwnProperty(condition)) {
@@ -353,7 +352,8 @@ Helpkit.TimesheetUtil = {
             hash = {
                 condition: condition,
                 operator: operator,
-                value: value.toString()
+                value: value.toString(),
+                label : label
             };
         }
 

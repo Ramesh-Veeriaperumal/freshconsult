@@ -109,7 +109,7 @@ module Reports::TimesheetReport
   end
 
   def scoper(start_date,end_date)
-    scope = Account.current.time_sheets.for_companies(@customer_id).by_agent(@user_id).by_group(@group_id).created_at_inside(start_date,end_date).hour_billable(@billable).for_products(@products_id)
+    scope = Account.current.time_sheets.for_companies(@customer_id).by_agent(nullify(@user_id)).by_group(nullify(@group_id)).created_at_inside(start_date,end_date).hour_billable(@billable).for_products(nullify(@products_id))
     # Joining with schema_less_tickets only when requested for 'group by product'
     scope = scope.joins('INNER JOIN helpdesk_schema_less_tickets on  helpdesk_schema_less_tickets.ticket_id = helpdesk_time_sheets.workable_id and helpdesk_schema_less_tickets.account_id = helpdesk_time_sheets.account_id  ') if group_by_caluse == :product_name && @products_id.blank?
 
@@ -261,7 +261,7 @@ module Reports::TimesheetReport
   #************************** Archive methods start here *****************************#
 
   def archive_scoper(start_date,end_date)
-    Account.current.archive_time_sheets.archive_for_companies(@customer_id).by_agent(@user_id).archive_by_group(@group_id).created_at_inside(start_date,end_date).hour_billable(@billable).archive_for_products(@products_id)
+    Account.current.archive_time_sheets.archive_for_companies(@customer_id).by_agent(nullify(user_id)).archive_by_group(nullify(@group_id)).created_at_inside(start_date,end_date).hour_billable(@billable).archive_for_products(nullify(@products_id))
   end
 
   def archive_filter_with_groupby(start_date,end_date)
@@ -279,7 +279,7 @@ module Reports::TimesheetReport
 
   def archive_select_conditions
     conditions = {}
-    conditions[:ticket_type] = @ticket_type unless @ticket_type.empty?
+    conditions[:ticket_type] = nullify(@ticket_type) unless @ticket_type.empty?
     conditions[:priority] = @priority unless @priority.empty?
     conditions[:status] = @status unless @status.empty?
     conditions[:source] = @source unless @source.empty?
@@ -418,7 +418,7 @@ module Reports::TimesheetReport
 
   def select_conditions
     conditions = {}
-    conditions[:ticket_type] = @ticket_type unless @ticket_type.empty?
+    conditions[:ticket_type] = nullify(@ticket_type) unless @ticket_type.empty?
     conditions[:priority] = @priority unless @priority.empty?
     conditions[:status] = @status unless @status.empty?
     conditions[:source] = @source unless @source.empty?
@@ -447,7 +447,7 @@ module Reports::TimesheetReport
 
   def construct_csv_params
     filters = params["filters"].to_s
-    filters_hash = JSON.parse filters.gsub('=>', ':')
+    filters_hash = JSON.parse filters
     data_hash = filters_hash["data_hash"]
     params[:report_filters] = data_hash["report_filters"]
     params[:columns] = data_hash["columns"]
@@ -460,10 +460,10 @@ module Reports::TimesheetReport
     params[:data_hash][:report_filters].each do |filter|
       condition = filter['condition'] || filter['name']
       if((condition.to_s.start_with?('ffs') || condition.to_s == "ticket_type") && params[:version].present?)
-        params[:"#{condition}"] = filter['label']
+        params[condition.to_sym] = filter['label']
       else
-        params[:"#{condition}"] = filter['value']
-        params[:"#{condition}"] = params[:"#{condition}"].split(',') if filter['value'].is_a? Array
+        params[condition.to_sym] = filter['value']
+        params[condition.to_sym] = params[condition.to_sym].split(',') if filter['value'].is_a? Array
       end
     end
     params[:select_hash] = params[:data_hash][:select_hash]
@@ -487,6 +487,7 @@ module Reports::TimesheetReport
                                 :active=>false
                                 }
     @show_options.delete(:historic_status)
+
     @show_options.map { |filter| (@custom_filter ||= []) << filter[1][:condition].to_s if filter[0].to_s.start_with?('ffs') }
     @label_hash = column_id_label_hash
     @filter_conditions = {}
@@ -523,7 +524,7 @@ module Reports::TimesheetReport
       :billable    => billable_and_non? ? [true, false] : @filter_conditions[:billable].map {|val| val.to_bool},
       :group_id    => @filter_conditions[:group_id] || [],
       :ticket_type => @filter_conditions[:ticket_type_label] || @filter_conditions[:ticket_type] || [],
-      :products_id => @filter_conditions[:product_id]|| [],
+      :products_id => @filter_conditions[:product_id]|| @filter_conditions[:products_id] || [],
       :priority    => @filter_conditions[:priority] || [],
       :status      => @filter_conditions[:status] || [],
       :source      => @filter_conditions[:source] || [],
@@ -710,6 +711,10 @@ module Reports::TimesheetReport
 
   def validate_chosen_custom_fields(cols)
     @request_custom_fields_columns =  cols & custom_column_master_hash.stringify_keys.keys
+  end
+
+  def nullify(arr)
+    arr.map { |x| x.to_i == -1 ? nil : x }
   end
 
 end
