@@ -40,6 +40,7 @@ gem 'fresh_request', :git => 'git@github.com:freshdesk/fresh_request.git', :bran
 gem 'iconv', '~> 1.0.4'
 gem 'thrift', '~> 0.9.2.0'
 gem 'charlock_holmes', "0.7.3"
+gem "tnef", "1.0.2"
 
 
 group :development, :test do

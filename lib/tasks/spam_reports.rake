@@ -25,7 +25,7 @@ end
 def learn_mail(args)
 	args.each do |sg_evt|
     if (sg_evt['event'] == "spamreport" || sg_evt['event'] == "complained")
-		  learn_spam(sg_evt.merge(:to => sg_evt['email'], :from => sg_evt['from_email'])) 
+		  learn_spam(sg_evt.merge(:to => sg_evt['email'], :from => sg_evt['from_email']).with_indifferent_access) 
     end
 	end
 end
@@ -61,7 +61,7 @@ def construct_email(account, params)
     subject = note.subject
     content = note.body_html
 	elsif (params[:ticket_id].present? && params[:ticket_id] != -1)
-		tkt = Helpdesk::Ticket.find_by_account_id_and_id(account.id, params[:ticket_id])
+		tkt = Helpdesk::Ticket.find_by_account_id_and_display_id(account.id, params[:ticket_id])
     subject = tkt.subject
     content = tkt.description_html
 	end
