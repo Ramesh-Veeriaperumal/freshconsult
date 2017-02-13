@@ -64,3 +64,5 @@
       :branding: 59
       :toggle_branding: 60
       :freshfone_vm_transcription: 61
+:selectable_features:
+  :branding: true

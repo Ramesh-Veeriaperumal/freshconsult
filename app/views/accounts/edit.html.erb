@@ -163,6 +163,29 @@
 								</div>	
 							</div>
 						<% end %>
+
+            <div class="control-group account-branding-toggle">
+              <%= f.label :account_branding, t('account.branding_toggle.title'), :class => "control-label" %>
+              <div class="controls">
+                <% unless current_account.subscription.trial_or_sprout_plan? %>
+                    <%= f.fields_for :bitmap_features do |bm| %>
+                        <%= bm.check_box :branding, {:id => 'account_branding_enabled', :checked => Account.current.branding_enabled?} %>
+                        <div class="help-block"><%= t('account.branding_toggle.helpnote') %></div>
+                    <% end %>
+
+                <% else %>
+                    <%= link_to "javascript:void(0)", :class => "btn" do %>
+                        <span class='ficon-lock locked'></span>
+                        <%=t('account.branding_toggle.disable_branding') %>
+                    <% end %>
+                    <div class="branding-upgrade-message">
+                      <% options = (current_user.privilege?(:manage_account)) ? {:tag => :a, :href => subscription_url} : {:tag => :p} %>
+                      <%= content_tag(options[:tag], t('subscription.upgrade.message'), :href => options[:href]) %>
+                    </div>
+                <% end %>
+              </div>
+            </div>
+
 						<div class="control-group">
 							<label class="control-label"><%= t("admin.products.portal.portal_settings") %></label>
 							<div class="controls">
@@ -271,7 +294,7 @@
 	})
 	jQuery(document).on("change", '.fileAdminUpload', function(){ 
 		if ( jQuery(this.form).valid() ) {
-			jQuery("#redirect_url").val("<%= edit_account_path %>") 
+			jQuery("#redirect_url").val("<%= edit_account_path %>")
 			this.form.submit()
 		}
 	})
@@ -279,7 +302,10 @@
 	<% if current_account.subscription.non_sprout_plan? %>
     jQuery("#account_forum_enabled").itoggle();
   <% end %>
-  
+  <% unless current_account.subscription.trial_or_sprout_plan?  %>
+    jQuery("#account_branding_enabled").itoggle();
+   <% end %>
+
 	<% if @restricted_helpdesk_launched %>
 
 

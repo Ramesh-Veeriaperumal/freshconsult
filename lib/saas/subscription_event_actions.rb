@@ -22,7 +22,8 @@ class SAAS::SubscriptionEventActions
     if plan_changed?
       plan_features = ::PLANS[:subscription_plans][new_plan.subscription_plan.canon_name.to_sym][:features]
       account.features_list.each do |feature|
-        account.reset_feature(feature) unless plan_features.include?(feature) || account_add_ons.include?(feature)
+        account.reset_feature(feature) unless plan_features.include?(feature) || account_add_ons.include?(feature) ||
+        account.selectable_features_list.include?(feature)
       end
       account.save
       #remove_chat_feature

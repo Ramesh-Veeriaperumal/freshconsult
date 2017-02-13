@@ -380,8 +380,17 @@ class Subscription < ActiveRecord::Base
   end
   
   def non_sprout_plan?
-    !(sprout? || sprout_classic? || new_sprout?) 
+    !(sprout? || sprout_classic? || new_sprout?)
   end
+
+  def sprout_plan?
+    !(non_sprout_plan?)
+  end
+
+  def trial_or_sprout_plan?
+    state == 'trial' || sprout_plan?
+  end
+
 
   def forum_available_plan?
     non_sprout_plan? && !new_blossom?

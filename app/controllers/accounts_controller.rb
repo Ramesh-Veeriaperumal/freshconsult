@@ -125,6 +125,11 @@ class AccountsController < ApplicationController
     params[:account][:main_portal_attributes].delete(:language) if @account.features?(:enable_multilingual)
     @account.main_portal_attributes  = params[:account][:main_portal_attributes]
     @account.permissible_domains = params[:account][:permissible_domains]
+    # Update bit map features
+    params[:account][:bitmap_features].each  do |key, value|
+      value == '0' ? @account.reset_feature(key.to_sym) : @account.set_feature(key.to_sym)
+    end
+
     if @account.save
       enable_restricted_helpdesk(params[:enable_restricted_helpdesk])
       @account.update_attributes!(params[:account].slice(:features))

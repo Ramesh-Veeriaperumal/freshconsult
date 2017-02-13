@@ -5,7 +5,7 @@ class Account < ActiveRecord::Base
   BOTH_FEATURES = [:shared_ownership]
   BITMAP_FEATURES = [:split_tickets, :add_watcher, :traffic_cop, :custom_ticket_views, :supervisor, :create_observer, :sla_management, 
     :email_commands, :assume_identity, :rebranding, :custom_apps, :custom_ticket_fields, :custom_company_fields, 
-    :custom_contact_fields, :occasional_agent, :allow_auto_suggest_solutions, :basic_twitter, :basic_facebook] 
+    :custom_contact_fields, :occasional_agent, :allow_auto_suggest_solutions, :basic_twitter, :basic_facebook, :branding]
 
   LP_FEATURES.each do |item|
     define_method "#{item.to_s}_enabled?" do
@@ -151,5 +151,9 @@ class Account < ActiveRecord::Base
 
   def tags_filter_reporting_enabled?    
     features?(:tags_filter_reporting)   
+  end
+
+  def selectable_features_list
+    SELECTABLE_FEATURES_DATA || {}
   end
 end

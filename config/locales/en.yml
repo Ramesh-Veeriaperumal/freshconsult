@@ -6088,6 +6088,13 @@ en:
         enable_forums: "enable forums in your account"
         go_back_message: "Go back to your helpdesk"
         helpnote: "Disabling this will turn off forums in all of your product portals for all users"
+
+    branding_toggle:
+            title: "Freshdesk Branding"
+            disable_branding: "Remove Freshdesk branding"
+            enable_branding: "Enable branding in your account"
+            go_back_message: "Go back to your helpdesk"
+            helpnote: "Turning this off will remove the Freshdesk branding in the footer of both your agent and customer portals"
     page_colors:
       title: Helpdesk Colors
       background: Background
