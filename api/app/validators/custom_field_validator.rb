@@ -161,7 +161,6 @@ class CustomFieldValidator < ActiveModel::EachValidator
     # required based on ticket field attribute or combination of status & ticket field attribute.
     def required_field?(record, values)
       # Should we have to raise exception or warn if current_field doen't respond to required_attribute?
-      return false if record.instance_variable_get(:@_skip_mandatory_check)
       is_required = @current_field.send(@required_attribute.to_sym) || (@closure_status && @current_field.required_for_closure)
       is_required ||= @parent[:required] if @parent.present?
       is_required = section_parent_present?(record, values) if is_required && section_field?

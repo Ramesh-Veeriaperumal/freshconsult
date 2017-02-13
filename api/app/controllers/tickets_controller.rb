@@ -14,7 +14,7 @@ class TicketsController < ApiApplicationController
 
   def create
     assign_protected
-    ticket_delegator = TicketDelegator.new(@item, ticket_fields: @ticket_fields, custom_fields: params[cname][:custom_field], _skip_mandatory_check: @_skip_mandatory_check)
+    ticket_delegator = TicketDelegator.new(@item, ticket_fields: @ticket_fields, custom_fields: params[cname][:custom_field])
     if !ticket_delegator.valid?(:create)
       render_custom_errors(ticket_delegator, true)
     else
@@ -216,9 +216,7 @@ class TicketsController < ApiApplicationController
         ParamsHelper.assign_checkbox_value(params[cname][:custom_fields], checkbox_names)
       end
 
-      @_skip_mandatory_check = params[cname][:_skip_mandatory_check] if params[cname].key?(:_skip_mandatory_check)
-
-      params_to_be_deleted = [:cc_emails, :_skip_mandatory_check]
+      params_to_be_deleted = [:cc_emails]
       [:due_by, :fr_due_by].each { |key| params_to_be_deleted << key if params[cname][key].nil? }
       ParamsHelper.clean_params(params_to_be_deleted, params[cname])
 

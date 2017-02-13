@@ -3,17 +3,15 @@ module ApiTicketConstants
   ARRAY_FIELDS = %w(tags cc_emails attachments).freeze
   HASH_FIELDS = ['custom_fields'].freeze
   COMPLEX_FIELDS = ARRAY_FIELDS | HASH_FIELDS
-  # _skip_mandatory_check has been added to CREATE_FIELDS for internal usage(To create a ticket without checking for mandatory fields)
   CREATE_FIELDS = %w(description due_by email_config_id fr_due_by group_id priority
                      email phone twitter_id facebook_id requester_id name
                      responder_id source status subject type product_id company_id
-                     _skip_mandatory_check
                   ).freeze | ARRAY_FIELDS | HASH_FIELDS
   UPDATE_FIELDS = %w(description due_by email_config_id fr_due_by group_id priority
                      email phone twitter_id facebook_id requester_id name
                      responder_id source status subject type product_id company_id
                   ).freeze | (ARRAY_FIELDS - ['cc_emails']) | HASH_FIELDS
-  COMPOSE_EMAIL_FIELDS = (CREATE_FIELDS - %w(source product_id responder_id requester_id phone twitter_id facebook_id _skip_mandatory_check)).freeze
+  COMPOSE_EMAIL_FIELDS = (CREATE_FIELDS - %w(source product_id responder_id requester_id phone twitter_id facebook_id)).freeze
   SHOW_FIELDS = ['include']
   ALLOWED_INCLUDE_PARAMS = %w(conversations requester company stats)
   SIDE_LOADING = ['requester', 'stats', 'company']

@@ -174,7 +174,6 @@ class TicketValidation < ApiValidation
   end
 
   def required_default_fields
-    return [] if @_skip_mandatory_check
     closure_status = required_based_on_status?
     ticket_fields.select { |x| x.default && (x.required || (x.required_for_closure && closure_status)) }
   end
