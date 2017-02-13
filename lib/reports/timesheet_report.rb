@@ -575,8 +575,13 @@ module Reports::TimesheetReport
   end
 
   def stacked_chart_data
-    barchart_data = [{:name=>"non_billable",:data=>[@metric_data[:current][:non_billable]],:color=>'#bbbbbb'},{:name=>"billable",:data=>[@metric_data[:current][:billable]],:color=>'#679d46'}]
+    barchart_data = [{:name=>"non_billable",:data=>[in_hours(@metric_data[:current][:non_billable])],:color=>'#bbbbbb'},{:name=>"billable",:data=>[in_hours(@metric_data[:current][:billable])],:color=>'#679d46'}]
     @activity_data_hash={'barchart_data'=>barchart_data}
+  end
+
+  def in_hours(hhnmm)
+    hh,mm = hhnmm.split(':')
+    hh.to_f + (mm.to_f/60)
   end
 
   def parse_date(date_time)
@@ -652,8 +657,8 @@ module Reports::TimesheetReport
       end
     end
     [:total_time, :billable, :non_billable].each do |type|
-      @metric_data[:previous][type] /= 3600.0
-      @metric_data[:current][type] /= 3600.0
+      @metric_data[:previous][type] = get_time_in_hours(@metric_data[:previous][type])
+      @metric_data[:current][type] = get_time_in_hours( @metric_data[:current][type])
     end
     @latest_timesheet_id = @summary.flatten.collect{ |entry| entry.max_timesheet_id if entry.current == 1}.compact.max
     total_time = 0
