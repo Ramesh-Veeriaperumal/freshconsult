@@ -394,7 +394,7 @@ class User < ActiveRecord::Base
   def update_companies(params)
     if has_multiple_companies_feature?
       if params[:user][:removed_companies].present?
-        to_be_removed = params[:user][:removed_companies].split(",").uniq
+        to_be_removed = JSON.parse params[:user][:removed_companies]
         remove_ids = to_be_removed.map{ |company_name| companies.find { |c| c.name == company_name}.id }
         UserCompany.destroy_all(:account_id => account_id,
                                 :user_id => id,

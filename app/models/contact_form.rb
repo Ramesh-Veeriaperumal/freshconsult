@@ -63,11 +63,18 @@ class ContactForm < ActiveRecord::Base
     custom_fields.select { |c| c.field_type == :custom_checkbox }
   end
 
+  def con_fields
+    @fields ||= contact_fields_from_cache
+  end
+
+  def fetch_client_manager_field
+    con_fields.find{ |cf| cf.name == "client_manager" }
+  end
+
   private
 
     def fetch_contact_fields
-      fields = contact_fields_from_cache
-      filter_fields fields, contact_field_conditions
+      filter_fields con_fields, contact_field_conditions
     end
 
     def filter_fields(field_list, conditions)
