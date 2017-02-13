@@ -7,14 +7,9 @@ class IntegratedResourcesController < ApiApplicationController
 
 	private
 
-	def scoper
-		current_account.installed_applications.find(params[:installed_application_id])
-	end
-
-	def load_objects(items = scoper)
+	def load_objects()
   	@items =  Integrations::IntegratedResource.where(:installed_application_id => params[:installed_application_id], :local_integratable_id => params[:local_integratable_id])
   end
-
 
   def validate_filter_params
     params.permit(*fields_to_validate)
