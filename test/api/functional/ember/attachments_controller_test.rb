@@ -63,7 +63,7 @@ class Ember::AttachmentsControllerTest < ActionController::TestCase
     DataTypeValidator.any_instance.unstub(:valid_type?)
     assert_response 200
     latest_attachment = Helpdesk::Attachment.last
-    match_json(attachment_pattern({}, latest_attachment))
+    match_json(attachment_pattern(latest_attachment))
     assert_equal latest_attachment.attachable_type, 'UserDraft'
   end
 
@@ -73,7 +73,7 @@ class Ember::AttachmentsControllerTest < ActionController::TestCase
     DataTypeValidator.any_instance.unstub(:valid_type?)
     assert_response 200
     latest_attachment = Helpdesk::Attachment.last
-    match_json(attachment_pattern({}, latest_attachment))
+    match_json(attachment_pattern(latest_attachment))
     assert_equal latest_attachment.attachable_type, 'UserDraft'
     assert_equal latest_attachment.attachable_id, @agent.id
   end
@@ -109,7 +109,7 @@ class Ember::AttachmentsControllerTest < ActionController::TestCase
     post :create, construct_params({version: 'private'}, inline_attachment_params_hash)
     assert_response 200
     latest_attachment = Helpdesk::Attachment.last
-    match_json(attachment_pattern({}, latest_attachment))
+    match_json(attachment_pattern(latest_attachment))
     assert_equal latest_attachment.attachable_type, 'Tickets Image Upload'
     assert latest_attachment.inline_url.present?
     Helpdesk::Attachment.any_instance.unstub(:valid_image?)

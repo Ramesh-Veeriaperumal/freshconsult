@@ -9,8 +9,6 @@ JSON.generate(@items.map do |group|
     created_at: group.created_at.try(:utc),
     updated_at: group.updated_at.try(:utc)
   }
-  #TODO need to check performance for fetching agentIds
-  response_hash.merge!(agent_ids: group.agent_ids_from_db)
   response_hash.merge!(auto_ticket_assign: group.auto_ticket_assign)  if group.round_robin_enabled?
   response_hash
 end)

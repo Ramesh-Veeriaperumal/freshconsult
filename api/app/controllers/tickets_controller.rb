@@ -98,8 +98,8 @@ class TicketsController < ApiApplicationController
       @include_validation.include_array.each { |association| increment_api_credit_by(1) }
     end
 
-    def decorator_options
-      options = { name_mapping: (@name_mapping || get_name_mapping) }
+    def decorator_options(options = {})
+      options[:name_mapping] = @name_mapping || get_name_mapping
       options[:sideload_options] = sideload_options.to_a if index? || show?
       super(options)
     end
@@ -112,7 +112,7 @@ class TicketsController < ApiApplicationController
     end
 
     def sideload_options
-      index? ? @ticket_filter.include_array : @include_validation.include_array
+      index? ? @ticket_filter.try(:include_array) : @include_validation.try(:include_array)
     end
 
     def set_custom_errors(item = @item)

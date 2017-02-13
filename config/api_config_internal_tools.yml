@@ -13,3 +13,6 @@ staging:
 production:
   <<: *defaults
   domain: "supreme.freshdesk.com"
+
+test:
+  <<: *defaults

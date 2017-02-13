@@ -8,7 +8,7 @@ module SocialTestHelper
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
     }
-    ret_hash.merge!(page_name: fb_post.facebook_page.page_name) if ['Helpdesk::Ticket'].include?(fb_post.postable_type)
+    ret_hash.merge!(fb_page: fb_page_pattern(fb_post)) if ['Helpdesk::Ticket'].include?(fb_post.postable_type)
     ret_hash
   end
   
@@ -18,6 +18,20 @@ module SocialTestHelper
         can_comment?: expected_output[:can_comment] || fb_post.post_attributes[:can_comment]
     }
     fb_dm_pattern(expected_output, fb_post).merge(post_attributes_hash)
+  end
+
+  def fb_page_pattern(fb_post)
+    page = fb_post.facebook_page
+    {
+      id: page.id,
+      profile_id: page.profile_id,
+      page_id: page.page_id,
+      page_name: page.page_name,
+      page_image_url: page.page_img_url,
+      page_link: page.page_link,
+      enable_page: page.enable_page,
+      product_id: page.product_id
+    }
   end
 
   def create_facebook_page(populate_streams = false)

@@ -21,6 +21,9 @@ class TicketFilterValidation < FilterValidation
   validate :validate_include, if: -> { errors[:include].blank? && include }
   validate :validate_filter_param, if: -> { errors[:filter].blank? && filter.present? && private_API? }
   validate :validate_query_hash, if: -> { errors.blank? && query_hash.present? }
+  validates :ids, data_type: { rules: Array, allow_nil: false }, 
+            array: { custom_numericality: { only_integer: true, greater_than: 0, allow_nil: false, ignore_string: :allow_string_param} },
+            custom_length: { maximum: ApiConstants::MAX_ITEMS_FOR_BULK_ACTION, message_options: { element_type: :values } }
 
   def initialize(request_params, item = nil, allow_string_param = true)
     @email = request_params.delete('email') if request_params.key?('email') # deleting email and replacing it with requester_id
@@ -32,6 +35,7 @@ class TicketFilterValidation < FilterValidation
     filter_name = fetch_filter(request_params)
     @conditions = @conditions - ['filter'] + [filter_name].compact
     self.skip_hash_params_set = true
+    request_params[:ids] = request_params[:ids].split(',') if request_params.key?(:ids)
     super(request_params, item, allow_string_param)
     @status = status.to_s.split(',') if request_params.key?('status')
     @version = request_params[:version]

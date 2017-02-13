@@ -1,0 +1,91 @@
+  type: array
+  items:
+    type: object
+    properties:
+      id:
+        type: number
+      performer:
+        type: object
+        properties:
+          type:
+            type: string
+            enum:
+              - user
+              - system
+          user:
+            type: object
+            properties:
+              id:
+                type: number
+              name:
+                type: string
+              agent:
+                type: boolean
+              avatar_url:
+                type: string
+              deleted:
+                type: boolean
+              email:
+                type: string
+          system:
+            type: object
+            properties:
+              id:
+                type: number
+              name:
+                type: string
+              exists:
+                type: boolean
+              type:
+                type: string
+                enum:
+                  - round_robin
+                  - business
+                  - scenario
+                  - supervisor
+                  - observer
+                  - app_business
+                  - installed_app
+                  - api_webhook
+      performed_at:
+        type: string
+        format: date-time
+      actions:
+        type: array
+        items:
+          type: object
+          properties:
+            type:
+              type: string
+              enum:
+                - property_update
+                - add_tag
+                - remove_tag
+                - add_watcher
+                - delete_status
+                - execute_scenario
+                - add_a_cc
+                - spam
+                - archive
+                - deleted
+                - email_to_requester
+                - email_to_group
+                - email_to_agent
+                - ticket_merge_source
+                - ticket_merge_target
+                - ticket_split_source
+                - ticket_split_target
+                - ticket_import
+                - round_robin
+                - shared_ownership_reset
+                - timesheet_create
+                - timesheet_edit
+                - timesheet_delete
+                - timer_running
+                - time_spent
+            content:
+              type: object
+              description: "Value corresponding to the action type."
+      highlight:
+        type: number
+        description: Shows which action has to be highlighted

@@ -42,6 +42,13 @@ module TicketActivitiesTestHelper
     get_activity_data(params)
   end
 
+  def archive_ticket_activity
+    params = {}
+    params[:summary] = '35.0'
+    params[:content] = '{"archive":["*",true]}'
+    get_activity_data(params)
+  end
+
   def tag_activity(flag)
     params = {}
     params[:summary] = flag ? '18.0' : '19.0'
@@ -86,7 +93,79 @@ module TicketActivitiesTestHelper
   def add_cc_activity
     params = {}
     params[:summary] = '40.0'
-    params[:content] = '{"system_changes":{"1":{"rule":["1.0","Add CC"],"add_a_cc":["test@cc.com"]}}}'
+    params[:content] = "{\"system_changes\":{\"#{@rule.id}\":{\"rule\":[\"1.0\",\"Add CC\"],\"add_a_cc\":[\"test@cc.com\"]}}}"
+    params[:event_type] = 'system'
+    get_activity_data(params)
+  end
+
+  def email_to_group_activity
+    params = {}
+    params[:summary] = '40.0'
+    params[:content] = "{\"system_changes\":{\"#{@rule.id}\":{\"rule\":[\"1.0\",\"Email test\"],\"email_to_group\":[\"Product Management\"]}}}"
+    params[:event_type] = 'system'
+    get_activity_data(params)
+  end
+
+  def email_to_agent_activity
+    params = {}
+    params[:summary] = '40.0'
+    params[:content] = "{\"system_changes\":{\"#{@rule.id}\":{\"rule\":[\"1.0\",\"Email test\"],\"email_to_agent\":[\"#{@agent.id}\"]}}}"
+    params[:event_type] = 'system'
+    get_activity_data(params)
+  end
+
+  def email_to_requester_activity
+    params = {}
+    params[:summary] = '40.0'
+    params[:content] = "{\"system_changes\":{\"#{@rule.id}\":{\"rule\":[\"1.0\",\"Email test\"],\"email_to_requester\":[\"#{@ticket.requester_id}\"]}}}"
+    params[:event_type] = 'system'
+    get_activity_data(params)
+  end
+
+  def ticket_merge_target_activity
+    params = {}
+    params[:summary] = '32.0'
+    params[:content] = "{\"activity_type\":{\"target_ticket_id\":[\"#{@target_ticket.id}.0\"],\"source_ticket_id\":[\"#{@ticket.id}.0\"],\"type\":\"ticket_merge_target\"}}"
+    get_activity_data(params)
+  end
+
+  def ticket_merge_source_activity
+    params = {}
+    params[:summary] = '31.0'
+    params[:content] = "{\"activity_type\":{\"target_ticket_id\":[\"#{@target_ticket.id}.0\"],\"source_ticket_id\":[\"#{@ticket.id}.0\"],\"type\":\"ticket_merge_source\"}}"
+    get_activity_data(params)
+  end
+
+  def ticket_split_target_activity
+    params = {}
+    params[:content] = "{\"activity_type\":{\"target_ticket_id\":[\"#{@target_ticket.id}.0\"],\"source_ticket_id\":[\"#{@ticket.id}.0\"],\"type\":\"ticket_split_target\"}}"
+    get_activity_data(params)
+  end
+
+  def ticket_split_source_activity
+    params = {}
+    params[:summary] = '33.0'
+    params[:content] = "{\"activity_type\":{\"target_ticket_id\":[\"#{@target_ticket.id}.0\"],\"source_ticket_id\":[\"#{@ticket.id}.0\"],\"type\":\"ticket_split_source\"}}"
+    get_activity_data(params)
+  end
+
+  def ticket_import_activity
+    params = {}
+    params[:content] = '{"activity_type":{"imported_at":"1484212625.25809","type":"ticket_import"}}'
+    get_activity_data(params)
+  end
+
+  def round_robin_activity
+    params = {}
+    params[:summary] = '37.0'
+    params[:content] = "{\"activity_type\":{\"responder_id\":[null,\"#{@agent.id}.0\"],\"type\":\"round_robin\"}}"
+    params[:event_type] = 'system'
+    get_activity_data(params)
+  end
+
+  def delete_status_activity
+    params = {}
+    params[:content] = '{"delete_status":["Open", "7.0"]}'
     get_activity_data(params)
   end
 
@@ -100,7 +179,7 @@ module TicketActivitiesTestHelper
         id: tkt_data.published_time,
         performer: get_performer_hash(tkt_data, content),
         highlight: tkt_data.summary.nil? ? nil : tkt_data.summary.to_i,
-        performed_at: Time.at(tkt_data.published_time / 10_000),
+        performed_at: Time.at(tkt_data.published_time / 10_000).utc,
         actions: [
           {
             type: :property_update,
@@ -143,7 +222,7 @@ module TicketActivitiesTestHelper
         id: tkt_data.published_time,
         performer: get_performer_hash(tkt_data, content),
         highlight: tkt_data.summary.nil? ? nil : tkt_data.summary.to_i,
-        performed_at: Time.at(tkt_data.published_time / 10_000),
+        performed_at: Time.at(tkt_data.published_time / 10_000).utc,
         actions: [
           {
             type: :property_update,
@@ -168,7 +247,8 @@ module TicketActivitiesTestHelper
         ]
       }
     end
-    result end
+    result
+  end
 
   def note_activity_pattern(ticket_activity_data)
     result = []
@@ -179,7 +259,7 @@ module TicketActivitiesTestHelper
         id: tkt_data.published_time,
         performer: get_performer_hash(tkt_data, content),
         highlight: tkt_data.summary.nil? ? nil : tkt_data.summary.to_i,
-        performed_at: Time.at(tkt_data.published_time / 1000),
+        performed_at: Time.at(tkt_data.published_time / 10_000).utc,
         actions: [
           {
             type: :note,
@@ -201,7 +281,7 @@ module TicketActivitiesTestHelper
         id: tkt_data.published_time,
         performer: get_performer_hash(tkt_data, content),
         highlight: tkt_data.summary.nil? ? nil : tkt_data.summary.to_i,
-        performed_at: Time.at(tkt_data.published_time / 10_000),
+        performed_at: Time.at(tkt_data.published_time / 10_000).utc,
         actions: [
           {
             type: flag ? :add_tag : :remove_tag,
@@ -222,7 +302,7 @@ module TicketActivitiesTestHelper
         id: tkt_data.published_time,
         performer: get_performer_hash(tkt_data, content),
         highlight: tkt_data.summary.nil? ? nil : tkt_data.summary.to_i,
-        performed_at: Time.at(tkt_data.published_time / 1000),
+        performed_at: Time.at(tkt_data.published_time / 10_000).utc,
         actions: [
           {
             type: :spam,
@@ -243,11 +323,32 @@ module TicketActivitiesTestHelper
         id: tkt_data.published_time,
         performer: get_performer_hash(tkt_data, content),
         highlight: tkt_data.summary.nil? ? nil : tkt_data.summary.to_i,
-        performed_at: Time.at(tkt_data.published_time / 1000),
+        performed_at: Time.at(tkt_data.published_time / 10_000).utc,
         actions: [
           {
             type: :deleted,
             content: content[:deleted][1] ? true : false
+          }
+        ]
+      }
+    end
+    result
+  end
+
+  def archive_activity_pattern(ticket_activity_data)
+    result = []
+    ticket_activity_data.ticket_data.each do |tkt_data|
+      content = JSON.parse(tkt_data.record.content).deep_symbolize_keys
+      performer_type = tkt_data.event_type.to_sym
+      result << {
+        id: tkt_data.published_time,
+        performer: get_performer_hash(tkt_data, content),
+        highlight: tkt_data.summary.nil? ? nil : tkt_data.summary.to_i,
+        performed_at: Time.at(tkt_data.published_time / 10_000).utc,
+        actions: [
+          {
+            type: :archive,
+            content: true
           }
         ]
       }
@@ -265,7 +366,7 @@ module TicketActivitiesTestHelper
         id: tkt_data.published_time,
         performer: get_performer_hash(tkt_data, content),
         highlight: tkt_data.summary.nil? ? nil : tkt_data.summary.to_i,
-        performed_at: Time.at(tkt_data.published_time / 1000),
+        performed_at: Time.at(tkt_data.published_time / 10_000).utc,
         actions: [
           {
             type: :watcher,
@@ -289,7 +390,7 @@ module TicketActivitiesTestHelper
         id: tkt_data.published_time,
         performer: get_performer_hash(tkt_data, content),
         highlight: tkt_data.summary.nil? ? nil : tkt_data.summary.to_i,
-        performed_at: Time.at(tkt_data.published_time / 1000),
+        performed_at: Time.at(tkt_data.published_time / 10_000).utc,
         actions: [
           {
             type: :execute_scenario,
@@ -313,7 +414,7 @@ module TicketActivitiesTestHelper
         id: tkt_data.published_time,
         performer: get_performer_hash(tkt_data, content),
         highlight: tkt_data.summary.nil? ? nil : tkt_data.summary.to_i,
-        performed_at: Time.at(tkt_data.published_time / 1000),
+        performed_at: Time.at(tkt_data.published_time / 10_000).utc,
         actions: [
           {
             type: :timesheet_create,
@@ -340,13 +441,13 @@ module TicketActivitiesTestHelper
         id: tkt_data.published_time,
         performer: get_performer_hash(tkt_data, content),
         highlight: tkt_data.summary.nil? ? nil : tkt_data.summary.to_i,
-        performed_at: Time.at(tkt_data.published_time / 1000),
+        performed_at: Time.at(tkt_data.published_time / 10_000).utc,
         actions: [
           {
             type: :timesheet_edit,
             content: {
               user_id: content_hash[:user_id][1].to_i,
-              executed_at: Time.at(content_hash[:executed_at][1].to_i),
+              executed_at: Time.at(content_hash[:executed_at][1].to_i).utc,
               billable: content_hash[:billable][1],
               time_spent: {
                 old_value: content_hash[:time_spent][0].to_i,
@@ -370,13 +471,13 @@ module TicketActivitiesTestHelper
         id: tkt_data.published_time,
         performer: get_performer_hash(tkt_data, content),
         highlight: tkt_data.summary.nil? ? nil : tkt_data.summary.to_i,
-        performed_at: Time.at(tkt_data.published_time / 1000),
+        performed_at: Time.at(tkt_data.published_time / 10_000).utc,
         actions: [
           {
             type: :timesheet_delete,
             content: {
               user_id: content_hash[:user_id][0].to_i,
-              executed_at: Time.at(content_hash[:executed_at][0].to_i),
+              executed_at: Time.at(content_hash[:executed_at][0].to_i).utc,
               billable: content_hash[:billable][0],
               time_spent: content_hash[:time_spent][0].to_i
             }
@@ -387,21 +488,153 @@ module TicketActivitiesTestHelper
     result
   end
 
-  def add_cc_activity_pattern(_ticket_data)
+  def add_cc_activity_pattern(ticket_activity_data)
     result = []
     ticket_activity_data.ticket_data.each do |tkt_data|
       content = JSON.parse(tkt_data.record.content).deep_symbolize_keys
       performer_type = tkt_data.event_type.to_sym
-      content_hash = content[:system_changes][:"1"]
+      content_hash = content[:system_changes][:"#{@rule.id}"]
       result << {
         id: tkt_data.published_time,
         performer: get_performer_hash(tkt_data, content),
         highlight: tkt_data.summary.nil? ? nil : tkt_data.summary.to_i,
-        performed_at: Time.at(tkt_data.published_time / 1000),
+        performed_at: Time.at(tkt_data.published_time / 10_000).utc,
         actions: [
           {
             type: :add_a_cc,
             content: content_hash[:add_a_cc]
+          }
+        ]
+      }
+    end
+    result
+  end
+
+  def email_to_activity_pattern(ticket_activity_data, type)
+    result = []
+    ticket_activity_data.ticket_data.each do |tkt_data|
+      content = JSON.parse(tkt_data.record.content).deep_symbolize_keys
+      performer_type = tkt_data.event_type.to_sym
+      content_hash = content[:system_changes][:"#{@rule.id}"]
+      result << {
+        id: tkt_data.published_time,
+        performer: get_performer_hash(tkt_data, content),
+        highlight: tkt_data.summary.nil? ? nil : tkt_data.summary.to_i,
+        performed_at: Time.at(tkt_data.published_time / 10_000).utc,
+        actions: [
+          {
+            type: type,
+            content: (type == :email_to_requester) ? content_hash[type][0].to_i : content_hash[type]
+          }
+        ]
+      }
+    end
+    result
+  end
+
+  def ticket_merge_activity_pattern(ticket_activity_data, type)
+    result = []
+    ticket_activity_data.ticket_data.each do |tkt_data|
+      content = JSON.parse(tkt_data.record.content).deep_symbolize_keys
+      performer_type = tkt_data.event_type.to_sym
+      content_hash = (type == :ticket_merge_source) ? { target_ticket_id: content[:activity_type][:target_ticket_id][0].to_i } : { source_ticket_ids: content[:activity_type][:source_ticket_id].map(&:to_i) }
+      result << {
+        id: tkt_data.published_time,
+        performer: get_performer_hash(tkt_data, content),
+        highlight: tkt_data.summary.nil? ? nil : tkt_data.summary.to_i,
+        performed_at: Time.at(tkt_data.published_time / 10_000).utc,
+        actions: [
+          {
+            type: type,
+            content: content_hash
+          }
+        ]
+      }
+    end
+    result
+  end
+
+  def ticket_split_activity_pattern(ticket_activity_data, type)
+    result = []
+    ticket_activity_data.ticket_data.each do |tkt_data|
+      content = JSON.parse(tkt_data.record.content).deep_symbolize_keys
+      performer_type = tkt_data.event_type.to_sym
+      content_hash = (type == :ticket_split_source) ? { target_ticket_id: content[:activity_type][:target_ticket_id][0].to_i } : { source_ticket_id: content[:activity_type][:source_ticket_id][0].to_i }
+      result << {
+        id: tkt_data.published_time,
+        performer: get_performer_hash(tkt_data, content),
+        highlight: tkt_data.summary.nil? ? nil : tkt_data.summary.to_i,
+        performed_at: Time.at(tkt_data.published_time / 10_000).utc,
+        actions: [
+          {
+            type: type,
+            content: content_hash
+          }
+        ]
+      }
+    end
+    result
+  end
+
+  def ticket_import_activity_pattern(ticket_activity_data)
+    result = []
+    ticket_activity_data.ticket_data.each do |tkt_data|
+      content = JSON.parse(tkt_data.record.content).deep_symbolize_keys
+      performer_type = tkt_data.event_type.to_sym
+      content_hash = { imported_at: Time.at(content[:activity_type][:imported_at].to_i).utc }
+      result << {
+        id: tkt_data.published_time,
+        performer: get_performer_hash(tkt_data, content),
+        highlight: tkt_data.summary.nil? ? nil : tkt_data.summary.to_i,
+        performed_at: Time.at(tkt_data.published_time / 10_000).utc,
+        actions: [
+          {
+            type: :ticket_import,
+            content: content_hash
+          }
+        ]
+      }
+    end
+    result
+  end
+
+  def round_robin_activity_pattern(ticket_activity_data)
+    result = []
+    ticket_activity_data.ticket_data.each do |tkt_data|
+      content = JSON.parse(tkt_data.record.content).deep_symbolize_keys
+      performer_type = tkt_data.event_type.to_sym
+      content_hash = { responder_id: content[:activity_type][:responder_id][1].to_i }
+      result << {
+        id: tkt_data.published_time,
+        performer: get_performer_hash(tkt_data, content),
+        highlight: tkt_data.summary.nil? ? nil : tkt_data.summary.to_i,
+        performed_at: Time.at(tkt_data.published_time / 10_000).utc,
+        actions: [
+          {
+            type: :round_robin,
+            content: content_hash
+          }
+        ]
+      }
+    end
+    result
+  end
+
+  def delete_status_activity_pattern(ticket_activity_data)
+    result = []
+    ticket_activity_data.ticket_data.each do |tkt_data|
+      content = JSON.parse(tkt_data.record.content).deep_symbolize_keys
+      performer_type = tkt_data.event_type.to_sym
+      content_hash = content[:delete_status]
+      result << {
+        id: tkt_data.published_time,
+        performer: get_performer_hash(tkt_data, content),
+        highlight: tkt_data.summary.nil? ? nil : tkt_data.summary.to_i,
+        performed_at: Time.at(tkt_data.published_time / 10_000).utc,
+        actions: [
+          {
+            type: :ticket_import,
+            content: { deleted_status: content_hash[0], current_status: content_hash[1].to_i }
           }
         ]
       }
@@ -414,7 +647,7 @@ module TicketActivitiesTestHelper
     activity_data = TestActivityData.new
     activity_data.total_count   = params[:total_count] || 1
     activity_data.query_count   = params[:total_count] || 1
-    activity_data.members       = params[:members] || "{\"user_ids\":[\"#{@ticket.requester_id}\",\"#{@ticket.responder_id}\"],\"rule_ids\":[],\"note_ids\":[],\"status_ids\":[\"#{@ticket.status}\"],\"ticket_ids\":[]}"
+    activity_data.members       = params[:members] || "{\"user_ids\":[\"#{@ticket.requester_id}\",\"#{@ticket.responder_id}\"],\"rule_ids\":[\"#{@rule.id}\"],\"note_ids\":[],\"status_ids\":[\"#{@ticket.status}\"],\"ticket_ids\":[]}"
     activity_data.error_message = params[:error_message] || {}
     ticket_data                 = TestTicketData.new
     ticket_data.actor           = params[:actor] || @ticket.requester_id
@@ -442,16 +675,24 @@ module TicketActivitiesTestHelper
                             email: user.email,
                             deleted: user.deleted
                           }
-                        else
+                        elsif content[:system_changes].present?
                           value = content[:system_changes]
                           rule = get_rule(value.keys.first.to_s.to_i)
                           {
-                            id: rule.id,
-                            type: value.values.first[:rule].first.to_i,
-                            name: rule.name,
+                            id: value.keys.first.to_s.to_i,
+                            type: ActivityConstants::RULE_LIST[value.values.first[:rule].first.to_i],
+                            name: value.values.first[:rule].last,
+                            exists: rule.present?
+                          }
+                        elsif content[:activity_type] && content[:activity_type][:type] == 'round_robin'
+                          {
+                            id: 0,
+                            type: ActivityConstants::RULE_LIST[-1],
+                            name: '',
                             exists: true
                           }
                         end
+
     {
       type: performer_type,
       performer_type => performer_content
@@ -463,6 +704,7 @@ module TicketActivitiesTestHelper
   end
 
   def get_rule(rule_id)
+    @account.account_va_rules.find_by_id(rule_id)
   end
 
   def create_timesheet

@@ -33,7 +33,9 @@ module BootstrapTestHelper
         personalized_email_replies: wildcard_matcher,
         compose_email_enabled: wildcard_matcher,
         include_survey_manually: wildcard_matcher
-      }
+      },
+      agents: Array,
+      groups: Array
     }
     if User.current.privilege?(:manage_users) || User.current.privilege?(:manage_account)
       pattern.merge!(subscription: {

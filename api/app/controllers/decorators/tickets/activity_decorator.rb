@@ -4,17 +4,17 @@ module Tickets
 
     delegate :published_time, :actor, :summary, :event_type, to: :record
 
-    SPECIAL_ACTIONS = {
-      activity_type: [
-        :ticket_merge_source,
-        :ticket_merge_target,
-        :ticket_split_source,
-        :ticket_split_target,
-        :ticket_import,
-        :round_robin,
-        :shared_ownership_reset
-      ]
-    }.freeze
+    SPECIAL_ACTION_IDENTIFIER = 'activity_type'.freeze
+
+    SPECIAL_ACTIONS = [
+      :ticket_merge_source,
+      :ticket_merge_target,
+      :ticket_split_source,
+      :ticket_split_target,
+      :ticket_import,
+      :round_robin,
+      :shared_ownership_reset
+    ].freeze
 
     PROPERTY_ACTIONS = [
       :subject,
@@ -33,8 +33,12 @@ module Tickets
       :unchecked
     ].freeze
 
-    ARRAY_CONTENT_TYPES  = [:add_tag, :remove_tag, :add_watcher, :add_a_cc].freeze
-    STRING_CONTENT_TYPES = [:spam, :archive, :deleted].freeze
+    ARRAY_CONTENT_TYPES = [
+      :add_tag, :remove_tag, :add_watcher, :add_a_cc,
+      :email_to_group, :email_to_agent
+    ].freeze
+
+    STRING_CONTENT_TYPES = [:spam, :archive, :deleted, :email_to_requester].freeze
 
     def initialize(record, options)
       super(record)
@@ -84,6 +88,13 @@ module Tickets
             name: @rule_name,
             exists: rule_exists?
           }
+        elsif round_robin?(content)
+          {
+            id: 0,
+            type: RULE_LIST[-1],
+            name: '',
+            exists: true
+          }
         end
       end
 
@@ -99,8 +110,9 @@ module Tickets
         action_array(content_hash.reject { |k| k == :rule })
       end
 
-      def parse_activity_time(time_in_seconds)
-        Time.at(time_in_seconds / TIME_MULTIPLIER).utc
+      def parse_activity_time(time_in_seconds, multiplier = true)
+        time_in_seconds /= TIME_MULTIPLIER if multiplier
+        Time.at(time_in_seconds).utc
       end
 
       def action_array(items = content)
@@ -128,6 +140,7 @@ module Tickets
           value.flat_map(&:values).reduce do |first, val|
             # invalid_fields will not be uniquely identified with a key. So it should be array
             if val.key?(:invalid_fields)
+              first[:invalid_fields] ||= []
               first[:invalid_fields] += val[:invalid_fields]
               first
             else
@@ -141,8 +154,7 @@ module Tickets
         if PROPERTY_ACTIONS.include?(key)
           type = :property_update
           content = (send(key, value) if respond_to?(key.to_s, true))
-        elsif SPECIAL_ACTIONS.keys.include?(key)
-          type = value[:type].to_sym
+        elsif key.to_s == SPECIAL_ACTION_IDENTIFIER && SPECIAL_ACTIONS.include?(value[:type].to_sym)
           content = send(value[:type], value) if respond_to?(value[:type], true)
         elsif respond_to?(key.to_s, true)
           type = key
@@ -177,6 +189,10 @@ module Tickets
 
       def rule_exists?
         @query_data_hash[:rules][@rule_id].present?
+      end
+
+      def round_robin?(content)
+        content[:activity_type] && content[:activity_type][:type] == 'round_robin'
       end
 
       def custom_field?(field)
@@ -215,7 +231,7 @@ module Tickets
       end
 
       def due_by(value)
-        { due_by: parse_activity_time(value[1].to_i) }
+        { due_by: parse_activity_time(value[1].to_i, false) }
       end
 
       # custom checkboxes
@@ -233,11 +249,9 @@ module Tickets
           name_mapping = @query_data_hash[:field_mapping].key(v.to_s)
           if name_mapping.present?
             field_name = TicketDecorator.display_name(name_mapping)
-            result[:custom_fields] ||= {}
-            result[:custom_fields].merge!(field_name => flag)
+            (result[:custom_fields] ||= {})[field_name] = flag
           else
-            result[:invalid_fields] ||= []
-            result[:invalid_fields] << { field_name: v, value: flag }
+            (result[:invalid_fields] ||= []) << { field_name: v, value: flag }
           end
         end
         result
@@ -262,12 +276,10 @@ module Tickets
       end
 
       # Tags
-      def add_tag(value)
-        value
-      end
-
-      def remove_tag(value)
-        value
+      [:add_tag, :remove_tag].each do |name|
+        define_method name do |value|
+          value
+        end
       end
 
       def delete_status(value)
@@ -288,12 +300,6 @@ module Tickets
       end
 
       # Special Activities
-      def activity_type(value)
-        if value[:type].present?
-          send(value[:type], value) if respond_to?(value[:type], true)
-        end
-      end
-
       def ticket_merge_source(value)
         { target_ticket_id: value[:target_ticket_id][0].to_i }
       end
@@ -312,13 +318,24 @@ module Tickets
 
       def ticket_import(value)
         # Time from activities service is not calculated with multiplier in this case
-        imp_time = parse_activity_time(value[:imported_at].to_i * TIME_MULTIPLIER)
+        imp_time = parse_activity_time(value[:imported_at].to_i, false)
         { imported_at: imp_time }
       end
 
+      def round_robin(value)
+        { responder_id: value[:responder_id][1].to_i }
+      end
+
       # Rules Related activities
-      def add_a_cc(value)
-        value
+
+      def email_to_requester(value)
+        value[0].to_i
+      end
+
+      [:add_a_cc, :email_to_group, :email_to_agent].each do |name|
+        define_method name do |value|
+          value
+        end
       end
 
       # watchers
@@ -356,11 +373,11 @@ module Tickets
         old_params = build_timesheet_params(value, false)
         new_params = build_timesheet_params(value, true)
         result = {}
-        old_params.map do |key, value|
-          result[key] = if value != new_params[key]
-                          { old_value: value, new_value: new_params[key] }
+        old_params.map do |key, val|
+          result[key] = if val != new_params[key]
+                          { old_value: val, new_value: new_params[key] }
                         else
-                          value
+                          val
                         end
         end
         result
@@ -383,7 +400,7 @@ module Tickets
         params = {}
         params[:billable]      = value[:billable][index]
         params[:user_id]       = value[:user_id][index].to_i
-        params[:executed_at]   = parse_activity_time(value[:executed_at][index].to_i * TIME_MULTIPLIER)
+        params[:executed_at]   = parse_activity_time(value[:executed_at][index].to_i, false)
         params[:time_spent]    = value[:time_spent][index].to_i
         params[:timer_running] = value[:timer_running][index] if value.key?(:timer_running)
         params

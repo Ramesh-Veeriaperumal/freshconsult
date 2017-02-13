@@ -312,15 +312,16 @@ module TicketsTestHelper
     assert new_ticket.cloud_files.present?
   end
 
-  def private_api_ticket_index_pattern(survey_results = {})
+  def private_api_ticket_index_pattern(survey_results = {}, requester = false)
     pattern_array = Helpdesk::Ticket.last(ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page]).map do |ticket|
       pattern = index_ticket_pattern(ticket, [:tags])
+      pattern.merge!(requester: Hash) if requester
       pattern.merge!(survey_result: feedback_pattern(survey_results[ticket.id])) if survey_results[ticket.id]
       pattern
     end
   end
 
-  def ticket_show_pattern(ticket, survey_result = nil)
+  def ticket_show_pattern(ticket, survey_result = nil, requester = false)
     pattern = ticket_pattern(ticket).merge(cloud_files: Array)
     ticket_topic = ticket_topic_pattern(ticket)
     pattern.merge!(freshfone_call: freshfone_call_pattern(ticket)) if freshfone_call_pattern(ticket).present?
@@ -332,6 +333,7 @@ module TicketsTestHelper
     pattern.merge!(meta: ticket_meta_pattern(ticket))
     pattern.merge!(survey_result: feedback_pattern(survey_result)) if survey_result
     pattern.merge!(ticket_topic: ticket_topic) if ticket_topic.present?
+    pattern.merge!(requester: Hash) if requester
     pattern
   end
 

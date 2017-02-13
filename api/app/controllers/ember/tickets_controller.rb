@@ -151,25 +151,34 @@ module Ember
       def decorate_objects
         return if @errors || @error
         decorator, options = decorator_options
-        decorate_requesters if (sideload_options || []).include?('requester')
         @items.map! { |item| decorator.new(item, options) } if @items
       end
 
-      def decorate_requesters
-        @requesters = (@items || []).collect(&:requester).uniq.each_with_object({}) do |contact, hash|
-          hash[contact.id] = ContactDecorator.new(contact, name_mapping: contact_name_mapping)
+      def decorator_options
+        options = {}
+        if (sideload_options || []).include?('requester')
+          options = { contact_name_mapping: contact_name_mapping, company_name_mapping: company_name_mapping}
         end
+        super(options)
       end
 
       def contact_name_mapping
         @contact_name_mapping ||= begin
-          custom_field = index? ? User.new.custom_field : @requester.custom_field
+          custom_field = User.new.custom_field
+          custom_field.each_with_object({}) { |(name, value), hash| hash[name] = CustomFieldDecorator.display_name(name) } if custom_field
+        end
+      end
+
+      def company_name_mapping
+        @company_name_mapping ||= begin
+          custom_field = Company.new.custom_field
           custom_field.each_with_object({}) { |(name, value), hash| hash[name] = CustomFieldDecorator.display_name(name) } if custom_field
         end
       end
 
       def tickets_filter
-        current_account.tickets.permissible(api_current_user).filter(params: params, filter: 'Helpdesk::Filters::CustomTicketFilter')
+        filtered_tickets = current_account.tickets.permissible(api_current_user).filter(params: params.except(:ids), filter: 'Helpdesk::Filters::CustomTicketFilter')
+        params[:ids].present? ? filtered_tickets.where(display_id: params[:ids]) : filtered_tickets
       end
 
       def validate_filter_params

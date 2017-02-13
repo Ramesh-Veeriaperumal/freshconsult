@@ -5,15 +5,12 @@ JSON.generate(@items.map do |agent|
     occasional: agent.occasional,
     id: agent.user_id,
     signature: agent.signature_html,
-    #TODO need to check performance for fetching groupIds
-    group_ids: agent.group_ids, 
     ticket_scope: agent.ticket_permission,
     created_at: agent.created_at.try(:utc),
     updated_at: agent.updated_at.try(:utc),
     available_since: agent.active_since.try(:utc),
     contact: {
-      active: user.active,      
-      company_id: user.company_id,
+      active: user.active,
       email: user.email,
       job_title: user.job_title,
       language: user.language,
